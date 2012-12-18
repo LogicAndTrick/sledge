@@ -1,0 +1,155 @@
+﻿RMF FILE FORMAT
+Version 2.2
+
+Type sizes:
+1 byte: char, byte, bool, string (per character)
+4 bytes: int, float
+
+String types:
+string(n): Fixed-length storage, null terminated value
+string: Variable-length storage, null terminated value, first byte indicates the length of the string (including terminator)
+
+Ints and floats are stored in little-endian form, meaning that the byte order has to be reversed if converting them manually.
+Most automatic binary readers should do this by default.
+
+Version 2.2 is the version used by the latest version of Valve Hammer Editor. To convert an older format to 2.2, open it in Hammer and re-save it.
+
+STRUCTURES
+
+Colour
+{
+	byte red
+	byte blue
+	byte green
+}
+
+Visgroup
+{
+	string(128) name
+	Colour colour
+	byte alpha (colour is 32-bit, includes alpha bit)
+	int id
+	bool visible
+	byte[3] unused
+}
+
+Vector
+{
+	float x
+	float y
+	float z
+}
+
+Plane
+{
+	Vector coordinate1
+	Vector coordinate2
+	Vector coordinate3
+}
+
+Face
+{
+	string(256) textureName
+	byte[4] unknown
+	Vector UAxis
+	float XShift
+	Vector VAxis
+	float YShift
+	float rotation
+	float XScale
+	float YScale
+	byte[16] unknown
+	int numberOfVertices
+	Vector[] vertices
+	Plane plane
+}
+
+Property
+{
+	string key
+	string value
+}
+
+EntityData
+{
+	string name
+	byte[4] unknown
+	int flags
+	int numberOfProperties
+	Property[] properties
+	byte[12] unknown
+}
+
+PathNode
+{
+	Vector position
+	int id
+	string(128) name
+	int numberOfProperties
+	Property[] properties
+}
+
+Path
+{
+	string(128) name
+	string(128) type
+	int direction
+	int numberOfNodes
+	PathNode[] nodes
+}
+
+MapObject
+{
+	string objectType ("CMapWorld", "CMapGroup", "CMapSolid", or "CMapEntity")
+	int visgroupId
+	Colour colour
+	int numberOfChildren
+	MapObject[] children
+}
+
+World : MapObject
+{
+	EntityData data
+	int numberOfPaths
+	Path[] paths
+}
+
+Group : MapObject
+{
+}
+
+Solid : MapObject
+{
+	int numberOfFaces
+	Face[] faces
+}
+
+Entity : MapObject
+{
+	EntityData data;
+	byte[2] unknown
+	Vector origin
+	byte[4] unknown
+}
+
+Camera
+{
+	Vector eyePosition
+	Vector lookPosition
+}
+
+FILE FORMAT
+
+RMF
+{
+	float version (2.2)
+	byte[3] header ('RMF')
+	int numberOfVisgroups
+	Visgroup[] visgroups
+	World worldspawn
+	string docinfo ("DOCINFO")
+	float unknown (possibly a docinfo version number, but unused)
+	int activeCamera
+	int numberOfCameras
+	Camera[] cameras
+}

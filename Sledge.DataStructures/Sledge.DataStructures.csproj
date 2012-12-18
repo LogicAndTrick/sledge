@@ -1,0 +1,117 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{26A974C9-E495-4FA3-8E87-1E00019D04F5}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Sledge.DataStructures</RootNamespace>
+    <AssemblyName>Sledge.DataStructures</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="OpenTK, Version=1.0.0.201, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
+      <HintPath>..\OpenTK.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Geometric\Box.cs" />
+    <Compile Include="Geometric\Cloud.cs" />
+    <Compile Include="Geometric\CoordinateF.cs" />
+    <Compile Include="Geometric\QuaternionF.cs" />
+    <Compile Include="Geometric\MatrixF.cs" />
+    <Compile Include="Geometric\MathFunctions.cs" />
+    <Compile Include="Geometric\Matrix.cs" />
+    <Compile Include="Geometric\Plane.cs" />
+    <Compile Include="Geometric\Quaternion.cs" />
+    <Compile Include="Geometric\Vector.cs" />
+    <Compile Include="GameData\Behaviour.cs" />
+    <Compile Include="GameData\ClassType.cs" />
+    <Compile Include="GameData\GameData.cs" />
+    <Compile Include="GameData\GameDataObject.cs" />
+    <Compile Include="GameData\IO.cs" />
+    <Compile Include="GameData\IOType.cs" />
+    <Compile Include="GameData\Option.cs" />
+    <Compile Include="GameData\Property.cs" />
+    <Compile Include="GameData\VariableType.cs" />
+    <Compile Include="Geometric\Line.cs" />
+    <Compile Include="MapObjects\DisplacementPoint.cs" />
+    <Compile Include="Geometric\Coordinate.cs" />
+    <Compile Include="MapObjects\Camera.cs" />
+    <Compile Include="MapObjects\Displacement.cs" />
+    <Compile Include="MapObjects\Entity.cs" />
+    <Compile Include="MapObjects\EntityData.cs" />
+    <Compile Include="MapObjects\Face.cs" />
+    <Compile Include="MapObjects\Group.cs" />
+    <Compile Include="MapObjects\Map.cs" />
+    <Compile Include="MapObjects\MapObject.cs" />
+    <Compile Include="MapObjects\Output.cs" />
+    <Compile Include="MapObjects\Path.cs" />
+    <Compile Include="MapObjects\PathDirection.cs" />
+    <Compile Include="MapObjects\PathNode.cs" />
+    <Compile Include="MapObjects\Property.cs" />
+    <Compile Include="MapObjects\Solid.cs" />
+    <Compile Include="MapObjects\TextureReference.cs" />
+    <Compile Include="MapObjects\Vertex.cs" />
+    <Compile Include="MapObjects\Visgroup.cs" />
+    <Compile Include="MapObjects\World.cs" />
+    <Compile Include="Models\Animation.cs" />
+    <Compile Include="Models\AnimationFrame.cs" />
+    <Compile Include="Models\Bone.cs" />
+    <Compile Include="Models\BoneAnimationFrame.cs" />
+    <Compile Include="Models\BoneWeighting.cs" />
+    <Compile Include="Models\Mesh.cs" />
+    <Compile Include="Models\MeshVertex.cs" />
+    <Compile Include="Models\Model.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Transformations\UnitMatrixMult.cs" />
+    <Compile Include="Transformations\UnitRotate.cs" />
+    <Compile Include="Transformations\UnitScale.cs" />
+    <Compile Include="Transformations\IUnitTransformation.cs" />
+    <Compile Include="Transformations\UnitTranslate.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Sledge.Common\Sledge.Common.csproj">
+      <Project>{5D414AC8-8B93-489F-9960-877923400FED}</Project>
+      <Name>Sledge.Common</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
