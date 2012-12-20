@@ -9,8 +9,5 @@ namespace Sledge.Database.Models
     {
         public int ID { get; set; }
         public string Name { get; set; }
-
-        public IList<Game> Games { get; set; }
-        public IList<Build> Builds { get; set; }
     }
 }

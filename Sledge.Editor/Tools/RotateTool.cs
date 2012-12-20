@@ -4,6 +4,7 @@ using System.Windows.Forms;
 using OpenTK;
 using Sledge.Editor.Properties;
 using Sledge.Extensions;
+using Sledge.Settings;
 using Sledge.UI;
 
 namespace Sledge.Editor.Tools
@@ -58,8 +59,9 @@ namespace Sledge.Editor.Tools
             if ((origv.Cross(newv).Z < 0)) angle = 2 * DMath.PI - angle;
 
             var shf = KeyboardState.Shift;
-            var def = Settings.Select.SnapRotationTo15DegreesByDefault;
-            if (shf ^ def)
+            var def = Select.RotationStyle;
+            var snap = (def == RotationStyle.SnapOnShift && shf) || (def == RotationStyle.SnapOffShift && !shf);
+            if (snap)
             {
                 var deg = angle * (180 / DMath.PI);
                 var rnd = Math.Round(deg / 15) * 15;

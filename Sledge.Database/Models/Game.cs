@@ -14,9 +14,7 @@ namespace Sledge.Database.Models
         public string ModDir { get; set; }
         public int BuildID { get; set; }
 
-        public Engine Engine { get; set; }
-        public Build Build { get; set; }
-        public IList<Fgd> Fgds { get; set; }
-        public IList<Wad> Wads { get; set; }
+        public List<Fgd> Fgds { get; set; }
+        public List<Wad> Wads { get; set; }
     }
 }

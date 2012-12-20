@@ -15,8 +15,5 @@ namespace Sledge.Database.Models
         public string Csg { get; set; }
         public string Vis { get; set; }
         public string Rad { get; set; }
-
-        public Engine Engine { get; set; }
-        public IList<Game> Games { get; set; }
     }
 }

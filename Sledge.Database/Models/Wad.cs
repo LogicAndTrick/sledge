@@ -10,7 +10,5 @@ namespace Sledge.Database.Models
         public int ID { get; set; }
         public int GameID { get; set; }
         public string Path { get; set; }
-
-        public Game Game { get; set; }
     }
 }

@@ -27,7 +27,7 @@ namespace Sledge.Editor
 
         private void GameSelectionFormLoad(object sender, EventArgs e)
         {
-            foreach (var engine in Context.DBContext.Engines)
+            foreach (var engine in Context.DBContext.GetAllEngines())
             {
                 lstEngine.Items.Add(new IDStringWrapper { ID = engine.ID, String = engine.Name });
             }
@@ -37,7 +37,7 @@ namespace Sledge.Editor
         {
             lstGame.Items.Clear();
             if (lstEngine.SelectedIndex < 0) return;
-            foreach (var game in Context.DBContext.Engines.Single(e => e.ID == ((IDStringWrapper)lstEngine.SelectedItem).ID).Games)
+            foreach (var game in Context.DBContext.GetAllGames().Where(g => g.EngineID == ((IDStringWrapper)lstEngine.SelectedItem).ID))
             {
                 lstGame.Items.Add(new IDStringWrapper {ID = game.ID, String = game.Name});
             }

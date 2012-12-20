@@ -1,66 +1,211 @@
-﻿using IQToolkit;
-using IQToolkit.Data.SQLite;
-using Sledge.Database.Models;
-using IQToolkit.Data;
-using IQToolkit.Data.Common;
-using IQToolkit.Data.Mapping;
-using System.Reflection;
-using System.Text;
+﻿using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.SQLite;
 using System.IO;
+using System.Reflection;
+using Sledge.Database.Models;
+using System.Linq;
 
 namespace Sledge.Database
 {
     public class Context
     {
-        private static QueryPolicy GetPolicy()
-        {
-            var ep = new EntityPolicy();
-
-            ep.IncludeWith<Game>(e => e.Fgds, true);
-            ep.IncludeWith<Game>(e => e.Wads, true);
-
-            ep.IncludeWith<Build>(e => e.Games, true);
-
-            ep.IncludeWith<Engine>(e => e.Games, true);
-            ep.IncludeWith<Engine>(e => e.Builds, true);
-
-            return ep;
-        }
+        public static Context DBContext { get; set; }
 
         public static Context Create()
         {
-            var xmlStream = Assembly.GetExecutingAssembly().GetManifestResourceStream(typeof(Context), "Mapping.xml");
             var dbPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            var xml = (new StreamReader(xmlStream)).ReadToEnd();
-            var map = XmlMapping.FromXml(xml);
-            
-            var provider = DbEntityProvider.From(
-                typeof (SQLiteQueryProvider),
-                Path.Combine(dbPath, "Sledge.db3"),
-                map,
-                GetPolicy());
-            return new Context(provider);
+            var connection = new SQLiteConnection("Data Source=" + Path.Combine(dbPath, "Sledge.db3"));
+            return new Context(connection);
         }
-
-        public static Context DBContext { get; set; }
 
         static Context()
         {
             DBContext = Create();
         }
 
-        public IEntityProvider Provider { get; private set; }
+        private IDbConnection _conn;
 
-        public Context(IEntityProvider provider)
+        public Context(IDbConnection conn)
         {
-            Provider = provider;
+            _conn = conn;
         }
 
-        public virtual IEntityTable<Game> Games { get { return Provider.GetTable<Game>("Games"); } }
-        public virtual IEntityTable<Fgd> Fgds { get { return Provider.GetTable<Fgd>("Fgds"); } }
-        public virtual IEntityTable<Wad> Wads { get { return Provider.GetTable<Wad>("Wads"); } }
-        public virtual IEntityTable<Build> Builds { get { return Provider.GetTable<Build>("Builds"); } }
-        public virtual IEntityTable<Engine> Engines { get { return Provider.GetTable<Engine>("Engines"); } }
-        public virtual IEntityTable<Setting> Settings { get { return Provider.GetTable<Setting>("Settings"); } }
+        #region Get All
+        public List<Setting> GetAllSettings()
+        {
+            var list = new List<Setting>();
+            try
+            {
+                _conn.Open();
+                using (var comm = _conn.CreateCommand())
+                {
+                    comm.CommandText = "SELECT ID, Key, Value FROM Settings";
+                    using (var rdr = comm.ExecuteReader(CommandBehavior.CloseConnection))
+                    {
+                        while (rdr.Read())
+                        {
+                            list.Add(new Setting
+                            {
+                                Key = rdr.GetString(1),
+                                Value = rdr.GetString(2),
+                            });
+                        }
+                    }
+                }
+            }
+            finally
+            {
+                _conn.Close();
+            }
+            return list;
+        }
+
+        public List<Game> GetAllGames()
+        {
+            var list = new List<Game>();
+            try
+            {
+                _conn.Open();
+                using (var comm = _conn.CreateCommand())
+                {
+                    comm.CommandText = "SELECT BuildID, EngineID, GameDir, ID, ModDir, Name FROM Games";
+                    using (var rdr = comm.ExecuteReader(CommandBehavior.CloseConnection))
+                    {
+                        while (rdr.Read())
+                        {
+                            list.Add(new Game
+                            {
+                                BuildID = rdr.GetInt32(0), 
+                                EngineID = rdr.GetInt32(1), 
+                                GameDir = rdr.GetString(2), 
+                                ID = rdr.GetInt32(3), 
+                                ModDir = rdr.GetString(4),
+                                Name = rdr.GetString(5) 
+                            });
+                        }
+                    }
+                }
+            }
+            finally
+            {
+                _conn.Close();
+            }
+            return list;
+        }
+
+        public List<Engine> GetAllEngines()
+        {
+            var list = new List<Engine>();
+            try
+            {
+                _conn.Open();
+                using (var comm = _conn.CreateCommand())
+                {
+                    comm.CommandText = "SELECT ID, Name FROM Engines";
+                    using (var rdr = comm.ExecuteReader(CommandBehavior.CloseConnection))
+                    {
+                        while (rdr.Read())
+                        {
+                            list.Add(new Engine
+                            {
+                                ID = rdr.GetInt32(0),
+                                Name = rdr.GetString(1),
+                            });
+                        }
+                    }
+                }
+            }
+            finally
+            {
+                _conn.Close();
+            }
+            return list;
+        }
+
+        public List<Fgd> GetAllFgds()
+        {
+            var list = new List<Fgd>();
+            try
+            {
+                _conn.Open();
+                using (var comm = _conn.CreateCommand())
+                {
+                    comm.CommandText = "SELECT ID, GameID, Path FROM Fgds";
+                    using (var rdr = comm.ExecuteReader(CommandBehavior.CloseConnection))
+                    {
+                        while (rdr.Read())
+                        {
+                            list.Add(new Fgd
+                            {
+                                ID = rdr.GetInt32(0),
+                                GameID = rdr.GetInt32(1),
+                                Path = rdr.GetString(2)
+                            });
+                        }
+                    }
+                }
+            }
+            finally
+            {
+                _conn.Close();
+            }
+            return list;
+        }
+
+        public List<Wad> GetAllWads()
+        {
+            var list = new List<Wad>();
+            try
+            {
+                _conn.Open();
+                using (var comm = _conn.CreateCommand())
+                {
+                    comm.CommandText = "SELECT ID, GameID, Path FROM Wads";
+                    using (var rdr = comm.ExecuteReader(CommandBehavior.CloseConnection))
+                    {
+                        while (rdr.Read())
+                        {
+                            list.Add(new Wad
+                            {
+                                ID = rdr.GetInt32(0),
+                                GameID = rdr.GetInt32(1),
+                                Path = rdr.GetString(2)
+                            });
+                        }
+                    }
+                }
+            }
+            finally
+            {
+                _conn.Close();
+            }
+            return list;
+        }
+        #endregion
+
+        public void SaveAllSettings(IEnumerable<Setting> settings)
+        {
+            try
+            {
+                _conn.Open();
+                using (var comm = _conn.CreateCommand())
+                {
+                    comm.CommandText = "DELETE FROM Settings";
+                    comm.ExecuteNonQuery();
+                }
+                using (var comm = _conn.CreateCommand())
+                {
+                    comm.CommandText = "INSERT INTO Settings " + String.Join(" UNION ",
+                        settings.Select(x => String.Format("SELECT '{0}', '{1}'", x.Key.Replace("'", "''"), x.Value.Replace("'", "''"))));
+                    comm.ExecuteNonQuery();
+                }
+            }
+            finally
+            {
+                _conn.Close();
+            }
+        }
     }
 }

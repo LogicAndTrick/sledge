@@ -32,15 +32,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="IQToolkit">
-      <HintPath>..\IQToolkit.dll</HintPath>
-    </Reference>
-    <Reference Include="IQToolkit.Data">
-      <HintPath>..\IQToolkit.Data.dll</HintPath>
-    </Reference>
-    <Reference Include="IQToolkit.Data.SQLite">
-      <HintPath>..\IQToolkit.Data.SQLite.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data.SQLite, Version=1.0.66.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=x86">
@@ -48,7 +39,6 @@
       <HintPath>..\System.Data.SQLite.dll</HintPath>
     </Reference>
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
@@ -62,9 +52,6 @@
     <Compile Include="Models\Setting.cs" />
     <Compile Include="Models\Wad.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Mapping.xml" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Sledge.db3">
