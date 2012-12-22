@@ -19,6 +19,7 @@ namespace Sledge.Settings
         private static string ToString(object obj)
         {
             if (obj == null) return "null";
+            if (obj is string) return "string[" + obj + "]";
             if (obj is int) return "int[" + obj + "]";
             if (obj is decimal) return "decimal[" + obj + "]";
             if (obj is bool) return "bool[" + Convert.ToString(obj).ToLower() + "]";
@@ -34,6 +35,8 @@ namespace Sledge.Settings
             var val = spl[1];
             switch (type)
             {
+                case "string":
+                    return val;
                 case "int":
                     return int.Parse(val);
                 case "decimal":

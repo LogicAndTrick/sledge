@@ -36,11 +36,6 @@ namespace Sledge.Editor.Settings
 		/// </summary>
 		private void InitializeComponent()
 		{
-            System.Windows.Forms.TreeNode treeNode11 = new System.Windows.Forms.TreeNode("WON Goldsource");
-            System.Windows.Forms.TreeNode treeNode12 = new System.Windows.Forms.TreeNode("Steam Goldsource");
-            System.Windows.Forms.TreeNode treeNode13 = new System.Windows.Forms.TreeNode("Source");
-            System.Windows.Forms.TreeNode treeNode14 = new System.Windows.Forms.TreeNode("Goldsource");
-            System.Windows.Forms.TreeNode treeNode15 = new System.Windows.Forms.TreeNode("Source");
             this.tbcSettings = new System.Windows.Forms.TabControl();
             this.tabGeneral = new System.Windows.Forms.TabPage();
             this.tab2DViews = new System.Windows.Forms.TabPage();
@@ -83,65 +78,64 @@ namespace Sledge.Editor.Settings
             this.DefaultGridSize = new System.Windows.Forms.DomainUpDown();
             this.tab3DViews = new System.Windows.Forms.TabPage();
             this.groupBox11 = new System.Windows.Forms.GroupBox();
-            this.o_3DInvertX = new System.Windows.Forms.CheckBox();
-            this.o_3DInvertY = new System.Windows.Forms.CheckBox();
+            this.InvertMouseX = new System.Windows.Forms.CheckBox();
+            this.InvertMouseY = new System.Windows.Forms.CheckBox();
             this.groupBox12 = new System.Windows.Forms.GroupBox();
-            this.o_3DTimeToTopSpeed = new System.Windows.Forms.TrackBar();
-            this.label14 = new System.Windows.Forms.Label();
+            this.TimeToTopSpeed = new System.Windows.Forms.TrackBar();
+            this.TimeToTopSpeedLabel = new System.Windows.Forms.Label();
             this.groupBox13 = new System.Windows.Forms.GroupBox();
-            this.o_3DForwardSpeed = new System.Windows.Forms.TrackBar();
-            this.label15 = new System.Windows.Forms.Label();
+            this.ForwardSpeed = new System.Windows.Forms.TrackBar();
+            this.ForwardSpeedLabel = new System.Windows.Forms.Label();
             this.groupBox14 = new System.Windows.Forms.GroupBox();
-            this.o_3DBackClippingPane = new System.Windows.Forms.TrackBar();
-            this.label16 = new System.Windows.Forms.Label();
+            this.BackClippingPane = new System.Windows.Forms.TrackBar();
+            this.BackClippingPaneLabel = new System.Windows.Forms.Label();
             this.tabGame = new System.Windows.Forms.TabPage();
-            this.tabGameSubTabs = new System.Windows.Forms.TabControl();
+            this.GameSubTabs = new System.Windows.Forms.TabControl();
             this.tabConfigDirectories = new System.Windows.Forms.TabPage();
-            this.btnGameChangeName = new System.Windows.Forms.Button();
             this.grpConfigGame = new System.Windows.Forms.GroupBox();
-            this.txtGameWONDir = new System.Windows.Forms.TextBox();
+            this.SelectedGameWonDir = new System.Windows.Forms.TextBox();
             this.lblGameWONDir = new System.Windows.Forms.Label();
-            this.btnGameDirBrowse = new System.Windows.Forms.Button();
+            this.SelectedGameDirBrowse = new System.Windows.Forms.Button();
             this.lblGameSteamDir = new System.Windows.Forms.Label();
-            this.cmbGameSteamDir = new System.Windows.Forms.ComboBox();
+            this.SelectedGameSteamDir = new System.Windows.Forms.ComboBox();
             this.lblGameMod = new System.Windows.Forms.Label();
-            this.cmbGameMod = new System.Windows.Forms.ComboBox();
+            this.SelectedGameMod = new System.Windows.Forms.ComboBox();
             this.lblGameName = new System.Windows.Forms.Label();
-            this.cmbGameBuild = new System.Windows.Forms.ComboBox();
+            this.SelectedGameBuild = new System.Windows.Forms.ComboBox();
             this.grpConfigSaving = new System.Windows.Forms.GroupBox();
             this.lblGameMapSaveDir = new System.Windows.Forms.Label();
-            this.chkGameEnableAutosave = new System.Windows.Forms.CheckBox();
-            this.txtGameMapDir = new System.Windows.Forms.TextBox();
-            this.btnGameMapDirBrowse = new System.Windows.Forms.Button();
-            this.txtGameAutosaveDir = new System.Windows.Forms.TextBox();
+            this.SelectedGameEnableAutosave = new System.Windows.Forms.CheckBox();
+            this.SelectedGameMapDir = new System.Windows.Forms.TextBox();
+            this.SelectedGameMapDirBrowse = new System.Windows.Forms.Button();
+            this.SelectedGameDiffAutosaveDir = new System.Windows.Forms.TextBox();
             this.lblGameAutosaveDir = new System.Windows.Forms.Label();
-            this.btnGameAutosaveDirBrowse = new System.Windows.Forms.Button();
-            this.chkGameMapDiffAutosaveDir = new System.Windows.Forms.CheckBox();
+            this.SelectedGameDiffAutosaveDirBrowse = new System.Windows.Forms.Button();
+            this.SelectedGameUseDiffAutosaveDir = new System.Windows.Forms.CheckBox();
             this.lblGameBuild = new System.Windows.Forms.Label();
-            this.txtGameName = new System.Windows.Forms.TextBox();
-            this.cmbGameEngine = new System.Windows.Forms.ComboBox();
+            this.SelectedGameName = new System.Windows.Forms.TextBox();
+            this.SelectedGameEngine = new System.Windows.Forms.ComboBox();
             this.lblGameEngine = new System.Windows.Forms.Label();
             this.tabConfigEntities = new System.Windows.Forms.TabPage();
             this.lblGameFGD = new System.Windows.Forms.Label();
-            this.btnGameAddFGD = new System.Windows.Forms.Button();
+            this.SelectedGameAddFgd = new System.Windows.Forms.Button();
             this.lblConfigBrushEnt = new System.Windows.Forms.Label();
-            this.btnGameRemoveFGD = new System.Windows.Forms.Button();
+            this.SelectedGameRemoveFgd = new System.Windows.Forms.Button();
             this.lblConfigPointEnt = new System.Windows.Forms.Label();
-            this.lstGameFGD = new System.Windows.Forms.ListBox();
-            this.cmbGameBrushEnt = new System.Windows.Forms.ComboBox();
-            this.cmbGamePointEnt = new System.Windows.Forms.ComboBox();
+            this.SelectedGameFgdList = new System.Windows.Forms.ListBox();
+            this.SelectedGameDefaultBrushEnt = new System.Windows.Forms.ComboBox();
+            this.SelectedGameDefaultPointEnt = new System.Windows.Forms.ComboBox();
             this.tabConfigTextures = new System.Windows.Forms.TabPage();
             this.lblGameWAD = new System.Windows.Forms.Label();
-            this.nudGameLightmapScale = new System.Windows.Forms.NumericUpDown();
+            this.SelectedGameLightmapScale = new System.Windows.Forms.NumericUpDown();
             this.lblConfigLightmapScale = new System.Windows.Forms.Label();
-            this.btnGameAddWAD = new System.Windows.Forms.Button();
-            this.nudGameTextureScale = new System.Windows.Forms.NumericUpDown();
-            this.lstGameWAD = new System.Windows.Forms.ListBox();
+            this.SelectedGameAddWad = new System.Windows.Forms.Button();
+            this.SelectedGameTextureScale = new System.Windows.Forms.NumericUpDown();
+            this.SelectedGameWadList = new System.Windows.Forms.ListBox();
             this.lblConfigTextureScale = new System.Windows.Forms.Label();
-            this.btnGameRemoveWAD = new System.Windows.Forms.Button();
-            this.tree_games = new System.Windows.Forms.TreeView();
-            this.btnGameRemove = new System.Windows.Forms.Button();
-            this.btnGameAdd = new System.Windows.Forms.Button();
+            this.SelectedGameRemoveWad = new System.Windows.Forms.Button();
+            this.GameTree = new System.Windows.Forms.TreeView();
+            this.RemoveGame = new System.Windows.Forms.Button();
+            this.AddGame = new System.Windows.Forms.Button();
             this.tabBuild = new System.Windows.Forms.TabPage();
             this.tabBuildSubTabs = new System.Windows.Forms.TabControl();
             this.tabBuildGeneral = new System.Windows.Forms.TabPage();
@@ -186,14 +180,14 @@ namespace Sledge.Editor.Settings
             this.lblBuildTEMPAdvancedConfig = new System.Windows.Forms.Label();
             this.btnBuildRemove = new System.Windows.Forms.Button();
             this.btnBuildAdd = new System.Windows.Forms.Button();
-            this.tree_builds = new System.Windows.Forms.TreeView();
+            this.BuildTree = new System.Windows.Forms.TreeView();
             this.tabSteam = new System.Windows.Forms.TabPage();
-            this.o_SteamInstallDir = new System.Windows.Forms.TextBox();
+            this.SteamInstallDir = new System.Windows.Forms.TextBox();
             this.label17 = new System.Windows.Forms.Label();
-            this.button1 = new System.Windows.Forms.Button();
+            this.ListAvailableGamesButton = new System.Windows.Forms.Button();
             this.label18 = new System.Windows.Forms.Label();
-            this.btnSteamInstallDirBrowse = new System.Windows.Forms.Button();
-            this.o_SteamUsername = new System.Windows.Forms.ComboBox();
+            this.SteamInstallDirBrowseButton = new System.Windows.Forms.Button();
+            this.SteamUsername = new System.Windows.Forms.ComboBox();
             this.tabHotkeys = new System.Windows.Forms.TabPage();
             this.listView1 = new System.Windows.Forms.ListView();
             this.chKey = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -222,6 +216,7 @@ namespace Sledge.Editor.Settings
             this.btnCancelSettings = new System.Windows.Forms.Button();
             this.btnApplyAndCloseSettings = new System.Windows.Forms.Button();
             this.btnApplySettings = new System.Windows.Forms.Button();
+            this.SelectedGameSteamInstall = new System.Windows.Forms.CheckBox();
             this.tbcSettings.SuspendLayout();
             this.tab2DViews.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.NudgeUnits)).BeginInit();
@@ -234,20 +229,20 @@ namespace Sledge.Editor.Settings
             this.tab3DViews.SuspendLayout();
             this.groupBox11.SuspendLayout();
             this.groupBox12.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.o_3DTimeToTopSpeed)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.TimeToTopSpeed)).BeginInit();
             this.groupBox13.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.o_3DForwardSpeed)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ForwardSpeed)).BeginInit();
             this.groupBox14.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.o_3DBackClippingPane)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.BackClippingPane)).BeginInit();
             this.tabGame.SuspendLayout();
-            this.tabGameSubTabs.SuspendLayout();
+            this.GameSubTabs.SuspendLayout();
             this.tabConfigDirectories.SuspendLayout();
             this.grpConfigGame.SuspendLayout();
             this.grpConfigSaving.SuspendLayout();
             this.tabConfigEntities.SuspendLayout();
             this.tabConfigTextures.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.nudGameLightmapScale)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudGameTextureScale)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.SelectedGameLightmapScale)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.SelectedGameTextureScale)).BeginInit();
             this.tabBuild.SuspendLayout();
             this.tabBuildSubTabs.SuspendLayout();
             this.tabBuildGeneral.SuspendLayout();
@@ -285,6 +280,7 @@ namespace Sledge.Editor.Settings
             this.tbcSettings.SelectedIndex = 0;
             this.tbcSettings.Size = new System.Drawing.Size(744, 537);
             this.tbcSettings.TabIndex = 0;
+            this.tbcSettings.SelectedIndexChanged += new System.EventHandler(this.TabChanged);
             // 
             // tabGeneral
             // 
@@ -762,8 +758,8 @@ namespace Sledge.Editor.Settings
             // 
             // groupBox11
             // 
-            this.groupBox11.Controls.Add(this.o_3DInvertX);
-            this.groupBox11.Controls.Add(this.o_3DInvertY);
+            this.groupBox11.Controls.Add(this.InvertMouseX);
+            this.groupBox11.Controls.Add(this.InvertMouseY);
             this.groupBox11.Location = new System.Drawing.Point(438, 6);
             this.groupBox11.Name = "groupBox11";
             this.groupBox11.Size = new System.Drawing.Size(146, 98);
@@ -771,28 +767,28 @@ namespace Sledge.Editor.Settings
             this.groupBox11.TabStop = false;
             this.groupBox11.Text = "Mouselook";
             // 
-            // o_3DInvertX
+            // InvertMouseX
             // 
-            this.o_3DInvertX.Location = new System.Drawing.Point(27, 49);
-            this.o_3DInvertX.Name = "o_3DInvertX";
-            this.o_3DInvertX.Size = new System.Drawing.Size(104, 24);
-            this.o_3DInvertX.TabIndex = 0;
-            this.o_3DInvertX.Text = "Invert X Axis";
-            this.o_3DInvertX.UseVisualStyleBackColor = true;
+            this.InvertMouseX.Location = new System.Drawing.Point(27, 49);
+            this.InvertMouseX.Name = "InvertMouseX";
+            this.InvertMouseX.Size = new System.Drawing.Size(104, 24);
+            this.InvertMouseX.TabIndex = 0;
+            this.InvertMouseX.Text = "Invert X Axis";
+            this.InvertMouseX.UseVisualStyleBackColor = true;
             // 
-            // o_3DInvertY
+            // InvertMouseY
             // 
-            this.o_3DInvertY.Location = new System.Drawing.Point(27, 19);
-            this.o_3DInvertY.Name = "o_3DInvertY";
-            this.o_3DInvertY.Size = new System.Drawing.Size(104, 24);
-            this.o_3DInvertY.TabIndex = 0;
-            this.o_3DInvertY.Text = "Invert Y Axis";
-            this.o_3DInvertY.UseVisualStyleBackColor = true;
+            this.InvertMouseY.Location = new System.Drawing.Point(27, 19);
+            this.InvertMouseY.Name = "InvertMouseY";
+            this.InvertMouseY.Size = new System.Drawing.Size(104, 24);
+            this.InvertMouseY.TabIndex = 0;
+            this.InvertMouseY.Text = "Invert Y Axis";
+            this.InvertMouseY.UseVisualStyleBackColor = true;
             // 
             // groupBox12
             // 
-            this.groupBox12.Controls.Add(this.o_3DTimeToTopSpeed);
-            this.groupBox12.Controls.Add(this.label14);
+            this.groupBox12.Controls.Add(this.TimeToTopSpeed);
+            this.groupBox12.Controls.Add(this.TimeToTopSpeedLabel);
             this.groupBox12.Location = new System.Drawing.Point(6, 214);
             this.groupBox12.Name = "groupBox12";
             this.groupBox12.Size = new System.Drawing.Size(426, 98);
@@ -800,32 +796,33 @@ namespace Sledge.Editor.Settings
             this.groupBox12.TabStop = false;
             this.groupBox12.Text = "Time to Top Speed";
             // 
-            // o_3DTimeToTopSpeed
+            // TimeToTopSpeed
             // 
-            this.o_3DTimeToTopSpeed.AutoSize = false;
-            this.o_3DTimeToTopSpeed.BackColor = System.Drawing.SystemColors.Window;
-            this.o_3DTimeToTopSpeed.Location = new System.Drawing.Point(6, 20);
-            this.o_3DTimeToTopSpeed.Maximum = 50;
-            this.o_3DTimeToTopSpeed.Name = "o_3DTimeToTopSpeed";
-            this.o_3DTimeToTopSpeed.Size = new System.Drawing.Size(414, 42);
-            this.o_3DTimeToTopSpeed.TabIndex = 0;
-            this.o_3DTimeToTopSpeed.TickFrequency = 10000;
-            this.o_3DTimeToTopSpeed.TickStyle = System.Windows.Forms.TickStyle.Both;
-            this.o_3DTimeToTopSpeed.Value = 5;
+            this.TimeToTopSpeed.AutoSize = false;
+            this.TimeToTopSpeed.BackColor = System.Drawing.SystemColors.Window;
+            this.TimeToTopSpeed.Location = new System.Drawing.Point(6, 20);
+            this.TimeToTopSpeed.Maximum = 50;
+            this.TimeToTopSpeed.Name = "TimeToTopSpeed";
+            this.TimeToTopSpeed.Size = new System.Drawing.Size(414, 42);
+            this.TimeToTopSpeed.TabIndex = 0;
+            this.TimeToTopSpeed.TickFrequency = 10000;
+            this.TimeToTopSpeed.TickStyle = System.Windows.Forms.TickStyle.Both;
+            this.TimeToTopSpeed.Value = 5;
+            this.TimeToTopSpeed.Scroll += new System.EventHandler(this.TimeToTopSpeedChanged);
             // 
-            // label14
+            // TimeToTopSpeedLabel
             // 
-            this.label14.Location = new System.Drawing.Point(6, 65);
-            this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(414, 23);
-            this.label14.TabIndex = 1;
-            this.label14.Text = "0.5 sec";
-            this.label14.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.TimeToTopSpeedLabel.Location = new System.Drawing.Point(6, 65);
+            this.TimeToTopSpeedLabel.Name = "TimeToTopSpeedLabel";
+            this.TimeToTopSpeedLabel.Size = new System.Drawing.Size(414, 23);
+            this.TimeToTopSpeedLabel.TabIndex = 1;
+            this.TimeToTopSpeedLabel.Text = "0.5 sec";
+            this.TimeToTopSpeedLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // groupBox13
             // 
-            this.groupBox13.Controls.Add(this.o_3DForwardSpeed);
-            this.groupBox13.Controls.Add(this.label15);
+            this.groupBox13.Controls.Add(this.ForwardSpeed);
+            this.groupBox13.Controls.Add(this.ForwardSpeedLabel);
             this.groupBox13.Location = new System.Drawing.Point(6, 110);
             this.groupBox13.Name = "groupBox13";
             this.groupBox13.Size = new System.Drawing.Size(426, 98);
@@ -833,33 +830,34 @@ namespace Sledge.Editor.Settings
             this.groupBox13.TabStop = false;
             this.groupBox13.Text = "Forward Speed";
             // 
-            // o_3DForwardSpeed
+            // ForwardSpeed
             // 
-            this.o_3DForwardSpeed.AutoSize = false;
-            this.o_3DForwardSpeed.BackColor = System.Drawing.SystemColors.Window;
-            this.o_3DForwardSpeed.Location = new System.Drawing.Point(6, 20);
-            this.o_3DForwardSpeed.Maximum = 5000;
-            this.o_3DForwardSpeed.Minimum = 100;
-            this.o_3DForwardSpeed.Name = "o_3DForwardSpeed";
-            this.o_3DForwardSpeed.Size = new System.Drawing.Size(414, 42);
-            this.o_3DForwardSpeed.TabIndex = 0;
-            this.o_3DForwardSpeed.TickFrequency = 10000;
-            this.o_3DForwardSpeed.TickStyle = System.Windows.Forms.TickStyle.Both;
-            this.o_3DForwardSpeed.Value = 1000;
+            this.ForwardSpeed.AutoSize = false;
+            this.ForwardSpeed.BackColor = System.Drawing.SystemColors.Window;
+            this.ForwardSpeed.Location = new System.Drawing.Point(6, 20);
+            this.ForwardSpeed.Maximum = 5000;
+            this.ForwardSpeed.Minimum = 100;
+            this.ForwardSpeed.Name = "ForwardSpeed";
+            this.ForwardSpeed.Size = new System.Drawing.Size(414, 42);
+            this.ForwardSpeed.TabIndex = 0;
+            this.ForwardSpeed.TickFrequency = 10000;
+            this.ForwardSpeed.TickStyle = System.Windows.Forms.TickStyle.Both;
+            this.ForwardSpeed.Value = 1000;
+            this.ForwardSpeed.Scroll += new System.EventHandler(this.ForwardSpeedChanged);
             // 
-            // label15
+            // ForwardSpeedLabel
             // 
-            this.label15.Location = new System.Drawing.Point(6, 65);
-            this.label15.Name = "label15";
-            this.label15.Size = new System.Drawing.Size(414, 23);
-            this.label15.TabIndex = 1;
-            this.label15.Text = "1000 units/sec";
-            this.label15.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.ForwardSpeedLabel.Location = new System.Drawing.Point(6, 65);
+            this.ForwardSpeedLabel.Name = "ForwardSpeedLabel";
+            this.ForwardSpeedLabel.Size = new System.Drawing.Size(414, 23);
+            this.ForwardSpeedLabel.TabIndex = 1;
+            this.ForwardSpeedLabel.Text = "1000 units/sec";
+            this.ForwardSpeedLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // groupBox14
             // 
-            this.groupBox14.Controls.Add(this.o_3DBackClippingPane);
-            this.groupBox14.Controls.Add(this.label16);
+            this.groupBox14.Controls.Add(this.BackClippingPane);
+            this.groupBox14.Controls.Add(this.BackClippingPaneLabel);
             this.groupBox14.Location = new System.Drawing.Point(6, 6);
             this.groupBox14.Name = "groupBox14";
             this.groupBox14.Size = new System.Drawing.Size(426, 98);
@@ -867,35 +865,36 @@ namespace Sledge.Editor.Settings
             this.groupBox14.TabStop = false;
             this.groupBox14.Text = "Back Clipping Pane";
             // 
-            // o_3DBackClippingPane
+            // BackClippingPane
             // 
-            this.o_3DBackClippingPane.AutoSize = false;
-            this.o_3DBackClippingPane.BackColor = System.Drawing.SystemColors.Window;
-            this.o_3DBackClippingPane.Location = new System.Drawing.Point(6, 20);
-            this.o_3DBackClippingPane.Maximum = 10000;
-            this.o_3DBackClippingPane.Minimum = 2000;
-            this.o_3DBackClippingPane.Name = "o_3DBackClippingPane";
-            this.o_3DBackClippingPane.Size = new System.Drawing.Size(414, 42);
-            this.o_3DBackClippingPane.TabIndex = 0;
-            this.o_3DBackClippingPane.TickFrequency = 10000;
-            this.o_3DBackClippingPane.TickStyle = System.Windows.Forms.TickStyle.Both;
-            this.o_3DBackClippingPane.Value = 5000;
+            this.BackClippingPane.AutoSize = false;
+            this.BackClippingPane.BackColor = System.Drawing.SystemColors.Window;
+            this.BackClippingPane.Location = new System.Drawing.Point(6, 20);
+            this.BackClippingPane.Maximum = 10000;
+            this.BackClippingPane.Minimum = 2000;
+            this.BackClippingPane.Name = "BackClippingPane";
+            this.BackClippingPane.Size = new System.Drawing.Size(414, 42);
+            this.BackClippingPane.TabIndex = 0;
+            this.BackClippingPane.TickFrequency = 10000;
+            this.BackClippingPane.TickStyle = System.Windows.Forms.TickStyle.Both;
+            this.BackClippingPane.Value = 5000;
+            this.BackClippingPane.Scroll += new System.EventHandler(this.BackClippingPaneChanged);
             // 
-            // label16
+            // BackClippingPaneLabel
             // 
-            this.label16.Location = new System.Drawing.Point(6, 65);
-            this.label16.Name = "label16";
-            this.label16.Size = new System.Drawing.Size(414, 23);
-            this.label16.TabIndex = 1;
-            this.label16.Text = "4000";
-            this.label16.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.BackClippingPaneLabel.Location = new System.Drawing.Point(6, 65);
+            this.BackClippingPaneLabel.Name = "BackClippingPaneLabel";
+            this.BackClippingPaneLabel.Size = new System.Drawing.Size(414, 23);
+            this.BackClippingPaneLabel.TabIndex = 1;
+            this.BackClippingPaneLabel.Text = "4000";
+            this.BackClippingPaneLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // tabGame
             // 
-            this.tabGame.Controls.Add(this.tabGameSubTabs);
-            this.tabGame.Controls.Add(this.tree_games);
-            this.tabGame.Controls.Add(this.btnGameRemove);
-            this.tabGame.Controls.Add(this.btnGameAdd);
+            this.tabGame.Controls.Add(this.GameSubTabs);
+            this.tabGame.Controls.Add(this.GameTree);
+            this.tabGame.Controls.Add(this.RemoveGame);
+            this.tabGame.Controls.Add(this.AddGame);
             this.tabGame.Location = new System.Drawing.Point(4, 22);
             this.tabGame.Name = "tabGame";
             this.tabGame.Padding = new System.Windows.Forms.Padding(3);
@@ -904,29 +903,29 @@ namespace Sledge.Editor.Settings
             this.tabGame.Text = "Game Configurations";
             this.tabGame.UseVisualStyleBackColor = true;
             // 
-            // tabGameSubTabs
+            // GameSubTabs
             // 
-            this.tabGameSubTabs.Controls.Add(this.tabConfigDirectories);
-            this.tabGameSubTabs.Controls.Add(this.tabConfigEntities);
-            this.tabGameSubTabs.Controls.Add(this.tabConfigTextures);
-            this.tabGameSubTabs.ItemSize = new System.Drawing.Size(58, 18);
-            this.tabGameSubTabs.Location = new System.Drawing.Point(245, 6);
-            this.tabGameSubTabs.Name = "tabGameSubTabs";
-            this.tabGameSubTabs.SelectedIndex = 0;
-            this.tabGameSubTabs.Size = new System.Drawing.Size(477, 423);
-            this.tabGameSubTabs.TabIndex = 23;
-            this.tabGameSubTabs.Visible = false;
+            this.GameSubTabs.Controls.Add(this.tabConfigDirectories);
+            this.GameSubTabs.Controls.Add(this.tabConfigEntities);
+            this.GameSubTabs.Controls.Add(this.tabConfigTextures);
+            this.GameSubTabs.ItemSize = new System.Drawing.Size(58, 18);
+            this.GameSubTabs.Location = new System.Drawing.Point(245, 6);
+            this.GameSubTabs.Name = "GameSubTabs";
+            this.GameSubTabs.SelectedIndex = 0;
+            this.GameSubTabs.Size = new System.Drawing.Size(477, 423);
+            this.GameSubTabs.TabIndex = 23;
+            this.GameSubTabs.Visible = false;
             // 
             // tabConfigDirectories
             // 
-            this.tabConfigDirectories.Controls.Add(this.btnGameChangeName);
+            this.tabConfigDirectories.Controls.Add(this.SelectedGameSteamInstall);
             this.tabConfigDirectories.Controls.Add(this.grpConfigGame);
             this.tabConfigDirectories.Controls.Add(this.lblGameName);
-            this.tabConfigDirectories.Controls.Add(this.cmbGameBuild);
+            this.tabConfigDirectories.Controls.Add(this.SelectedGameBuild);
             this.tabConfigDirectories.Controls.Add(this.grpConfigSaving);
             this.tabConfigDirectories.Controls.Add(this.lblGameBuild);
-            this.tabConfigDirectories.Controls.Add(this.txtGameName);
-            this.tabConfigDirectories.Controls.Add(this.cmbGameEngine);
+            this.tabConfigDirectories.Controls.Add(this.SelectedGameName);
+            this.tabConfigDirectories.Controls.Add(this.SelectedGameEngine);
             this.tabConfigDirectories.Controls.Add(this.lblGameEngine);
             this.tabConfigDirectories.Location = new System.Drawing.Point(4, 22);
             this.tabConfigDirectories.Name = "tabConfigDirectories";
@@ -936,24 +935,15 @@ namespace Sledge.Editor.Settings
             this.tabConfigDirectories.Text = "General";
             this.tabConfigDirectories.UseVisualStyleBackColor = true;
             // 
-            // btnGameChangeName
-            // 
-            this.btnGameChangeName.Location = new System.Drawing.Point(220, 9);
-            this.btnGameChangeName.Name = "btnGameChangeName";
-            this.btnGameChangeName.Size = new System.Drawing.Size(93, 20);
-            this.btnGameChangeName.TabIndex = 21;
-            this.btnGameChangeName.Text = "Change Name";
-            this.btnGameChangeName.UseVisualStyleBackColor = true;
-            // 
             // grpConfigGame
             // 
-            this.grpConfigGame.Controls.Add(this.txtGameWONDir);
+            this.grpConfigGame.Controls.Add(this.SelectedGameWonDir);
             this.grpConfigGame.Controls.Add(this.lblGameWONDir);
-            this.grpConfigGame.Controls.Add(this.btnGameDirBrowse);
+            this.grpConfigGame.Controls.Add(this.SelectedGameDirBrowse);
             this.grpConfigGame.Controls.Add(this.lblGameSteamDir);
-            this.grpConfigGame.Controls.Add(this.cmbGameSteamDir);
+            this.grpConfigGame.Controls.Add(this.SelectedGameSteamDir);
             this.grpConfigGame.Controls.Add(this.lblGameMod);
-            this.grpConfigGame.Controls.Add(this.cmbGameMod);
+            this.grpConfigGame.Controls.Add(this.SelectedGameMod);
             this.grpConfigGame.Location = new System.Drawing.Point(6, 89);
             this.grpConfigGame.Name = "grpConfigGame";
             this.grpConfigGame.Size = new System.Drawing.Size(445, 111);
@@ -961,13 +951,14 @@ namespace Sledge.Editor.Settings
             this.grpConfigGame.TabStop = false;
             this.grpConfigGame.Text = "Game";
             // 
-            // txtGameWONDir
+            // SelectedGameWonDir
             // 
-            this.txtGameWONDir.Location = new System.Drawing.Point(68, 16);
-            this.txtGameWONDir.Name = "txtGameWONDir";
-            this.txtGameWONDir.Size = new System.Drawing.Size(269, 20);
-            this.txtGameWONDir.TabIndex = 5;
-            this.txtGameWONDir.Text = "(WON only) example: C:\\Sierra\\Half-Life";
+            this.SelectedGameWonDir.Location = new System.Drawing.Point(68, 16);
+            this.SelectedGameWonDir.Name = "SelectedGameWonDir";
+            this.SelectedGameWonDir.Size = new System.Drawing.Size(269, 20);
+            this.SelectedGameWonDir.TabIndex = 5;
+            this.SelectedGameWonDir.Text = "(WON only) example: C:\\Sierra\\Half-Life";
+            this.SelectedGameWonDir.TextChanged += new System.EventHandler(this.SelectedGameWonDirChanged);
             // 
             // lblGameWONDir
             // 
@@ -978,14 +969,14 @@ namespace Sledge.Editor.Settings
             this.lblGameWONDir.Text = "Game Dir";
             this.lblGameWONDir.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // btnGameDirBrowse
+            // SelectedGameDirBrowse
             // 
-            this.btnGameDirBrowse.Location = new System.Drawing.Point(343, 15);
-            this.btnGameDirBrowse.Name = "btnGameDirBrowse";
-            this.btnGameDirBrowse.Size = new System.Drawing.Size(67, 23);
-            this.btnGameDirBrowse.TabIndex = 8;
-            this.btnGameDirBrowse.Text = "Browse...";
-            this.btnGameDirBrowse.UseVisualStyleBackColor = true;
+            this.SelectedGameDirBrowse.Location = new System.Drawing.Point(343, 15);
+            this.SelectedGameDirBrowse.Name = "SelectedGameDirBrowse";
+            this.SelectedGameDirBrowse.Size = new System.Drawing.Size(67, 23);
+            this.SelectedGameDirBrowse.TabIndex = 8;
+            this.SelectedGameDirBrowse.Text = "Browse...";
+            this.SelectedGameDirBrowse.UseVisualStyleBackColor = true;
             // 
             // lblGameSteamDir
             // 
@@ -996,17 +987,18 @@ namespace Sledge.Editor.Settings
             this.lblGameSteamDir.Text = "Game";
             this.lblGameSteamDir.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // cmbGameSteamDir
+            // SelectedGameSteamDir
             // 
-            this.cmbGameSteamDir.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbGameSteamDir.FormattingEnabled = true;
-            this.cmbGameSteamDir.Items.AddRange(new object[] {
+            this.SelectedGameSteamDir.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.SelectedGameSteamDir.FormattingEnabled = true;
+            this.SelectedGameSteamDir.Items.AddRange(new object[] {
             "(Steam only) Half-Life",
             "Counter-Strike"});
-            this.cmbGameSteamDir.Location = new System.Drawing.Point(67, 42);
-            this.cmbGameSteamDir.Name = "cmbGameSteamDir";
-            this.cmbGameSteamDir.Size = new System.Drawing.Size(240, 21);
-            this.cmbGameSteamDir.TabIndex = 10;
+            this.SelectedGameSteamDir.Location = new System.Drawing.Point(67, 42);
+            this.SelectedGameSteamDir.Name = "SelectedGameSteamDir";
+            this.SelectedGameSteamDir.Size = new System.Drawing.Size(240, 21);
+            this.SelectedGameSteamDir.TabIndex = 10;
+            this.SelectedGameSteamDir.SelectedIndexChanged += new System.EventHandler(this.SelectedGameSteamDirChanged);
             // 
             // lblGameMod
             // 
@@ -1017,16 +1009,16 @@ namespace Sledge.Editor.Settings
             this.lblGameMod.Text = "Mod";
             this.lblGameMod.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // cmbGameMod
+            // SelectedGameMod
             // 
-            this.cmbGameMod.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbGameMod.FormattingEnabled = true;
-            this.cmbGameMod.Items.AddRange(new object[] {
+            this.SelectedGameMod.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.SelectedGameMod.FormattingEnabled = true;
+            this.SelectedGameMod.Items.AddRange(new object[] {
             "Valve"});
-            this.cmbGameMod.Location = new System.Drawing.Point(67, 69);
-            this.cmbGameMod.Name = "cmbGameMod";
-            this.cmbGameMod.Size = new System.Drawing.Size(240, 21);
-            this.cmbGameMod.TabIndex = 10;
+            this.SelectedGameMod.Location = new System.Drawing.Point(67, 69);
+            this.SelectedGameMod.Name = "SelectedGameMod";
+            this.SelectedGameMod.Size = new System.Drawing.Size(240, 21);
+            this.SelectedGameMod.TabIndex = 10;
             // 
             // lblGameName
             // 
@@ -1037,25 +1029,25 @@ namespace Sledge.Editor.Settings
             this.lblGameName.Text = "Config Name";
             this.lblGameName.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // cmbGameBuild
+            // SelectedGameBuild
             // 
-            this.cmbGameBuild.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbGameBuild.FormattingEnabled = true;
-            this.cmbGameBuild.Location = new System.Drawing.Point(81, 62);
-            this.cmbGameBuild.Name = "cmbGameBuild";
-            this.cmbGameBuild.Size = new System.Drawing.Size(121, 21);
-            this.cmbGameBuild.TabIndex = 10;
+            this.SelectedGameBuild.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.SelectedGameBuild.FormattingEnabled = true;
+            this.SelectedGameBuild.Location = new System.Drawing.Point(81, 62);
+            this.SelectedGameBuild.Name = "SelectedGameBuild";
+            this.SelectedGameBuild.Size = new System.Drawing.Size(121, 21);
+            this.SelectedGameBuild.TabIndex = 10;
             // 
             // grpConfigSaving
             // 
             this.grpConfigSaving.Controls.Add(this.lblGameMapSaveDir);
-            this.grpConfigSaving.Controls.Add(this.chkGameEnableAutosave);
-            this.grpConfigSaving.Controls.Add(this.txtGameMapDir);
-            this.grpConfigSaving.Controls.Add(this.btnGameMapDirBrowse);
-            this.grpConfigSaving.Controls.Add(this.txtGameAutosaveDir);
+            this.grpConfigSaving.Controls.Add(this.SelectedGameEnableAutosave);
+            this.grpConfigSaving.Controls.Add(this.SelectedGameMapDir);
+            this.grpConfigSaving.Controls.Add(this.SelectedGameMapDirBrowse);
+            this.grpConfigSaving.Controls.Add(this.SelectedGameDiffAutosaveDir);
             this.grpConfigSaving.Controls.Add(this.lblGameAutosaveDir);
-            this.grpConfigSaving.Controls.Add(this.btnGameAutosaveDirBrowse);
-            this.grpConfigSaving.Controls.Add(this.chkGameMapDiffAutosaveDir);
+            this.grpConfigSaving.Controls.Add(this.SelectedGameDiffAutosaveDirBrowse);
+            this.grpConfigSaving.Controls.Add(this.SelectedGameUseDiffAutosaveDir);
             this.grpConfigSaving.Location = new System.Drawing.Point(6, 206);
             this.grpConfigSaving.Name = "grpConfigSaving";
             this.grpConfigSaving.Size = new System.Drawing.Size(445, 179);
@@ -1072,42 +1064,42 @@ namespace Sledge.Editor.Settings
             this.lblGameMapSaveDir.Text = "Map Save Dir";
             this.lblGameMapSaveDir.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // chkGameEnableAutosave
+            // SelectedGameEnableAutosave
             // 
-            this.chkGameEnableAutosave.Checked = true;
-            this.chkGameEnableAutosave.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkGameEnableAutosave.Location = new System.Drawing.Point(95, 53);
-            this.chkGameEnableAutosave.Name = "chkGameEnableAutosave";
-            this.chkGameEnableAutosave.Size = new System.Drawing.Size(225, 24);
-            this.chkGameEnableAutosave.TabIndex = 18;
-            this.chkGameEnableAutosave.Text = "Enable autosave for this config";
-            this.chkGameEnableAutosave.UseVisualStyleBackColor = true;
+            this.SelectedGameEnableAutosave.Checked = true;
+            this.SelectedGameEnableAutosave.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.SelectedGameEnableAutosave.Location = new System.Drawing.Point(95, 53);
+            this.SelectedGameEnableAutosave.Name = "SelectedGameEnableAutosave";
+            this.SelectedGameEnableAutosave.Size = new System.Drawing.Size(225, 24);
+            this.SelectedGameEnableAutosave.TabIndex = 18;
+            this.SelectedGameEnableAutosave.Text = "Enable autosave for this config";
+            this.SelectedGameEnableAutosave.UseVisualStyleBackColor = true;
             // 
-            // txtGameMapDir
+            // SelectedGameMapDir
             // 
-            this.txtGameMapDir.Location = new System.Drawing.Point(95, 27);
-            this.txtGameMapDir.Name = "txtGameMapDir";
-            this.txtGameMapDir.Size = new System.Drawing.Size(225, 20);
-            this.txtGameMapDir.TabIndex = 5;
-            this.txtGameMapDir.Text = "Default folder to save VMF/RMF files";
+            this.SelectedGameMapDir.Location = new System.Drawing.Point(95, 27);
+            this.SelectedGameMapDir.Name = "SelectedGameMapDir";
+            this.SelectedGameMapDir.Size = new System.Drawing.Size(225, 20);
+            this.SelectedGameMapDir.TabIndex = 5;
+            this.SelectedGameMapDir.Text = "Default folder to save VMF/RMF files";
             // 
-            // btnGameMapDirBrowse
+            // SelectedGameMapDirBrowse
             // 
-            this.btnGameMapDirBrowse.Location = new System.Drawing.Point(326, 25);
-            this.btnGameMapDirBrowse.Name = "btnGameMapDirBrowse";
-            this.btnGameMapDirBrowse.Size = new System.Drawing.Size(67, 23);
-            this.btnGameMapDirBrowse.TabIndex = 8;
-            this.btnGameMapDirBrowse.Text = "Browse...";
-            this.btnGameMapDirBrowse.UseVisualStyleBackColor = true;
+            this.SelectedGameMapDirBrowse.Location = new System.Drawing.Point(326, 25);
+            this.SelectedGameMapDirBrowse.Name = "SelectedGameMapDirBrowse";
+            this.SelectedGameMapDirBrowse.Size = new System.Drawing.Size(67, 23);
+            this.SelectedGameMapDirBrowse.TabIndex = 8;
+            this.SelectedGameMapDirBrowse.Text = "Browse...";
+            this.SelectedGameMapDirBrowse.UseVisualStyleBackColor = true;
             // 
-            // txtGameAutosaveDir
+            // SelectedGameDiffAutosaveDir
             // 
-            this.txtGameAutosaveDir.BackColor = System.Drawing.SystemColors.Window;
-            this.txtGameAutosaveDir.Location = new System.Drawing.Point(95, 109);
-            this.txtGameAutosaveDir.Name = "txtGameAutosaveDir";
-            this.txtGameAutosaveDir.Size = new System.Drawing.Size(225, 20);
-            this.txtGameAutosaveDir.TabIndex = 11;
-            this.txtGameAutosaveDir.Text = "Folder to put autosaves in";
+            this.SelectedGameDiffAutosaveDir.BackColor = System.Drawing.SystemColors.Window;
+            this.SelectedGameDiffAutosaveDir.Location = new System.Drawing.Point(95, 109);
+            this.SelectedGameDiffAutosaveDir.Name = "SelectedGameDiffAutosaveDir";
+            this.SelectedGameDiffAutosaveDir.Size = new System.Drawing.Size(225, 20);
+            this.SelectedGameDiffAutosaveDir.TabIndex = 11;
+            this.SelectedGameDiffAutosaveDir.Text = "Folder to put autosaves in";
             // 
             // lblGameAutosaveDir
             // 
@@ -1118,25 +1110,25 @@ namespace Sledge.Editor.Settings
             this.lblGameAutosaveDir.Text = "Autosave Dir";
             this.lblGameAutosaveDir.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // btnGameAutosaveDirBrowse
+            // SelectedGameDiffAutosaveDirBrowse
             // 
-            this.btnGameAutosaveDirBrowse.Location = new System.Drawing.Point(326, 107);
-            this.btnGameAutosaveDirBrowse.Name = "btnGameAutosaveDirBrowse";
-            this.btnGameAutosaveDirBrowse.Size = new System.Drawing.Size(67, 23);
-            this.btnGameAutosaveDirBrowse.TabIndex = 13;
-            this.btnGameAutosaveDirBrowse.Text = "Browse...";
-            this.btnGameAutosaveDirBrowse.UseVisualStyleBackColor = true;
+            this.SelectedGameDiffAutosaveDirBrowse.Location = new System.Drawing.Point(326, 107);
+            this.SelectedGameDiffAutosaveDirBrowse.Name = "SelectedGameDiffAutosaveDirBrowse";
+            this.SelectedGameDiffAutosaveDirBrowse.Size = new System.Drawing.Size(67, 23);
+            this.SelectedGameDiffAutosaveDirBrowse.TabIndex = 13;
+            this.SelectedGameDiffAutosaveDirBrowse.Text = "Browse...";
+            this.SelectedGameDiffAutosaveDirBrowse.UseVisualStyleBackColor = true;
             // 
-            // chkGameMapDiffAutosaveDir
+            // SelectedGameUseDiffAutosaveDir
             // 
-            this.chkGameMapDiffAutosaveDir.Checked = true;
-            this.chkGameMapDiffAutosaveDir.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkGameMapDiffAutosaveDir.Location = new System.Drawing.Point(95, 83);
-            this.chkGameMapDiffAutosaveDir.Name = "chkGameMapDiffAutosaveDir";
-            this.chkGameMapDiffAutosaveDir.Size = new System.Drawing.Size(225, 20);
-            this.chkGameMapDiffAutosaveDir.TabIndex = 14;
-            this.chkGameMapDiffAutosaveDir.Text = "Use a different directory for autosaves";
-            this.chkGameMapDiffAutosaveDir.UseVisualStyleBackColor = true;
+            this.SelectedGameUseDiffAutosaveDir.Checked = true;
+            this.SelectedGameUseDiffAutosaveDir.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.SelectedGameUseDiffAutosaveDir.Location = new System.Drawing.Point(95, 83);
+            this.SelectedGameUseDiffAutosaveDir.Name = "SelectedGameUseDiffAutosaveDir";
+            this.SelectedGameUseDiffAutosaveDir.Size = new System.Drawing.Size(225, 20);
+            this.SelectedGameUseDiffAutosaveDir.TabIndex = 14;
+            this.SelectedGameUseDiffAutosaveDir.Text = "Use a different directory for autosaves";
+            this.SelectedGameUseDiffAutosaveDir.UseVisualStyleBackColor = true;
             // 
             // lblGameBuild
             // 
@@ -1147,26 +1139,27 @@ namespace Sledge.Editor.Settings
             this.lblGameBuild.Text = "Build Profile";
             this.lblGameBuild.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // txtGameName
+            // SelectedGameName
             // 
-            this.txtGameName.Location = new System.Drawing.Point(81, 9);
-            this.txtGameName.Name = "txtGameName";
-            this.txtGameName.Size = new System.Drawing.Size(133, 20);
-            this.txtGameName.TabIndex = 5;
-            this.txtGameName.Text = "A_Config";
+            this.SelectedGameName.Location = new System.Drawing.Point(81, 9);
+            this.SelectedGameName.Name = "SelectedGameName";
+            this.SelectedGameName.Size = new System.Drawing.Size(133, 20);
+            this.SelectedGameName.TabIndex = 5;
+            this.SelectedGameName.TextChanged += new System.EventHandler(this.SelectedGameNameChanged);
             // 
-            // cmbGameEngine
+            // SelectedGameEngine
             // 
-            this.cmbGameEngine.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbGameEngine.FormattingEnabled = true;
-            this.cmbGameEngine.Items.AddRange(new object[] {
+            this.SelectedGameEngine.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.SelectedGameEngine.FormattingEnabled = true;
+            this.SelectedGameEngine.Items.AddRange(new object[] {
             "Goldsource (WON)",
             "Goldsource (Steam)",
             "Source"});
-            this.cmbGameEngine.Location = new System.Drawing.Point(81, 35);
-            this.cmbGameEngine.Name = "cmbGameEngine";
-            this.cmbGameEngine.Size = new System.Drawing.Size(121, 21);
-            this.cmbGameEngine.TabIndex = 7;
+            this.SelectedGameEngine.Location = new System.Drawing.Point(81, 35);
+            this.SelectedGameEngine.Name = "SelectedGameEngine";
+            this.SelectedGameEngine.Size = new System.Drawing.Size(121, 21);
+            this.SelectedGameEngine.TabIndex = 7;
+            this.SelectedGameEngine.SelectedIndexChanged += new System.EventHandler(this.SelectedGameEngineChanged);
             // 
             // lblGameEngine
             // 
@@ -1180,13 +1173,13 @@ namespace Sledge.Editor.Settings
             // tabConfigEntities
             // 
             this.tabConfigEntities.Controls.Add(this.lblGameFGD);
-            this.tabConfigEntities.Controls.Add(this.btnGameAddFGD);
+            this.tabConfigEntities.Controls.Add(this.SelectedGameAddFgd);
             this.tabConfigEntities.Controls.Add(this.lblConfigBrushEnt);
-            this.tabConfigEntities.Controls.Add(this.btnGameRemoveFGD);
+            this.tabConfigEntities.Controls.Add(this.SelectedGameRemoveFgd);
             this.tabConfigEntities.Controls.Add(this.lblConfigPointEnt);
-            this.tabConfigEntities.Controls.Add(this.lstGameFGD);
-            this.tabConfigEntities.Controls.Add(this.cmbGameBrushEnt);
-            this.tabConfigEntities.Controls.Add(this.cmbGamePointEnt);
+            this.tabConfigEntities.Controls.Add(this.SelectedGameFgdList);
+            this.tabConfigEntities.Controls.Add(this.SelectedGameDefaultBrushEnt);
+            this.tabConfigEntities.Controls.Add(this.SelectedGameDefaultPointEnt);
             this.tabConfigEntities.Location = new System.Drawing.Point(4, 22);
             this.tabConfigEntities.Name = "tabConfigEntities";
             this.tabConfigEntities.Padding = new System.Windows.Forms.Padding(3);
@@ -1204,14 +1197,14 @@ namespace Sledge.Editor.Settings
             this.lblGameFGD.Text = "Game Data Files";
             this.lblGameFGD.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
-            // btnGameAddFGD
+            // SelectedGameAddFgd
             // 
-            this.btnGameAddFGD.Location = new System.Drawing.Point(389, 26);
-            this.btnGameAddFGD.Name = "btnGameAddFGD";
-            this.btnGameAddFGD.Size = new System.Drawing.Size(74, 23);
-            this.btnGameAddFGD.TabIndex = 1;
-            this.btnGameAddFGD.Text = "Add...";
-            this.btnGameAddFGD.UseVisualStyleBackColor = true;
+            this.SelectedGameAddFgd.Location = new System.Drawing.Point(389, 26);
+            this.SelectedGameAddFgd.Name = "SelectedGameAddFgd";
+            this.SelectedGameAddFgd.Size = new System.Drawing.Size(74, 23);
+            this.SelectedGameAddFgd.TabIndex = 1;
+            this.SelectedGameAddFgd.Text = "Add...";
+            this.SelectedGameAddFgd.UseVisualStyleBackColor = true;
             // 
             // lblConfigBrushEnt
             // 
@@ -1222,14 +1215,14 @@ namespace Sledge.Editor.Settings
             this.lblConfigBrushEnt.Text = "Default Brush Entity";
             this.lblConfigBrushEnt.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // btnGameRemoveFGD
+            // SelectedGameRemoveFgd
             // 
-            this.btnGameRemoveFGD.Location = new System.Drawing.Point(389, 55);
-            this.btnGameRemoveFGD.Name = "btnGameRemoveFGD";
-            this.btnGameRemoveFGD.Size = new System.Drawing.Size(74, 23);
-            this.btnGameRemoveFGD.TabIndex = 3;
-            this.btnGameRemoveFGD.Text = "Remove";
-            this.btnGameRemoveFGD.UseVisualStyleBackColor = true;
+            this.SelectedGameRemoveFgd.Location = new System.Drawing.Point(389, 55);
+            this.SelectedGameRemoveFgd.Name = "SelectedGameRemoveFgd";
+            this.SelectedGameRemoveFgd.Size = new System.Drawing.Size(74, 23);
+            this.SelectedGameRemoveFgd.TabIndex = 3;
+            this.SelectedGameRemoveFgd.Text = "Remove";
+            this.SelectedGameRemoveFgd.UseVisualStyleBackColor = true;
             // 
             // lblConfigPointEnt
             // 
@@ -1240,54 +1233,54 @@ namespace Sledge.Editor.Settings
             this.lblConfigPointEnt.Text = "Default Point Entity";
             this.lblConfigPointEnt.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // lstGameFGD
+            // SelectedGameFgdList
             // 
-            this.lstGameFGD.FormattingEnabled = true;
-            this.lstGameFGD.Items.AddRange(new object[] {
+            this.SelectedGameFgdList.FormattingEnabled = true;
+            this.SelectedGameFgdList.Items.AddRange(new object[] {
             "half-life.fgd",
             "etc."});
-            this.lstGameFGD.Location = new System.Drawing.Point(15, 26);
-            this.lstGameFGD.Name = "lstGameFGD";
-            this.lstGameFGD.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.lstGameFGD.Size = new System.Drawing.Size(368, 160);
-            this.lstGameFGD.TabIndex = 16;
+            this.SelectedGameFgdList.Location = new System.Drawing.Point(15, 26);
+            this.SelectedGameFgdList.Name = "SelectedGameFgdList";
+            this.SelectedGameFgdList.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
+            this.SelectedGameFgdList.Size = new System.Drawing.Size(368, 160);
+            this.SelectedGameFgdList.TabIndex = 16;
             // 
-            // cmbGameBrushEnt
+            // SelectedGameDefaultBrushEnt
             // 
-            this.cmbGameBrushEnt.DropDownHeight = 300;
-            this.cmbGameBrushEnt.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbGameBrushEnt.FormattingEnabled = true;
-            this.cmbGameBrushEnt.IntegralHeight = false;
-            this.cmbGameBrushEnt.Items.AddRange(new object[] {
+            this.SelectedGameDefaultBrushEnt.DropDownHeight = 300;
+            this.SelectedGameDefaultBrushEnt.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.SelectedGameDefaultBrushEnt.FormattingEnabled = true;
+            this.SelectedGameDefaultBrushEnt.IntegralHeight = false;
+            this.SelectedGameDefaultBrushEnt.Items.AddRange(new object[] {
             "Valve"});
-            this.cmbGameBrushEnt.Location = new System.Drawing.Point(184, 219);
-            this.cmbGameBrushEnt.Name = "cmbGameBrushEnt";
-            this.cmbGameBrushEnt.Size = new System.Drawing.Size(199, 21);
-            this.cmbGameBrushEnt.TabIndex = 10;
+            this.SelectedGameDefaultBrushEnt.Location = new System.Drawing.Point(184, 219);
+            this.SelectedGameDefaultBrushEnt.Name = "SelectedGameDefaultBrushEnt";
+            this.SelectedGameDefaultBrushEnt.Size = new System.Drawing.Size(199, 21);
+            this.SelectedGameDefaultBrushEnt.TabIndex = 10;
             // 
-            // cmbGamePointEnt
+            // SelectedGameDefaultPointEnt
             // 
-            this.cmbGamePointEnt.DropDownHeight = 300;
-            this.cmbGamePointEnt.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbGamePointEnt.FormattingEnabled = true;
-            this.cmbGamePointEnt.IntegralHeight = false;
-            this.cmbGamePointEnt.Items.AddRange(new object[] {
+            this.SelectedGameDefaultPointEnt.DropDownHeight = 300;
+            this.SelectedGameDefaultPointEnt.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.SelectedGameDefaultPointEnt.FormattingEnabled = true;
+            this.SelectedGameDefaultPointEnt.IntegralHeight = false;
+            this.SelectedGameDefaultPointEnt.Items.AddRange(new object[] {
             "Valve"});
-            this.cmbGamePointEnt.Location = new System.Drawing.Point(184, 192);
-            this.cmbGamePointEnt.Name = "cmbGamePointEnt";
-            this.cmbGamePointEnt.Size = new System.Drawing.Size(199, 21);
-            this.cmbGamePointEnt.TabIndex = 10;
+            this.SelectedGameDefaultPointEnt.Location = new System.Drawing.Point(184, 192);
+            this.SelectedGameDefaultPointEnt.Name = "SelectedGameDefaultPointEnt";
+            this.SelectedGameDefaultPointEnt.Size = new System.Drawing.Size(199, 21);
+            this.SelectedGameDefaultPointEnt.TabIndex = 10;
             // 
             // tabConfigTextures
             // 
             this.tabConfigTextures.Controls.Add(this.lblGameWAD);
-            this.tabConfigTextures.Controls.Add(this.nudGameLightmapScale);
+            this.tabConfigTextures.Controls.Add(this.SelectedGameLightmapScale);
             this.tabConfigTextures.Controls.Add(this.lblConfigLightmapScale);
-            this.tabConfigTextures.Controls.Add(this.btnGameAddWAD);
-            this.tabConfigTextures.Controls.Add(this.nudGameTextureScale);
-            this.tabConfigTextures.Controls.Add(this.lstGameWAD);
+            this.tabConfigTextures.Controls.Add(this.SelectedGameAddWad);
+            this.tabConfigTextures.Controls.Add(this.SelectedGameTextureScale);
+            this.tabConfigTextures.Controls.Add(this.SelectedGameWadList);
             this.tabConfigTextures.Controls.Add(this.lblConfigTextureScale);
-            this.tabConfigTextures.Controls.Add(this.btnGameRemoveWAD);
+            this.tabConfigTextures.Controls.Add(this.SelectedGameRemoveWad);
             this.tabConfigTextures.Location = new System.Drawing.Point(4, 22);
             this.tabConfigTextures.Name = "tabConfigTextures";
             this.tabConfigTextures.Padding = new System.Windows.Forms.Padding(3);
@@ -1305,13 +1298,13 @@ namespace Sledge.Editor.Settings
             this.lblGameWAD.Text = "WAD Textures";
             this.lblGameWAD.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
-            // nudGameLightmapScale
+            // SelectedGameLightmapScale
             // 
-            this.nudGameLightmapScale.Location = new System.Drawing.Point(332, 218);
-            this.nudGameLightmapScale.Name = "nudGameLightmapScale";
-            this.nudGameLightmapScale.Size = new System.Drawing.Size(51, 20);
-            this.nudGameLightmapScale.TabIndex = 17;
-            this.nudGameLightmapScale.Value = new decimal(new int[] {
+            this.SelectedGameLightmapScale.Location = new System.Drawing.Point(332, 218);
+            this.SelectedGameLightmapScale.Name = "SelectedGameLightmapScale";
+            this.SelectedGameLightmapScale.Size = new System.Drawing.Size(51, 20);
+            this.SelectedGameLightmapScale.TabIndex = 17;
+            this.SelectedGameLightmapScale.Value = new decimal(new int[] {
             16,
             0,
             0,
@@ -1326,44 +1319,44 @@ namespace Sledge.Editor.Settings
             this.lblConfigLightmapScale.Text = "Default Lightmap Scale";
             this.lblConfigLightmapScale.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // btnGameAddWAD
+            // SelectedGameAddWad
             // 
-            this.btnGameAddWAD.Location = new System.Drawing.Point(389, 26);
-            this.btnGameAddWAD.Name = "btnGameAddWAD";
-            this.btnGameAddWAD.Size = new System.Drawing.Size(74, 23);
-            this.btnGameAddWAD.TabIndex = 1;
-            this.btnGameAddWAD.Text = "Add...";
-            this.btnGameAddWAD.UseVisualStyleBackColor = true;
+            this.SelectedGameAddWad.Location = new System.Drawing.Point(389, 26);
+            this.SelectedGameAddWad.Name = "SelectedGameAddWad";
+            this.SelectedGameAddWad.Size = new System.Drawing.Size(74, 23);
+            this.SelectedGameAddWad.TabIndex = 1;
+            this.SelectedGameAddWad.Text = "Add...";
+            this.SelectedGameAddWad.UseVisualStyleBackColor = true;
             // 
-            // nudGameTextureScale
+            // SelectedGameTextureScale
             // 
-            this.nudGameTextureScale.DecimalPlaces = 2;
-            this.nudGameTextureScale.Increment = new decimal(new int[] {
+            this.SelectedGameTextureScale.DecimalPlaces = 2;
+            this.SelectedGameTextureScale.Increment = new decimal(new int[] {
             5,
             0,
             0,
             131072});
-            this.nudGameTextureScale.Location = new System.Drawing.Point(332, 192);
-            this.nudGameTextureScale.Name = "nudGameTextureScale";
-            this.nudGameTextureScale.Size = new System.Drawing.Size(51, 20);
-            this.nudGameTextureScale.TabIndex = 17;
-            this.nudGameTextureScale.Value = new decimal(new int[] {
+            this.SelectedGameTextureScale.Location = new System.Drawing.Point(332, 192);
+            this.SelectedGameTextureScale.Name = "SelectedGameTextureScale";
+            this.SelectedGameTextureScale.Size = new System.Drawing.Size(51, 20);
+            this.SelectedGameTextureScale.TabIndex = 17;
+            this.SelectedGameTextureScale.Value = new decimal(new int[] {
             25,
             0,
             0,
             131072});
             // 
-            // lstGameWAD
+            // SelectedGameWadList
             // 
-            this.lstGameWAD.FormattingEnabled = true;
-            this.lstGameWAD.Items.AddRange(new object[] {
+            this.SelectedGameWadList.FormattingEnabled = true;
+            this.SelectedGameWadList.Items.AddRange(new object[] {
             "(Goldsource only)",
             "halflife.wad",
             "etc."});
-            this.lstGameWAD.Location = new System.Drawing.Point(15, 26);
-            this.lstGameWAD.Name = "lstGameWAD";
-            this.lstGameWAD.Size = new System.Drawing.Size(368, 160);
-            this.lstGameWAD.TabIndex = 16;
+            this.SelectedGameWadList.Location = new System.Drawing.Point(15, 26);
+            this.SelectedGameWadList.Name = "SelectedGameWadList";
+            this.SelectedGameWadList.Size = new System.Drawing.Size(368, 160);
+            this.SelectedGameWadList.TabIndex = 16;
             // 
             // lblConfigTextureScale
             // 
@@ -1374,56 +1367,50 @@ namespace Sledge.Editor.Settings
             this.lblConfigTextureScale.Text = "Default Texture Scale";
             this.lblConfigTextureScale.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // btnGameRemoveWAD
+            // SelectedGameRemoveWad
             // 
-            this.btnGameRemoveWAD.Location = new System.Drawing.Point(389, 55);
-            this.btnGameRemoveWAD.Name = "btnGameRemoveWAD";
-            this.btnGameRemoveWAD.Size = new System.Drawing.Size(74, 23);
-            this.btnGameRemoveWAD.TabIndex = 3;
-            this.btnGameRemoveWAD.Text = "Remove";
-            this.btnGameRemoveWAD.UseVisualStyleBackColor = true;
+            this.SelectedGameRemoveWad.Location = new System.Drawing.Point(389, 55);
+            this.SelectedGameRemoveWad.Name = "SelectedGameRemoveWad";
+            this.SelectedGameRemoveWad.Size = new System.Drawing.Size(74, 23);
+            this.SelectedGameRemoveWad.TabIndex = 3;
+            this.SelectedGameRemoveWad.Text = "Remove";
+            this.SelectedGameRemoveWad.UseVisualStyleBackColor = true;
             // 
-            // tree_games
+            // GameTree
             // 
-            this.tree_games.Location = new System.Drawing.Point(6, 6);
-            this.tree_games.Name = "tree_games";
-            treeNode11.Name = "nodeWHL";
-            treeNode11.Text = "WON Goldsource";
-            treeNode12.Name = "nodeSHL";
-            treeNode12.Text = "Steam Goldsource";
-            treeNode13.Name = "nodeSource";
-            treeNode13.Text = "Source";
-            this.tree_games.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
-            treeNode11,
-            treeNode12,
-            treeNode13});
-            this.tree_games.Size = new System.Drawing.Size(154, 448);
-            this.tree_games.TabIndex = 0;
+            this.GameTree.HideSelection = false;
+            this.GameTree.Location = new System.Drawing.Point(6, 6);
+            this.GameTree.Name = "GameTree";
+            this.GameTree.Size = new System.Drawing.Size(154, 448);
+            this.GameTree.TabIndex = 0;
+            this.GameTree.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.GameSelected);
             // 
-            // btnGameRemove
+            // RemoveGame
             // 
-            this.btnGameRemove.Location = new System.Drawing.Point(166, 35);
-            this.btnGameRemove.Name = "btnGameRemove";
-            this.btnGameRemove.Size = new System.Drawing.Size(73, 23);
-            this.btnGameRemove.TabIndex = 3;
-            this.btnGameRemove.Text = "Remove";
-            this.btnGameRemove.UseVisualStyleBackColor = true;
+            this.RemoveGame.Location = new System.Drawing.Point(166, 35);
+            this.RemoveGame.Name = "RemoveGame";
+            this.RemoveGame.Size = new System.Drawing.Size(73, 23);
+            this.RemoveGame.TabIndex = 3;
+            this.RemoveGame.Text = "Remove";
+            this.RemoveGame.UseVisualStyleBackColor = true;
+            this.RemoveGame.Click += new System.EventHandler(this.RemoveGameClicked);
             // 
-            // btnGameAdd
+            // AddGame
             // 
-            this.btnGameAdd.Location = new System.Drawing.Point(166, 6);
-            this.btnGameAdd.Name = "btnGameAdd";
-            this.btnGameAdd.Size = new System.Drawing.Size(73, 23);
-            this.btnGameAdd.TabIndex = 1;
-            this.btnGameAdd.Text = "Add New";
-            this.btnGameAdd.UseVisualStyleBackColor = true;
+            this.AddGame.Location = new System.Drawing.Point(166, 6);
+            this.AddGame.Name = "AddGame";
+            this.AddGame.Size = new System.Drawing.Size(73, 23);
+            this.AddGame.TabIndex = 1;
+            this.AddGame.Text = "Add New";
+            this.AddGame.UseVisualStyleBackColor = true;
+            this.AddGame.Click += new System.EventHandler(this.AddGameClicked);
             // 
             // tabBuild
             // 
             this.tabBuild.Controls.Add(this.tabBuildSubTabs);
             this.tabBuild.Controls.Add(this.btnBuildRemove);
             this.tabBuild.Controls.Add(this.btnBuildAdd);
-            this.tabBuild.Controls.Add(this.tree_builds);
+            this.tabBuild.Controls.Add(this.BuildTree);
             this.tabBuild.Location = new System.Drawing.Point(4, 22);
             this.tabBuild.Name = "tabBuild";
             this.tabBuild.Padding = new System.Windows.Forms.Padding(3);
@@ -1868,28 +1855,21 @@ namespace Sledge.Editor.Settings
             this.btnBuildAdd.Text = "Add New";
             this.btnBuildAdd.UseVisualStyleBackColor = true;
             // 
-            // tree_builds
+            // BuildTree
             // 
-            this.tree_builds.Location = new System.Drawing.Point(6, 6);
-            this.tree_builds.Name = "tree_builds";
-            treeNode14.Name = "nodeHL";
-            treeNode14.Text = "Goldsource";
-            treeNode15.Name = "nodeSource";
-            treeNode15.Text = "Source";
-            this.tree_builds.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
-            treeNode14,
-            treeNode15});
-            this.tree_builds.Size = new System.Drawing.Size(154, 448);
-            this.tree_builds.TabIndex = 9;
+            this.BuildTree.Location = new System.Drawing.Point(6, 6);
+            this.BuildTree.Name = "BuildTree";
+            this.BuildTree.Size = new System.Drawing.Size(154, 448);
+            this.BuildTree.TabIndex = 9;
             // 
             // tabSteam
             // 
-            this.tabSteam.Controls.Add(this.o_SteamInstallDir);
+            this.tabSteam.Controls.Add(this.SteamInstallDir);
             this.tabSteam.Controls.Add(this.label17);
-            this.tabSteam.Controls.Add(this.button1);
+            this.tabSteam.Controls.Add(this.ListAvailableGamesButton);
             this.tabSteam.Controls.Add(this.label18);
-            this.tabSteam.Controls.Add(this.btnSteamInstallDirBrowse);
-            this.tabSteam.Controls.Add(this.o_SteamUsername);
+            this.tabSteam.Controls.Add(this.SteamInstallDirBrowseButton);
+            this.tabSteam.Controls.Add(this.SteamUsername);
             this.tabSteam.Location = new System.Drawing.Point(4, 22);
             this.tabSteam.Name = "tabSteam";
             this.tabSteam.Padding = new System.Windows.Forms.Padding(3);
@@ -1898,12 +1878,13 @@ namespace Sledge.Editor.Settings
             this.tabSteam.Text = "Steam";
             this.tabSteam.UseVisualStyleBackColor = true;
             // 
-            // o_SteamInstallDir
+            // SteamInstallDir
             // 
-            this.o_SteamInstallDir.Location = new System.Drawing.Point(109, 20);
-            this.o_SteamInstallDir.Name = "o_SteamInstallDir";
-            this.o_SteamInstallDir.Size = new System.Drawing.Size(225, 20);
-            this.o_SteamInstallDir.TabIndex = 5;
+            this.SteamInstallDir.Location = new System.Drawing.Point(109, 20);
+            this.SteamInstallDir.Name = "SteamInstallDir";
+            this.SteamInstallDir.Size = new System.Drawing.Size(225, 20);
+            this.SteamInstallDir.TabIndex = 5;
+            this.SteamInstallDir.TextChanged += new System.EventHandler(this.SteamDirectoryChanged);
             // 
             // label17
             // 
@@ -1914,14 +1895,14 @@ namespace Sledge.Editor.Settings
             this.label17.Text = "Steam Directory";
             this.label17.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // button1
+            // ListAvailableGamesButton
             // 
-            this.button1.Location = new System.Drawing.Point(237, 44);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(115, 25);
-            this.button1.TabIndex = 8;
-            this.button1.Text = "List Available Games";
-            this.button1.UseVisualStyleBackColor = true;
+            this.ListAvailableGamesButton.Location = new System.Drawing.Point(237, 44);
+            this.ListAvailableGamesButton.Name = "ListAvailableGamesButton";
+            this.ListAvailableGamesButton.Size = new System.Drawing.Size(115, 25);
+            this.ListAvailableGamesButton.TabIndex = 8;
+            this.ListAvailableGamesButton.Text = "List Available Games";
+            this.ListAvailableGamesButton.UseVisualStyleBackColor = true;
             // 
             // label18
             // 
@@ -1932,23 +1913,24 @@ namespace Sledge.Editor.Settings
             this.label18.Text = "Steam Username";
             this.label18.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // btnSteamInstallDirBrowse
+            // SteamInstallDirBrowseButton
             // 
-            this.btnSteamInstallDirBrowse.Location = new System.Drawing.Point(340, 18);
-            this.btnSteamInstallDirBrowse.Name = "btnSteamInstallDirBrowse";
-            this.btnSteamInstallDirBrowse.Size = new System.Drawing.Size(67, 23);
-            this.btnSteamInstallDirBrowse.TabIndex = 8;
-            this.btnSteamInstallDirBrowse.Text = "Browse...";
-            this.btnSteamInstallDirBrowse.UseVisualStyleBackColor = true;
+            this.SteamInstallDirBrowseButton.Location = new System.Drawing.Point(340, 18);
+            this.SteamInstallDirBrowseButton.Name = "SteamInstallDirBrowseButton";
+            this.SteamInstallDirBrowseButton.Size = new System.Drawing.Size(67, 23);
+            this.SteamInstallDirBrowseButton.TabIndex = 8;
+            this.SteamInstallDirBrowseButton.Text = "Browse...";
+            this.SteamInstallDirBrowseButton.UseVisualStyleBackColor = true;
             // 
-            // o_SteamUsername
+            // SteamUsername
             // 
-            this.o_SteamUsername.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.o_SteamUsername.FormattingEnabled = true;
-            this.o_SteamUsername.Location = new System.Drawing.Point(109, 46);
-            this.o_SteamUsername.Name = "o_SteamUsername";
-            this.o_SteamUsername.Size = new System.Drawing.Size(121, 21);
-            this.o_SteamUsername.TabIndex = 7;
+            this.SteamUsername.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.SteamUsername.FormattingEnabled = true;
+            this.SteamUsername.Location = new System.Drawing.Point(109, 46);
+            this.SteamUsername.Name = "SteamUsername";
+            this.SteamUsername.Size = new System.Drawing.Size(121, 21);
+            this.SteamUsername.TabIndex = 7;
+            this.SteamUsername.SelectedIndexChanged += new System.EventHandler(this.SteamUsernameChanged);
             // 
             // tabHotkeys
             // 
@@ -2215,6 +2197,18 @@ namespace Sledge.Editor.Settings
             this.btnApplySettings.UseVisualStyleBackColor = true;
             this.btnApplySettings.Click += new System.EventHandler(this.Apply);
             // 
+            // SelectedGameSteamInstall
+            // 
+            this.SelectedGameSteamInstall.Checked = true;
+            this.SelectedGameSteamInstall.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.SelectedGameSteamInstall.Location = new System.Drawing.Point(217, 35);
+            this.SelectedGameSteamInstall.Name = "SelectedGameSteamInstall";
+            this.SelectedGameSteamInstall.Size = new System.Drawing.Size(109, 24);
+            this.SelectedGameSteamInstall.TabIndex = 21;
+            this.SelectedGameSteamInstall.Text = "Steam Install";
+            this.SelectedGameSteamInstall.UseVisualStyleBackColor = true;
+            this.SelectedGameSteamInstall.CheckedChanged += new System.EventHandler(this.SelectedGameEngineChanged);
+            // 
             // SettingsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -2240,13 +2234,13 @@ namespace Sledge.Editor.Settings
             this.tab3DViews.ResumeLayout(false);
             this.groupBox11.ResumeLayout(false);
             this.groupBox12.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.o_3DTimeToTopSpeed)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.TimeToTopSpeed)).EndInit();
             this.groupBox13.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.o_3DForwardSpeed)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ForwardSpeed)).EndInit();
             this.groupBox14.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.o_3DBackClippingPane)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.BackClippingPane)).EndInit();
             this.tabGame.ResumeLayout(false);
-            this.tabGameSubTabs.ResumeLayout(false);
+            this.GameSubTabs.ResumeLayout(false);
             this.tabConfigDirectories.ResumeLayout(false);
             this.tabConfigDirectories.PerformLayout();
             this.grpConfigGame.ResumeLayout(false);
@@ -2255,8 +2249,8 @@ namespace Sledge.Editor.Settings
             this.grpConfigSaving.PerformLayout();
             this.tabConfigEntities.ResumeLayout(false);
             this.tabConfigTextures.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.nudGameLightmapScale)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudGameTextureScale)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.SelectedGameLightmapScale)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.SelectedGameTextureScale)).EndInit();
             this.tabBuild.ResumeLayout(false);
             this.tabBuildSubTabs.ResumeLayout(false);
             this.tabBuildGeneral.ResumeLayout(false);
@@ -2295,47 +2289,46 @@ namespace Sledge.Editor.Settings
 		private System.Windows.Forms.TabPage tabBuildAdvancedBSP;
 		private System.Windows.Forms.TabPage tabBuildAdvancedCSG;
 		private System.Windows.Forms.TabControl tabBuildAdvancedSubTabs;
-		private System.Windows.Forms.TextBox txtGameMapDir;
+		private System.Windows.Forms.TextBox SelectedGameMapDir;
 		private System.Windows.Forms.TabPage tabGame;
-		private System.Windows.Forms.Button btnGameAdd;
-		private System.Windows.Forms.Button btnGameRemove;
-		private System.Windows.Forms.Button btnGameAddFGD;
-		private System.Windows.Forms.Button btnGameAddWAD;
-		private System.Windows.Forms.Button btnGameRemoveFGD;
-		private System.Windows.Forms.Button btnGameRemoveWAD;
+		private System.Windows.Forms.Button AddGame;
+		private System.Windows.Forms.Button RemoveGame;
+		private System.Windows.Forms.Button SelectedGameAddFgd;
+		private System.Windows.Forms.Button SelectedGameAddWad;
+		private System.Windows.Forms.Button SelectedGameRemoveFgd;
+		private System.Windows.Forms.Button SelectedGameRemoveWad;
 		private System.Windows.Forms.Label lblGameWAD;
 		private System.Windows.Forms.Label lblGameBuild;
-		private System.Windows.Forms.ComboBox cmbGameBuild;
-		private System.Windows.Forms.ListBox lstGameWAD;
+		private System.Windows.Forms.ComboBox SelectedGameBuild;
+		private System.Windows.Forms.ListBox SelectedGameWadList;
 		private System.Windows.Forms.Label lblGameFGD;
-		private System.Windows.Forms.ComboBox cmbGamePointEnt;
-		private System.Windows.Forms.ComboBox cmbGameBrushEnt;
-		private System.Windows.Forms.ListBox lstGameFGD;
-		private System.Windows.Forms.NumericUpDown nudGameTextureScale;
-		private System.Windows.Forms.NumericUpDown nudGameLightmapScale;
+		private System.Windows.Forms.ComboBox SelectedGameDefaultPointEnt;
+		private System.Windows.Forms.ComboBox SelectedGameDefaultBrushEnt;
+		private System.Windows.Forms.ListBox SelectedGameFgdList;
+		private System.Windows.Forms.NumericUpDown SelectedGameTextureScale;
+		private System.Windows.Forms.NumericUpDown SelectedGameLightmapScale;
 		private System.Windows.Forms.Label lblGameMapSaveDir;
-		private System.Windows.Forms.Button btnGameMapDirBrowse;
-		private System.Windows.Forms.TextBox txtGameAutosaveDir;
+		private System.Windows.Forms.Button SelectedGameMapDirBrowse;
+		private System.Windows.Forms.TextBox SelectedGameDiffAutosaveDir;
 		private System.Windows.Forms.Label lblGameAutosaveDir;
-		private System.Windows.Forms.Button btnGameAutosaveDirBrowse;
+		private System.Windows.Forms.Button SelectedGameDiffAutosaveDirBrowse;
 		private System.Windows.Forms.Label lblGameMod;
-		private System.Windows.Forms.ComboBox cmbGameMod;
-		private System.Windows.Forms.TextBox txtGameWONDir;
+		private System.Windows.Forms.ComboBox SelectedGameMod;
+		private System.Windows.Forms.TextBox SelectedGameWonDir;
 		private System.Windows.Forms.Label lblGameWONDir;
-		private System.Windows.Forms.Button btnGameDirBrowse;
+		private System.Windows.Forms.Button SelectedGameDirBrowse;
 		private System.Windows.Forms.Label lblGameSteamDir;
-		private System.Windows.Forms.ComboBox cmbGameSteamDir;
-		private System.Windows.Forms.TextBox txtGameName;
+		private System.Windows.Forms.ComboBox SelectedGameSteamDir;
+		private System.Windows.Forms.TextBox SelectedGameName;
 		private System.Windows.Forms.Label lblGameName;
 		private System.Windows.Forms.Label lblGameEngine;
-		private System.Windows.Forms.ComboBox cmbGameEngine;
-		private System.Windows.Forms.CheckBox chkGameMapDiffAutosaveDir;
-		private System.Windows.Forms.CheckBox chkGameEnableAutosave;
-		private System.Windows.Forms.TabControl tabGameSubTabs;
-		private System.Windows.Forms.Button btnGameChangeName;
-		private System.Windows.Forms.TreeView tree_games;
+		private System.Windows.Forms.ComboBox SelectedGameEngine;
+		private System.Windows.Forms.CheckBox SelectedGameUseDiffAutosaveDir;
+		private System.Windows.Forms.CheckBox SelectedGameEnableAutosave;
+        private System.Windows.Forms.TabControl GameSubTabs;
+		private System.Windows.Forms.TreeView GameTree;
 		private System.Windows.Forms.Button btnBuildChangeName;
-		private System.Windows.Forms.TreeView tree_builds;
+		private System.Windows.Forms.TreeView BuildTree;
 		private System.Windows.Forms.ColumnHeader chTrigger;
 		private System.Windows.Forms.ColumnHeader ckKeyCombo;
 		private System.Windows.Forms.ColumnHeader chKey;
@@ -2345,14 +2338,14 @@ namespace Sledge.Editor.Settings
 		private System.Windows.Forms.Panel GridBoundaryColour;
 		private System.Windows.Forms.Button btnCancelSettings;
 		private System.Windows.Forms.Button btnApplyAndCloseSettings;
-		private System.Windows.Forms.Button btnSteamInstallDirBrowse;
-		private System.Windows.Forms.TrackBar o_3DTimeToTopSpeed;
-		private System.Windows.Forms.CheckBox o_3DInvertX;
-		private System.Windows.Forms.CheckBox o_3DInvertY;
-		private System.Windows.Forms.TrackBar o_3DForwardSpeed;
-		private System.Windows.Forms.TrackBar o_3DBackClippingPane;
-		private System.Windows.Forms.TextBox o_SteamInstallDir;
-		private System.Windows.Forms.ComboBox o_SteamUsername;
+		private System.Windows.Forms.Button SteamInstallDirBrowseButton;
+		private System.Windows.Forms.TrackBar TimeToTopSpeed;
+		private System.Windows.Forms.CheckBox InvertMouseX;
+		private System.Windows.Forms.CheckBox InvertMouseY;
+		private System.Windows.Forms.TrackBar ForwardSpeed;
+		private System.Windows.Forms.TrackBar BackClippingPane;
+		private System.Windows.Forms.TextBox SteamInstallDir;
+		private System.Windows.Forms.ComboBox SteamUsername;
 		private System.Windows.Forms.Button btnApplySettings;
 		private System.Windows.Forms.CheckBox CrosshairCursorIn2DViews;
 		private System.Windows.Forms.RadioButton RotationStyle_SnapNever;
@@ -2383,14 +2376,14 @@ namespace Sledge.Editor.Settings
 		private System.Windows.Forms.TabPage tabConfigDirectories;
 		private System.Windows.Forms.TabPage tab2DViews;
 		private System.Windows.Forms.Label label18;
-		private System.Windows.Forms.Button button1;
+		private System.Windows.Forms.Button ListAvailableGamesButton;
 		private System.Windows.Forms.Label label17;
 		private System.Windows.Forms.TabPage tabSteam;
-		private System.Windows.Forms.Label label16;
+		private System.Windows.Forms.Label BackClippingPaneLabel;
 		private System.Windows.Forms.GroupBox groupBox14;
-		private System.Windows.Forms.Label label15;
+		private System.Windows.Forms.Label ForwardSpeedLabel;
 		private System.Windows.Forms.GroupBox groupBox13;
-		private System.Windows.Forms.Label label14;
+		private System.Windows.Forms.Label TimeToTopSpeedLabel;
 		private System.Windows.Forms.GroupBox groupBox12;
 		private System.Windows.Forms.GroupBox groupBox11;
 		private System.Windows.Forms.TabPage tab3DViews;
@@ -2464,5 +2457,6 @@ namespace Sledge.Editor.Settings
         private System.Windows.Forms.Label label21;
         private System.Windows.Forms.CheckBox HideGridOn;
         private System.Windows.Forms.DomainUpDown GridHighlight2UnitNum;
+        private System.Windows.Forms.CheckBox SelectedGameSteamInstall;
 	}
 }

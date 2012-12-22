@@ -60,8 +60,6 @@ namespace Sledge.Editor
                     gsd.ShowDialog();
                     if (gsd.SelectedGameID < 0) return;
                     var game = Context.DBContext.GetAllGames().Single(g => g.ID == gsd.SelectedGameID);
-                    game.Wads = Context.DBContext.GetAllWads().Where(x => x.GameID == game.ID).ToList();
-                    game.Fgds = Context.DBContext.GetAllFgds().Where(x => x.GameID == game.ID).ToList();
                     var filename = ofd.FileName;
                     //try
                     {

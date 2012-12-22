@@ -41,15 +41,15 @@ namespace Sledge.Database
                 _conn.Open();
                 using (var comm = _conn.CreateCommand())
                 {
-                    comm.CommandText = "SELECT ID, Key, Value FROM Settings";
+                    comm.CommandText = "SELECT Key, Value FROM Settings";
                     using (var rdr = comm.ExecuteReader(CommandBehavior.CloseConnection))
                     {
                         while (rdr.Read())
                         {
                             list.Add(new Setting
                             {
-                                Key = rdr.GetString(1),
-                                Value = rdr.GetString(2),
+                                Key = rdr.GetString(0),
+                                Value = rdr.GetString(1),
                             });
                         }
                     }
@@ -65,25 +65,42 @@ namespace Sledge.Database
         public List<Game> GetAllGames()
         {
             var list = new List<Game>();
+            var wads = GetAllWads();
+            var fgds = GetAllFgds();
             try
             {
                 _conn.Open();
                 using (var comm = _conn.CreateCommand())
                 {
-                    comm.CommandText = "SELECT BuildID, EngineID, GameDir, ID, ModDir, Name FROM Games";
+                    comm.CommandText = "SELECT ID, Name, EngineID, BuildID, SteamGameDir, WonGameDir, ModDir, MapDir, " +
+                                       "Autosave, UseCustomAutosaveDir, AutosaveDir, " +
+                                       "DefaultPointEntity, DefaultBrushEntity, DefaultTextureScale, DefaultLightmapScale, " +
+                                       "SteamInstall FROM Games";
                     using (var rdr = comm.ExecuteReader(CommandBehavior.CloseConnection))
                     {
                         while (rdr.Read())
                         {
                             list.Add(new Game
-                            {
-                                BuildID = rdr.GetInt32(0), 
-                                EngineID = rdr.GetInt32(1), 
-                                GameDir = rdr.GetString(2), 
-                                ID = rdr.GetInt32(3), 
-                                ModDir = rdr.GetString(4),
-                                Name = rdr.GetString(5) 
-                            });
+                                         {
+                                             ID = rdr.GetInt32(0),
+                                             Name = rdr.GetString(1),
+                                             EngineID = rdr.GetInt32(2),
+                                             BuildID = rdr.GetInt32(3),
+                                             SteamGameDir = rdr.GetString(4),
+                                             WonGameDir = rdr.GetString(5),
+                                             ModDir = rdr.GetString(6),
+                                             MapDir = rdr.GetString(7),
+                                             Autosave = rdr.GetInt32(8) > 0,
+                                             UseCustomAutosaveDir = rdr.GetInt32(9) > 0,
+                                             AutosaveDir = rdr.GetString(10),
+                                             DefaultPointEntity = rdr.GetString(11),
+                                             DefaultBrushEntity = rdr.GetString(12),
+                                             DefaultTextureScale = (decimal) rdr.GetFloat(13),
+                                             DefaultLightmapScale = (decimal) rdr.GetFloat(14),
+                                             SteamInstall = rdr.GetInt32(15) > 0,
+                                             Wads = wads.Where(x => x.GameID == rdr.GetInt32(3)).ToList(),
+                                             Fgds = fgds.Where(x => x.GameID == rdr.GetInt32(3)).ToList()
+                                         });
                         }
                     }
                 }
@@ -172,6 +189,41 @@ namespace Sledge.Database
                                 ID = rdr.GetInt32(0),
                                 GameID = rdr.GetInt32(1),
                                 Path = rdr.GetString(2)
+                            });
+                        }
+                    }
+                }
+            }
+            finally
+            {
+                _conn.Close();
+            }
+            return list;
+        }
+
+        public List<Build> GetAllBuilds()
+        {
+            var list = new List<Build>();
+            try
+            {
+                _conn.Open();
+                using (var comm = _conn.CreateCommand())
+                {
+                    comm.CommandText = "SELECT ID, Name, EngineID, Path, Bsp, Csg, Vis, Rad FROM Builds";
+                    using (var rdr = comm.ExecuteReader(CommandBehavior.CloseConnection))
+                    {
+                        while (rdr.Read())
+                        {
+                            list.Add(new Build
+                            {
+                                ID = rdr.GetInt32(0),
+                                Name = rdr.GetString(1),
+                                EngineID = rdr.GetInt32(2),
+                                Path = rdr.GetString(3),
+                                Bsp = rdr.GetString(4),
+                                Csg = rdr.GetString(5),
+                                Vis = rdr.GetString(6),
+                                Rad = rdr.GetString(7),
                             });
                         }
                     }

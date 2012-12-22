@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using Sledge.Database;
 using Sledge.Database.Models;
 using System.IO;
 using Sledge.Editor;
 using Sledge.Providers.Texture;
+using Sledge.Settings;
 using Sledge.UI;
 using Sledge.Editor.Tools;
 
@@ -19,9 +21,13 @@ namespace Sledge.Sandbox
 
         public static void Start()
         {
-            var editor = new Editor.Editor();
-            editor.Load += (sender, e) => PostStart(sender as Editor.Editor);
-            Application.Run(editor);
+           // var editor = new Editor.Editor();
+           // editor.Load += (sender, e) => PostStart(sender as Editor.Editor);
+           // Application.Run(editor);
+            var settings = Context.DBContext.GetAllSettings().ToDictionary(x => x.Key, x => x.Value);
+            Serialise.DeserialiseSettings(settings);
+            var settingsform = new Editor.Settings.SettingsForm();
+            Application.Run(settingsform);
         }
 
         public static void PostStart(Editor.Editor editor)
