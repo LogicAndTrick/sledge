@@ -92,6 +92,7 @@ namespace Sledge.Editor.Settings
             this.tabGame = new System.Windows.Forms.TabPage();
             this.GameSubTabs = new System.Windows.Forms.TabControl();
             this.tabConfigDirectories = new System.Windows.Forms.TabPage();
+            this.SelectedGameSteamInstall = new System.Windows.Forms.CheckBox();
             this.grpConfigGame = new System.Windows.Forms.GroupBox();
             this.SelectedGameWonDir = new System.Windows.Forms.TextBox();
             this.lblGameWONDir = new System.Windows.Forms.Label();
@@ -137,36 +138,33 @@ namespace Sledge.Editor.Settings
             this.RemoveGame = new System.Windows.Forms.Button();
             this.AddGame = new System.Windows.Forms.Button();
             this.tabBuild = new System.Windows.Forms.TabPage();
-            this.tabBuildSubTabs = new System.Windows.Forms.TabControl();
+            this.BuildSubTabs = new System.Windows.Forms.TabControl();
             this.tabBuildGeneral = new System.Windows.Forms.TabPage();
-            this.btnBuildChangeName = new System.Windows.Forms.Button();
             this.lblBuildName = new System.Windows.Forms.Label();
-            this.txtBuildName = new System.Windows.Forms.TextBox();
+            this.SelectedBuildName = new System.Windows.Forms.TextBox();
             this.lblBuildEngine = new System.Windows.Forms.Label();
-            this.cmbBuildEngine = new System.Windows.Forms.ComboBox();
+            this.SelectedBuildEngine = new System.Windows.Forms.ComboBox();
             this.tabBuildExecutables = new System.Windows.Forms.TabPage();
-            this.lstBuildPresets = new System.Windows.Forms.ListBox();
             this.lblBuildExeFolder = new System.Windows.Forms.Label();
             this.lblBuildBSP = new System.Windows.Forms.Label();
-            this.txtBuildExeFolder = new System.Windows.Forms.TextBox();
+            this.SelectedBuildExeFolder = new System.Windows.Forms.TextBox();
             this.lblBuildCSG = new System.Windows.Forms.Label();
-            this.cmbBuildRAD = new System.Windows.Forms.ComboBox();
-            this.cmbBuildBSP = new System.Windows.Forms.ComboBox();
-            this.lblBuildDetectedPresets = new System.Windows.Forms.Label();
+            this.SelectedBuildRad = new System.Windows.Forms.ComboBox();
+            this.SelectedBuildBsp = new System.Windows.Forms.ComboBox();
             this.lblBuildVIS = new System.Windows.Forms.Label();
-            this.cmbBuildVIS = new System.Windows.Forms.ComboBox();
-            this.cmbBuildCSG = new System.Windows.Forms.ComboBox();
+            this.SelectedBuildVis = new System.Windows.Forms.ComboBox();
+            this.SelectedBuildCsg = new System.Windows.Forms.ComboBox();
             this.lblBuildRAD = new System.Windows.Forms.Label();
-            this.btnBuildExeFolderBrowse = new System.Windows.Forms.Button();
+            this.SelectedBuildExeFolderBrowse = new System.Windows.Forms.Button();
             this.tabBuildPostCompile = new System.Windows.Forms.TabPage();
             this.lblBuildCommandLine = new System.Windows.Forms.Label();
-            this.chkBuildCopyBSP = new System.Windows.Forms.CheckBox();
-            this.chkBuildAskBeforeRun = new System.Windows.Forms.CheckBox();
-            this.radBuildRunGame = new System.Windows.Forms.RadioButton();
-            this.txtBuildCommandLine = new System.Windows.Forms.TextBox();
-            this.radBuildRunGameOnChange = new System.Windows.Forms.RadioButton();
-            this.chkBuildShowLog = new System.Windows.Forms.CheckBox();
-            this.radBuildDontRunGame = new System.Windows.Forms.RadioButton();
+            this.SelectedBuildCopyBsp = new System.Windows.Forms.CheckBox();
+            this.SelectedBuildAskBeforeRun = new System.Windows.Forms.CheckBox();
+            this.SelectedBuildRunGameAlways = new System.Windows.Forms.RadioButton();
+            this.SelectedBuildCommandLine = new System.Windows.Forms.TextBox();
+            this.SelectedBuildRunGameOnChange = new System.Windows.Forms.RadioButton();
+            this.SelectedBuildShowLog = new System.Windows.Forms.CheckBox();
+            this.SelectedBuildRunGameNever = new System.Windows.Forms.RadioButton();
             this.tabBuildAdvanced = new System.Windows.Forms.TabPage();
             this.tabBuildAdvancedSubTabs = new System.Windows.Forms.TabControl();
             this.tabBuildAdvancedCSG = new System.Windows.Forms.TabPage();
@@ -178,8 +176,8 @@ namespace Sledge.Editor.Settings
             this.tabBuildAdvancedPreview = new System.Windows.Forms.TabPage();
             this.txtBuildAdvancedPreview = new System.Windows.Forms.TextBox();
             this.lblBuildTEMPAdvancedConfig = new System.Windows.Forms.Label();
-            this.btnBuildRemove = new System.Windows.Forms.Button();
-            this.btnBuildAdd = new System.Windows.Forms.Button();
+            this.RemoveBuild = new System.Windows.Forms.Button();
+            this.AddBuild = new System.Windows.Forms.Button();
             this.BuildTree = new System.Windows.Forms.TreeView();
             this.tabSteam = new System.Windows.Forms.TabPage();
             this.SteamInstallDir = new System.Windows.Forms.TextBox();
@@ -216,7 +214,7 @@ namespace Sledge.Editor.Settings
             this.btnCancelSettings = new System.Windows.Forms.Button();
             this.btnApplyAndCloseSettings = new System.Windows.Forms.Button();
             this.btnApplySettings = new System.Windows.Forms.Button();
-            this.SelectedGameSteamInstall = new System.Windows.Forms.CheckBox();
+            this.SelectedBuildIncludeWads = new System.Windows.Forms.CheckBox();
             this.tbcSettings.SuspendLayout();
             this.tab2DViews.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.NudgeUnits)).BeginInit();
@@ -244,7 +242,7 @@ namespace Sledge.Editor.Settings
             ((System.ComponentModel.ISupportInitialize)(this.SelectedGameLightmapScale)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.SelectedGameTextureScale)).BeginInit();
             this.tabBuild.SuspendLayout();
-            this.tabBuildSubTabs.SuspendLayout();
+            this.BuildSubTabs.SuspendLayout();
             this.tabBuildGeneral.SuspendLayout();
             this.tabBuildExecutables.SuspendLayout();
             this.tabBuildPostCompile.SuspendLayout();
@@ -935,6 +933,18 @@ namespace Sledge.Editor.Settings
             this.tabConfigDirectories.Text = "General";
             this.tabConfigDirectories.UseVisualStyleBackColor = true;
             // 
+            // SelectedGameSteamInstall
+            // 
+            this.SelectedGameSteamInstall.Checked = true;
+            this.SelectedGameSteamInstall.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.SelectedGameSteamInstall.Location = new System.Drawing.Point(217, 35);
+            this.SelectedGameSteamInstall.Name = "SelectedGameSteamInstall";
+            this.SelectedGameSteamInstall.Size = new System.Drawing.Size(109, 24);
+            this.SelectedGameSteamInstall.TabIndex = 21;
+            this.SelectedGameSteamInstall.Text = "Steam Install";
+            this.SelectedGameSteamInstall.UseVisualStyleBackColor = true;
+            this.SelectedGameSteamInstall.CheckedChanged += new System.EventHandler(this.SelectedGameEngineChanged);
+            // 
             // grpConfigGame
             // 
             this.grpConfigGame.Controls.Add(this.SelectedGameWonDir);
@@ -1205,6 +1215,7 @@ namespace Sledge.Editor.Settings
             this.SelectedGameAddFgd.TabIndex = 1;
             this.SelectedGameAddFgd.Text = "Add...";
             this.SelectedGameAddFgd.UseVisualStyleBackColor = true;
+            this.SelectedGameAddFgd.Click += new System.EventHandler(this.SelectedGameAddFgdClicked);
             // 
             // lblConfigBrushEnt
             // 
@@ -1223,6 +1234,7 @@ namespace Sledge.Editor.Settings
             this.SelectedGameRemoveFgd.TabIndex = 3;
             this.SelectedGameRemoveFgd.Text = "Remove";
             this.SelectedGameRemoveFgd.UseVisualStyleBackColor = true;
+            this.SelectedGameRemoveFgd.Click += new System.EventHandler(this.SelectedGameRemoveFgdClicked);
             // 
             // lblConfigPointEnt
             // 
@@ -1327,6 +1339,7 @@ namespace Sledge.Editor.Settings
             this.SelectedGameAddWad.TabIndex = 1;
             this.SelectedGameAddWad.Text = "Add...";
             this.SelectedGameAddWad.UseVisualStyleBackColor = true;
+            this.SelectedGameAddWad.Click += new System.EventHandler(this.SelectedGameAddWadClicked);
             // 
             // SelectedGameTextureScale
             // 
@@ -1375,6 +1388,7 @@ namespace Sledge.Editor.Settings
             this.SelectedGameRemoveWad.TabIndex = 3;
             this.SelectedGameRemoveWad.Text = "Remove";
             this.SelectedGameRemoveWad.UseVisualStyleBackColor = true;
+            this.SelectedGameRemoveWad.Click += new System.EventHandler(this.SelectedGameRemoveWadClicked);
             // 
             // GameTree
             // 
@@ -1407,9 +1421,9 @@ namespace Sledge.Editor.Settings
             // 
             // tabBuild
             // 
-            this.tabBuild.Controls.Add(this.tabBuildSubTabs);
-            this.tabBuild.Controls.Add(this.btnBuildRemove);
-            this.tabBuild.Controls.Add(this.btnBuildAdd);
+            this.tabBuild.Controls.Add(this.BuildSubTabs);
+            this.tabBuild.Controls.Add(this.RemoveBuild);
+            this.tabBuild.Controls.Add(this.AddBuild);
             this.tabBuild.Controls.Add(this.BuildTree);
             this.tabBuild.Location = new System.Drawing.Point(4, 22);
             this.tabBuild.Name = "tabBuild";
@@ -1419,26 +1433,25 @@ namespace Sledge.Editor.Settings
             this.tabBuild.Text = "Build Programs";
             this.tabBuild.UseVisualStyleBackColor = true;
             // 
-            // tabBuildSubTabs
+            // BuildSubTabs
             // 
-            this.tabBuildSubTabs.Controls.Add(this.tabBuildGeneral);
-            this.tabBuildSubTabs.Controls.Add(this.tabBuildExecutables);
-            this.tabBuildSubTabs.Controls.Add(this.tabBuildPostCompile);
-            this.tabBuildSubTabs.Controls.Add(this.tabBuildAdvanced);
-            this.tabBuildSubTabs.Location = new System.Drawing.Point(245, 6);
-            this.tabBuildSubTabs.Name = "tabBuildSubTabs";
-            this.tabBuildSubTabs.SelectedIndex = 0;
-            this.tabBuildSubTabs.Size = new System.Drawing.Size(477, 499);
-            this.tabBuildSubTabs.TabIndex = 29;
-            this.tabBuildSubTabs.Visible = false;
+            this.BuildSubTabs.Controls.Add(this.tabBuildGeneral);
+            this.BuildSubTabs.Controls.Add(this.tabBuildExecutables);
+            this.BuildSubTabs.Controls.Add(this.tabBuildPostCompile);
+            this.BuildSubTabs.Controls.Add(this.tabBuildAdvanced);
+            this.BuildSubTabs.Location = new System.Drawing.Point(245, 6);
+            this.BuildSubTabs.Name = "BuildSubTabs";
+            this.BuildSubTabs.SelectedIndex = 0;
+            this.BuildSubTabs.Size = new System.Drawing.Size(477, 499);
+            this.BuildSubTabs.TabIndex = 29;
+            this.BuildSubTabs.Visible = false;
             // 
             // tabBuildGeneral
             // 
-            this.tabBuildGeneral.Controls.Add(this.btnBuildChangeName);
             this.tabBuildGeneral.Controls.Add(this.lblBuildName);
-            this.tabBuildGeneral.Controls.Add(this.txtBuildName);
+            this.tabBuildGeneral.Controls.Add(this.SelectedBuildName);
             this.tabBuildGeneral.Controls.Add(this.lblBuildEngine);
-            this.tabBuildGeneral.Controls.Add(this.cmbBuildEngine);
+            this.tabBuildGeneral.Controls.Add(this.SelectedBuildEngine);
             this.tabBuildGeneral.Location = new System.Drawing.Point(4, 22);
             this.tabBuildGeneral.Name = "tabBuildGeneral";
             this.tabBuildGeneral.Padding = new System.Windows.Forms.Padding(3);
@@ -1446,15 +1459,6 @@ namespace Sledge.Editor.Settings
             this.tabBuildGeneral.TabIndex = 0;
             this.tabBuildGeneral.Text = "General";
             this.tabBuildGeneral.UseVisualStyleBackColor = true;
-            // 
-            // btnBuildChangeName
-            // 
-            this.btnBuildChangeName.Location = new System.Drawing.Point(223, 6);
-            this.btnBuildChangeName.Name = "btnBuildChangeName";
-            this.btnBuildChangeName.Size = new System.Drawing.Size(90, 20);
-            this.btnBuildChangeName.TabIndex = 20;
-            this.btnBuildChangeName.Text = "Change Name";
-            this.btnBuildChangeName.UseVisualStyleBackColor = true;
             // 
             // lblBuildName
             // 
@@ -1465,13 +1469,14 @@ namespace Sledge.Editor.Settings
             this.lblBuildName.Text = "Config Name";
             this.lblBuildName.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // txtBuildName
+            // SelectedBuildName
             // 
-            this.txtBuildName.Location = new System.Drawing.Point(84, 6);
-            this.txtBuildName.Name = "txtBuildName";
-            this.txtBuildName.Size = new System.Drawing.Size(133, 20);
-            this.txtBuildName.TabIndex = 14;
-            this.txtBuildName.Text = "ZHLT";
+            this.SelectedBuildName.Location = new System.Drawing.Point(84, 6);
+            this.SelectedBuildName.Name = "SelectedBuildName";
+            this.SelectedBuildName.Size = new System.Drawing.Size(133, 20);
+            this.SelectedBuildName.TabIndex = 14;
+            this.SelectedBuildName.Text = "ZHLT";
+            this.SelectedBuildName.TextChanged += new System.EventHandler(this.SelectedBuildNameChanged);
             // 
             // lblBuildEngine
             // 
@@ -1482,33 +1487,33 @@ namespace Sledge.Editor.Settings
             this.lblBuildEngine.Text = "Engine";
             this.lblBuildEngine.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // cmbBuildEngine
+            // SelectedBuildEngine
             // 
-            this.cmbBuildEngine.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbBuildEngine.FormattingEnabled = true;
-            this.cmbBuildEngine.Items.AddRange(new object[] {
+            this.SelectedBuildEngine.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.SelectedBuildEngine.FormattingEnabled = true;
+            this.SelectedBuildEngine.Items.AddRange(new object[] {
             "Goldsource",
             "Source"});
-            this.cmbBuildEngine.Location = new System.Drawing.Point(84, 32);
-            this.cmbBuildEngine.Name = "cmbBuildEngine";
-            this.cmbBuildEngine.Size = new System.Drawing.Size(121, 21);
-            this.cmbBuildEngine.TabIndex = 19;
+            this.SelectedBuildEngine.Location = new System.Drawing.Point(84, 32);
+            this.SelectedBuildEngine.Name = "SelectedBuildEngine";
+            this.SelectedBuildEngine.Size = new System.Drawing.Size(121, 21);
+            this.SelectedBuildEngine.TabIndex = 19;
+            this.SelectedBuildEngine.SelectedIndexChanged += new System.EventHandler(this.SelectedBuildEngineChanged);
             // 
             // tabBuildExecutables
             // 
-            this.tabBuildExecutables.Controls.Add(this.lstBuildPresets);
+            this.tabBuildExecutables.Controls.Add(this.SelectedBuildIncludeWads);
             this.tabBuildExecutables.Controls.Add(this.lblBuildExeFolder);
             this.tabBuildExecutables.Controls.Add(this.lblBuildBSP);
-            this.tabBuildExecutables.Controls.Add(this.txtBuildExeFolder);
+            this.tabBuildExecutables.Controls.Add(this.SelectedBuildExeFolder);
             this.tabBuildExecutables.Controls.Add(this.lblBuildCSG);
-            this.tabBuildExecutables.Controls.Add(this.cmbBuildRAD);
-            this.tabBuildExecutables.Controls.Add(this.cmbBuildBSP);
-            this.tabBuildExecutables.Controls.Add(this.lblBuildDetectedPresets);
+            this.tabBuildExecutables.Controls.Add(this.SelectedBuildRad);
+            this.tabBuildExecutables.Controls.Add(this.SelectedBuildBsp);
             this.tabBuildExecutables.Controls.Add(this.lblBuildVIS);
-            this.tabBuildExecutables.Controls.Add(this.cmbBuildVIS);
-            this.tabBuildExecutables.Controls.Add(this.cmbBuildCSG);
+            this.tabBuildExecutables.Controls.Add(this.SelectedBuildVis);
+            this.tabBuildExecutables.Controls.Add(this.SelectedBuildCsg);
             this.tabBuildExecutables.Controls.Add(this.lblBuildRAD);
-            this.tabBuildExecutables.Controls.Add(this.btnBuildExeFolderBrowse);
+            this.tabBuildExecutables.Controls.Add(this.SelectedBuildExeFolderBrowse);
             this.tabBuildExecutables.Location = new System.Drawing.Point(4, 22);
             this.tabBuildExecutables.Name = "tabBuildExecutables";
             this.tabBuildExecutables.Padding = new System.Windows.Forms.Padding(3);
@@ -1516,17 +1521,6 @@ namespace Sledge.Editor.Settings
             this.tabBuildExecutables.TabIndex = 1;
             this.tabBuildExecutables.Text = "Build Programs";
             this.tabBuildExecutables.UseVisualStyleBackColor = true;
-            // 
-            // lstBuildPresets
-            // 
-            this.lstBuildPresets.FormattingEnabled = true;
-            this.lstBuildPresets.Items.AddRange(new object[] {
-            "ZHLT",
-            "Quake Tools"});
-            this.lstBuildPresets.Location = new System.Drawing.Point(6, 90);
-            this.lstBuildPresets.Name = "lstBuildPresets";
-            this.lstBuildPresets.Size = new System.Drawing.Size(167, 69);
-            this.lstBuildPresets.TabIndex = 22;
             // 
             // lblBuildExeFolder
             // 
@@ -1540,119 +1534,111 @@ namespace Sledge.Editor.Settings
             // 
             // lblBuildBSP
             // 
-            this.lblBuildBSP.Location = new System.Drawing.Point(179, 66);
+            this.lblBuildBSP.Location = new System.Drawing.Point(55, 56);
             this.lblBuildBSP.Name = "lblBuildBSP";
             this.lblBuildBSP.Size = new System.Drawing.Size(34, 20);
             this.lblBuildBSP.TabIndex = 16;
             this.lblBuildBSP.Text = "BSP";
             this.lblBuildBSP.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // txtBuildExeFolder
+            // SelectedBuildExeFolder
             // 
-            this.txtBuildExeFolder.Location = new System.Drawing.Point(6, 29);
-            this.txtBuildExeFolder.Name = "txtBuildExeFolder";
-            this.txtBuildExeFolder.Size = new System.Drawing.Size(323, 20);
-            this.txtBuildExeFolder.TabIndex = 15;
-            this.txtBuildExeFolder.Text = "example: C:\\hammer_alt";
+            this.SelectedBuildExeFolder.Location = new System.Drawing.Point(6, 29);
+            this.SelectedBuildExeFolder.Name = "SelectedBuildExeFolder";
+            this.SelectedBuildExeFolder.Size = new System.Drawing.Size(323, 20);
+            this.SelectedBuildExeFolder.TabIndex = 15;
+            this.SelectedBuildExeFolder.Text = "example: C:\\hammer_alt";
+            this.SelectedBuildExeFolder.TextChanged += new System.EventHandler(this.SelectedBuildPathChanged);
             // 
             // lblBuildCSG
             // 
-            this.lblBuildCSG.Location = new System.Drawing.Point(179, 93);
+            this.lblBuildCSG.Location = new System.Drawing.Point(55, 83);
             this.lblBuildCSG.Name = "lblBuildCSG";
             this.lblBuildCSG.Size = new System.Drawing.Size(34, 20);
             this.lblBuildCSG.TabIndex = 16;
             this.lblBuildCSG.Text = "CSG";
             this.lblBuildCSG.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // cmbBuildRAD
+            // SelectedBuildRad
             // 
-            this.cmbBuildRAD.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbBuildRAD.FormattingEnabled = true;
-            this.cmbBuildRAD.Location = new System.Drawing.Point(219, 146);
-            this.cmbBuildRAD.Name = "cmbBuildRAD";
-            this.cmbBuildRAD.Size = new System.Drawing.Size(234, 21);
-            this.cmbBuildRAD.TabIndex = 19;
+            this.SelectedBuildRad.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.SelectedBuildRad.FormattingEnabled = true;
+            this.SelectedBuildRad.Location = new System.Drawing.Point(95, 136);
+            this.SelectedBuildRad.Name = "SelectedBuildRad";
+            this.SelectedBuildRad.Size = new System.Drawing.Size(234, 21);
+            this.SelectedBuildRad.TabIndex = 19;
             // 
-            // cmbBuildBSP
+            // SelectedBuildBsp
             // 
-            this.cmbBuildBSP.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbBuildBSP.FormattingEnabled = true;
-            this.cmbBuildBSP.Location = new System.Drawing.Point(219, 65);
-            this.cmbBuildBSP.Name = "cmbBuildBSP";
-            this.cmbBuildBSP.Size = new System.Drawing.Size(234, 21);
-            this.cmbBuildBSP.TabIndex = 19;
-            // 
-            // lblBuildDetectedPresets
-            // 
-            this.lblBuildDetectedPresets.Location = new System.Drawing.Point(6, 66);
-            this.lblBuildDetectedPresets.Name = "lblBuildDetectedPresets";
-            this.lblBuildDetectedPresets.Size = new System.Drawing.Size(167, 20);
-            this.lblBuildDetectedPresets.TabIndex = 17;
-            this.lblBuildDetectedPresets.Text = "Detected presets:";
-            this.lblBuildDetectedPresets.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.SelectedBuildBsp.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.SelectedBuildBsp.FormattingEnabled = true;
+            this.SelectedBuildBsp.Location = new System.Drawing.Point(95, 55);
+            this.SelectedBuildBsp.Name = "SelectedBuildBsp";
+            this.SelectedBuildBsp.Size = new System.Drawing.Size(234, 21);
+            this.SelectedBuildBsp.TabIndex = 19;
             // 
             // lblBuildVIS
             // 
-            this.lblBuildVIS.Location = new System.Drawing.Point(179, 120);
+            this.lblBuildVIS.Location = new System.Drawing.Point(55, 110);
             this.lblBuildVIS.Name = "lblBuildVIS";
             this.lblBuildVIS.Size = new System.Drawing.Size(34, 20);
             this.lblBuildVIS.TabIndex = 16;
             this.lblBuildVIS.Text = "VIS";
             this.lblBuildVIS.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // cmbBuildVIS
+            // SelectedBuildVis
             // 
-            this.cmbBuildVIS.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbBuildVIS.FormattingEnabled = true;
-            this.cmbBuildVIS.Location = new System.Drawing.Point(219, 119);
-            this.cmbBuildVIS.Name = "cmbBuildVIS";
-            this.cmbBuildVIS.Size = new System.Drawing.Size(234, 21);
-            this.cmbBuildVIS.TabIndex = 19;
+            this.SelectedBuildVis.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.SelectedBuildVis.FormattingEnabled = true;
+            this.SelectedBuildVis.Location = new System.Drawing.Point(95, 109);
+            this.SelectedBuildVis.Name = "SelectedBuildVis";
+            this.SelectedBuildVis.Size = new System.Drawing.Size(234, 21);
+            this.SelectedBuildVis.TabIndex = 19;
             // 
-            // cmbBuildCSG
+            // SelectedBuildCsg
             // 
-            this.cmbBuildCSG.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbBuildCSG.FormattingEnabled = true;
-            this.cmbBuildCSG.Location = new System.Drawing.Point(219, 92);
-            this.cmbBuildCSG.Name = "cmbBuildCSG";
-            this.cmbBuildCSG.Size = new System.Drawing.Size(234, 21);
-            this.cmbBuildCSG.TabIndex = 19;
+            this.SelectedBuildCsg.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.SelectedBuildCsg.FormattingEnabled = true;
+            this.SelectedBuildCsg.Location = new System.Drawing.Point(95, 82);
+            this.SelectedBuildCsg.Name = "SelectedBuildCsg";
+            this.SelectedBuildCsg.Size = new System.Drawing.Size(234, 21);
+            this.SelectedBuildCsg.TabIndex = 19;
             // 
             // lblBuildRAD
             // 
-            this.lblBuildRAD.Location = new System.Drawing.Point(179, 147);
+            this.lblBuildRAD.Location = new System.Drawing.Point(55, 137);
             this.lblBuildRAD.Name = "lblBuildRAD";
             this.lblBuildRAD.Size = new System.Drawing.Size(34, 20);
             this.lblBuildRAD.TabIndex = 16;
             this.lblBuildRAD.Text = "RAD";
             this.lblBuildRAD.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // btnBuildExeFolderBrowse
+            // SelectedBuildExeFolderBrowse
             // 
-            this.btnBuildExeFolderBrowse.Location = new System.Drawing.Point(335, 27);
-            this.btnBuildExeFolderBrowse.Name = "btnBuildExeFolderBrowse";
-            this.btnBuildExeFolderBrowse.Size = new System.Drawing.Size(67, 23);
-            this.btnBuildExeFolderBrowse.TabIndex = 20;
-            this.btnBuildExeFolderBrowse.Text = "Browse...";
-            this.btnBuildExeFolderBrowse.UseVisualStyleBackColor = true;
+            this.SelectedBuildExeFolderBrowse.Location = new System.Drawing.Point(335, 27);
+            this.SelectedBuildExeFolderBrowse.Name = "SelectedBuildExeFolderBrowse";
+            this.SelectedBuildExeFolderBrowse.Size = new System.Drawing.Size(67, 23);
+            this.SelectedBuildExeFolderBrowse.TabIndex = 20;
+            this.SelectedBuildExeFolderBrowse.Text = "Browse...";
+            this.SelectedBuildExeFolderBrowse.UseVisualStyleBackColor = true;
             // 
             // tabBuildPostCompile
             // 
+            this.tabBuildPostCompile.BackColor = System.Drawing.SystemColors.Control;
             this.tabBuildPostCompile.Controls.Add(this.lblBuildCommandLine);
-            this.tabBuildPostCompile.Controls.Add(this.chkBuildCopyBSP);
-            this.tabBuildPostCompile.Controls.Add(this.chkBuildAskBeforeRun);
-            this.tabBuildPostCompile.Controls.Add(this.radBuildRunGame);
-            this.tabBuildPostCompile.Controls.Add(this.txtBuildCommandLine);
-            this.tabBuildPostCompile.Controls.Add(this.radBuildRunGameOnChange);
-            this.tabBuildPostCompile.Controls.Add(this.chkBuildShowLog);
-            this.tabBuildPostCompile.Controls.Add(this.radBuildDontRunGame);
+            this.tabBuildPostCompile.Controls.Add(this.SelectedBuildCopyBsp);
+            this.tabBuildPostCompile.Controls.Add(this.SelectedBuildAskBeforeRun);
+            this.tabBuildPostCompile.Controls.Add(this.SelectedBuildRunGameAlways);
+            this.tabBuildPostCompile.Controls.Add(this.SelectedBuildCommandLine);
+            this.tabBuildPostCompile.Controls.Add(this.SelectedBuildRunGameOnChange);
+            this.tabBuildPostCompile.Controls.Add(this.SelectedBuildShowLog);
+            this.tabBuildPostCompile.Controls.Add(this.SelectedBuildRunGameNever);
             this.tabBuildPostCompile.Location = new System.Drawing.Point(4, 22);
             this.tabBuildPostCompile.Name = "tabBuildPostCompile";
             this.tabBuildPostCompile.Padding = new System.Windows.Forms.Padding(3);
             this.tabBuildPostCompile.Size = new System.Drawing.Size(469, 473);
             this.tabBuildPostCompile.TabIndex = 2;
             this.tabBuildPostCompile.Text = "After Compiling";
-            this.tabBuildPostCompile.UseVisualStyleBackColor = true;
             // 
             // lblBuildCommandLine
             // 
@@ -1663,78 +1649,79 @@ namespace Sledge.Editor.Settings
             this.lblBuildCommandLine.Text = "Game command line";
             this.lblBuildCommandLine.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
-            // chkBuildCopyBSP
+            // SelectedBuildCopyBsp
             // 
-            this.chkBuildCopyBSP.Checked = true;
-            this.chkBuildCopyBSP.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkBuildCopyBSP.Location = new System.Drawing.Point(6, 7);
-            this.chkBuildCopyBSP.Name = "chkBuildCopyBSP";
-            this.chkBuildCopyBSP.Size = new System.Drawing.Size(256, 23);
-            this.chkBuildCopyBSP.TabIndex = 30;
-            this.chkBuildCopyBSP.Text = "Copy BSP into <mod>/maps folder on compile";
-            this.chkBuildCopyBSP.UseVisualStyleBackColor = true;
+            this.SelectedBuildCopyBsp.Checked = true;
+            this.SelectedBuildCopyBsp.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.SelectedBuildCopyBsp.Location = new System.Drawing.Point(6, 7);
+            this.SelectedBuildCopyBsp.Name = "SelectedBuildCopyBsp";
+            this.SelectedBuildCopyBsp.Size = new System.Drawing.Size(256, 23);
+            this.SelectedBuildCopyBsp.TabIndex = 30;
+            this.SelectedBuildCopyBsp.Text = "Copy BSP into <mod>/maps folder on compile";
+            this.SelectedBuildCopyBsp.UseVisualStyleBackColor = true;
             // 
-            // chkBuildAskBeforeRun
+            // SelectedBuildAskBeforeRun
             // 
-            this.chkBuildAskBeforeRun.Checked = true;
-            this.chkBuildAskBeforeRun.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkBuildAskBeforeRun.Location = new System.Drawing.Point(7, 152);
-            this.chkBuildAskBeforeRun.Name = "chkBuildAskBeforeRun";
-            this.chkBuildAskBeforeRun.Size = new System.Drawing.Size(171, 23);
-            this.chkBuildAskBeforeRun.TabIndex = 29;
-            this.chkBuildAskBeforeRun.Text = "Ask before running game";
-            this.chkBuildAskBeforeRun.UseVisualStyleBackColor = true;
+            this.SelectedBuildAskBeforeRun.Checked = true;
+            this.SelectedBuildAskBeforeRun.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.SelectedBuildAskBeforeRun.Location = new System.Drawing.Point(7, 152);
+            this.SelectedBuildAskBeforeRun.Name = "SelectedBuildAskBeforeRun";
+            this.SelectedBuildAskBeforeRun.Size = new System.Drawing.Size(171, 23);
+            this.SelectedBuildAskBeforeRun.TabIndex = 29;
+            this.SelectedBuildAskBeforeRun.Text = "Ask before running game";
+            this.SelectedBuildAskBeforeRun.UseVisualStyleBackColor = true;
             // 
-            // radBuildRunGame
+            // SelectedBuildRunGameAlways
             // 
-            this.radBuildRunGame.Location = new System.Drawing.Point(6, 65);
-            this.radBuildRunGame.Name = "radBuildRunGame";
-            this.radBuildRunGame.Size = new System.Drawing.Size(104, 23);
-            this.radBuildRunGame.TabIndex = 26;
-            this.radBuildRunGame.Text = "Run game";
-            this.radBuildRunGame.UseVisualStyleBackColor = true;
+            this.SelectedBuildRunGameAlways.Location = new System.Drawing.Point(6, 65);
+            this.SelectedBuildRunGameAlways.Name = "SelectedBuildRunGameAlways";
+            this.SelectedBuildRunGameAlways.Size = new System.Drawing.Size(104, 23);
+            this.SelectedBuildRunGameAlways.TabIndex = 26;
+            this.SelectedBuildRunGameAlways.Text = "Run game";
+            this.SelectedBuildRunGameAlways.UseVisualStyleBackColor = true;
             // 
-            // txtBuildCommandLine
+            // SelectedBuildCommandLine
             // 
-            this.txtBuildCommandLine.Location = new System.Drawing.Point(120, 178);
-            this.txtBuildCommandLine.Name = "txtBuildCommandLine";
-            this.txtBuildCommandLine.Size = new System.Drawing.Size(225, 20);
-            this.txtBuildCommandLine.TabIndex = 27;
-            this.txtBuildCommandLine.Text = "-dev -console";
+            this.SelectedBuildCommandLine.Location = new System.Drawing.Point(120, 178);
+            this.SelectedBuildCommandLine.Name = "SelectedBuildCommandLine";
+            this.SelectedBuildCommandLine.Size = new System.Drawing.Size(225, 20);
+            this.SelectedBuildCommandLine.TabIndex = 27;
+            this.SelectedBuildCommandLine.Text = "-dev -console";
             // 
-            // radBuildRunGameOnChange
+            // SelectedBuildRunGameOnChange
             // 
-            this.radBuildRunGameOnChange.Checked = true;
-            this.radBuildRunGameOnChange.Location = new System.Drawing.Point(6, 93);
-            this.radBuildRunGameOnChange.Name = "radBuildRunGameOnChange";
-            this.radBuildRunGameOnChange.Size = new System.Drawing.Size(192, 24);
-            this.radBuildRunGameOnChange.TabIndex = 25;
-            this.radBuildRunGameOnChange.TabStop = true;
-            this.radBuildRunGameOnChange.Text = "Run game only if the BSP changed";
-            this.radBuildRunGameOnChange.UseVisualStyleBackColor = true;
+            this.SelectedBuildRunGameOnChange.Checked = true;
+            this.SelectedBuildRunGameOnChange.Location = new System.Drawing.Point(6, 93);
+            this.SelectedBuildRunGameOnChange.Name = "SelectedBuildRunGameOnChange";
+            this.SelectedBuildRunGameOnChange.Size = new System.Drawing.Size(192, 24);
+            this.SelectedBuildRunGameOnChange.TabIndex = 25;
+            this.SelectedBuildRunGameOnChange.TabStop = true;
+            this.SelectedBuildRunGameOnChange.Text = "Run game only if the BSP changed";
+            this.SelectedBuildRunGameOnChange.UseVisualStyleBackColor = true;
             // 
-            // chkBuildShowLog
+            // SelectedBuildShowLog
             // 
-            this.chkBuildShowLog.Checked = true;
-            this.chkBuildShowLog.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkBuildShowLog.Location = new System.Drawing.Point(6, 36);
-            this.chkBuildShowLog.Name = "chkBuildShowLog";
-            this.chkBuildShowLog.Size = new System.Drawing.Size(256, 23);
-            this.chkBuildShowLog.TabIndex = 31;
-            this.chkBuildShowLog.Text = "Show compile log";
-            this.chkBuildShowLog.UseVisualStyleBackColor = true;
+            this.SelectedBuildShowLog.Checked = true;
+            this.SelectedBuildShowLog.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.SelectedBuildShowLog.Location = new System.Drawing.Point(6, 36);
+            this.SelectedBuildShowLog.Name = "SelectedBuildShowLog";
+            this.SelectedBuildShowLog.Size = new System.Drawing.Size(256, 23);
+            this.SelectedBuildShowLog.TabIndex = 31;
+            this.SelectedBuildShowLog.Text = "Show compile log";
+            this.SelectedBuildShowLog.UseVisualStyleBackColor = true;
             // 
-            // radBuildDontRunGame
+            // SelectedBuildRunGameNever
             // 
-            this.radBuildDontRunGame.Location = new System.Drawing.Point(6, 123);
-            this.radBuildDontRunGame.Name = "radBuildDontRunGame";
-            this.radBuildDontRunGame.Size = new System.Drawing.Size(104, 23);
-            this.radBuildDontRunGame.TabIndex = 24;
-            this.radBuildDontRunGame.Text = "Do nothing";
-            this.radBuildDontRunGame.UseVisualStyleBackColor = true;
+            this.SelectedBuildRunGameNever.Location = new System.Drawing.Point(6, 123);
+            this.SelectedBuildRunGameNever.Name = "SelectedBuildRunGameNever";
+            this.SelectedBuildRunGameNever.Size = new System.Drawing.Size(104, 23);
+            this.SelectedBuildRunGameNever.TabIndex = 24;
+            this.SelectedBuildRunGameNever.Text = "Do nothing";
+            this.SelectedBuildRunGameNever.UseVisualStyleBackColor = true;
             // 
             // tabBuildAdvanced
             // 
+            this.tabBuildAdvanced.BackColor = System.Drawing.SystemColors.Control;
             this.tabBuildAdvanced.Controls.Add(this.tabBuildAdvancedSubTabs);
             this.tabBuildAdvanced.Controls.Add(this.lblBuildTEMPAdvancedConfig);
             this.tabBuildAdvanced.Location = new System.Drawing.Point(4, 22);
@@ -1743,7 +1730,6 @@ namespace Sledge.Editor.Settings
             this.tabBuildAdvanced.Size = new System.Drawing.Size(469, 473);
             this.tabBuildAdvanced.TabIndex = 3;
             this.tabBuildAdvanced.Text = "Advanced";
-            this.tabBuildAdvanced.UseVisualStyleBackColor = true;
             // 
             // tabBuildAdvancedSubTabs
             // 
@@ -1837,23 +1823,25 @@ namespace Sledge.Editor.Settings
             this.lblBuildTEMPAdvancedConfig.Text = "These will be set as default settings of the compile dialog, but you can change t" +
     "hen for each compile if you want.";
             // 
-            // btnBuildRemove
+            // RemoveBuild
             // 
-            this.btnBuildRemove.Location = new System.Drawing.Point(166, 35);
-            this.btnBuildRemove.Name = "btnBuildRemove";
-            this.btnBuildRemove.Size = new System.Drawing.Size(73, 23);
-            this.btnBuildRemove.TabIndex = 12;
-            this.btnBuildRemove.Text = "Remove";
-            this.btnBuildRemove.UseVisualStyleBackColor = true;
+            this.RemoveBuild.Location = new System.Drawing.Point(166, 35);
+            this.RemoveBuild.Name = "RemoveBuild";
+            this.RemoveBuild.Size = new System.Drawing.Size(73, 23);
+            this.RemoveBuild.TabIndex = 12;
+            this.RemoveBuild.Text = "Remove";
+            this.RemoveBuild.UseVisualStyleBackColor = true;
+            this.RemoveBuild.Click += new System.EventHandler(this.RemoveBuildClicked);
             // 
-            // btnBuildAdd
+            // AddBuild
             // 
-            this.btnBuildAdd.Location = new System.Drawing.Point(166, 6);
-            this.btnBuildAdd.Name = "btnBuildAdd";
-            this.btnBuildAdd.Size = new System.Drawing.Size(73, 23);
-            this.btnBuildAdd.TabIndex = 10;
-            this.btnBuildAdd.Text = "Add New";
-            this.btnBuildAdd.UseVisualStyleBackColor = true;
+            this.AddBuild.Location = new System.Drawing.Point(166, 6);
+            this.AddBuild.Name = "AddBuild";
+            this.AddBuild.Size = new System.Drawing.Size(73, 23);
+            this.AddBuild.TabIndex = 10;
+            this.AddBuild.Text = "Add New";
+            this.AddBuild.UseVisualStyleBackColor = true;
+            this.AddBuild.Click += new System.EventHandler(this.AddBuildClicked);
             // 
             // BuildTree
             // 
@@ -1861,6 +1849,7 @@ namespace Sledge.Editor.Settings
             this.BuildTree.Name = "BuildTree";
             this.BuildTree.Size = new System.Drawing.Size(154, 448);
             this.BuildTree.TabIndex = 9;
+            this.BuildTree.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.BuildSelected);
             // 
             // tabSteam
             // 
@@ -2197,17 +2186,16 @@ namespace Sledge.Editor.Settings
             this.btnApplySettings.UseVisualStyleBackColor = true;
             this.btnApplySettings.Click += new System.EventHandler(this.Apply);
             // 
-            // SelectedGameSteamInstall
+            // SelectedBuildIncludeWads
             // 
-            this.SelectedGameSteamInstall.Checked = true;
-            this.SelectedGameSteamInstall.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.SelectedGameSteamInstall.Location = new System.Drawing.Point(217, 35);
-            this.SelectedGameSteamInstall.Name = "SelectedGameSteamInstall";
-            this.SelectedGameSteamInstall.Size = new System.Drawing.Size(109, 24);
-            this.SelectedGameSteamInstall.TabIndex = 21;
-            this.SelectedGameSteamInstall.Text = "Steam Install";
-            this.SelectedGameSteamInstall.UseVisualStyleBackColor = true;
-            this.SelectedGameSteamInstall.CheckedChanged += new System.EventHandler(this.SelectedGameEngineChanged);
+            this.SelectedBuildIncludeWads.Checked = true;
+            this.SelectedBuildIncludeWads.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.SelectedBuildIncludeWads.Location = new System.Drawing.Point(95, 163);
+            this.SelectedBuildIncludeWads.Name = "SelectedBuildIncludeWads";
+            this.SelectedBuildIncludeWads.Size = new System.Drawing.Size(293, 24);
+            this.SelectedBuildIncludeWads.TabIndex = 21;
+            this.SelectedBuildIncludeWads.Text = "Automatically include WAD files found in this directory";
+            this.SelectedBuildIncludeWads.UseVisualStyleBackColor = true;
             // 
             // SettingsForm
             // 
@@ -2252,7 +2240,7 @@ namespace Sledge.Editor.Settings
             ((System.ComponentModel.ISupportInitialize)(this.SelectedGameLightmapScale)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.SelectedGameTextureScale)).EndInit();
             this.tabBuild.ResumeLayout(false);
-            this.tabBuildSubTabs.ResumeLayout(false);
+            this.BuildSubTabs.ResumeLayout(false);
             this.tabBuildGeneral.ResumeLayout(false);
             this.tabBuildGeneral.PerformLayout();
             this.tabBuildExecutables.ResumeLayout(false);
@@ -2326,8 +2314,7 @@ namespace Sledge.Editor.Settings
 		private System.Windows.Forms.CheckBox SelectedGameUseDiffAutosaveDir;
 		private System.Windows.Forms.CheckBox SelectedGameEnableAutosave;
         private System.Windows.Forms.TabControl GameSubTabs;
-		private System.Windows.Forms.TreeView GameTree;
-		private System.Windows.Forms.Button btnBuildChangeName;
+        private System.Windows.Forms.TreeView GameTree;
 		private System.Windows.Forms.TreeView BuildTree;
 		private System.Windows.Forms.ColumnHeader chTrigger;
 		private System.Windows.Forms.ColumnHeader ckKeyCombo;
@@ -2370,7 +2357,7 @@ namespace Sledge.Editor.Settings
 		private System.Windows.Forms.TabPage tabBuildPostCompile;
 		private System.Windows.Forms.TabPage tabBuildExecutables;
 		private System.Windows.Forms.TabPage tabBuildGeneral;
-		private System.Windows.Forms.TabControl tabBuildSubTabs;
+		private System.Windows.Forms.TabControl BuildSubTabs;
 		private System.Windows.Forms.TabPage tabConfigTextures;
 		private System.Windows.Forms.TabPage tabConfigEntities;
 		private System.Windows.Forms.TabPage tabConfigDirectories;
@@ -2412,8 +2399,8 @@ namespace Sledge.Editor.Settings
 		private System.Windows.Forms.Label label9;
 		private System.Windows.Forms.Label label3;
 		private System.Windows.Forms.Label label2;
-		private System.Windows.Forms.TextBox txtBuildCommandLine;
-		private System.Windows.Forms.CheckBox chkBuildCopyBSP;
+		private System.Windows.Forms.TextBox SelectedBuildCommandLine;
+		private System.Windows.Forms.CheckBox SelectedBuildCopyBsp;
 		private System.Windows.Forms.Label lblConfigLightmapScale;
 		private System.Windows.Forms.Label lblConfigTextureScale;
 		private System.Windows.Forms.Label lblConfigBrushEnt;
@@ -2423,29 +2410,27 @@ namespace Sledge.Editor.Settings
 		private System.Windows.Forms.Button btnConfigSteamDirBrowse;
 		private System.Windows.Forms.ComboBox cmbConfigSteamUser;
 		private System.Windows.Forms.Label lblConfigSteamUser;
-		private System.Windows.Forms.Button btnBuildExeFolderBrowse;
-		private System.Windows.Forms.ComboBox cmbBuildEngine;
+		private System.Windows.Forms.Button SelectedBuildExeFolderBrowse;
+		private System.Windows.Forms.ComboBox SelectedBuildEngine;
 		private System.Windows.Forms.Label lblBuildEngine;
 		private System.Windows.Forms.Label lblBuildExeFolder;
 		private System.Windows.Forms.Label lblBuildName;
-		private System.Windows.Forms.TextBox txtBuildExeFolder;
-		private System.Windows.Forms.TextBox txtBuildName;
-		private System.Windows.Forms.Button btnBuildRemove;
-		private System.Windows.Forms.Button btnBuildAdd;
-		private System.Windows.Forms.CheckBox chkBuildShowLog;
-		private System.Windows.Forms.RadioButton radBuildDontRunGame;
-		private System.Windows.Forms.CheckBox chkBuildAskBeforeRun;
-		private System.Windows.Forms.RadioButton radBuildRunGameOnChange;
-		private System.Windows.Forms.RadioButton radBuildRunGame;
-		private System.Windows.Forms.Label lblBuildCommandLine;
-		private System.Windows.Forms.ListBox lstBuildPresets;
-		private System.Windows.Forms.Label lblBuildDetectedPresets;
-		private System.Windows.Forms.ComboBox cmbBuildRAD;
-		private System.Windows.Forms.ComboBox cmbBuildVIS;
+		private System.Windows.Forms.TextBox SelectedBuildExeFolder;
+		private System.Windows.Forms.TextBox SelectedBuildName;
+		private System.Windows.Forms.Button RemoveBuild;
+		private System.Windows.Forms.Button AddBuild;
+		private System.Windows.Forms.CheckBox SelectedBuildShowLog;
+		private System.Windows.Forms.RadioButton SelectedBuildRunGameNever;
+		private System.Windows.Forms.CheckBox SelectedBuildAskBeforeRun;
+		private System.Windows.Forms.RadioButton SelectedBuildRunGameOnChange;
+		private System.Windows.Forms.RadioButton SelectedBuildRunGameAlways;
+        private System.Windows.Forms.Label lblBuildCommandLine;
+		private System.Windows.Forms.ComboBox SelectedBuildRad;
+		private System.Windows.Forms.ComboBox SelectedBuildVis;
 		private System.Windows.Forms.Label lblBuildRAD;
-		private System.Windows.Forms.ComboBox cmbBuildCSG;
+		private System.Windows.Forms.ComboBox SelectedBuildCsg;
 		private System.Windows.Forms.Label lblBuildVIS;
-		private System.Windows.Forms.ComboBox cmbBuildBSP;
+		private System.Windows.Forms.ComboBox SelectedBuildBsp;
 		private System.Windows.Forms.Label lblBuildCSG;
 		private System.Windows.Forms.Label lblBuildBSP;
 		private System.Windows.Forms.Label lblBuildTEMPAdvancedConfig;
@@ -2458,5 +2443,6 @@ namespace Sledge.Editor.Settings
         private System.Windows.Forms.CheckBox HideGridOn;
         private System.Windows.Forms.DomainUpDown GridHighlight2UnitNum;
         private System.Windows.Forms.CheckBox SelectedGameSteamInstall;
+        private System.Windows.Forms.CheckBox SelectedBuildIncludeWads;
 	}
 }

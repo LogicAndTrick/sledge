@@ -7,6 +7,8 @@ using Sledge.Database;
 using Sledge.Database.Models;
 using System.IO;
 using Sledge.Editor;
+using Sledge.Providers.GameData;
+using Sledge.Providers.Map;
 using Sledge.Providers.Texture;
 using Sledge.Settings;
 using Sledge.UI;
@@ -21,6 +23,11 @@ namespace Sledge.Sandbox
 
         public static void Start()
         {
+            MapProvider.Register(new RmfProvider());
+            MapProvider.Register(new VmfProvider());
+            GameDataProvider.Register(new FgdProvider());
+            TextureProvider.Register(new WadProvider());
+
            // var editor = new Editor.Editor();
            // editor.Load += (sender, e) => PostStart(sender as Editor.Editor);
            // Application.Run(editor);

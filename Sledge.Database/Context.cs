@@ -98,8 +98,8 @@ namespace Sledge.Database
                                              DefaultTextureScale = (decimal) rdr.GetFloat(13),
                                              DefaultLightmapScale = (decimal) rdr.GetFloat(14),
                                              SteamInstall = rdr.GetInt32(15) > 0,
-                                             Wads = wads.Where(x => x.GameID == rdr.GetInt32(3)).ToList(),
-                                             Fgds = fgds.Where(x => x.GameID == rdr.GetInt32(3)).ToList()
+                                             Wads = wads.Where(x => x.GameID == rdr.GetInt32(0)).ToList(),
+                                             Fgds = fgds.Where(x => x.GameID == rdr.GetInt32(0)).ToList()
                                          });
                         }
                     }
@@ -249,7 +249,7 @@ namespace Sledge.Database
                 }
                 using (var comm = _conn.CreateCommand())
                 {
-                    comm.CommandText = "INSERT INTO Settings " + String.Join(" UNION ",
+                    comm.CommandText = "INSERT INTO Settings (Key, Value) " + String.Join(" UNION ",
                         settings.Select(x => String.Format("SELECT '{0}', '{1}'", x.Key.Replace("'", "''"), x.Value.Replace("'", "''"))));
                     comm.ExecuteNonQuery();
                 }
@@ -258,6 +258,82 @@ namespace Sledge.Database
             {
                 _conn.Close();
             }
+        }
+
+        public void SaveAllGames(List<Game> games)
+        {
+            try
+            {
+                _conn.Open();
+                using (var comm = _conn.CreateCommand())
+                {
+                    comm.CommandText = "DELETE FROM Games";
+                    comm.ExecuteNonQuery();
+                    comm.CommandText = "DELETE FROM Fgds";
+                    comm.ExecuteNonQuery();
+                    comm.CommandText = "DELETE FROM Wads";
+                    comm.ExecuteNonQuery();
+                }
+                using (var comm = _conn.CreateCommand())
+                {
+                    comm.CommandText = "INSERT INTO Games (ID, Name, EngineID, BuildID, SteamGameDir, " +
+                                       "WonGameDir, ModDir, MapDir, Autosave, UseCustomAutosaveDir, AutosaveDir, " +
+                                       "DefaultPointEntity, DefaultBrushEntity, DefaultTextureScale, " +
+                                       "DefaultLightmapScale, SteamInstall) " + 
+                                       String.Join(" UNION ", games.Select(x => String.Format(
+                                           "SELECT {0}, '{1}', {2}, {3}, '{4}', '{5}', '{6}', '{7}', {8}, {9}, '{10}', '{11}', '{12}', {13}, {14}, {15}",
+                                           x.ID > 0 ? x.ID.ToString() : "NULL", Escape(x.Name), x.EngineID, x.BuildID, Escape(x.SteamGameDir), Escape(x.WonGameDir), Escape(x.ModDir),
+                                           Escape(x.MapDir), x.Autosave ? 1 : 0, x.UseCustomAutosaveDir ? 1 : 0, Escape(x.AutosaveDir), 
+                                           Escape(x.DefaultPointEntity), Escape(x.DefaultBrushEntity), x.DefaultTextureScale, x.DefaultLightmapScale,
+                                           x.SteamInstall ? 1 : 0
+                                           )));
+                    comm.ExecuteNonQuery();
+                    comm.CommandText = "INSERT INTO Fgds (GameID, Path) " +
+                                       String.Join(" UNION ", games.SelectMany(x => x.Fgds)
+                                             .Select(x => String.Format("SELECT {0}, '{1}'",
+                                                 x.GameID, Escape(x.Path))));
+                    comm.ExecuteNonQuery();
+                    comm.CommandText = "INSERT INTO Wads (GameID, Path) " +
+                                       String.Join(" UNION ", games.SelectMany(x => x.Wads)
+                                             .Select(x => String.Format("SELECT {0}, '{1}'",
+                                                 x.GameID, Escape(x.Path))));
+                    comm.ExecuteNonQuery();
+                }
+            }
+            finally
+            {
+                _conn.Close();
+            }
+        }
+
+        public void SaveAllBuilds(IEnumerable<Build> builds)
+        {
+            try
+            {
+                _conn.Open();
+                using (var comm = _conn.CreateCommand())
+                {
+                    comm.CommandText = "DELETE FROM Builds";
+                    comm.ExecuteNonQuery();
+                }
+                using (var comm = _conn.CreateCommand())
+                {
+                    comm.CommandText = "INSERT INTO Builds (ID, Name, EngineID, Path, Bsp, Csg, Vis, Rad) " +
+                        String.Join(" UNION ", builds.Select(x => String.Format(
+                            "SELECT {0}, '{1}', {2}, '{3}', '{4}', '{5}', '{6}', '{7}'",
+                            x.ID, Escape(x.Name), x.EngineID, Escape(x.Path), Escape(x.Bsp), Escape(x.Csg), Escape(x.Vis), Escape(x.Rad))));
+                    comm.ExecuteNonQuery();
+                }
+            }
+            finally
+            {
+                _conn.Close();
+            }
+        }
+
+        private string Escape(string x)
+        {
+            return x == null ? "" : x.Replace("'", "''");
         }
     }
 }
