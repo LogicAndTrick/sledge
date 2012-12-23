@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 
 namespace Sledge.DataStructures.Geometric
 {
@@ -235,7 +236,8 @@ namespace Sledge.DataStructures.Geometric
 
         public static Coordinate Parse(string x, string y, string z)
         {
-            return new Coordinate(decimal.Parse(x), decimal.Parse(y), decimal.Parse(z));
+            const NumberStyles ns = NumberStyles.Float;
+            return new Coordinate(decimal.Parse(x, ns), decimal.Parse(y, ns), decimal.Parse(z, ns));
         }
 
         public CoordinateF ToCoordinateF()

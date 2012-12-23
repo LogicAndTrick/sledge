@@ -50,6 +50,7 @@
     <Compile Include="GameData\GameDataProvider.cs" />
     <Compile Include="GenericStructure.cs" />
     <Compile Include="BinaryExtensions.cs" />
+    <Compile Include="Map\MapFormatProvider.cs" />
     <Compile Include="Map\MapProvider.cs" />
     <Compile Include="Map\VmfProvider.cs" />
     <Compile Include="Model\MdlProvider.cs" />
