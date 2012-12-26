@@ -10,6 +10,30 @@ namespace Sledge.DataStructures.Geometric
         public Coordinate End { get; private set; }
         public Coordinate Center { get; private set; }
 
+        /// <summary>
+        /// The X value difference of this box
+        /// </summary>
+        public decimal Width
+        {
+            get { return End.X - Start.X; }
+        }
+
+        /// <summary>
+        /// The Y value difference of this box
+        /// </summary>
+        public decimal Length
+        {
+            get { return End.Y - Start.Y; }
+        }
+
+        /// <summary>
+        /// The Z value difference of this box
+        /// </summary>
+        public decimal Height
+        {
+            get { return End.Z - Start.Z; }
+        }
+
         public Box(Coordinate start, Coordinate end)
         {
             Start = start;

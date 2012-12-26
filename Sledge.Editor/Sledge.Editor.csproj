@@ -63,7 +63,30 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Brushes\BlockBrush.cs" />
+    <Compile Include="Brushes\BrushManager.cs" />
+    <Compile Include="Brushes\Controls\BrushControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Brushes\Controls\BooleanControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Brushes\Controls\BooleanControl.Designer.cs">
+      <DependentUpon>BooleanControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Brushes\Controls\NumericControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Brushes\Controls\NumericControl.Designer.cs">
+      <DependentUpon>NumericControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Brushes\ConeBrush.cs" />
+    <Compile Include="Brushes\TorusBrush.cs" />
+    <Compile Include="Brushes\PipeBrush.cs" />
+    <Compile Include="Brushes\CylinderBrush.cs" />
     <Compile Include="Brushes\IBrush.cs" />
+    <Compile Include="Brushes\PyramidBrush.cs" />
+    <Compile Include="Brushes\TetrahedronBrush.cs" />
+    <Compile Include="Brushes\WedgeBrush.cs" />
     <Compile Include="Editing\Selection.cs" />
     <Compile Include="Error.cs" />
     <Compile Include="Extensions\EnumExtensions.cs" />
@@ -123,6 +146,7 @@
     <Compile Include="Tools\DisplacementTools\SelectControl.Designer.cs">
       <DependentUpon>SelectControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="Tools\EntityTool.cs" />
     <Compile Include="Tools\RotateTool.cs" />
     <Compile Include="Tools\SkewTool.cs" />
     <Compile Include="Tools\NotGreatSelectTool.cs" />
@@ -175,6 +199,12 @@
       <DependentUpon>SettingsForm.cs</DependentUpon>
     </Compile>
     <Compile Include="UI\ViewportManager.cs" />
+    <EmbeddedResource Include="Brushes\Controls\BooleanControl.resx">
+      <DependentUpon>BooleanControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Brushes\Controls\NumericControl.resx">
+      <DependentUpon>NumericControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Editor.resx">
       <DependentUpon>Editor.cs</DependentUpon>
     </EmbeddedResource>
@@ -291,10 +321,12 @@
     <None Include="Resources\Tool_Texture.png" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Milestones.txt" />
     <Content Include="Resources\Arrow_Down.png" />
     <Content Include="Resources\Arrow_Up.png" />
     <Content Include="Resources\Tool_Brush.png" />
     <Content Include="Resources\Tool_Clip.png" />
+    <Content Include="Resources\Tool_Entity.png" />
     <Content Include="Resources\Tool_Rotate.png" />
     <Content Include="Resources\Tool_Skew.png" />
     <Content Include="Resources\Tool_Transform.png" />

@@ -32,18 +32,15 @@
             this.mnuMain = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.viewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.MenuToolsSettings = new System.Windows.Forms.ToolStripMenuItem();
             this.etcToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.stsStatus = new System.Windows.Forms.StatusStrip();
             this.tscToolStrip = new System.Windows.Forms.ToolStripContainer();
-            this.tblQuadView = new Sledge.Editor.UI.QuadSplitControl();
             this.panel1 = new System.Windows.Forms.Panel();
             this.RightToolbar = new System.Windows.Forms.TableLayoutPanel();
-            this.TextureCollapse = new Sledge.Editor.UI.CollapsingLabel();
             this.TexturePanel = new System.Windows.Forms.Panel();
             this.textBox1 = new System.Windows.Forms.TextBox();
-            this.BrushCreateCollapse = new Sledge.Editor.UI.CollapsingLabel();
-            this.BrushCreatePanel = new System.Windows.Forms.Panel();
-            this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.tspTools = new System.Windows.Forms.ToolStrip();
             this.tspFile = new System.Windows.Forms.ToolStrip();
             this.tsbNew = new System.Windows.Forms.ToolStripButton();
@@ -55,8 +52,11 @@
             this.pasteToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.tsbRandom = new System.Windows.Forms.ToolStripButton();
-            this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.MenuToolsSettings = new System.Windows.Forms.ToolStripMenuItem();
+            this.BrushCreatePanel = new System.Windows.Forms.FlowLayoutPanel();
+            this.comboBox1 = new System.Windows.Forms.ComboBox();
+            this.tblQuadView = new Sledge.Editor.UI.QuadSplitControl();
+            this.TextureCollapse = new Sledge.Editor.UI.CollapsingLabel();
+            this.BrushCreateCollapse = new Sledge.Editor.UI.CollapsingLabel();
             this.mnuMain.SuspendLayout();
             this.tscToolStrip.ContentPanel.SuspendLayout();
             this.tscToolStrip.LeftToolStripPanel.SuspendLayout();
@@ -65,8 +65,8 @@
             this.panel1.SuspendLayout();
             this.RightToolbar.SuspendLayout();
             this.TexturePanel.SuspendLayout();
-            this.BrushCreatePanel.SuspendLayout();
             this.tspFile.SuspendLayout();
+            this.BrushCreatePanel.SuspendLayout();
             this.SuspendLayout();
             // 
             // mnuMain
@@ -93,6 +93,21 @@
             this.viewToolStripMenuItem.Name = "viewToolStripMenuItem";
             this.viewToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
             this.viewToolStripMenuItem.Text = "View";
+            // 
+            // toolsToolStripMenuItem
+            // 
+            this.toolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.MenuToolsSettings});
+            this.toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
+            this.toolsToolStripMenuItem.Size = new System.Drawing.Size(48, 20);
+            this.toolsToolStripMenuItem.Text = "Tools";
+            // 
+            // MenuToolsSettings
+            // 
+            this.MenuToolsSettings.Name = "MenuToolsSettings";
+            this.MenuToolsSettings.Size = new System.Drawing.Size(116, 22);
+            this.MenuToolsSettings.Text = "Settings";
+            this.MenuToolsSettings.Click += new System.EventHandler(this.OpenSettingsDialog);
             // 
             // etcToolStripMenuItem
             // 
@@ -131,32 +146,6 @@
             // 
             this.tscToolStrip.TopToolStripPanel.Controls.Add(this.tspFile);
             // 
-            // tblQuadView
-            // 
-            this.tblQuadView.ColumnCount = 2;
-            this.tblQuadView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tblQuadView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tblQuadView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tblQuadView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tblQuadView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tblQuadView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tblQuadView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tblQuadView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tblQuadView.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tblQuadView.Location = new System.Drawing.Point(0, 0);
-            this.tblQuadView.Name = "tblQuadView";
-            this.tblQuadView.RowCount = 2;
-            this.tblQuadView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tblQuadView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tblQuadView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tblQuadView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tblQuadView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tblQuadView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tblQuadView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tblQuadView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tblQuadView.Size = new System.Drawing.Size(682, 457);
-            this.tblQuadView.TabIndex = 0;
-            // 
             // panel1
             // 
             this.panel1.Controls.Add(this.RightToolbar);
@@ -170,9 +159,9 @@
             // 
             this.RightToolbar.ColumnCount = 1;
             this.RightToolbar.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.RightToolbar.Controls.Add(this.BrushCreatePanel, 0, 3);
             this.RightToolbar.Controls.Add(this.TextureCollapse, 0, 0);
             this.RightToolbar.Controls.Add(this.BrushCreateCollapse, 0, 2);
-            this.RightToolbar.Controls.Add(this.BrushCreatePanel, 0, 3);
             this.RightToolbar.Controls.Add(this.TexturePanel, 0, 1);
             this.RightToolbar.Dock = System.Windows.Forms.DockStyle.Fill;
             this.RightToolbar.Location = new System.Drawing.Point(0, 0);
@@ -184,16 +173,6 @@
             this.RightToolbar.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.RightToolbar.Size = new System.Drawing.Size(150, 457);
             this.RightToolbar.TabIndex = 2;
-            // 
-            // TextureCollapse
-            // 
-            this.TextureCollapse.Collapsed = false;
-            this.TextureCollapse.ControlToCollapse = this.TexturePanel;
-            this.TextureCollapse.LabelText = "Textures";
-            this.TextureCollapse.Location = new System.Drawing.Point(3, 3);
-            this.TextureCollapse.Name = "TextureCollapse";
-            this.TextureCollapse.Size = new System.Drawing.Size(144, 15);
-            this.TextureCollapse.TabIndex = 0;
             // 
             // TexturePanel
             // 
@@ -209,32 +188,6 @@
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(100, 20);
             this.textBox1.TabIndex = 0;
-            // 
-            // BrushCreateCollapse
-            // 
-            this.BrushCreateCollapse.Collapsed = false;
-            this.BrushCreateCollapse.ControlToCollapse = this.BrushCreatePanel;
-            this.BrushCreateCollapse.LabelText = "Brush Types";
-            this.BrushCreateCollapse.Location = new System.Drawing.Point(3, 130);
-            this.BrushCreateCollapse.Name = "BrushCreateCollapse";
-            this.BrushCreateCollapse.Size = new System.Drawing.Size(144, 15);
-            this.BrushCreateCollapse.TabIndex = 2;
-            // 
-            // BrushCreatePanel
-            // 
-            this.BrushCreatePanel.Controls.Add(this.comboBox1);
-            this.BrushCreatePanel.Location = new System.Drawing.Point(3, 151);
-            this.BrushCreatePanel.Name = "BrushCreatePanel";
-            this.BrushCreatePanel.Size = new System.Drawing.Size(143, 100);
-            this.BrushCreatePanel.TabIndex = 1;
-            // 
-            // comboBox1
-            // 
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Location = new System.Drawing.Point(3, 3);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(137, 21);
-            this.comboBox1.TabIndex = 0;
             // 
             // tspTools
             // 
@@ -337,20 +290,72 @@
             this.tsbRandom.Size = new System.Drawing.Size(23, 22);
             this.tsbRandom.Text = "He&lp";
             // 
-            // toolsToolStripMenuItem
+            // BrushCreatePanel
             // 
-            this.toolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.MenuToolsSettings});
-            this.toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
-            this.toolsToolStripMenuItem.Size = new System.Drawing.Size(48, 20);
-            this.toolsToolStripMenuItem.Text = "Tools";
+            this.BrushCreatePanel.Controls.Add(this.comboBox1);
+            this.BrushCreatePanel.Location = new System.Drawing.Point(3, 151);
+            this.BrushCreatePanel.Name = "BrushCreatePanel";
+            this.BrushCreatePanel.Size = new System.Drawing.Size(144, 100);
+            this.BrushCreatePanel.TabIndex = 1;
             // 
-            // MenuToolsSettings
+            // comboBox1
             // 
-            this.MenuToolsSettings.Name = "MenuToolsSettings";
-            this.MenuToolsSettings.Size = new System.Drawing.Size(152, 22);
-            this.MenuToolsSettings.Text = "Settings";
-            this.MenuToolsSettings.Click += new System.EventHandler(this.OpenSettingsDialog);
+            this.comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBox1.FormattingEnabled = true;
+            this.comboBox1.Location = new System.Drawing.Point(3, 3);
+            this.comboBox1.Name = "comboBox1";
+            this.comboBox1.Size = new System.Drawing.Size(137, 21);
+            this.comboBox1.TabIndex = 0;
+            // 
+            // tblQuadView
+            // 
+            this.tblQuadView.ColumnCount = 2;
+            this.tblQuadView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tblQuadView.Location = new System.Drawing.Point(0, 0);
+            this.tblQuadView.Name = "tblQuadView";
+            this.tblQuadView.RowCount = 2;
+            this.tblQuadView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.Size = new System.Drawing.Size(682, 457);
+            this.tblQuadView.TabIndex = 0;
+            // 
+            // TextureCollapse
+            // 
+            this.TextureCollapse.Collapsed = false;
+            this.TextureCollapse.ControlToCollapse = this.TexturePanel;
+            this.TextureCollapse.LabelText = "Textures";
+            this.TextureCollapse.Location = new System.Drawing.Point(3, 3);
+            this.TextureCollapse.Name = "TextureCollapse";
+            this.TextureCollapse.Size = new System.Drawing.Size(144, 15);
+            this.TextureCollapse.TabIndex = 0;
+            // 
+            // BrushCreateCollapse
+            // 
+            this.BrushCreateCollapse.Collapsed = false;
+            this.BrushCreateCollapse.ControlToCollapse = this.BrushCreatePanel;
+            this.BrushCreateCollapse.LabelText = "Brush Types";
+            this.BrushCreateCollapse.Location = new System.Drawing.Point(3, 130);
+            this.BrushCreateCollapse.Name = "BrushCreateCollapse";
+            this.BrushCreateCollapse.Size = new System.Drawing.Size(144, 15);
+            this.BrushCreateCollapse.TabIndex = 2;
             // 
             // Editor
             // 
@@ -378,9 +383,9 @@
             this.RightToolbar.ResumeLayout(false);
             this.TexturePanel.ResumeLayout(false);
             this.TexturePanel.PerformLayout();
-            this.BrushCreatePanel.ResumeLayout(false);
             this.tspFile.ResumeLayout(false);
             this.tspFile.PerformLayout();
+            this.BrushCreatePanel.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -409,13 +414,13 @@
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.TableLayoutPanel RightToolbar;
         private UI.CollapsingLabel TextureCollapse;
-        private System.Windows.Forms.Panel BrushCreatePanel;
-        private System.Windows.Forms.ComboBox comboBox1;
         private UI.CollapsingLabel BrushCreateCollapse;
         private System.Windows.Forms.Panel TexturePanel;
         private System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.ToolStripMenuItem toolsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem MenuToolsSettings;
+        private System.Windows.Forms.FlowLayoutPanel BrushCreatePanel;
+        private System.Windows.Forms.ComboBox comboBox1;
     }
 }
 

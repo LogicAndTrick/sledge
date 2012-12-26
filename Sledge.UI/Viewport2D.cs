@@ -189,6 +189,16 @@ namespace Sledge.UI
             return CenterScreen + ((location - Position) * Zoom);
         }
 
+        public decimal UnitsToPixels(decimal units)
+        {
+            return units * Zoom;
+        }
+
+        public decimal PixelsToUnits(decimal pixels)
+        {
+            return pixels / Zoom;
+        }
+
         protected override void UpdateBeforeRender()
         {
             GL.Scale(new Vector3((float) Zoom, (float) Zoom, 0));

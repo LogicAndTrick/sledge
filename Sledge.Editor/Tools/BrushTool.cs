@@ -1,9 +1,12 @@
-﻿using System.Drawing;
+﻿using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
+using OpenTK.Graphics.OpenGL;
 using Sledge.DataStructures.Geometric;
 using Sledge.Editor.Properties;
 using Sledge.Editor.Editing;
 using Sledge.DataStructures.MapObjects;
+using Sledge.Editor.Rendering;
 using Sledge.Graphics.Helpers;
 using Sledge.UI;
 using Sledge.Editor.Brushes;
@@ -13,6 +16,8 @@ namespace Sledge.Editor.Tools
     public class BrushTool : BaseBoxTool
     {
         private Box _lastBox;
+        private bool _updatePreview;
+        private List<Face> _preview;
 
         public override Image GetIcon()
         {
@@ -36,7 +41,8 @@ namespace Sledge.Editor.Tools
 
         public override void ToolSelected()
         {
-            var sel = Selection.GetSelectedObjects().OfType<Solid>();
+            BrushManager.ValuesChanged += ValuesChanged;
+            var sel = Selection.GetSelectedObjects().OfType<Solid>().ToList();
             if (sel.Any())
             {
                 _lastBox = new Box(sel.Select(x => x.BoundingBox));
@@ -45,6 +51,23 @@ namespace Sledge.Editor.Tools
             {
                 _lastBox = new Box(Coordinate.Zero, new Coordinate(Document.GridSpacing, Document.GridSpacing, Document.GridSpacing));
             }
+            _updatePreview = true;
+        }
+
+        public override void ToolDeselected()
+        {
+            BrushManager.ValuesChanged -= ValuesChanged;
+            _updatePreview = false;
+        }
+
+        private void ValuesChanged(IBrush brush)
+        {
+            if (BrushManager.CurrentBrush == brush) _updatePreview = true;
+        }
+
+        protected override void OnBoxChanged()
+        {
+            _updatePreview = true;
         }
 
         protected override void LeftMouseDownToDraw(Viewport2D viewport, System.Windows.Forms.MouseEventArgs e)
@@ -53,18 +76,32 @@ namespace Sledge.Editor.Tools
             if (_lastBox == null) return;
             State.BoxStart += viewport.GetUnusedCoordinate(_lastBox.Start);
             State.BoxEnd += viewport.GetUnusedCoordinate(_lastBox.End);
+            _updatePreview = true;
         }
 
         private void CreateBrush(Box bounds)
         {
-            var temp = new BlockBrush();
-            var brush = temp.Create(bounds, TextureHelper.Get("AAATRIGGER"));
-            foreach (var obj in brush)
+            var brush = GetBrush(bounds);
+            if (brush != null)
             {
-                obj.Parent = Document.Map.WorldSpawn;
-                Document.Map.WorldSpawn.Children.Add(obj);
+                brush.Parent = Document.Map.WorldSpawn;
+                Document.Map.WorldSpawn.Children.Add(brush);
             }
             Document.UpdateDisplayLists();
+        }
+
+        private static MapObject GetBrush(Box bounds)
+        {
+            var brush = BrushManager.CurrentBrush;
+            var created = brush.Create(bounds, TextureHelper.Get("AAATRIGGER")).ToList();
+            if (created.Count > 1)
+            {
+                var g = new Group();
+                g.Children.AddRange(created);
+                g.UpdateBoundingBox(false);
+                return g;
+            }
+            return created.FirstOrDefault();
         }
 
         public override void BoxDrawnConfirm(ViewportBase viewport)
@@ -75,18 +112,71 @@ namespace Sledge.Editor.Tools
                 CreateBrush(box);
                 _lastBox = box;
             }
+            _preview = null;
             base.BoxDrawnConfirm(viewport);
         }
 
         public override void BoxDrawnCancel(ViewportBase viewport)
         {
             _lastBox = new Box(State.BoxStart, State.BoxEnd);
+            _preview = null;
             base.BoxDrawnCancel(viewport);
+        }
+
+        public override void UpdateFrame(ViewportBase viewport)
+        {
+            if (_updatePreview && ShouldDrawBox())
+            {
+                var box = new Box(State.BoxStart, State.BoxEnd);
+                var brush = GetBrush(box);
+                _preview = new List<Face>();
+                CollectFaces(_preview, new[] { brush });
+            }
+            _updatePreview = false;
+        }
+
+        private Color GetRenderColour()
+        {
+            var col = GetRenderBoxColour();
+            return Color.FromArgb(128, col);
+        }
+
+        protected override void Render2D(Viewport2D viewport)
+        {
+            base.Render2D(viewport);
+            if (ShouldDrawBox() && _preview != null)
+            {
+                GL.Color3(GetRenderColour());
+                Graphics.Helpers.Matrix.Push();
+                var matrix = DisplayListGroup.GetMatrixFor(viewport.Direction);
+                GL.MultMatrix(ref matrix);
+                DataStructures.Rendering.Rendering.DrawWireframe(_preview, true);
+                Graphics.Helpers.Matrix.Pop();
+            }
         }
 
         protected override void Render3D(Viewport3D viewport)
         {
             base.Render3D(viewport);
+            if (ShouldDraw3DBox() && _preview != null)
+            {
+                DataStructures.Rendering.Rendering.DrawFilled(_preview, GetRenderColour());
+            }
+        }
+
+        private static void CollectFaces(List<Face> faces, IEnumerable<MapObject> list)
+        {
+            foreach (var mo in list)
+            {
+                if (mo is Solid)
+                {
+                    faces.AddRange(((Solid)mo).Faces);
+                }
+                else if (mo is Entity || mo is Group)
+                {
+                    CollectFaces(faces, mo.Children);
+                }
+            }
         }
     }
 }

@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Text;
 using Sledge.Common;
 using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.MapObjects;
@@ -29,6 +28,23 @@ namespace Sledge.Providers.Map
         private void Assert(bool b, string message = "Malformed file.")
         {
             if (!b) throw new Exception(message);
+        }
+
+        private string FormatCoordinate(Coordinate c)
+        {
+            return c.X.ToString("0.000") + " " + c.Y.ToString("0.000") + " " + c.Z.ToString("0.000");
+        }
+
+        private void CollectSolids(List<Solid> solids, MapObject parent)
+        {
+            solids.AddRange(parent.Children.OfType<Solid>());
+            parent.Children.OfType<Group>().ToList().ForEach(x => CollectSolids(solids, x));
+        }
+
+        private void CollectEntities(List<Entity> entities, MapObject parent)
+        {
+            entities.AddRange(parent.Children.OfType<Entity>());
+            parent.Children.OfType<Group>().ToList().ForEach(x => CollectEntities(entities, x));
         }
 
         private Face ReadFace(string line)
@@ -67,6 +83,25 @@ namespace Sledge.Providers.Map
                        };
         }
 
+        private void WriteFace(StreamWriter sw, Face face)
+        {
+            // ( -128 64 64 ) ( -64 64 64 ) ( -64 0 64 ) AAATRIGGER [ 1 0 0 0 ] [ 0 -1 0 0 ] 0 1 1
+            var strings = face.Vertices.Take(3).Select(x => "( " + FormatCoordinate(x.Location) + " )").ToList();
+            strings.Add(face.Texture.Name);
+            strings.Add("[");
+            strings.Add(FormatCoordinate(face.Texture.UAxis));
+            strings.Add(face.Texture.XShift.ToString("0.000"));
+            strings.Add("]");
+            strings.Add("[");
+            strings.Add(FormatCoordinate(face.Texture.VAxis));
+            strings.Add(face.Texture.YShift.ToString("0.000"));
+            strings.Add("]");
+            strings.Add(face.Texture.Rotation.ToString("0.000"));
+            strings.Add(face.Texture.XScale.ToString("0.000"));
+            strings.Add(face.Texture.YScale.ToString("0.000"));
+            sw.WriteLine(String.Join(" ", strings));
+        }
+
         private Solid ReadSolid(StreamReader rdr)
         {
             var faces = new List<Face>();
@@ -98,13 +133,20 @@ namespace Sledge.Providers.Map
             return null;
         }
 
+        private void WriteSolid(StreamWriter sw, Solid solid)
+        {
+            sw.WriteLine("{");
+            solid.Faces.ForEach(x => WriteFace(sw, x));
+            sw.WriteLine("}");
+        }
+
         private static void ReadProperty(Entity ent, string line)
         {
             var split = line.Split(' ');
             var key = split[0].Trim('"');
             if (key == "wad" || key == "mapversion") { return; }
 
-            var val = split[1].Trim('"');
+            var val = String.Join(" ", split.Skip(1)).Trim('"');
 
             if (key == "classname")
             {
@@ -125,9 +167,14 @@ namespace Sledge.Providers.Map
             }
         }
 
+        private void WriteProperty(StreamWriter sw, string key, string value)
+        {
+            sw.WriteLine('"' + key + "\" \"" + value + '"');
+        }
+
         private Entity ReadEntity(StreamReader rdr)
         {
-            var ent = new Entity();
+            var ent = new Entity {EntityData = new EntityData()};
             string line;
             while ((line = CleanLine(rdr.ReadLine())) != null)
             {
@@ -135,7 +182,44 @@ namespace Sledge.Providers.Map
                 else if (line[0] == '{') ent.Children.Add(ReadSolid(rdr));
                 else if (line[0] == '}') break;
             }
+            ent.Children.ForEach(x => x.Parent = ent);
+            ent.UpdateBoundingBox(false);
             return ent;
+        }
+
+        private void WriteEntity(StreamWriter sw, Entity ent)
+        {
+            var solids = new List<Solid>();
+            CollectSolids(solids, ent);
+
+            sw.WriteLine("{");
+            WriteProperty(sw, "classname", ent.EntityData.Name);
+            WriteProperty(sw, "spawnflags", ent.EntityData.Flags.ToString());
+            ent.EntityData.Properties.ForEach(x => WriteProperty(sw, x.Key, x.Value));
+
+            if (solids.Any()) solids.ForEach(x => WriteSolid(sw, x)); // Brush entity
+            else WriteProperty(sw, "origin", FormatCoordinate(ent.Origin)); // Point entity
+
+            sw.WriteLine("}");
+        }
+
+        private void WriteWorld(StreamWriter sw, World world)
+        {
+            var solids = new List<Solid>();
+            var entities = new List<Entity>();
+            CollectSolids(solids, world);
+            CollectEntities(entities, world);
+
+            sw.WriteLine("{");
+            WriteProperty(sw, "classname", world.EntityData.Name);
+            WriteProperty(sw, "spawnflags", world.EntityData.Flags.ToString());
+            WriteProperty(sw, "mapversion", "220");
+            world.EntityData.Properties.ForEach(x => WriteProperty(sw, x.Key, x.Value));
+            
+            solids.ForEach(x => WriteSolid(sw, x));
+            entities.ForEach(x => WriteEntity(sw, x));
+
+            sw.WriteLine("}");
         }
 
         private List<Entity> ReadAllEntities(StreamReader rdr)
@@ -149,6 +233,11 @@ namespace Sledge.Providers.Map
             return list;
         }
 
+        /// <summary>
+        /// Reads a map from a stream in MAP format.
+        /// </summary>
+        /// <param name="stream">The stream to read from</param>
+        /// <returns>The parsed map</returns>
         protected override DataStructures.MapObjects.Map GetFromStream(Stream stream)
         {
             using (var reader = new StreamReader(stream))
@@ -158,15 +247,26 @@ namespace Sledge.Providers.Map
                 var worldspawn = allentities.FirstOrDefault(x => x.EntityData.Name == "worldspawn")
                                  ?? new Entity {EntityData = {Name = "worldspawn"}};
                 allentities.Remove(worldspawn);
-                map.WorldSpawn = new World {EntityData = worldspawn.EntityData};
+                map.WorldSpawn = new World { EntityData = worldspawn.EntityData };
                 map.WorldSpawn.Children.AddRange(allentities);
+                map.WorldSpawn.Children.AddRange(worldspawn.Children);
+                map.WorldSpawn.Children.ForEach(x => x.Parent = map.WorldSpawn);
+                map.WorldSpawn.UpdateBoundingBox(false);
                 return map;
             }
         }
 
+        /// <summary>
+        /// Writes a map to a stream in MAP format.
+        /// </summary>
+        /// <param name="stream">The stream to write to</param>
+        /// <param name="map">The map to save</param>
         protected override void SaveToStream(Stream stream, DataStructures.MapObjects.Map map)
         {
-            throw new NotImplementedException();
+            using (var writer = new StreamWriter(stream))
+            {
+                WriteWorld(writer, map.WorldSpawn);
+            }
         }
     }
 }

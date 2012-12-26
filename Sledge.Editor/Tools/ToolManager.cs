@@ -23,6 +23,7 @@ namespace Sledge.Editor.Tools
             Tools.Add(new ResizeTool());
             Tools.Add(new RotateTool());
             Tools.Add(new SkewTool());
+            Tools.Add(new EntityTool());
             Tools.Add(new BrushTool());
             Tools.Add(new TextureTool());
             Tools.Add(new DisplacementTool());

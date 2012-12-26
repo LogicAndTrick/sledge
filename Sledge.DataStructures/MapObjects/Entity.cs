@@ -12,6 +12,11 @@ namespace Sledge.DataStructures.MapObjects
         public EntityData EntityData { get; set; }
         public Coordinate Origin { get; set; }
 
+        public Entity()
+        {
+            Origin = new Coordinate(0, 0, 0);
+        }
+
         public override MapObject Clone()
         {
             var e = new Entity

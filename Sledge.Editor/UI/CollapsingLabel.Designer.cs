@@ -29,8 +29,7 @@
         private void InitializeComponent()
         {
             this.TextLabel = new System.Windows.Forms.Label();
-            this.ArrowImage = new System.Windows.Forms.PictureBox();
-            ((System.ComponentModel.ISupportInitialize)(this.ArrowImage)).BeginInit();
+            this.ArrowImage = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // TextLabel
@@ -46,14 +45,17 @@
             // ArrowImage
             // 
             this.ArrowImage.Dock = System.Windows.Forms.DockStyle.Right;
+            this.ArrowImage.FlatAppearance.BorderColor = System.Drawing.Color.White;
+            this.ArrowImage.FlatAppearance.BorderSize = 0;
+            this.ArrowImage.FlatAppearance.MouseDownBackColor = System.Drawing.Color.CornflowerBlue;
+            this.ArrowImage.FlatAppearance.MouseOverBackColor = System.Drawing.Color.SkyBlue;
+            this.ArrowImage.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.ArrowImage.Image = global::Sledge.Editor.Properties.Resources.Arrow_Up;
-            this.ArrowImage.InitialImage = null;
             this.ArrowImage.Location = new System.Drawing.Point(148, 0);
             this.ArrowImage.Name = "ArrowImage";
             this.ArrowImage.Size = new System.Drawing.Size(16, 16);
-            this.ArrowImage.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
-            this.ArrowImage.TabIndex = 1;
-            this.ArrowImage.TabStop = false;
+            this.ArrowImage.TabIndex = 2;
+            this.ArrowImage.UseVisualStyleBackColor = true;
             this.ArrowImage.Click += new System.EventHandler(this.LabelClick);
             // 
             // CollapsingLabel
@@ -64,7 +66,6 @@
             this.Controls.Add(this.TextLabel);
             this.Name = "CollapsingLabel";
             this.Size = new System.Drawing.Size(164, 16);
-            ((System.ComponentModel.ISupportInitialize)(this.ArrowImage)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -73,6 +74,6 @@
         #endregion
 
         private System.Windows.Forms.Label TextLabel;
-        private System.Windows.Forms.PictureBox ArrowImage;
+        private System.Windows.Forms.Button ArrowImage;
     }
 }

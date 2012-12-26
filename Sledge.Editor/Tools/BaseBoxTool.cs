@@ -125,6 +125,11 @@ namespace Sledge.Editor.Tools
             State = new BoxState();
         }
 
+        protected virtual void OnBoxChanged()
+        {
+            // Virtual
+        }
+
         // Mouse Down
         public override void MouseDown(ViewportBase viewport, MouseEventArgs e)
         {
@@ -156,6 +161,7 @@ namespace Sledge.Editor.Tools
             State.Action = BoxAction.DownToDraw;
             State.BoxStart = SnapIfNeeded(viewport.Expand(viewport.ScreenToWorld(e.X, viewport.Height - e.Y)));
             State.BoxEnd = State.BoxStart;
+            OnBoxChanged();
         }
 
         protected virtual void LeftMouseDownToResize(Viewport2D viewport, MouseEventArgs e)
@@ -205,6 +211,7 @@ namespace Sledge.Editor.Tools
             var corrected = GetProperBoxCoordinates(State.BoxStart, State.BoxEnd);
             State.BoxStart = corrected.Item1;
             State.BoxEnd = corrected.Item2;
+            OnBoxChanged();
         }
 
         protected virtual void LeftMouseUpResizing(Viewport2D viewport, MouseEventArgs e)
@@ -215,6 +222,7 @@ namespace Sledge.Editor.Tools
             var corrected = GetProperBoxCoordinates(coords.Item1, coords.Item2);
             State.BoxStart = corrected.Item1;
             State.BoxEnd = corrected.Item2;
+            OnBoxChanged();
         }
 
         protected virtual void LeftMouseClick(Viewport2D viewport, MouseEventArgs e)
@@ -223,6 +231,7 @@ namespace Sledge.Editor.Tools
             State.Action = BoxAction.ReadyToDraw;
             State.BoxStart = null;
             State.BoxEnd = null;
+            OnBoxChanged();
         }
 
         protected virtual void LeftMouseClickOnResizeHandle(Viewport2D vp, MouseEventArgs e)
@@ -267,6 +276,7 @@ namespace Sledge.Editor.Tools
             var now = SnapIfNeeded(viewport.ScreenToWorld(e.X, viewport.Height - e.Y));
             State.Action = BoxAction.Drawing;
             State.BoxEnd = viewport.GetUnusedCoordinate(State.BoxEnd) + viewport.Expand(now);
+            OnBoxChanged();
         }
 
         protected virtual void MouseDraggingToResize(Viewport2D viewport, MouseEventArgs e)
@@ -275,6 +285,7 @@ namespace Sledge.Editor.Tools
             var coords = GetResizedBoxCoordinates(viewport, e);
             State.BoxStart = coords.Item1;
             State.BoxEnd = coords.Item2;
+            OnBoxChanged();
         }
 
         protected virtual Cursor CursorForHandle(ResizeHandle handle)

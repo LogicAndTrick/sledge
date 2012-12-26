@@ -1,0 +1,54 @@
+﻿Key: Item - percentage complete, uncompleted tasks
+
+1. Goldsource Support
+  Formats
+    RMF - 50%, saving
+    MAP - 100%
+    FGD - 100%, (saving not needed for this milestone)
+    MDL - 50%, textures
+    WAD - 100%
+    GCF - 5%, file system
+  Main Tools
+    Selection - 100%
+    Entity - 60%, right toolbar, create object
+    Brush - 80%, arch, sphere
+    Texture - 80%, justify, hide mask
+    Decal - 0%
+    Clip - 100%
+    VM - 0%
+    Path - 0% (perhaps not needed)
+  Secondary Tools
+    Carve - 0%
+    Hollow - 0%
+    Groups - 0%
+    Visgroups - 0%
+    Cordon - 0%
+    Texture Lock - 0%
+    Entity/World - 0%
+    Texture Replace - 0%
+    Undo/Redo - 20%, hotkeys, integration, history
+    Manual Transform - 0%
+  Forms
+    Editor - 60%, right toolbar
+    Options - 80%, hotkeys
+    Texture Browser - 50%, used textures only, package tree, select, replace, stats
+    Object Properties - 0%
+  UI
+    New/Open/Save/Close - 20%, file menu, save as, change detection
+    Recent Files - 0%, windows 7 integration if possible
+    Cut/Copy/Paste/Paste Special - 0%
+    Select All/None - 0%
+    Grid Show/Snap Toggles - 0%
+    Hotkeys - 0%
+    Map Info/Entity Report - 0%
+    Check For Problems - 0%
+    Pointfiles/Leak Detection? - 0%
+    Options - 80%, hotkeys
+    Right Toolbar Textures
+    Right Toolbar Visgroups
+    Right Toolbar Brush Type
+    Right Toolbar Entity/World
+  Compiling
+    Compile Flags - 0%
+    Build Map - 0%
+    Run Game - 0%

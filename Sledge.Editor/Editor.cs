@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Windows.Forms;
 using Sledge.DataStructures.Rendering;
+using Sledge.Editor.Brushes;
 using Sledge.Editor.Settings;
 using Sledge.Editor.UI;
 using Sledge.FileSystem;
@@ -94,6 +95,8 @@ namespace Sledge.Editor
         {
             ViewportManager.Init(tblQuadView);
             ToolManager.Init();
+            BrushManager.Init();
+            BrushManager.SetBrushControl(BrushCreatePanel);
 
             foreach (var tool in ToolManager.Tools)
             {
@@ -110,6 +113,7 @@ namespace Sledge.Editor
             }
 
             MapProvider.Register(new RmfProvider());
+            MapProvider.Register(new MapFormatProvider());
             MapProvider.Register(new VmfProvider());
             GameDataProvider.Register(new FgdProvider());
             TextureProvider.Register(new WadProvider());
