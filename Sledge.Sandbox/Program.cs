@@ -17,7 +17,7 @@ namespace Sledge.Sandbox
             Application.SetCompatibleTextRenderingDefault(false);
             //Application.Run(new MainForm());
 
-            QuickStartBootstrap.MapFile = @"K:\Half-Life\Sledge\cliptest.rmf";
+            QuickStartBootstrap.MapFile = @"D:\Github\sledge\_Resources\RMF\entities.rmf";
             QuickStartBootstrap.Game = Context.DBContext.GetAllGames().Single(x => x.ID == 1);
             QuickStartBootstrap.Start();
         }

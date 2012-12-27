@@ -21,5 +21,10 @@ namespace Sledge.DataStructures.GameData
             VariableType = variableType;
             Options = new List<Option>();
         }
+
+        public string DisplayText()
+        {
+            return String.IsNullOrWhiteSpace(ShortDescription) ? Name : ShortDescription;
+        }
     }
 }

@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using Sledge.DataStructures.MapObjects;
 using Sledge.Database;
 using Sledge.Database.Models;
 using System.IO;
 using Sledge.Editor;
+using Sledge.Editor.UI;
 using Sledge.Providers.GameData;
 using Sledge.Providers.Map;
 using Sledge.Providers.Texture;
@@ -31,10 +33,18 @@ namespace Sledge.Sandbox
            // var editor = new Editor.Editor();
            // editor.Load += (sender, e) => PostStart(sender as Editor.Editor);
            // Application.Run(editor);
-            var settings = Context.DBContext.GetAllSettings().ToDictionary(x => x.Key, x => x.Value);
-            Serialise.DeserialiseSettings(settings);
-            var settingsform = new Editor.Settings.SettingsForm();
-            Application.Run(settingsform);
+           // var settings = Context.DBContext.GetAllSettings().ToDictionary(x => x.Key, x => x.Value);
+           // Serialise.DeserialiseSettings(settings);
+           // var settingsform = new Editor.Settings.SettingsForm();
+           // Application.Run(settingsform);
+
+            var map = MapProvider.GetMapFromFile(MapFile);
+            Document.Game = Game;
+            Document.Map = map;
+            Document.GameData = GameDataProvider.GetGameDataFromFiles(Game.Fgds.Select(f => f.Path));
+            var entity = new EntityEditor();
+            entity.Objects.AddRange(map.WorldSpawn.Children.OfType<Entity>().Take(1));
+            Application.Run(entity);
         }
 
         public static void PostStart(Editor.Editor editor)

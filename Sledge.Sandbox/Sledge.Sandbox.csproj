@@ -38,10 +38,6 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="DbLinq">
-      <HintPath>..\DbLinq.dll</HintPath>
-    </Reference>
-    <Reference Include="IQToolkit, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
@@ -67,6 +63,10 @@
     <ProjectReference Include="..\Sledge.Database\Sledge.Database.csproj">
       <Project>{FC8A5448-0F8B-4828-AC49-8D6138E20254}</Project>
       <Name>Sledge.Database</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Sledge.DataStructures\Sledge.DataStructures.csproj">
+      <Project>{26A974C9-E495-4FA3-8E87-1E00019D04F5}</Project>
+      <Name>Sledge.DataStructures</Name>
     </ProjectReference>
     <ProjectReference Include="..\Sledge.Editor\Sledge.Editor.csproj">
       <Project>{DFF00869-B064-483D-95C0-A88039C471C7}</Project>

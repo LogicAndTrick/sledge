@@ -19,5 +19,19 @@ namespace Sledge.DataStructures.GameData
             Classes = new List<GameDataObject>();
             Includes = new List<string>();
         }
+
+        public void CreateDependencies()
+        {
+            var resolved = new List<string>();
+            var unresolved = new List<GameDataObject>(Classes);
+            while (unresolved.Any())
+            {
+                var resolve = unresolved.Where(x => x.BaseClasses.All(resolved.Contains)).ToList();
+                if (!resolve.Any()) throw new Exception("Circular dependencies: " + String.Join(", ", unresolved.Select(x => x.Name)));
+                resolve.ForEach(x => x.Inherit(Classes.Where(y => x.BaseClasses.Contains(y.Name))));
+                unresolved.RemoveAll(resolve.Contains);
+                resolved.AddRange(resolve.Select(x => x.Name));
+            }
+        }
     }
 }

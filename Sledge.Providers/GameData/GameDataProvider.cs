@@ -33,6 +33,7 @@ namespace Sledge.Providers.GameData
                 gd.MapSizeLow = d.MapSizeLow;
                 gd.Classes.AddRange(d.Classes);
             }
+            gd.CreateDependencies();
             return gd;
         }
 
@@ -41,7 +42,9 @@ namespace Sledge.Providers.GameData
             var provider = RegisteredProviders.FirstOrDefault(p => p.IsValidForFile(fileName));
             if (provider != null)
             {
-                return provider.GetFromFile(fileName);
+                var gd = provider.GetFromFile(fileName);
+                gd.CreateDependencies();
+                return gd;
             }
             throw new ProviderNotFoundException("No GameData provider was found for this file.");
         }
@@ -51,7 +54,9 @@ namespace Sledge.Providers.GameData
             var provider = RegisteredProviders.FirstOrDefault(p => p.IsValidForString(contents));
             if (provider != null)
             {
-                return provider.GetFromString(contents);
+                var gd = provider.GetFromString(contents);
+                gd.CreateDependencies();
+                return gd;
             }
             throw new ProviderNotFoundException("No GameData provider was found for this string.");
         }
@@ -61,7 +66,9 @@ namespace Sledge.Providers.GameData
             var provider = RegisteredProviders.FirstOrDefault(p => p.IsValidForStream(stream));
             if (provider != null)
             {
-                return provider.GetFromStream(stream);
+                var gd = provider.GetFromStream(stream);
+                gd.CreateDependencies();
+                return gd;
             }
             throw new ProviderNotFoundException("No GameData provider was found for this stream.");
         }

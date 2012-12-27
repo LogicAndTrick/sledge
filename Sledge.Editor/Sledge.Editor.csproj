@@ -159,11 +159,23 @@
       <DependentUpon>TextureApplicationForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Tools\TransformationTool.cs" />
+    <Compile Include="UI\AngleControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\AngleControl.designer.cs">
+      <DependentUpon>AngleControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="UI\CollapsingLabel.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="UI\CollapsingLabel.Designer.cs">
       <DependentUpon>CollapsingLabel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\EntityEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\EntityEditor.designer.cs">
+      <DependentUpon>EntityEditor.cs</DependentUpon>
     </Compile>
     <Compile Include="UI\TextureBrowser.cs">
       <SubType>Form</SubType>
@@ -238,8 +250,14 @@
       <DependentUpon>TextureApplicationForm.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="UI\AngleControl.resx">
+      <DependentUpon>AngleControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="UI\CollapsingLabel.resx">
       <DependentUpon>CollapsingLabel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\EntityEditor.resx">
+      <DependentUpon>EntityEditor.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\TextureBrowser.resx">
       <DependentUpon>TextureBrowser.cs</DependentUpon>

@@ -14,7 +14,7 @@
     Brush - 80%, arch, sphere
     Texture - 80%, justify, hide mask
     Decal - 0%
-    Clip - 100%
+    Clip - 80%, choose sides to keep
     VM - 0%
     Path - 0% (perhaps not needed)
   Secondary Tools
@@ -32,7 +32,7 @@
     Editor - 60%, right toolbar
     Options - 80%, hotkeys
     Texture Browser - 50%, used textures only, package tree, select, replace, stats
-    Object Properties - 0%
+    Object Properties - 40%, saving, data types, visgroups (inputs/outputs not needed for milestone)
   UI
     New/Open/Save/Close - 20%, file menu, save as, change detection
     Recent Files - 0%, windows 7 integration if possible
