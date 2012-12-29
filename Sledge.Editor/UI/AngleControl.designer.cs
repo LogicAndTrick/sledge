@@ -72,6 +72,7 @@
             this.Controls.Add(this.cmbAngles);
             this.Controls.Add(this.lblAngles);
             this.Controls.Add(this.lblAngle);
+            this.DoubleBuffered = true;
             this.Name = "AngleControl";
             this.Size = new System.Drawing.Size(115, 64);
             this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.AngleControlMouseDown);

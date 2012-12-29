@@ -90,6 +90,8 @@
     <Compile Include="Editing\Selection.cs" />
     <Compile Include="Error.cs" />
     <Compile Include="Extensions\EnumExtensions.cs" />
+    <Compile Include="GameFiles\SteamGame.cs" />
+    <Compile Include="GameFiles\SteamGames.cs" />
     <Compile Include="GameSelectionForm.cs">
       <SubType>Form</SubType>
     </Compile>

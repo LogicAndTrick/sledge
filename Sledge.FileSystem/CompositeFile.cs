@@ -9,7 +9,7 @@ namespace Sledge.FileSystem
     /// Represents a group of files or containers across multiple file systems.
     /// If multiple files are found with the same name, the last one is given priority.
     /// </summary>
-    internal class CompositeFile : IFile
+    public class CompositeFile : IFile
     {
         private IEnumerable<IFile> Files { get; set; }
 
@@ -18,7 +18,7 @@ namespace Sledge.FileSystem
             Files = new List<IFile>(files.Where(x => x != null));
             Parent = parent;
             if (!Files.Any()) throw new FileNotFoundException("Cannot create a composite file with no files.");
-            if (Files.Select(x => x.Type).Distinct().Count() > 0) throw new Exception("Cannot create a composite file with multiple different file types.");
+            if (Files.Select(x => x.Type).Distinct().Any()) throw new Exception("Cannot create a composite file with multiple different file types.");
         }
 
         public CompositeFile(CompositeFile parent, string filePaths)
@@ -27,7 +27,7 @@ namespace Sledge.FileSystem
             Files = new List<IFile>(files.Where(x => x != null));
             Parent = parent;
             if (!Files.Any()) throw new FileNotFoundException("Cannot create a composite file with no files.");
-            if (Files.Select(x => x.Type).Distinct().Count() > 0) throw new Exception("Cannot create a composite file with multiple different file types.");
+            if (Files.Select(x => x.Type).Distinct().Any()) throw new Exception("Cannot create a composite file with multiple different file types.");
         }
 
         public FileSystemType Type

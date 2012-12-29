@@ -38,6 +38,9 @@ namespace Sledge.Editor.UI
 		{
             this.Tabs = new System.Windows.Forms.TabControl();
             this.ClassInfoTab = new System.Windows.Forms.TabPage();
+            this.ChangingClassWarning = new System.Windows.Forms.Label();
+            this.CancelClassChangeButton = new System.Windows.Forms.Button();
+            this.ConfirmClassChangeButton = new System.Windows.Forms.Button();
             this.SmartEditControlPanel = new System.Windows.Forms.Panel();
             this.SmartEditButton = new System.Windows.Forms.CheckBox();
             this.PasteKeyValues = new System.Windows.Forms.Button();
@@ -86,12 +89,14 @@ namespace Sledge.Editor.UI
             this.columnHeader13 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader14 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.FlagsTab = new System.Windows.Forms.TabPage();
+            this.FlagsTable = new System.Windows.Forms.CheckedListBox();
             this.VisgroupTab = new System.Windows.Forms.TabPage();
             this.label11 = new System.Windows.Forms.Label();
             this.VisgroupTree = new System.Windows.Forms.TreeView();
             this.btnCancel = new System.Windows.Forms.Button();
-            this.btnApply = new System.Windows.Forms.Button();
-            this.FlagsTable = new System.Windows.Forms.CheckedListBox();
+            this.ApplyButton = new System.Windows.Forms.Button();
+            this.AddPropertyButton = new System.Windows.Forms.Button();
+            this.DeletePropertyButton = new System.Windows.Forms.Button();
             this.Angles = new Sledge.Editor.UI.AngleControl();
             this.Tabs.SuspendLayout();
             this.ClassInfoTab.SuspendLayout();
@@ -118,6 +123,11 @@ namespace Sledge.Editor.UI
             // 
             // ClassInfoTab
             // 
+            this.ClassInfoTab.Controls.Add(this.ChangingClassWarning);
+            this.ClassInfoTab.Controls.Add(this.CancelClassChangeButton);
+            this.ClassInfoTab.Controls.Add(this.DeletePropertyButton);
+            this.ClassInfoTab.Controls.Add(this.AddPropertyButton);
+            this.ClassInfoTab.Controls.Add(this.ConfirmClassChangeButton);
             this.ClassInfoTab.Controls.Add(this.SmartEditControlPanel);
             this.ClassInfoTab.Controls.Add(this.SmartEditButton);
             this.ClassInfoTab.Controls.Add(this.PasteKeyValues);
@@ -139,6 +149,40 @@ namespace Sledge.Editor.UI
             this.ClassInfoTab.TabIndex = 0;
             this.ClassInfoTab.Text = "Class Info";
             this.ClassInfoTab.UseVisualStyleBackColor = true;
+            // 
+            // ChangingClassWarning
+            // 
+            this.ChangingClassWarning.AutoSize = true;
+            this.ChangingClassWarning.ForeColor = System.Drawing.Color.Brown;
+            this.ChangingClassWarning.Location = new System.Drawing.Point(220, 38);
+            this.ChangingClassWarning.Name = "ChangingClassWarning";
+            this.ChangingClassWarning.Size = new System.Drawing.Size(277, 26);
+            this.ChangingClassWarning.TabIndex = 11;
+            this.ChangingClassWarning.Text = "Changing class - click \"Change\" or \"Cancel\" to continue.\r\nThe object will not be " +
+    "affected until you click \"Apply\".\r\n";
+            this.ChangingClassWarning.Visible = false;
+            // 
+            // CancelClassChangeButton
+            // 
+            this.CancelClassChangeButton.Enabled = false;
+            this.CancelClassChangeButton.Location = new System.Drawing.Point(310, 7);
+            this.CancelClassChangeButton.Name = "CancelClassChangeButton";
+            this.CancelClassChangeButton.Size = new System.Drawing.Size(53, 21);
+            this.CancelClassChangeButton.TabIndex = 10;
+            this.CancelClassChangeButton.Text = "Cancel";
+            this.CancelClassChangeButton.UseVisualStyleBackColor = true;
+            this.CancelClassChangeButton.Click += new System.EventHandler(this.CancelClassChange);
+            // 
+            // ConfirmClassChangeButton
+            // 
+            this.ConfirmClassChangeButton.Enabled = false;
+            this.ConfirmClassChangeButton.Location = new System.Drawing.Point(251, 7);
+            this.ConfirmClassChangeButton.Name = "ConfirmClassChangeButton";
+            this.ConfirmClassChangeButton.Size = new System.Drawing.Size(53, 21);
+            this.ConfirmClassChangeButton.TabIndex = 10;
+            this.ConfirmClassChangeButton.Text = "Change";
+            this.ConfirmClassChangeButton.UseVisualStyleBackColor = true;
+            this.ConfirmClassChangeButton.Click += new System.EventHandler(this.ConfirmClassChange);
             // 
             // SmartEditControlPanel
             // 
@@ -215,10 +259,11 @@ namespace Sledge.Editor.UI
             this.KeyValuesList.Location = new System.Drawing.Point(6, 73);
             this.KeyValuesList.MultiSelect = false;
             this.KeyValuesList.Name = "KeyValuesList";
-            this.KeyValuesList.Size = new System.Drawing.Size(390, 301);
+            this.KeyValuesList.Size = new System.Drawing.Size(390, 274);
             this.KeyValuesList.TabIndex = 3;
             this.KeyValuesList.UseCompatibleStateImageBehavior = false;
             this.KeyValuesList.View = System.Windows.Forms.View.Details;
+            this.KeyValuesList.ItemSelectionChanged += new System.Windows.Forms.ListViewItemSelectionChangedEventHandler(this.KeyValuesListItemSelectionChanged);
             this.KeyValuesList.SelectedIndexChanged += new System.EventHandler(this.KeyValuesListSelectedIndexChanged);
             this.KeyValuesList.Leave += new System.EventHandler(this.KeyValuesListSelectedIndexChanged);
             // 
@@ -237,9 +282,9 @@ namespace Sledge.Editor.UI
             this.Class.FormattingEnabled = true;
             this.Class.Location = new System.Drawing.Point(57, 7);
             this.Class.Name = "Class";
-            this.Class.Size = new System.Drawing.Size(260, 21);
+            this.Class.Size = new System.Drawing.Size(187, 21);
             this.Class.TabIndex = 2;
-            this.Class.TextChanged += new System.EventHandler(this.ClassChanged);
+            this.Class.TextChanged += new System.EventHandler(this.StartClassChange);
             // 
             // label4
             // 
@@ -563,6 +608,15 @@ namespace Sledge.Editor.UI
             this.FlagsTab.Text = "Flags";
             this.FlagsTab.UseVisualStyleBackColor = true;
             // 
+            // FlagsTable
+            // 
+            this.FlagsTable.CheckOnClick = true;
+            this.FlagsTable.FormattingEnabled = true;
+            this.FlagsTable.Location = new System.Drawing.Point(6, 6);
+            this.FlagsTable.Name = "FlagsTable";
+            this.FlagsTable.Size = new System.Drawing.Size(662, 364);
+            this.FlagsTable.TabIndex = 0;
+            // 
             // VisgroupTab
             // 
             this.VisgroupTab.Controls.Add(this.label11);
@@ -600,23 +654,35 @@ namespace Sledge.Editor.UI
             this.btnCancel.Text = "Cancel";
             this.btnCancel.UseVisualStyleBackColor = true;
             // 
-            // btnApply
+            // ApplyButton
             // 
-            this.btnApply.Location = new System.Drawing.Point(538, 424);
-            this.btnApply.Name = "btnApply";
-            this.btnApply.Size = new System.Drawing.Size(75, 23);
-            this.btnApply.TabIndex = 2;
-            this.btnApply.Text = "Apply";
-            this.btnApply.UseVisualStyleBackColor = true;
+            this.ApplyButton.Location = new System.Drawing.Point(538, 424);
+            this.ApplyButton.Name = "ApplyButton";
+            this.ApplyButton.Size = new System.Drawing.Size(75, 23);
+            this.ApplyButton.TabIndex = 2;
+            this.ApplyButton.Text = "Apply";
+            this.ApplyButton.UseVisualStyleBackColor = true;
+            this.ApplyButton.Click += new System.EventHandler(this.ApplyButtonClicked);
             // 
-            // FlagsTable
+            // AddPropertyButton
             // 
-            this.FlagsTable.CheckOnClick = true;
-            this.FlagsTable.FormattingEnabled = true;
-            this.FlagsTable.Location = new System.Drawing.Point(6, 6);
-            this.FlagsTable.Name = "FlagsTable";
-            this.FlagsTable.Size = new System.Drawing.Size(662, 364);
-            this.FlagsTable.TabIndex = 0;
+            this.AddPropertyButton.Enabled = false;
+            this.AddPropertyButton.Location = new System.Drawing.Point(6, 353);
+            this.AddPropertyButton.Name = "AddPropertyButton";
+            this.AddPropertyButton.Size = new System.Drawing.Size(62, 21);
+            this.AddPropertyButton.TabIndex = 10;
+            this.AddPropertyButton.Text = "Add";
+            this.AddPropertyButton.UseVisualStyleBackColor = true;
+            // 
+            // DeletePropertyButton
+            // 
+            this.DeletePropertyButton.Enabled = false;
+            this.DeletePropertyButton.Location = new System.Drawing.Point(74, 353);
+            this.DeletePropertyButton.Name = "DeletePropertyButton";
+            this.DeletePropertyButton.Size = new System.Drawing.Size(62, 21);
+            this.DeletePropertyButton.TabIndex = 10;
+            this.DeletePropertyButton.Text = "Delete";
+            this.DeletePropertyButton.UseVisualStyleBackColor = true;
             // 
             // Angles
             // 
@@ -626,13 +692,14 @@ namespace Sledge.Editor.UI
             this.Angles.ShowTextBox = true;
             this.Angles.Size = new System.Drawing.Size(115, 46);
             this.Angles.TabIndex = 0;
+            this.Angles.AngleChangedEvent += new Sledge.Editor.UI.AngleControl.AngleChangedEventHandler(this.AnglesChanged);
             // 
             // EntityEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(706, 459);
-            this.Controls.Add(this.btnApply);
+            this.Controls.Add(this.ApplyButton);
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.Tabs);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
@@ -702,7 +769,7 @@ namespace Sledge.Editor.UI
 		private System.Windows.Forms.TextBox CommentsTextbox;
 		private System.Windows.Forms.Button CopyKeyValues;
 		private System.Windows.Forms.Button PasteKeyValues;
-		private System.Windows.Forms.Button btnApply;
+		private System.Windows.Forms.Button ApplyButton;
 		private System.Windows.Forms.Button btnCancel;
 		private System.Windows.Forms.TabPage OutputsTab;
 		private System.Windows.Forms.Label label1;
@@ -713,5 +780,10 @@ namespace Sledge.Editor.UI
         private System.Windows.Forms.CheckBox SmartEditButton;
         private System.Windows.Forms.Panel SmartEditControlPanel;
         private System.Windows.Forms.CheckedListBox FlagsTable;
+        private System.Windows.Forms.Button CancelClassChangeButton;
+        private System.Windows.Forms.Button ConfirmClassChangeButton;
+        private System.Windows.Forms.Label ChangingClassWarning;
+        private System.Windows.Forms.Button DeletePropertyButton;
+        private System.Windows.Forms.Button AddPropertyButton;
 	}
 }

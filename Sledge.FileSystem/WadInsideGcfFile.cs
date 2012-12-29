@@ -2,29 +2,29 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 using Sledge.Libs.HLLib;
 
 namespace Sledge.FileSystem
 {
-    /// <summary>
-    /// Represents a WAD container or sub-file in the native file system
-    /// </summary>
-    public class WadFile : IFile
+    public class WadInsideGcfFile : IFile
     {
-        private FileInfo FileInfo { get; set; }
+        private string GcfFileName { get; set; }
+        private string WadFileName { get; set; }
         private string FileName { get; set; }
 
-        public WadFile(string fileName)
+        public WadInsideGcfFile(string gcfFileName, string wadFileName)
         {
-            FileInfo = new FileInfo(fileName);
-            FileName = null;
+            GcfFileName = gcfFileName;
+            WadFileName = wadFileName;
         }
 
-        private WadFile(string fileName, string file)
+        public WadInsideGcfFile(string gcfFileName, string wadFileName, string fileName)
         {
-            FileInfo = new FileInfo(fileName);
-            FileName = file.EndsWith(".bmp") ? file : file + ".bmp";
+            GcfFileName = gcfFileName;
+            WadFileName = wadFileName;
+            FileName = fileName;
         }
 
         public FileSystemType Type
@@ -39,17 +39,29 @@ namespace Sledge.FileSystem
 
         public IFile Parent
         {
-            get { return IfContainer<IFile>(() => new NativeFile(FileInfo.Directory), () => new WadFile(FileInfo.FullName)); }
+            get
+            {
+                return IfContainer<IFile>(
+                    () => new GcfFile(GcfFileName, Path.GetDirectoryName(WadFileName)),
+                    () => new WadInsideGcfFile(GcfFileName, WadFileName)
+                    );
+            }
         }
 
         public string FullPathName
         {
-            get { return IfContainer(() => FileInfo.FullName, () => Path.Combine(FileInfo.FullName, FileName)); }
+            get
+            {
+                return IfContainer(
+                    () => GcfFileName + @"\" + WadFileName,
+                    () => GcfFileName + @"\" + WadFileName + @"\" + FileName
+                    );
+            }
         }
 
         public string Name
         {
-            get { return IfContainer(() => FileInfo.Name, () => FileName); }
+            get { return IfContainer(() => Path.GetFileName(WadFileName), () => FileName); }
         }
 
         public string NameWithoutExtension
@@ -62,45 +74,69 @@ namespace Sledge.FileSystem
             get { return IfContainer(() => "", () => "bmp"); }
         }
 
-        private int _exists = -1;
+        private bool _propertiesSet = false;
+        private bool _exists = false;
+        private int _size = 0;
+        private int _numFiles = 0;
+
+        private void SetProperties()
+        {
+            if (!_propertiesSet)
+            {
+                HLLib.Initialize();
+                using (var pack = new HLLib.Package(GcfFileName))
+                {
+                    var item = pack.GetRootFolder().GetItemByPath(WadFileName, HLLib.FindType.Files);
+                    var wad = new HLLib.File(item);
+                    _exists = wad.Exists;
+                    if (wad.Exists)
+                    {
+                        using (var wadPack = wad.OpenPackage())
+                        {
+                            if (IsContainer)
+                            {
+                                _size = (int) wad.Size;
+                                _numFiles = (int) wadPack.GetRootFolder().ItemCount;
+                            }
+                            else
+                            {
+                                var wadItem = wadPack.GetRootFolder().GetItemByName(FileName, HLLib.FindType.Files);
+                                _exists = wadItem.Exists;
+                                _size = (int) wadItem.Size;
+                            }
+                        }
+                    }
+                }
+                HLLib.Shutdown();
+            }
+            _propertiesSet = true;
+        }
+
         public bool Exists
         {
             get
             {
-                if (FileName == null) return FileInfo.Exists;
-
-                if (_exists < 0)
-                {
-                    HLLib.Initialize();
-                    using (var pack = new HLLib.Package(FileInfo.FullName))
-                    {
-                        var item = pack.GetRootFolder().GetItemByName(FileName, HLLib.FindType.Files);
-                        _exists = item.Exists ? 1 : 0;
-                    }
-                    HLLib.Shutdown();
-                }
-                return _exists > 0;
+                SetProperties();
+                return _exists;
             }
         }
 
-        private int _size = -1;
         public long Size
         {
             get
             {
-                if (FileName == null) return FileInfo.Length;
-
-                if (_size < 0)
-                {
-                    HLLib.Initialize();
-                    using (var pack = new HLLib.Package(FileInfo.FullName))
-                    {
-                        var item = pack.GetRootFolder().GetItemByName(FileName, HLLib.FindType.Files);
-                        _size = (int) item.Size;
-                    }
-                    HLLib.Shutdown();
-                }
+                SetProperties();
                 return _size;
+            }
+        }
+
+        public int NumFiles
+        {
+            get
+            {
+
+                SetProperties();
+                return _numFiles;
             }
         }
 
@@ -114,30 +150,11 @@ namespace Sledge.FileSystem
             get { return 0; }
         }
 
-        private int _numFiles = -1;
-        public int NumFiles
-        {
-            get
-            {
-                if (FileName != null) return 0;
-
-                if (_numFiles < 0)
-                {
-                    HLLib.Initialize();
-                    using (var pack = new HLLib.Package(FileInfo.FullName))
-                    {
-                        _numFiles = (int) pack.GetRootFolder().ItemCount;
-                    }
-                    HLLib.Shutdown();
-                }
-                return _numFiles;
-            }
-        }
-
         public Stream Open()
         {
-            // Allow this even if the WAD is a container.
-            return IfContainer<Stream>(() => FileInfo.OpenRead(), () => new WadFilePackageStream(FileInfo.FullName, FileName));
+            return IfContainer<Stream>(
+                () => new GcfFile.GcfFilePackageStream(GcfFileName, WadFileName),
+                () => new WadFileInsideGcfPackageStream(GcfFileName, WadFileName, FileName));
         }
 
         public byte[] ReadAll()
@@ -155,7 +172,7 @@ namespace Sledge.FileSystem
             using (var stream = Open())
             {
                 var arr = new byte[count];
-                stream.Read(arr, (int) offset, (int) count);
+                stream.Read(arr, (int)offset, (int)count);
                 return arr;
             }
         }
@@ -166,19 +183,24 @@ namespace Sledge.FileSystem
             if (_relatedFiles == null)
             {
                 _relatedFiles = new List<IFile>();
-                // Related WAD files: http://www.slackiller.com/tommy14/hltexture.htm
-                // +0name to +9name: animated texture (toggle 1)
-                // +Aname (to +Jname?): animated texture (toggle 2, group both toggles together)
-                // -0name to -9name: randomly tiled texture
+                // See same method in WadFile.cs
                 if (FileName != null && FileName.Length > 2 && (FileName.StartsWith("-") || FileName.StartsWith("-")))
                 {
                     var pattern = FileName.Substring(0, 1) + "\\d" + FileName.Substring(2);
                     HLLib.Initialize();
-                    using (var pack = new HLLib.Package(FileInfo.FullName))
+                    using (var pack = new HLLib.Package(GcfFileName))
                     {
-                        var root = pack.GetRootFolder();
-                        var files = root.GetItems().Where(x => x.Type == HLLib.DirectoryItemType.File);
-                        _relatedFiles.AddRange(files.Where(x => Regex.IsMatch(x.Name, pattern)).Select(item => new WadFile(FileInfo.FullName, item.Name)));
+                        var item = pack.GetRootFolder().GetItemByPath(WadFileName, HLLib.FindType.Files);
+                        var wad = new HLLib.File(item);
+                        if (wad.Exists)
+                        {
+                            using (var wadPack = wad.OpenPackage())
+                            {
+                                var root = wadPack.GetRootFolder();
+                                var files = root.GetItems().Where(x => x.Type == HLLib.DirectoryItemType.File);
+                                _relatedFiles.AddRange(files.Where(x => Regex.IsMatch(x.Name, pattern)).Select(i => new WadInsideGcfFile(GcfFileName, WadFileName, i.Name)));
+                            }
+                        }
                     }
                     HLLib.Shutdown();
                 }
@@ -193,17 +215,17 @@ namespace Sledge.FileSystem
 
         public IFile GetChild(string name)
         {
-            return null; // WADs don't have folder structure
+            return null;
         }
 
         public IEnumerable<IFile> GetChildren()
         {
-            return new List<IFile>(); // Nope
+            return new List<IFile>();
         }
 
         public IEnumerable<IFile> GetChildren(string regex)
         {
-            return new List<IFile>(); // They still don't
+            return new List<IFile>();
         }
 
         public IFile GetFile(string name)
@@ -220,11 +242,19 @@ namespace Sledge.FileSystem
                 if (FileName == null)
                 {
                     HLLib.Initialize();
-                    using (var pack = new HLLib.Package(FileInfo.FullName))
+                    using (var pack = new HLLib.Package(GcfFileName))
                     {
-                        var root = pack.GetRootFolder();
-                        var files = root.GetItems().Where(x => x.Type == HLLib.DirectoryItemType.File);
-                        _files.AddRange(files.Select(item => new WadFile(FileInfo.FullName, item.Name)));
+                        var item = pack.GetRootFolder().GetItemByPath(WadFileName, HLLib.FindType.Files);
+                        var wad = new HLLib.File(item);
+                        if (wad.Exists)
+                        {
+                            using (var wadPack = wad.OpenPackage())
+                            {
+                                var root = wadPack.GetRootFolder();
+                                var files = root.GetItems().Where(x => x.Type == HLLib.DirectoryItemType.File);
+                                _files.AddRange(files.Select(i => new WadInsideGcfFile(GcfFileName, WadFileName, i.Name)));
+                            }
+                        }
                     }
                     HLLib.Shutdown();
                 }
@@ -243,16 +273,19 @@ namespace Sledge.FileSystem
             return extension.ToLower() == "bmp" ? GetFiles() : new List<IFile>();
         }
 
-        internal class WadFilePackageStream : Stream
+        internal class WadFileInsideGcfPackageStream : Stream
         {
+            private readonly string _gcfPath;
             private readonly string _wadPath;
             private readonly string _fileName;
             private bool _open;
-            private HLLib.Package _package;
+            private HLLib.Package _gcfPackage;
+            private HLLib.Package _wadPackage;
             private HLLib.Stream _stream;
 
-            public WadFilePackageStream(string wadPath, string fileName)
+            public WadFileInsideGcfPackageStream(string gcfPath, string wadPath, string fileName)
             {
+                _gcfPath = gcfPath;
                 _wadPath = wadPath;
                 _fileName = fileName;
                 Open();
@@ -263,9 +296,11 @@ namespace Sledge.FileSystem
                 if (_open) return;
                 _open = true;
                 HLLib.Initialize();
-                _package = new HLLib.Package(_wadPath);
-                var item = _package.GetRootFolder().GetItemByName(_fileName, HLLib.FindType.Files);
-                _stream = _package.CreateStream(item);
+                _gcfPackage = new HLLib.Package(_gcfPath);
+                var wad = _gcfPackage.GetRootFolder().GetItemByPath(_wadPath, HLLib.FindType.Files);
+                _wadPackage = new HLLib.File(wad).OpenPackage();
+                var item = _wadPackage.GetRootFolder().GetItemByName(_fileName, HLLib.FindType.Files);
+                _stream = _wadPackage.CreateStream(item);
             }
 
             protected override void Dispose(bool disposing)
@@ -273,7 +308,8 @@ namespace Sledge.FileSystem
                 if (_open)
                 {
                     _stream.Dispose();
-                    _package.Dispose();
+                    _wadPackage.Dispose();
+                    _gcfPackage.Dispose();
                     HLLib.Shutdown();
                 }
                 base.Dispose(disposing);

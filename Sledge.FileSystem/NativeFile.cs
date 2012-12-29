@@ -9,7 +9,7 @@ namespace Sledge.FileSystem
     /// <summary>
     /// An implementation of the native windows file system using the IFile interface.
     /// </summary>
-    internal class NativeFile : IFile
+    public class NativeFile : IFile
     {
         protected FileInfo FileInfo { get; set; }
         protected DirectoryInfo DirectoryInfo { get; set; }

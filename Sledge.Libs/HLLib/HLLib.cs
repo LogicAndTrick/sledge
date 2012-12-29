@@ -708,6 +708,16 @@ namespace Sledge.Libs.HLLib
                 return GetValidation(ItemPtr);
             }
 
+            /// <summary>
+            /// Open this file as a HLLib package. This will open a stream
+            /// which will be closed when the package is disposed.
+            /// </summary>
+            /// <returns>The opened package.</returns>
+            public Package OpenPackage()
+            {
+                return new Package(CreateStream());
+            }
+
             public HLLibFileStream CreateStream()
             {
                 return new HLLibFileStream(ItemPtr);
@@ -775,7 +785,8 @@ namespace Sledge.Libs.HLLib
             public bool IsOpened { get { return GetOpened(StreamPtr); } }
             public uint Mode { get { return GetMode(StreamPtr); } }
             public uint Size { get { return GetStreamSize(StreamPtr); } }
-            public uint Pointer { get { return GetStreamPointer(StreamPtr); } }
+            //public uint Pointer { get { return GetStreamPointer(StreamPtr); } }
+            public uint Pointer { get { return (uint) StreamPtr; } }
 
             public bool Open(uint mode)
             {
@@ -929,11 +940,36 @@ namespace Sledge.Libs.HLLib
             internal uint PackageID { get; private set; }
             internal IntPtr PackageRootPtr { get; private set; }
             internal string Path { get; private set; }
+            internal Stream Stream { get; private set; }
 
+            /// <summary>
+            /// Open a package from the Windows filesystem.
+            /// </summary>
+            /// <param name="path">The package to open</param>
             public Package(string path)
             {
                 Path = path;
                 Type = GetTypeFromPath(path);
+
+                if (Type == PackageType.None)
+                {
+                    throw new Exception("Unsupported package type.");
+                }
+
+                uint packid;
+                Create(Type, out packid);
+                PackageID = packid;
+                Open();
+            }
+
+            /// <summary>
+            /// Open a package from a Stream. The stream will be disposed if the package is.
+            /// </summary>
+            /// <param name="stream">The Stream to open</param>
+            public Package(Stream stream)
+            {
+                Stream = stream;
+                Type = GetTypeFromStream(stream);
 
                 if (Type == PackageType.None)
                 {
@@ -954,6 +990,7 @@ namespace Sledge.Libs.HLLib
 
             public void Dispose()
             {
+                if (Stream != null) Stream.Dispose();
                 Close();
                 Delete(PackageID);
             }
@@ -962,10 +999,21 @@ namespace Sledge.Libs.HLLib
             {
                 Bind(PackageID);
                 if (IsOpened()) return;
-                if (OpenFile(Path, (uint)FileMode.ReadVolatile))
+                if (Stream == null)
                 {
-                    PackageRootPtr = GetRoot();
-                    return;
+                    if (OpenFile(Path, (uint) FileMode.ReadVolatile))
+                    {
+                        PackageRootPtr = GetRoot();
+                        return;
+                    }
+                }
+                else
+                {
+                    if (OpenStream(new IntPtr(Stream.Pointer), (uint) FileMode.ReadVolatile))
+                    {
+                        PackageRootPtr = GetRoot();
+                        return;
+                    }
                 }
                 Delete(PackageID);
                 throw new Exception("Unable to open file.");
@@ -1064,10 +1112,11 @@ namespace Sledge.Libs.HLLib
                     Open((uint)FileMode.ReadVolatile);
                 }
 
-                public void Dispose()
+                public new void Dispose()
                 {
                     Close();
                     ReleaseStream(StreamPtr);
+                    base.Dispose();
                 }
             }
 
@@ -1108,6 +1157,11 @@ namespace Sledge.Libs.HLLib
                     }
                 }
                 return ret;
+            }
+
+            private static PackageType GetTypeFromStream(Stream stream)
+            {
+                return GetTypeFromStream(new IntPtr(stream.Pointer));
             }
 
             [DllImport("HLLib.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "hlBindPackage")]

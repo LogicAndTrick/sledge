@@ -33,6 +33,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sledge.FileSystem", "Sledge
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sledge.QuickForms", "Sledge.QuickForms\Sledge.QuickForms.csproj", "{7FED88F3-717C-408A-85D9-28DD125DB61A}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{7A0A29CF-B1A8-4451-AAD4-C05004214452}"
+	ProjectSection(SolutionItems) = preProject
+		Sledge.vsmdi = Sledge.vsmdi
+		TestSettings.testsettings = TestSettings.testsettings
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = Sledge.vsmdi

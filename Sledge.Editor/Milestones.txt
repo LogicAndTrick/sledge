@@ -2,12 +2,21 @@
 
 1. Goldsource Support
   Formats
-    RMF - 50%, saving
+    RMF - 100%
     MAP - 100%
     FGD - 100%, (saving not needed for this milestone)
     MDL - 50%, textures
     WAD - 100%
     GCF - 5%, file system
+  Rendering
+    Solids - 90%
+    Entities - 0%
+    
+  File System
+    Custom file dialog - 0%
+    Native - 0%
+    WAD - 0%
+    GCF - 0%
   Main Tools
     Selection - 100%
     Entity - 60%, right toolbar, create object
@@ -32,7 +41,7 @@
     Editor - 60%, right toolbar
     Options - 80%, hotkeys
     Texture Browser - 50%, used textures only, package tree, select, replace, stats
-    Object Properties - 40%, saving, data types, visgroups (inputs/outputs not needed for milestone)
+    Object Properties - 60%, data types, visgroups (inputs/outputs not needed for milestone)
   UI
     New/Open/Save/Close - 20%, file menu, save as, change detection
     Recent Files - 0%, windows 7 integration if possible
@@ -43,11 +52,12 @@
     Map Info/Entity Report - 0%
     Check For Problems - 0%
     Pointfiles/Leak Detection? - 0%
+    Go to coordinates/brush number - 0%
     Options - 80%, hotkeys
-    Right Toolbar Textures
-    Right Toolbar Visgroups
-    Right Toolbar Brush Type
-    Right Toolbar Entity/World
+    Right Toolbar Textures - 0%
+    Right Toolbar Visgroups - 0%
+    Right Toolbar Brush Type - 100%
+    Right Toolbar Entity/World - 0%
   Compiling
     Compile Flags - 0%
     Build Map - 0%
