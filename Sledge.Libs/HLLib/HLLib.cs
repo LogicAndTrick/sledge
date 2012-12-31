@@ -1114,9 +1114,8 @@ namespace Sledge.Libs.HLLib
 
                 public new void Dispose()
                 {
-                    Close();
-                    ReleaseStream(StreamPtr);
                     base.Dispose();
+                    ReleaseStream(StreamPtr);
                 }
             }
 

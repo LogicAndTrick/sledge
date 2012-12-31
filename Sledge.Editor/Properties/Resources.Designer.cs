@@ -158,6 +158,13 @@ namespace Sledge.Editor.Properties {
             }
         }
         
+        internal static System.Drawing.Bitmap Tool_VM {
+            get {
+                object obj = ResourceManager.GetObject("Tool_VM", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap Tool_Zoom {
             get {
                 object obj = ResourceManager.GetObject("Tool_Zoom", resourceCulture);

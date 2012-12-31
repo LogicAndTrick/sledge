@@ -1,5 +1,18 @@
 ﻿Key: Item - percentage complete, uncompleted tasks
 
+Priorities
+  Decal Tool
+  VM Tool
+  Object Properties
+  Visgroups
+  Groups
+  Texture browser
+  Undo/Redo
+  New/Open/Save/Close
+  Recent Files
+  Cut/Copy/Paste/Paste Special
+  Compiling
+
 1. Goldsource Support
   Formats
     RMF - 100%
@@ -7,24 +20,28 @@
     FGD - 100%, (saving not needed for this milestone)
     MDL - 50%, textures
     WAD - 100%
-    GCF - 5%, file system
+    GCF - 90%, integration
+    PAK - 0%
+    SPR - 80%, testing, streaming, integration
   Rendering
     Solids - 90%
-    Entities - 0%
-    
+    Entities - 60%, sprites, models
+    Sprites - 0%
+    Models - 0%
   File System
+    FileSource and mounting - 10%
     Custom file dialog - 0%
-    Native - 0%
-    WAD - 0%
-    GCF - 0%
+    Native - 100%
+    WAD - 100%
+    GCF - 100%
   Main Tools
     Selection - 100%
-    Entity - 60%, right toolbar, create object
+    Entity - 60%, right toolbar, create object, 3D placement
     Brush - 80%, arch, sphere
     Texture - 80%, justify, hide mask
     Decal - 0%
     Clip - 80%, choose sides to keep
-    VM - 0%
+    VM - 60%, merge vertices, create vertices
     Path - 0% (perhaps not needed)
   Secondary Tools
     Carve - 0%
@@ -62,3 +79,32 @@
     Compile Flags - 0%
     Build Map - 0%
     Run Game - 0%
+
+2. Source support
+3. Plugins support
+
+A. Unknown Milestone
+  VM prevent illegal brushes
+  VM move in 3D
+
+---
+
+Secondary Milestones (i.e. potential side-projects)
+
+FGD Editor
+  FGD - 50%, saving
+  UI - 0%
+Map File Debugger/Low-level editor
+  MAP - 100%
+  RMF - 100%
+  VMF - 40%
+  UI - 20%, editing, visgroups, searching, etc
+Model Viewer
+  Goldsource MDL - 60%, textures
+  Source MDL - 30%, animation, texture, physbox, etc
+  UI - 0%
+Twister
+Batch Compiler
+Sprite Maker
+WAD Editor
+Map Viewer (ala Crafty)

@@ -50,11 +50,6 @@ namespace Sledge.Editor.Tools
             viewport.Cursor = Cursors.Default;
         }
 
-        protected static Coordinate SnapIfNeeded(Coordinate c)
-        {
-            return KeyboardState.Alt ? c : c.Snap(Document.GridSpacing);
-        }
-
         public override void MouseDown(ViewportBase viewport, MouseEventArgs e)
         {
             if (!(viewport is Viewport2D)) return;

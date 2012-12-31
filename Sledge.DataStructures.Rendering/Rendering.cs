@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using OpenTK.Graphics.OpenGL;
+using Sledge.Common;
 using Sledge.DataStructures.MapObjects;
 using Sledge.DataStructures.Geometric;
 using Sledge.Graphics.Helpers;
@@ -57,6 +58,13 @@ namespace Sledge.DataStructures.Rendering
             GL.Vertex3(c.DX, c.DY, c.DZ);
         }
 
+        private static bool RenderTransparent(ITexture texture, Face face)
+        {
+            if (face.Parent != null && face.Parent.IsTransparent) return true;
+            if (texture == null || texture.Name == null) return false;
+            return texture.Name.ToLower() == "aaatrigger";
+        }
+
         public static void CreateFilledList(string displayListName, IEnumerable<Face> faces, Color color = new Color())
         {
             using (DisplayList.Using(displayListName))
@@ -69,6 +77,7 @@ namespace Sledge.DataStructures.Rendering
         {
             var noTexturing = !color.IsEmpty;
             if (!noTexturing) TextureHelper.EnableTexturing();
+            faces = faces.Where(x => x.Parent == null || !x.Parent.IsHidden);
 
             GL.Light(LightName.Light0, LightParameter.Position, new float[] {-10000, -20000, 30000, 1});
             GL.Light(LightName.Light1, LightParameter.Position, new float[] {10000, 20000, 30000, 1});
@@ -109,19 +118,20 @@ namespace Sledge.DataStructures.Rendering
             else
             {
                 var texgroups = from f in faces
-                                group f by f.Texture.Texture
+                                group f by new {f.Texture.Texture, IsTransparent = RenderTransparent(f.Texture.Texture, f)}
                                 into g
                                 select g;
-                foreach (var g in texgroups)
+                foreach (var g in texgroups.OrderBy(x => !x.Key.IsTransparent ? 0 : 1))
                 {
                     var texture = false;
+                    var alpha = g.Key.IsTransparent ? 128 : 255;
                     GL.End();
-                    if (g.Key != null)
+                    if (g.Key.Texture != null)
                     {
                         texture = true;
                         TextureHelper.EnableTexturing();
-                        GL.Color4(Color.FromArgb(255, Color.White));
-                        g.Key.Bind();
+                        GL.Color4(Color.FromArgb(alpha, Color.White));
+                        g.Key.Texture.Bind();
                     }
                     else
                     {
@@ -131,7 +141,7 @@ namespace Sledge.DataStructures.Rendering
                     foreach (var f in g)
                     {
                         var disp = f is Displacement;
-                        GL.Color3(texture ? Color.White : f.Colour);
+                        GL.Color4(Color.FromArgb(alpha, texture ? Color.White : f.Colour));
                         //GL.Color3(f.Colour);
                         foreach (var tri in f.GetTriangles())
                         {
@@ -146,6 +156,7 @@ namespace Sledge.DataStructures.Rendering
                                 GLCoordinate(tri[2], f.Plane.Normal, texture);
                             }
                         }
+                        GL.Color3(Color.White);
                     }
                 }
             }
@@ -172,6 +183,8 @@ namespace Sledge.DataStructures.Rendering
         {
             TextureHelper.DisableTexturing();
             GL.Begin(BeginMode.Lines);
+
+            faces = faces.Where(x => x.Parent == null || !x.Parent.IsHidden);
 
             foreach (var f in faces)
             {

@@ -204,51 +204,17 @@ namespace Sledge.Editor.Tools
         /// <param name="viewport">The viewport that the box was confirmed in</param>
         public override void BoxDrawnConfirm(ViewportBase viewport)
         {
-            // If one of the dimensions has a depth value of 0, extend it out into infinite space
-            // If two or more dimensions have depth 0, do nothing.
-
-            var sameX = State.BoxStart.X == State.BoxEnd.X;
-            var sameY = State.BoxStart.Y == State.BoxEnd.Y;
-            var sameZ = State.BoxStart.Z == State.BoxEnd.Z;
-            var start = State.BoxStart.Clone();
-            var end = State.BoxEnd.Clone();
-            var invalid = false;
-
-            if (sameX)
+            Box boundingbox;
+            if (GetSelectionBox(out boundingbox))
             {
-                if (sameY || sameZ) invalid = true;
-                start.X = Decimal.MinValue;
-                end.X = Decimal.MaxValue;
+                // If the shift key is down, select all brushes that are fully contained by the box
+                // Otherwise, select all brushes that intersect with the box
+                var nodes = KeyboardState.Shift
+                                ? Document.Map.WorldSpawn.GetAllNodesContainedWithin(boundingbox).ToList()
+                                : Document.Map.WorldSpawn.GetAllNodesIntersectingWith(boundingbox).ToList();
+                Selection.Select(nodes);
+                Document.UpdateSelectLists();
             }
-
-            if (sameY)
-            {
-                if (sameZ) invalid = true;
-                start.Y = Decimal.MinValue;
-                end.Y = Decimal.MaxValue;
-            }
-
-            if (sameZ)
-            {
-                start.Z = Decimal.MinValue;
-                end.Z = Decimal.MaxValue;
-            }
-
-            if (invalid)
-            {
-                base.BoxDrawnConfirm(viewport);
-                return;
-            }
-
-            // If the shift key is down, select all brushes that are fully contained by the box
-            // Otherwise, select all brushes that intersect with the box
-
-            var boundingbox = new Box(start, end);
-            var nodes = KeyboardState.Shift
-                            ? Document.Map.WorldSpawn.GetAllNodesContainedWithin(boundingbox).ToList()
-                            : Document.Map.WorldSpawn.GetAllNodesIntersectingWith(boundingbox).ToList();
-            Selection.Select(nodes);
-            Document.UpdateSelectLists();
             base.BoxDrawnConfirm(viewport);
         }
     }

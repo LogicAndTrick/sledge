@@ -65,6 +65,7 @@ namespace Sledge.Editor.Rendering
                 }
                 else if (mo is Entity || mo is Group)
                 {
+                    if (mo is Entity) faces.AddRange(((Entity) mo).GetFaces());
                     CollectFaces(faces, mo.Children, excludeSelected);
                 }
             }

@@ -33,6 +33,24 @@ namespace Sledge.DataStructures.MapObjects
             SetMapTexturesRecursive(WorldSpawn, accessor);
         }
 
+        public void SetMapGameData(GameData.GameData gd)
+        {
+            SetMapGameDataRecursive(WorldSpawn, gd);
+        }
+
+        private static void SetMapGameDataRecursive(MapObject obj, GameData.GameData gd)
+        {
+            if (obj is Entity)
+            {
+                ((Entity) obj).GameData = gd.Classes.FirstOrDefault(x => x.Name == ((Entity) obj).EntityData.Name);
+                obj.UpdateBoundingBox();
+            }
+            else
+            {
+                obj.Children.ForEach(x => SetMapGameDataRecursive(x, gd));
+            }
+        }
+
         private static IEnumerable<string> GetAllTexturesRecursive(MapObject obj)
         {
             if (obj is Solid)

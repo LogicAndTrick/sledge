@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using Sledge.DataStructures.GameData;
 using Sledge.DataStructures.Geometric;
@@ -66,10 +68,61 @@ namespace Sledge.DataStructures.MapObjects
             base.UpdateBoundingBox(cascadeToParent);
         }
 
+        public new Color Colour
+        {
+            get
+            {
+                if (GameData != null && GameData.ClassType == ClassType.Point)
+                {
+                    var behav = GameData.Behaviours.SingleOrDefault(x => x.Name == "color");
+                    if (behav != null && behav.Values.Count == 3)
+                    {
+                        return behav.GetColour(0);
+                    }
+                }
+                return base.Colour;
+            }
+            set { base.Colour = value; }
+        }
+
+        public List<Face> GetFaces()
+        {
+            var faces = new List<Face>();
+            if (Children.Any()) return faces;
+
+            var box = BoundingBox.GetBoxFaces();
+            foreach (var ca in box)
+            {
+                var face = new Face
+                               {
+                                   Plane = new Plane(ca[0], ca[1], ca[2]),
+                                   Colour = Colour,
+                                   IsSelected = IsSelected,
+                               };
+                face.Vertices.AddRange(ca.Select(x => new Vertex(x, face)));
+                face.UpdateBoundingBox();
+                faces.Add(face);
+            }
+            return faces;
+        }
+
         public override void Transform(IUnitTransformation transform)
         {
             Origin = transform.Transform(Origin);
             base.Transform(transform);
+        }
+
+        /// <summary>
+        /// Returns the intersection point closest to the start of the line.
+        /// </summary>
+        /// <param name="line">The intersection line</param>
+        /// <returns>The closest intersecting point, or null if the line doesn't intersect.</returns>
+        public override Coordinate GetIntersectionPoint(Line line)
+        {
+            return GetFaces().Select(x => x.GetIntersectionPoint(line))
+                .Where(x => x != null)
+                .OrderBy(x => (x - line.Start).VectorMagnitude())
+                .FirstOrDefault();
         }
     }
 }

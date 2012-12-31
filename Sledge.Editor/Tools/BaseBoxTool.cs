@@ -108,11 +108,6 @@ namespace Sledge.Editor.Tools
             return null;
         }
 
-        protected static Coordinate SnapIfNeeded(Coordinate c)
-        {
-            return KeyboardState.Alt ? c : c.Snap(Document.GridSpacing);
-        }
-
         // Class Variables
         protected const decimal HandleWidth = 12;
 
@@ -628,6 +623,42 @@ namespace Sledge.Editor.Tools
         public override void MouseLeave(ViewportBase viewport, EventArgs e)
         {
             if (State.ActiveViewport != null) State.ActiveViewport.Cursor = Cursors.Default;
+        }
+
+        protected bool GetSelectionBox(out Box boundingbox)
+        {
+            // If one of the dimensions has a depth value of 0, extend it out into infinite space
+            // If two or more dimensions have depth 0, do nothing.
+
+            var sameX = State.BoxStart.X == State.BoxEnd.X;
+            var sameY = State.BoxStart.Y == State.BoxEnd.Y;
+            var sameZ = State.BoxStart.Z == State.BoxEnd.Z;
+            var start = State.BoxStart.Clone();
+            var end = State.BoxEnd.Clone();
+            var invalid = false;
+
+            if (sameX)
+            {
+                if (sameY || sameZ) invalid = true;
+                start.X = Decimal.MinValue;
+                end.X = Decimal.MaxValue;
+            }
+
+            if (sameY)
+            {
+                if (sameZ) invalid = true;
+                start.Y = Decimal.MinValue;
+                end.Y = Decimal.MaxValue;
+            }
+
+            if (sameZ)
+            {
+                start.Z = Decimal.MinValue;
+                end.Z = Decimal.MaxValue;
+            }
+
+            boundingbox = new Box(start, end);
+            return !invalid;
         }
     }
 }

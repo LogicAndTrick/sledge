@@ -11,44 +11,11 @@ namespace Sledge.DataStructures.MapObjects
 {
     public class Face
     {
-        private readonly static Coordinate TintVector = new Coordinate(1, 2, 3).Normalise();
-
-        private Color _colour;
-        private Plane _plane;
-
-        public Color Colour
-        {
-            get { return _colour; }
-            set
-            { 
-                _colour = value;
-
-                var tintvar = (double)TintVector.Dot(Plane.Normal);
-                // tint variation = 128
-                var diff = (int)(64 * (tintvar + 1));
-
-                TintColour = Color.FromArgb(value.A, Math.Max(0, value.R - diff), Math.Max(0, value.G - diff), Math.Max(0, value.B - diff));
-            }
-        }
+        public Color Colour { get; set; }
+        public Plane Plane { get; set; }
 
         public bool IsSelected { get; set; }
         public bool IsHidden { get; set; }
-        public Color TintColour { get; private set; }
-        public Color TintedWhite { get; private set; }
-
-        public Plane Plane
-        {
-            get { return _plane; }
-            set
-            {
-                _plane = value;
-                var tintvar = (double)TintVector.Dot(Plane.Normal);
-                // tint variation = 128
-                var diff = (int)(64 * (tintvar + 1));
-                var val = 255 - diff;
-                TintedWhite = Color.FromArgb(0, val, val, val);
-            }
-        }
 
         public TextureReference Texture { get; set; }
         public List<Vertex> Vertices { get; set; }
@@ -68,11 +35,9 @@ namespace Sledge.DataStructures.MapObjects
         {
             var f = new Face
                         {
-                            _plane = _plane.Clone(),
-                            _colour = _colour,
+                            Plane = Plane.Clone(),
+                            Colour = Colour,
                             IsSelected = IsSelected,
-                            TintColour = TintColour,
-                            TintedWhite = TintedWhite,
                             Texture = Texture.Clone(),
                             Parent = Parent,
                             BoundingBox = BoundingBox.Clone()
@@ -87,11 +52,9 @@ namespace Sledge.DataStructures.MapObjects
 
         public void Unclone(Face f)
         {
-            _plane = f._plane.Clone();
-            _colour = f._colour;
+            Plane = f.Plane.Clone();
+            Colour = f.Colour;
             IsSelected = f.IsSelected;
-            TintColour = f.TintColour;
-            TintedWhite = f.TintedWhite;
             Texture = f.Texture.Clone();
             Parent = f.Parent;
             BoundingBox = f.BoundingBox.Clone();

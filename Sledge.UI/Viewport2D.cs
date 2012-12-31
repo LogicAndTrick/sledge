@@ -99,8 +99,7 @@ namespace Sledge.UI
             {
                 var old = _position;
                 _position = value;
-                Listeners.Where(l => l is IViewport2DEventListener)
-                    .Select(l => l as IViewport2DEventListener)
+                Listeners.OfType<IViewport2DEventListener>()
                     .ToList().ForEach(l => l.PositionChanged(old, _position));
             }
         }
@@ -113,8 +112,7 @@ namespace Sledge.UI
             {
                 var old = _zoom;
                 _zoom = value;
-                Listeners.Where(l => l is IViewport2DEventListener)
-                    .Select(l => l as IViewport2DEventListener)
+                Listeners.OfType<IViewport2DEventListener>()
                     .ToList().ForEach(l => l.ZoomChanged(old, _zoom));
             }
         }

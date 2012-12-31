@@ -174,7 +174,7 @@ namespace Sledge.Providers.Map
 
         private Entity ReadEntity(StreamReader rdr)
         {
-            var ent = new Entity {EntityData = new EntityData()};
+            var ent = new Entity { EntityData = new EntityData(), Colour = Colour.GetRandomBrushColour() };
             string line;
             while ((line = CleanLine(rdr.ReadLine())) != null)
             {

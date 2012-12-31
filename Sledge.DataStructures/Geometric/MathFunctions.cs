@@ -1,4 +1,5 @@
-﻿using OpenTK;
+﻿using System;
+using OpenTK;
 
 namespace Sledge.DataStructures.Geometric
 {
@@ -23,7 +24,7 @@ namespace Sledge.DataStructures.Geometric
             var source = new Vector4d(coordinate.DX, coordinate.DY, coordinate.DZ, 1);
             var imed = Vector4d.Transform(source, modelview);
             var vector = Vector4d.Transform(imed, projection);
-            if (vector.W == 0) return null;
+            if (Math.Abs(vector.W - 0) < 0.00001) return null;
             var result = Vector3d.Divide(vector.Xyz, vector.W);
             result.X = viewport[0] + viewport[2] * (result.X + 1) / 2;
             result.Y = viewport[1] + viewport[3] * (result.Y + 1) / 2;
@@ -48,7 +49,7 @@ namespace Sledge.DataStructures.Geometric
                 2 * coordinate.DZ - 1,
                 1);
             var vector = Vector4d.Transform(source, matrix);
-            if (vector.W == 0) return null;
+            if (Math.Abs(vector.W - 0) < 0.00001) return null;
             var result = Vector3d.Divide(vector.Xyz, vector.W);
             return new Coordinate((decimal) result.X, (decimal) result.Y, (decimal) result.Z);
         }

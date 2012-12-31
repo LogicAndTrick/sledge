@@ -28,6 +28,7 @@ namespace Sledge.Editor.Tools
             Tools.Add(new TextureTool());
             Tools.Add(new DisplacementTool());
             Tools.Add(new ClipTool());
+            Tools.Add(new VMTool());
 
             Activate(Tools[0]);
         }

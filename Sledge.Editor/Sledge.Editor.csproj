@@ -161,6 +161,7 @@
       <DependentUpon>TextureApplicationForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Tools\TransformationTool.cs" />
+    <Compile Include="Tools\VMTool.cs" />
     <Compile Include="UI\AngleControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -351,6 +352,7 @@
     <Content Include="Resources\Tool_Skew.png" />
     <Content Include="Resources\Tool_Transform.png" />
     <Content Include="Resources\Tool_Translate.png" />
+    <Content Include="Resources\Tool_VM.png" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

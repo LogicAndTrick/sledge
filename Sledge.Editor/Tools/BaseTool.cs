@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using Sledge.DataStructures.Geometric;
 using Sledge.UI;
 using System.Drawing;
 
@@ -15,6 +16,11 @@ namespace Sledge.Editor.Tools
             View2D,
             View3D,
             Both
+        }
+
+        protected static Coordinate SnapIfNeeded(Coordinate c)
+        {
+            return KeyboardState.Alt ? c : c.Snap(Document.GridSpacing);
         }
 
         public ViewportBase Viewport { get; set; }

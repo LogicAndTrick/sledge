@@ -16,6 +16,8 @@ namespace Sledge.DataStructures.MapObjects
         public MapObject Parent { get; set; }
         public Color Colour { get; set; }
         public bool IsSelected { get; set; }
+        public bool IsHidden { get; set; }
+        public bool IsTransparent { get; set; }
         public Box BoundingBox { get; set; }
 
         protected MapObject()

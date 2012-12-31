@@ -107,6 +107,8 @@ namespace Sledge.Editor
                 GameData = new GameData();
             }
 
+            map.SetMapGameData(GameData);
+
             ViewportManager.AddGrids();
 
             foreach (var wad in game.Wads.OrderBy(x => Path.GetFileName(x.Path)))

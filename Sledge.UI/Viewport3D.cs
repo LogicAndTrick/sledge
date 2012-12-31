@@ -45,6 +45,40 @@ namespace Sledge.UI
         }
 
         /// <summary>
+        /// Convert a screen space coordinate into a world space coordinate.
+        /// The resulting coordinate will be quite a long way from the camera.
+        /// </summary>
+        /// <param name="screen">The screen coordinate (with Y in OpenGL space)</param>
+        /// <returns>The world coordinate</returns>
+        public Coordinate ScreenToWorld(Coordinate screen)
+        {
+            screen = new Coordinate(screen.X, screen.Y, 1);
+            var viewport = new[] { 0, 0, Width, Height };
+            var pm = Matrix4d.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(60), Width / (float)Height, 0.1f, 50000);
+            var vm = Matrix4d.LookAt(
+                new Vector3d(Camera.Location.X, Camera.Location.Y, Camera.Location.Z),
+                new Vector3d(Camera.LookAt.X, Camera.LookAt.Y, Camera.LookAt.Z),
+                Vector3d.UnitZ);
+            return MathFunctions.Unproject(screen, viewport, pm, vm);
+        }
+
+        /// <summary>
+        /// Convert a world space coordinate into a screen space coordinate.
+        /// </summary>
+        /// <param name="world">The world coordinate</param>
+        /// <returns>The screen coordinate</returns>
+        public Coordinate WorldToScreen(Coordinate world)
+        {
+            var viewport = new[] { 0, 0, Width, Height };
+            var pm = Matrix4d.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(60), Width / (float)Height, 0.1f, 50000);
+            var vm = Matrix4d.LookAt(
+                new Vector3d(Camera.Location.X, Camera.Location.Y, Camera.Location.Z),
+                new Vector3d(Camera.LookAt.X, Camera.LookAt.Y, Camera.LookAt.Z),
+                Vector3d.UnitZ);
+            return MathFunctions.Project(world, viewport, pm, vm);
+        }
+
+        /// <summary>
         /// Project the 2D coordinates from the screen coordinates outwards
         /// from the camera along the lookat vector, taking the frustrum
         /// into account. The resulting line will be run from the camera

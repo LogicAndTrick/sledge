@@ -180,6 +180,9 @@ namespace Sledge.DataStructures.Geometric
         }
 
         /* http://www.gamedev.net/community/forums/topic.asp?topic_id=338987 */
+        /// <summary>
+        /// Returns true if this box intersects the given line
+        /// </summary>
         public bool IntersectsWith(Line that)
         {
             var start = that.Start;
@@ -210,6 +213,17 @@ namespace Sledge.DataStructures.Geometric
             if (dca.Z > e.X * ad.Y + e.Y * ad.X) return false;
 
             return true;
+        }
+
+        /// <summary>
+        /// Returns true if the given coordinate is inside this box.
+        /// </summary>
+        /// <param name="c"></param>
+        /// <returns></returns>
+        public bool CoordinateIsInside(Coordinate c)
+        {
+            return c.X >= Start.X && c.Y >= Start.Y && c.Z >= Start.Z
+                   && c.X <= End.X && c.Y <= End.Y && c.Z <= End.Z;
         }
 
         public Box Clone()
