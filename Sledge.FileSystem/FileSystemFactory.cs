@@ -16,7 +16,7 @@ namespace Sledge.FileSystem
                              {
                                  new GenericFileSystemProvider(FileSystemType.Native, File.Exists, Directory.Exists, x => new NativeFile(x)),
 
-                                 new GenericFileSystemProvider(FileSystemType.Composite, x => false, x => false, x => new CompositeFile(null, x))
+                                 //new GenericFileSystemProvider(FileSystemType.Composite, x => false, x => false, x => new CompositeFile(null, x))
                              };
         }
 

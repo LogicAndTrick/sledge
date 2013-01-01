@@ -97,7 +97,7 @@ namespace Sledge.DataStructures.MapObjects
                                {
                                    Plane = new Plane(ca[0], ca[1], ca[2]),
                                    Colour = Colour,
-                                   IsSelected = IsSelected,
+                                   IsSelected = IsSelected
                                };
                 face.Vertices.AddRange(ca.Select(x => new Vertex(x, face)));
                 face.UpdateBoundingBox();

@@ -151,7 +151,7 @@ namespace Sledge.Providers
             bw.Write(c.B);
         }
 
-        public static Color ReadARGBColour(this BinaryReader br)
+        public static Color ReadRGBAColour(this BinaryReader br)
         {
             var r = br.ReadByte();
             var g = br.ReadByte();
@@ -160,12 +160,12 @@ namespace Sledge.Providers
             return Color.FromArgb(a, r, g, b);
         }
 
-        public static void WriteARGBColour(this BinaryWriter bw, Color c)
+        public static void WriteaRGBAColour(this BinaryWriter bw, Color c)
         {
-            bw.Write(c.A);
             bw.Write(c.R);
             bw.Write(c.G);
             bw.Write(c.B);
+            bw.Write(c.A);
         }
     }
 }

@@ -29,7 +29,7 @@ namespace Sledge.FileSystem
 
         public FileSystemType Type
         {
-            get { return FileSystemType.WAD; }
+            get { return FileSystemType.Gcf; }
         }
 
         private bool _checkedIsContainer;
@@ -273,9 +273,9 @@ namespace Sledge.FileSystem
                         }
                         var files = root.GetItems().ToList();
                         _children.AddRange(files.Where(x => x.Type == HLLib.DirectoryItemType.Folder)
-                            .Select(item => new GcfFile(FileInfo.FullName, item.Name)));
+                            .Select(item => new GcfFile(FileInfo.FullName, Path.Combine(FilePath ?? "", item.Name))));
                         _files.AddRange(files.Where(x => x.Type == HLLib.DirectoryItemType.File)
-                            .Select(item => new GcfFile(FileInfo.FullName, item.Name)));
+                            .Select(item => new GcfFile(FileInfo.FullName, Path.Combine(FilePath ?? "", item.Name))));
                     }
                     HLLib.Shutdown();
                 }

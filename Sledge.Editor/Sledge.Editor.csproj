@@ -214,6 +214,19 @@
       <DependentUpon>SettingsForm.cs</DependentUpon>
     </Compile>
     <Compile Include="UI\ViewportManager.cs" />
+    <Compile Include="Visgroups\VisgroupEditForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Visgroups\VisgroupEditForm.Designer.cs">
+      <DependentUpon>VisgroupEditForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Visgroups\VisgroupManager.cs" />
+    <Compile Include="Visgroups\VisgroupPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Visgroups\VisgroupPanel.Designer.cs">
+      <DependentUpon>VisgroupPanel.cs</DependentUpon>
+    </Compile>
     <EmbeddedResource Include="Brushes\Controls\BooleanControl.resx">
       <DependentUpon>BooleanControl.cs</DependentUpon>
     </EmbeddedResource>
@@ -264,6 +277,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UI\TextureBrowser.resx">
       <DependentUpon>TextureBrowser.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Visgroups\VisgroupEditForm.resx">
+      <DependentUpon>VisgroupEditForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Visgroups\VisgroupPanel.resx">
+      <DependentUpon>VisgroupPanel.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="App.config" />
     <None Include="Properties\Settings.settings">

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -23,7 +24,7 @@ namespace Sledge.Providers.Map
 
             // Only RMF version 2.2 is supported for the moment.
             var version = Math.Round(br.ReadSingle(), 1);
-            if (version != 2.2)
+            if (Math.Abs(version - 2.2) > 0.01)
             {
                 throw new ProviderException("Incorrect RMF version number. Expected 2.2, got " + version + ".");
             }
@@ -406,10 +407,11 @@ namespace Sledge.Providers.Map
                 var vis = new Visgroup
                     {
                         Name = br.ReadFixedLengthString(Encoding.UTF8, 128),
-                        Colour = br.ReadARGBColour(),
+                        Colour = br.ReadRGBAColour(),
                         ID = br.ReadInt32(),
                         Visible = br.ReadBoolean()
                     };
+                vis.Colour = Color.FromArgb(255, vis.Colour);
                 br.ReadBytes(3);
                 yield return vis;
             }
@@ -421,7 +423,7 @@ namespace Sledge.Providers.Map
             foreach (var visgroup in visgroups)
             {
                 bw.WriteFixedLengthString(Encoding.UTF8, 128, visgroup.Name);
-                bw.WriteARGBColour(visgroup.Colour);
+                bw.WriteaRGBAColour(visgroup.Colour);
                 bw.Write(visgroup.ID);
                 bw.Write(visgroup.Visible);
                 bw.Write(new byte[3]); // Unused

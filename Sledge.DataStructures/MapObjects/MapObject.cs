@@ -16,8 +16,8 @@ namespace Sledge.DataStructures.MapObjects
         public MapObject Parent { get; set; }
         public Color Colour { get; set; }
         public bool IsSelected { get; set; }
-        public bool IsHidden { get; set; }
-        public bool IsTransparent { get; set; }
+        public bool IsCodeHidden { get; set; }
+        public bool IsVisgroupHidden { get; set; }
         public Box BoundingBox { get; set; }
 
         protected MapObject()
@@ -157,7 +157,7 @@ namespace Sledge.DataStructures.MapObjects
         public IEnumerable<MapObject> GetAllNodesIntersectingWith(Box box)
         {
             var list = new List<MapObject>();
-            if (!(this is World))
+            if (!(this is World) && !IsCodeHidden && !IsVisgroupHidden)
             {
                 if (BoundingBox == null || !BoundingBox.IntersectsWith(box)) return list;
                 if (this is Solid || this is Entity) list.Add(this);
@@ -174,7 +174,7 @@ namespace Sledge.DataStructures.MapObjects
         public IEnumerable<MapObject> GetAllNodesIntersectingWith(Line line)
         {
             var list = new List<MapObject>();
-            if (!(this is World))
+            if (!(this is World) && !IsCodeHidden && !IsVisgroupHidden)
             {
                 if (BoundingBox == null || !BoundingBox.IntersectsWith(line)) return list;
                 if (this is Solid || this is Entity) list.Add(this);
@@ -191,7 +191,7 @@ namespace Sledge.DataStructures.MapObjects
         public IEnumerable<MapObject> GetAllNodesContainedWithin(Box box)
         {
             var list = new List<MapObject>();
-            if (!(this is World))
+            if (!(this is World) && !IsCodeHidden && !IsVisgroupHidden)
             {
                 if (BoundingBox == null || !BoundingBox.ContainedWithin(box)) return list;
                 if (this is Solid || this is Entity) list.Add(this);
@@ -209,7 +209,7 @@ namespace Sledge.DataStructures.MapObjects
         public IEnumerable<MapObject> GetAllNodesIntersecting2DLineTest(Box box)
         {
             var list = new List<MapObject>();
-            if (!(this is World))
+            if (!(this is World) && !IsCodeHidden && !IsVisgroupHidden)
             {
                 if (BoundingBox == null || !BoundingBox.IntersectsWith(box)) return list;
                 if (this is Solid && ((Solid)this).Faces.Any(f => f.IntersectsWithLine(box)))
@@ -219,6 +219,45 @@ namespace Sledge.DataStructures.MapObjects
             }
             list.AddRange(Children.SelectMany(x => x.GetAllNodesIntersecting2DLineTest(box)));
             return list;
+        }
+
+        public bool IsInVisgroup(int visgroup)
+        {
+            return Visgroups.Contains(visgroup);
+        }
+
+        /// <summary>
+        /// Recursively collect children matching a predicate.
+        /// </summary>
+        /// <param name="items">The list to populate</param>
+        /// <param name="matcher">The prediacate to match</param>
+        /// <param name="forceMatchIfParentMatches">If true and a parent matches the predicate, all children will be added regardless of match status.</param>
+        public void CollectChildren(List<MapObject> items, Predicate<MapObject> matcher, bool forceMatchIfParentMatches = false)
+        {
+            var thisMatch = matcher(this);
+            if (thisMatch)
+            {
+                items.Add(this);
+                if (forceMatchIfParentMatches) matcher = x => true;
+            }
+            Children.ForEach(x => x.CollectChildren(items, matcher, forceMatchIfParentMatches));
+        }
+
+        /// <summary>
+        /// Recursively modify children matching a predicate.
+        /// </summary>
+        /// <param name="action">The action to perform on matching children</param>
+        /// <param name="matcher">The prediacate to match</param>
+        /// <param name="forceMatchIfParentMatches">If true and a parent matches the predicate, all children will be modified regardless of match status.</param>
+        public void ModifyChildren(Predicate<MapObject> matcher, Action<MapObject> action, bool forceMatchIfParentMatches = false)
+        {
+            var thisMatch = matcher(this);
+            if (thisMatch)
+            {
+                action(this);
+                if (forceMatchIfParentMatches) matcher = x => true;
+            }
+            Children.ForEach(x => x.ModifyChildren(matcher, action, forceMatchIfParentMatches));
         }
     }
 }

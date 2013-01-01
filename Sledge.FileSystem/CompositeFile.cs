@@ -7,7 +7,7 @@ namespace Sledge.FileSystem
 {
     /// <summary>
     /// Represents a group of files or containers across multiple file systems.
-    /// If multiple files are found with the same name, the last one is given priority.
+    /// If multiple files are found with the same name, the first one is given priority.
     /// </summary>
     public class CompositeFile : IFile
     {
@@ -18,43 +18,39 @@ namespace Sledge.FileSystem
             Files = new List<IFile>(files.Where(x => x != null));
             Parent = parent;
             if (!Files.Any()) throw new FileNotFoundException("Cannot create a composite file with no files.");
-            if (Files.Select(x => x.Type).Distinct().Any()) throw new Exception("Cannot create a composite file with multiple different file types.");
-        }
-
-        public CompositeFile(CompositeFile parent, string filePaths)
-        {
-            var files = filePaths.Split(';').Select(FileSystemFactory.Create);
-            Files = new List<IFile>(files.Where(x => x != null));
-            Parent = parent;
-            if (!Files.Any()) throw new FileNotFoundException("Cannot create a composite file with no files.");
-            if (Files.Select(x => x.Type).Distinct().Any()) throw new Exception("Cannot create a composite file with multiple different file types.");
         }
 
         public FileSystemType Type
         {
-            get { return Files.Last(x => x.Exists).Type; }
+            get { return FileSystemType.Composite; }
         }
 
         public IFile Parent { get; set; }
 
         public string FullPathName
         {
-            get { return String.Join(";", Files.Select(x => x.FullPathName)); }
+            get { return Parent == null ? "\\" : Path.Combine(Parent.FullPathName, Name); }
+        }
+
+        private T First<T>(Func<IFile, T> func)
+        {
+            var f = Files.FirstOrDefault(x => x.Exists) ?? Files.First();
+            return func(f);
         }
 
         public string Name
         {
-            get { return Files.Last(x => x.Exists).Name; }
+            get { return First(x => x.Name); }
         }
 
         public string NameWithoutExtension
         {
-            get { return Files.Last(x => x.Exists).NameWithoutExtension; }
+            get { return First(x => x.NameWithoutExtension); }
         }
 
         public string Extension
         {
-            get { return Files.Last(x => x.Exists).Extension; }
+            get { return First(x => x.Extension); }
         }
 
         public bool Exists
@@ -64,12 +60,12 @@ namespace Sledge.FileSystem
 
         public long Size
         {
-            get { return Files.Last(x => x.Exists).Size; }
+            get { return First(x => x.Size); }
         }
 
         public bool IsContainer
         {
-            get { return Files.Last(x => x.Exists).IsContainer; }
+            get { return First(x => x.IsContainer); }
         }
 
         public int NumChildren
@@ -84,17 +80,17 @@ namespace Sledge.FileSystem
 
         public Stream Open()
         {
-            return Files.Last(x => x.Exists).Open();
+            return First(x => x.Open());
         }
 
         public byte[] ReadAll()
         {
-            return Files.Last(x => x.Exists).ReadAll();
+            return First(x => x.ReadAll());
         }
 
         public byte[] Read(long offset, long count)
         {
-            return Files.Last(x => x.Exists).Read(offset, count);
+            return First(x => x.Read(offset, count));
         }
 
         private IEnumerable<IFile> MergeByName(IEnumerable<IFile> files)

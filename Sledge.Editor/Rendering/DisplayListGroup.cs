@@ -59,13 +59,13 @@ namespace Sledge.Editor.Rendering
         {
             foreach (var mo in list.Where(mo => !excludeSelected || !mo.IsSelected))
             {
-                if (mo is Solid)
+                if (mo is Solid && !mo.IsCodeHidden && !mo.IsVisgroupHidden)
                 {
                     faces.AddRange(((Solid)mo).Faces.Where(x => !x.IsHidden && (!excludeSelected || !x.IsSelected)));
                 }
                 else if (mo is Entity || mo is Group)
                 {
-                    if (mo is Entity) faces.AddRange(((Entity) mo).GetFaces());
+                    if (mo is Entity && !mo.IsCodeHidden && !mo.IsVisgroupHidden) faces.AddRange(((Entity) mo).GetFaces());
                     CollectFaces(faces, mo.Children, excludeSelected);
                 }
             }

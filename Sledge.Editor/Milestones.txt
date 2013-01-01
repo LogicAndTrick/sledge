@@ -1,17 +1,16 @@
 ﻿Key: Item - percentage complete, uncompleted tasks
 
 Priorities
+  Undo/Redo
+  Compiling
   Decal Tool
-  VM Tool
   Object Properties
-  Visgroups
+  VMF
   Groups
   Texture browser
-  Undo/Redo
-  New/Open/Save/Close
-  Recent Files
   Cut/Copy/Paste/Paste Special
-  Compiling
+  Recent Files
+  New/Open/Save/Close
 
 1. Goldsource Support
   Formats
@@ -23,31 +22,32 @@ Priorities
     GCF - 90%, integration
     PAK - 0%
     SPR - 80%, testing, streaming, integration
+    VMF - 40%, fully support VHE4 format, saving, visgroups, hidden objects, options, flags, etc
   Rendering
     Solids - 90%
-    Entities - 60%, sprites, models
+    Entities - 60%, sprites, models, path connections
     Sprites - 0%
     Models - 0%
   File System
-    FileSource and mounting - 10%
-    Custom file dialog - 0%
+    FileSource and mounting - 50%, offset roots (for PAK files)
+    Custom file dialog - 50%, events, options
     Native - 100%
     WAD - 100%
     GCF - 100%
+    PAK - 0%
   Main Tools
     Selection - 100%
     Entity - 60%, right toolbar, create object, 3D placement
     Brush - 80%, arch, sphere
-    Texture - 80%, justify, hide mask
+    Texture - 90%, hide mask
     Decal - 0%
     Clip - 80%, choose sides to keep
-    VM - 60%, merge vertices, create vertices
-    Path - 0% (perhaps not needed)
+    VM - 80%, create vertices?
   Secondary Tools
     Carve - 0%
     Hollow - 0%
     Groups - 0%
-    Visgroups - 0%
+    Visgroups - 70%, assigning, marking, auto
     Cordon - 0%
     Texture Lock - 0%
     Entity/World - 0%
@@ -86,6 +86,7 @@ Priorities
 A. Unknown Milestone
   VM prevent illegal brushes
   VM move in 3D
+  VM create verts
 
 ---
 

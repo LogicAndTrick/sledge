@@ -3,6 +3,7 @@ using OpenTK;
 using Sledge.DataStructures.GameData;
 using Sledge.DataStructures.MapObjects;
 using Sledge.Editor.UI;
+using Sledge.Editor.Visgroups;
 using Sledge.Graphics.Helpers;
 using Sledge.Providers.GameData;
 using Sledge.Providers.Map;
@@ -40,6 +41,7 @@ namespace Sledge.Editor
         {
             Selection.Clear();
             ViewportManager.ClearContexts();
+            VisgroupManager.Clear();
             DisplayListGroup.DeleteLists();
             DisplayLists = new[]
                                {
@@ -130,6 +132,8 @@ namespace Sledge.Editor
 
             ViewportManager.Viewports.ForEach(vp => vp.RenderContext.Add(new ToolRenderable()));
             ViewportManager.AddContext3D(new WidgetLinesRenderable());
+
+            VisgroupManager.Update(Map);
         }
 
         public static void StartSelectionTransform()

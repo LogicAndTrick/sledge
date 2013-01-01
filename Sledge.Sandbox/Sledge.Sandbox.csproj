@@ -72,6 +72,10 @@
       <Project>{DFF00869-B064-483D-95C0-A88039C471C7}</Project>
       <Name>Sledge.Editor</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Sledge.FileSystem\Sledge.FileSystem.csproj">
+      <Project>{1C2C012D-DBA5-4C7F-994F-E3034AC60DCC}</Project>
+      <Name>Sledge.FileSystem</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Sledge.Libs\Sledge.Libs.csproj">
       <Project>{111EA4FC-CBFB-4C0F-9E4B-F3B050BEC459}</Project>
       <Name>Sledge.Libs</Name>

@@ -27,5 +27,15 @@ namespace Sledge.Common
         {
             return Color.FromArgb(255, 0, _rand.Next(128, 256), _rand.Next(128, 256));
         }
+
+        public static Color GetRandomLightColour()
+        {
+            return Color.FromArgb(255, _rand.Next(128, 256), _rand.Next(128, 256), _rand.Next(128, 256));
+        }
+
+        public static Color GetRandomDarkColour()
+        {
+            return Color.FromArgb(255, _rand.Next(0, 128), _rand.Next(0, 128), _rand.Next(0, 128));
+        }
     }
 }

@@ -42,8 +42,14 @@
             this.TexturePanel = new System.Windows.Forms.Panel();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.BrushCreatePanel = new System.Windows.Forms.FlowLayoutPanel();
+            this.label3 = new System.Windows.Forms.Label();
             this.BrushTypeList = new System.Windows.Forms.ComboBox();
             this.EntityPanel = new System.Windows.Forms.FlowLayoutPanel();
+            this.label2 = new System.Windows.Forms.Label();
+            this.EntityTypeList = new System.Windows.Forms.ComboBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.button1 = new System.Windows.Forms.Button();
+            this.button2 = new System.Windows.Forms.Button();
             this.tspTools = new System.Windows.Forms.ToolStrip();
             this.tspFile = new System.Windows.Forms.ToolStrip();
             this.tsbNew = new System.Windows.Forms.ToolStripButton();
@@ -55,16 +61,16 @@
             this.pasteToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.tsbRandom = new System.Windows.Forms.ToolStripButton();
-            this.EntityTypeList = new System.Windows.Forms.ComboBox();
-            this.button1 = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
-            this.label1 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
+            this.VisgroupsPanel = new System.Windows.Forms.Panel();
             this.tblQuadView = new Sledge.Editor.UI.QuadSplitControl();
+            this.VisgroupTree = new Sledge.Editor.Visgroups.VisgroupPanel();
+            this.VisgroupsCollapse = new Sledge.Editor.UI.CollapsingLabel();
             this.TextureCollapse = new Sledge.Editor.UI.CollapsingLabel();
             this.EntityCollapse = new Sledge.Editor.UI.CollapsingLabel();
             this.BrushCreateCollapse = new Sledge.Editor.UI.CollapsingLabel();
+            this.editButton = new System.Windows.Forms.Button();
+            this.button3 = new System.Windows.Forms.Button();
+            this.button4 = new System.Windows.Forms.Button();
             this.mnuMain.SuspendLayout();
             this.tscToolStrip.ContentPanel.SuspendLayout();
             this.tscToolStrip.LeftToolStripPanel.SuspendLayout();
@@ -76,6 +82,7 @@
             this.BrushCreatePanel.SuspendLayout();
             this.EntityPanel.SuspendLayout();
             this.tspFile.SuspendLayout();
+            this.VisgroupsPanel.SuspendLayout();
             this.SuspendLayout();
             // 
             // mnuMain
@@ -168,22 +175,26 @@
             // 
             this.RightToolbar.ColumnCount = 1;
             this.RightToolbar.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.RightToolbar.Controls.Add(this.VisgroupsPanel, 0, 3);
+            this.RightToolbar.Controls.Add(this.VisgroupsCollapse, 0, 2);
             this.RightToolbar.Controls.Add(this.TextureCollapse, 0, 0);
             this.RightToolbar.Controls.Add(this.TexturePanel, 0, 1);
-            this.RightToolbar.Controls.Add(this.BrushCreatePanel, 0, 5);
-            this.RightToolbar.Controls.Add(this.EntityCollapse, 0, 2);
-            this.RightToolbar.Controls.Add(this.EntityPanel, 0, 3);
-            this.RightToolbar.Controls.Add(this.BrushCreateCollapse, 0, 4);
+            this.RightToolbar.Controls.Add(this.BrushCreatePanel, 0, 7);
+            this.RightToolbar.Controls.Add(this.EntityCollapse, 0, 4);
+            this.RightToolbar.Controls.Add(this.EntityPanel, 0, 5);
+            this.RightToolbar.Controls.Add(this.BrushCreateCollapse, 0, 6);
             this.RightToolbar.Dock = System.Windows.Forms.DockStyle.Fill;
             this.RightToolbar.Location = new System.Drawing.Point(0, 0);
             this.RightToolbar.Name = "RightToolbar";
-            this.RightToolbar.RowCount = 6;
+            this.RightToolbar.RowCount = 7;
             this.RightToolbar.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.RightToolbar.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.RightToolbar.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.RightToolbar.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.RightToolbar.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.RightToolbar.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.RightToolbar.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.RightToolbar.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.RightToolbar.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.RightToolbar.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.RightToolbar.Size = new System.Drawing.Size(150, 457);
             this.RightToolbar.TabIndex = 2;
             // 
@@ -208,10 +219,19 @@
             this.BrushCreatePanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.BrushCreatePanel.Controls.Add(this.label3);
             this.BrushCreatePanel.Controls.Add(this.BrushTypeList);
-            this.BrushCreatePanel.Location = new System.Drawing.Point(3, 267);
+            this.BrushCreatePanel.Location = new System.Drawing.Point(3, 435);
             this.BrushCreatePanel.Name = "BrushCreatePanel";
             this.BrushCreatePanel.Size = new System.Drawing.Size(144, 48);
             this.BrushCreatePanel.TabIndex = 1;
+            // 
+            // label3
+            // 
+            this.label3.Location = new System.Drawing.Point(3, 0);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(137, 17);
+            this.label3.TabIndex = 5;
+            this.label3.Text = "Brush Type:";
+            this.label3.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
             // 
             // BrushTypeList
             // 
@@ -230,10 +250,55 @@
             this.EntityPanel.Controls.Add(this.label1);
             this.EntityPanel.Controls.Add(this.button1);
             this.EntityPanel.Controls.Add(this.button2);
-            this.EntityPanel.Location = new System.Drawing.Point(3, 150);
+            this.EntityPanel.Location = new System.Drawing.Point(3, 320);
             this.EntityPanel.Name = "EntityPanel";
-            this.EntityPanel.Size = new System.Drawing.Size(144, 91);
+            this.EntityPanel.Size = new System.Drawing.Size(144, 89);
             this.EntityPanel.TabIndex = 4;
+            // 
+            // label2
+            // 
+            this.label2.Location = new System.Drawing.Point(3, 0);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(137, 17);
+            this.label2.TabIndex = 4;
+            this.label2.Text = "Entity Type:";
+            this.label2.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
+            // 
+            // EntityTypeList
+            // 
+            this.EntityTypeList.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.EntityTypeList.FormattingEnabled = true;
+            this.EntityTypeList.Location = new System.Drawing.Point(3, 20);
+            this.EntityTypeList.Name = "EntityTypeList";
+            this.EntityTypeList.Size = new System.Drawing.Size(137, 21);
+            this.EntityTypeList.TabIndex = 0;
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(3, 44);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(137, 13);
+            this.label1.TabIndex = 3;
+            this.label1.Text = "Move selected:";
+            this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(3, 60);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(65, 23);
+            this.button1.TabIndex = 1;
+            this.button1.Text = "To world";
+            this.button1.UseVisualStyleBackColor = true;
+            // 
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(74, 60);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(65, 23);
+            this.button2.TabIndex = 2;
+            this.button2.Text = "To entity";
+            this.button2.UseVisualStyleBackColor = true;
             // 
             // tspTools
             // 
@@ -336,63 +401,23 @@
             this.tsbRandom.Size = new System.Drawing.Size(23, 22);
             this.tsbRandom.Text = "He&lp";
             // 
-            // EntityTypeList
+            // VisgroupsPanel
             // 
-            this.EntityTypeList.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.EntityTypeList.FormattingEnabled = true;
-            this.EntityTypeList.Location = new System.Drawing.Point(3, 20);
-            this.EntityTypeList.Name = "EntityTypeList";
-            this.EntityTypeList.Size = new System.Drawing.Size(137, 21);
-            this.EntityTypeList.TabIndex = 0;
-            // 
-            // button1
-            // 
-            this.button1.Location = new System.Drawing.Point(3, 60);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(65, 23);
-            this.button1.TabIndex = 1;
-            this.button1.Text = "To world";
-            this.button1.UseVisualStyleBackColor = true;
-            // 
-            // button2
-            // 
-            this.button2.Location = new System.Drawing.Point(74, 60);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(65, 23);
-            this.button2.TabIndex = 2;
-            this.button2.Text = "To entity";
-            this.button2.UseVisualStyleBackColor = true;
-            // 
-            // label1
-            // 
-            this.label1.Location = new System.Drawing.Point(3, 44);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(137, 13);
-            this.label1.TabIndex = 3;
-            this.label1.Text = "Move selected:";
-            this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // label2
-            // 
-            this.label2.Location = new System.Drawing.Point(3, 0);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(137, 17);
-            this.label2.TabIndex = 4;
-            this.label2.Text = "Entity Type:";
-            this.label2.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
-            // 
-            // label3
-            // 
-            this.label3.Location = new System.Drawing.Point(3, 0);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(137, 17);
-            this.label3.TabIndex = 5;
-            this.label3.Text = "Brush Type:";
-            this.label3.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
+            this.VisgroupsPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.VisgroupsPanel.Controls.Add(this.button4);
+            this.VisgroupsPanel.Controls.Add(this.button3);
+            this.VisgroupsPanel.Controls.Add(this.editButton);
+            this.VisgroupsPanel.Controls.Add(this.VisgroupTree);
+            this.VisgroupsPanel.Location = new System.Drawing.Point(3, 150);
+            this.VisgroupsPanel.Name = "VisgroupsPanel";
+            this.VisgroupsPanel.Size = new System.Drawing.Size(144, 144);
+            this.VisgroupsPanel.TabIndex = 0;
             // 
             // tblQuadView
             // 
             this.tblQuadView.ColumnCount = 2;
+            this.tblQuadView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tblQuadView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tblQuadView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tblQuadView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
@@ -425,8 +450,30 @@
             this.tblQuadView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tblQuadView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tblQuadView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tblQuadView.Size = new System.Drawing.Size(682, 457);
             this.tblQuadView.TabIndex = 0;
+            // 
+            // VisgroupTree
+            // 
+            this.VisgroupTree.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.VisgroupTree.Location = new System.Drawing.Point(1, 1);
+            this.VisgroupTree.Name = "VisgroupTree";
+            this.VisgroupTree.ShowCheckboxes = true;
+            this.VisgroupTree.Size = new System.Drawing.Size(140, 119);
+            this.VisgroupTree.TabIndex = 0;
+            // 
+            // VisgroupsCollapse
+            // 
+            this.VisgroupsCollapse.Collapsed = false;
+            this.VisgroupsCollapse.ControlToCollapse = this.VisgroupsPanel;
+            this.VisgroupsCollapse.LabelText = "Visgroups";
+            this.VisgroupsCollapse.Location = new System.Drawing.Point(3, 130);
+            this.VisgroupsCollapse.Name = "VisgroupsCollapse";
+            this.VisgroupsCollapse.Size = new System.Drawing.Size(144, 14);
+            this.VisgroupsCollapse.TabIndex = 6;
             // 
             // TextureCollapse
             // 
@@ -443,7 +490,7 @@
             this.EntityCollapse.Collapsed = false;
             this.EntityCollapse.ControlToCollapse = this.EntityPanel;
             this.EntityCollapse.LabelText = "Entities";
-            this.EntityCollapse.Location = new System.Drawing.Point(3, 130);
+            this.EntityCollapse.Location = new System.Drawing.Point(3, 300);
             this.EntityCollapse.Name = "EntityCollapse";
             this.EntityCollapse.Size = new System.Drawing.Size(144, 14);
             this.EntityCollapse.TabIndex = 5;
@@ -453,10 +500,40 @@
             this.BrushCreateCollapse.Collapsed = false;
             this.BrushCreateCollapse.ControlToCollapse = this.BrushCreatePanel;
             this.BrushCreateCollapse.LabelText = "Brush Types";
-            this.BrushCreateCollapse.Location = new System.Drawing.Point(3, 247);
+            this.BrushCreateCollapse.Location = new System.Drawing.Point(3, 415);
             this.BrushCreateCollapse.Name = "BrushCreateCollapse";
             this.BrushCreateCollapse.Size = new System.Drawing.Size(144, 14);
             this.BrushCreateCollapse.TabIndex = 2;
+            // 
+            // editButton
+            // 
+            this.editButton.Location = new System.Drawing.Point(1, 120);
+            this.editButton.Name = "editButton";
+            this.editButton.Size = new System.Drawing.Size(39, 22);
+            this.editButton.TabIndex = 1;
+            this.editButton.Tag = "Edit";
+            this.editButton.Text = "Edit";
+            this.editButton.UseVisualStyleBackColor = true;
+            // 
+            // button3
+            // 
+            this.button3.Location = new System.Drawing.Point(39, 120);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(46, 22);
+            this.button3.TabIndex = 1;
+            this.button3.Tag = "Select";
+            this.button3.Text = "Select";
+            this.button3.UseVisualStyleBackColor = true;
+            // 
+            // button4
+            // 
+            this.button4.Location = new System.Drawing.Point(84, 120);
+            this.button4.Name = "button4";
+            this.button4.Size = new System.Drawing.Size(57, 22);
+            this.button4.TabIndex = 1;
+            this.button4.Tag = "ShowAll";
+            this.button4.Text = "Show All";
+            this.button4.UseVisualStyleBackColor = true;
             // 
             // Editor
             // 
@@ -488,6 +565,7 @@
             this.EntityPanel.ResumeLayout(false);
             this.tspFile.ResumeLayout(false);
             this.tspFile.PerformLayout();
+            this.VisgroupsPanel.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -531,6 +609,12 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label3;
+        private UI.CollapsingLabel VisgroupsCollapse;
+        private System.Windows.Forms.Panel VisgroupsPanel;
+        private Visgroups.VisgroupPanel VisgroupTree;
+        private System.Windows.Forms.Button button4;
+        private System.Windows.Forms.Button button3;
+        private System.Windows.Forms.Button editButton;
     }
 }
 

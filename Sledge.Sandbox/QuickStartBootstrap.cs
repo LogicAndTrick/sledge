@@ -9,6 +9,7 @@ using Sledge.Database.Models;
 using System.IO;
 using Sledge.Editor;
 using Sledge.Editor.UI;
+using Sledge.FileSystem;
 using Sledge.Providers.GameData;
 using Sledge.Providers.Map;
 using Sledge.Providers.Texture;
@@ -38,13 +39,23 @@ namespace Sledge.Sandbox
            // var settingsform = new Editor.Settings.SettingsForm();
            // Application.Run(settingsform);
 
-            var map = MapProvider.GetMapFromFile(MapFile);
-            Document.Game = Game;
-            Document.Map = map;
-            Document.GameData = GameDataProvider.GetGameDataFromFiles(Game.Fgds.Select(f => f.Path));
-            var entity = new EntityEditor();
-            entity.Objects.AddRange(map.WorldSpawn.Children.OfType<Entity>().Take(1));
-            Application.Run(entity);
+           // var map = MapProvider.GetMapFromFile(MapFile);
+           // Document.Game = Game;
+           // Document.Map = map;
+           // Document.GameData = GameDataProvider.GetGameDataFromFiles(Game.Fgds.Select(f => f.Path));
+           // var entity = new EntityEditor();
+           // entity.Objects.AddRange(map.WorldSpawn.Children.OfType<Entity>().Take(1));
+           // Application.Run(entity);
+
+            var nat = new NativeFile(new DirectoryInfo(@"F:\Steam\steamapps\penguinboy77\half-life"));
+            var gcf1 = new GcfFile(@"F:\Steam\steamapps\half-life.gcf");
+            var gcf2 = new GcfFile(@"F:\Steam\steamapps\half-life engine.gcf");
+            var gcf3 = new GcfFile(@"F:\Steam\steamapps\half-life base content.gcf");
+            var gcf4 = new GcfFile(@"F:\Steam\steamapps\platform.gcf");
+            var com = new CompositeFile(null, new IFile[] { nat, gcf1, gcf2, gcf3, gcf4 });
+            var fsb = new FileSystemBrowserControl {Dock = DockStyle.Fill, File = com, FilterText = "WAD Files", Filter = "*.wad"};
+            var form = new Form {Controls = {fsb}, Width = 500, Height = 500};
+            Application.Run(form);
         }
 
         public static void PostStart(Editor.Editor editor)

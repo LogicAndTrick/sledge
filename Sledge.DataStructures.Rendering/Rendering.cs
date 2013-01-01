@@ -60,7 +60,7 @@ namespace Sledge.DataStructures.Rendering
 
         private static bool RenderTransparent(ITexture texture, Face face)
         {
-            if (face.Parent != null && face.Parent.IsTransparent) return true;
+            //if (face.Parent != null && face.Parent.IsTransparent) return true;
             if (texture == null || texture.Name == null) return false;
             return texture.Name.ToLower() == "aaatrigger";
         }
@@ -77,7 +77,7 @@ namespace Sledge.DataStructures.Rendering
         {
             var noTexturing = !color.IsEmpty;
             if (!noTexturing) TextureHelper.EnableTexturing();
-            faces = faces.Where(x => x.Parent == null || !x.Parent.IsHidden);
+            faces = faces.Where(x => x.Parent == null || !(x.Parent.IsCodeHidden || x.Parent.IsVisgroupHidden));
 
             GL.Light(LightName.Light0, LightParameter.Position, new float[] {-10000, -20000, 30000, 1});
             GL.Light(LightName.Light1, LightParameter.Position, new float[] {10000, 20000, 30000, 1});
@@ -184,7 +184,7 @@ namespace Sledge.DataStructures.Rendering
             TextureHelper.DisableTexturing();
             GL.Begin(BeginMode.Lines);
 
-            faces = faces.Where(x => x.Parent == null || !x.Parent.IsHidden);
+            faces = faces.Where(x => x.Parent == null || !(x.Parent.IsCodeHidden || x.Parent.IsVisgroupHidden));
 
             foreach (var f in faces)
             {

@@ -125,25 +125,14 @@ namespace Sledge.Editor.Tools
             _points = new List<VMPoint>();
             foreach (var solid in selectedSolids)
             {
-                var copy = (Solid) solid.Clone();
+                var copy = (Solid)solid.Clone();
                 _copies.Add(copy, solid);
 
                 // Set all the original solids to hidden
                 // (do this after we clone it so the clones aren't hidden too)
-                solid.IsHidden = true;
-
-                // Add the vertex points
-                // Group by location per solid, duplicate coordinates are "attached" and moved at the same time
-                foreach (var group in copy.Faces.SelectMany(x => x.Vertices).GroupBy(x => x.Location))
-                {
-                    _points.Add(new VMPoint
-                                    {
-                                        Solid = copy, // ten four, solid copy
-                                        Coordinate = group.First().Location,
-                                        Vertices = group.ToList()
-                                    });
-                }
+                solid.IsCodeHidden = true;
             }
+            RefreshPoints();
             RefreshMidpoints();
             _state = VMState.None;
             _moveStart = null;
@@ -156,7 +145,7 @@ namespace Sledge.Editor.Tools
             var selectedSolids = Selection.GetSelectedObjects().OfType<Solid>().ToList();
             foreach (var o in selectedSolids)
             {
-                o.IsHidden = false;
+                o.IsCodeHidden = false;
                 // Commit the manips back into the original object
                 var copy = _copies.First(x => x.Value == o).Key;
                 o.Unclone(copy);
@@ -168,6 +157,30 @@ namespace Sledge.Editor.Tools
             _state = VMState.None;
             _moveStart = null;
             Document.UpdateDisplayLists();
+        }
+
+        /// <summary>
+        /// Updates the points list (does not update midpoints)
+        /// </summary>
+        private void RefreshPoints()
+        {
+            var selected = _points.Where(x => !x.IsMidPoint && x.IsSelected).Select(x => new { x.Coordinate, x.Solid }).ToList();
+            _points.RemoveAll(x => !x.IsMidPoint);
+            foreach (var copy in _copies.Keys)
+            {
+                // Add the vertex points
+                // Group by location per solid, duplicate coordinates are "attached" and moved at the same time
+                foreach (var group in copy.Faces.SelectMany(x => x.Vertices).GroupBy(x => x.Location))
+                {
+                    _points.Add(new VMPoint
+                    {
+                        Solid = copy, // ten four, solid copy
+                        Coordinate = group.First().Location,
+                        Vertices = group.ToList(),
+                        IsSelected = selected.Any(x => x.Solid == copy && x.Coordinate == group.First().Location)
+                    });
+                }
+            }
         }
 
         /// <summary>
@@ -265,10 +278,16 @@ namespace Sledge.Editor.Tools
             // adjacent points with the same solid and coordinate need to be merged (erp)
             foreach (var group in _points.Where(x => !x.IsMidPoint).GroupBy(x => new {x.Solid, x.Coordinate}).Where(x => x.Count() > 1))
             {
-                var count = group.Count();
-                var allFaces = group.SelectMany(x => x.Vertices).Select(x => x.Parent).ToList();
+                var allFaces = group.SelectMany(x => x.Vertices).Select(x => x.Parent).Distinct().ToList();
+                foreach (var face in allFaces)
+                {
+                    var distinctVerts = face.Vertices.GroupBy(x => x.Location).Select(x => x.First()).ToList();
+                    if (distinctVerts.Count < 3) group.Key.Solid.Faces.Remove(face); // Remove face
+                    else face.Vertices.RemoveAll(x => !distinctVerts.Contains(x)); // Remove duped verts
+                }
                 // ... this is hard :(
             }
+            RefreshPoints();
         }
 
         public override void MouseMove(ViewportBase vp, MouseEventArgs e)

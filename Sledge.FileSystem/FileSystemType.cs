@@ -18,27 +18,27 @@ namespace Sledge.FileSystem
         /// <summary>
         /// A compressed ZIP file
         /// </summary>
-        ZIP,
+        Zip,
 
         /// <summary>
         /// A Steam GCF file
         /// </summary>
-        GCF,
+        Gcf,
 
         /// <summary>
         /// A GoldSource WAD texture file
         /// </summary>
-        WAD,
+        Wad,
 
         /// <summary>
         /// A WON GoldSource PAK container file
         /// </summary>
-        PAK,
+        Pak,
 
         /// <summary>
         /// A Valve VPK file
         /// </summary>
-        VPK,
+        Vpk,
 
         /// <summary>
         /// A non-standard file system implementation

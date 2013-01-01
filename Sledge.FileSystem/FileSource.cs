@@ -18,5 +18,10 @@ namespace Sledge.FileSystem
         {
             _roots.Add(source);
         }
+
+        public IFile GetRoot()
+        {
+            return new CompositeFile(null, _roots);
+        }
     }
 }

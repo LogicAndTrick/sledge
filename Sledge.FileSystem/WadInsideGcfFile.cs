@@ -29,7 +29,7 @@ namespace Sledge.FileSystem
 
         public FileSystemType Type
         {
-            get { return FileSystemType.WAD; }
+            get { return FileSystemType.Wad; }
         }
 
         private T IfContainer<T>(Func<T> container, Func<T> notContainer)
