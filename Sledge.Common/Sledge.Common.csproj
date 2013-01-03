@@ -46,6 +46,9 @@
     <Compile Include="Easings\Easing.cs" />
     <Compile Include="Easings\EasingType.cs" />
     <Compile Include="ITexture.cs" />
+    <Compile Include="Mediator\Mediator.cs" />
+    <Compile Include="Mediator\IMediatorListener.cs" />
+    <Compile Include="Mediator\MultiDictionary.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

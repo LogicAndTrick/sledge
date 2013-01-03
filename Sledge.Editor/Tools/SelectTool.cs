@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using OpenTK.Graphics.OpenGL;
 using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.MapObjects;
 using Sledge.Editor.Editing;
+using Sledge.Editor.History;
 using Sledge.Editor.Properties;
 using Sledge.UI;
 
@@ -19,12 +21,15 @@ namespace Sledge.Editor.Tools
     /// </summary>
     class SelectTool : BaseBoxTool
     {
+        private Box _selectionBoundingBox;
+        private SelectToolContextMenu _contextMenu;
         private MapObject ChosenItemFor3DSelection { get; set; }
         private List<MapObject> IntersectingObjectsFor3DSelection { get; set; }
 
         public SelectTool()
         {
             Usage = ToolUsage.Both;
+            _contextMenu = new SelectToolContextMenu(this);
         }
 
         public override Image GetIcon()
@@ -49,7 +54,71 @@ namespace Sledge.Editor.Tools
 
         public override void ToolSelected()
         {
+            UpdateSelectionBoundingBox();
             Document.UpdateSelectLists();
+        }
+
+        public override void ToolDeselected()
+        {
+            _selectionBoundingBox = null;
+        }
+
+        private void UpdateSelectionBoundingBox()
+        {
+            _selectionBoundingBox = Selection.IsEmpty() ? null : new Box(Selection.GetSelectedObjects().Select(x => x.BoundingBox));
+        }
+
+        /// <summary>
+        /// If ignoreGrouping is disabled, this will convert the list of objects into their topmost group or entity.
+        /// </summary>
+        /// <param name="objects">The object list to normalise</param>
+        /// <param name="ignoreGrouping">True if grouping is being ignored</param>
+        /// <returns>The normalised list of objects</returns>
+        private static IEnumerable<MapObject> NormaliseSelection(IEnumerable<MapObject> objects, bool ignoreGrouping)
+        {
+            return ignoreGrouping
+                       ? objects
+                       : objects.Select(x => x.FindTopmostParent(y => y is Group || y is Entity) ?? x).Distinct();
+        }
+
+        /// <summary>
+        /// Deselect (first) a list of objects and then select (second) another list.
+        /// </summary>
+        /// <param name="objectsToDeselect">The objects to deselect</param>
+        /// <param name="objectsToSelect">The objects to select</param>
+        /// <param name="deselectAll">If true, this will ignore the objectToDeselect parameter and just deselect everything</param>
+        /// <param name="ignoreGrouping">If true, object groups will be ignored</param>
+        private void SetSelected(IEnumerable<MapObject> objectsToDeselect, IEnumerable<MapObject> objectsToSelect, bool deselectAll, bool ignoreGrouping)
+        {
+            if (objectsToDeselect == null) objectsToDeselect = new MapObject[0];
+            if (objectsToSelect == null) objectsToSelect = new MapObject[0];
+
+            if (deselectAll)
+            {
+                objectsToDeselect = Selection.GetSelectedObjects();
+            }
+
+            // Normalise selections
+            objectsToDeselect = NormaliseSelection(objectsToDeselect.Where(x => x != null), ignoreGrouping);
+            objectsToSelect = NormaliseSelection(objectsToSelect.Where(x => x != null), ignoreGrouping);
+
+            // Don't bother deselecting the objects we're about to select
+            objectsToDeselect = objectsToDeselect.Where(x => !objectsToSelect.Contains(x));
+
+            // Perform selections
+            var deselected = objectsToDeselect.ToList();
+            var selected = objectsToSelect.ToList();
+
+            deselected.ForEach(Selection.Deselect);
+            selected.ForEach(Selection.Select);
+
+            // Log history
+            var hd = new HistorySelect("Deselected objects", deselected, true);
+            var hs = new HistorySelect("Selected objects", selected, true);
+            var ic = new HistoryItemCollection("Selection changed", new[] {hd, hs});
+            HistoryManager.AddHistoryItem(ic);
+
+            UpdateSelectionBoundingBox();
         }
 
         /// <summary>
@@ -76,18 +145,10 @@ namespace Sledge.Editor.Tools
             // By default, select the closest object
             ChosenItemFor3DSelection = IntersectingObjectsFor3DSelection.FirstOrDefault();
 
-            // Clear other selected objects if ctrl isn't down
-            if (!KeyboardState.Ctrl)
-            {
-                Selection.Clear();
-            }
-
-            // Select (or deselect if applicable) the clicked object
-            if (ChosenItemFor3DSelection != null)
-            {
-                if (ChosenItemFor3DSelection.IsSelected) Selection.Deselect(ChosenItemFor3DSelection);
-                else Selection.Select(ChosenItemFor3DSelection);
-            }
+            // If Ctrl is down and the object is already selected, we should deselect it instead.
+            var list = new[] {ChosenItemFor3DSelection};
+            var desel = ChosenItemFor3DSelection != null && KeyboardState.Ctrl && ChosenItemFor3DSelection.IsSelected;
+            SetSelected(desel ? list : null, desel ? null : list, !KeyboardState.Ctrl, false);
 
             Document.UpdateSelectLists();
             State.ActiveViewport = null;
@@ -108,9 +169,12 @@ namespace Sledge.Editor.Tools
                 return;
             }
 
+            var desel = new List<MapObject>();
+            var sel = new List<MapObject>();
+
             // Select (or deselect) the current element
-            if (ChosenItemFor3DSelection.IsSelected) Selection.Deselect(ChosenItemFor3DSelection);
-            else Selection.Select(ChosenItemFor3DSelection);
+            if (ChosenItemFor3DSelection.IsSelected) desel.Add(ChosenItemFor3DSelection);
+            else sel.Add(ChosenItemFor3DSelection);
 
             // Get the index of the current element
             var index = IntersectingObjectsFor3DSelection.IndexOf(ChosenItemFor3DSelection);
@@ -124,8 +188,10 @@ namespace Sledge.Editor.Tools
             ChosenItemFor3DSelection = IntersectingObjectsFor3DSelection[index];
 
             // Select (or deselect) the new current element
-            if (ChosenItemFor3DSelection.IsSelected) Selection.Deselect(ChosenItemFor3DSelection);
-            else Selection.Select(ChosenItemFor3DSelection);
+            if (ChosenItemFor3DSelection.IsSelected) desel.Add(ChosenItemFor3DSelection);
+            else sel.Add(ChosenItemFor3DSelection);
+
+            SetSelected(desel, sel, false, false);
 
             Document.UpdateSelectLists();
 
@@ -153,7 +219,7 @@ namespace Sledge.Editor.Tools
             // If we've clicked outside a selection box and not holding down control, clear the selection
             if (!Selection.IsEmpty() && !KeyboardState.Ctrl)
             {
-                Selection.Clear();
+                SetSelected(null, null, true, false);
                 Document.UpdateSelectLists();
             }
 
@@ -190,12 +256,33 @@ namespace Sledge.Editor.Tools
             var seltest = Document.Map.WorldSpawn.GetAllNodesIntersecting2DLineTest(box).FirstOrDefault();
             if (seltest != null)
             {
-                if (seltest.IsSelected) Selection.Deselect(seltest);
-                else Selection.Select(seltest);
+                var list = new[] { seltest };
+                SetSelected(seltest.IsSelected ? list : null, seltest.IsSelected ? null : list, false, false);
                 Document.UpdateSelectLists();
             }
 
             base.LeftMouseClick(viewport, e);
+        }
+
+        public override void MouseUp(ViewportBase viewport, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right && viewport is Viewport2D && _selectionBoundingBox != null)
+            {
+                MouseRightClick(e, (Viewport2D)viewport);
+            }
+            base.MouseUp(viewport, e);
+        }
+
+        private void MouseRightClick(MouseEventArgs e, Viewport2D vp)
+        {
+            var point = vp.ScreenToWorld(e.X, vp.Height - e.Y);
+            var start = vp.Flatten(_selectionBoundingBox.Start);
+            var end = vp.Flatten(_selectionBoundingBox.End);
+            if (point.X >= start.X && point.X <= end.X && point.Y >= start.Y && point.Y <= end.Y)
+            {
+                // Show context menu
+                _contextMenu.Show(vp, e.X, e.Y);
+            }
         }
 
         /// <summary>
@@ -212,10 +299,110 @@ namespace Sledge.Editor.Tools
                 var nodes = KeyboardState.Shift
                                 ? Document.Map.WorldSpawn.GetAllNodesContainedWithin(boundingbox).ToList()
                                 : Document.Map.WorldSpawn.GetAllNodesIntersectingWith(boundingbox).ToList();
-                Selection.Select(nodes);
+                SetSelected(null, nodes, false, false);
                 Document.UpdateSelectLists();
             }
             base.BoxDrawnConfirm(viewport);
+        }
+
+        protected override void Render2D(Viewport2D viewport)
+        {
+            base.Render2D(viewport);
+
+            if (_selectionBoundingBox == null) return;
+
+            var start = viewport.Flatten(_selectionBoundingBox.Start);
+            var end = viewport.Flatten(_selectionBoundingBox.End);
+            GL.Enable(EnableCap.LineStipple);
+            GL.LineStipple(10, 0x5555);
+            GL.Begin(BeginMode.LineLoop);
+            GL.Color3(Color.Red);
+            Coord(start.DX, start.DY, start.DZ);
+            Coord(end.DX, start.DY, start.DZ);
+            Coord(end.DX, end.DY, start.DZ);
+            Coord(start.DX, end.DY, start.DZ);
+            GL.End();
+            GL.Disable(EnableCap.LineStipple);
+        }
+
+        private void Cut()
+        {
+            
+        }
+
+        private void Copy()
+        {
+            
+        }
+
+        private void Delete()
+        {
+
+        }
+
+        private void Group()
+        {
+
+        }
+
+        private void Ungroup()
+        {
+
+        }
+
+        private void ToWorld()
+        {
+
+        }
+
+        private void ToEntity()
+        {
+
+        }
+
+        private sealed class SelectToolContextMenu : ContextMenuStrip
+        {
+            private readonly SelectTool _tool;
+
+            public SelectToolContextMenu(SelectTool tool)
+            {
+                _tool = tool;
+                Add("Cut", () => _tool.Cut());
+                Add("Copy", () => _tool.Copy());
+                Add("Delete", () => _tool.Delete());
+                Add("Paste Special", () => { });
+                Items.Add(new ToolStripSeparator());
+                Add("Undo", Document.Undo);
+                Add("Redo", Document.Redo);
+                Items.Add(new ToolStripSeparator());
+                Add("Carve", () => { });
+                Add("Hollow", () => { });
+                Items.Add(new ToolStripSeparator());
+                Add("Group", () => _tool.Group());
+                Add("Ungroup", () => _tool.Ungroup());
+                Items.Add(new ToolStripSeparator());
+                Add("Move To Entity", () => _tool.ToEntity());
+                Add("Move To World", () => _tool.ToWorld());
+                Items.Add(new ToolStripSeparator());
+                Items.Add(new ToolStripMenuItem("Align", null,
+                                                CreateMenuItem("Top", () => { }),
+                                                CreateMenuItem("Left", () => { }),
+                                                CreateMenuItem("Right", () => { }),
+                                                CreateMenuItem("Bottom", () => { })));
+                Add("Properties", () => { });
+            }
+
+            private void Add(string name, Action onclick)
+            {
+                Items.Add(CreateMenuItem(name, onclick));
+            }
+
+            private static ToolStripItem CreateMenuItem(string name, Action onclick)
+            {
+                var item = new ToolStripMenuItem(name);
+                item.Click += (sender, args) => onclick();
+                return item;
+            }
         }
     }
 }

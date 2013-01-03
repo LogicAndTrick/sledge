@@ -1,16 +1,21 @@
 ﻿Key: Item - percentage complete, uncompleted tasks
 
 Priorities
-  Undo/Redo
-  Compiling
-  Decal Tool
-  Object Properties
-  VMF
+  TDI prep
+  Mediator/wireup
   Groups
+  VMF
+    Cut/Copy/Paste/Paste Special
+  2D view right click
+    Object Properties
+  Compiling
+  2D sprite billboarding/special rendering
+    Decal Tool
   Texture browser
-  Cut/Copy/Paste/Paste Special
-  Recent Files
+  Undo/Redo
+  Hotkeys
   New/Open/Save/Close
+    Recent Files
 
 1. Goldsource Support
   Formats
@@ -40,19 +45,19 @@ Priorities
     Entity - 60%, right toolbar, create object, 3D placement
     Brush - 80%, arch, sphere
     Texture - 90%, hide mask
-    Decal - 0%
+    Decal - 0%, placement, rendering
     Clip - 80%, choose sides to keep
     VM - 80%, create vertices?
   Secondary Tools
     Carve - 0%
     Hollow - 0%
-    Groups - 0%
+    Groups - 40%, create, destroy
     Visgroups - 70%, assigning, marking, auto
     Cordon - 0%
     Texture Lock - 0%
     Entity/World - 0%
     Texture Replace - 0%
-    Undo/Redo - 20%, hotkeys, integration, history
+    Undo/Redo - 60%, integration, history UI
     Manual Transform - 0%
   Forms
     Editor - 60%, right toolbar
@@ -65,7 +70,7 @@ Priorities
     Cut/Copy/Paste/Paste Special - 0%
     Select All/None - 0%
     Grid Show/Snap Toggles - 0%
-    Hotkeys - 0%
+    Hotkeys - 60%, define keys, implement methods, hotkeys in forms
     Map Info/Entity Report - 0%
     Check For Problems - 0%
     Pointfiles/Leak Detection? - 0%

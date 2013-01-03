@@ -68,7 +68,7 @@ namespace Sledge.DataStructures.MapObjects
         }
 
         /// <summary>
-        /// For use in the <code>MapObject.GetAllNodesMatching</code> method.
+        /// For use in the <code>MapObject.Find</code> method.
         /// Returns solids with displacements that are sewable with this one.
         /// </summary>
         /// <param name="obj">MapObject to test</param>
@@ -99,7 +99,7 @@ namespace Sledge.DataStructures.MapObjects
             if (fromList == null)
             {
                 fromList = MapObject.GetRoot(Parent)
-                    .GetAllNodesMatching(HasSewableDisplacement).OfType<Solid>()
+                    .Find(HasSewableDisplacement).OfType<Solid>()
                     .SelectMany(x => x.Faces).OfType<Displacement>();
             }
             return fromList.Where(IsSewableTo);

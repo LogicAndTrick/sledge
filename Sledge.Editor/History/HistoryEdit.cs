@@ -5,12 +5,24 @@ using Sledge.DataStructures.MapObjects;
 
 namespace Sledge.Editor.History
 {
+    /// <summary>
+    /// The edit is an action that neither creates nor deletes objects, it merely modifies their data.
+    /// </summary>
     public class HistoryEdit : IHistoryItem
     {
+        public string Name { get; private set; }
+
         private readonly List<Tuple<MapObject, MapObject, MapObject>> _changedObjects;
 
-        public HistoryEdit(IEnumerable<MapObject> beforeEdit, IEnumerable<MapObject> current)
+        /// <summary>
+        /// Create an edit history item. The two object lists must be in the same order.
+        /// </summary>
+        /// <param name="name">The name of the history item</param>
+        /// <param name="beforeEdit">The list of objects before they were edited</param>
+        /// <param name="current">The list of objects as they are now, i.e. after they were edited.</param>
+        public HistoryEdit(string name, IEnumerable<MapObject> beforeEdit, IEnumerable<MapObject> current)
         {
+            Name = name;
             _changedObjects = new List<Tuple<MapObject, MapObject, MapObject>>();
             var be = beforeEdit.ToList();
             var cu = current.ToList();

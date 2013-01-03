@@ -419,11 +419,11 @@ namespace Sledge.Editor.Tools
         }
 
         #region Rendering
-        private static void Coord(double x, double y, double z)
+        protected static void Coord(double x, double y, double z)
         {
             GL.Vertex3(x, y, z);
         }
-        private static void Coord(Coordinate c)
+        protected static void Coord(Coordinate c)
         {
             GL.Vertex3(c.DX, c.DY, c.DZ);
         }

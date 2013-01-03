@@ -6,50 +6,56 @@ using Sledge.DataStructures.MapObjects;
 
 namespace Sledge.Editor.History
 {
-    public class HistoryManager
+    public static class HistoryManager
     {
-        public int SizeOfHistory { get; set; }
-        private List<IHistoryItem> _items;
-        private int _currentIndex;
+        public static int SizeOfHistory { get; set; }
+        private static readonly List<IHistoryItem> Items;
+        private static int _currentIndex;
 
-        public HistoryManager()
+        static HistoryManager()
         {
             SizeOfHistory = 100;
-            _items = new List<IHistoryItem>();
+            Items = new List<IHistoryItem>();
             _currentIndex = -1;
         }
 
-        public void AddHistoryItem(IHistoryItem item)
+        public static void Clear()
+        {
+            Items.Clear();
+            _currentIndex = -1;
+        }
+
+        public static void AddHistoryItem(IHistoryItem item)
         {
             // Delete the redo stack if required
-            if (_currentIndex < _items.Count - 1)
+            if (_currentIndex < Items.Count - 1)
             {
-                _items.GetRange(_currentIndex + 1, _items.Count - _currentIndex).ForEach(x => x.Dispose());
-                _items.RemoveRange(_currentIndex + 1, _items.Count - _currentIndex);
+                Items.GetRange(_currentIndex + 1, Items.Count - _currentIndex).ForEach(x => x.Dispose());
+                Items.RemoveRange(_currentIndex + 1, Items.Count - _currentIndex);
             }
             // Remove extra entries if required
-            while (_items.Count > SizeOfHistory - 1)
+            while (Items.Count > SizeOfHistory - 1)
             {
-                _items[0].Dispose();
-                _items.RemoveAt(0);
+                Items[0].Dispose();
+                Items.RemoveAt(0);
                 _currentIndex--;
             }
             // Add the new entry
-            _items.Add(item);
-            _currentIndex = _items.Count - 1;
+            Items.Add(item);
+            _currentIndex = Items.Count - 1;
         }
 
-        public void Undo(Map map)
+        public static void Undo(Map map)
         {
             if (_currentIndex < 0) return;
-            _items[_currentIndex].Undo(map);
+            Items[_currentIndex].Undo(map);
             _currentIndex--;
         }
 
-        public void Redo(Map map)
+        public static void Redo(Map map)
         {
-            if (_currentIndex + 1 > _items.Count - 1) return;
-            _items[_currentIndex + 1].Redo(map);
+            if (_currentIndex + 1 > Items.Count - 1) return;
+            Items[_currentIndex + 1].Redo(map);
             _currentIndex++;
         }
     }

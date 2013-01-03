@@ -156,5 +156,20 @@ namespace Sledge.Editor
                 sf.ShowDialog();
             }
         }
+
+        private void CompileMapClicked(object sender, EventArgs e)
+        {
+            Document.Compile();
+        }
+
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
+            return Hotkeys.HotkeyDown(this, keyData) || base.ProcessCmdKey(ref msg, keyData);
+        }
+
+        public QuadSplitControl GetFourView()
+        {
+            return tblQuadView;
+        }
     }
 }

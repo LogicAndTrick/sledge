@@ -42,6 +42,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="HotkeyDefinition.cs" />
+    <Compile Include="Hotkeys.cs" />
     <Compile Include="RotationStyle.cs" />
     <Compile Include="Select.cs" />
     <Compile Include="Grid.cs" />

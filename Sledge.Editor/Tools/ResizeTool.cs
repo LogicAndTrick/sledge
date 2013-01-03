@@ -38,6 +38,11 @@ namespace Sledge.Editor.Tools
             return true;
         }
 
+        protected override string GetTransformName()
+        {
+            return "Resize";
+        }
+
         protected override Matrix4d? GetTransformationMatrix(Viewport2D viewport, MouseEventArgs e)
         {
             var coords = GetBoxCoordinatesForSelectionResize(viewport, e);

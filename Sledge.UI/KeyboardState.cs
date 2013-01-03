@@ -1,4 +1,5 @@
-﻿using System.Runtime.InteropServices;
+﻿using System;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
 namespace Sledge.UI
@@ -59,6 +60,18 @@ namespace Sledge.UI
         {
             // Key is toggled if the low bit is 1
             return (GetKeyState((int) key) & 0x0001) == 0x0001;
+        }
+
+        public static string KeysToString(Keys key)
+        {
+            var kc = new KeysConverter();
+            return kc.ConvertToString(key);
+        }
+
+        public static Keys KeysFromString(string key)
+        {
+            var kc = new KeysConverter();
+            return (Keys) kc.ConvertFromString(key);
         }
     }
 }

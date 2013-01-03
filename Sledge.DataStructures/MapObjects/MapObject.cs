@@ -131,25 +131,6 @@ namespace Sledge.DataStructures.MapObjects
         }
 
         /// <summary>
-        /// Flattens the tree underneath this node.
-        /// </summary>
-        /// <returns>A list containing all the descendants of this node (including this node)</returns>
-        public IEnumerable<MapObject> GetAllNodes()
-        {
-            return Children.SelectMany(x => x.GetAllNodes()).Union(new[] {this});
-        }
-
-        /// <summary>
-        /// Flattens the tree and selects the nodes that match the test.
-        /// </summary>
-        /// <param name="test">The test function</param>
-        /// <returns>A list of all the descendants that match the test (including this node)</returns>
-        public IEnumerable<MapObject> GetAllNodesMatching(Func<MapObject, bool> test)
-        {
-            return GetAllNodes().Where(test);
-        }
-
-        /// <summary>
         /// Get all the nodes starting from this node that intersect with a box.
         /// </summary>
         /// <param name="box">The intersection box</param>
@@ -221,9 +202,73 @@ namespace Sledge.DataStructures.MapObjects
             return list;
         }
 
+        /// <summary>
+        /// Returns true if this object is in the given visgroup.
+        /// </summary>
+        /// <param name="visgroup">The visgroup to check</param>
+        /// <returns>True if this object is in the visgroup</returns>
         public bool IsInVisgroup(int visgroup)
         {
             return Visgroups.Contains(visgroup);
+        }
+
+        /// <summary>
+        /// Get all the parents of this node that match a predicate. The first item in the list will be the closest parent.
+        /// </summary>
+        /// <param name="matcher">The predicate to match</param>
+        /// <param name="includeWorld">True to include the World element at the bottom of the list</param>
+        /// <returns>The list of parents</returns>
+        public IEnumerable<MapObject> FindParents(Predicate<MapObject> matcher, bool includeWorld = false)
+        {
+            var o = this;
+            while (o.Parent != null)
+            {
+                if (o.Parent is World && !includeWorld) break;
+                if (matcher(o.Parent)) yield return o.Parent;
+                o = o.Parent;
+            }
+        }
+
+        /// <summary>
+        /// Find the first parent of this object that matches a predicate.
+        /// </summary>
+        /// <param name="matcher">The predicate to match</param>
+        /// <returns>The matching parent if it was found, null otherwise</returns>
+        public MapObject FindClosestParent(Predicate<MapObject> matcher)
+        {
+            return FindParents(matcher).FirstOrDefault();
+        }
+
+        /// <summary>
+        /// Find the last parent of this object that matches a predicate.
+        /// </summary>
+        /// <param name="matcher">The predicate to match</param>
+        /// <returns>The matching parent if it was found, null otherwise</returns>
+        public MapObject FindTopmostParent(Predicate<MapObject> matcher)
+        {
+            return FindParents(matcher).LastOrDefault();
+        }
+
+        /// <summary>
+        /// Flattens the tree underneath this node.
+        /// </summary>
+        /// <returns>A list containing all the descendants of this node (including this node)</returns>
+        public List<MapObject> FindAll()
+        {
+            return Find(x => true);
+        }
+
+        /// <summary>
+        /// Flattens the tree and selects the nodes that match the test.
+        /// </summary>
+        /// <param name="matcher">The prediacate to match</param>
+        /// <param name="forceMatchIfParentMatches">If true and a parent matches the predicate, all children will be added regardless of match status.</param>
+        /// <returns>A list of all the descendants that match the test (including this node)</returns>
+        public List<MapObject> Find(Predicate<MapObject> matcher, bool forceMatchIfParentMatches = false)
+        {
+            var list = new List<MapObject>();
+            FindRecursive(list, matcher, forceMatchIfParentMatches);
+            return list;
         }
 
         /// <summary>
@@ -232,7 +277,7 @@ namespace Sledge.DataStructures.MapObjects
         /// <param name="items">The list to populate</param>
         /// <param name="matcher">The prediacate to match</param>
         /// <param name="forceMatchIfParentMatches">If true and a parent matches the predicate, all children will be added regardless of match status.</param>
-        public void CollectChildren(List<MapObject> items, Predicate<MapObject> matcher, bool forceMatchIfParentMatches = false)
+        private void FindRecursive(ICollection<MapObject> items, Predicate<MapObject> matcher, bool forceMatchIfParentMatches = false)
         {
             var thisMatch = matcher(this);
             if (thisMatch)
@@ -240,7 +285,7 @@ namespace Sledge.DataStructures.MapObjects
                 items.Add(this);
                 if (forceMatchIfParentMatches) matcher = x => true;
             }
-            Children.ForEach(x => x.CollectChildren(items, matcher, forceMatchIfParentMatches));
+            Children.ForEach(x => x.FindRecursive(items, matcher, forceMatchIfParentMatches));
         }
 
         /// <summary>
@@ -249,7 +294,7 @@ namespace Sledge.DataStructures.MapObjects
         /// <param name="action">The action to perform on matching children</param>
         /// <param name="matcher">The prediacate to match</param>
         /// <param name="forceMatchIfParentMatches">If true and a parent matches the predicate, all children will be modified regardless of match status.</param>
-        public void ModifyChildren(Predicate<MapObject> matcher, Action<MapObject> action, bool forceMatchIfParentMatches = false)
+        public void ForEach(Predicate<MapObject> matcher, Action<MapObject> action, bool forceMatchIfParentMatches = false)
         {
             var thisMatch = matcher(this);
             if (thisMatch)
@@ -257,7 +302,7 @@ namespace Sledge.DataStructures.MapObjects
                 action(this);
                 if (forceMatchIfParentMatches) matcher = x => true;
             }
-            Children.ForEach(x => x.ModifyChildren(matcher, action, forceMatchIfParentMatches));
+            Children.ForEach(x => x.ForEach(matcher, action, forceMatchIfParentMatches));
         }
     }
 }

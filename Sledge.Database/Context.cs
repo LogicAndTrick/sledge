@@ -67,6 +67,7 @@ namespace Sledge.Database
             var list = new List<Game>();
             var wads = GetAllWads();
             var fgds = GetAllFgds();
+            var builds = GetAllBuilds();
             try
             {
                 _conn.Open();
@@ -99,7 +100,8 @@ namespace Sledge.Database
                                              DefaultLightmapScale = (decimal) rdr.GetFloat(14),
                                              SteamInstall = rdr.GetInt32(15) > 0,
                                              Wads = wads.Where(x => x.GameID == rdr.GetInt32(0)).ToList(),
-                                             Fgds = fgds.Where(x => x.GameID == rdr.GetInt32(0)).ToList()
+                                             Fgds = fgds.Where(x => x.GameID == rdr.GetInt32(0)).ToList(),
+                                             Build = builds.FirstOrDefault(x => x.ID == rdr.GetInt32(3))
                                          });
                         }
                     }

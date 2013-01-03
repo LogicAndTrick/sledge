@@ -6,13 +6,18 @@ using Sledge.DataStructures.MapObjects;
 
 namespace Sledge.Editor.History
 {
+    /// <summary>
+    /// An item collection is simply multiple history items combined into one transaction.
+    /// </summary>
     public class HistoryItemCollection : IHistoryItem
     {
-        private List<IHistoryItem> _items;
+        public string Name { get; private set; }
+        private readonly List<IHistoryItem> _items;
 
-        public HistoryItemCollection()
+        public HistoryItemCollection(string name, IEnumerable<IHistoryItem> items)
         {
-            _items = new List<IHistoryItem>();
+            Name = name;
+            _items = new List<IHistoryItem>(items);
         }
 
         public void Undo(Map map)

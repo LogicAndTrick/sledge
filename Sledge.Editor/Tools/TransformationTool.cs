@@ -9,6 +9,7 @@ using OpenTK.Graphics.OpenGL;
 using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.Transformations;
 using Sledge.Editor.Editing;
+using Sledge.Editor.History;
 using Sledge.Editor.Properties;
 using Sledge.Editor.Rendering;
 using Sledge.UI;
@@ -24,6 +25,7 @@ namespace Sledge.Editor.Tools
         protected abstract bool RenderCircleHandles { get; }
         protected abstract bool AllowCenterHandle { get; }
         protected abstract bool FilterHandle(ResizeHandle handle);
+        protected abstract string GetTransformName();
 
         protected override Color BoxColour
         {
@@ -289,10 +291,15 @@ namespace Sledge.Editor.Tools
         /// <param name="transform">The transformation to apply</param>
         protected void ExecuteTransform(IUnitTransformation transform)
         {
-            foreach (var o in Selection.GetSelectedObjects().Where(o => o.Parent == null || !o.Parent.IsSelected))
+            var objects = Selection.GetSelectedObjects().Where(o => o.Parent == null || !o.Parent.IsSelected).ToList();
+            var clones = objects.Select(x => x.Clone());
+            foreach (var o in objects)
             {
                 o.Transform(transform);
             }
+            var name = GetTransformName() + " (" + objects.Count + " object" + (objects.Count == 1 ? "" : "s") + ")";
+            var he = new HistoryEdit(name, clones, objects);
+            HistoryManager.AddHistoryItem(he);
         }
 
         /// <summary>

@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Linq;
 using OpenTK.Graphics.OpenGL;
 using Sledge.DataStructures.Geometric;
+using Sledge.Editor.History;
 using Sledge.Editor.Properties;
 using Sledge.Editor.Editing;
 using Sledge.DataStructures.MapObjects;
@@ -86,6 +87,8 @@ namespace Sledge.Editor.Tools
             {
                 brush.Parent = Document.Map.WorldSpawn;
                 Document.Map.WorldSpawn.Children.Add(brush);
+                var hc = new HistoryCreate("Create " + BrushManager.CurrentBrush.Name.ToLower(), new[] {brush});
+                HistoryManager.AddHistoryItem(hc);
             }
             Document.UpdateDisplayLists();
         }

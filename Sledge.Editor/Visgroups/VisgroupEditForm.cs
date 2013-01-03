@@ -64,8 +64,7 @@ namespace Sledge.Editor.Visgroups
             var id = VisgroupPanel.GetSelectedVisgroup();
             if (!id.HasValue) return;
             Document.Map.Visgroups.RemoveAll(x => x.ID == id.Value);
-            var collect = new List<MapObject>();
-            Document.Map.WorldSpawn.CollectChildren(collect, x => x.IsInVisgroup(id.Value));
+            var collect = Document.Map.WorldSpawn.Find(x => x.IsInVisgroup(id.Value));
             if (collect.Any())
             {
                 NeedReload = true;

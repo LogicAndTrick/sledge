@@ -46,7 +46,7 @@ namespace Sledge.Editor.Visgroups
             Update(Document.Map);
             Application.DoEvents();
             Document.Map.Visgroups.ForEach(x => x.Visible = true);
-            Document.Map.WorldSpawn.ModifyChildren(x => x.IsVisgroupHidden, x => x.IsVisgroupHidden = false);
+            Document.Map.WorldSpawn.ForEach(x => x.IsVisgroupHidden, x => x.IsVisgroupHidden = false);
             Document.UpdateDisplayLists();
         }
 
@@ -54,9 +54,8 @@ namespace Sledge.Editor.Visgroups
         {
             if (state == CheckState.Indeterminate) return;
             var visible = state == CheckState.Checked;
-            var visItems = new List<MapObject>();
             // Hide all the objects in the visgroup
-            Document.Map.WorldSpawn.CollectChildren(visItems, x => x.IsInVisgroup(visgroupId), true);
+            var visItems = Document.Map.WorldSpawn.Find(x => x.IsInVisgroup(visgroupId), true);
             visItems.ForEach(x => x.IsVisgroupHidden = !visible);
 
             // Grey out the other visgroups those objects are in
@@ -64,18 +63,17 @@ namespace Sledge.Editor.Visgroups
             foreach (var otherGroup in otherGroups)
             {
                 var oid = otherGroup;
-                var visibleInGroup = new List<MapObject>();
                 if (visible)
                 {
                     // Find items that are still invisible, if there are any then we set the state to indeterminate
-                    Document.Map.WorldSpawn.CollectChildren(visibleInGroup, x => x.IsInVisgroup(oid) && x.IsVisgroupHidden, true);
+                    var visibleInGroup = Document.Map.WorldSpawn.Find(x => x.IsInVisgroup(oid) && x.IsVisgroupHidden, true);
                     // The state cannot be unchecked because we have just shown one - if we have hidden items then indeterminate, else checked.
                     _visgroupPanel.SetCheckState(oid, visibleInGroup.Any() ? CheckState.Indeterminate : CheckState.Checked);
                 }
                 else
                 {
                     // Get the ones that are still visible
-                    Document.Map.WorldSpawn.CollectChildren(visibleInGroup, x => x.IsInVisgroup(oid) && !x.IsVisgroupHidden, true);
+                    var visibleInGroup = Document.Map.WorldSpawn.Find(x => x.IsInVisgroup(oid) && !x.IsVisgroupHidden, true);
                     _visgroupPanel.SetCheckState(oid, visibleInGroup.Any() ? CheckState.Indeterminate : CheckState.Unchecked);
                 }
             }

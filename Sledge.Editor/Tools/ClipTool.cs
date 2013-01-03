@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using OpenTK;
+using Sledge.Editor.History;
 using Sledge.Editor.Properties;
 using Sledge.UI;
 using Sledge.DataStructures.Geometric;
@@ -159,28 +160,7 @@ namespace Sledge.Editor.Tools
                     && !_clipPlanePoint2.EquivalentTo(_clipPlanePoint3)
                     && !_clipPlanePoint1.EquivalentTo(_clipPlanePoint3)) // Don't clip if the points are too close together
                 {
-                    var plane = new Plane(_clipPlanePoint1, _clipPlanePoint2, _clipPlanePoint3);
-                    foreach (var solid in Selection.GetSelectedObjects().OfType<Solid>().ToList())
-                    {
-                        // Split solid by plane
-                        Solid back, front;
-                        if (solid.Split(plane, out back, out front))
-                        {
-                            var parent = solid.Parent;
-                            Selection.Deselect(solid);
-                            parent.Children.Remove(solid);
-
-                            back.UpdateBoundingBox(false);
-                            front.UpdateBoundingBox();
-
-                            parent.Children.Add(back);
-                            parent.Children.Add(front);
-
-                            Selection.Select(back);
-                            Selection.Select(front);
-                        }
-                    }
-                    Document.UpdateDisplayLists();
+                    PerformClip();
                 }
             }
             if (e.KeyChar == 27 || e.KeyChar == 13) // Escape cancels, Enter commits and resets
@@ -188,6 +168,40 @@ namespace Sledge.Editor.Tools
                 _clipPlanePoint1 = _clipPlanePoint2 = _clipPlanePoint3 = _drawingPoint = null;
                 _state = _prevState = ClipState.None;
             }
+        }
+
+        private void PerformClip()
+        {
+            var objects = Selection.GetSelectedObjects().OfType<Solid>().ToList();
+            var deleted = new List<MapObject>();
+            var newObjects = new List<MapObject>();
+            var plane = new Plane(_clipPlanePoint1, _clipPlanePoint2, _clipPlanePoint3);
+            foreach (var solid in objects)
+            {
+                // Split solid by plane
+                Solid back, front;
+                if (!solid.Split(plane, out back, out front)) continue;
+
+                deleted.Add(solid.Clone());
+                newObjects.Add(back);
+                newObjects.Add(front);
+
+                var parent = solid.Parent;
+                Selection.Deselect(solid);
+                parent.Children.Remove(solid);
+
+                back.UpdateBoundingBox(false);
+                front.UpdateBoundingBox();
+
+                parent.Children.Add(back);
+                parent.Children.Add(front);
+
+                Selection.Select(back);
+                Selection.Select(front);
+            }
+            var hr = new HistoryReplace("Perform clip", deleted, newObjects);
+            HistoryManager.AddHistoryItem(hr);
+            Document.UpdateDisplayLists();
         }
 
         public override void Render(ViewportBase viewport)

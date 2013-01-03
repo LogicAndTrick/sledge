@@ -3,12 +3,17 @@ using Sledge.DataStructures.MapObjects;
 
 namespace Sledge.Editor.History
 {
+    /// <summary>
+    /// A history create adds objects to the map.
+    /// </summary>
     public class HistoryCreate : IHistoryItem
     {
+        public string Name { get; private set; }
         private readonly List<MapObject> _createdObjects;
 
-        public HistoryCreate(IEnumerable<MapObject> createdObjects)
+        public HistoryCreate(string name, IEnumerable<MapObject> createdObjects)
         {
+            Name = name;
             _createdObjects = new List<MapObject>(createdObjects);
         }
 

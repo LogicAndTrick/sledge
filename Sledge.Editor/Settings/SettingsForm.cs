@@ -367,14 +367,15 @@ namespace Sledge.Editor.Settings
                 ID = 0,
                 EngineID = _engines.First().ID,
                 Name = "New Game",
-                BuildID = 1,
+                BuildID = _builds.Select(x => x.ID).FirstOrDefault(),
                 Autosave = true,
                 MapDir = _games.Select(x => x.MapDir).FirstOrDefault() ?? "",
                 AutosaveDir = _games.Select(x => x.AutosaveDir).FirstOrDefault() ?? "",
                 DefaultLightmapScale = 1,
                 DefaultTextureScale = 1,
                 Fgds = new List<Fgd>(),
-                Wads = new List<Wad>()
+                Wads = new List<Wad>(),
+                Build = _builds.FirstOrDefault()
             });
             ReIndex();
             UpdateGameTree();

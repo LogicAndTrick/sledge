@@ -42,6 +42,11 @@ namespace Sledge.Editor.Tools
                    || handle == ResizeHandle.TopRight;
         }
 
+        protected override string GetTransformName()
+        {
+            return "Rotate";
+        }
+
         protected override Cursor CursorForHandle(ResizeHandle handle)
         {
             return SledgeCursors.RotateCursor;

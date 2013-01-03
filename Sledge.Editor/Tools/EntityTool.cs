@@ -6,6 +6,8 @@ using System.Text;
 using System.Windows.Forms;
 using OpenTK.Graphics.OpenGL;
 using Sledge.DataStructures.Geometric;
+using Sledge.DataStructures.MapObjects;
+using Sledge.Editor.History;
 using Sledge.Editor.Properties;
 using Sledge.Graphics.Helpers;
 using Sledge.UI;
@@ -103,6 +105,7 @@ namespace Sledge.Editor.Tools
 
         private void CreateEntity()
         {
+            var hc = new HistoryCreate("Create entity: ", new MapObject[0]);
             throw new NotImplementedException();
         }
 

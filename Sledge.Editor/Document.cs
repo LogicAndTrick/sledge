@@ -1,7 +1,11 @@
-﻿using System.Linq;
+﻿using System.IO;
+using System.Linq;
 using OpenTK;
 using Sledge.DataStructures.GameData;
 using Sledge.DataStructures.MapObjects;
+using Sledge.Editor.Clipboard;
+using Sledge.Editor.Compiling;
+using Sledge.Editor.History;
 using Sledge.Editor.UI;
 using Sledge.Editor.Visgroups;
 using Sledge.Graphics.Helpers;
@@ -42,6 +46,8 @@ namespace Sledge.Editor
             Selection.Clear();
             ViewportManager.ClearContexts();
             VisgroupManager.Clear();
+            HistoryManager.Clear();
+            ClipboardManager.Clear();
             DisplayListGroup.DeleteLists();
             DisplayLists = new[]
                                {
@@ -96,6 +102,7 @@ namespace Sledge.Editor
         public static void Load(Map map, Game game)
         {
             MapOpen = true;
+            Game = game;
 
             Editor.Instance.SelectTool(ToolManager.Tools[0]);
 
@@ -178,6 +185,34 @@ namespace Sledge.Editor
         {
             DisplayListGroup.RegenerateSelectLists();
             ViewportManager.Viewports.ForEach(vp => vp.UpdateNextFrame());
+        }
+
+        public static void Compile()
+        {
+            var currentFile = CurrentMapFile;
+            if (!currentFile.EndsWith("map"))
+            {
+                Map.WorldSpawn.EntityData.Properties.Add(new DataStructures.MapObjects.Property
+                                                             {
+                                                                 Key = "wad",
+                                                                 Value = string.Join(";", Game.Wads.Select(x => x.Path))
+                                                             });
+                var map = Path.ChangeExtension(CurrentMapFile, "map");
+                MapProvider.SaveMapToFile(map, Map);
+                currentFile = map;
+            }
+            var batch = new Batch(Game, currentFile);
+            BatchCompiler.Compile(batch);
+        }
+
+        public static void Undo()
+        {
+            HistoryManager.Undo(Map);
+        }
+
+        public static void Redo()
+        {
+            HistoryManager.Redo(Map);
         }
     }
 }

@@ -10,14 +10,33 @@ namespace Sledge.Editor.UI
 
         private bool _resizing;
 
+        public int MinimumViewSize { get; set; }
+        private int MaximumViewSize { get { return 100 - MinimumViewSize; } }
+
         public QuadSplitControl()
         {
+            MinimumViewSize = 2;
             _resizing = _inH = _inV = false;
             RowCount = ColumnCount = 2;
             ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50));
             ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50));
             RowStyles.Add(new RowStyle(SizeType.Percent, 50));
             RowStyles.Add(new RowStyle(SizeType.Percent, 50));
+        }
+
+        public void ResetViews()
+        {
+            foreach (ColumnStyle cs in ColumnStyles) cs.Width = 50;
+            foreach (RowStyle rs in RowStyles) rs.Height = 50;
+        }
+
+        public void FocusOn(int rowIndex, int columnIndex)
+        {
+            if (rowIndex < 0 || rowIndex > 1 || columnIndex < 0 || columnIndex > 1) return;
+            ColumnStyles[columnIndex].Width = MaximumViewSize;
+            ColumnStyles[(columnIndex + 1) % 2].Width = MinimumViewSize;
+            RowStyles[rowIndex].Height = MaximumViewSize;
+            RowStyles[(rowIndex + 1) % 2].Height = MinimumViewSize;
         }
 
         protected override void OnMouseMove(MouseEventArgs e)
@@ -27,14 +46,14 @@ namespace Sledge.Editor.UI
                 if (_inH && Width > 0)
                 {
                     var mp = e.Y / (float)Height * 100;
-                    mp = Math.Min(95, Math.Max(5, mp));
+                    mp = Math.Min(MaximumViewSize, Math.Max(MinimumViewSize, mp));
                     RowStyles[0].Height = mp;
                     RowStyles[1].Height = 100 - mp;
                 }
                 if (_inV && Height > 0)
                 {
                     var mp = e.X / (float)Width * 100;
-                    mp = Math.Min(95, Math.Max(5, mp));
+                    mp = Math.Min(MaximumViewSize, Math.Max(MinimumViewSize, mp));
                     ColumnStyles[0].Width = mp;
                     ColumnStyles[1].Width = 100 - mp;
                 }

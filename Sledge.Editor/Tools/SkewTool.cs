@@ -40,6 +40,11 @@ namespace Sledge.Editor.Tools
                    || handle == ResizeHandle.Right;
         }
 
+        protected override string GetTransformName()
+        {
+            return "Skew";
+        }
+
         protected override Cursor CursorForHandle(ResizeHandle handle)
         {
             return (handle == ResizeHandle.Top || handle == ResizeHandle.Bottom) ? Cursors.SizeWE : Cursors.SizeNS;

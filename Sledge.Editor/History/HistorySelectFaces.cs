@@ -5,26 +5,36 @@ namespace Sledge.Editor.History
 {
     public class HistorySelectFaces : IHistoryItem
     {
-        private readonly List<Face> _selectedFaces;
+        public string Name { get; private set; }
+        private readonly List<Face> _faces;
+        private readonly bool _selected;
 
-        public HistorySelectFaces(IEnumerable<Face> selectedFaces)
+        /// <summary>
+        /// Create a history face select item.
+        /// </summary>
+        /// <param name="name">The name of the item</param>
+        /// <param name="faces">The faces that were selected/deselected</param>
+        /// <param name="selected">True if the faces were selected, false if they were deselected.</param>
+        public HistorySelectFaces(string name, IEnumerable<Face> faces, bool selected)
         {
-            _selectedFaces = new List<Face>(selectedFaces);
+            Name = name;
+            _faces = new List<Face>(faces);
+            _selected = selected;
         }
 
         public void Undo(Map map)
         {
-            _selectedFaces.ForEach(x => x.IsSelected = !x.IsSelected);
+            _faces.ForEach(x => x.IsSelected = !_selected);
         }
 
         public void Redo(Map map)
         {
-            _selectedFaces.ForEach(x => x.IsSelected = !x.IsSelected);
+            _faces.ForEach(x => x.IsSelected = _selected);
         }
 
         public void Dispose()
         {
-            _selectedFaces.Clear();
+            _faces.Clear();
         }
     }
 }

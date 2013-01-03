@@ -87,7 +87,7 @@ namespace Sledge.Providers.Map
         {
             // ( -128 64 64 ) ( -64 64 64 ) ( -64 0 64 ) AAATRIGGER [ 1 0 0 0 ] [ 0 -1 0 0 ] 0 1 1
             var strings = face.Vertices.Take(3).Select(x => "( " + FormatCoordinate(x.Location) + " )").ToList();
-            strings.Add(face.Texture.Name);
+            strings.Add(String.IsNullOrWhiteSpace(face.Texture.Name) ? "AAATRIGGER" : face.Texture.Name);
             strings.Add("[");
             strings.Add(FormatCoordinate(face.Texture.UAxis));
             strings.Add(face.Texture.XShift.ToString("0.000"));
@@ -211,15 +211,16 @@ namespace Sledge.Providers.Map
             CollectEntities(entities, world);
 
             sw.WriteLine("{");
+
             WriteProperty(sw, "classname", world.EntityData.Name);
             WriteProperty(sw, "spawnflags", world.EntityData.Flags.ToString());
             WriteProperty(sw, "mapversion", "220");
             world.EntityData.Properties.ForEach(x => WriteProperty(sw, x.Key, x.Value));
-            
             solids.ForEach(x => WriteSolid(sw, x));
-            entities.ForEach(x => WriteEntity(sw, x));
 
             sw.WriteLine("}");
+
+            entities.ForEach(x => WriteEntity(sw, x));
         }
 
         private List<Entity> ReadAllEntities(StreamReader rdr)
