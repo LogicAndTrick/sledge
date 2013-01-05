@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
@@ -11,6 +11,38 @@ namespace Sledge.UI
     /// http://www.switchonthecode.com/tutorials/winforms-accessing-mouse-and-keyboard-state
     public static class KeyboardState
     {
+
+        private static readonly Dictionary<string, string> KeyStringReplacements;
+
+        static KeyboardState()
+        {
+            KeyStringReplacements = new Dictionary<string, string>
+                                        {
+                                            {"Add", "+"},
+                                            {"Oemplus", "+"},
+                                            {"Subtract", "-"},
+                                            {"OemMinus", "-"},
+                                            {"Separator", "-"},
+                                            {"Decimal", "."},
+                                            {"OemPeriod", "."},
+                                            {"Divide", "/"},
+                                            {"OemQuestion", "/"},
+                                            {"Multiply", "*"},
+                                            {"OemBackslash", "\\"},
+                                            {"Oem5", "\\"},
+                                            {"OemCloseBrackets", "]"},
+                                            {"Oem6", "]"},
+                                            {"OemOpenBrackets", "["},
+                                            {"OemPipe", "|"},
+                                            {"OemQuotes", "'"},
+                                            {"Oem7", "'"},
+                                            {"OemSemicolon", ";"},
+                                            {"Oem1", ";"},
+                                            {"Oemcomma", ","},
+                                            {"Oemtilde", "`"},
+                                            {"Back", "Backspace"}
+                                        };
+        }
 
         public static bool Ctrl
         {
@@ -65,13 +97,9 @@ namespace Sledge.UI
         public static string KeysToString(Keys key)
         {
             var kc = new KeysConverter();
-            return kc.ConvertToString(key);
-        }
-
-        public static Keys KeysFromString(string key)
-        {
-            var kc = new KeysConverter();
-            return (Keys) kc.ConvertFromString(key);
+            var str = kc.ConvertToString(key) ?? "";
+            foreach (var rep in KeyStringReplacements) str = str.Replace(rep.Key, rep.Value);
+            return str;
         }
     }
 }

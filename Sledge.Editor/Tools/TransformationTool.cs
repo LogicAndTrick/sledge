@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using Sledge.DataStructures.Geometric;
+using Sledge.DataStructures.MapObjects;
 using Sledge.DataStructures.Transformations;
 using Sledge.Editor.Editing;
 using Sledge.Editor.History;
@@ -266,7 +267,7 @@ namespace Sledge.Editor.Tools
             State.Action = BoxAction.ReadyToDraw;
             decimal x1 = Decimal.MaxValue, y1 = Decimal.MaxValue, z1 = Decimal.MaxValue;
             decimal x2 = Decimal.MinValue, y2 = Decimal.MinValue, z2 = Decimal.MinValue;
-            foreach (var c in Selection.GetSelectedObjects())
+            foreach (var c in Document.Selection.GetSelectedObjects())
             {
                 var min = c.BoundingBox.Start;
                 var max = c.BoundingBox.End;
@@ -291,15 +292,16 @@ namespace Sledge.Editor.Tools
         /// <param name="transform">The transformation to apply</param>
         protected void ExecuteTransform(IUnitTransformation transform)
         {
-            var objects = Selection.GetSelectedObjects().Where(o => o.Parent == null || !o.Parent.IsSelected).ToList();
-            var clones = objects.Select(x => x.Clone());
+            var objects = Document.Selection.GetSelectedObjects().Where(o => o.Parent == null || !o.Parent.IsSelected).ToList();
+            var idg = new IDGenerator();
+            var clones = objects.Select(x => x.Clone(idg));
             foreach (var o in objects)
             {
                 o.Transform(transform);
             }
             var name = GetTransformName() + " (" + objects.Count + " object" + (objects.Count == 1 ? "" : "s") + ")";
             var he = new HistoryEdit(name, clones, objects);
-            HistoryManager.AddHistoryItem(he);
+            Document.History.AddHistoryItem(he);
         }
 
         /// <summary>

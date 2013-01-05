@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Sledge.DataStructures.MapObjects;
+using Sledge.Editor.Documents;
 
 namespace Sledge.Editor.History
 {
@@ -20,19 +21,19 @@ namespace Sledge.Editor.History
             _items = new List<IHistoryItem>(items);
         }
 
-        public void Undo(Map map)
+        public void Undo(Document document)
         {
             for (var i = _items.Count - 1; i >= 0; i--)
             {
-                _items[i].Undo(map);
+                _items[i].Undo(document);
             }
         }
 
-        public void Redo(Map map)
+        public void Redo(Document document)
         {
             for (var i = 0; i < _items.Count; i++)
             {
-                _items[i].Redo(map);
+                _items[i].Redo(document);
             }
         }
 

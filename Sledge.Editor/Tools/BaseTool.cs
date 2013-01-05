@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using Sledge.Common.Mediator;
 using Sledge.DataStructures.Geometric;
 using Sledge.UI;
 using System.Drawing;
 
 namespace Sledge.Editor.Tools
 {
-    public abstract class BaseTool
+    public abstract class BaseTool : IMediatorListener
     {
         public enum ToolUsage
         {
@@ -18,11 +19,12 @@ namespace Sledge.Editor.Tools
             Both
         }
 
-        protected static Coordinate SnapIfNeeded(Coordinate c)
+        protected Coordinate SnapIfNeeded(Coordinate c)
         {
             return KeyboardState.Alt ? c : c.Snap(Document.GridSpacing);
         }
 
+        protected Documents.Document Document { get; set; }
         public ViewportBase Viewport { get; set; }
         public ToolUsage Usage { get; set; }
 
@@ -35,6 +37,12 @@ namespace Sledge.Editor.Tools
             Usage = ToolUsage.View2D;
         }
 
+        public void SetDocument(Documents.Document document)
+        {
+            Document = document;
+            DocumentChanged();
+        }
+
         public virtual void ToolSelected()
         {
             // Virtual
@@ -43,6 +51,16 @@ namespace Sledge.Editor.Tools
         public virtual void ToolDeselected()
         {
             // Virtual
+        }
+
+        public virtual void DocumentChanged()
+        {
+            // Virtual
+        }
+
+        public virtual void Notify(string message, object data)
+        {
+            Mediator.ExecuteDefault(this, message, data);
         }
 
         public abstract void MouseEnter(ViewportBase viewport, EventArgs e);

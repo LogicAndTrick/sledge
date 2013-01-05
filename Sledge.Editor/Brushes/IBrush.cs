@@ -13,6 +13,6 @@ namespace Sledge.Editor.Brushes
     {
         string Name { get; }
         IEnumerable<BrushControl> GetControls();
-        IEnumerable<MapObject> Create(Box box, ITexture texture);
+        IEnumerable<MapObject> Create(IDGenerator generator, Box box, ITexture texture);
     }
 }

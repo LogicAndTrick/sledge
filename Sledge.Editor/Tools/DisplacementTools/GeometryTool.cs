@@ -88,7 +88,7 @@ namespace Sledge.Editor.Tools.DisplacementTools
         {
             var disps = new List<Displacement>();
             //CollectJoinedDisplacements(disps, point.Parent, Selection.GetSelectedFaces().OfType<Displacement>().ToList());
-            disps.AddRange(Selection.GetSelectedFaces().OfType<Displacement>());
+            disps.AddRange(Document.Selection.GetSelectedFaces().OfType<Displacement>());
             var list = new List<Tuple<DisplacementPoint, decimal>>();
 
             if (brush == GeometryControl.Brush.Point)
@@ -192,7 +192,7 @@ namespace Sledge.Editor.Tools.DisplacementTools
         {
             _moveCount = 0;
             _mouseDown = false;
-            Selection.GetSelectedFaces().OfType<Displacement>().ToList().ForEach(x => x.CalculateNormals());
+            Document.Selection.GetSelectedFaces().OfType<Displacement>().ToList().ForEach(x => x.CalculateNormals());
         }
 
         public override void MouseWheel(ViewportBase viewport, MouseEventArgs e)
@@ -245,7 +245,7 @@ namespace Sledge.Editor.Tools.DisplacementTools
 
             // Check the current intersecting point
             var ray = vp.CastRayFromScreen(_mousePos.X, _mousePos.Y);
-            var selectedFaces = Selection.GetSelectedFaces().OfType<Displacement>();
+            var selectedFaces = Document.Selection.GetSelectedFaces().OfType<Displacement>();
             var closestPoints = selectedFaces.Select(x => x.GetClosestDisplacementPoint(ray));
             _currentPoint = closestPoints
                 .OrderBy(x => (x.Location - ray.ClosestPoint(x.Location)).VectorMagnitude())

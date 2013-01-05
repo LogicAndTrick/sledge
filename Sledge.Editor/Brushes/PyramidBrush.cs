@@ -19,9 +19,9 @@ namespace Sledge.Editor.Brushes
             return new List<BrushControl>();
         }
 
-        public IEnumerable<MapObject> Create(Box box, ITexture texture)
+        public IEnumerable<MapObject> Create(IDGenerator generator, Box box, ITexture texture)
         {
-            var solid = new Solid { Colour = Colour.GetRandomBrushColour() };
+            var solid = new Solid(generator.GetNextObjectID()) { Colour = Colour.GetRandomBrushColour() };
             // The lower Z plane will be base
             var c1 = new Coordinate(box.Start.X, box.Start.Y, box.Start.Z);
             var c2 = new Coordinate(box.End.X, box.Start.Y, box.Start.Z);
@@ -38,7 +38,7 @@ namespace Sledge.Editor.Brushes
                             };
             foreach (var arr in faces)
             {
-                var face = new Face
+                var face = new Face(generator.GetNextFaceID())
                                {
                                    Parent = solid,
                                    Plane = new Plane(arr[0], arr[1], arr[2]),

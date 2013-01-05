@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using OpenTK.Graphics.OpenGL;
 using OpenTK;
 
@@ -17,7 +14,7 @@ namespace Sledge.Editor.Rendering
                                  new Vector2d(origin.X - radius, origin.Y - radius),
                                  new Vector2d(origin.X + radius, origin.Y - radius),
                                  new Vector2d(origin.X + radius, origin.Y + radius),
-                                 new Vector2d(origin.X - radius, origin.Y + radius),
+                                 new Vector2d(origin.X - radius, origin.Y + radius)
                              };
             for (var i = 0; i < points.Length; i++)
             {

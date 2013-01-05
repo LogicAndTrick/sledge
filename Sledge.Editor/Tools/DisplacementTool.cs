@@ -5,7 +5,6 @@ using System.Windows.Forms;
 using Sledge.Editor.Tools.DisplacementTools;
 using Sledge.UI;
 using Sledge.Editor.Properties;
-using Sledge.Editor.Editing;
 
 namespace Sledge.Editor.Tools
 {
@@ -39,6 +38,11 @@ namespace Sledge.Editor.Tools
             if (_currentTool != null) _currentTool.ToolSelected();
         }
 
+        public override void DocumentChanged()
+        {
+            _tools.ForEach(x => x.SetDocument(Document));
+        }
+
         public override Image GetIcon()
         {
             return Resources.Tool_Texture;
@@ -53,7 +57,7 @@ namespace Sledge.Editor.Tools
         {
             _form.Show(Editor.Instance);
             Editor.Instance.Focus();
-            Selection.SwitchToFaceSelection();
+            Document.Selection.SwitchToFaceSelection();
             Document.UpdateDisplayLists(true);
 
             if (_currentTool != null) _currentTool.ToolSelected();
@@ -61,7 +65,7 @@ namespace Sledge.Editor.Tools
 
         public override void ToolDeselected()
         {
-            Selection.SwitchToObjectSelection();
+            Document.Selection.SwitchToObjectSelection();
             _form.Hide();
             Document.UpdateDisplayLists();
 

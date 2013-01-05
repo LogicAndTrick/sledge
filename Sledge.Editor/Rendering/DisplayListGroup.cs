@@ -1,14 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using Sledge.DataStructures.MapObjects;
 using Sledge.Editor.UI;
-using Sledge.Graphics;
-using Sledge.Graphics.Helpers;
 using Sledge.UI;
-using Sledge.DataStructures.Geometric;
-using Sledge.Editor.Editing;
 using OpenTK;
 
 namespace Sledge.Editor.Rendering
@@ -25,18 +18,11 @@ namespace Sledge.Editor.Rendering
     /// </summary>
     public sealed class DisplayListGroup
     {
-        public static readonly string DeselectedObjects3DName = "Deselected Objects 3D Display List";
-        public static readonly string DeselectedObjects2DName = "Deselected Objects 2D Display List";
+        #region Static
 
-        public static readonly string SelectedObjects3DName = "Selected Objects 3D Display List";
-        public static readonly string SelectedObjects2DName = "Selected Objects 2D Display List";
-
-        public static readonly string SelectedObjectWireframesName = "Selected Object Wireframes Display List";
-        public static readonly string SelectedObjectTintsName = "Selected Object Tints Display List";
-
-        public static readonly Matrix4d TopMatrix = Matrix4d.Identity;
-        public static readonly Matrix4d FrontMatrix = new Matrix4d(Vector4d.UnitZ, Vector4d.UnitX, Vector4d.UnitY, Vector4d.UnitW);
-        public static readonly Matrix4d SideMatrix = new Matrix4d(Vector4d.UnitX, Vector4d.UnitZ, Vector4d.UnitY, Vector4d.UnitW);
+        private static readonly Matrix4d TopMatrix = Matrix4d.Identity;
+        private static readonly Matrix4d FrontMatrix = new Matrix4d(Vector4d.UnitZ, Vector4d.UnitX, Vector4d.UnitY, Vector4d.UnitW);
+        private static readonly Matrix4d SideMatrix = new Matrix4d(Vector4d.UnitX, Vector4d.UnitZ, Vector4d.UnitY, Vector4d.UnitW);
 
         public static Matrix4d GetMatrixFor(Viewport2D.ViewDirection dir)
         {
@@ -49,95 +35,52 @@ namespace Sledge.Editor.Rendering
                 case Viewport2D.ViewDirection.Side:
                     return SideMatrix;
                 default:
-                    throw new ArgumentOutOfRangeException("dir", @"This direction does not exist.");
+                    throw new ArgumentOutOfRangeException("dir");
             }
         }
 
-        private static readonly object Lock = new object();
-
-        private static void CollectFaces(List<Face> faces, IEnumerable<MapObject> list, bool excludeSelected)
+        public static DisplayListGroup Create2D(Viewport2D.ViewDirection viewDirection)
         {
-            foreach (var mo in list.Where(mo => !excludeSelected || !mo.IsSelected))
-            {
-                if (mo is Solid && !mo.IsCodeHidden && !mo.IsVisgroupHidden)
-                {
-                    faces.AddRange(((Solid)mo).Faces.Where(x => !x.IsHidden && (!excludeSelected || !x.IsSelected)));
-                }
-                else if (mo is Entity || mo is Group)
-                {
-                    if (mo is Entity && !mo.IsCodeHidden && !mo.IsVisgroupHidden) faces.AddRange(((Entity) mo).GetFaces());
-                    CollectFaces(faces, mo.Children, excludeSelected);
-                }
-            }
+            var dlg = new DisplayListGroup { Is3D = false, ViewDirection = viewDirection };
+            dlg.Init();
+            return dlg;
         }
 
-        public static void DeleteLists()
+        public static DisplayListGroup Create3D()
         {
-            DisplayList.DeleteAll();
+            var dlg = new DisplayListGroup { Is3D = true };
+            dlg.Init();
+            return dlg;
         }
 
-        public static void RegenerateSelectLists()
-        {
-            lock (Lock)
-            {
-                var faces = new List<Face>();
-                if (Selection.InFaceSelection) faces.AddRange(Selection.GetSelectedFaces());
-                else CollectFaces(faces, Selection.GetSelectedObjects(), false);
+        #endregion
 
-                DataStructures.Rendering.Rendering.CreateFilledList(SelectedObjects3DName, faces, Color.Empty);
-                DataStructures.Rendering.Rendering.CreateWireframeList(SelectedObjectWireframesName, faces, true);
-                DataStructures.Rendering.Rendering.CreateFilledList(SelectedObjectTintsName, faces, Color.FromArgb(64, Color.Red));
-                DataStructures.Rendering.Rendering.CreateWireframeList(SelectedObjects2DName, faces, false);
-            }
-        }
+        private bool Is3D { get; set; }
+        private Viewport2D.ViewDirection ViewDirection { get; set; }
 
-        public static void RegenerateDisplayLists(bool excludeSelected)
-        {
-            lock (Lock)
-            {
-                var faces = new List<Face>();
-                CollectFaces(faces, Document.Map.WorldSpawn.Children, excludeSelected);
-
-                DataStructures.Rendering.Rendering.CreateFilledList(DeselectedObjects3DName, faces, Color.Empty);
-                DataStructures.Rendering.Rendering.CreateWireframeList(DeselectedObjects2DName, faces, false);
-            }
-        }
-
-        private readonly bool _3D;
-        private readonly Viewport2D.ViewDirection _viewDirection;
-
-        public TransformedDisplayListRenderable DeselectedObjects { get; private set; }
-        public TransformedDisplayListRenderable SelectedObjects { get; private set; }
-        public TransformedDisplayListRenderable SelectedObjectWireframes { get; private set; }
-        public TransformedDisplayListRenderable SelectedObjectTints { get; private set; }
-
-        public DisplayListGroup(Viewport2D.ViewDirection viewDirection)
-        {
-            _3D = false;
-            _viewDirection = viewDirection;
-            Init();
-        }
-
-        public DisplayListGroup()
-        {
-            _3D = true;
-            Init();
-        }
+        private TransformedDisplayListRenderable DeselectedObjects { get; set; }
+        private TransformedDisplayListRenderable SelectedObjects { get; set; }
+        private TransformedDisplayListRenderable SelectedObjectWireframes { get; set; }
+        private TransformedDisplayListRenderable SelectedObjectTints { get; set; }
 
         private void Init()
         {
             var mat = GetMatrix();
-            DeselectedObjects = new TransformedDisplayListRenderable(_3D ? DeselectedObjects3DName : DeselectedObjects2DName, mat);
-            SelectedObjects = new TransformedDisplayListRenderable(_3D ? SelectedObjects3DName : SelectedObjects2DName, mat);
-            SelectedObjectWireframes = new TransformedDisplayListRenderable(SelectedObjectWireframesName, mat);
-            SelectedObjectTints = new TransformedDisplayListRenderable(SelectedObjectTintsName, mat);
+            DeselectedObjects = new TransformedDisplayListRenderable(Is3D ? MapDisplayLists.DeselectedObjects3DName : MapDisplayLists.DeselectedObjects2DName, mat);
+            SelectedObjects = new TransformedDisplayListRenderable(Is3D ? MapDisplayLists.SelectedObjects3DName : MapDisplayLists.SelectedObjects2DName, mat);
+            SelectedObjectWireframes = new TransformedDisplayListRenderable(MapDisplayLists.SelectedObjectWireframesName, mat);
+            SelectedObjectTints = new TransformedDisplayListRenderable(MapDisplayLists.SelectedObjectTintsName, mat);
+            SelectedObjectWireframes.Colour = Is3D ? Color.Yellow : Color.Red;
+        }
 
-            SelectedObjectWireframes.Colour = _3D ? Color.Yellow : Color.Red;
+        private Matrix4d GetMatrix()
+        {
+            return Is3D ? Matrix4d.Identity : GetMatrixFor(ViewDirection);
         }
 
         public void Register()
         {
-            if (_3D)
+            if (Is3D)
             {
                 ViewportManager.AddContext3D(DeselectedObjects);
                 ViewportManager.AddContext3D(SelectedObjects);
@@ -146,10 +89,26 @@ namespace Sledge.Editor.Rendering
             }
             else
             {
-                ViewportManager.AddContext2D(DeselectedObjects, _viewDirection);
-                ViewportManager.AddContext2D(SelectedObjects, _viewDirection);
-                ViewportManager.AddContext2D(SelectedObjectWireframes, _viewDirection);
-                //ViewportManager.AddContext2D(SelectedObjectTints, _viewDirection);
+                ViewportManager.AddContext2D(DeselectedObjects, ViewDirection);
+                ViewportManager.AddContext2D(SelectedObjects, ViewDirection);
+                ViewportManager.AddContext2D(SelectedObjectWireframes, ViewDirection);
+            }
+        }
+
+        public void Unregister()
+        {
+            if (Is3D)
+            {
+                ViewportManager.RemoveContext3D(DeselectedObjects);
+                ViewportManager.RemoveContext3D(SelectedObjects);
+                ViewportManager.RemoveContext3D(SelectedObjectWireframes);
+                ViewportManager.RemoveContext3D(SelectedObjectTints);
+            }
+            else
+            {
+                ViewportManager.RemoveContext2D(DeselectedObjects, ViewDirection);
+                ViewportManager.RemoveContext2D(SelectedObjects, ViewDirection);
+                ViewportManager.RemoveContext2D(SelectedObjectWireframes, ViewDirection);
             }
         }
 
@@ -158,12 +117,7 @@ namespace Sledge.Editor.Rendering
             SelectedObjects.Matrix = Matrix4d.Mult(matrix, GetMatrix());
         }
 
-        private Matrix4d GetMatrix()
-        {
-            return _3D ? Matrix4d.Identity : GetMatrixFor(_viewDirection);
-        }
-
-        internal void SetTintSelectListEnabled(bool enabled)
+        public void SetTintSelectListEnabled(bool enabled)
         {
             SelectedObjectTints.Enabled = enabled;
         }

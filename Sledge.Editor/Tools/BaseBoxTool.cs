@@ -172,7 +172,7 @@ namespace Sledge.Editor.Tools
         public override void MouseUp(ViewportBase viewport, MouseEventArgs e)
         {
             if (viewport is Viewport3D) MouseUp3D((Viewport3D) viewport, e);
-            Document.CaptureAltPresses = false;
+            Editor.Instance.CaptureAltPresses = false;
             if (e.Button != MouseButtons.Left) return;
             if (!(viewport is Viewport2D)) return;
             var vp = (Viewport2D)viewport;
@@ -246,7 +246,7 @@ namespace Sledge.Editor.Tools
             {
                 case BoxAction.Drawing:
                 case BoxAction.DownToDraw:
-                    Document.CaptureAltPresses = true;
+                    Editor.Instance.CaptureAltPresses = true;
                     MouseDraggingToDraw(vp, e);
                     break;
                 case BoxAction.Drawn:
@@ -255,7 +255,7 @@ namespace Sledge.Editor.Tools
                     break;
                 case BoxAction.DownToResize:
                 case BoxAction.Resizing:
-                    Document.CaptureAltPresses = true;
+                    Editor.Instance.CaptureAltPresses = true;
                     MouseDraggingToResize(vp, e);
                     break;
             }

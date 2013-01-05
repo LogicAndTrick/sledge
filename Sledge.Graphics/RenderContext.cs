@@ -46,7 +46,7 @@ namespace Sledge.Graphics
 
         public T FindRenderable<T>() where T : IRenderable
         {
-            return Renderables.Where(r => typeof (T).Equals(r.GetType())).Select(r => (T)r).FirstOrDefault();
+            return Renderables.Where(r => typeof (T) == r.GetType()).Select(r => (T)r).FirstOrDefault();
         }
     }
 }

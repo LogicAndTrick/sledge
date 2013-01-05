@@ -10,26 +10,26 @@ namespace Sledge.DataStructures.MapObjects
         public EntityData EntityData { get; set; }
         public List<Path> Paths { get; private set; }
 
-        public World()
+        public World(long id) : base(id)
         {
             Paths = new List<Path>();
             EntityData = new EntityData();
         }
 
-        public override MapObject Clone()
+        public override MapObject Clone(IDGenerator generator)
         {
-            var e = new World
+            var e = new World(generator.GetNextObjectID())
             {
                 EntityData = EntityData.Clone(),
             };
             e.Paths.AddRange(Paths.Select(x => x.Clone()));
-            CloneBase(e);
+            CloneBase(e, generator);
             return e;
         }
 
-        public override void Unclone(MapObject o)
+        public override void Unclone(MapObject o, IDGenerator generator)
         {
-            UncloneBase(o);
+            UncloneBase(o, generator);
             var e = o as World;
             if (e == null) return;
             EntityData = e.EntityData.Clone();

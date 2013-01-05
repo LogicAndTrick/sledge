@@ -26,28 +26,80 @@ namespace Sledge.Providers
 	/// </summary>
 	public class GenericStructure
 	{
+        private class GenericStructureProperty
+        {
+            public string Key { get; set; }
+            public string Value { get; set; }
+
+            public GenericStructureProperty(string key, string value)
+            {
+                Key = key;
+                Value = value;
+            }
+        }
+
 	    public string Name { get; private set; }
-	    public Dictionary<string, string> Properties { get; set; }
+	    private List<GenericStructureProperty> Properties { get; set; }
 	    public List<GenericStructure> Children { get; private set; }
 
         public string this[string key]
 	    {
-            get { return Properties.ContainsKey(key) ? Properties[key] : null; }
-            set { Properties[key] = value; }
+            get
+            {
+                var prop = Properties.FirstOrDefault(x => x.Key == key);
+                return prop == null ? null : prop.Value;
+            }
+            set
+            {
+                var prop = Properties.FirstOrDefault(x => x.Key == key);
+                if (prop != null) prop.Value = value;
+                else Properties.Add(new GenericStructureProperty(key, value));
+            }
 	    }
+
+        public void AddProperty(string key, string value)
+        {
+            Properties.Add(new GenericStructureProperty(key, value));
+        }
+
+        public void RemoveProperty(string key)
+        {
+            Properties.RemoveAll(x => x.Key == key);
+        }
 
 		public GenericStructure(string name)
 		{
 		    Name = name;
-            Properties = new Dictionary<string, string>();
+            Properties = new List<GenericStructureProperty>();
             Children = new List<GenericStructure>();
 		}
+
+        public IEnumerable<string> GetPropertyKeys()
+        {
+            return Properties.Select(x => x.Key).Distinct();
+        }
+
+        public IEnumerable<string> GetAllPropertyValues(string key)
+        {
+            return Properties.Where(x => x.Key == key).Select(x => x.Value);
+        }
 
         public int PropertyInteger(string name, int defaultValue = 0)
         {
             var prop = this[name];
             int d;
             if (int.TryParse(prop, out d))
+            {
+                return d;
+            }
+            return defaultValue;
+        }
+
+        public long PropertyLong(string name, long defaultValue = 0)
+        {
+            var prop = this[name];
+            long d;
+            if (long.TryParse(prop, out d))
             {
                 return d;
             }
@@ -110,7 +162,7 @@ namespace Sledge.Providers
         public Coordinate PropertyCoordinate(string name)
         {
             var prop = this[name];
-            var defaultValue = Coordinate.Zero;
+            var defaultValue = new Coordinate(0, 0, 0);
             if (prop == null || prop.Count(c => c == ' ') != 2) return defaultValue;
             var split = prop.Replace("[", "").Replace("]", "").Split(' ');
             decimal x, y, z;
@@ -360,7 +412,7 @@ namespace Sledge.Providers
 		private static void ParseProperty(GenericStructure gs, string prop)
 		{
             var split = SplitWithQuotes(prop);
-            gs[split[0]] = split[1];
+            gs.Properties.Add(new GenericStructureProperty(split[0], split[1]));
 		}
         #endregion
 	}

@@ -19,12 +19,12 @@ namespace Sledge.Editor.Brushes
             return new List<BrushControl>();
         }
 
-        public IEnumerable<MapObject> Create(Box box, ITexture texture)
+        public IEnumerable<MapObject> Create(IDGenerator generator, Box box, ITexture texture)
         {
-            var solid = new Solid { Colour = Colour.GetRandomBrushColour() };
+            var solid = new Solid(generator.GetNextObjectID()) { Colour = Colour.GetRandomBrushColour() };
             foreach (var arr in box.GetBoxFaces())
             {
-                var face = new Face
+                var face = new Face(generator.GetNextFaceID())
                 {
                     Parent = solid,
                     Plane = new Plane(arr[0], arr[1], arr[2]),

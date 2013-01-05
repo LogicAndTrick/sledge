@@ -4,7 +4,6 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
-using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.MapObjects;
 using Path = Sledge.DataStructures.MapObjects.Path;
 
@@ -42,7 +41,8 @@ namespace Sledge.Providers.Map
             map.Visgroups.AddRange(visgroups);
 
             // Map Objects
-            var worldspawn = ReadWorldSpawn(br);
+            map.IDGenerator.Reset(); // So the world will be ID = 1
+            var worldspawn = ReadWorldSpawn(br, map.Visgroups, map.IDGenerator);
             map.WorldSpawn = worldspawn;
 
             // DOCINFO string check
@@ -151,24 +151,24 @@ namespace Sledge.Providers.Map
             bw.Write(new byte[12]); // Unused
         }
 
-        private static World ReadWorldSpawn(BinaryReader br)
+        private static World ReadWorldSpawn(BinaryReader br, List<Visgroup> visgroups, IDGenerator generator)
         {
-            return (World) ReadMapObject(br);
+            return (World)ReadMapObject(br, visgroups, generator);
         }
 
-        private static MapObject ReadMapObject(BinaryReader br)
+        private static MapObject ReadMapObject(BinaryReader br, List<Visgroup> visgroups, IDGenerator generator)
         {
             var type = br.ReadVariableLengthString();
             switch (type)
             {
                 case "CMapWorld":
-                    return ReadMapWorld(br);
+                    return ReadMapWorld(br, visgroups, generator);
                 case "CMapGroup":
-                    return ReadMapGroup(br);
+                    return ReadMapGroup(br, visgroups, generator);
                 case "CMapSolid":
-                    return ReadMapSolid(br);
+                    return ReadMapSolid(br, visgroups, generator);
                 case "CMapEntity":
-                    return ReadMapEntity(br);
+                    return ReadMapEntity(br, visgroups, generator);
                 default:
                     throw new ProviderException("Unknown RMF map object: " + type);
             }
@@ -182,17 +182,21 @@ namespace Sledge.Providers.Map
             else if (mo is Entity) WriteMapEntity(bw, (Entity)mo);
         }
 
-        private static void ReadMapBase(BinaryReader br, MapObject obj)
+        private static void ReadMapBase(BinaryReader br, MapObject obj, List<Visgroup> visgroups, IDGenerator generator)
         {
-            //TODO: RMF Visgroups
-            obj.Visgroups.Add(br.ReadInt32());
+            var visgroupId = br.ReadInt32();
+            if (visgroupId > 0 && visgroups.Any(x => x.ID == visgroupId))
+            {
+                obj.Visgroups.Add(visgroupId);
+                obj.IsVisgroupHidden = !visgroups.First(x => x.ID == visgroupId).Visible;
+            }
 
             obj.Colour = br.ReadRGBColour();
 
             var numChildren = br.ReadInt32();
             for (var i = 0; i < numChildren; i++)
             {
-                var child = ReadMapObject(br);
+                var child = ReadMapObject(br, visgroups, generator);
                 child.Parent = obj;
                 obj.Children.Add(child);
             }
@@ -209,10 +213,10 @@ namespace Sledge.Providers.Map
             }
         }
 
-        private static Entity ReadMapEntity(BinaryReader br)
+        private static Entity ReadMapEntity(BinaryReader br, List<Visgroup> visgroups, IDGenerator generator)
         {
-            var ent = new Entity();
-            ReadMapBase(br, ent);
+            var ent = new Entity(generator.GetNextObjectID());
+            ReadMapBase(br, ent, visgroups, generator);
             ent.EntityData = ReadEntityData(br);
             br.ReadBytes(2); // Unused
             ent.Origin = br.ReadCoordinate();
@@ -231,9 +235,9 @@ namespace Sledge.Providers.Map
             bw.Write(new byte[4]); // Unused
         }
 
-        private static Face ReadFace(BinaryReader br)
+        private static Face ReadFace(BinaryReader br, IDGenerator generator)
         {
-            var face = new Face();
+            var face = new Face(generator.GetNextFaceID());
             var textureName = br.ReadFixedLengthString(Encoding.UTF8, 256);
             br.ReadBytes(4); // Unused
             face.Texture.Name = textureName;
@@ -275,14 +279,14 @@ namespace Sledge.Providers.Map
             bw.WritePlane(face.Vertices.Select(v => v.Location).ToArray());
         }
 
-        private static Solid ReadMapSolid(BinaryReader br)
+        private static Solid ReadMapSolid(BinaryReader br, List<Visgroup> visgroups, IDGenerator generator)
         {
-            var sol = new Solid();
-            ReadMapBase(br, sol);
+            var sol = new Solid(generator.GetNextObjectID());
+            ReadMapBase(br, sol, visgroups, generator);
             var numFaces = br.ReadInt32();
             for (var i = 0; i < numFaces; i++)
             {
-                var face = ReadFace(br);
+                var face = ReadFace(br, generator);
                 face.Parent = sol;
                 face.Colour = sol.Colour;
                 sol.Faces.Add(face);
@@ -302,10 +306,10 @@ namespace Sledge.Providers.Map
             }
         }
 
-        private static Group ReadMapGroup(BinaryReader br)
+        private static Group ReadMapGroup(BinaryReader br, List<Visgroup> visgroups, IDGenerator generator)
         {
-            var grp = new Group();
-            ReadMapBase(br, grp);
+            var grp = new Group(generator.GetNextObjectID());
+            ReadMapBase(br, grp, visgroups, generator);
             grp.UpdateBoundingBox(false);
             return grp;
         }
@@ -374,10 +378,10 @@ namespace Sledge.Providers.Map
             }
         }
 
-        private static MapObject ReadMapWorld(BinaryReader br)
+        private static MapObject ReadMapWorld(BinaryReader br, List<Visgroup> visgroups, IDGenerator generator)
         {
-            var wld = new World();
-            ReadMapBase(br, wld);
+            var wld = new World(generator.GetNextObjectID());
+            ReadMapBase(br, wld, visgroups, generator);
             wld.EntityData = ReadEntityData(br);
             var numPaths = br.ReadInt32();
             for (var i = 0; i < numPaths; i++)

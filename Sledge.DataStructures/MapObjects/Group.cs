@@ -8,22 +8,27 @@ namespace Sledge.DataStructures.MapObjects
 {
     public class Group : MapObject
     {
-        public override MapObject Clone()
+        public Group(long id) : base(id)
         {
-            var group = new Group();
-            CloneBase(group);
+        }
+
+        public override MapObject Clone(IDGenerator generator)
+        {
+            var group = new Group(generator.GetNextObjectID());
+            CloneBase(group, generator);
             return group;
         }
 
-        public override void Unclone(MapObject o)
+        public override void Unclone(MapObject o, IDGenerator generator)
         {
-            UncloneBase(o);
+            UncloneBase(o, generator);
         }
 
         public override void UpdateBoundingBox(bool cascadeToParent = true)
         {
-            BoundingBox = !Children.Any(x => x.BoundingBox != null) ? null
-                : new Box(Children.Where(x => x.BoundingBox != null).SelectMany(x => new[] {x.BoundingBox.Start, x.BoundingBox.End}));
+            BoundingBox = Children.All(x => x.BoundingBox == null)
+                              ? null
+                              : new Box(Children.Where(x => x.BoundingBox != null).Select(x => x.BoundingBox));
             base.UpdateBoundingBox(cascadeToParent);
         }
     }

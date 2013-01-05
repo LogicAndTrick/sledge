@@ -7,37 +7,43 @@ namespace Sledge.Settings
 {
     public static class Hotkeys
     {
-        private static List<HotkeyDefinition> _definitions; 
+        private static readonly List<HotkeyDefinition> Definitions; 
 
         static Hotkeys()
         {
-            _definitions = new List<HotkeyDefinition>
+            Definitions = new List<HotkeyDefinition>
                                {
-                                   new HotkeyDefinition("Autosize Views", "Reset the position of the 4-view splitter", "FourViewAutosize", "Ctrl+A"),
-                                    new HotkeyDefinition("Focus View Top Left", "Focus on the 3D View", "FourViewFocusTopLeft", "F5"),
-                                    new HotkeyDefinition("Focus View Top Right", "Focus on the XY View", "FourViewFocusTopRight", "F2"),
-                                    new HotkeyDefinition("Focus View Bottom Left", "Focus on the YZ View", "FourViewFocusBottomLeft", "F4"),
-                                    new HotkeyDefinition("Focus View Bottom Right", "Focus on the XZ View", "FourViewFocusBottomRight", "F3"),
+                                   new HotkeyDefinition("Autosize Views", "Reset the position of the 4-view splitter", HotkeysMediator.FourViewAutosize, "Ctrl+A"),
+                                    new HotkeyDefinition("Focus View Top Left", "Focus on the 3D View", HotkeysMediator.FourViewFocusTopLeft, "F5"),
+                                    new HotkeyDefinition("Focus View Top Right", "Focus on the XY View", HotkeysMediator.FourViewFocusTopRight, "F2"),
+                                    new HotkeyDefinition("Focus View Bottom Left", "Focus on the YZ View", HotkeysMediator.FourViewFocusBottomLeft, "F4"),
+                                    new HotkeyDefinition("Focus View Bottom Right", "Focus on the XZ View", HotkeysMediator.FourViewFocusBottomRight, "F3"),
 
-                                    new HotkeyDefinition("New File", "Create a new map", "FileNew", "Ctrl+N"),
-                                    new HotkeyDefinition("Open File", "Open an existing map", "FileOpen", "Ctrl+O"),
-                                    new HotkeyDefinition("Save File", "Save the currently opened map", "FileSave", "Ctrl+S"),
-                                    new HotkeyDefinition("Export File", "Export the currently opened map", "FileExport", "Ctrl+E"),
-                                    new HotkeyDefinition("Compile Map", "Compile the currently opened map", "FileCompile", "F9"),
+                                    new HotkeyDefinition("New File", "Create a new map", HotkeysMediator.FileNew, "Ctrl+N"),
+                                    new HotkeyDefinition("Open File", "Open an existing map", HotkeysMediator.FileOpen, "Ctrl+O"),
+                                    new HotkeyDefinition("Save File", "Save the currently opened map", HotkeysMediator.FileSave, "Ctrl+S"),
+                                    new HotkeyDefinition("Export File", "Export the currently opened map", HotkeysMediator.FileExport, "Ctrl+E"),
+                                    new HotkeyDefinition("Compile Map", "Compile the currently opened map", HotkeysMediator.FileCompile, "F9"),
 
-                                    new HotkeyDefinition("Increase Grid Size", "Increase the current grid size", "GridIncrease", "]"),
-                                    new HotkeyDefinition("Decrease Grid Size", "Decrease the current grid size", "GridDecrease", "["),
+                                    new HotkeyDefinition("Increase Grid Size", "Increase the current grid size", HotkeysMediator.GridIncrease, "]"),
+                                    new HotkeyDefinition("Decrease Grid Size", "Decrease the current grid size", HotkeysMediator.GridDecrease, "["),
 
-                                    new HotkeyDefinition("Undo", "Undo the last action", "HistoryUndo", "Ctrl+Z"),
-                                    new HotkeyDefinition("Redo", "Redo the last undone action", "HistoryRedo", "Ctrl+Y"),
+                                    new HotkeyDefinition("Undo", "Undo the last action", HotkeysMediator.HistoryUndo, "Ctrl+Z"),
+                                    new HotkeyDefinition("Redo", "Redo the last undone action", HotkeysMediator.HistoryRedo, "Ctrl+Y"),
 
-                                    new HotkeyDefinition("Show Object Properties", "Open the object properties dialog for the currently selected items", "ObjectProperties", "Alt+Enter"),
+                                    new HotkeyDefinition("Show Object Properties", "Open the object properties dialog for the currently selected items", HotkeysMediator.ObjectProperties, "Alt+Enter"),
+                                    
+                                    new HotkeyDefinition("Copy", "Copy the current selection", HotkeysMediator.OperationsCopy, "Ctrl+C"),
+                                    new HotkeyDefinition("Cut", "Cut the current selection", HotkeysMediator.OperationsCut, "Ctrl+X"),
+                                    new HotkeyDefinition("Paste", "Paste the clipboard contents", HotkeysMediator.OperationsPaste, "Ctrl+V"),
+                                    new HotkeyDefinition("Paste Special", "Paste special the clipboard contents", HotkeysMediator.OperationsPasteSpecial, "Ctrl+B"),
+                                    new HotkeyDefinition("Delete", "Delete the current selection", HotkeysMediator.OperationsDelete, "Delete"),
                                };
         }
 
         public static HotkeyDefinition GetHotkeyFor(string keyCombination)
         {
-            return _definitions.FirstOrDefault(x => x.DefaultHotkey == keyCombination);
+            return Definitions.FirstOrDefault(x => x.DefaultHotkey == keyCombination);
         }
     }
 }

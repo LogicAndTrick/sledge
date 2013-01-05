@@ -31,12 +31,12 @@ namespace Sledge.Editor.Brushes
             yield return _width;
         }
 
-        private Solid MakeSolid(IEnumerable<Coordinate[]> faces, ITexture texture, Color col)
+        private Solid MakeSolid(IDGenerator generator, IEnumerable<Coordinate[]> faces, ITexture texture, Color col)
         {
-            var solid = new Solid { Colour = col };
+            var solid = new Solid(generator.GetNextObjectID()) { Colour = col };
             foreach (var arr in faces)
             {
-                var face = new Face
+                var face = new Face(generator.GetNextFaceID())
                 {
                     Parent = solid,
                     Plane = new Plane(arr[0], arr[1], arr[2]),
@@ -52,7 +52,7 @@ namespace Sledge.Editor.Brushes
             return solid;
         }
 
-        public IEnumerable<MapObject> Create(Box box, ITexture texture)
+        public IEnumerable<MapObject> Create(IDGenerator generator, Box box, ITexture texture)
         {
             var wallWidth = (int) _width.GetValue();
             if (wallWidth < 1) yield break;
@@ -98,7 +98,7 @@ namespace Sledge.Editor.Brushes
                 faces.Add(new[] { inner[i], inner[i] + z, outer[i] + z, outer[i] });
                 faces.Add(new[] { inner[next] + z, outer[next] + z, outer[i] + z, inner[i] + z });
                 faces.Add(new[] { inner[i], outer[i], outer[next], inner[next] });
-                yield return MakeSolid(faces, texture, colour);
+                yield return MakeSolid(generator, faces, texture, colour);
             }
         }
     }

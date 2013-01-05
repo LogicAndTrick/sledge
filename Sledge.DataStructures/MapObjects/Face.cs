@@ -11,6 +11,7 @@ namespace Sledge.DataStructures.MapObjects
 {
     public class Face
     {
+        public long ID { get; set; }
         public Color Colour { get; set; }
         public Plane Plane { get; set; }
 
@@ -24,16 +25,17 @@ namespace Sledge.DataStructures.MapObjects
 
         public Box BoundingBox { get; set; }
 
-        public Face()
+        public Face(long id)
         {
+            ID = id;
             Texture = new TextureReference();
             Vertices = new List<Vertex>();
             IsSelected = false;
         }
 
-        public Face Clone()
+        public Face Clone(IDGenerator generator)
         {
-            var f = new Face
+            var f = new Face(generator.GetNextFaceID())
                         {
                             Plane = Plane.Clone(),
                             Colour = Colour,

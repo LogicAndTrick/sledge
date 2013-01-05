@@ -73,6 +73,7 @@
     <Compile Include="MapObjects\EntityData.cs" />
     <Compile Include="MapObjects\Face.cs" />
     <Compile Include="MapObjects\Group.cs" />
+    <Compile Include="MapObjects\IDGenerator.cs" />
     <Compile Include="MapObjects\Map.cs" />
     <Compile Include="MapObjects\MapObject.cs" />
     <Compile Include="MapObjects\Output.cs" />

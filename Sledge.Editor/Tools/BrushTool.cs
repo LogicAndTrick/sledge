@@ -5,7 +5,6 @@ using OpenTK.Graphics.OpenGL;
 using Sledge.DataStructures.Geometric;
 using Sledge.Editor.History;
 using Sledge.Editor.Properties;
-using Sledge.Editor.Editing;
 using Sledge.DataStructures.MapObjects;
 using Sledge.Editor.Rendering;
 using Sledge.Graphics.Helpers;
@@ -43,7 +42,7 @@ namespace Sledge.Editor.Tools
         public override void ToolSelected()
         {
             BrushManager.ValuesChanged += ValuesChanged;
-            var sel = Selection.GetSelectedObjects().OfType<Solid>().ToList();
+            var sel = Document.Selection.GetSelectedObjects().OfType<Solid>().ToList();
             if (sel.Any())
             {
                 _lastBox = new Box(sel.Select(x => x.BoundingBox));
@@ -82,24 +81,24 @@ namespace Sledge.Editor.Tools
 
         private void CreateBrush(Box bounds)
         {
-            var brush = GetBrush(bounds);
+            var brush = GetBrush(bounds, Document.Map.IDGenerator);
             if (brush != null)
             {
                 brush.Parent = Document.Map.WorldSpawn;
                 Document.Map.WorldSpawn.Children.Add(brush);
                 var hc = new HistoryCreate("Create " + BrushManager.CurrentBrush.Name.ToLower(), new[] {brush});
-                HistoryManager.AddHistoryItem(hc);
+                Document.History.AddHistoryItem(hc);
             }
             Document.UpdateDisplayLists();
         }
 
-        private static MapObject GetBrush(Box bounds)
+        private MapObject GetBrush(Box bounds, IDGenerator idg)
         {
             var brush = BrushManager.CurrentBrush;
-            var created = brush.Create(bounds, TextureHelper.Get("AAATRIGGER")).ToList();
+            var created = brush.Create(idg, bounds, TextureHelper.Get("AAATRIGGER")).ToList();
             if (created.Count > 1)
             {
-                var g = new Group();
+                var g = new Group(idg.GetNextObjectID());
                 g.Children.AddRange(created);
                 g.UpdateBoundingBox(false);
                 return g;
@@ -131,7 +130,7 @@ namespace Sledge.Editor.Tools
             if (_updatePreview && ShouldDrawBox())
             {
                 var box = new Box(State.BoxStart, State.BoxEnd);
-                var brush = GetBrush(box);
+                var brush = GetBrush(box, new IDGenerator());
                 _preview = new List<Face>();
                 CollectFaces(_preview, new[] { brush });
             }

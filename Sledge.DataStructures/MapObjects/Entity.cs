@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using Sledge.DataStructures.GameData;
@@ -14,26 +13,26 @@ namespace Sledge.DataStructures.MapObjects
         public EntityData EntityData { get; set; }
         public Coordinate Origin { get; set; }
 
-        public Entity()
+        public Entity(long id) : base(id)
         {
             Origin = new Coordinate(0, 0, 0);
         }
 
-        public override MapObject Clone()
+        public override MapObject Clone(IDGenerator generator)
         {
-            var e = new Entity
+            var e = new Entity(generator.GetNextObjectID())
                        {
                            GameData = GameData,
                            EntityData = EntityData.Clone(),
                            Origin = Origin.Clone()
                        };
-            CloneBase(e);
+            CloneBase(e, generator);
             return e;
         }
 
-        public override void Unclone(MapObject o)
+        public override void Unclone(MapObject o, IDGenerator generator)
         {
-            UncloneBase(o);
+            UncloneBase(o, generator);
             var e = o as Entity;
             if (e == null) return;
             GameData = e.GameData;
@@ -85,7 +84,7 @@ namespace Sledge.DataStructures.MapObjects
             set { base.Colour = value; }
         }
 
-        public List<Face> GetFaces()
+        public IEnumerable<Face> GetFaces()
         {
             var faces = new List<Face>();
             if (Children.Any()) return faces;
@@ -93,7 +92,7 @@ namespace Sledge.DataStructures.MapObjects
             var box = BoundingBox.GetBoxFaces();
             foreach (var ca in box)
             {
-                var face = new Face
+                var face = new Face(0)
                                {
                                    Plane = new Plane(ca[0], ca[1], ca[2]),
                                    Colour = Colour,

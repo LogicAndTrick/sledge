@@ -1,22 +1,21 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using Sledge.Common;
 using Sledge.DataStructures.MapObjects;
+using Sledge.Editor.Documents;
 
 namespace Sledge.Editor.Visgroups
 {
     public partial class VisgroupEditForm : Form
     {
         public bool NeedReload { get; set; }
+        public Document Document { get; set; }
 
-        public VisgroupEditForm()
+        public VisgroupEditForm(Document doc)
         {
+            Document = doc;
             InitializeComponent();
             UpdateVisgroups();
             NeedReload = false;

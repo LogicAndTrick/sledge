@@ -1,11 +1,8 @@
 ﻿Key: Item - percentage complete, uncompleted tasks
 
 Priorities
-  TDI prep
-  Mediator/wireup
-  Groups
-  VMF
-    Cut/Copy/Paste/Paste Special
+  Cut/Copy/Paste/Paste Special
+  Re-combine select tool
   2D view right click
     Object Properties
   Compiling
@@ -13,9 +10,13 @@ Priorities
     Decal Tool
   Texture browser
   Undo/Redo
-  Hotkeys
+  Mediator wireup
+    Hotkeys
   New/Open/Save/Close
     Recent Files
+  Groups
+  Additional Map Properties
+    VMF
 
 1. Goldsource Support
   Formats
@@ -88,7 +89,7 @@ Priorities
 2. Source support
 3. Plugins support
 
-A. Unknown Milestone
+Feature Ideas
   VM prevent illegal brushes
   VM move in 3D
   VM create verts

@@ -93,6 +93,8 @@ namespace Sledge.Editor.Tools
         private decimal _lastScaleY;
         private List<TextureItem> _recentTextures;
 
+        public Documents.Document Document { get; set; }
+
         public TextureApplicationForm()
         {
             _freeze = true;
@@ -218,10 +220,10 @@ namespace Sledge.Editor.Tools
             TextureDetailsLabel.Text = "";
             var textures = new List<TextureItem>();
             var first = true;
-            foreach (var face in Selection.GetSelectedFaces())
+            foreach (var face in Document.Selection.GetSelectedFaces())
             {
                 var tex = face.Texture;
-                if (tex.Texture != null && !textures.Any(x => x.Name == tex.Texture.Name))
+                if (tex.Texture != null && textures.All(x => x.Name != tex.Texture.Name))
                 {
                     var item = TexturePackage.GetItem(tex.Texture.Name);
                     if (item != null)

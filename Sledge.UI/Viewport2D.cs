@@ -29,7 +29,7 @@ namespace Sledge.UI
             Side
         }
 
-        public static Coordinate Flatten(Coordinate c, ViewDirection direction)
+        private static Coordinate Flatten(Coordinate c, ViewDirection direction)
         {
             switch (direction)
             {
@@ -44,7 +44,7 @@ namespace Sledge.UI
             }
         }
 
-        public static Coordinate Expand(Coordinate c, ViewDirection direction)
+        private static Coordinate Expand(Coordinate c, ViewDirection direction)
         {
             switch (direction)
             {
@@ -59,7 +59,7 @@ namespace Sledge.UI
             }
         }
 
-        public static Coordinate GetUnusedCoordinate(Coordinate c, ViewDirection direction)
+        private static Coordinate GetUnusedCoordinate(Coordinate c, ViewDirection direction)
         {
             switch (direction)
             {
@@ -74,7 +74,7 @@ namespace Sledge.UI
             }
         }
 
-        public static Coordinate ZeroUnusedCoordinate(Coordinate c, ViewDirection direction)
+        private static Coordinate ZeroUnusedCoordinate(Coordinate c, ViewDirection direction)
         {
             switch (direction)
             {
@@ -117,7 +117,7 @@ namespace Sledge.UI
             }
         }
 
-        protected Coordinate CenterScreen { get; set; }
+        private Coordinate CenterScreen { get; set; }
 
         public Viewport2D(ViewDirection direction)
         {

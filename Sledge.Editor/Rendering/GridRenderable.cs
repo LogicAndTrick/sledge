@@ -5,15 +5,19 @@ using System.Drawing;
 using Sledge.Graphics.Helpers;
 using Sledge.Graphics.Renderables;
 using Sledge.Settings;
+using Sledge.UI;
 
 namespace Sledge.Editor.Rendering
 {
     public class GridRenderable : DisplayListRenderable
     {
-        protected decimal LastBuiltStep { get; set; }
+        private Documents.Document Document { get; set; }
+        private decimal LastBuiltStep { get; set; }
 
-        public GridRenderable(string listName) : base(listName)
+        public GridRenderable(Documents.Document doc, ViewportBase v)
+            : base("2DGridRenderable_" + v.GetHashCode())
         {
+            Document = doc;
             LastBuiltStep = -1;
             RebuildGrid(1);
         }
@@ -32,7 +36,7 @@ namespace Sledge.Editor.Rendering
                     actualDist *= Grid.HideFactor;
                 }
             }
-            if (step == LastBuiltStep) return; // This grid is the same as before
+            if (step == LastBuiltStep && !force) return; // This grid is the same as before
             using (DisplayList.Using(ListName))
             {
                 GL.Begin(BeginMode.Lines);

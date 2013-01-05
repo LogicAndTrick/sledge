@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Sledge.DataStructures.MapObjects;
+using Sledge.Editor.Documents;
 
 namespace Sledge.Editor.History
 {
@@ -22,12 +23,12 @@ namespace Sledge.Editor.History
             _selected = selected;
         }
 
-        public void Undo(Map map)
+        public void Undo(Document document)
         {
             _faces.ForEach(x => x.IsSelected = !_selected);
         }
 
-        public void Redo(Map map)
+        public void Redo(Document document)
         {
             _faces.ForEach(x => x.IsSelected = _selected);
         }

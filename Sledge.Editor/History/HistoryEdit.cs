@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Sledge.DataStructures.MapObjects;
+using Sledge.Editor.Documents;
 
 namespace Sledge.Editor.History
 {
@@ -27,20 +28,21 @@ namespace Sledge.Editor.History
             var be = beforeEdit.ToList();
             var cu = current.ToList();
             if (be.Count != cu.Count) throw new Exception("Both lists must be the same length.");
+            var idg = new IDGenerator(); // These clones will never be added into the document tree, don't care about their ids
             for (var i = 0; i < be.Count; i++)
             {
-                _changedObjects.Add(Tuple.Create(cu[i], be[i].Clone(), cu[i].Clone()));
+                _changedObjects.Add(Tuple.Create(cu[i], be[i].Clone(idg), cu[i].Clone(idg)));
             }
         }
 
-        public void Undo(Map map)
+        public void Undo(Document document)
         {
-            _changedObjects.ForEach(x => x.Item1.Unclone(x.Item2));
+            _changedObjects.ForEach(x => x.Item1.Unclone(x.Item2, document.Map.IDGenerator));
         }
 
-        public void Redo(Map map)
+        public void Redo(Document document)
         {
-            _changedObjects.ForEach(x => x.Item1.Unclone(x.Item3));
+            _changedObjects.ForEach(x => x.Item1.Unclone(x.Item3, document.Map.IDGenerator));
         }
 
         public void Dispose()

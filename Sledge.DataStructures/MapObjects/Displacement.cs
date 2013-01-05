@@ -17,7 +17,7 @@ namespace Sledge.DataStructures.MapObjects
         public DisplacementPoint[,] Points { get; set; }
         public int Resolution { get { return (int) Math.Pow(2, Power); } }
 
-        public Displacement()
+        public Displacement(long id) : base(id)
         {
             SetPower(3);
             StartPosition = new Coordinate(0, 0, 0);

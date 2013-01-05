@@ -59,12 +59,12 @@ namespace Sledge.Editor.Brushes
             yield return _rotationHeight;
         }
 
-        private Solid MakeSolid(IEnumerable<Coordinate[]> faces, ITexture texture, Color col)
+        private Solid MakeSolid(IDGenerator generator, IEnumerable<Coordinate[]> faces, ITexture texture, Color col)
         {
-            var solid = new Solid { Colour = col };
+            var solid = new Solid(generator.GetNextObjectID()) { Colour = col };
             foreach (var arr in faces)
             {
-                var face = new Face
+                var face = new Face(generator.GetNextFaceID())
                 {
                     Parent = solid,
                     Plane = new Plane(arr[0], arr[1], arr[2]),
@@ -80,7 +80,7 @@ namespace Sledge.Editor.Brushes
             return solid;
         }
 
-        public IEnumerable<MapObject> Create(Box box, ITexture texture)
+        public IEnumerable<MapObject> Create(IDGenerator generator, Box box, ITexture texture)
         {
             var crossSides = (int)_crossSides.GetValue();
             if (crossSides < 3) yield break;
@@ -170,7 +170,7 @@ namespace Sledge.Editor.Brushes
                         faces.Add(new[] { outerPoints[j], nextOuterPoints[j], nextInnerPoints[j], innerPoints[j] });
                         faces.Add(new[] { innerPoints[j], innerPoints[nextj], outerPoints[nextj], outerPoints[j] });
                         faces.Add(new[] { nextOuterPoints[j], nextOuterPoints[nextj], nextInnerPoints[nextj], nextInnerPoints[j] });
-                        yield return MakeSolid(faces, texture, colour);
+                        yield return MakeSolid(generator, faces, texture, colour);
                     }
                 }
                 else
@@ -188,7 +188,7 @@ namespace Sledge.Editor.Brushes
                     // Add the cross section faces
                     faces.Add(points.Reverse().ToArray());
                     faces.Add(nextPoints.ToArray());
-                    yield return MakeSolid(faces, texture, colour);
+                    yield return MakeSolid(generator, faces, texture, colour);
                 }
             }
         }

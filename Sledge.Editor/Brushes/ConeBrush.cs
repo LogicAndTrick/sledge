@@ -27,7 +27,7 @@ namespace Sledge.Editor.Brushes
             yield return _numSides;
         }
 
-        public IEnumerable<MapObject> Create(Box box, ITexture texture)
+        public IEnumerable<MapObject> Create(IDGenerator generator, Box box, ITexture texture)
         {
             var numsides = (int) _numSides.GetValue();
             if (numsides < 3) yield break;
@@ -59,10 +59,10 @@ namespace Sledge.Editor.Brushes
             }
             faces.Add(points.ToArray());
 
-            var solid = new Solid { Colour = Colour.GetRandomBrushColour() };
+            var solid = new Solid(generator.GetNextObjectID()) { Colour = Colour.GetRandomBrushColour() };
             foreach (var arr in faces)
             {
-                var face = new Face
+                var face = new Face(generator.GetNextFaceID())
                 {
                     Parent = solid,
                     Plane = new Plane(arr[0], arr[1], arr[2]),

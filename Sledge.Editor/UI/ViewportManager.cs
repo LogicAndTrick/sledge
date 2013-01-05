@@ -2,19 +2,16 @@
 using System.Linq;
 using System.Windows.Forms;
 using OpenTK;
-using Sledge.Editor.Rendering;
-using Sledge.Graphics;
 using Sledge.Graphics.Helpers;
 using Sledge.Graphics.Renderables;
 using Sledge.UI;
-using System;
 
 namespace Sledge.Editor.UI
 {
     public static class ViewportManager
     {
-        public static TableLayoutPanel MainWindowGrid { get; set; }
-        public static List<ViewportBase> Viewports { get; set; }
+        private static TableLayoutPanel MainWindowGrid { get; set; }
+        public static List<ViewportBase> Viewports { get; private set; }
 
         static ViewportManager()
         {
@@ -47,7 +44,7 @@ namespace Sledge.Editor.UI
             RunAll();
         }
 
-        public static void RunAll()
+        private static void RunAll()
         {
             Viewports.ForEach(v => v.Run());
         }
@@ -57,15 +54,14 @@ namespace Sledge.Editor.UI
             Viewports.ForEach(v => v.RenderContext.Clear());
         }
 
-        public static void AddGrids()
-        {
-            Viewports.OfType<Viewport2D>().ToList()
-                .ForEach(v => v.RenderContext.Add(new GridRenderable("2DGridRenderable_" + v.GetHashCode())));
-        }
-
         public static void AddContext3D(IRenderable r)
         {
             Viewports.OfType<Viewport3D>().ToList().ForEach(v => v.RenderContext.Add(r));
+        }
+
+        public static void RemoveContext3D(IRenderable r)
+        {
+            Viewports.OfType<Viewport3D>().ToList().ForEach(v => v.RenderContext.Remove(r));
         }
 
         public static void AddContext2D(IRenderable r)
@@ -73,12 +69,22 @@ namespace Sledge.Editor.UI
             Viewports.OfType<Viewport2D>().ToList().ForEach(v => v.RenderContext.Add(r));
         }
 
+        public static void RemoveContext2D(IRenderable r)
+        {
+            Viewports.OfType<Viewport2D>().ToList().ForEach(v => v.RenderContext.Remove(r));
+        }
+
         public static void AddContext2D(IRenderable r, Viewport2D.ViewDirection dir)
         {
             Viewports.OfType<Viewport2D>().Where(v => v != null && v.Direction == dir).ToList().ForEach(v => v.RenderContext.Add(r));
         }
 
-        public static Viewport3D Create3D()
+        public static void RemoveContext2D(IRenderable r, Viewport2D.ViewDirection dir)
+        {
+            Viewports.OfType<Viewport2D>().Where(v => v != null && v.Direction == dir).ToList().ForEach(v => v.RenderContext.Remove(r));
+        }
+
+        private static Viewport3D Create3D()
         {
             var viewport = new Viewport3D
             {
@@ -96,7 +102,7 @@ namespace Sledge.Editor.UI
             return viewport;
         }
 
-        public static Viewport2D Create2D(Viewport2D.ViewDirection direction)
+        private static Viewport2D Create2D(Viewport2D.ViewDirection direction)
         {
             var viewport = new Viewport2D(direction)
             {

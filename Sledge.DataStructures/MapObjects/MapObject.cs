@@ -10,6 +10,7 @@ namespace Sledge.DataStructures.MapObjects
 {
     public abstract class MapObject
     {
+        public long ID { get; set; }
         public string ClassName { get; set; }
         public List<int> Visgroups { get; set; }
         public List<MapObject> Children { get; set; }
@@ -20,8 +21,9 @@ namespace Sledge.DataStructures.MapObjects
         public bool IsVisgroupHidden { get; set; }
         public Box BoundingBox { get; set; }
 
-        protected MapObject()
+        protected MapObject(long id)
         {
+            ID = id;
             Visgroups = new List<int>();
             Children = new List<MapObject>();
         }
@@ -29,14 +31,14 @@ namespace Sledge.DataStructures.MapObjects
         /// <summary>
         /// Creates an exact copy of this object
         /// </summary>
-        public abstract MapObject Clone();
+        public abstract MapObject Clone(IDGenerator generator);
 
         /// <summary>
         /// Copies all the values of the provided object into this one
         /// </summary>
-        public abstract void Unclone(MapObject o);
+        public abstract void Unclone(MapObject o, IDGenerator generator);
 
-        protected void CloneBase(MapObject o)
+        protected void CloneBase(MapObject o, IDGenerator generator)
         {
             o.ClassName = ClassName;
             o.Visgroups.AddRange(Visgroups);
@@ -44,14 +46,14 @@ namespace Sledge.DataStructures.MapObjects
             o.Colour = Colour;
             o.IsSelected = IsSelected;
             o.BoundingBox = BoundingBox.Clone();
-            foreach (var c in Children.Select(x => x.Clone()))
+            foreach (var c in Children.Select(x => x.Clone(generator)))
             {
                 c.Parent = o;
                 o.Children.Add(c);
             }
         }
 
-        protected void UncloneBase(MapObject o)
+        protected void UncloneBase(MapObject o, IDGenerator generator)
         {
             Visgroups.Clear();
             Children.Clear();
@@ -62,7 +64,7 @@ namespace Sledge.DataStructures.MapObjects
             Colour = o.Colour;
             IsSelected = o.IsSelected;
             BoundingBox = o.BoundingBox.Clone();
-            foreach (var c in o.Children.Select(x => x.Clone()))
+            foreach (var c in o.Children.Select(x => x.Clone(generator)))
             {
                 c.Parent = this;
                 Children.Add(c);
@@ -155,7 +157,8 @@ namespace Sledge.DataStructures.MapObjects
         public IEnumerable<MapObject> GetAllNodesIntersectingWith(Line line)
         {
             var list = new List<MapObject>();
-            if (!(this is World) && !IsCodeHidden && !IsVisgroupHidden)
+            if (IsCodeHidden || IsVisgroupHidden) return list;
+            if (!(this is World))
             {
                 if (BoundingBox == null || !BoundingBox.IntersectsWith(line)) return list;
                 if (this is Solid || this is Entity) list.Add(this);

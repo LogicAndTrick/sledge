@@ -14,7 +14,7 @@ namespace Sledge.Editor.UI
             set { Viewport2D = (Viewport2D) value; }
         }
 
-        public Viewport2D Viewport2D { get; set; }
+        private Viewport2D Viewport2D { get; set; }
 
         public Grid2DEventListener(Viewport2D viewport)
         {

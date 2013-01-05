@@ -47,7 +47,7 @@ namespace Sledge.Providers.Map
             parent.Children.OfType<Group>().ToList().ForEach(x => CollectEntities(entities, x));
         }
 
-        private Face ReadFace(string line)
+        private Face ReadFace(string line, IDGenerator generator)
         {
             const NumberStyles ns = NumberStyles.Float;
 
@@ -64,7 +64,7 @@ namespace Sledge.Providers.Map
             Assert(parts[22] == "[");
             Assert(parts[27] == "]");
 
-            return new Face
+            return new Face(generator.GetNextFaceID())
                        {
                            Plane = new Plane(Coordinate.Parse(parts[1], parts[2], parts[3]),
                                              Coordinate.Parse(parts[6], parts[7], parts[8]),
@@ -102,7 +102,7 @@ namespace Sledge.Providers.Map
             sw.WriteLine(String.Join(" ", strings));
         }
 
-        private Solid ReadSolid(StreamReader rdr)
+        private Solid ReadSolid(StreamReader rdr, IDGenerator generator)
         {
             var faces = new List<Face>();
             string line;
@@ -110,7 +110,7 @@ namespace Sledge.Providers.Map
             {
                 if (line == "}")
                 {
-                    var ret = Solid.CreateFromIntersectingPlanes(faces.Select(x => x.Plane));
+                    var ret = Solid.CreateFromIntersectingPlanes(faces.Select(x => x.Plane), generator);
                     ret.Colour = Colour.GetRandomBrushColour();
                     foreach (var face in ret.Faces)
                     {
@@ -128,7 +128,7 @@ namespace Sledge.Providers.Map
                     ret.UpdateBoundingBox(false);
                     return ret;
                 }
-                faces.Add(ReadFace(line));
+                faces.Add(ReadFace(line, generator));
             }
             return null;
         }
@@ -172,14 +172,14 @@ namespace Sledge.Providers.Map
             sw.WriteLine('"' + key + "\" \"" + value + '"');
         }
 
-        private Entity ReadEntity(StreamReader rdr)
+        private Entity ReadEntity(StreamReader rdr, IDGenerator generator)
         {
-            var ent = new Entity { EntityData = new EntityData(), Colour = Colour.GetRandomBrushColour() };
+            var ent = new Entity(generator.GetNextObjectID()) { EntityData = new EntityData(), Colour = Colour.GetRandomBrushColour() };
             string line;
             while ((line = CleanLine(rdr.ReadLine())) != null)
             {
                 if (line[0] == '"') ReadProperty(ent, line);
-                else if (line[0] == '{') ent.Children.Add(ReadSolid(rdr));
+                else if (line[0] == '{') ent.Children.Add(ReadSolid(rdr, generator));
                 else if (line[0] == '}') break;
             }
             ent.Children.ForEach(x => x.Parent = ent);
@@ -223,13 +223,13 @@ namespace Sledge.Providers.Map
             entities.ForEach(x => WriteEntity(sw, x));
         }
 
-        private List<Entity> ReadAllEntities(StreamReader rdr)
+        private List<Entity> ReadAllEntities(StreamReader rdr, IDGenerator generator)
         {
             var list = new List<Entity>();
             string line;
             while ((line = CleanLine(rdr.ReadLine())) != null)
             {
-                if (line == "{") list.Add(ReadEntity(rdr));
+                if (line == "{") list.Add(ReadEntity(rdr, generator));
             }
             return list;
         }
@@ -244,11 +244,11 @@ namespace Sledge.Providers.Map
             using (var reader = new StreamReader(stream))
             {
                 var map = new DataStructures.MapObjects.Map();
-                var allentities = ReadAllEntities(reader);
+                var allentities = ReadAllEntities(reader, map.IDGenerator);
                 var worldspawn = allentities.FirstOrDefault(x => x.EntityData.Name == "worldspawn")
-                                 ?? new Entity {EntityData = {Name = "worldspawn"}};
+                                 ?? new Entity(0) {EntityData = {Name = "worldspawn"}};
                 allentities.Remove(worldspawn);
-                map.WorldSpawn = new World { EntityData = worldspawn.EntityData };
+                map.WorldSpawn.EntityData = worldspawn.EntityData;
                 map.WorldSpawn.Children.AddRange(allentities);
                 map.WorldSpawn.Children.AddRange(worldspawn.Children);
                 map.WorldSpawn.Children.ForEach(x => x.Parent = map.WorldSpawn);

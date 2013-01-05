@@ -29,18 +29,18 @@ namespace Sledge.Editor.UI
                 return Color.Transparent;
             }
 
-            public string DisplayValue()
+            public string DisplayValue(GameData gd)
             {
-                var cls = Document.GameData.Classes.FirstOrDefault(x => x.Name == Class);
+                var cls = gd.Classes.FirstOrDefault(x => x.Name == Class);
                 var prop = cls == null ? null : cls.Properties.FirstOrDefault(x => x.Name == Key && x.VariableType == VariableType.Choices);
                 var opt = prop == null ? null : prop.Options.FirstOrDefault(x => x.Key == Value);
                 return opt == null ? Value : opt.Description;
             }
 
-            public static List<TableValue> Create(string className, List<Property> props)
+            public static List<TableValue> Create(GameData gd, string className, List<Property> props)
             {
                 var list = new List<TableValue>();
-                var cls = Document.GameData.Classes.FirstOrDefault(x => x.Name == className);
+                var cls = gd.Classes.FirstOrDefault(x => x.Name == className);
                 var gameDataProps = cls != null ? cls.Properties : new List<DataStructures.GameData.Property>();
                 foreach (var gdProps in gameDataProps.Where(x => x.Name != "spawnflags").GroupBy(x => x.Name))
                 {
@@ -65,11 +65,13 @@ namespace Sledge.Editor.UI
         public List<MapObject> Objects { get; set; }
         private bool _changingClass;
         private string _prevClass;
+        private Documents.Document Document { get; set; }
 
         private bool _populating;
 
-        public EntityEditor()
+        public EntityEditor(Documents.Document document)
         {
+            Document = document;
             InitializeComponent();
             Objects = new List<MapObject>();
             _smartEditControls = new Dictionary<VariableType, SmartEditControl>();
@@ -130,7 +132,7 @@ namespace Sledge.Editor.UI
             }
             var classes = Objects.OfType<Entity>().Select(x => x.EntityData.Name.ToLower()).Distinct().ToList();
             var cls = classes.Count > 1 ? "" : classes[0];
-            _values = TableValue.Create(cls, Objects.OfType<Entity>().SelectMany(x => x.EntityData.Properties).Where(x => x.Key != "spawnflags").ToList());
+            _values = TableValue.Create(Document.GameData, cls, Objects.OfType<Entity>().SelectMany(x => x.EntityData.Properties).Where(x => x.Key != "spawnflags").ToList());
             Class.BackColor = Color.White;
             UpdateKeyValues();
         }
@@ -177,7 +179,7 @@ namespace Sledge.Editor.UI
                     SmartEditButton.Checked = SmartEditButton.Enabled = false;
                 }
             }
-            _values = TableValue.Create(cls, Objects.OfType<Entity>().SelectMany(x => x.EntityData.Properties).Where(x => x.Key != "spawnflags").ToList());
+            _values = TableValue.Create(Document.GameData, cls, Objects.OfType<Entity>().SelectMany(x => x.EntityData.Properties).Where(x => x.Key != "spawnflags").ToList());
             _prevClass = cls;
             UpdateKeyValues();
             PopulateFlags(cls, Objects.OfType<Entity>().Select(x => x.EntityData.Flags).ToList());
@@ -209,7 +211,7 @@ namespace Sledge.Editor.UI
             foreach (var tv in _values)
             {
                 var dt = smartEdit ? tv.DisplayText : tv.Key;
-                var dv = smartEdit ? tv.DisplayValue() : tv.Value;
+                var dv = smartEdit ? tv.DisplayValue(Document.GameData) : tv.Value;
                 KeyValuesList.Items.Add(new ListViewItem(dt) { Tag = tv.Key, BackColor = tv.GetColour() }).SubItems.Add(dv);
             }
 

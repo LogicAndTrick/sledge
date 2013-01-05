@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Sledge.DataStructures.Geometric;
 
 namespace Sledge.DataStructures.MapObjects
@@ -10,30 +8,30 @@ namespace Sledge.DataStructures.MapObjects
     {
         public List<Face> Faces { get; private set; }
 
-        public Solid()
+        public Solid(long id) : base(id)
         {
             Faces = new List<Face>();
         }
 
-        public override MapObject Clone()
+        public override MapObject Clone(IDGenerator generator)
         {
-            var e = new Solid();
-            foreach (var f in Faces.Select(x => x.Clone()))
+            var e = new Solid(generator.GetNextObjectID());
+            foreach (var f in Faces.Select(x => x.Clone(generator)))
             {
                 f.Parent = e;
                 e.Faces.Add(f);
             }
-            CloneBase(e);
+            CloneBase(e, generator);
             return e;
         }
 
-        public override void Unclone(MapObject o)
+        public override void Unclone(MapObject o, IDGenerator generator)
         {
-            UncloneBase(o);
+            UncloneBase(o, generator);
             var e = o as Solid;
             if (e == null) return;
             Faces.Clear();
-            foreach (var f in e.Faces.Select(x => x.Clone()))
+            foreach (var f in e.Faces.Select(x => x.Clone(generator)))
             {
                 f.Parent = this;
                 Faces.Add(f);
@@ -42,7 +40,7 @@ namespace Sledge.DataStructures.MapObjects
 
         public override void UpdateBoundingBox(bool cascadeToParent = true)
         {
-            BoundingBox = new Box(Faces.SelectMany(x => new[] { x.BoundingBox.Start, x.BoundingBox.End }));
+            BoundingBox = new Box(Faces.Select(x => x.BoundingBox));
             base.UpdateBoundingBox(cascadeToParent);
         }
 
@@ -65,11 +63,11 @@ namespace Sledge.DataStructures.MapObjects
                 .FirstOrDefault();
         }
 
-        public bool Split(Plane plane, out Solid back, out Solid front)
+        public bool Split(Plane plane, out Solid back, out Solid front, IDGenerator generator)
         {
             back = front = null;
             // Check that this solid actually spans the plane
-            if (!Faces.Any(x => x.ClassifyAgainstPlane(plane) == Face.FacePlaneClassification.Spanning)) return false;
+            if (Faces.All(x => x.ClassifyAgainstPlane(plane) != Face.FacePlaneClassification.Spanning)) return false;
 
             var backPlanes = new List<Plane> { plane };
             var frontPlanes = new List<Plane> { new Plane(-plane.Normal, -plane.DistanceFromOrigin) };
@@ -81,10 +79,10 @@ namespace Sledge.DataStructures.MapObjects
                 if (classification != Face.FacePlaneClassification.Front) backPlanes.Add(face.Plane);
             }
 
-            back = CreateFromIntersectingPlanes(backPlanes);
-            front = CreateFromIntersectingPlanes(frontPlanes);
-            CloneBase(back);
-            CloneBase(front);
+            back = CreateFromIntersectingPlanes(backPlanes, generator);
+            front = CreateFromIntersectingPlanes(frontPlanes, generator);
+            CloneBase(back, generator);
+            CloneBase(front, generator);
 
             front.Faces.Union(back.Faces).ToList().ForEach(x =>
                                     {
@@ -115,7 +113,7 @@ namespace Sledge.DataStructures.MapObjects
             return true;
         }
 
-        public static Solid CreateFromIntersectingPlanes(IEnumerable<Plane> planes)
+        public static Solid CreateFromIntersectingPlanes(IEnumerable<Plane> planes, IDGenerator generator)
         {
             const short max = short.MaxValue;
             var list = planes.ToList();
@@ -166,7 +164,7 @@ namespace Sledge.DataStructures.MapObjects
             }
             var origin = sum / cnt;
 
-            var solid = new Solid();
+            var solid = new Solid(1);
 
             // Step 3: Sort the vertices
             for (var i = 0; i < count; i++)
@@ -196,7 +194,7 @@ namespace Sledge.DataStructures.MapObjects
                 }
                 var tempPlane = new Plane(points[0], points[1], points[2]);
                 if (tempPlane.Normal.Dot(plane.Normal) < 0) points.Reverse();
-                var face = new Face { Parent = solid, Plane = new Plane(points[0], points[1], points[2]) };
+                var face = new Face(generator.GetNextFaceID()) { Parent = solid, Plane = new Plane(points[0], points[1], points[2]) };
                 face.Vertices.AddRange(points.Select(x => new Vertex(x, face)));
                 face.UpdateBoundingBox();
                 face.AlignTextureToWorld();

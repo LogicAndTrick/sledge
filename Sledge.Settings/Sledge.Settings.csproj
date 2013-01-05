@@ -44,6 +44,7 @@
   <ItemGroup>
     <Compile Include="HotkeyDefinition.cs" />
     <Compile Include="Hotkeys.cs" />
+    <Compile Include="HotkeysMediator.cs" />
     <Compile Include="RotationStyle.cs" />
     <Compile Include="Select.cs" />
     <Compile Include="Grid.cs" />

@@ -60,6 +60,11 @@ namespace Sledge.Editor.Tools
             _form.HideMaskToggled += HideMaskToggled;
         }
 
+        public override void DocumentChanged()
+        {
+            _form.Document = Document;
+        }
+
         private void HideMaskToggled(object sender, bool hide)
         {
             Document.HideFaceMask = hide;
@@ -68,16 +73,16 @@ namespace Sledge.Editor.Tools
 
         private void TextureJustified(object sender, JustifyMode justifymode, bool treatasone)
         {
-            if (Selection.IsEmpty()) return;
+            if (Document.Selection.IsEmpty()) return;
             var boxAlignMode = (justifymode == JustifyMode.Fit)
                                    ? Face.BoxAlignMode.Center // Don't care about the align mode when centering
                                    : (Face.BoxAlignMode) Enum.Parse(typeof (Face.BoxAlignMode), justifymode.ToString());
             Cloud cloud = null;
             if (treatasone)
             {
-                cloud = new Cloud(Selection.GetSelectedFaces().SelectMany(x => x.Vertices).Select(x => x.Location));
+                cloud = new Cloud(Document.Selection.GetSelectedFaces().SelectMany(x => x.Vertices).Select(x => x.Location));
             }
-            foreach (var face in Selection.GetSelectedFaces())
+            foreach (var face in Document.Selection.GetSelectedFaces())
             {
                 if (!treatasone)
                 {
@@ -98,7 +103,7 @@ namespace Sledge.Editor.Tools
 
         private void TextureApplied(object sender, TextureItem texture)
         {
-            foreach (var face in Selection.GetSelectedFaces())
+            foreach (var face in Document.Selection.GetSelectedFaces())
             {
                 face.Texture.Name = texture.Name;
                 face.Texture.Texture = texture.GetTexture();
@@ -111,7 +116,7 @@ namespace Sledge.Editor.Tools
 
         private void TextureAligned(object sender, AlignMode align)
         {
-            foreach (var face in Selection.GetSelectedFaces())
+            foreach (var face in Document.Selection.GetSelectedFaces())
             {
                 if (align == AlignMode.Face) face.AlignTextureToFace();
                 else if (align == AlignMode.World) face.AlignTextureToWorld();
@@ -123,7 +128,7 @@ namespace Sledge.Editor.Tools
 
         private void TexturePropertyChanged(object sender, decimal scalex, decimal scaley, int shiftx, int shifty, decimal rotation, int lightmapscale)
         {
-            foreach (var face in Selection.GetSelectedFaces())
+            foreach (var face in Document.Selection.GetSelectedFaces())
             {
                 face.Texture.XScale = scalex;
                 face.Texture.YScale = scaley;
@@ -149,14 +154,14 @@ namespace Sledge.Editor.Tools
         {
             _form.Show(Editor.Instance);
             Editor.Instance.Focus();
-            Selection.SwitchToFaceSelection();
+            Document.Selection.SwitchToFaceSelection();
             Document.UpdateSelectLists();
             _form.SelectionChanged();
         }
 
         public override void ToolDeselected()
         {
-            Selection.SwitchToObjectSelection();
+            Document.Selection.SwitchToObjectSelection();
             _form.Clear();
             _form.Hide();
             Document.UpdateDisplayLists();
@@ -182,7 +187,7 @@ namespace Sledge.Editor.Tools
             TextureItem itemToSelect = null;
             if ((behaviour == SelectBehaviour.Select || behaviour == SelectBehaviour.LiftSelect) && !KeyboardState.Ctrl)
             {
-                Selection.Clear();
+                Document.Selection.Clear();
             }
             if (clickedFace != null)
             {
@@ -193,8 +198,8 @@ namespace Sledge.Editor.Tools
                 {
                     foreach (var face in faces)
                     {
-                        if (face.IsSelected) Selection.Deselect(face);
-                        else Selection.Select(face);
+                        if (face.IsSelected) Document.Selection.Deselect(face);
+                        else Document.Selection.Select(face);
                     }
                 }
                 if (behaviour == SelectBehaviour.Lift || behaviour == SelectBehaviour.LiftSelect)
@@ -204,7 +209,7 @@ namespace Sledge.Editor.Tools
                 }
                 if (behaviour == SelectBehaviour.Apply || behaviour == SelectBehaviour.ApplyWithValues)
                 {
-                    var tex = Selection.GetSelectedFaces().FirstOrDefault();
+                    var tex = Document.Selection.GetSelectedFaces().FirstOrDefault();
                     var item = tex != null ? TexturePackage.GetItem(tex.Texture.Name) : null;
                     if (item != null)
                     {
@@ -260,7 +265,7 @@ namespace Sledge.Editor.Tools
         public override void Render(ViewportBase viewport)
         {
             TextureHelper.DisableTexturing();
-            foreach (var face in Selection.GetSelectedFaces())
+            foreach (var face in Document.Selection.GetSelectedFaces())
             {
                 var lineStart = face.BoundingBox.Center + face.Plane.Normal * 0.5m;
                 var uEnd = lineStart + face.Texture.UAxis * 20;

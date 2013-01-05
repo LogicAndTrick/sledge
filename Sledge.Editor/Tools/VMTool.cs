@@ -119,13 +119,14 @@ namespace Sledge.Editor.Tools
 
         public override void ToolSelected()
         {
-            var selectedSolids = Selection.GetSelectedObjects().OfType<Solid>().ToList();
+            var selectedSolids = Document.Selection.GetSelectedObjects().OfType<Solid>().ToList();
             // Init the points and copy caches
             _copies = new Dictionary<Solid, Solid>();
             _points = new List<VMPoint>();
+            var idg = new IDGenerator();
             foreach (var solid in selectedSolids)
             {
-                var copy = (Solid)solid.Clone();
+                var copy = (Solid)solid.Clone(idg);
                 _copies.Add(copy, solid);
 
                 // Set all the original solids to hidden
@@ -142,13 +143,13 @@ namespace Sledge.Editor.Tools
         public override void ToolDeselected()
         {
             // The solids are no longer hidden
-            var selectedSolids = Selection.GetSelectedObjects().OfType<Solid>().ToList();
+            var selectedSolids = Document.Selection.GetSelectedObjects().OfType<Solid>().ToList();
             foreach (var o in selectedSolids)
             {
                 o.IsCodeHidden = false;
                 // Commit the manips back into the original object
                 var copy = _copies.First(x => x.Value == o).Key;
-                o.Unclone(copy);
+                o.Unclone(copy, Document.Map.IDGenerator);
                 o.Faces.ForEach(x => x.UpdateBoundingBox());
                 o.UpdateBoundingBox();
             }
@@ -234,7 +235,7 @@ namespace Sledge.Editor.Tools
 
             // Mouse down on a point
             _state = VMState.Moving;
-            Document.CaptureAltPresses = true;
+            Editor.Instance.CaptureAltPresses = true;
             if (!vtx.IsSelected && !KeyboardState.Ctrl)
             {
                 // If we aren't clicking on a selected point and ctrl is not down, deselect the others
@@ -270,7 +271,7 @@ namespace Sledge.Editor.Tools
             _state = VMState.None;
             _moveStart = null;
             _clickedPoint = null;
-            Document.CaptureAltPresses = false;
+            Editor.Instance.CaptureAltPresses = false;
         }
 
         private void CheckMergedVertices()

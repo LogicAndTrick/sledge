@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Sledge.DataStructures.MapObjects;
+using Sledge.Editor.Documents;
 
 namespace Sledge.Editor.History
 {
@@ -17,12 +18,12 @@ namespace Sledge.Editor.History
             _deletedObjects = new List<MapObject>(deletedObjects);
         }
 
-        public void Undo(Map map)
+        public void Undo(Document document)
         {
             _deletedObjects.ForEach(x => x.Parent.Children.Add(x));
         }
 
-        public void Redo(Map map)
+        public void Redo(Document document)
         {
             _deletedObjects.ForEach(x => x.Parent.Children.Remove(x));
         }

@@ -69,7 +69,7 @@ namespace Sledge.Tests
         public void FaceLineIntersectionTest()
         {
             var plane = new Plane(new Coordinate(0, 0, 1), 100);
-            var face = new Face {Plane = plane};
+            var face = new Face(1) {Plane = plane};
             var coords = new[]
                              {
                                  new Coordinate(-100, -100, 100),

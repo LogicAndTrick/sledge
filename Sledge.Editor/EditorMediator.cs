@@ -7,7 +7,9 @@ namespace Sledge.Editor
 {
     public static class EditorMediator
     {
-        public const string Undo = "Undo";
-        public const string Redo = "Redo";
+        public const string SettingsChanged = "SettingsChanged";
+
+        public const string SelectionTypeChanged = "SelectionTypeChanged";
+        public const string SelectionChanged = "SelectionChanged";
     }
 }

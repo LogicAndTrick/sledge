@@ -1,27 +1,29 @@
 ﻿using System;
 using System.Linq;
 using System.Windows.Forms;
-using Sledge.DataStructures.Rendering;
+using Sledge.Common.Mediator;
+using Sledge.DataStructures.MapObjects;
 using Sledge.Editor.Brushes;
+using Sledge.Editor.Documents;
 using Sledge.Editor.Settings;
 using Sledge.Editor.UI;
 using Sledge.Editor.Visgroups;
-using Sledge.FileSystem;
+using Sledge.Providers;
 using Sledge.Providers.GameData;
 using Sledge.Providers.Map;
 using Sledge.Database;
 using Sledge.Editor.Tools;
-using Sledge.Providers.Model;
 using Sledge.Providers.Texture;
-using Sledge.Graphics;
-using Sledge.UI;
-using System.Diagnostics;
+using Sledge.Settings;
+using Hotkeys = Sledge.Editor.UI.Hotkeys;
 
 namespace Sledge.Editor
 {
-    public partial class Editor : Form
+    public partial class Editor : Form, IMediatorListener
     {
         public static Editor Instance { get; private set; }
+
+        public bool CaptureAltPresses { get; set; }
 
         public Editor()
         {
@@ -48,7 +50,7 @@ namespace Sledge.Editor
                 gsd.ShowDialog();
                 if (gsd.SelectedGameID < 0) return;
                 var game = Context.DBContext.GetAllGames().Single(g => g.ID == gsd.SelectedGameID);
-                Document.New(game);
+                DocumentManager.AddAndSwitch(new Document(null, new Map(), game));
             }
         }
 
@@ -63,14 +65,14 @@ namespace Sledge.Editor
                     if (gsd.SelectedGameID < 0) return;
                     var game = Context.DBContext.GetAllGames().Single(g => g.ID == gsd.SelectedGameID);
                     var filename = ofd.FileName;
-                    //try
+                    try
                     {
-                        Document.Open(filename, game);
+                        var map = MapProvider.GetMapFromFile(filename);
+                        DocumentManager.AddAndSwitch(new Document(filename, map, game));
                     }
-                    //catch (Exception e)
+                    catch (ProviderException e)
                     {
-                        //Error.Warning("The map file could not be opened:\n" + e.Message);
-                        //throw;
+                        Error.Warning("The map file could not be opened:\n" + e.Message);
                     }
                 }
             }
@@ -78,18 +80,7 @@ namespace Sledge.Editor
 
         private static void SaveFile()
         {
-            if (!Document.MapOpen) return;
-            var filename = Document.CurrentMapFile;
-            if (filename == null)
-            {
-                using (var sfd = new SaveFileDialog())
-                {
-                    sfd.Filter = @"RMF Files (*.rmf)|*.rmf";
-                    if (sfd.ShowDialog() != DialogResult.OK) return;
-                    filename = sfd.FileName;
-                }
-            }
-            Document.Save(filename);
+            Mediator.Publish(HotkeysMediator.FileSave);
         }
 
         private void EditorLoad(object sender, EventArgs e)
@@ -120,28 +111,13 @@ namespace Sledge.Editor
             GameDataProvider.Register(new FgdProvider());
             TextureProvider.Register(new WadProvider());
 
-            //try
-            //{
-            //    var mdl = new MdlProvider();
-            //    var filePath = @"D:\Sledge\_Resources\MDL\HL2_44\seagull.mdl";
-            //    //var filePath = @"D:\Sledge\_Resources\MDL\TF2_48\heavy.mdl";
-            //    //var filePath = @"D:\Sledge\_Resources\MDL\HL1_10\barney.mdl";
-            //    var file = FileSystemFactory.Create(filePath);
-            //    var rdr = mdl.LoadMDL(file, ModelLoadItems.AllStatic);
-            //    var modelRender = new ModelRenderable(rdr);
-            //    ViewportManager.AddContext3D(modelRender);
-            //    ViewportManager.AddContext2D(modelRender);
-            //}
-            //catch (Exception)
-            //{
-            //    throw;
-            //}
+            Subscribe();
         }
 
         protected override bool ProcessDialogKey(Keys keyData)
         {
             // Suppress presses of the alt key if required
-            if (Document.CaptureAltPresses && (keyData & Keys.Alt) == Keys.Alt)
+            if (CaptureAltPresses && (keyData & Keys.Alt) == Keys.Alt)
             {
                 return true;
             }
@@ -159,17 +135,51 @@ namespace Sledge.Editor
 
         private void CompileMapClicked(object sender, EventArgs e)
         {
-            Document.Compile();
+            Mediator.Publish(HotkeysMediator.FileCompile);
         }
 
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
-            return Hotkeys.HotkeyDown(this, keyData) || base.ProcessCmdKey(ref msg, keyData);
+            return Hotkeys.HotkeyDown(keyData) || base.ProcessCmdKey(ref msg, keyData);
         }
 
-        public QuadSplitControl GetFourView()
+        public void Notify(string message, object data)
         {
-            return tblQuadView;
+            Mediator.ExecuteDefault(this, message, data);
+        }
+
+        private void Subscribe()
+        {
+            Mediator.Subscribe(HotkeysMediator.FourViewAutosize, this);
+            Mediator.Subscribe(HotkeysMediator.FourViewFocusBottomLeft, this);
+            Mediator.Subscribe(HotkeysMediator.FourViewFocusBottomRight, this);
+            Mediator.Subscribe(HotkeysMediator.FourViewFocusTopLeft, this);
+            Mediator.Subscribe(HotkeysMediator.FourViewFocusTopRight, this);
+        }
+
+        public void FourViewAutosize()
+        {
+            tblQuadView.ResetViews();
+        }
+
+        public void FourViewFocusTopLeft()
+        {
+            tblQuadView.FocusOn(0, 0);
+        }
+
+        public void FourViewFocusTopRight()
+        {
+            tblQuadView.FocusOn(0, 1);
+        }
+
+        public void FourViewFocusBottomLeft()
+        {
+            tblQuadView.FocusOn(1, 0);
+        }
+
+        public void FourViewFocusBottomRight()
+        {
+            tblQuadView.FocusOn(1, 1);
         }
     }
 }

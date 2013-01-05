@@ -8,6 +8,7 @@ using Sledge.Database;
 using Sledge.Database.Models;
 using System.IO;
 using Sledge.Editor;
+using Sledge.Editor.Documents;
 using Sledge.Editor.UI;
 using Sledge.FileSystem;
 using Sledge.Providers.GameData;
@@ -62,7 +63,8 @@ namespace Sledge.Sandbox
         {
             if (File.Exists(MapFile) && Game != null)
             {
-                Document.Open(MapFile, Game);
+                var map = MapProvider.GetMapFromFile(MapFile);
+                DocumentManager.AddAndSwitch(new Document(MapFile, map, Game));
             }
             // Texture panel
             //using (var tlp = new TextureListPanel())

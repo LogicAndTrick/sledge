@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using Sledge.Editor.Brushes.Controls;
 
@@ -88,7 +87,7 @@ namespace Sledge.Editor.Brushes
             if (_brushControl == null || _comboBox == null) return;
             var sel = _comboBox.SelectedIndex;
             _comboBox.Items.Clear();
-            _comboBox.Items.AddRange(Brushes.Select(x => x.Name).ToArray());
+            _comboBox.Items.AddRange(Brushes.Select(x => x.Name).OfType<object>().ToArray());
             _comboBox.SelectedIndex = Math.Max(sel, 0);
         }
     }

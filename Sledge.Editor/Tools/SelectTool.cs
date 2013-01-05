@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using OpenTK.Graphics.OpenGL;
+using Sledge.Common.Mediator;
 using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.MapObjects;
 using Sledge.Editor.Editing;
@@ -54,7 +55,8 @@ namespace Sledge.Editor.Tools
 
         public override void ToolSelected()
         {
-            UpdateSelectionBoundingBox();
+            Mediator.Subscribe(EditorMediator.SelectionChanged, this);
+            SelectionChanged();
             Document.UpdateSelectLists();
         }
 
@@ -63,9 +65,11 @@ namespace Sledge.Editor.Tools
             _selectionBoundingBox = null;
         }
 
-        private void UpdateSelectionBoundingBox()
+        private void SelectionChanged()
         {
-            _selectionBoundingBox = Selection.IsEmpty() ? null : new Box(Selection.GetSelectedObjects().Select(x => x.BoundingBox));
+            _selectionBoundingBox = Document == null || Document.Selection.IsEmpty()
+                                        ? null
+                                        : new Box(Document.Selection.GetSelectedObjects().Select(x => x.BoundingBox));
         }
 
         /// <summary>
@@ -76,9 +80,10 @@ namespace Sledge.Editor.Tools
         /// <returns>The normalised list of objects</returns>
         private static IEnumerable<MapObject> NormaliseSelection(IEnumerable<MapObject> objects, bool ignoreGrouping)
         {
+            //TODO should selection flatten?
             return ignoreGrouping
                        ? objects
-                       : objects.Select(x => x.FindTopmostParent(y => y is Group || y is Entity) ?? x).Distinct();
+                       : objects.Select(x => x.FindTopmostParent(y => y is Group || y is Entity) ?? x).Distinct().SelectMany(x => x.FindAll());
         }
 
         /// <summary>
@@ -95,7 +100,7 @@ namespace Sledge.Editor.Tools
 
             if (deselectAll)
             {
-                objectsToDeselect = Selection.GetSelectedObjects();
+                objectsToDeselect = Document.Selection.GetSelectedObjects();
             }
 
             // Normalise selections
@@ -109,16 +114,14 @@ namespace Sledge.Editor.Tools
             var deselected = objectsToDeselect.ToList();
             var selected = objectsToSelect.ToList();
 
-            deselected.ForEach(Selection.Deselect);
-            selected.ForEach(Selection.Select);
+            deselected.ForEach(Document.Selection.Deselect);
+            selected.ForEach(Document.Selection.Select);
 
             // Log history
             var hd = new HistorySelect("Deselected objects", deselected, true);
             var hs = new HistorySelect("Selected objects", selected, true);
             var ic = new HistoryItemCollection("Selection changed", new[] {hd, hs});
-            HistoryManager.AddHistoryItem(ic);
-
-            UpdateSelectionBoundingBox();
+            Document.History.AddHistoryItem(ic);
         }
 
         /// <summary>
@@ -217,7 +220,7 @@ namespace Sledge.Editor.Tools
         protected override void LeftMouseDownToDraw(Viewport2D viewport, MouseEventArgs e)
         {
             // If we've clicked outside a selection box and not holding down control, clear the selection
-            if (!Selection.IsEmpty() && !KeyboardState.Ctrl)
+            if (!Document.Selection.IsEmpty() && !KeyboardState.Ctrl)
             {
                 SetSelected(null, null, true, false);
                 Document.UpdateSelectLists();
@@ -325,14 +328,24 @@ namespace Sledge.Editor.Tools
             GL.Disable(EnableCap.LineStipple);
         }
 
+        private void Undo()
+        {
+
+        }
+
+        private void Redo()
+        {
+
+        }
+
         private void Cut()
         {
-            
+
         }
 
         private void Copy()
         {
-            
+
         }
 
         private void Delete()
@@ -372,8 +385,8 @@ namespace Sledge.Editor.Tools
                 Add("Delete", () => _tool.Delete());
                 Add("Paste Special", () => { });
                 Items.Add(new ToolStripSeparator());
-                Add("Undo", Document.Undo);
-                Add("Redo", Document.Redo);
+                Add("Undo", () => _tool.Undo());
+                Add("Redo", () => _tool.Redo());
                 Items.Add(new ToolStripSeparator());
                 Add("Carve", () => { });
                 Add("Hollow", () => { });

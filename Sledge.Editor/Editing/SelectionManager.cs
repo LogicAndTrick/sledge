@@ -1,28 +1,35 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Sledge.Common.Mediator;
 using Sledge.DataStructures.MapObjects;
 using Sledge.DataStructures.Geometric;
 
 namespace Sledge.Editor.Editing
 {
-    public static class Selection
+    public class SelectionManager
     {
-        private static List<MapObject> SelectedObjects { get; set; }
-        private static List<Face> SelectedFaces { get; set; }
-        public static bool InFaceSelection { get; private set; }
-        private static Box _boundingBox;
+        private Documents.Document Document { get; set; }
+        private List<MapObject> SelectedObjects { get; set; }
+        private List<Face> SelectedFaces { get; set; }
+        public bool InFaceSelection { get; private set; }
 
-        private static bool _changed;
+        private bool _changed;
 
-        static Selection()
+        public SelectionManager(Documents.Document doc)
         {
+            Document = doc;
             SelectedObjects = new List<MapObject>();
             SelectedFaces = new List<Face>();
             InFaceSelection = false;
             _changed = false;
         }
 
-        public static IEnumerable<MapObject> GetSelectedObjects()
+        public Box GetSelectionBoundingBox()
+        {
+            return IsEmpty() ? null : new Box(GetSelectedObjects().Select(x => x.BoundingBox));
+        }
+
+        public IEnumerable<MapObject> GetSelectedObjects()
         {
             if (_changed)
             {
@@ -34,7 +41,7 @@ namespace Sledge.Editor.Editing
             return SelectedObjects;
         }
 
-        public static IEnumerable<Face> GetSelectedFaces()
+        public IEnumerable<Face> GetSelectedFaces()
         {
             if (_changed)
             {
@@ -46,7 +53,7 @@ namespace Sledge.Editor.Editing
             return SelectedFaces;
         }
 
-        public static void SwitchToFaceSelection()
+        public void SwitchToFaceSelection()
         {
             if (InFaceSelection) return;
             SelectedFaces.ForEach(x => x.IsSelected = false);
@@ -66,67 +73,100 @@ namespace Sledge.Editor.Editing
 
             InFaceSelection = true;
             _changed = false;
+
+            Mediator.Publish(EditorMediator.SelectionTypeChanged, Document);
         }
 
-        public static void SwitchToObjectSelection()
+        public void SwitchToObjectSelection()
         {
             if (!InFaceSelection) return;
             InFaceSelection = false;
             Clear();
+
+            Mediator.Publish(EditorMediator.SelectionTypeChanged, Document);
         }
 
-        public static void Clear()
+        public void Clear()
         {
             SelectedObjects.ForEach(x => x.IsSelected = false);
             SelectedObjects.Clear();
             SelectedFaces.ForEach(x => x.IsSelected = false);
             SelectedFaces.Clear();
             _changed = false;
+
+            Mediator.Publish(EditorMediator.SelectionChanged, Document);
         }
 
-        public static void Select(MapObject obj)
+        public void Select(MapObject obj)
         {
             obj.IsSelected = true;
             SelectedObjects.Add(obj);
             _changed = true;
+
+            Mediator.Publish(EditorMediator.SelectionChanged, Document);
         }
 
-        public static void Select(IEnumerable<MapObject> objs)
+        public void Select(IEnumerable<MapObject> objs)
         {
-            foreach (var o in objs)
+            foreach (var obj in objs)
             {
-                Select(o);
+                obj.IsSelected = true;
+                SelectedObjects.Add(obj);
+                _changed = true;
             }
+
+            Mediator.Publish(EditorMediator.SelectionChanged, Document);
         }
 
-        public static void Select(Face face)
+        public void Select(Face face)
         {
             face.IsSelected = true;
             SelectedFaces.Add(face);
             _changed = true;
+
+            Mediator.Publish(EditorMediator.SelectionChanged, Document);
         }
 
-        public static void Select(IEnumerable<Face> faces)
+        public void Select(IEnumerable<Face> faces)
         {
-            foreach (var o in faces)
+            foreach (var face in faces)
             {
-                Select(o);
+                face.IsSelected = true;
+                SelectedFaces.Add(face);
+                _changed = true;
             }
+
+            Mediator.Publish(EditorMediator.SelectionChanged, Document);
         }
 
-        public static void Deselect(MapObject obj)
+        public void Deselect(MapObject obj)
         {
             SelectedObjects.RemoveAll(x => x == obj);
             obj.IsSelected = false;
+
+            Mediator.Publish(EditorMediator.SelectionChanged, Document);
         }
 
-        public static void Deselect(Face face)
+        public void Deselect(IEnumerable<MapObject> objs)
+        {
+            foreach (var obj in objs)
+            {
+                SelectedObjects.RemoveAll(x => x == obj);
+                obj.IsSelected = false;
+            }
+
+            Mediator.Publish(EditorMediator.SelectionChanged, Document);
+        }
+
+        public void Deselect(Face face)
         {
             SelectedFaces.RemoveAll(x => x == face);
             face.IsSelected = false;
+
+            Mediator.Publish(EditorMediator.SelectionChanged, Document);
         }
 
-        public static bool IsEmpty()
+        public bool IsEmpty()
         {
             return InFaceSelection ? SelectedFaces.Count == 0 : SelectedObjects.Count == 0;
         }
