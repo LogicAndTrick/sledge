@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Sledge.Common.Mediator;
 using Sledge.Editor.Documents;
+using Sledge.Editor.Tools.TransformationTools;
 using Sledge.Editor.UI;
 using Sledge.UI;
 
@@ -22,9 +23,6 @@ namespace Sledge.Editor.Tools
         public static void Init()
         {
             Tools.Add(new SelectTool());
-            Tools.Add(new ResizeTool());
-            Tools.Add(new RotateTool());
-            Tools.Add(new SkewTool());
             Tools.Add(new EntityTool());
             Tools.Add(new BrushTool());
             Tools.Add(new TextureTool());

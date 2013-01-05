@@ -1,63 +1,47 @@
 ﻿using System;
-using System.Drawing;
 using System.Windows.Forms;
 using OpenTK;
-using Sledge.Editor.Properties;
+using Sledge.Editor.Documents;
 using Sledge.Extensions;
 using Sledge.Settings;
 using Sledge.UI;
 
-namespace Sledge.Editor.Tools
+namespace Sledge.Editor.Tools.TransformationTools
 {
     /// <summary>
     /// Allows the selected objects to be rotated
     /// </summary>
     class RotateTool : TransformationTool
     {
-        public override Image GetIcon()
-        {
-            return Resources.Tool_Rotate;
-        }
-
-        public override string GetName()
-        {
-            return "Rotate Tool";
-        }
-
-        protected override bool RenderCircleHandles
+        public override bool RenderCircleHandles
         {
             get { return true; }
         }
 
-        protected override bool AllowCenterHandle
+        public override bool FilterHandle(BaseBoxTool.ResizeHandle handle)
         {
-            get { return false; }
+            return handle == BaseBoxTool.ResizeHandle.BottomLeft
+                   || handle == BaseBoxTool.ResizeHandle.BottomRight
+                   || handle == BaseBoxTool.ResizeHandle.TopLeft
+                   || handle == BaseBoxTool.ResizeHandle.TopRight;
         }
 
-        protected override bool FilterHandle(ResizeHandle handle)
-        {
-            return handle == ResizeHandle.BottomLeft
-                   || handle == ResizeHandle.BottomRight
-                   || handle == ResizeHandle.TopLeft
-                   || handle == ResizeHandle.TopRight;
-        }
-
-        protected override string GetTransformName()
+        public override string GetTransformName()
         {
             return "Rotate";
         }
 
-        protected override Cursor CursorForHandle(ResizeHandle handle)
+        public override Cursor CursorForHandle(BaseBoxTool.ResizeHandle handle)
         {
             return SledgeCursors.RotateCursor;
         }
 
-        protected override Matrix4d? GetTransformationMatrix(Viewport2D viewport, MouseEventArgs e)
+        public override Matrix4d? GetTransformationMatrix(Viewport2D viewport, MouseEventArgs e, BaseBoxTool.BoxState state, Document doc)
         {
-            var origin = viewport.ZeroUnusedCoordinate((State.PreTransformBoxStart + State.PreTransformBoxEnd) / 2);
+            var origin = viewport.ZeroUnusedCoordinate((state.PreTransformBoxStart + state.PreTransformBoxEnd) / 2);
             var forigin = viewport.Flatten(origin);
 
-            var origv = (State.MoveStart - forigin).Normalise();
+            var origv = (state.MoveStart - forigin).Normalise();
             var newv = (viewport.ScreenToWorld(e.X, viewport.Height - e.Y) - forigin).Normalise();
 
             var angle = DMath.Acos(Math.Max(-1, Math.Min(1, origv.Dot(newv))));

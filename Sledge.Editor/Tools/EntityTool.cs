@@ -14,7 +14,7 @@ using Sledge.UI;
 
 namespace Sledge.Editor.Tools
 {
-    public class EntityTool : BaseBothTool
+    public class EntityTool : BaseTool
     {
         public enum EntityState
         {
@@ -28,6 +28,7 @@ namespace Sledge.Editor.Tools
 
         public EntityTool()
         {
+            Usage = ToolUsage.Both;
             _location = new Coordinate(0, 0, 0);
             _state = EntityState.None;
         }

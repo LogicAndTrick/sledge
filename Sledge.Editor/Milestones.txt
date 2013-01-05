@@ -2,7 +2,6 @@
 
 Priorities
   Cut/Copy/Paste/Paste Special
-  Re-combine select tool
   2D view right click
     Object Properties
   Compiling

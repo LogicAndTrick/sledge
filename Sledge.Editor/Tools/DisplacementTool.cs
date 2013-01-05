@@ -8,7 +8,7 @@ using Sledge.Editor.Properties;
 
 namespace Sledge.Editor.Tools
 {
-    public class DisplacementTool : Base3DTool
+    public class DisplacementTool : BaseTool
     {
 
         private readonly DisplacementForm _form;
@@ -17,6 +17,7 @@ namespace Sledge.Editor.Tools
 
         public DisplacementTool()
         {
+            Usage = ToolUsage.View3D;
             _form = new DisplacementForm();
             _form.ToolSelected += DisplacementToolSelected;
             _tools = new List<DisplacementSubTool>();

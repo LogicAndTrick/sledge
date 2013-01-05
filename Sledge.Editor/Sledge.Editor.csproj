@@ -129,11 +129,8 @@
     <Compile Include="Rendering\TransformedDisplayListRenderable.cs" />
     <Compile Include="Rendering\WidgetLinesRenderable.cs" />
     <Compile Include="SledgeCursors.cs" />
-    <Compile Include="Tools\Base2DTool.cs" />
     <Compile Include="Tools\BaseBoxTool.cs" />
     <Compile Include="Tools\BaseTool.cs" />
-    <Compile Include="Tools\Base3DTool.cs" />
-    <Compile Include="Tools\BaseBothTool.cs" />
     <Compile Include="Tools\BrushTool.cs" />
     <Compile Include="Tools\ClipTool.cs" />
     <Compile Include="Tools\DisplacementForm.cs">
@@ -159,9 +156,9 @@
       <DependentUpon>SelectControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Tools\EntityTool.cs" />
-    <Compile Include="Tools\RotateTool.cs" />
-    <Compile Include="Tools\SkewTool.cs" />
-    <Compile Include="Tools\ResizeTool.cs" />
+    <Compile Include="Tools\TransformationTools\RotateTool.cs" />
+    <Compile Include="Tools\TransformationTools\SkewTool.cs" />
+    <Compile Include="Tools\TransformationTools\ResizeTool.cs" />
     <Compile Include="Tools\SelectTool.cs" />
     <Compile Include="Tools\TextureApplicationForm.cs">
       <SubType>Form</SubType>
@@ -169,7 +166,7 @@
     <Compile Include="Tools\TextureApplicationForm.Designer.cs">
       <DependentUpon>TextureApplicationForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Tools\TransformationTool.cs" />
+    <Compile Include="Tools\TransformationTools\TransformationTool.cs" />
     <Compile Include="Tools\VMTool.cs" />
     <Compile Include="UI\AngleControl.cs">
       <SubType>UserControl</SubType>

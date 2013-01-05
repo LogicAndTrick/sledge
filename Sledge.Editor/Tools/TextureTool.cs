@@ -15,7 +15,7 @@ using Sledge.DataStructures.Geometric;
 
 namespace Sledge.Editor.Tools
 {
-    public class TextureTool : Base3DTool
+    public class TextureTool : BaseTool
     {
 
         #region Enums
@@ -52,6 +52,7 @@ namespace Sledge.Editor.Tools
 
         public TextureTool()
         {
+            Usage = ToolUsage.View3D;
             _form = new TextureApplicationForm();
             _form.PropertyChanged += TexturePropertyChanged;
             _form.TextureAlign += TextureAligned;

@@ -17,7 +17,7 @@ using Matrix = Sledge.Graphics.Helpers.Matrix;
 
 namespace Sledge.Editor.Tools
 {
-    public class ClipTool : BaseBothTool
+    public class ClipTool : BaseTool
     {
         public enum ClipState
         {
@@ -38,6 +38,7 @@ namespace Sledge.Editor.Tools
 
         public ClipTool()
         {
+            Usage = ToolUsage.Both;
             _clipPlanePoint1 = _clipPlanePoint2 = _clipPlanePoint3 = _drawingPoint = null;
             _state = _prevState = ClipState.None;
         }

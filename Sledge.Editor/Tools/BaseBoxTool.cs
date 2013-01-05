@@ -1,19 +1,17 @@
 ﻿using System;
 using System.Windows.Forms;
-using Sledge.Editor.Rendering;
 using Sledge.Graphics.Helpers;
 using Sledge.UI;
 using OpenTK.Graphics.OpenGL;
 using System.Drawing;
 using Sledge.DataStructures.Geometric;
-using Sledge.Editor.UI;
 
 namespace Sledge.Editor.Tools
 {
-    public abstract class BaseBoxTool : BaseBothTool
+    public abstract class BaseBoxTool : BaseTool
     {
         // Enum/Class Declarations
-        protected enum BoxAction
+        public enum BoxAction
         {
             ReadyToDraw,
             DownToDraw,
@@ -24,14 +22,14 @@ namespace Sledge.Editor.Tools
             Resizing
         }
 
-        protected enum ResizeHandle
+        public enum ResizeHandle
         {
             TopLeft,    Top,     TopRight,
             Left,       Center,  Right,
             BottomLeft, Bottom,  BottomRight
         }
 
-        protected class BoxState
+        public class BoxState
         {
             public BoxState()
             {
@@ -113,10 +111,11 @@ namespace Sledge.Editor.Tools
 
         protected abstract Color BoxColour { get; }
         protected abstract Color FillColour { get; }
-        protected BoxState State { get; set; }
+        internal BoxState State { get; set; }
 
         protected BaseBoxTool()
         {
+            Usage = ToolUsage.Both;
             State = new BoxState();
         }
 
