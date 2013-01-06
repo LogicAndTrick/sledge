@@ -9,10 +9,12 @@ using Sledge.Common.Mediator;
 using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.MapObjects;
 using Sledge.DataStructures.Transformations;
+using Sledge.Editor.Clipboard;
 using Sledge.Editor.History;
 using Sledge.Editor.Properties;
 using Sledge.Editor.Rendering;
 using Sledge.Editor.Tools.TransformationTools;
+using Sledge.Settings;
 using Sledge.UI;
 
 namespace Sledge.Editor.Tools
@@ -25,7 +27,6 @@ namespace Sledge.Editor.Tools
     /// </summary>
     class SelectTool : BaseBoxTool
     {
-        private SelectToolContextMenu _contextMenu;
         private MapObject ChosenItemFor3DSelection { get; set; }
         private List<MapObject> IntersectingObjectsFor3DSelection { get; set; }
 
@@ -39,7 +40,6 @@ namespace Sledge.Editor.Tools
         public SelectTool()
         {
             Usage = ToolUsage.Both;
-            _contextMenu = new SelectToolContextMenu(this);
             _tools = new List<TransformationTool>
                          {
                              new ResizeTool(),
@@ -176,8 +176,8 @@ namespace Sledge.Editor.Tools
             var deselected = objectsToDeselect.ToList();
             var selected = objectsToSelect.ToList();
 
-            deselected.ForEach(Document.Selection.Deselect);
-            selected.ForEach(Document.Selection.Select);
+            Document.Selection.Deselect(deselected);
+            Document.Selection.Select(selected);
 
             // Log history
             var hd = new HistorySelect("Deselected objects", deselected, true);
@@ -276,6 +276,11 @@ namespace Sledge.Editor.Tools
             return IntersectingObjectsFor3DSelection != null
                    && IntersectingObjectsFor3DSelection.Any()
                    && ChosenItemFor3DSelection != null;
+        }
+
+        public override HotkeyInterceptResult InterceptHotkey(HotkeysMediator hotkeyMessage)
+        {
+            return HotkeyInterceptResult.Continue;
         }
 
         /// <summary>
@@ -448,6 +453,16 @@ namespace Sledge.Editor.Tools
             var transformation = GetTransformMatrix(viewport, e);
             if (transformation.HasValue)
             {
+                if (KeyboardState.Shift && State.Handle == ResizeHandle.Center)
+                {
+                    // Clone the selection
+                    foreach (var clone in ClipboardManager.CloneFlatHeirarchy(Document, Document.Selection.GetSelectedObjects()))
+                    {
+                        clone.Parent = Document.Map.WorldSpawn;
+                        Document.Map.WorldSpawn.Children.Add(clone);
+                        clone.UpdateBoundingBox();
+                    }
+                }
                 ExecuteTransform(_currentTool.GetTransformName(), CreateMatrixMultTransformation(transformation.Value));
             }
             Document.EndSelectionTransform();
@@ -479,31 +494,6 @@ namespace Sledge.Editor.Tools
             }
         }
 
-        #endregion
-
-        #region Right click (move this?)
-        /*
-        public override void MouseUp(ViewportBase viewport, MouseEventArgs e)
-        {
-            if (e.Button == MouseButtons.Right && viewport is Viewport2D && _selectionBoundingBox != null)
-            {
-                MouseRightClick(e, (Viewport2D)viewport);
-            }
-            base.MouseUp(viewport, e);
-        }
-
-        private void MouseRightClick(MouseEventArgs e, Viewport2D vp)
-        {
-            var point = vp.ScreenToWorld(e.X, vp.Height - e.Y);
-            var start = vp.Flatten(_selectionBoundingBox.Start);
-            var end = vp.Flatten(_selectionBoundingBox.End);
-            if (point.X >= start.X && point.X <= end.X && point.Y >= start.Y && point.Y <= end.Y)
-            {
-                // Show context menu
-                _contextMenu.Show(vp, e.X, e.Y);
-            }
-        }
-        */
         #endregion
 
         #region Box drawn cancel/confirm
@@ -692,95 +682,5 @@ namespace Sledge.Editor.Tools
         }
 
         #endregion
-
-        private void Undo()
-        {
-
-        }
-
-        private void Redo()
-        {
-
-        }
-
-        private void Cut()
-        {
-
-        }
-
-        private void Copy()
-        {
-
-        }
-
-        private void Delete()
-        {
-
-        }
-
-        private void Group()
-        {
-
-        }
-
-        private void Ungroup()
-        {
-
-        }
-
-        private void ToWorld()
-        {
-
-        }
-
-        private void ToEntity()
-        {
-
-        }
-
-        private sealed class SelectToolContextMenu : ContextMenuStrip
-        {
-            private readonly SelectTool _tool;
-
-            public SelectToolContextMenu(SelectTool tool)
-            {
-                _tool = tool;
-                Add("Cut", () => _tool.Cut());
-                Add("Copy", () => _tool.Copy());
-                Add("Delete", () => _tool.Delete());
-                Add("Paste Special", () => { });
-                Items.Add(new ToolStripSeparator());
-                Add("Undo", () => _tool.Undo());
-                Add("Redo", () => _tool.Redo());
-                Items.Add(new ToolStripSeparator());
-                Add("Carve", () => { });
-                Add("Hollow", () => { });
-                Items.Add(new ToolStripSeparator());
-                Add("Group", () => _tool.Group());
-                Add("Ungroup", () => _tool.Ungroup());
-                Items.Add(new ToolStripSeparator());
-                Add("Move To Entity", () => _tool.ToEntity());
-                Add("Move To World", () => _tool.ToWorld());
-                Items.Add(new ToolStripSeparator());
-                Items.Add(new ToolStripMenuItem("Align", null,
-                                                CreateMenuItem("Top", () => { }),
-                                                CreateMenuItem("Left", () => { }),
-                                                CreateMenuItem("Right", () => { }),
-                                                CreateMenuItem("Bottom", () => { })));
-                Add("Properties", () => { });
-            }
-
-            private void Add(string name, Action onclick)
-            {
-                Items.Add(CreateMenuItem(name, onclick));
-            }
-
-            private static ToolStripItem CreateMenuItem(string name, Action onclick)
-            {
-                var item = new ToolStripMenuItem(name);
-                item.Click += (sender, args) => onclick();
-                return item;
-            }
-        }
     }
 }

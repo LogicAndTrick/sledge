@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
+using Sledge.Common.Mediator;
 using Sledge.UI;
 using Sledge.Editor.Tools;
 
@@ -55,6 +56,7 @@ namespace Sledge.Editor.UI
 
         public void MouseUp(MouseEventArgs e)
         {
+            if (e.Button == MouseButtons.Right && Viewport is Viewport2D) Mediator.Publish(EditorMediator.ViewportRightClick, new object[] {Viewport, e});
             if (!ShouldRelayEvent(ToolManager.ActiveTool)) return;
             ToolManager.ActiveTool.MouseUp(Viewport, e);
         }

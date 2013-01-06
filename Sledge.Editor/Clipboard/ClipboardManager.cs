@@ -30,7 +30,7 @@ namespace Sledge.Editor.Clipboard
         {
             // Remove extra entries if required
             while (Ring.Count > SizeOfClipboardRing - 1) Ring.RemoveAt(0);
-            var item = VmfProvider.CreateCopyStream(copiedObjects.ToList()).ToString();
+            var item = CreateCopyStream(copiedObjects);
             if (Ring.Contains(item)) Ring.Remove(item);
             Ring.Add(item);
             System.Windows.Forms.Clipboard.SetText(item);
@@ -48,6 +48,22 @@ namespace Sledge.Editor.Clipboard
             var str = System.Windows.Forms.Clipboard.GetText();
             if (!str.StartsWith("clipboard")) return null;
 
+            return ExtractCopyStream(document, str);
+        }
+
+        public static IEnumerable<MapObject> CloneFlatHeirarchy(Document document, IEnumerable<MapObject> objects)
+        {
+            return ExtractCopyStream(document, CreateCopyStream(objects));
+        }
+
+        private static string CreateCopyStream(IEnumerable<MapObject> copiedObjects)
+        {
+            var item = VmfProvider.CreateCopyStream(copiedObjects.ToList()).ToString();
+            return item;
+        }
+
+        private static IEnumerable<MapObject> ExtractCopyStream(Document document, string str)
+        {
             using (var tr = new StringReader(str))
             {
                 try

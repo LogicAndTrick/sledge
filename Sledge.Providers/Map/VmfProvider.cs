@@ -149,6 +149,17 @@ namespace Sledge.Providers.Map
             ret.Texture.YScale = vaxis.Item3;
             ret.Texture.Rotation = side.PropertyDecimal("rotation");
             ret.Plane = side.PropertyPlane("plane");
+
+            var verts = side.Children.FirstOrDefault(x => x.Name == "vertex");
+            if (verts != null)
+            {
+                var count = verts.PropertyInteger("count");
+                for (var i = 0; i < count; i++)
+                {
+                    ret.Vertices.Add(new Vertex(verts.PropertyCoordinate("vertex"+i), ret));
+                }
+            }
+
             return ret;
         }
 
@@ -168,6 +179,7 @@ namespace Sledge.Providers.Map
             // ret["smoothing_groups"]
 
             var verts = new GenericStructure("vertex");
+            verts["count"] = face.Vertices.Count.ToString();
             for (var i = 0; i < face.Vertices.Count; i++)
             {
                 verts["vertex" + i] = FormatCoordinate(face.Vertices[i].Location);
@@ -187,33 +199,49 @@ namespace Sledge.Providers.Map
             var editor = solid.GetChildren("editor").FirstOrDefault() ?? new GenericStructure("editor");
             var faces = solid.GetChildren("side").Select(x => ReadFace(x, generator)).ToList();
 
-            var idg = new IDGenerator(); // No need to increment the id generator if it doesn't have to be
-            var ret = Solid.CreateFromIntersectingPlanes(faces.Select(x => x.Plane), idg);
-            ret.ID = GetObjectID(solid, generator);
-            ret.Colour = editor.PropertyColour("color", Colour.GetRandomBrushColour());
-            ret.Visgroups.AddRange(editor.GetAllPropertyValues("visgroupid").Select(int.Parse));
+            Solid ret;
 
-            for (var i = 0; i < ret.Faces.Count; i++)
+            if (faces.All(x => x.Vertices.Count >= 3))
             {
-                var face = ret.Faces[i];
-                var f = faces.FirstOrDefault(x => x.Plane.Normal.EquivalentTo(ret.Faces[i].Plane.Normal));
-                if (f == null)
+                // Vertices were stored in the VMF
+                ret = new Solid(GetObjectID(solid, generator));
+                ret.Faces.AddRange(faces);
+            }
+            else
+            {
+                // Need to grab the vertices using plane intersections
+                var idg = new IDGenerator(); // No need to increment the id generator if it doesn't have to be
+                ret = Solid.CreateFromIntersectingPlanes(faces.Select(x => x.Plane), idg);
+                ret.ID = GetObjectID(solid, generator);
+
+                for (var i = 0; i < ret.Faces.Count; i++)
                 {
-                    // TODO: Report invalid solids
-                    Debug.WriteLine("Invalid solid! ID: " + solid["id"]);
-                    return null;
-                }
-                if (f is Displacement)
-                {
-                    var disp = (Displacement) f;
+                    var face = ret.Faces[i];
+                    var f = faces.FirstOrDefault(x => x.Plane.Normal.EquivalentTo(ret.Faces[i].Plane.Normal));
+                    if (f == null)
+                    {
+                        // TODO: Report invalid solids
+                        Debug.WriteLine("Invalid solid! ID: " + solid["id"]);
+                        return null;
+                    }
+                    face.Texture = f.Texture;
+
+                    var disp = f as Displacement;
+                    if (disp == null) continue;
+
                     disp.Plane = face.Plane;
                     disp.Vertices = face.Vertices;
+                    disp.Texture = f.Texture;
                     disp.AlignTextureToWorld();
                     disp.CalculatePoints();
                     ret.Faces[i] = disp;
-                    face = disp;
                 }
-                face.Texture = f.Texture;
+            }
+
+            ret.Colour = editor.PropertyColour("color", Colour.GetRandomBrushColour());
+            ret.Visgroups.AddRange(editor.GetAllPropertyValues("visgroupid").Select(int.Parse));
+            foreach (var face in ret.Faces)
+            {
                 face.Parent = ret;
                 face.Colour = ret.Colour;
                 face.UpdateBoundingBox();
@@ -263,7 +291,11 @@ namespace Sledge.Providers.Map
             var editor = entity.GetChildren("editor").FirstOrDefault() ?? new GenericStructure("editor");
             ret.Colour = editor.PropertyColour("color", Colour.GetRandomBrushColour());
             ret.Visgroups.AddRange(editor.GetAllPropertyValues("visgroupid").Select(int.Parse));
-            ret.Children.AddRange(entity.GetChildren("solid").Select(solid => ReadSolid(solid, generator)).Where(s => s != null));
+            foreach (var child in entity.GetChildren("solid").Select(solid => ReadSolid(solid, generator)).Where(s => s != null))
+            {
+                child.Parent = ret;
+                ret.Children.Add(child);
+            }
             ret.UpdateBoundingBox(false);
             return ret;
         }
@@ -327,11 +359,20 @@ namespace Sledge.Providers.Map
 
             // Build group tree
             var assignedGroups = groups.Where(x => x.Value == 0).Select(x => x.Key).ToList();
-            ret.Children.AddRange(assignedGroups); // Add the groups with no parent
+            foreach (var ag in assignedGroups)
+            {
+                // Add the groups with no parent
+                ag.Parent = ret;
+                ret.Children.Add(ag);
+                groups.Remove(ag);
+            }
             while (groups.Any())
             {
                 var canAssign = groups.Where(x => assignedGroups.Any(y => y.ID == x.Value)).ToList();
-                if (!canAssign.Any()) break;
+                if (!canAssign.Any())
+                {
+                    break;
+                }
                 foreach (var kv in canAssign)
                 {
                     // Add the group to the tree and the assigned list, remove it from the groups list
@@ -434,7 +475,8 @@ namespace Sledge.Providers.Map
         {
             var stream = new GenericStructure("clipboard");
 
-            stream.Children.AddRange(objects.OfType<Solid>().Where(x => !x.IsCodeHidden && !x.IsVisgroupHidden).Select(WriteSolid));
+            var entitySolids = objects.OfType<Entity>().SelectMany(x => x.Find(y => y is Solid)).ToList();
+            stream.Children.AddRange(objects.OfType<Solid>().Where(x => !x.IsCodeHidden && !x.IsVisgroupHidden && !entitySolids.Contains(x)).Select(WriteSolid));
             stream.Children.AddRange(objects.OfType<Group>().Select(WriteGroup));
             stream.Children.AddRange(objects.OfType<Entity>().Select(WriteEntity));
 
@@ -446,8 +488,16 @@ namespace Sledge.Providers.Map
             if (gs == null || gs.Name != "clipboard") return null;
             var dummyGen = new IDGenerator();
             var list = new List<MapObject>();
-            list.AddRange(ReadWorld(gs, dummyGen).Children);
-            list.AddRange(gs.GetChildren("entity").Select(x => ReadEntity(x, dummyGen)));
+            var world = ReadWorld(gs, dummyGen);
+            foreach (var entity in gs.GetChildren("entity"))
+            {
+                var ent = ReadEntity(entity, dummyGen);
+                var groupid = entity.Children.Where(x => x.Name == "editor").Select(x => x.PropertyInteger("groupid")).FirstOrDefault();
+                var entParent = groupid > 0 ? world.Find(x => x.ID == groupid && x is Group).FirstOrDefault() ?? world : world;
+                ent.Parent = entParent;
+                entParent.Children.Add(ent);
+            }
+            list.AddRange(world.Children);
             Reindex(list, generator);
             return list;
         }
@@ -495,8 +545,10 @@ namespace Sledge.Providers.Map
                 foreach (var entity in entities)
                 {
                     var ent = ReadEntity(entity, map.IDGenerator);
-                    ent.Parent = map.WorldSpawn;
-                    map.WorldSpawn.Children.Add(ent);
+                    var groupid = entity.Children.Where(x => x.Name == "editor").Select(x => x.PropertyInteger("groupid")).FirstOrDefault();
+                    var entParent = groupid > 0 ? map.WorldSpawn.Find(x => x.ID == groupid && x is Group).FirstOrDefault() ?? map.WorldSpawn : map.WorldSpawn;
+                    ent.Parent = entParent;
+                    entParent.Children.Add(ent);
                 }
 
                 return map;

@@ -1,5 +1,6 @@
 using System.Linq;
 using OpenTK;
+using Sledge.Common.Mediator;
 using Sledge.DataStructures.GameData;
 using Sledge.DataStructures.MapObjects;
 using Sledge.Database.Models;
@@ -75,6 +76,8 @@ namespace Sledge.Editor.Documents
             TexturePackage.LoadTextureData(texList);
 
             Map.PostLoadProcess(GameData, TextureHelper.Get);
+
+            if (MapFile != null) Mediator.Publish(EditorMediator.FileOpened, MapFile);
         }
 
         public void SetActive()
@@ -110,13 +113,11 @@ namespace Sledge.Editor.Documents
 
         public void StartSelectionTransform()
         {
-            MapDisplayLists.RegenerateSelectLists(Selection);
-            MapDisplayLists.RegenerateDisplayLists(Map.WorldSpawn.Children, true);
             foreach (var dl in DisplayLists)
             {
                 dl.SetTintSelectListEnabled(false);
             }
-            ViewportManager.Viewports.ForEach(vp => vp.UpdateNextFrame());
+            UpdateDisplayLists(true);
         }
 
         public void SetSelectListTransform(Matrix4d matrix)
@@ -129,18 +130,17 @@ namespace Sledge.Editor.Documents
 
         public void EndSelectionTransform()
         {
-            MapDisplayLists.RegenerateSelectLists(Selection);
-            MapDisplayLists.RegenerateDisplayLists(Map.WorldSpawn.Children, false);
             foreach (var dl in DisplayLists)
             {
                 dl.SetSelectListTransform(Matrix4d.Identity);
                 dl.SetTintSelectListEnabled(true);
             }
-            ViewportManager.Viewports.ForEach(vp => vp.UpdateNextFrame());
+            UpdateDisplayLists();
         }
 
         public void UpdateDisplayLists(bool exclude = false)
         {
+            Map.PartialPostLoadProcess(GameData, TextureHelper.Get);
             MapDisplayLists.RegenerateSelectLists(Selection);
             MapDisplayLists.RegenerateDisplayLists(Map.WorldSpawn.Children, exclude);
             ViewportManager.Viewports.ForEach(vp => vp.UpdateNextFrame());
@@ -148,6 +148,7 @@ namespace Sledge.Editor.Documents
 
         public void UpdateSelectLists()
         {
+            Map.PartialPostLoadProcess(GameData, TextureHelper.Get);
             MapDisplayLists.RegenerateSelectLists(Selection);
             ViewportManager.Viewports.ForEach(vp => vp.UpdateNextFrame());
         }

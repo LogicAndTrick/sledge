@@ -56,7 +56,6 @@ namespace Sledge.DataStructures.MapObjects
         protected void UncloneBase(MapObject o, IDGenerator generator)
         {
             Visgroups.Clear();
-            Children.Clear();
 
             ClassName = o.ClassName;
             Visgroups.AddRange(o.Visgroups);
@@ -64,11 +63,20 @@ namespace Sledge.DataStructures.MapObjects
             Colour = o.Colour;
             IsSelected = o.IsSelected;
             BoundingBox = o.BoundingBox.Clone();
+
+            Children.Clear();
             foreach (var c in o.Children.Select(x => x.Clone(generator)))
             {
                 c.Parent = this;
                 Children.Add(c);
             }
+        }
+
+        public void SetParent(MapObject parent)
+        {
+            if (Parent != null) Parent.Children.Remove(this);
+            Parent = parent;
+            if (Parent != null) Parent.Children.Add(this);
         }
 
         public void RemoveDescendant(MapObject remove)

@@ -1,31 +1,38 @@
 namespace Sledge.Settings
 {
-    public static class HotkeysMediator
+    public enum HotkeysMediator
     {
-        public const string FourViewAutosize = "FourViewAutosize";
-        public const string FourViewFocusTopLeft = "FourViewFocusTopLeft";
-        public const string FourViewFocusTopRight = "FourViewFocusTopRight";
-        public const string FourViewFocusBottomLeft = "FourViewFocusBottomLeft";
-        public const string FourViewFocusBottomRight = "FourViewFocusBottomRight";
+        FourViewAutosize,
+        FourViewFocusTopLeft,
+        FourViewFocusTopRight,
+        FourViewFocusBottomLeft,
+        FourViewFocusBottomRight,
 
-        public const string FileNew = "FileNew";
-        public const string FileOpen = "FileOpen";
-        public const string FileSave = "FileSave";
-        public const string FileExport = "FileExport";
-        public const string FileCompile = "FileCompile";
+        FileNew,
+        FileOpen,
+        FileSave,
+        FileExport,
+        FileCompile,
 
-        public const string GridIncrease = "GridIncrease";
-        public const string GridDecrease = "GridDecrease";
+        GridIncrease,
+        GridDecrease,
 
-        public const string HistoryUndo = "HistoryUndo";
-        public const string HistoryRedo = "HistoryRedo";
+        HistoryUndo,
+        HistoryRedo,
 
-        public const string ObjectProperties = "ObjectProperties";
+        GroupingGroup,
+        GroupingUngroup,
+        GroupingToggleIgnore,
 
-        public const string OperationsCopy = "OperationsCopy";
-        public const string OperationsCut = "OperationsCut";
-        public const string OperationsPaste = "OperationsPaste";
-        public const string OperationsPasteSpecial = "OperationsPasteSpecial";
-        public const string OperationsDelete = "OperationsDelete";
+        TieToEntity,
+        TieToWorld,
+
+        ObjectProperties,
+
+        OperationsCopy,
+        OperationsCut,
+        OperationsPaste,
+        OperationsPasteSpecial,
+        OperationsDelete,
     }
 }

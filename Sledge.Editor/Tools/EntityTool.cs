@@ -10,6 +10,7 @@ using Sledge.DataStructures.MapObjects;
 using Sledge.Editor.History;
 using Sledge.Editor.Properties;
 using Sledge.Graphics.Helpers;
+using Sledge.Settings;
 using Sledge.UI;
 
 namespace Sledge.Editor.Tools
@@ -179,6 +180,17 @@ namespace Sledge.Editor.Tools
                 GL.End();
             }
             TextureHelper.EnableTexturing();
+        }
+
+        public override HotkeyInterceptResult InterceptHotkey(HotkeysMediator hotkeyMessage)
+        {
+            switch (hotkeyMessage)
+            {
+                case HotkeysMediator.OperationsPasteSpecial:
+                case HotkeysMediator.OperationsPaste:
+                    return HotkeyInterceptResult.SwitchToSelectTool;
+            }
+            return HotkeyInterceptResult.Continue;
         }
     }
 }

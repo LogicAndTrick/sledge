@@ -32,8 +32,8 @@ namespace Sledge.Editor.History
             // Delete the redo stack if required
             if (_currentIndex < _items.Count - 1)
             {
-                _items.GetRange(_currentIndex + 1, _items.Count - _currentIndex).ForEach(x => x.Dispose());
-                _items.RemoveRange(_currentIndex + 1, _items.Count - _currentIndex);
+                _items.GetRange(_currentIndex + 1, _items.Count - _currentIndex - 1).ForEach(x => x.Dispose());
+                _items.RemoveRange(_currentIndex + 1, _items.Count - _currentIndex - 1);
             }
             // Remove extra entries if required
             while (_items.Count > SizeOfHistory - 1)
@@ -51,6 +51,7 @@ namespace Sledge.Editor.History
         {
             if (_currentIndex < 0) return;
             _items[_currentIndex].Undo(Document);
+            Document.UpdateDisplayLists();
             _currentIndex--;
         }
 
@@ -58,6 +59,7 @@ namespace Sledge.Editor.History
         {
             if (_currentIndex + 1 > _items.Count - 1) return;
             _items[_currentIndex + 1].Redo(Document);
+            Document.UpdateDisplayLists();
             _currentIndex++;
         }
     }

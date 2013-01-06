@@ -9,10 +9,10 @@ namespace Sledge.Settings
     {
         public string Name { get; set; }
         public string Description { get; set; }
-        public string Action { get; set; }
+        public HotkeysMediator Action { get; set; }
         public string DefaultHotkey { get; set; }
 
-        public HotkeyDefinition(string name, string description, string action, string defaultHotkey)
+        public HotkeyDefinition(string name, string description, HotkeysMediator action, string defaultHotkey)
         {
             Name = name;
             Description = description;

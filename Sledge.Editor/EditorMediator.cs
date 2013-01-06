@@ -11,5 +11,10 @@ namespace Sledge.Editor
 
         public const string SelectionTypeChanged = "SelectionTypeChanged";
         public const string SelectionChanged = "SelectionChanged";
+
+        public const string ViewportRightClick = "ViewportRightClick";
+
+        public const string FileOpened = "FileOpened";
+        public const string FileSaved = "FileSaved";
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using Sledge.Editor.Tools.DisplacementTools;
+using Sledge.Settings;
 using Sledge.UI;
 using Sledge.Editor.Properties;
 
@@ -131,6 +132,20 @@ namespace Sledge.Editor.Tools
         public override void PreRender(ViewportBase viewport)
         {
             if (_currentTool != null) _currentTool.PreRender(viewport);
+        }
+
+        public override HotkeyInterceptResult InterceptHotkey(HotkeysMediator hotkeyMessage)
+        {
+            switch (hotkeyMessage)
+            {
+                case HotkeysMediator.OperationsCopy:
+                case HotkeysMediator.OperationsCut:
+                case HotkeysMediator.OperationsPaste:
+                case HotkeysMediator.OperationsPasteSpecial:
+                case HotkeysMediator.OperationsDelete:
+                    return HotkeyInterceptResult.Abort;
+            }
+            return HotkeyInterceptResult.Continue;
         }
     }
 }

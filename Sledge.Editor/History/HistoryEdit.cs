@@ -37,12 +37,24 @@ namespace Sledge.Editor.History
 
         public void Undo(Document document)
         {
-            _changedObjects.ForEach(x => x.Item1.Unclone(x.Item2, document.Map.IDGenerator));
+            _changedObjects.ForEach(x =>
+                                        {
+                                            if (x.Item1.Parent != null) x.Item1.Parent.Children.Remove(x.Item1);
+                                            x.Item1.Unclone(x.Item2, document.Map.IDGenerator);
+                                            if (x.Item1.Parent != null) x.Item1.Parent.Children.Add(x.Item1);
+                                            x.Item1.UpdateBoundingBox();
+                                        });
         }
 
         public void Redo(Document document)
         {
-            _changedObjects.ForEach(x => x.Item1.Unclone(x.Item3, document.Map.IDGenerator));
+            _changedObjects.ForEach(x =>
+                                        {
+                                            if (x.Item1.Parent != null) x.Item1.Parent.Children.Remove(x.Item1);
+                                            x.Item1.Unclone(x.Item3, document.Map.IDGenerator);
+                                            if (x.Item1.Parent != null) x.Item1.Parent.Children.Add(x.Item1);
+                                            x.Item1.UpdateBoundingBox();
+                                        });
         }
 
         public void Dispose()

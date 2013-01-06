@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using Sledge.Common.Mediator;
 using Sledge.DataStructures.GameData;
 using Sledge.DataStructures.MapObjects;
 using Property = Sledge.DataStructures.MapObjects.Property;
 
 namespace Sledge.Editor.UI
 {
-    public partial class EntityEditor : Form
+    public partial class EntityEditor : Form, IMediatorListener
     {
         private class TableValue
         {
@@ -137,14 +138,49 @@ namespace Sledge.Editor.UI
             UpdateKeyValues();
         }
 
+        public void Notify(string message, object data)
+        {
+            if (message == EditorMediator.SelectionChanged || message == EditorMediator.SelectionTypeChanged)
+            {
+                UpdateObjects();
+            }
+        }
+
+        private void UpdateObjects()
+        {
+            Objects.Clear();
+            if (!Document.Selection.InFaceSelection)
+            {
+                Objects.AddRange(Document.Selection.GetSelectedParents());
+            }
+            RefreshData();
+        }
+
         protected override void OnLoad(EventArgs e)
         {
+            UpdateObjects();
+
+            Mediator.Subscribe(EditorMediator.SelectionChanged, this);
+            Mediator.Subscribe(EditorMediator.SelectionTypeChanged, this);
+        }
+
+        protected override void OnClosed(EventArgs e)
+        {
+            Mediator.UnsubscribeAll(this);
+            base.OnClosed(e);
+        }
+        
+        private void RefreshData()
+        {
+            Tabs.TabPages.Clear();
+            if (!Objects.Any()) return;
+            Tabs.TabPages.AddRange(new[] {ClassInfoTab, InputsTab, OutputsTab, FlagsTab, VisgroupTab});
             if (!Objects.All(x => x is Entity))
             {
-                Controls.Remove(ClassInfoTab);
-                Controls.Remove(InputsTab);
-                Controls.Remove(OutputsTab);
-                Controls.Remove(FlagsTab);
+                Tabs.TabPages.Remove(ClassInfoTab);
+                Tabs.TabPages.Remove(InputsTab);
+                Tabs.TabPages.Remove(OutputsTab);
+                Tabs.TabPages.Remove(FlagsTab);
                 return;
             }
             if (Document.Game.EngineID == 1) // Goldsource

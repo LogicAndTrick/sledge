@@ -170,5 +170,12 @@ namespace Sledge.Editor.Editing
         {
             return InFaceSelection ? SelectedFaces.Count == 0 : SelectedObjects.Count == 0;
         }
+
+        public IEnumerable<MapObject> GetSelectedParents()
+        {
+            var sel = GetSelectedObjects().ToList();
+            sel.SelectMany(x => x.Children).ToList().ForEach(x => sel.Remove(x));
+            return sel;
+        }
     }
 }

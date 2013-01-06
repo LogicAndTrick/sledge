@@ -237,6 +237,35 @@ namespace Sledge.Database
             }
             return list;
         }
+
+        public List<RecentFile> GetAllRecentFiles()
+        {
+            var list = new List<RecentFile>();
+            try
+            {
+                _conn.Open();
+                using (var comm = _conn.CreateCommand())
+                {
+                    comm.CommandText = "SELECT Location, `Order` FROM Recent";
+                    using (var rdr = comm.ExecuteReader(CommandBehavior.CloseConnection))
+                    {
+                        while (rdr.Read())
+                        {
+                            list.Add(new RecentFile
+                            {
+                                Location = rdr.GetString(0),
+                                Order = rdr.GetInt32(1),
+                            });
+                        }
+                    }
+                }
+            }
+            finally
+            {
+                _conn.Close();
+            }
+            return list;
+        }
         #endregion
 
         public void SaveAllSettings(IEnumerable<Setting> settings)
@@ -324,6 +353,29 @@ namespace Sledge.Database
                         String.Join(" UNION ", builds.Select(x => String.Format(
                             "SELECT {0}, '{1}', {2}, '{3}', '{4}', '{5}', '{6}', '{7}'",
                             x.ID, Escape(x.Name), x.EngineID, Escape(x.Path), Escape(x.Bsp), Escape(x.Csg), Escape(x.Vis), Escape(x.Rad))));
+                    comm.ExecuteNonQuery();
+                }
+            }
+            finally
+            {
+                _conn.Close();
+            }
+        }
+
+        public void SaveAllRecentFiles(IEnumerable<RecentFile> files)
+        {
+            try
+            {
+                _conn.Open();
+                using (var comm = _conn.CreateCommand())
+                {
+                    comm.CommandText = "DELETE FROM Recent";
+                    comm.ExecuteNonQuery();
+                }
+                using (var comm = _conn.CreateCommand())
+                {
+                    comm.CommandText = "INSERT INTO Recent (Location, `Order`) " + String.Join(" UNION ",
+                        files.Select(x => String.Format("SELECT '{0}', '{1}'", x.Location.Replace("'", "''"), x.Order)));
                     comm.ExecuteNonQuery();
                 }
             }

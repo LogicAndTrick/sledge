@@ -1,12 +1,14 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using Sledge.Common.Mediator;
 using Sledge.DataStructures.MapObjects;
+using Sledge.Editor.Actions;
 using Sledge.Editor.Clipboard;
 using Sledge.Editor.Compiling;
+using Sledge.Editor.History;
 using Sledge.Editor.Rendering;
+using Sledge.Editor.Tools;
 using Sledge.Editor.UI;
 using Sledge.Providers.Map;
 using Sledge.Settings;
@@ -36,7 +38,16 @@ namespace Sledge.Editor.Documents
             Mediator.Subscribe(HotkeysMediator.GridIncrease, this);
             Mediator.Subscribe(HotkeysMediator.GridDecrease, this);
             Mediator.Subscribe(HotkeysMediator.OperationsCopy, this);
+            Mediator.Subscribe(HotkeysMediator.OperationsCut, this);
             Mediator.Subscribe(HotkeysMediator.OperationsPaste, this);
+            Mediator.Subscribe(HotkeysMediator.OperationsDelete, this);
+            Mediator.Subscribe(HotkeysMediator.GroupingGroup, this);
+            Mediator.Subscribe(HotkeysMediator.GroupingUngroup, this);
+            Mediator.Subscribe(HotkeysMediator.TieToEntity, this);
+            Mediator.Subscribe(HotkeysMediator.TieToWorld, this);
+            Mediator.Subscribe(HotkeysMediator.ObjectProperties, this);
+
+            Mediator.Subscribe(EditorMediator.ViewportRightClick, this);
         }
 
         public void Unsubscribe()
@@ -46,6 +57,16 @@ namespace Sledge.Editor.Documents
 
         public void Notify(string message, object data)
         {
+            HotkeysMediator val;
+            if (ToolManager.ActiveTool != null && Enum.TryParse(message, true, out val))
+            {
+                var result = ToolManager.ActiveTool.InterceptHotkey(val);
+                if (result == HotkeyInterceptResult.Abort) return;
+                if (result == HotkeyInterceptResult.SwitchToSelectTool)
+                {
+                    ToolManager.Activate(ToolManager.Tools.OfType<SelectTool>().First());
+                }
+            }
             if (!Mediator.ExecuteDefault(this, message, data))
             {
                 throw new Exception("Invalid document message: " + message + ", with data: " + data);
@@ -69,7 +90,7 @@ namespace Sledge.Editor.Documents
             if (currentFile == null) return;
             if (!currentFile.EndsWith("map"))
             {
-                _document.Map.WorldSpawn.EntityData.Properties.Add(new DataStructures.MapObjects.Property
+                _document.Map.WorldSpawn.EntityData.Properties.Add(new Property
                                                                        {
                                                                            Key = "wad",
                                                                            Value = string.Join(";", _document.Game.Wads.Select(x => x.Path))
@@ -100,6 +121,7 @@ namespace Sledge.Editor.Documents
 
             MapProvider.SaveMapToFile(currentFile, _document.Map);
             _document.MapFile = currentFile;
+            Mediator.Publish(EditorMediator.FileOpened, _document.MapFile);
         }
 
         public void GridIncrease()
@@ -135,6 +157,12 @@ namespace Sledge.Editor.Documents
             }
         }
 
+        public void OperationsCut()
+        {
+            OperationsCopy();
+            OperationsDelete();
+        }
+
         public void OperationsPaste()
         {
             var content = ClipboardManager.GetPastedContent(_document);
@@ -149,8 +177,93 @@ namespace Sledge.Editor.Documents
             {
                 o.Parent = _document.Map.WorldSpawn;
                 _document.Map.WorldSpawn.Children.Add(o);
+                o.UpdateBoundingBox();
             }
             _document.Selection.Select(list.SelectMany(x => x.FindAll()));
+
+            var hc = new HistoryCreate("Create", list);
+            var hs = new HistorySelect("Select", list, true);
+            var hi = new HistoryItemCollection("Pasted " + list.Count + " item" + (list.Count == 1 ? "" : "s"), new IHistoryItem[] { hc, hs });
+            _document.History.AddHistoryItem(hi);
+
+            _document.UpdateDisplayLists();
+        }
+
+        public void OperationsDelete()
+        {
+            if (!_document.Selection.IsEmpty() && !_document.Selection.InFaceSelection)
+            {
+                var sel = _document.Selection.GetSelectedParents().ToList();
+                foreach (var o in sel)
+                {
+                    o.Parent.Children.Remove(o);
+                    o.Parent.UpdateBoundingBox();
+                }
+                _document.Selection.Clear();
+
+                var hs = new HistorySelect("Deselect", sel, false);
+                var hd = new HistoryDelete("Delete", sel);
+                var hi = new HistoryItemCollection("Removed " + sel.Count + " item" + (sel.Count == 1 ? "" : "s"), new IHistoryItem[] { hs, hd });
+                _document.History.AddHistoryItem(hi);
+
+                _document.UpdateDisplayLists();
+            }
+        }
+
+        public void GroupingGroup()
+        {
+            if (!_document.Selection.IsEmpty() && !_document.Selection.InFaceSelection)
+            {
+                var action = new GroupAction();
+                action.Perform(_document);
+                _document.History.AddHistoryItem(new HistoryAction("Grouped objects", action));
+                _document.UpdateDisplayLists();
+            }
+        }
+
+        public void GroupingUngroup()
+        {
+            if (!_document.Selection.IsEmpty() && !_document.Selection.InFaceSelection)
+            {
+                var action = new UngroupAction();
+                action.Perform(_document);
+                _document.History.AddHistoryItem(new HistoryAction("Ungrouped objects", action));
+                _document.UpdateDisplayLists();
+            }
+        }
+
+        public void TieToEntity()
+        {
+
+        }
+
+        public void TieToWorld()
+        {
+
+        }
+
+        public void ObjectProperties()
+        {
+            var pd = new EntityEditor(_document);
+            pd.Show(Editor.Instance);
+        }
+
+        public void ViewportRightClick(Viewport2D vp, MouseEventArgs e)
+        {
+            ViewportContextMenu.Instance.AddNonSelectionItems();
+            if (!_document.Selection.IsEmpty() && !_document.Selection.InFaceSelection && ToolManager.ActiveTool is SelectTool)
+            {
+                var selectionBoundingBox = _document.Selection.GetSelectionBoundingBox();
+                var point = vp.ScreenToWorld(e.X, vp.Height - e.Y);
+                var start = vp.Flatten(selectionBoundingBox.Start);
+                var end = vp.Flatten(selectionBoundingBox.End);
+                if (point.X >= start.X && point.X <= end.X && point.Y >= start.Y && point.Y <= end.Y)
+                {
+                    // Clicked inside the selection bounds
+                    ViewportContextMenu.Instance.AddSelectionItems();
+                }
+            }
+            ViewportContextMenu.Instance.Show(vp, e.X, e.Y);
         }
     }
 }

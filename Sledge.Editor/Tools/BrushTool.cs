@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using OpenTK.Graphics.OpenGL;
@@ -8,6 +9,7 @@ using Sledge.Editor.Properties;
 using Sledge.DataStructures.MapObjects;
 using Sledge.Editor.Rendering;
 using Sledge.Graphics.Helpers;
+using Sledge.Settings;
 using Sledge.UI;
 using Sledge.Editor.Brushes;
 
@@ -135,6 +137,17 @@ namespace Sledge.Editor.Tools
                 CollectFaces(_preview, new[] { brush });
             }
             _updatePreview = false;
+        }
+
+        public override HotkeyInterceptResult InterceptHotkey(HotkeysMediator hotkeyMessage)
+        {
+            switch (hotkeyMessage)
+            {
+                case HotkeysMediator.OperationsPasteSpecial:
+                case HotkeysMediator.OperationsPaste:
+                    return HotkeyInterceptResult.SwitchToSelectTool;
+            }
+            return HotkeyInterceptResult.Continue;
         }
 
         private Color GetRenderColour()

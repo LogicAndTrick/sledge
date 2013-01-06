@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using OpenTK;
 using Sledge.Editor.History;
 using Sledge.Editor.Properties;
+using Sledge.Settings;
 using Sledge.UI;
 using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.MapObjects;
@@ -207,6 +208,17 @@ namespace Sledge.Editor.Tools
         {
             if (viewport is Viewport2D) Render2D((Viewport2D) viewport);
             if (viewport is Viewport3D) Render3D((Viewport3D) viewport);
+        }
+
+        public override HotkeyInterceptResult InterceptHotkey(HotkeysMediator hotkeyMessage)
+        {
+            switch (hotkeyMessage)
+            {
+                case HotkeysMediator.OperationsPasteSpecial:
+                case HotkeysMediator.OperationsPaste:
+                    return HotkeyInterceptResult.SwitchToSelectTool;
+            }
+            return HotkeyInterceptResult.Continue;
         }
 
         private void Render2D(Viewport2D vp)

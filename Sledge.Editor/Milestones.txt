@@ -1,19 +1,14 @@
 ﻿Key: Item - percentage complete, uncompleted tasks
 
 Priorities
-  Cut/Copy/Paste/Paste Special
-  2D view right click
-    Object Properties
   Compiling
   2D sprite billboarding/special rendering
     Decal Tool
+  Paste Special
   Texture browser
   Undo/Redo
-  Mediator wireup
-    Hotkeys
   New/Open/Save/Close
-    Recent Files
-  Groups
+  2D view right click/Hotkeys
   Additional Map Properties
     VMF
 
@@ -27,7 +22,7 @@ Priorities
     GCF - 90%, integration
     PAK - 0%
     SPR - 80%, testing, streaming, integration
-    VMF - 40%, fully support VHE4 format, saving, visgroups, hidden objects, options, flags, etc
+    VMF - 90%, fully test against VHE4 format, additional map properties
   Rendering
     Solids - 90%
     Entities - 60%, sprites, models, path connections
@@ -51,7 +46,7 @@ Priorities
   Secondary Tools
     Carve - 0%
     Hollow - 0%
-    Groups - 40%, create, destroy
+    Groups - 100%
     Visgroups - 70%, assigning, marking, auto
     Cordon - 0%
     Texture Lock - 0%
@@ -66,8 +61,8 @@ Priorities
     Object Properties - 60%, data types, visgroups (inputs/outputs not needed for milestone)
   UI
     New/Open/Save/Close - 20%, file menu, save as, change detection
-    Recent Files - 0%, windows 7 integration if possible
-    Cut/Copy/Paste/Paste Special - 0%
+    Recent Files - 100%
+    Cut/Copy/Paste/Paste Special - 70%, paste special
     Select All/None - 0%
     Grid Show/Snap Toggles - 0%
     Hotkeys - 60%, define keys, implement methods, hotkeys in forms
@@ -77,12 +72,12 @@ Priorities
     Go to coordinates/brush number - 0%
     Options - 80%, hotkeys
     Right Toolbar Textures - 0%
-    Right Toolbar Visgroups - 0%
+    Right Toolbar Visgroups - 90%, show all
     Right Toolbar Brush Type - 100%
-    Right Toolbar Entity/World - 0%
+    Right Toolbar Entity/World - 20%
   Compiling
     Compile Flags - 0%
-    Build Map - 0%
+    Build Map - 20%
     Run Game - 0%
 
 2. Source support
@@ -103,7 +98,7 @@ FGD Editor
 Map File Debugger/Low-level editor
   MAP - 100%
   RMF - 100%
-  VMF - 40%
+  VMF - 80%
   UI - 20%, editing, visgroups, searching, etc
 Model Viewer
   Goldsource MDL - 60%, textures

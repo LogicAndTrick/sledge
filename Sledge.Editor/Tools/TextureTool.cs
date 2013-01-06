@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using Sledge.Providers.Texture;
+using Sledge.Settings;
 using Sledge.UI;
 using Sledge.Editor.Properties;
 using Sledge.Editor.Editing;
@@ -285,6 +286,20 @@ namespace Sledge.Editor.Tools
                 GL.End();
             }
             TextureHelper.EnableTexturing();
+        }
+
+        public override HotkeyInterceptResult InterceptHotkey(HotkeysMediator hotkeyMessage)
+        {
+            switch (hotkeyMessage)
+            {
+                case HotkeysMediator.OperationsCopy:
+                case HotkeysMediator.OperationsCut:
+                case HotkeysMediator.OperationsPaste:
+                case HotkeysMediator.OperationsPasteSpecial:
+                case HotkeysMediator.OperationsDelete:
+                    return HotkeyInterceptResult.Abort;
+            }
+            return HotkeyInterceptResult.Continue;
         }
 
         public override void MouseEnter(ViewportBase viewport, EventArgs e)

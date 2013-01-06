@@ -164,7 +164,7 @@ namespace Sledge.DataStructures.MapObjects
             }
             var origin = sum / cnt;
 
-            var solid = new Solid(1);
+            var solid = new Solid(generator.GetNextObjectID());
 
             // Step 3: Sort the vertices
             for (var i = 0; i < count; i++)

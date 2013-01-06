@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using Sledge.Settings;
 
 namespace Sledge.Editor.Tools.DisplacementTools
 {
@@ -14,6 +15,20 @@ namespace Sledge.Editor.Tools.DisplacementTools
         public override Image GetIcon()
         {
             throw new NotImplementedException();
+        }
+
+        public override HotkeyInterceptResult InterceptHotkey(HotkeysMediator hotkeyMessage)
+        {
+            switch (hotkeyMessage)
+            {
+                case HotkeysMediator.OperationsCopy:
+                case HotkeysMediator.OperationsCut:
+                case HotkeysMediator.OperationsPaste:
+                case HotkeysMediator.OperationsPasteSpecial:
+                case HotkeysMediator.OperationsDelete:
+                    return HotkeyInterceptResult.Abort;
+            }
+            return HotkeyInterceptResult.Continue;
         }
     }
 }

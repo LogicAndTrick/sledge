@@ -58,6 +58,11 @@ namespace Sledge.Common.Mediator
             Listeners.AddValue(message, new WeakReference(obj));
         }
 
+        public static void Subscribe(Enum message, IMediatorListener obj)
+        {
+            Listeners.AddValue(message.ToString(), new WeakReference(obj));
+        }
+
         public static void Unsubscribe(string message, IMediatorListener obj)
         {
             if (!Listeners.ContainsKey(message)) return;
@@ -71,6 +76,11 @@ namespace Sledge.Common.Mediator
             {
                 listener.RemoveAll(x => !x.IsAlive || x.Target == null || x.Target == obj);
             }
+        }
+
+        public static void Publish(Enum message, object parameter = null)
+        {
+            Publish(message.ToString(), parameter);
         }
 
         public static void Publish(string message, object parameter = null)

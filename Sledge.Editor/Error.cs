@@ -1,7 +1,6 @@
 ﻿using System.Windows.Forms;
 using System.Diagnostics;
 
-// ReSharper disable LocalizableElement
 namespace Sledge.Editor
 {
     public static class Error
@@ -32,4 +31,3 @@ namespace Sledge.Editor
         }
     }
 }
-// ReSharper restore LocalizableElement

@@ -6,6 +6,9 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sledge.Graphics", "Sledge.Graphics\Sledge.Graphics.csproj", "{614D4144-8920-4975-AC67-DBBA5CB1EB43}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sledge.Editor", "Sledge.Editor\Sledge.Editor.csproj", "{DFF00869-B064-483D-95C0-A88039C471C7}"
+	ProjectSection(ProjectDependencies) = postProject
+		{262FC468-01B6-451A-ABE9-9B6E00B29F81} = {262FC468-01B6-451A-ABE9-9B6E00B29F81}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sledge.Database", "Sledge.Database\Sledge.Database.csproj", "{FC8A5448-0F8B-4828-AC49-8D6138E20254}"
 EndProject
@@ -38,6 +41,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		Sledge.vsmdi = Sledge.vsmdi
 		TestSettings.testsettings = TestSettings.testsettings
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sledge.Editor.Elevate", "Sledge.Editor.Elevate\Sledge.Editor.Elevate.csproj", "{262FC468-01B6-451A-ABE9-9B6E00B29F81}"
 EndProject
 Global
 	GlobalSection(TestCaseManagementSettings) = postSolution
@@ -232,6 +237,16 @@ Global
 		{7FED88F3-717C-408A-85D9-28DD125DB61A}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{7FED88F3-717C-408A-85D9-28DD125DB61A}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{7FED88F3-717C-408A-85D9-28DD125DB61A}.Release|x86.ActiveCfg = Release|Any CPU
+		{262FC468-01B6-451A-ABE9-9B6E00B29F81}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{262FC468-01B6-451A-ABE9-9B6E00B29F81}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
+		{262FC468-01B6-451A-ABE9-9B6E00B29F81}.Debug|Mixed Platforms.Build.0 = Debug|x86
+		{262FC468-01B6-451A-ABE9-9B6E00B29F81}.Debug|x86.ActiveCfg = Debug|x86
+		{262FC468-01B6-451A-ABE9-9B6E00B29F81}.Debug|x86.Build.0 = Debug|x86
+		{262FC468-01B6-451A-ABE9-9B6E00B29F81}.Release|Any CPU.ActiveCfg = Release|x86
+		{262FC468-01B6-451A-ABE9-9B6E00B29F81}.Release|Mixed Platforms.ActiveCfg = Release|x86
+		{262FC468-01B6-451A-ABE9-9B6E00B29F81}.Release|Mixed Platforms.Build.0 = Release|x86
+		{262FC468-01B6-451A-ABE9-9B6E00B29F81}.Release|x86.ActiveCfg = Release|x86
+		{262FC468-01B6-451A-ABE9-9B6E00B29F81}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

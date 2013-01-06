@@ -47,11 +47,7 @@ namespace Sledge.DataStructures.MapObjects
         /// </summary>
         public void PostLoadProcess(GameData.GameData gameData, Func<string, ITexture> textureAccessor)
         {
-            // Set gamedata
-            SetMapGameDataRecursive(WorldSpawn, gameData);
-
-            // Set textures
-            SetMapTexturesRecursive(WorldSpawn, textureAccessor);
+            PartialPostLoadProcess(x => true, gameData, textureAccessor);
 
             var all = WorldSpawn.FindAll();
 
@@ -61,34 +57,37 @@ namespace Sledge.DataStructures.MapObjects
             IDGenerator.Reset(maxObjectId, maxFaceId);
 
             // todo visgroups
-        }
 
-        private static void SetMapGameDataRecursive(MapObject obj, GameData.GameData gd)
-        {
-            if (obj is Entity)
+            // Purge empty groups
+            foreach (var emptyGroup in WorldSpawn.Find(x => x is Group && !x.Children.Any()))
             {
-                ((Entity)obj).GameData = gd.Classes.FirstOrDefault(x => x.Name == ((Entity)obj).EntityData.Name);
-                obj.UpdateBoundingBox();
-            }
-            else
-            {
-                obj.Children.ForEach(x => SetMapGameDataRecursive(x, gd));
+                emptyGroup.Parent.Children.Remove(emptyGroup);
             }
         }
 
-        private static void SetMapTexturesRecursive(MapObject obj, Func<string, ITexture> accessor)
+        public void PartialPostLoadProcess(GameData.GameData gameData, Func<string, ITexture> textureAccessor)
         {
-            if (obj is Solid)
+            PartialPostLoadProcess(x => (x is Entity && ((Entity)x ).GameData == null) || (x is Solid && ((Solid) x).Faces.Any(y => y.Texture.Texture == null)), gameData, textureAccessor);
+        }
+
+        public void PartialPostLoadProcess(Predicate<MapObject> matcher, GameData.GameData gameData, Func<string, ITexture> textureAccessor)
+        {
+            var objects = WorldSpawn.Find(matcher);
+            foreach (var obj in objects)
             {
-                ((Solid)obj).Faces.ForEach(f =>
+                if (obj is Entity)
                 {
-                    f.Texture.Texture = accessor(f.Texture.Name);
-                    f.CalculateTextureCoordinates();
-                });
-            }
-            else
-            {
-                obj.Children.ForEach(x => SetMapTexturesRecursive(x, accessor));
+                    ((Entity)obj).GameData = gameData.Classes.FirstOrDefault(x => x.Name == ((Entity)obj).EntityData.Name);
+                    obj.UpdateBoundingBox();
+                }
+                else if (obj is Solid)
+                {
+                    ((Solid)obj).Faces.ForEach(f =>
+                    {
+                        f.Texture.Texture = textureAccessor(f.Texture.Name);
+                        f.CalculateTextureCoordinates();
+                    });
+                }
             }
         }
     }

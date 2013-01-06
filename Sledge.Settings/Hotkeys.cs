@@ -13,7 +13,7 @@ namespace Sledge.Settings
         {
             Definitions = new List<HotkeyDefinition>
                                {
-                                   new HotkeyDefinition("Autosize Views", "Reset the position of the 4-view splitter", HotkeysMediator.FourViewAutosize, "Ctrl+A"),
+                                    new HotkeyDefinition("Autosize Views", "Reset the position of the 4-view splitter", HotkeysMediator.FourViewAutosize, "Ctrl+A"),
                                     new HotkeyDefinition("Focus View Top Left", "Focus on the 3D View", HotkeysMediator.FourViewFocusTopLeft, "F5"),
                                     new HotkeyDefinition("Focus View Top Right", "Focus on the XY View", HotkeysMediator.FourViewFocusTopRight, "F2"),
                                     new HotkeyDefinition("Focus View Bottom Left", "Focus on the YZ View", HotkeysMediator.FourViewFocusBottomLeft, "F4"),
@@ -37,7 +37,13 @@ namespace Sledge.Settings
                                     new HotkeyDefinition("Cut", "Cut the current selection", HotkeysMediator.OperationsCut, "Ctrl+X"),
                                     new HotkeyDefinition("Paste", "Paste the clipboard contents", HotkeysMediator.OperationsPaste, "Ctrl+V"),
                                     new HotkeyDefinition("Paste Special", "Paste special the clipboard contents", HotkeysMediator.OperationsPasteSpecial, "Ctrl+B"),
-                                    new HotkeyDefinition("Delete", "Delete the current selection", HotkeysMediator.OperationsDelete, "Delete"),
+                                    new HotkeyDefinition("Delete", "Delete the current selection", HotkeysMediator.OperationsDelete, "Del"),
+                                    
+                                    new HotkeyDefinition("Group", "Group the selected objects", HotkeysMediator.GroupingGroup, "Ctrl+G"),
+                                    new HotkeyDefinition("Ungroup", "Ungroup the selected objects", HotkeysMediator.GroupingUngroup, "Ctrl+U"),
+                                    
+                                    new HotkeyDefinition("Tie To Entity", "Tie the selected objects to an entity", HotkeysMediator.TieToEntity, "Ctrl+T"),
+                                    new HotkeyDefinition("Move To World", "Move the selected objects to the world", HotkeysMediator.TieToWorld, "Ctrl+W"),
                                };
         }
 

@@ -180,7 +180,6 @@ namespace Sledge.Libs
             DXTQualityCount
         }
 
-// ReSharper disable InconsistentNaming
         public enum KernelFilter
         {
             KernelFilter4x = 0,
@@ -191,7 +190,6 @@ namespace Sledge.Libs
             KernelFilterDuDv,
             KernelFilterCount
         }
-// ReSharper restore InconsistentNaming
 
         public enum HeightConversionMethod
         {

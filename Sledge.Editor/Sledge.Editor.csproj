@@ -23,6 +23,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <UseVSHostingProcess>true</UseVSHostingProcess>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <PlatformTarget>x86</PlatformTarget>
@@ -33,11 +34,20 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="DbLinq">
       <HintPath>..\DbLinq.dll</HintPath>
     </Reference>
     <Reference Include="IQToolkit, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL" />
+    <Reference Include="Microsoft.WindowsAPICodePack">
+      <HintPath>..\Microsoft.WindowsAPICodePack.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.WindowsAPICodePack.Shell">
+      <HintPath>..\Microsoft.WindowsAPICodePack.Shell.dll</HintPath>
+    </Reference>
     <Reference Include="OpenTK, Version=1.0.0.201, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\OpenTK.dll</HintPath>
@@ -62,6 +72,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Actions\GroupAction.cs" />
+    <Compile Include="Actions\IAction.cs" />
+    <Compile Include="Actions\UngroupAction.cs" />
     <Compile Include="Brushes\BlockBrush.cs" />
     <Compile Include="Brushes\BrushManager.cs" />
     <Compile Include="Brushes\Controls\BrushControl.cs">
@@ -106,6 +119,7 @@
     <Compile Include="GameSelectionForm.Designer.cs">
       <DependentUpon>GameSelectionForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="History\HistoryAction.cs" />
     <Compile Include="History\HistoryCreate.cs" />
     <Compile Include="History\HistoryDelete.cs" />
     <Compile Include="History\HistoryEdit.cs" />
@@ -128,6 +142,7 @@
     </Compile>
     <Compile Include="Rendering\TransformedDisplayListRenderable.cs" />
     <Compile Include="Rendering\WidgetLinesRenderable.cs" />
+    <Compile Include="Settings\Elevate.cs" />
     <Compile Include="SledgeCursors.cs" />
     <Compile Include="Tools\BaseBoxTool.cs" />
     <Compile Include="Tools\BaseTool.cs" />
@@ -167,6 +182,9 @@
       <DependentUpon>TextureApplicationForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Tools\TransformationTools\TransformationTool.cs" />
+    <Compile Include="UI\ViewportContextMenu.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Tools\VMTool.cs" />
     <Compile Include="UI\AngleControl.cs">
       <SubType>UserControl</SubType>
@@ -291,6 +309,7 @@
       <DependentUpon>VisgroupPanel.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="App.config" />
+    <None Include="app.manifest" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -317,6 +336,10 @@
     <ProjectReference Include="..\Sledge.DataStructures\Sledge.DataStructures.csproj">
       <Project>{26A974C9-E495-4FA3-8E87-1E00019D04F5}</Project>
       <Name>Sledge.DataStructures</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Sledge.Editor.Elevate\Sledge.Editor.Elevate.csproj">
+      <Project>{262FC468-01B6-451A-ABE9-9B6E00B29F81}</Project>
+      <Name>Sledge.Editor.Elevate</Name>
     </ProjectReference>
     <ProjectReference Include="..\Sledge.FileSystem\Sledge.FileSystem.csproj">
       <Project>{1C2C012D-DBA5-4C7F-994F-E3034AC60DCC}</Project>

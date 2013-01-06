@@ -5,6 +5,7 @@ using System.Text;
 using System.Windows.Forms;
 using Sledge.Common.Mediator;
 using Sledge.DataStructures.Geometric;
+using Sledge.Settings;
 using Sledge.UI;
 using System.Drawing;
 
@@ -84,5 +85,19 @@ namespace Sledge.Editor.Tools
         {
             return false;
         }
+
+        /// <summary>
+        /// Intercepts a document hotkey. Returns false if the hotkey should not be executed.
+        /// </summary>
+        /// <param name="hotkeyMessage">The hotkey message</param>
+        /// <returns>False to prevent execution of the document hotkey</returns>
+        public abstract HotkeyInterceptResult InterceptHotkey(HotkeysMediator hotkeyMessage);
+    }
+
+    public enum HotkeyInterceptResult
+    {
+        Continue,
+        Abort,
+        SwitchToSelectTool
     }
 }

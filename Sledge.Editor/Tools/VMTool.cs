@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -9,6 +10,7 @@ using Sledge.DataStructures.MapObjects;
 using Sledge.Editor.Editing;
 using Sledge.Editor.Properties;
 using Sledge.Editor.Rendering;
+using Sledge.Settings;
 using Sledge.UI;
 using Matrix = Sledge.Graphics.Helpers.Matrix;
 
@@ -320,6 +322,21 @@ namespace Sledge.Editor.Tools
                 // We've moved the mouse, so not clicking on a point.
                 _clickedPoint = null;
             }
+        }
+
+        public override HotkeyInterceptResult InterceptHotkey(HotkeysMediator hotkeyMessage)
+        {
+            switch (hotkeyMessage)
+            {
+                case HotkeysMediator.HistoryUndo:
+                case HotkeysMediator.HistoryRedo:
+                    //todo message?
+                    return HotkeyInterceptResult.Abort;
+                case HotkeysMediator.OperationsPaste:
+                case HotkeysMediator.OperationsPasteSpecial:
+                    return HotkeyInterceptResult.SwitchToSelectTool;
+            }
+            return HotkeyInterceptResult.Continue;
         }
 
         public override void BoxDrawnConfirm(ViewportBase viewport)

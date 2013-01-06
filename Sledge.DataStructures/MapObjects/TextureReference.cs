@@ -13,7 +13,7 @@ namespace Sledge.DataStructures.MapObjects
             set
             {
                 _texture = value;
-                Name = _texture == null ? string.Empty : _texture.Name;
+                Name = _texture == null ? Name : _texture.Name;
             }
         }
 
