@@ -19,12 +19,24 @@ namespace Sledge.Graphics.Shaders
 
         public void Set(float v)
         {
+            if (Value != null && Value.Equals(v)) return;
+            Value = v;
             GL.Uniform1(Location, v);
         }
 
         public void Set(Matrix4 matrix)
         {
+            if (Value != null && Value.Equals(matrix)) return;
+            Value = matrix;
             GL.UniformMatrix4(Location, false, ref matrix);
+        }
+
+        public void Set(bool b)
+        {
+            if (Value != null && Value.Equals(b)) return;
+            Value = b;
+            var i = b ? 1 : 0;
+            GL.Uniform1(Location, i);
         }
     }
 }

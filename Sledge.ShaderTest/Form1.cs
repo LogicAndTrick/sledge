@@ -14,6 +14,7 @@ using Sledge.Graphics;
 using Sledge.Graphics.Arrays;
 using Sledge.Graphics.Helpers;
 using Sledge.Graphics.Renderables;
+using Sledge.Graphics.Shaders;
 using Sledge.Providers.GameData;
 using Sledge.Providers.Map;
 using Sledge.Providers.Texture;
@@ -169,6 +170,8 @@ void main()
 
         public const string FragmentShader = @"#version 330
 
+uniform bool isSelected;
+
 smooth in vec4 thefColor;
 smooth in float outfThing;
 
@@ -176,11 +179,16 @@ out vec4 outputColor;
 void main()
 {
 	outputColor = thefColor * (1.0-outfThing) + vec4(1,0,0,1) * outfThing;
+    if (isSelected) {
+        outputColor = thefColor * 0.2 + vec4(0.8,0,0,1);
+    } else {
+        outputColor = thefColor;
+    }
 }
 ";
 
         #region Verts
-        private float[] _vertexData = new[]
+        public static float[] _vertexData = new[]
                                           {
                                               0.25f, 0.25f, -1.25f, 1.0f,
                                               0.25f, -0.25f, -1.25f, 1.0f,
@@ -285,11 +293,6 @@ void main()
         #endregion
 
         private Viewport3D _viewport;
-        private int _program;
-        private int _offsetUniform;
-        private int _perspectiveUniform;
-        private int _cameraUniform;
-        private int _modelViewUniform;
 
         public Form1()
         {
@@ -310,9 +313,7 @@ void main()
             Controls.Add(_viewport);
         }
 
-        private int _buffer;
-        private int _vao;
-
+        private ShaderProgram _shaderProgram;
         private VertexArray _array;
 
         protected override void OnLoad(EventArgs e)
@@ -323,13 +324,9 @@ void main()
             GameDataProvider.Register(new FgdProvider());
             TextureProvider.Register(new WadProvider());
 
-
-            // Setup program
-            _program = MakeProgram();
-            _offsetUniform = GL.GetUniformLocation(_program, "offset");
-            _perspectiveUniform = GL.GetUniformLocation(_program, "perspectiveMatrix");
-            _cameraUniform = GL.GetUniformLocation(_program, "cameraMatrix");
-            _modelViewUniform = GL.GetUniformLocation(_program, "modelViewMatrix");
+            _shaderProgram = new ShaderProgram(new Shader(ShaderType.VertexShader, VertexShader),
+                                               new Shader(ShaderType.GeometryShader, GeometryShader),
+                                               new Shader(ShaderType.FragmentShader, FragmentShader));
 
             var ratio = _viewport.Width / (float)_viewport.Height;
             if (ratio <= 0) ratio = 1;
@@ -341,15 +338,14 @@ void main()
                 new Vector3((float)cam.LookAt.X, (float)cam.LookAt.Y, (float)cam.LookAt.Z), 
                 Vector3.UnitZ);
 
-            //cameraMatrix = Matrix4.CreateTranslation(0.5f, 0f, -1f);
-
             var mv = Matrix4.Scale(100);
 
-            GL.UseProgram(_program);
-            GL.UniformMatrix4(_perspectiveUniform, false, ref matrix);
-            GL.UniformMatrix4(_cameraUniform, false, ref cameraMatrix);
-            GL.UniformMatrix4(_modelViewUniform, false, ref mv);
-            GL.UseProgram(0);
+            _shaderProgram.Bind();
+            _shaderProgram.Set("perspectiveMatrix", matrix);
+            _shaderProgram.Set("cameraMatrix", cameraMatrix);
+            _shaderProgram.Set("modelViewMatrix", mv);
+            _shaderProgram.Set("isSelected", true);
+            _shaderProgram.Unbind();
 
 
 
@@ -384,29 +380,8 @@ void main()
             _array = new VertexArray(spec, BeginMode.Triangles, count, data2, indices.ToArray());
 
 
-            _viewport.Listeners.Add(new UpdateCameraListener(_program, _cameraUniform, _viewport));
+            _viewport.Listeners.Add(new UpdateCameraListener(_array, _shaderProgram, _viewport));
 
-            ms = new MemoryStream(1024);
-            bw = new BinaryWriter(ms);
-            for (int i = 0; i < _vertexData.Length; i++)
-            {
-                var f = _vertexData[i];
-                bw.Write(f);
-                if (i%4==3) bw.Write((float) rand.NextDouble());
-            }
-            var data = ms.ToArray();
-            bw.Dispose();
-            ms.Dispose();
-
-            // Setup VBO
-            GL.GenBuffers(1, out _buffer);
-            GL.BindBuffer(BufferTarget.ArrayBuffer, _buffer);
-            GL.BufferData(BufferTarget.ArrayBuffer, new IntPtr(sizeof(byte) * data.Length), data, BufferUsageHint.StaticDraw);
-            GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
-
-
-            GL.GenVertexArrays(1, out _vao);
-            GL.BindVertexArray(_vao);
 
             GL.Enable(EnableCap.CullFace);
             GL.CullFace(CullFaceMode.Back);
@@ -416,76 +391,21 @@ void main()
 
             //_viewport.RenderContext.Add(new Rawr(_program, _offsetUniform, (sizeof(byte) * data.Length) / 2, _buffer));
 
-            _viewport.RenderContext.Add(new ArrayRenderable(_array, _program, _offsetUniform));
+            _viewport.RenderContext.Add(new ArrayRenderable(_array, _shaderProgram));
 
             base.OnLoad(e);
-        }
-
-        private int MakeProgram()
-        {
-            var shaders = new List<int>
-                              {
-                                  CreateShader(ShaderType.VertexShader, VertexShader),
-                                  CreateShader(ShaderType.GeometryShader, GeometryShader),
-                                  CreateShader(ShaderType.FragmentShader, FragmentShader)
-                              };
-            return CreateProgram(shaders);
-        }
-
-        int CreateProgram(List<int> shaders)
-        {
-            var program = GL.CreateProgram();
-            shaders.ForEach(x => GL.AttachShader(program, x));
-            GL.LinkProgram(program);
-            return program;
-    
-            // Program error logging
-            //GLint status;
-            //glGetProgramiv (program, GL_LINK_STATUS, &status);
-            //if (status == GL_FALSE)
-            //{
-            //    GLint infoLogLength;
-            //    glGetProgramiv(program, GL_INFO_LOG_LENGTH, &infoLogLength);
-            //
-            //    GLchar *strInfoLog = new GLchar[infoLogLength + 1];
-            //    glGetProgramInfoLog(program, infoLogLength, NULL, strInfoLog);
-            //    fprintf(stderr, "Linker failure: %s\n", strInfoLog);
-            //    delete[] strInfoLog;
-            //}
-            //
-            //for(size_t iLoop = 0; iLoop < shaderList.size(); iLoop++)
-            //    glDetachShader(program, shaderList[iLoop]);
-            //
-        }
-
-        int CreateShader(ShaderType shaderType, string shaderCode)
-        {
-            var shader = GL.CreateShader(shaderType);
-            GL.ShaderSource(shader, shaderCode);
-            GL.CompileShader(shader);
-    
-            // Shader error logging
-            int status;
-            GL.GetShader(shader, ShaderParameter.CompileStatus, out status);
-            if (status == 0)
-            {
-                var err = GL.GetShaderInfoLog(shader);
-                Console.WriteLine(err);
-            }
-
-            return shader;
         }
     }
 
     class UpdateCameraListener : IViewportEventListener
     {
-        private int _program;
-        private int _cameraUniform;
+        private VertexArray _array;
+        private ShaderProgram _shaderProgram;
 
-        public UpdateCameraListener(int program, int cameraUniform, Viewport3D vp)
+        public UpdateCameraListener(VertexArray array, ShaderProgram shaderProgram, Viewport3D vp)
         {
-            _program = program;
-            _cameraUniform = cameraUniform;
+            _shaderProgram = shaderProgram;
+            _array = array;
             Viewport = vp;
         }
 
@@ -522,7 +442,32 @@ void main()
 
         public void MouseDown(MouseEventArgs e)
         {
+            var _vertexData = Form1._vertexData;
+            var colourOffset = _vertexData.Length / 2;
+            var ms = new MemoryStream(1024);
+            var bw = new BinaryWriter(ms);
+            var rand = new Random();
+            var count = (short)0;
+            var indices = new List<short>();
+            for (var i = 0; i < colourOffset; i += 4)
+            {
+                bw.Write(_vertexData[i + 0]);
+                bw.Write(_vertexData[i + 1]);
+                bw.Write(_vertexData[i + 2]);
+                bw.Write(_vertexData[i + 3]);
+                bw.Write(_vertexData[i + colourOffset + 0]);
+                bw.Write(_vertexData[i + colourOffset + 1]);
+                bw.Write(_vertexData[i + colourOffset + 2]);
+                bw.Write(_vertexData[i + colourOffset + 3]);
+                bw.Write((float)rand.NextDouble());
+                indices.Add(count);
+                count++;
+            }
+            var data2 = ms.ToArray();
+            bw.Dispose();
+            ms.Dispose();
 
+            _array.Update(count, data2, indices.ToArray());
         }
 
         public void MouseEnter(EventArgs e)
@@ -547,9 +492,9 @@ void main()
 
                 //cameraMatrix = Matrix4.CreateTranslation(0.5f, 0f, -1f);
 
-                GL.UseProgram(_program);
-                GL.UniformMatrix4(_cameraUniform, false, ref cameraMatrix);
-                GL.UseProgram(0);
+                _shaderProgram.Bind();
+                _shaderProgram.Set("cameraMatrix", cameraMatrix);
+                _shaderProgram.Unbind();
             }
         }
 
@@ -571,61 +516,20 @@ void main()
 
     class ArrayRenderable : IRenderable
     {
-        private int _program;
-        private int _offset;
+        private ShaderProgram _shaderProgram;
         public VertexArray Array { get; private set; }
 
-        public ArrayRenderable(VertexArray array, int program, int offset)
+        public ArrayRenderable(VertexArray array, ShaderProgram shaderProgram)
         {
+            _shaderProgram = shaderProgram;
             Array = array;
-            _program = program;
-            _offset = offset;
         }
 
         public void Render(object sender)
         {
-            GL.UseProgram(_program);
-            GL.Uniform3(_offset, 0.5f, 0.5f, 0);
+            _shaderProgram.Bind();
             Array.DrawElements();
-            GL.UseProgram(0);
-        }
-    }
-
-    class Rawr : IRenderable
-    {
-        private int _program;
-        private int _offset;
-        private int _colourOffset;
-        private int _buffer;
-
-        public Rawr(int program, int offset, int colourOffset, int buffer)
-        {
-            _program = program;
-            _offset = offset;
-            _colourOffset = colourOffset;
-            _buffer = buffer;
-        }
-
-        public void Render(object sender)
-        {
-            GL.UseProgram(_program);
-            GL.Uniform3(_offset, 0.5f, 0.5f, 0);
-
-            GL.BindBuffer(BufferTarget.ArrayBuffer, _buffer);
-            GL.EnableVertexAttribArray(0);
-            GL.EnableVertexAttribArray(1);
-            GL.EnableVertexAttribArray(2);
-            GL.VertexAttribPointer(0, 4, VertexAttribPointerType.Float, false, 20, 0);
-            GL.VertexAttribPointer(1, 4, VertexAttribPointerType.Float, false, 20, _colourOffset);
-
-            GL.VertexAttribPointer(2, 1, VertexAttribPointerType.Float, false, 20, 16);
-
-            GL.DrawArrays(BeginMode.Triangles, 0, 36);
-
-            GL.DisableVertexAttribArray(0);
-            GL.DisableVertexAttribArray(1);
-            GL.DisableVertexAttribArray(2);
-            GL.UseProgram(0);
+            _shaderProgram.Unbind();
         }
     }
 }

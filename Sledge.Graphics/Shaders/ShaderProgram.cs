@@ -1,20 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using OpenTK;
 using OpenTK.Graphics.OpenGL;
 
 namespace Sledge.Graphics.Shaders
 {
-    public class Program : IDisposable
+    public class ShaderProgram : IDisposable
     {
+        public static int CurrentProgram { get; private set; }
+
         public int ID { get; private set; }
         public List<Variable> Variables { get; private set; }
         public List<Shader> Shaders { get; private set; }
 
-        public Program(List<Shader> shaders)
+        public ShaderProgram(params Shader[] shaders)
         {
-            Shaders = shaders;
-            ID = CreateProgram(shaders);
+            Variables = new List<Variable>();
+            Shaders = shaders.ToList();
+            ID = CreateProgram(Shaders);
             int c;
             GL.GetProgram(ID, ProgramParameter.ActiveUniforms, out c);
             for (var i = 0; i < c; i++)
@@ -25,6 +30,7 @@ namespace Sledge.Graphics.Shaders
                 GL.GetActiveUniform(ID, i, 256, out len, out size, out type, sb);
                 var loc = GL.GetUniformLocation(ID, sb.ToString());
                 var v = new Variable(loc, sb.ToString(), type);
+                Variables.Add(v);
             }
         }
 
@@ -51,6 +57,36 @@ namespace Sledge.Graphics.Shaders
             }
 
             return program;
+        }
+
+        private Variable GetVariable(string name)
+        {
+            return Variables.FirstOrDefault(x => x.Name == name);
+        }
+
+        public void Set(string name, Matrix4 matrix)
+        {
+            GetVariable(name).Set(matrix);
+        }
+
+        public void Set(string name, float f)
+        {
+            GetVariable(name).Set(f);
+        }
+
+        public void Set(string name, bool b)
+        {
+            GetVariable(name).Set(b);
+        }
+
+        public void Bind()
+        {
+            GL.UseProgram(ID);
+        }
+
+        public void Unbind()
+        {
+            GL.UseProgram(ID);
         }
     }
 }

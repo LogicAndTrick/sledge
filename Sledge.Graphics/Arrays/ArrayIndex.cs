@@ -15,6 +15,11 @@ namespace Sledge.Graphics.Arrays
             return new ArrayIndex(name, VertexAttribPointerType.Float, 3);
         }
 
+        public static ArrayIndex Vector2(string name)
+        {
+            return new ArrayIndex(name, VertexAttribPointerType.Float, 2);
+        }
+
         public static ArrayIndex Float(string name)
         {
             return new ArrayIndex(name, VertexAttribPointerType.Float, 1);
