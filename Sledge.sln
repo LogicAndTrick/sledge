@@ -44,6 +44,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sledge.Editor.Elevate", "Sledge.Editor.Elevate\Sledge.Editor.Elevate.csproj", "{262FC468-01B6-451A-ABE9-9B6E00B29F81}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sledge.ShaderTest", "Sledge.ShaderTest\Sledge.ShaderTest.csproj", "{0BC9CA0D-C714-4536-8CC2-E28C718C762B}"
+EndProject
 Global
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = Sledge.vsmdi
@@ -247,6 +249,16 @@ Global
 		{262FC468-01B6-451A-ABE9-9B6E00B29F81}.Release|Mixed Platforms.Build.0 = Release|x86
 		{262FC468-01B6-451A-ABE9-9B6E00B29F81}.Release|x86.ActiveCfg = Release|x86
 		{262FC468-01B6-451A-ABE9-9B6E00B29F81}.Release|x86.Build.0 = Release|x86
+		{0BC9CA0D-C714-4536-8CC2-E28C718C762B}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{0BC9CA0D-C714-4536-8CC2-E28C718C762B}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
+		{0BC9CA0D-C714-4536-8CC2-E28C718C762B}.Debug|Mixed Platforms.Build.0 = Debug|x86
+		{0BC9CA0D-C714-4536-8CC2-E28C718C762B}.Debug|x86.ActiveCfg = Debug|x86
+		{0BC9CA0D-C714-4536-8CC2-E28C718C762B}.Debug|x86.Build.0 = Debug|x86
+		{0BC9CA0D-C714-4536-8CC2-E28C718C762B}.Release|Any CPU.ActiveCfg = Release|x86
+		{0BC9CA0D-C714-4536-8CC2-E28C718C762B}.Release|Mixed Platforms.ActiveCfg = Release|x86
+		{0BC9CA0D-C714-4536-8CC2-E28C718C762B}.Release|Mixed Platforms.Build.0 = Release|x86
+		{0BC9CA0D-C714-4536-8CC2-E28C718C762B}.Release|x86.ActiveCfg = Release|x86
+		{0BC9CA0D-C714-4536-8CC2-E28C718C762B}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

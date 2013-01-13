@@ -50,6 +50,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Arrays\VertexArray.cs" />
+    <Compile Include="Arrays\ArrayIndex.cs" />
+    <Compile Include="Arrays\ArraySpecification.cs" />
     <Compile Include="Camera.cs" />
     <Compile Include="Helpers\Clear.cs" />
     <Compile Include="Helpers\DisplayList.cs" />
@@ -63,6 +66,9 @@
     <Compile Include="Renderables\IRenderable.cs" />
     <Compile Include="RenderContext.cs" />
     <Compile Include="GLTexture.cs" />
+    <Compile Include="Shaders\Program.cs" />
+    <Compile Include="Shaders\Shader.cs" />
+    <Compile Include="Shaders\Variable.cs" />
     <Compile Include="Vertex.cs" />
   </ItemGroup>
   <ItemGroup>
