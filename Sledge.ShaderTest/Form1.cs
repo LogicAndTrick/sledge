@@ -9,8 +9,11 @@ using System.Text;
 using System.Windows.Forms;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
+using Sledge.DataStructures.MapObjects;
+using Sledge.DataStructures.Rendering;
+using Sledge.Database;
+using Sledge.Editor.Documents;
 using Sledge.Editor.UI;
-using Sledge.Graphics;
 using Sledge.Graphics.Arrays;
 using Sledge.Graphics.Helpers;
 using Sledge.Graphics.Renderables;
@@ -19,278 +22,75 @@ using Sledge.Providers.GameData;
 using Sledge.Providers.Map;
 using Sledge.Providers.Texture;
 using Sledge.UI;
+using Camera = Sledge.Graphics.Camera;
 using KeyPressEventArgs = System.Windows.Forms.KeyPressEventArgs;
 
 namespace Sledge.ShaderTest
 {
     public partial class Form1 : Form
     {
-        #region Single Pass Wireframe test
-        /*
+
         public const string VertexShader = @"#version 330
 
-layout(location = 0) in vec4 position;
-layout(location = 1) in vec4 color;
+layout(location = 0) in vec3 position;
+layout(location = 1) in vec3 normal;
+layout(location = 2) in vec2 texture;
+layout(location = 3) in vec3 colour;
 
-smooth out vec4 theColor;
+const vec3 light1direction = vec3(-1, -2, 3);
+const vec3 light2direction = vec3(1, 2, 3);
+const vec4 light1intensity = vec4(0.6, 0.6, 0.6, 1.0);
+const vec4 light2intensity = vec4(0.3, 0.3, 0.3, 1.0);
+const vec4 ambient = vec4(0.5, 0.5, 0.5, 1.0);
 
-uniform vec3 offset;
+smooth out vec4 vertexLighting;
+smooth out vec4 vertexColour;
+smooth out vec2 texCoord;
+
 uniform mat4 modelViewMatrix;
 uniform mat4 perspectiveMatrix;
 uniform mat4 cameraMatrix;
 
 void main()
 {
-	vec4 cameraPos = cameraMatrix * modelViewMatrix * position;// + vec4(offset.x, offset.y, offset.z, 0.0);
+	vec4 cameraPos = cameraMatrix * modelViewMatrix * vec4(position, 1);
 	gl_Position = perspectiveMatrix * cameraPos;
-	theColor = color;
-}
-";
 
-        public const string GeometryShader = @"#version 330
-#extension GL_EXT_gpu_shader4 : enable
- 
-layout(triangles) in;
-layout(triangle_strip, max_vertices = 3) out;
+    vec3 normalPos = normalize(normal);
 
-smooth in vec4 theColor[];
+    float incidence1 = dot(normalPos, light1direction);
+    float incidence2 = dot(normalPos, light2direction);
 
-smooth out vec4 thefColor;
+    incidence1 = clamp(incidence1, 0, 1);
+    incidence2 = clamp(incidence2, 0, 1);
 
-noperspective out vec3 dist;
-void main()
-{
-    vec2 p0 = vec2(400, 400) * gl_in[0].gl_Position.xy / gl_in[0].gl_Position.w;
-    vec2 p1 = vec2(400, 400) * gl_in[1].gl_Position.xy / gl_in[1].gl_Position.w;
-    vec2 p2 = vec2(400, 400) * gl_in[2].gl_Position.xy / gl_in[2].gl_Position.w;
-    
-    vec2 v0 = p2 - p1;
-    vec2 v1 = p2 - p0;
-    vec2 v2 = p1 - p0;
-    float area = abs(v1.x*v2.y - v1.y * v2.x);
-
-thefColor = theColor[0];
-    dist = vec3(area/length(v0),0,0);
-    gl_Position = gl_in[0].gl_Position;
-    EmitVertex();
-    //
-thefColor = theColor[1];
-    dist = vec3(0,area/length(v1),0);
-    gl_Position = gl_in[1].gl_Position;
-    EmitVertex();
-    
-thefColor = theColor[2];
-    dist = vec3(0,0,area/length(v2));
-    gl_Position = gl_in[2].gl_Position;
-    EmitVertex();
-    
-    EndPrimitive();
-
-//for(int i = 0; i < gl_in.length(); i++) {
-//    gl_Position = gl_in[i].gl_Position;
-//    EmitVertex();
-//  }
-//  EndPrimitive();
+	vertexColour = vec4(colour, 1);
+    vertexLighting = (vec4(1,1,1,1) * light1intensity * incidence1) * 0.5
+                   + (vec4(1,1,1,1) * light2intensity * incidence2) * 0.5
+                   + (vec4(1,1,1,1) * ambient);
 }
 ";
 
         public const string FragmentShader = @"#version 330
 
-smooth in vec4 thefColor;
+smooth in vec4 vertexColour;
+smooth in vec4 vertexLighting;
+smooth in vec2 texCoord;
 
-out vec4 outputColor;
-
-noperspective in vec3 dist;
-const vec4 WIRE_COL = vec4(1,0,0, 1);
-const vec4 FILL_COL = vec4(1,1,1, 1);
-
-void main()
-{
-    float d = min(dist.x, min(dist.y, dist.z));
-//if (d > 2) { discard; }
- 	float I = sin(exp2( -2 * d * d ));
- 	outputColor = I * WIRE_COL + (1.0 - I) * thefColor;
-	//outputColor = theColor;
-
-    //d = clamp(d - (1 - 1.0), 0.0, 2.0);
-    //outputColor = vec4(WIRE_COL, exp2(-2.0 * d * d));
-//float I = exp2( -2 * d * d );
-//outputColor = I * WIRE_COL + (1.0 - I) * FILL_COL;
-//outputColor = vec4(WIRE_COL.xyz, exp2(-2.0 * d * d));
-}
-";
-         */
-        #endregion
-
-        public const string VertexShader = @"#version 330
-
-layout(location = 0) in vec4 position;
-layout(location = 1) in vec4 color;
-layout(location = 2) in float thing;
-
-smooth out vec4 theColor;
-smooth out float outThing;
-
-uniform vec3 offset;
-uniform mat4 modelViewMatrix;
-uniform mat4 perspectiveMatrix;
-uniform mat4 cameraMatrix;
-
-void main()
-{
-	vec4 cameraPos = cameraMatrix * modelViewMatrix * position;// + vec4(offset.x, offset.y, offset.z, 0.0);
-	gl_Position = perspectiveMatrix * cameraPos;
-	theColor = color;
-    outThing = thing;
-}
-";
-
-        public const string GeometryShader = @"#version 330
-#extension GL_EXT_gpu_shader4 : enable
- 
-layout(triangles) in;
-layout(triangle_strip, max_vertices = 3) out;
-
-smooth in vec4 theColor[];
-smooth in float outThing[];
-smooth out vec4 thefColor;
-smooth out float outfThing;
-
-void main()
-{
-    for(int i = 0; i < gl_in.length(); i++) {
-        thefColor = theColor[i];
-        outfThing = outThing[i];
-        gl_Position = gl_in[i].gl_Position;
-        EmitVertex();
-    }
-    EndPrimitive();
-}
-";
-
-        public const string FragmentShader = @"#version 330
-
-uniform bool isSelected;
-
-smooth in vec4 thefColor;
-smooth in float outfThing;
+uniform bool isTextured;
+uniform sampler2D currentTexture;
 
 out vec4 outputColor;
 void main()
 {
-	outputColor = thefColor * (1.0-outfThing) + vec4(1,0,0,1) * outfThing;
-    if (isSelected) {
-        outputColor = thefColor * 0.2 + vec4(0.8,0,0,1);
+    if (isTextured) {
+        outputColor = texture(currentTexture, texCoord) * vertexLighting;
     } else {
-        outputColor = thefColor;
+        outputColor = vertexColour * vertexLighting;
     }
 }
 ";
 
-        #region Verts
-        public static float[] _vertexData = new[]
-                                          {
-                                              0.25f, 0.25f, -1.25f, 1.0f,
-                                              0.25f, -0.25f, -1.25f, 1.0f,
-                                              -0.25f, 0.25f, -1.25f, 1.0f,
-
-                                              0.25f, -0.25f, -1.25f, 1.0f,
-                                              -0.25f, -0.25f, -1.25f, 1.0f,
-                                              -0.25f, 0.25f, -1.25f, 1.0f,
-
-                                              0.25f, 0.25f, -2.75f, 1.0f,
-                                              -0.25f, 0.25f, -2.75f, 1.0f,
-                                              0.25f, -0.25f, -2.75f, 1.0f,
-
-                                              0.25f, -0.25f, -2.75f, 1.0f,
-                                              -0.25f, 0.25f, -2.75f, 1.0f,
-                                              -0.25f, -0.25f, -2.75f, 1.0f,
-
-                                              -0.25f, 0.25f, -1.25f, 1.0f,
-                                              -0.25f, -0.25f, -1.25f, 1.0f,
-                                              -0.25f, -0.25f, -2.75f, 1.0f,
-
-                                              -0.25f, 0.25f, -1.25f, 1.0f,
-                                              -0.25f, -0.25f, -2.75f, 1.0f,
-                                              -0.25f, 0.25f, -2.75f, 1.0f,
-
-                                              0.25f, 0.25f, -1.25f, 1.0f,
-                                              0.25f, -0.25f, -2.75f, 1.0f,
-                                              0.25f, -0.25f, -1.25f, 1.0f,
-
-                                              0.25f, 0.25f, -1.25f, 1.0f,
-                                              0.25f, 0.25f, -2.75f, 1.0f,
-                                              0.25f, -0.25f, -2.75f, 1.0f,
-
-                                              0.25f, 0.25f, -2.75f, 1.0f,
-                                              0.25f, 0.25f, -1.25f, 1.0f,
-                                              -0.25f, 0.25f, -1.25f, 1.0f,
-
-                                              0.25f, 0.25f, -2.75f, 1.0f,
-                                              -0.25f, 0.25f, -1.25f, 1.0f,
-                                              -0.25f, 0.25f, -2.75f, 1.0f,
-
-                                              0.25f, -0.25f, -2.75f, 1.0f,
-                                              -0.25f, -0.25f, -1.25f, 1.0f,
-                                              0.25f, -0.25f, -1.25f, 1.0f,
-
-                                              0.25f, -0.25f, -2.75f, 1.0f,
-                                              -0.25f, -0.25f, -2.75f, 1.0f,
-                                              -0.25f, -0.25f, -1.25f, 1.0f,
-
-
-
-
-                                              0.0f, 0.0f, 1.0f, 1.0f,
-                                              0.0f, 0.0f, 1.0f, 1.0f,
-                                              0.0f, 0.0f, 1.0f, 1.0f,
-
-                                              0.0f, 0.0f, 1.0f, 1.0f,
-                                              0.0f, 0.0f, 1.0f, 1.0f,
-                                              0.0f, 0.0f, 1.0f, 1.0f,
-
-                                              0.8f, 0.8f, 0.8f, 1.0f,
-                                              0.8f, 0.8f, 0.8f, 1.0f,
-                                              0.8f, 0.8f, 0.8f, 1.0f,
-
-                                              0.8f, 0.8f, 0.8f, 1.0f,
-                                              0.8f, 0.8f, 0.8f, 1.0f,
-                                              0.8f, 0.8f, 0.8f, 1.0f,
-
-                                              0.0f, 1.0f, 0.0f, 1.0f,
-                                              0.0f, 1.0f, 0.0f, 1.0f,
-                                              0.0f, 1.0f, 0.0f, 1.0f,
-
-                                              0.0f, 1.0f, 0.0f, 1.0f,
-                                              0.0f, 1.0f, 0.0f, 1.0f,
-                                              0.0f, 1.0f, 0.0f, 1.0f,
-
-                                              0.5f, 0.5f, 0.0f, 1.0f,
-                                              0.5f, 0.5f, 0.0f, 1.0f,
-                                              0.5f, 0.5f, 0.0f, 1.0f,
-
-                                              0.5f, 0.5f, 0.0f, 1.0f,
-                                              0.5f, 0.5f, 0.0f, 1.0f,
-                                              0.5f, 0.5f, 0.0f, 1.0f,
-
-                                              1.0f, 0.0f, 0.0f, 1.0f,
-                                              1.0f, 0.0f, 0.0f, 1.0f,
-                                              1.0f, 0.0f, 0.0f, 1.0f,
-
-                                              1.0f, 0.0f, 0.0f, 1.0f,
-                                              1.0f, 0.0f, 0.0f, 1.0f,
-                                              1.0f, 0.0f, 0.0f, 1.0f,
-
-                                              0.0f, 1.0f, 1.0f, 1.0f,
-                                              0.0f, 1.0f, 1.0f, 1.0f,
-                                              0.0f, 1.0f, 1.0f, 1.0f,
-
-                                              0.0f, 1.0f, 1.0f, 1.0f,
-                                              0.0f, 1.0f, 1.0f, 1.0f,
-                                              0.0f, 1.0f, 1.0f, 1.0f,
-
-                                          };
-        #endregion
 
         private Viewport3D _viewport;
 
@@ -314,7 +114,7 @@ void main()
         }
 
         private ShaderProgram _shaderProgram;
-        private VertexArray _array;
+        private VertexArrayByte _array;
 
         protected override void OnLoad(EventArgs e)
         {
@@ -323,14 +123,16 @@ void main()
             MapProvider.Register(new VmfProvider());
             GameDataProvider.Register(new FgdProvider());
             TextureProvider.Register(new WadProvider());
-
-            _shaderProgram = new ShaderProgram(new Shader(ShaderType.VertexShader, VertexShader),
-                                               new Shader(ShaderType.GeometryShader, GeometryShader),
-                                               new Shader(ShaderType.FragmentShader, FragmentShader));
+            try
+            {
+                _shaderProgram = new ShaderProgram(new Shader(ShaderType.VertexShader, VertexShader),
+                                                   //new Shader(ShaderType.GeometryShader, GeometryShader),
+                                                   new Shader(ShaderType.FragmentShader, FragmentShader));
+            
 
             var ratio = _viewport.Width / (float)_viewport.Height;
             if (ratio <= 0) ratio = 1;
-            var matrix = Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(60), ratio, 0.1f, 10000f);
+            var matrix = Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(60), ratio, 0.1f, 100000f);
 
             var cam = _viewport.Camera;
             var cameraMatrix = Matrix4.LookAt(
@@ -338,71 +140,79 @@ void main()
                 new Vector3((float)cam.LookAt.X, (float)cam.LookAt.Y, (float)cam.LookAt.Z), 
                 Vector3.UnitZ);
 
-            var mv = Matrix4.Scale(100);
+            var mv = Matrix4.Identity;
 
             _shaderProgram.Bind();
             _shaderProgram.Set("perspectiveMatrix", matrix);
             _shaderProgram.Set("cameraMatrix", cameraMatrix);
             _shaderProgram.Set("modelViewMatrix", mv);
-            _shaderProgram.Set("isSelected", true);
+            _shaderProgram.Set("isTextured", true);
             _shaderProgram.Unbind();
 
+            var map = MapProvider.GetMapFromFile(@"D:\Github\sledge\_Resources\RMF\verc_18.rmf");
+            Document = new Document(@"D:\Github\sledge\_Resources\RMF\verc_18.rmf", map, Context.DBContext.GetAllGames().First());
 
-
-            var spec = new ArraySpecification(ArrayIndex.Vector4("Vertices"),
-                                              ArrayIndex.Vector4("Colours"),
-                                              ArrayIndex.Float("Thing"));
-            var colourOffset = _vertexData.Length / 2;
-
-            var ms = new MemoryStream(1024);
-            var bw = new BinaryWriter(ms);
-            var rand = new Random();
-            var count = (short)0;
-            var indices = new List<short>();
-            for (var i = 0; i < colourOffset; i+=4)
-            {
-                bw.Write(_vertexData[i + 0]);
-                bw.Write(_vertexData[i + 1]);
-                bw.Write(_vertexData[i + 2]);
-                bw.Write(_vertexData[i + 3]);
-                bw.Write(_vertexData[i + colourOffset + 0]);
-                bw.Write(_vertexData[i + colourOffset + 1]);
-                bw.Write(_vertexData[i + colourOffset + 2]);
-                bw.Write(_vertexData[i + colourOffset + 3]);
-                bw.Write((float)rand.NextDouble());
-                indices.Add(count);
-                count++;
-            }
-            var data2 = ms.ToArray();
-            bw.Dispose();
-            ms.Dispose();
-
-            _array = new VertexArray(spec, BeginMode.Triangles, count, data2, indices.ToArray());
-
+            var am = new ArrayManager(map);
 
             _viewport.Listeners.Add(new UpdateCameraListener(_array, _shaderProgram, _viewport));
 
 
-            GL.Enable(EnableCap.CullFace);
-            GL.CullFace(CullFaceMode.Back);
-            GL.FrontFace(FrontFaceDirection.Cw);
+            //GL.Enable(EnableCap.CullFace);
+            //GL.CullFace(CullFaceMode.Back);
+            //GL.FrontFace(FrontFaceDirection.Cw);
+
+            //GL.Disable(EnableCap.CullFace);
 
             _viewport.Run();
 
             //_viewport.RenderContext.Add(new Rawr(_program, _offsetUniform, (sizeof(byte) * data.Length) / 2, _buffer));
 
-            _viewport.RenderContext.Add(new ArrayRenderable(_array, _shaderProgram));
+            //_viewport.RenderContext.Add(new ArrayRenderable(_array, _shaderProgram));
 
+            _viewport.RenderContext.Add(new ArrayManagerRenderable(am, map, _shaderProgram));
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                throw;
+            }
             base.OnLoad(e);
+        }
+
+        protected Document Document { get; set; }
+    }
+
+    class ArrayManagerRenderable : IRenderable
+    {
+        private ArrayManager _manager;
+        private ShaderProgram _shaderProgram;
+        private Map _map;
+
+        public ArrayManagerRenderable(ArrayManager manager, Map map, ShaderProgram shaderProgram)
+        {
+            _map = map;
+            _manager = manager;
+            _shaderProgram = shaderProgram;
+        }
+
+        public void Render(object sender)
+        {
+            //_manager.Update(_map);
+
+            TextureHelper.EnableTexturing();
+            _shaderProgram.Bind();
+            _manager.Draw(_shaderProgram);
+            _shaderProgram.Unbind();
+            TextureHelper.DisableTexturing();
         }
     }
 
     class UpdateCameraListener : IViewportEventListener
     {
-        private VertexArray _array;
+        private VertexArrayByte _array;
         private ShaderProgram _shaderProgram;
 
-        public UpdateCameraListener(VertexArray array, ShaderProgram shaderProgram, Viewport3D vp)
+        public UpdateCameraListener(VertexArrayByte array, ShaderProgram shaderProgram, Viewport3D vp)
         {
             _shaderProgram = shaderProgram;
             _array = array;
@@ -442,32 +252,6 @@ void main()
 
         public void MouseDown(MouseEventArgs e)
         {
-            var _vertexData = Form1._vertexData;
-            var colourOffset = _vertexData.Length / 2;
-            var ms = new MemoryStream(1024);
-            var bw = new BinaryWriter(ms);
-            var rand = new Random();
-            var count = (short)0;
-            var indices = new List<short>();
-            for (var i = 0; i < colourOffset; i += 4)
-            {
-                bw.Write(_vertexData[i + 0]);
-                bw.Write(_vertexData[i + 1]);
-                bw.Write(_vertexData[i + 2]);
-                bw.Write(_vertexData[i + 3]);
-                bw.Write(_vertexData[i + colourOffset + 0]);
-                bw.Write(_vertexData[i + colourOffset + 1]);
-                bw.Write(_vertexData[i + colourOffset + 2]);
-                bw.Write(_vertexData[i + colourOffset + 3]);
-                bw.Write((float)rand.NextDouble());
-                indices.Add(count);
-                count++;
-            }
-            var data2 = ms.ToArray();
-            bw.Dispose();
-            ms.Dispose();
-
-            _array.Update(count, data2, indices.ToArray());
         }
 
         public void MouseEnter(EventArgs e)
@@ -517,9 +301,9 @@ void main()
     class ArrayRenderable : IRenderable
     {
         private ShaderProgram _shaderProgram;
-        public VertexArray Array { get; private set; }
+        public VertexArrayByte Array { get; private set; }
 
-        public ArrayRenderable(VertexArray array, ShaderProgram shaderProgram)
+        public ArrayRenderable(VertexArrayByte array, ShaderProgram shaderProgram)
         {
             _shaderProgram = shaderProgram;
             Array = array;
@@ -528,7 +312,9 @@ void main()
         public void Render(object sender)
         {
             _shaderProgram.Bind();
+            Array.Bind();
             Array.DrawElements();
+            Array.Unbind();
             _shaderProgram.Unbind();
         }
     }

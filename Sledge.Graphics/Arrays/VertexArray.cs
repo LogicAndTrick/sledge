@@ -3,7 +3,22 @@ using OpenTK.Graphics.OpenGL;
 
 namespace Sledge.Graphics.Arrays
 {
-    public class VertexArray : IDisposable
+    public class VertexArrayByte : VertexArray<byte>
+    {
+        public VertexArrayByte(ArraySpecification specification, BeginMode mode, int count, byte[] array, short[] elementArray)
+            : base(specification, mode, count, sizeof(byte), array, elementArray)
+        {
+        }
+    }
+    public class VertexArrayFloat : VertexArray<float>
+    {
+        public VertexArrayFloat(ArraySpecification specification, BeginMode mode, int count, float[] array, short[] elementArray)
+            : base(specification, mode, count, sizeof(float), array, elementArray)
+        {
+        }
+    }
+
+    public class VertexArray<T> : IDisposable where T : struct 
     {
         public ArraySpecification Specification { get; private set; }
         public BeginMode Mode { get; private set; }
@@ -15,6 +30,7 @@ namespace Sledge.Graphics.Arrays
         private int _arrayID;
         private int _arrayLength;
         private int _elementArrayLength;
+        private int _typeSize;
 
         /// <summary>
         /// Create a new vertex array
@@ -22,13 +38,15 @@ namespace Sledge.Graphics.Arrays
         /// <param name="specification">The array specification</param>
         /// <param name="mode">The drawing mode of this array</param>
         /// <param name="count">The number of vertices</param>
+        /// <param name="typeSize">The size of the type in bytes</param>
         /// <param name="array">The data array. Must follow the specification of this array</param>
         /// <param name="elementArray">The element array</param>
-        public VertexArray(ArraySpecification specification, BeginMode mode, int count, byte[] array, short[] elementArray)
+        public VertexArray(ArraySpecification specification, BeginMode mode, int count, int typeSize, T[] array, short[] elementArray)
         {
             int id;
             GL.GenVertexArrays(1, out id);
             _vertexArrayID = id;
+            _typeSize = typeSize;
 
             Specification = specification;
             Mode = mode;
@@ -42,12 +60,12 @@ namespace Sledge.Graphics.Arrays
         /// <param name="count">The number of vertices</param>
         /// <param name="array">The data array. Must follow the specification of this array</param>
         /// <param name="elementArray">The element array</param>
-        public void Update(int count, byte[] array, short[] elementArray)
+        public void Update(int count, T[] array, short[] elementArray)
         {
             Count = count;
             int len, oaid = _arrayID, oeaid = _elementArrayID;
 
-            _arrayID = Update(BufferTarget.ArrayBuffer, _arrayID, array, sizeof(byte), _arrayLength, out len);
+            _arrayID = Update(BufferTarget.ArrayBuffer, _arrayID, array, _typeSize, _arrayLength, out len);
             _arrayLength = len;
 
             _elementArrayID = Update(BufferTarget.ElementArrayBuffer, _elementArrayID, elementArray, sizeof(short), _elementArrayLength, out len);
@@ -74,7 +92,7 @@ namespace Sledge.Graphics.Arrays
         /// <summary>
         /// Update a buffer
         /// </summary>
-        /// <typeparam name="T">The buffer array type</typeparam>
+        /// <typeparam name="TType">The buffer array type</typeparam>
         /// <param name="target">The buffer target</param>
         /// <param name="id">The current ID of the buffer</param>
         /// <param name="array">The new data array</param>
@@ -82,7 +100,7 @@ namespace Sledge.Graphics.Arrays
         /// <param name="currentLength">The current length of the buffer</param>
         /// <param name="newLength">The new length of the buffer</param>
         /// <returns>The new ID of the buffer</returns>
-        private static int Update<T>(BufferTarget target, int id, T[] array, int typeSize, int currentLength, out int newLength) where T : struct
+        private static int Update<TType>(BufferTarget target, int id, TType[] array, int typeSize, int currentLength, out int newLength) where TType : struct
         {
             if (id > 0 && array.Length <= currentLength)
             {
@@ -119,8 +137,16 @@ namespace Sledge.Graphics.Arrays
         /// <param name="count">The subset length</param>
         public void DrawElements(int offset, int count)
         {
+            GL.DrawElements(Mode, count, DrawElementsType.UnsignedShort, offset * _typeSize);
+        }
+
+        public void Bind()
+        {
             GL.BindVertexArray(_vertexArrayID);
-            GL.DrawElements(Mode, count, DrawElementsType.UnsignedShort, offset);
+        }
+
+        public void Unbind()
+        {
             GL.BindVertexArray(0);
         }
 
