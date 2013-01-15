@@ -79,16 +79,24 @@ smooth in vec4 vertexLighting;
 smooth in vec2 texCoord;
 
 uniform bool isSelected;
+uniform bool isWireframe;
 uniform bool isTextured;
 uniform sampler2D currentTexture;
 
 out vec4 outputColor;
 void main()
 {
-    if (isTextured) {
-        outputColor = texture2D(currentTexture, texCoord) * vertexLighting;
+    if (isWireframe) {
+        outputColor = vec4(1, 1, 0, 1);
     } else {
-        outputColor = vertexColour * vertexLighting;
+        if (isTextured) {
+            outputColor = texture2D(currentTexture, texCoord) * vertexLighting;
+        } else {
+            outputColor = vertexColour * vertexLighting;
+        }
+        if (isSelected) {
+            outputColor = outputColor * vec4(1, 0, 0, 1);
+        }
     }
 }
 ";
@@ -199,7 +207,7 @@ void main()
 
         public void Render(object sender)
         {
-            _manager.Update(_map);
+            //_manager.Update(_map);
 
             TextureHelper.EnableTexturing();
             _shaderProgram.Bind();
@@ -314,8 +322,8 @@ void main()
         public void Render(object sender)
         {
             _shaderProgram.Bind();
-            Array.Bind();
-            Array.DrawElements();
+            Array.Bind(0);
+            Array.DrawElements(0);
             Array.Unbind();
             _shaderProgram.Unbind();
         }

@@ -5,15 +5,15 @@ namespace Sledge.Graphics.Arrays
 {
     public class VertexArrayByte : VertexArray<byte>
     {
-        public VertexArrayByte(ArraySpecification specification, BeginMode mode, int count, byte[] array, short[] elementArray)
-            : base(specification, mode, count, sizeof(byte), array, elementArray)
+        public VertexArrayByte(ArraySpecification specification, BeginMode[] modes, int count, byte[] array, short[][] elementArrays)
+            : base(specification, modes, count, sizeof(byte), array, elementArrays)
         {
         }
     }
     public class VertexArrayFloat : VertexArray<float>
     {
-        public VertexArrayFloat(ArraySpecification specification, BeginMode mode, int count, float[] array, short[] elementArray)
-            : base(specification, mode, count, sizeof(float), array, elementArray)
+        public VertexArrayFloat(ArraySpecification specification, BeginMode[] modes, int count, float[] array, short[][] elementArrays)
+            : base(specification, modes, count, sizeof(float), array, elementArrays)
         {
         }
     }
@@ -21,37 +21,43 @@ namespace Sledge.Graphics.Arrays
     public class VertexArray<T> : IDisposable where T : struct 
     {
         public ArraySpecification Specification { get; private set; }
-        public BeginMode Mode { get; private set; }
+        public BeginMode[] Modes { get; private set; }
         public int Count { get; private set; }
+        public int ElementArrayCount { get; private set; }
 
-        private readonly int _vertexArrayID;
+        private readonly int[] _vertexArrayIDs;
 
-        private int _elementArrayID;
         private int _arrayID;
         private int _arrayLength;
-        private int _elementArrayLength;
-        private int _typeSize;
+        private readonly int[] _elementArrayIDs;
+        private readonly int[] _elementArrayLengths;
+        private readonly int _typeSize;
 
         /// <summary>
         /// Create a new vertex array
         /// </summary>
         /// <param name="specification">The array specification</param>
-        /// <param name="mode">The drawing mode of this array</param>
+        /// <param name="modes">The drawing modes of these arrays</param>
         /// <param name="count">The number of vertices</param>
         /// <param name="typeSize">The size of the type in bytes</param>
         /// <param name="array">The data array. Must follow the specification of this array</param>
-        /// <param name="elementArray">The element array</param>
-        public VertexArray(ArraySpecification specification, BeginMode mode, int count, int typeSize, T[] array, short[] elementArray)
+        /// <param name="elementArrays">The element arrays</param>
+        public VertexArray(ArraySpecification specification, BeginMode[] modes, int count, int typeSize, T[] array, short[][] elementArrays)
         {
-            int id;
-            GL.GenVertexArrays(1, out id);
-            _vertexArrayID = id;
+            ElementArrayCount = elementArrays.Length;
+
+            _vertexArrayIDs = new int[ElementArrayCount];
+            _elementArrayIDs = new int[ElementArrayCount];
+            _elementArrayLengths = new int[ElementArrayCount];
+
+            GL.GenVertexArrays(ElementArrayCount, _vertexArrayIDs);
+
             _typeSize = typeSize;
 
             Specification = specification;
-            Mode = mode;
+            Modes = modes;
 
-            Update(count, array, elementArray);
+            Update(count, array, elementArrays);
         }
 
         /// <summary>
@@ -59,34 +65,45 @@ namespace Sledge.Graphics.Arrays
         /// </summary>
         /// <param name="count">The number of vertices</param>
         /// <param name="array">The data array. Must follow the specification of this array</param>
-        /// <param name="elementArray">The element array</param>
-        public void Update(int count, T[] array, short[] elementArray)
+        /// <param name="elementArrays">The element arrays</param>
+        public void Update(int count, T[] array, short[][] elementArrays)
         {
+            if (elementArrays.Length != ElementArrayCount) throw new Exception("The element array set must contain " + ElementArrayCount + " element arrays.");
+
             Count = count;
-            int len, oaid = _arrayID, oeaid = _elementArrayID;
+            int len, oaid = _arrayID;
 
             _arrayID = Update(BufferTarget.ArrayBuffer, _arrayID, array, _typeSize, _arrayLength, out len);
             _arrayLength = len;
 
-            _elementArrayID = Update(BufferTarget.ElementArrayBuffer, _elementArrayID, elementArray, sizeof(short), _elementArrayLength, out len);
-            _elementArrayLength = len;
+            var changed = false;
+            for (var i = 0; i < ElementArrayCount; i++)
+            {
+                var oldId = _elementArrayIDs[i];
+                _elementArrayIDs[i] = Update(BufferTarget.ElementArrayBuffer, _elementArrayIDs[i], elementArrays[i], sizeof(short), _elementArrayLengths[i], out len);
+                _elementArrayLengths[i] = len;
+                changed |= oldId != _elementArrayIDs[i];
+            }
 
-            if (oaid == _arrayID && oeaid == _elementArrayID) return;
+            if (oaid == _arrayID && !changed) return;
 
             // Create VAO
-            GL.BindVertexArray(_vertexArrayID);
-            GL.BindBuffer(BufferTarget.ArrayBuffer, _arrayID);
-            var stride = Specification.Stride;
-            for (var i = 0; i < Specification.Indices.Count; i++)
+            for (var i = 0; i < ElementArrayCount; i++)
             {
-                var ai = Specification.Indices[i];
-                GL.EnableVertexAttribArray(i);
-                GL.VertexAttribPointer(i, ai.Length, ai.Type, false, stride, ai.Offset);
+                GL.BindVertexArray(_vertexArrayIDs[i]);
+                GL.BindBuffer(BufferTarget.ArrayBuffer, _arrayID);
+                var stride = Specification.Stride;
+                for (var j = 0; j < Specification.Indices.Count; j++)
+                {
+                    var ai = Specification.Indices[j];
+                    GL.EnableVertexAttribArray(j);
+                    GL.VertexAttribPointer(j, ai.Length, ai.Type, false, stride, ai.Offset);
+                }
+                GL.BindBuffer(BufferTarget.ElementArrayBuffer, _elementArrayIDs[i]);
+                GL.BindVertexArray(0);
+                GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
+                GL.BindBuffer(BufferTarget.ElementArrayBuffer, 0);
             }
-            GL.BindBuffer(BufferTarget.ElementArrayBuffer, _elementArrayID);
-            GL.BindVertexArray(0);
-            GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
-            GL.BindBuffer(BufferTarget.ElementArrayBuffer, 0);
         }
 
         /// <summary>
@@ -125,24 +142,25 @@ namespace Sledge.Graphics.Arrays
         /// <summary>
         /// Draw the entire array
         /// </summary>
-        public void DrawElements()
+        public void DrawElements(int index)
         {
-            DrawElements(0, Count);
+            DrawElements(index, 0, Count);
         }
 
         /// <summary>
         /// Draw a subset of the array
         /// </summary>
+        /// <param name="index">The index of the element array to use</param>
         /// <param name="offset">The subset offset</param>
         /// <param name="count">The subset length</param>
-        public void DrawElements(int offset, int count)
+        public void DrawElements(int index, int offset, int count)
         {
-            GL.DrawElements(Mode, count, DrawElementsType.UnsignedShort, offset * sizeof(short));
+            GL.DrawElements(Modes[index], count, DrawElementsType.UnsignedShort, offset * sizeof(short));
         }
 
-        public void Bind()
+        public void Bind(int index)
         {
-            GL.BindVertexArray(_vertexArrayID);
+            GL.BindVertexArray(_vertexArrayIDs[index]);
         }
 
         public void Unbind()
@@ -155,8 +173,9 @@ namespace Sledge.Graphics.Arrays
         /// </summary>
         public void Dispose()
         {
-            GL.DeleteVertexArrays(1, new[] {_vertexArrayID});
-            GL.DeleteBuffers(2, new[] {_arrayID, _elementArrayID});
+            GL.DeleteVertexArrays(1, _vertexArrayIDs);
+            GL.DeleteBuffers(1, ref _arrayID);
+            GL.DeleteBuffers(ElementArrayCount, _elementArrayIDs);
         }
     }
 }
