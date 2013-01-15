@@ -68,6 +68,7 @@ void main()
     vertexLighting = (vec4(1,1,1,1) * light1intensity * incidence1) * 0.5
                    + (vec4(1,1,1,1) * light2intensity * incidence2) * 0.5
                    + (vec4(1,1,1,1) * ambient);
+    texCoord = texture;
 }
 ";
 
@@ -77,6 +78,7 @@ smooth in vec4 vertexColour;
 smooth in vec4 vertexLighting;
 smooth in vec2 texCoord;
 
+uniform bool isSelected;
 uniform bool isTextured;
 uniform sampler2D currentTexture;
 
@@ -84,7 +86,7 @@ out vec4 outputColor;
 void main()
 {
     if (isTextured) {
-        outputColor = texture(currentTexture, texCoord) * vertexLighting;
+        outputColor = texture2D(currentTexture, texCoord) * vertexLighting;
     } else {
         outputColor = vertexColour * vertexLighting;
     }
@@ -197,7 +199,7 @@ void main()
 
         public void Render(object sender)
         {
-            //_manager.Update(_map);
+            _manager.Update(_map);
 
             TextureHelper.EnableTexturing();
             _shaderProgram.Bind();

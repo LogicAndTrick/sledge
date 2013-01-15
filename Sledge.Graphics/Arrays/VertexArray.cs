@@ -137,7 +137,7 @@ namespace Sledge.Graphics.Arrays
         /// <param name="count">The subset length</param>
         public void DrawElements(int offset, int count)
         {
-            GL.DrawElements(Mode, count, DrawElementsType.UnsignedShort, offset * _typeSize);
+            GL.DrawElements(Mode, count, DrawElementsType.UnsignedShort, offset * sizeof(short));
         }
 
         public void Bind()

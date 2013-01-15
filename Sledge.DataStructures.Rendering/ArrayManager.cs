@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using OpenTK.Graphics.OpenGL;
+using Sledge.Common;
 using Sledge.DataStructures.MapObjects;
 using Sledge.Graphics.Arrays;
 using Sledge.Graphics.Shaders;
@@ -13,6 +14,7 @@ namespace Sledge.DataStructures.Rendering
     public class ArrayManager
     {
         public Dictionary<Solid, SolidVertexArray> Arrays { get; private set; }
+        public List<IGrouping<ITexture, TextureSubset>> Cache;
         
         public ArrayManager(Map map)
         {
@@ -27,10 +29,24 @@ namespace Sledge.DataStructures.Rendering
                 if (!Arrays.ContainsKey(solid)) Arrays.Add(solid, new SolidVertexArray(solid));
                 else Arrays[solid].Update();
             }
+            Cache = Arrays.Values.SelectMany(x => x.Subsets).GroupBy(x => x.Texture).ToList();
         }
 
         public void Draw(ShaderProgram program)
         {
+            GL.ActiveTexture(TextureUnit.Texture0);
+            program.Set("currentTexture", 0);
+            foreach (var group in Cache)
+            {
+                var tex = group.Key;
+                if (tex != null) tex.Bind();
+                program.Set("isTextured", tex != null);
+                foreach (var ts in group)
+                {
+                    ts.Draw(program);
+                }
+            }
+            return;
             foreach (var kv in Arrays)
             {
                 kv.Value.Draw(program);
@@ -39,21 +55,30 @@ namespace Sledge.DataStructures.Rendering
         }
     }
 
+    public class TextureSubset
+    {
+        public int Start { get; private set; }
+        public int Count { get; private set; }
+        private SolidVertexArray _array;
+
+        public ITexture Texture { get; set; }
+
+        public TextureSubset(SolidVertexArray array, int start, int count, ITexture texture)
+        {
+            _array = array;
+            Start = start;
+            Count = count;
+            Texture = texture;
+        }
+
+        public void Draw(ShaderProgram program)
+        {
+            _array.DrawSubset(this, program);
+        }
+    }
+
     public class SolidVertexArray
     {
-        private class TextureSubset
-        {
-            public int Start { get; set; }
-            public int Count { get; set; }
-            public string TextureName { get; set; }
-
-            public TextureSubset(int start, int count, string textureName)
-            {
-                Start = start;
-                Count = count;
-                TextureName = textureName;
-            }
-        }
 
         private static readonly ArraySpecification Specification;
         private const int SpecSize = 11;
@@ -70,7 +95,7 @@ namespace Sledge.DataStructures.Rendering
         private const int BytesPerVertex = sizeof(float);
         private VertexArrayFloat _array;
         private Solid _solid;
-        private List<TextureSubset> _subsets; 
+        public List<TextureSubset> Subsets { get; private set; } 
 
         public SolidVertexArray(Solid solid)
         {
@@ -78,27 +103,43 @@ namespace Sledge.DataStructures.Rendering
             float[] array;
             short[] indices;
             int count;
-            _subsets = new List<TextureSubset>();
-            GetArrayData(out count, out array, out indices, _subsets);
+            Subsets = new List<TextureSubset>();
+            GetArrayData(out count, out array, out indices, Subsets);
 
             _array = new VertexArrayFloat(Specification, BeginMode.Triangles, count, array, indices);
+        }
+
+        public void DrawSubset(TextureSubset ts, ShaderProgram program)
+        {
+            _array.Bind();
+            _array.DrawElements(ts.Start, ts.Count);
+            _array.Unbind();
         }
 
         public void Draw(ShaderProgram program)
         {
             //_array.DrawElements(); //todo texturey stuff and so on
             _array.Bind();
-            _array.DrawElements(); //todo missing subset faces
+            //_array.DrawElements(); //todo missing subset faces
             //_array.DrawElements(0, 6);
             //_array.DrawElements(6, 6);
             //_array.DrawElements(12, 6);
             //_array.DrawElements(18, 6);
             //_array.DrawElements(24, 6);
             //_array.DrawElements(30, 6);
-            foreach (var ts in _subsets)
+            foreach (var ts in Subsets)
             {
+                if (ts.Texture != null)
+                {
+                    ts.Texture.Bind();
+                }
+                else
+                {
+                    int i = 1;
+                }
+                program.Set("isTextured", ts.Texture != null);
                // break;
-                //_array.DrawElements(ts.Start, ts.Count);
+                _array.DrawElements(ts.Start, ts.Count);
                 //break;
             }
             _array.Unbind();
@@ -109,8 +150,8 @@ namespace Sledge.DataStructures.Rendering
             float[] array;
             short[] indices;
             int count;
-            _subsets.Clear();
-            GetArrayData(out count, out array, out indices, _subsets);
+            Subsets.Clear();
+            GetArrayData(out count, out array, out indices, Subsets);
             _array.Update(count, array, indices);
         }
 
@@ -121,15 +162,15 @@ namespace Sledge.DataStructures.Rendering
             var idx = 0;
             array = new float[SpecSize * _solid.Faces.Sum(x => x.Vertices.Count)];
             var subsetStart = 0;
-            string currentTexture = null;
-            foreach (var face in _solid.Faces.OrderBy(x => x.Texture.Name))
+            ITexture currentTexture = null;
+            foreach (var face in _solid.Faces.OrderBy(x => x.Texture == null ? 0 : 1).ThenBy(x => x.Texture.Name))
             {
-                if (indexList.Count > 0 && face.Texture.Name != currentTexture)
+                if (indexList.Count > 0 && face.Texture.Texture != currentTexture)
                 {
-                    subsets.Add(new TextureSubset(subsetStart, indexList.Count - subsetStart, currentTexture));
+                    subsets.Add(new TextureSubset(this, subsetStart, indexList.Count - subsetStart, currentTexture));
                     subsetStart = indexList.Count;
-                    currentTexture = face.Texture.Name;
                 }
+                currentTexture = face.Texture.Texture;
                 float nx = (float) face.Plane.Normal.DX,
                         ny = (float) face.Plane.Normal.DY,
                         nz = (float) face.Plane.Normal.DZ;
@@ -158,7 +199,7 @@ namespace Sledge.DataStructures.Rendering
                 }
                 index += face.Vertices.Count;
             }
-            subsets.Add(new TextureSubset(subsetStart, indexList.Count - subsetStart, currentTexture));
+            subsets.Add(new TextureSubset(this, subsetStart, indexList.Count - subsetStart, currentTexture));
             indices = indexList.ToArray();
             count = indices.Length;
         }
