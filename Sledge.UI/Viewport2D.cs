@@ -29,25 +29,6 @@ namespace Sledge.UI
             Side
         }
 
-        private static readonly Matrix4 TopMatrix = Matrix4.Identity;
-        private static readonly Matrix4 FrontMatrix = new Matrix4(Vector4.UnitZ, Vector4.UnitX, Vector4.UnitY, Vector4.UnitW);
-        private static readonly Matrix4 SideMatrix = new Matrix4(Vector4.UnitX, Vector4.UnitZ, Vector4.UnitY, Vector4.UnitW);
-
-        private static Matrix4 GetMatrixFor(ViewDirection dir)
-        {
-            switch (dir)
-            {
-                case ViewDirection.Top:
-                    return TopMatrix;
-                case ViewDirection.Front:
-                    return FrontMatrix;
-                case ViewDirection.Side:
-                    return SideMatrix;
-                default:
-                    throw new ArgumentOutOfRangeException("dir");
-            }
-        }
-
         private static Coordinate Flatten(Coordinate c, ViewDirection direction)
         {
             switch (direction)
@@ -178,25 +159,6 @@ namespace Sledge.UI
         {
             base.SetViewport();
             Viewport.Orthographic(0, 0, Width, Height, -50000, 50000);
-        }
-
-        public override Matrix4 GetViewportMatrix()
-        {
-            const float near = -1;
-            const float far = 1;
-            return Matrix4.CreateOrthographic(Width, Height, near, far);
-        }
-
-        public override Matrix4 GetCameraMatrix()
-        {
-            var translate = Matrix4.CreateTranslation((float) -Position.X, (float) -Position.Y, 0);
-            var scale = Matrix4.Scale(new Vector3((float) Zoom, (float) Zoom, 0));
-            return translate * scale;
-        }
-
-        public override Matrix4 GetModelViewMatrix()
-        {
-            return GetMatrixFor(Direction);
         }
 
         protected override void OnResize(EventArgs e)

@@ -39,21 +39,6 @@ namespace Sledge.UI
             Viewport.Switch(0, 0, Width, Height);
         }
 
-        public virtual Matrix4 GetViewportMatrix()
-        {
-            return Matrix4.Identity;
-        }
-
-        public virtual Matrix4 GetCameraMatrix()
-        {
-            return Matrix4.Identity;
-        }
-
-        public virtual Matrix4 GetModelViewMatrix()
-        {
-            return Matrix4.Identity;
-        }
-
         protected override void OnResize(EventArgs e)
         {
             MakeCurrent();
