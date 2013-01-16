@@ -81,6 +81,7 @@ Priorities
     Run Game - 0%
 
 2. Source support
+     Use VBOs instead of display lists - displacments are far too laggy with display lists.
 3. Plugins support
 
 Feature Ideas
