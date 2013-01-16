@@ -21,6 +21,25 @@ namespace Sledge.UI
             Camera = new Camera();
         }
 
+        public override Matrix4 GetViewportMatrix()
+        {
+            const float near = 0.1f;
+            const float far = 50000f;
+            var ratio = Width / (float) Height;
+            if (ratio <= 0) ratio = 1;
+            return Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(60), ratio, near, far);
+        }
+
+        public override Matrix4 GetCameraMatrix()
+        {
+            var cam = Camera;
+            var cameraMatrix = Matrix4.LookAt(
+                new Vector3((float)cam.Location.X, (float)cam.Location.Y, (float)cam.Location.Z),
+                new Vector3((float)cam.LookAt.X, (float)cam.LookAt.Y, (float)cam.LookAt.Z),
+                Vector3.UnitZ);
+            return cameraMatrix;
+        }
+
         public override void SetViewport()
         {
             base.SetViewport();

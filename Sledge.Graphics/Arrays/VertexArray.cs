@@ -18,6 +18,11 @@ namespace Sledge.Graphics.Arrays
         }
     }
 
+    /// <summary>
+    /// A vertex array is a wrapper around an OpenGL object/element array set.
+    /// Only one object array is allowed however multiple element arrays are allowed.
+    /// </summary>
+    /// <typeparam name="T">The data type of the vertex array</typeparam>
     public class VertexArray<T> : IDisposable where T : struct 
     {
         public ArraySpecification Specification { get; private set; }

@@ -211,7 +211,7 @@ void main()
 
             TextureHelper.EnableTexturing();
             _shaderProgram.Bind();
-            _manager.Draw(_shaderProgram);
+            _manager.Draw3D(_shaderProgram);
             _shaderProgram.Unbind();
             TextureHelper.DisableTexturing();
         }

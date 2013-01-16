@@ -3,6 +3,10 @@ using Sledge.Graphics.Shaders;
 
 namespace Sledge.DataStructures.Rendering
 {
+    /// <summary>
+    /// A subset is a range of indices for a solid vertex array.
+    /// These are grouped by texture and selection status to reduce renderer context switching.
+    /// </summary>
     public class SolidVertexArraySubset
     {
         private readonly SolidVertexArray _array;
@@ -23,7 +27,7 @@ namespace Sledge.DataStructures.Rendering
             Texture = texture;
         }
 
-        public void Draw(ShaderProgram program)
+        public void DrawFilled(ShaderProgram program)
         {
             _array.Array.Bind(0);
             _array.Array.DrawElements(0, Start, Count);

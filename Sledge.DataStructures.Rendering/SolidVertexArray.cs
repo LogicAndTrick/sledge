@@ -6,9 +6,13 @@ using Sledge.Graphics.Arrays;
 
 namespace Sledge.DataStructures.Rendering
 {
+    /// <summary>
+    /// A solid vertex array collects and stores a VBO for a single solid.
+    /// Faces are grouped by texture and selection state and then split into
+    /// subsets for optimised rendering later on.
+    /// </summary>
     public class SolidVertexArray
     {
-
         private static readonly BeginMode[] Modes;
         private static readonly ArraySpecification Specification;
         private const int SpecSize = 11;
@@ -26,6 +30,10 @@ namespace Sledge.DataStructures.Rendering
         public VertexArrayFloat Array { get; private set; }
         public List<SolidVertexArraySubset> Subsets { get; private set; } 
 
+        /// <summary>
+        /// Create a new vertex array for a solid.
+        /// </summary>
+        /// <param name="solid">The array solid</param>
         public SolidVertexArray(Solid solid)
         {
             float[] array;
@@ -38,6 +46,10 @@ namespace Sledge.DataStructures.Rendering
             Array = new VertexArrayFloat(Specification, Modes, count, array, new[] { indices, wireframeIndices});
         }
 
+        /// <summary>
+        /// Update the array with new data.
+        /// </summary>
+        /// <param name="solid">Solid containing the data to update</param>
         public void Update(Solid solid)
         {
             float[] array;
@@ -49,6 +61,15 @@ namespace Sledge.DataStructures.Rendering
             Array.Update(count, array, new[] { indices, wireframeIndices });
         }
 
+        /// <summary>
+        /// Does a loop around the solid and calculates array data and the subsets
+        /// </summary>
+        /// <param name="solid">The array solid</param>
+        /// <param name="count">Outputs the number of verts in the array</param>
+        /// <param name="array">Outputs the array data</param>
+        /// <param name="indices">Outputs the triangle drawing indices</param>
+        /// <param name="wireframeIndices">Outputs the line drawing indices</param>
+        /// <param name="subsets">The collection of subsets to populate</param>
         private void GetArrayData(Solid solid, out int count, out float[] array, out short[] indices, out short[] wireframeIndices, ICollection<SolidVertexArraySubset> subsets)
         {
             var indexList = new List<short>();

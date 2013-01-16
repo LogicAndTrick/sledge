@@ -9,6 +9,9 @@ using Sledge.Graphics.Shaders;
 
 namespace Sledge.DataStructures.Rendering
 {
+    /// <summary>
+    /// The array manager controls the rendering of the map via the solid vertex arrays it maintains.
+    /// </summary>
     public class ArrayManager
     {
         private readonly Dictionary<Solid, SolidVertexArray> _arrays;
@@ -30,7 +33,7 @@ namespace Sledge.DataStructures.Rendering
             _cache = _arrays.Values.SelectMany(x => x.Subsets).GroupBy(x => x).ToList();
         }
 
-        public void Draw(ShaderProgram program)
+        public void Draw3D(ShaderProgram program)
         {
             GL.ActiveTexture(TextureUnit.Texture0);
             program.Set("currentTexture", 0);
@@ -41,7 +44,7 @@ namespace Sledge.DataStructures.Rendering
                 if (tex != null) tex.Bind();
                 program.Set("isTextured", tex != null);
                 program.Set("isSelected", true);
-                foreach (var ts in group) ts.Draw(program);
+                foreach (var ts in group) ts.DrawFilled(program);
                 if (true)
                 {
                     program.Set("isWireframe", true);
@@ -49,6 +52,22 @@ namespace Sledge.DataStructures.Rendering
                     program.Set("isWireframe", false);
                 }
             }
+        }
+
+        public void Draw2D(ShaderProgram program)
+        {
+            GL.ActiveTexture(TextureUnit.Texture0);
+            program.Set("isTextured", false);
+            program.Set("currentTexture", 0);
+            program.Set("isWireframe", true);
+            //selectedwireframecolour
+            foreach (var group in _cache)
+            {
+                var sel = group.Key.IsSelected;
+                program.Set("isSelected", true);
+                foreach (var ts in group) ts.DrawWireframe(program);
+            }
+            program.Set("isWireframe", false);
         }
     }
 }

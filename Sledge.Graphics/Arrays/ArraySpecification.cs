@@ -4,6 +4,9 @@ using System.Text;
 
 namespace Sledge.Graphics.Arrays
 {
+    /// <summary>
+    /// An array specification collects array indices into a structure ready for computation on the VBO layer.
+    /// </summary>
     public class ArraySpecification
     {
         public List<ArrayIndex> Indices { get; private set; }

@@ -3,6 +3,10 @@ using OpenTK.Graphics.OpenGL;
 
 namespace Sledge.Graphics.Arrays
 {
+    /// <summary>
+    /// An array index is a point within an array specification.
+    /// It defines the name (for display purposes), type, length, size, and offset of an array data point.
+    /// </summary>
     public class ArrayIndex
     {
         public static ArrayIndex Vector4(string name)
