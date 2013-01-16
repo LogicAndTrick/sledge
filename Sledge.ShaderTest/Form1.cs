@@ -211,7 +211,7 @@ void main()
 
             TextureHelper.EnableTexturing();
             _shaderProgram.Bind();
-            _manager.Draw3D(_shaderProgram);
+            _manager.Draw3D(1, _shaderProgram);
             _shaderProgram.Unbind();
             TextureHelper.DisableTexturing();
         }
@@ -305,27 +305,6 @@ void main()
         public void Render2D()
         {
 
-        }
-    }
-
-    class ArrayRenderable : IRenderable
-    {
-        private ShaderProgram _shaderProgram;
-        public VertexArrayByte Array { get; private set; }
-
-        public ArrayRenderable(VertexArrayByte array, ShaderProgram shaderProgram)
-        {
-            _shaderProgram = shaderProgram;
-            Array = array;
-        }
-
-        public void Render(object sender)
-        {
-            _shaderProgram.Bind();
-            Array.Bind(0);
-            Array.DrawElements(0);
-            Array.Unbind();
-            _shaderProgram.Unbind();
         }
     }
 }

@@ -252,23 +252,23 @@ void main()
             Shader.Unbind();
         }
 
-        public void Draw2D(Matrix4 viewport, Matrix4 camera, Matrix4 modelView)
+        public void Draw2D(object context, Matrix4 viewport, Matrix4 camera, Matrix4 modelView)
         {
             Shader.Bind();
             Shader.Set("perspectiveMatrix", viewport);
             Shader.Set("cameraMatrix", camera);
             Shader.Set("modelViewMatrix", modelView);
-            _array.Draw2D(Shader);
+            _array.Draw2D(context, Shader);
             Shader.Unbind();
         }
 
-        public void Draw3D(Matrix4 viewport, Matrix4 camera, Matrix4 modelView)
+        public void Draw3D(object context, Matrix4 viewport, Matrix4 camera, Matrix4 modelView)
         {
             Shader.Bind();
             Shader.Set("perspectiveMatrix", viewport);
             Shader.Set("cameraMatrix", camera);
             Shader.Set("modelViewMatrix", modelView);
-            _array.Draw3D(Shader);
+            _array.Draw3D(context, Shader);
             Shader.Unbind();
         }
 
@@ -279,7 +279,7 @@ void main()
 
         public void Register(IEnumerable<ViewportBase> viewports)
         {
-            foreach (var vp in viewports.Skip(0).Take(1))
+            foreach (var vp in viewports)
             {
                 vp.RenderContext.Add(new RenderManagerRenderable(vp, this));
             }

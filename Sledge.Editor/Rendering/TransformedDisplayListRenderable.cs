@@ -29,8 +29,8 @@ namespace Sledge.Editor.Rendering
             Matrix4 vm = _viewport.GetViewportMatrix(),
                     cm = _viewport.GetCameraMatrix(),
                     mm = _viewport.GetModelViewMatrix();
-            if (_is3D) _manager.Draw3D(vm, cm, mm);
-            else _manager.Draw2D(vm, cm, mm);
+            if (_is3D) _manager.Draw3D(_viewport, vm, cm, mm);
+            else _manager.Draw2D(_viewport, vm, cm, mm);
         }
     }
 

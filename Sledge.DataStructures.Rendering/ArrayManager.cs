@@ -33,7 +33,7 @@ namespace Sledge.DataStructures.Rendering
             _cache = _arrays.Values.SelectMany(x => x.Subsets).GroupBy(x => x).ToList();
         }
 
-        public void Draw3D(ShaderProgram program)
+        public void Draw3D(object context, ShaderProgram program)
         {
             GL.ActiveTexture(TextureUnit.Texture0);
             program.Set("currentTexture", 0);
@@ -43,18 +43,18 @@ namespace Sledge.DataStructures.Rendering
                 var sel = group.Key.IsSelected;
                 if (tex != null) tex.Bind();
                 program.Set("isTextured", tex != null);
-                program.Set("isSelected", true);
-                foreach (var ts in group) ts.DrawFilled(program);
-                if (true)
+                program.Set("isSelected", sel);
+                foreach (var ts in group) ts.DrawFilled(context, program);
+                if (sel)
                 {
                     program.Set("isWireframe", true);
-                    foreach (var ts in group) ts.DrawWireframe(program);
+                    foreach (var ts in group) ts.DrawWireframe(context, program);
                     program.Set("isWireframe", false);
                 }
             }
         }
 
-        public void Draw2D(ShaderProgram program)
+        public void Draw2D(object context, ShaderProgram program)
         {
             GL.ActiveTexture(TextureUnit.Texture0);
             program.Set("isTextured", false);
@@ -64,8 +64,8 @@ namespace Sledge.DataStructures.Rendering
             foreach (var group in _cache)
             {
                 var sel = group.Key.IsSelected;
-                program.Set("isSelected", true);
-                foreach (var ts in group) ts.DrawWireframe(program);
+                program.Set("isSelected", sel);
+                foreach (var ts in group) ts.DrawWireframe(context, program);
             }
             program.Set("isWireframe", false);
         }

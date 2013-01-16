@@ -27,18 +27,18 @@ namespace Sledge.DataStructures.Rendering
             Texture = texture;
         }
 
-        public void DrawFilled(ShaderProgram program)
+        public void DrawFilled(object context, ShaderProgram program)
         {
-            _array.Array.Bind(0);
+            _array.Bind(context, 0);
             _array.Array.DrawElements(0, Start, Count);
-            _array.Array.Unbind();
+            _array.Unbind();
         }
 
-        public void DrawWireframe(ShaderProgram program)
+        public void DrawWireframe(object context, ShaderProgram program)
         {
-            _array.Array.Bind(1);
+            _array.Bind(context, 1);
             _array.Array.DrawElements(1, Start, Count);
-            _array.Array.Unbind();
+            _array.Unbind();
         }
 
         private bool Equals(SolidVertexArraySubset other)

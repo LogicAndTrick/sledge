@@ -28,7 +28,22 @@ namespace Sledge.DataStructures.Rendering
         }
 
         public VertexArrayFloat Array { get; private set; }
-        public List<SolidVertexArraySubset> Subsets { get; private set; } 
+        public List<SolidVertexArraySubset> Subsets { get; private set; }
+        private Dictionary<object, VertexArray<float>> _arrays;
+
+        public void Bind(object context, int index)
+        {
+            if (!_arrays.ContainsKey(context))
+            {
+                _arrays.Add(context, new VertexArray<float>(Array));
+            }
+            _arrays[context].Bind(index);
+        }
+
+        public void Unbind()
+        {
+            VertexArray<float>.Unbind();
+        }
 
         /// <summary>
         /// Create a new vertex array for a solid.
@@ -36,6 +51,8 @@ namespace Sledge.DataStructures.Rendering
         /// <param name="solid">The array solid</param>
         public SolidVertexArray(Solid solid)
         {
+            _arrays = new Dictionary<object, VertexArray<float>>();
+
             float[] array;
             short[] indices;
             short[] wireframeIndices;
@@ -52,13 +69,13 @@ namespace Sledge.DataStructures.Rendering
         /// <param name="solid">Solid containing the data to update</param>
         public void Update(Solid solid)
         {
+            _arrays.Clear();
             float[] array;
             short[] indices;
             int count;
             Subsets.Clear();
             short[] wireframeIndices;
             GetArrayData(solid, out count, out array, out indices, out wireframeIndices, Subsets);
-            Array.Update(count, array, new[] { indices, wireframeIndices });
         }
 
         /// <summary>
