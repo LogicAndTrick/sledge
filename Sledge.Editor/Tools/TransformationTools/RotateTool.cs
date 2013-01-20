@@ -36,7 +36,7 @@ namespace Sledge.Editor.Tools.TransformationTools
             return SledgeCursors.RotateCursor;
         }
 
-        public override Matrix4d? GetTransformationMatrix(Viewport2D viewport, MouseEventArgs e, BaseBoxTool.BoxState state, Document doc)
+        public override Matrix4? GetTransformationMatrix(Viewport2D viewport, MouseEventArgs e, BaseBoxTool.BoxState state, Document doc)
         {
             var origin = viewport.ZeroUnusedCoordinate((state.PreTransformBoxStart + state.PreTransformBoxEnd) / 2);
             var forigin = viewport.Flatten(origin);
@@ -57,14 +57,14 @@ namespace Sledge.Editor.Tools.TransformationTools
                 angle = rnd * (DMath.PI / 180);
             }
 
-            Matrix4d rotm;
-            if (viewport.Direction == Viewport2D.ViewDirection.Top) rotm = Matrix4d.CreateRotationZ((float)angle);
-            else if (viewport.Direction == Viewport2D.ViewDirection.Front) rotm = Matrix4d.CreateRotationX((float)angle);
-            else rotm = Matrix4d.CreateRotationY((float)-angle); // The Y axis rotation goes in the reverse direction for whatever reason
+            Matrix4 rotm;
+            if (viewport.Direction == Viewport2D.ViewDirection.Top) rotm = Matrix4.CreateRotationZ((float)angle);
+            else if (viewport.Direction == Viewport2D.ViewDirection.Front) rotm = Matrix4.CreateRotationX((float)angle);
+            else rotm = Matrix4.CreateRotationY((float)-angle); // The Y axis rotation goes in the reverse direction for whatever reason
 
-            var mov = Matrix4d.CreateTranslation((float)-origin.X, (float)-origin.Y, (float)-origin.Z);
-            var rot = Matrix4d.Mult(mov, rotm);
-            return Matrix4d.Mult(rot, Matrix4d.Invert(mov));
+            var mov = Matrix4.CreateTranslation((float)-origin.X, (float)-origin.Y, (float)-origin.Z);
+            var rot = Matrix4.Mult(mov, rotm);
+            return Matrix4.Mult(rot, Matrix4.Invert(mov));
         }
     }
 }

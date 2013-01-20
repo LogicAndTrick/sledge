@@ -1,7 +1,9 @@
 ﻿Key: Item - percentage complete, uncompleted tasks
 
 Priorities
+  VBO
   Compiling
+  TDI
   2D sprite billboarding/special rendering
     Decal Tool
   Paste Special
@@ -28,6 +30,7 @@ Priorities
     Entities - 60%, sprites, models, path connections
     Sprites - 0%
     Models - 0%
+    VBO - 50%, entities, tool rendering, grids
   File System
     FileSource and mounting - 50%, offset roots (for PAK files)
     Custom file dialog - 50%, events, options
@@ -81,7 +84,6 @@ Priorities
     Run Game - 0%
 
 2. Source support
-     Use VBOs instead of display lists - displacments are far too laggy with display lists.
 3. Plugins support
 
 Feature Ideas

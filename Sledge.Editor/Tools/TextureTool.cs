@@ -70,7 +70,7 @@ namespace Sledge.Editor.Tools
         private void HideMaskToggled(object sender, bool hide)
         {
             Document.HideFaceMask = hide;
-            Document.UpdateSelectLists();
+            Document.UpdateDisplayLists(Document.Selection.GetSelectedFaces());
         }
 
         private void TextureJustified(object sender, JustifyMode justifymode, bool treatasone)
@@ -99,7 +99,7 @@ namespace Sledge.Editor.Tools
                     face.AlignTextureWithPointCloud(cloud, boxAlignMode);
                 }
             }
-            Document.UpdateSelectLists();
+            Document.UpdateDisplayLists(Document.Selection.GetSelectedFaces());
             _form.SelectionChanged();
         }
 
@@ -111,7 +111,8 @@ namespace Sledge.Editor.Tools
                 face.Texture.Texture = texture.GetTexture();
                 face.CalculateTextureCoordinates();
             }
-            Document.UpdateSelectLists();
+            // When the texture changes, the entire list needs to be regenerated, can't do a partial update.
+            Document.UpdateDisplayLists();
             _form.SelectionChanged();
             _form.SelectTexture(texture);
         }
@@ -124,7 +125,7 @@ namespace Sledge.Editor.Tools
                 else if (align == AlignMode.World) face.AlignTextureToWorld();
                 face.CalculateTextureCoordinates();
             }
-            Document.UpdateSelectLists();
+            Document.UpdateDisplayLists(Document.Selection.GetSelectedFaces());
             _form.SelectionChanged();
         }
 
@@ -138,7 +139,7 @@ namespace Sledge.Editor.Tools
                 face.Texture.YShift = shifty;
                 face.SetTextureRotation(rotation); // This will recalculate the texture coordinates as well
             }
-            Document.UpdateSelectLists();
+            Document.UpdateDisplayLists(Document.Selection.GetSelectedFaces());
             _form.SelectionChanged();
         }
 
@@ -157,22 +158,26 @@ namespace Sledge.Editor.Tools
             _form.Show(Editor.Instance);
             Editor.Instance.Focus();
             Document.Selection.SwitchToFaceSelection();
-            Document.UpdateSelectLists();
+            Document.UpdateDisplayLists(Document.Selection.GetSelectedFaces());
             _form.SelectionChanged();
         }
 
         public override void ToolDeselected()
         {
+            var selected = Document.Selection.GetSelectedFaces().ToList();
             Document.Selection.SwitchToObjectSelection();
             _form.Clear();
             _form.Hide();
-            Document.UpdateDisplayLists();
+            Document.UpdateDisplayLists(selected);
         }
 
         public override void MouseDown(ViewportBase viewport, MouseEventArgs e)
         {
             var vp = viewport as Viewport3D;
             if (vp == null || (e.Button != MouseButtons.Left && e.Button != MouseButtons.Right)) return;
+
+            var selected = Document.Selection.GetSelectedFaces().ToList();
+            var fullUpdate = false;
 
             var behaviour = e.Button == MouseButtons.Left
                                 ? _form.GetLeftClickBehaviour(KeyboardState.Ctrl, KeyboardState.Shift, KeyboardState.Alt)
@@ -206,7 +211,7 @@ namespace Sledge.Editor.Tools
                 }
                 if (behaviour == SelectBehaviour.Lift || behaviour == SelectBehaviour.LiftSelect)
                 {
-                    var tex = faces.Where(face => face.Texture.Texture != null).FirstOrDefault();
+                    var tex = faces.FirstOrDefault(face => face.Texture.Texture != null);
                     itemToSelect = tex != null ? TexturePackage.GetItem(tex.Texture.Name) : null;
                 }
                 if (behaviour == SelectBehaviour.Apply || behaviour == SelectBehaviour.ApplyWithValues)
@@ -215,6 +220,7 @@ namespace Sledge.Editor.Tools
                     var item = tex != null ? TexturePackage.GetItem(tex.Texture.Name) : null;
                     if (item != null)
                     {
+                        fullUpdate = true;
                         foreach (var face in faces)
                         {
                             face.Texture.Name = item.Name;
@@ -251,7 +257,10 @@ namespace Sledge.Editor.Tools
                     }
                 }
             }
-            Document.UpdateDisplayLists();
+
+            if (fullUpdate) Document.UpdateDisplayLists();
+            else Document.UpdateDisplayLists(selected.Union(Document.Selection.GetSelectedFaces()));
+
             _form.SelectionChanged();
             if (itemToSelect != null)
             {

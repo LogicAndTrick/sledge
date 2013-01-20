@@ -18,6 +18,11 @@ namespace Sledge.Editor.Documents
             Documents.Add(doc);
         }
 
+        public static void Remove(Document doc)
+        {
+            Documents.Remove(doc);
+        }
+
         public static void SwitchTo(Document doc)
         {
             if (CurrentDocument != null) CurrentDocument.SetInactive();

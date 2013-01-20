@@ -115,6 +115,11 @@ namespace Sledge.Graphics.Helpers
             GL.BindTexture(TextureTarget.Texture2D, reference);
         }
 
+        public static void Unbind()
+        {
+            GL.BindTexture(TextureTarget.Texture2D, 0);
+        }
+
         #endregion
 
         #region Get

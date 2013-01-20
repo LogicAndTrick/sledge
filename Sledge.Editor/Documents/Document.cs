@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using OpenTK;
 using Sledge.Common.Mediator;
@@ -15,7 +17,6 @@ using Sledge.Providers;
 using Sledge.Providers.GameData;
 using Sledge.Providers.Texture;
 using Sledge.Settings;
-using Sledge.UI;
 using Path = System.IO.Path;
 
 namespace Sledge.Editor.Documents
@@ -31,7 +32,7 @@ namespace Sledge.Editor.Documents
 
         public bool HideFaceMask { get; set; }
 
-        private DisplayListGroup[] DisplayLists { get; set; }
+        private RenderManager Renderer { get; set; }
 
         public SelectionManager Selection { get; private set; }
         public HistoryManager History { get; private set; }
@@ -48,13 +49,6 @@ namespace Sledge.Editor.Documents
 
             Selection = new SelectionManager(this);
             History = new HistoryManager(this);
-            DisplayLists = new[]
-                               {
-                                   DisplayListGroup.Create3D(),
-                                   DisplayListGroup.Create2D(Viewport2D.ViewDirection.Top),
-                                   DisplayListGroup.Create2D(Viewport2D.ViewDirection.Front),
-                                   DisplayListGroup.Create2D(Viewport2D.ViewDirection.Side)
-                               };
             GridSpacing = Grid.DefaultSize;
             HideFaceMask = false;
 
@@ -77,6 +71,8 @@ namespace Sledge.Editor.Documents
 
             Map.PostLoadProcess(GameData, TextureHelper.Get);
 
+            Renderer = new RenderManager(this);
+
             if (MapFile != null) Mediator.Publish(EditorMediator.FileOpened, MapFile);
         }
 
@@ -84,14 +80,12 @@ namespace Sledge.Editor.Documents
         {
             Editor.Instance.SelectTool(ToolManager.Tools[0]); // todo keep this? cache?
 
-            ViewportManager.Viewports.OfType<Viewport2D>().ToList().ForEach(x => x.RenderContext.Add(new GridRenderable(this, x)));
+            //ViewportManager.Viewports.OfType<Viewport2D>().ToList().ForEach(x => x.RenderContext.Add(new GridRenderable(this, x)));
 
             MapDisplayLists.RegenerateSelectLists(Selection);
             MapDisplayLists.RegenerateDisplayLists(Map.WorldSpawn.Children, false);
-            foreach (var dl in DisplayLists)
-            {
-                dl.Register();
-            }
+
+            Renderer.Register(ViewportManager.Viewports);
 
             ViewportManager.Viewports.ForEach(vp => vp.RenderContext.Add(new ToolRenderable()));
             ViewportManager.AddContext3D(new WidgetLinesRenderable());
@@ -113,43 +107,46 @@ namespace Sledge.Editor.Documents
 
         public void StartSelectionTransform()
         {
-            foreach (var dl in DisplayLists)
-            {
-                dl.SetTintSelectListEnabled(false);
-            }
-            UpdateDisplayLists(true);
+            // todo selection transform shader
+            //foreach (var dl in DisplayLists)
+            //{
+            //    dl.SetTintSelectListEnabled(false);
+            //}
+            //UpdateDisplayLists(true);
         }
 
-        public void SetSelectListTransform(Matrix4d matrix)
+        public void SetSelectListTransform(Matrix4 matrix)
         {
-            foreach (var dl in DisplayLists)
-            {
-                dl.SetSelectListTransform(matrix);
-            }
+            Renderer.Shader.Bind();
+            Renderer.Shader.Set("selectionTransform", matrix);
+            Renderer.Shader.Unbind();
         }
 
         public void EndSelectionTransform()
         {
-            foreach (var dl in DisplayLists)
-            {
-                dl.SetSelectListTransform(Matrix4d.Identity);
-                dl.SetTintSelectListEnabled(true);
-            }
-            UpdateDisplayLists();
+            Renderer.Shader.Bind();
+            Renderer.Shader.Set("selectionTransform", Matrix4.Identity);
+            Renderer.Shader.Unbind();
         }
 
-        public void UpdateDisplayLists(bool exclude = false)
+        public void UpdateDisplayLists()
         {
             Map.PartialPostLoadProcess(GameData, TextureHelper.Get);
-            MapDisplayLists.RegenerateSelectLists(Selection);
-            MapDisplayLists.RegenerateDisplayLists(Map.WorldSpawn.Children, exclude);
+            Renderer.Update();
             ViewportManager.Viewports.ForEach(vp => vp.UpdateNextFrame());
         }
 
-        public void UpdateSelectLists()
+        public void UpdateDisplayLists(IEnumerable<MapObject> objects)
         {
             Map.PartialPostLoadProcess(GameData, TextureHelper.Get);
-            MapDisplayLists.RegenerateSelectLists(Selection);
+            Renderer.UpdatePartial(objects);
+            ViewportManager.Viewports.ForEach(vp => vp.UpdateNextFrame());
+        }
+
+        public void UpdateDisplayLists(IEnumerable<Face> faces)
+        {
+            Map.PartialPostLoadProcess(GameData, TextureHelper.Get);
+            Renderer.UpdatePartial(faces);
             ViewportManager.Viewports.ForEach(vp => vp.UpdateNextFrame());
         }
     }

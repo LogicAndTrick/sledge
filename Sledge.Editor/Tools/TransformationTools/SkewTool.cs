@@ -36,7 +36,7 @@ namespace Sledge.Editor.Tools.TransformationTools
                        : Cursors.SizeNS;
         }
 
-        public override Matrix4d? GetTransformationMatrix(Viewport2D viewport, MouseEventArgs e, BaseBoxTool.BoxState state, Document doc)
+        public override Matrix4? GetTransformationMatrix(Viewport2D viewport, MouseEventArgs e, BaseBoxTool.BoxState state, Document doc)
         {
             var shearUpDown = state.Handle == BaseBoxTool.ResizeHandle.Left || state.Handle == BaseBoxTool.ResizeHandle.Right;
             var shearTopRight = state.Handle == BaseBoxTool.ResizeHandle.Top || state.Handle == BaseBoxTool.ResizeHandle.Right;
@@ -54,7 +54,7 @@ namespace Sledge.Editor.Tools.TransformationTools
             var shearAmount = new Coordinate(mouseDiff.X / relative.Y, mouseDiff.Y / relative.X, 0);
             if (!shearTopRight) shearAmount *= -1;
 
-            var shearMatrix = Matrix4d.Identity;
+            var shearMatrix = Matrix4.Identity;
             var sax = (float)shearAmount.X;
             var say = (float)shearAmount.Y;
 
@@ -75,9 +75,9 @@ namespace Sledge.Editor.Tools.TransformationTools
             }
 
 
-            var stran = Matrix4d.CreateTranslation((float)-shearOrigin.X, (float)-shearOrigin.Y, (float)-shearOrigin.Z);
-            var shear = Matrix4d.Mult(stran, shearMatrix);
-            return Matrix4d.Mult(shear, Matrix4d.Invert(stran));
+            var stran = Matrix4.CreateTranslation((float)-shearOrigin.X, (float)-shearOrigin.Y, (float)-shearOrigin.Z);
+            var shear = Matrix4.Mult(stran, shearMatrix);
+            return Matrix4.Mult(shear, Matrix4.Invert(stran));
         }
     }
 }

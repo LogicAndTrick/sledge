@@ -60,9 +60,13 @@ namespace Sledge.DataStructures.MapObjects
                 }
                 BoundingBox = new Box(Origin + sub, Origin + add);
             }
-            else
+            else if (Children.Any())
             {
                 BoundingBox = new Box(Children.SelectMany(x => new[] {x.BoundingBox.Start, x.BoundingBox.End}));
+            }
+            else
+            {
+                BoundingBox = new Box(Origin, Origin);
             }
             base.UpdateBoundingBox(cascadeToParent);
         }

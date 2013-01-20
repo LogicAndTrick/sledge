@@ -60,7 +60,7 @@ namespace Sledge.Editor.Tools
             _form.Show(Editor.Instance);
             Editor.Instance.Focus();
             Document.Selection.SwitchToFaceSelection();
-            Document.UpdateDisplayLists(true);
+            Document.UpdateDisplayLists();
 
             if (_currentTool != null) _currentTool.ToolSelected();
         }

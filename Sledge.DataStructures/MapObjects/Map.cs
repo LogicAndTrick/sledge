@@ -53,7 +53,8 @@ namespace Sledge.DataStructures.MapObjects
 
             // Set maximum ids
             var maxObjectId = all.Max(x => x.ID);
-            var maxFaceId = all.OfType<Solid>().SelectMany(x => x.Faces).Max(x => x.ID);
+            var faces = all.OfType<Solid>().SelectMany(x => x.Faces).ToList();
+            var maxFaceId = faces.Any() ? faces.Max(x => x.ID) : 0;
             IDGenerator.Reset(maxObjectId, maxFaceId);
 
             // todo visgroups

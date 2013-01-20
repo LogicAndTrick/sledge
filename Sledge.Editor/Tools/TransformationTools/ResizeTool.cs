@@ -33,16 +33,16 @@ namespace Sledge.Editor.Tools.TransformationTools
             return null;
         }
 
-        public override Matrix4d? GetTransformationMatrix(Viewport2D viewport, MouseEventArgs e, BaseBoxTool.BoxState state, Document doc)
+        public override Matrix4? GetTransformationMatrix(Viewport2D viewport, MouseEventArgs e, BaseBoxTool.BoxState state, Document doc)
         {
             var coords = GetBoxCoordinatesForSelectionResize(viewport, e, state, doc);
             state.BoxStart = coords.Item1;
             state.BoxEnd = coords.Item2;
-            Matrix4d resizeMatrix;
+            Matrix4 resizeMatrix;
             if (state.Handle == BaseBoxTool.ResizeHandle.Center)
             {
                 var movement = state.BoxStart - state.PreTransformBoxStart;
-                resizeMatrix = Matrix4d.CreateTranslation((float)movement.X, (float)movement.Y, (float)movement.Z);
+                resizeMatrix = Matrix4.CreateTranslation((float)movement.X, (float)movement.Y, (float)movement.Z);
             }
             else
             {
@@ -51,9 +51,9 @@ namespace Sledge.Editor.Tools.TransformationTools
                 resize = resize.ComponentDivide(state.PreTransformBoxEnd - state.PreTransformBoxStart);
                 resize += new Coordinate(1, 1, 1);
                 var offset = -GetOriginForTransform(viewport, state);
-                var trans = Matrix4d.CreateTranslation((float)offset.X, (float)offset.Y, (float)offset.Z);
-                var scale = Matrix4d.Mult(trans, Matrix4d.Scale((float)resize.X, (float)resize.Y, (float)resize.Z));
-                resizeMatrix = Matrix4d.Mult(scale, Matrix4d.Invert(trans));
+                var trans = Matrix4.CreateTranslation((float)offset.X, (float)offset.Y, (float)offset.Z);
+                var scale = Matrix4.Mult(trans, Matrix4.Scale((float)resize.X, (float)resize.Y, (float)resize.Z));
+                resizeMatrix = Matrix4.Mult(scale, Matrix4.Invert(trans));
             }
             return resizeMatrix;
         }

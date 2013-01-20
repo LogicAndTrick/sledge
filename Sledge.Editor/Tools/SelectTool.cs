@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
@@ -35,7 +36,7 @@ namespace Sledge.Editor.Tools
         private TransformationTool _currentTool;
 
         private bool Transforming { get; set; }
-        private Matrix4d? CurrentTransform { get; set; }
+        private Matrix4? CurrentTransform { get; set; }
 
         public SelectTool()
         {
@@ -72,7 +73,7 @@ namespace Sledge.Editor.Tools
         {
             Mediator.Subscribe(EditorMediator.SelectionChanged, this);
             SelectionChanged();
-            Document.UpdateSelectLists();
+            Document.UpdateDisplayLists(Document.Selection.GetSelectedObjects());
         }
 
         public override void ToolDeselected()
@@ -184,6 +185,9 @@ namespace Sledge.Editor.Tools
             var hs = new HistorySelect("Selected objects", selected, true);
             var ic = new HistoryItemCollection("Selection changed", new[] {hd, hs});
             Document.History.AddHistoryItem(ic);
+
+            // Update renderer
+            Document.UpdateDisplayLists(deselected.Union(selected));
         }
 
         #endregion
@@ -219,7 +223,6 @@ namespace Sledge.Editor.Tools
             var desel = ChosenItemFor3DSelection != null && KeyboardState.Ctrl && ChosenItemFor3DSelection.IsSelected;
             SetSelected(desel ? list : null, desel ? null : list, !KeyboardState.Ctrl, false);
 
-            Document.UpdateSelectLists();
             State.ActiveViewport = null;
         }
 
@@ -261,8 +264,6 @@ namespace Sledge.Editor.Tools
             else sel.Add(ChosenItemFor3DSelection);
 
             SetSelected(desel, sel, false, false);
-
-            Document.UpdateSelectLists();
 
             State.ActiveViewport = null;
         }
@@ -367,7 +368,6 @@ namespace Sledge.Editor.Tools
             if (!Document.Selection.IsEmpty() && !KeyboardState.Ctrl)
             {
                 SetSelected(null, null, true, false);
-                Document.UpdateSelectLists();
             }
 
             // We're drawing a selection box, so clear the current tool
@@ -402,7 +402,6 @@ namespace Sledge.Editor.Tools
             {
                 var list = new[] { seltest };
                 SetSelected(seltest.IsSelected ? list : null, seltest.IsSelected ? null : list, false, false);
-                Document.UpdateSelectLists();
             }
 
             base.LeftMouseClick(viewport, e);
@@ -422,7 +421,6 @@ namespace Sledge.Editor.Tools
                 {
                     var list = new[] { seltest };
                     SetSelected(seltest.IsSelected ? list : null, seltest.IsSelected ? null : list, false, false);
-                    Document.UpdateSelectLists();
                     SelectionChanged();
                     return;
                 }
@@ -433,7 +431,7 @@ namespace Sledge.Editor.Tools
             SetCurrentTool(_tools[(idx + 1) % _tools.Count]);
         }
 
-        private Matrix4d? GetTransformMatrix(Viewport2D viewport, MouseEventArgs e)
+        private Matrix4? GetTransformMatrix(Viewport2D viewport, MouseEventArgs e)
         {
             if (_currentTool == null) return null;
             return State.Handle == ResizeHandle.Center
@@ -516,7 +514,6 @@ namespace Sledge.Editor.Tools
                                 ? Document.Map.WorldSpawn.GetAllNodesContainedWithin(boundingbox).ToList()
                                 : Document.Map.WorldSpawn.GetAllNodesIntersectingWith(boundingbox).ToList();
                 SetSelected(null, nodes, false, false);
-                Document.UpdateSelectLists();
             }
             base.BoxDrawnConfirm(viewport);
             SelectionChanged();
@@ -604,8 +601,8 @@ namespace Sledge.Editor.Tools
             var start = viewport.Flatten(State.BoxStart);
             var end = viewport.Flatten(State.BoxEnd);
 
-            Matrix4d mat;
-            GL.GetDouble(GetPName.ProjectionMatrix, out mat);
+            Matrix4 mat;
+            GL.GetFloat(GetPName.ProjectionMatrix, out mat);
 
             // If transforming in the viewport, push the matrix transformation to the stack
             if (viewport == State.ActiveViewport && State.Action == BoxAction.Resizing && CurrentTransform.HasValue)
@@ -614,7 +611,7 @@ namespace Sledge.Editor.Tools
                 end = viewport.Flatten(State.PreTransformBoxEnd);
 
                 var dir = DisplayListGroup.GetMatrixFor(viewport.Direction);
-                var inv = Matrix4d.Invert(dir);
+                var inv = Matrix4.Invert(dir);
                 GL.MultMatrix(ref dir);
                 var transform = CurrentTransform.Value;
                 GL.MultMatrix(ref transform);
@@ -653,23 +650,21 @@ namespace Sledge.Editor.Tools
         {
             var objects = Document.Selection.GetSelectedObjects().Where(o => o.Parent == null || !o.Parent.IsSelected).ToList();
             var idg = new IDGenerator();
-            var clones = objects.Select(x => x.Clone(idg));
-            foreach (var o in objects)
-            {
-                o.Transform(transform);
-            }
+            var clones = objects.Select(x => x.Clone(idg)).ToList(); // TODO: Creating lots of clones is time consuming, can it be optimised?
+            Parallel.ForEach(objects, x => x.Transform(transform));
             var name = transformationName + " (" + objects.Count + " object" + (objects.Count == 1 ? "" : "s") + ")";
             var he = new HistoryEdit(name, clones, objects);
             Document.History.AddHistoryItem(he);
+            Document.UpdateDisplayLists(Document.Selection.GetSelectedObjects());
         }
 
         /// <summary>
-        /// Convert a Matrix4d into a unit transformation object
+        /// Convert a Matrix4 into a unit transformation object
         /// TODO: Move this somewhere better (extension method?)
         /// </summary>
         /// <param name="mat">The matrix to convert</param>
         /// <returns>The unit transformation representation of the matrix</returns>
-        private IUnitTransformation CreateMatrixMultTransformation(Matrix4d mat)
+        private IUnitTransformation CreateMatrixMultTransformation(Matrix4 mat)
         {
             var dmat = new[]
                            {

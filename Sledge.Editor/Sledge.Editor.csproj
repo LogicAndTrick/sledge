@@ -107,6 +107,7 @@
     <Compile Include="Documents\Document.cs" />
     <Compile Include="Documents\DocumentManager.cs" />
     <Compile Include="Documents\DocumentSubscriptions.cs" />
+    <Compile Include="Documents\RenderManager.cs" />
     <Compile Include="Editing\SelectionManager.cs" />
     <Compile Include="EditorMediator.cs" />
     <Compile Include="Error.cs" />

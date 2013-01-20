@@ -53,7 +53,8 @@ namespace Sledge.Providers.Texture
 
         public static void Load(string file)
         {
-            if (!File.Exists(file)) return;
+            file = file.ToLower();
+            if (!File.Exists(file) || LoadedPackages.ContainsKey(file)) return;
             var tp = new TexturePackage(file);
             tp.LoadAllTextureItems();
             LoadedPackages.Add(file, tp);
