@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Reflection;
 using System.Windows.Forms;
 using Microsoft.WindowsAPICodePack.Taskbar;
 using Sledge.Common.Mediator;
@@ -7,9 +8,11 @@ using Sledge.DataStructures.MapObjects;
 using Sledge.Database.Models;
 using Sledge.Editor.Brushes;
 using Sledge.Editor.Documents;
+using Sledge.Editor.Menu;
 using Sledge.Editor.Settings;
 using Sledge.Editor.UI;
 using Sledge.Editor.Visgroups;
+using Sledge.Graphics.Helpers;
 using Sledge.Providers;
 using Sledge.Providers.GameData;
 using Sledge.Providers.Map;
@@ -102,6 +105,9 @@ namespace Sledge.Editor
 
             UpdateRecentFiles();
 
+            MenuManager.Init(mnuMain);
+            MenuManager.Rebuild();
+
             ViewportManager.Init(tblQuadView);
             ToolManager.Init();
             BrushManager.Init();
@@ -127,6 +133,11 @@ namespace Sledge.Editor
             MapProvider.Register(new VmfProvider());
             GameDataProvider.Register(new FgdProvider());
             TextureProvider.Register(new WadProvider());
+            TextureProvider.Register(new SprProvider());
+
+            var spritesFolder = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Sprites");
+            TexturePackage.Load(spritesFolder);
+            TexturePackage.LoadTextureData(TexturePackage.GetLoadedItems().Select(x => x.Name));
 
             Subscribe();
         }
@@ -198,24 +209,27 @@ namespace Sledge.Editor
         private void UpdateRecentFiles()
         {
             var recents = Context.DBContext.GetAllRecentFiles();
-            var exitPosition = MenuFile.DropDownItems.IndexOf(MenuFileExit) - 1;
-            while (MenuFile.DropDownItems[exitPosition] != MenuFileBottomSep)
-            {
-                MenuFile.DropDownItems.RemoveAt(exitPosition--);
-            }
-            if (recents.Any())
-            {
-                exitPosition++;
-                foreach (var rf in recents.OrderBy(x => x.Order))
-                {
-                    var loc = rf.Location;
-                    var mi = new ToolStripMenuItem(System.IO.Path.GetFileName(loc));
-                    mi.Click += (sender, e) => LoadFile(loc);
-                    mi.ToolTipText = loc;
-                    MenuFile.DropDownItems.Insert(exitPosition++, mi);
-                }
-                MenuFile.DropDownItems.Insert(exitPosition, new ToolStripSeparator());
-            }
+            MenuManager.RecentFiles.Clear();
+            MenuManager.RecentFiles.AddRange(recents);
+            MenuManager.Rebuild();
+            //var exitPosition = MenuFile.DropDownItems.IndexOf(MenuFileExit) - 1;
+            //while (MenuFile.DropDownItems[exitPosition] != MenuFileBottomSep)
+            //{
+            //    MenuFile.DropDownItems.RemoveAt(exitPosition--);
+            //}
+            //if (recents.Any())
+            //{
+            //    exitPosition++;
+            //    foreach (var rf in recents.OrderBy(x => x.Order))
+            //    {
+            //        var loc = rf.Location;
+            //        var mi = new ToolStripMenuItem(System.IO.Path.GetFileName(loc));
+            //        mi.Click += (sender, e) => LoadFile(loc);
+            //        mi.ToolTipText = loc;
+            //        MenuFile.DropDownItems.Insert(exitPosition++, mi);
+            //    }
+            //    MenuFile.DropDownItems.Insert(exitPosition, new ToolStripSeparator());
+            //}
         }
 
         public void FileOpened(string path)

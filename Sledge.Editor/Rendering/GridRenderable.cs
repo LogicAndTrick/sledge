@@ -1,7 +1,4 @@
-﻿using System;
-using Sledge.Graphics;
-using OpenTK.Graphics.OpenGL;
-using System.Drawing;
+﻿using OpenTK.Graphics.OpenGL;
 using Sledge.Graphics.Helpers;
 using Sledge.Graphics.Renderables;
 using Sledge.Settings;
@@ -9,13 +6,13 @@ using Sledge.UI;
 
 namespace Sledge.Editor.Rendering
 {
-    public class GridRenderable : DisplayListRenderable
+    public class GridRenderable : TransformedDisplayListRenderable
     {
         private Documents.Document Document { get; set; }
         private decimal LastBuiltStep { get; set; }
 
-        public GridRenderable(Documents.Document doc, ViewportBase v)
-            : base("2DGridRenderable_" + v.GetHashCode())
+        public GridRenderable(Documents.Document doc, Viewport2D v)
+            : base("2DGridRenderable_" + v.GetHashCode(), v.GetModelViewMatrix())
         {
             Document = doc;
             LastBuiltStep = -1;

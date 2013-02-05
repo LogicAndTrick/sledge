@@ -1,11 +1,9 @@
 ﻿Key: Item - percentage complete, uncompleted tasks
 
 Priorities
-  VBO
   Compiling
   TDI
-  2D sprite billboarding/special rendering
-    Decal Tool
+  Decal Tool / Rendering
   Paste Special
   Texture browser
   Undo/Redo
@@ -28,9 +26,9 @@ Priorities
   Rendering
     Solids - 90%
     Entities - 60%, sprites, models, path connections
-    Sprites - 0%
+    Sprites - 95%, billboarding calculation could be improved
     Models - 0%
-    VBO - 50%, entities, tool rendering, grids
+    VBO - 100%
   File System
     FileSource and mounting - 50%, offset roots (for PAK files)
     Custom file dialog - 50%, events, options

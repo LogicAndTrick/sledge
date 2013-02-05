@@ -14,7 +14,8 @@ namespace Sledge.Editor.Rendering
                 || (ToolManager.ActiveTool.Usage == BaseTool.ToolUsage.View2D && sender is Viewport2D)
                 || (ToolManager.ActiveTool.Usage == BaseTool.ToolUsage.View3D && sender is Viewport3D))
             {
-                ToolManager.ActiveTool.Render(sender as ViewportBase);
+                var vp = sender as ViewportBase;
+                ToolManager.ActiveTool.Render(vp);
             }
         }
     }

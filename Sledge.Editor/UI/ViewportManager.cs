@@ -91,8 +91,8 @@ namespace Sledge.Editor.UI
                 Dock = DockStyle.Fill,
                 Camera =
                 {
-                    Location = new Vector3d(0, 0, 0),
-                    LookAt = new Vector3d(0, 1, 0)
+                    Location = new Vector3(0, 0, 0),
+                    LookAt = new Vector3(0, 1, 0)
                 }
             };
             viewport.MakeCurrent();

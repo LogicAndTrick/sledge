@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using Sledge.DataStructures.GameData;
+using Sledge.DatCommonusing Sledge.DataStructures.GameData;
 using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.Transformations;
 
@@ -12,6 +12,8 @@ namespace Sledge.DataStructures.MapObjects
         public GameDataObject GameData { get; set; }
         public EntityData EntityData { get; set; }
         public Coordinate Origin { get; set; }
+
+        publi        public ITexture Sprite}
 
         public Entity(long id) : base(id)
         {

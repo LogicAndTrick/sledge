@@ -13,11 +13,12 @@ using Sledge.Editor.Tools;
 using Sledge.Editor.UI;
 using Sledge.Editor.Visgroups;
 using Sledge.Graphics.Helpers;
+usine.Graphics.Helpers;
 using Sledge.Providers;
 using Sledge.Providers.GameData;
 using Sledge.Providers.Texture;
 using Sledge.Settings;
-using Path = System.IO.Path;
+using Path = System.IO.PaSledge.UItem.IO.Path;
 
 namespace Sledge.Editor.Documents
 {
@@ -32,9 +33,7 @@ namespace Sledge.Editor.Documents
 
         public bool HideFaceMask { get; set; }
 
-        private RenderManager Renderer { get; set; }
-
-        public SelectionManager Selection { get; private set; }
+        private RenderManager Renderer { geublic RenderManager Renderer { get; privateanager Selection { get; private set; }
         public HistoryManager History { get; private set; }
 
         private readonly DocumentSubscriptions _subscriptions;

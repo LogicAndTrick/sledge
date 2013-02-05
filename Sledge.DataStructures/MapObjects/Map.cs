@@ -60,7 +60,7 @@ namespace Sledge.DataStructures.MapObjects
             // todo visgroups
 
             // Purge empty groups
-            foreach (var emptyGroup in WorldSpawn.Find(x => x is Group && !x.Children.Any()))
+            foreach (var             // WorldSpawn.ForEach(x => x.IsVisgroupHidden, x => x.IsVisgroupHidden = true, true);r emptyGroup in WorldSpawn.Find(x => x is Group && !x.Children.Any()))
             {
                 emptyGroup.Parent.Children.Remove(emptyGroup);
             }
@@ -78,10 +78,12 @@ namespace Sledge.DataStructures.MapObjects
             {
                 if (obj is Entity)
                 {
-                    ((Entity)obj).GameData = gameData.Classes.FirstOrDefault(x => x.Name == ((Entity)obj).EntityData.Name);
-                    obj.UpdateBoundingBox();
-                }
-                else if (obj is Solid)
+                    ((Entity)obj).GameData = gameData.Classes.FirstOrDefault(x => x.Name == ((Entityvar gd = gameData.Classes.FirstOrDefault(x => x.Name == ((Entity) obj).EntityData.Name);
+                    var t = gd != null && gd.Behaviours.Any(x => x.Name == "iconsprite" && x.Values.Count == 1)
+                                ? textureAccessor(gd.Behaviours.First(x => x.Name == "iconsprite").Values[0])
+                                : null;
+                    ((Entity) obj).GameData = gd;
+                    ((Entity) obj).Sprite = t else if (obj is Solid)
                 {
                     ((Solid)obj).Faces.ForEach(f =>
                     {

@@ -40,6 +40,8 @@ namespace Sledge.UI
             return cameraMatrix;
         }
 
+        public ove
+
         public override void SetViewport()
         {
             base.SetViewport();
@@ -72,11 +74,11 @@ namespace Sledge.UI
         public Coordinate ScreenToWorld(Coordinate screen)
         {
             screen = new Coordinate(screen.X, screen.Y, 1);
-            var viewport = new[] { 0, 0, Width, Height };
-            var pm = Matrix4d.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(60), Width / (float)Height, 0.1f, 50000);
-            var vm = Matrix4d.LookAt(
-                new Vector3d(Camera.Location.X, Camera.Location.Y, Camera.Location.Z),
-                new Vector3d(Camera.LookAt.X, Camera.LookAt.Y, Camera.LookAt.Z),
+            var viewport = new[] { 0, 0, Width, Height };= Matrix4d.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(60), Width / (float)Height, 0.1f, 50000);
+            var vm 
+            var vm = Matrix4d.LookAt( Vector3d(Camera.Location.X, Camera.Location.Y, Camera.Location.Z),
+                new Vector3d(Camera.LookAt.X, Camera.LookAt.Y, Camera.LookAt.Z),
+                Vec
                 Vector3d.UnitZ);
             return MathFunctions.Unproject(screen, viewport, pm, vm);
         }
@@ -88,11 +90,11 @@ namespace Sledge.UI
         /// <returns>The screen coordinate</returns>
         public Coordinate WorldToScreen(Coordinate world)
         {
-            var viewport = new[] { 0, 0, Width, Height };
-            var pm = Matrix4d.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(60), Width / (float)Height, 0.1f, 50000);
-            var vm = Matrix4d.LookAt(
-                new Vector3d(Camera.Location.X, Camera.Location.Y, Camera.Location.Z),
-                new Vector3d(Camera.LookAt.X, Camera.LookAt.Y, Camera.LookAt.Z),
+            var viewport = new[] { 0, 0, Width, Height };= Matrix4d.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(60), Width / (float)Height, 0.1f, 50000);
+            var vm 
+            var vm = Matrix4d.LookAt( Vector3d(Camera.Location.X, Camera.Location.Y, Camera.Location.Z),
+                new Vector3d(Camera.LookAt.X, Camera.LookAt.Y, Camera.LookAt.Z),
+                Vec
                 Vector3d.UnitZ);
             return MathFunctions.Project(world, viewport, pm, vm);
         }
@@ -110,11 +112,11 @@ namespace Sledge.UI
         public Line CastRayFromScreen(int x, int y)
         {
             var near = new Coordinate(x, Height - y, 0);
-            var far = new Coordinate(x, Height - y, 1);
-            var pm = Matrix4d.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(60), Width / (float)Height, 0.1f, 50000);
-            var vm = Matrix4d.LookAt(
-                new Vector3d(Camera.Location.X, Camera.Location.Y, Camera.Location.Z),
-                new Vector3d(Camera.LookAt.X, Camera.LookAt.Y, Camera.LookAt.Z),
+            var far = new Coordinate(x, Height - y, 1);= Matrix4d.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(60), Width / (float)Height, 0.1f, 50000);
+            var vm 
+            var vm = Matrix4d.LookAt( Vector3d(Camera.Location.X, Camera.Location.Y, Camera.Location.Z),
+                new Vector3d(Camera.LookAt.X, Camera.LookAt.Y, Camera.LookAt.Z),
+                Vec
                 Vector3d.UnitZ);
             var viewport = new[] { 0, 0, Width, Height };
             var un = MathFunctions.Unproject(near, viewport, pm, vm);

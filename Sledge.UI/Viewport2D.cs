@@ -184,7 +184,7 @@ namespace Sledge.UI
         public override Matrix4 GetViewportMatrix()
         {
             const float near = -1000000;
-            const float far = 1000000;
+          const float far = 1000000;
             return Matrix4.CreateOrthographic(Width, Height, near, far);
         }
 

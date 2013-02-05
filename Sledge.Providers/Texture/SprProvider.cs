@@ -31,6 +31,7 @@ namespace Sledge.Providers.Texture
                 var width = br.ReadInt32();
                 var height = br.ReadInt32();
                 var numframes = br.ReadInt32();
+                var beamlength = br.ReadSingle();
                 var synctype = br.ReadInt32();
                 var paletteSize = br.ReadInt16();
                 var palette = br.ReadBytes(paletteSize * 3);
@@ -67,10 +68,10 @@ namespace Sledge.Providers.Texture
 
         protected override void LoadTexture(TexturePackage package, string name)
         {
-            var file = new FileInfo(Path.Combine(package.PackageFile, name + ".spr"));
+            var file = new FileInfo(Path.Combine(package.PackageFile, name));
             if (file.Exists)
             {
-                TextureHelper.Create(name, Parse(file));
+                TextureHelper.Create("sprites/" + name, Parse(file));
             }
         }
 

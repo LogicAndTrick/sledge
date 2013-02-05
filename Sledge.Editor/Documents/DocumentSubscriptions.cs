@@ -142,10 +142,9 @@ namespace Sledge.Editor.Documents
 
         public void RebuildGrid()
         {
-            foreach (var vp in ViewportManager.Viewports.OfType<Viewport2D>())
+            foreach (var kv in _document.Renderer.GridRenderables)
             {
-                var grid = vp.RenderContext.FindRenderable<GridRenderable>();
-                if (grid != null) grid.RebuildGrid(vp.Zoom, true);
+                kv.Value.RebuildGrid(((Viewport2D) kv.Key).Zoom, true);
             }
         }
 
