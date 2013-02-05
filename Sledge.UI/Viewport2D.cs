@@ -178,13 +178,13 @@ namespace Sledge.UI
         public override void SetViewport()
         {
             base.SetViewport();
-            //Viewport.Orthographic(0, 0, Width, Height, -50000, 50000);
+            Viewport.Orthographic(0, 0, Width, Height, -50000, 50000);
         }
 
         public override Matrix4 GetViewportMatrix()
         {
             const float near = -1000000;
-          const float far = 1000000;
+            const float far = 1000000;
             return Matrix4.CreateOrthographic(Width, Height, near, far);
         }
 

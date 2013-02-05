@@ -8,8 +8,8 @@ using Sledge.Graphics.Arrays;
 namespace Sledge.DataStructures.Rendering
 {
     /// <summary>
-    /// A solid vertex array collects and stores a VBO for a single soll solids in the map.
-    /// Faces are grouped by texture and then split into  optimised rendering later on.
+    /// A solid vertex array collects and stores a VBO for all solids in the map.
+    /// Faces are grouped by texture and then split into  subsets for optimised rendering later on.
     /// </summary>
     public class SolidVertexArray
     {
@@ -33,7 +33,8 @@ namespace Sledge.DataStructures.Rendering
         public List<VertexArraySubset<ITexture>> TextureSubsets { get; private set; }
         public List<VertexArraySubset<object>> WireframeSubsets { get; private set; }
         public Dictionary<Face, int> FaceOffsets { get; private set; }
-        private readonly Dictionary<object, Vublic Dictionary<Entity, int> Entity   private readonly Dictionary<object, VertexArray<float>> _arrays;
+        public Dictionary<Entity, int> EntityOffsets { get; private set; }
+        private readonly Dictionary<object, VertexArray<float>> _arrays;
 
         public void Bind(object context, int index)
         {
@@ -64,10 +65,10 @@ namespace Sledge.DataStructures.Rendering
             TextureSubsets = new List<VertexArraySubset<ITexture>>();
             WireframeSubsets = new List<VertexArraySubset<object>>();
             FaceOffsets = new Dictionary<Face, int>();
-            GetArrayData(objects, out count, out array, out indices, out wirefrEntityOffsets = new Dictionary<Entity, int>eIndices, TextureSubsets, WireframeSubsets, FaceOffsets);
+            EntityOffsets = new Dictionary<Entity, int>();
+            GetArrayData(objects, out count, out array, out indices, out wireframeIndices, TextureSubsets, WireframeSubsets, FaceOffsets, EntityOffsets);
 
-            Array.Update(count, array, new[] {indices, wireframeIndices});
-       , Entityn, Modes, count, sizeof(float), array, new[] { indices, wireframeIndices});
+            Array = new VertexBuffer<float>(Specification, Modes, count, sizeof(float), array, new[] { indices, wireframeIndices});
         }
 
         /// <summary>
@@ -84,19 +85,21 @@ namespace Sledge.DataStructures.Rendering
             TextureSubsets.Clear();
             WireframeSubsets.Clear();
             FaceOffsets.Clear();
-            GetArrayData(objects, out count, out array, out indices, out wireframeIndices, TextureEntity out wireframeIndices, TextureSubsets, WireframeSubsets, FaceOffsets);
+            EntityOffsets.Clear();
+            GetArrayData(objects, out count, out array, out indices, out wireframeIndices, TextureSubsets, WireframeSubsets, FaceOffsets, EntityOffsets);
 
             Array.Update(count, array, new[] {indices, wireframeIndices});
-       , Entity        }
+        }
 
         public void UpdatePartial(IEnumerable<MapObject> objects)
         {
             UpdatePartial(objects.OfType<Solid>().SelectMany(x => x.Faces));
+            UpdatePartial(objects.OfType<Entity>().Where(x => x.Children.Count == 0));
         }
 
         public void UpdatePartial(IEnumerable<Face> faces)
         {
-            var list =    UpdatePartial(objects.OfType<Entity>().Where(x => x.Children.Count == 0   var list = new float[128]; // 128 is large enough for most faces (up to 11 faces)
+            var list = new float[128]; // 128 is large enough for most faces (up to 11 faces)
             foreach (var face in faces)
             {
                 if (!FaceOffsets.ContainsKey(face)) continue;
@@ -108,9 +111,7 @@ namespace Sledge.DataStructures.Rendering
             }
         }
 
-        /// <summary>
-        /// Does a loop around the map objects and calculates array data and the subsets
-       public void UpdatePartial(IEnumerable<Entity> entities)
+        public void UpdatePartial(IEnumerable<Entity> entities)
         {
             var list = new float[6 * 4 * SpecSize];
             foreach (var entity in entities)
@@ -122,7 +123,12 @@ namespace Sledge.DataStructures.Rendering
                 {
                     idx = WriteFace(list, idx, face);
                 }
-                Array.UpdatePartial(offset, list.Length calculates array data and the subsets
+                Array.UpdatePartial(offset, list.Length, list);
+            }
+        }
+
+        /// <summary>
+        /// Does a loop around the map objects and calculates array data and the subsets
         /// </summary>
         /// <param name="objects">The objects in the array</param>
         /// <param name="count">Outputs the number of verts in the array</param>
@@ -132,19 +138,21 @@ namespace Sledge.DataStructures.Rendering
         /// <param name="subsets">The collection of textured subsets to populate</param>
         /// <param name="wireframeSubsets">The collection of wireframe subsets to populate</param>
         /// <param name="faceOffsets"> </param>
-        private static void GetArrayData(IEnumerable<MapObject> objects, out int count, out float[] array, out uint[] indices, ou/// <param name="entityrray, out uint[] indices, out uint[] wireframeIndices, ICollection<VertexArraySubset<ITexture>> subsets, ICollection<VertexArraySubset<object>> wireframeSubsets, Dictionary<Face, int> faceOffsets)
-        {
-            var faces = objects.OfType<Solid>().SelectMany(x => x.Faces).ToList();
-            var indexList , Dictionary<Entity, int> entityOffsets)
+        /// <param name="entityOffsets"> </param>
+        private static void GetArrayData(IEnumerable<MapObject> objects, out int count, out float[] array, out uint[] indices, out uint[] wireframeIndices, ICollection<VertexArraySubset<ITexture>> subsets, ICollection<VertexArraySubset<object>> wireframeSubsets, Dictionary<Face, int> faceOffsets, Dictionary<Entity, int> entityOffsets)
         {
             var obj = objects.Where(x => !x.IsVisgroupHidden && !x.IsCodeHidden).ToList();
             var faces = obj.OfType<Solid>().SelectMany(x => x.Faces).ToList();
-            var entities = obj.OfType<Entity>().Where(x => x.Children.Count == 0  uint index = 0;
+            var entities = obj.OfType<Entity>().Where(x => x.Children.Count == 0).ToList();
+            var indexList = new List<uint>();
+            var wireframeIndexList = new List<uint>();
+            uint index = 0;
             var idx = 0;
-            array = new float[SpecSize * faces.Sum(x => x.Vertices.Count)];
+            var numVerts = faces.Sum(x => x.Vertices.Count) + entities.Count * 6 * 4; // Entity is always a rec. prism (6 sides, quads)
+            array = new float[SpecSize * numVerts];
             var subsetStart = 0;
-            var wireframeSubsetvar numVerts = faces.Sum(x => x.Vertices.Count) + entities.Count * 6 * 4; // Entity is always a rec. prism (6 sides, quads)
-            array = new float[SpecSize * numVerts=> new { x.Texture.Texture }))
+            var wireframeSubsetStart = 0;
+            foreach (var group in faces.GroupBy(x => new { x.Texture.Texture }))
             {
                 foreach (var face in group)
                 {
@@ -171,12 +179,7 @@ namespace Sledge.DataStructures.Rendering
                 wireframeSubsets.Add(new VertexArraySubset<object>(null, wireframeSubsetStart, wireframeIndexList.Count - wireframeSubsetStart));
                 wireframeSubsetStart = wireframeIndexList.Count;
             }
-            indices = indexList.ToArray();
-            wireframeIndices = wireframeIndexList.ToArray();
-            count = indices.Length;
-        }
-
-        private staforeach (var entity in entities)
+            foreach (var entity in entities)
             {
                 entityOffsets.Add(entity, idx);
                 foreach (var face in entity.GetFaces())
@@ -189,22 +192,28 @@ namespace Sledge.DataStructures.Rendering
                             indexList.Add(index);
                             indexList.Add(index + i);
                             indexList.Add(index + i + 1);
-                        }i = (uint) ((i + 1) % face.Vertices.Count);
-                        wireframeIndexList.Add(index + i);
-                        wireframeIndexList.Add(index+ ni);
+                        }
                     }
-                    index += (uint) face.Vertices.Count;
-                }
-
-                subsets.Add(new VertexArraySubset<ITexture>(group.Key.Texture, subsetStart, indexList.Count face.Vertices.Count;
+                    for (uint i = 0; i < face.Vertices.Count; i++)
+                    {
+                        var ni = (uint)((i + 1) % face.Vertices.Count);
+                        wireframeIndexList.Add(index + i);
+                        wireframeIndexList.Add(index + ni);
+                    }
+                    index += (uint)face.Vertices.Count;
                 }
             }
             if (entities.Any())
             {
-                subsets.Add(new VertexArraySubset<ITexture>(null, subsetStart, indexList.Count - subsetStart));         wireframeSubsetStart = wireframeIndexList.Count;
+                subsets.Add(new VertexArraySubset<ITexture>(null, subsetStart, indexList.Count - subsetStart));
+                wireframeSubsets.Add(new VertexArraySubset<object>(null, wireframeSubsetStart, wireframeIndexList.Count - wireframeSubsetStart));
             }
             indices = indexList.ToArray();
-            wireframeIndices = wireframeIndexL    private static int WriteFace(float[] array, int idx, Face face)
+            wireframeIndices = wireframeIndexList.ToArray();
+            count = indices.Length;
+        }
+
+        private static int WriteFace(float[] array, int idx, Face face)
         {
             float nx = (float) face.Plane.Normal.DX,
                   ny = (float) face.Plane.Normal.DY,
@@ -225,12 +234,7 @@ namespace Sledge.DataStructures.Rendering
                 array[idx++] = (r);
                 array[idx++] = (g);
                 array[idx++] = (b);
-                array[idx++] = (face.IsSelected || face.Parent.IsSelected ? 1 : 0);
-            }
-            return idx;
-        }
-    }
-}(face.Parent != null && face.Parent.IsSelected) ? 1 : 0);
+                array[idx++] = (face.IsSelected || (face.Parent != null && face.Parent.IsSelected) ? 1 : 0);
             }
             return idx;
         }

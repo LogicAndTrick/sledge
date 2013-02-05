@@ -54,7 +54,6 @@ namespace Sledge.Providers.Texture
         public static void Load(string file)
         {
             file = file.ToLower();
- 
             if (!(File.Exists(file) || Directory.Exists(file)) || LoadedPackages.ContainsKey(file)) return;
             var tp = new TexturePackage(file);
             tp.LoadAllTextureItems();
@@ -71,8 +70,8 @@ namespace Sledge.Providers.Texture
         }
 
         /// <summary>
-        /// Tells this package to retrieve all the texture names from the file.       /// This will not get the actual texture data, but it will get some metadata
- 
+        /// Tells this package to retrieve all the texture names from the file.
+        /// This will not get the actual texture data, but it will get some metadata
         /// like name, width, height, and so on.
         /// </summary>
         public void LoadAllTextureItems()
