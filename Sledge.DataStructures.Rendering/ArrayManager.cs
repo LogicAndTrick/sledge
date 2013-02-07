@@ -16,15 +16,27 @@ namespace Sledge.DataStructures.Rendering
     public class ArrayManager
     {
         private readonly SolidVertexArray _array;
+        private readonly DecalFaceVertexArray _decalArray;
+
         public ArrayManager(Map map)
         {
-            _array = new SolidVertexArray(map.WorldSpawn.FindAll());
-            Update(map);
+            var all = map.WorldSpawn.FindAll();
+            _array = new SolidVertexArray(all);
+            _decalArray = new DecalFaceVertexArray(all);
+            // Update(map);
         }
 
         public void Update(Map map)
         {
-            _array.Update(map.WorldSpawn.FindAll());
+            var all = map.WorldSpawn.FindAll();
+            _array.Update(all);
+            _decalArray.Update(all);
+        }
+
+        public void UpdateDecals(Map map)
+        {
+            var all = map.WorldSpawn.FindAll();
+            _decalArray.Update(all);
         }
 
         public void UpdatePartial(IEnumerable<MapObject> objects)
@@ -39,6 +51,7 @@ namespace Sledge.DataStructures.Rendering
 
         public void DrawTextured(object context, ShaderProgram program)
         {
+            // Todo abstract this out a bit, repeated code all over the place
             _array.Bind(context, 0);
             foreach (var subset in _array.TextureSubsets)
             {
@@ -49,6 +62,16 @@ namespace Sledge.DataStructures.Rendering
                 _array.Array.DrawElements(0, subset.Start, subset.Count);
             }
             _array.Unbind();
+            _decalArray.Bind(context, 0);
+            foreach (var subset in _decalArray.TextureSubsets)
+            {
+                var tex = subset.Instance;
+                if (tex != null) tex.Bind();
+                else TextureHelper.Unbind();
+                program.Set("isTextured", tex != null);
+                _array.Array.DrawElements(0, subset.Start, subset.Count);
+            }
+            _decalArray.Unbind();
         }
 
         public void DrawWireframe(object context, ShaderProgram program)
@@ -59,6 +82,12 @@ namespace Sledge.DataStructures.Rendering
                 _array.Array.DrawElements(1, subset.Start, subset.Count);
             }
             _array.Unbind();
+            _decalArray.Bind(context, 1);
+            foreach (var subset in _decalArray.WireframeSubsets)
+            {
+                _decalArray.Array.DrawElements(1, subset.Start, subset.Count);
+            }
+            _decalArray.Unbind();
         }
     }
 }

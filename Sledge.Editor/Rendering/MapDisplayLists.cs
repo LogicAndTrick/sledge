@@ -32,7 +32,7 @@ namespace Sledge.Editor.Rendering
                 }
                 else if (mo is Entity || mo is Group)
                 {
-                    if (mo is Entity && !mo.IsCodeHidden && !mo.IsVisgroupHidden) faces.AddRange(((Entity)mo).GetFaces());
+                    if (mo is Entity && !mo.IsCodeHidden && !mo.IsVisgroupHidden) faces.AddRange(((Entity)mo).GetBoxFaces());
                     CollectFaces(faces, mo.Children, excludeSelected);
                 }
             }

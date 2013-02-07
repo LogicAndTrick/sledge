@@ -32,14 +32,21 @@ namespace Sledge.DataStructures.MapObjects
 
         private static IEnumerable<string> GetAllTexturesRecursive(MapObject obj)
         {
-            if (obj is Solid)
+            if (obj is Entity && obj.Children.Count == 0)
+            {
+                var ent = (Entity) obj;
+                if (ent.EntityData.Name == "infodecal")
+                {
+                    var tex = ent.EntityData.Properties.FirstOrDefault(x => x.Key == "texture");
+                    if (tex != null) return new[] {tex.Value};
+                }
+            }
+            else if (obj is Solid)
             {
                 return ((Solid) obj).Faces.Select(f => f.Texture.Name);
             }
-            else
-            {
-                return obj.Children.SelectMany(GetAllTexturesRecursive);
-            }
+
+            return obj.Children.SelectMany(GetAllTexturesRecursive);
         }
 
         /// <summary>
@@ -79,13 +86,21 @@ namespace Sledge.DataStructures.MapObjects
             {
                 if (obj is Entity)
                 {
-                    var gd = gameData.Classes.FirstOrDefault(x => x.Name == ((Entity) obj).EntityData.Name);
-                    var t = gd != null && gd.Behaviours.Any(x => x.Name == "iconsprite" && x.Values.Count == 1)
-                                ? textureAccessor(gd.Behaviours.First(x => x.Name == "iconsprite").Values[0])
-                                : null;
-                    ((Entity) obj).GameData = gd;
-                    ((Entity) obj).Sprite = t;
-                    obj.UpdateBoundingBox();
+                    var ent = (Entity) obj;
+                    var gd = gameData.Classes.FirstOrDefault(x => x.Name == ent.EntityData.Name);
+                    ent.GameData = gd;
+                    if (gd != null)
+                    {
+                        var beh = gd.Behaviours.FirstOrDefault(x => x.Name == "iconsprite");
+                        if (beh != null && beh.Values.Count == 1) ent.Sprite = textureAccessor(beh.Values[0]);
+                    }
+                    if (ent.EntityData.Name == "infodecal")
+                    {
+                        var tex = ent.EntityData.Properties.FirstOrDefault(x => x.Key == "texture");
+                        if (tex != null) ent.Decal = textureAccessor(tex.Value);
+                        ent.CalculateDecalGeometry();
+                    }
+                    ent.UpdateBoundingBox();
                 }
                 else if (obj is Solid)
                 {

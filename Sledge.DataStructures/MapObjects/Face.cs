@@ -345,7 +345,18 @@ namespace Sledge.DataStructures.MapObjects
         /// <returns>True if one of the face's edges intersects with the box.</returns>
         public bool IntersectsWithLine(Box box)
         {
-            return GetLines().Any(box.IntersectsWith);
+            // Shortcut through the bounding box to avoid the line computations if they aren't needed
+            return BoundingBox.IntersectsWith(box) && GetLines().Any(box.IntersectsWith);
+        }
+
+        /// <summary>
+        /// Test this face to see if the given bounding box intersects with it
+        /// </summary>
+        /// <param name="box">The box to test against</param>
+        /// <returns>True if the box intersects</returns>
+        public bool IntersectsWithBox(Box box)
+        {
+            return box.GetBoxLines().Any(x => GetIntersectionPoint(x) != null);
         }
 
         /// <summary>

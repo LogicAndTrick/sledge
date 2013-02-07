@@ -14,6 +14,7 @@ namespace Sledge.DataStructures.MapObjects
         public EntityData EntityData { get; set; }
         public Coordinate Origin { get; set; }
         public ITexture Sprite { get; set; }
+        public ITexture Decal { get; set; }
 
         public Entity(long id) : base(id)
         {
@@ -60,6 +61,11 @@ namespace Sledge.DataStructures.MapObjects
                     sub = behav.GetCoordinate(0);
                     add = behav.GetCoordinate(1);
                 }
+                else if (GameData.Name == "infodecal")
+                {
+                    sub = Coordinate.One * -4;
+                    add = Coordinate.One * 4;
+                }
                 BoundingBox = new Box(Origin + sub, Origin + add);
             }
             else if (Children.Any())
@@ -90,7 +96,7 @@ namespace Sledge.DataStructures.MapObjects
             set { base.Colour = value; }
         }
 
-        public IEnumerable<Face> GetFaces()
+        public IEnumerable<Face> GetBoxFaces()
         {
             var faces = new List<Face>();
             if (Children.Any()) return faces;
@@ -111,6 +117,63 @@ namespace Sledge.DataStructures.MapObjects
             return faces;
         }
 
+        private List<Face> _decalGeometry;
+
+        public IEnumerable<Face> GetTexturedFaces()
+        {
+            return _decalGeometry ?? (_decalGeometry = new List<Face>());
+        }
+
+        public void CalculateDecalGeometry()
+        {
+            _decalGeometry = new List<Face>();
+            if (Decal == null) return; // Texture not found
+
+            var boxRadius = Coordinate.One * 4;
+            // Decals apply to all faces that intersect within an 8x8x8 bounding box
+            // centered at the origin of the decal
+            var box = new Box(Origin - boxRadius, Origin + boxRadius);
+            var root = GetRoot(Parent);
+            // Get the faces that intersect with the decal's radius
+            var faces = root.GetAllNodesIntersectingWith(box).OfType<Solid>()
+                .SelectMany(x => x.Faces).Where(x => x.IntersectsWithBox(box));
+            foreach (var face in faces)
+            {
+                // Project the decal onto the face
+                var center = face.Plane.Project(Origin);
+                var decalFace = new Face(int.MinValue) // Use a dummy ID
+                                    {
+                                        Colour = Colour,
+                                        IsSelected = IsSelected,
+                                        IsHidden = IsCodeHidden,
+                                        Plane = face.Plane,
+                                        Texture =
+                                            {
+                                                Name = Decal.Name,
+                                                Texture = Decal,
+                                                UAxis = face.Texture.UAxis,
+                                                VAxis = face.Texture.VAxis,
+                                                XScale = face.Texture.XScale,
+                                                YScale = face.Texture.YScale,
+                                                XShift = -Decal.Width / 2m,
+                                                YShift = -Decal.Height / 2m
+                                            }
+                                    };
+                // Re-project the vertices in case the texture axes are not on the face plane
+                // Also add a tiny bit to the normal axis to ensure the decal is rendered in front of the face
+                var normalAdd = face.Plane.Normal * 0.2m;
+                var xShift = face.Texture.UAxis * face.Texture.XScale * Decal.Width / 2;
+                var yShift = face.Texture.VAxis * face.Texture.YScale * Decal.Height / 2;
+                decalFace.Vertices.Add(new Vertex(face.Plane.Project(center + xShift - yShift) + normalAdd, decalFace)); // Bottom Right
+                decalFace.Vertices.Add(new Vertex(face.Plane.Project(center + xShift + yShift) + normalAdd, decalFace)); // Top Right
+                decalFace.Vertices.Add(new Vertex(face.Plane.Project(center - xShift + yShift) + normalAdd, decalFace)); // Top Left
+                decalFace.Vertices.Add(new Vertex(face.Plane.Project(center - xShift - yShift) + normalAdd, decalFace)); // Bottom Left
+                // TODO: verify this covers all situations and I don't have to manually calculate the texture coordinates
+                decalFace.FitTextureToPointCloud(new Cloud(decalFace.Vertices.Select(x => x.Location)));
+                _decalGeometry.Add(decalFace);
+            }
+        }
+
         public override void Transform(IUnitTransformation transform)
         {
             Origin = transform.Transform(Origin);
@@ -124,7 +187,9 @@ namespace Sledge.DataStructures.MapObjects
         /// <returns>The closest intersecting point, or null if the line doesn't intersect.</returns>
         public override Coordinate GetIntersectionPoint(Line line)
         {
-            return GetFaces().Select(x => x.GetIntersectionPoint(line))
+            var faces = GetBoxFaces();
+            if (_decalGeometry != null) faces = faces.Union(_decalGeometry);
+            return faces.Select(x => x.GetIntersectionPoint(line))
                 .Where(x => x != null)
                 .OrderBy(x => (x - line.Start).VectorMagnitude())
                 .FirstOrDefault();
