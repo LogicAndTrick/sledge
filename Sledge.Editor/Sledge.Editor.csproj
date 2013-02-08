@@ -155,6 +155,7 @@
     <Compile Include="Tools\BaseTool.cs" />
     <Compile Include="Tools\BrushTool.cs" />
     <Compile Include="Tools\ClipTool.cs" />
+    <Compile Include="Tools\DecalTool.cs" />
     <Compile Include="Tools\DisplacementForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -408,6 +409,7 @@
     <Content Include="Resources\Arrow_Up.png" />
     <Content Include="Resources\Tool_Brush.png" />
     <Content Include="Resources\Tool_Clip.png" />
+    <Content Include="Resources\Tool_Decal.png" />
     <Content Include="Resources\Tool_Entity.png" />
     <Content Include="Resources\Tool_Rotate.png" />
     <Content Include="Resources\Tool_Skew.png" />
