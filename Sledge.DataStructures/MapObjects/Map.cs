@@ -76,7 +76,8 @@ namespace Sledge.DataStructures.MapObjects
 
         public void PartialPostLoadProcess(GameData.GameData gameData, Func<string, ITexture> textureAccessor)
         {
-            PartialPostLoadProcess(x => (x is Entity && ((Entity)x ).GameData == null) || (x is Solid && ((Solid) x).Faces.Any(y => y.Texture.Texture == null)), gameData, textureAccessor);
+            PartialPostLoadProcess(x => (x is Entity && (((Entity)x ).GameData == null || ((Entity)x).Decal != null))
+                || (x is Solid && ((Solid) x).Faces.Any(y => y.Texture.Texture == null)), gameData, textureAccessor);
         }
 
         public void PartialPostLoadProcess(Predicate<MapObject> matcher, GameData.GameData gameData, Func<string, ITexture> textureAccessor)

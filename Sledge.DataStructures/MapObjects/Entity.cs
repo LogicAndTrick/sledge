@@ -163,17 +163,26 @@ namespace Sledge.DataStructures.MapObjects
                 // Re-project the vertices in case the texture axes are not on the face plane
                 var xShift = face.Texture.UAxis * face.Texture.XScale * Decal.Width / 2;
                 var yShift = face.Texture.VAxis * face.Texture.YScale * Decal.Height / 2;
-                decalFace.Vertices.Add(new Vertex(face.Plane.Project(center + xShift - yShift), decalFace)); // Bottom Right
-                decalFace.Vertices.Add(new Vertex(face.Plane.Project(center + xShift + yShift), decalFace)); // Top Right
-                decalFace.Vertices.Add(new Vertex(face.Plane.Project(center - xShift + yShift), decalFace)); // Top Left
-                decalFace.Vertices.Add(new Vertex(face.Plane.Project(center - xShift - yShift), decalFace)); // Bottom Left
+                var verts = new[]
+                                {
+                                    new Vertex(face.Plane.Project(center + xShift - yShift), decalFace), // Bottom Right
+                                    new Vertex(face.Plane.Project(center + xShift + yShift), decalFace), // Top Right
+                                    new Vertex(face.Plane.Project(center - xShift + yShift), decalFace), // Top Left
+                                    new Vertex(face.Plane.Project(center - xShift - yShift), decalFace), // Bottom Left
+                                };
+
+                // TODO normalise these properly - the texture is reversed when it shouldn't be
+                if (!face.Plane.Normal.EquivalentTo(face.Texture.UAxis.Cross(face.Texture.VAxis))) decalFace.Vertices.AddRange(verts);
+                else decalFace.Vertices.AddRange(verts.Reverse());
+
                 decalFace.UpdateBoundingBox();
                 // TODO: verify this covers all situations and I don't have to manually calculate the texture coordinates
                 decalFace.FitTextureToPointCloud(new Cloud(decalFace.Vertices.Select(x => x.Location)));
-
+                
                 // Next, the decal geometry needs to be clipped to the face so it doesn't spill into the void
                 // Create a fake solid out of the decal geometry and clip it against all the brush planes
                 var fake = CreateFakeDecalSolid(decalFace);
+
                 foreach (var f in face.Parent.Faces.Except(new[] { face }))
                 {
                     Solid back, front;

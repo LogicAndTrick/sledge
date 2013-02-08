@@ -356,7 +356,8 @@ namespace Sledge.DataStructures.MapObjects
         /// <returns>True if the box intersects</returns>
         public bool IntersectsWithBox(Box box)
         {
-            return box.GetBoxLines().Any(x => GetIntersectionPoint(x) != null);
+            var verts = Vertices.Select(x => x.Location).ToList();
+            return box.GetBoxLines().Any(x => GetIntersectionPoint(verts, x, true) != null);
         }
 
         /// <summary>
@@ -390,10 +391,10 @@ namespace Sledge.DataStructures.MapObjects
             Spanning
         }
 
-        protected static Coordinate GetIntersectionPoint(IList<Coordinate> coordinates, Line line)
+        protected static Coordinate GetIntersectionPoint(IList<Coordinate> coordinates, Line line, bool ignoreDirection = false)
         {
             var plane = new Plane(coordinates[0], coordinates[1], coordinates[2]);
-            var intersect = plane.GetIntersectionPoint(line);
+            var intersect = plane.GetIntersectionPoint(line, ignoreDirection);
             if (intersect == null) return null;
 
             // http://paulbourke.net/geometry/insidepoly/

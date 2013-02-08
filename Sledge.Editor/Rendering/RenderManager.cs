@@ -252,11 +252,13 @@ void main()
         public void UpdatePartial(IEnumerable<MapObject> objects)
         {
             _array.UpdatePartial(objects);
+            _array.UpdateDecals(_document.Map);
         }
 
         public void UpdatePartial(IEnumerable<Face> faces)
         {
             _array.UpdatePartial(faces);
+            _array.UpdateDecals(_document.Map);
         }
 
         public void Register(IEnumerable<ViewportBase> viewports)
