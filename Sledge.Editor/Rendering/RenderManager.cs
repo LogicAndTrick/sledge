@@ -67,6 +67,7 @@ void main()
     vertexLighting = (vec4(1,1,1,1) * light1intensity * incidence1) * 0.5
                    + (vec4(1,1,1,1) * light2intensity * incidence2) * 0.5
                    + (vec4(1,1,1,1) * ambient);
+    vertexLighting.w = 1; // Reset the alpha channel or transparency gets messed up later
     texCoord = texture;
     vertexSelected = selected;
 }
