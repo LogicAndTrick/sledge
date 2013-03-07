@@ -3,11 +3,11 @@
 Priorities
   Compiling
   TDI
-  Decal Tool / Rendering
   Paste Special
   Texture browser
   Undo/Redo
   New/Open/Save/Close
+  Menu
   2D view right click/Hotkeys
   Additional Map Properties
     VMF
@@ -24,7 +24,7 @@ Priorities
     SPR - 80%, testing, streaming, integration
     VMF - 90%, fully test against VHE4 format, additional map properties
   Rendering
-    Solids - 90%
+    Solids - 90%, transparency
     Entities - 60%, sprites, models, path connections
     Sprites - 95%, billboarding calculation could be improved
     Models - 0%
@@ -41,7 +41,7 @@ Priorities
     Entity - 60%, right toolbar, create object, 3D placement
     Brush - 80%, arch, sphere
     Texture - 90%, hide mask
-    Decal - 0%, placement, rendering
+    Decal - 100%
     Clip - 80%, choose sides to keep
     VM - 80%, create vertices?
   Secondary Tools
@@ -61,6 +61,7 @@ Priorities
     Texture Browser - 50%, used textures only, package tree, select, replace, stats
     Object Properties - 60%, data types, visgroups (inputs/outputs not needed for milestone)
   UI
+    Menu Builder - 60%, actions
     New/Open/Save/Close - 20%, file menu, save as, change detection
     Recent Files - 100%
     Cut/Copy/Paste/Paste Special - 70%, paste special

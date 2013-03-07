@@ -7,44 +7,45 @@ namespace Sledge.Editor.Actions
 {
     public class UngroupAction : IAction
     {
-        private Dictionary<MapObject, MapObject> _groupsAndParents;
-        private Dictionary<MapObject, MapObject> _childrenAndParents;
+        private Dictionary<long, long> _groupsAndParents;
+        private Dictionary<long, long> _childrenAndParents;
+
+        public UngroupAction(IEnumerable<MapObject> objects)
+        {
+            var objs = objects.Where(x => x != null && x.Parent != null).OfType<Group>().ToList();
+            _groupsAndParents = objs.ToDictionary(x => x.ID, x => x.Parent.ID);
+            _childrenAndParents = objs.SelectMany(x => x.Children).ToDictionary(x => x.ID, x => x.Parent.ID);
+        }
 
         public void Perform(Document document)
         {
-            _groupsAndParents = new Dictionary<MapObject, MapObject>();
-            _childrenAndParents = new Dictionary<MapObject, MapObject>();
-
-            var objs = document.Selection.GetSelectedParents().OfType<Group>().ToList();
-            objs.ForEach(x => _groupsAndParents.Add(x, x.Parent));
-            objs.ForEach(x => x.SetParent(null));
-
-            var children = objs.SelectMany(x => x.Children).ToList();
-            foreach (var o in children)
+            foreach (var child in _childrenAndParents.Keys.Select(x => document.Map.WorldSpawn.FindByID(x)))
             {
-                _childrenAndParents.Add(o, o.Parent);
-                o.SetParent(document.Map.WorldSpawn);
-                o.UpdateBoundingBox();
+                child.SetParent(document.Map.WorldSpawn);
+                child.UpdateBoundingBox();
             }
 
-            document.Selection.Clear();
-            document.Selection.Select(children);
+            foreach (var group in _groupsAndParents.Keys.Select(x => document.Map.WorldSpawn.FindByID(x)))
+            {
+                group.SetParent(null);
+            }
         }
 
         public void Reverse(Document document)
         {
             foreach (var gp in _groupsAndParents)
             {
-                gp.Key.SetParent(gp.Value);
+                var group = document.Map.WorldSpawn.FindByID(gp.Key);
+                var parent = document.Map.WorldSpawn.FindByID(gp.Value);
+                group.SetParent(parent);
             }
             foreach (var cp in _childrenAndParents)
             {
-                cp.Key.SetParent(cp.Value);
-                cp.Key.UpdateBoundingBox();
+                var child = document.Map.WorldSpawn.FindByID(cp.Key);
+                var parent = document.Map.WorldSpawn.FindByID(cp.Value);
+                child.SetParent(parent);
+                child.UpdateBoundingBox();
             }
-
-            document.Selection.Clear();
-            document.Selection.Select(_groupsAndParents.Keys.SelectMany(x => x.FindAll()));
 
             Dispose();
         }

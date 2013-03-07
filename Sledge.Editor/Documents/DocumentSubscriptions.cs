@@ -213,7 +213,7 @@ namespace Sledge.Editor.Documents
         {
             if (!_document.Selection.IsEmpty() && !_document.Selection.InFaceSelection)
             {
-                var action = new GroupAction();
+                var action = new GroupAction(_document.Selection.GetSelectedObjects());
                 action.Perform(_document);
                 _document.History.AddHistoryItem(new HistoryAction("Grouped objects", action));
                 _document.UpdateDisplayLists();
@@ -224,7 +224,7 @@ namespace Sledge.Editor.Documents
         {
             if (!_document.Selection.IsEmpty() && !_document.Selection.InFaceSelection)
             {
-                var action = new UngroupAction();
+                var action = new UngroupAction(_document.Selection.GetSelectedObjects());
                 action.Perform(_document);
                 _document.History.AddHistoryItem(new HistoryAction("Ungrouped objects", action));
                 _document.UpdateDisplayLists();

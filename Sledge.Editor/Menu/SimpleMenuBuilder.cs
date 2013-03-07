@@ -11,7 +11,8 @@ namespace Sledge.Editor.Menu
         public string Name { get; set; }
         public string Message { get; set; }
         public Func<bool> IsVisible { get; set; }
-        public Func<bool> IsActive { get; set; } 
+        public Func<bool> IsActive { get; set; }
+        public Func<bool> IsChecked { get; set; }
 
         public SimpleMenuBuilder(string name, string message)
         {
@@ -33,6 +34,9 @@ namespace Sledge.Editor.Menu
             var mi = new ToolStripMenuItem(Name);
             mi.Click += (sender, e) => Mediator.Publish(Message);
             if (IsActive != null) mi.Enabled = IsActive();
+            if (IsChecked != null) mi.Checked = IsChecked();
+            var hk = Hotkeys.GetHotkeyForMessage(Message);
+            if (hk != null) mi.ShortcutKeyDisplayString = hk.DefaultHotkey;
             yield return mi;
         }
     }

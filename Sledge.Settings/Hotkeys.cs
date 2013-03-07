@@ -47,6 +47,11 @@ namespace Sledge.Settings
                                };
         }
 
+        public static HotkeyDefinition GetHotkeyForMessage(String message)
+        {
+            return Definitions.FirstOrDefault(x => x.Action.ToString() == message);
+        }
+
         public static HotkeyDefinition GetHotkeyFor(string keyCombination)
         {
             return Definitions.FirstOrDefault(x => x.DefaultHotkey == keyCombination);

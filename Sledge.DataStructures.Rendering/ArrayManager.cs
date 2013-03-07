@@ -62,6 +62,7 @@ namespace Sledge.DataStructures.Rendering
                 _array.Array.DrawElements(0, subset.Start, subset.Count);
             }
             _array.Unbind();
+            GL.Disable(EnableCap.CullFace);
             _decalArray.Bind(context, 0);
             foreach (var subset in _decalArray.TextureSubsets)
             {
@@ -72,6 +73,7 @@ namespace Sledge.DataStructures.Rendering
                 _array.Array.DrawElements(0, subset.Start, subset.Count);
             }
             _decalArray.Unbind();
+            GL.Enable(EnableCap.CullFace);
         }
 
         public void DrawWireframe(object context, ShaderProgram program)

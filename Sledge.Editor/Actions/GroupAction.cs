@@ -7,40 +7,43 @@ namespace Sledge.Editor.Actions
 {
     public class GroupAction : IAction
     {
-        private Dictionary<MapObject, MapObject> _originalParents;
-        private Group _createdGroup;
+        private readonly List<long> _groupedObjects;
+        private long _groupId;
+        private Dictionary<long, long> _originalChildParents;
+
+        public GroupAction(IEnumerable<MapObject> groupedObjects)
+        {
+            _groupedObjects = groupedObjects.Select(x => x.ID).ToList();
+        }
 
         public void Perform(Document document)
         {
-            _originalParents = new Dictionary<MapObject, MapObject>();
-            var objs = document.Selection.GetSelectedParents().ToList();
-            objs.ForEach(x => _originalParents.Add(x, x.Parent));
-
-            _createdGroup = new Group(document.Map.IDGenerator.GetNextObjectID());
-            objs.ForEach(x => x.SetParent(_createdGroup));
-            _createdGroup.SetParent(document.Map.WorldSpawn);
-            _createdGroup.UpdateBoundingBox();
-
-            document.Selection.Clear();
-            document.Selection.Select(_createdGroup.FindAll());
+            var objects = _groupedObjects
+                .Select(x => document.Map.WorldSpawn.FindByID(x))
+                .Where(x => x != null && x.Parent != null)
+                .ToList();
+            _originalChildParents = objects.ToDictionary(x => x.ID, x => x.Parent.ID);
+            _groupId = document.Map.IDGenerator.GetNextObjectID();
+            var group = new Group(_groupId);
+            objects.ForEach(x => x.SetParent(group));
+            group.SetParent(document.Map.WorldSpawn);
+            group.UpdateBoundingBox();
         }
 
         public void Reverse(Document document)
         {
-            var children = _createdGroup.Children.ToList();
-            children.ForEach(x => x.SetParent(_originalParents[x]));
+            var group = document.Map.WorldSpawn.FindByID(_groupId);
+            var children = group.Children.ToList();
+            children.ForEach(x => x.SetParent(document.Map.WorldSpawn.FindByID(_originalChildParents[x.ID])));
             children.ForEach(x => x.UpdateBoundingBox());
-
-            document.Selection.Clear();
-            document.Selection.Select(children.SelectMany(x => x.FindAll()));
-
+            group.SetParent(null);
             Dispose();
         }
 
         public void Dispose()
         {
-            _createdGroup = null;
-            _originalParents = null;
+            _originalChildParents = null;
+            _groupId = 0;
         }
     }
 }

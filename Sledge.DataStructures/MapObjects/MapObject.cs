@@ -261,6 +261,16 @@ namespace Sledge.DataStructures.MapObjects
         }
 
         /// <summary>
+        /// Get the single object in the object tree with the given ID.
+        /// </summary>
+        /// <param name="id">The ID of the object to locate</param>
+        /// <returns>The object with the matching ID or null if it wasn't found</returns>
+        public MapObject FindByID(long id)
+        {
+            return ID == id ? this : Children.Select(x => FindByID(id)).FirstOrDefault(x => x != null);
+        }
+
+        /// <summary>
         /// Flattens the tree underneath this node.
         /// </summary>
         /// <returns>A list containing all the descendants of this node (including this node)</returns>

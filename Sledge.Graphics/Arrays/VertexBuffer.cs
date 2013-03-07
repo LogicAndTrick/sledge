@@ -106,9 +106,9 @@ namespace Sledge.Graphics.Arrays
                 if (id > 0) GL.DeleteBuffers(1, ref id);
                 GL.GenBuffers(1, out id);
 
-                GL.BindBuffer(BufferTarget.ArrayBuffer, id);
-                GL.BufferData(BufferTarget.ArrayBuffer, new IntPtr(array.Length * typeSize), array, BufferUsageHint.StaticDraw);
-                GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
+                GL.BindBuffer(target, id);
+                GL.BufferData(target, new IntPtr(array.Length * typeSize), array, BufferUsageHint.StaticDraw);
+                GL.BindBuffer(target, 0);
                 newLength = array.Length;
             }
             return id;
