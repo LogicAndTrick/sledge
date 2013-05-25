@@ -10,7 +10,9 @@ namespace Sledge.Settings
 
         FileNew,
         FileOpen,
+        FileClose,
         FileSave,
+        FileSaveAs,
         FileExport,
         FileCompile,
 
@@ -34,5 +36,8 @@ namespace Sledge.Settings
         OperationsPaste,
         OperationsPasteSpecial,
         OperationsDelete,
+
+        SelectAll,
+        SelectionClear
     }
 }

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Sledge.Editor.Menu;
 using Sledge.Editor.Tools;
 
 namespace Sledge.Editor.Documents
@@ -29,6 +30,7 @@ namespace Sledge.Editor.Documents
             CurrentDocument = doc;
             ToolManager.SetDocument(doc);
             if (CurrentDocument != null) CurrentDocument.SetActive();
+            MenuManager.Rebuild();
         }
 
         public static void AddAndSwitch(Document doc)

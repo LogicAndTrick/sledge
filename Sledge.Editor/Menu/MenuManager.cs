@@ -46,14 +46,14 @@ namespace Sledge.Editor.Menu
             Func<bool> mapOpen = () => DocumentManager.CurrentDocument != null;
             Add("File", new SimpleMenuBuilder("New", HotkeysMediator.FileNew));
             Add("File", new SimpleMenuBuilder("Open", HotkeysMediator.FileOpen));
-            Add("File", new SimpleMenuBuilder("Close", "") {IsVisible = mapOpen});
+            Add("File", new SimpleMenuBuilder("Close", HotkeysMediator.FileClose) {IsVisible = mapOpen});
             Add("File", new SimpleMenuBuilder("Save", HotkeysMediator.FileSave) {IsVisible = mapOpen});
-            Add("File", new SimpleMenuBuilder("Save As...", "") {IsVisible = mapOpen});
+            Add("File", new SimpleMenuBuilder("Save As...", HotkeysMediator.FileSaveAs) {IsVisible = mapOpen});
             Add("File", new MenuSplitter {IsVisible = mapOpen});
             Add("File", new SimpleMenuBuilder("Run", HotkeysMediator.FileCompile) {IsVisible = mapOpen});
             Add("File", new RecentFilesMenu());
             Add("File", new MenuSplitter());
-            Add("File", new SimpleMenuBuilder("Exit", ""));
+            Add("File", new SimpleMenuBuilder("Exit", EditorMediator.Exit));
 
             Add("Edit", new SimpleMenuBuilder("Undo", HotkeysMediator.HistoryUndo) { IsVisible = mapOpen });
             Add("Edit", new SimpleMenuBuilder("Redo", HotkeysMediator.HistoryRedo) { IsVisible = mapOpen });
@@ -64,10 +64,10 @@ namespace Sledge.Editor.Menu
             Add("Edit", new SimpleMenuBuilder("Paste Special...", HotkeysMediator.OperationsPasteSpecial) { IsVisible = mapOpen });
             Add("Edit", new SimpleMenuBuilder("Delete", HotkeysMediator.OperationsDelete) { IsVisible = mapOpen });
             Add("Edit", new MenuSplitter { IsVisible = mapOpen });
-            Add("Edit", new SimpleMenuBuilder("Clear Selection", "") { IsVisible = mapOpen });
-            Add("Edit", new SimpleMenuBuilder("Select All", "") { IsVisible = mapOpen });
+            Add("Edit", new SimpleMenuBuilder("Clear Selection", HotkeysMediator.SelectionClear) { IsVisible = mapOpen });
+            Add("Edit", new SimpleMenuBuilder("Select All", HotkeysMediator.SelectAll) { IsVisible = mapOpen });
             Add("Edit", new MenuSplitter { IsVisible = mapOpen });
-            Add("Edit", new SimpleMenuBuilder("Object Properties", "") { IsVisible = mapOpen });
+            Add("Edit", new SimpleMenuBuilder("Object Properties", HotkeysMediator.ObjectProperties) { IsVisible = mapOpen });
 
             Add("Map", new SimpleMenuBuilder("Snap to Grid", "") { IsVisible = mapOpen });
             Add("Map", new SimpleMenuBuilder("Show Grid", "") { IsVisible = mapOpen });
@@ -105,9 +105,9 @@ namespace Sledge.Editor.Menu
             Add("Tools", new SimpleMenuBuilder("Align Objects", "") { IsVisible = mapOpen });
             Add("Tools", new SimpleMenuBuilder("Flip Objects", "") { IsVisible = mapOpen });
             Add("Tools", new MenuSplitter { IsVisible = mapOpen });
-            Add("Tools", new SimpleMenuBuilder("Options...", ""));
+            Add("Tools", new SimpleMenuBuilder("Options...", EditorMediator.OpenSettings));
 
-            Add("Help", new SimpleMenuBuilder("About...", ""));
+            Add("Help", new SimpleMenuBuilder("About...", EditorMediator.About));
         }
 
         public static void Rebuild()

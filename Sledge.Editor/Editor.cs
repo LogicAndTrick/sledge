@@ -34,38 +34,20 @@ namespace Sledge.Editor
         public Editor()
         {
             InitializeComponent();
-            tsbNew.Click += (sender, e) => NewFile();
-            tsbOpen.Click += (sender, e) => OpenFile();
-            tsbSave.Click += (sender, e) => SaveFile();
+            tsbNew.Click += (sender, e) => Mediator.Publish(HotkeysMediator.FileNew);
+            tsbOpen.Click += (sender, e) => Mediator.Publish(HotkeysMediator.FileOpen);
+            tsbSave.Click += (sender, e) => Mediator.Publish(HotkeysMediator.FileSave);
             Instance = this;
         }
 
         public void SelectTool(BaseTool t)
         {
             ToolManager.Activate(t);
+            var at = ToolManager.ActiveTool;
+            if (at == null) return;
             foreach (var tsb in from object item in tspTools.Items select ((ToolStripButton) item))
             {
-                tsb.Checked = (tsb.Name == ToolManager.ActiveTool.GetName());
-            }
-        }
-
-        public static void NewFile()
-        {
-            using (var gsd = new GameSelectionForm())
-            {
-                gsd.ShowDialog();
-                if (gsd.SelectedGameID < 0) return;
-                var game = Context.DBContext.GetAllGames().Single(g => g.ID == gsd.SelectedGameID);
-                DocumentManager.AddAndSwitch(new Document(null, new Map(), game));
-            }
-        }
-
-        private static void OpenFile()
-        {
-            using (var ofd = new OpenFileDialog())
-            {
-                if (ofd.ShowDialog() != DialogResult.OK) return;
-                LoadFile(ofd.FileName);
+                tsb.Checked = (tsb.Name == at.GetName());
             }
         }
 
@@ -86,11 +68,6 @@ namespace Sledge.Editor
                     Error.Warning("The map file could not be opened:\n" + e.Message);
                 }
             }
-        }
-
-        private static void SaveFile()
-        {
-            Mediator.Publish(HotkeysMediator.FileSave);
         }
 
         private void EditorLoad(object sender, EventArgs e)
@@ -142,6 +119,95 @@ namespace Sledge.Editor
             Subscribe();
         }
 
+        #region Mediator
+
+        private void Subscribe()
+        {
+            Mediator.Subscribe(HotkeysMediator.FourViewAutosize, this);
+            Mediator.Subscribe(HotkeysMediator.FourViewFocusBottomLeft, this);
+            Mediator.Subscribe(HotkeysMediator.FourViewFocusBottomRight, this);
+            Mediator.Subscribe(HotkeysMediator.FourViewFocusTopLeft, this);
+            Mediator.Subscribe(HotkeysMediator.FourViewFocusTopRight, this);
+
+            Mediator.Subscribe(HotkeysMediator.FileNew, this);
+            Mediator.Subscribe(HotkeysMediator.FileOpen, this);
+
+            Mediator.Subscribe(EditorMediator.FileOpened, this);
+            Mediator.Subscribe(EditorMediator.FileSaved, this);
+
+            Mediator.Subscribe(EditorMediator.Exit, this);
+
+            Mediator.Subscribe(EditorMediator.OpenSettings, this);
+        }
+
+        public static void FileNew()
+        {
+            using (var gsd = new GameSelectionForm())
+            {
+                gsd.ShowDialog();
+                if (gsd.SelectedGameID < 0) return;
+                var game = Context.DBContext.GetAllGames().Single(g => g.ID == gsd.SelectedGameID);
+                DocumentManager.AddAndSwitch(new Document(null, new Map(), game));
+            }
+        }
+
+        private static void FileOpen()
+        {
+            using (var ofd = new OpenFileDialog())
+            {
+                if (ofd.ShowDialog() != DialogResult.OK) return;
+                LoadFile(ofd.FileName);
+            }
+        }
+
+        private static void OpenSettings()
+        {
+            using (var sf = new SettingsForm())
+            {
+                sf.ShowDialog();
+            }
+        }
+
+        private void Exit()
+        {
+            Close();
+        }
+
+        public void FileOpened(string path)
+        {
+            RecentFile(path);
+        }
+
+        public void FileSaved(string path)
+        {
+            RecentFile(path);
+        }
+
+        public void FourViewAutosize()
+        {
+            tblQuadView.ResetViews();
+        }
+
+        public void FourViewFocusTopLeft()
+        {
+            tblQuadView.FocusOn(0, 0);
+        }
+
+        public void FourViewFocusTopRight()
+        {
+            tblQuadView.FocusOn(0, 1);
+        }
+
+        public void FourViewFocusBottomLeft()
+        {
+            tblQuadView.FocusOn(1, 0);
+        }
+
+        public void FourViewFocusBottomRight()
+        {
+            tblQuadView.FocusOn(1, 1);
+        }
+
         protected override bool ProcessDialogKey(Keys keyData)
         {
             // Suppress presses of the alt key if required
@@ -151,19 +217,6 @@ namespace Sledge.Editor
             }
 
             return base.ProcessDialogKey(keyData);
-        }
-
-        private void OpenSettingsDialog(object sender, EventArgs e)
-        {
-            using (var sf = new SettingsForm())
-            {
-                sf.ShowDialog();
-            }
-        }
-
-        private void CompileMapClicked(object sender, EventArgs e)
-        {
-            Mediator.Publish(HotkeysMediator.FileCompile);
         }
 
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
@@ -176,17 +229,7 @@ namespace Sledge.Editor
             Mediator.ExecuteDefault(this, message, data);
         }
 
-        private void Subscribe()
-        {
-            Mediator.Subscribe(HotkeysMediator.FourViewAutosize, this);
-            Mediator.Subscribe(HotkeysMediator.FourViewFocusBottomLeft, this);
-            Mediator.Subscribe(HotkeysMediator.FourViewFocusBottomRight, this);
-            Mediator.Subscribe(HotkeysMediator.FourViewFocusTopLeft, this);
-            Mediator.Subscribe(HotkeysMediator.FourViewFocusTopRight, this);
-
-            Mediator.Subscribe(EditorMediator.FileOpened, this);
-            Mediator.Subscribe(EditorMediator.FileSaved, this);
-        }
+        #endregion
 
         private void RecentFile(string path)
         {
@@ -230,41 +273,6 @@ namespace Sledge.Editor
             //    }
             //    MenuFile.DropDownItems.Insert(exitPosition, new ToolStripSeparator());
             //}
-        }
-
-        public void FileOpened(string path)
-        {
-            RecentFile(path);
-        }
-
-        public void FileSaved(string path)
-        {
-            RecentFile(path);
-        }
-
-        public void FourViewAutosize()
-        {
-            tblQuadView.ResetViews();
-        }
-
-        public void FourViewFocusTopLeft()
-        {
-            tblQuadView.FocusOn(0, 0);
-        }
-
-        public void FourViewFocusTopRight()
-        {
-            tblQuadView.FocusOn(0, 1);
-        }
-
-        public void FourViewFocusBottomLeft()
-        {
-            tblQuadView.FocusOn(1, 0);
-        }
-
-        public void FourViewFocusBottomRight()
-        {
-            tblQuadView.FocusOn(1, 1);
         }
     }
 }

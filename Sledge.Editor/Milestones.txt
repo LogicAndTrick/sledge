@@ -1,16 +1,28 @@
 ﻿Key: Item - percentage complete, uncompleted tasks
 
 Priorities
-  Compiling
-  TDI
   Paste Special
   Texture browser
+  Texture replace
+  Texture sidebar
   Undo/Redo
   New/Open/Save/Close
-  Menu
+  Menu actions
   2D view right click/Hotkeys
+  Entity Create
+  VM point rendering
+  VM dodgy snapping
+  All support tools
+  Recognise changes / prompt for save
   Additional Map Properties
     VMF
+
+Post-Alpha Priorities
+  TDI
+  Advanced compiling
+  Texture loader refactor
+  Models
+  Autosaving
 
 1. Goldsource Support
   Formats
@@ -78,9 +90,10 @@ Priorities
     Right Toolbar Brush Type - 100%
     Right Toolbar Entity/World - 20%
   Compiling
-    Compile Flags - 0%
-    Build Map - 20%
-    Run Game - 0%
+    Compile flags / UI - 0%
+    Build map - 60%
+    Clean up after compile
+    Run game - 0%
 
 2. Source support
 3. Plugins support

@@ -8,6 +8,7 @@ namespace Sledge.Editor
     public static class EditorMediator
     {
         public const string SettingsChanged = "SettingsChanged";
+        public const string OpenSettings = "OpenSettings";
 
         public const string SelectionTypeChanged = "SelectionTypeChanged";
         public const string SelectionChanged = "SelectionChanged";
@@ -16,5 +17,9 @@ namespace Sledge.Editor
 
         public const string FileOpened = "FileOpened";
         public const string FileSaved = "FileSaved";
+
+        public const string Exit = "Exit";
+
+        public const string About = "About";
     }
 }

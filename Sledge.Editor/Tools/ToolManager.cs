@@ -53,6 +53,7 @@ namespace Sledge.Editor.Tools
         public static void Activate(BaseTool tool)
         {
             if (tool == ActiveTool) return;
+            if (DocumentManager.CurrentDocument == null) return;
             if (ActiveTool != null) Deactivate();
             ActiveTool = tool;
             if (ActiveTool != null) ActiveTool.ToolSelected();
