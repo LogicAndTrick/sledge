@@ -28,8 +28,9 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.treeView1 = new System.Windows.Forms.TreeView();
+            this.PackageTree = new System.Windows.Forms.TreeView();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.SizeCombo = new System.Windows.Forms.ComboBox();
             this.TextureSizeLabel = new System.Windows.Forms.Label();
             this.TextureNameLabel = new System.Windows.Forms.Label();
             this.button2 = new System.Windows.Forms.Button();
@@ -38,18 +39,19 @@
             this.label2 = new System.Windows.Forms.Label();
             this.FilterTextbox = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.SizeCombo = new System.Windows.Forms.ComboBox();
             this.TextureList = new Sledge.Editor.UI.TextureListPanel();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
-            // treeView1
+            // PackageTree
             // 
-            this.treeView1.Dock = System.Windows.Forms.DockStyle.Left;
-            this.treeView1.Location = new System.Drawing.Point(0, 0);
-            this.treeView1.Name = "treeView1";
-            this.treeView1.Size = new System.Drawing.Size(120, 423);
-            this.treeView1.TabIndex = 1;
+            this.PackageTree.Dock = System.Windows.Forms.DockStyle.Left;
+            this.PackageTree.HideSelection = false;
+            this.PackageTree.Location = new System.Drawing.Point(0, 0);
+            this.PackageTree.Name = "PackageTree";
+            this.PackageTree.Size = new System.Drawing.Size(120, 423);
+            this.PackageTree.TabIndex = 1;
+            this.PackageTree.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.SelectedPackageChanged);
             // 
             // panel1
             // 
@@ -67,6 +69,20 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(827, 70);
             this.panel1.TabIndex = 2;
+            // 
+            // SizeCombo
+            // 
+            this.SizeCombo.FormattingEnabled = true;
+            this.SizeCombo.Items.AddRange(new object[] {
+            "64",
+            "128",
+            "256",
+            "512"});
+            this.SizeCombo.Location = new System.Drawing.Point(47, 32);
+            this.SizeCombo.Name = "SizeCombo";
+            this.SizeCombo.Size = new System.Drawing.Size(179, 21);
+            this.SizeCombo.TabIndex = 7;
+            this.SizeCombo.SelectedIndexChanged += new System.EventHandler(this.SizeValueChanged);
             // 
             // TextureSizeLabel
             // 
@@ -140,20 +156,6 @@
             this.label1.TabIndex = 0;
             this.label1.Text = "Filter";
             // 
-            // SizeCombo
-            // 
-            this.SizeCombo.FormattingEnabled = true;
-            this.SizeCombo.Items.AddRange(new object[] {
-            "64",
-            "128",
-            "256",
-            "512"});
-            this.SizeCombo.Location = new System.Drawing.Point(47, 32);
-            this.SizeCombo.Name = "SizeCombo";
-            this.SizeCombo.Size = new System.Drawing.Size(179, 21);
-            this.SizeCombo.TabIndex = 7;
-            this.SizeCombo.SelectedIndexChanged += new System.EventHandler(this.SizeValueChanged);
-            // 
             // TextureList
             // 
             this.TextureList.AllowMultipleSelection = true;
@@ -173,7 +175,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(827, 493);
             this.Controls.Add(this.TextureList);
-            this.Controls.Add(this.treeView1);
+            this.Controls.Add(this.PackageTree);
             this.Controls.Add(this.panel1);
             this.KeyPreview = true;
             this.MinimizeBox = false;
@@ -189,7 +191,7 @@
 
         #endregion
 
-        private System.Windows.Forms.TreeView treeView1;
+        private System.Windows.Forms.TreeView PackageTree;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Label TextureSizeLabel;
         private System.Windows.Forms.Label TextureNameLabel;

@@ -161,6 +161,7 @@ namespace Sledge.Editor.Tools
             Document.Selection.SwitchToFaceSelection();
             Document.UpdateDisplayLists(Document.Selection.GetSelectedFaces());
             _form.SelectionChanged();
+            _form.SelectTexture(Editor.Instance.GetSelectedTexture());
             Mediator.Subscribe(EditorMediator.TextureSelected, this);
         }
 

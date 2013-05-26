@@ -140,10 +140,18 @@ namespace Sledge.Editor.UI
 
         private void OwnerMeasureItem(object sender, MeasureItemEventArgs e)
         {
+            const int maxSize = 64;
+
             var item = (TextureComboBoxItem)Items[e.Index];
-            var textureHeight = Math.Min(64, Math.Max(item.Item.Height, item.Item.Width));
+
+            var iw = item.Item.Width;
+            var height = item.Item.Height;
             var minHeight = _fontHeight * 2;
-            e.ItemHeight = Math.Max(minHeight, textureHeight + _fontHeight) + 9;
+
+            if (iw > maxSize && iw >= height) height = (int)Math.Floor(maxSize * (height / (float)iw));
+            else if (height > maxSize) height = maxSize;
+
+            e.ItemHeight = Math.Max(minHeight, height + _fontHeight) + 9;
         }
 
         private void OwnerDrawItem(object sender, DrawItemEventArgs e)

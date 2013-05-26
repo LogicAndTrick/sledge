@@ -206,7 +206,7 @@ namespace Sledge.Editor
                 if (bmp.Width > TextureSelectionPictureBox.Width || bmp.Height > TextureSelectionPictureBox.Height)
                     TextureSelectionPictureBox.SizeMode = PictureBoxSizeMode.Zoom;
                 else
-                    TextureSelectionPictureBox.SizeMode = PictureBoxSizeMode.Normal;
+                    TextureSelectionPictureBox.SizeMode = PictureBoxSizeMode.CenterImage;
                 TextureSelectionPictureBox.Image = bmp;
             }
             TextureSizeLabel.Text = string.Format("{0} x {1}", selection.Width, selection.Height);
@@ -221,6 +221,11 @@ namespace Sledge.Editor
         private void TextureSelectionChanged(object sender, EventArgs e)
         {
             Mediator.Publish(EditorMediator.TextureSelected, TextureComboBox.GetSelectedTexture());
+        }
+
+        public TextureItem GetSelectedTexture()
+        {
+            return TextureComboBox.GetSelectedTexture();
         }
 
         public void FileOpened(string path)
@@ -323,6 +328,19 @@ namespace Sledge.Editor
             //    }
             //    MenuFile.DropDownItems.Insert(exitPosition, new ToolStripSeparator());
             //}
+        }
+
+        private void TextureBrowseButtonClicked(object sender, EventArgs e)
+        {
+            using (var tb = new TextureBrowser())
+            {
+                tb.SetTextureList(TexturePackage.GetLoadedItems());
+                tb.ShowDialog();
+                if (tb.SelectedTexture != null)
+                {
+                    Mediator.Publish(EditorMediator.TextureSelected, tb.SelectedTexture);
+                }
+            }
         }
     }
 }

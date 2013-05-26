@@ -38,6 +38,7 @@ namespace Sledge.Editor.UI
             _textures.AddRange(items);
             _packages.Clear();
             _packages.AddRange(_textures.Select(x => x.Package).Distinct());
+            UpdatePackageList();
             UpdateTextureList();
         }
 
@@ -51,16 +52,42 @@ namespace Sledge.Editor.UI
             UpdateTextureList();
         }
 
+        private void SelectedPackageChanged(object sender, TreeViewEventArgs e)
+        {
+            UpdateTextureList();
+        }
+
+        private void UpdatePackageList()
+        {
+            var selected = PackageTree.SelectedNode;
+            var selectedKey = selected == null ? null : selected.Name;
+            var packages = _textures.Select(x => x.Package).Distinct();
+            PackageTree.Nodes.Clear();
+            var parent = PackageTree.Nodes.Add("", "All Packages");
+            var reselect = parent;
+            foreach (var tp in packages)
+            {
+                var node = parent.Nodes.Add(tp.PackageFile, tp.ToString());
+                if (selectedKey == node.Name) reselect = node;
+            }
+            PackageTree.SelectedNode = reselect;
+            PackageTree.ExpandAll();
+        }
+
+        private IEnumerable<TextureItem> GetPackageTextures()
+        {
+            var package = PackageTree.SelectedNode;
+            var key = package == null ? null : package.Name;
+            if (String.IsNullOrWhiteSpace(key)) key = null;
+            return _textures.Where(x => key == null || key == x.Package.PackageFile);
+        }
+
         private void UpdateTextureList()
         {
-            var list = new List<TextureItem>();
+            var list = GetPackageTextures();
             if (!String.IsNullOrEmpty(FilterTextbox.Text))
             {
-                list.AddRange(_textures.Where(x => x.Name.ToLower().Contains(FilterTextbox.Text.ToLower())));
-            }
-            else
-            {
-                list = _textures;
+                list = list.Where(x => x.Name.ToLower().Contains(FilterTextbox.Text.ToLower()));
             }
             TextureList.SetTextureList(list);
         }
