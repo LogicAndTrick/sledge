@@ -140,7 +140,7 @@ namespace Sledge.Editor.UI
 
         public void Notify(string message, object data)
         {
-            if (message == EditorMediator.SelectionChanged || message == EditorMediator.SelectionTypeChanged)
+            if (message == EditorMediator.SelectionChanged.ToString() || message == EditorMediator.SelectionTypeChanged.ToString())
             {
                 UpdateObjects();
             }

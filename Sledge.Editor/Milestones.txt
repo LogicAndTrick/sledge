@@ -4,7 +4,8 @@ Priorities
   Paste Special
   Texture browser
   Texture replace
-  Texture sidebar
+  Texture sidebar: browse, replace, common history?
+  Texture tool: history (common?)
   Undo/Redo
   New/Open/Save/Close
   Menu actions
@@ -85,7 +86,7 @@ Post-Alpha Priorities
     Pointfiles/Leak Detection? - 0%
     Go to coordinates/brush number - 0%
     Options - 80%, hotkeys
-    Right Toolbar Textures - 0%
+    Right Toolbar Textures - 90%, fix texture tool to play nice with history
     Right Toolbar Visgroups - 90%, show all
     Right Toolbar Brush Type - 100%
     Right Toolbar Entity/World - 20%

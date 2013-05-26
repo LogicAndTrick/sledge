@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using Sledge.Common.Mediator;
 using Sledge.Providers.Texture;
 using Sledge.Settings;
 using Sledge.UI;
@@ -114,7 +115,7 @@ namespace Sledge.Editor.Tools
             // When the texture changes, the entire list needs to be regenerated, can't do a partial update.
             Document.UpdateDisplayLists();
             _form.SelectionChanged();
-            _form.SelectTexture(texture);
+            Mediator.Publish(EditorMediator.TextureSelected, texture);
         }
 
         private void TextureAligned(object sender, AlignMode align)
@@ -160,6 +161,7 @@ namespace Sledge.Editor.Tools
             Document.Selection.SwitchToFaceSelection();
             Document.UpdateDisplayLists(Document.Selection.GetSelectedFaces());
             _form.SelectionChanged();
+            Mediator.Subscribe(EditorMediator.TextureSelected, this);
         }
 
         public override void ToolDeselected()
@@ -169,6 +171,12 @@ namespace Sledge.Editor.Tools
             _form.Clear();
             _form.Hide();
             Document.UpdateDisplayLists(selected);
+            Mediator.UnsubscribeAll(this);
+        }
+
+        private void TextureSelected(TextureItem texture)
+        {
+            _form.SelectTexture(texture);
         }
 
         public override void MouseDown(ViewportBase viewport, MouseEventArgs e)
@@ -264,7 +272,7 @@ namespace Sledge.Editor.Tools
             _form.SelectionChanged();
             if (itemToSelect != null)
             {
-                _form.SelectTexture(itemToSelect);
+                Mediator.Publish(EditorMediator.TextureSelected, itemToSelect);
             }
         }
 

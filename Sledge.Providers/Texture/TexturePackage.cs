@@ -83,5 +83,11 @@ namespace Sledge.Providers.Texture
                 LoadedItems.Add(ti.Name, ti);
             }
         }
+
+        public override string ToString()
+        {
+            var str = PackageFile;
+            return Path.GetFileNameWithoutExtension(str) ?? PackageFile;
+        }
     }
 }

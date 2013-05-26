@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
+using Sledge.Common.Mediator;
 using Sledge.DataStructures.MapObjects;
 using Sledge.Providers.Texture;
 using Sledge.Editor.Editing;
@@ -402,7 +403,7 @@ namespace Sledge.Editor.Tools
                 browser.ShowDialog();
 
                 if (browser.SelectedTexture == null) return;
-                SelectTexture(browser.SelectedTexture);
+                Mediator.Publish(EditorMediator.TextureSelected, browser.SelectedTexture);
             }
         }
 

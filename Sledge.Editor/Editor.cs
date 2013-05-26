@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
@@ -138,6 +139,10 @@ namespace Sledge.Editor
             Mediator.Subscribe(EditorMediator.Exit, this);
 
             Mediator.Subscribe(EditorMediator.OpenSettings, this);
+
+            Mediator.Subscribe(EditorMediator.DocumentActivated, this);
+
+            Mediator.Subscribe(EditorMediator.TextureSelected, this);
         }
 
         public static void FileNew()
@@ -171,6 +176,51 @@ namespace Sledge.Editor
         private void Exit()
         {
             Close();
+        }
+
+        private void DocumentActivated(Document doc)
+        {
+            var index = TextureGroupComboBox.SelectedIndex;
+            TextureGroupComboBox.Items.Clear();
+            TextureGroupComboBox.Items.Add("All Textures");
+            foreach (var package in TexturePackage.GetLoadedPackages())
+            {
+                TextureGroupComboBox.Items.Add(package);
+            }
+            if (index < 0 || index >= TextureGroupComboBox.Items.Count) index = 0;
+            TextureGroupComboBox.SelectedIndex = index;
+            TextureSelected(TextureComboBox.GetSelectedTexture());
+        }
+
+        private void TextureSelected(TextureItem selection)
+        {
+            TextureComboBox.SetSelectedTexture(selection);
+            var dis = TextureSelectionPictureBox.Image;
+            TextureSelectionPictureBox.Image = null;
+            if (dis != null) dis.Dispose();
+            TextureSizeLabel.Text = "";
+            if (selection == null) return;
+            using (var tp = TextureProvider.GetStreamSourceForPackages(new[] {selection.Package}))
+            {
+                var bmp = tp.GetImage(selection);
+                if (bmp.Width > TextureSelectionPictureBox.Width || bmp.Height > TextureSelectionPictureBox.Height)
+                    TextureSelectionPictureBox.SizeMode = PictureBoxSizeMode.Zoom;
+                else
+                    TextureSelectionPictureBox.SizeMode = PictureBoxSizeMode.Normal;
+                TextureSelectionPictureBox.Image = bmp;
+            }
+            TextureSizeLabel.Text = string.Format("{0} x {1}", selection.Width, selection.Height);
+        }
+
+        private void TextureGroupSelected(object sender, EventArgs e)
+        {
+            var tp = TextureGroupComboBox.SelectedItem as TexturePackage;
+            TextureComboBox.Update(tp == null ? null : tp.PackageFile);
+        }
+
+        private void TextureSelectionChanged(object sender, EventArgs e)
+        {
+            Mediator.Publish(EditorMediator.TextureSelected, TextureComboBox.GetSelectedTexture());
         }
 
         public void FileOpened(string path)

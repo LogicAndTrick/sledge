@@ -5,21 +5,27 @@ using System.Text;
 
 namespace Sledge.Editor
 {
-    public static class EditorMediator
+    public enum EditorMediator
     {
-        public const string SettingsChanged = "SettingsChanged";
-        public const string OpenSettings = "OpenSettings";
+        SettingsChanged,
+        OpenSettings,
 
-        public const string SelectionTypeChanged = "SelectionTypeChanged";
-        public const string SelectionChanged = "SelectionChanged";
+        DocumentOpened,
+        DocumentActivated,
+        DocumentClosed,
 
-        public const string ViewportRightClick = "ViewportRightClick";
+        TextureSelected,
 
-        public const string FileOpened = "FileOpened";
-        public const string FileSaved = "FileSaved";
+        SelectionTypeChanged,
+        SelectionChanged,
 
-        public const string Exit = "Exit";
+        ViewportRightClick,
 
-        public const string About = "About";
+        FileOpened,
+        FileSaved,
+
+        Exit,
+
+        About
     }
 }

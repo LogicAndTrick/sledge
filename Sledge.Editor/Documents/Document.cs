@@ -76,6 +76,7 @@ namespace Sledge.Editor.Documents
             Renderer = new RenderManager(this);
 
             if (MapFile != null) Mediator.Publish(EditorMediator.FileOpened, MapFile);
+            Mediator.Publish(EditorMediator.DocumentOpened, this);
         }
 
         public void SetActive()
@@ -95,6 +96,8 @@ namespace Sledge.Editor.Documents
             VisgroupManager.SetCurrentDocument(this);
 
             _subscriptions.Subscribe();
+
+            Mediator.Publish(EditorMediator.DocumentActivated, this);
         }
 
         public void SetInactive()

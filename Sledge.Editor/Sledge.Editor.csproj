@@ -190,6 +190,9 @@
       <DependentUpon>TextureApplicationForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Tools\TransformationTools\TransformationTool.cs" />
+    <Compile Include="UI\TextureComboBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="UI\ViewportContextMenu.cs">
       <SubType>Component</SubType>
     </Compile>
