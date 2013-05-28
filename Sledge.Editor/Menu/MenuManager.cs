@@ -78,7 +78,7 @@ namespace Sledge.Editor.Menu
             Add("Map", new SimpleMenuBuilder("Entity Report...", "") { IsVisible = mapOpen });
             Add("Map", new SimpleMenuBuilder("Check for Problems", "") { IsVisible = mapOpen });
             Add("Map", new MenuSplitter { IsVisible = mapOpen });
-            Add("Map", new SimpleMenuBuilder("Map Properties...", "") { IsVisible = mapOpen });
+            Add("Map", new SimpleMenuBuilder("Map Properties...", EditorMediator.WorldspawnProperties) { IsVisible = mapOpen });
             Add("Map", new MenuSplitter { IsVisible = mapOpen });
             Add("Map", new SimpleMenuBuilder("Load Pointfile...", "") { IsVisible = mapOpen });
             Add("Map", new SimpleMenuBuilder("Unload Pointfile", "") { IsVisible = mapOpen });

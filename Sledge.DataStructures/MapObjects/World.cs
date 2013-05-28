@@ -13,7 +13,7 @@ namespace Sledge.DataStructures.MapObjects
         public World(long id) : base(id)
         {
             Paths = new List<Path>();
-            EntityData = new EntityData();
+            EntityData = new EntityData {Name = "worldspawn"};
         }
 
         public override MapObject Clone(IDGenerator generator)
@@ -35,6 +35,11 @@ namespace Sledge.DataStructures.MapObjects
             EntityData = e.EntityData.Clone();
             Paths.Clear();
             Paths.AddRange(e.Paths.Select(x => x.Clone()));
+        }
+
+        public override EntityData GetEntityData()
+        {
+            return EntityData;
         }
     }
 }

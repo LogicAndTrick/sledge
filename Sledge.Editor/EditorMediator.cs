@@ -26,6 +26,8 @@ namespace Sledge.Editor
 
         Exit,
 
-        About
+        About,
+
+        WorldspawnProperties
     }
 }

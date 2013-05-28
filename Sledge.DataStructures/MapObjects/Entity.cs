@@ -259,5 +259,10 @@ namespace Sledge.DataStructures.MapObjects
                 .OrderBy(x => (x - line.Start).VectorMagnitude())
                 .FirstOrDefault();
         }
+
+        public override EntityData GetEntityData()
+        {
+            return EntityData;
+        }
     }
 }

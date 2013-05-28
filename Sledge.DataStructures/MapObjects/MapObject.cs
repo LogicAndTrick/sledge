@@ -110,6 +110,11 @@ namespace Sledge.DataStructures.MapObjects
             return null;
         }
 
+        public virtual EntityData GetEntityData()
+        {
+            return null;
+        }
+
         /// <summary>
         /// Searches upwards for the last parent that is not null and is not
         /// an instance of <code>Sledge.DataStructures.MapObjects.World</code>.

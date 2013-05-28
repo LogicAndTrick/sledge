@@ -67,6 +67,18 @@ namespace Sledge.Editor.UI
         private bool _changingClass;
         private string _prevClass;
         private Documents.Document Document { get; set; }
+        public bool FollowSelection { get; set; }
+
+        public bool AllowClassChange
+        {
+            set
+            {
+                CancelClassChangeButton.Enabled
+                    = ConfirmClassChangeButton.Enabled
+                      = Class.Enabled
+                        = value; // It's like art or something!
+            }
+        }
 
         private bool _populating;
 
@@ -80,6 +92,8 @@ namespace Sledge.Editor.UI
             RegisterSmartEditControl(VariableType.String, new SmartEditString());
             RegisterSmartEditControl(VariableType.Integer, new SmartEditInteger());
             RegisterSmartEditControl(VariableType.Choices, new SmartEditChoices());
+
+            FollowSelection = true;
         }
 
         private void RegisterSmartEditControl(VariableType type, SmartEditControl ctrl)
@@ -91,34 +105,34 @@ namespace Sledge.Editor.UI
 
         private void Apply()
         {
-            var ents = Objects.OfType<Entity>().ToList();
+            var ents = Objects.Where(x => x is Entity || x is World).ToList();
             foreach (var entity in ents)
             {
-                // var currentProperties = entity.EntityData.Properties.ToDictionary(x => x.Key, x => x.Value);
+                var entityData = entity.GetEntityData();
                 // Updated class
                 if (Class.BackColor == Color.LightGreen)
                 {
-                    entity.EntityData.Name = Class.Text;
+                    entityData.Name = Class.Text;
                 }
 
                 // Remove nonexistant properties
-                entity.EntityData.Properties.RemoveAll(x => _values.All(y => y.Key != x.Key));
+                entityData.Properties.RemoveAll(x => _values.All(y => y.Key != x.Key));
 
                 // Set updated/new properties
                 foreach (var ent in _values.Where(x => x.IsModified))
                 {
-                    var prop = entity.EntityData.Properties.FirstOrDefault(x => x.Key == ent.Key);
+                    var prop = entityData.Properties.FirstOrDefault(x => x.Key == ent.Key);
                     if (prop == null)
                     {
                         prop = new Property {Key = ent.Key};
-                        entity.EntityData.Properties.Add(prop);
+                        entityData.Properties.Add(prop);
                     }
                     prop.Value = ent.Value;
                 }
 
                 // Set flags
                 var flags = Enumerable.Range(0, FlagsTable.Items.Count).Select(x => FlagsTable.GetItemCheckState(x)).ToList();
-                var entClass = Document.GameData.Classes.FirstOrDefault(x => x.Name == entity.EntityData.Name);
+                var entClass = Document.GameData.Classes.FirstOrDefault(x => x.Name == entityData.Name);
                 var spawnFlags = entClass == null ? null : entClass.Properties.FirstOrDefault(x => x.Name == "spawnflags");
                 var opts = spawnFlags == null ? null : spawnFlags.Options;
                 if (opts == null || flags.Count != opts.Count) continue;
@@ -126,14 +140,14 @@ namespace Sledge.Editor.UI
                 for (var i = 0; i < flags.Count; i++)
                 {
                     var val = int.Parse(opts[i].Key);
-                    if (flags[i] == CheckState.Unchecked) entity.EntityData.Flags &= ~val; // Switch the flag off if unchecked
-                    else if (flags[i] == CheckState.Checked) entity.EntityData.Flags |= val; // Switch it on if checked
+                    if (flags[i] == CheckState.Unchecked) entityData.Flags &= ~val; // Switch the flag off if unchecked
+                    else if (flags[i] == CheckState.Checked) entityData.Flags |= val; // Switch it on if checked
                     // No change if indeterminate
                 }
             }
-            var classes = Objects.OfType<Entity>().Select(x => x.EntityData.Name.ToLower()).Distinct().ToList();
+            var classes = ents.Select(x => x.GetEntityData().Name.ToLower()).Distinct().ToList();
             var cls = classes.Count > 1 ? "" : classes[0];
-            _values = TableValue.Create(Document.GameData, cls, Objects.OfType<Entity>().SelectMany(x => x.EntityData.Properties).Where(x => x.Key != "spawnflags").ToList());
+            _values = TableValue.Create(Document.GameData, cls, ents.SelectMany(x => x.GetEntityData().Properties).Where(x => x.Key != "spawnflags").ToList());
             Class.BackColor = Color.White;
             UpdateKeyValues();
         }
@@ -146,8 +160,16 @@ namespace Sledge.Editor.UI
             }
         }
 
+        public void SetObjects(IEnumerable<MapObject> objects)
+        {
+            Objects.Clear();
+            Objects.AddRange(objects);
+            RefreshData();
+        }
+
         private void UpdateObjects()
         {
+            if (!FollowSelection) return;
             Objects.Clear();
             if (!Document.Selection.InFaceSelection)
             {
@@ -175,7 +197,7 @@ namespace Sledge.Editor.UI
             Tabs.TabPages.Clear();
             if (!Objects.Any()) return;
             Tabs.TabPages.AddRange(new[] {ClassInfoTab, InputsTab, OutputsTab, FlagsTab, VisgroupTab});
-            if (!Objects.All(x => x is Entity))
+            if (!Objects.All(x => x is Entity || x is World))
             {
                 Tabs.TabPages.Remove(ClassInfoTab);
                 Tabs.TabPages.Remove(InputsTab);
@@ -190,11 +212,12 @@ namespace Sledge.Editor.UI
             }
             _populating = true;
             Class.Items.Clear();
+            var allowWorldspawn = Objects.Any(x => x is World);
             Class.Items.AddRange(Document.GameData.Classes
-                                     .Where(x => x.ClassType != ClassType.Base && x.Name != "worldspawn")
+                                     .Where(x => x.ClassType != ClassType.Base && (allowWorldspawn || x.Name != "worldspawn"))
                                      .Select(x => x.Name).OrderBy(x => x.ToLower()).OfType<object>().ToArray());
             if (!Objects.Any()) return;
-            var classes = Objects.OfType<Entity>().Select(x => x.EntityData.Name.ToLower()).Distinct().ToList();
+            var classes = Objects.Where(x => x is Entity || x is World).Select(x => x.GetEntityData().Name.ToLower()).Distinct().ToList();
             var cls = classes.Count > 1 ? "" : classes[0];
             if (classes.Count > 1)
             {
@@ -215,10 +238,10 @@ namespace Sledge.Editor.UI
                     SmartEditButton.Checked = SmartEditButton.Enabled = false;
                 }
             }
-            _values = TableValue.Create(Document.GameData, cls, Objects.OfType<Entity>().SelectMany(x => x.EntityData.Properties).Where(x => x.Key != "spawnflags").ToList());
+            _values = TableValue.Create(Document.GameData, cls, Objects.Where(x => x is Entity || x is World).SelectMany(x => x.GetEntityData().Properties).Where(x => x.Key != "spawnflags").ToList());
             _prevClass = cls;
             UpdateKeyValues();
-            PopulateFlags(cls, Objects.OfType<Entity>().Select(x => x.EntityData.Flags).ToList());
+            PopulateFlags(cls, Objects.Where(x => x is Entity || x is World).Select(x => x.GetEntityData().Flags).ToList());
             _populating = false;
         }
 
@@ -306,7 +329,7 @@ namespace Sledge.Editor.UI
                 _values.Add(new TableValue { DisplayText = prop.DisplayText(), Key = prop.Name, IsAdded = true, Value = prop.DefaultValue });
             }
 
-            FlagsTable.Enabled = ApplyButton.Enabled = false;
+            FlagsTable.Enabled = OkButton.Enabled = false;
             ConfirmClassChangeButton.Enabled = CancelClassChangeButton.Enabled = ChangingClassWarning.Visible = true;
             UpdateKeyValues();
         }
@@ -340,7 +363,7 @@ namespace Sledge.Editor.UI
 
             _changingClass = false;
             UpdateKeyValues();
-            FlagsTable.Enabled = ApplyButton.Enabled = true;
+            FlagsTable.Enabled = OkButton.Enabled = true;
             ConfirmClassChangeButton.Enabled = CancelClassChangeButton.Enabled = ChangingClassWarning.Visible = false;
             _prevClass = className;
         }
@@ -362,7 +385,7 @@ namespace Sledge.Editor.UI
 
             _changingClass = false;
             UpdateKeyValues();
-            FlagsTable.Enabled = ApplyButton.Enabled = true;
+            FlagsTable.Enabled = OkButton.Enabled = true;
             ConfirmClassChangeButton.Enabled = CancelClassChangeButton.Enabled = ChangingClassWarning.Visible = false;
         }
 
@@ -565,6 +588,17 @@ namespace Sledge.Editor.UI
         private void ApplyButtonClicked(object sender, EventArgs e)
         {
             Apply();
+        }
+
+        private void CancelButtonClicked(object sender, EventArgs e)
+        {
+            Close();
+        }
+
+        private void OkButtonClicked(object sender, EventArgs e)
+        {
+            Apply();
+            Close();
         }
     }
 }

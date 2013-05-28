@@ -8,8 +8,7 @@ Priorities
   Menu actions
   2D view right click/Hotkeys
   Entity Create
-  VM point rendering
-  VM dodgy snapping
+  VM clipping when splitting solid entities
   All support tools
   Recognise changes / prompt for save
   Additional Map Properties
@@ -66,7 +65,7 @@ Post-Alpha Priorities
     Undo/Redo - 60%, integration, history UI
     Manual Transform - 0%
   Forms
-    Editor - 60%, right toolbar
+    Editor - 80%, ?
     Options - 80%, hotkeys
     Texture Browser - 50%, used textures only, replace, stats
     Object Properties - 60%, data types, visgroups (inputs/outputs not needed for milestone)

@@ -48,6 +48,8 @@ namespace Sledge.Editor.Documents
             Mediator.Subscribe(HotkeysMediator.ObjectProperties, this);
 
             Mediator.Subscribe(EditorMediator.ViewportRightClick, this);
+
+            Mediator.Subscribe(EditorMediator.WorldspawnProperties, this);
         }
 
         public void Unsubscribe()
@@ -244,6 +246,13 @@ namespace Sledge.Editor.Documents
         public void ObjectProperties()
         {
             var pd = new EntityEditor(_document);
+            pd.Show(Editor.Instance);
+        }
+
+        public void WorldspawnProperties()
+        {
+            var pd = new EntityEditor(_document) {FollowSelection = false, AllowClassChange = false};
+            pd.SetObjects(new[] {_document.Map.WorldSpawn});
             pd.Show(Editor.Instance);
         }
 

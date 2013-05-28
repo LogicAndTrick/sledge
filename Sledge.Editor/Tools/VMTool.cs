@@ -10,6 +10,7 @@ using Sledge.DataStructures.MapObjects;
 using Sledge.Editor.Editing;
 using Sledge.Editor.Properties;
 using Sledge.Editor.Rendering;
+using Sledge.Graphics.Helpers;
 using Sledge.Settings;
 using Sledge.UI;
 using Matrix = Sledge.Graphics.Helpers.Matrix;
@@ -75,8 +76,9 @@ namespace Sledge.Editor.Tools
         private Dictionary<Solid, Solid> _copies; 
         private List<VMPoint> _points;
         private VMState _state;
-        private Coordinate _moveStart;
-        private VMPoint _clickedPoint;
+        private VMPoint _movingPoint;
+        private List<VMPoint> _clickedPoints;
+        private Coordinate _snapPointOffset;
 
         public override Image GetIcon()
         {
@@ -99,13 +101,13 @@ namespace Sledge.Editor.Tools
         }
 
         /// <summary>
-        /// Get the topmost (for the supplied viewport) VM point at the provided coordinate.
+        /// Get the VM points at the provided coordinate, ordered from top to bottom (for the supplied viewport).
         /// </summary>
         /// <param name="x">The X coordinate</param>
         /// <param name="y">The Y coordinate</param>
         /// <param name="viewport">The viewport</param>
-        /// <returns>The topmost point, or null if no point found</returns>
-        private VMPoint GetVertexAtPoint(int x, int y, Viewport2D viewport)
+        /// <returns>The points ordered from top to bottom, or an empty set if no points were found</returns>
+        private List<VMPoint> GetVerticesAtPoint(int x, int y, Viewport2D viewport)
         {
             var p = viewport.ScreenToWorld(x, y);
             var d = 5 / viewport.Zoom; // Tolerance value = 5 pixels
@@ -116,7 +118,7 @@ namespace Sledge.Editor.Tools
                     where p.X >= c.X - d && p.X <= c.X + d && p.Y >= c.Y - d && p.Y <= c.Y + d
                     let unused = viewport.GetUnusedCoordinate(point.Coordinate)
                     orderby unused.X + unused.Y + unused.Z descending
-                    select point).FirstOrDefault();
+                    select point).ToList();
         }
 
         public override void ToolSelected()
@@ -138,7 +140,9 @@ namespace Sledge.Editor.Tools
             RefreshPoints();
             RefreshMidpoints();
             _state = VMState.None;
-            _moveStart = null;
+            _snapPointOffset = null;
+            _movingPoint = null;
+            _clickedPoints = null;
             Document.UpdateDisplayLists(); // Can't just update the select list because the solids are now transparent
         }
 
@@ -158,7 +162,9 @@ namespace Sledge.Editor.Tools
             _copies = null;
             _points = null;
             _state = VMState.None;
-            _moveStart = null;
+            _snapPointOffset = null;
+            _movingPoint = null;
+            _clickedPoints = null;
             Document.UpdateDisplayLists();
         }
 
@@ -219,8 +225,8 @@ namespace Sledge.Editor.Tools
             var viewport = (Viewport2D)vp;
 
             // Find the clicked vertex
-            var vtx = GetVertexAtPoint(e.X, viewport.Height - e.Y, viewport);
-            if (vtx == null)
+            var vtxs = GetVerticesAtPoint(e.X, viewport.Height - e.Y, viewport);
+            if (!vtxs.Any())
             {
                 // Nothing clicked
                 if (!KeyboardState.Ctrl)
@@ -230,6 +236,16 @@ namespace Sledge.Editor.Tools
                 }
                 base.MouseDown(vp, e);
                 return;
+            }
+
+            // Use the topmost vertex as the control point
+            var vtx = vtxs.First();
+
+            // Shift selects only the topmost point
+            if (KeyboardState.Shift)
+            {
+                vtxs.Clear();
+                vtxs.Add(vtx);
             }
 
             // Vertex found, cancel the box if needed
@@ -244,9 +260,10 @@ namespace Sledge.Editor.Tools
                 _points.ForEach(x => x.IsSelected = false);
                 // If this point is already selected, don't deselect others. This is so we can move multiple points easily.
             }
-            vtx.IsSelected = true;
-            _clickedPoint = vtx; // This is unset if the mouse is moved, see MouseUp logic.
-            _moveStart = SnapIfNeeded(viewport.Expand(viewport.ScreenToWorld(e.X, viewport.Height - e.Y)));
+            vtxs.ForEach(x => x.IsSelected = true);
+            _clickedPoints = vtxs; // This is unset if the mouse is moved, see MouseUp logic.
+            _snapPointOffset = SnapIfNeeded(viewport.Expand(viewport.ScreenToWorld(e.X, viewport.Height - e.Y))) - viewport.Flatten(vtx.Coordinate);
+            _movingPoint = vtx;
         }
 
         public override void MouseUp(ViewportBase viewport, MouseEventArgs e)
@@ -255,13 +272,13 @@ namespace Sledge.Editor.Tools
 
             if (!(viewport is Viewport2D)) return;
 
-            if (_state == VMState.Moving && _clickedPoint != null && !KeyboardState.Ctrl)
+            if (_state == VMState.Moving && _clickedPoints != null && !KeyboardState.Ctrl)
             {
                 // If we were moving (or clicking on) a point, and the clicked point is
                 // not null (mouse not moved yet), AND ctrl is not down, deselect the other points.
                 // Otherwise selection has already been handled by MouseDown.
                 _points.ForEach(x => x.IsSelected = false);
-                _clickedPoint.IsSelected = true;
+                _clickedPoints.ForEach(x => x.IsSelected = true);
             }
 
             if (_state == VMState.Moving)
@@ -271,8 +288,9 @@ namespace Sledge.Editor.Tools
             
             RefreshMidpoints();
             _state = VMState.None;
-            _moveStart = null;
-            _clickedPoint = null;
+            _snapPointOffset = null;
+            _movingPoint = null;
+            _clickedPoints = null;
             Editor.Instance.CaptureAltPresses = false;
         }
 
@@ -303,16 +321,20 @@ namespace Sledge.Editor.Tools
             if (_state == VMState.None)
             {
                 // Not moving a point, just test for the cursor.
-                var vtx = GetVertexAtPoint(e.X, viewport.Height - e.Y, viewport);
-                if (vtx != null) viewport.Cursor = Cursors.Cross;
+                var vtxs = GetVerticesAtPoint(e.X, viewport.Height - e.Y, viewport);
+                if (vtxs.Any()) viewport.Cursor = Cursors.Cross;
                 else if (viewport.Cursor == Cursors.Cross) viewport.Cursor = Cursors.Default;
             }
             else
             {
                 // Moving a point, get the delta moved
                 var point = SnapIfNeeded(viewport.Expand(viewport.ScreenToWorld(e.X, viewport.Height - e.Y)));
-                var moveDistance = point - _moveStart;
-                _moveStart = point;
+                if (!KeyboardState.Alt && KeyboardState.Shift)
+                {
+                    // If shift is down, retain the offset the point was at before (relative to the grid)
+                    point += _snapPointOffset;
+                }
+                var moveDistance = point - viewport.Flatten(_movingPoint.Coordinate);
                 // Move each selected point by the delta value
                 foreach (var p in _points.Where(x => x.IsSelected))
                 {
@@ -320,7 +342,7 @@ namespace Sledge.Editor.Tools
                 }
                 RefreshMidpoints();
                 // We've moved the mouse, so not clicking on a point.
-                _clickedPoint = null;
+                _clickedPoints = null;
             }
         }
 
@@ -360,11 +382,11 @@ namespace Sledge.Editor.Tools
 
             // Render out the solid previews
             GL.Color3(Color.Pink);
-            Graphics.Helpers.Matrix.Push();
+            Matrix.Push();
             var matrix = DisplayListGroup.GetMatrixFor(vp.Direction);
             GL.MultMatrix(ref matrix);
             DataStructures.Rendering.Rendering.DrawWireframe(_copies.Keys.SelectMany(x => x.Faces), true);
-            Graphics.Helpers.Matrix.Pop();
+            Matrix.Pop();
 
             // Draw in order by the unused coordinate (the up axis for this viewport)
             var ordered = (from point in _points
@@ -388,6 +410,8 @@ namespace Sledge.Editor.Tools
         protected override void Render3D(Viewport3D vp)
         {
             base.Render3D(vp);
+
+            TextureHelper.DisableTexturing();
 
             // Get us into 2D rendering
             Matrix.Set(MatrixMode.Projection);
@@ -426,6 +450,8 @@ namespace Sledge.Editor.Tools
             Matrix.Set(MatrixMode.Modelview);
             Matrix.Identity();
             vp.Camera.Position();
+
+            TextureHelper.EnableTexturing();
 
             // Render out the solid previews
             GL.Color3(Color.White);

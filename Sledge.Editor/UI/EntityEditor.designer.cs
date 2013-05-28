@@ -40,6 +40,8 @@ namespace Sledge.Editor.UI
             this.ClassInfoTab = new System.Windows.Forms.TabPage();
             this.ChangingClassWarning = new System.Windows.Forms.Label();
             this.CancelClassChangeButton = new System.Windows.Forms.Button();
+            this.DeletePropertyButton = new System.Windows.Forms.Button();
+            this.AddPropertyButton = new System.Windows.Forms.Button();
             this.ConfirmClassChangeButton = new System.Windows.Forms.Button();
             this.SmartEditControlPanel = new System.Windows.Forms.Panel();
             this.SmartEditButton = new System.Windows.Forms.CheckBox();
@@ -56,6 +58,7 @@ namespace Sledge.Editor.UI
             this.label3 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
+            this.Angles = new Sledge.Editor.UI.AngleControl();
             this.OutputsTab = new System.Windows.Forms.TabPage();
             this.OutputDelete = new System.Windows.Forms.Button();
             this.OutputPaste = new System.Windows.Forms.Button();
@@ -94,10 +97,8 @@ namespace Sledge.Editor.UI
             this.label11 = new System.Windows.Forms.Label();
             this.VisgroupTree = new System.Windows.Forms.TreeView();
             this.btnCancel = new System.Windows.Forms.Button();
-            this.ApplyButton = new System.Windows.Forms.Button();
-            this.AddPropertyButton = new System.Windows.Forms.Button();
-            this.DeletePropertyButton = new System.Windows.Forms.Button();
-            this.Angles = new Sledge.Editor.UI.AngleControl();
+            this.OkButton = new System.Windows.Forms.Button();
+            this.button1 = new System.Windows.Forms.Button();
             this.Tabs.SuspendLayout();
             this.ClassInfoTab.SuspendLayout();
             this.OutputsTab.SuspendLayout();
@@ -172,6 +173,26 @@ namespace Sledge.Editor.UI
             this.CancelClassChangeButton.Text = "Cancel";
             this.CancelClassChangeButton.UseVisualStyleBackColor = true;
             this.CancelClassChangeButton.Click += new System.EventHandler(this.CancelClassChange);
+            // 
+            // DeletePropertyButton
+            // 
+            this.DeletePropertyButton.Enabled = false;
+            this.DeletePropertyButton.Location = new System.Drawing.Point(74, 353);
+            this.DeletePropertyButton.Name = "DeletePropertyButton";
+            this.DeletePropertyButton.Size = new System.Drawing.Size(62, 21);
+            this.DeletePropertyButton.TabIndex = 10;
+            this.DeletePropertyButton.Text = "Delete";
+            this.DeletePropertyButton.UseVisualStyleBackColor = true;
+            // 
+            // AddPropertyButton
+            // 
+            this.AddPropertyButton.Enabled = false;
+            this.AddPropertyButton.Location = new System.Drawing.Point(6, 353);
+            this.AddPropertyButton.Name = "AddPropertyButton";
+            this.AddPropertyButton.Size = new System.Drawing.Size(62, 21);
+            this.AddPropertyButton.TabIndex = 10;
+            this.AddPropertyButton.Text = "Add";
+            this.AddPropertyButton.UseVisualStyleBackColor = true;
             // 
             // ConfirmClassChangeButton
             // 
@@ -321,6 +342,16 @@ namespace Sledge.Editor.UI
             this.label1.TabIndex = 1;
             this.label1.Text = "Class:";
             this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // Angles
+            // 
+            this.Angles.Location = new System.Drawing.Point(553, 6);
+            this.Angles.Name = "Angles";
+            this.Angles.ShowLabel = false;
+            this.Angles.ShowTextBox = true;
+            this.Angles.Size = new System.Drawing.Size(115, 46);
+            this.Angles.TabIndex = 0;
+            this.Angles.AngleChangedEvent += new Sledge.Editor.UI.AngleControl.AngleChangedEventHandler(this.AnglesChanged);
             // 
             // OutputsTab
             // 
@@ -653,53 +684,35 @@ namespace Sledge.Editor.UI
             this.btnCancel.TabIndex = 2;
             this.btnCancel.Text = "Cancel";
             this.btnCancel.UseVisualStyleBackColor = true;
+            this.btnCancel.Click += new System.EventHandler(this.CancelButtonClicked);
             // 
-            // ApplyButton
+            // OkButton
             // 
-            this.ApplyButton.Location = new System.Drawing.Point(538, 424);
-            this.ApplyButton.Name = "ApplyButton";
-            this.ApplyButton.Size = new System.Drawing.Size(75, 23);
-            this.ApplyButton.TabIndex = 2;
-            this.ApplyButton.Text = "Apply";
-            this.ApplyButton.UseVisualStyleBackColor = true;
-            this.ApplyButton.Click += new System.EventHandler(this.ApplyButtonClicked);
+            this.OkButton.Location = new System.Drawing.Point(538, 424);
+            this.OkButton.Name = "OkButton";
+            this.OkButton.Size = new System.Drawing.Size(75, 23);
+            this.OkButton.TabIndex = 2;
+            this.OkButton.Text = "OK";
+            this.OkButton.UseVisualStyleBackColor = true;
+            this.OkButton.Click += new System.EventHandler(this.OkButtonClicked);
             // 
-            // AddPropertyButton
+            // button1
             // 
-            this.AddPropertyButton.Enabled = false;
-            this.AddPropertyButton.Location = new System.Drawing.Point(6, 353);
-            this.AddPropertyButton.Name = "AddPropertyButton";
-            this.AddPropertyButton.Size = new System.Drawing.Size(62, 21);
-            this.AddPropertyButton.TabIndex = 10;
-            this.AddPropertyButton.Text = "Add";
-            this.AddPropertyButton.UseVisualStyleBackColor = true;
-            // 
-            // DeletePropertyButton
-            // 
-            this.DeletePropertyButton.Enabled = false;
-            this.DeletePropertyButton.Location = new System.Drawing.Point(74, 353);
-            this.DeletePropertyButton.Name = "DeletePropertyButton";
-            this.DeletePropertyButton.Size = new System.Drawing.Size(62, 21);
-            this.DeletePropertyButton.TabIndex = 10;
-            this.DeletePropertyButton.Text = "Delete";
-            this.DeletePropertyButton.UseVisualStyleBackColor = true;
-            // 
-            // Angles
-            // 
-            this.Angles.Location = new System.Drawing.Point(553, 6);
-            this.Angles.Name = "Angles";
-            this.Angles.ShowLabel = false;
-            this.Angles.ShowTextBox = true;
-            this.Angles.Size = new System.Drawing.Size(115, 46);
-            this.Angles.TabIndex = 0;
-            this.Angles.AngleChangedEvent += new Sledge.Editor.UI.AngleControl.AngleChangedEventHandler(this.AnglesChanged);
+            this.button1.Location = new System.Drawing.Point(457, 424);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.TabIndex = 2;
+            this.button1.Text = "Apply";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.ApplyButtonClicked);
             // 
             // EntityEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(706, 459);
-            this.Controls.Add(this.ApplyButton);
+            this.Controls.Add(this.button1);
+            this.Controls.Add(this.OkButton);
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.Tabs);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
@@ -769,7 +782,7 @@ namespace Sledge.Editor.UI
 		private System.Windows.Forms.TextBox CommentsTextbox;
 		private System.Windows.Forms.Button CopyKeyValues;
 		private System.Windows.Forms.Button PasteKeyValues;
-		private System.Windows.Forms.Button ApplyButton;
+		private System.Windows.Forms.Button OkButton;
 		private System.Windows.Forms.Button btnCancel;
 		private System.Windows.Forms.TabPage OutputsTab;
 		private System.Windows.Forms.Label label1;
@@ -785,5 +798,6 @@ namespace Sledge.Editor.UI
         private System.Windows.Forms.Label ChangingClassWarning;
         private System.Windows.Forms.Button DeletePropertyButton;
         private System.Windows.Forms.Button AddPropertyButton;
+        private System.Windows.Forms.Button button1;
 	}
 }
