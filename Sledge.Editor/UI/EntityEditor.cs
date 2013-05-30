@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using Sledge.Common.Mediator;
 using Sledge.DataStructures.GameData;
 using Sledge.DataStructures.MapObjects;
+using Sledge.Editor.Visgroups;
 using Property = Sledge.DataStructures.MapObjects.Property;
 
 namespace Sledge.Editor.UI
@@ -106,6 +107,7 @@ namespace Sledge.Editor.UI
         private void Apply()
         {
             var ents = Objects.Where(x => x is Entity || x is World).ToList();
+            if (!ents.Any()) return;
             foreach (var entity in ents)
             {
                 var entityData = entity.GetEntityData();
@@ -154,9 +156,15 @@ namespace Sledge.Editor.UI
 
         public void Notify(string message, object data)
         {
-            if (message == EditorMediator.SelectionChanged.ToString() || message == EditorMediator.SelectionTypeChanged.ToString())
+            if (message == EditorMediator.SelectionChanged.ToString()
+                || message == EditorMediator.SelectionTypeChanged.ToString())
             {
                 UpdateObjects();
+            }
+
+            if (message == EditorMediator.VisgroupsChanged.ToString())
+            {
+                UpdateVisgroups();
             }
         }
 
@@ -178,12 +186,63 @@ namespace Sledge.Editor.UI
             RefreshData();
         }
 
+        private void UpdateVisgroups()
+        {
+            _populating = true;
+
+            var visgroups = Document.Map.Visgroups.Select(x => new Visgroup
+                                                                   {
+                                                                       Colour = x.Colour,
+                                                                       ID = x.ID,
+                                                                       Name = x.Name,
+                                                                       Visible = false
+                                                                   });
+
+            VisgroupPanel.Update(visgroups);
+
+            var groups = Objects.SelectMany(x => x.Visgroups)
+                .GroupBy(x => x)
+                .Select(x => new {ID = x.Key, Count = x.Count()});
+
+            foreach (var g in groups.Where(g => g.Count > 0))
+            {
+                VisgroupPanel.SetCheckState(g.ID, g.Count == Objects.Count
+                                                      ? CheckState.Checked
+                                                      : CheckState.Indeterminate);
+            }
+
+            _populating = false;
+        }
+
+        private void VisgroupToggled(object sender, int visgroupId, CheckState state)
+        {
+            switch (state)
+            {
+                case CheckState.Unchecked:
+                    Objects.ForEach(x => x.Visgroups.Remove(visgroupId));
+                    break;
+                case CheckState.Checked:
+                    foreach (var x in Objects.Where(x => !x.IsInVisgroup(visgroupId))) x.Visgroups.Add(visgroupId);
+                    break;
+            }
+            var updated = false;
+            foreach (var o in Objects.Where(x => x.IsVisgroupHidden && !x.Visgroups.Any()))
+            {
+                o.IsVisgroupHidden = false;
+                updated = true;
+            }
+            if (updated) Document.UpdateDisplayLists();
+            VisgroupManager.Update();
+        }
+
         protected override void OnLoad(EventArgs e)
         {
             UpdateObjects();
 
             Mediator.Subscribe(EditorMediator.SelectionChanged, this);
             Mediator.Subscribe(EditorMediator.SelectionTypeChanged, this);
+
+            Mediator.Subscribe(EditorMediator.VisgroupsChanged, this);
         }
 
         protected override void OnClosed(EventArgs e)
@@ -194,9 +253,16 @@ namespace Sledge.Editor.UI
         
         private void RefreshData()
         {
-            Tabs.TabPages.Clear();
-            if (!Objects.Any()) return;
-            Tabs.TabPages.AddRange(new[] {ClassInfoTab, InputsTab, OutputsTab, FlagsTab, VisgroupTab});
+            if (!Objects.Any())
+            {
+                Tabs.TabPages.Clear();
+                return;
+            }
+
+            UpdateVisgroups();
+
+            if (!Tabs.TabPages.Contains(VisgroupTab)) Tabs.TabPages.Add(VisgroupTab);
+
             if (!Objects.All(x => x is Entity || x is World))
             {
                 Tabs.TabPages.Remove(ClassInfoTab);
@@ -205,11 +271,23 @@ namespace Sledge.Editor.UI
                 Tabs.TabPages.Remove(FlagsTab);
                 return;
             }
-            if (Document.Game.EngineID == 1) // Goldsource
+
+            if (!Tabs.TabPages.Contains(ClassInfoTab)) Tabs.TabPages.Insert(0, ClassInfoTab);
+            if (!Tabs.TabPages.Contains(FlagsTab)) Tabs.TabPages.Insert(Tabs.TabPages.Count - 1, FlagsTab);
+
+            if (Document.Game.EngineID == 1)
             {
+                // Goldsource
                 Tabs.TabPages.Remove(InputsTab);
                 Tabs.TabPages.Remove(OutputsTab);
             }
+            else
+            {
+                // Source
+                if (!Tabs.TabPages.Contains(InputsTab)) Tabs.TabPages.Insert(1, InputsTab);
+                if (!Tabs.TabPages.Contains(OutputsTab)) Tabs.TabPages.Insert(2, OutputsTab);
+            }
+
             _populating = true;
             Class.Items.Clear();
             var allowWorldspawn = Objects.Any(x => x is World);

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Windows.Forms;
+using Sledge.Common.Mediator;
 using Sledge.Editor.Documents;
 
 namespace Sledge.Editor.Visgroups
@@ -36,6 +37,7 @@ namespace Sledge.Editor.Visgroups
             {
                 vef.ShowDialog();
                 Update();
+                Mediator.Publish(EditorMediator.VisgroupsChanged);
                 if (vef.NeedReload)
                 {
                     _currentDocument.UpdateDisplayLists();
@@ -96,7 +98,7 @@ namespace Sledge.Editor.Visgroups
         {
             Clear();
             if (_visgroupPanel == null || _currentDocument == null) return;
-            _visgroupPanel.Update(_currentDocument.Map.Visgroups);
+            _visgroupPanel.Update(_currentDocument);
         }
 
         public static void Clear()

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
 using Sledge.DataStructures.MapObjects;
+using Sledge.Editor.Documents;
 
 namespace Sledge.Editor.Visgroups
 {
@@ -41,6 +42,7 @@ namespace Sledge.Editor.Visgroups
         public VisgroupPanel()
         {
             InitializeComponent();
+
             /* http://www.codeproject.com/script/Articles/ViewDownloads.aspx?aid=202435 */
             CheckboxImages.Images.Add("Unchecked", GetCheckboxBitmap(CheckBoxState.UncheckedNormal));
             CheckboxImages.Images.Add("Checked", GetCheckboxBitmap(CheckBoxState.CheckedNormal));
@@ -58,12 +60,52 @@ namespace Sledge.Editor.Visgroups
             return bmp;
         }
 
+        private void VisgroupsChanged()
+        {
+            var visgroups = DocumentManager.CurrentDocument != null
+                                ? DocumentManager.CurrentDocument.Map.Visgroups
+                                : new List<Visgroup>();
+            Update(visgroups);
+        }
+
+        public void Update(Document document)
+        {
+            Clear();
+            var states = document.Map.WorldSpawn
+                .FindAll()
+                .SelectMany(x => x.Visgroups.Select(y => new {ID = y, Hidden = x.IsVisgroupHidden}))
+                .GroupBy(x => x.ID)
+                .ToDictionary(x => x.Key, x => GetCheckState(x.Select(y => y.Hidden)));
+            foreach (var v in document.Map.Visgroups)
+            {
+                VisgroupTree.Nodes.Add(new TreeNode(v.Name)
+                {
+                    StateImageKey = states.ContainsKey(v.ID) ? states[v.ID] : "Checked",
+                    BackColor = v.Colour,
+                    Tag = v.ID
+                });
+            }
+        }
+
+        private string GetCheckState(IEnumerable<bool> bools)
+        {
+            var a = bools.Distinct().ToArray();
+            if (a.Length == 0) return "Checked";
+            if (a.Length == 1) return a[0] ? "Unchecked" : "Checked";
+            return "Mixed";
+        }
+
         public void Update(IEnumerable<Visgroup> visgroups)
         {
             Clear();
             foreach (var v in visgroups)
             {
-                VisgroupTree.Nodes.Add(new TreeNode(v.Name) { StateImageKey = v.Visible ? "Checked" : "Unchecked", BackColor = v.Colour, Tag = v.ID });
+                VisgroupTree.Nodes.Add(new TreeNode(v.Name)
+                                           {
+                                               StateImageKey = v.Visible ? "Checked" : "Unchecked",
+                                               BackColor = v.Colour,
+                                               Tag = v.ID
+                                           });
             }
         }
 

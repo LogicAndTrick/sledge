@@ -28,6 +28,12 @@ namespace Sledge.Editor
 
         About,
 
-        WorldspawnProperties
+        WorldspawnProperties,
+
+        VisgroupToggled,
+        VisgroupsChanged,
+        VisgroupShowEditor,
+        VisgroupSelect,
+        VisgroupShowAll
     }
 }

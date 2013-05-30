@@ -94,8 +94,8 @@ namespace Sledge.Editor.UI
             this.FlagsTab = new System.Windows.Forms.TabPage();
             this.FlagsTable = new System.Windows.Forms.CheckedListBox();
             this.VisgroupTab = new System.Windows.Forms.TabPage();
+            this.VisgroupPanel = new Sledge.Editor.Visgroups.VisgroupPanel();
             this.label11 = new System.Windows.Forms.Label();
-            this.VisgroupTree = new System.Windows.Forms.TreeView();
             this.btnCancel = new System.Windows.Forms.Button();
             this.OkButton = new System.Windows.Forms.Button();
             this.button1 = new System.Windows.Forms.Button();
@@ -650,8 +650,8 @@ namespace Sledge.Editor.UI
             // 
             // VisgroupTab
             // 
+            this.VisgroupTab.Controls.Add(this.VisgroupPanel);
             this.VisgroupTab.Controls.Add(this.label11);
-            this.VisgroupTab.Controls.Add(this.VisgroupTree);
             this.VisgroupTab.Location = new System.Drawing.Point(4, 22);
             this.VisgroupTab.Name = "VisgroupTab";
             this.VisgroupTab.Padding = new System.Windows.Forms.Padding(3);
@@ -659,6 +659,18 @@ namespace Sledge.Editor.UI
             this.VisgroupTab.TabIndex = 4;
             this.VisgroupTab.Text = "Visgroup";
             this.VisgroupTab.UseVisualStyleBackColor = true;
+            // 
+            // VisgroupPanel
+            // 
+            this.VisgroupPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.VisgroupPanel.Location = new System.Drawing.Point(6, 26);
+            this.VisgroupPanel.Name = "VisgroupPanel";
+            this.VisgroupPanel.ShowCheckboxes = true;
+            this.VisgroupPanel.Size = new System.Drawing.Size(662, 348);
+            this.VisgroupPanel.TabIndex = 2;
+            this.VisgroupPanel.VisgroupToggled += new Sledge.Editor.Visgroups.VisgroupPanel.VisgroupToggledEventHandler(this.VisgroupToggled);
             // 
             // label11
             // 
@@ -668,13 +680,6 @@ namespace Sledge.Editor.UI
             this.label11.TabIndex = 1;
             this.label11.Text = "Member of group:";
             this.label11.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // VisgroupTree
-            // 
-            this.VisgroupTree.Location = new System.Drawing.Point(6, 26);
-            this.VisgroupTree.Name = "VisgroupTree";
-            this.VisgroupTree.Size = new System.Drawing.Size(662, 348);
-            this.VisgroupTree.TabIndex = 0;
             // 
             // btnCancel
             // 
@@ -737,7 +742,6 @@ namespace Sledge.Editor.UI
 
 		}
         private Sledge.Editor.UI.AngleControl Angles;
-		private System.Windows.Forms.TreeView VisgroupTree;
 		private System.Windows.Forms.Label label11;
 		private System.Windows.Forms.TabPage VisgroupTab;
 		private System.Windows.Forms.TabPage FlagsTab;
@@ -799,5 +803,6 @@ namespace Sledge.Editor.UI
         private System.Windows.Forms.Button DeletePropertyButton;
         private System.Windows.Forms.Button AddPropertyButton;
         private System.Windows.Forms.Button button1;
+        private Visgroups.VisgroupPanel VisgroupPanel;
 	}
 }

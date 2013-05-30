@@ -78,8 +78,11 @@ namespace Sledge.Common.Mediator
             }
         }
 
-        public static void Publish(Enum message, object parameter = null)
+        public static void Publish(Enum message, params object[] parameters)
         {
+            object parameter = null;
+            if (parameters.Length == 1) parameter = parameters[0];
+            else if (parameters.Length > 1) parameter = parameters;
             Publish(message.ToString(), parameter);
         }
 

@@ -68,7 +68,7 @@ Post-Alpha Priorities
     Editor - 80%, ?
     Options - 80%, hotkeys
     Texture Browser - 50%, used textures only, replace, stats
-    Object Properties - 60%, data types, visgroups (inputs/outputs not needed for milestone)
+    Object Properties - 80%, data types (inputs/outputs not needed for milestone)
   UI
     Menu Builder - 60%, actions
     New/Open/Save/Close - 20%, file menu, save as, change detection
