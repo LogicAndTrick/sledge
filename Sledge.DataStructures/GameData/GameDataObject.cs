@@ -67,5 +67,10 @@ namespace Sledge.DataStructures.GameData
                 else Behaviours.Insert(inc++, b);
             }
         }
+
+        public override string ToString()
+        {
+            return Name;
+        }
     }
 }

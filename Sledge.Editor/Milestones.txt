@@ -20,31 +20,32 @@ Post-Alpha Priorities
   Texture loader refactor
   Models
   Autosaving
+  PAK / GCF
 
 1. Goldsource Support
   Formats
     RMF - 100%
     MAP - 100%
     FGD - 100%, (saving not needed for this milestone)
-    MDL - 50%, textures
+    MDL - 50%, textures [post-alpha]
     WAD - 100%
-    GCF - 90%, integration
-    PAK - 0%
+    GCF - 90%, integration [post-alpha]
+    PAK - 0% [post-alpha]
     SPR - 80%, testing, streaming, integration
     VMF - 90%, fully test against VHE4 format, additional map properties
   Rendering
     Solids - 90%, transparency
     Entities - 60%, sprites, models, path connections
     Sprites - 95%, billboarding calculation could be improved
-    Models - 0%
+    Models - 0% [post-alpha]
     VBO - 100%
   File System
-    FileSource and mounting - 50%, offset roots (for PAK files)
-    Custom file dialog - 50%, events, options
+    FileSource and mounting - 50%, offset roots (for PAK files) [post-alpha]
+    Custom file dialog - 50%, events, options [post-alpha]
     Native - 100%
     WAD - 100%
     GCF - 100%
-    PAK - 0%
+    PAK - 0% [post-alpha]
   Main Tools
     Selection - 100%
     Entity - 60%, right toolbar, create object, 3D placement
@@ -99,6 +100,7 @@ Feature Ideas
   VM prevent illegal brushes
   VM move in 3D
   VM create verts
+  Filesystem preview (textures, models, etc)
 
 ---
 

@@ -8,16 +8,16 @@ namespace Sledge.Common
 {
     public static class Colour
     {
-        private static Random _rand;
+        private static readonly Random Rand;
 
         static Colour()
         {
-            _rand = new Random();
+            Rand = new Random();
         }
 
         public static Color GetRandomColour()
         {
-            return Color.FromArgb(255, _rand.Next(0, 256), _rand.Next(0, 256), _rand.Next(0, 256));
+            return Color.FromArgb(255, Rand.Next(0, 256), Rand.Next(0, 256), Rand.Next(0, 256));
         }
 
         /// <summary>
@@ -25,17 +25,22 @@ namespace Sledge.Common
         /// </summary>
         public static Color GetRandomBrushColour()
         {
-            return Color.FromArgb(255, 0, _rand.Next(128, 256), _rand.Next(128, 256));
+            return Color.FromArgb(255, 0, Rand.Next(128, 256), Rand.Next(128, 256));
         }
 
         public static Color GetRandomLightColour()
         {
-            return Color.FromArgb(255, _rand.Next(128, 256), _rand.Next(128, 256), _rand.Next(128, 256));
+            return Color.FromArgb(255, Rand.Next(128, 256), Rand.Next(128, 256), Rand.Next(128, 256));
         }
 
         public static Color GetRandomDarkColour()
         {
-            return Color.FromArgb(255, _rand.Next(0, 128), _rand.Next(0, 128), _rand.Next(0, 128));
+            return Color.FromArgb(255, Rand.Next(0, 128), Rand.Next(0, 128), Rand.Next(0, 128));
+        }
+
+        public static Color GetDefaultEntityColour()
+        {
+            return Color.FromArgb(255, 255, 0, 255);
         }
     }
 }

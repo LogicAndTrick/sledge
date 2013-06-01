@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Windows.Forms;
 using Microsoft.WindowsAPICodePack.Taskbar;
 using Sledge.Common.Mediator;
+using Sledge.DataStructures.GameData;
 using Sledge.DataStructures.MapObjects;
 using Sledge.Database.Models;
 using Sledge.Editor.Brushes;
@@ -180,6 +181,7 @@ namespace Sledge.Editor
 
         private void DocumentActivated(Document doc)
         {
+            // Textures
             var index = TextureGroupComboBox.SelectedIndex;
             TextureGroupComboBox.Items.Clear();
             TextureGroupComboBox.Items.Add("All Textures");
@@ -190,6 +192,21 @@ namespace Sledge.Editor
             if (index < 0 || index >= TextureGroupComboBox.Items.Count) index = 0;
             TextureGroupComboBox.SelectedIndex = index;
             TextureSelected(TextureComboBox.GetSelectedTexture());
+
+            // Entities
+            var selEnt = EntityTypeList.SelectedItem;
+            var def = doc.Game.DefaultPointEntity;
+            EntityTypeList.Items.Clear();
+            foreach (var gdo in doc.GameData.Classes.Where(x => x.ClassType == ClassType.Point))
+            {
+                EntityTypeList.Items.Add(gdo);
+                if (selEnt == null && gdo.Name == def) selEnt = gdo;
+            }
+            if (selEnt == null) selEnt = doc.GameData.Classes
+                .Where(x => x.ClassType == ClassType.Point)
+                .OrderBy(x => x.Name.StartsWith("info") ? 0 : 1)
+                .FirstOrDefault();
+            EntityTypeList.SelectedItem = selEnt;
         }
 
         private void TextureSelected(TextureItem selection)
@@ -226,6 +243,11 @@ namespace Sledge.Editor
         public TextureItem GetSelectedTexture()
         {
             return TextureComboBox.GetSelectedTexture();
+        }
+
+        public GameDataObject GetSelectedEntity()
+        {
+            return (GameDataObject) EntityTypeList.SelectedItem;
         }
 
         public void FileOpened(string path)

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using OpenTK.Graphics.OpenGL;
+using Sledge.Common;
 using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.MapObjects;
 using Sledge.Editor.History;
@@ -17,7 +18,7 @@ namespace Sledge.Editor.Tools
 {
     public class EntityTool : BaseTool
     {
-        public enum EntityState
+        private enum EntityState
         {
             None,
             Drawn,
@@ -56,11 +57,38 @@ namespace Sledge.Editor.Tools
 
         public override void MouseDown(ViewportBase viewport, MouseEventArgs e)
         {
-            if (!(viewport is Viewport2D)) return;
+            if (viewport is Viewport3D)
+            {
+                MouseDown((Viewport3D) viewport, e);
+                return;
+            }
+
             _state = EntityState.Moving;
-            var vp = viewport as Viewport2D;
+            var vp = (Viewport2D) viewport;
             var loc = SnapIfNeeded(vp.ScreenToWorld(e.X, vp.Height - e.Y));
             _location = vp.GetUnusedCoordinate(_location) + vp.Expand(loc);
+        }
+
+        private void MouseDown(Viewport3D vp, MouseEventArgs e)
+        {
+            if (vp == null) return;
+
+            // Get the ray that is cast from the clicked point along the viewport frustrum
+            var ray = vp.CastRayFromScreen(e.X, e.Y);
+
+            // Grab all the elements that intersect with the ray
+            var hits = Document.Map.WorldSpawn.GetAllNodesIntersectingWith(ray);
+
+            // Sort the list of intersecting elements by distance from ray origin and grab the first hit
+            var hit = hits
+                .Select(x => new { Item = x, Intersection = x.GetIntersectionPoint(ray) })
+                .Where(x => x.Intersection != null)
+                .OrderBy(x => (x.Intersection - ray.Start).VectorMagnitude())
+                .FirstOrDefault();
+
+            if (hit == null) return; // Nothing was clicked
+
+            CreateEntity(hit.Intersection);
         }
 
         public override void MouseUp(ViewportBase viewport, MouseEventArgs e)
@@ -96,7 +124,7 @@ namespace Sledge.Editor.Tools
             switch (e.KeyCode)
             {
                 case Keys.Enter:
-                    CreateEntity();
+                    CreateEntity(_location);
                     _state = EntityState.None;
                     break;
                 case Keys.Escape:
@@ -105,10 +133,34 @@ namespace Sledge.Editor.Tools
             }
         }
 
-        private void CreateEntity()
+        private void CreateEntity(Coordinate origin)
         {
-            var hc = new HistoryCreate("Create entity: ", new MapObject[0]);
-            throw new NotImplementedException();
+            var gd = Editor.Instance.GetSelectedEntity();
+            if (gd == null) return;
+
+            var col = gd.Behaviours.Where(x => x.Name == "color").ToArray();
+            var colour = col.Any() ? col[0].GetColour(0) : Colour.GetDefaultEntityColour();
+
+            var entity = new Entity(Document.Map.IDGenerator.GetNextObjectID())
+            {
+                EntityData = new EntityData
+                {
+                    Name = gd.Name
+                },
+                ClassName = gd.Name,
+                Colour = colour,
+                Origin = origin
+            };
+
+            // Log the history in the undo stack
+            var hc = new HistoryCreate("Create entity: ", new[] { entity });
+            Document.History.AddHistoryItem(hc);
+
+            // Add the entity and update the viewports
+            entity.Parent = Document.Map.WorldSpawn;
+            Document.Map.WorldSpawn.Children.Add(entity);
+            entity.UpdateBoundingBox();
+            Document.UpdateDisplayLists();
         }
 
         public override void KeyUp(ViewportBase viewport, KeyEventArgs e)

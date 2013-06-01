@@ -55,7 +55,8 @@ namespace Sledge.Editor.Tools
 
             if (hit == null) return; // Nothing was clicked
 
-            var textureName = "{TARGET"; // TODO texture toolbar
+            var selected = Editor.Instance.GetSelectedTexture();
+            var textureName = selected == null ? "{TARGET" : selected.Name;
             var decal = new Entity(Document.Map.IDGenerator.GetNextObjectID())
                             {
                                 EntityData = new EntityData
