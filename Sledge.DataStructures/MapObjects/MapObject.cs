@@ -77,6 +77,7 @@ namespace Sledge.DataStructures.MapObjects
             if (Parent != null) Parent.Children.Remove(this);
             Parent = parent;
             if (Parent != null) Parent.Children.Add(this);
+            UpdateBoundingBox();
         }
 
         public void RemoveDescendant(MapObject remove)
@@ -272,7 +273,7 @@ namespace Sledge.DataStructures.MapObjects
         /// <returns>The object with the matching ID or null if it wasn't found</returns>
         public MapObject FindByID(long id)
         {
-            return ID == id ? this : Children.Select(x => FindByID(id)).FirstOrDefault(x => x != null);
+            return ID == id ? this : Children.Select(x => x.FindByID(id)).FirstOrDefault(x => x != null);
         }
 
         /// <summary>

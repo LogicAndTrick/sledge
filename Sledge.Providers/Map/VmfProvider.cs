@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using Sledge.Common;
@@ -67,27 +68,25 @@ namespace Sledge.Providers.Map
 
         private static void WriteEntityData(GenericStructure obj, EntityData data)
         {
-            foreach (var property in data.Properties)
+            foreach (var property in data.Properties.OrderBy(x => x.Key))
             {
                 obj[property.Key] = property.Value;
             }
-            obj["spawnflags"] = data.Flags.ToString();
+            obj["spawnflags"] = data.Flags.ToString(CultureInfo.InvariantCulture);
         }
 
         private static GenericStructure WriteEditor(MapObject obj)
         {
             var editor = new GenericStructure("editor");
             editor["color"] = FormatColor(obj.Colour);
-            foreach (var visgroup in obj.Visgroups)
+            foreach (var visgroup in obj.Visgroups.OrderBy(x => x)) 
             {
-                editor.AddProperty("visgroupid", visgroup.ToString());
+                editor.AddProperty("visgroupid", visgroup.ToString(CultureInfo.InvariantCulture));
             }
             editor["visgroupshown"] = "1";
             editor["visgroupautoshown"] = "1";
-            if (obj.Parent is Group)
-            {
-                editor["groupid"] = ((Group)obj.Parent).ID.ToString();
-            }
+            if (obj.Parent is Group) editor["groupid"] = obj.Parent.ID.ToString(CultureInfo.InvariantCulture);
+            if (obj.Parent != null) editor["parentid"] = obj.Parent.ID.ToString(CultureInfo.InvariantCulture);
             return editor;
         }
 
@@ -166,7 +165,7 @@ namespace Sledge.Providers.Map
         private static GenericStructure WriteFace(Face face)
         {
             var ret = new GenericStructure("side");
-            ret["id"] = face.ID.ToString();
+            ret["id"] = face.ID.ToString(CultureInfo.InvariantCulture);
             ret["plane"] = String.Format("({0}) ({1}) ({2})",
                                          FormatCoordinate(face.Vertices[0].Location),
                                          FormatCoordinate(face.Vertices[1].Location),
@@ -174,21 +173,22 @@ namespace Sledge.Providers.Map
             ret["material"] = face.Texture.Name;
             ret["uaxis"] = String.Format("[{0} {1}] {2}", FormatCoordinate(face.Texture.UAxis), face.Texture.XShift, face.Texture.XScale);
             ret["vaxis"] = String.Format("[{0} {1}] {2}", FormatCoordinate(face.Texture.VAxis), face.Texture.YShift, face.Texture.YScale);
-            ret["rotation"] = face.Texture.Rotation.ToString();
+            ret["rotation"] = face.Texture.Rotation.ToString(CultureInfo.InvariantCulture);
             // ret["lightmapscale"]
             // ret["smoothing_groups"]
 
             var verts = new GenericStructure("vertex");
-            verts["count"] = face.Vertices.Count.ToString();
+            verts["count"] = face.Vertices.Count.ToString(CultureInfo.InvariantCulture);
             for (var i = 0; i < face.Vertices.Count; i++)
             {
                 verts["vertex" + i] = FormatCoordinate(face.Vertices[i].Location);
             }
             ret.Children.Add(verts);
 
-            if (face is Displacement)
+            var disp = face as Displacement;
+            if (disp != null)
             {
-                ret.Children.Add(WriteDisplacement((Displacement) face));
+                ret.Children.Add(WriteDisplacement(disp));
             }
 
             return ret;
@@ -260,9 +260,9 @@ namespace Sledge.Providers.Map
         private static GenericStructure WriteSolid(Solid solid)
         {
             var ret = new GenericStructure("solid");
-            ret["id"] = solid.ID.ToString();
+            ret["id"] = solid.ID.ToString(CultureInfo.InvariantCulture);
 
-            foreach (var face in solid.Faces)
+            foreach (var face in solid.Faces.OrderBy(x => x.ID))
             {
                 ret.Children.Add(WriteFace(face));
             }
@@ -303,7 +303,7 @@ namespace Sledge.Providers.Map
         private static GenericStructure WriteEntity(Entity ent)
         {
             var ret = new GenericStructure("entity");
-            ret["id"] = ent.ID.ToString();
+            ret["id"] = ent.ID.ToString(CultureInfo.InvariantCulture);
             ret["classname"] = ent.EntityData.Name;
             WriteEntityData(ret, ent.EntityData);
             if (ent.Children.Count == 0) ret["origin"] = FormatCoordinate(ent.Origin);
@@ -311,7 +311,7 @@ namespace Sledge.Providers.Map
             var editor = WriteEditor(ent);
             ret.Children.Add(editor);
 
-            foreach (var solid in ent.Children.SelectMany(x => x.FindAll()).OfType<Solid>())
+            foreach (var solid in ent.Children.SelectMany(x => x.FindAll()).OfType<Solid>().OrderBy(x => x.ID))
             {
                 ret.Children.Add(WriteSolid(solid));
             }
@@ -331,7 +331,7 @@ namespace Sledge.Providers.Map
         private static GenericStructure WriteGroup(Group group)
         {
             var ret = new GenericStructure("group");
-            ret["id"] = group.ID.ToString();
+            ret["id"] = group.ID.ToString(CultureInfo.InvariantCulture);
 
             var editor = WriteEditor(group);
             ret.Children.Add(editor);
@@ -426,23 +426,23 @@ namespace Sledge.Providers.Map
         {
             var world = map.WorldSpawn;
             var ret = new GenericStructure("world");
-            ret["id"] = world.ID.ToString();
+            ret["id"] = world.ID.ToString(CultureInfo.InvariantCulture);
             ret["classname"] = "worldspawn";
             WriteEntityData(ret, world.EntityData);
 
             //TODO these properties
-            ret["mapversion"] = map.Version.ToString();
+            ret["mapversion"] = map.Version.ToString(CultureInfo.InvariantCulture);
             ret["detailmaterial"] = "detail/detailsprites";
             ret["detailvbsp"] = "detail.vbsp";
             ret["maxpropscreenwidth"] = "-1";
             ret["skyname"] = "sky_day01_01";
 
-            foreach (var solid in solids)
+            foreach (var solid in solids.OrderBy(x => x.ID))
             {
                 ret.Children.Add(WriteSolid(solid));
             }
 
-            foreach (var group in groups)
+            foreach (var group in groups.OrderBy(x => x.ID))
             {
                 ret.Children.Add(WriteGroup(group));
             }
@@ -466,7 +466,7 @@ namespace Sledge.Providers.Map
         {
             var ret = new GenericStructure("visgroup");
             ret["name"] = visgroup.Name;
-            ret["visgroupid"] = visgroup.ID.ToString();
+            ret["visgroupid"] = visgroup.ID.ToString(CultureInfo.InvariantCulture);
             ret["color"] = FormatColor(visgroup.Colour);
             return ret;
         }
@@ -566,7 +566,7 @@ namespace Sledge.Providers.Map
             //TODO versioninfo
 
             var visgroups = new GenericStructure("visgroups");
-            foreach (var visgroup in map.Visgroups)
+            foreach (var visgroup in map.Visgroups.OrderBy(x => x.ID))
             {
                 visgroups.Children.Add(WriteVisgroup(visgroup));
             }
@@ -576,7 +576,7 @@ namespace Sledge.Providers.Map
 
             var world = WriteWorld(map, solids, groups);
 
-            var entities = ents.Select(WriteEntity).ToList();
+            var entities = ents.OrderBy(x => x.ID).Select(WriteEntity).ToList();
 
             var cameras = new GenericStructure("cameras");
             //TODO cameras

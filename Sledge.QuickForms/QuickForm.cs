@@ -68,17 +68,28 @@ namespace Sledge.QuickForms
 		    Controls.AddRange(ctl.ToArray());
 			CurrentOffset += ItemHeight + ItemPadding;
 		}
-		
+
+        /// <summary>
+        /// Add an item to the form.
+        /// </summary>
+        /// <param name="item">The item to add</param>
+        /// <returns>This object, for method chaining</returns>
+        public QuickForm Item(QuickFormItem item)
+        {
+            AddItem(item);
+            return this;
+        }
+
         /// <summary>
         /// Add a textbox to the form.
         /// </summary>
         /// <param name="name">The name of the textbox</param>
         /// <returns>This object, for method chaining</returns>
-		public QuickForm TextBox(string name)
-		{
-			AddItem(new QuickFormTextBox(name));
-		    return this;
-		}
+        public QuickForm TextBox(string name)
+        {
+            AddItem(new QuickFormTextBox(name));
+            return this;
+        }
 
 	    /// <summary>
 	    /// Add a browse textbox to the form.
@@ -112,10 +123,22 @@ namespace Sledge.QuickForms
         /// <param name="decimals">The number of decimals for the control</param>
         /// <returns>This object, for method chaining</returns>
         public QuickForm NumericUpDown(string name, int min, int max, int decimals)
-		{
+        {
             AddItem(new QuickFormNumericUpDown(name, min, max, decimals));
             return this;
-		}
+        }
+
+        /// <summary>
+        /// Add a ComboBox to the form.
+        /// </summary>
+        /// <param name="name">The name of the control</param>
+        /// <param name="items">The items for the control</param>
+        /// <returns>This object, for method chaining</returns>
+        public QuickForm ComboBox(string name, IEnumerable<object> items)
+        {
+            AddItem(new QuickFormComboBox(name, items));
+            return this;
+        }
 
         /// <summary>
         /// Add a checkbox to the form.
@@ -202,5 +225,17 @@ namespace Sledge.QuickForms
 			if (c != null) return ((CheckBox) c).Checked;
 			throw new Exception("Control " + name + " not found!");
 		}
+
+        /// <summary>
+        /// Get an object from a control
+        /// </summary>
+        /// <param name="name">The name of the control</param>
+        /// <returns>The object</returns>
+        public object Object(string name)
+        {
+            var c = GetControl(name);
+            if (c != null) return ((ComboBox)c).SelectedItem;
+            throw new Exception("Control " + name + " not found!");
+        }
 	}
 }

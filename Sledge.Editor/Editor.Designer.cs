@@ -59,8 +59,8 @@
             this.label2 = new System.Windows.Forms.Label();
             this.EntityTypeList = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.button1 = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
+            this.MoveToWorldButton = new System.Windows.Forms.Button();
+            this.MoveToEntityButton = new System.Windows.Forms.Button();
             this.BrushCreateCollapse = new Sledge.Editor.UI.CollapsingLabel();
             this.tspTools = new System.Windows.Forms.ToolStrip();
             this.tspFile = new System.Windows.Forms.ToolStrip();
@@ -171,11 +171,15 @@
             this.tblQuadView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tblQuadView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tblQuadView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tblQuadView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tblQuadView.Location = new System.Drawing.Point(0, 0);
             this.tblQuadView.MinimumViewSize = 2;
             this.tblQuadView.Name = "tblQuadView";
             this.tblQuadView.RowCount = 2;
+            this.tblQuadView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tblQuadView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tblQuadView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tblQuadView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
@@ -468,8 +472,8 @@
             this.EntityPanel.Controls.Add(this.label2);
             this.EntityPanel.Controls.Add(this.EntityTypeList);
             this.EntityPanel.Controls.Add(this.label1);
-            this.EntityPanel.Controls.Add(this.button1);
-            this.EntityPanel.Controls.Add(this.button2);
+            this.EntityPanel.Controls.Add(this.MoveToWorldButton);
+            this.EntityPanel.Controls.Add(this.MoveToEntityButton);
             this.EntityPanel.Location = new System.Drawing.Point(3, 359);
             this.EntityPanel.Name = "EntityPanel";
             this.EntityPanel.Size = new System.Drawing.Size(144, 89);
@@ -502,23 +506,25 @@
             this.label1.Text = "Move selected:";
             this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // button1
+            // MoveToWorldButton
             // 
-            this.button1.Location = new System.Drawing.Point(3, 60);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(65, 23);
-            this.button1.TabIndex = 1;
-            this.button1.Text = "To world";
-            this.button1.UseVisualStyleBackColor = true;
+            this.MoveToWorldButton.Location = new System.Drawing.Point(3, 60);
+            this.MoveToWorldButton.Name = "MoveToWorldButton";
+            this.MoveToWorldButton.Size = new System.Drawing.Size(65, 23);
+            this.MoveToWorldButton.TabIndex = 1;
+            this.MoveToWorldButton.Text = "To world";
+            this.MoveToWorldButton.UseVisualStyleBackColor = true;
+            this.MoveToWorldButton.Click += new System.EventHandler(this.MoveToWorldClicked);
             // 
-            // button2
+            // MoveToEntityButton
             // 
-            this.button2.Location = new System.Drawing.Point(74, 60);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(65, 23);
-            this.button2.TabIndex = 2;
-            this.button2.Text = "To entity";
-            this.button2.UseVisualStyleBackColor = true;
+            this.MoveToEntityButton.Location = new System.Drawing.Point(74, 60);
+            this.MoveToEntityButton.Name = "MoveToEntityButton";
+            this.MoveToEntityButton.Size = new System.Drawing.Size(65, 23);
+            this.MoveToEntityButton.TabIndex = 2;
+            this.MoveToEntityButton.Text = "To entity";
+            this.MoveToEntityButton.UseVisualStyleBackColor = true;
+            this.MoveToEntityButton.Click += new System.EventHandler(this.MoveToEntityClicked);
             // 
             // BrushCreateCollapse
             // 
@@ -694,8 +700,8 @@
         private UI.CollapsingLabel EntityCollapse;
         private System.Windows.Forms.FlowLayoutPanel EntityPanel;
         private System.Windows.Forms.ComboBox EntityTypeList;
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button MoveToWorldButton;
+        private System.Windows.Forms.Button MoveToEntityButton;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label3;

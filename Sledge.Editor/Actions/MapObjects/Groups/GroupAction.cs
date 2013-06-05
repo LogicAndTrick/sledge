@@ -3,7 +3,7 @@ using System.Linq;
 using Sledge.DataStructures.MapObjects;
 using Sledge.Editor.Documents;
 
-namespace Sledge.Editor.Actions
+namespace Sledge.Editor.Actions.MapObjects.Groups
 {
     public class GroupAction : IAction
     {

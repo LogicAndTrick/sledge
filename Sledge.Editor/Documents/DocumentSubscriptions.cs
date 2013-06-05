@@ -1,9 +1,11 @@
 using System;
 using System.Linq;
 using System.Windows.Forms;
+using Sledge.Common;
 using Sledge.Common.Mediator;
 using Sledge.DataStructures.MapObjects;
 using Sledge.Editor.Actions;
+using Sledge.Editor.Actions.MapObjects.Groups;
 using Sledge.Editor.Clipboard;
 using Sledge.Editor.Compiling;
 using Sledge.Editor.History;
@@ -11,6 +13,7 @@ using Sledge.Editor.Rendering;
 using Sledge.Editor.Tools;
 using Sledge.Editor.UI;
 using Sledge.Providers.Map;
+using Sledge.QuickForms.Items;
 using Sledge.Settings;
 using Sledge.UI;
 using Path = System.IO.Path;
@@ -233,14 +236,108 @@ namespace Sledge.Editor.Documents
             }
         }
 
+        private class EntityContainer
+        {
+            public Entity Entity { get; set; }
+            public override string ToString()
+            {
+                var name = Entity.EntityData.Properties.FirstOrDefault(x => x.Key.ToLower() == "targetname");
+                if (name != null) return name.Value + " (" + Entity.EntityData.Name + ")";
+                return Entity.EntityData.Name;
+            }
+        }
+
         public void TieToEntity()
         {
+            if (!_document.Selection.IsEmpty() && !_document.Selection.InFaceSelection)
+            {
+                var entities = _document.Selection.GetSelectedObjects().OfType<Entity>().ToList();
 
+                Entity existing = null;
+
+                var hi = new HistoryItemCollection("Tie to Entity");
+                
+                if (entities.Count == 1)
+                {
+                    var result = new QuickForms.QuickForm("Existing Entity in Selection") { Width = 400 }
+                        .Label(String.Format("You have selected an existing entity (a '{0}'), how would you like to proceed?", entities[0].ClassName))
+                        .Label(" - Keep the existing entity and add the selected items to the entity")
+                        .Label(" - Create a new entity and add the selected items to the new entity")
+                        .Item(new QuickFormDialogButtons()
+                                  .Button("Keep Existing", DialogResult.Yes)
+                                  .Button("Create New", DialogResult.No)
+                                  .Button("Cancel", DialogResult.Cancel))
+                        .ShowDialog();
+                    if (result == DialogResult.Yes)
+                    {
+                        existing = entities[0];
+                    }
+                }
+                else if (entities.Count > 1)
+                {
+                    var qf = new QuickForms.QuickForm("Multiple Entities Selected") {Width = 400}
+                        .Label("You have selected multiple entities, which one would you like to keep?")
+                        .ComboBox("Entity", entities.Select(x => new EntityContainer {Entity = x}))
+                        .OkCancel();
+                    var result = qf.ShowDialog();
+                    if (result == DialogResult.OK)
+                    {
+                        var cont = qf.Object("Entity") as EntityContainer;
+                        if (cont != null) existing = cont.Entity;
+                    }
+                }
+
+                if (existing == null)
+                {
+                    existing = new Entity(_document.Map.IDGenerator.GetNextObjectID())
+                    {
+                        EntityData = new EntityData
+                        {
+                            Name = _document.Game.DefaultBrushEntity
+                        },
+                        ClassName = _document.Game.DefaultBrushEntity,
+                        Colour = Colour.GetDefaultEntityColour()
+                    };
+                    existing.SetParent(_document.Map.WorldSpawn);
+                    hi.Add(new HistoryCreate("Create entity", new[] { existing }));
+                }
+
+                var removed = _document.Selection.GetSelectedObjects().Where(x => x != existing).ToList();
+                removed.ForEach(x => x.SetParent(existing));
+
+                hi.Add(new HistorySelect("Deselect", removed, false));
+                hi.Add(new HistoryDelete("Delete", removed));
+                hi.Add(new HistoryCreate("Create", removed));
+                hi.Add(new HistorySelect("Reselect", removed, true));
+
+                _document.History.AddHistoryItem(hi);
+
+                _document.UpdateDisplayLists();
+            }
         }
 
         public void TieToWorld()
         {
+            if (!_document.Selection.IsEmpty() && !_document.Selection.InFaceSelection)
+            {
+                var entities = _document.Selection.GetSelectedObjects().OfType<Entity>().ToList();
+                entities.ForEach(x => x.SetParent(null));
 
+                var children = entities.SelectMany(x => x.Children).ToList();
+                children.ForEach(x => x.SetParent(_document.Map.WorldSpawn));
+
+                _document.Selection.Clear();
+                _document.Selection.Select(children);
+
+                var hs = new HistorySelect("Deselect", entities, false);
+                var hd = new HistoryDelete("Delete", entities);
+                var ha = new HistoryCreate("Create", children);
+                var hr = new HistorySelect("Reselect", children, true);
+                var hi = new HistoryItemCollection("Tie to World", new IHistoryItem[] { hs, hd, ha, hr });
+                _document.History.AddHistoryItem(hi);
+
+                _document.UpdateDisplayLists();
+            }
         }
 
         public void ObjectProperties()

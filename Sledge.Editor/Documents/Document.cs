@@ -41,6 +41,12 @@ namespace Sledge.Editor.Documents
 
         private readonly DocumentSubscriptions _subscriptions;
 
+        private Document()
+        {
+            Selection = new SelectionManager(this);
+            History = new HistoryManager(this);
+        }
+
         public Document(string mapFile, Map map, Game game)
         {
             MapFile = mapFile;

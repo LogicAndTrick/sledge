@@ -23,6 +23,11 @@ namespace Sledge.Providers.Map
             RegisteredProviders.Remove(provider);
         }
 
+        public static void DeregisterAll()
+        {
+            RegisteredProviders.Clear();
+        }
+
         public static DataStructures.MapObjects.Map GetMapFromFile(string fileName)
         {
             if (!File.Exists(fileName)) throw new ProviderException("The supplied file doesn't exist.");

@@ -15,10 +15,15 @@ namespace Sledge.Editor.History
         public string Name { get; private set; }
         private readonly List<IHistoryItem> _items;
 
-        public HistoryItemCollection(string name, IEnumerable<IHistoryItem> items)
+        public HistoryItemCollection(string name, IEnumerable<IHistoryItem> items = null)
         {
             Name = name;
-            _items = new List<IHistoryItem>(items);
+            _items = items == null ? new List<IHistoryItem>() : items.ToList();
+        }
+
+        public void Add(IHistoryItem item)
+        {
+            _items.Add(item);
         }
 
         public void Undo(Document document)

@@ -27,5 +27,11 @@ namespace Sledge.Database.Models
         public List<Fgd> Fgds { get; set; }
         public List<Wad> Wads { get; set; }
         public Build Build { get; set; }
+
+        public Game()
+        {
+            Fgds = new List<Fgd>();
+            Wads = new List<Wad>();
+        }
     }
 }

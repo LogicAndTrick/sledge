@@ -364,5 +364,15 @@ namespace Sledge.Editor
                 }
             }
         }
+
+        private void MoveToWorldClicked(object sender, EventArgs e)
+        {
+            Mediator.Publish(HotkeysMediator.TieToWorld);
+        }
+
+        private void MoveToEntityClicked(object sender, EventArgs e)
+        {
+            Mediator.Publish(HotkeysMediator.TieToEntity);
+        }
     }
 }

@@ -72,9 +72,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Actions\GroupAction.cs" />
+    <Compile Include="Actions\ActionCollection.cs" />
+    <Compile Include="Actions\MapObjects\Groups\GroupAction.cs" />
     <Compile Include="Actions\IAction.cs" />
-    <Compile Include="Actions\UngroupAction.cs" />
+    <Compile Include="Actions\MapObjects\Groups\UngroupAction.cs" />
+    <Compile Include="Actions\MapObjects\Operations\Create.cs" />
+    <Compile Include="Actions\MapObjects\Operations\Delete.cs" />
     <Compile Include="Brushes\BlockBrush.cs" />
     <Compile Include="Brushes\BrushManager.cs" />
     <Compile Include="Brushes\Controls\BrushControl.cs">
@@ -420,7 +423,9 @@
     <Content Include="Resources\Tool_Translate.png" />
     <Content Include="Resources\Tool_VM.png" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Actions\MapObjects\Entities\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

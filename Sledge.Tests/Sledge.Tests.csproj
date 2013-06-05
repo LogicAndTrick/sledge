@@ -55,14 +55,23 @@
     </CodeAnalysisDependentAssemblyPaths>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Actions\MapObjectActionTests.cs" />
     <Compile Include="GeometricTest.cs" />
     <Compile Include="FileSystemTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Sledge.Database\Sledge.Database.csproj">
+      <Project>{FC8A5448-0F8B-4828-AC49-8D6138E20254}</Project>
+      <Name>Sledge.Database</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Sledge.DataStructures\Sledge.DataStructures.csproj">
       <Project>{26A974C9-E495-4FA3-8E87-1E00019D04F5}</Project>
       <Name>Sledge.DataStructures</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Sledge.Editor\Sledge.Editor.csproj">
+      <Project>{DFF00869-B064-483D-95C0-A88039C471C7}</Project>
+      <Name>Sledge.Editor</Name>
     </ProjectReference>
     <ProjectReference Include="..\Sledge.FileSystem\Sledge.FileSystem.csproj">
       <Project>{1C2C012D-DBA5-4C7F-994F-E3034AC60DCC}</Project>
@@ -75,6 +84,10 @@
     <ProjectReference Include="..\Sledge.Libs\Sledge.Libs.csproj">
       <Project>{111EA4FC-CBFB-4C0F-9E4B-F3B050BEC459}</Project>
       <Name>Sledge.Libs</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Sledge.Providers\Sledge.Providers.csproj">
+      <Project>{C7BD4AC8-1F8D-4520-AF2D-D279C0601AB4}</Project>
+      <Name>Sledge.Providers</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

@@ -3,6 +3,7 @@
   <Description>These are default test settings for a local test run.</Description>
   <Deployment>
     <DeploymentItem filename="Sledge.Libs\HLLib.dll" />
+    <DeploymentItem filename="_Resources\RMF\verc_18.rmf" />
   </Deployment>
   <Execution>
     <TestTypeSpecific>

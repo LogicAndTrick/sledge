@@ -45,6 +45,8 @@
     <Compile Include="Items\QuickFormBrowse.cs" />
     <Compile Include="Items\QuickFormButton.cs" />
     <Compile Include="Items\QuickFormCheckBox.cs" />
+    <Compile Include="Items\QuickFormComboBox.cs" />
+    <Compile Include="Items\QuickFormDialogButtons.cs" />
     <Compile Include="Items\QuickFormItem.cs" />
     <Compile Include="Items\QuickFormLabel.cs" />
     <Compile Include="Items\QuickFormNumericUpDown.cs" />
