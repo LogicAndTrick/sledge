@@ -5,7 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using Sledge.Common;
+using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.MapObjects;
+using Sledge.Editor.Actions.MapObjects.Operations;
 using Sledge.Editor.History;
 using Sledge.Editor.Properties;
 using Sledge.Graphics.Helpers;
@@ -55,30 +57,27 @@ namespace Sledge.Editor.Tools
 
             if (hit == null) return; // Nothing was clicked
 
+            CreateDecal(hit.Intersection);
+        }
+
+        private void CreateDecal(Coordinate origin)
+        {
             var selected = Editor.Instance.GetSelectedTexture();
             var textureName = selected == null ? "{TARGET" : selected.Name;
             var decal = new Entity(Document.Map.IDGenerator.GetNextObjectID())
-                            {
-                                EntityData = new EntityData
-                                                 {
-                                                     Name = "infodecal"
-                                                 },
-                                ClassName = "infodecal",
-                                Colour = Colour.GetRandomBrushColour(),
-                                Decal = TextureHelper.Get(textureName),
-                                Origin = hit.Intersection
-                            };
-            decal.EntityData.Properties.Add(new Property {Key = "texture", Value = textureName});
+            {
+                EntityData = new EntityData
+                {
+                    Name = "infodecal"
+                },
+                ClassName = "infodecal",
+                Colour = Colour.GetRandomBrushColour(),
+                Decal = TextureHelper.Get(textureName),
+                Origin = origin
+            };
+            decal.EntityData.Properties.Add(new Property { Key = "texture", Value = textureName });
 
-            // Log the history in the undo stack
-            var hc = new HistoryCreate("Apply decal", new[] {decal});
-            Document.History.AddHistoryItem(hc);
-
-            // Add the decal and update the viewports
-            decal.Parent = Document.Map.WorldSpawn;
-            Document.Map.WorldSpawn.Children.Add(decal);
-            decal.UpdateBoundingBox();
-            Document.UpdateDisplayLists();
+            Document.PerformAction("Apply decal", new Create(decal));
         }
 
         public override void MouseEnter(ViewportBase viewport, EventArgs e)

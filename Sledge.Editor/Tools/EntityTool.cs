@@ -8,6 +8,7 @@ using OpenTK.Graphics.OpenGL;
 using Sledge.Common;
 using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.MapObjects;
+using Sledge.Editor.Actions.MapObjects.Operations;
 using Sledge.Editor.History;
 using Sledge.Editor.Properties;
 using Sledge.Graphics.Helpers;
@@ -152,15 +153,7 @@ namespace Sledge.Editor.Tools
                 Origin = origin
             };
 
-            // Log the history in the undo stack
-            var hc = new HistoryCreate("Create entity: ", new[] { entity });
-            Document.History.AddHistoryItem(hc);
-
-            // Add the entity and update the viewports
-            entity.Parent = Document.Map.WorldSpawn;
-            Document.Map.WorldSpawn.Children.Add(entity);
-            entity.UpdateBoundingBox();
-            Document.UpdateDisplayLists();
+            Document.PerformAction("Create entity: " + gd.Name, new Create(entity));
         }
 
         public override void KeyUp(ViewportBase viewport, KeyEventArgs e)

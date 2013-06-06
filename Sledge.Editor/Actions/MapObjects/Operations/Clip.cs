@@ -98,10 +98,6 @@ namespace Sledge.Editor.Actions.MapObjects.Operations
                 solid.SetParent(null);
                 back.SetParent(parent);
                 front.SetParent(parent);
-
-                // Update the bounding boxes
-                back.UpdateBoundingBox(false); // Parent is updated in next call
-                front.UpdateBoundingBox();
             }
             document.Selection.Deselect(deselect);
             document.Selection.Select(reselect);

@@ -74,10 +74,17 @@ namespace Sledge.DataStructures.MapObjects
 
         public void SetParent(MapObject parent)
         {
-            if (Parent != null) Parent.Children.Remove(this);
+            if (Parent != null)
+            {
+                Parent.Children.Remove(this);
+                Parent.UpdateBoundingBox();
+            }
             Parent = parent;
-            if (Parent != null) Parent.Children.Add(this);
-            UpdateBoundingBox();
+            if (Parent != null)
+            {
+                Parent.Children.Add(this);
+                UpdateBoundingBox();
+            }
         }
 
         public void RemoveDescendant(MapObject remove)
