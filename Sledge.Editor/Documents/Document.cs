@@ -6,6 +6,7 @@ using Sledge.Common.Mediator;
 using Sledge.DataStructures.GameData;
 using Sledge.DataStructures.MapObjects;
 using Sledge.Database.Models;
+using Sledge.Editor.Actions;
 using Sledge.Editor.Editing;
 using Sledge.Editor.History;
 using Sledge.Editor.Rendering;
@@ -114,6 +115,19 @@ namespace Sledge.Editor.Documents
             MapDisplayLists.DeleteLists();
 
             _subscriptions.Unsubscribe();
+        }
+
+        /// <summary>
+        /// Performs the action, adds it to the history stack, and updates the display lists
+        /// </summary>
+        /// <param name="name">The name of the action, for history purposes</param>
+        /// <param name="action">The action to perform</param>
+        public void PerformAction(string name, IAction action)
+        {
+            action.Perform(this);
+            var history = new HistoryAction(name, action);
+            History.AddHistoryItem(history);
+            UpdateDisplayLists();
         }
 
         public void StartSelectionTransform()

@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using OpenTK;
+using Sledge.Editor.Actions.MapObjects.Operations;
 using Sledge.Editor.History;
 using Sledge.Editor.Properties;
 using Sledge.Settings;
@@ -173,35 +174,8 @@ namespace Sledge.Editor.Tools
         private void PerformClip()
         {
             var objects = Document.Selection.GetSelectedObjects().OfType<Solid>().ToList();
-            var deleted = new List<MapObject>();
-            var newObjects = new List<MapObject>();
             var plane = new Plane(_clipPlanePoint1, _clipPlanePoint2, _clipPlanePoint3);
-            foreach (var solid in objects)
-            {
-                // Split solid by plane
-                Solid back, front;
-                if (!solid.Split(plane, out back, out front, Document.Map.IDGenerator)) continue;
-
-                deleted.Add(solid);
-                newObjects.Add(back);
-                newObjects.Add(front);
-
-                var parent = solid.Parent;
-                Document.Selection.Deselect(solid);
-                parent.Children.Remove(solid);
-
-                back.UpdateBoundingBox(false);
-                front.UpdateBoundingBox();
-
-                parent.Children.Add(back);
-                parent.Children.Add(front);
-
-                Document.Selection.Select(back);
-                Document.Selection.Select(front);
-            }
-            var hr = new HistoryReplace("Perform clip", deleted, newObjects);
-            Document.History.AddHistoryItem(hr);
-            Document.UpdateDisplayLists();
+            Document.PerformAction("Perform Clip", new Clip(objects, plane));
         }
 
         public override void Render(ViewportBase viewport)

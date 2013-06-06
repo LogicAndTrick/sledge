@@ -5,6 +5,7 @@ using System.Text;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.MapObjects;
 using Sledge.Database.Models;
 using Sledge.Editor.Actions;
@@ -98,6 +99,14 @@ namespace Sledge.Tests.Actions
             random.ForEach(x => x.SetParent(null));
             SaveBefore();
             TestAction(new Create(random));
+        }
+
+        [TestMethod]
+        public void TestClip()
+        {
+            var all = _document.Map.WorldSpawn.FindAll().OfType<Solid>().ToList();
+            var plane = new Plane(Coordinate.UnitZ, Coordinate.Zero);
+            TestAction(new Clip(all, plane));
         }
     }
 }

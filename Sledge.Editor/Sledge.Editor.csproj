@@ -76,6 +76,7 @@
     <Compile Include="Actions\MapObjects\Groups\GroupAction.cs" />
     <Compile Include="Actions\IAction.cs" />
     <Compile Include="Actions\MapObjects\Groups\UngroupAction.cs" />
+    <Compile Include="Actions\MapObjects\Operations\Clip.cs" />
     <Compile Include="Actions\MapObjects\Operations\Create.cs" />
     <Compile Include="Actions\MapObjects\Operations\Delete.cs" />
     <Compile Include="Brushes\BlockBrush.cs" />

@@ -6,8 +6,8 @@ using Sledge.Editor.Documents;
 namespace Sledge.Editor.Actions.MapObjects.Operations
 {
     /// <summary>
-    /// Perform: Adds the given objects to the map
-    /// Reverse: Removes the objects from the map
+    /// Perform: Adds the given objects to the map, selecting them if required.
+    /// Reverse: Removes the objects from the map, deselecting if required.
     /// </summary>
     public class Create : IAction
     {
@@ -19,6 +19,11 @@ namespace Sledge.Editor.Actions.MapObjects.Operations
             _objects = objects;
         }
 
+        public Create(params MapObject[] objects)
+        {
+            _objects = objects.ToList();
+        }
+
         public void Dispose()
         {
             _ids = null;
@@ -28,6 +33,10 @@ namespace Sledge.Editor.Actions.MapObjects.Operations
         public void Reverse(Document document)
         {
             _objects = document.Map.WorldSpawn.Find(x => _ids.Contains(x.ID));
+            if (_objects.Any(x => x.IsSelected))
+            {
+                document.Selection.Deselect(_objects.Where(x => x.IsSelected));
+            }
             _objects.ForEach(x => x.SetParent(null));
             _ids = null;
         }
@@ -36,6 +45,10 @@ namespace Sledge.Editor.Actions.MapObjects.Operations
         {
             _ids = _objects.Select(x => x.ID).ToList();
             _objects.ForEach(x => x.SetParent(document.Map.WorldSpawn));
+            if (_objects.Any(x => x.IsSelected))
+            {
+                document.Selection.Select(_objects.Where(x => x.IsSelected));
+            }
             _objects = null;
         }
     }
