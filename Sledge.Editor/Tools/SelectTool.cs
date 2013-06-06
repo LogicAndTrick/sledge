@@ -10,6 +10,7 @@ using Sledge.Common.Mediator;
 using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.MapObjects;
 using Sledge.DataStructures.Transformations;
+using Sledge.Editor.Actions.MapObjects.Selection;
 using Sledge.Editor.Clipboard;
 using Sledge.Editor.History;
 using Sledge.Editor.Properties;
@@ -177,16 +178,7 @@ namespace Sledge.Editor.Tools
             var deselected = objectsToDeselect.ToList();
             var selected = objectsToSelect.ToList();
 
-            Document.Selection.Deselect(deselected);
-            Document.Selection.Select(selected);
-
-            // Log history
-            var hd = new HistorySelect("Deselected objects", deselected, true);
-            var hs = new HistorySelect("Selected objects", selected, true);
-            var ic = new HistoryItemCollection("Selection changed", new[] {hd, hs});
-            Document.History.AddHistoryItem(ic);
-
-            // Update renderer
+            Document.PerformAction("Selection changed", new ChangeSelection(selected, deselected), false);
             Document.UpdateDisplayLists(deselected.Union(selected));
         }
 

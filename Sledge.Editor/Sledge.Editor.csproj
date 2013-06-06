@@ -79,6 +79,9 @@
     <Compile Include="Actions\MapObjects\Operations\Clip.cs" />
     <Compile Include="Actions\MapObjects\Operations\Create.cs" />
     <Compile Include="Actions\MapObjects\Operations\Delete.cs" />
+    <Compile Include="Actions\MapObjects\Selection\ChangeSelection.cs" />
+    <Compile Include="Actions\MapObjects\Selection\Deselect.cs" />
+    <Compile Include="Actions\MapObjects\Selection\Select.cs" />
     <Compile Include="Brushes\BlockBrush.cs" />
     <Compile Include="Brushes\BrushManager.cs" />
     <Compile Include="Brushes\Controls\BrushControl.cs">
