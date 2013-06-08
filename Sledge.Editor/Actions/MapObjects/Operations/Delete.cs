@@ -32,9 +32,9 @@ namespace Sledge.Editor.Actions.MapObjects.Operations
         private List<long> _ids;
         private List<DeleteReference> _objects;
 
-        public Delete(List<long> ids)
+        public Delete(IEnumerable<long> ids)
         {
-            _ids = ids;
+            _ids = ids.ToList();
         }
 
         public void Dispose()

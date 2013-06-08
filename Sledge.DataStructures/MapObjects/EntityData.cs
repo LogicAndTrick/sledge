@@ -18,6 +18,18 @@ namespace Sledge.DataStructures.MapObjects
             Outputs = new List<Output>();
         }
 
+        public EntityData(GameData.GameDataObject gd)
+        {
+            Properties = new List<Property>();
+            Outputs = new List<Output>();
+            if (gd == null) return;
+            Name = gd.Name;
+            foreach (var prop in gd.Properties.Where(x => x.Name != "spawnflags"))
+            {
+                Properties.Add(new Property {Key = prop.Name, Value = prop.DefaultValue});
+            }
+        }
+
         public EntityData Clone()
         {
             var ed = new EntityData { Name = Name, Flags = Flags };

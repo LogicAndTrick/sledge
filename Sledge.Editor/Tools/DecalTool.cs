@@ -62,15 +62,13 @@ namespace Sledge.Editor.Tools
 
         private void CreateDecal(Coordinate origin)
         {
+            var gd = Document.GameData.Classes.First(x => x.Name == "infodecal");
             var selected = Editor.Instance.GetSelectedTexture();
             var textureName = selected == null ? "{TARGET" : selected.Name;
             var decal = new Entity(Document.Map.IDGenerator.GetNextObjectID())
             {
-                EntityData = new EntityData
-                {
-                    Name = "infodecal"
-                },
-                ClassName = "infodecal",
+                EntityData = new EntityData(gd),
+                ClassName = gd.Name,
                 Colour = Colour.GetRandomBrushColour(),
                 Decal = TextureHelper.Get(textureName),
                 Origin = origin

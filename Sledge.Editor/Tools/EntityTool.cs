@@ -144,10 +144,7 @@ namespace Sledge.Editor.Tools
 
             var entity = new Entity(Document.Map.IDGenerator.GetNextObjectID())
             {
-                EntityData = new EntityData
-                {
-                    Name = gd.Name
-                },
+                EntityData = new EntityData(gd),
                 ClassName = gd.Name,
                 Colour = colour,
                 Origin = origin

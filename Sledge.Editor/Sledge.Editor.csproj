@@ -80,6 +80,7 @@
     <Compile Include="Actions\MapObjects\Operations\Edit.cs" />
     <Compile Include="Actions\MapObjects\Operations\Create.cs" />
     <Compile Include="Actions\MapObjects\Operations\Delete.cs" />
+    <Compile Include="Actions\MapObjects\Operations\Reparent.cs" />
     <Compile Include="Actions\MapObjects\Selection\ChangeSelection.cs" />
     <Compile Include="Actions\MapObjects\Selection\Deselect.cs" />
     <Compile Include="Actions\MapObjects\Selection\Select.cs" />
