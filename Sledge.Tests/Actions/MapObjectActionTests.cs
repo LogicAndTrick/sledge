@@ -142,5 +142,13 @@ namespace Sledge.Tests.Actions
             var rot = new UnitRotate(40, new Line(new Coordinate(1, 0, -1), new Coordinate(2, -3, 7)));
             TestAction(new Edit(before, x => x.Transform(rot)));
         }
+
+        [TestMethod]
+        public void TestReparent()
+        {
+            var parent = _document.Map.WorldSpawn;
+            var objects = _document.Map.WorldSpawn.Children.SelectMany(x => x.FindAll());
+            TestAction(new Reparent(parent.ID, objects));
+        }
     }
 }

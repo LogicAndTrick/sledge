@@ -80,6 +80,7 @@
     <Compile Include="Actions\MapObjects\Operations\Edit.cs" />
     <Compile Include="Actions\MapObjects\Operations\Create.cs" />
     <Compile Include="Actions\MapObjects\Operations\Delete.cs" />
+    <Compile Include="Actions\MapObjects\Operations\EditFace.cs" />
     <Compile Include="Actions\MapObjects\Operations\Reparent.cs" />
     <Compile Include="Actions\MapObjects\Selection\ChangeSelection.cs" />
     <Compile Include="Actions\MapObjects\Selection\Deselect.cs" />
@@ -135,13 +136,7 @@
       <DependentUpon>GameSelectionForm.cs</DependentUpon>
     </Compile>
     <Compile Include="History\HistoryAction.cs" />
-    <Compile Include="History\HistoryCreate.cs" />
-    <Compile Include="History\HistoryDelete.cs" />
-    <Compile Include="History\HistoryEdit.cs" />
     <Compile Include="History\HistoryManager.cs" />
-    <Compile Include="History\HistoryItemCollection.cs" />
-    <Compile Include="History\HistoryReplace.cs" />
-    <Compile Include="History\HistorySelect.cs" />
     <Compile Include="History\HistorySelectFaces.cs" />
     <Compile Include="History\IHistoryItem.cs" />
     <Compile Include="Rendering\GLX.cs" />

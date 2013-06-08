@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using Sledge.Common.Mediator;
+using Sledge.Editor.Actions.MapObjects.Operations;
 using Sledge.Providers.Texture;
 using Sledge.Settings;
 using Sledge.UI;
@@ -81,65 +82,71 @@ namespace Sledge.Editor.Tools
                                    ? Face.BoxAlignMode.Center // Don't care about the align mode when centering
                                    : (Face.BoxAlignMode) Enum.Parse(typeof (Face.BoxAlignMode), justifymode.ToString());
             Cloud cloud = null;
-            if (treatasone)
+            Action<Face> action;
+            if (treatasone) 
             {
+                // If we treat as one, it means we want to align to one great big cloud
                 cloud = new Cloud(Document.Selection.GetSelectedFaces().SelectMany(x => x.Vertices).Select(x => x.Location));
             }
-            foreach (var face in Document.Selection.GetSelectedFaces())
+
+            if (justifymode == JustifyMode.Fit)
             {
-                if (!treatasone)
-                {
-                    cloud = new Cloud(face.Vertices.Select(x => x.Location));
-                }
-                if (justifymode == JustifyMode.Fit)
-                {
-                    face.FitTextureToPointCloud(cloud);
-                }
-                else
-                {
-                    face.AlignTextureWithPointCloud(cloud, boxAlignMode);
-                }
+                action = x => x.FitTextureToPointCloud(cloud ?? new Cloud(x.Vertices.Select(y => y.Location)));
             }
+            else
+            {
+                action = x => x.AlignTextureWithPointCloud(cloud ?? new Cloud(x.Vertices.Select(y => y.Location)), boxAlignMode);
+            }
+
+            Document.PerformAction("Align texture", new EditFace(Document.Selection.GetSelectedFaces(), action), false);
+
             Document.UpdateDisplayLists(Document.Selection.GetSelectedFaces());
             _form.SelectionChanged();
         }
 
         private void TextureApplied(object sender, TextureItem texture)
         {
-            foreach (var face in Document.Selection.GetSelectedFaces())
-            {
-                face.Texture.Name = texture.Name;
-                face.Texture.Texture = texture.GetTexture();
-                face.CalculateTextureCoordinates();
-            }
+            Action<Face> action = face =>
+                                      {
+                                          face.Texture.Name = texture.Name;
+                                          face.Texture.Texture = texture.GetTexture();
+                                          face.CalculateTextureCoordinates();
+                                      };
             // When the texture changes, the entire list needs to be regenerated, can't do a partial update.
-            Document.UpdateDisplayLists();
+            Document.PerformAction("Apply texture", new EditFace(Document.Selection.GetSelectedFaces(), action));
+
             _form.SelectionChanged();
             Mediator.Publish(EditorMediator.TextureSelected, texture);
         }
 
         private void TextureAligned(object sender, AlignMode align)
         {
-            foreach (var face in Document.Selection.GetSelectedFaces())
+            Action<Face> action = face =>
             {
                 if (align == AlignMode.Face) face.AlignTextureToFace();
                 else if (align == AlignMode.World) face.AlignTextureToWorld();
                 face.CalculateTextureCoordinates();
-            }
+            };
+
+            Document.PerformAction("Align texture", new EditFace(Document.Selection.GetSelectedFaces(), action), false);
+
             Document.UpdateDisplayLists(Document.Selection.GetSelectedFaces());
             _form.SelectionChanged();
         }
 
         private void TexturePropertyChanged(object sender, decimal scalex, decimal scaley, int shiftx, int shifty, decimal rotation, int lightmapscale)
         {
-            foreach (var face in Document.Selection.GetSelectedFaces())
+            Action<Face> action = face =>
             {
                 face.Texture.XScale = scalex;
                 face.Texture.YScale = scaley;
                 face.Texture.XShift = shiftx;
                 face.Texture.YShift = shifty;
                 face.SetTextureRotation(rotation); // This will recalculate the texture coordinates as well
-            }
+            };
+
+            Document.PerformAction("Modify texture properties", new EditFace(Document.Selection.GetSelectedFaces(), action), false);
+
             Document.UpdateDisplayLists(Document.Selection.GetSelectedFaces());
             _form.SelectionChanged();
         }
