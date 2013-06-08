@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using Sledge.DataStructures.MapObjects;
 using Sledge.Editor.Documents;
 
@@ -18,19 +19,30 @@ namespace Sledge.Editor.Actions.MapObjects.Operations
             public long ID { get; set; }
             public MapObject Before { get; set; }
             public MapObject After { get; set; }
+            public Action<MapObject> Action { get; set; }
 
             public EditReference(long id, MapObject before, MapObject after)
             {
                 ID = id;
-                Before = before;
-                After = after;
+                Before = before.Clone();
+                After = after.Clone();
+                Action = null;
+            }
+
+            public EditReference(MapObject obj, Action<MapObject> action)
+            {
+                ID = obj.ID;
+                Before = obj.Clone();
+                After = null;
+                Action = action;
             }
 
             public void Perform(MapObject root)
             {
                 var obj = root.FindByID(ID);
                 if (obj == null) return;
-                obj.Unclone(After);
+                if (Action != null) Action(obj);
+                else obj.Unclone(After);
             }
 
             public void Reverse(MapObject root)
@@ -51,6 +63,11 @@ namespace Sledge.Editor.Actions.MapObjects.Operations
             _objects = ids.Select(x => new EditReference(x, b.First(y => y.ID == x), a.First(y => y.ID == x))).ToList();
         }
 
+        public Edit(IEnumerable<MapObject> objects, Action<MapObject> action)
+        {
+            _objects = objects.Select(x => new EditReference(x, action)).ToList();
+        }
+
         public void Dispose()
         {
             _objects = null;
@@ -58,12 +75,12 @@ namespace Sledge.Editor.Actions.MapObjects.Operations
 
         public void Reverse(Document document)
         {
-            _objects.ForEach(x => x.Reverse(document.Map.WorldSpawn));
+            Parallel.ForEach(_objects, x => x.Reverse(document.Map.WorldSpawn));
         }
 
         public void Perform(Document document)
         {
-            _objects.ForEach(x => x.Perform(document.Map.WorldSpawn));
+            Parallel.ForEach(_objects, x => x.Perform(document.Map.WorldSpawn));
         }
     }
 }

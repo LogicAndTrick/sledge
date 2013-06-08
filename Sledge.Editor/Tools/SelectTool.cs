@@ -10,6 +10,7 @@ using Sledge.Common.Mediator;
 using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.MapObjects;
 using Sledge.DataStructures.Transformations;
+using Sledge.Editor.Actions.MapObjects.Operations;
 using Sledge.Editor.Actions.MapObjects.Selection;
 using Sledge.Editor.Clipboard;
 using Sledge.Editor.History;
@@ -641,12 +642,8 @@ namespace Sledge.Editor.Tools
         private void ExecuteTransform(string transformationName, IUnitTransformation transform)
         {
             var objects = Document.Selection.GetSelectedObjects().Where(o => o.Parent == null || !o.Parent.IsSelected).ToList();
-            var idg = new IDGenerator();
-            var clones = objects.Select(x => x.Copy(idg)).ToList(); // TODO: Creating lots of clones is time consuming, can it be optimised?
-            Parallel.ForEach(objects, x => x.Transform(transform));
             var name = transformationName + " (" + objects.Count + " object" + (objects.Count == 1 ? "" : "s") + ")";
-            var he = new HistoryEdit(name, clones, objects);
-            Document.History.AddHistoryItem(he);
+            Document.PerformAction(name, new Edit(objects, x => x.Transform(transform)), false);
             Document.UpdateDisplayLists(Document.Selection.GetSelectedObjects());
         }
 

@@ -7,6 +7,7 @@ using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.MapObjects;
+using Sledge.DataStructures.Transformations;
 using Sledge.Database.Models;
 using Sledge.Editor.Actions;
 using Sledge.Editor.Actions.MapObjects.Operations;
@@ -53,26 +54,41 @@ namespace Sledge.Tests.Actions
             MapProvider.SaveMapToFile("before.vmf", _document.Map);
         }
 
-        private void Compare()
+        private void Compare(bool checkDifferent)
         {
             if (File.Exists("after.vmf")) File.Delete("after.vmf");
             MapProvider.SaveMapToFile("after.vmf", _document.Map);
 
             var before = File.ReadAllLines("before.vmf");
             var after = File.ReadAllLines("after.vmf");
-            Assert.AreEqual(before.Length, after.Length);
 
-            for (var i = 0; i < before.Length; i++)
+            if (checkDifferent)
             {
-                Assert.AreEqual(before[i], after[i]);
+                if (before.Length == after.Length)
+                {
+                    for (var i = 0; i < before.Length; i++)
+                    {
+                        if (before[i] != after[i]) return;
+                    }
+                    Assert.Fail("The two files are the same when they should differ.");
+                }
+            }
+            else
+            {
+                Assert.AreEqual(before.Length, after.Length);
+                for (var i = 0; i < before.Length; i++)
+                {
+                    Assert.AreEqual(before[i], after[i]);
+                }
             }
         }
 
         private void TestAction(IAction action)
         {
             action.Perform(_document);
+            Compare(true);
             action.Reverse(_document);
-            Compare();
+            Compare(false);
         }
 
         [TestCleanup]
@@ -107,6 +123,24 @@ namespace Sledge.Tests.Actions
             var all = _document.Map.WorldSpawn.FindAll().OfType<Solid>().ToList();
             var plane = new Plane(Coordinate.UnitZ, Coordinate.Zero);
             TestAction(new Clip(all, plane));
+        }
+
+        [TestMethod]
+        public void TestEdit()
+        {
+            var before = GetRandomObjects(_document, 200).OfType<Solid>().ToList();
+            var after = before.Select(x => x.Clone()).ToList();
+            var rot = new UnitRotate(40, new Line(new Coordinate(1, 0, -1), new Coordinate(2, -3, 7)));
+            after.ForEach(x => x.Transform(rot));
+            TestAction(new Edit(before, after));
+        }
+
+        [TestMethod]
+        public void TestEditAction()
+        {
+            var before = GetRandomObjects(_document, 200).OfType<Solid>().ToList();
+            var rot = new UnitRotate(40, new Line(new Coordinate(1, 0, -1), new Coordinate(2, -3, 7)));
+            TestAction(new Edit(before, x => x.Transform(rot)));
         }
     }
 }
