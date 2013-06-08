@@ -166,6 +166,17 @@ namespace Sledge.Editor.Editing
             Mediator.Publish(EditorMediator.SelectionChanged, Document);
         }
 
+        public void Deselect(IEnumerable<Face> faces)
+        {
+            foreach (var face in faces)
+            {
+                SelectedFaces.RemoveAll(x => x == face);
+                face.IsSelected = false;
+            }
+
+            Mediator.Publish(EditorMediator.SelectionChanged, Document);
+        }
+
         public bool IsEmpty()
         {
             return InFaceSelection ? SelectedFaces.Count == 0 : SelectedObjects.Count == 0;

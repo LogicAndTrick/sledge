@@ -18,6 +18,11 @@ namespace Sledge.Editor.Actions
             Actions.AddRange(actions);
         }
 
+        public bool IsEmpty()
+        {
+            return Actions.Count == 0;
+        }
+
         public void Dispose()
         {
             Actions.ForEach(x => x.Dispose());

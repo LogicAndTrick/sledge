@@ -5,12 +5,12 @@ using Sledge.Editor.Documents;
 
 namespace Sledge.Editor.Actions.MapObjects.Selection
 {
-    public class ChangeSelection : IAction
+    public class ChangeFaceSelection : IAction
     {
-        private List<MapObject> _selected;
-        private List<MapObject> _deselected;
+        private List<Face> _selected;
+        private List<Face> _deselected;
 
-        public ChangeSelection(IEnumerable<MapObject> selected, IEnumerable<MapObject> deselected)
+        public ChangeFaceSelection(IEnumerable<Face> selected, IEnumerable<Face> deselected)
         {
             _selected = selected.ToList();
             _deselected = deselected.ToList();

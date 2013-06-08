@@ -4,7 +4,9 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using Sledge.Common.Mediator;
+using Sledge.Editor.Actions;
 using Sledge.Editor.Actions.MapObjects.Operations;
+using Sledge.Editor.Actions.MapObjects.Selection;
 using Sledge.Providers.Texture;
 using Sledge.Settings;
 using Sledge.UI;
@@ -106,10 +108,11 @@ namespace Sledge.Editor.Tools
 
         private void TextureApplied(object sender, TextureItem texture)
         {
+            var ti = texture.GetTexture();
             Action<Face> action = face =>
                                       {
                                           face.Texture.Name = texture.Name;
-                                          face.Texture.Texture = texture.GetTexture();
+                                          face.Texture.Texture = ti;
                                           face.CalculateTextureCoordinates();
                                       };
             // When the texture changes, the entire list needs to be regenerated, can't do a partial update.
@@ -207,81 +210,99 @@ namespace Sledge.Editor.Tools
                 .OrderBy(x => (x.Intersection - ray.Start).VectorMagnitude())
                 .Select(x => x.Item)
                 .FirstOrDefault();
-            TextureItem itemToSelect = null;
-            if ((behaviour == SelectBehaviour.Select || behaviour == SelectBehaviour.LiftSelect) && !KeyboardState.Ctrl)
+
+            if (clickedFace == null) return;
+
+            var faces = new List<Face>();
+            if (KeyboardState.Shift) faces.AddRange(clickedFace.Parent.Faces);
+            else faces.Add(clickedFace);
+
+            var firstSelected = Document.Selection.GetSelectedFaces().FirstOrDefault();
+            var firstClicked = faces.FirstOrDefault(face => face.Texture.Texture != null);
+
+            var ac = new ActionCollection();
+
+            var select = new ChangeFaceSelection(
+                KeyboardState.Ctrl ? faces.Where(x => !x.IsSelected) : faces,
+                KeyboardState.Ctrl ? faces.Where(x => x.IsSelected) : Document.Selection.GetSelectedFaces().Where(x => !faces.Contains(x)));
+
+            Action lift = () =>
+                              {
+                                  var itemToSelect = firstClicked != null
+                                                         ? TexturePackage.GetItem(firstClicked.Texture.Name)
+                                                         : null;
+                                  if (itemToSelect != null)
+                                  {
+                                      Mediator.Publish(EditorMediator.TextureSelected, itemToSelect);
+                                  }
+                              };
+
+            switch (behaviour)
             {
-                Document.Selection.Clear();
-            }
-            if (clickedFace != null)
-            {
-                var faces = new List<Face>();
-                if (KeyboardState.Shift) faces.AddRange(clickedFace.Parent.Faces);
-                else faces.Add(clickedFace);
-                if (behaviour == SelectBehaviour.Select || behaviour == SelectBehaviour.LiftSelect)
-                {
-                    foreach (var face in faces)
-                    {
-                        if (face.IsSelected) Document.Selection.Deselect(face);
-                        else Document.Selection.Select(face);
-                    }
-                }
-                if (behaviour == SelectBehaviour.Lift || behaviour == SelectBehaviour.LiftSelect)
-                {
-                    var tex = faces.FirstOrDefault(face => face.Texture.Texture != null);
-                    itemToSelect = tex != null ? TexturePackage.GetItem(tex.Texture.Name) : null;
-                }
-                if (behaviour == SelectBehaviour.Apply || behaviour == SelectBehaviour.ApplyWithValues)
-                {
-                    var tex = Document.Selection.GetSelectedFaces().FirstOrDefault();
-                    var item = tex != null ? TexturePackage.GetItem(tex.Texture.Name) : null;
+                case SelectBehaviour.Select:
+                    ac.Add(select);
+                    break;
+                case SelectBehaviour.LiftSelect:
+                    lift();
+                    ac.Add(select);
+                    break;
+                case SelectBehaviour.Lift:
+                    lift();
+                    break;
+                case SelectBehaviour.Apply:
+                case SelectBehaviour.ApplyWithValues:
+                    var item = firstSelected != null ? TexturePackage.GetItem(firstSelected.Texture.Name) : null;
                     if (item != null)
                     {
                         fullUpdate = true;
-                        foreach (var face in faces)
-                        {
-                            face.Texture.Name = item.Name;
-                            face.Texture.Texture = item.GetTexture();
-                            if (behaviour == SelectBehaviour.ApplyWithValues)
-                            {
-                                face.AlignTextureWithFace(tex); // Calculates the texture coordinates
-                            }
-                            else
-                            {
-                                face.CalculateTextureCoordinates();
-                            }
-                        }
+                        ac.Add(new EditFace(faces, face =>
+                                                        {
+                                                            face.Texture.Name = item.Name;
+                                                            face.Texture.Texture = item.GetTexture();
+                                                            if (behaviour == SelectBehaviour.ApplyWithValues)
+                                                            {
+                                                                // Calculates the texture coordinates
+                                                                face.AlignTextureWithFace(firstSelected);
+                                                            }
+                                                            else
+                                                            {
+                                                                face.CalculateTextureCoordinates();
+                                                            }
+                                                        }));
                     }
-                }
-                if (behaviour == SelectBehaviour.AlignToView)
-                {
-                    // Match the texture normal to the camera normal
-                    foreach (var face in faces)
-                    {
-                        var right = vp.Camera.GetRight();
-                        var up = vp.Camera.GetUp();
-                        var loc = vp.Camera.Location;
-                        var point = new Coordinate((decimal) loc.X, (decimal) loc.Y, (decimal) loc.Z);
-                        face.Texture.XScale = 1;
-                        face.Texture.YScale = 1;
-                        face.Texture.UAxis = new Coordinate((decimal)right.X, (decimal)right.Y, (decimal)right.Z);
-                        face.Texture.VAxis = new Coordinate((decimal) up.X, (decimal) up.Y, (decimal) up.Z);
-                        face.Texture.XShift = face.Texture.UAxis.Dot(point);
-                        face.Texture.YShift = face.Texture.VAxis.Dot(point);
-                        face.Texture.Rotation = 0;
-                        face.MinimiseTextureShiftValues();
-                        face.CalculateTextureCoordinates();
-                    }
-                }
+                    break;
+                case SelectBehaviour.AlignToView:
+                    var right = vp.Camera.GetRight();
+                    var up = vp.Camera.GetUp();
+                    var loc = vp.Camera.Location;
+                    var point = new Coordinate((decimal)loc.X, (decimal)loc.Y, (decimal)loc.Z);
+                    var uaxis = new Coordinate((decimal) right.X, (decimal) right.Y, (decimal) right.Z);
+                    var vaxis = new Coordinate((decimal) up.X, (decimal) up.Y, (decimal) up.Z);
+                    ac.Add(new EditFace(faces, face =>
+                                                    {
+                                                        face.Texture.XScale = 1;
+                                                        face.Texture.YScale = 1;
+                                                        face.Texture.UAxis = uaxis;
+                                                        face.Texture.VAxis = vaxis;
+                                                        face.Texture.XShift = face.Texture.UAxis.Dot(point);
+                                                        face.Texture.YShift = face.Texture.VAxis.Dot(point);
+                                                        face.Texture.Rotation = 0;
+                                                        face.MinimiseTextureShiftValues();
+                                                        face.CalculateTextureCoordinates();
+                                                    }));
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+            if (!ac.IsEmpty())
+            {
+                Document.PerformAction("Texture selection", ac, false);
             }
 
             if (fullUpdate) Document.UpdateDisplayLists();
             else Document.UpdateDisplayLists(selected.Union(Document.Selection.GetSelectedFaces()));
 
             _form.SelectionChanged();
-            if (itemToSelect != null)
-            {
-                Mediator.Publish(EditorMediator.TextureSelected, itemToSelect);
-            }
         }
 
         public override void KeyDown(ViewportBase viewport, KeyEventArgs e)

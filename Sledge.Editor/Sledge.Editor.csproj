@@ -82,9 +82,12 @@
     <Compile Include="Actions\MapObjects\Operations\Delete.cs" />
     <Compile Include="Actions\MapObjects\Operations\EditFace.cs" />
     <Compile Include="Actions\MapObjects\Operations\Reparent.cs" />
+    <Compile Include="Actions\MapObjects\Selection\ChangeFaceSelection.cs" />
     <Compile Include="Actions\MapObjects\Selection\ChangeSelection.cs" />
     <Compile Include="Actions\MapObjects\Selection\Deselect.cs" />
+    <Compile Include="Actions\MapObjects\Selection\DeselectFace.cs" />
     <Compile Include="Actions\MapObjects\Selection\Select.cs" />
+    <Compile Include="Actions\MapObjects\Selection\SelectFace.cs" />
     <Compile Include="Brushes\BlockBrush.cs" />
     <Compile Include="Brushes\BrushManager.cs" />
     <Compile Include="Brushes\Controls\BrushControl.cs">

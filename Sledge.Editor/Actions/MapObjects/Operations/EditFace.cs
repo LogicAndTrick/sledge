@@ -30,10 +30,11 @@ namespace Sledge.Editor.Actions.MapObjects.Operations
                 Action = null;
             }
 
-            public EditFaceReference(Face obj, Action<Face> action)
+            public EditFaceReference(Face face, Action<Face> action)
             {
-                ID = obj.ID;
-                Before = obj.Clone();
+                ParentID = face.Parent.ID;
+                ID = face.ID;
+                Before = face.Clone();
                 After = null;
                 Action = action;
             }
