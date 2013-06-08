@@ -7,6 +7,7 @@ using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.MapObjects;
+using Sledge.Editor.Actions.MapObjects.Operations;
 using Sledge.Editor.Editing;
 using Sledge.Editor.Properties;
 using Sledge.Editor.Rendering;
@@ -79,6 +80,7 @@ namespace Sledge.Editor.Tools
         private VMPoint _movingPoint;
         private List<VMPoint> _clickedPoints;
         private Coordinate _snapPointOffset;
+        private bool _dirty;
 
         public override Image GetIcon()
         {
@@ -127,10 +129,9 @@ namespace Sledge.Editor.Tools
             // Init the points and copy caches
             _copies = new Dictionary<Solid, Solid>();
             _points = new List<VMPoint>();
-            var idg = new IDGenerator();
             foreach (var solid in selectedSolids)
             {
-                var copy = (Solid)solid.Clone(idg);
+                var copy = (Solid)solid.Clone();
                 _copies.Add(copy, solid);
 
                 // Set all the original solids to hidden
@@ -143,6 +144,7 @@ namespace Sledge.Editor.Tools
             _snapPointOffset = null;
             _movingPoint = null;
             _clickedPoints = null;
+            _dirty = false;
             Document.UpdateDisplayLists(); // Can't just update the select list because the solids are now transparent
         }
 
@@ -150,14 +152,15 @@ namespace Sledge.Editor.Tools
         {
             // The solids are no longer hidden
             var selectedSolids = Document.Selection.GetSelectedObjects().OfType<Solid>().ToList();
+            if (_dirty)
+            {
+                // Commit the changes
+                var edit = new Edit(_copies.Values, _copies.Keys);
+                Document.PerformAction("Vertex Manipulation", edit, false); // The display list update is done below
+            }
             foreach (var o in selectedSolids)
             {
                 o.IsCodeHidden = false;
-                // Commit the manips back into the original object
-                var copy = _copies.First(x => x.Value == o).Key;
-                o.Unclone(copy, Document.Map.IDGenerator);
-                o.Faces.ForEach(x => x.UpdateBoundingBox());
-                o.UpdateBoundingBox();
             }
             _copies = null;
             _points = null;
@@ -343,6 +346,7 @@ namespace Sledge.Editor.Tools
                 RefreshMidpoints();
                 // We've moved the mouse, so not clicking on a point.
                 _clickedPoints = null;
+                _dirty = true;
             }
         }
 
@@ -352,7 +356,7 @@ namespace Sledge.Editor.Tools
             {
                 case HotkeysMediator.HistoryUndo:
                 case HotkeysMediator.HistoryRedo:
-                    //todo message?
+                    MessageBox.Show("Please exit the VM tool to undo any changes.");
                     return HotkeyInterceptResult.Abort;
                 case HotkeysMediator.OperationsPaste:
                 case HotkeysMediator.OperationsPasteSpecial:

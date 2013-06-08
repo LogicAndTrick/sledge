@@ -13,29 +13,59 @@ namespace Sledge.DataStructures.MapObjects
             Faces = new List<Face>();
         }
 
-        public override MapObject Clone(IDGenerator generator)
+        public override MapObject Copy(IDGenerator generator)
         {
             var e = new Solid(generator.GetNextObjectID());
-            foreach (var f in Faces.Select(x => x.Clone(generator)))
+            foreach (var f in Faces.Select(x => x.Copy(generator)))
             {
                 f.Parent = e;
                 e.Faces.Add(f);
+                f.UpdateBoundingBox();
             }
-            CloneBase(e, generator);
+            CopyBase(e, generator);
             return e;
         }
 
-        public override void Unclone(MapObject o, IDGenerator generator)
+        public override void Paste(MapObject o, IDGenerator generator)
         {
-            UncloneBase(o, generator);
+            PasteBase(o, generator);
             var e = o as Solid;
             if (e == null) return;
             Faces.Clear();
-            foreach (var f in e.Faces.Select(x => x.Clone(generator)))
+            foreach (var f in e.Faces.Select(x => x.Copy(generator)))
             {
                 f.Parent = this;
                 Faces.Add(f);
+                f.UpdateBoundingBox();
             }
+        }
+
+        public override MapObject Clone()
+        {
+            var e = new Solid(ID);
+            foreach (var f in Faces.Select(x => x.Clone()))
+            {
+                f.Parent = e;
+                e.Faces.Add(f);
+                f.UpdateBoundingBox();
+            }
+            CopyBase(e, null, true);
+            return e;
+        }
+
+        public override void Unclone(MapObject o)
+        {
+            PasteBase(o, null, true);
+            var e = o as Solid;
+            if (e == null) return;
+            Faces.Clear();
+            foreach (var f in e.Faces.Select(x => x.Clone()))
+            {
+                f.Parent = this;
+                Faces.Add(f);
+                f.UpdateBoundingBox();
+            }
+            UpdateBoundingBox();
         }
 
         public override void UpdateBoundingBox(bool cascadeToParent = true)
@@ -81,8 +111,8 @@ namespace Sledge.DataStructures.MapObjects
 
             back = CreateFromIntersectingPlanes(backPlanes, generator);
             front = CreateFromIntersectingPlanes(frontPlanes, generator);
-            CloneBase(back, generator);
-            CloneBase(front, generator);
+            CopyBase(back, generator);
+            CopyBase(front, generator);
 
             front.Faces.Union(back.Faces).ToList().ForEach(x =>
                                     {

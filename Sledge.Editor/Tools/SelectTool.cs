@@ -642,7 +642,7 @@ namespace Sledge.Editor.Tools
         {
             var objects = Document.Selection.GetSelectedObjects().Where(o => o.Parent == null || !o.Parent.IsSelected).ToList();
             var idg = new IDGenerator();
-            var clones = objects.Select(x => x.Clone(idg)).ToList(); // TODO: Creating lots of clones is time consuming, can it be optimised?
+            var clones = objects.Select(x => x.Copy(idg)).ToList(); // TODO: Creating lots of clones is time consuming, can it be optimised?
             Parallel.ForEach(objects, x => x.Transform(transform));
             var name = transformationName + " (" + objects.Count + " object" + (objects.Count == 1 ? "" : "s") + ")";
             var he = new HistoryEdit(name, clones, objects);

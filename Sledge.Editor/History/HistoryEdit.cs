@@ -31,7 +31,7 @@ namespace Sledge.Editor.History
             var idg = new IDGenerator(); // These clones will never be added into the document tree, don't care about their ids
             for (var i = 0; i < be.Count; i++)
             {
-                _changedObjects.Add(Tuple.Create(cu[i], be[i].Clone(idg), cu[i].Clone(idg)));
+                _changedObjects.Add(Tuple.Create(cu[i], be[i].Copy(idg), cu[i].Copy(idg)));
             }
         }
 
@@ -40,7 +40,7 @@ namespace Sledge.Editor.History
             _changedObjects.ForEach(x =>
                                         {
                                             if (x.Item1.Parent != null) x.Item1.Parent.Children.Remove(x.Item1);
-                                            x.Item1.Unclone(x.Item2, document.Map.IDGenerator);
+                                            x.Item1.Paste(x.Item2, document.Map.IDGenerator);
                                             if (x.Item1.Parent != null) x.Item1.Parent.Children.Add(x.Item1);
                                             x.Item1.UpdateBoundingBox();
                                         });
@@ -51,7 +51,7 @@ namespace Sledge.Editor.History
             _changedObjects.ForEach(x =>
                                         {
                                             if (x.Item1.Parent != null) x.Item1.Parent.Children.Remove(x.Item1);
-                                            x.Item1.Unclone(x.Item3, document.Map.IDGenerator);
+                                            x.Item1.Paste(x.Item3, document.Map.IDGenerator);
                                             if (x.Item1.Parent != null) x.Item1.Parent.Children.Add(x.Item1);
                                             x.Item1.UpdateBoundingBox();
                                         });

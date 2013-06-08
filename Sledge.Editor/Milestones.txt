@@ -1,13 +1,13 @@
 ﻿Key: Item - percentage complete, uncompleted tasks
 
 Priorities
+  Actions
   Paste Special
   Texture replace
   Undo/Redo
   New/Open/Save/Close
   Menu actions
   2D view right click/Hotkeys
-  Entity Create
   VM clipping when splitting solid entities
   All support tools
   Recognise changes / prompt for save
@@ -21,6 +21,8 @@ Post-Alpha Priorities
   Models
   Autosaving
   PAK / GCF
+  History stacks (for VM tool)
+  History sidebar
 
 1. Goldsource Support
   Formats

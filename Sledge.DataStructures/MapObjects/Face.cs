@@ -33,7 +33,7 @@ namespace Sledge.DataStructures.MapObjects
             IsSelected = false;
         }
 
-        public Face Clone(IDGenerator generator)
+        public Face Copy(IDGenerator generator)
         {
             var f = new Face(generator.GetNextFaceID())
                         {
@@ -52,7 +52,14 @@ namespace Sledge.DataStructures.MapObjects
             return f;
         }
 
-        public void Unclone(Face f)
+        public Face Clone()
+        {
+            var f = Copy(new IDGenerator());
+            f.ID = ID;
+            return f;
+        }
+
+        public void Paste(Face f)
         {
             Plane = f.Plane.Clone();
             Colour = f.Colour;
@@ -66,6 +73,12 @@ namespace Sledge.DataStructures.MapObjects
                 v.Parent = this;
                 Vertices.Add(v);
             }
+        }
+
+        public void Unclone(Face f)
+        {
+            Paste(f);
+            ID = f.ID;
         }
 
         public virtual IEnumerable<Line> GetLines()

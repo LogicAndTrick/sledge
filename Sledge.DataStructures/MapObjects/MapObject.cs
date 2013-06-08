@@ -29,46 +29,62 @@ namespace Sledge.DataStructures.MapObjects
         }
 
         /// <summary>
-        /// Creates an exact copy of this object
+        /// Creates an exact copy of this object with a new ID.
         /// </summary>
-        public abstract MapObject Clone(IDGenerator generator);
+        public abstract MapObject Copy(IDGenerator generator);
 
         /// <summary>
-        /// Copies all the values of the provided object into this one
+        /// Copies all the values of the provided object into this one, copying children and faces.
         /// </summary>
-        public abstract void Unclone(MapObject o, IDGenerator generator);
+        public abstract void Paste(MapObject o, IDGenerator generator);
 
-        protected void CloneBase(MapObject o, IDGenerator generator)
+        /// <summary>
+        /// Creates an exact clone of this object with the same ID.
+        /// </summary>
+        public abstract MapObject Clone();
+
+        /// <summary>
+        /// Copies all the values of the provided object into this one, cloning children and faces.
+        /// </summary>
+        public abstract void Unclone(MapObject o);
+
+        protected void CopyBase(MapObject o, IDGenerator generator, bool performClone = false)
         {
+            if (performClone) o.ID = ID;
             o.ClassName = ClassName;
             o.Visgroups.AddRange(Visgroups);
             o.Parent = Parent;
             o.Colour = Colour;
             o.IsSelected = IsSelected;
+            o.IsCodeHidden = IsCodeHidden;
+            o.IsVisgroupHidden = IsVisgroupHidden;
             o.BoundingBox = BoundingBox.Clone();
-            foreach (var c in Children.Select(x => x.Clone(generator)))
+            var children = Children.Select(x => performClone ? x.Clone() : x.Copy(generator));
+            foreach (var c in children)
             {
-                c.Parent = o;
-                o.Children.Add(c);
+                c.SetParent(o);
             }
         }
 
-        protected void UncloneBase(MapObject o, IDGenerator generator)
+        protected void PasteBase(MapObject o, IDGenerator generator, bool performUnclone = false)
         {
             Visgroups.Clear();
+            Children.Clear();
 
+            if (performUnclone) ID = o.ID;
             ClassName = o.ClassName;
             Visgroups.AddRange(o.Visgroups);
             Parent = o.Parent;
             Colour = o.Colour;
             IsSelected = o.IsSelected;
+            IsCodeHidden = o.IsCodeHidden;
+            IsVisgroupHidden = o.IsVisgroupHidden;
             BoundingBox = o.BoundingBox.Clone();
 
-            Children.Clear();
-            foreach (var c in o.Children.Select(x => x.Clone(generator)))
+            var children = o.Children.Select(x => performUnclone ? x.Clone() : x.Copy(generator));
+            foreach (var c in children)
             {
-                c.Parent = this;
-                Children.Add(c);
+                c.SetParent(this);
             }
         }
 

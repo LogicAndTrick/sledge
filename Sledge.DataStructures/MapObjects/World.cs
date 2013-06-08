@@ -16,20 +16,41 @@ namespace Sledge.DataStructures.MapObjects
             EntityData = new EntityData {Name = "worldspawn"};
         }
 
-        public override MapObject Clone(IDGenerator generator)
+        public override MapObject Copy(IDGenerator generator)
         {
             var e = new World(generator.GetNextObjectID())
             {
                 EntityData = EntityData.Clone(),
             };
             e.Paths.AddRange(Paths.Select(x => x.Clone()));
-            CloneBase(e, generator);
+            CopyBase(e, generator);
             return e;
         }
 
-        public override void Unclone(MapObject o, IDGenerator generator)
+        public override void Paste(MapObject o, IDGenerator generator)
         {
-            UncloneBase(o, generator);
+            PasteBase(o, generator);
+            var e = o as World;
+            if (e == null) return;
+            EntityData = e.EntityData.Clone();
+            Paths.Clear();
+            Paths.AddRange(e.Paths.Select(x => x.Clone()));
+        }
+
+        public override MapObject Clone()
+        {
+            var e = new World(ID)
+            {
+                EntityData = EntityData.Clone(),
+            };
+            e.Paths.AddRange(Paths.Select(x => x.Clone()));
+            CopyBase(e, null, true);
+            return e;
+        }
+
+        public override void Unclone(MapObject o)
+        {
+            PasteBase(o, null, true);
             var e = o as World;
             if (e == null) return;
             EntityData = e.EntityData.Clone();

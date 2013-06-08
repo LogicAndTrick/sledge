@@ -21,7 +21,7 @@ namespace Sledge.DataStructures.MapObjects
             Origin = new Coordinate(0, 0, 0);
         }
 
-        public override MapObject Clone(IDGenerator generator)
+        public override MapObject Copy(IDGenerator generator)
         {
             var e = new Entity(generator.GetNextObjectID())
                        {
@@ -29,13 +29,30 @@ namespace Sledge.DataStructures.MapObjects
                            EntityData = EntityData.Clone(),
                            Origin = Origin.Clone()
                        };
-            CloneBase(e, generator);
+            CopyBase(e, generator);
             return e;
         }
 
-        public override void Unclone(MapObject o, IDGenerator generator)
+        public override void Paste(MapObject o, IDGenerator generator)
         {
-            UncloneBase(o, generator);
+            PasteBase(o, generator);
+            var e = o as Entity;
+            if (e == null) return;
+            GameData = e.GameData;
+            Origin = e.Origin.Clone();
+            EntityData = e.EntityData.Clone();
+        }
+
+        public override MapObject Clone()
+        {
+            var e = new Entity(ID) {GameData = GameData, EntityData = EntityData.Clone(), Origin = Origin.Clone()};
+            CopyBase(e, null, true);
+            return e;
+        }
+
+        public override void Unclone(MapObject o)
+        {
+            PasteBase(o, null, true);
             var e = o as Entity;
             if (e == null) return;
             GameData = e.GameData;
