@@ -75,6 +75,8 @@ namespace Sledge.Editor.Editing
             _changed = false;
 
             Mediator.Publish(EditorMediator.SelectionTypeChanged, Document);
+
+            Mediator.Publish(EditorMediator.SelectionChanged, Document);
         }
 
         public void SwitchToObjectSelection()
@@ -84,6 +86,8 @@ namespace Sledge.Editor.Editing
             Clear();
 
             Mediator.Publish(EditorMediator.SelectionTypeChanged, Document);
+
+            Mediator.Publish(EditorMediator.SelectionChanged, Document);
         }
 
         public void Clear()
@@ -93,8 +97,6 @@ namespace Sledge.Editor.Editing
             SelectedFaces.ForEach(x => x.IsSelected = false);
             SelectedFaces.Clear();
             _changed = false;
-
-            Mediator.Publish(EditorMediator.SelectionChanged, Document);
         }
 
         public void Select(MapObject obj)
@@ -102,8 +104,6 @@ namespace Sledge.Editor.Editing
             obj.IsSelected = true;
             SelectedObjects.Add(obj);
             _changed = true;
-
-            Mediator.Publish(EditorMediator.SelectionChanged, Document);
         }
 
         public void Select(IEnumerable<MapObject> objs)
@@ -114,8 +114,6 @@ namespace Sledge.Editor.Editing
                 SelectedObjects.Add(obj);
                 _changed = true;
             }
-
-            Mediator.Publish(EditorMediator.SelectionChanged, Document);
         }
 
         public void Select(Face face)
@@ -123,8 +121,6 @@ namespace Sledge.Editor.Editing
             face.IsSelected = true;
             SelectedFaces.Add(face);
             _changed = true;
-
-            Mediator.Publish(EditorMediator.SelectionChanged, Document);
         }
 
         public void Select(IEnumerable<Face> faces)
@@ -135,16 +131,12 @@ namespace Sledge.Editor.Editing
                 SelectedFaces.Add(face);
                 _changed = true;
             }
-
-            Mediator.Publish(EditorMediator.SelectionChanged, Document);
         }
 
         public void Deselect(MapObject obj)
         {
             SelectedObjects.RemoveAll(x => x == obj);
             obj.IsSelected = false;
-
-            Mediator.Publish(EditorMediator.SelectionChanged, Document);
         }
 
         public void Deselect(IEnumerable<MapObject> objs)
@@ -154,16 +146,12 @@ namespace Sledge.Editor.Editing
                 SelectedObjects.RemoveAll(x => x == obj);
                 obj.IsSelected = false;
             }
-
-            Mediator.Publish(EditorMediator.SelectionChanged, Document);
         }
 
         public void Deselect(Face face)
         {
             SelectedFaces.RemoveAll(x => x == face);
             face.IsSelected = false;
-
-            Mediator.Publish(EditorMediator.SelectionChanged, Document);
         }
 
         public void Deselect(IEnumerable<Face> faces)
@@ -173,8 +161,6 @@ namespace Sledge.Editor.Editing
                 SelectedFaces.RemoveAll(x => x == face);
                 face.IsSelected = false;
             }
-
-            Mediator.Publish(EditorMediator.SelectionChanged, Document);
         }
 
         public bool IsEmpty()

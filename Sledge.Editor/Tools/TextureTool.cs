@@ -100,10 +100,7 @@ namespace Sledge.Editor.Tools
                 action = x => x.AlignTextureWithPointCloud(cloud ?? new Cloud(x.Vertices.Select(y => y.Location)), boxAlignMode);
             }
 
-            Document.PerformAction("Align texture", new EditFace(Document.Selection.GetSelectedFaces(), action), false);
-
-            Document.UpdateDisplayLists(Document.Selection.GetSelectedFaces());
-            _form.SelectionChanged();
+            Document.PerformAction("Align texture", new EditFace(Document.Selection.GetSelectedFaces(), action, false));
         }
 
         private void TextureApplied(object sender, TextureItem texture)
@@ -116,9 +113,8 @@ namespace Sledge.Editor.Tools
                                           face.CalculateTextureCoordinates();
                                       };
             // When the texture changes, the entire list needs to be regenerated, can't do a partial update.
-            Document.PerformAction("Apply texture", new EditFace(Document.Selection.GetSelectedFaces(), action));
+            Document.PerformAction("Apply texture", new EditFace(Document.Selection.GetSelectedFaces(), action, true));
 
-            _form.SelectionChanged();
             Mediator.Publish(EditorMediator.TextureSelected, texture);
         }
 
@@ -131,10 +127,7 @@ namespace Sledge.Editor.Tools
                 face.CalculateTextureCoordinates();
             };
 
-            Document.PerformAction("Align texture", new EditFace(Document.Selection.GetSelectedFaces(), action), false);
-
-            Document.UpdateDisplayLists(Document.Selection.GetSelectedFaces());
-            _form.SelectionChanged();
+            Document.PerformAction("Align texture", new EditFace(Document.Selection.GetSelectedFaces(), action, false));
         }
 
         private void TexturePropertyChanged(object sender, decimal scalex, decimal scaley, int shiftx, int shifty, decimal rotation, int lightmapscale)
@@ -148,10 +141,7 @@ namespace Sledge.Editor.Tools
                 face.SetTextureRotation(rotation); // This will recalculate the texture coordinates as well
             };
 
-            Document.PerformAction("Modify texture properties", new EditFace(Document.Selection.GetSelectedFaces(), action), false);
-
-            Document.UpdateDisplayLists(Document.Selection.GetSelectedFaces());
-            _form.SelectionChanged();
+            Document.PerformAction("Modify texture properties", new EditFace(Document.Selection.GetSelectedFaces(), action, false));
         }
 
         public override Image GetIcon()
@@ -173,6 +163,7 @@ namespace Sledge.Editor.Tools
             _form.SelectionChanged();
             _form.SelectTexture(Editor.Instance.GetSelectedTexture());
             Mediator.Subscribe(EditorMediator.TextureSelected, this);
+            Mediator.Subscribe(EditorMediator.DocumentTreeFacesChanged, this);
         }
 
         public override void ToolDeselected()
@@ -190,13 +181,15 @@ namespace Sledge.Editor.Tools
             _form.SelectTexture(texture);
         }
 
+        private void DocumentTreeFacesChanged()
+        {
+            _form.SelectionChanged();
+        }
+
         public override void MouseDown(ViewportBase viewport, MouseEventArgs e)
         {
             var vp = viewport as Viewport3D;
             if (vp == null || (e.Button != MouseButtons.Left && e.Button != MouseButtons.Right)) return;
-
-            var selected = Document.Selection.GetSelectedFaces().ToList();
-            var fullUpdate = false;
 
             var behaviour = e.Button == MouseButtons.Left
                                 ? _form.GetLeftClickBehaviour(KeyboardState.Ctrl, KeyboardState.Shift, KeyboardState.Alt)
@@ -254,11 +247,11 @@ namespace Sledge.Editor.Tools
                     var item = firstSelected != null ? TexturePackage.GetItem(firstSelected.Texture.Name) : null;
                     if (item != null)
                     {
-                        fullUpdate = true;
+                        var texture = item.GetTexture();
                         ac.Add(new EditFace(faces, face =>
                                                         {
                                                             face.Texture.Name = item.Name;
-                                                            face.Texture.Texture = item.GetTexture();
+                                                            face.Texture.Texture = texture;
                                                             if (behaviour == SelectBehaviour.ApplyWithValues)
                                                             {
                                                                 // Calculates the texture coordinates
@@ -268,7 +261,7 @@ namespace Sledge.Editor.Tools
                                                             {
                                                                 face.CalculateTextureCoordinates();
                                                             }
-                                                        }));
+                                                        }, true));
                     }
                     break;
                 case SelectBehaviour.AlignToView:
@@ -289,7 +282,7 @@ namespace Sledge.Editor.Tools
                                                         face.Texture.Rotation = 0;
                                                         face.MinimiseTextureShiftValues();
                                                         face.CalculateTextureCoordinates();
-                                                    }));
+                                                    }, false));
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -298,11 +291,6 @@ namespace Sledge.Editor.Tools
             {
                 Document.PerformAction("Texture selection", ac, false);
             }
-
-            if (fullUpdate) Document.UpdateDisplayLists();
-            else Document.UpdateDisplayLists(selected.Union(Document.Selection.GetSelectedFaces()));
-
-            _form.SelectionChanged();
         }
 
         public override void KeyDown(ViewportBase viewport, KeyEventArgs e)

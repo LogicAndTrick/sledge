@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Sledge.Common.Mediator;
 using Sledge.DataStructures.MapObjects;
 using Sledge.Editor.Documents;
 
@@ -76,11 +77,15 @@ namespace Sledge.Editor.Actions.MapObjects.Operations
         public void Reverse(Document document)
         {
             Parallel.ForEach(_objects, x => x.Reverse(document.Map.WorldSpawn));
+
+            Mediator.Publish(EditorMediator.DocumentTreeStructureChanged, _objects.Select(x => document.Map.WorldSpawn.FindByID(x.ID)));
         }
 
         public void Perform(Document document)
         {
             Parallel.ForEach(_objects, x => x.Perform(document.Map.WorldSpawn));
+
+            Mediator.Publish(EditorMediator.DocumentTreeStructureChanged, _objects.Select(x => document.Map.WorldSpawn.FindByID(x.ID)));
         }
     }
 }

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using Sledge.Common;
@@ -36,6 +37,10 @@ namespace Sledge.Editor.Documents
 
         public void Subscribe()
         {
+            Mediator.Subscribe(EditorMediator.DocumentTreeStructureChanged, this);
+            Mediator.Subscribe(EditorMediator.DocumentTreeObjectsChanged, this);
+            Mediator.Subscribe(EditorMediator.DocumentTreeFacesChanged, this);
+
             Mediator.Subscribe(HotkeysMediator.HistoryUndo, this);
             Mediator.Subscribe(HotkeysMediator.HistoryRedo, this);
             Mediator.Subscribe(HotkeysMediator.FileCompile, this);
@@ -82,6 +87,21 @@ namespace Sledge.Editor.Documents
 
         // ReSharper disable UnusedMember.Global
         // ReSharper disable MemberCanBePrivate.Global
+
+        private void DocumentTreeStructureChanged()
+        {
+            _document.UpdateDisplayLists();
+        }
+
+        private void DocumentTreeObjectsChanged(IEnumerable<MapObject> objects)
+        {
+            _document.UpdateDisplayLists(objects);
+        }
+
+        private void DocumentTreeFacesChanged(IEnumerable<Face> faces)
+        {
+            _document.UpdateDisplayLists(faces);
+        }
 
         public void HistoryUndo()
         {

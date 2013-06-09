@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Sledge.Common.Mediator;
 using Sledge.DataStructures.MapObjects;
 using Sledge.Editor.Documents;
 
@@ -43,12 +44,16 @@ namespace Sledge.Editor.Actions.MapObjects.Operations
             {
                 o.MapObject.SetParent(parents[o.OriginalParentID]);
             }
+
+            Mediator.Publish(EditorMediator.DocumentTreeStructureChanged);
         }
 
         public void Perform(Document document)
         {
             var parent = document.Map.WorldSpawn.FindByID(_parentId);
             _objects.ForEach(x => x.MapObject.SetParent(parent));
+
+            Mediator.Publish(EditorMediator.DocumentTreeStructureChanged);
         }
     }
 }

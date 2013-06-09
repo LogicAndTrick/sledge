@@ -156,7 +156,7 @@ namespace Sledge.Editor.Tools
             {
                 // Commit the changes
                 var edit = new Edit(_copies.Values, _copies.Keys);
-                Document.PerformAction("Vertex Manipulation", edit, false); // The display list update is done below
+                Document.PerformAction("Vertex Manipulation", edit);
             }
             foreach (var o in selectedSolids)
             {

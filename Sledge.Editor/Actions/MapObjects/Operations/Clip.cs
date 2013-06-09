@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Sledge.Common.Mediator;
 using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.MapObjects;
 using Sledge.Editor.Documents;
@@ -66,6 +67,8 @@ namespace Sledge.Editor.Actions.MapObjects.Operations
                 if (cr.IsSelected) reselect.Add(obj);
             }
             document.Selection.Select(reselect);
+
+            Mediator.Publish(EditorMediator.DocumentTreeStructureChanged);
         }
 
         public void Perform(Document document)
@@ -101,6 +104,8 @@ namespace Sledge.Editor.Actions.MapObjects.Operations
             }
             document.Selection.Deselect(deselect);
             document.Selection.Select(reselect);
+
+            Mediator.Publish(EditorMediator.DocumentTreeStructureChanged);
         }
     }
 }

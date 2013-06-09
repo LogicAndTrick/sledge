@@ -7,28 +7,19 @@ namespace Sledge.Editor
 {
     public enum EditorMediator
     {
+        // Settings messages
         SettingsChanged,
         OpenSettings,
 
+        // Document messages
         DocumentOpened,
         DocumentActivated,
         DocumentClosed,
 
+        // Editing messages
         TextureSelected,
 
-        SelectionTypeChanged,
-        SelectionChanged,
-
-        EntityDataChanged,
-
         ViewportRightClick,
-
-        FileOpened,
-        FileSaved,
-
-        Exit,
-
-        About,
 
         WorldspawnProperties,
 
@@ -36,6 +27,25 @@ namespace Sledge.Editor
         VisgroupsChanged,
         VisgroupShowEditor,
         VisgroupSelect,
-        VisgroupShowAll
+        VisgroupShowAll,
+
+        // Action messages
+
+        DocumentTreeStructureChanged,
+        DocumentTreeObjectsChanged,
+        DocumentTreeFacesChanged,
+
+        EntityDataChanged,
+
+        SelectionTypeChanged,
+        SelectionChanged,
+
+        // File system messages
+        FileOpened,
+        FileSaved,
+
+        // Editor messages
+        About,
+        Exit,
     }
 }

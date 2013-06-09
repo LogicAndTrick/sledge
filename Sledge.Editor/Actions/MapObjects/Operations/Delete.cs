@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Sledge.Common.Mediator;
 using Sledge.DataStructures.MapObjects;
 using Sledge.Editor.Documents;
 
@@ -52,6 +53,8 @@ namespace Sledge.Editor.Actions.MapObjects.Operations
             }
             document.Selection.Select(_objects.Where(x => x.IsSelected).Select(x => x.Object));
             _objects = null;
+
+            Mediator.Publish(EditorMediator.DocumentTreeStructureChanged);
         }
 
         public void Perform(Document document)
@@ -64,6 +67,8 @@ namespace Sledge.Editor.Actions.MapObjects.Operations
                 dr.Object.SetParent(null);
             }
             _ids = null;
+
+            Mediator.Publish(EditorMediator.DocumentTreeStructureChanged);
         }
     }
 }

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Sledge.Common.Mediator;
 using Sledge.DataStructures.MapObjects;
 using Sledge.Editor.Documents;
 
@@ -25,12 +26,16 @@ namespace Sledge.Editor.Actions.MapObjects.Selection
         {
             document.Selection.Select(_deselected);
             document.Selection.Deselect(_selected);
+
+            Mediator.Publish(EditorMediator.SelectionChanged);
         }
 
         public void Perform(Document document)
         {
             document.Selection.Deselect(_deselected);
             document.Selection.Select(_selected);
+
+            Mediator.Publish(EditorMediator.SelectionChanged);
         }
     }
 }

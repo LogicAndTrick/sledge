@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Sledge.Common.Mediator;
 using Sledge.DataStructures.MapObjects;
 using Sledge.Editor.Documents;
 
@@ -41,9 +42,7 @@ namespace Sledge.Editor.Actions.MapObjects.Operations
 
             public void Perform(MapObject root)
             {
-                var obj = root.FindByID(ParentID) as Solid;
-                if (obj == null) return;
-                var face = obj.Faces.FirstOrDefault(x => x.ID == ID);
+                var face = GetFace(root);
                 if (face == null) return;
                 if (Action != null) Action(face);
                 else face.Unclone(After);
@@ -51,27 +50,34 @@ namespace Sledge.Editor.Actions.MapObjects.Operations
 
             public void Reverse(MapObject root)
             {
-                var obj = root.FindByID(ID) as Solid;
-                if (obj == null) return;
-                var face = obj.Faces.FirstOrDefault(x => x.ID == ID);
+                var face = GetFace(root);
                 if (face == null) return;
                 face.Unclone(Before);
+            }
+
+            public Face GetFace(MapObject root)
+            {
+                var obj = root.FindByID(ParentID) as Solid;
+                return obj == null ? null : obj.Faces.FirstOrDefault(x => x.ID == ID);
             }
         }
 
         private List<EditFaceReference> _objects;
+        private bool _textureChange;
 
-        public EditFace(IEnumerable<Face> before, IEnumerable<Face> after)
+        public EditFace(IEnumerable<Face> before, IEnumerable<Face> after, bool textureChange)
         {
             var b = before.ToList();
             var a = after.ToList();
             var ids = b.Select(x => x.ID).Where(x => a.Any(y => x == y.ID));
             _objects = ids.Select(x => new EditFaceReference(x, b.First(y => y.ID == x), a.First(y => y.ID == x))).ToList();
+            _textureChange = textureChange;
         }
 
-        public EditFace(IEnumerable<Face> objects, Action<Face> action)
+        public EditFace(IEnumerable<Face> objects, Action<Face> action, bool textureChange)
         {
             _objects = objects.Select(x => new EditFaceReference(x, action)).ToList();
+            _textureChange = textureChange;
         }
 
         public void Dispose()
@@ -82,11 +88,17 @@ namespace Sledge.Editor.Actions.MapObjects.Operations
         public void Reverse(Document document)
         {
             Parallel.ForEach(_objects, x => x.Reverse(document.Map.WorldSpawn));
+
+            if (_textureChange) Mediator.Publish(EditorMediator.DocumentTreeStructureChanged);
+            else Mediator.Publish(EditorMediator.DocumentTreeFacesChanged, _objects.Select(x => x.GetFace(document.Map.WorldSpawn)));
         }
 
         public void Perform(Document document)
         {
             Parallel.ForEach(_objects, x => x.Perform(document.Map.WorldSpawn));
+
+            if (_textureChange) Mediator.Publish(EditorMediator.DocumentTreeStructureChanged);
+            else Mediator.Publish(EditorMediator.DocumentTreeFacesChanged, _objects.Select(x => x.GetFace(document.Map.WorldSpawn)));
         }
     }
 }

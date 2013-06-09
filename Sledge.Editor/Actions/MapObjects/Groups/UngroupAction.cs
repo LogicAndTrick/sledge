@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Sledge.Common.Mediator;
 using Sledge.DataStructures.MapObjects;
 using Sledge.Editor.Documents;
 
@@ -29,6 +30,8 @@ namespace Sledge.Editor.Actions.MapObjects.Groups
             {
                 group.SetParent(null);
             }
+
+            Mediator.Publish(EditorMediator.DocumentTreeStructureChanged);
         }
 
         public void Reverse(Document document)
@@ -48,6 +51,8 @@ namespace Sledge.Editor.Actions.MapObjects.Groups
             }
 
             Dispose();
+
+            Mediator.Publish(EditorMediator.DocumentTreeStructureChanged);
         }
 
         public void Dispose()

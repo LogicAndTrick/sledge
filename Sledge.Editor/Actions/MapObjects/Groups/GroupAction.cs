@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Sledge.Common.Mediator;
 using Sledge.DataStructures.MapObjects;
 using Sledge.Editor.Documents;
 
@@ -28,6 +29,8 @@ namespace Sledge.Editor.Actions.MapObjects.Groups
             objects.ForEach(x => x.SetParent(group));
             group.SetParent(document.Map.WorldSpawn);
             group.UpdateBoundingBox();
+
+            Mediator.Publish(EditorMediator.DocumentTreeStructureChanged);
         }
 
         public void Reverse(Document document)
@@ -38,6 +41,8 @@ namespace Sledge.Editor.Actions.MapObjects.Groups
             children.ForEach(x => x.UpdateBoundingBox());
             group.SetParent(null);
             Dispose();
+
+            Mediator.Publish(EditorMediator.DocumentTreeStructureChanged);
         }
 
         public void Dispose()

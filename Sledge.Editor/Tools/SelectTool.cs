@@ -179,8 +179,7 @@ namespace Sledge.Editor.Tools
             var deselected = objectsToDeselect.ToList();
             var selected = objectsToSelect.ToList();
 
-            Document.PerformAction("Selection changed", new ChangeSelection(selected, deselected), false);
-            Document.UpdateDisplayLists(deselected.Union(selected));
+            Document.PerformAction("Selection changed", new ChangeSelection(selected, deselected));
         }
 
         #endregion
@@ -643,8 +642,7 @@ namespace Sledge.Editor.Tools
         {
             var objects = Document.Selection.GetSelectedObjects().Where(o => o.Parent == null || !o.Parent.IsSelected).ToList();
             var name = transformationName + " (" + objects.Count + " object" + (objects.Count == 1 ? "" : "s") + ")";
-            Document.PerformAction(name, new Edit(objects, x => x.Transform(transform)), false);
-            Document.UpdateDisplayLists(Document.Selection.GetSelectedObjects());
+            Document.PerformAction(name, new Edit(objects, x => x.Transform(transform)));
         }
 
         /// <summary>
