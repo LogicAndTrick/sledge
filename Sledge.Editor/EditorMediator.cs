@@ -19,6 +19,8 @@ namespace Sledge.Editor
         SelectionTypeChanged,
         SelectionChanged,
 
+        EntityDataChanged,
+
         ViewportRightClick,
 
         FileOpened,

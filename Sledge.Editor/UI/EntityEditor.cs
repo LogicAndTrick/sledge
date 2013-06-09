@@ -117,14 +117,21 @@ namespace Sledge.Editor.UI
             foreach (var entity in ents)
             {
                 var entityData = entity.GetEntityData().Clone();
+                var changed = false;
                 // Updated class
                 if (Class.BackColor == Color.LightGreen)
                 {
                     entityData.Name = Class.Text;
+                    changed = true;
                 }
 
                 // Remove nonexistant properties
-                entityData.Properties.RemoveAll(x => _values.All(y => y.Key != x.Key));
+                var nonExistant = entityData.Properties.Where(x => _values.All(y => y.Key != x.Key));
+                if (nonExistant.Any())
+                {
+                    changed = true;
+                    entityData.Properties.RemoveAll(x => _values.All(y => y.Key != x.Key));
+                }
 
                 // Set updated/new properties
                 foreach (var ent in _values.Where(x => x.IsModified))
@@ -136,6 +143,7 @@ namespace Sledge.Editor.UI
                         entityData.Properties.Add(prop);
                     }
                     prop.Value = ent.Value;
+                    changed = true;
                 }
 
                 // Set flags
@@ -145,6 +153,7 @@ namespace Sledge.Editor.UI
                 var opts = spawnFlags == null ? null : spawnFlags.Options;
                 if (opts == null || flags.Count != opts.Count) continue;
 
+                var beforeFlags = entityData.Flags;
                 for (var i = 0; i < flags.Count; i++)
                 {
                     var val = int.Parse(opts[i].Key);
@@ -152,17 +161,17 @@ namespace Sledge.Editor.UI
                     else if (flags[i] == CheckState.Checked) entityData.Flags |= val; // Switch it on if checked
                     // No change if indeterminate
                 }
+                if (entityData.Flags != beforeFlags) changed = true;
 
-                action.AddEntity(entity, entityData);
+                if (changed) action.AddEntity(entity, entityData);
             }
 
-            Document.PerformAction("Edit entity values", action, false);
+            if (!action.IsEmpty())
+            {
+                Document.PerformAction("Edit entity values", action, false);
+            }
 
-            var classes = ents.Select(x => x.GetEntityData().Name.ToLower()).Distinct().ToList();
-            var cls = classes.Count > 1 ? "" : classes[0];
-            _values = TableValue.Create(Document.GameData, cls, ents.SelectMany(x => x.GetEntityData().Properties).Where(x => x.Key != "spawnflags").ToList());
             Class.BackColor = Color.White;
-            UpdateKeyValues();
         }
 
         public void Notify(string message, object data)
@@ -171,6 +180,11 @@ namespace Sledge.Editor.UI
                 || message == EditorMediator.SelectionTypeChanged.ToString())
             {
                 UpdateObjects();
+            }
+
+            if (message == EditorMediator.EntityDataChanged.ToString())
+            {
+                RefreshData();
             }
 
             if (message == EditorMediator.VisgroupsChanged.ToString())
@@ -188,7 +202,12 @@ namespace Sledge.Editor.UI
 
         private void UpdateObjects()
         {
-            if (!FollowSelection) return;
+            if (!FollowSelection)
+            {
+                UpdateKeyValues();
+                UpdateVisgroups();
+                return;
+            }
             Objects.Clear();
             if (!Document.Selection.InFaceSelection)
             {
@@ -258,6 +277,7 @@ namespace Sledge.Editor.UI
             Mediator.Subscribe(EditorMediator.SelectionChanged, this);
             Mediator.Subscribe(EditorMediator.SelectionTypeChanged, this);
 
+            Mediator.Subscribe(EditorMediator.EntityDataChanged, this);
             Mediator.Subscribe(EditorMediator.VisgroupsChanged, this);
         }
 
@@ -334,9 +354,10 @@ namespace Sledge.Editor.UI
             }
             _values = TableValue.Create(Document.GameData, cls, Objects.Where(x => x is Entity || x is World).SelectMany(x => x.GetEntityData().Properties).Where(x => x.Key != "spawnflags").ToList());
             _prevClass = cls;
-            UpdateKeyValues();
             PopulateFlags(cls, Objects.Where(x => x is Entity || x is World).Select(x => x.GetEntityData().Flags).ToList());
             _populating = false;
+
+            UpdateKeyValues();
         }
 
         private void PopulateFlags(string className, List<int> flags)

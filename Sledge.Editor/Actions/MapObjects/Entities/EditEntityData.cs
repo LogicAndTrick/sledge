@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Sledge.Common.Mediator;
 using Sledge.DataStructures.GameData;
 using Sledge.DataStructures.MapObjects;
 using Sledge.Editor.Documents;
@@ -27,6 +28,11 @@ namespace Sledge.Editor.Actions.MapObjects.Entities
             _objects.Add(new EntityReference {ID = obj.ID, Before = obj.GetEntityData().Clone(), After = newData});
         }
 
+        public bool IsEmpty()
+        {
+            return _objects.Count == 0;
+        }
+
         public void Dispose()
         {
             _objects = null;
@@ -40,6 +46,7 @@ namespace Sledge.Editor.Actions.MapObjects.Entities
                 if (obj is Entity) SetEntityData((Entity)obj, r.Before, document.GameData);
                 else if (obj is World) SetEntityData((World)obj, r.Before);
             }
+            Mediator.Publish(EditorMediator.EntityDataChanged);
         }
 
         public void Perform(Document document)
@@ -50,6 +57,7 @@ namespace Sledge.Editor.Actions.MapObjects.Entities
                 if (obj is Entity) SetEntityData((Entity) obj, r.After, document.GameData);
                 else if (obj is World) SetEntityData((World) obj, r.After);
             }
+            Mediator.Publish(EditorMediator.EntityDataChanged);
         }
 
         private void SetEntityData(Entity ent, EntityData data, GameData gameData)
