@@ -6,6 +6,9 @@ using System.Windows.Forms;
 using Sledge.Common.Mediator;
 using Sledge.DataStructures.GameData;
 using Sledge.DataStructures.MapObjects;
+using Sledge.Editor.Actions;
+using Sledge.Editor.Actions.MapObjects.Entities;
+using Sledge.Editor.Actions.MapObjects.Visgroups;
 using Sledge.Editor.Visgroups;
 using Property = Sledge.DataStructures.MapObjects.Property;
 
@@ -108,9 +111,12 @@ namespace Sledge.Editor.UI
         {
             var ents = Objects.Where(x => x is Entity || x is World).ToList();
             if (!ents.Any()) return;
+
+            var action = new EditEntityData();
+
             foreach (var entity in ents)
             {
-                var entityData = entity.GetEntityData();
+                var entityData = entity.GetEntityData().Clone();
                 // Updated class
                 if (Class.BackColor == Color.LightGreen)
                 {
@@ -146,7 +152,12 @@ namespace Sledge.Editor.UI
                     else if (flags[i] == CheckState.Checked) entityData.Flags |= val; // Switch it on if checked
                     // No change if indeterminate
                 }
+
+                action.AddEntity(entity, entityData);
             }
+
+            Document.PerformAction("Edit entity values", action, false);
+
             var classes = ents.Select(x => x.GetEntityData().Name.ToLower()).Distinct().ToList();
             var cls = classes.Count > 1 ? "" : classes[0];
             _values = TableValue.Create(Document.GameData, cls, ents.SelectMany(x => x.GetEntityData().Properties).Where(x => x.Key != "spawnflags").ToList());
@@ -216,15 +227,20 @@ namespace Sledge.Editor.UI
 
         private void VisgroupToggled(object sender, int visgroupId, CheckState state)
         {
+            IAction action = null;
             switch (state)
             {
                 case CheckState.Unchecked:
-                    Objects.ForEach(x => x.Visgroups.Remove(visgroupId));
+                    action = new RemoveVisgroup(visgroupId, Objects);
                     break;
                 case CheckState.Checked:
-                    foreach (var x in Objects.Where(x => !x.IsInVisgroup(visgroupId))) x.Visgroups.Add(visgroupId);
+                    action = new AddVisgroup(visgroupId, Objects);
                     break;
             }
+
+            if (action == null) return;
+            Document.PerformAction("Edit object visgroups", action, false);
+
             var updated = false;
             foreach (var o in Objects.Where(x => x.IsVisgroupHidden && !x.Visgroups.Any()))
             {

@@ -1,7 +1,7 @@
 ﻿Key: Item - percentage complete, uncompleted tasks
 
 Priorities
-  Actions
+  Action refreshing
   Paste Special
   Texture replace
   Undo/Redo

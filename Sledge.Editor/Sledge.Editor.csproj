@@ -86,8 +86,11 @@
     <Compile Include="Actions\MapObjects\Selection\ChangeSelection.cs" />
     <Compile Include="Actions\MapObjects\Selection\Deselect.cs" />
     <Compile Include="Actions\MapObjects\Selection\DeselectFace.cs" />
+    <Compile Include="Actions\MapObjects\Entities\EditEntityData.cs" />
     <Compile Include="Actions\MapObjects\Selection\Select.cs" />
     <Compile Include="Actions\MapObjects\Selection\SelectFace.cs" />
+    <Compile Include="Actions\MapObjects\Visgroups\AddVisgroup.cs" />
+    <Compile Include="Actions\MapObjects\Visgroups\RemoveVisgroup.cs" />
     <Compile Include="Brushes\BlockBrush.cs" />
     <Compile Include="Brushes\BrushManager.cs" />
     <Compile Include="Brushes\Controls\BrushControl.cs">
@@ -140,7 +143,6 @@
     </Compile>
     <Compile Include="History\HistoryAction.cs" />
     <Compile Include="History\HistoryManager.cs" />
-    <Compile Include="History\HistorySelectFaces.cs" />
     <Compile Include="History\IHistoryItem.cs" />
     <Compile Include="Rendering\GLX.cs" />
     <Compile Include="Rendering\GridRenderable.cs">
@@ -427,9 +429,7 @@
     <Content Include="Resources\Tool_Translate.png" />
     <Content Include="Resources\Tool_VM.png" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Actions\MapObjects\Entities\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
