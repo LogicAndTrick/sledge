@@ -122,13 +122,11 @@ namespace Sledge.Editor.Documents
         /// </summary>
         /// <param name="name">The name of the action, for history purposes</param>
         /// <param name="action">The action to perform</param>
-        /// <param name="updateDisplayLists">Whether or not to automatically update the display lists</param>
-        public void PerformAction(string name, IAction action, bool updateDisplayLists = true)
+        public void PerformAction(string name, IAction action)
         {
             action.Perform(this);
             var history = new HistoryAction(name, action);
             History.AddHistoryItem(history);
-            if (updateDisplayLists) UpdateDisplayLists();
         }
 
         public void StartSelectionTransform()

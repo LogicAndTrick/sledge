@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Sledge.DataStructures.Geometric
 {
@@ -10,13 +7,13 @@ namespace Sledge.DataStructures.Geometric
     /// </summary>
     public class Plane
     {
-        public Coordinate Normal { get; set; }
-        public decimal DistanceFromOrigin { get; set; }
-        public decimal A { get; set; }
-        public decimal B { get; set; }
-        public decimal C { get; set; }
-        public decimal D { get; set; }
-        public Coordinate PointOnPlane { get; set; }
+        public Coordinate Normal { get; private set; }
+        public decimal DistanceFromOrigin { get; private set; }
+        public decimal A { get; private set; }
+        public decimal B { get; private set; }
+        public decimal C { get; private set; }
+        public decimal D { get; private set; }
+        public Coordinate PointOnPlane { get; private set; }
         
         public Plane(Coordinate p1, Coordinate p2, Coordinate p3)
         {
@@ -71,7 +68,7 @@ namespace Sledge.DataStructures.Geometric
             //if s < 0 then it lies on the opposite side
             //if s = 0 then the point (x,y,z) lies on the plane
             var res = EvalAtPoint(co);
-            if (Math.Abs(res) < 0.001m) return 0;
+            if (Math.Abs(res) < 0.00001m) return 0;
             if (res < 0) return -1;
             return 1;
         }

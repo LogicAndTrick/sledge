@@ -77,6 +77,8 @@
     <Compile Include="Actions\IAction.cs" />
     <Compile Include="Actions\MapObjects\Groups\UngroupAction.cs" />
     <Compile Include="Actions\MapObjects\Operations\Clip.cs" />
+    <Compile Include="Actions\MapObjects\Operations\Carve.cs" />
+    <Compile Include="Actions\MapObjects\Operations\MakeHollow.cs" />
     <Compile Include="Actions\MapObjects\Operations\Edit.cs" />
     <Compile Include="Actions\MapObjects\Operations\Create.cs" />
     <Compile Include="Actions\MapObjects\Operations\Delete.cs" />

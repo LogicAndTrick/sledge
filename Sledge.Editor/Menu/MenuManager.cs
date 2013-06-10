@@ -89,14 +89,14 @@ namespace Sledge.Editor.Menu
             Add("View", new SimpleMenuBuilder("Hide Selected Objects", "") { IsVisible = mapOpen });
             Add("View", new SimpleMenuBuilder("Show Hidden Objects", "") { IsVisible = mapOpen });
 
-            Add("Tools", new SimpleMenuBuilder("Carve", "") { IsVisible = mapOpen });
-            Add("Tools", new SimpleMenuBuilder("Make Hollow", "") { IsVisible = mapOpen });
+            Add("Tools", new SimpleMenuBuilder("Carve", HotkeysMediator.Carve) { IsVisible = mapOpen });
+            Add("Tools", new SimpleMenuBuilder("Make Hollow", HotkeysMediator.MakeHollow) { IsVisible = mapOpen });
             Add("Tools", new MenuSplitter { IsVisible = mapOpen });
             Add("Tools", new SimpleMenuBuilder("Group", HotkeysMediator.GroupingGroup) { IsVisible = mapOpen });
             Add("Tools", new SimpleMenuBuilder("Ungroup", HotkeysMediator.GroupingUngroup) { IsVisible = mapOpen });
             Add("Tools", new MenuSplitter { IsVisible = mapOpen });
-            Add("Tools", new SimpleMenuBuilder("Tie to Entity", "") { IsVisible = mapOpen });
-            Add("Tools", new SimpleMenuBuilder("Move to World", "") { IsVisible = mapOpen });
+            Add("Tools", new SimpleMenuBuilder("Tie to Entity", HotkeysMediator.TieToEntity) { IsVisible = mapOpen });
+            Add("Tools", new SimpleMenuBuilder("Move to World", HotkeysMediator.TieToWorld) { IsVisible = mapOpen });
             Add("Tools", new MenuSplitter { IsVisible = mapOpen });
             Add("Tools", new SimpleMenuBuilder("Replace Textures", "") { IsVisible = mapOpen });
             Add("Tools", new MenuSplitter { IsVisible = mapOpen });

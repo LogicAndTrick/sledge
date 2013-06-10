@@ -16,6 +16,7 @@ using Sledge.Editor.Rendering;
 using Sledge.Editor.Tools;
 using Sledge.Editor.UI;
 using Sledge.Providers.Map;
+using Sledge.QuickForms;
 using Sledge.QuickForms.Items;
 using Sledge.Settings;
 using Sledge.UI;
@@ -55,6 +56,8 @@ namespace Sledge.Editor.Documents
             Mediator.Subscribe(HotkeysMediator.GroupingUngroup, this);
             Mediator.Subscribe(HotkeysMediator.TieToEntity, this);
             Mediator.Subscribe(HotkeysMediator.TieToWorld, this);
+            Mediator.Subscribe(HotkeysMediator.Carve, this);
+            Mediator.Subscribe(HotkeysMediator.MakeHollow, this);
             Mediator.Subscribe(HotkeysMediator.ObjectProperties, this);
 
             Mediator.Subscribe(EditorMediator.ViewportRightClick, this);
@@ -218,6 +221,46 @@ namespace Sledge.Editor.Documents
                 var name = "Removed " + sel.Count + " item" + (sel.Count == 1 ? "" : "s");
                 _document.PerformAction(name, new Delete(sel));
             }
+        }
+
+        public void Carve()
+        {
+            if (_document.Selection.IsEmpty() || _document.Selection.InFaceSelection) return;
+
+            var carver = _document.Selection.GetSelectedObjects().OfType<Solid>().FirstOrDefault();
+            if (carver == null) return;
+
+            var carvees = _document.Map.WorldSpawn.Find(x => x is Solid && x.BoundingBox.IntersectsWith(carver.BoundingBox)).OfType<Solid>();
+
+            _document.PerformAction("Carve objects", new Carve(carvees, carver));
+        }
+
+        public void MakeHollow()
+        {
+            if (_document.Selection.IsEmpty() || _document.Selection.InFaceSelection) return;
+
+            var solids = _document.Selection.GetSelectedObjects().OfType<Solid>().ToList();
+            if (!solids.Any()) return;
+
+            if (solids.Count > 1)
+            {
+                if (MessageBox.Show("This will hollow out every selected solid, are you sure?", "Multiple solids selected", MessageBoxButtons.YesNo) != DialogResult.Yes)
+                {
+                    return;
+                }
+            }
+
+            var qf = new QuickForm("Select wall width").NumericUpDown("Wall width (negative to hollow outwards)", -1024, 1024, 0, 32).OkCancel();
+
+            decimal width;
+            do
+            {
+                if (qf.ShowDialog() == DialogResult.Cancel) return;
+                width = qf.Decimal("Wall width (negative to hollow outwards)");
+                if (width == 0) MessageBox.Show("Please select a non-zero value.");
+            } while (width == 0);
+
+            _document.PerformAction("Make objects hollow", new MakeHollow(solids, width));
         }
 
         public void GroupingGroup()

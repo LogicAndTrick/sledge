@@ -4,6 +4,7 @@
   <Deployment>
     <DeploymentItem filename="Sledge.Libs\HLLib.dll" />
     <DeploymentItem filename="_Resources\RMF\verc_18.rmf" />
+    <DeploymentItem filename="_Resources\RMF\intersect.rmf" />
   </Deployment>
   <Execution>
     <TestTypeSpecific>

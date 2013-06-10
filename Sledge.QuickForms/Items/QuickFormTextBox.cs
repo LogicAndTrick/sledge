@@ -8,9 +8,12 @@ namespace Sledge.QuickForms.Items
     /// </summary>
     public class QuickFormTextBox : QuickFormItem
     {
-        public QuickFormTextBox(string tbname)
+        private readonly string _defaultValue;
+
+        public QuickFormTextBox(string tbname, string value)
         {
             Name = tbname;
+            _defaultValue = value;
         }
 
         public override List<Control> GetControls(QuickForm qf)
@@ -21,7 +24,7 @@ namespace Sledge.QuickForms.Items
             Size(l, qf.LabelWidth);
             TextAlign(l);
             controls.Add(l);
-            var t = new TextBox { Name = Name };
+            var t = new TextBox { Name = Name, Text = _defaultValue };
             Anchor(t);
             Location(t, qf, false);
             Size(t, qf, qf.LabelWidth);

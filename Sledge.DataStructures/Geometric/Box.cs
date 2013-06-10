@@ -34,6 +34,11 @@ namespace Sledge.DataStructures.Geometric
             get { return End.Z - Start.Z; }
         }
 
+        public Coordinate Dimensions
+        {
+            get { return new Coordinate(Width, Length, Height); }
+        }
+
         public Box(Coordinate start, Coordinate end)
         {
             Start = start;

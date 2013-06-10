@@ -20,6 +20,7 @@ namespace Sledge.Editor.Settings
         {
             if (!extension.StartsWith(".")) extension = "." + extension;
             var key = Registry.ClassesRoot.OpenSubKey(Path.Combine(extension, "OpenWithProgIds"));
+            if (key == null) return; // TODO etc etc
             var registered = key.GetValue(ProgramId, null) != null;
             if (!registered)
             {

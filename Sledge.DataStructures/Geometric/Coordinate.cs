@@ -218,10 +218,10 @@ namespace Sledge.DataStructures.Geometric
 
         public Coordinate ComponentDivide(Coordinate c)
         {
-            if (c.X == 0) c.X = 1;
-            if (c.Y == 0) c.Y = 1;
-            if (c.Z == 0) c.Z = 1;
-            return new Coordinate(X / c.X, Y / c.Y, Z / c.Z);
+            var x = c.X == 0 ? 1 : c.X;
+            var y = c.Y == 0 ? 1 : c.Y;
+            var z = c.Z == 0 ? 1 : c.Z;
+            return new Coordinate(X / x, Y / y, Z / z);
         }
 
         public override string ToString()

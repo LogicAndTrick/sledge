@@ -1,7 +1,8 @@
 ﻿Key: Item - percentage complete, uncompleted tasks
 
 Priorities
-  Action refreshing
+  Mediator/action visgroups
+  Actions for switching selection modes
   Paste Special
   Texture replace
   Undo/Redo
@@ -50,7 +51,7 @@ Post-Alpha Priorities
     PAK - 0% [post-alpha]
   Main Tools
     Selection - 100%
-    Entity - 60%, right toolbar, create object, 3D placement
+    Entity - 100%
     Brush - 80%, arch, sphere
     Texture - 90%, hide mask
     Decal - 100%

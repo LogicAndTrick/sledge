@@ -80,14 +80,15 @@ namespace Sledge.QuickForms
             return this;
         }
 
-        /// <summary>
-        /// Add a textbox to the form.
-        /// </summary>
-        /// <param name="name">The name of the textbox</param>
-        /// <returns>This object, for method chaining</returns>
-        public QuickForm TextBox(string name)
+	    /// <summary>
+	    /// Add a textbox to the form.
+	    /// </summary>
+	    /// <param name="name">The name of the textbox</param>
+	    /// <param name="value">The default value of the textbox</param>
+	    /// <returns>This object, for method chaining</returns>
+	    public QuickForm TextBox(string name, string value = "")
         {
-            AddItem(new QuickFormTextBox(name));
+            AddItem(new QuickFormTextBox(name, value));
             return this;
         }
 
@@ -114,17 +115,18 @@ namespace Sledge.QuickForms
             return this;
 		}
 
-        /// <summary>
-        /// Add a NumericUpDown to the form.
-        /// </summary>
-        /// <param name="name">The name of the control</param>
-        /// <param name="min">The minimum value of the control</param>
-        /// <param name="max">The maximum value of the control</param>
-        /// <param name="decimals">The number of decimals for the control</param>
-        /// <returns>This object, for method chaining</returns>
-        public QuickForm NumericUpDown(string name, int min, int max, int decimals)
+	    /// <summary>
+	    /// Add a NumericUpDown to the form.
+	    /// </summary>
+	    /// <param name="name">The name of the control</param>
+	    /// <param name="min">The minimum value of the control</param>
+	    /// <param name="max">The maximum value of the control</param>
+	    /// <param name="decimals">The number of decimals for the control</param>
+	    /// <param name="value">The default value of the control</param>
+	    /// <returns>This object, for method chaining</returns>
+	    public QuickForm NumericUpDown(string name, int min, int max, int decimals, decimal value = 0)
         {
-            AddItem(new QuickFormNumericUpDown(name, min, max, decimals));
+            AddItem(new QuickFormNumericUpDown(name, min, max, decimals, value));
             return this;
         }
 

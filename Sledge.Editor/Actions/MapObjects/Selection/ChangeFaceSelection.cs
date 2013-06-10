@@ -27,6 +27,7 @@ namespace Sledge.Editor.Actions.MapObjects.Selection
             document.Selection.Select(_deselected);
             document.Selection.Deselect(_selected);
 
+            Mediator.Publish(EditorMediator.DocumentTreeFacesChanged, _selected.Union(_deselected));
             Mediator.Publish(EditorMediator.SelectionChanged);
         }
 
@@ -35,6 +36,7 @@ namespace Sledge.Editor.Actions.MapObjects.Selection
             document.Selection.Deselect(_deselected);
             document.Selection.Select(_selected);
 
+            Mediator.Publish(EditorMediator.DocumentTreeFacesChanged, _selected.Union(_deselected));
             Mediator.Publish(EditorMediator.SelectionChanged);
         }
     }

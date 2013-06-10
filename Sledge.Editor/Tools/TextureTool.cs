@@ -289,7 +289,7 @@ namespace Sledge.Editor.Tools
             }
             if (!ac.IsEmpty())
             {
-                Document.PerformAction("Texture selection", ac, false);
+                Document.PerformAction("Texture selection", ac);
             }
         }
 

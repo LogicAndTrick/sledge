@@ -12,13 +12,15 @@ namespace Sledge.QuickForms.Items
         private readonly int _max;
         private readonly int _min;
         private readonly int _decimals;
+        private readonly decimal _defaultValue;
 
-        public QuickFormNumericUpDown(string nudname, int nudmin, int nudmax, int nuddecimals)
+        public QuickFormNumericUpDown(string nudname, int nudmin, int nudmax, int nuddecimals, decimal value)
         {
             Name = nudname;
             _min = nudmin;
             _max = nudmax;
             _decimals = nuddecimals;
+            _defaultValue = value;
         }
 
         public override List<Control> GetControls(QuickForm qf)
@@ -37,7 +39,8 @@ namespace Sledge.QuickForms.Items
                 Name = Name,
                 Anchor = AnchorStyles.Top | AnchorStyles.Right,
                 Increment = (_decimals > 0) ? (1m / (_decimals * 10m)) : (1),
-                Width = 80
+                Width = 80,
+                Value = _defaultValue
             };
             Location(n, qf, false);
             n.Location = new Point(qf.ClientSize.Width - QuickForm.ItemPadding - n.Width, n.Location.Y);

@@ -22,6 +22,9 @@ namespace Sledge.Settings
         HistoryUndo,
         HistoryRedo,
 
+        Carve,
+        MakeHollow,
+
         GroupingGroup,
         GroupingUngroup,
         GroupingToggleIgnore,

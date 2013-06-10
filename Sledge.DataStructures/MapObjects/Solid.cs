@@ -93,11 +93,25 @@ namespace Sledge.DataStructures.MapObjects
                 .FirstOrDefault();
         }
 
+        /// <summary>
+        /// Splits this solid into two solids by intersecting against a plane.
+        /// </summary>
+        /// <param name="plane">The splitting plane</param>
+        /// <param name="back">The back side of the solid</param>
+        /// <param name="front">The front side of the solid</param>
+        /// <param name="generator">The IDGenerator to use</param>
+        /// <returns>True if the plane splits the solid, false if the plane doesn't intersect</returns>
         public bool Split(Plane plane, out Solid back, out Solid front, IDGenerator generator)
         {
             back = front = null;
             // Check that this solid actually spans the plane
-            if (Faces.All(x => x.ClassifyAgainstPlane(plane) != Face.FacePlaneClassification.Spanning)) return false;
+            var classify = Faces.Select(x => x.ClassifyAgainstPlane(plane)).Distinct().ToList();
+            if (classify.All(x => x != Face.FacePlaneClassification.Spanning))
+            {
+                if (classify.Any(x => x == Face.FacePlaneClassification.Back)) back = this;
+                else if (classify.Any(x => x == Face.FacePlaneClassification.Front)) front = this;
+                return false;
+            }
 
             var backPlanes = new List<Plane> { plane };
             var frontPlanes = new List<Plane> { new Plane(-plane.Normal, -plane.DistanceFromOrigin) };
@@ -232,6 +246,19 @@ namespace Sledge.DataStructures.MapObjects
             }
             solid.UpdateBoundingBox();
             return solid;
+        }
+
+        public bool IsValid()
+        {
+            var origin = GetOrigin();
+            return Faces.Select(face => face.Plane.OnPlane(origin)).All(cls => cls < 0);
+        }
+
+        public Coordinate GetOrigin()
+        {
+            var points = Faces.SelectMany(x => x.Vertices.Select(y => y.Location)).ToList();
+            var origin = points.Aggregate(Coordinate.Zero, (x, y) => x + y) / points.Count;
+            return origin;
         }
     }
 }

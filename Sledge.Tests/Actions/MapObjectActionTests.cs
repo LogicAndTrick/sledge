@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Text;
@@ -12,6 +13,7 @@ using Sledge.Database.Models;
 using Sledge.Editor.Actions;
 using Sledge.Editor.Actions.MapObjects.Operations;
 using Sledge.Editor.Documents;
+using Sledge.Providers;
 using Sledge.Providers.Map;
 
 namespace Sledge.Tests.Actions
@@ -36,7 +38,6 @@ namespace Sledge.Tests.Actions
         [TestInitialize]
         public void Initialize()
         {
-
             MapProvider.Register(new RmfProvider());
             MapProvider.Register(new VmfProvider());
 

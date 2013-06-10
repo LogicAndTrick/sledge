@@ -168,7 +168,7 @@ namespace Sledge.Editor.UI
 
             if (!action.IsEmpty())
             {
-                Document.PerformAction("Edit entity values", action, false);
+                Document.PerformAction("Edit entity values", action);
             }
 
             Class.BackColor = Color.White;
@@ -258,7 +258,7 @@ namespace Sledge.Editor.UI
             }
 
             if (action == null) return;
-            Document.PerformAction("Edit object visgroups", action, false);
+            Document.PerformAction("Edit object visgroups", action);
 
             var updated = false;
             foreach (var o in Objects.Where(x => x.IsVisgroupHidden && !x.Visgroups.Any()))
