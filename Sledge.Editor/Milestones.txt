@@ -2,7 +2,6 @@
 
 Priorities
   Mediator/action visgroups
-  Actions for switching selection modes
   Paste Special
   Texture replace
   Undo/Redo
@@ -12,6 +11,7 @@ Priorities
   VM clipping when splitting solid entities
   All support tools
   Recognise changes / prompt for save
+  Actions for switching selection modes
   Additional Map Properties
     VMF
 
@@ -24,6 +24,10 @@ Post-Alpha Priorities
   PAK / GCF
   History stacks (for VM tool)
   History sidebar
+  Face/object selection transition history
+  Find/replace dialogs
+  Prefabs
+  Map diff
 
 1. Goldsource Support
   Formats
@@ -58,8 +62,8 @@ Post-Alpha Priorities
     Clip - 80%, choose sides to keep
     VM - 80%, create vertices?
   Secondary Tools
-    Carve - 0%
-    Hollow - 0%
+    Carve - 80%, groups
+    Hollow - 80%, groups
     Groups - 100%
     Visgroups - 70%, assigning, marking, auto
     Cordon - 0%

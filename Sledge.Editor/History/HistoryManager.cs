@@ -49,7 +49,7 @@ namespace Sledge.Editor.History
 
         public void Undo()
         {
-            if (_currentIndex < 0) return;
+            if (!CanUndo()) return;
             _items[_currentIndex].Undo(Document);
             Document.UpdateDisplayLists();
             _currentIndex--;
@@ -57,10 +57,20 @@ namespace Sledge.Editor.History
 
         public void Redo()
         {
-            if (_currentIndex + 1 > _items.Count - 1) return;
+            if (!CanRedo()) return;
             _items[_currentIndex + 1].Redo(Document);
             Document.UpdateDisplayLists();
             _currentIndex++;
+        }
+
+        public bool CanUndo()
+        {
+            return _currentIndex >= 0;
+        }
+
+        public bool CanRedo()
+        {
+            return _currentIndex + 1 <= _items.Count - 1;
         }
     }
 }

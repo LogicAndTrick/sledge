@@ -152,15 +152,15 @@ namespace Sledge.Editor.Tools
         {
             // The solids are no longer hidden
             var selectedSolids = Document.Selection.GetSelectedObjects().OfType<Solid>().ToList();
+            foreach (var o in selectedSolids)
+            {
+                o.IsCodeHidden = false;
+            }
             if (_dirty)
             {
                 // Commit the changes
                 var edit = new Edit(_copies.Values, _copies.Keys);
                 Document.PerformAction("Vertex Manipulation", edit);
-            }
-            foreach (var o in selectedSolids)
-            {
-                o.IsCodeHidden = false;
             }
             _copies = null;
             _points = null;
@@ -198,21 +198,31 @@ namespace Sledge.Editor.Tools
         /// <summary>
         /// Updates the positions of all midpoints.
         /// </summary>
-        private void RefreshMidpoints()
+        private void RefreshMidpoints(bool recreate = true)
         {
-            _points.RemoveAll(x => x.IsMidPoint);
+            if (recreate) _points.RemoveAll(x => x.IsMidPoint);
             foreach (var copy in _copies.Keys)
             {
                 foreach (var group in copy.Faces.SelectMany(x => x.GetLines()).GroupBy(x => new { x.Start, x.End }))
                 {
-                    _points.Add(new VMPoint
+                    var coord = (group.Key.Start + group.Key.End) / 2;
+                    var mpStart = _points.First(x => !x.IsMidPoint && x.Coordinate == group.Key.Start);
+                    var mpEnd = _points.First(x => !x.IsMidPoint && x.Coordinate == group.Key.End);
+                    if (recreate)
                     {
-                        Solid = copy,
-                        Coordinate = (group.Key.Start + group.Key.End) / 2,
-                        IsMidPoint = true,
-                        MidpointStart = _points.First(x => !x.IsMidPoint && x.Coordinate == group.Key.Start),
-                        MidpointEnd = _points.First(x => !x.IsMidPoint && x.Coordinate == group.Key.End)
-                    });
+                        _points.Add(new VMPoint
+                                        {
+                                            Solid = copy,
+                                            Coordinate = coord,
+                                            IsMidPoint = true,
+                                            MidpointStart = mpStart,
+                                            MidpointEnd = mpEnd
+                                        });
+                    }
+                    else
+                    {
+                        _points.First(x => x.IsMidPoint && x.MidpointStart == mpStart && x.MidpointEnd == mpEnd).Coordinate = coord;
+                    }
                 }
             }
         }
@@ -339,11 +349,11 @@ namespace Sledge.Editor.Tools
                 }
                 var moveDistance = point - viewport.Flatten(_movingPoint.Coordinate);
                 // Move each selected point by the delta value
-                foreach (var p in _points.Where(x => x.IsSelected))
+                foreach (var p in _points.Where(x => !x.IsMidPoint && x.IsSelected))
                 {
                     p.Move(moveDistance);
                 }
-                RefreshMidpoints();
+                RefreshMidpoints(false);
                 // We've moved the mouse, so not clicking on a point.
                 _clickedPoints = null;
                 _dirty = true;

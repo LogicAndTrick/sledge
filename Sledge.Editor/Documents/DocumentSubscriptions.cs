@@ -79,7 +79,7 @@ namespace Sledge.Editor.Documents
                 if (result == HotkeyInterceptResult.Abort) return;
                 if (result == HotkeyInterceptResult.SwitchToSelectTool)
                 {
-                    ToolManager.Activate(ToolManager.Tools.OfType<SelectTool>().First());
+                    ToolManager.Activate(typeof(SelectTool));
                 }
             }
             if (!Mediator.ExecuteDefault(this, message, data))

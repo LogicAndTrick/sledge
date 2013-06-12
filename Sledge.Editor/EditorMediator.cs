@@ -19,6 +19,8 @@ namespace Sledge.Editor
         // Editing messages
         TextureSelected,
 
+        ToolSelected,
+
         ViewportRightClick,
 
         WorldspawnProperties,
@@ -45,7 +47,10 @@ namespace Sledge.Editor
         FileSaved,
 
         // Editor messages
+        UpdateMenu,
+        CheckForUpdates,
+        OpenWebsite,
         About,
-        Exit,
+        Exit
     }
 }

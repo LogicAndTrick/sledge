@@ -92,7 +92,9 @@ namespace Sledge.Editor.Tools
         private MapObject GetBrush(Box bounds, IDGenerator idg)
         {
             var brush = BrushManager.CurrentBrush;
-            var created = brush.Create(idg, bounds, TextureHelper.Get("AAATRIGGER")).ToList();
+            var ti = Editor.Instance.GetSelectedTexture();
+            var texture = ti != null ? ti.GetTexture() : null;
+            var created = brush.Create(idg, bounds, texture).ToList();
             if (created.Count > 1)
             {
                 var g = new Group(idg.GetNextObjectID());

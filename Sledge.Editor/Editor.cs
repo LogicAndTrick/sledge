@@ -45,12 +45,6 @@ namespace Sledge.Editor
         public void SelectTool(BaseTool t)
         {
             ToolManager.Activate(t);
-            var at = ToolManager.ActiveTool;
-            if (at == null) return;
-            foreach (var tsb in from object item in tspTools.Items select ((ToolStripButton) item))
-            {
-                tsb.Checked = (tsb.Name == at.GetName());
-            }
         }
 
         private static void LoadFile(string fileName)
@@ -144,6 +138,7 @@ namespace Sledge.Editor
             Mediator.Subscribe(EditorMediator.DocumentActivated, this);
 
             Mediator.Subscribe(EditorMediator.TextureSelected, this);
+            Mediator.Subscribe(EditorMediator.ToolSelected, this);
         }
 
         public static void FileNew()
@@ -248,6 +243,16 @@ namespace Sledge.Editor
         public GameDataObject GetSelectedEntity()
         {
             return (GameDataObject) EntityTypeList.SelectedItem;
+        }
+
+        public void ToolSelected()
+        {
+            var at = ToolManager.ActiveTool;
+            if (at == null) return;
+            foreach (var tsb in from object item in tspTools.Items select ((ToolStripButton)item))
+            {
+                tsb.Checked = (tsb.Name == at.GetName());
+            }
         }
 
         public void FileOpened(string path)

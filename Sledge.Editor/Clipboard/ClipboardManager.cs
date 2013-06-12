@@ -51,6 +51,17 @@ namespace Sledge.Editor.Clipboard
             return ExtractCopyStream(document, str);
         }
 
+        /// <summary>
+        /// Returns true if the paste operation will probably work.
+        /// </summary>
+        /// <returns>True if the start of the clipboard stream looks parsable.</returns>
+        public static bool CanPaste()
+        {
+            if (!System.Windows.Forms.Clipboard.ContainsText()) return false;
+            var str = System.Windows.Forms.Clipboard.GetText();
+            return str.StartsWith("clipboard");
+        }
+
         public static IEnumerable<MapObject> CloneFlatHeirarchy(Document document, IEnumerable<MapObject> objects)
         {
             return ExtractCopyStream(document, CreateCopyStream(objects));

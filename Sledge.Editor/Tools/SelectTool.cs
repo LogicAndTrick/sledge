@@ -74,6 +74,8 @@ namespace Sledge.Editor.Tools
         public override void ToolSelected()
         {
             Mediator.Subscribe(EditorMediator.SelectionChanged, this);
+            Mediator.Subscribe(EditorMediator.DocumentTreeStructureChanged, this);
+            Mediator.Subscribe(EditorMediator.DocumentTreeObjectsChanged, this);
             SelectionChanged();
             Document.UpdateDisplayLists(Document.Selection.GetSelectedObjects());
         }
@@ -89,6 +91,19 @@ namespace Sledge.Editor.Tools
         {
             if (tool != null) _lastTool = tool;
             _currentTool = tool;
+        }
+
+        private void DocumentTreeStructureChanged()
+        {
+            SelectionChanged();
+        }
+
+        private void DocumentTreeObjectsChanged(IEnumerable<MapObject> objects)
+        {
+            if (objects.Any(x => x.IsSelected))
+            {
+                SelectionChanged();
+            }
         }
 
         private void SelectionChanged()

@@ -125,11 +125,14 @@
     <Compile Include="Documents\Document.cs" />
     <Compile Include="Documents\DocumentManager.cs" />
     <Compile Include="Documents\DocumentSubscriptions.cs" />
+    <Compile Include="Menu\GroupedMenuBuilder.cs" />
     <Compile Include="Menu\IMenuBuilder.cs" />
     <Compile Include="Menu\MenuManager.cs" />
     <Compile Include="Menu\MenuSplitter.cs" />
     <Compile Include="Menu\RecentFilesMenu.cs" />
-    <Compile Include="Menu\SimpleMenuBuilder.cs" />
+    <Compile Include="Menu\SimpleMenuBuilder.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Rendering\RenderManager.cs" />
     <Compile Include="Editing\SelectionManager.cs" />
     <Compile Include="EditorMediator.cs" />
@@ -201,6 +204,12 @@
       <DependentUpon>TextureApplicationForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Tools\TransformationTools\TransformationTool.cs" />
+    <Compile Include="UI\PasteSpecialDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\PasteSpecialDialog.Designer.cs">
+      <DependentUpon>PasteSpecialDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="UI\TextureComboBox.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -320,6 +329,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UI\EntityEditor.resx">
       <DependentUpon>EntityEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\PasteSpecialDialog.resx">
+      <DependentUpon>PasteSpecialDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\TextureBrowser.resx">
       <DependentUpon>TextureBrowser.cs</DependentUpon>

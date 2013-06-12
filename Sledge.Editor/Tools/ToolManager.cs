@@ -57,6 +57,12 @@ namespace Sledge.Editor.Tools
             if (ActiveTool != null) Deactivate();
             ActiveTool = tool;
             if (ActiveTool != null) ActiveTool.ToolSelected();
+            Mediator.Publish(EditorMediator.ToolSelected);
+        }
+
+        public static void Activate(Type toolType)
+        {
+            Activate(Tools.FirstOrDefault(x => x.GetType() == toolType));
         }
     }
 }
