@@ -78,11 +78,13 @@
     <Compile Include="Actions\MapObjects\Groups\UngroupAction.cs" />
     <Compile Include="Actions\MapObjects\Operations\Clip.cs" />
     <Compile Include="Actions\MapObjects\Operations\Carve.cs" />
+    <Compile Include="Actions\MapObjects\Operations\CreateEditDelete.cs" />
     <Compile Include="Actions\MapObjects\Operations\MakeHollow.cs" />
     <Compile Include="Actions\MapObjects\Operations\Edit.cs" />
     <Compile Include="Actions\MapObjects\Operations\Create.cs" />
     <Compile Include="Actions\MapObjects\Operations\Delete.cs" />
     <Compile Include="Actions\MapObjects\Operations\EditFace.cs" />
+    <Compile Include="Actions\MapObjects\Operations\PasteSpecial.cs" />
     <Compile Include="Actions\MapObjects\Operations\Reparent.cs" />
     <Compile Include="Actions\MapObjects\Selection\ChangeFaceSelection.cs" />
     <Compile Include="Actions\MapObjects\Selection\ChangeSelection.cs" />
@@ -125,6 +127,8 @@
     <Compile Include="Documents\Document.cs" />
     <Compile Include="Documents\DocumentManager.cs" />
     <Compile Include="Documents\DocumentSubscriptions.cs" />
+    <Compile Include="Enums\PasteSpecialGrouping.cs" />
+    <Compile Include="Enums\PasteSpecialStartPoint.cs" />
     <Compile Include="Menu\GroupedMenuBuilder.cs" />
     <Compile Include="Menu\IMenuBuilder.cs" />
     <Compile Include="Menu\MenuManager.cs" />

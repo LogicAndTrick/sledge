@@ -1,0 +1,184 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Sledge.Common.Mediator;
+using Sledge.DataStructures.MapObjects;
+using Sledge.Editor.Documents;
+
+namespace Sledge.Editor.Actions.MapObjects.Operations
+{
+    public abstract class CreateEditDelete : IAction
+    {
+        protected class DeleteReference
+        {
+            public long ParentID { get; set; }
+            public bool IsSelected { get; set; }
+            public MapObject Object { get; set; }
+            public bool TopMost { get; set; }
+
+            public DeleteReference(MapObject o, long parentID, bool isSelected, bool topMost)
+            {
+                Object = o;
+                ParentID = parentID;
+                IsSelected = isSelected;
+                TopMost = topMost;
+            }
+        }
+
+        protected class EditReference
+        {
+            public long ID { get; set; }
+            public MapObject Before { get; set; }
+            public MapObject After { get; set; }
+            public Action<MapObject> Action { get; set; }
+
+            public EditReference(long id, MapObject before, MapObject after)
+            {
+                ID = id;
+                Before = before.Clone();
+                After = after.Clone();
+                Action = null;
+            }
+
+            public EditReference(MapObject obj, Action<MapObject> action)
+            {
+                ID = obj.ID;
+                Before = obj.Clone();
+                After = null;
+                Action = action;
+            }
+
+            public void Perform(MapObject root)
+            {
+                var obj = root.FindByID(ID);
+                if (obj == null) return;
+                if (Action != null) Action(obj);
+                else obj.Unclone(After);
+            }
+
+            public void Reverse(MapObject root)
+            {
+                var obj = root.FindByID(ID);
+                if (obj == null) return;
+                obj.Unclone(Before);
+            }
+        }
+
+        private List<long> _createdIds;
+        private List<MapObject> _objectsToCreate;
+
+        private List<long> _idsToDelete;
+        private List<DeleteReference> _deletedObjects;
+
+        private List<EditReference> _editObjects;
+
+        protected CreateEditDelete()
+        {
+            _objectsToCreate = new List<MapObject>();
+            _idsToDelete = new List<long>();
+            _editObjects = new List<EditReference>();
+        }
+
+        protected void Create(IEnumerable<MapObject> objects)
+        {
+            _objectsToCreate.AddRange(objects);
+        }
+
+        protected void Delete(IEnumerable<long> ids)
+        {
+            _idsToDelete.AddRange(ids);
+        }
+
+        protected void Edit(IEnumerable<MapObject> before, IEnumerable<MapObject> after)
+        {
+            var b = before.ToList();
+            var a = after.ToList();
+            var ids = b.Select(x => x.ID).Where(x => a.Any(y => x == y.ID));
+            _editObjects.AddRange(ids.Select(x => new EditReference(x, b.First(y => y.ID == x), a.First(y => y.ID == x))));
+        }
+
+        protected void Edit(IEnumerable<MapObject> objects, Action<MapObject> action)
+        {
+            _editObjects.AddRange(objects.Select(x => new EditReference(x, action)));
+        }
+
+        public void Dispose()
+        {
+            _createdIds = null;
+            _objectsToCreate = null;
+
+            _idsToDelete = null;
+            _deletedObjects = null;
+
+            _editObjects = null;
+        }
+
+        public virtual void Reverse(Document document)
+        {
+            // Create
+            _objectsToCreate = document.Map.WorldSpawn.Find(x => _createdIds.Contains(x.ID));
+            if (_objectsToCreate.Any(x => x.IsSelected))
+            {
+                document.Selection.Deselect(_objectsToCreate.Where(x => x.IsSelected));
+            }
+            _objectsToCreate.ForEach(x => x.SetParent(null));
+            _createdIds = null;
+
+            // Delete
+            _idsToDelete = _deletedObjects.Select(x => x.Object.ID).ToList();
+            foreach (var dr in _deletedObjects.Where(x => x.TopMost))
+            {
+                dr.Object.SetParent(document.Map.WorldSpawn.FindByID(dr.ParentID));
+            }
+            document.Selection.Select(_deletedObjects.Where(x => x.IsSelected).Select(x => x.Object));
+            _deletedObjects = null;
+
+            // Edit
+            Parallel.ForEach(_editObjects, x => x.Reverse(document.Map.WorldSpawn));
+
+            if (_objectsToCreate.Any() || _idsToDelete.Any())
+            {
+                Mediator.Publish(EditorMediator.DocumentTreeStructureChanged);
+            }
+            else if (_editObjects.Any())
+            {
+                Mediator.Publish(EditorMediator.DocumentTreeStructureChanged, _editObjects.Select(x => document.Map.WorldSpawn.FindByID(x.ID)));
+            }
+        }
+
+        public virtual void Perform(Document document)
+        {
+            // Create
+            _createdIds = _objectsToCreate.Select(x => x.ID).ToList();
+            _objectsToCreate.ForEach(x => x.SetParent(document.Map.WorldSpawn));
+            if (_objectsToCreate.Any(x => x.IsSelected))
+            {
+                document.Selection.Select(_objectsToCreate.Where(x => x.IsSelected));
+            }
+            _objectsToCreate = null;
+
+            // Delete
+            var objects = document.Map.WorldSpawn.Find(x => _idsToDelete.Contains(x.ID) && x.Parent != null);
+            _deletedObjects = objects.Select(x => new DeleteReference(x, x.Parent.ID, x.IsSelected, !objects.Contains(x.Parent))).ToList();
+            document.Selection.Deselect(objects);
+            foreach (var dr in _deletedObjects.Where(x => x.TopMost))
+            {
+                dr.Object.SetParent(null);
+            }
+            _idsToDelete = null;
+
+            // Edit
+            Parallel.ForEach(_editObjects, x => x.Perform(document.Map.WorldSpawn));
+
+            if (_createdIds.Any() || _deletedObjects.Any())
+            {
+                Mediator.Publish(EditorMediator.DocumentTreeStructureChanged);
+            }
+            else if (_editObjects.Any())
+            {
+                Mediator.Publish(EditorMediator.DocumentTreeStructureChanged, _editObjects.Select(x => document.Map.WorldSpawn.FindByID(x.ID)));
+            }
+        }
+    }
+}

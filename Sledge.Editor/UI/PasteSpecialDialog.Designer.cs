@@ -31,31 +31,31 @@
             this.label1 = new System.Windows.Forms.Label();
             this.NumCopies = new System.Windows.Forms.NumericUpDown();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.StartOrigin = new System.Windows.Forms.RadioButton();
-            this.StartOriginal = new System.Windows.Forms.RadioButton();
             this.StartSelection = new System.Windows.Forms.RadioButton();
+            this.StartOriginal = new System.Windows.Forms.RadioButton();
+            this.StartOrigin = new System.Windows.Forms.RadioButton();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.GroupAll = new System.Windows.Forms.RadioButton();
             this.GroupIndividual = new System.Windows.Forms.RadioButton();
             this.GroupNone = new System.Windows.Forms.RadioButton();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.OffsetY = new System.Windows.Forms.NumericUpDown();
+            this.OffsetZ = new System.Windows.Forms.NumericUpDown();
+            this.OffsetX = new System.Windows.Forms.NumericUpDown();
+            this.SourceOffsetZButton = new System.Windows.Forms.Button();
+            this.ZeroOffsetZButton = new System.Windows.Forms.Button();
+            this.SourceOffsetYButton = new System.Windows.Forms.Button();
+            this.ZeroOffsetYButton = new System.Windows.Forms.Button();
+            this.SourceOffsetXButton = new System.Windows.Forms.Button();
+            this.ZeroOffsetXButton = new System.Windows.Forms.Button();
             this.label5 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
-            this.ZeroOffsetXButton = new System.Windows.Forms.Button();
-            this.SourceOffsetXButton = new System.Windows.Forms.Button();
-            this.ZeroOffsetYButton = new System.Windows.Forms.Button();
-            this.SourceOffsetYButton = new System.Windows.Forms.Button();
-            this.ZeroOffsetZButton = new System.Windows.Forms.Button();
-            this.SourceOffsetZButton = new System.Windows.Forms.Button();
             this.UniqueEntityNames = new System.Windows.Forms.CheckBox();
-            this.PrefixEntityNames = new System.Windows.Forms.CheckBox();
+            this.PrefixEntityNamesCheckbox = new System.Windows.Forms.CheckBox();
             this.EntityPrefix = new System.Windows.Forms.TextBox();
             this.OkButton = new System.Windows.Forms.Button();
             this.CancelButton = new System.Windows.Forms.Button();
-            this.OffsetX = new System.Windows.Forms.NumericUpDown();
-            this.OffsetY = new System.Windows.Forms.NumericUpDown();
-            this.OffsetZ = new System.Windows.Forms.NumericUpDown();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.RotationY = new System.Windows.Forms.NumericUpDown();
             this.RotationZ = new System.Windows.Forms.NumericUpDown();
@@ -70,9 +70,9 @@
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.OffsetX)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.OffsetY)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.OffsetZ)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.OffsetX)).BeginInit();
             this.groupBox4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.RotationY)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.RotationZ)).BeginInit();
@@ -122,15 +122,15 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Start Point";
             // 
-            // StartOrigin
+            // StartSelection
             // 
-            this.StartOrigin.AutoSize = true;
-            this.StartOrigin.Location = new System.Drawing.Point(12, 20);
-            this.StartOrigin.Name = "StartOrigin";
-            this.StartOrigin.Size = new System.Drawing.Size(110, 17);
-            this.StartOrigin.TabIndex = 0;
-            this.StartOrigin.Text = "Start at map origin";
-            this.StartOrigin.UseVisualStyleBackColor = true;
+            this.StartSelection.AutoSize = true;
+            this.StartSelection.Location = new System.Drawing.Point(11, 66);
+            this.StartSelection.Name = "StartSelection";
+            this.StartSelection.Size = new System.Drawing.Size(185, 17);
+            this.StartSelection.TabIndex = 0;
+            this.StartSelection.Text = "Start at center of current selection";
+            this.StartSelection.UseVisualStyleBackColor = true;
             // 
             // StartOriginal
             // 
@@ -144,15 +144,15 @@
             this.StartOriginal.Text = "Start at center of original";
             this.StartOriginal.UseVisualStyleBackColor = true;
             // 
-            // StartSelection
+            // StartOrigin
             // 
-            this.StartSelection.AutoSize = true;
-            this.StartSelection.Location = new System.Drawing.Point(11, 66);
-            this.StartSelection.Name = "StartSelection";
-            this.StartSelection.Size = new System.Drawing.Size(185, 17);
-            this.StartSelection.TabIndex = 0;
-            this.StartSelection.Text = "Start at center of current selection";
-            this.StartSelection.UseVisualStyleBackColor = true;
+            this.StartOrigin.AutoSize = true;
+            this.StartOrigin.Location = new System.Drawing.Point(12, 20);
+            this.StartOrigin.Name = "StartOrigin";
+            this.StartOrigin.Size = new System.Drawing.Size(110, 17);
+            this.StartOrigin.TabIndex = 0;
+            this.StartOrigin.Text = "Start at map origin";
+            this.StartOrigin.UseVisualStyleBackColor = true;
             // 
             // groupBox2
             // 
@@ -219,153 +219,6 @@
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Offset (accumulative)";
             // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(7, 75);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(17, 13);
-            this.label5.TabIndex = 12;
-            this.label5.Text = "Z:";
-            // 
-            // label6
-            // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(7, 49);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(17, 13);
-            this.label6.TabIndex = 10;
-            this.label6.Text = "Y:";
-            // 
-            // label7
-            // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(7, 23);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(17, 13);
-            this.label7.TabIndex = 8;
-            this.label7.Text = "X:";
-            // 
-            // ZeroOffsetXButton
-            // 
-            this.ZeroOffsetXButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.ZeroOffsetXButton.Location = new System.Drawing.Point(96, 20);
-            this.ZeroOffsetXButton.Name = "ZeroOffsetXButton";
-            this.ZeroOffsetXButton.Size = new System.Drawing.Size(25, 20);
-            this.ZeroOffsetXButton.TabIndex = 13;
-            this.ZeroOffsetXButton.Text = "0";
-            this.ZeroOffsetXButton.UseVisualStyleBackColor = true;
-            // 
-            // SourceOffsetXButton
-            // 
-            this.SourceOffsetXButton.Location = new System.Drawing.Point(127, 20);
-            this.SourceOffsetXButton.Name = "SourceOffsetXButton";
-            this.SourceOffsetXButton.Size = new System.Drawing.Size(49, 20);
-            this.SourceOffsetXButton.TabIndex = 13;
-            this.SourceOffsetXButton.Text = "Source";
-            this.SourceOffsetXButton.UseVisualStyleBackColor = true;
-            // 
-            // ZeroOffsetYButton
-            // 
-            this.ZeroOffsetYButton.Location = new System.Drawing.Point(96, 46);
-            this.ZeroOffsetYButton.Name = "ZeroOffsetYButton";
-            this.ZeroOffsetYButton.Size = new System.Drawing.Size(25, 20);
-            this.ZeroOffsetYButton.TabIndex = 13;
-            this.ZeroOffsetYButton.Text = "0";
-            this.ZeroOffsetYButton.UseVisualStyleBackColor = true;
-            // 
-            // SourceOffsetYButton
-            // 
-            this.SourceOffsetYButton.Location = new System.Drawing.Point(127, 46);
-            this.SourceOffsetYButton.Name = "SourceOffsetYButton";
-            this.SourceOffsetYButton.Size = new System.Drawing.Size(49, 20);
-            this.SourceOffsetYButton.TabIndex = 13;
-            this.SourceOffsetYButton.Text = "Source";
-            this.SourceOffsetYButton.UseVisualStyleBackColor = true;
-            // 
-            // ZeroOffsetZButton
-            // 
-            this.ZeroOffsetZButton.Location = new System.Drawing.Point(96, 72);
-            this.ZeroOffsetZButton.Name = "ZeroOffsetZButton";
-            this.ZeroOffsetZButton.Size = new System.Drawing.Size(25, 20);
-            this.ZeroOffsetZButton.TabIndex = 13;
-            this.ZeroOffsetZButton.Text = "0";
-            this.ZeroOffsetZButton.UseVisualStyleBackColor = true;
-            // 
-            // SourceOffsetZButton
-            // 
-            this.SourceOffsetZButton.Location = new System.Drawing.Point(127, 72);
-            this.SourceOffsetZButton.Name = "SourceOffsetZButton";
-            this.SourceOffsetZButton.Size = new System.Drawing.Size(49, 20);
-            this.SourceOffsetZButton.TabIndex = 13;
-            this.SourceOffsetZButton.Text = "Source";
-            this.SourceOffsetZButton.UseVisualStyleBackColor = true;
-            // 
-            // UniqueEntityNames
-            // 
-            this.UniqueEntityNames.AutoSize = true;
-            this.UniqueEntityNames.Location = new System.Drawing.Point(12, 239);
-            this.UniqueEntityNames.Name = "UniqueEntityNames";
-            this.UniqueEntityNames.Size = new System.Drawing.Size(150, 17);
-            this.UniqueEntityNames.TabIndex = 15;
-            this.UniqueEntityNames.Text = "Make entity names unique";
-            this.UniqueEntityNames.UseVisualStyleBackColor = true;
-            // 
-            // PrefixEntityNames
-            // 
-            this.PrefixEntityNames.AutoSize = true;
-            this.PrefixEntityNames.Location = new System.Drawing.Point(12, 262);
-            this.PrefixEntityNames.Name = "PrefixEntityNames";
-            this.PrefixEntityNames.Size = new System.Drawing.Size(148, 17);
-            this.PrefixEntityNames.TabIndex = 15;
-            this.PrefixEntityNames.Text = "Prefix named entities with:";
-            this.PrefixEntityNames.UseVisualStyleBackColor = true;
-            // 
-            // EntityPrefix
-            // 
-            this.EntityPrefix.Location = new System.Drawing.Point(159, 260);
-            this.EntityPrefix.Name = "EntityPrefix";
-            this.EntityPrefix.Size = new System.Drawing.Size(78, 20);
-            this.EntityPrefix.TabIndex = 11;
-            // 
-            // OkButton
-            // 
-            this.OkButton.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.OkButton.Location = new System.Drawing.Point(270, 257);
-            this.OkButton.Name = "OkButton";
-            this.OkButton.Size = new System.Drawing.Size(75, 23);
-            this.OkButton.TabIndex = 16;
-            this.OkButton.Text = "OK";
-            this.OkButton.UseVisualStyleBackColor = true;
-            // 
-            // CancelButton
-            // 
-            this.CancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.CancelButton.Location = new System.Drawing.Point(351, 257);
-            this.CancelButton.Name = "CancelButton";
-            this.CancelButton.Size = new System.Drawing.Size(75, 23);
-            this.CancelButton.TabIndex = 16;
-            this.CancelButton.Text = "Cancel";
-            this.CancelButton.UseVisualStyleBackColor = true;
-            // 
-            // OffsetX
-            // 
-            this.OffsetX.DecimalPlaces = 2;
-            this.OffsetX.Location = new System.Drawing.Point(24, 20);
-            this.OffsetX.Maximum = new decimal(new int[] {
-            16384,
-            0,
-            0,
-            0});
-            this.OffsetX.Minimum = new decimal(new int[] {
-            16384,
-            0,
-            0,
-            -2147483648});
-            this.OffsetX.Name = "OffsetX";
-            this.OffsetX.Size = new System.Drawing.Size(66, 20);
-            this.OffsetX.TabIndex = 14;
-            // 
             // OffsetY
             // 
             this.OffsetY.DecimalPlaces = 2;
@@ -401,6 +254,152 @@
             this.OffsetZ.Name = "OffsetZ";
             this.OffsetZ.Size = new System.Drawing.Size(66, 20);
             this.OffsetZ.TabIndex = 14;
+            // 
+            // OffsetX
+            // 
+            this.OffsetX.DecimalPlaces = 2;
+            this.OffsetX.Location = new System.Drawing.Point(24, 20);
+            this.OffsetX.Maximum = new decimal(new int[] {
+            16384,
+            0,
+            0,
+            0});
+            this.OffsetX.Minimum = new decimal(new int[] {
+            16384,
+            0,
+            0,
+            -2147483648});
+            this.OffsetX.Name = "OffsetX";
+            this.OffsetX.Size = new System.Drawing.Size(66, 20);
+            this.OffsetX.TabIndex = 14;
+            // 
+            // SourceOffsetZButton
+            // 
+            this.SourceOffsetZButton.Location = new System.Drawing.Point(127, 72);
+            this.SourceOffsetZButton.Name = "SourceOffsetZButton";
+            this.SourceOffsetZButton.Size = new System.Drawing.Size(49, 20);
+            this.SourceOffsetZButton.TabIndex = 13;
+            this.SourceOffsetZButton.Text = "Source";
+            this.SourceOffsetZButton.UseVisualStyleBackColor = true;
+            // 
+            // ZeroOffsetZButton
+            // 
+            this.ZeroOffsetZButton.Location = new System.Drawing.Point(96, 72);
+            this.ZeroOffsetZButton.Name = "ZeroOffsetZButton";
+            this.ZeroOffsetZButton.Size = new System.Drawing.Size(25, 20);
+            this.ZeroOffsetZButton.TabIndex = 13;
+            this.ZeroOffsetZButton.Text = "0";
+            this.ZeroOffsetZButton.UseVisualStyleBackColor = true;
+            // 
+            // SourceOffsetYButton
+            // 
+            this.SourceOffsetYButton.Location = new System.Drawing.Point(127, 46);
+            this.SourceOffsetYButton.Name = "SourceOffsetYButton";
+            this.SourceOffsetYButton.Size = new System.Drawing.Size(49, 20);
+            this.SourceOffsetYButton.TabIndex = 13;
+            this.SourceOffsetYButton.Text = "Source";
+            this.SourceOffsetYButton.UseVisualStyleBackColor = true;
+            // 
+            // ZeroOffsetYButton
+            // 
+            this.ZeroOffsetYButton.Location = new System.Drawing.Point(96, 46);
+            this.ZeroOffsetYButton.Name = "ZeroOffsetYButton";
+            this.ZeroOffsetYButton.Size = new System.Drawing.Size(25, 20);
+            this.ZeroOffsetYButton.TabIndex = 13;
+            this.ZeroOffsetYButton.Text = "0";
+            this.ZeroOffsetYButton.UseVisualStyleBackColor = true;
+            // 
+            // SourceOffsetXButton
+            // 
+            this.SourceOffsetXButton.Location = new System.Drawing.Point(127, 20);
+            this.SourceOffsetXButton.Name = "SourceOffsetXButton";
+            this.SourceOffsetXButton.Size = new System.Drawing.Size(49, 20);
+            this.SourceOffsetXButton.TabIndex = 13;
+            this.SourceOffsetXButton.Text = "Source";
+            this.SourceOffsetXButton.UseVisualStyleBackColor = true;
+            // 
+            // ZeroOffsetXButton
+            // 
+            this.ZeroOffsetXButton.Location = new System.Drawing.Point(96, 20);
+            this.ZeroOffsetXButton.Name = "ZeroOffsetXButton";
+            this.ZeroOffsetXButton.Size = new System.Drawing.Size(25, 20);
+            this.ZeroOffsetXButton.TabIndex = 13;
+            this.ZeroOffsetXButton.Text = "0";
+            this.ZeroOffsetXButton.UseVisualStyleBackColor = true;
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(7, 75);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(17, 13);
+            this.label5.TabIndex = 12;
+            this.label5.Text = "Z:";
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(7, 49);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(17, 13);
+            this.label6.TabIndex = 10;
+            this.label6.Text = "Y:";
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(7, 23);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(17, 13);
+            this.label7.TabIndex = 8;
+            this.label7.Text = "X:";
+            // 
+            // UniqueEntityNames
+            // 
+            this.UniqueEntityNames.AutoSize = true;
+            this.UniqueEntityNames.Location = new System.Drawing.Point(12, 239);
+            this.UniqueEntityNames.Name = "UniqueEntityNames";
+            this.UniqueEntityNames.Size = new System.Drawing.Size(150, 17);
+            this.UniqueEntityNames.TabIndex = 15;
+            this.UniqueEntityNames.Text = "Make entity names unique";
+            this.UniqueEntityNames.UseVisualStyleBackColor = true;
+            // 
+            // PrefixEntityNamesCheckbox
+            // 
+            this.PrefixEntityNamesCheckbox.AutoSize = true;
+            this.PrefixEntityNamesCheckbox.Location = new System.Drawing.Point(12, 262);
+            this.PrefixEntityNamesCheckbox.Name = "PrefixEntityNamesCheckbox";
+            this.PrefixEntityNamesCheckbox.Size = new System.Drawing.Size(148, 17);
+            this.PrefixEntityNamesCheckbox.TabIndex = 15;
+            this.PrefixEntityNamesCheckbox.Text = "Prefix named entities with:";
+            this.PrefixEntityNamesCheckbox.UseVisualStyleBackColor = true;
+            // 
+            // EntityPrefix
+            // 
+            this.EntityPrefix.Location = new System.Drawing.Point(159, 260);
+            this.EntityPrefix.Name = "EntityPrefix";
+            this.EntityPrefix.Size = new System.Drawing.Size(78, 20);
+            this.EntityPrefix.TabIndex = 11;
+            // 
+            // OkButton
+            // 
+            this.OkButton.DialogResult = System.Windows.Forms.DialogResult.OK;
+            this.OkButton.Location = new System.Drawing.Point(270, 257);
+            this.OkButton.Name = "OkButton";
+            this.OkButton.Size = new System.Drawing.Size(75, 23);
+            this.OkButton.TabIndex = 16;
+            this.OkButton.Text = "OK";
+            this.OkButton.UseVisualStyleBackColor = true;
+            // 
+            // CancelButton
+            // 
+            this.CancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.CancelButton.Location = new System.Drawing.Point(351, 257);
+            this.CancelButton.Name = "CancelButton";
+            this.CancelButton.Size = new System.Drawing.Size(75, 23);
+            this.CancelButton.TabIndex = 16;
+            this.CancelButton.Text = "Cancel";
+            this.CancelButton.UseVisualStyleBackColor = true;
             // 
             // groupBox4
             // 
@@ -476,7 +475,6 @@
             // 
             // ZeroRotationZButton
             // 
-            this.ZeroRotationZButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.ZeroRotationZButton.Location = new System.Drawing.Point(96, 72);
             this.ZeroRotationZButton.Name = "ZeroRotationZButton";
             this.ZeroRotationZButton.Size = new System.Drawing.Size(25, 20);
@@ -537,7 +535,7 @@
             this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.CancelButton);
             this.Controls.Add(this.OkButton);
-            this.Controls.Add(this.PrefixEntityNames);
+            this.Controls.Add(this.PrefixEntityNamesCheckbox);
             this.Controls.Add(this.UniqueEntityNames);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.groupBox2);
@@ -558,9 +556,9 @@
             this.groupBox2.PerformLayout();
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.OffsetX)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.OffsetY)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.OffsetZ)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.OffsetX)).EndInit();
             this.groupBox4.ResumeLayout(false);
             this.groupBox4.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.RotationY)).EndInit();
@@ -594,7 +592,7 @@
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.CheckBox UniqueEntityNames;
-        private System.Windows.Forms.CheckBox PrefixEntityNames;
+        private System.Windows.Forms.CheckBox PrefixEntityNamesCheckbox;
         private System.Windows.Forms.TextBox EntityPrefix;
         private System.Windows.Forms.Button OkButton;
         private System.Windows.Forms.Button CancelButton;

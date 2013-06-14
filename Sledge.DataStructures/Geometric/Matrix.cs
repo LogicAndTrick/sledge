@@ -329,9 +329,9 @@ namespace Sledge.DataStructures.Geometric
         public static Matrix Translation(Coordinate translation)
         {
             var m = Identity;
-            m.Values[12] = translation.X;
-            m.Values[13] = translation.Y;
-            m.Values[14] = translation.Z;
+            m.Values[3] = translation.X;
+            m.Values[7] = translation.Y;
+            m.Values[11] = translation.Z;
             return m;
         }
 

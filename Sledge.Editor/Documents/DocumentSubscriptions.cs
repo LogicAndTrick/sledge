@@ -4,6 +4,7 @@ using System.Linq;
 using System.Windows.Forms;
 using Sledge.Common;
 using Sledge.Common.Mediator;
+using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.MapObjects;
 using Sledge.Editor.Actions;
 using Sledge.Editor.Actions.MapObjects.Groups;
@@ -51,6 +52,7 @@ namespace Sledge.Editor.Documents
             Mediator.Subscribe(HotkeysMediator.OperationsCopy, this);
             Mediator.Subscribe(HotkeysMediator.OperationsCut, this);
             Mediator.Subscribe(HotkeysMediator.OperationsPaste, this);
+            Mediator.Subscribe(HotkeysMediator.OperationsPasteSpecial, this);
             Mediator.Subscribe(HotkeysMediator.OperationsDelete, this);
             Mediator.Subscribe(HotkeysMediator.GroupingGroup, this);
             Mediator.Subscribe(HotkeysMediator.GroupingUngroup, this);
@@ -211,6 +213,31 @@ namespace Sledge.Editor.Documents
             _document.PerformAction(name, new ActionCollection(
                                               new Deselect(selected), // Deselect the current objects
                                               new Create(list))); // Add and select the new objects
+        }
+
+        public void OperationsPasteSpecial()
+        {
+            if (!ClipboardManager.CanPaste()) return;
+
+            var content = ClipboardManager.GetPastedContent(_document);
+            if (content == null) return;
+
+            var list = content.ToList();
+            if (!list.Any()) return;
+
+            var box = new Box(list.Select(x => x.BoundingBox));
+
+            using (var psd = new PasteSpecialDialog(box))
+            {
+                if (psd.ShowDialog() == DialogResult.OK)
+                {
+                    var name = "Paste special (" + psd.NumberOfCopies + (psd.NumberOfCopies == 1 ? " copy)" : " copies)");
+                    var action = new PasteSpecial(list, psd.NumberOfCopies, psd.StartPoint, psd.Grouping,
+                                                  psd.AccumulativeOffset, psd.AccumulativeRotation,
+                                                  psd.MakeEntitiesUnique, psd.PrefixEntityNames, psd.EntityNamePrefix);
+                    _document.PerformAction(name, action);
+                }
+            }
         }
 
         public void OperationsDelete()
