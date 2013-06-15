@@ -67,6 +67,7 @@ namespace Sledge.Editor.Documents
 
             Mediator.Subscribe(HotkeysMediator.GridIncrease, this);
             Mediator.Subscribe(HotkeysMediator.GridDecrease, this);
+            Mediator.Subscribe(HotkeysMediator.ShowMapInformation, this);
 
             Mediator.Subscribe(EditorMediator.ViewportRightClick, this);
 
@@ -420,6 +421,14 @@ namespace Sledge.Editor.Documents
             foreach (var kv in _document.Renderer.GridRenderables)
             {
                 kv.Value.RebuildGrid(((Viewport2D)kv.Key).Zoom, true);
+            }
+        }
+
+        public void ShowMapInformation()
+        {
+            using (var mid = new MapInformationDialog(_document))
+            {
+                mid.ShowDialog();
             }
         }
 

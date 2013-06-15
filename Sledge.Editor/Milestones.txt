@@ -1,15 +1,22 @@
 ﻿Key: Item - percentage complete, uncompleted tasks
 
 Priorities
+  All support tools
+    Texture replace
+    Menu actions
+      Show/hide grid
+      Snap to grid action
+      Information dialog texture memory and packages used
+      Show selected brush ID
+      Entity report
+      Check for problems
+      Pointfiles
   Mediator/action visgroups
   Object properties tab switching
-  Texture replace
   Undo/Redo
   New/Open/Save/Close
-  Menu actions
   2D view right click/Hotkeys
   VM clipping when splitting solid entities
-  All support tools
   Recognise changes / prompt for save
   Actions for switching selection modes
   Additional Map Properties

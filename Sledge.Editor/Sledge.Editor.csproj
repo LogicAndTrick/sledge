@@ -208,6 +208,12 @@
       <DependentUpon>TextureApplicationForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Tools\TransformationTools\TransformationTool.cs" />
+    <Compile Include="UI\MapInformationDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\MapInformationDialog.Designer.cs">
+      <DependentUpon>MapInformationDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="UI\PasteSpecialDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -333,6 +339,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UI\EntityEditor.resx">
       <DependentUpon>EntityEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\MapInformationDialog.resx">
+      <DependentUpon>MapInformationDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\PasteSpecialDialog.resx">
       <DependentUpon>PasteSpecialDialog.cs</DependentUpon>

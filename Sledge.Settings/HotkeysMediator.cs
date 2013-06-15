@@ -16,11 +16,19 @@ namespace Sledge.Settings
         FileExport,
         FileCompile,
 
-        GridIncrease,
-        GridDecrease,
-
         HistoryUndo,
         HistoryRedo,
+
+        OperationsCopy,
+        OperationsCut,
+        OperationsPaste,
+        OperationsPasteSpecial,
+        OperationsDelete,
+
+        SelectAll,
+        SelectionClear,
+
+        ObjectProperties,
 
         Carve,
         MakeHollow,
@@ -32,15 +40,9 @@ namespace Sledge.Settings
         TieToEntity,
         TieToWorld,
 
-        ObjectProperties,
+        GridIncrease,
+        GridDecrease,
 
-        OperationsCopy,
-        OperationsCut,
-        OperationsPaste,
-        OperationsPasteSpecial,
-        OperationsDelete,
-
-        SelectAll,
-        SelectionClear
+        ShowMapInformation,
     }
 }
