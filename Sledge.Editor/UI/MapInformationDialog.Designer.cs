@@ -41,6 +41,9 @@
             this.NumSolidEntities = new System.Windows.Forms.Label();
             this.NumUniqueTextures = new System.Windows.Forms.Label();
             this.TextureMemory = new System.Windows.Forms.Label();
+            this.label7 = new System.Windows.Forms.Label();
+            this.TexturePackages = new System.Windows.Forms.ListBox();
+            this.CloseButton = new System.Windows.Forms.Button();
             this.tableLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -50,7 +53,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tableLayoutPanel1.ColumnCount = 2;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 99F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 53F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 152F));
             this.tableLayoutPanel1.Controls.Add(this.label1, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this.label2, 0, 1);
             this.tableLayoutPanel1.Controls.Add(this.label3, 0, 2);
@@ -183,11 +186,41 @@
             this.TextureMemory.TabIndex = 0;
             this.TextureMemory.Text = "12345";
             // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(12, 135);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(122, 13);
+            this.label7.TabIndex = 1;
+            this.label7.Text = "Texture packages used:";
+            // 
+            // TexturePackages
+            // 
+            this.TexturePackages.FormattingEnabled = true;
+            this.TexturePackages.Location = new System.Drawing.Point(12, 151);
+            this.TexturePackages.Name = "TexturePackages";
+            this.TexturePackages.Size = new System.Drawing.Size(251, 108);
+            this.TexturePackages.TabIndex = 2;
+            // 
+            // CloseButton
+            // 
+            this.CloseButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.CloseButton.Location = new System.Drawing.Point(188, 265);
+            this.CloseButton.Name = "CloseButton";
+            this.CloseButton.Size = new System.Drawing.Size(75, 23);
+            this.CloseButton.TabIndex = 3;
+            this.CloseButton.Text = "Close";
+            this.CloseButton.UseVisualStyleBackColor = true;
+            // 
             // MapInformationDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(275, 278);
+            this.ClientSize = new System.Drawing.Size(275, 298);
+            this.Controls.Add(this.CloseButton);
+            this.Controls.Add(this.TexturePackages);
+            this.Controls.Add(this.label7);
             this.Controls.Add(this.tableLayoutPanel1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
@@ -198,6 +231,7 @@
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -216,5 +250,8 @@
         private System.Windows.Forms.Label NumSolidEntities;
         private System.Windows.Forms.Label NumUniqueTextures;
         private System.Windows.Forms.Label TextureMemory;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.ListBox TexturePackages;
+        private System.Windows.Forms.Button CloseButton;
     }
 }

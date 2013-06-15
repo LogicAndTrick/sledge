@@ -10,6 +10,7 @@ using Sledge.Common.Mediator;
 using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.MapObjects;
 using Sledge.DataStructures.Transformations;
+using Sledge.Editor.Actions;
 using Sledge.Editor.Actions.MapObjects.Operations;
 using Sledge.Editor.Actions.MapObjects.Selection;
 using Sledge.Editor.Clipboard;
@@ -458,17 +459,8 @@ namespace Sledge.Editor.Tools
             var transformation = GetTransformMatrix(viewport, e);
             if (transformation.HasValue)
             {
-                if (KeyboardState.Shift && State.Handle == ResizeHandle.Center)
-                {
-                    // Clone the selection
-                    foreach (var clone in ClipboardManager.CloneFlatHeirarchy(Document, Document.Selection.GetSelectedObjects()))
-                    {
-                        clone.Parent = Document.Map.WorldSpawn;
-                        Document.Map.WorldSpawn.Children.Add(clone);
-                        clone.UpdateBoundingBox();
-                    }
-                }
-                ExecuteTransform(_currentTool.GetTransformName(), CreateMatrixMultTransformation(transformation.Value));
+                var createClone = KeyboardState.Shift && State.Handle == ResizeHandle.Center;
+                ExecuteTransform(_currentTool.GetTransformName(), CreateMatrixMultTransformation(transformation.Value), createClone);
             }
             Document.EndSelectionTransform();
             State.ActiveViewport = null;
@@ -653,11 +645,27 @@ namespace Sledge.Editor.Tools
         /// </summary>
         /// <param name="transformationName">The name of the transformation</param>
         /// <param name="transform">The transformation to apply</param>
-        private void ExecuteTransform(string transformationName, IUnitTransformation transform)
+        /// <param name="clone">True to create a clone before transforming the original.</param>
+        private void ExecuteTransform(string transformationName, IUnitTransformation transform, bool clone)
         {
-            var objects = Document.Selection.GetSelectedObjects().Where(o => o.Parent == null || !o.Parent.IsSelected).ToList();
-            var name = transformationName + " (" + objects.Count + " object" + (objects.Count == 1 ? "" : "s") + ")";
-            Document.PerformAction(name, new Edit(objects, x => x.Transform(transform)));
+            var action = new ActionCollection();
+
+            if (clone) transformationName += "-clone";
+            var objects = Document.Selection.GetSelectedParents().ToList();
+            var name = String.Format("{0} {1} object{2}", transformationName, objects.Count, (objects.Count == 1 ? "" : "s"));
+
+            if (clone)
+            {
+                // Copy the selection before transforming
+                var copies = ClipboardManager.CloneFlatHeirarchy(Document, Document.Selection.GetSelectedObjects()).ToList();
+                action.Add(new Create(copies));
+            }
+
+            // Transform the selection
+            action.Add(new Edit(objects, x => x.Transform(transform)));
+
+            // Execute the action
+            Document.PerformAction(name, action);
         }
 
         /// <summary>

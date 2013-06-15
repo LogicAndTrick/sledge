@@ -54,20 +54,25 @@ namespace Sledge.Editor.Actions.MapObjects.Operations
             document.Selection.Select(_objects.Where(x => x.IsSelected).Select(x => x.Object));
             _objects = null;
 
+            Mediator.Publish(EditorMediator.SelectionChanged);
             Mediator.Publish(EditorMediator.DocumentTreeStructureChanged);
         }
 
         public void Perform(Document document)
         {
             var objects = document.Map.WorldSpawn.Find(x => _ids.Contains(x.ID) && x.Parent != null);
-            _objects = objects.Select(x => new DeleteReference(x, x.Parent.ID, x.IsSelected, !objects.Contains(x.Parent))).ToList();
-            document.Selection.Deselect(objects);
+            var all = objects.SelectMany(x => x.FindAll()).ToList();
+            _objects = all
+                .Select(x => new DeleteReference(x, x.Parent.ID, x.IsSelected, !objects.Contains(x.Parent)))
+                .ToList();
+            document.Selection.Deselect(all);
             foreach (var dr in _objects.Where(x => x.TopMost))
             {
                 dr.Object.SetParent(null);
             }
             _ids = null;
 
+            Mediator.Publish(EditorMediator.SelectionChanged);
             Mediator.Publish(EditorMediator.DocumentTreeStructureChanged);
         }
     }

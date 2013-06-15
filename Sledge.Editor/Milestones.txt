@@ -6,9 +6,7 @@ Priorities
     Menu actions
       Show/hide grid
       Snap to grid action
-      Information dialog texture memory and packages used
       Show selected brush ID
-      Entity report
       Check for problems
       Pointfiles
   Mediator/action visgroups
@@ -75,7 +73,7 @@ Post-Alpha Priorities
     Visgroups - 70%, assigning, marking, auto
     Cordon - 0%
     Texture Lock - 0%
-    Entity/World - 0%
+    Entity/World - 90%, testing
     Texture Replace - 0%
     Undo/Redo - 60%, integration, history UI
     Manual Transform - 0%
@@ -88,11 +86,11 @@ Post-Alpha Priorities
     Menu Builder - 60%, actions
     New/Open/Save/Close - 20%, file menu, save as, change detection
     Recent Files - 100%
-    Cut/Copy/Paste/Paste Special - 70%, paste special
-    Select All/None - 0%
+    Cut/Copy/Paste/Paste Special - 100%
+    Select All/None - 100%
     Grid Show/Snap Toggles - 0%
     Hotkeys - 60%, define keys, implement methods, hotkeys in forms
-    Map Info/Entity Report - 0%
+    Map Info/Entity Report - 100%
     Check For Problems - 0%
     Pointfiles/Leak Detection? - 0%
     Go to coordinates/brush number - 0%

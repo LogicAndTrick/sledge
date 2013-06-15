@@ -155,6 +155,11 @@ namespace Sledge.UI
             CenterScreen = new Coordinate(Width / 2m, Height / 2m, 0);
         }
 
+        public override void FocusOn(Coordinate coordinate)
+        {
+            Position = Flatten(coordinate);
+        }
+
         public Coordinate Flatten(Coordinate c)
         {
             return Flatten(c, Direction);

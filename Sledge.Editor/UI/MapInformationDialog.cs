@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using Sledge.DataStructures.GameData;
 using Sledge.DataStructures.MapObjects;
 using Sledge.Editor.Documents;
+using Sledge.Providers.Texture;
 
 namespace Sledge.Editor.UI
 {
@@ -25,21 +26,37 @@ namespace Sledge.Editor.UI
         {
             var all = document.Map.WorldSpawn.FindAll();
             var solids = all.OfType<Solid>().ToList();
-            var numSolids = solids.Count;
-            var numFaces = solids.Sum(x => x.Faces.Count);
+            var faces = solids.SelectMany(x => x.Faces).ToList();
             var entities = all.OfType<Entity>().ToList();
+            var numSolids = solids.Count;
+            var numFaces = faces.Count;
             var numPointEnts = entities.Count(x => !x.Children.Any());
             var numSolidEnts = entities.Count(x => x.Children.Any());
-            var uniqueTextures = solids.SelectMany(x => x.Faces).Select(x => x.Texture.Name).Distinct().ToList();
+            var uniqueTextures = faces.Select(x => x.Texture.Name).Distinct().ToList();
             var numUniqueTextures = uniqueTextures.Count;
-            // todo texture memory
+            var textureMemory = faces.Select(x => x.Texture.Texture)
+                .Where(x => x != null)
+                .Distinct()
+                .Sum(x => x.Width * x.Height * 3); // 3 bytes per pixel
+            var textureMemoryMb = textureMemory / (1024m * 1024m);
+            var packages = uniqueTextures.Select(TexturePackage.GetItem)
+                .Where(x => x != null)
+                .Select(x => x.Package)
+                .Distinct();
+            // todo texture memory, texture packages
 
-            NumSolids.Text = numSolids.ToString(CultureInfo.InvariantCulture);
-            NumFaces.Text = numFaces.ToString(CultureInfo.InvariantCulture);
-            NumPointEntities.Text = numPointEnts.ToString(CultureInfo.InvariantCulture);
-            NumSolidEntities.Text = numSolidEnts.ToString(CultureInfo.InvariantCulture);
-            NumUniqueTextures.Text = numUniqueTextures.ToString(CultureInfo.InvariantCulture);
-            // TextureMemory.Text = textureMemory.ToString(CultureInfo.InvariantCulture);
+            NumSolids.Text = numSolids.ToString(CultureInfo.CurrentCulture);
+            NumFaces.Text = numFaces.ToString(CultureInfo.CurrentCulture);
+            NumPointEntities.Text = numPointEnts.ToString(CultureInfo.CurrentCulture);
+            NumSolidEntities.Text = numSolidEnts.ToString(CultureInfo.CurrentCulture);
+            NumUniqueTextures.Text = numUniqueTextures.ToString(CultureInfo.CurrentCulture);
+            // TextureMemory.Text = textureMemory.ToString(CultureInfo.CurrentCulture);
+            TextureMemory.Text = textureMemory.ToString("#,##0", CultureInfo.CurrentCulture)
+                + " bytes (" + textureMemoryMb.ToString("0.00", CultureInfo.CurrentCulture) + " MB)";
+            foreach (var tp in packages)
+            {
+                TexturePackages.Items.Add(tp);
+            }
         }
     }
 }

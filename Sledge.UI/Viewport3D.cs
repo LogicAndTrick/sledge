@@ -21,6 +21,23 @@ namespace Sledge.UI
             Camera = new Camera();
         }
 
+        public override void FocusOn(Box box)
+        {
+            FocusOn(box.Center, Coordinate.UnitY * -box.Length);
+        }
+
+        public override void FocusOn(Coordinate coordinate)
+        {
+            FocusOn(coordinate, Coordinate.UnitY * -100);
+        }
+
+        public void FocusOn(Coordinate coordinate, Coordinate distance)
+        {
+            var pos = coordinate + distance;
+            Camera.Location = new Vector3((float)pos.X, (float)pos.Y, (float)pos.Z);
+            Camera.LookAt = new Vector3((float)coordinate.X, (float)coordinate.Y, (float)coordinate.Z);
+        }
+
         public override Matrix4 GetViewportMatrix()
         {
             const float near = 0.1f;

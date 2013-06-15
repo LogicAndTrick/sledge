@@ -76,15 +76,29 @@ namespace Sledge.Editor.Actions.MapObjects.Operations
 
         public void Reverse(Document document)
         {
+            // See comment in perform below.
+            var selection = document.Selection.GetSelectedObjects().Select(x => x.ID).ToList();
+            document.Selection.Clear();
+
             Parallel.ForEach(_objects, x => x.Reverse(document.Map.WorldSpawn));
 
+            document.Selection.Select(selection.Select(x => document.Map.WorldSpawn.FindByID(x)).Where(x => x != null));
+
+            Mediator.Publish(EditorMediator.SelectionChanged);
             Mediator.Publish(EditorMediator.DocumentTreeStructureChanged, _objects.Select(x => document.Map.WorldSpawn.FindByID(x.ID)));
         }
 
         public void Perform(Document document)
         {
+            // Unclone deletes and recreates children. Need to maintain our own selection list.
+            var selection = document.Selection.GetSelectedObjects().Select(x => x.ID).ToList();
+            document.Selection.Clear();
+
             Parallel.ForEach(_objects, x => x.Perform(document.Map.WorldSpawn));
 
+            document.Selection.Select(selection.Select(x => document.Map.WorldSpawn.FindByID(x)).Where(x => x != null));
+
+            Mediator.Publish(EditorMediator.SelectionChanged);
             Mediator.Publish(EditorMediator.DocumentTreeStructureChanged, _objects.Select(x => document.Map.WorldSpawn.FindByID(x.ID)));
         }
     }

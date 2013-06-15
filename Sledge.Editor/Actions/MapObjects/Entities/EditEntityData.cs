@@ -40,24 +40,28 @@ namespace Sledge.Editor.Actions.MapObjects.Entities
 
         public void Reverse(Document document)
         {
+            var changed = new List<MapObject>();
             foreach (var r in _objects)
             {
                 var obj = document.Map.WorldSpawn.FindByID(r.ID);
+                changed.Add(obj);
                 if (obj is Entity) SetEntityData((Entity)obj, r.Before, document.GameData);
                 else if (obj is World) SetEntityData((World)obj, r.Before);
             }
-            Mediator.Publish(EditorMediator.EntityDataChanged);
+            Mediator.Publish(EditorMediator.EntityDataChanged, changed);
         }
 
         public void Perform(Document document)
         {
+            var changed = new List<MapObject>();
             foreach (var r in _objects)
             {
                 var obj = document.Map.WorldSpawn.FindByID(r.ID);
+                changed.Add(obj);
                 if (obj is Entity) SetEntityData((Entity) obj, r.After, document.GameData);
                 else if (obj is World) SetEntityData((World) obj, r.After);
             }
-            Mediator.Publish(EditorMediator.EntityDataChanged);
+            Mediator.Publish(EditorMediator.EntityDataChanged, changed);
         }
 
         private void SetEntityData(Entity ent, EntityData data, GameData gameData)

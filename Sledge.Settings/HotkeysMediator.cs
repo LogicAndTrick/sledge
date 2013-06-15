@@ -43,6 +43,11 @@ namespace Sledge.Settings
         GridIncrease,
         GridDecrease,
 
+        CenterAllViewsOnSelection,
+        Center3DViewsOnSelection,
+        Center2DViewsOnSelection,
+
         ShowMapInformation,
+        ShowEntityReport,
     }
 }

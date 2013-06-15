@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
+using Sledge.DataStructures.Geometric;
 using Sledge.Graphics;
 using System.Windows.Forms;
 using Sledge.Graphics.Helpers;
@@ -52,6 +53,16 @@ namespace Sledge.UI
         public virtual Matrix4 GetModelViewMatrix()
         {
             return Matrix4.Identity;
+        }
+
+        public virtual void FocusOn(Box box)
+        {
+            FocusOn(box.Center);
+        }
+
+        public virtual void FocusOn(Coordinate coordinate)
+        {
+            // Virtual
         }
 
         protected override void OnResize(EventArgs e)

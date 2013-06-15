@@ -67,7 +67,12 @@ namespace Sledge.Editor.Documents
 
             Mediator.Subscribe(HotkeysMediator.GridIncrease, this);
             Mediator.Subscribe(HotkeysMediator.GridDecrease, this);
+            Mediator.Subscribe(HotkeysMediator.CenterAllViewsOnSelection, this);
+            Mediator.Subscribe(HotkeysMediator.Center2DViewsOnSelection, this);
+            Mediator.Subscribe(HotkeysMediator.Center3DViewsOnSelection, this);
+
             Mediator.Subscribe(HotkeysMediator.ShowMapInformation, this);
+            Mediator.Subscribe(HotkeysMediator.ShowEntityReport, this);
 
             Mediator.Subscribe(EditorMediator.ViewportRightClick, this);
 
@@ -384,6 +389,8 @@ namespace Sledge.Editor.Documents
             ac.Add(new Actions.MapObjects.Selection.Select(existing));
 
             _document.PerformAction("Tie to Entity", ac);
+
+            Mediator.Publish(HotkeysMediator.ObjectProperties);
         }
 
         public void TieToWorld()
@@ -424,12 +431,48 @@ namespace Sledge.Editor.Documents
             }
         }
 
+        public void CenterAllViewsOnSelection()
+        {
+            var box = _document.Selection.GetSelectionBoundingBox();
+            if (box == null) return;
+            foreach (var vp in ViewportManager.Viewports)
+            {
+                vp.FocusOn(box);
+            }
+        }
+
+        public void Center2DViewsOnSelection()
+        {
+            var box = _document.Selection.GetSelectionBoundingBox();
+            if (box == null) return;
+            foreach (var vp in ViewportManager.Viewports.OfType<Viewport2D>())
+            {
+                vp.FocusOn(box);
+            }
+        }
+
+        public void Center3DViewsOnSelection()
+        {
+            var box = _document.Selection.GetSelectionBoundingBox();
+            if (box == null) return;
+            foreach (var vp in ViewportManager.Viewports.OfType<Viewport3D>())
+            {
+                vp.FocusOn(box);
+            }
+        }
+
         public void ShowMapInformation()
         {
             using (var mid = new MapInformationDialog(_document))
             {
                 mid.ShowDialog();
             }
+        }
+
+        public void ShowEntityReport()
+        {
+            var erd = new EntityReportDialog();
+            erd.Show(Editor.Instance);
         }
 
         public void ViewportRightClick(Viewport2D vp, MouseEventArgs e)

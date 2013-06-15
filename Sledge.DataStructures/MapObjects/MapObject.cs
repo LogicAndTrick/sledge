@@ -126,7 +126,7 @@ namespace Sledge.DataStructures.MapObjects
         public virtual void Transform(IUnitTransformation transform)
         {
             Children.ForEach(c => c.Transform(transform));
-            UpdateBoundingBox(false);
+            UpdateBoundingBox();
         }
 
         public virtual Coordinate GetIntersectionPoint(Line line)
