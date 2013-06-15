@@ -63,6 +63,18 @@ namespace Sledge.Editor.History
             _currentIndex++;
         }
 
+        public string GetUndoString()
+        {
+            if (!CanUndo()) return "Can't undo";
+            return "Undo " + _items[_currentIndex].Name;
+        }
+
+        public string GetRedoString()
+        {
+            if (!CanRedo()) return "Can't redo";
+            return "Redo " + _items[_currentIndex + 1].Name;
+        }
+
         public bool CanUndo()
         {
             return _currentIndex >= 0;

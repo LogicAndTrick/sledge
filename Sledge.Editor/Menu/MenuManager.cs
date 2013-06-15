@@ -58,10 +58,12 @@ namespace Sledge.Editor.Menu
             
             Func<bool> canUndo = () => DocumentManager.CurrentDocument.History.CanUndo();
             Func<bool> canRedo = () => DocumentManager.CurrentDocument.History.CanRedo();
+            Func<string> undoText = () => DocumentManager.CurrentDocument.History.GetUndoString();
+            Func<string> redoText = () => DocumentManager.CurrentDocument.History.GetRedoString();
             Func<bool> itemsSelected = () => DocumentManager.CurrentDocument.Selection.GetSelectedObjects().Any();
             Func<bool> canPaste = Clipboard.ClipboardManager.CanPaste;
-            Add("Edit", new SimpleMenuBuilder("Undo", HotkeysMediator.HistoryUndo) { IsVisible = mapOpen, IsActive = canUndo });
-            Add("Edit", new SimpleMenuBuilder("Redo", HotkeysMediator.HistoryRedo) { IsVisible = mapOpen, IsActive = canRedo });
+            Add("Edit", new SimpleMenuBuilder("Undo", HotkeysMediator.HistoryUndo) { IsVisible = mapOpen, IsActive = canUndo, Text = undoText });
+            Add("Edit", new SimpleMenuBuilder("Redo", HotkeysMediator.HistoryRedo) { IsVisible = mapOpen, IsActive = canRedo, Text = redoText });
             Add("Edit", new MenuSplitter { IsVisible = mapOpen });
             Add("Edit", new SimpleMenuBuilder("Cut", HotkeysMediator.OperationsCut) { IsVisible = mapOpen, IsActive = itemsSelected });
             Add("Edit", new SimpleMenuBuilder("Copy", HotkeysMediator.OperationsCopy) { IsVisible = mapOpen, IsActive = itemsSelected });
