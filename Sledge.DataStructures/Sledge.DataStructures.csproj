@@ -80,6 +80,7 @@
     <Compile Include="MapObjects\Path.cs" />
     <Compile Include="MapObjects\PathDirection.cs" />
     <Compile Include="MapObjects\PathNode.cs" />
+    <Compile Include="MapObjects\Pointfile.cs" />
     <Compile Include="MapObjects\Property.cs" />
     <Compile Include="MapObjects\Solid.cs" />
     <Compile Include="MapObjects\TextureReference.cs" />

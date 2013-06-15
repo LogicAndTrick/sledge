@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using OpenTK;
 using Sledge.Common;
 using Sledge.Common.Mediator;
 using Sledge.DataStructures.Geometric;
@@ -70,6 +72,10 @@ namespace Sledge.Editor.Documents
             Mediator.Subscribe(HotkeysMediator.CenterAllViewsOnSelection, this);
             Mediator.Subscribe(HotkeysMediator.Center2DViewsOnSelection, this);
             Mediator.Subscribe(HotkeysMediator.Center3DViewsOnSelection, this);
+
+            Mediator.Subscribe(HotkeysMediator.QuickLoadPointfile, this);
+            Mediator.Subscribe(HotkeysMediator.LoadPointfile, this);
+            Mediator.Subscribe(HotkeysMediator.UnloadPointfile, this);
 
             Mediator.Subscribe(HotkeysMediator.ShowMapInformation, this);
             Mediator.Subscribe(HotkeysMediator.ShowEntityReport, this);
@@ -459,6 +465,78 @@ namespace Sledge.Editor.Documents
             {
                 vp.FocusOn(box);
             }
+        }
+
+        private void OpenPointfile(string file)
+        {
+            if (!File.Exists(file))
+            {
+                MessageBox.Show("The pointfile was not found.");
+                return;
+            }
+
+            var text = File.ReadAllLines(file);
+            try
+            {
+                _document.Pointfile = Pointfile.Parse(text);
+
+                var end = _document.Pointfile.Lines.LastOrDefault();
+                if (end == null) return;
+
+                var vp = ViewportManager.Viewports.OfType<Viewport3D>().FirstOrDefault();
+                if (vp == null) return;
+
+                vp.Camera.Location = new Vector3((float)end.End.DX, (float)end.End.DY, (float)end.End.DZ);
+                vp.Camera.LookAt = new Vector3((float)end.Start.DX, (float)end.Start.DY, (float)end.Start.DZ);
+            }
+            catch
+            {
+                MessageBox.Show(Path.GetFileName(file) + " is not a valid pointfile!");
+            }
+        }
+
+        public void QuickLoadPointfile()
+        {
+            var dir = Path.GetDirectoryName(_document.MapFile);
+            var file = Path.GetFileNameWithoutExtension(_document.MapFile);
+            if (dir != null && file != null)
+            {
+                var lin = Path.Combine(dir, file + ".lin");
+                if (File.Exists(lin))
+                {
+                    OpenPointfile(lin);
+                    return;
+                }
+                var pts = Path.Combine(dir, file + ".lin");
+                if (File.Exists(pts))
+                {
+                    OpenPointfile(pts);
+                    return;
+                }
+            }
+            if (MessageBox.Show("No pointfile found. Would you like to browse for one?", "Pointfile not found", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            {
+                LoadPointfile();
+            }
+        }
+
+        public void LoadPointfile()
+        {
+            using (var ofd = new OpenFileDialog())
+            {
+                ofd.Filter = "Pointfiles (*.lin, *.pts)|*.lin;*.pts";
+                ofd.InitialDirectory = Path.GetDirectoryName(_document.MapFile);
+                ofd.Multiselect = false;
+                if (ofd.ShowDialog() == DialogResult.OK)
+                {
+                    OpenPointfile(ofd.FileName);
+                }
+            }
+        }
+
+        public void UnloadPointfile()
+        {
+            _document.Pointfile = null;
         }
 
         public void ShowMapInformation()

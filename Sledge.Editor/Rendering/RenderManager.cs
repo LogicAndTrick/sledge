@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -167,6 +168,9 @@ void main()
             _array.DrawWireframe(context, Shader);
 
             Unbind();
+
+            var vp2d = context as Viewport2D;
+            if (vp2d != null && _document.Pointfile != null) DrawPointfile(_document.Pointfile, vp2d.Flatten);
         }
 
         public void Draw3D(ViewportBase context, Matrix4 viewport, Matrix4 camera, Matrix4 modelView)
@@ -193,14 +197,7 @@ void main()
             Unbind();
 
             DrawBillboards(context as Viewport3D);
-        }
-
-        private void DrawDecals(Viewport3D vp)
-        {
-            //foreach (Entity entity in _document.Map.WorldSpawn.Find(x => !x.IsVisgroupHidden && !x.IsCodeHidden && x is Entity && ((Entity)x).EntityData.Name == "infodecal"))
-            //{
-            //    var faces = _document.Map.WorldSpawn.Find(x => x is Solid && ((Solid)x).in)
-            //}
+            if (_document.Pointfile != null) DrawPointfile(_document.Pointfile, x => x);
         }
 
         private void DrawBillboards(Viewport3D vp)
@@ -243,6 +240,37 @@ void main()
 
                 GL.End();
             }
+        }
+
+        private static void DrawPointfile(Pointfile pf, Func<Coordinate, Coordinate> transform)
+        {
+            TextureHelper.DisableTexturing();
+            GL.LineWidth(3);
+            GL.Begin(BeginMode.Lines);
+
+            var r = 1f;
+            var g = 0.5f;
+            var b = 0.5f;
+            var change = 0.5f / pf.Lines.Count;
+
+            foreach (var line in pf.Lines)
+            {
+                var start = transform(line.Start);
+                var end = transform(line.End);
+
+                GL.Color3(r, g, b);
+                GL.Vertex3(start.DX, start.DY, start.DZ);
+
+                r -= change;
+                b += change;
+
+                GL.Color3(r, g, b);
+                GL.Vertex3(end.DX, end.DY, end.DZ);
+            }
+
+            GL.End();
+            GL.LineWidth(1);
+            TextureHelper.EnableTexturing();
         }
 
         public void Update()

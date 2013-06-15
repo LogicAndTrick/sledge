@@ -35,6 +35,8 @@ namespace Sledge.Editor.Documents
 
         public bool HideFaceMask { get; set; }
 
+        public Pointfile Pointfile { get; set; }
+
         public RenderManager Renderer { get; private set; }
 
         public SelectionManager Selection { get; private set; }

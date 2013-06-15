@@ -49,5 +49,9 @@ namespace Sledge.Settings
 
         ShowMapInformation,
         ShowEntityReport,
+
+        QuickLoadPointfile,
+        LoadPointfile,
+        UnloadPointfile,
     }
 }

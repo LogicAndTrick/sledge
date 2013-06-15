@@ -90,8 +90,9 @@ namespace Sledge.Editor.Menu
             Add("Map", new MenuSplitter { IsVisible = mapOpen });
             Add("Map", new SimpleMenuBuilder("Map Properties...", EditorMediator.WorldspawnProperties) { IsVisible = mapOpen });
             Add("Map", new MenuSplitter { IsVisible = mapOpen });
-            Add("Map", new SimpleMenuBuilder("Load Pointfile...", "") { IsVisible = mapOpen });
-            Add("Map", new SimpleMenuBuilder("Unload Pointfile", "") { IsVisible = mapOpen });
+            Add("Map", new SimpleMenuBuilder("Quick Load Pointfile", HotkeysMediator.QuickLoadPointfile) { IsVisible = mapOpen });
+            Add("Map", new SimpleMenuBuilder("Load Pointfile...", HotkeysMediator.LoadPointfile) { IsVisible = mapOpen });
+            Add("Map", new SimpleMenuBuilder("Unload Pointfile", HotkeysMediator.UnloadPointfile) { IsVisible = mapOpen });
 
             Add("View", new SimpleMenuBuilder("Autosize 4 Views", HotkeysMediator.FourViewAutosize) { IsVisible = mapOpen });
             Add("View", new SimpleMenuBuilder("Center All Views on Selection", HotkeysMediator.CenterAllViewsOnSelection) { IsVisible = mapOpen, IsActive = itemsSelected });

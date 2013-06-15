@@ -8,7 +8,6 @@ Priorities
       Snap to grid action
       Show selected brush ID
       Check for problems
-      Pointfiles
   Mediator/action visgroups
   Object properties tab switching
   Undo/Redo
@@ -33,6 +32,7 @@ Post-Alpha Priorities
   Find/replace dialogs
   Prefabs
   Map diff
+  Pointfile dark/light theme toggle
 
 1. Goldsource Support
   Formats
@@ -92,7 +92,7 @@ Post-Alpha Priorities
     Hotkeys - 60%, define keys, implement methods, hotkeys in forms
     Map Info/Entity Report - 100%
     Check For Problems - 0%
-    Pointfiles/Leak Detection? - 0%
+    Pointfiles/Leak Detection? - 100%
     Go to coordinates/brush number - 0%
     Options - 80%, hotkeys
     Right Toolbar Textures - 90%, replace
@@ -113,6 +113,7 @@ Feature Ideas
   VM move in 3D
   VM create verts
   Filesystem preview (textures, models, etc)
+  Leak detection
 
 ---
 
