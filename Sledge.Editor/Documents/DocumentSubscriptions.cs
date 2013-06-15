@@ -43,24 +43,30 @@ namespace Sledge.Editor.Documents
             Mediator.Subscribe(EditorMediator.DocumentTreeObjectsChanged, this);
             Mediator.Subscribe(EditorMediator.DocumentTreeFacesChanged, this);
 
-            Mediator.Subscribe(HotkeysMediator.HistoryUndo, this);
-            Mediator.Subscribe(HotkeysMediator.HistoryRedo, this);
             Mediator.Subscribe(HotkeysMediator.FileCompile, this);
             Mediator.Subscribe(HotkeysMediator.FileSave, this);
-            Mediator.Subscribe(HotkeysMediator.GridIncrease, this);
-            Mediator.Subscribe(HotkeysMediator.GridDecrease, this);
+
+            Mediator.Subscribe(HotkeysMediator.HistoryUndo, this);
+            Mediator.Subscribe(HotkeysMediator.HistoryRedo, this);
+
             Mediator.Subscribe(HotkeysMediator.OperationsCopy, this);
             Mediator.Subscribe(HotkeysMediator.OperationsCut, this);
             Mediator.Subscribe(HotkeysMediator.OperationsPaste, this);
             Mediator.Subscribe(HotkeysMediator.OperationsPasteSpecial, this);
             Mediator.Subscribe(HotkeysMediator.OperationsDelete, this);
+            Mediator.Subscribe(HotkeysMediator.SelectionClear, this);
+            Mediator.Subscribe(HotkeysMediator.SelectAll, this);
+            Mediator.Subscribe(HotkeysMediator.ObjectProperties, this);
+
+            Mediator.Subscribe(HotkeysMediator.Carve, this);
+            Mediator.Subscribe(HotkeysMediator.MakeHollow, this);
             Mediator.Subscribe(HotkeysMediator.GroupingGroup, this);
             Mediator.Subscribe(HotkeysMediator.GroupingUngroup, this);
             Mediator.Subscribe(HotkeysMediator.TieToEntity, this);
             Mediator.Subscribe(HotkeysMediator.TieToWorld, this);
-            Mediator.Subscribe(HotkeysMediator.Carve, this);
-            Mediator.Subscribe(HotkeysMediator.MakeHollow, this);
-            Mediator.Subscribe(HotkeysMediator.ObjectProperties, this);
+
+            Mediator.Subscribe(HotkeysMediator.GridIncrease, this);
+            Mediator.Subscribe(HotkeysMediator.GridDecrease, this);
 
             Mediator.Subscribe(EditorMediator.ViewportRightClick, this);
 
@@ -159,30 +165,6 @@ namespace Sledge.Editor.Documents
             Mediator.Publish(EditorMediator.FileOpened, _document.MapFile);
         }
 
-        public void GridIncrease()
-        {
-            var curr = _document.GridSpacing;
-            if (curr >= 1024) return;
-            _document.GridSpacing *= 2;
-            RebuildGrid();
-        }
-
-        public void GridDecrease()
-        {
-            var curr = _document.GridSpacing;
-            if (curr <= 1) return;
-            _document.GridSpacing /= 2;
-            RebuildGrid();
-        }
-
-        public void RebuildGrid()
-        {
-            foreach (var kv in _document.Renderer.GridRenderables)
-            {
-                kv.Value.RebuildGrid(((Viewport2D) kv.Key).Zoom, true);
-            }
-        }
-
         public void OperationsCopy()
         {
             if (!_document.Selection.IsEmpty() && !_document.Selection.InFaceSelection)
@@ -248,6 +230,31 @@ namespace Sledge.Editor.Documents
                 var name = "Removed " + sel.Count + " item" + (sel.Count == 1 ? "" : "s");
                 _document.PerformAction(name, new Delete(sel));
             }
+        }
+
+        public void SelectionClear()
+        {
+            var selected = _document.Selection.GetSelectedObjects().ToList();
+            _document.PerformAction("Clear selection", new Deselect(selected));
+        }
+
+        public void SelectAll()
+        {
+            var all = _document.Map.WorldSpawn.Find(x => !(x is World));
+            _document.PerformAction("Select all", new Actions.MapObjects.Selection.Select(all));
+        }
+
+        public void ObjectProperties()
+        {
+            var pd = new EntityEditor(_document);
+            pd.Show(Editor.Instance);
+        }
+
+        public void WorldspawnProperties()
+        {
+            var pd = new EntityEditor(_document) { FollowSelection = false, AllowClassChange = false };
+            pd.SetObjects(new[] { _document.Map.WorldSpawn });
+            pd.Show(Editor.Instance);
         }
 
         public void Carve()
@@ -392,17 +399,28 @@ namespace Sledge.Editor.Documents
             _document.PerformAction("Tie to World", ac);
         }
 
-        public void ObjectProperties()
+        public void GridIncrease()
         {
-            var pd = new EntityEditor(_document);
-            pd.Show(Editor.Instance);
+            var curr = _document.GridSpacing;
+            if (curr >= 1024) return;
+            _document.GridSpacing *= 2;
+            RebuildGrid();
         }
 
-        public void WorldspawnProperties()
+        public void GridDecrease()
         {
-            var pd = new EntityEditor(_document) {FollowSelection = false, AllowClassChange = false};
-            pd.SetObjects(new[] {_document.Map.WorldSpawn});
-            pd.Show(Editor.Instance);
+            var curr = _document.GridSpacing;
+            if (curr <= 1) return;
+            _document.GridSpacing /= 2;
+            RebuildGrid();
+        }
+
+        public void RebuildGrid()
+        {
+            foreach (var kv in _document.Renderer.GridRenderables)
+            {
+                kv.Value.RebuildGrid(((Viewport2D)kv.Key).Zoom, true);
+            }
         }
 
         public void ViewportRightClick(Viewport2D vp, MouseEventArgs e)
