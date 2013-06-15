@@ -55,12 +55,17 @@
     </CodeAnalysisDependentAssemblyPaths>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Actions\ClipboardTests.cs" />
     <Compile Include="Actions\MapObjectActionTests.cs" />
     <Compile Include="GeometricTest.cs" />
     <Compile Include="FileSystemTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Sledge.Common\Sledge.Common.csproj">
+      <Project>{5D414AC8-8B93-489F-9960-877923400FED}</Project>
+      <Name>Sledge.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Sledge.Database\Sledge.Database.csproj">
       <Project>{FC8A5448-0F8B-4828-AC49-8D6138E20254}</Project>
       <Name>Sledge.Database</Name>

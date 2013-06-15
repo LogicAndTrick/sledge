@@ -132,6 +132,8 @@ namespace Sledge.Editor.UI
             ZeroRotationXButton.Click += (sender, e) => RotationX.Value = 0;
             ZeroRotationYButton.Click += (sender, e) => RotationY.Value = 0;
             ZeroRotationZButton.Click += (sender, e) => RotationZ.Value = 0;
+
+            PrefixEntityNamesCheckbox.CheckedChanged += (sender, e) => EntityPrefix.Enabled = PrefixEntityNamesCheckbox.Checked;
         }
     }
 }

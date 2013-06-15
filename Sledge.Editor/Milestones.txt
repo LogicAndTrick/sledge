@@ -2,7 +2,7 @@
 
 Priorities
   Mediator/action visgroups
-  Paste entities
+  Object properties tab switching
   Texture replace
   Undo/Redo
   New/Open/Save/Close

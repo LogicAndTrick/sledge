@@ -55,13 +55,17 @@ namespace Sledge.Providers.Map
             return c.R + " " + c.G + " " + c.B;
         }
 
+        private static readonly string[] ExcludedKeys = new[] {"id", "spawnflags", "classname"};
+
         private static EntityData ReadEntityData(GenericStructure structure)
         {
             var ret = new EntityData();
             foreach (var key in structure.GetPropertyKeys())
             {
+                if (ExcludedKeys.Contains(key.ToLower())) continue;
                 ret.Properties.Add(new Property {Key = key, Value = structure[key]});
             }
+            ret.Name = structure["classname"];
             ret.Flags = structure.PropertyInteger("spawnflags");
             return ret;
         }

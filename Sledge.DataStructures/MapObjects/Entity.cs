@@ -19,6 +19,7 @@ namespace Sledge.DataStructures.MapObjects
         public Entity(long id) : base(id)
         {
             Origin = new Coordinate(0, 0, 0);
+            EntityData = new EntityData();
         }
 
         public override MapObject Copy(IDGenerator generator)

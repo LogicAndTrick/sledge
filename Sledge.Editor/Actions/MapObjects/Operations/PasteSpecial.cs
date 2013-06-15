@@ -15,12 +15,12 @@ namespace Sledge.Editor.Actions.MapObjects.Operations
         private IEnumerable<MapObject> _objectsToPaste;
         private readonly int _numCopies;
         private readonly PasteSpecialStartPoint _startPoint;
-        private readonly PasteSpecialGrouping _grouping;
         private readonly Coordinate _offset;
         private readonly Coordinate _rotation;
-        private bool _makeEntitesUnique;
-        private bool _prefixEntityNames;
-        private string _entityNamePrefix;
+        private PasteSpecialGrouping _grouping;
+        private readonly bool _makeEntitesUnique;
+        private readonly bool _prefixEntityNames;
+        private readonly string _entityNamePrefix;
 
         private bool _firstRun;
 
@@ -39,6 +39,17 @@ namespace Sledge.Editor.Actions.MapObjects.Operations
             _prefixEntityNames = prefixEntityNames;
             _entityNamePrefix = entityNamePrefix;
             _firstRun = true;
+
+            if (_numCopies == 1 && grouping == PasteSpecialGrouping.All)
+            {
+                // Only one copy - individual will give the same result (this makes the below comparison easier)
+                _grouping = PasteSpecialGrouping.Individual;
+            }
+            if (_objectsToPaste.Count() == 1 && _grouping == PasteSpecialGrouping.Individual)
+            {
+                // Only one object - no need to group.
+                _grouping = PasteSpecialGrouping.None;
+            }
         }
 
         public override void Perform(Documents.Document document)
@@ -47,6 +58,12 @@ namespace Sledge.Editor.Actions.MapObjects.Operations
             {
                 var origin = GetPasteOrigin(document);
                 var objects = new List<MapObject>();
+
+                if (_objectsToPaste.Count() == 1)
+                {
+                    // Only one object - no need to group.
+                    _grouping = PasteSpecialGrouping.None;
+                }
 
                 Group allGroup = null;
                 if (_grouping == PasteSpecialGrouping.All)
