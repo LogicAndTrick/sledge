@@ -35,6 +35,8 @@ namespace Sledge.QuickForms
 	    /// </summary>
 	    public int LabelWidth { get; set; }
 
+	    public bool UseShortcutKeys { get; set; }
+
         /// <summary>
         /// Create a form with the specified title.
         /// </summary>
@@ -49,11 +51,33 @@ namespace Sledge.QuickForms
 			ShowInTaskbar = false;
 			MinimizeBox = false;
 			MaximizeBox = false;
-		}
+            UseShortcutKeys = false;
+            KeyPreview = true;
+	    }
+
+        protected override void OnKeyDown(KeyEventArgs e)
+        {
+            if (UseShortcutKeys)
+            {
+                if (e.KeyCode == Keys.Enter)
+                {
+                    var ok = Controls.OfType<Button>().FirstOrDefault(x => x.DialogResult == DialogResult.OK || x.DialogResult == DialogResult.Yes);
+                    if (ok != null) ok.PerformClick();
+                }
+                else if (e.KeyCode == Keys.Escape)
+                {
+                    var cancel = Controls.OfType<Button>().FirstOrDefault(x => x.DialogResult == DialogResult.Cancel || x.DialogResult == DialogResult.No);
+                    if (cancel != null) cancel.PerformClick();
+                }
+            }
+            base.OnKeyDown(e);
+        }
 		
 		protected override void OnLoad(EventArgs e)
 		{
 			ClientSize = new System.Drawing.Size(ClientSize.Width, CurrentOffset + ItemPadding);
+		    var nonlabel = Controls.OfType<Control>().FirstOrDefault(x => !(x is Label));
+            if (nonlabel != null) nonlabel.Focus();
 			base.OnLoad(e);
 		}
 		

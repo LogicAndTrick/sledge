@@ -84,7 +84,7 @@ namespace Sledge.Editor.Menu
                            ) { IsVisible = mapOpen });
             Add("Map", new MenuSplitter { IsVisible = mapOpen });
             Add("Map", new SimpleMenuBuilder("Show Information", HotkeysMediator.ShowMapInformation) { IsVisible = mapOpen });
-            Add("Map", new SimpleMenuBuilder("Show Selected Brush ID", "") { IsVisible = mapOpen, IsActive = itemsSelected });
+            Add("Map", new SimpleMenuBuilder("Show Selected Brush ID", HotkeysMediator.ShowSelectedBrushID) { IsVisible = mapOpen, IsActive = itemsSelected });
             Add("Map", new SimpleMenuBuilder("Entity Report...", HotkeysMediator.ShowEntityReport) { IsVisible = mapOpen });
             Add("Map", new SimpleMenuBuilder("Check for Problems", "") { IsVisible = mapOpen });
             Add("Map", new MenuSplitter { IsVisible = mapOpen });
@@ -99,8 +99,8 @@ namespace Sledge.Editor.Menu
             Add("View", new SimpleMenuBuilder("Center 2D Views on Selection", HotkeysMediator.Center2DViewsOnSelection) { IsVisible = mapOpen, IsActive = itemsSelected });
             Add("View", new SimpleMenuBuilder("Center 3D View on Selection", HotkeysMediator.Center3DViewsOnSelection) { IsVisible = mapOpen, IsActive = itemsSelected });
             Add("View", new MenuSplitter { IsVisible = mapOpen });
-            Add("View", new SimpleMenuBuilder("Go to Brush ID...", "") { IsVisible = mapOpen });
-            Add("View", new SimpleMenuBuilder("Go to Coordinates...", "") { IsVisible = mapOpen });
+            Add("View", new SimpleMenuBuilder("Go to Brush ID...", HotkeysMediator.GoToBrushID) { IsVisible = mapOpen });
+            Add("View", new SimpleMenuBuilder("Go to Coordinates...", HotkeysMediator.GoToCoordinates) { IsVisible = mapOpen });
             Add("View", new MenuSplitter { IsVisible = mapOpen });
             Add("View", new SimpleMenuBuilder("Hide Selected Objects", "") { IsVisible = mapOpen });
             Add("View", new SimpleMenuBuilder("Hide Unselected Objects", "") { IsVisible = mapOpen });

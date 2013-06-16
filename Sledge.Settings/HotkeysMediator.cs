@@ -47,6 +47,10 @@ namespace Sledge.Settings
         Center3DViewsOnSelection,
         Center2DViewsOnSelection,
 
+        GoToCoordinates,
+        GoToBrushID,
+        ShowSelectedBrushID,
+
         ShowMapInformation,
         ShowEntityReport,
 

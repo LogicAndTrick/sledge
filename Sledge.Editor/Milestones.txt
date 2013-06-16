@@ -6,8 +6,12 @@ Priorities
     Menu actions
       Show/hide grid
       Snap to grid action
-      Show selected brush ID
       Check for problems
+      Quickhide
+      Manual transform
+      Align objects
+      Flip objects
+  Toolbar buttons
   Mediator/action visgroups
   Object properties tab switching
   Undo/Redo
@@ -16,6 +20,7 @@ Priorities
   VM clipping when splitting solid entities
   Recognise changes / prompt for save
   Actions for switching selection modes
+  Check for updates (needed for alpha!)
   Additional Map Properties
     VMF
 

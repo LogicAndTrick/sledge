@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
@@ -72,11 +73,14 @@ namespace Sledge.Editor.Documents
             Mediator.Subscribe(HotkeysMediator.CenterAllViewsOnSelection, this);
             Mediator.Subscribe(HotkeysMediator.Center2DViewsOnSelection, this);
             Mediator.Subscribe(HotkeysMediator.Center3DViewsOnSelection, this);
+            Mediator.Subscribe(HotkeysMediator.GoToBrushID, this);
+            Mediator.Subscribe(HotkeysMediator.GoToCoordinates, this);
 
             Mediator.Subscribe(HotkeysMediator.QuickLoadPointfile, this);
             Mediator.Subscribe(HotkeysMediator.LoadPointfile, this);
             Mediator.Subscribe(HotkeysMediator.UnloadPointfile, this);
 
+            Mediator.Subscribe(HotkeysMediator.ShowSelectedBrushID, this);
             Mediator.Subscribe(HotkeysMediator.ShowMapInformation, this);
             Mediator.Subscribe(HotkeysMediator.ShowEntityReport, this);
 
@@ -467,6 +471,50 @@ namespace Sledge.Editor.Documents
             }
         }
 
+        public void GoToCoordinates()
+        {
+            using (var qf = new QuickForm("Enter Coordinates") { LabelWidth = 50, UseShortcutKeys = true }
+                .TextBox("X", "0")
+                .TextBox("Y", "0")
+                .TextBox("Z", "0")
+                .OkCancel())
+            {
+                qf.ClientSize = new Size(180, qf.ClientSize.Height);
+                if (qf.ShowDialog() != DialogResult.OK) return;
+
+                decimal x, y, z;
+                if (!Decimal.TryParse(qf.String("X"), out x)) return;
+                if (!Decimal.TryParse(qf.String("Y"), out y)) return;
+                if (!Decimal.TryParse(qf.String("Z"), out z)) return;
+
+                var coordinate = new Coordinate(x, y, z);
+
+                ViewportManager.Viewports.ForEach(vp => vp.FocusOn(coordinate));
+            }
+        }
+
+        public void GoToBrushID()
+        {
+            using (var qf = new QuickForm("Enter Brush ID") { LabelWidth = 100, UseShortcutKeys = true }
+                .TextBox("Brush ID")
+                .OkCancel())
+            {
+                qf.ClientSize = new Size(230, qf.ClientSize.Height);
+
+                if (qf.ShowDialog() != DialogResult.OK) return;
+
+                long id;
+                if (!long.TryParse(qf.String("Brush ID"), out id)) return;
+
+                var obj = _document.Map.WorldSpawn.FindByID(id);
+                if (obj == null) return;
+
+                // Select and go to the brush
+                _document.PerformAction("Select brush ID " + id, new ChangeSelection(new[] { obj }, _document.Selection.GetSelectedObjects()));
+                ViewportManager.Viewports.ForEach(x => x.FocusOn(obj.BoundingBox));
+            }
+        }
+
         private void OpenPointfile(string file)
         {
             if (!File.Exists(file))
@@ -537,6 +585,16 @@ namespace Sledge.Editor.Documents
         public void UnloadPointfile()
         {
             _document.Pointfile = null;
+        }
+
+        public void ShowSelectedBrushID()
+        {
+            if (_document.Selection.IsEmpty() || _document.Selection.InFaceSelection) return;
+
+            var selectedIds = _document.Selection.GetSelectedObjects().Select(x => x.ID);
+            var idString = String.Join(", ", selectedIds);
+
+            MessageBox.Show("Selected Object IDs: " + idString);
         }
 
         public void ShowMapInformation()
