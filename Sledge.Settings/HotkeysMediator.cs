@@ -54,6 +54,10 @@ namespace Sledge.Settings
         GoToBrushID,
         ShowSelectedBrushID,
 
+        ToggleSnapToGrid,
+        ToggleShow2DGrid,
+        ToggleShow3DGrid,
+
         ShowMapInformation,
         ShowEntityReport,
 

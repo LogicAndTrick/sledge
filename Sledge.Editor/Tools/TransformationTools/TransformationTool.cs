@@ -42,7 +42,7 @@ namespace Sledge.Editor.Tools.TransformationTools
 
         protected static Coordinate SnapIfNeeded(Coordinate c, Document doc)
         {
-            return KeyboardState.Alt ? c : c.Snap(doc.GridSpacing);
+            return doc.Snap(c);
         }
     }
 }

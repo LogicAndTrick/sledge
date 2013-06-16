@@ -43,9 +43,9 @@ namespace Sledge.Editor.Tools.TransformationTools
 
             var nsmd = viewport.ScreenToWorld(e.X, viewport.Height - e.Y) - state.MoveStart;
             var mouseDiff = SnapIfNeeded(nsmd, doc);
-            if (!KeyboardState.Alt && KeyboardState.Shift)
+            if (KeyboardState.Shift)
             {
-                mouseDiff = nsmd.Snap(doc.GridSpacing / 2);
+                mouseDiff = doc.Snap(nsmd, doc.Map.GridSpacing / 2);
             }
 
             var relative = viewport.Flatten(state.PreTransformBoxEnd - state.PreTransformBoxStart);

@@ -83,6 +83,10 @@ namespace Sledge.Editor.Documents
             Mediator.Subscribe(HotkeysMediator.LoadPointfile, this);
             Mediator.Subscribe(HotkeysMediator.UnloadPointfile, this);
 
+            Mediator.Subscribe(HotkeysMediator.ToggleSnapToGrid, this);
+            Mediator.Subscribe(HotkeysMediator.ToggleShow2DGrid, this);
+            Mediator.Subscribe(HotkeysMediator.ToggleShow3DGrid, this);
+
             Mediator.Subscribe(HotkeysMediator.ShowSelectedBrushID, this);
             Mediator.Subscribe(HotkeysMediator.ShowMapInformation, this);
             Mediator.Subscribe(HotkeysMediator.ShowEntityReport, this);
@@ -422,7 +426,7 @@ namespace Sledge.Editor.Documents
 
         private IUnitTransformation GetSnapTransform(Box box)
         {
-            var offset = box.Start.Snap(_document.GridSpacing) - box.Start;
+            var offset = box.Start.Snap(_document.Map.GridSpacing) - box.Start;
             return new UnitTranslate(offset);
         }
 
@@ -449,22 +453,25 @@ namespace Sledge.Editor.Documents
 
         public void GridIncrease()
         {
-            var curr = _document.GridSpacing;
+            var curr = _document.Map.GridSpacing;
             if (curr >= 1024) return;
-            _document.GridSpacing *= 2;
+            _document.Map.GridSpacing *= 2;
             RebuildGrid();
         }
 
         public void GridDecrease()
         {
-            var curr = _document.GridSpacing;
+            var curr = _document.Map.GridSpacing;
             if (curr <= 1) return;
-            _document.GridSpacing /= 2;
+            _document.Map.GridSpacing /= 2;
             RebuildGrid();
         }
 
         public void RebuildGrid()
         {
+            _document.Renderer.Bind();
+            _document.Renderer.GridSpacing = (float)_document.Map.GridSpacing;
+            _document.Renderer.Unbind();
             foreach (var kv in _document.Renderer.GridRenderables)
             {
                 kv.Value.RebuildGrid(((Viewport2D)kv.Key).Zoom, true);
@@ -615,6 +622,26 @@ namespace Sledge.Editor.Documents
         public void UnloadPointfile()
         {
             _document.Pointfile = null;
+        }
+
+        public void ToggleSnapToGrid()
+        {
+            _document.Map.SnapToGrid = !_document.Map.SnapToGrid;
+        }
+
+        public void ToggleShow2DGrid()
+        {
+            _document.Map.Show2DGrid = !_document.Map.Show2DGrid;
+            RebuildGrid();
+        }
+
+        public void ToggleShow3DGrid()
+        {
+            _document.Map.Show3DGrid = !_document.Map.Show3DGrid;
+            _document.Renderer.Bind();
+            _document.Renderer.Show3DGrid = _document.Map.Show3DGrid;
+            _document.Renderer.GridSpacing = (float)_document.Map.GridSpacing;
+            _document.Renderer.Unbind();
         }
 
         public void ShowSelectedBrushID()

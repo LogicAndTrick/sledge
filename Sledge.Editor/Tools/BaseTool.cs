@@ -22,7 +22,7 @@ namespace Sledge.Editor.Tools
 
         protected Coordinate SnapIfNeeded(Coordinate c)
         {
-            return KeyboardState.Alt ? c : c.Snap(Document.GridSpacing);
+            return Document.Snap(c);
         }
 
         protected Documents.Document Document { get; set; }

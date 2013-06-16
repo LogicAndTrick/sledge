@@ -4,6 +4,7 @@ using System.Linq;
 using OpenTK;
 using Sledge.Common.Mediator;
 using Sledge.DataStructures.GameData;
+using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.MapObjects;
 using Sledge.Database.Models;
 using Sledge.Editor.Actions;
@@ -31,9 +32,6 @@ namespace Sledge.Editor.Documents
 
         public Game Game { get; set; }
         public GameData GameData { get; set; }
-        public decimal GridSpacing { get; set; }
-
-        public bool HideFaceMask { get; set; }
 
         public Pointfile Pointfile { get; set; }
 
@@ -60,8 +58,10 @@ namespace Sledge.Editor.Documents
 
             Selection = new SelectionManager(this);
             History = new HistoryManager(this);
-            GridSpacing = Grid.DefaultSize;
-            HideFaceMask = false;
+            if (Map.GridSpacing <= 0)
+            {
+                Map.GridSpacing = Grid.DefaultSize;
+            }
 
             try
             {
@@ -117,6 +117,16 @@ namespace Sledge.Editor.Documents
             MapDisplayLists.DeleteLists();
 
             _subscriptions.Unsubscribe();
+        }
+
+        public Coordinate Snap(Coordinate c, decimal spacing = 0)
+        {
+            if (!Map.SnapToGrid) return c;
+
+            var snap = (Select.SnapStyle == SnapStyle.SnapOnAlt && KeyboardState.Alt) ||
+                       (Select.SnapStyle == SnapStyle.SnapOffAlt && !KeyboardState.Alt);
+
+            return snap ? c.Snap(spacing == 0 ? Map.GridSpacing : spacing) : c;
         }
 
         /// <summary>

@@ -52,7 +52,8 @@ namespace Sledge.Editor.Tools
             }
             else if (_lastBox == null)
             {
-                _lastBox = new Box(Coordinate.Zero, new Coordinate(Document.GridSpacing, Document.GridSpacing, Document.GridSpacing));
+                var gs = Document.Map.GridSpacing;
+                _lastBox = new Box(Coordinate.Zero, new Coordinate(gs, gs, gs));
             }
             _updatePreview = true;
         }

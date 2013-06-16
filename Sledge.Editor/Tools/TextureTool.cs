@@ -73,7 +73,7 @@ namespace Sledge.Editor.Tools
 
         private void HideMaskToggled(object sender, bool hide)
         {
-            Document.HideFaceMask = hide;
+            Document.Map.HideFaceMask = hide;
             Document.UpdateDisplayLists(Document.Selection.GetSelectedFaces());
         }
 

@@ -76,8 +76,9 @@ namespace Sledge.Editor.Menu
             Add("Edit", new MenuSplitter { IsVisible = mapOpen });
             Add("Edit", new SimpleMenuBuilder("Object Properties", HotkeysMediator.ObjectProperties) { IsVisible = mapOpen });
 
-            Add("Map", new SimpleMenuBuilder("Snap to Grid", "") { IsVisible = mapOpen });
-            Add("Map", new SimpleMenuBuilder("Show Grid", "") { IsVisible = mapOpen });
+            Add("Map", new SimpleMenuBuilder("Snap to Grid", HotkeysMediator.ToggleSnapToGrid) { IsVisible = mapOpen, IsChecked = () => DocumentManager.CurrentDocument.Map.SnapToGrid });
+            Add("Map", new SimpleMenuBuilder("Show 2D Grid", HotkeysMediator.ToggleShow2DGrid) { IsVisible = mapOpen, IsChecked = () => DocumentManager.CurrentDocument.Map.Show2DGrid });
+            Add("Map", new SimpleMenuBuilder("Show 3D Grid", HotkeysMediator.ToggleShow3DGrid) { IsVisible = mapOpen, IsChecked = () => DocumentManager.CurrentDocument.Map.Show3DGrid });
             Add("Map", new GroupedMenuBuilder("Grid Settings",
                                               new SimpleMenuBuilder("Smaller Grid", HotkeysMediator.GridDecrease) { IsVisible = mapOpen },
                                               new SimpleMenuBuilder("Bigger Grid", HotkeysMediator.GridIncrease) { IsVisible = mapOpen }

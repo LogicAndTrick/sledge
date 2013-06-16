@@ -15,6 +15,12 @@ namespace Sledge.DataStructures.MapObjects
         public World WorldSpawn { get; set; }
         public IDGenerator IDGenerator { get; private set; }
 
+        public bool Show2DGrid { get; set; }
+        public bool Show3DGrid { get; set; }
+        public bool SnapToGrid { get; set; }
+        public decimal GridSpacing { get; set; }
+        public bool HideFaceMask { get; set; }
+
         public Map()
         {
             Version = 1;
@@ -23,6 +29,8 @@ namespace Sledge.DataStructures.MapObjects
             ActiveCamera = null;
             IDGenerator = new IDGenerator();
             WorldSpawn = new World(IDGenerator.GetNextObjectID());
+
+            Show2DGrid = SnapToGrid = true;
         }
 
         public IEnumerable<string> GetAllTextures()

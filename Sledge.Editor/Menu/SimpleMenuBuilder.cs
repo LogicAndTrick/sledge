@@ -36,7 +36,7 @@ namespace Sledge.Editor.Menu
         public IEnumerable<ToolStripItem> Build()
         {
             if (IsVisible != null && !IsVisible()) yield break;
-            var mi = new UpdatingToolStripMenuItem(Name, IsActive, Text);
+            var mi = new UpdatingToolStripMenuItem(Name, IsActive, IsChecked, Text);
             mi.Click += (sender, e) => Mediator.Publish(Message, Parameter);
             if (IsActive != null) mi.Enabled = IsActive();
             if (IsChecked != null) mi.Checked = IsChecked();
@@ -49,18 +49,22 @@ namespace Sledge.Editor.Menu
     class UpdatingToolStripMenuItem : ToolStripMenuItem, IMediatorListener
     {
         private readonly Func<string> _text;
+        private readonly Func<bool> _isChecked;
         private readonly Func<bool> _isActive;
 
-        public UpdatingToolStripMenuItem(string text, Func<bool> isActive, Func<string> textAction) : base(text)
+        public UpdatingToolStripMenuItem(string text, Func<bool> isActive, Func<bool> isChecked, Func<string> textAction) : base(text)
         {
             _isActive = isActive;
+            _isChecked = isChecked;
             _text = textAction;
-            if (_isActive != null || _text != null) Mediator.Subscribe(EditorMediator.UpdateMenu, this);
+            if (_isActive != null || _text != null || _isChecked != null)
+                Mediator.Subscribe(EditorMediator.UpdateMenu, this);
         }
 
         public void Notify(string message, object data)
         {
             if (_isActive != null) Enabled = _isActive();
+            if (_isChecked != null) Checked = _isChecked();
             if (_text != null) Text = _text();
         }
     }

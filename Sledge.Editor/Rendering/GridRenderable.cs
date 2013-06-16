@@ -21,9 +21,14 @@ namespace Sledge.Editor.Rendering
 
         public void RebuildGrid(decimal zoom, bool force = false)
         {
+            if (!Document.Map.Show2DGrid)
+            {
+                using (DisplayList.Using(ListName)) { } // blank display list
+                return;
+            }
             var lower = Document.GameData.MapSizeLow;
             var upper = Document.GameData.MapSizeHigh;
-            var step = Document.GridSpacing;
+            var step = Document.Map.GridSpacing;
             var actualDist = step * zoom;
             if (Grid.HideSmallerOn)
             {

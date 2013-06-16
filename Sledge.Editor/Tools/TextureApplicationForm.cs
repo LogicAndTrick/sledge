@@ -272,7 +272,7 @@ namespace Sledge.Editor.Tools
             }
 
             SelectedTexturesList.SetTextureList(textures);
-            HideMaskCheckbox.Checked = Document.HideFaceMask;
+            HideMaskCheckbox.Checked = Document.Map.HideFaceMask;
             if (LeftClickCombo.SelectedIndex < 0) LeftClickCombo.SelectedIndex = 0;
             if (RightClickCombo.SelectedIndex < 0) RightClickCombo.SelectedIndex = 0;
 

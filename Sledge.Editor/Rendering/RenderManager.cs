@@ -34,6 +34,8 @@ const vec4 light1intensity = vec4(0.6, 0.6, 0.6, 1.0);
 const vec4 light2intensity = vec4(0.3, 0.3, 0.3, 1.0);
 const vec4 ambient = vec4(0.5, 0.5, 0.5, 1.0);
 
+smooth out vec4 worldPosition;
+smooth out vec4 worldNormal;
 smooth out vec4 vertexLighting;
 smooth out vec4 vertexColour;
 smooth out vec2 texCoord;
@@ -41,6 +43,8 @@ smooth out float vertexSelected;
 
 uniform bool isWireframe;
 uniform bool in3d;
+uniform bool showGrid;
+uniform float gridSpacing;
 
 uniform mat4 modelViewMatrix;
 uniform mat4 perspectiveMatrix;
@@ -56,7 +60,14 @@ void main()
 	vec4 cameraPos = cameraMatrix * modelPos;
 	gl_Position = perspectiveMatrix * cameraPos;
 
-    vec3 normalPos = normalize(normal);
+    vec4 npos = vec4(normal, 1);
+    // http://www.arcsynthesis.org/gltut/Illumination/Tut09%20Normal%20Transformation.html
+    if (selected > 0.9 && (!isWireframe || !in3d)) npos = transpose(inverse(selectionTransform)) * npos;
+    vec3 normalPos = normalize(npos.xyz);
+    npos = vec4(normalPos, 1);
+
+    worldPosition = pos;
+    worldNormal = npos;
 
     float incidence1 = dot(normalPos, light1direction);
     float incidence2 = dot(normalPos, light2direction);
@@ -76,6 +87,8 @@ void main()
 
         public const string FragmentShader = @"#version 330
 
+smooth in vec4 worldPosition;
+smooth in vec4 worldNormal;
 smooth in vec4 vertexColour;
 smooth in vec4 vertexLighting;
 smooth in vec2 texCoord;
@@ -85,6 +98,8 @@ uniform bool isWireframe;
 uniform bool isTextured;
 uniform vec4 wireframeColour;
 uniform bool in3d;
+uniform bool showGrid;
+uniform float gridSpacing;
 uniform sampler2D currentTexture;
 
 out vec4 outputColor;
@@ -105,6 +120,11 @@ void main()
             outputColor = outputColor * vec4(1, 0.5, 0.5, 1);
         }
     }
+    if (isTextured && showGrid) {
+        if (abs(worldNormal).x < 0.9999) outputColor = mix(outputColor, vec4(1, 0, 0, 1), step(mod(worldPosition.x, gridSpacing), 0.5));
+        if (abs(worldNormal).y < 0.9999) outputColor = mix(outputColor, vec4(0, 1, 0, 1), step(mod(worldPosition.y, gridSpacing), 0.5));
+        if (abs(worldNormal).z < 0.9999) outputColor = mix(outputColor, vec4(0, 0, 1, 1), step(mod(worldPosition.z, gridSpacing), 0.5));
+    }
 }
 ";
         #endregion Shaders
@@ -120,6 +140,8 @@ void main()
         public bool IsTextured { set { Shader.Set("isTextured", value); } }
         public bool IsWireframe { set { Shader.Set("isWireframe", value); } }
         public bool In3D { set { Shader.Set("in3d", value); } }
+        public bool Show3DGrid { set { Shader.Set("showGrid", value); } }
+        public float GridSpacing { set { Shader.Set("gridSpacing", value); } }
         public Vector4 WireframeColour { set { Shader.Set("wireframeColour", value); } }
 
         public Dictionary<ViewportBase, GridRenderable> GridRenderables { get; private set; }  
@@ -137,6 +159,8 @@ void main()
             Bind();
             Perspective = Camera = ModelView = SelectionTransform = Matrix4.Identity;
             IsTextured = IsWireframe = In3D = false;
+            Show3DGrid = document.Map.Show3DGrid;
+            GridSpacing = (float) document.Map.GridSpacing;
             WireframeColour = Vector4.Zero;
             Unbind();
         }
