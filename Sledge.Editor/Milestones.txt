@@ -4,13 +4,16 @@ Priorities
   All support tools
     Texture replace
     Menu actions
-      Show/hide grid
-      Snap to grid action
+      Show/hide/toggle snap grid
       Check for problems
       Quickhide
       Manual transform
       Align objects
       Flip objects
+  Select tool snap offsets
+  Select tool 2D drag view original
+  Brush tool too much snapping
+  Auto visgroup
   Toolbar buttons
   Mediator/action visgroups
   Object properties tab switching

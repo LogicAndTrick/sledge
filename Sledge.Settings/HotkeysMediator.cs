@@ -40,6 +40,9 @@ namespace Sledge.Settings
         TieToEntity,
         TieToWorld,
 
+        SnapSelectionToGrid,
+        SnapSelectionToGridIndividually,
+
         GridIncrease,
         GridDecrease,
 

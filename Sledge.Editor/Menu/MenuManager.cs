@@ -118,8 +118,8 @@ namespace Sledge.Editor.Menu
             Add("Tools", new SimpleMenuBuilder("Replace Textures", "") { IsVisible = mapOpen });
             Add("Tools", new MenuSplitter { IsVisible = mapOpen });
             Add("Tools", new SimpleMenuBuilder("Transform...", "") { IsVisible = mapOpen, IsActive = itemsSelected });
-            Add("Tools", new SimpleMenuBuilder("Snap Selected to Grid", "") { IsVisible = mapOpen, IsActive = itemsSelected });
-            Add("Tools", new SimpleMenuBuilder("Snap Selected to Grid Individually", "") { IsVisible = mapOpen, IsActive = itemsSelected });
+            Add("Tools", new SimpleMenuBuilder("Snap Selected to Grid", HotkeysMediator.SnapSelectionToGrid) { IsVisible = mapOpen, IsActive = itemsSelected });
+            Add("Tools", new SimpleMenuBuilder("Snap Selected to Grid Individually", HotkeysMediator.SnapSelectionToGridIndividually) { IsVisible = mapOpen, IsActive = itemsSelected });
             Add("Tools", new GroupedMenuBuilder("Align Objects",
                                                 new SimpleMenuBuilder("To Left", "") { IsVisible = mapOpen, IsActive = itemsSelected },
                                                 new SimpleMenuBuilder("To Right", "") { IsVisible = mapOpen, IsActive = itemsSelected },

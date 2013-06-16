@@ -9,6 +9,7 @@ using Sledge.Common;
 using Sledge.Common.Mediator;
 using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.MapObjects;
+using Sledge.DataStructures.Transformations;
 using Sledge.Editor.Actions;
 using Sledge.Editor.Actions.MapObjects.Groups;
 using Sledge.Editor.Actions.MapObjects.Operations;
@@ -67,6 +68,8 @@ namespace Sledge.Editor.Documents
             Mediator.Subscribe(HotkeysMediator.GroupingUngroup, this);
             Mediator.Subscribe(HotkeysMediator.TieToEntity, this);
             Mediator.Subscribe(HotkeysMediator.TieToWorld, this);
+            Mediator.Subscribe(HotkeysMediator.SnapSelectionToGrid, this);
+            Mediator.Subscribe(HotkeysMediator.SnapSelectionToGridIndividually, this);
 
             Mediator.Subscribe(HotkeysMediator.GridIncrease, this);
             Mediator.Subscribe(HotkeysMediator.GridDecrease, this);
@@ -415,6 +418,33 @@ namespace Sledge.Editor.Documents
             ac.Add(new Delete(entities.Select(x => x.ID)));
 
             _document.PerformAction("Tie to World", ac);
+        }
+
+        private IUnitTransformation GetSnapTransform(Box box)
+        {
+            var offset = box.Start.Snap(_document.GridSpacing) - box.Start;
+            return new UnitTranslate(offset);
+        }
+
+        public void SnapSelectionToGrid()
+        {
+            if (_document.Selection.IsEmpty() || _document.Selection.InFaceSelection) return;
+
+            var selected = _document.Selection.GetSelectedParents();
+
+            var box = _document.Selection.GetSelectionBoundingBox();
+            var transform = GetSnapTransform(box);
+
+            _document.PerformAction("Snap to grid", new Edit(selected, x => x.Transform(transform)));
+        }
+
+        public void SnapSelectionToGridIndividually()
+        {
+            if (_document.Selection.IsEmpty() || _document.Selection.InFaceSelection) return;
+
+            var selected = _document.Selection.GetSelectedParents();
+
+            _document.PerformAction("Snap to grid individually", new Edit(selected, x => x.Transform(GetSnapTransform(x.BoundingBox))));
         }
 
         public void GridIncrease()
