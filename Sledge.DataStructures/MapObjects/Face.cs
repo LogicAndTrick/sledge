@@ -196,7 +196,7 @@ namespace Sledge.DataStructures.MapObjects
             var intersect = Plane.Intersect(face.Plane, Plane, intersectionPlane);
             if (intersect != null)
             {
-                var texNormal = face.Texture.UAxis.Cross(face.Texture.VAxis).Normalise();
+                var texNormal = face.Texture.GetNormal();
 
                 // Since the intersection plane is perpendicular to both face planes, we can find the angle
                 // between the two planes (the original texture plane and the plane of this face) by projecting

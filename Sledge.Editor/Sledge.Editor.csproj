@@ -137,6 +137,25 @@
     <Compile Include="Menu\SimpleMenuBuilder.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Problems\DuplicateFaceIDs.cs" />
+    <Compile Include="Problems\DuplicateKeyValues.cs" />
+    <Compile Include="Problems\DuplicateObjectIDs.cs" />
+    <Compile Include="Problems\GameDataNotFound.cs" />
+    <Compile Include="Problems\GroupWithoutChildren.cs" />
+    <Compile Include="Problems\InvalidKeyValues.cs" />
+    <Compile Include="Problems\InvalidSolids.cs" />
+    <Compile Include="Problems\IProblemCheck.cs" />
+    <Compile Include="Problems\NoEntities.cs" />
+    <Compile Include="Problems\NoPlayerStart.cs" />
+    <Compile Include="Problems\PointEntityWithChildren.cs" />
+    <Compile Include="Problems\Problem.cs" />
+    <Compile Include="Problems\ProblemChecker.cs" />
+    <Compile Include="Problems\SolidEntityWithEntityChildren.cs" />
+    <Compile Include="Problems\SolidEntityWithoutChildren.cs" />
+    <Compile Include="Problems\SolidWithChildren.cs" />
+    <Compile Include="Problems\TargetWithoutMatchingName.cs" />
+    <Compile Include="Problems\TextureAxisPerpendicularToFace.cs" />
+    <Compile Include="Problems\TextureNotFound.cs" />
     <Compile Include="Rendering\RenderManager.cs" />
     <Compile Include="Editing\SelectionManager.cs" />
     <Compile Include="EditorMediator.cs" />
@@ -208,6 +227,12 @@
       <DependentUpon>TextureApplicationForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Tools\TransformationTools\TransformationTool.cs" />
+    <Compile Include="UI\CheckForProblemsDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\CheckForProblemsDialog.Designer.cs">
+      <DependentUpon>CheckForProblemsDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="UI\EntityReportDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -339,6 +364,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UI\AngleControl.resx">
       <DependentUpon>AngleControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\CheckForProblemsDialog.resx">
+      <DependentUpon>CheckForProblemsDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\CollapsingLabel.resx">
       <DependentUpon>CollapsingLabel.cs</DependentUpon>

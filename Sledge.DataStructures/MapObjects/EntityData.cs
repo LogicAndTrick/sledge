@@ -37,5 +37,11 @@ namespace Sledge.DataStructures.MapObjects
             ed.Outputs.AddRange(Outputs.Select(x => x.Clone()));
             return ed;
         }
+
+        public string GetPropertyValue(string key)
+        {
+            var prop = Properties.FirstOrDefault(x => String.Equals(key, x.Key, StringComparison.InvariantCultureIgnoreCase));
+            return prop == null ? null : prop.Value;
+        }
     }
 }

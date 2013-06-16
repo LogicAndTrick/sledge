@@ -1,0 +1,28 @@
+using System.Collections.Generic;
+using System.Linq;
+using Sledge.DataStructures.MapObjects;
+using Sledge.Editor.Actions;
+
+namespace Sledge.Editor.Problems
+{
+    public class TextureNotFound : IProblemCheck
+    {
+        public IEnumerable<Problem> Check(Map map)
+        {
+            var faces = map.WorldSpawn
+                .Find(x => x is Solid).OfType<Solid>()
+                .SelectMany(x => x.Faces)
+                .Where(x => x.Texture.Texture == null)
+                .ToList();
+            foreach (var name in faces.Select(x => x.Texture.Name).Distinct())
+            {
+                yield return new Problem(GetType(), faces.Where(x => x.Texture.Name == name).ToList(), Fix, "Texture not found: " + name, "This texture was not found in the currently loaded texture packages. Ensure that the correct texture packages are loaded. Fixing the problems will reset the face textures to the default texture.");
+            }
+        }
+
+        public IAction Fix(Problem problem)
+        {
+            throw new System.NotImplementedException();
+        }
+    }
+}

@@ -60,6 +60,7 @@ namespace Sledge.Settings
 
         ShowMapInformation,
         ShowEntityReport,
+        CheckForProblems,
 
         QuickLoadPointfile,
         LoadPointfile,

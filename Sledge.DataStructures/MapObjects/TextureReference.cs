@@ -50,6 +50,11 @@ namespace Sledge.DataStructures.MapObjects
             XScale = YScale = 1;
         }
 
+        public Coordinate GetNormal()
+        {
+            return UAxis.Cross(VAxis).Normalise();
+        }
+
         public TextureReference Clone()
         {
             return new TextureReference

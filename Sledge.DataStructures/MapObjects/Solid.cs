@@ -250,8 +250,26 @@ namespace Sledge.DataStructures.MapObjects
 
         public bool IsValid()
         {
+            // Check coplanar faces
+            if (Faces.Any(f1 => Faces.Where(f2 => f2 != f1).Any(f2 => f2.Plane == f1.Plane)))
+            {
+                return false;
+            }
+
+            // Check face vertices are all on the plane
+            if (Faces.Any(x => x.Vertices.Any(y => x.Plane.OnPlane(y.Location) != 0)))
+            {
+                return false;
+            }
+
+            // Check faces are pointing outwards
             var origin = GetOrigin();
-            return Faces.Select(face => face.Plane.OnPlane(origin)).All(cls => cls < 0);
+            if (Faces.Any(x => x.Plane.OnPlane(origin) >= 0))
+            {
+                return false;
+            }
+
+            return true;
         }
 
         public Coordinate GetOrigin()

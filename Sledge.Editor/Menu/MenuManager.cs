@@ -87,7 +87,7 @@ namespace Sledge.Editor.Menu
             Add("Map", new SimpleMenuBuilder("Show Information", HotkeysMediator.ShowMapInformation) { IsVisible = mapOpen });
             Add("Map", new SimpleMenuBuilder("Show Selected Brush ID", HotkeysMediator.ShowSelectedBrushID) { IsVisible = mapOpen, IsActive = itemsSelected });
             Add("Map", new SimpleMenuBuilder("Entity Report...", HotkeysMediator.ShowEntityReport) { IsVisible = mapOpen });
-            Add("Map", new SimpleMenuBuilder("Check for Problems", "") { IsVisible = mapOpen });
+            Add("Map", new SimpleMenuBuilder("Check for Problems", HotkeysMediator.CheckForProblems) { IsVisible = mapOpen });
             Add("Map", new MenuSplitter { IsVisible = mapOpen });
             Add("Map", new SimpleMenuBuilder("Map Properties...", EditorMediator.WorldspawnProperties) { IsVisible = mapOpen });
             Add("Map", new MenuSplitter { IsVisible = mapOpen });

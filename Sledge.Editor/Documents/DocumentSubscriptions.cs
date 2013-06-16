@@ -90,6 +90,7 @@ namespace Sledge.Editor.Documents
             Mediator.Subscribe(HotkeysMediator.ShowSelectedBrushID, this);
             Mediator.Subscribe(HotkeysMediator.ShowMapInformation, this);
             Mediator.Subscribe(HotkeysMediator.ShowEntityReport, this);
+            Mediator.Subscribe(HotkeysMediator.CheckForProblems, this);
 
             Mediator.Subscribe(EditorMediator.ViewportRightClick, this);
 
@@ -666,6 +667,14 @@ namespace Sledge.Editor.Documents
         {
             var erd = new EntityReportDialog();
             erd.Show(Editor.Instance);
+        }
+
+        public void CheckForProblems()
+        {
+            using (var cfpd = new CheckForProblemsDialog(_document))
+            {
+                cfpd.ShowDialog(Editor.Instance);
+            }
         }
 
         public void ViewportRightClick(Viewport2D vp, MouseEventArgs e)
