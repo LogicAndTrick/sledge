@@ -20,7 +20,7 @@ namespace Sledge.Editor.Actions.MapObjects.Operations
             public long ID { get; set; }
             public MapObject Before { get; set; }
             public MapObject After { get; set; }
-            public Action<MapObject> Action { get; set; }
+            public Action<Document, MapObject> Action { get; set; }
 
             public EditReference(long id, MapObject before, MapObject after)
             {
@@ -30,7 +30,7 @@ namespace Sledge.Editor.Actions.MapObjects.Operations
                 Action = null;
             }
 
-            public EditReference(MapObject obj, Action<MapObject> action)
+            public EditReference(MapObject obj, Action<Document, MapObject> action)
             {
                 ID = obj.ID;
                 Before = obj.Clone();
@@ -38,16 +38,18 @@ namespace Sledge.Editor.Actions.MapObjects.Operations
                 Action = action;
             }
 
-            public void Perform(MapObject root)
+            public void Perform(Document document)
             {
+                var root = document.Map.WorldSpawn;
                 var obj = root.FindByID(ID);
                 if (obj == null) return;
-                if (Action != null) Action(obj);
+                if (Action != null) Action(document, obj);
                 else obj.Unclone(After);
             }
 
-            public void Reverse(MapObject root)
+            public void Reverse(Document document)
             {
+                var root = document.Map.WorldSpawn;
                 var obj = root.FindByID(ID);
                 if (obj == null) return;
                 obj.Unclone(Before);
@@ -64,7 +66,7 @@ namespace Sledge.Editor.Actions.MapObjects.Operations
             _objects = ids.Select(x => new EditReference(x, b.First(y => y.ID == x), a.First(y => y.ID == x))).ToList();
         }
 
-        public Edit(IEnumerable<MapObject> objects, Action<MapObject> action)
+        public Edit(IEnumerable<MapObject> objects, Action<Document, MapObject> action)
         {
             _objects = objects.Select(x => new EditReference(x, action)).ToList();
         }
@@ -80,7 +82,7 @@ namespace Sledge.Editor.Actions.MapObjects.Operations
             var selection = document.Selection.GetSelectedObjects().Select(x => x.ID).ToList();
             document.Selection.Clear();
 
-            Parallel.ForEach(_objects, x => x.Reverse(document.Map.WorldSpawn));
+            Parallel.ForEach(_objects, x => x.Reverse(document));
 
             document.Selection.Select(selection.Select(x => document.Map.WorldSpawn.FindByID(x)).Where(x => x != null));
 
@@ -94,7 +96,7 @@ namespace Sledge.Editor.Actions.MapObjects.Operations
             var selection = document.Selection.GetSelectedObjects().Select(x => x.ID).ToList();
             document.Selection.Clear();
 
-            Parallel.ForEach(_objects, x => x.Perform(document.Map.WorldSpawn));
+            Parallel.ForEach(_objects, x => x.Perform(document));
 
             document.Selection.Select(selection.Select(x => document.Map.WorldSpawn.FindByID(x)).Where(x => x != null));
 

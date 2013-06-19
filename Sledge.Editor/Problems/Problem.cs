@@ -9,15 +9,17 @@ namespace Sledge.Editor.Problems
     public class Problem
     {
         public Type Type { get; set; }
+        public Map Map { get; set; }
         public List<MapObject> Objects { get; set; }
         public List<Face> Faces { get; set; }
         public Func<Problem, IAction> Fix { get; set; }
         public string Message { get; set; }
         public string Description { get; set; }
 
-        public Problem(Type type, Func<Problem, IAction> fix, string message, string description)
+        public Problem(Type type, Map map, Func<Problem, IAction> fix, string message, string description)
         {
             Type = type;
+            Map = map;
             Faces = new List<Face>();
             Objects = new List<MapObject>();
             Fix = fix;
@@ -25,9 +27,10 @@ namespace Sledge.Editor.Problems
             Description = description;
         }
 
-        public Problem(Type type, IEnumerable<MapObject> objects, Func<Problem, IAction> fix, string message, string description)
+        public Problem(Type type, Map map, IEnumerable<MapObject> objects, Func<Problem, IAction> fix, string message, string description)
         {
             Type = type;
+            Map = map;
             Faces = new List<Face>();
             Objects = (objects ?? new MapObject[0]).ToList();
             Fix = fix;
@@ -35,9 +38,10 @@ namespace Sledge.Editor.Problems
             Description = description;
         }
 
-        public Problem(Type type, IEnumerable<Face> faces, Func<Problem, IAction> fix, string message, string description)
+        public Problem(Type type, Map map, IEnumerable<Face> faces, Func<Problem, IAction> fix, string message, string description)
         {
             Type = type;
+            Map = map;
             Objects = new List<MapObject>();
             Faces = (faces ?? new Face[0]).ToList();
             Fix = fix;

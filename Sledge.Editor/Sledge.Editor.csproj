@@ -145,7 +145,6 @@
     <Compile Include="Problems\InvalidKeyValues.cs" />
     <Compile Include="Problems\InvalidSolids.cs" />
     <Compile Include="Problems\IProblemCheck.cs" />
-    <Compile Include="Problems\NoEntities.cs" />
     <Compile Include="Problems\NoPlayerStart.cs" />
     <Compile Include="Problems\PointEntityWithChildren.cs" />
     <Compile Include="Problems\Problem.cs" />

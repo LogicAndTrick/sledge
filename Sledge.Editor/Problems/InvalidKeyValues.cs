@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Sledge.DataStructures.MapObjects;
 using Sledge.Editor.Actions;
+using Sledge.Editor.Actions.MapObjects.Entities;
 
 namespace Sledge.Editor.Problems
 {
@@ -26,13 +27,26 @@ namespace Sledge.Editor.Problems
                         valid = false;
                     }
                 }
-                if (!valid) yield return new Problem(GetType(), new[] { entity }, Fix, "Entity has invalid key/value pairs", "There are key/value pairs that are not specified in the game data. Ensure the latest FGDs are loaded. Fixing the problem will remove the invalid keys.");
+                if (!valid) yield return new Problem(GetType(), map, new[] { entity }, Fix, "Entity has invalid key/value pairs", "There are key/value pairs that are not specified in the game data. Ensure the latest FGDs are loaded. Fixing the problem will remove the invalid keys.");
             }
         }
 
         public IAction Fix(Problem problem)
         {
-            throw new System.NotImplementedException();
+            var edit = new EditEntityData();
+            foreach (var mo in problem.Objects.OfType<Entity>().Where(x => x.GameData != null))
+            {
+                var ed = mo.GetEntityData().Clone();
+                foreach (var prop in mo.EntityData.Properties)
+                {
+                    if (!mo.GameData.Properties.Any(x => String.Equals(x.Name, prop.Key, StringComparison.InvariantCultureIgnoreCase)))
+                    {
+                        ed.Properties.Remove(prop);
+                    }
+                }
+                edit.AddEntity(mo, ed);
+            }
+            return edit;
         }
     }
 }

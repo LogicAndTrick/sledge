@@ -20,7 +20,7 @@ namespace Sledge.Editor.Actions.MapObjects.Operations
             public long ID { get; set; }
             public Face Before { get; set; }
             public Face After { get; set; }
-            public Action<Face> Action { get; set; }
+            public Action<Document, Face> Action { get; set; }
 
             public EditFaceReference(long id, Face before, Face after)
             {
@@ -31,7 +31,7 @@ namespace Sledge.Editor.Actions.MapObjects.Operations
                 Action = null;
             }
 
-            public EditFaceReference(Face face, Action<Face> action)
+            public EditFaceReference(Face face, Action<Document, Face> action)
             {
                 ParentID = face.Parent.ID;
                 ID = face.ID;
@@ -40,16 +40,18 @@ namespace Sledge.Editor.Actions.MapObjects.Operations
                 Action = action;
             }
 
-            public void Perform(MapObject root)
+            public void Perform(Document document)
             {
+                var root = document.Map.WorldSpawn;
                 var face = GetFace(root);
                 if (face == null) return;
-                if (Action != null) Action(face);
+                if (Action != null) Action(document, face);
                 else face.Unclone(After);
             }
 
-            public void Reverse(MapObject root)
+            public void Reverse(Document document)
             {
+                var root = document.Map.WorldSpawn;
                 var face = GetFace(root);
                 if (face == null) return;
                 face.Unclone(Before);
@@ -74,7 +76,7 @@ namespace Sledge.Editor.Actions.MapObjects.Operations
             _textureChange = textureChange;
         }
 
-        public EditFace(IEnumerable<Face> objects, Action<Face> action, bool textureChange)
+        public EditFace(IEnumerable<Face> objects, Action<Document, Face> action, bool textureChange)
         {
             _objects = objects.Select(x => new EditFaceReference(x, action)).ToList();
             _textureChange = textureChange;
@@ -87,7 +89,7 @@ namespace Sledge.Editor.Actions.MapObjects.Operations
 
         public void Reverse(Document document)
         {
-            Parallel.ForEach(_objects, x => x.Reverse(document.Map.WorldSpawn));
+            Parallel.ForEach(_objects, x => x.Reverse(document));
 
             if (_textureChange) Mediator.Publish(EditorMediator.DocumentTreeStructureChanged);
             else Mediator.Publish(EditorMediator.DocumentTreeFacesChanged, _objects.Select(x => x.GetFace(document.Map.WorldSpawn)));
@@ -95,7 +97,7 @@ namespace Sledge.Editor.Actions.MapObjects.Operations
 
         public void Perform(Document document)
         {
-            Parallel.ForEach(_objects, x => x.Perform(document.Map.WorldSpawn));
+            Parallel.ForEach(_objects, x => x.Perform(document));
 
             if (_textureChange) Mediator.Publish(EditorMediator.DocumentTreeStructureChanged);
             else Mediator.Publish(EditorMediator.DocumentTreeFacesChanged, _objects.Select(x => x.GetFace(document.Map.WorldSpawn)));

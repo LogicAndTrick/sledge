@@ -199,7 +199,7 @@ namespace Sledge.Editor
             }
             if (selEnt == null) selEnt = doc.GameData.Classes
                 .Where(x => x.ClassType == ClassType.Point)
-                .OrderBy(x => x.Name.StartsWith("info_player") ? 0 : 1)
+                .OrderBy(x => x.Name.StartsWith("info_player_start") ? 0 : 1)
                 .FirstOrDefault();
             EntityTypeList.SelectedItem = selEnt;
         }

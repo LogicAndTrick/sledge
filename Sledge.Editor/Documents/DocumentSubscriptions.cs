@@ -440,7 +440,7 @@ namespace Sledge.Editor.Documents
             var box = _document.Selection.GetSelectionBoundingBox();
             var transform = GetSnapTransform(box);
 
-            _document.PerformAction("Snap to grid", new Edit(selected, x => x.Transform(transform)));
+            _document.PerformAction("Snap to grid", new Edit(selected, (d, x) => x.Transform(transform)));
         }
 
         public void SnapSelectionToGridIndividually()
@@ -449,7 +449,7 @@ namespace Sledge.Editor.Documents
 
             var selected = _document.Selection.GetSelectedParents();
 
-            _document.PerformAction("Snap to grid individually", new Edit(selected, x => x.Transform(GetSnapTransform(x.BoundingBox))));
+            _document.PerformAction("Snap to grid individually", new Edit(selected, (d, x) => x.Transform(GetSnapTransform(x.BoundingBox))));
         }
 
         public void GridIncrease()

@@ -7,6 +7,7 @@ using Sledge.Common.Mediator;
 using Sledge.Editor.Actions;
 using Sledge.Editor.Actions.MapObjects.Operations;
 using Sledge.Editor.Actions.MapObjects.Selection;
+using Sledge.Editor.Documents;
 using Sledge.Providers.Texture;
 using Sledge.Settings;
 using Sledge.UI;
@@ -84,7 +85,7 @@ namespace Sledge.Editor.Tools
                                    ? Face.BoxAlignMode.Center // Don't care about the align mode when centering
                                    : (Face.BoxAlignMode) Enum.Parse(typeof (Face.BoxAlignMode), justifymode.ToString());
             Cloud cloud = null;
-            Action<Face> action;
+            Action<Document, Face> action;
             if (treatasone) 
             {
                 // If we treat as one, it means we want to align to one great big cloud
@@ -93,11 +94,11 @@ namespace Sledge.Editor.Tools
 
             if (justifymode == JustifyMode.Fit)
             {
-                action = x => x.FitTextureToPointCloud(cloud ?? new Cloud(x.Vertices.Select(y => y.Location)));
+                action = (d, x) => x.FitTextureToPointCloud(cloud ?? new Cloud(x.Vertices.Select(y => y.Location)));
             }
             else
             {
-                action = x => x.AlignTextureWithPointCloud(cloud ?? new Cloud(x.Vertices.Select(y => y.Location)), boxAlignMode);
+                action = (d, x) => x.AlignTextureWithPointCloud(cloud ?? new Cloud(x.Vertices.Select(y => y.Location)), boxAlignMode);
             }
 
             Document.PerformAction("Align texture", new EditFace(Document.Selection.GetSelectedFaces(), action, false));
@@ -106,7 +107,7 @@ namespace Sledge.Editor.Tools
         private void TextureApplied(object sender, TextureItem texture)
         {
             var ti = texture.GetTexture();
-            Action<Face> action = face =>
+            Action<Document, Face> action = (document, face) =>
                                       {
                                           face.Texture.Name = texture.Name;
                                           face.Texture.Texture = ti;
@@ -120,7 +121,7 @@ namespace Sledge.Editor.Tools
 
         private void TextureAligned(object sender, AlignMode align)
         {
-            Action<Face> action = face =>
+            Action<Document, Face> action = (document, face) =>
             {
                 if (align == AlignMode.Face) face.AlignTextureToFace();
                 else if (align == AlignMode.World) face.AlignTextureToWorld();
@@ -132,7 +133,7 @@ namespace Sledge.Editor.Tools
 
         private void TexturePropertyChanged(object sender, decimal scalex, decimal scaley, int shiftx, int shifty, decimal rotation, int lightmapscale)
         {
-            Action<Face> action = face =>
+            Action<Document, Face> action = (document, face) =>
             {
                 face.Texture.XScale = scalex;
                 face.Texture.YScale = scaley;
@@ -248,7 +249,7 @@ namespace Sledge.Editor.Tools
                     if (item != null)
                     {
                         var texture = item.GetTexture();
-                        ac.Add(new EditFace(faces, face =>
+                        ac.Add(new EditFace(faces, (document, face) =>
                                                         {
                                                             face.Texture.Name = item.Name;
                                                             face.Texture.Texture = texture;
@@ -271,7 +272,7 @@ namespace Sledge.Editor.Tools
                     var point = new Coordinate((decimal)loc.X, (decimal)loc.Y, (decimal)loc.Z);
                     var uaxis = new Coordinate((decimal) right.X, (decimal) right.Y, (decimal) right.Z);
                     var vaxis = new Coordinate((decimal) up.X, (decimal) up.Y, (decimal) up.Z);
-                    ac.Add(new EditFace(faces, face =>
+                    ac.Add(new EditFace(faces, (document, face) =>
                                                     {
                                                         face.Texture.XScale = 1;
                                                         face.Texture.YScale = 1;

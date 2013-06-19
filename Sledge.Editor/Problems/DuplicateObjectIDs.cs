@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Sledge.DataStructures.MapObjects;
 using Sledge.Editor.Actions;
+using Sledge.Editor.Actions.MapObjects.Operations;
 
 namespace Sledge.Editor.Problems
 {
@@ -16,13 +17,13 @@ namespace Sledge.Editor.Problems
                         select g;
             foreach (var dupe in dupes)
             {
-                yield return new Problem(GetType(), dupe, Fix, "Multiple objects have the same ID", "More than one object has the same ID. Each object ID should be unique. Fixing the problem will assign the duplicates new IDs.");
+                yield return new Problem(GetType(), map, dupe, Fix, "Multiple objects have the same ID", "More than one object has the same ID. Each object ID should be unique. Fixing the problem will assign the duplicates new IDs.");
             }
         }
 
         public IAction Fix(Problem problem)
         {
-            throw new System.NotImplementedException();
+            return new Edit(problem.Objects, (d, x) => x.ID = d.Map.IDGenerator.GetNextObjectID());
         }
     }
 }

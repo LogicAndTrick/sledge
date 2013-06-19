@@ -141,7 +141,7 @@ namespace Sledge.Tests.Actions
         {
             var before = GetRandomObjects(_document, 200).OfType<Solid>().ToList();
             var rot = new UnitRotate(40, new Line(new Coordinate(1, 0, -1), new Coordinate(2, -3, 7)));
-            TestAction(new Edit(before, x => x.Transform(rot)));
+            TestAction(new Edit(before, (d,x) => x.Transform(rot)));
         }
 
         [TestMethod]
