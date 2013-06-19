@@ -40,8 +40,21 @@ namespace Sledge.Settings
         TieToEntity,
         TieToWorld,
 
+        Transform,
+
         SnapSelectionToGrid,
         SnapSelectionToGridIndividually,
+
+        AlignXMin,
+        AlignXMax,
+        AlignYMin,
+        AlignYMax,
+        AlignZMin,
+        AlignZMax,
+
+        FlipX,
+        FlipY,
+        FlipZ,
 
         GridIncrease,
         GridDecrease,

@@ -4,14 +4,14 @@ Priorities
   All support tools
     Texture replace
     Menu actions
-      Check for problems
       Quickhide
-      Manual transform
       Align objects
       Flip objects
   Select tool snap offsets
   Select tool 2D drag view original
+  Select tool 2D select entities
   Brush tool too much snapping
+  Manual transform prevent scaling with zero values
   Auto visgroup
   Toolbar buttons
   Mediator/action visgroups
@@ -20,6 +20,7 @@ Priorities
   New/Open/Save/Close
   2D view right click/Hotkeys
   VM clipping when splitting solid entities
+  VM undo sticky selection
   Recognise changes / prompt for save
   Actions for switching selection modes
   Check for updates (needed for alpha!)

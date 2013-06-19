@@ -21,7 +21,7 @@ namespace Sledge.Editor.Problems
         {
             return new Create(new Entity(problem.Map.IDGenerator.GetNextObjectID())
                                   {
-                                      EntityData = new EntityData(),
+                                      EntityData = new EntityData { Name = "info_player_start" },
                                       ClassName = "info_player_start",
                                       Colour = Colour.GetDefaultEntityColour(),
                                       Origin = Coordinate.Zero

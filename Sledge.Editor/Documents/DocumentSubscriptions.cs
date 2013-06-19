@@ -16,16 +16,19 @@ using Sledge.Editor.Actions.MapObjects.Operations;
 using Sledge.Editor.Actions.MapObjects.Selection;
 using Sledge.Editor.Clipboard;
 using Sledge.Editor.Compiling;
+using Sledge.Editor.Enums;
 using Sledge.Editor.History;
 using Sledge.Editor.Rendering;
 using Sledge.Editor.Tools;
 using Sledge.Editor.UI;
+using Sledge.Extensions;
 using Sledge.Providers.Map;
 using Sledge.QuickForms;
 using Sledge.QuickForms.Items;
 using Sledge.Settings;
 using Sledge.UI;
 using Path = System.IO.Path;
+using Quaternion = Sledge.DataStructures.Geometric.Quaternion;
 
 namespace Sledge.Editor.Documents
 {
@@ -68,8 +71,18 @@ namespace Sledge.Editor.Documents
             Mediator.Subscribe(HotkeysMediator.GroupingUngroup, this);
             Mediator.Subscribe(HotkeysMediator.TieToEntity, this);
             Mediator.Subscribe(HotkeysMediator.TieToWorld, this);
+            Mediator.Subscribe(HotkeysMediator.Transform, this);
             Mediator.Subscribe(HotkeysMediator.SnapSelectionToGrid, this);
             Mediator.Subscribe(HotkeysMediator.SnapSelectionToGridIndividually, this);
+            Mediator.Subscribe(HotkeysMediator.AlignXMax, this);
+            Mediator.Subscribe(HotkeysMediator.AlignXMin, this);
+            Mediator.Subscribe(HotkeysMediator.AlignYMax, this);
+            Mediator.Subscribe(HotkeysMediator.AlignYMin, this);
+            Mediator.Subscribe(HotkeysMediator.AlignZMax, this);
+            Mediator.Subscribe(HotkeysMediator.AlignZMin, this);
+            Mediator.Subscribe(HotkeysMediator.FlipX, this);
+            Mediator.Subscribe(HotkeysMediator.FlipY, this);
+            Mediator.Subscribe(HotkeysMediator.FlipZ, this);
 
             Mediator.Subscribe(HotkeysMediator.GridIncrease, this);
             Mediator.Subscribe(HotkeysMediator.GridDecrease, this);
@@ -429,6 +442,39 @@ namespace Sledge.Editor.Documents
         {
             var offset = box.Start.Snap(_document.Map.GridSpacing) - box.Start;
             return new UnitTranslate(offset);
+        }
+
+        public void Transform()
+        {
+            if (_document.Selection.IsEmpty() || _document.Selection.InFaceSelection) return;
+            var box = _document.Selection.GetSelectionBoundingBox();
+            using (var td = new TransformDialog(box))
+            {
+                if (td.ShowDialog() != DialogResult.OK) return;
+
+                var value = td.TransformValue;
+                IUnitTransformation transform = null;
+                switch (td.TransformType)
+                {
+                    case TransformType.Rotate:
+                        var mov = Matrix.Translation(-box.Center); // Move to zero
+                        var rot = Matrix.Rotation(Quaternion.EulerAngles(value * DMath.PI / 180)); // Do rotation
+                        var fin = Matrix.Translation(box.Center); // Move to final origin
+                        transform = new UnitMatrixMult(fin * rot * mov);
+                        break;
+                    case TransformType.Translate:
+                        transform = new UnitTranslate(value);
+                        break;
+                    case TransformType.Scale:
+                        transform = new UnitScale(value, box.Center);
+                        break;
+                }
+
+                if (transform == null) return;
+
+                var selected = _document.Selection.GetSelectedParents();
+                _document.PerformAction("Transform selection", new Edit(selected, (d, x) => x.Transform(transform)));
+            }
         }
 
         public void SnapSelectionToGrid()

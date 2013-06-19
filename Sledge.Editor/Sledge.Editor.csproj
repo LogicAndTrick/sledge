@@ -129,6 +129,7 @@
     <Compile Include="Documents\DocumentSubscriptions.cs" />
     <Compile Include="Enums\PasteSpecialGrouping.cs" />
     <Compile Include="Enums\PasteSpecialStartPoint.cs" />
+    <Compile Include="Enums\TransformType.cs" />
     <Compile Include="Menu\GroupedMenuBuilder.cs" />
     <Compile Include="Menu\IMenuBuilder.cs" />
     <Compile Include="Menu\MenuManager.cs" />
@@ -252,6 +253,12 @@
     </Compile>
     <Compile Include="UI\TextureComboBox.cs">
       <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UI\TransformDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\TransformDialog.Designer.cs">
+      <DependentUpon>TransformDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="UI\ViewportContextMenu.cs">
       <SubType>Component</SubType>
@@ -384,6 +391,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UI\TextureBrowser.resx">
       <DependentUpon>TextureBrowser.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\TransformDialog.resx">
+      <DependentUpon>TransformDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Visgroups\VisgroupEditForm.resx">
       <DependentUpon>VisgroupEditForm.cs</DependentUpon>
