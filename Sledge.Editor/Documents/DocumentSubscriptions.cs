@@ -547,6 +547,31 @@ namespace Sledge.Editor.Documents
             AlignObjects(z => z.Start.Z, z => new Coordinate(0, 0, z));
         }
 
+        private void FlipObjects(Coordinate scale)
+        {
+            if (_document.Selection.IsEmpty() || _document.Selection.InFaceSelection) return;
+
+            var selected = _document.Selection.GetSelectedParents();
+            var box = _document.Selection.GetSelectionBoundingBox();
+
+            _document.PerformAction("Flip Objects", new Edit(selected, (d, x) => x.Transform(new UnitScale(scale, box.Center))));
+        }
+
+        public void FlipX()
+        {
+            FlipObjects(new Coordinate(-1, 1, 1));
+        }
+
+        public void FlipY()
+        {
+            FlipObjects(new Coordinate(1, -1, 1));
+        }
+
+        public void FlipZ()
+        {
+            FlipObjects(new Coordinate(1, 1, -1));
+        }
+
         public void GridIncrease()
         {
             var curr = _document.Map.GridSpacing;

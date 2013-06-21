@@ -5,8 +5,6 @@ Priorities
     Texture replace
     Menu actions
       Quickhide
-      Align objects
-      Flip objects
   Select tool snap offsets
   Select tool 2D drag view original
   Select tool 2D select entities
@@ -16,7 +14,7 @@ Priorities
   Toolbar buttons
   Mediator/action visgroups
   Object properties tab switching
-  Undo/Redo
+  Decal geometry errors when flipping / transforming
   New/Open/Save/Close
   2D view right click/Hotkeys
   VM clipping when splitting solid entities
@@ -84,7 +82,7 @@ Post-Alpha Priorities
     Entity/World - 90%, testing
     Texture Replace - 0%
     Undo/Redo - 70%, history UI
-    Manual Transform - 0%
+    Manual Transform - 90%, zero scale protection
   Forms
     Editor - 80%, ?
     Options - 80%, hotkeys
@@ -99,7 +97,7 @@ Post-Alpha Priorities
     Grid Show/Snap Toggles - 100%
     Hotkeys - 60%, define keys, implement methods, hotkeys in forms
     Map Info/Entity Report - 100%
-    Check For Problems - 0%
+    Check For Problems - 100%
     Pointfiles/Leak Detection? - 100%
     Go to coordinates/brush number - 100%
     Options - 80%, hotkeys, general

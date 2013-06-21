@@ -340,6 +340,13 @@ namespace Sledge.DataStructures.MapObjects
             UpdateBoundingBox();
         }
 
+        public virtual void Flip()
+        {
+            Vertices.Reverse();
+            Plane = new Plane(Vertices[0].Location, Vertices[1].Location, Vertices[2].Location);
+            UpdateBoundingBox();
+        }
+
         /// <summary>
         /// Returns the point that this line intersects with this face.
         /// </summary>

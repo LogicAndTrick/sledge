@@ -77,7 +77,17 @@ namespace Sledge.DataStructures.MapObjects
         public override void Transform(Transformations.IUnitTransformation transform)
         {
             Faces.ForEach(f => f.Transform(transform));
+
+            // Handle flip transforms / negative scales
+            var origin = GetOrigin();
+            if (Faces.All(x => x.Plane.OnPlane(origin) >= 0))
+            {
+                // All planes are facing inwards - flip them all
+                Faces.ForEach(x => x.Flip());
+            }
+
             base.Transform(transform);
+
         }
 
         /// <summary>

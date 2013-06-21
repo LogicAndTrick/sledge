@@ -209,7 +209,7 @@ namespace Sledge.DataStructures.MapObjects
                 }
 
                 // Extract out the original face
-                decalFace = fake.Faces.First(x => x.Plane.EquivalentTo(face.Plane, 0.01m));
+                decalFace = fake.Faces.First(x => x.Plane.EquivalentTo(face.Plane, 0.05m));
 
                 // Add a tiny bit to the normal axis to ensure the decal is rendered in front of the face
                 var normalAdd = face.Plane.Normal * 0.2m;
