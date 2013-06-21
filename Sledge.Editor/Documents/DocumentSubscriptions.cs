@@ -498,6 +498,55 @@ namespace Sledge.Editor.Documents
             _document.PerformAction("Snap to grid individually", new Edit(selected, (d, x) => x.Transform(GetSnapTransform(x.BoundingBox))));
         }
 
+        private IUnitTransformation GetAlignTransform(Box selection, Box item, Func<Box, decimal> extractor, Func<decimal, Coordinate> creator)
+        {
+            var current = extractor(item);
+            var target = extractor(selection);
+            var value = target - current;
+            var translate = creator(value);
+            return new UnitTranslate(translate);
+        }
+
+        private void AlignObjects(Func<Box, decimal> extractor, Func<decimal, Coordinate> creator)
+        {
+            if (_document.Selection.IsEmpty() || _document.Selection.InFaceSelection) return;
+
+            var selected = _document.Selection.GetSelectedParents();
+            var box = _document.Selection.GetSelectionBoundingBox();
+
+            _document.PerformAction("Align Objects", new Edit(selected, (d, x) => x.Transform(GetAlignTransform(box, x.BoundingBox, extractor, creator))));
+        }
+
+        public void AlignXMax()
+        {
+            AlignObjects(x => x.End.X, x => new Coordinate(x, 0, 0));
+        }
+
+        public void AlignXMin()
+        {
+            AlignObjects(x => x.Start.X, x => new Coordinate(x, 0, 0));
+        }
+
+        public void AlignYMax()
+        {
+            AlignObjects(y => y.End.Y, y => new Coordinate(0, y, 0));
+        }
+
+        public void AlignYMin()
+        {
+            AlignObjects(y => y.Start.Y, y => new Coordinate(0, y, 0));
+        }
+
+        public void AlignZMax()
+        {
+            AlignObjects(z => z.End.Z, z => new Coordinate(0, 0, z));
+        }
+
+        public void AlignZMin()
+        {
+            AlignObjects(z => z.Start.Z, z => new Coordinate(0, 0, z));
+        }
+
         public void GridIncrease()
         {
             var curr = _document.Map.GridSpacing;
