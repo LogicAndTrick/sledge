@@ -48,6 +48,7 @@
     <Compile Include="Geometric\Box.cs" />
     <Compile Include="Geometric\Cloud.cs" />
     <Compile Include="Geometric\CoordinateF.cs" />
+    <Compile Include="Geometric\Polygon.cs" />
     <Compile Include="Geometric\QuaternionF.cs" />
     <Compile Include="Geometric\MatrixF.cs" />
     <Compile Include="Geometric\MathFunctions.cs" />
@@ -72,6 +73,7 @@
     <Compile Include="MapObjects\Entity.cs" />
     <Compile Include="MapObjects\EntityData.cs" />
     <Compile Include="MapObjects\Face.cs" />
+    <Compile Include="PlaneClassification.cs" />
     <Compile Include="MapObjects\Group.cs" />
     <Compile Include="MapObjects\IDGenerator.cs" />
     <Compile Include="MapObjects\Map.cs" />

@@ -57,8 +57,8 @@ namespace Sledge.DataStructures.Geometric
         /// <summary>Finds if the given point is above, below, or on the plane.</summary>
         /// <param name="co">The coordinate to test</param>
         /// <returns>
-        /// value &lt; 0 if coordinate is below the plane<br />
-        /// value &gt; 0 if coordinate is above the plane<br />
+        /// value == -1 if coordinate is below the plane<br />
+        /// value == 1 if coordinate is above the plane<br />
         /// value == 0 if coordinate is on the plane.
         ///</returns>
         public int OnPlane(Coordinate co)

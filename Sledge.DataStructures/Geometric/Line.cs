@@ -37,6 +37,22 @@
             return Start + u * delta;
         }
 
+        /// <summary>
+        /// Determines if this line is behind, in front, or spanning a plane.
+        /// </summary>
+        /// <param name="p">The plane to test against</param>
+        /// <returns>A PlaneClassification value.</returns>
+        public PlaneClassification ClassifyAgainstPlane(Plane p)
+        {
+            var start = p.OnPlane(Start);
+            var end = p.OnPlane(End);
+
+            if (start == 0 && end == 0) return PlaneClassification.OnPlane;
+            if (start <= 0 && end <= 0) return PlaneClassification.Back;
+            if (start >= 0 && end >= 0) return PlaneClassification.Front;
+            return PlaneClassification.Spanning;
+        }
+
         public bool EquivalentTo(Line other, decimal delta = 0.0001m)
         {
             return (Start.EquivalentTo(other.Start, delta) && End.EquivalentTo(other.End, delta))

@@ -59,6 +59,7 @@
     <Compile Include="Actions\MapObjectActionTests.cs" />
     <Compile Include="GeometricTest.cs" />
     <Compile Include="FileSystemTest.cs" />
+    <Compile Include="PlaneIntersectionTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

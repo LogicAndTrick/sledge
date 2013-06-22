@@ -384,8 +384,8 @@ namespace Sledge.DataStructures.MapObjects
         /// Determines if this face is behind, in front, or spanning a plane.
         /// </summary>
         /// <param name="p">The plane to test against</param>
-        /// <returns>A FacePlaneClassification value.</returns>
-        public FacePlaneClassification ClassifyAgainstPlane(Plane p)
+        /// <returns>A PlaneClassification value.</returns>
+        public PlaneClassification ClassifyAgainstPlane(Plane p)
         {
             int front = 0, back = 0, onplane = 0, count = Vertices.Count;
 
@@ -397,18 +397,10 @@ namespace Sledge.DataStructures.MapObjects
                 if (test == 0) onplane++;
             }
 
-            if (onplane == count) return FacePlaneClassification.OnPlane;
-            if (front == count) return FacePlaneClassification.Front;
-            if (back == count) return FacePlaneClassification.Back;
-            return FacePlaneClassification.Spanning;
-        }
-
-        public enum FacePlaneClassification
-        {
-            Front,
-            Back,
-            OnPlane,
-            Spanning
+            if (onplane == count) return PlaneClassification.OnPlane;
+            if (front == count) return PlaneClassification.Front;
+            if (back == count) return PlaneClassification.Back;
+            return PlaneClassification.Spanning;
         }
 
         protected static Coordinate GetIntersectionPoint(IList<Coordinate> coordinates, Line line, bool ignoreDirection = false)

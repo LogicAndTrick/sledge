@@ -116,10 +116,10 @@ namespace Sledge.DataStructures.MapObjects
             back = front = null;
             // Check that this solid actually spans the plane
             var classify = Faces.Select(x => x.ClassifyAgainstPlane(plane)).Distinct().ToList();
-            if (classify.All(x => x != Face.FacePlaneClassification.Spanning))
+            if (classify.All(x => x != PlaneClassification.Spanning))
             {
-                if (classify.Any(x => x == Face.FacePlaneClassification.Back)) back = this;
-                else if (classify.Any(x => x == Face.FacePlaneClassification.Front)) front = this;
+                if (classify.Any(x => x == PlaneClassification.Back)) back = this;
+                else if (classify.Any(x => x == PlaneClassification.Front)) front = this;
                 return false;
             }
 
@@ -129,8 +129,8 @@ namespace Sledge.DataStructures.MapObjects
             foreach (var face in Faces)
             {
                 var classification = face.ClassifyAgainstPlane(plane);
-                if (classification != Face.FacePlaneClassification.Back) frontPlanes.Add(face.Plane);
-                if (classification != Face.FacePlaneClassification.Front) backPlanes.Add(face.Plane);
+                if (classification != PlaneClassification.Back) frontPlanes.Add(face.Plane);
+                if (classification != PlaneClassification.Front) backPlanes.Add(face.Plane);
             }
 
             back = CreateFromIntersectingPlanes(backPlanes, generator);
@@ -150,14 +150,14 @@ namespace Sledge.DataStructures.MapObjects
                 foreach (var face in back.Faces)
                 {
                     var classification = face.ClassifyAgainstPlane(orig.Plane);
-                    if (classification != Face.FacePlaneClassification.OnPlane) continue;
+                    if (classification != PlaneClassification.OnPlane) continue;
                     face.Texture = orig.Texture.Clone();
                     break;
                 }
                 foreach (var face in front.Faces)
                 {
                     var classification = face.ClassifyAgainstPlane(orig.Plane);
-                    if (classification != Face.FacePlaneClassification.OnPlane) continue;
+                    if (classification != PlaneClassification.OnPlane) continue;
                     face.Texture = orig.Texture.Clone();
                     break;
                 }
