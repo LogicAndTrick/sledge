@@ -334,7 +334,7 @@ namespace Sledge.Editor.Tools
         protected Tuple<Coordinate, Coordinate> GetResizedBoxCoordinates(Viewport2D viewport, MouseEventArgs e)
         {
             if (State.Action != BoxAction.Resizing) return Tuple.Create(State.BoxStart, State.BoxEnd);
-            var now = viewport.ScreenToWorld(e.X, viewport.Height - e.Y);
+            var now = SnapIfNeeded(viewport.ScreenToWorld(e.X, viewport.Height - e.Y));
             var cstart = viewport.Flatten(State.BoxStart);
             var cend = viewport.Flatten(State.BoxEnd);
             switch (State.Handle)
@@ -377,7 +377,7 @@ namespace Sledge.Editor.Tools
             }
             cstart = viewport.Expand(cstart) + viewport.GetUnusedCoordinate(State.BoxStart);
             cend = viewport.Expand(cend) + viewport.GetUnusedCoordinate(State.BoxEnd);
-            return Tuple.Create(SnapIfNeeded(cstart), SnapIfNeeded(cend));
+            return Tuple.Create(cstart, cend);
         }
 
         public override void KeyPress(ViewportBase viewport, KeyPressEventArgs e)

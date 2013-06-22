@@ -80,14 +80,29 @@ namespace Sledge.Editor.Actions.MapObjects.Operations
             _editObjects = new List<EditReference>();
         }
 
+        protected void Create(params MapObject[] objects)
+        {
+            _objectsToCreate.AddRange(objects);
+        }
+
         protected void Create(IEnumerable<MapObject> objects)
         {
             _objectsToCreate.AddRange(objects);
         }
 
+        protected void Delete(params long[] ids)
+        {
+            _idsToDelete.AddRange(ids);
+        }
+
         protected void Delete(IEnumerable<long> ids)
         {
             _idsToDelete.AddRange(ids);
+        }
+
+        protected void Edit(MapObject before, MapObject after)
+        {
+            _editObjects.Add(new EditReference(before.ID, before, after));
         }
 
         protected void Edit(IEnumerable<MapObject> before, IEnumerable<MapObject> after)
@@ -98,12 +113,17 @@ namespace Sledge.Editor.Actions.MapObjects.Operations
             _editObjects.AddRange(ids.Select(x => new EditReference(x, b.First(y => y.ID == x), a.First(y => y.ID == x))));
         }
 
+        protected void Edit(MapObject before, Action<MapObject> action)
+        {
+            _editObjects.Add(new EditReference(before, action));
+        }
+
         protected void Edit(IEnumerable<MapObject> objects, Action<MapObject> action)
         {
             _editObjects.AddRange(objects.Select(x => new EditReference(x, action)));
         }
 
-        public void Dispose()
+        public virtual void Dispose()
         {
             _createdIds = null;
             _objectsToCreate = null;

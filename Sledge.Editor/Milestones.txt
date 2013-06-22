@@ -8,17 +8,15 @@ Priorities
   Select tool snap offsets
   Select tool 2D drag view original
   Select tool 2D select entities
-  Brush tool too much snapping
-  Manual transform prevent scaling with zero values
   Auto visgroup
   Toolbar buttons
   Mediator/action visgroups
   Object properties tab switching
   Decal geometry errors when flipping / transforming
-  New/Open/Save/Close
+  New/Open/Save/Save As/Close
   2D view right click/Hotkeys
-  VM clipping when splitting solid entities
-  VM undo sticky selection
+  Clip retain groups
+  Transparent rendering / painter's algorithm
   Recognise changes / prompt for save
   Actions for switching selection modes
   Check for updates (needed for alpha!)
@@ -82,14 +80,14 @@ Post-Alpha Priorities
     Entity/World - 90%, testing
     Texture Replace - 0%
     Undo/Redo - 70%, history UI
-    Manual Transform - 90%, zero scale protection
+    Manual Transform - 100%
   Forms
     Editor - 80%, ?
     Options - 80%, hotkeys
     Texture Browser - 50%, used textures only, replace, stats
     Object Properties - 80%, data types (inputs/outputs not needed for milestone)
   UI
-    Menu Builder - 80%, actions
+    Menu Builder - 90%, actions
     New/Open/Save/Close - 60%, change detection
     Recent Files - 80%, bugs, testing
     Cut/Copy/Paste/Paste Special - 100%

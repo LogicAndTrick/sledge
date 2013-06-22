@@ -74,5 +74,14 @@ namespace Sledge.Editor.UI
                   = SourceValueZButton.Visible
                     = Translate.Checked;
         }
+
+        private void OkButtonClicked(object sender, EventArgs e)
+        {
+            if (Scale.Checked && (ValueX.Value == 0 || ValueY.Value == 0 || ValueZ.Value == 0))
+            {
+                MessageBox.Show("Please enter a non-zero value for all axes when scaling.");
+                DialogResult = DialogResult.None;
+            }
+        }
     }
 }
