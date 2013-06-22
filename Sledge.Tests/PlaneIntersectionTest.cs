@@ -56,6 +56,16 @@ namespace Sledge.Tests
         }
 
         [TestMethod]
+        public void TestValidSolids()
+        {
+            var idg = new IDGenerator();
+            var box = new Box(Coordinate.One * -100, Coordinate.One * 100);
+            var planes = new CylinderBrush().Create(idg, box, null).OfType<Solid>().SelectMany(x => x.Faces).Select(x => x.Plane).ToList();
+            var solid = Solid.CreateFromIntersectingPlanes(planes, idg);
+            Assert.IsTrue(solid.IsValid());
+        }
+
+        [TestMethod]
         public void BenchmarkSolidConstruction()
         {
             var idg = new IDGenerator();

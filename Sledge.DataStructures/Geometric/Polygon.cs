@@ -7,7 +7,7 @@ using Sledge.DataStructures.Transformations;
 namespace Sledge.DataStructures.Geometric
 {
     /// <summary>
-    /// Represents a coplanar, directed polygon with at least 3 vertices
+    /// Represents a coplanar, directed polygon with at least 3 vertices.
     /// </summary>
     public class Polygon
     {
@@ -43,10 +43,10 @@ namespace Sledge.DataStructures.Geometric
 
             Vertices = new List<Coordinate>
                            {
-                               plane.PointOnPlane - right + up, // Top left
                                plane.PointOnPlane + right + up, // Top right
+                               plane.PointOnPlane - right + up, // Top left
+                               plane.PointOnPlane - right - up, // Bottom left
                                plane.PointOnPlane + right - up, // Bottom right
-                               plane.PointOnPlane - right - up  // Bottom left
                            };
             Expand(radius);
         }
@@ -205,7 +205,7 @@ namespace Sledge.DataStructures.Geometric
                 var cls = clip.OnPlane(end);
 
                 // Check plane crossing
-                if (i > 0 && cls != 0 && prev != cls)
+                if (i > 0 && cls != 0 && prev != 0 && prev != cls)
                 {
                     // This line end point has crossed the plane
                     // Add the line intersect to the 
