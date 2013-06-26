@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using Sledge.Common;
@@ -189,9 +190,16 @@ namespace Sledge.DataStructures.MapObjects
                                     new Vertex(face.Plane.Project(center - xShift - yShift), decalFace), // Bottom Left
                                 };
 
-                // TODO normalise these properly - the texture is reversed when it shouldn't be
-                if (!face.Plane.Normal.EquivalentTo(face.Texture.UAxis.Cross(face.Texture.VAxis))) decalFace.Vertices.AddRange(verts);
-                else decalFace.Vertices.AddRange(verts.Reverse());
+                // Because the texture axes don't have to align to the face, we might have a reversed face here
+                // If so, reverse the points to get a valid face for the plane.
+                // TODO: Is there a better way to do this?
+                var vertPlane = new Plane(verts[0].Location, verts[1].Location, verts[2].Location);
+                if (!face.Plane.Normal.EquivalentTo(vertPlane.Normal))
+                {
+                    Array.Reverse(verts);
+                }
+
+                decalFace.Vertices.AddRange(verts);
 
                 decalFace.UpdateBoundingBox();
                 // TODO: verify this covers all situations and I don't have to manually calculate the texture coordinates
@@ -254,6 +262,10 @@ namespace Sledge.DataStructures.MapObjects
                 s.Faces.Add(f);
             }
             s.UpdateBoundingBox(false);
+            if (!s.IsValid())
+            {
+                int i = 0;
+            }
             return s;
         }
 

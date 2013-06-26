@@ -1,27 +1,38 @@
 ﻿Key: Item - percentage complete, uncompleted tasks
 
 Priorities
-  All support tools
-    Texture replace
-    Menu actions
-      Quickhide
-  Select tool snap offsets
-  Select tool 2D drag view original
-  Select tool 2D select entities
-  Auto visgroup
-  Toolbar buttons
-  Mediator/action visgroups
-  Object properties tab switching
-  Decal geometry errors when flipping / transforming
-  New/Open/Save/Save As/Close
-  2D view right click/Hotkeys
-  Clip retain groups
-  Transparent rendering / painter's algorithm
-  Recognise changes / prompt for save
-  Actions for switching selection modes
-  Check for updates (needed for alpha!)
-  Additional Map Properties
-    VMF
+  Bugs
+    Clip retain groups
+    Actions for switching selection modes
+  Enhancements
+    Auto visgroup
+    Select tool 2D drag view original
+    Select tool 2D select entities
+    Mediator/action visgroups
+    Transparent rendering / painter's algorithm
+    Additional Map Properties
+      VMF
+  Features
+    All support tools
+      Texture replace
+      Menu actions
+        Quickhide
+    Toolbar buttons
+      Show 2D/3D grid
+      Smaller/larger grid
+      Undo/redo
+      Carve/hollow
+      Group/ungroup/toggle ignore grouping
+      Visgroups/quickhide
+      Cut/copy/paste/paste special
+      Cordon tool
+      Texture lock, scaling lock
+      Maybe: select by handles, auto select, texture alignment
+      Run map
+    Recognise changes / prompt for save
+    New/Open/Save/Save As/Close
+    2D view right click/Hotkeys
+    Check for updates (needed for alpha!)
 
 Post-Alpha Priorities
   TDI
@@ -37,6 +48,8 @@ Post-Alpha Priorities
   Prefabs
   Map diff
   Pointfile dark/light theme toggle
+  3D view helpers
+  Toggle render of nodraw/null faces
 
 1. Goldsource Support
   Formats

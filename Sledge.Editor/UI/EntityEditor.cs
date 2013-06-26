@@ -297,6 +297,8 @@ namespace Sledge.Editor.UI
 
             UpdateVisgroups();
 
+            var beforeTabs = Tabs.TabPages.OfType<TabPage>().ToArray();
+
             if (!Tabs.TabPages.Contains(VisgroupTab)) Tabs.TabPages.Add(VisgroupTab);
 
             if (!Objects.All(x => x is Entity || x is World))
@@ -322,6 +324,14 @@ namespace Sledge.Editor.UI
                 // Source
                 if (!Tabs.TabPages.Contains(InputsTab)) Tabs.TabPages.Insert(1, InputsTab);
                 if (!Tabs.TabPages.Contains(OutputsTab)) Tabs.TabPages.Insert(2, OutputsTab);
+            }
+
+            var afterTabs = Tabs.TabPages.OfType<TabPage>().ToArray();
+
+            // If the tabs changed, we want to reset to the first tab
+            if (beforeTabs.Length != afterTabs.Length || beforeTabs.Except(afterTabs).Any())
+            {
+                Tabs.SelectedIndex = 0;
             }
 
             _populating = true;

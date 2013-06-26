@@ -2,9 +2,11 @@
 <TestSettings name="TestSettings" id="e6f500f7-307c-4995-8647-ddf9708c0313" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
   <Description>These are default test settings for a local test run.</Description>
   <Deployment>
+    <DeploymentItem filename="_Resources\RMF\intersect.rmf" />
     <DeploymentItem filename="Sledge.Libs\HLLib.dll" />
     <DeploymentItem filename="_Resources\RMF\verc_18.rmf" />
-    <DeploymentItem filename="_Resources\RMF\intersect.rmf" />
+    <DeploymentItem filename="_Resources\RMF\decalflip_bad.rmf" />
+    <DeploymentItem filename="_Resources\RMF\decalflip.rmf" />
   </Deployment>
   <Execution>
     <TestTypeSpecific>
