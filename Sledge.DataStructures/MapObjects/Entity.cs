@@ -187,7 +187,7 @@ namespace Sledge.DataStructures.MapObjects
                                     new Vertex(face.Plane.Project(center + xShift - yShift), decalFace), // Bottom Right
                                     new Vertex(face.Plane.Project(center + xShift + yShift), decalFace), // Top Right
                                     new Vertex(face.Plane.Project(center - xShift + yShift), decalFace), // Top Left
-                                    new Vertex(face.Plane.Project(center - xShift - yShift), decalFace), // Bottom Left
+                                    new Vertex(face.Plane.Project(center - xShift - yShift), decalFace)  // Bottom Left
                                 };
 
                 // Because the texture axes don't have to align to the face, we might have a reversed face here
@@ -260,11 +260,6 @@ namespace Sledge.DataStructures.MapObjects
                 f.Vertices.AddRange(ff.Select(x => new Vertex(x, f)));
                 f.UpdateBoundingBox();
                 s.Faces.Add(f);
-            }
-            s.UpdateBoundingBox(false);
-            if (!s.IsValid())
-            {
-                int i = 0;
             }
             return s;
         }
