@@ -261,6 +261,7 @@ namespace Sledge.DataStructures.MapObjects
                 f.UpdateBoundingBox();
                 s.Faces.Add(f);
             }
+            s.UpdateBoundingBox();
             return s;
         }
 
