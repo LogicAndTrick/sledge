@@ -27,6 +27,7 @@ namespace Sledge.Editor
 
         VisgroupToggled,
         VisgroupsChanged,
+        VisgroupVisibilityChanged,
         VisgroupShowEditor,
         VisgroupSelect,
         VisgroupShowAll,

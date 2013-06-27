@@ -40,7 +40,7 @@
             this.VisgroupTree.Indent = 16;
             this.VisgroupTree.Location = new System.Drawing.Point(0, 0);
             this.VisgroupTree.Name = "VisgroupTree";
-            this.VisgroupTree.Size = new System.Drawing.Size(265, 316);
+            this.VisgroupTree.Size = new System.Drawing.Size(244, 228);
             this.VisgroupTree.StateImageList = this.CheckboxImages;
             this.VisgroupTree.TabIndex = 0;
             this.VisgroupTree.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.NodeSelected);
@@ -59,7 +59,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.VisgroupTree);
             this.Name = "VisgroupPanel";
-            this.Size = new System.Drawing.Size(265, 316);
+            this.Size = new System.Drawing.Size(244, 228);
             this.ResumeLayout(false);
 
         }

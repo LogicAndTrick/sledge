@@ -14,6 +14,7 @@ using Sledge.Editor.Actions;
 using Sledge.Editor.Actions.MapObjects.Groups;
 using Sledge.Editor.Actions.MapObjects.Operations;
 using Sledge.Editor.Actions.MapObjects.Selection;
+using Sledge.Editor.Actions.Visgroups;
 using Sledge.Editor.Clipboard;
 using Sledge.Editor.Compiling;
 using Sledge.Editor.Enums;
@@ -21,6 +22,7 @@ using Sledge.Editor.History;
 using Sledge.Editor.Rendering;
 using Sledge.Editor.Tools;
 using Sledge.Editor.UI;
+using Sledge.Editor.Visgroups;
 using Sledge.Extensions;
 using Sledge.Providers.Map;
 using Sledge.QuickForms;
@@ -108,6 +110,11 @@ namespace Sledge.Editor.Documents
             Mediator.Subscribe(EditorMediator.ViewportRightClick, this);
 
             Mediator.Subscribe(EditorMediator.WorldspawnProperties, this);
+
+            Mediator.Subscribe(EditorMediator.VisgroupSelect, this);
+            Mediator.Subscribe(EditorMediator.VisgroupShowAll, this);
+            Mediator.Subscribe(EditorMediator.VisgroupShowEditor, this);
+            Mediator.Subscribe(EditorMediator.VisgroupToggled, this);
         }
 
         public void Unsubscribe()
@@ -813,6 +820,38 @@ namespace Sledge.Editor.Documents
                 }
             }
             ViewportContextMenu.Instance.Show(vp, e.X, e.Y);
+        }
+
+        public void VisgroupSelect(int visgroupId)
+        {
+
+        }
+
+        public void VisgroupShowEditor()
+        {
+            using (var vef = new VisgroupEditForm(_document))
+            {
+                if (vef.ShowDialog() == DialogResult.OK)
+                {
+                    var nv = new List<Visgroup>();
+                    var cv = new List<Visgroup>();
+                    var dv = new List<Visgroup>();
+                    vef.PopulateChangeLists(_document, nv, cv, dv);
+                    _document.PerformAction("Edit visgroups", new CreateEditDeleteVisgroups(nv, cv, dv));
+                }
+            }
+        }
+
+        public void VisgroupShowAll()
+        {
+            _document.PerformAction("Show all visgroups", new ShowAllVisgroups());
+        }
+
+        public void VisgroupToggled(int visgroupId, CheckState state)
+        {
+            if (state == CheckState.Indeterminate) return;
+            var visible = state == CheckState.Checked;
+            _document.PerformAction((visible ? "Show" : "Hide") + " visgroup", new ToggleVisgroup(visgroupId, visible));
         }
     }
 }

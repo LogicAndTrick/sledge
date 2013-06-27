@@ -8,7 +8,7 @@ namespace Sledge.Editor.Visgroups
 {
     public static class VisgroupManager
     {
-        private static VisgroupPanel _visgroupPanel;
+        //private static VisgroupPanel _visgroupPanel;
         private static Document _currentDocument;
 
         public static void SetCurrentDocument(Document doc)
@@ -16,7 +16,7 @@ namespace Sledge.Editor.Visgroups
             _currentDocument = doc;
             Update();
         }
-
+        /*
         public static void SetVisgroupPanel(Control panel)
         {
             _visgroupPanel = panel.Controls.OfType<VisgroupPanel>().First();
@@ -29,7 +29,6 @@ namespace Sledge.Editor.Visgroups
             var showAllButton = panel.Controls.OfType<Button>().First(x => x.Tag is string && (string)x.Tag == "ShowAll");
             showAllButton.Click += ShowAllVisgroups;
         }
-
         private static void ShowEditDialog(object sender, EventArgs e)
         {
             if (_currentDocument == null) return;
@@ -60,7 +59,8 @@ namespace Sledge.Editor.Visgroups
             _currentDocument.Map.WorldSpawn.ForEach(x => x.IsVisgroupHidden, x => x.IsVisgroupHidden = false);
             _currentDocument.UpdateDisplayLists();
         }
-
+        */
+        /*
         private static void VisgroupToggled(object sender, int visgroupId, CheckState state)
         {
             if (_currentDocument == null) return;
@@ -93,18 +93,18 @@ namespace Sledge.Editor.Visgroups
 
             _currentDocument.UpdateDisplayLists();
         }
-
+        */
         public static void Update()
         {
             Clear();
-            if (_visgroupPanel == null || _currentDocument == null) return;
-            _visgroupPanel.Update(_currentDocument);
+            //if (_visgroupPanel == null || _currentDocument == null) return;
+            //_visgroupPanel.Update(_currentDocument);
         }
 
         public static void Clear()
         {
-            if (_visgroupPanel == null) return;
-            _visgroupPanel.Clear();
+            //if (_visgroupPanel == null) return;
+            //_visgroupPanel.Clear();
         }
     }
 }

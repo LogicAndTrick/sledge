@@ -12,5 +12,10 @@ namespace Sledge.DataStructures.MapObjects
         public string Name { get; set; }
         public bool Visible { get; set; }
         public Color Colour { get; set; }
+
+        public Visgroup Clone()
+        {
+            return new Visgroup { ID = ID, Name = Name, Visible = Visible, Colour = Colour};
+        }
     }
 }

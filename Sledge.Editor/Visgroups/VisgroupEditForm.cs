@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -10,20 +11,31 @@ namespace Sledge.Editor.Visgroups
 {
     public partial class VisgroupEditForm : Form
     {
-        public bool NeedReload { get; set; }
-        public Document Document { get; set; }
+        private readonly List<Visgroup> _visgroups;
+        private readonly List<Visgroup> _deleted; 
 
         public VisgroupEditForm(Document doc)
         {
-            Document = doc;
             InitializeComponent();
+            _visgroups = new List<Visgroup>(doc.Map.Visgroups.Select(x => x.Clone()));
+            _deleted = new List<Visgroup>();
             UpdateVisgroups();
-            NeedReload = false;
+        }
+
+        public void PopulateChangeLists(Document doc, List<Visgroup> newVisgroups, List<Visgroup> changedVisgroups, List<Visgroup> deletedVisgroups)
+        {
+            foreach (var g in _visgroups)
+            {
+                var dg = doc.Map.Visgroups.FirstOrDefault(x => x.ID == g.ID);
+                if (dg == null) newVisgroups.Add(g);
+                else if (dg.Name != g.Name || dg.Colour != g.Colour) changedVisgroups.Add(g);
+            }
+            deletedVisgroups.AddRange(_deleted);
         }
 
         private void UpdateVisgroups()
         {
-            VisgroupPanel.Update(Document.Map.Visgroups);
+            VisgroupPanel.Update(_visgroups);
         }
 
         private void SelectionChanged(object sender, int? visgroupId)
@@ -32,26 +44,32 @@ namespace Sledge.Editor.Visgroups
             ColourPanel.BackColor = SystemColors.Control;
             if (visgroupId.HasValue)
             {
-                var visgroup = Document.Map.Visgroups.First(x => x.ID == visgroupId.Value);
+                var visgroup = _visgroups.First(x => x.ID == visgroupId.Value);
                 GroupName.Text = visgroup.Name;
                 ColourPanel.BackColor = visgroup.Colour;
-            } 
+            }
             else
             {
                 GroupName.Text = "";
             }
         }
 
+        private int GetNewID()
+        {
+            var ids = _visgroups.Select(x => x.ID).Union(_deleted.Select(x => x.ID)).ToList();
+            return ids.Any() ? ids.Max() + 1 : 1;
+        }
+
         private void AddGroup(object sender, EventArgs e)
         {
             var newGroup = new Visgroup
                                {
-                                   ID = Document.Map.Visgroups.Any() ? Document.Map.Visgroups.Max(x => x.ID) + 1 : 1,
+                                   ID = GetNewID(),
                                    Colour = Colour.GetRandomLightColour(),
                                    Name = "New Group",
                                    Visible = true
                                };
-            Document.Map.Visgroups.Add(newGroup);
+            _visgroups.Add(newGroup);
             UpdateVisgroups();
             VisgroupPanel.SetSelectedVisgroup(newGroup.ID);
             GroupName.SelectAll();
@@ -62,17 +80,9 @@ namespace Sledge.Editor.Visgroups
         {
             var id = VisgroupPanel.GetSelectedVisgroup();
             if (!id.HasValue) return;
-            Document.Map.Visgroups.RemoveAll(x => x.ID == id.Value);
-            var collect = Document.Map.WorldSpawn.Find(x => x.IsInVisgroup(id.Value));
-            if (collect.Any())
-            {
-                NeedReload = true;
-                collect.ForEach(x =>
-                                    {
-                                        x.Visgroups.Remove(id.Value);
-                                        x.IsVisgroupHidden = false;
-                                    });
-            }
+            var vg = _visgroups.First(x => x.ID == id.Value);
+            _visgroups.Remove(vg);
+            _deleted.Add(vg);
             UpdateVisgroups();
         }
 
@@ -80,7 +90,7 @@ namespace Sledge.Editor.Visgroups
         {
             var id = VisgroupPanel.GetSelectedVisgroup();
             if (!id.HasValue) return;
-            var vg = Document.Map.Visgroups.First(x => x.ID == id.Value);
+            var vg = _visgroups.First(x => x.ID == id.Value);
             if (vg.Name == GroupName.Text) return;
             vg.Name = GroupName.Text;
             VisgroupPanel.UpdateVisgroupName(id.Value, GroupName.Text);
@@ -90,8 +100,8 @@ namespace Sledge.Editor.Visgroups
         {
             var id = VisgroupPanel.GetSelectedVisgroup();
             if (!id.HasValue) return;
-            var vg = Document.Map.Visgroups.First(x => x.ID == id.Value);
-            using (var cp = new ColorDialog() {Color = vg.Colour})
+            var vg = _visgroups.First(x => x.ID == id.Value);
+            using (var cp = new ColorDialog {Color = vg.Colour})
             {
                 if (cp.ShowDialog() == DialogResult.OK)
                 {
