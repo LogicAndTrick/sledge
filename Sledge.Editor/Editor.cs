@@ -36,9 +36,6 @@ namespace Sledge.Editor
         public Editor()
         {
             InitializeComponent();
-            tsbNew.Click += (sender, e) => Mediator.Publish(HotkeysMediator.FileNew);
-            tsbOpen.Click += (sender, e) => Mediator.Publish(HotkeysMediator.FileOpen);
-            tsbSave.Click += (sender, e) => Mediator.Publish(HotkeysMediator.FileSave);
             Instance = this;
         }
 
@@ -78,7 +75,7 @@ namespace Sledge.Editor
 
             UpdateRecentFiles();
 
-            MenuManager.Init(mnuMain);
+            MenuManager.Init(mnuMain, tscToolStrip);
             MenuManager.Rebuild();
 
             ViewportManager.Init(tblQuadView);

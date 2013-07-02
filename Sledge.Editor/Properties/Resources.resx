@@ -127,6 +127,15 @@
   <data name="Cursor_Rotate" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Cursor_Rotate.cur;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="Menu_Close" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\menu_close.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Menu_New" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\menu_new.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Menu_Open" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\menu_open.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="Tool_Brush" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\resources\tool_brush.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>

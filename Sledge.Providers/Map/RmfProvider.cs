@@ -197,8 +197,7 @@ namespace Sledge.Providers.Map
             for (var i = 0; i < numChildren; i++)
             {
                 var child = ReadMapObject(br, visgroups, generator);
-                child.Parent = obj;
-                obj.Children.Add(child);
+                child.SetParent(obj);
             }
         }
 

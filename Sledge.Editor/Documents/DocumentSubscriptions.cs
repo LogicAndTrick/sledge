@@ -824,7 +824,9 @@ namespace Sledge.Editor.Documents
 
         public void VisgroupSelect(int visgroupId)
         {
-
+            if (_document.Selection.InFaceSelection) return;
+            var objects = _document.Map.WorldSpawn.Find(x => x.IsInVisgroup(visgroupId), true).Where(x => !x.IsVisgroupHidden);
+            _document.PerformAction("Select visgroup", new ChangeSelection(objects, _document.Selection.GetSelectedObjects()));
         }
 
         public void VisgroupShowEditor()
@@ -837,7 +839,10 @@ namespace Sledge.Editor.Documents
                     var cv = new List<Visgroup>();
                     var dv = new List<Visgroup>();
                     vef.PopulateChangeLists(_document, nv, cv, dv);
-                    _document.PerformAction("Edit visgroups", new CreateEditDeleteVisgroups(nv, cv, dv));
+                    if (nv.Any() || cv.Any() || dv.Any())
+                    {
+                        _document.PerformAction("Edit visgroups", new CreateEditDeleteVisgroups(nv, cv, dv));
+                    }
                 }
             }
         }

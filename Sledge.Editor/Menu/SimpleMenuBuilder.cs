@@ -1,14 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Windows.Forms;
-using Sledge.Common.Mediator;
-using Sledge.Settings;
 
 namespace Sledge.Editor.Menu
 {
     public class SimpleMenuBuilder : IMenuBuilder
     {
-
         public string Name { get; set; }
         public string Message { get; set; }
         public object Parameter { get; set; }
@@ -16,6 +14,9 @@ namespace Sledge.Editor.Menu
         public Func<bool> IsVisible { get; set; }
         public Func<bool> IsActive { get; set; }
         public Func<bool> IsChecked { get; set; }
+        public Image Image { get; set; }
+        public bool ShowInMenu { get; set; }
+        public bool ShowInToolStrip { get; set; }
 
         public SimpleMenuBuilder(string name, string message, object parameter = null)
         {
@@ -23,6 +24,7 @@ namespace Sledge.Editor.Menu
             Message = message;
             IsVisible = IsActive = null;
             Parameter = parameter;
+            ShowInMenu = true;
         }
 
         public SimpleMenuBuilder(string name, Enum message, object parameter = null)
@@ -31,41 +33,19 @@ namespace Sledge.Editor.Menu
             Message = message.ToString();
             IsVisible = IsActive = null;
             Parameter = parameter;
+            ShowInMenu = true;
         }
 
         public IEnumerable<ToolStripItem> Build()
         {
             if (IsVisible != null && !IsVisible()) yield break;
-            var mi = new UpdatingToolStripMenuItem(Name, IsActive, IsChecked, Text);
-            mi.Click += (sender, e) => Mediator.Publish(Message, Parameter);
-            if (IsActive != null) mi.Enabled = IsActive();
-            if (IsChecked != null) mi.Checked = IsChecked();
-            var hk = Hotkeys.GetHotkeyForMessage(Message);
-            if (hk != null) mi.ShortcutKeyDisplayString = hk.DefaultHotkey;
-            yield return mi;
-        }
-    }
-
-    class UpdatingToolStripMenuItem : ToolStripMenuItem, IMediatorListener
-    {
-        private readonly Func<string> _text;
-        private readonly Func<bool> _isChecked;
-        private readonly Func<bool> _isActive;
-
-        public UpdatingToolStripMenuItem(string text, Func<bool> isActive, Func<bool> isChecked, Func<string> textAction) : base(text)
-        {
-            _isActive = isActive;
-            _isChecked = isChecked;
-            _text = textAction;
-            if (_isActive != null || _text != null || _isChecked != null)
-                Mediator.Subscribe(EditorMediator.UpdateMenu, this);
+            yield return new UpdatingToolStripMenuItem(Name, Image, IsActive, IsChecked, Text, Message, Parameter);
         }
 
-        public void Notify(string message, object data)
+        public IEnumerable<ToolStripItem> BuildToolStrip()
         {
-            if (_isActive != null) Enabled = _isActive();
-            if (_isChecked != null) Checked = _isChecked();
-            if (_text != null) Text = _text();
+            if (IsVisible != null && !IsVisible()) yield break;
+            yield return new UpdatingToolStripButton(Name, Image, IsActive, IsChecked, Text, Message, Parameter);
         }
     }
 }

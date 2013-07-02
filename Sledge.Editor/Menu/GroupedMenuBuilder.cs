@@ -12,6 +12,9 @@ namespace Sledge.Editor.Menu
         public Func<bool> IsVisible { get; set; }
         public List<IMenuBuilder> SubMenus { get; set; }
 
+        public bool ShowInMenu { get { return true; } }
+        public bool ShowInToolStrip { get { return false; } }
+
         public GroupedMenuBuilder(string name, params IMenuBuilder[] subMenus)
         {
             Name = name;
@@ -29,6 +32,11 @@ namespace Sledge.Editor.Menu
             var mi = new ToolStripMenuItem(Name);
             mi.DropDownItems.AddRange(SubMenus.SelectMany(x => x.Build()).ToArray());
             yield return mi;
+        }
+
+        public IEnumerable<ToolStripItem> BuildToolStrip()
+        {
+            throw new NotImplementedException();
         }
 
         public IEnumerator<IMenuBuilder> GetEnumerator()

@@ -297,8 +297,7 @@ namespace Sledge.Providers.Map
             ret.Visgroups.AddRange(editor.GetAllPropertyValues("visgroupid").Select(int.Parse));
             foreach (var child in entity.GetChildren("solid").Select(solid => ReadSolid(solid, generator)).Where(s => s != null))
             {
-                child.Parent = ret;
-                ret.Children.Add(child);
+                child.SetParent(ret);
             }
             ret.UpdateBoundingBox(false);
             return ret;
@@ -366,8 +365,7 @@ namespace Sledge.Providers.Map
             foreach (var ag in assignedGroups)
             {
                 // Add the groups with no parent
-                ag.Parent = ret;
-                ret.Children.Add(ag);
+                ag.SetParent(ret);
                 groups.Remove(ag);
             }
             while (groups.Any())
@@ -381,8 +379,7 @@ namespace Sledge.Providers.Map
                 {
                     // Add the group to the tree and the assigned list, remove it from the groups list
                     var parent = assignedGroups.First(y => y.ID == kv.Value);
-                    kv.Key.Parent = parent;
-                    parent.Children.Add(kv.Key);
+                    kv.Key.SetParent(parent);
                     assignedGroups.Add(kv.Key);
                     groups.Remove(kv.Key);
                 }
@@ -397,8 +394,7 @@ namespace Sledge.Providers.Map
                 var editor = solid.GetChildren("editor").FirstOrDefault() ?? new GenericStructure("editor");
                 var gid = editor.PropertyLong("groupid");
                 var parent = gid > 0 ? assignedGroups.FirstOrDefault(x => x.ID == gid) ?? (MapObject) ret : ret;
-                s.Parent = parent;
-                parent.Children.Add(s);
+                s.SetParent(parent);
                 parent.UpdateBoundingBox();
             }
 
@@ -415,8 +411,7 @@ namespace Sledge.Providers.Map
                     var editor = solid.GetChildren("editor").FirstOrDefault() ?? new GenericStructure("editor");
                     var gid = editor.PropertyLong("groupid");
                     var parent = gid > 0 ? assignedGroups.FirstOrDefault(x => x.ID == gid) ?? (MapObject)ret : ret;
-                    s.Parent = parent;
-                    parent.Children.Add(s);
+                    s.SetParent(parent);
                     parent.UpdateBoundingBox();
                 }
             }
@@ -498,8 +493,7 @@ namespace Sledge.Providers.Map
                 var ent = ReadEntity(entity, dummyGen);
                 var groupid = entity.Children.Where(x => x.Name == "editor").Select(x => x.PropertyInteger("groupid")).FirstOrDefault();
                 var entParent = groupid > 0 ? world.Find(x => x.ID == groupid && x is Group).FirstOrDefault() ?? world : world;
-                ent.Parent = entParent;
-                entParent.Children.Add(ent);
+                ent.SetParent(entParent);
             }
             list.AddRange(world.Children);
             Reindex(list, generator);
@@ -551,8 +545,7 @@ namespace Sledge.Providers.Map
                     var ent = ReadEntity(entity, map.IDGenerator);
                     var groupid = entity.Children.Where(x => x.Name == "editor").Select(x => x.PropertyInteger("groupid")).FirstOrDefault();
                     var entParent = groupid > 0 ? map.WorldSpawn.Find(x => x.ID == groupid && x is Group).FirstOrDefault() ?? map.WorldSpawn : map.WorldSpawn;
-                    ent.Parent = entParent;
-                    entParent.Children.Add(ent);
+                    ent.SetParent(entParent);
                 }
 
                 return map;

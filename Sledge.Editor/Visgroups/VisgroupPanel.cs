@@ -146,9 +146,22 @@ namespace Sledge.Editor.Visgroups
         public CheckState GetCheckState(int visgroupId)
         {
             var node = GetNodeForVisgroupID(visgroupId);
+            return GetCheckState(node);
+        }
+
+        private CheckState GetCheckState(TreeNode node)
+        {
             if (node == null || node.StateImageKey == "Unchecked") return CheckState.Unchecked;
             if (node.StateImageKey == "Checked") return CheckState.Checked;
             return CheckState.Indeterminate;
+        }
+
+        public Dictionary<int, CheckState> GetAllCheckStates()
+        {
+            return VisgroupTree.Nodes
+                .OfType<TreeNode>()
+                .Where(x => x.Tag is int)
+                .ToDictionary(x => (int) x.Tag, GetCheckState);
         }
 
         public void SetCheckState(int visgroupId, CheckState state)

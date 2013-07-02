@@ -13,8 +13,9 @@ namespace Sledge.DataStructures.MapObjects
         public long ID { get; set; }
         public string ClassName { get; set; }
         public List<int> Visgroups { get; set; }
+        public List<int> AutoVisgroups { get; set; }
         public List<MapObject> Children { get; set; }
-        public MapObject Parent { get; set; }
+        public MapObject Parent { get; private set; }
         public Color Colour { get; set; }
         public bool IsSelected { get; set; }
         public bool IsCodeHidden { get; set; }
@@ -25,6 +26,7 @@ namespace Sledge.DataStructures.MapObjects
         {
             ID = id;
             Visgroups = new List<int>();
+            AutoVisgroups = new List<int>();
             Children = new List<MapObject>();
         }
 
@@ -53,6 +55,7 @@ namespace Sledge.DataStructures.MapObjects
             if (performClone) o.ID = ID;
             o.ClassName = ClassName;
             o.Visgroups.AddRange(Visgroups);
+            o.AutoVisgroups.AddRange(AutoVisgroups);
             o.Parent = Parent;
             o.Colour = Colour;
             o.IsSelected = IsSelected;
@@ -69,11 +72,13 @@ namespace Sledge.DataStructures.MapObjects
         protected void PasteBase(MapObject o, IDGenerator generator, bool performUnclone = false)
         {
             Visgroups.Clear();
+            AutoVisgroups.Clear();
             Children.Clear();
 
             if (performUnclone) ID = o.ID;
             ClassName = o.ClassName;
             Visgroups.AddRange(o.Visgroups);
+            AutoVisgroups.AddRange(o.AutoVisgroups);
             Parent = o.Parent;
             Colour = o.Colour;
             IsSelected = o.IsSelected;
@@ -250,6 +255,16 @@ namespace Sledge.DataStructures.MapObjects
         public bool IsInVisgroup(int visgroup)
         {
             return Visgroups.Contains(visgroup);
+        }
+
+        /// <summary>
+        /// Returns true if this object is in the given auto visgroup.
+        /// </summary>
+        /// <param name="visgroup">The auto visgroup to check</param>
+        /// <returns>True if this object is in the auto visgroup</returns>
+        public bool IsInAutoVisgroup(int visgroup)
+        {
+            return AutoVisgroups.Contains(visgroup);
         }
 
         /// <summary>

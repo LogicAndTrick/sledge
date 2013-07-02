@@ -8,6 +8,8 @@ namespace Sledge.Editor.Menu
 {
     public class RecentFilesMenu : IMenuBuilder
     {
+        public bool ShowInMenu { get { return true; } }
+        public bool ShowInToolStrip { get { return false; } }
         public IEnumerable<ToolStripItem> Build()
         {
             if (MenuManager.RecentFiles.Count == 0) yield break;
@@ -18,6 +20,11 @@ namespace Sledge.Editor.Menu
                 mi.Click += (sender, e) => Mediator.Publish("");
                 yield return mi;
             }
+        }
+
+        public IEnumerable<ToolStripItem> BuildToolStrip()
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

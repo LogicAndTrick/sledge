@@ -30,7 +30,7 @@ namespace Sledge.Editor.Visgroups
                 if (dg == null) newVisgroups.Add(g);
                 else if (dg.Name != g.Name || dg.Colour != g.Colour) changedVisgroups.Add(g);
             }
-            deletedVisgroups.AddRange(_deleted);
+            deletedVisgroups.AddRange(_deleted.Where(x => doc.Map.Visgroups.Any(y => y.ID == x.ID)));
         }
 
         private void UpdateVisgroups()

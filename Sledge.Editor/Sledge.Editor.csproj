@@ -93,8 +93,7 @@
     <Compile Include="Actions\MapObjects\Entities\EditEntityData.cs" />
     <Compile Include="Actions\MapObjects\Selection\Select.cs" />
     <Compile Include="Actions\MapObjects\Selection\SelectFace.cs" />
-    <Compile Include="Actions\MapObjects\Visgroups\AddVisgroup.cs" />
-    <Compile Include="Actions\MapObjects\Visgroups\RemoveVisgroup.cs" />
+    <Compile Include="Actions\Visgroups\EditObjectVisgroups.cs" />
     <Compile Include="Actions\Visgroups\CreateEditDeleteVisgroups.cs" />
     <Compile Include="Actions\Visgroups\ShowAllVisgroups.cs" />
     <Compile Include="Actions\Visgroups\ToggleVisgroup.cs" />
@@ -138,7 +137,11 @@
     <Compile Include="Menu\MenuManager.cs" />
     <Compile Include="Menu\MenuSplitter.cs" />
     <Compile Include="Menu\RecentFilesMenu.cs" />
-    <Compile Include="Menu\SimpleMenuBuilder.cs">
+    <Compile Include="Menu\SimpleMenuBuilder.cs" />
+    <Compile Include="Menu\UpdatingToolStripButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Menu\UpdatingToolStripMenuItem.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Problems\DuplicateFaceIDs.cs" />
@@ -325,7 +328,6 @@
     <Compile Include="Visgroups\VisgroupEditForm.Designer.cs">
       <DependentUpon>VisgroupEditForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Visgroups\VisgroupManager.cs" />
     <Compile Include="Visgroups\VisgroupPanel.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -504,6 +506,9 @@
     <Content Include="Milestones.txt" />
     <Content Include="Resources\Arrow_Down.png" />
     <Content Include="Resources\Arrow_Up.png" />
+    <Content Include="Resources\Menu_Close.png" />
+    <Content Include="Resources\Menu_New.png" />
+    <Content Include="Resources\Menu_Open.png" />
     <Content Include="Resources\Tool_Brush.png" />
     <Content Include="Resources\Tool_Clip.png" />
     <Content Include="Resources\Tool_Decal.png" />
@@ -514,7 +519,9 @@
     <Content Include="Resources\Tool_Translate.png" />
     <Content Include="Resources\Tool_VM.png" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Actions\MapObjects\Visgroups\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

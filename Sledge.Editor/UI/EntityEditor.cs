@@ -8,7 +8,7 @@ using Sledge.DataStructures.GameData;
 using Sledge.DataStructures.MapObjects;
 using Sledge.Editor.Actions;
 using Sledge.Editor.Actions.MapObjects.Entities;
-using Sledge.Editor.Actions.MapObjects.Visgroups;
+using Sledge.Editor.Actions.Visgroups;
 using Sledge.Editor.Visgroups;
 using Property = Sledge.DataStructures.MapObjects.Property;
 
@@ -109,9 +109,38 @@ namespace Sledge.Editor.UI
 
         private void Apply()
         {
-            var ents = Objects.Where(x => x is Entity || x is World).ToList();
-            if (!ents.Any()) return;
+            string actionText = null;
+            var ac = new ActionCollection();
+            var editAction = GetEditEntityDataAction();
+            var visgroupAction = GetUpdateVisgroupsAction();
 
+            if (editAction != null)
+            {
+                // The entity change is more important to show
+                actionText = "Edit entity data";
+                ac.Add(editAction);
+            }
+
+            if (visgroupAction != null)
+            {
+                // Visgroup change shows if entity data not changed
+                if (actionText == null) actionText = "Edit object visgroups";
+                ac.Add(visgroupAction);
+            }
+
+            if (!ac.IsEmpty())
+            {
+                // Run if either action shows changes
+                Document.PerformAction(actionText, ac);
+            }
+
+            Class.BackColor = Color.White;
+        }
+
+        private EditEntityData GetEditEntityDataAction()
+        {
+            var ents = Objects.Where(x => x is Entity || x is World).ToList();
+            if (!ents.Any()) return null;
             var action = new EditEntityData();
 
             foreach (var entity in ents)
@@ -147,9 +176,12 @@ namespace Sledge.Editor.UI
                 }
 
                 // Set flags
-                var flags = Enumerable.Range(0, FlagsTable.Items.Count).Select(x => FlagsTable.GetItemCheckState(x)).ToList();
+                var flags =
+                    Enumerable.Range(0, FlagsTable.Items.Count).Select(x => FlagsTable.GetItemCheckState(x)).ToList();
                 var entClass = Document.GameData.Classes.FirstOrDefault(x => x.Name == entityData.Name);
-                var spawnFlags = entClass == null ? null : entClass.Properties.FirstOrDefault(x => x.Name == "spawnflags");
+                var spawnFlags = entClass == null
+                                     ? null
+                                     : entClass.Properties.FirstOrDefault(x => x.Name == "spawnflags");
                 var opts = spawnFlags == null ? null : spawnFlags.Options;
                 if (opts == null || flags.Count != opts.Count) continue;
 
@@ -166,12 +198,17 @@ namespace Sledge.Editor.UI
                 if (changed) action.AddEntity(entity, entityData);
             }
 
-            if (!action.IsEmpty())
-            {
-                Document.PerformAction("Edit entity values", action);
-            }
+            return action.IsEmpty() ? null : action;
+        }
 
-            Class.BackColor = Color.White;
+        private IAction GetUpdateVisgroupsAction()
+        {
+            var states = VisgroupPanel.GetAllCheckStates();
+            var add = states.Where(x => x.Value == CheckState.Checked).Select(x => x.Key).ToList();
+            var rem = states.Where(x => x.Value == CheckState.Unchecked).Select(x => x.Key).ToList();
+            // If all the objects are in the add groups and none are in the remove groups, nothing needs to be changed
+            if (Objects.All(x => add.All(x.IsInVisgroup) && !rem.Any(x.IsInVisgroup))) return null;
+            return new EditObjectVisgroups(Objects, add, rem);
         }
 
         public void Notify(string message, object data)
@@ -189,7 +226,7 @@ namespace Sledge.Editor.UI
 
             if (message == EditorMediator.VisgroupsChanged.ToString())
             {
-                UpdateVisgroups();
+                UpdateVisgroups(true);
             }
         }
 
@@ -205,7 +242,7 @@ namespace Sledge.Editor.UI
             if (!FollowSelection)
             {
                 UpdateKeyValues();
-                UpdateVisgroups();
+                UpdateVisgroups(false);
                 return;
             }
             Objects.Clear();
@@ -216,7 +253,12 @@ namespace Sledge.Editor.UI
             RefreshData();
         }
 
-        private void UpdateVisgroups()
+        private void EditVisgroupsClicked(object sender, EventArgs e)
+        {
+            Mediator.Publish(EditorMediator.VisgroupShowEditor);
+        }
+
+        private void UpdateVisgroups(bool retainCheckStates)
         {
             _populating = true;
 
@@ -228,46 +270,31 @@ namespace Sledge.Editor.UI
                                                                        Visible = false
                                                                    });
 
-            VisgroupPanel.Update(visgroups);
+            Dictionary<int, CheckState> states;
 
-            var groups = Objects.SelectMany(x => x.Visgroups)
-                .GroupBy(x => x)
-                .Select(x => new {ID = x.Key, Count = x.Count()});
-
-            foreach (var g in groups.Where(g => g.Count > 0))
+            if (retainCheckStates)
             {
-                VisgroupPanel.SetCheckState(g.ID, g.Count == Objects.Count
+                 states = VisgroupPanel.GetAllCheckStates();
+            }
+            else
+            {
+                states = Objects.SelectMany(x => x.Visgroups)
+                    .GroupBy(x => x)
+                    .Select(x => new {ID = x.Key, Count = x.Count()})
+                    .Where(g => g.Count > 0)
+                    .ToDictionary(g => g.ID, g => g.Count == Objects.Count
                                                       ? CheckState.Checked
                                                       : CheckState.Indeterminate);
             }
 
+            VisgroupPanel.Update(visgroups);
+
+            foreach (var kv in states)
+            {
+                VisgroupPanel.SetCheckState(kv.Key, kv.Value);
+            }
+
             _populating = false;
-        }
-
-        private void VisgroupToggled(object sender, int visgroupId, CheckState state)
-        {
-            IAction action = null;
-            switch (state)
-            {
-                case CheckState.Unchecked:
-                    action = new RemoveVisgroup(visgroupId, Objects);
-                    break;
-                case CheckState.Checked:
-                    action = new AddVisgroup(visgroupId, Objects);
-                    break;
-            }
-
-            if (action == null) return;
-            Document.PerformAction("Edit object visgroups", action);
-
-            var updated = false;
-            foreach (var o in Objects.Where(x => x.IsVisgroupHidden && !x.Visgroups.Any()))
-            {
-                o.IsVisgroupHidden = false;
-                updated = true;
-            }
-            if (updated) Document.UpdateDisplayLists();
-            VisgroupManager.Update();
         }
 
         protected override void OnLoad(EventArgs e)
@@ -295,7 +322,7 @@ namespace Sledge.Editor.UI
                 return;
             }
 
-            UpdateVisgroups();
+            UpdateVisgroups(false);
 
             var beforeTabs = Tabs.TabPages.OfType<TabPage>().ToArray();
 

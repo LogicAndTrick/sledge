@@ -4,11 +4,10 @@ Priorities
   Bugs
     Clip retain groups
     Actions for switching selection modes
+    Toolbar buttons not updating on select/copy/etc
   Enhancements
-    Auto visgroup
     Select tool 2D drag view original
     Select tool 2D select entities
-    Mediator/action visgroups
     Transparent rendering / painter's algorithm
     Additional Map Properties
       VMF
@@ -18,21 +17,16 @@ Priorities
       Menu actions
         Quickhide
     Toolbar buttons
-      Show 2D/3D grid
-      Smaller/larger grid
-      Undo/redo
-      Carve/hollow
-      Group/ungroup/toggle ignore grouping
+      Ignore grouping
       Visgroups/quickhide
-      Cut/copy/paste/paste special
       Cordon tool
       Texture lock, scaling lock
       Maybe: select by handles, auto select, texture alignment
-      Run map
     Recognise changes / prompt for save
     New/Open/Save/Save As/Close
     2D view right click/Hotkeys
     Check for updates (needed for alpha!)
+    Toobar & tool icons
 
 Post-Alpha Priorities
   TDI
@@ -50,6 +44,7 @@ Post-Alpha Priorities
   Pointfile dark/light theme toggle
   3D view helpers
   Toggle render of nodraw/null faces
+  Auto visgroup
 
 1. Goldsource Support
   Formats

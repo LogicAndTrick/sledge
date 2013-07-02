@@ -179,10 +179,9 @@ namespace Sledge.Providers.Map
             while ((line = CleanLine(rdr.ReadLine())) != null)
             {
                 if (line[0] == '"') ReadProperty(ent, line);
-                else if (line[0] == '{') ent.Children.Add(ReadSolid(rdr, generator));
+                else if (line[0] == '{') ReadSolid(rdr, generator).SetParent(ent);
                 else if (line[0] == '}') break;
             }
-            ent.Children.ForEach(x => x.Parent = ent);
             ent.UpdateBoundingBox(false);
             return ent;
         }
@@ -249,9 +248,8 @@ namespace Sledge.Providers.Map
                                  ?? new Entity(0) {EntityData = {Name = "worldspawn"}};
                 allentities.Remove(worldspawn);
                 map.WorldSpawn.EntityData = worldspawn.EntityData;
-                map.WorldSpawn.Children.AddRange(allentities);
-                map.WorldSpawn.Children.AddRange(worldspawn.Children);
-                map.WorldSpawn.Children.ForEach(x => x.Parent = map.WorldSpawn);
+                allentities.ForEach(x => x.SetParent(map.WorldSpawn));
+                worldspawn.Children.ForEach(x => x.SetParent(map.WorldSpawn));
                 map.WorldSpawn.UpdateBoundingBox(false);
                 return map;
             }

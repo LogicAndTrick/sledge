@@ -102,8 +102,6 @@ namespace Sledge.Editor.Documents
             ViewportManager.Viewports.ForEach(vp => vp.RenderContext.Add(new ToolRenderable()));
             ViewportManager.AddContext3D(new WidgetLinesRenderable());
 
-            VisgroupManager.SetCurrentDocument(this);
-
             _subscriptions.Subscribe();
 
             Mediator.Publish(EditorMediator.DocumentActivated, this);
@@ -113,7 +111,6 @@ namespace Sledge.Editor.Documents
         {
             // todo save state (camera locations, selected tool)
             ViewportManager.ClearContexts();
-            VisgroupManager.SetCurrentDocument(null);
             MapDisplayLists.DeleteLists();
 
             _subscriptions.Unsubscribe();

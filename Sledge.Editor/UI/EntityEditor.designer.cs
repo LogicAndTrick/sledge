@@ -94,6 +94,7 @@ namespace Sledge.Editor.UI
             this.FlagsTab = new System.Windows.Forms.TabPage();
             this.FlagsTable = new System.Windows.Forms.CheckedListBox();
             this.VisgroupTab = new System.Windows.Forms.TabPage();
+            this.EditVisgroupsButton = new System.Windows.Forms.Button();
             this.VisgroupPanel = new Sledge.Editor.Visgroups.VisgroupPanel();
             this.label11 = new System.Windows.Forms.Label();
             this.btnCancel = new System.Windows.Forms.Button();
@@ -650,6 +651,7 @@ namespace Sledge.Editor.UI
             // 
             // VisgroupTab
             // 
+            this.VisgroupTab.Controls.Add(this.EditVisgroupsButton);
             this.VisgroupTab.Controls.Add(this.VisgroupPanel);
             this.VisgroupTab.Controls.Add(this.label11);
             this.VisgroupTab.Location = new System.Drawing.Point(4, 22);
@@ -660,6 +662,17 @@ namespace Sledge.Editor.UI
             this.VisgroupTab.Text = "Visgroup";
             this.VisgroupTab.UseVisualStyleBackColor = true;
             // 
+            // EditVisgroupsButton
+            // 
+            this.EditVisgroupsButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.EditVisgroupsButton.Location = new System.Drawing.Point(570, 351);
+            this.EditVisgroupsButton.Name = "EditVisgroupsButton";
+            this.EditVisgroupsButton.Size = new System.Drawing.Size(98, 23);
+            this.EditVisgroupsButton.TabIndex = 3;
+            this.EditVisgroupsButton.Text = "Edit Visgroups";
+            this.EditVisgroupsButton.UseVisualStyleBackColor = true;
+            this.EditVisgroupsButton.Click += new System.EventHandler(this.EditVisgroupsClicked);
+            // 
             // VisgroupPanel
             // 
             this.VisgroupPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -668,9 +681,8 @@ namespace Sledge.Editor.UI
             this.VisgroupPanel.Location = new System.Drawing.Point(6, 26);
             this.VisgroupPanel.Name = "VisgroupPanel";
             this.VisgroupPanel.ShowCheckboxes = true;
-            this.VisgroupPanel.Size = new System.Drawing.Size(662, 348);
+            this.VisgroupPanel.Size = new System.Drawing.Size(662, 319);
             this.VisgroupPanel.TabIndex = 2;
-            this.VisgroupPanel.VisgroupToggled += new Sledge.Editor.Visgroups.VisgroupPanel.VisgroupToggledEventHandler(this.VisgroupToggled);
             // 
             // label11
             // 
@@ -804,5 +816,6 @@ namespace Sledge.Editor.UI
         private System.Windows.Forms.Button AddPropertyButton;
         private System.Windows.Forms.Button button1;
         private Visgroups.VisgroupPanel VisgroupPanel;
+        private System.Windows.Forms.Button EditVisgroupsButton;
 	}
 }

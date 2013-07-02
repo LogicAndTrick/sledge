@@ -78,7 +78,7 @@ namespace Sledge.DataStructures.MapObjects
             // Purge empty groups
             foreach (var emptyGroup in WorldSpawn.Find(x => x is Group && !x.Children.Any()))
             {
-                emptyGroup.Parent.Children.Remove(emptyGroup);
+                emptyGroup.SetParent(null);
             }
         }
 

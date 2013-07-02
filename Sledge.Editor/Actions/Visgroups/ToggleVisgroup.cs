@@ -12,6 +12,7 @@ namespace Sledge.Editor.Actions.Visgroups
         private readonly int _visgroupId;
         private readonly bool _hide;
         private List<MapObject> _changed;
+        private List<MapObject> _deselected;
 
         public ToggleVisgroup(int visgroupId, bool visible)
         {
@@ -23,16 +24,24 @@ namespace Sledge.Editor.Actions.Visgroups
         public void Dispose()
         {
             _changed = null;
+            _deselected = null;
         }
 
         public void Reverse(Document document)
         {
             _changed.ForEach(x => x.IsVisgroupHidden = !_hide);
 
+            if (_deselected != null)
+            {
+                document.Selection.Select(_deselected);
+                Mediator.Publish(EditorMediator.SelectionChanged);
+            }
+
             Mediator.Publish(EditorMediator.VisgroupVisibilityChanged, _visgroupId);
             Mediator.Publish(EditorMediator.DocumentTreeStructureChanged);
 
             _changed = null;
+            _deselected = null;
         }
 
         public void Perform(Document document)
@@ -40,6 +49,13 @@ namespace Sledge.Editor.Actions.Visgroups
             _changed = document.Map.WorldSpawn.Find(x => x.IsInVisgroup(_visgroupId), true)
                 .Where(x => x.IsVisgroupHidden != _hide).ToList();
             _changed.ForEach(x => x.IsVisgroupHidden = _hide);
+
+            if (_hide)
+            {
+                _deselected = _changed.Where(x => x.IsSelected).ToList();
+                document.Selection.Deselect(_deselected);
+                Mediator.Publish(EditorMediator.SelectionChanged);
+            }
 
             Mediator.Publish(EditorMediator.VisgroupVisibilityChanged, _visgroupId);
             Mediator.Publish(EditorMediator.DocumentTreeStructureChanged);

@@ -49,6 +49,7 @@ namespace Sledge.Editor
 
         // Editor messages
         UpdateMenu,
+        UpdateToolstrip,
         CheckForUpdates,
         OpenWebsite,
         About,
