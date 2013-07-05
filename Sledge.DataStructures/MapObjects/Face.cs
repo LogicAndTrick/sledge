@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -120,6 +121,7 @@ namespace Sledge.DataStructures.MapObjects
 
         public virtual void CalculateTextureCoordinates()
         {
+            MinimiseTextureShiftValues();
             Vertices.ForEach(c => c.TextureU = c.TextureV = 0);
 
             if (Texture.Texture == null) return;
@@ -229,12 +231,10 @@ namespace Sledge.DataStructures.MapObjects
             Texture.XScale = face.Texture.XScale;
             Texture.YScale = face.Texture.YScale;
 
-            MinimiseTextureShiftValues();
-
             CalculateTextureCoordinates();
         }
 
-        public void MinimiseTextureShiftValues()
+        private void MinimiseTextureShiftValues()
         {
             if (Texture.Texture == null) return;
             // Keep the shift values to a minimum
@@ -249,8 +249,8 @@ namespace Sledge.DataStructures.MapObjects
             if (Texture.Texture == null) return;
 
             // Scale will change, no need to use it in the calculations
-            var xvals = cloud.GetExtents().Select(x => x.Dot(Texture.UAxis));
-            var yvals = cloud.GetExtents().Select(x => x.Dot(Texture.VAxis));
+            var xvals = cloud.GetExtents().Select(x => x.Dot(Texture.UAxis)).ToList();
+            var yvals = cloud.GetExtents().Select(x => x.Dot(Texture.VAxis)).ToList();
 
             var minU = xvals.Min();
             var minV = yvals.Min();
@@ -262,7 +262,6 @@ namespace Sledge.DataStructures.MapObjects
             Texture.XShift = -minU / Texture.XScale;
             Texture.YShift = -minV / Texture.YScale;
 
-            MinimiseTextureShiftValues();
             CalculateTextureCoordinates();
         }
 
@@ -270,8 +269,8 @@ namespace Sledge.DataStructures.MapObjects
         {
             if (Texture.Texture == null) return;
 
-            var xvals = cloud.GetExtents().Select(x => x.Dot(Texture.UAxis) / Texture.XScale);
-            var yvals = cloud.GetExtents().Select(x => x.Dot(Texture.VAxis) / Texture.YScale);
+            var xvals = cloud.GetExtents().Select(x => x.Dot(Texture.UAxis) / Texture.XScale).ToList();
+            var yvals = cloud.GetExtents().Select(x => x.Dot(Texture.VAxis) / Texture.YScale).ToList();
 
             var minU = xvals.Min();
             var minV = yvals.Min();
@@ -299,8 +298,6 @@ namespace Sledge.DataStructures.MapObjects
                     Texture.YShift = -maxV + Texture.Texture.Height;
                     break;
             }
-
-            MinimiseTextureShiftValues();
             CalculateTextureCoordinates();
         }
 
@@ -328,7 +325,7 @@ namespace Sledge.DataStructures.MapObjects
             BoundingBox = new Box(Vertices.Select(x => x.Location));
         }
 
-        public virtual void Transform(IUnitTransformation transform)
+        public virtual void Transform(IUnitTransformation transform, TransformFlags flags)
         {
             foreach (var t in Vertices)
             {
@@ -336,6 +333,35 @@ namespace Sledge.DataStructures.MapObjects
             }
             Plane = new Plane(Vertices[0].Location, Vertices[1].Location, Vertices[2].Location);
             Colour = Colour;
+            if (flags.HasFlag(TransformFlags.TextureScalingLock))
+            {
+                // Make a best-effort guess of retaining scaling. All bets are off during skew operations.
+                // Transform the current texture axes
+                var origin = transform.Transform(Coordinate.Zero);
+                var ua = transform.Transform(Texture.UAxis) - origin;
+                var va = transform.Transform(Texture.VAxis) - origin;
+                // Multiply the scales by the magnitudes (they were normals before the transform operation)
+                Texture.XScale *= ua.VectorMagnitude();
+                Texture.YScale *= va.VectorMagnitude();
+            }
+            if (flags.HasFlag(TransformFlags.TextureLock))
+            {
+                // Transform the texture axes and move them back to the origin
+                var origin = transform.Transform(Coordinate.Zero);
+                var ua = transform.Transform(Texture.UAxis) - origin;
+                var va = transform.Transform(Texture.VAxis) - origin;
+                // Only do the transform if the axes end up being not perpendicular
+                // Otherwise just make a best-effort guess, same as the scaling lock
+                if (Math.Abs(ua.Dot(va)) < 0.0001m)
+                {
+                    Texture.UAxis = ua;
+                    Texture.VAxis = va;
+                }
+                // Calculate the new shift values based on the UV values of the vertices
+                var vtx = Vertices[0];
+                Texture.XShift = Texture.Texture.Width * vtx.TextureU - (vtx.Location.Dot(Texture.UAxis)) / Texture.XScale;
+                Texture.YShift = Texture.Texture.Height * vtx.TextureV - (vtx.Location.Dot(Texture.VAxis)) / Texture.YScale;
+            }
             CalculateTextureCoordinates();
             UpdateBoundingBox();
         }

@@ -40,6 +40,14 @@ namespace Sledge.DataStructures.MapObjects
             CordonBounds = new Box(Coordinate.One * -1024, Coordinate.One * 1024);
         }
 
+        public TransformFlags GetTransformFlags()
+        {
+            var flags = TransformFlags.None;
+            if (TextureLock) flags |= TransformFlags.TextureLock;
+            if (TextureScalingLock) flags |= TransformFlags.TextureScalingLock;
+            return flags;
+        }
+
         public IEnumerable<string> GetAllTextures()
         {
             return GetAllTexturesRecursive(WorldSpawn).Distinct();

@@ -662,7 +662,7 @@ namespace Sledge.Editor.Tools
             }
 
             // Transform the selection
-            action.Add(new Edit(objects, (d, x) => x.Transform(transform)));
+            action.Add(new Edit(objects, (d, x) => x.Transform(transform, d.Map.GetTransformFlags())));
 
             // Execute the action
             Document.PerformAction(name, action);

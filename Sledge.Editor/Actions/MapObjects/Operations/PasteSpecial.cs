@@ -92,7 +92,7 @@ namespace Sledge.Editor.Actions.MapObjects.Operations
                 {
                     var copyOrigin = origin + (_offset * i);
                     var copyRotation = _rotation * i;
-                    var copy = CreateCopy(document.Map.IDGenerator, copyOrigin, copyRotation, names).ToList();
+                    var copy = CreateCopy(document.Map.IDGenerator, copyOrigin, copyRotation, names, document.Map.GetTransformFlags()).ToList();
                     var grouped = GroupCopy(document.Map.IDGenerator, allGroup, copy);
                     objects.AddRange(grouped);
                 }
@@ -130,7 +130,7 @@ namespace Sledge.Editor.Actions.MapObjects.Operations
             return origin;
         }
 
-        private IEnumerable<MapObject> CreateCopy(IDGenerator gen, Coordinate origin, Coordinate rotation, List<string> names)
+        private IEnumerable<MapObject> CreateCopy(IDGenerator gen, Coordinate origin, Coordinate rotation, List<string> names, TransformFlags transformFlags)
         {
             var box = new Box(_objectsToPaste.Select(x => x.BoundingBox));
 
@@ -143,7 +143,7 @@ namespace Sledge.Editor.Actions.MapObjects.Operations
             {
                 // Copy, transform and fix entity names
                 var copy = mo.Copy(gen);
-                copy.Transform(transform);
+                copy.Transform(transform, transformFlags);
                 FixEntityNames(copy, names);
                 yield return copy;
             }

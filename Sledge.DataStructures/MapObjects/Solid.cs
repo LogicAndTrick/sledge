@@ -75,9 +75,9 @@ namespace Sledge.DataStructures.MapObjects
             base.UpdateBoundingBox(cascadeToParent);
         }
 
-        public override void Transform(Transformations.IUnitTransformation transform)
+        public override void Transform(Transformations.IUnitTransformation transform, TransformFlags flags)
         {
-            Faces.ForEach(f => f.Transform(transform));
+            Faces.ForEach(f => f.Transform(transform, flags));
 
             // Handle flip transforms / negative scales
             var origin = GetOrigin();
@@ -87,7 +87,7 @@ namespace Sledge.DataStructures.MapObjects
                 Faces.ForEach(x => x.Flip());
             }
 
-            base.Transform(transform);
+            base.Transform(transform, flags);
 
         }
 

@@ -67,6 +67,7 @@
     <Compile Include="GameData\VariableType.cs" />
     <Compile Include="Geometric\Line.cs" />
     <Compile Include="MapObjects\AutoVisgroup.cs" />
+    <Compile Include="MapObjects\TransformFlags.cs" />
     <Compile Include="MapObjects\VisgroupFilters\IAutoVisgroup.cs" />
     <Compile Include="MapObjects\DisplacementPoint.cs" />
     <Compile Include="Geometric\Coordinate.cs" />

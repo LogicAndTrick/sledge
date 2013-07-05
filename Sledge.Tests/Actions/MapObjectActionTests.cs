@@ -132,7 +132,7 @@ namespace Sledge.Tests.Actions
             var before = GetRandomObjects(_document, 200).OfType<Solid>().ToList();
             var after = before.Select(x => x.Clone()).ToList();
             var rot = new UnitRotate(40, new Line(new Coordinate(1, 0, -1), new Coordinate(2, -3, 7)));
-            after.ForEach(x => x.Transform(rot));
+            after.ForEach(x => x.Transform(rot, TransformFlags.None));
             TestAction(new Edit(before, after));
         }
 
@@ -141,7 +141,7 @@ namespace Sledge.Tests.Actions
         {
             var before = GetRandomObjects(_document, 200).OfType<Solid>().ToList();
             var rot = new UnitRotate(40, new Line(new Coordinate(1, 0, -1), new Coordinate(2, -3, 7)));
-            TestAction(new Edit(before, (d,x) => x.Transform(rot)));
+            TestAction(new Edit(before, (d,x) => x.Transform(rot, TransformFlags.None)));
         }
 
         [TestMethod]

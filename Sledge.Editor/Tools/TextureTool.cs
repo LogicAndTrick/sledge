@@ -281,7 +281,6 @@ namespace Sledge.Editor.Tools
                                                         face.Texture.XShift = face.Texture.UAxis.Dot(point);
                                                         face.Texture.YShift = face.Texture.VAxis.Dot(point);
                                                         face.Texture.Rotation = 0;
-                                                        face.MinimiseTextureShiftValues();
                                                         face.CalculateTextureCoordinates();
                                                     }, false));
                     break;

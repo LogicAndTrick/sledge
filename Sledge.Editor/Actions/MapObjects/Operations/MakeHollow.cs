@@ -97,7 +97,7 @@ namespace Sledge.Editor.Actions.MapObjects.Operations
                 var scale = target.ComponentDivide(current);
                 var transform = new UnitScale(scale, origin);
                 var carver = (Solid) solid.Clone();
-                carver.Transform(transform);
+                carver.Transform(transform, document.Map.GetTransformFlags());
 
                 solid.SetParent(null);
                 carver.SetParent(null);

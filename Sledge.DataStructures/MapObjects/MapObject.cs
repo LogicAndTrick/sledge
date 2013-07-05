@@ -128,9 +128,9 @@ namespace Sledge.DataStructures.MapObjects
             }
         }
 
-        public virtual void Transform(IUnitTransformation transform)
+        public virtual void Transform(IUnitTransformation transform, TransformFlags flags)
         {
-            Children.ForEach(c => c.Transform(transform));
+            Children.ForEach(c => c.Transform(transform, flags));
             UpdateBoundingBox();
         }
 

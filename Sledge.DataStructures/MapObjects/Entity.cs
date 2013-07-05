@@ -221,7 +221,7 @@ namespace Sledge.DataStructures.MapObjects
 
                 // Add a tiny bit to the normal axis to ensure the decal is rendered in front of the face
                 var normalAdd = face.Plane.Normal * 0.2m;
-                decalFace.Transform(new UnitTranslate(normalAdd));
+                decalFace.Transform(new UnitTranslate(normalAdd), TransformFlags.None);
 
                 _decalGeometry.Add(decalFace);
             }
@@ -265,10 +265,10 @@ namespace Sledge.DataStructures.MapObjects
             return s;
         }
 
-        public override void Transform(IUnitTransformation transform)
+        public override void Transform(IUnitTransformation transform, TransformFlags flags)
         {
             Origin = transform.Transform(Origin);
-            base.Transform(transform);
+            base.Transform(transform, flags);
         }
 
         /// <summary>

@@ -520,7 +520,7 @@ namespace Sledge.Editor.Documents
                 if (transform == null) return;
 
                 var selected = _document.Selection.GetSelectedParents();
-                _document.PerformAction("Transform selection", new Edit(selected, (d, x) => x.Transform(transform)));
+                _document.PerformAction("Transform selection", new Edit(selected, (d, x) => x.Transform(transform, d.Map.GetTransformFlags())));
             }
         }
 
@@ -545,7 +545,7 @@ namespace Sledge.Editor.Documents
             var box = _document.Selection.GetSelectionBoundingBox();
             var transform = GetSnapTransform(box);
 
-            _document.PerformAction("Snap to grid", new Edit(selected, (d, x) => x.Transform(transform)));
+            _document.PerformAction("Snap to grid", new Edit(selected, (d, x) => x.Transform(transform, d.Map.GetTransformFlags())));
         }
 
         public void SnapSelectionToGridIndividually()
@@ -554,7 +554,7 @@ namespace Sledge.Editor.Documents
 
             var selected = _document.Selection.GetSelectedParents();
 
-            _document.PerformAction("Snap to grid individually", new Edit(selected, (d, x) => x.Transform(GetSnapTransform(x.BoundingBox))));
+            _document.PerformAction("Snap to grid individually", new Edit(selected, (d, x) => x.Transform(GetSnapTransform(x.BoundingBox), d.Map.GetTransformFlags())));
         }
 
         private IUnitTransformation GetAlignTransform(Box selection, Box item, Func<Box, decimal> extractor, Func<decimal, Coordinate> creator)
@@ -573,7 +573,7 @@ namespace Sledge.Editor.Documents
             var selected = _document.Selection.GetSelectedParents();
             var box = _document.Selection.GetSelectionBoundingBox();
 
-            _document.PerformAction("Align Objects", new Edit(selected, (d, x) => x.Transform(GetAlignTransform(box, x.BoundingBox, extractor, creator))));
+            _document.PerformAction("Align Objects", new Edit(selected, (d, x) => x.Transform(GetAlignTransform(box, x.BoundingBox, extractor, creator), d.Map.GetTransformFlags())));
         }
 
         public void AlignXMax()
@@ -613,7 +613,7 @@ namespace Sledge.Editor.Documents
             var selected = _document.Selection.GetSelectedParents();
             var box = _document.Selection.GetSelectionBoundingBox();
 
-            _document.PerformAction("Flip Objects", new Edit(selected, (d, x) => x.Transform(new UnitScale(scale, box.Center))));
+            _document.PerformAction("Flip Objects", new Edit(selected, (d, x) => x.Transform(new UnitScale(scale, box.Center), d.Map.GetTransformFlags())));
         }
 
         public void FlipX()

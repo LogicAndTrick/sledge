@@ -244,7 +244,7 @@ namespace Sledge.DataStructures.MapObjects
             BoundingBox = new Box(list);
         }
 
-        public override void Transform(IUnitTransformation transform)
+        public override void Transform(IUnitTransformation transform, TransformFlags flags)
         {
             foreach (var p in Points)
             {
@@ -252,7 +252,7 @@ namespace Sledge.DataStructures.MapObjects
                 p.CurrentPosition.Location = transform.Transform(p.CurrentPosition.Location);
             }
             CalculateNormals();
-            base.Transform(transform);
+            base.Transform(transform, flags);
         }
 
         public override Coordinate GetIntersectionPoint(Line line)
