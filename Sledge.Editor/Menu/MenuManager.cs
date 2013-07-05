@@ -120,7 +120,7 @@ namespace Sledge.Editor.Menu
             Add("Tools", new SimpleMenuBuilder("Tie to Entity", HotkeysMediator.TieToEntity) { IsVisible = mapOpen, IsActive = itemsSelected });
             Add("Tools", new SimpleMenuBuilder("Move to World", HotkeysMediator.TieToWorld) { IsVisible = mapOpen, IsActive = itemsSelected });
             Add("Tools", new MenuSplitter { IsVisible = mapOpen });
-            Add("Tools", new SimpleMenuBuilder("Replace Textures", "") { IsVisible = mapOpen });
+            Add("Tools", new SimpleMenuBuilder("Replace Textures", HotkeysMediator.ReplaceTextures) { IsVisible = mapOpen });
             Add("Tools", new MenuSplitter { IsVisible = mapOpen });
             Add("Tools", new SimpleMenuBuilder("Transform...", HotkeysMediator.Transform) { IsVisible = mapOpen, IsActive = itemsSelected });
             Add("Tools", new SimpleMenuBuilder("Snap Selected to Grid", HotkeysMediator.SnapSelectionToGrid) { IsVisible = mapOpen, IsActive = itemsSelected });

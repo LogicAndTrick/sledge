@@ -78,6 +78,7 @@ namespace Sledge.Editor.Documents
             Mediator.Subscribe(HotkeysMediator.TieToEntity, this);
             Mediator.Subscribe(HotkeysMediator.TieToWorld, this);
             Mediator.Subscribe(HotkeysMediator.Transform, this);
+            Mediator.Subscribe(HotkeysMediator.ReplaceTextures, this);
             Mediator.Subscribe(HotkeysMediator.SnapSelectionToGrid, this);
             Mediator.Subscribe(HotkeysMediator.SnapSelectionToGridIndividually, this);
             Mediator.Subscribe(HotkeysMediator.AlignXMax, this);
@@ -516,6 +517,18 @@ namespace Sledge.Editor.Documents
 
                 var selected = _document.Selection.GetSelectedParents();
                 _document.PerformAction("Transform selection", new Edit(selected, (d, x) => x.Transform(transform)));
+            }
+        }
+
+        public void ReplaceTextures()
+        {
+            using (var trd = new TextureReplaceDialog(_document))
+            {
+                if (trd.ShowDialog() == DialogResult.OK)
+                {
+                    var action = trd.GetAction(_document);
+                    _document.PerformAction("Replace textures", action);
+                }
             }
         }
 

@@ -46,6 +46,8 @@ namespace Sledge.Settings
 
         Transform,
 
+        ReplaceTextures,
+
         SnapSelectionToGrid,
         SnapSelectionToGridIndividually,
 

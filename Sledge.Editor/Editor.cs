@@ -367,6 +367,11 @@ namespace Sledge.Editor
             }
         }
 
+        private void TextureReplaceButtonClicked(object sender, EventArgs e)
+        {
+            Mediator.Publish(HotkeysMediator.ReplaceTextures);
+        }
+
         private void MoveToWorldClicked(object sender, EventArgs e)
         {
             Mediator.Publish(HotkeysMediator.TieToWorld);

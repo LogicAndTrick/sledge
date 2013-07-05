@@ -12,8 +12,6 @@ Priorities
     Additional Map Properties
       VMF
   Features
-    All support tools
-      Texture replace
     Toolbar buttons
       Ignore grouping
       Visgroups
@@ -23,6 +21,7 @@ Priorities
     Recognise changes / prompt for save
     New/Open/Save/Save As/Close
     2D view right click/Hotkeys
+    Get rid of options database, use text-based format instead
     Check for updates (needed for alpha!)
     Toobar & tool icons
 
@@ -83,7 +82,7 @@ Post-Alpha Priorities
     Cordon - 0%
     Texture Lock - 0%
     Entity/World - 90%, testing
-    Texture Replace - 0%
+    Texture Replace - 100%
     Undo/Redo - 70%, history UI
     Manual Transform - 100%
   Forms
@@ -104,7 +103,7 @@ Post-Alpha Priorities
     Pointfiles/Leak Detection? - 100%
     Go to coordinates/brush number - 100%
     Options - 80%, hotkeys, general
-    Right Toolbar Textures - 90%, replace
+    Right Toolbar Textures - 100%
     Right Toolbar Visgroups - 100%
     Right Toolbar Brush Type - 100%
     Right Toolbar Entity/World - 100%
