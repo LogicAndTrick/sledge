@@ -76,7 +76,10 @@ namespace Sledge.DataStructures.MapObjects
             // WorldSpawn.ForEach(x => x.IsVisgroupHidden, x => x.IsVisgroupHidden = true, true);
 
             // Auto visgroup
-            Visgroups.Add(AutoVisgroup.GetDefaultAutoVisgroup());
+            var auto = AutoVisgroup.GetDefaultAutoVisgroup();
+            var quickHide = new AutoVisgroup {ID = int.MinValue, IsHidden = true, Name = "Autohide", Parent = auto, Visible = false};
+            auto.Children.Add(quickHide);
+            Visgroups.Add(auto);
             UpdateAutoVisgroups(all, false);
 
             // Purge empty groups

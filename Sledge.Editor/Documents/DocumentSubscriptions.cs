@@ -67,6 +67,10 @@ namespace Sledge.Editor.Documents
             Mediator.Subscribe(HotkeysMediator.SelectAll, this);
             Mediator.Subscribe(HotkeysMediator.ObjectProperties, this);
 
+            Mediator.Subscribe(HotkeysMediator.QuickHideSelected, this);
+            Mediator.Subscribe(HotkeysMediator.QuickHideUnselected, this);
+            Mediator.Subscribe(HotkeysMediator.QuickHideShowAll, this);
+
             Mediator.Subscribe(HotkeysMediator.Carve, this);
             Mediator.Subscribe(HotkeysMediator.MakeHollow, this);
             Mediator.Subscribe(HotkeysMediator.GroupingGroup, this);
@@ -292,6 +296,37 @@ namespace Sledge.Editor.Documents
         {
             var pd = new EntityEditor(_document);
             pd.Show(Editor.Instance);
+        }
+
+        public void QuickHideSelected()
+        {
+            if (_document.Selection.IsEmpty() || _document.Selection.InFaceSelection) return;
+
+            var autohide = _document.Map.GetAllVisgroups().FirstOrDefault(x => x.Name == "Autohide");
+            if (autohide == null) return;
+
+            var objects = _document.Selection.GetSelectedObjects();
+            _document.PerformAction("Hide objects", new QuickHideObjects(objects));
+        }
+
+        public void QuickHideUnselected()
+        {
+            if (_document.Selection.InFaceSelection) return;
+
+            var autohide = _document.Map.GetAllVisgroups().FirstOrDefault(x => x.Name == "Autohide");
+            if (autohide == null) return;
+
+            var objects = _document.Map.WorldSpawn.Find(x => !x.IsSelected);
+            _document.PerformAction("Hide objects", new QuickHideObjects(objects));
+        }
+
+        public void QuickHideShowAll()
+        {
+            var autohide = _document.Map.GetAllVisgroups().FirstOrDefault(x => x.Name == "Autohide");
+            if (autohide == null) return;
+
+            var objects = _document.Map.WorldSpawn.Find(x => x.IsInVisgroup(autohide.ID));
+            _document.PerformAction("Show hidden objects", new QuickShowObjects(objects));
         }
 
         public void WorldspawnProperties()

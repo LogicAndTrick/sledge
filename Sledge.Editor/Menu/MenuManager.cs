@@ -107,9 +107,9 @@ namespace Sledge.Editor.Menu
             Add("View", new SimpleMenuBuilder("Go to Brush ID...", HotkeysMediator.GoToBrushID) { IsVisible = mapOpen });
             Add("View", new SimpleMenuBuilder("Go to Coordinates...", HotkeysMediator.GoToCoordinates) { IsVisible = mapOpen });
             Add("View", new MenuSplitter { IsVisible = mapOpen });
-            Add("View", new SimpleMenuBuilder("Hide Selected Objects", "") { IsVisible = mapOpen, ShowInToolStrip = true });
-            Add("View", new SimpleMenuBuilder("Hide Unselected Objects", "") { IsVisible = mapOpen, ShowInToolStrip = true });
-            Add("View", new SimpleMenuBuilder("Show Hidden Objects", "") { IsVisible = mapOpen, ShowInToolStrip = true });
+            Add("View", new SimpleMenuBuilder("Hide Selected Objects", HotkeysMediator.QuickHideSelected) { IsVisible = mapOpen, ShowInToolStrip = true });
+            Add("View", new SimpleMenuBuilder("Hide Unselected Objects", HotkeysMediator.QuickHideUnselected) { IsVisible = mapOpen, ShowInToolStrip = true });
+            Add("View", new SimpleMenuBuilder("Show Hidden Objects", HotkeysMediator.QuickHideShowAll) { IsVisible = mapOpen, ShowInToolStrip = true });
 
             Add("Tools", new SimpleMenuBuilder("Carve", HotkeysMediator.Carve) { IsVisible = mapOpen, IsActive = itemsSelected, ShowInToolStrip = true });
             Add("Tools", new SimpleMenuBuilder("Make Hollow", HotkeysMediator.MakeHollow) { IsVisible = mapOpen, IsActive = itemsSelected, ShowInToolStrip = true });

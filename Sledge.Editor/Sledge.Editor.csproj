@@ -93,6 +93,8 @@
     <Compile Include="Actions\MapObjects\Entities\EditEntityData.cs" />
     <Compile Include="Actions\MapObjects\Selection\Select.cs" />
     <Compile Include="Actions\MapObjects\Selection\SelectFace.cs" />
+    <Compile Include="Actions\Visgroups\QuickShowObjects.cs" />
+    <Compile Include="Actions\Visgroups\QuickHideObjects.cs" />
     <Compile Include="Actions\Visgroups\EditObjectVisgroups.cs" />
     <Compile Include="Actions\Visgroups\CreateEditDeleteVisgroups.cs" />
     <Compile Include="Actions\Visgroups\ShowAllVisgroups.cs" />

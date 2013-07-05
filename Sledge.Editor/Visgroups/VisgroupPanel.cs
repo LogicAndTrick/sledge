@@ -41,6 +41,7 @@ namespace Sledge.Editor.Visgroups
 
         public bool DisableAutomaticVisgroups { get; set; }
         public bool SortAutomaticFirst { get; set; }
+        public bool ShowHidden { get; set; }
 
         public VisgroupPanel()
         {
@@ -85,6 +86,7 @@ namespace Sledge.Editor.Visgroups
 
         private void AddNode(TreeNode parent, Visgroup visgroup, Func<Visgroup, string> getCheckState)
         {
+            if (!ShowHidden && visgroup is AutoVisgroup && ((AutoVisgroup)visgroup).IsHidden) return;
             var node = new TreeNode(visgroup.Name)
             {
                 StateImageKey = getCheckState(visgroup) + (DisableAutomaticVisgroups && visgroup.IsAutomatic ? "Disabled" : ""),

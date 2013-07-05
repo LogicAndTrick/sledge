@@ -30,6 +30,10 @@ namespace Sledge.Settings
 
         ObjectProperties,
 
+        QuickHideSelected,
+        QuickHideUnselected,
+        QuickHideShowAll,
+
         Carve,
         MakeHollow,
 
