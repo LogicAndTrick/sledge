@@ -39,6 +39,9 @@ namespace Sledge.Editor.Visgroups
             set { VisgroupTree.StateImageList = value ? CheckboxImages : null; }
         }
 
+        public bool DisableAutomaticVisgroups { get; set; }
+        public bool SortAutomaticFirst { get; set; }
+
         public VisgroupPanel()
         {
             InitializeComponent();
@@ -46,7 +49,12 @@ namespace Sledge.Editor.Visgroups
             /* http://www.codeproject.com/script/Articles/ViewDownloads.aspx?aid=202435 */
             CheckboxImages.Images.Add("Unchecked", GetCheckboxBitmap(CheckBoxState.UncheckedNormal));
             CheckboxImages.Images.Add("Checked", GetCheckboxBitmap(CheckBoxState.CheckedNormal));
-            CheckboxImages.Images.Add("Mixed", GetCheckboxBitmap(CheckBoxState.CheckedDisabled));
+            CheckboxImages.Images.Add("Mixed", GetCheckboxBitmap(CheckBoxState.MixedNormal));
+
+
+            CheckboxImages.Images.Add("UncheckedDisabled", GetCheckboxBitmap(CheckBoxState.UncheckedDisabled));
+            CheckboxImages.Images.Add("CheckedDisabled", GetCheckboxBitmap(CheckBoxState.CheckedDisabled));
+            CheckboxImages.Images.Add("MixedDisabled", GetCheckboxBitmap(CheckBoxState.MixedDisabled));
         }
 
         private static Bitmap GetCheckboxBitmap(CheckBoxState state)
@@ -68,6 +76,31 @@ namespace Sledge.Editor.Visgroups
             Update(visgroups);
         }
 
+        private IEnumerable<Visgroup> Sort(IEnumerable<Visgroup> list)
+        {
+            return SortAutomaticFirst
+                       ? list.OrderBy(x => x.IsAutomatic ? 0 : 1).ThenBy(x => x.Name)
+                       : list.OrderBy(x => x.IsAutomatic ? 1 : 0).ThenBy(x => x.Name);
+        }
+
+        private void AddNode(TreeNode parent, Visgroup visgroup, Func<Visgroup, string> getCheckState)
+        {
+            var node = new TreeNode(visgroup.Name)
+            {
+                StateImageKey = getCheckState(visgroup) + (DisableAutomaticVisgroups && visgroup.IsAutomatic ? "Disabled" : ""),
+                BackColor = visgroup.Colour,
+                Tag = visgroup.ID
+            };
+
+            if (parent == null) VisgroupTree.Nodes.Add(node);
+            else parent.Nodes.Add(node);
+
+            foreach (var vg in Sort(visgroup.Children))
+            {
+                AddNode(node, vg, getCheckState);
+            }
+        }
+
         public void Update(Document document)
         {
             Clear();
@@ -76,14 +109,9 @@ namespace Sledge.Editor.Visgroups
                 .SelectMany(x => x.Visgroups.Select(y => new {ID = y, Hidden = x.IsVisgroupHidden}))
                 .GroupBy(x => x.ID)
                 .ToDictionary(x => x.Key, x => GetCheckState(x.Select(y => y.Hidden)));
-            foreach (var v in document.Map.Visgroups)
+            foreach (var v in Sort(document.Map.Visgroups))
             {
-                VisgroupTree.Nodes.Add(new TreeNode(v.Name)
-                {
-                    StateImageKey = states.ContainsKey(v.ID) ? states[v.ID] : "Checked",
-                    BackColor = v.Colour,
-                    Tag = v.ID
-                });
+                AddNode(null, v, x => states.ContainsKey(x.ID) ? states[x.ID] : "Checked");
             }
         }
 
@@ -95,17 +123,23 @@ namespace Sledge.Editor.Visgroups
             return "Mixed";
         }
 
+        private IEnumerable<TreeNode> GetAllNodes()
+        {
+            return GetAllNodes(VisgroupTree.Nodes.OfType<TreeNode>());
+        }
+
+        private IEnumerable<TreeNode> GetAllNodes(IEnumerable<TreeNode> nodes)
+        {
+            var n = nodes.ToList();
+            return n.SelectMany(x => GetAllNodes(x.Nodes.OfType<TreeNode>())).Union(n);
+        }
+
         public void Update(IEnumerable<Visgroup> visgroups)
         {
             Clear();
-            foreach (var v in visgroups)
+            foreach (var v in Sort(visgroups))
             {
-                VisgroupTree.Nodes.Add(new TreeNode(v.Name)
-                                           {
-                                               StateImageKey = v.Visible ? "Checked" : "Unchecked",
-                                               BackColor = v.Colour,
-                                               Tag = v.ID
-                                           });
+                AddNode(null, v, x => x.Visible ? "Checked" : "Unchecked");
             }
         }
 
@@ -114,9 +148,14 @@ namespace Sledge.Editor.Visgroups
             VisgroupTree.Nodes.Clear();
         }
 
+        public void ExpandAllNodes()
+        {
+            VisgroupTree.ExpandAll();
+        }
+
         private TreeNode GetNodeForVisgroupID(int visgroupId)
         {
-            return VisgroupTree.Nodes.OfType<TreeNode>().FirstOrDefault(x => x.Tag is int && (int)x.Tag == visgroupId);
+            return GetAllNodes().FirstOrDefault(x => x.Tag is int && (int)x.Tag == visgroupId);
         }
 
         public int? GetSelectedVisgroup()
@@ -151,15 +190,14 @@ namespace Sledge.Editor.Visgroups
 
         private CheckState GetCheckState(TreeNode node)
         {
-            if (node == null || node.StateImageKey == "Unchecked") return CheckState.Unchecked;
-            if (node.StateImageKey == "Checked") return CheckState.Checked;
+            if (node == null || node.StateImageKey.StartsWith("Unchecked")) return CheckState.Unchecked;
+            if (node.StateImageKey.StartsWith("Checked")) return CheckState.Checked;
             return CheckState.Indeterminate;
         }
 
         public Dictionary<int, CheckState> GetAllCheckStates()
         {
-            return VisgroupTree.Nodes
-                .OfType<TreeNode>()
+            return GetAllNodes()
                 .Where(x => x.Tag is int)
                 .ToDictionary(x => (int) x.Tag, GetCheckState);
         }
@@ -168,6 +206,7 @@ namespace Sledge.Editor.Visgroups
         {
             var node = GetNodeForVisgroupID(visgroupId);
             if (node == null) return;
+            var disabled = node.StateImageKey.EndsWith("Disabled");
             switch (state)
             {
                 case CheckState.Unchecked:
@@ -182,6 +221,7 @@ namespace Sledge.Editor.Visgroups
                 default:
                     throw new ArgumentOutOfRangeException("state");
             }
+            if (disabled) node.StateImageKey += "Disabled";
         }
 
         private void NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
@@ -192,10 +232,14 @@ namespace Sledge.Editor.Visgroups
             var hit = VisgroupTree.HitTest(e.X, e.Y);
             if (hit.Location != TreeViewHitTestLocations.StateImage) return;
 
+            var disabled = e.Node.StateImageKey.EndsWith("Disabled");
+            if (disabled) return;
+
+            var id = (int) e.Node.Tag;
             // unchecked -> checked, checked -> unchecked, mixed -> unchecked
-            var visible = e.Node.StateImageKey == "Unchecked";
-            e.Node.StateImageKey = visible ? "Checked" : "Unchecked";
-            OnVisgroupToggled((int) e.Node.Tag, visible ? CheckState.Checked : CheckState.Unchecked);
+            var visible = e.Node.StateImageKey.StartsWith("Unchecked");
+            e.Node.StateImageKey = (visible ? "Checked" : "Unchecked");
+            OnVisgroupToggled(id, visible ? CheckState.Checked : CheckState.Unchecked);
         }
 
         private void NodeSelected(object sender, TreeViewEventArgs e)

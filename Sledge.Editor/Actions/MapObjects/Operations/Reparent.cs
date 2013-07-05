@@ -43,17 +43,21 @@ namespace Sledge.Editor.Actions.MapObjects.Operations
             foreach (var o in _objects)
             {
                 o.MapObject.SetParent(parents[o.OriginalParentID]);
+                document.Map.UpdateAutoVisgroups(o.MapObject, true);
             }
 
             Mediator.Publish(EditorMediator.DocumentTreeStructureChanged);
+            Mediator.Publish(EditorMediator.VisgroupsChanged);
         }
 
         public void Perform(Document document)
         {
             var parent = document.Map.WorldSpawn.FindByID(_parentId);
             _objects.ForEach(x => x.MapObject.SetParent(parent));
+            document.Map.UpdateAutoVisgroups(_objects.Select(x => x.MapObject), true);
 
             Mediator.Publish(EditorMediator.DocumentTreeStructureChanged);
+            Mediator.Publish(EditorMediator.VisgroupsChanged);
         }
     }
 }

@@ -262,13 +262,15 @@ namespace Sledge.Editor.UI
         {
             _populating = true;
 
-            var visgroups = Document.Map.Visgroups.Select(x => new Visgroup
-                                                                   {
-                                                                       Colour = x.Colour,
-                                                                       ID = x.ID,
-                                                                       Name = x.Name,
-                                                                       Visible = false
-                                                                   });
+            var visgroups = Document.Map.Visgroups.Select(x => x.Clone()).ToList();
+
+            Action<Visgroup> setVisible = null;
+            setVisible = x =>
+                             {
+                                 x.Visible = false;
+                                 x.Children.ForEach(y => setVisible(y));
+                             };
+            visgroups.ForEach(x => setVisible(x));
 
             Dictionary<int, CheckState> states;
 
@@ -293,6 +295,8 @@ namespace Sledge.Editor.UI
             {
                 VisgroupPanel.SetCheckState(kv.Key, kv.Value);
             }
+
+            VisgroupPanel.ExpandAllNodes();
 
             _populating = false;
         }

@@ -168,7 +168,7 @@ namespace Sledge.DataStructures.MapObjects.VisgroupFilters
         public string Name { get { return "Trigger"; } }
         public bool IsMatch(MapObject x)
         {
-            return x is Solid && ((Solid)x).Faces.Any(y => String.Equals(y.Texture.Name, "trigger", StringComparison.InvariantCultureIgnoreCase));
+            return x is Solid && ((Solid)x).Faces.Any(y => String.Equals(y.Texture.Name, "aaatrigger", StringComparison.InvariantCultureIgnoreCase));
         }
     }
 

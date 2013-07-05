@@ -31,7 +31,7 @@ namespace Sledge.Editor.Actions.MapObjects.Operations
             public long ID { get; set; }
             public MapObject Before { get; set; }
             public MapObject After { get; set; }
-            public Action<MapObject> Action { get; set; }
+            public Action<Document, MapObject> Action { get; set; }
 
             public EditReference(long id, MapObject before, MapObject after)
             {
@@ -41,7 +41,7 @@ namespace Sledge.Editor.Actions.MapObjects.Operations
                 Action = null;
             }
 
-            public EditReference(MapObject obj, Action<MapObject> action)
+            public EditReference(MapObject obj, Action<Document, MapObject> action)
             {
                 ID = obj.ID;
                 Before = obj.Clone();
@@ -49,19 +49,23 @@ namespace Sledge.Editor.Actions.MapObjects.Operations
                 Action = action;
             }
 
-            public void Perform(MapObject root)
+            public void Perform(Document document)
             {
+                var root = document.Map.WorldSpawn;
                 var obj = root.FindByID(ID);
                 if (obj == null) return;
-                if (Action != null) Action(obj);
+                if (Action != null) Action(document, obj);
                 else obj.Unclone(After);
+                document.Map.UpdateAutoVisgroups(obj, true);
             }
 
-            public void Reverse(MapObject root)
+            public void Reverse(Document document)
             {
+                var root = document.Map.WorldSpawn;
                 var obj = root.FindByID(ID);
                 if (obj == null) return;
                 obj.Unclone(Before);
+                document.Map.UpdateAutoVisgroups(obj, true);
             }
         }
 
@@ -113,12 +117,12 @@ namespace Sledge.Editor.Actions.MapObjects.Operations
             _editObjects.AddRange(ids.Select(x => new EditReference(x, b.First(y => y.ID == x), a.First(y => y.ID == x))));
         }
 
-        protected void Edit(MapObject before, Action<MapObject> action)
+        protected void Edit(MapObject before, Action<Document, MapObject> action)
         {
             _editObjects.Add(new EditReference(before, action));
         }
 
-        protected void Edit(IEnumerable<MapObject> objects, Action<MapObject> action)
+        protected void Edit(IEnumerable<MapObject> objects, Action<Document, MapObject> action)
         {
             _editObjects.AddRange(objects.Select(x => new EditReference(x, action)));
         }
@@ -150,12 +154,13 @@ namespace Sledge.Editor.Actions.MapObjects.Operations
             foreach (var dr in _deletedObjects.Where(x => x.TopMost))
             {
                 dr.Object.SetParent(document.Map.WorldSpawn.FindByID(dr.ParentID));
+                document.Map.UpdateAutoVisgroups(dr.Object, true);
             }
             document.Selection.Select(_deletedObjects.Where(x => x.IsSelected).Select(x => x.Object));
             _deletedObjects = null;
 
             // Edit
-            Parallel.ForEach(_editObjects, x => x.Reverse(document.Map.WorldSpawn));
+            Parallel.ForEach(_editObjects, x => x.Reverse(document));
 
             if (_objectsToCreate.Any() || _idsToDelete.Any())
             {
@@ -165,6 +170,8 @@ namespace Sledge.Editor.Actions.MapObjects.Operations
             {
                 Mediator.Publish(EditorMediator.DocumentTreeStructureChanged, _editObjects.Select(x => document.Map.WorldSpawn.FindByID(x.ID)));
             }
+
+            Mediator.Publish(EditorMediator.VisgroupsChanged);
         }
 
         public virtual void Perform(Document document)
@@ -176,6 +183,7 @@ namespace Sledge.Editor.Actions.MapObjects.Operations
             {
                 document.Selection.Select(_objectsToCreate.Where(x => x.IsSelected));
             }
+            document.Map.UpdateAutoVisgroups(_objectsToCreate, true);
             _objectsToCreate = null;
 
             // Delete
@@ -189,7 +197,7 @@ namespace Sledge.Editor.Actions.MapObjects.Operations
             _idsToDelete = null;
 
             // Edit
-            Parallel.ForEach(_editObjects, x => x.Perform(document.Map.WorldSpawn));
+            Parallel.ForEach(_editObjects, x => x.Perform(document));
 
             if (_createdIds.Any() || _deletedObjects.Any())
             {
@@ -199,6 +207,8 @@ namespace Sledge.Editor.Actions.MapObjects.Operations
             {
                 Mediator.Publish(EditorMediator.DocumentTreeStructureChanged, _editObjects.Select(x => document.Map.WorldSpawn.FindByID(x.ID)));
             }
+
+            Mediator.Publish(EditorMediator.VisgroupsChanged);
         }
     }
 }

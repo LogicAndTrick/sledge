@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Sledge.Common.Mediator;
-using Sledge.DataStructures.MapObjects;
-using Sledge.Editor.Documents;
+﻿using System.Collections.Generic;
 
 namespace Sledge.Editor.Actions.MapObjects.Operations
 {
@@ -12,68 +6,11 @@ namespace Sledge.Editor.Actions.MapObjects.Operations
     /// Perform: Removes the given objects from the map, and from the selection if required.
     /// Reverse: Adds the given objects back to their original parents, and reselects them if required.
     /// </summary>
-    public class Delete : IAction
+    public class Delete : CreateEditDelete
     {
-        private class DeleteReference
-        {
-            public long ParentID { get; set; }
-            public bool IsSelected { get; set; }
-            public MapObject Object { get; set; }
-            public bool TopMost { get; set; }
-
-            public DeleteReference(MapObject o, long parentID, bool isSelected, bool topMost)
-            {
-                Object = o;
-                ParentID = parentID;
-                IsSelected = isSelected;
-                TopMost = topMost;
-            }
-        }
-
-        private List<long> _ids;
-        private List<DeleteReference> _objects;
-
         public Delete(IEnumerable<long> ids)
         {
-            _ids = ids.ToList();
-        }
-
-        public void Dispose()
-        {
-            _ids = null;
-            _objects = null;
-        }
-
-        public void Reverse(Document document)
-        {
-            _ids = _objects.Select(x => x.Object.ID).ToList();
-            foreach (var dr in _objects.Where(x => x.TopMost))
-            {
-                dr.Object.SetParent(document.Map.WorldSpawn.FindByID(dr.ParentID));
-            }
-            document.Selection.Select(_objects.Where(x => x.IsSelected).Select(x => x.Object));
-            _objects = null;
-
-            Mediator.Publish(EditorMediator.SelectionChanged);
-            Mediator.Publish(EditorMediator.DocumentTreeStructureChanged);
-        }
-
-        public void Perform(Document document)
-        {
-            var objects = document.Map.WorldSpawn.Find(x => _ids.Contains(x.ID) && x.Parent != null);
-            var all = objects.SelectMany(x => x.FindAll()).ToList();
-            _objects = all
-                .Select(x => new DeleteReference(x, x.Parent.ID, x.IsSelected, !objects.Contains(x.Parent)))
-                .ToList();
-            document.Selection.Deselect(all);
-            foreach (var dr in _objects.Where(x => x.TopMost))
-            {
-                dr.Object.SetParent(null);
-            }
-            _ids = null;
-
-            Mediator.Publish(EditorMediator.SelectionChanged);
-            Mediator.Publish(EditorMediator.DocumentTreeStructureChanged);
+            Delete(ids);
         }
     }
 }

@@ -44,7 +44,6 @@ Post-Alpha Priorities
   Pointfile dark/light theme toggle
   3D view helpers
   Toggle render of nodraw/null faces
-  Auto visgroup
 
 1. Goldsource Support
   Formats

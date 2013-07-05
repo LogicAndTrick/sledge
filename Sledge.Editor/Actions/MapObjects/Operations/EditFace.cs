@@ -65,7 +65,7 @@ namespace Sledge.Editor.Actions.MapObjects.Operations
         }
 
         private List<EditFaceReference> _objects;
-        private bool _textureChange;
+        private readonly bool _textureChange;
 
         public EditFace(IEnumerable<Face> before, IEnumerable<Face> after, bool textureChange)
         {
@@ -91,16 +91,34 @@ namespace Sledge.Editor.Actions.MapObjects.Operations
         {
             Parallel.ForEach(_objects, x => x.Reverse(document));
 
-            if (_textureChange) Mediator.Publish(EditorMediator.DocumentTreeStructureChanged);
-            else Mediator.Publish(EditorMediator.DocumentTreeFacesChanged, _objects.Select(x => x.GetFace(document.Map.WorldSpawn)));
+            var faces = _objects.Select(x => x.GetFace(document.Map.WorldSpawn));
+            if (_textureChange)
+            {
+                document.Map.UpdateAutoVisgroups(faces.Select(x => x.Parent).Distinct(), false);
+                Mediator.Publish(EditorMediator.DocumentTreeStructureChanged);  
+                Mediator.Publish(EditorMediator.VisgroupsChanged);
+            }
+            else
+            {
+                Mediator.Publish(EditorMediator.DocumentTreeFacesChanged, faces);
+            }
         }
 
         public void Perform(Document document)
         {
             Parallel.ForEach(_objects, x => x.Perform(document));
-
-            if (_textureChange) Mediator.Publish(EditorMediator.DocumentTreeStructureChanged);
-            else Mediator.Publish(EditorMediator.DocumentTreeFacesChanged, _objects.Select(x => x.GetFace(document.Map.WorldSpawn)));
+            
+            var faces = _objects.Select(x => x.GetFace(document.Map.WorldSpawn));
+            if (_textureChange)
+            {
+                document.Map.UpdateAutoVisgroups(faces.Select(x => x.Parent).Distinct(), false);
+                Mediator.Publish(EditorMediator.DocumentTreeStructureChanged);
+                Mediator.Publish(EditorMediator.VisgroupsChanged);
+            }
+            else
+            {
+                Mediator.Publish(EditorMediator.DocumentTreeFacesChanged, faces);
+            }
         }
     }
 }

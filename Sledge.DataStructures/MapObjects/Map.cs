@@ -75,11 +75,56 @@ namespace Sledge.DataStructures.MapObjects
             // todo visgroups
             // WorldSpawn.ForEach(x => x.IsVisgroupHidden, x => x.IsVisgroupHidden = true, true);
 
+            // Auto visgroup
+            Visgroups.Add(AutoVisgroup.GetDefaultAutoVisgroup());
+            UpdateAutoVisgroups(all, false);
+
             // Purge empty groups
             foreach (var emptyGroup in WorldSpawn.Find(x => x is Group && !x.Children.Any()))
             {
                 emptyGroup.SetParent(null);
             }
+        }
+
+        public void UpdateAutoVisgroups(MapObject node, bool recursive)
+        {
+            var nodes = recursive ? node.FindAll() : new List<MapObject> { node };
+            UpdateAutoVisgroups(nodes, false);
+        }
+
+        public void UpdateAutoVisgroups(IEnumerable<MapObject> nodes, bool recursive)
+        {
+            var autos = GetAllVisgroups().OfType<AutoVisgroup>().Where(x => x.Filter != null).ToList();
+            var list = recursive ? nodes.SelectMany(x => x.FindAll()) : nodes;
+            foreach (var o in list)
+            {
+                var obj = o;
+                obj.Visgroups.RemoveAll(x => o.AutoVisgroups.Contains(x));
+                obj.AutoVisgroups.Clear();
+                foreach (var vg in autos.Where(x => x.Filter(obj)))
+                {
+                    // Add this visgroup and all parents
+                    Visgroup visgroup = vg;
+                    while (visgroup != null)
+                    {
+                        if (o.AutoVisgroups.Contains(visgroup.ID)) break; // Break out of infinite loop (just in case)
+                        o.AutoVisgroups.Add(visgroup.ID);
+                        visgroup = visgroup.Parent;
+                    }
+                }
+                o.Visgroups.AddRange(o.AutoVisgroups);
+            }
+        }
+
+        public IEnumerable<Visgroup> GetAllVisgroups()
+        {
+            return GetAllVisgroups(Visgroups);
+        }
+
+        private IEnumerable<Visgroup> GetAllVisgroups(IEnumerable<Visgroup> groups)
+        {
+            var g = groups.ToList();
+            return g.SelectMany(x => GetAllVisgroups(x.Children)).Union(g);
         }
 
         public void PartialPostLoadProcess(GameData.GameData gameData, Func<string, ITexture> textureAccessor)
