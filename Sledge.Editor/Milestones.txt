@@ -14,10 +14,9 @@ Priorities
   Features
     Toolbar buttons
       Ignore grouping
-      Visgroups
       Cordon tool
       Texture lock, scaling lock
-      Maybe: select by handles, auto select, texture alignment
+      Maybe: select by handles, auto select, texture alignment, visgroups
     Recognise changes / prompt for save
     New/Open/Save/Save As/Close
     2D view right click/Hotkeys

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Sledge.Common;
+using Sledge.DataStructures.Geometric;
 
 namespace Sledge.DataStructures.MapObjects
 {
@@ -20,6 +21,10 @@ namespace Sledge.DataStructures.MapObjects
         public bool SnapToGrid { get; set; }
         public decimal GridSpacing { get; set; }
         public bool HideFaceMask { get; set; }
+        public bool TextureLock { get; set; }
+        public bool TextureScalingLock { get; set; }
+        public bool Cordon { get; set; }
+        public Box CordonBounds { get; set; }
 
         public Map()
         {
@@ -31,6 +36,8 @@ namespace Sledge.DataStructures.MapObjects
             WorldSpawn = new World(IDGenerator.GetNextObjectID());
 
             Show2DGrid = SnapToGrid = true;
+            TextureLock = true;
+            CordonBounds = new Box(Coordinate.One * -1024, Coordinate.One * 1024);
         }
 
         public IEnumerable<string> GetAllTextures()

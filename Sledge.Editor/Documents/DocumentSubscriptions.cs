@@ -107,6 +107,10 @@ namespace Sledge.Editor.Documents
             Mediator.Subscribe(HotkeysMediator.ToggleShow2DGrid, this);
             Mediator.Subscribe(HotkeysMediator.ToggleShow3DGrid, this);
 
+            Mediator.Subscribe(HotkeysMediator.ToggleTextureLock, this);
+            Mediator.Subscribe(HotkeysMediator.ToggleTextureScalingLock, this);
+            Mediator.Subscribe(HotkeysMediator.ToggleCordon, this);
+
             Mediator.Subscribe(HotkeysMediator.ShowSelectedBrushID, this);
             Mediator.Subscribe(HotkeysMediator.ShowMapInformation, this);
             Mediator.Subscribe(HotkeysMediator.ShowEntityReport, this);
@@ -818,6 +822,21 @@ namespace Sledge.Editor.Documents
             _document.Renderer.Show3DGrid = _document.Map.Show3DGrid;
             _document.Renderer.GridSpacing = (float)_document.Map.GridSpacing;
             _document.Renderer.Unbind();
+        }
+
+        public void ToggleTextureLock()
+        {
+            _document.Map.TextureLock = !_document.Map.TextureLock;
+        }
+
+        public void ToggleTextureScalingLock()
+        {
+            _document.Map.TextureScalingLock = !_document.Map.TextureScalingLock;
+        }
+
+        public void ToggleCordon()
+        {
+            _document.Map.Cordon = !_document.Map.Cordon;
         }
 
         public void ShowSelectedBrushID()

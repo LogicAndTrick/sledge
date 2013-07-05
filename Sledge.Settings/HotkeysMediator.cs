@@ -76,6 +76,9 @@ namespace Sledge.Settings
         ToggleSnapToGrid,
         ToggleShow2DGrid,
         ToggleShow3DGrid,
+        ToggleTextureLock,
+        ToggleTextureScalingLock,
+        ToggleCordon,
 
         ShowMapInformation,
         ShowEntityReport,
