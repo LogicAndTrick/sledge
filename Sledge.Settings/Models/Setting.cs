@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using Sledge.Providers;
 
-namespace Sledge.Database.Models
+namespace Sledge.Settings.Models
 {
     public class Setting
     {

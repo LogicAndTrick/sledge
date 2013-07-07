@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
@@ -7,21 +6,18 @@ using Microsoft.WindowsAPICodePack.Taskbar;
 using Sledge.Common.Mediator;
 using Sledge.DataStructures.GameData;
 using Sledge.DataStructures.MapObjects;
-using Sledge.Database.Models;
 using Sledge.Editor.Brushes;
 using Sledge.Editor.Documents;
 using Sledge.Editor.Menu;
 using Sledge.Editor.Settings;
 using Sledge.Editor.UI;
-using Sledge.Editor.Visgroups;
-using Sledge.Graphics.Helpers;
 using Sledge.Providers;
 using Sledge.Providers.GameData;
 using Sledge.Providers.Map;
-using Sledge.Database;
 using Sledge.Editor.Tools;
 using Sledge.Providers.Texture;
 using Sledge.Settings;
+using Sledge.Settings.Models;
 using Hotkeys = Sledge.Editor.UI.Hotkeys;
 
 namespace Sledge.Editor
@@ -50,7 +46,7 @@ namespace Sledge.Editor
             {
                 gsd.ShowDialog();
                 if (gsd.SelectedGameID < 0) return;
-                var game = Context.DBContext.GetAllGames().Single(g => g.ID == gsd.SelectedGameID);
+                var game = SettingsManager.Games.Single(g => g.ID == gsd.SelectedGameID);
                 try
                 {
                     var map = MapProvider.GetMapFromFile(fileName);
@@ -65,6 +61,8 @@ namespace Sledge.Editor
 
         private void EditorLoad(object sender, EventArgs e)
         {
+            SettingsManager.Read();
+
             if (TaskbarManager.IsPlatformSupported)
             {
                 TaskbarManager.Instance.ApplicationId = Elevation.ProgramId;
@@ -144,7 +142,7 @@ namespace Sledge.Editor
             {
                 gsd.ShowDialog();
                 if (gsd.SelectedGameID < 0) return;
-                var game = Context.DBContext.GetAllGames().Single(g => g.ID == gsd.SelectedGameID);
+                var game = SettingsManager.Games.Single(g => g.ID == gsd.SelectedGameID);
                 DocumentManager.AddAndSwitch(new Document(null, new Map(), game));
             }
         }
@@ -318,40 +316,24 @@ namespace Sledge.Editor
                 JumpList.AddToRecent(path);
                 _jumpList.Refresh();
             }
-            var recents = Context.DBContext.GetAllRecentFiles().OrderBy(x => x.Order).Where(x => x.Location != path).Take(9).ToList();
+            var recents = SettingsManager.RecentFiles.OrderBy(x => x.Order).Where(x => x.Location != path).Take(9).ToList();
             recents.Insert(0, new RecentFile { Location = path});
             for (var i = 0; i < recents.Count; i++)
             {
                 recents[i].Order = i;
             }
-            Context.DBContext.SaveAllRecentFiles(recents);
+            SettingsManager.RecentFiles.Clear();
+            SettingsManager.RecentFiles.AddRange(recents);
+            SettingsManager.Write();
             UpdateRecentFiles();
         }
 
         private void UpdateRecentFiles()
         {
-            var recents = Context.DBContext.GetAllRecentFiles();
+            var recents = SettingsManager.RecentFiles;
             MenuManager.RecentFiles.Clear();
             MenuManager.RecentFiles.AddRange(recents);
             MenuManager.Rebuild();
-            //var exitPosition = MenuFile.DropDownItems.IndexOf(MenuFileExit) - 1;
-            //while (MenuFile.DropDownItems[exitPosition] != MenuFileBottomSep)
-            //{
-            //    MenuFile.DropDownItems.RemoveAt(exitPosition--);
-            //}
-            //if (recents.Any())
-            //{
-            //    exitPosition++;
-            //    foreach (var rf in recents.OrderBy(x => x.Order))
-            //    {
-            //        var loc = rf.Location;
-            //        var mi = new ToolStripMenuItem(System.IO.Path.GetFileName(loc));
-            //        mi.Click += (sender, e) => LoadFile(loc);
-            //        mi.ToolTipText = loc;
-            //        MenuFile.DropDownItems.Insert(exitPosition++, mi);
-            //    }
-            //    MenuFile.DropDownItems.Insert(exitPosition, new ToolStripSeparator());
-            //}
         }
 
         private void TextureBrowseButtonClicked(object sender, EventArgs e)

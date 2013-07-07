@@ -873,7 +873,7 @@ namespace Sledge.Editor.Documents
 
         public void ViewportRightClick(Viewport2D vp, MouseEventArgs e)
         {
-            ViewportContextMenu.Instance.AddNonSelectionItems();
+            ViewportContextMenu.Instance.AddNonSelectionItems(_document, vp);
             if (!_document.Selection.IsEmpty() && !_document.Selection.InFaceSelection && ToolManager.ActiveTool is SelectTool)
             {
                 var selectionBoundingBox = _document.Selection.GetSelectionBoundingBox();
@@ -883,7 +883,7 @@ namespace Sledge.Editor.Documents
                 if (point.X >= start.X && point.X <= end.X && point.Y >= start.Y && point.Y <= end.Y)
                 {
                     // Clicked inside the selection bounds
-                    ViewportContextMenu.Instance.AddSelectionItems();
+                    ViewportContextMenu.Instance.AddSelectionItems(_document, vp);
                 }
             }
             ViewportContextMenu.Instance.Show(vp, e.X, e.Y);

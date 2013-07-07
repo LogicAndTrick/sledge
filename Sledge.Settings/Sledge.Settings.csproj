@@ -45,14 +45,33 @@
     <Compile Include="HotkeyDefinition.cs" />
     <Compile Include="Hotkeys.cs" />
     <Compile Include="HotkeysMediator.cs" />
+    <Compile Include="Models\Build.cs" />
+    <Compile Include="Models\Engine.cs" />
+    <Compile Include="Models\Fgd.cs" />
+    <Compile Include="Models\Game.cs" />
+    <Compile Include="Models\RecentFile.cs" />
+    <Compile Include="Models\Setting.cs" />
+    <Compile Include="Models\Wad.cs" />
     <Compile Include="RotationStyle.cs" />
     <Compile Include="Select.cs" />
     <Compile Include="Grid.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Serialise.cs" />
+    <Compile Include="SettingsManager.cs" />
     <Compile Include="SnapStyle.cs" />
     <Compile Include="Steam.cs" />
     <Compile Include="View.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Sledge.Providers\Sledge.Providers.csproj">
+      <Project>{C7BD4AC8-1F8D-4520-AF2D-D279C0601AB4}</Project>
+      <Name>Sledge.Providers</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Settings.vdf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

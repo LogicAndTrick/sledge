@@ -17,7 +17,6 @@ Priorities
       Maybe: select by handles, auto select, texture alignment, visgroups
     Recognise changes / prompt for save
     New/Open/Save/Save As/Close
-    2D view right click/Hotkeys
     Get rid of options database, use text-based format instead
     Check for updates (needed for alpha!)
     Toobar & tool icons

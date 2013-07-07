@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Windows.Forms;
-using Sledge.Database;
+using Sledge.Settings;
 
 namespace Sledge.Sandbox
 {
@@ -18,7 +18,7 @@ namespace Sledge.Sandbox
             //Application.Run(new MainForm());
 
             QuickStartBootstrap.MapFile = @"D:\Github\sledge\_Resources\RMF\entities.rmf";
-            QuickStartBootstrap.Game = Context.DBContext.GetAllGames().Single(x => x.ID == 1);
+            QuickStartBootstrap.Game = SettingsManager.Games.Single(x => x.ID == 1);
             QuickStartBootstrap.Start();
         }
     }

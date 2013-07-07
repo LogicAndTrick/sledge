@@ -84,6 +84,19 @@ namespace Sledge.Providers
             return Properties.Where(x => x.Key == key).Select(x => x.Value);
         }
 
+        public bool PropertyBoolean(string name, bool defaultValue = false)
+        {
+            var prop = this[name];
+            if (prop == "1") return true;
+            if (prop == "0") return false;
+            bool d;
+            if (bool.TryParse(prop, out d))
+            {
+                return d;
+            }
+            return defaultValue;
+        }
+
         public int PropertyInteger(string name, int defaultValue = 0)
         {
             var prop = this[name];
@@ -288,7 +301,7 @@ namespace Sledge.Providers
         {
             using (var reader = new StreamReader(filePath))
             {
-                return Parse(reader);
+                return Parse(reader).ToList();
             }
         }
 

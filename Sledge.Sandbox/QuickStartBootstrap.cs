@@ -1,21 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows.Forms;
-using Sledge.DataStructures.MapObjects;
-using Sledge.Database;
-using Sledge.Database.Models;
+﻿using System.Windows.Forms;
 using System.IO;
-using Sledge.Editor;
 using Sledge.Editor.Documents;
-using Sledge.Editor.UI;
 using Sledge.FileSystem;
 using Sledge.Providers.GameData;
 using Sledge.Providers.Map;
 using Sledge.Providers.Texture;
-using Sledge.Settings;
-using Sledge.UI;
+using Sledge.Settings.Models;
 using Sledge.Editor.Tools;
 
 namespace Sledge.Sandbox

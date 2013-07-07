@@ -64,10 +64,6 @@
       <Project>{5D414AC8-8B93-489F-9960-877923400FED}</Project>
       <Name>Sledge.Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Sledge.Database\Sledge.Database.csproj">
-      <Project>{FC8A5448-0F8B-4828-AC49-8D6138E20254}</Project>
-      <Name>Sledge.Database</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Sledge.DataStructures\Sledge.DataStructures.csproj">
       <Project>{26A974C9-E495-4FA3-8E87-1E00019D04F5}</Project>
       <Name>Sledge.DataStructures</Name>

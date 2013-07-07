@@ -1,15 +1,13 @@
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 using Sledge.DataStructures.GameData;
-using Sledge.Database;
-using Sledge.Database.Models;
 using Sledge.Providers.GameData;
 using Sledge.QuickForms;
 using Sledge.Settings;
 using System.Linq;
+using Sledge.Settings.Models;
 
 namespace Sledge.Editor.Settings
 {
@@ -98,9 +96,9 @@ namespace Sledge.Editor.Settings
 	        _selectedBuild = null;
             UpdateSelectedBuild();
 
-            _engines = Context.DBContext.GetAllEngines();
-            _games = Context.DBContext.GetAllGames();
-            _builds = Context.DBContext.GetAllBuilds();
+            _engines = new List<Engine>(SettingsManager.Engines);
+            _games = new List<Game>(SettingsManager.Games);
+            _builds = new List<Build>(SettingsManager.Builds);
 
             ReIndex();
 
@@ -261,12 +259,13 @@ namespace Sledge.Editor.Settings
             // Hotkeys
 
             // Save settings to database
-            var newSettings = Serialise.SerialiseSettings().Select(s => new Setting {Key = s.Key, Value = s.Value});
-            Context.DBContext.SaveAllSettings(newSettings);
-
             ReIndex();
-            Context.DBContext.SaveAllBuilds(_builds);
-            Context.DBContext.SaveAllGames(_games);
+            SettingsManager.Builds.Clear();
+            SettingsManager.Builds.AddRange(_builds);
+            SettingsManager.Games.Clear();
+            SettingsManager.Games.AddRange(_games);
+
+            SettingsManager.Write();
         }
 
         private void Apply(object sender, EventArgs e)
@@ -293,6 +292,7 @@ namespace Sledge.Editor.Settings
 
         private void Close(object sender, MouseEventArgs e)
         {
+            SettingsManager.Read();
             Close();
         }
 

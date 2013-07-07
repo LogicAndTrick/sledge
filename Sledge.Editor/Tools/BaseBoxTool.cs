@@ -631,7 +631,7 @@ namespace Sledge.Editor.Tools
 
         protected virtual bool ShouldDraw3DBox()
         {
-            return true;
+            return State.Action != BoxAction.ReadyToDraw;
         }
 
         protected virtual void Render3DBox(Viewport3D viewport, Coordinate start, Coordinate end)

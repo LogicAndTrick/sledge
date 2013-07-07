@@ -7,6 +7,7 @@ using Sledge.DataStructures.MapObjects;
 using Sledge.Providers.Texture;
 using Sledge.Editor.Editing;
 using Sledge.Editor.UI;
+using Sledge.Settings;
 
 namespace Sledge.Editor.Tools
 {
@@ -427,7 +428,7 @@ namespace Sledge.Editor.Tools
 
         private void ReplaceButtonClicked(object sender, EventArgs e)
         {
-            // TODO: Texture replace
+            Mediator.Publish(HotkeysMediator.ReplaceTextures);
         }
 
         private void SmoothingGroupsButtonClicked(object sender, EventArgs e)

@@ -6,7 +6,6 @@ using Sledge.Common.Mediator;
 using Sledge.DataStructures.GameData;
 using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.MapObjects;
-using Sledge.Database.Models;
 using Sledge.Editor.Actions;
 using Sledge.Editor.Editing;
 using Sledge.Editor.History;
@@ -20,6 +19,7 @@ using Sledge.Providers;
 using Sledge.Providers.GameData;
 using Sledge.Providers.Texture;
 using Sledge.Settings;
+using Sledge.Settings.Models;
 using Sledge.UI;
 using Path = System.IO.Path;
 

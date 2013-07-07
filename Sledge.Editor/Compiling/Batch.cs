@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.IO;
-using Sledge.Database.Models;
+using Sledge.Settings.Models;
 
 namespace Sledge.Editor.Compiling
 {

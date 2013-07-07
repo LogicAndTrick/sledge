@@ -1,4 +1,6 @@
-namespace Sledge.Database.Models
+using Sledge.Providers;
+
+namespace Sledge.Settings.Models
 {
     public class RecentFile
     {

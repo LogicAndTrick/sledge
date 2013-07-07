@@ -4,10 +4,10 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using Sledge.Common.Mediator;
-using Sledge.Database.Models;
 using Sledge.Editor.Documents;
 using Sledge.Editor.Properties;
 using Sledge.Settings;
+using Sledge.Settings.Models;
 
 namespace Sledge.Editor.Menu
 {
