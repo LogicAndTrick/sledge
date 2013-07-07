@@ -72,6 +72,7 @@ namespace Sledge.Editor.Tools
         protected override void OnBoxChanged()
         {
             _updatePreview = true;
+            base.OnBoxChanged();
         }
 
         protected override void LeftMouseDownToDraw(Viewport2D viewport, System.Windows.Forms.MouseEventArgs e)

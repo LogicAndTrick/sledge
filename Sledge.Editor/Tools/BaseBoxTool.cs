@@ -53,6 +53,54 @@ namespace Sledge.Editor.Tools
                         || ActiveViewport == vp;
             }
 
+            public void FixBoxBounds()
+            {
+                if (Action != BoxAction.Drawing && Action != BoxAction.Resizing) return;
+                if (!(ActiveViewport is Viewport2D)) return;
+                var vp = (Viewport2D) ActiveViewport;
+
+                if (BoxStart.X > BoxEnd.X)
+                {
+                    var temp = BoxStart.X;
+                    BoxStart.X = BoxEnd.X;
+                    BoxEnd.X = temp;
+                    var flat = vp.Flatten(Coordinate.UnitX);
+                    if (flat.X == 1) SwapHandle("Left", "Right");
+                    if (flat.Y == 1) SwapHandle("Top", "Bottom");
+                }
+                if (BoxStart.Y > BoxEnd.Y)
+                {
+                    var temp = BoxStart.Y;
+                    BoxStart.Y = BoxEnd.Y;
+                    BoxEnd.Y = temp;
+                    var flat = vp.Flatten(Coordinate.UnitY);
+                    if (flat.X == 1) SwapHandle("Left", "Right");
+                    if (flat.Y == 1) SwapHandle("Top", "Bottom");
+                }
+                if (BoxStart.Z > BoxEnd.Z)
+                {
+                    var temp = BoxStart.Z;
+                    BoxStart.Z = BoxEnd.Z;
+                    BoxEnd.Z = temp;
+                    var flat = vp.Flatten(Coordinate.UnitZ);
+                    if (flat.X == 1) SwapHandle("Left", "Right");
+                    if (flat.Y == 1) SwapHandle("Top", "Bottom");
+                }
+            }
+
+            public void SwapHandle(string one, string two)
+            {
+                var str = Handle.ToString();
+                if (str.Contains(one))
+                {
+                    Handle = (ResizeHandle) Enum.Parse(typeof (ResizeHandle), str.Replace(one, two));
+                }
+                else if (str.Contains(two))
+                {
+                    Handle = (ResizeHandle)Enum.Parse(typeof(ResizeHandle), str.Replace(two, one));
+                }
+            }
+
             public ViewportBase ActiveViewport { get; set; }
             public BoxAction Action { get; set; }
             public ResizeHandle Handle { get; set; }
@@ -121,7 +169,7 @@ namespace Sledge.Editor.Tools
 
         protected virtual void OnBoxChanged()
         {
-            // Virtual
+            State.FixBoxBounds();
         }
 
         // Mouse Down
@@ -155,6 +203,7 @@ namespace Sledge.Editor.Tools
             State.Action = BoxAction.DownToDraw;
             State.BoxStart = SnapIfNeeded(viewport.Expand(viewport.ScreenToWorld(e.X, viewport.Height - e.Y)));
             State.BoxEnd = State.BoxStart;
+            State.Handle = ResizeHandle.BottomLeft;
             OnBoxChanged();
         }
 
@@ -199,10 +248,10 @@ namespace Sledge.Editor.Tools
 
         protected virtual void LeftMouseUpDrawing(Viewport2D viewport, MouseEventArgs e)
         {
+            var coords = GetResizedBoxCoordinates(viewport, e);
+            var corrected = GetProperBoxCoordinates(coords.Item1, coords.Item2);
             State.ActiveViewport = null;
             State.Action = BoxAction.Drawn;
-            State.BoxEnd = viewport.GetUnusedCoordinate(State.BoxEnd) + SnapIfNeeded(viewport.Expand(viewport.ScreenToWorld(e.X, viewport.Height - e.Y)));
-            var corrected = GetProperBoxCoordinates(State.BoxStart, State.BoxEnd);
             State.BoxStart = corrected.Item1;
             State.BoxEnd = corrected.Item2;
             OnBoxChanged();
@@ -210,10 +259,10 @@ namespace Sledge.Editor.Tools
 
         protected virtual void LeftMouseUpResizing(Viewport2D viewport, MouseEventArgs e)
         {
-            State.ActiveViewport = null;
-            State.Action = BoxAction.Drawn;
             var coords = GetResizedBoxCoordinates(viewport, e);
             var corrected = GetProperBoxCoordinates(coords.Item1, coords.Item2);
+            State.ActiveViewport = null;
+            State.Action = BoxAction.Drawn;
             State.BoxStart = corrected.Item1;
             State.BoxEnd = corrected.Item2;
             OnBoxChanged();
@@ -267,9 +316,10 @@ namespace Sledge.Editor.Tools
 
         protected virtual void MouseDraggingToDraw(Viewport2D viewport, MouseEventArgs e)
         {
-            var now = SnapIfNeeded(viewport.ScreenToWorld(e.X, viewport.Height - e.Y));
             State.Action = BoxAction.Drawing;
-            State.BoxEnd = viewport.GetUnusedCoordinate(State.BoxEnd) + viewport.Expand(now);
+            var coords = GetResizedBoxCoordinates(viewport, e);
+            State.BoxStart = coords.Item1;
+            State.BoxEnd = coords.Item2;
             OnBoxChanged();
         }
 
@@ -333,7 +383,7 @@ namespace Sledge.Editor.Tools
 
         protected Tuple<Coordinate, Coordinate> GetResizedBoxCoordinates(Viewport2D viewport, MouseEventArgs e)
         {
-            if (State.Action != BoxAction.Resizing) return Tuple.Create(State.BoxStart, State.BoxEnd);
+            if (State.Action != BoxAction.Resizing && State.Action != BoxAction.Drawing) return Tuple.Create(State.BoxStart, State.BoxEnd);
             var now = SnapIfNeeded(viewport.ScreenToWorld(e.X, viewport.Height - e.Y));
             var cstart = viewport.Flatten(State.BoxStart);
             var cend = viewport.Flatten(State.BoxEnd);
