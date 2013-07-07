@@ -249,7 +249,10 @@ namespace Sledge.Providers.Map
                 allentities.Remove(worldspawn);
                 map.WorldSpawn.EntityData = worldspawn.EntityData;
                 allentities.ForEach(x => x.SetParent(map.WorldSpawn));
-                worldspawn.Children.ForEach(x => x.SetParent(map.WorldSpawn));
+                foreach (var obj in worldspawn.Children.ToArray())
+                {
+                    obj.SetParent(map.WorldSpawn);
+                }
                 map.WorldSpawn.UpdateBoundingBox(false);
                 return map;
             }

@@ -30,6 +30,7 @@ namespace Sledge.Editor.Tools
             //Tools.Add(new DisplacementTool());
             Tools.Add(new ClipTool());
             Tools.Add(new VMTool());
+            Tools.Add(new CordonTool());
         }
 
         public static void Deactivate()

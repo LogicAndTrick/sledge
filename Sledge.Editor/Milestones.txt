@@ -14,8 +14,6 @@ Priorities
   Features
     Toolbar buttons
       Ignore grouping
-      Cordon tool
-      Texture lock, scaling lock
       Maybe: select by handles, auto select, texture alignment, visgroups
     Recognise changes / prompt for save
     New/Open/Save/Save As/Close
@@ -23,6 +21,7 @@ Priorities
     Get rid of options database, use text-based format instead
     Check for updates (needed for alpha!)
     Toobar & tool icons
+    Cordon compile
 
 Post-Alpha Priorities
   TDI
@@ -79,7 +78,7 @@ Post-Alpha Priorities
     Groups - 100%
     Visgroups - 100%
     Cordon - 0%
-    Texture Lock - 0%
+    Texture Lock - 100%
     Entity/World - 90%, testing
     Texture Replace - 100%
     Undo/Redo - 70%, history UI
