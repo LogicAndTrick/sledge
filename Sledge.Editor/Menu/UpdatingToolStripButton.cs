@@ -26,6 +26,9 @@ namespace Sledge.Editor.Menu
             {
                 Mediator.Subscribe(EditorMediator.UpdateMenu, this);
                 Mediator.Subscribe(EditorMediator.UpdateToolstrip, this);
+                Mediator.Subscribe(EditorMediator.SelectionChanged, this);
+                Mediator.Subscribe(EditorMediator.HistoryChanged, this);
+                Mediator.Subscribe(EditorMediator.ClipboardChanged, this);
             }
             Notify(null, null);
         }

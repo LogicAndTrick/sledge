@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Sledge.Common.Mediator;
 using Sledge.DataStructures.MapObjects;
 
 namespace Sledge.Editor.History
@@ -12,6 +13,8 @@ namespace Sledge.Editor.History
         public int SizeOfHistory { get; set; }
         private readonly List<IHistoryItem> _items;
         private int _currentIndex;
+
+        public long TotalActionsSinceLastSave { get; set; }
 
         public HistoryManager(Documents.Document doc)
         {
@@ -45,22 +48,26 @@ namespace Sledge.Editor.History
             // Add the new entry
             _items.Add(item);
             _currentIndex = _items.Count - 1;
+            TotalActionsSinceLastSave++;
+            Mediator.Publish(EditorMediator.HistoryChanged);
         }
 
         public void Undo()
         {
             if (!CanUndo()) return;
             _items[_currentIndex].Undo(Document);
-            Document.UpdateDisplayLists();
             _currentIndex--;
+            TotalActionsSinceLastSave--;
+            Mediator.Publish(EditorMediator.HistoryChanged);
         }
 
         public void Redo()
         {
             if (!CanRedo()) return;
             _items[_currentIndex + 1].Redo(Document);
-            Document.UpdateDisplayLists();
             _currentIndex++;
+            TotalActionsSinceLastSave++;
+            Mediator.Publish(EditorMediator.HistoryChanged);
         }
 
         public string GetUndoString()

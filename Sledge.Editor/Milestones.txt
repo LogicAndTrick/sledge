@@ -4,7 +4,6 @@ Priorities
   Bugs
     Clip retain groups
     Actions for switching selection modes
-    Toolbar buttons not updating on select/copy/etc
   Enhancements
     Select tool 2D drag view original
     Select tool 2D select entities
@@ -12,12 +11,6 @@ Priorities
     Additional Map Properties
       VMF
   Features
-    Toolbar buttons
-      Ignore grouping
-      Maybe: select by handles, auto select, texture alignment, visgroups
-    Recognise changes / prompt for save
-    New/Open/Save/Save As/Close
-    Get rid of options database, use text-based format instead
     Check for updates (needed for alpha!)
     Toobar & tool icons
     Cordon compile
@@ -38,6 +31,9 @@ Post-Alpha Priorities
   Pointfile dark/light theme toggle
   3D view helpers
   Toggle render of nodraw/null faces
+  Game config detection
+  Toolbar buttons
+    Maybe: select by handles, auto select, visgroups
 
 1. Goldsource Support
   Formats
@@ -76,7 +72,7 @@ Post-Alpha Priorities
     Hollow - 80%, groups
     Groups - 100%
     Visgroups - 100%
-    Cordon - 0%
+    Cordon - 50%, render, compile
     Texture Lock - 100%
     Entity/World - 90%, testing
     Texture Replace - 100%
@@ -89,7 +85,7 @@ Post-Alpha Priorities
     Object Properties - 80%, data types (inputs/outputs not needed for milestone)
   UI
     Menu Builder - 100%
-    New/Open/Save/Close - 60%, change detection
+    New/Open/Save/Close - 100%
     Recent Files - 80%, bugs, testing
     Cut/Copy/Paste/Paste Special - 100%
     Select All/None - 100%

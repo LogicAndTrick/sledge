@@ -43,6 +43,9 @@ namespace Sledge.Editor
         SelectionTypeChanged,
         SelectionChanged,
 
+        HistoryChanged,
+        ClipboardChanged,
+
         // File system messages
         FileOpened,
         FileSaved,

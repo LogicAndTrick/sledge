@@ -39,7 +39,8 @@ namespace Sledge.Editor.Visgroups
             set { VisgroupTree.StateImageList = value ? CheckboxImages : null; }
         }
 
-        public bool DisableAutomaticVisgroups { get; set; }
+        public bool DisableAutomatic { get; set; }
+        public bool HideAutomatic { get; set; }
         public bool SortAutomaticFirst { get; set; }
         public bool ShowHidden { get; set; }
 
@@ -87,9 +88,10 @@ namespace Sledge.Editor.Visgroups
         private void AddNode(TreeNode parent, Visgroup visgroup, Func<Visgroup, string> getCheckState)
         {
             if (!ShowHidden && visgroup is AutoVisgroup && ((AutoVisgroup)visgroup).IsHidden) return;
+            if (HideAutomatic && visgroup.IsAutomatic) return;
             var node = new TreeNode(visgroup.Name)
             {
-                StateImageKey = getCheckState(visgroup) + (DisableAutomaticVisgroups && visgroup.IsAutomatic ? "Disabled" : ""),
+                StateImageKey = getCheckState(visgroup) + (DisableAutomatic && visgroup.IsAutomatic ? "Disabled" : ""),
                 BackColor = visgroup.Colour,
                 Tag = visgroup.ID
             };

@@ -203,7 +203,7 @@ namespace Sledge.Providers.Map
 
         private static void WriteMapBase(BinaryWriter bw, MapObject obj)
         {
-            bw.Write(obj.Visgroups.FirstOrDefault());
+            bw.Write(obj.Visgroups.Except(obj.AutoVisgroups).FirstOrDefault());
             bw.WriteRGBColour(obj.Colour);
             bw.Write(obj.Children.Count);
             foreach (var mo in obj.Children)
@@ -423,7 +423,7 @@ namespace Sledge.Providers.Map
         private static void WriteVisgroups(BinaryWriter bw, List<Visgroup> visgroups)
         {
             bw.Write(visgroups.Count);
-            foreach (var visgroup in visgroups)
+            foreach (var visgroup in visgroups.Where(x => !x.IsAutomatic))
             {
                 bw.WriteFixedLengthString(Encoding.UTF8, 128, visgroup.Name);
                 bw.WriteaRGBAColour(visgroup.Colour);

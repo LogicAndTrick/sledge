@@ -86,6 +86,11 @@ namespace Sledge.Editor.Tools
             SetCurrentTool(null);
         }
 
+        private bool IgnoreGrouping()
+        {
+            return Document.Map.IgnoreGrouping;
+        }
+
         #region Current tool
 
         private void SetCurrentTool(TransformationTool tool)
@@ -229,7 +234,7 @@ namespace Sledge.Editor.Tools
             // If Ctrl is down and the object is already selected, we should deselect it instead.
             var list = new[] {ChosenItemFor3DSelection};
             var desel = ChosenItemFor3DSelection != null && KeyboardState.Ctrl && ChosenItemFor3DSelection.IsSelected;
-            SetSelected(desel ? list : null, desel ? null : list, !KeyboardState.Ctrl, false);
+            SetSelected(desel ? list : null, desel ? null : list, !KeyboardState.Ctrl, IgnoreGrouping());
 
             State.ActiveViewport = null;
         }
@@ -271,7 +276,7 @@ namespace Sledge.Editor.Tools
             if (ChosenItemFor3DSelection.IsSelected) desel.Add(ChosenItemFor3DSelection);
             else sel.Add(ChosenItemFor3DSelection);
 
-            SetSelected(desel, sel, false, false);
+            SetSelected(desel, sel, false, IgnoreGrouping());
 
             State.ActiveViewport = null;
         }
@@ -375,7 +380,7 @@ namespace Sledge.Editor.Tools
             // If we've clicked outside a selection box and not holding down control, clear the selection
             if (!Document.Selection.IsEmpty() && !KeyboardState.Ctrl)
             {
-                SetSelected(null, null, true, false);
+                SetSelected(null, null, true, IgnoreGrouping());
             }
 
             // We're drawing a selection box, so clear the current tool
@@ -409,7 +414,7 @@ namespace Sledge.Editor.Tools
             if (seltest != null)
             {
                 var list = new[] { seltest };
-                SetSelected(seltest.IsSelected ? list : null, seltest.IsSelected ? null : list, false, false);
+                SetSelected(seltest.IsSelected ? list : null, seltest.IsSelected ? null : list, false, IgnoreGrouping());
             }
 
             base.LeftMouseClick(viewport, e);
@@ -428,7 +433,7 @@ namespace Sledge.Editor.Tools
                 if (seltest != null)
                 {
                     var list = new[] { seltest };
-                    SetSelected(seltest.IsSelected ? list : null, seltest.IsSelected ? null : list, false, false);
+                    SetSelected(seltest.IsSelected ? list : null, seltest.IsSelected ? null : list, false, IgnoreGrouping());
                     SelectionChanged();
                     return;
                 }
@@ -512,7 +517,7 @@ namespace Sledge.Editor.Tools
                 var nodes = KeyboardState.Shift
                                 ? Document.Map.WorldSpawn.GetAllNodesContainedWithin(boundingbox).ToList()
                                 : Document.Map.WorldSpawn.GetAllNodesIntersectingWith(boundingbox).ToList();
-                SetSelected(null, nodes, false, false);
+                SetSelected(null, nodes, false, IgnoreGrouping());
             }
             base.BoxDrawnConfirm(viewport);
             SelectionChanged();

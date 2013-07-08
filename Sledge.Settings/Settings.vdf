@@ -44,7 +44,7 @@ Sledge
         "WonGameDir" "F:\Half-Life WON"
         "SteamGameDir" "Half-Life"
         "ModDir" "valve"
-        "MapDir" ""
+        "MapDir" "D:\Github\sledge\_Resources\RMF"
         "Autosave" "True"
         "UseCustomAutosaveDir" "False"
         "AutosaveDir" ""

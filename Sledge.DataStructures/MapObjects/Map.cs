@@ -21,6 +21,7 @@ namespace Sledge.DataStructures.MapObjects
         public bool SnapToGrid { get; set; }
         public decimal GridSpacing { get; set; }
         public bool HideFaceMask { get; set; }
+        public bool IgnoreGrouping { get; set; }
         public bool TextureLock { get; set; }
         public bool TextureScalingLock { get; set; }
         public bool Cordon { get; set; }

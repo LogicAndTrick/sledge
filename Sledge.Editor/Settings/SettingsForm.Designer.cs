@@ -145,6 +145,7 @@ namespace Sledge.Editor.Settings
             this.lblBuildEngine = new System.Windows.Forms.Label();
             this.SelectedBuildEngine = new System.Windows.Forms.ComboBox();
             this.tabBuildExecutables = new System.Windows.Forms.TabPage();
+            this.SelectedBuildIncludeWads = new System.Windows.Forms.CheckBox();
             this.lblBuildExeFolder = new System.Windows.Forms.Label();
             this.lblBuildBSP = new System.Windows.Forms.Label();
             this.SelectedBuildExeFolder = new System.Windows.Forms.TextBox();
@@ -214,7 +215,6 @@ namespace Sledge.Editor.Settings
             this.btnCancelSettings = new System.Windows.Forms.Button();
             this.btnApplyAndCloseSettings = new System.Windows.Forms.Button();
             this.btnApplySettings = new System.Windows.Forms.Button();
-            this.SelectedBuildIncludeWads = new System.Windows.Forms.CheckBox();
             this.tbcSettings.SuspendLayout();
             this.tab2DViews.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.NudgeUnits)).BeginInit();
@@ -987,6 +987,7 @@ namespace Sledge.Editor.Settings
             this.SelectedGameDirBrowse.TabIndex = 8;
             this.SelectedGameDirBrowse.Text = "Browse...";
             this.SelectedGameDirBrowse.UseVisualStyleBackColor = true;
+            this.SelectedGameDirBrowse.Click += new System.EventHandler(this.SelectedGameDirBrowseClicked);
             // 
             // lblGameSteamDir
             // 
@@ -1101,6 +1102,7 @@ namespace Sledge.Editor.Settings
             this.SelectedGameMapDirBrowse.TabIndex = 8;
             this.SelectedGameMapDirBrowse.Text = "Browse...";
             this.SelectedGameMapDirBrowse.UseVisualStyleBackColor = true;
+            this.SelectedGameMapDirBrowse.Click += new System.EventHandler(this.SelectedGameMapDirBrowseClicked);
             // 
             // SelectedGameDiffAutosaveDir
             // 
@@ -1128,6 +1130,7 @@ namespace Sledge.Editor.Settings
             this.SelectedGameDiffAutosaveDirBrowse.TabIndex = 13;
             this.SelectedGameDiffAutosaveDirBrowse.Text = "Browse...";
             this.SelectedGameDiffAutosaveDirBrowse.UseVisualStyleBackColor = true;
+            this.SelectedGameDiffAutosaveDirBrowse.Click += new System.EventHandler(this.SelectedGameDiffAutosaveDirBrowseClicked);
             // 
             // SelectedGameUseDiffAutosaveDir
             // 
@@ -1521,6 +1524,17 @@ namespace Sledge.Editor.Settings
             this.tabBuildExecutables.TabIndex = 1;
             this.tabBuildExecutables.Text = "Build Programs";
             this.tabBuildExecutables.UseVisualStyleBackColor = true;
+            // 
+            // SelectedBuildIncludeWads
+            // 
+            this.SelectedBuildIncludeWads.Checked = true;
+            this.SelectedBuildIncludeWads.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.SelectedBuildIncludeWads.Location = new System.Drawing.Point(95, 163);
+            this.SelectedBuildIncludeWads.Name = "SelectedBuildIncludeWads";
+            this.SelectedBuildIncludeWads.Size = new System.Drawing.Size(293, 24);
+            this.SelectedBuildIncludeWads.TabIndex = 21;
+            this.SelectedBuildIncludeWads.Text = "Automatically include WAD files found in this directory";
+            this.SelectedBuildIncludeWads.UseVisualStyleBackColor = true;
             // 
             // lblBuildExeFolder
             // 
@@ -2186,17 +2200,6 @@ namespace Sledge.Editor.Settings
             this.btnApplySettings.UseVisualStyleBackColor = true;
             this.btnApplySettings.Click += new System.EventHandler(this.Apply);
             // 
-            // SelectedBuildIncludeWads
-            // 
-            this.SelectedBuildIncludeWads.Checked = true;
-            this.SelectedBuildIncludeWads.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.SelectedBuildIncludeWads.Location = new System.Drawing.Point(95, 163);
-            this.SelectedBuildIncludeWads.Name = "SelectedBuildIncludeWads";
-            this.SelectedBuildIncludeWads.Size = new System.Drawing.Size(293, 24);
-            this.SelectedBuildIncludeWads.TabIndex = 21;
-            this.SelectedBuildIncludeWads.Text = "Automatically include WAD files found in this directory";
-            this.SelectedBuildIncludeWads.UseVisualStyleBackColor = true;
-            // 
             // SettingsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -2208,7 +2211,7 @@ namespace Sledge.Editor.Settings
             this.Controls.Add(this.tbcSettings);
             this.Name = "SettingsForm";
             this.ShowInTaskbar = false;
-            this.Text = "SettingsForm";
+            this.Text = "Sledge Settings";
             this.Load += new System.EventHandler(this.SettingsFormLoad);
             this.tbcSettings.ResumeLayout(false);
             this.tab2DViews.ResumeLayout(false);

@@ -598,16 +598,49 @@ namespace Sledge.Editor.Settings
             node.Text = SelectedGameName.Text;
         }
 
+        private void SelectedGameDirBrowseClicked(object sender, EventArgs e)
+        {
+            using (var fbd = new FolderBrowserDialog { SelectedPath = SelectedGameWonDir.Text })
+            {
+                if (fbd.ShowDialog() == DialogResult.OK)
+                {
+                    SelectedGameWonDir.Text = fbd.SelectedPath;
+                }
+            }
+        }
+
+        private void SelectedGameMapDirBrowseClicked(object sender, EventArgs e)
+        {
+            using (var fbd = new FolderBrowserDialog { SelectedPath = SelectedGameMapDir.Text })
+            {
+                if (fbd.ShowDialog() == DialogResult.OK)
+                {
+                    SelectedGameMapDir.Text = fbd.SelectedPath;
+                }
+            }
+        }
+
+        private void SelectedGameDiffAutosaveDirBrowseClicked(object sender, EventArgs e)
+        {
+            using (var fbd = new FolderBrowserDialog { SelectedPath = SelectedGameDiffAutosaveDir.Text })
+            {
+                if (fbd.ShowDialog() == DialogResult.OK)
+                {
+                    SelectedGameDiffAutosaveDir.Text = fbd.SelectedPath;
+                }
+            }
+        }
+
         private void SelectedGameAddFgdClicked(object sender, EventArgs e)
         {
-            var qf = new QuickForm("Select FGD") { LabelWidth = 30 }
-                .Browse("File", "Forge Game Data files (*.fgd)|*.fgd")
-                .OkCancel();
-            using (qf)
+            using (var ofd = new OpenFileDialog { Filter = "Forge Game Data files (*.fgd)|*.fgd", Multiselect = true })
             {
-                if (qf.ShowDialog() == DialogResult.OK)
+                if (ofd.ShowDialog() == DialogResult.OK)
                 {
-                    _selectedGame.Fgds.Add(new Fgd { GameID = _selectedGame.ID, Path = qf.String("File") });
+                    foreach (var fileName in ofd.FileNames)
+                    {
+                        _selectedGame.Fgds.Add(new Fgd { GameID = _selectedGame.ID, Path = fileName });
+                    }
                     SelectedGameUpdateFgds();
                 }
             }
@@ -624,14 +657,14 @@ namespace Sledge.Editor.Settings
 
         private void SelectedGameAddWadClicked(object sender, EventArgs e)
         {
-            var qf = new QuickForm("Select WAD") { LabelWidth = 30 }
-                .Browse("File", "WAD files (*.wad)|*.wad")
-                .OkCancel();
-            using (qf)
+            using (var ofd = new OpenFileDialog { Filter = "WAD files (*.wad)|*.wad", Multiselect = true })
             {
-                if (qf.ShowDialog() == DialogResult.OK)
+                if (ofd.ShowDialog() == DialogResult.OK)
                 {
-                    _selectedGame.Wads.Add(new Wad { GameID = _selectedGame.ID, Path = qf.String("File") });
+                    foreach (var fileName in ofd.FileNames)
+                    {
+                        _selectedGame.Wads.Add(new Wad { GameID = _selectedGame.ID, Path = fileName });
+                    }
                     SelectedGameUpdateWads();
                 }
             }

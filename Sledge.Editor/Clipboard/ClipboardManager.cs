@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using Sledge.Common.Mediator;
 using Sledge.DataStructures.MapObjects;
 using Sledge.Editor.Documents;
 using Sledge.Providers;
@@ -34,6 +35,7 @@ namespace Sledge.Editor.Clipboard
             if (Ring.Contains(item)) Ring.Remove(item);
             Ring.Add(item);
             System.Windows.Forms.Clipboard.SetText(item);
+            Mediator.Publish(EditorMediator.ClipboardChanged);
         }
 
         public static IEnumerable<string> GetClipboardRing()

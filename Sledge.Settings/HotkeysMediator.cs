@@ -13,7 +13,6 @@ namespace Sledge.Settings
         FileClose,
         FileSave,
         FileSaveAs,
-        FileExport,
         FileCompile,
 
         HistoryUndo,
@@ -39,7 +38,6 @@ namespace Sledge.Settings
 
         GroupingGroup,
         GroupingUngroup,
-        GroupingToggleIgnore,
 
         TieToEntity,
         TieToWorld,
@@ -76,6 +74,7 @@ namespace Sledge.Settings
         ToggleSnapToGrid,
         ToggleShow2DGrid,
         ToggleShow3DGrid,
+        ToggleIgnoreGrouping,
         ToggleTextureLock,
         ToggleTextureScalingLock,
         ToggleCordon,

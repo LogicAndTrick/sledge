@@ -75,7 +75,7 @@
             this.VisgroupPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.VisgroupPanel.DisableAutomaticVisgroups = false;
+            this.VisgroupPanel.DisableAutomatic = false;
             this.VisgroupPanel.Location = new System.Drawing.Point(-1, -1);
             this.VisgroupPanel.Name = "VisgroupPanel";
             this.VisgroupPanel.ShowCheckboxes = true;

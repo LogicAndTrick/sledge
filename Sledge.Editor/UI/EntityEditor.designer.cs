@@ -678,7 +678,7 @@ namespace Sledge.Editor.UI
             this.VisgroupPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.VisgroupPanel.DisableAutomaticVisgroups = true;
+            this.VisgroupPanel.DisableAutomatic = true;
             this.VisgroupPanel.Location = new System.Drawing.Point(6, 26);
             this.VisgroupPanel.Name = "VisgroupPanel";
             this.VisgroupPanel.ShowCheckboxes = true;

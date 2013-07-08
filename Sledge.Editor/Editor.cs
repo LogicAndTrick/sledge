@@ -110,6 +110,25 @@ namespace Sledge.Editor
             Subscribe();
         }
 
+        private void EditorClosing(object sender, FormClosingEventArgs e)
+        {
+            if (DocumentManager.CurrentDocument != null)
+            {
+                if (DocumentManager.CurrentDocument.History.TotalActionsSinceLastSave > 0)
+                {
+                    var result = MessageBox.Show("Would you like to save your changes to this map?", "Changes Detected", MessageBoxButtons.YesNoCancel);
+                    if (result == DialogResult.Cancel)
+                    {
+                        e.Cancel = true;
+                        return;
+                    }
+                    if (result == DialogResult.Yes) Mediator.Publish(HotkeysMediator.FileSave);
+                }
+                DocumentManager.SwitchTo(null);
+                DocumentManager.Remove(DocumentManager.CurrentDocument);
+            }
+        }
+
         #region Mediator
 
         private void Subscribe()

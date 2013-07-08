@@ -52,8 +52,10 @@ namespace Sledge.Editor.Documents
             Mediator.Subscribe(EditorMediator.DocumentTreeObjectsChanged, this);
             Mediator.Subscribe(EditorMediator.DocumentTreeFacesChanged, this);
 
-            Mediator.Subscribe(HotkeysMediator.FileCompile, this);
+            Mediator.Subscribe(HotkeysMediator.FileClose, this);
             Mediator.Subscribe(HotkeysMediator.FileSave, this);
+            Mediator.Subscribe(HotkeysMediator.FileSaveAs, this);
+            Mediator.Subscribe(HotkeysMediator.FileCompile, this);
 
             Mediator.Subscribe(HotkeysMediator.HistoryUndo, this);
             Mediator.Subscribe(HotkeysMediator.HistoryRedo, this);
@@ -106,7 +108,7 @@ namespace Sledge.Editor.Documents
             Mediator.Subscribe(HotkeysMediator.ToggleSnapToGrid, this);
             Mediator.Subscribe(HotkeysMediator.ToggleShow2DGrid, this);
             Mediator.Subscribe(HotkeysMediator.ToggleShow3DGrid, this);
-
+            Mediator.Subscribe(HotkeysMediator.ToggleIgnoreGrouping, this);
             Mediator.Subscribe(HotkeysMediator.ToggleTextureLock, this);
             Mediator.Subscribe(HotkeysMediator.ToggleTextureScalingLock, this);
             Mediator.Subscribe(HotkeysMediator.ToggleCordon, this);
@@ -177,24 +179,16 @@ namespace Sledge.Editor.Documents
             _document.History.Redo();
         }
 
-        public void FileCompile()
+        public void FileClose()
         {
-            FileSave();
-            var currentFile = _document.MapFile;
-            if (currentFile == null) return;
-            if (!currentFile.EndsWith("map"))
+            if (_document.History.TotalActionsSinceLastSave > 0)
             {
-                _document.Map.WorldSpawn.EntityData.Properties.Add(new Property
-                                                                       {
-                                                                           Key = "wad",
-                                                                           Value = string.Join(";", _document.Game.Wads.Select(x => x.Path))
-                                                                       });
-                var map = Path.ChangeExtension(_document.MapFile, "map");
-                MapProvider.SaveMapToFile(map, _document.Map);
-                currentFile = map;
+                var result = MessageBox.Show("Would you like to save your changes to this map?", "Changes Detected", MessageBoxButtons.YesNoCancel);
+                if (result == DialogResult.Cancel) return;
+                if (result == DialogResult.Yes) FileSave();
             }
-            var batch = new Batch(_document.Game, currentFile);
-            BatchCompiler.Compile(batch);
+            DocumentManager.SwitchTo(null);
+            DocumentManager.Remove(_document);
         }
 
         public void FileSave()
@@ -204,7 +198,7 @@ namespace Sledge.Editor.Documents
             {
                 using (var sfd = new SaveFileDialog())
                 {
-                    sfd.Filter = @"RMF Files (*.rmf)|*.rmf";
+                    sfd.Filter = @"VMF Files (*.vmf)|*.vmf|RMF Files (*.rmf)|*.rmf|MAP Files (*.map)|*.map";
                     if (sfd.ShowDialog() == DialogResult.OK)
                     {
                         currentFile = sfd.FileName;
@@ -216,6 +210,48 @@ namespace Sledge.Editor.Documents
             MapProvider.SaveMapToFile(currentFile, _document.Map);
             _document.MapFile = currentFile;
             Mediator.Publish(EditorMediator.FileOpened, _document.MapFile);
+
+            _document.History.TotalActionsSinceLastSave = 0;
+        }
+
+        public void FileSaveAs()
+        {
+            string currentFile = null;
+            using (var sfd = new SaveFileDialog())
+            {
+                sfd.Filter = @"VMF Files (*.vmf)|*.vmf|RMF Files (*.rmf)|*.rmf|MAP Files (*.map)|*.map";
+                if (sfd.ShowDialog() == DialogResult.OK)
+                {
+                    currentFile = sfd.FileName;
+                }
+            }
+            if (currentFile == null) return;
+
+            MapProvider.SaveMapToFile(currentFile, _document.Map);
+            _document.MapFile = currentFile;
+            Mediator.Publish(EditorMediator.FileOpened, _document.MapFile);
+
+            _document.History.TotalActionsSinceLastSave = 0;
+        }
+
+        public void FileCompile()
+        {
+            FileSave();
+            var currentFile = _document.MapFile;
+            if (currentFile == null) return;
+            if (!currentFile.EndsWith("map"))
+            {
+                _document.Map.WorldSpawn.EntityData.Properties.Add(new Property
+                {
+                    Key = "wad",
+                    Value = string.Join(";", _document.Game.Wads.Select(x => x.Path))
+                });
+                var map = Path.ChangeExtension(_document.MapFile, "map");
+                MapProvider.SaveMapToFile(map, _document.Map);
+                currentFile = map;
+            }
+            var batch = new Batch(_document.Game, currentFile);
+            BatchCompiler.Compile(batch);
         }
 
         public void OperationsCopy()
@@ -807,12 +843,14 @@ namespace Sledge.Editor.Documents
         public void ToggleSnapToGrid()
         {
             _document.Map.SnapToGrid = !_document.Map.SnapToGrid;
+            Mediator.Publish(EditorMediator.UpdateToolstrip);
         }
 
         public void ToggleShow2DGrid()
         {
             _document.Map.Show2DGrid = !_document.Map.Show2DGrid;
             RebuildGrid();
+            Mediator.Publish(EditorMediator.UpdateToolstrip);
         }
 
         public void ToggleShow3DGrid()
@@ -822,21 +860,31 @@ namespace Sledge.Editor.Documents
             _document.Renderer.Show3DGrid = _document.Map.Show3DGrid;
             _document.Renderer.GridSpacing = (float)_document.Map.GridSpacing;
             _document.Renderer.Unbind();
+            Mediator.Publish(EditorMediator.UpdateToolstrip);
+        }
+
+        public void ToggleIgnoreGrouping()
+        {
+            _document.Map.IgnoreGrouping = !_document.Map.IgnoreGrouping;
+            Mediator.Publish(EditorMediator.UpdateToolstrip);
         }
 
         public void ToggleTextureLock()
         {
             _document.Map.TextureLock = !_document.Map.TextureLock;
+            Mediator.Publish(EditorMediator.UpdateToolstrip);
         }
 
         public void ToggleTextureScalingLock()
         {
             _document.Map.TextureScalingLock = !_document.Map.TextureScalingLock;
+            Mediator.Publish(EditorMediator.UpdateToolstrip);
         }
 
         public void ToggleCordon()
         {
             _document.Map.Cordon = !_document.Map.Cordon;
+            Mediator.Publish(EditorMediator.UpdateToolstrip);
         }
 
         public void ShowSelectedBrushID()

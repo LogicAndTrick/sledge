@@ -60,11 +60,11 @@ namespace Sledge.Editor.Menu
             Add("File", new MenuSplitter());
             Add("File", new SimpleMenuBuilder("Exit", EditorMediator.Exit));
             
-            Func<bool> canUndo = () => DocumentManager.CurrentDocument.History.CanUndo();
-            Func<bool> canRedo = () => DocumentManager.CurrentDocument.History.CanRedo();
-            Func<string> undoText = () => DocumentManager.CurrentDocument.History.GetUndoString();
-            Func<string> redoText = () => DocumentManager.CurrentDocument.History.GetRedoString();
-            Func<bool> itemsSelected = () => DocumentManager.CurrentDocument.Selection.GetSelectedObjects().Any();
+            Func<bool> canUndo = () => mapOpen() && DocumentManager.CurrentDocument.History.CanUndo();
+            Func<bool> canRedo = () => mapOpen() && DocumentManager.CurrentDocument.History.CanRedo();
+            Func<string> undoText = () => mapOpen() ? DocumentManager.CurrentDocument.History.GetUndoString() : "";
+            Func<string> redoText = () => mapOpen() ? DocumentManager.CurrentDocument.History.GetRedoString() : "";
+            Func<bool> itemsSelected = () => mapOpen() && DocumentManager.CurrentDocument.Selection.GetSelectedObjects().Any();
             Func<bool> canPaste = Clipboard.ClipboardManager.CanPaste;
             Add("Edit", new SimpleMenuBuilder("Undo", HotkeysMediator.HistoryUndo) { IsVisible = mapOpen, IsActive = canUndo, Text = undoText, ShowInToolStrip = true });
             Add("Edit", new SimpleMenuBuilder("Redo", HotkeysMediator.HistoryRedo) { IsVisible = mapOpen, IsActive = canRedo, Text = redoText, ShowInToolStrip = true });
@@ -80,9 +80,9 @@ namespace Sledge.Editor.Menu
             Add("Edit", new MenuSplitter { IsVisible = mapOpen });
             Add("Edit", new SimpleMenuBuilder("Object Properties", HotkeysMediator.ObjectProperties) { IsVisible = mapOpen, ShowInToolStrip = true });
 
-            Add("Map", new SimpleMenuBuilder("Snap to Grid", HotkeysMediator.ToggleSnapToGrid) { IsVisible = mapOpen, IsChecked = () => DocumentManager.CurrentDocument.Map.SnapToGrid, ShowInToolStrip = true });
-            Add("Map", new SimpleMenuBuilder("Show 2D Grid", HotkeysMediator.ToggleShow2DGrid) { IsVisible = mapOpen, IsChecked = () => DocumentManager.CurrentDocument.Map.Show2DGrid, ShowInToolStrip = true });
-            Add("Map", new SimpleMenuBuilder("Show 3D Grid", HotkeysMediator.ToggleShow3DGrid) { IsVisible = mapOpen, IsChecked = () => DocumentManager.CurrentDocument.Map.Show3DGrid, ShowInToolStrip = true });
+            Add("Map", new SimpleMenuBuilder("Snap to Grid", HotkeysMediator.ToggleSnapToGrid) { IsVisible = mapOpen, IsChecked = () => mapOpen() && DocumentManager.CurrentDocument.Map.SnapToGrid, ShowInToolStrip = true });
+            Add("Map", new SimpleMenuBuilder("Show 2D Grid", HotkeysMediator.ToggleShow2DGrid) { IsVisible = mapOpen, IsChecked = () => mapOpen() && DocumentManager.CurrentDocument.Map.Show2DGrid, ShowInToolStrip = true });
+            Add("Map", new SimpleMenuBuilder("Show 3D Grid", HotkeysMediator.ToggleShow3DGrid) { IsVisible = mapOpen, IsChecked = () => mapOpen() && DocumentManager.CurrentDocument.Map.Show3DGrid, ShowInToolStrip = true });
             Add("Map", new GroupedMenuBuilder("Grid Settings",
                                               new SimpleMenuBuilder("Smaller Grid", HotkeysMediator.GridDecrease) { IsVisible = mapOpen, ShowInToolStrip = true },
                                               new SimpleMenuBuilder("Bigger Grid", HotkeysMediator.GridIncrease) { IsVisible = mapOpen, ShowInToolStrip = true }
@@ -90,8 +90,10 @@ namespace Sledge.Editor.Menu
             Add("Map", new SimpleMenuBuilder("Smaller Grid", HotkeysMediator.GridDecrease) { IsVisible = mapOpen, ShowInToolStrip = true, ShowInMenu = false });
             Add("Map", new SimpleMenuBuilder("Bigger Grid", HotkeysMediator.GridIncrease) { IsVisible = mapOpen, ShowInToolStrip = true, ShowInMenu = false });
             Add("Map", new MenuSplitter { IsVisible = mapOpen, ShowInToolStrip = true });
-            Add("Map", new SimpleMenuBuilder("Texture Lock", HotkeysMediator.ToggleTextureLock) { IsVisible = mapOpen, IsChecked = () => DocumentManager.CurrentDocument.Map.TextureLock, ShowInToolStrip = true });
-            Add("Map", new SimpleMenuBuilder("Texture Scaling Lock", HotkeysMediator.ToggleTextureScalingLock) { IsVisible = mapOpen, IsChecked = () => DocumentManager.CurrentDocument.Map.TextureScalingLock, ShowInToolStrip = true });
+            Add("Map", new SimpleMenuBuilder("Ignore Grouping", HotkeysMediator.ToggleIgnoreGrouping) { IsVisible = mapOpen, IsChecked = () => mapOpen() && DocumentManager.CurrentDocument.Map.IgnoreGrouping, ShowInToolStrip = true });
+            Add("Map", new MenuSplitter { IsVisible = mapOpen, ShowInToolStrip = true });
+            Add("Map", new SimpleMenuBuilder("Texture Lock", HotkeysMediator.ToggleTextureLock) { IsVisible = mapOpen, IsChecked = () => mapOpen() && DocumentManager.CurrentDocument.Map.TextureLock, ShowInToolStrip = true });
+            Add("Map", new SimpleMenuBuilder("Texture Scaling Lock", HotkeysMediator.ToggleTextureScalingLock) { IsVisible = mapOpen, IsChecked = () => mapOpen() && DocumentManager.CurrentDocument.Map.TextureScalingLock, ShowInToolStrip = true });
             Add("Map", new MenuSplitter { IsVisible = mapOpen });
             Add("Map", new SimpleMenuBuilder("Show Information", HotkeysMediator.ShowMapInformation) { IsVisible = mapOpen });
             Add("Map", new SimpleMenuBuilder("Show Selected Brush ID", HotkeysMediator.ShowSelectedBrushID) { IsVisible = mapOpen, IsActive = itemsSelected });
@@ -122,7 +124,7 @@ namespace Sledge.Editor.Menu
             Add("Tools", new SimpleMenuBuilder("Group", HotkeysMediator.GroupingGroup) { IsVisible = mapOpen, IsActive = itemsSelected, ShowInToolStrip = true });
             Add("Tools", new SimpleMenuBuilder("Ungroup", HotkeysMediator.GroupingUngroup) { IsVisible = mapOpen, IsActive = itemsSelected, ShowInToolStrip = true });
             Add("Tools", new MenuSplitter { IsVisible = mapOpen, ShowInToolStrip = true });
-            Add("Tools", new SimpleMenuBuilder("Cordon Tool", HotkeysMediator.ToggleCordon) { IsVisible = mapOpen, IsChecked = () => DocumentManager.CurrentDocument.Map.Cordon, ShowInToolStrip = true });
+            Add("Tools", new SimpleMenuBuilder("Cordon Tool", HotkeysMediator.ToggleCordon) { IsVisible = mapOpen, IsChecked = () => mapOpen() && DocumentManager.CurrentDocument.Map.Cordon, ShowInToolStrip = true });
             Add("Tools", new MenuSplitter { IsVisible = mapOpen });
             Add("Tools", new SimpleMenuBuilder("Tie to Entity", HotkeysMediator.TieToEntity) { IsVisible = mapOpen, IsActive = itemsSelected });
             Add("Tools", new SimpleMenuBuilder("Move to World", HotkeysMediator.TieToWorld) { IsVisible = mapOpen, IsActive = itemsSelected });
@@ -174,7 +176,7 @@ namespace Sledge.Editor.Menu
                 _menu.Items.Add(mi);
             }
             // Need to remove and re-add tool strips because the ordering is incorrect otherwise
-            foreach (var control in _container.Controls.OfType<ToolStripPanel>().SelectMany(x => x.Controls.OfType<ToolStrip>()))
+            foreach (var control in _container.Controls.OfType<ToolStripPanel>().SelectMany(x => x.Controls.OfType<ToolStrip>()).ToList())
             {
                 if (MenuItems.Any(x => x.Key == control.Name))
                 {
