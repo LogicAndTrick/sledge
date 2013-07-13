@@ -42,6 +42,9 @@ smooth out vec2 texCoord;
 smooth out float vertexSelected;
 
 uniform bool isWireframe;
+uniform bool drawUntransformed;
+uniform bool drawSelectedOnly;
+uniform bool drawUnselectedOnly;
 uniform bool in3d;
 uniform bool showGrid;
 uniform float gridSpacing;
@@ -54,7 +57,7 @@ uniform mat4 selectionTransform;
 void main()
 {
     vec4 pos = vec4(position, 1);
-    if (selected > 0.9 && (!isWireframe || !in3d)) pos = selectionTransform * pos;
+    if (selected > 0.9 && !drawUntransformed) pos = selectionTransform * pos;
     vec4 modelPos = modelViewMatrix * pos;
     
 	vec4 cameraPos = cameraMatrix * modelPos;
@@ -62,7 +65,7 @@ void main()
 
     vec4 npos = vec4(normal, 1);
     // http://www.arcsynthesis.org/gltut/Illumination/Tut09%20Normal%20Transformation.html
-    if (selected > 0.9 && (!isWireframe || !in3d)) npos = transpose(inverse(selectionTransform)) * npos;
+    if (selected > 0.9 && !drawUntransformed) npos = transpose(inverse(selectionTransform)) * npos;
     vec3 normalPos = normalize(npos.xyz);
     npos = vec4(normalPos, 1);
 
@@ -95,8 +98,12 @@ smooth in vec2 texCoord;
 smooth in float vertexSelected;
 
 uniform bool isWireframe;
+uniform bool drawUntransformed;
+uniform bool drawSelectedOnly;
+uniform bool drawUnselectedOnly;
 uniform bool isTextured;
 uniform vec4 wireframeColour;
+uniform vec4 selectedWireframeColour;
 uniform bool in3d;
 uniform bool showGrid;
 uniform float gridSpacing;
@@ -105,9 +112,10 @@ uniform sampler2D currentTexture;
 out vec4 outputColor;
 void main()
 {
-    if (in3d && vertexSelected <= 0.9) discard;
+    if (drawSelectedOnly && vertexSelected <= 0.9) discard;
+    if (drawUnselectedOnly && vertexSelected > 0.9) discard;
     if (isWireframe) {
-        if (!in3d && vertexSelected > 0.9) outputColor = vec4(1, 0, 0, 1);
+        if (!in3d && vertexSelected > 0.9) outputColor = selectedWireframeColour;
         else if (wireframeColour.w == 0) outputColor = vertexColour;
         else outputColor = wireframeColour;
     } else {
@@ -139,10 +147,14 @@ void main()
         public Matrix4 SelectionTransform { set { Shader.Set("selectionTransform", value); } }
         public bool IsTextured { set { Shader.Set("isTextured", value); } }
         public bool IsWireframe { set { Shader.Set("isWireframe", value); } }
+        public bool DrawUntransformed { set { Shader.Set("drawUntransformed", value); } }
+        public bool DrawSelectedOnly { set { Shader.Set("drawSelectedOnly", value); } }
+        public bool DrawUnselectedOnly { set { Shader.Set("drawUnselectedOnly", value); } }
         public bool In3D { set { Shader.Set("in3d", value); } }
         public bool Show3DGrid { set { Shader.Set("showGrid", value); } }
         public float GridSpacing { set { Shader.Set("gridSpacing", value); } }
         public Vector4 WireframeColour { set { Shader.Set("wireframeColour", value); } }
+        public Vector4 SelectedWireframeColour { set { Shader.Set("selectedWireframeColour", value); } }
 
         public Dictionary<ViewportBase, GridRenderable> GridRenderables { get; private set; }  
 
@@ -184,11 +196,22 @@ void main()
             IsWireframe = true;
             WireframeColour = Vector4.Zero;
             In3D = false;
+            DrawUntransformed = false;
+            DrawSelectedOnly = false;
 
             ModelView = Matrix4.Identity;
             if (GridRenderables.ContainsKey(context)) GridRenderables[context].Render(context);
 
             ModelView = modelView;
+
+            DrawUntransformed = true;
+            DrawSelectedOnly = true;
+            SelectedWireframeColour = new Vector4(0.6f, 0, 0, 1);
+            _array.DrawWireframe(context, Shader);
+
+            DrawUntransformed = false;
+            DrawSelectedOnly = false;
+            SelectedWireframeColour = new Vector4(1, 0, 0, 1);
             _array.DrawWireframe(context, Shader);
 
             Unbind();
@@ -207,14 +230,19 @@ void main()
             IsTextured = true;
             IsWireframe = false;
             In3D = false;
+            DrawUntransformed = false;
+            DrawSelectedOnly = false;
 
             GL.ActiveTexture(TextureUnit.Texture0);
             Shader.Set("currentTexture", 0);
             _array.DrawTextured(context, Shader);
 
+            DrawUntransformed = true;
+            DrawSelectedOnly = true;
             In3D = true;
             IsWireframe = true;
             WireframeColour = new Vector4(1, 1, 0, 1);
+            SelectedWireframeColour = new Vector4(1, 0, 0, 1);
 
             _array.DrawWireframe(context, Shader);
 

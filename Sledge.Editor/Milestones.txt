@@ -2,9 +2,9 @@
 
 Priorities
   Bugs
-    Clip retain groups
+    Undo transforms not resetting bounding boxes for entity solids
+    Box tool snapping off-grid on move resize
   Enhancements
-    Select tool 2D drag view original
     Select tool 2D select entities
   Features
     Check for updates (needed for alpha!)

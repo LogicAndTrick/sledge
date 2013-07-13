@@ -333,7 +333,7 @@ namespace Sledge.DataStructures.MapObjects
             }
             Plane = new Plane(Vertices[0].Location, Vertices[1].Location, Vertices[2].Location);
             Colour = Colour;
-            if (flags.HasFlag(TransformFlags.TextureScalingLock))
+            if (flags.HasFlag(TransformFlags.TextureScalingLock) && Texture.Texture != null)
             {
                 // Make a best-effort guess of retaining scaling. All bets are off during skew operations.
                 // Transform the current texture axes
@@ -344,7 +344,7 @@ namespace Sledge.DataStructures.MapObjects
                 Texture.XScale *= ua.VectorMagnitude();
                 Texture.YScale *= va.VectorMagnitude();
             }
-            if (flags.HasFlag(TransformFlags.TextureLock))
+            if (flags.HasFlag(TransformFlags.TextureLock) && Texture.Texture != null)
             {
                 // Transform the texture axes and move them back to the origin
                 var origin = transform.Transform(Coordinate.Zero);
@@ -361,6 +361,11 @@ namespace Sledge.DataStructures.MapObjects
                 var vtx = Vertices[0];
                 Texture.XShift = Texture.Texture.Width * vtx.TextureU - (vtx.Location.Dot(Texture.UAxis)) / Texture.XScale;
                 Texture.YShift = Texture.Texture.Height * vtx.TextureV - (vtx.Location.Dot(Texture.VAxis)) / Texture.YScale;
+            }
+            else
+            {
+                // During rotate/skew operations we'll mess up the texture axes, just reset them.
+                AlignTextureToFace();
             }
             CalculateTextureCoordinates();
             UpdateBoundingBox();
