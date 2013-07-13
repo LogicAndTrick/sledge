@@ -3,13 +3,9 @@
 Priorities
   Bugs
     Clip retain groups
-    Actions for switching selection modes
   Enhancements
     Select tool 2D drag view original
     Select tool 2D select entities
-    Transparent rendering / painter's algorithm
-    Additional Map Properties
-      VMF
   Features
     Check for updates (needed for alpha!)
     Toobar & tool icons
@@ -34,6 +30,10 @@ Post-Alpha Priorities
   3D view helpers
   Toggle render of nodraw/null faces
   Game config detection
+  Transparent rendering / painter's algorithm
+  Actions for switching selection modes
+  Cameras
+   VMF/RMF read/write
   Toolbar buttons
     Maybe: select by handles, auto select, visgroups
 

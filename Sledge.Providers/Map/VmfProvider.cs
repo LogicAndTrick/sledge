@@ -518,14 +518,14 @@ namespace Sledge.Providers.Map
                 var parent = new GenericStructure("Root");
                 parent.Children.AddRange(GenericStructure.Parse(reader));
                 // Sections from a Hammer map:
-                // versioninfo
-                // visgroups
-                // viewsettings
-                // world
-                // entity
-                // cameras
-                // cordon
-                // (why does hammer save these in reverse alphabetical?)
+                // - world
+                // - entity
+                // - visgroups
+                // - cordon
+                // Not done yet
+                // - versioninfo
+                // - viewsettings
+                // - cameras
 
                 var map = new DataStructures.MapObjects.Map();
 
@@ -533,6 +533,8 @@ namespace Sledge.Providers.Map
                 var entities = parent.GetChildren("entity");
                 var visgroups = parent.GetChildren("visgroups").SelectMany(x => x.GetChildren("visgroup"));
                 var cameras = parent.GetChildren("cameras").FirstOrDefault();
+                var cordon = parent.GetChildren("cordon").FirstOrDefault();
+                var viewsettings = parent.GetChildren("viewsettings").FirstOrDefault();
 
                 foreach (var visgroup in visgroups)
                 {
@@ -548,6 +550,26 @@ namespace Sledge.Providers.Map
                     ent.SetParent(entParent);
                 }
 
+                if (cordon != null)
+                {
+                    var start = cordon.PropertyCoordinate("mins", map.CordonBounds.Start);
+                    var end = cordon.PropertyCoordinate("maxs", map.CordonBounds.End);
+                    map.CordonBounds = new Box(start, end);
+                    map.Cordon = cordon.PropertyBoolean("active", map.Cordon);
+                }
+
+                if (viewsettings != null)
+                {
+                    map.SnapToGrid = viewsettings.PropertyBoolean("bSnapToGrid", map.SnapToGrid);
+                    map.Show2DGrid = viewsettings.PropertyBoolean("bShowGrid", map.Show2DGrid);
+                    map.Show3DGrid = viewsettings.PropertyBoolean("bShow3DGrid", map.Show3DGrid);
+                    map.GridSpacing = viewsettings.PropertyDecimal("nGridSpacing", map.GridSpacing);
+                    map.IgnoreGrouping = viewsettings.PropertyBoolean("bIgnoreGrouping", map.IgnoreGrouping);
+                    map.HideFaceMask = viewsettings.PropertyBoolean("bHideFaceMask", map.HideFaceMask);
+                    map.TextureLock = viewsettings.PropertyBoolean("bTextureLock", map.TextureLock);
+                    map.TextureScalingLock = viewsettings.PropertyBoolean("bTextureScalingLock", map.TextureScalingLock);
+                }
+
                 return map;
             }
         }
@@ -559,8 +581,14 @@ namespace Sledge.Providers.Map
             var ents = new List<Entity>();
             FlattenTree(map.WorldSpawn, solids, ents, groups);
 
+            var fvi = FileVersionInfo.GetVersionInfo(typeof (VmfProvider).Assembly.Location);
             var versioninfo = new GenericStructure("versioninfo");
-            //TODO versioninfo
+            versioninfo.AddProperty("editorname", "Sledge");
+            versioninfo.AddProperty("editorversion", fvi.ProductMajorPart.ToString(CultureInfo.InvariantCulture) + "." + fvi.ProductMinorPart.ToString(CultureInfo.InvariantCulture));
+            versioninfo.AddProperty("editorbuild", fvi.ProductBuildPart.ToString(CultureInfo.InvariantCulture));
+            versioninfo.AddProperty("mapversion", map.Version.ToString(CultureInfo.InvariantCulture));
+            versioninfo.AddProperty("formatversion", "100");
+            versioninfo.AddProperty("prefab", "0");
 
             var visgroups = new GenericStructure("visgroups");
             foreach (var visgroup in map.Visgroups.OrderBy(x => x.ID))
@@ -569,7 +597,15 @@ namespace Sledge.Providers.Map
             }
 
             var viewsettings = new GenericStructure("viewsettings");
-            //TODO viewsettings
+
+            viewsettings.AddProperty("bSnapToGrid", map.SnapToGrid ? "1" : "0");
+            viewsettings.AddProperty("bShowGrid", map.Show2DGrid ? "1" : "0");
+            viewsettings.AddProperty("bShow3DGrid", map.Show3DGrid ? "1" : "0");
+            viewsettings.AddProperty("nGridSpacing", map.GridSpacing.ToString(CultureInfo.InvariantCulture));
+            viewsettings.AddProperty("bIgnoreGrouping", map.IgnoreGrouping ? "1" : "0");
+            viewsettings.AddProperty("bHideFaceMask", map.HideFaceMask ? "1" : "0");
+            viewsettings.AddProperty("bTextureLock", map.TextureLock ? "1" : "0");
+            viewsettings.AddProperty("bTextureScalingLock", map.TextureScalingLock ? "1" : "0");
 
             var world = WriteWorld(map, solids, groups);
 
@@ -579,7 +615,9 @@ namespace Sledge.Providers.Map
             //TODO cameras
 
             var cordon = new GenericStructure("cordon");
-            //TODO cordon
+            cordon.AddProperty("mins", map.CordonBounds.Start.ToString());
+            cordon.AddProperty("maxs", map.CordonBounds.End.ToString());
+            cordon.AddProperty("active", map.Cordon ? "1" : "0");
 
             using (var sw = new StreamWriter(stream))
             {

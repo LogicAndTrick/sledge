@@ -172,12 +172,12 @@ namespace Sledge.Providers
             return defaultValue;
         }
 
-        public Coordinate PropertyCoordinate(string name)
+        public Coordinate PropertyCoordinate(string name, Coordinate defaultValue = null)
         {
             var prop = this[name];
-            var defaultValue = new Coordinate(0, 0, 0);
+            if (defaultValue == null) defaultValue = Coordinate.Zero;
             if (prop == null || prop.Count(c => c == ' ') != 2) return defaultValue;
-            var split = prop.Replace("[", "").Replace("]", "").Split(' ');
+            var split = prop.Replace("[", "").Replace("]", "").Replace("(", "").Replace(")", "").Split(' ');
             decimal x, y, z;
             if (decimal.TryParse(split[0], out x)
                 && decimal.TryParse(split[1], out y)
