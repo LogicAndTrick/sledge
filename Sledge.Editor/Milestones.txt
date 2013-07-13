@@ -2,8 +2,7 @@
 
 Priorities
   Bugs
-    Undo transforms not resetting bounding boxes for entity solids
-    Box tool snapping off-grid on move resize
+    (Empty for now)
   Enhancements
     Select tool 2D select entities
   Features

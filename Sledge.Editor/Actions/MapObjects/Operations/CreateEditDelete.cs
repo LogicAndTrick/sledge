@@ -54,8 +54,17 @@ namespace Sledge.Editor.Actions.MapObjects.Operations
                 var root = document.Map.WorldSpawn;
                 var obj = root.FindByID(ID);
                 if (obj == null) return;
+
+                // Unclone will reset children, need to reselect them if needed
+                var deselect = obj.FindAll().Where(x => x.IsSelected).ToList();
+                document.Selection.Deselect(deselect);
+
                 if (Action != null) Action(document, obj);
                 else obj.Unclone(After);
+
+                var select = obj.FindAll().Where(x => deselect.Any(y => x.ID == y.ID));
+                document.Selection.Select(select);
+
                 document.Map.UpdateAutoVisgroups(obj, true);
             }
 
@@ -64,7 +73,16 @@ namespace Sledge.Editor.Actions.MapObjects.Operations
                 var root = document.Map.WorldSpawn;
                 var obj = root.FindByID(ID);
                 if (obj == null) return;
+
+                // Unclone will reset children, need to reselect them if needed
+                var deselect = obj.FindAll().Where(x => x.IsSelected).ToList();
+                document.Selection.Deselect(deselect);
+
                 obj.Unclone(Before);
+
+                var select = obj.FindAll().Where(x => deselect.Any(y => x.ID == y.ID));
+                document.Selection.Select(select);
+
                 document.Map.UpdateAutoVisgroups(obj, true);
             }
         }
@@ -140,6 +158,9 @@ namespace Sledge.Editor.Actions.MapObjects.Operations
 
         public virtual void Reverse(Document document)
         {
+            // Edit
+            Parallel.ForEach(_editObjects, x => x.Reverse(document));
+
             // Create
             _objectsToCreate = document.Map.WorldSpawn.Find(x => _createdIds.Contains(x.ID));
             if (_objectsToCreate.Any(x => x.IsSelected))
@@ -158,9 +179,6 @@ namespace Sledge.Editor.Actions.MapObjects.Operations
             }
             document.Selection.Select(_deletedObjects.Where(x => x.IsSelected).Select(x => x.Object));
             _deletedObjects = null;
-
-            // Edit
-            Parallel.ForEach(_editObjects, x => x.Reverse(document));
 
             if (_objectsToCreate.Any() || _idsToDelete.Any())
             {
