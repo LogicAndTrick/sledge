@@ -15,6 +15,7 @@ namespace Sledge.Editor.Actions.MapObjects.Operations
     {
         private Plane _plane;
         private List<Solid> _objects;
+        private Dictionary<long, long> _parents;
         private bool _firstRun;
 
         public Clip(List<Solid> objects, Plane plane)
@@ -28,6 +29,7 @@ namespace Sledge.Editor.Actions.MapObjects.Operations
         {
             _plane = null;
             _objects = null;
+            _parents = null;
             base.Dispose();
         }
 
@@ -36,6 +38,7 @@ namespace Sledge.Editor.Actions.MapObjects.Operations
             if (_firstRun)
             {
                 _firstRun = false;
+                _parents = new Dictionary<long, long>();
                 foreach (var solid in _objects)
                 {
                     // Split solid by plane
@@ -49,9 +52,23 @@ namespace Sledge.Editor.Actions.MapObjects.Operations
 
                     Create(back, front);
                     Delete(solid.ID);
+
+                    _parents.Add(back.ID, solid.Parent.ID);
+                    _parents.Add(front.ID, solid.Parent.ID);
                 }
             }
             base.Perform(document);
+            var objs = new List<MapObject>();
+            foreach (var kv in _parents)
+            {
+                var obj = document.Map.WorldSpawn.FindByID(kv.Key);
+                var parent = document.Map.WorldSpawn.FindByID(kv.Value);
+                obj.SetParent(parent);
+
+                if (parent is World) objs.Add(obj);
+                else if (!objs.Contains(parent)) objs.Add(parent);
+            }
+            document.Map.UpdateAutoVisgroups(objs, true);
         }
     }
 }

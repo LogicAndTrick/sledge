@@ -28,6 +28,7 @@ namespace Sledge.Editor.Actions.MapObjects.Groups
 
             foreach (var group in _groupsAndParents.Keys.Select(x => document.Map.WorldSpawn.FindByID(x)))
             {
+                document.Selection.Deselect(group);
                 group.SetParent(null);
             }
 
