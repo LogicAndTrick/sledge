@@ -238,7 +238,13 @@ namespace Sledge.DataStructures.MapObjects
             if (!(this is World) && !IsCodeHidden && !IsVisgroupHidden)
             {
                 if (BoundingBox == null || !BoundingBox.IntersectsWith(box)) return list;
+                // Solids: Match face edges against box
                 if (this is Solid && ((Solid)this).Faces.Any(f => f.IntersectsWithLine(box)))
+                {
+                    list.Add(this);
+                }
+                // Point entities: Match bounding box edges against box
+                if (this is Entity && !Children.Any() && BoundingBox.GetBoxLines().Any(box.IntersectsWith))
                 {
                     list.Add(this);
                 }

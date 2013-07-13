@@ -4,7 +4,7 @@ Priorities
   Bugs
     (Empty for now)
   Enhancements
-    Select tool 2D select entities
+    (Empty)
   Features
     Check for updates (needed for alpha!)
     Toobar & tool icons
