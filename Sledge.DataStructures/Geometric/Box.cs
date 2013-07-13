@@ -6,6 +6,8 @@ namespace Sledge.DataStructures.Geometric
 {
     public class Box
     {
+        public readonly static Box Empty = new Box(Coordinate.Zero, Coordinate.Zero);
+
         public Coordinate Start { get; private set; }
         public Coordinate End { get; private set; }
         public Coordinate Center { get; private set; }
@@ -88,6 +90,11 @@ namespace Sledge.DataStructures.Geometric
             Start = min;
             End = max;
             Center = (Start + End) / 2;
+        }
+
+        public bool IsEmpty()
+        {
+            return Width == 0 && Height == 0 && Length == 0;
         }
 
         public Plane[] GetBoxPlanes()

@@ -9,7 +9,6 @@ Priorities
     Check for updates (needed for alpha!)
     Toobar & tool icons
     Cordon compile
-    Status bar
     Title bar
 
 Post-Alpha Priorities

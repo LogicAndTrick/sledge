@@ -692,6 +692,7 @@ namespace Sledge.Editor.Documents
             {
                 kv.Value.RebuildGrid(((Viewport2D)kv.Key).Zoom, true);
             }
+            Mediator.Publish(EditorMediator.DocumentGridSpacingChanged, _document.Map.GridSpacing);
         }
 
         public void CenterAllViewsOnSelection()

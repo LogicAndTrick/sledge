@@ -30,6 +30,12 @@
         {
             this.mnuMain = new System.Windows.Forms.MenuStrip();
             this.stsStatus = new System.Windows.Forms.StatusStrip();
+            this.StatusTextLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.StatusSelectionLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.StatusCoordinatesLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.StatusBoxLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.StatusZoomLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.StatusSnapLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.tscToolStrip = new System.Windows.Forms.ToolStripContainer();
             this.panel1 = new System.Windows.Forms.Panel();
             this.RightToolbar = new System.Windows.Forms.TableLayoutPanel();
@@ -53,12 +59,6 @@
             this.MoveToWorldButton = new System.Windows.Forms.Button();
             this.MoveToEntityButton = new System.Windows.Forms.Button();
             this.tspTools = new System.Windows.Forms.ToolStrip();
-            this.StatusTextLabel = new System.Windows.Forms.ToolStripStatusLabel();
-            this.StatusSelectionLabel = new System.Windows.Forms.ToolStripStatusLabel();
-            this.StatusCoordinatesLabel = new System.Windows.Forms.ToolStripStatusLabel();
-            this.StatusBoxLabel = new System.Windows.Forms.ToolStripStatusLabel();
-            this.StatusZoomLabel = new System.Windows.Forms.ToolStripStatusLabel();
-            this.StatusSnapLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.tblQuadView = new Sledge.Editor.UI.QuadSplitControl();
             this.HistoryCollapse = new Sledge.Editor.UI.CollapsingLabel();
             this.visgroupToolbarPanel1 = new Sledge.Editor.Visgroups.VisgroupToolbarPanel();
@@ -102,6 +102,58 @@
             this.stsStatus.Size = new System.Drawing.Size(866, 24);
             this.stsStatus.TabIndex = 1;
             this.stsStatus.Text = "statusStrip1";
+            // 
+            // StatusTextLabel
+            // 
+            this.StatusTextLabel.Name = "StatusTextLabel";
+            this.StatusTextLabel.Size = new System.Drawing.Size(270, 19);
+            this.StatusTextLabel.Spring = true;
+            this.StatusTextLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // StatusSelectionLabel
+            // 
+            this.StatusSelectionLabel.AutoSize = false;
+            this.StatusSelectionLabel.BorderSides = ((System.Windows.Forms.ToolStripStatusLabelBorderSides)((((System.Windows.Forms.ToolStripStatusLabelBorderSides.Left | System.Windows.Forms.ToolStripStatusLabelBorderSides.Top) 
+            | System.Windows.Forms.ToolStripStatusLabelBorderSides.Right) 
+            | System.Windows.Forms.ToolStripStatusLabelBorderSides.Bottom)));
+            this.StatusSelectionLabel.Name = "StatusSelectionLabel";
+            this.StatusSelectionLabel.Size = new System.Drawing.Size(130, 19);
+            // 
+            // StatusCoordinatesLabel
+            // 
+            this.StatusCoordinatesLabel.AutoSize = false;
+            this.StatusCoordinatesLabel.BorderSides = ((System.Windows.Forms.ToolStripStatusLabelBorderSides)((((System.Windows.Forms.ToolStripStatusLabelBorderSides.Left | System.Windows.Forms.ToolStripStatusLabelBorderSides.Top) 
+            | System.Windows.Forms.ToolStripStatusLabelBorderSides.Right) 
+            | System.Windows.Forms.ToolStripStatusLabelBorderSides.Bottom)));
+            this.StatusCoordinatesLabel.Name = "StatusCoordinatesLabel";
+            this.StatusCoordinatesLabel.Size = new System.Drawing.Size(130, 19);
+            // 
+            // StatusBoxLabel
+            // 
+            this.StatusBoxLabel.AutoSize = false;
+            this.StatusBoxLabel.BorderSides = ((System.Windows.Forms.ToolStripStatusLabelBorderSides)((((System.Windows.Forms.ToolStripStatusLabelBorderSides.Left | System.Windows.Forms.ToolStripStatusLabelBorderSides.Top) 
+            | System.Windows.Forms.ToolStripStatusLabelBorderSides.Right) 
+            | System.Windows.Forms.ToolStripStatusLabelBorderSides.Bottom)));
+            this.StatusBoxLabel.Name = "StatusBoxLabel";
+            this.StatusBoxLabel.Size = new System.Drawing.Size(130, 19);
+            // 
+            // StatusZoomLabel
+            // 
+            this.StatusZoomLabel.AutoSize = false;
+            this.StatusZoomLabel.BorderSides = ((System.Windows.Forms.ToolStripStatusLabelBorderSides)((((System.Windows.Forms.ToolStripStatusLabelBorderSides.Left | System.Windows.Forms.ToolStripStatusLabelBorderSides.Top) 
+            | System.Windows.Forms.ToolStripStatusLabelBorderSides.Right) 
+            | System.Windows.Forms.ToolStripStatusLabelBorderSides.Bottom)));
+            this.StatusZoomLabel.Name = "StatusZoomLabel";
+            this.StatusZoomLabel.Size = new System.Drawing.Size(80, 19);
+            // 
+            // StatusSnapLabel
+            // 
+            this.StatusSnapLabel.AutoSize = false;
+            this.StatusSnapLabel.BorderSides = ((System.Windows.Forms.ToolStripStatusLabelBorderSides)((((System.Windows.Forms.ToolStripStatusLabelBorderSides.Left | System.Windows.Forms.ToolStripStatusLabelBorderSides.Top) 
+            | System.Windows.Forms.ToolStripStatusLabelBorderSides.Right) 
+            | System.Windows.Forms.ToolStripStatusLabelBorderSides.Bottom)));
+            this.StatusSnapLabel.Name = "StatusSnapLabel";
+            this.StatusSnapLabel.Size = new System.Drawing.Size(80, 19);
             // 
             // tscToolStrip
             // 
@@ -359,67 +411,13 @@
             this.tspTools.Size = new System.Drawing.Size(34, 117);
             this.tspTools.TabIndex = 0;
             // 
-            // StatusTextLabel
-            // 
-            this.StatusTextLabel.Name = "StatusTextLabel";
-            this.StatusTextLabel.Size = new System.Drawing.Size(320, 19);
-            this.StatusTextLabel.Spring = true;
-            this.StatusTextLabel.Text = "Status Text";
-            this.StatusTextLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // StatusSelectionLabel
-            // 
-            this.StatusSelectionLabel.AutoSize = false;
-            this.StatusSelectionLabel.BorderSides = ((System.Windows.Forms.ToolStripStatusLabelBorderSides)((((System.Windows.Forms.ToolStripStatusLabelBorderSides.Left | System.Windows.Forms.ToolStripStatusLabelBorderSides.Top) 
-            | System.Windows.Forms.ToolStripStatusLabelBorderSides.Right) 
-            | System.Windows.Forms.ToolStripStatusLabelBorderSides.Bottom)));
-            this.StatusSelectionLabel.Name = "StatusSelectionLabel";
-            this.StatusSelectionLabel.Size = new System.Drawing.Size(100, 19);
-            this.StatusSelectionLabel.Text = "Selection";
-            // 
-            // StatusCoordinatesLabel
-            // 
-            this.StatusCoordinatesLabel.AutoSize = false;
-            this.StatusCoordinatesLabel.BorderSides = ((System.Windows.Forms.ToolStripStatusLabelBorderSides)((((System.Windows.Forms.ToolStripStatusLabelBorderSides.Left | System.Windows.Forms.ToolStripStatusLabelBorderSides.Top) 
-            | System.Windows.Forms.ToolStripStatusLabelBorderSides.Right) 
-            | System.Windows.Forms.ToolStripStatusLabelBorderSides.Bottom)));
-            this.StatusCoordinatesLabel.Name = "StatusCoordinatesLabel";
-            this.StatusCoordinatesLabel.Size = new System.Drawing.Size(100, 19);
-            this.StatusCoordinatesLabel.Text = "Coordinates";
-            // 
-            // StatusBoxLabel
-            // 
-            this.StatusBoxLabel.AutoSize = false;
-            this.StatusBoxLabel.BorderSides = ((System.Windows.Forms.ToolStripStatusLabelBorderSides)((((System.Windows.Forms.ToolStripStatusLabelBorderSides.Left | System.Windows.Forms.ToolStripStatusLabelBorderSides.Top) 
-            | System.Windows.Forms.ToolStripStatusLabelBorderSides.Right) 
-            | System.Windows.Forms.ToolStripStatusLabelBorderSides.Bottom)));
-            this.StatusBoxLabel.Name = "StatusBoxLabel";
-            this.StatusBoxLabel.Size = new System.Drawing.Size(100, 19);
-            this.StatusBoxLabel.Text = "Box";
-            // 
-            // StatusZoomLabel
-            // 
-            this.StatusZoomLabel.AutoSize = false;
-            this.StatusZoomLabel.BorderSides = ((System.Windows.Forms.ToolStripStatusLabelBorderSides)((((System.Windows.Forms.ToolStripStatusLabelBorderSides.Left | System.Windows.Forms.ToolStripStatusLabelBorderSides.Top) 
-            | System.Windows.Forms.ToolStripStatusLabelBorderSides.Right) 
-            | System.Windows.Forms.ToolStripStatusLabelBorderSides.Bottom)));
-            this.StatusZoomLabel.Name = "StatusZoomLabel";
-            this.StatusZoomLabel.Size = new System.Drawing.Size(100, 19);
-            this.StatusZoomLabel.Text = "Zoom";
-            // 
-            // StatusSnapLabel
-            // 
-            this.StatusSnapLabel.AutoSize = false;
-            this.StatusSnapLabel.BorderSides = ((System.Windows.Forms.ToolStripStatusLabelBorderSides)((((System.Windows.Forms.ToolStripStatusLabelBorderSides.Left | System.Windows.Forms.ToolStripStatusLabelBorderSides.Top) 
-            | System.Windows.Forms.ToolStripStatusLabelBorderSides.Right) 
-            | System.Windows.Forms.ToolStripStatusLabelBorderSides.Bottom)));
-            this.StatusSnapLabel.Name = "StatusSnapLabel";
-            this.StatusSnapLabel.Size = new System.Drawing.Size(100, 19);
-            this.StatusSnapLabel.Text = "Snap";
-            // 
             // tblQuadView
             // 
             this.tblQuadView.ColumnCount = 2;
+            this.tblQuadView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tblQuadView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tblQuadView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tblQuadView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
@@ -487,6 +485,10 @@
             this.tblQuadView.MinimumViewSize = 2;
             this.tblQuadView.Name = "tblQuadView";
             this.tblQuadView.RowCount = 2;
+            this.tblQuadView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tblQuadView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tblQuadView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tblQuadView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));

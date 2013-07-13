@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
+using Sledge.Common.Mediator;
 using Sledge.Graphics.Helpers;
 using Sledge.UI;
 using OpenTK.Graphics.OpenGL;
@@ -170,6 +171,10 @@ namespace Sledge.Editor.Tools
         protected virtual void OnBoxChanged()
         {
             State.FixBoxBounds();
+            Mediator.Publish(EditorMediator.SelectionBoxChanged,
+                             State.Action == BoxAction.ReadyToDraw
+                                 ? Box.Empty
+                                 : new Box(State.BoxStart, State.BoxEnd));
         }
 
         // Mouse Down

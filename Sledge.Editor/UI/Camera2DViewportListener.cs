@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
+using Sledge.Common.Mediator;
+using Sledge.DataStructures.Geometric;
 using Sledge.UI;
 
 namespace Sledge.Editor.UI
@@ -37,7 +39,8 @@ namespace Sledge.Editor.UI
 
         public void MouseMove(MouseEventArgs e)
         {
-            
+            var pt = Viewport2D.Expand(Viewport2D.ScreenToWorld(new Coordinate(e.X, Viewport2D.Height - e.Y, 0)));
+            Mediator.Publish(EditorMediator.MouseCoordinatesChanged, pt);
         }
 
         public void MouseWheel(MouseEventArgs e)
@@ -46,6 +49,8 @@ namespace Sledge.Editor.UI
             Viewport2D.Zoom *= (decimal)Math.Pow(1.2, (e.Delta < 0 ? -1 : 1));
             var after = Viewport2D.ScreenToWorld(e.X, Viewport2D.Height - e.Y);
             Viewport2D.Position -= (after - before);
+
+            Mediator.Publish(EditorMediator.ViewZoomChanged, Viewport2D.Zoom);
         }
 
         public void MouseUp(MouseEventArgs e)
@@ -60,12 +65,13 @@ namespace Sledge.Editor.UI
 
         public void MouseEnter(EventArgs e)
         {
-            
+            Mediator.Publish(EditorMediator.ViewFocused);
+            Mediator.Publish(EditorMediator.ViewZoomChanged, Viewport2D.Zoom);
         }
 
         public void MouseLeave(EventArgs e)
         {
-            
+            Mediator.Publish(EditorMediator.ViewUnfocused);
         }
 
         public void UpdateFrame()

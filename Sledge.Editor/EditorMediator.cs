@@ -46,6 +46,14 @@ namespace Sledge.Editor
         HistoryChanged,
         ClipboardChanged,
 
+        // Status bar messages
+        MouseCoordinatesChanged,
+        SelectionBoxChanged,
+        ViewZoomChanged,
+        ViewFocused,
+        ViewUnfocused,
+        DocumentGridSpacingChanged,
+
         // File system messages
         FileOpened,
         FileSaved,

@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
 using Microsoft.WindowsAPICodePack.Taskbar;
 using Sledge.Common.Mediator;
 using Sledge.DataStructures.GameData;
+using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.MapObjects;
 using Sledge.Editor.Brushes;
 using Sledge.Editor.Documents;
@@ -150,6 +152,13 @@ namespace Sledge.Editor
             Mediator.Subscribe(EditorMediator.OpenSettings, this);
 
             Mediator.Subscribe(EditorMediator.DocumentActivated, this);
+            Mediator.Subscribe(EditorMediator.MouseCoordinatesChanged, this);
+            Mediator.Subscribe(EditorMediator.SelectionBoxChanged, this);
+            Mediator.Subscribe(EditorMediator.SelectionChanged, this);
+            Mediator.Subscribe(EditorMediator.ViewZoomChanged, this);
+            Mediator.Subscribe(EditorMediator.ViewFocused, this);
+            Mediator.Subscribe(EditorMediator.ViewUnfocused, this);
+            Mediator.Subscribe(EditorMediator.DocumentGridSpacingChanged, this);
 
             Mediator.Subscribe(EditorMediator.TextureSelected, this);
             Mediator.Subscribe(EditorMediator.ToolSelected, this);
@@ -216,6 +225,74 @@ namespace Sledge.Editor
                 .OrderBy(x => x.Name.StartsWith("info_player_start") ? 0 : 1)
                 .FirstOrDefault();
             EntityTypeList.SelectedItem = selEnt;
+
+            // Status bar
+            StatusSelectionLabel.Text = "";
+            StatusCoordinatesLabel.Text = "";
+            StatusBoxLabel.Text = "";
+            StatusZoomLabel.Text = "";
+            StatusSnapLabel.Text = "";
+            StatusTextLabel.Text = "";
+
+            SelectionChanged();
+            DocumentGridSpacingChanged(doc.Map.GridSpacing);
+        }
+
+        private void MouseCoordinatesChanged(Coordinate coord)
+        {
+            if (DocumentManager.CurrentDocument != null)
+            {
+                coord = DocumentManager.CurrentDocument.Snap(coord);
+            }
+            StatusCoordinatesLabel.Text = coord.X.ToString("0") + " " + coord.Y.ToString("0") + " " + coord.Z.ToString("0");
+        }
+
+        private void SelectionBoxChanged(Box box)
+        {
+            if (box == null || box.IsEmpty()) StatusBoxLabel.Text = "";
+            else StatusBoxLabel.Text = box.Width.ToString("0") + " x " + box.Length.ToString("0") + " x " + box.Height.ToString("0");
+        }
+
+        private void SelectionChanged()
+        {
+            StatusSelectionLabel.Text = "";
+            if (DocumentManager.CurrentDocument == null) return;
+
+            var sel  = DocumentManager.CurrentDocument.Selection.GetSelectedParents().ToList();
+            var count = sel.Count;
+            if (count == 0)
+            {
+                StatusSelectionLabel.Text = "No objects selected";
+            }
+            else if (count == 1)
+            {
+                StatusSelectionLabel.Text = sel[0].GetType().Name;
+            }
+            else
+            {
+                StatusSelectionLabel.Text = count.ToString(CultureInfo.InvariantCulture) + " objects selected";
+            }
+        }
+
+        private void ViewZoomChanged(decimal zoom)
+        {
+            StatusZoomLabel.Text = "Zoom: " + zoom.ToString("0.00");
+        }
+
+        private void ViewFocused()
+        {
+
+        }
+
+        private void ViewUnfocused()
+        {
+            StatusCoordinatesLabel.Text = "";
+            StatusZoomLabel.Text = "";
+        }
+
+        private void DocumentGridSpacingChanged(decimal spacing)
+        {
+            StatusSnapLabel.Text = "Grid: " + spacing.ToString("0.##");
         }
 
         private void TextureSelected(TextureItem selection)
