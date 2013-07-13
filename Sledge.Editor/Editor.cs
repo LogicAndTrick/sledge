@@ -236,6 +236,8 @@ namespace Sledge.Editor
 
             SelectionChanged();
             DocumentGridSpacingChanged(doc.Map.GridSpacing);
+
+            Text = "Sledge - " + System.IO.Path.GetFileName(doc.MapFile);
         }
 
         private void MouseCoordinatesChanged(Coordinate coord)

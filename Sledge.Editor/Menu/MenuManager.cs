@@ -52,10 +52,10 @@ namespace Sledge.Editor.Menu
             Add("File", new SimpleMenuBuilder("New", HotkeysMediator.FileNew) { Image = Resources.Menu_New, ShowInToolStrip = true });
             Add("File", new SimpleMenuBuilder("Open", HotkeysMediator.FileOpen) { Image = Resources.Menu_Open, ShowInToolStrip = true });
             Add("File", new SimpleMenuBuilder("Close", HotkeysMediator.FileClose) {IsVisible = mapOpen, Image = Resources.Menu_Close, ShowInToolStrip = true});
-            Add("File", new SimpleMenuBuilder("Save", HotkeysMediator.FileSave) {IsVisible = mapOpen, ShowInToolStrip = true});
-            Add("File", new SimpleMenuBuilder("Save As...", HotkeysMediator.FileSaveAs) {IsVisible = mapOpen});
+            Add("File", new SimpleMenuBuilder("Save", HotkeysMediator.FileSave) {IsVisible = mapOpen, Image = Resources.Menu_Save, ShowInToolStrip = true});
+            Add("File", new SimpleMenuBuilder("Save As...", HotkeysMediator.FileSaveAs) { Image = Resources.Menu_SaveAs, IsVisible = mapOpen });
             Add("File", new MenuSplitter { IsVisible = mapOpen, ShowInToolStrip = true });
-            Add("File", new SimpleMenuBuilder("Run", HotkeysMediator.FileCompile) { IsVisible = mapOpen, ShowInToolStrip = true });
+            Add("File", new SimpleMenuBuilder("Run", HotkeysMediator.FileCompile) { Image = Resources.Menu_Run, IsVisible = mapOpen, ShowInToolStrip = true });
             Add("File", new RecentFilesMenu());
             Add("File", new MenuSplitter());
             Add("File", new SimpleMenuBuilder("Exit", EditorMediator.Exit));
@@ -66,45 +66,45 @@ namespace Sledge.Editor.Menu
             Func<string> redoText = () => mapOpen() ? DocumentManager.CurrentDocument.History.GetRedoString() : "";
             Func<bool> itemsSelected = () => mapOpen() && DocumentManager.CurrentDocument.Selection.GetSelectedObjects().Any();
             Func<bool> canPaste = Clipboard.ClipboardManager.CanPaste;
-            Add("Edit", new SimpleMenuBuilder("Undo", HotkeysMediator.HistoryUndo) { IsVisible = mapOpen, IsActive = canUndo, Text = undoText, ShowInToolStrip = true });
-            Add("Edit", new SimpleMenuBuilder("Redo", HotkeysMediator.HistoryRedo) { IsVisible = mapOpen, IsActive = canRedo, Text = redoText, ShowInToolStrip = true });
+            Add("Edit", new SimpleMenuBuilder("Undo", HotkeysMediator.HistoryUndo) { Image = Resources.Menu_Undo, IsVisible = mapOpen, IsActive = canUndo, Text = undoText, ShowInToolStrip = true });
+            Add("Edit", new SimpleMenuBuilder("Redo", HotkeysMediator.HistoryRedo) { Image = Resources.Menu_Redo, IsVisible = mapOpen, IsActive = canRedo, Text = redoText, ShowInToolStrip = true });
             Add("Edit", new MenuSplitter { IsVisible = mapOpen, ShowInToolStrip = true });
-            Add("Edit", new SimpleMenuBuilder("Cut", HotkeysMediator.OperationsCut) { IsVisible = mapOpen, IsActive = itemsSelected, ShowInToolStrip = true });
-            Add("Edit", new SimpleMenuBuilder("Copy", HotkeysMediator.OperationsCopy) { IsVisible = mapOpen, IsActive = itemsSelected, ShowInToolStrip = true });
-            Add("Edit", new SimpleMenuBuilder("Paste", HotkeysMediator.OperationsPaste) { IsVisible = mapOpen, IsActive = canPaste, ShowInToolStrip = true });
-            Add("Edit", new SimpleMenuBuilder("Paste Special...", HotkeysMediator.OperationsPasteSpecial) { IsVisible = mapOpen, IsActive = canPaste, ShowInToolStrip = true });
-            Add("Edit", new SimpleMenuBuilder("Delete", HotkeysMediator.OperationsDelete) { IsVisible = mapOpen, IsActive = itemsSelected, ShowInToolStrip = true });
+            Add("Edit", new SimpleMenuBuilder("Cut", HotkeysMediator.OperationsCut) { Image = Resources.Menu_Cut, IsVisible = mapOpen, IsActive = itemsSelected, ShowInToolStrip = true });
+            Add("Edit", new SimpleMenuBuilder("Copy", HotkeysMediator.OperationsCopy) { Image = Resources.Menu_Copy, IsVisible = mapOpen, IsActive = itemsSelected, ShowInToolStrip = true });
+            Add("Edit", new SimpleMenuBuilder("Paste", HotkeysMediator.OperationsPaste) { Image = Resources.Menu_Paste, IsVisible = mapOpen, IsActive = canPaste, ShowInToolStrip = true });
+            Add("Edit", new SimpleMenuBuilder("Paste Special...", HotkeysMediator.OperationsPasteSpecial) { Image = Resources.Menu_PasteSpecial, IsVisible = mapOpen, IsActive = canPaste, ShowInToolStrip = true });
+            Add("Edit", new SimpleMenuBuilder("Delete", HotkeysMediator.OperationsDelete) { Image = Resources.Menu_Delete, IsVisible = mapOpen, IsActive = itemsSelected, ShowInToolStrip = true });
             Add("Edit", new MenuSplitter { IsVisible = mapOpen, ShowInToolStrip = true });
-            Add("Edit", new SimpleMenuBuilder("Clear Selection", HotkeysMediator.SelectionClear) { IsVisible = mapOpen, IsActive = itemsSelected });
-            Add("Edit", new SimpleMenuBuilder("Select All", HotkeysMediator.SelectAll) { IsVisible = mapOpen });
+            Add("Edit", new SimpleMenuBuilder("Clear Selection", HotkeysMediator.SelectionClear) { Image = Resources.Menu_ClearSelection, IsVisible = mapOpen, IsActive = itemsSelected });
+            Add("Edit", new SimpleMenuBuilder("Select All", HotkeysMediator.SelectAll) { Image = Resources.Menu_SelectAll, IsVisible = mapOpen });
             Add("Edit", new MenuSplitter { IsVisible = mapOpen });
-            Add("Edit", new SimpleMenuBuilder("Object Properties", HotkeysMediator.ObjectProperties) { IsVisible = mapOpen, ShowInToolStrip = true });
+            Add("Edit", new SimpleMenuBuilder("Object Properties", HotkeysMediator.ObjectProperties) { Image = Resources.Menu_ObjectProperties, IsVisible = mapOpen, ShowInToolStrip = true });
 
-            Add("Map", new SimpleMenuBuilder("Snap to Grid", HotkeysMediator.ToggleSnapToGrid) { IsVisible = mapOpen, IsChecked = () => mapOpen() && DocumentManager.CurrentDocument.Map.SnapToGrid, ShowInToolStrip = true });
-            Add("Map", new SimpleMenuBuilder("Show 2D Grid", HotkeysMediator.ToggleShow2DGrid) { IsVisible = mapOpen, IsChecked = () => mapOpen() && DocumentManager.CurrentDocument.Map.Show2DGrid, ShowInToolStrip = true });
-            Add("Map", new SimpleMenuBuilder("Show 3D Grid", HotkeysMediator.ToggleShow3DGrid) { IsVisible = mapOpen, IsChecked = () => mapOpen() && DocumentManager.CurrentDocument.Map.Show3DGrid, ShowInToolStrip = true });
+            Add("Map", new SimpleMenuBuilder("Snap to Grid", HotkeysMediator.ToggleSnapToGrid) { Image = Resources.Menu_SnapToGrid, IsVisible = mapOpen, IsChecked = () => mapOpen() && DocumentManager.CurrentDocument.Map.SnapToGrid, ShowInToolStrip = true });
+            Add("Map", new SimpleMenuBuilder("Show 2D Grid", HotkeysMediator.ToggleShow2DGrid) { Image = Resources.Menu_Show2DGrid, IsVisible = mapOpen, IsChecked = () => mapOpen() && DocumentManager.CurrentDocument.Map.Show2DGrid, ShowInToolStrip = true });
+            Add("Map", new SimpleMenuBuilder("Show 3D Grid", HotkeysMediator.ToggleShow3DGrid) { Image = Resources.Menu_Show3DGrid, IsVisible = mapOpen, IsChecked = () => mapOpen() && DocumentManager.CurrentDocument.Map.Show3DGrid, ShowInToolStrip = true });
             Add("Map", new GroupedMenuBuilder("Grid Settings",
-                                              new SimpleMenuBuilder("Smaller Grid", HotkeysMediator.GridDecrease) { IsVisible = mapOpen, ShowInToolStrip = true },
-                                              new SimpleMenuBuilder("Bigger Grid", HotkeysMediator.GridIncrease) { IsVisible = mapOpen, ShowInToolStrip = true }
+                                              new SimpleMenuBuilder("Smaller Grid", HotkeysMediator.GridDecrease) { Image = Resources.Menu_SmallerGrid, IsVisible = mapOpen, ShowInToolStrip = true },
+                                              new SimpleMenuBuilder("Bigger Grid", HotkeysMediator.GridIncrease) { Image = Resources.Menu_LargerGrid, IsVisible = mapOpen, ShowInToolStrip = true }
                            ) { IsVisible = mapOpen });
-            Add("Map", new SimpleMenuBuilder("Smaller Grid", HotkeysMediator.GridDecrease) { IsVisible = mapOpen, ShowInToolStrip = true, ShowInMenu = false });
-            Add("Map", new SimpleMenuBuilder("Bigger Grid", HotkeysMediator.GridIncrease) { IsVisible = mapOpen, ShowInToolStrip = true, ShowInMenu = false });
+            Add("Map", new SimpleMenuBuilder("Smaller Grid", HotkeysMediator.GridDecrease) { Image = Resources.Menu_SmallerGrid, IsVisible = mapOpen, ShowInToolStrip = true, ShowInMenu = false });
+            Add("Map", new SimpleMenuBuilder("Bigger Grid", HotkeysMediator.GridIncrease) { Image = Resources.Menu_LargerGrid, IsVisible = mapOpen, ShowInToolStrip = true, ShowInMenu = false });
             Add("Map", new MenuSplitter { IsVisible = mapOpen, ShowInToolStrip = true });
-            Add("Map", new SimpleMenuBuilder("Ignore Grouping", HotkeysMediator.ToggleIgnoreGrouping) { IsVisible = mapOpen, IsChecked = () => mapOpen() && DocumentManager.CurrentDocument.Map.IgnoreGrouping, ShowInToolStrip = true });
+            Add("Map", new SimpleMenuBuilder("Ignore Grouping", HotkeysMediator.ToggleIgnoreGrouping) { Image = Resources.Menu_IgnoreGrouping, IsVisible = mapOpen, IsChecked = () => mapOpen() && DocumentManager.CurrentDocument.Map.IgnoreGrouping, ShowInToolStrip = true });
             Add("Map", new MenuSplitter { IsVisible = mapOpen, ShowInToolStrip = true });
-            Add("Map", new SimpleMenuBuilder("Texture Lock", HotkeysMediator.ToggleTextureLock) { IsVisible = mapOpen, IsChecked = () => mapOpen() && DocumentManager.CurrentDocument.Map.TextureLock, ShowInToolStrip = true });
-            Add("Map", new SimpleMenuBuilder("Texture Scaling Lock", HotkeysMediator.ToggleTextureScalingLock) { IsVisible = mapOpen, IsChecked = () => mapOpen() && DocumentManager.CurrentDocument.Map.TextureScalingLock, ShowInToolStrip = true });
+            Add("Map", new SimpleMenuBuilder("Texture Lock", HotkeysMediator.ToggleTextureLock) { Image = Resources.Menu_TextureLock, IsVisible = mapOpen, IsChecked = () => mapOpen() && DocumentManager.CurrentDocument.Map.TextureLock, ShowInToolStrip = true });
+            Add("Map", new SimpleMenuBuilder("Texture Scaling Lock", HotkeysMediator.ToggleTextureScalingLock) { Image = Resources.Menu_TextureScalingLock, IsVisible = mapOpen, IsChecked = () => mapOpen() && DocumentManager.CurrentDocument.Map.TextureScalingLock, ShowInToolStrip = true });
             Add("Map", new MenuSplitter { IsVisible = mapOpen });
-            Add("Map", new SimpleMenuBuilder("Show Information", HotkeysMediator.ShowMapInformation) { IsVisible = mapOpen });
-            Add("Map", new SimpleMenuBuilder("Show Selected Brush ID", HotkeysMediator.ShowSelectedBrushID) { IsVisible = mapOpen, IsActive = itemsSelected });
-            Add("Map", new SimpleMenuBuilder("Entity Report...", HotkeysMediator.ShowEntityReport) { IsVisible = mapOpen });
-            Add("Map", new SimpleMenuBuilder("Check for Problems", HotkeysMediator.CheckForProblems) { IsVisible = mapOpen });
+            Add("Map", new SimpleMenuBuilder("Show Information", HotkeysMediator.ShowMapInformation) { Image = Resources.Menu_ShowInformation, IsVisible = mapOpen });
+            Add("Map", new SimpleMenuBuilder("Show Selected Brush ID", HotkeysMediator.ShowSelectedBrushID) { Image = Resources.Menu_ShowBrushID, IsVisible = mapOpen, IsActive = itemsSelected });
+            Add("Map", new SimpleMenuBuilder("Entity Report...", HotkeysMediator.ShowEntityReport) { Image = Resources.Menu_EntityReport, IsVisible = mapOpen });
+            Add("Map", new SimpleMenuBuilder("Check for Problems", HotkeysMediator.CheckForProblems) { Image = Resources.Menu_CheckForProblems, IsVisible = mapOpen });
             Add("Map", new MenuSplitter { IsVisible = mapOpen });
-            Add("Map", new SimpleMenuBuilder("Map Properties...", EditorMediator.WorldspawnProperties) { IsVisible = mapOpen });
+            Add("Map", new SimpleMenuBuilder("Map Properties...", EditorMediator.WorldspawnProperties) { Image = Resources.Menu_MapProperties, IsVisible = mapOpen });
             Add("Map", new MenuSplitter { IsVisible = mapOpen });
-            Add("Map", new SimpleMenuBuilder("Quick Load Pointfile", HotkeysMediator.QuickLoadPointfile) { IsVisible = mapOpen });
-            Add("Map", new SimpleMenuBuilder("Load Pointfile...", HotkeysMediator.LoadPointfile) { IsVisible = mapOpen });
-            Add("Map", new SimpleMenuBuilder("Unload Pointfile", HotkeysMediator.UnloadPointfile) { IsVisible = mapOpen });
+            Add("Map", new SimpleMenuBuilder("Quick Load Pointfile", HotkeysMediator.QuickLoadPointfile) { Image = Resources.Menu_QuickLoadPointfile, IsVisible = mapOpen });
+            Add("Map", new SimpleMenuBuilder("Load Pointfile...", HotkeysMediator.LoadPointfile) { Image = Resources.Menu_LoadPointfile, IsVisible = mapOpen });
+            Add("Map", new SimpleMenuBuilder("Unload Pointfile", HotkeysMediator.UnloadPointfile) { Image = Resources.Menu_UnloadPointfile, IsVisible = mapOpen });
 
             Add("View", new SimpleMenuBuilder("Autosize 4 Views", HotkeysMediator.FourViewAutosize) { IsVisible = mapOpen });
             Add("View", new SimpleMenuBuilder("Center All Views on Selection", HotkeysMediator.CenterAllViewsOnSelection) { IsVisible = mapOpen, IsActive = itemsSelected });

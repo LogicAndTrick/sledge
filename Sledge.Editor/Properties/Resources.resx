@@ -127,14 +127,107 @@
   <data name="Cursor_Rotate" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Cursor_Rotate.cur;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="Menu_CheckForProblems" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\menu_checkforproblems.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Menu_ClearSelection" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\menu_clearselection.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="Menu_Close" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\resources\menu_close.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Menu_Copy" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\menu_copy.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Menu_Cut" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\menu_cut.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Menu_Delete" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\menu_delete.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Menu_EntityReport" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\menu_entityreport.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Menu_Group" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\menu_group.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Menu_IgnoreGrouping" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\menu_ignoregrouping.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Menu_LargerGrid" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\menu_largergrid.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Menu_LoadPointfile" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\menu_loadpointfile.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Menu_MapProperties" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\menu_mapproperties.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Menu_New" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\resources\menu_new.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="Menu_ObjectProperties" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\menu_objectproperties.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="Menu_Open" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\resources\menu_open.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Menu_Paste" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\menu_paste.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Menu_PasteSpecial" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\menu_pastespecial.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Menu_QuickLoadPointfile" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\menu_quickloadpointfile.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Menu_Redo" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\menu_redo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Menu_Run" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\menu_run.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Menu_Save" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\menu_save.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Menu_SaveAs" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\menu_saveas.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Menu_SelectAll" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\menu_selectall.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Menu_Show2DGrid" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\menu_show2dgrid.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Menu_Show3DGrid" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\menu_show3dgrid.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Menu_ShowBrushID" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\menu_showbrushid.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Menu_ShowInformation" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\menu_showinformation.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Menu_SmallerGrid" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\menu_smallergrid.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Menu_SnapToGrid" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\menu_snaptogrid.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Menu_TextureLock" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\menu_texturelock.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Menu_TextureScalingLock" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\menu_texturescalinglock.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Menu_Undo" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\menu_undo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Menu_Ungroup" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\menu_ungroup.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Menu_UnloadPointfile" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\menu_unloadpointfile.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Tool_Brush" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\resources\tool_brush.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
