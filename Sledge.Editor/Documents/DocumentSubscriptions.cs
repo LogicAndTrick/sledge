@@ -189,6 +189,7 @@ namespace Sledge.Editor.Documents
             }
             DocumentManager.SwitchTo(null);
             DocumentManager.Remove(_document);
+            Mediator.Publish(EditorMediator.DocumentClosed);
         }
 
         public void FileSave()

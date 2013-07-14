@@ -102,5 +102,10 @@ namespace Sledge.Editor.Visgroups
         {
             Mediator.ExecuteDefault(this, message, data);
         }
+
+        public void Clear()
+        {
+            VisgroupPanel.Clear();
+        }
     }
 }

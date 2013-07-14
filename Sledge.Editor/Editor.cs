@@ -152,6 +152,8 @@ namespace Sledge.Editor
             Mediator.Subscribe(EditorMediator.OpenSettings, this);
 
             Mediator.Subscribe(EditorMediator.DocumentActivated, this);
+            Mediator.Subscribe(EditorMediator.DocumentClosed, this);
+
             Mediator.Subscribe(EditorMediator.MouseCoordinatesChanged, this);
             Mediator.Subscribe(EditorMediator.SelectionBoxChanged, this);
             Mediator.Subscribe(EditorMediator.SelectionChanged, this);
@@ -237,7 +239,24 @@ namespace Sledge.Editor
             SelectionChanged();
             DocumentGridSpacingChanged(doc.Map.GridSpacing);
 
-            Text = "Sledge - " + System.IO.Path.GetFileName(doc.MapFile);
+            Text = "Sledge - " + (String.IsNullOrWhiteSpace(doc.MapFile) ? "Untitled" : System.IO.Path.GetFileName(doc.MapFile));
+        }
+
+        private void DocumentClosed()
+        {
+            TextureGroupComboBox.Items.Clear();
+            TextureComboBox.Items.Clear();
+            EntityTypeList.Items.Clear();
+            VisgroupToolbarPanel.Clear();
+            TextureSelected(null);
+
+            StatusSelectionLabel.Text = "";
+            StatusCoordinatesLabel.Text = "";
+            StatusBoxLabel.Text = "";
+            StatusZoomLabel.Text = "";
+            StatusSnapLabel.Text = "";
+            StatusTextLabel.Text = "";
+            Text = "Sledge";
         }
 
         private void MouseCoordinatesChanged(Coordinate coord)
@@ -299,12 +318,12 @@ namespace Sledge.Editor
 
         private void TextureSelected(TextureItem selection)
         {
-            TextureComboBox.SetSelectedTexture(selection);
             var dis = TextureSelectionPictureBox.Image;
             TextureSelectionPictureBox.Image = null;
             if (dis != null) dis.Dispose();
             TextureSizeLabel.Text = "";
             if (selection == null) return;
+            TextureComboBox.SetSelectedTexture(selection);
             using (var tp = TextureProvider.GetStreamSourceForPackages(new[] {selection.Package}))
             {
                 var bmp = tp.GetImage(selection);
