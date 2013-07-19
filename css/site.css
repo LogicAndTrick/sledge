@@ -1,0 +1,43 @@
+.header {
+    text-align: center;
+    background-image: url('../img/background.png');
+    background-position: center center;
+    padding: 20px;
+    color: #fff;
+    border-bottom: 2px solid #aaa;
+}
+
+.header h1 {
+    font-size: 60px;
+    line-height: 70px;
+}
+
+.header img {
+
+}
+
+.header h2 {
+    font-weight: normal;
+    color: #33EE33;
+}
+
+.header div.download {
+    width: 340px;
+    height: 20px;
+    margin: 0 auto;
+}
+
+.header div.download a {
+    width: 300px;
+    line-height: 50px;
+    display: block;
+    float: left;
+}
+
+.header div.download img {
+    padding-right: 10px;
+}
+
+.container {
+    margin: 20px auto;
+}
