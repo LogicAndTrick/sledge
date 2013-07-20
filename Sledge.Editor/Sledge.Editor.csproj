@@ -458,6 +458,10 @@
       <Project>{262FC468-01B6-451A-ABE9-9B6E00B29F81}</Project>
       <Name>Sledge.Editor.Elevate</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Sledge.Editor.Updater\Sledge.Editor.Updater.csproj">
+      <Project>{B9E644B2-F5A1-429D-805D-38A1733ADB4F}</Project>
+      <Name>Sledge.Editor.Updater</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Sledge.FileSystem\Sledge.FileSystem.csproj">
       <Project>{1C2C012D-DBA5-4C7F-994F-E3034AC60DCC}</Project>
       <Name>Sledge.FileSystem</Name>

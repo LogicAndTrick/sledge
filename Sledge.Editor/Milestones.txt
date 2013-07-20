@@ -2,13 +2,16 @@
 
 Priorities
   Bugs
-    (Empty for now)
+    Background colour setting not applying
   Enhancements
     (Empty)
   Features
     Check for updates (needed for alpha!)
+      On startup
     Toobar & tool icons
     Cordon compile
+    Finish the menu/toolbar actions
+    Proper error handling / stacktrace reporting
 
 Post-Alpha Priorities
   TDI
