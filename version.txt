@@ -1,0 +1,3 @@
+0.1.0.0
+2013-07-20T03:55:59Z
+https://github.com/LogicAndTrick/sledge/releases/download/pre-alpha/Sledge.Editor.0.1.0.0.zip
