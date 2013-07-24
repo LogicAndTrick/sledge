@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 
@@ -10,6 +11,24 @@ namespace Sledge.Common.Mediator
     /// </summary>
     public static class Mediator
     {
+        public delegate void MediatorExceptionEventHandler(string message, Exception exception);
+        public static event MediatorExceptionEventHandler MediatorException;
+        private static void OnMediatorException(string message, object parameter, Exception ex)
+        {
+            if (MediatorException != null)
+            {
+                var st = new StackTrace();
+                var frames = st.GetFrames() ?? new StackFrame[0];
+                var msg = "Mediator exception: " + message + "(" + parameter + ")";
+                foreach (var frame in frames)
+                {
+                    var method = frame.GetMethod();
+                    msg += "\r\n    " + method.ReflectedType.FullName + "." + method.Name;
+                }
+                MediatorException(message, new Exception(msg, ex));
+            }
+        }
+
         /// <summary>
         /// Helper method to execute the a function with the same name as the message. Called by the listener if desired.
         /// </summary>
@@ -99,7 +118,17 @@ namespace Sledge.Common.Mediator
                 else if (reference.Target != null)
                 {
                     var method = reference.Target.GetType().GetMethod("Notify", new[] { typeof(string), typeof(object) });
-                    if (method != null) method.Invoke(reference.Target, new object[] { message, parameter });
+                    if (method != null)
+                    {
+                        try
+                        {
+                            method.Invoke(reference.Target, new[] { message, parameter });
+                        }
+                        catch (Exception ex)
+                        {
+                            OnMediatorException(message, parameter, ex);
+                        }
+                    }
                 }
             }
         }

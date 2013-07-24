@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using Sledge.DataStructures.Geometric;
@@ -17,6 +18,42 @@ namespace Sledge.UI
         public List<IViewportEventListener> Listeners { get; set; }
         public bool IsFocused { get; private set; }
         private int UnfocusedUpdateCounter { get; set; }
+
+        public delegate void RenderExceptionEventHandler(object sender, Exception exception);
+        public event RenderExceptionEventHandler RenderException;
+        protected void OnRenderException(Exception ex)
+        {
+            if (RenderException != null)
+            {
+                var st = new StackTrace();
+                var frames = st.GetFrames() ?? new StackFrame[0];
+                var msg = "Rendering exception: " + ex.Message;
+                foreach (var frame in frames)
+                {
+                    var method = frame.GetMethod();
+                    msg += "\r\n    " + method.ReflectedType.FullName + "." + method.Name;
+                }
+                RenderException(this, new Exception(msg, ex));
+            }
+        }
+
+        public delegate void ListenerExceptionEventHandler(object sender, Exception exception);
+        public event ListenerExceptionEventHandler ListenerException;
+        protected void OnListenerException(Exception ex)
+        {
+            if (ListenerException != null)
+            {
+                var st = new StackTrace();
+                var frames = st.GetFrames() ?? new StackFrame[0];
+                var msg = "Listener exception: " + ex.Message;
+                foreach (var frame in frames)
+                {
+                    var method = frame.GetMethod();
+                    msg += "\r\n    " + method.ReflectedType.FullName + "." + method.Name;
+                }
+                ListenerException(this, new Exception(msg, ex));
+            }
+        }
 
         protected ViewportBase()
         {
@@ -98,12 +135,19 @@ namespace Sledge.UI
             }
             UnfocusedUpdateCounter = 0;
 
-            if (!Context.IsCurrent)
+            try
             {
-                MakeCurrent();
+                if (!Context.IsCurrent)
+                {
+                    MakeCurrent();
+                }
+            }
+            catch (Exception ex)
+            {
+                OnRenderException(ex);
             }
 
-            Listeners.ForEach(l => l.UpdateFrame());
+            ListenerDo(x => x.UpdateFrame());
 
             LoadIdentity();
             UpdateAfterLoadIdentity();
@@ -114,9 +158,16 @@ namespace Sledge.UI
             UpdateBeforeClearViewport();
             ClearViewport();
 
-            UpdateBeforeRender();
-            RenderContext.Render(this);
-            UpdateAfterRender();
+            try
+            {
+                UpdateBeforeRender();
+                RenderContext.Render(this);
+                UpdateAfterRender();
+            }
+            catch(Exception ex)
+            {
+                OnRenderException(ex);
+            }
 
             SwapBuffers();
         }
@@ -124,6 +175,21 @@ namespace Sledge.UI
         public void LoadIdentity()
         {
             GL.LoadIdentity();
+        }
+
+        private void ListenerDo(Action<IViewportEventListener> action)
+        {
+            foreach (var listener in Listeners)
+            {
+                try
+                {
+                    action(listener);
+                }
+                catch (Exception ex)
+                {
+                    OnListenerException(ex);
+                }
+            }
         }
 
         protected virtual void UpdateAfterLoadIdentity()
@@ -138,7 +204,7 @@ namespace Sledge.UI
 
         protected virtual void UpdateBeforeClearViewport()
         {
-            Listeners.ForEach(x => x.PreRender());
+            ListenerDo(x => x.PreRender());
         }
 
         protected virtual void UpdateBeforeRender()
@@ -153,49 +219,49 @@ namespace Sledge.UI
 
         protected override void OnMouseWheel(MouseEventArgs e)
         {
-            Listeners.ForEach(l => l.MouseWheel(e));
+            ListenerDo(l => l.MouseWheel(e));
         }
 
         protected override void OnMouseEnter(EventArgs e)
         {
             Focus();
             IsFocused = true;
-            Listeners.ForEach(l => l.MouseEnter(e));
+            ListenerDo(l => l.MouseEnter(e));
         }
 
         protected override void OnMouseLeave(EventArgs e)
         {
-            Listeners.ForEach(l => l.MouseLeave(e));
+            ListenerDo(l => l.MouseLeave(e));
         }
 
         protected override void OnMouseMove(MouseEventArgs e)
         {
-            Listeners.ForEach(l => l.MouseMove(e));
+            ListenerDo(l => l.MouseMove(e));
         }
 
         protected override void OnMouseUp(MouseEventArgs e)
         {
-            Listeners.ForEach(l => l.MouseUp(e));
+            ListenerDo(l => l.MouseUp(e));
         }
 
         protected override void OnMouseDown(MouseEventArgs e)
         {
-            Listeners.ForEach(l => l.MouseDown(e));
+            ListenerDo(l => l.MouseDown(e));
         }
 
         protected override void OnKeyDown(KeyEventArgs e)
         {
-            Listeners.ForEach(l => l.KeyDown(e));
+            ListenerDo(l => l.KeyDown(e));
         }
 
         protected override void OnKeyPress(KeyPressEventArgs e)
         {
-            Listeners.ForEach(l => l.KeyPress(e));
+            ListenerDo(l => l.KeyPress(e));
         }
 
         protected override void OnKeyUp(KeyEventArgs e)
         {
-            Listeners.ForEach(l => l.KeyUp(e));
+            ListenerDo(l => l.KeyUp(e));
         }
     }
 }

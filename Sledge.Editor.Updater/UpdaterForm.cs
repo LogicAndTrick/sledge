@@ -79,7 +79,8 @@ namespace Sledge.Editor.Updater
                                               {
                                                   InstallUpdate(directory, download);
                                                   Directory.Delete(updateDirectory, true);
-                                                  Close();
+                                                  Process.Start(Path.Combine(directory, "Sledge.Editor.exe"));
+                                                  Application.Exit();
                                               });
                     }
                     return;

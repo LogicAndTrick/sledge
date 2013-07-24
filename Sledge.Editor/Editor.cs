@@ -1,6 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
+using System.IO;
 using System.Linq;
+using System.Net;
 using System.Reflection;
 using System.Windows.Forms;
 using Microsoft.WindowsAPICodePack.Taskbar;
@@ -21,6 +25,7 @@ using Sledge.Providers.Texture;
 using Sledge.Settings;
 using Sledge.Settings.Models;
 using Hotkeys = Sledge.Editor.UI.Hotkeys;
+using Path = Sledge.DataStructures.MapObjects.Path;
 
 namespace Sledge.Editor
 {
@@ -110,7 +115,102 @@ namespace Sledge.Editor
             //TexturePackage.LoadTextureData(TexturePackage.GetLoadedItems().Select(x => x.Name));
 
             Subscribe();
+
+            Mediator.MediatorException += (msg, ex) => Logging.Logger.ShowException(ex, "Mediator Error: " + msg);
         }
+
+        #region Updates
+
+        private void CheckForUpdates()
+        {
+            #if DEBUG
+                return;
+            #endif
+
+            var sources = GetUpdateSources();
+            var version = GetCurrentVersion();
+            foreach (var source in sources)
+            {
+                var result = GetUpdateCheckResult(source, version);
+                if (result == null) continue;
+                if (!String.Equals(result.Version, version, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    if (MessageBox.Show("An update is available, would you like to update now?", "New version detected!", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                    {
+                        Process.Start(System.IO.Path.Combine(System.IO.Path.GetDirectoryName(typeof(Editor).Assembly.Location), "Sledge.Editor.Updater.exe"));
+                        Application.Exit();
+                    }
+                }
+                return;
+            }
+        }
+
+        private class UpdateSource
+        {
+            public string Name { get; set; }
+            public string Url { get; set; }
+
+            public string GetUrl(string version)
+            {
+                return String.Format(Url, version);
+            }
+        }
+
+        private class UpdateCheckResult
+        {
+            public string Version { get; set; }
+            public DateTime Date { get; set; }
+            public string DownloadUrl { get; set; }
+        }
+
+        private IEnumerable<UpdateSource> GetUpdateSources()
+        {
+            var dir = System.IO.Path.GetDirectoryName(typeof(Editor).Assembly.Location);
+            if (dir == null) yield break;
+            var file = System.IO.Path.Combine(dir, "UpdateSources.txt");
+            if (!File.Exists(file)) yield break;
+            var lines = File.ReadAllLines(file);
+            foreach (var line in lines)
+            {
+                if (String.IsNullOrWhiteSpace(line) || line.StartsWith("#")) continue;
+                var split = line.Split(':');
+                if (split.Length < 2) continue;
+                var us = new UpdateSource
+                {
+                    Name = split[0],
+                    Url = String.Join(":", split.Skip(1))
+                };
+                yield return us;
+            }
+        }
+
+        private String GetCurrentVersion()
+        {
+            var info = FileVersionInfo.GetVersionInfo(typeof(Editor).Assembly.Location);
+            return info.FileVersion;
+        }
+
+        private UpdateCheckResult GetUpdateCheckResult(UpdateSource source, string version)
+        {
+            try
+            {
+                using (var downloader = new WebClient())
+                {
+                    var str = downloader.DownloadString(source.GetUrl(version)).Split('\n', '\r');
+                    if (str.Length < 3 || String.IsNullOrWhiteSpace(str[0]))
+                    {
+                        return null;
+                    }
+                    return new UpdateCheckResult { Version = str[0], Date = DateTime.Parse(str[1]), DownloadUrl = str[2] };
+                }
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        #endregion
 
         private void EditorClosing(object sender, FormClosingEventArgs e)
         {
@@ -164,6 +264,13 @@ namespace Sledge.Editor
 
             Mediator.Subscribe(EditorMediator.TextureSelected, this);
             Mediator.Subscribe(EditorMediator.ToolSelected, this);
+
+            Mediator.Subscribe(EditorMediator.About, this);
+        }
+
+        private void About()
+        {
+            throw new Exception("THIS IS AN EXCEPTION!");
         }
 
         public static void FileNew()
@@ -479,6 +586,11 @@ namespace Sledge.Editor
         private void MoveToEntityClicked(object sender, EventArgs e)
         {
             Mediator.Publish(HotkeysMediator.TieToEntity);
+        }
+
+        private void EditorShown(object sender, EventArgs e)
+        {
+            System.Threading.Tasks.Task.Factory.StartNew(CheckForUpdates);
         }
     }
 }

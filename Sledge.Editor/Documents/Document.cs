@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using OpenTK;
 using Sledge.Common.Mediator;
@@ -133,7 +134,23 @@ namespace Sledge.Editor.Documents
         /// <param name="action">The action to perform</param>
         public void PerformAction(string name, IAction action)
         {
-            action.Perform(this);
+            try
+            {
+                action.Perform(this);
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace();
+                var frames = st.GetFrames() ?? new StackFrame[0];
+                var msg = "Action exception: " + name + " (" + action + ")";
+                foreach (var frame in frames)
+                {
+                    var method = frame.GetMethod();
+                    msg += "\r\n    " + method.ReflectedType.FullName + "." + method.Name;
+                }
+                Logging.Logger.ShowException(new Exception(msg, ex), "Error performing action");
+            }
+
             var history = new HistoryAction(name, action);
             History.AddHistoryItem(history);
         }

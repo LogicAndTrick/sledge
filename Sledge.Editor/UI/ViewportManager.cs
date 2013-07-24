@@ -32,6 +32,8 @@ namespace Sledge.Editor.UI
             Viewports.Add(bl);
             Viewports.Add(br);
 
+            Viewports.ForEach(SubscribeExceptions);
+
             MainWindowGrid.Controls.Clear();
             MainWindowGrid.ColumnCount = 2;
             MainWindowGrid.RowCount = 2;
@@ -42,6 +44,12 @@ namespace Sledge.Editor.UI
             MainWindowGrid.Controls.Add(br, 1, 1);
 
             RunAll();
+        }
+
+        private static void SubscribeExceptions(ViewportBase vp)
+        {
+            vp.ListenerException += (sender, ex) => Logging.Logger.ShowException(ex, "Viewport Listener Exception");
+            vp.RenderException += (sender, ex) => Logging.Logger.ShowException(ex, "Viewport Render Exception");
         }
 
         private static void RunAll()

@@ -11,7 +11,6 @@ Priorities
     Toobar & tool icons
     Cordon compile
     Finish the menu/toolbar actions
-    Proper error handling / stacktrace reporting
 
 Post-Alpha Priorities
   TDI
