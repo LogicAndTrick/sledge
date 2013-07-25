@@ -124,7 +124,7 @@ namespace Sledge.Editor.Menu
             Add("Tools", new SimpleMenuBuilder("Group", HotkeysMediator.GroupingGroup) { Image = Resources.Menu_Group, IsVisible = mapOpen, IsActive = itemsSelected, ShowInToolStrip = true });
             Add("Tools", new SimpleMenuBuilder("Ungroup", HotkeysMediator.GroupingUngroup) { Image = Resources.Menu_Ungroup, IsVisible = mapOpen, IsActive = itemsSelected, ShowInToolStrip = true });
             Add("Tools", new MenuSplitter { IsVisible = mapOpen, ShowInToolStrip = true });
-            Add("Tools", new SimpleMenuBuilder("Cordon Tool", HotkeysMediator.ToggleCordon) { Image = Resources.Menu_Cordon, IsVisible = mapOpen, IsChecked = () => mapOpen() && DocumentManager.CurrentDocument.Map.Cordon, ShowInToolStrip = true });
+            Add("Tools", new SimpleMenuBuilder("Enable Cordon", HotkeysMediator.ToggleCordon) { Image = Resources.Menu_Cordon, IsVisible = mapOpen, IsChecked = () => mapOpen() && DocumentManager.CurrentDocument.Map.Cordon, ShowInToolStrip = true });
             Add("Tools", new MenuSplitter { IsVisible = mapOpen });
             Add("Tools", new SimpleMenuBuilder("Tie to Entity", HotkeysMediator.TieToEntity) { Image = Resources.Menu_TieToEntity, IsVisible = mapOpen, IsActive = itemsSelected });
             Add("Tools", new SimpleMenuBuilder("Move to World", HotkeysMediator.TieToWorld) { Image = Resources.Menu_TieToWorld, IsVisible = mapOpen, IsActive = itemsSelected });

@@ -2,16 +2,12 @@
 
 Priorities
   Bugs
-    Background colour setting not applying
-    Recent files menu not opening recent files
     Windows 7 recent file jump list not opening files
   Enhancements
     (Empty)
   Features
-    Check for updates (needed for alpha!)
-      On startup
     Cordon compile
-    Finish the menu/toolbar actions
+    Recent files menu -> open files
 
 Post-Alpha Priorities
   TDI

@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Windows.Forms;
 using OpenTK;
+using OpenTK.Graphics.OpenGL;
 using Sledge.Graphics.Helpers;
 using Sledge.Graphics.Renderables;
 using Sledge.UI;
@@ -105,6 +106,7 @@ namespace Sledge.Editor.UI
             };
             viewport.MakeCurrent();
             GraphicsHelper.InitGL3D();
+            GL.ClearColor(Sledge.Settings.Grid.Background);
             viewport.Listeners.Add(new Camera3DViewportListener(viewport));
             viewport.Listeners.Add(new ToolViewportListener(viewport));
             return viewport;
@@ -118,6 +120,7 @@ namespace Sledge.Editor.UI
             };
             viewport.MakeCurrent();
             GraphicsHelper.InitGL2D();
+            GL.ClearColor(Sledge.Settings.Grid.Background);
             viewport.Listeners.Add(new Camera2DViewportListener(viewport));
             viewport.Listeners.Add(new Grid2DEventListener(viewport));
             viewport.Listeners.Add(new ToolViewportListener(viewport));

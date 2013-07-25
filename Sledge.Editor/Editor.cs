@@ -265,12 +265,22 @@ namespace Sledge.Editor
             Mediator.Subscribe(EditorMediator.TextureSelected, this);
             Mediator.Subscribe(EditorMediator.ToolSelected, this);
 
+            Mediator.Subscribe(EditorMediator.OpenWebsite, this);
+            Mediator.Subscribe(EditorMediator.CheckForUpdates, this);
             Mediator.Subscribe(EditorMediator.About, this);
+        }
+
+        private void OpenWebsite(string url)
+        {
+            Process.Start(url);
         }
 
         private void About()
         {
-            throw new Exception("THIS IS AN EXCEPTION!");
+            using (var ad = new AboutDialog())
+            {
+                ad.ShowDialog();
+            }
         }
 
         public static void FileNew()
