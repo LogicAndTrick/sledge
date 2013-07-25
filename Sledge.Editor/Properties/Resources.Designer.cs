@@ -93,6 +93,66 @@ namespace Sledge.Editor.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap Menu_Align {
+            get {
+                object obj = ResourceManager.GetObject("Menu_Align", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Menu_AutosizeViews {
+            get {
+                object obj = ResourceManager.GetObject("Menu_AutosizeViews", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Menu_Carve {
+            get {
+                object obj = ResourceManager.GetObject("Menu_Carve", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Menu_CenterSelection2D {
+            get {
+                object obj = ResourceManager.GetObject("Menu_CenterSelection2D", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Menu_CenterSelection3D {
+            get {
+                object obj = ResourceManager.GetObject("Menu_CenterSelection3D", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Menu_CenterSelectionAll {
+            get {
+                object obj = ResourceManager.GetObject("Menu_CenterSelectionAll", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap Menu_CheckForProblems {
             get {
                 object obj = ResourceManager.GetObject("Menu_CheckForProblems", resourceCulture);
@@ -123,9 +183,29 @@ namespace Sledge.Editor.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap Menu_Community {
+            get {
+                object obj = ResourceManager.GetObject("Menu_Community", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap Menu_Copy {
             get {
                 object obj = ResourceManager.GetObject("Menu_Copy", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Menu_Cordon {
+            get {
+                object obj = ResourceManager.GetObject("Menu_Cordon", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -163,9 +243,79 @@ namespace Sledge.Editor.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap Menu_Flip {
+            get {
+                object obj = ResourceManager.GetObject("Menu_Flip", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Menu_GoToBrushID {
+            get {
+                object obj = ResourceManager.GetObject("Menu_GoToBrushID", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Menu_GoToCoordinates {
+            get {
+                object obj = ResourceManager.GetObject("Menu_GoToCoordinates", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap Menu_Group {
             get {
                 object obj = ResourceManager.GetObject("Menu_Group", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Menu_Help {
+            get {
+                object obj = ResourceManager.GetObject("Menu_Help", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Menu_HideSelected {
+            get {
+                object obj = ResourceManager.GetObject("Menu_HideSelected", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Menu_HideUnselected {
+            get {
+                object obj = ResourceManager.GetObject("Menu_HideUnselected", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Menu_Hollow {
+            get {
+                object obj = ResourceManager.GetObject("Menu_Hollow", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -243,6 +393,16 @@ namespace Sledge.Editor.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap Menu_Options {
+            get {
+                object obj = ResourceManager.GetObject("Menu_Options", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap Menu_Paste {
             get {
                 object obj = ResourceManager.GetObject("Menu_Paste", resourceCulture);
@@ -276,6 +436,16 @@ namespace Sledge.Editor.Properties {
         internal static System.Drawing.Bitmap Menu_Redo {
             get {
                 object obj = ResourceManager.GetObject("Menu_Redo", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Menu_ReplaceTextures {
+            get {
+                object obj = ResourceManager.GetObject("Menu_ReplaceTextures", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -353,6 +523,16 @@ namespace Sledge.Editor.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap Menu_ShowHidden {
+            get {
+                object obj = ResourceManager.GetObject("Menu_ShowHidden", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap Menu_ShowInformation {
             get {
                 object obj = ResourceManager.GetObject("Menu_ShowInformation", resourceCulture);
@@ -366,6 +546,26 @@ namespace Sledge.Editor.Properties {
         internal static System.Drawing.Bitmap Menu_SmallerGrid {
             get {
                 object obj = ResourceManager.GetObject("Menu_SmallerGrid", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Menu_SnapSelection {
+            get {
+                object obj = ResourceManager.GetObject("Menu_SnapSelection", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Menu_SnapSelectionIndividual {
+            get {
+                object obj = ResourceManager.GetObject("Menu_SnapSelectionIndividual", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -403,6 +603,36 @@ namespace Sledge.Editor.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap Menu_TieToEntity {
+            get {
+                object obj = ResourceManager.GetObject("Menu_TieToEntity", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Menu_TieToWorld {
+            get {
+                object obj = ResourceManager.GetObject("Menu_TieToWorld", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Menu_Transform {
+            get {
+                object obj = ResourceManager.GetObject("Menu_Transform", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap Menu_Undo {
             get {
                 object obj = ResourceManager.GetObject("Menu_Undo", resourceCulture);
@@ -426,6 +656,26 @@ namespace Sledge.Editor.Properties {
         internal static System.Drawing.Bitmap Menu_UnloadPointfile {
             get {
                 object obj = ResourceManager.GetObject("Menu_UnloadPointfile", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Menu_Update {
+            get {
+                object obj = ResourceManager.GetObject("Menu_Update", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Menu_Website {
+            get {
+                object obj = ResourceManager.GetObject("Menu_Website", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
