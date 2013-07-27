@@ -3,15 +3,16 @@
 Priorities
   Bugs
     Windows 7 recent file jump list not opening files
+    Clip tool is laggy
+    Recent files menu -> open files
   Enhancements
     (Empty)
   Features
-    Cordon compile
-    Recent files menu -> open files
+    (Post-alpha)
 
 Post-Alpha Priorities
   TDI
-  Advanced compiling
+  Advanced/proper compiling
   Texture loader refactor
   Models
   Autosaving

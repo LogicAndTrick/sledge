@@ -144,6 +144,11 @@ namespace Sledge.Editor.Tools
 
         public void SelectTexture(TextureItem item)
         {
+            if (item == null)
+            {
+                SelectedTexturesList.SetSelectedTextures(new TextureItem[0]);
+                return;
+            }
             // Add the texture to the recent texture list
             if (!_recentTextures.Contains(item))
             {

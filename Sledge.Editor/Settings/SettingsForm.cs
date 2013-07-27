@@ -374,8 +374,7 @@ namespace Sledge.Editor.Settings
                 DefaultLightmapScale = 1,
                 DefaultTextureScale = 1,
                 Fgds = new List<Fgd>(),
-                Wads = new List<Wad>(),
-                Build = _builds.FirstOrDefault()
+                Wads = new List<Wad>()
             });
             ReIndex();
             UpdateGameTree();
@@ -479,7 +478,7 @@ namespace Sledge.Editor.Settings
 	        {
 	            SelectedGameFgdList.Items.Add(fgd.Path);
 	        }
-	        var gd = GameDataProvider.GetGameDataFromFiles(_selectedGame.Fgds.Select(x => x.Path));
+	        var gd = GameDataProvider.GetGameDataFromFiles(_selectedGame.Fgds.Select(x => x.Path).Where(File.Exists));
 
             SelectedGameDefaultPointEnt.Items.Clear();
             SelectedGameDefaultPointEnt.Items.AddRange(gd.Classes.Where(x => x.ClassType == ClassType.Point).Select(x => x.Name).ToArray());

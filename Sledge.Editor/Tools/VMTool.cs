@@ -205,9 +205,11 @@ namespace Sledge.Editor.Tools
             {
                 foreach (var group in copy.Faces.SelectMany(x => x.GetLines()).GroupBy(x => new { x.Start, x.End }))
                 {
-                    var coord = (group.Key.Start + group.Key.End) / 2;
-                    var mpStart = _points.First(x => !x.IsMidPoint && x.Coordinate == group.Key.Start);
-                    var mpEnd = _points.First(x => !x.IsMidPoint && x.Coordinate == group.Key.End);
+                    var s = group.Key.Start;
+                    var e = group.Key.End;
+                    var coord = (s + e) / 2;
+                    var mpStart = _points.First(x => !x.IsMidPoint && x.Coordinate == s);
+                    var mpEnd = _points.First(x => !x.IsMidPoint && x.Coordinate == e);
                     if (recreate)
                     {
                         _points.Add(new VMPoint
@@ -221,7 +223,10 @@ namespace Sledge.Editor.Tools
                     }
                     else
                     {
-                        _points.First(x => x.IsMidPoint && x.MidpointStart == mpStart && x.MidpointEnd == mpEnd).Coordinate = coord;
+                        foreach (var point in _points.Where(x => x.IsMidPoint && x.MidpointStart.Coordinate == s && x.MidpointEnd.Coordinate == e))
+                        {
+                            point.Coordinate = coord;
+                        }
                     }
                 }
             }
@@ -275,7 +280,7 @@ namespace Sledge.Editor.Tools
             }
             vtxs.ForEach(x => x.IsSelected = true);
             _clickedPoints = vtxs; // This is unset if the mouse is moved, see MouseUp logic.
-            _snapPointOffset = SnapIfNeeded(viewport.Expand(viewport.ScreenToWorld(e.X, viewport.Height - e.Y))) - viewport.Flatten(vtx.Coordinate);
+            _snapPointOffset = SnapIfNeeded(viewport.Expand(viewport.ScreenToWorld(e.X, viewport.Height - e.Y))) - viewport.ZeroUnusedCoordinate(vtx.Coordinate);
             _movingPoint = vtx;
         }
 
@@ -347,7 +352,7 @@ namespace Sledge.Editor.Tools
                     // If shift is down, retain the offset the point was at before (relative to the grid)
                     point += _snapPointOffset;
                 }
-                var moveDistance = point - viewport.Flatten(_movingPoint.Coordinate);
+                var moveDistance = point - viewport.ZeroUnusedCoordinate(_movingPoint.Coordinate);
                 // Move each selected point by the delta value
                 foreach (var p in _points.Where(x => !x.IsMidPoint && x.IsSelected))
                 {
@@ -440,7 +445,7 @@ namespace Sledge.Editor.Tools
             foreach (var point in _points)
             {
                 var c = vp.WorldToScreen(point.Coordinate);
-                if (c.Z > 1) continue;
+                if (c == null || c.Z > 1) continue;
                 c -= half;
 
                 GL.Color3(Color.Black);

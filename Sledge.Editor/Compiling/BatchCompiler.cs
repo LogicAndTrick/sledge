@@ -16,7 +16,8 @@ namespace Sledge.Editor.Compiling
             {
                 script.AppendLine(batch.BeforeExecuteStep);
                 script.AppendLine(step.BeforeExecute);
-                script.Append('"').Append(step.Operation).Append('"').Append(' ').AppendLine(step.Flags);
+                var cq = step.SystemCommand ? "" : "\"";
+                script.Append(cq).Append(step.Operation).Append(cq).Append(' ').AppendLine(step.Flags);
                 script.AppendLine(step.AfterExecute);
                 script.AppendLine(batch.AfterExecuteStep);
             }

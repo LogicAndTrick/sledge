@@ -108,6 +108,7 @@ namespace Sledge.Editor.Visgroups
         public void Update(Document document)
         {
             Clear();
+            if (document == null) return;
             var states = document.Map.WorldSpawn
                 .FindAll()
                 .SelectMany(x => x.Visgroups.Select(y => new {ID = y, Hidden = x.IsVisgroupHidden}))

@@ -194,7 +194,11 @@ namespace Sledge.Providers.Map
             sw.WriteLine("{");
             WriteProperty(sw, "classname", ent.EntityData.Name);
             WriteProperty(sw, "spawnflags", ent.EntityData.Flags.ToString());
-            ent.EntityData.Properties.ForEach(x => WriteProperty(sw, x.Key, x.Value));
+            foreach (var prop in ent.EntityData.Properties)
+            {
+                if (prop.Key == "classname" || prop.Key == "spawnflags") continue;
+                WriteProperty(sw, prop.Key, prop.Value);
+            }
 
             if (solids.Any()) solids.ForEach(x => WriteSolid(sw, x)); // Brush entity
             else WriteProperty(sw, "origin", FormatCoordinate(ent.Origin)); // Point entity
@@ -214,7 +218,11 @@ namespace Sledge.Providers.Map
             WriteProperty(sw, "classname", world.EntityData.Name);
             WriteProperty(sw, "spawnflags", world.EntityData.Flags.ToString());
             WriteProperty(sw, "mapversion", "220");
-            world.EntityData.Properties.ForEach(x => WriteProperty(sw, x.Key, x.Value));
+            foreach (var prop in world.EntityData.Properties)
+            {
+                if (prop.Key == "classname" || prop.Key == "spawnflags" || prop.Key == "mapversion") continue;
+                WriteProperty(sw, prop.Key, prop.Value);
+            }
             solids.ForEach(x => WriteSolid(sw, x));
 
             sw.WriteLine("}");

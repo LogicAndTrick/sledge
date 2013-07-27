@@ -26,7 +26,6 @@ namespace Sledge.Settings.Models
 
         public List<Fgd> Fgds { get; set; }
         public List<Wad> Wads { get; set; }
-        public Build Build { get; set; }
 
         public Game()
         {

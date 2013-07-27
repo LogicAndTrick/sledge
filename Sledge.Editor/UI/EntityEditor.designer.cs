@@ -679,9 +679,11 @@ namespace Sledge.Editor.UI
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.VisgroupPanel.DisableAutomatic = true;
+            this.VisgroupPanel.HideAutomatic = false;
             this.VisgroupPanel.Location = new System.Drawing.Point(6, 26);
             this.VisgroupPanel.Name = "VisgroupPanel";
             this.VisgroupPanel.ShowCheckboxes = true;
+            this.VisgroupPanel.ShowHidden = false;
             this.VisgroupPanel.Size = new System.Drawing.Size(662, 319);
             this.VisgroupPanel.SortAutomaticFirst = false;
             this.VisgroupPanel.TabIndex = 2;
@@ -741,7 +743,7 @@ namespace Sledge.Editor.UI
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "EntityEditor";
+            this.Text = "Object Properties";
             this.Tabs.ResumeLayout(false);
             this.ClassInfoTab.ResumeLayout(false);
             this.ClassInfoTab.PerformLayout();

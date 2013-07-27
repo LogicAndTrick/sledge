@@ -11,6 +11,7 @@ using Sledge.Editor.Actions.MapObjects.Operations;
 using Sledge.Editor.History;
 using Sledge.Editor.Properties;
 using Sledge.Graphics.Helpers;
+using Sledge.Providers.Texture;
 using Sledge.Settings;
 using Sledge.UI;
 
@@ -65,6 +66,12 @@ namespace Sledge.Editor.Tools
             var gd = Document.GameData.Classes.First(x => x.Name == "infodecal");
             var selected = Editor.Instance.GetSelectedTexture();
             var textureName = selected == null ? "{TARGET" : selected.Name;
+
+            if (TexturePackage.GetItem(textureName) == null)
+            {
+                return;
+            }
+
             var decal = new Entity(Document.Map.IDGenerator.GetNextObjectID())
             {
                 EntityData = new EntityData(gd),
@@ -73,7 +80,7 @@ namespace Sledge.Editor.Tools
                 Decal = TextureHelper.Get(textureName),
                 Origin = origin
             };
-            decal.EntityData.Properties.Add(new Property { Key = "texture", Value = textureName });
+            decal.EntityData.SetPropertyValue("texture", textureName);
 
             Document.PerformAction("Apply decal", new Create(decal));
         }

@@ -14,7 +14,8 @@ namespace Sledge.Editor.Logging
         {
             var info = new ExceptionInfo(ex, message);
             var window = new ExceptionWindow(info);
-            window.Show(Editor.Instance);
+            if (Editor.Instance == null || Editor.Instance.IsDisposed) window.Show();
+            else window.Show(Editor.Instance);
         }
     }
 

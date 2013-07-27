@@ -91,16 +91,20 @@ namespace Sledge.Providers.GameData
 
         protected virtual DataStructures.GameData.GameData GetFromFile(string filename)
         {
-            Stream strm = new FileStream(filename, FileMode.Open, FileAccess.Read);
-            return GetFromStream(strm);
+            using (var strm = new FileStream(filename, FileMode.Open, FileAccess.Read))
+            {
+                return GetFromStream(strm);
+            }
         }
 
         protected virtual DataStructures.GameData.GameData GetFromString(string contents)
         {
             var length = Encoding.UTF8.GetByteCount(contents);
-            Stream strm = new MemoryStream(length);
-            strm.Write(Encoding.UTF8.GetBytes(contents), 0, length);
-            return GetFromStream(strm);
+            using (var strm = new MemoryStream(length))
+            {
+                strm.Write(Encoding.UTF8.GetBytes(contents), 0, length);
+                return GetFromStream(strm);
+            }
         }
 
         protected abstract DataStructures.GameData.GameData GetFromStream(Stream stream);

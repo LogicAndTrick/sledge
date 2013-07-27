@@ -238,21 +238,58 @@ namespace Sledge.Editor.Documents
         public void FileCompile()
         {
             FileSave();
-            var currentFile = _document.MapFile;
-            if (currentFile == null) return;
-            if (!currentFile.EndsWith("map"))
+            if (_document.MapFile == null) return;
+
+            var tempDir = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+            Directory.CreateDirectory(tempDir);
+
+            _document.Map.WorldSpawn.EntityData.Properties.Add(new Property
             {
-                _document.Map.WorldSpawn.EntityData.Properties.Add(new Property
-                {
-                    Key = "wad",
-                    Value = string.Join(";", _document.Game.Wads.Select(x => x.Path))
-                });
-                var map = Path.ChangeExtension(_document.MapFile, "map");
-                MapProvider.SaveMapToFile(map, _document.Map);
-                currentFile = map;
-            }
-            var batch = new Batch(_document.Game, currentFile);
+                Key = "wad",
+                Value = string.Join(";", _document.Game.Wads.Select(x => x.Path))
+            });
+            var map = Path.Combine(tempDir, Path.GetFileNameWithoutExtension(_document.MapFile) + ".map");
+            SaveWithCordon(map);
+
+            var build = SettingsManager.Builds.FirstOrDefault(x => x.ID == _document.Game.BuildID);
+            var batch = new Batch(_document.Game, build, map, _document.MapFile);
             BatchCompiler.Compile(batch);
+        }
+
+        private void SaveWithCordon(string file)
+        {
+            var map = _document.Map;
+            if (_document.Map.Cordon)
+            {
+                map = new Map();
+                map.WorldSpawn.EntityData = _document.Map.WorldSpawn.EntityData.Clone();
+                var entities = _document.Map.WorldSpawn.GetAllNodesContainedWithin(_document.Map.CordonBounds);
+                foreach (var mo in entities)
+                {
+                    var clone = mo.Clone();
+                    clone.SetParent(map.WorldSpawn);
+                }
+                var outside = new Box(map.WorldSpawn.Children.Select(x => x.BoundingBox).Union(new[] {_document.Map.CordonBounds}));
+                outside = new Box(outside.Start - Coordinate.One, outside.End + Coordinate.One);
+                var inside = _document.Map.CordonBounds;
+
+                var brush = new Brushes.BlockBrush();
+
+                var cordon = (Solid) brush.Create(map.IDGenerator, outside, null).First();
+                var carver = (Solid) brush.Create(map.IDGenerator, inside, null).First();
+                cordon.Faces.ForEach(x => x.Texture.Name = "BLACK");
+
+                // Do a carve (TODO: move carve into helper method?)
+                foreach (var plane in carver.Faces.Select(x => x.Plane))
+                {
+                    Solid back, front;
+                    if (!cordon.Split(plane, out back, out front, map.IDGenerator)) continue;
+                    front.SetParent(map.WorldSpawn);
+                    cordon = back;
+                }
+
+            }
+            MapProvider.SaveMapToFile(file, map);
         }
 
         public void OperationsCopy()

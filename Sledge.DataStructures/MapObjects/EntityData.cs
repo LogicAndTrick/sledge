@@ -43,5 +43,16 @@ namespace Sledge.DataStructures.MapObjects
             var prop = Properties.FirstOrDefault(x => String.Equals(key, x.Key, StringComparison.InvariantCultureIgnoreCase));
             return prop == null ? null : prop.Value;
         }
+
+        public void SetPropertyValue(string key, string value)
+        {
+            var prop = Properties.FirstOrDefault(x => String.Equals(key, x.Key, StringComparison.InvariantCultureIgnoreCase));
+            if (prop == null)
+            {
+                prop = new Property { Key = key};
+                Properties.Add(prop);
+            }
+            prop.Value = value;
+        }
     }
 }

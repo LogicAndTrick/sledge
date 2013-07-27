@@ -12,23 +12,26 @@ namespace Sledge.Editor.Compiling
         public string BeforeExecuteStep { get; set; }
         public string AfterExecuteStep { get; set; }
         public string TargetFile { get; set; }
+        public string OriginalFile { get; set; }
 
-        public Batch(Game game, string targetFile)
+        public Batch(Game game, Build build, string targetFile, string originalFile)
         {
             // TODO: this properly
-            var build = game.Build;
             BeforeExecute = "";
             AfterExecute = "";
             BeforeExecuteStep = "";
             AfterExecuteStep = "";
             TargetFile = targetFile;
             var fileFlag = '"' + targetFile + '"';
+            var bspFile = '"' + Path.ChangeExtension(targetFile, "bsp") + '"';
+            var copyBsp = '"' + Path.ChangeExtension(originalFile, "bsp") + '"';
             Steps = new List<BatchCompileStep>
                         {
                             new BatchCompileStep { Operation = Path.Combine(build.Path, build.Csg), Flags = fileFlag },
                             new BatchCompileStep { Operation = Path.Combine(build.Path, build.Bsp), Flags = fileFlag },
                             new BatchCompileStep { Operation = Path.Combine(build.Path, build.Vis), Flags = fileFlag },
                             new BatchCompileStep { Operation = Path.Combine(build.Path, build.Rad), Flags = fileFlag },
+                            new BatchCompileStep { Operation = "move", SystemCommand = true, Flags = bspFile + " " + copyBsp }
                             //new BatchCompileStep { Operation = "copy"}
                         };
         }
