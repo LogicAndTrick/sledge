@@ -452,8 +452,16 @@ namespace Sledge.Editor.Settings
             SelectedGameMod.SelectedText = _selectedGame.ModDir;
             SelectedGameWonDir.Text = _selectedGame.WonGameDir;
             SelectedGameSteamDir.SelectedText = _selectedGame.SteamGameDir;
-            SelectedGameBuild.SelectedIndex = Math.Max(0, _builds.FindIndex(x => x.ID == _selectedGame.BuildID));
-            SelectedGameEngine.SelectedIndex = Math.Max(0, _engines.FindIndex(x => x.ID == _selectedGame.EngineID));
+
+            if (SelectedGameBuild.Items.Count > 0)
+            {
+                SelectedGameBuild.SelectedIndex = Math.Max(0, _builds.FindIndex(x => x.ID == _selectedGame.BuildID));
+            }
+            if (SelectedGameEngine.Items.Count > 0)
+            {
+                SelectedGameEngine.SelectedIndex = Math.Max(0, _engines.FindIndex(x => x.ID == _selectedGame.EngineID));
+            }
+
             SelectedGameSteamInstall.Checked = _selectedGame.SteamInstall;
 
             SelectedGameEngineChanged(null, null);
@@ -497,7 +505,7 @@ namespace Sledge.Editor.Settings
 
 	    private void SelectedGameEngineChanged(object sender, EventArgs e)
         {
-            if (_selectedGame == null) return;
+            if (_selectedGame == null || SelectedGameEngine.SelectedIndex < 0) return;
             var eng = _engines[SelectedGameEngine.SelectedIndex];
             var change = eng.ID != _selectedGame.EngineID;
             _selectedGame.EngineID = eng.ID;
