@@ -25,7 +25,6 @@ using Sledge.Providers.Texture;
 using Sledge.Settings;
 using Sledge.Settings.Models;
 using Hotkeys = Sledge.Editor.UI.Hotkeys;
-using Path = Sledge.DataStructures.MapObjects.Path;
 
 namespace Sledge.Editor
 {

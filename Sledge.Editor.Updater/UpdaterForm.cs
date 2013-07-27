@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -82,6 +83,13 @@ namespace Sledge.Editor.Updater
                                                   Process.Start(Path.Combine(directory, "Sledge.Editor.exe"));
                                                   Application.Exit();
                                               });
+                    }
+                    else
+                    {
+                        InstallUpdate(directory, download);
+                        Directory.Delete(updateDirectory, true);
+                        Process.Start(Path.Combine(directory, "Sledge.Editor.exe"));
+                        Application.Exit();
                     }
                     return;
                 }
@@ -169,13 +177,19 @@ namespace Sledge.Editor.Updater
 
         private void InstallUpdate(string installDir, string file)
         {
-            StatusLabel.Text = "Installing update...";
+            StatusLabel.BeginInvoke((Action) (() =>
+                                                  {
+                                                      StatusLabel.Text = "Installing update...";
+                                                  }));
             // File is already in a folder at this point.
             var updateDir = Path.GetDirectoryName(file);
             if (updateDir == null) return;
 
             UnZip(file); // Extract in-place
             File.Delete(file); // Delete archive
+            // Delete currently used files
+            File.Delete(Path.Combine(updateDir, "ICSharpCode.SharpZipLib.dll"));
+            File.Delete(Path.Combine(updateDir, "Sledge.Editor.Updater.exe"));
             InstallDirectory(installDir, updateDir); // Move all files across
         }
 
