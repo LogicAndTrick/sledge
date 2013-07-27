@@ -64,15 +64,15 @@ namespace Sledge.Editor.Tools
             Mediator.ExecuteDefault(this, message, data);
         }
 
-        public abstract void MouseEnter(ViewportBase viewport, EventArgs e);
-        public abstract void MouseLeave(ViewportBase viewport, EventArgs e);
-        public abstract void MouseDown(ViewportBase viewport, MouseEventArgs e);
-        public abstract void MouseUp(ViewportBase viewport, MouseEventArgs e);
-        public abstract void MouseWheel(ViewportBase viewport, MouseEventArgs e);
-        public abstract void MouseMove(ViewportBase viewport, MouseEventArgs e);
-        public abstract void KeyPress(ViewportBase viewport, KeyPressEventArgs e);
-        public abstract void KeyDown(ViewportBase viewport, KeyEventArgs e);
-        public abstract void KeyUp(ViewportBase viewport, KeyEventArgs e);
+        public abstract void MouseEnter(ViewportBase viewport, ViewportEvent e);
+        public abstract void MouseLeave(ViewportBase viewport, ViewportEvent e);
+        public abstract void MouseDown(ViewportBase viewport, ViewportEvent e);
+        public abstract void MouseUp(ViewportBase viewport, ViewportEvent e);
+        public abstract void MouseWheel(ViewportBase viewport, ViewportEvent e);
+        public abstract void MouseMove(ViewportBase viewport, ViewportEvent e);
+        public abstract void KeyPress(ViewportBase viewport, ViewportEvent e);
+        public abstract void KeyDown(ViewportBase viewport, ViewportEvent e);
+        public abstract void KeyUp(ViewportBase viewport, ViewportEvent e);
         public abstract void UpdateFrame(ViewportBase viewport);
         public abstract void Render(ViewportBase viewport);
 

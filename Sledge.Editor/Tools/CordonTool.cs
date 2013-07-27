@@ -7,6 +7,7 @@ using OpenTK.Graphics.OpenGL;
 using Sledge.DataStructures.Geometric;
 using Sledge.Editor.Properties;
 using Sledge.Settings;
+using Sledge.UI;
 
 namespace Sledge.Editor.Tools
 {
@@ -50,7 +51,7 @@ namespace Sledge.Editor.Tools
             State.Action = BoxAction.Drawn;
         }
 
-        protected override void LeftMouseUpResizing(Sledge.UI.Viewport2D viewport, System.Windows.Forms.MouseEventArgs e)
+        protected override void LeftMouseUpResizing(Viewport2D viewport, ViewportEvent e)
         {
             Document.Map.CordonBounds = new Box(State.BoxStart, State.BoxEnd);
             base.LeftMouseUpResizing(viewport, e);
@@ -110,22 +111,22 @@ namespace Sledge.Editor.Tools
             }
         }
 
-        protected override void LeftMouseDownToDraw(Sledge.UI.Viewport2D viewport, System.Windows.Forms.MouseEventArgs e)
+        protected override void LeftMouseDownToDraw(Viewport2D viewport, ViewportEvent e)
         {
             //
         }
 
-        protected override void MouseDraggingToDraw(Sledge.UI.Viewport2D viewport, System.Windows.Forms.MouseEventArgs e)
+        protected override void MouseDraggingToDraw(Viewport2D viewport, ViewportEvent e)
         {
             //
         }
 
-        protected override void LeftMouseUpDrawing(Sledge.UI.Viewport2D viewport, System.Windows.Forms.MouseEventArgs e)
+        protected override void LeftMouseUpDrawing(Viewport2D viewport, ViewportEvent e)
         {
             //
         }
 
-        protected override void LeftMouseClick(Sledge.UI.Viewport2D viewport, System.Windows.Forms.MouseEventArgs e)
+        protected override void LeftMouseClick(Viewport2D viewport, ViewportEvent e)
         {
             //
         }

@@ -178,7 +178,7 @@ namespace Sledge.Editor.Tools
         }
 
         // Mouse Down
-        public override void MouseDown(ViewportBase viewport, MouseEventArgs e)
+        public override void MouseDown(ViewportBase viewport, ViewportEvent e)
         {
             if (viewport is Viewport3D) MouseDown3D((Viewport3D)viewport, e);
             if (e.Button != MouseButtons.Left) return;
@@ -197,12 +197,12 @@ namespace Sledge.Editor.Tools
             }
         }
 
-        protected virtual void MouseDown3D(Viewport3D viewport, MouseEventArgs e)
+        protected virtual void MouseDown3D(Viewport3D viewport, ViewportEvent e)
         {
             // Virtual
         }
 
-        protected virtual void LeftMouseDownToDraw(Viewport2D viewport, MouseEventArgs e)
+        protected virtual void LeftMouseDownToDraw(Viewport2D viewport, ViewportEvent e)
         {
             State.ActiveViewport = viewport;
             State.Action = BoxAction.DownToDraw;
@@ -212,7 +212,7 @@ namespace Sledge.Editor.Tools
             OnBoxChanged();
         }
 
-        protected virtual void LeftMouseDownToResize(Viewport2D viewport, MouseEventArgs e)
+        protected virtual void LeftMouseDownToResize(Viewport2D viewport, ViewportEvent e)
         {
             State.ActiveViewport = viewport;
             State.Action = BoxAction.DownToResize;
@@ -222,7 +222,7 @@ namespace Sledge.Editor.Tools
         }
 
         // Mouse Up
-        public override void MouseUp(ViewportBase viewport, MouseEventArgs e)
+        public override void MouseUp(ViewportBase viewport, ViewportEvent e)
         {
             if (viewport is Viewport3D) MouseUp3D((Viewport3D) viewport, e);
             Editor.Instance.CaptureAltPresses = false;
@@ -246,12 +246,12 @@ namespace Sledge.Editor.Tools
             }
         }
 
-        protected virtual void MouseUp3D(Viewport3D viewport, MouseEventArgs e)
+        protected virtual void MouseUp3D(Viewport3D viewport, ViewportEvent e)
         {
             // Virtual
         }
 
-        protected virtual void LeftMouseUpDrawing(Viewport2D viewport, MouseEventArgs e)
+        protected virtual void LeftMouseUpDrawing(Viewport2D viewport, ViewportEvent e)
         {
             var coords = GetResizedBoxCoordinates(viewport, e);
             var corrected = GetProperBoxCoordinates(coords.Item1, coords.Item2);
@@ -262,7 +262,7 @@ namespace Sledge.Editor.Tools
             OnBoxChanged();
         }
 
-        protected virtual void LeftMouseUpResizing(Viewport2D viewport, MouseEventArgs e)
+        protected virtual void LeftMouseUpResizing(Viewport2D viewport, ViewportEvent e)
         {
             var coords = GetResizedBoxCoordinates(viewport, e);
             var corrected = GetProperBoxCoordinates(coords.Item1, coords.Item2);
@@ -273,7 +273,7 @@ namespace Sledge.Editor.Tools
             OnBoxChanged();
         }
 
-        protected virtual void LeftMouseClick(Viewport2D viewport, MouseEventArgs e)
+        protected virtual void LeftMouseClick(Viewport2D viewport, ViewportEvent e)
         {
             State.ActiveViewport = null;
             State.Action = BoxAction.ReadyToDraw;
@@ -282,13 +282,13 @@ namespace Sledge.Editor.Tools
             OnBoxChanged();
         }
 
-        protected virtual void LeftMouseClickOnResizeHandle(Viewport2D vp, MouseEventArgs e)
+        protected virtual void LeftMouseClickOnResizeHandle(Viewport2D vp, ViewportEvent e)
         {
             State.Action = BoxAction.ReadyToResize;
         }
 
         // Mouse Move
-        public override void MouseMove(ViewportBase viewport, MouseEventArgs e)
+        public override void MouseMove(ViewportBase viewport, ViewportEvent e)
         {
             if (viewport is Viewport3D) MouseMove3D((Viewport3D) viewport, e);
             if (!(viewport is Viewport2D)) return;
@@ -314,12 +314,12 @@ namespace Sledge.Editor.Tools
             }
         }
 
-        protected virtual void MouseMove3D(Viewport3D viewport, MouseEventArgs e)
+        protected virtual void MouseMove3D(Viewport3D viewport, ViewportEvent e)
         {
             // Virtual
         }
 
-        protected virtual void MouseDraggingToDraw(Viewport2D viewport, MouseEventArgs e)
+        protected virtual void MouseDraggingToDraw(Viewport2D viewport, ViewportEvent e)
         {
             State.Action = BoxAction.Drawing;
             var coords = GetResizedBoxCoordinates(viewport, e);
@@ -328,7 +328,7 @@ namespace Sledge.Editor.Tools
             OnBoxChanged();
         }
 
-        protected virtual void MouseDraggingToResize(Viewport2D viewport, MouseEventArgs e)
+        protected virtual void MouseDraggingToResize(Viewport2D viewport, ViewportEvent e)
         {
             State.Action = BoxAction.Resizing;
             var coords = GetResizedBoxCoordinates(viewport, e);
@@ -360,7 +360,7 @@ namespace Sledge.Editor.Tools
             }
         }
 
-        protected virtual void MouseHoverWhenDrawn(Viewport2D viewport, MouseEventArgs e)
+        protected virtual void MouseHoverWhenDrawn(Viewport2D viewport, ViewportEvent e)
         {
             var now = viewport.ScreenToWorld(e.X, viewport.Height - e.Y);
             var start = viewport.Flatten(State.BoxStart);
@@ -381,12 +381,12 @@ namespace Sledge.Editor.Tools
             }
         }
 
-        public override void MouseWheel(ViewportBase viewport, MouseEventArgs e)
+        public override void MouseWheel(ViewportBase viewport, ViewportEvent e)
         {
             // Nope.
         }
 
-        protected Tuple<Coordinate, Coordinate> GetResizedBoxCoordinates(Viewport2D viewport, MouseEventArgs e)
+        protected Tuple<Coordinate, Coordinate> GetResizedBoxCoordinates(Viewport2D viewport, ViewportEvent e)
         {
             if (State.Action != BoxAction.Resizing && State.Action != BoxAction.Drawing) return Tuple.Create(State.BoxStart, State.BoxEnd);
             var now = SnapIfNeeded(viewport.ScreenToWorld(e.X, viewport.Height - e.Y));
@@ -435,12 +435,12 @@ namespace Sledge.Editor.Tools
             return Tuple.Create(cstart, cend);
         }
 
-        public override void KeyPress(ViewportBase viewport, KeyPressEventArgs e)
+        public override void KeyPress(ViewportBase viewport, ViewportEvent e)
         {
 
         }
 
-        public override void KeyDown(ViewportBase viewport, KeyEventArgs e)
+        public override void KeyDown(ViewportBase viewport, ViewportEvent e)
         {
             switch (e.KeyCode)
             {
@@ -467,7 +467,7 @@ namespace Sledge.Editor.Tools
             State.ActiveViewport = null;
         }
 
-        public override void KeyUp(ViewportBase viewport, KeyEventArgs e)
+        public override void KeyUp(ViewportBase viewport, ViewportEvent e)
         {
             // Probably not needed
         }
@@ -669,12 +669,12 @@ namespace Sledge.Editor.Tools
             //TODO: Drag-scrolling
         }
 
-        public override void MouseEnter(ViewportBase viewport, EventArgs e)
+        public override void MouseEnter(ViewportBase viewport, ViewportEvent e)
         {
             if (State.ActiveViewport != null) State.ActiveViewport.Cursor = Cursors.Default;
         }
 
-        public override void MouseLeave(ViewportBase viewport, EventArgs e)
+        public override void MouseLeave(ViewportBase viewport, ViewportEvent e)
         {
             if (State.ActiveViewport != null) State.ActiveViewport.Cursor = Cursors.Default;
         }

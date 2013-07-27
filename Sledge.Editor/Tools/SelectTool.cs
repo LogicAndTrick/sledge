@@ -212,7 +212,7 @@ namespace Sledge.Editor.Tools
         /// </summary>
         /// <param name="viewport">The viewport that was clicked</param>
         /// <param name="e">The click event</param>
-        protected override void MouseDown3D(Viewport3D viewport, MouseEventArgs e)
+        protected override void MouseDown3D(Viewport3D viewport, ViewportEvent e)
         {
             // First, get the ray that is cast from the clicked point along the viewport frustrum
             var ray = viewport.CastRayFromScreen(e.X, e.Y);
@@ -244,7 +244,7 @@ namespace Sledge.Editor.Tools
         /// </summary>
         /// <param name="viewport">The viewport that was scrolled</param>
         /// <param name="e">The scroll event</param>
-        public override void MouseWheel(ViewportBase viewport, MouseEventArgs e)
+        public override void MouseWheel(ViewportBase viewport, ViewportEvent e)
         {
             // If we're not in 3D cycle mode, carry on
             if (!(viewport is Viewport3D)
@@ -302,7 +302,7 @@ namespace Sledge.Editor.Tools
         /// </summary>
         /// <param name="viewport">The 3D viewport</param>
         /// <param name="e">The mouse event</param>
-        protected override void MouseUp3D(Viewport3D viewport, MouseEventArgs e)
+        protected override void MouseUp3D(Viewport3D viewport, ViewportEvent e)
         {
             IntersectingObjectsFor3DSelection = null;
             ChosenItemFor3DSelection = null;
@@ -325,7 +325,7 @@ namespace Sledge.Editor.Tools
         /// </summary>
         /// <param name="viewport">The viewport</param>
         /// <param name="e">The mouse event</param>
-        protected override void MouseHoverWhenDrawn(Viewport2D viewport, MouseEventArgs e)
+        protected override void MouseHoverWhenDrawn(Viewport2D viewport, ViewportEvent e)
         {
             if (_currentTool == null)
             {
@@ -375,7 +375,7 @@ namespace Sledge.Editor.Tools
         /// </summary>
         /// <param name="viewport">The viewport to draw in</param>
         /// <param name="e">The mouse event</param>
-        protected override void LeftMouseDownToDraw(Viewport2D viewport, MouseEventArgs e)
+        protected override void LeftMouseDownToDraw(Viewport2D viewport, ViewportEvent e)
         {
             // If we've clicked outside a selection box and not holding down control, clear the selection
             if (!Document.Selection.IsEmpty() && !KeyboardState.Ctrl)
@@ -389,7 +389,7 @@ namespace Sledge.Editor.Tools
             base.LeftMouseDownToDraw(viewport, e);
         }
 
-        private MapObject SelectionTest(Viewport2D viewport, MouseEventArgs e)
+        private MapObject SelectionTest(Viewport2D viewport, ViewportEvent e)
         {
             // Create a box to represent the click, with a tolerance level
             var unused = viewport.GetUnusedCoordinate(new Coordinate(100000, 100000, 100000));
@@ -408,7 +408,7 @@ namespace Sledge.Editor.Tools
         /// </summary>
         /// <param name="viewport">The 2D viewport</param>
         /// <param name="e">The mouse event</param>
-        protected override void LeftMouseClick(Viewport2D viewport, MouseEventArgs e)
+        protected override void LeftMouseClick(Viewport2D viewport, ViewportEvent e)
         {
             var seltest = SelectionTest(viewport, e);
             if (seltest != null)
@@ -421,7 +421,7 @@ namespace Sledge.Editor.Tools
             SelectionChanged();
         }
 
-        protected override void LeftMouseClickOnResizeHandle(Viewport2D viewport, MouseEventArgs e)
+        protected override void LeftMouseClickOnResizeHandle(Viewport2D viewport, ViewportEvent e)
         {
             base.LeftMouseClickOnResizeHandle(viewport, e);
 
@@ -444,7 +444,7 @@ namespace Sledge.Editor.Tools
             SetCurrentTool(_tools[(idx + 1) % _tools.Count]);
         }
 
-        private Matrix4? GetTransformMatrix(Viewport2D viewport, MouseEventArgs e)
+        private Matrix4? GetTransformMatrix(Viewport2D viewport, ViewportEvent e)
         {
             if (_currentTool == null) return null;
             return State.Handle == ResizeHandle.Center
@@ -452,7 +452,7 @@ namespace Sledge.Editor.Tools
                        : _currentTool.GetTransformationMatrix(viewport, e, State, Document);
         }
 
-        protected override void LeftMouseUpResizing(Viewport2D viewport, MouseEventArgs e)
+        protected override void LeftMouseUpResizing(Viewport2D viewport, ViewportEvent e)
         {
             if (_currentTool == null)
             {
@@ -475,7 +475,7 @@ namespace Sledge.Editor.Tools
             SelectionChanged();
         }
 
-        protected override void MouseDraggingToResize(Viewport2D viewport, MouseEventArgs e)
+        protected override void MouseDraggingToResize(Viewport2D viewport, ViewportEvent e)
         {
             if (_currentTool == null)
             {

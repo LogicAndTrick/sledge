@@ -10,7 +10,7 @@ namespace Sledge.Editor.Tools.TransformationTools
 {
     abstract class TransformationTool
     {
-        public abstract Matrix4? GetTransformationMatrix(Viewport2D viewport, MouseEventArgs mouseEventArgs, BaseBoxTool.BoxState state, Document doc);
+        public abstract Matrix4? GetTransformationMatrix(Viewport2D viewport, ViewportEvent mouseEventArgs, BaseBoxTool.BoxState state, Document doc);
         public abstract bool RenderCircleHandles { get; }
         public abstract bool FilterHandle(BaseBoxTool.ResizeHandle handle);
         public abstract string GetTransformName();

@@ -1,26 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows.Forms;
-
-namespace Sledge.UI
+﻿namespace Sledge.UI
 {
     public interface IViewportEventListener
     {
         ViewportBase Viewport { get; set; }
 
-        void KeyUp(KeyEventArgs e);
-        void KeyDown(KeyEventArgs e);
-        void KeyPress(KeyPressEventArgs e);
+        void KeyUp(ViewportEvent e);
+        void KeyDown(ViewportEvent e);
+        void KeyPress(ViewportEvent e);
 
-        void MouseMove(MouseEventArgs e);
-        void MouseWheel(MouseEventArgs e);
-        void MouseUp(MouseEventArgs e);
-        void MouseDown(MouseEventArgs e);
+        void MouseMove(ViewportEvent e);
+        void MouseWheel(ViewportEvent e);
+        void MouseUp(ViewportEvent e);
+        void MouseDown(ViewportEvent e);
 
-        void MouseEnter(EventArgs e);
-        void MouseLeave(EventArgs e);
+        void MouseEnter(ViewportEvent e);
+        void MouseLeave(ViewportEvent e);
 
         void UpdateFrame();
         void PreRender();

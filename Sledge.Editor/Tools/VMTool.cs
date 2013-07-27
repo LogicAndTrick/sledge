@@ -232,7 +232,7 @@ namespace Sledge.Editor.Tools
             }
         }
 
-        public override void MouseDown(ViewportBase vp, MouseEventArgs e)
+        public override void MouseDown(ViewportBase vp, ViewportEvent e)
         {
             if (!(vp is Viewport2D))
             {
@@ -284,7 +284,7 @@ namespace Sledge.Editor.Tools
             _movingPoint = vtx;
         }
 
-        public override void MouseUp(ViewportBase viewport, MouseEventArgs e)
+        public override void MouseUp(ViewportBase viewport, ViewportEvent e)
         {
             base.MouseUp(viewport, e);
 
@@ -329,7 +329,7 @@ namespace Sledge.Editor.Tools
             RefreshPoints();
         }
 
-        public override void MouseMove(ViewportBase vp, MouseEventArgs e)
+        public override void MouseMove(ViewportBase vp, ViewportEvent e)
         {
             base.MouseMove(vp, e);
 

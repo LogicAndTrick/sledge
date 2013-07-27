@@ -33,7 +33,7 @@ namespace Sledge.Editor.Tools.TransformationTools
             return null;
         }
 
-        public override Matrix4? GetTransformationMatrix(Viewport2D viewport, MouseEventArgs e, BaseBoxTool.BoxState state, Document doc)
+        public override Matrix4? GetTransformationMatrix(Viewport2D viewport, ViewportEvent e, BaseBoxTool.BoxState state, Document doc)
         {
             var coords = GetBoxCoordinatesForSelectionResize(viewport, e, state, doc);
             state.BoxStart = coords.Item1;
@@ -58,7 +58,7 @@ namespace Sledge.Editor.Tools.TransformationTools
             return resizeMatrix;
         }
 
-        private Tuple<Coordinate, Coordinate> GetBoxCoordinatesForSelectionResize(Viewport2D viewport, MouseEventArgs e, BaseBoxTool.BoxState state, Document document)
+        private Tuple<Coordinate, Coordinate> GetBoxCoordinatesForSelectionResize(Viewport2D viewport, ViewportEvent e, BaseBoxTool.BoxState state, Document document)
         {
             if (state.Action != BaseBoxTool.BoxAction.Resizing) return Tuple.Create(state.BoxStart, state.BoxEnd);
             var now = viewport.ScreenToWorld(e.X, viewport.Height - e.Y);

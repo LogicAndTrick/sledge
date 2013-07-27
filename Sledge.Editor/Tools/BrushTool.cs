@@ -75,7 +75,7 @@ namespace Sledge.Editor.Tools
             base.OnBoxChanged();
         }
 
-        protected override void LeftMouseDownToDraw(Viewport2D viewport, System.Windows.Forms.MouseEventArgs e)
+        protected override void LeftMouseDownToDraw(Viewport2D viewport, ViewportEvent e)
         {
             base.LeftMouseDownToDraw(viewport, e);
             if (_lastBox == null) return;

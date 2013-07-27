@@ -36,47 +36,47 @@ namespace Sledge.Editor.UI
             }
         }
 
-        public void KeyUp(KeyEventArgs e)
+        public void KeyUp(ViewportEvent e)
         {
             // Not used
         }
 
-        public void KeyDown(KeyEventArgs e)
+        public void KeyDown(ViewportEvent e)
         {
             // Not used
         }
 
-        public void KeyPress(KeyPressEventArgs e)
+        public void KeyPress(ViewportEvent e)
         {
             // Not used
         }
 
-        public void MouseMove(MouseEventArgs e)
+        public void MouseMove(ViewportEvent e)
         {
             // Not used
         }
 
-        public void MouseWheel(MouseEventArgs e)
+        public void MouseWheel(ViewportEvent e)
         {
             // Not used
         }
 
-        public void MouseUp(MouseEventArgs e)
+        public void MouseUp(ViewportEvent e)
         {
             // Not used
         }
 
-        public void MouseDown(MouseEventArgs e)
+        public void MouseDown(ViewportEvent e)
         {
             // Not used
         }
 
-        public void MouseEnter(EventArgs e)
+        public void MouseEnter(ViewportEvent e)
         {
             // Not used
         }
 
-        public void MouseLeave(EventArgs e)
+        public void MouseLeave(ViewportEvent e)
         {
             // Not used
         }

@@ -24,56 +24,56 @@ namespace Sledge.Editor.UI
                    || (usage == BaseTool.ToolUsage.View3D && Viewport is Viewport3D);
         }
 
-        public void KeyUp(KeyEventArgs e)
+        public void KeyUp(ViewportEvent e)
         {
             if (!ShouldRelayEvent(ToolManager.ActiveTool)) return;
             ToolManager.ActiveTool.KeyUp(Viewport, e);
         }
 
-        public void KeyDown(KeyEventArgs e)
+        public void KeyDown(ViewportEvent e)
         {
             if (!ShouldRelayEvent(ToolManager.ActiveTool)) return;
             ToolManager.ActiveTool.KeyDown(Viewport, e);
         }
 
-        public void KeyPress(KeyPressEventArgs e)
+        public void KeyPress(ViewportEvent e)
         {
             if (!ShouldRelayEvent(ToolManager.ActiveTool)) return;
             ToolManager.ActiveTool.KeyPress(Viewport, e);
         }
 
-        public void MouseMove(MouseEventArgs e)
+        public void MouseMove(ViewportEvent e)
         {
             if (!ShouldRelayEvent(ToolManager.ActiveTool)) return;
             ToolManager.ActiveTool.MouseMove(Viewport, e);
         }
 
-        public void MouseWheel(MouseEventArgs e)
+        public void MouseWheel(ViewportEvent e)
         {
             if (!ShouldRelayEvent(ToolManager.ActiveTool)) return;
             ToolManager.ActiveTool.MouseWheel(Viewport, e);
         }
 
-        public void MouseUp(MouseEventArgs e)
+        public void MouseUp(ViewportEvent e)
         {
             if (e.Button == MouseButtons.Right && Viewport is Viewport2D) Mediator.Publish(EditorMediator.ViewportRightClick, new object[] {Viewport, e});
             if (!ShouldRelayEvent(ToolManager.ActiveTool)) return;
             ToolManager.ActiveTool.MouseUp(Viewport, e);
         }
 
-        public void MouseDown(MouseEventArgs e)
+        public void MouseDown(ViewportEvent e)
         {
             if (!ShouldRelayEvent(ToolManager.ActiveTool)) return;
             ToolManager.ActiveTool.MouseDown(Viewport, e);
         }
 
-        public void MouseEnter(EventArgs e)
+        public void MouseEnter(ViewportEvent e)
         {
             if (!ShouldRelayEvent(ToolManager.ActiveTool)) return;
             ToolManager.ActiveTool.MouseEnter(Viewport, e);
         }
 
-        public void MouseLeave(EventArgs e)
+        public void MouseLeave(ViewportEvent e)
         {
             if (!ShouldRelayEvent(ToolManager.ActiveTool)) return;
             ToolManager.ActiveTool.MouseLeave(Viewport, e);

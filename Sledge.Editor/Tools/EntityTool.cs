@@ -46,17 +46,17 @@ namespace Sledge.Editor.Tools
             return "Entity Tool";
         }
 
-        public override void MouseEnter(ViewportBase viewport, EventArgs e)
+        public override void MouseEnter(ViewportBase viewport, ViewportEvent e)
         {
             viewport.Cursor = Cursors.Default;
         }
 
-        public override void MouseLeave(ViewportBase viewport, EventArgs e)
+        public override void MouseLeave(ViewportBase viewport, ViewportEvent e)
         {
             viewport.Cursor = Cursors.Default;
         }
 
-        public override void MouseDown(ViewportBase viewport, MouseEventArgs e)
+        public override void MouseDown(ViewportBase viewport, ViewportEvent e)
         {
             if (viewport is Viewport3D)
             {
@@ -70,7 +70,7 @@ namespace Sledge.Editor.Tools
             _location = vp.GetUnusedCoordinate(_location) + vp.Expand(loc);
         }
 
-        private void MouseDown(Viewport3D vp, MouseEventArgs e)
+        private void MouseDown(Viewport3D vp, ViewportEvent e)
         {
             if (vp == null) return;
 
@@ -92,7 +92,7 @@ namespace Sledge.Editor.Tools
             CreateEntity(hit.Intersection);
         }
 
-        public override void MouseUp(ViewportBase viewport, MouseEventArgs e)
+        public override void MouseUp(ViewportBase viewport, ViewportEvent e)
         {
             if (!(viewport is Viewport2D)) return;
             _state = EntityState.Drawn;
@@ -101,12 +101,12 @@ namespace Sledge.Editor.Tools
             _location = vp.GetUnusedCoordinate(_location) + vp.Expand(loc);
         }
 
-        public override void MouseWheel(ViewportBase viewport, MouseEventArgs e)
+        public override void MouseWheel(ViewportBase viewport, ViewportEvent e)
         {
             // Nothing
         }
 
-        public override void MouseMove(ViewportBase viewport, MouseEventArgs e)
+        public override void MouseMove(ViewportBase viewport, ViewportEvent e)
         {
             if (!(viewport is Viewport2D)) return;
             if (_state != EntityState.Moving) return;
@@ -115,12 +115,12 @@ namespace Sledge.Editor.Tools
             _location = vp.GetUnusedCoordinate(_location) + vp.Expand(loc);
         }
 
-        public override void KeyPress(ViewportBase viewport, KeyPressEventArgs e)
+        public override void KeyPress(ViewportBase viewport, ViewportEvent e)
         {
             // Nothing
         }
 
-        public override void KeyDown(ViewportBase viewport, KeyEventArgs e)
+        public override void KeyDown(ViewportBase viewport, ViewportEvent e)
         {
             switch (e.KeyCode)
             {
@@ -153,7 +153,7 @@ namespace Sledge.Editor.Tools
             Document.PerformAction("Create entity: " + gd.Name, new Create(entity));
         }
 
-        public override void KeyUp(ViewportBase viewport, KeyEventArgs e)
+        public override void KeyUp(ViewportBase viewport, ViewportEvent e)
         {
             //
         }

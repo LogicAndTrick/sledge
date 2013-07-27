@@ -73,7 +73,7 @@ namespace Sledge.Editor.Tools
             return ClipState.None;
         }
 
-        public override void MouseDown(ViewportBase vp, MouseEventArgs e)
+        public override void MouseDown(ViewportBase vp, ViewportEvent e)
         {
             if (!(vp is Viewport2D)) return;
             var viewport = (Viewport2D) vp;
@@ -92,7 +92,7 @@ namespace Sledge.Editor.Tools
             }
         }
 
-        public override void MouseUp(ViewportBase vp, MouseEventArgs e)
+        public override void MouseUp(ViewportBase vp, ViewportEvent e)
         {
             if (!(vp is Viewport2D)) return;
             var viewport = (Viewport2D)vp;
@@ -111,7 +111,7 @@ namespace Sledge.Editor.Tools
             Editor.Instance.CaptureAltPresses = false;
         }
 
-        public override void MouseMove(ViewportBase vp, MouseEventArgs e)
+        public override void MouseMove(ViewportBase vp, ViewportEvent e)
         {
             if (!(vp is Viewport2D)) return;
             var viewport = (Viewport2D)vp;
@@ -153,7 +153,7 @@ namespace Sledge.Editor.Tools
             }
         }
 
-        public override void KeyPress(ViewportBase viewport, KeyPressEventArgs e)
+        public override void KeyPress(ViewportBase viewport, ViewportEvent e)
         {
             if (e.KeyChar == 13) // Enter
             {
@@ -326,27 +326,27 @@ namespace Sledge.Editor.Tools
             TextureHelper.EnableTexturing();
         }
 
-        public override void MouseEnter(ViewportBase viewport, EventArgs e)
+        public override void MouseEnter(ViewportBase viewport, ViewportEvent e)
         {
             //
         }
 
-        public override void MouseLeave(ViewportBase viewport, EventArgs e)
+        public override void MouseLeave(ViewportBase viewport, ViewportEvent e)
         {
             //
         }
 
-        public override void MouseWheel(ViewportBase viewport, MouseEventArgs e)
+        public override void MouseWheel(ViewportBase viewport, ViewportEvent e)
         {
             //
         }
 
-        public override void KeyDown(ViewportBase viewport, KeyEventArgs e)
+        public override void KeyDown(ViewportBase viewport, ViewportEvent e)
         {
             //
         }
 
-        public override void KeyUp(ViewportBase viewport, KeyEventArgs e)
+        public override void KeyUp(ViewportBase viewport, ViewportEvent e)
         {
             //
         }

@@ -74,12 +74,12 @@ namespace Sledge.Editor.Tools
             if (_currentTool != null) _currentTool.ToolDeselected();
         }
 
-        public override void MouseDown(ViewportBase viewport, MouseEventArgs e)
+        public override void MouseDown(ViewportBase viewport, ViewportEvent e)
         {
             if (_currentTool != null) _currentTool.MouseDown(viewport, e);
         }
 
-        public override void KeyDown(ViewportBase viewport, KeyEventArgs e)
+        public override void KeyDown(ViewportBase viewport, ViewportEvent e)
         {
             if (_currentTool != null) _currentTool.KeyDown(viewport, e);
         }
@@ -89,37 +89,37 @@ namespace Sledge.Editor.Tools
             if (_currentTool != null) _currentTool.Render(viewport);
         }
 
-        public override void MouseEnter(ViewportBase viewport, EventArgs e)
+        public override void MouseEnter(ViewportBase viewport, ViewportEvent e)
         {
             if (_currentTool != null) _currentTool.MouseEnter(viewport, e);
         }
 
-        public override void MouseLeave(ViewportBase viewport, EventArgs e)
+        public override void MouseLeave(ViewportBase viewport, ViewportEvent e)
         {
             if (_currentTool != null) _currentTool.MouseLeave(viewport, e);
         }
 
-        public override void MouseUp(ViewportBase viewport, MouseEventArgs e)
+        public override void MouseUp(ViewportBase viewport, ViewportEvent e)
         {
             if (_currentTool != null) _currentTool.MouseUp(viewport, e);
         }
 
-        public override void MouseWheel(ViewportBase viewport, MouseEventArgs e)
+        public override void MouseWheel(ViewportBase viewport, ViewportEvent e)
         {
             if (_currentTool != null) _currentTool.MouseWheel(viewport, e);
         }
 
-        public override void MouseMove(ViewportBase viewport, MouseEventArgs e)
+        public override void MouseMove(ViewportBase viewport, ViewportEvent e)
         {
             if (_currentTool != null) _currentTool.MouseMove(viewport, e);
         }
 
-        public override void KeyPress(ViewportBase viewport, KeyPressEventArgs e)
+        public override void KeyPress(ViewportBase viewport, ViewportEvent e)
         {
             if (_currentTool != null) _currentTool.KeyPress(viewport, e);
         }
 
-        public override void KeyUp(ViewportBase viewport, KeyEventArgs e)
+        public override void KeyUp(ViewportBase viewport, ViewportEvent e)
         {
             if (_currentTool != null) _currentTool.KeyUp(viewport, e);
         }

@@ -36,7 +36,7 @@ namespace Sledge.Editor.Tools.TransformationTools
             return SledgeCursors.RotateCursor;
         }
 
-        public override Matrix4? GetTransformationMatrix(Viewport2D viewport, MouseEventArgs e, BaseBoxTool.BoxState state, Document doc)
+        public override Matrix4? GetTransformationMatrix(Viewport2D viewport, ViewportEvent e, BaseBoxTool.BoxState state, Document doc)
         {
             var origin = viewport.ZeroUnusedCoordinate((state.PreTransformBoxStart + state.PreTransformBoxEnd) / 2);
             var forigin = viewport.Flatten(origin);

@@ -96,12 +96,12 @@ namespace Sledge.Editor.UI
             TextureHelper.EnableTexturing();
         }
 
-        public void KeyUp(KeyEventArgs e)
+        public void KeyUp(ViewportEvent e)
         {
             //
         }
 
-        public void KeyDown(KeyEventArgs e)
+        public void KeyDown(ViewportEvent e)
         {
             if (!Focus) return;
             if (e.KeyCode == Keys.Z)
@@ -120,12 +120,12 @@ namespace Sledge.Editor.UI
             }
         }
 
-        public void KeyPress(KeyPressEventArgs e)
+        public void KeyPress(ViewportEvent e)
         {
             // Nothing.
         }
 
-        public void MouseMove(MouseEventArgs e)
+        public void MouseMove(ViewportEvent e)
         {
             if (!Focus) return;
             if (PositionKnown && FreeLook)
@@ -149,28 +149,28 @@ namespace Sledge.Editor.UI
             PositionKnown = true;
         }
 
-        public void MouseWheel(MouseEventArgs e)
+        public void MouseWheel(ViewportEvent e)
         {
             if (!Focus || (ToolManager.ActiveTool != null && ToolManager.ActiveTool.IsCapturingMouseWheel())) return;
             Camera.Advance((e.Delta / Math.Abs(e.Delta)) * 500);
         }
 
-        public void MouseUp(MouseEventArgs e)
+        public void MouseUp(ViewportEvent e)
         {
             // Nothing.
         }
 
-        public void MouseDown(MouseEventArgs e)
+        public void MouseDown(ViewportEvent e)
         {
             // Nothing.
         }
 
-        public void MouseEnter(EventArgs e)
+        public void MouseEnter(ViewportEvent e)
         {
             Focus = true;
         }
 
-        public void MouseLeave(EventArgs e)
+        public void MouseLeave(ViewportEvent e)
         {
             if (FreeLook)
             {

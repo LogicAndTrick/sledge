@@ -958,7 +958,7 @@ namespace Sledge.Editor.Documents
             }
         }
 
-        public void ViewportRightClick(Viewport2D vp, MouseEventArgs e)
+        public void ViewportRightClick(Viewport2D vp, ViewportEvent e)
         {
             ViewportContextMenu.Instance.AddNonSelectionItems(_document, vp);
             if (!_document.Selection.IsEmpty() && !_document.Selection.InFaceSelection && ToolManager.ActiveTool is SelectTool)

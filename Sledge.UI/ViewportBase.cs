@@ -192,6 +192,25 @@ namespace Sledge.UI
             }
         }
 
+        private void ListenerDoEvent(ViewportEvent e, Action<IViewportEventListener, ViewportEvent> action)
+        {
+            foreach (var listener in Listeners)
+            {
+                try
+                {
+                    action(listener, e);
+                }
+                catch (Exception ex)
+                {
+                    OnListenerException(ex);
+                }
+                if (e.Handled)
+                {
+                    break;
+                }
+            }
+        }
+
         protected virtual void UpdateAfterLoadIdentity()
         {
 
@@ -219,49 +238,49 @@ namespace Sledge.UI
 
         protected override void OnMouseWheel(MouseEventArgs e)
         {
-            ListenerDo(l => l.MouseWheel(e));
+            ListenerDoEvent(new ViewportEvent(this, e),  (l, v) => l.MouseWheel(v));
         }
 
         protected override void OnMouseEnter(EventArgs e)
         {
             Focus();
             IsFocused = true;
-            ListenerDo(l => l.MouseEnter(e));
+            ListenerDoEvent(new ViewportEvent(this, e), (l, v) => l.MouseEnter(v));
         }
 
         protected override void OnMouseLeave(EventArgs e)
         {
-            ListenerDo(l => l.MouseLeave(e));
+            ListenerDoEvent(new ViewportEvent(this, e), (l, v) => l.MouseLeave(v));
         }
 
         protected override void OnMouseMove(MouseEventArgs e)
         {
-            ListenerDo(l => l.MouseMove(e));
+            ListenerDoEvent(new ViewportEvent(this, e), (l, v) => l.MouseMove(v));
         }
 
         protected override void OnMouseUp(MouseEventArgs e)
         {
-            ListenerDo(l => l.MouseUp(e));
+            ListenerDoEvent(new ViewportEvent(this, e), (l, v) => l.MouseUp(v));
         }
 
         protected override void OnMouseDown(MouseEventArgs e)
         {
-            ListenerDo(l => l.MouseDown(e));
+            ListenerDoEvent(new ViewportEvent(this, e), (l, v) => l.MouseDown(v));
         }
 
         protected override void OnKeyDown(KeyEventArgs e)
         {
-            ListenerDo(l => l.KeyDown(e));
+            ListenerDoEvent(new ViewportEvent(this, e), (l, v) => l.KeyDown(v));
         }
 
         protected override void OnKeyPress(KeyPressEventArgs e)
         {
-            ListenerDo(l => l.KeyPress(e));
+            ListenerDoEvent(new ViewportEvent(this, e), (l, v) => l.KeyPress(v));
         }
 
         protected override void OnKeyUp(KeyEventArgs e)
         {
-            ListenerDo(l => l.KeyUp(e));
+            ListenerDoEvent(new ViewportEvent(this, e), (l, v) => l.KeyUp(v));
         }
     }
 }

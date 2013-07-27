@@ -67,6 +67,7 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="IViewportEventListener.cs" />
+    <Compile Include="ViewportEvent.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Sledge.DataStructures\Sledge.DataStructures.csproj">
