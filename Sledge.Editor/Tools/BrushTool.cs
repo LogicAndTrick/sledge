@@ -100,8 +100,8 @@ namespace Sledge.Editor.Tools
             if (created.Count > 1)
             {
                 var g = new Group(idg.GetNextObjectID());
-                g.Children.AddRange(created);
-                g.UpdateBoundingBox(false);
+                created.ForEach(x => x.SetParent(g));
+                g.UpdateBoundingBox();
                 return g;
             }
             return created.FirstOrDefault();
