@@ -325,6 +325,17 @@ namespace Sledge.Editor.Settings
             TimeToTopSpeedLabel.Text = TimeToTopSpeed.Value / 10m + @" sec";
         }
 
+        private void SteamInstallDirBrowseClicked(object sender, EventArgs e)
+        {
+            using (var fbd = new FolderBrowserDialog { SelectedPath = SteamInstallDir.Text })
+            {
+                if (fbd.ShowDialog() == DialogResult.OK)
+                {
+                    SteamInstallDir.Text = fbd.SelectedPath;
+                }
+            }
+        }
+
         private void SteamUsernameChanged(object sender, EventArgs e)
         {
             SelectedGameUpdateSteamGames();

@@ -1924,6 +1924,7 @@ namespace Sledge.Editor.Settings
             this.SteamInstallDirBrowseButton.TabIndex = 8;
             this.SteamInstallDirBrowseButton.Text = "Browse...";
             this.SteamInstallDirBrowseButton.UseVisualStyleBackColor = true;
+            this.SteamInstallDirBrowseButton.Click += new System.EventHandler(this.SteamInstallDirBrowseClicked);
             // 
             // SteamUsername
             // 
