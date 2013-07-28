@@ -94,6 +94,16 @@ namespace Sledge.FileSystem
             }
         }
 
+        private void UpdateSelection(object sender, EventArgs e)
+        {
+            var str = "";
+            foreach (ListViewItem si in FileList.SelectedItems)
+            {
+                str += si.Text + "; ";
+            }
+            SelectionTextbox.Text = str;
+        }
+
         private void UpButtonClicked(object sender, EventArgs e)
         {
             var parent = File.Parent;

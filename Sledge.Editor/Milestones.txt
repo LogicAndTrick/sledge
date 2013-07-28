@@ -15,7 +15,6 @@ Post-Alpha Priorities
   Advanced/proper compiling
   Texture loader refactor
   Models
-  Autosaving
   PAK / GCF
   History stacks (for VM tool)
   History sidebar

@@ -13,7 +13,7 @@ namespace Sledge.FileSystem
     {
         private IEnumerable<IFile> Files { get; set; }
 
-        public CompositeFile(CompositeFile parent, IEnumerable<IFile> files)
+        public CompositeFile(IFile parent, IEnumerable<IFile> files)
         {
             Files = new List<IFile>(files.Where(x => x != null));
             Parent = parent;

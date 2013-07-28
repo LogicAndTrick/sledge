@@ -1,4 +1,6 @@
-﻿using System.Windows.Forms;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Windows.Forms;
 using System.IO;
 using Sledge.Editor.Documents;
 using Sledge.FileSystem;
@@ -38,13 +40,19 @@ namespace Sledge.Sandbox
            // entity.Objects.AddRange(map.WorldSpawn.Children.OfType<Entity>().Take(1));
            // Application.Run(entity);
 
+            /*
             var nat = new NativeFile(new DirectoryInfo(@"F:\Steam\steamapps\common\Half-Life"));
             var gcf1 = new GcfFile(@"F:\Steam\steamapps\half-life.gcf");
             var gcf2 = new GcfFile(@"F:\Steam\steamapps\half-life engine.gcf");
             //var gcf3 = new GcfFile(@"F:\Steam\steamapps\half-life base content.gcf");
             var gcf4 = new GcfFile(@"F:\Steam\steamapps\platform.gcf");
             var com = new CompositeFile(null, new IFile[] { nat, gcf1, gcf2, gcf4 });
-            var fsb = new FileSystemBrowserControl {Dock = DockStyle.Fill, File = com, FilterText = "WAD Files", Filter = "*.wad"};
+            */
+            var nat = new NativeFile(new DirectoryInfo(@"F:\Half-Life WON"));
+            var pak = new PakFile(@"F:\Half-Life WON\valve\pak0.pak");
+            var vir = new VirtualFile(null, "valve", new[] {pak});
+            var com = new CompositeFile(null, new IFile[] { nat, vir });
+            var fsb = new FileSystemBrowserControl {Dock = DockStyle.Fill, File = nat};//, FilterText = "WAD Files", Filter = "*.wad"};
             var form = new Form {Controls = {fsb}, Width = 500, Height = 500};
             Application.Run(form);
         }

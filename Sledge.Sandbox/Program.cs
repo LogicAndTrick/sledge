@@ -18,6 +18,7 @@ namespace Sledge.Sandbox
             //Application.Run(new MainForm());
 
             QuickStartBootstrap.MapFile = @"D:\Github\sledge\_Resources\RMF\entities.rmf";
+            SettingsManager.Read();
             QuickStartBootstrap.Game = SettingsManager.Games.Single(x => x.ID == 1);
             QuickStartBootstrap.Start();
         }

@@ -41,6 +41,11 @@ namespace Sledge.FileSystem
         Vpk,
 
         /// <summary>
+        /// A file that doesn't exist on the disk
+        /// </summary>
+        Virtual,
+
+        /// <summary>
         /// A non-standard file system implementation
         /// </summary>
         Custom,

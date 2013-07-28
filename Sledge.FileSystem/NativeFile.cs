@@ -118,27 +118,37 @@ namespace Sledge.FileSystem
 
         public IFile GetChild(string name)
         {
-            return IsContainer ? GetChildren().FirstOrDefault(x => x.Name.ToLower() == name.ToLower()) : null;
+            return GetChildren().FirstOrDefault(x => x.Name.ToLower() == name.ToLower());
         }
 
         public IEnumerable<IFile> GetChildren()
         {
             return !IsContainer
                        ? (IEnumerable<IFile>) new List<IFile>()
-                       : DirectoryInfo.GetDirectories().Select(directoryInfo => new NativeFile(directoryInfo));
+                       : DirectoryInfo.GetDirectories().Select(CreateChild);
+        }
+
+        private IFile CreateChild(DirectoryInfo dir)
+        {
+            var nf = new NativeFile(dir);
+            var paks = dir.GetFiles("*.pak");
+            if (paks.Any())
+            {
+                var list = paks.Select(x => new PakFile(x.FullName)).OfType<IFile>().ToList();
+                list.Insert(0, nf);
+                return new CompositeFile(this, list);
+            }
+            return nf;
         }
 
         public IEnumerable<IFile> GetChildren(string regex)
         {
-            return !IsContainer
-                       ? (IEnumerable<IFile>) new List<IFile>()
-                       : DirectoryInfo.GetDirectories().Where(x => Regex.IsMatch(x.Name, regex))
-                             .Select(directoryInfo => new NativeFile(directoryInfo));
+            return GetChildren().Where(x => Regex.IsMatch(x.Name, regex));
         }
 
         public IFile GetFile(string name)
         {
-            return IsContainer ? GetFiles().FirstOrDefault(x => x.Name.ToLower() == name.ToLower()) : null;
+            return GetFiles().FirstOrDefault(x => x.Name.ToLower() == name.ToLower());
         }
 
         public IEnumerable<IFile> GetFiles()
@@ -150,18 +160,12 @@ namespace Sledge.FileSystem
 
         public IEnumerable<IFile> GetFiles(string regex)
         {
-            return !IsContainer
-                       ? (IEnumerable<IFile>)new List<IFile>()
-                       : DirectoryInfo.GetFiles().Where(x => Regex.IsMatch(x.Name, regex))
-                             .Select(fileInfo => new NativeFile(fileInfo));
+            return GetFiles().Where(x => Regex.IsMatch(x.Name, regex));
         }
 
         public IEnumerable<IFile> GetFilesWithExtension(string extension)
         {
-            return !IsContainer
-                       ? (IEnumerable<IFile>)new List<IFile>()
-                       : DirectoryInfo.GetFiles().Where(x => x.Extension.ToLower() == extension.ToLower())
-                             .Select(fileInfo => new NativeFile(fileInfo));
+            return GetFiles().Where(x => x.Extension.ToLower() == extension.ToLower());
         }
     }
 }

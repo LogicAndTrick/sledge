@@ -30,10 +30,10 @@
         {
             this.components = new System.ComponentModel.Container();
             this.FileList = new System.Windows.Forms.ListView();
+            this.FileImages = new System.Windows.Forms.ImageList(this.components);
             this.LocationTextbox = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.UpButton = new System.Windows.Forms.Button();
-            this.FileImages = new System.Windows.Forms.ImageList(this.components);
             this.SelectionTextbox = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.button1 = new System.Windows.Forms.Button();
@@ -54,7 +54,14 @@
             this.FileList.TabIndex = 0;
             this.FileList.UseCompatibleStateImageBehavior = false;
             this.FileList.View = System.Windows.Forms.View.List;
+            this.FileList.SelectedIndexChanged += new System.EventHandler(this.UpdateSelection);
             this.FileList.DoubleClick += new System.EventHandler(this.FileListDoubleClicked);
+            // 
+            // FileImages
+            // 
+            this.FileImages.ColorDepth = System.Windows.Forms.ColorDepth.Depth32Bit;
+            this.FileImages.ImageSize = new System.Drawing.Size(16, 16);
+            this.FileImages.TransparentColor = System.Drawing.Color.Transparent;
             // 
             // LocationTextbox
             // 
@@ -85,12 +92,6 @@
             this.UpButton.Text = "Up";
             this.UpButton.UseVisualStyleBackColor = true;
             this.UpButton.Click += new System.EventHandler(this.UpButtonClicked);
-            // 
-            // FileImages
-            // 
-            this.FileImages.ColorDepth = System.Windows.Forms.ColorDepth.Depth32Bit;
-            this.FileImages.ImageSize = new System.Drawing.Size(16, 16);
-            this.FileImages.TransparentColor = System.Drawing.Color.Transparent;
             // 
             // SelectionTextbox
             // 

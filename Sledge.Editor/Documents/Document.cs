@@ -150,12 +150,12 @@ namespace Sledge.Editor.Documents
         public void Autosave()
         {
             if (!Game.Autosave) return;
+            var dir = GetAutosaveFolder();
+            var fmt = GetAutosaveFormatString();
 
             // Only save on change if the game is configured to do so
-            if (History.TotalActionsSinceLastAutoSave != 0 || !Game.AutosaveOnlyOnChanged)
+            if (dir != null && fmt != null && (History.TotalActionsSinceLastAutoSave != 0 || !Game.AutosaveOnlyOnChanged))
             {
-                var dir = GetAutosaveFolder();
-                var fmt = GetAutosaveFormatString();
                 var date = DateTime.Now.ToUniversalTime().ToString("yyyy-MM-dd-hh-mm-ss");
                 var filename = String.Format(fmt, date);
                 if (System.IO.File.Exists(filename)) System.IO.File.Delete(filename);
