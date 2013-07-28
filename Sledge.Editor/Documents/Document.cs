@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
+using System.Text.RegularExpressions;
 using OpenTK;
 using Sledge.Common.Mediator;
 using Sledge.DataStructures.GameData;
@@ -18,6 +20,7 @@ using Sledge.Graphics;
 using Sledge.Graphics.Helpers;
 using Sledge.Providers;
 using Sledge.Providers.GameData;
+using Sledge.Providers.Map;
 using Sledge.Providers.Texture;
 using Sledge.Settings;
 using Sledge.Settings.Models;
@@ -87,6 +90,13 @@ namespace Sledge.Editor.Documents
 
             if (MapFile != null) Mediator.Publish(EditorMediator.FileOpened, MapFile);
             Mediator.Publish(EditorMediator.DocumentOpened, this);
+
+            // Autosaving
+            if (Game.Autosave)
+            {
+                var at = Math.Max(1, Game.AutosaveTime);
+                Scheduler.Schedule(this, Autosave, TimeSpan.FromMinutes(at));
+            }
         }
 
         public void SetActive()
@@ -115,6 +125,93 @@ namespace Sledge.Editor.Documents
             MapDisplayLists.DeleteLists();
 
             _subscriptions.Unsubscribe();
+        }
+
+        public void Close()
+        {
+            Scheduler.Clear(this);
+        }
+
+        private string GetAutosaveFormatString()
+        {
+            if (MapFile == null || Path.GetFileNameWithoutExtension(MapFile) == null) return null;
+            var we = Path.GetFileNameWithoutExtension(MapFile);
+            var ex = Path.GetExtension(MapFile);
+            return we + ".auto.{0}" + ex;
+        }
+
+        private string GetAutosaveFolder()
+        {
+            if (Game.UseCustomAutosaveDir && System.IO.Directory.Exists(Game.AutosaveDir)) return Game.AutosaveDir;
+            if (MapFile == null || Path.GetDirectoryName(MapFile) == null) return null;
+            return Path.GetDirectoryName(MapFile);
+        }
+
+        public void Autosave()
+        {
+            if (!Game.Autosave) return;
+
+            // Only save on change if the game is configured to do so
+            if (History.TotalActionsSinceLastAutoSave != 0 || !Game.AutosaveOnlyOnChanged)
+            {
+                var dir = GetAutosaveFolder();
+                var fmt = GetAutosaveFormatString();
+                var date = DateTime.Now.ToUniversalTime().ToString("yyyy-MM-dd-hh-mm-ss");
+                var filename = String.Format(fmt, date);
+                if (System.IO.File.Exists(filename)) System.IO.File.Delete(filename);
+
+                // Save the file
+                MapProvider.SaveMapToFile(Path.Combine(dir, filename), Map);
+
+                // Delete extra autosaves if there is a limit
+                if (Game.AutosaveLimit > 0)
+                {
+                    var asFiles = GetAutosaveFiles(dir);
+                    foreach (var file in asFiles.OrderByDescending(x => x.Value).Skip(Game.AutosaveLimit))
+                    {
+                        if (System.IO.File.Exists(file.Key)) System.IO.File.Delete(file.Key);
+                    }
+                }
+
+                // Publish event
+                Mediator.Publish(EditorMediator.FileAutosaved, this);
+                History.TotalActionsSinceLastAutoSave = 0;
+            }
+
+            // Reschedule autosave
+            var at = Math.Max(1, Game.AutosaveTime);
+            Scheduler.Schedule(this, Autosave, TimeSpan.FromMinutes(at));
+        }
+
+        public Dictionary<string, DateTime> GetAutosaveFiles(string dir)
+        {
+            var ret = new Dictionary<string, DateTime>();
+            var fs = GetAutosaveFormatString();
+            if (fs == null || dir == null) return ret;
+            // Search for matching files
+            var files = System.IO.Directory.GetFiles(dir, String.Format(fs, "*"));
+            foreach (var file in files)
+            {
+                // Match the date portion with a regex
+                var re = Regex.Escape(fs.Replace("{0}", ":")).Replace(":", "{0}");
+                var regex = String.Format(re, "(\\d{4})-(\\d{2})-(\\d{2})-(\\d{2})-(\\d{2})-(\\d{2})");
+                var match = Regex.Match(Path.GetFileName(file), regex, RegexOptions.IgnoreCase);
+                if (!match.Success) continue;
+
+                // Parse the date and add it if it is valid
+                DateTime date;
+                var result = DateTime.TryParse(String.Format("{0}-{1}-{2}T{3}:{4}:{5}Z",
+                                                             match.Groups[1].Value, match.Groups[2].Value,
+                                                             match.Groups[3].Value, match.Groups[4].Value,
+                                                             match.Groups[5].Value, match.Groups[6].Value),
+                                                             CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal,
+                                                             out date);
+                if (result)
+                {
+                    ret.Add(file, date);
+                }
+            }
+            return ret;
         }
 
         public Coordinate Snap(Coordinate c, decimal spacing = 0)

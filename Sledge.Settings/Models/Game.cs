@@ -19,6 +19,9 @@ namespace Sledge.Settings.Models
         public bool Autosave { get; set; }
         public bool UseCustomAutosaveDir { get; set; }
         public string AutosaveDir { get; set; }
+        public int AutosaveTime { get; set; }
+        public int AutosaveLimit { get; set; }
+        public bool AutosaveOnlyOnChanged { get; set; }
         public string DefaultPointEntity { get; set; }
         public string DefaultBrushEntity { get; set; }
         public decimal DefaultTextureScale { get; set; }
@@ -31,6 +34,9 @@ namespace Sledge.Settings.Models
         {
             Fgds = new List<Fgd>();
             Wads = new List<Wad>();
+            AutosaveTime = 5;
+            AutosaveLimit = 5;
+            AutosaveOnlyOnChanged = true;
         }
 
         public void Read(GenericStructure gs)
@@ -47,6 +53,9 @@ namespace Sledge.Settings.Models
             Autosave = gs.PropertyBoolean("Autosave");
             UseCustomAutosaveDir = gs.PropertyBoolean("UseCustomAutosaveDir");
             AutosaveDir = gs["AutosaveDir"];
+            AutosaveTime = gs.PropertyInteger("AutosaveTime");
+            AutosaveLimit = gs.PropertyInteger("AutosaveLimit");
+            AutosaveOnlyOnChanged = gs.PropertyBoolean("AutosaveOnlyOnChanged");
             DefaultPointEntity = gs["DefaultPointEntity"];
             DefaultBrushEntity = gs["DefaultBrushEntity"];
             DefaultTextureScale = gs.PropertyDecimal("DefaultTextureScale");
@@ -85,6 +94,9 @@ namespace Sledge.Settings.Models
             gs["Autosave"] = Autosave.ToString(CultureInfo.InvariantCulture);
             gs["UseCustomAutosaveDir"] = UseCustomAutosaveDir.ToString(CultureInfo.InvariantCulture);
             gs["AutosaveDir"] = AutosaveDir;
+            gs["AutosaveTime"] = AutosaveTime.ToString(CultureInfo.InvariantCulture);
+            gs["AutosaveLimit"] = AutosaveLimit.ToString(CultureInfo.InvariantCulture);
+            gs["AutosaveOnlyOnChanged"] = AutosaveOnlyOnChanged.ToString(CultureInfo.InvariantCulture);
             gs["DefaultPointEntity"] = DefaultPointEntity;
             gs["DefaultBrushEntity"] = DefaultBrushEntity;
             gs["DefaultTextureScale"] = DefaultTextureScale.ToString(CultureInfo.InvariantCulture);

@@ -51,6 +51,9 @@ namespace Sledge.Editor.Settings
             SelectedGameEnableAutosave.CheckedChanged += (s, e) => CheckNull(_selectedGame, x => x.Autosave = SelectedGameEnableAutosave.Checked);
             SelectedGameUseDiffAutosaveDir.CheckedChanged += (s, e) => CheckNull(_selectedGame, x => x.UseCustomAutosaveDir = SelectedGameUseDiffAutosaveDir.Checked);
             SelectedGameDiffAutosaveDir.TextChanged += (s, e) => CheckNull(_selectedGame, x => x.AutosaveDir = SelectedGameDiffAutosaveDir.Text);
+            SelectedGameAutosaveTime.ValueChanged += (s, e) => CheckNull(_selectedGame, x => x.AutosaveTime = (int) SelectedGameAutosaveTime.Value);
+            SelectedGameAutosaveLimit.ValueChanged += (s, e) => CheckNull(_selectedGame, x => x.AutosaveLimit = (int)SelectedGameAutosaveLimit.Value);
+            SelectedGameAutosaveOnlyOnChange.CheckedChanged += (s, e) => CheckNull(_selectedGame, x => x.AutosaveOnlyOnChanged = SelectedGameAutosaveOnlyOnChange.Checked);
             SelectedGameDefaultPointEnt.SelectedIndexChanged += (s, e) => CheckNull(_selectedGame, x => x.DefaultPointEntity = SelectedGameDefaultPointEnt.Text);
             SelectedGameDefaultBrushEnt.SelectedIndexChanged += (s, e) => CheckNull(_selectedGame, x => x.DefaultBrushEntity = SelectedGameDefaultBrushEnt.Text);
             SelectedGameTextureScale.ValueChanged += (s, e) => CheckNull(_selectedGame, x => x.DefaultTextureScale = SelectedGameTextureScale.Value);
@@ -454,6 +457,7 @@ namespace Sledge.Editor.Settings
             SelectedGameMapDir.Text = _selectedGame.MapDir;
             SelectedGameEnableAutosave.Checked = _selectedGame.Autosave;
             SelectedGameUseDiffAutosaveDir.Checked = _selectedGame.UseCustomAutosaveDir;
+            SelectedGameAutosaveOnlyOnChange.Checked = _selectedGame.AutosaveOnlyOnChanged;
             SelectedGameDiffAutosaveDir.Text = _selectedGame.AutosaveDir;
             SelectedGameDefaultPointEnt.SelectedText = _selectedGame.DefaultPointEntity;
             SelectedGameDefaultBrushEnt.SelectedText = _selectedGame.DefaultBrushEntity;
@@ -463,6 +467,24 @@ namespace Sledge.Editor.Settings
             SelectedGameMod.SelectedText = _selectedGame.ModDir;
             SelectedGameWonDir.Text = _selectedGame.WonGameDir;
             SelectedGameSteamDir.SelectedText = _selectedGame.SteamGameDir;
+
+            SelectedGameAutosaveLimit.Value = _selectedGame.AutosaveLimit;
+            if (_selectedGame.AutosaveLimit >= SelectedGameAutosaveLimit.Minimum && _selectedGame.AutosaveLimit <= SelectedGameAutosaveLimit.Maximum)
+            {
+                SelectedGameAutosaveLimit.Value = _selectedGame.AutosaveLimit;
+            }
+            else
+            {
+                SelectedGameAutosaveLimit.Value = 5;
+            }
+            if (_selectedGame.AutosaveTime >= SelectedGameAutosaveTime.Minimum && _selectedGame.AutosaveTime <= SelectedGameAutosaveTime.Maximum)
+            {
+                SelectedGameAutosaveTime.Value = _selectedGame.AutosaveTime;
+            }
+            else
+            {
+                SelectedGameAutosaveTime.Value = 5;
+            }
 
             if (SelectedGameBuild.Items.Count > 0)
             {
