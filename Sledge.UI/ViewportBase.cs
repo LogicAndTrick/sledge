@@ -169,6 +169,8 @@ namespace Sledge.UI
                 OnRenderException(ex);
             }
 
+            if (IsDisposed) return;
+
             SwapBuffers();
         }
 
