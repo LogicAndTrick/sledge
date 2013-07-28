@@ -18,9 +18,9 @@ namespace Sledge.Editor.Actions.MapObjects.Operations
         private Dictionary<long, long> _parents;
         private bool _firstRun;
 
-        public Clip(List<Solid> objects, Plane plane)
+        public Clip(IEnumerable<Solid> objects, Plane plane)
         {
-            _objects = objects;
+            _objects = objects.Where(x => x.IsValid()).ToList();
             _plane = plane;
             _firstRun = true;
         }
