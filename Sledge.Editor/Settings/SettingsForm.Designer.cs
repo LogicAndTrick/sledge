@@ -215,6 +215,13 @@ namespace Sledge.Editor.Settings
             this.btnCancelSettings = new System.Windows.Forms.Button();
             this.btnApplyAndCloseSettings = new System.Windows.Forms.Button();
             this.btnApplySettings = new System.Windows.Forms.Button();
+            this.label12 = new System.Windows.Forms.Label();
+            this.SelectedGameAutosaveTime = new System.Windows.Forms.NumericUpDown();
+            this.label14 = new System.Windows.Forms.Label();
+            this.label15 = new System.Windows.Forms.Label();
+            this.label16 = new System.Windows.Forms.Label();
+            this.SelectedGameAutosaveLimit = new System.Windows.Forms.NumericUpDown();
+            this.SelectedGameAutosaveOnlyOnChange = new System.Windows.Forms.CheckBox();
             this.tbcSettings.SuspendLayout();
             this.tab2DViews.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.NudgeUnits)).BeginInit();
@@ -259,6 +266,8 @@ namespace Sledge.Editor.Settings
             ((System.ComponentModel.ISupportInitialize)(this.trackBar2)).BeginInit();
             this.groupBox7.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.SelectedGameAutosaveTime)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.SelectedGameAutosaveLimit)).BeginInit();
             this.SuspendLayout();
             // 
             // tbcSettings
@@ -910,7 +919,7 @@ namespace Sledge.Editor.Settings
             this.GameSubTabs.Location = new System.Drawing.Point(245, 6);
             this.GameSubTabs.Name = "GameSubTabs";
             this.GameSubTabs.SelectedIndex = 0;
-            this.GameSubTabs.Size = new System.Drawing.Size(477, 423);
+            this.GameSubTabs.Size = new System.Drawing.Size(477, 472);
             this.GameSubTabs.TabIndex = 23;
             this.GameSubTabs.Visible = false;
             // 
@@ -928,7 +937,7 @@ namespace Sledge.Editor.Settings
             this.tabConfigDirectories.Location = new System.Drawing.Point(4, 22);
             this.tabConfigDirectories.Name = "tabConfigDirectories";
             this.tabConfigDirectories.Padding = new System.Windows.Forms.Padding(3);
-            this.tabConfigDirectories.Size = new System.Drawing.Size(469, 397);
+            this.tabConfigDirectories.Size = new System.Drawing.Size(469, 446);
             this.tabConfigDirectories.TabIndex = 0;
             this.tabConfigDirectories.Text = "General";
             this.tabConfigDirectories.UseVisualStyleBackColor = true;
@@ -1051,6 +1060,12 @@ namespace Sledge.Editor.Settings
             // 
             // grpConfigSaving
             // 
+            this.grpConfigSaving.Controls.Add(this.SelectedGameAutosaveLimit);
+            this.grpConfigSaving.Controls.Add(this.label16);
+            this.grpConfigSaving.Controls.Add(this.SelectedGameAutosaveTime);
+            this.grpConfigSaving.Controls.Add(this.label15);
+            this.grpConfigSaving.Controls.Add(this.label14);
+            this.grpConfigSaving.Controls.Add(this.label12);
             this.grpConfigSaving.Controls.Add(this.lblGameMapSaveDir);
             this.grpConfigSaving.Controls.Add(this.SelectedGameEnableAutosave);
             this.grpConfigSaving.Controls.Add(this.SelectedGameMapDir);
@@ -1058,10 +1073,11 @@ namespace Sledge.Editor.Settings
             this.grpConfigSaving.Controls.Add(this.SelectedGameDiffAutosaveDir);
             this.grpConfigSaving.Controls.Add(this.lblGameAutosaveDir);
             this.grpConfigSaving.Controls.Add(this.SelectedGameDiffAutosaveDirBrowse);
+            this.grpConfigSaving.Controls.Add(this.SelectedGameAutosaveOnlyOnChange);
             this.grpConfigSaving.Controls.Add(this.SelectedGameUseDiffAutosaveDir);
             this.grpConfigSaving.Location = new System.Drawing.Point(6, 206);
             this.grpConfigSaving.Name = "grpConfigSaving";
-            this.grpConfigSaving.Size = new System.Drawing.Size(445, 179);
+            this.grpConfigSaving.Size = new System.Drawing.Size(445, 234);
             this.grpConfigSaving.TabIndex = 20;
             this.grpConfigSaving.TabStop = false;
             this.grpConfigSaving.Text = "Saving";
@@ -1196,7 +1212,7 @@ namespace Sledge.Editor.Settings
             this.tabConfigEntities.Location = new System.Drawing.Point(4, 22);
             this.tabConfigEntities.Name = "tabConfigEntities";
             this.tabConfigEntities.Padding = new System.Windows.Forms.Padding(3);
-            this.tabConfigEntities.Size = new System.Drawing.Size(469, 397);
+            this.tabConfigEntities.Size = new System.Drawing.Size(469, 422);
             this.tabConfigEntities.TabIndex = 1;
             this.tabConfigEntities.Text = "Entities";
             this.tabConfigEntities.UseVisualStyleBackColor = true;
@@ -1299,7 +1315,7 @@ namespace Sledge.Editor.Settings
             this.tabConfigTextures.Location = new System.Drawing.Point(4, 22);
             this.tabConfigTextures.Name = "tabConfigTextures";
             this.tabConfigTextures.Padding = new System.Windows.Forms.Padding(3);
-            this.tabConfigTextures.Size = new System.Drawing.Size(469, 397);
+            this.tabConfigTextures.Size = new System.Drawing.Size(469, 422);
             this.tabConfigTextures.TabIndex = 2;
             this.tabConfigTextures.Text = "Textures";
             this.tabConfigTextures.UseVisualStyleBackColor = true;
@@ -2201,6 +2217,87 @@ namespace Sledge.Editor.Settings
             this.btnApplySettings.UseVisualStyleBackColor = true;
             this.btnApplySettings.Click += new System.EventHandler(this.Apply);
             // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.Location = new System.Drawing.Point(10, 141);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(81, 13);
+            this.label12.TabIndex = 19;
+            this.label12.Text = "Autosave every";
+            // 
+            // SelectedGameAutosaveTime
+            // 
+            this.SelectedGameAutosaveTime.Location = new System.Drawing.Point(96, 139);
+            this.SelectedGameAutosaveTime.Maximum = new decimal(new int[] {
+            60,
+            0,
+            0,
+            0});
+            this.SelectedGameAutosaveTime.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.SelectedGameAutosaveTime.Name = "SelectedGameAutosaveTime";
+            this.SelectedGameAutosaveTime.Size = new System.Drawing.Size(50, 20);
+            this.SelectedGameAutosaveTime.TabIndex = 20;
+            this.SelectedGameAutosaveTime.Value = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
+            // 
+            // label14
+            // 
+            this.label14.AutoSize = true;
+            this.label14.Location = new System.Drawing.Point(152, 141);
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size(49, 13);
+            this.label14.TabIndex = 19;
+            this.label14.Text = "minute(s)";
+            // 
+            // label15
+            // 
+            this.label15.AutoSize = true;
+            this.label15.Location = new System.Drawing.Point(21, 167);
+            this.label15.Name = "label15";
+            this.label15.Size = new System.Drawing.Size(69, 13);
+            this.label15.TabIndex = 19;
+            this.label15.Text = "Keep the last";
+            // 
+            // label16
+            // 
+            this.label16.AutoSize = true;
+            this.label16.Location = new System.Drawing.Point(152, 167);
+            this.label16.Name = "label16";
+            this.label16.Size = new System.Drawing.Size(166, 13);
+            this.label16.TabIndex = 19;
+            this.label16.Text = "autosave(s) on disk (0 to keep all)";
+            // 
+            // SelectedGameAutosaveLimit
+            // 
+            this.SelectedGameAutosaveLimit.Location = new System.Drawing.Point(96, 165);
+            this.SelectedGameAutosaveLimit.Name = "SelectedGameAutosaveLimit";
+            this.SelectedGameAutosaveLimit.Size = new System.Drawing.Size(50, 20);
+            this.SelectedGameAutosaveLimit.TabIndex = 20;
+            this.SelectedGameAutosaveLimit.Value = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
+            // 
+            // SelectedGameAutosaveOnlyOnChange
+            // 
+            this.SelectedGameAutosaveOnlyOnChange.Checked = true;
+            this.SelectedGameAutosaveOnlyOnChange.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.SelectedGameAutosaveOnlyOnChange.Location = new System.Drawing.Point(96, 191);
+            this.SelectedGameAutosaveOnlyOnChange.Name = "SelectedGameAutosaveOnlyOnChange";
+            this.SelectedGameAutosaveOnlyOnChange.Size = new System.Drawing.Size(225, 20);
+            this.SelectedGameAutosaveOnlyOnChange.TabIndex = 14;
+            this.SelectedGameAutosaveOnlyOnChange.Text = "Only autosave if changes detected";
+            this.SelectedGameAutosaveOnlyOnChange.UseVisualStyleBackColor = true;
+            // 
             // SettingsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -2266,6 +2363,8 @@ namespace Sledge.Editor.Settings
             ((System.ComponentModel.ISupportInitialize)(this.trackBar2)).EndInit();
             this.groupBox7.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.SelectedGameAutosaveTime)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.SelectedGameAutosaveLimit)).EndInit();
             this.ResumeLayout(false);
 
 		}
@@ -2448,5 +2547,12 @@ namespace Sledge.Editor.Settings
         private System.Windows.Forms.DomainUpDown GridHighlight2UnitNum;
         private System.Windows.Forms.CheckBox SelectedGameSteamInstall;
         private System.Windows.Forms.CheckBox SelectedBuildIncludeWads;
+        private System.Windows.Forms.NumericUpDown SelectedGameAutosaveTime;
+        private System.Windows.Forms.Label label14;
+        private System.Windows.Forms.Label label12;
+        private System.Windows.Forms.NumericUpDown SelectedGameAutosaveLimit;
+        private System.Windows.Forms.Label label16;
+        private System.Windows.Forms.Label label15;
+        private System.Windows.Forms.CheckBox SelectedGameAutosaveOnlyOnChange;
 	}
 }

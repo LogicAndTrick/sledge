@@ -15,6 +15,7 @@ namespace Sledge.Editor.History
         private int _currentIndex;
 
         public long TotalActionsSinceLastSave { get; set; }
+        public long TotalActionsSinceLastAutoSave { get; set; }
 
         public HistoryManager(Documents.Document doc)
         {
@@ -49,6 +50,7 @@ namespace Sledge.Editor.History
             _items.Add(item);
             _currentIndex = _items.Count - 1;
             TotalActionsSinceLastSave++;
+            TotalActionsSinceLastAutoSave++;
             Mediator.Publish(EditorMediator.HistoryChanged);
         }
 
@@ -58,6 +60,7 @@ namespace Sledge.Editor.History
             _items[_currentIndex].Undo(Document);
             _currentIndex--;
             TotalActionsSinceLastSave--;
+            TotalActionsSinceLastAutoSave--;
             Mediator.Publish(EditorMediator.HistoryChanged);
         }
 
@@ -67,6 +70,7 @@ namespace Sledge.Editor.History
             _items[_currentIndex + 1].Redo(Document);
             _currentIndex++;
             TotalActionsSinceLastSave++;
+            TotalActionsSinceLastAutoSave++;
             Mediator.Publish(EditorMediator.HistoryChanged);
         }
 

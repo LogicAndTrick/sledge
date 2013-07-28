@@ -21,6 +21,7 @@ namespace Sledge.Editor.Documents
 
         public static void Remove(Document doc)
         {
+            doc.Close();
             Documents.Remove(doc);
         }
 

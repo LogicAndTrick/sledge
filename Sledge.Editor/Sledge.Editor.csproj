@@ -197,6 +197,7 @@
     </Compile>
     <Compile Include="Rendering\TransformedDisplayListRenderable.cs" />
     <Compile Include="Rendering\WidgetLinesRenderable.cs" />
+    <Compile Include="Scheduler.cs" />
     <Compile Include="Settings\Elevate.cs" />
     <Compile Include="SledgeCursors.cs" />
     <Compile Include="Tools\BaseBoxTool.cs" />

@@ -225,8 +225,8 @@ namespace Sledge.Editor
                     }
                     if (result == DialogResult.Yes) Mediator.Publish(HotkeysMediator.FileSave);
                 }
-                DocumentManager.SwitchTo(null);
                 DocumentManager.Remove(DocumentManager.CurrentDocument);
+                DocumentManager.SwitchTo(null);
             }
         }
 
