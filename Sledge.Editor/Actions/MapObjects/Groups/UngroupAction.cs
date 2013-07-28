@@ -8,13 +8,13 @@ namespace Sledge.Editor.Actions.MapObjects.Groups
 {
     public class UngroupAction : IAction
     {
-        private Dictionary<long, long> _groupsAndParents;
+        private Dictionary<Group, long> _groupsAndParents;
         private Dictionary<long, long> _childrenAndParents;
 
         public UngroupAction(IEnumerable<MapObject> objects)
         {
             var objs = objects.Where(x => x != null && x.Parent != null).OfType<Group>().ToList();
-            _groupsAndParents = objs.ToDictionary(x => x.ID, x => x.Parent.ID);
+            _groupsAndParents = objs.ToDictionary(x => x, x => x.Parent.ID);
             _childrenAndParents = objs.SelectMany(x => x.Children).ToDictionary(x => x.ID, x => x.Parent.ID);
         }
 
@@ -26,7 +26,7 @@ namespace Sledge.Editor.Actions.MapObjects.Groups
                 child.UpdateBoundingBox();
             }
 
-            foreach (var group in _groupsAndParents.Keys.Select(x => document.Map.WorldSpawn.FindByID(x)))
+            foreach (var group in _groupsAndParents.Keys)
             {
                 document.Selection.Deselect(group);
                 group.SetParent(null);
@@ -39,7 +39,7 @@ namespace Sledge.Editor.Actions.MapObjects.Groups
         {
             foreach (var gp in _groupsAndParents)
             {
-                var group = document.Map.WorldSpawn.FindByID(gp.Key);
+                var group = gp.Key;
                 var parent = document.Map.WorldSpawn.FindByID(gp.Value);
                 group.SetParent(parent);
             }

@@ -138,12 +138,12 @@ namespace Sledge.Editor.Brushes
                     var xval = majorSecondaryOuter * DMath.Cos(cross) * DMath.Cos(ring);
                     var yval = majorSecondaryOuter * DMath.Cos(cross) * DMath.Sin(ring);
                     var zval = minorSecondaryOuter * DMath.Sin(cross) + addz;
-                    crossSecOuter[j] = new Coordinate(xval + rxval, yval + ryval, zval + rzval).Round(0);
+                    crossSecOuter[j] = new Coordinate(xval + rxval, yval + ryval, zval + rzval);
                     if (!crossMakeHollow) continue;
                     xval = majorSecondaryInner * DMath.Cos(cross) * DMath.Cos(ring);
                     yval = majorSecondaryInner * DMath.Cos(cross) * DMath.Sin(ring);
                     zval = minorSecondaryInner * DMath.Sin(cross) + addz;
-                    crossSecInner[j] = new Coordinate(xval + rxval, yval + ryval, zval + rzval).Round(0);
+                    crossSecInner[j] = new Coordinate(xval + rxval, yval + ryval, zval + rzval);
                 }
                 ringOuterSections.Add(crossSecOuter);
                 ringInnerSections.Add(crossSecInner);
