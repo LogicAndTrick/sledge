@@ -239,6 +239,7 @@ namespace Sledge.Editor
             Mediator.Subscribe(HotkeysMediator.FourViewFocusBottomRight, this);
             Mediator.Subscribe(HotkeysMediator.FourViewFocusTopLeft, this);
             Mediator.Subscribe(HotkeysMediator.FourViewFocusTopRight, this);
+            Mediator.Subscribe(HotkeysMediator.FourViewFocusCurrent, this);
 
             Mediator.Subscribe(HotkeysMediator.FileNew, this);
             Mediator.Subscribe(HotkeysMediator.FileOpen, this);
@@ -516,6 +517,22 @@ namespace Sledge.Editor
         public void FourViewFocusBottomRight()
         {
             tblQuadView.FocusOn(1, 1);
+        }
+
+        public void FourViewFocusCurrent()
+        {
+            if (tblQuadView.IsFocusing())
+            {
+                tblQuadView.Unfocus();
+            }
+            else
+            {
+                var focused = ViewportManager.Viewports.FirstOrDefault(x => x.IsFocused);
+                if (focused != null)
+                {
+                    tblQuadView.FocusOn(focused);
+                }
+            }
         }
 
         protected override bool ProcessDialogKey(Keys keyData)

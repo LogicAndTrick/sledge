@@ -30,14 +30,63 @@ namespace Sledge.Editor.UI
             foreach (RowStyle rs in RowStyles) rs.Height = 50;
         }
 
+        public void FocusOn(Control ctrl)
+        {
+            if (ctrl == null || !Controls.Contains(ctrl)) return;
+            var row = GetRow(ctrl);
+            var col = GetColumn(ctrl);
+            FocusOn(row, col);
+        }
+
         public void FocusOn(int rowIndex, int columnIndex)
         {
             if (rowIndex < 0 || rowIndex > 1 || columnIndex < 0 || columnIndex > 1) return;
+            RememberFocus();
             ColumnStyles[columnIndex].Width = MaximumViewSize;
             ColumnStyles[(columnIndex + 1) % 2].Width = MinimumViewSize;
             RowStyles[rowIndex].Height = MaximumViewSize;
             RowStyles[(rowIndex + 1) % 2].Height = MinimumViewSize;
         }
+
+        private void RememberFocus()
+        {
+            _memoryWidth = new float[ColumnStyles.Count];
+            _memoryHeight = new float[RowStyles.Count];
+            for (var i = 0; i < ColumnStyles.Count; i++)
+            {
+                _memoryWidth[i] = ColumnStyles[i].Width;
+            }
+            for (var i = 0; i < RowStyles.Count; i++)
+            {
+                _memoryHeight[i] = RowStyles[i].Height;
+            }
+        }
+
+        private void ForgetFocus()
+        {
+            _memoryWidth = _memoryHeight = null;
+        }
+
+        public void Unfocus()
+        {
+            for (var i = 0; i < ColumnStyles.Count; i++)
+            {
+                ColumnStyles[i].Width = _memoryWidth[i];
+            }
+            for (var i = 0; i < RowStyles.Count; i++)
+            {
+                RowStyles[i].Height = _memoryHeight[i];
+            }
+            ForgetFocus();
+        }
+
+        public bool IsFocusing()
+        {
+            return _memoryWidth != null;
+        }
+
+        private float[] _memoryWidth;
+        private float[] _memoryHeight;
 
         protected override void OnMouseMove(MouseEventArgs e)
         {
@@ -45,6 +94,7 @@ namespace Sledge.Editor.UI
             {
                 if (_inH && Width > 0)
                 {
+                    ForgetFocus();
                     var mp = e.Y / (float)Height * 100;
                     mp = Math.Min(MaximumViewSize, Math.Max(MinimumViewSize, mp));
                     RowStyles[0].Height = mp;
@@ -52,6 +102,7 @@ namespace Sledge.Editor.UI
                 }
                 if (_inV && Height > 0)
                 {
+                    ForgetFocus();
                     var mp = e.X / (float)Width * 100;
                     mp = Math.Min(MaximumViewSize, Math.Max(MinimumViewSize, mp));
                     ColumnStyles[0].Width = mp;
@@ -101,10 +152,12 @@ namespace Sledge.Editor.UI
         {
             if (_inH)
             {
+                ForgetFocus();
                 RowStyles[0].Height = RowStyles[1].Height = 50;
             }
             if (_inV)
             {
+                ForgetFocus();
                 ColumnStyles[0].Width = ColumnStyles[1].Width = 50;
             }
         }

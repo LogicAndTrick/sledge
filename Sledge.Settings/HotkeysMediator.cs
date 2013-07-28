@@ -7,6 +7,7 @@ namespace Sledge.Settings
         FourViewFocusTopRight,
         FourViewFocusBottomLeft,
         FourViewFocusBottomRight,
+        FourViewFocusCurrent,
 
         FileNew,
         FileOpen,

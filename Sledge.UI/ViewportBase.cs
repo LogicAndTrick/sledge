@@ -250,6 +250,7 @@ namespace Sledge.UI
 
         protected override void OnMouseLeave(EventArgs e)
         {
+            IsFocused = false;
             ListenerDoEvent(new ViewportEvent(this, e), (l, v) => l.MouseLeave(v));
         }
 
