@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using OpenTK;
 using Sledge.Common;
 using Sledge.Common.Mediator;
+using Sledge.DataStructures.GameData;
 using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.MapObjects;
 using Sledge.DataStructures.Transformations;
@@ -30,6 +31,7 @@ using Sledge.QuickForms.Items;
 using Sledge.Settings;
 using Sledge.UI;
 using Path = System.IO.Path;
+using Property = Sledge.DataStructures.MapObjects.Property;
 using Quaternion = Sledge.DataStructures.Geometric.Quaternion;
 
 namespace Sledge.Editor.Documents
@@ -526,7 +528,12 @@ namespace Sledge.Editor.Documents
             {
                 var def = _document.Game.DefaultBrushEntity;
                 var entity = _document.GameData.Classes.FirstOrDefault(x => x.Name.ToLower() == def.ToLower())
-                             ?? _document.GameData.Classes.OrderBy(x => x.Name.StartsWith("trigger_once") ? 0 : 1).First();
+                             ?? _document.GameData.Classes.Where(x => x.ClassType == ClassType.Solid).OrderBy(x => x.Name.StartsWith("trigger_once") ? 0 : 1).FirstOrDefault();
+                if (entity == null)
+                {
+                    MessageBox.Show("No solid entities found. Please make sure your FGDs are configured correctly.", "No entities found!");
+                    return;
+                }
                 existing = new Entity(_document.Map.IDGenerator.GetNextObjectID())
                                {
                                    EntityData = new EntityData(entity),
