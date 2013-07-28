@@ -5,33 +5,45 @@ Priorities
     Windows 7 recent file jump list not opening files
     Clip tool is laggy
     Recent files menu -> open files
-  Enhancements
-    (Empty)
-  Features
-    (Post-alpha)
-
-Post-Alpha Priorities
-  TDI
-  Advanced/proper compiling
-  Texture loader refactor
-  Models
-  PAK / GCF
-  History stacks (for VM tool)
-  History sidebar
-  Face/object selection transition history
-  Find/replace dialogs
-  Prefabs
-  Map diff
-  Pointfile dark/light theme toggle
-  3D view helpers
-  Toggle render of nodraw/null faces
-  Game config detection
-  Transparent rendering / painter's algorithm
-  Actions for switching selection modes
-  Cameras
-   VMF/RMF read/write
-  Toolbar buttons
-    Maybe: select by handles, auto select, visgroups
+  Backend
+    Texture loader refactor
+    Model loader
+  Rendering
+    3D view helpers
+      Sprite helpers / Redo sprite billboarding
+      Models
+        FileSystem (PAK / GCF)
+        Model textures
+    Pointfile dark/light theme toggle
+    Toggle render of nodraw/null faces
+    Transparent rendering / painter's algorithm
+    Hide mask
+    Cordon render
+  Document/Actions
+    TDI
+    Advanced/proper compiling
+    History stacks (for VM tool)
+    Prefabs
+    Face/object selection transition history
+    Actions for switching selection modes
+    Cameras
+      VMF/RMF read/write
+    Handles
+      Select by handles option
+    Auto select option
+    Brush scripts
+      Arch
+      Sphere
+  UI
+    History sidebar
+    Find/replace dialogs
+    Map diff
+    Game config detection
+    Object properties dialog data types
+      File system - custom file browser
+    Texture browser - used textures only
+    Options
+      Hotkey configuration
 
 1. Goldsource Support
   Formats
@@ -70,7 +82,7 @@ Post-Alpha Priorities
     Hollow - 80%, groups
     Groups - 100%
     Visgroups - 100%
-    Cordon - 50%, render, compile
+    Cordon - 80%, render
     Texture Lock - 100%
     Entity/World - 90%, testing
     Texture Replace - 100%
