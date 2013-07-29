@@ -97,7 +97,8 @@ namespace Sledge.Editor
                     (s, ea) => SelectTool(tl),
                     tl.GetName())
                         {
-                            Checked = (tl == ToolManager.ActiveTool)
+                            Checked = (tl == ToolManager.ActiveTool),
+                            ToolTipText = tl.GetName()
                         }
                     );
             }
