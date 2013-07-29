@@ -108,10 +108,10 @@ namespace Sledge.Editor.Documents
             MapDisplayLists.RegenerateSelectLists(Selection);
             MapDisplayLists.RegenerateDisplayLists(Map.WorldSpawn.Children, false);
 
+            ViewportManager.AddContext3D(new WidgetLinesRenderable());
             Renderer.Register(ViewportManager.Viewports);
 
             ViewportManager.Viewports.ForEach(vp => vp.RenderContext.Add(new ToolRenderable()));
-            ViewportManager.AddContext3D(new WidgetLinesRenderable());
 
             _subscriptions.Subscribe();
 

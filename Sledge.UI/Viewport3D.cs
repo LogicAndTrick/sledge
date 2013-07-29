@@ -41,10 +41,9 @@ namespace Sledge.UI
         public override Matrix4 GetViewportMatrix()
         {
             const float near = 0.1f;
-            const float far = 50000f;
             var ratio = Width / (float)Height;
             if (ratio <= 0) ratio = 1;
-            return Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(Camera.FOV), ratio, near, far);
+            return Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(Camera.FOV), ratio, near, Camera.ClipDistance);
         }
 
         public override Matrix4 GetCameraMatrix()
@@ -55,7 +54,7 @@ namespace Sledge.UI
         public override void SetViewport()
         {
             base.SetViewport();
-            Viewport.Perspective(0, 0, Width, Height, Camera.FOV);
+            Viewport.Perspective(0, 0, Width, Height, Camera.FOV, 0.1f, Camera.ClipDistance);
         }
 
         protected override void UpdateBeforeClearViewport()

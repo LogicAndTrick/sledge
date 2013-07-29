@@ -118,11 +118,18 @@ namespace Sledge.Editor.UI
                     Cursor.Show();
                 }
             }
+            if (FreeLook)
+            {
+                e.Handled = true;
+            }
         }
 
         public void KeyPress(ViewportEvent e)
         {
-            // Nothing.
+            if (FreeLook)
+            {
+                e.Handled = true;
+            }
         }
 
         public void MouseMove(ViewportEvent e)

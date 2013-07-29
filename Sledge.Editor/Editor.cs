@@ -317,6 +317,7 @@ namespace Sledge.Editor
             foreach (var vp in ViewportManager.Viewports.OfType<Sledge.UI.Viewport3D>())
             {
                 vp.Camera.FOV = Sledge.Settings.View.CameraFOV;
+                vp.Camera.ClipDistance = Sledge.Settings.View.BackClippingPane;
             }
             ViewportManager.RefreshClearColour();
         }

@@ -112,7 +112,8 @@ namespace Sledge.Editor.UI
                 {
                     Location = new Vector3(0, 0, 0),
                     LookAt = new Vector3(0, 1, 0),
-                    FOV = Sledge.Settings.View.CameraFOV
+                    FOV = Sledge.Settings.View.CameraFOV,
+                    ClipDistance = Sledge.Settings.View.BackClippingPane
                 }
             };
             viewport.MakeCurrent();
