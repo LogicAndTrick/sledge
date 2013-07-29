@@ -133,23 +133,9 @@ namespace Sledge.Editor.Tools
             else
             {
                 State.Action = BoxAction.ReadyToResize;
-                decimal x1 = Decimal.MaxValue, y1 = Decimal.MaxValue, z1 = Decimal.MaxValue;
-                decimal x2 = Decimal.MinValue, y2 = Decimal.MinValue, z2 = Decimal.MinValue;
-                foreach (var c in Document.Selection.GetSelectedObjects())
-                {
-                    var min = c.BoundingBox.Start;
-                    var max = c.BoundingBox.End;
-
-                    x1 = Math.Min(x1, min.X);
-                    y1 = Math.Min(y1, min.Y);
-                    z1 = Math.Min(z1, min.Z);
-
-                    x2 = Math.Max(x2, max.X);
-                    y2 = Math.Max(y2, max.Y);
-                    z2 = Math.Max(z2, max.Z);
-                }
-                State.BoxStart = new Coordinate(x1, y1, z1);
-                State.BoxEnd = new Coordinate(x2, y2, z2);
+                var box = Document.Selection.GetSelectionBoundingBox();
+                State.BoxStart = box.Start;
+                State.BoxEnd = box.End;
             }
         }
 

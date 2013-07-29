@@ -38,7 +38,7 @@ namespace Sledge.Editor.Editing
                 SelectedObjects.AddRange(distinct);
                 _changed = false;
             }
-            return SelectedObjects;
+            return new List<MapObject>(SelectedObjects);
         }
 
         public IEnumerable<Face> GetSelectedFaces()
