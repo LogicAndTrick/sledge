@@ -159,7 +159,7 @@ namespace Sledge.Editor.Actions.MapObjects.Operations
         public virtual void Reverse(Document document)
         {
             // Edit
-            Parallel.ForEach(_editObjects, x => x.Reverse(document));
+            _editObjects.ForEach(x => x.Perform(document));
 
             // Create
             _objectsToCreate = document.Map.WorldSpawn.Find(x => _createdIds.Contains(x.ID));
@@ -215,7 +215,7 @@ namespace Sledge.Editor.Actions.MapObjects.Operations
             _idsToDelete = null;
 
             // Edit
-            Parallel.ForEach(_editObjects, x => x.Perform(document));
+            _editObjects.ForEach(x => x.Perform(document));
 
             if (_createdIds.Any() || _deletedObjects.Any())
             {
