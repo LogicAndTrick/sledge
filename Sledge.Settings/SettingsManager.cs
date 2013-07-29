@@ -32,23 +32,31 @@ namespace Sledge.Settings
             RecentFiles = new List<RecentFile>();
             Settings = new List<Setting>();
 
-            var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            SettingsFile = Path.Combine(path, "Settings.vdf");
+            var appdata = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            var sledge = Path.Combine(appdata, "Sledge");
+            if (!Directory.Exists(sledge)) Directory.CreateDirectory(sledge);
+            SettingsFile = Path.Combine(sledge, "Settings.vdf");
+        }
+
+        private static GenericStructure ReadSettingsFile()
+        {
+            if (File.Exists(SettingsFile)) return GenericStructure.Parse(SettingsFile).FirstOrDefault();
+
+            var exec = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            var path = Path.Combine(exec, "Settings.vdf");
+            if (File.Exists(path)) return GenericStructure.Parse(path).FirstOrDefault();
+
+            return null;
         }
 
         public static void Read()
         {
-            if (!File.Exists(SettingsFile))
-            {
-                Write();
-            }
-
             Builds.Clear();
             Games.Clear();
             RecentFiles.Clear();
             Settings.Clear();
 
-            var root = GenericStructure.Parse(SettingsFile).FirstOrDefault();
+            var root = ReadSettingsFile();
 
             if (root == null) return;
 
@@ -87,6 +95,11 @@ namespace Sledge.Settings
                 Builds.Add(b);
             }
             Serialise.DeserialiseSettings(Settings.ToDictionary(x => x.Key, x => x.Value));
+
+            if (!File.Exists(SettingsFile))
+            {
+                Write();
+            }
         }
 
         public static void Write()
