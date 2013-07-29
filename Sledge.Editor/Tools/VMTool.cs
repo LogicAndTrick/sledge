@@ -481,7 +481,7 @@ namespace Sledge.Editor.Tools
             // Get back into 3D rendering
             Matrix.Set(MatrixMode.Projection);
             Matrix.Identity();
-            Graphics.Helpers.Viewport.Perspective(0, 0, vp.Width, vp.Height);
+            Graphics.Helpers.Viewport.Perspective(0, 0, vp.Width, vp.Height, Sledge.Settings.View.CameraFOV);
             Matrix.Set(MatrixMode.Modelview);
             Matrix.Identity();
             vp.Camera.Position();

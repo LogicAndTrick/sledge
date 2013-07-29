@@ -12,11 +12,13 @@ namespace Sledge.Graphics
     {
         public Vector3 LookAt { get; set; }
         public Vector3 Location { get; set; }
+        public int FOV { get; set; }
 
         public Camera()
         {
             LookAt = new Vector3(1, 0, 0);
             Location = new Vector3(0, 0, 0);
+            FOV = 60;
         }
 
         public void Position()

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
+using Sledge.Common.Mediator;
 using Sledge.DataStructures.GameData;
 using Sledge.Providers.GameData;
 using Sledge.QuickForms;
@@ -303,6 +304,8 @@ namespace Sledge.Editor.Settings
             SettingsManager.Games.AddRange(_games);
 
             SettingsManager.Write();
+
+            Mediator.Publish(EditorMediator.SettingsChanged);
         }
 
         private void Apply(object sender, EventArgs e)

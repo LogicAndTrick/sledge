@@ -5,14 +5,14 @@ namespace Sledge.Graphics.Helpers
 {
     public static class Viewport
     {
-        public static void Perspective(int x, int y, int width, int height, float near = 0.1f, float far = 50000)
+        public static void Perspective(int x, int y, int width, int height, int fov, float near = 0.1f, float far = 50000)
         {
             Switch(x, y, width, height);
             var mode = Matrix.CurrentMode;
             Matrix.Set(MatrixMode.Projection);
             var ratio = width / (float) height;
             if (ratio <= 0) ratio = 1;
-            Matrix4 projection = Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(60), ratio, near, far);
+            Matrix4 projection = Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(fov), ratio, near, far);
             GL.LoadMatrix(ref projection);
             Matrix.Set(mode);
         }

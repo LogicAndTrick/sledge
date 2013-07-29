@@ -250,6 +250,7 @@ namespace Sledge.Editor
             Mediator.Subscribe(EditorMediator.Exit, this);
 
             Mediator.Subscribe(EditorMediator.OpenSettings, this);
+            Mediator.Subscribe(EditorMediator.SettingsChanged, this);
 
             Mediator.Subscribe(EditorMediator.DocumentActivated, this);
             Mediator.Subscribe(EditorMediator.DocumentClosed, this);
@@ -308,6 +309,14 @@ namespace Sledge.Editor
             using (var sf = new SettingsForm())
             {
                 sf.ShowDialog();
+            }
+        }
+
+        private static void SettingsChanged()
+        {
+            foreach (var vp in ViewportManager.Viewports.OfType<Sledge.UI.Viewport3D>())
+            {
+                vp.Camera.FOV = Sledge.Settings.View.CameraFOV;
             }
         }
 

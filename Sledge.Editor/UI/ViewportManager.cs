@@ -101,7 +101,8 @@ namespace Sledge.Editor.UI
                 Camera =
                 {
                     Location = new Vector3(0, 0, 0),
-                    LookAt = new Vector3(0, 1, 0)
+                    LookAt = new Vector3(0, 1, 0),
+                    FOV = Sledge.Settings.View.CameraFOV
                 }
             };
             viewport.MakeCurrent();

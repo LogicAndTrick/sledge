@@ -44,23 +44,18 @@ namespace Sledge.UI
             const float far = 50000f;
             var ratio = Width / (float)Height;
             if (ratio <= 0) ratio = 1;
-            return Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(60), ratio, near, far);
+            return Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(Camera.FOV), ratio, near, far);
         }
 
         public override Matrix4 GetCameraMatrix()
         {
-            var cam = Camera;
-            var cameraMatrix = Matrix4.LookAt(
-                new Vector3((float)cam.Location.X, (float)cam.Location.Y, (float)cam.Location.Z),
-                new Vector3((float)cam.LookAt.X, (float)cam.LookAt.Y, (float)cam.LookAt.Z),
-                Vector3.UnitZ);
-            return cameraMatrix;
+             return Matrix4.LookAt(Camera.Location, Camera.LookAt, Vector3.UnitZ);
         }
 
         public override void SetViewport()
         {
             base.SetViewport();
-            Viewport.Perspective(0, 0, Width, Height);
+            Viewport.Perspective(0, 0, Width, Height, Camera.FOV);
         }
 
         protected override void UpdateBeforeClearViewport()
