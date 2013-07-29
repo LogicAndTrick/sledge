@@ -318,6 +318,7 @@ namespace Sledge.Editor
             {
                 vp.Camera.FOV = Sledge.Settings.View.CameraFOV;
             }
+            ViewportManager.RefreshClearColour();
         }
 
         private void Exit()

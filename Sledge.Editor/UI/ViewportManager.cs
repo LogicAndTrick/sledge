@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using OpenTK;
@@ -91,6 +92,15 @@ namespace Sledge.Editor.UI
         public static void RemoveContext2D(IRenderable r, Viewport2D.ViewDirection dir)
         {
             Viewports.OfType<Viewport2D>().Where(v => v != null && v.Direction == dir).ToList().ForEach(v => v.RenderContext.Remove(r));
+        }
+
+        public static void RefreshClearColour()
+        {
+            foreach (var vp in Viewports)
+            {
+                vp.MakeCurrent();
+                GL.ClearColor(Sledge.Settings.Grid.Background);
+            }
         }
 
         private static Viewport3D Create3D()

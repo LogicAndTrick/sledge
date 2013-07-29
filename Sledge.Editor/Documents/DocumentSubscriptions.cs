@@ -54,6 +54,8 @@ namespace Sledge.Editor.Documents
             Mediator.Subscribe(EditorMediator.DocumentTreeObjectsChanged, this);
             Mediator.Subscribe(EditorMediator.DocumentTreeFacesChanged, this);
 
+            Mediator.Subscribe(EditorMediator.SettingsChanged, this);
+
             Mediator.Subscribe(HotkeysMediator.FileClose, this);
             Mediator.Subscribe(HotkeysMediator.FileSave, this);
             Mediator.Subscribe(HotkeysMediator.FileSaveAs, this);
@@ -172,6 +174,11 @@ namespace Sledge.Editor.Documents
         private void DocumentTreeFacesChanged(IEnumerable<Face> faces)
         {
             _document.UpdateDisplayLists(faces);
+        }
+
+        public void SettingsChanged()
+        {
+            RebuildGrid();
         }
 
         public void HistoryUndo()
