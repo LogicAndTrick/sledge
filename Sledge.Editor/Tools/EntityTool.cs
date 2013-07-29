@@ -46,6 +46,11 @@ namespace Sledge.Editor.Tools
             return "Entity Tool";
         }
 
+        public override HotkeyTool? GetHotkeyToolType()
+        {
+            return HotkeyTool.Entity;
+        }
+
         public override void MouseEnter(ViewportBase viewport, ViewportEvent e)
         {
             viewport.Cursor = Cursors.Default;

@@ -14,7 +14,7 @@ namespace Sledge.Editor.UI
             var hotkeyDefinition = Sledge.Settings.Hotkeys.GetHotkeyFor(keyCombination);
             if (hotkeyDefinition != null)
             {
-                Mediator.Publish(hotkeyDefinition.Action);
+                Mediator.Publish(hotkeyDefinition.Action, hotkeyDefinition.Parameter);
                 return true;
             }
             return false;

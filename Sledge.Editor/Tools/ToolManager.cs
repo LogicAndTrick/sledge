@@ -6,6 +6,7 @@ using Sledge.Common.Mediator;
 using Sledge.Editor.Documents;
 using Sledge.Editor.Tools.TransformationTools;
 using Sledge.Editor.UI;
+using Sledge.Settings;
 using Sledge.UI;
 
 namespace Sledge.Editor.Tools
@@ -64,6 +65,12 @@ namespace Sledge.Editor.Tools
         public static void Activate(Type toolType)
         {
             Activate(Tools.FirstOrDefault(x => x.GetType() == toolType));
+        }
+
+        public static void Activate(HotkeyTool hotkeyTool)
+        {
+            var hk = Tools.FirstOrDefault(x => x.GetHotkeyToolType() == hotkeyTool);
+            if (hk != null) Activate(hk);
         }
     }
 }

@@ -32,6 +32,11 @@ namespace Sledge.Editor.Tools
             return "Brush Tool";
         }
 
+        public override HotkeyTool? GetHotkeyToolType()
+        {
+            return HotkeyTool.Brush;
+        }
+
         protected override Color BoxColour
         {
             get { return Color.Turquoise; }

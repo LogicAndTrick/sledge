@@ -55,6 +55,11 @@ namespace Sledge.Editor.Tools
             return "Displacement Tool";
         }
 
+        public override HotkeyTool? GetHotkeyToolType()
+        {
+            return HotkeyTool.Displacement;
+        }
+
         public override void ToolSelected()
         {
             _form.Show(Editor.Instance);

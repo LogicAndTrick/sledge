@@ -72,7 +72,17 @@ namespace Sledge.Settings
                                     new HotkeyDefinition("Transform", "Open the 'Transform' dialog", HotkeysMediator.Transform, "Ctrl+M"),
                                     new HotkeyDefinition("Check for Problems", "Open the 'Check for Problems' dialog", HotkeysMediator.CheckForProblems, "Alt+P"),
                                     new HotkeyDefinition("Go to Brush ID", "Open the 'Go to Brush ID' dialog", HotkeysMediator.GoToBrushID, "Ctrl+Shift+G"),
-
+                                    
+                                    new HotkeyDefinition("Selection Tool", "Switch to the selection tool", HotkeysMediator.SwitchTool, HotkeyTool.Selection, "Shift+S"),
+                                    new HotkeyDefinition("Entity Tool", "Switch to the entity tool", HotkeysMediator.SwitchTool, HotkeyTool.Entity, "Shift+E"),
+                                    new HotkeyDefinition("Brush Tool", "Switch to the brush tool", HotkeysMediator.SwitchTool, HotkeyTool.Brush, "Shift+B"),
+                                    new HotkeyDefinition("Texture Tool", "Switch to the texture application tool", HotkeysMediator.SwitchTool, HotkeyTool.Texture, "Shift+A"),
+                                    new HotkeyDefinition("Decal Tool", "Switch to the decal tool", HotkeysMediator.SwitchTool, HotkeyTool.Decal, "Shift+D"),
+                                    new HotkeyDefinition("Clip Tool", "Switch to the clipping tool", HotkeysMediator.SwitchTool, HotkeyTool.Clip, "Shift+X"),
+                                    new HotkeyDefinition("Vertex Manipulation Tool", "Switch to the vertex manipulation tool", HotkeysMediator.SwitchTool, HotkeyTool.VM, "Shift+V"),
+                                    new HotkeyDefinition("Cordon Tool", "Switch to the cordon tool", HotkeysMediator.SwitchTool, HotkeyTool.Cordon, "Shift+K"),
+                                    
+                                    new HotkeyDefinition("Apply Current Texture", "Apply the current texture to the selection.", HotkeysMediator.ApplyCurrentTextureToSelection, "Shift+T"),
                                };
         }
 

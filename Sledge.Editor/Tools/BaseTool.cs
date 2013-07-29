@@ -31,6 +31,7 @@ namespace Sledge.Editor.Tools
 
         public abstract Image GetIcon();
         public abstract string GetName();
+        public abstract HotkeyTool? GetHotkeyToolType();
 
         protected BaseTool()
         {

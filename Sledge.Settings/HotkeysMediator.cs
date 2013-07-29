@@ -34,6 +34,9 @@ namespace Sledge.Settings
         QuickHideUnselected,
         QuickHideShowAll,
 
+        SwitchTool,
+        ApplyCurrentTextureToSelection,
+
         Carve,
         MakeHollow,
 

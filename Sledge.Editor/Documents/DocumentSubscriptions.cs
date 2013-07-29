@@ -75,6 +75,9 @@ namespace Sledge.Editor.Documents
             Mediator.Subscribe(HotkeysMediator.QuickHideUnselected, this);
             Mediator.Subscribe(HotkeysMediator.QuickHideShowAll, this);
 
+            Mediator.Subscribe(HotkeysMediator.SwitchTool, this);
+            Mediator.Subscribe(HotkeysMediator.ApplyCurrentTextureToSelection, this);
+
             Mediator.Subscribe(HotkeysMediator.Carve, this);
             Mediator.Subscribe(HotkeysMediator.MakeHollow, this);
             Mediator.Subscribe(HotkeysMediator.GroupingGroup, this);
@@ -377,6 +380,28 @@ namespace Sledge.Editor.Documents
         {
             var pd = new EntityEditor(_document);
             pd.Show(Editor.Instance);
+        }
+
+        public void SwitchTool(HotkeyTool tool)
+        {
+            ToolManager.Activate(tool);
+        }
+
+        public void ApplyCurrentTextureToSelection()
+        {
+            if (_document.Selection.IsEmpty() || _document.Selection.InFaceSelection || Editor.Instance == null) return;
+            var texture = Editor.Instance.GetSelectedTexture();
+            if (texture == null) return;
+            var ti = texture.GetTexture();
+            if (ti == null) return;
+            Action<Document, Face> action = (document, face) =>
+            {
+                face.Texture.Name = texture.Name;
+                face.Texture.Texture = ti;
+                face.CalculateTextureCoordinates();
+            };
+            var faces = _document.Selection.GetSelectedObjects().OfType<Solid>().SelectMany(x => x.Faces);
+            _document.PerformAction("Apply current texture", new EditFace(faces, action, true));
         }
 
         public void QuickHideSelected()

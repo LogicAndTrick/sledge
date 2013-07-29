@@ -23,6 +23,11 @@ namespace Sledge.Editor.Tools
             return "Cordon Tool";
         }
 
+        public override HotkeyTool? GetHotkeyToolType()
+        {
+            return HotkeyTool.Cordon;
+        }
+
         public override HotkeyInterceptResult InterceptHotkey(HotkeysMediator hotkeyMessage)
         {
             switch (hotkeyMessage)

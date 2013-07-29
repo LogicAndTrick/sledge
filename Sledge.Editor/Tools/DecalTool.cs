@@ -38,6 +38,11 @@ namespace Sledge.Editor.Tools
             return "Decal Tool";
         }
 
+        public override HotkeyTool? GetHotkeyToolType()
+        {
+            return HotkeyTool.Decal;
+        }
+
         public override void MouseDown(ViewportBase viewport, ViewportEvent e)
         {
             var vp = viewport as Viewport3D;

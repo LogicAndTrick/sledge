@@ -62,6 +62,11 @@ namespace Sledge.Editor.Tools
             return "Select Tool";
         }
 
+        public override HotkeyTool? GetHotkeyToolType()
+        {
+            return HotkeyTool.Selection;
+        }
+
         protected override Color BoxColour
         {
             get { return Color.Yellow; }

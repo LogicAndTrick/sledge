@@ -86,7 +86,6 @@ namespace Sledge.Editor
             ToolManager.Init();
             BrushManager.Init();
             BrushManager.SetBrushControl(BrushCreatePanel);
-            //VisgroupManager.SetVisgroupPanel(VisgroupsPanel);
 
             foreach (var tool in ToolManager.Tools)
             {

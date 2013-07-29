@@ -55,6 +55,11 @@ namespace Sledge.Editor.Tools
             return "Clip Tool";
         }
 
+        public override HotkeyTool? GetHotkeyToolType()
+        {
+            return HotkeyTool.Clip;
+        }
+
         private ClipState GetStateAtPoint(int x, int y, Viewport2D viewport)
         {
             if (_clipPlanePoint1 == null || _clipPlanePoint2 == null || _clipPlanePoint3 == null) return ClipState.None;

@@ -92,6 +92,11 @@ namespace Sledge.Editor.Tools
             return "Vertex Manipulation Tool";
         }
 
+        public override HotkeyTool? GetHotkeyToolType()
+        {
+            return HotkeyTool.VM;
+        }
+
         protected override Color BoxColour
         {
             get { return Color.Orange; }

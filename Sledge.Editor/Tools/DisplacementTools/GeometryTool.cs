@@ -7,8 +7,6 @@ using OpenTK.Graphics.OpenGL;
 using Sledge.Common.Easings;
 using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.MapObjects;
-using Sledge.DataStructures.Rendering;
-using Sledge.Editor.Editing;
 using Sledge.Graphics.Helpers;
 using Sledge.UI;
 

@@ -155,6 +155,11 @@ namespace Sledge.Editor.Tools
             return "Texture Application Tool";
         }
 
+        public override HotkeyTool? GetHotkeyToolType()
+        {
+            return HotkeyTool.Texture;
+        }
+
         public override void ToolSelected()
         {
             _form.Show(Editor.Instance);

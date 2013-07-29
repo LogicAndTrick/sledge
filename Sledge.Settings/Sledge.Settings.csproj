@@ -45,6 +45,7 @@
     <Compile Include="HotkeyDefinition.cs" />
     <Compile Include="Hotkeys.cs" />
     <Compile Include="HotkeysMediator.cs" />
+    <Compile Include="HotkeyTool.cs" />
     <Compile Include="Models\Build.cs" />
     <Compile Include="Models\Engine.cs" />
     <Compile Include="Models\Fgd.cs" />

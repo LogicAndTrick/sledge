@@ -27,6 +27,7 @@ namespace Sledge.Settings
             Description = description;
             Action = action;
             DefaultHotkey = defaultHotkey;
+            Parameter = parameter;
         }
     }
 }
