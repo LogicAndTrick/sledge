@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using OpenTK.Graphics.OpenGL;
+using Sledge.Common.Mediator;
 using Sledge.DataStructures.Geometric;
 using Sledge.Editor.Actions.MapObjects.Operations;
 using Sledge.Editor.History;
@@ -93,6 +94,10 @@ namespace Sledge.Editor.Tools
         {
             var brush = GetBrush(bounds, Document.Map.IDGenerator);
             if (brush == null) return;
+            if (Select.SelectCreatedBrush)
+            {
+                brush.IsSelected = true;
+            }
             Document.PerformAction("Create " + BrushManager.CurrentBrush.Name.ToLower(), new Create(brush));
         }
 
@@ -122,6 +127,10 @@ namespace Sledge.Editor.Tools
             }
             _preview = null;
             base.BoxDrawnConfirm(viewport);
+            if (Select.SwitchToSelectAfterCreation)
+            {
+                Mediator.Publish(HotkeysMediator.SwitchTool, HotkeyTool.Selection);
+            }
         }
 
         public override void BoxDrawnCancel(ViewportBase viewport)
