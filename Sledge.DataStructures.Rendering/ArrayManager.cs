@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text;
 using OpenTK.Graphics.OpenGL;
 using Sledge.DataStructures.MapObjects;
 using Sledge.Graphics.Helpers;
@@ -20,22 +18,35 @@ namespace Sledge.DataStructures.Rendering
 
         public ArrayManager(Map map)
         {
-            var all = map.WorldSpawn.FindAll();
+            var all = GetAllVisible(map.WorldSpawn);
             _array = new SolidVertexArray(all);
             _decalArray = new DecalFaceVertexArray(all);
-            // Update(map);
+        }
+
+        private IList<MapObject> GetAllVisible(MapObject root)
+        {
+            var list = new List<MapObject>();
+            FindRecursive(list, root, x => !x.IsVisgroupHidden);
+            return list.Where(x => !x.IsCodeHidden).ToList();
+        }
+
+        private void FindRecursive(ICollection<MapObject> items, MapObject root, Predicate<MapObject> matcher)
+        {
+            if (!matcher(root)) return;
+            items.Add(root);
+            root.Children.ForEach(x => FindRecursive(items, x, matcher));
         }
 
         public void Update(Map map)
         {
-            var all = map.WorldSpawn.FindAll();
+            var all = GetAllVisible(map.WorldSpawn);
             _array.Update(all);
             _decalArray.Update(all);
         }
 
         public void UpdateDecals(Map map)
         {
-            var all = map.WorldSpawn.FindAll();
+            var all = GetAllVisible(map.WorldSpawn);
             _decalArray.Update(all);
         }
 

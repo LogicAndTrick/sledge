@@ -182,7 +182,8 @@ namespace Sledge.DataStructures.MapObjects
         public IEnumerable<MapObject> GetAllNodesIntersectingWith(Box box)
         {
             var list = new List<MapObject>();
-            if (!(this is World) && !IsCodeHidden && !IsVisgroupHidden)
+            if (IsCodeHidden || IsVisgroupHidden) return list;
+            if (!(this is World))
             {
                 if (BoundingBox == null || !BoundingBox.IntersectsWith(box)) return list;
                 if (this is Solid || this is Entity) list.Add(this);
