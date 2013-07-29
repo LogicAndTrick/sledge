@@ -370,6 +370,17 @@ namespace Sledge.Editor.Tools
             }
         }
 
+        public override void KeyDown(ViewportBase viewport, ViewportEvent e)
+        {
+            var nudge = GetNudgeValue(e.KeyCode);
+            var vp = viewport as Viewport2D;
+            if (nudge != null && vp != null && _state == VMState.None && _points.Any(x => x.IsSelected))
+            {
+                var translate = vp.Expand(nudge);
+            }
+            base.KeyDown(viewport, e);
+        }
+
         public override HotkeyInterceptResult InterceptHotkey(HotkeysMediator hotkeyMessage)
         {
             switch (hotkeyMessage)

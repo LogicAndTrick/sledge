@@ -271,6 +271,13 @@ namespace Sledge.UI
             ListenerDoEvent(new ViewportEvent(this, e), (l, v) => l.MouseDown(v));
         }
 
+        protected override bool IsInputKey(Keys keyData)
+        {
+            // http://www.opentk.com/node/1192
+            // Force all keys to be passed to the regular key events
+            return true;
+        }
+
         protected override void OnKeyDown(KeyEventArgs e)
         {
             ListenerDoEvent(new ViewportEvent(this, e), (l, v) => l.KeyDown(v));

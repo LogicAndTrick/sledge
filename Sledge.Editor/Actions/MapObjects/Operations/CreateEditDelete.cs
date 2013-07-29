@@ -159,7 +159,7 @@ namespace Sledge.Editor.Actions.MapObjects.Operations
         public virtual void Reverse(Document document)
         {
             // Edit
-            _editObjects.ForEach(x => x.Perform(document));
+            _editObjects.ForEach(x => x.Reverse(document));
 
             // Create
             _objectsToCreate = document.Map.WorldSpawn.Find(x => _createdIds.Contains(x.ID));

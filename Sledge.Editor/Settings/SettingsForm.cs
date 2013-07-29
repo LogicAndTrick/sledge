@@ -184,6 +184,8 @@ namespace Sledge.Editor.Settings
             RotationStyle_SnapNever.Checked = Sledge.Settings.Select.RotationStyle == RotationStyle.SnapNever;
             SnapStyle_SnapOffAlt.Checked = Sledge.Settings.Select.SnapStyle == SnapStyle.SnapOffAlt;
             SnapStyle_SnapOnAlt.Checked = Sledge.Settings.Select.SnapStyle == SnapStyle.SnapOnAlt;
+            NudgeStyle_GridOffCtrl.Checked = Sledge.Settings.Select.NudgeStyle == NudgeStyle.GridOffCtrl;
+            NudgeStyle_GridOnCtrl.Checked = Sledge.Settings.Select.NudgeStyle == NudgeStyle.GridOnCtrl;
             DefaultGridSize.SelectedItem = Grid.DefaultSize;
             HideGridLimit.Value = Grid.HideSmallerThan;
             HideGridOn.Checked = Grid.HideSmallerOn;
@@ -229,6 +231,8 @@ namespace Sledge.Editor.Settings
             if (RotationStyle_SnapNever.Checked) Sledge.Settings.Select.RotationStyle = RotationStyle.SnapNever;
             if (SnapStyle_SnapOffAlt.Checked) Sledge.Settings.Select.SnapStyle = SnapStyle.SnapOffAlt;
             if (SnapStyle_SnapOnAlt.Checked) Sledge.Settings.Select.SnapStyle = SnapStyle.SnapOnAlt;
+            if (NudgeStyle_GridOffCtrl.Checked) Sledge.Settings.Select.NudgeStyle = NudgeStyle.GridOffCtrl;
+            if (NudgeStyle_GridOnCtrl.Checked) Sledge.Settings.Select.NudgeStyle = NudgeStyle.GridOnCtrl;
             Grid.DefaultSize = int.Parse(Convert.ToString(DefaultGridSize.Text));
             Grid.HideSmallerThan = int.Parse(Convert.ToString(HideGridLimit.Value));
             Grid.HideSmallerOn = HideGridOn.Checked;

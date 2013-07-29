@@ -104,6 +104,12 @@ namespace Sledge.Editor.Settings
             this.lblGameName = new System.Windows.Forms.Label();
             this.SelectedGameBuild = new System.Windows.Forms.ComboBox();
             this.grpConfigSaving = new System.Windows.Forms.GroupBox();
+            this.SelectedGameAutosaveLimit = new System.Windows.Forms.NumericUpDown();
+            this.label16 = new System.Windows.Forms.Label();
+            this.SelectedGameAutosaveTime = new System.Windows.Forms.NumericUpDown();
+            this.label15 = new System.Windows.Forms.Label();
+            this.label14 = new System.Windows.Forms.Label();
+            this.label12 = new System.Windows.Forms.Label();
             this.lblGameMapSaveDir = new System.Windows.Forms.Label();
             this.SelectedGameEnableAutosave = new System.Windows.Forms.CheckBox();
             this.SelectedGameMapDir = new System.Windows.Forms.TextBox();
@@ -111,6 +117,7 @@ namespace Sledge.Editor.Settings
             this.SelectedGameDiffAutosaveDir = new System.Windows.Forms.TextBox();
             this.lblGameAutosaveDir = new System.Windows.Forms.Label();
             this.SelectedGameDiffAutosaveDirBrowse = new System.Windows.Forms.Button();
+            this.SelectedGameAutosaveOnlyOnChange = new System.Windows.Forms.CheckBox();
             this.SelectedGameUseDiffAutosaveDir = new System.Windows.Forms.CheckBox();
             this.lblGameBuild = new System.Windows.Forms.Label();
             this.SelectedGameName = new System.Windows.Forms.TextBox();
@@ -215,13 +222,9 @@ namespace Sledge.Editor.Settings
             this.btnCancelSettings = new System.Windows.Forms.Button();
             this.btnApplyAndCloseSettings = new System.Windows.Forms.Button();
             this.btnApplySettings = new System.Windows.Forms.Button();
-            this.label12 = new System.Windows.Forms.Label();
-            this.SelectedGameAutosaveTime = new System.Windows.Forms.NumericUpDown();
-            this.label14 = new System.Windows.Forms.Label();
-            this.label15 = new System.Windows.Forms.Label();
-            this.label16 = new System.Windows.Forms.Label();
-            this.SelectedGameAutosaveLimit = new System.Windows.Forms.NumericUpDown();
-            this.SelectedGameAutosaveOnlyOnChange = new System.Windows.Forms.CheckBox();
+            this.groupBox16 = new System.Windows.Forms.GroupBox();
+            this.NudgeStyle_GridOnCtrl = new System.Windows.Forms.RadioButton();
+            this.NudgeStyle_GridOffCtrl = new System.Windows.Forms.RadioButton();
             this.tbcSettings.SuspendLayout();
             this.tab2DViews.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.NudgeUnits)).BeginInit();
@@ -244,6 +247,8 @@ namespace Sledge.Editor.Settings
             this.tabConfigDirectories.SuspendLayout();
             this.grpConfigGame.SuspendLayout();
             this.grpConfigSaving.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.SelectedGameAutosaveLimit)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.SelectedGameAutosaveTime)).BeginInit();
             this.tabConfigEntities.SuspendLayout();
             this.tabConfigTextures.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.SelectedGameLightmapScale)).BeginInit();
@@ -266,8 +271,7 @@ namespace Sledge.Editor.Settings
             ((System.ComponentModel.ISupportInitialize)(this.trackBar2)).BeginInit();
             this.groupBox7.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.SelectedGameAutosaveTime)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.SelectedGameAutosaveLimit)).BeginInit();
+            this.groupBox16.SuspendLayout();
             this.SuspendLayout();
             // 
             // tbcSettings
@@ -307,6 +311,7 @@ namespace Sledge.Editor.Settings
             this.tab2DViews.Controls.Add(this.groupBox6);
             this.tab2DViews.Controls.Add(this.groupBox3);
             this.tab2DViews.Controls.Add(this.label2);
+            this.tab2DViews.Controls.Add(this.groupBox16);
             this.tab2DViews.Controls.Add(this.groupBox4);
             this.tab2DViews.Controls.Add(this.groupBox5);
             this.tab2DViews.Location = new System.Drawing.Point(4, 22);
@@ -368,14 +373,14 @@ namespace Sledge.Editor.Settings
             this.groupBox6.Controls.Add(this.RotationStyle_SnapOffShift);
             this.groupBox6.Location = new System.Drawing.Point(6, 60);
             this.groupBox6.Name = "groupBox6";
-            this.groupBox6.Size = new System.Drawing.Size(247, 114);
+            this.groupBox6.Size = new System.Drawing.Size(239, 114);
             this.groupBox6.TabIndex = 0;
             this.groupBox6.TabStop = false;
             this.groupBox6.Text = "Rotation Style";
             // 
             // RotationStyle_SnapNever
             // 
-            this.RotationStyle_SnapNever.Location = new System.Drawing.Point(14, 79);
+            this.RotationStyle_SnapNever.Location = new System.Drawing.Point(11, 79);
             this.RotationStyle_SnapNever.Name = "RotationStyle_SnapNever";
             this.RotationStyle_SnapNever.Size = new System.Drawing.Size(137, 24);
             this.RotationStyle_SnapNever.TabIndex = 2;
@@ -385,7 +390,7 @@ namespace Sledge.Editor.Settings
             // RotationStyle_SnapOnShift
             // 
             this.RotationStyle_SnapOnShift.Checked = true;
-            this.RotationStyle_SnapOnShift.Location = new System.Drawing.Point(14, 19);
+            this.RotationStyle_SnapOnShift.Location = new System.Drawing.Point(11, 19);
             this.RotationStyle_SnapOnShift.Name = "RotationStyle_SnapOnShift";
             this.RotationStyle_SnapOnShift.Size = new System.Drawing.Size(182, 24);
             this.RotationStyle_SnapOnShift.TabIndex = 2;
@@ -395,7 +400,7 @@ namespace Sledge.Editor.Settings
             // 
             // RotationStyle_SnapOffShift
             // 
-            this.RotationStyle_SnapOffShift.Location = new System.Drawing.Point(14, 49);
+            this.RotationStyle_SnapOffShift.Location = new System.Drawing.Point(11, 49);
             this.RotationStyle_SnapOffShift.Name = "RotationStyle_SnapOffShift";
             this.RotationStyle_SnapOffShift.Size = new System.Drawing.Size(230, 24);
             this.RotationStyle_SnapOffShift.TabIndex = 2;
@@ -614,7 +619,7 @@ namespace Sledge.Editor.Settings
             // 
             this.label2.Location = new System.Drawing.Point(185, 35);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(53, 18);
+            this.label2.Size = new System.Drawing.Size(230, 18);
             this.label2.TabIndex = 3;
             this.label2.Text = "unit(s)";
             // 
@@ -622,9 +627,9 @@ namespace Sledge.Editor.Settings
             // 
             this.groupBox4.Controls.Add(this.SnapStyle_SnapOffAlt);
             this.groupBox4.Controls.Add(this.SnapStyle_SnapOnAlt);
-            this.groupBox4.Location = new System.Drawing.Point(259, 60);
+            this.groupBox4.Location = new System.Drawing.Point(251, 60);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(247, 114);
+            this.groupBox4.Size = new System.Drawing.Size(212, 114);
             this.groupBox4.TabIndex = 0;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Snap to Grid";
@@ -632,7 +637,7 @@ namespace Sledge.Editor.Settings
             // SnapStyle_SnapOffAlt
             // 
             this.SnapStyle_SnapOffAlt.Checked = true;
-            this.SnapStyle_SnapOffAlt.Location = new System.Drawing.Point(14, 19);
+            this.SnapStyle_SnapOffAlt.Location = new System.Drawing.Point(10, 19);
             this.SnapStyle_SnapOffAlt.Name = "SnapStyle_SnapOffAlt";
             this.SnapStyle_SnapOffAlt.Size = new System.Drawing.Size(182, 24);
             this.SnapStyle_SnapOffAlt.TabIndex = 2;
@@ -642,7 +647,7 @@ namespace Sledge.Editor.Settings
             // 
             // SnapStyle_SnapOnAlt
             // 
-            this.SnapStyle_SnapOnAlt.Location = new System.Drawing.Point(14, 49);
+            this.SnapStyle_SnapOnAlt.Location = new System.Drawing.Point(10, 49);
             this.SnapStyle_SnapOnAlt.Name = "SnapStyle_SnapOnAlt";
             this.SnapStyle_SnapOnAlt.Size = new System.Drawing.Size(213, 24);
             this.SnapStyle_SnapOnAlt.TabIndex = 2;
@@ -1082,6 +1087,76 @@ namespace Sledge.Editor.Settings
             this.grpConfigSaving.TabStop = false;
             this.grpConfigSaving.Text = "Saving";
             // 
+            // SelectedGameAutosaveLimit
+            // 
+            this.SelectedGameAutosaveLimit.Location = new System.Drawing.Point(96, 165);
+            this.SelectedGameAutosaveLimit.Name = "SelectedGameAutosaveLimit";
+            this.SelectedGameAutosaveLimit.Size = new System.Drawing.Size(50, 20);
+            this.SelectedGameAutosaveLimit.TabIndex = 20;
+            this.SelectedGameAutosaveLimit.Value = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
+            // 
+            // label16
+            // 
+            this.label16.AutoSize = true;
+            this.label16.Location = new System.Drawing.Point(152, 167);
+            this.label16.Name = "label16";
+            this.label16.Size = new System.Drawing.Size(166, 13);
+            this.label16.TabIndex = 19;
+            this.label16.Text = "autosave(s) on disk (0 to keep all)";
+            // 
+            // SelectedGameAutosaveTime
+            // 
+            this.SelectedGameAutosaveTime.Location = new System.Drawing.Point(96, 139);
+            this.SelectedGameAutosaveTime.Maximum = new decimal(new int[] {
+            60,
+            0,
+            0,
+            0});
+            this.SelectedGameAutosaveTime.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.SelectedGameAutosaveTime.Name = "SelectedGameAutosaveTime";
+            this.SelectedGameAutosaveTime.Size = new System.Drawing.Size(50, 20);
+            this.SelectedGameAutosaveTime.TabIndex = 20;
+            this.SelectedGameAutosaveTime.Value = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
+            // 
+            // label15
+            // 
+            this.label15.AutoSize = true;
+            this.label15.Location = new System.Drawing.Point(21, 167);
+            this.label15.Name = "label15";
+            this.label15.Size = new System.Drawing.Size(69, 13);
+            this.label15.TabIndex = 19;
+            this.label15.Text = "Keep the last";
+            // 
+            // label14
+            // 
+            this.label14.AutoSize = true;
+            this.label14.Location = new System.Drawing.Point(152, 141);
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size(49, 13);
+            this.label14.TabIndex = 19;
+            this.label14.Text = "minute(s)";
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.Location = new System.Drawing.Point(10, 141);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(81, 13);
+            this.label12.TabIndex = 19;
+            this.label12.Text = "Autosave every";
+            // 
             // lblGameMapSaveDir
             // 
             this.lblGameMapSaveDir.Location = new System.Drawing.Point(9, 27);
@@ -1148,6 +1223,17 @@ namespace Sledge.Editor.Settings
             this.SelectedGameDiffAutosaveDirBrowse.UseVisualStyleBackColor = true;
             this.SelectedGameDiffAutosaveDirBrowse.Click += new System.EventHandler(this.SelectedGameDiffAutosaveDirBrowseClicked);
             // 
+            // SelectedGameAutosaveOnlyOnChange
+            // 
+            this.SelectedGameAutosaveOnlyOnChange.Checked = true;
+            this.SelectedGameAutosaveOnlyOnChange.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.SelectedGameAutosaveOnlyOnChange.Location = new System.Drawing.Point(96, 191);
+            this.SelectedGameAutosaveOnlyOnChange.Name = "SelectedGameAutosaveOnlyOnChange";
+            this.SelectedGameAutosaveOnlyOnChange.Size = new System.Drawing.Size(225, 20);
+            this.SelectedGameAutosaveOnlyOnChange.TabIndex = 14;
+            this.SelectedGameAutosaveOnlyOnChange.Text = "Only autosave if changes detected";
+            this.SelectedGameAutosaveOnlyOnChange.UseVisualStyleBackColor = true;
+            // 
             // SelectedGameUseDiffAutosaveDir
             // 
             this.SelectedGameUseDiffAutosaveDir.Checked = true;
@@ -1212,7 +1298,7 @@ namespace Sledge.Editor.Settings
             this.tabConfigEntities.Location = new System.Drawing.Point(4, 22);
             this.tabConfigEntities.Name = "tabConfigEntities";
             this.tabConfigEntities.Padding = new System.Windows.Forms.Padding(3);
-            this.tabConfigEntities.Size = new System.Drawing.Size(469, 422);
+            this.tabConfigEntities.Size = new System.Drawing.Size(469, 446);
             this.tabConfigEntities.TabIndex = 1;
             this.tabConfigEntities.Text = "Entities";
             this.tabConfigEntities.UseVisualStyleBackColor = true;
@@ -1315,7 +1401,7 @@ namespace Sledge.Editor.Settings
             this.tabConfigTextures.Location = new System.Drawing.Point(4, 22);
             this.tabConfigTextures.Name = "tabConfigTextures";
             this.tabConfigTextures.Padding = new System.Windows.Forms.Padding(3);
-            this.tabConfigTextures.Size = new System.Drawing.Size(469, 422);
+            this.tabConfigTextures.Size = new System.Drawing.Size(469, 446);
             this.tabConfigTextures.TabIndex = 2;
             this.tabConfigTextures.Text = "Textures";
             this.tabConfigTextures.UseVisualStyleBackColor = true;
@@ -2217,86 +2303,36 @@ namespace Sledge.Editor.Settings
             this.btnApplySettings.UseVisualStyleBackColor = true;
             this.btnApplySettings.Click += new System.EventHandler(this.Apply);
             // 
-            // label12
+            // groupBox16
             // 
-            this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(10, 141);
-            this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(81, 13);
-            this.label12.TabIndex = 19;
-            this.label12.Text = "Autosave every";
+            this.groupBox16.Controls.Add(this.NudgeStyle_GridOnCtrl);
+            this.groupBox16.Controls.Add(this.NudgeStyle_GridOffCtrl);
+            this.groupBox16.Location = new System.Drawing.Point(469, 60);
+            this.groupBox16.Name = "groupBox16";
+            this.groupBox16.Size = new System.Drawing.Size(256, 114);
+            this.groupBox16.TabIndex = 0;
+            this.groupBox16.TabStop = false;
+            this.groupBox16.Text = "Nudge Grid";
             // 
-            // SelectedGameAutosaveTime
+            // NudgeStyle_GridOnCtrl
             // 
-            this.SelectedGameAutosaveTime.Location = new System.Drawing.Point(96, 139);
-            this.SelectedGameAutosaveTime.Maximum = new decimal(new int[] {
-            60,
-            0,
-            0,
-            0});
-            this.SelectedGameAutosaveTime.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.SelectedGameAutosaveTime.Name = "SelectedGameAutosaveTime";
-            this.SelectedGameAutosaveTime.Size = new System.Drawing.Size(50, 20);
-            this.SelectedGameAutosaveTime.TabIndex = 20;
-            this.SelectedGameAutosaveTime.Value = new decimal(new int[] {
-            5,
-            0,
-            0,
-            0});
+            this.NudgeStyle_GridOnCtrl.Checked = true;
+            this.NudgeStyle_GridOnCtrl.Location = new System.Drawing.Point(14, 19);
+            this.NudgeStyle_GridOnCtrl.Name = "NudgeStyle_GridOnCtrl";
+            this.NudgeStyle_GridOnCtrl.Size = new System.Drawing.Size(236, 24);
+            this.NudgeStyle_GridOnCtrl.TabIndex = 2;
+            this.NudgeStyle_GridOnCtrl.TabStop = true;
+            this.NudgeStyle_GridOnCtrl.Text = "Press control to nudge by grid width";
+            this.NudgeStyle_GridOnCtrl.UseVisualStyleBackColor = true;
             // 
-            // label14
+            // NudgeStyle_GridOffCtrl
             // 
-            this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point(152, 141);
-            this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(49, 13);
-            this.label14.TabIndex = 19;
-            this.label14.Text = "minute(s)";
-            // 
-            // label15
-            // 
-            this.label15.AutoSize = true;
-            this.label15.Location = new System.Drawing.Point(21, 167);
-            this.label15.Name = "label15";
-            this.label15.Size = new System.Drawing.Size(69, 13);
-            this.label15.TabIndex = 19;
-            this.label15.Text = "Keep the last";
-            // 
-            // label16
-            // 
-            this.label16.AutoSize = true;
-            this.label16.Location = new System.Drawing.Point(152, 167);
-            this.label16.Name = "label16";
-            this.label16.Size = new System.Drawing.Size(166, 13);
-            this.label16.TabIndex = 19;
-            this.label16.Text = "autosave(s) on disk (0 to keep all)";
-            // 
-            // SelectedGameAutosaveLimit
-            // 
-            this.SelectedGameAutosaveLimit.Location = new System.Drawing.Point(96, 165);
-            this.SelectedGameAutosaveLimit.Name = "SelectedGameAutosaveLimit";
-            this.SelectedGameAutosaveLimit.Size = new System.Drawing.Size(50, 20);
-            this.SelectedGameAutosaveLimit.TabIndex = 20;
-            this.SelectedGameAutosaveLimit.Value = new decimal(new int[] {
-            5,
-            0,
-            0,
-            0});
-            // 
-            // SelectedGameAutosaveOnlyOnChange
-            // 
-            this.SelectedGameAutosaveOnlyOnChange.Checked = true;
-            this.SelectedGameAutosaveOnlyOnChange.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.SelectedGameAutosaveOnlyOnChange.Location = new System.Drawing.Point(96, 191);
-            this.SelectedGameAutosaveOnlyOnChange.Name = "SelectedGameAutosaveOnlyOnChange";
-            this.SelectedGameAutosaveOnlyOnChange.Size = new System.Drawing.Size(225, 20);
-            this.SelectedGameAutosaveOnlyOnChange.TabIndex = 14;
-            this.SelectedGameAutosaveOnlyOnChange.Text = "Only autosave if changes detected";
-            this.SelectedGameAutosaveOnlyOnChange.UseVisualStyleBackColor = true;
+            this.NudgeStyle_GridOffCtrl.Location = new System.Drawing.Point(14, 49);
+            this.NudgeStyle_GridOffCtrl.Name = "NudgeStyle_GridOffCtrl";
+            this.NudgeStyle_GridOffCtrl.Size = new System.Drawing.Size(238, 24);
+            this.NudgeStyle_GridOffCtrl.TabIndex = 2;
+            this.NudgeStyle_GridOffCtrl.Text = "Nudge by grid width unless control is pressed";
+            this.NudgeStyle_GridOffCtrl.UseVisualStyleBackColor = true;
             // 
             // SettingsForm
             // 
@@ -2336,6 +2372,8 @@ namespace Sledge.Editor.Settings
             this.grpConfigGame.PerformLayout();
             this.grpConfigSaving.ResumeLayout(false);
             this.grpConfigSaving.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.SelectedGameAutosaveLimit)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.SelectedGameAutosaveTime)).EndInit();
             this.tabConfigEntities.ResumeLayout(false);
             this.tabConfigTextures.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.SelectedGameLightmapScale)).EndInit();
@@ -2363,8 +2401,7 @@ namespace Sledge.Editor.Settings
             ((System.ComponentModel.ISupportInitialize)(this.trackBar2)).EndInit();
             this.groupBox7.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.SelectedGameAutosaveTime)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.SelectedGameAutosaveLimit)).EndInit();
+            this.groupBox16.ResumeLayout(false);
             this.ResumeLayout(false);
 
 		}
@@ -2554,5 +2591,8 @@ namespace Sledge.Editor.Settings
         private System.Windows.Forms.Label label16;
         private System.Windows.Forms.Label label15;
         private System.Windows.Forms.CheckBox SelectedGameAutosaveOnlyOnChange;
+        private System.Windows.Forms.GroupBox groupBox16;
+        private System.Windows.Forms.RadioButton NudgeStyle_GridOnCtrl;
+        private System.Windows.Forms.RadioButton NudgeStyle_GridOffCtrl;
 	}
 }

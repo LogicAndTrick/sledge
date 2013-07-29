@@ -47,7 +47,10 @@ namespace Sledge.Settings
 
         public static void DeserialiseSettings(Dictionary<string, string> dict)
         {
-            GetProperties().ToList().ForEach(x => x.SetValue(null, FromString(x.PropertyType, dict[x.Name]), null));
+            foreach (var prop in GetProperties().Where(prop => dict.ContainsKey(prop.Name)))
+            {
+                prop.SetValue(null, FromString(prop.PropertyType, dict[prop.Name]), null);
+            }
         }
     }
 }

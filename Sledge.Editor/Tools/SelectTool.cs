@@ -487,6 +487,20 @@ namespace Sledge.Editor.Tools
             }
         }
 
+        public override void KeyDown(ViewportBase viewport, ViewportEvent e)
+        {
+            var nudge = GetNudgeValue(e.KeyCode);
+            var vp = viewport as Viewport2D;
+            if (nudge != null && vp != null && (State.Action == BoxAction.ReadyToResize || State.Action == BoxAction.Drawn) && !Document.Selection.IsEmpty())
+            {
+                var translate = vp.Expand(nudge);
+                var transformation = Matrix4.CreateTranslation((float) translate.X, (float) translate.Y, (float) translate.Z);
+                ExecuteTransform("Nudge", CreateMatrixMultTransformation(transformation), KeyboardState.Shift);
+                SelectionChanged();
+            }
+            base.KeyDown(viewport, e);
+        }
+
         #endregion
 
         #region Box drawn cancel/confirm

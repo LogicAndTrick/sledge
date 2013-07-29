@@ -25,6 +25,26 @@ namespace Sledge.Editor.Tools
             return Document.Snap(c);
         }
 
+        protected Coordinate GetNudgeValue(Keys k)
+        {
+            var ctrl = KeyboardState.Ctrl;
+            var gridoff = Select.NudgeStyle == NudgeStyle.GridOffCtrl;
+            var grid = (gridoff && !ctrl) || (!gridoff && ctrl);
+            var val = grid ? Document.Map.GridSpacing : Select.NudgeUnits;
+            switch (k)
+            {
+                case Keys.Left:
+                    return new Coordinate(-val, 0, 0);
+                case Keys.Right:
+                    return new Coordinate(val, 0, 0);
+                case Keys.Up:
+                    return new Coordinate(0, val, 0);
+                case Keys.Down:
+                    return new Coordinate(0, -val, 0);
+            }
+            return null;
+        }
+
         protected Documents.Document Document { get; set; }
         public ViewportBase Viewport { get; set; }
         public ToolUsage Usage { get; set; }

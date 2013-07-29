@@ -7,6 +7,7 @@
 
         public static bool ArrowKeysNudgeSelection { get; set; }
         public static decimal NudgeUnits { get; set; }
+        public static NudgeStyle NudgeStyle { get; set; }
 
         public static bool KeepGroupsWhenCloning { get; set; }
         public static bool SelectByCenterHandlesOnly { get; set; }
@@ -16,8 +17,9 @@
             SnapStyle = SnapStyle.SnapOffAlt;
             RotationStyle = RotationStyle.SnapOnShift;
 
-            ArrowKeysNudgeSelection = false;
+            ArrowKeysNudgeSelection = true;
             NudgeUnits = 1;
+            NudgeStyle = NudgeStyle.GridOnCtrl;
 
             KeepGroupsWhenCloning = true;
             SelectByCenterHandlesOnly = false;
