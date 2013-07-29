@@ -410,7 +410,7 @@ namespace Sledge.Editor.Tools
                     break;
                 case ResizeHandle.Center:
                     var cdiff = cend - cstart;
-                    cstart = State.PreTransformBoxStart + now - SnapIfNeeded(State.MoveStart);
+                    cstart = viewport.Flatten(State.PreTransformBoxStart) + now - SnapIfNeeded(State.MoveStart);
                     cend = cstart + cdiff;
                     break;
                 case ResizeHandle.Right:

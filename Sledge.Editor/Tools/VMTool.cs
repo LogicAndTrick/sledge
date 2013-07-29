@@ -11,10 +11,12 @@ using Sledge.Editor.Actions.MapObjects.Operations;
 using Sledge.Editor.Editing;
 using Sledge.Editor.Properties;
 using Sledge.Editor.Rendering;
+using Sledge.Graphics;
 using Sledge.Graphics.Helpers;
 using Sledge.Settings;
 using Sledge.UI;
 using Matrix = Sledge.Graphics.Helpers.Matrix;
+using Vertex = Sledge.DataStructures.MapObjects.Vertex;
 
 namespace Sledge.Editor.Tools
 {
@@ -418,7 +420,7 @@ namespace Sledge.Editor.Tools
             // Render out the solid previews
             GL.Color3(Color.Pink);
             Matrix.Push();
-            var matrix = DisplayListGroup.GetMatrixFor(vp.Direction);
+            var matrix = vp.GetModelViewMatrix();
             GL.MultMatrix(ref matrix);
             DataStructures.Rendering.Rendering.DrawWireframe(_copies.Keys.SelectMany(x => x.Faces), true);
             Matrix.Pop();

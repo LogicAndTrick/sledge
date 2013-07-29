@@ -4,6 +4,7 @@ using System.Linq;
 using System.Windows.Forms;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
+using Sledge.Editor.Rendering;
 using Sledge.Graphics.Helpers;
 using Sledge.Graphics.Renderables;
 using Sledge.UI;
@@ -62,6 +63,16 @@ namespace Sledge.Editor.UI
         public static void ClearContexts()
         {
             Viewports.ForEach(v => v.RenderContext.Clear());
+        }
+
+        public static void AddContextAll(IRenderable r)
+        {
+            Viewports.ForEach(v => v.RenderContext.Add(r));
+        }
+
+        public static void RemoveContextAll(IRenderable r)
+        {
+            Viewports.ForEach(v => v.RenderContext.Remove(r));
         }
 
         public static void AddContext3D(IRenderable r)

@@ -103,15 +103,9 @@ namespace Sledge.Editor.Documents
         {
             Editor.Instance.SelectTool(ToolManager.Tools[0]); // todo keep this? cache?
 
-            //ViewportManager.Viewports.OfType<Viewport2D>().ToList().ForEach(x => x.RenderContext.Add(new GridRenderable(this, x)));
-
-            MapDisplayLists.RegenerateSelectLists(Selection);
-            MapDisplayLists.RegenerateDisplayLists(Map.WorldSpawn.Children, false);
-
             ViewportManager.AddContext3D(new WidgetLinesRenderable());
             Renderer.Register(ViewportManager.Viewports);
-
-            ViewportManager.Viewports.ForEach(vp => vp.RenderContext.Add(new ToolRenderable()));
+            ViewportManager.AddContextAll(new ToolRenderable());
 
             _subscriptions.Subscribe();
 
@@ -122,7 +116,6 @@ namespace Sledge.Editor.Documents
         {
             // todo save state (camera locations, selected tool)
             ViewportManager.ClearContexts();
-            MapDisplayLists.DeleteLists();
 
             _subscriptions.Unsubscribe();
         }

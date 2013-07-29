@@ -7,6 +7,7 @@ using OpenTK;
 using Sledge.Editor.Actions.MapObjects.Operations;
 using Sledge.Editor.History;
 using Sledge.Editor.Properties;
+using Sledge.Graphics;
 using Sledge.Settings;
 using Sledge.UI;
 using Sledge.DataStructures.Geometric;
@@ -257,7 +258,7 @@ namespace Sledge.Editor.Tools
                 GL.LineWidth(2);
                 GL.Color3(Color.White);
                 Matrix.Push();
-                var mat = DisplayListGroup.GetMatrixFor(vp.Direction);
+                var mat = vp.GetModelViewMatrix();
                 GL.MultMatrix(ref mat);
                 DataStructures.Rendering.Rendering.DrawWireframe(faces, true);
                 Matrix.Pop();

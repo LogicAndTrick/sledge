@@ -18,6 +18,7 @@ using Sledge.Editor.History;
 using Sledge.Editor.Properties;
 using Sledge.Editor.Rendering;
 using Sledge.Editor.Tools.TransformationTools;
+using Sledge.Graphics;
 using Sledge.Settings;
 using Sledge.UI;
 
@@ -627,7 +628,7 @@ namespace Sledge.Editor.Tools
                 start = viewport.Flatten(State.PreTransformBoxStart);
                 end = viewport.Flatten(State.PreTransformBoxEnd);
 
-                var dir = DisplayListGroup.GetMatrixFor(viewport.Direction);
+                var dir = viewport.GetModelViewMatrix();
                 var inv = Matrix4.Invert(dir);
                 GL.MultMatrix(ref dir);
                 var transform = CurrentTransform.Value;

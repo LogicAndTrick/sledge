@@ -176,7 +176,7 @@ namespace Sledge.Editor.Tools
             {
                 GL.Color3(GetRenderColour());
                 Graphics.Helpers.Matrix.Push();
-                var matrix = DisplayListGroup.GetMatrixFor(viewport.Direction);
+                var matrix = viewport.GetModelViewMatrix();
                 GL.MultMatrix(ref matrix);
                 DataStructures.Rendering.Rendering.DrawWireframe(_preview, true);
                 Graphics.Helpers.Matrix.Pop();

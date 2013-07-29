@@ -55,6 +55,7 @@
     <Compile Include="Arrays\VertexArray.cs" />
     <Compile Include="Arrays\VertexBuffer.cs" />
     <Compile Include="Camera.cs" />
+    <Compile Include="GLX.cs" />
     <Compile Include="Helpers\Clear.cs" />
     <Compile Include="Helpers\DisplayList.cs" />
     <Compile Include="Helpers\GraphicsHelper.cs" />

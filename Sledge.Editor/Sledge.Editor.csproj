@@ -183,14 +183,12 @@
     <Compile Include="History\HistoryAction.cs" />
     <Compile Include="History\HistoryManager.cs" />
     <Compile Include="History\IHistoryItem.cs" />
-    <Compile Include="Rendering\GLX.cs" />
     <Compile Include="Rendering\GridRenderable.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Rendering\DisplayListGroup.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Rendering\MapDisplayLists.cs" />
     <Compile Include="Rendering\RenderManagerRenderable.cs" />
     <Compile Include="Rendering\ToolRenderable.cs">
       <SubType>Code</SubType>

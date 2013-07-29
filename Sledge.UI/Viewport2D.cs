@@ -48,7 +48,6 @@ namespace Sledge.UI
             }
         }
 
-
         private static Coordinate Flatten(Coordinate c, ViewDirection direction)
         {
             switch (direction)

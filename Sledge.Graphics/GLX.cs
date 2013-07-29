@@ -2,7 +2,7 @@
 using OpenTK.Graphics.OpenGL;
 using OpenTK;
 
-namespace Sledge.Editor.Rendering
+namespace Sledge.Graphics
 {
     public static class GLX
     {
