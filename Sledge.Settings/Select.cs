@@ -9,8 +9,14 @@
         public static decimal NudgeUnits { get; set; }
         public static NudgeStyle NudgeStyle { get; set; }
 
+        public static bool AutoSelectBox { get; set; }
+        public static bool SwitchToSelectAfterCreation { get; set; }
+        public static bool SelectCreatedBrush { get; set; }
         public static bool KeepGroupsWhenCloning { get; set; }
-        public static bool SelectByCenterHandlesOnly { get; set; }
+
+        public static bool DrawCenterHandles { get; set; }
+        public static bool ClickSelectByCenterHandlesOnly { get; set; }
+        public static bool BoxSelectByCenterHandlesOnly { get; set; }
 
         static Select()
         {
@@ -21,8 +27,14 @@
             NudgeUnits = 1;
             NudgeStyle = NudgeStyle.GridOnCtrl;
 
+            AutoSelectBox = false;
+            SwitchToSelectAfterCreation = false;
+            SelectCreatedBrush = true;
             KeepGroupsWhenCloning = true;
-            SelectByCenterHandlesOnly = false;
+
+            DrawCenterHandles = false;
+            ClickSelectByCenterHandlesOnly = false;
+            BoxSelectByCenterHandlesOnly = false;
         }
     }
 }

@@ -177,19 +177,31 @@ namespace Sledge.Editor.Settings
         {
             // 2D Views
             CrosshairCursorIn2DViews.Checked = Sledge.Settings.View.CrosshairCursorIn2DViews;
-            ArrowKeysNudgeSelection.Checked = Sledge.Settings.Select.ArrowKeysNudgeSelection;
-            NudgeUnits.Value = Sledge.Settings.Select.NudgeUnits;
+            AutoSelectBox.Checked = Sledge.Settings.Select.AutoSelectBox;
+            SwitchToSelectAfterCreation.Checked = Sledge.Settings.Select.SwitchToSelectAfterCreation;
+            SelectCreatedBrush.Checked = Sledge.Settings.Select.SelectCreatedBrush;
+            DrawCenterHandles.Checked = Sledge.Settings.Select.DrawCenterHandles;
+            BoxSelectByHandlesOnly.Checked = Sledge.Settings.Select.BoxSelectByCenterHandlesOnly;
+            ClickSelectByHandlesOnly.Checked = Sledge.Settings.Select.ClickSelectByCenterHandlesOnly;
+            KeepGroupsWhenCloning.Checked = Sledge.Settings.Select.KeepGroupsWhenCloning;
+
             RotationStyle_SnapOnShift.Checked = Sledge.Settings.Select.RotationStyle == RotationStyle.SnapOnShift;
             RotationStyle_SnapOffShift.Checked = Sledge.Settings.Select.RotationStyle == RotationStyle.SnapOffShift;
             RotationStyle_SnapNever.Checked = Sledge.Settings.Select.RotationStyle == RotationStyle.SnapNever;
+
             SnapStyle_SnapOffAlt.Checked = Sledge.Settings.Select.SnapStyle == SnapStyle.SnapOffAlt;
             SnapStyle_SnapOnAlt.Checked = Sledge.Settings.Select.SnapStyle == SnapStyle.SnapOnAlt;
+
+            ArrowKeysNudgeSelection.Checked = Sledge.Settings.Select.ArrowKeysNudgeSelection;
+            NudgeUnits.Value = Sledge.Settings.Select.NudgeUnits;
             NudgeStyle_GridOffCtrl.Checked = Sledge.Settings.Select.NudgeStyle == NudgeStyle.GridOffCtrl;
             NudgeStyle_GridOnCtrl.Checked = Sledge.Settings.Select.NudgeStyle == NudgeStyle.GridOnCtrl;
+
             DefaultGridSize.SelectedItem = Grid.DefaultSize;
             HideGridLimit.Value = Grid.HideSmallerThan;
             HideGridOn.Checked = Grid.HideSmallerOn;
             HideGridFactor.SelectedItem = Grid.HideFactor;
+
             GridBackgroundColour.BackColor = Grid.Background;
             GridColour.BackColor = Grid.GridLines;
             GridZeroAxisColour.BackColor = Grid.ZeroLines;
@@ -203,12 +215,15 @@ namespace Sledge.Editor.Settings
 
             // 3D Views
             BackClippingPane.Value = Sledge.Settings.View.BackClippingPane;
+	        ModelRenderDistance.Value = Sledge.Settings.View.ModelRenderDistance;
+	        DetailRenderDistance.Value = Sledge.Settings.View.DetailRenderDistance;
+
             ForwardSpeed.Value = Sledge.Settings.View.ForwardSpeed;
             TimeToTopSpeed.Value = (int) (Sledge.Settings.View.TimeToTopSpeed / 10);
             InvertMouseX.Checked = Sledge.Settings.View.InvertX;
             InvertMouseY.Checked = Sledge.Settings.View.InvertY;
-            BackClippingPane.Value = Sledge.Settings.View.BackClippingPane;
-            BackClippingPane.Value = Sledge.Settings.View.BackClippingPane;
+
+	        CameraFOV.Value = Sledge.Settings.View.CameraFOV;
 
             // Game Configurations
             // Build Programs
@@ -224,19 +239,31 @@ namespace Sledge.Editor.Settings
         {
             // 2D Views
             Sledge.Settings.View.CrosshairCursorIn2DViews = CrosshairCursorIn2DViews.Checked;
-            Sledge.Settings.Select.ArrowKeysNudgeSelection = ArrowKeysNudgeSelection.Checked;
-            Sledge.Settings.Select.NudgeUnits = NudgeUnits.Value;
+            Sledge.Settings.Select.AutoSelectBox = AutoSelectBox.Checked;
+            Sledge.Settings.Select.SwitchToSelectAfterCreation = SwitchToSelectAfterCreation.Checked;
+            Sledge.Settings.Select.SelectCreatedBrush = SelectCreatedBrush.Checked;
+            Sledge.Settings.Select.DrawCenterHandles = DrawCenterHandles.Checked;
+            Sledge.Settings.Select.BoxSelectByCenterHandlesOnly = BoxSelectByHandlesOnly.Checked;
+            Sledge.Settings.Select.ClickSelectByCenterHandlesOnly = ClickSelectByHandlesOnly.Checked;
+            Sledge.Settings.Select.KeepGroupsWhenCloning = KeepGroupsWhenCloning.Checked;
+
             if (RotationStyle_SnapOnShift.Checked) Sledge.Settings.Select.RotationStyle = RotationStyle.SnapOnShift;
             if (RotationStyle_SnapOffShift.Checked) Sledge.Settings.Select.RotationStyle = RotationStyle.SnapOffShift;
             if (RotationStyle_SnapNever.Checked) Sledge.Settings.Select.RotationStyle = RotationStyle.SnapNever;
+
             if (SnapStyle_SnapOffAlt.Checked) Sledge.Settings.Select.SnapStyle = SnapStyle.SnapOffAlt;
             if (SnapStyle_SnapOnAlt.Checked) Sledge.Settings.Select.SnapStyle = SnapStyle.SnapOnAlt;
+
+            Sledge.Settings.Select.ArrowKeysNudgeSelection = ArrowKeysNudgeSelection.Checked;
+            Sledge.Settings.Select.NudgeUnits = NudgeUnits.Value;
             if (NudgeStyle_GridOffCtrl.Checked) Sledge.Settings.Select.NudgeStyle = NudgeStyle.GridOffCtrl;
             if (NudgeStyle_GridOnCtrl.Checked) Sledge.Settings.Select.NudgeStyle = NudgeStyle.GridOnCtrl;
+
             Grid.DefaultSize = int.Parse(Convert.ToString(DefaultGridSize.Text));
             Grid.HideSmallerThan = int.Parse(Convert.ToString(HideGridLimit.Value));
             Grid.HideSmallerOn = HideGridOn.Checked;
             Grid.HideFactor = int.Parse(Convert.ToString(HideGridFactor.Text));
+
             Grid.Background = GridBackgroundColour.BackColor;
             Grid.GridLines = GridColour.BackColor;
             Grid.ZeroLines = GridZeroAxisColour.BackColor;
@@ -250,12 +277,15 @@ namespace Sledge.Editor.Settings
 
             // 3D Views
             Sledge.Settings.View.BackClippingPane = BackClippingPane.Value;
+            Sledge.Settings.View.ModelRenderDistance = ModelRenderDistance.Value;
+            Sledge.Settings.View.DetailRenderDistance = DetailRenderDistance.Value;
+
             Sledge.Settings.View.ForwardSpeed = ForwardSpeed.Value;
             Sledge.Settings.View.TimeToTopSpeed = TimeToTopSpeed.Value * 10m;
             Sledge.Settings.View.InvertX = InvertMouseX.Checked;
             Sledge.Settings.View.InvertY = InvertMouseY.Checked;
-            Sledge.Settings.View.BackClippingPane = BackClippingPane.Value;
-            Sledge.Settings.View.BackClippingPane = BackClippingPane.Value;
+
+            Sledge.Settings.View.CameraFOV = (int) CameraFOV.Value;
 
             // Game Configurations
             // Build Programs
