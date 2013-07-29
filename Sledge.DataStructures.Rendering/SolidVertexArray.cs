@@ -141,7 +141,7 @@ namespace Sledge.DataStructures.Rendering
         /// <param name="entityOffsets"> </param>
         private static void GetArrayData(IEnumerable<MapObject> objects, out int count, out float[] array, out uint[] indices, out uint[] wireframeIndices, ICollection<VertexArraySubset<ITexture>> subsets, ICollection<VertexArraySubset<object>> wireframeSubsets, Dictionary<Face, int> faceOffsets, Dictionary<Entity, int> entityOffsets)
         {
-            var obj = objects.Where(x => !x.IsVisgroupHidden && !x.IsCodeHidden).ToList();
+            var obj = objects.Where(x => !x.IsVisgroupHidden && !x.IsCodeHidden && !x.IsRenderHidden).ToList();
             var faces = obj.OfType<Solid>().SelectMany(x => x.Faces).ToList();
             var entities = obj.OfType<Entity>().Where(x => x.Children.Count == 0).ToList();
             var indexList = new List<uint>();

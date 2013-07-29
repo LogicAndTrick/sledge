@@ -27,7 +27,7 @@ namespace Sledge.DataStructures.Rendering
         {
             var list = new List<MapObject>();
             FindRecursive(list, root, x => !x.IsVisgroupHidden);
-            return list.Where(x => !x.IsCodeHidden).ToList();
+            return list.Where(x => !x.IsCodeHidden && !x.IsRenderHidden).ToList();
         }
 
         private void FindRecursive(ICollection<MapObject> items, MapObject root, Predicate<MapObject> matcher)

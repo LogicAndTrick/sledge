@@ -99,7 +99,7 @@ namespace Sledge.DataStructures.Rendering
         /// <param name="wireframeSubsets">The collection of wireframe subsets to populate</param>
         private static void GetArrayData(IEnumerable<MapObject> objects, out int count, out float[] array, out uint[] indices, out uint[] wireframeIndices, ICollection<VertexArraySubset<ITexture>> subsets, ICollection<VertexArraySubset<object>> wireframeSubsets)
         {
-            var obj = objects.Where(x => !x.IsVisgroupHidden && !x.IsCodeHidden).ToList();
+            var obj = objects.Where(x => !x.IsVisgroupHidden && !x.IsCodeHidden && !x.IsRenderHidden).ToList();
             var faces = obj.OfType<Entity>().SelectMany(x => x.GetTexturedFaces()).ToList();
             var indexList = new List<uint>();
             var wireframeIndexList = new List<uint>();

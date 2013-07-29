@@ -264,6 +264,7 @@ void main()
 
         private void DrawBillboards(Viewport3D vp)
         {
+            // TODO HELPERS
             // These billboards aren't perfect but they'll do (they rotate with the lookat vector rather than the location vector)
             var right = vp.Camera.GetRight();
             var up = vp.Camera.GetUp();
