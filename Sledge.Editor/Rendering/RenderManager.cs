@@ -20,7 +20,7 @@ namespace Sledge.Editor.Rendering
     public class RenderManager
     {
         #region Shaders
-        public const string VertexShader = @"#version 330
+        public const string VertexShader = @"#version 130
 
 layout(location = 0) in vec3 position;
 layout(location = 1) in vec3 normal;
@@ -53,6 +53,7 @@ uniform mat4 modelViewMatrix;
 uniform mat4 perspectiveMatrix;
 uniform mat4 cameraMatrix;
 uniform mat4 selectionTransform;
+uniform mat4 inverseSelectionTransform;
 
 void main()
 {
@@ -65,7 +66,7 @@ void main()
 
     vec4 npos = vec4(normal, 1);
     // http://www.arcsynthesis.org/gltut/Illumination/Tut09%20Normal%20Transformation.html
-    if (selected > 0.9 && !drawUntransformed) npos = transpose(inverse(selectionTransform)) * npos;
+    if (selected > 0.9 && !drawUntransformed) npos = transpose(inverseSelectionTransform) * npos;
     vec3 normalPos = normalize(npos.xyz);
     npos = vec4(normalPos, 1);
 
@@ -88,7 +89,7 @@ void main()
 }
 ";
 
-        public const string FragmentShader = @"#version 330
+        public const string FragmentShader = @"#version 130
 
 smooth in vec4 worldPosition;
 smooth in vec4 worldNormal;
@@ -144,7 +145,16 @@ void main()
         public Matrix4 Perspective { set { Shader.Set("perspectiveMatrix", value); } }
         public Matrix4 Camera { set { Shader.Set("cameraMatrix", value); } }
         public Matrix4 ModelView { set { Shader.Set("modelViewMatrix", value); } }
-        public Matrix4 SelectionTransform { set { Shader.Set("selectionTransform", value); } }
+
+        public Matrix4 SelectionTransform
+        {
+            set
+            {
+                Shader.Set("selectionTransform", value);
+                Shader.Set("inverseSelectionTransform", Matrix4.Invert(value));
+            }
+        }
+
         public bool IsTextured { set { Shader.Set("isTextured", value); } }
         public bool IsWireframe { set { Shader.Set("isWireframe", value); } }
         public bool DrawUntransformed { set { Shader.Set("drawUntransformed", value); } }
