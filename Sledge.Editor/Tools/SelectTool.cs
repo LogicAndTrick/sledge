@@ -442,6 +442,15 @@ namespace Sledge.Editor.Tools
                        : _currentTool.GetTransformationMatrix(viewport, e, State, Document);
         }
 
+        protected override void LeftMouseUpDrawing(Viewport2D viewport, ViewportEvent e)
+        {
+            base.LeftMouseUpDrawing(viewport, e);
+            if (Sledge.Settings.Select.AutoSelectBox)
+            {
+                BoxDrawnConfirm(viewport);
+            }
+        }
+
         protected override void LeftMouseUpResizing(Viewport2D viewport, ViewportEvent e)
         {
             if (_currentTool == null)
