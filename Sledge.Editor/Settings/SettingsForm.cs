@@ -184,7 +184,7 @@ namespace Sledge.Editor.Settings
             DrawCenterHandles.Checked = Sledge.Settings.Select.DrawCenterHandles;
             BoxSelectByHandlesOnly.Checked = Sledge.Settings.Select.BoxSelectByCenterHandlesOnly;
             ClickSelectByHandlesOnly.Checked = Sledge.Settings.Select.ClickSelectByCenterHandlesOnly;
-            KeepGroupsWhenCloning.Checked = Sledge.Settings.Select.KeepGroupsWhenCloning;
+            KeepVisgroupsWhenCloning.Checked = Sledge.Settings.Select.KeepVisgroupsWhenCloning;
 
             RotationStyle_SnapOnShift.Checked = Sledge.Settings.Select.RotationStyle == RotationStyle.SnapOnShift;
             RotationStyle_SnapOffShift.Checked = Sledge.Settings.Select.RotationStyle == RotationStyle.SnapOffShift;
@@ -246,7 +246,7 @@ namespace Sledge.Editor.Settings
             Sledge.Settings.Select.DrawCenterHandles = DrawCenterHandles.Checked;
             Sledge.Settings.Select.BoxSelectByCenterHandlesOnly = BoxSelectByHandlesOnly.Checked;
             Sledge.Settings.Select.ClickSelectByCenterHandlesOnly = ClickSelectByHandlesOnly.Checked;
-            Sledge.Settings.Select.KeepGroupsWhenCloning = KeepGroupsWhenCloning.Checked;
+            Sledge.Settings.Select.KeepVisgroupsWhenCloning = KeepVisgroupsWhenCloning.Checked;
 
             if (RotationStyle_SnapOnShift.Checked) Sledge.Settings.Select.RotationStyle = RotationStyle.SnapOnShift;
             if (RotationStyle_SnapOffShift.Checked) Sledge.Settings.Select.RotationStyle = RotationStyle.SnapOffShift;

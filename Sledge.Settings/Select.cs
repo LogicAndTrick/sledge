@@ -12,7 +12,7 @@
         public static bool AutoSelectBox { get; set; }
         public static bool SwitchToSelectAfterCreation { get; set; }
         public static bool SelectCreatedBrush { get; set; }
-        public static bool KeepGroupsWhenCloning { get; set; }
+        public static bool KeepVisgroupsWhenCloning { get; set; }
 
         public static bool DrawCenterHandles { get; set; }
         public static bool ClickSelectByCenterHandlesOnly { get; set; }
@@ -30,7 +30,7 @@
             AutoSelectBox = false;
             SwitchToSelectAfterCreation = false;
             SelectCreatedBrush = true;
-            KeepGroupsWhenCloning = true;
+            KeepVisgroupsWhenCloning = true;
 
             DrawCenterHandles = false;
             ClickSelectByCenterHandlesOnly = false;

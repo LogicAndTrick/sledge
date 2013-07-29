@@ -680,7 +680,18 @@ namespace Sledge.Editor.Tools
             }
 
             // Transform the selection
-            action.Add(new Edit(objects, (d, x) => x.Transform(transform, d.Map.GetTransformFlags())));
+            var keepVisgroups = Sledge.Settings.Select.KeepVisgroupsWhenCloning;
+            action.Add(new Edit(objects, (d, x) =>
+                                             {
+                                                 x.Transform(transform, d.Map.GetTransformFlags());
+                                                 if (!keepVisgroups)
+                                                 {
+                                                     foreach (var o in x.FindAll())
+                                                     {
+                                                         o.Visgroups.Clear();
+                                                     }
+                                                 }
+                                             }));
 
             // Execute the action
             Document.PerformAction(name, action);

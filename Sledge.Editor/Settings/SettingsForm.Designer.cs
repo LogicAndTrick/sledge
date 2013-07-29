@@ -39,9 +39,6 @@ namespace Sledge.Editor.Settings
             this.tbcSettings = new System.Windows.Forms.TabControl();
             this.tabGeneral = new System.Windows.Forms.TabPage();
             this.tab2DViews = new System.Windows.Forms.TabPage();
-            this.ArrowKeysNudgeSelection = new System.Windows.Forms.CheckBox();
-            this.NudgeUnits = new System.Windows.Forms.NumericUpDown();
-            this.CrosshairCursorIn2DViews = new System.Windows.Forms.CheckBox();
             this.groupBox6 = new System.Windows.Forms.GroupBox();
             this.RotationStyle_SnapNever = new System.Windows.Forms.RadioButton();
             this.RotationStyle_SnapOnShift = new System.Windows.Forms.RadioButton();
@@ -65,7 +62,21 @@ namespace Sledge.Editor.Settings
             this.GridColour = new System.Windows.Forms.Panel();
             this.GridHighlight1Distance = new System.Windows.Forms.NumericUpDown();
             this.label8 = new System.Windows.Forms.Label();
+            this.groupBox17 = new System.Windows.Forms.GroupBox();
+            this.KeepVisgroupsWhenCloning = new System.Windows.Forms.CheckBox();
+            this.ClickSelectByHandlesOnly = new System.Windows.Forms.CheckBox();
+            this.BoxSelectByHandlesOnly = new System.Windows.Forms.CheckBox();
+            this.DrawCenterHandles = new System.Windows.Forms.CheckBox();
+            this.SelectCreatedBrush = new System.Windows.Forms.CheckBox();
+            this.SwitchToSelectAfterCreation = new System.Windows.Forms.CheckBox();
+            this.AutoSelectBox = new System.Windows.Forms.CheckBox();
+            this.CrosshairCursorIn2DViews = new System.Windows.Forms.CheckBox();
+            this.groupBox16 = new System.Windows.Forms.GroupBox();
+            this.ArrowKeysNudgeSelection = new System.Windows.Forms.CheckBox();
+            this.NudgeStyle_GridOnCtrl = new System.Windows.Forms.RadioButton();
+            this.NudgeStyle_GridOffCtrl = new System.Windows.Forms.RadioButton();
             this.label2 = new System.Windows.Forms.Label();
+            this.NudgeUnits = new System.Windows.Forms.NumericUpDown();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.SnapStyle_SnapOffAlt = new System.Windows.Forms.RadioButton();
             this.SnapStyle_SnapOnAlt = new System.Windows.Forms.RadioButton();
@@ -77,14 +88,26 @@ namespace Sledge.Editor.Settings
             this.HideGridFactor = new System.Windows.Forms.DomainUpDown();
             this.DefaultGridSize = new System.Windows.Forms.DomainUpDown();
             this.tab3DViews = new System.Windows.Forms.TabPage();
+            this.groupBox12 = new System.Windows.Forms.GroupBox();
+            this.CameraFOV = new System.Windows.Forms.NumericUpDown();
+            this.label29 = new System.Windows.Forms.Label();
+            this.groupBox13 = new System.Windows.Forms.GroupBox();
             this.InvertMouseX = new System.Windows.Forms.CheckBox();
+            this.TimeToTopSpeedLabel = new System.Windows.Forms.Label();
             this.InvertMouseY = new System.Windows.Forms.CheckBox();
             this.TimeToTopSpeed = new System.Windows.Forms.TrackBar();
-            this.TimeToTopSpeedLabel = new System.Windows.Forms.Label();
-            this.groupBox13 = new System.Windows.Forms.GroupBox();
-            this.ForwardSpeed = new System.Windows.Forms.TrackBar();
+            this.label28 = new System.Windows.Forms.Label();
+            this.label27 = new System.Windows.Forms.Label();
             this.ForwardSpeedLabel = new System.Windows.Forms.Label();
+            this.ForwardSpeed = new System.Windows.Forms.TrackBar();
             this.groupBox14 = new System.Windows.Forms.GroupBox();
+            this.label26 = new System.Windows.Forms.Label();
+            this.label24 = new System.Windows.Forms.Label();
+            this.label22 = new System.Windows.Forms.Label();
+            this.DetailRenderDistance = new System.Windows.Forms.TrackBar();
+            this.label25 = new System.Windows.Forms.Label();
+            this.ModelRenderDistance = new System.Windows.Forms.TrackBar();
+            this.label23 = new System.Windows.Forms.Label();
             this.BackClippingPane = new System.Windows.Forms.TrackBar();
             this.BackClippingPaneLabel = new System.Windows.Forms.Label();
             this.tabGame = new System.Windows.Forms.TabPage();
@@ -220,43 +243,26 @@ namespace Sledge.Editor.Settings
             this.btnCancelSettings = new System.Windows.Forms.Button();
             this.btnApplyAndCloseSettings = new System.Windows.Forms.Button();
             this.btnApplySettings = new System.Windows.Forms.Button();
-            this.groupBox16 = new System.Windows.Forms.GroupBox();
-            this.NudgeStyle_GridOnCtrl = new System.Windows.Forms.RadioButton();
-            this.NudgeStyle_GridOffCtrl = new System.Windows.Forms.RadioButton();
-            this.groupBox17 = new System.Windows.Forms.GroupBox();
-            this.AutoSelectBox = new System.Windows.Forms.CheckBox();
-            this.SwitchToSelectAfterCreation = new System.Windows.Forms.CheckBox();
-            this.DrawCenterHandles = new System.Windows.Forms.CheckBox();
-            this.BoxSelectByHandlesOnly = new System.Windows.Forms.CheckBox();
-            this.label22 = new System.Windows.Forms.Label();
-            this.label23 = new System.Windows.Forms.Label();
-            this.ModelRenderDistance = new System.Windows.Forms.TrackBar();
-            this.label24 = new System.Windows.Forms.Label();
-            this.label25 = new System.Windows.Forms.Label();
-            this.DetailRenderDistance = new System.Windows.Forms.TrackBar();
-            this.label26 = new System.Windows.Forms.Label();
-            this.label27 = new System.Windows.Forms.Label();
-            this.label28 = new System.Windows.Forms.Label();
-            this.groupBox12 = new System.Windows.Forms.GroupBox();
-            this.label29 = new System.Windows.Forms.Label();
-            this.CameraFOV = new System.Windows.Forms.NumericUpDown();
-            this.SelectCreatedBrush = new System.Windows.Forms.CheckBox();
-            this.ClickSelectByHandlesOnly = new System.Windows.Forms.CheckBox();
-            this.KeepGroupsWhenCloning = new System.Windows.Forms.CheckBox();
             this.tbcSettings.SuspendLayout();
             this.tab2DViews.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.NudgeUnits)).BeginInit();
             this.groupBox6.SuspendLayout();
             this.groupBox3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.GridHighlight1Distance)).BeginInit();
+            this.groupBox17.SuspendLayout();
+            this.groupBox16.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.NudgeUnits)).BeginInit();
             this.groupBox4.SuspendLayout();
             this.groupBox5.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.HideGridLimit)).BeginInit();
             this.tab3DViews.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.TimeToTopSpeed)).BeginInit();
+            this.groupBox12.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.CameraFOV)).BeginInit();
             this.groupBox13.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.TimeToTopSpeed)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ForwardSpeed)).BeginInit();
             this.groupBox14.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.DetailRenderDistance)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ModelRenderDistance)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.BackClippingPane)).BeginInit();
             this.tabGame.SuspendLayout();
             this.GameSubTabs.SuspendLayout();
@@ -287,12 +293,6 @@ namespace Sledge.Editor.Settings
             ((System.ComponentModel.ISupportInitialize)(this.trackBar2)).BeginInit();
             this.groupBox7.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
-            this.groupBox16.SuspendLayout();
-            this.groupBox17.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.ModelRenderDistance)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.DetailRenderDistance)).BeginInit();
-            this.groupBox12.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.CameraFOV)).BeginInit();
             this.SuspendLayout();
             // 
             // tbcSettings
@@ -339,50 +339,6 @@ namespace Sledge.Editor.Settings
             this.tab2DViews.TabIndex = 1;
             this.tab2DViews.Text = "2D Views";
             this.tab2DViews.UseVisualStyleBackColor = true;
-            // 
-            // ArrowKeysNudgeSelection
-            // 
-            this.ArrowKeysNudgeSelection.Checked = true;
-            this.ArrowKeysNudgeSelection.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.ArrowKeysNudgeSelection.Location = new System.Drawing.Point(12, 19);
-            this.ArrowKeysNudgeSelection.Name = "ArrowKeysNudgeSelection";
-            this.ArrowKeysNudgeSelection.Size = new System.Drawing.Size(126, 24);
-            this.ArrowKeysNudgeSelection.TabIndex = 0;
-            this.ArrowKeysNudgeSelection.Text = "Arrow keys nudge by";
-            this.ArrowKeysNudgeSelection.UseVisualStyleBackColor = true;
-            // 
-            // NudgeUnits
-            // 
-            this.NudgeUnits.DecimalPlaces = 2;
-            this.NudgeUnits.Location = new System.Drawing.Point(138, 20);
-            this.NudgeUnits.Maximum = new decimal(new int[] {
-            10,
-            0,
-            0,
-            0});
-            this.NudgeUnits.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            65536});
-            this.NudgeUnits.Name = "NudgeUnits";
-            this.NudgeUnits.Size = new System.Drawing.Size(51, 20);
-            this.NudgeUnits.TabIndex = 2;
-            this.NudgeUnits.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            // 
-            // CrosshairCursorIn2DViews
-            // 
-            this.CrosshairCursorIn2DViews.Location = new System.Drawing.Point(10, 19);
-            this.CrosshairCursorIn2DViews.Name = "CrosshairCursorIn2DViews";
-            this.CrosshairCursorIn2DViews.Size = new System.Drawing.Size(225, 24);
-            this.CrosshairCursorIn2DViews.TabIndex = 0;
-            this.CrosshairCursorIn2DViews.Tag = "";
-            this.CrosshairCursorIn2DViews.Text = "Crosshair cursor in 2D views";
-            this.CrosshairCursorIn2DViews.UseVisualStyleBackColor = true;
             // 
             // groupBox6
             // 
@@ -633,6 +589,151 @@ namespace Sledge.Editor.Settings
             this.label8.TabIndex = 1;
             this.label8.Text = "Highlight 1:";
             // 
+            // groupBox17
+            // 
+            this.groupBox17.Controls.Add(this.KeepVisgroupsWhenCloning);
+            this.groupBox17.Controls.Add(this.ClickSelectByHandlesOnly);
+            this.groupBox17.Controls.Add(this.BoxSelectByHandlesOnly);
+            this.groupBox17.Controls.Add(this.DrawCenterHandles);
+            this.groupBox17.Controls.Add(this.SelectCreatedBrush);
+            this.groupBox17.Controls.Add(this.SwitchToSelectAfterCreation);
+            this.groupBox17.Controls.Add(this.AutoSelectBox);
+            this.groupBox17.Controls.Add(this.CrosshairCursorIn2DViews);
+            this.groupBox17.Location = new System.Drawing.Point(421, 126);
+            this.groupBox17.Name = "groupBox17";
+            this.groupBox17.Size = new System.Drawing.Size(304, 269);
+            this.groupBox17.TabIndex = 0;
+            this.groupBox17.TabStop = false;
+            this.groupBox17.Text = "Options";
+            // 
+            // KeepGroupsWhenCloning
+            // 
+            this.KeepVisgroupsWhenCloning.Location = new System.Drawing.Point(10, 229);
+            this.KeepVisgroupsWhenCloning.Name = "KeepVisgroupsWhenCloning";
+            this.KeepVisgroupsWhenCloning.Size = new System.Drawing.Size(278, 24);
+            this.KeepVisgroupsWhenCloning.TabIndex = 0;
+            this.KeepVisgroupsWhenCloning.Tag = "";
+            this.KeepVisgroupsWhenCloning.Text = "Keep visgroups when cloning";
+            this.KeepVisgroupsWhenCloning.UseVisualStyleBackColor = true;
+            // 
+            // ClickSelectByHandlesOnly
+            // 
+            this.ClickSelectByHandlesOnly.Enabled = false;
+            this.ClickSelectByHandlesOnly.Location = new System.Drawing.Point(10, 199);
+            this.ClickSelectByHandlesOnly.Name = "ClickSelectByHandlesOnly";
+            this.ClickSelectByHandlesOnly.Size = new System.Drawing.Size(278, 24);
+            this.ClickSelectByHandlesOnly.TabIndex = 0;
+            this.ClickSelectByHandlesOnly.Tag = "";
+            this.ClickSelectByHandlesOnly.Text = "Clicking in 2D view selects by center handles only";
+            this.ClickSelectByHandlesOnly.UseVisualStyleBackColor = true;
+            // 
+            // BoxSelectByHandlesOnly
+            // 
+            this.BoxSelectByHandlesOnly.Enabled = false;
+            this.BoxSelectByHandlesOnly.Location = new System.Drawing.Point(10, 169);
+            this.BoxSelectByHandlesOnly.Name = "BoxSelectByHandlesOnly";
+            this.BoxSelectByHandlesOnly.Size = new System.Drawing.Size(257, 24);
+            this.BoxSelectByHandlesOnly.TabIndex = 0;
+            this.BoxSelectByHandlesOnly.Tag = "";
+            this.BoxSelectByHandlesOnly.Text = "Selection box selects by center handles only";
+            this.BoxSelectByHandlesOnly.UseVisualStyleBackColor = true;
+            // 
+            // DrawCenterHandles
+            // 
+            this.DrawCenterHandles.Enabled = false;
+            this.DrawCenterHandles.Location = new System.Drawing.Point(10, 139);
+            this.DrawCenterHandles.Name = "DrawCenterHandles";
+            this.DrawCenterHandles.Size = new System.Drawing.Size(257, 24);
+            this.DrawCenterHandles.TabIndex = 0;
+            this.DrawCenterHandles.Tag = "";
+            this.DrawCenterHandles.Text = "Render brush center handles";
+            this.DrawCenterHandles.UseVisualStyleBackColor = true;
+            // 
+            // SelectCreatedBrush
+            // 
+            this.SelectCreatedBrush.Location = new System.Drawing.Point(10, 109);
+            this.SelectCreatedBrush.Name = "SelectCreatedBrush";
+            this.SelectCreatedBrush.Size = new System.Drawing.Size(257, 24);
+            this.SelectCreatedBrush.TabIndex = 0;
+            this.SelectCreatedBrush.Tag = "";
+            this.SelectCreatedBrush.Text = "Automatically select created brush";
+            this.SelectCreatedBrush.UseVisualStyleBackColor = true;
+            // 
+            // SwitchToSelectAfterCreation
+            // 
+            this.SwitchToSelectAfterCreation.Location = new System.Drawing.Point(10, 79);
+            this.SwitchToSelectAfterCreation.Name = "SwitchToSelectAfterCreation";
+            this.SwitchToSelectAfterCreation.Size = new System.Drawing.Size(257, 24);
+            this.SwitchToSelectAfterCreation.TabIndex = 0;
+            this.SwitchToSelectAfterCreation.Tag = "";
+            this.SwitchToSelectAfterCreation.Text = "Switch to selection tool after brush creation";
+            this.SwitchToSelectAfterCreation.UseVisualStyleBackColor = true;
+            // 
+            // AutoSelectBox
+            // 
+            this.AutoSelectBox.Location = new System.Drawing.Point(10, 49);
+            this.AutoSelectBox.Name = "AutoSelectBox";
+            this.AutoSelectBox.Size = new System.Drawing.Size(225, 24);
+            this.AutoSelectBox.TabIndex = 0;
+            this.AutoSelectBox.Tag = "";
+            this.AutoSelectBox.Text = "Automatically select when box is drawn";
+            this.AutoSelectBox.UseVisualStyleBackColor = true;
+            // 
+            // CrosshairCursorIn2DViews
+            // 
+            this.CrosshairCursorIn2DViews.Location = new System.Drawing.Point(10, 19);
+            this.CrosshairCursorIn2DViews.Name = "CrosshairCursorIn2DViews";
+            this.CrosshairCursorIn2DViews.Size = new System.Drawing.Size(225, 24);
+            this.CrosshairCursorIn2DViews.TabIndex = 0;
+            this.CrosshairCursorIn2DViews.Tag = "";
+            this.CrosshairCursorIn2DViews.Text = "Crosshair cursor in 2D views";
+            this.CrosshairCursorIn2DViews.UseVisualStyleBackColor = true;
+            // 
+            // groupBox16
+            // 
+            this.groupBox16.Controls.Add(this.ArrowKeysNudgeSelection);
+            this.groupBox16.Controls.Add(this.NudgeStyle_GridOnCtrl);
+            this.groupBox16.Controls.Add(this.NudgeStyle_GridOffCtrl);
+            this.groupBox16.Controls.Add(this.label2);
+            this.groupBox16.Controls.Add(this.NudgeUnits);
+            this.groupBox16.Location = new System.Drawing.Point(469, 6);
+            this.groupBox16.Name = "groupBox16";
+            this.groupBox16.Size = new System.Drawing.Size(256, 114);
+            this.groupBox16.TabIndex = 0;
+            this.groupBox16.TabStop = false;
+            this.groupBox16.Text = "Nudge Grid";
+            // 
+            // ArrowKeysNudgeSelection
+            // 
+            this.ArrowKeysNudgeSelection.Checked = true;
+            this.ArrowKeysNudgeSelection.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.ArrowKeysNudgeSelection.Location = new System.Drawing.Point(12, 19);
+            this.ArrowKeysNudgeSelection.Name = "ArrowKeysNudgeSelection";
+            this.ArrowKeysNudgeSelection.Size = new System.Drawing.Size(126, 24);
+            this.ArrowKeysNudgeSelection.TabIndex = 0;
+            this.ArrowKeysNudgeSelection.Text = "Arrow keys nudge by";
+            this.ArrowKeysNudgeSelection.UseVisualStyleBackColor = true;
+            // 
+            // NudgeStyle_GridOnCtrl
+            // 
+            this.NudgeStyle_GridOnCtrl.Checked = true;
+            this.NudgeStyle_GridOnCtrl.Location = new System.Drawing.Point(12, 49);
+            this.NudgeStyle_GridOnCtrl.Name = "NudgeStyle_GridOnCtrl";
+            this.NudgeStyle_GridOnCtrl.Size = new System.Drawing.Size(236, 24);
+            this.NudgeStyle_GridOnCtrl.TabIndex = 2;
+            this.NudgeStyle_GridOnCtrl.TabStop = true;
+            this.NudgeStyle_GridOnCtrl.Text = "Press control to nudge by grid width";
+            this.NudgeStyle_GridOnCtrl.UseVisualStyleBackColor = true;
+            // 
+            // NudgeStyle_GridOffCtrl
+            // 
+            this.NudgeStyle_GridOffCtrl.Location = new System.Drawing.Point(12, 79);
+            this.NudgeStyle_GridOffCtrl.Name = "NudgeStyle_GridOffCtrl";
+            this.NudgeStyle_GridOffCtrl.Size = new System.Drawing.Size(238, 24);
+            this.NudgeStyle_GridOffCtrl.TabIndex = 2;
+            this.NudgeStyle_GridOffCtrl.Text = "Nudge by grid width unless control is pressed";
+            this.NudgeStyle_GridOffCtrl.UseVisualStyleBackColor = true;
+            // 
             // label2
             // 
             this.label2.Location = new System.Drawing.Point(195, 22);
@@ -640,6 +741,29 @@ namespace Sledge.Editor.Settings
             this.label2.Size = new System.Drawing.Size(45, 18);
             this.label2.TabIndex = 3;
             this.label2.Text = "unit(s)";
+            // 
+            // NudgeUnits
+            // 
+            this.NudgeUnits.DecimalPlaces = 2;
+            this.NudgeUnits.Location = new System.Drawing.Point(138, 20);
+            this.NudgeUnits.Maximum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.NudgeUnits.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            this.NudgeUnits.Name = "NudgeUnits";
+            this.NudgeUnits.Size = new System.Drawing.Size(51, 20);
+            this.NudgeUnits.TabIndex = 2;
+            this.NudgeUnits.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
             // 
             // groupBox4
             // 
@@ -785,6 +909,65 @@ namespace Sledge.Editor.Settings
             this.tab3DViews.Text = "3D Views";
             this.tab3DViews.UseVisualStyleBackColor = true;
             // 
+            // groupBox12
+            // 
+            this.groupBox12.Controls.Add(this.CameraFOV);
+            this.groupBox12.Controls.Add(this.label29);
+            this.groupBox12.Location = new System.Drawing.Point(438, 6);
+            this.groupBox12.Name = "groupBox12";
+            this.groupBox12.Size = new System.Drawing.Size(292, 71);
+            this.groupBox12.TabIndex = 4;
+            this.groupBox12.TabStop = false;
+            this.groupBox12.Text = "General";
+            // 
+            // CameraFOV
+            // 
+            this.CameraFOV.Location = new System.Drawing.Point(82, 27);
+            this.CameraFOV.Maximum = new decimal(new int[] {
+            150,
+            0,
+            0,
+            0});
+            this.CameraFOV.Minimum = new decimal(new int[] {
+            30,
+            0,
+            0,
+            0});
+            this.CameraFOV.Name = "CameraFOV";
+            this.CameraFOV.Size = new System.Drawing.Size(50, 20);
+            this.CameraFOV.TabIndex = 1;
+            this.CameraFOV.Value = new decimal(new int[] {
+            60,
+            0,
+            0,
+            0});
+            // 
+            // label29
+            // 
+            this.label29.AutoSize = true;
+            this.label29.Location = new System.Drawing.Point(9, 29);
+            this.label29.Name = "label29";
+            this.label29.Size = new System.Drawing.Size(67, 13);
+            this.label29.TabIndex = 0;
+            this.label29.Text = "Camera FOV";
+            // 
+            // groupBox13
+            // 
+            this.groupBox13.Controls.Add(this.InvertMouseX);
+            this.groupBox13.Controls.Add(this.TimeToTopSpeedLabel);
+            this.groupBox13.Controls.Add(this.InvertMouseY);
+            this.groupBox13.Controls.Add(this.TimeToTopSpeed);
+            this.groupBox13.Controls.Add(this.label28);
+            this.groupBox13.Controls.Add(this.label27);
+            this.groupBox13.Controls.Add(this.ForwardSpeedLabel);
+            this.groupBox13.Controls.Add(this.ForwardSpeed);
+            this.groupBox13.Location = new System.Drawing.Point(6, 188);
+            this.groupBox13.Name = "groupBox13";
+            this.groupBox13.Size = new System.Drawing.Size(426, 180);
+            this.groupBox13.TabIndex = 2;
+            this.groupBox13.TabStop = false;
+            this.groupBox13.Text = "Navigation";
+            // 
             // InvertMouseX
             // 
             this.InvertMouseX.Location = new System.Drawing.Point(12, 148);
@@ -793,6 +976,15 @@ namespace Sledge.Editor.Settings
             this.InvertMouseX.TabIndex = 0;
             this.InvertMouseX.Text = "Invert Mouselook X Axis";
             this.InvertMouseX.UseVisualStyleBackColor = true;
+            // 
+            // TimeToTopSpeedLabel
+            // 
+            this.TimeToTopSpeedLabel.Location = new System.Drawing.Point(354, 68);
+            this.TimeToTopSpeedLabel.Name = "TimeToTopSpeedLabel";
+            this.TimeToTopSpeedLabel.Size = new System.Drawing.Size(65, 42);
+            this.TimeToTopSpeedLabel.TabIndex = 1;
+            this.TimeToTopSpeedLabel.Text = "0.5\r\nseconds";
+            this.TimeToTopSpeedLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // InvertMouseY
             // 
@@ -817,31 +1009,32 @@ namespace Sledge.Editor.Settings
             this.TimeToTopSpeed.Value = 5;
             this.TimeToTopSpeed.Scroll += new System.EventHandler(this.TimeToTopSpeedChanged);
             // 
-            // TimeToTopSpeedLabel
+            // label28
             // 
-            this.TimeToTopSpeedLabel.Location = new System.Drawing.Point(354, 68);
-            this.TimeToTopSpeedLabel.Name = "TimeToTopSpeedLabel";
-            this.TimeToTopSpeedLabel.Size = new System.Drawing.Size(65, 42);
-            this.TimeToTopSpeedLabel.TabIndex = 1;
-            this.TimeToTopSpeedLabel.Text = "0.5\r\nseconds";
-            this.TimeToTopSpeedLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.label28.AutoSize = true;
+            this.label28.Location = new System.Drawing.Point(9, 83);
+            this.label28.Name = "label28";
+            this.label28.Size = new System.Drawing.Size(92, 13);
+            this.label28.TabIndex = 4;
+            this.label28.Text = "Time to top speed";
             // 
-            // groupBox13
+            // label27
             // 
-            this.groupBox13.Controls.Add(this.InvertMouseX);
-            this.groupBox13.Controls.Add(this.TimeToTopSpeedLabel);
-            this.groupBox13.Controls.Add(this.InvertMouseY);
-            this.groupBox13.Controls.Add(this.TimeToTopSpeed);
-            this.groupBox13.Controls.Add(this.label28);
-            this.groupBox13.Controls.Add(this.label27);
-            this.groupBox13.Controls.Add(this.ForwardSpeedLabel);
-            this.groupBox13.Controls.Add(this.ForwardSpeed);
-            this.groupBox13.Location = new System.Drawing.Point(6, 188);
-            this.groupBox13.Name = "groupBox13";
-            this.groupBox13.Size = new System.Drawing.Size(426, 180);
-            this.groupBox13.TabIndex = 2;
-            this.groupBox13.TabStop = false;
-            this.groupBox13.Text = "Navigation";
+            this.label27.AutoSize = true;
+            this.label27.Location = new System.Drawing.Point(9, 35);
+            this.label27.Name = "label27";
+            this.label27.Size = new System.Drawing.Size(77, 13);
+            this.label27.TabIndex = 4;
+            this.label27.Text = "Forward speed";
+            // 
+            // ForwardSpeedLabel
+            // 
+            this.ForwardSpeedLabel.Location = new System.Drawing.Point(362, 20);
+            this.ForwardSpeedLabel.Name = "ForwardSpeedLabel";
+            this.ForwardSpeedLabel.Size = new System.Drawing.Size(57, 42);
+            this.ForwardSpeedLabel.TabIndex = 1;
+            this.ForwardSpeedLabel.Text = "1000\r\nunits/sec";
+            this.ForwardSpeedLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // ForwardSpeed
             // 
@@ -857,15 +1050,6 @@ namespace Sledge.Editor.Settings
             this.ForwardSpeed.TickStyle = System.Windows.Forms.TickStyle.Both;
             this.ForwardSpeed.Value = 1000;
             this.ForwardSpeed.Scroll += new System.EventHandler(this.ForwardSpeedChanged);
-            // 
-            // ForwardSpeedLabel
-            // 
-            this.ForwardSpeedLabel.Location = new System.Drawing.Point(362, 20);
-            this.ForwardSpeedLabel.Name = "ForwardSpeedLabel";
-            this.ForwardSpeedLabel.Size = new System.Drawing.Size(57, 42);
-            this.ForwardSpeedLabel.TabIndex = 1;
-            this.ForwardSpeedLabel.Text = "1000\r\nunits/sec";
-            this.ForwardSpeedLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // groupBox14
             // 
@@ -884,6 +1068,81 @@ namespace Sledge.Editor.Settings
             this.groupBox14.TabIndex = 2;
             this.groupBox14.TabStop = false;
             this.groupBox14.Text = "Performance";
+            // 
+            // label26
+            // 
+            this.label26.AutoSize = true;
+            this.label26.Location = new System.Drawing.Point(7, 136);
+            this.label26.Name = "label26";
+            this.label26.Size = new System.Drawing.Size(110, 13);
+            this.label26.TabIndex = 4;
+            this.label26.Text = "Detail render distance";
+            // 
+            // label24
+            // 
+            this.label24.AutoSize = true;
+            this.label24.Location = new System.Drawing.Point(7, 81);
+            this.label24.Name = "label24";
+            this.label24.Size = new System.Drawing.Size(112, 13);
+            this.label24.TabIndex = 4;
+            this.label24.Text = "Model render distance";
+            // 
+            // label22
+            // 
+            this.label22.AutoSize = true;
+            this.label22.Location = new System.Drawing.Point(6, 34);
+            this.label22.Name = "label22";
+            this.label22.Size = new System.Drawing.Size(100, 13);
+            this.label22.TabIndex = 4;
+            this.label22.Text = "Back clipping plane";
+            // 
+            // DetailRenderDistance
+            // 
+            this.DetailRenderDistance.AutoSize = false;
+            this.DetailRenderDistance.BackColor = System.Drawing.SystemColors.Window;
+            this.DetailRenderDistance.Location = new System.Drawing.Point(125, 122);
+            this.DetailRenderDistance.Maximum = 10000;
+            this.DetailRenderDistance.Minimum = 2000;
+            this.DetailRenderDistance.Name = "DetailRenderDistance";
+            this.DetailRenderDistance.Size = new System.Drawing.Size(232, 41);
+            this.DetailRenderDistance.TabIndex = 0;
+            this.DetailRenderDistance.TickFrequency = 10000;
+            this.DetailRenderDistance.TickStyle = System.Windows.Forms.TickStyle.Both;
+            this.DetailRenderDistance.Value = 5000;
+            this.DetailRenderDistance.Scroll += new System.EventHandler(this.BackClippingPaneChanged);
+            // 
+            // label25
+            // 
+            this.label25.Location = new System.Drawing.Point(351, 131);
+            this.label25.Name = "label25";
+            this.label25.Size = new System.Drawing.Size(69, 23);
+            this.label25.TabIndex = 1;
+            this.label25.Text = "4000";
+            this.label25.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // ModelRenderDistance
+            // 
+            this.ModelRenderDistance.AutoSize = false;
+            this.ModelRenderDistance.BackColor = System.Drawing.SystemColors.Window;
+            this.ModelRenderDistance.Location = new System.Drawing.Point(125, 67);
+            this.ModelRenderDistance.Maximum = 10000;
+            this.ModelRenderDistance.Minimum = 2000;
+            this.ModelRenderDistance.Name = "ModelRenderDistance";
+            this.ModelRenderDistance.Size = new System.Drawing.Size(232, 41);
+            this.ModelRenderDistance.TabIndex = 0;
+            this.ModelRenderDistance.TickFrequency = 10000;
+            this.ModelRenderDistance.TickStyle = System.Windows.Forms.TickStyle.Both;
+            this.ModelRenderDistance.Value = 5000;
+            this.ModelRenderDistance.Scroll += new System.EventHandler(this.BackClippingPaneChanged);
+            // 
+            // label23
+            // 
+            this.label23.Location = new System.Drawing.Point(351, 76);
+            this.label23.Name = "label23";
+            this.label23.Size = new System.Drawing.Size(69, 23);
+            this.label23.TabIndex = 1;
+            this.label23.Text = "4000";
+            this.label23.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // BackClippingPane
             // 
@@ -2311,266 +2570,6 @@ namespace Sledge.Editor.Settings
             this.btnApplySettings.UseVisualStyleBackColor = true;
             this.btnApplySettings.Click += new System.EventHandler(this.Apply);
             // 
-            // groupBox16
-            // 
-            this.groupBox16.Controls.Add(this.ArrowKeysNudgeSelection);
-            this.groupBox16.Controls.Add(this.NudgeStyle_GridOnCtrl);
-            this.groupBox16.Controls.Add(this.NudgeStyle_GridOffCtrl);
-            this.groupBox16.Controls.Add(this.label2);
-            this.groupBox16.Controls.Add(this.NudgeUnits);
-            this.groupBox16.Location = new System.Drawing.Point(469, 6);
-            this.groupBox16.Name = "groupBox16";
-            this.groupBox16.Size = new System.Drawing.Size(256, 114);
-            this.groupBox16.TabIndex = 0;
-            this.groupBox16.TabStop = false;
-            this.groupBox16.Text = "Nudge Grid";
-            // 
-            // NudgeStyle_GridOnCtrl
-            // 
-            this.NudgeStyle_GridOnCtrl.Checked = true;
-            this.NudgeStyle_GridOnCtrl.Location = new System.Drawing.Point(12, 49);
-            this.NudgeStyle_GridOnCtrl.Name = "NudgeStyle_GridOnCtrl";
-            this.NudgeStyle_GridOnCtrl.Size = new System.Drawing.Size(236, 24);
-            this.NudgeStyle_GridOnCtrl.TabIndex = 2;
-            this.NudgeStyle_GridOnCtrl.TabStop = true;
-            this.NudgeStyle_GridOnCtrl.Text = "Press control to nudge by grid width";
-            this.NudgeStyle_GridOnCtrl.UseVisualStyleBackColor = true;
-            // 
-            // NudgeStyle_GridOffCtrl
-            // 
-            this.NudgeStyle_GridOffCtrl.Location = new System.Drawing.Point(12, 79);
-            this.NudgeStyle_GridOffCtrl.Name = "NudgeStyle_GridOffCtrl";
-            this.NudgeStyle_GridOffCtrl.Size = new System.Drawing.Size(238, 24);
-            this.NudgeStyle_GridOffCtrl.TabIndex = 2;
-            this.NudgeStyle_GridOffCtrl.Text = "Nudge by grid width unless control is pressed";
-            this.NudgeStyle_GridOffCtrl.UseVisualStyleBackColor = true;
-            // 
-            // groupBox17
-            // 
-            this.groupBox17.Controls.Add(this.KeepGroupsWhenCloning);
-            this.groupBox17.Controls.Add(this.ClickSelectByHandlesOnly);
-            this.groupBox17.Controls.Add(this.BoxSelectByHandlesOnly);
-            this.groupBox17.Controls.Add(this.DrawCenterHandles);
-            this.groupBox17.Controls.Add(this.SelectCreatedBrush);
-            this.groupBox17.Controls.Add(this.SwitchToSelectAfterCreation);
-            this.groupBox17.Controls.Add(this.AutoSelectBox);
-            this.groupBox17.Controls.Add(this.CrosshairCursorIn2DViews);
-            this.groupBox17.Location = new System.Drawing.Point(421, 126);
-            this.groupBox17.Name = "groupBox17";
-            this.groupBox17.Size = new System.Drawing.Size(304, 269);
-            this.groupBox17.TabIndex = 0;
-            this.groupBox17.TabStop = false;
-            this.groupBox17.Text = "Options";
-            // 
-            // AutoSelectBox
-            // 
-            this.AutoSelectBox.Location = new System.Drawing.Point(10, 49);
-            this.AutoSelectBox.Name = "AutoSelectBox";
-            this.AutoSelectBox.Size = new System.Drawing.Size(225, 24);
-            this.AutoSelectBox.TabIndex = 0;
-            this.AutoSelectBox.Tag = "";
-            this.AutoSelectBox.Text = "Automatically select when box is drawn";
-            this.AutoSelectBox.UseVisualStyleBackColor = true;
-            // 
-            // SwitchToSelectAfterCreation
-            // 
-            this.SwitchToSelectAfterCreation.Location = new System.Drawing.Point(10, 79);
-            this.SwitchToSelectAfterCreation.Name = "SwitchToSelectAfterCreation";
-            this.SwitchToSelectAfterCreation.Size = new System.Drawing.Size(257, 24);
-            this.SwitchToSelectAfterCreation.TabIndex = 0;
-            this.SwitchToSelectAfterCreation.Tag = "";
-            this.SwitchToSelectAfterCreation.Text = "Switch to selection tool after brush creation";
-            this.SwitchToSelectAfterCreation.UseVisualStyleBackColor = true;
-            // 
-            // DrawCenterHandles
-            // 
-            this.DrawCenterHandles.Enabled = false;
-            this.DrawCenterHandles.Location = new System.Drawing.Point(10, 139);
-            this.DrawCenterHandles.Name = "DrawCenterHandles";
-            this.DrawCenterHandles.Size = new System.Drawing.Size(257, 24);
-            this.DrawCenterHandles.TabIndex = 0;
-            this.DrawCenterHandles.Tag = "";
-            this.DrawCenterHandles.Text = "Render brush center handles";
-            this.DrawCenterHandles.UseVisualStyleBackColor = true;
-            // 
-            // BoxSelectByHandlesOnly
-            // 
-            this.BoxSelectByHandlesOnly.Enabled = false;
-            this.BoxSelectByHandlesOnly.Location = new System.Drawing.Point(10, 169);
-            this.BoxSelectByHandlesOnly.Name = "BoxSelectByHandlesOnly";
-            this.BoxSelectByHandlesOnly.Size = new System.Drawing.Size(257, 24);
-            this.BoxSelectByHandlesOnly.TabIndex = 0;
-            this.BoxSelectByHandlesOnly.Tag = "";
-            this.BoxSelectByHandlesOnly.Text = "Selection box selects by center handles only";
-            this.BoxSelectByHandlesOnly.UseVisualStyleBackColor = true;
-            // 
-            // label22
-            // 
-            this.label22.AutoSize = true;
-            this.label22.Location = new System.Drawing.Point(6, 34);
-            this.label22.Name = "label22";
-            this.label22.Size = new System.Drawing.Size(100, 13);
-            this.label22.TabIndex = 4;
-            this.label22.Text = "Back clipping plane";
-            // 
-            // label23
-            // 
-            this.label23.Location = new System.Drawing.Point(351, 76);
-            this.label23.Name = "label23";
-            this.label23.Size = new System.Drawing.Size(69, 23);
-            this.label23.TabIndex = 1;
-            this.label23.Text = "4000";
-            this.label23.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // ModelRenderDistance
-            // 
-            this.ModelRenderDistance.AutoSize = false;
-            this.ModelRenderDistance.BackColor = System.Drawing.SystemColors.Window;
-            this.ModelRenderDistance.Location = new System.Drawing.Point(125, 67);
-            this.ModelRenderDistance.Maximum = 10000;
-            this.ModelRenderDistance.Minimum = 2000;
-            this.ModelRenderDistance.Name = "ModelRenderDistance";
-            this.ModelRenderDistance.Size = new System.Drawing.Size(232, 41);
-            this.ModelRenderDistance.TabIndex = 0;
-            this.ModelRenderDistance.TickFrequency = 10000;
-            this.ModelRenderDistance.TickStyle = System.Windows.Forms.TickStyle.Both;
-            this.ModelRenderDistance.Value = 5000;
-            this.ModelRenderDistance.Scroll += new System.EventHandler(this.BackClippingPaneChanged);
-            // 
-            // label24
-            // 
-            this.label24.AutoSize = true;
-            this.label24.Location = new System.Drawing.Point(7, 81);
-            this.label24.Name = "label24";
-            this.label24.Size = new System.Drawing.Size(112, 13);
-            this.label24.TabIndex = 4;
-            this.label24.Text = "Model render distance";
-            // 
-            // label25
-            // 
-            this.label25.Location = new System.Drawing.Point(351, 131);
-            this.label25.Name = "label25";
-            this.label25.Size = new System.Drawing.Size(69, 23);
-            this.label25.TabIndex = 1;
-            this.label25.Text = "4000";
-            this.label25.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // DetailRenderDistance
-            // 
-            this.DetailRenderDistance.AutoSize = false;
-            this.DetailRenderDistance.BackColor = System.Drawing.SystemColors.Window;
-            this.DetailRenderDistance.Location = new System.Drawing.Point(125, 122);
-            this.DetailRenderDistance.Maximum = 10000;
-            this.DetailRenderDistance.Minimum = 2000;
-            this.DetailRenderDistance.Name = "DetailRenderDistance";
-            this.DetailRenderDistance.Size = new System.Drawing.Size(232, 41);
-            this.DetailRenderDistance.TabIndex = 0;
-            this.DetailRenderDistance.TickFrequency = 10000;
-            this.DetailRenderDistance.TickStyle = System.Windows.Forms.TickStyle.Both;
-            this.DetailRenderDistance.Value = 5000;
-            this.DetailRenderDistance.Scroll += new System.EventHandler(this.BackClippingPaneChanged);
-            // 
-            // label26
-            // 
-            this.label26.AutoSize = true;
-            this.label26.Location = new System.Drawing.Point(7, 136);
-            this.label26.Name = "label26";
-            this.label26.Size = new System.Drawing.Size(110, 13);
-            this.label26.TabIndex = 4;
-            this.label26.Text = "Detail render distance";
-            // 
-            // label27
-            // 
-            this.label27.AutoSize = true;
-            this.label27.Location = new System.Drawing.Point(9, 35);
-            this.label27.Name = "label27";
-            this.label27.Size = new System.Drawing.Size(77, 13);
-            this.label27.TabIndex = 4;
-            this.label27.Text = "Forward speed";
-            // 
-            // label28
-            // 
-            this.label28.AutoSize = true;
-            this.label28.Location = new System.Drawing.Point(9, 83);
-            this.label28.Name = "label28";
-            this.label28.Size = new System.Drawing.Size(92, 13);
-            this.label28.TabIndex = 4;
-            this.label28.Text = "Time to top speed";
-            // 
-            // groupBox12
-            // 
-            this.groupBox12.Controls.Add(this.CameraFOV);
-            this.groupBox12.Controls.Add(this.label29);
-            this.groupBox12.Location = new System.Drawing.Point(438, 6);
-            this.groupBox12.Name = "groupBox12";
-            this.groupBox12.Size = new System.Drawing.Size(292, 71);
-            this.groupBox12.TabIndex = 4;
-            this.groupBox12.TabStop = false;
-            this.groupBox12.Text = "General";
-            // 
-            // label29
-            // 
-            this.label29.AutoSize = true;
-            this.label29.Location = new System.Drawing.Point(9, 29);
-            this.label29.Name = "label29";
-            this.label29.Size = new System.Drawing.Size(67, 13);
-            this.label29.TabIndex = 0;
-            this.label29.Text = "Camera FOV";
-            // 
-            // CameraFOV
-            // 
-            this.CameraFOV.Location = new System.Drawing.Point(82, 27);
-            this.CameraFOV.Maximum = new decimal(new int[] {
-            150,
-            0,
-            0,
-            0});
-            this.CameraFOV.Minimum = new decimal(new int[] {
-            30,
-            0,
-            0,
-            0});
-            this.CameraFOV.Name = "CameraFOV";
-            this.CameraFOV.Size = new System.Drawing.Size(50, 20);
-            this.CameraFOV.TabIndex = 1;
-            this.CameraFOV.Value = new decimal(new int[] {
-            60,
-            0,
-            0,
-            0});
-            // 
-            // SelectCreatedBrush
-            // 
-            this.SelectCreatedBrush.Location = new System.Drawing.Point(10, 109);
-            this.SelectCreatedBrush.Name = "SelectCreatedBrush";
-            this.SelectCreatedBrush.Size = new System.Drawing.Size(257, 24);
-            this.SelectCreatedBrush.TabIndex = 0;
-            this.SelectCreatedBrush.Tag = "";
-            this.SelectCreatedBrush.Text = "Automatically select created brush";
-            this.SelectCreatedBrush.UseVisualStyleBackColor = true;
-            // 
-            // ClickSelectByHandlesOnly
-            // 
-            this.ClickSelectByHandlesOnly.Enabled = false;
-            this.ClickSelectByHandlesOnly.Location = new System.Drawing.Point(10, 199);
-            this.ClickSelectByHandlesOnly.Name = "ClickSelectByHandlesOnly";
-            this.ClickSelectByHandlesOnly.Size = new System.Drawing.Size(278, 24);
-            this.ClickSelectByHandlesOnly.TabIndex = 0;
-            this.ClickSelectByHandlesOnly.Tag = "";
-            this.ClickSelectByHandlesOnly.Text = "Clicking in 2D view selects by center handles only";
-            this.ClickSelectByHandlesOnly.UseVisualStyleBackColor = true;
-            // 
-            // KeepGroupsWhenCloning
-            // 
-            this.KeepGroupsWhenCloning.Enabled = false;
-            this.KeepGroupsWhenCloning.Location = new System.Drawing.Point(10, 229);
-            this.KeepGroupsWhenCloning.Name = "KeepGroupsWhenCloning";
-            this.KeepGroupsWhenCloning.Size = new System.Drawing.Size(278, 24);
-            this.KeepGroupsWhenCloning.TabIndex = 0;
-            this.KeepGroupsWhenCloning.Tag = "";
-            this.KeepGroupsWhenCloning.Text = "Keep groups when cloning";
-            this.KeepGroupsWhenCloning.UseVisualStyleBackColor = true;
-            // 
             // SettingsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -2586,20 +2585,27 @@ namespace Sledge.Editor.Settings
             this.Load += new System.EventHandler(this.SettingsFormLoad);
             this.tbcSettings.ResumeLayout(false);
             this.tab2DViews.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.NudgeUnits)).EndInit();
             this.groupBox6.ResumeLayout(false);
             this.groupBox3.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.GridHighlight1Distance)).EndInit();
+            this.groupBox17.ResumeLayout(false);
+            this.groupBox16.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.NudgeUnits)).EndInit();
             this.groupBox4.ResumeLayout(false);
             this.groupBox5.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.HideGridLimit)).EndInit();
             this.tab3DViews.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.TimeToTopSpeed)).EndInit();
+            this.groupBox12.ResumeLayout(false);
+            this.groupBox12.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.CameraFOV)).EndInit();
             this.groupBox13.ResumeLayout(false);
             this.groupBox13.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.TimeToTopSpeed)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.ForwardSpeed)).EndInit();
             this.groupBox14.ResumeLayout(false);
             this.groupBox14.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.DetailRenderDistance)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ModelRenderDistance)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.BackClippingPane)).EndInit();
             this.tabGame.ResumeLayout(false);
             this.GameSubTabs.ResumeLayout(false);
@@ -2638,13 +2644,6 @@ namespace Sledge.Editor.Settings
             ((System.ComponentModel.ISupportInitialize)(this.trackBar2)).EndInit();
             this.groupBox7.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).EndInit();
-            this.groupBox16.ResumeLayout(false);
-            this.groupBox17.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.ModelRenderDistance)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.DetailRenderDistance)).EndInit();
-            this.groupBox12.ResumeLayout(false);
-            this.groupBox12.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.CameraFOV)).EndInit();
             this.ResumeLayout(false);
 
 		}
@@ -2854,6 +2853,6 @@ namespace Sledge.Editor.Settings
         private System.Windows.Forms.Label label29;
         private System.Windows.Forms.CheckBox SelectCreatedBrush;
         private System.Windows.Forms.CheckBox ClickSelectByHandlesOnly;
-        private System.Windows.Forms.CheckBox KeepGroupsWhenCloning;
+        private System.Windows.Forms.CheckBox KeepVisgroupsWhenCloning;
 	}
 }
