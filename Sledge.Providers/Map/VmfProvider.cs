@@ -538,7 +538,9 @@ namespace Sledge.Providers.Map
 
                 foreach (var visgroup in visgroups)
                 {
-                    map.Visgroups.Add(ReadVisgroup(visgroup));
+                    var vg = ReadVisgroup(visgroup);
+                    if (vg.ID < 0 && vg.Name == "Auto") continue; 
+                    map.Visgroups.Add(vg);
                 }
 
                 if (world != null) map.WorldSpawn = ReadWorld(world, map.IDGenerator);
@@ -591,7 +593,7 @@ namespace Sledge.Providers.Map
             versioninfo.AddProperty("prefab", "0");
 
             var visgroups = new GenericStructure("visgroups");
-            foreach (var visgroup in map.Visgroups.OrderBy(x => x.ID))
+            foreach (var visgroup in map.Visgroups.OrderBy(x => x.ID).Where(x => !x.IsAutomatic))
             {
                 visgroups.Children.Add(WriteVisgroup(visgroup));
             }
