@@ -101,19 +101,17 @@ namespace Sledge.Editor.Editing
 
         public void Select(MapObject obj)
         {
-            obj.IsSelected = true;
-            SelectedObjects.Add(obj);
-            _changed = true;
+            Select(new[] { obj });
         }
 
         public void Select(IEnumerable<MapObject> objs)
         {
-            foreach (var obj in objs)
+            foreach (var obj in objs.SelectMany(x => x.FindAll()).Distinct())
             {
                 obj.IsSelected = true;
                 SelectedObjects.Add(obj);
-                _changed = true;
             }
+            _changed = true;
         }
 
         public void Select(Face face)
@@ -129,23 +127,23 @@ namespace Sledge.Editor.Editing
             {
                 face.IsSelected = true;
                 SelectedFaces.Add(face);
-                _changed = true;
             }
+            _changed = true;
         }
 
         public void Deselect(MapObject obj)
         {
-            SelectedObjects.RemoveAll(x => x == obj);
-            obj.IsSelected = false;
+            Deselect(new[] {obj});
         }
 
         public void Deselect(IEnumerable<MapObject> objs)
         {
-            foreach (var obj in objs)
+            foreach (var obj in objs.SelectMany(x => x.FindAll()).Distinct())
             {
                 SelectedObjects.RemoveAll(x => x == obj);
                 obj.IsSelected = false;
             }
+            _changed = true;
         }
 
         public void Deselect(Face face)
@@ -161,6 +159,7 @@ namespace Sledge.Editor.Editing
                 SelectedFaces.RemoveAll(x => x == face);
                 face.IsSelected = false;
             }
+            _changed = true;
         }
 
         public bool IsEmpty()

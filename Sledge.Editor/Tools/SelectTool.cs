@@ -156,7 +156,6 @@ namespace Sledge.Editor.Tools
         /// <returns>The normalised list of objects</returns>
         private static IEnumerable<MapObject> NormaliseSelection(IEnumerable<MapObject> objects, bool ignoreGrouping)
         {
-            //TODO should selection flatten?
             return ignoreGrouping
                        ? objects
                        : objects.Select(x => x.FindTopmostParent(y => y is Group || y is Entity) ?? x).Distinct().SelectMany(x => x.FindAll());

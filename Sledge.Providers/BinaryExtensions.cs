@@ -160,7 +160,7 @@ namespace Sledge.Providers
             return Color.FromArgb(a, r, g, b);
         }
 
-        public static void WriteaRGBAColour(this BinaryWriter bw, Color c)
+        public static void WriteRGBAColour(this BinaryWriter bw, Color c)
         {
             bw.Write(c.R);
             bw.Write(c.G);

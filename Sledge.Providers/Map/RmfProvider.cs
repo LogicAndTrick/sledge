@@ -420,13 +420,14 @@ namespace Sledge.Providers.Map
             }
         }
 
-        private static void WriteVisgroups(BinaryWriter bw, List<Visgroup> visgroups)
+        private static void WriteVisgroups(BinaryWriter bw, IEnumerable<Visgroup> visgroups)
         {
-            bw.Write(visgroups.Count);
-            foreach (var visgroup in visgroups.Where(x => !x.IsAutomatic))
+            var vis = visgroups.Where(x => !x.IsAutomatic).ToList();
+            bw.Write(vis.Count);
+            foreach (var visgroup in vis)
             {
                 bw.WriteFixedLengthString(Encoding.UTF8, 128, visgroup.Name);
-                bw.WriteaRGBAColour(visgroup.Colour);
+                bw.WriteRGBAColour(visgroup.Colour);
                 bw.Write(visgroup.ID);
                 bw.Write(visgroup.Visible);
                 bw.Write(new byte[3]); // Unused
