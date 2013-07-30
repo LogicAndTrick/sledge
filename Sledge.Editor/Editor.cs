@@ -110,8 +110,8 @@ namespace Sledge.Editor
             TextureProvider.Register(new SprProvider());
 
             var spritesFolder = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Sprites");
-            TexturePackage.Load(spritesFolder);
-            TexturePackage.LoadTextureData(TexturePackage.GetLoadedItems().Select(x => x.Name));
+            //TexturePackage.Load(spritesFolder);
+            //TexturePackage.LoadTextureData(TexturePackage.GetLoadedItems().Select(x => x.Name));
 
             Subscribe();
 
