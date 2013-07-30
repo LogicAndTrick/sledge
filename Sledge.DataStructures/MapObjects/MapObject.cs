@@ -19,7 +19,8 @@ namespace Sledge.DataStructures.MapObjects
         public Color Colour { get; set; }
         public bool IsSelected { get; set; }
         public bool IsCodeHidden { get; set; }
-        public bool IsRenderHidden { get; set; }
+        public bool IsRenderHidden2D { get; set; }
+        public bool IsRenderHidden3D { get; set; }
         public bool IsVisgroupHidden { get; set; }
         public Box BoundingBox { get; set; }
 
@@ -61,7 +62,8 @@ namespace Sledge.DataStructures.MapObjects
             o.Colour = Colour;
             o.IsSelected = IsSelected;
             o.IsCodeHidden = IsCodeHidden;
-            o.IsRenderHidden = IsRenderHidden;
+            o.IsRenderHidden2D = IsRenderHidden2D;
+            o.IsRenderHidden3D = IsRenderHidden3D;
             o.IsVisgroupHidden = IsVisgroupHidden;
             o.BoundingBox = BoundingBox.Clone();
             var children = Children.Select(x => performClone ? x.Clone() : x.Copy(generator));
@@ -85,7 +87,8 @@ namespace Sledge.DataStructures.MapObjects
             Colour = o.Colour;
             IsSelected = o.IsSelected;
             IsCodeHidden = o.IsCodeHidden;
-            IsRenderHidden = o.IsRenderHidden;
+            IsRenderHidden2D = o.IsRenderHidden2D;
+            IsRenderHidden3D = o.IsRenderHidden3D;
             IsVisgroupHidden = o.IsVisgroupHidden;
             BoundingBox = o.BoundingBox.Clone();
 

@@ -13,6 +13,7 @@ using Sledge.Editor.Actions;
 using Sledge.Editor.Editing;
 using Sledge.Editor.History;
 using Sledge.Editor.Rendering;
+using Sledge.Editor.Rendering.Helpers;
 using Sledge.Editor.Tools;
 using Sledge.Editor.UI;
 using Sledge.Editor.Visgroups;
@@ -43,6 +44,7 @@ namespace Sledge.Editor.Documents
 
         public SelectionManager Selection { get; private set; }
         public HistoryManager History { get; private set; }
+        public HelperManager HelperManager { get; set; }
 
         private readonly DocumentSubscriptions _subscriptions;
 
@@ -50,6 +52,7 @@ namespace Sledge.Editor.Documents
         {
             Selection = new SelectionManager(this);
             History = new HistoryManager(this);
+            HelperManager = new HelperManager(this);
         }
 
         public Document(string mapFile, Map map, Game game)
@@ -87,6 +90,7 @@ namespace Sledge.Editor.Documents
             Map.PostLoadProcess(GameData, TextureHelper.Get);
 
             Renderer = new RenderManager(this);
+            HelperManager = new HelperManager(this);
 
             if (MapFile != null) Mediator.Publish(EditorMediator.FileOpened, MapFile);
             Mediator.Publish(EditorMediator.DocumentOpened, this);
@@ -106,8 +110,10 @@ namespace Sledge.Editor.Documents
             ViewportManager.AddContext3D(new WidgetLinesRenderable());
             Renderer.Register(ViewportManager.Viewports);
             ViewportManager.AddContextAll(new ToolRenderable());
+            ViewportManager.AddContextAll(new HelperRenderable(this));
 
             _subscriptions.Subscribe();
+            HelperManager.UpdateCache();
 
             Mediator.Publish(EditorMediator.DocumentActivated, this);
         }
@@ -116,6 +122,7 @@ namespace Sledge.Editor.Documents
         {
             // todo save state (camera locations, selected tool)
             ViewportManager.ClearContexts();
+            HelperManager.ClearCache();
 
             _subscriptions.Unsubscribe();
         }
@@ -272,6 +279,7 @@ namespace Sledge.Editor.Documents
         public void UpdateDisplayLists()
         {
             Map.PartialPostLoadProcess(GameData, TextureHelper.Get);
+            HelperManager.UpdateCache();
             Renderer.Update();
             ViewportManager.Viewports.ForEach(vp => vp.UpdateNextFrame());
         }
@@ -279,6 +287,7 @@ namespace Sledge.Editor.Documents
         public void UpdateDisplayLists(IEnumerable<MapObject> objects)
         {
             Map.PartialPostLoadProcess(GameData, TextureHelper.Get);
+            HelperManager.UpdateCache();
             Renderer.UpdatePartial(objects);
             ViewportManager.Viewports.ForEach(vp => vp.UpdateNextFrame());
         }
@@ -286,6 +295,7 @@ namespace Sledge.Editor.Documents
         public void UpdateDisplayLists(IEnumerable<Face> faces)
         {
             Map.PartialPostLoadProcess(GameData, TextureHelper.Get);
+            HelperManager.UpdateCache();
             Renderer.UpdatePartial(faces);
             ViewportManager.Viewports.ForEach(vp => vp.UpdateNextFrame());
         }

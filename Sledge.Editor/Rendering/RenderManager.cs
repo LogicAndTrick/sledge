@@ -258,7 +258,7 @@ void main()
 
             Unbind();
 
-            DrawBillboards(context as Viewport3D);
+            //DrawBillboards(context as Viewport3D);
             if (_document.Pointfile != null) DrawPointfile(_document.Pointfile, x => x);
         }
 
