@@ -6,6 +6,7 @@ using System.Text;
 using System.Windows.Forms;
 using OpenTK.Graphics.OpenGL;
 using Sledge.Common;
+using Sledge.Common.Mediator;
 using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.MapObjects;
 using Sledge.Editor.Actions.MapObjects.Operations;
@@ -156,6 +157,10 @@ namespace Sledge.Editor.Tools
             };
 
             Document.PerformAction("Create entity: " + gd.Name, new Create(entity));
+            if (Select.SwitchToSelectAfterEntity)
+            {
+                Mediator.Publish(HotkeysMediator.SwitchTool, HotkeyTool.Selection);
+            }
         }
 
         public override void KeyUp(ViewportBase viewport, ViewportEvent e)
