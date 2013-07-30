@@ -199,6 +199,24 @@ namespace Sledge.DataStructures.MapObjects
         }
 
         /// <summary>
+        /// Get all the nodes starting from this node with the centers contained within a box.
+        /// </summary>
+        /// <param name="box">The containing box</param>
+        /// <returns>A list of all the descendants that have centers inside the box.</returns>
+        public IEnumerable<MapObject> GetAllNodesWithCentersContainedWithin(Box box)
+        {
+            var list = new List<MapObject>();
+            if (IsCodeHidden || IsVisgroupHidden) return list;
+            if (!(this is World))
+            {
+                if (BoundingBox == null || !box.CoordinateIsInside(BoundingBox.Center)) return list;
+                if ((this is Solid || this is Entity) && !Children.Any()) list.Add(this);
+            }
+            list.AddRange(Children.SelectMany(x => x.GetAllNodesWithCentersContainedWithin(box)));
+            return list;
+        }
+
+        /// <summary>
         /// Get all the nodes starting from this node that intersect with a line.
         /// </summary>
         /// <param name="line">The intersection line</param>
@@ -238,25 +256,32 @@ namespace Sledge.DataStructures.MapObjects
         /// edges of the solid intersect with the provided box.
         /// </summary>
         /// <param name="box">The intersection box</param>
+        /// <param name="includeOrigin">Set to true to test against the object origins as well</param>
+        /// <param name="forceOrigin">Set to true to only test against the object origins and ignore other tests</param>
         /// <returns>A list of all the solid descendants where the edges of the solid intersect with the box.</returns>
-        public IEnumerable<MapObject> GetAllNodesIntersecting2DLineTest(Box box)
+        public IEnumerable<MapObject> GetAllNodesIntersecting2DLineTest(Box box, bool includeOrigin = false, bool forceOrigin = false)
         {
             var list = new List<MapObject>();
             if (!(this is World) && !IsCodeHidden && !IsVisgroupHidden)
             {
                 if (BoundingBox == null || !BoundingBox.IntersectsWith(box)) return list;
                 // Solids: Match face edges against box
-                if (this is Solid && ((Solid)this).Faces.Any(f => f.IntersectsWithLine(box)))
+                if (!forceOrigin && this is Solid && ((Solid)this).Faces.Any(f => f.IntersectsWithLine(box)))
                 {
                     list.Add(this);
                 }
                 // Point entities: Match bounding box edges against box
-                if (this is Entity && !Children.Any() && BoundingBox.GetBoxLines().Any(box.IntersectsWith))
+                else if (!forceOrigin && this is Entity && !Children.Any() && BoundingBox.GetBoxLines().Any(box.IntersectsWith))
+                {
+                    list.Add(this);
+                }
+                // Origins: Match bounding box center against box (for solids and point entities)
+                else if ((includeOrigin || forceOrigin) && !Children.Any() && (this is Solid || this is Entity) && box.CoordinateIsInside(BoundingBox.Center))
                 {
                     list.Add(this);
                 }
             }
-            list.AddRange(Children.SelectMany(x => x.GetAllNodesIntersecting2DLineTest(box)));
+            list.AddRange(Children.SelectMany(x => x.GetAllNodesIntersecting2DLineTest(box, includeOrigin, forceOrigin)));
             return list;
         }
 

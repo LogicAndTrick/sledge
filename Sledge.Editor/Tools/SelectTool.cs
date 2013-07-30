@@ -390,8 +390,10 @@ namespace Sledge.Editor.Tools
             var click = viewport.Expand(viewport.ScreenToWorld(e.X, viewport.Height - e.Y));
             var box = new Box(click - add, click + add);
 
+            var centerHandles = Sledge.Settings.Select.DrawCenterHandles;
+            var centerOnly = Sledge.Settings.Select.ClickSelectByCenterHandlesOnly;
             // Get the first element that intersects with the box, selecting or deselecting as needed
-            return Document.Map.WorldSpawn.GetAllNodesIntersecting2DLineTest(box).FirstOrDefault();
+            return Document.Map.WorldSpawn.GetAllNodesIntersecting2DLineTest(box, centerHandles, centerOnly).FirstOrDefault();
         }
 
         /// <summary>
@@ -527,10 +529,13 @@ namespace Sledge.Editor.Tools
             if (GetSelectionBox(out boundingbox))
             {
                 // If the shift key is down, select all brushes that are fully contained by the box
+                // If select by handles only is on, select all brushes with centers inside the box
                 // Otherwise, select all brushes that intersect with the box
-                var nodes = KeyboardState.Shift
-                                ? Document.Map.WorldSpawn.GetAllNodesContainedWithin(boundingbox).ToList()
-                                : Document.Map.WorldSpawn.GetAllNodesIntersectingWith(boundingbox).ToList();
+                Func<Box, IEnumerable<MapObject>> selector = Document.Map.WorldSpawn.GetAllNodesIntersectingWith;
+                if (Sledge.Settings.Select.BoxSelectByCenterHandlesOnly) selector = Document.Map.WorldSpawn.GetAllNodesWithCentersContainedWithin;
+                if (KeyboardState.Shift) selector = Document.Map.WorldSpawn.GetAllNodesContainedWithin;
+
+                var nodes = selector(boundingbox).ToList();
                 SetSelected(null, nodes, false, IgnoreGrouping());
             }
             base.BoxDrawnConfirm(viewport);
