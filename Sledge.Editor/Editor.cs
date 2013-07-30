@@ -265,6 +265,7 @@ namespace Sledge.Editor
 
             Mediator.Subscribe(EditorMediator.TextureSelected, this);
             Mediator.Subscribe(EditorMediator.ToolSelected, this);
+            Mediator.Subscribe(EditorMediator.ResetSelectedBrushType, this);
 
             Mediator.Subscribe(EditorMediator.OpenWebsite, this);
             Mediator.Subscribe(EditorMediator.CheckForUpdates, this);
@@ -492,6 +493,14 @@ namespace Sledge.Editor
             foreach (var tsb in from object item in tspTools.Items select ((ToolStripButton)item))
             {
                 tsb.Checked = (tsb.Name == at.GetName());
+            }
+        }
+
+        public void ResetSelectedBrushType()
+        {
+            if (BrushTypeList.Items.Count > 0)
+            {
+                BrushTypeList.SelectedIndex = 0;
             }
         }
 

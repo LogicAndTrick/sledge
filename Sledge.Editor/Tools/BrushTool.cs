@@ -139,6 +139,10 @@ namespace Sledge.Editor.Tools
             {
                 Mediator.Publish(HotkeysMediator.SwitchTool, HotkeyTool.Selection);
             }
+            if (Select.ResetBrushTypeOnCreation)
+            {
+                Mediator.Publish(EditorMediator.ResetSelectedBrushType);
+            }
         }
 
         public override void BoxDrawnCancel(ViewportBase viewport)

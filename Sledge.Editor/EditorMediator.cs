@@ -18,12 +18,10 @@ namespace Sledge.Editor
 
         // Editing messages
         TextureSelected,
-
         ToolSelected,
-
         ViewportRightClick,
-
         WorldspawnProperties,
+        ResetSelectedBrushType,
 
         VisgroupToggled,
         VisgroupsChanged,
