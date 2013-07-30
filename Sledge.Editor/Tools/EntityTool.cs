@@ -155,6 +155,10 @@ namespace Sledge.Editor.Tools
                 Colour = colour,
                 Origin = origin
             };
+            if (Select.SelectCreatedEntity)
+            {
+                entity.IsSelected = true;
+            }
 
             Document.PerformAction("Create entity: " + gd.Name, new Create(entity));
             if (Select.SwitchToSelectAfterEntity)
