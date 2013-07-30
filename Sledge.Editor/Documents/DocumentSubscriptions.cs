@@ -19,8 +19,6 @@ using Sledge.Editor.Actions.Visgroups;
 using Sledge.Editor.Clipboard;
 using Sledge.Editor.Compiling;
 using Sledge.Editor.Enums;
-using Sledge.Editor.History;
-using Sledge.Editor.Rendering;
 using Sledge.Editor.Tools;
 using Sledge.Editor.UI;
 using Sledge.Editor.Visgroups;
@@ -178,6 +176,7 @@ namespace Sledge.Editor.Documents
 
         public void SettingsChanged()
         {
+            _document.HelperManager.UpdateCache();
             RebuildGrid();
         }
 

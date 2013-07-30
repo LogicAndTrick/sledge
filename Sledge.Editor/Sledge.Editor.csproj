@@ -167,6 +167,13 @@
     <Compile Include="Problems\TargetWithoutMatchingName.cs" />
     <Compile Include="Problems\TextureAxisPerpendicularToFace.cs" />
     <Compile Include="Problems\TextureNotFound.cs" />
+    <Compile Include="Rendering\Helpers\CenterHandlesHelper.cs" />
+    <Compile Include="Rendering\Helpers\EntitySpriteHelper.cs" />
+    <Compile Include="Rendering\Helpers\HelperManager.cs" />
+    <Compile Include="Rendering\Helpers\HelperRenderable.cs" />
+    <Compile Include="Rendering\Helpers\HelperType.cs" />
+    <Compile Include="Rendering\Helpers\IHelper.cs" />
+    <Compile Include="Rendering\Helpers\PointfileHelper.cs" />
     <Compile Include="Rendering\RenderManager.cs" />
     <Compile Include="Editing\SelectionManager.cs" />
     <Compile Include="EditorMediator.cs" />

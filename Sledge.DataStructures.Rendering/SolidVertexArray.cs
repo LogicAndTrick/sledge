@@ -139,7 +139,10 @@ namespace Sledge.DataStructures.Rendering
         /// <param name="wireframeSubsets">The collection of wireframe subsets to populate</param>
         /// <param name="faceOffsets"> </param>
         /// <param name="entityOffsets"> </param>
-        private static void GetArrayData(IEnumerable<MapObject> objects, out int count, out float[] array, out uint[] indices, out uint[] wireframeIndices, ICollection<VertexArraySubset<ITexture>> subsets, ICollection<VertexArraySubset<object>> wireframeSubsets, Dictionary<Face, int> faceOffsets, Dictionary<Entity, int> entityOffsets)
+        private static void GetArrayData(IEnumerable<MapObject> objects, out int count, out float[] array,
+            out uint[] indices, out uint[] wireframeIndices,
+            ICollection<VertexArraySubset<ITexture>> subsets, ICollection<VertexArraySubset<object>> wireframeSubsets,
+            Dictionary<Face, int> faceOffsets, Dictionary<Entity, int> entityOffsets)
         {
             var obj = objects.Where(x => !x.IsVisgroupHidden && !x.IsCodeHidden).ToList();
             var faces = obj.OfType<Solid>().SelectMany(x => x.Faces).ToList();
@@ -158,17 +161,23 @@ namespace Sledge.DataStructures.Rendering
                 {
                     faceOffsets.Add(face, idx);
                     idx = WriteFace(array, idx, face);
-                    for (uint i = 1; i < face.Vertices.Count - 1; i++)
+                    if (!face.Parent.IsRenderHidden3D)
                     {
-                        indexList.Add(index);
-                        indexList.Add(index + i);
-                        indexList.Add(index + i + 1);
+                        for (uint i = 1; i < face.Vertices.Count - 1; i++)
+                        {
+                            indexList.Add(index);
+                            indexList.Add(index + i);
+                            indexList.Add(index + i + 1);
+                        }
                     }
-                    for (uint i = 0; i < face.Vertices.Count; i++)
+                    if (!face.Parent.IsRenderHidden2D)
                     {
-                        var ni = (uint) ((i + 1) % face.Vertices.Count);
-                        wireframeIndexList.Add(index + i);
-                        wireframeIndexList.Add(index + ni);
+                        for (uint i = 0; i < face.Vertices.Count; i++)
+                        {
+                            var ni = (uint) ((i + 1) % face.Vertices.Count);
+                            wireframeIndexList.Add(index + i);
+                            wireframeIndexList.Add(index + ni);
+                        }
                     }
                     index += (uint) face.Vertices.Count;
                 }
@@ -185,7 +194,7 @@ namespace Sledge.DataStructures.Rendering
                 foreach (var face in entity.GetBoxFaces())
                 {
                     idx = WriteFace(array, idx, face);
-                    if (entity.Sprite == null) // Don't draw the faces if the entity has a sprite
+                    if (!entity.IsRenderHidden3D)
                     {
                         for (uint i = 1; i < face.Vertices.Count - 1; i++)
                         {
@@ -194,11 +203,14 @@ namespace Sledge.DataStructures.Rendering
                             indexList.Add(index + i + 1);
                         }
                     }
-                    for (uint i = 0; i < face.Vertices.Count; i++)
+                    if (!entity.IsRenderHidden2D)
                     {
-                        var ni = (uint)((i + 1) % face.Vertices.Count);
-                        wireframeIndexList.Add(index + i);
-                        wireframeIndexList.Add(index + ni);
+                        for (uint i = 0; i < face.Vertices.Count; i++)
+                        {
+                            var ni = (uint) ((i + 1) % face.Vertices.Count);
+                            wireframeIndexList.Add(index + i);
+                            wireframeIndexList.Add(index + ni);
+                        }
                     }
                     index += (uint)face.Vertices.Count;
                 }
