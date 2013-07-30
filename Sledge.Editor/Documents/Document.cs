@@ -245,16 +245,6 @@ namespace Sledge.Editor.Documents
             History.AddHistoryItem(history);
         }
 
-        public void StartSelectionTransform()
-        {
-            // todo selection transform shader
-            //foreach (var dl in DisplayLists)
-            //{
-            //    dl.SetTintSelectListEnabled(false);
-            //}
-            //UpdateDisplayLists(true);
-        }
-
         public void SetSelectListTransform(Matrix4 matrix)
         {
             Renderer.Shader.Bind();

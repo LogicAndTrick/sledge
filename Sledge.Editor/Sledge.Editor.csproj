@@ -186,9 +186,6 @@
     <Compile Include="Rendering\GridRenderable.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Rendering\DisplayListGroup.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Rendering\RenderManagerRenderable.cs" />
     <Compile Include="Rendering\ToolRenderable.cs">
       <SubType>Code</SubType>

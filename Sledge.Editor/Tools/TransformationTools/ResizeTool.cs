@@ -61,7 +61,7 @@ namespace Sledge.Editor.Tools.TransformationTools
         private Tuple<Coordinate, Coordinate> GetBoxCoordinatesForSelectionResize(Viewport2D viewport, ViewportEvent e, BaseBoxTool.BoxState state, Document document)
         {
             if (state.Action != BaseBoxTool.BoxAction.Resizing) return Tuple.Create(state.BoxStart, state.BoxEnd);
-            var now = viewport.ScreenToWorld(e.X, viewport.Height - e.Y);
+            var now = SnapIfNeeded(viewport.ScreenToWorld(e.X, viewport.Height - e.Y), document);
             var cstart = viewport.Flatten(state.BoxStart);
             var cend = viewport.Flatten(state.BoxEnd);
             switch (state.Handle)
@@ -82,7 +82,7 @@ namespace Sledge.Editor.Tools.TransformationTools
                     break;
                 case BaseBoxTool.ResizeHandle.Center:
                     var cdiff = cend - cstart;
-                    cstart = viewport.Flatten(state.PreTransformBoxStart) + now - state.MoveStart;
+                    cstart = viewport.Flatten(state.PreTransformBoxStart) + now - SnapIfNeeded(state.MoveStart, document);
                     cend = cstart + cdiff;
                     break;
                 case BaseBoxTool.ResizeHandle.Right:
@@ -102,9 +102,38 @@ namespace Sledge.Editor.Tools.TransformationTools
                 default:
                     throw new ArgumentOutOfRangeException();
             }
-            cstart = viewport.Expand(cstart) + viewport.GetUnusedCoordinate(state.BoxStart);
-            cend = viewport.Expand(cend) + viewport.GetUnusedCoordinate(state.BoxEnd);
-            return Tuple.Create(SnapIfNeeded(cstart, document), SnapIfNeeded(cend, document));
+            return SnapBoxCoordinatesIfNeeded(viewport, state, document, cstart, cend);
+        }
+
+        private Tuple<Coordinate, Coordinate> SnapBoxCoordinatesIfNeeded(Viewport2D viewport, BaseBoxTool.BoxState state, Document document, Coordinate start, Coordinate end)
+        {
+            if (state.Action == BaseBoxTool.BoxAction.Resizing && state.Handle == BaseBoxTool.ResizeHandle.Center)
+            {
+                // Pick the corner to snap
+                var ms = state.MoveStart;
+                var pts = viewport.Flatten(state.PreTransformBoxStart);
+                var pte = viewport.Flatten(state.PreTransformBoxEnd);
+                var ss = SnapIfNeeded(start, document);
+                var se = SnapIfNeeded(end, document);
+                var middle = (pts + pte) / 2;
+                var delta = ss - start;
+                if (ms.Y > middle.Y)
+                {
+                    // Top
+                    delta.Y = se.Y - end.Y;
+                }
+                if (ms.X > middle.X)
+                {
+                    // Right
+                    delta.X = se.X - end.X;
+                }
+                start += delta;
+                end += delta;
+            }
+
+            var cstart = viewport.Expand(start) + viewport.GetUnusedCoordinate(state.BoxStart);
+            var cend = viewport.Expand(end) + viewport.GetUnusedCoordinate(state.BoxEnd);
+            return Tuple.Create(cstart, cend);
         }
 
         private static Coordinate GetOriginForTransform(Viewport2D viewport, BaseBoxTool.BoxState state)

@@ -39,7 +39,6 @@ namespace Sledge.Editor.Tools
         private TransformationTool _lastTool;
         private TransformationTool _currentTool;
 
-        private bool Transforming { get; set; }
         private Matrix4? CurrentTransform { get; set; }
 
         public SelectTool()
@@ -470,7 +469,6 @@ namespace Sledge.Editor.Tools
             Document.EndSelectionTransform();
             State.ActiveViewport = null;
             State.Action = BoxAction.Drawn;
-            Transforming = false;
 
             SelectionChanged();
         }
@@ -485,11 +483,6 @@ namespace Sledge.Editor.Tools
 
             State.Action = BoxAction.Resizing;
             CurrentTransform = GetTransformMatrix(viewport, e);
-            if (!Transforming) // First drag event
-            {
-                Document.StartSelectionTransform();
-                Transforming = true;
-            }
             if (CurrentTransform.HasValue)
             {
                 Document.SetSelectListTransform(CurrentTransform.Value);
@@ -619,23 +612,6 @@ namespace Sledge.Editor.Tools
             var start = viewport.Flatten(State.BoxStart);
             var end = viewport.Flatten(State.BoxEnd);
 
-            Matrix4 mat;
-            GL.GetFloat(GetPName.ProjectionMatrix, out mat);
-
-            // If transforming in the viewport, push the matrix transformation to the stack
-            if (viewport == State.ActiveViewport && State.Action == BoxAction.Resizing && CurrentTransform.HasValue)
-            {
-                start = viewport.Flatten(State.PreTransformBoxStart);
-                end = viewport.Flatten(State.PreTransformBoxEnd);
-
-                var dir = viewport.GetModelViewMatrix();
-                var inv = Matrix4.Invert(dir);
-                GL.MultMatrix(ref dir);
-                var transform = CurrentTransform.Value;
-                GL.MultMatrix(ref transform);
-                GL.MultMatrix(ref inv);
-            }
-
             if (ShouldDrawBox())
             {
                 RenderBox(viewport, start, end);
@@ -645,9 +621,6 @@ namespace Sledge.Editor.Tools
             {
                 RenderResizeBox(viewport, start, end);
             }
-
-            // Restore the untransformed matrix
-            GL.LoadMatrix(ref mat);
 
             if (ShouldRenderHandles())
             {

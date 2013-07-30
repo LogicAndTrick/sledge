@@ -430,8 +430,37 @@ namespace Sledge.Editor.Tools
                 default:
                     throw new ArgumentOutOfRangeException();
             }
-            cstart = viewport.Expand(cstart) + viewport.GetUnusedCoordinate(State.BoxStart);
-            cend = viewport.Expand(cend) + viewport.GetUnusedCoordinate(State.BoxEnd);
+            return SnapBoxCoordinatesIfNeeded(viewport, cstart, cend);
+        }
+
+        private Tuple<Coordinate, Coordinate> SnapBoxCoordinatesIfNeeded(Viewport2D viewport, Coordinate start, Coordinate end)
+        {
+            if (State.Action == BoxAction.Resizing && State.Handle == ResizeHandle.Center)
+            {
+                // Pick the corner to snap
+                var ms = State.MoveStart;
+                var pts = viewport.Flatten(State.PreTransformBoxStart);
+                var pte = viewport.Flatten(State.PreTransformBoxEnd);
+                var ss = SnapIfNeeded(start);
+                var se = SnapIfNeeded(end);
+                var middle = (pts + pte) / 2;
+                var delta = ss - start;
+                if (ms.Y > middle.Y)
+                {
+                    // Top
+                    delta.Y = se.Y - end.Y;
+                }
+                if (ms.X > middle.X)
+                {
+                    // Right
+                    delta.X = se.X - end.X;
+                }
+                start += delta;
+                end += delta;
+            }
+
+            var cstart = viewport.Expand(start) + viewport.GetUnusedCoordinate(State.BoxStart);
+            var cend = viewport.Expand(end) + viewport.GetUnusedCoordinate(State.BoxEnd);
             return Tuple.Create(cstart, cend);
         }
 
