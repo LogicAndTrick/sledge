@@ -565,6 +565,16 @@ namespace Sledge.Libs.HLLib
             [DllImport("HLLib.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "hlItemExtract")]
             [return:MarshalAs(UnmanagedType.U1)]
             protected static extern bool Extract(IntPtr pItem, string lpPath);
+
+            [DllImport("HLLib.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "hlPackageGetItemAttributeCount")]
+            protected static extern uint GetItemAttributeCount();
+
+            [DllImport("HLLib.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "hlPackageGetItemAttributeName")]
+            protected static extern string GetPackageItemAttributeName(PackageAttribute eAttribute);
+
+            [DllImport("HLLib.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "hlPackageGetItemAttribute")]
+            [return: MarshalAs(UnmanagedType.U1)]
+            internal static extern bool GetItemAttribute(IntPtr pItem, PackageAttribute eAttribute, out AttributeStruct pAttributeStruct);
         }
 
         public class Folder : Item
@@ -1294,6 +1304,17 @@ namespace Sledge.Libs.HLLib
             internal WADFile(IntPtr file) : base(file)
             {
                 _width = _height = 0;
+            }
+
+            public uint GetLumpType()
+            {
+                AttributeStruct attr;
+                if (!GetItemAttribute(ItemPtr, PackageAttribute.WADItemType, out attr))
+                {
+                    throw new Exception("Error reading lump type");
+                }
+                var a = new Attribute(attr);
+                return a.GetUInt();
             }
 
             private void GetImageDimensions()

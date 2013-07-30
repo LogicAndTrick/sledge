@@ -163,6 +163,11 @@ namespace Sledge.Providers.Texture
             }
         }
 
+        private bool IsValidLumpType(uint type)
+        {
+            return type == 0x42 || type == 0x43;
+        }
+
         protected override IEnumerable<TextureItem> GetAllTextureItems(TexturePackage package)
         {
             var ret = new List<TextureItem>();
@@ -175,6 +180,7 @@ namespace Sledge.Providers.Texture
                     var items = folder.GetItems();
                     ret.AddRange(items
                         .Select(item => new HLLib.WADFile(item))
+                        .Where(wad => IsValidLumpType(wad.GetLumpType()))
                         .Select(wad => new TextureItem(package, Path.GetFileNameWithoutExtension(wad.Name), wad.Width, wad.Height)));
                 }
             }
