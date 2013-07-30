@@ -69,9 +69,6 @@ namespace Sledge.Editor.Settings
             this.GridHighlight1Distance = new System.Windows.Forms.NumericUpDown();
             this.label8 = new System.Windows.Forms.Label();
             this.groupBox17 = new System.Windows.Forms.GroupBox();
-            this.KeepVisgroupsWhenCloning = new System.Windows.Forms.CheckBox();
-            this.SelectCreatedBrush = new System.Windows.Forms.CheckBox();
-            this.SwitchToSelectAfterCreation = new System.Windows.Forms.CheckBox();
             this.AutoSelectBox = new System.Windows.Forms.CheckBox();
             this.CrosshairCursorIn2DViews = new System.Windows.Forms.CheckBox();
             this.groupBox16 = new System.Windows.Forms.GroupBox();
@@ -246,7 +243,16 @@ namespace Sledge.Editor.Settings
             this.btnCancelSettings = new System.Windows.Forms.Button();
             this.btnApplyAndCloseSettings = new System.Windows.Forms.Button();
             this.btnApplySettings = new System.Windows.Forms.Button();
+            this.SelectCreatedBrush = new System.Windows.Forms.CheckBox();
+            this.SwitchToSelectAfterCreation = new System.Windows.Forms.CheckBox();
+            this.groupBox18 = new System.Windows.Forms.GroupBox();
+            this.SwitchToSelectAfterEntity = new System.Windows.Forms.CheckBox();
+            this.DeselectOthersWhenSelectingCreation = new System.Windows.Forms.CheckBox();
+            this.SelectCreatedEntity = new System.Windows.Forms.CheckBox();
+            this.KeepVisgroupsWhenCloning = new System.Windows.Forms.CheckBox();
+            this.ResetBrushTypeOnCreation = new System.Windows.Forms.CheckBox();
             this.tbcSettings.SuspendLayout();
+            this.tabGeneral.SuspendLayout();
             this.tab2DViews.SuspendLayout();
             this.groupBox11.SuspendLayout();
             this.groupBox6.SuspendLayout();
@@ -297,6 +303,7 @@ namespace Sledge.Editor.Settings
             ((System.ComponentModel.ISupportInitialize)(this.trackBar2)).BeginInit();
             this.groupBox7.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
+            this.groupBox18.SuspendLayout();
             this.SuspendLayout();
             // 
             // tbcSettings
@@ -320,6 +327,7 @@ namespace Sledge.Editor.Settings
             // 
             // tabGeneral
             // 
+            this.tabGeneral.Controls.Add(this.groupBox18);
             this.tabGeneral.Location = new System.Drawing.Point(4, 22);
             this.tabGeneral.Name = "tabGeneral";
             this.tabGeneral.Padding = new System.Windows.Forms.Padding(3);
@@ -352,9 +360,9 @@ namespace Sledge.Editor.Settings
             this.groupBox11.Controls.Add(this.DrawCenterHandles);
             this.groupBox11.Controls.Add(this.BoxSelectByHandlesOnly);
             this.groupBox11.Controls.Add(this.ClickSelectByHandlesOnly);
-            this.groupBox11.Location = new System.Drawing.Point(421, 302);
+            this.groupBox11.Location = new System.Drawing.Point(421, 244);
             this.groupBox11.Name = "groupBox11";
-            this.groupBox11.Size = new System.Drawing.Size(304, 170);
+            this.groupBox11.Size = new System.Drawing.Size(304, 178);
             this.groupBox11.TabIndex = 1;
             this.groupBox11.TabStop = false;
             this.groupBox11.Text = "Center Handles";
@@ -661,46 +669,14 @@ namespace Sledge.Editor.Settings
             // groupBox17
             // 
             this.groupBox17.Controls.Add(this.KeepVisgroupsWhenCloning);
-            this.groupBox17.Controls.Add(this.SelectCreatedBrush);
-            this.groupBox17.Controls.Add(this.SwitchToSelectAfterCreation);
             this.groupBox17.Controls.Add(this.AutoSelectBox);
             this.groupBox17.Controls.Add(this.CrosshairCursorIn2DViews);
             this.groupBox17.Location = new System.Drawing.Point(421, 126);
             this.groupBox17.Name = "groupBox17";
-            this.groupBox17.Size = new System.Drawing.Size(304, 170);
+            this.groupBox17.Size = new System.Drawing.Size(304, 112);
             this.groupBox17.TabIndex = 0;
             this.groupBox17.TabStop = false;
             this.groupBox17.Text = "Options";
-            // 
-            // KeepVisgroupsWhenCloning
-            // 
-            this.KeepVisgroupsWhenCloning.Location = new System.Drawing.Point(10, 139);
-            this.KeepVisgroupsWhenCloning.Name = "KeepVisgroupsWhenCloning";
-            this.KeepVisgroupsWhenCloning.Size = new System.Drawing.Size(278, 24);
-            this.KeepVisgroupsWhenCloning.TabIndex = 0;
-            this.KeepVisgroupsWhenCloning.Tag = "";
-            this.KeepVisgroupsWhenCloning.Text = "Keep visgroups when cloning";
-            this.KeepVisgroupsWhenCloning.UseVisualStyleBackColor = true;
-            // 
-            // SelectCreatedBrush
-            // 
-            this.SelectCreatedBrush.Location = new System.Drawing.Point(10, 109);
-            this.SelectCreatedBrush.Name = "SelectCreatedBrush";
-            this.SelectCreatedBrush.Size = new System.Drawing.Size(257, 24);
-            this.SelectCreatedBrush.TabIndex = 0;
-            this.SelectCreatedBrush.Tag = "";
-            this.SelectCreatedBrush.Text = "Automatically select created brush";
-            this.SelectCreatedBrush.UseVisualStyleBackColor = true;
-            // 
-            // SwitchToSelectAfterCreation
-            // 
-            this.SwitchToSelectAfterCreation.Location = new System.Drawing.Point(10, 79);
-            this.SwitchToSelectAfterCreation.Name = "SwitchToSelectAfterCreation";
-            this.SwitchToSelectAfterCreation.Size = new System.Drawing.Size(257, 24);
-            this.SwitchToSelectAfterCreation.TabIndex = 0;
-            this.SwitchToSelectAfterCreation.Tag = "";
-            this.SwitchToSelectAfterCreation.Text = "Switch to selection tool after brush creation";
-            this.SwitchToSelectAfterCreation.UseVisualStyleBackColor = true;
             // 
             // AutoSelectBox
             // 
@@ -2603,6 +2579,91 @@ namespace Sledge.Editor.Settings
             this.btnApplySettings.UseVisualStyleBackColor = true;
             this.btnApplySettings.Click += new System.EventHandler(this.Apply);
             // 
+            // SelectCreatedBrush
+            // 
+            this.SelectCreatedBrush.Location = new System.Drawing.Point(12, 79);
+            this.SelectCreatedBrush.Name = "SelectCreatedBrush";
+            this.SelectCreatedBrush.Size = new System.Drawing.Size(233, 24);
+            this.SelectCreatedBrush.TabIndex = 2;
+            this.SelectCreatedBrush.Tag = "";
+            this.SelectCreatedBrush.Text = "Automatically select created brush";
+            this.SelectCreatedBrush.UseVisualStyleBackColor = true;
+            // 
+            // SwitchToSelectAfterCreation
+            // 
+            this.SwitchToSelectAfterCreation.Location = new System.Drawing.Point(12, 19);
+            this.SwitchToSelectAfterCreation.Name = "SwitchToSelectAfterCreation";
+            this.SwitchToSelectAfterCreation.Size = new System.Drawing.Size(233, 24);
+            this.SwitchToSelectAfterCreation.TabIndex = 3;
+            this.SwitchToSelectAfterCreation.Tag = "";
+            this.SwitchToSelectAfterCreation.Text = "Switch to selection tool after brush creation";
+            this.SwitchToSelectAfterCreation.UseVisualStyleBackColor = true;
+            // 
+            // groupBox18
+            // 
+            this.groupBox18.Controls.Add(this.SwitchToSelectAfterEntity);
+            this.groupBox18.Controls.Add(this.SwitchToSelectAfterCreation);
+            this.groupBox18.Controls.Add(this.ResetBrushTypeOnCreation);
+            this.groupBox18.Controls.Add(this.DeselectOthersWhenSelectingCreation);
+            this.groupBox18.Controls.Add(this.SelectCreatedEntity);
+            this.groupBox18.Controls.Add(this.SelectCreatedBrush);
+            this.groupBox18.Location = new System.Drawing.Point(6, 6);
+            this.groupBox18.Name = "groupBox18";
+            this.groupBox18.Size = new System.Drawing.Size(357, 205);
+            this.groupBox18.TabIndex = 4;
+            this.groupBox18.TabStop = false;
+            this.groupBox18.Text = "Creation";
+            // 
+            // SwitchToSelectAfterEntity
+            // 
+            this.SwitchToSelectAfterEntity.Location = new System.Drawing.Point(12, 49);
+            this.SwitchToSelectAfterEntity.Name = "SwitchToSelectAfterEntity";
+            this.SwitchToSelectAfterEntity.Size = new System.Drawing.Size(233, 24);
+            this.SwitchToSelectAfterEntity.TabIndex = 3;
+            this.SwitchToSelectAfterEntity.Tag = "";
+            this.SwitchToSelectAfterEntity.Text = "Switch to selection tool after entity creation";
+            this.SwitchToSelectAfterEntity.UseVisualStyleBackColor = true;
+            // 
+            // DeselectOthersWhenSelectingCreation
+            // 
+            this.DeselectOthersWhenSelectingCreation.Location = new System.Drawing.Point(12, 139);
+            this.DeselectOthersWhenSelectingCreation.Name = "DeselectOthersWhenSelectingCreation";
+            this.DeselectOthersWhenSelectingCreation.Size = new System.Drawing.Size(339, 24);
+            this.DeselectOthersWhenSelectingCreation.TabIndex = 2;
+            this.DeselectOthersWhenSelectingCreation.Tag = "";
+            this.DeselectOthersWhenSelectingCreation.Text = "Deselect other objects when automatically selecting created items";
+            this.DeselectOthersWhenSelectingCreation.UseVisualStyleBackColor = true;
+            // 
+            // SelectCreatedEntity
+            // 
+            this.SelectCreatedEntity.Location = new System.Drawing.Point(12, 109);
+            this.SelectCreatedEntity.Name = "SelectCreatedEntity";
+            this.SelectCreatedEntity.Size = new System.Drawing.Size(233, 24);
+            this.SelectCreatedEntity.TabIndex = 2;
+            this.SelectCreatedEntity.Tag = "";
+            this.SelectCreatedEntity.Text = "Automatically select created entity";
+            this.SelectCreatedEntity.UseVisualStyleBackColor = true;
+            // 
+            // KeepVisgroupsWhenCloning
+            // 
+            this.KeepVisgroupsWhenCloning.Location = new System.Drawing.Point(10, 79);
+            this.KeepVisgroupsWhenCloning.Name = "KeepVisgroupsWhenCloning";
+            this.KeepVisgroupsWhenCloning.Size = new System.Drawing.Size(278, 24);
+            this.KeepVisgroupsWhenCloning.TabIndex = 2;
+            this.KeepVisgroupsWhenCloning.Tag = "";
+            this.KeepVisgroupsWhenCloning.Text = "Keep visgroups when cloning";
+            this.KeepVisgroupsWhenCloning.UseVisualStyleBackColor = true;
+            // 
+            // ResetBrushTypeOnCreation
+            // 
+            this.ResetBrushTypeOnCreation.Location = new System.Drawing.Point(12, 169);
+            this.ResetBrushTypeOnCreation.Name = "ResetBrushTypeOnCreation";
+            this.ResetBrushTypeOnCreation.Size = new System.Drawing.Size(339, 24);
+            this.ResetBrushTypeOnCreation.TabIndex = 2;
+            this.ResetBrushTypeOnCreation.Tag = "";
+            this.ResetBrushTypeOnCreation.Text = "Reset to block brush type after creating brush";
+            this.ResetBrushTypeOnCreation.UseVisualStyleBackColor = true;
+            // 
             // SettingsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -2617,6 +2678,7 @@ namespace Sledge.Editor.Settings
             this.Text = "Sledge Settings";
             this.Load += new System.EventHandler(this.SettingsFormLoad);
             this.tbcSettings.ResumeLayout(false);
+            this.tabGeneral.ResumeLayout(false);
             this.tab2DViews.ResumeLayout(false);
             this.groupBox11.ResumeLayout(false);
             this.groupBox6.ResumeLayout(false);
@@ -2678,6 +2740,7 @@ namespace Sledge.Editor.Settings
             ((System.ComponentModel.ISupportInitialize)(this.trackBar2)).EndInit();
             this.groupBox7.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).EndInit();
+            this.groupBox18.ResumeLayout(false);
             this.ResumeLayout(false);
 
 		}
@@ -2869,7 +2932,6 @@ namespace Sledge.Editor.Settings
         private System.Windows.Forms.RadioButton NudgeStyle_GridOnCtrl;
         private System.Windows.Forms.RadioButton NudgeStyle_GridOffCtrl;
         private System.Windows.Forms.GroupBox groupBox17;
-        private System.Windows.Forms.CheckBox SwitchToSelectAfterCreation;
         private System.Windows.Forms.CheckBox AutoSelectBox;
         private System.Windows.Forms.CheckBox BoxSelectByHandlesOnly;
         private System.Windows.Forms.CheckBox DrawCenterHandles;
@@ -2885,11 +2947,17 @@ namespace Sledge.Editor.Settings
         private System.Windows.Forms.GroupBox groupBox12;
         private System.Windows.Forms.NumericUpDown CameraFOV;
         private System.Windows.Forms.Label label29;
-        private System.Windows.Forms.CheckBox SelectCreatedBrush;
         private System.Windows.Forms.CheckBox ClickSelectByHandlesOnly;
-        private System.Windows.Forms.CheckBox KeepVisgroupsWhenCloning;
         private System.Windows.Forms.GroupBox groupBox11;
         private System.Windows.Forms.CheckBox CenterHandlesOnlyNearCursor;
         private System.Windows.Forms.CheckBox CenterHandlesActiveViewportOnly;
+        private System.Windows.Forms.GroupBox groupBox18;
+        private System.Windows.Forms.CheckBox SwitchToSelectAfterEntity;
+        private System.Windows.Forms.CheckBox SwitchToSelectAfterCreation;
+        private System.Windows.Forms.CheckBox DeselectOthersWhenSelectingCreation;
+        private System.Windows.Forms.CheckBox SelectCreatedEntity;
+        private System.Windows.Forms.CheckBox SelectCreatedBrush;
+        private System.Windows.Forms.CheckBox KeepVisgroupsWhenCloning;
+        private System.Windows.Forms.CheckBox ResetBrushTypeOnCreation;
 	}
 }

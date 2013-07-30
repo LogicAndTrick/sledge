@@ -9,9 +9,14 @@
         public static decimal NudgeUnits { get; set; }
         public static NudgeStyle NudgeStyle { get; set; }
 
-        public static bool AutoSelectBox { get; set; }
         public static bool SwitchToSelectAfterCreation { get; set; }
         public static bool SelectCreatedBrush { get; set; }
+        public static bool SwitchToSelectAfterEntity { get; set; }
+        public static bool SelectCreatedEntity { get; set; }
+        public static bool DeselectOthersWhenSelectingCreation { get; set; }
+        public static bool ResetBrushTypeOnCreation { get; set; }
+
+        public static bool AutoSelectBox { get; set; }
         public static bool KeepVisgroupsWhenCloning { get; set; }
 
         public static bool DrawCenterHandles { get; set; }
@@ -29,9 +34,14 @@
             NudgeUnits = 1;
             NudgeStyle = NudgeStyle.GridOnCtrl;
 
-            AutoSelectBox = false;
             SwitchToSelectAfterCreation = false;
             SelectCreatedBrush = true;
+            SwitchToSelectAfterEntity = false;
+            SelectCreatedEntity = true;
+            DeselectOthersWhenSelectingCreation = true;
+            ResetBrushTypeOnCreation = true;
+
+            AutoSelectBox = false;
             KeepVisgroupsWhenCloning = true;
 
             DrawCenterHandles = false;

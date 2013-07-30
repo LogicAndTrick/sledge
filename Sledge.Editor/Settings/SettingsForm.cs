@@ -176,11 +176,17 @@ namespace Sledge.Editor.Settings
 
 	    private void SettingsFormLoad(object sender, EventArgs e)
         {
+            // General
+            SwitchToSelectAfterCreation.Checked = Sledge.Settings.Select.SwitchToSelectAfterCreation;
+	        SwitchToSelectAfterEntity.Checked = Sledge.Settings.Select.SwitchToSelectAfterEntity;
+            SelectCreatedBrush.Checked = Sledge.Settings.Select.SelectCreatedBrush;
+	        SelectCreatedEntity.Checked = Sledge.Settings.Select.SelectCreatedEntity;
+	        DeselectOthersWhenSelectingCreation.Checked = Sledge.Settings.Select.DeselectOthersWhenSelectingCreation;
+	        ResetBrushTypeOnCreation.Checked = Sledge.Settings.Select.ResetBrushTypeOnCreation;
+
             // 2D Views
             CrosshairCursorIn2DViews.Checked = Sledge.Settings.View.CrosshairCursorIn2DViews;
             AutoSelectBox.Checked = Sledge.Settings.Select.AutoSelectBox;
-            SwitchToSelectAfterCreation.Checked = Sledge.Settings.Select.SwitchToSelectAfterCreation;
-            SelectCreatedBrush.Checked = Sledge.Settings.Select.SelectCreatedBrush;
             KeepVisgroupsWhenCloning.Checked = Sledge.Settings.Select.KeepVisgroupsWhenCloning;
 
             DrawCenterHandles.Checked = Sledge.Settings.Select.DrawCenterHandles;
@@ -241,11 +247,17 @@ namespace Sledge.Editor.Settings
 
         private void Apply()
         {
+            // General
+            Sledge.Settings.Select.SwitchToSelectAfterCreation = SwitchToSelectAfterCreation.Checked;
+            Sledge.Settings.Select.SwitchToSelectAfterEntity = SwitchToSelectAfterEntity.Checked;
+            Sledge.Settings.Select.SelectCreatedBrush = SelectCreatedBrush.Checked;
+            Sledge.Settings.Select.SelectCreatedEntity = SelectCreatedEntity.Checked;
+            Sledge.Settings.Select.DeselectOthersWhenSelectingCreation = DeselectOthersWhenSelectingCreation.Checked;
+            Sledge.Settings.Select.ResetBrushTypeOnCreation = ResetBrushTypeOnCreation.Checked;
+
             // 2D Views
             Sledge.Settings.View.CrosshairCursorIn2DViews = CrosshairCursorIn2DViews.Checked;
             Sledge.Settings.Select.AutoSelectBox = AutoSelectBox.Checked;
-            Sledge.Settings.Select.SwitchToSelectAfterCreation = SwitchToSelectAfterCreation.Checked;
-            Sledge.Settings.Select.SelectCreatedBrush = SelectCreatedBrush.Checked;
             Sledge.Settings.Select.KeepVisgroupsWhenCloning = KeepVisgroupsWhenCloning.Checked;
 
             Sledge.Settings.Select.DrawCenterHandles = DrawCenterHandles.Checked;
