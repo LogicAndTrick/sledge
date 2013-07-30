@@ -5,7 +5,9 @@ using System.Linq;
 using OpenTK.Graphics.OpenGL;
 using Sledge.Common.Mediator;
 using Sledge.DataStructures.Geometric;
+using Sledge.Editor.Actions;
 using Sledge.Editor.Actions.MapObjects.Operations;
+using Sledge.Editor.Actions.MapObjects.Selection;
 using Sledge.Editor.History;
 using Sledge.Editor.Properties;
 using Sledge.DataStructures.MapObjects;
@@ -14,6 +16,7 @@ using Sledge.Graphics.Helpers;
 using Sledge.Settings;
 using Sledge.UI;
 using Sledge.Editor.Brushes;
+using Select = Sledge.Settings.Select;
 
 namespace Sledge.Editor.Tools
 {
@@ -94,11 +97,16 @@ namespace Sledge.Editor.Tools
         {
             var brush = GetBrush(bounds, Document.Map.IDGenerator);
             if (brush == null) return;
+            IAction action = new Create(brush);
             if (Select.SelectCreatedBrush)
             {
                 brush.IsSelected = true;
+                if (Select.DeselectOthersWhenSelectingCreation)
+                {
+                    action = new ActionCollection(new ChangeSelection(new MapObject[0], Document.Selection.GetSelectedObjects()), action);
+                }
             }
-            Document.PerformAction("Create " + BrushManager.CurrentBrush.Name.ToLower(), new Create(brush));
+            Document.PerformAction("Create " + BrushManager.CurrentBrush.Name.ToLower(), action);
         }
 
         private MapObject GetBrush(Box bounds, IDGenerator idg)

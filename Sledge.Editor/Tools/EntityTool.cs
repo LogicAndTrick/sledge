@@ -9,12 +9,15 @@ using Sledge.Common;
 using Sledge.Common.Mediator;
 using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.MapObjects;
+using Sledge.Editor.Actions;
 using Sledge.Editor.Actions.MapObjects.Operations;
+using Sledge.Editor.Actions.MapObjects.Selection;
 using Sledge.Editor.History;
 using Sledge.Editor.Properties;
 using Sledge.Graphics.Helpers;
 using Sledge.Settings;
 using Sledge.UI;
+using Select = Sledge.Settings.Select;
 
 namespace Sledge.Editor.Tools
 {
@@ -155,12 +158,18 @@ namespace Sledge.Editor.Tools
                 Colour = colour,
                 Origin = origin
             };
+
+            IAction action = new Create(entity);
             if (Select.SelectCreatedEntity)
             {
                 entity.IsSelected = true;
+                if (Select.DeselectOthersWhenSelectingCreation)
+                {
+                    action = new ActionCollection(new ChangeSelection(new MapObject[0], Document.Selection.GetSelectedObjects()), action);
+                }
             }
 
-            Document.PerformAction("Create entity: " + gd.Name, new Create(entity));
+            Document.PerformAction("Create entity: " + gd.Name, action);
             if (Select.SwitchToSelectAfterEntity)
             {
                 Mediator.Publish(HotkeysMediator.SwitchTool, HotkeyTool.Selection);
