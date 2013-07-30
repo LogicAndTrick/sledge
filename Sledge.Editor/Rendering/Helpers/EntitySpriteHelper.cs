@@ -30,6 +30,8 @@ namespace Sledge.Editor.Rendering.Helpers
 
         public void Render3D(Viewport3D vp, MapObject o)
         {
+            // These billboards aren't perfect but they'll do (they rotate with the lookat vector rather than the location vector)
+
             var right = vp.Camera.GetRight();
             var up = vp.Camera.GetUp();
             var entity = (Entity) o;

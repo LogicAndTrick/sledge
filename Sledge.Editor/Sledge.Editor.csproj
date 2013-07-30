@@ -172,6 +172,7 @@
     <Compile Include="Rendering\Helpers\HelperRenderable.cs" />
     <Compile Include="Rendering\Helpers\HelperType.cs" />
     <Compile Include="Rendering\Helpers\IHelper.cs" />
+    <Compile Include="Rendering\Helpers\PointfileHelper.cs" />
     <Compile Include="Rendering\RenderManager.cs" />
     <Compile Include="Editing\SelectionManager.cs" />
     <Compile Include="EditorMediator.cs" />

@@ -1,17 +1,12 @@
-using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
-using Sledge.DataStructures.GameData;
-using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.MapObjects;
 using Sledge.DataStructures.Rendering;
 using Sledge.Editor.Documents;
 using Sledge.Editor.UI;
 using Sledge.Extensions;
-using Sledge.Graphics.Helpers;
 using Sledge.Graphics.Shaders;
 using Sledge.UI;
 
@@ -225,9 +220,6 @@ void main()
             _array.DrawWireframe(context, Shader);
 
             Unbind();
-
-            var vp2d = context as Viewport2D;
-            if (vp2d != null && _document.Pointfile != null) DrawPointfile(_document.Pointfile, vp2d.Flatten);
         }
 
         public void Draw3D(ViewportBase context, Matrix4 viewport, Matrix4 camera, Matrix4 modelView)
@@ -257,83 +249,6 @@ void main()
             _array.DrawWireframe(context, Shader);
 
             Unbind();
-
-            //DrawBillboards(context as Viewport3D);
-            if (_document.Pointfile != null) DrawPointfile(_document.Pointfile, x => x);
-        }
-
-        private void DrawBillboards(Viewport3D vp)
-        {
-            // TODO HELPERS
-            // These billboards aren't perfect but they'll do (they rotate with the lookat vector rather than the location vector)
-            var right = vp.Camera.GetRight();
-            var up = vp.Camera.GetUp();
-            foreach (Entity entity in _document.Map.WorldSpawn.Find(x => !x.IsVisgroupHidden && !x.IsCodeHidden && x is Entity && ((Entity)x).Sprite != null))
-            {
-                var orig = new Vector3((float)entity.Origin.X, (float)entity.Origin.Y, (float)entity.Origin.Z);
-                var normal = Vector3.Subtract(vp.Camera.Location, orig);
-
-                var tex = entity.Sprite;
-                TextureHelper.EnableTexturing();
-                GL.Color3(Color.White);
-                tex.Bind();
-
-                if (entity.GameData != null)
-                {
-                    var col = entity.GameData.Properties.FirstOrDefault(x => x.VariableType == VariableType.Color255);
-                    if (col != null)
-                    {
-                        var val = entity.EntityData.Properties.FirstOrDefault(x => x.Key == col.Name);
-                        if (val != null)
-                        {
-                            GL.Color3(val.GetColour(Color.White));
-                        }
-                    }
-                }
-
-                var tup = Vector3.Multiply(up, (float) entity.BoundingBox.Height / 2f);
-                var tright = Vector3.Multiply(right, (float) entity.BoundingBox.Width / 2f);
-
-                GL.Begin(BeginMode.Quads);
-
-                GL.Normal3(normal); GL.TexCoord2(1, 1); GL.Vertex3(Vector3.Subtract(orig, Vector3.Add(tup, tright)));
-                GL.Normal3(normal); GL.TexCoord2(1, 0); GL.Vertex3(Vector3.Add(orig, Vector3.Subtract(tup, tright)));
-                GL.Normal3(normal); GL.TexCoord2(0, 0); GL.Vertex3(Vector3.Add(orig, Vector3.Add(tup, tright)));
-                GL.Normal3(normal); GL.TexCoord2(0, 1); GL.Vertex3(Vector3.Subtract(orig, Vector3.Subtract(tup, tright)));
-
-                GL.End();
-            }
-        }
-
-        private static void DrawPointfile(Pointfile pf, Func<Coordinate, Coordinate> transform)
-        {
-            TextureHelper.DisableTexturing();
-            GL.LineWidth(3);
-            GL.Begin(BeginMode.Lines);
-
-            var r = 1f;
-            var g = 0.5f;
-            var b = 0.5f;
-            var change = 0.5f / pf.Lines.Count;
-
-            foreach (var line in pf.Lines)
-            {
-                var start = transform(line.Start);
-                var end = transform(line.End);
-
-                GL.Color3(r, g, b);
-                GL.Vertex3(start.DX, start.DY, start.DZ);
-
-                r -= change;
-                b += change;
-
-                GL.Color3(r, g, b);
-                GL.Vertex3(end.DX, end.DY, end.DZ);
-            }
-
-            GL.End();
-            GL.LineWidth(1);
-            TextureHelper.EnableTexturing();
         }
 
         public void Update()
