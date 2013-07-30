@@ -15,6 +15,8 @@
         public static bool KeepVisgroupsWhenCloning { get; set; }
 
         public static bool DrawCenterHandles { get; set; }
+        public static bool CenterHandlesActiveViewportOnly { get; set; }
+        public static bool CenterHandlesFollowCursor { get; set; }
         public static bool ClickSelectByCenterHandlesOnly { get; set; }
         public static bool BoxSelectByCenterHandlesOnly { get; set; }
 
@@ -33,6 +35,8 @@
             KeepVisgroupsWhenCloning = true;
 
             DrawCenterHandles = false;
+            CenterHandlesActiveViewportOnly = true;
+            CenterHandlesFollowCursor = true;
             ClickSelectByCenterHandlesOnly = false;
             BoxSelectByCenterHandlesOnly = false;
         }

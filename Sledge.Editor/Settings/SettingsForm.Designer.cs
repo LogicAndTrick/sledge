@@ -39,6 +39,12 @@ namespace Sledge.Editor.Settings
             this.tbcSettings = new System.Windows.Forms.TabControl();
             this.tabGeneral = new System.Windows.Forms.TabPage();
             this.tab2DViews = new System.Windows.Forms.TabPage();
+            this.groupBox11 = new System.Windows.Forms.GroupBox();
+            this.CenterHandlesOnlyNearCursor = new System.Windows.Forms.CheckBox();
+            this.CenterHandlesActiveViewportOnly = new System.Windows.Forms.CheckBox();
+            this.DrawCenterHandles = new System.Windows.Forms.CheckBox();
+            this.BoxSelectByHandlesOnly = new System.Windows.Forms.CheckBox();
+            this.ClickSelectByHandlesOnly = new System.Windows.Forms.CheckBox();
             this.groupBox6 = new System.Windows.Forms.GroupBox();
             this.RotationStyle_SnapNever = new System.Windows.Forms.RadioButton();
             this.RotationStyle_SnapOnShift = new System.Windows.Forms.RadioButton();
@@ -64,9 +70,6 @@ namespace Sledge.Editor.Settings
             this.label8 = new System.Windows.Forms.Label();
             this.groupBox17 = new System.Windows.Forms.GroupBox();
             this.KeepVisgroupsWhenCloning = new System.Windows.Forms.CheckBox();
-            this.ClickSelectByHandlesOnly = new System.Windows.Forms.CheckBox();
-            this.BoxSelectByHandlesOnly = new System.Windows.Forms.CheckBox();
-            this.DrawCenterHandles = new System.Windows.Forms.CheckBox();
             this.SelectCreatedBrush = new System.Windows.Forms.CheckBox();
             this.SwitchToSelectAfterCreation = new System.Windows.Forms.CheckBox();
             this.AutoSelectBox = new System.Windows.Forms.CheckBox();
@@ -245,6 +248,7 @@ namespace Sledge.Editor.Settings
             this.btnApplySettings = new System.Windows.Forms.Button();
             this.tbcSettings.SuspendLayout();
             this.tab2DViews.SuspendLayout();
+            this.groupBox11.SuspendLayout();
             this.groupBox6.SuspendLayout();
             this.groupBox3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.GridHighlight1Distance)).BeginInit();
@@ -326,6 +330,7 @@ namespace Sledge.Editor.Settings
             // 
             // tab2DViews
             // 
+            this.tab2DViews.Controls.Add(this.groupBox11);
             this.tab2DViews.Controls.Add(this.groupBox6);
             this.tab2DViews.Controls.Add(this.groupBox3);
             this.tab2DViews.Controls.Add(this.groupBox17);
@@ -339,6 +344,70 @@ namespace Sledge.Editor.Settings
             this.tab2DViews.TabIndex = 1;
             this.tab2DViews.Text = "2D Views";
             this.tab2DViews.UseVisualStyleBackColor = true;
+            // 
+            // groupBox11
+            // 
+            this.groupBox11.Controls.Add(this.CenterHandlesOnlyNearCursor);
+            this.groupBox11.Controls.Add(this.CenterHandlesActiveViewportOnly);
+            this.groupBox11.Controls.Add(this.DrawCenterHandles);
+            this.groupBox11.Controls.Add(this.BoxSelectByHandlesOnly);
+            this.groupBox11.Controls.Add(this.ClickSelectByHandlesOnly);
+            this.groupBox11.Location = new System.Drawing.Point(421, 302);
+            this.groupBox11.Name = "groupBox11";
+            this.groupBox11.Size = new System.Drawing.Size(304, 170);
+            this.groupBox11.TabIndex = 1;
+            this.groupBox11.TabStop = false;
+            this.groupBox11.Text = "Center Handles";
+            // 
+            // CenterHandlesOnlyNearCursor
+            // 
+            this.CenterHandlesOnlyNearCursor.Location = new System.Drawing.Point(10, 79);
+            this.CenterHandlesOnlyNearCursor.Name = "CenterHandlesOnlyNearCursor";
+            this.CenterHandlesOnlyNearCursor.Size = new System.Drawing.Size(257, 24);
+            this.CenterHandlesOnlyNearCursor.TabIndex = 0;
+            this.CenterHandlesOnlyNearCursor.Tag = "";
+            this.CenterHandlesOnlyNearCursor.Text = "Render only near cursor position";
+            this.CenterHandlesOnlyNearCursor.UseVisualStyleBackColor = true;
+            // 
+            // CenterHandlesActiveViewportOnly
+            // 
+            this.CenterHandlesActiveViewportOnly.Location = new System.Drawing.Point(10, 49);
+            this.CenterHandlesActiveViewportOnly.Name = "CenterHandlesActiveViewportOnly";
+            this.CenterHandlesActiveViewportOnly.Size = new System.Drawing.Size(257, 24);
+            this.CenterHandlesActiveViewportOnly.TabIndex = 0;
+            this.CenterHandlesActiveViewportOnly.Tag = "";
+            this.CenterHandlesActiveViewportOnly.Text = "Render only in active viewport";
+            this.CenterHandlesActiveViewportOnly.UseVisualStyleBackColor = true;
+            // 
+            // DrawCenterHandles
+            // 
+            this.DrawCenterHandles.Location = new System.Drawing.Point(10, 19);
+            this.DrawCenterHandles.Name = "DrawCenterHandles";
+            this.DrawCenterHandles.Size = new System.Drawing.Size(257, 24);
+            this.DrawCenterHandles.TabIndex = 0;
+            this.DrawCenterHandles.Tag = "";
+            this.DrawCenterHandles.Text = "Render brush center handles";
+            this.DrawCenterHandles.UseVisualStyleBackColor = true;
+            // 
+            // BoxSelectByHandlesOnly
+            // 
+            this.BoxSelectByHandlesOnly.Location = new System.Drawing.Point(10, 109);
+            this.BoxSelectByHandlesOnly.Name = "BoxSelectByHandlesOnly";
+            this.BoxSelectByHandlesOnly.Size = new System.Drawing.Size(257, 24);
+            this.BoxSelectByHandlesOnly.TabIndex = 0;
+            this.BoxSelectByHandlesOnly.Tag = "";
+            this.BoxSelectByHandlesOnly.Text = "Selection box selects by center handles only";
+            this.BoxSelectByHandlesOnly.UseVisualStyleBackColor = true;
+            // 
+            // ClickSelectByHandlesOnly
+            // 
+            this.ClickSelectByHandlesOnly.Location = new System.Drawing.Point(10, 139);
+            this.ClickSelectByHandlesOnly.Name = "ClickSelectByHandlesOnly";
+            this.ClickSelectByHandlesOnly.Size = new System.Drawing.Size(278, 24);
+            this.ClickSelectByHandlesOnly.TabIndex = 0;
+            this.ClickSelectByHandlesOnly.Tag = "";
+            this.ClickSelectByHandlesOnly.Text = "Clicking in 2D view selects by center handles only";
+            this.ClickSelectByHandlesOnly.UseVisualStyleBackColor = true;
             // 
             // groupBox6
             // 
@@ -592,62 +661,26 @@ namespace Sledge.Editor.Settings
             // groupBox17
             // 
             this.groupBox17.Controls.Add(this.KeepVisgroupsWhenCloning);
-            this.groupBox17.Controls.Add(this.ClickSelectByHandlesOnly);
-            this.groupBox17.Controls.Add(this.BoxSelectByHandlesOnly);
-            this.groupBox17.Controls.Add(this.DrawCenterHandles);
             this.groupBox17.Controls.Add(this.SelectCreatedBrush);
             this.groupBox17.Controls.Add(this.SwitchToSelectAfterCreation);
             this.groupBox17.Controls.Add(this.AutoSelectBox);
             this.groupBox17.Controls.Add(this.CrosshairCursorIn2DViews);
             this.groupBox17.Location = new System.Drawing.Point(421, 126);
             this.groupBox17.Name = "groupBox17";
-            this.groupBox17.Size = new System.Drawing.Size(304, 269);
+            this.groupBox17.Size = new System.Drawing.Size(304, 170);
             this.groupBox17.TabIndex = 0;
             this.groupBox17.TabStop = false;
             this.groupBox17.Text = "Options";
             // 
-            // KeepGroupsWhenCloning
+            // KeepVisgroupsWhenCloning
             // 
-            this.KeepVisgroupsWhenCloning.Location = new System.Drawing.Point(10, 229);
+            this.KeepVisgroupsWhenCloning.Location = new System.Drawing.Point(10, 139);
             this.KeepVisgroupsWhenCloning.Name = "KeepVisgroupsWhenCloning";
             this.KeepVisgroupsWhenCloning.Size = new System.Drawing.Size(278, 24);
             this.KeepVisgroupsWhenCloning.TabIndex = 0;
             this.KeepVisgroupsWhenCloning.Tag = "";
             this.KeepVisgroupsWhenCloning.Text = "Keep visgroups when cloning";
             this.KeepVisgroupsWhenCloning.UseVisualStyleBackColor = true;
-            // 
-            // ClickSelectByHandlesOnly
-            // 
-            this.ClickSelectByHandlesOnly.Enabled = false;
-            this.ClickSelectByHandlesOnly.Location = new System.Drawing.Point(10, 199);
-            this.ClickSelectByHandlesOnly.Name = "ClickSelectByHandlesOnly";
-            this.ClickSelectByHandlesOnly.Size = new System.Drawing.Size(278, 24);
-            this.ClickSelectByHandlesOnly.TabIndex = 0;
-            this.ClickSelectByHandlesOnly.Tag = "";
-            this.ClickSelectByHandlesOnly.Text = "Clicking in 2D view selects by center handles only";
-            this.ClickSelectByHandlesOnly.UseVisualStyleBackColor = true;
-            // 
-            // BoxSelectByHandlesOnly
-            // 
-            this.BoxSelectByHandlesOnly.Enabled = false;
-            this.BoxSelectByHandlesOnly.Location = new System.Drawing.Point(10, 169);
-            this.BoxSelectByHandlesOnly.Name = "BoxSelectByHandlesOnly";
-            this.BoxSelectByHandlesOnly.Size = new System.Drawing.Size(257, 24);
-            this.BoxSelectByHandlesOnly.TabIndex = 0;
-            this.BoxSelectByHandlesOnly.Tag = "";
-            this.BoxSelectByHandlesOnly.Text = "Selection box selects by center handles only";
-            this.BoxSelectByHandlesOnly.UseVisualStyleBackColor = true;
-            // 
-            // DrawCenterHandles
-            // 
-            this.DrawCenterHandles.Enabled = false;
-            this.DrawCenterHandles.Location = new System.Drawing.Point(10, 139);
-            this.DrawCenterHandles.Name = "DrawCenterHandles";
-            this.DrawCenterHandles.Size = new System.Drawing.Size(257, 24);
-            this.DrawCenterHandles.TabIndex = 0;
-            this.DrawCenterHandles.Tag = "";
-            this.DrawCenterHandles.Text = "Render brush center handles";
-            this.DrawCenterHandles.UseVisualStyleBackColor = true;
             // 
             // SelectCreatedBrush
             // 
@@ -2585,6 +2618,7 @@ namespace Sledge.Editor.Settings
             this.Load += new System.EventHandler(this.SettingsFormLoad);
             this.tbcSettings.ResumeLayout(false);
             this.tab2DViews.ResumeLayout(false);
+            this.groupBox11.ResumeLayout(false);
             this.groupBox6.ResumeLayout(false);
             this.groupBox3.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.GridHighlight1Distance)).EndInit();
@@ -2854,5 +2888,8 @@ namespace Sledge.Editor.Settings
         private System.Windows.Forms.CheckBox SelectCreatedBrush;
         private System.Windows.Forms.CheckBox ClickSelectByHandlesOnly;
         private System.Windows.Forms.CheckBox KeepVisgroupsWhenCloning;
+        private System.Windows.Forms.GroupBox groupBox11;
+        private System.Windows.Forms.CheckBox CenterHandlesOnlyNearCursor;
+        private System.Windows.Forms.CheckBox CenterHandlesActiveViewportOnly;
 	}
 }

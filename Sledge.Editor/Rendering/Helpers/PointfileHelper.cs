@@ -15,6 +15,11 @@ namespace Sledge.Editor.Rendering.Helpers
         public bool IsDocumentHelper { get { return true; } }
         public HelperType HelperType { get { return HelperType.None; } }
 
+        public void AfterRender3D(Viewport3D viewport)
+        {
+            throw new NotImplementedException();
+        }
+
         public void RenderDocument(ViewportBase viewport, Document document)
         {
             if (document.Pointfile == null) return;
@@ -57,7 +62,22 @@ namespace Sledge.Editor.Rendering.Helpers
             return false;
         }
 
+        public void BeforeRender2D(Viewport2D viewport)
+        {
+            throw new NotImplementedException();
+        }
+
         public void Render2D(Viewport2D viewport, MapObject o)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void AfterRender2D(Viewport2D viewport)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void BeforeRender3D(Viewport3D viewport)
         {
             throw new NotImplementedException();
         }

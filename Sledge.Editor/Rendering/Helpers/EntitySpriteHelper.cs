@@ -23,9 +23,24 @@ namespace Sledge.Editor.Rendering.Helpers
             return o is Entity && ((Entity) o).Sprite != null;
         }
 
+        public void BeforeRender2D(Viewport2D viewport)
+        {
+            throw new NotImplementedException();
+        }
+
         public void Render2D(Viewport2D viewport, MapObject o)
         {
             throw new NotImplementedException();
+        }
+
+        public void AfterRender2D(Viewport2D viewport)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void BeforeRender3D(Viewport3D viewport)
+        {
+
         }
 
         public void Render3D(Viewport3D vp, MapObject o)
@@ -68,6 +83,11 @@ namespace Sledge.Editor.Rendering.Helpers
             GL.Normal3(normal); GL.TexCoord2(0, 1); GL.Vertex3(Vector3.Subtract(orig, Vector3.Subtract(tup, tright)));
 
             GL.End();
+        }
+
+        public void AfterRender3D(Viewport3D viewport)
+        {
+
         }
 
         public void RenderDocument(ViewportBase viewport, Document document)

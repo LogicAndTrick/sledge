@@ -10,9 +10,9 @@ namespace Sledge.Editor.Rendering.Helpers
 {
     /// <summary>
     /// Helpers are objects that either replace or augment a map object. A few of them operate on a document instead of a map object.
-    /// Example of a replacement: Model replacing the bounding box of a prop entity
-    /// Example of an augmentation: A line connecting a trigger and a target entity
-    /// Example of a document helper: Rendering a pointfile, rendering cordon bounds
+    /// Examples of a replacement: Model replacing the bounding box of a prop entity, sprite rendering for an entity instead of a box
+    /// Examples of an augmentation: A line connecting a trigger and a target entity, wireframe sphere showing ambient entity radius
+    /// Examples of a document helper: Rendering a pointfile, rendering cordon bounds
     /// </summary>
     public class HelperManager
     {
@@ -60,7 +60,7 @@ namespace Sledge.Editor.Rendering.Helpers
             ReIndex();
         }
 
-        private IList<MapObject> GetAllVisible(MapObject root)
+        private IEnumerable<MapObject> GetAllVisible(MapObject root)
         {
             var list = new List<MapObject>();
             FindRecursive(list, root, x => !x.IsVisgroupHidden);
@@ -113,18 +113,22 @@ namespace Sledge.Editor.Rendering.Helpers
                 // Render 2D
                 if (helper.Is2DHelper && vp2 != null && _helperCache.ContainsKey(helper))
                 {
+                    helper.BeforeRender2D(vp2);
                     foreach (var obj in _helperCache[helper])
                     {
                         helper.Render2D(vp2, obj);
                     }
+                    helper.AfterRender2D(vp2);
                 }
                 // Render 3D
                 if (helper.Is3DHelper && vp3 != null && _helperCache.ContainsKey(helper))
                 {
+                    helper.BeforeRender3D(vp3);
                     foreach (var obj in _helperCache[helper])
                     {
                         helper.Render3D(vp3, obj);
                     }
+                    helper.AfterRender3D(vp3);
                 }
             }
         }

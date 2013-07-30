@@ -176,6 +176,7 @@ namespace Sledge.Editor.Documents
 
         public void SettingsChanged()
         {
+            _document.HelperManager.UpdateCache();
             RebuildGrid();
         }
 
