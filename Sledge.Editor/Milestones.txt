@@ -6,14 +6,12 @@ Priorities
     Clip tool is laggy
     Recent files menu -> open files
   Backend
-    Texture loader refactor
     Model loader
   Rendering
-    3D view helpers
-      Sprite helpers / Redo sprite billboarding
-      Models
-        FileSystem (PAK / GCF)
-        Model textures
+    Models
+      FileSystem (PAK / GCF)
+      Model textures
+      Model render helper
     Pointfile dark/light theme toggle
     Toggle render of nodraw/null faces
     Transparent rendering / painter's algorithm

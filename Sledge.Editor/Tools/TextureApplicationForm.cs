@@ -232,7 +232,7 @@ namespace Sledge.Editor.Tools
                 var tex = face.Texture;
                 if (tex.Texture != null && textures.All(x => x.Name != tex.Texture.Name))
                 {
-                    var item = TexturePackage.GetItem(tex.Texture.Name);
+                    var item = Document.TextureCollection.GetItem(tex.Texture.Name);
                     if (item != null)
                     {
                         textures.Add(item);
@@ -405,7 +405,7 @@ namespace Sledge.Editor.Tools
         {
             using (var browser = new TextureBrowser())
             {
-                browser.SetTextureList(TexturePackage.GetLoadedItems());
+                browser.SetTextureList(Document.TextureCollection.GetAllItems());
                 browser.ShowDialog();
 
                 if (browser.SelectedTexture == null) return;

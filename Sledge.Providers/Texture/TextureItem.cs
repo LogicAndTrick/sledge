@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Sledge.Common;
+﻿using Sledge.Common;
 using Sledge.Graphics.Helpers;
 
 namespace Sledge.Providers.Texture
@@ -24,11 +20,11 @@ namespace Sledge.Providers.Texture
 
         public ITexture GetTexture()
         {
-            if (!TextureHelper.Exists(Name))
+            if (!TextureHelper.Exists(Name.ToLowerInvariant()))
             {
-                TextureProvider.LoadTextureFromPackage(Package, Name);
+                TextureProvider.LoadTextureItem(this);
             }
-            return TextureHelper.Get(Name);
+            return TextureHelper.Get(Name.ToLowerInvariant());
         }
     }
 }

@@ -45,6 +45,7 @@ namespace Sledge.Editor.Documents
         public SelectionManager Selection { get; private set; }
         public HistoryManager History { get; private set; }
         public HelperManager HelperManager { get; set; }
+        public TextureCollection TextureCollection { get; set; }
 
         private readonly DocumentSubscriptions _subscriptions;
 
@@ -53,6 +54,7 @@ namespace Sledge.Editor.Documents
             Selection = new SelectionManager(this);
             History = new HistoryManager(this);
             HelperManager = new HelperManager(this);
+            TextureCollection = new TextureCollection(new List<TexturePackage>());
         }
 
         public Document(string mapFile, Map map, Game game)
@@ -80,12 +82,10 @@ namespace Sledge.Editor.Documents
                 GameData = new GameData();
             }
 
-            foreach (var wad in game.Wads.OrderBy(x => Path.GetFileName(x.Path)))
-            {
-                TexturePackage.Load(wad.Path);
-            }
+            TextureCollection = TextureProvider.CreateCollection(game.Wads.Select(x => x.Path).Distinct());
             var texList = Map.GetAllTextures();
-            TexturePackage.LoadTextureData(texList);
+            var items = TextureCollection.GetItems(texList);
+            TextureCollection.LoadTextureItems(items);
 
             Map.PostLoadProcess(GameData, TextureHelper.Get);
 
@@ -130,6 +130,7 @@ namespace Sledge.Editor.Documents
         public void Close()
         {
             Scheduler.Clear(this);
+            TextureProvider.DeleteCollection(TextureCollection);
         }
 
         private string GetAutosaveFormatString()

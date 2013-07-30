@@ -1,31 +1,20 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
-using System;
-using System.Drawing;
 
 namespace Sledge.Providers.Texture
 {
     public abstract class TextureProvider
     {
-        public abstract class TextureStreamSource : IDisposable
-        {
-            protected List<TexturePackage> Packages;
-
-            protected TextureStreamSource(IEnumerable<TexturePackage> packages)
-            {
-                Packages = new List<TexturePackage>(packages);
-            }
-
-            public abstract Bitmap GetImage(TextureItem item);
-
-            public abstract void Dispose();
-        }
-
         private static readonly List<TextureProvider> RegisteredProviders;
+        private static readonly List<TextureCollection> Collections;
+        private static readonly List<TexturePackage> Packages;
 
         static TextureProvider()
         {
             RegisteredProviders = new List<TextureProvider>();
+            Collections = new List<TextureCollection>();
+            Packages = new List<TexturePackage>();
         }
 
         #region Registration
@@ -42,75 +31,62 @@ namespace Sledge.Providers.Texture
 
         #endregion
 
-        protected abstract bool IsValidForPackageFile(string package);
+        public abstract bool IsValidForPackageFile(string package);
+        public abstract TexturePackage CreatePackage(string package);
+        public abstract void LoadTexture(TextureItem item);
+        public abstract void LoadTextures(IEnumerable<TextureItem> items);
+        public abstract ITextureStreamSource GetStreamSource(IEnumerable<TexturePackage> packages);
 
-        public static void LoadTexturesFromPackages(IEnumerable<TexturePackage> packages, IEnumerable<string> names)
+        public static TextureCollection CreateCollection(IEnumerable<string> packages)
         {
-            packages.ToList().ForEach(p => LoadTexturesFromPackage(p, names));
-        }
-
-        public static void LoadTexturesFromPackage(TexturePackage package, IEnumerable<string> names)
-        {
-            var provider = RegisteredProviders.FirstOrDefault(p => p.IsValidForPackageFile(package.PackageFile));
-            if (provider != null)
+            var pkgs = new List<TexturePackage>();
+            foreach (var package in packages)
             {
-                provider.LoadTextures(package, names);
-                return;
-            }
-        }
-
-        public static void LoadTextureFromPackage(TexturePackage package, string name)
-        {
-            var provider = RegisteredProviders.FirstOrDefault(p => p.IsValidForPackageFile(package.PackageFile));
-            if (provider != null)
-            {
-                provider.LoadTexture(package, name);
-                return;
-            }
-            throw new ProviderNotFoundException("No texture provider was found for this package.");
-        }
-
-        protected abstract void LoadTexture(TexturePackage package, string name);
-        protected abstract void LoadTextures(TexturePackage package, IEnumerable<string> names);
-
-        public static IEnumerable<TextureItem> GetAllTextureItemsFromPackage(TexturePackage package)
-        {
-            var provider = RegisteredProviders.FirstOrDefault(p => p.IsValidForPackageFile(package.PackageFile));
-            if (provider != null)
-            {
-                return provider.GetAllTextureItems(package);
-            }
-            throw new ProviderNotFoundException("No texture provider was found for this package.");
-        }
-
-        /// <summary>
-        /// Loads all the texture items for a package. Doesn't get image data, just
-        /// the metadata of the texture.
-        /// </summary>
-        /// <param name="package">The texture package to load textures from</param>
-        /// <returns>A list of texture items in the package.</returns>
-        protected abstract IEnumerable<TextureItem> GetAllTextureItems(TexturePackage package);
-
-        public static TextureStreamSource GetStreamSourceForPackages(IEnumerable<TexturePackage> packages)
-        {
-            foreach (var rp in RegisteredProviders)
-            {
-                var valid = true;
-                foreach (var tp in packages)
+                var existing = Packages.FirstOrDefault(x => String.Equals(x.PackageFile, package, StringComparison.InvariantCultureIgnoreCase));
+                if (existing != null)
                 {
-                    if (!rp.IsValidForPackageFile(tp.PackageFile))
-                    {
-                        valid = false;
-                    }
+                    // Package already loaded in another map
+                    pkgs.Add(existing);
                 }
-                if (valid)
+                else
                 {
-                    return rp.GetStreamSource(packages);
+                    // Load the package
+                    var provider = RegisteredProviders.FirstOrDefault(p => p.IsValidForPackageFile(package));
+                    if (provider == null) throw new ProviderNotFoundException("No texture provider was found for package: " + package);
+                    var pkg = provider.CreatePackage(package);
+                    Packages.Add(pkg);
+                    pkgs.Add(pkg);
                 }
             }
-            throw new ProviderNotFoundException("No texture provider was found for this package.");
+            var tc = new TextureCollection(pkgs);
+            Collections.Add(tc);
+            return tc;
         }
 
-        protected abstract TextureStreamSource GetStreamSource(IEnumerable<TexturePackage> packages);
+        public static void DeleteCollection(TextureCollection collection)
+        {
+            Collections.RemoveAll(x => x == collection);
+            foreach (var package in Packages.ToArray())
+            {
+                if (!Collections.Any(x => x.Packages.Contains(package)))
+                {
+                    Packages.Remove(package);
+                    package.Dispose();
+                }
+            }
+        }
+
+        public static void LoadTextureItem(TextureItem item)
+        {
+            item.Package.LoadTexture(item);
+        }
+
+        public static void LoadTextureItems(IEnumerable<TextureItem> items)
+        {
+            foreach (var g in items.GroupBy(x => x.Package))
+            {
+                g.Key.LoadTextures(g);
+            }
+        }
     }
 }

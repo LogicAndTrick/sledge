@@ -23,7 +23,7 @@ namespace Sledge.Editor.Problems
         }
 
         public IAction Fix(Problem problem)
-        {
+        {/*
             var ignored = "{#!~+-0123456789".ToCharArray();
             var def = TexturePackage.GetLoadedItems()
                 .OrderBy(x => new string(x.Name.Where(c => !ignored.Contains(c)).ToArray()) + "Z")
@@ -36,7 +36,8 @@ namespace Sledge.Editor.Problems
                                                            x.Texture.Texture = def.GetTexture();
                                                            x.CalculateTextureCoordinates();
                                                        }
-                                                   }, true);
+                                                   }, true);*/
+            return null;
         }
     }
 }

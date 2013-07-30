@@ -642,7 +642,7 @@ namespace Sledge.Editor.Documents
             {
                 if (trd.ShowDialog() == DialogResult.OK)
                 {
-                    var action = trd.GetAction(_document);
+                    var action = trd.GetAction();
                     _document.PerformAction("Replace textures", action);
                 }
             }

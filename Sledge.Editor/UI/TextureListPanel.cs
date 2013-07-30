@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using Sledge.Editor.Documents;
 using Sledge.Providers.Texture;
 using Sledge.UI;
 
@@ -324,7 +325,7 @@ namespace Sledge.Editor.UI
 
         public void RenderTextures(System.Drawing.Graphics g)
         {
-            if (_textures.Count == 0) return;
+            if (_textures.Count == 0 || DocumentManager.CurrentDocument == null) return;
 
             var x = 0;
             var y = _scrollBar.Value;
@@ -339,7 +340,7 @@ namespace Sledge.Editor.UI
             y = topRow * _calculatedSize.Height - y;
 
             var packs = _textures.Select(t => t.Package).Distinct();
-            using (var stream = TextureProvider.GetStreamSourceForPackages(packs))
+            using (var stream = DocumentManager.CurrentDocument.TextureCollection.GetStreamSource(packs))
             {
                 foreach (var ti in _textures.Skip(skip).Take(take))
                 {

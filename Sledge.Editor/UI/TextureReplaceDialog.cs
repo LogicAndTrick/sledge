@@ -18,8 +18,11 @@ namespace Sledge.Editor.UI
 {
     public partial class TextureReplaceDialog : Form
     {
+        private Document _document;
+
         public TextureReplaceDialog(Document document)
         {
+            _document = document;
             InitializeComponent();
             BindTextureControls(Find, FindImage, FindBrowse, FindInfo);
             BindTextureControls(Replace, ReplaceImage, ReplaceBrowse, ReplaceInfo);
@@ -40,11 +43,11 @@ namespace Sledge.Editor.UI
             }
         }
 
-        private IEnumerable<MapObject> GetObjects(Document doc)
+        private IEnumerable<MapObject> GetObjects()
         {
-            if (ReplaceSelection.Checked) return doc.Selection.GetSelectedObjects();
-            if (ReplaceVisible.Checked) return doc.Map.WorldSpawn.Find(x => !x.IsVisgroupHidden);
-            return doc.Map.WorldSpawn.FindAll();
+            if (ReplaceSelection.Checked) return _document.Selection.GetSelectedObjects();
+            if (ReplaceVisible.Checked) return _document.Map.WorldSpawn.Find(x => !x.IsVisgroupHidden);
+            return _document.Map.WorldSpawn.FindAll();
         }
 
         private bool MatchTextureName(string name)
@@ -70,7 +73,7 @@ namespace Sledge.Editor.UI
             {
                 var n = substitute ? name.Replace(find, replace) : replace;
 
-                var item = TexturePackage.GetLoadedItems().FirstOrDefault(x => x.Name.ToLowerInvariant().Equals(n));
+                var item = _document.TextureCollection.GetItem(n);
                 if (item == null) continue;
                 
                 list.Add(Tuple.Create(name, item, item.GetTexture()));
@@ -78,12 +81,12 @@ namespace Sledge.Editor.UI
             return list;
         }
 
-        public IAction GetAction(Document document)
+        public IAction GetAction()
         {
-            var faces = GetObjects(document).OfType<Solid>().SelectMany(x => x.Faces).Where(x => MatchTextureName(x.Texture.Name)).ToList();
+            var faces = GetObjects().OfType<Solid>().SelectMany(x => x.Faces).Where(x => MatchTextureName(x.Texture.Name)).ToList();
             if (ActionSelect.Checked)
             {
-                return new ChangeSelection(faces.Select(x => x.Parent).Distinct(), document.Selection.GetSelectedObjects());
+                return new ChangeSelection(faces.Select(x => x.Parent).Distinct(), _document.Selection.GetSelectedObjects());
             }
             var rescale = RescaleTextures.Checked;
             var replacements = GetReplacements(faces.Select(x => x.Texture.Name));
@@ -93,7 +96,7 @@ namespace Sledge.Editor.UI
                                                     if (repl == null) return;
                                                     if (rescale)
                                                     {
-                                                        var item = TexturePackage.GetLoadedItems().FirstOrDefault(x => x.Name.ToLowerInvariant().Equals(face.Texture.Name.ToLowerInvariant()));
+                                                        var item = _document.TextureCollection.GetItem(face.Texture.Name);
                                                         if (item != null)
                                                         {
                                                             face.Texture.XScale *= item.Width / (decimal)repl.Item2.Width;
@@ -118,7 +121,7 @@ namespace Sledge.Editor.UI
         {
             using (var tb = new TextureBrowser())
             {
-                tb.SetTextureList(TexturePackage.GetLoadedItems());
+                tb.SetTextureList(_document.TextureCollection.GetAllItems());
                 tb.ShowDialog();
                 if (tb.SelectedTexture != null)
                 {
@@ -129,7 +132,7 @@ namespace Sledge.Editor.UI
 
         private void UpdateTexture(string text, PictureBox image, Label info)
         {
-            var item = TexturePackage.GetLoadedItems().FirstOrDefault(x => String.Equals(x.Name, text, StringComparison.InvariantCultureIgnoreCase));
+            var item = _document.TextureCollection.GetItem(text);
             if (item == null)
             {
                 image.Image = null;
@@ -137,7 +140,7 @@ namespace Sledge.Editor.UI
                 return;
             }
 
-            using (var tp = TextureProvider.GetStreamSourceForPackages(new[] { item.Package }))
+            using (var tp = _document.TextureCollection.GetStreamSource())
             {
                 var bmp = tp.GetImage(item);
                 image.SizeMode = bmp.Width > image.Width || bmp.Height > image.Height

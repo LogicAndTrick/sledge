@@ -12,11 +12,9 @@ using Sledge.Providers.Texture;
 using Sledge.Settings;
 using Sledge.UI;
 using Sledge.Editor.Properties;
-using Sledge.Editor.Editing;
 using Sledge.Graphics.Helpers;
 using OpenTK.Graphics.OpenGL;
 using Sledge.DataStructures.MapObjects;
-using Sledge.Extensions;
 using Sledge.DataStructures.Geometric;
 
 namespace Sledge.Editor.Tools
@@ -228,7 +226,7 @@ namespace Sledge.Editor.Tools
             Action lift = () =>
                               {
                                   var itemToSelect = firstClicked != null
-                                                         ? TexturePackage.GetItem(firstClicked.Texture.Name)
+                                                         ? Document.TextureCollection.GetItem(firstClicked.Texture.Name)
                                                          : null;
                                   if (itemToSelect != null)
                                   {
@@ -250,7 +248,7 @@ namespace Sledge.Editor.Tools
                     break;
                 case SelectBehaviour.Apply:
                 case SelectBehaviour.ApplyWithValues:
-                    var item = firstSelected != null ? TexturePackage.GetItem(firstSelected.Texture.Name) : null;
+                    var item = firstSelected != null ? Document.TextureCollection.GetItem(firstSelected.Texture.Name) : null;
                     if (item != null)
                     {
                         var texture = item.GetTexture();

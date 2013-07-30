@@ -1,17 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Windows.Forms;
 using Sledge.Common;
 using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.MapObjects;
 using Sledge.Editor.Actions.MapObjects.Operations;
-using Sledge.Editor.History;
 using Sledge.Editor.Properties;
 using Sledge.Graphics.Helpers;
-using Sledge.Providers.Texture;
 using Sledge.Settings;
 using Sledge.UI;
 
@@ -72,7 +66,7 @@ namespace Sledge.Editor.Tools
             var selected = Editor.Instance.GetSelectedTexture();
             var textureName = selected == null ? "{TARGET" : selected.Name;
 
-            if (TexturePackage.GetItem(textureName) == null)
+            if (Document.TextureCollection.GetItem(textureName) == null)
             {
                 return;
             }
@@ -82,7 +76,7 @@ namespace Sledge.Editor.Tools
                 EntityData = new EntityData(gd),
                 ClassName = gd.Name,
                 Colour = Colour.GetRandomBrushColour(),
-                Decal = TextureHelper.Get(textureName),
+                Decal = TextureHelper.Get(textureName.ToLowerInvariant()),
                 Origin = origin
             };
             decal.EntityData.SetPropertyValue("texture", textureName);
