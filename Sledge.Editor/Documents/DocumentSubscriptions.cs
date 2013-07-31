@@ -394,6 +394,7 @@ namespace Sledge.Editor.Documents
 
         public void SwitchTool(HotkeyTool tool)
         {
+            if (ToolManager.ActiveTool != null && ToolManager.ActiveTool.GetHotkeyToolType() == tool) tool = HotkeyTool.Selection;
             ToolManager.Activate(tool);
         }
 
