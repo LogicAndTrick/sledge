@@ -14,7 +14,6 @@ Priorities
       Model render helper
     Toggle render of nodraw/null faces
     Transparent rendering / painter's algorithm
-    Cordon render
   Document/Actions
     TDI
     Advanced/proper compiling

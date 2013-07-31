@@ -73,7 +73,7 @@ namespace Sledge.Editor.Tools
                 var min = viewport.ScreenToWorld(0, 0);
                 var max = viewport.ScreenToWorld(viewport.Width, viewport.Height);
 
-                GL.Color4(Color.FromArgb(128, Color.Purple));
+                GL.Color4(Color.FromArgb(128, Color.Orange));
                 GL.Begin(BeginMode.Quads);
 
                 Coord(min.DX, min.DY, 0);

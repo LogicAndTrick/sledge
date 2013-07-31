@@ -168,6 +168,7 @@
     <Compile Include="Problems\TextureAxisPerpendicularToFace.cs" />
     <Compile Include="Problems\TextureNotFound.cs" />
     <Compile Include="Rendering\Helpers\CenterHandlesHelper.cs" />
+    <Compile Include="Rendering\Helpers\CordonHelper.cs" />
     <Compile Include="Rendering\Helpers\EntitySpriteHelper.cs" />
     <Compile Include="Rendering\Helpers\HelperManager.cs" />
     <Compile Include="Rendering\Helpers\HelperRenderable.cs" />
