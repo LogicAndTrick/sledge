@@ -68,6 +68,7 @@ namespace Sledge.Settings
         
         public static float GetSpecialTextureOpacity(string name)
         {
+            if (!View.RenderTransparentToolBrushes) return 1;
             name = name.ToLowerInvariant();
             return SpecialTextureOpacities.ContainsKey(name) ? SpecialTextureOpacities[name] : 1;
         }

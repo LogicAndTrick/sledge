@@ -95,6 +95,8 @@ namespace Sledge.Editor.Menu
             Add("Map", new SimpleMenuBuilder("Texture Lock", HotkeysMediator.ToggleTextureLock) { Image = Resources.Menu_TextureLock, IsVisible = mapOpen, IsChecked = () => mapOpen() && DocumentManager.CurrentDocument.Map.TextureLock, ShowInToolStrip = true });
             Add("Map", new SimpleMenuBuilder("Texture Scaling Lock", HotkeysMediator.ToggleTextureScalingLock) { Image = Resources.Menu_TextureScalingLock, IsVisible = mapOpen, IsChecked = () => mapOpen() && DocumentManager.CurrentDocument.Map.TextureScalingLock, ShowInToolStrip = true });
             Add("Map", new MenuSplitter { IsVisible = mapOpen });
+            Add("Map", new SimpleMenuBuilder("Hide Null Textures", HotkeysMediator.ToggleHideNullTextures) { Image = Resources.Menu_HideNullTextures, IsVisible = mapOpen, IsChecked = () => mapOpen() && DocumentManager.CurrentDocument.Map.HideNullTextures, ShowInToolStrip = true });
+            Add("Map", new MenuSplitter { IsVisible = mapOpen });
             Add("Map", new SimpleMenuBuilder("Show Information", HotkeysMediator.ShowMapInformation) { Image = Resources.Menu_ShowInformation, IsVisible = mapOpen });
             Add("Map", new SimpleMenuBuilder("Show Selected Brush ID", HotkeysMediator.ShowSelectedBrushID) { Image = Resources.Menu_ShowBrushID, IsVisible = mapOpen, IsActive = itemsSelected });
             Add("Map", new SimpleMenuBuilder("Entity Report...", HotkeysMediator.ShowEntityReport) { Image = Resources.Menu_EntityReport, IsVisible = mapOpen });

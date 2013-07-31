@@ -223,8 +223,9 @@ namespace Sledge.Editor.Settings
 
             // 3D Views
             BackClippingPane.Value = Sledge.Settings.View.BackClippingPane;
-	        ModelRenderDistance.Value = Sledge.Settings.View.ModelRenderDistance;
-	        DetailRenderDistance.Value = Sledge.Settings.View.DetailRenderDistance;
+            ModelRenderDistance.Value = Sledge.Settings.View.ModelRenderDistance;
+            DetailRenderDistance.Value = Sledge.Settings.View.DetailRenderDistance;
+            RenderTransparentToolBrushes.Checked = Sledge.Settings.View.RenderTransparentToolBrushes;
 
             ForwardSpeed.Value = Sledge.Settings.View.ForwardSpeed;
             TimeToTopSpeed.Value = (int) (Sledge.Settings.View.TimeToTopSpeed / 10);
@@ -296,6 +297,7 @@ namespace Sledge.Editor.Settings
             Sledge.Settings.View.BackClippingPane = BackClippingPane.Value;
             Sledge.Settings.View.ModelRenderDistance = ModelRenderDistance.Value;
             Sledge.Settings.View.DetailRenderDistance = DetailRenderDistance.Value;
+            Sledge.Settings.View.RenderTransparentToolBrushes = RenderTransparentToolBrushes.Checked;
 
             Sledge.Settings.View.ForwardSpeed = ForwardSpeed.Value;
             Sledge.Settings.View.TimeToTopSpeed = TimeToTopSpeed.Value * 10m;

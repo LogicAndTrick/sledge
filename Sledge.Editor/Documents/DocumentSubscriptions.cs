@@ -118,6 +118,8 @@ namespace Sledge.Editor.Documents
             Mediator.Subscribe(HotkeysMediator.ToggleTextureScalingLock, this);
             Mediator.Subscribe(HotkeysMediator.ToggleCordon, this);
             Mediator.Subscribe(HotkeysMediator.ToggleHideFaceMask, this);
+            Mediator.Subscribe(HotkeysMediator.ToggleHideDisplacementSolids, this);
+            Mediator.Subscribe(HotkeysMediator.ToggleHideNullTextures, this);
 
             Mediator.Subscribe(HotkeysMediator.ShowSelectedBrushID, this);
             Mediator.Subscribe(HotkeysMediator.ShowMapInformation, this);
@@ -179,6 +181,7 @@ namespace Sledge.Editor.Documents
         {
             _document.HelperManager.UpdateCache();
             RebuildGrid();
+            _document.UpdateDisplayLists();
         }
 
         public void HistoryUndo()
@@ -968,6 +971,20 @@ namespace Sledge.Editor.Documents
         public void ToggleHideFaceMask()
         {
             _document.Map.HideFaceMask = !_document.Map.HideFaceMask;
+        }
+
+        public void ToggleHideDisplacementSolids()
+        {
+            _document.Map.HideDisplacementSolids = !_document.Map.HideDisplacementSolids;
+            // todo hide displacement solids
+            Mediator.Publish(EditorMediator.UpdateToolstrip);
+        }
+
+        public void ToggleHideNullTextures()
+        {
+            _document.Map.HideNullTextures = !_document.Map.HideNullTextures;
+            _document.UpdateDisplayLists();
+            Mediator.Publish(EditorMediator.UpdateToolstrip);
         }
 
         public void ShowSelectedBrushID()
