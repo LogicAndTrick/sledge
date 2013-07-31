@@ -182,10 +182,13 @@ namespace Sledge.Editor.Settings
 	        DeselectOthersWhenSelectingCreation.Checked = Sledge.Settings.Select.DeselectOthersWhenSelectingCreation;
 	        ResetBrushTypeOnCreation.Checked = Sledge.Settings.Select.ResetBrushTypeOnCreation;
 
+	        ApplyTextureImmediately.Checked = Sledge.Settings.Select.ApplyTextureImmediately;
+
             // 2D Views
             CrosshairCursorIn2DViews.Checked = Sledge.Settings.View.CrosshairCursorIn2DViews;
             AutoSelectBox.Checked = Sledge.Settings.Select.AutoSelectBox;
             KeepVisgroupsWhenCloning.Checked = Sledge.Settings.Select.KeepVisgroupsWhenCloning;
+	        ScrollWheelZoomMultiplier.Value = Sledge.Settings.View.ScrollWheelZoomMultiplier;
 
             DrawCenterHandles.Checked = Sledge.Settings.Select.DrawCenterHandles;
 	        CenterHandlesActiveViewportOnly.Checked = Sledge.Settings.Select.CenterHandlesActiveViewportOnly;
@@ -254,10 +257,13 @@ namespace Sledge.Editor.Settings
             Sledge.Settings.Select.DeselectOthersWhenSelectingCreation = DeselectOthersWhenSelectingCreation.Checked;
             Sledge.Settings.Select.ResetBrushTypeOnCreation = ResetBrushTypeOnCreation.Checked;
 
+            Sledge.Settings.Select.ApplyTextureImmediately = ApplyTextureImmediately.Checked;
+
             // 2D Views
             Sledge.Settings.View.CrosshairCursorIn2DViews = CrosshairCursorIn2DViews.Checked;
             Sledge.Settings.Select.AutoSelectBox = AutoSelectBox.Checked;
             Sledge.Settings.Select.KeepVisgroupsWhenCloning = KeepVisgroupsWhenCloning.Checked;
+            Sledge.Settings.View.ScrollWheelZoomMultiplier = ScrollWheelZoomMultiplier.Value;
 
             Sledge.Settings.Select.DrawCenterHandles = DrawCenterHandles.Checked;
             Sledge.Settings.Select.CenterHandlesActiveViewportOnly = CenterHandlesActiveViewportOnly.Checked;

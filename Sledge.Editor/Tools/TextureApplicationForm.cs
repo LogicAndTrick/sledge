@@ -410,6 +410,10 @@ namespace Sledge.Editor.Tools
 
                 if (browser.SelectedTexture == null) return;
                 Mediator.Publish(EditorMediator.TextureSelected, browser.SelectedTexture);
+                if (Sledge.Settings.Select.ApplyTextureImmediately)
+                {
+                    ApplyButtonClicked(sender, e);
+                }
             }
         }
 

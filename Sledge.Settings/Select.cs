@@ -25,6 +25,8 @@
         public static bool ClickSelectByCenterHandlesOnly { get; set; }
         public static bool BoxSelectByCenterHandlesOnly { get; set; }
 
+        public static bool ApplyTextureImmediately { get; set; }
+
         static Select()
         {
             SnapStyle = SnapStyle.SnapOffAlt;

@@ -2,6 +2,7 @@
 using System.Windows.Forms;
 using Sledge.Common.Mediator;
 using Sledge.DataStructures.Geometric;
+using Sledge.Extensions;
 using Sledge.UI;
 
 namespace Sledge.Editor.UI
@@ -71,7 +72,7 @@ namespace Sledge.Editor.UI
         public void MouseWheel(ViewportEvent e)
         {
             var before = Viewport2D.ScreenToWorld(e.X, Viewport2D.Height - e.Y);
-            Viewport2D.Zoom *= (decimal)Math.Pow(1.2, (e.Delta < 0 ? -1 : 1));
+            Viewport2D.Zoom *= DMath.Pow(Sledge.Settings.View.ScrollWheelZoomMultiplier, (e.Delta < 0 ? -1 : 1));
             var after = Viewport2D.ScreenToWorld(e.X, Viewport2D.Height - e.Y);
             Viewport2D.Position -= (after - before);
 
