@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Windows.Forms;
 using Sledge.Settings;
+using Sledge.Settings.GameDetection;
 
 namespace Sledge.Sandbox
 {
@@ -16,6 +17,11 @@ namespace Sledge.Sandbox
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             //Application.Run(new MainForm());
+
+            var wd = new WonDetector();
+            wd.Detect();
+
+            return;
 
             QuickStartBootstrap.MapFile = @"D:\Github\sledge\_Resources\RMF\entities.rmf";
             SettingsManager.Read();

@@ -28,9 +28,6 @@ Priorities
     Actions for switching selection modes
     Cameras
       VMF/RMF read/write
-    Handles
-      Select by handles option
-    Auto select option
     Brush scripts
       Arch
       Sphere

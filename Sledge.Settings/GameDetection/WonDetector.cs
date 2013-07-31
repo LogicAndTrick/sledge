@@ -1,11 +1,58 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using System.Text;
+using System.Text.RegularExpressions;
 using Microsoft.Win32;
+using Sledge.Settings.Models;
 
-namespace Sledge.Configuration.GameDetection
+namespace Sledge.Settings.GameDetection
 {
+    public static class GoldsourceDirectoryScanner
+    {
+        public static IEnumerable<Game> Scan(string dir)
+        {
+            foreach (var d in Directory.GetDirectories(dir))
+            {
+                var di = new DirectoryInfo(d);
+                var gam = Directory.GetFiles(d, "liblist.gam");
+                if (gam.Any())
+                {
+                    var lines = File.ReadAllLines(gam[0]).Select(x => x.Trim());
+                    var dict = GetGamKeyVals(lines);
+                    if (!dict.ContainsKey("game")) continue;
+                    var game = new Game();
+                    game.EngineID = 1;
+                    // game.Fgds lookup
+                    game.ModDir = di.Name;
+                    game.Name = dict["game"];
+                    game.SteamInstall = false;
+                    game.Wads.AddRange(Directory.GetFiles(d, "*.wad").Select(x => new Wad { Path = x }));
+                    game.WonGameDir = dir;
+                    yield return game;
+                }
+            }
+        }
+
+        private static Dictionary<string, string> GetGamKeyVals(IEnumerable<string> lines)
+        {
+            var dict = new Dictionary<string, string>();
+            foreach (var line in lines)
+            {
+                var str = line;
+                if (str.Contains("//")) str = line.Substring(0, str.IndexOf("//", System.StringComparison.Ordinal));
+                str = Regex.Replace(str, @"\s+", " ").Trim();
+                if (String.IsNullOrWhiteSpace(str)) continue;
+                var split = str.Split(' ');
+                if (split.Length != 2) continue;
+                var key = split[0].ToLower();
+                var value = split[1].Trim('"');
+                dict.Add(key, value);
+            }
+            return dict;
+        }
+    }
+
     public class WonDetector : IGameDetector
     {
         public string Name
@@ -66,9 +113,9 @@ namespace Sledge.Configuration.GameDetection
                     }
                 }
             }
-            foreach (var directory in directoriesToScan)
+            foreach (var directory in directoriesToScan.Select(x => x.ToLower()).Distinct())
             {
-                
+                var games = GoldsourceDirectoryScanner.Scan(directory);
             }
         }
     }

@@ -124,8 +124,6 @@ namespace Sledge.Editor.Settings
             {
                 _games[i].ID = i + 1;
                 _games[i].BuildID = _builds.FindIndex(x => x.ID == _games[i].BuildID) + 1;
-                _games[i].Fgds.ForEach(x => x.GameID = i + 1);
-                _games[i].Wads.ForEach(x => x.GameID = i + 1);
             }
 
             for (var i = 0; i < _builds.Count; i++)
@@ -734,7 +732,7 @@ namespace Sledge.Editor.Settings
                 {
                     foreach (var fileName in ofd.FileNames)
                     {
-                        _selectedGame.Fgds.Add(new Fgd { GameID = _selectedGame.ID, Path = fileName });
+                        _selectedGame.Fgds.Add(new Fgd { Path = fileName });
                     }
                     SelectedGameUpdateFgds();
                 }
@@ -758,7 +756,7 @@ namespace Sledge.Editor.Settings
                 {
                     foreach (var fileName in ofd.FileNames)
                     {
-                        _selectedGame.Wads.Add(new Wad { GameID = _selectedGame.ID, Path = fileName });
+                        _selectedGame.Wads.Add(new Wad { Path = fileName });
                     }
                     SelectedGameUpdateWads();
                 }

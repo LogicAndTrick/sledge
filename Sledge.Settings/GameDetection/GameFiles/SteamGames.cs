@@ -3,7 +3,7 @@
 
 using System.Collections.Generic;
 
-namespace Sledge.Editor.GameFiles
+namespace Sledge.Settings.GameDetection.GameFiles
 {
     public static class SteamGames
     {

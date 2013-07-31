@@ -66,7 +66,7 @@ namespace Sledge.Settings.Models
             {
                 foreach (var key in wads.GetPropertyKeys())
                 {
-                    Wads.Add(new Wad { ID = int.Parse(key), GameID = ID, Path = wads[key] });
+                    Wads.Add(new Wad { Path = wads[key] });
                 }
             }
 
@@ -75,7 +75,7 @@ namespace Sledge.Settings.Models
             {
                 foreach (var key in fgds.GetPropertyKeys())
                 {
-                    Fgds.Add(new Fgd { ID = int.Parse(key), GameID = ID, Path = fgds[key] });
+                    Fgds.Add(new Fgd { Path = fgds[key] });
                 }
             }
         }

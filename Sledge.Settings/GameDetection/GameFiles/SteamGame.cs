@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
-namespace Sledge.Editor.GameFiles
+namespace Sledge.Settings.GameDetection.GameFiles
 {
     public class SteamGame
     {
