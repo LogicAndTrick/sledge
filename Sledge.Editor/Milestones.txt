@@ -12,8 +12,6 @@ Priorities
       FileSystem (PAK / GCF)
       Model textures
       Model render helper
-    Toggle render of nodraw/null faces
-    Transparent rendering / painter's algorithm
   Document/Actions
     TDI
     Advanced/proper compiling
