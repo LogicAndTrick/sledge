@@ -129,7 +129,7 @@ void main()
             outputColor = outputColor * selectionColourMultiplier; //vec4(1, 0.5, 0.5, 1);
         }
     }
-    if (isTextured && showGrid) {
+    if (in3d && showGrid) {
         if (abs(worldNormal).x < 0.9999) outputColor = mix(outputColor, vec4(1, 0, 0, 1), step(mod(worldPosition.x, gridSpacing), 0.5));
         if (abs(worldNormal).y < 0.9999) outputColor = mix(outputColor, vec4(0, 1, 0, 1), step(mod(worldPosition.y, gridSpacing), 0.5));
         if (abs(worldNormal).z < 0.9999) outputColor = mix(outputColor, vec4(0, 0, 1, 1), step(mod(worldPosition.z, gridSpacing), 0.5));
@@ -243,7 +243,7 @@ void main()
             ModelView = modelView;
             IsTextured = true;
             IsWireframe = false;
-            In3D = false;
+            In3D = true;
             DrawUntransformed = false;
             DrawSelectedOnly = false;
             SelectionColourMultiplier = _document.Selection.InFaceSelection && _document.Map.HideFaceMask ? Vector4.One : new Vector4(1, 0.5f, 0.5f, 1);
@@ -257,7 +257,6 @@ void main()
 
             DrawUntransformed = true;
             DrawSelectedOnly = true;
-            In3D = true;
             IsWireframe = true;
             WireframeColour = new Vector4(1, 1, 0, 1);
             SelectedWireframeColour = new Vector4(1, 0, 0, 1);

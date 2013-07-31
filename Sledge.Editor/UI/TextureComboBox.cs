@@ -113,6 +113,7 @@ namespace Sledge.Editor.UI
             foreach (var hi in _history)
             {
                 var item = GetTexture(hi.Name, true);
+                if (item.Item == null) continue;
                 if (hi == last) item.DrawBorder = true;
                 Items.Add(item);
                 if (reselect == null && selectedName == item.Item.Name) reselect = item;
