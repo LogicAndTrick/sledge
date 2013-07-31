@@ -104,11 +104,6 @@ namespace Sledge.DataStructures.MapObjects
                 .FirstOrDefault();
         }
 
-        public void Split2(Plane plane, out Solid back, out Solid front, IDGenerator generator)
-        {
-            throw new Exception();
-        }
-
         /// <summary>
         /// Splits this solid into two solids by intersecting against a plane.
         /// </summary>

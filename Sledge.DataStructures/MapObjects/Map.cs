@@ -21,6 +21,8 @@ namespace Sledge.DataStructures.MapObjects
         public bool SnapToGrid { get; set; }
         public decimal GridSpacing { get; set; }
         public bool HideFaceMask { get; set; }
+        public bool HideDisplacementSolids { get; set; }
+        public bool HideNullTextures { get; set; }
         public bool IgnoreGrouping { get; set; }
         public bool TextureLock { get; set; }
         public bool TextureScalingLock { get; set; }
@@ -38,6 +40,7 @@ namespace Sledge.DataStructures.MapObjects
 
             Show2DGrid = SnapToGrid = true;
             TextureLock = true;
+            HideDisplacementSolids = true;
             CordonBounds = new Box(Coordinate.One * -1024, Coordinate.One * 1024);
         }
 
@@ -76,9 +79,9 @@ namespace Sledge.DataStructures.MapObjects
         /// <summary>
         /// Should be called when a map is loaded. Sets up visgroups, object ids, gamedata, and textures.
         /// </summary>
-        public void PostLoadProcess(GameData.GameData gameData, Func<string, ITexture> textureAccessor)
+        public void PostLoadProcess(GameData.GameData gameData, Func<string, ITexture> textureAccessor, Func<string, float> textureOpacity)
         {
-            PartialPostLoadProcess(x => true, gameData, textureAccessor);
+            PartialPostLoadProcess(gameData, textureAccessor, textureOpacity);
 
             var all = WorldSpawn.FindAll();
 
@@ -146,41 +149,56 @@ namespace Sledge.DataStructures.MapObjects
             return g.SelectMany(x => GetAllVisgroups(x.Children)).Union(g);
         }
 
-        public void PartialPostLoadProcess(GameData.GameData gameData, Func<string, ITexture> textureAccessor)
+        public void PartialPostLoadProcess(GameData.GameData gameData, Func<string, ITexture> textureAccessor, Func<string, float> textureOpacity)
         {
-            PartialPostLoadProcess(x => (x is Entity && (((Entity)x ).GameData == null || ((Entity)x).Decal != null))
-                || (x is Solid && ((Solid) x).Faces.Any(y => y.Texture.Texture == null)), gameData, textureAccessor);
-        }
-
-        public void PartialPostLoadProcess(Predicate<MapObject> matcher, GameData.GameData gameData, Func<string, ITexture> textureAccessor)
-        {
-            var objects = WorldSpawn.Find(matcher);
+            var objects = WorldSpawn.FindAll();
             foreach (var obj in objects)
             {
                 if (obj is Entity)
                 {
                     var ent = (Entity) obj;
-                    var gd = gameData.Classes.FirstOrDefault(x => x.Name == ent.EntityData.Name);
-                    ent.GameData = gd;
-                    if (gd != null)
+                    if (ent.GameData == null || !String.Equals(ent.GameData.Name, ent.EntityData.Name, StringComparison.InvariantCultureIgnoreCase))
                     {
-                        var beh = gd.Behaviours.FirstOrDefault(x => x.Name == "iconsprite");
-                        if (beh != null && beh.Values.Count == 1) ent.Sprite = textureAccessor(beh.Values[0].ToLowerInvariant());
+                        var gd = gameData.Classes.FirstOrDefault(x => x.Name == ent.EntityData.Name);
+                        ent.GameData = gd;
+                        if (gd != null)
+                        {
+                            var beh = gd.Behaviours.FirstOrDefault(x => x.Name == "iconsprite");
+                            if (beh != null && beh.Values.Count == 1) ent.Sprite = textureAccessor(beh.Values[0].ToLowerInvariant());
+                        }
+                        ent.UpdateBoundingBox();
                     }
                     if (ent.EntityData.Name == "infodecal")
                     {
-                        var tex = ent.EntityData.Properties.FirstOrDefault(x => x.Key == "texture");
-                        if (tex != null) ent.Decal = textureAccessor(tex.Value.ToLowerInvariant());
+                        if (ent.Decal == null)
+                        {
+                            var tex = ent.EntityData.Properties.FirstOrDefault(x => x.Key == "texture");
+                            if (tex != null) ent.Decal = textureAccessor(tex.Value.ToLowerInvariant());
+                        }
                         ent.CalculateDecalGeometry();
+                        ent.UpdateBoundingBox();
                     }
-                    ent.UpdateBoundingBox();
                 }
                 else if (obj is Solid)
                 {
-                    ((Solid)obj).Faces.ForEach(f =>
+                    var s = ((Solid)obj);
+                    var disp = HideDisplacementSolids && s.Faces.Any(x => x is Displacement);
+                    s.Faces.ForEach(f =>
                     {
-                        f.Texture.Texture = textureAccessor(f.Texture.Name.ToLowerInvariant());
-                        f.CalculateTextureCoordinates();
+                        if (f.Texture.Texture == null)
+                        {
+                            f.Texture.Texture = textureAccessor(f.Texture.Name.ToLowerInvariant());
+                            f.CalculateTextureCoordinates();
+                        }
+                        if (disp && !(f is Displacement))
+                        {
+                            f.Opacity = 0;
+                        }
+                        else
+                        {
+                            f.Opacity = textureOpacity(f.Texture.Name.ToLowerInvariant());
+                            if (!HideNullTextures && f.Opacity < 0.1) f.Opacity = 1;
+                        }
                     });
                 }
             }

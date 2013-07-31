@@ -31,12 +31,49 @@ namespace Sledge.Settings
             Games = new List<Game>();
             RecentFiles = new List<RecentFile>();
             Settings = new List<Setting>();
+            SpecialTextureOpacities = new Dictionary<string, float>
+                                          {
+                                              {"null", 0},
+                                              {"tools/toolsnodraw", 0},
+                                              {"aaatrigger", 0.5f},
+                                              {"bevel", 0.5f},
+                                              {"clip", 0.5f},
+                                              {"hint", 0.5f},
+                                              {"origin", 0.5f},
+                                              {"skip", 0.5f},
+                                              {"tools/toolsareaportal", 0.5f},
+                                              {"tools/toolsblock_los", 0.5f},
+                                              {"tools/toolsblockbullets", 0.5f},
+                                              {"tools/toolsblocklight", 0.5f},
+                                              {"tools/toolsclip", 0.5f},
+                                              {"tools/toolscontrolclip", 0.5f},
+                                              {"tools/toolsfog", 0.5f},
+                                              {"tools/toolshint", 0.5f},
+                                              {"tools/toolsinvisible", 0.5f},
+                                              {"tools/toolsinvisibledisplacement", 0.5f},
+                                              {"tools/toolsinvisibleladder", 0.5f},
+                                              {"tools/toolsnpcclip", 0.5f},
+                                              {"tools/toolsoccluder", 0.5f},
+                                              {"tools/toolsorigin", 0.5f},
+                                              {"tools/toolsplayerclip", 0.5f},
+                                              {"tools/toolsskip", 0.5f},
+                                              {"tools/toolstrigger", 0.5f}
+                                          };
 
             var appdata = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
             var sledge = Path.Combine(appdata, "Sledge");
             if (!Directory.Exists(sledge)) Directory.CreateDirectory(sledge);
             SettingsFile = Path.Combine(sledge, "Settings.vdf");
         }
+        
+        public static float GetSpecialTextureOpacity(string name)
+        {
+            if (!View.RenderTransparentToolBrushes) return 1;
+            name = name.ToLowerInvariant();
+            return SpecialTextureOpacities.ContainsKey(name) ? SpecialTextureOpacities[name] : 1;
+        }
+
+        private static readonly IDictionary<string, float> SpecialTextureOpacities;
 
         private static GenericStructure ReadSettingsFile()
         {

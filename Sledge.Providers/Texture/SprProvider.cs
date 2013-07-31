@@ -78,7 +78,7 @@ namespace Sledge.Providers.Texture
                 var file = new FileInfo(Path.Combine(item.Package.PackageFile, item.Name));
                 if (file.Exists)
                 {
-                    TextureHelper.Create("sprites/" + item.Name.ToLowerInvariant(), Parse(file));
+                    TextureHelper.Create("sprites/" + item.Name.ToLowerInvariant(), Parse(file), true);
                 }
             }
         }

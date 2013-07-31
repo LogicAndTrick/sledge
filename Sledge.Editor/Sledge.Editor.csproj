@@ -588,6 +588,7 @@
     <Content Include="Resources\Menu_TextureScalingLock.png" />
     <Content Include="Resources\Menu_TieToEntity.png" />
     <Content Include="Resources\Menu_TieToWorld.png" />
+    <Content Include="Resources\Menu_HideNullTextures.png" />
     <Content Include="Resources\Menu_Transform.png" />
     <Content Include="Resources\Menu_Undo.png" />
     <Content Include="Resources\Menu_Ungroup.png" />

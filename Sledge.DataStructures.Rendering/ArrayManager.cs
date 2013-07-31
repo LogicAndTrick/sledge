@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using OpenTK.Graphics.OpenGL;
+using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.MapObjects;
 using Sledge.Graphics.Helpers;
 using Sledge.Graphics.Shaders;
@@ -60,7 +61,7 @@ namespace Sledge.DataStructures.Rendering
             _array.UpdatePartial(faces);
         }
 
-        public void DrawTextured(object context, ShaderProgram program)
+        public void DrawTextured(object context, Coordinate cameraLocation, ShaderProgram program)
         {
             // Todo abstract this out a bit, repeated code all over the place
             _array.Bind(context, 0);
@@ -72,6 +73,15 @@ namespace Sledge.DataStructures.Rendering
                 program.Set("isTextured", tex != null);
                 _array.Array.DrawElements(0, subset.Start, subset.Count);
             }
+            _array.Bind(context, 1);
+            foreach (var subset in _array.TransparentSubsets.OrderByDescending(x => (cameraLocation - x.Instance.Origin).LengthSquared()))
+            {
+                var tf = subset.Instance;
+                if (tf.Texture != null) tf.Texture.Bind();
+                else TextureHelper.Unbind();
+                program.Set("isTextured", tf.Texture != null);
+                _array.Array.DrawElements(0, subset.Start, subset.Count);
+            }
             _array.Unbind();
             GL.Disable(EnableCap.CullFace);
             _decalArray.Bind(context, 0);
@@ -81,7 +91,7 @@ namespace Sledge.DataStructures.Rendering
                 if (tex != null) tex.Bind();
                 else TextureHelper.Unbind();
                 program.Set("isTextured", tex != null);
-                _array.Array.DrawElements(0, subset.Start, subset.Count);
+                _decalArray.Array.DrawElements(0, subset.Start, subset.Count);
             }
             _decalArray.Unbind();
             GL.Enable(EnableCap.CullFace);
@@ -89,7 +99,7 @@ namespace Sledge.DataStructures.Rendering
 
         public void DrawWireframe(object context, ShaderProgram program)
         {
-            _array.Bind(context, 1);
+            _array.Bind(context, 2);
             foreach (var subset in _array.WireframeSubsets)
             {
                 _array.Array.DrawElements(1, subset.Start, subset.Count);

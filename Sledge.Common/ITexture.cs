@@ -5,10 +5,11 @@ namespace Sledge.Common
 {
     public interface ITexture : IDisposable
     {
-        string Name { get; set; }
-        int Width { get; set; }
-        int Height { get; set; }
-        Bitmap BitmapImage { get; set; }
+        string Name { get; }
+        int Width { get; }
+        int Height { get; }
+        bool HasTransparency { get; }
+        Bitmap BitmapImage { get; }
         void Bind();
     }
 }

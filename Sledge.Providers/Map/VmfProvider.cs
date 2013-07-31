@@ -568,6 +568,7 @@ namespace Sledge.Providers.Map
                     map.GridSpacing = viewsettings.PropertyDecimal("nGridSpacing", map.GridSpacing);
                     map.IgnoreGrouping = viewsettings.PropertyBoolean("bIgnoreGrouping", map.IgnoreGrouping);
                     map.HideFaceMask = viewsettings.PropertyBoolean("bHideFaceMask", map.HideFaceMask);
+                    map.HideNullTextures = viewsettings.PropertyBoolean("bHideNullTextures", map.HideNullTextures);
                     map.TextureLock = viewsettings.PropertyBoolean("bTextureLock", map.TextureLock);
                     map.TextureScalingLock = viewsettings.PropertyBoolean("bTextureScalingLock", map.TextureScalingLock);
                 }
@@ -606,6 +607,7 @@ namespace Sledge.Providers.Map
             viewsettings.AddProperty("nGridSpacing", map.GridSpacing.ToString(CultureInfo.InvariantCulture));
             viewsettings.AddProperty("bIgnoreGrouping", map.IgnoreGrouping ? "1" : "0");
             viewsettings.AddProperty("bHideFaceMask", map.HideFaceMask ? "1" : "0");
+            viewsettings.AddProperty("bHideNullTextures", map.HideNullTextures ? "1" : "0");
             viewsettings.AddProperty("bTextureLock", map.TextureLock ? "1" : "0");
             viewsettings.AddProperty("bTextureScalingLock", map.TextureScalingLock ? "1" : "0");
 

@@ -12,11 +12,13 @@ namespace Sledge.Providers.Texture
 {
     public class WadProvider : TextureProvider
     {
-        private static Bitmap PostProcessBitmap(string name, Bitmap bmp)
+        private static Bitmap PostProcessBitmap(string name, Bitmap bmp, out bool hasTransparency)
         {
+            hasTransparency = false;
             // Transparent textures are named like: {Name
             if (name.StartsWith("{"))
             {
+                hasTransparency = true;
                 var palette = bmp.Palette;
 
                 // Two transparency types: "blue" transparency and "decal" transparency
@@ -91,7 +93,8 @@ namespace Sledge.Providers.Texture
                     using (var stream = root.Item1.CreateStream(search))
                     {
                         var bmp = new Bitmap(new MemoryStream(stream.ReadAll()));
-                        return PostProcessBitmap(item.Name, bmp);
+                        bool hasTransparency;
+                        return PostProcessBitmap(item.Name, bmp, out hasTransparency);
                     }
                 }
                 return null;
@@ -177,8 +180,9 @@ namespace Sledge.Providers.Texture
                             using (var stream = pack.CreateStream(item))
                             {
                                 var bmp = new Bitmap(new MemoryStream(stream.ReadAll()));
-                                bmp = PostProcessBitmap(ti.Name, bmp);
-                                TextureHelper.Create(ti.Name.ToLowerInvariant(), bmp);
+                                bool hasTransparency;
+                                bmp = PostProcessBitmap(ti.Name, bmp, out hasTransparency);
+                                TextureHelper.Create(ti.Name.ToLowerInvariant(), bmp, hasTransparency);
                                 bmp.Dispose();
                             }
                         }

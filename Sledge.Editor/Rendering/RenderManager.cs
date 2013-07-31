@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
+using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.MapObjects;
 using Sledge.DataStructures.Rendering;
 using Sledge.Editor.Documents;
@@ -20,7 +21,7 @@ namespace Sledge.Editor.Rendering
 layout(location = 0) in vec3 position;
 layout(location = 1) in vec3 normal;
 layout(location = 2) in vec2 texture;
-layout(location = 3) in vec3 colour;
+layout(location = 3) in vec4 colour;
 layout(location = 4) in float selected;
 
 const vec3 light1direction = vec3(-1, -2, 3);
@@ -74,7 +75,7 @@ void main()
     incidence1 = clamp(incidence1, 0, 1);
     incidence2 = clamp(incidence2, 0, 1);
 
-	vertexColour = vec4(colour, 1);
+	vertexColour = colour;
     vertexLighting = (vec4(1,1,1,1) * light1intensity * incidence1) * 0.5
                    + (vec4(1,1,1,1) * light2intensity * incidence2) * 0.5
                    + (vec4(1,1,1,1) * ambient);
@@ -109,6 +110,7 @@ uniform sampler2D currentTexture;
 out vec4 outputColor;
 void main()
 {
+    float alpha = vertexColour.w;
     if (drawSelectedOnly && vertexSelected <= 0.9) discard;
     if (drawUnselectedOnly && vertexSelected > 0.9) discard;
     if (isWireframe) {
@@ -117,7 +119,9 @@ void main()
         else outputColor = wireframeColour;
     } else {
         if (isTextured) {
-            outputColor = texture2D(currentTexture, texCoord) * vertexLighting;
+            vec4 texColour = texture2D(currentTexture, texCoord);
+            outputColor = texColour * vertexLighting;
+            if (texColour.w < alpha) alpha = texColour.w;
         } else {
             outputColor = vertexColour * vertexLighting;
         }
@@ -130,6 +134,7 @@ void main()
         if (abs(worldNormal).y < 0.9999) outputColor = mix(outputColor, vec4(0, 1, 0, 1), step(mod(worldPosition.y, gridSpacing), 0.5));
         if (abs(worldNormal).z < 0.9999) outputColor = mix(outputColor, vec4(0, 0, 1, 1), step(mod(worldPosition.z, gridSpacing), 0.5));
     }
+    outputColor.w = alpha;
 }
 ";
         #endregion Shaders
@@ -243,9 +248,12 @@ void main()
             DrawSelectedOnly = false;
             SelectionColourMultiplier = _document.Selection.InFaceSelection && _document.Map.HideFaceMask ? Vector4.One : new Vector4(1, 0.5f, 0.5f, 1);
 
+            var cam = ((Viewport3D) context).Camera.Location;
+            var location = new Coordinate((decimal) cam.X, (decimal) cam.Y, (decimal) cam.Z);
+
             GL.ActiveTexture(TextureUnit.Texture0);
             Shader.Set("currentTexture", 0);
-            _array.DrawTextured(context, Shader);
+            _array.DrawTextured(context, location, Shader);
 
             DrawUntransformed = true;
             DrawSelectedOnly = true;
