@@ -82,6 +82,7 @@ namespace Sledge.Settings
         ToggleTextureLock,
         ToggleTextureScalingLock,
         ToggleCordon,
+        ToggleHideFaceMask,
 
         ShowMapInformation,
         ShowEntityReport,

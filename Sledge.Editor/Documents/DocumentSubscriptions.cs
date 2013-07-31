@@ -117,6 +117,7 @@ namespace Sledge.Editor.Documents
             Mediator.Subscribe(HotkeysMediator.ToggleTextureLock, this);
             Mediator.Subscribe(HotkeysMediator.ToggleTextureScalingLock, this);
             Mediator.Subscribe(HotkeysMediator.ToggleCordon, this);
+            Mediator.Subscribe(HotkeysMediator.ToggleHideFaceMask, this);
 
             Mediator.Subscribe(HotkeysMediator.ShowSelectedBrushID, this);
             Mediator.Subscribe(HotkeysMediator.ShowMapInformation, this);
@@ -962,6 +963,11 @@ namespace Sledge.Editor.Documents
         {
             _document.Map.Cordon = !_document.Map.Cordon;
             Mediator.Publish(EditorMediator.UpdateToolstrip);
+        }
+
+        public void ToggleHideFaceMask()
+        {
+            _document.Map.HideFaceMask = !_document.Map.HideFaceMask;
         }
 
         public void ShowSelectedBrushID()

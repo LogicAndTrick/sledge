@@ -100,6 +100,7 @@ uniform bool drawUnselectedOnly;
 uniform bool isTextured;
 uniform vec4 wireframeColour;
 uniform vec4 selectedWireframeColour;
+uniform vec4 selectionColourMultiplier;
 uniform bool in3d;
 uniform bool showGrid;
 uniform float gridSpacing;
@@ -121,7 +122,7 @@ void main()
             outputColor = vertexColour * vertexLighting;
         }
         if (vertexSelected > 0.9) {
-            outputColor = outputColor * vec4(1, 0.5, 0.5, 1);
+            outputColor = outputColor * selectionColourMultiplier; //vec4(1, 0.5, 0.5, 1);
         }
     }
     if (isTextured && showGrid) {
@@ -136,6 +137,8 @@ void main()
         private readonly Document _document;
         private readonly ArrayManager _array;
         public ShaderProgram Shader { get; private set; }
+
+        #region Shader Variables
 
         public Matrix4 Perspective { set { Shader.Set("perspectiveMatrix", value); } }
         public Matrix4 Camera { set { Shader.Set("cameraMatrix", value); } }
@@ -160,6 +163,9 @@ void main()
         public float GridSpacing { set { Shader.Set("gridSpacing", value); } }
         public Vector4 WireframeColour { set { Shader.Set("wireframeColour", value); } }
         public Vector4 SelectedWireframeColour { set { Shader.Set("selectedWireframeColour", value); } }
+        public Vector4 SelectionColourMultiplier { set { Shader.Set("selectionColourMultiplier", value); } }
+
+        #endregion
 
         public Dictionary<ViewportBase, GridRenderable> GridRenderables { get; private set; }  
 
@@ -179,6 +185,7 @@ void main()
             Show3DGrid = document.Map.Show3DGrid;
             GridSpacing = (float) document.Map.GridSpacing;
             WireframeColour = Vector4.Zero;
+            SelectionColourMultiplier = new Vector4(1, 0.5f, 0.5f, 1);
             Unbind();
         }
 
@@ -234,6 +241,7 @@ void main()
             In3D = false;
             DrawUntransformed = false;
             DrawSelectedOnly = false;
+            SelectionColourMultiplier = _document.Selection.InFaceSelection && _document.Map.HideFaceMask ? Vector4.One : new Vector4(1, 0.5f, 0.5f, 1);
 
             GL.ActiveTexture(TextureUnit.Texture0);
             Shader.Set("currentTexture", 0);

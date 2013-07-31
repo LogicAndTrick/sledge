@@ -230,7 +230,7 @@ namespace Sledge.Editor.Tools
             foreach (var face in Document.Selection.GetSelectedFaces())
             {
                 var tex = face.Texture;
-                if (tex.Texture != null && textures.All(x => x.Name != tex.Texture.Name))
+                if (tex.Texture != null && textures.All(x => !String.Equals(x.Name, tex.Texture.Name, StringComparison.InvariantCultureIgnoreCase)))
                 {
                     var item = Document.TextureCollection.GetItem(tex.Texture.Name);
                     if (item != null)

@@ -72,8 +72,8 @@ namespace Sledge.Editor.Tools
 
         private void HideMaskToggled(object sender, bool hide)
         {
-            Document.Map.HideFaceMask = hide;
-            Document.UpdateDisplayLists(Document.Selection.GetSelectedFaces());
+            Document.Map.HideFaceMask = !hide;
+            Mediator.Publish(HotkeysMediator.ToggleHideFaceMask);
         }
 
         private void TextureJustified(object sender, JustifyMode justifymode, bool treatasone)

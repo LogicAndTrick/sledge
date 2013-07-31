@@ -12,10 +12,8 @@ Priorities
       FileSystem (PAK / GCF)
       Model textures
       Model render helper
-    Pointfile dark/light theme toggle
     Toggle render of nodraw/null faces
     Transparent rendering / painter's algorithm
-    Hide mask
     Cordon render
   Document/Actions
     TDI
