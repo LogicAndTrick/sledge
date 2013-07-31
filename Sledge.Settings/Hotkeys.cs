@@ -63,7 +63,7 @@ namespace Sledge.Settings
                                     new HotkeyDefinition("Center 3D View on Selection", "Center the 3D viewport on the current selection", HotkeysMediator.Center3DViewsOnSelection, "Ctrl+Shift+E"),
                                     
                                     new HotkeyDefinition("Deselect All", "Deselect all currently selected objects", HotkeysMediator.SelectionClear, "Shift+Q"),
-                                    new HotkeyDefinition("Deselect All", "Deselect all currently selected objects", HotkeysMediator.SelectionClear, "Esc"),
+                                    new HotkeyDefinition("Deselect All", "Deselect all currently selected objects", HotkeysMediator.SelectionClear, "Escape"),
                                     
                                     new HotkeyDefinition("Tie to Entity", "Tie the selected objects to an entity", HotkeysMediator.TieToEntity, "Ctrl+T"),
                                     new HotkeyDefinition("Move to World", "Move the selected entities to the world", HotkeysMediator.TieToWorld, "Ctrl+Shift+W"),
