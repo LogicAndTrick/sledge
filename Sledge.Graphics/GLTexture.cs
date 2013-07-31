@@ -11,6 +11,7 @@ namespace Sledge.Graphics
         public string Name { get; set; }
         public int Width { get; set; }
         public int Height { get; set; }
+        public bool HasTransparency { get; set; }
         public Bitmap BitmapImage { get; set; }
 
         internal GLTexture(int reference, string name)

@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using OpenTK.Graphics.OpenGL;
 using Sledge.Common;
+using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.MapObjects;
 using Sledge.Graphics.Arrays;
 
@@ -13,6 +14,18 @@ namespace Sledge.DataStructures.Rendering
     /// </summary>
     public class SolidVertexArray
     {
+        public class TransparentFace
+        {
+            public Coordinate Origin { get; set; }
+            public ITexture Texture { get; set; }
+
+            public TransparentFace(Coordinate origin, ITexture texture)
+            {
+                Origin = origin;
+                Texture = texture;
+            }
+        }
+
         private static readonly BeginMode[] Modes;
         private static readonly ArraySpecification Specification;
         private static readonly int SpecSize;
@@ -31,6 +44,7 @@ namespace Sledge.DataStructures.Rendering
 
         public VertexBuffer<float> Array { get; private set; }
         public List<VertexArraySubset<ITexture>> TextureSubsets { get; private set; }
+        public List<VertexArraySubset<TransparentFace>> TransparentSubsets { get; private set; }
         public List<VertexArraySubset<object>> WireframeSubsets { get; private set; }
         public Dictionary<Face, int> FaceOffsets { get; private set; }
         public Dictionary<Entity, int> EntityOffsets { get; private set; }
@@ -60,15 +74,17 @@ namespace Sledge.DataStructures.Rendering
 
             float[] array;
             uint[] indices;
+            uint[] transparentIndices;
             uint[] wireframeIndices;
             int count;
             TextureSubsets = new List<VertexArraySubset<ITexture>>();
+            TransparentSubsets = new List<VertexArraySubset<TransparentFace>>();
             WireframeSubsets = new List<VertexArraySubset<object>>();
             FaceOffsets = new Dictionary<Face, int>();
             EntityOffsets = new Dictionary<Entity, int>();
-            GetArrayData(objects, out count, out array, out indices, out wireframeIndices, TextureSubsets, WireframeSubsets, FaceOffsets, EntityOffsets);
+            GetArrayData(objects, out count, out array, out indices, out transparentIndices, out wireframeIndices, TextureSubsets, TransparentSubsets, WireframeSubsets, FaceOffsets, EntityOffsets);
 
-            Array = new VertexBuffer<float>(Specification, Modes, count, sizeof(float), array, new[] { indices, wireframeIndices});
+            Array = new VertexBuffer<float>(Specification, Modes, count, sizeof(float), array, new[] { indices, transparentIndices, wireframeIndices});
         }
 
         /// <summary>
@@ -80,15 +96,17 @@ namespace Sledge.DataStructures.Rendering
             _arrays.Clear();
             float[] array;
             uint[] indices;
+            uint[] transparentIndices;
             uint[] wireframeIndices;
             int count;
             TextureSubsets.Clear();
+            TransparentSubsets.Clear();
             WireframeSubsets.Clear();
             FaceOffsets.Clear();
             EntityOffsets.Clear();
-            GetArrayData(objects, out count, out array, out indices, out wireframeIndices, TextureSubsets, WireframeSubsets, FaceOffsets, EntityOffsets);
+            GetArrayData(objects, out count, out array, out indices, out transparentIndices, out wireframeIndices, TextureSubsets, TransparentSubsets, WireframeSubsets, FaceOffsets, EntityOffsets);
 
-            Array.Update(count, array, new[] {indices, wireframeIndices});
+            Array.Update(count, array, new[] {indices, transparentIndices, wireframeIndices});
         }
 
         public void UpdatePartial(IEnumerable<MapObject> objects)
@@ -136,24 +154,27 @@ namespace Sledge.DataStructures.Rendering
         /// <param name="indices">Outputs the triangle drawing indices</param>
         /// <param name="wireframeIndices">Outputs the line drawing indices</param>
         /// <param name="subsets">The collection of textured subsets to populate</param>
+        /// <param name="transparentSubsets">The collection of textured transparent subsets to populate</param>
         /// <param name="wireframeSubsets">The collection of wireframe subsets to populate</param>
         /// <param name="faceOffsets"> </param>
         /// <param name="entityOffsets"> </param>
         private static void GetArrayData(IEnumerable<MapObject> objects, out int count, out float[] array,
-            out uint[] indices, out uint[] wireframeIndices,
-            ICollection<VertexArraySubset<ITexture>> subsets, ICollection<VertexArraySubset<object>> wireframeSubsets,
+            out uint[] indices, out uint[] transparentIndices, out uint[] wireframeIndices,
+            ICollection<VertexArraySubset<ITexture>> subsets, ICollection<VertexArraySubset<TransparentFace>> transparentSubsets, ICollection<VertexArraySubset<object>> wireframeSubsets,
             Dictionary<Face, int> faceOffsets, Dictionary<Entity, int> entityOffsets)
         {
             var obj = objects.Where(x => !x.IsVisgroupHidden && !x.IsCodeHidden).ToList();
             var faces = obj.OfType<Solid>().SelectMany(x => x.Faces).ToList();
             var entities = obj.OfType<Entity>().Where(x => x.Children.Count == 0).ToList();
             var indexList = new List<uint>();
+            var transparentList = new List<uint>();
             var wireframeIndexList = new List<uint>();
             uint index = 0;
             var idx = 0;
             var numVerts = faces.Sum(x => x.Vertices.Count) + entities.Count * 6 * 4; // Entity is always a rec. prism (6 sides, quads)
             array = new float[SpecSize * numVerts];
             var subsetStart = 0;
+            var transparentSubsetStart = 0;
             var wireframeSubsetStart = 0;
             foreach (var group in faces.GroupBy(x => new { x.Texture.Texture }))
             {
@@ -163,11 +184,19 @@ namespace Sledge.DataStructures.Rendering
                     idx = WriteFace(array, idx, face);
                     if (!face.Parent.IsRenderHidden3D)
                     {
+                        var transparent = face.Texture.Texture != null && (face.Opacity < 0.95 || face.Texture.Texture.HasTransparency);
+                        var l = transparent ? transparentList : indexList;
                         for (uint i = 1; i < face.Vertices.Count - 1; i++)
                         {
-                            indexList.Add(index);
-                            indexList.Add(index + i);
-                            indexList.Add(index + i + 1);
+                            l.Add(index);
+                            l.Add(index + i);
+                            l.Add(index + i + 1);
+                        }
+                        if (transparent)
+                        {
+                            var tf = new TransparentFace(face.BoundingBox.Center, group.Key.Texture);
+                            transparentSubsets.Add(new VertexArraySubset<TransparentFace>(tf, transparentSubsetStart, transparentList.Count - transparentSubsetStart));
+                            transparentSubsetStart = transparentList.Count;
                         }
                     }
                     if (!face.Parent.IsRenderHidden2D)
@@ -221,6 +250,7 @@ namespace Sledge.DataStructures.Rendering
                 wireframeSubsets.Add(new VertexArraySubset<object>(null, wireframeSubsetStart, wireframeIndexList.Count - wireframeSubsetStart));
             }
             indices = indexList.ToArray();
+            transparentIndices = transparentList.ToArray();
             wireframeIndices = wireframeIndexList.ToArray();
             count = indices.Length;
         }

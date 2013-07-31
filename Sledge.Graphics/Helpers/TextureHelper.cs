@@ -48,7 +48,7 @@ namespace Sledge.Graphics.Helpers
 
         #region Create
 
-        public static GLTexture Create(string name, Bitmap bitmap)
+        public static GLTexture Create(string name, Bitmap bitmap, bool hasTransparency)
         {
             if (Exists(name)) {
                 Delete(name);
@@ -72,14 +72,9 @@ namespace Sledge.Graphics.Helpers
                 data.Scan0
                 );
             bitmap.UnlockBits(data);
-            var texobj = new GLTexture(tex, name) { Width = bitmap.Width, Height = bitmap.Height, BitmapImage = (Bitmap)bitmap.Clone() };
+            var texobj = new GLTexture(tex, name) { Width = bitmap.Width, Height = bitmap.Height, HasTransparency = hasTransparency, BitmapImage = (Bitmap)bitmap.Clone() };
             Textures.Add(name, texobj);
             return texobj;
-        }
-
-        public static void Create(string name, string path)
-        {
-            Create(name, new Bitmap(Image.FromFile(path)));
         }
 
         private static int CreateAndBindTexture()
