@@ -30,10 +30,11 @@ namespace Sledge.Editor.Rendering.Helpers
         private Coordinate _mousePos;
         public void BeforeRender2D(Viewport2D viewport)
         {
-            _offset = 3.5 / (double)viewport.Zoom;
+            _offset = 3 / (double)viewport.Zoom;
             _fadeDistance = 200 / (double)viewport.Zoom;
             var mp = viewport.PointToClient(Control.MousePosition);
             _mousePos = viewport.ScreenToWorld(new Coordinate(mp.X, viewport.Height - mp.Y, 0));
+            GL.Enable(EnableCap.LineSmooth);
             GL.Begin(BeginMode.Lines);
         }
 
@@ -58,6 +59,7 @@ namespace Sledge.Editor.Rendering.Helpers
         public void AfterRender2D(Viewport2D viewport)
         {
             GL.End();
+            GL.Disable(EnableCap.LineSmooth);
         }
 
         public void BeforeRender3D(Viewport3D viewport)
