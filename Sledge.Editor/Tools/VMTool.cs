@@ -379,6 +379,12 @@ namespace Sledge.Editor.Tools
             if (nudge != null && vp != null && _state == VMState.None && _points.Any(x => x.IsSelected))
             {
                 var translate = vp.Expand(nudge);
+                foreach (var p in _points.Where(x => !x.IsMidPoint && x.IsSelected))
+                {
+                    p.Move(translate);
+                }
+                RefreshMidpoints(false);
+                _dirty = true;
             }
             base.KeyDown(viewport, e);
         }
