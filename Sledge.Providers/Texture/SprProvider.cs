@@ -11,7 +11,7 @@ namespace Sledge.Providers.Texture
 {
     public class SprProvider : TextureProvider
     {
-        protected override bool IsValidForPackageFile(string package)
+        public override bool IsValidForPackageFile(string package)
         {
             return Directory.Exists(package);
         }
@@ -66,20 +66,20 @@ namespace Sledge.Providers.Texture
             }
         }
 
-        protected override void LoadTexture(TexturePackage package, string name)
+        public override void LoadTexture(TextureItem item)
         {
-            var file = new FileInfo(Path.Combine(package.PackageFile, name));
-            if (file.Exists)
-            {
-                TextureHelper.Create("sprites/" + name, Parse(file));
-            }
+            LoadTextures(new[] {item});
         }
 
-        protected override void LoadTextures(TexturePackage package, IEnumerable<string> names)
+        public override void LoadTextures(IEnumerable<TextureItem> items)
         {
-            foreach (var name in names)
+            foreach (var item in items)
             {
-                LoadTexture(package, name);
+                var file = new FileInfo(Path.Combine(item.Package.PackageFile, item.Name));
+                if (file.Exists)
+                {
+                    TextureHelper.Create("sprites/" + item.Name.ToLowerInvariant(), Parse(file));
+                }
             }
         }
 
@@ -89,13 +89,19 @@ namespace Sledge.Providers.Texture
             return new TextureItem(package, name.Substring(package.PackageFile.Length).TrimStart(Path.DirectorySeparatorChar), bmp.Width, bmp.Height);
         }
 
-        protected override IEnumerable<TextureItem> GetAllTextureItems(TexturePackage package)
+        public override TexturePackage CreatePackage(string package)
         {
-            return Directory.GetFiles(package.PackageFile, "*.spr", SearchOption.AllDirectories)
-                .Select(x => CreateTextureItem(package, x));
+            var tp = new TexturePackage(package, this);
+            var items = Directory.GetFiles(package, "*.spr", SearchOption.AllDirectories)
+                .Select(x => CreateTextureItem(tp, x));
+            foreach (var ti in items)
+            {
+                tp.AddTexture(ti);
+            }
+            return tp;
         }
 
-        protected override TextureStreamSource GetStreamSource(IEnumerable<TexturePackage> packages)
+        public override ITextureStreamSource GetStreamSource(IEnumerable<TexturePackage> packages)
         {
             throw new NotImplementedException();
         }

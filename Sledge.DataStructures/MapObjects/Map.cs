@@ -165,12 +165,12 @@ namespace Sledge.DataStructures.MapObjects
                     if (gd != null)
                     {
                         var beh = gd.Behaviours.FirstOrDefault(x => x.Name == "iconsprite");
-                        if (beh != null && beh.Values.Count == 1) ent.Sprite = textureAccessor(beh.Values[0]);
+                        if (beh != null && beh.Values.Count == 1) ent.Sprite = textureAccessor(beh.Values[0].ToLowerInvariant());
                     }
                     if (ent.EntityData.Name == "infodecal")
                     {
                         var tex = ent.EntityData.Properties.FirstOrDefault(x => x.Key == "texture");
-                        if (tex != null) ent.Decal = textureAccessor(tex.Value);
+                        if (tex != null) ent.Decal = textureAccessor(tex.Value.ToLowerInvariant());
                         ent.CalculateDecalGeometry();
                     }
                     ent.UpdateBoundingBox();
@@ -179,7 +179,7 @@ namespace Sledge.DataStructures.MapObjects
                 {
                     ((Solid)obj).Faces.ForEach(f =>
                     {
-                        f.Texture.Texture = textureAccessor(f.Texture.Name);
+                        f.Texture.Texture = textureAccessor(f.Texture.Name.ToLowerInvariant());
                         f.CalculateTextureCoordinates();
                     });
                 }

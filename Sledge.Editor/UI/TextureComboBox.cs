@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using Sledge.Editor.Documents;
 using Sledge.Providers.Texture;
 
 namespace Sledge.Editor.UI
@@ -24,7 +25,7 @@ namespace Sledge.Editor.UI
 
         private readonly List<TextureItem> _history;
         private List<TexturePackage> _packages;
-        private TextureProvider.TextureStreamSource _streamSource;
+        private ITextureStreamSource _streamSource;
         private int _fontHeight;
 
         public TextureComboBox()
@@ -44,7 +45,8 @@ namespace Sledge.Editor.UI
 
         private void OpenStream(object sender, EventArgs e)
         {
-            _streamSource = TextureProvider.GetStreamSourceForPackages(_packages.Union(_history.Select(x => x.Package).Distinct()));
+            if (DocumentManager.CurrentDocument == null) return;
+            _streamSource = DocumentManager.CurrentDocument.TextureCollection.GetStreamSource(_packages.Union(_history.Select(x => x.Package).Distinct()));
         }
 
         private void CloseStream(object sender, EventArgs e)
@@ -106,6 +108,7 @@ namespace Sledge.Editor.UI
             var selectedName = selected == null ? null : selected.Item.Name;
             TextureComboBoxItem reselect = null;
             Items.Clear();
+            if (DocumentManager.CurrentDocument == null) return;
             var last = _history.LastOrDefault();
             foreach (var hi in _history)
             {
@@ -114,8 +117,8 @@ namespace Sledge.Editor.UI
                 Items.Add(item);
                 if (reselect == null && selectedName == item.Item.Name) reselect = item;
             }
-            _packages = TexturePackage.GetLoadedPackages().Where(x => x.PackageFile == package).ToList();
-            if (!_packages.Any()) _packages.AddRange(TexturePackage.GetLoadedPackages());
+            _packages = DocumentManager.CurrentDocument.TextureCollection.Packages.Where(x => x.PackageFile == package).ToList();
+            if (!_packages.Any()) _packages.AddRange(DocumentManager.CurrentDocument.TextureCollection.Packages);
             var textures = _packages.SelectMany(x => x.Items).Select(x => x.Value).OrderBy(x => x.Name);
             foreach (var item in textures.Select(ti => GetTexture(ti.Name, false)))
             {
@@ -135,7 +138,8 @@ namespace Sledge.Editor.UI
 
         private static TextureComboBoxItem GetTexture(string name, bool isHistory)
         {
-            return new TextureComboBoxItem {DrawBorder = false, IsHistory = isHistory, Item = TexturePackage.GetItem(name)};
+            var item = DocumentManager.CurrentDocument == null ? null : DocumentManager.CurrentDocument.TextureCollection.GetItem(name);
+            return new TextureComboBoxItem {DrawBorder = false, IsHistory = isHistory, Item = item};
         }
 
         private void OwnerMeasureItem(object sender, MeasureItemEventArgs e)

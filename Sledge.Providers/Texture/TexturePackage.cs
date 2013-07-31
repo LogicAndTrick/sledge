@@ -8,79 +8,44 @@ using Sledge.Graphics.Helpers;
 
 namespace Sledge.Providers.Texture
 {
-    public class TexturePackage
+    public class TexturePackage : IDisposable
     {
-        private static readonly Dictionary<string, TexturePackage> LoadedPackages = new Dictionary<string, TexturePackage>();
-        private static readonly Dictionary<string, TextureItem> LoadedItems = new Dictionary<string, TextureItem>();
-        
-        public static void ClearLoadedPackages()
+        internal TextureProvider Provider { get; private set; }
+        public string PackageFile { get; private set; }
+        public Dictionary<string, TextureItem> Items { get; private set; }
+        private readonly Dictionary<string, TextureItem> _loadedItems;
+
+        public TexturePackage(string packageFile, TextureProvider provider)
         {
-            LoadedPackages.Clear();
-            LoadedItems.Clear();
-            TextureHelper.ClearLoadedTextures();
+            Provider = provider;
+            PackageFile = packageFile;
+            Items = new Dictionary<string, TextureItem>();
+            _loadedItems = new Dictionary<string, TextureItem>();
         }
 
-        public static void LoadTextureData(string name)
+        public void AddTexture(TextureItem item)
         {
-            if (TextureHelper.Exists(name)) return;
-            var item = LoadedItems[name];
-            if (item != null)
+            if (Items.ContainsKey(item.Name.ToLowerInvariant())) return;
+            Items.Add(item.Name.ToLowerInvariant(), item);
+        }
+
+        public void LoadTexture(TextureItem item)
+        {
+            if (!_loadedItems.ContainsKey(item.Name.ToLowerInvariant()))
             {
-                TextureProvider.LoadTextureFromPackage(item.Package, item.Name);
+                Provider.LoadTexture(item);
+                _loadedItems.Add(item.Name.ToLowerInvariant(), item);
             }
         }
 
-        public static void LoadTextureData(IEnumerable<string> names)
+        public void LoadTextures(IEnumerable<TextureItem> items)
         {
-            var texes = names.Where(x => !TextureHelper.Exists(x));
-            TextureProvider.LoadTexturesFromPackages(LoadedPackages.Values, texes);
-        }
-
-        public static IEnumerable<TexturePackage> GetLoadedPackages()
-        {
-            return LoadedPackages.Values;
-        }
-
-        public static IEnumerable<TextureItem> GetLoadedItems()
-        {
-            return LoadedItems.Values;
-        }
-
-        public static TextureItem GetItem(string name)
-        {
-            return LoadedItems.ContainsKey(name) ? LoadedItems[name] : null;
-        }
-
-        public static void Load(string file)
-        {
-            file = file.ToLower();
-            if (!(File.Exists(file) || Directory.Exists(file)) || LoadedPackages.ContainsKey(file)) return;
-            var tp = new TexturePackage(file);
-            tp.LoadAllTextureItems();
-            LoadedPackages.Add(file, tp);
-        }
-
-        public string PackageFile { get; private set; }
-        public Dictionary<string, TextureItem> Items { get; private set; }
-
-        private TexturePackage(string packageFile)
-        {
-            PackageFile = packageFile;
-            Items = new Dictionary<string, TextureItem>();
-        }
-
-        /// <summary>
-        /// Tells this package to retrieve all the texture names from the file.
-        /// This will not get the actual texture data, but it will get some metadata
-        /// like name, width, height, and so on.
-        /// </summary>
-        public void LoadAllTextureItems()
-        {
-            foreach (var ti in TextureProvider.GetAllTextureItemsFromPackage(this))
+            var all = items.Where(x => !_loadedItems.ContainsKey(x.Name.ToLowerInvariant())).ToList();
+            if (!all.Any()) return;
+            Provider.LoadTextures(all);
+            foreach (var ti in all)
             {
-                if (LoadedItems.ContainsKey(ti.Name)) continue;
-                Items.Add(ti.Name, ti);
-                LoadedItems.Add(ti.Name, ti);
+                _loadedItems.Add(ti.Name.ToLowerInvariant(), ti);
             }
         }
 
@@ -88,6 +53,14 @@ namespace Sledge.Providers.Texture
         {
             var str = PackageFile;
             return Path.GetFileNameWithoutExtension(str) ?? PackageFile;
+        }
+
+        public void Dispose()
+        {
+            foreach (var kv in _loadedItems)
+            {
+                TextureHelper.Delete(kv.Value.Name.ToLowerInvariant());
+            }
         }
     }
 }

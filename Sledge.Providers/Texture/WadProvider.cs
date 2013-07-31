@@ -60,22 +60,29 @@ namespace Sledge.Providers.Texture
             return bmp;
         }
 
-        public class WadStreamSource : TextureStreamSource
+        private class WadStreamSource : ITextureStreamSource
         {
+            private readonly List<TexturePackage> _texturePackages;
             private readonly Dictionary<string, Tuple<HLLib.Package, HLLib.Folder>> _packages;
 
-            public WadStreamSource(IEnumerable<TexturePackage> packages) : base(packages)
+            public WadStreamSource(IEnumerable<TexturePackage> packages)
             {
+                _texturePackages = packages.ToList();
                 _packages = new Dictionary<string, Tuple<HLLib.Package, HLLib.Folder>>();
                 HLLib.Initialize();
-                foreach (var tp in Packages)
+                foreach (var tp in _texturePackages)
                 {
                     var pack = new HLLib.Package(tp.PackageFile);
                     _packages.Add(tp.PackageFile, Tuple.Create(pack, pack.GetRootFolder()));
                 }
             }
 
-            public override Bitmap GetImage(TextureItem item)
+            public bool HasImage(TextureItem item)
+            {
+                return _texturePackages.Any(x => x.Items.ContainsValue(item));
+            }
+
+            public Bitmap GetImage(TextureItem item)
             {
                 var root = _packages[item.Package.PackageFile];
                 var search = root.Item2.GetItemByName(item.Name + ".bmp", HLLib.FindType.Files);
@@ -90,7 +97,7 @@ namespace Sledge.Providers.Texture
                 return null;
             }
 
-            public override void Dispose()
+            public void Dispose()
             {
                 foreach (var root in _packages)
                 {
@@ -98,7 +105,7 @@ namespace Sledge.Providers.Texture
                     {
                         root.Value.Item1.Dispose();
                     }
-                    catch (Exception)
+                    catch
                     {
                         // Continue regardless
                     }
@@ -107,52 +114,73 @@ namespace Sledge.Providers.Texture
             }
         }
 
-        protected override bool IsValidForPackageFile(string package)
+        public override bool IsValidForPackageFile(string package)
         {
             return package.EndsWith(".wad") && File.Exists(package);
         }
 
-        protected override void LoadTexture(TexturePackage package, string name)
+        private bool IsValidLumpType(uint type)
         {
+            return type == 0x42 || type == 0x43;
+        }
+
+        public override TexturePackage CreatePackage(string package)
+        {
+            var tp = new TexturePackage(package, this);
+            var list = new List<TextureItem>();
             try
             {
                 HLLib.Initialize();
-                using (var pack = new HLLib.Package(package.PackageFile))
+                using (var pack = new HLLib.Package(package))
                 {
-                    var item = pack.GetRootFolder().GetItemByName(name + ".bmp", HLLib.FindType.Files);
-                    using (var stream = pack.CreateStream(item))
-                    {
-                        var bmp = new Bitmap(new MemoryStream(stream.ReadAll()));
-                        bmp = PostProcessBitmap(name, bmp);
-                        TextureHelper.Create(name, bmp);
-                        bmp.Dispose();
-                    }
+                    var folder = pack.GetRootFolder();
+                    var items = folder.GetItems();
+                    list.AddRange(items
+                        .Select(item => new HLLib.WADFile(item))
+                        .Where(wad => IsValidLumpType(wad.GetLumpType()))
+                        .Select(wad => new TextureItem(tp, Path.GetFileNameWithoutExtension(wad.Name), wad.Width, wad.Height)));
                 }
             }
             finally
             {
                 HLLib.Shutdown();
             }
+            foreach (var ti in list)
+            {
+                tp.AddTexture(ti);
+            }
+            return tp;
         }
 
-        protected override void LoadTextures(TexturePackage package, IEnumerable<string> names)
+        public override void LoadTexture(TextureItem item)
         {
+            LoadTextures(new[] {item});
+        }
+
+        public override void LoadTextures(IEnumerable<TextureItem> items)
+        {
+            var list = items.ToList();
+            var packages = list.Select(x => x.Package).Distinct();
             try
             {
                 HLLib.Initialize();
-                using (var pack = new HLLib.Package(package.PackageFile))
+                foreach (var package in packages)
                 {
-                    var folder = pack.GetRootFolder();
-                    foreach (var name in names)
+                    var p = package;
+                    using (var pack = new HLLib.Package(p.PackageFile))
                     {
-                        var item = folder.GetItemByName(name + ".bmp", HLLib.FindType.Files);
-                        if (!item.Exists) continue;
-                        using (var stream = pack.CreateStream(item))
+                        var folder = pack.GetRootFolder();
+                        foreach (var ti in list.Where(x => x.Package == p))
                         {
-                            var bmp = new Bitmap(new MemoryStream(stream.ReadAll()));
-                            bmp = PostProcessBitmap(name, bmp);
-                            TextureHelper.Create(name, bmp);
-                            bmp.Dispose();
+                            var item = folder.GetItemByName(ti.Name + ".bmp", HLLib.FindType.Files);
+                            if (!item.Exists) continue;
+                            using (var stream = pack.CreateStream(item))
+                            {
+                                var bmp = new Bitmap(new MemoryStream(stream.ReadAll()));
+                                bmp = PostProcessBitmap(ti.Name, bmp);
+                                TextureHelper.Create(ti.Name.ToLowerInvariant(), bmp);
+                                bmp.Dispose();
+                            }
                         }
                     }
                 }
@@ -163,35 +191,7 @@ namespace Sledge.Providers.Texture
             }
         }
 
-        private bool IsValidLumpType(uint type)
-        {
-            return type == 0x42 || type == 0x43;
-        }
-
-        protected override IEnumerable<TextureItem> GetAllTextureItems(TexturePackage package)
-        {
-            var ret = new List<TextureItem>();
-            try
-            {
-                HLLib.Initialize();
-                using (var pack = new HLLib.Package(package.PackageFile))
-                {
-                    var folder = pack.GetRootFolder();
-                    var items = folder.GetItems();
-                    ret.AddRange(items
-                        .Select(item => new HLLib.WADFile(item))
-                        .Where(wad => IsValidLumpType(wad.GetLumpType()))
-                        .Select(wad => new TextureItem(package, Path.GetFileNameWithoutExtension(wad.Name), wad.Width, wad.Height)));
-                }
-            }
-            finally
-            {
-                HLLib.Shutdown();
-            }
-            return ret;
-        }
-
-        protected override TextureStreamSource GetStreamSource(IEnumerable<TexturePackage> packages)
+        public override ITextureStreamSource GetStreamSource(IEnumerable<TexturePackage> packages)
         {
             return new WadStreamSource(packages);
         }

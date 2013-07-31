@@ -109,9 +109,10 @@ namespace Sledge.Editor
             TextureProvider.Register(new WadProvider());
             TextureProvider.Register(new SprProvider());
 
+            // Sprites are loaded on startup and always retained
             var spritesFolder = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Sprites");
-            //TexturePackage.Load(spritesFolder);
-            //TexturePackage.LoadTextureData(TexturePackage.GetLoadedItems().Select(x => x.Name));
+            var collection = TextureProvider.CreateCollection(new[] { spritesFolder });
+            collection.LoadTextureItems(collection.GetAllItems());
 
             Subscribe();
 
@@ -334,7 +335,7 @@ namespace Sledge.Editor
             var index = TextureGroupComboBox.SelectedIndex;
             TextureGroupComboBox.Items.Clear();
             TextureGroupComboBox.Items.Add("All Textures");
-            foreach (var package in TexturePackage.GetLoadedPackages())
+            foreach (var package in doc.TextureCollection.Packages)
             {
                 TextureGroupComboBox.Items.Add(package);
             }
@@ -451,9 +452,9 @@ namespace Sledge.Editor
             TextureSelectionPictureBox.Image = null;
             if (dis != null) dis.Dispose();
             TextureSizeLabel.Text = "";
-            if (selection == null) return;
+            if (selection == null || DocumentManager.CurrentDocument == null) return;
             TextureComboBox.SetSelectedTexture(selection);
-            using (var tp = TextureProvider.GetStreamSourceForPackages(new[] {selection.Package}))
+            using (var tp = DocumentManager.CurrentDocument.TextureCollection.GetStreamSource())
             {
                 var bmp = tp.GetImage(selection);
                 if (bmp.Width > TextureSelectionPictureBox.Width || bmp.Height > TextureSelectionPictureBox.Height)
@@ -608,9 +609,10 @@ namespace Sledge.Editor
 
         private void TextureBrowseButtonClicked(object sender, EventArgs e)
         {
+            if (DocumentManager.CurrentDocument == null) return;
             using (var tb = new TextureBrowser())
             {
-                tb.SetTextureList(TexturePackage.GetLoadedItems());
+                tb.SetTextureList(DocumentManager.CurrentDocument.TextureCollection.GetAllItems());
                 tb.ShowDialog();
                 if (tb.SelectedTexture != null)
                 {
