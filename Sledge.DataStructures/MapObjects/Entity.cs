@@ -161,23 +161,18 @@ namespace Sledge.DataStructures.MapObjects
             {
                 // Project the decal onto the face
                 var center = face.Plane.Project(Origin);
+                var texture = face.Texture.Clone();
+                texture.Name = Decal.Name;
+                texture.Texture = Decal;
+                texture.XShift = -Decal.Width / 2m;
+                texture.YShift = -Decal.Height / 2m;
                 var decalFace = new Face(idg.GetNextFaceID())
                                     {
                                         Colour = Colour,
                                         IsSelected = IsSelected,
                                         IsHidden = IsCodeHidden,
                                         Plane = face.Plane,
-                                        Texture =
-                                            {
-                                                Name = Decal.Name,
-                                                Texture = Decal,
-                                                UAxis = face.Texture.UAxis,
-                                                VAxis = face.Texture.VAxis,
-                                                XScale = face.Texture.XScale,
-                                                YScale = face.Texture.YScale,
-                                                XShift = -Decal.Width / 2m,
-                                                YShift = -Decal.Height / 2m
-                                            }
+                                        Texture = texture
                                     };
                 // Re-project the vertices in case the texture axes are not on the face plane
                 var xShift = face.Texture.UAxis * face.Texture.XScale * Decal.Width / 2;
@@ -200,10 +195,13 @@ namespace Sledge.DataStructures.MapObjects
                 }
 
                 decalFace.Vertices.AddRange(verts);
-
                 decalFace.UpdateBoundingBox();
-                // TODO: verify this covers all situations and I don't have to manually calculate the texture coordinates
-                decalFace.FitTextureToPointCloud(new Cloud(decalFace.Vertices.Select(x => x.Location)));
+
+                // Calculate the X and Y shift bases on the first vertex location (assuming U/V of first vertex is zero) - we dont want these to change
+                var vtx = decalFace.Vertices[0];
+                decalFace.Texture.XShift = -(vtx.Location.Dot(decalFace.Texture.UAxis)) / decalFace.Texture.XScale;
+                decalFace.Texture.YShift = -(vtx.Location.Dot(decalFace.Texture.VAxis)) / decalFace.Texture.YScale;
+                decalFace.CalculateTextureCoordinates();
                 
                 // Next, the decal geometry needs to be clipped to the face so it doesn't spill into the void
                 // Create a fake solid out of the decal geometry and clip it against all the brush planes
@@ -221,7 +219,7 @@ namespace Sledge.DataStructures.MapObjects
 
                 // Add a tiny bit to the normal axis to ensure the decal is rendered in front of the face
                 var normalAdd = face.Plane.Normal * 0.2m;
-                decalFace.Transform(new UnitTranslate(normalAdd), TransformFlags.None);
+                decalFace.Transform(new UnitTranslate(normalAdd), TransformFlags.TextureLock);
 
                 _decalGeometry.Add(decalFace);
             }

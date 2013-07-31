@@ -26,7 +26,7 @@ namespace Sledge.DataStructures.Rendering
                 ArrayIndex.Vector3("Position"),
                 ArrayIndex.Vector3("Normal"),
                 ArrayIndex.Vector2("Texture"),
-                ArrayIndex.Vector3("Colour"),
+                ArrayIndex.Vector4("Colour"),
                 ArrayIndex.Float("Selected"));
             SpecSize = Specification.Indices.Sum(x => x.Length);
         }
@@ -147,7 +147,8 @@ namespace Sledge.DataStructures.Rendering
                   nz = (float) face.Plane.Normal.DZ;
             float r = face.Colour.R / 255f,
                   g = face.Colour.G / 255f,
-                  b = face.Colour.B / 255f;
+                  b = face.Colour.B / 255f,
+                  a = 1;
             foreach (var vert in face.Vertices)
             {
                 array[idx++] = ((float) vert.Location.DX);
@@ -161,6 +162,7 @@ namespace Sledge.DataStructures.Rendering
                 array[idx++] = (r);
                 array[idx++] = (g);
                 array[idx++] = (b);
+                array[idx++] = (a);
                 array[idx++] = (face.IsSelected || (face.Parent != null && face.Parent.IsSelected) ? 1 : 0);
             }
             return idx;
