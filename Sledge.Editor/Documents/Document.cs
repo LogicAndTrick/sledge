@@ -87,7 +87,7 @@ namespace Sledge.Editor.Documents
             var items = TextureCollection.GetItems(texList);
             TextureCollection.LoadTextureItems(items);
 
-            Map.PostLoadProcess(GameData, TextureHelper.Get);
+            Map.PostLoadProcess(GameData, TextureHelper.Get, SettingsManager.GetSpecialTextureOpacity);
 
             Renderer = new RenderManager(this);
             HelperManager = new HelperManager(this);
@@ -269,7 +269,7 @@ namespace Sledge.Editor.Documents
 
         public void UpdateDisplayLists()
         {
-            Map.PartialPostLoadProcess(GameData, TextureHelper.Get);
+            Map.PartialPostLoadProcess(GameData, TextureHelper.Get, SettingsManager.GetSpecialTextureOpacity);
             HelperManager.UpdateCache();
             Renderer.Update();
             ViewportManager.Viewports.ForEach(vp => vp.UpdateNextFrame());
@@ -277,7 +277,7 @@ namespace Sledge.Editor.Documents
 
         public void UpdateDisplayLists(IEnumerable<MapObject> objects)
         {
-            Map.PartialPostLoadProcess(GameData, TextureHelper.Get);
+            Map.PartialPostLoadProcess(GameData, TextureHelper.Get, SettingsManager.GetSpecialTextureOpacity);
             HelperManager.UpdateCache();
             Renderer.UpdatePartial(objects);
             ViewportManager.Viewports.ForEach(vp => vp.UpdateNextFrame());
@@ -285,7 +285,7 @@ namespace Sledge.Editor.Documents
 
         public void UpdateDisplayLists(IEnumerable<Face> faces)
         {
-            Map.PartialPostLoadProcess(GameData, TextureHelper.Get);
+            Map.PartialPostLoadProcess(GameData, TextureHelper.Get, SettingsManager.GetSpecialTextureOpacity);
             HelperManager.UpdateCache();
             Renderer.UpdatePartial(faces);
             ViewportManager.Viewports.ForEach(vp => vp.UpdateNextFrame());

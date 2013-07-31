@@ -18,6 +18,7 @@ namespace Sledge.DataStructures.MapObjects
 
         public bool IsSelected { get; set; }
         public bool IsHidden { get; set; }
+        public float Opacity { get; set; }
 
         public TextureReference Texture { get; set; }
         public List<Vertex> Vertices { get; set; }
@@ -32,6 +33,7 @@ namespace Sledge.DataStructures.MapObjects
             Texture = new TextureReference();
             Vertices = new List<Vertex>();
             IsSelected = false;
+            Opacity = 1;
         }
 
         public Face Copy(IDGenerator generator)
@@ -41,6 +43,8 @@ namespace Sledge.DataStructures.MapObjects
                             Plane = Plane.Clone(),
                             Colour = Colour,
                             IsSelected = IsSelected,
+                            IsHidden = IsHidden,
+                            Opacity = Opacity,
                             Texture = Texture.Clone(),
                             Parent = Parent,
                             BoundingBox = BoundingBox.Clone()
@@ -65,6 +69,8 @@ namespace Sledge.DataStructures.MapObjects
             Plane = f.Plane.Clone();
             Colour = f.Colour;
             IsSelected = f.IsSelected;
+            IsHidden = f.IsHidden;
+            Opacity = f.Opacity;
             Texture = f.Texture.Clone();
             Parent = f.Parent;
             BoundingBox = f.BoundingBox.Clone();

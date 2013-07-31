@@ -20,7 +20,7 @@ namespace Sledge.Editor.Rendering
 layout(location = 0) in vec3 position;
 layout(location = 1) in vec3 normal;
 layout(location = 2) in vec2 texture;
-layout(location = 3) in vec3 colour;
+layout(location = 3) in vec4 colour;
 layout(location = 4) in float selected;
 
 const vec3 light1direction = vec3(-1, -2, 3);
@@ -74,7 +74,7 @@ void main()
     incidence1 = clamp(incidence1, 0, 1);
     incidence2 = clamp(incidence2, 0, 1);
 
-	vertexColour = vec4(colour, 1);
+	vertexColour = colour;
     vertexLighting = (vec4(1,1,1,1) * light1intensity * incidence1) * 0.5
                    + (vec4(1,1,1,1) * light2intensity * incidence2) * 0.5
                    + (vec4(1,1,1,1) * ambient);
@@ -130,6 +130,7 @@ void main()
         if (abs(worldNormal).y < 0.9999) outputColor = mix(outputColor, vec4(0, 1, 0, 1), step(mod(worldPosition.y, gridSpacing), 0.5));
         if (abs(worldNormal).z < 0.9999) outputColor = mix(outputColor, vec4(0, 0, 1, 1), step(mod(worldPosition.z, gridSpacing), 0.5));
     }
+    outputColor.w = vertexColour.w;
 }
 ";
         #endregion Shaders
