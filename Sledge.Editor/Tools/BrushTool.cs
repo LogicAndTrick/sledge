@@ -48,7 +48,7 @@ namespace Sledge.Editor.Tools
 
         protected override Color FillColour
         {
-            get { return Color.FromArgb(64, Color.Green); }
+            get { return Color.FromArgb(Sledge.Settings.View.SelectionBoxBackgroundOpacity, Color.Green); }
         }
 
         public override void ToolSelected()

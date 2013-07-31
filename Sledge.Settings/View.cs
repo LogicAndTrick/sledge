@@ -4,6 +4,7 @@ namespace Sledge.Settings
     {
         public static bool CrosshairCursorIn2DViews { get; set; }
         public static decimal ScrollWheelZoomMultiplier { get; set; }
+        public static int SelectionBoxBackgroundOpacity { get; set; }
 
         public static int BackClippingPane { get; set; }
         public static int ModelRenderDistance { get; set; }
@@ -21,6 +22,7 @@ namespace Sledge.Settings
         {
             CrosshairCursorIn2DViews = false;
             ScrollWheelZoomMultiplier = 1.2m;
+            SelectionBoxBackgroundOpacity = 64;
 
             BackClippingPane = 6000;
             ModelRenderDistance = 4000;

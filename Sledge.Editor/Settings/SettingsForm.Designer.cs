@@ -38,6 +38,8 @@ namespace Sledge.Editor.Settings
 		{
             this.tbcSettings = new System.Windows.Forms.TabControl();
             this.tabGeneral = new System.Windows.Forms.TabPage();
+            this.groupBox19 = new System.Windows.Forms.GroupBox();
+            this.ApplyTextureImmediately = new System.Windows.Forms.CheckBox();
             this.groupBox18 = new System.Windows.Forms.GroupBox();
             this.SwitchToSelectAfterEntity = new System.Windows.Forms.CheckBox();
             this.SwitchToSelectAfterCreation = new System.Windows.Forms.CheckBox();
@@ -79,6 +81,8 @@ namespace Sledge.Editor.Settings
             this.KeepVisgroupsWhenCloning = new System.Windows.Forms.CheckBox();
             this.AutoSelectBox = new System.Windows.Forms.CheckBox();
             this.CrosshairCursorIn2DViews = new System.Windows.Forms.CheckBox();
+            this.label30 = new System.Windows.Forms.Label();
+            this.ScrollWheelZoomMultiplier = new System.Windows.Forms.NumericUpDown();
             this.groupBox16 = new System.Windows.Forms.GroupBox();
             this.ArrowKeysNudgeSelection = new System.Windows.Forms.CheckBox();
             this.NudgeStyle_GridOnCtrl = new System.Windows.Forms.RadioButton();
@@ -252,12 +256,11 @@ namespace Sledge.Editor.Settings
             this.btnCancelSettings = new System.Windows.Forms.Button();
             this.btnApplyAndCloseSettings = new System.Windows.Forms.Button();
             this.btnApplySettings = new System.Windows.Forms.Button();
-            this.label30 = new System.Windows.Forms.Label();
-            this.ScrollWheelZoomMultiplier = new System.Windows.Forms.NumericUpDown();
-            this.groupBox19 = new System.Windows.Forms.GroupBox();
-            this.ApplyTextureImmediately = new System.Windows.Forms.CheckBox();
+            this.SelectionBoxBackgroundOpacity = new System.Windows.Forms.NumericUpDown();
+            this.label31 = new System.Windows.Forms.Label();
             this.tbcSettings.SuspendLayout();
             this.tabGeneral.SuspendLayout();
+            this.groupBox19.SuspendLayout();
             this.groupBox18.SuspendLayout();
             this.tab2DViews.SuspendLayout();
             this.groupBox11.SuspendLayout();
@@ -265,6 +268,7 @@ namespace Sledge.Editor.Settings
             this.groupBox3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.GridHighlight1Distance)).BeginInit();
             this.groupBox17.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.ScrollWheelZoomMultiplier)).BeginInit();
             this.groupBox16.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.NudgeUnits)).BeginInit();
             this.groupBox4.SuspendLayout();
@@ -309,8 +313,7 @@ namespace Sledge.Editor.Settings
             ((System.ComponentModel.ISupportInitialize)(this.trackBar2)).BeginInit();
             this.groupBox7.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.ScrollWheelZoomMultiplier)).BeginInit();
-            this.groupBox19.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.SelectionBoxBackgroundOpacity)).BeginInit();
             this.SuspendLayout();
             // 
             // tbcSettings
@@ -343,6 +346,26 @@ namespace Sledge.Editor.Settings
             this.tabGeneral.TabIndex = 0;
             this.tabGeneral.Text = "General";
             this.tabGeneral.UseVisualStyleBackColor = true;
+            // 
+            // groupBox19
+            // 
+            this.groupBox19.Controls.Add(this.ApplyTextureImmediately);
+            this.groupBox19.Location = new System.Drawing.Point(369, 6);
+            this.groupBox19.Name = "groupBox19";
+            this.groupBox19.Size = new System.Drawing.Size(357, 205);
+            this.groupBox19.TabIndex = 4;
+            this.groupBox19.TabStop = false;
+            this.groupBox19.Text = "Textures";
+            // 
+            // ApplyTextureImmediately
+            // 
+            this.ApplyTextureImmediately.Location = new System.Drawing.Point(12, 19);
+            this.ApplyTextureImmediately.Name = "ApplyTextureImmediately";
+            this.ApplyTextureImmediately.Size = new System.Drawing.Size(339, 24);
+            this.ApplyTextureImmediately.TabIndex = 3;
+            this.ApplyTextureImmediately.Tag = "";
+            this.ApplyTextureImmediately.Text = "Apply texture immediately after browsing in texture application tool";
+            this.ApplyTextureImmediately.UseVisualStyleBackColor = true;
             // 
             // groupBox18
             // 
@@ -443,7 +466,7 @@ namespace Sledge.Editor.Settings
             this.groupBox11.Controls.Add(this.DrawCenterHandles);
             this.groupBox11.Controls.Add(this.BoxSelectByHandlesOnly);
             this.groupBox11.Controls.Add(this.ClickSelectByHandlesOnly);
-            this.groupBox11.Location = new System.Drawing.Point(421, 270);
+            this.groupBox11.Location = new System.Drawing.Point(421, 294);
             this.groupBox11.Name = "groupBox11";
             this.groupBox11.Size = new System.Drawing.Size(304, 178);
             this.groupBox11.TabIndex = 1;
@@ -754,11 +777,13 @@ namespace Sledge.Editor.Settings
             this.groupBox17.Controls.Add(this.KeepVisgroupsWhenCloning);
             this.groupBox17.Controls.Add(this.AutoSelectBox);
             this.groupBox17.Controls.Add(this.CrosshairCursorIn2DViews);
+            this.groupBox17.Controls.Add(this.label31);
             this.groupBox17.Controls.Add(this.label30);
+            this.groupBox17.Controls.Add(this.SelectionBoxBackgroundOpacity);
             this.groupBox17.Controls.Add(this.ScrollWheelZoomMultiplier);
             this.groupBox17.Location = new System.Drawing.Point(421, 126);
             this.groupBox17.Name = "groupBox17";
-            this.groupBox17.Size = new System.Drawing.Size(304, 138);
+            this.groupBox17.Size = new System.Drawing.Size(304, 162);
             this.groupBox17.TabIndex = 0;
             this.groupBox17.TabStop = false;
             this.groupBox17.Text = "Options";
@@ -792,6 +817,43 @@ namespace Sledge.Editor.Settings
             this.CrosshairCursorIn2DViews.Tag = "";
             this.CrosshairCursorIn2DViews.Text = "Crosshair cursor in 2D views";
             this.CrosshairCursorIn2DViews.UseVisualStyleBackColor = true;
+            // 
+            // label30
+            // 
+            this.label30.Location = new System.Drawing.Point(7, 106);
+            this.label30.Name = "label30";
+            this.label30.Size = new System.Drawing.Size(204, 20);
+            this.label30.TabIndex = 3;
+            this.label30.Text = "Scroll wheel zoom multiplier (default 1.20)";
+            this.label30.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // ScrollWheelZoomMultiplier
+            // 
+            this.ScrollWheelZoomMultiplier.DecimalPlaces = 2;
+            this.ScrollWheelZoomMultiplier.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            this.ScrollWheelZoomMultiplier.Location = new System.Drawing.Point(217, 108);
+            this.ScrollWheelZoomMultiplier.Maximum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.ScrollWheelZoomMultiplier.Minimum = new decimal(new int[] {
+            101,
+            0,
+            0,
+            131072});
+            this.ScrollWheelZoomMultiplier.Name = "ScrollWheelZoomMultiplier";
+            this.ScrollWheelZoomMultiplier.Size = new System.Drawing.Size(50, 20);
+            this.ScrollWheelZoomMultiplier.TabIndex = 2;
+            this.ScrollWheelZoomMultiplier.Value = new decimal(new int[] {
+            12,
+            0,
+            0,
+            65536});
             // 
             // groupBox16
             // 
@@ -2684,62 +2746,31 @@ namespace Sledge.Editor.Settings
             this.btnApplySettings.UseVisualStyleBackColor = true;
             this.btnApplySettings.Click += new System.EventHandler(this.Apply);
             // 
-            // label30
+            // SelectionBoxBackgroundOpacity
             // 
-            this.label30.Location = new System.Drawing.Point(7, 106);
-            this.label30.Name = "label30";
-            this.label30.Size = new System.Drawing.Size(204, 20);
-            this.label30.TabIndex = 3;
-            this.label30.Text = "Scroll wheel zoom multiplier (default 1.20)";
-            this.label30.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // ScrollWheelZoomMultiplier
-            // 
-            this.ScrollWheelZoomMultiplier.DecimalPlaces = 2;
-            this.ScrollWheelZoomMultiplier.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            65536});
-            this.ScrollWheelZoomMultiplier.Location = new System.Drawing.Point(217, 108);
-            this.ScrollWheelZoomMultiplier.Maximum = new decimal(new int[] {
-            10,
+            this.SelectionBoxBackgroundOpacity.Location = new System.Drawing.Point(217, 134);
+            this.SelectionBoxBackgroundOpacity.Maximum = new decimal(new int[] {
+            128,
             0,
             0,
             0});
-            this.ScrollWheelZoomMultiplier.Minimum = new decimal(new int[] {
-            101,
+            this.SelectionBoxBackgroundOpacity.Name = "SelectionBoxBackgroundOpacity";
+            this.SelectionBoxBackgroundOpacity.Size = new System.Drawing.Size(50, 20);
+            this.SelectionBoxBackgroundOpacity.TabIndex = 2;
+            this.SelectionBoxBackgroundOpacity.Value = new decimal(new int[] {
+            64,
             0,
             0,
-            131072});
-            this.ScrollWheelZoomMultiplier.Name = "ScrollWheelZoomMultiplier";
-            this.ScrollWheelZoomMultiplier.Size = new System.Drawing.Size(50, 20);
-            this.ScrollWheelZoomMultiplier.TabIndex = 2;
-            this.ScrollWheelZoomMultiplier.Value = new decimal(new int[] {
-            12,
-            0,
-            0,
-            65536});
+            0});
             // 
-            // groupBox19
+            // label31
             // 
-            this.groupBox19.Controls.Add(this.ApplyTextureImmediately);
-            this.groupBox19.Location = new System.Drawing.Point(369, 6);
-            this.groupBox19.Name = "groupBox19";
-            this.groupBox19.Size = new System.Drawing.Size(357, 205);
-            this.groupBox19.TabIndex = 4;
-            this.groupBox19.TabStop = false;
-            this.groupBox19.Text = "Textures";
-            // 
-            // ApplyTextureImmediately
-            // 
-            this.ApplyTextureImmediately.Location = new System.Drawing.Point(12, 19);
-            this.ApplyTextureImmediately.Name = "ApplyTextureImmediately";
-            this.ApplyTextureImmediately.Size = new System.Drawing.Size(339, 24);
-            this.ApplyTextureImmediately.TabIndex = 3;
-            this.ApplyTextureImmediately.Tag = "";
-            this.ApplyTextureImmediately.Text = "Apply texture immediately after browsing in texture application tool";
-            this.ApplyTextureImmediately.UseVisualStyleBackColor = true;
+            this.label31.Location = new System.Drawing.Point(7, 132);
+            this.label31.Name = "label31";
+            this.label31.Size = new System.Drawing.Size(204, 20);
+            this.label31.TabIndex = 3;
+            this.label31.Text = "Selection box background opacity";
+            this.label31.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // SettingsForm
             // 
@@ -2756,6 +2787,7 @@ namespace Sledge.Editor.Settings
             this.Load += new System.EventHandler(this.SettingsFormLoad);
             this.tbcSettings.ResumeLayout(false);
             this.tabGeneral.ResumeLayout(false);
+            this.groupBox19.ResumeLayout(false);
             this.groupBox18.ResumeLayout(false);
             this.tab2DViews.ResumeLayout(false);
             this.groupBox11.ResumeLayout(false);
@@ -2763,6 +2795,7 @@ namespace Sledge.Editor.Settings
             this.groupBox3.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.GridHighlight1Distance)).EndInit();
             this.groupBox17.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.ScrollWheelZoomMultiplier)).EndInit();
             this.groupBox16.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.NudgeUnits)).EndInit();
             this.groupBox4.ResumeLayout(false);
@@ -2818,8 +2851,7 @@ namespace Sledge.Editor.Settings
             ((System.ComponentModel.ISupportInitialize)(this.trackBar2)).EndInit();
             this.groupBox7.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.ScrollWheelZoomMultiplier)).EndInit();
-            this.groupBox19.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.SelectionBoxBackgroundOpacity)).EndInit();
             this.ResumeLayout(false);
 
 		}
@@ -3043,5 +3075,7 @@ namespace Sledge.Editor.Settings
         private System.Windows.Forms.NumericUpDown ScrollWheelZoomMultiplier;
         private System.Windows.Forms.GroupBox groupBox19;
         private System.Windows.Forms.CheckBox ApplyTextureImmediately;
+        private System.Windows.Forms.Label label31;
+        private System.Windows.Forms.NumericUpDown SelectionBoxBackgroundOpacity;
 	}
 }

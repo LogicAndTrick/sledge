@@ -189,6 +189,7 @@ namespace Sledge.Editor.Settings
             AutoSelectBox.Checked = Sledge.Settings.Select.AutoSelectBox;
             KeepVisgroupsWhenCloning.Checked = Sledge.Settings.Select.KeepVisgroupsWhenCloning;
 	        ScrollWheelZoomMultiplier.Value = Sledge.Settings.View.ScrollWheelZoomMultiplier;
+	        SelectionBoxBackgroundOpacity.Value = Sledge.Settings.View.SelectionBoxBackgroundOpacity;
 
             DrawCenterHandles.Checked = Sledge.Settings.Select.DrawCenterHandles;
 	        CenterHandlesActiveViewportOnly.Checked = Sledge.Settings.Select.CenterHandlesActiveViewportOnly;
@@ -264,6 +265,7 @@ namespace Sledge.Editor.Settings
             Sledge.Settings.Select.AutoSelectBox = AutoSelectBox.Checked;
             Sledge.Settings.Select.KeepVisgroupsWhenCloning = KeepVisgroupsWhenCloning.Checked;
             Sledge.Settings.View.ScrollWheelZoomMultiplier = ScrollWheelZoomMultiplier.Value;
+            Sledge.Settings.View.SelectionBoxBackgroundOpacity = (int) SelectionBoxBackgroundOpacity.Value;
 
             Sledge.Settings.Select.DrawCenterHandles = DrawCenterHandles.Checked;
             Sledge.Settings.Select.CenterHandlesActiveViewportOnly = CenterHandlesActiveViewportOnly.Checked;
