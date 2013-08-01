@@ -172,7 +172,7 @@ void main()
 
         #endregion
 
-        public Dictionary<ViewportBase, GridRenderable> GridRenderables { get; private set; }  
+        public Dictionary<ViewportBase, GridRenderable> GridRenderables { get; private set; }
 
         public RenderManager(Document document)
         {
@@ -181,7 +181,7 @@ void main()
             Shader = new ShaderProgram(
                 new Shader(ShaderType.VertexShader, VertexShader),
                 new Shader(ShaderType.FragmentShader, FragmentShader));
-            GridRenderables = ViewportManager.Viewports.OfType<Viewport2D>().ToDictionary(x => (ViewportBase) x, x => new GridRenderable(_document, x));
+            GridRenderables = ViewportManager.Viewports.OfType<Viewport2D>().ToDictionary(x => (ViewportBase)x, x => new GridRenderable(_document));
 
             // Set up default values
             Bind();
@@ -206,6 +206,8 @@ void main()
 
         public void Draw2D(ViewportBase context, Matrix4 viewport, Matrix4 camera, Matrix4 modelView)
         {
+            if (GridRenderables.ContainsKey(context)) GridRenderables[context].Render(context);
+
             Bind();
             Perspective = viewport;
             Camera = camera;
@@ -213,14 +215,7 @@ void main()
             IsWireframe = true;
             WireframeColour = Vector4.Zero;
             In3D = false;
-            DrawUntransformed = false;
-            DrawSelectedOnly = false;
-
-            ModelView = Matrix4.Identity;
-            if (GridRenderables.ContainsKey(context)) GridRenderables[context].Render(context);
-
             ModelView = modelView;
-
             DrawUntransformed = true;
             DrawSelectedOnly = true;
             SelectedWireframeColour = new Vector4(0.6f, 0, 0, 1);

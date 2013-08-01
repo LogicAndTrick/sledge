@@ -196,7 +196,6 @@
     <Compile Include="Rendering\ToolRenderable.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Rendering\TransformedDisplayListRenderable.cs" />
     <Compile Include="Rendering\WidgetLinesRenderable.cs" />
     <Compile Include="Scheduler.cs" />
     <Compile Include="Settings\Elevate.cs" />

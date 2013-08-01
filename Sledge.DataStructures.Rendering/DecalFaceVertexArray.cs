@@ -75,6 +75,10 @@ namespace Sledge.DataStructures.Rendering
         /// <param name="objects">List containing the data to update</param>
         public void Update(IEnumerable<MapObject> objects)
         {
+            foreach (var kv in _arrays)
+            {
+                kv.Value.Dispose();
+            }
             _arrays.Clear();
             float[] array;
             uint[] indices;
