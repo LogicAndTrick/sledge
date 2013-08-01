@@ -16,8 +16,9 @@ namespace Sledge.Editor.Menu
             yield return new ToolStripSeparator();
             foreach (var rf in MenuManager.RecentFiles.OrderBy(x => x.Order))
             {
-                var mi = new ToolStripMenuItem(Path.GetFileName(rf.Location));
-                mi.Click += (sender, e) => Mediator.Publish("");
+                var file = rf.Location;
+                var mi = new ToolStripMenuItem(Path.GetFileName(file));
+                mi.Click += (sender, e) => Mediator.Publish(EditorMediator.LoadFile, file);
                 yield return mi;
             }
         }

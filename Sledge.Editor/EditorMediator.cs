@@ -58,6 +58,7 @@ namespace Sledge.Editor
         FileAutosaved,
 
         // Editor messages
+        LoadFile,
         UpdateMenu,
         UpdateToolstrip,
         CheckForUpdates,

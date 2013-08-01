@@ -248,6 +248,8 @@ namespace Sledge.Editor
             Mediator.Subscribe(EditorMediator.FileOpened, this);
             Mediator.Subscribe(EditorMediator.FileSaved, this);
 
+            Mediator.Subscribe(EditorMediator.LoadFile, this);
+
             Mediator.Subscribe(EditorMediator.Exit, this);
 
             Mediator.Subscribe(EditorMediator.OpenSettings, this);
