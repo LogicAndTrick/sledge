@@ -77,6 +77,10 @@ namespace Sledge.Editor.UI
             Viewport2D.Position -= (after - before);
 
             Mediator.Publish(EditorMediator.ViewZoomChanged, Viewport2D.Zoom);
+            if (KeyboardState.IsKeyDown(Keys.ControlKey))
+            {
+                Mediator.Publish(EditorMediator.SetZoomValue, Viewport2D.Zoom);
+            }
         }
 
         public void MouseUp(ViewportEvent e)

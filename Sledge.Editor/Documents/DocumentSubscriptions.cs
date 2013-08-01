@@ -134,6 +134,7 @@ namespace Sledge.Editor.Documents
             Mediator.Subscribe(EditorMediator.VisgroupShowAll, this);
             Mediator.Subscribe(EditorMediator.VisgroupShowEditor, this);
             Mediator.Subscribe(EditorMediator.VisgroupToggled, this);
+            Mediator.Subscribe(EditorMediator.SetZoomValue, this);
         }
 
         public void Unsubscribe()
@@ -1073,6 +1074,15 @@ namespace Sledge.Editor.Documents
             if (state == CheckState.Indeterminate) return;
             var visible = state == CheckState.Checked;
             _document.PerformAction((visible ? "Show" : "Hide") + " visgroup", new ToggleVisgroup(visgroupId, visible));
+        }
+
+        public void SetZoomValue(decimal value)
+        {
+            foreach (var vp in ViewportManager.Viewports.OfType<Viewport2D>())
+            {
+                vp.Zoom = value;
+            }
+            Mediator.Publish(EditorMediator.ViewZoomChanged, value);
         }
     }
 }
