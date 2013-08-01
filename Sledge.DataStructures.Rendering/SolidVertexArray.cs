@@ -93,6 +93,10 @@ namespace Sledge.DataStructures.Rendering
         /// <param name="objects">List containing the data to update</param>
         public void Update(IEnumerable<MapObject> objects)
         {
+            foreach (var kv in _arrays)
+            {
+                kv.Value.Dispose();
+            }
             _arrays.Clear();
             float[] array;
             uint[] indices;
@@ -117,7 +121,7 @@ namespace Sledge.DataStructures.Rendering
 
         public void UpdatePartial(IEnumerable<Face> faces)
         {
-            var list = new float[128]; // 128 is large enough for most faces (up to 11 faces)
+            var list = new float[128]; // 128 is large enough for most faces (up to 11 vertices)
             foreach (var face in faces)
             {
                 if (!FaceOffsets.ContainsKey(face)) continue;
