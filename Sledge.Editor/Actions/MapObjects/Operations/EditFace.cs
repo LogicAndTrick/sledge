@@ -89,12 +89,12 @@ namespace Sledge.Editor.Actions.MapObjects.Operations
 
         public void Reverse(Document document)
         {
-            Parallel.ForEach(_objects, x => x.Reverse(document));
+            _objects.ForEach(x => x.Reverse(document));
 
             var faces = _objects.Select(x => x.GetFace(document.Map.WorldSpawn));
             if (_textureChange)
             {
-                document.Map.UpdateAutoVisgroups(faces.Select(x => x.Parent).Distinct(), false);
+                document.Map.UpdateAutoVisgroups(faces.Where(x => x != null).Select(x => x.Parent).Distinct(), false);
                 Mediator.Publish(EditorMediator.DocumentTreeStructureChanged);  
                 Mediator.Publish(EditorMediator.VisgroupsChanged);
             }
@@ -106,12 +106,12 @@ namespace Sledge.Editor.Actions.MapObjects.Operations
 
         public void Perform(Document document)
         {
-            Parallel.ForEach(_objects, x => x.Perform(document));
+            _objects.ForEach(x => x.Perform(document));
             
             var faces = _objects.Select(x => x.GetFace(document.Map.WorldSpawn));
             if (_textureChange)
             {
-                document.Map.UpdateAutoVisgroups(faces.Select(x => x.Parent).Distinct(), false);
+                document.Map.UpdateAutoVisgroups(faces.Where(x => x != null).Select(x => x.Parent).Distinct(), false);
                 Mediator.Publish(EditorMediator.DocumentTreeStructureChanged);
                 Mediator.Publish(EditorMediator.VisgroupsChanged);
             }
