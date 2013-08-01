@@ -14,7 +14,7 @@ using Property = Sledge.DataStructures.MapObjects.Property;
 
 namespace Sledge.Editor.UI
 {
-    public partial class EntityEditor : Form, IMediatorListener
+    public partial class EntityEditor : HotkeyForm, IMediatorListener
     {
         private class TableValue
         {

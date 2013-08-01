@@ -259,6 +259,9 @@
     <Compile Include="UI\EntityReportDialog.Designer.cs">
       <DependentUpon>EntityReportDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="UI\HotkeyForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="UI\MapInformationDialog.cs">
       <SubType>Form</SubType>
     </Compile>

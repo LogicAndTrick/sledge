@@ -16,7 +16,7 @@ using Sledge.Settings;
 
 namespace Sledge.Editor.UI
 {
-    public partial class EntityReportDialog : Form, IMediatorListener
+    public partial class EntityReportDialog : HotkeyForm, IMediatorListener
     {
         private class ColumnComparer : IComparer
         {

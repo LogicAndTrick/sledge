@@ -28,7 +28,7 @@ using Hotkeys = Sledge.Editor.UI.Hotkeys;
 
 namespace Sledge.Editor
 {
-    public partial class Editor : Form, IMediatorListener
+    public partial class Editor : HotkeyForm, IMediatorListener
     {
         private JumpList _jumpList;
         public static Editor Instance { get; private set; }

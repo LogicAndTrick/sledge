@@ -4,10 +4,11 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using Sledge.Editor.Tools.DisplacementTools;
+using Sledge.Editor.UI;
 
 namespace Sledge.Editor.Tools
 {
-    public partial class DisplacementForm : Form
+    public partial class DisplacementForm : HotkeyForm
     {
 
         #region Events

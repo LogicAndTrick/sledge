@@ -11,7 +11,7 @@ using Sledge.Settings;
 
 namespace Sledge.Editor.Tools
 {
-    public partial class TextureApplicationForm : Form
+    public partial class TextureApplicationForm : HotkeyForm
     {
 
         #region Events
