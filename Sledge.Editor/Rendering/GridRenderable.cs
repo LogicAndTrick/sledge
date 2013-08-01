@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using OpenTK.Graphics.OpenGL;
@@ -64,24 +65,45 @@ void main()
         }
 
         private readonly Document _document;
-        private readonly decimal _lastBuiltStep;
         private readonly ShaderProgram _program;
-        private readonly VertexBuffer<float> _buffer;
-        private readonly VertexArray<float> _array;
+
+        private decimal _step;
+        private bool _needsRebuild;
+
+        private bool _arrayCreated;
+        private uint _arrayId;
+        private int _arrayCount;
 
         public GridRenderable(Document document)
         {
             _program = new ShaderProgram(
                 new Shader(ShaderType.VertexShader, VertexShader),
                 new Shader(ShaderType.FragmentShader, FragmentShader));
-            _buffer = new VertexBuffer<float>(Specification, Modes, 0, sizeof(float), new float[0], new[] { new uint[0] });
-            _array = new VertexArray<float>(_buffer);
             _document = document;
-            _lastBuiltStep = -1;
+            _step = -1;
             RebuildGrid(1);
         }
 
+
         public void RebuildGrid(decimal zoom, bool force = false)
+        {
+            if (!_document.Map.Show2DGrid) return;
+            var step = _document.Map.GridSpacing;
+            var actualDist = step * zoom;
+            if (Grid.HideSmallerOn)
+            {
+                while (actualDist < Grid.HideSmallerThan)
+                {
+                    step *= Grid.HideFactor;
+                    actualDist *= Grid.HideFactor;
+                }
+            }
+            if (step == _step && !force) return; // This grid is the same as before
+            _needsRebuild = true;
+            _step = step;
+        }
+
+        private void RebuildGrid()
         {
             var array = new List<float>();
             var indices = new List<uint>();
@@ -90,23 +112,12 @@ void main()
             {
                 var lower = _document.GameData.MapSizeLow;
                 var upper = _document.GameData.MapSizeHigh;
-                var step = _document.Map.GridSpacing;
-                var actualDist = step * zoom;
-                if (Grid.HideSmallerOn)
-                {
-                    while (actualDist < Grid.HideSmallerThan)
-                    {
-                        step *= Grid.HideFactor;
-                        actualDist *= Grid.HideFactor;
-                    }
-                }
-                if (step == _lastBuiltStep && !force) return; // This grid is the same as before
-                for (decimal i = lower; i <= upper; i += step)
+                for (decimal i = lower; i <= upper; i += _step)
                 {
                     var c = Grid.GridLines;
                     if (i == 0) c = Grid.ZeroLines;
                     else if (i % Grid.Highlight2UnitNum == 0 && Grid.Highlight2On) c = Grid.Highlight2;
-                    else if (i % (step * Grid.Highlight1LineNum) == 0 && Grid.Highlight1On) c = Grid.Highlight1;
+                    else if (i % (_step * Grid.Highlight1LineNum) == 0 && Grid.Highlight1On) c = Grid.Highlight1;
                     var ifloat = (float)i;
                     MakePoint(array, indices, c, lower, ifloat);
                     MakePoint(array, indices, c, upper, ifloat);
@@ -128,7 +139,23 @@ void main()
                 MakePoint(array, indices, Grid.BoundaryLines, upper, lower);
             }
 
-            _buffer.Update(indices.Count, array.ToArray(), new[] {indices.ToArray()});
+            if (_arrayCreated)
+            {
+                GL.DeleteBuffers(1, new[] { _arrayId });
+            }
+            GL.GenBuffers(1, out _arrayId);
+            GL.BindBuffer(BufferTarget.ArrayBuffer, _arrayId);
+            GL.BufferData(BufferTarget.ArrayBuffer, new IntPtr(sizeof(float) * array.Count), array.ToArray(), BufferUsageHint.StaticDraw);
+            var stride = Specification.Stride;
+            for (var j = 0; j < Specification.Indices.Count; j++)
+            {
+                var ai = Specification.Indices[j];
+                GL.EnableVertexAttribArray(j);
+                GL.VertexAttribPointer(j, ai.Length, ai.Type, false, stride, ai.Offset);
+            }
+            GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
+            _arrayCount = indices.Count;
+            _arrayCreated = true;
         }
 
         private void MakePoint(List<float> array, List<uint> indices, Color colour, float x, float y, float z = 0)
@@ -142,15 +169,21 @@ void main()
         {
             var viewport = sender as Viewport2D;
             if (viewport == null) return;
+
+            if (_needsRebuild) RebuildGrid();
+            _needsRebuild = false;
+
+            if (!_arrayCreated)  return;
+
             _program.Bind();
 
             _program.Set("perspectiveMatrix", viewport.GetViewportMatrix());
             _program.Set("cameraMatrix", viewport.GetCameraMatrix());
 
-            _array.CreateArrays();
-            _array.Bind(0);
-            _buffer.DrawElements(0);
-            VertexArray<float>.Unbind();
+            GL.BindBuffer(BufferTarget.ArrayBuffer, _arrayId);
+            GL.DrawArrays(BeginMode.Lines, 0, _arrayCount);
+            GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
+
             _program.Unbind();
         }
     }

@@ -81,7 +81,9 @@ namespace Sledge.Editor.Settings
             this.KeepVisgroupsWhenCloning = new System.Windows.Forms.CheckBox();
             this.AutoSelectBox = new System.Windows.Forms.CheckBox();
             this.CrosshairCursorIn2DViews = new System.Windows.Forms.CheckBox();
+            this.label31 = new System.Windows.Forms.Label();
             this.label30 = new System.Windows.Forms.Label();
+            this.SelectionBoxBackgroundOpacity = new System.Windows.Forms.NumericUpDown();
             this.ScrollWheelZoomMultiplier = new System.Windows.Forms.NumericUpDown();
             this.groupBox16 = new System.Windows.Forms.GroupBox();
             this.ArrowKeysNudgeSelection = new System.Windows.Forms.CheckBox();
@@ -256,8 +258,6 @@ namespace Sledge.Editor.Settings
             this.btnCancelSettings = new System.Windows.Forms.Button();
             this.btnApplyAndCloseSettings = new System.Windows.Forms.Button();
             this.btnApplySettings = new System.Windows.Forms.Button();
-            this.SelectionBoxBackgroundOpacity = new System.Windows.Forms.NumericUpDown();
-            this.label31 = new System.Windows.Forms.Label();
             this.tbcSettings.SuspendLayout();
             this.tabGeneral.SuspendLayout();
             this.groupBox19.SuspendLayout();
@@ -268,6 +268,7 @@ namespace Sledge.Editor.Settings
             this.groupBox3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.GridHighlight1Distance)).BeginInit();
             this.groupBox17.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.SelectionBoxBackgroundOpacity)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ScrollWheelZoomMultiplier)).BeginInit();
             this.groupBox16.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.NudgeUnits)).BeginInit();
@@ -313,7 +314,6 @@ namespace Sledge.Editor.Settings
             ((System.ComponentModel.ISupportInitialize)(this.trackBar2)).BeginInit();
             this.groupBox7.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.SelectionBoxBackgroundOpacity)).BeginInit();
             this.SuspendLayout();
             // 
             // tbcSettings
@@ -818,6 +818,15 @@ namespace Sledge.Editor.Settings
             this.CrosshairCursorIn2DViews.Text = "Crosshair cursor in 2D views";
             this.CrosshairCursorIn2DViews.UseVisualStyleBackColor = true;
             // 
+            // label31
+            // 
+            this.label31.Location = new System.Drawing.Point(7, 132);
+            this.label31.Name = "label31";
+            this.label31.Size = new System.Drawing.Size(204, 20);
+            this.label31.TabIndex = 3;
+            this.label31.Text = "Selection box background opacity";
+            this.label31.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
             // label30
             // 
             this.label30.Location = new System.Drawing.Point(7, 106);
@@ -826,6 +835,23 @@ namespace Sledge.Editor.Settings
             this.label30.TabIndex = 3;
             this.label30.Text = "Scroll wheel zoom multiplier (default 1.20)";
             this.label30.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // SelectionBoxBackgroundOpacity
+            // 
+            this.SelectionBoxBackgroundOpacity.Location = new System.Drawing.Point(217, 134);
+            this.SelectionBoxBackgroundOpacity.Maximum = new decimal(new int[] {
+            128,
+            0,
+            0,
+            0});
+            this.SelectionBoxBackgroundOpacity.Name = "SelectionBoxBackgroundOpacity";
+            this.SelectionBoxBackgroundOpacity.Size = new System.Drawing.Size(50, 20);
+            this.SelectionBoxBackgroundOpacity.TabIndex = 2;
+            this.SelectionBoxBackgroundOpacity.Value = new decimal(new int[] {
+            64,
+            0,
+            0,
+            0});
             // 
             // ScrollWheelZoomMultiplier
             // 
@@ -2180,6 +2206,7 @@ namespace Sledge.Editor.Settings
             this.SelectedBuildExeFolderBrowse.TabIndex = 20;
             this.SelectedBuildExeFolderBrowse.Text = "Browse...";
             this.SelectedBuildExeFolderBrowse.UseVisualStyleBackColor = true;
+            this.SelectedBuildExeFolderBrowse.Click += new System.EventHandler(this.SelectedBuildExeFolderBrowseClicked);
             // 
             // tabBuildPostCompile
             // 
@@ -2746,32 +2773,6 @@ namespace Sledge.Editor.Settings
             this.btnApplySettings.UseVisualStyleBackColor = true;
             this.btnApplySettings.Click += new System.EventHandler(this.Apply);
             // 
-            // SelectionBoxBackgroundOpacity
-            // 
-            this.SelectionBoxBackgroundOpacity.Location = new System.Drawing.Point(217, 134);
-            this.SelectionBoxBackgroundOpacity.Maximum = new decimal(new int[] {
-            128,
-            0,
-            0,
-            0});
-            this.SelectionBoxBackgroundOpacity.Name = "SelectionBoxBackgroundOpacity";
-            this.SelectionBoxBackgroundOpacity.Size = new System.Drawing.Size(50, 20);
-            this.SelectionBoxBackgroundOpacity.TabIndex = 2;
-            this.SelectionBoxBackgroundOpacity.Value = new decimal(new int[] {
-            64,
-            0,
-            0,
-            0});
-            // 
-            // label31
-            // 
-            this.label31.Location = new System.Drawing.Point(7, 132);
-            this.label31.Name = "label31";
-            this.label31.Size = new System.Drawing.Size(204, 20);
-            this.label31.TabIndex = 3;
-            this.label31.Text = "Selection box background opacity";
-            this.label31.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
             // SettingsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -2795,6 +2796,7 @@ namespace Sledge.Editor.Settings
             this.groupBox3.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.GridHighlight1Distance)).EndInit();
             this.groupBox17.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.SelectionBoxBackgroundOpacity)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.ScrollWheelZoomMultiplier)).EndInit();
             this.groupBox16.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.NudgeUnits)).EndInit();
@@ -2851,7 +2853,6 @@ namespace Sledge.Editor.Settings
             ((System.ComponentModel.ISupportInitialize)(this.trackBar2)).EndInit();
             this.groupBox7.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.SelectionBoxBackgroundOpacity)).EndInit();
             this.ResumeLayout(false);
 
 		}

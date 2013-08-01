@@ -804,6 +804,17 @@ namespace Sledge.Editor.Settings
             UpdateSelectedBuild();
         }
 
+        private void SelectedBuildExeFolderBrowseClicked(object sender, EventArgs e)
+        {
+            using (var fbd = new FolderBrowserDialog { SelectedPath = SelectedBuildExeFolder.Text })
+            {
+                if (fbd.ShowDialog() == DialogResult.OK)
+                {
+                    SelectedBuildExeFolder.Text = fbd.SelectedPath;
+                }
+            }
+        }
+
         private void SelectedBuildNameChanged(object sender, EventArgs e)
         {
             if (_selectedBuild == null) return;
