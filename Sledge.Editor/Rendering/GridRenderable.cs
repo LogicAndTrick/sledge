@@ -67,12 +67,12 @@ void main()
         private readonly Document _document;
         private readonly ShaderProgram _program;
 
+        private readonly VertexBuffer<float> _buffer;
+        private readonly VertexArray<float> _array;
+
+
         private decimal _step;
         private bool _needsRebuild;
-
-        private bool _arrayCreated;
-        private uint _arrayId;
-        private int _arrayCount;
 
         public GridRenderable(Document document)
         {
@@ -81,6 +81,8 @@ void main()
                 new Shader(ShaderType.FragmentShader, FragmentShader));
             _document = document;
             _step = -1;
+            _buffer = new VertexBuffer<float>(Specification, Modes, 0, sizeof(float), new float[0], new[] { new uint[0] });
+            _array = new VertexArray<float>(_buffer);
             RebuildGrid(1);
         }
 
@@ -139,23 +141,7 @@ void main()
                 MakePoint(array, indices, Grid.BoundaryLines, upper, lower);
             }
 
-            if (_arrayCreated)
-            {
-                GL.DeleteBuffers(1, new[] { _arrayId });
-            }
-            GL.GenBuffers(1, out _arrayId);
-            GL.BindBuffer(BufferTarget.ArrayBuffer, _arrayId);
-            GL.BufferData(BufferTarget.ArrayBuffer, new IntPtr(sizeof(float) * array.Count), array.ToArray(), BufferUsageHint.StaticDraw);
-            var stride = Specification.Stride;
-            for (var j = 0; j < Specification.Indices.Count; j++)
-            {
-                var ai = Specification.Indices[j];
-                GL.EnableVertexAttribArray(j);
-                GL.VertexAttribPointer(j, ai.Length, ai.Type, false, stride, ai.Offset);
-            }
-            GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
-            _arrayCount = indices.Count;
-            _arrayCreated = true;
+            _buffer.Update(indices.Count, array.ToArray(), new[] { indices.ToArray() });
         }
 
         private void MakePoint(List<float> array, List<uint> indices, Color colour, float x, float y, float z = 0)
@@ -173,16 +159,15 @@ void main()
             if (_needsRebuild) RebuildGrid();
             _needsRebuild = false;
 
-            if (!_arrayCreated)  return;
-
             _program.Bind();
 
             _program.Set("perspectiveMatrix", viewport.GetViewportMatrix());
             _program.Set("cameraMatrix", viewport.GetCameraMatrix());
 
-            GL.BindBuffer(BufferTarget.ArrayBuffer, _arrayId);
-            GL.DrawArrays(BeginMode.Lines, 0, _arrayCount);
-            GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
+            _array.CreateArrays();
+            _array.Bind(0);
+            _buffer.DrawElements(0);
+            VertexArray<float>.Unbind();
 
             _program.Unbind();
         }
