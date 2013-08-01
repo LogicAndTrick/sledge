@@ -717,22 +717,28 @@ namespace Sledge.Editor.UI
                 return _comboBox.Text;
             }
 
+            private IEnumerable<Option> GetSortedOptions()
+            {
+                int key;
+                if (Property.Options.All(x => int.TryParse(x.Key, out key)))
+                {
+                    return Property.Options.OrderBy(x => int.Parse(x.Key));
+                }
+                return Property.Options.OrderBy(x => x.Key.ToLowerInvariant());
+            }
+
             protected override void OnSetProperty()
             {
                 _comboBox.Items.Clear();
                 if (Property != null)
                 {
-                    var options = Property.Options.OrderBy(x => int.Parse(x.Key)).ToList();
+                    var options = GetSortedOptions().ToList();
                     _comboBox.Items.AddRange(options.Select(x => x.DisplayText()).OfType<object>().ToArray());
-                    int selection;
-                    if (int.TryParse(PropertyValue, out selection))
+                    var index = options.FindIndex(x => String.Equals(x.Key, PropertyValue, StringComparison.InvariantCultureIgnoreCase));
+                    if (index >= 0)
                     {
-                        var index = options.FindIndex(x => int.Parse(x.Key) == selection);
-                        if (index >= 0)
-                        {
-                            _comboBox.SelectedIndex = index;
-                            return;
-                        }
+                        _comboBox.SelectedIndex = index;
+                        return;
                     }
                 }
                 _comboBox.Text = PropertyValue;
