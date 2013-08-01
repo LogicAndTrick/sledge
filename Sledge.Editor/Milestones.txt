@@ -32,6 +32,7 @@ Priorities
     Object properties dialog data types
       File system - custom file browser
     Texture browser - used textures only
+    VM vertex scaling tool
     Options
       Hotkey configuration
 
