@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using Sledge.Graphics;
@@ -32,38 +33,37 @@ namespace Sledge.Editor.UI
             Focus = false;
             Viewport = vp;
             Camera = vp.Camera;
+            _downKeys = new List<Keys>();
         }
+
+        private readonly List<Keys> _downKeys;
 
         public void UpdateFrame()
         {
             if (!Focus) return;
             var amt = 15m;
-            if (KeyboardState.IsKeyDown(Keys.ShiftKey))
-            {
-                amt *= 2;
-            }
-            if (KeyboardState.IsKeyDown(Keys.ControlKey))
-            {
-                amt = 1m;
-            }
-            if (KeyboardState.IsKeyDown(Keys.W))
-            {
-                Camera.Advance(amt);
-            }
+            // These keys are used for hotkeys, don't want the 3D view to move about when trying to use hotkeys.
+            var ignore = KeyboardState.IsAnyKeyDown(Keys.ShiftKey, Keys.ControlKey, Keys.Alt);
+            IfKey(Keys.W, () => Camera.Advance(amt), ignore);
+            IfKey(Keys.S, () => Camera.Advance(-amt), ignore);
+            IfKey(Keys.A, () => Camera.Strafe(-amt), ignore);
+            IfKey(Keys.D, () => Camera.Strafe(amt), ignore);
+        }
 
-            if (KeyboardState.IsKeyDown(Keys.S))
+        private void IfKey(Keys key, Action action, bool ignoreKeyboard)
+        {
+            if (!KeyboardState.IsKeyDown(key))
             {
-                Camera.Advance(-amt);
+                _downKeys.Remove(key);
             }
-
-            if (KeyboardState.IsKeyDown(Keys.A))
+            else if (ignoreKeyboard)
             {
-                Camera.Strafe(-amt);
+                if (_downKeys.Contains(key)) action();
             }
-
-            if (KeyboardState.IsKeyDown(Keys.D))
+            else
             {
-                Camera.Strafe(amt);
+                if (!_downKeys.Contains(key)) _downKeys.Add(key);
+                action();
             }
         }
 
@@ -104,7 +104,7 @@ namespace Sledge.Editor.UI
         public void KeyDown(ViewportEvent e)
         {
             if (!Focus) return;
-            if (e.KeyCode == Keys.Z)
+            if (e.KeyCode == Keys.Z && !e.Alt && !e.Control && !e.Shift)
             {
                 FreeLook = !FreeLook;
                 if (FreeLook && CursorVisible)

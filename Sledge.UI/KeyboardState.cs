@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
@@ -86,6 +87,11 @@ namespace Sledge.UI
         {
             // Key is down if the high bit is 1
             return (GetKeyState((int)key) & 0x8000) == 0x8000;
+        }
+
+        public static bool IsAnyKeyDown(params Keys[] keys)
+        {
+            return keys.Any(IsKeyDown);
         }
 
         private static bool IsKeyToggled(Keys key)
