@@ -11,78 +11,63 @@ using Sledge.Editor.Actions.MapObjects.Operations;
 using Sledge.Editor.Editing;
 using Sledge.Editor.Properties;
 using Sledge.Editor.Rendering;
+using Sledge.Editor.Tools.VMTools;
 using Sledge.Graphics;
 using Sledge.Graphics.Helpers;
 using Sledge.Settings;
 using Sledge.UI;
 using Matrix = Sledge.Graphics.Helpers.Matrix;
-using Vertex = Sledge.DataStructures.MapObjects.Vertex;
 
 namespace Sledge.Editor.Tools
 {
     public class VMTool : BaseBoxTool
     {
-        private class VMPoint
-        {
-            private bool _isSelected;
-            public Coordinate Coordinate { get; set; }
-            public Solid Solid { get; set; }
-            public List<Vertex> Vertices { get; set; }
-
-            /// <summary>
-            /// Midpoints are somewhat "virtual" points in that they only facilitate the moving and selection of two points at once.
-            /// </summary>
-            public bool IsMidPoint { get; set; }
-            public VMPoint MidpointStart { get; set; }
-            public VMPoint MidpointEnd { get; set; }
-            public bool IsSelected
-            {
-                get
-                {
-                    if (IsMidPoint) return MidpointStart.IsSelected && MidpointEnd.IsSelected;
-                    return _isSelected;
-                }
-                set
-                {
-                    if (IsMidPoint) MidpointStart.IsSelected = MidpointEnd.IsSelected = value;
-                    else _isSelected = value;
-                }
-            }
-
-            public void Move(Coordinate delta)
-            {
-                Coordinate += delta;
-                if (!IsMidPoint)
-                {
-                    Vertices.ForEach(x => x.Location += delta);
-                }
-            }
-
-            public Color GetColour()
-            {
-                // Midpoints are selected = Pink, deselected = orange
-                // Vertex points are selected = red, deselected = white
-                if (IsMidPoint) return IsSelected ? Color.DeepPink : Color.Orange;
-                return IsSelected ? Color.Red : Color.White;
-            }
-        }
-
-        private enum VMState
-        {
-            None,
-            Moving
-        }
+        private readonly VMForm _form;
+        private readonly List<VMSubTool> _tools;
+        private VMSubTool _currentTool;
 
         /// <summary>
         /// Key = copy, Value = original
         /// </summary>
-        private Dictionary<Solid, Solid> _copies; 
-        private List<VMPoint> _points;
-        private VMState _state;
+        private Dictionary<Solid, Solid> _copies;
+
+        public List<VMPoint> Points { get; private set; }
+        public List<VMPoint> MoveSelection { get; private set; }
+        public bool Dirty { get; set; }
+
         private VMPoint _movingPoint;
-        private List<VMPoint> _clickedPoints;
         private Coordinate _snapPointOffset;
-        private bool _dirty;
+
+        public VMTool()
+        {
+            _form = new VMForm();
+            _form.ToolSelected += VMToolSelected;
+            _tools = new List<VMSubTool>();
+
+            AddTool(new StandardTool(this));
+            AddTool(new ScaleTool(this));
+            _currentTool = _tools.FirstOrDefault();
+        }
+
+        private void VMToolSelected(object sender, VMSubTool tool)
+        {
+            if (_currentTool == tool) return;
+            if (_currentTool != null) _currentTool.ToolDeselected();
+            _currentTool = tool;
+            if (_currentTool != null) _currentTool.ToolSelected();
+        }
+
+        private void AddTool(VMSubTool tool)
+        {
+            _form.AddTool(tool);
+            _tools.Add(tool);
+        }
+
+        public override void DocumentChanged()
+        {
+            _form.Document = Document;
+            _tools.ForEach(x => x.SetDocument(Document));
+        }
 
         public override Image GetIcon()
         {
@@ -116,13 +101,13 @@ namespace Sledge.Editor.Tools
         /// <param name="y">The Y coordinate</param>
         /// <param name="viewport">The viewport</param>
         /// <returns>The points ordered from top to bottom, or an empty set if no points were found</returns>
-        private List<VMPoint> GetVerticesAtPoint(int x, int y, Viewport2D viewport)
+        public List<VMPoint> GetVerticesAtPoint(int x, int y, Viewport2D viewport)
         {
             var p = viewport.ScreenToWorld(x, y);
             var d = 5 / viewport.Zoom; // Tolerance value = 5 pixels
 
             // Order by the unused coordinate in the view (which is the up axis) descending to get the "closest" point
-            return (from point in _points
+            return (from point in Points
                     let c = viewport.Flatten(point.Coordinate)
                     where p.X >= c.X - d && p.X <= c.X + d && p.Y >= c.Y - d && p.Y <= c.Y + d
                     let unused = viewport.GetUnusedCoordinate(point.Coordinate)
@@ -132,10 +117,13 @@ namespace Sledge.Editor.Tools
 
         public override void ToolSelected()
         {
+            _form.Show(Editor.Instance);
+            Editor.Instance.Focus();
+
             var selectedSolids = Document.Selection.GetSelectedObjects().OfType<Solid>().ToList();
             // Init the points and copy caches
             _copies = new Dictionary<Solid, Solid>();
-            _points = new List<VMPoint>();
+            Points = new List<VMPoint>();
             foreach (var solid in selectedSolids)
             {
                 var copy = (Solid)solid.Clone();
@@ -147,51 +135,63 @@ namespace Sledge.Editor.Tools
             }
             RefreshPoints();
             RefreshMidpoints();
-            _state = VMState.None;
             _snapPointOffset = null;
             _movingPoint = null;
-            _clickedPoints = null;
-            _dirty = false;
-            Document.UpdateDisplayLists(); // Can't just update the select list because the solids are now transparent
+            MoveSelection = null;
+            Dirty = false;
+            Document.UpdateDisplayLists();
+
+            if (_currentTool != null) _currentTool.ToolSelected();
+            _form.SelectionChanged();
         }
 
         public override void ToolDeselected()
         {
+            if (_currentTool != null) _currentTool.ToolDeselected();
+
             // The solids are no longer hidden
             var selectedSolids = Document.Selection.GetSelectedObjects().OfType<Solid>().ToList();
             foreach (var o in selectedSolids)
             {
                 o.IsCodeHidden = false;
             }
-            if (_dirty)
+            if (Dirty)
             {
                 // Commit the changes
                 var edit = new Edit(_copies.Values, _copies.Keys);
                 Document.PerformAction("Vertex Manipulation", edit);
             }
             _copies = null;
-            _points = null;
-            _state = VMState.None;
+            Points = null;
             _snapPointOffset = null;
             _movingPoint = null;
-            _clickedPoints = null;
+            MoveSelection = null;
+
+            _form.Clear();
+            _form.Hide();
             Document.UpdateDisplayLists();
+        }
+
+        public void SelectionChanged()
+        {
+            _currentTool.SelectionChanged();
+            _form.SelectionChanged();
         }
 
         /// <summary>
         /// Updates the points list (does not update midpoints)
         /// </summary>
-        private void RefreshPoints()
+        public void RefreshPoints()
         {
-            var selected = _points.Where(x => !x.IsMidPoint && x.IsSelected).Select(x => new { x.Coordinate, x.Solid }).ToList();
-            _points.RemoveAll(x => !x.IsMidPoint);
+            var selected = Points.Where(x => !x.IsMidPoint && x.IsSelected).Select(x => new { x.Coordinate, x.Solid }).ToList();
+            Points.RemoveAll(x => !x.IsMidPoint);
             foreach (var copy in _copies.Keys)
             {
                 // Add the vertex points
                 // Group by location per solid, duplicate coordinates are "attached" and moved at the same time
                 foreach (var group in copy.Faces.SelectMany(x => x.Vertices).GroupBy(x => x.Location))
                 {
-                    _points.Add(new VMPoint
+                    Points.Add(new VMPoint
                     {
                         Solid = copy, // ten four, solid copy
                         Coordinate = group.First().Location,
@@ -205,9 +205,9 @@ namespace Sledge.Editor.Tools
         /// <summary>
         /// Updates the positions of all midpoints.
         /// </summary>
-        private void RefreshMidpoints(bool recreate = true)
+        public void RefreshMidpoints(bool recreate = true)
         {
-            if (recreate) _points.RemoveAll(x => x.IsMidPoint);
+            if (recreate) Points.RemoveAll(x => x.IsMidPoint);
             foreach (var copy in _copies.Keys)
             {
                 foreach (var group in copy.Faces.SelectMany(x => x.GetLines()).GroupBy(x => new { x.Start, x.End }))
@@ -215,11 +215,11 @@ namespace Sledge.Editor.Tools
                     var s = group.Key.Start;
                     var e = group.Key.End;
                     var coord = (s + e) / 2;
-                    var mpStart = _points.First(x => !x.IsMidPoint && x.Coordinate == s);
-                    var mpEnd = _points.First(x => !x.IsMidPoint && x.Coordinate == e);
+                    var mpStart = Points.First(x => !x.IsMidPoint && x.Coordinate == s);
+                    var mpEnd = Points.First(x => !x.IsMidPoint && x.Coordinate == e);
                     if (recreate)
                     {
-                        _points.Add(new VMPoint
+                        Points.Add(new VMPoint
                                         {
                                             Solid = copy,
                                             Coordinate = coord,
@@ -230,7 +230,7 @@ namespace Sledge.Editor.Tools
                     }
                     else
                     {
-                        foreach (var point in _points.Where(x => x.IsMidPoint && x.MidpointStart.Coordinate == s && x.MidpointEnd.Coordinate == e))
+                        foreach (var point in Points.Where(x => x.IsMidPoint && x.MidpointStart.Coordinate == s && x.MidpointEnd.Coordinate == e))
                         {
                             point.Coordinate = coord;
                         }
@@ -247,17 +247,25 @@ namespace Sledge.Editor.Tools
                 return;
             }
 
+            if (_currentTool == null) return;
+
+            // If the current tool handles the event, we're done
+            _currentTool.MouseDown(vp, e);
+            if (e.Handled) return;
+
             var viewport = (Viewport2D)vp;
 
-            // Find the clicked vertex
-            var vtxs = GetVerticesAtPoint(e.X, viewport.Height - e.Y, viewport);
+            // Otherwise we try a selection
+            // Find the clicked vertices
+            var vtxs = _currentTool.GetVerticesAtPoint(e.X, viewport.Height - e.Y, viewport);
+
             if (!vtxs.Any())
             {
                 // Nothing clicked
                 if (!KeyboardState.Ctrl)
                 {
-                    // Deselect all the point if not ctrl-ing
-                    _points.ForEach(x => x.IsSelected = false);
+                    // Deselect all the points if not ctrl-ing
+                    Points.ForEach(x => x.IsSelected = false);
                 }
                 base.MouseDown(vp, e);
                 return;
@@ -277,16 +285,17 @@ namespace Sledge.Editor.Tools
             BoxDrawnCancel(vp);
 
             // Mouse down on a point
-            _state = VMState.Moving;
-            Editor.Instance.CaptureAltPresses = true;
             if (!vtx.IsSelected && !KeyboardState.Ctrl)
             {
                 // If we aren't clicking on a selected point and ctrl is not down, deselect the others
-                _points.ForEach(x => x.IsSelected = false);
+                Points.ForEach(x => x.IsSelected = false);
                 // If this point is already selected, don't deselect others. This is so we can move multiple points easily.
             }
             vtxs.ForEach(x => x.IsSelected = true);
-            _clickedPoints = vtxs; // This is unset if the mouse is moved, see MouseUp logic.
+            SelectionChanged();
+
+            _currentTool.DragStart(vtxs);
+            MoveSelection = vtxs;
             _snapPointOffset = SnapIfNeeded(viewport.Expand(viewport.ScreenToWorld(e.X, viewport.Height - e.Y))) - viewport.ZeroUnusedCoordinate(vtx.Coordinate);
             _movingPoint = vtx;
         }
@@ -296,44 +305,31 @@ namespace Sledge.Editor.Tools
             base.MouseUp(viewport, e);
 
             if (!(viewport is Viewport2D)) return;
+            if (_currentTool == null) return;
 
-            if (_state == VMState.Moving && _clickedPoints != null && !KeyboardState.Ctrl)
+            _currentTool.MouseUp(viewport, e);
+            if (!e.Handled)
             {
-                // If we were moving (or clicking on) a point, and the clicked point is
-                // not null (mouse not moved yet), AND ctrl is not down, deselect the other points.
-                // Otherwise selection has already been handled by MouseDown.
-                _points.ForEach(x => x.IsSelected = false);
-                _clickedPoints.ForEach(x => x.IsSelected = true);
+                if (MoveSelection != null && !KeyboardState.Ctrl)
+                {
+                    // If we were clicking on a point, and the mouse hasn't moved yet,
+                    // and ctrl is not down, deselect the other points.
+                    Points.ForEach(x => x.IsSelected = false);
+                    MoveSelection.ForEach(x => x.IsSelected = true);
+                    SelectionChanged();
+
+                    _currentTool.MouseClick(viewport, e);
+                }
+                else
+                {
+                    _currentTool.DragEnd();
+                }
             }
 
-            if (_state == VMState.Moving)
-            {
-                CheckMergedVertices();
-            }
-            
             RefreshMidpoints();
-            _state = VMState.None;
             _snapPointOffset = null;
             _movingPoint = null;
-            _clickedPoints = null;
-            Editor.Instance.CaptureAltPresses = false;
-        }
-
-        private void CheckMergedVertices()
-        {
-            // adjacent points with the same solid and coordinate need to be merged (erp)
-            foreach (var group in _points.Where(x => !x.IsMidPoint).GroupBy(x => new {x.Solid, x.Coordinate}).Where(x => x.Count() > 1))
-            {
-                var allFaces = group.SelectMany(x => x.Vertices).Select(x => x.Parent).Distinct().ToList();
-                foreach (var face in allFaces)
-                {
-                    var distinctVerts = face.Vertices.GroupBy(x => x.Location).Select(x => x.First()).ToList();
-                    if (distinctVerts.Count < 3) group.Key.Solid.Faces.Remove(face); // Remove face
-                    else face.Vertices.RemoveAll(x => !distinctVerts.Contains(x)); // Remove duped verts
-                }
-                // ... this is hard :(
-            }
-            RefreshPoints();
+            MoveSelection = null;
         }
 
         public override void MouseMove(ViewportBase vp, ViewportEvent e)
@@ -341,12 +337,17 @@ namespace Sledge.Editor.Tools
             base.MouseMove(vp, e);
 
             if (!(vp is Viewport2D)) return;
+            if (_currentTool == null) return;
+
+            _currentTool.MouseMove(vp, e);
+            if (e.Handled) return;
+
             var viewport = (Viewport2D)vp;
 
-            if (_state == VMState.None)
+            if (_movingPoint == null)
             {
                 // Not moving a point, just test for the cursor.
-                var vtxs = GetVerticesAtPoint(e.X, viewport.Height - e.Y, viewport);
+                var vtxs = _currentTool.GetVerticesAtPoint(e.X, viewport.Height - e.Y, viewport);
                 if (vtxs.Any()) viewport.Cursor = Cursors.Cross;
                 else if (viewport.Cursor == Cursors.Cross) viewport.Cursor = Cursors.Default;
             }
@@ -360,33 +361,10 @@ namespace Sledge.Editor.Tools
                     point += _snapPointOffset;
                 }
                 var moveDistance = point - viewport.ZeroUnusedCoordinate(_movingPoint.Coordinate);
-                // Move each selected point by the delta value
-                foreach (var p in _points.Where(x => !x.IsMidPoint && x.IsSelected))
-                {
-                    p.Move(moveDistance);
-                }
+                _currentTool.DragMove(moveDistance);
                 RefreshMidpoints(false);
-                // We've moved the mouse, so not clicking on a point.
-                _clickedPoints = null;
-                _dirty = true;
+                MoveSelection = null;
             }
-        }
-
-        public override void KeyDown(ViewportBase viewport, ViewportEvent e)
-        {
-            var nudge = GetNudgeValue(e.KeyCode);
-            var vp = viewport as Viewport2D;
-            if (nudge != null && vp != null && _state == VMState.None && _points.Any(x => x.IsSelected))
-            {
-                var translate = vp.Expand(nudge);
-                foreach (var p in _points.Where(x => !x.IsMidPoint && x.IsSelected))
-                {
-                    p.Move(translate);
-                }
-                RefreshMidpoints(false);
-                _dirty = true;
-            }
-            base.KeyDown(viewport, e);
         }
 
         public override HotkeyInterceptResult InterceptHotkey(HotkeysMediator hotkeyMessage)
@@ -409,11 +387,12 @@ namespace Sledge.Editor.Tools
             Box box;
             if (GetSelectionBox(out box))
             {
-                foreach (var point in _points.Where(x => box.CoordinateIsInside(x.Coordinate)))
+                foreach (var point in Points.Where(x => box.CoordinateIsInside(x.Coordinate)))
                 {
                     // Select all the points in the box
                     point.IsSelected = true;
                 }
+                SelectionChanged();
             }
 
             base.BoxDrawnConfirm(viewport);
@@ -422,6 +401,8 @@ namespace Sledge.Editor.Tools
         protected override void Render2D(Viewport2D vp)
         {
             base.Render2D(vp);
+
+            if (_currentTool != null) _currentTool.Render2D(vp);
 
             // Render out the solid previews
             GL.Color3(Color.Pink);
@@ -432,7 +413,7 @@ namespace Sledge.Editor.Tools
             Matrix.Pop();
 
             // Draw in order by the unused coordinate (the up axis for this viewport)
-            var ordered = (from point in _points
+            var ordered = (from point in Points
                            let unused = vp.GetUnusedCoordinate(point.Coordinate)
                            orderby unused.X + unused.Y + unused.Z
                            select point).ToList();
@@ -454,6 +435,8 @@ namespace Sledge.Editor.Tools
         {
             base.Render3D(vp);
 
+            if (_currentTool != null) _currentTool.Render3D(vp);
+
             TextureHelper.DisableTexturing();
 
             // Get us into 2D rendering
@@ -466,7 +449,7 @@ namespace Sledge.Editor.Tools
             var half = new Coordinate(vp.Width, vp.Height, 0) / 2;
             // Render out the point handles
             GL.Begin(BeginMode.Quads);
-            foreach (var point in _points)
+            foreach (var point in Points)
             {
                 var c = vp.WorldToScreen(point.Coordinate);
                 if (c == null || c.Z > 1) continue;
@@ -503,6 +486,66 @@ namespace Sledge.Editor.Tools
             DataStructures.Rendering.Rendering.DrawFilled(faces, Color.FromArgb(64, Color.Green));
             GL.Color3(Color.Pink);
             DataStructures.Rendering.Rendering.DrawWireframe(faces, true);
+        }
+
+        public override void KeyDown(ViewportBase viewport, ViewportEvent e)
+        {
+            if (_currentTool != null) _currentTool.KeyDown(viewport, e);
+            if (e.Handled) return;
+            base.KeyDown(viewport, e);
+        }
+
+        public override void Render(ViewportBase viewport)
+        {
+            if (_currentTool != null) _currentTool.Render(viewport);
+            base.Render(viewport);
+        }
+
+        public override void MouseEnter(ViewportBase viewport, ViewportEvent e)
+        {
+            if (_currentTool != null) _currentTool.MouseEnter(viewport, e);
+            if (e.Handled) return;
+            base.MouseEnter(viewport, e);
+        }
+
+        public override void MouseLeave(ViewportBase viewport, ViewportEvent e)
+        {
+            if (_currentTool != null) _currentTool.MouseLeave(viewport, e);
+            if (e.Handled) return;
+            base.MouseLeave(viewport, e);
+        }
+
+        public override void MouseWheel(ViewportBase viewport, ViewportEvent e)
+        {
+            if (_currentTool != null) _currentTool.MouseWheel(viewport, e);
+            if (e.Handled) return;
+            base.MouseWheel(viewport, e);
+        }
+
+        public override void KeyPress(ViewportBase viewport, ViewportEvent e)
+        {
+            if (_currentTool != null) _currentTool.KeyPress(viewport, e);
+            if (e.Handled) return;
+            base.KeyPress(viewport, e);
+        }
+
+        public override void KeyUp(ViewportBase viewport, ViewportEvent e)
+        {
+            if (_currentTool != null) _currentTool.KeyUp(viewport, e);
+            if (e.Handled) return;
+            base.KeyUp(viewport, e);
+        }
+
+        public override void UpdateFrame(ViewportBase viewport)
+        {
+            if (_currentTool != null) _currentTool.UpdateFrame(viewport);
+            base.UpdateFrame(viewport);
+        }
+
+        public override void PreRender(ViewportBase viewport)
+        {
+            if (_currentTool != null) _currentTool.PreRender(viewport);
+            base.PreRender(viewport);
         }
     }
 }
