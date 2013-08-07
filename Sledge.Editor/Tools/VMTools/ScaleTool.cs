@@ -59,11 +59,26 @@ namespace Sledge.Editor.Tools.VMTools
             ((ScaleControl) Control).ResetValue();
         }
 
+        public override bool ShouldDeselect(List<VMPoint> vtxs)
+        {
+            return !vtxs.Contains(_origin);
+        }
+
+        public override bool NoSelection()
+        {
+            return false;
+        }
+
+        public override bool DrawVertices()
+        {
+            return true;
+        }
+
         private void MovePoints(decimal value, bool relative)
         {
             var o = _origin.Coordinate;
             // Move each selected point by the computed offset from the origin
-            foreach (var p in MainTool.Points.Where(x => !x.IsMidPoint && x.IsSelected))
+            foreach (var p in MainTool.GetSelectedPoints())
             {
                 var orig = _originals[p];
                 var diff = orig - o;
@@ -71,6 +86,7 @@ namespace Sledge.Editor.Tools.VMTools
                 var move = relative ? o + diff * value / 100 : orig + direction * value;
                 p.Move(move - p.Coordinate);
             }
+            MainTool.UpdateEditedFaces();
             MainTool.RefreshMidpoints();
             MainTool.Dirty = true;
         }
@@ -181,15 +197,10 @@ namespace Sledge.Editor.Tools.VMTools
         {
             var nudge = GetNudgeValue(e.KeyCode);
             var vp = viewport as Viewport2D;
-            if (nudge != null && vp != null && _state == VMState.None && MainTool.Points.Any(x => x.IsSelected))
+            if (nudge != null && vp != null && _state == VMState.None)
             {
                 var translate = vp.Expand(nudge);
-                foreach (var p in MainTool.Points.Where(x => !x.IsMidPoint && x.IsSelected))
-                {
-                    p.Move(translate);
-                }
-                MainTool.RefreshMidpoints(false);
-                MainTool.Dirty = true;
+                _origin.Move(translate);
             }
         }
 

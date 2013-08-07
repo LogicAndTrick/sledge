@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Sledge.DataStructures.Geometric;
+using Sledge.DataStructures.MapObjects;
 using Sledge.UI;
 
 namespace Sledge.Editor.Tools.VMTools
@@ -18,7 +19,130 @@ namespace Sledge.Editor.Tools.VMTools
 
         public StandardTool(VMTool mainTool) : base(mainTool)
         {
-            Control = new StandardControl();
+            var sc = new StandardControl();
+            sc.Merge += Merge;
+            sc.Split += Split;
+            Control = sc;
+        }
+
+        private bool AutomaticallyMerge()
+        {
+            return ((StandardControl) Control).AutomaticallyMerge;
+        }
+
+        private void UpdateSplitEnabled()
+        {
+            ((StandardControl) Control).SplitEnabled = CanSplit();
+        }
+
+        private bool CanSplit()
+        {
+            return GetSplitFace() != null;
+        }
+
+        private Face GetSplitFace()
+        {
+            if (MainTool.Points == null) return null;
+
+            var selected = MainTool.Points.Where(x => x.IsSelected).ToList();
+
+            // Must have two points selected
+            if (selected.Count != 2) return null;
+
+            // Selection must share a face
+            var commonFace = selected[0].GetAdjacentFaces().Intersect(selected[1].GetAdjacentFaces()).ToList();
+            if (commonFace.Count != 1) return null;
+
+            var face = commonFace[0];
+            var s = selected[0].Coordinate;
+            var e = selected[1].Coordinate;
+            var edges = face.GetEdges();
+
+            // The points cannot be adjacent
+            return edges.Any(x => (x.Start == s && x.End == e) || (x.Start == e && x.End == s))
+                       ? null
+                       : face;
+        }
+
+        private void Merge(object sender)
+        {
+            CheckMergedVertices(true);
+        }
+
+        private void Split(object sender)
+        {
+            var face = GetSplitFace();
+            if (face == null) return;
+
+            var solid = face.Parent;
+
+            var sel = MainTool.Points.Where(x => x.IsSelected).ToList();
+            var p1 = sel[0];
+            var p2 = sel[1];
+
+            if (p1.IsMidPoint) AddAdjacentPoint(face, p1);
+            if (p2.IsMidPoint) AddAdjacentPoint(face, p2);
+
+            var polygon = new Polygon(face.Vertices.Select(x => x.Location));
+            var clip = new Plane(p1.Coordinate, p2.Coordinate, p1.Coordinate + face.Plane.Normal * 10);
+            Polygon back, front;
+            polygon.Split(clip, out back, out front);
+            if (back == null || front == null) return;
+
+            solid.Faces.Remove(face);
+            face.Parent = null;
+
+            CreateFace(back, solid, face);
+            CreateFace(front, solid, face);
+
+            solid.UpdateBoundingBox();
+
+            MainTool.UpdateEditedFaces();
+            MainTool.RefreshPoints();
+            MainTool.RefreshMidpoints();
+            MainTool.Dirty = true;
+        }
+
+        private void CreateFace(Polygon polygon, Solid parent, Face original)
+        {
+            var verts = polygon.Vertices;
+            var f = new Face(Document.Map.IDGenerator.GetNextFaceID())
+            {
+                Parent = parent,
+                Plane = new Plane(verts[0], verts[1], verts[2]),
+                Colour = parent.Colour,
+                Texture = original.Texture.Clone()
+            };
+            f.Vertices.AddRange(verts.Select(x => new Vertex(x, f)));
+            f.UpdateBoundingBox();
+            f.CalculateTextureCoordinates();
+            parent.Faces.Add(f);
+        }
+
+        private void AddAdjacentPoint(Face face, VMPoint point)
+        {
+            var solid = face.Parent;
+            var s = point.MidpointStart.Coordinate;
+            var e = point.MidpointEnd.Coordinate;
+
+            foreach (var f in solid.Faces.Where(x => x != face))
+            {
+                foreach (var edge in f.GetEdges())
+                {
+                    if (edge.Start == s && edge.End == e)
+                    {
+                        var idx = f.Vertices.FindIndex(x => x.Location == e);
+                        f.Vertices.Insert(idx, new Vertex(point.Coordinate, f));
+                        return;
+                    }
+                    if (edge.Start == e && edge.End == s)
+                    {
+                        var idx = f.Vertices.FindIndex(x => x.Location == s);
+                        f.Vertices.Insert(idx, new Vertex(point.Coordinate, f));
+                        return;
+                    }
+                }
+            }
         }
 
         public override string GetName()
@@ -29,6 +153,7 @@ namespace Sledge.Editor.Tools.VMTools
         public override void ToolSelected()
         {
             _state = VMState.None;
+            UpdateSplitEnabled();
         }
 
         public override void ToolDeselected()
@@ -50,18 +175,19 @@ namespace Sledge.Editor.Tools.VMTools
         public override void DragMove(Coordinate distance)
         {
             // Move each selected point by the delta value
-            foreach (var p in MainTool.Points.Where(x => !x.IsMidPoint && x.IsSelected))
+            foreach (var p in MainTool.GetSelectedPoints())
             {
                 p.Move(distance);
             }
+            MainTool.UpdateEditedFaces();
             MainTool.Dirty = true;
         }
 
         public override void DragEnd()
         {
-            if (_state == VMState.Moving)
+            if (_state == VMState.Moving && AutomaticallyMerge())
             {
-                CheckMergedVertices();
+                CheckMergedVertices(false);
             }
             _state = VMState.None;
             Editor.Instance.CaptureAltPresses = false;
@@ -69,13 +195,14 @@ namespace Sledge.Editor.Tools.VMTools
 
         public override void MouseClick(ViewportBase viewport, ViewportEvent e)
         {
-
+            _state = VMState.None;
         }
 
-        private void CheckMergedVertices()
+        private void CheckMergedVertices(bool selected)
         {
+            var points = selected ? MainTool.GetSelectedPoints() : MainTool.Points.Where(x => !x.IsMidPoint);
             // adjacent points with the same solid and coordinate need to be merged (erp)
-            foreach (var group in MainTool.Points.Where(x => !x.IsMidPoint).GroupBy(x => new { x.Solid, x.Coordinate }).Where(x => x.Count() > 1))
+            foreach (var group in points.GroupBy(x => new { x.Solid, x.Coordinate }).Where(x => x.Count() > 1))
             {
                 var allFaces = group.SelectMany(x => x.Vertices).Select(x => x.Parent).Distinct().ToList();
                 foreach (var face in allFaces)
@@ -128,13 +255,15 @@ namespace Sledge.Editor.Tools.VMTools
         {
             var nudge = GetNudgeValue(e.KeyCode);
             var vp = viewport as Viewport2D;
-            if (nudge != null && vp != null && _state == VMState.None && MainTool.Points.Any(x => x.IsSelected))
+            var sel = MainTool.GetSelectedPoints();
+            if (nudge != null && vp != null && _state == VMState.None && sel.Any())
             {
                 var translate = vp.Expand(nudge);
-                foreach (var p in MainTool.Points.Where(x => !x.IsMidPoint && x.IsSelected))
+                foreach (var p in sel)
                 {
                     p.Move(translate);
                 }
+                MainTool.UpdateEditedFaces();
                 MainTool.RefreshMidpoints(false);
                 MainTool.Dirty = true;
             }
@@ -167,7 +296,22 @@ namespace Sledge.Editor.Tools.VMTools
 
         public override void SelectionChanged()
         {
-            
+            UpdateSplitEnabled();
+        }
+
+        public override bool ShouldDeselect(List<VMPoint> vtxs)
+        {
+            return true;
+        }
+
+        public override bool NoSelection()
+        {
+            return false;
+        }
+
+        public override bool DrawVertices()
+        {
+            return true;
         }
     }
 }

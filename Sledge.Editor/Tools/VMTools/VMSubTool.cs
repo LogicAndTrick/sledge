@@ -51,5 +51,8 @@ namespace Sledge.Editor.Tools.VMTools
         public abstract void Render2D(Viewport2D viewport);
         public abstract void Render3D(Viewport3D viewport);
         public abstract void SelectionChanged();
+        public abstract bool ShouldDeselect(List<VMPoint> vtxs);
+        public abstract bool NoSelection();
+        public abstract bool DrawVertices();
     }
 }

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.MapObjects;
 
@@ -7,7 +8,6 @@ namespace Sledge.Editor.Tools.VMTools
 {
     public class VMPoint
     {
-        private bool _isSelected;
         public Coordinate Coordinate { get; set; }
         public Solid Solid { get; set; }
         public List<Vertex> Vertices { get; set; }
@@ -18,19 +18,7 @@ namespace Sledge.Editor.Tools.VMTools
         public bool IsMidPoint { get; set; }
         public VMPoint MidpointStart { get; set; }
         public VMPoint MidpointEnd { get; set; }
-        public bool IsSelected
-        {
-            get
-            {
-                if (IsMidPoint) return MidpointStart.IsSelected && MidpointEnd.IsSelected;
-                return _isSelected;
-            }
-            set
-            {
-                if (IsMidPoint) MidpointStart.IsSelected = MidpointEnd.IsSelected = value;
-                else _isSelected = value;
-            }
-        }
+        public bool IsSelected { get; set; }
 
         public void Move(Coordinate delta)
         {
@@ -47,6 +35,23 @@ namespace Sledge.Editor.Tools.VMTools
             // Vertex points are selected = red, deselected = white
             if (IsMidPoint) return IsSelected ? Color.DeepPink : Color.Orange;
             return IsSelected ? Color.Red : Color.White;
+        }
+
+        public bool IsMidPointFor(VMPoint start, VMPoint end)
+        {
+            return IsMidPoint
+                   && ((start == MidpointStart && end == MidpointEnd)
+                       || (end == MidpointStart && start == MidpointEnd));
+        }
+
+        public IEnumerable<Face> GetAdjacentFaces()
+        {
+            if (IsMidPoint)
+            {
+                return MidpointStart.GetAdjacentFaces()
+                    .Intersect(MidpointEnd.GetAdjacentFaces());
+            }
+            return Vertices.Select(x => x.Parent).Distinct();
         }
     }
 }

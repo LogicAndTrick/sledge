@@ -86,13 +86,13 @@ namespace Sledge.Editor.Tools
             this.listBox1.FormattingEnabled = true;
             this.listBox1.Location = new System.Drawing.Point(445, 27);
             this.listBox1.Name = "listBox1";
-            this.listBox1.Size = new System.Drawing.Size(134, 121);
+            this.listBox1.Size = new System.Drawing.Size(134, 134);
             this.listBox1.TabIndex = 6;
             // 
             // button3
             // 
             this.button3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button3.Location = new System.Drawing.Point(445, 154);
+            this.button3.Location = new System.Drawing.Point(445, 167);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(63, 23);
             this.button3.TabIndex = 7;
@@ -102,7 +102,7 @@ namespace Sledge.Editor.Tools
             // button4
             // 
             this.button4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button4.Location = new System.Drawing.Point(514, 154);
+            this.button4.Location = new System.Drawing.Point(514, 167);
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(65, 23);
             this.button4.TabIndex = 7;
@@ -136,7 +136,7 @@ namespace Sledge.Editor.Tools
             | System.Windows.Forms.AnchorStyles.Right)));
             this.ControlPanel.Location = new System.Drawing.Point(152, 12);
             this.ControlPanel.Name = "ControlPanel";
-            this.ControlPanel.Size = new System.Drawing.Size(287, 165);
+            this.ControlPanel.Size = new System.Drawing.Size(287, 178);
             this.ControlPanel.TabIndex = 9;
             this.ControlPanel.TabStop = false;
             // 
@@ -144,7 +144,7 @@ namespace Sledge.Editor.Tools
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(591, 189);
+            this.ClientSize = new System.Drawing.Size(591, 202);
             this.ControlBox = false;
             this.Controls.Add(this.ControlPanel);
             this.Controls.Add(this.groupRadios);

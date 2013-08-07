@@ -46,6 +46,7 @@ namespace Sledge.Editor.Tools
 
             AddTool(new StandardTool(this));
             AddTool(new ScaleTool(this));
+            AddTool(new EditFaceTool(this));
             _currentTool = _tools.FirstOrDefault();
         }
 
@@ -115,6 +116,34 @@ namespace Sledge.Editor.Tools
                     select point).ToList();
         }
 
+        public IEnumerable<Solid> GetCopies()
+        {
+            return _copies.Keys;
+        }
+
+        public IEnumerable<Solid> GetOriginals()
+        {
+            return _copies.Values;
+        }
+
+        public List<VMPoint> GetSelectedPoints()
+        {
+            var list = new List<VMPoint>();
+            foreach (var point in Points.Where(point => point.IsSelected))
+            {
+                if (point.IsMidPoint)
+                {
+                    if (!list.Contains(point.MidpointStart)) list.Add(point.MidpointStart);
+                    if (!list.Contains(point.MidpointEnd)) list.Add(point.MidpointEnd);
+                }
+                else
+                {
+                    if (!list.Contains(point)) list.Add(point);
+                }
+            }
+            return list;
+        }
+
         public override void ToolSelected()
         {
             _form.Show(Editor.Instance);
@@ -127,6 +156,8 @@ namespace Sledge.Editor.Tools
             foreach (var solid in selectedSolids)
             {
                 var copy = (Solid)solid.Clone();
+                copy.IsSelected = false;
+                foreach (var f in copy.Faces) f.IsSelected = false;
                 _copies.Add(copy, solid);
 
                 // Set all the original solids to hidden
@@ -207,6 +238,7 @@ namespace Sledge.Editor.Tools
         /// </summary>
         public void RefreshMidpoints(bool recreate = true)
         {
+            var selected = Points.Where(x => x.IsMidPoint && x.IsSelected).Select(x => new { Start = x.MidpointStart.Coordinate, End = x.MidpointEnd.Coordinate, x.Solid }).ToList();
             if (recreate) Points.RemoveAll(x => x.IsMidPoint);
             foreach (var copy in _copies.Keys)
             {
@@ -217,7 +249,8 @@ namespace Sledge.Editor.Tools
                     var coord = (s + e) / 2;
                     var mpStart = Points.First(x => !x.IsMidPoint && x.Coordinate == s);
                     var mpEnd = Points.First(x => !x.IsMidPoint && x.Coordinate == e);
-                    if (recreate)
+                    var existingPoints = Points.Where(x => x.IsMidPointFor(mpStart, mpEnd)).ToList();
+                    if (recreate && !existingPoints.Any())
                     {
                         Points.Add(new VMPoint
                                         {
@@ -225,7 +258,8 @@ namespace Sledge.Editor.Tools
                                             Coordinate = coord,
                                             IsMidPoint = true,
                                             MidpointStart = mpStart,
-                                            MidpointEnd = mpEnd
+                                            MidpointEnd = mpEnd,
+                                            IsSelected = selected.Any(x => x.Solid == copy && x.Start == mpStart.Coordinate && x.End == mpEnd.Coordinate)
                                         });
                     }
                     else
@@ -239,8 +273,23 @@ namespace Sledge.Editor.Tools
             }
         }
 
+        public void UpdateEditedFaces()
+        {
+            foreach (var face in GetCopies().SelectMany(x => x.Faces))
+            {
+                face.CalculateTextureCoordinates();
+                if (face.Vertices.Count >= 3) face.Plane = new Plane(face.Vertices[0].Location, face.Vertices[1].Location, face.Vertices[2].Location);
+            }
+        }
+
         public override void MouseDown(ViewportBase vp, ViewportEvent e)
         {
+            if (_currentTool != null)
+            {
+                // If the current tool handles the event, we're done
+                _currentTool.MouseDown(vp, e);
+                if (e.Handled) return;
+            }
             if (!(vp is Viewport2D))
             {
                 base.MouseDown(vp, e);
@@ -249,9 +298,7 @@ namespace Sledge.Editor.Tools
 
             if (_currentTool == null) return;
 
-            // If the current tool handles the event, we're done
-            _currentTool.MouseDown(vp, e);
-            if (e.Handled) return;
+            if (_currentTool.NoSelection()) return;
 
             var viewport = (Viewport2D)vp;
 
@@ -285,7 +332,7 @@ namespace Sledge.Editor.Tools
             BoxDrawnCancel(vp);
 
             // Mouse down on a point
-            if (!vtx.IsSelected && !KeyboardState.Ctrl)
+            if (!vtx.IsSelected && !KeyboardState.Ctrl && _currentTool.ShouldDeselect(vtxs))
             {
                 // If we aren't clicking on a selected point and ctrl is not down, deselect the others
                 Points.ForEach(x => x.IsSelected = false);
@@ -304,10 +351,12 @@ namespace Sledge.Editor.Tools
         {
             base.MouseUp(viewport, e);
 
-            if (!(viewport is Viewport2D)) return;
             if (_currentTool == null) return;
-
             _currentTool.MouseUp(viewport, e);
+
+            if (!(viewport is Viewport2D)) return;
+            if (_currentTool.NoSelection()) return;
+
             if (!e.Handled)
             {
                 if (MoveSelection != null && !KeyboardState.Ctrl)
@@ -336,11 +385,13 @@ namespace Sledge.Editor.Tools
         {
             base.MouseMove(vp, e);
 
-            if (!(vp is Viewport2D)) return;
             if (_currentTool == null) return;
 
             _currentTool.MouseMove(vp, e);
             if (e.Handled) return;
+
+            if (!(vp is Viewport2D)) return;
+            if (_currentTool.NoSelection()) return;
 
             var viewport = (Viewport2D)vp;
 
@@ -439,51 +490,55 @@ namespace Sledge.Editor.Tools
 
             TextureHelper.DisableTexturing();
 
-            // Get us into 2D rendering
-            Matrix.Set(MatrixMode.Projection);
-            Matrix.Identity();
-            Graphics.Helpers.Viewport.Orthographic(0, 0, vp.Width, vp.Height);
-            Matrix.Set(MatrixMode.Modelview);
-            Matrix.Identity();
-
-            var half = new Coordinate(vp.Width, vp.Height, 0) / 2;
-            // Render out the point handles
-            GL.Begin(BeginMode.Quads);
-            foreach (var point in Points)
+            if (_currentTool == null || _currentTool.DrawVertices())
             {
-                var c = vp.WorldToScreen(point.Coordinate);
-                if (c == null || c.Z > 1) continue;
-                c -= half;
+                // Get us into 2D rendering
+                Matrix.Set(MatrixMode.Projection);
+                Matrix.Identity();
+                Graphics.Helpers.Viewport.Orthographic(0, 0, vp.Width, vp.Height);
+                Matrix.Set(MatrixMode.Modelview);
+                Matrix.Identity();
 
-                GL.Color3(Color.Black);
-                GL.Vertex2(c.DX - 4, c.DY - 4);
-                GL.Vertex2(c.DX - 4, c.DY + 4);
-                GL.Vertex2(c.DX + 4, c.DY + 4);
-                GL.Vertex2(c.DX + 4, c.DY - 4);
+                var half = new Coordinate(vp.Width, vp.Height, 0) / 2;
+                // Render out the point handles
+                GL.Begin(BeginMode.Quads);
+                foreach (var point in Points)
+                {
+                    var c = vp.WorldToScreen(point.Coordinate);
+                    if (c == null || c.Z > 1) continue;
+                    c -= half;
 
-                GL.Color3(point.GetColour());
-                GL.Vertex2(c.DX - 3, c.DY - 3);
-                GL.Vertex2(c.DX - 3, c.DY + 3);
-                GL.Vertex2(c.DX + 3, c.DY + 3);
-                GL.Vertex2(c.DX + 3, c.DY - 3);
+                    GL.Color3(Color.Black);
+                    GL.Vertex2(c.DX - 4, c.DY - 4);
+                    GL.Vertex2(c.DX - 4, c.DY + 4);
+                    GL.Vertex2(c.DX + 4, c.DY + 4);
+                    GL.Vertex2(c.DX + 4, c.DY - 4);
+
+                    GL.Color3(point.GetColour());
+                    GL.Vertex2(c.DX - 3, c.DY - 3);
+                    GL.Vertex2(c.DX - 3, c.DY + 3);
+                    GL.Vertex2(c.DX + 3, c.DY + 3);
+                    GL.Vertex2(c.DX + 3, c.DY - 3);
+                }
+                GL.End();
+
+                // Get back into 3D rendering
+                Matrix.Set(MatrixMode.Projection);
+                Matrix.Identity();
+                Graphics.Helpers.Viewport.Perspective(0, 0, vp.Width, vp.Height, Sledge.Settings.View.CameraFOV);
+                Matrix.Set(MatrixMode.Modelview);
+                Matrix.Identity();
+                vp.Camera.Position();
+
+                TextureHelper.EnableTexturing();
             }
-            GL.End();
-
-            // Get back into 3D rendering
-            Matrix.Set(MatrixMode.Projection);
-            Matrix.Identity();
-            Graphics.Helpers.Viewport.Perspective(0, 0, vp.Width, vp.Height, Sledge.Settings.View.CameraFOV);
-            Matrix.Set(MatrixMode.Modelview);
-            Matrix.Identity();
-            vp.Camera.Position();
-
-            TextureHelper.EnableTexturing();
 
             // Render out the solid previews
             GL.Color3(Color.White);
             var faces = _copies.Keys.SelectMany(x => x.Faces).ToList();
             DataStructures.Rendering.Rendering.DrawFilled(faces, Color.Empty);
-            DataStructures.Rendering.Rendering.DrawFilled(faces, Color.FromArgb(64, Color.Green));
+            DataStructures.Rendering.Rendering.DrawFilled(faces.Where(x => !x.IsSelected), Color.FromArgb(64, Color.Green));
+            DataStructures.Rendering.Rendering.DrawFilled(faces.Where(x => x.IsSelected), Color.FromArgb(64, Color.Red));
             GL.Color3(Color.Pink);
             DataStructures.Rendering.Rendering.DrawWireframe(faces, true);
         }

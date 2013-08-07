@@ -246,6 +246,7 @@
       <DependentUpon>TextureApplicationForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Tools\TransformationTools\TransformationTool.cs" />
+    <Compile Include="Tools\VMTools\EditFaceTool.cs" />
     <Compile Include="Tools\VMTools\ScaleTool.cs" />
     <Compile Include="Tools\VMTools\EditFaceControl.cs">
       <SubType>UserControl</SubType>
