@@ -41,12 +41,40 @@ namespace Sledge.Editor.Tools
         {
             _form = new VMForm();
             _form.ToolSelected += VMToolSelected;
+            _form.DeselectAll += DeselectAll;
+            _form.Reset += Reset;
+            _form.FixAllErrors += FixAllErrors;
+            _form.FixError += FixError;
             _tools = new List<VMSubTool>();
 
             AddTool(new StandardTool(this));
             AddTool(new ScaleTool(this));
             AddTool(new EditFaceTool(this));
             _currentTool = _tools.FirstOrDefault();
+        }
+
+        private void FixError(object sender, object error)
+        {
+
+        }
+
+        private void FixAllErrors(object sender)
+        {
+
+        }
+
+        private void Reset(object sender)
+        {
+            Dirty = false;
+            Commit(_copies.Values.ToList());
+            _copies.Clear();
+            SelectionChanged();
+        }
+
+        private void DeselectAll(object sender)
+        {
+            Points.ForEach(x => x.IsSelected = false);
+            VertexSelectionChanged();
         }
 
         private void VMToolSelected(object sender, VMSubTool tool)

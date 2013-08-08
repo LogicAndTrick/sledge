@@ -3,13 +3,8 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using Sledge.Common.Mediator;
-using Sledge.DataStructures.MapObjects;
 using Sledge.Editor.Tools.VMTools;
-using Sledge.Providers.Texture;
-using Sledge.Editor.Editing;
 using Sledge.Editor.UI;
-using Sledge.Settings;
 
 namespace Sledge.Editor.Tools
 {
@@ -19,14 +14,54 @@ namespace Sledge.Editor.Tools
         #region Events
 
         public delegate void ToolSelectedEventHandler(object sender, VMSubTool tool);
+        public delegate void DeselectAllEventHandler(object sender);
+        public delegate void ResetEventHandler(object sender);
+        public delegate void FixErrorEventHandler(object sender, object error);
+        public delegate void FixAllErrorsEventHandler(object sender);
 
         public event ToolSelectedEventHandler ToolSelected;
+        public event DeselectAllEventHandler DeselectAll;
+        public event ResetEventHandler Reset;
+        public event FixErrorEventHandler FixError;
+        public event FixAllErrorsEventHandler FixAllErrors;
 
         protected virtual void OnToolSelected(VMSubTool tool)
         {
             if (ToolSelected != null)
             {
                 ToolSelected(this, tool);
+            }
+        }
+
+        protected virtual void OnDeselectAll()
+        {
+            if (DeselectAll != null)
+            {
+                DeselectAll(this);
+            }
+        }
+
+        protected virtual void OnReset()
+        {
+            if (Reset != null)
+            {
+                Reset(this);
+            }
+        }
+
+        protected virtual void OnFixError(object error)
+        {
+            if (FixError != null)
+            {
+                FixError(this, error);
+            }
+        }
+
+        protected virtual void OnFixAllErrors()
+        {
+            if (FixAllErrors != null)
+            {
+                FixAllErrors(this);
             }
         }
 
@@ -84,10 +119,35 @@ namespace Sledge.Editor.Tools
             }
         }
 
+        public void SetErrorList(IEnumerable<object> errors)
+        {
+            
+        }
+
         protected override void OnMouseEnter(EventArgs e)
         {
             Focus();
             base.OnMouseEnter(e);
+        }
+
+        private void DeselectAllButtonClicked(object sender, EventArgs e)
+        {
+            OnDeselectAll();
+        }
+
+        private void ResetButtonClicked(object sender, EventArgs e)
+        {
+            OnReset();
+        }
+
+        private void FixErrorButtonClicked(object sender, EventArgs e)
+        {
+
+        }
+
+        private void FixAllErrorsButtonClicked(object sender, EventArgs e)
+        {
+            OnFixAllErrors();
         }
     }
 }

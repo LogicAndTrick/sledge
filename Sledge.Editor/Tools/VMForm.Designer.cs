@@ -32,12 +32,12 @@ namespace Sledge.Editor.Tools
         {
             this.components = new System.ComponentModel.Container();
             this.HoverTip = new System.Windows.Forms.ToolTip(this.components);
-            this.button1 = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
+            this.DeselectAllButton = new System.Windows.Forms.Button();
+            this.ResetButton = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
-            this.listBox1 = new System.Windows.Forms.ListBox();
-            this.button3 = new System.Windows.Forms.Button();
-            this.button4 = new System.Windows.Forms.Button();
+            this.ErrorList = new System.Windows.Forms.ListBox();
+            this.FixErrorButton = new System.Windows.Forms.Button();
+            this.FixAllErrorsButton = new System.Windows.Forms.Button();
             this.radioLayoutPanel = new System.Windows.Forms.FlowLayoutPanel();
             this.groupRadios = new System.Windows.Forms.GroupBox();
             this.ControlPanel = new System.Windows.Forms.GroupBox();
@@ -51,23 +51,25 @@ namespace Sledge.Editor.Tools
             this.HoverTip.IsBalloon = true;
             this.HoverTip.ReshowDelay = 100;
             // 
-            // button1
+            // DeselectAllButton
             // 
-            this.button1.Location = new System.Drawing.Point(12, 126);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(134, 23);
-            this.button1.TabIndex = 3;
-            this.button1.Text = "Deselect All";
-            this.button1.UseVisualStyleBackColor = true;
+            this.DeselectAllButton.Location = new System.Drawing.Point(12, 126);
+            this.DeselectAllButton.Name = "DeselectAllButton";
+            this.DeselectAllButton.Size = new System.Drawing.Size(134, 23);
+            this.DeselectAllButton.TabIndex = 3;
+            this.DeselectAllButton.Text = "Deselect All";
+            this.DeselectAllButton.UseVisualStyleBackColor = true;
+            this.DeselectAllButton.Click += new System.EventHandler(this.DeselectAllButtonClicked);
             // 
-            // button2
+            // ResetButton
             // 
-            this.button2.Location = new System.Drawing.Point(12, 155);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(134, 23);
-            this.button2.TabIndex = 4;
-            this.button2.Text = "Reset to Original";
-            this.button2.UseVisualStyleBackColor = true;
+            this.ResetButton.Location = new System.Drawing.Point(12, 155);
+            this.ResetButton.Name = "ResetButton";
+            this.ResetButton.Size = new System.Drawing.Size(134, 23);
+            this.ResetButton.TabIndex = 4;
+            this.ResetButton.Text = "Reset to Original";
+            this.ResetButton.UseVisualStyleBackColor = true;
+            this.ResetButton.Click += new System.EventHandler(this.ResetButtonClicked);
             // 
             // label2
             // 
@@ -79,35 +81,37 @@ namespace Sledge.Editor.Tools
             this.label2.TabIndex = 5;
             this.label2.Text = "Errors";
             // 
-            // listBox1
+            // ErrorList
             // 
-            this.listBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.ErrorList.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.listBox1.FormattingEnabled = true;
-            this.listBox1.Location = new System.Drawing.Point(445, 27);
-            this.listBox1.Name = "listBox1";
-            this.listBox1.Size = new System.Drawing.Size(134, 134);
-            this.listBox1.TabIndex = 6;
+            this.ErrorList.FormattingEnabled = true;
+            this.ErrorList.Location = new System.Drawing.Point(445, 27);
+            this.ErrorList.Name = "ErrorList";
+            this.ErrorList.Size = new System.Drawing.Size(134, 134);
+            this.ErrorList.TabIndex = 6;
             // 
-            // button3
+            // FixErrorButton
             // 
-            this.button3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button3.Location = new System.Drawing.Point(445, 167);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(63, 23);
-            this.button3.TabIndex = 7;
-            this.button3.Text = "Fix";
-            this.button3.UseVisualStyleBackColor = true;
+            this.FixErrorButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.FixErrorButton.Location = new System.Drawing.Point(445, 167);
+            this.FixErrorButton.Name = "FixErrorButton";
+            this.FixErrorButton.Size = new System.Drawing.Size(63, 23);
+            this.FixErrorButton.TabIndex = 7;
+            this.FixErrorButton.Text = "Fix";
+            this.FixErrorButton.UseVisualStyleBackColor = true;
+            this.FixErrorButton.Click += new System.EventHandler(this.FixErrorButtonClicked);
             // 
-            // button4
+            // FixAllErrorsButton
             // 
-            this.button4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button4.Location = new System.Drawing.Point(514, 167);
-            this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(65, 23);
-            this.button4.TabIndex = 7;
-            this.button4.Text = "Fix All";
-            this.button4.UseVisualStyleBackColor = true;
+            this.FixAllErrorsButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.FixAllErrorsButton.Location = new System.Drawing.Point(514, 167);
+            this.FixAllErrorsButton.Name = "FixAllErrorsButton";
+            this.FixAllErrorsButton.Size = new System.Drawing.Size(65, 23);
+            this.FixAllErrorsButton.TabIndex = 7;
+            this.FixAllErrorsButton.Text = "Fix All";
+            this.FixAllErrorsButton.UseVisualStyleBackColor = true;
+            this.FixAllErrorsButton.Click += new System.EventHandler(this.FixAllErrorsButtonClicked);
             // 
             // radioLayoutPanel
             // 
@@ -148,12 +152,12 @@ namespace Sledge.Editor.Tools
             this.ControlBox = false;
             this.Controls.Add(this.ControlPanel);
             this.Controls.Add(this.groupRadios);
-            this.Controls.Add(this.button4);
-            this.Controls.Add(this.button3);
-            this.Controls.Add(this.listBox1);
+            this.Controls.Add(this.FixAllErrorsButton);
+            this.Controls.Add(this.FixErrorButton);
+            this.Controls.Add(this.ErrorList);
             this.Controls.Add(this.label2);
-            this.Controls.Add(this.button2);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.ResetButton);
+            this.Controls.Add(this.DeselectAllButton);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.Name = "VMForm";
             this.ShowIcon = false;
@@ -169,12 +173,12 @@ namespace Sledge.Editor.Tools
         #endregion
 
         private System.Windows.Forms.ToolTip HoverTip;
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button DeselectAllButton;
+        private System.Windows.Forms.Button ResetButton;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.ListBox listBox1;
-        private System.Windows.Forms.Button button3;
-        private System.Windows.Forms.Button button4;
+        private System.Windows.Forms.ListBox ErrorList;
+        private System.Windows.Forms.Button FixErrorButton;
+        private System.Windows.Forms.Button FixAllErrorsButton;
         private System.Windows.Forms.FlowLayoutPanel radioLayoutPanel;
         private System.Windows.Forms.GroupBox groupRadios;
         private System.Windows.Forms.GroupBox ControlPanel;
