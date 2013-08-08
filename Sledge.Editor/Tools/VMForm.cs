@@ -72,14 +72,16 @@ namespace Sledge.Editor.Tools
             OnToolSelected(tool);
         }
 
-        public void SelectionChanged()
+        public void SetSelectedTool(VMSubTool tool)
         {
-
-        }
-
-        public void Clear()
-        {
-            
+            foreach (RadioButton rb in radioLayoutPanel.Controls)
+            {
+                if (rb.Text == tool.GetName())
+                {
+                    if (!rb.Checked) rb.Checked = true;
+                    return;
+                }
+            }
         }
 
         protected override void OnMouseEnter(EventArgs e)

@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Sledge.Common.Mediator;
 using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.MapObjects;
+using Sledge.Settings;
 using Sledge.UI;
 
 namespace Sledge.Editor.Tools.VMTools
@@ -103,6 +105,14 @@ namespace Sledge.Editor.Tools.VMTools
             MainTool.Dirty = true;
         }
 
+        private void VMSplitFace()
+        {
+            if (CanSplit())
+            {
+                Split(null);
+            }
+        }
+
         private void CreateFace(Polygon polygon, Solid parent, Face original)
         {
             var verts = polygon.Vertices;
@@ -154,11 +164,13 @@ namespace Sledge.Editor.Tools.VMTools
         {
             _state = VMState.None;
             UpdateSplitEnabled();
+            Mediator.Subscribe(HotkeysMediator.VMSplitFace, this);
         }
 
         public override void ToolDeselected()
         {
             _state = VMState.None;
+            Mediator.UnsubscribeAll(this);
         }
 
         public override List<VMPoint> GetVerticesAtPoint(int x, int y, Viewport2D viewport)

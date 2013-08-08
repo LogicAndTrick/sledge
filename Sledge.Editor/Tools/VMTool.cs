@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -10,9 +9,7 @@ using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.MapObjects;
 using Sledge.Editor.Actions.MapObjects.Operations;
 using Sledge.Editor.Actions.MapObjects.Selection;
-using Sledge.Editor.Editing;
 using Sledge.Editor.Properties;
-using Sledge.Editor.Rendering;
 using Sledge.Editor.Tools.VMTools;
 using Sledge.Graphics;
 using Sledge.Graphics.Helpers;
@@ -55,6 +52,7 @@ namespace Sledge.Editor.Tools
         private void VMToolSelected(object sender, VMSubTool tool)
         {
             if (_currentTool == tool) return;
+            _form.SetSelectedTool(tool);
             if (_currentTool != null) _currentTool.ToolDeselected();
             _currentTool = tool;
             if (_currentTool != null) _currentTool.ToolSelected();
@@ -64,6 +62,21 @@ namespace Sledge.Editor.Tools
         {
             _form.AddTool(tool);
             _tools.Add(tool);
+        }
+
+        private void VMStandardMode()
+        {
+            VMToolSelected(this, _tools.First(x => x is StandardTool));
+        }
+
+        private void VMScalingMode()
+        {
+            VMToolSelected(this, _tools.First(x => x is ScaleTool));
+        }
+
+        private void VMFaceEditMode()
+        {
+            VMToolSelected(this, _tools.First(x => x is EditFaceTool));
         }
 
         public override void DocumentChanged()
@@ -220,8 +233,11 @@ namespace Sledge.Editor.Tools
             MoveSelection = null;
 
             if (_currentTool != null) _currentTool.ToolSelected();
-            _form.SelectionChanged();
+
             Mediator.Subscribe(EditorMediator.SelectionChanged, this);
+            Mediator.Subscribe(HotkeysMediator.VMStandardMode, this);
+            Mediator.Subscribe(HotkeysMediator.VMScalingMode, this);
+            Mediator.Subscribe(HotkeysMediator.VMFaceEditMode, this);
         }
 
         public override void ToolDeselected()
@@ -237,7 +253,6 @@ namespace Sledge.Editor.Tools
             _movingPoint = null;
             MoveSelection = null;
 
-            _form.Clear();
             _form.Hide();
             Document.UpdateDisplayLists();
             Mediator.UnsubscribeAll(this);
@@ -246,7 +261,6 @@ namespace Sledge.Editor.Tools
         private void VertexSelectionChanged()
         {
             _currentTool.SelectionChanged();
-            _form.SelectionChanged();
         }
 
         /// <summary>
