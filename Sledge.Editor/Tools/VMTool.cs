@@ -5,9 +5,11 @@ using System.Linq;
 using System.Windows.Forms;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
+using Sledge.Common.Mediator;
 using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.MapObjects;
 using Sledge.Editor.Actions.MapObjects.Operations;
+using Sledge.Editor.Actions.MapObjects.Selection;
 using Sledge.Editor.Editing;
 using Sledge.Editor.Properties;
 using Sledge.Editor.Rendering;
@@ -116,6 +118,20 @@ namespace Sledge.Editor.Tools
                     select point).ToList();
         }
 
+        public List<VMPoint> GetVerticesAtPoint(int x, int y, Viewport3D viewport)
+        {
+            var l = viewport.Camera.Location;
+            var pos = new Coordinate((decimal) l.X, (decimal) l.Y, (decimal) l.Z);
+            var p = new Coordinate(x, y, 0);
+            const int d = 5;
+            return (from point in Points
+                    let c = viewport.WorldToScreen(point.Coordinate)
+                    where c != null && c.Z <= 1
+                    where p.X >= c.X - d && p.X <= c.X + d && p.Y >= c.Y - d && p.Y <= c.Y + d
+                    orderby (pos - point.Coordinate).LengthSquared()
+                    select point).ToList();
+        }
+
         public IEnumerable<Solid> GetCopies()
         {
             return _copies.Keys;
@@ -142,6 +158,51 @@ namespace Sledge.Editor.Tools
                 }
             }
             return list;
+        }
+
+        private void Commit(IList<Solid> solids)
+        {
+            if (!solids.Any()) return;
+
+            // Unhide the solids
+            foreach (var solid in solids)
+            {
+                solid.IsCodeHidden = false;
+            }
+            var kvs = _copies.Where(x => solids.Contains(x.Value)).ToList();
+            if (Dirty)
+            {
+                // Commit the changes
+                var edit = new Edit(kvs.Select(x => x.Value), kvs.Select(x => x.Key));
+                Document.PerformAction("Vertex Manipulation", edit);
+            }
+            foreach (var kv in kvs)
+            {
+                _copies.Remove(kv.Key);
+            }
+        }
+
+        private void SelectionChanged()
+        {
+            var selectedSolids = Document.Selection.GetSelectedObjects().OfType<Solid>().ToList();
+            var commit = _copies.Values.Where(x => !selectedSolids.Contains(x)).ToList();
+            Commit(commit);
+            if (!_copies.Any()) Dirty = false;
+            Points.Clear();
+            foreach (var solid in selectedSolids.Where(x => !_copies.ContainsValue(x)))
+            {
+                var copy = (Solid)solid.Clone();
+                copy.IsSelected = false;
+                foreach (var f in copy.Faces) f.IsSelected = false;
+                _copies.Add(copy, solid);
+
+                // Set all the original solids to hidden
+                // (do this after we clone it so the clones aren't hidden too)
+                solid.IsCodeHidden = true;
+            }
+            RefreshPoints();
+            RefreshMidpoints();
+            Document.UpdateDisplayLists();
         }
 
         public override void ToolSelected()
@@ -174,6 +235,7 @@ namespace Sledge.Editor.Tools
 
             if (_currentTool != null) _currentTool.ToolSelected();
             _form.SelectionChanged();
+            Mediator.Subscribe(EditorMediator.SelectionChanged, this);
         }
 
         public override void ToolDeselected()
@@ -201,9 +263,10 @@ namespace Sledge.Editor.Tools
             _form.Clear();
             _form.Hide();
             Document.UpdateDisplayLists();
+            Mediator.UnsubscribeAll(this);
         }
 
-        public void SelectionChanged()
+        private void VertexSelectionChanged()
         {
             _currentTool.SelectionChanged();
             _form.SelectionChanged();
@@ -282,6 +345,66 @@ namespace Sledge.Editor.Tools
             }
         }
 
+        private void MouseDown(Viewport3D vp, ViewportEvent e)
+        {
+            if (!_currentTool.NoSelection())
+            {
+                var vtxs = _currentTool.GetVerticesAtPoint(e.X, vp.Height - e.Y, vp);
+
+                if (vtxs.Any())
+                {
+                    // Use the topmost vertex as the control point
+                    var vtx = vtxs.First();
+
+                    // Mouse down on a point
+                    if (!vtx.IsSelected && !KeyboardState.Ctrl && _currentTool.ShouldDeselect(vtxs))
+                    {
+                        // If we aren't clicking on a selected point and ctrl is not down, deselect the others
+                        Points.ForEach(x => x.IsSelected = false);
+                        // If this point is already selected, don't deselect others. This is the same behaviour as 2D selection.
+                    }
+                    vtxs.ForEach(x => x.IsSelected = true);
+                    VertexSelectionChanged();
+
+                    // Don't do other click operations
+                    return;
+                }
+
+                // Nothing clicked
+                if (!KeyboardState.Ctrl)
+                {
+                    // Deselect all the points if not ctrl-ing
+                    Points.ForEach(x => x.IsSelected = false);
+                }
+            }
+            if (!_currentTool.No3DSelection())
+            {
+                // Do selection
+                var ray = vp.CastRayFromScreen(e.X, e.Y);
+                var hits = Document.Map.WorldSpawn.GetAllNodesIntersectingWith(ray);
+                var solid = hits
+                    .OfType<Solid>()
+                    .Select(x => new { Item = x, Intersection = x.GetIntersectionPoint(ray) })
+                    .Where(x => x.Intersection != null)
+                    .OrderBy(x => (x.Intersection - ray.Start).VectorMagnitude())
+                    .Select(x => x.Item)
+                    .FirstOrDefault();
+
+                if (solid != null)
+                {
+                    // select solid
+                    var select = new[] {solid};
+                    var deselect = KeyboardState.Ctrl ? Document.Selection.GetSelectedObjects() : new MapObject[0];
+                    Document.PerformAction("Select VM solid", new ChangeSelection(select, deselect));
+
+                    // Don't do other click operations
+                    return;
+                }
+            }
+
+            base.MouseDown(vp, e);
+        }
+
         public override void MouseDown(ViewportBase vp, ViewportEvent e)
         {
             if (_currentTool != null)
@@ -292,7 +415,7 @@ namespace Sledge.Editor.Tools
             }
             if (!(vp is Viewport2D))
             {
-                base.MouseDown(vp, e);
+                MouseDown((Viewport3D)vp, e);
                 return;
             }
 
@@ -339,7 +462,7 @@ namespace Sledge.Editor.Tools
                 // If this point is already selected, don't deselect others. This is so we can move multiple points easily.
             }
             vtxs.ForEach(x => x.IsSelected = true);
-            SelectionChanged();
+            VertexSelectionChanged();
 
             _currentTool.DragStart(vtxs);
             MoveSelection = vtxs;
@@ -365,7 +488,7 @@ namespace Sledge.Editor.Tools
                     // and ctrl is not down, deselect the other points.
                     Points.ForEach(x => x.IsSelected = false);
                     MoveSelection.ForEach(x => x.IsSelected = true);
-                    SelectionChanged();
+                    VertexSelectionChanged();
 
                     _currentTool.MouseClick(viewport, e);
                 }
@@ -443,7 +566,7 @@ namespace Sledge.Editor.Tools
                     // Select all the points in the box
                     point.IsSelected = true;
                 }
-                SelectionChanged();
+                VertexSelectionChanged();
             }
 
             base.BoxDrawnConfirm(viewport);

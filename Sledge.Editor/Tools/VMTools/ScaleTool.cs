@@ -69,6 +69,11 @@ namespace Sledge.Editor.Tools.VMTools
             return false;
         }
 
+        public override bool No3DSelection()
+        {
+            return true;
+        }
+
         public override bool DrawVertices()
         {
             return true;
@@ -130,6 +135,11 @@ namespace Sledge.Editor.Tools.VMTools
             }
 
             return verts;
+        }
+
+        public override List<VMPoint> GetVerticesAtPoint(int x, int y, Viewport3D viewport)
+        {
+            return MainTool.GetVerticesAtPoint(x, y, viewport);
         }
 
         public override void DragStart(List<VMPoint> clickedPoints)

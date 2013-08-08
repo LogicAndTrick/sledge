@@ -43,6 +43,7 @@ namespace Sledge.Editor.Tools.VMTools
         }
 
         public abstract List<VMPoint> GetVerticesAtPoint(int x, int y, Viewport2D viewport);
+        public abstract List<VMPoint> GetVerticesAtPoint(int x, int y, Viewport3D viewport);
         public abstract void DragStart(List<VMPoint> clickedPoints);
         public abstract void DragMove(Coordinate distance);
         public abstract void DragEnd();
@@ -53,6 +54,7 @@ namespace Sledge.Editor.Tools.VMTools
         public abstract void SelectionChanged();
         public abstract bool ShouldDeselect(List<VMPoint> vtxs);
         public abstract bool NoSelection();
+        public abstract bool No3DSelection();
         public abstract bool DrawVertices();
     }
 }

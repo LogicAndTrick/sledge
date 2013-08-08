@@ -166,6 +166,11 @@ namespace Sledge.Editor.Tools.VMTools
             return MainTool.GetVerticesAtPoint(x, y, viewport);
         }
 
+        public override List<VMPoint> GetVerticesAtPoint(int x, int y, Viewport3D viewport)
+        {
+            return MainTool.GetVerticesAtPoint(x, y, viewport);
+        }
+
         public override void DragStart(List<VMPoint> clickedPoints)
         {
             _state = VMState.Down;
@@ -305,6 +310,11 @@ namespace Sledge.Editor.Tools.VMTools
         }
 
         public override bool NoSelection()
+        {
+            return false;
+        }
+
+        public override bool No3DSelection()
         {
             return false;
         }
