@@ -188,7 +188,6 @@ namespace Sledge.Editor.Tools
             var commit = _copies.Values.Where(x => !selectedSolids.Contains(x)).ToList();
             Commit(commit);
             if (!_copies.Any()) Dirty = false;
-            Points.Clear();
             foreach (var solid in selectedSolids.Where(x => !_copies.ContainsValue(x)))
             {
                 var copy = (Solid)solid.Clone();
@@ -210,28 +209,15 @@ namespace Sledge.Editor.Tools
             _form.Show(Editor.Instance);
             Editor.Instance.Focus();
 
-            var selectedSolids = Document.Selection.GetSelectedObjects().OfType<Solid>().ToList();
             // Init the points and copy caches
             _copies = new Dictionary<Solid, Solid>();
             Points = new List<VMPoint>();
-            foreach (var solid in selectedSolids)
-            {
-                var copy = (Solid)solid.Clone();
-                copy.IsSelected = false;
-                foreach (var f in copy.Faces) f.IsSelected = false;
-                _copies.Add(copy, solid);
 
-                // Set all the original solids to hidden
-                // (do this after we clone it so the clones aren't hidden too)
-                solid.IsCodeHidden = true;
-            }
-            RefreshPoints();
-            RefreshMidpoints();
+            SelectionChanged();
+
             _snapPointOffset = null;
             _movingPoint = null;
             MoveSelection = null;
-            Dirty = false;
-            Document.UpdateDisplayLists();
 
             if (_currentTool != null) _currentTool.ToolSelected();
             _form.SelectionChanged();
@@ -242,18 +228,9 @@ namespace Sledge.Editor.Tools
         {
             if (_currentTool != null) _currentTool.ToolDeselected();
 
-            // The solids are no longer hidden
-            var selectedSolids = Document.Selection.GetSelectedObjects().OfType<Solid>().ToList();
-            foreach (var o in selectedSolids)
-            {
-                o.IsCodeHidden = false;
-            }
-            if (Dirty)
-            {
-                // Commit the changes
-                var edit = new Edit(_copies.Values, _copies.Keys);
-                Document.PerformAction("Vertex Manipulation", edit);
-            }
+            // Commit the changes
+            Commit(_copies.Values.ToList());
+
             _copies = null;
             Points = null;
             _snapPointOffset = null;
@@ -394,7 +371,7 @@ namespace Sledge.Editor.Tools
                 {
                     // select solid
                     var select = new[] {solid};
-                    var deselect = KeyboardState.Ctrl ? Document.Selection.GetSelectedObjects() : new MapObject[0];
+                    var deselect = !KeyboardState.Ctrl ? Document.Selection.GetSelectedObjects() : new MapObject[0];
                     Document.PerformAction("Select VM solid", new ChangeSelection(select, deselect));
 
                     // Don't do other click operations
@@ -437,6 +414,33 @@ namespace Sledge.Editor.Tools
                     // Deselect all the points if not ctrl-ing
                     Points.ForEach(x => x.IsSelected = false);
                 }
+
+                // Try to select in 2D
+
+                // Create a box to represent the click, with a tolerance level
+                var unused = viewport.GetUnusedCoordinate(new Coordinate(100000, 100000, 100000));
+                var tolerance = 4 / viewport.Zoom; // Selection tolerance of four pixels
+                var used = viewport.Expand(new Coordinate(tolerance, tolerance, 0));
+                var add = used + unused;
+                var click = viewport.Expand(viewport.ScreenToWorld(e.X, viewport.Height - e.Y));
+                var box = new Box(click - add, click + add);
+
+                var centerHandles = Sledge.Settings.Select.DrawCenterHandles;
+                var centerOnly = Sledge.Settings.Select.ClickSelectByCenterHandlesOnly;
+                // Get the first element that intersects with the box
+                var solid = Document.Map.WorldSpawn.GetAllNodesIntersecting2DLineTest(box, centerHandles, centerOnly).OfType<Solid>().FirstOrDefault();
+
+                if (solid != null)
+                {
+                    // select solid
+                    var select = new[] { solid };
+                    var deselect = !KeyboardState.Ctrl ? Document.Selection.GetSelectedObjects() : new MapObject[0];
+                    Document.PerformAction("Select VM solid", new ChangeSelection(select, deselect));
+
+                    // Don't do other click operations
+                    return;
+                }
+
                 base.MouseDown(vp, e);
                 return;
             }
