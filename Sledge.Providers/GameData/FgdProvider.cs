@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using Sledge.DataStructures.GameData;
@@ -12,7 +13,7 @@ namespace Sledge.Providers.GameData
 
         protected override bool IsValidForFile(string filename)
         {
-            return filename.EndsWith(".fgd");
+            return filename.EndsWith(".fgd", true, CultureInfo.InvariantCulture);
         }
 
         protected override bool IsValidForStream(Stream stream)

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing.Imaging;
+using System.Globalization;
 using System.Linq;
 using System.IO;
 using Sledge.Graphics;
@@ -119,7 +120,7 @@ namespace Sledge.Providers.Texture
 
         public override bool IsValidForPackageFile(string package)
         {
-            return package.EndsWith(".wad") && File.Exists(package);
+            return package.EndsWith(".wad", true, CultureInfo.InvariantCulture) && File.Exists(package);
         }
 
         private bool IsValidLumpType(uint type)

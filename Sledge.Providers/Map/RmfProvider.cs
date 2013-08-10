@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -13,7 +14,7 @@ namespace Sledge.Providers.Map
     {
         protected override bool IsValidForFileName(string filename)
         {
-            return filename.EndsWith(".rmf");
+            return filename.EndsWith(".rmf", true, CultureInfo.InvariantCulture);
         }
 
         protected override DataStructures.MapObjects.Map GetFromStream(Stream stream)

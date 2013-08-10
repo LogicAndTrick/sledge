@@ -14,14 +14,14 @@ namespace Sledge.Providers.Map
     {
         protected override bool IsValidForFileName(string filename)
         {
-            return filename.EndsWith(".map");
+            return filename.EndsWith(".map", true, CultureInfo.InvariantCulture);
         }
 
         private string CleanLine(string line)
         {
             if (line == null) return null;
             var ret = line;
-            if (ret.Contains("//")) ret = ret.Substring(0, ret.IndexOf("//")); // Comments
+            if (ret.Contains("//")) ret = ret.Substring(0, ret.IndexOf("//", StringComparison.Ordinal)); // Comments
             return ret.Trim();
         }
 
