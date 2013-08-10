@@ -16,12 +16,14 @@ namespace Sledge.Editor.Tools
         public delegate void ToolSelectedEventHandler(object sender, VMSubTool tool);
         public delegate void DeselectAllEventHandler(object sender);
         public delegate void ResetEventHandler(object sender);
-        public delegate void FixErrorEventHandler(object sender, object error);
+        public delegate void SelectErrorEventHandler(object sender, VMError error);
+        public delegate void FixErrorEventHandler(object sender, VMError error);
         public delegate void FixAllErrorsEventHandler(object sender);
 
         public event ToolSelectedEventHandler ToolSelected;
         public event DeselectAllEventHandler DeselectAll;
         public event ResetEventHandler Reset;
+        public event SelectErrorEventHandler SelectError;
         public event FixErrorEventHandler FixError;
         public event FixAllErrorsEventHandler FixAllErrors;
 
@@ -49,7 +51,15 @@ namespace Sledge.Editor.Tools
             }
         }
 
-        protected virtual void OnFixError(object error)
+        protected virtual void OnSelectError(VMError error)
+        {
+            if (SelectError != null)
+            {
+                SelectError(this, error);
+            }
+        }
+
+        protected virtual void OnFixError(VMError error)
         {
             if (FixError != null)
             {
@@ -119,9 +129,10 @@ namespace Sledge.Editor.Tools
             }
         }
 
-        public void SetErrorList(IEnumerable<object> errors)
+        public void SetErrorList(IEnumerable<VMError> errors)
         {
-            
+            ErrorList.Items.Clear();
+            ErrorList.Items.AddRange(errors.OfType<object>().ToArray());
         }
 
         protected override void OnMouseEnter(EventArgs e)
@@ -148,6 +159,12 @@ namespace Sledge.Editor.Tools
         private void FixAllErrorsButtonClicked(object sender, EventArgs e)
         {
             OnFixAllErrors();
+        }
+
+        private void ErrorListSelectionChanged(object sender, EventArgs e)
+        {
+            var error = ErrorList.SelectedItem as VMError;
+            OnSelectError(error);
         }
     }
 }

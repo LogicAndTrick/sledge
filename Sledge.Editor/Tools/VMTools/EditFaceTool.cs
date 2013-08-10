@@ -67,10 +67,7 @@ namespace Sledge.Editor.Tools.VMTools
             solid.UpdateBoundingBox();
             UpdateSelection();
 
-            MainTool.UpdateEditedFaces();
-            MainTool.RefreshPoints();
-            MainTool.RefreshMidpoints();
-            MainTool.Dirty = true;
+            MainTool.SetDirty(true, true);
         }
 
         private void BevelFace(Face face, int num)
@@ -101,10 +98,7 @@ namespace Sledge.Editor.Tools.VMTools
             solid.UpdateBoundingBox();
             UpdateSelection();
 
-            MainTool.UpdateEditedFaces();
-            MainTool.RefreshPoints();
-            MainTool.RefreshMidpoints();
-            MainTool.Dirty = true;
+            MainTool.SetDirty(true, true);
         }
 
         public override string GetName()

@@ -36,8 +36,6 @@ namespace Sledge.Editor.Tools
             this.ResetButton = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
             this.ErrorList = new System.Windows.Forms.ListBox();
-            this.FixErrorButton = new System.Windows.Forms.Button();
-            this.FixAllErrorsButton = new System.Windows.Forms.Button();
             this.radioLayoutPanel = new System.Windows.Forms.FlowLayoutPanel();
             this.groupRadios = new System.Windows.Forms.GroupBox();
             this.ControlPanel = new System.Windows.Forms.GroupBox();
@@ -88,30 +86,9 @@ namespace Sledge.Editor.Tools
             this.ErrorList.FormattingEnabled = true;
             this.ErrorList.Location = new System.Drawing.Point(445, 27);
             this.ErrorList.Name = "ErrorList";
-            this.ErrorList.Size = new System.Drawing.Size(134, 134);
+            this.ErrorList.Size = new System.Drawing.Size(134, 160);
             this.ErrorList.TabIndex = 6;
-            // 
-            // FixErrorButton
-            // 
-            this.FixErrorButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.FixErrorButton.Location = new System.Drawing.Point(445, 167);
-            this.FixErrorButton.Name = "FixErrorButton";
-            this.FixErrorButton.Size = new System.Drawing.Size(63, 23);
-            this.FixErrorButton.TabIndex = 7;
-            this.FixErrorButton.Text = "Fix";
-            this.FixErrorButton.UseVisualStyleBackColor = true;
-            this.FixErrorButton.Click += new System.EventHandler(this.FixErrorButtonClicked);
-            // 
-            // FixAllErrorsButton
-            // 
-            this.FixAllErrorsButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.FixAllErrorsButton.Location = new System.Drawing.Point(514, 167);
-            this.FixAllErrorsButton.Name = "FixAllErrorsButton";
-            this.FixAllErrorsButton.Size = new System.Drawing.Size(65, 23);
-            this.FixAllErrorsButton.TabIndex = 7;
-            this.FixAllErrorsButton.Text = "Fix All";
-            this.FixAllErrorsButton.UseVisualStyleBackColor = true;
-            this.FixAllErrorsButton.Click += new System.EventHandler(this.FixAllErrorsButtonClicked);
+            this.ErrorList.SelectedIndexChanged += new System.EventHandler(this.ErrorListSelectionChanged);
             // 
             // radioLayoutPanel
             // 
@@ -152,8 +129,6 @@ namespace Sledge.Editor.Tools
             this.ControlBox = false;
             this.Controls.Add(this.ControlPanel);
             this.Controls.Add(this.groupRadios);
-            this.Controls.Add(this.FixAllErrorsButton);
-            this.Controls.Add(this.FixErrorButton);
             this.Controls.Add(this.ErrorList);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.ResetButton);
@@ -177,8 +152,6 @@ namespace Sledge.Editor.Tools
         private System.Windows.Forms.Button ResetButton;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.ListBox ErrorList;
-        private System.Windows.Forms.Button FixErrorButton;
-        private System.Windows.Forms.Button FixAllErrorsButton;
         private System.Windows.Forms.FlowLayoutPanel radioLayoutPanel;
         private System.Windows.Forms.GroupBox groupRadios;
         private System.Windows.Forms.GroupBox ControlPanel;

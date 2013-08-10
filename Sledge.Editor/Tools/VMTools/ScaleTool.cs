@@ -91,9 +91,7 @@ namespace Sledge.Editor.Tools.VMTools
                 var move = relative ? o + diff * value / 100 : orig + direction * value;
                 p.Move(move - p.Coordinate);
             }
-            MainTool.UpdateEditedFaces();
-            MainTool.RefreshMidpoints();
-            MainTool.Dirty = true;
+            MainTool.SetDirty(false, true);
         }
 
         private void DocumentGridSpacingChanged(decimal gridSpacing)

@@ -68,7 +68,7 @@ namespace Sledge.Editor.Tools.VMTools
 
         private void Merge(object sender)
         {
-            CheckMergedVertices(true);
+            CheckMergedVertices();
         }
 
         private void Split(object sender)
@@ -99,10 +99,7 @@ namespace Sledge.Editor.Tools.VMTools
 
             solid.UpdateBoundingBox();
 
-            MainTool.UpdateEditedFaces();
-            MainTool.RefreshPoints();
-            MainTool.RefreshMidpoints();
-            MainTool.Dirty = true;
+            MainTool.SetDirty(true, true);
         }
 
         private void VMSplitFace()
@@ -191,20 +188,22 @@ namespace Sledge.Editor.Tools.VMTools
 
         public override void DragMove(Coordinate distance)
         {
+            _state = VMState.Moving;
             // Move each selected point by the delta value
             foreach (var p in MainTool.GetSelectedPoints())
             {
                 p.Move(distance);
             }
-            MainTool.UpdateEditedFaces();
-            MainTool.Dirty = true;
+
+            MainTool.SetDirty(false, false);
         }
 
         public override void DragEnd()
         {
-            if (_state == VMState.Moving && AutomaticallyMerge())
+            if (_state == VMState.Moving)
             {
-                CheckMergedVertices(false);
+                if (AutomaticallyMerge()) CheckMergedVertices();
+                else MainTool.SetDirty(true, true);
             }
             _state = VMState.None;
             Editor.Instance.CaptureAltPresses = false;
@@ -215,22 +214,21 @@ namespace Sledge.Editor.Tools.VMTools
             _state = VMState.None;
         }
 
-        private void CheckMergedVertices(bool selected)
+        private void CheckMergedVertices()
         {
-            var points = selected ? MainTool.GetSelectedPoints() : MainTool.Points.Where(x => !x.IsMidPoint);
             // adjacent points with the same solid and coordinate need to be merged (erp)
-            foreach (var group in points.GroupBy(x => new { x.Solid, x.Coordinate }).Where(x => x.Count() > 1))
+            foreach (var group in MainTool.GetCopies().SelectMany(x => x.Faces).SelectMany(x => x.Vertices).GroupBy(x => new { x.Parent, x.Location }).Where(x => x.Count() > 1))
             {
-                var allFaces = group.SelectMany(x => x.Vertices).Select(x => x.Parent).Distinct().ToList();
+                var allFaces = group.Select(x => x.Parent).Distinct().ToList();
                 foreach (var face in allFaces)
                 {
                     var distinctVerts = face.Vertices.GroupBy(x => x.Location).Select(x => x.First()).ToList();
-                    if (distinctVerts.Count < 3) group.Key.Solid.Faces.Remove(face); // Remove face
+                    if (distinctVerts.Count < 3) face.Parent.Faces.Remove(face); // Remove face
                     else face.Vertices.RemoveAll(x => !distinctVerts.Contains(x)); // Remove duped verts
                 }
                 // ... this is hard :(
             }
-            MainTool.RefreshPoints();
+            MainTool.SetDirty(true, true);
         }
 
         public override void MouseEnter(ViewportBase viewport, ViewportEvent e)
@@ -280,9 +278,7 @@ namespace Sledge.Editor.Tools.VMTools
                 {
                     p.Move(translate);
                 }
-                MainTool.UpdateEditedFaces();
-                MainTool.RefreshMidpoints(false);
-                MainTool.Dirty = true;
+                CheckMergedVertices();
             }
         }
 

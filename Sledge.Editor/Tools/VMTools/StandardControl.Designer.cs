@@ -39,9 +39,9 @@
             // 
             this.MergeButton.Location = new System.Drawing.Point(6, 55);
             this.MergeButton.Name = "MergeButton";
-            this.MergeButton.Size = new System.Drawing.Size(211, 23);
+            this.MergeButton.Size = new System.Drawing.Size(144, 23);
             this.MergeButton.TabIndex = 8;
-            this.MergeButton.Text = "Merge overlapping vertices in selection";
+            this.MergeButton.Text = "Merge overlapping vertices";
             this.MergeButton.UseVisualStyleBackColor = true;
             this.MergeButton.Click += new System.EventHandler(this.MergeButtonClicked);
             // 
@@ -50,11 +50,11 @@
             this.AutoMerge.AutoSize = true;
             this.AutoMerge.Checked = true;
             this.AutoMerge.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.AutoMerge.Location = new System.Drawing.Point(6, 84);
+            this.AutoMerge.Location = new System.Drawing.Point(156, 59);
             this.AutoMerge.Name = "AutoMerge";
-            this.AutoMerge.Size = new System.Drawing.Size(160, 17);
+            this.AutoMerge.Size = new System.Drawing.Size(88, 17);
             this.AutoMerge.TabIndex = 7;
-            this.AutoMerge.Text = "Automatically merge vertices";
+            this.AutoMerge.Text = "Automatically";
             this.AutoMerge.UseVisualStyleBackColor = true;
             // 
             // label1
@@ -71,7 +71,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(3, 115);
+            this.label2.Location = new System.Drawing.Point(3, 89);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(159, 26);
             this.label2.TabIndex = 6;
@@ -79,7 +79,7 @@
             // 
             // SplitButton
             // 
-            this.SplitButton.Location = new System.Drawing.Point(168, 115);
+            this.SplitButton.Location = new System.Drawing.Point(168, 89);
             this.SplitButton.Name = "SplitButton";
             this.SplitButton.Size = new System.Drawing.Size(76, 23);
             this.SplitButton.TabIndex = 8;
@@ -97,7 +97,7 @@
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Name = "StandardControl";
-            this.Size = new System.Drawing.Size(250, 156);
+            this.Size = new System.Drawing.Size(250, 126);
             this.ResumeLayout(false);
             this.PerformLayout();
 

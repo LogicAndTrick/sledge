@@ -50,9 +50,16 @@ namespace Sledge.Editor.Tools.VMTools
             _freeze = true;
             InitializeComponent();
             _freeze = false;
+            SetValueLimits();
         }
 
         public void ResetValue()
+        {
+            SetValueLimits();
+            OnValueReset(DistanceValue.Value, UseRelative.Checked);
+        }
+
+        private void SetValueLimits()
         {
             _freeze = true;
             if (UseRelative.Checked)
@@ -70,7 +77,6 @@ namespace Sledge.Editor.Tools.VMTools
                 DistanceValue.Increment = _gridSpacing;
             }
             _freeze = false;
-            OnValueReset(DistanceValue.Value, UseRelative.Checked);
         }
 
         private decimal _gridSpacing = 1;

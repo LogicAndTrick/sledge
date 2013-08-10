@@ -32,10 +32,10 @@ namespace Sledge.Editor.Tools
 
         public List<VMPoint> Points { get; private set; }
         public List<VMPoint> MoveSelection { get; private set; }
-        public bool Dirty { get; set; }
 
         private VMPoint _movingPoint;
         private Coordinate _snapPointOffset;
+        private bool _dirty;
 
         public VMTool()
         {
@@ -43,6 +43,7 @@ namespace Sledge.Editor.Tools
             _form.ToolSelected += VMToolSelected;
             _form.DeselectAll += DeselectAll;
             _form.Reset += Reset;
+            _form.SelectError += SelectError;
             _form.FixAllErrors += FixAllErrors;
             _form.FixError += FixError;
             _tools = new List<VMSubTool>();
@@ -51,6 +52,26 @@ namespace Sledge.Editor.Tools
             AddTool(new ScaleTool(this));
             AddTool(new EditFaceTool(this));
             _currentTool = _tools.FirstOrDefault();
+        }
+
+        private void SelectError(object sender, VMError error)
+        {
+            if (error != null)
+            {
+                VMToolSelected(null, _tools.First(x => x is StandardTool));
+                Points.ForEach(x => x.IsSelected = x.Vertices != null && error.Vertices.Any(y => x.Vertices.Contains(y)));
+                foreach (var f in _copies.SelectMany(x => x.Key.Faces))
+                {
+                    f.IsSelected = error.Faces.Contains(f);
+                }
+            }
+            else
+            {
+                foreach (var f in _copies.SelectMany(x => x.Key.Faces))
+                {
+                    f.IsSelected = false;
+                }
+            }
         }
 
         private void FixError(object sender, object error)
@@ -65,7 +86,7 @@ namespace Sledge.Editor.Tools
 
         private void Reset(object sender)
         {
-            Dirty = false;
+            _dirty = false;
             Commit(_copies.Values.ToList());
             _copies.Clear();
             SelectionChanged();
@@ -136,6 +157,50 @@ namespace Sledge.Editor.Tools
         protected override Color FillColour
         {
             get { return Color.FromArgb(Sledge.Settings.View.SelectionBoxBackgroundOpacity, Color.DodgerBlue); }
+        }
+
+        public void SetDirty(bool points, bool midpoints)
+        {
+            UpdateEditedFaces();
+            if (points) RefreshPoints();
+            if (midpoints) RefreshMidpoints();
+            _form.SetErrorList(GetErrors());
+            _dirty = true;
+        }
+
+        public IEnumerable<VMError> GetErrors()
+        {
+            foreach (var kv in _copies)
+            {
+                var s = kv.Key;
+                foreach (var g in s.GetCoplanarFaces().GroupBy(x => x.Plane))
+                {
+                    yield return new VMError("Coplanar faces", s, g);
+                }
+                foreach (var f in s.GetBackwardsFaces())
+                {
+                    yield return new VMError("Backwards face", s, new[] { f });
+                }
+                foreach (var f in s.Faces)
+                {
+                    var np = f.GetNonPlanarVertices().ToList();
+                    var found = false;
+                    if (np.Any())
+                    {
+                        yield return new VMError("Nonplanar vertex", s, new[] { f }, np);
+                        found = true;
+                    }
+                    foreach (var g in f.Vertices.GroupBy(x => x.Location).Where(x => x.Count() > 1))
+                    {
+                        yield return new VMError("Overlapping vertices", s, new[] { f }, g);
+                        found = true;
+                    }
+                    if (!f.IsConvex() && !found)
+                    {
+                        yield return new VMError("Concave face", s, new[] { f });
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -211,15 +276,17 @@ namespace Sledge.Editor.Tools
                 solid.IsCodeHidden = false;
             }
             var kvs = _copies.Where(x => solids.Contains(x.Value)).ToList();
-            if (Dirty)
+            foreach (var kv in kvs)
+            {
+                _copies.Remove(kv.Key);
+                foreach (var f in kv.Key.Faces) f.IsSelected = false;
+                foreach (var f in kv.Value.Faces) f.IsSelected = false;
+            }
+            if (_dirty)
             {
                 // Commit the changes
                 var edit = new Edit(kvs.Select(x => x.Value), kvs.Select(x => x.Key));
                 Document.PerformAction("Vertex Manipulation", edit);
-            }
-            foreach (var kv in kvs)
-            {
-                _copies.Remove(kv.Key);
             }
         }
 
@@ -228,7 +295,7 @@ namespace Sledge.Editor.Tools
             var selectedSolids = Document.Selection.GetSelectedObjects().OfType<Solid>().ToList();
             var commit = _copies.Values.Where(x => !selectedSolids.Contains(x)).ToList();
             Commit(commit);
-            if (!_copies.Any()) Dirty = false;
+            if (!_copies.Any()) _dirty = false;
             foreach (var solid in selectedSolids.Where(x => !_copies.ContainsValue(x)))
             {
                 var copy = (Solid)solid.Clone();
