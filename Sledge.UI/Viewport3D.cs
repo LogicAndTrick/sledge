@@ -54,7 +54,9 @@ namespace Sledge.UI
         public override void SetViewport()
         {
             base.SetViewport();
-            Viewport.Perspective(0, 0, Width, Height, Camera.FOV, 0.1f, Camera.ClipDistance);
+            var fov = Camera == null ? 60 : Camera.FOV;
+            var clip = Camera == null ? 6000 : Camera.ClipDistance;
+            Viewport.Perspective(0, 0, Width, Height, fov, 0.1f, clip);
         }
 
         protected override void UpdateBeforeClearViewport()
