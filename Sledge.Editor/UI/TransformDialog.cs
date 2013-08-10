@@ -73,6 +73,18 @@ namespace Sledge.Editor.UI
                 = SourceValueYButton.Visible
                   = SourceValueZButton.Visible
                     = Translate.Checked;
+            if (Scale.Checked)
+            {
+                if (ValueX.Value == 0) ValueX.Value = 1;
+                if (ValueY.Value == 0) ValueY.Value = 1;
+                if (ValueZ.Value == 0) ValueZ.Value = 1;
+            }
+            else
+            {
+                if (ValueX.Value == 1) ValueX.Value = 0;
+                if (ValueY.Value == 1) ValueY.Value = 0;
+                if (ValueZ.Value == 1) ValueZ.Value = 0;
+            }
         }
 
         private void OkButtonClicked(object sender, EventArgs e)
