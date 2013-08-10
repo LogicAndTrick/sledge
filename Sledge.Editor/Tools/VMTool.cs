@@ -617,6 +617,15 @@ namespace Sledge.Editor.Tools
             MoveSelection = null;
         }
 
+        protected override void LeftMouseUpDrawing(Viewport2D viewport, ViewportEvent e)
+        {
+            base.LeftMouseUpDrawing(viewport, e);
+            if (Sledge.Settings.Select.AutoSelectBox)
+            {
+                BoxDrawnConfirm(viewport);
+            }
+        }
+
         public override void MouseMove(ViewportBase vp, ViewportEvent e)
         {
             base.MouseMove(vp, e);
