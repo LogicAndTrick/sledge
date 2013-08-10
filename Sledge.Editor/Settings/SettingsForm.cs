@@ -420,9 +420,9 @@ namespace Sledge.Editor.Settings
             if (!Directory.Exists(steamdir)) return;
             var usernames = Directory.GetDirectories(steamdir).Select(Path.GetFileName);
             var ignored = new[] {"common", "downloading", "media", "sourcemods", "temp"};
-            SteamUsername.Items.AddRange(usernames.Where(x => !ignored.Contains(x.ToLower())).ToArray());
+            SteamUsername.Items.AddRange(usernames.Where(x => !ignored.Contains(x.ToLower())).OfType<object>().ToArray());
             var idx = SteamUsername.Items.IndexOf(SteamUsername.Text);
-            SteamUsername.SelectedIndex = Math.Max(0, idx);
+            if (SteamUsername.Items.Count > 0) SteamUsername.SelectedIndex = Math.Max(0, idx);
         }
 
         private void RemoveGameClicked(object sender, EventArgs e)
