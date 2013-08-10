@@ -204,6 +204,13 @@
     <Compile Include="Tools\BaseTool.cs" />
     <Compile Include="Tools\BrushTool.cs" />
     <Compile Include="Tools\ClipTool.cs" />
+    <Compile Include="Tools\VMTools\VMError.cs" />
+    <Compile Include="Tools\VMForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Tools\VMForm.Designer.cs">
+      <DependentUpon>VMForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Tools\CordonTool.cs" />
     <Compile Include="Tools\DecalTool.cs" />
     <Compile Include="Tools\DisplacementForm.cs">
@@ -240,6 +247,29 @@
       <DependentUpon>TextureApplicationForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Tools\TransformationTools\TransformationTool.cs" />
+    <Compile Include="Tools\VMTools\EditFaceTool.cs" />
+    <Compile Include="Tools\VMTools\ScaleTool.cs" />
+    <Compile Include="Tools\VMTools\EditFaceControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Tools\VMTools\EditFaceControl.Designer.cs">
+      <DependentUpon>EditFaceControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Tools\VMTools\ScaleControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Tools\VMTools\ScaleControl.Designer.cs">
+      <DependentUpon>ScaleControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Tools\VMTools\StandardControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Tools\VMTools\StandardControl.Designer.cs">
+      <DependentUpon>StandardControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Tools\VMTools\VMPoint.cs" />
+    <Compile Include="Tools\VMTools\VMSubTool.cs" />
+    <Compile Include="Tools\VMTools\StandardTool.cs" />
     <Compile Include="UI\AboutDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -390,6 +420,10 @@
     <EmbeddedResource Include="Settings\SettingsForm.resx">
       <DependentUpon>SettingsForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Tools\VMForm.resx">
+      <DependentUpon>VMForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Tools\DisplacementForm.resx">
       <DependentUpon>DisplacementForm.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -403,6 +437,15 @@
     <EmbeddedResource Include="Tools\TextureApplicationForm.resx">
       <DependentUpon>TextureApplicationForm.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Tools\VMTools\EditFaceControl.resx">
+      <DependentUpon>EditFaceControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Tools\VMTools\ScaleControl.resx">
+      <DependentUpon>ScaleControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Tools\VMTools\StandardControl.resx">
+      <DependentUpon>StandardControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\AboutDialog.resx">
       <DependentUpon>AboutDialog.cs</DependentUpon>

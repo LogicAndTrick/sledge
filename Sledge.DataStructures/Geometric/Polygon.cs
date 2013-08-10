@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Sledge.DataStructures.Transformations;
+using Sledge.Extensions;
 
 namespace Sledge.DataStructures.Geometric
 {
@@ -120,6 +121,21 @@ namespace Sledge.DataStructures.Geometric
         {
             Vertices = Vertices.Select(transform.Transform).ToList();
             Plane = new Plane(Vertices[0], Vertices[1], Vertices[2]);
+        }
+
+        public bool IsConvex()
+        {
+            for (var i = 0; i < Vertices.Count; i++)
+            {
+                var v1 = Vertices[i];
+                var v2 = Vertices[(i + 1) % Vertices.Count];
+                var v3 = Vertices[(i + 2) % Vertices.Count];
+                var l1 = (v1 - v2).Normalise();
+                var l2 = (v3 - v2).Normalise();
+                var cross = l1.Cross(l2);
+                if (Plane.OnPlane(v2 + cross) < 0.0001m) return false;
+            }
+            return true;
         }
 
         /// <summary>

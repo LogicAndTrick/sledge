@@ -200,28 +200,23 @@ namespace Sledge.DataStructures.MapObjects
             return solid;
         }
 
+        public IEnumerable<Face> GetCoplanarFaces()
+        {
+            return Faces.Where(f1 => Faces.Where(f2 => f2 != f1).Any(f2 => f2.Plane == f1.Plane));
+        }
+
+        public IEnumerable<Face> GetBackwardsFaces()
+        {
+            var origin = GetOrigin();
+            return Faces.Where(x => x.Plane.OnPlane(origin) >= 0);
+        }
+
         public bool IsValid()
         {
-            // Check coplanar faces
-            if (Faces.Any(f1 => Faces.Where(f2 => f2 != f1).Any(f2 => f2.Plane == f1.Plane)))
-            {
-                return false;
-            }
-
-            // Check face vertices are all on the plane
-            if (Faces.Any(x => x.Vertices.Any(y => x.Plane.OnPlane(y.Location) != 0)))
-            {
-                return false;
-            }
-
-            // Check faces are pointing outwards
-            var origin = GetOrigin();
-            if (Faces.Any(x => x.Plane.OnPlane(origin) >= 0))
-            {
-                return false;
-            }
-
-            return true;
+            return !GetCoplanarFaces().Any() // Check coplanar faces
+                   && !GetBackwardsFaces().Any() // Check faces are pointing outwards
+                   && !Faces.Any(x => x.GetNonPlanarVertices().Any()) // Check face vertices are all on the plane
+                   && Faces.All(x => x.IsConvex()); // Check all faces are concave
         }
 
         public Coordinate GetOrigin()

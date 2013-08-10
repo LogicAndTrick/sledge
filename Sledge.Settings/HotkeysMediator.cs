@@ -93,5 +93,12 @@ namespace Sledge.Settings
         QuickLoadPointfile,
         LoadPointfile,
         UnloadPointfile,
+
+        // Tool specific
+
+        VMStandardMode,
+        VMScalingMode,
+        VMFaceEditMode,
+        VMSplitFace,
     }
 }

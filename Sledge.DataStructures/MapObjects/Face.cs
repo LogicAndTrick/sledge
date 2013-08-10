@@ -114,6 +114,16 @@ namespace Sledge.DataStructures.MapObjects
             }
         }
 
+        public IEnumerable<Vertex> GetNonPlanarVertices()
+        {
+            return Vertices.Where(x => Plane.OnPlane(x.Location) != 0);
+        }
+
+        public bool IsConvex()
+        {
+            return new Polygon(Vertices.Select(x => x.Location)).IsConvex();
+        }
+
         #region Textures
 
         public enum BoxAlignMode

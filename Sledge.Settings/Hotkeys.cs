@@ -83,6 +83,11 @@ namespace Sledge.Settings
                                     new HotkeyDefinition("Cordon Tool", "Switch to the cordon tool", HotkeysMediator.SwitchTool, HotkeyTool.Cordon, "Shift+K"),
                                     
                                     new HotkeyDefinition("Apply Current Texture", "Apply the current texture to the selection.", HotkeysMediator.ApplyCurrentTextureToSelection, "Shift+T"),
+                                    
+                                    new HotkeyDefinition("Vertex Manipulation Standard Mode", "Switch to the standard mode while in the VM tool.", HotkeysMediator.VMStandardMode, "Alt+W"),
+                                    new HotkeyDefinition("Vertex Manipulation Scaling Mode", "Switch to the scaling mode while in the VM tool.", HotkeysMediator.VMScalingMode, "Alt+E"),
+                                    new HotkeyDefinition("Vertex Manipulation Face Edit Mode", "Switch to the face edit mode while in the VM tool.", HotkeysMediator.VMFaceEditMode, "Alt+R"),
+                                    new HotkeyDefinition("Vertex Manipulation Split Face", "Perform a split operation in standard mode while in the VM tool.", HotkeysMediator.VMSplitFace, "Ctrl+F"),
                                };
         }
 
