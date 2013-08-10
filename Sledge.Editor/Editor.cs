@@ -90,6 +90,7 @@ namespace Sledge.Editor
             foreach (var tool in ToolManager.Tools)
             {
                 var tl = tool;
+                var hotkey = Sledge.Settings.Hotkeys.GetHotkeyForMessage(HotkeysMediator.SwitchTool, tool.GetHotkeyToolType());
                 tspTools.Items.Add(new ToolStripButton(
                     "",
                     tl.GetIcon(),
@@ -97,7 +98,7 @@ namespace Sledge.Editor
                     tl.GetName())
                         {
                             Checked = (tl == ToolManager.ActiveTool),
-                            ToolTipText = tl.GetName()
+                            ToolTipText = tl.GetName() + (hotkey != null ? " (" +hotkey.DefaultHotkey + ")" : "")
                         }
                     );
             }

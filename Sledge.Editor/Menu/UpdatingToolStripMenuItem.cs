@@ -22,7 +22,7 @@ namespace Sledge.Editor.Menu
             _text = textAction;
             _message = message;
             _parameter = parameter;
-            var hk = Hotkeys.GetHotkeyForMessage(message);
+            var hk = Hotkeys.GetHotkeyForMessage(message, parameter);
             if (hk != null) ShortcutKeyDisplayString = hk.DefaultHotkey;
             if (_isActive != null || _text != null || _isChecked != null)
             {

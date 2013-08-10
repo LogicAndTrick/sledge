@@ -91,9 +91,9 @@ namespace Sledge.Settings
                                };
         }
 
-        public static HotkeyDefinition GetHotkeyForMessage(String message)
+        public static HotkeyDefinition GetHotkeyForMessage(object message, object parameter)
         {
-            return Definitions.FirstOrDefault(x => x.Action.ToString() == message);
+            return Definitions.FirstOrDefault(x => x.Action.ToString() == message.ToString() && Equals(x.Parameter, parameter));
         }
 
         public static HotkeyDefinition GetHotkeyFor(string keyCombination)
