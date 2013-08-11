@@ -60,7 +60,6 @@ namespace Sledge.Graphics.Helpers
                 );
             var tex = CreateAndBindTexture();
             SetTextureParameters();
-            GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
             GL.TexImage2D(
                 TextureTarget.Texture2D,
                 0,
