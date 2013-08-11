@@ -255,6 +255,16 @@ namespace Sledge.Editor.Documents
         {
             FileSave();
             if (_document.MapFile == null) return;
+            
+            var build = SettingsManager.Builds.FirstOrDefault(x => x.ID == _document.Game.BuildID);
+            if (build == null)
+            {
+                if (MessageBox.Show("Please set up the build tools for this game profile.\n\nWould you like to open the settings page now?", "No build configuration", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                {
+                    Mediator.Publish(EditorMediator.OpenSettings);
+                }
+                return;
+            }
 
             var tempDir = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
             Directory.CreateDirectory(tempDir);
@@ -267,7 +277,6 @@ namespace Sledge.Editor.Documents
             var map = Path.Combine(tempDir, Path.GetFileNameWithoutExtension(_document.MapFile) + ".map");
             SaveWithCordon(map);
 
-            var build = SettingsManager.Builds.FirstOrDefault(x => x.ID == _document.Game.BuildID);
             var batch = new Batch(_document.Game, build, map, _document.MapFile);
             BatchCompiler.Compile(batch);
         }
