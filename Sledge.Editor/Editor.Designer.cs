@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.mnuMain = new System.Windows.Forms.MenuStrip();
             this.stsStatus = new System.Windows.Forms.StatusStrip();
             this.StatusTextLabel = new System.Windows.Forms.ToolStripStatusLabel();
@@ -38,6 +39,7 @@
             this.StatusSnapLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.tscToolStrip = new System.Windows.Forms.ToolStripContainer();
             this.tblQuadView = new Sledge.Editor.UI.QuadSplitControl();
+            this.DocumentTabs = new Sledge.Editor.UI.FlexibleTabControl();
             this.panel1 = new System.Windows.Forms.Panel();
             this.RightToolbar = new System.Windows.Forms.TableLayoutPanel();
             this.HistoryPanel = new System.Windows.Forms.FlowLayoutPanel();
@@ -161,6 +163,7 @@
             // tscToolStrip.ContentPanel
             // 
             this.tscToolStrip.ContentPanel.Controls.Add(this.tblQuadView);
+            this.tscToolStrip.ContentPanel.Controls.Add(this.DocumentTabs);
             this.tscToolStrip.ContentPanel.Controls.Add(this.panel1);
             this.tscToolStrip.ContentPanel.Size = new System.Drawing.Size(832, 801);
             this.tscToolStrip.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -247,8 +250,20 @@
             this.tblQuadView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tblQuadView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tblQuadView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tblQuadView.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tblQuadView.Location = new System.Drawing.Point(0, 0);
+            this.tblQuadView.Location = new System.Drawing.Point(0, 24);
             this.tblQuadView.MinimumViewSize = 2;
             this.tblQuadView.Name = "tblQuadView";
             this.tblQuadView.RowCount = 2;
@@ -322,8 +337,31 @@
             this.tblQuadView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tblQuadView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tblQuadView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tblQuadView.Size = new System.Drawing.Size(682, 801);
+            this.tblQuadView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.Size = new System.Drawing.Size(682, 777);
             this.tblQuadView.TabIndex = 0;
+            // 
+            // DocumentTabs
+            // 
+            this.DocumentTabs.Dock = System.Windows.Forms.DockStyle.Top;
+            this.DocumentTabs.Location = new System.Drawing.Point(0, 0);
+            this.DocumentTabs.Name = "DocumentTabs";
+            this.DocumentTabs.SelectedIndex = 0;
+            this.DocumentTabs.Size = new System.Drawing.Size(682, 24);
+            this.DocumentTabs.TabIndex = 2;
+            this.DocumentTabs.RequestClose += new Sledge.Editor.UI.FlexibleTabControl.RequestCloseEventHandler(this.DocumentTabsRequestClose);
+            this.DocumentTabs.SelectedIndexChanged += new System.EventHandler(this.DocumentTabsSelectedIndexChanged);
             // 
             // panel1
             // 
@@ -711,6 +749,7 @@
         private System.Windows.Forms.ToolStripStatusLabel StatusBoxLabel;
         private System.Windows.Forms.ToolStripStatusLabel StatusZoomLabel;
         private System.Windows.Forms.ToolStripStatusLabel StatusSnapLabel;
+        private UI.FlexibleTabControl DocumentTabs;
     }
 }
 

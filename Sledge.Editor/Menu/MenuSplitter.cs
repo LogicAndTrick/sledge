@@ -12,13 +12,13 @@ namespace Sledge.Editor.Menu
 
         public IEnumerable<ToolStripItem> Build()
         {
-            if (IsVisible != null && !IsVisible()) yield break;
+            //if (IsVisible != null && !IsVisible()) yield break;
             yield return new ToolStripSeparator();
         }
 
         public IEnumerable<ToolStripItem> BuildToolStrip()
         {
-            if (IsVisible != null && !IsVisible()) yield break;
+            //if (IsVisible != null && !IsVisible()) yield break;
             yield return new ToolStripSeparator();
         }
     }

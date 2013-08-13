@@ -13,8 +13,13 @@ namespace Sledge.Editor
 
         // Document messages
         DocumentOpened,
+        DocumentSaved,
+        DocumentDeactivated,
         DocumentActivated,
         DocumentClosed,
+        DocumentAllClosed,
+
+        // Document manager messages
 
         // Editing messages
         TextureSelected,

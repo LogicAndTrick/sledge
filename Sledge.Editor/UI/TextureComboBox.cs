@@ -104,11 +104,26 @@ namespace Sledge.Editor.UI
 
         public void Update(string package)
         {
+            if (DocumentManager.CurrentDocument == null)
+            {
+                Items.Clear();
+                return;
+            }
+            var packs = DocumentManager.CurrentDocument.TextureCollection.Packages.Where(x => x.PackageFile == package).ToList();
+            if (!packs.Any()) packs.AddRange(DocumentManager.CurrentDocument.TextureCollection.Packages);
+
+            if (packs.Count == _packages.Count && !packs.Except(_packages).Any())
+            {
+                // Packages are the same, no need to update.
+                return;
+            }
+
+            _packages = packs;
+
+            Items.Clear();
             var selected = SelectedItem as TextureComboBoxItem;
             var selectedName = selected == null ? null : selected.Item.Name;
             TextureComboBoxItem reselect = null;
-            Items.Clear();
-            if (DocumentManager.CurrentDocument == null) return;
             var last = _history.LastOrDefault();
             foreach (var hi in _history)
             {
@@ -118,8 +133,6 @@ namespace Sledge.Editor.UI
                 Items.Add(item);
                 if (reselect == null && selectedName == item.Item.Name) reselect = item;
             }
-            _packages = DocumentManager.CurrentDocument.TextureCollection.Packages.Where(x => x.PackageFile == package).ToList();
-            if (!_packages.Any()) _packages.AddRange(DocumentManager.CurrentDocument.TextureCollection.Packages);
             var textures = _packages.SelectMany(x => x.Items).Select(x => x.Value).OrderBy(x => x.Name);
             foreach (var item in textures.Select(ti => GetTexture(ti.Name, false)))
             {

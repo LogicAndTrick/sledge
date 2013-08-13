@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Windows.Forms;
 using OpenTK;
 using Sledge.Common;
 using Sledge.Common.Mediator;
@@ -34,6 +35,7 @@ namespace Sledge.Editor.Documents
     public class Document
     {
         public string MapFile { get; set; }
+        public string MapFileName { get; set; }
         public Map Map { get; set; }
 
         public Game Game { get; set; }
@@ -63,6 +65,9 @@ namespace Sledge.Editor.Documents
             MapFile = mapFile;
             Map = map;
             Game = game;
+            MapFileName = mapFile == null
+                              ? DocumentManager.GetUntitledDocumentName()
+                              : Path.GetFileName(mapFile) ?? DocumentManager.GetUntitledDocumentName();
 
             _subscriptions = new DocumentSubscriptions(this);
 
@@ -94,7 +99,6 @@ namespace Sledge.Editor.Documents
             HelperManager = new HelperManager(this);
 
             if (MapFile != null) Mediator.Publish(EditorMediator.FileOpened, MapFile);
-            Mediator.Publish(EditorMediator.DocumentOpened, this);
 
             // Autosaving
             if (Game.Autosave)
@@ -115,8 +119,6 @@ namespace Sledge.Editor.Documents
 
             _subscriptions.Subscribe();
             HelperManager.UpdateCache();
-
-            Mediator.Publish(EditorMediator.DocumentActivated, this);
         }
 
         public void SetInactive()
@@ -132,6 +134,30 @@ namespace Sledge.Editor.Documents
         {
             Scheduler.Clear(this);
             TextureProvider.DeleteCollection(TextureCollection);
+        }
+
+        public bool SaveFile(string path = null, bool forceOverride = false)
+        {
+            path = forceOverride ? path : path ?? MapFile;
+            if (path == null)
+            {
+                using (var sfd = new SaveFileDialog())
+                {
+                    sfd.Filter = @"VMF Files (*.vmf)|*.vmf|RMF Files (*.rmf)|*.rmf|MAP Files (*.map)|*.map";
+                    if (sfd.ShowDialog() == DialogResult.OK)
+                    {
+                        path = sfd.FileName;
+                    }
+                }
+            }
+            if (path == null) return false;
+
+            MapProvider.SaveMapToFile(path, Map);
+            MapFile = path;
+            MapFileName = Path.GetFileName(MapFile);
+            History.TotalActionsSinceLastSave = 0;
+            Mediator.Publish(EditorMediator.DocumentSaved, this);
+            return true;
         }
 
         private string GetAutosaveFormatString()

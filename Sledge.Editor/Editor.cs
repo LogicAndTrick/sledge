@@ -77,6 +77,7 @@ namespace Sledge.Editor
                 _jumpList.Refresh();
             }
 
+            UpdateDocumentTabs();
             UpdateRecentFiles();
 
             MenuManager.Init(mnuMain, tscToolStrip);
@@ -213,22 +214,46 @@ namespace Sledge.Editor
 
         #endregion
 
+        private bool PromptForChanges(Document doc)
+        {
+            if (doc.History.TotalActionsSinceLastSave > 0)
+            {
+                var result = MessageBox.Show("Would you like to save your changes to " + doc.MapFileName + "?", "Changes Detected", MessageBoxButtons.YesNoCancel);
+                if (result == DialogResult.Cancel)
+                {
+                    return false;
+                }
+                if (result == DialogResult.Yes)
+                {
+                    if (!doc.SaveFile())
+                    {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+
         private void EditorClosing(object sender, FormClosingEventArgs e)
         {
+            foreach(var doc in DocumentManager.Documents.ToArray())
+            {
+                if (doc == DocumentManager.CurrentDocument) continue;
+                if (!PromptForChanges(doc))
+                {
+                    e.Cancel = true;
+                    return;
+                }
+                DocumentManager.Remove(doc);
+            }
             if (DocumentManager.CurrentDocument != null)
             {
-                if (DocumentManager.CurrentDocument.History.TotalActionsSinceLastSave > 0)
+                if (!PromptForChanges(DocumentManager.CurrentDocument))
                 {
-                    var result = MessageBox.Show("Would you like to save your changes to this map?", "Changes Detected", MessageBoxButtons.YesNoCancel);
-                    if (result == DialogResult.Cancel)
-                    {
-                        e.Cancel = true;
-                        return;
-                    }
-                    if (result == DialogResult.Yes) Mediator.Publish(HotkeysMediator.FileSave);
+                    e.Cancel = true;
+                    return;
                 }
                 DocumentManager.Remove(DocumentManager.CurrentDocument);
-                DocumentManager.SwitchTo(null);
             }
         }
 
@@ -257,7 +282,11 @@ namespace Sledge.Editor
             Mediator.Subscribe(EditorMediator.SettingsChanged, this);
 
             Mediator.Subscribe(EditorMediator.DocumentActivated, this);
+            Mediator.Subscribe(EditorMediator.DocumentSaved, this);
+            Mediator.Subscribe(EditorMediator.DocumentOpened, this);
             Mediator.Subscribe(EditorMediator.DocumentClosed, this);
+            Mediator.Subscribe(EditorMediator.DocumentAllClosed, this);
+            Mediator.Subscribe(EditorMediator.HistoryChanged, this);
 
             Mediator.Subscribe(EditorMediator.MouseCoordinatesChanged, this);
             Mediator.Subscribe(EditorMediator.SelectionBoxChanged, this);
@@ -373,9 +402,83 @@ namespace Sledge.Editor
             DocumentGridSpacingChanged(doc.Map.GridSpacing);
 
             Text = "Sledge - " + (String.IsNullOrWhiteSpace(doc.MapFile) ? "Untitled" : System.IO.Path.GetFileName(doc.MapFile));
+
+            DocumentTabs.SelectedIndex = DocumentManager.Documents.IndexOf(doc);
         }
 
-        private void DocumentClosed()
+        private void UpdateDocumentTabs()
+        {
+            if (DocumentTabs.TabPages.Count != DocumentManager.Documents.Count)
+            {
+                DocumentTabs.TabPages.Clear();
+                foreach (var doc in DocumentManager.Documents)
+                {
+                    DocumentTabs.TabPages.Add(doc.MapFileName);
+                }
+            }
+            else
+            {
+                for (var i = 0; i < DocumentManager.Documents.Count; i++)
+                {
+                    var doc = DocumentManager.Documents[i];
+                    DocumentTabs.TabPages[i].Text = doc.MapFileName + (doc.History.TotalActionsSinceLastSave > 0 ? " *" : "");
+                }
+            }
+            if (DocumentManager.CurrentDocument != null)
+            {
+                var si = DocumentManager.Documents.IndexOf(DocumentManager.CurrentDocument);
+                if (si >= 0 && si != DocumentTabs.SelectedIndex) DocumentTabs.SelectedIndex = si;
+            }
+        }
+
+        private void HistoryChanged()
+        {
+            UpdateDocumentTabs();
+        }
+
+        private void DocumentTabsSelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (_closingDocumentTab) return;
+            var si = DocumentTabs.SelectedIndex;
+            if (si >= 0 && si < DocumentManager.Documents.Count)
+            {
+                DocumentManager.SwitchTo(DocumentManager.Documents[si]);
+            }
+        }
+
+        private bool _closingDocumentTab = false;
+
+        private void DocumentTabsRequestClose(object sender, int index)
+        {
+            if (index < 0 || index >= DocumentManager.Documents.Count) return;
+
+            var doc = DocumentManager.Documents[index];
+            if (!PromptForChanges(doc))
+            {
+                return;
+            }
+            _closingDocumentTab = true;
+            DocumentManager.Remove(doc);
+            _closingDocumentTab = false;
+        }
+
+        private void DocumentOpened(Document doc)
+        {
+            UpdateDocumentTabs();
+        }
+
+        private void DocumentSaved(Document doc)
+        {
+            FileOpened(doc.MapFile);
+            UpdateDocumentTabs();
+        }
+
+        private void DocumentClosed(Document doc)
+        {
+            UpdateDocumentTabs();
+        }
+
+        private void DocumentAllClosed()
         {
             TextureGroupComboBox.Items.Clear();
             TextureComboBox.Items.Clear();
@@ -607,7 +710,7 @@ namespace Sledge.Editor
             var recents = SettingsManager.RecentFiles;
             MenuManager.RecentFiles.Clear();
             MenuManager.RecentFiles.AddRange(recents);
-            MenuManager.Rebuild();
+            MenuManager.UpdateRecentFilesMenu();
         }
 
         private void TextureBrowseButtonClicked(object sender, EventArgs e)
