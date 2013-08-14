@@ -183,5 +183,35 @@ namespace Sledge.Settings
 
             File.WriteAllText(SettingsFile, root.ToString());
         }
+
+        private static string GetSessionFile()
+        {
+            var appdata = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            var sledge = Path.Combine(appdata, "Sledge");
+            if (!Directory.Exists(sledge)) Directory.CreateDirectory(sledge);
+            return Path.Combine(sledge, "session");
+        }
+
+        public static void SaveSession(IEnumerable<Tuple<string, Game>> files)
+        {
+            File.WriteAllLines(GetSessionFile(), files.Select(x => x.Item1 + ":" + x.Item2.ID));
+        }
+
+        public static IEnumerable<Tuple<string, Game>> LoadSession()
+        {
+            var sf = GetSessionFile();
+            if (!File.Exists(sf)) return new List<Tuple<string, Game>>();
+            return File.ReadAllLines(sf)
+                .Select(x =>
+                            {
+                                var i = x.LastIndexOf(":", StringComparison.Ordinal);
+                                var file = x.Substring(0, i);
+                                var num = x.Substring(i + 1);
+                                int id;
+                                int.TryParse(num, out id);
+                                return Tuple.Create(file, Games.FirstOrDefault(g => g.ID == id));
+                            })
+                .Where(x => File.Exists(x.Item1) && x.Item2 != null);
+        }
     }
 }

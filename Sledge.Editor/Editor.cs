@@ -46,6 +46,19 @@ namespace Sledge.Editor
             ToolManager.Activate(t);
         }
 
+        private static void LoadFileGame(string fileName, Game game)
+        {
+            try
+            {
+                var map = MapProvider.GetMapFromFile(fileName);
+                DocumentManager.AddAndSwitch(new Document(fileName, map, game));
+            }
+            catch (ProviderException e)
+            {
+                Error.Warning("The map file could not be opened:\n" + e.Message);
+            }
+        }
+
         private static void LoadFile(string fileName)
         {
             using (var gsd = new GameSelectionForm())
@@ -53,15 +66,7 @@ namespace Sledge.Editor
                 gsd.ShowDialog();
                 if (gsd.SelectedGameID < 0) return;
                 var game = SettingsManager.Games.Single(g => g.ID == gsd.SelectedGameID);
-                try
-                {
-                    var map = MapProvider.GetMapFromFile(fileName);
-                    DocumentManager.AddAndSwitch(new Document(fileName, map, game));
-                }
-                catch (ProviderException e)
-                {
-                    Error.Warning("The map file could not be opened:\n" + e.Message);
-                }
+                LoadFileGame(fileName, game);
             }
         }
 
@@ -119,6 +124,11 @@ namespace Sledge.Editor
             Subscribe();
 
             Mediator.MediatorException += (msg, ex) => Logging.Logger.ShowException(ex, "Mediator Error: " + msg);
+
+            foreach (var session in SettingsManager.LoadSession())
+            {
+                LoadFileGame(session.Item1, session.Item2);
+            }
         }
 
         #region Updates
@@ -238,23 +248,13 @@ namespace Sledge.Editor
         {
             foreach(var doc in DocumentManager.Documents.ToArray())
             {
-                if (doc == DocumentManager.CurrentDocument) continue;
                 if (!PromptForChanges(doc))
                 {
                     e.Cancel = true;
                     return;
                 }
-                DocumentManager.Remove(doc);
             }
-            if (DocumentManager.CurrentDocument != null)
-            {
-                if (!PromptForChanges(DocumentManager.CurrentDocument))
-                {
-                    e.Cancel = true;
-                    return;
-                }
-                DocumentManager.Remove(DocumentManager.CurrentDocument);
-            }
+            SettingsManager.SaveSession(DocumentManager.Documents.Select(x => Tuple.Create(x.MapFile, x.Game)));
         }
 
         #region Mediator
