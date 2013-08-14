@@ -126,6 +126,7 @@
     <Compile Include="Compiling\BatchCompileStep.cs" />
     <Compile Include="Documents\Document.cs" />
     <Compile Include="Documents\DocumentManager.cs" />
+    <Compile Include="Documents\DocumentMemory.cs" />
     <Compile Include="Documents\DocumentSubscriptions.cs" />
     <Compile Include="Enums\PasteSpecialGrouping.cs" />
     <Compile Include="Enums\PasteSpecialStartPoint.cs" />
@@ -287,6 +288,9 @@
     </Compile>
     <Compile Include="UI\EntityReportDialog.Designer.cs">
       <DependentUpon>EntityReportDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\ClosableTabControl.cs">
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="UI\HotkeyForm.cs">
       <SubType>Form</SubType>

@@ -70,12 +70,14 @@ namespace Sledge.Providers.Texture
 
             public WadStreamSource(IEnumerable<TexturePackage> packages)
             {
-                _texturePackages = packages.ToList();
+                _texturePackages = new List<TexturePackage>();
                 _packages = new Dictionary<string, Tuple<HLLib.Package, HLLib.Folder>>();
                 HLLib.Initialize();
-                foreach (var tp in _texturePackages)
+                foreach (var tp in packages)
                 {
+                    if (_packages.ContainsKey(tp.PackageFile)) continue;
                     var pack = new HLLib.Package(tp.PackageFile);
+                    _texturePackages.Add(tp);
                     _packages.Add(tp.PackageFile, Tuple.Create(pack, pack.GetRootFolder()));
                 }
             }

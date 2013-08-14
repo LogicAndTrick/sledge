@@ -18,6 +18,11 @@ namespace Sledge.Settings
 
         public static int CameraFOV { get; set; }
 
+        public static bool LoadSession { get; set; }
+        public static bool KeepCameraPositions { get; set; }
+        public static bool KeepSelectedTool { get; set; }
+        public static bool KeepViewportSplitterPosition { get; set; }
+
         static View()
         {
             CrosshairCursorIn2DViews = false;
@@ -36,6 +41,11 @@ namespace Sledge.Settings
             InvertY = false;
 
             CameraFOV = 60;
+
+            LoadSession = true;
+            KeepCameraPositions = false;
+            KeepSelectedTool = false;
+            KeepViewportSplitterPosition = false;
         }
     }
 }

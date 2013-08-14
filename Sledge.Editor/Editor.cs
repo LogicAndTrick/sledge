@@ -46,6 +46,19 @@ namespace Sledge.Editor
             ToolManager.Activate(t);
         }
 
+        private static void LoadFileGame(string fileName, Game game)
+        {
+            try
+            {
+                var map = MapProvider.GetMapFromFile(fileName);
+                DocumentManager.AddAndSwitch(new Document(fileName, map, game));
+            }
+            catch (ProviderException e)
+            {
+                Error.Warning("The map file could not be opened:\n" + e.Message);
+            }
+        }
+
         private static void LoadFile(string fileName)
         {
             using (var gsd = new GameSelectionForm())
@@ -53,15 +66,7 @@ namespace Sledge.Editor
                 gsd.ShowDialog();
                 if (gsd.SelectedGameID < 0) return;
                 var game = SettingsManager.Games.Single(g => g.ID == gsd.SelectedGameID);
-                try
-                {
-                    var map = MapProvider.GetMapFromFile(fileName);
-                    DocumentManager.AddAndSwitch(new Document(fileName, map, game));
-                }
-                catch (ProviderException e)
-                {
-                    Error.Warning("The map file could not be opened:\n" + e.Message);
-                }
+                LoadFileGame(fileName, game);
             }
         }
 
@@ -77,6 +82,7 @@ namespace Sledge.Editor
                 _jumpList.Refresh();
             }
 
+            UpdateDocumentTabs();
             UpdateRecentFiles();
 
             MenuManager.Init(mnuMain, tscToolStrip);
@@ -118,6 +124,14 @@ namespace Sledge.Editor
             Subscribe();
 
             Mediator.MediatorException += (msg, ex) => Logging.Logger.ShowException(ex, "Mediator Error: " + msg);
+
+            if (Sledge.Settings.View.LoadSession)
+            {
+                foreach (var session in SettingsManager.LoadSession())
+                {
+                    LoadFileGame(session.Item1, session.Item2);
+                }
+            }
         }
 
         #region Updates
@@ -213,23 +227,37 @@ namespace Sledge.Editor
 
         #endregion
 
+        private bool PromptForChanges(Document doc)
+        {
+            if (doc.History.TotalActionsSinceLastSave > 0)
+            {
+                var result = MessageBox.Show("Would you like to save your changes to " + doc.MapFileName + "?", "Changes Detected", MessageBoxButtons.YesNoCancel);
+                if (result == DialogResult.Cancel)
+                {
+                    return false;
+                }
+                if (result == DialogResult.Yes)
+                {
+                    if (!doc.SaveFile())
+                    {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+
         private void EditorClosing(object sender, FormClosingEventArgs e)
         {
-            if (DocumentManager.CurrentDocument != null)
+            foreach(var doc in DocumentManager.Documents.ToArray())
             {
-                if (DocumentManager.CurrentDocument.History.TotalActionsSinceLastSave > 0)
+                if (!PromptForChanges(doc))
                 {
-                    var result = MessageBox.Show("Would you like to save your changes to this map?", "Changes Detected", MessageBoxButtons.YesNoCancel);
-                    if (result == DialogResult.Cancel)
-                    {
-                        e.Cancel = true;
-                        return;
-                    }
-                    if (result == DialogResult.Yes) Mediator.Publish(HotkeysMediator.FileSave);
+                    e.Cancel = true;
+                    return;
                 }
-                DocumentManager.Remove(DocumentManager.CurrentDocument);
-                DocumentManager.SwitchTo(null);
             }
+            SettingsManager.SaveSession(DocumentManager.Documents.Select(x => Tuple.Create(x.MapFile, x.Game)));
         }
 
         #region Mediator
@@ -246,6 +274,9 @@ namespace Sledge.Editor
             Mediator.Subscribe(HotkeysMediator.FileNew, this);
             Mediator.Subscribe(HotkeysMediator.FileOpen, this);
 
+            Mediator.Subscribe(HotkeysMediator.PreviousTab, this);
+            Mediator.Subscribe(HotkeysMediator.NextTab, this);
+
             Mediator.Subscribe(EditorMediator.FileOpened, this);
             Mediator.Subscribe(EditorMediator.FileSaved, this);
 
@@ -257,7 +288,11 @@ namespace Sledge.Editor
             Mediator.Subscribe(EditorMediator.SettingsChanged, this);
 
             Mediator.Subscribe(EditorMediator.DocumentActivated, this);
+            Mediator.Subscribe(EditorMediator.DocumentSaved, this);
+            Mediator.Subscribe(EditorMediator.DocumentOpened, this);
             Mediator.Subscribe(EditorMediator.DocumentClosed, this);
+            Mediator.Subscribe(EditorMediator.DocumentAllClosed, this);
+            Mediator.Subscribe(EditorMediator.HistoryChanged, this);
 
             Mediator.Subscribe(EditorMediator.MouseCoordinatesChanged, this);
             Mediator.Subscribe(EditorMediator.SelectionBoxChanged, this);
@@ -307,6 +342,26 @@ namespace Sledge.Editor
                 if (ofd.ShowDialog() != DialogResult.OK) return;
                 LoadFile(ofd.FileName);
             }
+        }
+
+        private void PreviousTab()
+        {
+            var count = DocumentTabs.TabCount;
+            if (count <= 1) return;
+            var sel = DocumentTabs.SelectedIndex;
+            var prev = sel - 1;
+            if (prev < 0) prev = count - 1;
+            DocumentTabs.SelectedIndex = prev;
+        }
+
+        private void NextTab()
+        {
+            var count = DocumentTabs.TabCount;
+            if (count <= 1) return;
+            var sel = DocumentTabs.SelectedIndex;
+            var next = sel + 1;
+            if (next >= count) next = 0;
+            DocumentTabs.SelectedIndex = next;
         }
 
         private static void OpenSettings()
@@ -373,9 +428,83 @@ namespace Sledge.Editor
             DocumentGridSpacingChanged(doc.Map.GridSpacing);
 
             Text = "Sledge - " + (String.IsNullOrWhiteSpace(doc.MapFile) ? "Untitled" : System.IO.Path.GetFileName(doc.MapFile));
+
+            DocumentTabs.SelectedIndex = DocumentManager.Documents.IndexOf(doc);
         }
 
-        private void DocumentClosed()
+        private void UpdateDocumentTabs()
+        {
+            if (DocumentTabs.TabPages.Count != DocumentManager.Documents.Count)
+            {
+                DocumentTabs.TabPages.Clear();
+                foreach (var doc in DocumentManager.Documents)
+                {
+                    DocumentTabs.TabPages.Add(doc.MapFileName);
+                }
+            }
+            else
+            {
+                for (var i = 0; i < DocumentManager.Documents.Count; i++)
+                {
+                    var doc = DocumentManager.Documents[i];
+                    DocumentTabs.TabPages[i].Text = doc.MapFileName + (doc.History.TotalActionsSinceLastSave > 0 ? " *" : "");
+                }
+            }
+            if (DocumentManager.CurrentDocument != null)
+            {
+                var si = DocumentManager.Documents.IndexOf(DocumentManager.CurrentDocument);
+                if (si >= 0 && si != DocumentTabs.SelectedIndex) DocumentTabs.SelectedIndex = si;
+            }
+        }
+
+        private void HistoryChanged()
+        {
+            UpdateDocumentTabs();
+        }
+
+        private void DocumentTabsSelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (_closingDocumentTab) return;
+            var si = DocumentTabs.SelectedIndex;
+            if (si >= 0 && si < DocumentManager.Documents.Count)
+            {
+                DocumentManager.SwitchTo(DocumentManager.Documents[si]);
+            }
+        }
+
+        private bool _closingDocumentTab = false;
+
+        private void DocumentTabsRequestClose(object sender, int index)
+        {
+            if (index < 0 || index >= DocumentManager.Documents.Count) return;
+
+            var doc = DocumentManager.Documents[index];
+            if (!PromptForChanges(doc))
+            {
+                return;
+            }
+            _closingDocumentTab = true;
+            DocumentManager.Remove(doc);
+            _closingDocumentTab = false;
+        }
+
+        private void DocumentOpened(Document doc)
+        {
+            UpdateDocumentTabs();
+        }
+
+        private void DocumentSaved(Document doc)
+        {
+            FileOpened(doc.MapFile);
+            UpdateDocumentTabs();
+        }
+
+        private void DocumentClosed(Document doc)
+        {
+            UpdateDocumentTabs();
+        }
+
+        private void DocumentAllClosed()
         {
             TextureGroupComboBox.Items.Clear();
             TextureComboBox.Items.Clear();
@@ -607,7 +736,7 @@ namespace Sledge.Editor
             var recents = SettingsManager.RecentFiles;
             MenuManager.RecentFiles.Clear();
             MenuManager.RecentFiles.AddRange(recents);
-            MenuManager.Rebuild();
+            MenuManager.UpdateRecentFilesMenu();
         }
 
         private void TextureBrowseButtonClicked(object sender, EventArgs e)

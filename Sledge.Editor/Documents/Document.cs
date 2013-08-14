@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Windows.Forms;
 using OpenTK;
 using Sledge.Common;
 using Sledge.Common.Mediator;
@@ -17,8 +18,6 @@ using Sledge.Editor.Rendering;
 using Sledge.Editor.Rendering.Helpers;
 using Sledge.Editor.Tools;
 using Sledge.Editor.UI;
-using Sledge.Editor.Visgroups;
-using Sledge.Graphics;
 using Sledge.Graphics.Helpers;
 using Sledge.Providers;
 using Sledge.Providers.GameData;
@@ -34,6 +33,7 @@ namespace Sledge.Editor.Documents
     public class Document
     {
         public string MapFile { get; set; }
+        public string MapFileName { get; set; }
         public Map Map { get; set; }
 
         public Game Game { get; set; }
@@ -49,6 +49,7 @@ namespace Sledge.Editor.Documents
         public TextureCollection TextureCollection { get; set; }
 
         private readonly DocumentSubscriptions _subscriptions;
+        private readonly DocumentMemory _memory;
 
         private Document()
         {
@@ -63,8 +64,12 @@ namespace Sledge.Editor.Documents
             MapFile = mapFile;
             Map = map;
             Game = game;
+            MapFileName = mapFile == null
+                              ? DocumentManager.GetUntitledDocumentName()
+                              : Path.GetFileName(mapFile) ?? DocumentManager.GetUntitledDocumentName();
 
             _subscriptions = new DocumentSubscriptions(this);
+            _memory = new DocumentMemory();
 
             Selection = new SelectionManager(this);
             History = new HistoryManager(this);
@@ -94,7 +99,6 @@ namespace Sledge.Editor.Documents
             HelperManager = new HelperManager(this);
 
             if (MapFile != null) Mediator.Publish(EditorMediator.FileOpened, MapFile);
-            Mediator.Publish(EditorMediator.DocumentOpened, this);
 
             // Autosaving
             if (Game.Autosave)
@@ -106,7 +110,9 @@ namespace Sledge.Editor.Documents
 
         public void SetActive()
         {
-            Editor.Instance.SelectTool(ToolManager.Tools[0]); // todo keep this? cache?
+            if (!Sledge.Settings.View.KeepSelectedTool) ToolManager.Activate(_memory.SelectedTool);
+            if (!Sledge.Settings.View.KeepCameraPositions) _memory.RestoreViewports(ViewportManager.Viewports);
+            if (!Sledge.Settings.View.KeepViewportSplitterPosition) ViewportManager.SetSplitterPosition(_memory.SplitterPosition);
 
             ViewportManager.AddContext3D(new WidgetLinesRenderable());
             Renderer.Register(ViewportManager.Viewports);
@@ -115,13 +121,14 @@ namespace Sledge.Editor.Documents
 
             _subscriptions.Subscribe();
             HelperManager.UpdateCache();
-
-            Mediator.Publish(EditorMediator.DocumentActivated, this);
         }
 
         public void SetInactive()
         {
-            // todo save state (camera locations, selected tool)
+            if (!Sledge.Settings.View.KeepSelectedTool && ToolManager.ActiveTool != null) _memory.SelectedTool = ToolManager.ActiveTool.GetType();
+            if (!Sledge.Settings.View.KeepCameraPositions) _memory.RememberViewports(ViewportManager.Viewports);
+            if (!Sledge.Settings.View.KeepViewportSplitterPosition) _memory.SplitterPosition = ViewportManager.GetSplitterPosition();
+
             ViewportManager.ClearContexts();
             HelperManager.ClearCache();
 
@@ -132,6 +139,30 @@ namespace Sledge.Editor.Documents
         {
             Scheduler.Clear(this);
             TextureProvider.DeleteCollection(TextureCollection);
+        }
+
+        public bool SaveFile(string path = null, bool forceOverride = false)
+        {
+            path = forceOverride ? path : path ?? MapFile;
+            if (path == null)
+            {
+                using (var sfd = new SaveFileDialog())
+                {
+                    sfd.Filter = @"VMF Files (*.vmf)|*.vmf|RMF Files (*.rmf)|*.rmf|MAP Files (*.map)|*.map";
+                    if (sfd.ShowDialog() == DialogResult.OK)
+                    {
+                        path = sfd.FileName;
+                    }
+                }
+            }
+            if (path == null) return false;
+
+            MapProvider.SaveMapToFile(path, Map);
+            MapFile = path;
+            MapFileName = Path.GetFileName(MapFile);
+            History.TotalActionsSinceLastSave = 0;
+            Mediator.Publish(EditorMediator.DocumentSaved, this);
+            return true;
         }
 
         private string GetAutosaveFormatString()

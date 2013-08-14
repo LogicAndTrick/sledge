@@ -38,14 +38,19 @@ namespace Sledge.Editor.Menu
 
         public IEnumerable<ToolStripItem> Build()
         {
-            if (IsVisible != null && !IsVisible()) yield break;
-            yield return new UpdatingToolStripMenuItem(Name, Image, IsActive, IsChecked, Text, Message, Parameter);
+            //if (IsVisible != null && !IsVisible()) yield break;
+            yield return new UpdatingToolStripMenuItem(Name, Image, CombineActions(IsVisible, IsActive), IsChecked, Text, Message, Parameter);
         }
 
         public IEnumerable<ToolStripItem> BuildToolStrip()
         {
-            if (IsVisible != null && !IsVisible()) yield break;
-            yield return new UpdatingToolStripButton(Name, Image, IsActive, IsChecked, Text, Message, Parameter);
+            //if (IsVisible != null && !IsVisible()) yield break;
+            yield return new UpdatingToolStripButton(Name, Image, CombineActions(IsVisible, IsActive), IsChecked, Text, Message, Parameter);
+        }
+
+        private Func<bool> CombineActions(Func<bool> one, Func<bool> two)
+        {
+            return () => (one == null && two == null) || ((one == null || one()) && (two == null || two()));
         }
     }
 }

@@ -203,57 +203,22 @@ namespace Sledge.Editor.Documents
                 if (result == DialogResult.Cancel) return;
                 if (result == DialogResult.Yes) FileSave();
             }
-            DocumentManager.SwitchTo(null);
             DocumentManager.Remove(_document);
-            Mediator.Publish(EditorMediator.DocumentClosed);
         }
 
         public void FileSave()
         {
-            var currentFile = _document.MapFile;
-            if (currentFile == null)
-            {
-                using (var sfd = new SaveFileDialog())
-                {
-                    sfd.Filter = @"VMF Files (*.vmf)|*.vmf|RMF Files (*.rmf)|*.rmf|MAP Files (*.map)|*.map";
-                    if (sfd.ShowDialog() == DialogResult.OK)
-                    {
-                        currentFile = sfd.FileName;
-                    }
-                }
-            }
-            if (currentFile == null) return;
-
-            MapProvider.SaveMapToFile(currentFile, _document.Map);
-            _document.MapFile = currentFile;
-            Mediator.Publish(EditorMediator.FileOpened, _document.MapFile);
-
-            _document.History.TotalActionsSinceLastSave = 0;
+            _document.SaveFile();
         }
 
         public void FileSaveAs()
         {
-            string currentFile = null;
-            using (var sfd = new SaveFileDialog())
-            {
-                sfd.Filter = @"VMF Files (*.vmf)|*.vmf|RMF Files (*.rmf)|*.rmf|MAP Files (*.map)|*.map";
-                if (sfd.ShowDialog() == DialogResult.OK)
-                {
-                    currentFile = sfd.FileName;
-                }
-            }
-            if (currentFile == null) return;
-
-            MapProvider.SaveMapToFile(currentFile, _document.Map);
-            _document.MapFile = currentFile;
-            Mediator.Publish(EditorMediator.FileOpened, _document.MapFile);
-
-            _document.History.TotalActionsSinceLastSave = 0;
+            _document.SaveFile(null, true);
         }
 
         public void FileCompile()
         {
-            FileSave();
+            _document.SaveFile();
             if (_document.MapFile == null) return;
             
             var build = SettingsManager.Builds.FirstOrDefault(x => x.ID == _document.Game.BuildID);

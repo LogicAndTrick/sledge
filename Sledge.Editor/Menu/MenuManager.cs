@@ -62,8 +62,8 @@ namespace Sledge.Editor.Menu
             
             Func<bool> canUndo = () => mapOpen() && DocumentManager.CurrentDocument.History.CanUndo();
             Func<bool> canRedo = () => mapOpen() && DocumentManager.CurrentDocument.History.CanRedo();
-            Func<string> undoText = () => mapOpen() ? DocumentManager.CurrentDocument.History.GetUndoString() : "";
-            Func<string> redoText = () => mapOpen() ? DocumentManager.CurrentDocument.History.GetRedoString() : "";
+            Func<string> undoText = () => mapOpen() ? DocumentManager.CurrentDocument.History.GetUndoString() : "Undo";
+            Func<string> redoText = () => mapOpen() ? DocumentManager.CurrentDocument.History.GetRedoString() : "Redo";
             Func<bool> itemsSelected = () => mapOpen() && DocumentManager.CurrentDocument.Selection.GetSelectedObjects().Any();
             Func<bool> canPaste = Clipboard.ClipboardManager.CanPaste;
             Add("Edit", new SimpleMenuBuilder("Undo", HotkeysMediator.HistoryUndo) { Image = Resources.Menu_Undo, IsVisible = mapOpen, IsActive = canUndo, Text = undoText, ShowInToolStrip = true });
@@ -161,6 +161,24 @@ namespace Sledge.Editor.Menu
             Add("Help", new SimpleMenuBuilder("About...", EditorMediator.About));
         }
 
+        public static void UpdateRecentFilesMenu()
+        {
+            RebuildPartial("File");
+        }
+
+        public static void RebuildPartial(string name)
+        {
+            if (!MenuItems.ContainsKey(name)) return;
+            var mi = MenuItems[name];
+
+            foreach (ToolStripMenuItem menu in _menu.Items)
+            {
+                if (menu.Text != name) continue;
+                menu.DropDownItems.Clear();
+                menu.DropDownItems.AddRange(mi.Where(x => x.ShowInMenu).SelectMany(x => x.Build()).ToArray());
+            }
+        }
+
         public static void Rebuild()
         {
             if (_menu == null || _container == null) return;
@@ -169,29 +187,42 @@ namespace Sledge.Editor.Menu
                 mi.DropDownOpening -= DropDownOpening;
             }
             _menu.Items.Clear();
+            var removeMenu = _menu.Items.OfType<ToolStripMenuItem>().ToList();
             foreach (var kv in MenuItems)
             {
-                var mi = new ToolStripMenuItem(kv.Key);
+                var mi = removeMenu.FirstOrDefault(x => x.Text == kv.Key) ?? new ToolStripMenuItem(kv.Key);
+                mi.DropDownItems.Clear();
                 mi.DropDownItems.AddRange(kv.Value.Where(x => x.ShowInMenu).SelectMany(x => x.Build()).ToArray());
                 if (mi.DropDownItems.Count <= 0) continue;
+                removeMenu.Remove(mi);
                 mi.DropDownOpening += DropDownOpening;
-                _menu.Items.Add(mi);
+                if (!_menu.Items.Contains(mi)) _menu.Items.Add(mi);
+            }
+            foreach (var rem in removeMenu)
+            {
+                _menu.Items.Remove(rem);
             }
             // Need to remove and re-add tool strips because the ordering is incorrect otherwise
-            foreach (var control in _container.Controls.OfType<ToolStripPanel>().SelectMany(x => x.Controls.OfType<ToolStrip>()).ToList())
-            {
-                if (MenuItems.Any(x => x.Key == control.Name))
-                {
-                    control.Parent.Controls.Remove(control);
-                    control.Dispose();
-                }
-            }
+            var removeToolbar = _container.Controls.OfType<ToolStripPanel>()
+                .SelectMany(x => x.Controls.OfType<ToolStrip>())
+                .Where(control => MenuItems.Any(x => x.Key == control.Name))
+                .ToList();
             foreach (var kv in MenuItems.Reverse())
             {
-                var ts = new ToolStrip {Name = kv.Key};
+                var ts = removeToolbar.FirstOrDefault(x => x.Name == kv.Key) ?? new ToolStrip {Name = kv.Key};
+                // TODO Match by name, only remove items that don't match
                 ts.Items.Clear();
                 ts.Items.AddRange(kv.Value.Where(x => x.ShowInToolStrip).SelectMany(x => x.BuildToolStrip()).ToArray());
-                if (ts.Items.Count > 0) _container.TopToolStripPanel.Join(ts);
+                if (ts.Items.Count > 0)
+                {
+                    if (!removeToolbar.Contains(ts)) _container.TopToolStripPanel.Join(ts);
+                    removeToolbar.Remove(ts);
+                }
+            }
+            foreach (var control in removeToolbar)
+            {
+                control.Parent.Controls.Remove(control);
+                control.Dispose();
             }
         }
 

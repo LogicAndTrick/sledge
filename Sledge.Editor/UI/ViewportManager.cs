@@ -49,6 +49,22 @@ namespace Sledge.Editor.UI
             RunAll();
         }
 
+        public static PointF GetSplitterPosition()
+        {
+            var w = MainWindowGrid.GetColumnWidths();
+            var h = MainWindowGrid.GetRowHeights();
+            return new PointF(MainWindowGrid.ColumnStyles[0].Width, MainWindowGrid.RowStyles[0].Height);
+        }
+
+        public static void SetSplitterPosition(PointF pos)
+        {
+            if (pos.X <= 0 || pos.Y <= 0) return;
+            MainWindowGrid.ColumnStyles[0].Width = pos.X;
+            MainWindowGrid.ColumnStyles[1].Width = 100 - pos.X;
+            MainWindowGrid.RowStyles[0].Height = pos.Y;
+            MainWindowGrid.RowStyles[1].Height = 100 - pos.Y;
+        }
+
         private static void SubscribeExceptions(ViewportBase vp)
         {
             vp.ListenerException += (sender, ex) => Logging.Logger.ShowException(ex, "Viewport Listener Exception");
