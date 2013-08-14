@@ -233,8 +233,20 @@ namespace Sledge.Providers.GameData
                                     Key = iterator.Current.GetValue()
                                 };
                                 Expect(iterator, LexType.Colon);
-                                Expect(iterator, LexType.String);
-                                opt.Description = ParsePlusString(iterator);
+
+                                // Some FGDs use values for property descriptions instead of strings
+                                iterator.MoveNext();
+                                Assert(iterator.Current.IsValueOrString(), "Choices value must be value or string type.");
+                                if (iterator.Current.Type == LexType.String)
+                                {
+                                    opt.Description = ParsePlusString(iterator);
+                                }
+                                else
+                                {
+                                    opt.Description = iterator.Current.GetValue();
+                                    iterator.MoveNext(); // ParsePlusString moves next once it's complete, need to do the same here
+                                }
+
                                 prop.Options.Add(opt);
                                 if (iterator.Current.Type != LexType.Colon)
                                 {
