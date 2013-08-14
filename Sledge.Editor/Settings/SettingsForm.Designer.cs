@@ -258,6 +258,10 @@ namespace Sledge.Editor.Settings
             this.btnCancelSettings = new System.Windows.Forms.Button();
             this.btnApplyAndCloseSettings = new System.Windows.Forms.Button();
             this.btnApplySettings = new System.Windows.Forms.Button();
+            this.groupBox20 = new System.Windows.Forms.GroupBox();
+            this.LoadSession = new System.Windows.Forms.CheckBox();
+            this.KeepCameraPositions = new System.Windows.Forms.CheckBox();
+            this.KeepSelectedTool = new System.Windows.Forms.CheckBox();
             this.tbcSettings.SuspendLayout();
             this.tabGeneral.SuspendLayout();
             this.groupBox19.SuspendLayout();
@@ -314,6 +318,7 @@ namespace Sledge.Editor.Settings
             ((System.ComponentModel.ISupportInitialize)(this.trackBar2)).BeginInit();
             this.groupBox7.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
+            this.groupBox20.SuspendLayout();
             this.SuspendLayout();
             // 
             // tbcSettings
@@ -337,6 +342,7 @@ namespace Sledge.Editor.Settings
             // 
             // tabGeneral
             // 
+            this.tabGeneral.Controls.Add(this.groupBox20);
             this.tabGeneral.Controls.Add(this.groupBox19);
             this.tabGeneral.Controls.Add(this.groupBox18);
             this.tabGeneral.Location = new System.Drawing.Point(4, 22);
@@ -2773,6 +2779,48 @@ namespace Sledge.Editor.Settings
             this.btnApplySettings.UseVisualStyleBackColor = true;
             this.btnApplySettings.Click += new System.EventHandler(this.Apply);
             // 
+            // groupBox20
+            // 
+            this.groupBox20.Controls.Add(this.KeepSelectedTool);
+            this.groupBox20.Controls.Add(this.KeepCameraPositions);
+            this.groupBox20.Controls.Add(this.LoadSession);
+            this.groupBox20.Location = new System.Drawing.Point(6, 217);
+            this.groupBox20.Name = "groupBox20";
+            this.groupBox20.Size = new System.Drawing.Size(357, 115);
+            this.groupBox20.TabIndex = 4;
+            this.groupBox20.TabStop = false;
+            this.groupBox20.Text = "Multiple Files";
+            // 
+            // LoadSession
+            // 
+            this.LoadSession.Location = new System.Drawing.Point(12, 19);
+            this.LoadSession.Name = "LoadSession";
+            this.LoadSession.Size = new System.Drawing.Size(339, 24);
+            this.LoadSession.TabIndex = 3;
+            this.LoadSession.Tag = "";
+            this.LoadSession.Text = "Load previously opened files on startup";
+            this.LoadSession.UseVisualStyleBackColor = true;
+            // 
+            // KeepCameraPositions
+            // 
+            this.KeepCameraPositions.Location = new System.Drawing.Point(12, 49);
+            this.KeepCameraPositions.Name = "KeepCameraPositions";
+            this.KeepCameraPositions.Size = new System.Drawing.Size(339, 24);
+            this.KeepCameraPositions.TabIndex = 3;
+            this.KeepCameraPositions.Tag = "";
+            this.KeepCameraPositions.Text = "Keep current camera positions when switching between maps";
+            this.KeepCameraPositions.UseVisualStyleBackColor = true;
+            // 
+            // KeepSelectedTool
+            // 
+            this.KeepSelectedTool.Location = new System.Drawing.Point(12, 79);
+            this.KeepSelectedTool.Name = "KeepSelectedTool";
+            this.KeepSelectedTool.Size = new System.Drawing.Size(339, 24);
+            this.KeepSelectedTool.TabIndex = 3;
+            this.KeepSelectedTool.Tag = "";
+            this.KeepSelectedTool.Text = "Keep current selected tool when switching between maps";
+            this.KeepSelectedTool.UseVisualStyleBackColor = true;
+            // 
             // SettingsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -2853,6 +2901,7 @@ namespace Sledge.Editor.Settings
             ((System.ComponentModel.ISupportInitialize)(this.trackBar2)).EndInit();
             this.groupBox7.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).EndInit();
+            this.groupBox20.ResumeLayout(false);
             this.ResumeLayout(false);
 
 		}
@@ -3078,5 +3127,9 @@ namespace Sledge.Editor.Settings
         private System.Windows.Forms.CheckBox ApplyTextureImmediately;
         private System.Windows.Forms.Label label31;
         private System.Windows.Forms.NumericUpDown SelectionBoxBackgroundOpacity;
+        private System.Windows.Forms.GroupBox groupBox20;
+        private System.Windows.Forms.CheckBox KeepSelectedTool;
+        private System.Windows.Forms.CheckBox KeepCameraPositions;
+        private System.Windows.Forms.CheckBox LoadSession;
 	}
 }

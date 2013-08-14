@@ -110,8 +110,8 @@ namespace Sledge.Editor.Documents
 
         public void SetActive()
         {
-            ToolManager.Activate(_memory.SelectedTool);
-            _memory.RestoreViewports(ViewportManager.Viewports);
+            if (!Sledge.Settings.View.KeepSelectedTool) ToolManager.Activate(_memory.SelectedTool);
+            if (!Sledge.Settings.View.KeepCameraPositions) _memory.RestoreViewports(ViewportManager.Viewports);
 
             ViewportManager.AddContext3D(new WidgetLinesRenderable());
             Renderer.Register(ViewportManager.Viewports);
@@ -124,8 +124,8 @@ namespace Sledge.Editor.Documents
 
         public void SetInactive()
         {
-            if (ToolManager.ActiveTool != null) _memory.SelectedTool = ToolManager.ActiveTool.GetType();
-            _memory.RememberViewports(ViewportManager.Viewports);
+            if (!Sledge.Settings.View.KeepSelectedTool && ToolManager.ActiveTool != null) _memory.SelectedTool = ToolManager.ActiveTool.GetType();
+            if (!Sledge.Settings.View.KeepCameraPositions) _memory.RememberViewports(ViewportManager.Viewports);
 
             ViewportManager.ClearContexts();
             HelperManager.ClearCache();

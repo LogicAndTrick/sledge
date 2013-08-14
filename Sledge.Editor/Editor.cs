@@ -125,9 +125,12 @@ namespace Sledge.Editor
 
             Mediator.MediatorException += (msg, ex) => Logging.Logger.ShowException(ex, "Mediator Error: " + msg);
 
-            foreach (var session in SettingsManager.LoadSession())
+            if (Sledge.Settings.View.LoadSession)
             {
-                LoadFileGame(session.Item1, session.Item2);
+                foreach (var session in SettingsManager.LoadSession())
+                {
+                    LoadFileGame(session.Item1, session.Item2);
+                }
             }
         }
 

@@ -184,6 +184,10 @@ namespace Sledge.Editor.Settings
 
 	        ApplyTextureImmediately.Checked = Sledge.Settings.Select.ApplyTextureImmediately;
 
+            LoadSession.Checked = Sledge.Settings.View.LoadSession;
+            KeepCameraPositions.Checked = Sledge.Settings.View.KeepCameraPositions;
+            KeepSelectedTool.Checked = Sledge.Settings.View.KeepSelectedTool;
+
             // 2D Views
             CrosshairCursorIn2DViews.Checked = Sledge.Settings.View.CrosshairCursorIn2DViews;
             AutoSelectBox.Checked = Sledge.Settings.Select.AutoSelectBox;
@@ -259,6 +263,10 @@ namespace Sledge.Editor.Settings
             Sledge.Settings.Select.ResetBrushTypeOnCreation = ResetBrushTypeOnCreation.Checked;
 
             Sledge.Settings.Select.ApplyTextureImmediately = ApplyTextureImmediately.Checked;
+
+            Sledge.Settings.View.LoadSession = LoadSession.Checked;
+            Sledge.Settings.View.KeepCameraPositions = KeepCameraPositions.Checked;
+            Sledge.Settings.View.KeepSelectedTool = KeepSelectedTool.Checked;
 
             // 2D Views
             Sledge.Settings.View.CrosshairCursorIn2DViews = CrosshairCursorIn2DViews.Checked;
