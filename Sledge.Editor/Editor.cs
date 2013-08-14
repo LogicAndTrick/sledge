@@ -274,6 +274,9 @@ namespace Sledge.Editor
             Mediator.Subscribe(HotkeysMediator.FileNew, this);
             Mediator.Subscribe(HotkeysMediator.FileOpen, this);
 
+            Mediator.Subscribe(HotkeysMediator.PreviousTab, this);
+            Mediator.Subscribe(HotkeysMediator.NextTab, this);
+
             Mediator.Subscribe(EditorMediator.FileOpened, this);
             Mediator.Subscribe(EditorMediator.FileSaved, this);
 
@@ -339,6 +342,26 @@ namespace Sledge.Editor
                 if (ofd.ShowDialog() != DialogResult.OK) return;
                 LoadFile(ofd.FileName);
             }
+        }
+
+        private void PreviousTab()
+        {
+            var count = DocumentTabs.TabCount;
+            if (count <= 1) return;
+            var sel = DocumentTabs.SelectedIndex;
+            var prev = sel - 1;
+            if (prev < 0) prev = count - 1;
+            DocumentTabs.SelectedIndex = prev;
+        }
+
+        private void NextTab()
+        {
+            var count = DocumentTabs.TabCount;
+            if (count <= 1) return;
+            var sel = DocumentTabs.SelectedIndex;
+            var next = sel + 1;
+            if (next >= count) next = 0;
+            DocumentTabs.SelectedIndex = next;
         }
 
         private static void OpenSettings()

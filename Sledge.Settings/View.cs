@@ -21,6 +21,7 @@ namespace Sledge.Settings
         public static bool LoadSession { get; set; }
         public static bool KeepCameraPositions { get; set; }
         public static bool KeepSelectedTool { get; set; }
+        public static bool KeepViewportSplitterPosition { get; set; }
 
         static View()
         {
@@ -44,6 +45,7 @@ namespace Sledge.Settings
             LoadSession = true;
             KeepCameraPositions = false;
             KeepSelectedTool = false;
+            KeepViewportSplitterPosition = false;
         }
     }
 }

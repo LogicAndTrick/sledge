@@ -262,6 +262,7 @@ namespace Sledge.Editor.Settings
             this.LoadSession = new System.Windows.Forms.CheckBox();
             this.KeepCameraPositions = new System.Windows.Forms.CheckBox();
             this.KeepSelectedTool = new System.Windows.Forms.CheckBox();
+            this.KeepViewportSplitterPosition = new System.Windows.Forms.CheckBox();
             this.tbcSettings.SuspendLayout();
             this.tabGeneral.SuspendLayout();
             this.groupBox19.SuspendLayout();
@@ -2781,12 +2782,13 @@ namespace Sledge.Editor.Settings
             // 
             // groupBox20
             // 
+            this.groupBox20.Controls.Add(this.KeepViewportSplitterPosition);
             this.groupBox20.Controls.Add(this.KeepSelectedTool);
             this.groupBox20.Controls.Add(this.KeepCameraPositions);
             this.groupBox20.Controls.Add(this.LoadSession);
             this.groupBox20.Location = new System.Drawing.Point(6, 217);
             this.groupBox20.Name = "groupBox20";
-            this.groupBox20.Size = new System.Drawing.Size(357, 115);
+            this.groupBox20.Size = new System.Drawing.Size(357, 158);
             this.groupBox20.TabIndex = 4;
             this.groupBox20.TabStop = false;
             this.groupBox20.Text = "Multiple Files";
@@ -2820,6 +2822,16 @@ namespace Sledge.Editor.Settings
             this.KeepSelectedTool.Tag = "";
             this.KeepSelectedTool.Text = "Keep current selected tool when switching between maps";
             this.KeepSelectedTool.UseVisualStyleBackColor = true;
+            // 
+            // KeepViewportSplitterPosition
+            // 
+            this.KeepViewportSplitterPosition.Location = new System.Drawing.Point(12, 109);
+            this.KeepViewportSplitterPosition.Name = "KeepViewportSplitterPosition";
+            this.KeepViewportSplitterPosition.Size = new System.Drawing.Size(339, 24);
+            this.KeepViewportSplitterPosition.TabIndex = 3;
+            this.KeepViewportSplitterPosition.Tag = "";
+            this.KeepViewportSplitterPosition.Text = "Keep viewport splitter position when switching between maps";
+            this.KeepViewportSplitterPosition.UseVisualStyleBackColor = true;
             // 
             // SettingsForm
             // 
@@ -3131,5 +3143,6 @@ namespace Sledge.Editor.Settings
         private System.Windows.Forms.CheckBox KeepSelectedTool;
         private System.Windows.Forms.CheckBox KeepCameraPositions;
         private System.Windows.Forms.CheckBox LoadSession;
+        private System.Windows.Forms.CheckBox KeepViewportSplitterPosition;
 	}
 }

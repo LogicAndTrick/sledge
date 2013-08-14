@@ -187,6 +187,7 @@ namespace Sledge.Editor.Settings
             LoadSession.Checked = Sledge.Settings.View.LoadSession;
             KeepCameraPositions.Checked = Sledge.Settings.View.KeepCameraPositions;
             KeepSelectedTool.Checked = Sledge.Settings.View.KeepSelectedTool;
+	        KeepViewportSplitterPosition.Checked = Sledge.Settings.View.KeepViewportSplitterPosition;
 
             // 2D Views
             CrosshairCursorIn2DViews.Checked = Sledge.Settings.View.CrosshairCursorIn2DViews;
@@ -267,6 +268,7 @@ namespace Sledge.Editor.Settings
             Sledge.Settings.View.LoadSession = LoadSession.Checked;
             Sledge.Settings.View.KeepCameraPositions = KeepCameraPositions.Checked;
             Sledge.Settings.View.KeepSelectedTool = KeepSelectedTool.Checked;
+            Sledge.Settings.View.KeepViewportSplitterPosition = KeepViewportSplitterPosition.Checked;
 
             // 2D Views
             Sledge.Settings.View.CrosshairCursorIn2DViews = CrosshairCursorIn2DViews.Checked;

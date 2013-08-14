@@ -100,5 +100,10 @@ namespace Sledge.Settings
         VMScalingMode,
         VMFaceEditMode,
         VMSplitFace,
+
+        // Tabs
+
+        PreviousTab,
+        NextTab,
     }
 }

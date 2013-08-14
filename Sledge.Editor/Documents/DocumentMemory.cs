@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using OpenTK;
 using Sledge.DataStructures.Geometric;
 using Sledge.Editor.Tools;
@@ -13,6 +14,7 @@ namespace Sledge.Editor.Documents
         private Vector3 _cameraLookat;
         private Vector3 _cameraLocation;
         public Type SelectedTool { get; set; }
+        public PointF SplitterPosition { get; set; }
 
         public DocumentMemory()
         {
