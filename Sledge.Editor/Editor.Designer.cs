@@ -39,7 +39,7 @@
             this.StatusSnapLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.tscToolStrip = new System.Windows.Forms.ToolStripContainer();
             this.tblQuadView = new Sledge.Editor.UI.QuadSplitControl();
-            this.DocumentTabs = new Sledge.Editor.UI.FlexibleTabControl();
+            this.DocumentTabs = new Sledge.Editor.UI.ClosableTabControl();
             this.panel1 = new System.Windows.Forms.Panel();
             this.RightToolbar = new System.Windows.Forms.TableLayoutPanel();
             this.HistoryPanel = new System.Windows.Forms.FlowLayoutPanel();
@@ -360,7 +360,7 @@
             this.DocumentTabs.SelectedIndex = 0;
             this.DocumentTabs.Size = new System.Drawing.Size(682, 24);
             this.DocumentTabs.TabIndex = 2;
-            this.DocumentTabs.RequestClose += new Sledge.Editor.UI.FlexibleTabControl.RequestCloseEventHandler(this.DocumentTabsRequestClose);
+            this.DocumentTabs.RequestClose += new Sledge.Editor.UI.ClosableTabControl.RequestCloseEventHandler(this.DocumentTabsRequestClose);
             this.DocumentTabs.SelectedIndexChanged += new System.EventHandler(this.DocumentTabsSelectedIndexChanged);
             // 
             // panel1
@@ -749,7 +749,7 @@
         private System.Windows.Forms.ToolStripStatusLabel StatusBoxLabel;
         private System.Windows.Forms.ToolStripStatusLabel StatusZoomLabel;
         private System.Windows.Forms.ToolStripStatusLabel StatusSnapLabel;
-        private UI.FlexibleTabControl DocumentTabs;
+        private UI.ClosableTabControl DocumentTabs;
     }
 }
 

@@ -8,7 +8,7 @@ using System.Windows.Forms;
 
 namespace Sledge.Editor.UI
 {
-    public class FlexibleTabControl : TabControl
+    public class ClosableTabControl : TabControl
     {
         public delegate void RequestCloseEventHandler(object sender, int index);
 
@@ -22,7 +22,7 @@ namespace Sledge.Editor.UI
             }
         }
 
-        public FlexibleTabControl()
+        public ClosableTabControl()
         {
             SetStyle(ControlStyles.UserPaint, true);
             SetStyle(ControlStyles.AllPaintingInWmPaint, true);

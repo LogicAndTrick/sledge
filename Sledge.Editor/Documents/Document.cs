@@ -18,8 +18,6 @@ using Sledge.Editor.Rendering;
 using Sledge.Editor.Rendering.Helpers;
 using Sledge.Editor.Tools;
 using Sledge.Editor.UI;
-using Sledge.Editor.Visgroups;
-using Sledge.Graphics;
 using Sledge.Graphics.Helpers;
 using Sledge.Providers;
 using Sledge.Providers.GameData;
@@ -51,6 +49,7 @@ namespace Sledge.Editor.Documents
         public TextureCollection TextureCollection { get; set; }
 
         private readonly DocumentSubscriptions _subscriptions;
+        private readonly DocumentMemory _memory;
 
         private Document()
         {
@@ -70,6 +69,7 @@ namespace Sledge.Editor.Documents
                               : Path.GetFileName(mapFile) ?? DocumentManager.GetUntitledDocumentName();
 
             _subscriptions = new DocumentSubscriptions(this);
+            _memory = new DocumentMemory();
 
             Selection = new SelectionManager(this);
             History = new HistoryManager(this);
@@ -110,7 +110,8 @@ namespace Sledge.Editor.Documents
 
         public void SetActive()
         {
-            Editor.Instance.SelectTool(ToolManager.Tools[0]); // todo keep this? cache?
+            ToolManager.Activate(_memory.SelectedTool);
+            _memory.RestoreViewports(ViewportManager.Viewports);
 
             ViewportManager.AddContext3D(new WidgetLinesRenderable());
             Renderer.Register(ViewportManager.Viewports);
@@ -123,7 +124,9 @@ namespace Sledge.Editor.Documents
 
         public void SetInactive()
         {
-            // todo save state (camera locations, selected tool)
+            if (ToolManager.ActiveTool != null) _memory.SelectedTool = ToolManager.ActiveTool.GetType();
+            _memory.RememberViewports(ViewportManager.Viewports);
+
             ViewportManager.ClearContexts();
             HelperManager.ClearCache();
 
