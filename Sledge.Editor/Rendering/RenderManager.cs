@@ -141,13 +141,16 @@ void main()
 
         private readonly Document _document;
         private readonly ArrayManager _array;
-        public ShaderProgram Shader { get; private set; }
+        private ShaderProgram Shader { get; set; }
 
         #region Shader Variables
 
-        public Matrix4 Perspective { set { Shader.Set("perspectiveMatrix", value); } }
-        public Matrix4 Camera { set { Shader.Set("cameraMatrix", value); } }
-        public Matrix4 ModelView { set { Shader.Set("modelViewMatrix", value); } }
+        private bool Show3DGrid { set { Shader.Set("showGrid", value); } }
+        private float GridSpacing { set { Shader.Set("gridSpacing", value); } }
+
+        private Matrix4 Perspective { set { Shader.Set("perspectiveMatrix", value); } }
+        private Matrix4 Camera { set { Shader.Set("cameraMatrix", value); } }
+        private Matrix4 ModelView { set { Shader.Set("modelViewMatrix", value); } }
 
         public Matrix4 SelectionTransform
         {
@@ -158,21 +161,19 @@ void main()
             }
         }
 
-        public bool IsTextured { set { Shader.Set("isTextured", value); } }
-        public bool IsWireframe { set { Shader.Set("isWireframe", value); } }
-        public bool DrawUntransformed { set { Shader.Set("drawUntransformed", value); } }
-        public bool DrawSelectedOnly { set { Shader.Set("drawSelectedOnly", value); } }
-        public bool DrawUnselectedOnly { set { Shader.Set("drawUnselectedOnly", value); } }
-        public bool In3D { set { Shader.Set("in3d", value); } }
-        public bool Show3DGrid { set { Shader.Set("showGrid", value); } }
-        public float GridSpacing { set { Shader.Set("gridSpacing", value); } }
-        public Vector4 WireframeColour { set { Shader.Set("wireframeColour", value); } }
-        public Vector4 SelectedWireframeColour { set { Shader.Set("selectedWireframeColour", value); } }
-        public Vector4 SelectionColourMultiplier { set { Shader.Set("selectionColourMultiplier", value); } }
+        private bool IsTextured { set { Shader.Set("isTextured", value); } }
+        private bool IsWireframe { set { Shader.Set("isWireframe", value); } }
+        private bool DrawUntransformed { set { Shader.Set("drawUntransformed", value); } }
+        private bool DrawSelectedOnly { set { Shader.Set("drawSelectedOnly", value); } }
+        private bool DrawUnselectedOnly { set { Shader.Set("drawUnselectedOnly", value); } }
+        private bool In3D { set { Shader.Set("in3d", value); } }
+        private Vector4 WireframeColour { set { Shader.Set("wireframeColour", value); } }
+        private Vector4 SelectedWireframeColour { set { Shader.Set("selectedWireframeColour", value); } }
+        private Vector4 SelectionColourMultiplier { set { Shader.Set("selectionColourMultiplier", value); } }
 
         #endregion
 
-        public Dictionary<ViewportBase, GridRenderable> GridRenderables { get; private set; }
+        private Dictionary<ViewportBase, GridRenderable> GridRenderables { get; set; }
 
         public RenderManager(Document document)
         {
@@ -184,31 +185,34 @@ void main()
             GridRenderables = ViewportManager.Viewports.OfType<Viewport2D>().ToDictionary(x => (ViewportBase)x, x => new GridRenderable(_document));
 
             // Set up default values
-            Bind();
+            Shader.Bind();
             Perspective = Camera = ModelView = SelectionTransform = Matrix4.Identity;
             IsTextured = IsWireframe = In3D = false;
             Show3DGrid = document.Map.Show3DGrid;
             GridSpacing = (float) document.Map.GridSpacing;
             WireframeColour = Vector4.Zero;
             SelectionColourMultiplier = new Vector4(1, 0.5f, 0.5f, 1);
-            Unbind();
+            Shader.Unbind();
         }
 
-        public void Bind()
+        public void UpdateGrid(decimal gridSpacing, bool showIn2D, bool showIn3D)
         {
             Shader.Bind();
-        }
-
-        public void Unbind()
-        {
+            GridSpacing = (float) gridSpacing;
+            Show3DGrid = showIn3D;
             Shader.Unbind();
+
+            foreach (var kv in GridRenderables)
+            {
+                kv.Value.RebuildGrid(((Viewport2D)kv.Key).Zoom);
+            }
         }
 
         public void Draw2D(ViewportBase context, Matrix4 viewport, Matrix4 camera, Matrix4 modelView)
         {
             if (GridRenderables.ContainsKey(context)) GridRenderables[context].Render(context);
 
-            Bind();
+            Shader.Bind();
             Perspective = viewport;
             Camera = camera;
             IsTextured = false;
@@ -226,12 +230,12 @@ void main()
             SelectedWireframeColour = new Vector4(1, 0, 0, 1);
             _array.DrawWireframe(context, Shader);
 
-            Unbind();
+            Shader.Unbind();
         }
 
         public void Draw3D(ViewportBase context, Matrix4 viewport, Matrix4 camera, Matrix4 modelView)
         {
-            Bind();
+            Shader.Bind();
 
             Perspective = viewport;
             Camera = camera;
@@ -258,7 +262,7 @@ void main()
 
             _array.DrawWireframe(context, Shader);
 
-            Unbind();
+            Shader.Unbind();
         }
 
         public void Update()

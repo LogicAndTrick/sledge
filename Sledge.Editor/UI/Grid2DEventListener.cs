@@ -24,15 +24,10 @@ namespace Sledge.Editor.UI
 
         public void ZoomChanged(decimal oldZoom, decimal newZoom)
         {
-            //var gr = Viewport.RenderContext.FindRenderable<GridRenderable>();
-            //if (gr != null)
-            //{
-            //    gr.RebuildGrid(newZoom);
-            //}
-            if (Documents.DocumentManager.CurrentDocument != null
-                && Documents.DocumentManager.CurrentDocument.Renderer.GridRenderables.ContainsKey(Viewport))
+            var doc = Documents.DocumentManager.CurrentDocument;
+            if (doc != null)
             {
-                Documents.DocumentManager.CurrentDocument.Renderer.GridRenderables[Viewport].RebuildGrid(newZoom);
+                doc.Renderer.UpdateGrid(doc.Map.GridSpacing, doc.Map.Show2DGrid, doc.Map.Show3DGrid);
             }
         }
 

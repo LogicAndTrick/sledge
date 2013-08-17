@@ -150,7 +150,7 @@ namespace Sledge.Editor
                 if (result == null) continue;
                 if (!String.Equals(result.Version, version, StringComparison.InvariantCultureIgnoreCase))
                 {
-                    if (MessageBox.Show("An update is available, would you like to update now?", "New version detected!", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                    if (MessageBox.Show("A new version of Sledge is available. Would you like to update?", "New version detected!", MessageBoxButtons.YesNo) == DialogResult.Yes)
                     {
                         Process.Start(System.IO.Path.Combine(System.IO.Path.GetDirectoryName(typeof(Editor).Assembly.Location), "Sledge.Editor.Updater.exe"));
                         Application.Exit();

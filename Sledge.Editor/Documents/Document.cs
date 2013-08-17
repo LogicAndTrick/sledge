@@ -287,16 +287,12 @@ namespace Sledge.Editor.Documents
 
         public void SetSelectListTransform(Matrix4 matrix)
         {
-            Renderer.Shader.Bind();
-            Renderer.Shader.Set("selectionTransform", matrix);
-            Renderer.Shader.Unbind();
+            Renderer.SelectionTransform = matrix;
         }
 
         public void EndSelectionTransform()
         {
-            Renderer.Shader.Bind();
-            Renderer.Shader.Set("selectionTransform", Matrix4.Identity);
-            Renderer.Shader.Unbind();
+            Renderer.SelectionTransform = Matrix4.Identity;
         }
 
         private ITexture GetTexture(string name)

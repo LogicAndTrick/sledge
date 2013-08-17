@@ -4,7 +4,6 @@ Priorities
   Bugs
     Windows 7 recent file jump list not opening files
     Clip tool is laggy
-    Recent files menu -> open files
   Backend
     Model loader
   Rendering
@@ -13,7 +12,6 @@ Priorities
       Model textures
       Model render helper
   Document/Actions
-    TDI
     Advanced/proper compiling
     History stacks (for VM tool)
     Prefabs
@@ -32,9 +30,11 @@ Priorities
     Object properties dialog data types
       File system - custom file browser
     Texture browser - used textures only
-    VM vertex scaling tool
     Options
       Hotkey configuration
+    Auto Update
+      Show release notes
+      Option to disable
 
 1. Goldsource Support
   Formats

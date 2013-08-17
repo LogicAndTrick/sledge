@@ -741,13 +741,7 @@ namespace Sledge.Editor.Documents
 
         public void RebuildGrid()
         {
-            _document.Renderer.Bind();
-            _document.Renderer.GridSpacing = (float)_document.Map.GridSpacing;
-            _document.Renderer.Unbind();
-            foreach (var kv in _document.Renderer.GridRenderables)
-            {
-                kv.Value.RebuildGrid(((Viewport2D)kv.Key).Zoom, true);
-            }
+            _document.Renderer.UpdateGrid(_document.Map.GridSpacing, _document.Map.Show2DGrid, _document.Map.Show3DGrid);
             Mediator.Publish(EditorMediator.DocumentGridSpacingChanged, _document.Map.GridSpacing);
         }
 
@@ -913,10 +907,7 @@ namespace Sledge.Editor.Documents
         public void ToggleShow3DGrid()
         {
             _document.Map.Show3DGrid = !_document.Map.Show3DGrid;
-            _document.Renderer.Bind();
-            _document.Renderer.Show3DGrid = _document.Map.Show3DGrid;
-            _document.Renderer.GridSpacing = (float)_document.Map.GridSpacing;
-            _document.Renderer.Unbind();
+            _document.Renderer.UpdateGrid(_document.Map.GridSpacing, _document.Map.Show2DGrid, _document.Map.Show3DGrid);
             Mediator.Publish(EditorMediator.UpdateToolstrip);
         }
 
