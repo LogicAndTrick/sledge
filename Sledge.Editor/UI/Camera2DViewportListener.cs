@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Windows.Forms;
 using Sledge.Common.Mediator;
 using Sledge.DataStructures.Geometric;
@@ -39,11 +40,29 @@ namespace Sledge.Editor.UI
                 Viewport.Cursor = Cursors.SizeAll;
                 e.Handled = true;
             }
+            var str = e.KeyCode.ToString();
+            if (str.StartsWith("NumPad") || str.StartsWith("D"))
+            {
+                var last = str.Last();
+                if (Char.IsDigit(last))
+                {
+                    var press = (int) Char.GetNumericValue(last);
+                    if (press >= 0 && press <= 9)
+                    {
+                        if (press == 0) press = 10;
+                        var num = Math.Max(press - 6, 6 - press);
+                        var pow = (decimal) Math.Pow(2, num);
+                        var zoom = press < 6 ? 1 / pow : pow;
+                        Viewport2D.Zoom = zoom;
+                        Mediator.Publish(EditorMediator.ViewZoomChanged, Viewport2D.Zoom);
+                    }
+                }
+            }
         }
 
         public void KeyPress(ViewportEvent e)
         {
-
+            
         }
 
         public void MouseMove(ViewportEvent e)
