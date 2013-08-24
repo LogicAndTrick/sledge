@@ -37,6 +37,7 @@ namespace Sledge.Editor
 
         public Editor()
         {
+            PreventSimpleHotkeyPassthrough = false;
             InitializeComponent();
             Instance = this;
         }
