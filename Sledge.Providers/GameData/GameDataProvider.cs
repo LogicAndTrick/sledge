@@ -43,7 +43,6 @@ namespace Sledge.Providers.GameData
             if (provider != null)
             {
                 var gd = provider.GetFromFile(fileName);
-                gd.CreateDependencies();
                 return gd;
             }
             throw new ProviderNotFoundException("No GameData provider was found for this file.");
@@ -55,7 +54,6 @@ namespace Sledge.Providers.GameData
             if (provider != null)
             {
                 var gd = provider.GetFromString(contents);
-                gd.CreateDependencies();
                 return gd;
             }
             throw new ProviderNotFoundException("No GameData provider was found for this string.");
@@ -67,7 +65,6 @@ namespace Sledge.Providers.GameData
             if (provider != null)
             {
                 var gd = provider.GetFromStream(stream);
-                gd.CreateDependencies();
                 return gd;
             }
             throw new ProviderNotFoundException("No GameData provider was found for this stream.");

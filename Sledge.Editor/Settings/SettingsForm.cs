@@ -600,21 +600,30 @@ namespace Sledge.Editor.Settings
 	        {
 	            SelectedGameFgdList.Items.Add(fgd.Path);
 	        }
-	        var gd = GameDataProvider.GetGameDataFromFiles(_selectedGame.Fgds.Select(x => x.Path).Where(File.Exists));
 
             SelectedGameDefaultPointEnt.Items.Clear();
-            SelectedGameDefaultPointEnt.Items.AddRange(gd.Classes.Where(x => x.ClassType == ClassType.Point).Select(x => x.Name).ToArray());
-            var idx = SelectedGameDefaultPointEnt.Items.IndexOf(_selectedGame.DefaultPointEntity ?? "");
-            if (idx < 0) idx = SelectedGameDefaultPointEnt.Items.IndexOf("info_player_start");
-            if (idx < 0) idx = SelectedGameDefaultPointEnt.Items.IndexOf("light");
-	        if (SelectedGameDefaultPointEnt.Items.Count > 0) SelectedGameDefaultPointEnt.SelectedIndex = Math.Max(0, idx);
-
             SelectedGameDefaultBrushEnt.Items.Clear();
-            SelectedGameDefaultBrushEnt.Items.AddRange(gd.Classes.Where(x => x.ClassType == ClassType.Solid).Select(x => x.Name).ToArray());
-            idx = SelectedGameDefaultBrushEnt.Items.IndexOf(_selectedGame.DefaultBrushEntity ?? "");
-            if (idx < 0) idx = SelectedGameDefaultBrushEnt.Items.IndexOf("func_detail");
-            if (idx < 0) idx = SelectedGameDefaultBrushEnt.Items.IndexOf("trigger_once");
-            if (SelectedGameDefaultBrushEnt.Items.Count > 0) SelectedGameDefaultBrushEnt.SelectedIndex = Math.Max(0, idx);
+
+            try
+            {
+                var gd = GameDataProvider.GetGameDataFromFiles(_selectedGame.Fgds.Select(x => x.Path).Where(File.Exists));
+
+                SelectedGameDefaultPointEnt.Items.AddRange(gd.Classes.Where(x => x.ClassType == ClassType.Point).Select(x => x.Name).OfType<object>().ToArray());
+                var idx = SelectedGameDefaultPointEnt.Items.IndexOf(_selectedGame.DefaultPointEntity ?? "");
+                if (idx < 0) idx = SelectedGameDefaultPointEnt.Items.IndexOf("info_player_start");
+                if (idx < 0) idx = SelectedGameDefaultPointEnt.Items.IndexOf("light");
+                if (SelectedGameDefaultPointEnt.Items.Count > 0) SelectedGameDefaultPointEnt.SelectedIndex = Math.Max(0, idx);
+
+                SelectedGameDefaultBrushEnt.Items.AddRange(gd.Classes.Where(x => x.ClassType == ClassType.Solid).Select(x => x.Name).OfType<object>().ToArray());
+                idx = SelectedGameDefaultBrushEnt.Items.IndexOf(_selectedGame.DefaultBrushEntity ?? "");
+                if (idx < 0) idx = SelectedGameDefaultBrushEnt.Items.IndexOf("func_detail");
+                if (idx < 0) idx = SelectedGameDefaultBrushEnt.Items.IndexOf("trigger_once");
+                if (SelectedGameDefaultBrushEnt.Items.Count > 0) SelectedGameDefaultBrushEnt.SelectedIndex = Math.Max(0, idx);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("There was an error loading the provided FGDs, please ensure that you have loaded all dependant FGDs.\nError was: "+ex.Message);
+            }
 	    }
 
 	    private void SelectedGameEngineChanged(object sender, EventArgs e)
