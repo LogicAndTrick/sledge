@@ -139,6 +139,7 @@ namespace Sledge.Editor.Documents
         {
             Scheduler.Clear(this);
             TextureProvider.DeleteCollection(TextureCollection);
+            Renderer.Dispose();
         }
 
         public bool SaveFile(string path = null, bool forceOverride = false)
@@ -287,12 +288,12 @@ namespace Sledge.Editor.Documents
 
         public void SetSelectListTransform(Matrix4 matrix)
         {
-            Renderer.SelectionTransform = matrix;
+            Renderer.SetSelectionTransform(matrix);
         }
 
         public void EndSelectionTransform()
         {
-            Renderer.SelectionTransform = Matrix4.Identity;
+            Renderer.SetSelectionTransform(Matrix4.Identity);
         }
 
         private ITexture GetTexture(string name)

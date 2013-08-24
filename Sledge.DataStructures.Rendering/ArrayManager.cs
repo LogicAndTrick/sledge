@@ -12,7 +12,7 @@ namespace Sledge.DataStructures.Rendering
     /// <summary>
     /// The array manager controls the rendering of the map via the solid vertex arrays it maintains.
     /// </summary>
-    public class ArrayManager
+    public class ArrayManager : IDisposable
     {
         private readonly SolidVertexArray _array;
         private readonly DecalFaceVertexArray _decalArray;
@@ -22,6 +22,12 @@ namespace Sledge.DataStructures.Rendering
             var all = GetAllVisible(map.WorldSpawn);
             _array = new SolidVertexArray(all);
             _decalArray = new DecalFaceVertexArray(all);
+        }
+
+        public void Dispose()
+        {
+            _array.Dispose();
+            _decalArray.Dispose();
         }
 
         private IList<MapObject> GetAllVisible(MapObject root)
