@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using OpenTK;
@@ -6,280 +7,77 @@ using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.MapObjects;
 using Sledge.DataStructures.Rendering;
 using Sledge.Editor.Documents;
+using Sledge.Editor.Rendering.Renderers;
 using Sledge.Editor.UI;
 using Sledge.Extensions;
 using Sledge.Graphics.Shaders;
+using Sledge.Settings;
 using Sledge.UI;
 
 namespace Sledge.Editor.Rendering
 {
-    public class RenderManager
+    public class RenderManager : IDisposable
     {
-        #region Shaders
-        public const string VertexShader = @"#version 130
-
-layout(location = 0) in vec3 position;
-layout(location = 1) in vec3 normal;
-layout(location = 2) in vec2 texture;
-layout(location = 3) in vec4 colour;
-layout(location = 4) in float selected;
-
-const vec3 light1direction = vec3(-1, -2, 3);
-const vec3 light2direction = vec3(1, 2, 3);
-const vec4 light1intensity = vec4(0.6, 0.6, 0.6, 1.0);
-const vec4 light2intensity = vec4(0.3, 0.3, 0.3, 1.0);
-const vec4 ambient = vec4(0.5, 0.5, 0.5, 1.0);
-
-smooth out vec4 worldPosition;
-smooth out vec4 worldNormal;
-smooth out vec4 vertexLighting;
-smooth out vec4 vertexColour;
-smooth out vec2 texCoord;
-smooth out float vertexSelected;
-
-uniform bool isWireframe;
-uniform bool drawUntransformed;
-uniform bool drawSelectedOnly;
-uniform bool drawUnselectedOnly;
-uniform bool in3d;
-uniform bool showGrid;
-uniform float gridSpacing;
-
-uniform mat4 modelViewMatrix;
-uniform mat4 perspectiveMatrix;
-uniform mat4 cameraMatrix;
-uniform mat4 selectionTransform;
-uniform mat4 inverseSelectionTransform;
-
-void main()
-{
-    vec4 pos = vec4(position, 1);
-    if (selected > 0.9 && !drawUntransformed) pos = selectionTransform * pos;
-    vec4 modelPos = modelViewMatrix * pos;
-    
-	vec4 cameraPos = cameraMatrix * modelPos;
-	gl_Position = perspectiveMatrix * cameraPos;
-
-    vec4 npos = vec4(normal, 1);
-    // http://www.arcsynthesis.org/gltut/Illumination/Tut09%20Normal%20Transformation.html
-    if (selected > 0.9 && !drawUntransformed) npos = transpose(inverseSelectionTransform) * npos;
-    vec3 normalPos = normalize(npos.xyz);
-    npos = vec4(normalPos, 1);
-
-    worldPosition = pos;
-    worldNormal = npos;
-
-    float incidence1 = dot(normalPos, light1direction);
-    float incidence2 = dot(normalPos, light2direction);
-
-    incidence1 = clamp(incidence1, 0, 1);
-    incidence2 = clamp(incidence2, 0, 1);
-
-	vertexColour = colour;
-    vertexLighting = (vec4(1,1,1,1) * light1intensity * incidence1) * 0.5
-                   + (vec4(1,1,1,1) * light2intensity * incidence2) * 0.5
-                   + (vec4(1,1,1,1) * ambient);
-    vertexLighting.w = 1; // Reset the alpha channel or transparency gets messed up later
-    texCoord = texture;
-    vertexSelected = selected;
-}
-";
-
-        public const string FragmentShader = @"#version 130
-
-smooth in vec4 worldPosition;
-smooth in vec4 worldNormal;
-smooth in vec4 vertexColour;
-smooth in vec4 vertexLighting;
-smooth in vec2 texCoord;
-smooth in float vertexSelected;
-
-uniform bool isWireframe;
-uniform bool drawUntransformed;
-uniform bool drawSelectedOnly;
-uniform bool drawUnselectedOnly;
-uniform bool isTextured;
-uniform vec4 wireframeColour;
-uniform vec4 selectedWireframeColour;
-uniform vec4 selectionColourMultiplier;
-uniform bool in3d;
-uniform bool showGrid;
-uniform float gridSpacing;
-uniform sampler2D currentTexture;
-
-out vec4 outputColor;
-void main()
-{
-    float alpha = vertexColour.w;
-    if (drawSelectedOnly && vertexSelected <= 0.9) discard;
-    if (drawUnselectedOnly && vertexSelected > 0.9) discard;
-    if (isWireframe) {
-        if (!in3d && vertexSelected > 0.9) outputColor = selectedWireframeColour;
-        else if (wireframeColour.w == 0) outputColor = vertexColour;
-        else outputColor = wireframeColour;
-    } else {
-        if (isTextured) {
-            vec4 texColour = texture2D(currentTexture, texCoord);
-            outputColor = texColour * vertexLighting;
-            if (texColour.w < alpha) alpha = texColour.w;
-        } else {
-            outputColor = vertexColour * vertexLighting;
-        }
-        if (vertexSelected > 0.9) {
-            outputColor = outputColor * selectionColourMultiplier; //vec4(1, 0.5, 0.5, 1);
-        }
-    }
-    if (in3d && showGrid) {
-        if (abs(worldNormal).x < 0.9999) outputColor = mix(outputColor, vec4(1, 0, 0, 1), step(mod(worldPosition.x, gridSpacing), 0.5));
-        if (abs(worldNormal).y < 0.9999) outputColor = mix(outputColor, vec4(0, 1, 0, 1), step(mod(worldPosition.y, gridSpacing), 0.5));
-        if (abs(worldNormal).z < 0.9999) outputColor = mix(outputColor, vec4(0, 0, 1, 1), step(mod(worldPosition.z, gridSpacing), 0.5));
-    }
-    outputColor.w = alpha;
-}
-";
-        #endregion Shaders
-
         private readonly Document _document;
-        private readonly ArrayManager _array;
-        private ShaderProgram Shader { get; set; }
-
-        #region Shader Variables
-
-        private bool Show3DGrid { set { Shader.Set("showGrid", value); } }
-        private float GridSpacing { set { Shader.Set("gridSpacing", value); } }
-
-        private Matrix4 Perspective { set { Shader.Set("perspectiveMatrix", value); } }
-        private Matrix4 Camera { set { Shader.Set("cameraMatrix", value); } }
-        private Matrix4 ModelView { set { Shader.Set("modelViewMatrix", value); } }
-
-        public Matrix4 SelectionTransform
-        {
-            set
-            {
-                Shader.Set("selectionTransform", value);
-                Shader.Set("inverseSelectionTransform", Matrix4.Invert(value));
-            }
-        }
-
-        private bool IsTextured { set { Shader.Set("isTextured", value); } }
-        private bool IsWireframe { set { Shader.Set("isWireframe", value); } }
-        private bool DrawUntransformed { set { Shader.Set("drawUntransformed", value); } }
-        private bool DrawSelectedOnly { set { Shader.Set("drawSelectedOnly", value); } }
-        private bool DrawUnselectedOnly { set { Shader.Set("drawUnselectedOnly", value); } }
-        private bool In3D { set { Shader.Set("in3d", value); } }
-        private Vector4 WireframeColour { set { Shader.Set("wireframeColour", value); } }
-        private Vector4 SelectedWireframeColour { set { Shader.Set("selectedWireframeColour", value); } }
-        private Vector4 SelectionColourMultiplier { set { Shader.Set("selectionColourMultiplier", value); } }
-
-        #endregion
-
-        private Dictionary<ViewportBase, GridRenderable> GridRenderables { get; set; }
+        private readonly IRenderer _renderer;
 
         public RenderManager(Document document)
         {
             _document = document;
-            _array = new ArrayManager(document.Map);
-            Shader = new ShaderProgram(
-                new Shader(ShaderType.VertexShader, VertexShader),
-                new Shader(ShaderType.FragmentShader, FragmentShader));
-            GridRenderables = ViewportManager.Viewports.OfType<Viewport2D>().ToDictionary(x => (ViewportBase)x, x => new GridRenderable(_document));
+            switch (View.Renderer)
+            {
+                case RenderMode.OpenGL3:
+                    _renderer = new ArrayRendererGL3(_document);
+                    break;
+                case RenderMode.OpenGL1DisplayLists:
+                    _renderer = new DisplayListRendererGL1(_document);
+                    break;
+                case RenderMode.OpenGL1Immediate:
+                    _renderer = new ImmediateRendererGL1(_document);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException("This isn't a valid render mode.");
+            }
+        }
 
-            // Set up default values
-            Shader.Bind();
-            Perspective = Camera = ModelView = SelectionTransform = Matrix4.Identity;
-            IsTextured = IsWireframe = In3D = false;
-            Show3DGrid = document.Map.Show3DGrid;
-            GridSpacing = (float) document.Map.GridSpacing;
-            WireframeColour = Vector4.Zero;
-            SelectionColourMultiplier = new Vector4(1, 0.5f, 0.5f, 1);
-            Shader.Unbind();
+        public void Dispose()
+        {
+            _renderer.Dispose();
         }
 
         public void UpdateGrid(decimal gridSpacing, bool showIn2D, bool showIn3D)
         {
-            Shader.Bind();
-            GridSpacing = (float) gridSpacing;
-            Show3DGrid = showIn3D;
-            Shader.Unbind();
+            _renderer.UpdateGrid(gridSpacing, showIn2D, showIn3D);
+        }
 
-            foreach (var kv in GridRenderables)
-            {
-                kv.Value.RebuildGrid(((Viewport2D)kv.Key).Zoom);
-            }
+        public void SetSelectionTransform(Matrix4 selectionTransform)
+        {
+            _renderer.SetSelectionTransform(selectionTransform);
         }
 
         public void Draw2D(ViewportBase context, Matrix4 viewport, Matrix4 camera, Matrix4 modelView)
         {
-            if (GridRenderables.ContainsKey(context)) GridRenderables[context].Render(context);
-
-            Shader.Bind();
-            Perspective = viewport;
-            Camera = camera;
-            IsTextured = false;
-            IsWireframe = true;
-            WireframeColour = Vector4.Zero;
-            In3D = false;
-            ModelView = modelView;
-            DrawUntransformed = true;
-            DrawSelectedOnly = true;
-            SelectedWireframeColour = new Vector4(0.6f, 0, 0, 1);
-            _array.DrawWireframe(context, Shader);
-
-            DrawUntransformed = false;
-            DrawSelectedOnly = false;
-            SelectedWireframeColour = new Vector4(1, 0, 0, 1);
-            _array.DrawWireframe(context, Shader);
-
-            Shader.Unbind();
+            _renderer.Draw2D(context, viewport, camera, modelView);
         }
 
         public void Draw3D(ViewportBase context, Matrix4 viewport, Matrix4 camera, Matrix4 modelView)
         {
-            Shader.Bind();
-
-            Perspective = viewport;
-            Camera = camera;
-            ModelView = modelView;
-            IsTextured = true;
-            IsWireframe = false;
-            In3D = true;
-            DrawUntransformed = false;
-            DrawSelectedOnly = false;
-            SelectionColourMultiplier = _document.Selection.InFaceSelection && _document.Map.HideFaceMask ? Vector4.One : new Vector4(1, 0.5f, 0.5f, 1);
-
-            var cam = ((Viewport3D) context).Camera.Location;
-            var location = new Coordinate((decimal) cam.X, (decimal) cam.Y, (decimal) cam.Z);
-
-            GL.ActiveTexture(TextureUnit.Texture0);
-            Shader.Set("currentTexture", 0);
-            _array.DrawTextured(context, location, Shader);
-
-            DrawUntransformed = true;
-            DrawSelectedOnly = true;
-            IsWireframe = true;
-            WireframeColour = new Vector4(1, 1, 0, 1);
-            SelectedWireframeColour = new Vector4(1, 0, 0, 1);
-
-            _array.DrawWireframe(context, Shader);
-
-            Shader.Unbind();
+            _renderer.Draw3D(context, viewport, camera, modelView);
         }
 
         public void Update()
         {
-            _array.Update(_document.Map);
+            _renderer.Update();
         }
 
         public void UpdatePartial(IEnumerable<MapObject> objects)
         {
-            _array.UpdatePartial(objects);
-            _array.UpdateDecals(_document.Map);
+            _renderer.UpdatePartial(objects);
         }
 
         public void UpdatePartial(IEnumerable<Face> faces)
         {
-            _array.UpdatePartial(faces);
-            _array.UpdateDecals(_document.Map);
+            _renderer.UpdatePartial(faces);
         }
 
         public void Register(IEnumerable<ViewportBase> viewports)

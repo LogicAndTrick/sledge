@@ -58,6 +58,7 @@
     <Compile Include="Models\Setting.cs" />
     <Compile Include="Models\Wad.cs" />
     <Compile Include="NudgeStyle.cs" />
+    <Compile Include="RenderMode.cs" />
     <Compile Include="RotationStyle.cs" />
     <Compile Include="Select.cs" />
     <Compile Include="Grid.cs" />

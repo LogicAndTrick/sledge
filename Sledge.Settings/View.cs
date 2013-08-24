@@ -23,6 +23,8 @@ namespace Sledge.Settings
         public static bool KeepSelectedTool { get; set; }
         public static bool KeepViewportSplitterPosition { get; set; }
 
+        public static RenderMode Renderer { get; set; }
+
         static View()
         {
             CrosshairCursorIn2DViews = false;
@@ -46,6 +48,8 @@ namespace Sledge.Settings
             KeepCameraPositions = false;
             KeepSelectedTool = false;
             KeepViewportSplitterPosition = false;
+
+            Renderer = RenderMode.OpenGL3;
         }
     }
 }

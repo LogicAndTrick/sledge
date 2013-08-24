@@ -121,13 +121,22 @@ namespace Sledge.DataStructures.MapObjects
             if (Children.Any()) return faces;
 
             var box = BoundingBox.GetBoxFaces();
+            var dummySolid = new Solid(-1)
+                                 {
+                                     IsCodeHidden = IsCodeHidden,
+                                     IsRenderHidden2D = IsRenderHidden2D,
+                                     IsSelected = IsSelected,
+                                     IsRenderHidden3D = IsRenderHidden3D,
+                                     IsVisgroupHidden = IsVisgroupHidden
+                                 };
             foreach (var ca in box)
             {
                 var face = new Face(0)
                                {
                                    Plane = new Plane(ca[0], ca[1], ca[2]),
                                    Colour = Colour,
-                                   IsSelected = IsSelected
+                                   IsSelected = IsSelected,
+                                   Parent = dummySolid
                                };
                 face.Vertices.AddRange(ca.Select(x => new Vertex(x, face)));
                 face.UpdateBoundingBox();

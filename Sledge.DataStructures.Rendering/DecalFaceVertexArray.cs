@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using OpenTK.Graphics.OpenGL;
@@ -13,7 +14,7 @@ namespace Sledge.DataStructures.Rendering
     /// Decals are separated from the solid vertex array because extra decal faces can be added by
     /// simple translations, which would break partial updating.
     /// </summary>
-    public class DecalFaceVertexArray
+    public class DecalFaceVertexArray : IDisposable
     {
         private static readonly BeginMode[] Modes;
         private static readonly ArraySpecification Specification;
@@ -67,6 +68,18 @@ namespace Sledge.DataStructures.Rendering
             GetArrayData(objects, out count, out array, out indices, out wireframeIndices, TextureSubsets, WireframeSubsets);
 
             Array = new VertexBuffer<float>(Specification, Modes, count, sizeof(float), array, new[] { indices, wireframeIndices});
+        }
+
+        public void Dispose()
+        {
+            TextureSubsets.Clear();
+            WireframeSubsets.Clear();
+            foreach (var va in _arrays)
+            {
+                va.Value.Dispose();
+            }
+            _arrays.Clear();
+            Array.Dispose();
         }
 
         /// <summary>

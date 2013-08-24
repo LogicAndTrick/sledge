@@ -189,6 +189,10 @@ namespace Sledge.Editor.Settings
             KeepSelectedTool.Checked = Sledge.Settings.View.KeepSelectedTool;
 	        KeepViewportSplitterPosition.Checked = Sledge.Settings.View.KeepViewportSplitterPosition;
 
+            RenderMode.SelectedIndex = 0;
+            if (Sledge.Settings.View.Renderer == Sledge.Settings.RenderMode.OpenGL1DisplayLists) RenderMode.SelectedIndex = 1;
+            if (Sledge.Settings.View.Renderer == Sledge.Settings.RenderMode.OpenGL1Immediate) RenderMode.SelectedIndex = 2;
+
             // 2D Views
             CrosshairCursorIn2DViews.Checked = Sledge.Settings.View.CrosshairCursorIn2DViews;
             AutoSelectBox.Checked = Sledge.Settings.Select.AutoSelectBox;
@@ -269,6 +273,10 @@ namespace Sledge.Editor.Settings
             Sledge.Settings.View.KeepCameraPositions = KeepCameraPositions.Checked;
             Sledge.Settings.View.KeepSelectedTool = KeepSelectedTool.Checked;
             Sledge.Settings.View.KeepViewportSplitterPosition = KeepViewportSplitterPosition.Checked;
+
+            Sledge.Settings.View.Renderer = Sledge.Settings.RenderMode.OpenGL3;
+            if (RenderMode.SelectedIndex == 1) Sledge.Settings.View.Renderer = Sledge.Settings.RenderMode.OpenGL1DisplayLists;
+            if (RenderMode.SelectedIndex == 2) Sledge.Settings.View.Renderer = Sledge.Settings.RenderMode.OpenGL1Immediate;
 
             // 2D Views
             Sledge.Settings.View.CrosshairCursorIn2DViews = CrosshairCursorIn2DViews.Checked;

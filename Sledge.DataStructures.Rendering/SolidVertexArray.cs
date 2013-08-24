@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using OpenTK.Graphics.OpenGL;
@@ -12,7 +13,7 @@ namespace Sledge.DataStructures.Rendering
     /// A solid vertex array collects and stores a VBO for all solids in the map.
     /// Faces are grouped by texture and then split into  subsets for optimised rendering later on.
     /// </summary>
-    public class SolidVertexArray
+    public class SolidVertexArray : IDisposable
     {
         public class TransparentFace
         {
@@ -85,6 +86,21 @@ namespace Sledge.DataStructures.Rendering
             GetArrayData(objects, out count, out array, out indices, out transparentIndices, out wireframeIndices, TextureSubsets, TransparentSubsets, WireframeSubsets, FaceOffsets, EntityOffsets);
 
             Array = new VertexBuffer<float>(Specification, Modes, count, sizeof(float), array, new[] { indices, transparentIndices, wireframeIndices});
+        }
+
+        public void Dispose()
+        {
+            TextureSubsets.Clear();
+            TransparentSubsets.Clear();
+            WireframeSubsets.Clear();
+            FaceOffsets.Clear();
+            EntityOffsets.Clear();
+            foreach (var va in _arrays)
+            {
+                va.Value.Dispose();
+            }
+            _arrays.Clear();
+            Array.Dispose();
         }
 
         /// <summary>
