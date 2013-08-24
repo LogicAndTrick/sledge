@@ -408,7 +408,7 @@ namespace Sledge.Editor.Documents
             var autohide = _document.Map.GetAllVisgroups().FirstOrDefault(x => x.Name == "Autohide");
             if (autohide == null) return;
 
-            var objects = _document.Map.WorldSpawn.Find(x => !x.IsSelected);
+            var objects = _document.Map.WorldSpawn.FindAll().Except(_document.Selection.GetSelectedObjects()).Where(x => !(x is World) && !(x is Group));
             _document.PerformAction("Hide objects", new QuickHideObjects(objects));
         }
 
