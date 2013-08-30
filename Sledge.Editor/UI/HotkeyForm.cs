@@ -21,12 +21,13 @@ namespace Sledge.Editor.UI
             if (PreventSimpleHotkeyPassthrough)
             {
                 var str = KeyboardState.KeysToString(keyData).ToLowerInvariant();
-                if (!str.Contains("ctrl") && !str.Contains("alt"))
+                if (!str.Contains("ctrl") && !str.Contains("alt") && !str.Contains("shift"))
                 {
                     return base.ProcessCmdKey(ref msg, keyData);
                 }
             }
-            return Hotkeys.HotkeyDown(keyData) || base.ProcessCmdKey(ref msg, keyData);
+            // Prevent short curcuiting so the base method always runs
+            return Hotkeys.HotkeyDown(keyData) | base.ProcessCmdKey(ref msg, keyData);
         }
     }
 }
