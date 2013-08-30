@@ -248,7 +248,7 @@ namespace Sledge.Editor.Tools
                     break;
                 case SelectBehaviour.Apply:
                 case SelectBehaviour.ApplyWithValues:
-                    var item = firstSelected != null ? Document.TextureCollection.GetItem(firstSelected.Texture.Name) : null;
+                    var item = _form.GetFirstSelectedTexture();
                     if (item != null)
                     {
                         var texture = item.GetTexture();

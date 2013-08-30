@@ -115,8 +115,26 @@ namespace Sledge.Editor.Tools
             RecentTexturesList.Clear();
         }
 
+        public TextureItem GetFirstSelectedTexture()
+        {
+            return RecentTexturesList
+                .GetSelectedTextures()
+                .Union(SelectedTexturesList.GetSelectedTextures())
+                .FirstOrDefault();
+        }
+
+        public IEnumerable<TextureItem> GetSelectedTextures()
+        {
+            return RecentTexturesList
+                .GetSelectedTextures()
+                .Union(SelectedTexturesList.GetSelectedTextures());
+        }
+
         private void TextureSelectionChanged(object sender, IEnumerable<TextureItem> selection)
         {
+            if (_freeze) return;
+
+            _freeze = true;
             var item = selection.FirstOrDefault();
             if (selection.Any())
             {
@@ -135,6 +153,7 @@ namespace Sledge.Editor.Tools
             {
                 TextureDetailsLabel.Text = string.Format("{0} ({1}x{2})", item.Name, item.Width, item.Height);
             }
+            _freeze = false;
         }
 
         private void UpdateRecentTextureList()
@@ -277,7 +296,15 @@ namespace Sledge.Editor.Tools
                 first = false;
             }
 
+            if (textures.Any())
+            {
+                var t = textures[0];
+                TextureDetailsLabel.Text = string.Format("{0} ({1}x{2})", t.Name, t.Width, t.Height);
+            }
+
             SelectedTexturesList.SetTextureList(textures);
+            SelectedTexturesList.SetSelectedTextures(textures);
+            RecentTexturesList.SetSelectedTextures(new TextureItem[0]);
             HideMaskCheckbox.Checked = Document.Map.HideFaceMask;
             if (LeftClickCombo.SelectedIndex < 0) LeftClickCombo.SelectedIndex = 0;
             if (RightClickCombo.SelectedIndex < 0) RightClickCombo.SelectedIndex = 0;
@@ -419,10 +446,7 @@ namespace Sledge.Editor.Tools
 
         private void ApplyButtonClicked(object sender, EventArgs e)
         {
-            var item = RecentTexturesList
-                    .GetSelectedTextures()
-                    .Union(SelectedTexturesList.GetSelectedTextures())
-                    .FirstOrDefault();
+            var item = GetFirstSelectedTexture();
             if (item != null)
             {
                 OnTextureApply(item);
