@@ -208,6 +208,7 @@
             this.MinimizeBox = false;
             this.MinimumSize = new System.Drawing.Size(500, 486);
             this.Name = "ExceptionWindow";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "This isn\'t good!";
             this.ResumeLayout(false);
             this.PerformLayout();

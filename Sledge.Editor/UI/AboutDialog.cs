@@ -7,6 +7,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using Sledge.Common.Mediator;
 
 namespace Sledge.Editor.UI
 {
@@ -16,9 +17,12 @@ namespace Sledge.Editor.UI
         {
             InitializeComponent();
 
-            InfoLabel.Text = "Sledge " + FileVersionInfo.GetVersionInfo(typeof(Editor).Assembly.Location).FileVersion + "\n"
-                 + "Created by Daniel Walder - http://logic-and-trick.com \n"
-                 + "Open source software - http://github.com/LogicAndTrick/sledge";
+            VersionLabel.Text = FileVersionInfo.GetVersionInfo(typeof (Editor).Assembly.Location).FileVersion;
+
+            LTLink.Click += (s, e) => Mediator.Publish(EditorMediator.OpenWebsite, "http://logic-and-trick.com");
+            GithubLink.Click += (s, e) => Mediator.Publish(EditorMediator.OpenWebsite, "https://github.com/LogicAndTrick/sledge");
+            GPLLink.Click += (s, e) => Mediator.Publish(EditorMediator.OpenWebsite, "http://www.gnu.org/licenses/gpl-2.0.html");
+            TWHLLink.Click += (s, e) => Mediator.Publish(EditorMediator.OpenWebsite, "http://twhl.info");
         }
     }
 }

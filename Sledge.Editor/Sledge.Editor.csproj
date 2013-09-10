@@ -37,6 +37,9 @@
   <PropertyGroup>
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>Resources\Sledge.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.WindowsAPICodePack">
       <HintPath>..\Microsoft.WindowsAPICodePack.dll</HintPath>
@@ -588,6 +591,17 @@
     <Content Include="Milestones.txt" />
     <Content Include="Resources\Arrow_Down.png" />
     <Content Include="Resources\Arrow_Up.png" />
+    <None Include="Resources\Logo\Logo.svg" />
+    <None Include="Resources\Logo\Sledge Render 128.png" />
+    <None Include="Resources\Logo\Sledge Render 16.png" />
+    <None Include="Resources\Logo\Sledge Render 256.png" />
+    <None Include="Resources\Logo\Sledge Render 32.png" />
+    <None Include="Resources\Logo\Sledge Render 48.png" />
+    <None Include="Resources\Logo\Sledge Render 64.png" />
+    <None Include="Resources\Logo\Sledge Render.png" />
+    <None Include="Resources\Logo\Sledge Trace Deus.png" />
+    <None Include="Resources\Logo\Sledge Trace.png" />
+    <None Include="Resources\Logo\Sledge.ico" />
     <Content Include="Resources\Menu_Align.png" />
     <Content Include="Resources\Menu_AutosizeViews.png" />
     <Content Include="Resources\Menu_Carve.png" />
@@ -648,6 +662,8 @@
     <Content Include="Resources\Menu_UnloadPointfile.png" />
     <Content Include="Resources\Menu_Update.png" />
     <Content Include="Resources\Menu_Website.png" />
+    <None Include="Resources\Sledge.ico" />
+    <None Include="Resources\Sledge_Large.png" />
     <Content Include="Resources\Tool_Brush.png" />
     <Content Include="Resources\Tool_Clip.png" />
     <Content Include="Resources\Tool_Cordon.png" />

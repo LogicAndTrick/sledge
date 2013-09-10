@@ -311,6 +311,7 @@
             this.MinimumSize = new System.Drawing.Size(530, 330);
             this.Name = "EntityReportDialog";
             this.ShowInTaskbar = false;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Entity Report";
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
