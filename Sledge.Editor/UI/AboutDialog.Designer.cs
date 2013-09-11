@@ -45,6 +45,7 @@
             this.label9 = new System.Windows.Forms.Label();
             this.TWHLLink = new System.Windows.Forms.LinkLabel();
             this.label10 = new System.Windows.Forms.Label();
+            this.AJLink = new System.Windows.Forms.LinkLabel();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -170,18 +171,18 @@
             this.label7.AutoSize = true;
             this.label7.Location = new System.Drawing.Point(295, 197);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(173, 13);
+            this.label7.Size = new System.Drawing.Size(215, 13);
             this.label7.TabIndex = 8;
-            this.label7.Text = "Brad \"Strideh\" Dimmock - Graphics";
+            this.label7.Text = "Strider && Instant Mix (from TWHL) - Graphics";
             // 
             // label8
             // 
             this.label8.AutoSize = true;
             this.label8.Location = new System.Drawing.Point(295, 215);
             this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(114, 13);
+            this.label8.Size = new System.Drawing.Size(123, 13);
             this.label8.TabIndex = 8;
-            this.label8.Text = "AJ Scarcella - Website";
+            this.label8.Text = "AJ Scarcella - Website - ";
             // 
             // label9
             // 
@@ -211,6 +212,16 @@
             this.label10.TabIndex = 8;
             this.label10.Text = "...and everyone else in the modding community!";
             // 
+            // AJLink
+            // 
+            this.AJLink.AutoSize = true;
+            this.AJLink.Location = new System.Drawing.Point(414, 215);
+            this.AJLink.Name = "AJLink";
+            this.AJLink.Size = new System.Drawing.Size(92, 13);
+            this.AJLink.TabIndex = 6;
+            this.AJLink.TabStop = true;
+            this.AJLink.Text = "scrub-studios.com";
+            // 
             // AboutDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -224,6 +235,7 @@
             this.Controls.Add(this.GPLLink);
             this.Controls.Add(this.GithubLink);
             this.Controls.Add(this.label3);
+            this.Controls.Add(this.AJLink);
             this.Controls.Add(this.TWHLLink);
             this.Controls.Add(this.LTLink);
             this.Controls.Add(this.label5);
@@ -266,5 +278,6 @@
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.LinkLabel TWHLLink;
         private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.LinkLabel AJLink;
     }
 }

@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Editor));
             this.mnuMain = new System.Windows.Forms.MenuStrip();
             this.stsStatus = new System.Windows.Forms.StatusStrip();
             this.StatusTextLabel = new System.Windows.Forms.ToolStripStatusLabel();
@@ -165,7 +166,7 @@
             this.tscToolStrip.ContentPanel.Controls.Add(this.tblQuadView);
             this.tscToolStrip.ContentPanel.Controls.Add(this.DocumentTabs);
             this.tscToolStrip.ContentPanel.Controls.Add(this.panel1);
-            this.tscToolStrip.ContentPanel.Size = new System.Drawing.Size(826, 801);
+            this.tscToolStrip.ContentPanel.Size = new System.Drawing.Size(832, 801);
             this.tscToolStrip.Dock = System.Windows.Forms.DockStyle.Fill;
             // 
             // tscToolStrip.LeftToolStripPanel
@@ -180,6 +181,10 @@
             // tblQuadView
             // 
             this.tblQuadView.ColumnCount = 2;
+            this.tblQuadView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tblQuadView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tblQuadView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tblQuadView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
@@ -357,7 +362,11 @@
             this.tblQuadView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tblQuadView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tblQuadView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tblQuadView.Size = new System.Drawing.Size(676, 777);
+            this.tblQuadView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.Size = new System.Drawing.Size(682, 777);
             this.tblQuadView.TabIndex = 0;
             // 
             // DocumentTabs
@@ -366,7 +375,7 @@
             this.DocumentTabs.Location = new System.Drawing.Point(0, 0);
             this.DocumentTabs.Name = "DocumentTabs";
             this.DocumentTabs.SelectedIndex = 0;
-            this.DocumentTabs.Size = new System.Drawing.Size(676, 24);
+            this.DocumentTabs.Size = new System.Drawing.Size(682, 24);
             this.DocumentTabs.TabIndex = 2;
             this.DocumentTabs.RequestClose += new Sledge.Editor.UI.ClosableTabControl.RequestCloseEventHandler(this.DocumentTabsRequestClose);
             this.DocumentTabs.SelectedIndexChanged += new System.EventHandler(this.DocumentTabsSelectedIndexChanged);
@@ -375,7 +384,7 @@
             // 
             this.panel1.Controls.Add(this.RightToolbar);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Right;
-            this.panel1.Location = new System.Drawing.Point(676, 0);
+            this.panel1.Location = new System.Drawing.Point(682, 0);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(150, 801);
             this.panel1.TabIndex = 1;
@@ -677,7 +686,7 @@
             this.tspTools.Location = new System.Drawing.Point(0, 3);
             this.tspTools.Name = "tspTools";
             this.tspTools.Padding = new System.Windows.Forms.Padding(6, 3, 3, 3);
-            this.tspTools.Size = new System.Drawing.Size(40, 36);
+            this.tspTools.Size = new System.Drawing.Size(34, 117);
             this.tspTools.TabIndex = 0;
             // 
             // Editor
@@ -688,6 +697,7 @@
             this.Controls.Add(this.tscToolStrip);
             this.Controls.Add(this.stsStatus);
             this.Controls.Add(this.mnuMain);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
             this.MainMenuStrip = this.mnuMain;
             this.Name = "Editor";
