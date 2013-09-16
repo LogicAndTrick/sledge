@@ -75,8 +75,13 @@ namespace Sledge.Providers
             return br.ReadString().Trim('\0');
         }
 
+        const int MaxVariableStringLength = 248;
+
         public static void WriteVariableLengthString(this BinaryWriter bw, string str)
         {
+            // RMF strings can't be more than Byte.MaxValue characters long (including the null terminator).
+            // Though Hammer crashes at 250 characters, so it must be doing something odd.
+            if (str.Length > MaxVariableStringLength) str = str.Substring(0, MaxVariableStringLength);
             bw.Write(str + '\0');
         }
 
