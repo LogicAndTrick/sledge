@@ -86,6 +86,7 @@ namespace Sledge.Settings
         ToggleHideDisplacementSolids,
         ToggleHideNullTextures,
 
+        ShowLogicalTree,
         ShowMapInformation,
         ShowEntityReport,
         CheckForProblems,

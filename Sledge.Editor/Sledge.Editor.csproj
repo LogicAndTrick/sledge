@@ -308,6 +308,12 @@
     <Compile Include="UI\MapInformationDialog.Designer.cs">
       <DependentUpon>MapInformationDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="UI\MapTreeWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\MapTreeWindow.Designer.cs">
+      <DependentUpon>MapTreeWindow.cs</DependentUpon>
+    </Compile>
     <Compile Include="UI\PasteSpecialDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -479,6 +485,9 @@
     <EmbeddedResource Include="UI\MapInformationDialog.resx">
       <DependentUpon>MapInformationDialog.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="UI\MapTreeWindow.resx">
+      <DependentUpon>MapTreeWindow.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="UI\PasteSpecialDialog.resx">
       <DependentUpon>PasteSpecialDialog.cs</DependentUpon>
     </EmbeddedResource>
@@ -647,6 +656,7 @@
     <Content Include="Resources\Menu_ShowBrushID.png" />
     <Content Include="Resources\Menu_ShowHidden.png" />
     <Content Include="Resources\Menu_ShowInformation.png" />
+    <Content Include="Resources\Menu_ShowLogicalTree.png" />
     <Content Include="Resources\Menu_SmallerGrid.png" />
     <Content Include="Resources\Menu_SnapSelection.png" />
     <Content Include="Resources\Menu_SnapSelectionIndividual.png" />

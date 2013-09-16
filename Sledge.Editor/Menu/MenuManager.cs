@@ -101,6 +101,7 @@ namespace Sledge.Editor.Menu
             Add("Map", new SimpleMenuBuilder("Show Selected Brush ID", HotkeysMediator.ShowSelectedBrushID) { Image = Resources.Menu_ShowBrushID, IsVisible = mapOpen, IsActive = itemsSelected });
             Add("Map", new SimpleMenuBuilder("Entity Report...", HotkeysMediator.ShowEntityReport) { Image = Resources.Menu_EntityReport, IsVisible = mapOpen });
             Add("Map", new SimpleMenuBuilder("Check for Problems", HotkeysMediator.CheckForProblems) { Image = Resources.Menu_CheckForProblems, IsVisible = mapOpen });
+            Add("Map", new SimpleMenuBuilder("Show Logical Tree", HotkeysMediator.ShowLogicalTree) { Image = Resources.Menu_ShowLogicalTree, IsVisible = mapOpen });
             Add("Map", new MenuSplitter { IsVisible = mapOpen });
             Add("Map", new SimpleMenuBuilder("Map Properties...", EditorMediator.WorldspawnProperties) { Image = Resources.Menu_MapProperties, IsVisible = mapOpen });
             Add("Map", new MenuSplitter { IsVisible = mapOpen });

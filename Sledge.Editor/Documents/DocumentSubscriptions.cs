@@ -123,6 +123,7 @@ namespace Sledge.Editor.Documents
 
             Mediator.Subscribe(HotkeysMediator.ShowSelectedBrushID, this);
             Mediator.Subscribe(HotkeysMediator.ShowMapInformation, this);
+            Mediator.Subscribe(HotkeysMediator.ShowLogicalTree, this);
             Mediator.Subscribe(HotkeysMediator.ShowEntityReport, this);
             Mediator.Subscribe(HotkeysMediator.CheckForProblems, this);
 
@@ -234,11 +235,7 @@ namespace Sledge.Editor.Documents
             var tempDir = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
             Directory.CreateDirectory(tempDir);
 
-            _document.Map.WorldSpawn.EntityData.Properties.Add(new Property
-            {
-                Key = "wad",
-                Value = string.Join(";", _document.Game.Wads.Select(x => x.Path))
-            });
+            _document.Map.WorldSpawn.EntityData.SetPropertyValue("wad", string.Join(";", _document.Game.Wads.Select(x => x.Path)));
             var map = Path.Combine(tempDir, Path.GetFileNameWithoutExtension(_document.MapFile) + ".map");
             SaveWithCordon(map);
 
@@ -970,6 +967,12 @@ namespace Sledge.Editor.Documents
             {
                 mid.ShowDialog();
             }
+        }
+
+        public void ShowLogicalTree()
+        {
+            var mtw = new MapTreeWindow(_document);
+            mtw.Show(Editor.Instance);
         }
 
         public void ShowEntityReport()

@@ -553,6 +553,16 @@ namespace Sledge.Editor.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap Menu_ShowLogicalTree {
+            get {
+                object obj = ResourceManager.GetObject("Menu_ShowLogicalTree", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap Menu_SmallerGrid {
             get {
                 object obj = ResourceManager.GetObject("Menu_SmallerGrid", resourceCulture);
