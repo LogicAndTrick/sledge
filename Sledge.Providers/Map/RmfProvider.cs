@@ -131,7 +131,8 @@ namespace Sledge.Providers.Map
             var numProperties = br.ReadInt32();
             for (var i = 0; i < numProperties; i++)
             {
-                data.Properties.Add(ReadProperty(br));
+                var prop = ReadProperty(br);
+                data.SetPropertyValue(prop.Key, prop.Value);
             }
 
             br.ReadBytes(12); // More unused bytes

@@ -32,7 +32,9 @@ namespace Sledge.Providers.Map
 
         private string FormatCoordinate(Coordinate c)
         {
-            return c.X.ToString("0.000") + " " + c.Y.ToString("0.000") + " " + c.Z.ToString("0.000");
+            return c.X.ToString("0.000", CultureInfo.InvariantCulture)
+                   + " " + c.Y.ToString("0.000", CultureInfo.InvariantCulture)
+                   + " " + c.Z.ToString("0.000", CultureInfo.InvariantCulture);
         }
 
         private void CollectSolids(List<Solid> solids, MapObject parent)
@@ -90,15 +92,15 @@ namespace Sledge.Providers.Map
             strings.Add(String.IsNullOrWhiteSpace(face.Texture.Name) ? "AAATRIGGER" : face.Texture.Name);
             strings.Add("[");
             strings.Add(FormatCoordinate(face.Texture.UAxis));
-            strings.Add(face.Texture.XShift.ToString("0.000"));
+            strings.Add(face.Texture.XShift.ToString("0.000", CultureInfo.InvariantCulture));
             strings.Add("]");
             strings.Add("[");
             strings.Add(FormatCoordinate(face.Texture.VAxis));
-            strings.Add(face.Texture.YShift.ToString("0.000"));
+            strings.Add(face.Texture.YShift.ToString("0.000", CultureInfo.InvariantCulture));
             strings.Add("]");
-            strings.Add(face.Texture.Rotation.ToString("0.000"));
-            strings.Add(face.Texture.XScale.ToString("0.000"));
-            strings.Add(face.Texture.YScale.ToString("0.000"));
+            strings.Add(face.Texture.Rotation.ToString("0.000", CultureInfo.InvariantCulture));
+            strings.Add(face.Texture.XScale.ToString("0.000", CultureInfo.InvariantCulture));
+            strings.Add(face.Texture.YScale.ToString("0.000", CultureInfo.InvariantCulture));
             sw.WriteLine(String.Join(" ", strings));
         }
 
@@ -163,7 +165,7 @@ namespace Sledge.Providers.Map
             }
             else
             {
-                ent.EntityData.Properties.Add(new Property { Key = key, Value = val });
+                ent.EntityData.SetPropertyValue(key, val);
             }
         }
 
@@ -193,7 +195,7 @@ namespace Sledge.Providers.Map
 
             sw.WriteLine("{");
             WriteProperty(sw, "classname", ent.EntityData.Name);
-            WriteProperty(sw, "spawnflags", ent.EntityData.Flags.ToString());
+            WriteProperty(sw, "spawnflags", ent.EntityData.Flags.ToString(CultureInfo.InvariantCulture));
             foreach (var prop in ent.EntityData.Properties)
             {
                 if (prop.Key == "classname" || prop.Key == "spawnflags") continue;
@@ -216,7 +218,7 @@ namespace Sledge.Providers.Map
             sw.WriteLine("{");
 
             WriteProperty(sw, "classname", world.EntityData.Name);
-            WriteProperty(sw, "spawnflags", world.EntityData.Flags.ToString());
+            WriteProperty(sw, "spawnflags", world.EntityData.Flags.ToString(CultureInfo.InvariantCulture));
             WriteProperty(sw, "mapversion", "220");
             foreach (var prop in world.EntityData.Properties)
             {
