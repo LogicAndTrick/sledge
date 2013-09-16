@@ -183,17 +183,18 @@ namespace Sledge.Editor.UI
                                      ? null
                                      : entClass.Properties.FirstOrDefault(x => x.Name == "spawnflags");
                 var opts = spawnFlags == null ? null : spawnFlags.Options;
-                if (opts == null || flags.Count != opts.Count) continue;
-
-                var beforeFlags = entityData.Flags;
-                for (var i = 0; i < flags.Count; i++)
+                if (opts != null && flags.Count == opts.Count)
                 {
-                    var val = int.Parse(opts[i].Key);
-                    if (flags[i] == CheckState.Unchecked) entityData.Flags &= ~val; // Switch the flag off if unchecked
-                    else if (flags[i] == CheckState.Checked) entityData.Flags |= val; // Switch it on if checked
-                    // No change if indeterminate
+                    var beforeFlags = entityData.Flags;
+                    for (var i = 0; i < flags.Count; i++)
+                    {
+                        var val = int.Parse(opts[i].Key);
+                        if (flags[i] == CheckState.Unchecked) entityData.Flags &= ~val; // Switch the flag off if unchecked
+                        else if (flags[i] == CheckState.Checked) entityData.Flags |= val; // Switch it on if checked
+                        // No change if indeterminate
+                    }
+                    if (entityData.Flags != beforeFlags) changed = true;
                 }
-                if (entityData.Flags != beforeFlags) changed = true;
 
                 if (changed) action.AddEntity(entity, entityData);
             }
