@@ -95,8 +95,8 @@ namespace Sledge.Editor.Documents
 
             Map.PostLoadProcess(GameData, GetTexture, SettingsManager.GetSpecialTextureOpacity);
 
-            Renderer = new RenderManager(this);
             HelperManager = new HelperManager(this);
+            Renderer = new RenderManager(this);
 
             if (MapFile != null) Mediator.Publish(EditorMediator.FileOpened, MapFile);
 
