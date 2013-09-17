@@ -551,6 +551,8 @@ namespace Sledge.Editor.Settings
             SelectedGameTextureScale.Value = _selectedGame.DefaultTextureScale;
             SelectedGameLightmapScale.Value = _selectedGame.DefaultLightmapScale;
 
+            SelectedGameSteamInstall.Checked = _selectedGame.SteamInstall;
+
             SelectedGameMod.SelectedText = _selectedGame.ModDir;
             SelectedGameWonDir.Text = _selectedGame.WonGameDir;
             SelectedGameSteamDir.SelectedText = _selectedGame.SteamGameDir;
@@ -581,8 +583,6 @@ namespace Sledge.Editor.Settings
             {
                 SelectedGameEngine.SelectedIndex = Math.Max(0, _engines.FindIndex(x => x.ID == _selectedGame.EngineID));
             }
-
-            SelectedGameSteamInstall.Checked = _selectedGame.SteamInstall;
 
             SelectedGameEngineChanged(null, null);
             SelectedGameUpdateSteamGames();
@@ -698,7 +698,7 @@ namespace Sledge.Editor.Settings
 
         private void SelectedGameWonDirChanged(object sender, EventArgs e)
         {
-            if (SelectedGameEngine.SelectedIndex < 0) return;
+            if (SelectedGameEngine.SelectedIndex < 0 || SelectedGameSteamInstall.Checked) return;
             var eng = _engines[SelectedGameEngine.SelectedIndex];
             if (eng.Name != "Goldsource" || SelectedGameSteamInstall.Checked) return;
             SelectedGameMod.Items.Clear();
@@ -712,7 +712,7 @@ namespace Sledge.Editor.Settings
 
         private void SelectedGameSteamDirChanged(object sender, EventArgs e)
         {
-            if (SelectedGameEngine.SelectedIndex < 0) return;
+            if (SelectedGameEngine.SelectedIndex < 0 || !SelectedGameSteamInstall.Checked) return;
             var eng = _engines[SelectedGameEngine.SelectedIndex];
             if (eng.Name == "Goldsource" && !SelectedGameSteamInstall.Checked) return;
             SelectedGameMod.Items.Clear();
