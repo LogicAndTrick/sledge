@@ -87,7 +87,6 @@ namespace Sledge.Editor.Tools
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(613, 396);
-            this.ControlBox = false;
             this.Controls.Add(this.panel1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.Name = "DisplacementForm";
@@ -95,6 +94,7 @@ namespace Sledge.Editor.Tools
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Displacement Editing";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.OnClosing);
             this.groupRadios.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
             this.ResumeLayout(false);

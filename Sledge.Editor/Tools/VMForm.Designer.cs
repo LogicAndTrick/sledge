@@ -126,7 +126,6 @@ namespace Sledge.Editor.Tools
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(591, 202);
-            this.ControlBox = false;
             this.Controls.Add(this.ControlPanel);
             this.Controls.Add(this.groupRadios);
             this.Controls.Add(this.ErrorList);
@@ -139,6 +138,7 @@ namespace Sledge.Editor.Tools
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Vertex Manipulation";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.OnClosing);
             this.groupRadios.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();

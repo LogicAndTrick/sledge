@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using Sledge.Common.Mediator;
 using Sledge.Editor.Tools.DisplacementTools;
 using Sledge.Editor.UI;
+using Sledge.Settings;
 
 namespace Sledge.Editor.Tools
 {
@@ -64,6 +66,15 @@ namespace Sledge.Editor.Tools
         {
             Focus();
             base.OnMouseEnter(e);
+        }
+
+        private void OnClosing(object sender, FormClosingEventArgs e)
+        {
+            if (e.CloseReason == CloseReason.UserClosing)
+            {
+                e.Cancel = true;
+                Mediator.Publish(HotkeysMediator.SwitchTool, HotkeyTool.Displacement);
+            }
         }
     }
 }

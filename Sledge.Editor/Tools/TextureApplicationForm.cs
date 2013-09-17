@@ -468,5 +468,14 @@ namespace Sledge.Editor.Tools
         {
             // TODO SOURCE: Texture Smoothing Groups
         }
+
+        private void OnClosing(object sender, FormClosingEventArgs e)
+        {
+            if (e.CloseReason == CloseReason.UserClosing)
+            {
+                e.Cancel = true;
+                Mediator.Publish(HotkeysMediator.SwitchTool, HotkeyTool.Texture);
+            }
+        }
     }
 }

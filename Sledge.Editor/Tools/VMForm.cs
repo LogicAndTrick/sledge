@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using Sledge.Common.Mediator;
 using Sledge.Editor.Tools.VMTools;
 using Sledge.Editor.UI;
+using Sledge.Settings;
 
 namespace Sledge.Editor.Tools
 {
@@ -165,6 +167,15 @@ namespace Sledge.Editor.Tools
         {
             var error = ErrorList.SelectedItem as VMError;
             OnSelectError(error);
+        }
+
+        private void OnClosing(object sender, FormClosingEventArgs e)
+        {
+            if (e.CloseReason == CloseReason.UserClosing)
+            {
+                e.Cancel = true;
+                Mediator.Publish(HotkeysMediator.SwitchTool, HotkeyTool.VM);
+            }
         }
     }
 }
