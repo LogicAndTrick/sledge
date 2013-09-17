@@ -193,6 +193,10 @@ namespace Sledge.Editor.Settings
             if (Sledge.Settings.View.Renderer == Sledge.Settings.RenderMode.OpenGL1DisplayLists) RenderMode.SelectedIndex = 1;
             if (Sledge.Settings.View.Renderer == Sledge.Settings.RenderMode.OpenGL1Immediate) RenderMode.SelectedIndex = 2;
 
+            DisableWadTransparency.Checked = Sledge.Settings.View.DisableWadTransparency;
+            DisableToolTransparency.Checked = Sledge.Settings.View.DisableToolTextureTransparency;
+            GloballyDisableTransparency.Checked = Sledge.Settings.View.GloballyDisableTransparency;
+
             // 2D Views
             CrosshairCursorIn2DViews.Checked = Sledge.Settings.View.CrosshairCursorIn2DViews;
             AutoSelectBox.Checked = Sledge.Settings.Select.AutoSelectBox;
@@ -238,7 +242,6 @@ namespace Sledge.Editor.Settings
             BackClippingPane.Value = Sledge.Settings.View.BackClippingPane;
             ModelRenderDistance.Value = Sledge.Settings.View.ModelRenderDistance;
             DetailRenderDistance.Value = Sledge.Settings.View.DetailRenderDistance;
-            RenderTransparentToolBrushes.Checked = Sledge.Settings.View.RenderTransparentToolBrushes;
 
             ForwardSpeed.Value = Sledge.Settings.View.ForwardSpeed;
             TimeToTopSpeed.Value = (int) (Sledge.Settings.View.TimeToTopSpeed / 10);
@@ -277,6 +280,10 @@ namespace Sledge.Editor.Settings
             Sledge.Settings.View.Renderer = Sledge.Settings.RenderMode.OpenGL3;
             if (RenderMode.SelectedIndex == 1) Sledge.Settings.View.Renderer = Sledge.Settings.RenderMode.OpenGL1DisplayLists;
             if (RenderMode.SelectedIndex == 2) Sledge.Settings.View.Renderer = Sledge.Settings.RenderMode.OpenGL1Immediate;
+
+            Sledge.Settings.View.DisableWadTransparency = DisableWadTransparency.Checked;
+            Sledge.Settings.View.DisableToolTextureTransparency = DisableToolTransparency.Checked;
+            Sledge.Settings.View.GloballyDisableTransparency = GloballyDisableTransparency.Checked;
 
             // 2D Views
             Sledge.Settings.View.CrosshairCursorIn2DViews = CrosshairCursorIn2DViews.Checked;
@@ -323,7 +330,6 @@ namespace Sledge.Editor.Settings
             Sledge.Settings.View.BackClippingPane = BackClippingPane.Value;
             Sledge.Settings.View.ModelRenderDistance = ModelRenderDistance.Value;
             Sledge.Settings.View.DetailRenderDistance = DetailRenderDistance.Value;
-            Sledge.Settings.View.RenderTransparentToolBrushes = RenderTransparentToolBrushes.Checked;
 
             Sledge.Settings.View.ForwardSpeed = ForwardSpeed.Value;
             Sledge.Settings.View.TimeToTopSpeed = TimeToTopSpeed.Value * 10m;

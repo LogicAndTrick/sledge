@@ -13,11 +13,13 @@ namespace Sledge.Providers.Texture
 {
     public class WadProvider : TextureProvider
     {
+        public static bool ReplaceTransparentPixels = true;
+
         private static Bitmap PostProcessBitmap(string name, Bitmap bmp, out bool hasTransparency)
         {
             hasTransparency = false;
             // Transparent textures are named like: {Name
-            if (name.StartsWith("{"))
+            if (ReplaceTransparentPixels && name.StartsWith("{"))
             {
                 hasTransparency = true;
                 var palette = bmp.Palette;

@@ -17,9 +17,18 @@ namespace Sledge.Graphics.Helpers
     {
         public static readonly Dictionary<string, GLTexture> Textures;
 
+        private static PixelInternalFormat PixelInternalFormat { get; set; }
+
+        public static bool EnableTransparency
+        {
+            get { return PixelInternalFormat == PixelInternalFormat.Rgba; }
+            set { PixelInternalFormat = value ? PixelInternalFormat.Rgba : PixelInternalFormat.Rgb; }
+        }
+
         static TextureHelper()
         {
             Textures = new Dictionary<string, GLTexture>();
+            PixelInternalFormat = PixelInternalFormat.Rgba;
         }
 
         public static void ClearLoadedTextures()
@@ -63,7 +72,7 @@ namespace Sledge.Graphics.Helpers
             GL.TexImage2D(
                 TextureTarget.Texture2D,
                 0,
-                PixelInternalFormat.Rgba,
+                PixelInternalFormat,
                 data.Width, data.Height,
                 0,
                 PixelFormat.Bgra,

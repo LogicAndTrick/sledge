@@ -146,8 +146,8 @@ namespace Sledge.Editor.Rendering.Renderers
 
             var all = GetAllVisible(Document.Map.WorldSpawn);
             var cache = CollectFaces(all);
-            var unselected = cache.Where(x => !x.IsSelected && (x.Parent == null || !x.Parent.IsSelected)).ToList();
-            var selected = cache.Where(x => x.IsSelected || (x.Parent != null && x.Parent.IsSelected)).ToList();
+            var unselected = cache.Where(x => !x.IsSelected && (x.Parent == null || !x.Parent.IsSelected) && x.Opacity > 0.1).ToList();
+            var selected = cache.Where(x => (x.IsSelected || (x.Parent != null && x.Parent.IsSelected)) && x.Opacity > 0.1).ToList();
 
             GL.NewList(_listUnselectedWireframe2D, ListMode.Compile);
             DataStructures.Rendering.Rendering.DrawWireframe(unselected.Where(x => x.Parent == null || !x.Parent.IsRenderHidden2D), false);

@@ -133,8 +133,8 @@ namespace Sledge.Editor.Rendering.Renderers
             if (_cache != null) return;
             var all = GetAllVisible(Document.Map.WorldSpawn);
             _cache = CollectFaces(all);
-            _unselected = _cache.Where(x => !x.IsSelected && (x.Parent == null || !x.Parent.IsSelected)).ToList();
-            _selected = _cache.Where(x => x.IsSelected || (x.Parent != null && x.Parent.IsSelected)).ToList();
+            _unselected = _cache.Where(x => !x.IsSelected && (x.Parent == null || !x.Parent.IsSelected) && x.Opacity > 0.1).ToList();
+            _selected = _cache.Where(x => (x.IsSelected || (x.Parent != null && x.Parent.IsSelected)) && x.Opacity > 0.1).ToList();
         }
 
         private IList<MapObject> GetAllVisible(MapObject root)

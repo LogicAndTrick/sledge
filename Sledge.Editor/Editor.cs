@@ -17,6 +17,7 @@ using Sledge.Editor.Documents;
 using Sledge.Editor.Menu;
 using Sledge.Editor.Settings;
 using Sledge.Editor.UI;
+using Sledge.Graphics.Helpers;
 using Sledge.Providers;
 using Sledge.Providers.GameData;
 using Sledge.Providers.Map;
@@ -121,6 +122,9 @@ namespace Sledge.Editor
             GameDataProvider.Register(new FgdProvider());
             TextureProvider.Register(new WadProvider());
             TextureProvider.Register(new SprProvider());
+
+            WadProvider.ReplaceTransparentPixels = !Sledge.Settings.View.DisableWadTransparency && !Sledge.Settings.View.GloballyDisableTransparency;
+            TextureHelper.EnableTransparency = !Sledge.Settings.View.GloballyDisableTransparency;
 
             // Sprites are loaded on startup and always retained
             var spritesFolder = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Sprites");
@@ -386,6 +390,8 @@ namespace Sledge.Editor
                 vp.Camera.ClipDistance = Sledge.Settings.View.BackClippingPane;
             }
             ViewportManager.RefreshClearColour();
+            WadProvider.ReplaceTransparentPixels = !Sledge.Settings.View.DisableWadTransparency && !Sledge.Settings.View.GloballyDisableTransparency;
+            TextureHelper.EnableTransparency = !Sledge.Settings.View.GloballyDisableTransparency;
         }
 
         private void Exit()

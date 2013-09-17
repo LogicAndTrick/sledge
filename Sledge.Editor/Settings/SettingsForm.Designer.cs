@@ -123,7 +123,6 @@ namespace Sledge.Editor.Settings
             this.ForwardSpeedLabel = new System.Windows.Forms.Label();
             this.ForwardSpeed = new System.Windows.Forms.TrackBar();
             this.groupBox14 = new System.Windows.Forms.GroupBox();
-            this.RenderTransparentToolBrushes = new System.Windows.Forms.CheckBox();
             this.label26 = new System.Windows.Forms.Label();
             this.label24 = new System.Windows.Forms.Label();
             this.label22 = new System.Windows.Forms.Label();
@@ -266,6 +265,9 @@ namespace Sledge.Editor.Settings
             this.btnCancelSettings = new System.Windows.Forms.Button();
             this.btnApplyAndCloseSettings = new System.Windows.Forms.Button();
             this.btnApplySettings = new System.Windows.Forms.Button();
+            this.DisableWadTransparency = new System.Windows.Forms.CheckBox();
+            this.DisableToolTransparency = new System.Windows.Forms.CheckBox();
+            this.GloballyDisableTransparency = new System.Windows.Forms.CheckBox();
             this.tbcSettings.SuspendLayout();
             this.tabGeneral.SuspendLayout();
             this.groupBox20.SuspendLayout();
@@ -415,6 +417,9 @@ namespace Sledge.Editor.Settings
             // groupBox21
             // 
             this.groupBox21.Controls.Add(this.RenderMode);
+            this.groupBox21.Controls.Add(this.GloballyDisableTransparency);
+            this.groupBox21.Controls.Add(this.DisableToolTransparency);
+            this.groupBox21.Controls.Add(this.DisableWadTransparency);
             this.groupBox21.Controls.Add(this.label32);
             this.groupBox21.Location = new System.Drawing.Point(369, 217);
             this.groupBox21.Name = "groupBox21";
@@ -1251,7 +1256,7 @@ namespace Sledge.Editor.Settings
             this.groupBox13.Controls.Add(this.label27);
             this.groupBox13.Controls.Add(this.ForwardSpeedLabel);
             this.groupBox13.Controls.Add(this.ForwardSpeed);
-            this.groupBox13.Location = new System.Drawing.Point(6, 219);
+            this.groupBox13.Location = new System.Drawing.Point(6, 187);
             this.groupBox13.Name = "groupBox13";
             this.groupBox13.Size = new System.Drawing.Size(426, 180);
             this.groupBox13.TabIndex = 2;
@@ -1343,7 +1348,6 @@ namespace Sledge.Editor.Settings
             // 
             // groupBox14
             // 
-            this.groupBox14.Controls.Add(this.RenderTransparentToolBrushes);
             this.groupBox14.Controls.Add(this.label26);
             this.groupBox14.Controls.Add(this.label24);
             this.groupBox14.Controls.Add(this.label22);
@@ -1355,19 +1359,10 @@ namespace Sledge.Editor.Settings
             this.groupBox14.Controls.Add(this.BackClippingPaneLabel);
             this.groupBox14.Location = new System.Drawing.Point(6, 6);
             this.groupBox14.Name = "groupBox14";
-            this.groupBox14.Size = new System.Drawing.Size(426, 207);
+            this.groupBox14.Size = new System.Drawing.Size(426, 175);
             this.groupBox14.TabIndex = 2;
             this.groupBox14.TabStop = false;
             this.groupBox14.Text = "Performance";
-            // 
-            // RenderTransparentToolBrushes
-            // 
-            this.RenderTransparentToolBrushes.Location = new System.Drawing.Point(12, 173);
-            this.RenderTransparentToolBrushes.Name = "RenderTransparentToolBrushes";
-            this.RenderTransparentToolBrushes.Size = new System.Drawing.Size(186, 24);
-            this.RenderTransparentToolBrushes.TabIndex = 5;
-            this.RenderTransparentToolBrushes.Text = "Render transparent tool brushes";
-            this.RenderTransparentToolBrushes.UseVisualStyleBackColor = true;
             // 
             // label26
             // 
@@ -2871,6 +2866,36 @@ namespace Sledge.Editor.Settings
             this.btnApplySettings.UseVisualStyleBackColor = true;
             this.btnApplySettings.Click += new System.EventHandler(this.Apply);
             // 
+            // DisableWadTransparency
+            // 
+            this.DisableWadTransparency.Location = new System.Drawing.Point(12, 49);
+            this.DisableWadTransparency.Name = "DisableWadTransparency";
+            this.DisableWadTransparency.Size = new System.Drawing.Size(233, 24);
+            this.DisableWadTransparency.TabIndex = 3;
+            this.DisableWadTransparency.Tag = "";
+            this.DisableWadTransparency.Text = "Disable WAD texture transparency";
+            this.DisableWadTransparency.UseVisualStyleBackColor = true;
+            // 
+            // DisableToolTransparency
+            // 
+            this.DisableToolTransparency.Location = new System.Drawing.Point(12, 79);
+            this.DisableToolTransparency.Name = "DisableToolTransparency";
+            this.DisableToolTransparency.Size = new System.Drawing.Size(233, 24);
+            this.DisableToolTransparency.TabIndex = 3;
+            this.DisableToolTransparency.Tag = "";
+            this.DisableToolTransparency.Text = "Disable tool texture transparency";
+            this.DisableToolTransparency.UseVisualStyleBackColor = true;
+            // 
+            // GloballyDisableTransparency
+            // 
+            this.GloballyDisableTransparency.Location = new System.Drawing.Point(12, 109);
+            this.GloballyDisableTransparency.Name = "GloballyDisableTransparency";
+            this.GloballyDisableTransparency.Size = new System.Drawing.Size(233, 24);
+            this.GloballyDisableTransparency.TabIndex = 3;
+            this.GloballyDisableTransparency.Tag = "";
+            this.GloballyDisableTransparency.Text = "Disable transparent textures globally";
+            this.GloballyDisableTransparency.UseVisualStyleBackColor = true;
+            // 
             // SettingsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -3173,7 +3198,6 @@ namespace Sledge.Editor.Settings
         private System.Windows.Forms.CheckBox SelectCreatedBrush;
         private System.Windows.Forms.CheckBox KeepVisgroupsWhenCloning;
         private System.Windows.Forms.CheckBox ResetBrushTypeOnCreation;
-        private System.Windows.Forms.CheckBox RenderTransparentToolBrushes;
         private System.Windows.Forms.Label label30;
         private System.Windows.Forms.NumericUpDown ScrollWheelZoomMultiplier;
         private System.Windows.Forms.GroupBox groupBox19;
@@ -3188,5 +3212,8 @@ namespace Sledge.Editor.Settings
         private System.Windows.Forms.GroupBox groupBox21;
         private System.Windows.Forms.ComboBox RenderMode;
         private System.Windows.Forms.Label label32;
+        private System.Windows.Forms.CheckBox GloballyDisableTransparency;
+        private System.Windows.Forms.CheckBox DisableToolTransparency;
+        private System.Windows.Forms.CheckBox DisableWadTransparency;
 	}
 }

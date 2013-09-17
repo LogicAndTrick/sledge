@@ -9,7 +9,6 @@ namespace Sledge.Settings
         public static int BackClippingPane { get; set; }
         public static int ModelRenderDistance { get; set; }
         public static int DetailRenderDistance { get; set; }
-        public static bool RenderTransparentToolBrushes { get; set; }
 
         public static int ForwardSpeed { get; set; }
         public static decimal TimeToTopSpeed { get; set; }
@@ -24,6 +23,9 @@ namespace Sledge.Settings
         public static bool KeepViewportSplitterPosition { get; set; }
 
         public static RenderMode Renderer { get; set; }
+        public static bool DisableWadTransparency { get; set; }
+        public static bool DisableToolTextureTransparency { get; set; }
+        public static bool GloballyDisableTransparency { get; set; }
 
         static View()
         {
@@ -34,7 +36,6 @@ namespace Sledge.Settings
             BackClippingPane = 6000;
             ModelRenderDistance = 4000;
             DetailRenderDistance = 4000;
-            RenderTransparentToolBrushes = true;
 
             ForwardSpeed = 1000;
             TimeToTopSpeed = 0.5m;
@@ -50,6 +51,9 @@ namespace Sledge.Settings
             KeepViewportSplitterPosition = false;
 
             Renderer = RenderMode.OpenGL3;
+            DisableWadTransparency = false;
+            DisableToolTextureTransparency = false;
+            GloballyDisableTransparency = false;    
         }
     }
 }

@@ -194,7 +194,7 @@ namespace Sledge.DataStructures.MapObjects
                         {
                             f.Opacity = 0;
                         }
-                        else
+                        else if (f.Texture.Texture != null)
                         {
                             f.Opacity = textureOpacity(f.Texture.Name.ToLowerInvariant());
                             if (!HideNullTextures && f.Opacity < 0.1) f.Opacity = 1;
