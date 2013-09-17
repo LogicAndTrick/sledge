@@ -163,15 +163,15 @@ namespace Sledge.Editor.UI
                 }
 
                 // Set updated/new properties
-                foreach (var ent in _values.Where(x => x.IsModified))
+                foreach (var ent in _values.Where(x => x.IsModified || (x.IsAdded && !x.IsRemoved)))
                 {
-                    var prop = entityData.Properties.FirstOrDefault(x => x.Key == ent.Key);
-                    if (prop == null)
-                    {
-                        prop = new Property {Key = ent.Key};
-                        entityData.Properties.Add(prop);
-                    }
-                    prop.Value = ent.Value;
+                    entityData.SetPropertyValue(ent.Key, ent.Value);
+                    changed = true;
+                }
+
+                foreach (var ent in _values.Where(x => x.IsRemoved && !x.IsAdded))
+                {
+                    entityData.Properties.RemoveAll(x => x.Key == ent.Key);
                     changed = true;
                 }
 
@@ -439,9 +439,8 @@ namespace Sledge.Editor.UI
                 Angles.SetAnglePropertyString(angleVal.Value);
             }
 
-            if (selectedIndex >= 0) KeyValuesList.SelectedIndices.Add(selectedIndex);
-
-            //KeyValuesListSelectedIndexChanged(null, null);
+            if (selectedIndex >= 0 && KeyValuesList.Items.Count > selectedIndex) KeyValuesList.SelectedIndices.Add(selectedIndex);
+            else KeyValuesListSelectedIndexChanged(null, null);
 
             _populating = false;
         }
@@ -556,14 +555,25 @@ namespace Sledge.Editor.UI
         private void PropertyValueChanged(object sender, string propertyname, string propertyvalue)
         {
             var val = _values.FirstOrDefault(x => x.Key == propertyname);
-            if (val == null) return;
+            var li = KeyValuesList.Items.OfType<ListViewItem>().FirstOrDefault(x => ((string) x.Tag) == propertyname);
+            if (val == null)
+            {
+                if (li != null) KeyValuesList.Items.Remove(li);
+                return;
+            }
             val.IsModified = true;
             val.Value = propertyvalue;
-            var li = KeyValuesList.Items.OfType<ListViewItem>().FirstOrDefault(x => ((string) x.Tag) == propertyname);
-            if (li != null)
+            if (li == null)
+            {
+                var dt = SmartEditButton.Checked ? val.DisplayText : val.Key;
+                var dv = SmartEditButton.Checked ? val.DisplayValue(Document.GameData) : val.Value;
+                li = new ListViewItem(dt) { Tag = val.Key, BackColor = val.GetColour() };
+                KeyValuesList.Items.Add(li).SubItems.Add(dv);
+            }
+            else
             {
                 li.BackColor = val.GetColour();
-                li.SubItems[1].Text = val.Value;
+                li.SubItems[1].Text = SmartEditButton.Checked ? val.DisplayValue(Document.GameData) : val.Value;
             }
             if (propertyname == "angles" && propertyvalue != Angles.GetAnglePropertyString())
             {
@@ -602,6 +612,50 @@ namespace Sledge.Editor.UI
                 HelpTextbox.Text = gdProp.Description;
             }
             AddSmartEditControl(gdProp, propName, value);
+        }
+
+        private void AddPropertyClicked(object sender, EventArgs e)
+        {
+            if (_changingClass) return;
+            // Generate a new unique key name
+            var key = 1;
+            string name;
+            do
+            {
+                name = "key" + key;
+                key++;
+            } while (_values.Any(x => String.Equals(x.Key, name, StringComparison.InvariantCultureIgnoreCase)));
+            _values.Add(new TableValue
+                            {
+                                Class = Class.Text,
+                                DisplayText = name,
+                                Key = name,
+                                Value = "value",
+                                IsAdded = true,
+                                IsModified = true,
+                                IsRemoved = false
+                            });
+            PropertyValueChanged(this, name, "value");
+        }
+
+        private void RemovePropertyClicked(object sender, EventArgs e)
+        {
+            if (KeyValuesList.SelectedItems.Count == 0 || _changingClass) return;
+            var selected = KeyValuesList.SelectedItems[0];
+            var propName = (string)selected.Tag;
+            var val = _values.FirstOrDefault(x => x.Key == propName);
+            if (val != null)
+            {
+                if (val.IsAdded)
+                {
+                    _values.Remove(val);
+                }
+                else
+                {
+                    val.IsRemoved = true;
+                }
+                PropertyValueChanged(this, val.Key, val.Value);
+            }
         }
 
         #region Smart Edit Controls

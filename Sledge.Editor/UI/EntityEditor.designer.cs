@@ -177,23 +177,23 @@ namespace Sledge.Editor.UI
             // 
             // DeletePropertyButton
             // 
-            this.DeletePropertyButton.Enabled = false;
             this.DeletePropertyButton.Location = new System.Drawing.Point(74, 353);
             this.DeletePropertyButton.Name = "DeletePropertyButton";
             this.DeletePropertyButton.Size = new System.Drawing.Size(62, 21);
             this.DeletePropertyButton.TabIndex = 10;
             this.DeletePropertyButton.Text = "Delete";
             this.DeletePropertyButton.UseVisualStyleBackColor = true;
+            this.DeletePropertyButton.Click += new System.EventHandler(this.RemovePropertyClicked);
             // 
             // AddPropertyButton
             // 
-            this.AddPropertyButton.Enabled = false;
             this.AddPropertyButton.Location = new System.Drawing.Point(6, 353);
             this.AddPropertyButton.Name = "AddPropertyButton";
             this.AddPropertyButton.Size = new System.Drawing.Size(62, 21);
             this.AddPropertyButton.TabIndex = 10;
             this.AddPropertyButton.Text = "Add";
             this.AddPropertyButton.UseVisualStyleBackColor = true;
+            this.AddPropertyButton.Click += new System.EventHandler(this.AddPropertyClicked);
             // 
             // ConfirmClassChangeButton
             // 
