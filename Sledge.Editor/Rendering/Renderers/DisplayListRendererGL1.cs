@@ -174,7 +174,10 @@ namespace Sledge.Editor.Rendering.Renderers
             GL.EndList();
 
             GL.NewList(_listSelectedFilledHighlight, ListMode.Compile);
-            DataStructures.Rendering.Rendering.DrawFilled(sel3D, Color.FromArgb(64, Color.Red));
+            if (!Document.Map.HideFaceMask || !Document.Selection.InFaceSelection)
+            {
+                DataStructures.Rendering.Rendering.DrawFilled(sel3D, Color.FromArgb(64, Color.Red));
+            }
             GL.EndList();
 
             _update = false;
@@ -226,6 +229,11 @@ namespace Sledge.Editor.Rendering.Renderers
         }
 
         public void UpdatePartial(IEnumerable<Face> faces)
+        {
+            _update = true;
+        }
+
+        public void UpdateDocumentToggles()
         {
             _update = true;
         }

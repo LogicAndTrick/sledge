@@ -297,5 +297,10 @@ void main()
             _array.UpdatePartial(faces);
             _array.UpdateDecals(_document.Map);
         }
+
+        public void UpdateDocumentToggles()
+        {
+            // Not needed
+        }
     }
 }

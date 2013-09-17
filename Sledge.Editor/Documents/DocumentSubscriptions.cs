@@ -904,6 +904,11 @@ namespace Sledge.Editor.Documents
         public void ToggleShow3DGrid()
         {
             _document.Map.Show3DGrid = !_document.Map.Show3DGrid;
+            if (_document.Map.Show3DGrid && Sledge.Settings.View.Renderer != RenderMode.OpenGL3)
+            {
+                MessageBox.Show("The 3D grid is only available when the OpenGL 3.0 renderer is used.");
+                _document.Map.Show3DGrid = false;
+            }
             _document.Renderer.UpdateGrid(_document.Map.GridSpacing, _document.Map.Show2DGrid, _document.Map.Show3DGrid);
             Mediator.Publish(EditorMediator.UpdateToolstrip);
         }
@@ -935,6 +940,7 @@ namespace Sledge.Editor.Documents
         public void ToggleHideFaceMask()
         {
             _document.Map.HideFaceMask = !_document.Map.HideFaceMask;
+            _document.Renderer.UpdateDocumentToggles();
         }
 
         public void ToggleHideDisplacementSolids()

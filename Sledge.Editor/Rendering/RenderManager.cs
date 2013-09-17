@@ -80,6 +80,11 @@ namespace Sledge.Editor.Rendering
             _renderer.UpdatePartial(faces);
         }
 
+        public void UpdateDocumentToggles()
+        {
+            _renderer.UpdateDocumentToggles();
+        }
+
         public void Register(IEnumerable<ViewportBase> viewports)
         {
             foreach (var vp in viewports)

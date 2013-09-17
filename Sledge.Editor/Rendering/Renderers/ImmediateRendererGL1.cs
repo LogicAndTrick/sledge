@@ -119,7 +119,10 @@ namespace Sledge.Editor.Rendering.Renderers
             GL.MultMatrix(ref _selectionTransform);
 
             DataStructures.Rendering.Rendering.DrawFilled(_selected.Where(x => x.Parent == null || !x.Parent.IsRenderHidden3D), Color.Empty);
-            DataStructures.Rendering.Rendering.DrawFilled(_selected.Where(x => x.Parent == null || !x.Parent.IsRenderHidden3D), Color.FromArgb(64, Color.Red));
+            if (!Document.Selection.InFaceSelection || !Document.Map.HideFaceMask)
+            {
+                DataStructures.Rendering.Rendering.DrawFilled(_selected.Where(x => x.Parent == null || !x.Parent.IsRenderHidden3D), Color.FromArgb(64, Color.Red));
+            }
 
             GL.LoadMatrix(ref current);
         }
@@ -185,6 +188,11 @@ namespace Sledge.Editor.Rendering.Renderers
         public void UpdatePartial(IEnumerable<Face> faces)
         {
             _cache = null;
+        }
+
+        public void UpdateDocumentToggles()
+        {
+            // Not needed
         }
     }
 }
