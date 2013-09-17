@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using Sledge.Common.Mediator;
 using Sledge.DataStructures.GameData;
 using Sledge.DataStructures.MapObjects;
+using Sledge.Editor.Actions.MapObjects.Selection;
 using Sledge.Editor.Documents;
 
 namespace Sledge.Editor.UI
@@ -22,6 +23,7 @@ namespace Sledge.Editor.UI
             InitializeComponent();
             Document = document;
             Mediator.Subscribe(EditorMediator.DocumentActivated, this);
+            Mediator.Subscribe(EditorMediator.SelectionChanged, this);
         }
 
         protected override void OnLoad(EventArgs e)
@@ -33,6 +35,25 @@ namespace Sledge.Editor.UI
         {
             Document = document;
             RefreshNodes();
+        }
+
+        private void SelectionChanged()
+        {
+            if (Document == null || Document.Selection.InFaceSelection || Document.Selection.IsEmpty()) return;
+            var first = Document.Selection.GetSelectedParents().First();
+            var node = FindNodeWithTag(MapTree.Nodes.OfType<TreeNode>(), first);
+            if (node != null) MapTree.SelectedNode = node;
+        }
+
+        private TreeNode FindNodeWithTag(IEnumerable<TreeNode> nodes, object tag)
+        {
+            foreach (var tn in nodes)
+            {
+                if (tn.Tag == tag) return tn;
+                var recurse = FindNodeWithTag(tn.Nodes.OfType<TreeNode>(), tag);
+                if (recurse != null) return recurse;
+            }
+            return null;
         }
 
         private void RefreshNodes()
@@ -131,9 +152,13 @@ namespace Sledge.Editor.UI
             Mediator.ExecuteDefault(this, message, data);
         }
 
-        private void SelectionChanged(object sender, TreeViewEventArgs e)
+        private void TreeSelectionChanged(object sender, TreeViewEventArgs e)
         {
             RefreshSelectionProperties();
+            if (MapTree.SelectedNode != null && MapTree.SelectedNode.Tag is MapObject && !(MapTree.SelectedNode.Tag is World) && Document != null && !Document.Selection.InFaceSelection)
+            {
+                Document.PerformAction("Select object", new ChangeSelection(((MapObject)MapTree.SelectedNode.Tag).FindAll(), Document.Selection.GetSelectedObjects()));
+            }
         }
 
         private void RefreshSelectionProperties()

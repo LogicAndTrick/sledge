@@ -196,7 +196,7 @@
             // TWHLLink
             // 
             this.TWHLLink.AutoSize = true;
-            this.TWHLLink.Location = new System.Drawing.Point(462, 233);
+            this.TWHLLink.Location = new System.Drawing.Point(464, 233);
             this.TWHLLink.Name = "TWHLLink";
             this.TWHLLink.Size = new System.Drawing.Size(46, 13);
             this.TWHLLink.TabIndex = 6;
@@ -215,7 +215,7 @@
             // AJLink
             // 
             this.AJLink.AutoSize = true;
-            this.AJLink.Location = new System.Drawing.Point(414, 215);
+            this.AJLink.Location = new System.Drawing.Point(416, 215);
             this.AJLink.Name = "AJLink";
             this.AJLink.Size = new System.Drawing.Size(92, 13);
             this.AJLink.TabIndex = 6;

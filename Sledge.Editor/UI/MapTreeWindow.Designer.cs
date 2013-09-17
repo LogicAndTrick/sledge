@@ -39,11 +39,12 @@
             this.MapTree.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.MapTree.HideSelection = false;
             this.MapTree.Location = new System.Drawing.Point(0, 0);
             this.MapTree.Name = "MapTree";
             this.MapTree.Size = new System.Drawing.Size(272, 425);
             this.MapTree.TabIndex = 4;
-            this.MapTree.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.SelectionChanged);
+            this.MapTree.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.TreeSelectionChanged);
             // 
             // Properties
             // 

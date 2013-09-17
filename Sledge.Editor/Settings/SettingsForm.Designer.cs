@@ -43,6 +43,9 @@ namespace Sledge.Editor.Settings
             this.KeepSelectedTool = new System.Windows.Forms.CheckBox();
             this.KeepCameraPositions = new System.Windows.Forms.CheckBox();
             this.LoadSession = new System.Windows.Forms.CheckBox();
+            this.groupBox21 = new System.Windows.Forms.GroupBox();
+            this.RenderMode = new System.Windows.Forms.ComboBox();
+            this.label32 = new System.Windows.Forms.Label();
             this.groupBox19 = new System.Windows.Forms.GroupBox();
             this.ApplyTextureImmediately = new System.Windows.Forms.CheckBox();
             this.groupBox18 = new System.Windows.Forms.GroupBox();
@@ -263,12 +266,10 @@ namespace Sledge.Editor.Settings
             this.btnCancelSettings = new System.Windows.Forms.Button();
             this.btnApplyAndCloseSettings = new System.Windows.Forms.Button();
             this.btnApplySettings = new System.Windows.Forms.Button();
-            this.groupBox21 = new System.Windows.Forms.GroupBox();
-            this.label32 = new System.Windows.Forms.Label();
-            this.RenderMode = new System.Windows.Forms.ComboBox();
             this.tbcSettings.SuspendLayout();
             this.tabGeneral.SuspendLayout();
             this.groupBox20.SuspendLayout();
+            this.groupBox21.SuspendLayout();
             this.groupBox19.SuspendLayout();
             this.groupBox18.SuspendLayout();
             this.tab2DViews.SuspendLayout();
@@ -323,7 +324,6 @@ namespace Sledge.Editor.Settings
             ((System.ComponentModel.ISupportInitialize)(this.trackBar2)).BeginInit();
             this.groupBox7.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
-            this.groupBox21.SuspendLayout();
             this.SuspendLayout();
             // 
             // tbcSettings
@@ -411,6 +411,39 @@ namespace Sledge.Editor.Settings
             this.LoadSession.Tag = "";
             this.LoadSession.Text = "Load previously opened files on startup";
             this.LoadSession.UseVisualStyleBackColor = true;
+            // 
+            // groupBox21
+            // 
+            this.groupBox21.Controls.Add(this.RenderMode);
+            this.groupBox21.Controls.Add(this.label32);
+            this.groupBox21.Location = new System.Drawing.Point(369, 217);
+            this.groupBox21.Name = "groupBox21";
+            this.groupBox21.Size = new System.Drawing.Size(357, 158);
+            this.groupBox21.TabIndex = 4;
+            this.groupBox21.TabStop = false;
+            this.groupBox21.Text = "Rendering";
+            // 
+            // RenderMode
+            // 
+            this.RenderMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.RenderMode.FormattingEnabled = true;
+            this.RenderMode.Items.AddRange(new object[] {
+            "OpenGL 3.0 (Fastest, requires compatible GPU)",
+            "OpenGL 1.0 Display Lists (Should work for most GPUs)",
+            "OpenGL 1.0 Immediate (Slow, most compatible)"});
+            this.RenderMode.Location = new System.Drawing.Point(72, 16);
+            this.RenderMode.Name = "RenderMode";
+            this.RenderMode.Size = new System.Drawing.Size(279, 21);
+            this.RenderMode.TabIndex = 1;
+            // 
+            // label32
+            // 
+            this.label32.AutoSize = true;
+            this.label32.Location = new System.Drawing.Point(9, 19);
+            this.label32.Name = "label32";
+            this.label32.Size = new System.Drawing.Size(51, 13);
+            this.label32.TabIndex = 0;
+            this.label32.Text = "Renderer";
             // 
             // groupBox19
             // 
@@ -2838,39 +2871,6 @@ namespace Sledge.Editor.Settings
             this.btnApplySettings.UseVisualStyleBackColor = true;
             this.btnApplySettings.Click += new System.EventHandler(this.Apply);
             // 
-            // groupBox21
-            // 
-            this.groupBox21.Controls.Add(this.RenderMode);
-            this.groupBox21.Controls.Add(this.label32);
-            this.groupBox21.Location = new System.Drawing.Point(369, 217);
-            this.groupBox21.Name = "groupBox21";
-            this.groupBox21.Size = new System.Drawing.Size(357, 158);
-            this.groupBox21.TabIndex = 4;
-            this.groupBox21.TabStop = false;
-            this.groupBox21.Text = "Rendering";
-            // 
-            // label32
-            // 
-            this.label32.AutoSize = true;
-            this.label32.Location = new System.Drawing.Point(9, 19);
-            this.label32.Name = "label32";
-            this.label32.Size = new System.Drawing.Size(51, 13);
-            this.label32.TabIndex = 0;
-            this.label32.Text = "Renderer";
-            // 
-            // RenderMode
-            // 
-            this.RenderMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.RenderMode.FormattingEnabled = true;
-            this.RenderMode.Items.AddRange(new object[] {
-            "OpenGL 3.0 (Fastest, requires compatible GPU)",
-            "OpenGL 1.0 Display Lists (Should work for most GPUs)",
-            "OpenGL 1.0 Immediate (Slow, most compatible)"});
-            this.RenderMode.Location = new System.Drawing.Point(72, 16);
-            this.RenderMode.Name = "RenderMode";
-            this.RenderMode.Size = new System.Drawing.Size(279, 21);
-            this.RenderMode.TabIndex = 1;
-            // 
             // SettingsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -2882,11 +2882,14 @@ namespace Sledge.Editor.Settings
             this.Controls.Add(this.tbcSettings);
             this.Name = "SettingsForm";
             this.ShowInTaskbar = false;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Sledge Settings";
             this.Load += new System.EventHandler(this.SettingsFormLoad);
             this.tbcSettings.ResumeLayout(false);
             this.tabGeneral.ResumeLayout(false);
             this.groupBox20.ResumeLayout(false);
+            this.groupBox21.ResumeLayout(false);
+            this.groupBox21.PerformLayout();
             this.groupBox19.ResumeLayout(false);
             this.groupBox18.ResumeLayout(false);
             this.tab2DViews.ResumeLayout(false);
@@ -2952,8 +2955,6 @@ namespace Sledge.Editor.Settings
             ((System.ComponentModel.ISupportInitialize)(this.trackBar2)).EndInit();
             this.groupBox7.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).EndInit();
-            this.groupBox21.ResumeLayout(false);
-            this.groupBox21.PerformLayout();
             this.ResumeLayout(false);
 
 		}
