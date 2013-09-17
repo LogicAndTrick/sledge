@@ -35,7 +35,7 @@
             this.TextureNameLabel = new System.Windows.Forms.Label();
             this.button2 = new System.Windows.Forms.Button();
             this.button1 = new System.Windows.Forms.Button();
-            this.checkBox1 = new System.Windows.Forms.CheckBox();
+            this.UsedTexturesOnlyBox = new System.Windows.Forms.CheckBox();
             this.label2 = new System.Windows.Forms.Label();
             this.FilterTextbox = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
@@ -60,7 +60,7 @@
             this.panel1.Controls.Add(this.TextureNameLabel);
             this.panel1.Controls.Add(this.button2);
             this.panel1.Controls.Add(this.button1);
-            this.panel1.Controls.Add(this.checkBox1);
+            this.panel1.Controls.Add(this.UsedTexturesOnlyBox);
             this.panel1.Controls.Add(this.label2);
             this.panel1.Controls.Add(this.FilterTextbox);
             this.panel1.Controls.Add(this.label1);
@@ -120,15 +120,16 @@
             this.button1.Text = "Select";
             this.button1.UseVisualStyleBackColor = true;
             // 
-            // checkBox1
+            // UsedTexturesOnlyBox
             // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.Location = new System.Drawing.Point(232, 9);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(113, 17);
-            this.checkBox1.TabIndex = 4;
-            this.checkBox1.Text = "Used textures only";
-            this.checkBox1.UseVisualStyleBackColor = true;
+            this.UsedTexturesOnlyBox.AutoSize = true;
+            this.UsedTexturesOnlyBox.Location = new System.Drawing.Point(232, 9);
+            this.UsedTexturesOnlyBox.Name = "UsedTexturesOnlyBox";
+            this.UsedTexturesOnlyBox.Size = new System.Drawing.Size(113, 17);
+            this.UsedTexturesOnlyBox.TabIndex = 4;
+            this.UsedTexturesOnlyBox.Text = "Used textures only";
+            this.UsedTexturesOnlyBox.UseVisualStyleBackColor = true;
+            this.UsedTexturesOnlyBox.CheckedChanged += new System.EventHandler(this.UsedTexturesOnlyChanged);
             // 
             // label2
             // 
@@ -197,7 +198,7 @@
         private System.Windows.Forms.Label TextureNameLabel;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.CheckBox checkBox1;
+        private System.Windows.Forms.CheckBox UsedTexturesOnlyBox;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox FilterTextbox;
         private System.Windows.Forms.Label label1;

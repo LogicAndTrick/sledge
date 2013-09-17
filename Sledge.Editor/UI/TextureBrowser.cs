@@ -6,6 +6,8 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using Sledge.DataStructures.MapObjects;
+using Sledge.Editor.Documents;
 using Sledge.Providers.Texture;
 
 namespace Sledge.Editor.UI
@@ -57,6 +59,11 @@ namespace Sledge.Editor.UI
             UpdateTextureList();
         }
 
+        private void UsedTexturesOnlyChanged(object sender, EventArgs e)
+        {
+            UpdateTextureList();
+        }
+
         private void UpdatePackageList()
         {
             var selected = PackageTree.SelectedNode;
@@ -88,6 +95,12 @@ namespace Sledge.Editor.UI
             if (!String.IsNullOrEmpty(FilterTextbox.Text))
             {
                 list = list.Where(x => x.Name.ToLower().Contains(FilterTextbox.Text.ToLower()));
+            }
+            if (UsedTexturesOnlyBox.Checked && DocumentManager.CurrentDocument != null)
+            {
+                var used = DocumentManager.CurrentDocument.Map.WorldSpawn.Find(x => x is Solid).OfType<Solid>()
+                    .SelectMany(x => x.Faces).Select(x => x.Texture.Name).Distinct().ToList();
+                list = list.Where(x => used.Any(y => String.Equals(x.Name, y, StringComparison.InvariantCultureIgnoreCase)));
             }
             TextureList.SetTextureList(list);
         }
