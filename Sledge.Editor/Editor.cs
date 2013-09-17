@@ -555,7 +555,17 @@ namespace Sledge.Editor
             }
             else if (count == 1)
             {
-                StatusSelectionLabel.Text = sel[0].GetType().Name;
+                var obj = sel[0];
+                var ed = obj.GetEntityData();
+                if (ed != null)
+                {
+                    var name = ed.GetPropertyValue("targetname");
+                    StatusSelectionLabel.Text = ed.Name + (String.IsNullOrWhiteSpace(name) ? "" : " - " + name);
+                }
+                else
+                {
+                    StatusSelectionLabel.Text = sel[0].GetType().Name;
+                }
             }
             else
             {
