@@ -274,6 +274,9 @@ namespace Sledge.Editor.UI
                 case Keys.Home:
                     ScrollByAmount(-int.MaxValue);
                     break;
+                case Keys.Enter:
+                    if (_selection.Count > 0) OnTextureSelected(_selection[0]);
+                    break;
             }
             base.OnKeyDown(e);
         }

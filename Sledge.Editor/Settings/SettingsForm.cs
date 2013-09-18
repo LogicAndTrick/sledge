@@ -707,7 +707,7 @@ namespace Sledge.Editor.Settings
             var ignored = new[] { "gldrv", "logos", "logs", "errorlogs", "platform", "config" };
             SelectedGameMod.Items.AddRange(mods.Where(x => !ignored.Contains(x.ToLower())).ToArray());
             var idx = SelectedGameMod.Items.IndexOf(_selectedGame.ModDir ?? "");
-            SelectedGameMod.SelectedIndex = Math.Max(0, idx);
+            if (SelectedGameMod.Items.Count > 0) SelectedGameMod.SelectedIndex = Math.Max(0, idx);
         }
 
         private void SelectedGameSteamDirChanged(object sender, EventArgs e)
@@ -723,7 +723,7 @@ namespace Sledge.Editor.Settings
             var ignored = new[] {"gldrv", "logos", "logs", "errorlogs", "platform", "config", "bin"};
             SelectedGameMod.Items.AddRange(mods.Where(x => !ignored.Contains(x.ToLower())).ToArray());
             var idx = SelectedGameMod.Items.IndexOf(_selectedGame.ModDir ?? "");
-            SelectedGameMod.SelectedIndex = Math.Max(0, idx);
+            if (SelectedGameMod.Items.Count > 0) SelectedGameMod.SelectedIndex = Math.Max(0, idx);
         }
 
         private void SelectedGameNameChanged(object sender, EventArgs e)
