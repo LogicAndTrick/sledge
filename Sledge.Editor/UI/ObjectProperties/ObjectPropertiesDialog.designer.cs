@@ -6,9 +6,9 @@
  * 
  * To change this template use Tools | Options | Coding | Edit Standard Headers.
  */
-namespace Sledge.Editor.UI
+namespace Sledge.Editor.UI.ObjectProperties
 {
-	partial class EntityEditor
+	partial class ObjectPropertiesDialog
 	{
 		/// <summary>
 		/// Designer variable used to keep track of non-visual components.
@@ -739,7 +739,7 @@ namespace Sledge.Editor.UI
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.Name = "EntityEditor";
+            this.Name = "ObjectPropertiesDialog";
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;

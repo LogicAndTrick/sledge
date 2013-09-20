@@ -314,6 +314,28 @@
     <Compile Include="UI\MapTreeWindow.Designer.cs">
       <DependentUpon>MapTreeWindow.cs</DependentUpon>
     </Compile>
+    <Compile Include="UI\ObjectProperties\SmartEdit\DumbEditControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UI\ObjectProperties\ObjectPropertiesDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\ObjectProperties\ObjectPropertiesDialog.designer.cs">
+      <DependentUpon>ObjectPropertiesDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\ObjectProperties\SmartEdit\SmartEditChoices.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UI\ObjectProperties\SmartEdit\SmartEditControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UI\ObjectProperties\SmartEdit\SmartEditInteger.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UI\ObjectProperties\SmartEdit\SmartEditString.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UI\ObjectProperties\TableValue.cs" />
     <Compile Include="UI\PasteSpecialDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -350,12 +372,6 @@
     </Compile>
     <Compile Include="UI\CollapsingLabel.Designer.cs">
       <DependentUpon>CollapsingLabel.cs</DependentUpon>
-    </Compile>
-    <Compile Include="UI\EntityEditor.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\EntityEditor.designer.cs">
-      <DependentUpon>EntityEditor.cs</DependentUpon>
     </Compile>
     <Compile Include="UI\Hotkeys.cs" />
     <Compile Include="UI\TextureBrowser.cs">
@@ -476,9 +492,6 @@
     <EmbeddedResource Include="UI\CollapsingLabel.resx">
       <DependentUpon>CollapsingLabel.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UI\EntityEditor.resx">
-      <DependentUpon>EntityEditor.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="UI\EntityReportDialog.resx">
       <DependentUpon>EntityReportDialog.cs</DependentUpon>
     </EmbeddedResource>
@@ -487,6 +500,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UI\MapTreeWindow.resx">
       <DependentUpon>MapTreeWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\ObjectProperties\ObjectPropertiesDialog.resx">
+      <DependentUpon>ObjectPropertiesDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\PasteSpecialDialog.resx">
       <DependentUpon>PasteSpecialDialog.cs</DependentUpon>

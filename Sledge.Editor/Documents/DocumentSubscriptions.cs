@@ -21,6 +21,7 @@ using Sledge.Editor.Compiling;
 using Sledge.Editor.Enums;
 using Sledge.Editor.Tools;
 using Sledge.Editor.UI;
+using Sledge.Editor.UI.ObjectProperties;
 using Sledge.Editor.Visgroups;
 using Sledge.Extensions;
 using Sledge.Providers.Map;
@@ -360,7 +361,7 @@ namespace Sledge.Editor.Documents
 
         public void ObjectProperties()
         {
-            var pd = new EntityEditor(_document);
+            var pd = new ObjectPropertiesDialog(_document);
             pd.Show(Editor.Instance);
         }
 
@@ -420,7 +421,7 @@ namespace Sledge.Editor.Documents
 
         public void WorldspawnProperties()
         {
-            var pd = new EntityEditor(_document) { FollowSelection = false, AllowClassChange = false };
+            var pd = new ObjectPropertiesDialog(_document) { FollowSelection = false, AllowClassChange = false };
             pd.SetObjects(new[] { _document.Map.WorldSpawn });
             pd.Show(Editor.Instance);
         }

@@ -9,64 +9,15 @@ using Sledge.DataStructures.MapObjects;
 using Sledge.Editor.Actions;
 using Sledge.Editor.Actions.MapObjects.Entities;
 using Sledge.Editor.Actions.Visgroups;
-using Sledge.Editor.Visgroups;
-using Property = Sledge.DataStructures.MapObjects.Property;
 
-namespace Sledge.Editor.UI
+namespace Sledge.Editor.UI.ObjectProperties
 {
-    public partial class EntityEditor : Form, IMediatorListener
+    public partial class ObjectPropertiesDialog : Form, IMediatorListener
     {
-        private class TableValue
-        {
-            public string Class { get; set; }
-            public string Key { get; set; }
-            public string DisplayText { get; set; }
-            public string Value { get; set; }
-            public bool IsModified { get; set; }
-            public bool IsAdded { get; set; }
-            public bool IsRemoved { get; set; }
-
-            public Color GetColour()
-            {
-                if (IsAdded) return Color.LightBlue;
-                if (IsRemoved) return Color.LightPink;
-                if (IsModified) return Color.LightGreen;
-                return Color.Transparent;
-            }
-
-            public string DisplayValue(GameData gd)
-            {
-                var cls = gd.Classes.FirstOrDefault(x => x.Name == Class);
-                var prop = cls == null ? null : cls.Properties.FirstOrDefault(x => x.Name == Key && x.VariableType == VariableType.Choices);
-                var opt = prop == null ? null : prop.Options.FirstOrDefault(x => x.Key == Value);
-                return opt == null ? Value : opt.Description;
-            }
-
-            public static List<TableValue> Create(GameData gd, string className, List<Property> props)
-            {
-                var list = new List<TableValue>();
-                var cls = gd.Classes.FirstOrDefault(x => x.Name == className);
-                var gameDataProps = cls != null ? cls.Properties : new List<DataStructures.GameData.Property>();
-                foreach (var gdProps in gameDataProps.Where(x => x.Name != "spawnflags").GroupBy(x => x.Name))
-                {
-                    var gdProp = gdProps.First();
-                    var vals = props.Where(x => x.Key == gdProp.Name).Select(x => x.Value).Distinct().ToList();
-                    var value = vals.Count == 0 ? gdProp.DefaultValue : (vals.Count == 1 ? vals.First() : "<multiple values>" + String.Join(", ", vals));
-                    list.Add(new TableValue { Class = className, DisplayText = gdProp.DisplayText(), Key = gdProp.Name, Value = value});
-                }
-                foreach (var group in props.Where(x => gameDataProps.All(y => x.Key != y.Name)).GroupBy(x => x.Key))
-                {
-                    var vals = group.Select(x => x.Value).Distinct().ToList();
-                    var value = vals.Count == 1 ? vals.First() : "<multiple values> - " + String.Join(", ", vals);
-                    list.Add(new TableValue { Class = className, DisplayText = group.Key, Key = group.Key, Value = value });
-                }
-                return list;
-            }
-        }
-
         private List<TableValue> _values;
 
         private readonly Dictionary<VariableType, SmartEditControl> _smartEditControls;
+        private readonly SmartEditControl _dumbEditControl;
         public List<MapObject> Objects { get; set; }
         private bool _changingClass;
         private string _prevClass;
@@ -86,12 +37,16 @@ namespace Sledge.Editor.UI
 
         private bool _populating;
 
-        public EntityEditor(Documents.Document document)
+        public ObjectPropertiesDialog(Documents.Document document)
         {
             Document = document;
             InitializeComponent();
             Objects = new List<MapObject>();
             _smartEditControls = new Dictionary<VariableType, SmartEditControl>();
+
+            _dumbEditControl = new DumbEditControl();
+            _dumbEditControl.ValueChanged += PropertyValueChanged;
+            _dumbEditControl.NameChanged += PropertyNameChanged;
 
             RegisterSmartEditControl(VariableType.String, new SmartEditString());
             RegisterSmartEditControl(VariableType.Integer, new SmartEditInteger());
@@ -155,23 +110,31 @@ namespace Sledge.Editor.UI
                 }
 
                 // Remove nonexistant properties
-                var nonExistant = entityData.Properties.Where(x => _values.All(y => y.Key != x.Key));
+                var nonExistant = entityData.Properties.Where(x => _values.All(y => y.OriginalKey != x.Key));
                 if (nonExistant.Any())
                 {
                     changed = true;
-                    entityData.Properties.RemoveAll(x => _values.All(y => y.Key != x.Key));
+                    entityData.Properties.RemoveAll(x => _values.All(y => y.OriginalKey != x.Key));
                 }
 
                 // Set updated/new properties
                 foreach (var ent in _values.Where(x => x.IsModified || (x.IsAdded && !x.IsRemoved)))
                 {
-                    entityData.SetPropertyValue(ent.Key, ent.Value);
+                    entityData.SetPropertyValue(ent.OriginalKey, ent.Value);
+                    if (!String.IsNullOrWhiteSpace(ent.NewKey) && ent.NewKey != ent.OriginalKey)
+                    {
+                        var prop = entityData.Properties.FirstOrDefault(x => String.Equals(x.Key, ent.OriginalKey, StringComparison.InvariantCultureIgnoreCase));
+                        if (prop != null && !entityData.Properties.Any(x => String.Equals(x.Key, ent.NewKey, StringComparison.InvariantCultureIgnoreCase)))
+                        {
+                            prop.Key = ent.NewKey;
+                        }
+                    }
                     changed = true;
                 }
 
                 foreach (var ent in _values.Where(x => x.IsRemoved && !x.IsAdded))
                 {
-                    entityData.Properties.RemoveAll(x => x.Key == ent.Key);
+                    entityData.Properties.RemoveAll(x => x.Key == ent.OriginalKey);
                     changed = true;
                 }
 
@@ -426,13 +389,13 @@ namespace Sledge.Editor.UI
             KeyValuesList.Items.Clear();
             foreach (var tv in _values)
             {
-                var dt = smartEdit ? tv.DisplayText : tv.Key;
+                var dt = smartEdit ? tv.DisplayText(Document.GameData) : tv.OriginalKey;
                 var dv = smartEdit ? tv.DisplayValue(Document.GameData) : tv.Value;
-                KeyValuesList.Items.Add(new ListViewItem(dt) { Tag = tv.Key, BackColor = tv.GetColour() }).SubItems.Add(dv);
+                KeyValuesList.Items.Add(new ListViewItem(dt) { Tag = tv.OriginalKey, BackColor = tv.GetColour() }).SubItems.Add(dv);
             }
 
             Angles.Enabled = false;
-            var angleVal = _values.FirstOrDefault(x => x.Key == "angles");
+            var angleVal = _values.FirstOrDefault(x => x.OriginalKey == "angles");
             if (angleVal != null)
             {
                 Angles.Enabled = !_changingClass;
@@ -474,15 +437,14 @@ namespace Sledge.Editor.UI
             // Mark the current properties that aren't in the new class as 'removed'
             foreach (var tv in _values)
             {
-                var prop = props.FirstOrDefault(x => x.Name == tv.Key);
+                var prop = props.FirstOrDefault(x => x.Name == tv.OriginalKey);
                 tv.IsRemoved = prop == null;
-                tv.DisplayText = prop == null ? tv.Key : prop.DisplayText();
             }
 
             // Add the new properties that aren't in the new class as 'added'
-            foreach (var prop in props.Where(x => x.Name != "spawnflags" && _values.All(y => y.Key != x.Name)))
+            foreach (var prop in props.Where(x => x.Name != "spawnflags" && _values.All(y => y.OriginalKey != x.Name)))
             {
-                _values.Add(new TableValue { DisplayText = prop.DisplayText(), Key = prop.Name, IsAdded = true, Value = prop.DefaultValue });
+                _values.Add(new TableValue { OriginalKey = prop.Name, NewKey = prop.Name, IsAdded = true, Value = prop.DefaultValue });
             }
 
             FlagsTable.Enabled = OkButton.Enabled = false;
@@ -502,8 +464,6 @@ namespace Sledge.Editor.UI
                 tv.Class = className;
                 tv.IsModified = tv.IsModified || tv.IsAdded;
                 tv.IsAdded = false;
-                var prop = cls != null ? cls.Properties.FirstOrDefault(x => x.Name == tv.Key) : null;
-                tv.DisplayText = prop == null ? tv.Key : prop.DisplayText();
             }
 
             // Update the flags table
@@ -535,8 +495,6 @@ namespace Sledge.Editor.UI
             foreach (var tv in _values)
             {
                 tv.IsRemoved = false;
-                var prop = cls != null ? cls.Properties.FirstOrDefault(x => x.Name == tv.Key) : null;
-                tv.DisplayText = prop == null ? tv.Key : prop.DisplayText();
             }
 
             _changingClass = false;
@@ -554,7 +512,7 @@ namespace Sledge.Editor.UI
 
         private void PropertyValueChanged(object sender, string propertyname, string propertyvalue)
         {
-            var val = _values.FirstOrDefault(x => x.Key == propertyname);
+            var val = _values.FirstOrDefault(x => x.OriginalKey == propertyname);
             var li = KeyValuesList.Items.OfType<ListViewItem>().FirstOrDefault(x => ((string) x.Tag) == propertyname);
             if (val == null)
             {
@@ -565,9 +523,9 @@ namespace Sledge.Editor.UI
             val.Value = propertyvalue;
             if (li == null)
             {
-                var dt = SmartEditButton.Checked ? val.DisplayText : val.Key;
+                var dt = SmartEditButton.Checked ? val.DisplayText(Document.GameData) : val.OriginalKey;
                 var dv = SmartEditButton.Checked ? val.DisplayValue(Document.GameData) : val.Value;
-                li = new ListViewItem(dt) { Tag = val.Key, BackColor = val.GetColour() };
+                li = new ListViewItem(dt) { Tag = val.OriginalKey, BackColor = val.GetColour() };
                 KeyValuesList.Items.Add(li).SubItems.Add(dv);
             }
             else
@@ -581,6 +539,23 @@ namespace Sledge.Editor.UI
             }
         }
 
+        private void PropertyNameChanged(object sender, string oldName, string newName)
+        {
+            var val = _values.FirstOrDefault(x => x.OriginalKey == oldName);
+            if (val == null)
+            {
+                return;
+            }
+            val.IsModified = true;
+            val.NewKey = newName;
+            var li = KeyValuesList.Items.OfType<ListViewItem>().FirstOrDefault(x => ((string)x.Tag) == oldName);
+            if (li != null)
+            {
+                li.BackColor = val.GetColour();
+                li.SubItems[0].Text = SmartEditButton.Checked ? val.DisplayText(Document.GameData) : val.NewKey;
+            }
+        }
+
         private void AnglesChanged(object sender, AngleControl.AngleChangedEventArgs e)
         {
             if (_populating) return;
@@ -590,7 +565,7 @@ namespace Sledge.Editor.UI
                 && SmartEditControlPanel.Controls.Count > 0
                 && SmartEditControlPanel.Controls[0] is SmartEditControl)
             {
-                ((SmartEditControl) SmartEditControlPanel.Controls[0]).SetProperty("angles", Angles.GetAnglePropertyString(), null);
+                ((SmartEditControl) SmartEditControlPanel.Controls[0]).SetProperty("angles", "angles", Angles.GetAnglePropertyString(), null);
             }
         }
 
@@ -603,15 +578,16 @@ namespace Sledge.Editor.UI
             var smartEdit = SmartEditButton.Checked;
             var className = Class.Text;
             var selected = KeyValuesList.SelectedItems[0];
-            var propName = (string) selected.Tag;
+            var originalName = (string)selected.Tag;
             var value = selected.SubItems[1].Text;
             var cls = Document.GameData.Classes.FirstOrDefault(x => x.Name == className);
-            var gdProp = smartEdit && cls != null ? cls.Properties.FirstOrDefault(x => x.Name == propName) : null;
+            var prop = _values.FirstOrDefault(x => x.OriginalKey == originalName);
+            var gdProp = smartEdit && cls != null && prop != null ? cls.Properties.FirstOrDefault(x => x.Name == prop.NewKey) : null;
             if (gdProp != null)
             {
                 HelpTextbox.Text = gdProp.Description;
             }
-            AddSmartEditControl(gdProp, propName, value);
+            AddSmartEditControl(gdProp, originalName, value);
         }
 
         private void AddPropertyClicked(object sender, EventArgs e)
@@ -624,12 +600,12 @@ namespace Sledge.Editor.UI
             {
                 name = "key" + key;
                 key++;
-            } while (_values.Any(x => String.Equals(x.Key, name, StringComparison.InvariantCultureIgnoreCase)));
+            } while (_values.Any(x => String.Equals(x.OriginalKey, name, StringComparison.InvariantCultureIgnoreCase)));
             _values.Add(new TableValue
                             {
                                 Class = Class.Text,
-                                DisplayText = name,
-                                Key = name,
+                                OriginalKey = name,
+                                NewKey = name,
                                 Value = "value",
                                 IsAdded = true,
                                 IsModified = true,
@@ -643,7 +619,7 @@ namespace Sledge.Editor.UI
             if (KeyValuesList.SelectedItems.Count == 0 || _changingClass) return;
             var selected = KeyValuesList.SelectedItems[0];
             var propName = (string)selected.Tag;
-            var val = _values.FirstOrDefault(x => x.Key == propName);
+            var val = _values.FirstOrDefault(x => x.OriginalKey == propName);
             if (val != null)
             {
                 if (val.IsAdded)
@@ -654,153 +630,22 @@ namespace Sledge.Editor.UI
                 {
                     val.IsRemoved = true;
                 }
-                PropertyValueChanged(this, val.Key, val.Value);
+                PropertyValueChanged(this, val.OriginalKey, val.Value);
             }
         }
-
-        #region Smart Edit Controls
 
         private void AddSmartEditControl(DataStructures.GameData.Property property, string propertyName, string value)
         {
             SmartEditControlPanel.Controls.Clear();
-            var ctrl = _smartEditControls[VariableType.String];
+            var ctrl = _dumbEditControl;
             if (property != null && _smartEditControls.ContainsKey(property.VariableType))
             {
                 ctrl = _smartEditControls[property.VariableType];
             }
-            ctrl.SetProperty(propertyName, value, property);
+            var prop = _values.FirstOrDefault(x => x.OriginalKey == propertyName);
+            ctrl.SetProperty(propertyName, prop == null ? propertyName : prop.NewKey, value, property);
             SmartEditControlPanel.Controls.Add(ctrl);
         }
-
-        private abstract class SmartEditControl : FlowLayoutPanel
-        {
-            public string PropertyName { get; private set; }
-            public string PropertyValue { get; private set; }
-            public DataStructures.GameData.Property Property { get; private set; }
-
-            public delegate void ValueChangedEventHandler(object sender, string propertyName, string propertyValue);
-
-            public event ValueChangedEventHandler ValueChanged;
-
-            protected virtual void OnValueChanged()
-            {
-                if (_setting) return;
-                PropertyValue = GetValue();
-                if (ValueChanged != null)
-                {
-                    ValueChanged(this, PropertyName, PropertyValue);
-                }
-            }
-
-            private bool _setting;
-
-            public void SetProperty(string propertyName, string currentValue, DataStructures.GameData.Property property)
-            {
-                _setting = true;
-                PropertyName = propertyName;
-                PropertyValue = currentValue;
-                Property = property;
-                OnSetProperty();
-                _setting = false;
-            }
-
-            protected abstract string GetValue();
-            protected abstract void OnSetProperty();
-        }
-
-        private class SmartEditString : SmartEditControl
-        {
-            private readonly TextBox _textBox;
-            public SmartEditString()
-            {
-                _textBox = new TextBox { Width = 250 };
-                _textBox.TextChanged += (sender, e) => OnValueChanged();
-                Controls.Add(_textBox);
-            }
-
-            protected override string GetValue()
-            {
-                return _textBox.Text;
-            }
-
-            protected override void OnSetProperty()
-            {
-                _textBox.Text = PropertyValue;
-            }
-        }
-
-        private class SmartEditInteger : SmartEditControl
-        {
-            private readonly NumericUpDown _numericUpDown;
-            public SmartEditInteger()
-            {
-                _numericUpDown = new NumericUpDown {Width = 50, Minimum = short.MinValue, Maximum = short.MaxValue, Value = 0};
-                _numericUpDown.ValueChanged += (sender, e) => OnValueChanged();
-                Controls.Add(_numericUpDown);
-            }
-
-            protected override string GetValue()
-            {
-                return _numericUpDown.Value.ToString();
-            }
-
-            protected override void OnSetProperty()
-            {
-                _numericUpDown.Text = PropertyValue;
-            }
-        }
-
-        private class SmartEditChoices : SmartEditControl
-        {
-            private readonly ComboBox _comboBox;
-            public SmartEditChoices()
-            {
-                _comboBox = new ComboBox { Width = 250 };
-                _comboBox.TextChanged += (sender, e) => OnValueChanged();
-                Controls.Add(_comboBox);
-            }
-
-            protected override string GetValue()
-            {
-                if (Property != null)
-                {
-                    var opt = Property.Options.FirstOrDefault(x => x.Description == _comboBox.Text);
-                    if (opt != null) return opt.Key;
-                    opt = Property.Options.FirstOrDefault(x => x.Key == _comboBox.Text);
-                    if (opt != null) return opt.Key;
-                }
-                return _comboBox.Text;
-            }
-
-            private IEnumerable<Option> GetSortedOptions()
-            {
-                int key;
-                if (Property.Options.All(x => int.TryParse(x.Key, out key)))
-                {
-                    return Property.Options.OrderBy(x => int.Parse(x.Key));
-                }
-                return Property.Options.OrderBy(x => x.Key.ToLowerInvariant());
-            }
-
-            protected override void OnSetProperty()
-            {
-                _comboBox.Items.Clear();
-                if (Property != null)
-                {
-                    var options = GetSortedOptions().ToList();
-                    _comboBox.Items.AddRange(options.Select(x => x.DisplayText()).OfType<object>().ToArray());
-                    var index = options.FindIndex(x => String.Equals(x.Key, PropertyValue, StringComparison.InvariantCultureIgnoreCase));
-                    if (index >= 0)
-                    {
-                        _comboBox.SelectedIndex = index;
-                        return;
-                    }
-                }
-                _comboBox.Text = PropertyValue;
-            }
-        }
-
-        #endregion
 
         private void ApplyButtonClicked(object sender, EventArgs e)
         {
