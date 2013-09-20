@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 
@@ -22,12 +23,17 @@ namespace Sledge.Settings
                 var c = (Color) obj;
                 return c.R + " " + c.G + " " + c.B;
             }
-            return obj.ToString();
+            return Convert.ToString(obj, CultureInfo.InvariantCulture);
         }
 
         private static object FromString(Type t, string str)
         {
             if (t.IsEnum) return Enum.Parse(t, str);
+            if (t == typeof(decimal))
+            {
+                // Settings were saved with culture before, need backwards compatibility
+                str = str.Replace(',', '.');
+            }
             if (t == typeof(Color))
             {
                 var spl = str.Split(' ');
@@ -37,7 +43,7 @@ namespace Sledge.Settings
                 int.TryParse(spl[2], out b);
                 return Color.FromArgb(r, g, b);
             }
-            return Convert.ChangeType(str, t);
+            return Convert.ChangeType(str, t, CultureInfo.InvariantCulture);
         }
 
         public static Dictionary<string, string> SerialiseSettings()

@@ -101,7 +101,7 @@ namespace Sledge.Providers
         {
             var prop = this[name];
             int d;
-            if (int.TryParse(prop, out d))
+            if (int.TryParse(prop, NumberStyles.Integer, CultureInfo.InvariantCulture, out d))
             {
                 return d;
             }
@@ -112,7 +112,7 @@ namespace Sledge.Providers
         {
             var prop = this[name];
             long d;
-            if (long.TryParse(prop, out d))
+            if (long.TryParse(prop, NumberStyles.Integer, CultureInfo.InvariantCulture, out d))
             {
                 return d;
             }
@@ -123,7 +123,7 @@ namespace Sledge.Providers
         {
             var prop = this[name];
             decimal d;
-            if (decimal.TryParse(prop, out d))
+            if (decimal.TryParse(prop, NumberStyles.Float, CultureInfo.InvariantCulture, out d))
             {
                 return d;
             }
@@ -139,7 +139,7 @@ namespace Sledge.Providers
             for (var i = 0; i < count; i++)
             {
                 decimal d;
-                if (decimal.TryParse(split[i], out d))
+                if (decimal.TryParse(split[i], NumberStyles.Float, CultureInfo.InvariantCulture, out d))
                 {
                     defaultValue[i] = d;
                 }
@@ -179,9 +179,9 @@ namespace Sledge.Providers
             if (prop == null || prop.Count(c => c == ' ') != 2) return defaultValue;
             var split = prop.Replace("[", "").Replace("]", "").Replace("(", "").Replace(")", "").Split(' ');
             decimal x, y, z;
-            if (decimal.TryParse(split[0], out x)
-                && decimal.TryParse(split[1], out y)
-                && decimal.TryParse(split[2], out z))
+            if (decimal.TryParse(split[0], NumberStyles.Float, CultureInfo.InvariantCulture, out x)
+                && decimal.TryParse(split[1], NumberStyles.Float, CultureInfo.InvariantCulture, out y)
+                && decimal.TryParse(split[2], NumberStyles.Float, CultureInfo.InvariantCulture, out z))
             {
                 return new Coordinate(x, y, z);
             }
@@ -197,9 +197,9 @@ namespace Sledge.Providers
             for (var i = 0; i < count; i++)
             {
                 decimal x, y, z;
-                if (decimal.TryParse(split[i * 3], out x)
-                    && decimal.TryParse(split[i * 3 + 1], out y)
-                    && decimal.TryParse(split[i * 3 + 2], out z))
+                if (decimal.TryParse(split[i * 3], NumberStyles.Float, CultureInfo.InvariantCulture, out x)
+                    && decimal.TryParse(split[i * 3 + 1], NumberStyles.Float, CultureInfo.InvariantCulture, out y)
+                    && decimal.TryParse(split[i * 3 + 2], NumberStyles.Float, CultureInfo.InvariantCulture, out z))
                 {
                     defaultValue[i] = new Coordinate(x, y, z);
                 }
@@ -214,11 +214,11 @@ namespace Sledge.Providers
             if (prop == null || prop.Count(c => c == ' ') != 4) return defaultValue;
             var split = prop.Replace("[", "").Replace("]", "").Split(' ');
             decimal x, y, z, sh, sc;
-            if (decimal.TryParse(split[0], out x)
-                && decimal.TryParse(split[1], out y)
-                && decimal.TryParse(split[2], out z)
-                && decimal.TryParse(split[3], out sh)
-                && decimal.TryParse(split[4], out sc))
+            if (decimal.TryParse(split[0], NumberStyles.Float, CultureInfo.InvariantCulture, out x)
+                && decimal.TryParse(split[1], NumberStyles.Float, CultureInfo.InvariantCulture, out y)
+                && decimal.TryParse(split[2], NumberStyles.Float, CultureInfo.InvariantCulture, out z)
+                && decimal.TryParse(split[3], NumberStyles.Float, CultureInfo.InvariantCulture, out sh)
+                && decimal.TryParse(split[4], NumberStyles.Float, CultureInfo.InvariantCulture, out sc))
             {
                 return Tuple.Create(new Coordinate(x, y, z), sh, sc);
             }
@@ -231,9 +231,9 @@ namespace Sledge.Providers
             if (prop == null || prop.Count(x => x == ' ') != 2) return defaultValue;
             var split = prop.Split(' ');
             int r, g, b;
-            if (int.TryParse(split[0], out r)
-                && int.TryParse(split[1], out g)
-                && int.TryParse(split[2], out b))
+            if (int.TryParse(split[0], NumberStyles.Integer, CultureInfo.InvariantCulture, out r)
+                && int.TryParse(split[1], NumberStyles.Integer, CultureInfo.InvariantCulture, out g)
+                && int.TryParse(split[2], NumberStyles.Integer, CultureInfo.InvariantCulture, out b))
             {
                 return Color.FromArgb(r, g, b);
             }

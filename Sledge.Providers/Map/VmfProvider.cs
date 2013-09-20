@@ -47,12 +47,16 @@ namespace Sledge.Providers.Map
 
         private static string FormatCoordinate(Coordinate c)
         {
-            return c.X.ToString("0.000") + " " + c.Y.ToString("0.000") + " " + c.Z.ToString("0.000");
+            return c.X.ToString("0.000", CultureInfo.InvariantCulture)
+                + " " + c.Y.ToString("0.000", CultureInfo.InvariantCulture)
+                + " " + c.Z.ToString("0.000", CultureInfo.InvariantCulture);
         }
 
         private static string FormatColor(Color c)
         {
-            return c.R + " " + c.G + " " + c.B;
+            return c.R.ToString(CultureInfo.InvariantCulture)
+                + " " + c.G.ToString(CultureInfo.InvariantCulture)
+                + " " + c.B.ToString(CultureInfo.InvariantCulture);
         }
 
         private static readonly string[] ExcludedKeys = new[] {"id", "spawnflags", "classname"};
@@ -175,8 +179,8 @@ namespace Sledge.Providers.Map
                                          FormatCoordinate(face.Vertices[1].Location),
                                          FormatCoordinate(face.Vertices[2].Location));
             ret["material"] = face.Texture.Name;
-            ret["uaxis"] = String.Format("[{0} {1}] {2}", FormatCoordinate(face.Texture.UAxis), face.Texture.XShift, face.Texture.XScale);
-            ret["vaxis"] = String.Format("[{0} {1}] {2}", FormatCoordinate(face.Texture.VAxis), face.Texture.YShift, face.Texture.YScale);
+            ret["uaxis"] = String.Format(CultureInfo.CurrentCulture, "[{0} {1}] {2}", FormatCoordinate(face.Texture.UAxis), face.Texture.XShift, face.Texture.XScale);
+            ret["vaxis"] = String.Format(CultureInfo.CurrentCulture, "[{0} {1}] {2}", FormatCoordinate(face.Texture.VAxis), face.Texture.YShift, face.Texture.YScale);
             ret["rotation"] = face.Texture.Rotation.ToString(CultureInfo.InvariantCulture);
             // ret["lightmapscale"]
             // ret["smoothing_groups"]
