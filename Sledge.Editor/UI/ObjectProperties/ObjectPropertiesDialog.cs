@@ -9,6 +9,7 @@ using Sledge.DataStructures.MapObjects;
 using Sledge.Editor.Actions;
 using Sledge.Editor.Actions.MapObjects.Entities;
 using Sledge.Editor.Actions.Visgroups;
+using Sledge.Editor.UI.ObjectProperties.SmartEdit;
 
 namespace Sledge.Editor.UI.ObjectProperties
 {
@@ -44,22 +45,32 @@ namespace Sledge.Editor.UI.ObjectProperties
             Objects = new List<MapObject>();
             _smartEditControls = new Dictionary<VariableType, SmartEditControl>();
 
-            _dumbEditControl = new DumbEditControl();
+            _dumbEditControl = new DumbEditControl {Document = Document};
             _dumbEditControl.ValueChanged += PropertyValueChanged;
             _dumbEditControl.NameChanged += PropertyNameChanged;
 
-            RegisterSmartEditControl(VariableType.String, new SmartEditString());
-            RegisterSmartEditControl(VariableType.Integer, new SmartEditInteger());
-            RegisterSmartEditControl(VariableType.Choices, new SmartEditChoices());
+            RegisterSmartEditControls();
 
             FollowSelection = true;
         }
 
-        private void RegisterSmartEditControl(VariableType type, SmartEditControl ctrl)
+        private void RegisterSmartEditControls()
         {
-            ctrl.ValueChanged += PropertyValueChanged;
-            ctrl.Dock = DockStyle.Fill;
-            _smartEditControls.Add(type, ctrl);
+            var types = typeof(SmartEditControl).Assembly.GetTypes()
+                .Where(x => typeof(SmartEditControl).IsAssignableFrom(x))
+                .Where(x => x != typeof(SmartEditControl))
+                .Where(x => x.GetCustomAttributes(typeof(SmartEditAttribute), false).Any());
+            foreach (var type in types)
+            {
+                var attr = (SmartEditAttribute) type.GetCustomAttributes(typeof (SmartEditAttribute), false).First();
+                var inst = (SmartEditControl) Activator.CreateInstance(type);
+
+                inst.Document = Document;
+                inst.ValueChanged += PropertyValueChanged;
+                inst.Dock = DockStyle.Fill;
+
+                _smartEditControls.Add(attr.VariableType, inst);
+            }
         }
 
         private void Apply()
@@ -573,7 +584,7 @@ namespace Sledge.Editor.UI.ObjectProperties
         {
             HelpTextbox.Text = "";
             CommentsTextbox.Text = "";
-            SmartEditControlPanel.Controls.Clear();
+            ClearSmartEditControls();
             if (KeyValuesList.SelectedItems.Count == 0 || _changingClass) return;
             var smartEdit = SmartEditButton.Checked;
             var className = Class.Text;
@@ -634,15 +645,26 @@ namespace Sledge.Editor.UI.ObjectProperties
             }
         }
 
+        private void ClearSmartEditControls()
+        {
+            foreach (var c in _smartEditControls)
+            {
+                c.Value.EditingEntityData = null;
+            }
+            _dumbEditControl.EditingEntityData = null;
+            SmartEditControlPanel.Controls.Clear();
+        }
+
         private void AddSmartEditControl(DataStructures.GameData.Property property, string propertyName, string value)
         {
-            SmartEditControlPanel.Controls.Clear();
+            ClearSmartEditControls();
             var ctrl = _dumbEditControl;
             if (property != null && _smartEditControls.ContainsKey(property.VariableType))
             {
                 ctrl = _smartEditControls[property.VariableType];
             }
             var prop = _values.FirstOrDefault(x => x.OriginalKey == propertyName);
+            ctrl.EditingEntityData = Objects.Select(x => x.GetEntityData()).Where(x => x != null).ToList();
             ctrl.SetProperty(propertyName, prop == null ? propertyName : prop.NewKey, value, property);
             SmartEditControlPanel.Controls.Add(ctrl);
         }

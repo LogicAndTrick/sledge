@@ -323,6 +323,7 @@
     <Compile Include="UI\ObjectProperties\ObjectPropertiesDialog.designer.cs">
       <DependentUpon>ObjectPropertiesDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="UI\ObjectProperties\SmartEdit\SmartEditAttribute.cs" />
     <Compile Include="UI\ObjectProperties\SmartEdit\SmartEditChoices.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -333,6 +334,9 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="UI\ObjectProperties\SmartEdit\SmartEditString.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UI\ObjectProperties\SmartEdit\SmartEditTargetName.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="UI\ObjectProperties\TableValue.cs" />

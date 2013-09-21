@@ -4,8 +4,9 @@ using System.Linq;
 using System.Windows.Forms;
 using Sledge.DataStructures.GameData;
 
-namespace Sledge.Editor.UI.ObjectProperties
+namespace Sledge.Editor.UI.ObjectProperties.SmartEdit
 {
+    [SmartEdit(VariableType.Choices)]
     internal class SmartEditChoices : SmartEditControl
     {
         private readonly ComboBox _comboBox;

@@ -1,7 +1,9 @@
 using System.Windows.Forms;
+using Sledge.DataStructures.GameData;
 
-namespace Sledge.Editor.UI.ObjectProperties
+namespace Sledge.Editor.UI.ObjectProperties.SmartEdit
 {
+    [SmartEdit(VariableType.String)]
     internal class SmartEditString : SmartEditControl
     {
         private readonly TextBox _textBox;

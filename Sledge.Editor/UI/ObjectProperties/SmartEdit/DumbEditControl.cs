@@ -1,7 +1,7 @@
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace Sledge.Editor.UI.ObjectProperties
+namespace Sledge.Editor.UI.ObjectProperties.SmartEdit
 {
     internal class DumbEditControl : SmartEditControl
     {

@@ -1,14 +1,16 @@
 using System.Globalization;
 using System.Windows.Forms;
+using Sledge.DataStructures.GameData;
 
-namespace Sledge.Editor.UI.ObjectProperties
+namespace Sledge.Editor.UI.ObjectProperties.SmartEdit
 {
+    [SmartEdit(VariableType.Integer)]
     internal class SmartEditInteger : SmartEditControl
     {
         private readonly NumericUpDown _numericUpDown;
         public SmartEditInteger()
         {
-            _numericUpDown = new NumericUpDown { Width = 50, Minimum = short.MinValue, Maximum = short.MaxValue, Value = 0 };
+            _numericUpDown = new NumericUpDown { Width = 50, Minimum = short.MinValue, Maximum = short.MaxValue, Value = 0, DecimalPlaces = 0 };
             _numericUpDown.ValueChanged += (sender, e) => OnValueChanged();
             Controls.Add(_numericUpDown);
         }

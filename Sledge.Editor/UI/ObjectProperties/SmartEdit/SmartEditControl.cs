@@ -1,9 +1,15 @@
+using System.Collections.Generic;
 using System.Windows.Forms;
+using Sledge.DataStructures.MapObjects;
+using Sledge.Editor.Documents;
 
-namespace Sledge.Editor.UI.ObjectProperties
+namespace Sledge.Editor.UI.ObjectProperties.SmartEdit
 {
     internal abstract class SmartEditControl : FlowLayoutPanel
     {
+        public Document Document { get; set; }
+        public List<EntityData> EditingEntityData { get; set; }
+
         public string OriginalName { get; private set; }
         public string PropertyName { get; private set; }
         public string PropertyValue { get; private set; }
