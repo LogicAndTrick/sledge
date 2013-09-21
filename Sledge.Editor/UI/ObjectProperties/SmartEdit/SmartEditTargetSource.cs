@@ -6,12 +6,12 @@ using Sledge.DataStructures.GameData;
 namespace Sledge.Editor.UI.ObjectProperties.SmartEdit
 {
     [SmartEdit(VariableType.TargetSource)]
-    internal class SmartEditTargetName : SmartEditControl
+    internal class SmartEditTargetSource : SmartEditControl
     {
         private readonly TextBox _textBox;
         private readonly Label _validationLabel;
 
-        public SmartEditTargetName()
+        public SmartEditTargetSource()
         {
             _textBox = new TextBox { Width = 250 };
             _textBox.TextChanged += (sender, e) => OnValueChanged();

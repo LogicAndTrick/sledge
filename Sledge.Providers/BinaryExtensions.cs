@@ -81,6 +81,7 @@ namespace Sledge.Providers
         {
             // RMF strings can't be more than Byte.MaxValue characters long (including the null terminator).
             // Though Hammer crashes at 250 characters, so it must be doing something odd.
+            if (str == null) str = "";
             if (str.Length > MaxVariableStringLength) str = str.Substring(0, MaxVariableStringLength);
             bw.Write(str + '\0');
         }

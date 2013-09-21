@@ -314,6 +314,15 @@
     <Compile Include="UI\MapTreeWindow.Designer.cs">
       <DependentUpon>MapTreeWindow.cs</DependentUpon>
     </Compile>
+    <Compile Include="UI\ObjectProperties\SmartEdit\SmartEditColor1.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UI\ObjectProperties\SmartEdit\SmartEditColor255.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UI\ObjectProperties\SmartEdit\SmartEditTargetDestination.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="UI\ObjectProperties\SmartEdit\DumbEditControl.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -336,7 +345,7 @@
     <Compile Include="UI\ObjectProperties\SmartEdit\SmartEditString.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="UI\ObjectProperties\SmartEdit\SmartEditTargetName.cs">
+    <Compile Include="UI\ObjectProperties\SmartEdit\SmartEditTargetSource.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="UI\ObjectProperties\TableValue.cs" />
@@ -631,6 +640,7 @@
     <None Include="Resources\Logo\Sledge Trace Deus.png" />
     <None Include="Resources\Logo\Sledge Trace.png" />
     <None Include="Resources\Logo\Sledge.ico" />
+    <None Include="Resources\Button_ColourPicker.png" />
     <Content Include="Resources\Menu_Align.png" />
     <Content Include="Resources\Menu_AutosizeViews.png" />
     <Content Include="Resources\Menu_Carve.png" />
