@@ -22,13 +22,18 @@ namespace Sledge.Editor.UI
         {
             InitializeComponent();
             Document = document;
-            Mediator.Subscribe(EditorMediator.DocumentActivated, this);
-            Mediator.Subscribe(EditorMediator.SelectionChanged, this);
         }
 
         protected override void OnLoad(EventArgs e)
         {
+            Mediator.Subscribe(EditorMediator.DocumentActivated, this);
+            Mediator.Subscribe(EditorMediator.SelectionChanged, this);
             RefreshNodes();
+        }
+
+        protected override void OnClosed(EventArgs e)
+        {
+            Mediator.UnsubscribeAll(this);
         }
 
         private void DocumentActivated(Document document)
@@ -58,9 +63,13 @@ namespace Sledge.Editor.UI
 
         private void RefreshNodes()
         {
+            MapTree.BeginUpdate();
             MapTree.Nodes.Clear();
-            if (Document == null) return;
-            LoadMapNode(null, Document.Map.WorldSpawn);
+            if (Document != null)
+            {
+                LoadMapNode(null, Document.Map.WorldSpawn);
+            }
+            MapTree.EndUpdate();
         }
 
         private void LoadMapNode(TreeNode parent, MapObject obj)
@@ -98,7 +107,7 @@ namespace Sledge.Editor.UI
             }
             if (mo is Group)
             {
-                return " (" + mo.Children + " children)";
+                return " (" + mo.Children.Count + " children)";
             }
             var ed = mo.GetEntityData();
             if (ed != null)

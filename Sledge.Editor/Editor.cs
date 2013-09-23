@@ -17,11 +17,13 @@ using Sledge.Editor.Documents;
 using Sledge.Editor.Menu;
 using Sledge.Editor.Settings;
 using Sledge.Editor.UI;
+using Sledge.FileSystem;
 using Sledge.Graphics.Helpers;
 using Sledge.Providers;
 using Sledge.Providers.GameData;
 using Sledge.Providers.Map;
 using Sledge.Editor.Tools;
+using Sledge.Providers.Model;
 using Sledge.Providers.Texture;
 using Sledge.Settings;
 using Sledge.Settings.Models;
@@ -142,6 +144,10 @@ namespace Sledge.Editor
                     LoadFileGame(session.Item1, session.Item2);
                 }
             }
+
+            var mdl = new MdlProvider();
+            mdl.LoadMDL(new NativeFile(@"D:\Github\sledge\_Resources\MDL\HL1_10\barney.mdl"), ModelLoadItems.All);
+
         }
 
         #region Updates

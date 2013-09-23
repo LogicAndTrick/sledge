@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.Models;
@@ -329,13 +332,16 @@ namespace Sledge.Providers.Model
                 if (numTextures == 0)
                 {
                     var texFile = file.Parent.GetFile(file.NameWithoutExtension + "T." + file.Extension);
-                    tempBr = new BinaryReader(texFile.Open());
-                    // TODO: read texture header, etc, etc?
-                    br.BaseStream.Position = 180;
+                    br = new BinaryReader(texFile.Open());
+                    br.BaseStream.Position = 180; // skip all the unused nonsense in the T file
                     numTextures = br.ReadInt32();
                     textureIndex = br.ReadInt32();
+                    var textureDataIndex = br.ReadInt32();
+                    var numSkinRef = br.ReadInt32();
+                    var numSkinFamilies = br.ReadInt32();
+                    var skinIndex = br.ReadInt32();
                 }
-                tempBr.BaseStream.Position = textureIndex;
+                br.BaseStream.Position = textureIndex;
                 for (var i = 0; i < numTextures; i++)
                 {
                     var name = br.ReadFixedLengthString(Encoding.ASCII, 64);
@@ -348,16 +354,38 @@ namespace Sledge.Providers.Model
                     br.BaseStream.Position = index;
 
                     var indices = br.ReadBytes(width * height);
-                    var paletteSize = indices.Max();
-                    var palette = br.ReadBytes(paletteSize * 3);
+                    var palette = br.ReadBytes((byte.MaxValue + 1) * 3);
+                    var bmp = new Bitmap(width, height, PixelFormat.Format8bppIndexed);
+                    var pal = bmp.Palette;
+                    for (var j = 0; j <= byte.MaxValue; j++)
+                    {
+                        var k = j * 3;
+                        pal.Entries[j] = Color.FromArgb(255, palette[k], palette[k + 1], palette[k + 2]);
+                    }
+                    bmp.Palette = pal;
+                    var bmpData = bmp.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.WriteOnly, bmp.PixelFormat);
+                    Marshal.Copy(indices, 0, bmpData.Scan0, indices.Length);
+                    bmp.UnlockBits(bmpData);
+
+                    var tex = new DataStructures.Models.Texture
+                                  {
+                                      Name = name,
+                                      Index = i,
+                                      Width = width,
+                                      Height = height,
+                                      Flags = flags,
+                                      Image = bmp
+                                  };
+                    model.Textures.Add(tex);
 
                     br.BaseStream.Position = savedPosition;
                 }
                 //
                 if (numTextures == 0)
                 {
-                    tempBr.BaseStream.Dispose();
-                    tempBr.Dispose();
+                    br.BaseStream.Dispose();
+                    br.Dispose();
+                    br = tempBr;
                 }
             }
             else if (data.Version >= MDLVersionSource2006)
@@ -856,6 +884,9 @@ namespace Sledge.Providers.Model
                 var meshSkinRef = br.ReadInt32();
                 var meshNumNorms = br.ReadInt32();
                 var meshNormIndex = br.ReadInt32();
+
+                mesh.SkinRef = meshSkinRef;
+
                 var pos = br.BaseStream.Position;
                 br.BaseStream.Position = meshTriIndex;
                 int sh;

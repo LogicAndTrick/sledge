@@ -29,7 +29,6 @@ Priorities
     Game config detection
     Object properties dialog data types
       File system - custom file browser
-    Texture browser - used textures only
     Options
       Hotkey configuration
     Auto Update
