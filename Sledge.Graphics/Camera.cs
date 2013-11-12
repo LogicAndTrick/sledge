@@ -99,6 +99,14 @@ namespace Sledge.Graphics
             Location += add;
         }
 
+        public void Ascend(decimal units)
+        {
+            var up = GetUp();
+            var add = up * (float)units;
+            LookAt += add;
+            Location += add;
+        }
+
         public Vector3 GetUp()
         {
             var temp = LookAt - Location;

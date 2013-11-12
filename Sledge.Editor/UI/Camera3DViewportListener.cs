@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
+using OpenTK.Input;
 using Sledge.Graphics;
 using Sledge.UI;
 using OpenTK.Graphics.OpenGL;
 using Sledge.Editor.Tools;
 using KeyPressEventArgs = System.Windows.Forms.KeyPressEventArgs;
 using Sledge.Graphics.Helpers;
+using KeyboardState = Sledge.UI.KeyboardState;
 
 namespace Sledge.Editor.UI
 {
@@ -107,6 +109,7 @@ namespace Sledge.Editor.UI
             if (e.KeyCode == Keys.Z && !e.Alt && !e.Control && !e.Shift)
             {
                 FreeLook = !FreeLook;
+                PositionKnown = false;
                 if (FreeLook && CursorVisible)
                 {
                     CursorVisible = false;
@@ -135,25 +138,61 @@ namespace Sledge.Editor.UI
         public void MouseMove(ViewportEvent e)
         {
             if (!Focus) return;
-            if (PositionKnown && FreeLook)
+            if (PositionKnown && (FreeLook || KeyboardState.IsKeyDown(Keys.Space) || ToolManager.ActiveTool is CameraTool))
             {
                 var dx = LastKnownX - e.X;
                 var dy = e.Y - LastKnownY;
                 if (dx != 0 || dy != 0)
                 {
-                    // Camera
-                    var fovdiv = (Viewport.Width / 60m) / 2.5m;
-                    Camera.Pan(dx / fovdiv);
-                    Camera.Tilt(dy / fovdiv);
-                    LastKnownX = Viewport.Width / 2;
-                    LastKnownY = Viewport.Height / 2;
-                    Cursor.Position = Viewport.PointToScreen(new Point(LastKnownX, LastKnownY));
+                    MouseMoved(e, dx, dy);
                     return;
                 }
             }
             LastKnownX = e.X;
             LastKnownY = e.Y;
             PositionKnown = true;
+        }
+
+        private void MouseMoved(ViewportEvent e, int dx, int dy)
+        {
+            var space = KeyboardState.IsKeyDown(Keys.Space) || ToolManager.ActiveTool is CameraTool;
+            var left = Control.MouseButtons.HasFlag(MouseButtons.Left);
+            var right = Control.MouseButtons.HasFlag(MouseButtons.Right);
+            var both = left && right;
+            if (both) left = right = false;
+            var freelook = FreeLook || (space && left);
+            var updown = space && right;
+            var forwardback = space && both;
+
+            if (freelook)
+            {
+                // Camera
+                var fovdiv = (Viewport.Width / 60m) / 2.5m;
+                Camera.Pan(dx / fovdiv);
+                Camera.Tilt(dy / fovdiv);
+            }
+            else if (updown)
+            {
+                Camera.Strafe(-dx);
+                Camera.Ascend(-dy);
+            }
+            else if (forwardback)
+            {
+                Camera.Strafe(-dx);
+                Camera.Advance(-dy);
+            }
+
+            if (FreeLook)
+            {
+                LastKnownX = Viewport.Width/2;
+                LastKnownY = Viewport.Height/2;
+                Cursor.Position = Viewport.PointToScreen(new Point(LastKnownX, LastKnownY));
+            }
+            else
+            {
+                LastKnownX = e.X;
+                LastKnownY = e.Y;
+            }
         }
 
         public void MouseWheel(ViewportEvent e)

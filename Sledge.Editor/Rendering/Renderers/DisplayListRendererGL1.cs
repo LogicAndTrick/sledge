@@ -5,7 +5,9 @@ using System.Linq;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using Sledge.DataStructures.MapObjects;
+using Sledge.DataStructures.Models;
 using Sledge.Editor.Documents;
+using Sledge.Graphics.Renderables;
 using Sledge.Settings;
 using Sledge.UI;
 
@@ -231,6 +233,11 @@ namespace Sledge.Editor.Rendering.Renderers
         public void UpdatePartial(IEnumerable<Face> faces)
         {
             _update = true;
+        }
+
+        public IRenderable CreateRenderable(Model model)
+        {
+            throw new NotImplementedException();
         }
 
         public void UpdateDocumentToggles()

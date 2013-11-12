@@ -5,9 +5,11 @@ using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.MapObjects;
+using Sledge.DataStructures.Models;
 using Sledge.DataStructures.Rendering;
 using Sledge.Editor.Documents;
 using Sledge.Editor.UI;
+using Sledge.Graphics.Renderables;
 using Sledge.Graphics.Shaders;
 using Sledge.UI;
 
@@ -296,6 +298,11 @@ void main()
         {
             _array.UpdatePartial(faces);
             _array.UpdateDecals(_document.Map);
+        }
+
+        public IRenderable CreateRenderable(Model model)
+        {
+            throw new System.NotImplementedException();
         }
 
         public void UpdateDocumentToggles()

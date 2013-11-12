@@ -1,6 +1,8 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.21005.1
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sledge.UI", "Sledge.UI\Sledge.UI.csproj", "{ABBEE97F-B5A6-4ED6-8D8F-6D4091FB9D44}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sledge.Graphics", "Sledge.Graphics\Sledge.Graphics.csproj", "{614D4144-8920-4975-AC67-DBBA5CB1EB43}"
@@ -44,9 +46,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sledge.Editor.Updater", "Sledge.Editor.Updater\Sledge.Editor.Updater.csproj", "{B9E644B2-F5A1-429D-805D-38A1733ADB4F}"
 EndProject
 Global
-	GlobalSection(TestCaseManagementSettings) = postSolution
-		CategoryFile = Sledge.vsmdi
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Debug|Mixed Platforms = Debug|Mixed Platforms
@@ -109,13 +108,11 @@ Global
 		{C7BD4AC8-1F8D-4520-AF2D-D279C0601AB4}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
 		{C7BD4AC8-1F8D-4520-AF2D-D279C0601AB4}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
 		{C7BD4AC8-1F8D-4520-AF2D-D279C0601AB4}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{C7BD4AC8-1F8D-4520-AF2D-D279C0601AB4}.Debug|x86.Build.0 = Debug|Any CPU
 		{C7BD4AC8-1F8D-4520-AF2D-D279C0601AB4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C7BD4AC8-1F8D-4520-AF2D-D279C0601AB4}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C7BD4AC8-1F8D-4520-AF2D-D279C0601AB4}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{C7BD4AC8-1F8D-4520-AF2D-D279C0601AB4}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{C7BD4AC8-1F8D-4520-AF2D-D279C0601AB4}.Release|x86.ActiveCfg = Release|Any CPU
-		{C7BD4AC8-1F8D-4520-AF2D-D279C0601AB4}.Release|x86.Build.0 = Release|Any CPU
 		{26A974C9-E495-4FA3-8E87-1E00019D04F5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{26A974C9-E495-4FA3-8E87-1E00019D04F5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{26A974C9-E495-4FA3-8E87-1E00019D04F5}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
@@ -247,5 +244,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(TestCaseManagementSettings) = postSolution
+		CategoryFile = Sledge.vsmdi
 	EndGlobalSection
 EndGlobal

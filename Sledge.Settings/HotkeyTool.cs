@@ -10,6 +10,7 @@ namespace Sledge.Settings
         Decal,
         Clip,
         VM,
-        Cordon
+        Cordon,
+        Camera
     }
 }

@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using OpenTK;
 using Sledge.DataStructures.MapObjects;
+using Sledge.DataStructures.Models;
 using Sledge.Editor.Documents;
+using Sledge.Graphics.Renderables;
 using Sledge.UI;
 
 namespace Sledge.Editor.Rendering.Renderers
@@ -22,6 +24,9 @@ namespace Sledge.Editor.Rendering.Renderers
         void Update();
         void UpdatePartial(IEnumerable<MapObject> objects);
         void UpdatePartial(IEnumerable<Face> faces);
+
+        // Renderables
+        IRenderable CreateRenderable(Model model);
 
         void UpdateDocumentToggles();
     }

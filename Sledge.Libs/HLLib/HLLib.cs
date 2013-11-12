@@ -527,8 +527,27 @@ namespace Sledge.Libs.HLLib
             protected static extern DirectoryItemType GetType(IntPtr pItem);
 
             [DllImport("HLLib.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "hlItemGetName")]
-            [return: MarshalAs(UnmanagedType.AnsiBStr)]
-            protected static extern string GetName(IntPtr pItem);
+            //[return: MarshalAs(UnmanagedType.AnsiBStr)]
+            // There's as reason we're not using AnsiBStr anymore, see below.
+            protected static extern unsafe byte* GetNameBytes(IntPtr pItem);
+
+            protected static string GetName(IntPtr item)
+            {
+                // VS2013 hates marshalling as an AnsiBStr for some reason.
+                // When in debug mode, it just craps out when it tries. No error, nothing. When running without debug, it works fine.
+                // That's annoying, so this is the work around - get the pointer, loop until we find the null terminator, create a string from it.
+                // Unsafe, but uncrash-y...
+                unsafe
+                {
+                    var gn2 = GetNameBytes(item);
+                    var bytes = new List<byte>();
+                    for (var i = 0; gn2[i] > 0; i++)
+                    {
+                        bytes.Add(gn2[i]);
+                    }
+                    return new string(System.Text.Encoding.ASCII.GetChars(bytes.ToArray()));
+                }
+            }
 
             [DllImport("HLLib.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "hlItemGetID")]
             protected static extern uint GetID(IntPtr pItem);
