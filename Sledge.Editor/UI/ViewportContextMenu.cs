@@ -9,9 +9,9 @@ using Sledge.UI;
 
 namespace Sledge.Editor.UI
 {
-    internal sealed class ViewportContextMenu : ContextMenuStrip
+    public sealed class ViewportContextMenu : ContextMenuStrip
     {
-        public static ViewportContextMenu Instance { get; private set; }
+        internal static ViewportContextMenu Instance { get; private set; }
 
         static ViewportContextMenu()
         {

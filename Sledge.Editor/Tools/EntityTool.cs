@@ -14,6 +14,7 @@ using Sledge.Editor.Actions.MapObjects.Operations;
 using Sledge.Editor.Actions.MapObjects.Selection;
 using Sledge.Editor.History;
 using Sledge.Editor.Properties;
+using Sledge.Editor.UI;
 using Sledge.Graphics.Helpers;
 using Sledge.Settings;
 using Sledge.UI;
@@ -72,6 +73,7 @@ namespace Sledge.Editor.Tools
                 MouseDown((Viewport3D) viewport, e);
                 return;
             }
+            if (e.Button != MouseButtons.Left) return;
 
             _state = EntityState.Moving;
             var vp = (Viewport2D) viewport;
@@ -81,7 +83,7 @@ namespace Sledge.Editor.Tools
 
         private void MouseDown(Viewport3D vp, ViewportEvent e)
         {
-            if (vp == null) return;
+            if (vp == null || e.Button != MouseButtons.Left) return;
 
             // Get the ray that is cast from the clicked point along the viewport frustrum
             var ray = vp.CastRayFromScreen(e.X, e.Y);
@@ -103,7 +105,7 @@ namespace Sledge.Editor.Tools
 
         public override void MouseUp(ViewportBase viewport, ViewportEvent e)
         {
-            if (!(viewport is Viewport2D)) return;
+            if (!(viewport is Viewport2D) || e.Button != MouseButtons.Left) return;
             _state = EntityState.Drawn;
             var vp = viewport as Viewport2D;
             var loc = SnapIfNeeded(vp.ScreenToWorld(e.X, vp.Height - e.Y));
@@ -117,7 +119,7 @@ namespace Sledge.Editor.Tools
 
         public override void MouseMove(ViewportBase viewport, ViewportEvent e)
         {
-            if (!(viewport is Viewport2D)) return;
+            if (!(viewport is Viewport2D) || !Control.MouseButtons.HasFlag(MouseButtons.Left)) return;
             if (_state != EntityState.Moving) return;
             var vp = viewport as Viewport2D;
             var loc = SnapIfNeeded(vp.ScreenToWorld(e.X, vp.Height - e.Y));
@@ -256,6 +258,18 @@ namespace Sledge.Editor.Tools
                     return HotkeyInterceptResult.SwitchToSelectTool;
             }
             return HotkeyInterceptResult.Continue;
+        }
+        public override void OverrideViewportContextMenu(ViewportContextMenu menu, Viewport2D vp, ViewportEvent e)
+        {
+            menu.Items.Clear();
+            var point = vp.ScreenToWorld(e.X, vp.Height - e.Y);
+            var loc = vp.Flatten(_location);
+            if ((loc-point).VectorMagnitude() < 10)
+            {
+                var item = new ToolStripMenuItem("Create Object");
+                item.Click += (sender, args) => CreateEntity(_location);
+                menu.Items.Add(item);
+            }
         }
     }
 }

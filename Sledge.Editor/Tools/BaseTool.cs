@@ -5,6 +5,7 @@ using System.Text;
 using System.Windows.Forms;
 using Sledge.Common.Mediator;
 using Sledge.DataStructures.Geometric;
+using Sledge.Editor.UI;
 using Sledge.Settings;
 using Sledge.UI;
 using System.Drawing;
@@ -113,6 +114,11 @@ namespace Sledge.Editor.Tools
         /// <param name="hotkeyMessage">The hotkey message</param>
         /// <returns>False to prevent execution of the document hotkey</returns>
         public abstract HotkeyInterceptResult InterceptHotkey(HotkeysMediator hotkeyMessage);
+
+        public virtual void OverrideViewportContextMenu(ViewportContextMenu menu, Viewport2D vp, ViewportEvent e)
+        {
+            // Default: nothing...
+        }
     }
 
     public enum HotkeyInterceptResult

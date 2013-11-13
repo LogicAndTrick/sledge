@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Windows.Forms;
 using OpenTK.Graphics.OpenGL;
 using Sledge.Common.Mediator;
 using Sledge.DataStructures.Geometric;
@@ -12,6 +13,7 @@ using Sledge.Editor.History;
 using Sledge.Editor.Properties;
 using Sledge.DataStructures.MapObjects;
 using Sledge.Editor.Rendering;
+using Sledge.Editor.UI;
 using Sledge.Graphics.Helpers;
 using Sledge.Settings;
 using Sledge.UI;
@@ -173,6 +175,17 @@ namespace Sledge.Editor.Tools
                     return HotkeyInterceptResult.SwitchToSelectTool;
             }
             return HotkeyInterceptResult.Continue;
+        }
+
+        public override void OverrideViewportContextMenu(ViewportContextMenu menu, Viewport2D vp, ViewportEvent e)
+        {
+            menu.Items.Clear();
+            if (State.Handle == ResizeHandle.Center)
+            {
+                var item = new ToolStripMenuItem("Create Object");
+                item.Click += (sender, args) => BoxDrawnConfirm(vp);
+                menu.Items.Add(item);
+            }
         }
 
         private Color GetRenderColour()

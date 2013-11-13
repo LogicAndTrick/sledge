@@ -1011,7 +1011,8 @@ namespace Sledge.Editor.Documents
                     ViewportContextMenu.Instance.AddSelectionItems(_document, vp);
                 }
             }
-            ViewportContextMenu.Instance.Show(vp, e.X, e.Y);
+            if (ToolManager.ActiveTool != null) ToolManager.ActiveTool.OverrideViewportContextMenu(ViewportContextMenu.Instance, vp, e);
+            if (ViewportContextMenu.Instance.Items.Count > 0) ViewportContextMenu.Instance.Show(vp, e.X, e.Y);
         }
 
         public void VisgroupSelect(int visgroupId)
