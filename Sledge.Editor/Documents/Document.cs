@@ -66,10 +66,14 @@ namespace Sledge.Editor.Documents
             Game = game;
             MapFileName = mapFile == null
                               ? DocumentManager.GetUntitledDocumentName()
-                              : Path.GetFileName(mapFile) ?? DocumentManager.GetUntitledDocumentName();
+                              : Path.GetFileName(mapFile);
 
             _subscriptions = new DocumentSubscriptions(this);
+
             _memory = new DocumentMemory();
+
+            var cam = Map.GetActiveCamera();
+            if (cam != null) _memory.SetCamera(cam.EyePosition, cam.LookPosition);
 
             Selection = new SelectionManager(this);
             History = new HistoryManager(this);
@@ -157,6 +161,21 @@ namespace Sledge.Editor.Documents
                 }
             }
             if (path == null) return false;
+
+            // Save the 3D camera position
+            var cam = ViewportManager.Viewports.OfType<Viewport3D>().Select(x => x.Camera).FirstOrDefault();
+            if (cam != null)
+            {
+                if (Map.ActiveCamera == null)
+                {
+                    Map.ActiveCamera = !Map.Cameras.Any() ? new Camera() : Map.Cameras.First();
+                    if (!Map.Cameras.Contains(Map.ActiveCamera)) Map.Cameras.Add(Map.ActiveCamera);
+                }
+                var loc = cam.Location;
+                var look = cam.LookAt;
+                Map.ActiveCamera.EyePosition = new Coordinate((decimal)loc.X, (decimal)loc.Y, (decimal)loc.Z);
+                Map.ActiveCamera.LookPosition = new Coordinate((decimal)look.X, (decimal)look.Y, (decimal)look.Z);
+            }
 
             MapProvider.SaveMapToFile(path, Map);
             MapFile = path;

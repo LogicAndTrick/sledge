@@ -203,5 +203,11 @@ namespace Sledge.DataStructures.MapObjects
                 }
             }
         }
+
+        public Camera GetActiveCamera()
+        {
+            if (!Cameras.Any() || ActiveCamera == null) return null;
+            return ActiveCamera;
+        }
     }
 }

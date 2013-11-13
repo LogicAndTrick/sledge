@@ -556,6 +556,30 @@ namespace Sledge.Providers.Map
                     ent.SetParent(entParent);
                 }
 
+                var activeCamera = 0;
+                if (cameras != null)
+                {
+                    activeCamera = cameras.PropertyInteger("activecamera");
+                    foreach (var cam in cameras.GetChildren("camera"))
+                    {
+                        var pos = cam.PropertyCoordinate("position");
+                        var look = cam.PropertyCoordinate("look");
+                        if (pos != null && look != null)
+                        {
+                            map.Cameras.Add(new Camera {EyePosition = pos, LookPosition = look});
+                        }
+                    }
+                }
+                if (!map.Cameras.Any())
+                {
+                    map.Cameras.Add(new Camera { EyePosition = Coordinate.Zero, LookPosition = Coordinate.UnitY });
+                }
+                if (activeCamera < 0 || activeCamera >= map.Cameras.Count)
+                {
+                    activeCamera = 0;
+                }
+                map.ActiveCamera = map.Cameras[activeCamera];
+
                 if (cordon != null)
                 {
                     var start = cordon.PropertyCoordinate("mins", map.CordonBounds.Start);
@@ -620,7 +644,14 @@ namespace Sledge.Providers.Map
             var entities = ents.OrderBy(x => x.ID).Select(WriteEntity).ToList();
 
             var cameras = new GenericStructure("cameras");
-            //TODO cameras
+            cameras.AddProperty("activecamera", map.Cameras.IndexOf(map.ActiveCamera).ToString(CultureInfo.InvariantCulture));
+            foreach (var cam in map.Cameras)
+            {
+                var camera = new GenericStructure("camera");
+                camera.AddProperty("position", "[" + FormatCoordinate(cam.EyePosition) + "]");
+                camera.AddProperty("look", "[" + FormatCoordinate(cam.LookPosition) + "]");
+                cameras.Children.Add(camera);
+            }
 
             var cordon = new GenericStructure("cordon");
             cordon.AddProperty("mins", map.CordonBounds.Start.ToString());

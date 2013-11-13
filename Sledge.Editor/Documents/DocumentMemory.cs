@@ -24,6 +24,12 @@ namespace Sledge.Editor.Documents
             SelectedTool = typeof (SelectTool);
         }
 
+        public void SetCamera(Coordinate position, Coordinate look)
+        {
+            _cameraLocation = new Vector3((float)position.X, (float)position.Y, (float)position.Z);
+            _cameraLookat = new Vector3((float)look.X, (float)look.Y, (float)look.Z);
+        }
+
         public void RememberViewports(IEnumerable<ViewportBase> viewports)
         {
             // Todo viewport: remember types and positions
