@@ -21,6 +21,7 @@ namespace Sledge.Editor.UI
         private int LastKnownY { get; set; }
         private bool PositionKnown { get; set; }
         private bool FreeLook { get; set; }
+        private bool FreeLookToggle { get; set; }
         private bool CursorVisible { get; set; }
         private bool Focus { get; set; }
         private Camera Camera { get; set; }
@@ -31,6 +32,7 @@ namespace Sledge.Editor.UI
             LastKnownY = 0;
             PositionKnown = false;
             FreeLook = false;
+            FreeLookToggle = false;
             CursorVisible = true;
             Focus = false;
             Viewport = vp;
@@ -100,7 +102,7 @@ namespace Sledge.Editor.UI
 
         public void KeyUp(ViewportEvent e)
         {
-            //
+            SetFreeLook();
         }
 
         public void KeyDown(ViewportEvent e)
@@ -108,22 +110,44 @@ namespace Sledge.Editor.UI
             if (!Focus) return;
             if (e.KeyCode == Keys.Z && !e.Alt && !e.Control && !e.Shift)
             {
-                FreeLook = !FreeLook;
+                FreeLookToggle = !FreeLookToggle;
+                SetFreeLook();
                 PositionKnown = false;
-                if (FreeLook && CursorVisible)
-                {
-                    CursorVisible = false;
-                    Cursor.Hide();
-                }
-                else if (!FreeLook && !CursorVisible)
-                {
-                    CursorVisible = true;
-                    Cursor.Show();
-                }
+            }
+            else
+            {
+                SetFreeLook();
             }
             if (FreeLook)
             {
                 e.Handled = true;
+            }
+        }
+
+        private void SetFreeLook()
+        {
+            FreeLook = false;
+            if (FreeLookToggle)
+            {
+                FreeLook = true;
+            }
+            else
+            {
+                var space = KeyboardState.IsKeyDown(Keys.Space) || ToolManager.ActiveTool is CameraTool;
+                var left = Control.MouseButtons.HasFlag(MouseButtons.Left);
+                var right = Control.MouseButtons.HasFlag(MouseButtons.Right);
+                FreeLook = space && (left || right);
+            }
+
+            if (FreeLook && CursorVisible)
+            {
+                CursorVisible = false;
+                Cursor.Hide();
+            }
+            else if (!FreeLook && !CursorVisible)
+            {
+                CursorVisible = true;
+                Cursor.Show();
             }
         }
 
@@ -138,7 +162,7 @@ namespace Sledge.Editor.UI
         public void MouseMove(ViewportEvent e)
         {
             if (!Focus) return;
-            if (PositionKnown && (FreeLook || KeyboardState.IsKeyDown(Keys.Space) || ToolManager.ActiveTool is CameraTool))
+            if (PositionKnown && FreeLook)
             {
                 var dx = LastKnownX - e.X;
                 var dy = e.Y - LastKnownY;
@@ -155,23 +179,14 @@ namespace Sledge.Editor.UI
 
         private void MouseMoved(ViewportEvent e, int dx, int dy)
         {
-            var space = KeyboardState.IsKeyDown(Keys.Space) || ToolManager.ActiveTool is CameraTool;
+            if (!FreeLook) return;
+
             var left = Control.MouseButtons.HasFlag(MouseButtons.Left);
             var right = Control.MouseButtons.HasFlag(MouseButtons.Right);
-            var both = left && right;
-            if (both) left = right = false;
-            var freelook = FreeLook || (space && left);
-            var updown = space && right;
-            var forwardback = space && both;
+            var updown = !left && right;
+            var forwardback = left && right;
 
-            if (freelook)
-            {
-                // Camera
-                var fovdiv = (Viewport.Width / 60m) / 2.5m;
-                Camera.Pan(dx / fovdiv);
-                Camera.Tilt(dy / fovdiv);
-            }
-            else if (updown)
+            if (updown)
             {
                 Camera.Strafe(-dx);
                 Camera.Ascend(-dy);
@@ -181,18 +196,17 @@ namespace Sledge.Editor.UI
                 Camera.Strafe(-dx);
                 Camera.Advance(-dy);
             }
+            else // left mouse or z-toggle
+            {
+                // Camera
+                var fovdiv = (Viewport.Width / 60m) / 2.5m;
+                Camera.Pan(dx / fovdiv);
+                Camera.Tilt(dy / fovdiv);
+            }
 
-            if (FreeLook)
-            {
-                LastKnownX = Viewport.Width/2;
-                LastKnownY = Viewport.Height/2;
-                Cursor.Position = Viewport.PointToScreen(new Point(LastKnownX, LastKnownY));
-            }
-            else
-            {
-                LastKnownX = e.X;
-                LastKnownY = e.Y;
-            }
+            LastKnownX = Viewport.Width/2;
+            LastKnownY = Viewport.Height/2;
+            Cursor.Position = Viewport.PointToScreen(new Point(LastKnownX, LastKnownY));
         }
 
         public void MouseWheel(ViewportEvent e)
@@ -203,12 +217,12 @@ namespace Sledge.Editor.UI
 
         public void MouseUp(ViewportEvent e)
         {
-            // Nothing.
+            SetFreeLook();
         }
 
         public void MouseDown(ViewportEvent e)
         {
-            // Nothing.
+            SetFreeLook();
         }
 
         public void MouseEnter(ViewportEvent e)
@@ -220,15 +234,21 @@ namespace Sledge.Editor.UI
         {
             if (FreeLook)
             {
-                FreeLook = false;
+                LastKnownX = Viewport.Width/2;
+                LastKnownY = Viewport.Height/2;
+                Cursor.Position = Viewport.PointToScreen(new Point(LastKnownX, LastKnownY));
+
+            }
+            else
+            {
                 if (!CursorVisible)
                 {
                     CursorVisible = true;
                     Cursor.Show();
                 }
+                PositionKnown = false;
+                Focus = false;
             }
-            PositionKnown = false;
-            Focus = false;
         }
     }
 }
