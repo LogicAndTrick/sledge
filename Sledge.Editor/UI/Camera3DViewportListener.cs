@@ -203,7 +203,7 @@ namespace Sledge.Editor.UI
 
         public void MouseUp(ViewportEvent e)
         {
-            // Nothing.
+            // Nothing..
         }
 
         public void MouseDown(ViewportEvent e)
