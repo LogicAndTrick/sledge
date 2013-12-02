@@ -20,7 +20,16 @@ namespace Sledge.Editor.UI
         private int LastKnownX { get; set; }
         private int LastKnownY { get; set; }
         private bool PositionKnown { get; set; }
-        private bool FreeLook { get; set; }
+
+		/// <summary>
+		/// Returns true if camera mode is active.
+		/// </summary>
+        private bool CameraActive { get; set; }
+
+		/// <summary>
+		/// Returns true if the Z key was used to toggle camera mode.
+		/// </summary>
+		private bool CameraActiveZToggle { get; set; }
         private bool CursorVisible { get; set; }
         private bool Focus { get; set; }
         private Camera Camera { get; set; }
@@ -30,7 +39,8 @@ namespace Sledge.Editor.UI
             LastKnownX = 0;
             LastKnownY = 0;
             PositionKnown = false;
-            FreeLook = false;
+            CameraActive = false;
+			CameraActiveZToggle = false;
             CursorVisible = true;
             Focus = false;
             Viewport = vp;
@@ -81,7 +91,7 @@ namespace Sledge.Editor.UI
 
         public void Render2D()
         {
-            if (!Focus || !FreeLook) return;
+            if (!Focus || !CameraActive) return;
 
             TextureHelper.DisableTexturing();
             GL.Begin(BeginMode.Lines);
@@ -108,20 +118,10 @@ namespace Sledge.Editor.UI
             if (!Focus) return;
             if (e.KeyCode == Keys.Z && !e.Alt && !e.Control && !e.Shift)
             {
-                FreeLook = !FreeLook;
-                PositionKnown = false;
-                if (FreeLook && CursorVisible)
-                {
-                    CursorVisible = false;
-                    Cursor.Hide();
-                }
-                else if (!FreeLook && !CursorVisible)
-                {
-                    CursorVisible = true;
-                    Cursor.Show();
-                }
+				CameraActiveZToggle = !CameraActiveZToggle;
+				CameraActiveToggle();
             }
-            if (FreeLook)
+            if (CameraActive)
             {
                 e.Handled = true;
             }
@@ -129,7 +129,7 @@ namespace Sledge.Editor.UI
 
         public void KeyPress(ViewportEvent e)
         {
-            if (FreeLook)
+            if (CameraActive)
             {
                 e.Handled = true;
             }
@@ -138,7 +138,7 @@ namespace Sledge.Editor.UI
         public void MouseMove(ViewportEvent e)
         {
             if (!Focus) return;
-            if (PositionKnown && (FreeLook || KeyboardState.IsKeyDown(Keys.Space) || ToolManager.ActiveTool is CameraTool))
+            if (PositionKnown && (CameraActive || KeyboardState.IsKeyDown(Keys.Space) || ToolManager.ActiveTool is CameraTool))
             {
                 var dx = LastKnownX - e.X;
                 var dy = e.Y - LastKnownY;
@@ -155,38 +155,54 @@ namespace Sledge.Editor.UI
 
         private void MouseMoved(ViewportEvent e, int dx, int dy)
         {
-            var space = KeyboardState.IsKeyDown(Keys.Space) || ToolManager.ActiveTool is CameraTool;
-            var left = Control.MouseButtons.HasFlag(MouseButtons.Left);
-            var right = Control.MouseButtons.HasFlag(MouseButtons.Right);
-            var both = left && right;
-            if (both) left = right = false;
-            var freelook = FreeLook || (space && left);
-            var updown = space && right;
-            var forwardback = space && both;
+			var mouseLeft = Control.MouseButtons.HasFlag(MouseButtons.Left);
+            var mouseRight = Control.MouseButtons.HasFlag(MouseButtons.Right);
+            var mouseBoth = mouseLeft && mouseRight;
+            if (mouseBoth) mouseLeft = mouseRight = false;
 
-            if (freelook)
-            {
-                // Camera
-                var fovdiv = (Viewport.Width / 60m) / 2.5m;
-                Camera.Pan(dx / fovdiv);
-                Camera.Tilt(dy / fovdiv);
-            }
-            else if (updown)
+			var cameraActive = false;
+
+			if ((KeyboardState.IsKeyDown(Keys.Space) && (mouseLeft || mouseRight || mouseBoth)) ||
+				(ToolManager.ActiveTool is CameraTool && (mouseLeft || mouseRight || mouseBoth)) ||
+				CameraActiveZToggle)
+			{
+				cameraActive = true;
+			}
+
+			var freeLook = cameraActive && mouseLeft;
+            var panMode = cameraActive && mouseRight;
+            var dollyMode = cameraActive && mouseBoth;
+
+			// CameraActiveToggle
+			if (CameraActive != cameraActive)
+			{
+				CameraActiveToggle();
+			}
+
+			// Camera Movement
+			if (freeLook)
+			{
+				var fovdiv = (Viewport.Width / 60m) / 2.5m;
+				Camera.Pan(dx / fovdiv);
+				Camera.Tilt(dy / fovdiv);
+			}
+            else if (panMode)
             {
                 Camera.Strafe(-dx);
                 Camera.Ascend(-dy);
             }
-            else if (forwardback)
+            else if (dollyMode)
             {
                 Camera.Strafe(-dx);
                 Camera.Advance(-dy);
             }
 
-            if (FreeLook)
+			// Cursor
+			if (cameraActive)
             {
-                LastKnownX = Viewport.Width/2;
-                LastKnownY = Viewport.Height/2;
-                Cursor.Position = Viewport.PointToScreen(new Point(LastKnownX, LastKnownY));
+				LastKnownX = Viewport.Width / 2;
+				LastKnownY = Viewport.Height / 2;
+				Cursor.Position = Viewport.PointToScreen(new Point(LastKnownX, LastKnownY));
             }
             else
             {
@@ -203,12 +219,12 @@ namespace Sledge.Editor.UI
 
         public void MouseUp(ViewportEvent e)
         {
-            // Nothing.
+			// Do Nothing.
         }
 
         public void MouseDown(ViewportEvent e)
         {
-            // Nothing.
+			// Do Nothing.
         }
 
         public void MouseEnter(ViewportEvent e)
@@ -218,17 +234,28 @@ namespace Sledge.Editor.UI
 
         public void MouseLeave(ViewportEvent e)
         {
-            if (FreeLook)
+            if (CameraActive)
             {
-                FreeLook = false;
-                if (!CursorVisible)
-                {
-                    CursorVisible = true;
-                    Cursor.Show();
-                }
+				CameraActiveToggle();
             }
             PositionKnown = false;
             Focus = false;
         }
+
+		private void CameraActiveToggle()
+		{
+			CameraActive = !CameraActive;
+			PositionKnown = false;
+			if (CameraActive && CursorVisible)
+			{
+				CursorVisible = false;
+				Cursor.Hide();
+			}
+			else if (!CameraActive && !CursorVisible)
+			{
+				CursorVisible = true;
+				Cursor.Show();
+			}
+		}
     }
 }
