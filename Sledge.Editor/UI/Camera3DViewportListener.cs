@@ -22,14 +22,14 @@ namespace Sledge.Editor.UI
         private bool PositionKnown { get; set; }
 
 		/// <summary>
-		/// Returns true if FreeLook mode is active
+		/// Returns true if camera mode is active.
 		/// </summary>
         private bool CameraActive { get; set; }
 
 		/// <summary>
-		/// Returns true if the Z key was used to toggle FreeLook mode.
+		/// Returns true if the Z key was used to toggle camera mode.
 		/// </summary>
-		private bool FreeLookZToggle { get; set; }
+		private bool CameraActiveZToggle { get; set; }
         private bool CursorVisible { get; set; }
         private bool Focus { get; set; }
         private Camera Camera { get; set; }
@@ -40,7 +40,7 @@ namespace Sledge.Editor.UI
             LastKnownY = 0;
             PositionKnown = false;
             CameraActive = false;
-			FreeLookZToggle = false;
+			CameraActiveZToggle = false;
             CursorVisible = true;
             Focus = false;
             Viewport = vp;
@@ -118,7 +118,7 @@ namespace Sledge.Editor.UI
             if (!Focus) return;
             if (e.KeyCode == Keys.Z && !e.Alt && !e.Control && !e.Shift)
             {
-				FreeLookZToggle = !FreeLookZToggle;
+				CameraActiveZToggle = !CameraActiveZToggle;
 				CameraActiveToggle();
             }
             if (CameraActive)
@@ -164,7 +164,7 @@ namespace Sledge.Editor.UI
 
 			if ((KeyboardState.IsKeyDown(Keys.Space) && (mouseLeft || mouseRight || mouseBoth)) ||
 				(ToolManager.ActiveTool is CameraTool && (mouseLeft || mouseRight || mouseBoth)) ||
-				FreeLookZToggle)
+				CameraActiveZToggle)
 			{
 				cameraActive = true;
 			}
