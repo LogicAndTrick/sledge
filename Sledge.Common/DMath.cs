@@ -22,6 +22,11 @@ namespace Sledge.Extensions
             return (decimal) Math.Pow((double) b, (double) e);
         }
 
+        public static decimal Tan(decimal angle)
+        {
+            return (decimal)Math.Tan((double)angle);
+        }
+
         public static decimal Atan(decimal angle)
         {
             return (decimal)Math.Atan((double)angle);

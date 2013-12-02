@@ -17,8 +17,6 @@ Priorities
     Prefabs
     Face/object selection transition history
     Actions for switching selection modes
-    Cameras
-      VMF/RMF read/write
     Brush scripts
       Arch
       Sphere

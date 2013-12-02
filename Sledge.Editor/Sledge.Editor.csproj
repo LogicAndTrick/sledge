@@ -134,6 +134,7 @@
     <Compile Include="Enums\PasteSpecialGrouping.cs" />
     <Compile Include="Enums\PasteSpecialStartPoint.cs" />
     <Compile Include="Enums\TransformType.cs" />
+    <Compile Include="History\HistoryStack.cs" />
     <Compile Include="Logging\ExceptionWindow.cs">
       <SubType>Form</SubType>
     </Compile>
