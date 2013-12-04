@@ -70,6 +70,9 @@ namespace Sledge.DataStructures.Rendering
                 GL.End();
             }
             if (frame != null) CurrentFrame = (CurrentFrame + 1) % anim.Frames.Count;
+
+            GL.Enable(EnableCap.CullFace);
+            GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Fill);
         }
     }
 }

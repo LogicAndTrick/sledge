@@ -43,6 +43,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CompositeFile.cs" />
+    <Compile Include="FileExtensions.cs" />
     <Compile Include="PakFile.cs" />
     <Compile Include="FileSystemBrowserControl.cs">
       <SubType>UserControl</SubType>

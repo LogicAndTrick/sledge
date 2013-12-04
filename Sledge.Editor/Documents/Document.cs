@@ -13,6 +13,7 @@ using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.MapObjects;
 using Sledge.Editor.Actions;
 using Sledge.Editor.Editing;
+using Sledge.Editor.Environment;
 using Sledge.Editor.History;
 using Sledge.Editor.Rendering;
 using Sledge.Editor.Rendering.Helpers;
@@ -37,6 +38,7 @@ namespace Sledge.Editor.Documents
         public Map Map { get; set; }
 
         public Game Game { get; set; }
+        public GameEnvironment Environment { get; private set; }
         public GameData GameData { get; set; }
 
         public Pointfile Pointfile { get; set; }
@@ -64,6 +66,7 @@ namespace Sledge.Editor.Documents
             MapFile = mapFile;
             Map = map;
             Game = game;
+            Environment = new GameEnvironment(game);
             MapFileName = mapFile == null
                               ? DocumentManager.GetUntitledDocumentName()
                               : Path.GetFileName(mapFile);

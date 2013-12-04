@@ -47,6 +47,7 @@ namespace Sledge.Editor.Rendering.Helpers
                 .Select(Activator.CreateInstance)
                 .OfType<IHelper>()
                 .ToList();
+            _helpers.ForEach(x => x.Document = _document);
             UpdateCache();
         }
 

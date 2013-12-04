@@ -277,6 +277,7 @@ namespace Sledge.Providers.Model
             }
 
             var model = new DataStructures.Models.Model();
+            model.Name = file.NameWithoutExtension;
             model.BonesTransformMesh = modelData.Version == MDLVersionGoldsource;
 
             if (loadItems.HasFlag(ModelLoadItems.Bones))

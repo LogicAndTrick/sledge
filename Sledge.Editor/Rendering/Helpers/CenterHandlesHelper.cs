@@ -15,6 +15,7 @@ namespace Sledge.Editor.Rendering.Helpers
 {
     public class CenterHandlesHelper : IHelper
     {
+        public Document Document { get; set; }
         public bool Is2DHelper { get { return Sledge.Settings.Select.DrawCenterHandles; } }
         public bool Is3DHelper { get { return false; } }
         public bool IsDocumentHelper { get { return false; } }

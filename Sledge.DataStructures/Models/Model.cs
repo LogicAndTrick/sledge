@@ -2,18 +2,9 @@ using System.Collections.Generic;
 
 namespace Sledge.DataStructures.Models
 {
-    public class Texture
-    {
-        public int Index { get; set; }
-        public string Name { get; set; }
-        public int Width { get; set; }
-        public int Height { get; set; }
-        public int Flags { get; set; }
-        public System.Drawing.Bitmap Image { get; set; }
-    }
-
     public class Model
     {
+        public string Name { get; set; }
         public List<Bone> Bones { get; private set; }
         public List<Mesh> Meshes { get; private set; }
         public List<Animation> Animations { get; private set; }

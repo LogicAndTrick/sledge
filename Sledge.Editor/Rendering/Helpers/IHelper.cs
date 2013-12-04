@@ -6,6 +6,7 @@ namespace Sledge.Editor.Rendering.Helpers
 {
     public interface IHelper
     {
+        Document Document { get; set; }
         bool Is2DHelper { get; }
         bool Is3DHelper { get; }
         bool IsDocumentHelper { get; }
