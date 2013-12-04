@@ -9,6 +9,7 @@ using Sledge.QuickForms;
 using Sledge.Settings;
 using System.Linq;
 using Sledge.Settings.Models;
+using Sledge.Settings.Models.Engines;
 
 namespace Sledge.Editor.Settings
 {
@@ -640,8 +641,8 @@ namespace Sledge.Editor.Settings
             var eng = _engines[SelectedGameEngine.SelectedIndex];
             var change = eng.ID != _selectedGame.EngineID;
             _selectedGame.EngineID = eng.ID;
-            SelectedGameSteamInstall.Enabled = eng.Name == "Goldsource";
-            if (eng.Name == "Goldsource" && !SelectedGameSteamInstall.Checked)
+            SelectedGameSteamInstall.Enabled = eng.GetType() == typeof(EngineGoldSource);
+            if (eng.GetType() == typeof(EngineGoldSource) && !SelectedGameSteamInstall.Checked)
             {
                 lblGameWONDir.Visible = SelectedGameWonDir.Visible = SelectedGameDirBrowse.Visible = true;
                 lblGameSteamDir.Visible = SelectedGameSteamDir.Visible = false;
@@ -696,7 +697,7 @@ namespace Sledge.Editor.Settings
                               };
             SelectedGameSteamDir.Items.Clear();
             var eng = _engines[SelectedGameEngine.SelectedIndex];
-            var include = eng.Name == "Goldsource" ? includeGoldsource : includeSource;
+            var include = eng.GetType() == typeof(EngineGoldSource) ? includeGoldsource : includeSource;
             SelectedGameSteamDir.Items.AddRange(games.Where(x => include.Contains(x.ToLower())).Distinct().OrderBy(x => x.ToLower()).ToArray());
             var idx = SelectedGameSteamDir.Items.IndexOf(_selectedGame.SteamGameDir ?? "");
             if (SelectedGameSteamDir.Items.Count > 0) SelectedGameSteamDir.SelectedIndex = Math.Max(0, idx);
@@ -706,7 +707,7 @@ namespace Sledge.Editor.Settings
         {
             if (SelectedGameEngine.SelectedIndex < 0 || SelectedGameSteamInstall.Checked) return;
             var eng = _engines[SelectedGameEngine.SelectedIndex];
-            if (eng.Name != "Goldsource" || SelectedGameSteamInstall.Checked) return;
+            if (eng.GetType() != typeof(EngineGoldSource) || SelectedGameSteamInstall.Checked) return;
 
             SelectedGameMod.Items.Clear();
             SelectedGameBase.Items.Clear();
@@ -731,7 +732,7 @@ namespace Sledge.Editor.Settings
         {
             if (SelectedGameEngine.SelectedIndex < 0 || !SelectedGameSteamInstall.Checked) return;
             var eng = _engines[SelectedGameEngine.SelectedIndex];
-            if (eng.Name == "Goldsource" && !SelectedGameSteamInstall.Checked) return;
+            if (eng.GetType() == typeof(EngineGoldSource) && !SelectedGameSteamInstall.Checked) return;
 
             SelectedGameMod.Items.Clear();
             SelectedGameBase.Items.Clear();
@@ -890,7 +891,7 @@ namespace Sledge.Editor.Settings
             var eng = _engines[SelectedBuildEngine.SelectedIndex];
             var change = eng.ID != _selectedBuild.EngineID;
             _selectedBuild.EngineID = eng.ID;
-            var gs = eng.Name == "Goldsource";
+            var gs = eng.GetType() == typeof(EngineGoldSource);
             SelectedBuildCsg.Enabled = SelectedBuildIncludeWads.Enabled = gs;
             if (change)
             {

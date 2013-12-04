@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using Microsoft.Win32;
 using Sledge.Settings.Models;
+using Sledge.Settings.Models.Engines;
 
 namespace Sledge.Settings.GameDetection
 {
@@ -22,7 +23,7 @@ namespace Sledge.Settings.GameDetection
                     var dict = GetGamKeyVals(lines);
                     if (!dict.ContainsKey("game")) continue;
                     var game = new Game();
-                    game.EngineID = 1;
+                    game.EngineID = EngineGoldSource.EngineID;
                     // game.Fgds lookup
                     // game.BaseDir
                     game.ModDir = di.Name;

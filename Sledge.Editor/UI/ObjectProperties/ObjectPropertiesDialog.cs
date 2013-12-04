@@ -10,6 +10,7 @@ using Sledge.Editor.Actions;
 using Sledge.Editor.Actions.MapObjects.Entities;
 using Sledge.Editor.Actions.Visgroups;
 using Sledge.Editor.UI.ObjectProperties.SmartEdit;
+using Sledge.Settings.Models.Engines;
 
 namespace Sledge.Editor.UI.ObjectProperties
 {
@@ -319,7 +320,7 @@ namespace Sledge.Editor.UI.ObjectProperties
             if (!Tabs.TabPages.Contains(ClassInfoTab)) Tabs.TabPages.Insert(0, ClassInfoTab);
             if (!Tabs.TabPages.Contains(FlagsTab)) Tabs.TabPages.Insert(Tabs.TabPages.Count - 1, FlagsTab);
 
-            if (Document.Game.EngineID == 1)
+            if (Document.Game.EngineID == EngineGoldSource.EngineID)
             {
                 // Goldsource
                 Tabs.TabPages.Remove(InputsTab);
