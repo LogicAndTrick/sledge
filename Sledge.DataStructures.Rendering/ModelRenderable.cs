@@ -15,7 +15,7 @@ namespace Sledge.DataStructures.Rendering
         public ModelRenderable(Model model)
         {
             Model = model;
-            CurrentAnimation = 1;
+            CurrentAnimation = model.Animations.Count - 1;
             CurrentFrame = 0;
         }
 

@@ -95,7 +95,9 @@ namespace Sledge.FileSystem
 
         private IEnumerable<IFile> MergeByName(IEnumerable<IFile> files)
         {
-            return files.GroupBy(x => new { Name = x.Name.ToLower(), x.IsContainer }).Select(x => new CompositeFile(this, x));
+            return files.GroupBy(x => new {Name = x.Name.ToLower(), x.IsContainer})
+                .Where(x => x.Any())
+                .Select(x => new CompositeFile(this, x));
         }
 
         public IEnumerable<IFile> GetRelatedFiles()
@@ -110,7 +112,8 @@ namespace Sledge.FileSystem
 
         public IFile GetChild(string name)
         {
-            return new CompositeFile(this, Files.Select(x => x.GetChild(name)));
+            var children = Files.Select(x => x.GetChild(name)).Where(x => x != null).ToList();
+            return !children.Any() ? null : new CompositeFile(this, children);
         }
 
         public IEnumerable<IFile> GetChildren()
@@ -125,7 +128,8 @@ namespace Sledge.FileSystem
 
         public IFile GetFile(string name)
         {
-            return new CompositeFile(this, Files.Select(x => x.GetFile(name)));
+            var files = Files.Select(x => x.GetFile(name)).Where(x => x != null).ToList();
+            return !files.Any() ? null : new CompositeFile(this, files);
         }
 
         public IEnumerable<IFile> GetFiles()

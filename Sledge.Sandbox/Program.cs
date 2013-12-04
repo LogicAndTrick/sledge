@@ -21,7 +21,7 @@ namespace Sledge.Sandbox
             var wd = new WonDetector();
             wd.Detect();
 
-            return;
+            //return;
 
             QuickStartBootstrap.MapFile = @"D:\Github\sledge\_Resources\RMF\entities.rmf";
             SettingsManager.Read();

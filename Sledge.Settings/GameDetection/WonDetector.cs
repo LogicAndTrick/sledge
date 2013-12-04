@@ -24,6 +24,7 @@ namespace Sledge.Settings.GameDetection
                     var game = new Game();
                     game.EngineID = 1;
                     // game.Fgds lookup
+                    // game.BaseDir
                     game.ModDir = di.Name;
                     game.Name = dict["game"];
                     game.SteamInstall = false;

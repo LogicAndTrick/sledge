@@ -14,6 +14,8 @@ namespace Sledge.FileSystem
         protected FileInfo FileInfo { get; set; }
         protected DirectoryInfo DirectoryInfo { get; set; }
 
+        private IEnumerable<PakFile> _pakFiles;
+
         public NativeFile(FileInfo fileInfo)
         {
             FileInfo = fileInfo;
@@ -77,12 +79,12 @@ namespace Sledge.FileSystem
 
         public int NumChildren
         {
-            get { return IsContainer ? DirectoryInfo.GetDirectories().Length : 0; }
+            get { return IsContainer ? GetChildren().Count() : 0; }
         }
 
         public int NumFiles
         {
-            get { return IsContainer ? DirectoryInfo.GetFiles().Length : 0; }
+            get { return IsContainer ? GetFiles().Count() : 0; }
         }
 
         public Stream Open()
@@ -113,32 +115,44 @@ namespace Sledge.FileSystem
 
         public IFile GetRelatedFile(string extension)
         {
-            return GetRelatedFiles().FirstOrDefault(x => x.Extension.ToLower() == extension.ToLower());
+            return GetRelatedFiles().FirstOrDefault(x => String.Equals(x.Extension, extension, StringComparison.CurrentCultureIgnoreCase));
+        }
+
+        private void LoadPakFiles()
+        {
+            if (_pakFiles != null) return;
+            _pakFiles = DirectoryInfo.GetFiles("*.pak").Select(x => new PakFile(x.FullName)).ToList();
         }
 
         public IFile GetChild(string name)
         {
-            return GetChildren().FirstOrDefault(x => x.Name.ToLower() == name.ToLower());
+            return GetChildren().FirstOrDefault(x => String.Equals(x.Name, name, StringComparison.CurrentCultureIgnoreCase));
         }
 
         public IEnumerable<IFile> GetChildren()
         {
-            return !IsContainer
-                       ? (IEnumerable<IFile>) new List<IFile>()
-                       : DirectoryInfo.GetDirectories().Select(CreateChild);
-        }
-
-        private IFile CreateChild(DirectoryInfo dir)
-        {
-            var nf = new NativeFile(dir);
-            var paks = dir.GetFiles("*.pak");
-            if (paks.Any())
+            if (!IsContainer) return new List<IFile>();
+            LoadPakFiles();
+            var children = _pakFiles.SelectMany(x => x.GetChildren()).ToList();
+            var dirs = DirectoryInfo.GetDirectories().Select<DirectoryInfo, IFile>(x =>
             {
-                var list = paks.Select(x => new PakFile(x.FullName)).OfType<IFile>().ToList();
-                list.Insert(0, nf);
-                return new CompositeFile(this, list);
+                var nf = new NativeFile(x);
+                var paks = children.Where(p => String.Equals(x.Name, p.Name, StringComparison.CurrentCultureIgnoreCase)).ToList();
+                if (paks.Any())
+                {
+                    paks.Insert(0, nf);
+                    return new CompositeFile(this, paks);
+                }
+                return nf;
+            }).ToList();
+            foreach (var d in children)
+            {
+                if (!dirs.Any(x => String.Equals(x.Name, d.Name, StringComparison.CurrentCultureIgnoreCase)))
+                {
+                    dirs.Add(d);
+                }
             }
-            return nf;
+            return dirs;
         }
 
         public IEnumerable<IFile> GetChildren(string regex)
@@ -148,14 +162,22 @@ namespace Sledge.FileSystem
 
         public IFile GetFile(string name)
         {
-            return GetFiles().FirstOrDefault(x => x.Name.ToLower() == name.ToLower());
+            return GetFiles().FirstOrDefault(x => String.Equals(x.Name, name, StringComparison.CurrentCultureIgnoreCase));
         }
 
         public IEnumerable<IFile> GetFiles()
         {
-            return !IsContainer
-                       ? (IEnumerable<IFile>)new List<IFile>()
-                       : DirectoryInfo.GetFiles().Select(fileInfo => new NativeFile(fileInfo));
+            if (!IsContainer) return new List<IFile>();
+            LoadPakFiles();
+            var files = DirectoryInfo.GetFiles().Select(fileInfo => new NativeFile(fileInfo)).ToList<IFile>();
+            foreach (var f in _pakFiles.SelectMany(x => x.GetFiles()))
+            {
+                if (!files.Any(x => String.Equals(x.Name, f.Name, StringComparison.CurrentCultureIgnoreCase)))
+                {
+                    files.Add(f);
+                }
+            }
+            return files;
         }
 
         public IEnumerable<IFile> GetFiles(string regex)
@@ -165,7 +187,7 @@ namespace Sledge.FileSystem
 
         public IEnumerable<IFile> GetFilesWithExtension(string extension)
         {
-            return GetFiles().Where(x => x.Extension.ToLower() == extension.ToLower());
+            return GetFiles().Where(x => String.Equals(x.Extension, extension, StringComparison.CurrentCultureIgnoreCase));
         }
     }
 }

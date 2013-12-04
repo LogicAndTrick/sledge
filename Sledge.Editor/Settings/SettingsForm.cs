@@ -48,6 +48,7 @@ namespace Sledge.Editor.Settings
             SelectedGameWonDir.TextChanged += (s, e) => CheckNull(_selectedGame, x => x.WonGameDir = SelectedGameWonDir.Text);
             SelectedGameSteamDir.SelectedIndexChanged += (s, e) => CheckNull(_selectedGame, x => x.SteamGameDir = SelectedGameSteamDir.Text);
             SelectedGameMod.SelectedIndexChanged += (s, e) => CheckNull(_selectedGame, x => x.ModDir = SelectedGameMod.Text);
+            SelectedGameBase.SelectedIndexChanged += (s, e) => CheckNull(_selectedGame, x => x.BaseDir = SelectedGameBase.Text);
             SelectedGameMapDir.TextChanged += (s, e) => CheckNull(_selectedGame, x => x.MapDir = SelectedGameMapDir.Text);
             SelectedGameEnableAutosave.CheckedChanged += (s, e) => CheckNull(_selectedGame, x => x.Autosave = SelectedGameEnableAutosave.Checked);
             SelectedGameUseDiffAutosaveDir.CheckedChanged += (s, e) => CheckNull(_selectedGame, x => x.UseCustomAutosaveDir = SelectedGameUseDiffAutosaveDir.Checked);
@@ -554,6 +555,7 @@ namespace Sledge.Editor.Settings
             SelectedGameSteamInstall.Checked = _selectedGame.SteamInstall;
 
             SelectedGameMod.SelectedText = _selectedGame.ModDir;
+            SelectedGameBase.SelectedText = _selectedGame.BaseDir;
             SelectedGameWonDir.Text = _selectedGame.WonGameDir;
             SelectedGameSteamDir.SelectedText = _selectedGame.SteamGameDir;
 
@@ -641,6 +643,8 @@ namespace Sledge.Editor.Settings
             SelectedGameSteamInstall.Enabled = eng.Name == "Goldsource";
             if (eng.Name == "Goldsource" && !SelectedGameSteamInstall.Checked)
             {
+                lblGameWONDir.Visible = SelectedGameWonDir.Visible = SelectedGameDirBrowse.Visible = true;
+                lblGameSteamDir.Visible = SelectedGameSteamDir.Visible = false;
                 SelectedGameWonDir.Enabled = true;
                 SelectedGameDirBrowse.Enabled = true;
                 SelectedGameSteamDir.Enabled = false;
@@ -648,6 +652,8 @@ namespace Sledge.Editor.Settings
             }
             else
             {
+                lblGameWONDir.Visible = SelectedGameWonDir.Visible = SelectedGameDirBrowse.Visible = false;
+                lblGameSteamDir.Visible = SelectedGameSteamDir.Visible = true;
                 SelectedGameWonDir.Enabled = false;
                 SelectedGameDirBrowse.Enabled = false;
                 SelectedGameSteamDir.Enabled = true;
@@ -701,13 +707,24 @@ namespace Sledge.Editor.Settings
             if (SelectedGameEngine.SelectedIndex < 0 || SelectedGameSteamInstall.Checked) return;
             var eng = _engines[SelectedGameEngine.SelectedIndex];
             if (eng.Name != "Goldsource" || SelectedGameSteamInstall.Checked) return;
+
             SelectedGameMod.Items.Clear();
+            SelectedGameBase.Items.Clear();
+
             if (!Directory.Exists(SelectedGameWonDir.Text)) return;
+
             var mods = Directory.GetDirectories(SelectedGameWonDir.Text).Select(Path.GetFileName);
             var ignored = new[] { "gldrv", "logos", "logs", "errorlogs", "platform", "config" };
-            SelectedGameMod.Items.AddRange(mods.Where(x => !ignored.Contains(x.ToLower())).ToArray());
+
+            var range = mods.Where(x => !ignored.Contains(x.ToLower())).OfType<object>().ToArray();
+            SelectedGameMod.Items.AddRange(range);
+            SelectedGameBase.Items.AddRange(range);
+
             var idx = SelectedGameMod.Items.IndexOf(_selectedGame.ModDir ?? "");
             if (SelectedGameMod.Items.Count > 0) SelectedGameMod.SelectedIndex = Math.Max(0, idx);
+
+            idx = SelectedGameBase.Items.IndexOf(_selectedGame.BaseDir ?? "");
+            if (SelectedGameBase.Items.Count > 0) SelectedGameBase.SelectedIndex = Math.Max(0, idx);
         }
 
         private void SelectedGameSteamDirChanged(object sender, EventArgs e)
@@ -715,15 +732,26 @@ namespace Sledge.Editor.Settings
             if (SelectedGameEngine.SelectedIndex < 0 || !SelectedGameSteamInstall.Checked) return;
             var eng = _engines[SelectedGameEngine.SelectedIndex];
             if (eng.Name == "Goldsource" && !SelectedGameSteamInstall.Checked) return;
+
             SelectedGameMod.Items.Clear();
+            SelectedGameBase.Items.Clear();
+
             var dir = Path.Combine(SteamInstallDir.Text, "steamapps", SteamUsername.Text, SelectedGameSteamDir.Text);
             if (!Directory.Exists(dir)) dir = Path.Combine(SteamInstallDir.Text, "steamapps", "common", SelectedGameSteamDir.Text);
             if (!Directory.Exists(dir)) return;
+
             var mods = Directory.GetDirectories(dir).Select(Path.GetFileName);
             var ignored = new[] {"gldrv", "logos", "logs", "errorlogs", "platform", "config", "bin"};
-            SelectedGameMod.Items.AddRange(mods.Where(x => !ignored.Contains(x.ToLower())).ToArray());
+
+            var range = mods.Where(x => !ignored.Contains(x.ToLower())).OfType<object>().ToArray();
+            SelectedGameMod.Items.AddRange(range);
+            SelectedGameBase.Items.AddRange(range);
+
             var idx = SelectedGameMod.Items.IndexOf(_selectedGame.ModDir ?? "");
             if (SelectedGameMod.Items.Count > 0) SelectedGameMod.SelectedIndex = Math.Max(0, idx);
+
+            idx = SelectedGameBase.Items.IndexOf(_selectedGame.BaseDir ?? "");
+            if (SelectedGameBase.Items.Count > 0) SelectedGameBase.SelectedIndex = Math.Max(0, idx);
         }
 
         private void SelectedGameNameChanged(object sender, EventArgs e)

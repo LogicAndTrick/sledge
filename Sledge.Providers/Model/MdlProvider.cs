@@ -31,8 +31,18 @@ namespace Sledge.Providers.Model
     /// Loader for Source and GoldSource MDL files.
     /// // TODO: Source animation support! Currently reads animations fine, but displays them incorrectly!
     /// </summary>
-    public class MdlProvider
+    public class MdlProvider : ModelProvider
     {
+        protected override bool IsValidForFile(IFile file)
+        {
+            return file.Extension.ToLowerInvariant() == "mdl";
+        }
+
+        protected override DataStructures.Models.Model LoadFromFile(IFile file)
+        {
+            return LoadMDL(file, ModelLoadItems.AllStatic);
+        }
+
         // Model loader for MDL files. Reference Valve's studiohdr_t struct definition for the most part.
         public DataStructures.Models.Model LoadMDL(IFile file, ModelLoadItems loadItems)
         {

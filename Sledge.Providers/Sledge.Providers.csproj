@@ -54,6 +54,7 @@
     <Compile Include="Map\MapProvider.cs" />
     <Compile Include="Map\VmfProvider.cs" />
     <Compile Include="Model\MdlProvider.cs" />
+    <Compile Include="Model\ModelProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ProviderException.cs" />
     <Compile Include="ProviderNotFoundException.cs" />

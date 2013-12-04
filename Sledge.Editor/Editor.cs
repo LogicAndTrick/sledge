@@ -124,6 +124,7 @@ namespace Sledge.Editor
             GameDataProvider.Register(new FgdProvider());
             TextureProvider.Register(new WadProvider());
             TextureProvider.Register(new SprProvider());
+            ModelProvider.Register(new MdlProvider());
 
             WadProvider.ReplaceTransparentPixels = !Sledge.Settings.View.DisableWadTransparency && !Sledge.Settings.View.GloballyDisableTransparency;
             TextureHelper.EnableTransparency = !Sledge.Settings.View.GloballyDisableTransparency;
@@ -144,10 +145,6 @@ namespace Sledge.Editor
                     LoadFileGame(session.Item1, session.Item2);
                 }
             }
-
-            var mdl = new MdlProvider();
-            mdl.LoadMDL(new NativeFile(@"D:\Github\sledge\_Resources\MDL\HL1_10\barney.mdl"), ModelLoadItems.All);
-
         }
 
         #region Updates

@@ -45,6 +45,9 @@ namespace Sledge.Editor.Settings
             this.LoadSession = new System.Windows.Forms.CheckBox();
             this.groupBox21 = new System.Windows.Forms.GroupBox();
             this.RenderMode = new System.Windows.Forms.ComboBox();
+            this.GloballyDisableTransparency = new System.Windows.Forms.CheckBox();
+            this.DisableToolTransparency = new System.Windows.Forms.CheckBox();
+            this.DisableWadTransparency = new System.Windows.Forms.CheckBox();
             this.label32 = new System.Windows.Forms.Label();
             this.groupBox19 = new System.Windows.Forms.GroupBox();
             this.ApplyTextureImmediately = new System.Windows.Forms.CheckBox();
@@ -265,9 +268,8 @@ namespace Sledge.Editor.Settings
             this.btnCancelSettings = new System.Windows.Forms.Button();
             this.btnApplyAndCloseSettings = new System.Windows.Forms.Button();
             this.btnApplySettings = new System.Windows.Forms.Button();
-            this.DisableWadTransparency = new System.Windows.Forms.CheckBox();
-            this.DisableToolTransparency = new System.Windows.Forms.CheckBox();
-            this.GloballyDisableTransparency = new System.Windows.Forms.CheckBox();
+            this.lblBaseGame = new System.Windows.Forms.Label();
+            this.SelectedGameBase = new System.Windows.Forms.ComboBox();
             this.tbcSettings.SuspendLayout();
             this.tabGeneral.SuspendLayout();
             this.groupBox20.SuspendLayout();
@@ -440,6 +442,36 @@ namespace Sledge.Editor.Settings
             this.RenderMode.Name = "RenderMode";
             this.RenderMode.Size = new System.Drawing.Size(279, 21);
             this.RenderMode.TabIndex = 1;
+            // 
+            // GloballyDisableTransparency
+            // 
+            this.GloballyDisableTransparency.Location = new System.Drawing.Point(12, 109);
+            this.GloballyDisableTransparency.Name = "GloballyDisableTransparency";
+            this.GloballyDisableTransparency.Size = new System.Drawing.Size(233, 24);
+            this.GloballyDisableTransparency.TabIndex = 3;
+            this.GloballyDisableTransparency.Tag = "";
+            this.GloballyDisableTransparency.Text = "Disable transparent textures globally";
+            this.GloballyDisableTransparency.UseVisualStyleBackColor = true;
+            // 
+            // DisableToolTransparency
+            // 
+            this.DisableToolTransparency.Location = new System.Drawing.Point(12, 79);
+            this.DisableToolTransparency.Name = "DisableToolTransparency";
+            this.DisableToolTransparency.Size = new System.Drawing.Size(233, 24);
+            this.DisableToolTransparency.TabIndex = 3;
+            this.DisableToolTransparency.Tag = "";
+            this.DisableToolTransparency.Text = "Disable tool texture transparency";
+            this.DisableToolTransparency.UseVisualStyleBackColor = true;
+            // 
+            // DisableWadTransparency
+            // 
+            this.DisableWadTransparency.Location = new System.Drawing.Point(12, 49);
+            this.DisableWadTransparency.Name = "DisableWadTransparency";
+            this.DisableWadTransparency.Size = new System.Drawing.Size(233, 24);
+            this.DisableWadTransparency.TabIndex = 3;
+            this.DisableWadTransparency.Tag = "";
+            this.DisableWadTransparency.Text = "Disable WAD texture transparency";
+            this.DisableWadTransparency.UseVisualStyleBackColor = true;
             // 
             // label32
             // 
@@ -1523,6 +1555,8 @@ namespace Sledge.Editor.Settings
             // 
             // grpConfigGame
             // 
+            this.grpConfigGame.Controls.Add(this.lblBaseGame);
+            this.grpConfigGame.Controls.Add(this.SelectedGameBase);
             this.grpConfigGame.Controls.Add(this.SelectedGameWonDir);
             this.grpConfigGame.Controls.Add(this.lblGameWONDir);
             this.grpConfigGame.Controls.Add(this.SelectedGameDirBrowse);
@@ -1539,9 +1573,9 @@ namespace Sledge.Editor.Settings
             // 
             // SelectedGameWonDir
             // 
-            this.SelectedGameWonDir.Location = new System.Drawing.Point(68, 16);
+            this.SelectedGameWonDir.Location = new System.Drawing.Point(75, 16);
             this.SelectedGameWonDir.Name = "SelectedGameWonDir";
-            this.SelectedGameWonDir.Size = new System.Drawing.Size(269, 20);
+            this.SelectedGameWonDir.Size = new System.Drawing.Size(288, 20);
             this.SelectedGameWonDir.TabIndex = 5;
             this.SelectedGameWonDir.Text = "(WON only) example: C:\\Sierra\\Half-Life";
             this.SelectedGameWonDir.TextChanged += new System.EventHandler(this.SelectedGameWonDirChanged);
@@ -1550,14 +1584,14 @@ namespace Sledge.Editor.Settings
             // 
             this.lblGameWONDir.Location = new System.Drawing.Point(6, 16);
             this.lblGameWONDir.Name = "lblGameWONDir";
-            this.lblGameWONDir.Size = new System.Drawing.Size(56, 20);
+            this.lblGameWONDir.Size = new System.Drawing.Size(63, 20);
             this.lblGameWONDir.TabIndex = 6;
             this.lblGameWONDir.Text = "Game Dir";
             this.lblGameWONDir.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // SelectedGameDirBrowse
             // 
-            this.SelectedGameDirBrowse.Location = new System.Drawing.Point(343, 15);
+            this.SelectedGameDirBrowse.Location = new System.Drawing.Point(369, 15);
             this.SelectedGameDirBrowse.Name = "SelectedGameDirBrowse";
             this.SelectedGameDirBrowse.Size = new System.Drawing.Size(67, 23);
             this.SelectedGameDirBrowse.TabIndex = 8;
@@ -1567,7 +1601,7 @@ namespace Sledge.Editor.Settings
             // 
             // lblGameSteamDir
             // 
-            this.lblGameSteamDir.Location = new System.Drawing.Point(16, 43);
+            this.lblGameSteamDir.Location = new System.Drawing.Point(16, 16);
             this.lblGameSteamDir.Name = "lblGameSteamDir";
             this.lblGameSteamDir.Size = new System.Drawing.Size(45, 20);
             this.lblGameSteamDir.TabIndex = 9;
@@ -1581,19 +1615,19 @@ namespace Sledge.Editor.Settings
             this.SelectedGameSteamDir.Items.AddRange(new object[] {
             "(Steam only) Half-Life",
             "Counter-Strike"});
-            this.SelectedGameSteamDir.Location = new System.Drawing.Point(67, 42);
+            this.SelectedGameSteamDir.Location = new System.Drawing.Point(75, 15);
             this.SelectedGameSteamDir.Name = "SelectedGameSteamDir";
-            this.SelectedGameSteamDir.Size = new System.Drawing.Size(240, 21);
+            this.SelectedGameSteamDir.Size = new System.Drawing.Size(259, 21);
             this.SelectedGameSteamDir.TabIndex = 10;
             this.SelectedGameSteamDir.SelectedIndexChanged += new System.EventHandler(this.SelectedGameSteamDirChanged);
             // 
             // lblGameMod
             // 
-            this.lblGameMod.Location = new System.Drawing.Point(16, 70);
+            this.lblGameMod.Location = new System.Drawing.Point(3, 70);
             this.lblGameMod.Name = "lblGameMod";
-            this.lblGameMod.Size = new System.Drawing.Size(45, 20);
+            this.lblGameMod.Size = new System.Drawing.Size(198, 20);
             this.lblGameMod.TabIndex = 9;
-            this.lblGameMod.Text = "Mod";
+            this.lblGameMod.Text = "Mod Directory (e.g. \'cstrike\')";
             this.lblGameMod.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // SelectedGameMod
@@ -1602,9 +1636,9 @@ namespace Sledge.Editor.Settings
             this.SelectedGameMod.FormattingEnabled = true;
             this.SelectedGameMod.Items.AddRange(new object[] {
             "Valve"});
-            this.SelectedGameMod.Location = new System.Drawing.Point(67, 69);
+            this.SelectedGameMod.Location = new System.Drawing.Point(210, 71);
             this.SelectedGameMod.Name = "SelectedGameMod";
-            this.SelectedGameMod.Size = new System.Drawing.Size(240, 21);
+            this.SelectedGameMod.Size = new System.Drawing.Size(225, 21);
             this.SelectedGameMod.TabIndex = 10;
             // 
             // lblGameName
@@ -2866,35 +2900,26 @@ namespace Sledge.Editor.Settings
             this.btnApplySettings.UseVisualStyleBackColor = true;
             this.btnApplySettings.Click += new System.EventHandler(this.Apply);
             // 
-            // DisableWadTransparency
+            // lblBaseGame
             // 
-            this.DisableWadTransparency.Location = new System.Drawing.Point(12, 49);
-            this.DisableWadTransparency.Name = "DisableWadTransparency";
-            this.DisableWadTransparency.Size = new System.Drawing.Size(233, 24);
-            this.DisableWadTransparency.TabIndex = 3;
-            this.DisableWadTransparency.Tag = "";
-            this.DisableWadTransparency.Text = "Disable WAD texture transparency";
-            this.DisableWadTransparency.UseVisualStyleBackColor = true;
+            this.lblBaseGame.Location = new System.Drawing.Point(3, 43);
+            this.lblBaseGame.Name = "lblBaseGame";
+            this.lblBaseGame.Size = new System.Drawing.Size(198, 20);
+            this.lblBaseGame.TabIndex = 11;
+            this.lblBaseGame.Text = "Base Game Directory (e.g. \'valve\')";
+            this.lblBaseGame.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // DisableToolTransparency
+            // SelectedGameBase
             // 
-            this.DisableToolTransparency.Location = new System.Drawing.Point(12, 79);
-            this.DisableToolTransparency.Name = "DisableToolTransparency";
-            this.DisableToolTransparency.Size = new System.Drawing.Size(233, 24);
-            this.DisableToolTransparency.TabIndex = 3;
-            this.DisableToolTransparency.Tag = "";
-            this.DisableToolTransparency.Text = "Disable tool texture transparency";
-            this.DisableToolTransparency.UseVisualStyleBackColor = true;
-            // 
-            // GloballyDisableTransparency
-            // 
-            this.GloballyDisableTransparency.Location = new System.Drawing.Point(12, 109);
-            this.GloballyDisableTransparency.Name = "GloballyDisableTransparency";
-            this.GloballyDisableTransparency.Size = new System.Drawing.Size(233, 24);
-            this.GloballyDisableTransparency.TabIndex = 3;
-            this.GloballyDisableTransparency.Tag = "";
-            this.GloballyDisableTransparency.Text = "Disable transparent textures globally";
-            this.GloballyDisableTransparency.UseVisualStyleBackColor = true;
+            this.SelectedGameBase.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.SelectedGameBase.FormattingEnabled = true;
+            this.SelectedGameBase.Items.AddRange(new object[] {
+            "(Steam only) Half-Life",
+            "Counter-Strike"});
+            this.SelectedGameBase.Location = new System.Drawing.Point(211, 44);
+            this.SelectedGameBase.Name = "SelectedGameBase";
+            this.SelectedGameBase.Size = new System.Drawing.Size(225, 21);
+            this.SelectedGameBase.TabIndex = 12;
             // 
             // SettingsForm
             // 
@@ -3215,5 +3240,7 @@ namespace Sledge.Editor.Settings
         private System.Windows.Forms.CheckBox GloballyDisableTransparency;
         private System.Windows.Forms.CheckBox DisableToolTransparency;
         private System.Windows.Forms.CheckBox DisableWadTransparency;
+        private System.Windows.Forms.Label lblBaseGame;
+        private System.Windows.Forms.ComboBox SelectedGameBase;
 	}
 }

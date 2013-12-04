@@ -53,11 +53,11 @@ namespace Sledge.Editor.Logging
         public ExceptionInfo(Exception exception, string info)
         {
             Exception = exception;
-            RuntimeVersion = Environment.Version.ToString();
+            RuntimeVersion = System.Environment.Version.ToString();
             Date = DateTime.Now;
             InformationMessage = info;
             ApplicationVersion = FileVersionInfo.GetVersionInfo(typeof(Logger).Assembly.Location).FileVersion;
-            OperatingSystem = Environment.OSVersion.VersionString;
+            OperatingSystem = System.Environment.OSVersion.VersionString;
 
             var list = new List<Exception>();
             do

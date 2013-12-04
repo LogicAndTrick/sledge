@@ -14,6 +14,7 @@ namespace Sledge.Settings.Models
         public bool SteamInstall { get; set; }
         public string WonGameDir { get; set; }
         public string SteamGameDir { get; set; }
+        public string BaseDir { get; set; }
         public string ModDir { get; set; }
         public string MapDir { get; set; }
         public bool Autosave { get; set; }
@@ -49,6 +50,7 @@ namespace Sledge.Settings.Models
             WonGameDir = gs["WonGameDir"];
             SteamGameDir = gs["SteamGameDir"];
             ModDir = gs["ModDir"];
+            BaseDir = gs["BaseDir"];
             MapDir = gs["MapDir"];
             Autosave = gs.PropertyBoolean("Autosave");
             UseCustomAutosaveDir = gs.PropertyBoolean("UseCustomAutosaveDir");
@@ -90,6 +92,7 @@ namespace Sledge.Settings.Models
             gs["WonGameDir"] = WonGameDir;
             gs["SteamGameDir"] = SteamGameDir;
             gs["ModDir"] = ModDir;
+            gs["BaseDir"] = BaseDir;
             gs["MapDir"] = MapDir;
             gs["Autosave"] = Autosave.ToString(CultureInfo.InvariantCulture);
             gs["UseCustomAutosaveDir"] = UseCustomAutosaveDir.ToString(CultureInfo.InvariantCulture);
