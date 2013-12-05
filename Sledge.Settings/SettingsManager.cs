@@ -13,7 +13,6 @@ namespace Sledge.Settings
     public static class SettingsManager
     {
         public static List<Build> Builds { get; set; }
-        public static List<Engine> Engines { get; set; }
         public static List<Game> Games { get; set; }
         public static List<RecentFile> RecentFiles { get; set; }
         public static List<Setting> Settings { get; set; }
@@ -23,11 +22,6 @@ namespace Sledge.Settings
         static SettingsManager()
         {
             Builds = new List<Build>();
-            Engines = new List<Engine>
-                          {
-                              new Engine { ID = 1, Name = "Goldsource" },
-                              //new Engine { ID = 2, Name = "Source" }
-                          };
             Games = new List<Game>();
             RecentFiles = new List<RecentFile>();
             Settings = new List<Setting>();

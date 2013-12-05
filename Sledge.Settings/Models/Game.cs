@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using Sledge.Providers;
@@ -9,7 +10,7 @@ namespace Sledge.Settings.Models
     {
         public int ID { get; set; }
         public string Name { get; set; }
-        public int EngineID { get; set; }
+        public Engine Engine { get; set; }
         public int BuildID { get; set; }
         public bool SteamInstall { get; set; }
         public string WonGameDir { get; set; }
@@ -48,7 +49,7 @@ namespace Sledge.Settings.Models
         {
             ID = gs.PropertyInteger("ID");
             Name = gs["Name"];
-            EngineID = gs.PropertyInteger("EngineID");
+            Engine = (Engine) Enum.Parse(typeof(Engine), gs["EngineID"]);
             BuildID = gs.PropertyInteger("BuildID");
             SteamInstall = gs.PropertyBoolean("SteamInstall");
             WonGameDir = gs["WonGameDir"];
@@ -93,7 +94,7 @@ namespace Sledge.Settings.Models
         {
             gs["ID"] = ID.ToString(CultureInfo.InvariantCulture);
             gs["Name"] = Name;
-            gs["EngineID"] = EngineID.ToString(CultureInfo.InvariantCulture);
+            gs["EngineID"] = Engine.ToString();
             gs["BuildID"] = BuildID.ToString(CultureInfo.InvariantCulture);
             gs["SteamInstall"] = SteamInstall.ToString(CultureInfo.InvariantCulture);
             gs["WonGameDir"] = WonGameDir;

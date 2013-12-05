@@ -18,7 +18,6 @@ namespace Sledge.Editor.Settings
 	/// </summary>
 	public partial class SettingsForm : Form
 	{
-	    private List<Engine> _engines; 
 	    private List<Game> _games;
 	    private List<Build> _builds;
 
@@ -43,7 +42,7 @@ namespace Sledge.Editor.Settings
 	    {
             // Game Configurations
             SelectedGameName.TextChanged += (s, e) => CheckNull(_selectedGame, x => x.Name = SelectedGameName.Text);
-            SelectedGameEngine.SelectedIndexChanged += (s, e) => CheckNull(_selectedGame, x => x.EngineID = _engines[SelectedGameEngine.SelectedIndex].ID);
+            SelectedGameEngine.SelectedIndexChanged += (s, e) => CheckNull(_selectedGame, x => x.Engine = (Engine) SelectedGameEngine.SelectedItem);
             SelectedGameBuild.SelectedIndexChanged += (s, e) => CheckNull(_selectedGame, x => x.BuildID = _builds[SelectedGameBuild.SelectedIndex].ID);
             SelectedGameSteamInstall.CheckedChanged += (s, e) => CheckNull(_selectedGame, x => x.SteamInstall = SelectedGameSteamInstall.Checked);
             SelectedGameWonDir.TextChanged += (s, e) => CheckNull(_selectedGame, x => x.WonGameDir = SelectedGameWonDir.Text);
@@ -68,7 +67,7 @@ namespace Sledge.Editor.Settings
 
             // Build Configurations
             SelectedBuildName.TextChanged += (s, e) => CheckNull(_selectedBuild, x => x.Name = SelectedBuildName.Text);
-            SelectedBuildEngine.SelectedIndexChanged += (s, e) => CheckNull(_selectedBuild, x => x.EngineID = _engines[SelectedBuildEngine.SelectedIndex].ID);
+            SelectedBuildEngine.SelectedIndexChanged += (s, e) => CheckNull(_selectedBuild, x => x.Engine = (Engine) SelectedBuildEngine.SelectedItem);
             SelectedBuildExeFolder.TextChanged += (s, e) => CheckNull(_selectedBuild, x => x.Path = SelectedBuildExeFolder.Text);
             SelectedBuildBsp.SelectedIndexChanged += (s, e) => CheckNull(_selectedBuild, x => x.Bsp = SelectedBuildBsp.Text);
             SelectedBuildCsg.SelectedIndexChanged += (s, e) => CheckNull(_selectedBuild, x => x.Csg = SelectedBuildCsg.Text);
@@ -106,17 +105,16 @@ namespace Sledge.Editor.Settings
 	        _selectedBuild = null;
             UpdateSelectedBuild();
 
-            _engines = new List<Engine>(SettingsManager.Engines);
             _games = new List<Game>(SettingsManager.Games);
             _builds = new List<Build>(SettingsManager.Builds);
 
             ReIndex();
 
             SelectedGameEngine.Items.Clear();
-            SelectedGameEngine.Items.AddRange(_engines.Select(x => x.Name).ToArray());
+            SelectedGameEngine.Items.AddRange(Enum.GetValues(typeof(Engine)).OfType<object>().ToArray());
 
             SelectedBuildEngine.Items.Clear();
-            SelectedBuildEngine.Items.AddRange(_engines.Select(x => x.Name).ToArray());
+            SelectedBuildEngine.Items.AddRange(Enum.GetValues(typeof(Engine)).OfType<object>().ToArray());
 
             UpdateGameTree();
             UpdateBuildTree();
@@ -141,15 +139,14 @@ namespace Sledge.Editor.Settings
 	    private void UpdateBuildTree()
 	    {
 	        BuildTree.Nodes.Clear();
-            foreach (var engine in _engines)
+            foreach (Engine engine in Enum.GetValues(typeof(Engine)))
             {
-                var eid = engine.ID;
-                var node = BuildTree.Nodes.Add(engine.ID.ToString(), engine.Name);
-                var list = _builds.Where(x => x.EngineID == eid).ToList();
+                var node = BuildTree.Nodes.Add(engine.ToString(), engine.ToString());
+                var list = _builds.Where(x => x.Engine == engine).ToList();
                 foreach (var build in list)
                 {
                     var index = _builds.IndexOf(build);
-                    node.Nodes.Add(index.ToString(), build.Name);
+                    node.Nodes.Add(index.ToString(CultureInfo.InvariantCulture), build.Name);
                 }
             }
             BuildTree.ExpandAll();
@@ -160,15 +157,14 @@ namespace Sledge.Editor.Settings
 	    private void UpdateGameTree()
 	    {
             GameTree.Nodes.Clear();
-	        foreach (var engine in _engines)
+            foreach (Engine engine in Enum.GetValues(typeof(Engine)))
 	        {
-                var eid = engine.ID;
-                var node = GameTree.Nodes.Add(engine.ID.ToString(), engine.Name);
-	            var list = _games.Where(x => x.EngineID == eid).ToList();
+                var node = GameTree.Nodes.Add(engine.ToString(), engine.ToString());
+	            var list = _games.Where(x => x.Engine == engine).ToList();
 	            foreach (var game in list)
 	            {
 	                var index = _games.IndexOf(game);
-	                node.Nodes.Add(index.ToString(), game.Name);
+	                node.Nodes.Add(index.ToString(CultureInfo.InvariantCulture), game.Name);
 	            }
 	        }
             GameTree.ExpandAll();
@@ -472,7 +468,7 @@ namespace Sledge.Editor.Settings
             _games.Add(new Game
             {
                 ID = 0,
-                EngineID = _engines.First().ID,
+                Engine = Engine.Goldsource,
                 Name = "New Game",
                 BuildID = _builds.Select(x => x.ID).FirstOrDefault(),
                 Autosave = true,
@@ -495,7 +491,7 @@ namespace Sledge.Editor.Settings
             _builds.Add(new Build
                             {
                                 ID = 0,
-                                EngineID = _engines.First().ID,
+                                Engine = Engine.Goldsource,
                                 Name = "New Build"
                             });
             ReIndex();
@@ -510,7 +506,7 @@ namespace Sledge.Editor.Settings
             if (_selectedBuild != null)
             {
                 _builds.Remove(_selectedBuild);
-                var replacementBuild = _builds.OrderBy(x => x.EngineID == _selectedBuild.EngineID ? 1 : 2).FirstOrDefault();
+                var replacementBuild = _builds.OrderBy(x => x.Engine == _selectedBuild.Engine ? 1 : 2).FirstOrDefault();
                 var replace = replacementBuild == null ? 0 : replacementBuild.ID;
                 _games.Where(x => x.BuildID == _selectedBuild.ID).ToList().ForEach(x => x.BuildID = replace);
                 _selectedBuild = null;
@@ -592,7 +588,7 @@ namespace Sledge.Editor.Settings
             }
             if (SelectedGameEngine.Items.Count > 0)
             {
-                SelectedGameEngine.SelectedIndex = Math.Max(0, _engines.FindIndex(x => x.ID == _selectedGame.EngineID));
+                SelectedGameEngine.SelectedIndex = Math.Max(0, Enum.GetValues(typeof(Engine)).OfType<Engine>().ToList<Engine>().FindIndex(x => x == _selectedGame.Engine));
             }
 
             SelectedGameOverrideSizeHigh.Enabled = SelectedGameOverrideSizeLow.Enabled = SelectedGameOverrideMapSize.Checked;
@@ -653,11 +649,11 @@ namespace Sledge.Editor.Settings
 	    private void SelectedGameEngineChanged(object sender, EventArgs e)
         {
             if (_selectedGame == null || SelectedGameEngine.SelectedIndex < 0) return;
-            var eng = _engines[SelectedGameEngine.SelectedIndex];
-            var change = eng.ID != _selectedGame.EngineID;
-            _selectedGame.EngineID = eng.ID;
-            SelectedGameSteamInstall.Enabled = eng.Name == "Goldsource";
-            if (eng.Name == "Goldsource" && !SelectedGameSteamInstall.Checked)
+            var eng = (Engine) SelectedGameEngine.SelectedItem;
+            var change = eng != _selectedGame.Engine;
+            _selectedGame.Engine = eng;
+            SelectedGameSteamInstall.Enabled = eng == Engine.Goldsource;
+            if (eng == Engine.Goldsource && !SelectedGameSteamInstall.Checked)
             {
                 lblGameWONDir.Visible = SelectedGameWonDir.Visible = SelectedGameDirBrowse.Visible = true;
                 lblGameSteamDir.Visible = SelectedGameSteamDir.Visible = false;
@@ -711,9 +707,9 @@ namespace Sledge.Editor.Settings
                                   "portal", "portal 2", "team fortress 2"
                               };
             SelectedGameSteamDir.Items.Clear();
-            var eng = _engines[SelectedGameEngine.SelectedIndex];
-            var include = eng.Name == "Goldsource" ? includeGoldsource : includeSource;
-            SelectedGameSteamDir.Items.AddRange(games.Where(x => include.Contains(x.ToLower())).Distinct().OrderBy(x => x.ToLower()).ToArray());
+            var eng = (Engine) SelectedGameEngine.SelectedItem;
+            var include = eng == Engine.Goldsource ? includeGoldsource : includeSource;
+            SelectedGameSteamDir.Items.AddRange(games.Where(x => include.Contains(x.ToLower())).Distinct().OrderBy(x => x.ToLower()).ToArray<object>());
             var idx = SelectedGameSteamDir.Items.IndexOf(_selectedGame.SteamGameDir ?? "");
             if (SelectedGameSteamDir.Items.Count > 0) SelectedGameSteamDir.SelectedIndex = Math.Max(0, idx);
         }
@@ -721,8 +717,8 @@ namespace Sledge.Editor.Settings
         private void SelectedGameWonDirChanged(object sender, EventArgs e)
         {
             if (SelectedGameEngine.SelectedIndex < 0 || SelectedGameSteamInstall.Checked) return;
-            var eng = _engines[SelectedGameEngine.SelectedIndex];
-            if (eng.Name != "Goldsource" || SelectedGameSteamInstall.Checked) return;
+            var eng = (Engine) SelectedGameEngine.SelectedItem;
+            if (eng != Engine.Goldsource || SelectedGameSteamInstall.Checked) return;
 
             SelectedGameMod.Items.Clear();
             SelectedGameBase.Items.Clear();
@@ -746,8 +742,8 @@ namespace Sledge.Editor.Settings
         private void SelectedGameSteamDirChanged(object sender, EventArgs e)
         {
             if (SelectedGameEngine.SelectedIndex < 0 || !SelectedGameSteamInstall.Checked) return;
-            var eng = _engines[SelectedGameEngine.SelectedIndex];
-            if (eng.Name == "Goldsource" && !SelectedGameSteamInstall.Checked) return;
+            var eng = (Engine) SelectedGameEngine.SelectedItem;
+            if (eng == Engine.Goldsource && !SelectedGameSteamInstall.Checked) return;
 
             SelectedGameMod.Items.Clear();
             SelectedGameBase.Items.Clear();
@@ -773,7 +769,7 @@ namespace Sledge.Editor.Settings
         private void SelectedGameNameChanged(object sender, EventArgs e)
         {
             if (_selectedGame == null) return;
-            var idx = _games.IndexOf(_selectedGame).ToString();
+            var idx = _games.IndexOf(_selectedGame).ToString(CultureInfo.InvariantCulture);
             var node = GameTree.Nodes.OfType<TreeNode>().SelectMany(x => x.Nodes.OfType<TreeNode>()).First(x => x.Name == idx);
             node.Text = SelectedGameName.Text;
         }
@@ -908,10 +904,10 @@ namespace Sledge.Editor.Settings
         private void SelectedBuildEngineChanged(object sender, EventArgs e)
         {
             if (_selectedBuild == null) return;
-            var eng = _engines[SelectedBuildEngine.SelectedIndex];
-            var change = eng.ID != _selectedBuild.EngineID;
-            _selectedBuild.EngineID = eng.ID;
-            var gs = eng.Name == "Goldsource";
+            var eng = (Engine) SelectedBuildEngine.SelectedItem;
+            var change = eng != _selectedBuild.Engine;
+            _selectedBuild.Engine = eng;
+            var gs = eng == Engine.Goldsource;
             SelectedBuildCsg.Enabled = SelectedBuildIncludeWads.Enabled = gs;
             if (change)
             {
@@ -928,7 +924,7 @@ namespace Sledge.Editor.Settings
             BuildSubTabs.Visible = RemoveBuild.Enabled = _selectedBuild != null;
             if (_selectedBuild == null) return;
             SelectedBuildName.Text = _selectedBuild.Name;
-            SelectedBuildEngine.SelectedIndex = Math.Max(0, _builds.FindIndex(x => x.ID == _selectedBuild.EngineID));
+            SelectedBuildEngine.SelectedIndex = Math.Max(0, Enum.GetValues(typeof(Engine)).OfType<Engine>().ToList<Engine>().FindIndex(x => x == _selectedBuild.Engine));
             SelectedBuildExeFolder.Text = _selectedBuild.Path;
             SelectedBuildBsp.SelectedText = _selectedBuild.Bsp;
             SelectedBuildCsg.SelectedText = _selectedBuild.Csg;

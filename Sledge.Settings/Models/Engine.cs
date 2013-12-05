@@ -2,9 +2,9 @@
 
 namespace Sledge.Settings.Models
 {
-    public class Engine
+    public enum Engine
     {
-        public int ID { get; set; }
-        public string Name { get; set; }
+        Goldsource = 1,
+        //Source = 2
     }
 }
