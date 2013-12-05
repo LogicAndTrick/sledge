@@ -7,6 +7,7 @@ using System.Reflection;
 using System.Text;
 using Sledge.Providers;
 using Sledge.Settings.Models;
+using Sledge.Settings.Models.Engines;
 
 namespace Sledge.Settings
 {
@@ -25,8 +26,9 @@ namespace Sledge.Settings
             Builds = new List<Build>();
             Engines = new List<Engine>
                           {
-                              new Engine { ID = 1, Name = "Goldsource" },
-                              //new Engine { ID = 2, Name = "Source" }
+                              new EngineGoldSource(),
+                              //new EngineSource(),
+                              //new EngineSvencoop() // Sven Co-op 5.0 modified GoldSrc engine
                           };
             Games = new List<Game>();
             RecentFiles = new List<RecentFile>();
