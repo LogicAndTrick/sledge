@@ -36,6 +36,7 @@ namespace Sledge.Editor.Settings
 		/// </summary>
 		private void InitializeComponent()
 		{
+            this.components = new System.ComponentModel.Container();
             this.tbcSettings = new System.Windows.Forms.TabControl();
             this.tabGeneral = new System.Windows.Forms.TabPage();
             this.groupBox20 = new System.Windows.Forms.GroupBox();
@@ -140,6 +141,8 @@ namespace Sledge.Editor.Settings
             this.tabConfigDirectories = new System.Windows.Forms.TabPage();
             this.SelectedGameSteamInstall = new System.Windows.Forms.CheckBox();
             this.grpConfigGame = new System.Windows.Forms.GroupBox();
+            this.lblBaseGame = new System.Windows.Forms.Label();
+            this.SelectedGameBase = new System.Windows.Forms.ComboBox();
             this.SelectedGameWonDir = new System.Windows.Forms.TextBox();
             this.lblGameWONDir = new System.Windows.Forms.Label();
             this.SelectedGameDirBrowse = new System.Windows.Forms.Button();
@@ -268,8 +271,9 @@ namespace Sledge.Editor.Settings
             this.btnCancelSettings = new System.Windows.Forms.Button();
             this.btnApplyAndCloseSettings = new System.Windows.Forms.Button();
             this.btnApplySettings = new System.Windows.Forms.Button();
-            this.lblBaseGame = new System.Windows.Forms.Label();
-            this.SelectedGameBase = new System.Windows.Forms.ComboBox();
+            this.WADTooltip = new System.Windows.Forms.ToolTip(this.components);
+            this.WADTooltipTimer = new System.Windows.Forms.Timer(this.components);
+            this.lblDebug = new System.Windows.Forms.Label();
             this.tbcSettings.SuspendLayout();
             this.tabGeneral.SuspendLayout();
             this.groupBox20.SuspendLayout();
@@ -1571,6 +1575,27 @@ namespace Sledge.Editor.Settings
             this.grpConfigGame.TabStop = false;
             this.grpConfigGame.Text = "Game";
             // 
+            // lblBaseGame
+            // 
+            this.lblBaseGame.Location = new System.Drawing.Point(3, 43);
+            this.lblBaseGame.Name = "lblBaseGame";
+            this.lblBaseGame.Size = new System.Drawing.Size(198, 20);
+            this.lblBaseGame.TabIndex = 11;
+            this.lblBaseGame.Text = "Base Game Directory (e.g. \'valve\')";
+            this.lblBaseGame.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // SelectedGameBase
+            // 
+            this.SelectedGameBase.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.SelectedGameBase.FormattingEnabled = true;
+            this.SelectedGameBase.Items.AddRange(new object[] {
+            "(Steam only) Half-Life",
+            "Counter-Strike"});
+            this.SelectedGameBase.Location = new System.Drawing.Point(211, 44);
+            this.SelectedGameBase.Name = "SelectedGameBase";
+            this.SelectedGameBase.Size = new System.Drawing.Size(225, 21);
+            this.SelectedGameBase.TabIndex = 12;
+            // 
             // SelectedGameWonDir
             // 
             this.SelectedGameWonDir.Location = new System.Drawing.Point(75, 16);
@@ -1986,6 +2011,7 @@ namespace Sledge.Editor.Settings
             // 
             // tabConfigTextures
             // 
+            this.tabConfigTextures.Controls.Add(this.lblDebug);
             this.tabConfigTextures.Controls.Add(this.lblGameWAD);
             this.tabConfigTextures.Controls.Add(this.SelectedGameLightmapScale);
             this.tabConfigTextures.Controls.Add(this.lblConfigLightmapScale);
@@ -2071,6 +2097,8 @@ namespace Sledge.Editor.Settings
             this.SelectedGameWadList.Name = "SelectedGameWadList";
             this.SelectedGameWadList.Size = new System.Drawing.Size(368, 160);
             this.SelectedGameWadList.TabIndex = 16;
+            this.SelectedGameWadList.MouseLeave += new System.EventHandler(this.SelectedGameWadListMouseLeave);
+            this.SelectedGameWadList.MouseMove += new System.Windows.Forms.MouseEventHandler(this.SelectedGameWadListMouseMove);
             // 
             // lblConfigTextureScale
             // 
@@ -2900,26 +2928,19 @@ namespace Sledge.Editor.Settings
             this.btnApplySettings.UseVisualStyleBackColor = true;
             this.btnApplySettings.Click += new System.EventHandler(this.Apply);
             // 
-            // lblBaseGame
+            // WADTooltipTimer
             // 
-            this.lblBaseGame.Location = new System.Drawing.Point(3, 43);
-            this.lblBaseGame.Name = "lblBaseGame";
-            this.lblBaseGame.Size = new System.Drawing.Size(198, 20);
-            this.lblBaseGame.TabIndex = 11;
-            this.lblBaseGame.Text = "Base Game Directory (e.g. \'valve\')";
-            this.lblBaseGame.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.WADTooltipTimer.Interval = 1000;
+            this.WADTooltipTimer.Tick += new System.EventHandler(this.WADTooltipTimerTick);
             // 
-            // SelectedGameBase
+            // lblDebug
             // 
-            this.SelectedGameBase.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.SelectedGameBase.FormattingEnabled = true;
-            this.SelectedGameBase.Items.AddRange(new object[] {
-            "(Steam only) Half-Life",
-            "Counter-Strike"});
-            this.SelectedGameBase.Location = new System.Drawing.Point(211, 44);
-            this.SelectedGameBase.Name = "SelectedGameBase";
-            this.SelectedGameBase.Size = new System.Drawing.Size(225, 21);
-            this.SelectedGameBase.TabIndex = 12;
+            this.lblDebug.AutoSize = true;
+            this.lblDebug.Location = new System.Drawing.Point(35, 206);
+            this.lblDebug.Name = "lblDebug";
+            this.lblDebug.Size = new System.Drawing.Size(41, 13);
+            this.lblDebug.TabIndex = 18;
+            this.lblDebug.Text = "label33";
             // 
             // SettingsForm
             // 
@@ -2980,6 +3001,7 @@ namespace Sledge.Editor.Settings
             ((System.ComponentModel.ISupportInitialize)(this.SelectedGameAutosaveTime)).EndInit();
             this.tabConfigEntities.ResumeLayout(false);
             this.tabConfigTextures.ResumeLayout(false);
+            this.tabConfigTextures.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.SelectedGameLightmapScale)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.SelectedGameTextureScale)).EndInit();
             this.tabBuild.ResumeLayout(false);
@@ -3242,5 +3264,8 @@ namespace Sledge.Editor.Settings
         private System.Windows.Forms.CheckBox DisableWadTransparency;
         private System.Windows.Forms.Label lblBaseGame;
         private System.Windows.Forms.ComboBox SelectedGameBase;
+        private System.Windows.Forms.ToolTip WADTooltip;
+        private System.Windows.Forms.Timer WADTooltipTimer;
+        private System.Windows.Forms.Label lblDebug;
 	}
 }

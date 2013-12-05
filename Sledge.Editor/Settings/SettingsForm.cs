@@ -843,6 +843,45 @@ namespace Sledge.Editor.Settings
             }
         }
 
+        private int _WADHoveringIndex = -1;
+        private System.Drawing.Point _WADHoveringPoint;
+        private void SelectedGameWadListMouseMove(object sender, MouseEventArgs e)
+        {
+            _WADHoveringPoint = e.Location;
+
+            var index = SelectedGameWadList.IndexFromPoint(_WADHoveringPoint);
+
+            if (index >= 0)
+            {
+                if (index != _WADHoveringIndex)
+                {
+                    WADTooltipTimer.Stop();
+                    WADTooltip.Hide(this);
+
+                    _WADHoveringIndex = index;
+                    
+                    WADTooltipTimer.Start();
+                }
+            }
+            else
+            {
+                WADTooltipTimer.Stop();
+                WADTooltip.Hide(this);
+            }
+        }
+
+        private void SelectedGameWadListMouseLeave(object sender, EventArgs e)
+        {
+            WADTooltipTimer.Stop();
+            WADTooltip.Hide(this);
+        }
+
+        private void WADTooltipTimerTick(object sender, EventArgs e)
+        {
+            WADTooltipTimer.Stop(); 
+            WADTooltip.Show(SelectedGameWadList.Items[_WADHoveringIndex].ToString(), this, this.PointToClient(SelectedGameWadList.PointToScreen(_WADHoveringPoint)));
+        }
+
         #endregion
 
         #region Selected Build
@@ -950,5 +989,7 @@ namespace Sledge.Editor.Settings
         }
 
 	    #endregion
+
+        
 	}
 }
