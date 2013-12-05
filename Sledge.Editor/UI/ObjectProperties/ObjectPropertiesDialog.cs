@@ -77,16 +77,21 @@ namespace Sledge.Editor.UI.ObjectProperties
         {
             string actionText = null;
             var ac = new ActionCollection();
-            var editAction = GetEditEntityDataAction();
-            var visgroupAction = GetUpdateVisgroupsAction();
-
-            if (editAction != null)
+            
+            
+            // Check if it's actually editing keyvalues
+            if (_values != null)
             {
-                // The entity change is more important to show
-                actionText = "Edit entity data";
-                ac.Add(editAction);
+                var editAction = GetEditEntityDataAction();
+                if (editAction != null)
+                {
+                    // The entity change is more important to show
+                    actionText = "Edit entity data";
+                    ac.Add(editAction);
+                }
             }
 
+            var visgroupAction = GetUpdateVisgroupsAction();
             if (visgroupAction != null)
             {
                 // Visgroup change shows if entity data not changed
