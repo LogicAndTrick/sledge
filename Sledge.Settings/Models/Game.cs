@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using Sledge.Providers;
@@ -9,7 +10,7 @@ namespace Sledge.Settings.Models
     {
         public int ID { get; set; }
         public string Name { get; set; }
-        public int EngineID { get; set; }
+        public Engine Engine { get; set; }
         public int BuildID { get; set; }
         public bool SteamInstall { get; set; }
         public string WonGameDir { get; set; }
@@ -28,6 +29,10 @@ namespace Sledge.Settings.Models
         public decimal DefaultTextureScale { get; set; }
         public decimal DefaultLightmapScale { get; set; }
 
+        public bool OverrideMapSize { get; set; }
+        public int OverrideMapSizeLow { get; set; }
+        public int OverrideMapSizeHigh { get; set; }
+
         public List<Fgd> Fgds { get; set; }
         public List<Wad> Wads { get; set; }
 
@@ -44,7 +49,7 @@ namespace Sledge.Settings.Models
         {
             ID = gs.PropertyInteger("ID");
             Name = gs["Name"];
-            EngineID = gs.PropertyInteger("EngineID");
+            Engine = (Engine) Enum.Parse(typeof(Engine), gs["EngineID"]);
             BuildID = gs.PropertyInteger("BuildID");
             SteamInstall = gs.PropertyBoolean("SteamInstall");
             WonGameDir = gs["WonGameDir"];
@@ -62,6 +67,9 @@ namespace Sledge.Settings.Models
             DefaultBrushEntity = gs["DefaultBrushEntity"];
             DefaultTextureScale = gs.PropertyDecimal("DefaultTextureScale");
             DefaultLightmapScale = gs.PropertyDecimal("DefaultLightmapScale");
+            OverrideMapSize = gs.PropertyBoolean("OverrideMapSize");
+            OverrideMapSizeLow = gs.PropertyInteger("OverrideMapSizeLow");
+            OverrideMapSizeHigh = gs.PropertyInteger("OverrideMapSizeHigh");
 
             var wads = gs.Children.FirstOrDefault(x => x.Name == "Wads");
             if (wads != null)
@@ -86,7 +94,7 @@ namespace Sledge.Settings.Models
         {
             gs["ID"] = ID.ToString(CultureInfo.InvariantCulture);
             gs["Name"] = Name;
-            gs["EngineID"] = EngineID.ToString(CultureInfo.InvariantCulture);
+            gs["EngineID"] = Engine.ToString();
             gs["BuildID"] = BuildID.ToString(CultureInfo.InvariantCulture);
             gs["SteamInstall"] = SteamInstall.ToString(CultureInfo.InvariantCulture);
             gs["WonGameDir"] = WonGameDir;
@@ -104,6 +112,9 @@ namespace Sledge.Settings.Models
             gs["DefaultBrushEntity"] = DefaultBrushEntity;
             gs["DefaultTextureScale"] = DefaultTextureScale.ToString(CultureInfo.InvariantCulture);
             gs["DefaultLightmapScale"] = DefaultLightmapScale.ToString(CultureInfo.InvariantCulture);
+            gs["OverrideMapSize"] = OverrideMapSize.ToString(CultureInfo.InvariantCulture);
+            gs["OverrideMapSizeLow"] = OverrideMapSizeLow.ToString(CultureInfo.InvariantCulture);
+            gs["OverrideMapSizeHigh"] = OverrideMapSizeHigh.ToString(CultureInfo.InvariantCulture);
 
             var wads = new GenericStructure("Wads");
             var i = 1;

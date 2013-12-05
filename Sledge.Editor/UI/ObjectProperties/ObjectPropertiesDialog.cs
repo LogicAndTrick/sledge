@@ -10,6 +10,7 @@ using Sledge.Editor.Actions;
 using Sledge.Editor.Actions.MapObjects.Entities;
 using Sledge.Editor.Actions.Visgroups;
 using Sledge.Editor.UI.ObjectProperties.SmartEdit;
+using Sledge.Settings.Models;
 
 namespace Sledge.Editor.UI.ObjectProperties
 {
@@ -77,16 +78,21 @@ namespace Sledge.Editor.UI.ObjectProperties
         {
             string actionText = null;
             var ac = new ActionCollection();
-            var editAction = GetEditEntityDataAction();
-            var visgroupAction = GetUpdateVisgroupsAction();
-
-            if (editAction != null)
+            
+            
+            // Check if it's actually editing keyvalues
+            if (_values != null)
             {
-                // The entity change is more important to show
-                actionText = "Edit entity data";
-                ac.Add(editAction);
+                var editAction = GetEditEntityDataAction();
+                if (editAction != null)
+                {
+                    // The entity change is more important to show
+                    actionText = "Edit entity data";
+                    ac.Add(editAction);
+                }
             }
 
+            var visgroupAction = GetUpdateVisgroupsAction();
             if (visgroupAction != null)
             {
                 // Visgroup change shows if entity data not changed
@@ -319,7 +325,7 @@ namespace Sledge.Editor.UI.ObjectProperties
             if (!Tabs.TabPages.Contains(ClassInfoTab)) Tabs.TabPages.Insert(0, ClassInfoTab);
             if (!Tabs.TabPages.Contains(FlagsTab)) Tabs.TabPages.Insert(Tabs.TabPages.Count - 1, FlagsTab);
 
-            if (Document.Game.EngineID == 1)
+            if (Document.Game.Engine == Engine.Goldsource)
             {
                 // Goldsource
                 Tabs.TabPages.Remove(InputsTab);

@@ -22,7 +22,7 @@ namespace Sledge.Settings.GameDetection
                     var dict = GetGamKeyVals(lines);
                     if (!dict.ContainsKey("game")) continue;
                     var game = new Game();
-                    game.EngineID = 1;
+                    game.Engine = Engine.Goldsource;
                     // game.Fgds lookup
                     // game.BaseDir
                     game.ModDir = di.Name;

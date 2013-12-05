@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using System;
+using System.Globalization;
 using Sledge.Providers;
 
 namespace Sledge.Settings.Models
@@ -7,7 +8,7 @@ namespace Sledge.Settings.Models
     {
         public int ID { get; set; }
         public string Name { get; set; }
-        public int EngineID { get; set; }
+        public Engine Engine { get; set; }
         public string Path { get; set; }
         public string Bsp { get; set; }
         public string Csg { get; set; }
@@ -18,7 +19,7 @@ namespace Sledge.Settings.Models
         {
             ID = gs.PropertyInteger("ID");
             Name = gs["Name"];
-            EngineID = gs.PropertyInteger("EngineID");
+            Engine = (Engine)Enum.Parse(typeof(Engine), gs["EngineID"]);
             Path = gs["Path"];
             Bsp = gs["Bsp"];
             Csg = gs["Csg"];
@@ -30,7 +31,7 @@ namespace Sledge.Settings.Models
         {
             gs["ID"] = ID.ToString(CultureInfo.InvariantCulture);
             gs["Name"] = Name;
-            gs["EngineID"] = EngineID.ToString(CultureInfo.InvariantCulture);
+            gs["EngineID"] = Engine.ToString();
             gs["Path"] = Path;
             gs["Bsp"] = Bsp;
             gs["Csg"] = Csg;

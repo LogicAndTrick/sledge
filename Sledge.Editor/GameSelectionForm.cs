@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Windows.Forms;
 using Sledge.Settings;
+using Sledge.Settings.Models;
 
 namespace Sledge.Editor
 {
@@ -27,9 +28,9 @@ namespace Sledge.Editor
 
         private void GameSelectionFormLoad(object sender, EventArgs e)
         {
-            foreach (var engine in SettingsManager.Engines)
+            foreach (Engine engine in Enum.GetValues(typeof(Engine)))
             {
-                lstEngine.Items.Add(new IDStringWrapper { ID = engine.ID, String = engine.Name });
+                lstEngine.Items.Add(engine);
             }
         }
 
@@ -37,7 +38,8 @@ namespace Sledge.Editor
         {
             lstGame.Items.Clear();
             if (lstEngine.SelectedIndex < 0) return;
-            foreach (var game in SettingsManager.Games.Where(g => g.EngineID == ((IDStringWrapper)lstEngine.SelectedItem).ID))
+            var e = (Engine) lstEngine.SelectedItem;
+            foreach (var game in SettingsManager.Games.Where(g => g.Engine == e))
             {
                 lstGame.Items.Add(new IDStringWrapper {ID = game.ID, String = game.Name});
             }
