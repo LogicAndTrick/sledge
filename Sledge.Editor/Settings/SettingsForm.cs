@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Windows.Forms;
 using Sledge.Common.Mediator;
@@ -60,6 +61,10 @@ namespace Sledge.Editor.Settings
             SelectedGameDefaultBrushEnt.SelectedIndexChanged += (s, e) => CheckNull(_selectedGame, x => x.DefaultBrushEntity = SelectedGameDefaultBrushEnt.Text);
             SelectedGameTextureScale.ValueChanged += (s, e) => CheckNull(_selectedGame, x => x.DefaultTextureScale = SelectedGameTextureScale.Value);
             SelectedGameLightmapScale.ValueChanged += (s, e) => CheckNull(_selectedGame, x => x.DefaultLightmapScale = SelectedGameLightmapScale.Value);
+            SelectedGameOverrideMapSize.CheckedChanged += (s, e) => CheckNull(_selectedGame, x => x.OverrideMapSize = SelectedGameOverrideMapSize.Checked);
+	        var sizes = new[] {4096, 8192, 16384, 32768, 65536};
+            SelectedGameOverrideSizeLow.SelectedIndexChanged += (s, e) => CheckNull(_selectedGame, x => x.OverrideMapSizeLow = SelectedGameOverrideSizeLow.SelectedIndex < 0 ? 0 : -sizes[SelectedGameOverrideSizeLow.SelectedIndex]);
+            SelectedGameOverrideSizeHigh.SelectedIndexChanged += (s, e) => CheckNull(_selectedGame, x => x.OverrideMapSizeHigh = SelectedGameOverrideSizeHigh.SelectedIndex < 0 ? 0 : sizes[SelectedGameOverrideSizeHigh.SelectedIndex]);
 
             // Build Configurations
             SelectedBuildName.TextChanged += (s, e) => CheckNull(_selectedBuild, x => x.Name = SelectedBuildName.Text);
@@ -551,6 +556,10 @@ namespace Sledge.Editor.Settings
             SelectedGameDefaultBrushEnt.SelectedText = _selectedGame.DefaultBrushEntity;
             SelectedGameTextureScale.Value = _selectedGame.DefaultTextureScale;
             SelectedGameLightmapScale.Value = _selectedGame.DefaultLightmapScale;
+            SelectedGameOverrideMapSize.Checked = _selectedGame.OverrideMapSize;
+            var sizes = new[] { 4096, 8192, 16384, 32768, 65536 };
+            SelectedGameOverrideSizeLow.SelectedIndex = Array.IndexOf(sizes, -_selectedGame.OverrideMapSizeLow);
+            SelectedGameOverrideSizeHigh.SelectedIndex = Array.IndexOf(sizes, _selectedGame.OverrideMapSizeHigh);
 
             SelectedGameSteamInstall.Checked = _selectedGame.SteamInstall;
 
@@ -586,6 +595,8 @@ namespace Sledge.Editor.Settings
                 SelectedGameEngine.SelectedIndex = Math.Max(0, _engines.FindIndex(x => x.ID == _selectedGame.EngineID));
             }
 
+            SelectedGameOverrideSizeHigh.Enabled = SelectedGameOverrideSizeLow.Enabled = SelectedGameOverrideMapSize.Checked;
+
             SelectedGameEngineChanged(null, null);
             SelectedGameUpdateSteamGames();
             SelectedGameUpdateFgds();
@@ -611,6 +622,8 @@ namespace Sledge.Editor.Settings
 
             SelectedGameDefaultPointEnt.Items.Clear();
             SelectedGameDefaultBrushEnt.Items.Clear();
+            SelectedGameDetectedSizeHigh.Text = "";
+            SelectedGameDetectedSizeLow.Text = "";
 
             try
             {
@@ -627,6 +640,9 @@ namespace Sledge.Editor.Settings
                 if (idx < 0) idx = SelectedGameDefaultBrushEnt.Items.IndexOf("func_detail");
                 if (idx < 0) idx = SelectedGameDefaultBrushEnt.Items.IndexOf("trigger_once");
                 if (SelectedGameDefaultBrushEnt.Items.Count > 0) SelectedGameDefaultBrushEnt.SelectedIndex = Math.Max(0, idx);
+
+                SelectedGameDetectedSizeHigh.Text = gd.MapSizeHigh.ToString(CultureInfo.InvariantCulture);
+                SelectedGameDetectedSizeLow.Text = gd.MapSizeLow.ToString(CultureInfo.InvariantCulture);
             }
             catch (Exception ex)
             {
@@ -817,6 +833,11 @@ namespace Sledge.Editor.Settings
                 _selectedGame.Fgds.RemoveAt(SelectedGameFgdList.SelectedIndex);
                 SelectedGameUpdateFgds();
             }
+        }
+
+        private void SelectedGameOverrideMapSizeChanged(object sender, EventArgs e)
+        {
+            SelectedGameOverrideSizeHigh.Enabled = SelectedGameOverrideSizeLow.Enabled = SelectedGameOverrideMapSize.Checked;
         }
 
         private void SelectedGameAddWadClicked(object sender, EventArgs e)

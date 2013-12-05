@@ -28,6 +28,10 @@ namespace Sledge.Settings.Models
         public decimal DefaultTextureScale { get; set; }
         public decimal DefaultLightmapScale { get; set; }
 
+        public bool OverrideMapSize { get; set; }
+        public int OverrideMapSizeLow { get; set; }
+        public int OverrideMapSizeHigh { get; set; }
+
         public List<Fgd> Fgds { get; set; }
         public List<Wad> Wads { get; set; }
 
@@ -62,6 +66,9 @@ namespace Sledge.Settings.Models
             DefaultBrushEntity = gs["DefaultBrushEntity"];
             DefaultTextureScale = gs.PropertyDecimal("DefaultTextureScale");
             DefaultLightmapScale = gs.PropertyDecimal("DefaultLightmapScale");
+            OverrideMapSize = gs.PropertyBoolean("OverrideMapSize");
+            OverrideMapSizeLow = gs.PropertyInteger("OverrideMapSizeLow");
+            OverrideMapSizeHigh = gs.PropertyInteger("OverrideMapSizeHigh");
 
             var wads = gs.Children.FirstOrDefault(x => x.Name == "Wads");
             if (wads != null)
@@ -104,6 +111,9 @@ namespace Sledge.Settings.Models
             gs["DefaultBrushEntity"] = DefaultBrushEntity;
             gs["DefaultTextureScale"] = DefaultTextureScale.ToString(CultureInfo.InvariantCulture);
             gs["DefaultLightmapScale"] = DefaultLightmapScale.ToString(CultureInfo.InvariantCulture);
+            gs["OverrideMapSize"] = OverrideMapSize.ToString(CultureInfo.InvariantCulture);
+            gs["OverrideMapSizeLow"] = OverrideMapSizeLow.ToString(CultureInfo.InvariantCulture);
+            gs["OverrideMapSizeHigh"] = OverrideMapSizeHigh.ToString(CultureInfo.InvariantCulture);
 
             var wads = new GenericStructure("Wads");
             var i = 1;
