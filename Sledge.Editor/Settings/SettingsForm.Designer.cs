@@ -172,12 +172,22 @@ namespace Sledge.Editor.Settings
             this.SelectedGameEngine = new System.Windows.Forms.ComboBox();
             this.lblGameEngine = new System.Windows.Forms.Label();
             this.tabConfigEntities = new System.Windows.Forms.TabPage();
+            this.label38 = new System.Windows.Forms.Label();
+            this.SelectedGameDetectedSizeHigh = new System.Windows.Forms.Label();
+            this.SelectedGameDetectedSizeLow = new System.Windows.Forms.Label();
+            this.label36 = new System.Windows.Forms.Label();
+            this.SelectedGameOverrideSizeHigh = new System.Windows.Forms.ComboBox();
+            this.label37 = new System.Windows.Forms.Label();
+            this.label35 = new System.Windows.Forms.Label();
+            this.SelectedGameOverrideSizeLow = new System.Windows.Forms.ComboBox();
+            this.label33 = new System.Windows.Forms.Label();
+            this.SelectedGameOverrideMapSize = new System.Windows.Forms.CheckBox();
             this.lblGameFGD = new System.Windows.Forms.Label();
             this.SelectedGameAddFgd = new System.Windows.Forms.Button();
+            this.label34 = new System.Windows.Forms.Label();
             this.lblConfigBrushEnt = new System.Windows.Forms.Label();
             this.SelectedGameRemoveFgd = new System.Windows.Forms.Button();
             this.lblConfigPointEnt = new System.Windows.Forms.Label();
-            this.SelectedGameFgdList = new System.Windows.Forms.ListBox();
             this.SelectedGameDefaultBrushEnt = new System.Windows.Forms.ComboBox();
             this.SelectedGameDefaultPointEnt = new System.Windows.Forms.ComboBox();
             this.tabConfigTextures = new System.Windows.Forms.TabPage();
@@ -186,7 +196,6 @@ namespace Sledge.Editor.Settings
             this.lblConfigLightmapScale = new System.Windows.Forms.Label();
             this.SelectedGameAddWad = new System.Windows.Forms.Button();
             this.SelectedGameTextureScale = new System.Windows.Forms.NumericUpDown();
-            this.SelectedGameWadList = new System.Windows.Forms.ListBox();
             this.lblConfigTextureScale = new System.Windows.Forms.Label();
             this.SelectedGameRemoveWad = new System.Windows.Forms.Button();
             this.GameTree = new System.Windows.Forms.TreeView();
@@ -270,17 +279,12 @@ namespace Sledge.Editor.Settings
             this.btnCancelSettings = new System.Windows.Forms.Button();
             this.btnApplyAndCloseSettings = new System.Windows.Forms.Button();
             this.btnApplySettings = new System.Windows.Forms.Button();
-            this.SelectedGameOverrideMapSize = new System.Windows.Forms.CheckBox();
-            this.label33 = new System.Windows.Forms.Label();
-            this.SelectedGameOverrideSizeLow = new System.Windows.Forms.ComboBox();
-            this.label34 = new System.Windows.Forms.Label();
-            this.SelectedGameOverrideSizeHigh = new System.Windows.Forms.ComboBox();
-            this.label35 = new System.Windows.Forms.Label();
-            this.label36 = new System.Windows.Forms.Label();
-            this.label37 = new System.Windows.Forms.Label();
-            this.label38 = new System.Windows.Forms.Label();
-            this.SelectedGameDetectedSizeLow = new System.Windows.Forms.Label();
-            this.SelectedGameDetectedSizeHigh = new System.Windows.Forms.Label();
+            this.SelectedGameWadList = new System.Windows.Forms.ListView();
+            this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.SelectedGameFgdList = new System.Windows.Forms.ListView();
+            this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.tbcSettings.SuspendLayout();
             this.tabGeneral.SuspendLayout();
             this.groupBox20.SuspendLayout();
@@ -1915,6 +1919,7 @@ namespace Sledge.Editor.Settings
             // 
             // tabConfigEntities
             // 
+            this.tabConfigEntities.Controls.Add(this.SelectedGameFgdList);
             this.tabConfigEntities.Controls.Add(this.label38);
             this.tabConfigEntities.Controls.Add(this.SelectedGameDetectedSizeHigh);
             this.tabConfigEntities.Controls.Add(this.SelectedGameDetectedSizeLow);
@@ -1931,7 +1936,6 @@ namespace Sledge.Editor.Settings
             this.tabConfigEntities.Controls.Add(this.lblConfigBrushEnt);
             this.tabConfigEntities.Controls.Add(this.SelectedGameRemoveFgd);
             this.tabConfigEntities.Controls.Add(this.lblConfigPointEnt);
-            this.tabConfigEntities.Controls.Add(this.SelectedGameFgdList);
             this.tabConfigEntities.Controls.Add(this.SelectedGameDefaultBrushEnt);
             this.tabConfigEntities.Controls.Add(this.SelectedGameDefaultPointEnt);
             this.tabConfigEntities.Location = new System.Drawing.Point(4, 22);
@@ -1941,6 +1945,113 @@ namespace Sledge.Editor.Settings
             this.tabConfigEntities.TabIndex = 1;
             this.tabConfigEntities.Text = "Entities";
             this.tabConfigEntities.UseVisualStyleBackColor = true;
+            // 
+            // label38
+            // 
+            this.label38.Location = new System.Drawing.Point(18, 303);
+            this.label38.Name = "label38";
+            this.label38.Size = new System.Drawing.Size(137, 20);
+            this.label38.TabIndex = 25;
+            this.label38.Text = "Detected map dimensions:";
+            this.label38.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // SelectedGameDetectedSizeHigh
+            // 
+            this.SelectedGameDetectedSizeHigh.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.SelectedGameDetectedSizeHigh.Location = new System.Drawing.Point(306, 303);
+            this.SelectedGameDetectedSizeHigh.Name = "SelectedGameDetectedSizeHigh";
+            this.SelectedGameDetectedSizeHigh.Size = new System.Drawing.Size(57, 20);
+            this.SelectedGameDetectedSizeHigh.TabIndex = 24;
+            this.SelectedGameDetectedSizeHigh.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // SelectedGameDetectedSizeLow
+            // 
+            this.SelectedGameDetectedSizeLow.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.SelectedGameDetectedSizeLow.Location = new System.Drawing.Point(202, 303);
+            this.SelectedGameDetectedSizeLow.Name = "SelectedGameDetectedSizeLow";
+            this.SelectedGameDetectedSizeLow.Size = new System.Drawing.Size(57, 20);
+            this.SelectedGameDetectedSizeLow.TabIndex = 24;
+            this.SelectedGameDetectedSizeLow.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // label36
+            // 
+            this.label36.Location = new System.Drawing.Point(161, 303);
+            this.label36.Name = "label36";
+            this.label36.Size = new System.Drawing.Size(35, 20);
+            this.label36.TabIndex = 24;
+            this.label36.Text = "Low";
+            this.label36.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // SelectedGameOverrideSizeHigh
+            // 
+            this.SelectedGameOverrideSizeHigh.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.SelectedGameOverrideSizeHigh.FormattingEnabled = true;
+            this.SelectedGameOverrideSizeHigh.Items.AddRange(new object[] {
+            "4096",
+            "8192",
+            "16384",
+            "32768",
+            "65536"});
+            this.SelectedGameOverrideSizeHigh.Location = new System.Drawing.Point(306, 331);
+            this.SelectedGameOverrideSizeHigh.Name = "SelectedGameOverrideSizeHigh";
+            this.SelectedGameOverrideSizeHigh.Size = new System.Drawing.Size(57, 21);
+            this.SelectedGameOverrideSizeHigh.TabIndex = 23;
+            // 
+            // label37
+            // 
+            this.label37.Location = new System.Drawing.Point(265, 303);
+            this.label37.Name = "label37";
+            this.label37.Size = new System.Drawing.Size(35, 20);
+            this.label37.TabIndex = 22;
+            this.label37.Text = "High";
+            this.label37.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // label35
+            // 
+            this.label35.Location = new System.Drawing.Point(265, 330);
+            this.label35.Name = "label35";
+            this.label35.Size = new System.Drawing.Size(35, 20);
+            this.label35.TabIndex = 22;
+            this.label35.Text = "High";
+            this.label35.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // SelectedGameOverrideSizeLow
+            // 
+            this.SelectedGameOverrideSizeLow.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.SelectedGameOverrideSizeLow.FormattingEnabled = true;
+            this.SelectedGameOverrideSizeLow.Items.AddRange(new object[] {
+            "-4096",
+            "-8192",
+            "-16384",
+            "-32768",
+            "-65536"});
+            this.SelectedGameOverrideSizeLow.Location = new System.Drawing.Point(202, 331);
+            this.SelectedGameOverrideSizeLow.Name = "SelectedGameOverrideSizeLow";
+            this.SelectedGameOverrideSizeLow.Size = new System.Drawing.Size(57, 21);
+            this.SelectedGameOverrideSizeLow.TabIndex = 21;
+            // 
+            // label33
+            // 
+            this.label33.Location = new System.Drawing.Point(15, 258);
+            this.label33.Name = "label33";
+            this.label33.Size = new System.Drawing.Size(368, 40);
+            this.label33.TabIndex = 20;
+            this.label33.Text = "Sledge uses the @mapsize syntax in the map FGDs to set the map size limits. If us" +
+    "ing a non-source FGD that doesn\'t have this syntax, the map size can be overridd" +
+    "en below.";
+            this.label33.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // SelectedGameOverrideMapSize
+            // 
+            this.SelectedGameOverrideMapSize.Checked = true;
+            this.SelectedGameOverrideMapSize.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.SelectedGameOverrideMapSize.Location = new System.Drawing.Point(18, 329);
+            this.SelectedGameOverrideMapSize.Name = "SelectedGameOverrideMapSize";
+            this.SelectedGameOverrideMapSize.Size = new System.Drawing.Size(137, 24);
+            this.SelectedGameOverrideMapSize.TabIndex = 19;
+            this.SelectedGameOverrideMapSize.Text = "Override FGD map size";
+            this.SelectedGameOverrideMapSize.UseVisualStyleBackColor = true;
+            this.SelectedGameOverrideMapSize.CheckedChanged += new System.EventHandler(this.SelectedGameOverrideMapSizeChanged);
             // 
             // lblGameFGD
             // 
@@ -1960,6 +2071,15 @@ namespace Sledge.Editor.Settings
             this.SelectedGameAddFgd.Text = "Add...";
             this.SelectedGameAddFgd.UseVisualStyleBackColor = true;
             this.SelectedGameAddFgd.Click += new System.EventHandler(this.SelectedGameAddFgdClicked);
+            // 
+            // label34
+            // 
+            this.label34.Location = new System.Drawing.Point(161, 330);
+            this.label34.Name = "label34";
+            this.label34.Size = new System.Drawing.Size(35, 20);
+            this.label34.TabIndex = 9;
+            this.label34.Text = "Low";
+            this.label34.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // lblConfigBrushEnt
             // 
@@ -1989,18 +2109,6 @@ namespace Sledge.Editor.Settings
             this.lblConfigPointEnt.Text = "Default Point Entity";
             this.lblConfigPointEnt.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // SelectedGameFgdList
-            // 
-            this.SelectedGameFgdList.FormattingEnabled = true;
-            this.SelectedGameFgdList.Items.AddRange(new object[] {
-            "half-life.fgd",
-            "etc."});
-            this.SelectedGameFgdList.Location = new System.Drawing.Point(15, 26);
-            this.SelectedGameFgdList.Name = "SelectedGameFgdList";
-            this.SelectedGameFgdList.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.SelectedGameFgdList.Size = new System.Drawing.Size(368, 160);
-            this.SelectedGameFgdList.TabIndex = 16;
-            // 
             // SelectedGameDefaultBrushEnt
             // 
             this.SelectedGameDefaultBrushEnt.DropDownHeight = 300;
@@ -2029,12 +2137,12 @@ namespace Sledge.Editor.Settings
             // 
             // tabConfigTextures
             // 
+            this.tabConfigTextures.Controls.Add(this.SelectedGameWadList);
             this.tabConfigTextures.Controls.Add(this.lblGameWAD);
             this.tabConfigTextures.Controls.Add(this.SelectedGameLightmapScale);
             this.tabConfigTextures.Controls.Add(this.lblConfigLightmapScale);
             this.tabConfigTextures.Controls.Add(this.SelectedGameAddWad);
             this.tabConfigTextures.Controls.Add(this.SelectedGameTextureScale);
-            this.tabConfigTextures.Controls.Add(this.SelectedGameWadList);
             this.tabConfigTextures.Controls.Add(this.lblConfigTextureScale);
             this.tabConfigTextures.Controls.Add(this.SelectedGameRemoveWad);
             this.tabConfigTextures.Location = new System.Drawing.Point(4, 22);
@@ -2102,18 +2210,6 @@ namespace Sledge.Editor.Settings
             0,
             0,
             131072});
-            // 
-            // SelectedGameWadList
-            // 
-            this.SelectedGameWadList.FormattingEnabled = true;
-            this.SelectedGameWadList.Items.AddRange(new object[] {
-            "(Goldsource only)",
-            "halflife.wad",
-            "etc."});
-            this.SelectedGameWadList.Location = new System.Drawing.Point(15, 26);
-            this.SelectedGameWadList.Name = "SelectedGameWadList";
-            this.SelectedGameWadList.Size = new System.Drawing.Size(368, 160);
-            this.SelectedGameWadList.TabIndex = 16;
             // 
             // lblConfigTextureScale
             // 
@@ -2943,121 +3039,51 @@ namespace Sledge.Editor.Settings
             this.btnApplySettings.UseVisualStyleBackColor = true;
             this.btnApplySettings.Click += new System.EventHandler(this.Apply);
             // 
-            // SelectedGameOverrideMapSize
+            // SelectedGameWadList
             // 
-            this.SelectedGameOverrideMapSize.Checked = true;
-            this.SelectedGameOverrideMapSize.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.SelectedGameOverrideMapSize.Location = new System.Drawing.Point(18, 329);
-            this.SelectedGameOverrideMapSize.Name = "SelectedGameOverrideMapSize";
-            this.SelectedGameOverrideMapSize.Size = new System.Drawing.Size(137, 24);
-            this.SelectedGameOverrideMapSize.TabIndex = 19;
-            this.SelectedGameOverrideMapSize.Text = "Override FGD map size";
-            this.SelectedGameOverrideMapSize.UseVisualStyleBackColor = true;
-            this.SelectedGameOverrideMapSize.CheckedChanged += new System.EventHandler(this.SelectedGameOverrideMapSizeChanged);
+            this.SelectedGameWadList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader2,
+            this.columnHeader3});
+            this.SelectedGameWadList.FullRowSelect = true;
+            this.SelectedGameWadList.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
+            this.SelectedGameWadList.Location = new System.Drawing.Point(15, 26);
+            this.SelectedGameWadList.Name = "SelectedGameWadList";
+            this.SelectedGameWadList.ShowItemToolTips = true;
+            this.SelectedGameWadList.Size = new System.Drawing.Size(368, 160);
+            this.SelectedGameWadList.TabIndex = 18;
+            this.SelectedGameWadList.UseCompatibleStateImageBehavior = false;
+            this.SelectedGameWadList.View = System.Windows.Forms.View.Details;
             // 
-            // label33
+            // columnHeader2
             // 
-            this.label33.Location = new System.Drawing.Point(15, 258);
-            this.label33.Name = "label33";
-            this.label33.Size = new System.Drawing.Size(368, 40);
-            this.label33.TabIndex = 20;
-            this.label33.Text = "Sledge uses the @mapsize syntax in the map FGDs to set the map size limits. If us" +
-    "ing a non-source FGD that doesn\'t have this syntax, the map size can be overridd" +
-    "en below.";
-            this.label33.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.columnHeader2.Text = "Name";
             // 
-            // SelectedGameOverrideSizeLow
+            // columnHeader3
             // 
-            this.SelectedGameOverrideSizeLow.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.SelectedGameOverrideSizeLow.FormattingEnabled = true;
-            this.SelectedGameOverrideSizeLow.Items.AddRange(new object[] {
-            "-4096",
-            "-8192",
-            "-16384",
-            "-32768",
-            "-65536"});
-            this.SelectedGameOverrideSizeLow.Location = new System.Drawing.Point(202, 331);
-            this.SelectedGameOverrideSizeLow.Name = "SelectedGameOverrideSizeLow";
-            this.SelectedGameOverrideSizeLow.Size = new System.Drawing.Size(57, 21);
-            this.SelectedGameOverrideSizeLow.TabIndex = 21;
+            this.columnHeader3.Text = "Path";
             // 
-            // label34
+            // SelectedGameFgdList
             // 
-            this.label34.Location = new System.Drawing.Point(161, 330);
-            this.label34.Name = "label34";
-            this.label34.Size = new System.Drawing.Size(35, 20);
-            this.label34.TabIndex = 9;
-            this.label34.Text = "Low";
-            this.label34.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.SelectedGameFgdList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader1,
+            this.columnHeader4});
+            this.SelectedGameFgdList.FullRowSelect = true;
+            this.SelectedGameFgdList.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
+            this.SelectedGameFgdList.Location = new System.Drawing.Point(15, 26);
+            this.SelectedGameFgdList.Name = "SelectedGameFgdList";
+            this.SelectedGameFgdList.ShowItemToolTips = true;
+            this.SelectedGameFgdList.Size = new System.Drawing.Size(368, 160);
+            this.SelectedGameFgdList.TabIndex = 26;
+            this.SelectedGameFgdList.UseCompatibleStateImageBehavior = false;
+            this.SelectedGameFgdList.View = System.Windows.Forms.View.Details;
             // 
-            // SelectedGameOverrideSizeHigh
+            // columnHeader1
             // 
-            this.SelectedGameOverrideSizeHigh.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.SelectedGameOverrideSizeHigh.FormattingEnabled = true;
-            this.SelectedGameOverrideSizeHigh.Items.AddRange(new object[] {
-            "4096",
-            "8192",
-            "16384",
-            "32768",
-            "65536"});
-            this.SelectedGameOverrideSizeHigh.Location = new System.Drawing.Point(306, 331);
-            this.SelectedGameOverrideSizeHigh.Name = "SelectedGameOverrideSizeHigh";
-            this.SelectedGameOverrideSizeHigh.Size = new System.Drawing.Size(57, 21);
-            this.SelectedGameOverrideSizeHigh.TabIndex = 23;
+            this.columnHeader1.Text = "Name";
             // 
-            // label35
+            // columnHeader4
             // 
-            this.label35.Location = new System.Drawing.Point(265, 330);
-            this.label35.Name = "label35";
-            this.label35.Size = new System.Drawing.Size(35, 20);
-            this.label35.TabIndex = 22;
-            this.label35.Text = "High";
-            this.label35.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // label36
-            // 
-            this.label36.Location = new System.Drawing.Point(161, 303);
-            this.label36.Name = "label36";
-            this.label36.Size = new System.Drawing.Size(35, 20);
-            this.label36.TabIndex = 24;
-            this.label36.Text = "Low";
-            this.label36.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // label37
-            // 
-            this.label37.Location = new System.Drawing.Point(265, 303);
-            this.label37.Name = "label37";
-            this.label37.Size = new System.Drawing.Size(35, 20);
-            this.label37.TabIndex = 22;
-            this.label37.Text = "High";
-            this.label37.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // label38
-            // 
-            this.label38.Location = new System.Drawing.Point(18, 303);
-            this.label38.Name = "label38";
-            this.label38.Size = new System.Drawing.Size(137, 20);
-            this.label38.TabIndex = 25;
-            this.label38.Text = "Detected map dimensions:";
-            this.label38.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // SelectedGameDetectedSizeLow
-            // 
-            this.SelectedGameDetectedSizeLow.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.SelectedGameDetectedSizeLow.Location = new System.Drawing.Point(202, 303);
-            this.SelectedGameDetectedSizeLow.Name = "SelectedGameDetectedSizeLow";
-            this.SelectedGameDetectedSizeLow.Size = new System.Drawing.Size(57, 20);
-            this.SelectedGameDetectedSizeLow.TabIndex = 24;
-            this.SelectedGameDetectedSizeLow.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // SelectedGameDetectedSizeHigh
-            // 
-            this.SelectedGameDetectedSizeHigh.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.SelectedGameDetectedSizeHigh.Location = new System.Drawing.Point(306, 303);
-            this.SelectedGameDetectedSizeHigh.Name = "SelectedGameDetectedSizeHigh";
-            this.SelectedGameDetectedSizeHigh.Size = new System.Drawing.Size(57, 20);
-            this.SelectedGameDetectedSizeHigh.TabIndex = 24;
-            this.SelectedGameDetectedSizeHigh.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.columnHeader4.Text = "Path";
             // 
             // SettingsForm
             // 
@@ -3168,12 +3194,10 @@ namespace Sledge.Editor.Settings
 		private System.Windows.Forms.Button SelectedGameRemoveWad;
 		private System.Windows.Forms.Label lblGameWAD;
 		private System.Windows.Forms.Label lblGameBuild;
-		private System.Windows.Forms.ComboBox SelectedGameBuild;
-		private System.Windows.Forms.ListBox SelectedGameWadList;
+        private System.Windows.Forms.ComboBox SelectedGameBuild;
 		private System.Windows.Forms.Label lblGameFGD;
 		private System.Windows.Forms.ComboBox SelectedGameDefaultPointEnt;
-		private System.Windows.Forms.ComboBox SelectedGameDefaultBrushEnt;
-		private System.Windows.Forms.ListBox SelectedGameFgdList;
+        private System.Windows.Forms.ComboBox SelectedGameDefaultBrushEnt;
 		private System.Windows.Forms.NumericUpDown SelectedGameTextureScale;
 		private System.Windows.Forms.NumericUpDown SelectedGameLightmapScale;
 		private System.Windows.Forms.Label lblGameMapSaveDir;
@@ -3391,5 +3415,11 @@ namespace Sledge.Editor.Settings
         private System.Windows.Forms.Label SelectedGameDetectedSizeLow;
         private System.Windows.Forms.Label label36;
         private System.Windows.Forms.Label label37;
+        private System.Windows.Forms.ListView SelectedGameWadList;
+        private System.Windows.Forms.ColumnHeader columnHeader2;
+        private System.Windows.Forms.ColumnHeader columnHeader3;
+        private System.Windows.Forms.ListView SelectedGameFgdList;
+        private System.Windows.Forms.ColumnHeader columnHeader1;
+        private System.Windows.Forms.ColumnHeader columnHeader4;
 	}
 }

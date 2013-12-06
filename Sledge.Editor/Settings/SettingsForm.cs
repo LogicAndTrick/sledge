@@ -604,8 +604,14 @@ namespace Sledge.Editor.Settings
             SelectedGameWadList.Items.Clear();
             foreach (var wad in _selectedGame.Wads)
             {
-                SelectedGameWadList.Items.Add(wad.Path);
+                var item = new ListViewItem(new[]
+                {
+                    Path.GetFileName(wad.Path),
+                    wad.Path
+                }) {ToolTipText = wad.Path};
+                SelectedGameWadList.Items.Add(item);
             }
+            SelectedGameWadList.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
 	    }
 
 	    private void SelectedGameUpdateFgds()
@@ -613,8 +619,14 @@ namespace Sledge.Editor.Settings
             SelectedGameFgdList.Items.Clear();
 	        foreach (var fgd in _selectedGame.Fgds)
 	        {
-	            SelectedGameFgdList.Items.Add(fgd.Path);
-	        }
+                var item = new ListViewItem(new[]
+                {
+                    Path.GetFileName(fgd.Path),
+                    fgd.Path
+                }) { ToolTipText = fgd.Path };
+                SelectedGameFgdList.Items.Add(item);
+            }
+            SelectedGameFgdList.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
 
             SelectedGameDefaultPointEnt.Items.Clear();
             SelectedGameDefaultBrushEnt.Items.Clear();
@@ -824,9 +836,12 @@ namespace Sledge.Editor.Settings
 
         private void SelectedGameRemoveFgdClicked(object sender, EventArgs e)
         {
-            if (SelectedGameFgdList.SelectedIndex >= 0)
+            if (SelectedGameFgdList.SelectedIndices.Count > 0)
             {
-                _selectedGame.Fgds.RemoveAt(SelectedGameFgdList.SelectedIndex);
+                foreach (var idx in SelectedGameFgdList.SelectedIndices.OfType<int>().OrderByDescending(x => x).ToArray())
+                {
+                    _selectedGame.Fgds.RemoveAt(idx);
+                }
                 SelectedGameUpdateFgds();
             }
         }
@@ -853,9 +868,12 @@ namespace Sledge.Editor.Settings
 
         private void SelectedGameRemoveWadClicked(object sender, EventArgs e)
         {
-            if (SelectedGameWadList.SelectedIndex >= 0)
+            if (SelectedGameWadList.SelectedIndices.Count > 0)
             {
-                _selectedGame.Wads.RemoveAt(SelectedGameWadList.SelectedIndex);
+                foreach (var idx in SelectedGameWadList.SelectedIndices.OfType<int>().OrderByDescending(x => x).ToArray())
+                {
+                    _selectedGame.Wads.RemoveAt(idx);
+                }
                 SelectedGameUpdateWads();
             }
         }
