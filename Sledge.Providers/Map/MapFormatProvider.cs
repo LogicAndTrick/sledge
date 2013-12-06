@@ -75,12 +75,12 @@ namespace Sledge.Providers.Map
                                {
                                    Name = parts[15],
                                    UAxis = Coordinate.Parse(parts[17], parts[18], parts[19]),
-                                   XShift = decimal.Parse(parts[20], ns),
+                                   XShift = decimal.Parse(parts[20], ns,CultureInfo.InvariantCulture),
                                    VAxis = Coordinate.Parse(parts[23], parts[24], parts[25]),
-                                   YShift = decimal.Parse(parts[26], ns),
-                                   Rotation = decimal.Parse(parts[28], ns),
-                                   XScale = decimal.Parse(parts[29], ns),
-                                   YScale = decimal.Parse(parts[30], ns)
+                                   YShift = decimal.Parse(parts[26], ns, CultureInfo.InvariantCulture),
+                                   Rotation = decimal.Parse(parts[28], ns, CultureInfo.InvariantCulture),
+                                   XScale = decimal.Parse(parts[29], ns, CultureInfo.InvariantCulture),
+                                   YScale = decimal.Parse(parts[30], ns, CultureInfo.InvariantCulture)
                                }
                        };
         }

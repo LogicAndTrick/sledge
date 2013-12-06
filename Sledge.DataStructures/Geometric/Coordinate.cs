@@ -237,7 +237,7 @@ namespace Sledge.DataStructures.Geometric
         public static Coordinate Parse(string x, string y, string z)
         {
             const NumberStyles ns = NumberStyles.Float;
-            return new Coordinate(decimal.Parse(x, ns), decimal.Parse(y, ns), decimal.Parse(z, ns));
+            return new Coordinate(decimal.Parse(x, ns, CultureInfo.InvariantCulture), decimal.Parse(y, ns, CultureInfo.InvariantCulture), decimal.Parse(z, ns, CultureInfo.InvariantCulture));
         }
 
         public CoordinateF ToCoordinateF()
