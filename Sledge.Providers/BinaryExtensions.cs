@@ -72,18 +72,25 @@ namespace Sledge.Providers
 
         public static string ReadVariableLengthString(this BinaryReader br)
         {
-            return br.ReadString().Trim('\0');
+            // GH#87: RMF strings aren't prefixed in the same way .NET's BinaryReader expects
+            // Read the byte length and then read that number of characters.
+            var len = br.ReadByte();
+            var chars = br.ReadChars(len);
+            return new string(chars).Trim('\0');
         }
 
-        const int MaxVariableStringLength = 248;
+        const int MaxVariableStringLength = 127;
 
         public static void WriteVariableLengthString(this BinaryWriter bw, string str)
         {
-            // RMF strings can't be more than Byte.MaxValue characters long (including the null terminator).
-            // Though Hammer crashes at 250 characters, so it must be doing something odd.
+            // GH#87: RMF strings aren't prefixed in the same way .NET's BinaryReader expects
+            // Write the byte length (+1) and then write that number of characters plus the null terminator.
+            // Hammer doesn't like RMF strings longer than 128 bytes...
             if (str == null) str = "";
             if (str.Length > MaxVariableStringLength) str = str.Substring(0, MaxVariableStringLength);
-            bw.Write(str + '\0');
+            bw.Write((byte) (str.Length + 1));
+            bw.Write(str.ToCharArray());
+            bw.Write('\0');
         }
 
 
