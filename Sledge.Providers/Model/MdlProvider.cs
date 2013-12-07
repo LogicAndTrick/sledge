@@ -836,11 +836,12 @@ namespace Sledge.Providers.Model
                 vertInfoIndex = br.ReadInt32();
             }
             var vertIndex = br.ReadInt32();
+            int numNorms = 0, normInfoIndex = 0, normIndex = 0;
             if (data.Version == MDLVersionGoldsource)
             {
-                var numNorms = br.ReadInt32();
-                var normInfoIndex = br.ReadInt32();
-                var normIndex = br.ReadInt32();
+                numNorms = br.ReadInt32();
+                normInfoIndex = br.ReadInt32();
+                normIndex = br.ReadInt32();
             }
             else if (data.Version >= MDLVersionSource2006)
             {
@@ -865,7 +866,7 @@ namespace Sledge.Providers.Model
 
             if (data.Version == MDLVersionGoldsource)
             {
-                ReadVerticesGoldSource(br, model, numVerts, vertInfoIndex, vertIndex, numMesh, meshIndex);
+                ReadVerticesGoldSource(br, model, numVerts, vertInfoIndex, vertIndex, numMesh, meshIndex, numNorms, normInfoIndex, normIndex);
             }
             else if (data.Version >= MDLVersionSource2006)
             {
@@ -875,16 +876,16 @@ namespace Sledge.Providers.Model
             br.BaseStream.Position = endPos;
         }
 
-        private static void ReadVerticesGoldSource(BinaryReader br, DataStructures.Models.Model model, int numVerts, int vertInfoIndex, int vertIndex, int numMesh, int meshIndex)
+        private static void ReadVerticesGoldSource(BinaryReader br, DataStructures.Models.Model model, int numVerts, int vertInfoIndex, int vertIndex, int numMesh, int meshIndex, int numNorms, int normInfoIndex, int normIndex)
         {
             br.BaseStream.Position = vertInfoIndex;
             var vertInfoData = br.ReadByteArray(numVerts);
-            //br.BaseStream.Position = normInfoIndex;
-            //var normInfoData = br.ReadByteArray(numNorms);
+            br.BaseStream.Position = normInfoIndex;
+            var normInfoData = br.ReadByteArray(numNorms);
             br.BaseStream.Position = vertIndex;
             var vertices = br.ReadCoordinateFArray(numVerts);
-            //br.BaseStream.Position = normIndex;
-            //var normals = br.ReadCoordinateFArray(numNorms);
+            br.BaseStream.Position = normIndex;
+            var normals = br.ReadCoordinateFArray(numNorms);
 
             br.BaseStream.Position = meshIndex;
             for (var i = 0; i < numMesh; i++)
@@ -911,9 +912,8 @@ namespace Sledge.Providers.Model
                     {
                         list.Add(new MdlProviderSequenceDataPoint
                                      {
-                                         Vertex = br.ReadInt16(),
-                                         // Vertex index in the vertices array
-                                         Light = br.ReadInt16(),
+                                         Vertex = br.ReadInt16(), // Vertex index in the vertices array
+                                         Normal = br.ReadInt16(), // Normal index in the normals array
                                          TextureS = br.ReadInt16(),
                                          TextureT = br.ReadInt16()
                                      });
@@ -927,8 +927,12 @@ namespace Sledge.Providers.Model
                         {
                             var vi = list[idx];
                             var boneIndex = vertInfoData[vi.Vertex]; // Vertinfo tells what bone the vert belongs to
-                            mesh.Vertices.Add(new MeshVertex(vertices[vi.Vertex], model.Bones[boneIndex], vi.TextureS,
-                                                             vi.TextureT));
+                            mesh.Vertices.Add(new MeshVertex(
+                                vertices[vi.Vertex],
+                                normals[vi.Normal],
+                                model.Bones[boneIndex],
+                                vi.TextureS,
+                                vi.TextureT));
                         }
                     }
                 }
@@ -970,7 +974,7 @@ namespace Sledge.Providers.Model
                         {
                             boneWeights.Add(new BoneWeighting(model.Bones[vert.Bones[j]], vert.BoneWeights[j]));
                         }
-                        var mv = new MeshVertex(vert.Position, boneWeights, vert.TextureS, vert.TextureT);
+                        var mv = new MeshVertex(vert.Position, vert.Normal, boneWeights, vert.TextureS, vert.TextureT);
                         mesh.Vertices.Add(mv);
                     }
                     model.Meshes.Add(mesh);
@@ -1416,7 +1420,7 @@ namespace Sledge.Providers.Model
         private class MdlProviderSequenceDataPoint
         {
             public short Vertex { get; set; }
-            public short Light { get; set; }
+            public short Normal { get; set; }
             public short TextureS { get; set; }
             public short TextureT { get; set; }
         }

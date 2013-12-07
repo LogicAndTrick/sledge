@@ -11,5 +11,6 @@ namespace Sledge.Common
         bool HasTransparency { get; }
         Bitmap BitmapImage { get; }
         void Bind();
+        void Unbind();
     }
 }

@@ -25,6 +25,11 @@ namespace Sledge.Graphics
             TextureHelper.Bind(Reference);
         }
 
+        public void Unbind()
+        {
+            TextureHelper.Unbind();
+        }
+
         public void Dispose()
         {
             BitmapImage.Dispose();

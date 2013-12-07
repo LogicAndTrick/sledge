@@ -74,6 +74,12 @@ namespace Sledge.Tests
             {
                 //
             }
+
+            public void Unbind()
+            {
+                //
+            }
+
             public void Dispose()
             {
                 //

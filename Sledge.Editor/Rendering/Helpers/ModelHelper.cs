@@ -1,12 +1,19 @@
 using System.Collections.Generic;
 using System.Linq;
+using OpenTK;
+using OpenTK.Graphics.OpenGL;
+using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.MapObjects;
 using Sledge.DataStructures.Models;
 using Sledge.DataStructures.Rendering;
+using Sledge.DataStructures.Rendering.Models;
 using Sledge.Editor.Documents;
 using Sledge.FileSystem;
+using Sledge.Graphics.Helpers;
+using Sledge.Graphics.Renderables;
 using Sledge.Providers.Model;
 using Sledge.UI;
+using Tao.OpenGl;
 
 namespace Sledge.Editor.Rendering.Helpers
 {
@@ -52,28 +59,54 @@ namespace Sledge.Editor.Rendering.Helpers
         }
 
         private List<Model> _cache = new List<Model>(); //todo move this to proper helper
+        private Dictionary<Model, IRenderable> _renderables = new Dictionary<Model, IRenderable>(); 
  
         public void Render3D(Viewport3D viewport, MapObject o)
         {
             var e = (Entity) o;
-            if (e.GameData == null) return;
-            var studio = e.GameData.Behaviours.FirstOrDefault(x => x.Name == "studio");
-            if (studio == null || studio.Values.Count != 1 || studio.Values[0].Trim() == "") return;
-            var path = studio.Values[0].Trim();
-
-            // todo cache these!
-            var file = Document.Environment.Root.TraversePath(path);
-            if (file == null) return;
-
-
-            var model = _cache.FirstOrDefault(x => x.Name == file.NameWithoutExtension);
-            if (model == null)
+            var loc = viewport.Camera.Location;
+            var distance = new Coordinate((decimal)loc.X, (decimal)loc.Y, (decimal)loc.Z) - o.BoundingBox.Center;
+            if (distance.VectorMagnitude() < 1000 && e.GameData != null)
             {
-                model = ModelProvider.LoadModel(file);
-                _cache.Add(model);
+                var studio = e.GameData.Behaviours.FirstOrDefault(x => x.Name == "studio");
+                if (studio != null && studio.Values.Count == 1 && studio.Values[0].Trim() != "")
+                {
+                    var path = studio.Values[0].Trim();
+
+                    // todo cache these!
+                    var file = Document.Environment.Root.TraversePath(path);
+                    if (file != null)
+                    {
+                        var model = _cache.FirstOrDefault(x => x.Name == file.NameWithoutExtension);
+                        if (model == null)
+                        {
+                            model = ModelProvider.LoadModel(file);
+                            _cache.Add(model);
+                            _renderables.Add(model, new DisplayListModelRenderable(model));
+                        }
+                        var renderable = _renderables[model];
+
+                        var c = o.BoundingBox.Center;
+                        c.Z = o.BoundingBox.Start.Z;
+                        var tl = new Vector3d(c.DX, c.DY, c.DZ);
+                        GL.Translate(tl);
+                        renderable.Render(viewport);
+                        GL.Translate(-tl);
+
+                        return;
+                    }
+                }
             }
-            var renderable = new ModelRenderable(model);
-            renderable.Render(viewport);
+            GL.Color3(o.Colour);
+            GL.Begin(BeginMode.Quads);
+            foreach (var face in o.BoundingBox.GetBoxFaces())
+            {
+                foreach (var v in face)
+                {
+                    GL.Vertex3(v.DX, v.DY, v.DZ);
+                }
+            }
+            GL.End();
         }
 
         public void AfterRender3D(Viewport3D viewport)
