@@ -94,7 +94,28 @@ namespace Sledge.DataStructures.Rendering.Models
                         var c = v.Location * transform;
                         if (texture != null)
                         {
-                            GL.TexCoord2(v.TextureU / texture.Width, v.TextureV / texture.Height);
+                            if ((Model.Textures[group.Key].Flags & 0x02) != 0)
+                            {
+                                // Borrowed from HLMV's StudioModel::Chrome function
+                                var tmp = transform.Shift.Normalise();
+                                var up = tmp.Cross(CoordinateF.UnitX).Normalise(); // Using unitx for the "player right" vector
+                                var right = tmp.Cross(up).Normalise();
+
+                                // HLMV is doing an inverse rotate (no translation), so we set the shift values to zero after inversing
+                                var inv = transform.Inverse();
+                                inv[12] = inv[13] = inv[14] = 0;
+                                up = up * inv;
+                                right = right * inv;
+
+                                var x = (v.Normal.Dot(right) + 1) * 32;
+                                var y = (v.Normal.Dot(up) + 1) * 32;
+
+                                GL.TexCoord2(x / texture.Width, y / texture.Height);
+                            }
+                            else
+                            {
+                                GL.TexCoord2(v.TextureU / texture.Width, v.TextureV / texture.Height);
+                            }
                         }
                         GL.Vertex3(c.X, c.Y, c.Z);
                     }

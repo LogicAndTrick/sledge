@@ -14,6 +14,7 @@ namespace Sledge.DataStructures.Models
         public List<Animation> Animations { get; private set; }
         public List<Texture> Textures { get; set; }
         public bool BonesTransformMesh { get; set; }
+        private bool _combined;
 
         public Model()
         {
@@ -21,6 +22,7 @@ namespace Sledge.DataStructures.Models
             Meshes = new List<Mesh>();
             Animations = new List<Animation>();
             Textures = new List<Texture>();
+            _combined = false;
         }
 
         /// <summary>
@@ -29,17 +31,18 @@ namespace Sledge.DataStructures.Models
         /// </summary>
         public void CombineTextures()
         {
-            if (Textures.Count <= 1) return;
+            if (_combined) return;
+            _combined = true;
 
+            var texs = Textures.Where(x => (x.Flags & 0x02) == 0).ToList();
             // Calculate the dimension of the combined texture
             var width = 0;
             var height = 0;
-            var heightList = new int[Textures.Count];
-            for (var i = 0; i < Textures.Count; i++)
+            var heightList = new Dictionary<int, int>();
+            foreach (var texture in texs)
             {
-                var texture = Textures[i];
                 width = Math.Max(texture.Width, width);
-                heightList[i] = height;
+                heightList.Add(texture.Index, height);
                 height += texture.Height;
             }
 
@@ -48,7 +51,7 @@ namespace Sledge.DataStructures.Models
             using (var g = Graphics.FromImage(bmp))
             {
                 var y = 0;
-                foreach (var texture in Textures)
+                foreach (var texture in texs)
                 {
                     g.DrawImage(texture.Image, 0, y);
                     y += texture.Height;
@@ -58,26 +61,28 @@ namespace Sledge.DataStructures.Models
             // Create the texture object and replace the existing textures
             var tex = new Texture
             {
-                Flags = Textures[0].Flags,
+                Flags = texs[0].Flags,
                 Height = height,
                 Width = width,
                 Image = bmp,
                 Index = 0,
                 Name = "Combined Texture"
             };
-            foreach (var texture in Textures)
+            foreach (var texture in texs)
             {
                 texture.Image.Dispose();
             }
-            Textures.Clear();
-            Textures.Add(tex);
+            Textures.RemoveAll(x => (x.Flags & 0x02) == 0);
+            Textures.Insert(0, tex);
 
             // Update all the meshes with the new texture and alter the texture coordinates as needed
             foreach (var mesh in Meshes)
             {
-                if (heightList.Length <= mesh.SkinRef)
+                if (!heightList.ContainsKey(mesh.SkinRef))
                 {
-                    mesh.SkinRef = -1;
+                    var sk = Textures.FindIndex(x => x.Index == mesh.SkinRef);
+                    if (sk > 0) mesh.SkinRef = sk;
+                    else mesh.SkinRef = -1;
                     continue;
                 }
                 var i = mesh.SkinRef;
@@ -88,6 +93,20 @@ namespace Sledge.DataStructures.Models
                 }
                 mesh.SkinRef = 0;
             }
+            for (var i = 0; i < Textures.Count; i++)
+            {
+                Textures[i].Index = i;
+            }
+        }
+
+        /// <summary>
+        /// Normalises vertex texture coordinates to be between 0 and 1.
+        /// Also pre-calculates chrome values.
+        /// This operation modifies the model vertices.
+        /// </summary>
+        public void NormaliseTextureCoordinates()
+        {
+
         }
     }
 }
