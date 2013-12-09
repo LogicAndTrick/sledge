@@ -83,6 +83,7 @@ namespace Sledge.Editor.Rendering.Helpers
                             model = ModelProvider.LoadModel(file);
                             _cache.Add(model);
                             _renderables.Add(model, new DisplayListModelRenderable(model));
+                            //_renderables.Add(model, new GL3ModelRenderable(model));
                         }
                         var renderable = _renderables[model];
 

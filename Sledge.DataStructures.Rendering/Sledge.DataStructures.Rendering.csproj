@@ -45,6 +45,8 @@
   <ItemGroup>
     <Compile Include="ArrayManager.cs" />
     <Compile Include="DecalFaceVertexArray.cs" />
+    <Compile Include="Models\DisplayListModelRenderable.cs" />
+    <Compile Include="Models\GL3ModelRenderable.cs" />
     <Compile Include="Models\ImmediateModelRenderable.cs" />
     <Compile Include="Models\ModelVertexArray.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

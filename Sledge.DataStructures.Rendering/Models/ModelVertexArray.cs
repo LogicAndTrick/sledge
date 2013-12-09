@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using OpenTK.Graphics.OpenGL;
 using Sledge.DataStructures.Models;
 using Sledge.Graphics.Arrays;
@@ -20,6 +19,7 @@ namespace Sledge.DataStructures.Rendering.Models
             Modes = new[] { BeginMode.Triangles };
             Specification = new ArraySpecification(
                 ArrayIndex.Vector3("Position"),
+                ArrayIndex.Vector3("Normal"),
                 ArrayIndex.Vector2("Texture"));
             SpecSize = Specification.Indices.Sum(x => x.Length);
         }
@@ -84,9 +84,13 @@ namespace Sledge.DataStructures.Rendering.Models
                     {
                         var transform = transforms[vertex.BoneWeightings.First().Bone.BoneIndex];
                         var c = vertex.Location * transform;
+                        var n = vertex.Normal * transform;
                         data.Add(c.X);
                         data.Add(c.Y);
                         data.Add(c.Z);
+                        data.Add(n.X);
+                        data.Add(n.Y);
+                        data.Add(n.Z);
                         data.Add(vertex.TextureU);
                         data.Add(vertex.TextureV);
                         indexList.Add((uint) count);
