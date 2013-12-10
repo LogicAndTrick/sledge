@@ -7,18 +7,13 @@ namespace Sledge.Graphics
 {
     public class RenderContext
     {
-        private static int _numLists = 0;
-
-        private string ListName { get; set; }
         private List<IRenderable> Renderables { get; set; }
         private bool Changed { get; set; }
 
         public RenderContext()
         {
-            _numLists++;
             Renderables = new List<IRenderable>();
             Changed = true;
-            ListName = "RenderContext." + _numLists + ".GeometryList";
         }
 
         public void Add(IRenderable r)

@@ -12,6 +12,7 @@ namespace Sledge.Graphics.Arrays
         {
             _buffer = buffer;
             CreateArrays();
+            
         }
 
         public void CreateArrays()

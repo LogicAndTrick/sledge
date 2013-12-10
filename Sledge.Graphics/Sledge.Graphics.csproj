@@ -52,6 +52,7 @@
   <ItemGroup>
     <Compile Include="Arrays\ArrayIndex.cs" />
     <Compile Include="Arrays\ArraySpecification.cs" />
+    <Compile Include="Arrays\VBO.cs" />
     <Compile Include="Arrays\VertexArray.cs" />
     <Compile Include="Arrays\VertexBuffer.cs" />
     <Compile Include="Camera.cs" />
