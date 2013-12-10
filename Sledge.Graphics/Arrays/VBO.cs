@@ -26,8 +26,8 @@ namespace Sledge.Graphics.Arrays
     public abstract class VBO<TIn, TOut> : IDisposable
         where TOut : struct
     {
-        public ArraySpecification Specification { get; private set; }
-        private int _size;
+        private ArraySpecification Specification { get; set; }
+        private readonly int _size;
 
         private readonly List<TOut> _data;
         private readonly Dictionary<int, List<uint>> _indices;
@@ -35,7 +35,11 @@ namespace Sledge.Graphics.Arrays
         private readonly Dictionary<int, List<Subset>> _subsets;
         private readonly Dictionary<object, int> _offsets;
 
-        public VBO(IEnumerable<TIn> data)
+        private int _array = -1;
+        private int _elementArray = -1;
+        private readonly Dictionary<IGraphicsContext, VertexArray> _vertexArrays;
+
+        protected VBO(IEnumerable<TIn> data)
         {
             Specification = new ArraySpecification(typeof(TOut));
             _size = Marshal.SizeOf(typeof (TOut));
@@ -57,7 +61,7 @@ namespace Sledge.Graphics.Arrays
             Commit();
         }
 
-        public void Render(IGraphicsContext context, BeginMode mode, Subset subset)
+        protected void Render(IGraphicsContext context, BeginMode mode, Subset subset)
         {
             if (!_vertexArrays.ContainsKey(context)) CreateVertexArray(context);
 
@@ -66,33 +70,6 @@ namespace Sledge.Graphics.Arrays
             GL.BindVertexArray(arr.ID);
             GL.DrawElements(mode, subset.Count, DrawElementsType.UnsignedInt, subset.Start * sizeof (uint));
             GL.BindVertexArray(0);
-        }
-
-        private struct VertexArray
-        {
-            public int ID;
-            public bool Dirty;
-
-            public void Bind(ArraySpecification specification, int array, int elementArray)
-            {
-                GL.BindVertexArray(ID);
-
-                GL.BindBuffer(BufferTarget.ArrayBuffer, array);
-                var stride = specification.Stride;
-                for (var j = 0; j < specification.Indices.Count; j++)
-                {
-                    var ai = specification.Indices[j];
-                    GL.EnableVertexAttribArray(j);
-                    GL.VertexAttribPointer(j, ai.Length, ai.Type, false, stride, ai.Offset);
-                }
-                GL.BindBuffer(BufferTarget.ElementArrayBuffer, elementArray);
-
-                GL.BindVertexArray(0);
-                GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
-                GL.BindBuffer(BufferTarget.ElementArrayBuffer, 0);
-
-                Dirty = false;
-            }
         }
 
         private void CreateVertexArray(IGraphicsContext context)
@@ -104,14 +81,11 @@ namespace Sledge.Graphics.Arrays
 
         public void Dispose()
         {
-            //
+            if (_array >= 0) GL.DeleteBuffers(1, ref _array);
+            if (_elementArray >= 0) GL.DeleteBuffers(1, ref _elementArray);
         }
 
-        private int _array = -1;
-        private int _elementArray = -1;
-        private Dictionary<IGraphicsContext, VertexArray> _vertexArrays;
-
-        protected void Clear()
+        private void Clear()
         {
             _data.Clear();
             _indices.Clear();
@@ -121,10 +95,6 @@ namespace Sledge.Graphics.Arrays
 
             if (_array >= 0) GL.DeleteBuffers(1, ref _array);
             if (_elementArray >= 0) GL.DeleteBuffers(1, ref _elementArray);
-            foreach (var id in _vertexArrays)
-            {
-                
-            }
         }
 
         protected void Update(int index, IEnumerable<TOut> data)
@@ -135,7 +105,7 @@ namespace Sledge.Graphics.Arrays
             GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
         }
 
-        protected void Commit()
+        private void Commit()
         {
             var data = _data.ToArray();
             var elementData = new uint[_indices.Sum(x => x.Value.Count)];
@@ -253,6 +223,33 @@ namespace Sledge.Graphics.Arrays
                 var ni = (uint)((i + 1) % num);
                 yield return i;
                 yield return ni;
+            }
+        }
+
+        private struct VertexArray
+        {
+            public int ID;
+            public bool Dirty;
+
+            public void Bind(ArraySpecification specification, int array, int elementArray)
+            {
+                GL.BindVertexArray(ID);
+
+                GL.BindBuffer(BufferTarget.ArrayBuffer, array);
+                var stride = specification.Stride;
+                for (var j = 0; j < specification.Indices.Count; j++)
+                {
+                    var ai = specification.Indices[j];
+                    GL.EnableVertexAttribArray(j);
+                    GL.VertexAttribPointer(j, ai.Length, ai.Type, false, stride, ai.Offset);
+                }
+                GL.BindBuffer(BufferTarget.ElementArrayBuffer, elementArray);
+
+                GL.BindVertexArray(0);
+                GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
+                GL.BindBuffer(BufferTarget.ElementArrayBuffer, 0);
+
+                Dirty = false;
             }
         }
     }

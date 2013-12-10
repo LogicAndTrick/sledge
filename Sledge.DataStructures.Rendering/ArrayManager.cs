@@ -15,7 +15,7 @@ namespace Sledge.DataStructures.Rendering
     /// </summary>
     public class ArrayManager : IDisposable
     {
-        private MoVbo _vbo;
+        private MapObjectArray _vbo;
         //private readonly SolidVertexArray _array;
         //private readonly DecalFaceVertexArray _decalArray;
 
@@ -25,7 +25,7 @@ namespace Sledge.DataStructures.Rendering
             //_array = new SolidVertexArray(all);
             //_decalArray = new DecalFaceVertexArray(all);
 
-            _vbo = new MoVbo(all);
+            _vbo = new MapObjectArray(all);
         }
 
         public void Dispose()
