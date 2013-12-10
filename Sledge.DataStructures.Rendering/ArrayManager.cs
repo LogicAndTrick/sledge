@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.MapObjects;
@@ -14,20 +15,25 @@ namespace Sledge.DataStructures.Rendering
     /// </summary>
     public class ArrayManager : IDisposable
     {
-        private readonly SolidVertexArray _array;
-        private readonly DecalFaceVertexArray _decalArray;
+        private MoVbo _vbo;
+        //private readonly SolidVertexArray _array;
+        //private readonly DecalFaceVertexArray _decalArray;
 
         public ArrayManager(Map map)
         {
             var all = GetAllVisible(map.WorldSpawn);
-            _array = new SolidVertexArray(all);
-            _decalArray = new DecalFaceVertexArray(all);
+            //_array = new SolidVertexArray(all);
+            //_decalArray = new DecalFaceVertexArray(all);
+
+            _vbo = new MoVbo(all);
         }
 
         public void Dispose()
         {
-            _array.Dispose();
-            _decalArray.Dispose();
+            //_array.Dispose();
+            //_decalArray.Dispose();
+
+            _vbo.Dispose();
         }
 
         private IList<MapObject> GetAllVisible(MapObject root)
@@ -47,76 +53,40 @@ namespace Sledge.DataStructures.Rendering
         public void Update(Map map)
         {
             var all = GetAllVisible(map.WorldSpawn);
-            _array.Update(all);
-            _decalArray.Update(all);
+            _vbo.Update(all);
+            //_array.Update(all);
+            //_decalArray.Update(all);
         }
 
         public void UpdateDecals(Map map)
         {
             var all = GetAllVisible(map.WorldSpawn);
-            _decalArray.Update(all);
+            //_decalArray.Update(all);
         }
 
         public void UpdatePartial(IEnumerable<MapObject> objects)
         {
-            _array.UpdatePartial(objects);
+            //_array.UpdatePartial(objects);
+            _vbo.UpdatePartial(objects);
         }
 
         public void UpdatePartial(IEnumerable<Face> faces)
         {
-            _array.UpdatePartial(faces);
+            //_array.UpdatePartial(faces);
+            _vbo.UpdatePartial(faces);
         }
 
-        public void DrawTextured(object context, Coordinate cameraLocation, ShaderProgram program)
+        public void DrawTextured(IGraphicsContext context, Coordinate cameraLocation, ShaderProgram program)
         {
-            // Todo abstract this out a bit, repeated code all over the place
-            _array.Bind(context, 0);
-            foreach (var subset in _array.TextureSubsets)
-            {
-                var tex = subset.Instance;
-                if (tex != null) tex.Bind();
-                else TextureHelper.Unbind();
-                program.Set("isTextured", tex != null);
-                _array.Array.DrawElements(0, subset.Start, subset.Count);
-            }
-            _array.Bind(context, 1);
-            foreach (var subset in _array.TransparentSubsets.OrderByDescending(x => (cameraLocation - x.Instance.Origin).LengthSquared()))
-            {
-                var tf = subset.Instance;
-                if (tf.Texture != null) tf.Texture.Bind();
-                else TextureHelper.Unbind();
-                program.Set("isTextured", tf.Texture != null);
-                _array.Array.DrawElements(0, subset.Start, subset.Count);
-            }
-            _array.Unbind();
-            GL.Disable(EnableCap.CullFace);
-            _decalArray.Bind(context, 0);
-            foreach (var subset in _decalArray.TextureSubsets)
-            {
-                var tex = subset.Instance;
-                if (tex != null) tex.Bind();
-                else TextureHelper.Unbind();
-                program.Set("isTextured", tex != null);
-                _decalArray.Array.DrawElements(0, subset.Start, subset.Count);
-            }
-            _decalArray.Unbind();
-            GL.Enable(EnableCap.CullFace);
+            _vbo.RenderTextured(context, program);
+            _vbo.RenderTransparent(context, program, cameraLocation);
+            // todo decals
         }
 
-        public void DrawWireframe(object context, ShaderProgram program)
+        public void DrawWireframe(IGraphicsContext context, ShaderProgram program)
         {
-            _array.Bind(context, 2);
-            foreach (var subset in _array.WireframeSubsets)
-            {
-                _array.Array.DrawElements(1, subset.Start, subset.Count);
-            }
-            _array.Unbind();
-            _decalArray.Bind(context, 1);
-            foreach (var subset in _decalArray.WireframeSubsets)
-            {
-                _decalArray.Array.DrawElements(1, subset.Start, subset.Count);
-            }
-            _decalArray.Unbind();
+
+            _vbo.RenderWireframe(context, program);
         }
     }
 }

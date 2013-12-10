@@ -241,12 +241,12 @@ void main()
             DrawUntransformed = true;
             DrawSelectedOnly = true;
             SelectedWireframeColour = new Vector4(0.6f, 0, 0, 1);
-            _array.DrawWireframe(context, Shader);
+            _array.DrawWireframe(context.Context, Shader);
 
             DrawUntransformed = false;
             DrawSelectedOnly = false;
             SelectedWireframeColour = new Vector4(1, 0, 0, 1);
-            _array.DrawWireframe(context, Shader);
+            _array.DrawWireframe(context.Context, Shader);
 
             Shader.Unbind();
         }
@@ -270,7 +270,7 @@ void main()
 
             GL.ActiveTexture(TextureUnit.Texture0);
             Shader.Set("currentTexture", 0);
-            _array.DrawTextured(context, location, Shader);
+            _array.DrawTextured(context.Context, location, Shader);
 
             DrawUntransformed = true;
             DrawSelectedOnly = true;
@@ -278,7 +278,7 @@ void main()
             WireframeColour = new Vector4(1, 1, 0, 1);
             SelectedWireframeColour = new Vector4(1, 0, 0, 1);
 
-            _array.DrawWireframe(context, Shader);
+            _array.DrawWireframe(context.Context, Shader);
 
             Shader.Unbind();
         }
