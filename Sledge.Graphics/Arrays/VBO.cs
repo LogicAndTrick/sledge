@@ -10,13 +10,15 @@ namespace Sledge.Graphics.Arrays
     public class Subset
     {
         public int GroupID { get; set; }
+        public Type Type { get; set; }
         public object Instance { get; set; }
         public int Start { get; set; }
         public int Count { get; set; }
 
-        public Subset(int groupId, object instance, int start, int count)
+        public Subset(int groupId, Type type, object instance, int start, int count)
         {
             GroupID = groupId;
+            Type = type;
             Instance = instance;
             Start = start;
             Count = count;
@@ -31,7 +33,7 @@ namespace Sledge.Graphics.Arrays
 
         private readonly List<TOut> _data;
         private readonly Dictionary<int, List<uint>> _indices;
-        private readonly Dictionary<int, Tuple<int, object>> _subsetState;
+        private readonly Dictionary<int, int> _subsetState;
         private readonly Dictionary<int, List<Subset>> _subsets;
         private readonly Dictionary<object, int> _offsets;
 
@@ -46,7 +48,7 @@ namespace Sledge.Graphics.Arrays
 
             _data = new List<TOut>();
             _indices = new Dictionary<int, List<uint>>();
-            _subsetState = new Dictionary<int, Tuple<int, object>>();
+            _subsetState = new Dictionary<int, int>();
             _subsets = new Dictionary<int, List<Subset>>();
             _offsets = new Dictionary<object, int>();
             _vertexArrays = new Dictionary<IGraphicsContext, VertexArray>();
@@ -142,17 +144,17 @@ namespace Sledge.Graphics.Arrays
 
         protected abstract void CreateArray(IEnumerable<TIn> data);
 
-        protected void StartSubset<T>(int groupId, T context) where T : class 
+        protected void StartSubset(int groupId)
         {
             if (_subsetState.ContainsKey(groupId)) throw new Exception("Cannot start two subsets for the same group.");
 
             if (!_indices.ContainsKey(groupId)) _indices.Add(groupId, new List<uint>());
             var list = _indices[groupId];
 
-            _subsetState.Add(groupId, Tuple.Create(list.Count, (object) context));
+            _subsetState.Add(groupId, list.Count);
         }
 
-        protected void PushSubset(int groupId)
+        protected void PushSubset<T>(int groupId, T context) where T : class 
         {
             if (!_subsetState.ContainsKey(groupId)) throw new Exception("No subset exists for this group.");
 
@@ -162,11 +164,11 @@ namespace Sledge.Graphics.Arrays
             if (!_indices.ContainsKey(groupId)) _indices.Add(groupId, new List<uint>());
             var list = _indices[groupId];
 
-            var num = list.Count - ss.Item1;
+            var num = list.Count - ss;
             if (num == 0) return;
 
             if (!_subsets.ContainsKey(groupId)) _subsets.Add(groupId, new List<Subset>());
-            _subsets[groupId].Add(new Subset(groupId, ss.Item2, ss.Item1, num));
+            _subsets[groupId].Add(new Subset(groupId, typeof(T), context, ss, num));
         }
 
         protected IEnumerable<Subset> GetSubsets(int groupId)
@@ -178,7 +180,8 @@ namespace Sledge.Graphics.Arrays
         protected IEnumerable<Subset> GetSubsets<T>(int groupId)
         {
             if (!_subsets.ContainsKey(groupId)) return new List<Subset>();
-            return _subsets[groupId].Where(x => x.Instance is T);
+            var t = typeof (T);
+            return _subsets[groupId].Where(x => x.Type == t);
         }
 
         protected void PushIndex(int groupId, uint start, IEnumerable<uint> indices)

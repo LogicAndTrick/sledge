@@ -33,7 +33,7 @@ namespace Sledge.DataStructures.Rendering
         {
         }
 
-        public void RenderTextured(IGraphicsContext context, ShaderProgram program)
+        public void RenderTextured(IGraphicsContext context, ShaderProgram program, Coordinate cameraLocation)
         {
             foreach (var subset in GetSubsets<ITexture>(Textured))
             {
@@ -47,6 +47,7 @@ namespace Sledge.DataStructures.Rendering
 
         public void RenderTransparent(IGraphicsContext context, ShaderProgram program, Coordinate cameraLocation)
         {
+
             var sorted =
                 from subset in GetSubsets<Face>(Transparent)
                 let face = subset.Instance as Face
@@ -105,31 +106,31 @@ namespace Sledge.DataStructures.Rendering
             var faces = obj.OfType<Solid>().SelectMany(x => x.Faces).ToList();
             var entities = obj.OfType<Entity>().Where(x => x.Children.Count == 0).ToList();
 
-            StartSubset(Wireframe, (object)null);
+            StartSubset(Wireframe);
 
             // Render solids
             foreach (var group in faces.GroupBy(x => new { x.Texture.Texture, Transparent = HasTransparency(x) }))
             {
                 var subset = group.Key.Transparent ? Transparent : Textured;
-                if (!group.Key.Transparent) StartSubset(subset, group.Key.Texture);
+                if (!group.Key.Transparent) StartSubset(subset);
 
                 foreach (var face in group)
                 {
-                    if (group.Key.Transparent) StartSubset(subset, face);
+                    if (group.Key.Transparent) StartSubset(subset);
 
                     PushOffset(face);
                     var index = PushData(Convert(face));
                     if (!face.Parent.IsRenderHidden3D) PushIndex(subset, index, Triangulate(face.Vertices.Count));
                     if (!face.Parent.IsRenderHidden2D) PushIndex(Wireframe, index, Linearise(face.Vertices.Count));
 
-                    if (group.Key.Transparent) PushSubset(subset);
+                    if (group.Key.Transparent) PushSubset(subset, face);
                 }
 
-                if (!group.Key.Transparent) PushSubset(subset);
+                if (!group.Key.Transparent) PushSubset(subset, group.Key.Texture);
             }
 
             // Render entities
-            StartSubset<ITexture>(Textured, null);
+            StartSubset(Textured);
             foreach (var entity in entities)
             {
                 PushOffset(entity);
@@ -140,9 +141,9 @@ namespace Sledge.DataStructures.Rendering
                     if (!face.Parent.IsRenderHidden2D) PushIndex(Wireframe, index, Linearise(face.Vertices.Count));
                 }
             }
-            PushSubset(Textured);
+            PushSubset(Textured, (ITexture) null);
 
-            PushSubset(Wireframe);
+            PushSubset(Wireframe, (object)null);
         }
 
         private bool HasTransparency(Face face)

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using OpenTK;
@@ -145,7 +146,7 @@ void main()
         public Document Document { get { return _document; } set { _document = value; } }
 
         private Document _document;
-        private readonly ArrayManager _array;
+        private MapObjectArray _array;
         private ShaderProgram Shader { get; set; }
 
         #region Shader Variables
@@ -183,7 +184,10 @@ void main()
         public ArrayRendererGL3(Document document)
         {
             _document = document;
-            _array = new ArrayManager(document.Map);
+
+            var all = GetAllVisible(document.Map.WorldSpawn);
+            _array = new MapObjectArray(all);
+
             Shader = new ShaderProgram(
                 new Shader(ShaderType.VertexShader, VertexShader),
                 new Shader(ShaderType.FragmentShader, FragmentShader));
@@ -241,12 +245,12 @@ void main()
             DrawUntransformed = true;
             DrawSelectedOnly = true;
             SelectedWireframeColour = new Vector4(0.6f, 0, 0, 1);
-            _array.DrawWireframe(context.Context, Shader);
+            _array.RenderWireframe(context.Context, Shader);
 
             DrawUntransformed = false;
             DrawSelectedOnly = false;
             SelectedWireframeColour = new Vector4(1, 0, 0, 1);
-            _array.DrawWireframe(context.Context, Shader);
+            _array.RenderWireframe(context.Context, Shader);
 
             Shader.Unbind();
         }
@@ -270,44 +274,63 @@ void main()
 
             GL.ActiveTexture(TextureUnit.Texture0);
             Shader.Set("currentTexture", 0);
-            _array.DrawTextured(context.Context, location, Shader);
+            _array.RenderTextured(context.Context, Shader, location);
 
+            // todo render helpers...
+
+            _array.RenderTransparent(context.Context, Shader, location);
+            
             DrawUntransformed = true;
             DrawSelectedOnly = true;
             IsWireframe = true;
             WireframeColour = new Vector4(1, 1, 0, 1);
             SelectedWireframeColour = new Vector4(1, 0, 0, 1);
 
-            _array.DrawWireframe(context.Context, Shader);
-
+            _array.RenderWireframe(context.Context, Shader);
+            
             Shader.Unbind();
         }
 
         public void Update()
         {
-            _array.Update(_document.Map);
+            var all = GetAllVisible(Document.Map.WorldSpawn);
+            _array.Update(all);
         }
 
         public void UpdatePartial(IEnumerable<MapObject> objects)
         {
             _array.UpdatePartial(objects);
-            _array.UpdateDecals(_document.Map);
+            //_array.UpdateDecals(_document.Map);
         }
 
         public void UpdatePartial(IEnumerable<Face> faces)
         {
             _array.UpdatePartial(faces);
-            _array.UpdateDecals(_document.Map);
+            //_array.UpdateDecals(_document.Map);
         }
 
         public IRenderable CreateRenderable(Model model)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public void UpdateDocumentToggles()
         {
             // Not needed
+        }
+
+        private static IEnumerable<MapObject> GetAllVisible(MapObject root)
+        {
+            var list = new List<MapObject>();
+            FindRecursive(list, root, x => !x.IsVisgroupHidden);
+            return list.Where(x => !x.IsCodeHidden).ToList();
+        }
+
+        private static void FindRecursive(ICollection<MapObject> items, MapObject root, Predicate<MapObject> matcher)
+        {
+            if (!matcher(root)) return;
+            items.Add(root);
+            root.Children.ForEach(x => FindRecursive(items, x, matcher));
         }
     }
 }
