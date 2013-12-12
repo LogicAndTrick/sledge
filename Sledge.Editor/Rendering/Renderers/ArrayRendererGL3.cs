@@ -275,7 +275,6 @@ void main()
             GL.ActiveTexture(TextureUnit.Texture0);
             Shader.Set("currentTexture", 0);
             _array.RenderTextured(context.Context, Shader, location);
-
             // todo render helpers...
 
             _array.RenderTransparent(context.Context, Shader, location);
