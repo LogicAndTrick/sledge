@@ -19,7 +19,7 @@ namespace Sledge.Editor.Rendering.Renderers
     public class ArrayRendererGL3 : IRenderer
     {
         #region Shaders
-        public const string VertexShader = @"#version 130
+        public const string VertexShader = @"#version 120
 
 layout(location = 0) in vec3 position;
 layout(location = 1) in vec3 normal;
@@ -33,12 +33,12 @@ const vec4 light1intensity = vec4(0.6, 0.6, 0.6, 1.0);
 const vec4 light2intensity = vec4(0.3, 0.3, 0.3, 1.0);
 const vec4 ambient = vec4(0.5, 0.5, 0.5, 1.0);
 
-smooth out vec4 worldPosition;
-smooth out vec4 worldNormal;
-smooth out vec4 vertexLighting;
-smooth out vec4 vertexColour;
-smooth out vec2 texCoord;
-smooth out float vertexSelected;
+varying vec4 worldPosition;
+varying vec4 worldNormal;
+varying vec4 vertexLighting;
+varying vec4 vertexColour;
+varying vec2 texCoord;
+varying float vertexSelected;
 
 uniform bool isWireframe;
 uniform bool drawUntransformed;
@@ -82,20 +82,20 @@ void main()
     vertexLighting = (vec4(1,1,1,1) * light1intensity * incidence1) * 0.5
                    + (vec4(1,1,1,1) * light2intensity * incidence2) * 0.5
                    + (vec4(1,1,1,1) * ambient);
-    vertexLighting.w = 1; // Reset the alpha channel or transparency gets messed up later
+    vertexLighting.w = 1.0; // Reset the alpha channel or transparency gets messed up later
     texCoord = texture;
     vertexSelected = selected;
 }
 ";
 
-        public const string FragmentShader = @"#version 130
+        public const string FragmentShader = @"#version 120
 
-smooth in vec4 worldPosition;
-smooth in vec4 worldNormal;
-smooth in vec4 vertexColour;
-smooth in vec4 vertexLighting;
-smooth in vec2 texCoord;
-smooth in float vertexSelected;
+varying vec4 worldPosition;
+varying vec4 worldNormal;
+varying vec4 vertexColour;
+varying vec4 vertexLighting;
+varying vec2 texCoord;
+varying float vertexSelected;
 
 uniform bool isWireframe;
 uniform bool drawUntransformed;
@@ -110,9 +110,9 @@ uniform bool showGrid;
 uniform float gridSpacing;
 uniform sampler2D currentTexture;
 
-out vec4 outputColor;
 void main()
 {
+    vec4 outputColor;
     float alpha = vertexColour.w;
     if (drawSelectedOnly && vertexSelected <= 0.9) discard;
     if (drawUnselectedOnly && vertexSelected > 0.9) discard;
@@ -138,6 +138,7 @@ void main()
         if (abs(worldNormal).z < 0.9999) outputColor = mix(outputColor, vec4(0, 0, 1, 1), step(mod(worldPosition.z, gridSpacing), 0.5));
     }
     outputColor.w = alpha;
+    gl_FragColor = outputColor;
 }
 ";
         #endregion Shaders

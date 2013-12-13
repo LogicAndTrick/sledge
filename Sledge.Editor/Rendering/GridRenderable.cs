@@ -16,13 +16,13 @@ namespace Sledge.Editor.Rendering
     {
         #region Shaders
 
-        private const string VertexShader = @"#version 130
+        private const string VertexShader = @"#version 120
 
 layout(location = 0) in vec3 position;
 layout(location = 1) in vec4 colour;
 
-smooth out vec4 worldPosition;
-smooth out vec4 vertexColour;
+varying vec4 worldPosition;
+varying vec4 vertexColour;
 
 uniform mat4 perspectiveMatrix;
 uniform mat4 cameraMatrix;
@@ -38,15 +38,14 @@ void main()
 }
 ";
 
-        public const string FragmentShader = @"#version 130
+        public const string FragmentShader = @"#version 120
 
-smooth in vec4 worldPosition;
-smooth in vec4 vertexColour;
+varying vec4 worldPosition;
+varying vec4 vertexColour;
 
-out vec4 outputColor;
 void main()
 {
-    outputColor = vertexColour;
+    gl_FragColor = vertexColour;
 }
 ";
         #endregion
