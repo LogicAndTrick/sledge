@@ -33,19 +33,25 @@ namespace Sledge.DataStructures.Rendering
         {
         }
 
-        public void RenderTextured(IGraphicsContext context, ShaderProgram program, Coordinate cameraLocation)
+        public void RenderTextured(IGraphicsContext context)
         {
-            foreach (var subset in GetSubsets<ITexture>(Textured))
+            foreach (var subset in GetSubsets<ITexture>(Textured).Where(x => x.Instance != null))
             {
-                var tex = (ITexture) subset.Instance;
-                if (tex != null) tex.Bind();
-                else TextureHelper.Unbind();
-                program.Set("isTextured", tex != null);
+                var tex = (ITexture)subset.Instance;
+                tex.Bind();
+                Render(context, BeginMode.Triangles, subset);
+            }
+        }
+        public void RenderUntextured(IGraphicsContext context)
+        {
+            TextureHelper.Unbind();
+            foreach (var subset in GetSubsets<ITexture>(Textured).Where(x => x.Instance == null))
+            {
                 Render(context, BeginMode.Triangles, subset);
             }
         }
 
-        public void RenderTransparent(IGraphicsContext context, ShaderProgram program, Coordinate cameraLocation)
+        public void RenderTransparent(IGraphicsContext context, Action<bool> isTextured, Coordinate cameraLocation)
         {
 
             var sorted =
@@ -59,12 +65,13 @@ namespace Sledge.DataStructures.Rendering
                 var tex = ((Face) subset.Instance).Texture;
                 if (tex.Texture != null) tex.Texture.Bind();
                 else TextureHelper.Unbind();
-                program.Set("isTextured", tex.Texture != null);
+                isTextured(tex.Texture != null);
+                //program.Set("isTextured", tex.Texture != null);
                 Render(context, BeginMode.Triangles, subset);
             }
         }
 
-        public void RenderWireframe(IGraphicsContext context, ShaderProgram program)
+        public void RenderWireframe(IGraphicsContext context)
         {
             foreach (var subset in GetSubsets(Wireframe))
             {

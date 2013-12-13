@@ -39,7 +39,6 @@ namespace Sledge.Graphics.Arrays
 
         private int _array = -1;
         private int _elementArray = -1;
-        //private readonly Dictionary<IGraphicsContext, VertexArray> _vertexArrays;
 
         protected VBO(IEnumerable<TIn> data)
         {
@@ -51,7 +50,6 @@ namespace Sledge.Graphics.Arrays
             _subsetState = new Dictionary<int, int>();
             _subsets = new Dictionary<int, List<Subset>>();
             _offsets = new Dictionary<object, int>();
-            //_vertexArrays = new Dictionary<IGraphicsContext, VertexArray>();
 
             Update(data);
         }

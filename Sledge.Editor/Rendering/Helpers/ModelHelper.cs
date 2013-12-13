@@ -63,6 +63,7 @@ namespace Sledge.Editor.Rendering.Helpers
  
         public void Render3D(Viewport3D viewport, MapObject o)
         {
+            return;
             var e = (Entity) o;
             var loc = viewport.Camera.Location;
             var distance = new Coordinate((decimal)loc.X, (decimal)loc.Y, (decimal)loc.Z) - o.BoundingBox.Center;

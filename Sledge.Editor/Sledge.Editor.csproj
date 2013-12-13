@@ -204,9 +204,12 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Rendering\RenderManagerRenderable.cs" />
+    <Compile Include="Rendering\Shaders\MapObject2DShader.cs" />
+    <Compile Include="Rendering\Shaders\MapObject3DShader.cs" />
     <Compile Include="Rendering\ToolRenderable.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Rendering\Viewport3DRenderOptions.cs" />
     <Compile Include="Rendering\WidgetLinesRenderable.cs" />
     <Compile Include="Scheduler.cs" />
     <Compile Include="Settings\Elevate.cs" />
@@ -552,6 +555,10 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <EmbeddedResource Include="Rendering\Shaders\MapObject3D.frag" />
+    <EmbeddedResource Include="Rendering\Shaders\MapObject3D.vert" />
+    <EmbeddedResource Include="Rendering\Shaders\MapObject2D.vert" />
+    <EmbeddedResource Include="Rendering\Shaders\MapObject2D.frag" />
     <None Include="Sprites\lightbulb.spr">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
