@@ -168,16 +168,6 @@ namespace Sledge.DataStructures.MapObjects
                         }
                         ent.UpdateBoundingBox();
                     }
-                    if (ent.EntityData.Name == "infodecal")
-                    {
-                        if (ent.Decal == null)
-                        {
-                            var tex = ent.EntityData.Properties.FirstOrDefault(x => x.Key == "texture");
-                            if (tex != null) ent.Decal = textureAccessor(tex.Value.ToLowerInvariant());
-                        }
-                        ent.CalculateDecalGeometry();
-                        ent.UpdateBoundingBox();
-                    }
                 }
                 else if (obj is Solid)
                 {

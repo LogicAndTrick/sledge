@@ -136,6 +136,8 @@ namespace Sledge.DataStructures.Rendering
                 if (!group.Key.Transparent) PushSubset(subset, group.Key.Texture);
             }
 
+            var decals = new List<Face>();
+
             // Render entities
             StartSubset(Textured);
             foreach (var entity in entities)
@@ -147,6 +149,7 @@ namespace Sledge.DataStructures.Rendering
                     if (!face.Parent.IsRenderHidden3D) PushIndex(Textured, index, Triangulate(face.Vertices.Count));
                     if (!face.Parent.IsRenderHidden2D) PushIndex(Wireframe, index, Linearise(face.Vertices.Count));
                 }
+                //if (entity.has)
             }
             PushSubset(Textured, (ITexture) null);
 

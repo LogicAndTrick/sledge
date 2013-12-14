@@ -7,6 +7,7 @@ using OpenTK.Graphics.OpenGL;
 using Sledge.DataStructures.MapObjects;
 using Sledge.DataStructures.Models;
 using Sledge.Editor.Documents;
+using Sledge.Editor.Extensions;
 using Sledge.Graphics.Renderables;
 using Sledge.Settings;
 using Sledge.UI;
@@ -214,7 +215,7 @@ namespace Sledge.Editor.Rendering.Renderers
                 if (entity != null)
                 {
                     list.AddRange(entity.GetBoxFaces());
-                    list.AddRange(entity.GetTexturedFaces());
+                    list.AddRange(entity.GetDecalGeometry());
                 }
             }
             return list;

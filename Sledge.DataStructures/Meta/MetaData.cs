@@ -16,7 +16,7 @@ namespace Sledge.DataStructures.Meta
 
         public void Set<T>(string key, T value)
         {
-            _data.Add(key, value);
+            _data[key] = value;
         }
 
         public void Unset(string key)
@@ -30,6 +30,11 @@ namespace Sledge.DataStructures.Meta
             var v = _data[key];
             if (v is T) return (T)v;
             return default(T);
+        }
+
+        public IEnumerable<T> GetAll<T>()
+        {
+            return _data.Values.OfType<T>();
         }
 
         public bool Has<T>(string key)
