@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Drawing;
 using Sledge.DataStructures.Geometric;
+using Sledge.DataStructures.Meta;
 using Sledge.DataStructures.Transformations;
 
 namespace Sledge.DataStructures.MapObjects
@@ -23,6 +24,7 @@ namespace Sledge.DataStructures.MapObjects
         public bool IsRenderHidden3D { get; set; }
         public bool IsVisgroupHidden { get; set; }
         public Box BoundingBox { get; set; }
+        public MetaData MetaData { get; private set; }
 
         protected MapObject(long id)
         {
@@ -30,6 +32,7 @@ namespace Sledge.DataStructures.MapObjects
             Visgroups = new List<int>();
             AutoVisgroups = new List<int>();
             Children = new List<MapObject>();
+            MetaData = new MetaData();
         }
 
         /// <summary>
@@ -66,6 +69,7 @@ namespace Sledge.DataStructures.MapObjects
             o.IsRenderHidden3D = IsRenderHidden3D;
             o.IsVisgroupHidden = IsVisgroupHidden;
             o.BoundingBox = BoundingBox.Clone();
+            o.MetaData = MetaData.Clone();
             var children = Children.Select(x => performClone ? x.Clone() : x.Copy(generator));
             foreach (var c in children)
             {
@@ -91,6 +95,7 @@ namespace Sledge.DataStructures.MapObjects
             IsRenderHidden3D = o.IsRenderHidden3D;
             IsVisgroupHidden = o.IsVisgroupHidden;
             BoundingBox = o.BoundingBox.Clone();
+            MetaData = o.MetaData.Clone();
 
             var children = o.Children.Select(x => performUnclone ? x.Clone() : x.Copy(generator));
             foreach (var c in children)

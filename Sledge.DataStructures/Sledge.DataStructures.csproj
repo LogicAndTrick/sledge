@@ -76,6 +76,7 @@
     <Compile Include="MapObjects\Entity.cs" />
     <Compile Include="MapObjects\EntityData.cs" />
     <Compile Include="MapObjects\Face.cs" />
+    <Compile Include="Meta\MetaData.cs" />
     <Compile Include="Models\Texture.cs" />
     <Compile Include="PlaneClassification.cs" />
     <Compile Include="MapObjects\Group.cs" />

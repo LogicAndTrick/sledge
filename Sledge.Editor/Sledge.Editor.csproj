@@ -135,6 +135,7 @@
     <Compile Include="Enums\PasteSpecialStartPoint.cs" />
     <Compile Include="Enums\TransformType.cs" />
     <Compile Include="Environment\GameEnvironment.cs" />
+    <Compile Include="Extensions\MapObjectExtensions.cs" />
     <Compile Include="History\HistoryStack.cs" />
     <Compile Include="Logging\ExceptionWindow.cs">
       <SubType>Form</SubType>
