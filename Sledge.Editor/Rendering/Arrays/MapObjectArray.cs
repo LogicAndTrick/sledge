@@ -3,27 +3,19 @@ using System.Collections.Generic;
 using System.Linq;
 using OpenTK;
 using OpenTK.Graphics;
-using OpenTK.Graphics.OpenGL;
 using Sledge.Common;
 using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.MapObjects;
+using Sledge.DataStructures.Models;
+using Sledge.Editor.Extensions;
 using Sledge.Graphics.Arrays;
 using Sledge.Graphics.Helpers;
-using Sledge.Graphics.Shaders;
+using BeginMode = OpenTK.Graphics.OpenGL.BeginMode;
 
-namespace Sledge.DataStructures.Rendering
+namespace Sledge.Editor.Rendering.Arrays
 {
-    public class MapObjectArray : VBO<MapObject, MapObjectArray.MapObjectVertex>
+    public class MapObjectArray : VBO<MapObject, MapObjectVertex>
     {
-        public struct MapObjectVertex
-        {
-            public Vector3 Position;
-            public Vector3 Normal;
-            public Vector2 Texture;
-            public Color4 Colour;
-            public float IsSelected;
-        }
-
         private const int Textured = 0;
         private const int Transparent = 1;
         private const int Wireframe = 2;
@@ -136,8 +128,6 @@ namespace Sledge.DataStructures.Rendering
                 if (!group.Key.Transparent) PushSubset(subset, group.Key.Texture);
             }
 
-            var decals = new List<Face>();
-
             // Render entities
             StartSubset(Textured);
             foreach (var entity in entities)
@@ -149,7 +139,6 @@ namespace Sledge.DataStructures.Rendering
                     if (!face.Parent.IsRenderHidden3D) PushIndex(Textured, index, Triangulate(face.Vertices.Count));
                     if (!face.Parent.IsRenderHidden2D) PushIndex(Wireframe, index, Linearise(face.Vertices.Count));
                 }
-                //if (entity.has)
             }
             PushSubset(Textured, (ITexture) null);
 

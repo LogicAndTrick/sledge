@@ -26,7 +26,8 @@ namespace Sledge.Editor.Extensions
             var e = mo as Entity;
             if (e == null || !ShouldHaveDecal(e)) return;
             var tex = e.EntityData.Properties.FirstOrDefault(x => x.Key == "texture");
-            if (tex != null) e.SetDecal(document.GetTexture(tex.Value.ToLowerInvariant()));
+            if (tex == null || (HasDecal(e) && string.Equals(GetDecal(e).Name, tex.Value, StringComparison.CurrentCultureIgnoreCase))) return;
+            e.SetDecal(document.GetTexture(tex.Value.ToLowerInvariant()));
         }
 
         public static bool ShouldHaveDecal(this Entity entity)
@@ -36,10 +37,8 @@ namespace Sledge.Editor.Extensions
 
         public static void SetDecal(this Entity entity, ITexture texture)
         {
-            var geometry = CalculateDecalGeometry(entity, texture);
             entity.MetaData.Set(DecalMetaKey, texture);
-            entity.MetaData.Set(DecalGeometryMetaKey, geometry);
-            entity.MetaData.Set(DecalBoundingBoxMetaKey, new Box(geometry.SelectMany(x => x.Vertices).Select(x => x.Location)));
+            UpdateDecalGeometry(entity);
         }
 
         public static ITexture GetDecal(this Entity entity)
@@ -52,6 +51,15 @@ namespace Sledge.Editor.Extensions
             return entity.MetaData.Get<List<Face>>(DecalGeometryMetaKey) ?? new List<Face>();
         }
 
+        public static void UpdateDecalGeometry(this Entity entity)
+        {
+            var decal = GetDecal(entity);
+            if (decal == null) return;
+            var geometry = CalculateDecalGeometry(entity, decal);
+            entity.MetaData.Set(DecalGeometryMetaKey, geometry);
+            entity.MetaData.Set(DecalBoundingBoxMetaKey, geometry.Any() ? new Box(geometry.SelectMany(x => x.Vertices).Select(x => x.Location)) : null);
+        }
+
         public static bool HasDecal(this Entity entity)
         {
             return entity.MetaData.Has<ITexture>(DecalMetaKey);
@@ -60,7 +68,7 @@ namespace Sledge.Editor.Extensions
         private static List<Face> CalculateDecalGeometry(Entity entity, ITexture decal)
         {
             var decalGeometry = new List<Face>();
-            if (decal == null) return decalGeometry; // Texture not found
+            if (decal == null || entity.Parent == null) return decalGeometry; // Texture not found
 
             var boxRadius = Coordinate.One * 4;
             // Decals apply to all faces that intersect within an 8x8x8 bounding box
@@ -69,7 +77,7 @@ namespace Sledge.Editor.Extensions
             var root = MapObject.GetRoot(entity.Parent);
             // Get the faces that intersect with the decal's radius
             var faces = root.GetAllNodesIntersectingWith(box).OfType<Solid>()
-                .SelectMany(x => x.Faces).Where(x => x.IntersectsWithBox(box));
+                    .SelectMany(x => x.Faces).Where(x => x.IntersectsWithBox(box));
             var idg = new IDGenerator(); // Dummy generator
             foreach (var face in faces)
             {

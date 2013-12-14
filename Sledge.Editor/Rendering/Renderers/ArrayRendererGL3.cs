@@ -7,6 +7,8 @@ using Sledge.DataStructures.MapObjects;
 using Sledge.DataStructures.Models;
 using Sledge.DataStructures.Rendering;
 using Sledge.Editor.Documents;
+using Sledge.Editor.Extensions;
+using Sledge.Editor.Rendering.Arrays;
 using Sledge.Editor.Rendering.Shaders;
 using Sledge.Editor.UI;
 using Sledge.Graphics.Renderables;
@@ -20,7 +22,10 @@ namespace Sledge.Editor.Rendering.Renderers
         public Document Document { get { return _document; } set { _document = value; } }
 
         private Document _document;
+
         private readonly MapObjectArray _array;
+        private readonly DecalArray _decalArray;
+
         private readonly MapObject2DShader _mapObject2DShader;
         private readonly MapObject3DShader _mapObject3DShader;
         private Matrix4 _selectionTransform;
@@ -32,8 +37,8 @@ namespace Sledge.Editor.Rendering.Renderers
         {
             _document = document;
 
-            var all = GetAllVisible(document.Map.WorldSpawn);
-            _array = new MapObjectArray(all);
+            _array = new MapObjectArray(GetAllVisible(document.Map.WorldSpawn));
+            _decalArray = new DecalArray(GetDecals(document.Map.WorldSpawn));
 
             GridRenderables = ViewportManager.Viewports.OfType<Viewport2D>().ToDictionary(x => (ViewportBase)x, x => new GridRenderable(_document));
 
@@ -128,28 +133,32 @@ namespace Sledge.Editor.Rendering.Renderers
             _mapObject2DShader.SelectedColour = new Vector4(1, 1, 0, 1);
             _mapObject2DShader.SelectionTransform = Matrix4.Identity;
             _array.RenderWireframe(context.Context);
+            _decalArray.RenderWireframe(context.Context);
             _mapObject2DShader.Unbind();
 
             // Render transparent
             _mapObject3DShader.Bind(opts);
+            _decalArray.RenderTransparent(context.Context, location);
             _array.RenderTransparent(context.Context, x => _mapObject3DShader.IsTextured = x, location);
             _mapObject3DShader.Unbind();
         }
 
         public void Update()
         {
-            var all = GetAllVisible(Document.Map.WorldSpawn);
-            _array.Update(all);
+            _array.Update(GetAllVisible(Document.Map.WorldSpawn));
+            _decalArray.Update(GetDecals(Document.Map.WorldSpawn));
         }
 
         public void UpdatePartial(IEnumerable<MapObject> objects)
         {
             _array.UpdatePartial(objects);
+            _decalArray.Update(GetDecals(Document.Map.WorldSpawn));
         }
 
         public void UpdatePartial(IEnumerable<Face> faces)
         {
             _array.UpdatePartial(faces);
+            _decalArray.Update(GetDecals(Document.Map.WorldSpawn));
         }
 
         public IRenderable CreateRenderable(Model model)
@@ -160,6 +169,15 @@ namespace Sledge.Editor.Rendering.Renderers
         public void UpdateDocumentToggles()
         {
             // Not needed
+        }
+
+        private IEnumerable<MapObject> GetDecals(MapObject root)
+        {
+            var list = new List<MapObject>();
+            FindRecursive(list, root, x => !x.IsVisgroupHidden);
+            var results = list.Where(x => !x.IsCodeHidden && x is Entity && ((Entity)x).HasDecal()).ToList();
+            results.ForEach(x => ((Entity) x).UpdateDecalGeometry());
+            return results;
         }
 
         private static IEnumerable<MapObject> GetAllVisible(MapObject root)

@@ -49,7 +49,6 @@
     <Compile Include="Models\ModelVertexArray.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Rendering.cs" />
-    <Compile Include="MapObjectArray.cs" />
     <Compile Include="VertexArraySubset.cs" />
   </ItemGroup>
   <ItemGroup>

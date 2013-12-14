@@ -164,6 +164,11 @@ namespace Sledge.DataStructures.MapObjects
                 .FirstOrDefault();
         }
 
+        public override Box GetIntersectionBoundingBox()
+        {
+            return new Box(new[] {BoundingBox}.Union(MetaData.GetAll<Box>()));
+        }
+
         public override EntityData GetEntityData()
         {
             return EntityData;

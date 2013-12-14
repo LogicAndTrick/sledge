@@ -155,6 +155,11 @@ namespace Sledge.DataStructures.MapObjects
             return null;
         }
 
+        public virtual Box GetIntersectionBoundingBox()
+        {
+            return BoundingBox;
+        }
+
         /// <summary>
         /// Searches upwards for the last parent that is not null and is not
         /// an instance of <code>Sledge.DataStructures.MapObjects.World</code>.
@@ -232,7 +237,8 @@ namespace Sledge.DataStructures.MapObjects
             if (IsCodeHidden || IsVisgroupHidden) return list;
             if (!(this is World))
             {
-                if (BoundingBox == null || !BoundingBox.IntersectsWith(line)) return list;
+                var bbox = GetIntersectionBoundingBox();
+                if (bbox == null || !bbox.IntersectsWith(line)) return list;
                 if (this is Solid || this is Entity) list.Add(this);
             }
             list.AddRange(Children.SelectMany(x => x.GetAllNodesIntersectingWith(line)));
