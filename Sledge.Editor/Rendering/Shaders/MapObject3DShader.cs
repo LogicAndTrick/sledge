@@ -19,6 +19,8 @@ namespace Sledge.Editor.Rendering.Shaders
         private bool IsLit { set { Shader.Set("isLit", value); } }
         private Vector4 SelectionColourMultiplier { set { Shader.Set("selectionColourMultiplier", value); } }
 
+        public Vector4 Translation { set { Shader.Set("translation", value); } }
+
         public Matrix4 SelectionTransform
         {
             set
@@ -44,6 +46,7 @@ namespace Sledge.Editor.Rendering.Shaders
             Show3DGrid = false;
             GridSpacing = 64;
             SelectionColourMultiplier = new Vector4(1, 0.5f, 0.5f, 1);
+            Translation = Vector4.Zero;
 
             GL.ActiveTexture(TextureUnit.Texture0);
             Shader.Set("currentTexture", 0);

@@ -19,6 +19,7 @@ varying vec4 vertexColour;
 varying vec2 texCoord;
 varying float vertexSelected;
 
+uniform vec4 translation;
 uniform mat4 modelViewMatrix;
 uniform mat4 perspectiveMatrix;
 uniform mat4 cameraMatrix;
@@ -27,7 +28,7 @@ uniform mat4 inverseSelectionTransform;
 
 void main()
 {
-    vec4 pos = vec4(position, 1);
+    vec4 pos = vec4(position, 1) + translation;
     if (selected > 0.9) pos = selectionTransform * pos;
     vec4 modelPos = modelViewMatrix * pos;
     

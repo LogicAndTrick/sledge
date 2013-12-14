@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Linq;
+using Sledge.Common;
 using Sledge.DataStructures.Geometric;
 
 namespace Sledge.DataStructures.Models
 {
-    public class Model
+    public class Model: IDisposable
     {
         public string Name { get; set; }
         public List<Bone> Bones { get; private set; }
@@ -161,6 +162,15 @@ namespace Sledge.DataStructures.Models
                     v.TextureU /= skin.Width;
                     v.TextureV /= skin.Height;
                 }
+            }
+        }
+
+        public void Dispose()
+        {
+            foreach (var t in Textures)
+            {
+                if (t.Image != null) t.Image.Dispose();
+                if (t.TextureObject != null) t.TextureObject.Dispose();
             }
         }
     }

@@ -5,7 +5,6 @@ using OpenTK;
 using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.MapObjects;
 using Sledge.DataStructures.Models;
-using Sledge.DataStructures.Rendering;
 using Sledge.Editor.Documents;
 using Sledge.Editor.Extensions;
 using Sledge.Editor.Rendering.Arrays;
@@ -16,15 +15,17 @@ using Sledge.UI;
 
 namespace Sledge.Editor.Rendering.Renderers
 {
-    public class ArrayRendererGL3 : IRenderer
+    public class ModernRenderer : IRenderer
     {
-        public string Name { get { return "OpenGL 3.0 Renderer"; } }
+        public string Name { get { return "OpenGL 2.1 Renderer"; } }
         public Document Document { get { return _document; } set { _document = value; } }
 
         private Document _document;
 
         private readonly MapObjectArray _array;
         private readonly DecalArray _decalArray;
+        private readonly Dictionary<Model, ModelArray> _modelArrays;
+        private readonly List<Tuple<Entity, Model>> _models;
 
         private readonly MapObject2DShader _mapObject2DShader;
         private readonly MapObject3DShader _mapObject3DShader;
@@ -33,12 +34,14 @@ namespace Sledge.Editor.Rendering.Renderers
 
         private Dictionary<ViewportBase, GridRenderable> GridRenderables { get; set; }
 
-        public ArrayRendererGL3(Document document)
+        public ModernRenderer(Document document)
         {
             _document = document;
 
             _array = new MapObjectArray(GetAllVisible(document.Map.WorldSpawn));
             _decalArray = new DecalArray(GetDecals(document.Map.WorldSpawn));
+            _modelArrays = new Dictionary<Model, ModelArray>();
+            _models = new List<Tuple<Entity, Model>>();
 
             GridRenderables = ViewportManager.Viewports.OfType<Viewport2D>().ToDictionary(x => (ViewportBase)x, x => new GridRenderable(_document));
 
@@ -117,13 +120,25 @@ namespace Sledge.Editor.Rendering.Renderers
             // Render textured polygons
             _array.RenderTextured(context.Context);
 
+            // Render textured models
+            if (!Sledge.Settings.View.DisableModelRendering)
+            {
+                foreach (var tuple in _models)
+                {
+                    var arr = _modelArrays[tuple.Item2];
+                    var origin = tuple.Item1.Origin;
+                    if (tuple.Item1.HideDistance() <= (location - origin).VectorMagnitude()) continue;
+                    _mapObject3DShader.Translation = new Vector4((float) origin.X, (float) origin.Y, (float) origin.Z, 0);
+                    arr.RenderTextured(context.Context);
+                }
+                _mapObject3DShader.Translation = Vector4.Zero;
+            }
+
             // Render untextured polygons
             _mapObject3DShader.IsTextured = false;
-            _array.RenderUntextured(context.Context);
-
-            //todo decals
-            // Render sprites
-            // Render models
+            _array.RenderUntextured(context.Context, location);
+            
+            // todo Render sprites
 
             _mapObject3DShader.Unbind();
 
@@ -147,18 +162,40 @@ namespace Sledge.Editor.Rendering.Renderers
         {
             _array.Update(GetAllVisible(Document.Map.WorldSpawn));
             _decalArray.Update(GetDecals(Document.Map.WorldSpawn));
+            UpdateModels();
         }
 
         public void UpdatePartial(IEnumerable<MapObject> objects)
         {
             _array.UpdatePartial(objects);
             _decalArray.Update(GetDecals(Document.Map.WorldSpawn));
+            UpdateModels();
         }
 
         public void UpdatePartial(IEnumerable<Face> faces)
         {
             _array.UpdatePartial(faces);
             _decalArray.Update(GetDecals(Document.Map.WorldSpawn));
+            UpdateModels();
+        }
+
+        private void UpdateModels()
+        {
+            _models.Clear();
+            foreach (var entity in GetModels(Document.Map.WorldSpawn))
+            {
+                var model = entity.GetModel();
+                _models.Add(Tuple.Create(entity, model.Model));
+                if (!_modelArrays.ContainsKey(model.Model))
+                {
+                    _modelArrays.Add(model.Model, new ModelArray(model.Model));
+                }
+            }
+            foreach (var kv in _modelArrays.Where(x => _models.All(y => y.Item2 != x.Key)).ToList())
+            {
+                kv.Value.Dispose();
+                _modelArrays.Remove(kv.Key);
+            }
         }
 
         public IRenderable CreateRenderable(Model model)
@@ -171,12 +208,19 @@ namespace Sledge.Editor.Rendering.Renderers
             // Not needed
         }
 
+        private IEnumerable<Entity> GetModels(MapObject root)
+        {
+            var list = new List<MapObject>();
+            FindRecursive(list, root, x => !x.IsVisgroupHidden);
+            return list.Where(x => !x.IsCodeHidden).OfType<Entity>().Where(x => x.HasModel());
+        }
+
         private IEnumerable<MapObject> GetDecals(MapObject root)
         {
             var list = new List<MapObject>();
             FindRecursive(list, root, x => !x.IsVisgroupHidden);
             var results = list.Where(x => !x.IsCodeHidden && x is Entity && ((Entity)x).HasDecal()).ToList();
-            results.ForEach(x => ((Entity) x).UpdateDecalGeometry());
+            results.ForEach(x => ((Entity)x).UpdateDecalGeometry());
             return results;
         }
 

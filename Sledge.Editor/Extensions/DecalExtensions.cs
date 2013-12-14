@@ -143,6 +143,7 @@ namespace Sledge.Editor.Extensions
                 var normalAdd = face.Plane.Normal * 0.2m;
                 decalFace.Transform(new UnitTranslate(normalAdd), TransformFlags.TextureLock);
 
+                decalFace.IsSelected = entity.IsSelected;
                 decalGeometry.Add(decalFace);
             }
             return decalGeometry;

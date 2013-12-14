@@ -14,7 +14,7 @@ using Sledge.UI;
 
 namespace Sledge.Editor.Rendering.Renderers
 {
-    public class DisplayListRendererGL1 : IRenderer
+    public class DisplayListRenderer : IRenderer
     {
         public string Name { get { return "OpenGL 1.0 Renderer (Display List)"; } }
         public Document Document { get; set; }
@@ -28,7 +28,7 @@ namespace Sledge.Editor.Rendering.Renderers
         private readonly int _listSelectedFilled;
         private readonly int _listSelectedFilledHighlight;
 
-        public DisplayListRendererGL1(Document document)
+        public DisplayListRenderer(Document document)
         {
             Document = document;
             _update = true;
@@ -153,33 +153,33 @@ namespace Sledge.Editor.Rendering.Renderers
             var selected = cache.Where(x => (x.IsSelected || (x.Parent != null && x.Parent.IsSelected)) && x.Opacity > 0.1).ToList();
 
             GL.NewList(_listUnselectedWireframe2D, ListMode.Compile);
-            DataStructures.Rendering.Rendering.DrawWireframe(unselected.Where(x => x.Parent == null || !x.Parent.IsRenderHidden2D), false);
+            Immediate.MapObjectRenderer.DrawWireframe(unselected.Where(x => x.Parent == null || !x.Parent.IsRenderHidden2D), false);
             GL.EndList();
 
             GL.NewList(_listSelectedWireframe2D, ListMode.Compile);
             GL.Color4(Color.Red);
-            DataStructures.Rendering.Rendering.DrawWireframe(selected.Where(x => x.Parent == null || !x.Parent.IsRenderHidden2D), true);
+            Immediate.MapObjectRenderer.DrawWireframe(selected.Where(x => x.Parent == null || !x.Parent.IsRenderHidden2D), true);
             GL.EndList();
 
             GL.NewList(_listUnselectedFilled, ListMode.Compile);
-            DataStructures.Rendering.Rendering.DrawFilled(unselected.Where(x => x.Parent == null || !x.Parent.IsRenderHidden3D), Color.Empty);
+            Immediate.MapObjectRenderer.DrawFilled(unselected.Where(x => x.Parent == null || !x.Parent.IsRenderHidden3D), Color.Empty);
             GL.EndList();
 
             var sel3D = selected.Where(x => x.Parent == null || !x.Parent.IsRenderHidden3D).ToList();
 
             GL.NewList(_listSelectedWireframe3D, ListMode.Compile);
             GL.Color4(Color.Yellow);
-            DataStructures.Rendering.Rendering.DrawWireframe(sel3D, true);
+            Immediate.MapObjectRenderer.DrawWireframe(sel3D, true);
             GL.EndList();
 
             GL.NewList(_listSelectedFilled, ListMode.Compile);
-            DataStructures.Rendering.Rendering.DrawFilled(sel3D, Color.Empty);
+            Immediate.MapObjectRenderer.DrawFilled(sel3D, Color.Empty);
             GL.EndList();
 
             GL.NewList(_listSelectedFilledHighlight, ListMode.Compile);
             if (!Document.Map.HideFaceMask || !Document.Selection.InFaceSelection)
             {
-                DataStructures.Rendering.Rendering.DrawFilled(sel3D, Color.FromArgb(64, Color.Red));
+                Immediate.MapObjectRenderer.DrawFilled(sel3D, Color.FromArgb(64, Color.Red));
             }
             GL.EndList();
 

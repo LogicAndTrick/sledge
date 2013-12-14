@@ -14,14 +14,14 @@ using Sledge.UI;
 
 namespace Sledge.Editor.Rendering.Renderers
 {
-    public class ImmediateRendererGL1 : IRenderer
+    public class ImmediateRenderer : IRenderer
     {
         public string Name { get { return "OpenGL 1.0 Renderer (Immediate Mode)"; } }
         public Document Document { get; set; }
 
         private Matrix4 _selectionTransform;
 
-        public ImmediateRendererGL1(Document document)
+        public ImmediateRenderer(Document document)
         {
             Document = document;
             _cache = null;
@@ -54,13 +54,13 @@ namespace Sledge.Editor.Rendering.Renderers
             GL.MatrixMode(MatrixMode.Modelview);
             GL.MultMatrix(ref modelView);
 
-            DataStructures.Rendering.Rendering.DrawWireframe(_unselected.Where(x => x.Parent == null || !x.Parent.IsRenderHidden2D), false);
+            Immediate.MapObjectRenderer.DrawWireframe(_unselected.Where(x => x.Parent == null || !x.Parent.IsRenderHidden2D), false);
             GL.Color4(Color.Red);
 
             GL.LoadMatrix(ref current);
             GL.MultMatrix(ref modelView);
             GL.MultMatrix(ref _selectionTransform);
-            DataStructures.Rendering.Rendering.DrawWireframe(_selected.Where(x => x.Parent == null || !x.Parent.IsRenderHidden2D), true);
+            Immediate.MapObjectRenderer.DrawWireframe(_selected.Where(x => x.Parent == null || !x.Parent.IsRenderHidden2D), true);
 
             GL.LoadMatrix(ref current);
         }
@@ -112,19 +112,19 @@ namespace Sledge.Editor.Rendering.Renderers
         public void Draw3D(ViewportBase context, Matrix4 viewport, Matrix4 camera, Matrix4 modelView)
         {
             UpdateCache();
-            DataStructures.Rendering.Rendering.DrawFilled(_unselected.Where(x => x.Parent == null || !x.Parent.IsRenderHidden3D), Color.Empty);
+            Immediate.MapObjectRenderer.DrawFilled(_unselected.Where(x => x.Parent == null || !x.Parent.IsRenderHidden3D), Color.Empty);
             GL.Color4(Color.Yellow);
-            DataStructures.Rendering.Rendering.DrawWireframe(_selected, true);
+            Immediate.MapObjectRenderer.DrawWireframe(_selected, true);
 
             Matrix4 current;
             GL.GetFloat(GetPName.ModelviewMatrix, out current);
             GL.MatrixMode(MatrixMode.Modelview);
             GL.MultMatrix(ref _selectionTransform);
 
-            DataStructures.Rendering.Rendering.DrawFilled(_selected.Where(x => x.Parent == null || !x.Parent.IsRenderHidden3D), Color.Empty);
+            Immediate.MapObjectRenderer.DrawFilled(_selected.Where(x => x.Parent == null || !x.Parent.IsRenderHidden3D), Color.Empty);
             if (!Document.Selection.InFaceSelection || !Document.Map.HideFaceMask)
             {
-                DataStructures.Rendering.Rendering.DrawFilled(_selected.Where(x => x.Parent == null || !x.Parent.IsRenderHidden3D), Color.FromArgb(64, Color.Red));
+                Immediate.MapObjectRenderer.DrawFilled(_selected.Where(x => x.Parent == null || !x.Parent.IsRenderHidden3D), Color.FromArgb(64, Color.Red));
             }
 
             GL.LoadMatrix(ref current);

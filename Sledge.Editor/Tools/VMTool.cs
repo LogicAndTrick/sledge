@@ -705,7 +705,7 @@ namespace Sledge.Editor.Tools
             Matrix.Push();
             var matrix = vp.GetModelViewMatrix();
             GL.MultMatrix(ref matrix);
-            DataStructures.Rendering.Rendering.DrawWireframe(_copies.Keys.SelectMany(x => x.Faces), true);
+            Rendering.Immediate.MapObjectRenderer.DrawWireframe(_copies.Keys.SelectMany(x => x.Faces), true);
             Matrix.Pop();
 
             // Draw in order by the unused coordinate (the up axis for this viewport)
@@ -781,11 +781,11 @@ namespace Sledge.Editor.Tools
             // Render out the solid previews
             GL.Color3(Color.White);
             var faces = _copies.Keys.SelectMany(x => x.Faces).ToList();
-            DataStructures.Rendering.Rendering.DrawFilled(faces, Color.Empty);
-            DataStructures.Rendering.Rendering.DrawFilled(faces.Where(x => !x.IsSelected), Color.FromArgb(64, Color.Green));
-            DataStructures.Rendering.Rendering.DrawFilled(faces.Where(x => x.IsSelected), Color.FromArgb(64, Color.Red));
+            Rendering.Immediate.MapObjectRenderer.DrawFilled(faces, Color.Empty);
+            Rendering.Immediate.MapObjectRenderer.DrawFilled(faces.Where(x => !x.IsSelected), Color.FromArgb(64, Color.Green));
+            Rendering.Immediate.MapObjectRenderer.DrawFilled(faces.Where(x => x.IsSelected), Color.FromArgb(64, Color.Red));
             GL.Color3(Color.Pink);
-            DataStructures.Rendering.Rendering.DrawWireframe(faces, true);
+            Rendering.Immediate.MapObjectRenderer.DrawWireframe(faces, true);
         }
 
         public override void KeyDown(ViewportBase viewport, ViewportEvent e)

@@ -109,6 +109,7 @@ namespace Sledge.Editor.Documents
 
             Map.PostLoadProcess(GameData, GetTexture, SettingsManager.GetSpecialTextureOpacity);
             Map.UpdateDecals(this);
+            Map.UpdateModels(this);
 
             HelperManager = new HelperManager(this);
             Renderer = new RenderManager(this);
@@ -341,6 +342,7 @@ namespace Sledge.Editor.Documents
         {
             Map.PartialPostLoadProcess(GameData, GetTexture, SettingsManager.GetSpecialTextureOpacity);
             Map.UpdateDecals(this);
+            Map.UpdateModels(this);
             HelperManager.UpdateCache();
             Renderer.Update();
             ViewportManager.Viewports.ForEach(vp => vp.UpdateNextFrame());
@@ -350,6 +352,7 @@ namespace Sledge.Editor.Documents
         {
             Map.PartialPostLoadProcess(GameData, GetTexture, SettingsManager.GetSpecialTextureOpacity);
             Map.UpdateDecals(this);
+            Map.UpdateModels(this);
             HelperManager.UpdateCache();
             Renderer.UpdatePartial(objects);
             ViewportManager.Viewports.ForEach(vp => vp.UpdateNextFrame());
@@ -359,6 +362,7 @@ namespace Sledge.Editor.Documents
         {
             Map.PartialPostLoadProcess(GameData, GetTexture, SettingsManager.GetSpecialTextureOpacity);
             Map.UpdateDecals(this);
+            Map.UpdateModels(this);
             HelperManager.UpdateCache();
             Renderer.UpdatePartial(faces);
             ViewportManager.Viewports.ForEach(vp => vp.UpdateNextFrame());

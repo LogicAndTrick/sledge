@@ -34,11 +34,17 @@ namespace Sledge.Editor.Rendering.Arrays
                 Render(context, BeginMode.Triangles, subset);
             }
         }
-        public void RenderUntextured(IGraphicsContext context)
+        public void RenderUntextured(IGraphicsContext context, Coordinate location)
         {
             TextureHelper.Unbind();
             foreach (var subset in GetSubsets<ITexture>(Textured).Where(x => x.Instance == null))
             {
+                Render(context, BeginMode.Triangles, subset);
+            }
+            foreach (var subset in GetSubsets<Entity>(Textured))
+            {
+                var e = (Entity) subset.Instance;
+                if (!Sledge.Settings.View.DisableModelRendering && e.HasModel() && e.HideDistance() > (location - e.Origin).VectorMagnitude()) continue;
                 Render(context, BeginMode.Triangles, subset);
             }
         }
@@ -129,9 +135,9 @@ namespace Sledge.Editor.Rendering.Arrays
             }
 
             // Render entities
-            StartSubset(Textured);
             foreach (var entity in entities)
             {
+                StartSubset(Textured);
                 PushOffset(entity);
                 foreach (var face in entity.GetBoxFaces())
                 {
@@ -139,8 +145,8 @@ namespace Sledge.Editor.Rendering.Arrays
                     if (!face.Parent.IsRenderHidden3D) PushIndex(Textured, index, Triangulate(face.Vertices.Count));
                     if (!face.Parent.IsRenderHidden2D) PushIndex(Wireframe, index, Linearise(face.Vertices.Count));
                 }
+                PushSubset(Textured, entity);
             }
-            PushSubset(Textured, (ITexture) null);
 
             PushSubset(Wireframe, (object)null);
         }

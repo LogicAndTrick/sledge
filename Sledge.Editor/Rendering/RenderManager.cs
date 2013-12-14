@@ -5,7 +5,6 @@ using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.MapObjects;
-using Sledge.DataStructures.Rendering;
 using Sledge.Editor.Documents;
 using Sledge.Editor.Rendering.Renderers;
 using Sledge.Editor.UI;
@@ -27,13 +26,13 @@ namespace Sledge.Editor.Rendering
             switch (View.Renderer)
             {
                 case RenderMode.OpenGL3:
-                    _renderer = new ArrayRendererGL3(_document);
+                    _renderer = new ModernRenderer(_document);
                     break;
                 case RenderMode.OpenGL1DisplayLists:
-                    _renderer = new DisplayListRendererGL1(_document);
+                    _renderer = new DisplayListRenderer(_document);
                     break;
                 case RenderMode.OpenGL1Immediate:
-                    _renderer = new ImmediateRendererGL1(_document);
+                    _renderer = new ImmediateRenderer(_document);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException("This isn't a valid render mode.");
