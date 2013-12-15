@@ -116,6 +116,8 @@ namespace Sledge.Editor.Rendering.Renderers
 
             _mapObject3DShader.Bind(opts);
             _mapObject3DShader.SelectionTransform = _selectionTransform;
+            _mapObject3DShader.SelectionColourMultiplier = Document.Map.HideFaceMask && Document.Selection.InFaceSelection
+                ? new Vector4(1, 1, 1, 1) : new Vector4(1, 0.5f, 0.5f, 1);
 
             // Render textured polygons
             _array.RenderTextured(context.Context);
@@ -198,29 +200,24 @@ namespace Sledge.Editor.Rendering.Renderers
             }
         }
 
-        public IRenderable CreateRenderable(Model model)
-        {
-            throw new NotImplementedException();
-        }
-
         public void UpdateDocumentToggles()
         {
             // Not needed
         }
 
-        private IEnumerable<Entity> GetModels(MapObject root)
+        private static IEnumerable<Entity> GetModels(MapObject root)
         {
             var list = new List<MapObject>();
             FindRecursive(list, root, x => !x.IsVisgroupHidden);
             return list.Where(x => !x.IsCodeHidden).OfType<Entity>().Where(x => x.HasModel());
         }
 
-        private IEnumerable<MapObject> GetDecals(MapObject root)
+        private static IEnumerable<Entity> GetDecals(MapObject root)
         {
             var list = new List<MapObject>();
             FindRecursive(list, root, x => !x.IsVisgroupHidden);
-            var results = list.Where(x => !x.IsCodeHidden && x is Entity && ((Entity)x).HasDecal()).ToList();
-            results.ForEach(x => ((Entity)x).UpdateDecalGeometry());
+            var results = list.Where(x => !x.IsCodeHidden).OfType<Entity>().Where(x => x.HasDecal()).ToList();
+            results.ForEach(x => x.UpdateDecalGeometry());
             return results;
         }
 

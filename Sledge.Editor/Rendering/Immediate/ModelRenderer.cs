@@ -1,6 +1,7 @@
 using System.Linq;
 using OpenTK.Graphics.OpenGL;
 using Sledge.DataStructures.Models;
+using Sledge.Graphics.Helpers;
 
 namespace Sledge.Editor.Rendering.Immediate
 {
@@ -11,6 +12,7 @@ namespace Sledge.Editor.Rendering.Immediate
             var transforms = model.Bones.Select(x => x.Transform).ToList();
 
             GL.Color4(1f, 1f, 1f, 1f);
+            TextureHelper.EnableTexturing();
 
             foreach (var group in model.Meshes.GroupBy(x => x.SkinRef))
             {
@@ -33,6 +35,7 @@ namespace Sledge.Editor.Rendering.Immediate
                 }
                 if (texture != null) texture.Unbind();
             }
+            TextureHelper.DisableTexturing();
         }
     }
 }

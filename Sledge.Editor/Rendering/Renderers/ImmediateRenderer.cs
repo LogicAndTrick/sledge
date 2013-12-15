@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
+using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.MapObjects;
 using Sledge.DataStructures.Models;
 using Sledge.Editor.Documents;
@@ -54,13 +55,26 @@ namespace Sledge.Editor.Rendering.Renderers
             GL.MatrixMode(MatrixMode.Modelview);
             GL.MultMatrix(ref modelView);
 
+            // Draw unselected stuff
             Immediate.MapObjectRenderer.DrawWireframe(_unselected.Where(x => x.Parent == null || !x.Parent.IsRenderHidden2D), false);
-            GL.Color4(Color.Red);
+            Immediate.MapObjectRenderer.DrawWireframe(_decals.Where(x => !x.IsSelected && !x.IsRenderHidden2D).SelectMany(x => x.GetDecalGeometry()), false);
+            Immediate.MapObjectRenderer.DrawWireframe(_models.Where(x => !x.IsSelected && !x.IsRenderHidden2D).SelectMany(x => x.GetBoxFaces()), false);
+
+            // Draw selection (untransformed)
+            GL.Color4(Color.FromArgb(128, 0, 0));
+            Immediate.MapObjectRenderer.DrawWireframe(_selected.Where(x => x.Parent == null || !x.Parent.IsRenderHidden2D), true);
+            Immediate.MapObjectRenderer.DrawWireframe(_decals.Where(x => x.IsSelected && !x.IsRenderHidden2D).SelectMany(x => x.GetDecalGeometry()), true);
+            Immediate.MapObjectRenderer.DrawWireframe(_models.Where(x => x.IsSelected && !x.IsRenderHidden2D).SelectMany(x => x.GetBoxFaces()), true);
 
             GL.LoadMatrix(ref current);
             GL.MultMatrix(ref modelView);
             GL.MultMatrix(ref _selectionTransform);
+
+            // Draw selection (transformed)
+            GL.Color4(Color.Red);
             Immediate.MapObjectRenderer.DrawWireframe(_selected.Where(x => x.Parent == null || !x.Parent.IsRenderHidden2D), true);
+            Immediate.MapObjectRenderer.DrawWireframe(_decals.Where(x => x.IsSelected && !x.IsRenderHidden2D).SelectMany(x => x.GetDecalGeometry()), true);
+            Immediate.MapObjectRenderer.DrawWireframe(_models.Where(x => x.IsSelected && !x.IsRenderHidden2D).SelectMany(x => x.GetBoxFaces()), true);
 
             GL.LoadMatrix(ref current);
         }
@@ -112,27 +126,65 @@ namespace Sledge.Editor.Rendering.Renderers
         public void Draw3D(ViewportBase context, Matrix4 viewport, Matrix4 camera, Matrix4 modelView)
         {
             UpdateCache();
+
+            var cam = ((Viewport3D)context).Camera.Location;
+            var location = new Coordinate((decimal)cam.X, (decimal)cam.Y, (decimal)cam.Z);
+
+            var sel3D = _selected.Where(x => x.Parent == null || !x.Parent.IsRenderHidden3D).ToList();
+            var sel3DDecals = _decals.Where(x => x.IsSelected && !x.IsRenderHidden3D).ToList();
+
+            // Draw unselected
             Immediate.MapObjectRenderer.DrawFilled(_unselected.Where(x => x.Parent == null || !x.Parent.IsRenderHidden3D), Color.Empty);
+            // Draw selected (wireframe; untransformed)
             GL.Color4(Color.Yellow);
-            Immediate.MapObjectRenderer.DrawWireframe(_selected, true);
+            Immediate.MapObjectRenderer.DrawWireframe(sel3D, true);
+            Immediate.MapObjectRenderer.DrawWireframe(_decals.Where(x => x.IsSelected && !x.IsRenderHidden3D).SelectMany(x => x.GetDecalGeometry()), true);
+            Immediate.MapObjectRenderer.DrawWireframe(_models.Where(x => x.IsSelected && !x.IsRenderHidden3D).SelectMany(x => x.GetBoxFaces()), true);
+            
+            // Draw models
+            if (!View.DisableModelRendering)
+            {
+                foreach (var entity in _models)
+                {
+                    var origin = entity.Origin;
+                    if (entity.HideDistance() <= (location - origin).VectorMagnitude())
+                    {
+                        Immediate.MapObjectRenderer.DrawFilled(entity.GetBoxFaces(), Color.Empty);
+                    }
+                    else
+                    {
+                        GL.Translate(origin.DX, origin.DY, origin.DZ);
+                        Immediate.ModelRenderer.Render(entity.GetModel().Model);
+                        GL.Translate(-origin.DX, -origin.DY, -origin.DZ);
+                    }
+                }
+            }
 
             Matrix4 current;
             GL.GetFloat(GetPName.ModelviewMatrix, out current);
             GL.MatrixMode(MatrixMode.Modelview);
             GL.MultMatrix(ref _selectionTransform);
 
-            Immediate.MapObjectRenderer.DrawFilled(_selected.Where(x => x.Parent == null || !x.Parent.IsRenderHidden3D), Color.Empty);
-            if (!Document.Selection.InFaceSelection || !Document.Map.HideFaceMask)
+            // Draw selection
+            Immediate.MapObjectRenderer.DrawFilled(sel3D, Color.Empty);
+            Immediate.MapObjectRenderer.DrawFilled(sel3DDecals.SelectMany(x => x.GetDecalGeometry()), Color.Empty);
+            if (!Document.Map.HideFaceMask || !Document.Selection.InFaceSelection)
             {
-                Immediate.MapObjectRenderer.DrawFilled(_selected.Where(x => x.Parent == null || !x.Parent.IsRenderHidden3D), Color.FromArgb(64, Color.Red));
+                Immediate.MapObjectRenderer.DrawFilled(sel3D, Color.FromArgb(64, Color.Red));
+                Immediate.MapObjectRenderer.DrawFilled(sel3DDecals.SelectMany(x => x.GetDecalGeometry()), Color.FromArgb(64, Color.Red));
             }
 
             GL.LoadMatrix(ref current);
+
+            // Draw unselected decals
+            Immediate.MapObjectRenderer.DrawFilled(_decals.Where(x => !x.IsSelected && !x.IsRenderHidden3D).SelectMany(x => x.GetDecalGeometry()), Color.Empty);
         }
 
         private List<Face> _cache;
         private List<Face> _unselected;
         private List<Face> _selected;
+        private List<Entity> _decals;
+        private List<Entity> _models;
         
         private void UpdateCache()
         {
@@ -141,20 +193,9 @@ namespace Sledge.Editor.Rendering.Renderers
             _cache = CollectFaces(all);
             _unselected = _cache.Where(x => !x.IsSelected && (x.Parent == null || !x.Parent.IsSelected) && x.Opacity > 0.1).ToList();
             _selected = _cache.Where(x => (x.IsSelected || (x.Parent != null && x.Parent.IsSelected)) && x.Opacity > 0.1).ToList();
-        }
 
-        private IList<MapObject> GetAllVisible(MapObject root)
-        {
-            var list = new List<MapObject>();
-            FindRecursive(list, root, x => !x.IsVisgroupHidden);
-            return list.Where(x => !x.IsCodeHidden).ToList();
-        }
-
-        private void FindRecursive(ICollection<MapObject> items, MapObject root, Predicate<MapObject> matcher)
-        {
-            if (!matcher(root)) return;
-            items.Add(root);
-            root.Children.ForEach(x => FindRecursive(items, x, matcher));
+            _decals = GetDecals(Document.Map.WorldSpawn).ToList();
+            _models = GetModels(Document.Map.WorldSpawn).ToList();
         }
 
         private List<Face> CollectFaces(IEnumerable<MapObject> all)
@@ -169,10 +210,9 @@ namespace Sledge.Editor.Rendering.Renderers
                 {
                     list.AddRange(solid.Faces);
                 }
-                if (entity != null)
+                if (entity != null && (!entity.HasModel() || View.DisableModelRendering))
                 {
                     list.AddRange(entity.GetBoxFaces());
-                    list.AddRange(entity.GetDecalGeometry());
                 }
             }
             return list;
@@ -193,14 +233,39 @@ namespace Sledge.Editor.Rendering.Renderers
             _cache = null;
         }
 
-        public IRenderable CreateRenderable(Model model)
-        {
-            throw new NotImplementedException();
-        }
-
         public void UpdateDocumentToggles()
         {
             // Not needed
+        }
+
+        private static IEnumerable<Entity> GetModels(MapObject root)
+        {
+            var list = new List<MapObject>();
+            FindRecursive(list, root, x => !x.IsVisgroupHidden);
+            return list.Where(x => !x.IsCodeHidden).OfType<Entity>().Where(x => x.HasModel());
+        }
+
+        private static IEnumerable<Entity> GetDecals(MapObject root)
+        {
+            var list = new List<MapObject>();
+            FindRecursive(list, root, x => !x.IsVisgroupHidden);
+            var results = list.Where(x => !x.IsCodeHidden).OfType<Entity>().Where(x => x.HasDecal()).ToList();
+            results.ForEach(x => x.UpdateDecalGeometry());
+            return results;
+        }
+
+        private static IEnumerable<MapObject> GetAllVisible(MapObject root)
+        {
+            var list = new List<MapObject>();
+            FindRecursive(list, root, x => !x.IsVisgroupHidden);
+            return list.Where(x => !x.IsCodeHidden).ToList();
+        }
+
+        private static void FindRecursive(ICollection<MapObject> items, MapObject root, Predicate<MapObject> matcher)
+        {
+            if (!matcher(root)) return;
+            items.Add(root);
+            root.Children.ForEach(x => FindRecursive(items, x, matcher));
         }
     }
 }

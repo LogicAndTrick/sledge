@@ -17,8 +17,8 @@ namespace Sledge.Editor.Rendering.Shaders
 
         public bool IsTextured { set { Shader.Set("isTextured", value); } }
         private bool IsLit { set { Shader.Set("isLit", value); } }
-        private Vector4 SelectionColourMultiplier { set { Shader.Set("selectionColourMultiplier", value); } }
 
+        public Vector4 SelectionColourMultiplier { set { Shader.Set("selectionColourMultiplier", value); } }
         public Vector4 Translation { set { Shader.Set("translation", value); } }
 
         public Matrix4 SelectionTransform
