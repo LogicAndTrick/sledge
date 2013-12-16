@@ -43,16 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ArrayManager.cs" />
-    <Compile Include="DecalFaceVertexArray.cs" />
-    <Compile Include="Models\DisplayListModelRenderable.cs" />
-    <Compile Include="Models\GL3ModelRenderable.cs" />
-    <Compile Include="Models\ImmediateModelRenderable.cs" />
-    <Compile Include="Models\ModelVertexArray.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Rendering.cs" />
-    <Compile Include="SolidVertexArray.cs" />
-    <Compile Include="VertexArraySubset.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Sledge.Common\Sledge.Common.csproj">
@@ -67,6 +58,9 @@
       <Project>{614D4144-8920-4975-AC67-DBBA5CB1EB43}</Project>
       <Name>Sledge.Graphics</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Models\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

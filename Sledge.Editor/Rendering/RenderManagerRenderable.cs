@@ -1,5 +1,4 @@
 using OpenTK;
-using Sledge.Editor.Documents;
 using Sledge.Graphics.Renderables;
 using Sledge.UI;
 

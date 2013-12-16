@@ -26,6 +26,7 @@ namespace Sledge.Settings
         public static bool DisableWadTransparency { get; set; }
         public static bool DisableToolTextureTransparency { get; set; }
         public static bool GloballyDisableTransparency { get; set; }
+        public static bool DisableModelRendering { get; set; }
 
         static View()
         {
@@ -53,7 +54,8 @@ namespace Sledge.Settings
             Renderer = RenderMode.OpenGL3;
             DisableWadTransparency = false;
             DisableToolTextureTransparency = false;
-            GloballyDisableTransparency = false;    
+            GloballyDisableTransparency = false;
+            DisableModelRendering = false;
         }
     }
 }

@@ -27,7 +27,7 @@ namespace Sledge.FileSystem
 
         public IFile Parent { get; set; }
 
-        public string FullPathName
+        public virtual string FullPathName
         {
             get { return Parent == null ? "\\" : Path.Combine(Parent.FullPathName, Name); }
         }

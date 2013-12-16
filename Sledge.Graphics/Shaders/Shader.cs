@@ -35,9 +35,9 @@ namespace Sledge.Graphics.Shaders
                                                            _attribLocations.Add(int.Parse(x.Groups[1].Value), x.Groups[3].Value);
                                                            return "in " + x.Groups[2].Value + " " + x.Groups[3].Value + ";";
                                                        });
-            if (!ShaderCode.Trim().StartsWith("#version 130"))
+            if (!ShaderCode.Trim().StartsWith("#version 120"))
             {
-                throw new Exception("Please use #version 130 for shaders to keep support for older hardware.");
+                throw new Exception("Please use #version 120 for shaders to keep support for older hardware.");
             }
         }
 

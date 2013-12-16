@@ -7,6 +7,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Sledge.Common;
 using Sledge.DataStructures.MapObjects;
 using Sledge.Editor.Documents;
+using Sledge.Editor.Extensions;
 using Sledge.Graphics;
 using Sledge.Providers;
 using Sledge.Providers.Map;
@@ -30,8 +31,7 @@ namespace Sledge.Tests
             var ents = document.Map.WorldSpawn.FindAll().OfType<Entity>();
             foreach (var entity in ents)
             {
-                entity.Decal = new MockTexture(64, 64, "Test");
-                entity.CalculateDecalGeometry();
+                entity.SetDecal(new MockTexture(64, 64, "Test"));
             }
         }
 
@@ -49,8 +49,7 @@ namespace Sledge.Tests
             var ents = document.Map.WorldSpawn.FindAll().OfType<Entity>();
             foreach (var entity in ents)
             {
-                entity.Decal = new MockTexture(64, 64, "Test");
-                entity.CalculateDecalGeometry();
+                entity.SetDecal(new MockTexture(64, 64, "Test"));
             }
         }
 

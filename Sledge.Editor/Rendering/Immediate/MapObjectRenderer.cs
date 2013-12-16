@@ -4,14 +4,13 @@ using System.Drawing;
 using System.Linq;
 using OpenTK.Graphics.OpenGL;
 using Sledge.Common;
-using Sledge.DataStructures.MapObjects;
 using Sledge.DataStructures.Geometric;
+using Sledge.DataStructures.MapObjects;
 using Sledge.Graphics.Helpers;
-using Vertex = Sledge.DataStructures.MapObjects.Vertex;
 
-namespace Sledge.DataStructures.Rendering
+namespace Sledge.Editor.Rendering.Immediate
 {
-    public static class Rendering
+    public static class MapObjectRenderer
     {
         public static Color Tint(Coordinate sun, Coordinate normal, Color c)
         {

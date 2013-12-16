@@ -14,6 +14,7 @@ using Sledge.DataStructures.MapObjects;
 using Sledge.Editor.Actions;
 using Sledge.Editor.Editing;
 using Sledge.Editor.Environment;
+using Sledge.Editor.Extensions;
 using Sledge.Editor.History;
 using Sledge.Editor.Rendering;
 using Sledge.Editor.Rendering.Helpers;
@@ -107,6 +108,8 @@ namespace Sledge.Editor.Documents
             TextureCollection.LoadTextureItems(items);
 
             Map.PostLoadProcess(GameData, GetTexture, SettingsManager.GetSpecialTextureOpacity);
+            Map.UpdateDecals(this);
+            Map.UpdateModels(this);
 
             HelperManager = new HelperManager(this);
             Renderer = new RenderManager(this);
@@ -324,7 +327,7 @@ namespace Sledge.Editor.Documents
             Renderer.SetSelectionTransform(Matrix4.Identity);
         }
 
-        private ITexture GetTexture(string name)
+        public ITexture GetTexture(string name)
         {
             if (!TextureHelper.Exists(name))
             {
@@ -338,6 +341,8 @@ namespace Sledge.Editor.Documents
         public void UpdateDisplayLists()
         {
             Map.PartialPostLoadProcess(GameData, GetTexture, SettingsManager.GetSpecialTextureOpacity);
+            Map.UpdateDecals(this);
+            Map.UpdateModels(this);
             HelperManager.UpdateCache();
             Renderer.Update();
             ViewportManager.Viewports.ForEach(vp => vp.UpdateNextFrame());
@@ -346,6 +351,8 @@ namespace Sledge.Editor.Documents
         public void UpdateDisplayLists(IEnumerable<MapObject> objects)
         {
             Map.PartialPostLoadProcess(GameData, GetTexture, SettingsManager.GetSpecialTextureOpacity);
+            Map.UpdateDecals(this);
+            Map.UpdateModels(this);
             HelperManager.UpdateCache();
             Renderer.UpdatePartial(objects);
             ViewportManager.Viewports.ForEach(vp => vp.UpdateNextFrame());
@@ -354,6 +361,8 @@ namespace Sledge.Editor.Documents
         public void UpdateDisplayLists(IEnumerable<Face> faces)
         {
             Map.PartialPostLoadProcess(GameData, GetTexture, SettingsManager.GetSpecialTextureOpacity);
+            Map.UpdateDecals(this);
+            Map.UpdateModels(this);
             HelperManager.UpdateCache();
             Renderer.UpdatePartial(faces);
             ViewportManager.Viewports.ForEach(vp => vp.UpdateNextFrame());

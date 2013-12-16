@@ -59,6 +59,7 @@
     <Compile Include="IFile.cs" />
     <Compile Include="NativeFile.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RootFile.cs" />
     <Compile Include="VirtualFile.cs" />
     <Compile Include="WadFile.cs" />
     <Compile Include="WadInsideGcfFile.cs" />

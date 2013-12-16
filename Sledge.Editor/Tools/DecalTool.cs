@@ -4,6 +4,7 @@ using Sledge.Common;
 using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.MapObjects;
 using Sledge.Editor.Actions.MapObjects.Operations;
+using Sledge.Editor.Extensions;
 using Sledge.Editor.Properties;
 using Sledge.Graphics.Helpers;
 using Sledge.Settings;
@@ -76,9 +77,9 @@ namespace Sledge.Editor.Tools
                 EntityData = new EntityData(gd),
                 ClassName = gd.Name,
                 Colour = Colour.GetRandomBrushColour(),
-                Decal = TextureHelper.Get(textureName.ToLowerInvariant()),
                 Origin = origin
             };
+            decal.SetDecal(TextureHelper.Get(textureName.ToLowerInvariant()));
             decal.EntityData.SetPropertyValue("texture", textureName);
 
             Document.PerformAction("Apply decal", new Create(decal));
