@@ -12,9 +12,9 @@ namespace Sledge.Editor.Rendering.Shaders
         public bool UnselectedOnly { set { Shader.Set("drawUnselectedOnly", value); } }
         public Vector4 SelectedColour { set { Shader.Set("selectedColour", value); } }
 
-        private Matrix4 Perspective { set { Shader.Set("perspectiveMatrix", value); } }
-        private Matrix4 Camera { set { Shader.Set("cameraMatrix", value); } }
-        private Matrix4 ModelView { set { Shader.Set("modelViewMatrix", value); } }
+        public Matrix4 Perspective { set { Shader.Set("perspectiveMatrix", value); } }
+        public Matrix4 Camera { set { Shader.Set("cameraMatrix", value); } }
+        public Matrix4 ModelView { set { Shader.Set("modelViewMatrix", value); } }
 
         public Matrix4 SelectionTransform { set { Shader.Set("selectionTransform", value); } }
 

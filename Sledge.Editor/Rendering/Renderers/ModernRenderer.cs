@@ -10,7 +10,6 @@ using Sledge.Editor.Extensions;
 using Sledge.Editor.Rendering.Arrays;
 using Sledge.Editor.Rendering.Shaders;
 using Sledge.Editor.UI;
-using Sledge.Graphics.Renderables;
 using Sledge.UI;
 
 namespace Sledge.Editor.Rendering.Renderers
@@ -22,6 +21,7 @@ namespace Sledge.Editor.Rendering.Renderers
 
         private Document _document;
 
+        private Dictionary<Viewport2D, GridArray> GridArrays { get; set; }
         private readonly MapObjectArray _array;
         private readonly DecalArray _decalArray;
         private readonly Dictionary<Model, ModelArray> _modelArrays;
@@ -30,9 +30,6 @@ namespace Sledge.Editor.Rendering.Renderers
         private readonly MapObject2DShader _mapObject2DShader;
         private readonly MapObject3DShader _mapObject3DShader;
         private Matrix4 _selectionTransform;
-
-
-        private Dictionary<ViewportBase, GridRenderable> GridRenderables { get; set; }
 
         public ModernRenderer(Document document)
         {
@@ -43,7 +40,8 @@ namespace Sledge.Editor.Rendering.Renderers
             _modelArrays = new Dictionary<Model, ModelArray>();
             _models = new List<Tuple<Entity, Model>>();
 
-            GridRenderables = ViewportManager.Viewports.OfType<Viewport2D>().ToDictionary(x => (ViewportBase)x, x => new GridRenderable(_document));
+            // Can't use a single grid array as it varies depending on the zoom level (pixel hiding factor)
+            GridArrays = ViewportManager.Viewports.OfType<Viewport2D>().ToDictionary(x => x, x => new GridArray());
 
             _selectionTransform = Matrix4.Identity;
             _mapObject2DShader = new MapObject2DShader();
@@ -58,9 +56,9 @@ namespace Sledge.Editor.Rendering.Renderers
 
         public void UpdateGrid(decimal gridSpacing, bool showIn2D, bool showIn3D)
         {
-            foreach (var kv in GridRenderables)
+            foreach (var kv in GridArrays)
             {
-                kv.Value.RebuildGrid(((Viewport2D)kv.Key).Zoom);
+                kv.Value.Update(Document.GameData.MapSizeLow, Document.GameData.MapSizeHigh, gridSpacing, kv.Key.Zoom);
             }
         }
 
@@ -71,28 +69,37 @@ namespace Sledge.Editor.Rendering.Renderers
 
         public void Draw2D(ViewportBase context, Matrix4 viewport, Matrix4 camera, Matrix4 modelView)
         {
-            if (GridRenderables.ContainsKey(context)) GridRenderables[context].Render(context);
-
             var opts = new Viewport2DRenderOptions
             {
                 Viewport = viewport,
                 Camera = camera,
-                ModelView = modelView
+                ModelView = Matrix4.Identity // modelView
             };
 
             _mapObject2DShader.Bind(opts);
 
-            // Render wireframe (untransformed)
             _mapObject2DShader.SelectionTransform = Matrix4.Identity;
             _mapObject2DShader.SelectedOnly = false;
             _mapObject2DShader.SelectedColour = new Vector4(0.5f, 0, 0, 1);
+
+            if (Document.Map.Show2DGrid)
+            {
+                // Render grid
+                var vp2 = (Viewport2D) context;
+                if (GridArrays.ContainsKey(vp2)) GridArrays[vp2].Render(context.Context);
+            }
+
+            // Render wireframe (untransformed)
+            _mapObject2DShader.ModelView = modelView;
             _array.RenderWireframe(context.Context);
+            _decalArray.RenderWireframe(context.Context);
 
             // Render wireframe (transformed)
             _mapObject2DShader.SelectionTransform = _selectionTransform;
             _mapObject2DShader.SelectedOnly = true;
             _mapObject2DShader.SelectedColour = new Vector4(1, 0, 0, 1);
             _array.RenderWireframe(context.Context);
+            _decalArray.RenderWireframe(context.Context);
 
             _mapObject2DShader.Unbind();
         }

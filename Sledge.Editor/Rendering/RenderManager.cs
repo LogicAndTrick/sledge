@@ -1,15 +1,9 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using OpenTK;
-using OpenTK.Graphics.OpenGL;
-using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.MapObjects;
 using Sledge.Editor.Documents;
 using Sledge.Editor.Rendering.Renderers;
-using Sledge.Editor.UI;
-using Sledge.Extensions;
-using Sledge.Graphics.Shaders;
 using Sledge.Settings;
 using Sledge.UI;
 

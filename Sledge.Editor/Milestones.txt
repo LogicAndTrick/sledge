@@ -6,8 +6,6 @@ Priorities
     Clip tool is laggy
   Rendering
     Models
-	  - Fix the grid renderable to use the new VBO
-	  - Get rid of old VertexBuffer/VertexArray
 	  - Change sprite renderables?
 	  - Further break dependencies between modern renderer and shaders/arrays
 	  - FileSystem environment root naming

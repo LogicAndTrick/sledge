@@ -176,6 +176,7 @@
     <Compile Include="Problems\TextureAxisPerpendicularToFace.cs" />
     <Compile Include="Problems\TextureNotFound.cs" />
     <Compile Include="Rendering\Arrays\DecalArray.cs" />
+    <Compile Include="Rendering\Arrays\GridArray.cs" />
     <Compile Include="Rendering\Arrays\ModelArray.cs" />
     <Compile Include="Rendering\Arrays\MapObjectArray.cs" />
     <Compile Include="Rendering\Arrays\MapObjectVertex.cs" />
@@ -207,9 +208,6 @@
     <Compile Include="History\HistoryAction.cs" />
     <Compile Include="History\HistoryManager.cs" />
     <Compile Include="History\IHistoryItem.cs" />
-    <Compile Include="Rendering\GridRenderable.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Rendering\RenderManagerRenderable.cs" />
     <Compile Include="Rendering\Shaders\MapObject2DShader.cs" />
     <Compile Include="Rendering\Shaders\MapObject3DShader.cs" />
