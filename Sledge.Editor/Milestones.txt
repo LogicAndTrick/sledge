@@ -4,11 +4,6 @@ Priorities
   Bugs
     Windows 7 recent file jump list not opening files
     Clip tool is laggy
-  Rendering
-    Models
-	  - Change sprite renderables?
-	  - Further break dependencies between modern renderer and shaders/arrays
-	  - FileSystem environment root naming
   Document/Actions
     Advanced/proper compiling
     Prefabs
@@ -33,6 +28,9 @@ Post-Alpha
     History sidebar
     Map diff
     History stacks (for VM tool)
+  Rendering
+	Change sprite renderables?
+	Further break dependencies between modern renderer and shaders/arrays
 
 1. Goldsource Support
   Formats

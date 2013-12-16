@@ -117,7 +117,7 @@ namespace Sledge.Sandbox
             {
                 if (!ok.Contains(kv.Method) && kv.VersionCategories.Any(x => float.Parse(x.Item1) > 2.0))
                 {
-                    Console.Write(kv.File.Name + " - " + kv.Method + ":");
+                    Console.Write(kv.File.FullName + " - " + kv.Method + ":");
                     foreach (var vc in kv.VersionCategories)
                     {
                         Console.Write(" -> " + vc.Item1 + " (" + vc.Item2 + ")");
