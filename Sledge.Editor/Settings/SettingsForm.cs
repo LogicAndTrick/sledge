@@ -245,6 +245,9 @@ namespace Sledge.Editor.Settings
             BackClippingPane.Value = Sledge.Settings.View.BackClippingPane;
             ModelRenderDistance.Value = Sledge.Settings.View.ModelRenderDistance;
             DetailRenderDistance.Value = Sledge.Settings.View.DetailRenderDistance;
+            BackClippingPaneChanged(null, null);
+            ModelRenderDistanceChanged(null, null);
+            DetailRenderDistanceChanged(null, null);
 
             ForwardSpeed.Value = Sledge.Settings.View.ForwardSpeed;
             TimeToTopSpeed.Value = (int) (Sledge.Settings.View.TimeToTopSpeed / 10);

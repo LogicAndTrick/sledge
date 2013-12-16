@@ -47,6 +47,7 @@ namespace Sledge.Editor.Settings
             this.RenderMode = new System.Windows.Forms.ComboBox();
             this.GloballyDisableTransparency = new System.Windows.Forms.CheckBox();
             this.DisableToolTransparency = new System.Windows.Forms.CheckBox();
+            this.DisableModelRendering = new System.Windows.Forms.CheckBox();
             this.DisableWadTransparency = new System.Windows.Forms.CheckBox();
             this.label32 = new System.Windows.Forms.Label();
             this.groupBox19 = new System.Windows.Forms.GroupBox();
@@ -285,7 +286,6 @@ namespace Sledge.Editor.Settings
             this.btnCancelSettings = new System.Windows.Forms.Button();
             this.btnApplyAndCloseSettings = new System.Windows.Forms.Button();
             this.btnApplySettings = new System.Windows.Forms.Button();
-            this.DisableModelRendering = new System.Windows.Forms.CheckBox();
             this.tbcSettings.SuspendLayout();
             this.tabGeneral.SuspendLayout();
             this.groupBox20.SuspendLayout();
@@ -479,6 +479,16 @@ namespace Sledge.Editor.Settings
             this.DisableToolTransparency.Tag = "";
             this.DisableToolTransparency.Text = "Disable tool texture transparency";
             this.DisableToolTransparency.UseVisualStyleBackColor = true;
+            // 
+            // DisableModelRendering
+            // 
+            this.DisableModelRendering.Location = new System.Drawing.Point(12, 139);
+            this.DisableModelRendering.Name = "DisableModelRendering";
+            this.DisableModelRendering.Size = new System.Drawing.Size(233, 24);
+            this.DisableModelRendering.TabIndex = 3;
+            this.DisableModelRendering.Tag = "";
+            this.DisableModelRendering.Text = "Disable model rendering";
+            this.DisableModelRendering.UseVisualStyleBackColor = true;
             // 
             // DisableWadTransparency
             // 
@@ -1446,7 +1456,7 @@ namespace Sledge.Editor.Settings
             this.DetailRenderDistance.BackColor = System.Drawing.SystemColors.Window;
             this.DetailRenderDistance.Location = new System.Drawing.Point(125, 122);
             this.DetailRenderDistance.Maximum = 10000;
-            this.DetailRenderDistance.Minimum = 2000;
+            this.DetailRenderDistance.Minimum = 200;
             this.DetailRenderDistance.Name = "DetailRenderDistance";
             this.DetailRenderDistance.Size = new System.Drawing.Size(232, 41);
             this.DetailRenderDistance.TabIndex = 0;
@@ -1470,7 +1480,7 @@ namespace Sledge.Editor.Settings
             this.ModelRenderDistance.BackColor = System.Drawing.SystemColors.Window;
             this.ModelRenderDistance.Location = new System.Drawing.Point(125, 67);
             this.ModelRenderDistance.Maximum = 10000;
-            this.ModelRenderDistance.Minimum = 2000;
+            this.ModelRenderDistance.Minimum = 200;
             this.ModelRenderDistance.Name = "ModelRenderDistance";
             this.ModelRenderDistance.Size = new System.Drawing.Size(232, 41);
             this.ModelRenderDistance.TabIndex = 0;
@@ -3086,16 +3096,6 @@ namespace Sledge.Editor.Settings
             this.btnApplySettings.Text = "Apply";
             this.btnApplySettings.UseVisualStyleBackColor = true;
             this.btnApplySettings.Click += new System.EventHandler(this.Apply);
-            // 
-            // DisableModelRendering
-            // 
-            this.DisableModelRendering.Location = new System.Drawing.Point(12, 139);
-            this.DisableModelRendering.Name = "DisableModelRendering";
-            this.DisableModelRendering.Size = new System.Drawing.Size(233, 24);
-            this.DisableModelRendering.TabIndex = 3;
-            this.DisableModelRendering.Tag = "";
-            this.DisableModelRendering.Text = "Disable model rendering";
-            this.DisableModelRendering.UseVisualStyleBackColor = true;
             // 
             // SettingsForm
             // 

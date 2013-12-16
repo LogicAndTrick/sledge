@@ -35,8 +35,8 @@ namespace Sledge.Settings
             SelectionBoxBackgroundOpacity = 64;
 
             BackClippingPane = 6000;
-            ModelRenderDistance = 4000;
-            DetailRenderDistance = 4000;
+            ModelRenderDistance = 2000;
+            DetailRenderDistance = 2000;
 
             ForwardSpeed = 1000;
             TimeToTopSpeed = 0.5m;
