@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Deployment.Application;
 using System.IO;
 using System.Linq;
-using System.Text;
 using Sledge.FileSystem;
 using Sledge.Settings.Models;
 
@@ -18,7 +16,7 @@ namespace Sledge.Editor.Environment
         {
             get
             {
-                return _root ?? (_root = new CompositeFile(null, GetGameDirectories().Select(x => new NativeFile(x))));
+                return _root ?? (_root = new RootFile(Game.Name, GetGameDirectories().Select(x => new NativeFile(x))));
             }
         }
 

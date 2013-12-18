@@ -198,6 +198,7 @@ namespace Sledge.Editor.Settings
             DisableWadTransparency.Checked = Sledge.Settings.View.DisableWadTransparency;
             DisableToolTransparency.Checked = Sledge.Settings.View.DisableToolTextureTransparency;
             GloballyDisableTransparency.Checked = Sledge.Settings.View.GloballyDisableTransparency;
+	        DisableModelRendering.Checked = Sledge.Settings.View.DisableModelRendering;
 
             // 2D Views
             CrosshairCursorIn2DViews.Checked = Sledge.Settings.View.CrosshairCursorIn2DViews;
@@ -244,6 +245,9 @@ namespace Sledge.Editor.Settings
             BackClippingPane.Value = Sledge.Settings.View.BackClippingPane;
             ModelRenderDistance.Value = Sledge.Settings.View.ModelRenderDistance;
             DetailRenderDistance.Value = Sledge.Settings.View.DetailRenderDistance;
+            BackClippingPaneChanged(null, null);
+            ModelRenderDistanceChanged(null, null);
+            DetailRenderDistanceChanged(null, null);
 
             ForwardSpeed.Value = Sledge.Settings.View.ForwardSpeed;
             TimeToTopSpeed.Value = (int) (Sledge.Settings.View.TimeToTopSpeed / 10);
@@ -286,6 +290,7 @@ namespace Sledge.Editor.Settings
             Sledge.Settings.View.DisableWadTransparency = DisableWadTransparency.Checked;
             Sledge.Settings.View.DisableToolTextureTransparency = DisableToolTransparency.Checked;
             Sledge.Settings.View.GloballyDisableTransparency = GloballyDisableTransparency.Checked;
+            Sledge.Settings.View.DisableModelRendering = DisableModelRendering.Checked;
 
             // 2D Views
             Sledge.Settings.View.CrosshairCursorIn2DViews = CrosshairCursorIn2DViews.Checked;
@@ -404,7 +409,17 @@ namespace Sledge.Editor.Settings
 
         private void BackClippingPaneChanged(object sender, EventArgs e)
         {
-            BackClippingPaneLabel.Text = BackClippingPane.Value.ToString();
+            BackClippingPaneLabel.Text = BackClippingPane.Value.ToString(CultureInfo.InvariantCulture);
+        }
+
+        private void ModelRenderDistanceChanged(object sender, EventArgs e)
+        {
+            ModelRenderDistanceLabel.Text = ModelRenderDistance.Value.ToString(CultureInfo.InvariantCulture);
+        }
+
+        private void DetailRenderDistanceChanged(object sender, EventArgs e)
+        {
+            DetailRenderDistanceLabel.Text = DetailRenderDistance.Value.ToString(CultureInfo.InvariantCulture);
         }
 
         private void ForwardSpeedChanged(object sender, EventArgs e)
@@ -985,5 +1000,5 @@ namespace Sledge.Editor.Settings
         }
 
 	    #endregion
-	}
+    }
 }

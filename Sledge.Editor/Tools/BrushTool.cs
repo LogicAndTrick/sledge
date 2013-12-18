@@ -203,7 +203,7 @@ namespace Sledge.Editor.Tools
                 Graphics.Helpers.Matrix.Push();
                 var matrix = viewport.GetModelViewMatrix();
                 GL.MultMatrix(ref matrix);
-                DataStructures.Rendering.Rendering.DrawWireframe(_preview, true);
+                Rendering.Immediate.MapObjectRenderer.DrawWireframe(_preview, true);
                 Graphics.Helpers.Matrix.Pop();
             }
         }
@@ -213,7 +213,7 @@ namespace Sledge.Editor.Tools
             base.Render3D(viewport);
             if (ShouldDraw3DBox() && _preview != null)
             {
-                DataStructures.Rendering.Rendering.DrawFilled(_preview, GetRenderColour());
+                Rendering.Immediate.MapObjectRenderer.DrawFilled(_preview, GetRenderColour());
             }
         }
 

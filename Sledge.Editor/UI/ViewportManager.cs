@@ -141,7 +141,8 @@ namespace Sledge.Editor.UI
                     LookAt = new Vector3(0, 1, 0),
                     FOV = Sledge.Settings.View.CameraFOV,
                     ClipDistance = Sledge.Settings.View.BackClippingPane
-                }
+                },
+                VSync = false
             };
             viewport.MakeCurrent();
             GraphicsHelper.InitGL3D();
@@ -155,7 +156,8 @@ namespace Sledge.Editor.UI
         {
             var viewport = new Viewport2D(direction)
             {
-                Dock = DockStyle.Fill
+                Dock = DockStyle.Fill,
+                VSync = false
             };
             viewport.MakeCurrent();
             GraphicsHelper.InitGL2D();

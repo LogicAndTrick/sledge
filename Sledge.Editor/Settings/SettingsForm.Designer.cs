@@ -47,6 +47,7 @@ namespace Sledge.Editor.Settings
             this.RenderMode = new System.Windows.Forms.ComboBox();
             this.GloballyDisableTransparency = new System.Windows.Forms.CheckBox();
             this.DisableToolTransparency = new System.Windows.Forms.CheckBox();
+            this.DisableModelRendering = new System.Windows.Forms.CheckBox();
             this.DisableWadTransparency = new System.Windows.Forms.CheckBox();
             this.label32 = new System.Windows.Forms.Label();
             this.groupBox19 = new System.Windows.Forms.GroupBox();
@@ -130,9 +131,9 @@ namespace Sledge.Editor.Settings
             this.label24 = new System.Windows.Forms.Label();
             this.label22 = new System.Windows.Forms.Label();
             this.DetailRenderDistance = new System.Windows.Forms.TrackBar();
-            this.label25 = new System.Windows.Forms.Label();
+            this.DetailRenderDistanceLabel = new System.Windows.Forms.Label();
             this.ModelRenderDistance = new System.Windows.Forms.TrackBar();
-            this.label23 = new System.Windows.Forms.Label();
+            this.ModelRenderDistanceLabel = new System.Windows.Forms.Label();
             this.BackClippingPane = new System.Windows.Forms.TrackBar();
             this.BackClippingPaneLabel = new System.Windows.Forms.Label();
             this.tabGame = new System.Windows.Forms.TabPage();
@@ -172,6 +173,9 @@ namespace Sledge.Editor.Settings
             this.SelectedGameEngine = new System.Windows.Forms.ComboBox();
             this.lblGameEngine = new System.Windows.Forms.Label();
             this.tabConfigEntities = new System.Windows.Forms.TabPage();
+            this.SelectedGameFgdList = new System.Windows.Forms.ListView();
+            this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.label38 = new System.Windows.Forms.Label();
             this.SelectedGameDetectedSizeHigh = new System.Windows.Forms.Label();
             this.SelectedGameDetectedSizeLow = new System.Windows.Forms.Label();
@@ -191,6 +195,9 @@ namespace Sledge.Editor.Settings
             this.SelectedGameDefaultBrushEnt = new System.Windows.Forms.ComboBox();
             this.SelectedGameDefaultPointEnt = new System.Windows.Forms.ComboBox();
             this.tabConfigTextures = new System.Windows.Forms.TabPage();
+            this.SelectedGameWadList = new System.Windows.Forms.ListView();
+            this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.lblGameWAD = new System.Windows.Forms.Label();
             this.SelectedGameLightmapScale = new System.Windows.Forms.NumericUpDown();
             this.lblConfigLightmapScale = new System.Windows.Forms.Label();
@@ -279,12 +286,6 @@ namespace Sledge.Editor.Settings
             this.btnCancelSettings = new System.Windows.Forms.Button();
             this.btnApplyAndCloseSettings = new System.Windows.Forms.Button();
             this.btnApplySettings = new System.Windows.Forms.Button();
-            this.SelectedGameWadList = new System.Windows.Forms.ListView();
-            this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.SelectedGameFgdList = new System.Windows.Forms.ListView();
-            this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.tbcSettings.SuspendLayout();
             this.tabGeneral.SuspendLayout();
             this.groupBox20.SuspendLayout();
@@ -436,11 +437,12 @@ namespace Sledge.Editor.Settings
             this.groupBox21.Controls.Add(this.RenderMode);
             this.groupBox21.Controls.Add(this.GloballyDisableTransparency);
             this.groupBox21.Controls.Add(this.DisableToolTransparency);
+            this.groupBox21.Controls.Add(this.DisableModelRendering);
             this.groupBox21.Controls.Add(this.DisableWadTransparency);
             this.groupBox21.Controls.Add(this.label32);
-            this.groupBox21.Location = new System.Drawing.Point(369, 217);
+            this.groupBox21.Location = new System.Drawing.Point(369, 85);
             this.groupBox21.Name = "groupBox21";
-            this.groupBox21.Size = new System.Drawing.Size(357, 158);
+            this.groupBox21.Size = new System.Drawing.Size(357, 290);
             this.groupBox21.TabIndex = 4;
             this.groupBox21.TabStop = false;
             this.groupBox21.Text = "Rendering";
@@ -478,6 +480,16 @@ namespace Sledge.Editor.Settings
             this.DisableToolTransparency.Text = "Disable tool texture transparency";
             this.DisableToolTransparency.UseVisualStyleBackColor = true;
             // 
+            // DisableModelRendering
+            // 
+            this.DisableModelRendering.Location = new System.Drawing.Point(12, 139);
+            this.DisableModelRendering.Name = "DisableModelRendering";
+            this.DisableModelRendering.Size = new System.Drawing.Size(233, 24);
+            this.DisableModelRendering.TabIndex = 3;
+            this.DisableModelRendering.Tag = "";
+            this.DisableModelRendering.Text = "Disable model rendering";
+            this.DisableModelRendering.UseVisualStyleBackColor = true;
+            // 
             // DisableWadTransparency
             // 
             this.DisableWadTransparency.Location = new System.Drawing.Point(12, 49);
@@ -502,7 +514,7 @@ namespace Sledge.Editor.Settings
             this.groupBox19.Controls.Add(this.ApplyTextureImmediately);
             this.groupBox19.Location = new System.Drawing.Point(369, 6);
             this.groupBox19.Name = "groupBox19";
-            this.groupBox19.Size = new System.Drawing.Size(357, 205);
+            this.groupBox19.Size = new System.Drawing.Size(357, 73);
             this.groupBox19.TabIndex = 4;
             this.groupBox19.TabStop = false;
             this.groupBox19.Text = "Textures";
@@ -1399,9 +1411,9 @@ namespace Sledge.Editor.Settings
             this.groupBox14.Controls.Add(this.label24);
             this.groupBox14.Controls.Add(this.label22);
             this.groupBox14.Controls.Add(this.DetailRenderDistance);
-            this.groupBox14.Controls.Add(this.label25);
+            this.groupBox14.Controls.Add(this.DetailRenderDistanceLabel);
             this.groupBox14.Controls.Add(this.ModelRenderDistance);
-            this.groupBox14.Controls.Add(this.label23);
+            this.groupBox14.Controls.Add(this.ModelRenderDistanceLabel);
             this.groupBox14.Controls.Add(this.BackClippingPane);
             this.groupBox14.Controls.Add(this.BackClippingPaneLabel);
             this.groupBox14.Location = new System.Drawing.Point(6, 6);
@@ -1444,23 +1456,23 @@ namespace Sledge.Editor.Settings
             this.DetailRenderDistance.BackColor = System.Drawing.SystemColors.Window;
             this.DetailRenderDistance.Location = new System.Drawing.Point(125, 122);
             this.DetailRenderDistance.Maximum = 10000;
-            this.DetailRenderDistance.Minimum = 2000;
+            this.DetailRenderDistance.Minimum = 200;
             this.DetailRenderDistance.Name = "DetailRenderDistance";
             this.DetailRenderDistance.Size = new System.Drawing.Size(232, 41);
             this.DetailRenderDistance.TabIndex = 0;
             this.DetailRenderDistance.TickFrequency = 10000;
             this.DetailRenderDistance.TickStyle = System.Windows.Forms.TickStyle.Both;
             this.DetailRenderDistance.Value = 5000;
-            this.DetailRenderDistance.Scroll += new System.EventHandler(this.BackClippingPaneChanged);
+            this.DetailRenderDistance.Scroll += new System.EventHandler(this.DetailRenderDistanceChanged);
             // 
-            // label25
+            // DetailRenderDistanceLabel
             // 
-            this.label25.Location = new System.Drawing.Point(351, 131);
-            this.label25.Name = "label25";
-            this.label25.Size = new System.Drawing.Size(69, 23);
-            this.label25.TabIndex = 1;
-            this.label25.Text = "4000";
-            this.label25.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.DetailRenderDistanceLabel.Location = new System.Drawing.Point(351, 131);
+            this.DetailRenderDistanceLabel.Name = "DetailRenderDistanceLabel";
+            this.DetailRenderDistanceLabel.Size = new System.Drawing.Size(69, 23);
+            this.DetailRenderDistanceLabel.TabIndex = 1;
+            this.DetailRenderDistanceLabel.Text = "4000";
+            this.DetailRenderDistanceLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // ModelRenderDistance
             // 
@@ -1468,23 +1480,23 @@ namespace Sledge.Editor.Settings
             this.ModelRenderDistance.BackColor = System.Drawing.SystemColors.Window;
             this.ModelRenderDistance.Location = new System.Drawing.Point(125, 67);
             this.ModelRenderDistance.Maximum = 10000;
-            this.ModelRenderDistance.Minimum = 2000;
+            this.ModelRenderDistance.Minimum = 200;
             this.ModelRenderDistance.Name = "ModelRenderDistance";
             this.ModelRenderDistance.Size = new System.Drawing.Size(232, 41);
             this.ModelRenderDistance.TabIndex = 0;
             this.ModelRenderDistance.TickFrequency = 10000;
             this.ModelRenderDistance.TickStyle = System.Windows.Forms.TickStyle.Both;
             this.ModelRenderDistance.Value = 5000;
-            this.ModelRenderDistance.Scroll += new System.EventHandler(this.BackClippingPaneChanged);
+            this.ModelRenderDistance.Scroll += new System.EventHandler(this.ModelRenderDistanceChanged);
             // 
-            // label23
+            // ModelRenderDistanceLabel
             // 
-            this.label23.Location = new System.Drawing.Point(351, 76);
-            this.label23.Name = "label23";
-            this.label23.Size = new System.Drawing.Size(69, 23);
-            this.label23.TabIndex = 1;
-            this.label23.Text = "4000";
-            this.label23.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.ModelRenderDistanceLabel.Location = new System.Drawing.Point(351, 76);
+            this.ModelRenderDistanceLabel.Name = "ModelRenderDistanceLabel";
+            this.ModelRenderDistanceLabel.Size = new System.Drawing.Size(69, 23);
+            this.ModelRenderDistanceLabel.TabIndex = 1;
+            this.ModelRenderDistanceLabel.Text = "4000";
+            this.ModelRenderDistanceLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // BackClippingPane
             // 
@@ -1946,6 +1958,29 @@ namespace Sledge.Editor.Settings
             this.tabConfigEntities.Text = "Entities";
             this.tabConfigEntities.UseVisualStyleBackColor = true;
             // 
+            // SelectedGameFgdList
+            // 
+            this.SelectedGameFgdList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader1,
+            this.columnHeader4});
+            this.SelectedGameFgdList.FullRowSelect = true;
+            this.SelectedGameFgdList.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
+            this.SelectedGameFgdList.Location = new System.Drawing.Point(15, 26);
+            this.SelectedGameFgdList.Name = "SelectedGameFgdList";
+            this.SelectedGameFgdList.ShowItemToolTips = true;
+            this.SelectedGameFgdList.Size = new System.Drawing.Size(368, 160);
+            this.SelectedGameFgdList.TabIndex = 26;
+            this.SelectedGameFgdList.UseCompatibleStateImageBehavior = false;
+            this.SelectedGameFgdList.View = System.Windows.Forms.View.Details;
+            // 
+            // columnHeader1
+            // 
+            this.columnHeader1.Text = "Name";
+            // 
+            // columnHeader4
+            // 
+            this.columnHeader4.Text = "Path";
+            // 
             // label38
             // 
             this.label38.Location = new System.Drawing.Point(18, 303);
@@ -2152,6 +2187,29 @@ namespace Sledge.Editor.Settings
             this.tabConfigTextures.TabIndex = 2;
             this.tabConfigTextures.Text = "Textures";
             this.tabConfigTextures.UseVisualStyleBackColor = true;
+            // 
+            // SelectedGameWadList
+            // 
+            this.SelectedGameWadList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader2,
+            this.columnHeader3});
+            this.SelectedGameWadList.FullRowSelect = true;
+            this.SelectedGameWadList.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
+            this.SelectedGameWadList.Location = new System.Drawing.Point(15, 26);
+            this.SelectedGameWadList.Name = "SelectedGameWadList";
+            this.SelectedGameWadList.ShowItemToolTips = true;
+            this.SelectedGameWadList.Size = new System.Drawing.Size(368, 160);
+            this.SelectedGameWadList.TabIndex = 18;
+            this.SelectedGameWadList.UseCompatibleStateImageBehavior = false;
+            this.SelectedGameWadList.View = System.Windows.Forms.View.Details;
+            // 
+            // columnHeader2
+            // 
+            this.columnHeader2.Text = "Name";
+            // 
+            // columnHeader3
+            // 
+            this.columnHeader3.Text = "Path";
             // 
             // lblGameWAD
             // 
@@ -3039,52 +3097,6 @@ namespace Sledge.Editor.Settings
             this.btnApplySettings.UseVisualStyleBackColor = true;
             this.btnApplySettings.Click += new System.EventHandler(this.Apply);
             // 
-            // SelectedGameWadList
-            // 
-            this.SelectedGameWadList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnHeader2,
-            this.columnHeader3});
-            this.SelectedGameWadList.FullRowSelect = true;
-            this.SelectedGameWadList.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
-            this.SelectedGameWadList.Location = new System.Drawing.Point(15, 26);
-            this.SelectedGameWadList.Name = "SelectedGameWadList";
-            this.SelectedGameWadList.ShowItemToolTips = true;
-            this.SelectedGameWadList.Size = new System.Drawing.Size(368, 160);
-            this.SelectedGameWadList.TabIndex = 18;
-            this.SelectedGameWadList.UseCompatibleStateImageBehavior = false;
-            this.SelectedGameWadList.View = System.Windows.Forms.View.Details;
-            // 
-            // columnHeader2
-            // 
-            this.columnHeader2.Text = "Name";
-            // 
-            // columnHeader3
-            // 
-            this.columnHeader3.Text = "Path";
-            // 
-            // SelectedGameFgdList
-            // 
-            this.SelectedGameFgdList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnHeader1,
-            this.columnHeader4});
-            this.SelectedGameFgdList.FullRowSelect = true;
-            this.SelectedGameFgdList.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
-            this.SelectedGameFgdList.Location = new System.Drawing.Point(15, 26);
-            this.SelectedGameFgdList.Name = "SelectedGameFgdList";
-            this.SelectedGameFgdList.ShowItemToolTips = true;
-            this.SelectedGameFgdList.Size = new System.Drawing.Size(368, 160);
-            this.SelectedGameFgdList.TabIndex = 26;
-            this.SelectedGameFgdList.UseCompatibleStateImageBehavior = false;
-            this.SelectedGameFgdList.View = System.Windows.Forms.View.Details;
-            // 
-            // columnHeader1
-            // 
-            this.columnHeader1.Text = "Name";
-            // 
-            // columnHeader4
-            // 
-            this.columnHeader4.Text = "Path";
-            // 
             // SettingsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -3366,9 +3378,9 @@ namespace Sledge.Editor.Settings
         private System.Windows.Forms.Label label24;
         private System.Windows.Forms.Label label22;
         private System.Windows.Forms.TrackBar DetailRenderDistance;
-        private System.Windows.Forms.Label label25;
+        private System.Windows.Forms.Label DetailRenderDistanceLabel;
         private System.Windows.Forms.TrackBar ModelRenderDistance;
-        private System.Windows.Forms.Label label23;
+        private System.Windows.Forms.Label ModelRenderDistanceLabel;
         private System.Windows.Forms.Label label28;
         private System.Windows.Forms.GroupBox groupBox12;
         private System.Windows.Forms.NumericUpDown CameraFOV;
@@ -3421,5 +3433,6 @@ namespace Sledge.Editor.Settings
         private System.Windows.Forms.ListView SelectedGameFgdList;
         private System.Windows.Forms.ColumnHeader columnHeader1;
         private System.Windows.Forms.ColumnHeader columnHeader4;
+        private System.Windows.Forms.CheckBox DisableModelRendering;
 	}
 }

@@ -26,6 +26,7 @@ namespace Sledge.Settings
         public static bool DisableWadTransparency { get; set; }
         public static bool DisableToolTextureTransparency { get; set; }
         public static bool GloballyDisableTransparency { get; set; }
+        public static bool DisableModelRendering { get; set; }
 
         static View()
         {
@@ -34,8 +35,8 @@ namespace Sledge.Settings
             SelectionBoxBackgroundOpacity = 64;
 
             BackClippingPane = 6000;
-            ModelRenderDistance = 4000;
-            DetailRenderDistance = 4000;
+            ModelRenderDistance = 2000;
+            DetailRenderDistance = 2000;
 
             ForwardSpeed = 1000;
             TimeToTopSpeed = 0.5m;
@@ -53,7 +54,8 @@ namespace Sledge.Settings
             Renderer = RenderMode.OpenGL3;
             DisableWadTransparency = false;
             DisableToolTextureTransparency = false;
-            GloballyDisableTransparency = false;    
+            GloballyDisableTransparency = false;
+            DisableModelRendering = false;
         }
     }
 }

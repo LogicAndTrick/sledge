@@ -21,8 +21,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sledge.DataStructures", "Sl
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sledge.Settings", "Sledge.Settings\Sledge.Settings.csproj", "{A79FF02F-3EAA-4FF1-A060-2E2FFE983EF3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sledge.DataStructures.Rendering", "Sledge.DataStructures.Rendering\Sledge.DataStructures.Rendering.csproj", "{E2498E8A-279E-4AA4-BD2C-0CEADB9DDCE7}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sledge.Sandbox", "Sledge.Sandbox\Sledge.Sandbox.csproj", "{BDFF0077-DC3E-4CE3-9CAF-AF7F076DEED7}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sledge.Tools.MapFileDebugger", "Sledge.Tools.MapFileDebugger\Sledge.Tools.MapFileDebugger.csproj", "{8FA24DBE-3A4A-4A99-9C40-FC577C39F933}"
@@ -137,18 +135,6 @@ Global
 		{A79FF02F-3EAA-4FF1-A060-2E2FFE983EF3}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{A79FF02F-3EAA-4FF1-A060-2E2FFE983EF3}.Release|x86.ActiveCfg = Release|Any CPU
 		{A79FF02F-3EAA-4FF1-A060-2E2FFE983EF3}.Release|x86.Build.0 = Release|Any CPU
-		{E2498E8A-279E-4AA4-BD2C-0CEADB9DDCE7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E2498E8A-279E-4AA4-BD2C-0CEADB9DDCE7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E2498E8A-279E-4AA4-BD2C-0CEADB9DDCE7}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{E2498E8A-279E-4AA4-BD2C-0CEADB9DDCE7}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{E2498E8A-279E-4AA4-BD2C-0CEADB9DDCE7}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{E2498E8A-279E-4AA4-BD2C-0CEADB9DDCE7}.Debug|x86.Build.0 = Debug|Any CPU
-		{E2498E8A-279E-4AA4-BD2C-0CEADB9DDCE7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E2498E8A-279E-4AA4-BD2C-0CEADB9DDCE7}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E2498E8A-279E-4AA4-BD2C-0CEADB9DDCE7}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{E2498E8A-279E-4AA4-BD2C-0CEADB9DDCE7}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{E2498E8A-279E-4AA4-BD2C-0CEADB9DDCE7}.Release|x86.ActiveCfg = Release|Any CPU
-		{E2498E8A-279E-4AA4-BD2C-0CEADB9DDCE7}.Release|x86.Build.0 = Release|Any CPU
 		{BDFF0077-DC3E-4CE3-9CAF-AF7F076DEED7}.Debug|Any CPU.ActiveCfg = Debug|x86
 		{BDFF0077-DC3E-4CE3-9CAF-AF7F076DEED7}.Debug|Any CPU.Build.0 = Debug|x86
 		{BDFF0077-DC3E-4CE3-9CAF-AF7F076DEED7}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
@@ -244,9 +230,6 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(Performance) = preSolution
-		HasPerformanceSessions = true
 	EndGlobalSection
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = Sledge.vsmdi
