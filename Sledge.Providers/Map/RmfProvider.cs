@@ -83,15 +83,15 @@ namespace Sledge.Providers.Map
         {
             return new Property
                 {
-                    Key = br.ReadVariableLengthString(),
-                    Value = br.ReadVariableLengthString()
+                    Key = br.ReadCString(),
+                    Value = br.ReadCString()
                 };
         }
 
         public static void WriteProperty(BinaryWriter bw, Property p)
         {
-            bw.WriteVariableLengthString(p.Key);
-            bw.WriteVariableLengthString(p.Value);
+            bw.WriteCString(p.Key);
+            bw.WriteCString(p.Value);
         }
 
         private static IEnumerable<Camera> ReadCameras(BinaryReader br)
@@ -121,7 +121,7 @@ namespace Sledge.Providers.Map
         {
             var data = new EntityData
                 {
-                    Name = br.ReadVariableLengthString()
+                    Name = br.ReadCString()
                 };
 
             br.ReadBytes(4); // Unused bytes
@@ -142,7 +142,7 @@ namespace Sledge.Providers.Map
 
         private static void WriteEntityData(BinaryWriter bw, EntityData data)
         {
-            bw.WriteVariableLengthString(data.Name);
+            bw.WriteCString(data.Name);
             bw.Write(new byte[4]); // Unused
             bw.Write(data.Flags);
             bw.Write(data.Properties.Count);
@@ -160,7 +160,7 @@ namespace Sledge.Providers.Map
 
         private static MapObject ReadMapObject(BinaryReader br, List<Visgroup> visgroups, IDGenerator generator)
         {
-            var type = br.ReadVariableLengthString();
+            var type = br.ReadCString();
             switch (type)
             {
                 case "CMapWorld":
@@ -228,7 +228,7 @@ namespace Sledge.Providers.Map
 
         private static void WriteMapEntity(BinaryWriter bw, Entity ent)
         {
-            bw.WriteVariableLengthString("CMapEntity");
+            bw.WriteCString("CMapEntity");
             WriteMapBase(bw, ent);
             WriteEntityData(bw, ent.EntityData);
             bw.Write(new byte[2]); // Unused
@@ -298,7 +298,7 @@ namespace Sledge.Providers.Map
 
         private static void WriteMapSolid(BinaryWriter bw, Solid s)
         {
-            bw.WriteVariableLengthString("CMapSolid");
+            bw.WriteCString("CMapSolid");
             WriteMapBase(bw, s);
             bw.Write(s.Faces.Count);
             foreach (var face in s.Faces)
@@ -317,7 +317,7 @@ namespace Sledge.Providers.Map
 
         private static void WriteMapGroup(BinaryWriter bw, Group g)
         {
-            bw.WriteVariableLengthString("CMapGroup");
+            bw.WriteCString("CMapGroup");
             WriteMapBase(bw, g);
         }
 
@@ -394,7 +394,7 @@ namespace Sledge.Providers.Map
 
         private static void WriteMapWorld(BinaryWriter bw, World w)
         {
-            bw.WriteVariableLengthString("CMapWorld");
+            bw.WriteCString("CMapWorld");
             WriteMapBase(bw, w);
             WriteEntityData(bw, w.EntityData);
             bw.Write(w.Paths.Count);

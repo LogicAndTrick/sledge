@@ -35,7 +35,7 @@ namespace Sledge.Editor.Rendering.Arrays
 
                 var transforms = model.Bones.Select(x => x.Transform).ToList();
 
-                foreach (var g in model.Meshes.GroupBy(x => x.SkinRef))
+                foreach (var g in model.GetActiveMeshes().GroupBy(x => x.SkinRef))
                 {
                     StartSubset(Textured);
                     var tex = model.Textures[g.Key];

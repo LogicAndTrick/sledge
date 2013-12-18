@@ -12,7 +12,7 @@ namespace Sledge.DataStructures.Models
     {
         public string Name { get; set; }
         public List<Bone> Bones { get; private set; }
-        public List<Mesh> Meshes { get; private set; }
+        public List<BodyPart> BodyParts { get; private set; }
         public List<Animation> Animations { get; private set; }
         public List<Texture> Textures { get; set; }
         public bool BonesTransformMesh { get; set; }
@@ -21,10 +21,26 @@ namespace Sledge.DataStructures.Models
         public Model()
         {
             Bones = new List<Bone>();
-            Meshes = new List<Mesh>();
+            BodyParts = new List<BodyPart>();
             Animations = new List<Animation>();
             Textures = new List<Texture>();
             _preprocessed = false;
+        }
+
+        public IEnumerable<Mesh> GetActiveMeshes()
+        {
+            return BodyParts.SelectMany(x => x.GetActiveGroup());
+        }
+
+        public void AddMesh(string bodyPartName, int groupid, Mesh mesh)
+        {
+            var g = BodyParts.FirstOrDefault(x => x.Name == bodyPartName);
+            if (g == null)
+            {
+                g = new BodyPart(bodyPartName);
+                BodyParts.Add(g);
+            }
+            g.AddMesh(groupid, mesh);
         }
 
         /// <summary>
@@ -90,7 +106,7 @@ namespace Sledge.DataStructures.Models
             Textures.Insert(0, tex);
 
             // Update all the meshes with the new texture and alter the texture coordinates as needed
-            foreach (var mesh in Meshes)
+            foreach (var mesh in GetActiveMeshes())
             {
                 if (!heightList.ContainsKey(mesh.SkinRef))
                 {
@@ -119,7 +135,7 @@ namespace Sledge.DataStructures.Models
         private void PreCalculateChromeCoordinates()
         {
             var transforms = Bones.Select(x => x.Transform).ToList();
-            foreach (var g in Meshes.GroupBy(x => x.SkinRef))
+            foreach (var g in GetActiveMeshes().GroupBy(x => x.SkinRef))
             {
                 var skin = Textures.FirstOrDefault(x => x.Index == g.Key);
                 if (skin == null || (skin.Flags & 0x02) == 0) continue;
@@ -153,7 +169,7 @@ namespace Sledge.DataStructures.Models
         /// </summary>
         private void NormaliseTextureCoordinates()
         {
-            foreach (var g in Meshes.GroupBy(x => x.SkinRef))
+            foreach (var g in GetActiveMeshes().GroupBy(x => x.SkinRef))
             {
                 var skin = Textures.FirstOrDefault(x => x.Index == g.Key);
                 if (skin == null) continue;

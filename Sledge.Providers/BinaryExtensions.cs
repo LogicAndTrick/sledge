@@ -21,6 +21,23 @@ namespace Sledge.Providers
             bw.Write(arr, 0, length);
         }
 
+        public static string ReadNullTerminatedString(this BinaryReader br)
+        {
+            var str = "";
+            char c;
+            while ((c = br.ReadChar()) != 0)
+            {
+                str += c;
+            }
+            return str;
+        }
+
+        public static void WriteNullTerminatedString(this BinaryWriter bw, string str)
+        {
+            bw.Write(str.ToCharArray());
+            bw.Write((char) 0);
+        }
+
         public static byte[] ReadByteArray(this BinaryReader br, int num)
         {
             var arr = new byte[num];
@@ -70,7 +87,7 @@ namespace Sledge.Providers
             return arr;
         }
 
-        public static string ReadVariableLengthString(this BinaryReader br)
+        public static string ReadCString(this BinaryReader br)
         {
             // GH#87: RMF strings aren't prefixed in the same way .NET's BinaryReader expects
             // Read the byte length and then read that number of characters.
@@ -81,7 +98,7 @@ namespace Sledge.Providers
 
         const int MaxVariableStringLength = 127;
 
-        public static void WriteVariableLengthString(this BinaryWriter bw, string str)
+        public static void WriteCString(this BinaryWriter bw, string str)
         {
             // GH#87: RMF strings aren't prefixed in the same way .NET's BinaryReader expects
             // Write the byte length (+1) and then write that number of characters plus the null terminator.

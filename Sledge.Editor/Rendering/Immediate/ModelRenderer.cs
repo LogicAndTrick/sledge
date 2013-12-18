@@ -14,7 +14,7 @@ namespace Sledge.Editor.Rendering.Immediate
             GL.Color4(1f, 1f, 1f, 1f);
             TextureHelper.EnableTexturing();
 
-            foreach (var group in model.Meshes.GroupBy(x => x.SkinRef))
+            foreach (var group in model.GetActiveMeshes().GroupBy(x => x.SkinRef))
             {
                 var texture = model.Textures[group.Key].TextureObject;
                 if (texture != null) texture.Bind();

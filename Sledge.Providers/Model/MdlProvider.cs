@@ -7,6 +7,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using Sledge.DataStructures.Geometric;
+using Sledge.DataStructures.MapObjects;
 using Sledge.DataStructures.Models;
 using Sledge.FileSystem;
 
@@ -799,6 +800,10 @@ namespace Sledge.Providers.Model
             if (data.Version >= MDLVersionSource2006)
             {
                 nameIndex = br.ReadInt32();
+                var idx = br.BaseStream.Position;
+                br.BaseStream.Position = startIndex + nameIndex;
+                name = br.ReadNullTerminatedString();
+                br.BaseStream.Position = idx;
             }
             else if (data.Version == MDLVersionGoldsource)
             {
@@ -813,13 +818,13 @@ namespace Sledge.Providers.Model
             br.BaseStream.Position = modelIndex + startIndex;
             for (var i = 0; i < numModels; i++)
             {
-                ReadStudioModel(br, bodyPartIndex, i, data, model);
+                ReadStudioModel(br, name, bodyPartIndex, i, data, model);
             }
 
             br.BaseStream.Position = endIndex;
         }
 
-        private static void ReadStudioModel(BinaryReader br, int bodyPartIndex, int modelIndex, ModelData data, DataStructures.Models.Model model)
+        private static void ReadStudioModel(BinaryReader br, string groupName, int bodyPartIndex, int modelIndex, ModelData data, DataStructures.Models.Model model)
         {
             var startModelPos = br.BaseStream.Position;
             var name = br.ReadFixedLengthString(Encoding.ASCII, 64);
@@ -866,17 +871,17 @@ namespace Sledge.Providers.Model
 
             if (data.Version == MDLVersionGoldsource)
             {
-                ReadVerticesGoldSource(br, model, numVerts, vertInfoIndex, vertIndex, numMesh, meshIndex, numNorms, normInfoIndex, normIndex);
+                ReadVerticesGoldSource(br, groupName, modelIndex, model, numVerts, vertInfoIndex, vertIndex, numMesh, meshIndex, numNorms, normInfoIndex, normIndex);
             }
             else if (data.Version >= MDLVersionSource2006)
             {
-                ReadVerticesSource(br, bodyPartIndex, modelIndex, data, model, numMesh, startModelPos + meshIndex);
+                ReadVerticesSource(br, groupName, bodyPartIndex, modelIndex, data, model, numMesh, startModelPos + meshIndex);
             }
 
             br.BaseStream.Position = endPos;
         }
 
-        private static void ReadVerticesGoldSource(BinaryReader br, DataStructures.Models.Model model, int numVerts, int vertInfoIndex, int vertIndex, int numMesh, int meshIndex, int numNorms, int normInfoIndex, int normIndex)
+        private static void ReadVerticesGoldSource(BinaryReader br, string bodyPartName, int modelIndex, DataStructures.Models.Model model, int numVerts, int vertInfoIndex, int vertIndex, int numMesh, int meshIndex, int numNorms, int normInfoIndex, int normIndex)
         {
             br.BaseStream.Position = vertInfoIndex;
             var vertInfoData = br.ReadByteArray(numVerts);
@@ -936,12 +941,12 @@ namespace Sledge.Providers.Model
                         }
                     }
                 }
-                model.Meshes.Add(mesh);
+                model.AddMesh(bodyPartName, modelIndex, mesh);
                 br.BaseStream.Position = pos;
             }
         }
 
-        private static void ReadVerticesSource(BinaryReader br, int bodyPartIndex, int modelIndex, ModelData modelData, DataStructures.Models.Model model, int numMesh, long meshIndex)
+        private static void ReadVerticesSource(BinaryReader br, string groupName, int bodyPartIndex, int modelIndex, ModelData modelData, DataStructures.Models.Model model, int numMesh, long meshIndex)
         {
             br.BaseStream.Position = meshIndex;
             for (var i = 0; i < numMesh; i++)
@@ -977,7 +982,7 @@ namespace Sledge.Providers.Model
                         var mv = new MeshVertex(vert.Position, vert.Normal, boneWeights, vert.TextureS, vert.TextureT);
                         mesh.Vertices.Add(mv);
                     }
-                    model.Meshes.Add(mesh);
+                    model.AddMesh(groupName, modelIndex, mesh);
                 }
             }
         }
