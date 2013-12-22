@@ -12,8 +12,11 @@
     line-height: 70px;
 }
 
-.header img {
-
+.header .logo {
+    display: inline-block;
+    background-color: rgba(255, 255, 255, 0.4);
+    box-shadow: 0px 0px 200px #fff;
+    border-radius: 200px;
 }
 
 .header h2 {
