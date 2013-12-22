@@ -16,7 +16,6 @@ Priorities
     Find/replace dialogs
     Game config detection
     Object properties dialog data types
-      File system - custom file browser
     Options
       Hotkey configuration
     Auto Update
