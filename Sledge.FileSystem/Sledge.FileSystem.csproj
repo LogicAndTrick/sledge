@@ -44,6 +44,12 @@
   <ItemGroup>
     <Compile Include="CompositeFile.cs" />
     <Compile Include="FileExtensions.cs" />
+    <Compile Include="FileSystemBrowserDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FileSystemBrowserDialog.Designer.cs">
+      <DependentUpon>FileSystemBrowserDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="PakFile.cs" />
     <Compile Include="FileSystemBrowserControl.cs">
       <SubType>UserControl</SubType>
@@ -73,6 +79,9 @@
   <ItemGroup>
     <EmbeddedResource Include="FileSystemBrowserControl.resx">
       <DependentUpon>FileSystemBrowserControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FileSystemBrowserDialog.resx">
+      <DependentUpon>FileSystemBrowserDialog.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup />

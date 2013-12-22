@@ -49,6 +49,7 @@ namespace Sledge.Editor.Actions.MapObjects.Entities
                 else if (obj is World) SetEntityData((World)obj, r.Before);
             }
             Mediator.Publish(EditorMediator.EntityDataChanged, changed);
+            Mediator.Publish(EditorMediator.DocumentTreeObjectsChanged, changed);
 
             document.Map.UpdateAutoVisgroups(changed, true);
             Mediator.Publish(EditorMediator.VisgroupsChanged);
@@ -65,6 +66,7 @@ namespace Sledge.Editor.Actions.MapObjects.Entities
                 else if (obj is World) SetEntityData((World) obj, r.After);
             }
             Mediator.Publish(EditorMediator.EntityDataChanged, changed);
+            Mediator.Publish(EditorMediator.DocumentTreeObjectsChanged, changed);
 
             document.Map.UpdateAutoVisgroups(changed, true);
             Mediator.Publish(EditorMediator.VisgroupsChanged);

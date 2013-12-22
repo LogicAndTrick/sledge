@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Sledge.Common;
+using Sledge.DataStructures.GameData;
 using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.MapObjects;
 using Sledge.DataStructures.Models;
@@ -43,9 +44,22 @@ namespace Sledge.Editor.Extensions
         {
             if (entity.GameData == null) return null;
             var studio = entity.GameData.Behaviours.FirstOrDefault(x => x.Name == "studio");
-            if (studio == null || studio.Values.Count != 1) return null;
-            var model = studio.Values[0].Trim();
-            return String.IsNullOrWhiteSpace(model) ? null : model;
+            if (studio == null) return null;
+
+            // First see if the studio behaviour forces a model...
+            if (studio.Values.Count == 1 && !String.IsNullOrWhiteSpace(studio.Values[0]))
+            {
+                return studio.Values[0].Trim();
+            }
+
+            // Find the first property that is a studio type...
+            var prop = entity.GameData.Properties.FirstOrDefault(x => x.VariableType == VariableType.Studio);
+            if (prop != null)
+            {
+                var val = entity.EntityData.GetPropertyValue(prop.Name);
+                if (!String.IsNullOrWhiteSpace(val)) return val;
+            }
+            return null;
         }
 
         public static void SetModel(this Entity entity, ModelReference model)

@@ -13,6 +13,31 @@ namespace Sledge.FileSystem
 {
     public partial class FileSystemBrowserControl : UserControl
     {
+        #region Events
+        public delegate void ConfirmedButtonEventHandler(object sender, IEnumerable<IFile> selection);
+        public delegate void CancelButtonEventHandler(object sender);
+
+        public event ConfirmedButtonEventHandler Confirmed;
+        public event CancelButtonEventHandler Cancelled;
+
+        protected virtual void OnConfirmed(IEnumerable<IFile> files)
+        {
+            if (Confirmed != null)
+            {
+                Confirmed(this, files);
+            }
+        }
+
+        protected virtual void OnCancelled()
+        {
+            if (Cancelled != null)
+            {
+                Cancelled(this);
+            }
+        }
+
+        #endregion Events
+
         private IFile _file;
         private string _filter;
         private readonly List<Regex> _regexes; 
@@ -64,15 +89,16 @@ namespace Sledge.FileSystem
 
         private void UpdateFile()
         {
-            LocationTextbox.Text = File.FullPathName;
             FileList.Items.Clear();
+            if (File == null) return;
+            LocationTextbox.Text = File.FullPathName;
             foreach (var child in File.GetChildren().OrderBy(x => x.Name.ToLower()))
             {
-                FileList.Items.Add(new ListViewItem(child.Name, "_Folder"));
+                FileList.Items.Add(new ListViewItem(child.Name, "_Folder") {Tag = child});
             }
             foreach (var file in File.GetFiles().Where(x => Matches(x.Name)).OrderBy(x => x.Name.ToLower()))
             {
-                FileList.Items.Add(new ListViewItem(file.Name, GetIcon(file.FullPathName)));
+                FileList.Items.Add(new ListViewItem(file.Name, GetIcon(file.FullPathName)) {Tag = file});
             }
         }
 
@@ -112,12 +138,12 @@ namespace Sledge.FileSystem
 
         private void CancelButtonClicked(object sender, EventArgs e)
         {
-
+            OnCancelled();
         }
 
         private void OkButtonClicked(object sender, EventArgs e)
         {
-
+            OnConfirmed(FileList.SelectedItems.OfType<ListViewItem>().Select(x => x.Tag).OfType<IFile>());
         }
     }
 }
