@@ -103,7 +103,7 @@ namespace Sledge.DataStructures.MapObjects
             {
                 if (GameData != null && GameData.ClassType == ClassType.Point)
                 {
-                    var behav = GameData.Behaviours.SingleOrDefault(x => x.Name == "color");
+                    var behav = GameData.Behaviours.LastOrDefault(x => x.Name == "color");
                     if (behav != null && behav.Values.Count == 3)
                     {
                         return behav.GetColour(0);
