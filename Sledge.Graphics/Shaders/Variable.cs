@@ -33,6 +33,14 @@ namespace Sledge.Graphics.Shaders
             GL.UniformMatrix4(Location, false, ref matrix);
         }
 
+        public void Set(Matrix4[] matrix)
+        {
+            if (Value != null && Value.Equals(matrix)) return;
+            Value = matrix;
+            //GL.UniformMatrix4(Location, false, ref matrix);
+            GL.UniformMatrix4(Location, matrix.Length, false, ref matrix[0].Row0.X);
+        }
+
         public void Set(bool b)
         {
             if (Value != null && Value.Equals(b)) return;

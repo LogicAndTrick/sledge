@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Data.Odbc;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Linq;
@@ -25,6 +26,7 @@ namespace Sledge.DataStructures.Models
             Animations = new List<Animation>();
             Textures = new List<Texture>();
             _preprocessed = false;
+            
         }
 
         public IEnumerable<Mesh> GetActiveMeshes()
@@ -41,6 +43,21 @@ namespace Sledge.DataStructures.Models
                 BodyParts.Add(g);
             }
             g.AddMesh(groupid, mesh);
+        }
+
+        public List<MatrixF> GetTransforms(int animation = 0, int frame = 0)
+        {
+            if (Animations.Count > animation && animation >= 0)
+            {
+                var ani = Animations[animation];
+                if (ani.Frames.Count > 0)
+                {
+                    if (frame < 0 || frame >= ani.Frames.Count) frame = 0;
+                    var frm = ani.Frames[frame];
+                    return frm.GetBoneTransforms(BonesTransformMesh, !BonesTransformMesh);
+                }
+            }
+            return Bones.Select(x => x.Transform).ToList();
         }
 
         /// <summary>

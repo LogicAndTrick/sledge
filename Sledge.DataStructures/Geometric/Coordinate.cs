@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Globalization;
+using Sledge.Extensions;
 
 namespace Sledge.DataStructures.Geometric
 {
@@ -102,7 +103,7 @@ namespace Sledge.DataStructures.Geometric
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return other.X == X && other.Y == Y && other.Z == Z;
+            return EquivalentTo(other);
         }
 
         public override bool Equals(object obj)
@@ -222,6 +223,18 @@ namespace Sledge.DataStructures.Geometric
             var y = c.Y == 0 ? 1 : c.Y;
             var z = c.Z == 0 ? 1 : c.Z;
             return new Coordinate(X / x, Y / y, Z / z);
+        }
+
+        /// <summary>
+        /// Treats this vector as a directional unit vector and constructs a euler angle representation of that angle (in radians)
+        /// </summary>
+        /// <returns></returns>
+        public Coordinate ToEulerAngles()
+        {
+            // http://www.gamedev.net/topic/399701-convert-vector-to-euler-cardan-angles/#entry3651854
+            var yaw = DMath.Atan2(Y, X);
+            var pitch = DMath.Atan2(-Z, DMath.Sqrt(X * X + Y * Y));
+            return new Coordinate(0, pitch, yaw); // HL FGD has X = roll, Y = pitch, Z = yaw
         }
 
         public override string ToString()

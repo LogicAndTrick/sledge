@@ -31,6 +31,12 @@ Post-Alpha
   Rendering
 	Change sprite renderables?
 	Further break dependencies between modern renderer and shaders/arrays
+	Models
+	  Attachment chooser
+	  Sequence chooser
+	  Animation?
+	  Fix rotations
+	  Set angles value on rotate/transform
 
 1. Goldsource Support
   Formats

@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Drawing;
 using System.Linq;
 using OpenTK;
+using OpenTK.Graphics.OpenGL;
 using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.MapObjects;
 using Sledge.DataStructures.Models;
@@ -10,7 +13,11 @@ using Sledge.Editor.Extensions;
 using Sledge.Editor.Rendering.Arrays;
 using Sledge.Editor.Rendering.Shaders;
 using Sledge.Editor.UI;
+using Sledge.Extensions;
+using Sledge.Graphics.Helpers;
 using Sledge.UI;
+using Matrix = Sledge.DataStructures.Geometric.Matrix;
+using Quaternion = Sledge.DataStructures.Geometric.Quaternion;
 
 namespace Sledge.Editor.Rendering.Renderers
 {
@@ -29,6 +36,8 @@ namespace Sledge.Editor.Rendering.Renderers
 
         private readonly MapObject2DShader _mapObject2DShader;
         private readonly MapObject3DShader _mapObject3DShader;
+
+        private Matrix _selectionTransformMat;
         private Matrix4 _selectionTransform;
 
         public ModernRenderer(Document document)
@@ -43,6 +52,7 @@ namespace Sledge.Editor.Rendering.Renderers
             // Can't use a single grid array as it varies depending on the zoom level (pixel hiding factor)
             GridArrays = ViewportManager.Viewports.OfType<Viewport2D>().ToDictionary(x => x, x => new GridArray());
 
+            _selectionTransformMat = Matrix.Identity;
             _selectionTransform = Matrix4.Identity;
             _mapObject2DShader = new MapObject2DShader();
             _mapObject3DShader = new MapObject3DShader();
@@ -65,6 +75,7 @@ namespace Sledge.Editor.Rendering.Renderers
         public void SetSelectionTransform(Matrix4 selectionTransform)
         {
             _selectionTransform = selectionTransform;
+            _selectionTransformMat = Matrix.FromOpenTKMatrix4(selectionTransform);
         }
 
         public void Draw2D(ViewportBase context, Matrix4 viewport, Matrix4 camera, Matrix4 modelView)
@@ -137,10 +148,19 @@ namespace Sledge.Editor.Rendering.Renderers
                     var arr = _modelArrays[tuple.Item2];
                     var origin = tuple.Item1.Origin;
                     if (tuple.Item1.HideDistance() <= (location - origin).VectorMagnitude()) continue;
-                    _mapObject3DShader.Translation = new Vector4((float) origin.X, (float) origin.Y, (float) origin.Z, 0);
+
+                    var angles = tuple.Item1.EntityData.GetPropertyCoordinate("angles", Coordinate.Zero);
+                    angles = new Coordinate(-DMath.DegreesToRadians(angles.Z), DMath.DegreesToRadians(angles.X), -DMath.DegreesToRadians(angles.Y));
+                    if (tuple.Item1.IsSelected)
+                    {
+                        origin *= _selectionTransformMat;
+                        // TODO: rotation/angles
+                    }
+                    var tform = Matrix.Rotation(Quaternion.EulerAngles(angles)).Translate(origin);
+                    _mapObject3DShader.Transformation = tform.ToGLSLMatrix4();
                     arr.RenderTextured(context.Context);
                 }
-                _mapObject3DShader.Translation = Vector4.Zero;
+                _mapObject3DShader.Transformation = Matrix4.Identity;
             }
 
             // Render untextured polygons

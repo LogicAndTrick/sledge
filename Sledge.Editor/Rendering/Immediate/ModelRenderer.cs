@@ -9,7 +9,7 @@ namespace Sledge.Editor.Rendering.Immediate
     {
         public static void Render(Model model)
         {
-            var transforms = model.Bones.Select(x => x.Transform).ToList();
+            var transforms = model.GetTransforms();
 
             GL.Color4(1f, 1f, 1f, 1f);
             TextureHelper.EnableTexturing();

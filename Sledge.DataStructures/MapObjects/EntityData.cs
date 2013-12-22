@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Sledge.DataStructures.Geometric;
 
 namespace Sledge.DataStructures.MapObjects
 {
@@ -53,6 +54,12 @@ namespace Sledge.DataStructures.MapObjects
                 Properties.Add(prop);
             }
             prop.Value = value;
+        }
+
+        public Coordinate GetPropertyCoordinate(string key, Coordinate def = null)
+        {
+            var prop = Properties.FirstOrDefault(x => String.Equals(key, x.Key, StringComparison.InvariantCultureIgnoreCase));
+            return prop == null ? def : prop.GetCoordinate(def);
         }
     }
 }

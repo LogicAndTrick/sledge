@@ -53,6 +53,10 @@ namespace Sledge.Editor.Rendering.Helpers
             var entity = (Entity) o;
 
             var orig = new Vector3((float)entity.Origin.X, (float)entity.Origin.Y, (float)entity.Origin.Z);
+            if (entity.IsSelected)
+            {
+                orig = Vector3.TransformPosition(orig, Document.SelectListTransform);
+            }
             var normal = Vector3.Subtract(vp.Camera.Location, orig);
 
             var tex = entity.Sprite;

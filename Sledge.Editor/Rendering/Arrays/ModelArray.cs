@@ -33,7 +33,7 @@ namespace Sledge.Editor.Rendering.Arrays
             {
                 PushOffset(model);
 
-                var transforms = model.Bones.Select(x => x.Transform).ToList();
+                var transforms = model.GetTransforms();
 
                 foreach (var g in model.GetActiveMeshes().GroupBy(x => x.SkinRef))
                 {

@@ -71,6 +71,7 @@ namespace Sledge.Editor.Documents
             MapFileName = mapFile == null
                               ? DocumentManager.GetUntitledDocumentName()
                               : Path.GetFileName(mapFile);
+            SelectListTransform = Matrix4.Identity;
 
             _subscriptions = new DocumentSubscriptions(this);
 
@@ -317,13 +318,17 @@ namespace Sledge.Editor.Documents
             History.AddHistoryItem(history);
         }
 
+        public Matrix4 SelectListTransform { get; private set; }
+
         public void SetSelectListTransform(Matrix4 matrix)
         {
+            SelectListTransform = matrix;
             Renderer.SetSelectionTransform(matrix);
         }
 
         public void EndSelectionTransform()
         {
+            SelectListTransform = Matrix4.Identity;
             Renderer.SetSelectionTransform(Matrix4.Identity);
         }
 

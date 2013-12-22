@@ -9,9 +9,11 @@ using Sledge.DataStructures.MapObjects;
 using Sledge.DataStructures.Models;
 using Sledge.Editor.Documents;
 using Sledge.Editor.Extensions;
+using Sledge.Extensions;
 using Sledge.Graphics.Renderables;
 using Sledge.Settings;
 using Sledge.UI;
+using Quaternion = Sledge.DataStructures.Geometric.Quaternion;
 
 namespace Sledge.Editor.Rendering.Renderers
 {
@@ -20,6 +22,7 @@ namespace Sledge.Editor.Rendering.Renderers
         public string Name { get { return "OpenGL 1.0 Renderer (Display List)"; } }
         public Document Document { get; set; }
 
+        private Matrix _selectionTransformMat;
         private Matrix4 _selectionTransform;
 
         private readonly int _listUntransformed2D;
@@ -35,6 +38,7 @@ namespace Sledge.Editor.Rendering.Renderers
         {
             Document = document;
             _update = true;
+            _selectionTransformMat = Matrix.Identity;
             _selectionTransform = Matrix4.Identity;
             _models = new List<Tuple<Entity, Model>>();
             _modelLists = new Dictionary<Model, int>();
@@ -60,6 +64,7 @@ namespace Sledge.Editor.Rendering.Renderers
         public void SetSelectionTransform(Matrix4 selTransform)
         {
             _selectionTransform = selTransform;
+            _selectionTransformMat = Matrix.FromOpenTKMatrix4(selTransform);
         }
 
         public void Draw2D(ViewportBase context, Matrix4 viewport, Matrix4 camera, Matrix4 modelView)
@@ -137,6 +142,10 @@ namespace Sledge.Editor.Rendering.Renderers
 
             GL.CallList(_listUntransformed3D);
 
+            Matrix4 current;
+            GL.GetFloat(GetPName.ModelviewMatrix, out current);
+            GL.MatrixMode(MatrixMode.Modelview);
+
             // Render models
             if (!View.DisableModelRendering)
             {
@@ -150,20 +159,23 @@ namespace Sledge.Editor.Rendering.Renderers
                     }
                     else
                     {
-                        GL.Translate(origin.DX, origin.DY, origin.DZ);
+                        var angles = tuple.Item1.EntityData.GetPropertyCoordinate("angles", Coordinate.Zero);
+                        angles = new Coordinate(DMath.DegreesToRadians(angles.Z), DMath.DegreesToRadians(angles.X), DMath.DegreesToRadians(angles.Y));
+                        if (tuple.Item1.IsSelected)
+                        {
+                            origin *= _selectionTransformMat;
+                        }
+                        var tform = Matrix.Rotation(Quaternion.EulerAngles(angles)).Translate(origin).ToOpenTKMatrix4();
+                        GL.MultMatrix(ref tform);
+
                         GL.CallList(arr);
-                        GL.Translate(-origin.DX, -origin.DY, -origin.DZ);
+                        GL.LoadMatrix(ref current);
                     }
                 }
             }
 
-            Matrix4 current;
-            GL.GetFloat(GetPName.ModelviewMatrix, out current);
-            GL.MatrixMode(MatrixMode.Modelview);
             GL.MultMatrix(ref _selectionTransform);
-
             GL.CallList(_listTransformed3D);
-
             GL.LoadMatrix(ref current);
 
             GL.CallList(_listUntransformedDecals3D);

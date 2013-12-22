@@ -9,9 +9,11 @@ using Sledge.DataStructures.MapObjects;
 using Sledge.DataStructures.Models;
 using Sledge.Editor.Documents;
 using Sledge.Editor.Extensions;
+using Sledge.Extensions;
 using Sledge.Graphics.Renderables;
 using Sledge.Settings;
 using Sledge.UI;
+using Quaternion = Sledge.DataStructures.Geometric.Quaternion;
 
 namespace Sledge.Editor.Rendering.Renderers
 {
@@ -20,12 +22,14 @@ namespace Sledge.Editor.Rendering.Renderers
         public string Name { get { return "OpenGL 1.0 Renderer (Immediate Mode)"; } }
         public Document Document { get; set; }
 
+        private Matrix _selectionTransformMat;
         private Matrix4 _selectionTransform;
 
         public ImmediateRenderer(Document document)
         {
             Document = document;
             _cache = null;
+            _selectionTransformMat = Matrix.Identity;
             _selectionTransform = Matrix4.Identity;
         }
 
@@ -42,6 +46,7 @@ namespace Sledge.Editor.Rendering.Renderers
         public void SetSelectionTransform(Matrix4 selTransform)
         {
             _selectionTransform = selTransform;
+            _selectionTransformMat = Matrix.FromOpenTKMatrix4(selTransform);
         }
 
         public void Draw2D(ViewportBase context, Matrix4 viewport, Matrix4 camera, Matrix4 modelView)
@@ -140,7 +145,11 @@ namespace Sledge.Editor.Rendering.Renderers
             Immediate.MapObjectRenderer.DrawWireframe(sel3D, true);
             Immediate.MapObjectRenderer.DrawWireframe(_decals.Where(x => x.IsSelected && !x.IsRenderHidden3D).SelectMany(x => x.GetDecalGeometry()), true);
             Immediate.MapObjectRenderer.DrawWireframe(_models.Where(x => x.IsSelected && !x.IsRenderHidden3D).SelectMany(x => x.GetBoxFaces()), true);
-            
+
+            Matrix4 current;
+            GL.GetFloat(GetPName.ModelviewMatrix, out current);
+            GL.MatrixMode(MatrixMode.Modelview);
+
             // Draw models
             if (!View.DisableModelRendering)
             {
@@ -153,16 +162,20 @@ namespace Sledge.Editor.Rendering.Renderers
                     }
                     else
                     {
-                        GL.Translate(origin.DX, origin.DY, origin.DZ);
+                        var angles = entity.EntityData.GetPropertyCoordinate("angles", Coordinate.Zero);
+                        angles = new Coordinate(DMath.DegreesToRadians(angles.Z), DMath.DegreesToRadians(angles.X), DMath.DegreesToRadians(angles.Y));
+                        if (entity.IsSelected)
+                        {
+                            origin *= _selectionTransformMat;
+                        }
+                        var tform = Matrix.Rotation(Quaternion.EulerAngles(angles)).Translate(origin).ToOpenTKMatrix4();
+                        GL.MultMatrix(ref tform);
                         Immediate.ModelRenderer.Render(entity.GetModel().Model);
-                        GL.Translate(-origin.DX, -origin.DY, -origin.DZ);
+                        GL.LoadMatrix(ref current);
                     }
                 }
             }
 
-            Matrix4 current;
-            GL.GetFloat(GetPName.ModelviewMatrix, out current);
-            GL.MatrixMode(MatrixMode.Modelview);
             GL.MultMatrix(ref _selectionTransform);
 
             // Draw selection

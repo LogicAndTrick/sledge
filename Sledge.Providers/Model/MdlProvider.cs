@@ -41,7 +41,7 @@ namespace Sledge.Providers.Model
 
         protected override DataStructures.Models.Model LoadFromFile(IFile file)
         {
-            return LoadMDL(file, ModelLoadItems.AllStatic);
+            return LoadMDL(file, ModelLoadItems.AllStatic | ModelLoadItems.Animations);
         }
 
         // Model loader for MDL files. Reference Valve's studiohdr_t struct definition for the most part.

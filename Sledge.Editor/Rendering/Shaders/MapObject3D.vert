@@ -19,7 +19,7 @@ varying vec4 vertexColour;
 varying vec2 texCoord;
 varying float vertexSelected;
 
-uniform vec4 translation;
+uniform mat4 transformation;
 uniform mat4 modelViewMatrix;
 uniform mat4 perspectiveMatrix;
 uniform mat4 cameraMatrix;
@@ -28,9 +28,9 @@ uniform mat4 inverseSelectionTransform;
 
 void main()
 {
-    vec4 pos = vec4(position, 1) + translation;
+    vec4 pos = vec4(position, 1);
     if (selected > 0.9) pos = selectionTransform * pos;
-    vec4 modelPos = modelViewMatrix * pos;
+    vec4 modelPos = modelViewMatrix * pos * transformation;
     
 	vec4 cameraPos = cameraMatrix * modelPos;
 	gl_Position = perspectiveMatrix * cameraPos;
