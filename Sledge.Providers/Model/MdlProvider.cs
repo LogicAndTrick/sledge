@@ -47,7 +47,7 @@ namespace Sledge.Providers.Model
         // Model loader for MDL files. Reference Valve's studiohdr_t struct definition for the most part.
         public DataStructures.Models.Model LoadMDL(IFile file, ModelLoadItems loadItems)
         {
-            using (var fs = file.Open())
+            using (var fs = new MemoryStream(file.ReadAll()))
             {
                 using(var br = new BinaryReader(fs))
                 {
@@ -341,8 +341,10 @@ namespace Sledge.Providers.Model
             if (data.Version == MDLVersionGoldsource)
             {
                 var tempBr = br;
+                var disp = false;
                 if (numTextures == 0)
                 {
+                    disp = true;
                     var texFile = file.Parent.GetFile(file.NameWithoutExtension + "T." + file.Extension);
                     br = new BinaryReader(texFile.Open());
                     br.BaseStream.Position = 180; // skip all the unused nonsense in the T file
@@ -393,7 +395,7 @@ namespace Sledge.Providers.Model
                     br.BaseStream.Position = savedPosition;
                 }
                 //
-                if (numTextures == 0)
+                if (disp)
                 {
                     br.BaseStream.Dispose();
                     br.Dispose();

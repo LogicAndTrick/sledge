@@ -858,10 +858,13 @@ namespace Sledge.Libs.HLLib
                 return buffer;
             }
 
-            public override void Close()
+            private bool _disposed = false;
+            protected override void Dispose(bool disposing)
             {
-                if (!IsOpened) return;
+                if (_disposed || !IsOpened) return;
+                _disposed = true;
                 Close(StreamPtr);
+                base.Dispose(disposing);
             }
 
             public override long Seek(long offset, SeekOrigin origin)
@@ -902,7 +905,7 @@ namespace Sledge.Libs.HLLib
 
             public override long Position
             {
-                get { return Pointer; }
+                get { return GetStreamPointer(StreamPtr); }
                 set { Seek(value, SeekMode.Beginning); }
             }
 

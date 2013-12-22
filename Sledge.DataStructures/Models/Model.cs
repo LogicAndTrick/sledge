@@ -82,6 +82,7 @@ namespace Sledge.DataStructures.Models
         /// </summary>
         private void CombineTextures()
         {
+            if (!Textures.Any()) return;
             // Calculate the dimension of the combined texture
             var width = 0;
             var height = 0;

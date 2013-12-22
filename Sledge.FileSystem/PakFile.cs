@@ -351,6 +351,7 @@ namespace Sledge.FileSystem
                     _stream.Dispose();
                     _package.Dispose();
                     HLLib.Shutdown();
+                    _open = false;
                 }
                 base.Dispose(disposing);
             }
