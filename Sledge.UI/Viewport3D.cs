@@ -86,7 +86,7 @@ namespace Sledge.UI
         {
             screen = new Coordinate(screen.X, screen.Y, 1);
             var viewport = new[] { 0, 0, Width, Height };
-            var pm = Matrix4d.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(60), Width / (float)Height, 0.1f, 50000);
+            var pm = Matrix4d.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(Camera.FOV), Width / (float)Height, 0.1f, 50000);
             var vm = Matrix4d.LookAt(
                 new Vector3d(Camera.Location.X, Camera.Location.Y, Camera.Location.Z),
                 new Vector3d(Camera.LookAt.X, Camera.LookAt.Y, Camera.LookAt.Z),
@@ -102,7 +102,7 @@ namespace Sledge.UI
         public Coordinate WorldToScreen(Coordinate world)
         {
             var viewport = new[] { 0, 0, Width, Height };
-            var pm = Matrix4d.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(60), Width / (float)Height, 0.1f, 50000);
+            var pm = Matrix4d.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(Camera.FOV), Width / (float)Height, 0.1f, 50000);
             var vm = Matrix4d.LookAt(
                 new Vector3d(Camera.Location.X, Camera.Location.Y, Camera.Location.Z),
                 new Vector3d(Camera.LookAt.X, Camera.LookAt.Y, Camera.LookAt.Z),
@@ -124,7 +124,7 @@ namespace Sledge.UI
         {
             var near = new Coordinate(x, Height - y, 0);
             var far = new Coordinate(x, Height - y, 1);
-            var pm = Matrix4d.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(60), Width / (float)Height, 0.1f, 50000);
+            var pm = Matrix4d.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(Camera.FOV), Width / (float)Height, 0.1f, 50000);
             var vm = Matrix4d.LookAt(
                 new Vector3d(Camera.Location.X, Camera.Location.Y, Camera.Location.Z),
                 new Vector3d(Camera.LookAt.X, Camera.LookAt.Y, Camera.LookAt.Z),
