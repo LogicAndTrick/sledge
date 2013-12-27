@@ -142,6 +142,7 @@ namespace Sledge.Editor.Tools
                 State.BoxStart = box.Start;
                 State.BoxEnd = box.End;
             }
+            OnBoxChanged();
         }
 
         #endregion
