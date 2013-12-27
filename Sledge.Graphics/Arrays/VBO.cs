@@ -92,9 +92,6 @@ namespace Sledge.Graphics.Arrays
             _subsetState.Clear();
             _subsets.Clear();
             _offsets.Clear();
-
-            if (_array >= 0) GL.DeleteBuffers(1, ref _array);
-            if (_elementArray >= 0) GL.DeleteBuffers(1, ref _elementArray);
         }
 
         protected void Update(int index, IEnumerable<TOut> data)
@@ -124,15 +121,15 @@ namespace Sledge.Graphics.Arrays
             }
 
             // Array buffer
-            GL.GenBuffers(1, out _array);
+            if (_array < 0) GL.GenBuffers(1, out _array);
             GL.BindBuffer(BufferTarget.ArrayBuffer, _array);
-            GL.BufferData(BufferTarget.ArrayBuffer, new IntPtr(data.Length * _size), data, BufferUsageHint.StaticDraw);
+            GL.BufferData(BufferTarget.ArrayBuffer, new IntPtr(data.Length * _size), data, BufferUsageHint.StreamDraw);
             GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
 
             // Element buffer
-            GL.GenBuffers(1, out _elementArray);
+            if (_elementArray < 0) GL.GenBuffers(1, out _elementArray);
             GL.BindBuffer(BufferTarget.ElementArrayBuffer, _elementArray);
-            GL.BufferData(BufferTarget.ElementArrayBuffer, new IntPtr(elementData.Length * sizeof(uint)), elementData, BufferUsageHint.StaticDraw);
+            GL.BufferData(BufferTarget.ElementArrayBuffer, new IntPtr(elementData.Length * sizeof(uint)), elementData, BufferUsageHint.StreamDraw);
             GL.BindBuffer(BufferTarget.ElementArrayBuffer, 0);
 
             _data.Clear();

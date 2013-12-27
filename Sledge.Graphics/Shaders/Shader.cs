@@ -28,12 +28,14 @@ namespace Sledge.Graphics.Shaders
         private void ReplaceLayoutLocations()
         {
             _attribLocations = new Dictionary<int, string>();
-            // layout(location = 0) in vec3 position;
-	        var regex = new Regex(@"layout\s*\(\s*location\s*=\s*(\d+)\s*\)\s*in\s*([^\s]*)\s*([^\s*]*)\s*;");
+            // 300 -> layout(location = 0) in vec3 position;
+            // 130 -> in vec3 position
+            // 120 -> attribute vec3 position
+            var regex = new Regex(@"layout\s*\(\s*location\s*=\s*(\d+)\s*\)\s*in\s*([^\s]*)\s*([^\s*]*)\s*;");
             ShaderCode = regex.Replace(ShaderCode, x =>
                                                        {
                                                            _attribLocations.Add(int.Parse(x.Groups[1].Value), x.Groups[3].Value);
-                                                           return "in " + x.Groups[2].Value + " " + x.Groups[3].Value + ";";
+                                                           return "attribute " + x.Groups[2].Value + " " + x.Groups[3].Value + ";";
                                                        });
             if (!ShaderCode.Trim().StartsWith("#version 120"))
             {
