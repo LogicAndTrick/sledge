@@ -11,10 +11,11 @@ namespace Sledge.Editor.UI
         public static bool HotkeyDown(Keys keyData)
         {
             var keyCombination = KeyboardState.KeysToString(keyData);
-            var hotkeyDefinition = Sledge.Settings.Hotkeys.GetHotkeyFor(keyCombination);
-            if (hotkeyDefinition != null)
+            var hotkeyImplementation = Sledge.Settings.Hotkeys.GetHotkeyFor(keyCombination);
+            if (hotkeyImplementation != null)
             {
-                Mediator.Publish(hotkeyDefinition.Action, hotkeyDefinition.Parameter);
+                var def = hotkeyImplementation.Definition;
+                Mediator.Publish(def.Action, def.Parameter);
                 return true;
             }
             return false;

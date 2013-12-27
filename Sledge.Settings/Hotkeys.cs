@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using Sledge.Settings.Models;
 
 namespace Sledge.Settings
 {
     public static class Hotkeys
     {
-        private static readonly List<HotkeyDefinition> Definitions; 
+        private static readonly List<HotkeyDefinition> Definitions;
+        private static readonly List<HotkeyImplementation> Implementations;
 
         static Hotkeys()
         {
@@ -23,7 +24,7 @@ namespace Sledge.Settings
                                     new HotkeyDefinition("New File", "Create a new map", HotkeysMediator.FileNew, "Ctrl+N"),
                                     new HotkeyDefinition("Open File", "Open an existing map", HotkeysMediator.FileOpen, "Ctrl+O"),
                                     new HotkeyDefinition("Save File", "Save the currently opened map", HotkeysMediator.FileSave, "Ctrl+S"),
-                                    new HotkeyDefinition("Save File As...", "Save the currently opened map", HotkeysMediator.FileSave, "Ctrl+Alt+S"),
+                                    new HotkeyDefinition("Save File As...", "Save the currently opened map", HotkeysMediator.FileSaveAs, "Ctrl+Alt+S"),
                                     new HotkeyDefinition("Compile Map", "Compile the currently opened map", HotkeysMediator.FileCompile, "F9"),
 
                                     new HotkeyDefinition("Increase Grid Size", "Increase the current grid size", HotkeysMediator.GridIncrease, "]"),
@@ -39,31 +40,24 @@ namespace Sledge.Settings
 
                                     new HotkeyDefinition("Show Object Properties", "Open the object properties dialog for the currently selected items", HotkeysMediator.ObjectProperties, "Alt+Enter"),
                                     
-                                    new HotkeyDefinition("Copy", "Copy the current selection", HotkeysMediator.OperationsCopy, "Ctrl+C"),
-                                    new HotkeyDefinition("Copy", "Copy the current selection", HotkeysMediator.OperationsCopy, "Ctrl+Ins"),
-                                    new HotkeyDefinition("Cut", "Cut the current selection", HotkeysMediator.OperationsCut, "Ctrl+X"),
-                                    new HotkeyDefinition("Cut", "Cut the current selection", HotkeysMediator.OperationsCut, "Shift+Del"),
-                                    new HotkeyDefinition("Paste", "Paste the clipboard contents", HotkeysMediator.OperationsPaste, "Ctrl+V"),
-                                    new HotkeyDefinition("Paste", "Paste the clipboard contents", HotkeysMediator.OperationsPaste, "Shift+Ins"),
+                                    new HotkeyDefinition("Copy", "Copy the current selection", HotkeysMediator.OperationsCopy, "Ctrl+C", "Ctrl+Ins"),
+                                    new HotkeyDefinition("Cut", "Cut the current selection", HotkeysMediator.OperationsCut, "Ctrl+X", "Shift+Del"),
+                                    new HotkeyDefinition("Paste", "Paste the clipboard contents", HotkeysMediator.OperationsPaste, "Ctrl+V", "Shift+Ins"),
                                     new HotkeyDefinition("Paste Special", "Paste special the clipboard contents", HotkeysMediator.OperationsPasteSpecial, "Ctrl+B"),
                                     new HotkeyDefinition("Delete", "Delete the current selection", HotkeysMediator.OperationsDelete, "Del"),
                                     
                                     new HotkeyDefinition("Group", "Group the selected objects", HotkeysMediator.GroupingGroup, "Ctrl+G"),
-                                    new HotkeyDefinition("Ungroup", "Ungroup the selected objects", HotkeysMediator.GroupingUngroup, "Ctrl+U"),
+                                    new HotkeyDefinition("Ungroup", "Ungroup the selected objects", HotkeysMediator.GroupingUngroup, "Ctrl+U", "Ctrl+H"),
                                     new HotkeyDefinition("Toggle Ignore Grouping", "Toggle ignore grouping on and off", HotkeysMediator.ToggleIgnoreGrouping, "Ctrl+W"),
                                     
                                     new HotkeyDefinition("Hide Selected", "Hide the selected objects", HotkeysMediator.QuickHideSelected, "H"),
                                     new HotkeyDefinition("Hide Unselected", "Hide the unselected objects", HotkeysMediator.QuickHideUnselected, "Ctrl+H"),
                                     new HotkeyDefinition("Unhide All", "Show all hidden objects", HotkeysMediator.QuickHideShowAll, "U"),
                                     
-                                    new HotkeyDefinition("Tie To Entity", "Tie the selected objects to an entity", HotkeysMediator.TieToEntity, "Ctrl+T"),
-                                    new HotkeyDefinition("Ungroup", "Ungroup the selected objects", HotkeysMediator.GroupingUngroup, "Ctrl+H"),
-                                    
                                     new HotkeyDefinition("Center 2D View on Selection", "Center the 2D viewports on the current selection", HotkeysMediator.Center2DViewsOnSelection, "Ctrl+E"),
                                     new HotkeyDefinition("Center 3D View on Selection", "Center the 3D viewport on the current selection", HotkeysMediator.Center3DViewsOnSelection, "Ctrl+Shift+E"),
                                     
-                                    new HotkeyDefinition("Deselect All", "Deselect all currently selected objects", HotkeysMediator.SelectionClear, "Shift+Q"),
-                                    new HotkeyDefinition("Deselect All", "Deselect all currently selected objects", HotkeysMediator.SelectionClear, "Escape"),
+                                    new HotkeyDefinition("Deselect All", "Deselect all currently selected objects", HotkeysMediator.SelectionClear, "Shift+Q", "Escape"),
                                     
                                     new HotkeyDefinition("Tie to Entity", "Tie the selected objects to an entity", HotkeysMediator.TieToEntity, "Ctrl+T"),
                                     new HotkeyDefinition("Move to World", "Move the selected entities to the world", HotkeysMediator.TieToWorld, "Ctrl+Shift+W"),
@@ -92,16 +86,63 @@ namespace Sledge.Settings
                                     new HotkeyDefinition("Previous Tab", "Move to the previous open tab", HotkeysMediator.PreviousTab, "Ctrl+Shift+Tab"),
                                     new HotkeyDefinition("Next Tab", "Move to the next open tab", HotkeysMediator.NextTab, "Ctrl+Tab"),
                                };
+            Implementations = new List<HotkeyImplementation>();
+            SetupHotkeys(new List<Hotkey>());
         }
 
-        public static HotkeyDefinition GetHotkeyForMessage(object message, object parameter)
+        public static void SetupHotkeys(List<Hotkey> overrides)
         {
-            return Definitions.FirstOrDefault(x => x.Action.ToString() == message.ToString() && Equals(x.Parameter, parameter));
+            Implementations.Clear();
+            foreach (var def in Definitions)
+            {
+                var overridden = false;
+                foreach (var hk in overrides.Where(x => x.ID == def.ID).ToList())
+                {
+                    overridden = true;
+                    if (!String.IsNullOrWhiteSpace(hk.HotkeyString))
+                    {
+                        Implementations.Add(new HotkeyImplementation(def, hk.HotkeyString));
+                    }
+                }
+                if (!overridden)
+                {
+                    foreach (var hk in def.DefaultHotkeys)
+                    {
+                        Implementations.Add(new HotkeyImplementation(def, hk));
+                    }
+                }
+            }
         }
 
-        public static HotkeyDefinition GetHotkeyFor(string keyCombination)
+        public static IEnumerable<Hotkey> GetHotkeys()
         {
-            return Definitions.FirstOrDefault(x => x.DefaultHotkey == keyCombination);
+            foreach (var def in Definitions)
+            {
+                var impls = Implementations.Where(x => x.Definition.ID == def.ID).ToList();
+                if (!impls.Any())
+                {
+                    yield return new Hotkey {ID = def.ID, HotkeyString = ""};
+                }
+                else
+                {
+                    foreach (var impl in impls)
+                    {
+                        yield return new Hotkey {ID = def.ID, HotkeyString = impl.Hotkey};
+                    }
+                }
+            }
+        }
+
+        public static HotkeyImplementation GetHotkeyForMessage(object message, object parameter)
+        {
+            var def = Definitions.FirstOrDefault(x => x.Action.ToString() == message.ToString() && Equals(x.Parameter, parameter));
+            if (def == null) return null;
+            return Implementations.FirstOrDefault(x => x.Definition.ID == def.ID);
+        }
+
+        public static HotkeyImplementation GetHotkeyFor(string keyCombination)
+        {
+            return Implementations.FirstOrDefault(x => x.Hotkey == keyCombination);
         }
     }
 }

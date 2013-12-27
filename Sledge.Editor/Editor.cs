@@ -108,7 +108,7 @@ namespace Sledge.Editor
                     tl.GetName())
                         {
                             Checked = (tl == ToolManager.ActiveTool),
-                            ToolTipText = tl.GetName() + (hotkey != null ? " (" +hotkey.DefaultHotkey + ")" : ""),
+                            ToolTipText = tl.GetName() + (hotkey != null ? " (" +hotkey.Hotkey + ")" : ""),
                             DisplayStyle = ToolStripItemDisplayStyle.Image,
                             ImageScaling = ToolStripItemImageScaling.None,
                             AutoSize = false,

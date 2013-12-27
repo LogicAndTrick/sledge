@@ -23,7 +23,7 @@ namespace Sledge.Editor.Menu
             _message = message;
             _parameter = parameter;
             var hk = Hotkeys.GetHotkeyForMessage(message, parameter);
-            if (hk != null) ShortcutKeyDisplayString = hk.DefaultHotkey;
+            if (hk != null) ShortcutKeyDisplayString = hk.Hotkey;
             if (_isActive != null || _text != null || _isChecked != null)
             {
                 Mediator.Subscribe(EditorMediator.UpdateMenu, this);

@@ -47,6 +47,7 @@
     <Compile Include="GameDetection\IGameDetector.cs" />
     <Compile Include="GameDetection\WonDetector.cs" />
     <Compile Include="HotkeyDefinition.cs" />
+    <Compile Include="HotkeyImplementation.cs" />
     <Compile Include="Hotkeys.cs" />
     <Compile Include="HotkeysMediator.cs" />
     <Compile Include="HotkeyTool.cs" />
@@ -54,6 +55,7 @@
     <Compile Include="Models\Engine.cs" />
     <Compile Include="Models\Fgd.cs" />
     <Compile Include="Models\Game.cs" />
+    <Compile Include="Models\Hotkey.cs" />
     <Compile Include="Models\RecentFile.cs" />
     <Compile Include="Models\Setting.cs" />
     <Compile Include="Models\Wad.cs" />

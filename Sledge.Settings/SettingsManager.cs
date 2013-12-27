@@ -16,6 +16,7 @@ namespace Sledge.Settings
         public static List<Game> Games { get; set; }
         public static List<RecentFile> RecentFiles { get; set; }
         public static List<Setting> Settings { get; set; }
+        public static List<Hotkey> Hotkeys { get; set; }
 
         public static string SettingsFile { get; set; }
 
@@ -25,6 +26,7 @@ namespace Sledge.Settings
             Games = new List<Game>();
             RecentFiles = new List<RecentFile>();
             Settings = new List<Setting>();
+            Hotkeys = new List<Hotkey>();
             SpecialTextureOpacities = new Dictionary<string, float>
                                           {
                                               {"null", 0},
@@ -129,7 +131,18 @@ namespace Sledge.Settings
                 b.Read(build);
                 Builds.Add(b);
             }
+            var hotkeys = root.Children.FirstOrDefault(x => x.Name == "Hotkeys");
+            if (hotkeys != null)
+            {
+                foreach (var key in hotkeys.GetPropertyKeys())
+                {
+                    var spl = key.Split(':');
+                    Hotkeys.Add(new Hotkey {ID = spl[0], HotkeyString = hotkeys[key]});
+                }
+            }
+
             Serialise.DeserialiseSettings(Settings.ToDictionary(x => x.Key, x => x.Value));
+            Sledge.Settings.Hotkeys.SetupHotkeys(Hotkeys);
 
             if (!File.Exists(SettingsFile))
             {
@@ -178,6 +191,20 @@ namespace Sledge.Settings
                 build.Write(b);
                 root.Children.Add(b);
             }
+
+            // Hotkeys
+            Hotkeys = Sledge.Settings.Hotkeys.GetHotkeys().ToList();
+            var hotkeys = new GenericStructure("Hotkeys");
+            foreach (var g in Hotkeys.GroupBy(x => x.ID))
+            {
+                var count = 0;
+                foreach (var hotkey in g)
+                {
+                    hotkeys.AddProperty(hotkey.ID + ":" + count, hotkey.HotkeyString);
+                    count++;
+                }
+            }
+            root.Children.Add(hotkeys);
 
             File.WriteAllText(SettingsFile, root.ToString());
         }
