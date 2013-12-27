@@ -92,6 +92,7 @@ namespace Sledge.Settings
             Games.Clear();
             RecentFiles.Clear();
             Settings.Clear();
+            Hotkeys.Clear();
 
             var root = ReadSettingsFile();
 

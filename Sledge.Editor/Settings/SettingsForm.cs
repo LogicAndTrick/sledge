@@ -10,19 +10,21 @@ using Sledge.QuickForms;
 using Sledge.Settings;
 using System.Linq;
 using Sledge.Settings.Models;
+using Sledge.UI;
 
 namespace Sledge.Editor.Settings
 {
-	/// <summary>
-	/// Description of SettingsForm.
-	/// </summary>
-	public partial class SettingsForm : Form
-	{
-	    private List<Game> _games;
-	    private List<Build> _builds;
+    /// <summary>
+    /// Description of SettingsForm.
+    /// </summary>
+    public partial class SettingsForm : Form
+    {
+        private List<Game> _games;
+        private List<Build> _builds;
+        private List<Hotkey> _hotkeys; 
 
-		public SettingsForm()
-		{
+        public SettingsForm()
+        {
             InitializeComponent();
             BindColourPicker(GridBackgroundColour);
             BindColourPicker(GridColour);
@@ -31,15 +33,15 @@ namespace Sledge.Editor.Settings
             BindColourPicker(GridHighlight1Colour);
             BindColourPicker(GridHighlight2Colour);
 
-		    UpdateData();
+            UpdateData();
 
             tbcSettings.SelectTab(3);
-		    BindConfigControls();
-		}
+            BindConfigControls();
+        }
 
         #region Initialisation
-	    private void BindConfigControls()
-	    {
+        private void BindConfigControls()
+        {
             // Game Configurations
             SelectedGameName.TextChanged += (s, e) => CheckNull(_selectedGame, x => x.Name = SelectedGameName.Text);
             SelectedGameEngine.SelectedIndexChanged += (s, e) => CheckNull(_selectedGame, x => x.Engine = (Engine) SelectedGameEngine.SelectedItem);
@@ -61,7 +63,7 @@ namespace Sledge.Editor.Settings
             SelectedGameTextureScale.ValueChanged += (s, e) => CheckNull(_selectedGame, x => x.DefaultTextureScale = SelectedGameTextureScale.Value);
             SelectedGameLightmapScale.ValueChanged += (s, e) => CheckNull(_selectedGame, x => x.DefaultLightmapScale = SelectedGameLightmapScale.Value);
             SelectedGameOverrideMapSize.CheckedChanged += (s, e) => CheckNull(_selectedGame, x => x.OverrideMapSize = SelectedGameOverrideMapSize.Checked);
-	        var sizes = new[] {4096, 8192, 16384, 32768, 65536};
+            var sizes = new[] {4096, 8192, 16384, 32768, 65536};
             SelectedGameOverrideSizeLow.SelectedIndexChanged += (s, e) => CheckNull(_selectedGame, x => x.OverrideMapSizeLow = SelectedGameOverrideSizeLow.SelectedIndex < 0 ? 0 : -sizes[SelectedGameOverrideSizeLow.SelectedIndex]);
             SelectedGameOverrideSizeHigh.SelectedIndexChanged += (s, e) => CheckNull(_selectedGame, x => x.OverrideMapSizeHigh = SelectedGameOverrideSizeHigh.SelectedIndex < 0 ? 0 : sizes[SelectedGameOverrideSizeHigh.SelectedIndex]);
 
@@ -74,9 +76,9 @@ namespace Sledge.Editor.Settings
             SelectedBuildVis.SelectedIndexChanged += (s, e) => CheckNull(_selectedBuild, x => x.Vis = SelectedBuildVis.Text);
             SelectedBuildRad.SelectedIndexChanged += (s, e) => CheckNull(_selectedBuild, x => x.Rad = SelectedBuildRad.Text);
             
-	    }
+        }
 
-	    private void BindColourPicker(Control panel)
+        private void BindColourPicker(Control panel)
         {
             panel.Click += (sender, e) =>
             {
@@ -97,12 +99,12 @@ namespace Sledge.Editor.Settings
 
         #region Data Loading
 
-	    private void UpdateData()
-	    {
+        private void UpdateData()
+        {
             _selectedGame = null;
             UpdateSelectedGame();
 
-	        _selectedBuild = null;
+            _selectedBuild = null;
             UpdateSelectedBuild();
 
             _games = new List<Game>(SettingsManager.Games);
@@ -120,6 +122,8 @@ namespace Sledge.Editor.Settings
             UpdateBuildTree();
             UpdateSteamUsernames();
             SelectedGameUpdateSteamGames();
+
+            _hotkeys = Hotkeys.GetHotkeys().Select(x => new Hotkey { ID = x.ID, HotkeyString = x.HotkeyString }).ToList();
         }
 
         private void ReIndex()
@@ -136,9 +140,9 @@ namespace Sledge.Editor.Settings
             }
         }
 
-	    private void UpdateBuildTree()
-	    {
-	        BuildTree.Nodes.Clear();
+        private void UpdateBuildTree()
+        {
+            BuildTree.Nodes.Clear();
             foreach (Engine engine in Enum.GetValues(typeof(Engine)))
             {
                 var node = BuildTree.Nodes.Add(engine.ToString(), engine.ToString());
@@ -151,45 +155,45 @@ namespace Sledge.Editor.Settings
             }
             BuildTree.ExpandAll();
             SelectedGameBuild.Items.Clear();
-	        SelectedGameBuild.Items.AddRange(_builds.Select(x => x.Name).ToArray());
+            SelectedGameBuild.Items.AddRange(_builds.Select(x => x.Name).ToArray());
         }
 
-	    private void UpdateGameTree()
-	    {
+        private void UpdateGameTree()
+        {
             GameTree.Nodes.Clear();
             foreach (Engine engine in Enum.GetValues(typeof(Engine)))
-	        {
+            {
                 var node = GameTree.Nodes.Add(engine.ToString(), engine.ToString());
-	            var list = _games.Where(x => x.Engine == engine).ToList();
-	            foreach (var game in list)
-	            {
-	                var index = _games.IndexOf(game);
-	                node.Nodes.Add(index.ToString(CultureInfo.InvariantCulture), game.Name);
-	            }
-	        }
+                var list = _games.Where(x => x.Engine == engine).ToList();
+                foreach (var game in list)
+                {
+                    var index = _games.IndexOf(game);
+                    node.Nodes.Add(index.ToString(CultureInfo.InvariantCulture), game.Name);
+                }
+            }
             GameTree.ExpandAll();
-	    }
+        }
 
         #endregion
 
         #region Load/Apply
 
-	    private void SettingsFormLoad(object sender, EventArgs e)
+        private void SettingsFormLoad(object sender, EventArgs e)
         {
             // General
             SwitchToSelectAfterCreation.Checked = Sledge.Settings.Select.SwitchToSelectAfterCreation;
-	        SwitchToSelectAfterEntity.Checked = Sledge.Settings.Select.SwitchToSelectAfterEntity;
+            SwitchToSelectAfterEntity.Checked = Sledge.Settings.Select.SwitchToSelectAfterEntity;
             SelectCreatedBrush.Checked = Sledge.Settings.Select.SelectCreatedBrush;
-	        SelectCreatedEntity.Checked = Sledge.Settings.Select.SelectCreatedEntity;
-	        DeselectOthersWhenSelectingCreation.Checked = Sledge.Settings.Select.DeselectOthersWhenSelectingCreation;
-	        ResetBrushTypeOnCreation.Checked = Sledge.Settings.Select.ResetBrushTypeOnCreation;
+            SelectCreatedEntity.Checked = Sledge.Settings.Select.SelectCreatedEntity;
+            DeselectOthersWhenSelectingCreation.Checked = Sledge.Settings.Select.DeselectOthersWhenSelectingCreation;
+            ResetBrushTypeOnCreation.Checked = Sledge.Settings.Select.ResetBrushTypeOnCreation;
 
-	        ApplyTextureImmediately.Checked = Sledge.Settings.Select.ApplyTextureImmediately;
+            ApplyTextureImmediately.Checked = Sledge.Settings.Select.ApplyTextureImmediately;
 
             LoadSession.Checked = Sledge.Settings.View.LoadSession;
             KeepCameraPositions.Checked = Sledge.Settings.View.KeepCameraPositions;
             KeepSelectedTool.Checked = Sledge.Settings.View.KeepSelectedTool;
-	        KeepViewportSplitterPosition.Checked = Sledge.Settings.View.KeepViewportSplitterPosition;
+            KeepViewportSplitterPosition.Checked = Sledge.Settings.View.KeepViewportSplitterPosition;
 
             RenderMode.SelectedIndex = 0;
             if (Sledge.Settings.View.Renderer == Sledge.Settings.RenderMode.OpenGL1DisplayLists) RenderMode.SelectedIndex = 1;
@@ -198,18 +202,18 @@ namespace Sledge.Editor.Settings
             DisableWadTransparency.Checked = Sledge.Settings.View.DisableWadTransparency;
             DisableToolTransparency.Checked = Sledge.Settings.View.DisableToolTextureTransparency;
             GloballyDisableTransparency.Checked = Sledge.Settings.View.GloballyDisableTransparency;
-	        DisableModelRendering.Checked = Sledge.Settings.View.DisableModelRendering;
+            DisableModelRendering.Checked = Sledge.Settings.View.DisableModelRendering;
 
             // 2D Views
             CrosshairCursorIn2DViews.Checked = Sledge.Settings.View.CrosshairCursorIn2DViews;
             AutoSelectBox.Checked = Sledge.Settings.Select.AutoSelectBox;
             KeepVisgroupsWhenCloning.Checked = Sledge.Settings.Select.KeepVisgroupsWhenCloning;
-	        ScrollWheelZoomMultiplier.Value = Sledge.Settings.View.ScrollWheelZoomMultiplier;
-	        SelectionBoxBackgroundOpacity.Value = Sledge.Settings.View.SelectionBoxBackgroundOpacity;
+            ScrollWheelZoomMultiplier.Value = Sledge.Settings.View.ScrollWheelZoomMultiplier;
+            SelectionBoxBackgroundOpacity.Value = Sledge.Settings.View.SelectionBoxBackgroundOpacity;
 
             DrawCenterHandles.Checked = Sledge.Settings.Select.DrawCenterHandles;
-	        CenterHandlesActiveViewportOnly.Checked = Sledge.Settings.Select.CenterHandlesActiveViewportOnly;
-	        CenterHandlesOnlyNearCursor.Checked = Sledge.Settings.Select.CenterHandlesFollowCursor;
+            CenterHandlesActiveViewportOnly.Checked = Sledge.Settings.Select.CenterHandlesActiveViewportOnly;
+            CenterHandlesOnlyNearCursor.Checked = Sledge.Settings.Select.CenterHandlesFollowCursor;
             BoxSelectByHandlesOnly.Checked = Sledge.Settings.Select.BoxSelectByCenterHandlesOnly;
             ClickSelectByHandlesOnly.Checked = Sledge.Settings.Select.ClickSelectByCenterHandlesOnly;
 
@@ -254,7 +258,7 @@ namespace Sledge.Editor.Settings
             InvertMouseX.Checked = Sledge.Settings.View.InvertX;
             InvertMouseY.Checked = Sledge.Settings.View.InvertY;
 
-	        CameraFOV.Value = Sledge.Settings.View.CameraFOV;
+            CameraFOV.Value = Sledge.Settings.View.CameraFOV;
 
             // Game Configurations
             // Build Programs
@@ -264,6 +268,7 @@ namespace Sledge.Editor.Settings
             UpdateSteamUsernames();
 
             // Hotkeys
+            UpdateHotkeyList();
         }
 
         private void Apply()
@@ -352,7 +357,10 @@ namespace Sledge.Editor.Settings
             Steam.SteamUsername = SteamUsername.Text;
 
             // Hotkeys
-
+            SettingsManager.Hotkeys.Clear();
+            SettingsManager.Hotkeys.AddRange(_hotkeys);
+            Hotkeys.SetupHotkeys(SettingsManager.Hotkeys);
+            
             // Save settings to database
             ReIndex();
             SettingsManager.Builds.Clear();
@@ -448,7 +456,7 @@ namespace Sledge.Editor.Settings
             SelectedGameUpdateSteamGames();
         }
 
-	    private void SteamDirectoryChanged(object sender, EventArgs e)
+        private void SteamDirectoryChanged(object sender, EventArgs e)
         {
             UpdateSteamUsernames();
             SelectedGameUpdateSteamGames();
@@ -535,7 +543,7 @@ namespace Sledge.Editor.Settings
 
         #region Selected Game
 
-	    private Game _selectedGame;
+        private Game _selectedGame;
 
         private void GameSelected(object sender, TreeViewEventArgs e)
         {
@@ -614,8 +622,8 @@ namespace Sledge.Editor.Settings
             SelectedGameUpdateWads();
         }
 
-	    private void SelectedGameUpdateWads()
-	    {
+        private void SelectedGameUpdateWads()
+        {
             SelectedGameWadList.Items.Clear();
             foreach (var wad in _selectedGame.Wads)
             {
@@ -627,13 +635,13 @@ namespace Sledge.Editor.Settings
                 SelectedGameWadList.Items.Add(item);
             }
             SelectedGameWadList.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
-	    }
+        }
 
-	    private void SelectedGameUpdateFgds()
-	    {
+        private void SelectedGameUpdateFgds()
+        {
             SelectedGameFgdList.Items.Clear();
-	        foreach (var fgd in _selectedGame.Fgds)
-	        {
+            foreach (var fgd in _selectedGame.Fgds)
+            {
                 var item = new ListViewItem(new[]
                 {
                     Path.GetFileName(fgd.Path),
@@ -671,9 +679,9 @@ namespace Sledge.Editor.Settings
             {
                 MessageBox.Show("There was an error loading the provided FGDs, please ensure that you have loaded all dependant FGDs.\nError was: "+ex.Message);
             }
-	    }
+        }
 
-	    private void SelectedGameEngineChanged(object sender, EventArgs e)
+        private void SelectedGameEngineChanged(object sender, EventArgs e)
         {
             if (_selectedGame == null || SelectedGameEngine.SelectedIndex < 0) return;
             var eng = (Engine) SelectedGameEngine.SelectedItem;
@@ -897,7 +905,7 @@ namespace Sledge.Editor.Settings
 
         #region Selected Build
 
-	    private Build _selectedBuild;
+        private Build _selectedBuild;
 
         private void BuildSelected(object sender, TreeViewEventArgs e)
         {
@@ -952,8 +960,8 @@ namespace Sledge.Editor.Settings
             }
         }
 
-	    private void UpdateSelectedBuild()
-	    {
+        private void UpdateSelectedBuild()
+        {
             BuildSubTabs.Visible = RemoveBuild.Enabled = _selectedBuild != null;
             if (_selectedBuild == null) return;
             SelectedBuildName.Text = _selectedBuild.Name;
@@ -964,7 +972,7 @@ namespace Sledge.Editor.Settings
             SelectedBuildVis.SelectedText = _selectedBuild.Vis;
             SelectedBuildRad.SelectedText = _selectedBuild.Rad;
             //SelectedBuildIncludeWads.Checked = _selectedBuild.IncludeWads;
-	    }
+        }
 
         private void SelectedBuildPathChanged(object sender, EventArgs e)
         {
@@ -999,6 +1007,157 @@ namespace Sledge.Editor.Settings
             if (SelectedBuildRad.SelectedIndex < 0) SelectedBuildRad.SelectedIndex = Math.Max(0, dirs.FindIndex(x => x.ToLower().Contains("rad")));
         }
 
-	    #endregion
+        #endregion
+
+        #region Hotkeys
+
+        private class HotkeyQuickFormItem : QuickForms.Items.QuickFormTextBox
+        {
+            public HotkeyQuickFormItem(string tbname, string value) : base(tbname, value)
+            {
+            }
+            public override List<Control> GetControls(QuickForm qf)
+            {
+                var ctrls = base.GetControls(qf);
+                ctrls.OfType<TextBox>().First().KeyDown += HotkeyDown;
+                return ctrls;
+            }
+
+            private void HotkeyDown(object sender, KeyEventArgs e)
+            {
+                e.SuppressKeyPress = e.Handled = true;
+                ((TextBox) sender).Text = KeyboardState.KeysToString(e.KeyData);
+            }
+        }
+        private void UpdateHotkeyList()
+        {
+            HotkeyList.BeginUpdate();
+            var idx = HotkeyList.SelectedIndices.Count == 0 ? 0 : HotkeyList.SelectedIndices[0];
+            HotkeyList.Items.Clear();
+            foreach (var hotkey in _hotkeys.OrderBy(x => x.ID))
+            {
+                var def = Hotkeys.GetHotkeyDefinition(hotkey.ID);
+                HotkeyList.Items.Add(new ListViewItem(new[]
+                                                          {
+                                                              def.Name,
+                                                              def.Description,
+                                                              String.IsNullOrWhiteSpace(hotkey.HotkeyString)
+                                                                  ? "<unassigned>"
+                                                                  : hotkey.HotkeyString
+                                                          }) {Tag = hotkey});
+            }
+            HotkeyList.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
+            if (idx >= 0 && idx < HotkeyList.Items.Count) HotkeyList.Items[idx].Selected = true;
+            HotkeyList.EndUpdate();
+
+            HotkeyActionList.BeginUpdate();
+            idx = HotkeyActionList.SelectedIndex;
+            HotkeyActionList.Items.Clear();
+            foreach (var def in Hotkeys.GetHotkeyDefinitions().OrderBy(x => x.ID))
+            {
+                HotkeyActionList.Items.Add(def);
+            }
+            if (idx < 0 || idx >= HotkeyActionList.Items.Count) idx = 0;
+            HotkeyActionList.SelectedIndex = idx;
+            HotkeyActionList.EndUpdate();
+        }
+
+        private void DeleteHotkey(Hotkey hk)
+        {
+            var others = _hotkeys.Where(x => x.ID == hk.ID && x != hk).ToList();
+            if (others.Any()) _hotkeys.Remove(hk);
+            else hk.HotkeyString = "";
+            UpdateHotkeyList();
+        }
+
+        private void EditHotkey(Hotkey hk)
+        {
+            using (var qf = new QuickForm("Enter New Hotkey")
+                .Item(new HotkeyQuickFormItem("Hotkey", hk.HotkeyString))
+                .OkCancel())
+            {
+                if (qf.ShowDialog() != DialogResult.OK) return;
+                var key = qf.String("Hotkey");
+                if (String.IsNullOrWhiteSpace(key)) return;
+
+                var conflict = _hotkeys.FirstOrDefault(x => x.HotkeyString == key && x != hk);
+                if (conflict != null)
+                {
+                    if (MessageBox.Show(key + " is already assigned to \"" + Hotkeys.GetHotkeyDefinition(conflict.ID) + "\".\n" +
+                                        "Continue anyway?", "Conflict Detected", MessageBoxButtons.YesNo) == DialogResult.No)
+                    {
+                        return;
+                    }
+                }
+
+                hk.HotkeyString = key;
+                UpdateHotkeyList();
+            }
+        }
+
+        private void HotkeyListKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Delete && HotkeyList.SelectedItems.Count == 1)
+            {
+                DeleteHotkey((Hotkey)HotkeyList.SelectedItems[0].Tag);
+            }
+            else if (e.KeyCode == Keys.Enter && HotkeyList.SelectedItems.Count == 1)
+            {
+                EditHotkey((Hotkey)HotkeyList.SelectedItems[0].Tag);
+            }
+        }
+
+        private void HotkeyListDoubleClicked(object sender, MouseEventArgs e)
+        {
+            if (HotkeyList.SelectedItems.Count == 1)
+            {
+                EditHotkey((Hotkey)HotkeyList.SelectedItems[0].Tag);
+            }
+        }
+
+        private void HotkeyReassignButtonClicked(object sender, EventArgs e)
+        {
+            if (HotkeyList.SelectedItems.Count == 1)
+            {
+                EditHotkey((Hotkey)HotkeyList.SelectedItems[0].Tag);
+            }
+        }
+
+        private void HotkeyRemoveButtonClicked(object sender, EventArgs e)
+        {
+            if (HotkeyList.SelectedItems.Count == 1)
+            {
+                DeleteHotkey((Hotkey)HotkeyList.SelectedItems[0].Tag);
+            }
+        }
+
+        private void HotkeyAddButtonClicked(object sender, EventArgs e)
+        {
+            var key = HotkeyCombination.Text;
+            if (HotkeyActionList.SelectedIndex <= 0 || String.IsNullOrWhiteSpace(key)) return;
+            var conflict = _hotkeys.FirstOrDefault(x => x.HotkeyString == key);
+            if (conflict != null)
+            {
+                if (MessageBox.Show(key + " is already assigned to \"" + Hotkeys.GetHotkeyDefinition(conflict.ID) + "\".\n" +
+                                    "Continue anyway?", "Conflict Detected", MessageBoxButtons.YesNo) == DialogResult.No)
+                {
+                    return;
+                }
+            }
+            var def = (HotkeyDefinition) HotkeyActionList.SelectedItem;
+            var blank = _hotkeys.FirstOrDefault(x => x.ID == def.ID && String.IsNullOrWhiteSpace(x.HotkeyString));
+            if (blank == null) _hotkeys.Add(new Hotkey { ID = def.ID, HotkeyString = key });
+            else blank.HotkeyString = key;
+            HotkeyCombination.Text = "";
+            UpdateHotkeyList();
+        }
+
+        private void HotkeyCombinationKeyDown(object sender, KeyEventArgs e)
+        {
+            e.SuppressKeyPress = true;
+            e.Handled = true;
+            HotkeyCombination.Text = KeyboardState.KeysToString(e.KeyData);
+        }
+        #endregion
     }
 }

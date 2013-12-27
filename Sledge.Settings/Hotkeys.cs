@@ -144,5 +144,15 @@ namespace Sledge.Settings
         {
             return Implementations.FirstOrDefault(x => x.Hotkey == keyCombination);
         }
+
+        public static HotkeyDefinition GetHotkeyDefinition(string id)
+        {
+            return Definitions.FirstOrDefault(x => x.ID == id);
+        }
+
+        public static IEnumerable<HotkeyDefinition> GetHotkeyDefinitions()
+        {
+            return Definitions;
+        }
     }
 }

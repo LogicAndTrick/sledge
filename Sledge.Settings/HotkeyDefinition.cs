@@ -32,5 +32,10 @@ namespace Sledge.Settings
             DefaultHotkeys = defaultHotkeys;
             Parameter = parameter;
         }
+
+        public override string ToString()
+        {
+            return Name;
+        }
     }
 }

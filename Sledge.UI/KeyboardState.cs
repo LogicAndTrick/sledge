@@ -103,7 +103,7 @@ namespace Sledge.UI
         public static string KeysToString(Keys key)
         {
             var kc = new KeysConverter();
-            var str = kc.ConvertToString(key) ?? "";
+            var str = kc.ConvertToInvariantString(key) ?? "";
             foreach (var rep in KeyStringReplacements) str = str.Replace(rep.Key, rep.Value);
             return str;
         }

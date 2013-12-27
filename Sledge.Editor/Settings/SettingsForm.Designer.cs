@@ -259,10 +259,18 @@ namespace Sledge.Editor.Settings
             this.SteamInstallDirBrowseButton = new System.Windows.Forms.Button();
             this.SteamUsername = new System.Windows.Forms.ComboBox();
             this.tabHotkeys = new System.Windows.Forms.TabPage();
-            this.listView1 = new System.Windows.Forms.ListView();
-            this.chKey = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.groupBox22 = new System.Windows.Forms.GroupBox();
+            this.HotkeyActionList = new System.Windows.Forms.ComboBox();
+            this.HotkeyAddButton = new System.Windows.Forms.Button();
+            this.label25 = new System.Windows.Forms.Label();
+            this.label23 = new System.Windows.Forms.Label();
+            this.HotkeyCombination = new System.Windows.Forms.TextBox();
+            this.HotkeyReassignButton = new System.Windows.Forms.Button();
+            this.HotkeyRemoveButton = new System.Windows.Forms.Button();
+            this.HotkeyList = new System.Windows.Forms.ListView();
+            this.chAction = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.chDescription = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.ckKeyCombo = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.chTrigger = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.groupBox15 = new System.Windows.Forms.GroupBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
@@ -337,6 +345,7 @@ namespace Sledge.Editor.Settings
             this.tabBuildAdvancedPreview.SuspendLayout();
             this.tabSteam.SuspendLayout();
             this.tabHotkeys.SuspendLayout();
+            this.groupBox22.SuspendLayout();
             this.groupBox10.SuspendLayout();
             this.groupBox9.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar3)).BeginInit();
@@ -2834,7 +2843,10 @@ namespace Sledge.Editor.Settings
             // 
             // tabHotkeys
             // 
-            this.tabHotkeys.Controls.Add(this.listView1);
+            this.tabHotkeys.Controls.Add(this.groupBox22);
+            this.tabHotkeys.Controls.Add(this.HotkeyReassignButton);
+            this.tabHotkeys.Controls.Add(this.HotkeyRemoveButton);
+            this.tabHotkeys.Controls.Add(this.HotkeyList);
             this.tabHotkeys.Location = new System.Drawing.Point(4, 22);
             this.tabHotkeys.Name = "tabHotkeys";
             this.tabHotkeys.Padding = new System.Windows.Forms.Padding(3);
@@ -2843,30 +2855,120 @@ namespace Sledge.Editor.Settings
             this.tabHotkeys.Text = "Hotkeys";
             this.tabHotkeys.UseVisualStyleBackColor = true;
             // 
-            // listView1
+            // groupBox22
             // 
-            this.listView1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.chKey,
-            this.ckKeyCombo,
-            this.chTrigger});
-            this.listView1.Location = new System.Drawing.Point(6, 6);
-            this.listView1.Name = "listView1";
-            this.listView1.Size = new System.Drawing.Size(724, 499);
-            this.listView1.TabIndex = 0;
-            this.listView1.UseCompatibleStateImageBehavior = false;
-            this.listView1.View = System.Windows.Forms.View.Details;
+            this.groupBox22.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.groupBox22.Controls.Add(this.HotkeyActionList);
+            this.groupBox22.Controls.Add(this.HotkeyAddButton);
+            this.groupBox22.Controls.Add(this.label25);
+            this.groupBox22.Controls.Add(this.label23);
+            this.groupBox22.Controls.Add(this.HotkeyCombination);
+            this.groupBox22.Location = new System.Drawing.Point(6, 455);
+            this.groupBox22.Name = "groupBox22";
+            this.groupBox22.Size = new System.Drawing.Size(437, 50);
+            this.groupBox22.TabIndex = 4;
+            this.groupBox22.TabStop = false;
+            this.groupBox22.Text = "New Hotkey";
             // 
-            // chKey
+            // HotkeyActionList
             // 
-            this.chKey.Text = "Key";
+            this.HotkeyActionList.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.HotkeyActionList.FormattingEnabled = true;
+            this.HotkeyActionList.Location = new System.Drawing.Point(49, 18);
+            this.HotkeyActionList.Name = "HotkeyActionList";
+            this.HotkeyActionList.Size = new System.Drawing.Size(150, 21);
+            this.HotkeyActionList.TabIndex = 3;
+            // 
+            // HotkeyAddButton
+            // 
+            this.HotkeyAddButton.Location = new System.Drawing.Point(358, 16);
+            this.HotkeyAddButton.Name = "HotkeyAddButton";
+            this.HotkeyAddButton.Size = new System.Drawing.Size(69, 23);
+            this.HotkeyAddButton.TabIndex = 3;
+            this.HotkeyAddButton.Text = "Add";
+            this.HotkeyAddButton.UseVisualStyleBackColor = true;
+            this.HotkeyAddButton.Click += new System.EventHandler(this.HotkeyAddButtonClicked);
+            // 
+            // label25
+            // 
+            this.label25.AutoSize = true;
+            this.label25.Location = new System.Drawing.Point(6, 22);
+            this.label25.Name = "label25";
+            this.label25.Size = new System.Drawing.Size(37, 13);
+            this.label25.TabIndex = 2;
+            this.label25.Text = "Action";
+            // 
+            // label23
+            // 
+            this.label23.AutoSize = true;
+            this.label23.Location = new System.Drawing.Point(205, 22);
+            this.label23.Name = "label23";
+            this.label23.Size = new System.Drawing.Size(41, 13);
+            this.label23.TabIndex = 2;
+            this.label23.Text = "Hotkey";
+            // 
+            // HotkeyCombination
+            // 
+            this.HotkeyCombination.Location = new System.Drawing.Point(252, 19);
+            this.HotkeyCombination.Name = "HotkeyCombination";
+            this.HotkeyCombination.Size = new System.Drawing.Size(100, 20);
+            this.HotkeyCombination.TabIndex = 1;
+            this.HotkeyCombination.KeyDown += new System.Windows.Forms.KeyEventHandler(this.HotkeyCombinationKeyDown);
+            // 
+            // HotkeyReassignButton
+            // 
+            this.HotkeyReassignButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.HotkeyReassignButton.Location = new System.Drawing.Point(661, 455);
+            this.HotkeyReassignButton.Name = "HotkeyReassignButton";
+            this.HotkeyReassignButton.Size = new System.Drawing.Size(69, 23);
+            this.HotkeyReassignButton.TabIndex = 3;
+            this.HotkeyReassignButton.Text = "Reassign";
+            this.HotkeyReassignButton.UseVisualStyleBackColor = true;
+            this.HotkeyReassignButton.Click += new System.EventHandler(this.HotkeyReassignButtonClicked);
+            // 
+            // HotkeyRemoveButton
+            // 
+            this.HotkeyRemoveButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.HotkeyRemoveButton.Location = new System.Drawing.Point(661, 482);
+            this.HotkeyRemoveButton.Name = "HotkeyRemoveButton";
+            this.HotkeyRemoveButton.Size = new System.Drawing.Size(69, 23);
+            this.HotkeyRemoveButton.TabIndex = 3;
+            this.HotkeyRemoveButton.Text = "Remove";
+            this.HotkeyRemoveButton.UseVisualStyleBackColor = true;
+            this.HotkeyRemoveButton.Click += new System.EventHandler(this.HotkeyRemoveButtonClicked);
+            // 
+            // HotkeyList
+            // 
+            this.HotkeyList.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.HotkeyList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.chAction,
+            this.chDescription,
+            this.ckKeyCombo});
+            this.HotkeyList.FullRowSelect = true;
+            this.HotkeyList.HideSelection = false;
+            this.HotkeyList.Location = new System.Drawing.Point(6, 6);
+            this.HotkeyList.MultiSelect = false;
+            this.HotkeyList.Name = "HotkeyList";
+            this.HotkeyList.Size = new System.Drawing.Size(724, 443);
+            this.HotkeyList.TabIndex = 0;
+            this.HotkeyList.UseCompatibleStateImageBehavior = false;
+            this.HotkeyList.View = System.Windows.Forms.View.Details;
+            this.HotkeyList.KeyDown += new System.Windows.Forms.KeyEventHandler(this.HotkeyListKeyDown);
+            this.HotkeyList.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.HotkeyListDoubleClicked);
+            // 
+            // chAction
+            // 
+            this.chAction.Text = "Action";
+            // 
+            // chDescription
+            // 
+            this.chDescription.Text = "Description";
             // 
             // ckKeyCombo
             // 
-            this.ckKeyCombo.Text = "Key Combination";
-            // 
-            // chTrigger
-            // 
-            this.chTrigger.Text = "Action";
+            this.ckKeyCombo.Text = "Hotkey";
             // 
             // groupBox15
             // 
@@ -3069,6 +3171,7 @@ namespace Sledge.Editor.Settings
             // 
             // btnCancelSettings
             // 
+            this.btnCancelSettings.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnCancelSettings.Location = new System.Drawing.Point(681, 555);
             this.btnCancelSettings.Name = "btnCancelSettings";
             this.btnCancelSettings.Size = new System.Drawing.Size(75, 23);
@@ -3079,6 +3182,7 @@ namespace Sledge.Editor.Settings
             // 
             // btnApplyAndCloseSettings
             // 
+            this.btnApplyAndCloseSettings.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnApplyAndCloseSettings.Location = new System.Drawing.Point(584, 555);
             this.btnApplyAndCloseSettings.Name = "btnApplyAndCloseSettings";
             this.btnApplyAndCloseSettings.Size = new System.Drawing.Size(91, 23);
@@ -3089,6 +3193,7 @@ namespace Sledge.Editor.Settings
             // 
             // btnApplySettings
             // 
+            this.btnApplySettings.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnApplySettings.Location = new System.Drawing.Point(503, 555);
             this.btnApplySettings.Name = "btnApplySettings";
             this.btnApplySettings.Size = new System.Drawing.Size(75, 23);
@@ -3174,6 +3279,8 @@ namespace Sledge.Editor.Settings
             this.tabSteam.ResumeLayout(false);
             this.tabSteam.PerformLayout();
             this.tabHotkeys.ResumeLayout(false);
+            this.groupBox22.ResumeLayout(false);
+            this.groupBox22.PerformLayout();
             this.groupBox10.ResumeLayout(false);
             this.groupBox9.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.trackBar3)).EndInit();
@@ -3232,11 +3339,10 @@ namespace Sledge.Editor.Settings
 		private System.Windows.Forms.CheckBox SelectedGameEnableAutosave;
         private System.Windows.Forms.TabControl GameSubTabs;
         private System.Windows.Forms.TreeView GameTree;
-		private System.Windows.Forms.TreeView BuildTree;
-		private System.Windows.Forms.ColumnHeader chTrigger;
+        private System.Windows.Forms.TreeView BuildTree;
 		private System.Windows.Forms.ColumnHeader ckKeyCombo;
-		private System.Windows.Forms.ColumnHeader chKey;
-		private System.Windows.Forms.ListView listView1;
+		private System.Windows.Forms.ColumnHeader chAction;
+		private System.Windows.Forms.ListView HotkeyList;
 		private System.Windows.Forms.TabPage tabHotkeys;
 		private System.Windows.Forms.Label label19;
 		private System.Windows.Forms.Panel GridBoundaryColour;
@@ -3434,5 +3540,14 @@ namespace Sledge.Editor.Settings
         private System.Windows.Forms.ColumnHeader columnHeader1;
         private System.Windows.Forms.ColumnHeader columnHeader4;
         private System.Windows.Forms.CheckBox DisableModelRendering;
+        private System.Windows.Forms.Button HotkeyRemoveButton;
+        private System.Windows.Forms.Label label23;
+        private System.Windows.Forms.TextBox HotkeyCombination;
+        private System.Windows.Forms.Button HotkeyReassignButton;
+        private System.Windows.Forms.GroupBox groupBox22;
+        private System.Windows.Forms.ComboBox HotkeyActionList;
+        private System.Windows.Forms.Label label25;
+        private System.Windows.Forms.Button HotkeyAddButton;
+        private System.Windows.Forms.ColumnHeader chDescription;
 	}
 }
