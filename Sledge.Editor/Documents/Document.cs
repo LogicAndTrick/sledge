@@ -181,11 +181,14 @@ namespace Sledge.Editor.Documents
             {
                 if (Map.ActiveCamera == null)
                 {
-                    Map.ActiveCamera = !Map.Cameras.Any() ? new Camera() : Map.Cameras.First();
+                    Map.ActiveCamera = !Map.Cameras.Any() ? new Camera{LookPosition = Coordinate.UnitX * Map.GridSpacing * 1.5m} : Map.Cameras.First();
                     if (!Map.Cameras.Contains(Map.ActiveCamera)) Map.Cameras.Add(Map.ActiveCamera);
                 }
+                var dist = (Map.ActiveCamera.LookPosition - Map.ActiveCamera.EyePosition).VectorMagnitude();
                 var loc = cam.Location;
                 var look = cam.LookAt;
+                look.Normalize();
+                look *= (float) dist;
                 Map.ActiveCamera.EyePosition = new Coordinate((decimal)loc.X, (decimal)loc.Y, (decimal)loc.Z);
                 Map.ActiveCamera.LookPosition = new Coordinate((decimal)look.X, (decimal)look.Y, (decimal)look.Z);
             }
