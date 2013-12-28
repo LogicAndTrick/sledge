@@ -16,5 +16,17 @@ namespace Sledge.DataStructures.MapObjects
             EyePosition = new Coordinate(0, 0, 0);
             LookPosition = new Coordinate(0, 0, 0);
         }
+
+        public decimal Length
+        {
+            get { return (LookPosition - EyePosition).VectorMagnitude(); }
+            set { LookPosition = EyePosition + Direction * value; }
+        }
+
+        public Coordinate Direction
+        {
+            get { return (LookPosition - EyePosition).Normalise(); }
+            set { LookPosition = EyePosition + value.Normalise() * Length; }
+        }
     }
 }

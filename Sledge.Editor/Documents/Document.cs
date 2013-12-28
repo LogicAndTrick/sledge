@@ -186,9 +186,9 @@ namespace Sledge.Editor.Documents
                 }
                 var dist = (Map.ActiveCamera.LookPosition - Map.ActiveCamera.EyePosition).VectorMagnitude();
                 var loc = cam.Location;
-                var look = cam.LookAt;
+                var look = cam.LookAt - cam.Location;
                 look.Normalize();
-                look *= (float) dist;
+                look = loc + look * (float) dist;
                 Map.ActiveCamera.EyePosition = new Coordinate((decimal)loc.X, (decimal)loc.Y, (decimal)loc.Z);
                 Map.ActiveCamera.LookPosition = new Coordinate((decimal)look.X, (decimal)look.Y, (decimal)look.Z);
             }

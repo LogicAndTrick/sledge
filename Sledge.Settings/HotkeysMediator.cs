@@ -188,6 +188,11 @@ namespace Sledge.Settings
         [Description("Vertex Manipulation | Split Face")]
         VMSplitFace,
 
+        [Description("Camera | Next Camera")]
+        CameraNext,
+        [Description("Camera | Previous Camera")]
+        CameraPrevious,
+
         // Tabs
 
         [Description("Go to Previous Tab")]

@@ -2,12 +2,10 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
-using OpenTK.Input;
 using Sledge.Graphics;
 using Sledge.UI;
 using OpenTK.Graphics.OpenGL;
 using Sledge.Editor.Tools;
-using KeyPressEventArgs = System.Windows.Forms.KeyPressEventArgs;
 using Sledge.Graphics.Helpers;
 using KeyboardState = Sledge.UI.KeyboardState;
 

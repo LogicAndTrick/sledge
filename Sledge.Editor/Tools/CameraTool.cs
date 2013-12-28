@@ -8,6 +8,7 @@ using System.Text;
 using System.Windows.Forms;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
+using Sledge.Common.Mediator;
 using Sledge.DataStructures.Geometric;
 using Sledge.Editor.Properties;
 using Sledge.Editor.UI;
@@ -30,11 +31,39 @@ namespace Sledge.Editor.Tools
         }
 
         private State _state;
-        private DataStructures.MapObjects.Camera _stateCamera;
+        private Camera _stateCamera;
 
         public override void ToolSelected()
         {
             _state = State.None;
+            Mediator.Subscribe(HotkeysMediator.CameraNext, this);
+            Mediator.Subscribe(HotkeysMediator.CameraPrevious, this);
+        }
+
+        private void CameraNext()
+        {
+            if (_state != State.None || Document.Map.Cameras.Count < 2) return;
+            var idx = Document.Map.Cameras.IndexOf(Document.Map.ActiveCamera);
+            idx = (idx + 1) % Document.Map.Cameras.Count;
+            Document.Map.ActiveCamera = Document.Map.Cameras[idx];
+            SetViewportCamera(Document.Map.ActiveCamera.EyePosition, Document.Map.ActiveCamera.LookPosition);
+        }
+
+        private void CameraPrevious()
+        {
+            if (_state != State.None || Document.Map.Cameras.Count < 2) return;
+            var idx = Document.Map.Cameras.IndexOf(Document.Map.ActiveCamera);
+            idx = (idx + Document.Map.Cameras.Count - 1) % Document.Map.Cameras.Count;
+            Document.Map.ActiveCamera = Document.Map.Cameras[idx];
+            SetViewportCamera(Document.Map.ActiveCamera.EyePosition, Document.Map.ActiveCamera.LookPosition);
+        }
+
+        private void CameraDelete()
+        {
+            if (_state != State.None || Document.Map.Cameras.Count < 2) return;
+            var del = Document.Map.ActiveCamera;
+            CameraPrevious();
+            if (del != Document.Map.ActiveCamera) Document.Map.Cameras.Remove(del);
         }
 
         public override Image GetIcon()
@@ -74,7 +103,7 @@ namespace Sledge.Editor.Tools
             cam.LookAt = new Vector3((float) look.X, (float) look.Y, (float) look.Z);
         }
 
-        private State GetStateAtPoint(int x, int y, Viewport2D viewport, out DataStructures.MapObjects.Camera activeCamera)
+        private State GetStateAtPoint(int x, int y, Viewport2D viewport, out Camera activeCamera)
         {
             var d = 5 / viewport.Zoom;
 
@@ -94,11 +123,18 @@ namespace Sledge.Editor.Tools
 
         private IEnumerable<Camera> GetCameras()
         {
+            var c = GetViewportCamera();
             if (!Document.Map.Cameras.Any())
             {
-                var c = GetViewportCamera();
                 Document.Map.Cameras.Add(new Camera { EyePosition = c.Item1, LookPosition = c.Item2});
             }
+            if (Document.Map.ActiveCamera == null || !Document.Map.Cameras.Contains(Document.Map.ActiveCamera))
+            {
+                Document.Map.ActiveCamera = Document.Map.Cameras.First();
+            }
+            var len = Document.Map.ActiveCamera.Length;
+            Document.Map.ActiveCamera.EyePosition = c.Item1;
+            Document.Map.ActiveCamera.LookPosition = c.Item1 + (c.Item2 - c.Item1).Normalise() * len;
             foreach (var camera in Document.Map.Cameras)
             {
                 var dir = camera.LookPosition - camera.EyePosition;
@@ -122,11 +158,19 @@ namespace Sledge.Editor.Tools
             var vp = viewport as Viewport2D;
             if (vp == null) return;
             _state = GetStateAtPoint(e.X, vp.Height - e.Y, vp, out _stateCamera);
+            if (_state == State.None)
+            {
+                var p = SnapIfNeeded(vp.Expand(vp.ScreenToWorld(e.X, vp.Height - e.Y)));
+                _stateCamera = new Camera { EyePosition = p, LookPosition = p + Coordinate.UnitX * 1.5m * Document.Map.GridSpacing };
+                Document.Map.Cameras.Add(_stateCamera);
+                _state = State.MovingLook;
+            }
             if (_stateCamera != null)
             {
                 SetViewportCamera(_stateCamera.EyePosition, _stateCamera.LookPosition);
                 Document.Map.ActiveCamera = _stateCamera;
             }
+            
         }
 
         public override void MouseUp(ViewportBase viewport, ViewportEvent e)
@@ -155,12 +199,16 @@ namespace Sledge.Editor.Tools
                     break;
                 case State.MovingPosition:
                     if (_stateCamera == null) break;
-                    _stateCamera.EyePosition = vp.GetUnusedCoordinate(_stateCamera.EyePosition) + p;
+                    var newEye = vp.GetUnusedCoordinate(_stateCamera.EyePosition) + p;
+                    if (KeyboardState.Ctrl) _stateCamera.LookPosition += (newEye - _stateCamera.EyePosition);
+                    _stateCamera.EyePosition = newEye;
                     SetViewportCamera(_stateCamera.EyePosition, _stateCamera.LookPosition);
                     break;
                 case State.MovingLook:
                     if (_stateCamera == null) break;
-                    _stateCamera.LookPosition = vp.GetUnusedCoordinate(_stateCamera.LookPosition) + p;
+                    var newLook = vp.GetUnusedCoordinate(_stateCamera.LookPosition) + p;
+                    if (KeyboardState.Ctrl) _stateCamera.EyePosition += (newLook - _stateCamera.LookPosition);
+                    _stateCamera.LookPosition = newLook;
                     SetViewportCamera(_stateCamera.EyePosition, _stateCamera.LookPosition);
                     break;
             }
@@ -205,16 +253,10 @@ namespace Sledge.Editor.Tools
 
             foreach (var camera in cams)
             {
-                var pos = camera.EyePosition;
-                var look = camera.LookPosition;
-                var p1 = vp.Flatten(pos);
-                var p2 = vp.Flatten(look);
+                var p1 = vp.Flatten(camera.EyePosition);
+                var p2 = vp.Flatten(camera.LookPosition);
 
-                var multiplier = 4/vp.Zoom;
-                var dir = (p2 - p1).Normalise();
-                var cp = new Coordinate(-dir.Y, dir.X, 0).Normalise();
-
-                GL.Color3(Color.Red);
+                GL.Color3(camera == Document.Map.ActiveCamera ? Color.Cyan : Color.Red);
                 GL.Vertex2(p1.DX, p1.DY);
                 GL.Vertex2(p2.DX, p2.DY);
                 GL.Vertex2(p2.DX, p2.DY);
@@ -228,21 +270,18 @@ namespace Sledge.Editor.Tools
 
             foreach (var camera in cams)
             {
-                var pos = camera.EyePosition;
-                var p1 = vp.Flatten(pos);
+                var p1 = vp.Flatten(camera.EyePosition);
 
                 // Position circle
                 GL.Begin(BeginMode.Polygon);
-                GL.Color3(Color.Cyan);
+                GL.Color3(camera == Document.Map.ActiveCamera ? Color.Red : Color.Cyan);
                 GLX.Circle(new Vector2d(p1.DX, p1.DY), 4, z, loop: true);
                 GL.End();
             }
             foreach (var camera in cams)
             {
-                var pos = camera.EyePosition;
-                var look = camera.LookPosition;
-                var p1 = vp.Flatten(pos);
-                var p2 = vp.Flatten(look);
+                var p1 = vp.Flatten(camera.EyePosition);
+                var p2 = vp.Flatten(camera.LookPosition);
 
                 var multiplier = 4 / vp.Zoom;
                 var dir = (p2 - p1).Normalise();
@@ -250,10 +289,10 @@ namespace Sledge.Editor.Tools
 
                 // Direction Triangle
                 GL.Begin(BeginMode.Triangles);
-                GL.Color3(Color.LawnGreen);
-                Coord(p2 + dir*1.5m*multiplier);
-                Coord(p2 - (dir + cp)*multiplier);
-                Coord(p2 - (dir - cp)*multiplier);
+                GL.Color3(camera == Document.Map.ActiveCamera ? Color.DarkOrange : Color.LawnGreen);
+                Coord(p2 + dir * 1.5m * multiplier);
+                Coord(p2 - (dir + cp) * multiplier);
+                Coord(p2 - (dir - cp) * multiplier);
                 GL.End();
             }
 
@@ -263,10 +302,8 @@ namespace Sledge.Editor.Tools
 
             foreach (var camera in cams)
             {
-                var pos = camera.EyePosition;
-                var look = camera.LookPosition;
-                var p1 = vp.Flatten(pos);
-                var p2 = vp.Flatten(look);
+                var p1 = vp.Flatten(camera.EyePosition);
+                var p2 = vp.Flatten(camera.LookPosition);
 
                 var multiplier = 4 / vp.Zoom;
                 var dir = (p2 - p1).Normalise();
@@ -294,6 +331,11 @@ namespace Sledge.Editor.Tools
 
         public override HotkeyInterceptResult InterceptHotkey(HotkeysMediator hotkeyMessage)
         {
+            if (hotkeyMessage == HotkeysMediator.OperationsDelete)
+            {
+                CameraDelete();
+                return HotkeyInterceptResult.Abort;
+            }
             return HotkeyInterceptResult.Continue;
         }
     }

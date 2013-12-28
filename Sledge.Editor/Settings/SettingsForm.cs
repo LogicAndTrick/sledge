@@ -1158,6 +1158,12 @@ namespace Sledge.Editor.Settings
             e.Handled = true;
             HotkeyCombination.Text = KeyboardState.KeysToString(e.KeyData);
         }
+
+        protected override bool ProcessTabKey(bool forward)
+        {
+            if (HotkeyCombination.Focused) return false;
+            return base.ProcessTabKey(forward);
+        }
         #endregion
     }
 }

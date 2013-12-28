@@ -82,6 +82,9 @@ namespace Sledge.Settings
                                     new HotkeyDefinition("Vertex Manipulation Scaling Mode", "Switch to the scaling mode while in the VM tool.", HotkeysMediator.VMScalingMode, "Alt+E"),
                                     new HotkeyDefinition("Vertex Manipulation Face Edit Mode", "Switch to the face edit mode while in the VM tool.", HotkeysMediator.VMFaceEditMode, "Alt+R"),
                                     new HotkeyDefinition("Vertex Manipulation Split Face", "Perform a split operation in standard mode while in the VM tool.", HotkeysMediator.VMSplitFace, "Ctrl+F"),
+
+                                    new HotkeyDefinition("Next Camera", "Switch to the next camera in the camera tool.", HotkeysMediator.CameraNext, "Tab", "PgDn"),
+                                    new HotkeyDefinition("Previous Camera", "Switch to the previous camera in the camera tool.", HotkeysMediator.CameraPrevious, "PgUp"),
                                     
                                     new HotkeyDefinition("Previous Tab", "Move to the previous open tab", HotkeysMediator.PreviousTab, "Ctrl+Shift+Tab"),
                                     new HotkeyDefinition("Next Tab", "Move to the next open tab", HotkeysMediator.NextTab, "Ctrl+Tab"),
