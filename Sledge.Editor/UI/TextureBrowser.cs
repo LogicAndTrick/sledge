@@ -18,10 +18,41 @@ namespace Sledge.Editor.UI
         {
             InitializeComponent();
             TextureList.TextureSelected += TextureSelected;
-            SizeCombo.SelectedIndex = 1;
+            TextureList.SelectionChanged += SelectionChanged;
+            SizeCombo.SelectedIndex = 2;
             _textures = new List<TextureItem>();
             _packages = new List<TexturePackage>();
             SelectedTexture = null;
+
+            SortOrderCombo.Items.Clear();
+            foreach (var tso in Enum.GetValues(typeof(TextureListPanel.TextureSortOrder)))
+            {
+                SortOrderCombo.Items.Add(tso);
+            }
+            SortOrderCombo.SelectedIndex = 0;
+
+            SelectionChanged(null, TextureList.GetSelectedTextures());
+        }
+
+        private void SelectionChanged(object sender, IEnumerable<TextureItem> selection)
+        {
+            var list = selection.ToList();
+            if (!list.Any())
+            {
+                TextureNameLabel.Text = "";
+                TextureSizeLabel.Text = "";
+            }
+            else if (list.Count == 1)
+            {
+                var t = list[0];
+                TextureNameLabel.Text = t.Name;
+                TextureSizeLabel.Text = t.Width + " x " + t.Height;
+            }
+            else
+            {
+                TextureNameLabel.Text = list.Count + " textures selected";
+                TextureSizeLabel.Text = "";
+            }
         }
 
         public TextureItem SelectedTexture { get; set; }
@@ -107,7 +138,7 @@ namespace Sledge.Editor.UI
 
         private void SizeValueChanged(object sender, EventArgs e)
         {
-            TextureList.ImageSize = Convert.ToInt32(SizeCombo.SelectedItem);
+            TextureList.ImageSize = SizeCombo.SelectedIndex == 0 ? 0 : Convert.ToInt32(SizeCombo.SelectedItem);
         }
 
         private static readonly char[] AllowedSpecialChars = "!@#$%^&*()-_=+<>,.?/'\"\\;:[]{}`~".ToCharArray();
@@ -128,6 +159,16 @@ namespace Sledge.Editor.UI
                 FilterTextbox.Text += e.KeyChar;
                 UpdateTextureList();
             }
+        }
+
+        private void SortOrderComboIndexChanged(object sender, EventArgs e)
+        {
+            TextureList.SortOrder = (TextureListPanel.TextureSortOrder) SortOrderCombo.SelectedItem;
+        }
+
+        private void SortDescendingCheckboxChanged(object sender, EventArgs e)
+        {
+            TextureList.SortDescending = SortDescendingCheckbox.Checked;
         }
     }
 }

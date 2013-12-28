@@ -151,7 +151,7 @@ namespace Sledge.Editor.Tools
             TextureDetailsLabel.Text = "";
             if (item != null)
             {
-                TextureDetailsLabel.Text = string.Format("{0} ({1}x{2})", item.Name, item.Width, item.Height);
+                TextureDetailsLabel.Text = string.Format("{0} ({1} x {2})", item.Name, item.Width, item.Height);
             }
             _freeze = false;
         }

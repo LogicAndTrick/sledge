@@ -11,6 +11,15 @@ namespace Sledge.Editor.UI
 {
     public sealed class TextureListPanel : Panel
     {
+        public enum TextureSortOrder
+        {
+            Name,
+            Width,
+            Height,
+            Size,
+            Package
+        }
+
         public delegate void TextureSelectedEventHandler(object sender, TextureItem item);
         public delegate void SelectionChangedEventHandler(object sender, IEnumerable<TextureItem> selection);
 
@@ -37,9 +46,12 @@ namespace Sledge.Editor.UI
         private readonly VScrollBar _scrollBar;
 
         private readonly List<TextureItem> _textures;
-        private Size _calculatedSize;
         private int _imageSize;
 
+        private readonly List<Rectangle> _rectangles;
+
+        private TextureSortOrder _sortOrder;
+        private bool _sortDescending;
         private bool _allowSelection;
         private bool _allowMultipleSelection;
         private TextureItem _lastSelectedItem;
@@ -83,7 +95,27 @@ namespace Sledge.Editor.UI
             set
             {
                 _imageSize = value;
-                UpdateScrollbarValues();
+                UpdateRectangles();
+            }
+        }
+
+        public TextureSortOrder SortOrder
+        {
+            get { return _sortOrder; }
+            set
+            {
+                _sortOrder = value;
+                UpdateRectangles();
+            }
+        }
+
+        public bool SortDescending
+        {
+            get { return _sortDescending; }
+            set
+            {
+                _sortDescending = value;
+                UpdateRectangles();
             }
         }
 
@@ -105,9 +137,11 @@ namespace Sledge.Editor.UI
             _selection = new List<TextureItem>();
             _imageSize = 128;
 
+            _rectangles = new List<Rectangle>();
+
             Controls.Add(_scrollBar);
 
-            UpdateScrollbarValues();
+            UpdateRectangles();
         }
 
         #region Selection
@@ -122,12 +156,11 @@ namespace Sledge.Editor.UI
 
         public void ScrollToItem(TextureItem item)
         {
-            var index = _textures.IndexOf(item);
+            var index = GetTextures().ToList().IndexOf(item);
             if (index < 0) return;
 
-            var texturesPerRow = (int)Math.Floor(Width / (float)_calculatedSize.Width);
-            var texRow = index / texturesPerRow;
-            var yscroll = Math.Max(0, Math.Min(texRow * _calculatedSize.Height, _scrollBar.Maximum - ClientRectangle.Height));
+            var rec = _rectangles[index];
+            var yscroll = Math.Max(0, Math.Min(rec.Top - 3, _scrollBar.Maximum - ClientRectangle.Height));
             _scrollBar.Value = yscroll;
             Refresh();
         }
@@ -140,12 +173,9 @@ namespace Sledge.Editor.UI
             var x = e.X;
             var y = _scrollBar.Value + e.Y;
 
-            var texturesPerRow = (int)Math.Floor(Width / (float)_calculatedSize.Width);
-            var clickedRow = (int)Math.Floor(y / (float)_calculatedSize.Height);
-            var clickedColumn = (int)Math.Floor(x / (float)_calculatedSize.Width);
-            var clickedIndex = texturesPerRow * clickedRow + clickedColumn;
+            var clickedIndex = GetIndexAt(x, y);
 
-            var item = _textures[clickedIndex];
+            var item = GetTextures().ElementAt(clickedIndex);
             if (item == _selection[0])
             {
                 OnTextureSelected(_selection[0]);
@@ -162,12 +192,9 @@ namespace Sledge.Editor.UI
             var x = e.X;
             var y = _scrollBar.Value + e.Y;
 
-            var texturesPerRow = (int) Math.Floor(Width / (float) _calculatedSize.Width);
-            var clickedRow = (int) Math.Floor(y / (float) _calculatedSize.Height);
-            var clickedColumn = (int) Math.Floor(x / (float) _calculatedSize.Width);
-            var clickedIndex = texturesPerRow * clickedRow + clickedColumn;
+            var clickedIndex = GetIndexAt(x, y);
 
-            var item = clickedIndex >= 0 && clickedIndex < _textures.Count ? _textures[clickedIndex] : null;
+            var item = clickedIndex >= 0 && clickedIndex < _textures.Count ? GetTextures().ElementAt(clickedIndex) : null;
 
             if (item == null)
             {
@@ -180,10 +207,10 @@ namespace Sledge.Editor.UI
             }
             else if (AllowMultipleSelection && KeyboardState.Shift && _lastSelectedItem != null)
             {
-                var bef = _textures.IndexOf(_lastSelectedItem);
+                var bef = GetTextures().ToList().IndexOf(_lastSelectedItem);
                 var start = Math.Min(bef, clickedIndex);
                 var count = Math.Abs(clickedIndex - bef) + 1;
-                _selection.AddRange(_textures.GetRange(start, count).Where(i => !_selection.Contains(i)));
+                _selection.AddRange(GetTextures().ToList().GetRange(start, count).Where(i => !_selection.Contains(i)));
             }
             else 
             {
@@ -195,13 +222,53 @@ namespace Sledge.Editor.UI
             Refresh();
         }
 
+        public int GetIndexAt(int x, int y)
+        {
+            int pad = 3,
+                font = 4 + SystemFonts.MessageBoxFont.Height;
+            for (var i = 0; i < _rectangles.Count; i++)
+            {
+                var rec = _rectangles[i];
+                if (rec.Left - pad <= x
+                    && rec.Right + pad >= x
+                    && rec.Top - pad <= y
+                    && rec.Bottom + pad + font >= y)
+                {
+                    return i;
+                }
+            }
+            return -1;
+        }
+
         #endregion
 
         #region Add/Remove/Get Textures
 
         public IEnumerable<TextureItem> GetTextures()
         {
-            return _textures;
+            IEnumerable<TextureItem> sorted;
+            switch (SortOrder)
+            {
+                case TextureSortOrder.Name:
+                    sorted = _textures.OrderBy(x => x.Name);
+                    break;
+                case TextureSortOrder.Width:
+                    sorted = _textures.OrderBy(x => x.Width).ThenBy(x => x.Name);
+                    break;
+                case TextureSortOrder.Height:
+                    sorted = _textures.OrderBy(x => x.Height).ThenBy(x => x.Name);
+                    break;
+                case TextureSortOrder.Size:
+                    sorted = _textures.OrderBy(x => x.Width * x.Height).ThenBy(x => x.Name);
+                    break;
+                case TextureSortOrder.Package:
+                    sorted = _textures.OrderBy(x => System.IO.Path.GetFileName(x.Package.PackageFile)).ThenBy(x => x.Name);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+            if (_sortDescending) return sorted.Reverse();
+            return sorted;
         }
 
         public IEnumerable<TextureItem> GetSelectedTextures()
@@ -215,7 +282,7 @@ namespace Sledge.Editor.UI
             _lastSelectedItem = null;
             _selection.Clear();
             OnSelectionChanged(_selection);
-            UpdateScrollbarValues();
+            UpdateRectangles();
         }
 
         public void SetTextureList(IEnumerable<TextureItem> textures)
@@ -225,13 +292,13 @@ namespace Sledge.Editor.UI
             _selection.Clear();
             _textures.AddRange(textures);
             OnSelectionChanged(_selection);
-            UpdateScrollbarValues();
+            UpdateRectangles();
         }
 
         public void AddTextures(IEnumerable<TextureItem> textures)
         {
             _textures.AddRange(textures);
-            UpdateScrollbarValues();
+            UpdateRectangles();
         }
 
         public void Clear()
@@ -289,23 +356,42 @@ namespace Sledge.Editor.UI
 
         #endregion
 
-        #region Updating Scrollbar Values
+        #region Updating Rectangles & Dimensions
 
         protected override void OnResize(EventArgs eventargs)
         {
             base.OnResize(eventargs);
-            UpdateScrollbarValues();
+            UpdateRectangles();
         }
 
-        private void UpdateScrollbarValues()
+        private void UpdateRectangles()
         {
-            _calculatedSize = new Size(_imageSize + 6, _imageSize + 6 + SystemFonts.MessageBoxFont.Height + 4);
-
-            var texturesPerRow = (int)Math.Floor(Width / (float)_calculatedSize.Width);
-            var numberOfRows = (int)Math.Ceiling(_textures.Count / (float)texturesPerRow);
-
-            _scrollBar.Maximum = numberOfRows * _calculatedSize.Height;
-            _scrollBar.SmallChange = _calculatedSize.Height;
+            int w = ClientRectangle.Width - _scrollBar.Width,
+                pad = 3,
+                font = 4 + SystemFonts.MessageBoxFont.Height,
+                cx = 0,
+                cy = 0,
+                my = 0;
+            _rectangles.Clear();
+            foreach (var ti in GetTextures())
+            {
+                var rw = w - cx;
+                var wid = (_imageSize > 0 ? _imageSize : ti.Width) + pad + pad;
+                var hei = (_imageSize > 0 ? _imageSize : ti.Height) + pad + pad + font;
+                if (rw < wid)
+                {
+                    // New row
+                    cx = 0;
+                    cy += my;
+                    my = 0;
+                }
+                my = Math.Max(my, hei);
+                var rect = new Rectangle(cx + pad, cy + pad, wid - pad - pad, hei - pad - pad - font);
+                _rectangles.Add(rect);
+                cx += wid;
+            }
+            _scrollBar.Maximum = cy + my;
+            _scrollBar.SmallChange = (_imageSize > 0 ? _imageSize : 128) + pad + pad + font;
             _scrollBar.LargeChange = ClientRectangle.Height;
 
             if (_scrollBar.Value > _scrollBar.Maximum - ClientRectangle.Height)
@@ -330,70 +416,57 @@ namespace Sledge.Editor.UI
         {
             if (_textures.Count == 0 || DocumentManager.CurrentDocument == null) return;
 
-            var x = 0;
             var y = _scrollBar.Value;
-            var width = ClientRectangle.Width;
             var height = ClientRectangle.Height;
 
-            var texturesPerRow = (int)Math.Floor(Width / (float)_calculatedSize.Width);
-            var topRow = (int)Math.Floor(y / (float)_calculatedSize.Height);
-            var bottomRow = (int)Math.Floor((y + height) / (float)_calculatedSize.Height);
-            var skip = topRow * texturesPerRow;
-            var take = (bottomRow - topRow + 1) * texturesPerRow;
-            y = topRow * _calculatedSize.Height - y;
-
+            var texs = GetTextures().ToList();
             var packs = _textures.Select(t => t.Package).Distinct();
             using (var stream = DocumentManager.CurrentDocument.TextureCollection.GetStreamSource(packs))
             {
-                foreach (var ti in _textures.Skip(skip).Take(take))
+                for (var i = 0; i < texs.Count; i++)
                 {
-                    using (var bmp = stream.GetImage(ti))
-                    {
-                        DrawImage(g, bmp, ti, x, y);
-                    }
-                    x += _calculatedSize.Width;
+                    var rec = _rectangles[i];
+                    if (rec.Bottom < y) continue;
+                    if (rec.Top > y + height) break;
+                    var tex = texs[i];
 
-                    if (x + _calculatedSize.Width > width)
+                    using (var bmp = stream.GetImage(tex))
                     {
-                        x = 0;
-                        y += _calculatedSize.Height;
-                        if (y >= height)
-                        {
-                            break;
-                        }
+                        DrawImage(g, bmp, tex, rec.X, rec.Y - y, rec.Width, rec.Height);
                     }
                 }
             }
         }
 
-        private void DrawImage(System.Drawing.Graphics g, Image bmp, TextureItem ti, int x, int y)
+        private void DrawImage(System.Drawing.Graphics g, Image bmp, TextureItem ti, int x, int y, int w, int h)
         {
             if (bmp == null) return;
 
             var iw = bmp.Width;
             var ih = bmp.Height;
-            if (iw > _imageSize && iw >= ih)
+            if (iw > w && iw >= ih)
             {
-                ih = (int)Math.Floor(_imageSize * (ih / (float)iw));
-                iw = _imageSize;
+                ih = (int)Math.Floor(h * (ih / (float)iw));
+                iw = w;
             }
-            else if (ih > _imageSize)
+            else if (ih > h)
             {
-                iw = (int)Math.Floor(_imageSize * (iw / (float)ih));
-                ih = _imageSize;
+                iw = (int)Math.Floor(w * (iw / (float)ih));
+                ih = h;
             }
+            g.FillRectangle(System.Drawing.Brushes.Black, x - 3, y - 3, w + 6, h + 10 + SystemFonts.MessageBoxFont.Height);
 
-            g.DrawImage(bmp, x + 3, y + 3, iw, ih);
+            g.DrawImage(bmp, x, y, iw, ih);
             if (_selection.Contains(ti))
             {
-                g.DrawRectangle(Pens.Red, x + 2, y + 2, _imageSize + 1, _imageSize + 1);
-                g.DrawRectangle(Pens.Red, x + 1, y + 1, _imageSize + 3, _imageSize + 3);
+                g.DrawRectangle(Pens.Red, x - 1, y - 1, w + 2, h + 2);
+                g.DrawRectangle(Pens.Red, x - 2, y - 2, w + 4, h + 4);
             }
             else
             {
-                g.DrawRectangle(Pens.White, x + 1, y + 1, _imageSize + 3, _imageSize + 3);
+                g.DrawRectangle(Pens.White, x - 2, y - 2, w + 4, h + 4);
             }
-            g.DrawString(ti.Name, SystemFonts.MessageBoxFont, System.Drawing.Brushes.White, x + 1, y + _imageSize + 6);
+            g.DrawString(ti.Name, SystemFonts.MessageBoxFont, System.Drawing.Brushes.White, x - 2, y + h + 3);
         }
 
         #endregion
