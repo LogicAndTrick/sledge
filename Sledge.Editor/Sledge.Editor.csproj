@@ -215,6 +215,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Rendering\Viewport3DRenderOptions.cs" />
+    <Compile Include="Rendering\ViewportLabelListener.cs" />
     <Compile Include="Rendering\WidgetLinesRenderable.cs" />
     <Compile Include="Scheduler.cs" />
     <Compile Include="Settings\Elevate.cs" />
