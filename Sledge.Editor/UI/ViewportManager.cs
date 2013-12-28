@@ -126,7 +126,7 @@ namespace Sledge.Editor.UI
             foreach (var vp in Viewports)
             {
                 vp.MakeCurrent();
-                GL.ClearColor(Sledge.Settings.Grid.Background);
+                GL.ClearColor(vp is Viewport3D ? Sledge.Settings.View.ViewportBackground : Sledge.Settings.Grid.Background);
             }
         }
 
@@ -146,7 +146,7 @@ namespace Sledge.Editor.UI
             };
             viewport.MakeCurrent();
             GraphicsHelper.InitGL3D();
-            GL.ClearColor(Sledge.Settings.Grid.Background);
+            GL.ClearColor(Sledge.Settings.View.ViewportBackground);
             viewport.Listeners.Add(new Camera3DViewportListener(viewport));
             viewport.Listeners.Add(new ToolViewportListener(viewport));
             return viewport;

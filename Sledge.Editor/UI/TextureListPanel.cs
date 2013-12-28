@@ -464,7 +464,7 @@ namespace Sledge.Editor.UI
             }
             else
             {
-                g.DrawRectangle(Pens.White, x - 2, y - 2, w + 4, h + 4);
+                g.DrawRectangle(Pens.Gray, x - 2, y - 2, w + 4, h + 4);
             }
             g.DrawString(ti.Name, SystemFonts.MessageBoxFont, System.Drawing.Brushes.White, x - 2, y + h + 3);
         }

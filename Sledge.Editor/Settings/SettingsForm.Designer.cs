@@ -294,6 +294,8 @@ namespace Sledge.Editor.Settings
             this.btnCancelSettings = new System.Windows.Forms.Button();
             this.btnApplyAndCloseSettings = new System.Windows.Forms.Button();
             this.btnApplySettings = new System.Windows.Forms.Button();
+            this.label39 = new System.Windows.Forms.Label();
+            this.ViewportBackgroundColour = new System.Windows.Forms.Panel();
             this.tbcSettings.SuspendLayout();
             this.tabGeneral.SuspendLayout();
             this.groupBox20.SuspendLayout();
@@ -1274,18 +1276,20 @@ namespace Sledge.Editor.Settings
             // 
             // groupBox12
             // 
+            this.groupBox12.Controls.Add(this.label39);
+            this.groupBox12.Controls.Add(this.ViewportBackgroundColour);
             this.groupBox12.Controls.Add(this.CameraFOV);
             this.groupBox12.Controls.Add(this.label29);
             this.groupBox12.Location = new System.Drawing.Point(438, 6);
             this.groupBox12.Name = "groupBox12";
-            this.groupBox12.Size = new System.Drawing.Size(292, 71);
+            this.groupBox12.Size = new System.Drawing.Size(292, 91);
             this.groupBox12.TabIndex = 4;
             this.groupBox12.TabStop = false;
             this.groupBox12.Text = "General";
             // 
             // CameraFOV
             // 
-            this.CameraFOV.Location = new System.Drawing.Point(82, 27);
+            this.CameraFOV.Location = new System.Drawing.Point(92, 20);
             this.CameraFOV.Maximum = new decimal(new int[] {
             150,
             0,
@@ -1308,11 +1312,11 @@ namespace Sledge.Editor.Settings
             // label29
             // 
             this.label29.AutoSize = true;
-            this.label29.Location = new System.Drawing.Point(9, 29);
+            this.label29.Location = new System.Drawing.Point(12, 22);
             this.label29.Name = "label29";
-            this.label29.Size = new System.Drawing.Size(67, 13);
+            this.label29.Size = new System.Drawing.Size(70, 13);
             this.label29.TabIndex = 0;
-            this.label29.Text = "Camera FOV";
+            this.label29.Text = "Camera FOV:";
             // 
             // groupBox13
             // 
@@ -3202,6 +3206,23 @@ namespace Sledge.Editor.Settings
             this.btnApplySettings.UseVisualStyleBackColor = true;
             this.btnApplySettings.Click += new System.EventHandler(this.Apply);
             // 
+            // label39
+            // 
+            this.label39.Location = new System.Drawing.Point(12, 46);
+            this.label39.Name = "label39";
+            this.label39.Size = new System.Drawing.Size(74, 17);
+            this.label39.TabIndex = 3;
+            this.label39.Text = "Background:";
+            // 
+            // ViewportBackgroundColour
+            // 
+            this.ViewportBackgroundColour.BackColor = System.Drawing.Color.Black;
+            this.ViewportBackgroundColour.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.ViewportBackgroundColour.Location = new System.Drawing.Point(92, 46);
+            this.ViewportBackgroundColour.Name = "ViewportBackgroundColour";
+            this.ViewportBackgroundColour.Size = new System.Drawing.Size(51, 17);
+            this.ViewportBackgroundColour.TabIndex = 4;
+            // 
             // SettingsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -3549,5 +3570,7 @@ namespace Sledge.Editor.Settings
         private System.Windows.Forms.Label label25;
         private System.Windows.Forms.Button HotkeyAddButton;
         private System.Windows.Forms.ColumnHeader chDescription;
+        private System.Windows.Forms.Label label39;
+        private System.Windows.Forms.Panel ViewportBackgroundColour;
 	}
 }

@@ -32,6 +32,7 @@ namespace Sledge.Editor.Settings
             BindColourPicker(GridBoundaryColour);
             BindColourPicker(GridHighlight1Colour);
             BindColourPicker(GridHighlight2Colour);
+            BindColourPicker(ViewportBackgroundColour);
 
             UpdateData();
 
@@ -246,6 +247,7 @@ namespace Sledge.Editor.Settings
             GridHighlight2On.Checked = Grid.Highlight2On;
 
             // 3D Views
+            ViewportBackgroundColour.BackColor = Sledge.Settings.View.ViewportBackground;
             BackClippingPane.Value = Sledge.Settings.View.BackClippingPane;
             ModelRenderDistance.Value = Sledge.Settings.View.ModelRenderDistance;
             DetailRenderDistance.Value = Sledge.Settings.View.DetailRenderDistance;
@@ -339,6 +341,7 @@ namespace Sledge.Editor.Settings
             Grid.Highlight2On = GridHighlight2On.Checked;
 
             // 3D Views
+            Sledge.Settings.View.ViewportBackground = ViewportBackgroundColour.BackColor;
             Sledge.Settings.View.BackClippingPane = BackClippingPane.Value;
             Sledge.Settings.View.ModelRenderDistance = ModelRenderDistance.Value;
             Sledge.Settings.View.DetailRenderDistance = DetailRenderDistance.Value;
