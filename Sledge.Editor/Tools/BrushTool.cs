@@ -213,7 +213,7 @@ namespace Sledge.Editor.Tools
             base.Render3D(viewport);
             if (ShouldDraw3DBox() && _preview != null)
             {
-                Rendering.Immediate.MapObjectRenderer.DrawFilled(_preview, GetRenderColour());
+                Rendering.Immediate.MapObjectRenderer.DrawFilled(_preview, GetRenderColour(), false, viewport.Type != Viewport3D.ViewType.Flat);
             }
         }
 

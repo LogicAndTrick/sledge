@@ -44,7 +44,8 @@ namespace Sledge.Editor.Rendering
             }
             else if (Viewport is Viewport3D)
             {
-                _text = "Textured";
+                var type = ((Viewport3D) Viewport).Type;
+                _text = type.ToString();
             }
             if (_menu != null) _menu.Dispose();
             _menu = new ContextMenu(new[]

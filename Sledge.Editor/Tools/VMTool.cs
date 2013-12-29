@@ -778,12 +778,17 @@ namespace Sledge.Editor.Tools
                 TextureHelper.EnableTexturing();
             }
 
+            var type = vp.Type;
+            bool shaded = type == Viewport3D.ViewType.Shaded || type == Viewport3D.ViewType.Textured,
+                 textured = type == Viewport3D.ViewType.Textured,
+                 wireframe = type == Viewport3D.ViewType.Wireframe;
+
             // Render out the solid previews
             GL.Color3(Color.White);
             var faces = _copies.Keys.SelectMany(x => x.Faces).ToList();
-            Rendering.Immediate.MapObjectRenderer.DrawFilled(faces, Color.Empty);
-            Rendering.Immediate.MapObjectRenderer.DrawFilled(faces.Where(x => !x.IsSelected), Color.FromArgb(64, Color.Green));
-            Rendering.Immediate.MapObjectRenderer.DrawFilled(faces.Where(x => x.IsSelected), Color.FromArgb(64, Color.Red));
+            Rendering.Immediate.MapObjectRenderer.DrawFilled(faces, Color.Empty, textured, shaded);
+            Rendering.Immediate.MapObjectRenderer.DrawFilled(faces.Where(x => !x.IsSelected), Color.FromArgb(64, Color.Green), false, shaded);
+            Rendering.Immediate.MapObjectRenderer.DrawFilled(faces.Where(x => x.IsSelected), Color.FromArgb(64, Color.Red), false, shaded);
             GL.Color3(Color.Pink);
             Rendering.Immediate.MapObjectRenderer.DrawWireframe(faces, true);
         }

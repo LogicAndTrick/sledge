@@ -45,7 +45,10 @@ namespace Sledge.Providers.Texture
             Provider.LoadTextures(all);
             foreach (var ti in all)
             {
-                _loadedItems.Add(ti.Name.ToLowerInvariant(), ti);
+                if (!_loadedItems.ContainsKey(ti.Name.ToLowerInvariant()))
+                {
+                    _loadedItems.Add(ti.Name.ToLowerInvariant(), ti);
+                }
             }
         }
 

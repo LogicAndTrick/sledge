@@ -64,18 +64,17 @@ namespace Sledge.Editor.Rendering.Immediate
             return texture.Name.ToLower() == "aaatrigger";
         }
 
-        public static void CreateFilledList(string displayListName, IEnumerable<Face> faces, Color color = new Color())
+        public static void CreateFilledList(string displayListName, IEnumerable<Face> faces, bool textured, bool lit, Color color = new Color())
         {
             using (DisplayList.Using(displayListName))
             {
-                DrawFilled(faces, color);
+                DrawFilled(faces, color, textured, lit);
             }
         }
 
-        public static void DrawFilled(IEnumerable<Face> faces, Color color)
+        public static void DrawFilled(IEnumerable<Face> faces, Color color, bool textured, bool lit = true)
         {
-            var noTexturing = !color.IsEmpty;
-            if (!noTexturing) TextureHelper.EnableTexturing();
+            if (textured) TextureHelper.EnableTexturing();
             faces = faces.Where(x => x.Parent == null || !(x.Parent.IsCodeHidden || x.Parent.IsVisgroupHidden || x.Parent.IsRenderHidden3D));
 
             GL.Light(LightName.Light0, LightParameter.Position, new float[] {-10000, -20000, 30000, 1});
@@ -85,19 +84,21 @@ namespace Sledge.Editor.Rendering.Immediate
             GL.Light(LightName.Light1, LightParameter.Ambient, new float[] {0.0f, 0.0f, 0.0f, 1});
             GL.Light(LightName.Light1, LightParameter.Diffuse, new float[] {0.3f, 0.3f, 0.3f, 1.0f});
             GL.LightModel(LightModelParameter.LightModelAmbient, new float[] {0.5f, 0.5f, 0.5f, 1.0f});
-            GL.Enable(EnableCap.Lighting);
+            if (lit) GL.Enable(EnableCap.Lighting);
             GL.Enable(EnableCap.Light0);
             GL.Enable(EnableCap.Light1);
             GL.Enable(EnableCap.ColorMaterial);
             GL.ColorMaterial(MaterialFace.FrontAndBack, ColorMaterialParameter.AmbientAndDiffuse);
 
             GL.Begin(BeginMode.Triangles);
-            GL.Color4(noTexturing ? color : Color.FromArgb(255, Color.White));
-            if (noTexturing)
+            GL.Color4(!textured ? color : Color.FromArgb(255, Color.White));
+            if (!textured)
             {
-                GL.Color4(color);
+                TextureHelper.DisableTexturing();
                 foreach (var face in faces)
                 {
+                    var tp = RenderTransparent(face.Texture.Texture, face);
+                    GL.Color4(Color.FromArgb(tp ? 128 : 255, color.IsEmpty ? face.Colour : color));
                     var disp = face is Displacement;
                     foreach (var tri in face.GetTriangles())
                     {
@@ -165,7 +166,7 @@ namespace Sledge.Editor.Rendering.Immediate
             GL.Disable(EnableCap.ColorMaterial);
             GL.Disable(EnableCap.Light1);
             GL.Disable(EnableCap.Light0);
-            GL.Disable(EnableCap.Lighting);
+            if (lit) GL.Disable(EnableCap.Lighting);
 
             TextureHelper.DisableTexturing();
         }

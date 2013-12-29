@@ -132,65 +132,100 @@ namespace Sledge.Editor.Rendering.Renderers
         {
             UpdateCache();
 
+            var type = ((Viewport3D)context).Type;
             var cam = ((Viewport3D)context).Camera.Location;
             var location = new Coordinate((decimal)cam.X, (decimal)cam.Y, (decimal)cam.Z);
 
-            var sel3D = _selected.Where(x => x.Parent == null || !x.Parent.IsRenderHidden3D).ToList();
-            var sel3DDecals = _decals.Where(x => x.IsSelected && !x.IsRenderHidden3D).ToList();
-
-            // Draw unselected
-            Immediate.MapObjectRenderer.DrawFilled(_unselected.Where(x => x.Parent == null || !x.Parent.IsRenderHidden3D), Color.Empty);
-            // Draw selected (wireframe; untransformed)
-            GL.Color4(Color.Yellow);
-            Immediate.MapObjectRenderer.DrawWireframe(sel3D, true);
-            Immediate.MapObjectRenderer.DrawWireframe(_decals.Where(x => x.IsSelected && !x.IsRenderHidden3D).SelectMany(x => x.GetDecalGeometry()), true);
-            Immediate.MapObjectRenderer.DrawWireframe(_models.Where(x => x.IsSelected && !x.IsRenderHidden3D).SelectMany(x => x.GetBoxFaces()), true);
+            bool shaded = type == Viewport3D.ViewType.Shaded || type == Viewport3D.ViewType.Textured,
+                 textured = type == Viewport3D.ViewType.Textured,
+                 wireframe = type == Viewport3D.ViewType.Wireframe;
 
             Matrix4 current;
             GL.GetFloat(GetPName.ModelviewMatrix, out current);
             GL.MatrixMode(MatrixMode.Modelview);
 
-            // Draw models
-            if (!View.DisableModelRendering)
+            var sel3D = _selected.Where(x => x.Parent == null || !x.Parent.IsRenderHidden3D).ToList();
+            var sel3DDecals = _decals.Where(x => x.IsSelected && !x.IsRenderHidden3D).ToList();
+
+            if (!wireframe)
             {
-                foreach (var entity in _models)
+                // Draw unselected
+                Immediate.MapObjectRenderer.DrawFilled(_unselected.Where(x => x.Parent == null || !x.Parent.IsRenderHidden3D), Color.Empty, textured, shaded);
+                // Draw selected (wireframe; untransformed)
+                GL.Color4(Color.Yellow);
+                Immediate.MapObjectRenderer.DrawWireframe(sel3D, true);
+                Immediate.MapObjectRenderer.DrawWireframe(_decals.Where(x => x.IsSelected && !x.IsRenderHidden3D).SelectMany(x => x.GetDecalGeometry()), true);
+                Immediate.MapObjectRenderer.DrawWireframe(_models.Where(x => x.IsSelected && !x.IsRenderHidden3D).SelectMany(x => x.GetBoxFaces()), true);
+
+                // Draw models
+                if (!View.DisableModelRendering)
                 {
-                    var origin = entity.Origin;
-                    if (entity.HideDistance() <= (location - origin).VectorMagnitude())
+                    foreach (var entity in _models)
                     {
-                        Immediate.MapObjectRenderer.DrawFilled(entity.GetBoxFaces(), Color.Empty);
-                    }
-                    else
-                    {
-                        var angles = entity.EntityData.GetPropertyCoordinate("angles", Coordinate.Zero);
-                        angles = new Coordinate(DMath.DegreesToRadians(angles.Z), DMath.DegreesToRadians(angles.X), DMath.DegreesToRadians(angles.Y));
-                        if (entity.IsSelected)
+                        var origin = entity.Origin;
+                        if (entity.HideDistance() <= (location - origin).VectorMagnitude())
                         {
-                            origin *= _selectionTransformMat;
+                            Immediate.MapObjectRenderer.DrawFilled(entity.GetBoxFaces(), Color.Empty, textured, shaded);
                         }
-                        var tform = Matrix.Rotation(Quaternion.EulerAngles(angles)).Translate(origin).ToOpenTKMatrix4();
-                        GL.MultMatrix(ref tform);
-                        Immediate.ModelRenderer.Render(entity.GetModel().Model);
-                        GL.LoadMatrix(ref current);
+                        else
+                        {
+                            var angles = entity.EntityData.GetPropertyCoordinate("angles", Coordinate.Zero);
+                            angles = new Coordinate(DMath.DegreesToRadians(angles.Z), DMath.DegreesToRadians(angles.X), DMath.DegreesToRadians(angles.Y));
+                            if (entity.IsSelected)
+                            {
+                                origin *= _selectionTransformMat;
+                            }
+                            var tform = Matrix.Rotation(Quaternion.EulerAngles(angles)).Translate(origin).ToOpenTKMatrix4();
+                            GL.MultMatrix(ref tform);
+                            Immediate.ModelRenderer.Render(entity.GetModel().Model);
+                            GL.LoadMatrix(ref current);
+                        }
                     }
                 }
+            }
+            else
+            {
+                // Draw unselected stuff
+                Immediate.MapObjectRenderer.DrawWireframe(_unselected.Where(x => x.Parent == null || !x.Parent.IsRenderHidden2D), false);
+                Immediate.MapObjectRenderer.DrawWireframe(_decals.Where(x => !x.IsSelected && !x.IsRenderHidden2D).SelectMany(x => x.GetDecalGeometry()), false);
+                Immediate.MapObjectRenderer.DrawWireframe(_models.Where(x => !x.IsSelected && !x.IsRenderHidden2D).SelectMany(x => x.GetBoxFaces()), false);
+
+                // Draw selection (untransformed)
+                GL.Color4(Color.FromArgb(128, 0, 0));
+                Immediate.MapObjectRenderer.DrawWireframe(_selected.Where(x => x.Parent == null || !x.Parent.IsRenderHidden2D), true);
+                Immediate.MapObjectRenderer.DrawWireframe(_decals.Where(x => x.IsSelected && !x.IsRenderHidden2D).SelectMany(x => x.GetDecalGeometry()), true);
+                Immediate.MapObjectRenderer.DrawWireframe(_models.Where(x => x.IsSelected && !x.IsRenderHidden2D).SelectMany(x => x.GetBoxFaces()), true);
             }
 
             GL.MultMatrix(ref _selectionTransform);
 
-            // Draw selection
-            Immediate.MapObjectRenderer.DrawFilled(sel3D, Color.Empty);
-            Immediate.MapObjectRenderer.DrawFilled(sel3DDecals.SelectMany(x => x.GetDecalGeometry()), Color.Empty);
-            if (!Document.Map.HideFaceMask || !Document.Selection.InFaceSelection)
+            if (!wireframe)
             {
-                Immediate.MapObjectRenderer.DrawFilled(sel3D, Color.FromArgb(64, Color.Red));
-                Immediate.MapObjectRenderer.DrawFilled(sel3DDecals.SelectMany(x => x.GetDecalGeometry()), Color.FromArgb(64, Color.Red));
+                // Draw selection
+                Immediate.MapObjectRenderer.DrawFilled(sel3D, Color.Empty, textured, shaded);
+                Immediate.MapObjectRenderer.DrawFilled(sel3DDecals.SelectMany(x => x.GetDecalGeometry()), Color.Empty, textured, shaded);
+                if (!Document.Map.HideFaceMask || !Document.Selection.InFaceSelection)
+                {
+                    Immediate.MapObjectRenderer.DrawFilled(sel3D, Color.FromArgb(64, Color.Red), textured, shaded);
+                    Immediate.MapObjectRenderer.DrawFilled(sel3DDecals.SelectMany(x => x.GetDecalGeometry()), Color.FromArgb(64, Color.Red), textured, shaded);
+                }
+            }
+            else
+            {
+                // Draw selection (transformed)
+                GL.Color4(Color.Red);
+                Immediate.MapObjectRenderer.DrawWireframe(_selected.Where(x => x.Parent == null || !x.Parent.IsRenderHidden2D), true);
+                Immediate.MapObjectRenderer.DrawWireframe(_decals.Where(x => x.IsSelected && !x.IsRenderHidden2D).SelectMany(x => x.GetDecalGeometry()), true);
+                Immediate.MapObjectRenderer.DrawWireframe(_models.Where(x => x.IsSelected && !x.IsRenderHidden2D).SelectMany(x => x.GetBoxFaces()), true);
             }
 
             GL.LoadMatrix(ref current);
 
-            // Draw unselected decals
-            Immediate.MapObjectRenderer.DrawFilled(_decals.Where(x => !x.IsSelected && !x.IsRenderHidden3D).SelectMany(x => x.GetDecalGeometry()), Color.Empty);
+            if (!wireframe)
+            {
+                // Draw unselected decals
+                Immediate.MapObjectRenderer.DrawFilled(_decals.Where(x => !x.IsSelected && !x.IsRenderHidden3D).SelectMany(x => x.GetDecalGeometry()), Color.Empty, textured, shaded);
+            }
         }
 
         private List<Face> _cache;
