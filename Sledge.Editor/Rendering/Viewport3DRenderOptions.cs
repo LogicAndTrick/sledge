@@ -6,7 +6,7 @@ namespace Sledge.Editor.Rendering
     {
         public bool Wireframe { get; set; }
         public bool Textured { get; set; }
-        public bool Lit { get; set; }
+        public bool Shaded { get; set; }
 
         public bool ShowGrid { get; set; }
         public decimal GridSpacing { get; set; }

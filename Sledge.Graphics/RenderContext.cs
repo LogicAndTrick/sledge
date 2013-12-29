@@ -1,11 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Sledge.Graphics.Renderables;
 using Enumerable = System.Linq.Enumerable;
 
 namespace Sledge.Graphics
 {
-    public class RenderContext
+    public class RenderContext : IDisposable
     {
         private List<IRenderable> Renderables { get; set; }
         private bool Changed { get; set; }
@@ -42,6 +43,12 @@ namespace Sledge.Graphics
         public T FindRenderable<T>() where T : IRenderable
         {
             return Renderables.Where(r => typeof (T) == r.GetType()).Select(r => (T)r).FirstOrDefault();
+        }
+
+        public void Dispose()
+        {
+            Renderables.OfType<IDisposable>().ToList().ForEach(x => x.Dispose());
+            Clear();
         }
     }
 }

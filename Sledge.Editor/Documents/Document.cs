@@ -375,5 +375,26 @@ namespace Sledge.Editor.Documents
             Renderer.UpdatePartial(faces);
             ViewportManager.Viewports.ForEach(vp => vp.UpdateNextFrame());
         }
+
+        public void Make3D(ViewportBase viewport, Viewport3D.ViewType type)
+        {
+            var vp = ViewportManager.Make3D(viewport, type);
+            vp.RenderContext.Add(new WidgetLinesRenderable());
+            Renderer.Register(new[] { vp });
+            vp.RenderContext.Add(new ToolRenderable());
+            vp.RenderContext.Add(new HelperRenderable(this));
+            Renderer.UpdateGrid(Map.GridSpacing, Map.Show2DGrid, Map.Show3DGrid);
+            UpdateDisplayLists();
+        }
+
+        public void Make2D(ViewportBase viewport, Viewport2D.ViewDirection direction)
+        {
+            var vp = ViewportManager.Make2D(viewport, direction);
+            Renderer.Register(new[] { vp });
+            vp.RenderContext.Add(new ToolRenderable());
+            vp.RenderContext.Add(new HelperRenderable(this));
+            Renderer.UpdateGrid(Map.GridSpacing, Map.Show2DGrid, Map.Show3DGrid);
+            UpdateDisplayLists();
+        }
     }
 }

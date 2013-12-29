@@ -62,7 +62,7 @@ namespace Sledge.Editor.Rendering.Shaders
             Camera = options.Camera;
             ModelView = options.ModelView;
             IsTextured = options.Textured;
-            IsLit = options.Lit;
+            IsLit = options.Shaded;
             Show3DGrid = options.ShowGrid;
             GridSpacing = (float) options.GridSpacing;
             // todo selection transform

@@ -63,7 +63,13 @@ namespace Sledge.Editor.Tools
 
         private void CreateDecal(Coordinate origin)
         {
-            var gd = Document.GameData.Classes.First(x => x.Name == "infodecal");
+            var gd = Document.GameData.Classes.FirstOrDefault(x => x.Name == "infodecal");
+            if (gd == null)
+            {
+                System.Windows.Forms.MessageBox.Show("`infodecal` was not found in the entity list.", "FGD Data Not Found",
+                    System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
+                return;
+            }
             var selected = Editor.Instance.GetSelectedTexture();
             var textureName = selected == null ? "{TARGET" : selected.Name;
 

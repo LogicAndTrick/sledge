@@ -9,15 +9,41 @@ namespace Sledge.UI
 {
     public class Viewport3D : ViewportBase
     {
-        public Camera Camera { get; set; }
-
-        public Viewport3D()
+        public enum ViewType
         {
+            /// <summary>
+            /// Renders textured and shaded solids
+            /// </summary>
+            Textured,
+
+            /// <summary>
+            /// Renders shaded solids
+            /// </summary>
+            Shaded,
+
+            /// <summary>
+            /// Renders flat solids
+            /// </summary>
+            Flat,
+
+            /// <summary>
+            /// Renders wireframe solids
+            /// </summary>
+            Wireframe
+        }
+
+        public Camera Camera { get; set; }
+        public ViewType Type { get; set; }
+
+        public Viewport3D(ViewType type)
+        {
+            Type = type;
             Camera = new Camera();
         }
 
-        public Viewport3D(RenderContext context) : base(context)
+        public Viewport3D(ViewType type, RenderContext context) : base(context)
         {
+            Type = type;
             Camera = new Camera();
         }
 

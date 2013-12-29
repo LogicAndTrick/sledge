@@ -3,11 +3,15 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Windows.Forms;
 using OpenTK;
 using OpenTK.Graphics;
+using Sledge.Editor.Documents;
+using Sledge.Editor.UI;
 using Sledge.Graphics.Helpers;
 using Sledge.Settings;
 using Sledge.UI;
+using View = Sledge.Settings.View;
 
 namespace Sledge.Editor.Rendering
 {
@@ -20,21 +24,84 @@ namespace Sledge.Editor.Rendering
         private RectangleF _rect;
         private string _text;
         private bool _showing;
+        private ContextMenu _menu;
 
         public ViewportLabelListener(ViewportBase viewport)
         {
             Viewport = viewport;
             _printer = new TextPrinter(TextQuality.Low);
+            Rebuild();
+        }
+
+        private void Rebuild()
+        {
+            _rect = RectangleF.Empty;
             _text = "";
-            if (viewport is Viewport2D)
+            if (Viewport is Viewport2D)
             {
-                var dir = ((Viewport2D) viewport).Direction;
+                var dir = ((Viewport2D)Viewport).Direction;
                 _text = dir.ToString();
             }
-            else if (viewport is Viewport3D)
+            else if (Viewport is Viewport3D)
             {
                 _text = "Textured";
             }
+            if (_menu != null) _menu.Dispose();
+            _menu = new ContextMenu(new[]
+                                        {
+                                            CreateMenu("3D Textured", Viewport3D.ViewType.Textured, null),
+                                            CreateMenu("3D Shaded", Viewport3D.ViewType.Shaded, null),
+                                            CreateMenu("3D Flat", Viewport3D.ViewType.Flat, null),
+                                            CreateMenu("3D Wireframe", Viewport3D.ViewType.Wireframe, null),
+                                            new MenuItem("-"), 
+                                            CreateMenu("2D Top", null, Viewport2D.ViewDirection.Top),
+                                            CreateMenu("2D Side", null, Viewport2D.ViewDirection.Side),
+                                            CreateMenu("2D Front", null, Viewport2D.ViewDirection.Front),
+                                        });
+        }
+
+        private MenuItem CreateMenu(string text, Viewport3D.ViewType? type, Viewport2D.ViewDirection? dir)
+        {
+            var menu = new MenuItem(text);
+            menu.Click += (sender, e) => SwitchType(type, dir);
+            if (dir.HasValue && Viewport is Viewport2D)
+            {
+                var vpdir = ((Viewport2D) Viewport).Direction;
+                menu.Checked = vpdir == dir.Value;
+            }
+            else if (type.HasValue && Viewport is Viewport3D)
+            {
+                var vptype = ((Viewport3D) Viewport).Type;
+                menu.Checked = vptype == type.Value;
+            }
+            return menu;
+        }
+
+        private void SwitchType(Viewport3D.ViewType? type,  Viewport2D.ViewDirection? dir)
+        {
+            var doc = DocumentManager.CurrentDocument;
+            if (doc == null) return;
+            if (type.HasValue)
+            {
+                var vp = Viewport as Viewport3D;
+                if (vp == null)
+                {
+                    doc.Make3D(Viewport, type.Value);
+                    return;
+                }
+                vp.Type = type.Value;
+            }
+            else if (dir.HasValue)
+            {
+                var vp = Viewport as Viewport2D;
+                if (vp == null)
+                {
+                    doc.Make2D(Viewport, dir.Value);
+                    return;
+                }
+                vp.Direction = dir.Value;
+            }
+            Rebuild();
         }
 
         public void Render2D()
@@ -106,7 +173,11 @@ namespace Sledge.Editor.Rendering
 
         public void MouseDown(ViewportEvent e)
         {
-
+            if (_showing)
+            {
+                _menu.Show(Viewport, new Point(e.X, e.Y));
+                e.Handled = true;
+            }
         }
 
         public void MouseEnter(ViewportEvent e)

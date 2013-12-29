@@ -108,7 +108,7 @@ namespace Sledge.UI
             }
         }
 
-        public ViewDirection Direction { get; private set; }
+        public ViewDirection Direction { get; set; }
 
         private Coordinate _position;
         public Coordinate Position

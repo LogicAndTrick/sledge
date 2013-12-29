@@ -25,7 +25,7 @@ namespace Sledge.Editor.UI
         {
             MainWindowGrid = tlp;
 
-            var tl = Create3D();
+            var tl = Create3D(Viewport3D.ViewType.Textured);
             var tr = Create2D(Viewport2D.ViewDirection.Top);
             var bl = Create2D(Viewport2D.ViewDirection.Front);
             var br = Create2D(Viewport2D.ViewDirection.Side);
@@ -130,9 +130,9 @@ namespace Sledge.Editor.UI
             }
         }
 
-        private static Viewport3D Create3D()
+        private static Viewport3D Create3D(Viewport3D.ViewType type)
         {
-            var viewport = new Viewport3D
+            var viewport = new Viewport3D(type)
             {
                 Dock = DockStyle.Fill,
                 Camera =
@@ -147,9 +147,9 @@ namespace Sledge.Editor.UI
             viewport.MakeCurrent();
             GraphicsHelper.InitGL3D();
             GL.ClearColor(Sledge.Settings.View.ViewportBackground);
+            viewport.Listeners.Add(new ViewportLabelListener(viewport));
             viewport.Listeners.Add(new Camera3DViewportListener(viewport));
             viewport.Listeners.Add(new ToolViewportListener(viewport));
-            viewport.Listeners.Add(new ViewportLabelListener(viewport));
             return viewport;
         }
 
@@ -163,11 +163,41 @@ namespace Sledge.Editor.UI
             viewport.MakeCurrent();
             GraphicsHelper.InitGL2D();
             GL.ClearColor(Sledge.Settings.Grid.Background);
+            viewport.Listeners.Add(new ViewportLabelListener(viewport));
             viewport.Listeners.Add(new Camera2DViewportListener(viewport));
             viewport.Listeners.Add(new Grid2DEventListener(viewport));
             viewport.Listeners.Add(new ToolViewportListener(viewport));
-            viewport.Listeners.Add(new ViewportLabelListener(viewport));
             return viewport;
+        }
+
+        public static Viewport2D Make2D(ViewportBase viewport, Viewport2D.ViewDirection direction)
+        {
+            Viewports.Remove(viewport);
+            var pos = MainWindowGrid.GetCellPosition(viewport);
+            MainWindowGrid.Controls.Remove(viewport);
+            viewport.Dispose();
+
+            viewport = Create2D(direction);
+            Viewports.Add(viewport);
+            SubscribeExceptions(viewport);
+            MainWindowGrid.Controls.Add(viewport, pos.Column, pos.Row);
+            viewport.Run();
+            return (Viewport2D) viewport;
+        }
+
+        public static Viewport3D Make3D(ViewportBase viewport, Viewport3D.ViewType type)
+        {
+            Viewports.Remove(viewport);
+            var pos = MainWindowGrid.GetCellPosition(viewport);
+            MainWindowGrid.Controls.Remove(viewport);
+            viewport.Dispose();
+
+            viewport = Create3D(type);
+            Viewports.Add(viewport);
+            SubscribeExceptions(viewport);
+            MainWindowGrid.Controls.Add(viewport, pos.Column, pos.Row);
+            viewport.Run();
+            return (Viewport3D) viewport;
         }
     }
 }

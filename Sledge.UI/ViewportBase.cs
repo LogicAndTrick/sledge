@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using Sledge.DataStructures.Geometric;
@@ -65,6 +66,16 @@ namespace Sledge.UI
         {
             RenderContext = context;
             Listeners = new List<IViewportEventListener>();
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            Listeners.OfType<IDisposable>().ToList().ForEach(x => x.Dispose());
+            Listeners.Clear();
+            
+            RenderContext.Dispose();
+            UpdateTimer.Dispose();
+            base.Dispose(disposing);
         }
 
         public void ClearViewport()
