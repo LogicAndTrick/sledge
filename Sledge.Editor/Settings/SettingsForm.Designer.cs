@@ -115,6 +115,8 @@ namespace Sledge.Editor.Settings
             this.DefaultGridSize = new System.Windows.Forms.DomainUpDown();
             this.tab3DViews = new System.Windows.Forms.TabPage();
             this.groupBox12 = new System.Windows.Forms.GroupBox();
+            this.label39 = new System.Windows.Forms.Label();
+            this.ViewportBackgroundColour = new System.Windows.Forms.Panel();
             this.CameraFOV = new System.Windows.Forms.NumericUpDown();
             this.label29 = new System.Windows.Forms.Label();
             this.groupBox13 = new System.Windows.Forms.GroupBox();
@@ -294,8 +296,6 @@ namespace Sledge.Editor.Settings
             this.btnCancelSettings = new System.Windows.Forms.Button();
             this.btnApplyAndCloseSettings = new System.Windows.Forms.Button();
             this.btnApplySettings = new System.Windows.Forms.Button();
-            this.label39 = new System.Windows.Forms.Label();
-            this.ViewportBackgroundColour = new System.Windows.Forms.Panel();
             this.tbcSettings.SuspendLayout();
             this.tabGeneral.SuspendLayout();
             this.groupBox20.SuspendLayout();
@@ -463,7 +463,7 @@ namespace Sledge.Editor.Settings
             this.RenderMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.RenderMode.FormattingEnabled = true;
             this.RenderMode.Items.AddRange(new object[] {
-            "OpenGL 3.0 (Fastest, requires compatible GPU)",
+            "OpenGL 2.1 (Fastest, requires compatible GPU)",
             "OpenGL 1.0 Display Lists (Should work for most GPUs)",
             "OpenGL 1.0 Immediate (Slow, most compatible)"});
             this.RenderMode.Location = new System.Drawing.Point(72, 16);
@@ -1286,6 +1286,23 @@ namespace Sledge.Editor.Settings
             this.groupBox12.TabIndex = 4;
             this.groupBox12.TabStop = false;
             this.groupBox12.Text = "General";
+            // 
+            // label39
+            // 
+            this.label39.Location = new System.Drawing.Point(12, 46);
+            this.label39.Name = "label39";
+            this.label39.Size = new System.Drawing.Size(74, 17);
+            this.label39.TabIndex = 3;
+            this.label39.Text = "Background:";
+            // 
+            // ViewportBackgroundColour
+            // 
+            this.ViewportBackgroundColour.BackColor = System.Drawing.Color.Black;
+            this.ViewportBackgroundColour.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.ViewportBackgroundColour.Location = new System.Drawing.Point(92, 46);
+            this.ViewportBackgroundColour.Name = "ViewportBackgroundColour";
+            this.ViewportBackgroundColour.Size = new System.Drawing.Size(51, 17);
+            this.ViewportBackgroundColour.TabIndex = 4;
             // 
             // CameraFOV
             // 
@@ -3205,23 +3222,6 @@ namespace Sledge.Editor.Settings
             this.btnApplySettings.Text = "Apply";
             this.btnApplySettings.UseVisualStyleBackColor = true;
             this.btnApplySettings.Click += new System.EventHandler(this.Apply);
-            // 
-            // label39
-            // 
-            this.label39.Location = new System.Drawing.Point(12, 46);
-            this.label39.Name = "label39";
-            this.label39.Size = new System.Drawing.Size(74, 17);
-            this.label39.TabIndex = 3;
-            this.label39.Text = "Background:";
-            // 
-            // ViewportBackgroundColour
-            // 
-            this.ViewportBackgroundColour.BackColor = System.Drawing.Color.Black;
-            this.ViewportBackgroundColour.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.ViewportBackgroundColour.Location = new System.Drawing.Point(92, 46);
-            this.ViewportBackgroundColour.Name = "ViewportBackgroundColour";
-            this.ViewportBackgroundColour.Size = new System.Drawing.Size(51, 17);
-            this.ViewportBackgroundColour.TabIndex = 4;
             // 
             // SettingsForm
             // 

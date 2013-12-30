@@ -34,6 +34,13 @@ Post-Alpha
       Animation?
       Fix rotations
       Set angles value on rotate/transform
+	Helpers
+	  Entity text labels (2D)
+	  Box dimension labels (2D)
+	Tools
+	  Select tool
+	    Advanced manipulator (3D)
+
 
 1. Goldsource Support
   Formats

@@ -677,7 +677,7 @@ namespace Sledge.Providers.Model
 
                 for (var i = 0; i < 6; i++) // For each offset [X, Y, Z, XR, YR, ZR]
                 {
-                    if (offsets[i] == 0) continue;
+                    if (offsets[i] <= 0) continue;
                     br.BaseStream.Position = offsetPos + offsets[i];
                     var values = ReadRLEEncodedAnimationFrameValues(br, numframes);
                     for (var f = 0; f < numframes; f++)
