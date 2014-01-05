@@ -5,6 +5,13 @@
         <title>Sledge</title>
         <link href="css/bootstrap.min.css" rel="stylesheet">
         <link href="css/site.css" rel="stylesheet">
+        <script src="http://code.jquery.com/jquery-1.10.2.min.js" type="text/javascript"></script>
+        <script src="js/bootstrap.min.js" type="text/javascript"></script>
+        <script type="text/javascript">
+            $(function(){
+                $('.carousel').carousel()
+            });
+        </script>
     </head>
     <body>
         <a href="https://github.com/LogicAndTrick/sledge"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_white_ffffff.png" alt="Fork me on GitHub"></a>
@@ -28,55 +35,138 @@
                 <p>Sledge is currently in <strong>public alpha</strong>, which means that there are
                 still many changes being made and it will be updated often. Alpha builds may be unstable.</p>
             </div>
+            <h2>What is Sledge?</h2>
+            <p>
+                Sledge is a completely free and open source replacement for Valve's Hammer Editor, with a focus on
+                compatibility with both Goldsource and Source engines. The purpose of Sledge is to offer advanced
+                editing features from later versions of Hammer and other editors and make them available to all
+                users, regardless of which engine they choose to use.
+            </p>
+            <p>
+                Sledge uses the same file formats as Hammer does (RMF, MAP, VMF) and maps are compatible between
+                both programs. The editing process is almost identical to Hammer, the hotkeys are the same, as well
+                as many of the screen elements and dialogs. Switching to Sledge will not be difficult for users who
+                are familiar with Hammer.
+            </p>
+            <p class="screenshot screenshot-full">
+                <img src="screens/fullscreen.png" alt="Sledge Main Window">
+            </p>
             <div class="row">
                 <div class="span6">
-                    <h2>Reasons to Try Sledge</h2>
+                    <h2>Sledge Requirements</h2>
                     <ul>
-                        <li>Sledge is built using modern frameworks and libraries,
-                        and is tested on modern operating systems.</li>
+                        <li>Windows (XP, Vista, 7, 8)</li>
+                        <li>Microsoft .NET 4.0 (<a href="http://www.microsoft.com/en-us/download/details.aspx?id=17851">Download Here</a>)</li>
+                        <li>OpenGL compatible graphics card</li>
+                        <li>FGD for the game of your choice</li>
+                    </ul>
+                    <p>Sledge does not currently have many compilation options and an external compiler such as
+                    <a href="http://twhl.info/forums.php?thread=14161">The Compilator</a> or
+                    <a href="http://nemesis.thewavelength.net/index.php?p=2">Nem's Batch Compiler</a> is recommended.</p>
+                    <p>Note that WINE/Mono for Linux and Mac is currently not supported, but may be in the future.</p>
+                </div>
+                <div class="span6">
+                    <p class="screenshot">
+                        <img src="screens/brush_create.png" alt="Create Brush Preview">
+                    </p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="span6">
+                    <p class="screenshot">
+                        <img src="screens/models.png" alt="Model Rendering">
+                    </p>
+                </div>
+                <div class="span6">
+                    <h2>Advantages of Sledge</h2>
+                    <ul>
                         <li>Sledge brings many editing features available in Hammer 4
                         into the Goldsource editing environment.</li>
-                        <li>Sledge is constantly being enhanced and new features are always being added.</li>
-                        <li>Sledge is open source, which means the source code
+                        <li>It is built using modern frameworks and libraries,
+                        and is tested on modern operating systems.</li>
+                        <li>It is constantly being enhanced and new features are always being added.</li>
+                        <li>It is open source, which means the source code
                         is available to everybody to modify and improve.</li>
                     </ul>
                 </div>
+            </div>
+            <div class="row">
                 <div class="span6">
                     <h2>Features in Sledge</h2>
                     <ul>
                         <li>Runs on modern operating systems and graphics cards</li>
                         <li>Full support for Goldsource editing</li>
                         <li>Reads and writes RMF, MAP, VMF files</li>
+                        <li>Complete compatibility with Hammer maps</li>
                         <li>Proper decimal precision for sub-grid geometry</li>
-                        <li>Support for large maps via FGD attributes</li>
+                        <li>Support for large maps</li>
                         <li>Support for multiple visgroups per object</li>
                         <li>Automatic visgrouping</li>
+                        <li>Displays models from unextracted PAK files</li>
+                        <li>Improved texture browser filtering and display options</li>
+                        <li>A huge number of settings to customise to your liking</li>
                         <li>...and much more!</li>
                     </ul>
                 </div>
+                <div class="span6">
+                    <p class="screenshot">
+                        <img src="screens/texture_browser.png" alt="Texture Browser">
+                    </p>
+                </div>
+            </div>
+            
+            <h2>Extremely Customisable</h2>
+            <p>
+                Don't like the colour of the grid lines?
+                Prefer your background colours to be blue?
+                Want to automatically switch to the selection tool after you create a brush?
+                How about changing the hotkeys?
+                Sledge has you covered for all this and more!
+            </p>
+            <div id="settings-slideshow" class="carousel slide" style="width: 784px; margin: 10px auto 20px;">
+                <ol class="carousel-indicators">
+                    <li data-target="#settings-slideshow" data-slide-to="0" class="active"></li>
+                    <li data-target="#settings-slideshow" data-slide-to="1"></li>
+                    <li data-target="#settings-slideshow" data-slide-to="2"></li>
+                    <li data-target="#settings-slideshow" data-slide-to="3"></li>
+                    <li data-target="#settings-slideshow" data-slide-to="4"></li>
+                </ol>
+                <!-- Carousel items -->
+                <div class="carousel-inner">
+                    <div class="active item"><img src="screens/settings1.png" alt="Sledge Settings"></div>
+                    <div class="item"><img src="screens/settings2.png" alt="Sledge Settings"></div>
+                    <div class="item"><img src="screens/settings4.png" alt="Sledge Settings"></div>
+                    <div class="item"><img src="screens/settings5.png" alt="Sledge Settings"></div>
+                    <div class="item"><img src="screens/settings6.png" alt="Sledge Settings"></div>
+                </div>
+                <!-- Carousel nav -->
+                <a class="carousel-control left" href="#settings-slideshow" data-slide="prev">&lsaquo;</a>
+                <a class="carousel-control right" href="#settings-slideshow" data-slide="next">&rsaquo;</a>
             </div>
             <div class="row">
-                <div class="span4">
+                <div class="span6">
+                    <p class="screenshot">
+                        <img src="screens/texture_application.png" alt="Texture Browser">
+                    </p>
+                </div>
+                <div class="span6">
                     <h3>Sledge Public Alpha</h3>
-                    <p>Sledge is currently in alpha stage, so it may be unstable and some features are missing. Missing features include:</p>
+                    <p>Sledge is currently in alpha stage, so it may be unstable and some features are missing.
+                    Missing features include:</p>
                     <ul>
-                        <li>Support for opening multiple maps at once</li>
                         <li>Advanced compile options</li>
-                        <li>Rendering models</li>
-                        <li>Autosaving</li>
-                        <li>Support for PAK/GCF packaged installs</li>
                         <li>Built-in support for prefabs/instances</li>
                         <li>Automatic detection of game configurations</li>
-                        <li>Transparent tool brush rendering</li>
-                        <li>Support for editor cameras</li>
+                        <li>Windows jump-list/shell integration</li>
+                        <li>Arch and sphere brush types</li>
                     </ul>
-                </div>
-                <div class="span4">
                     <h3>Source Support</h3>
-                    <p>The current milestone is to fully support Goldsource editing. Once the alpha test is complete, work to add support for Source will begin. Full Source support is expected to be released in version 2.</p>
-                    <p>Many Source editing features will be available in Goldsource as well, such as displacements and instances. These features will convert to Goldsource-compatible brushwork when a map is compiled.</p>
-                </div>
-                <div class="span4">
+                    <p>The current milestone is to fully support Goldsource editing.
+                    Once the alpha test is complete, work to add support for Source will begin.
+                    Full Source support is expected to be released in version 2.</p>
+                    <p>Many Source editing features will be available in Goldsource as well, such as
+                    displacements and instances. These features will convert to Goldsource-compatible
+                    brushwork when a map is compiled.</p>
                     <h3>Future Possibilities</h3>
                     <p>Because Sledge is open source, the possibilities for future expansion are endless. Some popular ideas include the following:</p>
                     <ul>
@@ -89,6 +179,11 @@
                     </ul>
                 </div>
             </div>
+            <p class="footer">
+                Sledge was created and is maintained by <a href="http://logic-and-trick">Logic &amp; Trick</a>.
+                View the code and submit issues on <a href="https://github.com/LogicAndTrick/sledge">GitHub</a>
+                or <a href="http://twhl.info/forums.php?thread=18410">TWHL</a>.
+            </p>
         </div>
     </body>
 </html>

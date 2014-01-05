@@ -44,3 +44,10 @@
 .container {
     margin: 20px auto;
 }
+
+.footer {
+    text-align: center;
+    margin-top: 20px;
+    border-top: 1px solid #dedede;
+    padding-top: 20px;
+}
