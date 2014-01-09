@@ -420,7 +420,7 @@ namespace Sledge.Editor
             var selEnt = EntityTypeList.SelectedItem;
             var def = doc.Game.DefaultPointEntity;
             EntityTypeList.Items.Clear();
-            foreach (var gdo in doc.GameData.Classes.Where(x => x.ClassType == ClassType.Point))
+            foreach (var gdo in doc.GameData.Classes.Where(x => x.ClassType == ClassType.Point).OrderBy(x => x.Name.ToLowerInvariant()))
             {
                 EntityTypeList.Items.Add(gdo);
                 if (selEnt == null && gdo.Name == def) selEnt = gdo;

@@ -34,6 +34,7 @@ namespace Sledge.Providers.GameData
                 gd.Classes.AddRange(d.Classes);
             }
             gd.CreateDependencies();
+            gd.RemoveDuplicates();
             return gd;
         }
 

@@ -33,5 +33,13 @@ namespace Sledge.DataStructures.GameData
                 resolved.AddRange(resolve.Select(x => x.Name));
             }
         }
+
+        public void RemoveDuplicates()
+        {
+            foreach (var g in Classes.Where(x => x.ClassType != ClassType.Base).GroupBy(x => x.Name.ToLowerInvariant()).Where(g => g.Count() > 1).ToList())
+            {
+                foreach (var obj in g.Skip(1)) Classes.Remove(obj);
+            }
+        }
     }
 }
