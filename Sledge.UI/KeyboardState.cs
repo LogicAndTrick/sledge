@@ -41,7 +41,20 @@ namespace Sledge.UI
                                             {"Oem1", ";"},
                                             {"Oemcomma", ","},
                                             {"Oemtilde", "`"},
-                                            {"Back", "Backspace"}
+                                            {"Back", "Backspace"},
+                                            {"Return", "Enter"},
+                                            {"Next", "PageDown"},
+                                            {"Prior", "PageUp"},
+                                            {"D1", "1"},
+                                            {"D2", "2"},
+                                            {"D3", "3"},
+                                            {"D4", "4"},
+                                            {"D5", "5"},
+                                            {"D6", "6"},
+                                            {"D7", "7"},
+                                            {"D8", "8"},
+                                            {"D9", "9"},
+                                            {"D0", "0"}
                                         };
         }
 
@@ -102,10 +115,19 @@ namespace Sledge.UI
 
         public static string KeysToString(Keys key)
         {
-            var kc = new KeysConverter();
-            var str = kc.ConvertToInvariantString(key) ?? "";
-            foreach (var rep in KeyStringReplacements) str = str.Replace(rep.Key, rep.Value);
-            return str;
+            // KeysConverter seems to ignore the invariant culture, manually replicate the results
+            var mods = key & Keys.Modifiers;
+            var keycode = key & Keys.KeyCode;
+            if (keycode == Keys.None) return "";
+
+            var str = keycode.ToString();
+            if (KeyStringReplacements.ContainsKey(str)) str = KeyStringReplacements[str];
+
+            // Modifier order: Ctrl+Alt+Shift+Key
+            return (mods.HasFlag(Keys.Control) ? "Ctrl+" : "")
+                   + (mods.HasFlag(Keys.Alt) ? "Alt+" : "")
+                   + (mods.HasFlag(Keys.Shift) ? "Shift+" : "")
+                   + str;
         }
     }
 }
