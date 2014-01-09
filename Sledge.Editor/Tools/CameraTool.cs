@@ -158,7 +158,7 @@ namespace Sledge.Editor.Tools
             var vp = viewport as Viewport2D;
             if (vp == null) return;
             _state = GetStateAtPoint(e.X, vp.Height - e.Y, vp, out _stateCamera);
-            if (_state == State.None)
+            if (_state == State.None && KeyboardState.Shift)
             {
                 var p = SnapIfNeeded(vp.Expand(vp.ScreenToWorld(e.X, vp.Height - e.Y)));
                 _stateCamera = new Camera { EyePosition = p, LookPosition = p + Coordinate.UnitX * 1.5m * Document.Map.GridSpacing };
@@ -256,7 +256,7 @@ namespace Sledge.Editor.Tools
                 var p1 = vp.Flatten(camera.EyePosition);
                 var p2 = vp.Flatten(camera.LookPosition);
 
-                GL.Color3(camera == Document.Map.ActiveCamera ? Color.Cyan : Color.Red);
+                GL.Color3(camera == Document.Map.ActiveCamera ? Color.Red : Color.Cyan);
                 GL.Vertex2(p1.DX, p1.DY);
                 GL.Vertex2(p2.DX, p2.DY);
                 GL.Vertex2(p2.DX, p2.DY);
@@ -274,7 +274,7 @@ namespace Sledge.Editor.Tools
 
                 // Position circle
                 GL.Begin(BeginMode.Polygon);
-                GL.Color3(camera == Document.Map.ActiveCamera ? Color.Red : Color.Cyan);
+                GL.Color3(camera == Document.Map.ActiveCamera ? Color.DarkOrange : Color.LawnGreen);
                 GLX.Circle(new Vector2d(p1.DX, p1.DY), 4, z, loop: true);
                 GL.End();
             }
@@ -289,10 +289,10 @@ namespace Sledge.Editor.Tools
 
                 // Direction Triangle
                 GL.Begin(BeginMode.Triangles);
-                GL.Color3(camera == Document.Map.ActiveCamera ? Color.DarkOrange : Color.LawnGreen);
-                Coord(p2 + dir * 1.5m * multiplier);
-                Coord(p2 - (dir + cp) * multiplier);
+                GL.Color3(camera == Document.Map.ActiveCamera ? Color.Red : Color.Cyan);
                 Coord(p2 - (dir - cp) * multiplier);
+                Coord(p2 - (dir + cp) * multiplier);
+                Coord(p2 + dir * 1.5m * multiplier);
                 GL.End();
             }
 
