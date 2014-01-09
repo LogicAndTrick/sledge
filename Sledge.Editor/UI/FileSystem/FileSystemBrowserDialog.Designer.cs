@@ -1,4 +1,4 @@
-﻿namespace Sledge.FileSystem
+﻿namespace Sledge.Editor.UI.FileSystem
 {
     partial class FileSystemBrowserDialog
     {
@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.Browser = new Sledge.FileSystem.FileSystemBrowserControl();
+            this.Browser = new FileSystemBrowserControl();
             this.SuspendLayout();
             // 
             // Browser

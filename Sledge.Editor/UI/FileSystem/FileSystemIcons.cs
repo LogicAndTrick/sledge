@@ -32,7 +32,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using Microsoft.Win32;
 
-namespace Sledge.FileSystem
+namespace Sledge.Editor.UI.FileSystem
 {
     public static class FileSystemIcons
     {
@@ -460,7 +460,7 @@ namespace Sledge.FileSystem
         {
             var fileInfo = new SHFILEINFO();
 
-            SHGetFileInfo(Environment.CurrentDirectory, (int) FILE_ATTRIBUTE_DIRECTORY, out fileInfo,
+            SHGetFileInfo(System.Environment.CurrentDirectory, (int) FILE_ATTRIBUTE_DIRECTORY, out fileInfo,
                           Marshal.SizeOf(fileInfo),
                           FileInfoFlags.SHGFI_ICON | FileInfoFlags.SHGFI_USEFILEATTRIBUTES | (FileInfoFlags) size |
                           (FileInfoFlags)systemFolderType);

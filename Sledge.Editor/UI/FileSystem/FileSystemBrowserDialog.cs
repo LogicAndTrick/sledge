@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Text;
 using System.Windows.Forms;
+using Sledge.Editor.Logging;
+using Sledge.FileSystem;
 
-namespace Sledge.FileSystem
+namespace Sledge.Editor.UI.FileSystem
 {
     public partial class FileSystemBrowserDialog : Form
     {
@@ -68,7 +66,16 @@ namespace Sledge.FileSystem
             Browser.Cancelled += Cancel;
             Browser.Confirmed += Confirm;
 
-            Browser.File = root;
+            try
+            {
+                // DO NOT REMOVE THIS TRY/CATCH BLOCK!
+                // Without it, the CLR crashes, even if no exception is thrown! I have no idea why this is the case.
+                Browser.File = root;
+            }
+            catch (Exception ex)
+            {
+                Logger.ShowException(ex);
+            }
         }
 
         private void Confirm(object sender, IEnumerable<IFile> selection)

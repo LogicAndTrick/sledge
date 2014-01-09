@@ -3,6 +3,7 @@ using System.Linq;
 using System.Windows.Forms;
 using System.IO;
 using Sledge.Editor.Documents;
+using Sledge.Editor.UI.FileSystem;
 using Sledge.FileSystem;
 using Sledge.Providers.GameData;
 using Sledge.Providers.Map;

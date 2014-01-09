@@ -311,6 +311,19 @@
     <Compile Include="UI\ClosableTabControl.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="UI\FileSystem\FileSystemBrowserControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\FileSystem\FileSystemBrowserControl.Designer.cs">
+      <DependentUpon>FileSystemBrowserControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\FileSystem\FileSystemBrowserDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\FileSystem\FileSystemBrowserDialog.Designer.cs">
+      <DependentUpon>FileSystemBrowserDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\FileSystem\FileSystemIcons.cs" />
     <Compile Include="UI\HotkeyForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -522,6 +535,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UI\EntityReportDialog.resx">
       <DependentUpon>EntityReportDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\FileSystem\FileSystemBrowserControl.resx">
+      <DependentUpon>FileSystemBrowserControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\FileSystem\FileSystemBrowserDialog.resx">
+      <DependentUpon>FileSystemBrowserDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\MapInformationDialog.resx">
       <DependentUpon>MapInformationDialog.cs</DependentUpon>

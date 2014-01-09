@@ -33,31 +33,11 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CompositeFile.cs" />
     <Compile Include="FileExtensions.cs" />
-    <Compile Include="FileSystemBrowserDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="FileSystemBrowserDialog.Designer.cs">
-      <DependentUpon>FileSystemBrowserDialog.cs</DependentUpon>
-    </Compile>
     <Compile Include="PakFile.cs" />
-    <Compile Include="FileSystemBrowserControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="FileSystemBrowserControl.Designer.cs">
-      <DependentUpon>FileSystemBrowserControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="FileSystemIcons.cs" />
     <Compile Include="GcfFile.cs" />
     <Compile Include="FileSource.cs" />
     <Compile Include="FileSystemFactory.cs" />
@@ -75,14 +55,6 @@
       <Project>{111EA4FC-CBFB-4C0F-9E4B-F3B050BEC459}</Project>
       <Name>Sledge.Libs</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="FileSystemBrowserControl.resx">
-      <DependentUpon>FileSystemBrowserControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="FileSystemBrowserDialog.resx">
-      <DependentUpon>FileSystemBrowserDialog.cs</DependentUpon>
-    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
