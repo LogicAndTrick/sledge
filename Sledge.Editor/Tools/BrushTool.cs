@@ -213,7 +213,11 @@ namespace Sledge.Editor.Tools
             base.Render3D(viewport);
             if (ShouldDraw3DBox() && _preview != null)
             {
+                GL.Disable(EnableCap.CullFace);
+                TextureHelper.Unbind();
                 Rendering.Immediate.MapObjectRenderer.DrawFilled(_preview, GetRenderColour(), false, viewport.Type != Viewport3D.ViewType.Flat);
+                GL.Color4(Color.GreenYellow);
+                Rendering.Immediate.MapObjectRenderer.DrawWireframe(_preview, true);
             }
         }
 

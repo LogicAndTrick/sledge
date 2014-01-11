@@ -10,7 +10,6 @@ Priorities
       Arch
       Sphere
   UI
-    Find/replace dialogs
     Game config detection
     Object properties dialog data types
     Auto Update
@@ -20,6 +19,7 @@ Priorities
 Post-Alpha
   Prefabs / Instancing
   UI
+    Find/replace dialogs
     History sidebar
     Map diff
     History stacks (for VM tool)

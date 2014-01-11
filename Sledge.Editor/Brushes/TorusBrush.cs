@@ -73,7 +73,7 @@ namespace Sledge.Editor.Brushes
                 };
                 face.Vertices.AddRange(arr.Select(x => new Vertex(x, face)));
                 face.UpdateBoundingBox();
-                face.AlignTextureToFace();
+                face.AlignTextureToWorld();
                 solid.Faces.Add(face);
             }
             solid.UpdateBoundingBox();
@@ -125,7 +125,6 @@ namespace Sledge.Editor.Brushes
             var ringInnerSections = new List<Coordinate[]>();
             for (var i = 0; i < ringSides + 1; i++)
             {
-                var addz = heightAdd * i;
                 var ring = ringStart + i * ringAngle;
                 var rxval = box.Center.X + majorPrimary * DMath.Cos(ring);
                 var ryval = box.Center.Y + minorPrimary * DMath.Sin(ring);
@@ -137,12 +136,12 @@ namespace Sledge.Editor.Brushes
                     var cross = crossStart + j * crossAngle;
                     var xval = majorSecondaryOuter * DMath.Cos(cross) * DMath.Cos(ring);
                     var yval = majorSecondaryOuter * DMath.Cos(cross) * DMath.Sin(ring);
-                    var zval = minorSecondaryOuter * DMath.Sin(cross) + addz;
+                    var zval = minorSecondaryOuter * DMath.Sin(cross);
                     crossSecOuter[j] = new Coordinate(xval + rxval, yval + ryval, zval + rzval);
                     if (!crossMakeHollow) continue;
                     xval = majorSecondaryInner * DMath.Cos(cross) * DMath.Cos(ring);
                     yval = majorSecondaryInner * DMath.Cos(cross) * DMath.Sin(ring);
-                    zval = minorSecondaryInner * DMath.Sin(cross) + addz;
+                    zval = minorSecondaryInner * DMath.Sin(cross);
                     crossSecInner[j] = new Coordinate(xval + rxval, yval + ryval, zval + rzval);
                 }
                 ringOuterSections.Add(crossSecOuter);
@@ -152,6 +151,7 @@ namespace Sledge.Editor.Brushes
             // Create the solids
             for (var i = 0; i < ringSides; i++)
             {
+                var vertical = Coordinate.UnitZ * heightAdd * i;
                 var nexti = i + 1;
                 if (crossMakeHollow)
                 {
@@ -164,12 +164,12 @@ namespace Sledge.Editor.Brushes
                     {
                         var nextj = j + 1;
                         var faces = new List<Coordinate[]>();
-                        faces.Add(new[] { outerPoints[j], outerPoints[nextj], nextOuterPoints[nextj], nextOuterPoints[j] });
-                        faces.Add(new[] { nextInnerPoints[j], nextInnerPoints[nextj], innerPoints[nextj], innerPoints[j] });
-                        faces.Add(new[] { innerPoints[nextj], nextInnerPoints[nextj], nextOuterPoints[nextj], outerPoints[nextj] });
-                        faces.Add(new[] { outerPoints[j], nextOuterPoints[j], nextInnerPoints[j], innerPoints[j] });
-                        faces.Add(new[] { innerPoints[j], innerPoints[nextj], outerPoints[nextj], outerPoints[j] });
-                        faces.Add(new[] { nextOuterPoints[j], nextOuterPoints[nextj], nextInnerPoints[nextj], nextInnerPoints[j] });
+                        faces.Add(new[] { outerPoints[j], outerPoints[nextj], nextOuterPoints[nextj], nextOuterPoints[j] }.Select(x => x + vertical).ToArray());
+                        faces.Add(new[] { nextInnerPoints[j], nextInnerPoints[nextj], innerPoints[nextj], innerPoints[j] }.Select(x => x + vertical).ToArray());
+                        faces.Add(new[] { innerPoints[nextj], nextInnerPoints[nextj], nextOuterPoints[nextj], outerPoints[nextj] }.Select(x => x + vertical).ToArray());
+                        faces.Add(new[] { outerPoints[j], nextOuterPoints[j], nextInnerPoints[j], innerPoints[j] }.Select(x => x + vertical).ToArray());
+                        faces.Add(new[] { innerPoints[j], innerPoints[nextj], outerPoints[nextj], outerPoints[j] }.Select(x => x + vertical).ToArray());
+                        faces.Add(new[] { nextOuterPoints[j], nextOuterPoints[nextj], nextInnerPoints[nextj], nextInnerPoints[j] }.Select(x => x + vertical).ToArray());
                         yield return MakeSolid(generator, faces, texture, colour);
                     }
                 }
@@ -183,11 +183,11 @@ namespace Sledge.Editor.Brushes
                     for (var j = 0; j < crossSides; j++)
                     {
                         var nextj = (j + 1) % crossSides;
-                        faces.Add(new[] { points[j], points[nextj], nextPoints[nextj], nextPoints[j] });
+                        faces.Add(new[] { points[j], points[nextj], nextPoints[nextj], nextPoints[j] }.Select(x => x + vertical).ToArray());
                     }
                     // Add the cross section faces
-                    faces.Add(points.Reverse().ToArray());
-                    faces.Add(nextPoints.ToArray());
+                    faces.Add(points.Reverse().Select(x => x + vertical).ToArray());
+                    faces.Add(nextPoints.Select(x => x + vertical).ToArray());
                     yield return MakeSolid(generator, faces, texture, colour);
                 }
             }

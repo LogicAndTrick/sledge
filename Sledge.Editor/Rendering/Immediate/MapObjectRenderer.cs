@@ -98,7 +98,7 @@ namespace Sledge.Editor.Rendering.Immediate
                 foreach (var face in faces)
                 {
                     var tp = RenderTransparent(face.Texture.Texture, face);
-                    GL.Color4(Color.FromArgb(tp ? 128 : 255, color.IsEmpty ? face.Colour : color));
+                    GL.Color4(Color.FromArgb(Math.Min(tp ? 128 : 255, color.IsEmpty ? 255 : color.A), color.IsEmpty ? face.Colour : color));
                     var disp = face is Displacement;
                     foreach (var tri in face.GetTriangles())
                     {
