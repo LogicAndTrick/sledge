@@ -106,13 +106,13 @@ namespace Sledge.Editor.Tools.VMTools
             return "Edit Face Mode";
         }
 
-        public override void ToolSelected()
+        public override void ToolSelected(bool preventHistory)
         {
             _selection = new List<Face>();
             UpdateSelection();
         }
 
-        public override void ToolDeselected()
+        public override void ToolDeselected(bool preventHistory)
         {
             _selection.Clear();
             UpdateSelection();

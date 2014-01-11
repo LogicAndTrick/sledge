@@ -77,7 +77,7 @@ namespace Sledge.Editor.Tools
             get { return Color.FromArgb(Sledge.Settings.View.SelectionBoxBackgroundOpacity, Color.Gray); }
         }
 
-        public override void ToolSelected()
+        public override void ToolSelected(bool preventHistory)
         {
             Mediator.Subscribe(EditorMediator.SelectionChanged, this);
             Mediator.Subscribe(EditorMediator.DocumentTreeStructureChanged, this);
@@ -86,7 +86,7 @@ namespace Sledge.Editor.Tools
             Document.UpdateDisplayLists(Document.Selection.GetSelectedObjects());
         }
 
-        public override void ToolDeselected()
+        public override void ToolDeselected(bool preventHistory)
         {
             SetCurrentTool(null);
         }

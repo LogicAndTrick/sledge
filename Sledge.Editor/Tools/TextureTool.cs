@@ -8,6 +8,7 @@ using Sledge.Editor.Actions;
 using Sledge.Editor.Actions.MapObjects.Operations;
 using Sledge.Editor.Actions.MapObjects.Selection;
 using Sledge.Editor.Documents;
+using Sledge.Editor.History;
 using Sledge.Providers.Texture;
 using Sledge.Settings;
 using Sledge.UI;
@@ -158,25 +159,37 @@ namespace Sledge.Editor.Tools
             return HotkeyTool.Texture;
         }
 
-        public override void ToolSelected()
+        public override void ToolSelected(bool preventHistory)
         {
             _form.Show(Editor.Instance);
             Editor.Instance.Focus();
-            Document.Selection.SwitchToFaceSelection();
-            Document.UpdateDisplayLists(Document.Selection.GetSelectedFaces());
+
+            if (!preventHistory)
+            {
+                Document.History.AddHistoryItem(new HistoryAction("Switch selection mode", new ChangeToFaceSelectionMode(GetType(), Document.Selection.GetSelectedObjects())));
+                Document.Selection.SwitchToFaceSelection();
+                Document.UpdateDisplayLists(Document.Selection.GetSelectedFaces());
+            }
+
             _form.SelectionChanged();
             _form.SelectTexture(Editor.Instance.GetSelectedTexture());
             Mediator.Subscribe(EditorMediator.TextureSelected, this);
             Mediator.Subscribe(EditorMediator.DocumentTreeFacesChanged, this);
         }
 
-        public override void ToolDeselected()
+        public override void ToolDeselected(bool preventHistory)
         {
             var selected = Document.Selection.GetSelectedFaces().ToList();
-            Document.Selection.SwitchToObjectSelection();
+
+            if (!preventHistory)
+            {
+                Document.History.AddHistoryItem(new HistoryAction("Switch selection mode", new ChangeToObjectSelectionMode(GetType(), selected)));
+                Document.Selection.SwitchToObjectSelection();
+                Document.UpdateDisplayLists(selected);
+            }
+
             _form.Clear();
             _form.Hide();
-            Document.UpdateDisplayLists(selected);
             Mediator.UnsubscribeAll(this);
         }
 

@@ -39,12 +39,12 @@ namespace Sledge.Editor.Tools.DisplacementTools
             return "Geometry";
         }
 
-        public override void ToolSelected()
+        public override void ToolSelected(bool preventHistory)
         {
             //
         }
 
-        public override void ToolDeselected()
+        public override void ToolDeselected(bool preventHistory)
         {
             _currentPoint = null;
         }

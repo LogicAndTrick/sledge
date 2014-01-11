@@ -102,9 +102,9 @@ namespace Sledge.Editor.Tools
         {
             if (_currentTool == tool) return;
             _form.SetSelectedTool(tool);
-            if (_currentTool != null) _currentTool.ToolDeselected();
+            if (_currentTool != null) _currentTool.ToolDeselected(false);
             _currentTool = tool;
-            if (_currentTool != null) _currentTool.ToolSelected();
+            if (_currentTool != null) _currentTool.ToolSelected(false);
         }
 
         private void AddTool(VMSubTool tool)
@@ -312,7 +312,7 @@ namespace Sledge.Editor.Tools
             Document.UpdateDisplayLists();
         }
 
-        public override void ToolSelected()
+        public override void ToolSelected(bool preventHistory)
         {
             _form.Show(Editor.Instance);
             Editor.Instance.Focus();
@@ -327,7 +327,7 @@ namespace Sledge.Editor.Tools
             _movingPoint = null;
             MoveSelection = null;
 
-            if (_currentTool != null) _currentTool.ToolSelected();
+            if (_currentTool != null) _currentTool.ToolSelected(preventHistory);
 
             Mediator.Subscribe(EditorMediator.SelectionChanged, this);
             Mediator.Subscribe(HotkeysMediator.VMStandardMode, this);
@@ -335,9 +335,9 @@ namespace Sledge.Editor.Tools
             Mediator.Subscribe(HotkeysMediator.VMFaceEditMode, this);
         }
 
-        public override void ToolDeselected()
+        public override void ToolDeselected(bool preventHistory)
         {
-            if (_currentTool != null) _currentTool.ToolDeselected();
+            if (_currentTool != null) _currentTool.ToolDeselected(preventHistory);
 
             // Commit the changes
             Commit(_copies.Values.ToList());

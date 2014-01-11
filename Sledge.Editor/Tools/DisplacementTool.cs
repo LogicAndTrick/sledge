@@ -35,9 +35,9 @@ namespace Sledge.Editor.Tools
 
         private void DisplacementToolSelected(object sender, DisplacementSubTool tool)
         {
-            if (_currentTool != null) _currentTool.ToolDeselected();
+            if (_currentTool != null) _currentTool.ToolDeselected(false);
             _currentTool = tool;
-            if (_currentTool != null) _currentTool.ToolSelected();
+            if (_currentTool != null) _currentTool.ToolSelected(false);
         }
 
         public override void DocumentChanged()
@@ -60,23 +60,23 @@ namespace Sledge.Editor.Tools
             return HotkeyTool.Displacement;
         }
 
-        public override void ToolSelected()
+        public override void ToolSelected(bool preventHistory)
         {
             _form.Show(Editor.Instance);
             Editor.Instance.Focus();
             Document.Selection.SwitchToFaceSelection();
             Document.UpdateDisplayLists();
 
-            if (_currentTool != null) _currentTool.ToolSelected();
+            if (_currentTool != null) _currentTool.ToolSelected(preventHistory);
         }
 
-        public override void ToolDeselected()
+        public override void ToolDeselected(bool preventHistory)
         {
             Document.Selection.SwitchToObjectSelection();
             _form.Hide();
             Document.UpdateDisplayLists();
 
-            if (_currentTool != null) _currentTool.ToolDeselected();
+            if (_currentTool != null) _currentTool.ToolDeselected(preventHistory);
         }
 
         public override void MouseDown(ViewportBase viewport, ViewportEvent e)

@@ -104,7 +104,7 @@ namespace Sledge.Editor.Tools.VMTools
             return "Scale Mode";
         }
 
-        public override void ToolSelected()
+        public override void ToolSelected(bool preventHistory)
         {
             _state = VMState.None;
             _originals = MainTool.Points.ToDictionary(x => x, x => x.Coordinate);
@@ -113,7 +113,7 @@ namespace Sledge.Editor.Tools.VMTools
             Mediator.Subscribe(EditorMediator.DocumentGridSpacingChanged, this);
         }
 
-        public override void ToolDeselected()
+        public override void ToolDeselected(bool preventHistory)
         {
             _state = VMState.None;
             _originals = null;

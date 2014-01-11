@@ -33,7 +33,7 @@ namespace Sledge.Editor.Tools
         private State _state;
         private Camera _stateCamera;
 
-        public override void ToolSelected()
+        public override void ToolSelected(bool preventHistory)
         {
             _state = State.None;
             Mediator.Subscribe(HotkeysMediator.CameraNext, this);

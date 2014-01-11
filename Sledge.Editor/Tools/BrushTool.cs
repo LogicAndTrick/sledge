@@ -53,7 +53,7 @@ namespace Sledge.Editor.Tools
             get { return Color.FromArgb(Sledge.Settings.View.SelectionBoxBackgroundOpacity, Color.Green); }
         }
 
-        public override void ToolSelected()
+        public override void ToolSelected(bool preventHistory)
         {
             BrushManager.ValuesChanged += ValuesChanged;
             var sel = Document.Selection.GetSelectedObjects().OfType<Solid>().ToList();
@@ -69,7 +69,7 @@ namespace Sledge.Editor.Tools
             _updatePreview = true;
         }
 
-        public override void ToolDeselected()
+        public override void ToolDeselected(bool preventHistory)
         {
             BrushManager.ValuesChanged -= ValuesChanged;
             _updatePreview = false;

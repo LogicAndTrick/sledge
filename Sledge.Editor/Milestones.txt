@@ -6,8 +6,6 @@ Priorities
     Clip tool is laggy
   Document/Actions
     Advanced/proper compiling
-    Face/object selection transition history
-    Actions for switching selection modes
     Brush scripts
       Arch
       Sphere

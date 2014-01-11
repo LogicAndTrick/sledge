@@ -49,7 +49,7 @@ namespace Sledge.Editor.Tools
             get { return Color.FromArgb(Sledge.Settings.View.SelectionBoxBackgroundOpacity, Color.LightGray); }
         }
 
-        public override void ToolSelected()
+        public override void ToolSelected(bool preventHistory)
         {
             State.BoxStart = Document.Map.CordonBounds.Start;
             State.BoxEnd = Document.Map.CordonBounds.End;

@@ -157,14 +157,14 @@ namespace Sledge.Editor.Tools.VMTools
             return "Standard Mode";
         }
 
-        public override void ToolSelected()
+        public override void ToolSelected(bool preventHistory)
         {
             _state = VMState.None;
             UpdateSplitEnabled();
             Mediator.Subscribe(HotkeysMediator.VMSplitFace, this);
         }
 
-        public override void ToolDeselected()
+        public override void ToolDeselected(bool preventHistory)
         {
             _state = VMState.None;
             Mediator.UnsubscribeAll(this);

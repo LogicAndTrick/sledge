@@ -66,12 +66,12 @@ namespace Sledge.Editor.Tools
             DocumentChanged();
         }
 
-        public virtual void ToolSelected()
+        public virtual void ToolSelected(bool preventHistory)
         {
             // Virtual
         }
 
-        public virtual void ToolDeselected()
+        public virtual void ToolDeselected(bool preventHistory)
         {
             // Virtual
         }
