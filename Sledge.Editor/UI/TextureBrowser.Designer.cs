@@ -30,6 +30,9 @@
         {
             this.PackageTree = new System.Windows.Forms.TreeView();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.SortDescendingCheckbox = new System.Windows.Forms.CheckBox();
+            this.SortOrderCombo = new System.Windows.Forms.ComboBox();
+            this.label3 = new System.Windows.Forms.Label();
             this.SizeCombo = new System.Windows.Forms.ComboBox();
             this.TextureSizeLabel = new System.Windows.Forms.Label();
             this.TextureNameLabel = new System.Windows.Forms.Label();
@@ -39,10 +42,7 @@
             this.label2 = new System.Windows.Forms.Label();
             this.FilterTextbox = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.SortOrderCombo = new System.Windows.Forms.ComboBox();
-            this.label3 = new System.Windows.Forms.Label();
             this.TextureList = new Sledge.Editor.UI.TextureListPanel();
-            this.SortDescendingCheckbox = new System.Windows.Forms.CheckBox();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -75,6 +75,39 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(827, 70);
             this.panel1.TabIndex = 2;
+            // 
+            // SortDescendingCheckbox
+            // 
+            this.SortDescendingCheckbox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.SortDescendingCheckbox.AutoSize = true;
+            this.SortDescendingCheckbox.Location = new System.Drawing.Point(708, 34);
+            this.SortDescendingCheckbox.Name = "SortDescendingCheckbox";
+            this.SortDescendingCheckbox.Size = new System.Drawing.Size(103, 17);
+            this.SortDescendingCheckbox.TabIndex = 10;
+            this.SortDescendingCheckbox.Text = "Sort descending";
+            this.SortDescendingCheckbox.UseVisualStyleBackColor = true;
+            this.SortDescendingCheckbox.CheckedChanged += new System.EventHandler(this.SortDescendingCheckboxChanged);
+            // 
+            // SortOrderCombo
+            // 
+            this.SortOrderCombo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.SortOrderCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.SortOrderCombo.FormattingEnabled = true;
+            this.SortOrderCombo.Location = new System.Drawing.Point(708, 9);
+            this.SortOrderCombo.Name = "SortOrderCombo";
+            this.SortOrderCombo.Size = new System.Drawing.Size(107, 21);
+            this.SortOrderCombo.TabIndex = 9;
+            this.SortOrderCombo.SelectedIndexChanged += new System.EventHandler(this.SortOrderComboIndexChanged);
+            // 
+            // label3
+            // 
+            this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(661, 12);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(41, 13);
+            this.label3.TabIndex = 8;
+            this.label3.Text = "Sort By";
             // 
             // SizeCombo
             // 
@@ -165,25 +198,6 @@
             this.label1.TabIndex = 0;
             this.label1.Text = "Filter";
             // 
-            // SortOrderCombo
-            // 
-            this.SortOrderCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.SortOrderCombo.FormattingEnabled = true;
-            this.SortOrderCombo.Location = new System.Drawing.Point(708, 9);
-            this.SortOrderCombo.Name = "SortOrderCombo";
-            this.SortOrderCombo.Size = new System.Drawing.Size(107, 21);
-            this.SortOrderCombo.TabIndex = 9;
-            this.SortOrderCombo.SelectedIndexChanged += new System.EventHandler(this.SortOrderComboIndexChanged);
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(661, 12);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(41, 13);
-            this.label3.TabIndex = 8;
-            this.label3.Text = "Sort By";
-            // 
             // TextureList
             // 
             this.TextureList.AllowMultipleSelection = true;
@@ -195,19 +209,9 @@
             this.TextureList.Location = new System.Drawing.Point(120, 0);
             this.TextureList.Name = "TextureList";
             this.TextureList.Size = new System.Drawing.Size(707, 423);
+            this.TextureList.SortDescending = false;
             this.TextureList.SortOrder = Sledge.Editor.UI.TextureListPanel.TextureSortOrder.Name;
             this.TextureList.TabIndex = 0;
-            // 
-            // SortDescendingCheckbox
-            // 
-            this.SortDescendingCheckbox.AutoSize = true;
-            this.SortDescendingCheckbox.Location = new System.Drawing.Point(708, 34);
-            this.SortDescendingCheckbox.Name = "SortDescendingCheckbox";
-            this.SortDescendingCheckbox.Size = new System.Drawing.Size(103, 17);
-            this.SortDescendingCheckbox.TabIndex = 10;
-            this.SortDescendingCheckbox.Text = "Sort descending";
-            this.SortDescendingCheckbox.UseVisualStyleBackColor = true;
-            this.SortDescendingCheckbox.CheckedChanged += new System.EventHandler(this.SortDescendingCheckboxChanged);
             // 
             // TextureBrowser
             // 
