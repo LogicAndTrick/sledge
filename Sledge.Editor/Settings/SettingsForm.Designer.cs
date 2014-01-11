@@ -296,6 +296,7 @@ namespace Sledge.Editor.Settings
             this.btnCancelSettings = new System.Windows.Forms.Button();
             this.btnApplyAndCloseSettings = new System.Windows.Forms.Button();
             this.btnApplySettings = new System.Windows.Forms.Button();
+            this.HotkeyResetButton = new System.Windows.Forms.Button();
             this.tbcSettings.SuspendLayout();
             this.tabGeneral.SuspendLayout();
             this.groupBox20.SuspendLayout();
@@ -2864,6 +2865,7 @@ namespace Sledge.Editor.Settings
             // 
             // tabHotkeys
             // 
+            this.tabHotkeys.Controls.Add(this.HotkeyResetButton);
             this.tabHotkeys.Controls.Add(this.groupBox22);
             this.tabHotkeys.Controls.Add(this.HotkeyReassignButton);
             this.tabHotkeys.Controls.Add(this.HotkeyRemoveButton);
@@ -3223,6 +3225,17 @@ namespace Sledge.Editor.Settings
             this.btnApplySettings.UseVisualStyleBackColor = true;
             this.btnApplySettings.Click += new System.EventHandler(this.Apply);
             // 
+            // HotkeyResetButton
+            // 
+            this.HotkeyResetButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.HotkeyResetButton.Location = new System.Drawing.Point(537, 482);
+            this.HotkeyResetButton.Name = "HotkeyResetButton";
+            this.HotkeyResetButton.Size = new System.Drawing.Size(118, 23);
+            this.HotkeyResetButton.TabIndex = 5;
+            this.HotkeyResetButton.Text = "Reset to Defaults";
+            this.HotkeyResetButton.UseVisualStyleBackColor = true;
+            this.HotkeyResetButton.Click += new System.EventHandler(this.HotkeyResetButtonClicked);
+            // 
             // SettingsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -3572,5 +3585,6 @@ namespace Sledge.Editor.Settings
         private System.Windows.Forms.ColumnHeader chDescription;
         private System.Windows.Forms.Label label39;
         private System.Windows.Forms.Panel ViewportBackgroundColour;
+        private System.Windows.Forms.Button HotkeyResetButton;
 	}
 }

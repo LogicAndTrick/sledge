@@ -1167,6 +1167,19 @@ namespace Sledge.Editor.Settings
             if (HotkeyCombination.Focused) return false;
             return base.ProcessTabKey(forward);
         }
+
+        private void HotkeyResetButtonClicked(object sender, EventArgs e)
+        {
+            _hotkeys.Clear();
+            foreach (var def in Hotkeys.GetHotkeyDefinitions())
+            {
+                foreach (var hk in def.DefaultHotkeys)
+                {
+                    _hotkeys.Add(new Hotkey {ID = def.ID, HotkeyString = hk});
+                }
+            }
+            UpdateHotkeyList();
+        }
         #endregion
     }
 }
