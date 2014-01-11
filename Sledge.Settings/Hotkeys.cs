@@ -68,6 +68,7 @@ namespace Sledge.Settings
                                     new HotkeyDefinition("Go to Brush ID", "Open the 'Go to Brush ID' dialog", HotkeysMediator.GoToBrushID, "Ctrl+Shift+G"),
                                     
                                     new HotkeyDefinition("Selection Tool", "Switch to the selection tool", HotkeysMediator.SwitchTool, HotkeyTool.Selection, "Shift+S"),
+                                    new HotkeyDefinition("Camera Tool", "Switch to the camera tool", HotkeysMediator.SwitchTool, HotkeyTool.Camera, "Shift+C"),
                                     new HotkeyDefinition("Entity Tool", "Switch to the entity tool", HotkeysMediator.SwitchTool, HotkeyTool.Entity, "Shift+E"),
                                     new HotkeyDefinition("Brush Tool", "Switch to the brush tool", HotkeysMediator.SwitchTool, HotkeyTool.Brush, "Shift+B"),
                                     new HotkeyDefinition("Texture Tool", "Switch to the texture application tool", HotkeysMediator.SwitchTool, HotkeyTool.Texture, "Shift+A"),
