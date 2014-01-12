@@ -306,6 +306,9 @@
     <Compile Include="UI\CheckForProblemsDialog.Designer.cs">
       <DependentUpon>CheckForProblemsDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="UI\DockedPanel.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="UI\EntityReportDialog.cs">
       <SubType>Form</SubType>
     </Compile>

@@ -89,6 +89,8 @@ namespace Sledge.Editor
             UpdateDocumentTabs();
             UpdateRecentFiles();
 
+            DockBottom.Hidden = DockLeft.Hidden = DockRight.Hidden = true;
+
             MenuManager.Init(mnuMain, tscToolStrip);
             MenuManager.Rebuild();
 

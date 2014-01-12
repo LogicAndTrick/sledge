@@ -41,6 +41,7 @@
             this.tscToolStrip = new System.Windows.Forms.ToolStripContainer();
             this.tblQuadView = new Sledge.Editor.UI.QuadSplitControl();
             this.DocumentTabs = new Sledge.Editor.UI.ClosableTabControl();
+            this.tabPage1 = new System.Windows.Forms.TabPage();
             this.panel1 = new System.Windows.Forms.Panel();
             this.RightToolbar = new System.Windows.Forms.TableLayoutPanel();
             this.HistoryPanel = new System.Windows.Forms.FlowLayoutPanel();
@@ -70,10 +71,15 @@
             this.MoveToEntityButton = new System.Windows.Forms.Button();
             this.BrushCreateCollapse = new Sledge.Editor.UI.CollapsingLabel();
             this.tspTools = new System.Windows.Forms.ToolStrip();
+            this.DockLeft = new Sledge.Editor.UI.DockedPanel();
+            this.DockRight = new Sledge.Editor.UI.DockedPanel();
+            this.DockBottom = new Sledge.Editor.UI.DockedPanel();
+            this.DockFill = new Sledge.Editor.UI.DockedPanel();
             this.stsStatus.SuspendLayout();
             this.tscToolStrip.ContentPanel.SuspendLayout();
             this.tscToolStrip.LeftToolStripPanel.SuspendLayout();
             this.tscToolStrip.SuspendLayout();
+            this.DocumentTabs.SuspendLayout();
             this.panel1.SuspendLayout();
             this.RightToolbar.SuspendLayout();
             this.VisgroupsPanel.SuspendLayout();
@@ -81,6 +87,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.TextureSelectionPictureBox)).BeginInit();
             this.BrushCreatePanel.SuspendLayout();
             this.EntityPanel.SuspendLayout();
+            this.DockFill.SuspendLayout();
             this.SuspendLayout();
             // 
             // mnuMain
@@ -100,7 +107,7 @@
             this.StatusBoxLabel,
             this.StatusZoomLabel,
             this.StatusSnapLabel});
-            this.stsStatus.Location = new System.Drawing.Point(0, 850);
+            this.stsStatus.Location = new System.Drawing.Point(0, 726);
             this.stsStatus.Name = "stsStatus";
             this.stsStatus.Size = new System.Drawing.Size(866, 24);
             this.stsStatus.TabIndex = 1;
@@ -163,10 +170,12 @@
             // 
             // tscToolStrip.ContentPanel
             // 
-            this.tscToolStrip.ContentPanel.Controls.Add(this.tblQuadView);
-            this.tscToolStrip.ContentPanel.Controls.Add(this.DocumentTabs);
+            this.tscToolStrip.ContentPanel.Controls.Add(this.DockFill);
+            this.tscToolStrip.ContentPanel.Controls.Add(this.DockRight);
+            this.tscToolStrip.ContentPanel.Controls.Add(this.DockLeft);
+            this.tscToolStrip.ContentPanel.Controls.Add(this.DockBottom);
             this.tscToolStrip.ContentPanel.Controls.Add(this.panel1);
-            this.tscToolStrip.ContentPanel.Size = new System.Drawing.Size(832, 801);
+            this.tscToolStrip.ContentPanel.Size = new System.Drawing.Size(832, 677);
             this.tscToolStrip.Dock = System.Windows.Forms.DockStyle.Fill;
             // 
             // tscToolStrip.LeftToolStripPanel
@@ -174,13 +183,17 @@
             this.tscToolStrip.LeftToolStripPanel.Controls.Add(this.tspTools);
             this.tscToolStrip.Location = new System.Drawing.Point(0, 24);
             this.tscToolStrip.Name = "tscToolStrip";
-            this.tscToolStrip.Size = new System.Drawing.Size(866, 826);
+            this.tscToolStrip.Size = new System.Drawing.Size(866, 702);
             this.tscToolStrip.TabIndex = 2;
             this.tscToolStrip.Text = "tscToolStrip";
             // 
             // tblQuadView
             // 
             this.tblQuadView.ColumnCount = 2;
+            this.tblQuadView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tblQuadView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tblQuadView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tblQuadView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
@@ -366,19 +379,34 @@
             this.tblQuadView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tblQuadView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tblQuadView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tblQuadView.Size = new System.Drawing.Size(682, 777);
+            this.tblQuadView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.Size = new System.Drawing.Size(635, 636);
             this.tblQuadView.TabIndex = 0;
             // 
             // DocumentTabs
             // 
+            this.DocumentTabs.Controls.Add(this.tabPage1);
             this.DocumentTabs.Dock = System.Windows.Forms.DockStyle.Top;
             this.DocumentTabs.Location = new System.Drawing.Point(0, 0);
             this.DocumentTabs.Name = "DocumentTabs";
             this.DocumentTabs.SelectedIndex = 0;
-            this.DocumentTabs.Size = new System.Drawing.Size(682, 24);
+            this.DocumentTabs.Size = new System.Drawing.Size(635, 24);
             this.DocumentTabs.TabIndex = 2;
             this.DocumentTabs.RequestClose += new Sledge.Editor.UI.ClosableTabControl.RequestCloseEventHandler(this.DocumentTabsRequestClose);
             this.DocumentTabs.SelectedIndexChanged += new System.EventHandler(this.DocumentTabsSelectedIndexChanged);
+            // 
+            // tabPage1
+            // 
+            this.tabPage1.ImageIndex = 0;
+            this.tabPage1.Location = new System.Drawing.Point(4, 25);
+            this.tabPage1.Name = "tabPage1";
+            this.tabPage1.Size = new System.Drawing.Size(627, 0);
+            this.tabPage1.TabIndex = 0;
+            this.tabPage1.Text = "Tab";
+            this.tabPage1.UseVisualStyleBackColor = true;
             // 
             // panel1
             // 
@@ -386,7 +414,7 @@
             this.panel1.Dock = System.Windows.Forms.DockStyle.Right;
             this.panel1.Location = new System.Drawing.Point(682, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(150, 801);
+            this.panel1.Size = new System.Drawing.Size(150, 677);
             this.panel1.TabIndex = 1;
             // 
             // RightToolbar
@@ -417,7 +445,7 @@
             this.RightToolbar.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.RightToolbar.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.RightToolbar.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.RightToolbar.Size = new System.Drawing.Size(150, 801);
+            this.RightToolbar.Size = new System.Drawing.Size(150, 677);
             this.RightToolbar.TabIndex = 2;
             // 
             // HistoryPanel
@@ -689,11 +717,45 @@
             this.tspTools.Size = new System.Drawing.Size(34, 117);
             this.tspTools.TabIndex = 0;
             // 
+            // DockLeft
+            // 
+            this.DockLeft.Dock = System.Windows.Forms.DockStyle.Left;
+            this.DockLeft.Location = new System.Drawing.Point(0, 0);
+            this.DockLeft.Name = "DockLeft";
+            this.DockLeft.Size = new System.Drawing.Size(26, 660);
+            this.DockLeft.TabIndex = 3;
+            // 
+            // DockRight
+            // 
+            this.DockRight.Dock = System.Windows.Forms.DockStyle.Right;
+            this.DockRight.Location = new System.Drawing.Point(661, 0);
+            this.DockRight.Name = "DockRight";
+            this.DockRight.Size = new System.Drawing.Size(21, 660);
+            this.DockRight.TabIndex = 3;
+            // 
+            // DockBottom
+            // 
+            this.DockBottom.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.DockBottom.Location = new System.Drawing.Point(0, 660);
+            this.DockBottom.Name = "DockBottom";
+            this.DockBottom.Size = new System.Drawing.Size(682, 17);
+            this.DockBottom.TabIndex = 3;
+            // 
+            // DockFill
+            // 
+            this.DockFill.Controls.Add(this.tblQuadView);
+            this.DockFill.Controls.Add(this.DocumentTabs);
+            this.DockFill.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.DockFill.Location = new System.Drawing.Point(26, 0);
+            this.DockFill.Name = "DockFill";
+            this.DockFill.Size = new System.Drawing.Size(635, 660);
+            this.DockFill.TabIndex = 4;
+            // 
             // Editor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(866, 874);
+            this.ClientSize = new System.Drawing.Size(866, 750);
             this.Controls.Add(this.tscToolStrip);
             this.Controls.Add(this.stsStatus);
             this.Controls.Add(this.mnuMain);
@@ -713,6 +775,7 @@
             this.tscToolStrip.LeftToolStripPanel.PerformLayout();
             this.tscToolStrip.ResumeLayout(false);
             this.tscToolStrip.PerformLayout();
+            this.DocumentTabs.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
             this.RightToolbar.ResumeLayout(false);
             this.VisgroupsPanel.ResumeLayout(false);
@@ -721,6 +784,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.TextureSelectionPictureBox)).EndInit();
             this.BrushCreatePanel.ResumeLayout(false);
             this.EntityPanel.ResumeLayout(false);
+            this.DockFill.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -768,6 +832,11 @@
         private System.Windows.Forms.ToolStripStatusLabel StatusZoomLabel;
         private System.Windows.Forms.ToolStripStatusLabel StatusSnapLabel;
         private UI.ClosableTabControl DocumentTabs;
+        private System.Windows.Forms.TabPage tabPage1;
+        private UI.DockedPanel DockFill;
+        private UI.DockedPanel DockRight;
+        private UI.DockedPanel DockLeft;
+        private UI.DockedPanel DockBottom;
     }
 }
 
