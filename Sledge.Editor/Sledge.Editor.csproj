@@ -390,6 +390,9 @@
     <Compile Include="UI\PasteSpecialDialog.Designer.cs">
       <DependentUpon>PasteSpecialDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="UI\Sidebar\SidebarPanel.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="UI\TextureComboBox.cs">
       <SubType>Component</SubType>
     </Compile>
