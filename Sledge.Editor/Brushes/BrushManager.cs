@@ -42,6 +42,8 @@ namespace Sledge.Editor.Brushes
             Brushes.Add(new CylinderBrush());
             Brushes.Add(new ConeBrush());
             Brushes.Add(new PipeBrush());
+            Brushes.Add(new ArchBrush());
+            //Brushes.Add(new SphereBrush());
             Brushes.Add(new TorusBrush());
         }
 

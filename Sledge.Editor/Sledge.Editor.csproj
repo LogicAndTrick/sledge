@@ -100,6 +100,7 @@
     <Compile Include="Actions\Visgroups\CreateEditDeleteVisgroups.cs" />
     <Compile Include="Actions\Visgroups\ShowAllVisgroups.cs" />
     <Compile Include="Actions\Visgroups\ToggleVisgroup.cs" />
+    <Compile Include="Brushes\SphereBrush.cs" />
     <Compile Include="Brushes\BlockBrush.cs" />
     <Compile Include="Brushes\BrushManager.cs" />
     <Compile Include="Brushes\Controls\BrushControl.cs">
@@ -118,6 +119,7 @@
       <DependentUpon>NumericControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Brushes\ConeBrush.cs" />
+    <Compile Include="Brushes\ArchBrush.cs" />
     <Compile Include="Brushes\TorusBrush.cs" />
     <Compile Include="Brushes\PipeBrush.cs" />
     <Compile Include="Brushes\CylinderBrush.cs" />
