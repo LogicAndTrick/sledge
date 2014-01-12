@@ -6,9 +6,6 @@ Priorities
     Clip tool is laggy
   Document/Actions
     Advanced/proper compiling
-    Brush scripts
-      Arch
-      Sphere
     Clip tool choose side
   UI
     Game config detection
