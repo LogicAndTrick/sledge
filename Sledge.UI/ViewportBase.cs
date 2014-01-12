@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using OpenTK;
-using OpenTK.Graphics.OpenGL;
+using OpenTK.Graphics;
 using Sledge.DataStructures.Geometric;
 using Sledge.Graphics;
 using System.Windows.Forms;
 using Sledge.Graphics.Helpers;
+using ClearBufferMask = OpenTK.Graphics.OpenGL.ClearBufferMask;
+using GL = OpenTK.Graphics.OpenGL.GL;
 using KeyPressEventArgs = System.Windows.Forms.KeyPressEventArgs;
 
 namespace Sledge.UI
@@ -56,13 +58,13 @@ namespace Sledge.UI
             }
         }
 
-        protected ViewportBase()
+        protected ViewportBase() : base(new GraphicsMode(GraphicsMode.Default.ColorFormat, 24))
         {
             RenderContext = new RenderContext();
             Listeners = new List<IViewportEventListener>();
         }
 
-        protected ViewportBase(RenderContext context)
+        protected ViewportBase(RenderContext context) : base(new GraphicsMode(GraphicsMode.Default.ColorFormat, 24))
         {
             RenderContext = context;
             Listeners = new List<IViewportEventListener>();
