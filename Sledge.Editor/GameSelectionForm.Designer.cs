@@ -28,75 +28,57 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label1 = new System.Windows.Forms.Label();
-            this.lstEngine = new System.Windows.Forms.ListBox();
-            this.label2 = new System.Windows.Forms.Label();
-            this.lstGame = new System.Windows.Forms.ListBox();
+            this.GameTable = new System.Windows.Forms.TableLayoutPanel();
+            this.GamePanel = new System.Windows.Forms.Panel();
+            this.GamePanel.SuspendLayout();
             this.SuspendLayout();
             // 
-            // label1
+            // GameTable
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(62, 9);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(40, 13);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "Engine";
+            this.GameTable.AutoSize = true;
+            this.GameTable.ColumnCount = 2;
+            this.GameTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.GameTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 30F));
+            this.GameTable.Dock = System.Windows.Forms.DockStyle.Top;
+            this.GameTable.Location = new System.Drawing.Point(0, 0);
+            this.GameTable.Name = "GameTable";
+            this.GameTable.Padding = new System.Windows.Forms.Padding(10);
+            this.GameTable.RowCount = 1;
+            this.GameTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
+            this.GameTable.Size = new System.Drawing.Size(272, 50);
+            this.GameTable.TabIndex = 2;
             // 
-            // lstEngine
+            // GamePanel
             // 
-            this.lstEngine.FormattingEnabled = true;
-            this.lstEngine.IntegralHeight = false;
-            this.lstEngine.Location = new System.Drawing.Point(15, 31);
-            this.lstEngine.Name = "lstEngine";
-            this.lstEngine.Size = new System.Drawing.Size(140, 260);
-            this.lstEngine.TabIndex = 1;
-            this.lstEngine.SelectedIndexChanged += new System.EventHandler(this.LstEngineSelectedIndexChanged);
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(208, 9);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(35, 13);
-            this.label2.TabIndex = 0;
-            this.label2.Text = "Game";
-            // 
-            // lstGame
-            // 
-            this.lstGame.FormattingEnabled = true;
-            this.lstGame.IntegralHeight = false;
-            this.lstGame.Location = new System.Drawing.Point(161, 31);
-            this.lstGame.Name = "lstGame";
-            this.lstGame.Size = new System.Drawing.Size(140, 260);
-            this.lstGame.TabIndex = 1;
-            this.lstGame.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.LstGameMouseDoubleClick);
+            this.GamePanel.AutoScroll = true;
+            this.GamePanel.Controls.Add(this.GameTable);
+            this.GamePanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.GamePanel.Location = new System.Drawing.Point(0, 0);
+            this.GamePanel.Name = "GamePanel";
+            this.GamePanel.Size = new System.Drawing.Size(272, 303);
+            this.GamePanel.TabIndex = 3;
             // 
             // GameSelectionForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(314, 303);
-            this.Controls.Add(this.lstGame);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.lstEngine);
-            this.Controls.Add(this.label1);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.ClientSize = new System.Drawing.Size(272, 303);
+            this.Controls.Add(this.GamePanel);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "GameSelectionForm";
+            this.ShowIcon = false;
             this.Text = "Choose Your Game";
             this.Load += new System.EventHandler(this.GameSelectionFormLoad);
+            this.GamePanel.ResumeLayout(false);
+            this.GamePanel.PerformLayout();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
         #endregion
 
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.ListBox lstEngine;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.ListBox lstGame;
+        private System.Windows.Forms.TableLayoutPanel GameTable;
+        private System.Windows.Forms.Panel GamePanel;
     }
 }

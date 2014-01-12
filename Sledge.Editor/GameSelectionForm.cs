@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using Sledge.Settings;
@@ -28,27 +29,27 @@ namespace Sledge.Editor
 
         private void GameSelectionFormLoad(object sender, EventArgs e)
         {
-            foreach (Engine engine in Enum.GetValues(typeof(Engine)))
+            GameTable.RowStyles.Clear();
+            foreach (var g in SettingsManager.Games.GroupBy(x => x.Engine).OrderBy(x => (int)x.Key))
             {
-                lstEngine.Items.Add(engine);
+                GameTable.RowStyles.Add(new RowStyle(SizeType.Absolute, 20));
+                GameTable.Controls.Add(new Label{Text = g.Key.ToString(), Font = new Font(Font, FontStyle.Bold), Dock = DockStyle.Fill, TextAlign = ContentAlignment.MiddleLeft});
+                GameTable.Controls.Add(new Label {Text = ""});
+                foreach (var game in g)
+                {
+                    GameTable.RowStyles.Add(new RowStyle(SizeType.Absolute, 30));
+                    GameTable.Controls.Add(new Label{Text = game.Name,Dock = DockStyle.Fill, TextAlign = ContentAlignment.MiddleLeft});
+                    var btn = new Button {Text = ">>", Width = 40};
+                    var btnGame = game;
+                    btn.Click += (s, ev) => SelectGame(btnGame);
+                    GameTable.Controls.Add(btn);
+                }
             }
         }
 
-        private void LstEngineSelectedIndexChanged(object sender, EventArgs ea)
+        private void SelectGame(Game game)
         {
-            lstGame.Items.Clear();
-            if (lstEngine.SelectedIndex < 0) return;
-            var e = (Engine) lstEngine.SelectedItem;
-            foreach (var game in SettingsManager.Games.Where(g => g.Engine == e))
-            {
-                lstGame.Items.Add(new IDStringWrapper {ID = game.ID, String = game.Name});
-            }
-        }
-
-        private void LstGameMouseDoubleClick(object sender, MouseEventArgs e)
-        {
-            if (lstGame.SelectedIndex < 0) return;
-            SelectedGameID = ((IDStringWrapper) lstGame.SelectedItem).ID;
+            SelectedGameID = game.ID;
             Close();
         }
     }
