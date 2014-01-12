@@ -137,7 +137,7 @@ namespace Sledge.DataStructures.Geometric
             return new Coordinate(xv, yv, zv);
         }
 
-        public Coordinate Round(int num = 4)
+        public Coordinate Round(int num = 8)
         {
             return new Coordinate(Math.Round(X, num), Math.Round(Y, num), Math.Round(Z, num));
         }

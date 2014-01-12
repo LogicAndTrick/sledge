@@ -47,9 +47,9 @@ namespace Sledge.Providers.Map
 
         private static string FormatCoordinate(Coordinate c)
         {
-            return c.X.ToString("0.000", CultureInfo.InvariantCulture)
-                + " " + c.Y.ToString("0.000", CultureInfo.InvariantCulture)
-                + " " + c.Z.ToString("0.000", CultureInfo.InvariantCulture);
+            return c.X.ToString("0.00000000", CultureInfo.InvariantCulture)
+                + " " + c.Y.ToString("0.00000000", CultureInfo.InvariantCulture)
+                + " " + c.Z.ToString("0.00000000", CultureInfo.InvariantCulture);
         }
 
         private static string FormatColor(Color c)
