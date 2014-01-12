@@ -43,13 +43,18 @@ namespace Sledge.Editor.UI
         public void UpdateFrame()
         {
             if (!Focus) return;
-            var amt = 15m;
+            var move = 15m;
+            var tilt = 2m;
             // These keys are used for hotkeys, don't want the 3D view to move about when trying to use hotkeys.
             var ignore = KeyboardState.IsAnyKeyDown(Keys.ShiftKey, Keys.ControlKey, Keys.Alt);
-            IfKey(Keys.W, () => Camera.Advance(amt), ignore);
-            IfKey(Keys.S, () => Camera.Advance(-amt), ignore);
-            IfKey(Keys.A, () => Camera.Strafe(-amt), ignore);
-            IfKey(Keys.D, () => Camera.Strafe(amt), ignore);
+            IfKey(Keys.W, () => Camera.Advance(move), ignore);
+            IfKey(Keys.S, () => Camera.Advance(-move), ignore);
+            IfKey(Keys.A, () => Camera.Strafe(-move), ignore);
+            IfKey(Keys.D, () => Camera.Strafe(move), ignore);
+            IfKey(Keys.Right, () => Camera.Pan(-tilt), ignore);
+            IfKey(Keys.Left, () => Camera.Pan(tilt), ignore);
+            IfKey(Keys.Up, () => Camera.Tilt(-tilt), ignore);
+            IfKey(Keys.Down, () => Camera.Tilt(tilt), ignore);
         }
 
         private void IfKey(Keys key, Action action, bool ignoreKeyboard)
