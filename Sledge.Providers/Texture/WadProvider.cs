@@ -146,7 +146,7 @@ namespace Sledge.Providers.Texture
                     list.AddRange(items
                         .Select(item => new HLLib.WADFile(item))
                         .Where(wad => IsValidLumpType(wad.GetLumpType()))
-                        .Select(wad => new TextureItem(tp, Path.GetFileNameWithoutExtension(wad.Name), wad.Width, wad.Height)));
+                        .Select(wad => new TextureItem(tp, StripExtension(wad.Name), wad.Width, wad.Height)));
                 }
             }
             finally
@@ -158,6 +158,15 @@ namespace Sledge.Providers.Texture
                 tp.AddTexture(ti);
             }
             return tp;
+        }
+
+        public static string StripExtension(string path)
+        {
+            // WAD seems to support texture names that aren't valid in Windows, so Path.GetFileNameWithoutExtension throws an error.
+            // Replicate the results with StripExtension.
+            // Input = FILE_NAME.bmp
+            var idx = path.LastIndexOf('.');
+            return idx < 0 ? path : path.Substring(0, idx);
         }
 
         public override void LoadTexture(TextureItem item)
