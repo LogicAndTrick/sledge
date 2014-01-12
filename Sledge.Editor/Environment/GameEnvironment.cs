@@ -16,7 +16,13 @@ namespace Sledge.Editor.Environment
         {
             get
             {
-                return _root ?? (_root = new RootFile(Game.Name, GetGameDirectories().Select(x => new NativeFile(x))));
+                if (_root == null)
+                {
+                    var dirs = GetGameDirectories().Where(Directory.Exists).ToList();
+                    if (dirs.Any()) _root = new RootFile(Game.Name, dirs.Select(x => new NativeFile(x)));
+                    else _root = new VirtualFile(null, "");
+                }
+                return _root;
             }
         }
 

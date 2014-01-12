@@ -28,7 +28,7 @@ namespace Sledge.FileSystem
             Parent = parent;
             Name = name;
             IsContainer = false;
-            FullPathName = Path.Combine(parent.FullPathName, name);
+            FullPathName = parent != null ? Path.Combine(parent.FullPathName, name) : name;
             NameWithoutExtension = Path.GetFileNameWithoutExtension(name);
             Extension = (Path.GetExtension(Name) ?? "").TrimStart('.');
             Exists = true;
