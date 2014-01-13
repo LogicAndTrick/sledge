@@ -45,12 +45,13 @@ namespace Sledge.Editor.UI
 
         private void OpenStream(object sender, EventArgs e)
         {
-            if (DocumentManager.CurrentDocument == null) return;
+            if (DocumentManager.CurrentDocument == null || !DocumentManager.CurrentDocument.TextureCollection.Packages.Any()) return;
             _streamSource = DocumentManager.CurrentDocument.TextureCollection.GetStreamSource(_packages.Union(_history.Select(x => x.Package).Distinct()));
         }
 
         private void CloseStream(object sender, EventArgs e)
         {
+            if (_streamSource == null) return;
             _streamSource.Dispose();
             _streamSource = null;
         }

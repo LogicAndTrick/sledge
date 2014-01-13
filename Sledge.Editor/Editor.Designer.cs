@@ -1,4 +1,6 @@
-﻿namespace Sledge.Editor
+﻿using Sledge.Editor.UI;
+
+namespace Sledge.Editor
 {
     partial class Editor
     {
@@ -46,7 +48,7 @@
             this.DockRight = new Sledge.Editor.UI.DockedPanel();
             this.DockLeft = new Sledge.Editor.UI.DockedPanel();
             this.DockBottom = new Sledge.Editor.UI.DockedPanel();
-            this.panel1 = new System.Windows.Forms.Panel();
+            this.sidebarPanel = new Sledge.Editor.UI.DockedPanel();
             this.RightToolbar = new System.Windows.Forms.TableLayoutPanel();
             this.HistoryPanel = new System.Windows.Forms.FlowLayoutPanel();
             this.HistoryCollapse = new Sledge.Editor.UI.CollapsingLabel();
@@ -82,7 +84,7 @@
             this.tscToolStrip.SuspendLayout();
             this.DockFill.SuspendLayout();
             this.DocumentTabs.SuspendLayout();
-            this.panel1.SuspendLayout();
+            this.sidebarPanel.SuspendLayout();
             this.RightToolbar.SuspendLayout();
             this.VisgroupsPanel.SuspendLayout();
             this.TexturePanel.SuspendLayout();
@@ -175,7 +177,7 @@
             this.tscToolStrip.ContentPanel.Controls.Add(this.DockRight);
             this.tscToolStrip.ContentPanel.Controls.Add(this.DockLeft);
             this.tscToolStrip.ContentPanel.Controls.Add(this.DockBottom);
-            this.tscToolStrip.ContentPanel.Controls.Add(this.panel1);
+            this.tscToolStrip.ContentPanel.Controls.Add(this.sidebarPanel);
             this.tscToolStrip.ContentPanel.Size = new System.Drawing.Size(845, 677);
             this.tscToolStrip.Dock = System.Windows.Forms.DockStyle.Fill;
             // 
@@ -197,12 +199,30 @@
             this.DockFill.Hidden = false;
             this.DockFill.Location = new System.Drawing.Point(26, 0);
             this.DockFill.Name = "DockFill";
-            this.DockFill.Size = new System.Drawing.Size(648, 660);
+            this.DockFill.Size = new System.Drawing.Size(643, 660);
             this.DockFill.TabIndex = 4;
             // 
             // tblQuadView
             // 
             this.tblQuadView.ColumnCount = 2;
+            this.tblQuadView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tblQuadView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tblQuadView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tblQuadView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
@@ -424,7 +444,25 @@
             this.tblQuadView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tblQuadView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tblQuadView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tblQuadView.Size = new System.Drawing.Size(648, 636);
+            this.tblQuadView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.Size = new System.Drawing.Size(643, 636);
             this.tblQuadView.TabIndex = 0;
             // 
             // DocumentTabs
@@ -434,7 +472,7 @@
             this.DocumentTabs.Location = new System.Drawing.Point(0, 0);
             this.DocumentTabs.Name = "DocumentTabs";
             this.DocumentTabs.SelectedIndex = 0;
-            this.DocumentTabs.Size = new System.Drawing.Size(648, 24);
+            this.DocumentTabs.Size = new System.Drawing.Size(643, 24);
             this.DocumentTabs.TabIndex = 2;
             this.DocumentTabs.RequestClose += new Sledge.Editor.UI.ClosableTabControl.RequestCloseEventHandler(this.DocumentTabsRequestClose);
             this.DocumentTabs.SelectedIndexChanged += new System.EventHandler(this.DocumentTabsSelectedIndexChanged);
@@ -444,7 +482,7 @@
             this.tabPage1.ImageIndex = 0;
             this.tabPage1.Location = new System.Drawing.Point(4, 25);
             this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Size = new System.Drawing.Size(640, -5);
+            this.tabPage1.Size = new System.Drawing.Size(635, -5);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Tab";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -454,8 +492,9 @@
             this.DockRight.Dock = System.Windows.Forms.DockStyle.Right;
             this.DockRight.DockDimension = 21;
             this.DockRight.Hidden = false;
-            this.DockRight.Location = new System.Drawing.Point(674, 0);
+            this.DockRight.Location = new System.Drawing.Point(669, 0);
             this.DockRight.Name = "DockRight";
+            this.DockRight.Padding = new System.Windows.Forms.Padding(5, 0, 0, 0);
             this.DockRight.Size = new System.Drawing.Size(21, 660);
             this.DockRight.TabIndex = 3;
             // 
@@ -476,17 +515,20 @@
             this.DockBottom.Hidden = false;
             this.DockBottom.Location = new System.Drawing.Point(0, 660);
             this.DockBottom.Name = "DockBottom";
-            this.DockBottom.Size = new System.Drawing.Size(695, 17);
+            this.DockBottom.Size = new System.Drawing.Size(690, 17);
             this.DockBottom.TabIndex = 3;
             // 
-            // panel1
+            // sidebarPanel
             // 
-            this.panel1.Controls.Add(this.RightToolbar);
-            this.panel1.Dock = System.Windows.Forms.DockStyle.Right;
-            this.panel1.Location = new System.Drawing.Point(695, 0);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(150, 677);
-            this.panel1.TabIndex = 1;
+            this.sidebarPanel.Controls.Add(this.RightToolbar);
+            this.sidebarPanel.Dock = System.Windows.Forms.DockStyle.Right;
+            this.sidebarPanel.DockDimension = 155;
+            this.sidebarPanel.Hidden = false;
+            this.sidebarPanel.Location = new System.Drawing.Point(690, 0);
+            this.sidebarPanel.Name = "sidebarPanel";
+            this.sidebarPanel.Padding = new System.Windows.Forms.Padding(5, 0, 0, 0);
+            this.sidebarPanel.Size = new System.Drawing.Size(155, 677);
+            this.sidebarPanel.TabIndex = 1;
             // 
             // RightToolbar
             // 
@@ -504,7 +546,7 @@
             this.RightToolbar.Controls.Add(this.BrushCreateCollapse, 0, 6);
             this.RightToolbar.Controls.Add(this.sidebarPanel1, 0, 10);
             this.RightToolbar.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.RightToolbar.Location = new System.Drawing.Point(0, 0);
+            this.RightToolbar.Location = new System.Drawing.Point(5, 0);
             this.RightToolbar.Name = "RightToolbar";
             this.RightToolbar.RowCount = 11;
             this.RightToolbar.RowStyles.Add(new System.Windows.Forms.RowStyle());
@@ -782,13 +824,12 @@
             // 
             // sidebarPanel1
             // 
-            this.sidebarPanel1.HeaderBackgroundColor = System.Drawing.Color.Gray;
-            this.sidebarPanel1.HeaderForegroundColor = System.Drawing.Color.WhiteSmoke;
+            this.sidebarPanel1.AutoSize = true;
+            this.sidebarPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.sidebarPanel1.Hidden = false;
             this.sidebarPanel1.Location = new System.Drawing.Point(3, 568);
             this.sidebarPanel1.Name = "sidebarPanel1";
-            this.sidebarPanel1.Padding = new System.Windows.Forms.Padding(3, 20, 3, 3);
-            this.sidebarPanel1.Size = new System.Drawing.Size(144, 100);
+            this.sidebarPanel1.Size = new System.Drawing.Size(144, 106);
             this.sidebarPanel1.TabIndex = 9;
             this.sidebarPanel1.Text = "This is a test panel";
             // 
@@ -828,8 +869,9 @@
             this.tscToolStrip.PerformLayout();
             this.DockFill.ResumeLayout(false);
             this.DocumentTabs.ResumeLayout(false);
-            this.panel1.ResumeLayout(false);
+            this.sidebarPanel.ResumeLayout(false);
             this.RightToolbar.ResumeLayout(false);
+            this.RightToolbar.PerformLayout();
             this.VisgroupsPanel.ResumeLayout(false);
             this.TexturePanel.ResumeLayout(false);
             this.TexturePanel.PerformLayout();
@@ -848,7 +890,7 @@
         private System.Windows.Forms.ToolStripContainer tscToolStrip;
         private System.Windows.Forms.ToolStrip tspTools;
         private UI.QuadSplitControl tblQuadView;
-        private System.Windows.Forms.Panel panel1;
+        private DockedPanel sidebarPanel;
         private System.Windows.Forms.TableLayoutPanel RightToolbar;
         private UI.CollapsingLabel TextureCollapse;
         private UI.CollapsingLabel BrushCreateCollapse;

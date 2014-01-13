@@ -42,5 +42,15 @@ namespace Sledge.Common
         {
             return Color.FromArgb(255, 255, 0, 255);
         }
+
+        public static Color Darken(this Color color, int by = 20)
+        {
+            return Color.FromArgb(color.A, Math.Max(0, color.R - by), Math.Max(0, color.G - by), Math.Max(0, color.B - by));
+        }
+
+        public static Color Lighten(this Color color, int by = 20)
+        {
+            return Color.FromArgb(color.A, Math.Min(255, color.R + by), Math.Min(255, color.G + by), Math.Min(255, color.B + by));
+        }
     }
 }

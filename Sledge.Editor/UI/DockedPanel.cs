@@ -117,11 +117,6 @@ namespace Sledge.Editor.UI
             Height = Math.Min(Math.Max(height, Math.Max(MinSize, ResizeHandleSize + 1)), MaxSize);
         }
 
-        protected override void OnDockChanged(EventArgs e)
-        {
-            base.OnDockChanged(e);
-        }
-
         protected override void OnMouseMove(MouseEventArgs e)
         {
             if (Hidden) return;

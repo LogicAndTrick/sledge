@@ -390,8 +390,15 @@
     <Compile Include="UI\PasteSpecialDialog.Designer.cs">
       <DependentUpon>PasteSpecialDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="UI\Sidebar\SidebarManager.cs" />
     <Compile Include="UI\Sidebar\SidebarPanel.cs">
       <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UI\Sidebar\TextureSidebarPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\Sidebar\TextureSidebarPanel.Designer.cs">
+      <DependentUpon>TextureSidebarPanel.cs</DependentUpon>
     </Compile>
     <Compile Include="UI\TextureComboBox.cs">
       <SubType>Component</SubType>
@@ -563,6 +570,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UI\PasteSpecialDialog.resx">
       <DependentUpon>PasteSpecialDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Sidebar\TextureSidebarPanel.resx">
+      <DependentUpon>TextureSidebarPanel.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\TextureBrowser.resx">
       <DependentUpon>TextureBrowser.cs</DependentUpon>

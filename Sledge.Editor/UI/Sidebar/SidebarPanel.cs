@@ -1,81 +1,148 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
+using Sledge.Common;
 
 namespace Sledge.Editor.UI.Sidebar
 {
-    class SidebarPanel : Panel
+    public class SidebarPanel : Panel
     {
-        private Color _headerBackgroundColor = Color.Gray;
-        public Color HeaderBackgroundColor
-        {
-            get { return _headerBackgroundColor; }
-            set { _headerBackgroundColor = value; Invalidate(); Update(); }
-        }
-
-        private Color _headerForegroundColor = Color.WhiteSmoke;
-        public Color HeaderForegroundColor
-        {
-            get { return _headerForegroundColor; }
-            set { _headerForegroundColor = value; Invalidate(); Update(); }
-        }
-
         private bool _hidden;
+
         public bool Hidden
         {
             get { return _hidden; }
             set {
                 _hidden = value;
+                if (_hidden) Controls.Remove(_panel);
+                else
+                {
+                    Controls.Add(_panel);
+                    Controls.SetChildIndex(_panel, 0);
+                }
                 Invalidate();
                 Update();
             }
         }
 
+        public override string Text
+        {
+            get { return _header.Text; }
+            set { _header.Text = value; }
+        }
+
+        private SidebarHeader _header;
+        private Panel _panel;
+
         public SidebarPanel()
         {
+            AutoSize = true;
+            _hidden = false;
+            _header = new SidebarHeader {Text = "This is a test", Expanded = !_hidden, Dock = DockStyle.Top};
+            _header.Click += HeaderClicked;
+
+            _panel = new Panel{Dock = DockStyle.Fill, AutoScroll =  true, AutoScrollMinSize = new Size(10, 200)};
+            Controls.Add(_panel);
+            Controls.Add(_header);
+        }
+
+        public void AddControl(Control c)
+        {
+            _panel.Controls.Add(c);
+        }
+
+        private void HeaderClicked(object sender, EventArgs e)
+        {
+            Hidden = !Hidden;
+            _header.Expanded = !Hidden;
+        }
+    }
+
+    class SidebarHeader : Label
+    {
+        private bool _expanded;
+
+        public bool Expanded
+        {
+            get { return _expanded; }
+            set {
+                _expanded = value;
+                Refresh();
+            }
+        }
+
+        public SidebarHeader()
+        {
             DoubleBuffered = true;
-            Padding = new Padding(3, 20, 3, 3);
-            Text = "This is a test panel";
+            _expanded = false;
+            Height = Font.Height + 12;
+            AutoSize = false;
+            Padding = new Padding(16, 5, 3, 1);
+            SetStyle(ControlStyles.StandardDoubleClick, false);
+            Cursor = Cursors.Hand;
         }
 
         protected override void OnPaint(PaintEventArgs e)
         {
-            var pts = new[]
-                              {
-                                  new Point(4, 0),
-                                  new Point(Width - 4, 0),
-                                  new Point(Width - 1, 1),
-                                  new Point(Width, 4),
-                                  new Point(Width, 20),
-                                  new Point(0, 20),
-                                  new Point(0, 4),
-                                  new Point(1, 1),
-                              };
-            using (var brush = new SolidBrush(_headerBackgroundColor))
+            e.Graphics.DrawLine(SystemPens.ControlDark, 0, 0, Width, 0);
+            e.Graphics.DrawLine(SystemPens.ControlLightLight, 0, 1, Width, 1);
+            if (_mouseIn)
             {
-                e.Graphics.FillPolygon(brush, pts);
+                using (var brush = new SolidBrush(BackColor.Darken()))
+                {
+                    e.Graphics.FillRectangle(brush, new Rectangle(0, 3, Width, Height - Padding.Vertical));
+                }
             }
-            using (var pen = new Pen(_headerBackgroundColor))
+            using (var brush = new SolidBrush(ForeColor))
             {
-                e.Graphics.DrawLine(pen, 2, Height - 2, Width - 2, Height - 2);
+                e.Graphics.FillPolygon(brush, GetTrianglePoints());
             }
-            using (var pen = new Pen(_headerForegroundColor))
-            {
-                e.Graphics.DrawPolygon(pen, pts);
-            }
-            using (var brush = new SolidBrush(_headerForegroundColor))
-            {
-                e.Graphics.DrawString(Text, Font, brush, 5, 4);
-            }
-            
+
             base.OnPaint(e);
+        }
+
+        private bool _mouseIn;
+
+        protected override void OnMouseEnter(EventArgs e)
+        {
+            _mouseIn = true;
+            Refresh();
+            base.OnMouseEnter(e);
+        }
+
+        protected override void OnMouseLeave(EventArgs e)
+        {
+            _mouseIn = false;
+            Refresh();
+            base.OnMouseLeave(e);
+        }
+
+        private Point[] GetTrianglePoints()
+        {
+            if (_expanded)
+            {
+                var left = 4;
+                var top = 5 + Padding.Top;
+                return new[]
+                {
+                    new Point(left, top),
+                    new Point(left + 8, top),
+                    new Point(left + 4, top + 4),
+                    new Point(left + 3, top + 4)
+                };
+            }
+            else
+            {
+                var left = 6;
+                var top = 2 + Padding.Top;
+                return new[]
+                {
+                    new Point(left, top),
+                    new Point(left + 4, top + 4),
+                    new Point(left + 4, top + 5),
+                    new Point(left, top + 9)
+                };
+            }
         }
     }
 }

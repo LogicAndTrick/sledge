@@ -17,6 +17,7 @@ using Sledge.Editor.Documents;
 using Sledge.Editor.Menu;
 using Sledge.Editor.Settings;
 using Sledge.Editor.UI;
+using Sledge.Editor.UI.Sidebar;
 using Sledge.FileSystem;
 using Sledge.Graphics.Helpers;
 using Sledge.Providers;
@@ -93,6 +94,8 @@ namespace Sledge.Editor
 
             MenuManager.Init(mnuMain, tscToolStrip);
             MenuManager.Rebuild();
+
+            SidebarManager.Init(RightToolbar);
 
             ViewportManager.Init(tblQuadView);
             ToolManager.Init();
