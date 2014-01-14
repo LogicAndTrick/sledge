@@ -1,0 +1,38 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Drawing;
+using System.Data;
+using System.Linq;
+using System.Text;
+using System.Windows.Forms;
+using Sledge.Common.Mediator;
+using Sledge.Editor.Brushes;
+
+namespace Sledge.Editor.UI.Sidebar
+{
+    public partial class BrushSidebarPanel : UserControl, IMediatorListener
+    {
+        public BrushSidebarPanel()
+        {
+            InitializeComponent();
+
+            BrushManager.Init();
+            BrushManager.SetBrushControl(this);
+            Mediator.Subscribe(EditorMediator.ResetSelectedBrushType, this);
+        }
+
+        public void ResetSelectedBrushType()
+        {
+            if (BrushTypeList.Items.Count > 0)
+            {
+                BrushTypeList.SelectedIndex = 0;
+            }
+        }
+
+        public void Notify(string message, object data)
+        {
+            Mediator.ExecuteDefault(this, message, data);
+        }
+    }
+}

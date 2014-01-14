@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using Sledge.Editor.Brushes.Controls;
@@ -47,10 +48,16 @@ namespace Sledge.Editor.Brushes
             Brushes.Add(new TorusBrush());
         }
 
+        private static ComboBox FindComboBox(Control parent)
+        {
+            if (parent is ComboBox) return (ComboBox) parent;
+            return parent.Controls.OfType<Control>().Select(FindComboBox).FirstOrDefault(x => x != null);
+        }
+
         public static void SetBrushControl(Control brushControl)
         {
             _brushControl = brushControl;
-            _comboBox = _brushControl.Controls.OfType<ComboBox>().FirstOrDefault();
+            _comboBox = FindComboBox(_brushControl);
             if (_comboBox != null)
             {
                 _comboBox.SelectedIndexChanged += (sender, e) => UpdateSelectedBrush(Brushes[((ComboBox) sender).SelectedIndex]);
@@ -66,10 +73,15 @@ namespace Sledge.Editor.Brushes
             CurrentBrush = brush;
             if (CurrentBrush == null) return;
             CurrentControls.AddRange(CurrentBrush.GetControls());
-            CurrentControls.ForEach(x => x.ValuesChanged += ControlValuesChanged);
-            CurrentControls.ForEach(x => x.Width = _brushControl.Width);
-            CurrentControls.ForEach(x => _brushControl.Controls.Add(x));
-            _brushControl.Height = _brushControl.Controls.OfType<Control>().Sum(x => x.Height + 6);
+            for (var i = 0; i < CurrentControls.Count; i++)
+            {
+                var ctrl = CurrentControls[i];
+                ctrl.Dock = DockStyle.Top;
+                ctrl.ValuesChanged += ControlValuesChanged;
+                _brushControl.Controls.Add(ctrl);
+                _brushControl.Controls.SetChildIndex(ctrl, i);
+            }
+            //_brushControl.MinimumSize = new Size(0, _brushControl.Controls.OfType<Control>().Sum(x => x.Height + 6));
             OnValuesChanged(CurrentBrush);
         }
 

@@ -390,6 +390,18 @@
     <Compile Include="UI\PasteSpecialDialog.Designer.cs">
       <DependentUpon>PasteSpecialDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="UI\Sidebar\BrushSidebarPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\Sidebar\BrushSidebarPanel.Designer.cs">
+      <DependentUpon>BrushSidebarPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Sidebar\EntitySidebarPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\Sidebar\EntitySidebarPanel.Designer.cs">
+      <DependentUpon>EntitySidebarPanel.cs</DependentUpon>
+    </Compile>
     <Compile Include="UI\Sidebar\SidebarManager.cs" />
     <Compile Include="UI\Sidebar\SidebarPanel.cs">
       <SubType>Component</SubType>
@@ -399,6 +411,12 @@
     </Compile>
     <Compile Include="UI\Sidebar\TextureSidebarPanel.Designer.cs">
       <DependentUpon>TextureSidebarPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Sidebar\VisgroupSidebarPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\Sidebar\VisgroupSidebarPanel.Designer.cs">
+      <DependentUpon>VisgroupSidebarPanel.cs</DependentUpon>
     </Compile>
     <Compile Include="UI\TextureComboBox.cs">
       <SubType>Component</SubType>
@@ -571,8 +589,17 @@
     <EmbeddedResource Include="UI\PasteSpecialDialog.resx">
       <DependentUpon>PasteSpecialDialog.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="UI\Sidebar\BrushSidebarPanel.resx">
+      <DependentUpon>BrushSidebarPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Sidebar\EntitySidebarPanel.resx">
+      <DependentUpon>EntitySidebarPanel.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="UI\Sidebar\TextureSidebarPanel.resx">
       <DependentUpon>TextureSidebarPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Sidebar\VisgroupSidebarPanel.resx">
+      <DependentUpon>VisgroupSidebarPanel.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\TextureBrowser.resx">
       <DependentUpon>TextureBrowser.cs</DependentUpon>

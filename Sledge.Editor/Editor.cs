@@ -90,17 +90,17 @@ namespace Sledge.Editor
             UpdateDocumentTabs();
             UpdateRecentFiles();
 
-            DockBottom.Hidden = DockLeft.Hidden = DockRight.Hidden = true;
+            DockBottom.Hidden = DockLeft.Hidden = true;
 
             MenuManager.Init(mnuMain, tscToolStrip);
             MenuManager.Rebuild();
 
-            SidebarManager.Init(RightToolbar);
+            SidebarManager.Init(DockRight);
 
             ViewportManager.Init(tblQuadView);
             ToolManager.Init();
-            BrushManager.Init();
-            BrushManager.SetBrushControl(BrushCreatePanel);
+            //BrushManager.Init();
+            //BrushManager.SetBrushControl(BrushCreatePanel);
 
             foreach (var tool in ToolManager.Tools)
             {

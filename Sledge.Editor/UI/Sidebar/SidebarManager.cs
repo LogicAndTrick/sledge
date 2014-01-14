@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 
 namespace Sledge.Editor.UI.Sidebar
@@ -10,16 +7,39 @@ namespace Sledge.Editor.UI.Sidebar
     {
         public static void Init(Control container)
         {
-            var tex = CreatePanel("Textures", new TextureSidebarPanel());
+            var table = new TableLayoutPanel { Dock = DockStyle.Fill, AutoSize = true, AutoScroll = true };
+            
+            table.RowStyles.Clear();
+            table.Resize += (s,e) => ResizeTable(table);
+            table.ControlAdded += (s, e) => ResizeTable(table);
+            table.Layout += (s, e) => ResizeTable(table);
 
-            container.Controls.Add(tex);
+            container.Controls.Add(table);
+
+            CreatePanel("Textures", new TextureSidebarPanel(), table);
+            CreatePanel("Visgroups", new VisgroupSidebarPanel(), table);
+            CreatePanel("Entities", new EntitySidebarPanel(), table);
+            CreatePanel("Brushes", new BrushSidebarPanel(), table);
         }
 
-        public static SidebarPanel CreatePanel(string text, Control contents)
+        private static void ResizeTable(TableLayoutPanel panel)
         {
-            var panel = new SidebarPanel { Text = text, Dock = DockStyle.Fill};
-            contents.Dock = DockStyle.Fill;
+            if (panel.HorizontalScroll.Visible)
+            {
+                // resize the panel to remove the horizontal scrollbar
+                panel.Padding = new Padding(0, 0, SystemInformation.VerticalScrollBarWidth, 0);
+                panel.Padding = new Padding(0, 0, 0, 0);
+            }
+        }
+
+        public static SidebarPanel CreatePanel(string text, Control contents, TableLayoutPanel table)
+        {
+            var panel = new SidebarPanel { Text = text, Dock = DockStyle.Fill };
             panel.AddControl(contents);
+
+            table.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+            table.Controls.Add(panel);
+
             return panel;
         }
     }

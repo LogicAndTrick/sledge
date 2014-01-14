@@ -14,15 +14,23 @@ namespace Sledge.Editor.UI.Sidebar
             get { return _hidden; }
             set {
                 _hidden = value;
-                if (_hidden) Controls.Remove(_panel);
+                if (_hidden)
+                {
+                    Controls.Remove(_panel);
+                }
                 else
                 {
                     Controls.Add(_panel);
                     Controls.SetChildIndex(_panel, 0);
                 }
-                Invalidate();
-                Update();
+                SetHeight();
             }
+        }
+
+        private void SetHeight()
+        {
+            //Height = Padding.Vertical + _header.Height + _panel.Height;
+            Refresh();
         }
 
         public override string Text
@@ -41,13 +49,16 @@ namespace Sledge.Editor.UI.Sidebar
             _header = new SidebarHeader {Text = "This is a test", Expanded = !_hidden, Dock = DockStyle.Top};
             _header.Click += HeaderClicked;
 
-            _panel = new Panel{Dock = DockStyle.Fill, AutoScroll =  true, AutoScrollMinSize = new Size(10, 200)};
+            _panel = new Panel{ Dock = DockStyle.Top, AutoSize = true};
             Controls.Add(_panel);
             Controls.Add(_header);
+
+            SetHeight();
         }
 
         public void AddControl(Control c)
         {
+            c.Dock = DockStyle.Top;
             _panel.Controls.Add(c);
         }
 

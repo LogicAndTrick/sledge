@@ -51,7 +51,7 @@ namespace Sledge.Editor.UI.Sidebar
 
         private void ReplaceButtonClicked(object sender, EventArgs e)
         {
-            // todo
+            Mediator.Publish(HotkeysMediator.ReplaceTextures);
         }
 
         private void GroupChanged(object sender, EventArgs e)
