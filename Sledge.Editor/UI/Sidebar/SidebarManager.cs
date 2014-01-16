@@ -7,19 +7,21 @@ namespace Sledge.Editor.UI.Sidebar
     {
         public static void Init(Control container)
         {
-            var table = new TableLayoutPanel { Dock = DockStyle.Fill, AutoSize = true, AutoScroll = true };
+            /*var table = new TableLayoutPanel { Dock = DockStyle.Fill, AutoSize = true, AutoSizeMode = AutoSizeMode.GrowAndShrink };
             
             table.RowStyles.Clear();
             table.Resize += (s,e) => ResizeTable(table);
             table.ControlAdded += (s, e) => ResizeTable(table);
-            table.Layout += (s, e) => ResizeTable(table);
+            table.Layout += (s, e) => ResizeTable(table);*/
 
-            container.Controls.Add(table);
+            var scrollPanel = new SidebarContainer {Dock = DockStyle.Fill};
 
-            CreatePanel("Textures", new TextureSidebarPanel(), table);
-            CreatePanel("Visgroups", new VisgroupSidebarPanel(), table);
-            CreatePanel("Entities", new EntitySidebarPanel(), table);
-            CreatePanel("Brushes", new BrushSidebarPanel(), table);
+            container.Controls.Add(scrollPanel);
+
+            CreatePanel("Textures", new TextureSidebarPanel(), scrollPanel);
+            CreatePanel("Visgroups", new VisgroupSidebarPanel(), scrollPanel);
+            CreatePanel("Entities", new EntitySidebarPanel(), scrollPanel);
+            CreatePanel("Brushes", new BrushSidebarPanel(), scrollPanel);
         }
 
         private static void ResizeTable(TableLayoutPanel panel)
@@ -32,13 +34,12 @@ namespace Sledge.Editor.UI.Sidebar
             }
         }
 
-        public static SidebarPanel CreatePanel(string text, Control contents, TableLayoutPanel table)
+        public static SidebarPanel CreatePanel(string text, Control contents, SidebarContainer container)
         {
             var panel = new SidebarPanel { Text = text, Dock = DockStyle.Fill };
             panel.AddControl(contents);
 
-            table.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-            table.Controls.Add(panel);
+            container.Add(panel);
 
             return panel;
         }

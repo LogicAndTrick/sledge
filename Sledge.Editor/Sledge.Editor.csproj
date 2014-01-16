@@ -402,6 +402,12 @@
     <Compile Include="UI\Sidebar\EntitySidebarPanel.Designer.cs">
       <DependentUpon>EntitySidebarPanel.cs</DependentUpon>
     </Compile>
+    <Compile Include="UI\Sidebar\SidebarContainer.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\Sidebar\SidebarContainer.Designer.cs">
+      <DependentUpon>SidebarContainer.cs</DependentUpon>
+    </Compile>
     <Compile Include="UI\Sidebar\SidebarManager.cs" />
     <Compile Include="UI\Sidebar\SidebarPanel.cs">
       <SubType>Component</SubType>
@@ -594,6 +600,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UI\Sidebar\EntitySidebarPanel.resx">
       <DependentUpon>EntitySidebarPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Sidebar\SidebarContainer.resx">
+      <DependentUpon>SidebarContainer.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\Sidebar\TextureSidebarPanel.resx">
       <DependentUpon>TextureSidebarPanel.cs</DependentUpon>

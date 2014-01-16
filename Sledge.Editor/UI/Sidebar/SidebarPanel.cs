@@ -23,14 +23,7 @@ namespace Sledge.Editor.UI.Sidebar
                     Controls.Add(_panel);
                     Controls.SetChildIndex(_panel, 0);
                 }
-                SetHeight();
             }
-        }
-
-        private void SetHeight()
-        {
-            //Height = Padding.Vertical + _header.Height + _panel.Height;
-            Refresh();
         }
 
         public override string Text
@@ -45,6 +38,8 @@ namespace Sledge.Editor.UI.Sidebar
         public SidebarPanel()
         {
             AutoSize = true;
+            AutoSizeMode = AutoSizeMode.GrowAndShrink;
+
             _hidden = false;
             _header = new SidebarHeader {Text = "This is a test", Expanded = !_hidden, Dock = DockStyle.Top};
             _header.Click += HeaderClicked;
@@ -52,8 +47,6 @@ namespace Sledge.Editor.UI.Sidebar
             _panel = new Panel{ Dock = DockStyle.Top, AutoSize = true};
             Controls.Add(_panel);
             Controls.Add(_header);
-
-            SetHeight();
         }
 
         public void AddControl(Control c)
