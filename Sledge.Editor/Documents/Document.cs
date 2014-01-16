@@ -125,6 +125,16 @@ namespace Sledge.Editor.Documents
             }
         }
 
+        public void SetMemory<T>(string name, T obj)
+        {
+            _memory.Set(name, obj);
+        }
+
+        public T GetMemory<T>(string name, T def = default (T))
+        {
+            return _memory.Get(name, def);
+        }
+
         public void SetActive()
         {
             if (!Sledge.Settings.View.KeepSelectedTool) ToolManager.Activate(_memory.SelectedTool);

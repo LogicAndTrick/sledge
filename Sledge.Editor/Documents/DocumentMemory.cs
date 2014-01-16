@@ -16,12 +16,15 @@ namespace Sledge.Editor.Documents
         public Type SelectedTool { get; set; }
         public PointF SplitterPosition { get; set; }
 
+        private Dictionary<string, object> _store; 
+
         public DocumentMemory()
         {
             _positions = new Dictionary<Viewport2D.ViewDirection, Tuple<Coordinate, decimal>>();
             _cameraLocation = new Vector3(0, 0, 0);
             _cameraLookat = new Vector3(1, 0, 0);
             SelectedTool = typeof (SelectTool);
+            _store = new Dictionary<string, object>();
         }
 
         public void SetCamera(Coordinate position, Coordinate look)
@@ -74,6 +77,19 @@ namespace Sledge.Editor.Documents
                     vp3.Camera.LookAt = _cameraLookat;
                 }
             }
+        }
+
+        public void Set<T>(string name, T state)
+        {
+            if (_store.ContainsKey(name)) _store.Remove(name);
+            _store.Add(name, state);
+        }
+
+        public T Get<T>(string name, T def = default (T))
+        {
+            if (!_store.ContainsKey(name)) return def;
+            var obj = _store[name];
+            return obj is T ? (T) obj : def;
         }
     }
 }

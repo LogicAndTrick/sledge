@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
+using Sledge.Settings;
 
 namespace Sledge.Editor.UI.Sidebar
 {
@@ -7,14 +8,10 @@ namespace Sledge.Editor.UI.Sidebar
     {
         public static void Init(Control container)
         {
-            /*var table = new TableLayoutPanel { Dock = DockStyle.Fill, AutoSize = true, AutoSizeMode = AutoSizeMode.GrowAndShrink };
-            
-            table.RowStyles.Clear();
-            table.Resize += (s,e) => ResizeTable(table);
-            table.ControlAdded += (s, e) => ResizeTable(table);
-            table.Layout += (s, e) => ResizeTable(table);*/
-
             var scrollPanel = new SidebarContainer {Dock = DockStyle.Fill};
+
+            container.Width = Layout.SidebarWidth;
+            container.Resize += (s, e) => Layout.SidebarWidth = container.Width;
 
             container.Controls.Add(scrollPanel);
 

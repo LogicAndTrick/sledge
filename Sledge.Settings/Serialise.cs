@@ -11,7 +11,7 @@ namespace Sledge.Settings
     {
         private static IEnumerable<PropertyInfo> GetProperties()
         {
-            var list = new[] {typeof (Grid), typeof (Select), typeof (Steam), typeof (View)};
+            var list = new[] {typeof (Grid), typeof (Select), typeof (Steam), typeof (View), typeof(Layout)};
             return list.SelectMany(x => x.GetProperties(BindingFlags.Static | BindingFlags.Public));
         }
 

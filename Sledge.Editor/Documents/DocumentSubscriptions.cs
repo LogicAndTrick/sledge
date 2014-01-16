@@ -25,6 +25,7 @@ using Sledge.Editor.UI.ObjectProperties;
 using Sledge.Editor.Visgroups;
 using Sledge.Extensions;
 using Sledge.Providers.Map;
+using Sledge.Providers.Texture;
 using Sledge.QuickForms;
 using Sledge.QuickForms.Items;
 using Sledge.Settings;
@@ -137,6 +138,7 @@ namespace Sledge.Editor.Documents
             Mediator.Subscribe(EditorMediator.VisgroupShowEditor, this);
             Mediator.Subscribe(EditorMediator.VisgroupToggled, this);
             Mediator.Subscribe(EditorMediator.SetZoomValue, this);
+            Mediator.Subscribe(EditorMediator.TextureSelected, this);
         }
 
         public void Unsubscribe()
@@ -1059,6 +1061,11 @@ namespace Sledge.Editor.Documents
                 vp.Zoom = value;
             }
             Mediator.Publish(EditorMediator.ViewZoomChanged, value);
+        }
+
+        public void TextureSelected(TextureItem selection)
+        {
+            _document.SetMemory("SelectedTexture", selection == null ? null : selection.Name);
         }
     }
 }

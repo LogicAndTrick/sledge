@@ -276,6 +276,7 @@ namespace Sledge.Editor
                 }
             }
             SettingsManager.SaveSession(DocumentManager.Documents.Select(x => Tuple.Create(x.MapFile, x.Game)));
+            SettingsManager.Write();
         }
 
         #region Mediator

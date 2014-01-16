@@ -16,6 +16,9 @@ namespace Sledge.Editor.UI
     {
         public TextureBrowser()
         {
+            var sz = GetMemory("SizeMode", 2);
+            var so = GetMemory("SortBy", 0);
+
             InitializeComponent();
             TextureList.TextureSelected += TextureSelected;
             TextureList.SelectionChanged += SelectionChanged;
@@ -30,6 +33,12 @@ namespace Sledge.Editor.UI
                 SortOrderCombo.Items.Add(tso);
             }
             SortOrderCombo.SelectedIndex = 0;
+
+            FilterTextbox.Text = GetMemory("Filter", "");
+            UsedTexturesOnlyBox.Checked = GetMemory("UsedTexturesOnly", false);
+            SizeCombo.SelectedIndex = sz;
+            SortOrderCombo.SelectedIndex = so;
+            SortDescendingCheckbox.Checked = GetMemory("SortDescending", false);
 
             SelectionChanged(null, TextureList.GetSelectedTextures());
         }
@@ -59,8 +68,21 @@ namespace Sledge.Editor.UI
         private readonly List<TextureItem> _textures;
         private readonly List<TexturePackage> _packages;
 
+        private void SetMemory<T>(string name, T value)
+        {
+            name = GetType().Name + '.' + name;
+            if (DocumentManager.CurrentDocument != null) DocumentManager.CurrentDocument.SetMemory(name, value);
+        }
+
+        private T GetMemory<T>(string name, T def = default(T))
+        {
+            name = GetType().Name + '.' + name;
+            return DocumentManager.CurrentDocument != null ? DocumentManager.CurrentDocument.GetMemory(name, def) : def;
+        }
+
         private void TextureSelected(object sender, TextureItem item)
         {
+            SetMemory("TextureSelection", item.Name);
             SelectedTexture = item;
             Close();
         }
@@ -82,23 +104,30 @@ namespace Sledge.Editor.UI
 
         private void FilterTextboxKeyUp(object sender, KeyEventArgs e)
         {
+            SetMemory("Filter", FilterTextbox.Text);
             UpdateTextureList();
         }
 
         private void SelectedPackageChanged(object sender, TreeViewEventArgs e)
         {
+            var package = PackageTree.SelectedNode;
+            var key = package == null ? null : package.Name;
+            if (String.IsNullOrWhiteSpace(key)) key = null;
+            SetMemory("SelectedPackage", key);
+
             UpdateTextureList();
         }
 
         private void UsedTexturesOnlyChanged(object sender, EventArgs e)
         {
+            SetMemory("UsedTexturesOnly", UsedTexturesOnlyBox.Checked);
             UpdateTextureList();
         }
 
         private void UpdatePackageList()
         {
             var selected = PackageTree.SelectedNode;
-            var selectedKey = selected == null ? null : selected.Name;
+            var selectedKey = selected == null ? GetMemory<string>("SelectedPackage") : selected.Name;
             var packages = _textures.Select(x => x.Package).Distinct();
             PackageTree.Nodes.Clear();
             var parent = PackageTree.Nodes.Add("", "All Packages");
@@ -133,11 +162,21 @@ namespace Sledge.Editor.UI
                     .SelectMany(x => x.Faces).Select(x => x.Texture.Name).Distinct().ToList();
                 list = list.Where(x => used.Any(y => String.Equals(x.Name, y, StringComparison.InvariantCultureIgnoreCase)));
             }
-            TextureList.SetTextureList(list);
+            var l = list.ToList();
+            TextureList.SetTextureList(l);
+
+            var sel = DocumentManager.CurrentDocument == null ? null : DocumentManager.CurrentDocument.GetMemory<string>("SelectedTexture");
+            var tex = l.FirstOrDefault(x => x.Name == sel);
+            if (tex != null)
+            {
+                TextureList.SetSelectedTextures(new [] { tex });
+                TextureList.ScrollToItem(tex);
+            }
         }
 
         private void SizeValueChanged(object sender, EventArgs e)
         {
+            SetMemory("SizeMode", SizeCombo.SelectedIndex);
             TextureList.ImageSize = SizeCombo.SelectedIndex == 0 ? 0 : Convert.ToInt32(SizeCombo.SelectedItem);
         }
 
@@ -163,11 +202,13 @@ namespace Sledge.Editor.UI
 
         private void SortOrderComboIndexChanged(object sender, EventArgs e)
         {
+            SetMemory("SortBy", SortOrderCombo.SelectedIndex);
             TextureList.SortOrder = (TextureListPanel.TextureSortOrder) SortOrderCombo.SelectedItem;
         }
 
         private void SortDescendingCheckboxChanged(object sender, EventArgs e)
         {
+            SetMemory("SortDescending", SortDescendingCheckbox.Checked);
             TextureList.SortDescending = SortDescendingCheckbox.Checked;
         }
     }
