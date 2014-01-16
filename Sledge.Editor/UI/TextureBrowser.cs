@@ -82,7 +82,6 @@ namespace Sledge.Editor.UI
 
         private void TextureSelected(object sender, TextureItem item)
         {
-            SetMemory("TextureSelection", item.Name);
             SelectedTexture = item;
             Close();
         }
@@ -165,12 +164,11 @@ namespace Sledge.Editor.UI
             var l = list.ToList();
             TextureList.SetTextureList(l);
 
-            var sel = DocumentManager.CurrentDocument == null ? null : DocumentManager.CurrentDocument.GetMemory<string>("SelectedTexture");
-            var tex = l.FirstOrDefault(x => x.Name == sel);
-            if (tex != null)
+            var sel = DocumentManager.CurrentDocument == null ? null : DocumentManager.CurrentDocument.GetSelectedTexture();
+            if (sel != null)
             {
-                TextureList.SetSelectedTextures(new [] { tex });
-                TextureList.ScrollToItem(tex);
+                TextureList.SetSelectedTextures(new [] { sel });
+                TextureList.ScrollToItem(sel);
             }
         }
 

@@ -82,7 +82,7 @@ namespace Sledge.Editor.UI.Sidebar
             }
             if (index < 0 || index >= GroupComboBox.Items.Count) index = 0;
             GroupComboBox.SelectedIndex = index;
-            TextureSelected(TextureComboBox.GetSelectedTexture());
+            Mediator.Publish(EditorMediator.TextureSelected, TextureComboBox.GetSelectedTexture());
         }
 
         private void DocumentAllClosed()

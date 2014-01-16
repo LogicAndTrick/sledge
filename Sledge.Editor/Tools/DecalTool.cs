@@ -70,7 +70,7 @@ namespace Sledge.Editor.Tools
                     System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
                 return;
             }
-            var selected = Editor.Instance.GetSelectedTexture();
+            var selected = Document.GetSelectedTexture();
             var textureName = selected == null ? "{TARGET" : selected.Name;
 
             if (Document.TextureCollection.GetItem(textureName) == null)

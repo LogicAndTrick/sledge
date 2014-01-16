@@ -410,18 +410,6 @@ namespace Sledge.Editor
 
         private void DocumentActivated(Document doc)
         {
-            // Textures
-            var index = TextureGroupComboBox.SelectedIndex;
-            TextureGroupComboBox.Items.Clear();
-            TextureGroupComboBox.Items.Add("All Textures");
-            foreach (var package in doc.TextureCollection.Packages)
-            {
-                TextureGroupComboBox.Items.Add(package);
-            }
-            if (index < 0 || index >= TextureGroupComboBox.Items.Count) index = 0;
-            TextureGroupComboBox.SelectedIndex = index;
-            TextureSelected(TextureComboBox.GetSelectedTexture());
-
             // Entities
             var selEnt = EntityTypeList.SelectedItem;
             var def = doc.Game.DefaultPointEntity;
@@ -527,11 +515,8 @@ namespace Sledge.Editor
 
         private void DocumentAllClosed()
         {
-            TextureGroupComboBox.Items.Clear();
-            TextureComboBox.Items.Clear();
             EntityTypeList.Items.Clear();
             VisgroupToolbarPanel.Clear();
-            TextureSelected(null);
 
             StatusSelectionLabel.Text = "";
             StatusCoordinatesLabel.Text = "";
@@ -607,42 +592,6 @@ namespace Sledge.Editor
         private void DocumentGridSpacingChanged(decimal spacing)
         {
             StatusSnapLabel.Text = "Grid: " + spacing.ToString("0.##");
-        }
-
-        private void TextureSelected(TextureItem selection)
-        {
-            var dis = TextureSelectionPictureBox.Image;
-            TextureSelectionPictureBox.Image = null;
-            if (dis != null) dis.Dispose();
-            TextureSizeLabel.Text = "";
-            if (selection == null || DocumentManager.CurrentDocument == null) return;
-            TextureComboBox.SetSelectedTexture(selection);
-            using (var tp = DocumentManager.CurrentDocument.TextureCollection.GetStreamSource())
-            {
-                var bmp = tp.GetImage(selection);
-                if (bmp.Width > TextureSelectionPictureBox.Width || bmp.Height > TextureSelectionPictureBox.Height)
-                    TextureSelectionPictureBox.SizeMode = PictureBoxSizeMode.Zoom;
-                else
-                    TextureSelectionPictureBox.SizeMode = PictureBoxSizeMode.CenterImage;
-                TextureSelectionPictureBox.Image = bmp;
-            }
-            TextureSizeLabel.Text = string.Format("{0} x {1}", selection.Width, selection.Height);
-        }
-
-        private void TextureGroupSelected(object sender, EventArgs e)
-        {
-            var tp = TextureGroupComboBox.SelectedItem as TexturePackage;
-            TextureComboBox.Update(tp == null ? null : tp.PackageFile);
-        }
-
-        private void TextureSelectionChanged(object sender, EventArgs e)
-        {
-            Mediator.Publish(EditorMediator.TextureSelected, TextureComboBox.GetSelectedTexture());
-        }
-
-        public TextureItem GetSelectedTexture()
-        {
-            return TextureComboBox.GetSelectedTexture();
         }
 
         public GameDataObject GetSelectedEntity()

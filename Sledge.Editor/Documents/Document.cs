@@ -406,5 +406,11 @@ namespace Sledge.Editor.Documents
             Renderer.UpdateGrid(Map.GridSpacing, Map.Show2DGrid, Map.Show3DGrid);
             UpdateDisplayLists();
         }
+
+        public TextureItem GetSelectedTexture()
+        {
+            var sel = GetMemory<string>("SelectedTexture");
+            return sel == null ? null : TextureCollection.GetItem(sel);
+        }
     }
 }

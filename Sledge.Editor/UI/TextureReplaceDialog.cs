@@ -36,9 +36,9 @@ namespace Sledge.Editor.UI
                 ReplaceVisible.Checked = true;
             }
 
-            if (Editor.Instance != null && Editor.Instance.GetSelectedTexture() != null)
+            if (_document.GetSelectedTexture() != null)
             {
-                var tex = Editor.Instance.GetSelectedTexture();
+                var tex = _document.GetSelectedTexture();
                 Find.Text = tex.Name;
             }
         }

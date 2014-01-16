@@ -376,7 +376,7 @@ namespace Sledge.Editor.Documents
         public void ApplyCurrentTextureToSelection()
         {
             if (_document.Selection.IsEmpty() || _document.Selection.InFaceSelection || Editor.Instance == null) return;
-            var texture = Editor.Instance.GetSelectedTexture();
+            var texture = _document.GetSelectedTexture();
             if (texture == null) return;
             var ti = texture.GetTexture();
             if (ti == null) return;

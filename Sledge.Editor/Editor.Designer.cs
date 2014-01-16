@@ -55,16 +55,6 @@ namespace Sledge.Editor
             this.VisgroupsPanel = new System.Windows.Forms.Panel();
             this.VisgroupToolbarPanel = new Sledge.Editor.Visgroups.VisgroupToolbarPanel();
             this.VisgroupsCollapse = new Sledge.Editor.UI.CollapsingLabel();
-            this.TextureCollapse = new Sledge.Editor.UI.CollapsingLabel();
-            this.TexturePanel = new System.Windows.Forms.Panel();
-            this.TextureBrowseButton = new System.Windows.Forms.Button();
-            this.TextureReplaceButton = new System.Windows.Forms.Button();
-            this.TextureSizeLabel = new System.Windows.Forms.Label();
-            this.TextureSelectionPictureBox = new System.Windows.Forms.PictureBox();
-            this.TextureComboBox = new Sledge.Editor.UI.TextureComboBox();
-            this.TextureGroupComboBox = new System.Windows.Forms.ComboBox();
-            this.label5 = new System.Windows.Forms.Label();
-            this.label4 = new System.Windows.Forms.Label();
             this.BrushCreatePanel = new System.Windows.Forms.FlowLayoutPanel();
             this.label3 = new System.Windows.Forms.Label();
             this.BrushTypeList = new System.Windows.Forms.ComboBox();
@@ -87,8 +77,6 @@ namespace Sledge.Editor
             this.sidebarPanel.SuspendLayout();
             this.RightToolbar.SuspendLayout();
             this.VisgroupsPanel.SuspendLayout();
-            this.TexturePanel.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.TextureSelectionPictureBox)).BeginInit();
             this.BrushCreatePanel.SuspendLayout();
             this.EntityPanel.SuspendLayout();
             this.SuspendLayout();
@@ -205,6 +193,8 @@ namespace Sledge.Editor
             // tblQuadView
             // 
             this.tblQuadView.ColumnCount = 2;
+            this.tblQuadView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tblQuadView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tblQuadView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tblQuadView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
@@ -490,6 +480,8 @@ namespace Sledge.Editor
             this.tblQuadView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tblQuadView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tblQuadView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tblQuadView.Size = new System.Drawing.Size(434, 636);
             this.tblQuadView.TabIndex = 0;
             // 
@@ -510,7 +502,7 @@ namespace Sledge.Editor
             this.tabPage1.ImageIndex = 0;
             this.tabPage1.Location = new System.Drawing.Point(4, 25);
             this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Size = new System.Drawing.Size(446, -5);
+            this.tabPage1.Size = new System.Drawing.Size(426, -5);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Tab";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -567,8 +559,6 @@ namespace Sledge.Editor
             this.RightToolbar.Controls.Add(this.HistoryCollapse, 0, 8);
             this.RightToolbar.Controls.Add(this.VisgroupsPanel, 0, 3);
             this.RightToolbar.Controls.Add(this.VisgroupsCollapse, 0, 2);
-            this.RightToolbar.Controls.Add(this.TextureCollapse, 0, 0);
-            this.RightToolbar.Controls.Add(this.TexturePanel, 0, 1);
             this.RightToolbar.Controls.Add(this.BrushCreatePanel, 0, 7);
             this.RightToolbar.Controls.Add(this.EntityCollapse, 0, 4);
             this.RightToolbar.Controls.Add(this.EntityPanel, 0, 5);
@@ -595,7 +585,7 @@ namespace Sledge.Editor
             // HistoryPanel
             // 
             this.HistoryPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.HistoryPanel.Location = new System.Drawing.Point(3, 548);
+            this.HistoryPanel.Location = new System.Drawing.Point(3, 382);
             this.HistoryPanel.Name = "HistoryPanel";
             this.HistoryPanel.Size = new System.Drawing.Size(144, 14);
             this.HistoryPanel.TabIndex = 8;
@@ -605,7 +595,7 @@ namespace Sledge.Editor
             this.HistoryCollapse.Collapsed = false;
             this.HistoryCollapse.ControlToCollapse = this.HistoryPanel;
             this.HistoryCollapse.LabelText = "History";
-            this.HistoryCollapse.Location = new System.Drawing.Point(3, 528);
+            this.HistoryCollapse.Location = new System.Drawing.Point(3, 362);
             this.HistoryCollapse.Name = "HistoryCollapse";
             this.HistoryCollapse.Size = new System.Drawing.Size(144, 14);
             this.HistoryCollapse.TabIndex = 7;
@@ -614,7 +604,7 @@ namespace Sledge.Editor
             // 
             this.VisgroupsPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.VisgroupsPanel.Controls.Add(this.VisgroupToolbarPanel);
-            this.VisgroupsPanel.Location = new System.Drawing.Point(3, 189);
+            this.VisgroupsPanel.Location = new System.Drawing.Point(3, 23);
             this.VisgroupsPanel.Name = "VisgroupsPanel";
             this.VisgroupsPanel.Size = new System.Drawing.Size(144, 144);
             this.VisgroupsPanel.TabIndex = 0;
@@ -632,123 +622,17 @@ namespace Sledge.Editor
             this.VisgroupsCollapse.Collapsed = false;
             this.VisgroupsCollapse.ControlToCollapse = this.VisgroupsPanel;
             this.VisgroupsCollapse.LabelText = "Visgroups";
-            this.VisgroupsCollapse.Location = new System.Drawing.Point(3, 169);
+            this.VisgroupsCollapse.Location = new System.Drawing.Point(3, 3);
             this.VisgroupsCollapse.Name = "VisgroupsCollapse";
             this.VisgroupsCollapse.Size = new System.Drawing.Size(144, 14);
             this.VisgroupsCollapse.TabIndex = 6;
-            // 
-            // TextureCollapse
-            // 
-            this.TextureCollapse.Collapsed = false;
-            this.TextureCollapse.ControlToCollapse = this.TexturePanel;
-            this.TextureCollapse.LabelText = "Textures";
-            this.TextureCollapse.Location = new System.Drawing.Point(3, 3);
-            this.TextureCollapse.Name = "TextureCollapse";
-            this.TextureCollapse.Size = new System.Drawing.Size(144, 15);
-            this.TextureCollapse.TabIndex = 0;
-            // 
-            // TexturePanel
-            // 
-            this.TexturePanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.TexturePanel.Controls.Add(this.TextureBrowseButton);
-            this.TexturePanel.Controls.Add(this.TextureReplaceButton);
-            this.TexturePanel.Controls.Add(this.TextureSizeLabel);
-            this.TexturePanel.Controls.Add(this.TextureSelectionPictureBox);
-            this.TexturePanel.Controls.Add(this.TextureComboBox);
-            this.TexturePanel.Controls.Add(this.TextureGroupComboBox);
-            this.TexturePanel.Controls.Add(this.label5);
-            this.TexturePanel.Controls.Add(this.label4);
-            this.TexturePanel.Location = new System.Drawing.Point(3, 24);
-            this.TexturePanel.Name = "TexturePanel";
-            this.TexturePanel.Size = new System.Drawing.Size(144, 139);
-            this.TexturePanel.TabIndex = 3;
-            // 
-            // TextureBrowseButton
-            // 
-            this.TextureBrowseButton.Location = new System.Drawing.Point(73, 90);
-            this.TextureBrowseButton.Name = "TextureBrowseButton";
-            this.TextureBrowseButton.Size = new System.Drawing.Size(66, 20);
-            this.TextureBrowseButton.TabIndex = 5;
-            this.TextureBrowseButton.Text = "Browse...";
-            this.TextureBrowseButton.UseVisualStyleBackColor = true;
-            this.TextureBrowseButton.Click += new System.EventHandler(this.TextureBrowseButtonClicked);
-            // 
-            // TextureReplaceButton
-            // 
-            this.TextureReplaceButton.Location = new System.Drawing.Point(73, 113);
-            this.TextureReplaceButton.Name = "TextureReplaceButton";
-            this.TextureReplaceButton.Size = new System.Drawing.Size(66, 20);
-            this.TextureReplaceButton.TabIndex = 5;
-            this.TextureReplaceButton.Text = "Replace...";
-            this.TextureReplaceButton.UseVisualStyleBackColor = true;
-            this.TextureReplaceButton.Click += new System.EventHandler(this.TextureReplaceButtonClicked);
-            // 
-            // TextureSizeLabel
-            // 
-            this.TextureSizeLabel.AutoSize = true;
-            this.TextureSizeLabel.Location = new System.Drawing.Point(73, 69);
-            this.TextureSizeLabel.Name = "TextureSizeLabel";
-            this.TextureSizeLabel.Size = new System.Drawing.Size(0, 13);
-            this.TextureSizeLabel.TabIndex = 4;
-            // 
-            // TextureSelectionPictureBox
-            // 
-            this.TextureSelectionPictureBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.TextureSelectionPictureBox.Location = new System.Drawing.Point(3, 69);
-            this.TextureSelectionPictureBox.Name = "TextureSelectionPictureBox";
-            this.TextureSelectionPictureBox.Size = new System.Drawing.Size(64, 64);
-            this.TextureSelectionPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.TextureSelectionPictureBox.TabIndex = 3;
-            this.TextureSelectionPictureBox.TabStop = false;
-            // 
-            // TextureComboBox
-            // 
-            this.TextureComboBox.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawVariable;
-            this.TextureComboBox.DropDownHeight = 600;
-            this.TextureComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.TextureComboBox.FormattingEnabled = true;
-            this.TextureComboBox.IntegralHeight = false;
-            this.TextureComboBox.ItemHeight = 15;
-            this.TextureComboBox.Location = new System.Drawing.Point(3, 42);
-            this.TextureComboBox.Name = "TextureComboBox";
-            this.TextureComboBox.Size = new System.Drawing.Size(136, 21);
-            this.TextureComboBox.TabIndex = 2;
-            this.TextureComboBox.SelectionChangeCommitted += new System.EventHandler(this.TextureSelectionChanged);
-            // 
-            // TextureGroupComboBox
-            // 
-            this.TextureGroupComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.TextureGroupComboBox.FormattingEnabled = true;
-            this.TextureGroupComboBox.Location = new System.Drawing.Point(41, 1);
-            this.TextureGroupComboBox.Name = "TextureGroupComboBox";
-            this.TextureGroupComboBox.Size = new System.Drawing.Size(98, 21);
-            this.TextureGroupComboBox.TabIndex = 1;
-            this.TextureGroupComboBox.SelectedIndexChanged += new System.EventHandler(this.TextureGroupSelected);
-            // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(3, 26);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(46, 13);
-            this.label5.TabIndex = 0;
-            this.label5.Text = "Texture:";
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(3, 4);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(39, 13);
-            this.label4.TabIndex = 0;
-            this.label4.Text = "Group:";
             // 
             // BrushCreatePanel
             // 
             this.BrushCreatePanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.BrushCreatePanel.Controls.Add(this.label3);
             this.BrushCreatePanel.Controls.Add(this.BrushTypeList);
-            this.BrushCreatePanel.Location = new System.Drawing.Point(3, 474);
+            this.BrushCreatePanel.Location = new System.Drawing.Point(3, 308);
             this.BrushCreatePanel.Name = "BrushCreatePanel";
             this.BrushCreatePanel.Size = new System.Drawing.Size(144, 48);
             this.BrushCreatePanel.TabIndex = 1;
@@ -776,7 +660,7 @@ namespace Sledge.Editor
             this.EntityCollapse.Collapsed = false;
             this.EntityCollapse.ControlToCollapse = this.EntityPanel;
             this.EntityCollapse.LabelText = "Entities";
-            this.EntityCollapse.Location = new System.Drawing.Point(3, 339);
+            this.EntityCollapse.Location = new System.Drawing.Point(3, 173);
             this.EntityCollapse.Name = "EntityCollapse";
             this.EntityCollapse.Size = new System.Drawing.Size(144, 14);
             this.EntityCollapse.TabIndex = 5;
@@ -789,7 +673,7 @@ namespace Sledge.Editor
             this.EntityPanel.Controls.Add(this.label1);
             this.EntityPanel.Controls.Add(this.MoveToWorldButton);
             this.EntityPanel.Controls.Add(this.MoveToEntityButton);
-            this.EntityPanel.Location = new System.Drawing.Point(3, 359);
+            this.EntityPanel.Location = new System.Drawing.Point(3, 193);
             this.EntityPanel.Name = "EntityPanel";
             this.EntityPanel.Size = new System.Drawing.Size(144, 89);
             this.EntityPanel.TabIndex = 4;
@@ -846,7 +730,7 @@ namespace Sledge.Editor
             this.BrushCreateCollapse.Collapsed = false;
             this.BrushCreateCollapse.ControlToCollapse = this.BrushCreatePanel;
             this.BrushCreateCollapse.LabelText = "Brush Types";
-            this.BrushCreateCollapse.Location = new System.Drawing.Point(3, 454);
+            this.BrushCreateCollapse.Location = new System.Drawing.Point(3, 288);
             this.BrushCreateCollapse.Name = "BrushCreateCollapse";
             this.BrushCreateCollapse.Size = new System.Drawing.Size(144, 14);
             this.BrushCreateCollapse.TabIndex = 2;
@@ -854,11 +738,12 @@ namespace Sledge.Editor
             // sidebarPanel1
             // 
             this.sidebarPanel1.AutoSize = true;
+            this.sidebarPanel1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.sidebarPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.sidebarPanel1.Hidden = false;
-            this.sidebarPanel1.Location = new System.Drawing.Point(3, 568);
+            this.sidebarPanel1.Location = new System.Drawing.Point(3, 402);
             this.sidebarPanel1.Name = "sidebarPanel1";
-            this.sidebarPanel1.Size = new System.Drawing.Size(144, 106);
+            this.sidebarPanel1.Size = new System.Drawing.Size(144, 272);
             this.sidebarPanel1.TabIndex = 9;
             this.sidebarPanel1.Text = "This is a test panel";
             // 
@@ -902,9 +787,6 @@ namespace Sledge.Editor
             this.RightToolbar.ResumeLayout(false);
             this.RightToolbar.PerformLayout();
             this.VisgroupsPanel.ResumeLayout(false);
-            this.TexturePanel.ResumeLayout(false);
-            this.TexturePanel.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.TextureSelectionPictureBox)).EndInit();
             this.BrushCreatePanel.ResumeLayout(false);
             this.EntityPanel.ResumeLayout(false);
             this.ResumeLayout(false);
@@ -921,9 +803,7 @@ namespace Sledge.Editor
         private UI.QuadSplitControl tblQuadView;
         private DockedPanel sidebarPanel;
         private System.Windows.Forms.TableLayoutPanel RightToolbar;
-        private UI.CollapsingLabel TextureCollapse;
         private UI.CollapsingLabel BrushCreateCollapse;
-        private System.Windows.Forms.Panel TexturePanel;
         private System.Windows.Forms.FlowLayoutPanel BrushCreatePanel;
         private System.Windows.Forms.ComboBox BrushTypeList;
         private UI.CollapsingLabel EntityCollapse;
@@ -936,14 +816,6 @@ namespace Sledge.Editor
         private System.Windows.Forms.Label label3;
         private UI.CollapsingLabel VisgroupsCollapse;
         private System.Windows.Forms.Panel VisgroupsPanel;
-        private System.Windows.Forms.ComboBox TextureGroupComboBox;
-        private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.Label label4;
-        private UI.TextureComboBox TextureComboBox;
-        private System.Windows.Forms.Label TextureSizeLabel;
-        private System.Windows.Forms.PictureBox TextureSelectionPictureBox;
-        private System.Windows.Forms.Button TextureBrowseButton;
-        private System.Windows.Forms.Button TextureReplaceButton;
         private UI.CollapsingLabel HistoryCollapse;
         private System.Windows.Forms.FlowLayoutPanel HistoryPanel;
         private Visgroups.VisgroupToolbarPanel VisgroupToolbarPanel;
