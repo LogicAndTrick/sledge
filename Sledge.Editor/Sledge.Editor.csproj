@@ -747,6 +747,7 @@
     <Content Include="Resources\Menu_Cut.png" />
     <Content Include="Resources\Menu_Delete.png" />
     <Content Include="Resources\Menu_EntityReport.png" />
+    <Content Include="Resources\Menu_Export.png" />
     <Content Include="Resources\Menu_Flip.png" />
     <Content Include="Resources\Menu_GoToBrushID.png" />
     <Content Include="Resources\Menu_GoToCoordinates.png" />

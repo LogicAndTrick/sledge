@@ -23,6 +23,7 @@ namespace Sledge.Editor
 
         // Editing messages
         TextureSelected,
+        EntitySelected,
         ToolSelected,
         ViewportRightClick,
         WorldspawnProperties,

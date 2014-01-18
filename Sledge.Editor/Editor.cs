@@ -90,12 +90,12 @@ namespace Sledge.Editor
             UpdateDocumentTabs();
             UpdateRecentFiles();
 
-            DockBottom.Hidden = DockLeft.Hidden = true;
+            DockBottom.Hidden = DockLeft.Hidden = DockRight.Hidden = true;
 
             MenuManager.Init(mnuMain, tscToolStrip);
             MenuManager.Rebuild();
 
-            SidebarManager.Init(DockRight);
+            SidebarManager.Init(RightSidebar);
 
             ViewportManager.Init(tblQuadView);
             ToolManager.Init();
@@ -321,9 +321,7 @@ namespace Sledge.Editor
             Mediator.Subscribe(EditorMediator.ViewUnfocused, this);
             Mediator.Subscribe(EditorMediator.DocumentGridSpacingChanged, this);
 
-            Mediator.Subscribe(EditorMediator.TextureSelected, this);
             Mediator.Subscribe(EditorMediator.ToolSelected, this);
-            Mediator.Subscribe(EditorMediator.ResetSelectedBrushType, this);
 
             Mediator.Subscribe(EditorMediator.OpenWebsite, this);
             Mediator.Subscribe(EditorMediator.CheckForUpdates, this);
@@ -410,21 +408,6 @@ namespace Sledge.Editor
 
         private void DocumentActivated(Document doc)
         {
-            // Entities
-            var selEnt = EntityTypeList.SelectedItem;
-            var def = doc.Game.DefaultPointEntity;
-            EntityTypeList.Items.Clear();
-            foreach (var gdo in doc.GameData.Classes.Where(x => x.ClassType == ClassType.Point).OrderBy(x => x.Name.ToLowerInvariant()))
-            {
-                EntityTypeList.Items.Add(gdo);
-                if (selEnt == null && gdo.Name == def) selEnt = gdo;
-            }
-            if (selEnt == null) selEnt = doc.GameData.Classes
-                .Where(x => x.ClassType == ClassType.Point)
-                .OrderBy(x => x.Name.StartsWith("info_player_start") ? 0 : 1)
-                .FirstOrDefault();
-            EntityTypeList.SelectedItem = selEnt;
-
             // Status bar
             StatusSelectionLabel.Text = "";
             StatusCoordinatesLabel.Text = "";
@@ -515,9 +498,6 @@ namespace Sledge.Editor
 
         private void DocumentAllClosed()
         {
-            EntityTypeList.Items.Clear();
-            VisgroupToolbarPanel.Clear();
-
             StatusSelectionLabel.Text = "";
             StatusCoordinatesLabel.Text = "";
             StatusBoxLabel.Text = "";
@@ -594,11 +574,6 @@ namespace Sledge.Editor
             StatusSnapLabel.Text = "Grid: " + spacing.ToString("0.##");
         }
 
-        public GameDataObject GetSelectedEntity()
-        {
-            return (GameDataObject) EntityTypeList.SelectedItem;
-        }
-
         public void ToolSelected()
         {
             var at = ToolManager.ActiveTool;
@@ -606,14 +581,6 @@ namespace Sledge.Editor
             foreach (var tsb in from object item in tspTools.Items select ((ToolStripButton)item))
             {
                 tsb.Checked = (tsb.Name == at.GetName());
-            }
-        }
-
-        public void ResetSelectedBrushType()
-        {
-            if (BrushTypeList.Items.Count > 0)
-            {
-                BrushTypeList.SelectedIndex = 0;
             }
         }
 
@@ -717,20 +684,6 @@ namespace Sledge.Editor
             MenuManager.RecentFiles.Clear();
             MenuManager.RecentFiles.AddRange(recents);
             MenuManager.UpdateRecentFilesMenu();
-        }
-
-        private void TextureBrowseButtonClicked(object sender, EventArgs e)
-        {
-            if (DocumentManager.CurrentDocument == null) return;
-            using (var tb = new TextureBrowser())
-            {
-                tb.SetTextureList(DocumentManager.CurrentDocument.TextureCollection.GetAllItems());
-                tb.ShowDialog();
-                if (tb.SelectedTexture != null)
-                {
-                    Mediator.Publish(EditorMediator.TextureSelected, tb.SelectedTexture);
-                }
-            }
         }
 
         private void TextureReplaceButtonClicked(object sender, EventArgs e)

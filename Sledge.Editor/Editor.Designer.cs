@@ -45,28 +45,10 @@ namespace Sledge.Editor
             this.tblQuadView = new Sledge.Editor.UI.QuadSplitControl();
             this.DocumentTabs = new Sledge.Editor.UI.ClosableTabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.DockRight = new Sledge.Editor.UI.DockedPanel();
+            this.RightSidebar = new Sledge.Editor.UI.DockedPanel();
             this.DockLeft = new Sledge.Editor.UI.DockedPanel();
             this.DockBottom = new Sledge.Editor.UI.DockedPanel();
-            this.sidebarPanel = new Sledge.Editor.UI.DockedPanel();
-            this.RightToolbar = new System.Windows.Forms.TableLayoutPanel();
-            this.HistoryPanel = new System.Windows.Forms.FlowLayoutPanel();
-            this.HistoryCollapse = new Sledge.Editor.UI.CollapsingLabel();
-            this.VisgroupsPanel = new System.Windows.Forms.Panel();
-            this.VisgroupToolbarPanel = new Sledge.Editor.Visgroups.VisgroupToolbarPanel();
-            this.VisgroupsCollapse = new Sledge.Editor.UI.CollapsingLabel();
-            this.BrushCreatePanel = new System.Windows.Forms.FlowLayoutPanel();
-            this.label3 = new System.Windows.Forms.Label();
-            this.BrushTypeList = new System.Windows.Forms.ComboBox();
-            this.EntityCollapse = new Sledge.Editor.UI.CollapsingLabel();
-            this.EntityPanel = new System.Windows.Forms.FlowLayoutPanel();
-            this.label2 = new System.Windows.Forms.Label();
-            this.EntityTypeList = new System.Windows.Forms.ComboBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.MoveToWorldButton = new System.Windows.Forms.Button();
-            this.MoveToEntityButton = new System.Windows.Forms.Button();
-            this.BrushCreateCollapse = new Sledge.Editor.UI.CollapsingLabel();
-            this.sidebarPanel1 = new Sledge.Editor.UI.Sidebar.SidebarPanel();
+            this.DockRight = new Sledge.Editor.UI.DockedPanel();
             this.tspTools = new System.Windows.Forms.ToolStrip();
             this.stsStatus.SuspendLayout();
             this.tscToolStrip.ContentPanel.SuspendLayout();
@@ -74,11 +56,6 @@ namespace Sledge.Editor
             this.tscToolStrip.SuspendLayout();
             this.DockFill.SuspendLayout();
             this.DocumentTabs.SuspendLayout();
-            this.sidebarPanel.SuspendLayout();
-            this.RightToolbar.SuspendLayout();
-            this.VisgroupsPanel.SuspendLayout();
-            this.BrushCreatePanel.SuspendLayout();
-            this.EntityPanel.SuspendLayout();
             this.SuspendLayout();
             // 
             // mnuMain
@@ -162,10 +139,10 @@ namespace Sledge.Editor
             // tscToolStrip.ContentPanel
             // 
             this.tscToolStrip.ContentPanel.Controls.Add(this.DockFill);
-            this.tscToolStrip.ContentPanel.Controls.Add(this.DockRight);
+            this.tscToolStrip.ContentPanel.Controls.Add(this.RightSidebar);
             this.tscToolStrip.ContentPanel.Controls.Add(this.DockLeft);
             this.tscToolStrip.ContentPanel.Controls.Add(this.DockBottom);
-            this.tscToolStrip.ContentPanel.Controls.Add(this.sidebarPanel);
+            this.tscToolStrip.ContentPanel.Controls.Add(this.DockRight);
             this.tscToolStrip.ContentPanel.Size = new System.Drawing.Size(845, 677);
             this.tscToolStrip.Dock = System.Windows.Forms.DockStyle.Fill;
             // 
@@ -187,12 +164,16 @@ namespace Sledge.Editor
             this.DockFill.Hidden = false;
             this.DockFill.Location = new System.Drawing.Point(26, 0);
             this.DockFill.Name = "DockFill";
-            this.DockFill.Size = new System.Drawing.Size(434, 660);
+            this.DockFill.Size = new System.Drawing.Size(567, 660);
             this.DockFill.TabIndex = 4;
             // 
             // tblQuadView
             // 
             this.tblQuadView.ColumnCount = 2;
+            this.tblQuadView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tblQuadView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tblQuadView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tblQuadView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
@@ -482,7 +463,11 @@ namespace Sledge.Editor
             this.tblQuadView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tblQuadView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tblQuadView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tblQuadView.Size = new System.Drawing.Size(434, 636);
+            this.tblQuadView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.Size = new System.Drawing.Size(567, 636);
             this.tblQuadView.TabIndex = 0;
             // 
             // DocumentTabs
@@ -492,7 +477,7 @@ namespace Sledge.Editor
             this.DocumentTabs.Location = new System.Drawing.Point(0, 0);
             this.DocumentTabs.Name = "DocumentTabs";
             this.DocumentTabs.SelectedIndex = 0;
-            this.DocumentTabs.Size = new System.Drawing.Size(434, 24);
+            this.DocumentTabs.Size = new System.Drawing.Size(567, 24);
             this.DocumentTabs.TabIndex = 2;
             this.DocumentTabs.RequestClose += new Sledge.Editor.UI.ClosableTabControl.RequestCloseEventHandler(this.DocumentTabsRequestClose);
             this.DocumentTabs.SelectedIndexChanged += new System.EventHandler(this.DocumentTabsSelectedIndexChanged);
@@ -507,17 +492,17 @@ namespace Sledge.Editor
             this.tabPage1.Text = "Tab";
             this.tabPage1.UseVisualStyleBackColor = true;
             // 
-            // DockRight
+            // RightSidebar
             // 
-            this.DockRight.Dock = System.Windows.Forms.DockStyle.Right;
-            this.DockRight.DockDimension = 230;
-            this.DockRight.Hidden = false;
-            this.DockRight.Location = new System.Drawing.Point(460, 0);
-            this.DockRight.MinSize = 230;
-            this.DockRight.Name = "DockRight";
-            this.DockRight.Padding = new System.Windows.Forms.Padding(5, 0, 0, 0);
-            this.DockRight.Size = new System.Drawing.Size(230, 660);
-            this.DockRight.TabIndex = 3;
+            this.RightSidebar.Dock = System.Windows.Forms.DockStyle.Right;
+            this.RightSidebar.DockDimension = 230;
+            this.RightSidebar.Hidden = false;
+            this.RightSidebar.Location = new System.Drawing.Point(593, 0);
+            this.RightSidebar.MinSize = 230;
+            this.RightSidebar.Name = "RightSidebar";
+            this.RightSidebar.Padding = new System.Windows.Forms.Padding(5, 0, 0, 0);
+            this.RightSidebar.Size = new System.Drawing.Size(230, 660);
+            this.RightSidebar.TabIndex = 3;
             // 
             // DockLeft
             // 
@@ -536,216 +521,19 @@ namespace Sledge.Editor
             this.DockBottom.Hidden = false;
             this.DockBottom.Location = new System.Drawing.Point(0, 660);
             this.DockBottom.Name = "DockBottom";
-            this.DockBottom.Size = new System.Drawing.Size(690, 17);
+            this.DockBottom.Size = new System.Drawing.Size(823, 17);
             this.DockBottom.TabIndex = 3;
             // 
-            // sidebarPanel
+            // DockRight
             // 
-            this.sidebarPanel.Controls.Add(this.RightToolbar);
-            this.sidebarPanel.Dock = System.Windows.Forms.DockStyle.Right;
-            this.sidebarPanel.DockDimension = 155;
-            this.sidebarPanel.Hidden = false;
-            this.sidebarPanel.Location = new System.Drawing.Point(690, 0);
-            this.sidebarPanel.Name = "sidebarPanel";
-            this.sidebarPanel.Padding = new System.Windows.Forms.Padding(5, 0, 0, 0);
-            this.sidebarPanel.Size = new System.Drawing.Size(155, 677);
-            this.sidebarPanel.TabIndex = 1;
-            // 
-            // RightToolbar
-            // 
-            this.RightToolbar.ColumnCount = 1;
-            this.RightToolbar.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.RightToolbar.Controls.Add(this.HistoryPanel, 0, 9);
-            this.RightToolbar.Controls.Add(this.HistoryCollapse, 0, 8);
-            this.RightToolbar.Controls.Add(this.VisgroupsPanel, 0, 3);
-            this.RightToolbar.Controls.Add(this.VisgroupsCollapse, 0, 2);
-            this.RightToolbar.Controls.Add(this.BrushCreatePanel, 0, 7);
-            this.RightToolbar.Controls.Add(this.EntityCollapse, 0, 4);
-            this.RightToolbar.Controls.Add(this.EntityPanel, 0, 5);
-            this.RightToolbar.Controls.Add(this.BrushCreateCollapse, 0, 6);
-            this.RightToolbar.Controls.Add(this.sidebarPanel1, 0, 10);
-            this.RightToolbar.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.RightToolbar.Location = new System.Drawing.Point(5, 0);
-            this.RightToolbar.Name = "RightToolbar";
-            this.RightToolbar.RowCount = 11;
-            this.RightToolbar.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.RightToolbar.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.RightToolbar.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.RightToolbar.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.RightToolbar.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.RightToolbar.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.RightToolbar.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.RightToolbar.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.RightToolbar.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.RightToolbar.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.RightToolbar.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.RightToolbar.Size = new System.Drawing.Size(150, 677);
-            this.RightToolbar.TabIndex = 2;
-            // 
-            // HistoryPanel
-            // 
-            this.HistoryPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.HistoryPanel.Location = new System.Drawing.Point(3, 382);
-            this.HistoryPanel.Name = "HistoryPanel";
-            this.HistoryPanel.Size = new System.Drawing.Size(144, 14);
-            this.HistoryPanel.TabIndex = 8;
-            // 
-            // HistoryCollapse
-            // 
-            this.HistoryCollapse.Collapsed = false;
-            this.HistoryCollapse.ControlToCollapse = this.HistoryPanel;
-            this.HistoryCollapse.LabelText = "History";
-            this.HistoryCollapse.Location = new System.Drawing.Point(3, 362);
-            this.HistoryCollapse.Name = "HistoryCollapse";
-            this.HistoryCollapse.Size = new System.Drawing.Size(144, 14);
-            this.HistoryCollapse.TabIndex = 7;
-            // 
-            // VisgroupsPanel
-            // 
-            this.VisgroupsPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.VisgroupsPanel.Controls.Add(this.VisgroupToolbarPanel);
-            this.VisgroupsPanel.Location = new System.Drawing.Point(3, 23);
-            this.VisgroupsPanel.Name = "VisgroupsPanel";
-            this.VisgroupsPanel.Size = new System.Drawing.Size(144, 144);
-            this.VisgroupsPanel.TabIndex = 0;
-            // 
-            // VisgroupToolbarPanel
-            // 
-            this.VisgroupToolbarPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.VisgroupToolbarPanel.Location = new System.Drawing.Point(0, 0);
-            this.VisgroupToolbarPanel.Name = "VisgroupToolbarPanel";
-            this.VisgroupToolbarPanel.Size = new System.Drawing.Size(142, 142);
-            this.VisgroupToolbarPanel.TabIndex = 2;
-            // 
-            // VisgroupsCollapse
-            // 
-            this.VisgroupsCollapse.Collapsed = false;
-            this.VisgroupsCollapse.ControlToCollapse = this.VisgroupsPanel;
-            this.VisgroupsCollapse.LabelText = "Visgroups";
-            this.VisgroupsCollapse.Location = new System.Drawing.Point(3, 3);
-            this.VisgroupsCollapse.Name = "VisgroupsCollapse";
-            this.VisgroupsCollapse.Size = new System.Drawing.Size(144, 14);
-            this.VisgroupsCollapse.TabIndex = 6;
-            // 
-            // BrushCreatePanel
-            // 
-            this.BrushCreatePanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.BrushCreatePanel.Controls.Add(this.label3);
-            this.BrushCreatePanel.Controls.Add(this.BrushTypeList);
-            this.BrushCreatePanel.Location = new System.Drawing.Point(3, 308);
-            this.BrushCreatePanel.Name = "BrushCreatePanel";
-            this.BrushCreatePanel.Size = new System.Drawing.Size(144, 48);
-            this.BrushCreatePanel.TabIndex = 1;
-            // 
-            // label3
-            // 
-            this.label3.Location = new System.Drawing.Point(3, 0);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(137, 17);
-            this.label3.TabIndex = 5;
-            this.label3.Text = "Brush Type:";
-            this.label3.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
-            // 
-            // BrushTypeList
-            // 
-            this.BrushTypeList.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.BrushTypeList.FormattingEnabled = true;
-            this.BrushTypeList.Location = new System.Drawing.Point(3, 20);
-            this.BrushTypeList.Name = "BrushTypeList";
-            this.BrushTypeList.Size = new System.Drawing.Size(137, 21);
-            this.BrushTypeList.TabIndex = 0;
-            // 
-            // EntityCollapse
-            // 
-            this.EntityCollapse.Collapsed = false;
-            this.EntityCollapse.ControlToCollapse = this.EntityPanel;
-            this.EntityCollapse.LabelText = "Entities";
-            this.EntityCollapse.Location = new System.Drawing.Point(3, 173);
-            this.EntityCollapse.Name = "EntityCollapse";
-            this.EntityCollapse.Size = new System.Drawing.Size(144, 14);
-            this.EntityCollapse.TabIndex = 5;
-            // 
-            // EntityPanel
-            // 
-            this.EntityPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.EntityPanel.Controls.Add(this.label2);
-            this.EntityPanel.Controls.Add(this.EntityTypeList);
-            this.EntityPanel.Controls.Add(this.label1);
-            this.EntityPanel.Controls.Add(this.MoveToWorldButton);
-            this.EntityPanel.Controls.Add(this.MoveToEntityButton);
-            this.EntityPanel.Location = new System.Drawing.Point(3, 193);
-            this.EntityPanel.Name = "EntityPanel";
-            this.EntityPanel.Size = new System.Drawing.Size(144, 89);
-            this.EntityPanel.TabIndex = 4;
-            // 
-            // label2
-            // 
-            this.label2.Location = new System.Drawing.Point(3, 0);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(137, 17);
-            this.label2.TabIndex = 4;
-            this.label2.Text = "Entity Type:";
-            this.label2.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
-            // 
-            // EntityTypeList
-            // 
-            this.EntityTypeList.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.EntityTypeList.FormattingEnabled = true;
-            this.EntityTypeList.Location = new System.Drawing.Point(3, 20);
-            this.EntityTypeList.Name = "EntityTypeList";
-            this.EntityTypeList.Size = new System.Drawing.Size(137, 21);
-            this.EntityTypeList.TabIndex = 0;
-            // 
-            // label1
-            // 
-            this.label1.Location = new System.Drawing.Point(3, 44);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(137, 13);
-            this.label1.TabIndex = 3;
-            this.label1.Text = "Move selected:";
-            this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // MoveToWorldButton
-            // 
-            this.MoveToWorldButton.Location = new System.Drawing.Point(3, 60);
-            this.MoveToWorldButton.Name = "MoveToWorldButton";
-            this.MoveToWorldButton.Size = new System.Drawing.Size(65, 23);
-            this.MoveToWorldButton.TabIndex = 1;
-            this.MoveToWorldButton.Text = "To world";
-            this.MoveToWorldButton.UseVisualStyleBackColor = true;
-            this.MoveToWorldButton.Click += new System.EventHandler(this.MoveToWorldClicked);
-            // 
-            // MoveToEntityButton
-            // 
-            this.MoveToEntityButton.Location = new System.Drawing.Point(74, 60);
-            this.MoveToEntityButton.Name = "MoveToEntityButton";
-            this.MoveToEntityButton.Size = new System.Drawing.Size(65, 23);
-            this.MoveToEntityButton.TabIndex = 2;
-            this.MoveToEntityButton.Text = "To entity";
-            this.MoveToEntityButton.UseVisualStyleBackColor = true;
-            this.MoveToEntityButton.Click += new System.EventHandler(this.MoveToEntityClicked);
-            // 
-            // BrushCreateCollapse
-            // 
-            this.BrushCreateCollapse.Collapsed = false;
-            this.BrushCreateCollapse.ControlToCollapse = this.BrushCreatePanel;
-            this.BrushCreateCollapse.LabelText = "Brush Types";
-            this.BrushCreateCollapse.Location = new System.Drawing.Point(3, 288);
-            this.BrushCreateCollapse.Name = "BrushCreateCollapse";
-            this.BrushCreateCollapse.Size = new System.Drawing.Size(144, 14);
-            this.BrushCreateCollapse.TabIndex = 2;
-            // 
-            // sidebarPanel1
-            // 
-            this.sidebarPanel1.AutoSize = true;
-            this.sidebarPanel1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.sidebarPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.sidebarPanel1.Hidden = false;
-            this.sidebarPanel1.Location = new System.Drawing.Point(3, 402);
-            this.sidebarPanel1.Name = "sidebarPanel1";
-            this.sidebarPanel1.Size = new System.Drawing.Size(144, 272);
-            this.sidebarPanel1.TabIndex = 9;
-            this.sidebarPanel1.Text = "This is a test panel";
+            this.DockRight.Dock = System.Windows.Forms.DockStyle.Right;
+            this.DockRight.DockDimension = 22;
+            this.DockRight.Hidden = false;
+            this.DockRight.Location = new System.Drawing.Point(823, 0);
+            this.DockRight.Name = "DockRight";
+            this.DockRight.Padding = new System.Windows.Forms.Padding(5, 0, 0, 0);
+            this.DockRight.Size = new System.Drawing.Size(22, 677);
+            this.DockRight.TabIndex = 1;
             // 
             // tspTools
             // 
@@ -783,12 +571,6 @@ namespace Sledge.Editor
             this.tscToolStrip.PerformLayout();
             this.DockFill.ResumeLayout(false);
             this.DocumentTabs.ResumeLayout(false);
-            this.sidebarPanel.ResumeLayout(false);
-            this.RightToolbar.ResumeLayout(false);
-            this.RightToolbar.PerformLayout();
-            this.VisgroupsPanel.ResumeLayout(false);
-            this.BrushCreatePanel.ResumeLayout(false);
-            this.EntityPanel.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -801,24 +583,7 @@ namespace Sledge.Editor
         private System.Windows.Forms.ToolStripContainer tscToolStrip;
         private System.Windows.Forms.ToolStrip tspTools;
         private UI.QuadSplitControl tblQuadView;
-        private DockedPanel sidebarPanel;
-        private System.Windows.Forms.TableLayoutPanel RightToolbar;
-        private UI.CollapsingLabel BrushCreateCollapse;
-        private System.Windows.Forms.FlowLayoutPanel BrushCreatePanel;
-        private System.Windows.Forms.ComboBox BrushTypeList;
-        private UI.CollapsingLabel EntityCollapse;
-        private System.Windows.Forms.FlowLayoutPanel EntityPanel;
-        private System.Windows.Forms.ComboBox EntityTypeList;
-        private System.Windows.Forms.Button MoveToWorldButton;
-        private System.Windows.Forms.Button MoveToEntityButton;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Label label3;
-        private UI.CollapsingLabel VisgroupsCollapse;
-        private System.Windows.Forms.Panel VisgroupsPanel;
-        private UI.CollapsingLabel HistoryCollapse;
-        private System.Windows.Forms.FlowLayoutPanel HistoryPanel;
-        private Visgroups.VisgroupToolbarPanel VisgroupToolbarPanel;
+        private DockedPanel DockRight;
         private System.Windows.Forms.ToolStripStatusLabel StatusTextLabel;
         private System.Windows.Forms.ToolStripStatusLabel StatusSelectionLabel;
         private System.Windows.Forms.ToolStripStatusLabel StatusCoordinatesLabel;
@@ -828,10 +593,9 @@ namespace Sledge.Editor
         private UI.ClosableTabControl DocumentTabs;
         private System.Windows.Forms.TabPage tabPage1;
         private UI.DockedPanel DockFill;
-        private UI.DockedPanel DockRight;
+        private UI.DockedPanel RightSidebar;
         private UI.DockedPanel DockLeft;
         private UI.DockedPanel DockBottom;
-        private UI.Sidebar.SidebarPanel sidebarPanel1;
     }
 }
 

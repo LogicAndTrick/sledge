@@ -14,6 +14,7 @@ namespace Sledge.Editor.UI.Sidebar
         {
             InitializeComponent();
             Mediator.Subscribe(EditorMediator.DocumentActivated, this);
+            Mediator.Subscribe(EditorMediator.DocumentAllClosed, this);
             Mediator.Subscribe(EditorMediator.VisgroupsChanged, this);
             Mediator.Subscribe(EditorMediator.VisgroupVisibilityChanged, this);
         }
@@ -24,6 +25,11 @@ namespace Sledge.Editor.UI.Sidebar
         }
 
         private void DocumentActivated()
+        {
+            VisgroupPanel.Update(DocumentManager.CurrentDocument);
+        }
+
+        private void DocumentAllClosed()
         {
             VisgroupPanel.Update(DocumentManager.CurrentDocument);
         }

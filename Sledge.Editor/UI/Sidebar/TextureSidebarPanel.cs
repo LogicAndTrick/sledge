@@ -87,6 +87,8 @@ namespace Sledge.Editor.UI.Sidebar
 
         private void DocumentAllClosed()
         {
+            GroupComboBox.Items.Clear();
+            TextureComboBox.Items.Clear();
             TextureSelected(null);
         }
 

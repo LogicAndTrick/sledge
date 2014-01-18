@@ -59,6 +59,7 @@ namespace Sledge.Editor.Documents
             Mediator.Subscribe(HotkeysMediator.FileClose, this);
             Mediator.Subscribe(HotkeysMediator.FileSave, this);
             Mediator.Subscribe(HotkeysMediator.FileSaveAs, this);
+            Mediator.Subscribe(HotkeysMediator.FileExport, this);
             Mediator.Subscribe(HotkeysMediator.FileCompile, this);
 
             Mediator.Subscribe(HotkeysMediator.HistoryUndo, this);
@@ -139,6 +140,7 @@ namespace Sledge.Editor.Documents
             Mediator.Subscribe(EditorMediator.VisgroupToggled, this);
             Mediator.Subscribe(EditorMediator.SetZoomValue, this);
             Mediator.Subscribe(EditorMediator.TextureSelected, this);
+            Mediator.Subscribe(EditorMediator.EntitySelected, this);
         }
 
         public void Unsubscribe()
@@ -218,6 +220,11 @@ namespace Sledge.Editor.Documents
         public void FileSaveAs()
         {
             _document.SaveFile(null, true);
+        }
+
+        public void FileExport()
+        {
+            _document.SaveFile(null, true, false);
         }
 
         public void FileCompile()
@@ -1066,6 +1073,11 @@ namespace Sledge.Editor.Documents
         public void TextureSelected(TextureItem selection)
         {
             _document.SetMemory("SelectedTexture", selection == null ? null : selection.Name);
+        }
+
+        public void EntitySelected(GameDataObject selection)
+        {
+            _document.SetMemory("SelectedEntity", selection == null ? null : selection.Name);
         }
     }
 }

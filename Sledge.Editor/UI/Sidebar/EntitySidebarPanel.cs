@@ -20,6 +20,7 @@ namespace Sledge.Editor.UI.Sidebar
             InitializeComponent();
 
             Mediator.Subscribe(EditorMediator.DocumentActivated, this);
+            Mediator.Subscribe(EditorMediator.DocumentAllClosed, this);
         }
 
         private void MoveToWorldButtonClicked(object sender, EventArgs e)
@@ -34,24 +35,38 @@ namespace Sledge.Editor.UI.Sidebar
 
         private void DocumentActivated(Document doc)
         {
-            var selEnt = EntityTypeList.SelectedItem;
+            var selEnt = EntityTypeList.SelectedItem as GameDataObject;
+            var sel = selEnt == null ? null : selEnt.Name;
             var def = doc.Game.DefaultPointEntity;
+            GameDataObject reselect = null, redef = null;
             EntityTypeList.Items.Clear();
             foreach (var gdo in doc.GameData.Classes.Where(x => x.ClassType == ClassType.Point).OrderBy(x => x.Name.ToLowerInvariant()))
             {
                 EntityTypeList.Items.Add(gdo);
-                if (selEnt == null && gdo.Name == def) selEnt = gdo;
+                if (String.Equals(sel, gdo.Name, StringComparison.InvariantCultureIgnoreCase)) reselect = gdo;
+                if (String.Equals(def, gdo.Name, StringComparison.InvariantCultureIgnoreCase)) redef = gdo;
             }
-            if (selEnt == null) selEnt = doc.GameData.Classes
+            if (reselect == null && redef == null) redef = doc.GameData.Classes
                 .Where(x => x.ClassType == ClassType.Point)
                 .OrderBy(x => x.Name.StartsWith("info_player_start") ? 0 : 1)
                 .FirstOrDefault();
-            EntityTypeList.SelectedItem = selEnt;
+            EntityTypeList.SelectedItem = reselect ?? redef;
+            SelectedEntityChanged(null, null);
+        }
+
+        private void DocumentAllClosed()
+        {
+            EntityTypeList.Items.Clear();
         }
 
         public void Notify(string message, object data)
         {
             Mediator.ExecuteDefault(this, message, data);
+        }
+
+        private void SelectedEntityChanged(object sender, EventArgs e)
+        {
+            Mediator.Publish(EditorMediator.EntitySelected, EntityTypeList.SelectedItem as GameDataObject);
         }
     }
 }

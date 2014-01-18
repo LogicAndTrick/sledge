@@ -169,7 +169,7 @@ namespace Sledge.Editor.Documents
             Renderer.Dispose();
         }
 
-        public bool SaveFile(string path = null, bool forceOverride = false)
+        public bool SaveFile(string path = null, bool forceOverride = false, bool switchPath = true)
         {
             path = forceOverride ? path : path ?? MapFile;
             if (path == null)
@@ -204,10 +204,13 @@ namespace Sledge.Editor.Documents
             }
 
             MapProvider.SaveMapToFile(path, Map);
-            MapFile = path;
-            MapFileName = Path.GetFileName(MapFile);
-            History.TotalActionsSinceLastSave = 0;
-            Mediator.Publish(EditorMediator.DocumentSaved, this);
+            if (switchPath)
+            {
+                MapFile = path;
+                MapFileName = Path.GetFileName(MapFile);
+                History.TotalActionsSinceLastSave = 0;
+                Mediator.Publish(EditorMediator.DocumentSaved, this);
+            }
             return true;
         }
 
@@ -411,6 +414,12 @@ namespace Sledge.Editor.Documents
         {
             var sel = GetMemory<string>("SelectedTexture");
             return sel == null ? null : TextureCollection.GetItem(sel);
+        }
+
+        public GameDataObject GetSelectedEntity()
+        {
+            var sel = GetMemory<string>("SelectedEntity");
+            return sel == null ? null : GameData.Classes.FirstOrDefault(x => x.Name == sel);
         }
     }
 }

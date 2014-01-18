@@ -147,7 +147,7 @@ namespace Sledge.Editor.Tools
 
         private void CreateEntity(Coordinate origin)
         {
-            var gd = Editor.Instance.GetSelectedEntity();
+            var gd = Document.GetSelectedEntity();
             if (gd == null) return;
 
             var col = gd.Behaviours.Where(x => x.Name == "color").ToArray();

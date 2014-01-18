@@ -21,6 +21,8 @@ namespace Sledge.Settings
         FileSave,
         [Description("Save As...")]
         FileSaveAs,
+        [Description("Export...")]
+        FileExport,
         [Description("Run")]
         FileCompile,
 
