@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Windows.Forms;
 using Sledge.Settings;
 
@@ -6,39 +7,45 @@ namespace Sledge.Editor.UI.Sidebar
 {
     public static class SidebarManager
     {
+        private static SidebarContainer _container;
+
         public static void Init(Control container)
         {
-            var scrollPanel = new SidebarContainer {Dock = DockStyle.Fill};
+            _container = new SidebarContainer { Dock = DockStyle.Fill };
 
             container.Width = Layout.SidebarWidth;
             container.Resize += (s, e) => Layout.SidebarWidth = container.Width;
 
-            container.Controls.Add(scrollPanel);
+            container.Controls.Add(_container);
 
-            CreatePanel("Textures", new TextureSidebarPanel(), scrollPanel);
-            CreatePanel("Visgroups", new VisgroupSidebarPanel(), scrollPanel);
-            CreatePanel("Entities", new EntitySidebarPanel(), scrollPanel);
-            CreatePanel("Brushes", new BrushSidebarPanel(), scrollPanel);
+            CreatePanel("Textures", new TextureSidebarPanel());
+            CreatePanel("Visgroups", new VisgroupSidebarPanel());
+            CreatePanel("Entities", new EntitySidebarPanel());
+            CreatePanel("Brushes", new BrushSidebarPanel());
         }
 
-        private static void ResizeTable(TableLayoutPanel panel)
+        private static void CreatePanel(string text, Control contents)
         {
-            if (panel.HorizontalScroll.Visible)
-            {
-                // resize the panel to remove the horizontal scrollbar
-                panel.Padding = new Padding(0, 0, SystemInformation.VerticalScrollBarWidth, 0);
-                panel.Padding = new Padding(0, 0, 0, 0);
-            }
-        }
-
-        public static SidebarPanel CreatePanel(string text, Control contents, SidebarContainer container)
-        {
-            var panel = new SidebarPanel { Text = text, Dock = DockStyle.Fill };
+            var panel = new SidebarPanel { Text = text, Dock = DockStyle.Fill, Hidden = !Expanded(text) };
             panel.AddControl(contents);
+            _container.Add(panel);
+        }
 
-            container.Add(panel);
+        public static void SaveLayout()
+        {
+            var serialised = String.Join(";", _container.GetControls()
+                .OfType<SidebarPanel>()
+                .Select(x => x.Text + ":" + (x.Hidden ? '0' : '1')));
+            Layout.SidebarLayout = serialised;
+        }
 
-            return panel;
+        private static bool Expanded(string text)
+        {
+            return Layout.SidebarLayout.Split(';')
+                .Select(x => x.Split(':'))
+                .Where(x => x.Length == 2 && x[0] == text)
+                .Select(x => x[1])
+                .FirstOrDefault() != "0";
         }
     }
 }

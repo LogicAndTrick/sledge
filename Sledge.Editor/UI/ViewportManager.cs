@@ -1,12 +1,15 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Security.Permissions;
 using System.Windows.Forms;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using Sledge.Editor.Rendering;
 using Sledge.Graphics.Helpers;
 using Sledge.Graphics.Renderables;
+using Sledge.Settings;
 using Sledge.UI;
 
 namespace Sledge.Editor.UI
@@ -21,14 +24,51 @@ namespace Sledge.Editor.UI
             Viewports = new List<ViewportBase>();
         }
 
+        private static ViewportBase CreateViewport(string setting, Viewport3D.ViewType preferred3D)
+        {
+            return CreateViewport(setting, true, preferred3D, Viewport2D.ViewDirection.Top);
+        }
+
+        private static ViewportBase CreateViewport(string setting, Viewport2D.ViewDirection preferred2D)
+        {
+            return CreateViewport(setting, false, Viewport3D.ViewType.Textured, preferred2D);
+        }
+
+        private static ViewportBase CreateViewport(string setting, bool prefer3D, Viewport3D.ViewType preferred3D, Viewport2D.ViewDirection preferred2D)
+        {
+            if (setting != null)
+            {
+                var spl = setting.ToLowerInvariant().Split('.');
+                if (spl.Length == 2)
+                {
+                    switch (spl[0])
+                    {
+                        case "viewport3d":
+                            prefer3D = true;
+                            Viewport3D.ViewType vt;
+                            if (Enum.TryParse(spl[1], true, out vt)) preferred3D = vt;
+                            break;
+                        case "viewport2d":
+                            prefer3D = false;
+                            Viewport2D.ViewDirection vd;
+                            if (Enum.TryParse(spl[1], true, out vd)) preferred2D = vd;
+                            break;
+                    }
+                }
+            }
+
+            if (prefer3D) return Create3D(preferred3D);
+            else return Create2D(preferred2D);
+        }
+
         public static void Init(TableLayoutPanel tlp)
         {
             MainWindowGrid = tlp;
 
-            var tl = Create3D(Viewport3D.ViewType.Textured);
-            var tr = Create2D(Viewport2D.ViewDirection.Top);
-            var bl = Create2D(Viewport2D.ViewDirection.Front);
-            var br = Create2D(Viewport2D.ViewDirection.Side);
+            var tl = CreateViewport(Layout.ViewportTopLeft, Viewport3D.ViewType.Textured);
+            var tr = CreateViewport(Layout.ViewportTopRight, Viewport2D.ViewDirection.Top);
+            var bl = CreateViewport(Layout.ViewportBottomLeft, Viewport2D.ViewDirection.Front);
+            var br = CreateViewport(Layout.ViewportBottomRight, Viewport2D.ViewDirection.Side);
 
             Viewports.Add(tl);
             Viewports.Add(tr);
@@ -47,6 +87,23 @@ namespace Sledge.Editor.UI
             MainWindowGrid.Controls.Add(br, 1, 1);
 
             RunAll();
+        }
+
+        private static string SerialiseViewport(Control vp)
+        {
+            var vp2 = vp as Viewport2D;
+            var vp3 = vp as Viewport3D;
+            if (vp2 != null) return "Viewport2D." + vp2.Direction;
+            if (vp3 != null) return "Viewport3D." + vp3.Type;
+            return "";
+        }
+
+        public static void SaveLayout()
+        {
+            Layout.ViewportTopLeft = SerialiseViewport(MainWindowGrid.GetControlFromPosition(0, 0));
+            Layout.ViewportTopRight = SerialiseViewport(MainWindowGrid.GetControlFromPosition(1, 0));
+            Layout.ViewportBottomLeft = SerialiseViewport(MainWindowGrid.GetControlFromPosition(0, 1));
+            Layout.ViewportBottomRight = SerialiseViewport(MainWindowGrid.GetControlFromPosition(1, 1));
         }
 
         public static PointF GetSplitterPosition()

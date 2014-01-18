@@ -99,8 +99,6 @@ namespace Sledge.Editor
 
             ViewportManager.Init(tblQuadView);
             ToolManager.Init();
-            //BrushManager.Init();
-            //BrushManager.SetBrushControl(BrushCreatePanel);
 
             foreach (var tool in ToolManager.Tools)
             {
@@ -275,6 +273,8 @@ namespace Sledge.Editor
                     return;
                 }
             }
+            SidebarManager.SaveLayout();
+            ViewportManager.SaveLayout();
             SettingsManager.SaveSession(DocumentManager.Documents.Select(x => Tuple.Create(x.MapFile, x.Game)));
             SettingsManager.Write();
         }

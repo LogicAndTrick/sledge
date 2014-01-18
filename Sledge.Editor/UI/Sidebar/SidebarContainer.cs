@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -19,11 +20,27 @@ namespace Sledge.Editor.UI.Sidebar
 
         public void Add(Control c)
         {
+            Insert(c, ContentPanel.Controls.Count);
+        }
+
+        public void Insert(Control c, int index)
+        {
             c.Dock = DockStyle.Top;
             c.Resize += DoLayout;
             ContentPanel.Controls.Add(c);
-            ContentPanel.Controls.SetChildIndex(c, 0);
+            ContentPanel.Controls.SetChildIndex(c, ContentPanel.Controls.Count - index - 1);
             DoLayout(null, null);
+        }
+
+        public void Remove(Control c)
+        {
+            ContentPanel.Controls.Remove(c);
+            DoLayout(null, null);
+        }
+
+        public IEnumerable<Control> GetControls()
+        {
+            return ContentPanel.Controls.OfType<Control>();
         }
 
         private void DoLayout(object sender, EventArgs eventArgs)
