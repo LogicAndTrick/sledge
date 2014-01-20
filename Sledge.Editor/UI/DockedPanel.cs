@@ -1,9 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing;
+using System.Drawing.Imaging;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using Sledge.Common;
+using Sledge.Editor.Properties;
 
 namespace Sledge.Editor.UI
 {
@@ -51,12 +55,13 @@ namespace Sledge.Editor.UI
                 if (value)
                 {
                     _savedDimension = DockDimension;
-                    DockDimension = 0;
+                    DockDimension = HandleWidth;
                 }
                 else
                 {
                     DockDimension = Math.Max(_savedDimension, 10);
                 }
+                Refresh();
             }
         }
 
@@ -76,6 +81,29 @@ namespace Sledge.Editor.UI
             _resizing = false;
         }
 
+        private static readonly Bitmap _arrow;
+
+        static DockedPanel()
+        {
+            _arrow = new Bitmap(Resources.Arrow_Down.Width, Resources.Arrow_Down.Height);
+            using (var g = System.Drawing.Graphics.FromImage(_arrow))
+            {
+                using (var attrs = new ImageAttributes())
+                {
+                    var colorMatrix = new ColorMatrix(new[]
+                    {
+                        new float[] {1, 0, 0, 0, 0},
+                        new float[] {0, 1, 0, 0, 0},
+                        new float[] {0, 0, 1, 0, 0},
+                        new float[] {0, 0, 0, 0.5f, 0},
+                        new float[] {0, 0, 0, 0, 1}
+                    });
+                    attrs.SetColorMatrix(colorMatrix, ColorMatrixFlag.Default, ColorAdjustType.Bitmap);
+                    g.DrawImage(Resources.Arrow_Down, new Rectangle(0, 0, _arrow.Width, _arrow.Height), 0, 0, _arrow.Width, _arrow.Height, GraphicsUnit.Pixel, attrs);
+                }
+            }
+        }
+
         private const int ResizeHandleSize = 4;
 
         private bool IsInResizeArea(MouseEventArgs e)
@@ -84,13 +112,28 @@ namespace Sledge.Editor.UI
             {
                 case DockStyle.Left:
                     return Width >= e.X && Width - ResizeHandleSize <= e.X;
-                    break;
                 case DockStyle.Right:
                     return e.X >= 0 && e.X <= ResizeHandleSize;
                 case DockStyle.Top:
                     return Height >= e.Y && Height - ResizeHandleSize <= e.Y;
                 case DockStyle.Bottom:
                     return e.Y >= 0 && e.Y <= ResizeHandleSize;
+            }
+            return false;
+        }
+
+        private bool IsInButtonArea(MouseEventArgs e)
+        {
+            switch (Dock)
+            {
+                case DockStyle.Left:
+                    return Width >= e.X && Width - ButtonHeight <= e.X && e.Y <= ButtonHeight;
+                case DockStyle.Right:
+                    return e.X >= 0 && e.X <= ButtonHeight && e.Y <= ButtonHeight;
+                case DockStyle.Top:
+                    return Height >= e.Y && Height - ButtonHeight <= e.Y && e.X <= ButtonHeight;
+                case DockStyle.Bottom:
+                    return e.Y >= 0 && e.Y <= ButtonHeight && e.X <= ButtonHeight;
             }
             return false;
         }
@@ -119,14 +162,19 @@ namespace Sledge.Editor.UI
 
         protected override void OnMouseMove(MouseEventArgs e)
         {
-            if (Hidden) return;
             if (_resizing)
             {
                 SetDockSize(e);
             } 
             else
             {
-                if (IsInResizeArea(e))
+                var ba = IsInButtonArea(e);
+                var ra = IsInResizeArea(e);
+                if (ba || (_hidden && ra))
+                {
+                    Cursor = Cursors.Hand;
+                }
+                else if (ra && !_hidden)
                 {
                     Cursor = (Dock == DockStyle.Left || Dock == DockStyle.Right) ? Cursors.SizeWE : Cursors.SizeNS;
                 }
@@ -146,7 +194,10 @@ namespace Sledge.Editor.UI
 
         protected override void OnMouseDown(MouseEventArgs e)
         {
-            if (IsInResizeArea(e)) _resizing = true;
+            var ba = IsInButtonArea(e);
+            var ra = IsInResizeArea(e);
+            if (ba || (ra && _hidden)) Hidden = !Hidden;
+            else if (!_hidden && IsInResizeArea(e)) _resizing = true;
             base.OnMouseDown(e);
         }
 
@@ -154,6 +205,78 @@ namespace Sledge.Editor.UI
         {
             _resizing = false;
             base.OnMouseUp(e);
+        }
+
+        private const int ButtonHeight = 12;
+        private const int HandleWidth = 8;
+        private const int RenderHandleWidth = 3;
+
+        protected override void OnDockChanged(EventArgs e)
+        {
+            var padding = new Padding(0);
+            switch (Dock)
+            {
+                case DockStyle.Top:
+                    padding.Bottom = HandleWidth;
+                    break;
+                case DockStyle.Bottom:
+                    padding.Top = HandleWidth;
+                    break;
+                case DockStyle.Left:
+                    padding.Right = HandleWidth;
+                    break;
+                case DockStyle.Right:
+                    padding.Left = HandleWidth;
+                    break;
+            }
+            Padding = padding;
+        }
+
+        protected override void OnPaint(PaintEventArgs e)
+        {
+            base.OnPaint(e);
+
+            const int padding = 4;
+            var rect = Rectangle.Empty;
+            var rotflip = RotateFlipType.RotateNoneFlipNone;
+            int buttonX = 0, buttonY = 0;
+            switch (Dock)
+            {
+                case DockStyle.Top:
+                    rect = new Rectangle(padding + ButtonHeight, Height - RenderHandleWidth - 1, Width - padding - padding - ButtonHeight, RenderHandleWidth);
+                    rotflip = _hidden ? RotateFlipType.RotateNoneFlipNone : RotateFlipType.RotateNoneFlipY;
+                    buttonX = padding;
+                    buttonY = Height - HandleWidth;
+                    break;
+                case DockStyle.Bottom:
+                    rect = new Rectangle(padding + ButtonHeight, 1, Width - padding - padding - ButtonHeight, RenderHandleWidth);
+                    rotflip = !_hidden ? RotateFlipType.RotateNoneFlipNone : RotateFlipType.RotateNoneFlipY;
+                    buttonX = padding;
+                    break;
+                case DockStyle.Left:
+                    rect = new Rectangle(Width - RenderHandleWidth - 1, padding + ButtonHeight, RenderHandleWidth, Height - padding - padding - ButtonHeight);
+                    rotflip = _hidden ? RotateFlipType.Rotate90FlipX : RotateFlipType.Rotate90FlipNone;
+                    buttonY = padding;
+                    buttonX = Width - HandleWidth;
+                    break;
+                case DockStyle.Right:
+                    rect = new Rectangle(1, padding + ButtonHeight, RenderHandleWidth, Height - padding - padding - ButtonHeight);
+                    rotflip = !_hidden ? RotateFlipType.Rotate90FlipX : RotateFlipType.Rotate90FlipNone;
+                    buttonY = padding;
+                    break;
+            }
+            if (!rect.IsEmpty)
+            {
+                using (var b = new SolidBrush(BackColor.Darken(_hidden ? 10 : 40)))
+                {
+                    e.Graphics.FillRectangle(b, rect);
+                }
+                using (var cl = new Bitmap(_arrow))
+                {
+                    cl.RotateFlip(rotflip);
+                    e.Graphics.DrawImage(cl, buttonX, buttonY);
+                }
+            }
         }
     }
 }

@@ -316,11 +316,15 @@ namespace Sledge.Editor
             this.tblQuadView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tblQuadView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tblQuadView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tblQuadView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tblQuadView.Location = new System.Drawing.Point(0, 24);
             this.tblQuadView.MinimumViewSize = 2;
             this.tblQuadView.Name = "tblQuadView";
             this.tblQuadView.RowCount = 2;
+            this.tblQuadView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tblQuadView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tblQuadView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tblQuadView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
@@ -487,7 +491,7 @@ namespace Sledge.Editor
             this.tabPage1.ImageIndex = 0;
             this.tabPage1.Location = new System.Drawing.Point(4, 25);
             this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Size = new System.Drawing.Size(426, -5);
+            this.tabPage1.Size = new System.Drawing.Size(559, -5);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Tab";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -500,7 +504,6 @@ namespace Sledge.Editor
             this.RightSidebar.Location = new System.Drawing.Point(593, 0);
             this.RightSidebar.MinSize = 230;
             this.RightSidebar.Name = "RightSidebar";
-            this.RightSidebar.Padding = new System.Windows.Forms.Padding(5, 0, 0, 0);
             this.RightSidebar.Size = new System.Drawing.Size(230, 660);
             this.RightSidebar.TabIndex = 3;
             // 
@@ -531,7 +534,6 @@ namespace Sledge.Editor
             this.DockRight.Hidden = false;
             this.DockRight.Location = new System.Drawing.Point(823, 0);
             this.DockRight.Name = "DockRight";
-            this.DockRight.Padding = new System.Windows.Forms.Padding(5, 0, 0, 0);
             this.DockRight.Size = new System.Drawing.Size(22, 677);
             this.DockRight.TabIndex = 1;
             // 
