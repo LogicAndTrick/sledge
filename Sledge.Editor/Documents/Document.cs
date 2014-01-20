@@ -202,7 +202,7 @@ namespace Sledge.Editor.Documents
                 Map.ActiveCamera.EyePosition = new Coordinate((decimal)loc.X, (decimal)loc.Y, (decimal)loc.Z);
                 Map.ActiveCamera.LookPosition = new Coordinate((decimal)look.X, (decimal)look.Y, (decimal)look.Z);
             }
-
+            Map.WorldSpawn.EntityData.SetPropertyValue("wad", string.Join(";", Game.Wads.Select(x => x.Path)));
             MapProvider.SaveMapToFile(path, Map);
             if (switchPath)
             {
