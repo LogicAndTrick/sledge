@@ -309,6 +309,13 @@
     <Compile Include="UI\DockedPanel.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="UI\DockPanels\OutputMessagePanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\DockPanels\OutputMessagePanel.Designer.cs">
+      <DependentUpon>OutputMessagePanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\DockPanels\OutputWord.cs" />
     <Compile Include="UI\EntityReportDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -573,6 +580,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UI\CollapsingLabel.resx">
       <DependentUpon>CollapsingLabel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\DockPanels\OutputMessagePanel.resx">
+      <DependentUpon>OutputMessagePanel.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\EntityReportDialog.resx">
       <DependentUpon>EntityReportDialog.cs</DependentUpon>

@@ -50,12 +50,14 @@ namespace Sledge.Editor
             this.DockBottom = new Sledge.Editor.UI.DockedPanel();
             this.DockRight = new Sledge.Editor.UI.DockedPanel();
             this.tspTools = new System.Windows.Forms.ToolStrip();
+            this.outputMessagePanel1 = new Sledge.Editor.UI.DockPanels.OutputMessagePanel();
             this.stsStatus.SuspendLayout();
             this.tscToolStrip.ContentPanel.SuspendLayout();
             this.tscToolStrip.LeftToolStripPanel.SuspendLayout();
             this.tscToolStrip.SuspendLayout();
             this.DockFill.SuspendLayout();
             this.DocumentTabs.SuspendLayout();
+            this.DockBottom.SuspendLayout();
             this.SuspendLayout();
             // 
             // mnuMain
@@ -164,12 +166,16 @@ namespace Sledge.Editor
             this.DockFill.Hidden = false;
             this.DockFill.Location = new System.Drawing.Point(26, 0);
             this.DockFill.Name = "DockFill";
-            this.DockFill.Size = new System.Drawing.Size(567, 660);
+            this.DockFill.Size = new System.Drawing.Size(567, 528);
             this.DockFill.TabIndex = 4;
             // 
             // tblQuadView
             // 
             this.tblQuadView.ColumnCount = 2;
+            this.tblQuadView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tblQuadView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tblQuadView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tblQuadView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
@@ -471,7 +477,11 @@ namespace Sledge.Editor
             this.tblQuadView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tblQuadView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tblQuadView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tblQuadView.Size = new System.Drawing.Size(567, 636);
+            this.tblQuadView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblQuadView.Size = new System.Drawing.Size(567, 504);
             this.tblQuadView.TabIndex = 0;
             // 
             // DocumentTabs
@@ -504,7 +514,8 @@ namespace Sledge.Editor
             this.RightSidebar.Location = new System.Drawing.Point(593, 0);
             this.RightSidebar.MinSize = 230;
             this.RightSidebar.Name = "RightSidebar";
-            this.RightSidebar.Size = new System.Drawing.Size(230, 660);
+            this.RightSidebar.Padding = new System.Windows.Forms.Padding(8, 0, 0, 0);
+            this.RightSidebar.Size = new System.Drawing.Size(230, 528);
             this.RightSidebar.TabIndex = 3;
             // 
             // DockLeft
@@ -514,17 +525,20 @@ namespace Sledge.Editor
             this.DockLeft.Hidden = false;
             this.DockLeft.Location = new System.Drawing.Point(0, 0);
             this.DockLeft.Name = "DockLeft";
-            this.DockLeft.Size = new System.Drawing.Size(26, 660);
+            this.DockLeft.Padding = new System.Windows.Forms.Padding(0, 0, 8, 0);
+            this.DockLeft.Size = new System.Drawing.Size(26, 528);
             this.DockLeft.TabIndex = 3;
             // 
             // DockBottom
             // 
+            this.DockBottom.Controls.Add(this.outputMessagePanel1);
             this.DockBottom.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.DockBottom.DockDimension = 17;
+            this.DockBottom.DockDimension = 149;
             this.DockBottom.Hidden = false;
-            this.DockBottom.Location = new System.Drawing.Point(0, 660);
+            this.DockBottom.Location = new System.Drawing.Point(0, 528);
             this.DockBottom.Name = "DockBottom";
-            this.DockBottom.Size = new System.Drawing.Size(823, 17);
+            this.DockBottom.Padding = new System.Windows.Forms.Padding(0, 8, 0, 0);
+            this.DockBottom.Size = new System.Drawing.Size(823, 149);
             this.DockBottom.TabIndex = 3;
             // 
             // DockRight
@@ -534,6 +548,7 @@ namespace Sledge.Editor
             this.DockRight.Hidden = false;
             this.DockRight.Location = new System.Drawing.Point(823, 0);
             this.DockRight.Name = "DockRight";
+            this.DockRight.Padding = new System.Windows.Forms.Padding(8, 0, 0, 0);
             this.DockRight.Size = new System.Drawing.Size(22, 677);
             this.DockRight.TabIndex = 1;
             // 
@@ -546,6 +561,14 @@ namespace Sledge.Editor
             this.tspTools.Padding = new System.Windows.Forms.Padding(6, 3, 3, 3);
             this.tspTools.Size = new System.Drawing.Size(34, 117);
             this.tspTools.TabIndex = 0;
+            // 
+            // outputMessagePanel1
+            // 
+            this.outputMessagePanel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.outputMessagePanel1.Location = new System.Drawing.Point(0, 8);
+            this.outputMessagePanel1.Name = "outputMessagePanel1";
+            this.outputMessagePanel1.Size = new System.Drawing.Size(823, 141);
+            this.outputMessagePanel1.TabIndex = 0;
             // 
             // Editor
             // 
@@ -573,6 +596,7 @@ namespace Sledge.Editor
             this.tscToolStrip.PerformLayout();
             this.DockFill.ResumeLayout(false);
             this.DocumentTabs.ResumeLayout(false);
+            this.DockBottom.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -598,6 +622,7 @@ namespace Sledge.Editor
         private UI.DockedPanel RightSidebar;
         private UI.DockedPanel DockLeft;
         private UI.DockedPanel DockBottom;
+        private UI.DockPanels.OutputMessagePanel outputMessagePanel1;
     }
 }
 
