@@ -64,6 +64,9 @@ namespace Sledge.Editor
         FileSaved,
         FileAutosaved,
 
+        // Message logging
+        OutputMessage,
+
         // Editor messages
         LoadFile,
         UpdateMenu,

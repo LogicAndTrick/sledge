@@ -8,10 +8,16 @@ namespace Sledge.Editor.UI.DockPanels
         public ConsoleColor Colour { get; set; }
         public string Text { get; set; }
 
-        public OutputWord()
+        public OutputWord(string text)
         {
+            Text = text ?? "";
             Colour = ConsoleColor.Black;
-            Text = "";
+        }
+
+        public OutputWord(string text, ConsoleColor color)
+        {
+            Colour = color;
+            Text = text ?? "";
         }
 
         public Color GetColour()

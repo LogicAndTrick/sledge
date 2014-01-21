@@ -6,10 +6,11 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using Sledge.Common.Mediator;
 
 namespace Sledge.Editor.UI.DockPanels
 {
-    public partial class OutputMessagePanel : UserControl
+    public partial class OutputMessagePanel : UserControl, IMediatorListener
     {
         private readonly Dictionary<string, List<OutputWord>> _words;
         private string _currentType;
@@ -22,11 +23,7 @@ namespace Sledge.Editor.UI.DockPanels
 
             OutputType.SelectedIndex = OutputType.Items.Count - 1;
 
-            AddOutput("Debug", new OutputWord { Colour = ConsoleColor.Black, Text = "Test1 " });
-            AddOutput("Debug", new OutputWord { Colour = ConsoleColor.Red, Text = "Test2\n" });
-            AddOutput("Debug", new OutputWord { Colour = ConsoleColor.DarkGreen, Text = "Test3 - " });
-            AddOutput("Debug", new OutputWord { Colour = ConsoleColor.Magenta, Text = "Test4\n\n" });
-            AddOutput("Debug", new OutputWord { Colour = ConsoleColor.Cyan, Text = "Test5" });
+            Mediator.Subscribe(EditorMediator.OutputMessage, this);
         }
 
         private void OutputTypeChanged(object sender, EventArgs e)
@@ -47,6 +44,32 @@ namespace Sledge.Editor.UI.DockPanels
             }
         }
 
+        private void OutputMessage(string type, string text)
+        {
+            AddOutput(type, new OutputWord(text));
+        }
+
+        private void OutputMessage(string type, OutputWord word)
+        {
+            AddOutput(type, word);
+        }
+
+        private void OutputMessage(string type, List<OutputWord> words)
+        {
+            if (!_words.ContainsKey(type)) _words.Add(type, new List<OutputWord>());
+            _words[type].AddRange(words);
+            if (type == _currentType)
+            {
+                OutputBox.Select(OutputBox.TextLength, 0);
+                foreach (var word in words)
+                {
+                    OutputBox.SelectionColor = word.GetColour();
+                    OutputBox.AppendText(word.Text);
+                }
+                OutputBox.ScrollToCaret();
+            }
+        }
+        
         public void AddOutput(string type, OutputWord word)
         {
             if (!_words.ContainsKey(type)) _words.Add(type, new List<OutputWord>());
@@ -58,6 +81,17 @@ namespace Sledge.Editor.UI.DockPanels
                 OutputBox.AppendText(word.Text);
                 OutputBox.ScrollToCaret();
             }
+        }
+
+        public void Notify(string message, object data)
+        {
+            Mediator.ExecuteDefault(this, message, data);
+        }
+
+        private void ClearButtonClicked(object sender, EventArgs e)
+        {
+            if (_words.ContainsKey(_currentType)) _words[_currentType].Clear();
+            OutputBox.Clear();
         }
     }
 }

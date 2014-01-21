@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
@@ -59,7 +60,9 @@ namespace Sledge.Common.Mediator
             }
             if (method != null)
             {
-                method.Invoke(obj, parameters);
+                var sync = obj as ISynchronizeInvoke;
+                if (sync != null && sync.InvokeRequired) sync.Invoke(new Action(() => method.Invoke(obj, parameters)), null);
+                else method.Invoke(obj, parameters);
                 return true;
             }
             return false;

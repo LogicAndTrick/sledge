@@ -39,7 +39,7 @@
             this.OutputType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.OutputType.FormattingEnabled = true;
             this.OutputType.Items.AddRange(new object[] {
-            "Debug"});
+            "Compile"});
             this.OutputType.Location = new System.Drawing.Point(79, 3);
             this.OutputType.Name = "OutputType";
             this.OutputType.Size = new System.Drawing.Size(121, 21);
@@ -78,6 +78,7 @@
             this.ClearButton.TabIndex = 3;
             this.ClearButton.Text = "Clear";
             this.ClearButton.UseVisualStyleBackColor = true;
+            this.ClearButton.Click += new System.EventHandler(this.ClearButtonClicked);
             // 
             // OutputMessagePanel
             // 
