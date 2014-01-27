@@ -118,6 +118,16 @@ namespace Sledge.Editor.UI
             _mouseDown = new Coordinate(e.X, Viewport2D.Height - e.Y, 0);
         }
 
+        public void MouseClick(ViewportEvent e)
+        {
+            
+        }
+
+        public void MouseDoubleClick(ViewportEvent e)
+        {
+            
+        }
+
         public void MouseEnter(ViewportEvent e)
         {
             if (KeyboardState.IsKeyDown(Keys.Space))

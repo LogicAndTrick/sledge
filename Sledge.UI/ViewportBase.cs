@@ -284,6 +284,16 @@ namespace Sledge.UI
             ListenerDoEvent(new ViewportEvent(this, e), (l, v) => l.MouseDown(v));
         }
 
+        protected override void OnMouseClick(MouseEventArgs e)
+        {
+            ListenerDoEvent(new ViewportEvent(this, e), (l, v) => l.MouseClick(v));
+        }
+
+        protected override void OnMouseDoubleClick(MouseEventArgs e)
+        {
+            ListenerDoEvent(new ViewportEvent(this, e), (l, v) => l.MouseDoubleClick(v));
+        }
+
         protected override bool IsInputKey(Keys keyData)
         {
             // http://www.opentk.com/node/1192

@@ -104,6 +104,16 @@ namespace Sledge.Editor.Tools
             if (_currentTool != null) _currentTool.MouseLeave(viewport, e);
         }
 
+        public override void MouseClick(ViewportBase viewport, ViewportEvent e)
+        {
+            if (_currentTool != null) _currentTool.MouseClick(viewport, e);
+        }
+
+        public override void MouseDoubleClick(ViewportBase viewport, ViewportEvent e)
+        {
+            if (_currentTool != null) _currentTool.MouseDoubleClick(viewport, e);
+        }
+
         public override void MouseUp(ViewportBase viewport, ViewportEvent e)
         {
             if (_currentTool != null) _currentTool.MouseUp(viewport, e);

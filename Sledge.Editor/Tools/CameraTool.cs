@@ -170,7 +170,17 @@ namespace Sledge.Editor.Tools
                 SetViewportCamera(_stateCamera.EyePosition, _stateCamera.LookPosition);
                 Document.Map.ActiveCamera = _stateCamera;
             }
-            
+
+        }
+
+        public override void MouseClick(ViewportBase viewport, ViewportEvent e)
+        {
+            // Not used
+        }
+
+        public override void MouseDoubleClick(ViewportBase viewport, ViewportEvent e)
+        {
+            // Not used
         }
 
         public override void MouseUp(ViewportBase viewport, ViewportEvent e)

@@ -221,6 +221,16 @@ namespace Sledge.Editor.Tools
             State.PreTransformBoxEnd = State.BoxEnd;
         }
 
+        public override void MouseClick(ViewportBase viewport, ViewportEvent e)
+        {
+            // Not used
+        }
+
+        public override void MouseDoubleClick(ViewportBase viewport, ViewportEvent e)
+        {
+            // Not used
+        }
+
         // Mouse Up
         public override void MouseUp(ViewportBase viewport, ViewportEvent e)
         {

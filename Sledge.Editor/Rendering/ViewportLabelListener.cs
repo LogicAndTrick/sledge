@@ -181,6 +181,16 @@ namespace Sledge.Editor.Rendering
             }
         }
 
+        public void MouseClick(ViewportEvent e)
+        {
+            
+        }
+
+        public void MouseDoubleClick(ViewportEvent e)
+        {
+
+        }
+
         public void MouseEnter(ViewportEvent e)
         {
 

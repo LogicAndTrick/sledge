@@ -78,6 +78,16 @@ namespace Sledge.Editor.Tools.DisplacementTools
             //}
         }
 
+        public override void MouseClick(ViewportBase viewport, ViewportEvent e)
+        {
+            // Not used
+        }
+
+        public override void MouseDoubleClick(ViewportBase viewport, ViewportEvent e)
+        {
+            // Not used
+        }
+
         public override void MouseUp(ViewportBase viewport, ViewportEvent e)
         {
             //

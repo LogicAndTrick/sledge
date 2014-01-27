@@ -181,6 +181,11 @@ namespace Sledge.Editor.Tools.VMTools
 
         }
 
+        public override void MouseDoubleClick(ViewportBase viewport, ViewportEvent e)
+        {
+            // Not used
+        }
+
         public override void MouseUp(ViewportBase viewport, ViewportEvent e)
         {
 

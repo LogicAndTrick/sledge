@@ -103,6 +103,16 @@ namespace Sledge.Editor.Tools
             CreateEntity(hit.Intersection);
         }
 
+        public override void MouseClick(ViewportBase viewport, ViewportEvent e)
+        {
+            // Not used
+        }
+
+        public override void MouseDoubleClick(ViewportBase viewport, ViewportEvent e)
+        {
+            // Not used
+        }
+
         public override void MouseUp(ViewportBase viewport, ViewportEvent e)
         {
             if (!(viewport is Viewport2D) || e.Button != MouseButtons.Left) return;

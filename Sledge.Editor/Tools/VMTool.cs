@@ -583,6 +583,16 @@ namespace Sledge.Editor.Tools
             _movingPoint = vtx;
         }
 
+        public override void MouseClick(ViewportBase viewport, ViewportEvent e)
+        {
+            // Not used
+        }
+
+        public override void MouseDoubleClick(ViewportBase viewport, ViewportEvent e)
+        {
+            // Not used
+        }
+
         public override void MouseUp(ViewportBase viewport, ViewportEvent e)
         {
             base.MouseUp(viewport, e);

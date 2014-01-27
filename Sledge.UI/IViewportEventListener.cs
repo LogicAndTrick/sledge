@@ -12,6 +12,8 @@
         void MouseWheel(ViewportEvent e);
         void MouseUp(ViewportEvent e);
         void MouseDown(ViewportEvent e);
+        void MouseClick(ViewportEvent e);
+        void MouseDoubleClick(ViewportEvent e);
 
         void MouseEnter(ViewportEvent e);
         void MouseLeave(ViewportEvent e);

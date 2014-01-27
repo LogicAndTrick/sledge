@@ -16,6 +16,9 @@ namespace Sledge.Editor.UI.ObjectProperties
 {
     public partial class ObjectPropertiesDialog : Form, IMediatorListener
     {
+        private static int _numOpen = 0;
+        public static bool IsShowing { get { return _numOpen > 0; } }
+
         private List<TableValue> _values;
 
         private readonly Dictionary<VariableType, SmartEditControl> _smartEditControls;
@@ -284,6 +287,7 @@ namespace Sledge.Editor.UI.ObjectProperties
 
         protected override void OnLoad(EventArgs e)
         {
+            _numOpen += 1;
             UpdateObjects();
 
             Mediator.Subscribe(EditorMediator.SelectionChanged, this);
@@ -295,6 +299,7 @@ namespace Sledge.Editor.UI.ObjectProperties
 
         protected override void OnClosed(EventArgs e)
         {
+            _numOpen -= 1;
             Mediator.UnsubscribeAll(this);
             base.OnClosed(e);
         }

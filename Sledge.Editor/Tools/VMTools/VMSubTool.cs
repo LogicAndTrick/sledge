@@ -47,7 +47,6 @@ namespace Sledge.Editor.Tools.VMTools
         public abstract void DragStart(List<VMPoint> clickedPoints);
         public abstract void DragMove(Coordinate distance);
         public abstract void DragEnd();
-        public abstract void MouseClick(ViewportBase viewport, ViewportEvent e);
 
         public abstract void Render2D(Viewport2D viewport);
         public abstract void Render3D(Viewport3D viewport);

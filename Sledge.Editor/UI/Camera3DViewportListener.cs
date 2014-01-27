@@ -235,6 +235,16 @@ namespace Sledge.Editor.UI
             SetFreeLook();
         }
 
+        public void MouseClick(ViewportEvent e)
+        {
+            
+        }
+
+        public void MouseDoubleClick(ViewportEvent e)
+        {
+            
+        }
+
         public void MouseEnter(ViewportEvent e)
         {
             Focus = true;

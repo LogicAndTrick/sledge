@@ -66,6 +66,16 @@ namespace Sledge.Editor.UI
             // Not used
         }
 
+        public void MouseClick(ViewportEvent e)
+        {
+            // Not used
+        }
+
+        public void MouseDoubleClick(ViewportEvent e)
+        {
+            // Not used
+        }
+
         public void MouseEnter(ViewportEvent e)
         {
             // Not used

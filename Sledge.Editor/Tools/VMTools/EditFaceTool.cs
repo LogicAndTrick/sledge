@@ -143,11 +143,6 @@ namespace Sledge.Editor.Tools.VMTools
 
         }
 
-        public override void MouseClick(ViewportBase viewport, ViewportEvent e)
-        {
-
-        }
-
         public override void MouseEnter(ViewportBase viewport, ViewportEvent e)
         {
             
@@ -194,6 +189,16 @@ namespace Sledge.Editor.Tools.VMTools
                 s.IsSelected = false;
                 foreach (var f in s.Faces) f.IsSelected = _selection.Contains(f);
             }
+        }
+
+        public override void MouseClick(ViewportBase viewport, ViewportEvent e)
+        {
+            // Not used
+        }
+
+        public override void MouseDoubleClick(ViewportBase viewport, ViewportEvent e)
+        {
+            // Not used
         }
 
         public override void MouseUp(ViewportBase viewport, ViewportEvent e)

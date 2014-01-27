@@ -214,6 +214,11 @@ namespace Sledge.Editor.Tools.VMTools
             _state = VMState.None;
         }
 
+        public override void MouseDoubleClick(ViewportBase viewport, ViewportEvent e)
+        {
+            // Not used
+        }
+
         private void CheckMergedVertices()
         {
             // adjacent points with the same solid and coordinate need to be merged (erp)

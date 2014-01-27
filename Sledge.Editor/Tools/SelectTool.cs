@@ -18,6 +18,7 @@ using Sledge.Editor.History;
 using Sledge.Editor.Properties;
 using Sledge.Editor.Rendering;
 using Sledge.Editor.Tools.TransformationTools;
+using Sledge.Editor.UI.ObjectProperties;
 using Sledge.Graphics;
 using Sledge.Settings;
 using Sledge.UI;
@@ -194,6 +195,16 @@ namespace Sledge.Editor.Tools
             Document.PerformAction("Selection changed", new ChangeSelection(selected, deselected));
         }
 
+        #endregion
+
+        #region Double Click
+        public override void MouseDoubleClick(ViewportBase viewport, ViewportEvent e)
+        {
+            if (!Document.Selection.IsEmpty() && !ObjectPropertiesDialog.IsShowing)
+            {
+                Mediator.Publish(HotkeysMediator.ObjectProperties);
+            }
+        }
         #endregion
 
         #region 3D selection

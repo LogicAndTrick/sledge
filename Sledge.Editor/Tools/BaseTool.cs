@@ -89,6 +89,8 @@ namespace Sledge.Editor.Tools
         public abstract void MouseEnter(ViewportBase viewport, ViewportEvent e);
         public abstract void MouseLeave(ViewportBase viewport, ViewportEvent e);
         public abstract void MouseDown(ViewportBase viewport, ViewportEvent e);
+        public abstract void MouseClick(ViewportBase viewport, ViewportEvent e);
+        public abstract void MouseDoubleClick(ViewportBase viewport, ViewportEvent e);
         public abstract void MouseUp(ViewportBase viewport, ViewportEvent e);
         public abstract void MouseWheel(ViewportBase viewport, ViewportEvent e);
         public abstract void MouseMove(ViewportBase viewport, ViewportEvent e);

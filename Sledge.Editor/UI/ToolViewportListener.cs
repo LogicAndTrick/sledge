@@ -67,6 +67,18 @@ namespace Sledge.Editor.UI
             ToolManager.ActiveTool.MouseDown(Viewport, e);
         }
 
+        public void MouseClick(ViewportEvent e)
+        {
+            if (!ShouldRelayEvent(ToolManager.ActiveTool)) return;
+            ToolManager.ActiveTool.MouseClick(Viewport, e);
+        }
+
+        public void MouseDoubleClick(ViewportEvent e)
+        {
+            if (!ShouldRelayEvent(ToolManager.ActiveTool)) return;
+            ToolManager.ActiveTool.MouseDoubleClick(Viewport, e);
+        }
+
         public void MouseEnter(ViewportEvent e)
         {
             if (!ShouldRelayEvent(ToolManager.ActiveTool)) return;
