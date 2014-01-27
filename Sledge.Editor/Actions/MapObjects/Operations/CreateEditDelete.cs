@@ -197,10 +197,12 @@ namespace Sledge.Editor.Actions.MapObjects.Operations
             // Create
             _createdIds = _objectsToCreate.Select(x => x.ID).ToList();
             _objectsToCreate.ForEach(x => x.SetParent(document.Map.WorldSpawn));
-            if (_objectsToCreate.Any(x => x.IsSelected))
-            {
-                document.Selection.Select(_objectsToCreate.Where(x => x.IsSelected));
-            }
+
+            // Select objects if IsSelected is true
+            var sel = _objectsToCreate.Where(x => x.IsSelected).ToList();
+            sel.RemoveAll(x => x.BoundingBox == null); // Don't select objects with no bbox
+            if (sel.Any()) document.Selection.Select(sel);
+
             document.Map.UpdateAutoVisgroups(_objectsToCreate, true);
             _objectsToCreate = null;
 

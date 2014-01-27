@@ -35,7 +35,7 @@ namespace Sledge.Editor.Actions.MapObjects.Selection
 
         public void Perform(Document document)
         {
-            document.Selection.Select(_objects);
+            document.Selection.Select(_objects.Where(x => x.BoundingBox != null));
 
             Mediator.Publish(EditorMediator.DocumentTreeObjectsChanged, _objects);
             Mediator.Publish(EditorMediator.SelectionChanged);

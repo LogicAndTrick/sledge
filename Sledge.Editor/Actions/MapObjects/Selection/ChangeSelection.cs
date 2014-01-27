@@ -24,7 +24,7 @@ namespace Sledge.Editor.Actions.MapObjects.Selection
 
         public void Reverse(Document document)
         {
-            document.Selection.Select(_deselected);
+            document.Selection.Select(_deselected.Where(x => x.BoundingBox != null));
             document.Selection.Deselect(_selected);
 
             Mediator.Publish(EditorMediator.DocumentTreeObjectsChanged, _selected.Union(_deselected));
@@ -34,7 +34,7 @@ namespace Sledge.Editor.Actions.MapObjects.Selection
         public void Perform(Document document)
         {
             document.Selection.Deselect(_deselected);
-            document.Selection.Select(_selected);
+            document.Selection.Select(_selected.Where(x => x.BoundingBox != null));
 
             Mediator.Publish(EditorMediator.DocumentTreeObjectsChanged, _selected.Union(_deselected));
             Mediator.Publish(EditorMediator.SelectionChanged);
