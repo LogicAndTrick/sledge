@@ -206,6 +206,21 @@ namespace Sledge.Editor.Actions.MapObjects.Operations
 
             // Delete
             var objects = document.Map.WorldSpawn.Find(x => _idsToDelete.Contains(x.ID) && x.Parent != null);
+
+            // Recursively check for parent groups that will be empty after these objects have been deleted
+            IList<MapObject> emptyParents;
+            do
+            {
+                // Exclude world objects, but we want to remove Group and (brush) Entity objects as they are invalid if empty.
+                emptyParents = objects.Where(x => x.Parent != null && !(x.Parent is World) && x.Parent.Children.Count == 1).ToList();
+                foreach (var ep in emptyParents)
+                {
+                    // Swap the child object for its parent
+                    objects.Remove(ep);
+                    objects.Add(ep.Parent);
+                }
+            } while (emptyParents.Any()); // If we changed the collection, we need to re-check
+
             _deletedObjects = objects.Select(x => new DeleteReference(x, x.Parent.ID, x.IsSelected, !objects.Contains(x.Parent))).ToList();
             document.Selection.Deselect(objects);
             foreach (var dr in _deletedObjects.Where(x => x.TopMost))
