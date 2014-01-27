@@ -131,6 +131,7 @@
     <Compile Include="Compiling\Batch.cs" />
     <Compile Include="Compiling\BatchCompiler.cs" />
     <Compile Include="Compiling\BatchCompileStep.cs" />
+    <Compile Include="Compiling\CompileLogTracer.cs" />
     <Compile Include="Documents\Document.cs" />
     <Compile Include="Documents\DocumentManager.cs" />
     <Compile Include="Documents\DocumentMemory.cs" />
