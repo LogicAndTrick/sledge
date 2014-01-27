@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using Sledge.Common.Mediator;
 using Sledge.Settings;
 using Sledge.Settings.Models;
 
@@ -44,6 +45,19 @@ namespace Sledge.Editor
                     btn.Click += (s, ev) => SelectGame(btnGame);
                     GameTable.Controls.Add(btn);
                 }
+            }
+
+            if (!SettingsManager.Games.Any())
+            {
+                if (MessageBox.Show(
+                    "You must set up a game configuration before you can create a map. Would you like to set one up now?",
+                    "No Game Configuration Found",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Warning) == DialogResult.Yes)
+                {
+                    Mediator.Publish(EditorMediator.OpenSettings);
+                }
+                Close();
             }
         }
 
