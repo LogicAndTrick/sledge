@@ -51,6 +51,7 @@ namespace Sledge.Editor.Rendering.Renderers
 
             // Can't use a single grid array as it varies depending on the zoom level (pixel hiding factor)
             GridArrays = ViewportManager.Viewports.OfType<Viewport2D>().ToDictionary(x => x, x => new GridArray());
+            UpdateGrid(document.Map.GridSpacing, document.Map.Show2DGrid, document.Map.Show3DGrid);
 
             _selectionTransformMat = Matrix.Identity;
             _selectionTransform = Matrix4.Identity;
