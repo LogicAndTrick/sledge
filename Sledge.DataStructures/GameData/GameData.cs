@@ -11,6 +11,8 @@ namespace Sledge.DataStructures.GameData
         public int MapSizeHigh { get; set; }
         public List<GameDataObject> Classes { get; private set; }
         public List<string> Includes { get; private set; }
+        public List<string> MaterialExclusions { get; private set; }
+        public List<AutoVisgroupSection> AutoVisgroups { get; private set; }
 
         public GameData()
         {
@@ -18,6 +20,8 @@ namespace Sledge.DataStructures.GameData
             MapSizeLow = -4096;
             Classes = new List<GameDataObject>();
             Includes = new List<string>();
+            MaterialExclusions = new List<string>();
+            AutoVisgroups = new List<AutoVisgroupSection>();
         }
 
         public void CreateDependencies()

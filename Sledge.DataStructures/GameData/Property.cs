@@ -14,6 +14,7 @@ namespace Sledge.DataStructures.GameData
         public string DefaultValue { get; set; }
         public List<Option> Options { get; set; }
         public bool ReadOnly { get; set; }
+        public bool ShowInEntityReport { get; set; }
 
         public Property(string name, VariableType variableType)
         {

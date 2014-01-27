@@ -56,7 +56,7 @@ namespace Sledge.Providers.GameData
         {
             iterator.MoveNext();
             var type = iterator.Current.Value;
-            if (type == "include")
+            if (type.Equals("include", StringComparison.InvariantCultureIgnoreCase))
             {
                 Expect(iterator, LexType.String);
                 if (CurrentFile != null)
@@ -64,7 +64,11 @@ namespace Sledge.Providers.GameData
                     var filename = iterator.Current.GetValue();
                     var path = Path.GetDirectoryName(CurrentFile) ?? "";
                     var incfile = Path.Combine(path, filename);
+
+                    var current = CurrentFile;
                     var incgd = GetGameDataFromFile(incfile);
+                    CurrentFile = current;
+
                     gd.MapSizeHigh = incgd.MapSizeHigh;
                     gd.MapSizeLow = incgd.MapSizeLow;
                     gd.Includes.Add(filename);
@@ -75,7 +79,7 @@ namespace Sledge.Providers.GameData
                     throw new ProviderException("Unable to include a file when not reading from a file.");
                 }
             }
-            else if (type == "mapsize")
+            else if (type.Equals("mapsize", StringComparison.InvariantCultureIgnoreCase))
             {
                 Expect(iterator, LexType.So);
                 Expect(iterator, LexType.Value);
@@ -84,6 +88,53 @@ namespace Sledge.Providers.GameData
                 Expect(iterator, LexType.Value);
                 gd.MapSizeHigh = Int32.Parse(iterator.Current.Value);
                 Expect(iterator, LexType.Already);
+            }
+            else if (type.Equals("materialexclusion", StringComparison.InvariantCultureIgnoreCase))
+            {
+                Expect(iterator, LexType.Open);
+                iterator.MoveNext();
+                while (iterator.Current.Type != LexType.Close)
+                {
+                    Assert(iterator.Current.IsValueOrString(), "Expected value type, got " + iterator.Current.Type + ".");
+                    var exclusion = iterator.Current.GetValue();
+                    gd.MaterialExclusions.Add(exclusion);
+                    iterator.MoveNext();
+                }
+            }
+            else if (type.Equals("autovisgroup", StringComparison.InvariantCultureIgnoreCase))
+            {
+                Expect(iterator, LexType.Equals);
+
+                iterator.MoveNext();
+                Assert(iterator.Current.IsValueOrString(), "Expected value type, got " + iterator.Current.Type + ".");
+                var sectionName = iterator.Current.GetValue();
+                var sect = new AutoVisgroupSection {Name = sectionName};
+
+                Expect(iterator, LexType.Open);
+                iterator.MoveNext();
+                while (iterator.Current.Type != LexType.Close)
+                {
+                    Assert(iterator.Current.IsValueOrString(), "Expected value type, got " + iterator.Current.Type + ".");
+                    var groupName = iterator.Current.GetValue();
+                    var grp = new AutoVisgroup {Name = groupName};
+
+                    Expect(iterator, LexType.Open);
+                    iterator.MoveNext();
+                    while (iterator.Current.Type != LexType.Close)
+                    {
+                        Assert(iterator.Current.IsValueOrString(), "Expected value type, got " + iterator.Current.Type + ".");
+                        var entity = iterator.Current.GetValue();
+                        grp.EntityNames.Add(entity);
+                        iterator.MoveNext();
+                    }
+
+                    sect.Groups.Add(grp);
+                }
+
+                gd.AutoVisgroups.Add(sect);
+            }
+            else if (type.Equals("include", StringComparison.InvariantCultureIgnoreCase))
+            {
             }
             else
             {
@@ -114,7 +165,7 @@ namespace Sledge.Providers.GameData
                         if (iterator.Current.Type != LexType.Comma)
                         {
                             Assert(iterator.Current.Type == LexType.Value || iterator.Current.Type == LexType.String,
-                                   "Unexpected " + iterator.Current.Type + ".");
+                                "Unexpected " + iterator.Current.Type + ".");
                             var value = iterator.Current.Value;
                             if (iterator.Current.Type == LexType.String) value = value.Trim('"');
                             bh.Values.Add(value);
@@ -182,13 +233,24 @@ namespace Sledge.Providers.GameData
                         var vartype = ParseVariableType(iterator.Current.Value);
                         Expect(iterator, LexType.Already);
                         var prop = new Property(pt, vartype);
-                        iterator.MoveNext(); // if not colon or equals, this will be the value of the next io/property, or close
-                        if (iterator.Current.Type == LexType.Value && iterator.Current.Value == "readonly")
+                        iterator.MoveNext();
+                            // if not colon or equals, this will be the value of the next io/property, or close
+                        if (iterator.Current.Type == LexType.Value)
                         {
-                            // Readonly properties require a special case:
-                            // name(type) readonly : "Description"
-                            prop.ReadOnly = true;
-                            iterator.MoveNext();
+                            // Check for additional flags on the property
+                            // e.g.: name(type) readonly : "This is a read only value"
+                            //       name(type) report   : "This value will show in the entity report"
+                            switch (iterator.Current.Value)
+                            {
+                                case "readonly":
+                                    prop.ReadOnly = true;
+                                    iterator.MoveNext();
+                                    break;
+                                case "report":
+                                    prop.ShowInEntityReport = true;
+                                    iterator.MoveNext();
+                                    break;
+                            }
                         }
                         do // Using do/while(false) so I can break out - reduces nesting.
                         {
@@ -244,7 +306,8 @@ namespace Sledge.Providers.GameData
                                 else
                                 {
                                     opt.Description = iterator.Current.GetValue();
-                                    iterator.MoveNext(); // ParsePlusString moves next once it's complete, need to do the same here
+                                    iterator.MoveNext();
+                                        // ParsePlusString moves next once it's complete, need to do the same here
                                 }
 
                                 prop.Options.Add(opt);
