@@ -21,6 +21,7 @@ namespace Sledge.Editor.UI
         private bool FreeLook { get; set; }
         private bool FreeLookToggle { get; set; }
         private bool CursorVisible { get; set; }
+        private Rectangle CursorClip { get; set; }
         private bool Focus { get; set; }
         private Camera Camera { get; set; }
 
@@ -144,11 +145,17 @@ namespace Sledge.Editor.UI
 
             if (FreeLook && CursorVisible)
             {
+                CursorClip = Cursor.Clip;
+                Cursor.Clip = Viewport.RectangleToScreen(new Rectangle(0, 0, Viewport.Width, Viewport.Height));
+                Viewport.Capture = true;
                 CursorVisible = false;
                 Cursor.Hide();
             }
             else if (!FreeLook && !CursorVisible)
             {
+                Cursor.Clip = CursorClip;
+                CursorClip = Rectangle.Empty;
+                Viewport.Capture = false;
                 CursorVisible = true;
                 Cursor.Show();
             }
@@ -246,6 +253,9 @@ namespace Sledge.Editor.UI
             {
                 if (!CursorVisible)
                 {
+                    Cursor.Clip = CursorClip;
+                    CursorClip = Rectangle.Empty;
+                    Viewport.Capture = false;
                     CursorVisible = true;
                     Cursor.Show();
                 }
