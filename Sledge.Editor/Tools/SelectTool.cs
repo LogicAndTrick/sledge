@@ -152,6 +152,7 @@ namespace Sledge.Editor.Tools
 
         /// <summary>
         /// If ignoreGrouping is disabled, this will convert the list of objects into their topmost group or entity.
+        /// If ignoreGrouping is enabled, this will remove objects that have children from the list.
         /// </summary>
         /// <param name="objects">The object list to normalise</param>
         /// <param name="ignoreGrouping">True if grouping is being ignored</param>
@@ -159,7 +160,7 @@ namespace Sledge.Editor.Tools
         private static IEnumerable<MapObject> NormaliseSelection(IEnumerable<MapObject> objects, bool ignoreGrouping)
         {
             return ignoreGrouping
-                       ? objects
+                       ? objects.Where(x => !x.Children.Any())
                        : objects.Select(x => x.FindTopmostParent(y => y is Group || y is Entity) ?? x).Distinct().SelectMany(x => x.FindAll());
         }
 
