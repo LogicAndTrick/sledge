@@ -313,6 +313,8 @@ namespace Sledge.Editor
             Mediator.Subscribe(EditorMediator.DocumentAllClosed, this);
             Mediator.Subscribe(EditorMediator.HistoryChanged, this);
 
+            Mediator.Subscribe(EditorMediator.CompileStarted, this);
+
             Mediator.Subscribe(EditorMediator.MouseCoordinatesChanged, this);
             Mediator.Subscribe(EditorMediator.SelectionBoxChanged, this);
             Mediator.Subscribe(EditorMediator.SelectionChanged, this);
@@ -452,6 +454,11 @@ namespace Sledge.Editor
         private void HistoryChanged()
         {
             UpdateDocumentTabs();
+        }
+
+        private void CompileStarted()
+        {
+            if (DockBottom.Hidden && Sledge.Settings.View.CompileOpenOutput) DockBottom.Hidden = false;
         }
 
         private void DocumentTabsSelectedIndexChanged(object sender, EventArgs e)

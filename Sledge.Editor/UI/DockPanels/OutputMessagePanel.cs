@@ -24,6 +24,7 @@ namespace Sledge.Editor.UI.DockPanels
             OutputType.SelectedIndex = OutputType.Items.Count - 1;
 
             Mediator.Subscribe(EditorMediator.OutputMessage, this);
+            Mediator.Subscribe(EditorMediator.CompileStarted, this);
         }
 
         private void OutputTypeChanged(object sender, EventArgs e)
@@ -42,6 +43,12 @@ namespace Sledge.Editor.UI.DockPanels
                     }
                 }
             }
+        }
+
+        private void CompileStarted()
+        {
+            if (_words.ContainsKey("Compile")) _words["Compile"].Clear();
+            if (_currentType == "Compile") OutputBox.Clear();
         }
 
         private void OutputMessage(string type, string text)

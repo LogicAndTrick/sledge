@@ -14,7 +14,7 @@ namespace Sledge.Editor.Compiling
         public string TargetFile { get; set; }
         public string OriginalFile { get; set; }
 
-        public Batch(Game game, Build build, string targetFile, string originalFile)
+        public Batch(Game game, Build build, BuildProfile profile, string targetFile, string originalFile)
         {
             // TODO: this properly
             BeforeExecute = "";
@@ -27,10 +27,10 @@ namespace Sledge.Editor.Compiling
             var copyBsp = '"' + Path.ChangeExtension(originalFile, "bsp") + '"';
             Steps = new List<BatchCompileStep>
                         {
-                            new BatchCompileStep { Operation = Path.Combine(build.Path, build.Csg), Flags = fileFlag },
-                            new BatchCompileStep { Operation = Path.Combine(build.Path, build.Bsp), Flags = fileFlag },
-                            new BatchCompileStep { Operation = Path.Combine(build.Path, build.Vis), Flags = fileFlag },
-                            new BatchCompileStep { Operation = Path.Combine(build.Path, build.Rad), Flags = fileFlag },
+                            new BatchCompileStep { Operation = Path.Combine(build.Path, build.Csg), Flags = (profile.FullCsgParameters + ' ' + fileFlag).Trim() },
+                            new BatchCompileStep { Operation = Path.Combine(build.Path, build.Bsp), Flags = (profile.FullBspParameters + ' ' + fileFlag).Trim() },
+                            new BatchCompileStep { Operation = Path.Combine(build.Path, build.Vis), Flags = (profile.FullVisParameters + ' ' + fileFlag).Trim() },
+                            new BatchCompileStep { Operation = Path.Combine(build.Path, build.Rad), Flags = (profile.FullRadParameters + ' ' + fileFlag).Trim() },
                             new BatchCompileStep { Operation = "move", SystemCommand = true, Flags = bspFile + " " + copyBsp }
                             //new BatchCompileStep { Operation = "copy"}
                         };

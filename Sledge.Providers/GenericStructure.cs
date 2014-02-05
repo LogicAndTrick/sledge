@@ -5,6 +5,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
+using Sledge.Common.Extensions;
 using Sledge.DataStructures.Geometric;
 
 namespace Sledge.Providers
@@ -95,6 +96,13 @@ namespace Sledge.Providers
                 return d;
             }
             return defaultValue;
+        }
+
+        public T PropertyEnum<T>(string name, T defaultValue = default(T)) where T : struct
+        {
+            var prop = this[name];
+            T val;
+            return Enum.TryParse(prop, true, out val) ? val : defaultValue;
         }
 
         public int PropertyInteger(string name, int defaultValue = 0)
@@ -247,7 +255,7 @@ namespace Sledge.Providers
         /// <returns>A list of children</returns>
         public IEnumerable<GenericStructure> GetChildren(string name = null)
         {
-            return Children.Where(x => name == null || x.Name.ToLower() == name.ToLower());
+            return Children.Where(x => name == null || String.Equals(x.Name, name, StringComparison.CurrentCultureIgnoreCase));
         }
 
         /// <summary>
@@ -257,7 +265,7 @@ namespace Sledge.Providers
         /// <returns>A list of descendants</returns>
         public IEnumerable<GenericStructure> GetDescendants(string name = null)
         {
-            return Children.Where(x => name == null || x.Name.ToLower() == name.ToLower())
+            return Children.Where(x => name == null || String.Equals(x.Name, name, StringComparison.CurrentCultureIgnoreCase))
                 .Union(Children.SelectMany(x => x.GetDescendants(name)));
         }
 
@@ -280,7 +288,7 @@ namespace Sledge.Providers
                 sb.Append(postTabStr)
                     .Append('"').Append(kv.Key).Append('"')
                     .Append(' ')
-                    .Append('"').Append(kv.Value).Append('"')
+                    .Append('"').Append((kv.Value ?? "").Replace('"', '`')).Append('"')
                     .AppendLine();
             }
             foreach (var child in Children)
@@ -335,41 +343,6 @@ namespace Sledge.Providers
             return ret.Trim();
         }
 
-	    /// <summary>
-	    /// Split a string, but don't split within quoted values.
-	    /// </summary>
-	    /// <param name="line">The line to split</param>
-	    /// <param name="splitTest">Optional split test. Defaults to whitespace test.</param>
-	    /// <param name="quoteChar">Optional quote character. Defaults to double quote.</param>
-	    /// <returns>An array of split values</returns>
-	    private static string[] SplitWithQuotes(string line, Func<char, bool> splitTest = null, char quoteChar = '"')
-        {
-            if (splitTest == null) splitTest = Char.IsWhiteSpace;
-            var result = new List<string>();
-            var index = 0;
-            var inQuote = false;
-            for (var i = 0; i < line.Length; i++)
-            {
-                var c = line[i];
-                if (splitTest(c) && index == i)
-                {
-                    index = i + 1;
-                }
-                else if (c == quoteChar)
-                {
-                    inQuote = !inQuote;
-                }
-                else if (splitTest(c) && !inQuote)
-                {
-                    result.Add(line.Substring(index, i - index).Trim(quoteChar));
-                    index = i + 1;
-                }
-                if (i != line.Length - 1) continue;
-                result.Add(line.Substring(index, (i + 1) - index).Trim(quoteChar));
-            }
-            return result.ToArray();
-        }
-
         /// <summary>
         /// Parse a structure, given the name of the structure
         /// </summary>
@@ -378,7 +351,7 @@ namespace Sledge.Providers
         /// <returns>The parsed structure</returns>
 		private static GenericStructure ParseStructure(TextReader reader, string name)
         {
-            var gs = new GenericStructure(SplitWithQuotes(name)[0]);
+            var gs = new GenericStructure(name.SplitWithQuotes()[0]);
 	        var line = CleanLine(reader.ReadLine());
 			if (line != "{") {
 				return gs;
@@ -401,7 +374,7 @@ namespace Sledge.Providers
 	    private static bool ValidStructStartString(string s)
 		{
 			if (string.IsNullOrEmpty(s)) return false;
-            var split = SplitWithQuotes(s);
+            var split = s.SplitWithQuotes();
             return split.Length == 1;
 		}
 
@@ -413,7 +386,7 @@ namespace Sledge.Providers
 		private static bool ValidStructPropertyString(string s)
 		{
 			if (string.IsNullOrEmpty(s)) return false;
-            var split = SplitWithQuotes(s);
+            var split = s.SplitWithQuotes();
             return split.Length == 2;
 		}
 
@@ -424,8 +397,8 @@ namespace Sledge.Providers
         /// <param name="prop">The property string to parse</param>
 		private static void ParseProperty(GenericStructure gs, string prop)
 		{
-            var split = SplitWithQuotes(prop);
-            gs.Properties.Add(new GenericStructureProperty(split[0], split[1]));
+            var split = prop.SplitWithQuotes();
+            gs.Properties.Add(new GenericStructureProperty(split[0], (split[1] ?? "").Replace('`', '"')));
 		}
         #endregion
 	}

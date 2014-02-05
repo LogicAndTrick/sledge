@@ -45,6 +45,7 @@
     <Compile Include="DMath.cs" />
     <Compile Include="Easings\Easing.cs" />
     <Compile Include="Easings\EasingType.cs" />
+    <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="ITexture.cs" />
     <Compile Include="Mediator\Mediator.cs" />
     <Compile Include="Mediator\IMediatorListener.cs" />

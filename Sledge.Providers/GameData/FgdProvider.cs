@@ -69,10 +69,15 @@ namespace Sledge.Providers.GameData
                     var incgd = GetGameDataFromFile(incfile);
                     CurrentFile = current;
 
-                    gd.MapSizeHigh = incgd.MapSizeHigh;
-                    gd.MapSizeLow = incgd.MapSizeLow;
-                    gd.Includes.Add(filename);
-                    gd.Classes.AddRange(incgd.Classes);
+                    if (!gd.Includes.Any(x => String.Equals(x, filename, StringComparison.InvariantCultureIgnoreCase))) gd.Includes.Add(filename);
+
+                    // Merge the included gamedata into the current one
+                    gd.MapSizeHigh = Math.Max(incgd.MapSizeHigh, gd.MapSizeHigh);
+                    gd.MapSizeLow = Math.Min(incgd.MapSizeLow, gd.MapSizeLow);
+                    gd.Includes.AddRange(incgd.Includes.Where(x => !gd.Includes.Contains(x)));
+                    gd.Classes.AddRange(incgd.Classes.Where(x => !gd.Classes.Any(y => String.Equals(x.Name, y.Name, StringComparison.InvariantCultureIgnoreCase))));
+                    gd.AutoVisgroups.AddRange(incgd.AutoVisgroups.Where(x => !gd.AutoVisgroups.Any(y => String.Equals(x.Name, y.Name, StringComparison.InvariantCultureIgnoreCase))));
+                    gd.MaterialExclusions.AddRange(incgd.MaterialExclusions.Where(x => !gd.MaterialExclusions.Any(y => String.Equals(x, y, StringComparison.InvariantCultureIgnoreCase))));
                 }
                 else
                 {
@@ -132,9 +137,6 @@ namespace Sledge.Providers.GameData
                 }
 
                 gd.AutoVisgroups.Add(sect);
-            }
-            else if (type.Equals("include", StringComparison.InvariantCultureIgnoreCase))
-            {
             }
             else
             {

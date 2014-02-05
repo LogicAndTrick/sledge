@@ -32,6 +32,9 @@ namespace Sledge.Settings
         public static bool GloballyDisableTransparency { get; set; }
         public static bool DisableModelRendering { get; set; }
 
+        public static bool CompileOpenOutput { get; set; }
+        public static bool CompileDefaultAdvanced { get; set; }
+
         static View()
         {
             CrosshairCursorIn2DViews = false;
@@ -62,6 +65,9 @@ namespace Sledge.Settings
             DisableToolTextureTransparency = false;
             GloballyDisableTransparency = false;
             DisableModelRendering = false;
+
+            CompileOpenOutput = true;
+            CompileDefaultAdvanced = false;
         }
     }
 }

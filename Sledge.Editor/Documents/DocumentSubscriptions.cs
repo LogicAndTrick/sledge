@@ -242,15 +242,21 @@ namespace Sledge.Editor.Documents
                 return;
             }
 
-            var tempDir = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
-            Directory.CreateDirectory(tempDir);
+            using (var cd = new CompileDialog(build))
+            {
+                if (cd.ShowDialog() == DialogResult.OK)
+                {
+                    var tempDir = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+                    Directory.CreateDirectory(tempDir);
 
-            _document.Map.WorldSpawn.EntityData.SetPropertyValue("wad", string.Join(";", _document.Game.Wads.Select(x => x.Path)));
-            var map = Path.Combine(tempDir, Path.GetFileNameWithoutExtension(_document.MapFile) + ".map");
-            SaveWithCordon(map);
+                    _document.Map.WorldSpawn.EntityData.SetPropertyValue("wad", string.Join(";", _document.Game.Wads.Select(x => x.Path)));
+                    var map = Path.Combine(tempDir, Path.GetFileNameWithoutExtension(_document.MapFile) + ".map");
+                    SaveWithCordon(map);
 
-            var batch = new Batch(_document.Game, build, map, _document.MapFile);
-            BatchCompiler.Compile(batch);
+                    var batch = new Batch(_document.Game, build, cd.GetProfile(), map, _document.MapFile);
+                    BatchCompiler.Compile(batch);
+                }
+            }
         }
 
         private void SaveWithCordon(string file)

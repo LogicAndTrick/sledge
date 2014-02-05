@@ -48,6 +48,11 @@ namespace Sledge.Editor.Compiling
             Mediator.Publish(EditorMediator.OutputMessage, "Compile", _words);
         }
 
+        public void AddErrorLine(string line)
+        {
+            Mediator.Publish(EditorMediator.OutputMessage, "Compile", new OutputWord(line, ConsoleColor.Red));
+        }
+
         private void Emit(string text, ConsoleColor colour = ConsoleColor.Black)
         {
             _words.Add(new OutputWord(text, colour));

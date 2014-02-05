@@ -1,9 +1,11 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.WindowsAPICodePack.Shell.PropertySystem;
+using Sledge.Common.Mediator;
 
 namespace Sledge.Editor.Compiling
 {
@@ -33,6 +35,8 @@ namespace Sledge.Editor.Compiling
 
         private static void DoCompile(Batch batch)
         {
+            Mediator.Publish(EditorMediator.CompileStarted);
+            var logger = new CompileLogTracer();
             foreach (var step in batch.Steps)
             {
                 var process = new Process
@@ -46,11 +50,15 @@ namespace Sledge.Editor.Compiling
                         WorkingDirectory = Path.GetDirectoryName(batch.TargetFile)
                     }
                 };
-                var logger = new CompileLogTracer();
                 process.OutputDataReceived += (sender, args) => logger.AddLine(args.Data);
                 process.Start();
                 process.BeginOutputReadLine();
                 process.WaitForExit();
+            }
+            var errFile = Path.ChangeExtension(batch.TargetFile, "err");
+            if (File.Exists(errFile))
+            {
+                logger.AddErrorLine("The following errors were detected:\r\n\r\n" + File.ReadAllText(errFile).Trim());
             }
         }
     }

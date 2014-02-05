@@ -51,6 +51,9 @@ namespace Sledge.Editor
         HistoryChanged,
         ClipboardChanged,
 
+        CompileStarted,
+        CompileFinished,
+
         // Status bar messages
         MouseCoordinatesChanged,
         SelectionBoxChanged,

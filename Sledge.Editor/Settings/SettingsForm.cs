@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Windows.Forms;
 using Sledge.Common.Mediator;
 using Sledge.DataStructures.GameData;
+using Sledge.Editor.Compiling;
 using Sledge.Providers.GameData;
 using Sledge.QuickForms;
 using Sledge.Settings;
@@ -76,7 +78,38 @@ namespace Sledge.Editor.Settings
             SelectedBuildCsg.SelectedIndexChanged += (s, e) => CheckNull(_selectedBuild, x => x.Csg = SelectedBuildCsg.Text);
             SelectedBuildVis.SelectedIndexChanged += (s, e) => CheckNull(_selectedBuild, x => x.Vis = SelectedBuildVis.Text);
             SelectedBuildRad.SelectedIndexChanged += (s, e) => CheckNull(_selectedBuild, x => x.Rad = SelectedBuildRad.Text);
-            
+
+            // Build Profiles
+            SelectedBuildCsgParameters.ValueChanged += (s, e) => CheckNull(_selectedProfile, x =>
+            {
+                x.GeneratedCsgParameters = SelectedBuildCsgParameters.GeneratedCommands;
+                x.AdditionalCsgParameters = SelectedBuildCsgParameters.AdditionalCommands;
+                UpdateSelectedBuildProfilePreview();
+            });
+            SelectedBuildBspParameters.ValueChanged += (s, e) => CheckNull(_selectedProfile, x =>
+            {
+                x.GeneratedBspParameters = SelectedBuildBspParameters.GeneratedCommands;
+                x.AdditionalBspParameters = SelectedBuildBspParameters.AdditionalCommands;
+                UpdateSelectedBuildProfilePreview();
+            });
+            SelectedBuildVisParameters.ValueChanged += (s, e) => CheckNull(_selectedProfile, x =>
+            {
+                x.GeneratedVisParameters = SelectedBuildVisParameters.GeneratedCommands;
+                x.AdditionalVisParameters = SelectedBuildVisParameters.AdditionalCommands;
+                UpdateSelectedBuildProfilePreview();
+            });
+            SelectedBuildRadParameters.ValueChanged += (s, e) => CheckNull(_selectedProfile, x =>
+            {
+                x.GeneratedRadParameters = SelectedBuildRadParameters.GeneratedCommands;
+                x.AdditionalRadParameters = SelectedBuildRadParameters.AdditionalCommands;
+                UpdateSelectedBuildProfilePreview();
+            });
+            SelectedBuildSharedParameters.ValueChanged += (s, e) => CheckNull(_selectedProfile, x =>
+            {
+                x.GeneratedSharedParameters = SelectedBuildSharedParameters.GeneratedCommands;
+                x.AdditionalSharedParameters = SelectedBuildSharedParameters.AdditionalCommands;
+                UpdateSelectedBuildProfilePreview();
+            });
         }
 
         private void BindColourPicker(Control panel)
@@ -118,6 +151,9 @@ namespace Sledge.Editor.Settings
 
             SelectedBuildEngine.Items.Clear();
             SelectedBuildEngine.Items.AddRange(Enum.GetValues(typeof(Engine)).OfType<object>().ToArray());
+
+            SelectedBuildSpecification.Items.Clear();
+            SelectedBuildSpecification.Items.AddRange(CompileSpecification.Specifications.OfType<object>().ToArray());
 
             UpdateGameTree();
             UpdateBuildTree();
@@ -204,6 +240,9 @@ namespace Sledge.Editor.Settings
             DisableToolTransparency.Checked = Sledge.Settings.View.DisableToolTextureTransparency;
             GloballyDisableTransparency.Checked = Sledge.Settings.View.GloballyDisableTransparency;
             DisableModelRendering.Checked = Sledge.Settings.View.DisableModelRendering;
+
+            CompileOpenOutput.Checked = Sledge.Settings.View.CompileOpenOutput;
+            CompileDefaultAdvanced.Checked = Sledge.Settings.View.CompileDefaultAdvanced;
 
             // 2D Views
             CrosshairCursorIn2DViews.Checked = Sledge.Settings.View.CrosshairCursorIn2DViews;
@@ -298,6 +337,9 @@ namespace Sledge.Editor.Settings
             Sledge.Settings.View.DisableToolTextureTransparency = DisableToolTransparency.Checked;
             Sledge.Settings.View.GloballyDisableTransparency = GloballyDisableTransparency.Checked;
             Sledge.Settings.View.DisableModelRendering = DisableModelRendering.Checked;
+
+            Sledge.Settings.View.CompileOpenOutput = CompileOpenOutput.Checked;
+            Sledge.Settings.View.CompileDefaultAdvanced = CompileDefaultAdvanced.Checked;
 
             // 2D Views
             Sledge.Settings.View.CrosshairCursorIn2DViews = CrosshairCursorIn2DViews.Checked;
@@ -909,6 +951,7 @@ namespace Sledge.Editor.Settings
         #region Selected Build
 
         private Build _selectedBuild;
+        private BuildProfile _selectedProfile;
 
         private void BuildSelected(object sender, TreeViewEventArgs e)
         {
@@ -963,18 +1006,84 @@ namespace Sledge.Editor.Settings
             }
         }
 
+        private void SelectedBuildSpecificationChanged(object sender, EventArgs e)
+        {
+            var spec = SelectedBuildSpecification.SelectedItem as CompileSpecification;
+
+            _selectedBuild.Specification = spec == null ? "" : spec.ID;
+
+            SelectedBuildUpdateProfiles();
+        }
+
+        private bool _pauseProfileUpdates;
+
+        private void SelectedBuildProfileChanged(object sender, EventArgs e)
+        {
+            if (_pauseProfileUpdates) return;
+            _selectedProfile = SelectedBuildProfile.SelectedItem as BuildProfile;
+            SelectedBuildUpdateCompileParameters(true);
+        }
+
+        private void SelectedBuildUpdateProfiles(bool addNew = false, string newName = "Default")
+        {
+            _pauseProfileUpdates = true;
+            var setDefault = false;
+            if (!_selectedBuild.Profiles.Any() || addNew)
+            {
+                _selectedProfile = new BuildProfile {ID = 1, BuildID = _selectedBuild.ID, Name = newName};
+                _selectedBuild.Profiles.Add(_selectedProfile);
+                setDefault = true;
+            }
+
+            SelectedBuildProfile.Items.Clear();
+            foreach (var prof in _selectedBuild.Profiles)
+            {
+                SelectedBuildProfile.Items.Add(prof);
+            }
+
+            var idx = _selectedBuild.Profiles.IndexOf(_selectedProfile);
+            if (idx < 0)
+            {
+                _selectedProfile = _selectedBuild.Profiles[0];
+                idx = 0;
+            }
+
+            SelectedBuildProfile.SelectedIndex = idx;
+
+            SelectedBuildUpdateCompileParameters(!setDefault);
+
+            if (setDefault)
+            {
+                _selectedProfile.GeneratedCsgParameters = SelectedBuildCsgParameters.GeneratedCommands;
+                _selectedProfile.AdditionalCsgParameters = SelectedBuildCsgParameters.AdditionalCommands;
+                _selectedProfile.GeneratedBspParameters = SelectedBuildBspParameters.GeneratedCommands;
+                _selectedProfile.GeneratedBspParameters = SelectedBuildBspParameters.AdditionalCommands;
+                _selectedProfile.GeneratedVisParameters = SelectedBuildVisParameters.GeneratedCommands;
+                _selectedProfile.GeneratedVisParameters = SelectedBuildVisParameters.AdditionalCommands;
+                _selectedProfile.GeneratedRadParameters = SelectedBuildRadParameters.GeneratedCommands;
+                _selectedProfile.GeneratedRadParameters = SelectedBuildRadParameters.AdditionalCommands;
+                _selectedProfile.GeneratedSharedParameters = SelectedBuildSharedParameters.GeneratedCommands;
+                _selectedProfile.GeneratedSharedParameters = SelectedBuildSharedParameters.AdditionalCommands;
+            }
+            _pauseProfileUpdates = false;
+        }
+
         private void UpdateSelectedBuild()
         {
             BuildSubTabs.Visible = RemoveBuild.Enabled = _selectedBuild != null;
             if (_selectedBuild == null) return;
+            if (!_selectedBuild.Profiles.Contains(_selectedProfile))
+            {
+                _selectedProfile = _selectedBuild.Profiles.FirstOrDefault();
+            }
             SelectedBuildName.Text = _selectedBuild.Name;
             SelectedBuildEngine.SelectedIndex = Math.Max(0, Enum.GetValues(typeof(Engine)).OfType<Engine>().ToList<Engine>().FindIndex(x => x == _selectedBuild.Engine));
+            SelectedBuildSpecification.SelectedIndex = Math.Max(0, CompileSpecification.Specifications.FindIndex(x => x.ID == _selectedBuild.Specification));
             SelectedBuildExeFolder.Text = _selectedBuild.Path;
             SelectedBuildBsp.SelectedText = _selectedBuild.Bsp;
             SelectedBuildCsg.SelectedText = _selectedBuild.Csg;
             SelectedBuildVis.SelectedText = _selectedBuild.Vis;
             SelectedBuildRad.SelectedText = _selectedBuild.Rad;
-            //SelectedBuildIncludeWads.Checked = _selectedBuild.IncludeWads;
         }
 
         private void SelectedBuildPathChanged(object sender, EventArgs e)
@@ -1008,6 +1117,146 @@ namespace Sledge.Editor.Settings
             if (SelectedBuildCsg.SelectedIndex < 0) SelectedBuildCsg.SelectedIndex = Math.Max(0, dirs.FindIndex(x => x.ToLower().Contains("csg")));
             if (SelectedBuildVis.SelectedIndex < 0) SelectedBuildVis.SelectedIndex = Math.Max(0, dirs.FindIndex(x => x.ToLower().Contains("vis")));
             if (SelectedBuildRad.SelectedIndex < 0) SelectedBuildRad.SelectedIndex = Math.Max(0, dirs.FindIndex(x => x.ToLower().Contains("rad")));
+        }
+
+        private void SelectedBuildUpdateCompileParameters(bool setValues)
+        {
+            SelectedBuildCsgParameters.ClearParameters();
+            SelectedBuildBspParameters.ClearParameters();
+            SelectedBuildVisParameters.ClearParameters();
+            SelectedBuildRadParameters.ClearParameters();
+            SelectedBuildSharedParameters.ClearParameters();
+
+            var spec = CompileSpecification.Specifications.FirstOrDefault(x => x.ID == _selectedBuild.Specification);
+            if (spec == null) return;
+
+            var prof = SelectedBuildProfile.SelectedItem as BuildProfile;
+            if (prof == null) return;
+
+            var csg = spec.GetTool("csg");
+            if (csg != null)
+            {
+                SelectedBuildCsgParameters.AddParameters(csg.Parameters);
+                SelectedBuildCsgParameters.SetDescription(csg.Description);
+            }
+
+            var bsp = spec.GetTool("bsp");
+            if (bsp != null)
+            {
+                SelectedBuildBspParameters.AddParameters(bsp.Parameters);
+                SelectedBuildBspParameters.SetDescription(bsp.Description);
+            }
+
+            var vis = spec.GetTool("vis");
+            if (vis != null)
+            {
+                SelectedBuildVisParameters.AddParameters(vis.Parameters);
+                SelectedBuildVisParameters.SetDescription(vis.Description);
+            }
+
+            var rad = spec.GetTool("rad");
+            if (rad != null)
+            {
+                SelectedBuildRadParameters.AddParameters(rad.Parameters);
+                SelectedBuildRadParameters.SetDescription(rad.Description);
+            }
+
+            var shared = spec.GetTool("shared");
+            if (shared != null)
+            {
+                SelectedBuildSharedParameters.AddParameters(shared.Parameters);
+                SelectedBuildSharedParameters.SetDescription(shared.Description);
+            }
+
+            if (setValues)
+            {
+                SelectedBuildCsgParameters.SetCommands(prof.GeneratedCsgParameters ?? "", prof.AdditionalCsgParameters ?? "");
+                SelectedBuildBspParameters.SetCommands(prof.GeneratedBspParameters ?? "", prof.AdditionalBspParameters ?? "");
+                SelectedBuildVisParameters.SetCommands(prof.GeneratedVisParameters ?? "", prof.AdditionalVisParameters ?? "");
+                SelectedBuildRadParameters.SetCommands(prof.GeneratedRadParameters ?? "", prof.AdditionalRadParameters ?? "");
+                SelectedBuildSharedParameters.SetCommands(prof.GeneratedSharedParameters ?? "", prof.AdditionalSharedParameters ?? "");
+            }
+        }
+
+        private void SelectedBuildRenameProfileButtonClicked(object sender, EventArgs e)
+        {
+            if (_selectedBuild == null || _selectedProfile == null) return;
+            using (var qf = new QuickForm("Rename Build Profile").TextBox("Name", _selectedProfile.Name).OkCancel())
+            {
+                if (qf.ShowDialog() == DialogResult.OK)
+                {
+                    var name = qf.String("Name");
+                    if (_selectedBuild.Profiles.Any(x => String.Equals(name, x.Name, StringComparison.InvariantCultureIgnoreCase)))
+                    {
+                        MessageBox.Show("There is already a profile with that name, please type a unique name.", "Cannot rename profile");
+                        name = null;
+                    }
+                    if (!String.IsNullOrWhiteSpace(name) && _selectedProfile.Name != name)
+                    {
+                        _selectedProfile.Name = name;
+                        SelectedBuildUpdateProfiles();
+                    }
+                }
+            }
+        }
+
+        private void SelectedBuildDeleteProfileButtonClicked(object sender, EventArgs e)
+        {
+            if (_selectedProfile == null) return;
+            if (MessageBox.Show("Are you sure you want to delete the '" + _selectedProfile.Name + "' profile?",
+                    "Delete Build Profile", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+            {
+                _selectedBuild.Profiles.Remove(_selectedProfile);
+                SelectedBuildUpdateProfiles();
+            }
+        }
+
+        private void SelectedBuildNewProfileButtonClicked(object sender, EventArgs e)
+        {
+            if (_selectedBuild == null) return;
+            using (var qf = new QuickForm("New Build Profile").TextBox("Name").OkCancel())
+            {
+                if (qf.ShowDialog() == DialogResult.OK)
+                {
+                    var name = qf.String("Name");
+                    if (_selectedBuild.Profiles.Any(x => String.Equals(name, x.Name, StringComparison.InvariantCultureIgnoreCase)))
+                    {
+                        MessageBox.Show("There is already a profile with that name, please type a unique name.", "Cannot create profile");
+                        name = null;
+                    }
+                    if (!String.IsNullOrWhiteSpace(name))
+                    {
+                        SelectedBuildUpdateProfiles(true, name);
+                    }
+                }
+            }
+        }
+
+        private void UpdateSelectedBuildProfilePreview()
+        {
+            SelectedBuildProfilePreview.Text = "";
+            if (_selectedProfile == null || _selectedBuild == null) return;
+            var str = _selectedBuild.Csg
+                      + ' ' + (_selectedProfile.GeneratedCsgParameters
+                      + ' ' + _selectedProfile.AdditionalCsgParameters
+                      + ' ' + _selectedProfile.GeneratedSharedParameters
+                      + ' ' + _selectedProfile.AdditionalSharedParameters).Trim() + " <mapname>\r\n\r\n"
+                      + _selectedBuild.Bsp
+                      + ' ' + (_selectedProfile.GeneratedBspParameters
+                      + ' ' + _selectedProfile.AdditionalBspParameters
+                      + ' ' + _selectedProfile.GeneratedSharedParameters
+                      + ' ' + _selectedProfile.AdditionalSharedParameters).Trim() + " <mapname>\r\n\r\n"
+                      + _selectedBuild.Vis
+                      + ' ' + (_selectedProfile.GeneratedVisParameters
+                      + ' ' + _selectedProfile.AdditionalVisParameters
+                      + ' ' + _selectedProfile.GeneratedSharedParameters
+                      + ' ' + _selectedProfile.AdditionalSharedParameters).Trim() + " <mapname>\r\n\r\n"
+                      + _selectedBuild.Rad
+                      + ' ' + (_selectedProfile.GeneratedRadParameters
+                      + ' ' + _selectedProfile.AdditionalRadParameters
+                      + ' ' + _selectedProfile.GeneratedSharedParameters
+                      + ' ' + _selectedProfile.AdditionalSharedParameters).Trim() + " <mapname>\r\n\r\n";
+            SelectedBuildProfilePreview.Text = str;
         }
 
         #endregion

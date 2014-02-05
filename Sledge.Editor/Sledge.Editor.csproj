@@ -131,7 +131,27 @@
     <Compile Include="Compiling\Batch.cs" />
     <Compile Include="Compiling\BatchCompiler.cs" />
     <Compile Include="Compiling\BatchCompileStep.cs" />
+    <Compile Include="Compiling\CompileDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Compiling\CompileDialog.Designer.cs">
+      <DependentUpon>CompileDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="Compiling\CompileLogTracer.cs" />
+    <Compile Include="Compiling\CompileParameter.cs" />
+    <Compile Include="Compiling\CompileParameterPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Compiling\CompileParameterPanel.Designer.cs">
+      <DependentUpon>CompileParameterPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Compiling\CompileParameterType.cs" />
+    <Compile Include="Compiling\CompilePreset.cs" />
+    <Compile Include="Compiling\CompileSpecification.cs" />
+    <Compile Include="Compiling\CompileTool.cs" />
+    <Compile Include="Compiling\HeadingButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Documents\Document.cs" />
     <Compile Include="Documents\DocumentManager.cs" />
     <Compile Include="Documents\DocumentMemory.cs" />
@@ -521,6 +541,12 @@
     <EmbeddedResource Include="Brushes\Controls\NumericControl.resx">
       <DependentUpon>NumericControl.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Compiling\CompileDialog.resx">
+      <DependentUpon>CompileDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Compiling\CompileParameterPanel.resx">
+      <DependentUpon>CompileParameterPanel.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Editor.resx">
       <DependentUpon>Editor.cs</DependentUpon>
     </EmbeddedResource>
@@ -641,6 +667,9 @@
     </EmbeddedResource>
     <None Include="App.config" />
     <None Include="app.manifest" />
+    <None Include="Specifications\Goldsource.vdf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

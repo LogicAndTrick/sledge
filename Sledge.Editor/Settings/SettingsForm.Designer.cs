@@ -215,7 +215,9 @@ namespace Sledge.Editor.Settings
             this.tabBuildGeneral = new System.Windows.Forms.TabPage();
             this.lblBuildName = new System.Windows.Forms.Label();
             this.SelectedBuildName = new System.Windows.Forms.TextBox();
+            this.label20 = new System.Windows.Forms.Label();
             this.lblBuildEngine = new System.Windows.Forms.Label();
+            this.SelectedBuildSpecification = new System.Windows.Forms.ComboBox();
             this.SelectedBuildEngine = new System.Windows.Forms.ComboBox();
             this.tabBuildExecutables = new System.Windows.Forms.TabPage();
             this.SelectedBuildIncludeWads = new System.Windows.Forms.CheckBox();
@@ -240,16 +242,24 @@ namespace Sledge.Editor.Settings
             this.SelectedBuildShowLog = new System.Windows.Forms.CheckBox();
             this.SelectedBuildRunGameNever = new System.Windows.Forms.RadioButton();
             this.tabBuildAdvanced = new System.Windows.Forms.TabPage();
+            this.SelectedBuildNewProfileButton = new System.Windows.Forms.Button();
+            this.SelectedBuildRenameProfileButton = new System.Windows.Forms.Button();
+            this.SelectedBuildDeleteProfileButton = new System.Windows.Forms.Button();
+            this.SelectedBuildProfile = new System.Windows.Forms.ComboBox();
+            this.label40 = new System.Windows.Forms.Label();
             this.tabBuildAdvancedSubTabs = new System.Windows.Forms.TabControl();
             this.tabBuildAdvancedCSG = new System.Windows.Forms.TabPage();
-            this.label20 = new System.Windows.Forms.Label();
+            this.SelectedBuildCsgParameters = new Sledge.Editor.Compiling.CompileParameterPanel();
             this.tabBuildAdvancedBSP = new System.Windows.Forms.TabPage();
+            this.SelectedBuildBspParameters = new Sledge.Editor.Compiling.CompileParameterPanel();
             this.tabBuildAdvancedVIS = new System.Windows.Forms.TabPage();
+            this.SelectedBuildVisParameters = new Sledge.Editor.Compiling.CompileParameterPanel();
             this.tabBuildAdvancedRAD = new System.Windows.Forms.TabPage();
+            this.SelectedBuildRadParameters = new Sledge.Editor.Compiling.CompileParameterPanel();
             this.tabBuildAdvancedShared = new System.Windows.Forms.TabPage();
+            this.SelectedBuildSharedParameters = new Sledge.Editor.Compiling.CompileParameterPanel();
             this.tabBuildAdvancedPreview = new System.Windows.Forms.TabPage();
-            this.txtBuildAdvancedPreview = new System.Windows.Forms.TextBox();
-            this.lblBuildTEMPAdvancedConfig = new System.Windows.Forms.Label();
+            this.SelectedBuildProfilePreview = new System.Windows.Forms.TextBox();
             this.RemoveBuild = new System.Windows.Forms.Button();
             this.AddBuild = new System.Windows.Forms.Button();
             this.BuildTree = new System.Windows.Forms.TreeView();
@@ -261,6 +271,7 @@ namespace Sledge.Editor.Settings
             this.SteamInstallDirBrowseButton = new System.Windows.Forms.Button();
             this.SteamUsername = new System.Windows.Forms.ComboBox();
             this.tabHotkeys = new System.Windows.Forms.TabPage();
+            this.HotkeyResetButton = new System.Windows.Forms.Button();
             this.groupBox22 = new System.Windows.Forms.GroupBox();
             this.HotkeyActionList = new System.Windows.Forms.ComboBox();
             this.HotkeyAddButton = new System.Windows.Forms.Button();
@@ -296,7 +307,9 @@ namespace Sledge.Editor.Settings
             this.btnCancelSettings = new System.Windows.Forms.Button();
             this.btnApplyAndCloseSettings = new System.Windows.Forms.Button();
             this.btnApplySettings = new System.Windows.Forms.Button();
-            this.HotkeyResetButton = new System.Windows.Forms.Button();
+            this.groupBox23 = new System.Windows.Forms.GroupBox();
+            this.CompileOpenOutput = new System.Windows.Forms.CheckBox();
+            this.CompileDefaultAdvanced = new System.Windows.Forms.CheckBox();
             this.tbcSettings.SuspendLayout();
             this.tabGeneral.SuspendLayout();
             this.groupBox20.SuspendLayout();
@@ -345,6 +358,10 @@ namespace Sledge.Editor.Settings
             this.tabBuildAdvanced.SuspendLayout();
             this.tabBuildAdvancedSubTabs.SuspendLayout();
             this.tabBuildAdvancedCSG.SuspendLayout();
+            this.tabBuildAdvancedBSP.SuspendLayout();
+            this.tabBuildAdvancedVIS.SuspendLayout();
+            this.tabBuildAdvancedRAD.SuspendLayout();
+            this.tabBuildAdvancedShared.SuspendLayout();
             this.tabBuildAdvancedPreview.SuspendLayout();
             this.tabSteam.SuspendLayout();
             this.tabHotkeys.SuspendLayout();
@@ -356,6 +373,7 @@ namespace Sledge.Editor.Settings
             ((System.ComponentModel.ISupportInitialize)(this.trackBar2)).BeginInit();
             this.groupBox7.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
+            this.groupBox23.SuspendLayout();
             this.SuspendLayout();
             // 
             // tbcSettings
@@ -379,6 +397,7 @@ namespace Sledge.Editor.Settings
             // 
             // tabGeneral
             // 
+            this.tabGeneral.Controls.Add(this.groupBox23);
             this.tabGeneral.Controls.Add(this.groupBox20);
             this.tabGeneral.Controls.Add(this.groupBox21);
             this.tabGeneral.Controls.Add(this.groupBox19);
@@ -454,7 +473,7 @@ namespace Sledge.Editor.Settings
             this.groupBox21.Controls.Add(this.label32);
             this.groupBox21.Location = new System.Drawing.Point(369, 85);
             this.groupBox21.Name = "groupBox21";
-            this.groupBox21.Size = new System.Drawing.Size(357, 290);
+            this.groupBox21.Size = new System.Drawing.Size(357, 167);
             this.groupBox21.TabIndex = 4;
             this.groupBox21.TabStop = false;
             this.groupBox21.Text = "Rendering";
@@ -2379,7 +2398,9 @@ namespace Sledge.Editor.Settings
             // 
             this.tabBuildGeneral.Controls.Add(this.lblBuildName);
             this.tabBuildGeneral.Controls.Add(this.SelectedBuildName);
+            this.tabBuildGeneral.Controls.Add(this.label20);
             this.tabBuildGeneral.Controls.Add(this.lblBuildEngine);
+            this.tabBuildGeneral.Controls.Add(this.SelectedBuildSpecification);
             this.tabBuildGeneral.Controls.Add(this.SelectedBuildEngine);
             this.tabBuildGeneral.Location = new System.Drawing.Point(4, 22);
             this.tabBuildGeneral.Name = "tabBuildGeneral";
@@ -2407,6 +2428,15 @@ namespace Sledge.Editor.Settings
             this.SelectedBuildName.Text = "ZHLT";
             this.SelectedBuildName.TextChanged += new System.EventHandler(this.SelectedBuildNameChanged);
             // 
+            // label20
+            // 
+            this.label20.Location = new System.Drawing.Point(6, 60);
+            this.label20.Name = "label20";
+            this.label20.Size = new System.Drawing.Size(72, 20);
+            this.label20.TabIndex = 16;
+            this.label20.Text = "Specification";
+            this.label20.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
             // lblBuildEngine
             // 
             this.lblBuildEngine.Location = new System.Drawing.Point(33, 33);
@@ -2415,6 +2445,19 @@ namespace Sledge.Editor.Settings
             this.lblBuildEngine.TabIndex = 16;
             this.lblBuildEngine.Text = "Engine";
             this.lblBuildEngine.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // SelectedBuildSpecification
+            // 
+            this.SelectedBuildSpecification.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.SelectedBuildSpecification.FormattingEnabled = true;
+            this.SelectedBuildSpecification.Items.AddRange(new object[] {
+            "Goldsource",
+            "Source"});
+            this.SelectedBuildSpecification.Location = new System.Drawing.Point(84, 59);
+            this.SelectedBuildSpecification.Name = "SelectedBuildSpecification";
+            this.SelectedBuildSpecification.Size = new System.Drawing.Size(229, 21);
+            this.SelectedBuildSpecification.TabIndex = 19;
+            this.SelectedBuildSpecification.SelectedIndexChanged += new System.EventHandler(this.SelectedBuildSpecificationChanged);
             // 
             // SelectedBuildEngine
             // 
@@ -2565,7 +2608,6 @@ namespace Sledge.Editor.Settings
             // 
             // tabBuildPostCompile
             // 
-            this.tabBuildPostCompile.BackColor = System.Drawing.SystemColors.Control;
             this.tabBuildPostCompile.Controls.Add(this.lblBuildCommandLine);
             this.tabBuildPostCompile.Controls.Add(this.SelectedBuildCopyBsp);
             this.tabBuildPostCompile.Controls.Add(this.SelectedBuildAskBeforeRun);
@@ -2580,6 +2622,7 @@ namespace Sledge.Editor.Settings
             this.tabBuildPostCompile.Size = new System.Drawing.Size(469, 473);
             this.tabBuildPostCompile.TabIndex = 2;
             this.tabBuildPostCompile.Text = "After Compiling";
+            this.tabBuildPostCompile.UseVisualStyleBackColor = true;
             // 
             // lblBuildCommandLine
             // 
@@ -2662,15 +2705,68 @@ namespace Sledge.Editor.Settings
             // 
             // tabBuildAdvanced
             // 
-            this.tabBuildAdvanced.BackColor = System.Drawing.SystemColors.Control;
+            this.tabBuildAdvanced.Controls.Add(this.SelectedBuildNewProfileButton);
+            this.tabBuildAdvanced.Controls.Add(this.SelectedBuildRenameProfileButton);
+            this.tabBuildAdvanced.Controls.Add(this.SelectedBuildDeleteProfileButton);
+            this.tabBuildAdvanced.Controls.Add(this.SelectedBuildProfile);
+            this.tabBuildAdvanced.Controls.Add(this.label40);
             this.tabBuildAdvanced.Controls.Add(this.tabBuildAdvancedSubTabs);
-            this.tabBuildAdvanced.Controls.Add(this.lblBuildTEMPAdvancedConfig);
             this.tabBuildAdvanced.Location = new System.Drawing.Point(4, 22);
             this.tabBuildAdvanced.Name = "tabBuildAdvanced";
             this.tabBuildAdvanced.Padding = new System.Windows.Forms.Padding(3);
             this.tabBuildAdvanced.Size = new System.Drawing.Size(469, 473);
             this.tabBuildAdvanced.TabIndex = 3;
             this.tabBuildAdvanced.Text = "Advanced";
+            this.tabBuildAdvanced.UseVisualStyleBackColor = true;
+            // 
+            // SelectedBuildNewProfileButton
+            // 
+            this.SelectedBuildNewProfileButton.Location = new System.Drawing.Point(382, 4);
+            this.SelectedBuildNewProfileButton.Name = "SelectedBuildNewProfileButton";
+            this.SelectedBuildNewProfileButton.Size = new System.Drawing.Size(81, 23);
+            this.SelectedBuildNewProfileButton.TabIndex = 22;
+            this.SelectedBuildNewProfileButton.Text = "New Profile...";
+            this.SelectedBuildNewProfileButton.UseVisualStyleBackColor = true;
+            this.SelectedBuildNewProfileButton.Click += new System.EventHandler(this.SelectedBuildNewProfileButtonClicked);
+            // 
+            // SelectedBuildRenameProfileButton
+            // 
+            this.SelectedBuildRenameProfileButton.Location = new System.Drawing.Point(175, 4);
+            this.SelectedBuildRenameProfileButton.Name = "SelectedBuildRenameProfileButton";
+            this.SelectedBuildRenameProfileButton.Size = new System.Drawing.Size(56, 23);
+            this.SelectedBuildRenameProfileButton.TabIndex = 22;
+            this.SelectedBuildRenameProfileButton.Text = "Rename";
+            this.SelectedBuildRenameProfileButton.UseVisualStyleBackColor = true;
+            this.SelectedBuildRenameProfileButton.Click += new System.EventHandler(this.SelectedBuildRenameProfileButtonClicked);
+            // 
+            // SelectedBuildDeleteProfileButton
+            // 
+            this.SelectedBuildDeleteProfileButton.Location = new System.Drawing.Point(237, 4);
+            this.SelectedBuildDeleteProfileButton.Name = "SelectedBuildDeleteProfileButton";
+            this.SelectedBuildDeleteProfileButton.Size = new System.Drawing.Size(56, 23);
+            this.SelectedBuildDeleteProfileButton.TabIndex = 22;
+            this.SelectedBuildDeleteProfileButton.Text = "Delete";
+            this.SelectedBuildDeleteProfileButton.UseVisualStyleBackColor = true;
+            this.SelectedBuildDeleteProfileButton.Click += new System.EventHandler(this.SelectedBuildDeleteProfileButtonClicked);
+            // 
+            // SelectedBuildProfile
+            // 
+            this.SelectedBuildProfile.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.SelectedBuildProfile.FormattingEnabled = true;
+            this.SelectedBuildProfile.Location = new System.Drawing.Point(49, 6);
+            this.SelectedBuildProfile.Name = "SelectedBuildProfile";
+            this.SelectedBuildProfile.Size = new System.Drawing.Size(121, 21);
+            this.SelectedBuildProfile.TabIndex = 21;
+            this.SelectedBuildProfile.SelectedIndexChanged += new System.EventHandler(this.SelectedBuildProfileChanged);
+            // 
+            // label40
+            // 
+            this.label40.AutoSize = true;
+            this.label40.Location = new System.Drawing.Point(6, 9);
+            this.label40.Name = "label40";
+            this.label40.Size = new System.Drawing.Size(36, 13);
+            this.label40.TabIndex = 20;
+            this.label40.Text = "Profile";
             // 
             // tabBuildAdvancedSubTabs
             // 
@@ -2688,81 +2784,120 @@ namespace Sledge.Editor.Settings
             // 
             // tabBuildAdvancedCSG
             // 
-            this.tabBuildAdvancedCSG.Controls.Add(this.label20);
+            this.tabBuildAdvancedCSG.Controls.Add(this.SelectedBuildCsgParameters);
             this.tabBuildAdvancedCSG.Location = new System.Drawing.Point(4, 22);
             this.tabBuildAdvancedCSG.Name = "tabBuildAdvancedCSG";
-            this.tabBuildAdvancedCSG.Padding = new System.Windows.Forms.Padding(3);
             this.tabBuildAdvancedCSG.Size = new System.Drawing.Size(449, 408);
             this.tabBuildAdvancedCSG.TabIndex = 0;
             this.tabBuildAdvancedCSG.Text = "CSG";
             this.tabBuildAdvancedCSG.UseVisualStyleBackColor = true;
             // 
-            // label20
+            // SelectedBuildCsgParameters
             // 
-            this.label20.Font = new System.Drawing.Font("Microsoft Sans Serif", 20F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label20.Location = new System.Drawing.Point(93, 268);
-            this.label20.Name = "label20";
-            this.label20.Size = new System.Drawing.Size(238, 36);
-            this.label20.TabIndex = 2;
-            this.label20.Text = "+WADINCLUDE";
+            this.SelectedBuildCsgParameters.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.SelectedBuildCsgParameters.Location = new System.Drawing.Point(0, 0);
+            this.SelectedBuildCsgParameters.MinimumSize = new System.Drawing.Size(300, 250);
+            this.SelectedBuildCsgParameters.Name = "SelectedBuildCsgParameters";
+            this.SelectedBuildCsgParameters.Size = new System.Drawing.Size(449, 408);
+            this.SelectedBuildCsgParameters.TabIndex = 0;
             // 
             // tabBuildAdvancedBSP
             // 
+            this.tabBuildAdvancedBSP.Controls.Add(this.SelectedBuildBspParameters);
             this.tabBuildAdvancedBSP.Location = new System.Drawing.Point(4, 22);
             this.tabBuildAdvancedBSP.Name = "tabBuildAdvancedBSP";
             this.tabBuildAdvancedBSP.Size = new System.Drawing.Size(449, 408);
             this.tabBuildAdvancedBSP.TabIndex = 1;
+            this.tabBuildAdvancedBSP.Text = "BSP";
+            this.tabBuildAdvancedBSP.UseVisualStyleBackColor = true;
+            // 
+            // SelectedBuildBspParameters
+            // 
+            this.SelectedBuildBspParameters.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.SelectedBuildBspParameters.Location = new System.Drawing.Point(0, 0);
+            this.SelectedBuildBspParameters.MinimumSize = new System.Drawing.Size(300, 250);
+            this.SelectedBuildBspParameters.Name = "SelectedBuildBspParameters";
+            this.SelectedBuildBspParameters.Size = new System.Drawing.Size(449, 408);
+            this.SelectedBuildBspParameters.TabIndex = 1;
             // 
             // tabBuildAdvancedVIS
             // 
+            this.tabBuildAdvancedVIS.Controls.Add(this.SelectedBuildVisParameters);
             this.tabBuildAdvancedVIS.Location = new System.Drawing.Point(4, 22);
             this.tabBuildAdvancedVIS.Name = "tabBuildAdvancedVIS";
             this.tabBuildAdvancedVIS.Size = new System.Drawing.Size(449, 408);
             this.tabBuildAdvancedVIS.TabIndex = 2;
+            this.tabBuildAdvancedVIS.Text = "VIS";
+            this.tabBuildAdvancedVIS.UseVisualStyleBackColor = true;
+            // 
+            // SelectedBuildVisParameters
+            // 
+            this.SelectedBuildVisParameters.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.SelectedBuildVisParameters.Location = new System.Drawing.Point(0, 0);
+            this.SelectedBuildVisParameters.MinimumSize = new System.Drawing.Size(300, 250);
+            this.SelectedBuildVisParameters.Name = "SelectedBuildVisParameters";
+            this.SelectedBuildVisParameters.Size = new System.Drawing.Size(449, 408);
+            this.SelectedBuildVisParameters.TabIndex = 1;
             // 
             // tabBuildAdvancedRAD
             // 
+            this.tabBuildAdvancedRAD.Controls.Add(this.SelectedBuildRadParameters);
             this.tabBuildAdvancedRAD.Location = new System.Drawing.Point(4, 22);
             this.tabBuildAdvancedRAD.Name = "tabBuildAdvancedRAD";
             this.tabBuildAdvancedRAD.Size = new System.Drawing.Size(449, 408);
             this.tabBuildAdvancedRAD.TabIndex = 3;
+            this.tabBuildAdvancedRAD.Text = "RAD";
+            this.tabBuildAdvancedRAD.UseVisualStyleBackColor = true;
+            // 
+            // SelectedBuildRadParameters
+            // 
+            this.SelectedBuildRadParameters.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.SelectedBuildRadParameters.Location = new System.Drawing.Point(0, 0);
+            this.SelectedBuildRadParameters.MinimumSize = new System.Drawing.Size(300, 250);
+            this.SelectedBuildRadParameters.Name = "SelectedBuildRadParameters";
+            this.SelectedBuildRadParameters.Size = new System.Drawing.Size(449, 408);
+            this.SelectedBuildRadParameters.TabIndex = 1;
             // 
             // tabBuildAdvancedShared
             // 
+            this.tabBuildAdvancedShared.Controls.Add(this.SelectedBuildSharedParameters);
             this.tabBuildAdvancedShared.Location = new System.Drawing.Point(4, 22);
             this.tabBuildAdvancedShared.Name = "tabBuildAdvancedShared";
             this.tabBuildAdvancedShared.Size = new System.Drawing.Size(449, 408);
             this.tabBuildAdvancedShared.TabIndex = 4;
+            this.tabBuildAdvancedShared.Text = "Shared";
+            this.tabBuildAdvancedShared.UseVisualStyleBackColor = true;
+            // 
+            // SelectedBuildSharedParameters
+            // 
+            this.SelectedBuildSharedParameters.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.SelectedBuildSharedParameters.Location = new System.Drawing.Point(0, 0);
+            this.SelectedBuildSharedParameters.MinimumSize = new System.Drawing.Size(300, 250);
+            this.SelectedBuildSharedParameters.Name = "SelectedBuildSharedParameters";
+            this.SelectedBuildSharedParameters.Size = new System.Drawing.Size(449, 408);
+            this.SelectedBuildSharedParameters.TabIndex = 1;
             // 
             // tabBuildAdvancedPreview
             // 
-            this.tabBuildAdvancedPreview.Controls.Add(this.txtBuildAdvancedPreview);
+            this.tabBuildAdvancedPreview.Controls.Add(this.SelectedBuildProfilePreview);
             this.tabBuildAdvancedPreview.Location = new System.Drawing.Point(4, 22);
             this.tabBuildAdvancedPreview.Name = "tabBuildAdvancedPreview";
-            this.tabBuildAdvancedPreview.Padding = new System.Windows.Forms.Padding(3);
             this.tabBuildAdvancedPreview.Size = new System.Drawing.Size(449, 408);
             this.tabBuildAdvancedPreview.TabIndex = 5;
             this.tabBuildAdvancedPreview.Text = "Preview";
             this.tabBuildAdvancedPreview.UseVisualStyleBackColor = true;
             // 
-            // txtBuildAdvancedPreview
+            // SelectedBuildProfilePreview
             // 
-            this.txtBuildAdvancedPreview.BackColor = System.Drawing.SystemColors.Window;
-            this.txtBuildAdvancedPreview.Location = new System.Drawing.Point(6, 6);
-            this.txtBuildAdvancedPreview.Multiline = true;
-            this.txtBuildAdvancedPreview.Name = "txtBuildAdvancedPreview";
-            this.txtBuildAdvancedPreview.ReadOnly = true;
-            this.txtBuildAdvancedPreview.Size = new System.Drawing.Size(437, 396);
-            this.txtBuildAdvancedPreview.TabIndex = 3;
-            // 
-            // lblBuildTEMPAdvancedConfig
-            // 
-            this.lblBuildTEMPAdvancedConfig.Location = new System.Drawing.Point(6, 5);
-            this.lblBuildTEMPAdvancedConfig.Name = "lblBuildTEMPAdvancedConfig";
-            this.lblBuildTEMPAdvancedConfig.Size = new System.Drawing.Size(457, 33);
-            this.lblBuildTEMPAdvancedConfig.TabIndex = 18;
-            this.lblBuildTEMPAdvancedConfig.Text = "These will be set as default settings of the compile dialog, but you can change t" +
-    "hen for each compile if you want.";
+            this.SelectedBuildProfilePreview.BackColor = System.Drawing.SystemColors.Window;
+            this.SelectedBuildProfilePreview.Font = new System.Drawing.Font("Courier New", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.SelectedBuildProfilePreview.Location = new System.Drawing.Point(6, 6);
+            this.SelectedBuildProfilePreview.Multiline = true;
+            this.SelectedBuildProfilePreview.Name = "SelectedBuildProfilePreview";
+            this.SelectedBuildProfilePreview.ReadOnly = true;
+            this.SelectedBuildProfilePreview.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.SelectedBuildProfilePreview.Size = new System.Drawing.Size(437, 396);
+            this.SelectedBuildProfilePreview.TabIndex = 3;
             // 
             // RemoveBuild
             // 
@@ -2877,6 +3012,17 @@ namespace Sledge.Editor.Settings
             this.tabHotkeys.TabIndex = 6;
             this.tabHotkeys.Text = "Hotkeys";
             this.tabHotkeys.UseVisualStyleBackColor = true;
+            // 
+            // HotkeyResetButton
+            // 
+            this.HotkeyResetButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.HotkeyResetButton.Location = new System.Drawing.Point(537, 482);
+            this.HotkeyResetButton.Name = "HotkeyResetButton";
+            this.HotkeyResetButton.Size = new System.Drawing.Size(118, 23);
+            this.HotkeyResetButton.TabIndex = 5;
+            this.HotkeyResetButton.Text = "Reset to Defaults";
+            this.HotkeyResetButton.UseVisualStyleBackColor = true;
+            this.HotkeyResetButton.Click += new System.EventHandler(this.HotkeyResetButtonClicked);
             // 
             // groupBox22
             // 
@@ -3225,16 +3371,36 @@ namespace Sledge.Editor.Settings
             this.btnApplySettings.UseVisualStyleBackColor = true;
             this.btnApplySettings.Click += new System.EventHandler(this.Apply);
             // 
-            // HotkeyResetButton
+            // groupBox23
             // 
-            this.HotkeyResetButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.HotkeyResetButton.Location = new System.Drawing.Point(537, 482);
-            this.HotkeyResetButton.Name = "HotkeyResetButton";
-            this.HotkeyResetButton.Size = new System.Drawing.Size(118, 23);
-            this.HotkeyResetButton.TabIndex = 5;
-            this.HotkeyResetButton.Text = "Reset to Defaults";
-            this.HotkeyResetButton.UseVisualStyleBackColor = true;
-            this.HotkeyResetButton.Click += new System.EventHandler(this.HotkeyResetButtonClicked);
+            this.groupBox23.Controls.Add(this.CompileDefaultAdvanced);
+            this.groupBox23.Controls.Add(this.CompileOpenOutput);
+            this.groupBox23.Location = new System.Drawing.Point(369, 258);
+            this.groupBox23.Name = "groupBox23";
+            this.groupBox23.Size = new System.Drawing.Size(357, 117);
+            this.groupBox23.TabIndex = 5;
+            this.groupBox23.TabStop = false;
+            this.groupBox23.Text = "Compiling";
+            // 
+            // CompileOpenOutput
+            // 
+            this.CompileOpenOutput.Location = new System.Drawing.Point(12, 19);
+            this.CompileOpenOutput.Name = "CompileOpenOutput";
+            this.CompileOpenOutput.Size = new System.Drawing.Size(224, 24);
+            this.CompileOpenOutput.TabIndex = 3;
+            this.CompileOpenOutput.Tag = "";
+            this.CompileOpenOutput.Text = "Open the output panel on compile start";
+            this.CompileOpenOutput.UseVisualStyleBackColor = true;
+            // 
+            // CompileDefaultAdvanced
+            // 
+            this.CompileDefaultAdvanced.Location = new System.Drawing.Point(12, 49);
+            this.CompileDefaultAdvanced.Name = "CompileDefaultAdvanced";
+            this.CompileDefaultAdvanced.Size = new System.Drawing.Size(224, 24);
+            this.CompileDefaultAdvanced.TabIndex = 3;
+            this.CompileDefaultAdvanced.Tag = "";
+            this.CompileDefaultAdvanced.Text = "Use advanced compile dialog by default";
+            this.CompileDefaultAdvanced.UseVisualStyleBackColor = true;
             // 
             // SettingsForm
             // 
@@ -3306,8 +3472,13 @@ namespace Sledge.Editor.Settings
             this.tabBuildPostCompile.ResumeLayout(false);
             this.tabBuildPostCompile.PerformLayout();
             this.tabBuildAdvanced.ResumeLayout(false);
+            this.tabBuildAdvanced.PerformLayout();
             this.tabBuildAdvancedSubTabs.ResumeLayout(false);
             this.tabBuildAdvancedCSG.ResumeLayout(false);
+            this.tabBuildAdvancedBSP.ResumeLayout(false);
+            this.tabBuildAdvancedVIS.ResumeLayout(false);
+            this.tabBuildAdvancedRAD.ResumeLayout(false);
+            this.tabBuildAdvancedShared.ResumeLayout(false);
             this.tabBuildAdvancedPreview.ResumeLayout(false);
             this.tabBuildAdvancedPreview.PerformLayout();
             this.tabSteam.ResumeLayout(false);
@@ -3322,15 +3493,15 @@ namespace Sledge.Editor.Settings
             ((System.ComponentModel.ISupportInitialize)(this.trackBar2)).EndInit();
             this.groupBox7.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).EndInit();
+            this.groupBox23.ResumeLayout(false);
             this.ResumeLayout(false);
 
 		}
-		private System.Windows.Forms.TextBox txtBuildAdvancedPreview;
+		private System.Windows.Forms.TextBox SelectedBuildProfilePreview;
 		private System.Windows.Forms.TabPage tabBuildAdvancedPreview;
 		private System.Windows.Forms.GroupBox groupBox1;
 		private System.Windows.Forms.GroupBox groupBox2;
-		private System.Windows.Forms.GroupBox groupBox15;
-		private System.Windows.Forms.Label label20;
+        private System.Windows.Forms.GroupBox groupBox15;
 		private System.Windows.Forms.TabPage tabBuildAdvancedShared;
 		private System.Windows.Forms.TabPage tabBuildAdvancedRAD;
 		private System.Windows.Forms.TabPage tabBuildAdvancedVIS;
@@ -3487,8 +3658,7 @@ namespace Sledge.Editor.Settings
 		private System.Windows.Forms.Label lblBuildVIS;
 		private System.Windows.Forms.ComboBox SelectedBuildBsp;
 		private System.Windows.Forms.Label lblBuildCSG;
-		private System.Windows.Forms.Label lblBuildBSP;
-		private System.Windows.Forms.Label lblBuildTEMPAdvancedConfig;
+        private System.Windows.Forms.Label lblBuildBSP;
 		private System.Windows.Forms.GroupBox grpConfigGame;
 		private System.Windows.Forms.GroupBox grpConfigSaving;
 		private System.Windows.Forms.TabPage tabBuild;
@@ -3586,5 +3756,20 @@ namespace Sledge.Editor.Settings
         private System.Windows.Forms.Label label39;
         private System.Windows.Forms.Panel ViewportBackgroundColour;
         private System.Windows.Forms.Button HotkeyResetButton;
+        private Compiling.CompileParameterPanel SelectedBuildCsgParameters;
+        private System.Windows.Forms.Label label20;
+        private System.Windows.Forms.ComboBox SelectedBuildSpecification;
+        private System.Windows.Forms.Button SelectedBuildNewProfileButton;
+        private System.Windows.Forms.Button SelectedBuildDeleteProfileButton;
+        private System.Windows.Forms.ComboBox SelectedBuildProfile;
+        private System.Windows.Forms.Label label40;
+        private System.Windows.Forms.Button SelectedBuildRenameProfileButton;
+        private Compiling.CompileParameterPanel SelectedBuildBspParameters;
+        private Compiling.CompileParameterPanel SelectedBuildVisParameters;
+        private Compiling.CompileParameterPanel SelectedBuildRadParameters;
+        private Compiling.CompileParameterPanel SelectedBuildSharedParameters;
+        private System.Windows.Forms.GroupBox groupBox23;
+        private System.Windows.Forms.CheckBox CompileDefaultAdvanced;
+        private System.Windows.Forms.CheckBox CompileOpenOutput;
 	}
 }
