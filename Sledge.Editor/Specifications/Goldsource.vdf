@@ -13,7 +13,7 @@ Specification
 	Preset
 	{
 		Name "Fast"
-		Description "Run the compile in fast mode to get a quick lower preview of your work"
+		Description "Run the compile in fast mode to get a quick lower-quality preview of your work"
 		Csg "-wadautodetect -low -estimate -noinfo"
 		Bsp "-low -estimate -noinfo"
 		Vis "-fast -low -estimate -noinfo"

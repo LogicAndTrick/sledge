@@ -13,6 +13,7 @@ using Sledge.DataStructures.GameData;
 using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.MapObjects;
 using Sledge.Editor.Brushes;
+using Sledge.Editor.Compiling;
 using Sledge.Editor.Documents;
 using Sledge.Editor.Menu;
 using Sledge.Editor.Settings;
@@ -314,6 +315,8 @@ namespace Sledge.Editor
             Mediator.Subscribe(EditorMediator.HistoryChanged, this);
 
             Mediator.Subscribe(EditorMediator.CompileStarted, this);
+            Mediator.Subscribe(EditorMediator.CompileFinished, this);
+            Mediator.Subscribe(EditorMediator.CompileFailed, this);
 
             Mediator.Subscribe(EditorMediator.MouseCoordinatesChanged, this);
             Mediator.Subscribe(EditorMediator.SelectionBoxChanged, this);
@@ -456,9 +459,40 @@ namespace Sledge.Editor
             UpdateDocumentTabs();
         }
 
-        private void CompileStarted()
+        private void CompileStarted(Batch batch)
         {
             if (DockBottom.Hidden && Sledge.Settings.View.CompileOpenOutput) DockBottom.Hidden = false;
+        }
+
+        private void CompileFinished(Batch batch)
+        {
+            if (batch.Build.AfterRunGame)
+            {
+                if (batch.Build.AfterAskBeforeRun)
+                {
+                    if (MessageBox.Show(
+                        "The compile of " + batch.Document.MapFileName + " completed successfully.\n" +
+                        "Would you like to run the game now?",
+                        "Compile Successful!",
+                        MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes)
+                    {
+                        return;
+                    }
+                    // todo: Run game.
+                }
+            }
+        }
+
+        private void CompileFailed(Batch batch)
+        {
+            if (batch.Build.AfterRunGame && batch.Build.AfterAskBeforeRun)
+            {
+                MessageBox.Show(
+                    "The compile of " + batch.Document.MapFileName + " failed. If any errors were generated, " +
+                    "they will appear in the compile output panel.",
+                    "Compile Failed!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                if (DockBottom.Hidden) DockBottom.Hidden = false;
+            }
         }
 
         private void DocumentTabsSelectedIndexChanged(object sender, EventArgs e)

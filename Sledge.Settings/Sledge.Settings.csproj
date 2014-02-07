@@ -54,6 +54,7 @@
     <Compile Include="Layout.cs" />
     <Compile Include="Models\Build.cs" />
     <Compile Include="Models\BuildProfile.cs" />
+    <Compile Include="Models\CompileWorkingDirectory.cs" />
     <Compile Include="Models\Engine.cs" />
     <Compile Include="Models\Fgd.cs" />
     <Compile Include="Models\Game.cs" />

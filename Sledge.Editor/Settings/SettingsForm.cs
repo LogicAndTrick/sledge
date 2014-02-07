@@ -79,6 +79,23 @@ namespace Sledge.Editor.Settings
             SelectedBuildVis.SelectedIndexChanged += (s, e) => CheckNull(_selectedBuild, x => x.Vis = SelectedBuildVis.Text);
             SelectedBuildRad.SelectedIndexChanged += (s, e) => CheckNull(_selectedBuild, x => x.Rad = SelectedBuildRad.Text);
 
+            SelectedBuildWorkingDirTemp.CheckedChanged += (s, e) => { if (SelectedBuildWorkingDirTemp.Checked) CheckNull(_selectedBuild, x => x.WorkingDirectory = CompileWorkingDirectory.TemporaryDirectory); };
+            SelectedBuildWorkingDirSame.CheckedChanged += (s, e) => { if (SelectedBuildWorkingDirSame.Checked) CheckNull(_selectedBuild, x => x.WorkingDirectory = CompileWorkingDirectory.SameDirectory); };
+            SelectedBuildWorkingDirSub.CheckedChanged += (s, e) => { if (SelectedBuildWorkingDirSub.Checked) CheckNull(_selectedBuild, x => x.WorkingDirectory = CompileWorkingDirectory.SubDirectory); };
+
+            SelectedBuildAfterCopyBsp.CheckedChanged += (s, e) => CheckNull(_selectedBuild, x => x.AfterCopyBsp = SelectedBuildAfterCopyBsp.Checked);
+            SelectedBuildAfterRunGame.CheckedChanged += (s, e) => CheckNull(_selectedBuild, x => x.AfterRunGame = SelectedBuildAfterRunGame.Checked);
+            SelectedBuildGameCommandLine.TextChanged += (s, e) => CheckNull(_selectedBuild, x => x.AfterRunGameParameters = SelectedBuildGameCommandLine.Text);
+            SelectedBuildAskBeforeRun.CheckedChanged += (s, e) => CheckNull(_selectedBuild, x => x.AfterAskBeforeRun = SelectedBuildAskBeforeRun.Checked);
+
+            SelectedBuildCopyBsp.CheckedChanged += (s, e) => CheckNull(_selectedBuild, x => x.CopyBsp = SelectedBuildCopyBsp.Checked);
+            SelectedBuildCopyRes.CheckedChanged += (s, e) => CheckNull(_selectedBuild, x => x.CopyRes = SelectedBuildCopyRes.Checked);
+            SelectedBuildCopyLin.CheckedChanged += (s, e) => CheckNull(_selectedBuild, x => x.CopyLin = SelectedBuildCopyLin.Checked);
+            SelectedBuildCopyMap.CheckedChanged += (s, e) => CheckNull(_selectedBuild, x => x.CopyMap = SelectedBuildCopyMap.Checked);
+            SelectedBuildCopyPts.CheckedChanged += (s, e) => CheckNull(_selectedBuild, x => x.CopyPts = SelectedBuildCopyPts.Checked);
+            SelectedBuildCopyLog.CheckedChanged += (s, e) => CheckNull(_selectedBuild, x => x.CopyLog = SelectedBuildCopyLog.Checked);
+            SelectedBuildCopyErr.CheckedChanged += (s, e) => CheckNull(_selectedBuild, x => x.CopyErr = SelectedBuildCopyErr.Checked);
+
             // Build Profiles
             SelectedBuildCsgParameters.ValueChanged += (s, e) => CheckNull(_selectedProfile, x =>
             {
@@ -1084,6 +1101,23 @@ namespace Sledge.Editor.Settings
             SelectedBuildCsg.SelectedText = _selectedBuild.Csg;
             SelectedBuildVis.SelectedText = _selectedBuild.Vis;
             SelectedBuildRad.SelectedText = _selectedBuild.Rad;
+
+            SelectedBuildWorkingDirTemp.Checked = _selectedBuild.WorkingDirectory == CompileWorkingDirectory.TemporaryDirectory;
+            SelectedBuildWorkingDirSame.Checked = _selectedBuild.WorkingDirectory == CompileWorkingDirectory.SameDirectory;
+            SelectedBuildWorkingDirSub.Checked = _selectedBuild.WorkingDirectory == CompileWorkingDirectory.SubDirectory;
+
+            SelectedBuildAfterCopyBsp.Checked = _selectedBuild.AfterCopyBsp;
+            SelectedBuildAfterRunGame.Checked = _selectedBuild.AfterRunGame;
+            SelectedBuildGameCommandLine.Text = _selectedBuild.AfterRunGameParameters;
+            SelectedBuildAskBeforeRun.Checked = _selectedBuild.AfterAskBeforeRun;
+
+            SelectedBuildCopyBsp.Checked = _selectedBuild.CopyBsp;
+            SelectedBuildCopyRes.Checked = _selectedBuild.CopyRes;
+            SelectedBuildCopyLin.Checked = _selectedBuild.CopyLin;
+            SelectedBuildCopyMap.Checked = _selectedBuild.CopyMap;
+            SelectedBuildCopyPts.Checked = _selectedBuild.CopyPts;
+            SelectedBuildCopyLog.Checked = _selectedBuild.CopyLog;
+            SelectedBuildCopyErr.Checked = _selectedBuild.CopyErr;
         }
 
         private void SelectedBuildPathChanged(object sender, EventArgs e)

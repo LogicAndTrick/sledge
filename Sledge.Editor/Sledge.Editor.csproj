@@ -129,7 +129,6 @@
     <Compile Include="Brushes\WedgeBrush.cs" />
     <Compile Include="Clipboard\ClipboardManager.cs" />
     <Compile Include="Compiling\Batch.cs" />
-    <Compile Include="Compiling\BatchCompiler.cs" />
     <Compile Include="Compiling\BatchCompileStep.cs" />
     <Compile Include="Compiling\CompileDialog.cs">
       <SubType>Form</SubType>

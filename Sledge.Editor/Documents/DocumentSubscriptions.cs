@@ -246,53 +246,10 @@ namespace Sledge.Editor.Documents
             {
                 if (cd.ShowDialog() == DialogResult.OK)
                 {
-                    var tempDir = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
-                    Directory.CreateDirectory(tempDir);
-
-                    _document.Map.WorldSpawn.EntityData.SetPropertyValue("wad", string.Join(";", _document.Game.Wads.Select(x => x.Path)));
-                    var map = Path.Combine(tempDir, Path.GetFileNameWithoutExtension(_document.MapFile) + ".map");
-                    SaveWithCordon(map);
-
-                    var batch = new Batch(_document.Game, build, cd.GetProfile(), map, _document.MapFile);
-                    BatchCompiler.Compile(batch);
+                    var batch = new Batch(_document, build, cd.GetProfile());
+                    batch.Compile();
                 }
             }
-        }
-
-        private void SaveWithCordon(string file)
-        {
-            var map = _document.Map;
-            if (_document.Map.Cordon)
-            {
-                map = new Map();
-                map.WorldSpawn.EntityData = _document.Map.WorldSpawn.EntityData.Clone();
-                var entities = _document.Map.WorldSpawn.GetAllNodesContainedWithin(_document.Map.CordonBounds);
-                foreach (var mo in entities)
-                {
-                    var clone = mo.Clone();
-                    clone.SetParent(map.WorldSpawn);
-                }
-                var outside = new Box(map.WorldSpawn.Children.Select(x => x.BoundingBox).Union(new[] {_document.Map.CordonBounds}));
-                outside = new Box(outside.Start - Coordinate.One, outside.End + Coordinate.One);
-                var inside = _document.Map.CordonBounds;
-
-                var brush = new Brushes.BlockBrush();
-
-                var cordon = (Solid) brush.Create(map.IDGenerator, outside, null).First();
-                var carver = (Solid) brush.Create(map.IDGenerator, inside, null).First();
-                cordon.Faces.ForEach(x => x.Texture.Name = "BLACK");
-
-                // Do a carve (TODO: move carve into helper method?)
-                foreach (var plane in carver.Faces.Select(x => x.Plane))
-                {
-                    Solid back, front;
-                    if (!cordon.Split(plane, out back, out front, map.IDGenerator)) continue;
-                    front.SetParent(map.WorldSpawn);
-                    cordon = back;
-                }
-
-            }
-            MapProvider.SaveMapToFile(file, map);
         }
 
         public void OperationsCopy()
@@ -872,7 +829,7 @@ namespace Sledge.Editor.Documents
                     OpenPointfile(lin);
                     return;
                 }
-                var pts = Path.Combine(dir, file + ".lin");
+                var pts = Path.Combine(dir, file + ".pts");
                 if (File.Exists(pts))
                 {
                     OpenPointfile(pts);

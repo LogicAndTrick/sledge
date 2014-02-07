@@ -38,6 +38,9 @@ namespace Sledge.Editor.Settings
 		{
             this.tbcSettings = new System.Windows.Forms.TabControl();
             this.tabGeneral = new System.Windows.Forms.TabPage();
+            this.groupBox23 = new System.Windows.Forms.GroupBox();
+            this.CompileDefaultAdvanced = new System.Windows.Forms.CheckBox();
+            this.CompileOpenOutput = new System.Windows.Forms.CheckBox();
             this.groupBox20 = new System.Windows.Forms.GroupBox();
             this.KeepViewportSplitterPosition = new System.Windows.Forms.CheckBox();
             this.KeepSelectedTool = new System.Windows.Forms.CheckBox();
@@ -213,6 +216,23 @@ namespace Sledge.Editor.Settings
             this.tabBuild = new System.Windows.Forms.TabPage();
             this.BuildSubTabs = new System.Windows.Forms.TabControl();
             this.tabBuildGeneral = new System.Windows.Forms.TabPage();
+            this.groupBox26 = new System.Windows.Forms.GroupBox();
+            this.SelectedBuildCopyLin = new System.Windows.Forms.CheckBox();
+            this.SelectedBuildCopyErr = new System.Windows.Forms.CheckBox();
+            this.SelectedBuildCopyLog = new System.Windows.Forms.CheckBox();
+            this.SelectedBuildCopyPts = new System.Windows.Forms.CheckBox();
+            this.SelectedBuildCopyRes = new System.Windows.Forms.CheckBox();
+            this.SelectedBuildCopyMap = new System.Windows.Forms.CheckBox();
+            this.SelectedBuildCopyBsp = new System.Windows.Forms.CheckBox();
+            this.groupBox25 = new System.Windows.Forms.GroupBox();
+            this.SelectedBuildWorkingDirSub = new System.Windows.Forms.RadioButton();
+            this.SelectedBuildWorkingDirSame = new System.Windows.Forms.RadioButton();
+            this.SelectedBuildWorkingDirTemp = new System.Windows.Forms.RadioButton();
+            this.groupBox24 = new System.Windows.Forms.GroupBox();
+            this.SelectedBuildAfterRunGame = new System.Windows.Forms.CheckBox();
+            this.SelectedBuildAfterCopyBsp = new System.Windows.Forms.CheckBox();
+            this.SelectedBuildAskBeforeRun = new System.Windows.Forms.CheckBox();
+            this.SelectedBuildGameCommandLine = new System.Windows.Forms.TextBox();
             this.lblBuildName = new System.Windows.Forms.Label();
             this.SelectedBuildName = new System.Windows.Forms.TextBox();
             this.label20 = new System.Windows.Forms.Label();
@@ -232,15 +252,6 @@ namespace Sledge.Editor.Settings
             this.SelectedBuildCsg = new System.Windows.Forms.ComboBox();
             this.lblBuildRAD = new System.Windows.Forms.Label();
             this.SelectedBuildExeFolderBrowse = new System.Windows.Forms.Button();
-            this.tabBuildPostCompile = new System.Windows.Forms.TabPage();
-            this.lblBuildCommandLine = new System.Windows.Forms.Label();
-            this.SelectedBuildCopyBsp = new System.Windows.Forms.CheckBox();
-            this.SelectedBuildAskBeforeRun = new System.Windows.Forms.CheckBox();
-            this.SelectedBuildRunGameAlways = new System.Windows.Forms.RadioButton();
-            this.SelectedBuildCommandLine = new System.Windows.Forms.TextBox();
-            this.SelectedBuildRunGameOnChange = new System.Windows.Forms.RadioButton();
-            this.SelectedBuildShowLog = new System.Windows.Forms.CheckBox();
-            this.SelectedBuildRunGameNever = new System.Windows.Forms.RadioButton();
             this.tabBuildAdvanced = new System.Windows.Forms.TabPage();
             this.SelectedBuildNewProfileButton = new System.Windows.Forms.Button();
             this.SelectedBuildRenameProfileButton = new System.Windows.Forms.Button();
@@ -307,11 +318,9 @@ namespace Sledge.Editor.Settings
             this.btnCancelSettings = new System.Windows.Forms.Button();
             this.btnApplyAndCloseSettings = new System.Windows.Forms.Button();
             this.btnApplySettings = new System.Windows.Forms.Button();
-            this.groupBox23 = new System.Windows.Forms.GroupBox();
-            this.CompileOpenOutput = new System.Windows.Forms.CheckBox();
-            this.CompileDefaultAdvanced = new System.Windows.Forms.CheckBox();
             this.tbcSettings.SuspendLayout();
             this.tabGeneral.SuspendLayout();
+            this.groupBox23.SuspendLayout();
             this.groupBox20.SuspendLayout();
             this.groupBox21.SuspendLayout();
             this.groupBox19.SuspendLayout();
@@ -353,8 +362,10 @@ namespace Sledge.Editor.Settings
             this.tabBuild.SuspendLayout();
             this.BuildSubTabs.SuspendLayout();
             this.tabBuildGeneral.SuspendLayout();
+            this.groupBox26.SuspendLayout();
+            this.groupBox25.SuspendLayout();
+            this.groupBox24.SuspendLayout();
             this.tabBuildExecutables.SuspendLayout();
-            this.tabBuildPostCompile.SuspendLayout();
             this.tabBuildAdvanced.SuspendLayout();
             this.tabBuildAdvancedSubTabs.SuspendLayout();
             this.tabBuildAdvancedCSG.SuspendLayout();
@@ -373,7 +384,6 @@ namespace Sledge.Editor.Settings
             ((System.ComponentModel.ISupportInitialize)(this.trackBar2)).BeginInit();
             this.groupBox7.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
-            this.groupBox23.SuspendLayout();
             this.SuspendLayout();
             // 
             // tbcSettings
@@ -409,6 +419,37 @@ namespace Sledge.Editor.Settings
             this.tabGeneral.TabIndex = 0;
             this.tabGeneral.Text = "General";
             this.tabGeneral.UseVisualStyleBackColor = true;
+            // 
+            // groupBox23
+            // 
+            this.groupBox23.Controls.Add(this.CompileDefaultAdvanced);
+            this.groupBox23.Controls.Add(this.CompileOpenOutput);
+            this.groupBox23.Location = new System.Drawing.Point(369, 258);
+            this.groupBox23.Name = "groupBox23";
+            this.groupBox23.Size = new System.Drawing.Size(357, 117);
+            this.groupBox23.TabIndex = 5;
+            this.groupBox23.TabStop = false;
+            this.groupBox23.Text = "Compiling";
+            // 
+            // CompileDefaultAdvanced
+            // 
+            this.CompileDefaultAdvanced.Location = new System.Drawing.Point(12, 49);
+            this.CompileDefaultAdvanced.Name = "CompileDefaultAdvanced";
+            this.CompileDefaultAdvanced.Size = new System.Drawing.Size(224, 24);
+            this.CompileDefaultAdvanced.TabIndex = 3;
+            this.CompileDefaultAdvanced.Tag = "";
+            this.CompileDefaultAdvanced.Text = "Use advanced compile dialog by default";
+            this.CompileDefaultAdvanced.UseVisualStyleBackColor = true;
+            // 
+            // CompileOpenOutput
+            // 
+            this.CompileOpenOutput.Location = new System.Drawing.Point(12, 19);
+            this.CompileOpenOutput.Name = "CompileOpenOutput";
+            this.CompileOpenOutput.Size = new System.Drawing.Size(224, 24);
+            this.CompileOpenOutput.TabIndex = 3;
+            this.CompileOpenOutput.Tag = "";
+            this.CompileOpenOutput.Text = "Open the output panel on compile start";
+            this.CompileOpenOutput.UseVisualStyleBackColor = true;
             // 
             // groupBox20
             // 
@@ -2385,7 +2426,6 @@ namespace Sledge.Editor.Settings
             // 
             this.BuildSubTabs.Controls.Add(this.tabBuildGeneral);
             this.BuildSubTabs.Controls.Add(this.tabBuildExecutables);
-            this.BuildSubTabs.Controls.Add(this.tabBuildPostCompile);
             this.BuildSubTabs.Controls.Add(this.tabBuildAdvanced);
             this.BuildSubTabs.Location = new System.Drawing.Point(245, 6);
             this.BuildSubTabs.Name = "BuildSubTabs";
@@ -2396,6 +2436,9 @@ namespace Sledge.Editor.Settings
             // 
             // tabBuildGeneral
             // 
+            this.tabBuildGeneral.Controls.Add(this.groupBox26);
+            this.tabBuildGeneral.Controls.Add(this.groupBox25);
+            this.tabBuildGeneral.Controls.Add(this.groupBox24);
             this.tabBuildGeneral.Controls.Add(this.lblBuildName);
             this.tabBuildGeneral.Controls.Add(this.SelectedBuildName);
             this.tabBuildGeneral.Controls.Add(this.label20);
@@ -2409,6 +2452,198 @@ namespace Sledge.Editor.Settings
             this.tabBuildGeneral.TabIndex = 0;
             this.tabBuildGeneral.Text = "General";
             this.tabBuildGeneral.UseVisualStyleBackColor = true;
+            // 
+            // groupBox26
+            // 
+            this.groupBox26.Controls.Add(this.SelectedBuildCopyLin);
+            this.groupBox26.Controls.Add(this.SelectedBuildCopyErr);
+            this.groupBox26.Controls.Add(this.SelectedBuildCopyLog);
+            this.groupBox26.Controls.Add(this.SelectedBuildCopyPts);
+            this.groupBox26.Controls.Add(this.SelectedBuildCopyRes);
+            this.groupBox26.Controls.Add(this.SelectedBuildCopyMap);
+            this.groupBox26.Controls.Add(this.SelectedBuildCopyBsp);
+            this.groupBox26.Location = new System.Drawing.Point(6, 295);
+            this.groupBox26.Name = "groupBox26";
+            this.groupBox26.Size = new System.Drawing.Size(457, 107);
+            this.groupBox26.TabIndex = 38;
+            this.groupBox26.TabStop = false;
+            this.groupBox26.Text = "Copy files back into map file\'s directory";
+            // 
+            // SelectedBuildCopyLin
+            // 
+            this.SelectedBuildCopyLin.Checked = true;
+            this.SelectedBuildCopyLin.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.SelectedBuildCopyLin.Location = new System.Drawing.Point(6, 77);
+            this.SelectedBuildCopyLin.Name = "SelectedBuildCopyLin";
+            this.SelectedBuildCopyLin.Size = new System.Drawing.Size(133, 23);
+            this.SelectedBuildCopyLin.TabIndex = 36;
+            this.SelectedBuildCopyLin.Text = "LIN (linear pointfile)";
+            this.SelectedBuildCopyLin.UseVisualStyleBackColor = true;
+            // 
+            // SelectedBuildCopyErr
+            // 
+            this.SelectedBuildCopyErr.Checked = true;
+            this.SelectedBuildCopyErr.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.SelectedBuildCopyErr.Location = new System.Drawing.Point(284, 48);
+            this.SelectedBuildCopyErr.Name = "SelectedBuildCopyErr";
+            this.SelectedBuildCopyErr.Size = new System.Drawing.Size(146, 23);
+            this.SelectedBuildCopyErr.TabIndex = 36;
+            this.SelectedBuildCopyErr.Text = "ERR (compile error log)";
+            this.SelectedBuildCopyErr.UseVisualStyleBackColor = true;
+            // 
+            // SelectedBuildCopyLog
+            // 
+            this.SelectedBuildCopyLog.Checked = true;
+            this.SelectedBuildCopyLog.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.SelectedBuildCopyLog.Location = new System.Drawing.Point(284, 19);
+            this.SelectedBuildCopyLog.Name = "SelectedBuildCopyLog";
+            this.SelectedBuildCopyLog.Size = new System.Drawing.Size(146, 23);
+            this.SelectedBuildCopyLog.TabIndex = 36;
+            this.SelectedBuildCopyLog.Text = "LOG (compile output log)";
+            this.SelectedBuildCopyLog.UseVisualStyleBackColor = true;
+            // 
+            // SelectedBuildCopyPts
+            // 
+            this.SelectedBuildCopyPts.Checked = true;
+            this.SelectedBuildCopyPts.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.SelectedBuildCopyPts.Location = new System.Drawing.Point(145, 48);
+            this.SelectedBuildCopyPts.Name = "SelectedBuildCopyPts";
+            this.SelectedBuildCopyPts.Size = new System.Drawing.Size(133, 23);
+            this.SelectedBuildCopyPts.TabIndex = 36;
+            this.SelectedBuildCopyPts.Text = "PTS (pointfile)";
+            this.SelectedBuildCopyPts.UseVisualStyleBackColor = true;
+            // 
+            // SelectedBuildCopyRes
+            // 
+            this.SelectedBuildCopyRes.Checked = true;
+            this.SelectedBuildCopyRes.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.SelectedBuildCopyRes.Location = new System.Drawing.Point(6, 48);
+            this.SelectedBuildCopyRes.Name = "SelectedBuildCopyRes";
+            this.SelectedBuildCopyRes.Size = new System.Drawing.Size(133, 23);
+            this.SelectedBuildCopyRes.TabIndex = 36;
+            this.SelectedBuildCopyRes.Text = "RES (resource file)";
+            this.SelectedBuildCopyRes.UseVisualStyleBackColor = true;
+            // 
+            // SelectedBuildCopyMap
+            // 
+            this.SelectedBuildCopyMap.Checked = true;
+            this.SelectedBuildCopyMap.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.SelectedBuildCopyMap.Location = new System.Drawing.Point(145, 19);
+            this.SelectedBuildCopyMap.Name = "SelectedBuildCopyMap";
+            this.SelectedBuildCopyMap.Size = new System.Drawing.Size(133, 23);
+            this.SelectedBuildCopyMap.TabIndex = 36;
+            this.SelectedBuildCopyMap.Text = "MAP (exported map)";
+            this.SelectedBuildCopyMap.UseVisualStyleBackColor = true;
+            // 
+            // SelectedBuildCopyBsp
+            // 
+            this.SelectedBuildCopyBsp.Checked = true;
+            this.SelectedBuildCopyBsp.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.SelectedBuildCopyBsp.Location = new System.Drawing.Point(6, 19);
+            this.SelectedBuildCopyBsp.Name = "SelectedBuildCopyBsp";
+            this.SelectedBuildCopyBsp.Size = new System.Drawing.Size(133, 23);
+            this.SelectedBuildCopyBsp.TabIndex = 36;
+            this.SelectedBuildCopyBsp.Text = "BSP (compiled result)";
+            this.SelectedBuildCopyBsp.UseVisualStyleBackColor = true;
+            // 
+            // groupBox25
+            // 
+            this.groupBox25.Controls.Add(this.SelectedBuildWorkingDirSub);
+            this.groupBox25.Controls.Add(this.SelectedBuildWorkingDirSame);
+            this.groupBox25.Controls.Add(this.SelectedBuildWorkingDirTemp);
+            this.groupBox25.Location = new System.Drawing.Point(6, 86);
+            this.groupBox25.Name = "groupBox25";
+            this.groupBox25.Size = new System.Drawing.Size(457, 90);
+            this.groupBox25.TabIndex = 37;
+            this.groupBox25.TabStop = false;
+            this.groupBox25.Text = "Compile working directory";
+            // 
+            // SelectedBuildWorkingDirSub
+            // 
+            this.SelectedBuildWorkingDirSub.AutoSize = true;
+            this.SelectedBuildWorkingDirSub.Location = new System.Drawing.Point(6, 65);
+            this.SelectedBuildWorkingDirSub.Name = "SelectedBuildWorkingDirSub";
+            this.SelectedBuildWorkingDirSub.Size = new System.Drawing.Size(234, 17);
+            this.SelectedBuildWorkingDirSub.TabIndex = 0;
+            this.SelectedBuildWorkingDirSub.TabStop = true;
+            this.SelectedBuildWorkingDirSub.Text = "Use a sub-directory in the map file\'s directory";
+            this.SelectedBuildWorkingDirSub.UseVisualStyleBackColor = true;
+            // 
+            // SelectedBuildWorkingDirSame
+            // 
+            this.SelectedBuildWorkingDirSame.AutoSize = true;
+            this.SelectedBuildWorkingDirSame.Location = new System.Drawing.Point(6, 42);
+            this.SelectedBuildWorkingDirSame.Name = "SelectedBuildWorkingDirSame";
+            this.SelectedBuildWorkingDirSame.Size = new System.Drawing.Size(204, 17);
+            this.SelectedBuildWorkingDirSame.TabIndex = 0;
+            this.SelectedBuildWorkingDirSame.TabStop = true;
+            this.SelectedBuildWorkingDirSame.Text = "Use the same directory as the map file";
+            this.SelectedBuildWorkingDirSame.UseVisualStyleBackColor = true;
+            // 
+            // SelectedBuildWorkingDirTemp
+            // 
+            this.SelectedBuildWorkingDirTemp.AutoSize = true;
+            this.SelectedBuildWorkingDirTemp.Location = new System.Drawing.Point(6, 19);
+            this.SelectedBuildWorkingDirTemp.Name = "SelectedBuildWorkingDirTemp";
+            this.SelectedBuildWorkingDirTemp.Size = new System.Drawing.Size(145, 17);
+            this.SelectedBuildWorkingDirTemp.TabIndex = 0;
+            this.SelectedBuildWorkingDirTemp.TabStop = true;
+            this.SelectedBuildWorkingDirTemp.Text = "Use a temporary directory";
+            this.SelectedBuildWorkingDirTemp.UseVisualStyleBackColor = true;
+            // 
+            // groupBox24
+            // 
+            this.groupBox24.Controls.Add(this.SelectedBuildAfterRunGame);
+            this.groupBox24.Controls.Add(this.SelectedBuildAfterCopyBsp);
+            this.groupBox24.Controls.Add(this.SelectedBuildAskBeforeRun);
+            this.groupBox24.Controls.Add(this.SelectedBuildGameCommandLine);
+            this.groupBox24.Location = new System.Drawing.Point(6, 182);
+            this.groupBox24.Name = "groupBox24";
+            this.groupBox24.Size = new System.Drawing.Size(457, 107);
+            this.groupBox24.TabIndex = 20;
+            this.groupBox24.TabStop = false;
+            this.groupBox24.Text = "After compiling has finished";
+            // 
+            // SelectedBuildAfterRunGame
+            // 
+            this.SelectedBuildAfterRunGame.Checked = true;
+            this.SelectedBuildAfterRunGame.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.SelectedBuildAfterRunGame.Location = new System.Drawing.Point(26, 48);
+            this.SelectedBuildAfterRunGame.Name = "SelectedBuildAfterRunGame";
+            this.SelectedBuildAfterRunGame.Size = new System.Drawing.Size(174, 23);
+            this.SelectedBuildAfterRunGame.TabIndex = 35;
+            this.SelectedBuildAfterRunGame.Text = "Run the game with parameters:";
+            this.SelectedBuildAfterRunGame.UseVisualStyleBackColor = true;
+            // 
+            // SelectedBuildAfterCopyBsp
+            // 
+            this.SelectedBuildAfterCopyBsp.Checked = true;
+            this.SelectedBuildAfterCopyBsp.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.SelectedBuildAfterCopyBsp.Location = new System.Drawing.Point(6, 19);
+            this.SelectedBuildAfterCopyBsp.Name = "SelectedBuildAfterCopyBsp";
+            this.SelectedBuildAfterCopyBsp.Size = new System.Drawing.Size(241, 23);
+            this.SelectedBuildAfterCopyBsp.TabIndex = 36;
+            this.SelectedBuildAfterCopyBsp.Text = "Copy BSP into the game\'s map directory";
+            this.SelectedBuildAfterCopyBsp.UseVisualStyleBackColor = true;
+            // 
+            // SelectedBuildAskBeforeRun
+            // 
+            this.SelectedBuildAskBeforeRun.Checked = true;
+            this.SelectedBuildAskBeforeRun.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.SelectedBuildAskBeforeRun.Location = new System.Drawing.Point(26, 77);
+            this.SelectedBuildAskBeforeRun.Name = "SelectedBuildAskBeforeRun";
+            this.SelectedBuildAskBeforeRun.Size = new System.Drawing.Size(171, 23);
+            this.SelectedBuildAskBeforeRun.TabIndex = 34;
+            this.SelectedBuildAskBeforeRun.Text = "Ask before running the game";
+            this.SelectedBuildAskBeforeRun.UseVisualStyleBackColor = true;
+            // 
+            // SelectedBuildGameCommandLine
+            // 
+            this.SelectedBuildGameCommandLine.Location = new System.Drawing.Point(206, 49);
+            this.SelectedBuildGameCommandLine.Name = "SelectedBuildGameCommandLine";
+            this.SelectedBuildGameCommandLine.Size = new System.Drawing.Size(213, 20);
+            this.SelectedBuildGameCommandLine.TabIndex = 33;
+            this.SelectedBuildGameCommandLine.Text = "-dev -console";
             // 
             // lblBuildName
             // 
@@ -2605,103 +2840,6 @@ namespace Sledge.Editor.Settings
             this.SelectedBuildExeFolderBrowse.Text = "Browse...";
             this.SelectedBuildExeFolderBrowse.UseVisualStyleBackColor = true;
             this.SelectedBuildExeFolderBrowse.Click += new System.EventHandler(this.SelectedBuildExeFolderBrowseClicked);
-            // 
-            // tabBuildPostCompile
-            // 
-            this.tabBuildPostCompile.Controls.Add(this.lblBuildCommandLine);
-            this.tabBuildPostCompile.Controls.Add(this.SelectedBuildCopyBsp);
-            this.tabBuildPostCompile.Controls.Add(this.SelectedBuildAskBeforeRun);
-            this.tabBuildPostCompile.Controls.Add(this.SelectedBuildRunGameAlways);
-            this.tabBuildPostCompile.Controls.Add(this.SelectedBuildCommandLine);
-            this.tabBuildPostCompile.Controls.Add(this.SelectedBuildRunGameOnChange);
-            this.tabBuildPostCompile.Controls.Add(this.SelectedBuildShowLog);
-            this.tabBuildPostCompile.Controls.Add(this.SelectedBuildRunGameNever);
-            this.tabBuildPostCompile.Location = new System.Drawing.Point(4, 22);
-            this.tabBuildPostCompile.Name = "tabBuildPostCompile";
-            this.tabBuildPostCompile.Padding = new System.Windows.Forms.Padding(3);
-            this.tabBuildPostCompile.Size = new System.Drawing.Size(469, 473);
-            this.tabBuildPostCompile.TabIndex = 2;
-            this.tabBuildPostCompile.Text = "After Compiling";
-            this.tabBuildPostCompile.UseVisualStyleBackColor = true;
-            // 
-            // lblBuildCommandLine
-            // 
-            this.lblBuildCommandLine.Location = new System.Drawing.Point(7, 178);
-            this.lblBuildCommandLine.Name = "lblBuildCommandLine";
-            this.lblBuildCommandLine.Size = new System.Drawing.Size(107, 20);
-            this.lblBuildCommandLine.TabIndex = 28;
-            this.lblBuildCommandLine.Text = "Game command line";
-            this.lblBuildCommandLine.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // SelectedBuildCopyBsp
-            // 
-            this.SelectedBuildCopyBsp.Checked = true;
-            this.SelectedBuildCopyBsp.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.SelectedBuildCopyBsp.Location = new System.Drawing.Point(6, 7);
-            this.SelectedBuildCopyBsp.Name = "SelectedBuildCopyBsp";
-            this.SelectedBuildCopyBsp.Size = new System.Drawing.Size(256, 23);
-            this.SelectedBuildCopyBsp.TabIndex = 30;
-            this.SelectedBuildCopyBsp.Text = "Copy BSP into <mod>/maps folder on compile";
-            this.SelectedBuildCopyBsp.UseVisualStyleBackColor = true;
-            // 
-            // SelectedBuildAskBeforeRun
-            // 
-            this.SelectedBuildAskBeforeRun.Checked = true;
-            this.SelectedBuildAskBeforeRun.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.SelectedBuildAskBeforeRun.Location = new System.Drawing.Point(7, 152);
-            this.SelectedBuildAskBeforeRun.Name = "SelectedBuildAskBeforeRun";
-            this.SelectedBuildAskBeforeRun.Size = new System.Drawing.Size(171, 23);
-            this.SelectedBuildAskBeforeRun.TabIndex = 29;
-            this.SelectedBuildAskBeforeRun.Text = "Ask before running game";
-            this.SelectedBuildAskBeforeRun.UseVisualStyleBackColor = true;
-            // 
-            // SelectedBuildRunGameAlways
-            // 
-            this.SelectedBuildRunGameAlways.Location = new System.Drawing.Point(6, 65);
-            this.SelectedBuildRunGameAlways.Name = "SelectedBuildRunGameAlways";
-            this.SelectedBuildRunGameAlways.Size = new System.Drawing.Size(104, 23);
-            this.SelectedBuildRunGameAlways.TabIndex = 26;
-            this.SelectedBuildRunGameAlways.Text = "Run game";
-            this.SelectedBuildRunGameAlways.UseVisualStyleBackColor = true;
-            // 
-            // SelectedBuildCommandLine
-            // 
-            this.SelectedBuildCommandLine.Location = new System.Drawing.Point(120, 178);
-            this.SelectedBuildCommandLine.Name = "SelectedBuildCommandLine";
-            this.SelectedBuildCommandLine.Size = new System.Drawing.Size(225, 20);
-            this.SelectedBuildCommandLine.TabIndex = 27;
-            this.SelectedBuildCommandLine.Text = "-dev -console";
-            // 
-            // SelectedBuildRunGameOnChange
-            // 
-            this.SelectedBuildRunGameOnChange.Checked = true;
-            this.SelectedBuildRunGameOnChange.Location = new System.Drawing.Point(6, 93);
-            this.SelectedBuildRunGameOnChange.Name = "SelectedBuildRunGameOnChange";
-            this.SelectedBuildRunGameOnChange.Size = new System.Drawing.Size(192, 24);
-            this.SelectedBuildRunGameOnChange.TabIndex = 25;
-            this.SelectedBuildRunGameOnChange.TabStop = true;
-            this.SelectedBuildRunGameOnChange.Text = "Run game only if the BSP changed";
-            this.SelectedBuildRunGameOnChange.UseVisualStyleBackColor = true;
-            // 
-            // SelectedBuildShowLog
-            // 
-            this.SelectedBuildShowLog.Checked = true;
-            this.SelectedBuildShowLog.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.SelectedBuildShowLog.Location = new System.Drawing.Point(6, 36);
-            this.SelectedBuildShowLog.Name = "SelectedBuildShowLog";
-            this.SelectedBuildShowLog.Size = new System.Drawing.Size(256, 23);
-            this.SelectedBuildShowLog.TabIndex = 31;
-            this.SelectedBuildShowLog.Text = "Show compile log";
-            this.SelectedBuildShowLog.UseVisualStyleBackColor = true;
-            // 
-            // SelectedBuildRunGameNever
-            // 
-            this.SelectedBuildRunGameNever.Location = new System.Drawing.Point(6, 123);
-            this.SelectedBuildRunGameNever.Name = "SelectedBuildRunGameNever";
-            this.SelectedBuildRunGameNever.Size = new System.Drawing.Size(104, 23);
-            this.SelectedBuildRunGameNever.TabIndex = 24;
-            this.SelectedBuildRunGameNever.Text = "Do nothing";
-            this.SelectedBuildRunGameNever.UseVisualStyleBackColor = true;
             // 
             // tabBuildAdvanced
             // 
@@ -3371,37 +3509,6 @@ namespace Sledge.Editor.Settings
             this.btnApplySettings.UseVisualStyleBackColor = true;
             this.btnApplySettings.Click += new System.EventHandler(this.Apply);
             // 
-            // groupBox23
-            // 
-            this.groupBox23.Controls.Add(this.CompileDefaultAdvanced);
-            this.groupBox23.Controls.Add(this.CompileOpenOutput);
-            this.groupBox23.Location = new System.Drawing.Point(369, 258);
-            this.groupBox23.Name = "groupBox23";
-            this.groupBox23.Size = new System.Drawing.Size(357, 117);
-            this.groupBox23.TabIndex = 5;
-            this.groupBox23.TabStop = false;
-            this.groupBox23.Text = "Compiling";
-            // 
-            // CompileOpenOutput
-            // 
-            this.CompileOpenOutput.Location = new System.Drawing.Point(12, 19);
-            this.CompileOpenOutput.Name = "CompileOpenOutput";
-            this.CompileOpenOutput.Size = new System.Drawing.Size(224, 24);
-            this.CompileOpenOutput.TabIndex = 3;
-            this.CompileOpenOutput.Tag = "";
-            this.CompileOpenOutput.Text = "Open the output panel on compile start";
-            this.CompileOpenOutput.UseVisualStyleBackColor = true;
-            // 
-            // CompileDefaultAdvanced
-            // 
-            this.CompileDefaultAdvanced.Location = new System.Drawing.Point(12, 49);
-            this.CompileDefaultAdvanced.Name = "CompileDefaultAdvanced";
-            this.CompileDefaultAdvanced.Size = new System.Drawing.Size(224, 24);
-            this.CompileDefaultAdvanced.TabIndex = 3;
-            this.CompileDefaultAdvanced.Tag = "";
-            this.CompileDefaultAdvanced.Text = "Use advanced compile dialog by default";
-            this.CompileDefaultAdvanced.UseVisualStyleBackColor = true;
-            // 
             // SettingsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -3418,6 +3525,7 @@ namespace Sledge.Editor.Settings
             this.Load += new System.EventHandler(this.SettingsFormLoad);
             this.tbcSettings.ResumeLayout(false);
             this.tabGeneral.ResumeLayout(false);
+            this.groupBox23.ResumeLayout(false);
             this.groupBox20.ResumeLayout(false);
             this.groupBox21.ResumeLayout(false);
             this.groupBox21.PerformLayout();
@@ -3467,10 +3575,13 @@ namespace Sledge.Editor.Settings
             this.BuildSubTabs.ResumeLayout(false);
             this.tabBuildGeneral.ResumeLayout(false);
             this.tabBuildGeneral.PerformLayout();
+            this.groupBox26.ResumeLayout(false);
+            this.groupBox25.ResumeLayout(false);
+            this.groupBox25.PerformLayout();
+            this.groupBox24.ResumeLayout(false);
+            this.groupBox24.PerformLayout();
             this.tabBuildExecutables.ResumeLayout(false);
             this.tabBuildExecutables.PerformLayout();
-            this.tabBuildPostCompile.ResumeLayout(false);
-            this.tabBuildPostCompile.PerformLayout();
             this.tabBuildAdvanced.ResumeLayout(false);
             this.tabBuildAdvanced.PerformLayout();
             this.tabBuildAdvancedSubTabs.ResumeLayout(false);
@@ -3493,7 +3604,6 @@ namespace Sledge.Editor.Settings
             ((System.ComponentModel.ISupportInitialize)(this.trackBar2)).EndInit();
             this.groupBox7.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).EndInit();
-            this.groupBox23.ResumeLayout(false);
             this.ResumeLayout(false);
 
 		}
@@ -3581,8 +3691,7 @@ namespace Sledge.Editor.Settings
 		private System.Windows.Forms.CheckBox GridHighlight1On;
 		private System.Windows.Forms.DomainUpDown HideGridFactor;
 		private System.Windows.Forms.NumericUpDown HideGridLimit;
-		private System.Windows.Forms.TabPage tabBuildAdvanced;
-		private System.Windows.Forms.TabPage tabBuildPostCompile;
+        private System.Windows.Forms.TabPage tabBuildAdvanced;
 		private System.Windows.Forms.TabPage tabBuildExecutables;
 		private System.Windows.Forms.TabPage tabBuildGeneral;
 		private System.Windows.Forms.TabControl BuildSubTabs;
@@ -3624,9 +3733,7 @@ namespace Sledge.Editor.Settings
 		private System.Windows.Forms.Label label8;
 		private System.Windows.Forms.Label label9;
 		private System.Windows.Forms.Label label3;
-		private System.Windows.Forms.Label label2;
-		private System.Windows.Forms.TextBox SelectedBuildCommandLine;
-		private System.Windows.Forms.CheckBox SelectedBuildCopyBsp;
+        private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.Label lblConfigLightmapScale;
 		private System.Windows.Forms.Label lblConfigTextureScale;
 		private System.Windows.Forms.Label lblConfigBrushEnt;
@@ -3644,13 +3751,7 @@ namespace Sledge.Editor.Settings
 		private System.Windows.Forms.TextBox SelectedBuildExeFolder;
 		private System.Windows.Forms.TextBox SelectedBuildName;
 		private System.Windows.Forms.Button RemoveBuild;
-		private System.Windows.Forms.Button AddBuild;
-		private System.Windows.Forms.CheckBox SelectedBuildShowLog;
-		private System.Windows.Forms.RadioButton SelectedBuildRunGameNever;
-		private System.Windows.Forms.CheckBox SelectedBuildAskBeforeRun;
-		private System.Windows.Forms.RadioButton SelectedBuildRunGameOnChange;
-		private System.Windows.Forms.RadioButton SelectedBuildRunGameAlways;
-        private System.Windows.Forms.Label lblBuildCommandLine;
+        private System.Windows.Forms.Button AddBuild;
 		private System.Windows.Forms.ComboBox SelectedBuildRad;
 		private System.Windows.Forms.ComboBox SelectedBuildVis;
 		private System.Windows.Forms.Label lblBuildRAD;
@@ -3771,5 +3872,22 @@ namespace Sledge.Editor.Settings
         private System.Windows.Forms.GroupBox groupBox23;
         private System.Windows.Forms.CheckBox CompileDefaultAdvanced;
         private System.Windows.Forms.CheckBox CompileOpenOutput;
+        private System.Windows.Forms.GroupBox groupBox24;
+        private System.Windows.Forms.CheckBox SelectedBuildAfterRunGame;
+        private System.Windows.Forms.CheckBox SelectedBuildAfterCopyBsp;
+        private System.Windows.Forms.CheckBox SelectedBuildAskBeforeRun;
+        private System.Windows.Forms.TextBox SelectedBuildGameCommandLine;
+        private System.Windows.Forms.GroupBox groupBox25;
+        private System.Windows.Forms.RadioButton SelectedBuildWorkingDirSub;
+        private System.Windows.Forms.RadioButton SelectedBuildWorkingDirSame;
+        private System.Windows.Forms.RadioButton SelectedBuildWorkingDirTemp;
+        private System.Windows.Forms.GroupBox groupBox26;
+        private System.Windows.Forms.CheckBox SelectedBuildCopyLin;
+        private System.Windows.Forms.CheckBox SelectedBuildCopyPts;
+        private System.Windows.Forms.CheckBox SelectedBuildCopyRes;
+        private System.Windows.Forms.CheckBox SelectedBuildCopyMap;
+        private System.Windows.Forms.CheckBox SelectedBuildCopyBsp;
+        private System.Windows.Forms.CheckBox SelectedBuildCopyErr;
+        private System.Windows.Forms.CheckBox SelectedBuildCopyLog;
 	}
 }

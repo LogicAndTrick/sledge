@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using Sledge.Providers;
 
@@ -133,6 +134,25 @@ namespace Sledge.Settings.Models
                 i++;
             }
             gs.Children.Add(fgds);
+        }
+
+        public string GetMapDirectory()
+        {
+            return Path.Combine(GetModDirectory(), "maps");
+        }
+
+        public string GetModDirectory()
+        {
+            return SteamInstall
+                ? Path.Combine(Steam.SteamDirectory, "steamapps", "common", SteamGameDir, ModDir)
+                : Path.Combine(WonGameDir, ModDir);
+        }
+
+        public string GetBaseDirectory()
+        {
+            return SteamInstall
+                ? Path.Combine(Steam.SteamDirectory, "steamapps", "common", SteamGameDir, BaseDir)
+                : Path.Combine(WonGameDir, BaseDir);
         }
     }
 }

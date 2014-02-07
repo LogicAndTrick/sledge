@@ -53,6 +53,7 @@ namespace Sledge.Editor
 
         CompileStarted,
         CompileFinished,
+        CompileFailed,
 
         // Status bar messages
         MouseCoordinatesChanged,
