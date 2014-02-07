@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 
@@ -21,15 +20,14 @@ namespace Sledge.Graphics.Shaders
             Shaders = shaders.ToList();
             ID = CreateProgram(Shaders);
             int c;
-            GL.GetProgram(ID, ProgramParameter.ActiveUniforms, out c);
+            GL.GetProgram(ID, GetProgramParameterName.ActiveUniforms, out c);
             for (var i = 0; i < c; i++)
             {
-                int len, size;
+                int size;
                 ActiveUniformType type;
-                var sb = new StringBuilder();
-                GL.GetActiveUniform(ID, i, 256, out len, out size, out type, sb);
-                var loc = GL.GetUniformLocation(ID, sb.ToString());
-                var v = new Variable(loc, sb.ToString(), type);
+                var name = GL.GetActiveUniform(ID, i, out size, out type);
+                var loc = GL.GetUniformLocation(ID, name);
+                var v = new Variable(loc, name, type);
                 Variables.Add(v);
             }
         }
@@ -50,7 +48,7 @@ namespace Sledge.Graphics.Shaders
 
             // Program error logging
             int status;
-            GL.GetProgram(program, ProgramParameter.LinkStatus, out status);
+            GL.GetProgram(program, GetProgramParameterName.LinkStatus, out status);
             if (status == 0)
             {
                 var err = GL.GetProgramInfoLog(program);
