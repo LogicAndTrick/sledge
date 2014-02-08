@@ -478,7 +478,26 @@ namespace Sledge.Editor
                     {
                         return;
                     }
-                    // todo: Run game.
+                    var exe = batch.Game.GetExecutable();
+                    if (!File.Exists(exe))
+                    {
+                        MessageBox.Show(
+                            "The location of the game executable is incorrect. Please ensure that the game configuration has been set up correctly.",
+                            "Failed to launch!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
+
+                    var flags = String.Format("{0} +map \"{1}\" {2}", batch.Game.GetGameLaunchArgument(), batch.MapFileName, batch.Build.AfterRunGameParameters);
+                    try
+                    {
+                        Process.Start(exe, flags);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Launching game failed: " + ex.Message, "Failed to launch!",
+                            MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
                 }
             }
         }

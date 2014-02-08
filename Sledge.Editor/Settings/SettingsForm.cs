@@ -54,6 +54,7 @@ namespace Sledge.Editor.Settings
             SelectedGameSteamDir.SelectedIndexChanged += (s, e) => CheckNull(_selectedGame, x => x.SteamGameDir = SelectedGameSteamDir.Text);
             SelectedGameMod.SelectedIndexChanged += (s, e) => CheckNull(_selectedGame, x => x.ModDir = SelectedGameMod.Text);
             SelectedGameBase.SelectedIndexChanged += (s, e) => CheckNull(_selectedGame, x => x.BaseDir = SelectedGameBase.Text);
+            SelectedGameExecutable.SelectedIndexChanged += (s, e) => CheckNull(_selectedGame, x => x.Executable = SelectedGameExecutable.Text);
             SelectedGameMapDir.TextChanged += (s, e) => CheckNull(_selectedGame, x => x.MapDir = SelectedGameMapDir.Text);
             SelectedGameEnableAutosave.CheckedChanged += (s, e) => CheckNull(_selectedGame, x => x.Autosave = SelectedGameEnableAutosave.Checked);
             SelectedGameUseDiffAutosaveDir.CheckedChanged += (s, e) => CheckNull(_selectedGame, x => x.UseCustomAutosaveDir = SelectedGameUseDiffAutosaveDir.Checked);
@@ -646,6 +647,7 @@ namespace Sledge.Editor.Settings
 
             SelectedGameMod.SelectedText = _selectedGame.ModDir;
             SelectedGameBase.SelectedText = _selectedGame.BaseDir;
+            SelectedGameExecutable.SelectedText = _selectedGame.Executable;
             SelectedGameWonDir.Text = _selectedGame.WonGameDir;
             SelectedGameSteamDir.SelectedText = _selectedGame.SteamGameDir;
 
@@ -819,21 +821,30 @@ namespace Sledge.Editor.Settings
 
             SelectedGameMod.Items.Clear();
             SelectedGameBase.Items.Clear();
+            SelectedGameExecutable.Items.Clear();
 
             if (!Directory.Exists(SelectedGameWonDir.Text)) return;
 
             var mods = Directory.GetDirectories(SelectedGameWonDir.Text).Select(Path.GetFileName);
             var ignored = new[] { "gldrv", "logos", "logs", "errorlogs", "platform", "config" };
 
-            var range = mods.Where(x => !ignored.Contains(x.ToLower())).OfType<object>().ToArray();
+            var range = mods.Where(x => !ignored.Contains(x.ToLowerInvariant())).OfType<object>().ToArray();
             SelectedGameMod.Items.AddRange(range);
             SelectedGameBase.Items.AddRange(range);
+
+            var exes = Directory.GetFiles(SelectedGameWonDir.Text, "*.exe").Select(Path.GetFileName);
+            ignored = new[] { "sxuninst.exe", "utdel32.exe", "upd.exe", "hlds.exe", "hltv.exe" };
+            range = exes.Where(x => !ignored.Contains(x.ToLowerInvariant())).OfType<object>().ToArray();
+            SelectedGameExecutable.Items.AddRange(range);
 
             var idx = SelectedGameMod.Items.IndexOf(_selectedGame.ModDir ?? "");
             if (SelectedGameMod.Items.Count > 0) SelectedGameMod.SelectedIndex = Math.Max(0, idx);
 
             idx = SelectedGameBase.Items.IndexOf(_selectedGame.BaseDir ?? "");
             if (SelectedGameBase.Items.Count > 0) SelectedGameBase.SelectedIndex = Math.Max(0, idx);
+
+            idx = SelectedGameExecutable.Items.IndexOf(_selectedGame.Executable ?? "");
+            if (SelectedGameExecutable.Items.Count > 0) SelectedGameExecutable.SelectedIndex = Math.Max(0, idx);
         }
 
         private void SelectedGameSteamDirChanged(object sender, EventArgs e)
@@ -844,6 +855,7 @@ namespace Sledge.Editor.Settings
 
             SelectedGameMod.Items.Clear();
             SelectedGameBase.Items.Clear();
+            SelectedGameExecutable.Items.Clear();
 
             var dir = Path.Combine(SteamInstallDir.Text, "steamapps", SteamUsername.Text, SelectedGameSteamDir.Text);
             if (!Directory.Exists(dir)) dir = Path.Combine(SteamInstallDir.Text, "steamapps", "common", SelectedGameSteamDir.Text);
@@ -856,11 +868,19 @@ namespace Sledge.Editor.Settings
             SelectedGameMod.Items.AddRange(range);
             SelectedGameBase.Items.AddRange(range);
 
+            var exes = Directory.GetFiles(dir, "*.exe").Select(Path.GetFileName);
+            ignored = new[] { "sxuninst.exe", "utdel32.exe", "upd.exe", "hlds.exe", "hltv.exe" };
+            range = exes.Where(x => !ignored.Contains(x.ToLowerInvariant())).OfType<object>().ToArray();
+            SelectedGameExecutable.Items.AddRange(range);
+
             var idx = SelectedGameMod.Items.IndexOf(_selectedGame.ModDir ?? "");
             if (SelectedGameMod.Items.Count > 0) SelectedGameMod.SelectedIndex = Math.Max(0, idx);
 
             idx = SelectedGameBase.Items.IndexOf(_selectedGame.BaseDir ?? "");
             if (SelectedGameBase.Items.Count > 0) SelectedGameBase.SelectedIndex = Math.Max(0, idx);
+
+            idx = SelectedGameExecutable.Items.IndexOf(_selectedGame.Executable ?? "");
+            if (SelectedGameExecutable.Items.Count > 0) SelectedGameExecutable.SelectedIndex = Math.Max(0, idx);
         }
 
         private void SelectedGameNameChanged(object sender, EventArgs e)

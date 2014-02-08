@@ -318,6 +318,8 @@ namespace Sledge.Editor.Settings
             this.btnCancelSettings = new System.Windows.Forms.Button();
             this.btnApplyAndCloseSettings = new System.Windows.Forms.Button();
             this.btnApplySettings = new System.Windows.Forms.Button();
+            this.SelectedGameExecutable = new System.Windows.Forms.ComboBox();
+            this.label41 = new System.Windows.Forms.Label();
             this.tbcSettings.SuspendLayout();
             this.tabGeneral.SuspendLayout();
             this.groupBox23.SuspendLayout();
@@ -1680,11 +1682,13 @@ namespace Sledge.Editor.Settings
             this.grpConfigGame.Controls.Add(this.SelectedGameDirBrowse);
             this.grpConfigGame.Controls.Add(this.lblGameSteamDir);
             this.grpConfigGame.Controls.Add(this.SelectedGameSteamDir);
+            this.grpConfigGame.Controls.Add(this.label41);
             this.grpConfigGame.Controls.Add(this.lblGameMod);
+            this.grpConfigGame.Controls.Add(this.SelectedGameExecutable);
             this.grpConfigGame.Controls.Add(this.SelectedGameMod);
             this.grpConfigGame.Location = new System.Drawing.Point(6, 89);
             this.grpConfigGame.Name = "grpConfigGame";
-            this.grpConfigGame.Size = new System.Drawing.Size(445, 111);
+            this.grpConfigGame.Size = new System.Drawing.Size(445, 129);
             this.grpConfigGame.TabIndex = 19;
             this.grpConfigGame.TabStop = false;
             this.grpConfigGame.Text = "Game";
@@ -1707,7 +1711,7 @@ namespace Sledge.Editor.Settings
             "Counter-Strike"});
             this.SelectedGameBase.Location = new System.Drawing.Point(211, 44);
             this.SelectedGameBase.Name = "SelectedGameBase";
-            this.SelectedGameBase.Size = new System.Drawing.Size(225, 21);
+            this.SelectedGameBase.Size = new System.Drawing.Size(152, 21);
             this.SelectedGameBase.TabIndex = 12;
             // 
             // SelectedGameWonDir
@@ -1777,7 +1781,7 @@ namespace Sledge.Editor.Settings
             "Valve"});
             this.SelectedGameMod.Location = new System.Drawing.Point(210, 71);
             this.SelectedGameMod.Name = "SelectedGameMod";
-            this.SelectedGameMod.Size = new System.Drawing.Size(225, 21);
+            this.SelectedGameMod.Size = new System.Drawing.Size(152, 21);
             this.SelectedGameMod.TabIndex = 10;
             // 
             // lblGameName
@@ -1815,9 +1819,9 @@ namespace Sledge.Editor.Settings
             this.grpConfigSaving.Controls.Add(this.SelectedGameDiffAutosaveDirBrowse);
             this.grpConfigSaving.Controls.Add(this.SelectedGameAutosaveOnlyOnChange);
             this.grpConfigSaving.Controls.Add(this.SelectedGameUseDiffAutosaveDir);
-            this.grpConfigSaving.Location = new System.Drawing.Point(6, 206);
+            this.grpConfigSaving.Location = new System.Drawing.Point(6, 224);
             this.grpConfigSaving.Name = "grpConfigSaving";
-            this.grpConfigSaving.Size = new System.Drawing.Size(445, 234);
+            this.grpConfigSaving.Size = new System.Drawing.Size(445, 216);
             this.grpConfigSaving.TabIndex = 20;
             this.grpConfigSaving.TabStop = false;
             this.grpConfigSaving.Text = "Saving";
@@ -3509,6 +3513,26 @@ namespace Sledge.Editor.Settings
             this.btnApplySettings.UseVisualStyleBackColor = true;
             this.btnApplySettings.Click += new System.EventHandler(this.Apply);
             // 
+            // SelectedGameExecutable
+            // 
+            this.SelectedGameExecutable.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.SelectedGameExecutable.FormattingEnabled = true;
+            this.SelectedGameExecutable.Items.AddRange(new object[] {
+            "Valve"});
+            this.SelectedGameExecutable.Location = new System.Drawing.Point(211, 98);
+            this.SelectedGameExecutable.Name = "SelectedGameExecutable";
+            this.SelectedGameExecutable.Size = new System.Drawing.Size(152, 21);
+            this.SelectedGameExecutable.TabIndex = 10;
+            // 
+            // label41
+            // 
+            this.label41.Location = new System.Drawing.Point(4, 97);
+            this.label41.Name = "label41";
+            this.label41.Size = new System.Drawing.Size(198, 20);
+            this.label41.TabIndex = 9;
+            this.label41.Text = "Game Executable (e.g. \'hl.exe\')";
+            this.label41.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
             // SettingsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -3889,5 +3913,7 @@ namespace Sledge.Editor.Settings
         private System.Windows.Forms.CheckBox SelectedBuildCopyBsp;
         private System.Windows.Forms.CheckBox SelectedBuildCopyErr;
         private System.Windows.Forms.CheckBox SelectedBuildCopyLog;
+        private System.Windows.Forms.Label label41;
+        private System.Windows.Forms.ComboBox SelectedGameExecutable;
 	}
 }

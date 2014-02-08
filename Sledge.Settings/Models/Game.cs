@@ -18,6 +18,7 @@ namespace Sledge.Settings.Models
         public string SteamGameDir { get; set; }
         public string BaseDir { get; set; }
         public string ModDir { get; set; }
+        public string Executable { get; set; }
         public string MapDir { get; set; }
         public bool Autosave { get; set; }
         public bool UseCustomAutosaveDir { get; set; }
@@ -57,6 +58,7 @@ namespace Sledge.Settings.Models
             SteamGameDir = gs["SteamGameDir"];
             ModDir = gs["ModDir"];
             BaseDir = gs["BaseDir"];
+            Executable = gs["Executable"];
             MapDir = gs["MapDir"];
             Autosave = gs.PropertyBoolean("Autosave");
             UseCustomAutosaveDir = gs.PropertyBoolean("UseCustomAutosaveDir");
@@ -102,6 +104,7 @@ namespace Sledge.Settings.Models
             gs["SteamGameDir"] = SteamGameDir;
             gs["ModDir"] = ModDir;
             gs["BaseDir"] = BaseDir;
+            gs["Executable"] = Executable;
             gs["MapDir"] = MapDir;
             gs["Autosave"] = Autosave.ToString(CultureInfo.InvariantCulture);
             gs["UseCustomAutosaveDir"] = UseCustomAutosaveDir.ToString(CultureInfo.InvariantCulture);
@@ -153,6 +156,61 @@ namespace Sledge.Settings.Models
             return SteamInstall
                 ? Path.Combine(Steam.SteamDirectory, "steamapps", "common", SteamGameDir, BaseDir)
                 : Path.Combine(WonGameDir, BaseDir);
+        }
+
+        public string GetExecutable()
+        {
+            return SteamInstall
+                ? Path.Combine(Steam.SteamDirectory, "steam.exe")
+                : Path.Combine(WonGameDir, Executable);
+        }
+
+        public string GetGameLaunchArgument()
+        {
+            if (SteamInstall)
+            {
+                var id = GetSteamAppId();
+                return "-applaunch " + id;
+            }
+            else
+            {
+                var mod = (ModDir ?? "").ToLowerInvariant();
+                if (mod != "valve") return "-game " + mod;
+                return "";
+            }
+        }
+
+        private int GetSteamAppId()
+        {
+            if (Engine == Engine.Goldsource)
+            {
+                switch ((ModDir ?? "").ToLowerInvariant())
+                {
+                    case "bshift":
+                        return 130;
+                    case "czero":
+                        return 80;
+                    case "czeror":
+                        return 100;
+                    case "cstrike":
+                        return 10;
+                    case "dod":
+                        return 30;
+                    case "dmc":
+                        return 40;
+                    case "ricochet":
+                        return 60;
+                    case "gearbox":
+                        return 50;
+                    case "tfc":
+                        return 20;
+                    case "valve":
+                    default:
+                        return 70;
+                }
+            }
+            // todo source
+            return 0;
         }
     }
 }

@@ -23,6 +23,7 @@ namespace Sledge.Editor.Compiling
         public List<BatchCompileStep> Steps { get; set; }
         public string TargetFile { get; set; }
         public string OriginalFile { get; set; }
+        public string MapFileName { get { return Path.GetFileNameWithoutExtension(Document.MapFileName); } }
 
         public Batch(Document document, Build build, BuildProfile profile)
         {
