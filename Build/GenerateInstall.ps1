@@ -20,7 +20,7 @@ echo 'Building Solution...'
 (& $msbuild '../Sledge.sln' '/p:Configuration=Release') | Add-Content $log
 
 echo 'Copying Files...'
-(& 'robocopy.exe' '../Sledge.Editor/bin/Release/' 'Out/Build' '/S' '/XF' '*.pdb' '*.xml' '*.vshost.*' '*.vdf') | Add-Content $log
+(& 'robocopy.exe' '../Sledge.Editor/bin/Release/' 'Out/Build' '/S' '/XF' '*.pdb' '*.xml' '*.vshost.*' 'Settings.vdf') | Add-Content $log
 
 $version = (Get-Command './Out/Build/Sledge.Editor.exe').FileVersionInfo.ProductVersion
 $zipfile = './Out/Sledge.Editor.' + $version + '.zip'

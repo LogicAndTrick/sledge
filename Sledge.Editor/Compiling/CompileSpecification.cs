@@ -39,19 +39,22 @@ namespace Sledge.Editor.Compiling
         {
             Specifications = new List<CompileSpecification>();
             var specFolder = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Specifications");
-            foreach (var file in Directory.GetFiles(specFolder, "*.vdf"))
+            if (Directory.Exists(specFolder))
             {
-                try
+                foreach (var file in Directory.GetFiles(specFolder, "*.vdf"))
                 {
-                    var gs = GenericStructure.Parse(file);
-                    foreach (var spec in gs.Where(x => x.Name == "Specification"))
+                    try
                     {
-                        Specifications.Add(Parse(spec));
+                        var gs = GenericStructure.Parse(file);
+                        foreach (var spec in gs.Where(x => x.Name == "Specification"))
+                        {
+                            Specifications.Add(Parse(spec));
+                        }
                     }
-                }
-                catch
-                {
-                    // Not a valid GS
+                    catch
+                    {
+                        // Not a valid GS
+                    }
                 }
             }
             if (!Specifications.Any())
