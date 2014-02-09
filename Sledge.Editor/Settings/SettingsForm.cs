@@ -55,6 +55,7 @@ namespace Sledge.Editor.Settings
             SelectedGameMod.SelectedIndexChanged += (s, e) => CheckNull(_selectedGame, x => x.ModDir = SelectedGameMod.Text);
             SelectedGameBase.SelectedIndexChanged += (s, e) => CheckNull(_selectedGame, x => x.BaseDir = SelectedGameBase.Text);
             SelectedGameExecutable.SelectedIndexChanged += (s, e) => CheckNull(_selectedGame, x => x.Executable = SelectedGameExecutable.Text);
+            SelectedGameRunArguments.TextChanged += (s, e) => CheckNull(_selectedGame, x => x.ExecutableParameters = SelectedGameRunArguments.Text);
             SelectedGameMapDir.TextChanged += (s, e) => CheckNull(_selectedGame, x => x.MapDir = SelectedGameMapDir.Text);
             SelectedGameEnableAutosave.CheckedChanged += (s, e) => CheckNull(_selectedGame, x => x.Autosave = SelectedGameEnableAutosave.Checked);
             SelectedGameUseDiffAutosaveDir.CheckedChanged += (s, e) => CheckNull(_selectedGame, x => x.UseCustomAutosaveDir = SelectedGameUseDiffAutosaveDir.Checked);
@@ -86,7 +87,6 @@ namespace Sledge.Editor.Settings
 
             SelectedBuildAfterCopyBsp.CheckedChanged += (s, e) => CheckNull(_selectedBuild, x => x.AfterCopyBsp = SelectedBuildAfterCopyBsp.Checked);
             SelectedBuildAfterRunGame.CheckedChanged += (s, e) => CheckNull(_selectedBuild, x => x.AfterRunGame = SelectedBuildAfterRunGame.Checked);
-            SelectedBuildGameCommandLine.TextChanged += (s, e) => CheckNull(_selectedBuild, x => x.AfterRunGameParameters = SelectedBuildGameCommandLine.Text);
             SelectedBuildAskBeforeRun.CheckedChanged += (s, e) => CheckNull(_selectedBuild, x => x.AfterAskBeforeRun = SelectedBuildAskBeforeRun.Checked);
 
             SelectedBuildCopyBsp.CheckedChanged += (s, e) => CheckNull(_selectedBuild, x => x.CopyBsp = SelectedBuildCopyBsp.Checked);
@@ -648,6 +648,7 @@ namespace Sledge.Editor.Settings
             SelectedGameMod.SelectedText = _selectedGame.ModDir;
             SelectedGameBase.SelectedText = _selectedGame.BaseDir;
             SelectedGameExecutable.SelectedText = _selectedGame.Executable;
+            SelectedGameRunArguments.Text = _selectedGame.ExecutableParameters;
             SelectedGameWonDir.Text = _selectedGame.WonGameDir;
             SelectedGameSteamDir.SelectedText = _selectedGame.SteamGameDir;
 
@@ -1128,7 +1129,6 @@ namespace Sledge.Editor.Settings
 
             SelectedBuildAfterCopyBsp.Checked = _selectedBuild.AfterCopyBsp;
             SelectedBuildAfterRunGame.Checked = _selectedBuild.AfterRunGame;
-            SelectedBuildGameCommandLine.Text = _selectedBuild.AfterRunGameParameters;
             SelectedBuildAskBeforeRun.Checked = _selectedBuild.AfterAskBeforeRun;
 
             SelectedBuildCopyBsp.Checked = _selectedBuild.CopyBsp;

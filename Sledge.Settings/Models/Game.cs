@@ -19,6 +19,7 @@ namespace Sledge.Settings.Models
         public string BaseDir { get; set; }
         public string ModDir { get; set; }
         public string Executable { get; set; }
+        public string ExecutableParameters { get; set; }
         public string MapDir { get; set; }
         public bool Autosave { get; set; }
         public bool UseCustomAutosaveDir { get; set; }
@@ -59,6 +60,7 @@ namespace Sledge.Settings.Models
             ModDir = gs["ModDir"];
             BaseDir = gs["BaseDir"];
             Executable = gs["Executable"];
+            ExecutableParameters = gs["ExecutableParameters"];
             MapDir = gs["MapDir"];
             Autosave = gs.PropertyBoolean("Autosave");
             UseCustomAutosaveDir = gs.PropertyBoolean("UseCustomAutosaveDir");
@@ -105,6 +107,7 @@ namespace Sledge.Settings.Models
             gs["ModDir"] = ModDir;
             gs["BaseDir"] = BaseDir;
             gs["Executable"] = Executable;
+            gs["ExecutableParameters"] = ExecutableParameters;
             gs["MapDir"] = MapDir;
             gs["Autosave"] = Autosave.ToString(CultureInfo.InvariantCulture);
             gs["UseCustomAutosaveDir"] = UseCustomAutosaveDir.ToString(CultureInfo.InvariantCulture);

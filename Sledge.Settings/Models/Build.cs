@@ -21,7 +21,6 @@ namespace Sledge.Settings.Models
         public CompileWorkingDirectory WorkingDirectory { get; set; }
         public bool AfterCopyBsp { get; set; }
         public bool AfterRunGame { get; set; }
-        public string AfterRunGameParameters { get; set; }
         public bool AfterAskBeforeRun { get; set; }
 
         public bool CopyBsp { get; set; }
@@ -52,7 +51,6 @@ namespace Sledge.Settings.Models
             WorkingDirectory = gs.PropertyEnum("WorkingDirectory", CompileWorkingDirectory.TemporaryDirectory);
             AfterCopyBsp = gs.PropertyBoolean("AfterCopyBsp");
             AfterRunGame = gs.PropertyBoolean("AfterRunGame");
-            AfterRunGameParameters = gs["AfterRunGameParameters"] ?? "";
             AfterAskBeforeRun = gs.PropertyBoolean("AfterAskBeforeRun");
 
             CopyBsp = gs.PropertyBoolean("CopyBsp");
@@ -86,7 +84,6 @@ namespace Sledge.Settings.Models
             gs["WorkingDirectory"] = WorkingDirectory.ToString();
             gs["AfterCopyBsp"] = AfterCopyBsp.ToString(CultureInfo.InvariantCulture);
             gs["AfterRunGame"] = AfterRunGame.ToString(CultureInfo.InvariantCulture);
-            gs["AfterRunGameParameters"] = AfterRunGameParameters;
             gs["AfterAskBeforeRun"] = AfterAskBeforeRun.ToString(CultureInfo.InvariantCulture);
 
             gs["CopyBsp"] = CopyBsp.ToString(CultureInfo.InvariantCulture);

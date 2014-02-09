@@ -487,7 +487,7 @@ namespace Sledge.Editor
                         return;
                     }
 
-                    var flags = String.Format("{0} +map \"{1}\" {2}", batch.Game.GetGameLaunchArgument(), batch.MapFileName, batch.Build.AfterRunGameParameters);
+                    var flags = String.Format("{0} +map \"{1}\" {2}", batch.Game.GetGameLaunchArgument(), batch.MapFileName, batch.Game.ExecutableParameters);
                     try
                     {
                         Process.Start(exe, flags);
