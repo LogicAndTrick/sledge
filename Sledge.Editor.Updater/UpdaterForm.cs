@@ -198,7 +198,8 @@ namespace Sledge.Editor.Updater
             foreach (var newDir in Directory.GetDirectories(newDirectory))
             {
                 var oldDir = Path.Combine(oldDirectory, Path.GetFileName(newDir));
-                if (Directory.Exists(oldDir)) InstallDirectory(oldDir, newDir);
+                if (!Directory.Exists(oldDir)) Directory.CreateDirectory(oldDir);
+                InstallDirectory(oldDir, newDir);
             }
             foreach (var newFile in Directory.GetFiles(newDirectory))
             {

@@ -666,6 +666,9 @@
     </EmbeddedResource>
     <None Include="App.config" />
     <None Include="app.manifest" />
+    <None Include="Goldsource.vdf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Specifications\Goldsource.vdf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
