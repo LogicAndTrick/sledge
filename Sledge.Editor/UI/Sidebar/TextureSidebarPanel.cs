@@ -60,7 +60,7 @@ namespace Sledge.Editor.UI.Sidebar
             TextureComboBox.Update(tp == null ? null : tp.PackageFile);
         }
 
-        private void TextureSelected(object sender, EventArgs e)
+        private void TextureSelectionChanged(object sender, EventArgs e)
         {
             Mediator.Publish(EditorMediator.TextureSelected, TextureComboBox.GetSelectedTexture());
         }

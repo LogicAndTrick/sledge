@@ -56,7 +56,7 @@ namespace Sledge.Common.Mediator
             if (method == null)
             {
                 method = t.GetMethod(message, flags);
-                parameters = null;
+                if (method != null) parameters = method.GetParameters().Select(x => (object) null).ToArray();
             }
             if (method != null)
             {

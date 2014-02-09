@@ -141,6 +141,8 @@ namespace Sledge.DataStructures.MapObjects
             Vertices.ForEach(c => c.TextureU = c.TextureV = 0);
 
             if (Texture.Texture == null) return;
+            if (Texture.Texture.Width == 0 || Texture.Texture.Height == 0) return;
+            if (Texture.XScale == 0 || Texture.YScale == 0) return;
 
             var udiv = Texture.Texture.Width * Texture.XScale;
             var uadd = Texture.XShift / Texture.Texture.Width;

@@ -140,7 +140,7 @@
             this.TextureComboBox.Name = "TextureComboBox";
             this.TextureComboBox.Size = new System.Drawing.Size(137, 21);
             this.TextureComboBox.TabIndex = 9;
-            this.TextureComboBox.SelectionChangeCommitted += new System.EventHandler(this.TextureSelected);
+            this.TextureComboBox.SelectionChangeCommitted += new System.EventHandler(this.TextureSelectionChanged);
             // 
             // TextureSidebarPanel
             // 
