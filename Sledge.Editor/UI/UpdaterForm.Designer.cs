@@ -1,4 +1,4 @@
-﻿namespace Sledge.Editor.Updater
+﻿namespace Sledge.Editor.UI
 {
     partial class UpdaterForm
     {
@@ -62,6 +62,7 @@
             this.CancelButton.TabIndex = 2;
             this.CancelButton.Text = "Cancel";
             this.CancelButton.UseVisualStyleBackColor = true;
+            this.CancelButton.Click += new System.EventHandler(this.CancelButtonClicked);
             // 
             // UpdaterForm
             // 

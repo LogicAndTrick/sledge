@@ -47,6 +47,9 @@
     <Reference Include="Microsoft.WindowsAPICodePack.Shell">
       <HintPath>..\Microsoft.WindowsAPICodePack.Shell.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="OpenTK, Version=1.0.0.201, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\OpenTK.dll</HintPath>
@@ -466,6 +469,12 @@
     <Compile Include="UI\TransformDialog.Designer.cs">
       <DependentUpon>TransformDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="UI\UpdaterForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\UpdaterForm.Designer.cs">
+      <DependentUpon>UpdaterForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="UI\ViewportContextMenu.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -655,6 +664,9 @@
     <EmbeddedResource Include="UI\TransformDialog.resx">
       <DependentUpon>TransformDialog.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="UI\UpdaterForm.resx">
+      <DependentUpon>UpdaterForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Visgroups\VisgroupEditForm.resx">
       <DependentUpon>VisgroupEditForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -705,10 +717,6 @@
     <ProjectReference Include="..\Sledge.Editor.Elevate\Sledge.Editor.Elevate.csproj">
       <Project>{262FC468-01B6-451A-ABE9-9B6E00B29F81}</Project>
       <Name>Sledge.Editor.Elevate</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Sledge.Editor.Updater\Sledge.Editor.Updater.csproj">
-      <Project>{B9E644B2-F5A1-429D-805D-38A1733ADB4F}</Project>
-      <Name>Sledge.Editor.Updater</Name>
     </ProjectReference>
     <ProjectReference Include="..\Sledge.FileSystem\Sledge.FileSystem.csproj">
       <Project>{1C2C012D-DBA5-4C7F-994F-E3034AC60DCC}</Project>

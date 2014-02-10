@@ -8,6 +8,8 @@ using System.Net;
 using System.Reflection;
 using System.Windows.Forms;
 using Microsoft.WindowsAPICodePack.Taskbar;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Sledge.Common.Mediator;
 using Sledge.DataStructures.GameData;
 using Sledge.DataStructures.Geometric;
@@ -87,7 +89,6 @@ namespace Sledge.Editor
                 if (!Directory.Exists(specFolder)) Directory.CreateDirectory(specFolder);
                 var specDest = Path.Combine(specFolder, "Goldsource.vdf");
                 if (File.Exists(spec) && !File.Exists(specDest)) File.Move(spec, specDest);
-                if (File.Exists(spec)) File.Delete(spec);
             }
             catch
             {
@@ -172,85 +173,139 @@ namespace Sledge.Editor
 
         private void CheckForUpdates()
         {
+            DoUpdateCheck(true);
+        }
+
+        private void DoUpdateCheck(bool notify)
+        {
             #if DEBUG
                 return;
             #endif
 
-            var sources = GetUpdateSources();
-            var version = GetCurrentVersion();
-            foreach (var source in sources)
+            try
             {
-                var result = GetUpdateCheckResult(source, version);
-                if (result == null) continue;
-                if (!String.Equals(result.Version, version, StringComparison.InvariantCultureIgnoreCase))
+                var version = GetCurrentVersion();
+                var result = GetUpdateCheckResult(SledgeWebsiteUpdateSource);
+                if (result == null) return;
+                if (String.Equals(result.Version, version, StringComparison.InvariantCultureIgnoreCase))
                 {
-                    if (MessageBox.Show("A new version of Sledge is available. Would you like to update?", "New version detected!", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                    if (notify)
                     {
-                        Process.Start(System.IO.Path.Combine(System.IO.Path.GetDirectoryName(typeof(Editor).Assembly.Location), "Sledge.Editor.Updater.exe"));
-                        Application.Exit();
+                        NotifyUpdateError("This version of Sledge is currently up-to-date.", "No Updates Found");
                     }
+                    return;
                 }
-                return;
+
+                var details = GetLatestReleaseDetails();
+                if (!details.Exists)
+                {
+                    if (notify)
+                    {
+                        NotifyUpdateError("There was a problem downloading the update details, please try again later.", "Update Error");
+                    }
+                    return;
+                }
+
+                if (InvokeRequired) BeginInvoke(new Action(() => NotifyUpdate(details)));
+                else NotifyUpdate(details);
+            }
+            catch (Exception ex)
+            {
+                if (notify)
+                {
+                    NotifyUpdateError("An error occurred during the update: " + ex.Message, "Update Failed!");
+                }
             }
         }
 
-        private class UpdateSource
+        private void NotifyUpdateError(string message, string title)
         {
-            public string Name { get; set; }
-            public string Url { get; set; }
+            if (InvokeRequired) BeginInvoke(new Action(() => MessageBox.Show(message, title)));
+            else MessageBox.Show(message, title);
+        }
 
-            public string GetUrl(string version)
+        private void NotifyUpdate(ReleaseDetails details)
+        {
+            if (MessageBox.Show("A new version of Sledge is available. Would you like to update?", "New version detected!", MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
-                return String.Format(Url, version);
+                var file = Path.Combine(Path.GetTempPath(), details.FileName);
+                var dialog = new UpdaterForm(details.DownloadUrl, file);
+                dialog.ShowDialog(this);
+                if (dialog.Completed)
+                {
+                    _updateExecutable = file;
+                    Close();
+                }
             }
+        }
+
+        private string _updateExecutable = null;
+        private const string GithubReleasesApiUrl = "https://api.github.com/repos/LogicAndTrick/sledge/releases?page=1&per_page=1";
+        private const string SledgeWebsiteUpdateSource = "http://sledge-editor.com/version.txt";
+
+        private ReleaseDetails GetLatestReleaseDetails()
+        {
+            using (var wc = new WebClient())
+            {
+                wc.Headers.Add(HttpRequestHeader.UserAgent, "LogicAndTrick/Sledge-Editor");
+                var str = wc.DownloadString(GithubReleasesApiUrl);
+                return new ReleaseDetails(str);
+            }
+        }
+
+        private class ReleaseDetails
+        {
+            public string Tag { get; set; }
+            public string Name { get; set; }
+            public string Changelog { get; set; }
+            public string FileName { get; set; }
+            public string DownloadUrl { get; set; }
+
+            public ReleaseDetails(string jsonString)
+            {
+                var obj = JsonConvert.DeserializeObject(jsonString) as JArray;
+                if (obj == null || obj.Count < 1) return;
+                var rel = obj[0] as JObject;
+                if (rel == null) return;
+                var assets = rel.GetValue("assets") as JArray;
+                if (assets == null || assets.Count < 1) return;
+                var exeAsset = assets.FirstOrDefault(x => x is JObject && ((JObject)x).GetValue("name").ToString().EndsWith(".exe")) as JObject;
+                if (exeAsset == null) return;
+
+                Tag = rel.GetValue("tag_name").ToString();
+                Name = rel.GetValue("name").ToString();
+                Changelog = rel.GetValue("body").ToString();
+                FileName = exeAsset.GetValue("name").ToString();
+                DownloadUrl = exeAsset.GetValue("url").ToString();
+            }
+
+            public bool Exists { get { return Tag != null; } }
         }
 
         private class UpdateCheckResult
         {
             public string Version { get; set; }
             public DateTime Date { get; set; }
-            public string DownloadUrl { get; set; }
-        }
-
-        private IEnumerable<UpdateSource> GetUpdateSources()
-        {
-            var dir = System.IO.Path.GetDirectoryName(typeof(Editor).Assembly.Location);
-            if (dir == null) yield break;
-            var file = System.IO.Path.Combine(dir, "UpdateSources.txt");
-            if (!File.Exists(file)) yield break;
-            var lines = File.ReadAllLines(file);
-            foreach (var line in lines)
-            {
-                if (String.IsNullOrWhiteSpace(line) || line.StartsWith("#")) continue;
-                var split = line.Split(':');
-                if (split.Length < 2) continue;
-                var us = new UpdateSource
-                {
-                    Name = split[0],
-                    Url = String.Join(":", split.Skip(1))
-                };
-                yield return us;
-            }
         }
 
         private String GetCurrentVersion()
         {
-            var info = FileVersionInfo.GetVersionInfo(typeof(Editor).Assembly.Location);
-            return info.FileVersion;
+            var info = typeof (Editor).Assembly.GetName().Version;
+            return info.ToString();
         }
 
-        private UpdateCheckResult GetUpdateCheckResult(UpdateSource source, string version)
+        private UpdateCheckResult GetUpdateCheckResult(string url)
         {
             try
             {
                 using (var downloader = new WebClient())
                 {
-                    var str = downloader.DownloadString(source.GetUrl(version)).Split('\n', '\r');
-                    if (str.Length < 3 || String.IsNullOrWhiteSpace(str[0]))
+                    var str = downloader.DownloadString(url).Split('\n', '\r');
+                    if (str.Length < 2 || String.IsNullOrWhiteSpace(str[0]))
                     {
                         return null;
                     }
-                    return new UpdateCheckResult { Version = str[0], Date = DateTime.Parse(str[1]), DownloadUrl = str[2] };
+                    return new UpdateCheckResult { Version = str[0], Date = DateTime.Parse(str[1]) };
                 }
             }
             catch
@@ -295,6 +350,11 @@ namespace Sledge.Editor
             ViewportManager.SaveLayout();
             SettingsManager.SaveSession(DocumentManager.Documents.Select(x => Tuple.Create(x.MapFile, x.Game)));
             SettingsManager.Write();
+            if (_updateExecutable != null && File.Exists(_updateExecutable))
+            {
+                var loc = Path.GetDirectoryName(typeof (Editor).Assembly.Location);
+                Process.Start(_updateExecutable, "/S" + (loc != null ? " /D=" + loc : ""));
+            }
         }
 
         #region Mediator
@@ -780,7 +840,7 @@ namespace Sledge.Editor
 
         private void EditorShown(object sender, EventArgs e)
         {
-            System.Threading.Tasks.Task.Factory.StartNew(CheckForUpdates);
+            System.Threading.Tasks.Task.Factory.StartNew(() => DoUpdateCheck(false));
         }
     }
 }
