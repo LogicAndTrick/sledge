@@ -525,6 +525,7 @@
       <DependentUpon>SettingsForm.cs</DependentUpon>
     </Compile>
     <Compile Include="UI\ViewportManager.cs" />
+    <Compile Include="UI\UpdateReleaseDetails.cs" />
     <Compile Include="Visgroups\VisgroupEditForm.cs">
       <SubType>Form</SubType>
     </Compile>

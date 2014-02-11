@@ -9,17 +9,20 @@ namespace Sledge.Editor.UI
 {
     public partial class UpdaterForm : Form
     {
-        private readonly string _url;
+        private readonly UpdateReleaseDetails _details;
         private readonly string _filename;
         public bool Completed { get; private set; }
 
-        public UpdaterForm(string url, string filename)
+        public UpdaterForm(UpdateReleaseDetails details, string filename)
         {
-            _url = url;
+            _details = details;
             _filename = filename;
             Completed = false;
 
             InitializeComponent();
+
+            StatusLabel.Text = "A new version of Sledge is available!\nWould you like to download it now?";
+            ReleaseDetails.Text = _details.Name + "\r\n\r\n" + _details.Changelog.Replace("\r", "").Replace("\n", "\r\n");
         }
 
         private readonly CancellationTokenSource _tokenSource = new CancellationTokenSource();
@@ -29,9 +32,9 @@ namespace Sledge.Editor.UI
             _tokenSource.Cancel();
         }
 
-        private void UpdaterFormLoad(object sender, EventArgs e)
+        private void DownloadButtonClicked(object sender, EventArgs e)
         {
-            DownloadUpdate(_url, _filename, _tokenSource.Token);
+            DownloadUpdate(_details.DownloadUrl, _filename, _tokenSource.Token);
         }
 
         private Task DownloadUpdate(string url, string file, CancellationToken token)

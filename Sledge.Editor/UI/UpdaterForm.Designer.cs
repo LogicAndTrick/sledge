@@ -31,6 +31,8 @@
             this.StatusLabel = new System.Windows.Forms.Label();
             this.ProgressBar = new System.Windows.Forms.ProgressBar();
             this.CancelButton = new System.Windows.Forms.Button();
+            this.StartButton = new System.Windows.Forms.Button();
+            this.ReleaseDetails = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // StatusLabel
@@ -38,25 +40,25 @@
             this.StatusLabel.AutoSize = true;
             this.StatusLabel.Location = new System.Drawing.Point(12, 9);
             this.StatusLabel.Name = "StatusLabel";
-            this.StatusLabel.Size = new System.Drawing.Size(0, 13);
+            this.StatusLabel.Size = new System.Drawing.Size(66, 13);
             this.StatusLabel.TabIndex = 0;
+            this.StatusLabel.Text = "Status Label";
             // 
             // ProgressBar
             // 
-            this.ProgressBar.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            this.ProgressBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.ProgressBar.Location = new System.Drawing.Point(12, 25);
+            this.ProgressBar.Location = new System.Drawing.Point(12, 246);
             this.ProgressBar.Name = "ProgressBar";
-            this.ProgressBar.Size = new System.Drawing.Size(256, 10);
+            this.ProgressBar.Size = new System.Drawing.Size(293, 10);
             this.ProgressBar.Step = 1;
             this.ProgressBar.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
             this.ProgressBar.TabIndex = 1;
             // 
             // CancelButton
             // 
-            this.CancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.CancelButton.Location = new System.Drawing.Point(274, 12);
+            this.CancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.CancelButton.Location = new System.Drawing.Point(311, 233);
             this.CancelButton.Name = "CancelButton";
             this.CancelButton.Size = new System.Drawing.Size(75, 23);
             this.CancelButton.TabIndex = 2;
@@ -64,11 +66,37 @@
             this.CancelButton.UseVisualStyleBackColor = true;
             this.CancelButton.Click += new System.EventHandler(this.CancelButtonClicked);
             // 
+            // StartButton
+            // 
+            this.StartButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.StartButton.Location = new System.Drawing.Point(311, 12);
+            this.StartButton.Name = "StartButton";
+            this.StartButton.Size = new System.Drawing.Size(75, 23);
+            this.StartButton.TabIndex = 2;
+            this.StartButton.Text = "Download";
+            this.StartButton.UseVisualStyleBackColor = true;
+            this.StartButton.Click += new System.EventHandler(this.DownloadButtonClicked);
+            // 
+            // ReleaseDetails
+            // 
+            this.ReleaseDetails.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.ReleaseDetails.BackColor = System.Drawing.SystemColors.ControlLightLight;
+            this.ReleaseDetails.Location = new System.Drawing.Point(15, 41);
+            this.ReleaseDetails.Multiline = true;
+            this.ReleaseDetails.Name = "ReleaseDetails";
+            this.ReleaseDetails.ReadOnly = true;
+            this.ReleaseDetails.Size = new System.Drawing.Size(371, 186);
+            this.ReleaseDetails.TabIndex = 3;
+            // 
             // UpdaterForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(361, 45);
+            this.ClientSize = new System.Drawing.Size(398, 266);
+            this.Controls.Add(this.ReleaseDetails);
+            this.Controls.Add(this.StartButton);
             this.Controls.Add(this.CancelButton);
             this.Controls.Add(this.ProgressBar);
             this.Controls.Add(this.StatusLabel);
@@ -77,9 +105,9 @@
             this.MinimizeBox = false;
             this.Name = "UpdaterForm";
             this.ShowInTaskbar = false;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Sledge Updater";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.UpdaterFormFormClosing);
-            this.Load += new System.EventHandler(this.UpdaterFormLoad);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -90,6 +118,8 @@
         private System.Windows.Forms.Label StatusLabel;
         private System.Windows.Forms.ProgressBar ProgressBar;
         private System.Windows.Forms.Button CancelButton;
+        private System.Windows.Forms.Button StartButton;
+        private System.Windows.Forms.TextBox ReleaseDetails;
     }
 }
 

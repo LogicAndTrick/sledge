@@ -8,8 +8,6 @@ using System.Net;
 using System.Reflection;
 using System.Windows.Forms;
 using Microsoft.WindowsAPICodePack.Taskbar;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using Sledge.Common.Mediator;
 using Sledge.DataStructures.GameData;
 using Sledge.DataStructures.Geometric;
@@ -224,12 +222,11 @@ namespace Sledge.Editor
             else MessageBox.Show(message, title);
         }
 
-        private void NotifyUpdate(ReleaseDetails details)
+        private void NotifyUpdate(UpdateReleaseDetails details)
         {
-            if (MessageBox.Show("A new version of Sledge is available. Would you like to update?", "New version detected!", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            var file = Path.Combine(Path.GetTempPath(), details.FileName);
+            using (var dialog = new UpdaterForm(details, file))
             {
-                var file = Path.Combine(Path.GetTempPath(), details.FileName);
-                var dialog = new UpdaterForm(details.DownloadUrl, file);
                 dialog.ShowDialog(this);
                 if (dialog.Completed)
                 {
@@ -243,43 +240,14 @@ namespace Sledge.Editor
         private const string GithubReleasesApiUrl = "https://api.github.com/repos/LogicAndTrick/sledge/releases?page=1&per_page=1";
         private const string SledgeWebsiteUpdateSource = "http://sledge-editor.com/version.txt";
 
-        private ReleaseDetails GetLatestReleaseDetails()
+        private UpdateReleaseDetails GetLatestReleaseDetails()
         {
             using (var wc = new WebClient())
             {
                 wc.Headers.Add(HttpRequestHeader.UserAgent, "LogicAndTrick/Sledge-Editor");
                 var str = wc.DownloadString(GithubReleasesApiUrl);
-                return new ReleaseDetails(str);
+                return new UpdateReleaseDetails(str);
             }
-        }
-
-        private class ReleaseDetails
-        {
-            public string Tag { get; set; }
-            public string Name { get; set; }
-            public string Changelog { get; set; }
-            public string FileName { get; set; }
-            public string DownloadUrl { get; set; }
-
-            public ReleaseDetails(string jsonString)
-            {
-                var obj = JsonConvert.DeserializeObject(jsonString) as JArray;
-                if (obj == null || obj.Count < 1) return;
-                var rel = obj[0] as JObject;
-                if (rel == null) return;
-                var assets = rel.GetValue("assets") as JArray;
-                if (assets == null || assets.Count < 1) return;
-                var exeAsset = assets.FirstOrDefault(x => x is JObject && ((JObject)x).GetValue("name").ToString().EndsWith(".exe")) as JObject;
-                if (exeAsset == null) return;
-
-                Tag = rel.GetValue("tag_name").ToString();
-                Name = rel.GetValue("name").ToString();
-                Changelog = rel.GetValue("body").ToString();
-                FileName = exeAsset.GetValue("name").ToString();
-                DownloadUrl = exeAsset.GetValue("url").ToString();
-            }
-
-            public bool Exists { get { return Tag != null; } }
         }
 
         private class UpdateCheckResult
