@@ -36,6 +36,8 @@ namespace Sledge.Editor.UI
             Add("Delete", HotkeysMediator.OperationsDelete);
             Add("Paste Special", HotkeysMediator.OperationsPasteSpecial, Clipboard.ClipboardManager.CanPaste());
             Items.Add(new ToolStripSeparator());
+            Add("Transform...", HotkeysMediator.Transform);
+            Items.Add(new ToolStripSeparator());
             Add(doc.History.GetUndoString(), HotkeysMediator.HistoryUndo, doc.History.CanUndo());
             Add(doc.History.GetRedoString(), HotkeysMediator.HistoryRedo, doc.History.CanRedo());
             Items.Add(new ToolStripSeparator());
