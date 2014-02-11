@@ -201,7 +201,7 @@ namespace Sledge.Editor.Tools
         #region Double Click
         public override void MouseDoubleClick(ViewportBase viewport, ViewportEvent e)
         {
-            if (!Document.Selection.IsEmpty() && !ObjectPropertiesDialog.IsShowing)
+            if (viewport is Viewport3D && !Document.Selection.IsEmpty() && !ObjectPropertiesDialog.IsShowing)
             {
                 Mediator.Publish(HotkeysMediator.ObjectProperties);
             }
