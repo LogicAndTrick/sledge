@@ -141,17 +141,38 @@ namespace Sledge.Editor.Tools
             else if (_state == ClipState.MovingPoint1)
             {
                 // Move point 1
-                _clipPlanePoint1 = viewport.GetUnusedCoordinate(_clipPlanePoint1) + point;
+                var cp1 = viewport.GetUnusedCoordinate(_clipPlanePoint1) + point;
+                if (KeyboardState.Ctrl)
+                {
+                    var diff = _clipPlanePoint1 - cp1;
+                    _clipPlanePoint2 -= diff;
+                    _clipPlanePoint3 -= diff;
+                }
+                _clipPlanePoint1 = cp1;
             }
             else if (_state == ClipState.MovingPoint2)
             {
                 // Move point 2
-                _clipPlanePoint2 = viewport.GetUnusedCoordinate(_clipPlanePoint2) + point;
+                var cp2 = viewport.GetUnusedCoordinate(_clipPlanePoint2) + point;
+                if (KeyboardState.Ctrl)
+                {
+                    var diff = _clipPlanePoint2 - cp2;
+                    _clipPlanePoint1 -= diff;
+                    _clipPlanePoint3 -= diff;
+                }
+                _clipPlanePoint2 = cp2;
             }
             else if (_state == ClipState.MovingPoint3)
             {
                 // Move point 3
-                _clipPlanePoint3 = viewport.GetUnusedCoordinate(_clipPlanePoint3) + point;
+                var cp3 = viewport.GetUnusedCoordinate(_clipPlanePoint3) + point;
+                if (KeyboardState.Ctrl)
+                {
+                    var diff = _clipPlanePoint3 - cp3;
+                    _clipPlanePoint1 -= diff;
+                    _clipPlanePoint2 -= diff;
+                }
+                _clipPlanePoint3 = cp3;
             }
 
             Editor.Instance.CaptureAltPresses = _state != ClipState.None && _state != ClipState.Drawn;
