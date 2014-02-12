@@ -795,9 +795,7 @@ namespace Sledge.Editor.Settings
             if (Directory.Exists(commondir)) games.AddRange(Directory.GetDirectories(commondir).Select(Path.GetFileName));
             var includeGoldsource = new[]
                               {
-                                  "counter-strike", "day of defeat", "deathmatch classic",
-                                  "half-life", "half-life blue shift",
-                                  "opposing force", "team fortress classic"
+                                  "half-life"
                               };
             var includeSource = new[]
                               {
