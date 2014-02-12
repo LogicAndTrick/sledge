@@ -266,6 +266,7 @@ namespace Sledge.Editor.Settings
             CrosshairCursorIn2DViews.Checked = Sledge.Settings.View.CrosshairCursorIn2DViews;
             AutoSelectBox.Checked = Sledge.Settings.Select.AutoSelectBox;
             KeepVisgroupsWhenCloning.Checked = Sledge.Settings.Select.KeepVisgroupsWhenCloning;
+            DrawBoxText.Checked = Sledge.Settings.View.DrawBoxText;
             ScrollWheelZoomMultiplier.Value = Sledge.Settings.View.ScrollWheelZoomMultiplier;
             SelectionBoxBackgroundOpacity.Value = Sledge.Settings.View.SelectionBoxBackgroundOpacity;
 
@@ -363,6 +364,7 @@ namespace Sledge.Editor.Settings
             Sledge.Settings.View.CrosshairCursorIn2DViews = CrosshairCursorIn2DViews.Checked;
             Sledge.Settings.Select.AutoSelectBox = AutoSelectBox.Checked;
             Sledge.Settings.Select.KeepVisgroupsWhenCloning = KeepVisgroupsWhenCloning.Checked;
+            Sledge.Settings.View.DrawBoxText = DrawBoxText.Checked;
             Sledge.Settings.View.ScrollWheelZoomMultiplier = ScrollWheelZoomMultiplier.Value;
             Sledge.Settings.View.SelectionBoxBackgroundOpacity = (int) SelectionBoxBackgroundOpacity.Value;
 

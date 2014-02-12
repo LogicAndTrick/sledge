@@ -68,7 +68,7 @@ namespace Sledge.Editor.Tools
             var start = viewport.Flatten(State.BoxStart);
             var end = viewport.Flatten(State.BoxEnd);
 
-            if (ShouldDrawBox())
+            if (ShouldDrawBox(viewport))
             {
                 var min = viewport.ScreenToWorld(0, 0);
                 var max = viewport.ScreenToWorld(viewport.Width, viewport.Height);

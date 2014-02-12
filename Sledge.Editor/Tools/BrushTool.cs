@@ -156,7 +156,7 @@ namespace Sledge.Editor.Tools
 
         public override void UpdateFrame(ViewportBase viewport)
         {
-            if (_updatePreview && ShouldDrawBox())
+            if (_updatePreview && ShouldDrawBox(viewport))
             {
                 var box = new Box(State.BoxStart, State.BoxEnd);
                 var brush = GetBrush(box, new IDGenerator());
@@ -197,7 +197,7 @@ namespace Sledge.Editor.Tools
         protected override void Render2D(Viewport2D viewport)
         {
             base.Render2D(viewport);
-            if (ShouldDrawBox() && _preview != null)
+            if (ShouldDrawBox(viewport) && _preview != null)
             {
                 GL.Color3(GetRenderColour());
                 Graphics.Helpers.Matrix.Push();

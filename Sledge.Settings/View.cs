@@ -7,6 +7,7 @@ namespace Sledge.Settings
         public static bool CrosshairCursorIn2DViews { get; set; }
         public static decimal ScrollWheelZoomMultiplier { get; set; }
         public static int SelectionBoxBackgroundOpacity { get; set; }
+        public static bool DrawBoxText { get; set; }
         
         public static Color ViewportBackground { get; set; }
 
@@ -40,6 +41,7 @@ namespace Sledge.Settings
             CrosshairCursorIn2DViews = false;
             ScrollWheelZoomMultiplier = 1.2m;
             SelectionBoxBackgroundOpacity = 64;
+            DrawBoxText = true;
 
             ViewportBackground = Color.Black;
 

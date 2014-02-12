@@ -3,9 +3,11 @@ using System.Windows.Forms;
 using Sledge.Common.Mediator;
 using Sledge.Graphics.Helpers;
 using Sledge.UI;
-using OpenTK.Graphics.OpenGL;
 using System.Drawing;
 using Sledge.DataStructures.Geometric;
+using OpenTK.Graphics.OpenGL;
+using TextPrinter = OpenTK.Graphics.TextPrinter;
+using TextQuality = OpenTK.Graphics.TextQuality;
 
 namespace Sledge.Editor.Tools
 {
@@ -158,6 +160,9 @@ namespace Sledge.Editor.Tools
         // Class Variables
         protected const decimal HandleWidth = 12;
 
+        protected TextPrinter _printer;
+        protected Font _printerFont;
+
         protected abstract Color BoxColour { get; }
         protected abstract Color FillColour { get; }
         internal BoxState State { get; set; }
@@ -166,6 +171,9 @@ namespace Sledge.Editor.Tools
         {
             Usage = ToolUsage.Both;
             State = new BoxState();
+
+            _printer = new TextPrinter(TextQuality.High);
+            _printerFont = new Font(FontFamily.GenericSansSerif, 18, GraphicsUnit.Pixel);
         }
 
         protected virtual void OnBoxChanged()
@@ -527,13 +535,18 @@ namespace Sledge.Editor.Tools
             if (viewport is Viewport3D) Render3D((Viewport3D)viewport);
         }
 
-        protected virtual bool ShouldDrawBox()
+        protected virtual bool ShouldDrawBox(ViewportBase viewport)
         {
             return State.Action == BoxAction.Drawing
                    || State.Action == BoxAction.Drawn
                    || State.Action == BoxAction.ReadyToResize
                    || State.Action == BoxAction.DownToResize
                    || State.Action == BoxAction.Resizing;
+        }
+
+        protected virtual bool ShouldDrawBoxText(ViewportBase viewport)
+        {
+            return ShouldDrawBox(viewport);
         }
 
         protected virtual Color GetRenderFillColour()
@@ -546,6 +559,11 @@ namespace Sledge.Editor.Tools
             return BoxColour;
         }
 
+        protected virtual Color GetRenderTextColour()
+        {
+            return BoxColour;
+        }
+
         protected virtual Color GetRenderResizeHoverColour()
         {
             return FillColour;
@@ -553,14 +571,14 @@ namespace Sledge.Editor.Tools
 
         protected virtual void RenderBox(Viewport2D viewport, Coordinate start, Coordinate end)
         {
-            GL.Begin(BeginMode.Quads);
+            GL.Begin(PrimitiveType.Quads);
             GL.Color4(GetRenderFillColour());
             Coord(start.DX, start.DY, start.DZ);
             Coord(end.DX, start.DY, start.DZ);
             Coord(end.DX, end.DY, start.DZ);
             Coord(start.DX, end.DY, start.DZ);
             GL.End();
-            GL.Begin(BeginMode.LineLoop);
+            GL.Begin(PrimitiveType.LineLoop);
             GL.Color3(GetRenderBoxColour());
             Coord(start.DX, start.DY, start.DZ);
             Coord(end.DX, start.DY, start.DZ);
@@ -648,7 +666,7 @@ namespace Sledge.Editor.Tools
         protected virtual void RenderResizeBox(Viewport2D viewport, Coordinate start, Coordinate end)
         {
             var box = GetRenderResizeBox(start, end);
-            GL.Begin(BeginMode.Quads);
+            GL.Begin(PrimitiveType.Quads);
             GL.Color4(FillColour);
             double x1 = box[0], y1 = box[1], x2 = box[2], y2 = box[3];
             Coord(x1, y1, 0);
@@ -658,18 +676,51 @@ namespace Sledge.Editor.Tools
             GL.End();
         }
 
+        protected void RenderBoxText(Viewport2D viewport, Coordinate boxStart, Coordinate boxEnd)
+        {
+            if (!Sledge.Settings.View.DrawBoxText) return;
+
+            var widthText = (boxEnd.X - boxStart.X).ToString("0.00");
+            var heightText = (boxEnd.Y - boxStart.Y).ToString("0.00");
+
+            var wid = _printer.Measure(widthText, _printerFont, new RectangleF(0, 0, viewport.Width, viewport.Height));
+            var hei = _printer.Measure(widthText, _printerFont, new RectangleF(0, 0, viewport.Width, viewport.Height));
+
+            boxStart = viewport.WorldToScreen(boxStart);
+            boxEnd = viewport.WorldToScreen(boxEnd);
+
+            var cx = (float)(boxStart.X + (boxEnd.X - boxStart.X) / 2);
+            var cy = (float)(boxStart.Y + (boxEnd.Y - boxStart.Y) / 2);
+
+            var wrect = new RectangleF(cx - wid.BoundingBox.Width / 2, viewport.Height - (float)boxEnd.Y - _printerFont.Height - 15, wid.BoundingBox.Width, wid.BoundingBox.Height);
+            var hrect = new RectangleF((float)boxEnd.X + 15, viewport.Height - cy - hei.BoundingBox.Height / 2, hei.BoundingBox.Width, hei.BoundingBox.Height);
+
+            GL.Disable(EnableCap.CullFace);
+
+            _printer.Begin();
+            _printer.Print(widthText, _printerFont, BoxColour, wrect);
+            _printer.Print(heightText, _printerFont, BoxColour, hrect);
+            _printer.End();
+
+            GL.Enable(OpenTK.Graphics.OpenGL.EnableCap.CullFace);
+        }
+
         protected virtual void Render2D(Viewport2D viewport)
         {
             if (State.Action == BoxAction.ReadyToDraw || State.Action == BoxAction.DownToDraw) return;
             var start = viewport.Flatten(State.BoxStart);
             var end = viewport.Flatten(State.BoxEnd);
-            if (ShouldDrawBox())
+            if (ShouldDrawBox(viewport))
             {
                 RenderBox(viewport, start, end);
             }
             if (ShouldRenderResizeBox(viewport))
             {
                 RenderResizeBox(viewport, start, end);
+            }
+            if (ShouldDrawBoxText(viewport))
+            {
+                RenderBoxText(viewport, start, end);
             }
         }
 
@@ -705,7 +756,7 @@ namespace Sledge.Editor.Tools
 
         public override void UpdateFrame(ViewportBase viewport)
         {
-            //TODO: Drag-scrolling
+
         }
 
         public override void MouseEnter(ViewportBase viewport, ViewportEvent e)
