@@ -43,7 +43,7 @@ namespace Sledge.Editor.Extensions
         public static string GetModelName(this Entity entity)
         {
             if (entity.GameData == null) return null;
-            var studio = entity.GameData.Behaviours.FirstOrDefault(x => x.Name == "studio");
+            var studio = entity.GameData.Behaviours.FirstOrDefault(x => String.Equals(x.Name, "studio", StringComparison.InvariantCultureIgnoreCase));
             if (studio == null) return null;
 
             // First see if the studio behaviour forces a model...
@@ -54,6 +54,7 @@ namespace Sledge.Editor.Extensions
 
             // Find the first property that is a studio type...
             var prop = entity.GameData.Properties.FirstOrDefault(x => x.VariableType == VariableType.Studio);
+            if (prop == null) prop = entity.GameData.Properties.FirstOrDefault(x => String.Equals(x.Name, "model", StringComparison.InvariantCultureIgnoreCase));
             if (prop != null)
             {
                 var val = entity.EntityData.GetPropertyValue(prop.Name);
