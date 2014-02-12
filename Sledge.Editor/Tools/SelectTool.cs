@@ -22,6 +22,7 @@ using Sledge.Editor.UI.ObjectProperties;
 using Sledge.Graphics;
 using Sledge.Settings;
 using Sledge.UI;
+using Tao.OpenGl;
 
 namespace Sledge.Editor.Tools
 {
@@ -501,6 +502,13 @@ namespace Sledge.Editor.Tools
             if (CurrentTransform.HasValue)
             {
                 Document.SetSelectListTransform(CurrentTransform.Value);
+                var box = new Box(State.PreTransformBoxStart, State.PreTransformBoxEnd);
+                var trans = CreateMatrixMultTransformation(CurrentTransform.Value);
+                Mediator.Publish(EditorMediator.SelectionBoxChanged, box.Transform(trans));
+            }
+            else
+            {
+                //OnBoxChanged();
             }
         }
 
@@ -629,6 +637,35 @@ namespace Sledge.Editor.Tools
 
             var start = viewport.Flatten(State.BoxStart);
             var end = viewport.Flatten(State.BoxEnd);
+
+            if (State.Action == BoxAction.Resizing && CurrentTransform.HasValue)
+            {
+                var box = new Box(viewport.Flatten(State.PreTransformBoxStart), viewport.Flatten(State.PreTransformBoxEnd));
+                var trans = CreateMatrixMultTransformation(CurrentTransform.Value);
+                box = box.Transform(trans);
+                var s = viewport.Flatten(box.Start);
+                var e = viewport.Flatten(box.End);
+
+                GL.Enable(EnableCap.LineStipple);
+                GL.LineStipple(10, 0xAAAA);
+                GL.Begin(PrimitiveType.Lines);
+                GL.Color4(Color.FromArgb(64, BoxColour));
+
+                Coord(s.DX, s.DY, e.DZ);
+                Coord(e.DX, s.DY, e.DZ);
+
+                Coord(s.DX, e.DY, e.DZ);
+                Coord(e.DX, e.DY, e.DZ);
+
+                Coord(s.DX, s.DY, e.DZ);
+                Coord(s.DX, e.DY, e.DZ);
+
+                Coord(e.DX, s.DY, e.DZ);
+                Coord(e.DX, e.DY, e.DZ);
+
+                GL.End();
+                GL.Disable(EnableCap.LineStipple);
+            }
 
             if (ShouldDrawBox())
             {

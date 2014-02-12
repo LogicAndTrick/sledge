@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Sledge.DataStructures.Transformations;
 
 namespace Sledge.DataStructures.Geometric
 {
@@ -95,6 +96,18 @@ namespace Sledge.DataStructures.Geometric
         public bool IsEmpty()
         {
             return Width == 0 && Height == 0 && Length == 0;
+        }
+        public IEnumerable<Coordinate> GetBoxPoints()
+        {
+            yield return new Coordinate(Start.X, End.Y, End.Z);
+            yield return End.Clone();
+            yield return new Coordinate(Start.X, Start.Y, End.Z);
+            yield return new Coordinate(End.X, Start.Y, End.Z);
+
+            yield return new Coordinate(Start.X, End.Y, Start.Z);
+            yield return new Coordinate(End.X, End.Y, Start.Z);
+            yield return Start.Clone();
+            yield return new Coordinate(End.X, Start.Y, Start.Z);
         }
 
         public Plane[] GetBoxPlanes()
@@ -236,6 +249,11 @@ namespace Sledge.DataStructures.Geometric
         {
             return c.X >= Start.X && c.Y >= Start.Y && c.Z >= Start.Z
                    && c.X <= End.X && c.Y <= End.Y && c.Z <= End.Z;
+        }
+
+        public Box Transform(IUnitTransformation transform)
+        {
+            return new Box(GetBoxPoints().Select(transform.Transform));
         }
 
         public Box Clone()
