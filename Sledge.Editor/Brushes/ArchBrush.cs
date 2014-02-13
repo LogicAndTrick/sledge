@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -11,22 +12,22 @@ namespace Sledge.Editor.Brushes
 {
     public class ArchBrush : IBrush
     {
-        private readonly NumericControl _arc;
+        private readonly NumericControl _numSides;
         private readonly NumericControl _startAngle;
         private readonly NumericControl _tiltAngle;
+        private readonly NumericControl _arc;
         private readonly NumericControl _wallWidth;
-        private readonly NumericControl _numSides;
         private readonly NumericControl _addHeight;
         private readonly BooleanControl _curvedRamp;
 
         public ArchBrush()
         {
-            _arc = new NumericControl(this) { LabelText = "Arc", Minimum = 1, Maximum = 360*4, Value = 360 };
-            _wallWidth = new NumericControl(this) { LabelText = "Wall width", Minimum = 1, Maximum = 1024, Value = 16};
             _numSides = new NumericControl(this) { LabelText = "Num. sides" };
             _startAngle = new NumericControl(this) { LabelText = "Start Angle", Minimum = 0, Maximum = 359, Value = 0 };
-            _tiltAngle = new NumericControl(this) { LabelText = "Tilt angle", Minimum = -90, Maximum = 90, Value = 0 };
-            _addHeight = new NumericControl(this) { LabelText = "Add height", Minimum = -1024, Maximum = 1024, Value = 0};
+            _tiltAngle = new NumericControl(this) { LabelText = "Tilt Angle", Minimum = -90, Maximum = 90, Value = 0 };
+            _arc = new NumericControl(this) { LabelText = "Arc", Minimum = 1, Maximum = 360 * 4, Value = 360 };
+            _wallWidth = new NumericControl(this) { LabelText = "Wall width", Minimum = 1, Maximum = 1024, Value = 16 };
+            _addHeight = new NumericControl(this) { LabelText = "Add height", Minimum = -1024, Maximum = 1024, Value = 0 };
             _curvedRamp = new BooleanControl(this) { LabelText = "Curved ramp", Checked = false };
         }
 
@@ -104,8 +105,8 @@ namespace Sledge.Editor.Brushes
             for (var i = 0; i < numsides + 1; i++)
             {
                 var a = start + i * angle;
-                var h = i * addHeight
-                var hypot = 0.5 * wallWidth
+                var h = i * addHeight;
+                var hypot = wallWidth / 2;
 
                 var xval = box.Center.X + majorOut * DMath.Cos(a);
                 var yval = box.Center.Y + minorOut * DMath.Sin(a);
