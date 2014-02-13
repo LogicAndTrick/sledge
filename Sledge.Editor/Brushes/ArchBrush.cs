@@ -119,7 +119,8 @@ namespace Sledge.Editor.Brushes
             }
 
             // Create the solids
-            for (var i = 0; i < 2 * numsides; i++)
+            var numSolids = curvedRamp ? 2 * numsides : numsides;
+            for (var i = 0; i < numSolids; i++)
             {
                 var faces = new List<Coordinate[]>();
                 var z = new Coordinate(0, 0, height);
