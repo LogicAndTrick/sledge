@@ -13,22 +13,24 @@ namespace Sledge.Editor.Brushes
     public class ArchBrush : IBrush
     {
         private readonly NumericControl _numSides;
-        private readonly NumericControl _startAngle;
-        private readonly NumericControl _tiltAngle;
-        private readonly NumericControl _arc;
         private readonly NumericControl _wallWidth;
+        private readonly NumericControl _arc;
+        private readonly NumericControl _startAngle;
         private readonly NumericControl _addHeight;
         private readonly BooleanControl _curvedRamp;
+        private readonly NumericControl _tiltAngle;
 
         public ArchBrush()
         {
             _numSides = new NumericControl(this) { LabelText = "Num. sides" };
-            _startAngle = new NumericControl(this) { LabelText = "Start Angle", Minimum = 0, Maximum = 359, Value = 0 };
-            _tiltAngle = new NumericControl(this) { LabelText = "Tilt Angle", Minimum = -90, Maximum = 90, Value = 0 };
-            _arc = new NumericControl(this) { LabelText = "Arc", Minimum = 1, Maximum = 360 * 4, Value = 360 };
             _wallWidth = new NumericControl(this) { LabelText = "Wall width", Minimum = 1, Maximum = 1024, Value = 16 };
+            _arc = new NumericControl(this) { LabelText = "Arc", Minimum = 1, Maximum = 360 * 4, Value = 360 };
+            _startAngle = new NumericControl(this) { LabelText = "Start Angle", Minimum = 0, Maximum = 359, Value = 0 };
             _addHeight = new NumericControl(this) { LabelText = "Add height", Minimum = -1024, Maximum = 1024, Value = 0 };
             _curvedRamp = new BooleanControl(this) { LabelText = "Curved ramp", Checked = false };
+            _tiltAngle = new NumericControl(this) { LabelText = "Tilt Angle", Minimum = -90, Maximum = 90, Value = 0, Enabled = false };
+
+            _curvedRamp.ValuesChanged += (s, b) => _tiltAngle.Enabled = _curvedRamp.GetValue();
         }
 
         public string Name
@@ -39,12 +41,12 @@ namespace Sledge.Editor.Brushes
         public IEnumerable<BrushControl> GetControls()
         {
             yield return _numSides;
-            yield return _startAngle;
-            yield return _tiltAngle;
-            yield return _arc;
             yield return _wallWidth;
+            yield return _arc;
+            yield return _startAngle;
             yield return _addHeight;
             yield return _curvedRamp;
+            yield return _tiltAngle;
         }
 
         private Solid MakeSolid(IDGenerator generator, IEnumerable<Coordinate[]> faces, ITexture texture, Color col)
@@ -72,16 +74,16 @@ namespace Sledge.Editor.Brushes
         {
             var numsides = (int)_numSides.GetValue();
             if (numsides < 3) yield break;
-            var startAngle = (int)_startAngle.GetValue();
-            if (startAngle < 0 || startAngle > 359) yield break;
-            var tiltAngle = (int)_tiltAngle.GetValue();
-            if (tiltAngle < -90 || startAngle > 90) yield break;
-            var arc = (int)_arc.GetValue();
-            if (arc < 1) yield break;
             var wallWidth = _wallWidth.GetValue();
             if (wallWidth < 1) yield break;
+            var arc = (int)_arc.GetValue();
+            if (arc < 1) yield break;
+            var startAngle = (int)_startAngle.GetValue();
+            if (startAngle < 0 || startAngle > 359) yield break;
             var addHeight = _addHeight.GetValue() / numsides;
             var curvedRamp = _curvedRamp.GetValue();
+            var tiltAngle = (int)_tiltAngle.GetValue();
+            if (tiltAngle < -90 || startAngle > 90) yield break;
 
             // Very similar to the pipe brush, except with options for start angle, tilt, arc, and height
             var width = box.Width;
@@ -120,32 +122,31 @@ namespace Sledge.Editor.Brushes
             }
 
             // Create the solids
-            var numSolids = curvedRamp ? 2 * numsides : numsides;
-            for (var i = 0; i < numSolids; i++)
+            for (var i = 0; i < numsides; i++)
             {
                 var faces = new List<Coordinate[]>();
                 var z = new Coordinate(0, 0, height);
 
+                // Since we are triangulating/splitting each arch segment, we need to generate 2 brushes per side
                 if (curvedRamp)
                 {
-                    // Since we are triangulating/splitting each arch segment, we need to generate 2 brushes per side
-                    // TODO: Different split orientations for the segments, depending on the arch's curving direction
-                    if (i % 2 == 0)
-                    {
-                        faces.Add(new[] { inner[i],       outer[i],       inner[i] + z   });
-                        faces.Add(new[] { inner[i],       inner[i+1],     inner[i] + z   });
-                        faces.Add(new[] { outer[i],       inner[i+1],     outer[i] + z   });
-                        faces.Add(new[] { inner[i],       outer[i],       inner[i+1]     });
-                        faces.Add(new[] { inner[i] + z,   outer[i] + z,   inner[i+1] + z });
-                    }
-                    else
-                    {
-                        faces.Add(new[] { outer[i],       inner[i+1],     outer[i] + z   });
-                        faces.Add(new[] { outer[i],       outer[i+1],     outer[i] + z   });
-                        faces.Add(new[] { inner[i+1],     outer[i+1],     inner[i+1] + z });
-                        faces.Add(new[] { outer[i],       inner[i+1],     outer[i+1]     });
-                        faces.Add(new[] { outer[i] + z,   inner[i+1] + z, outer[i+1] + z });
-                    }
+                    // Two different splitting options for the segments, depending on the arch's curving direction
+                    var arr1 = (addHeight >= 0) ? inner : outer;
+                    var arr2 = (addHeight >= 0) ? outer : inner;
+
+                    faces.Add(new[] { arr1[i],       arr2[i],       arr1[i] + z,   arr2[i] + z   });
+                    faces.Add(new[] { arr1[i],       arr1[i+1],     arr1[i] + z,   arr1[i+1] + z });
+                    faces.Add(new[] { arr2[i],       arr1[i+1],     arr2[i] + z,   arr1[i+1] + z });
+                    faces.Add(new[] { arr1[i],       arr2[i],       arr1[i+1]      });
+                    faces.Add(new[] { arr1[i] + z,   arr2[i] + z,   arr1[i+1] + z  });
+                    yield return MakeSolid(generator, faces, texture, colour);
+
+                    faces.Add(new[] { arr2[i],       arr1[i+1],     arr2[i] + z,   arr1[i+1] + z });
+                    faces.Add(new[] { arr2[i],       arr2[i+1],     arr2[i] + z,   arr2[i+1] + z });
+                    faces.Add(new[] { arr1[i+1],     arr2[i+1],     arr1[i+1] + z, arr2[i+1] + z });
+                    faces.Add(new[] { arr2[i],       arr1[i+1],     arr2[i+1]      });
+                    faces.Add(new[] { arr2[i] + z,   arr1[i+1] + z, arr2[i+1] + z  });
+                    yield return MakeSolid(generator, faces, texture, colour);
                 }
                 else
                 {
@@ -155,9 +156,8 @@ namespace Sledge.Editor.Brushes
                     faces.Add(new[] { inner[i],       inner[i] + z,   outer[i] + z,   outer[i]     });
                     faces.Add(new[] { inner[i+1] + z, outer[i+1] + z, outer[i] + z,   inner[i] + z });
                     faces.Add(new[] { inner[i],       outer[i],       outer[i+1],     inner[i+1]   });
+                    yield return MakeSolid(generator, faces, texture, colour);
                 }
-
-                yield return MakeSolid(generator, faces, texture, colour);
             }
         }
     }
