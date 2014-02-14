@@ -732,8 +732,8 @@ namespace Sledge.Editor.Tools
         protected virtual void Render3DBox(Viewport3D viewport, Coordinate start, Coordinate end)
         {
             var box = new Box(start, end);
-            TextureHelper.DisableTexturing();
-            GL.Begin(BeginMode.Lines);
+            TextureHelper.Unbind();
+            GL.Begin(PrimitiveType.Lines);
             GL.Color4(GetRenderBoxColour());
             foreach (var line in box.GetBoxLines())
             {
@@ -741,7 +741,6 @@ namespace Sledge.Editor.Tools
                 Coord(line.End);
             }
             GL.End();
-            TextureHelper.EnableTexturing();
         }
 
         protected virtual void Render3D(Viewport3D viewport)

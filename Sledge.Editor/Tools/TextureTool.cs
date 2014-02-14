@@ -316,14 +316,13 @@ namespace Sledge.Editor.Tools
 
         public override void Render(ViewportBase viewport)
         {
-            TextureHelper.DisableTexturing();
+            TextureHelper.Unbind();
+            GL.Begin(PrimitiveType.Lines);
             foreach (var face in Document.Selection.GetSelectedFaces())
             {
                 var lineStart = face.BoundingBox.Center + face.Plane.Normal * 0.5m;
                 var uEnd = lineStart + face.Texture.UAxis * 20;
                 var vEnd = lineStart + face.Texture.VAxis * 20;
-
-                GL.Begin(BeginMode.Lines);
 
                 GL.Color3(Color.Yellow);
                 GL.Vertex3(lineStart.DX, lineStart.DY, lineStart.DZ);
@@ -332,10 +331,8 @@ namespace Sledge.Editor.Tools
                 GL.Color3(Color.FromArgb(0, 255, 0));
                 GL.Vertex3(lineStart.DX, lineStart.DY, lineStart.DZ);
                 GL.Vertex3(vEnd.DX, vEnd.DY, vEnd.DZ);
-
-                GL.End();
             }
-            TextureHelper.EnableTexturing();
+            GL.End();
         }
 
         public override HotkeyInterceptResult InterceptHotkey(HotkeysMediator hotkeyMessage)

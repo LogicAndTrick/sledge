@@ -13,6 +13,7 @@ using Sledge.Editor.History;
 using Sledge.Editor.Properties;
 using Sledge.DataStructures.MapObjects;
 using Sledge.Editor.Rendering;
+using Sledge.Editor.Rendering.Immediate;
 using Sledge.Editor.UI;
 using Sledge.Graphics.Helpers;
 using Sledge.Settings;
@@ -215,9 +216,11 @@ namespace Sledge.Editor.Tools
             {
                 GL.Disable(EnableCap.CullFace);
                 TextureHelper.Unbind();
-                Rendering.Immediate.MapObjectRenderer.DrawFilled(_preview, GetRenderColour(), false, viewport.Type != Viewport3D.ViewType.Flat);
+                if (viewport.Type != Viewport3D.ViewType.Flat) MapObjectRenderer.EnableLighting();
+                MapObjectRenderer.DrawFilled(_preview, GetRenderColour(), false);
+                MapObjectRenderer.DisableLighting();
                 GL.Color4(Color.GreenYellow);
-                Rendering.Immediate.MapObjectRenderer.DrawWireframe(_preview, true);
+                MapObjectRenderer.DrawWireframe(_preview, true);
             }
         }
 

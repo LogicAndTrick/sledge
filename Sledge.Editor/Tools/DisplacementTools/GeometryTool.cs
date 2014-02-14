@@ -273,9 +273,9 @@ namespace Sledge.Editor.Tools.DisplacementTools
                 var sub = new Coordinate(40, 40, 40);
                 var pointBox = new Box(_currentPoint.CurrentPosition.Location - sub, _currentPoint.CurrentPosition.Location + sub);
 
-                TextureHelper.DisableTexturing();
+                TextureHelper.Unbind();
                 GL.LineWidth(3);
-                GL.Begin(BeginMode.Lines);
+                GL.Begin(PrimitiveType.Lines);
                 GL.Color3(1f, 1, 0);
                 foreach (var line in pointBox.GetBoxLines())
                 {
@@ -284,7 +284,6 @@ namespace Sledge.Editor.Tools.DisplacementTools
                 }
                 GL.End();
                 GL.LineWidth(1);
-                TextureHelper.EnableTexturing();
             }
         }
     }

@@ -52,5 +52,15 @@ namespace Sledge.Common
         {
             return Color.FromArgb(color.A, Math.Min(255, color.R + by), Math.Min(255, color.G + by), Math.Min(255, color.B + by));
         }
+
+        public static Color Blend(this Color color, Color other)
+        {
+            return Color.FromArgb(
+                (byte) ((color.A) / 255f * (other.A / 255f) * 255),
+                (byte) ((color.R) / 255f * (other.R / 255f) * 255),
+                (byte) ((color.G) / 255f * (other.G / 255f) * 255),
+                (byte) ((color.B) / 255f * (other.B / 255f) * 255)
+                );
+        }
     }
 }

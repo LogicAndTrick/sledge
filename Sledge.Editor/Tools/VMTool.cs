@@ -10,12 +10,15 @@ using Sledge.DataStructures.MapObjects;
 using Sledge.Editor.Actions.MapObjects.Operations;
 using Sledge.Editor.Actions.MapObjects.Selection;
 using Sledge.Editor.Properties;
+using Sledge.Editor.Rendering.Immediate;
 using Sledge.Editor.Tools.VMTools;
 using Sledge.Graphics;
 using Sledge.Graphics.Helpers;
 using Sledge.Settings;
 using Sledge.UI;
 using Matrix = Sledge.Graphics.Helpers.Matrix;
+using Select = Sledge.Settings.Select;
+using View = Sledge.Settings.View;
 
 namespace Sledge.Editor.Tools
 {
@@ -156,7 +159,7 @@ namespace Sledge.Editor.Tools
 
         protected override Color FillColour
         {
-            get { return Color.FromArgb(Sledge.Settings.View.SelectionBoxBackgroundOpacity, Color.DodgerBlue); }
+            get { return Color.FromArgb(View.SelectionBoxBackgroundOpacity, Color.DodgerBlue); }
         }
 
         public void SetDirty(bool points, bool midpoints)
@@ -534,8 +537,8 @@ namespace Sledge.Editor.Tools
                 var click = viewport.Expand(viewport.ScreenToWorld(e.X, viewport.Height - e.Y));
                 var box = new Box(click - add, click + add);
 
-                var centerHandles = Sledge.Settings.Select.DrawCenterHandles;
-                var centerOnly = Sledge.Settings.Select.ClickSelectByCenterHandlesOnly;
+                var centerHandles = Select.DrawCenterHandles;
+                var centerOnly = Select.ClickSelectByCenterHandlesOnly;
                 // Get the first element that intersects with the box
                 var solid = Document.Map.WorldSpawn.GetAllNodesIntersecting2DLineTest(box, centerHandles, centerOnly).OfType<Solid>().FirstOrDefault();
 
@@ -630,7 +633,7 @@ namespace Sledge.Editor.Tools
         protected override void LeftMouseUpDrawing(Viewport2D viewport, ViewportEvent e)
         {
             base.LeftMouseUpDrawing(viewport, e);
-            if (Sledge.Settings.Select.AutoSelectBox)
+            if (Select.AutoSelectBox)
             {
                 BoxDrawnConfirm(viewport);
             }
@@ -715,7 +718,7 @@ namespace Sledge.Editor.Tools
             Matrix.Push();
             var matrix = vp.GetModelViewMatrix();
             GL.MultMatrix(ref matrix);
-            Rendering.Immediate.MapObjectRenderer.DrawWireframe(_copies.Keys.SelectMany(x => x.Faces), true);
+            MapObjectRenderer.DrawWireframe(_copies.Keys.SelectMany(x => x.Faces), true);
             Matrix.Pop();
 
             // Draw in order by the unused coordinate (the up axis for this viewport)
@@ -743,7 +746,7 @@ namespace Sledge.Editor.Tools
 
             if (_currentTool != null) _currentTool.Render3D(vp);
 
-            TextureHelper.DisableTexturing();
+            TextureHelper.Unbind();
 
             if (_currentTool == null || _currentTool.DrawVertices())
             {
@@ -756,7 +759,7 @@ namespace Sledge.Editor.Tools
 
                 var half = new Coordinate(vp.Width, vp.Height, 0) / 2;
                 // Render out the point handles
-                GL.Begin(BeginMode.Quads);
+                GL.Begin(PrimitiveType.Quads);
                 foreach (var point in Points)
                 {
                     var c = vp.WorldToScreen(point.Coordinate);
@@ -780,12 +783,10 @@ namespace Sledge.Editor.Tools
                 // Get back into 3D rendering
                 Matrix.Set(MatrixMode.Projection);
                 Matrix.Identity();
-                Graphics.Helpers.Viewport.Perspective(0, 0, vp.Width, vp.Height, Sledge.Settings.View.CameraFOV);
+                Graphics.Helpers.Viewport.Perspective(0, 0, vp.Width, vp.Height, View.CameraFOV);
                 Matrix.Set(MatrixMode.Modelview);
                 Matrix.Identity();
                 vp.Camera.Position();
-
-                TextureHelper.EnableTexturing();
             }
 
             var type = vp.Type;
@@ -796,11 +797,13 @@ namespace Sledge.Editor.Tools
             // Render out the solid previews
             GL.Color3(Color.White);
             var faces = _copies.Keys.SelectMany(x => x.Faces).ToList();
-            Rendering.Immediate.MapObjectRenderer.DrawFilled(faces, Color.Empty, textured, shaded);
-            Rendering.Immediate.MapObjectRenderer.DrawFilled(faces.Where(x => !x.IsSelected), Color.FromArgb(64, Color.Green), false, shaded);
-            Rendering.Immediate.MapObjectRenderer.DrawFilled(faces.Where(x => x.IsSelected), Color.FromArgb(64, Color.Red), false, shaded);
+            if (shaded) MapObjectRenderer.EnableLighting();
+            MapObjectRenderer.DrawFilled(faces, Color.Empty, textured);
+            MapObjectRenderer.DrawFilled(faces.Where(x => !x.IsSelected), Color.FromArgb(64, Color.Green), false);
+            MapObjectRenderer.DrawFilled(faces.Where(x => x.IsSelected), Color.FromArgb(64, Color.Red), false);
+            MapObjectRenderer.DisableLighting();
             GL.Color3(Color.Pink);
-            Rendering.Immediate.MapObjectRenderer.DrawWireframe(faces, true);
+            MapObjectRenderer.DrawWireframe(faces, true);
         }
 
         public override void KeyDown(ViewportBase viewport, ViewportEvent e)

@@ -89,8 +89,8 @@ namespace Sledge.Editor.UI
         {
             if (!Focus || !FreeLook) return;
 
-            TextureHelper.DisableTexturing();
-            GL.Begin(BeginMode.Lines);
+            TextureHelper.Unbind();
+            GL.Begin(PrimitiveType.Lines);
             GL.Color3(Color.White);
             GL.Vertex2(0, -5);
             GL.Vertex2(0, 5);
@@ -101,7 +101,6 @@ namespace Sledge.Editor.UI
             GL.Vertex2(-5, 1);
             GL.Vertex2(5, 1);
             GL.End();
-            TextureHelper.EnableTexturing();
         }
 
         public void KeyUp(ViewportEvent e)

@@ -80,8 +80,8 @@ namespace Sledge.Editor.Rendering.Helpers
         private void Render3D(Viewport3D viewport, Document document)
         {
             var box = document.Map.CordonBounds;
-            TextureHelper.DisableTexturing();
-            GL.Begin(BeginMode.Lines);
+            TextureHelper.Unbind();
+            GL.Begin(PrimitiveType.Lines);
             GL.Color4(Color.Red);
             foreach (var line in box.GetBoxLines())
             {
@@ -89,7 +89,6 @@ namespace Sledge.Editor.Rendering.Helpers
                 GL.Vertex3(line.End.DX, line.End.DY, line.End.DZ);
             }
             GL.End();
-            TextureHelper.EnableTexturing();
         }
 
         public bool IsValidFor(MapObject o)
