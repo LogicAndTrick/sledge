@@ -680,11 +680,11 @@ namespace Sledge.Editor.Tools
         {
             if (!Sledge.Settings.View.DrawBoxText) return;
 
-            var widthText = (boxEnd.X - boxStart.X).ToString("0.00");
-            var heightText = (boxEnd.Y - boxStart.Y).ToString("0.00");
+            var widthText = (boxEnd.X - boxStart.X).ToString("0.0");
+            var heightText = (boxEnd.Y - boxStart.Y).ToString("0.0");
 
             var wid = _printer.Measure(widthText, _printerFont, new RectangleF(0, 0, viewport.Width, viewport.Height));
-            var hei = _printer.Measure(widthText, _printerFont, new RectangleF(0, 0, viewport.Width, viewport.Height));
+            var hei = _printer.Measure(heightText, _printerFont, new RectangleF(0, 0, viewport.Width, viewport.Height));
 
             boxStart = viewport.WorldToScreen(boxStart);
             boxEnd = viewport.WorldToScreen(boxEnd);
@@ -692,8 +692,8 @@ namespace Sledge.Editor.Tools
             var cx = (float)(boxStart.X + (boxEnd.X - boxStart.X) / 2);
             var cy = (float)(boxStart.Y + (boxEnd.Y - boxStart.Y) / 2);
 
-            var wrect = new RectangleF(cx - wid.BoundingBox.Width / 2, viewport.Height - (float)boxEnd.Y - _printerFont.Height - 15, wid.BoundingBox.Width, wid.BoundingBox.Height);
-            var hrect = new RectangleF((float)boxEnd.X + 15, viewport.Height - cy - hei.BoundingBox.Height / 2, hei.BoundingBox.Width, hei.BoundingBox.Height);
+            var wrect = new RectangleF(cx - wid.BoundingBox.Width / 2, viewport.Height - (float)boxEnd.Y - _printerFont.Height - 15, wid.BoundingBox.Width * 1.2f, wid.BoundingBox.Height);
+            var hrect = new RectangleF((float)boxEnd.X + 15, viewport.Height - cy - hei.BoundingBox.Height / 2, hei.BoundingBox.Width * 1.2f, hei.BoundingBox.Height);
 
             GL.Disable(EnableCap.CullFace);
 
