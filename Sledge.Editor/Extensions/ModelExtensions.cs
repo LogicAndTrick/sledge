@@ -31,8 +31,15 @@ namespace Sledge.Editor.Extensions
             if (e == null || !ShouldHaveModel(e)) return;
             var model = GetModelName(e);
             var file = document.Environment.Root.TraversePath(model);
-            if (file == null) return;
-            SetModel(e, ModelProvider.CreateModelReference(file));
+            if (file == null || !ModelProvider.CanLoad(file)) return;
+            try
+            {
+                SetModel(e, ModelProvider.CreateModelReference(file));
+            }
+            catch
+            {
+                // Couldn't load
+            }
         }
 
         public static bool ShouldHaveModel(this Entity entity)
