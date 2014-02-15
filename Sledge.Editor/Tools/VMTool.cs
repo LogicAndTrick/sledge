@@ -512,8 +512,10 @@ namespace Sledge.Editor.Tools
             base.MouseDown(vp, e);
         }
 
+        private bool _clickSelectionDone = false;
         public override void MouseDown(ViewportBase vp, ViewportEvent e)
         {
+            _clickSelectionDone = false;
             if (_currentTool != null)
             {
                 // If the current tool handles the event, we're done
@@ -575,37 +577,20 @@ namespace Sledge.Editor.Tools
                 return;
             }
 
+
+            // If any vertices are selected, don't change the selection yet
+            if (!vtxs.Any(x => x.IsSelected))
+            {
+                _clickSelectionDone = true;
+                DoSelection(vtxs, viewport);
+            }
+
+            // Only move selected vertices
+            vtxs = vtxs.Where(x => x.IsSelected).ToList();
+            if (!vtxs.Any()) return;
+
             // Use the topmost vertex as the control point
             var vtx = vtxs.First();
-
-            // Shift selects only the topmost point
-            if (KeyboardState.Shift)
-            {
-                vtxs.Clear();
-                vtxs.Add(vtx);
-            }
-
-            // Vertex found, cancel the box if needed
-            BoxDrawnCancel(vp);
-
-            // Mouse down on a point
-            if (vtx.IsSelected && KeyboardState.Ctrl && _currentTool.ShouldDeselect(vtxs))
-            {
-                // If the vertex is selected and ctrl is down, deselect the vertices
-                vtxs.ForEach(x => x.IsSelected = false);
-            }
-            else
-            {
-                if (!vtx.IsSelected && !KeyboardState.Ctrl && _currentTool.ShouldDeselect(vtxs))
-                {
-                    // If we aren't clicking on a selected point and ctrl is not down, deselect the others
-                    Points.ForEach(x => x.IsSelected = false);
-                    // If this point is already selected, don't deselect others. This is so we can move multiple points easily.
-                }
-                vtxs.ForEach(x => x.IsSelected = true);
-            }
-            VertexSelectionChanged();
-
             _currentTool.DragStart(vtxs);
             MoveSelection = vtxs;
             _snapPointOffset = SnapIfNeeded(viewport.Expand(viewport.ScreenToWorld(e.X, viewport.Height - e.Y))) - viewport.ZeroUnusedCoordinate(vtx.Coordinate);
@@ -614,7 +599,45 @@ namespace Sledge.Editor.Tools
 
         public override void MouseClick(ViewportBase viewport, ViewportEvent e)
         {
-            // Not used
+            var vp = viewport as Viewport2D;
+            if (vp == null || _clickSelectionDone) return;
+
+            var vtxs = _currentTool.GetVerticesAtPoint(e.X, viewport.Height - e.Y, vp);
+            DoSelection(vtxs, vp);
+        }
+
+        private void DoSelection(List<VMPoint> vertices, Viewport2D vp)
+        {
+            if (!vertices.Any()) return;
+
+            var vtx = vertices.First();
+            // Shift selects only the topmost point
+            if (KeyboardState.Shift)
+            {
+                vertices.Clear();
+                vertices.Add(vtx);
+            }
+
+            // Vertex found, cancel the box if needed
+            BoxDrawnCancel(vp);
+
+            // Mouse down on a point
+            if (vtx.IsSelected && KeyboardState.Ctrl && _currentTool.ShouldDeselect(vertices))
+            {
+                // If the vertex is selected and ctrl is down, deselect the vertices
+                vertices.ForEach(x => x.IsSelected = false);
+            }
+            else
+            {
+                if (!vtx.IsSelected && !KeyboardState.Ctrl && _currentTool.ShouldDeselect(vertices))
+                {
+                    // If we aren't clicking on a selected point and ctrl is not down, deselect the others
+                    Points.ForEach(x => x.IsSelected = false);
+                    // If this point is already selected, don't deselect others. This is so we can move multiple points easily.
+                }
+                vertices.ForEach(x => x.IsSelected = true);
+            }
+            VertexSelectionChanged();
         }
 
         public override void MouseDoubleClick(ViewportBase viewport, ViewportEvent e)
@@ -750,7 +773,7 @@ namespace Sledge.Editor.Tools
             // Draw in order by the unused coordinate (the up axis for this viewport)
             var ordered = (from point in Points
                            let unused = vp.GetUnusedCoordinate(point.Coordinate)
-                           orderby unused.X + unused.Y + unused.Z
+                           orderby point.IsSelected, unused.X + unused.Y + unused.Z
                            select point).ToList();
             // Render out the point handles
             var z = (double) vp.Zoom;
