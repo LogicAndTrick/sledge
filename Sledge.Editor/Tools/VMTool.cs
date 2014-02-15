@@ -446,13 +446,21 @@ namespace Sledge.Editor.Tools
                     var vtx = vtxs.First();
 
                     // Mouse down on a point
-                    if (!vtx.IsSelected && !KeyboardState.Ctrl && _currentTool.ShouldDeselect(vtxs))
+                    if (vtx.IsSelected && KeyboardState.Ctrl && _currentTool.ShouldDeselect(vtxs))
                     {
-                        // If we aren't clicking on a selected point and ctrl is not down, deselect the others
-                        Points.ForEach(x => x.IsSelected = false);
-                        // If this point is already selected, don't deselect others. This is the same behaviour as 2D selection.
+                        // If the vertex is selected and ctrl is down, deselect the vertices
+                        vtxs.ForEach(x => x.IsSelected = false);
                     }
-                    vtxs.ForEach(x => x.IsSelected = true);
+                    else
+                    {
+                        if (!vtx.IsSelected && !KeyboardState.Ctrl && _currentTool.ShouldDeselect(vtxs))
+                        {
+                            // If we aren't clicking on a selected point and ctrl is not down, deselect the others
+                            Points.ForEach(x => x.IsSelected = false);
+                            // If this point is already selected, don't deselect others. This is the same behaviour as 2D selection.
+                        }
+                        vtxs.ForEach(x => x.IsSelected = true);
+                    }
                     VertexSelectionChanged();
 
                     // Don't do other click operations
@@ -470,7 +478,7 @@ namespace Sledge.Editor.Tools
             {
                 // Do selection
                 var ray = vp.CastRayFromScreen(e.X, e.Y);
-                var hits = Document.Map.WorldSpawn.GetAllNodesIntersectingWith(ray);
+                var hits = Document.Map.WorldSpawn.GetAllNodesIntersectingWith(ray, true);
                 var solid = hits
                     .OfType<Solid>()
                     .Select(x => new { Item = x, Intersection = x.GetIntersectionPoint(ray) })
@@ -481,10 +489,20 @@ namespace Sledge.Editor.Tools
 
                 if (solid != null)
                 {
-                    // select solid
-                    var select = new[] {solid};
-                    var deselect = !KeyboardState.Ctrl ? Document.Selection.GetSelectedObjects() : new MapObject[0];
-                    Document.PerformAction("Select VM solid", new ChangeSelection(select, deselect));
+                    if (solid.IsSelected && KeyboardState.Ctrl)
+                    {
+                        // deselect solid
+                        var select = new MapObject[0];
+                        var deselect = new[] {solid};
+                        Document.PerformAction("Deselect VM solid", new ChangeSelection(select, deselect));
+                    }
+                    else if (!solid.IsSelected)
+                    {
+                        // select solid
+                        var select = new[] {solid};
+                        var deselect = !KeyboardState.Ctrl ? Document.Selection.GetSelectedObjects() : new MapObject[0];
+                        Document.PerformAction("Select VM solid", new ChangeSelection(select, deselect));
+                    }
 
                     // Don't do other click operations
                     return;
@@ -571,13 +589,21 @@ namespace Sledge.Editor.Tools
             BoxDrawnCancel(vp);
 
             // Mouse down on a point
-            if (!vtx.IsSelected && !KeyboardState.Ctrl && _currentTool.ShouldDeselect(vtxs))
+            if (vtx.IsSelected && KeyboardState.Ctrl && _currentTool.ShouldDeselect(vtxs))
             {
-                // If we aren't clicking on a selected point and ctrl is not down, deselect the others
-                Points.ForEach(x => x.IsSelected = false);
-                // If this point is already selected, don't deselect others. This is so we can move multiple points easily.
+                // If the vertex is selected and ctrl is down, deselect the vertices
+                vtxs.ForEach(x => x.IsSelected = false);
             }
-            vtxs.ForEach(x => x.IsSelected = true);
+            else
+            {
+                if (!vtx.IsSelected && !KeyboardState.Ctrl && _currentTool.ShouldDeselect(vtxs))
+                {
+                    // If we aren't clicking on a selected point and ctrl is not down, deselect the others
+                    Points.ForEach(x => x.IsSelected = false);
+                    // If this point is already selected, don't deselect others. This is so we can move multiple points easily.
+                }
+                vtxs.ForEach(x => x.IsSelected = true);
+            }
             VertexSelectionChanged();
 
             _currentTool.DragStart(vtxs);
@@ -800,16 +826,16 @@ namespace Sledge.Editor.Tools
 
             if (!wireframe)
             {
-            if (shaded) MapObjectRenderer.EnableLighting();
+                if (shaded) MapObjectRenderer.EnableLighting();
                 GL.Enable(EnableCap.Texture2D);
                 MapObjectRenderer.DrawFilled(faces.Where(x => !x.IsSelected), Color.FromArgb(255, 64, 192, 64), textured);
                 MapObjectRenderer.DrawFilled(faces.Where(x => x.IsSelected), Color.FromArgb(255, 255, 128, 128), textured);
                 GL.Disable(EnableCap.Texture2D);
-            MapObjectRenderer.DisableLighting();
+                MapObjectRenderer.DisableLighting();
 
-            GL.Color3(Color.Pink);
-            MapObjectRenderer.DrawWireframe(faces, true);
-        }
+                GL.Color3(Color.Pink);
+                MapObjectRenderer.DrawWireframe(faces, true);
+            }
             else
             {
                 GL.Color4(Color.FromArgb(255, 64, 192, 64));

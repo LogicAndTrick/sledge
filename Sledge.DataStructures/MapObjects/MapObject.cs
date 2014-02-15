@@ -194,17 +194,19 @@ namespace Sledge.DataStructures.MapObjects
         /// Get all the nodes starting from this node that intersect with a box.
         /// </summary>
         /// <param name="box">The intersection box</param>
+        /// <param name="allowCodeHidden">Set to true to include nodes that have been hidden by code</param>
+        /// <param name="allowVisgroupHidden">Set to true to include nodes that have been hidden by the user</param>
         /// <returns>A list of all the descendants that intersect with the box.</returns>
-        public IEnumerable<MapObject> GetAllNodesIntersectingWith(Box box)
+        public IEnumerable<MapObject> GetAllNodesIntersectingWith(Box box, bool allowCodeHidden = false, bool allowVisgroupHidden = false)
         {
             var list = new List<MapObject>();
-            if (IsCodeHidden || IsVisgroupHidden) return list;
+            if ((!allowCodeHidden && IsCodeHidden) || (!allowVisgroupHidden && IsVisgroupHidden)) return list;
             if (!(this is World))
             {
                 if (BoundingBox == null || !BoundingBox.IntersectsWith(box)) return list;
                 if (this is Solid || this is Entity) list.Add(this);
             }
-            list.AddRange(Children.SelectMany(x => x.GetAllNodesIntersectingWith(box)));
+            list.AddRange(Children.SelectMany(x => x.GetAllNodesIntersectingWith(box, allowCodeHidden, allowVisgroupHidden)));
             return list;
         }
 
@@ -212,17 +214,19 @@ namespace Sledge.DataStructures.MapObjects
         /// Get all the nodes starting from this node with the centers contained within a box.
         /// </summary>
         /// <param name="box">The containing box</param>
+        /// <param name="allowCodeHidden">Set to true to include nodes that have been hidden by code</param>
+        /// <param name="allowVisgroupHidden">Set to true to include nodes that have been hidden by the user</param>
         /// <returns>A list of all the descendants that have centers inside the box.</returns>
-        public IEnumerable<MapObject> GetAllNodesWithCentersContainedWithin(Box box)
+        public IEnumerable<MapObject> GetAllNodesWithCentersContainedWithin(Box box, bool allowCodeHidden = false, bool allowVisgroupHidden = false)
         {
             var list = new List<MapObject>();
-            if (IsCodeHidden || IsVisgroupHidden) return list;
+            if ((!allowCodeHidden && IsCodeHidden) || (!allowVisgroupHidden && IsVisgroupHidden)) return list;
             if (!(this is World))
             {
                 if (BoundingBox == null || !box.CoordinateIsInside(BoundingBox.Center)) return list;
                 if ((this is Solid || this is Entity) && !Children.Any()) list.Add(this);
             }
-            list.AddRange(Children.SelectMany(x => x.GetAllNodesWithCentersContainedWithin(box)));
+            list.AddRange(Children.SelectMany(x => x.GetAllNodesWithCentersContainedWithin(box, allowCodeHidden, allowVisgroupHidden)));
             return list;
         }
 
@@ -230,18 +234,20 @@ namespace Sledge.DataStructures.MapObjects
         /// Get all the nodes starting from this node that intersect with a line.
         /// </summary>
         /// <param name="line">The intersection line</param>
+        /// <param name="allowCodeHidden">Set to true to include nodes that have been hidden by code</param>
+        /// <param name="allowVisgroupHidden">Set to true to include nodes that have been hidden by the user</param>
         /// <returns>A list of all the descendants that intersect with the line.</returns>
-        public IEnumerable<MapObject> GetAllNodesIntersectingWith(Line line)
+        public IEnumerable<MapObject> GetAllNodesIntersectingWith(Line line, bool allowCodeHidden = false, bool allowVisgroupHidden = false)
         {
             var list = new List<MapObject>();
-            if (IsCodeHidden || IsVisgroupHidden) return list;
+            if ((!allowCodeHidden && IsCodeHidden) || (!allowVisgroupHidden && IsVisgroupHidden)) return list;
             if (!(this is World))
             {
                 var bbox = GetIntersectionBoundingBox();
                 if (bbox == null || !bbox.IntersectsWith(line)) return list;
                 if (this is Solid || this is Entity) list.Add(this);
             }
-            list.AddRange(Children.SelectMany(x => x.GetAllNodesIntersectingWith(line)));
+            list.AddRange(Children.SelectMany(x => x.GetAllNodesIntersectingWith(line, allowCodeHidden, allowVisgroupHidden)));
             return list;
         }
 
@@ -249,16 +255,18 @@ namespace Sledge.DataStructures.MapObjects
         /// Get all the nodes starting from this node that are entirely contained within a box.
         /// </summary>
         /// <param name="box">The containing box</param>
+        /// <param name="allowCodeHidden">Set to true to include nodes that have been hidden by code</param>
+        /// <param name="allowVisgroupHidden">Set to true to include nodes that have been hidden by the user</param>
         /// <returns>A list of all the descendants that are contained within the box.</returns>
-        public IEnumerable<MapObject> GetAllNodesContainedWithin(Box box)
+        public IEnumerable<MapObject> GetAllNodesContainedWithin(Box box, bool allowCodeHidden = false, bool allowVisgroupHidden = false)
         {
             var list = new List<MapObject>();
-            if (!(this is World) && !IsCodeHidden && !IsVisgroupHidden)
+            if (!(this is World) && (allowCodeHidden || !IsCodeHidden) && (allowVisgroupHidden || !IsVisgroupHidden))
             {
                 if (BoundingBox == null || !BoundingBox.ContainedWithin(box)) return list;
                 if (this is Solid || this is Entity) list.Add(this);
             }
-            list.AddRange(Children.SelectMany(x => x.GetAllNodesContainedWithin(box)));
+            list.AddRange(Children.SelectMany(x => x.GetAllNodesContainedWithin(box, allowCodeHidden, allowVisgroupHidden)));
             return list;
         }
 
@@ -269,11 +277,13 @@ namespace Sledge.DataStructures.MapObjects
         /// <param name="box">The intersection box</param>
         /// <param name="includeOrigin">Set to true to test against the object origins as well</param>
         /// <param name="forceOrigin">Set to true to only test against the object origins and ignore other tests</param>
+        /// <param name="allowCodeHidden">Set to true to include nodes that have been hidden by code</param>
+        /// <param name="allowVisgroupHidden">Set to true to include nodes that have been hidden by the user</param>
         /// <returns>A list of all the solid descendants where the edges of the solid intersect with the box.</returns>
-        public IEnumerable<MapObject> GetAllNodesIntersecting2DLineTest(Box box, bool includeOrigin = false, bool forceOrigin = false)
+        public IEnumerable<MapObject> GetAllNodesIntersecting2DLineTest(Box box, bool includeOrigin = false, bool forceOrigin = false, bool allowCodeHidden = false, bool allowVisgroupHidden = false)
         {
             var list = new List<MapObject>();
-            if (!(this is World) && !IsCodeHidden && !IsVisgroupHidden)
+            if (!(this is World) && (allowCodeHidden || !IsCodeHidden) && (allowVisgroupHidden || !IsVisgroupHidden))
             {
                 if (BoundingBox == null || !BoundingBox.IntersectsWith(box)) return list;
                 // Solids: Match face edges against box
@@ -292,7 +302,7 @@ namespace Sledge.DataStructures.MapObjects
                     list.Add(this);
                 }
             }
-            list.AddRange(Children.SelectMany(x => x.GetAllNodesIntersecting2DLineTest(box, includeOrigin, forceOrigin)));
+            list.AddRange(Children.SelectMany(x => x.GetAllNodesIntersecting2DLineTest(box, includeOrigin, forceOrigin, allowCodeHidden, allowVisgroupHidden)));
             return list;
         }
 
