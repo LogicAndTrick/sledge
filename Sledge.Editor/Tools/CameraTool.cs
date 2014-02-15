@@ -68,7 +68,7 @@ namespace Sledge.Editor.Tools
 
         public override Image GetIcon()
         {
-            return Resources.Tool_Rotate;
+            return Resources.Tool_Camera;
         }
 
         public override string GetName()
