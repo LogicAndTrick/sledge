@@ -11,6 +11,7 @@ namespace Sledge.Settings
         Clip,
         VM,
         Cordon,
-        Camera
+        Camera,
+        Sketch
     }
 }

@@ -251,6 +251,7 @@
     <Compile Include="Tools\BaseTool.cs" />
     <Compile Include="Tools\BrushTool.cs" />
     <Compile Include="Tools\ClipTool.cs" />
+    <Compile Include="Tools\SketchTool.cs" />
     <Compile Include="Tools\VMTools\VMError.cs" />
     <Compile Include="Tools\VMForm.cs">
       <SubType>Form</SubType>

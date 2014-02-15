@@ -64,7 +64,7 @@ namespace Sledge.Editor.Rendering.Immediate
             }
         }
 
-        public static void DrawFilled(IEnumerable<Face> faces, Color color, bool textured)
+        public static void DrawFilled(IEnumerable<Face> faces, Color color, bool textured, bool blend = true)
         {
             if (color.IsEmpty) color = Color.White;
             faces = faces.Where(x => x.Parent == null || !(x.Parent.IsCodeHidden || x.Parent.IsVisgroupHidden || x.Parent.IsRenderHidden3D));
@@ -96,7 +96,7 @@ namespace Sledge.Editor.Rendering.Immediate
                 foreach (var f in g)
                 {
                     var disp = f is Displacement;
-                    GL.Color4(Color.FromArgb(blendAlpha, texture ? color : f.Colour.Blend(color)));
+                    GL.Color4(Color.FromArgb(blendAlpha, texture ? color : (blend ? f.Colour.Blend(color) : color)));
                     foreach (var tri in f.GetTriangles())
                     {
                         if (disp)
