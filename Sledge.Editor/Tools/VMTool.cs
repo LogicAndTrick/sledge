@@ -797,13 +797,26 @@ namespace Sledge.Editor.Tools
             // Render out the solid previews
             GL.Color3(Color.White);
             var faces = _copies.Keys.SelectMany(x => x.Faces).ToList();
+
+            if (!wireframe)
+            {
             if (shaded) MapObjectRenderer.EnableLighting();
-            MapObjectRenderer.DrawFilled(faces, Color.Empty, textured);
-            MapObjectRenderer.DrawFilled(faces.Where(x => !x.IsSelected), Color.FromArgb(64, Color.Green), false);
-            MapObjectRenderer.DrawFilled(faces.Where(x => x.IsSelected), Color.FromArgb(64, Color.Red), false);
+                GL.Enable(EnableCap.Texture2D);
+                MapObjectRenderer.DrawFilled(faces.Where(x => !x.IsSelected), Color.FromArgb(255, 64, 192, 64), textured);
+                MapObjectRenderer.DrawFilled(faces.Where(x => x.IsSelected), Color.FromArgb(255, 255, 128, 128), textured);
+                GL.Disable(EnableCap.Texture2D);
             MapObjectRenderer.DisableLighting();
+
             GL.Color3(Color.Pink);
             MapObjectRenderer.DrawWireframe(faces, true);
+        }
+            else
+            {
+                GL.Color4(Color.FromArgb(255, 64, 192, 64));
+                MapObjectRenderer.DrawWireframe(faces.Where(x => !x.IsSelected), true);
+                GL.Color4(Color.FromArgb(255, 255, 128, 128));
+                MapObjectRenderer.DrawWireframe(faces.Where(x => x.IsSelected), true);
+            }
         }
 
         public override void KeyDown(ViewportBase viewport, ViewportEvent e)

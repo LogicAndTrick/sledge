@@ -163,6 +163,8 @@ namespace Sledge.Editor.Tools
                 var brush = GetBrush(box, new IDGenerator());
                 _preview = new List<Face>();
                 CollectFaces(_preview, new[] { brush });
+                var color = GetRenderBoxColour();
+                _preview.ForEach(x => { x.Colour = color; });
             }
             _updatePreview = false;
         }
