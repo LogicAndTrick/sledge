@@ -16,7 +16,7 @@ namespace Sledge.Editor.Brushes
         private readonly NumericControl _wallWidth;
         private readonly NumericControl _arc;
         private readonly NumericControl _startAngle;
-        private readonly NumericControl _addHeight;
+        private readonly NumericControl _archHeight;
         private readonly BooleanControl _curvedRamp;
         private readonly NumericControl _tiltAngle;
 
@@ -25,10 +25,10 @@ namespace Sledge.Editor.Brushes
             _numSides = new NumericControl(this) { LabelText = "Num. sides" };
             _wallWidth = new NumericControl(this) { LabelText = "Wall width", Minimum = 1, Maximum = 1024, Value = 16 };
             _arc = new NumericControl(this) { LabelText = "Arc", Minimum = 1, Maximum = 360 * 4, Value = 360 };
-            _startAngle = new NumericControl(this) { LabelText = "Start Angle", Minimum = 0, Maximum = 359, Value = 0 };
-            _addHeight = new NumericControl(this) { LabelText = "Add height", Minimum = -1024, Maximum = 1024, Value = 0 };
+            _startAngle = new NumericControl(this) { LabelText = "Start angle", Minimum = 0, Maximum = 359, Value = 0 };
+            _archHeight = new NumericControl(this) { LabelText = "Arch height", Minimum = -1024, Maximum = 1024, Value = 0 };
             _curvedRamp = new BooleanControl(this) { LabelText = "Curved ramp", Checked = false };
-            _tiltAngle = new NumericControl(this) { LabelText = "Tilt Angle", Minimum = -90, Maximum = 90, Value = 0, Enabled = false };
+            _tiltAngle = new NumericControl(this) { LabelText = "Tilt angle", Minimum = -90, Maximum = 90, Value = 0, Enabled = false };
 
             _curvedRamp.ValuesChanged += (s, b) => _tiltAngle.Enabled = _curvedRamp.GetValue();
         }
@@ -44,7 +44,7 @@ namespace Sledge.Editor.Brushes
             yield return _wallWidth;
             yield return _arc;
             yield return _startAngle;
-            yield return _addHeight;
+            yield return _archHeight;
             yield return _curvedRamp;
             yield return _tiltAngle;
         }
@@ -69,7 +69,7 @@ namespace Sledge.Editor.Brushes
             solid.UpdateBoundingBox();
             return solid;
         }
-        
+
         public IEnumerable<MapObject> Create(IDGenerator generator, Box box, ITexture texture)
         {
             var numSides = (int)_numSides.GetValue();
@@ -80,7 +80,7 @@ namespace Sledge.Editor.Brushes
             if (arc < 1) yield break;
             var startAngle = (int)_startAngle.GetValue();
             if (startAngle < 0 || startAngle > 359) yield break;
-            var addHeight = _addHeight.GetValue();
+            var archHeight = _archHeight.GetValue();
             var curvedRamp = _curvedRamp.GetValue();
             var tiltAngle = curvedRamp ? (int)_tiltAngle.GetValue() : 0;
             if (tiltAngle < -90 || tiltAngle > 90) yield break;
@@ -98,6 +98,7 @@ namespace Sledge.Editor.Brushes
             var start = DMath.DegreesToRadians(startAngle);
             var tilt = DMath.DegreesToRadians(tiltAngle);
             var angle = DMath.DegreesToRadians(arc) / numSides;
+            var heightAdd = archHeight / numSides;
 
             var colour = Colour.GetRandomBrushColour();
 
@@ -108,7 +109,7 @@ namespace Sledge.Editor.Brushes
             for (var i = 0; i < numSides + 1; i++)
             {
                 var a = start + i * angle;
-                var h = i * addHeight;
+                var h = i * heightAdd;
                 var tiltHeight = wallWidth / 2 * DMath.Sin(tilt); // TODO: Interpolation
                 
                 var xval = box.Center.X + majorOut * DMath.Cos(a);
@@ -150,7 +151,7 @@ namespace Sledge.Editor.Brushes
                 }
                 else
                 {
-                    var h = i * addHeight * Coordinate.UnitZ;
+                    var h = i * heightAdd * Coordinate.UnitZ;
                     faces.Add(new[] { outer[i],       outer[i] + z,   outer[i+1] + z, outer[i+1]   }.Select(x => x + h).ToArray());
                     faces.Add(new[] { inner[i+1],     inner[i+1] + z, inner[i] + z,   inner[i]     }.Select(x => x + h).ToArray());
                     faces.Add(new[] { outer[i+1],     outer[i+1] + z, inner[i+1] + z, inner[i+1]   }.Select(x => x + h).ToArray());
