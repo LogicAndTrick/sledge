@@ -112,12 +112,12 @@ namespace Sledge.Editor.Brushes
 
                 var xval = box.Center.X + majorOut * DMath.Cos(a);
                 var yval = box.Center.Y + minorOut * DMath.Sin(a);
-                var zval = box.Start.Z + h + hypot * DMath.Sin(tiltAngle); // TODO: Interpolation
+                var zval = box.Start.Z + h + hypot * DMath.Sin(tilt); // TODO: Interpolation
                 outer[i] = new Coordinate(xval, yval, zval).Round(0);
 
                 xval = box.Center.X + majorIn * DMath.Cos(a);
                 yval = box.Center.Y + minorIn * DMath.Sin(a);
-                zval = box.Start.Z + h - hypot * DMath.Sin(tiltAngle);     // TODO: Interpolation
+                zval = box.Start.Z + h - hypot * DMath.Sin(tilt);     // TODO: Interpolation
                 inner[i] = new Coordinate(xval, yval, zval).Round(0);
             }
 
@@ -127,25 +127,21 @@ namespace Sledge.Editor.Brushes
                 var faces = new List<Coordinate[]>();
                 var z = new Coordinate(0, 0, height);
 
-                // Since we are triangulating/splitting each arch segment, we need to generate 2 brushes per side
                 if (curvedRamp)
                 {
-                    // Two different splitting options for the segments, depending on the arch's curving direction
-                    var arr1 = (addHeight >= 0) ? inner : outer;
-                    var arr2 = (addHeight >= 0) ? outer : inner;
-
-                    faces.Add(new[] { arr1[i],       arr2[i],       arr1[i] + z,   arr2[i] + z   });
-                    faces.Add(new[] { arr1[i],       arr1[i+1],     arr1[i] + z,   arr1[i+1] + z });
-                    faces.Add(new[] { arr2[i],       arr1[i+1],     arr2[i] + z,   arr1[i+1] + z });
-                    faces.Add(new[] { arr1[i],       arr2[i],       arr1[i+1]      });
-                    faces.Add(new[] { arr1[i] + z,   arr2[i] + z,   arr1[i+1] + z  });
+                    // Since we are triangulating/splitting each arch segment, we need to generate 2 brushes per side
+                    faces.Add(new[] { inner[i],       inner[i] + z,   outer[i] + z,   outer[i]   });
+                    faces.Add(new[] { inner[i+1],     inner[i+1] + z, inner[i] + z,   inner[i]   });
+                    faces.Add(new[] { outer[i],       outer[i] + z,   inner[i+1] + z, inner[i+1] });
+                    faces.Add(new[] { inner[i],       outer[i],       inner[i+1]      });
+                    faces.Add(new[] { inner[i] + z,   inner[i+1] + z, outer[i] + z    });
                     yield return MakeSolid(generator, faces, texture, colour);
 
-                    faces.Add(new[] { arr2[i],       arr1[i+1],     arr2[i] + z,   arr1[i+1] + z });
-                    faces.Add(new[] { arr2[i],       arr2[i+1],     arr2[i] + z,   arr2[i+1] + z });
-                    faces.Add(new[] { arr1[i+1],     arr2[i+1],     arr1[i+1] + z, arr2[i+1] + z });
-                    faces.Add(new[] { arr2[i],       arr1[i+1],     arr2[i+1]      });
-                    faces.Add(new[] { arr2[i] + z,   arr1[i+1] + z, arr2[i+1] + z  });
+                    faces.Add(new[] { inner[i+1],     inner[i+1] + z, outer[i] + z,   outer[i]   });
+                    faces.Add(new[] { outer[i],       outer[i] + z,   outer[i+1] + z, outer[i+1] });
+                    faces.Add(new[] { outer[i+1],     outer[i+1] + z, inner[i+1] + z, inner[i+1] });
+                    faces.Add(new[] { outer[i],       outer[i+1],     inner[i+1]      });
+                    faces.Add(new[] { outer[i] + z,   inner[i+1] + z, outer[i+1] + z  });
                     yield return MakeSolid(generator, faces, texture, colour);
                 }
                 else
