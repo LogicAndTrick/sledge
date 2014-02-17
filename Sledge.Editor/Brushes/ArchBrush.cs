@@ -129,24 +129,46 @@ namespace Sledge.Editor.Brushes
                 var faces = new List<Coordinate[]>();
                 var z = new Coordinate(0, 0, height);
 
+                // Since we are triangulating/splitting each arch segment, we need to generate 2 brushes per side
                 if (curvedRamp)
                 {
-                    // Since we are triangulating/splitting each arch segment, we need to generate 2 brushes per side
-                    // TODO: Different split orientations for the segments depending on the arch's curving direction
-                    faces.Add(new[] { inner[i+1],     inner[i+1] + z, inner[i] + z,   inner[i]   });
-                    faces.Add(new[] { outer[i],       outer[i] + z,   inner[i+1] + z, inner[i+1] });
-                    faces.Add(new[] { inner[i],       inner[i] + z,   outer[i] + z,   outer[i]   });
-                    faces.Add(new[] { inner[i] + z,   inner[i+1] + z, outer[i] + z    });
-                    faces.Add(new[] { inner[i],       outer[i],       inner[i+1]      });
+                    // The splitting orientation depends on the curving direction of the arch
+                    if (heightAdd >= 0)
+                    {
+                        faces.Add(new[] { outer[i],       outer[i] + z,   outer[i+1] + z, outer[i+1] });
+                        faces.Add(new[] { outer[i+1],     outer[i+1] + z, inner[i] + z,   inner[i]   });
+                        faces.Add(new[] { inner[i],       inner[i] + z,   outer[i] + z,   outer[i]   });
+                        faces.Add(new[] { outer[i] + z,   inner[i] + z,   outer[i+1] + z  });
+                        faces.Add(new[] { outer[i+1],     inner[i],       outer[i]        });
+                    }
+                    else
+                    {
+                        faces.Add(new[] { inner[i+1],     inner[i+1] + z, inner[i] + z,   inner[i]   });
+                        faces.Add(new[] { outer[i],       outer[i] + z,   inner[i+1] + z, inner[i+1] });
+                        faces.Add(new[] { inner[i],       inner[i] + z,   outer[i] + z,   outer[i]   });
+                        faces.Add(new[] { inner[i+1] + z, outer[i] + z,   inner[i] + z    });
+                        faces.Add(new[] { inner[i],       outer[i],       inner[i+1]      });
+                    }
                     yield return MakeSolid(generator, faces, texture, colour);
 
                     faces.Clear();
 
-                    faces.Add(new[] { outer[i],       outer[i] + z,   outer[i+1] + z, outer[i+1] });
-                    faces.Add(new[] { inner[i+1],     inner[i+1] + z, outer[i] + z,   outer[i]   });
-                    faces.Add(new[] { outer[i+1],     outer[i+1] + z, inner[i+1] + z, inner[i+1] });
-                    faces.Add(new[] { outer[i] + z,   inner[i+1] + z, outer[i+1] + z  });
-                    faces.Add(new[] { outer[i],       outer[i+1],     inner[i+1]      });
+                    if (heightAdd >= 0)
+                    {
+                        faces.Add(new[] { inner[i+1],     inner[i+1] + z, inner[i] + z,   inner[i]   });
+                        faces.Add(new[] { inner[i],       inner[i] + z,   outer[i+1] + z, outer[i+1] });
+                        faces.Add(new[] { outer[i+1],     outer[i+1] + z, inner[i+1] + z, inner[i+1] });
+                        faces.Add(new[] { inner[i+1] + z, outer[i+1] + z, inner[i] + z    });
+                        faces.Add(new[] { inner[i],       outer[i+1],     inner[i+1]      });
+                    }
+                    else
+                    {
+                        faces.Add(new[] { outer[i],       outer[i] + z,   outer[i+1] + z, outer[i+1] });
+                        faces.Add(new[] { inner[i+1],     inner[i+1] + z, outer[i] + z,   outer[i]   });
+                        faces.Add(new[] { outer[i+1],     outer[i+1] + z, inner[i+1] + z, inner[i+1] });
+                        faces.Add(new[] { outer[i] + z,   inner[i+1] + z, outer[i+1] + z  });
+                        faces.Add(new[] { outer[i+1],     inner[i+1],     outer[i]        });
+                    }
                     yield return MakeSolid(generator, faces, texture, colour);
                 }
                 else
