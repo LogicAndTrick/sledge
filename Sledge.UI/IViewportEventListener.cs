@@ -18,7 +18,7 @@
         void MouseEnter(ViewportEvent e);
         void MouseLeave(ViewportEvent e);
 
-        void UpdateFrame();
+        void UpdateFrame(FrameInfo frame);
         void PreRender();
         void Render3D();
         void Render2D();

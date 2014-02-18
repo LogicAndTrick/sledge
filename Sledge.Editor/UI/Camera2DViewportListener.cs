@@ -149,7 +149,7 @@ namespace Sledge.Editor.UI
         private const int ScrollMaximum = 200;
         private const int ScrollPadding = 40;
 
-        public void UpdateFrame()
+        public void UpdateFrame(FrameInfo frame)
         {
             if (Viewport2D.IsFocused && _mouseDown != null && Control.MouseButtons.HasFlag(MouseButtons.Left) && !KeyboardState.IsKeyDown(Keys.Space))
             {

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
+using Sledge.Common.Easings;
 using Sledge.Graphics;
 using Sledge.UI;
 using OpenTK.Graphics.OpenGL;
@@ -24,6 +25,9 @@ namespace Sledge.Editor.UI
         private Rectangle CursorClip { get; set; }
         private bool Focus { get; set; }
         private Camera Camera { get; set; }
+        private long _downMillis;
+        private long _lastMillis;
+        private Easing _easing;
 
         public Camera3DViewportListener(Viewport3D vp)
         {
@@ -37,14 +41,34 @@ namespace Sledge.Editor.UI
             Viewport = vp;
             Camera = vp.Camera;
             _downKeys = new List<Keys>();
+            _downMillis = _lastMillis = 0;
+            _easing = Easing.FromType(EasingType.Sinusoidal, EasingDirection.Out);
         }
 
         private readonly List<Keys> _downKeys;
 
-        public void UpdateFrame()
+        public void UpdateFrame(FrameInfo frame)
         {
+            var currMillis = _lastMillis;
+            _lastMillis = frame.Milliseconds;
+            if (currMillis == 0) return;
+
+            var seconds = (frame.Milliseconds - currMillis) / 1000m;
+            var units = Sledge.Settings.View.ForwardSpeed * seconds;
+
             if (!Focus) return;
-            var move = 15m;
+
+            var down = KeyboardState.IsAnyKeyDown(Keys.W, Keys.A, Keys.S, Keys.D);
+            if (!down) _downMillis = 0;
+            else if (_downMillis == 0) _downMillis = currMillis;
+
+            if (Sledge.Settings.View.TimeToTopSpeed > 0)
+            {
+                var downFor = (frame.Milliseconds - _downMillis) / Sledge.Settings.View.TimeToTopSpeed;
+                if (downFor >= 0 && downFor < 1) units *= _easing.Evaluate(downFor);
+            }
+
+            var move = units;
             var tilt = 2m;
             // These keys are used for hotkeys, don't want the 3D view to move about when trying to use hotkeys.
             var ignore = KeyboardState.IsAnyKeyDown(Keys.ShiftKey, Keys.ControlKey, Keys.Alt);

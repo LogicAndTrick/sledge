@@ -118,7 +118,7 @@ namespace Sledge.Editor.Tools.DisplacementTools
             //
         }
 
-        public override void UpdateFrame(ViewportBase viewport)
+        public override void UpdateFrame(ViewportBase viewport, FrameInfo frame)
         {
             //
         }

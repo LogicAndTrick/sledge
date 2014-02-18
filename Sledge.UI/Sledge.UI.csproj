@@ -43,13 +43,13 @@
       <HintPath>..\OpenTK.dll</HintPath>
     </Reference>
     <Reference Include="OpenTK.Compatibility, Version=1.0.0.201, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
-		<SpecificVersion>False</SpecificVersion>
-		<HintPath>..\OpenTK.Compatibility.dll</HintPath>
-	</Reference>
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\OpenTK.Compatibility.dll</HintPath>
+    </Reference>
     <Reference Include="OpenTK.GLControl, Version=1.0.0.201, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
-		<SpecificVersion>False</SpecificVersion>
-		<HintPath>..\OpenTK.GLControl.dll</HintPath>
-	</Reference>
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\OpenTK.GLControl.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
@@ -60,6 +60,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FrameInfo.cs" />
     <Compile Include="IViewport2DEventListener.cs" />
     <Compile Include="KeyboardState.cs" />
     <Compile Include="Viewport2D.cs">

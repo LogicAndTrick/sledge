@@ -790,7 +790,7 @@ namespace Sledge.Editor.Tools
         }
         #endregion
 
-        public override void UpdateFrame(ViewportBase viewport)
+        public override void UpdateFrame(ViewportBase viewport, FrameInfo frame)
         {
 
         }

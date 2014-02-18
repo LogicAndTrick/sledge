@@ -155,7 +155,7 @@ namespace Sledge.Editor.Tools
             base.BoxDrawnCancel(viewport);
         }
 
-        public override void UpdateFrame(ViewportBase viewport)
+        public override void UpdateFrame(ViewportBase viewport, FrameInfo frame)
         {
             if (_updatePreview && ShouldDrawBox(viewport))
             {

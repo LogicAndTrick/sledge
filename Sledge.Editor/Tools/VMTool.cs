@@ -916,10 +916,10 @@ namespace Sledge.Editor.Tools
             base.KeyUp(viewport, e);
         }
 
-        public override void UpdateFrame(ViewportBase viewport)
+        public override void UpdateFrame(ViewportBase viewport, FrameInfo frame)
         {
-            if (_currentTool != null) _currentTool.UpdateFrame(viewport);
-            base.UpdateFrame(viewport);
+            if (_currentTool != null) _currentTool.UpdateFrame(viewport, frame);
+            base.UpdateFrame(viewport, frame);
         }
 
         public override void PreRender(ViewportBase viewport)

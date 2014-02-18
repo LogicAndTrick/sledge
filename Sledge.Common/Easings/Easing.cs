@@ -6,20 +6,34 @@ namespace Sledge.Common.Easings
     public class Easing
     {
         private Func<decimal, decimal> Function { get; set; }
+        private EasingDirection Direction { get; set; }
 
-        public Easing(Func<decimal, decimal> function)
+        public Easing(Func<decimal, decimal> function, EasingDirection direction)
         {
             Function = function;
+            Direction = direction;
         }
 
         public decimal Evaluate(decimal input)
         {
-            return Function(input);
+            switch (Direction)
+            {
+                case EasingDirection.In:
+                    return Function(input);
+                case EasingDirection.Out:
+                    return 1 - Function(1 - input);
+                case EasingDirection.InOut:
+                    return input < 0.5m
+                        ? Function(input * 2) / 2
+                        : 1 - Function(input * -2 + 2) / 2;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
         }
 
-        public static Easing FromType(EasingType type)
+        public static Easing FromType(EasingType type, EasingDirection direction)
         {
-            return new Easing(FunctionFromType(type));
+            return new Easing(FunctionFromType(type), direction);
         }
 
         private static Func<decimal, decimal> FunctionFromType(EasingType easing)

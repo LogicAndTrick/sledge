@@ -91,10 +91,10 @@ namespace Sledge.Editor.UI
             ToolManager.ActiveTool.MouseLeave(Viewport, e);
         }
 
-        public void UpdateFrame()
+        public void UpdateFrame(FrameInfo frame)
         {
             if (!ShouldRelayEvent(ToolManager.ActiveTool)) return;
-            ToolManager.ActiveTool.UpdateFrame(Viewport);
+            ToolManager.ActiveTool.UpdateFrame(Viewport, frame);
         }
 
         public void PreRender()

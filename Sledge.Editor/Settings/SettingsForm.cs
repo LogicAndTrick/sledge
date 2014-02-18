@@ -314,7 +314,11 @@ namespace Sledge.Editor.Settings
             DetailRenderDistanceChanged(null, null);
 
             ForwardSpeed.Value = Sledge.Settings.View.ForwardSpeed;
-            TimeToTopSpeed.Value = (int) (Sledge.Settings.View.TimeToTopSpeed / 10);
+            ForwardSpeedChanged(null, null);
+
+            TimeToTopSpeed.Value = (int) (Sledge.Settings.View.TimeToTopSpeed / 100);
+            TimeToTopSpeedChanged(null, null);
+
             InvertMouseX.Checked = Sledge.Settings.View.InvertX;
             InvertMouseY.Checked = Sledge.Settings.View.InvertY;
 
@@ -409,7 +413,7 @@ namespace Sledge.Editor.Settings
             Sledge.Settings.View.DetailRenderDistance = DetailRenderDistance.Value;
 
             Sledge.Settings.View.ForwardSpeed = ForwardSpeed.Value;
-            Sledge.Settings.View.TimeToTopSpeed = TimeToTopSpeed.Value * 10m;
+            Sledge.Settings.View.TimeToTopSpeed = TimeToTopSpeed.Value * 100m;
             Sledge.Settings.View.InvertX = InvertMouseX.Checked;
             Sledge.Settings.View.InvertY = InvertMouseY.Checked;
 

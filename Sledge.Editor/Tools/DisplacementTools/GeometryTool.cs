@@ -240,7 +240,7 @@ namespace Sledge.Editor.Tools.DisplacementTools
             //
         }
 
-        public override void UpdateFrame(ViewportBase viewport)
+        public override void UpdateFrame(ViewportBase viewport, FrameInfo frame)
         {
             var vp = viewport as Viewport3D;
             if (vp == null) return;

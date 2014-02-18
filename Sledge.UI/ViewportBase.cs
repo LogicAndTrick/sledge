@@ -19,6 +19,7 @@ namespace Sledge.UI
     {
         public RenderContext RenderContext { get; set; }
         protected Timer UpdateTimer { get; set; }
+        private Stopwatch _stopwatch;
         public List<IViewportEventListener> Listeners { get; set; }
         public bool IsFocused { get; private set; }
         private int UnfocusedUpdateCounter { get; set; }
@@ -78,6 +79,7 @@ namespace Sledge.UI
             
             RenderContext.Dispose();
             UpdateTimer.Dispose();
+            _stopwatch.Stop();
             base.Dispose(disposing);
         }
 
@@ -126,6 +128,8 @@ namespace Sledge.UI
         public void Run()
         {
             MakeCurrent();
+            _stopwatch = new Stopwatch();
+            _stopwatch.Start();
             UpdateTimer = new Timer { Interval = 1 };
             UpdateTimer.Tick += (sender, e) => UpdateFrame();
             UpdateTimer.Start();
@@ -161,7 +165,8 @@ namespace Sledge.UI
                 OnRenderException(ex);
             }
 
-            ListenerDo(x => x.UpdateFrame());
+            var frame = new FrameInfo(_stopwatch.ElapsedMilliseconds);
+            ListenerDo(x => x.UpdateFrame(frame));
 
             LoadIdentity();
             UpdateAfterLoadIdentity();

@@ -139,9 +139,9 @@ namespace Sledge.Editor.Tools
             if (_currentTool != null) _currentTool.KeyUp(viewport, e);
         }
 
-        public override void UpdateFrame(ViewportBase viewport)
+        public override void UpdateFrame(ViewportBase viewport, FrameInfo frame)
         {
-            if (_currentTool != null) _currentTool.UpdateFrame(viewport);
+            if (_currentTool != null) _currentTool.UpdateFrame(viewport, frame);
         }
 
         public override void PreRender(ViewportBase viewport)
