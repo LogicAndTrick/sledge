@@ -93,14 +93,12 @@ namespace Sledge.Editor.Tools
         private bool _freeze;
         private decimal _lastScaleX;
         private decimal _lastScaleY;
-        private List<TextureItem> _recentTextures;
 
         public Documents.Document Document { get; set; }
 
         public TextureApplicationForm()
         {
             _freeze = true;
-            _recentTextures = new List<TextureItem>();
             InitializeComponent();
             SelectedTexturesList.SelectionChanged += TextureSelectionChanged;
             RecentTexturesList.SelectionChanged += TextureSelectionChanged;
@@ -111,7 +109,6 @@ namespace Sledge.Editor.Tools
         public void Clear()
         {
             SelectedTexturesList.Clear();
-            _recentTextures.Clear();
             RecentTexturesList.Clear();
         }
 
@@ -158,7 +155,7 @@ namespace Sledge.Editor.Tools
 
         private void UpdateRecentTextureList()
         {
-            RecentTexturesList.SetTextureList(_recentTextures.Where(x => x.Name.ToLower().Contains(RecentFilterTextbox.Text.ToLower())));
+            RecentTexturesList.SetTextureList(Document.TextureCollection.GetRecentTextures().Where(x => x.Name.ToLower().Contains(RecentFilterTextbox.Text.ToLower())));
         }
 
         public void SelectTexture(TextureItem item)
@@ -168,12 +165,8 @@ namespace Sledge.Editor.Tools
                 SelectedTexturesList.SetSelectedTextures(new TextureItem[0]);
                 return;
             }
-            // Add the texture to the recent texture list
-            if (!_recentTextures.Contains(item))
-            {
-                _recentTextures.Insert(0, item);
-                UpdateRecentTextureList();
-            }
+
+            UpdateRecentTextureList();
 
             // If the texture is in the list of selected faces, select the texture in that list
             var sl = SelectedTexturesList.GetTextures();

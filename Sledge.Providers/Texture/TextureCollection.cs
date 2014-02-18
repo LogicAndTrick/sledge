@@ -9,9 +9,45 @@ namespace Sledge.Providers.Texture
     {
         public List<TexturePackage> Packages { get; set; }
 
+        private string _selectedTexture;
+        private List<string> _recentTextures;
+
+        public TextureItem SelectedTexture
+        {
+            get
+            {
+                return _selectedTexture == null ? null : GetItem(_selectedTexture);
+            }
+            set
+            {
+                _selectedTexture = value == null ? null : value.Name;
+                if (_selectedTexture != null)
+                {
+                    _recentTextures.Remove(_selectedTexture);
+                    _recentTextures.Insert(0, _selectedTexture);
+                    while (_recentTextures.Count > 25) _recentTextures.RemoveAt(_recentTextures.Count - 1);
+                }
+            }
+        }
+
         public TextureCollection(List<TexturePackage> packages)
         {
             Packages = packages;
+            _recentTextures = new List<string>();
+            SelectedTexture = GetDefaultSelection();
+        }
+
+        private TextureItem GetDefaultSelection()
+        {
+            var ignored = "{#!~+-0123456789".ToCharArray();
+            return GetAllItems()
+                .OrderBy(x => new string(x.Name.Where(c => !ignored.Contains(c)).ToArray()) + "Z")
+                .FirstOrDefault();
+        }
+
+        public IEnumerable<TextureItem> GetRecentTextures()
+        {
+            return _recentTextures.Select(GetItem);
         }
 
         public ITextureStreamSource GetStreamSource()

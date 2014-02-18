@@ -49,7 +49,7 @@ namespace Sledge.Editor.Tools
         public static void SetDocument(Document doc)
         {
             var active = ActiveTool;
-            Deactivate(true);
+            Deactivate();
             Tools.ForEach(x => x.SetDocument(doc));
             Activate(active);
         }

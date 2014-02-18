@@ -172,7 +172,7 @@ namespace Sledge.Editor.Tools
             }
 
             _form.SelectionChanged();
-            _form.SelectTexture(Document.GetSelectedTexture());
+            _form.SelectTexture(Document.TextureCollection.SelectedTexture);
             Mediator.Subscribe(EditorMediator.TextureSelected, this);
             Mediator.Subscribe(EditorMediator.DocumentTreeFacesChanged, this);
         }
