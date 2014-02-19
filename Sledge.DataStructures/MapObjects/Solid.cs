@@ -205,17 +205,17 @@ namespace Sledge.DataStructures.MapObjects
             return Faces.Where(f1 => Faces.Where(f2 => f2 != f1).Any(f2 => f2.Plane == f1.Plane));
         }
 
-        public IEnumerable<Face> GetBackwardsFaces()
+        public IEnumerable<Face> GetBackwardsFaces(decimal epsilon = 0.001m)
         {
             var origin = GetOrigin();
-            return Faces.Where(x => x.Plane.OnPlane(origin) >= 0);
+            return Faces.Where(x => x.Plane.OnPlane(origin, epsilon) >= 0);
         }
 
-        public bool IsValid()
+        public bool IsValid(decimal epsilon = 0.5m)
         {
             return !GetCoplanarFaces().Any() // Check coplanar faces
-                   && !GetBackwardsFaces().Any() // Check faces are pointing outwards
-                   && !Faces.Any(x => x.GetNonPlanarVertices().Any()) // Check face vertices are all on the plane
+                   && !GetBackwardsFaces(epsilon).Any() // Check faces are pointing outwards
+                   && !Faces.Any(x => x.GetNonPlanarVertices(epsilon).Any()) // Check face vertices are all on the plane
                    && Faces.All(x => x.IsConvex()); // Check all faces are concave
         }
 

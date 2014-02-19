@@ -114,14 +114,14 @@ namespace Sledge.DataStructures.MapObjects
             }
         }
 
-        public IEnumerable<Vertex> GetNonPlanarVertices()
+        public IEnumerable<Vertex> GetNonPlanarVertices(decimal epsilon = 0.001m)
         {
-            return Vertices.Where(x => Plane.OnPlane(x.Location) != 0);
+            return Vertices.Where(x => Plane.OnPlane(x.Location, epsilon) != 0);
         }
 
-        public bool IsConvex()
+        public bool IsConvex(decimal epsilon = 0.001m)
         {
-            return new Polygon(Vertices.Select(x => x.Location)).IsConvex();
+            return new Polygon(Vertices.Select(x => x.Location)).IsConvex(epsilon);
         }
 
         #region Textures
@@ -438,7 +438,7 @@ namespace Sledge.DataStructures.MapObjects
         {
             int front = 0, back = 0, onplane = 0, count = Vertices.Count;
 
-            foreach (var test in Vertices.Select(v => v.Location).Select(p.OnPlane))
+            foreach (var test in Vertices.Select(v => v.Location).Select(x => p.OnPlane(x)))
             {
                 // Vertices on the plane are both in front and behind the plane in this context
                 if (test <= 0) back++;

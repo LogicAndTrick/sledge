@@ -123,7 +123,7 @@ namespace Sledge.DataStructures.Geometric
             Plane = new Plane(Vertices[0], Vertices[1], Vertices[2]);
         }
 
-        public bool IsConvex()
+        public bool IsConvex(decimal epsilon = 0.001m)
         {
             for (var i = 0; i < Vertices.Count; i++)
             {
@@ -133,7 +133,7 @@ namespace Sledge.DataStructures.Geometric
                 var l1 = (v1 - v2).Normalise();
                 var l2 = (v3 - v2).Normalise();
                 var cross = l1.Cross(l2);
-                if (Plane.OnPlane(v2 + cross) < 0.0001m) return false;
+                if (Plane.OnPlane(v2 + cross, epsilon) < 0.0001m) return false;
             }
             return true;
         }
@@ -162,7 +162,7 @@ namespace Sledge.DataStructures.Geometric
         {
             int front = 0, back = 0, onplane = 0, count = Vertices.Count;
 
-            foreach (var test in Vertices.Select(p.OnPlane))
+            foreach (var test in Vertices.Select(x => p.OnPlane(x)))
             {
                 // Vertices on the plane are both in front and behind the plane in this context
                 if (test <= 0) back++;
