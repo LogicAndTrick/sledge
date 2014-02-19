@@ -151,7 +151,10 @@ namespace Sledge.Editor.UI
                 }
             }
             // Text
-            var textRect = new Rectangle(rect.X + 14, rect.Y + 5, rect.Width - 26, rect.Height - 5);
+            var textWidth = (int) g.MeasureString(tab.Text, Font).Width;
+            var textLeft = rect.X + 14;
+            var textRight = rect.Right - 26;
+            var textRect = new Rectangle(textLeft + (textRight - textLeft - textWidth) / 2, rect.Y + 4, rect.Width - 26, rect.Height - 5);
             using (var b = new SolidBrush(tab.ForeColor))
             {
                 g.DrawString(tab.Text, Font, b, textRect);
