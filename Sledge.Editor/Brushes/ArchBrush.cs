@@ -19,6 +19,7 @@ namespace Sledge.Editor.Brushes
         private readonly NumericControl _addHeight;
         private readonly BooleanControl _curvedRamp;
         private readonly NumericControl _tiltAngle;
+        private readonly NumericControl _tiltInterp;
 
         private const decimal Atan_2 = 63.434948822922047218617812884M;
 
@@ -31,8 +32,9 @@ namespace Sledge.Editor.Brushes
             _addHeight = new NumericControl(this) { LabelText = "Add height", Minimum = -1024, Maximum = 1024, Value = 0 };
             _curvedRamp = new BooleanControl(this) { LabelText = "Curved ramp", Checked = false };
             _tiltAngle = new NumericControl(this) { LabelText = "Tilt angle", Minimum = -Atan_2, Maximum = Atan_2, Value = 0, Enabled = false };
+            _tiltInterp = new NumericControl(this) { LabelText = "Tilt interpolation", Minimum = 0, Maximum = 100, Value = 0, Enabled = false };
 
-            _curvedRamp.ValuesChanged += (s, b) => _tiltAngle.Enabled = _curvedRamp.GetValue();
+            _curvedRamp.ValuesChanged += (s, b) => _tiltAngle.Enabled = _tiltInterp.Enabled = _curvedRamp.GetValue();
         }
 
         public string Name
@@ -49,6 +51,7 @@ namespace Sledge.Editor.Brushes
             yield return _addHeight;
             yield return _curvedRamp;
             yield return _tiltAngle;
+            yield return _tiltInterp;
         }
 
         private Solid MakeSolid(IDGenerator generator, IEnumerable<Coordinate[]> faces, ITexture texture, Color col)
@@ -86,6 +89,8 @@ namespace Sledge.Editor.Brushes
             var curvedRamp = _curvedRamp.GetValue();
             var tiltAngle = curvedRamp ? _tiltAngle.GetValue() : 0;
             if (tiltAngle < -Atan_2 || tiltAngle > Atan_2) yield break;
+            var tiltInterp = curvedRamp ? _tiltInterp.GetValue() : 0;
+            if (tiltInterp < 0 || tiltInterp > 100) yield break;
             
             // Very similar to the pipe brush, except with options for start angle, arc, height and tilt
             var width = box.Width;
@@ -111,7 +116,13 @@ namespace Sledge.Editor.Brushes
             {
                 var a = start + i * angle;
                 var h = i * addHeight;
-                var tiltHeight = wallWidth / 2 * DMath.Tan(tilt); // TODO: Interpolation
+                var interp = 1M;
+                if (tiltInterp != 0)
+                {
+                    interp = (numSides - 2 * DMath.Abs(i - numSides / 2M)) / (numSides * tiltInterp / 100);
+                    interp = DMath.Clamp(interp, 0, 1);
+                }
+                var tiltHeight = wallWidth / 2 * interp * DMath.Tan(tilt);
                 
                 var xval = box.Center.X + majorOut * DMath.Cos(a);
                 var yval = box.Center.Y + minorOut * DMath.Sin(a);
