@@ -109,7 +109,6 @@ namespace Sledge.Editor.Brushes
             var colour = Colour.GetRandomBrushColour();
 
             // Calculate the coordinates of the inner and outer ellipses' points
-            // TODO: Handle height adding for both curving and non-curving arches in a separate method
             var outer = new Coordinate[numSides + 1];
             var inner = new Coordinate[numSides + 1];
             for (var i = 0; i < numSides + 1; i++)
@@ -119,7 +118,8 @@ namespace Sledge.Editor.Brushes
                 var interp = 1M;
                 if (tiltInterp != 0)
                 {
-                    interp = (numSides - 2 * DMath.Abs(i - numSides / 2M)) / (numSides * tiltInterp / 100);
+                    var relative = i - numSides / 2M;
+                    interp = (numSides - 2 * DMath.Abs(relative)) / (numSides * tiltInterp / 100);
                     interp = DMath.Clamp(interp, 0, 1);
                 }
                 var tiltHeight = wallWidth / 2 * interp * DMath.Tan(tilt);
