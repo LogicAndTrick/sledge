@@ -245,7 +245,7 @@ namespace Sledge.Editor.UI
         public void MouseWheel(ViewportEvent e)
         {
             if (!Focus || (ToolManager.ActiveTool != null && ToolManager.ActiveTool.IsCapturingMouseWheel())) return;
-            Camera.Advance((e.Delta / Math.Abs(e.Delta)) * 500);
+            Camera.Advance((e.Delta / Math.Abs(e.Delta)) * Sledge.Settings.View.MouseWheelMoveDistance);
         }
 
         public void MouseUp(ViewportEvent e)

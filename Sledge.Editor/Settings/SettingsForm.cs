@@ -321,6 +321,7 @@ namespace Sledge.Editor.Settings
 
             InvertMouseX.Checked = Sledge.Settings.View.InvertX;
             InvertMouseY.Checked = Sledge.Settings.View.InvertY;
+            MouseWheelMoveDistance.Value = Sledge.Settings.View.MouseWheelMoveDistance;
 
             CameraFOV.Value = Sledge.Settings.View.CameraFOV;
 
@@ -416,6 +417,7 @@ namespace Sledge.Editor.Settings
             Sledge.Settings.View.TimeToTopSpeed = TimeToTopSpeed.Value * 100m;
             Sledge.Settings.View.InvertX = InvertMouseX.Checked;
             Sledge.Settings.View.InvertY = InvertMouseY.Checked;
+            Sledge.Settings.View.MouseWheelMoveDistance = MouseWheelMoveDistance.Value;
 
             Sledge.Settings.View.CameraFOV = (int) CameraFOV.Value;
 
