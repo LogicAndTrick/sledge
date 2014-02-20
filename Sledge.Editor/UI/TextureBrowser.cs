@@ -164,7 +164,7 @@ namespace Sledge.Editor.UI
             var l = list.ToList();
             TextureList.SetTextureList(l);
 
-            var sel = DocumentManager.CurrentDocument == null ? null : DocumentManager.CurrentDocument.GetSelectedTexture();
+            var sel = DocumentManager.CurrentDocument == null ? null : DocumentManager.CurrentDocument.TextureCollection.SelectedTexture;
             if (sel != null)
             {
                 TextureList.SetSelectedTextures(new [] { sel });

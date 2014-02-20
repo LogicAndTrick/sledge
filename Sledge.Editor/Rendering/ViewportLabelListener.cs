@@ -201,7 +201,7 @@ namespace Sledge.Editor.Rendering
             _showing = false;
         }
 
-        public void UpdateFrame()
+        public void UpdateFrame(FrameInfo frame)
         {
 
         }

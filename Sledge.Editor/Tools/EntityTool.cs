@@ -193,7 +193,7 @@ namespace Sledge.Editor.Tools
             //
         }
 
-        public override void UpdateFrame(ViewportBase viewport)
+        public override void UpdateFrame(ViewportBase viewport, FrameInfo frame)
         {
             //
         }
@@ -210,16 +210,17 @@ namespace Sledge.Editor.Tools
         public override void Render(ViewportBase viewport)
         {
             if (_state == EntityState.None) return;
-            TextureHelper.DisableTexturing();
+
             var high = Document.GameData.MapSizeHigh;
             var low = Document.GameData.MapSizeLow;
+
             if (viewport is Viewport3D)
             {
                 var offset = new Coordinate(20, 20, 20);
                 var start = _location - offset;
                 var end = _location + offset;
                 var box = new Box(start, end);
-                GL.Begin(BeginMode.Lines);
+                GL.Begin(PrimitiveType.Lines);
                 GL.Color3(Color.LimeGreen);
                 foreach (var line in box.GetBoxLines())
                 {
@@ -241,14 +242,14 @@ namespace Sledge.Editor.Tools
                 var offset = new Coordinate(units, units, units);
                 var start = vp.Flatten(_location - offset);
                 var end = vp.Flatten(_location + offset);
-                GL.Begin(BeginMode.LineLoop);
+                GL.Begin(PrimitiveType.LineLoop);
                 GL.Color3(Color.LimeGreen);
                 Coord(start.DX, start.DY, start.DZ);
                 Coord(end.DX, start.DY, start.DZ);
                 Coord(end.DX, end.DY, start.DZ);
                 Coord(start.DX, end.DY, start.DZ);
                 GL.End();
-                GL.Begin(BeginMode.Lines);
+                GL.Begin(PrimitiveType.Lines);
                 var loc = vp.Flatten(_location);
                 Coord(low, loc.DY, 0);
                 Coord(high, loc.DY, 0);
@@ -256,7 +257,6 @@ namespace Sledge.Editor.Tools
                 Coord(loc.DX, high, 0);
                 GL.End();
             }
-            TextureHelper.EnableTexturing();
         }
 
         public override HotkeyInterceptResult InterceptHotkey(HotkeysMediator hotkeyMessage)

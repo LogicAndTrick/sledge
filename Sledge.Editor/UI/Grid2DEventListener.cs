@@ -86,7 +86,7 @@ namespace Sledge.Editor.UI
             // Not used
         }
 
-        public void UpdateFrame()
+        public void UpdateFrame(FrameInfo frame)
         {
             // Not used
         }

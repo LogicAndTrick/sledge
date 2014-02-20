@@ -12,7 +12,6 @@ namespace Sledge.Editor.Rendering.Immediate
             var transforms = model.GetTransforms();
 
             GL.Color4(1f, 1f, 1f, 1f);
-            TextureHelper.EnableTexturing();
 
             foreach (var group in model.GetActiveMeshes().GroupBy(x => x.SkinRef))
             {
@@ -20,7 +19,7 @@ namespace Sledge.Editor.Rendering.Immediate
                 if (texture != null) texture.Bind();
                 foreach (var mesh in group)
                 {
-                    GL.Begin(BeginMode.Triangles);
+                    GL.Begin(PrimitiveType.Triangles);
                     foreach (var v in mesh.Vertices)
                     {
                         var transform = transforms[v.BoneWeightings.First().Bone.BoneIndex];
@@ -35,7 +34,6 @@ namespace Sledge.Editor.Rendering.Immediate
                 }
                 if (texture != null) texture.Unbind();
             }
-            TextureHelper.DisableTexturing();
         }
     }
 }

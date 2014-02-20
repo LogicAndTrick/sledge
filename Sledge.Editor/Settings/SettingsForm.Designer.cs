@@ -93,6 +93,7 @@ namespace Sledge.Editor.Settings
             this.GridHighlight1Distance = new System.Windows.Forms.NumericUpDown();
             this.label8 = new System.Windows.Forms.Label();
             this.groupBox17 = new System.Windows.Forms.GroupBox();
+            this.DrawBoxText = new System.Windows.Forms.CheckBox();
             this.KeepVisgroupsWhenCloning = new System.Windows.Forms.CheckBox();
             this.AutoSelectBox = new System.Windows.Forms.CheckBox();
             this.CrosshairCursorIn2DViews = new System.Windows.Forms.CheckBox();
@@ -320,7 +321,8 @@ namespace Sledge.Editor.Settings
             this.btnCancelSettings = new System.Windows.Forms.Button();
             this.btnApplyAndCloseSettings = new System.Windows.Forms.Button();
             this.btnApplySettings = new System.Windows.Forms.Button();
-            this.DrawBoxText = new System.Windows.Forms.CheckBox();
+            this.label43 = new System.Windows.Forms.Label();
+            this.MouseWheelMoveDistance = new System.Windows.Forms.NumericUpDown();
             this.tbcSettings.SuspendLayout();
             this.tabGeneral.SuspendLayout();
             this.groupBox23.SuspendLayout();
@@ -386,6 +388,7 @@ namespace Sledge.Editor.Settings
             ((System.ComponentModel.ISupportInitialize)(this.trackBar2)).BeginInit();
             this.groupBox7.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.MouseWheelMoveDistance)).BeginInit();
             this.SuspendLayout();
             // 
             // tbcSettings
@@ -1025,6 +1028,16 @@ namespace Sledge.Editor.Settings
             this.groupBox17.TabStop = false;
             this.groupBox17.Text = "Options";
             // 
+            // DrawBoxText
+            // 
+            this.DrawBoxText.Location = new System.Drawing.Point(10, 79);
+            this.DrawBoxText.Name = "DrawBoxText";
+            this.DrawBoxText.Size = new System.Drawing.Size(225, 24);
+            this.DrawBoxText.TabIndex = 4;
+            this.DrawBoxText.Tag = "";
+            this.DrawBoxText.Text = "Draw selection box size in the viewport";
+            this.DrawBoxText.UseVisualStyleBackColor = true;
+            // 
             // KeepVisgroupsWhenCloning
             // 
             this.KeepVisgroupsWhenCloning.Location = new System.Drawing.Point(10, 109);
@@ -1401,6 +1414,8 @@ namespace Sledge.Editor.Settings
             // 
             // groupBox13
             // 
+            this.groupBox13.Controls.Add(this.label43);
+            this.groupBox13.Controls.Add(this.MouseWheelMoveDistance);
             this.groupBox13.Controls.Add(this.InvertMouseX);
             this.groupBox13.Controls.Add(this.TimeToTopSpeedLabel);
             this.groupBox13.Controls.Add(this.InvertMouseY);
@@ -3533,15 +3548,31 @@ namespace Sledge.Editor.Settings
             this.btnApplySettings.UseVisualStyleBackColor = true;
             this.btnApplySettings.Click += new System.EventHandler(this.Apply);
             // 
-            // DrawBoxText
+            // label43
             // 
-            this.DrawBoxText.Location = new System.Drawing.Point(10, 79);
-            this.DrawBoxText.Name = "DrawBoxText";
-            this.DrawBoxText.Size = new System.Drawing.Size(225, 24);
-            this.DrawBoxText.TabIndex = 4;
-            this.DrawBoxText.Tag = "";
-            this.DrawBoxText.Text = "Draw selection box size in the viewport";
-            this.DrawBoxText.UseVisualStyleBackColor = true;
+            this.label43.Location = new System.Drawing.Point(211, 119);
+            this.label43.Name = "label43";
+            this.label43.Size = new System.Drawing.Size(148, 20);
+            this.label43.TabIndex = 6;
+            this.label43.Text = "Mouse wheel move distance";
+            this.label43.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // MouseWheelMoveDistance
+            // 
+            this.MouseWheelMoveDistance.Location = new System.Drawing.Point(365, 121);
+            this.MouseWheelMoveDistance.Maximum = new decimal(new int[] {
+            1000,
+            0,
+            0,
+            0});
+            this.MouseWheelMoveDistance.Name = "MouseWheelMoveDistance";
+            this.MouseWheelMoveDistance.Size = new System.Drawing.Size(50, 20);
+            this.MouseWheelMoveDistance.TabIndex = 5;
+            this.MouseWheelMoveDistance.Value = new decimal(new int[] {
+            500,
+            0,
+            0,
+            0});
             // 
             // SettingsForm
             // 
@@ -3635,6 +3666,7 @@ namespace Sledge.Editor.Settings
             ((System.ComponentModel.ISupportInitialize)(this.trackBar2)).EndInit();
             this.groupBox7.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.MouseWheelMoveDistance)).EndInit();
             this.ResumeLayout(false);
 
 		}
@@ -3923,5 +3955,7 @@ namespace Sledge.Editor.Settings
         private System.Windows.Forms.Label label42;
         private System.Windows.Forms.TextBox SelectedGameRunArguments;
         private System.Windows.Forms.CheckBox DrawBoxText;
+        private System.Windows.Forms.Label label43;
+        private System.Windows.Forms.NumericUpDown MouseWheelMoveDistance;
 	}
 }

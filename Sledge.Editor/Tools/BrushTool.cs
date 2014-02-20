@@ -13,6 +13,7 @@ using Sledge.Editor.History;
 using Sledge.Editor.Properties;
 using Sledge.DataStructures.MapObjects;
 using Sledge.Editor.Rendering;
+using Sledge.Editor.Rendering.Immediate;
 using Sledge.Editor.UI;
 using Sledge.Graphics.Helpers;
 using Sledge.Settings;
@@ -114,7 +115,7 @@ namespace Sledge.Editor.Tools
         private MapObject GetBrush(Box bounds, IDGenerator idg)
         {
             var brush = BrushManager.CurrentBrush;
-            var ti = Document.GetSelectedTexture();
+            var ti = Document.TextureCollection.SelectedTexture;
             var texture = ti != null ? ti.GetTexture() : null;
             var created = brush.Create(idg, bounds, texture).ToList();
             if (created.Count > 1)
@@ -154,7 +155,7 @@ namespace Sledge.Editor.Tools
             base.BoxDrawnCancel(viewport);
         }
 
-        public override void UpdateFrame(ViewportBase viewport)
+        public override void UpdateFrame(ViewportBase viewport, FrameInfo frame)
         {
             if (_updatePreview && ShouldDrawBox(viewport))
             {
@@ -162,6 +163,8 @@ namespace Sledge.Editor.Tools
                 var brush = GetBrush(box, new IDGenerator());
                 _preview = new List<Face>();
                 CollectFaces(_preview, new[] { brush });
+                var color = GetRenderBoxColour();
+                _preview.ForEach(x => { x.Colour = color; });
             }
             _updatePreview = false;
         }
@@ -215,9 +218,11 @@ namespace Sledge.Editor.Tools
             {
                 GL.Disable(EnableCap.CullFace);
                 TextureHelper.Unbind();
-                Rendering.Immediate.MapObjectRenderer.DrawFilled(_preview, GetRenderColour(), false, viewport.Type != Viewport3D.ViewType.Flat);
+                if (viewport.Type != Viewport3D.ViewType.Flat) MapObjectRenderer.EnableLighting();
+                MapObjectRenderer.DrawFilled(_preview, GetRenderColour(), false);
+                MapObjectRenderer.DisableLighting();
                 GL.Color4(Color.GreenYellow);
-                Rendering.Immediate.MapObjectRenderer.DrawWireframe(_preview, true);
+                MapObjectRenderer.DrawWireframe(_preview, true);
             }
         }
 

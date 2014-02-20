@@ -549,9 +549,9 @@ namespace Sledge.Editor.Tools
                 // If the shift key is down, select all brushes that are fully contained by the box
                 // If select by handles only is on, select all brushes with centers inside the box
                 // Otherwise, select all brushes that intersect with the box
-                Func<Box, IEnumerable<MapObject>> selector = Document.Map.WorldSpawn.GetAllNodesIntersectingWith;
-                if (Sledge.Settings.Select.BoxSelectByCenterHandlesOnly) selector = Document.Map.WorldSpawn.GetAllNodesWithCentersContainedWithin;
-                if (KeyboardState.Shift) selector = Document.Map.WorldSpawn.GetAllNodesContainedWithin;
+                Func<Box, IEnumerable<MapObject>> selector = x => Document.Map.WorldSpawn.GetAllNodesIntersectingWith(x);
+                if (Sledge.Settings.Select.BoxSelectByCenterHandlesOnly) selector = x => Document.Map.WorldSpawn.GetAllNodesWithCentersContainedWithin(x);
+                if (KeyboardState.Shift) selector = x => Document.Map.WorldSpawn.GetAllNodesContainedWithin(x);
 
                 var nodes = selector(boundingbox).ToList();
                 SetSelected(null, nodes, false, IgnoreGrouping());

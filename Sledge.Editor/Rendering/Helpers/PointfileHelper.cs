@@ -29,9 +29,9 @@ namespace Sledge.Editor.Rendering.Helpers
             Func<Coordinate, Coordinate> transform = x => x;
             if (vp2 != null) transform = vp2.Flatten;
 
-            TextureHelper.DisableTexturing();
+            TextureHelper.Unbind();
             GL.LineWidth(3);
-            GL.Begin(BeginMode.Lines);
+            GL.Begin(PrimitiveType.Lines);
 
             var r = 1f;
             var g = 0.5f;
@@ -55,7 +55,6 @@ namespace Sledge.Editor.Rendering.Helpers
 
             GL.End();
             GL.LineWidth(1);
-            TextureHelper.EnableTexturing();
         }
 
         public bool IsValidFor(MapObject o)

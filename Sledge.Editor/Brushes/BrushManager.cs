@@ -72,7 +72,7 @@ namespace Sledge.Editor.Brushes
             CurrentControls.Clear();
             CurrentBrush = brush;
             if (CurrentBrush == null) return;
-            CurrentControls.AddRange(CurrentBrush.GetControls());
+            CurrentControls.AddRange(CurrentBrush.GetControls().Reverse());
             for (var i = 0; i < CurrentControls.Count; i++)
             {
                 var ctrl = CurrentControls[i];

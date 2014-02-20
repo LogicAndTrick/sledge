@@ -305,7 +305,7 @@ namespace Sledge.Editor.Tools
                 || _clipPlanePoint2 == null
                 || _clipPlanePoint3 == null) return; // Nothing to draw at this point
 
-            TextureHelper.DisableTexturing();
+            TextureHelper.Unbind();
 
             // Draw points
 
@@ -345,7 +345,7 @@ namespace Sledge.Editor.Tools
                 var dx = u * 10000;
                 var dy = v * 10000;
                 GL.Disable(EnableCap.CullFace);
-                GL.Begin(BeginMode.Quads);
+                GL.Begin(PrimitiveType.Quads);
                 GL.Color4(Color.FromArgb(100, Color.Turquoise));
                 Action<Coordinate> render = c => GL.Vertex3(c.DX, c.DY, c.DZ);
                 render(point - dx - dy);
@@ -356,8 +356,6 @@ namespace Sledge.Editor.Tools
 
                 GL.Enable(EnableCap.CullFace);
             }
-
-            TextureHelper.EnableTexturing();
         }
 
         public override void MouseEnter(ViewportBase viewport, ViewportEvent e)
@@ -385,7 +383,7 @@ namespace Sledge.Editor.Tools
             //
         }
 
-        public override void UpdateFrame(ViewportBase viewport)
+        public override void UpdateFrame(ViewportBase viewport, FrameInfo frame)
         {
             //
         }

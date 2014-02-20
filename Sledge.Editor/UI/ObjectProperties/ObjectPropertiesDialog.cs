@@ -159,13 +159,12 @@ namespace Sledge.Editor.UI.ObjectProperties
                 }
 
                 // Set flags
-                var flags =
-                    Enumerable.Range(0, FlagsTable.Items.Count).Select(x => FlagsTable.GetItemCheckState(x)).ToList();
+                var flags = Enumerable.Range(0, FlagsTable.Items.Count).Select(x => FlagsTable.GetItemCheckState(x)).ToList();
                 var entClass = Document.GameData.Classes.FirstOrDefault(x => x.Name == entityData.Name);
                 var spawnFlags = entClass == null
                                      ? null
                                      : entClass.Properties.FirstOrDefault(x => x.Name == "spawnflags");
-                var opts = spawnFlags == null ? null : spawnFlags.Options;
+                var opts = spawnFlags == null ? null : spawnFlags.Options.OrderBy(x => int.Parse(x.Key)).ToList();
                 if (opts != null && flags.Count == opts.Count)
                 {
                     var beforeFlags = entityData.Flags;

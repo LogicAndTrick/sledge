@@ -385,7 +385,7 @@ namespace Sledge.Editor.Tools
             this.tableLayoutPanel1.ColumnCount = 3;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 65F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 187F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 189F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel1.Controls.Add(this.ScaleXValue, 1, 1);
@@ -595,6 +595,8 @@ namespace Sledge.Editor.Tools
             this.RecentTexturesList.Location = new System.Drawing.Point(318, 178);
             this.RecentTexturesList.Name = "RecentTexturesList";
             this.RecentTexturesList.Size = new System.Drawing.Size(87, 179);
+            this.RecentTexturesList.SortDescending = false;
+            this.RecentTexturesList.SortOrder = Sledge.Editor.UI.TextureListPanel.TextureSortOrder.None;
             this.RecentTexturesList.TabIndex = 38;
             // 
             // SelectedTexturesList
@@ -607,6 +609,8 @@ namespace Sledge.Editor.Tools
             this.SelectedTexturesList.Location = new System.Drawing.Point(12, 178);
             this.SelectedTexturesList.Name = "SelectedTexturesList";
             this.SelectedTexturesList.Size = new System.Drawing.Size(300, 179);
+            this.SelectedTexturesList.SortDescending = false;
+            this.SelectedTexturesList.SortOrder = Sledge.Editor.UI.TextureListPanel.TextureSortOrder.Name;
             this.SelectedTexturesList.TabIndex = 37;
             // 
             // TextureApplicationForm

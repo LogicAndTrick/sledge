@@ -10,12 +10,15 @@ using Sledge.DataStructures.MapObjects;
 using Sledge.Editor.Actions.MapObjects.Operations;
 using Sledge.Editor.Actions.MapObjects.Selection;
 using Sledge.Editor.Properties;
+using Sledge.Editor.Rendering.Immediate;
 using Sledge.Editor.Tools.VMTools;
 using Sledge.Graphics;
 using Sledge.Graphics.Helpers;
 using Sledge.Settings;
 using Sledge.UI;
 using Matrix = Sledge.Graphics.Helpers.Matrix;
+using Select = Sledge.Settings.Select;
+using View = Sledge.Settings.View;
 
 namespace Sledge.Editor.Tools
 {
@@ -156,7 +159,7 @@ namespace Sledge.Editor.Tools
 
         protected override Color FillColour
         {
-            get { return Color.FromArgb(Sledge.Settings.View.SelectionBoxBackgroundOpacity, Color.DodgerBlue); }
+            get { return Color.FromArgb(View.SelectionBoxBackgroundOpacity, Color.DodgerBlue); }
         }
 
         public void SetDirty(bool points, bool midpoints)
@@ -443,13 +446,21 @@ namespace Sledge.Editor.Tools
                     var vtx = vtxs.First();
 
                     // Mouse down on a point
-                    if (!vtx.IsSelected && !KeyboardState.Ctrl && _currentTool.ShouldDeselect(vtxs))
+                    if (vtx.IsSelected && KeyboardState.Ctrl && _currentTool.ShouldDeselect(vtxs))
                     {
-                        // If we aren't clicking on a selected point and ctrl is not down, deselect the others
-                        Points.ForEach(x => x.IsSelected = false);
-                        // If this point is already selected, don't deselect others. This is the same behaviour as 2D selection.
+                        // If the vertex is selected and ctrl is down, deselect the vertices
+                        vtxs.ForEach(x => x.IsSelected = false);
                     }
-                    vtxs.ForEach(x => x.IsSelected = true);
+                    else
+                    {
+                        if (!vtx.IsSelected && !KeyboardState.Ctrl && _currentTool.ShouldDeselect(vtxs))
+                        {
+                            // If we aren't clicking on a selected point and ctrl is not down, deselect the others
+                            Points.ForEach(x => x.IsSelected = false);
+                            // If this point is already selected, don't deselect others. This is the same behaviour as 2D selection.
+                        }
+                        vtxs.ForEach(x => x.IsSelected = true);
+                    }
                     VertexSelectionChanged();
 
                     // Don't do other click operations
@@ -467,7 +478,7 @@ namespace Sledge.Editor.Tools
             {
                 // Do selection
                 var ray = vp.CastRayFromScreen(e.X, e.Y);
-                var hits = Document.Map.WorldSpawn.GetAllNodesIntersectingWith(ray);
+                var hits = Document.Map.WorldSpawn.GetAllNodesIntersectingWith(ray, true);
                 var solid = hits
                     .OfType<Solid>()
                     .Select(x => new { Item = x, Intersection = x.GetIntersectionPoint(ray) })
@@ -478,10 +489,20 @@ namespace Sledge.Editor.Tools
 
                 if (solid != null)
                 {
-                    // select solid
-                    var select = new[] {solid};
-                    var deselect = !KeyboardState.Ctrl ? Document.Selection.GetSelectedObjects() : new MapObject[0];
-                    Document.PerformAction("Select VM solid", new ChangeSelection(select, deselect));
+                    if (solid.IsSelected && KeyboardState.Ctrl)
+                    {
+                        // deselect solid
+                        var select = new MapObject[0];
+                        var deselect = new[] {solid};
+                        Document.PerformAction("Deselect VM solid", new ChangeSelection(select, deselect));
+                    }
+                    else if (!solid.IsSelected)
+                    {
+                        // select solid
+                        var select = new[] {solid};
+                        var deselect = !KeyboardState.Ctrl ? Document.Selection.GetSelectedObjects() : new MapObject[0];
+                        Document.PerformAction("Select VM solid", new ChangeSelection(select, deselect));
+                    }
 
                     // Don't do other click operations
                     return;
@@ -491,8 +512,10 @@ namespace Sledge.Editor.Tools
             base.MouseDown(vp, e);
         }
 
+        private bool _clickSelectionDone = false;
         public override void MouseDown(ViewportBase vp, ViewportEvent e)
         {
+            _clickSelectionDone = false;
             if (_currentTool != null)
             {
                 // If the current tool handles the event, we're done
@@ -534,8 +557,8 @@ namespace Sledge.Editor.Tools
                 var click = viewport.Expand(viewport.ScreenToWorld(e.X, viewport.Height - e.Y));
                 var box = new Box(click - add, click + add);
 
-                var centerHandles = Sledge.Settings.Select.DrawCenterHandles;
-                var centerOnly = Sledge.Settings.Select.ClickSelectByCenterHandlesOnly;
+                var centerHandles = Select.DrawCenterHandles;
+                var centerOnly = Select.ClickSelectByCenterHandlesOnly;
                 // Get the first element that intersects with the box
                 var solid = Document.Map.WorldSpawn.GetAllNodesIntersecting2DLineTest(box, centerHandles, centerOnly).OfType<Solid>().FirstOrDefault();
 
@@ -554,29 +577,20 @@ namespace Sledge.Editor.Tools
                 return;
             }
 
+
+            // If any vertices are selected, don't change the selection yet
+            if (!vtxs.Any(x => x.IsSelected))
+            {
+                _clickSelectionDone = true;
+                DoSelection(vtxs, viewport);
+            }
+
+            // Only move selected vertices
+            vtxs = vtxs.Where(x => x.IsSelected).ToList();
+            if (!vtxs.Any()) return;
+
             // Use the topmost vertex as the control point
             var vtx = vtxs.First();
-
-            // Shift selects only the topmost point
-            if (KeyboardState.Shift)
-            {
-                vtxs.Clear();
-                vtxs.Add(vtx);
-            }
-
-            // Vertex found, cancel the box if needed
-            BoxDrawnCancel(vp);
-
-            // Mouse down on a point
-            if (!vtx.IsSelected && !KeyboardState.Ctrl && _currentTool.ShouldDeselect(vtxs))
-            {
-                // If we aren't clicking on a selected point and ctrl is not down, deselect the others
-                Points.ForEach(x => x.IsSelected = false);
-                // If this point is already selected, don't deselect others. This is so we can move multiple points easily.
-            }
-            vtxs.ForEach(x => x.IsSelected = true);
-            VertexSelectionChanged();
-
             _currentTool.DragStart(vtxs);
             MoveSelection = vtxs;
             _snapPointOffset = SnapIfNeeded(viewport.Expand(viewport.ScreenToWorld(e.X, viewport.Height - e.Y))) - viewport.ZeroUnusedCoordinate(vtx.Coordinate);
@@ -585,7 +599,45 @@ namespace Sledge.Editor.Tools
 
         public override void MouseClick(ViewportBase viewport, ViewportEvent e)
         {
-            // Not used
+            var vp = viewport as Viewport2D;
+            if (vp == null || _clickSelectionDone) return;
+
+            var vtxs = _currentTool.GetVerticesAtPoint(e.X, viewport.Height - e.Y, vp);
+            DoSelection(vtxs, vp);
+        }
+
+        private void DoSelection(List<VMPoint> vertices, Viewport2D vp)
+        {
+            if (!vertices.Any()) return;
+
+            var vtx = vertices.First();
+            // Shift selects only the topmost point
+            if (KeyboardState.Shift)
+            {
+                vertices.Clear();
+                vertices.Add(vtx);
+            }
+
+            // Vertex found, cancel the box if needed
+            BoxDrawnCancel(vp);
+
+            // Mouse down on a point
+            if (vtx.IsSelected && KeyboardState.Ctrl && _currentTool.ShouldDeselect(vertices))
+            {
+                // If the vertex is selected and ctrl is down, deselect the vertices
+                vertices.ForEach(x => x.IsSelected = false);
+            }
+            else
+            {
+                if (!vtx.IsSelected && !KeyboardState.Ctrl && _currentTool.ShouldDeselect(vertices))
+                {
+                    // If we aren't clicking on a selected point and ctrl is not down, deselect the others
+                    Points.ForEach(x => x.IsSelected = false);
+                    // If this point is already selected, don't deselect others. This is so we can move multiple points easily.
+                }
+                vertices.ForEach(x => x.IsSelected = true);
+            }
+            VertexSelectionChanged();
         }
 
         public override void MouseDoubleClick(ViewportBase viewport, ViewportEvent e)
@@ -630,7 +682,7 @@ namespace Sledge.Editor.Tools
         protected override void LeftMouseUpDrawing(Viewport2D viewport, ViewportEvent e)
         {
             base.LeftMouseUpDrawing(viewport, e);
-            if (Sledge.Settings.Select.AutoSelectBox)
+            if (Select.AutoSelectBox)
             {
                 BoxDrawnConfirm(viewport);
             }
@@ -715,13 +767,13 @@ namespace Sledge.Editor.Tools
             Matrix.Push();
             var matrix = vp.GetModelViewMatrix();
             GL.MultMatrix(ref matrix);
-            Rendering.Immediate.MapObjectRenderer.DrawWireframe(_copies.Keys.SelectMany(x => x.Faces), true);
+            MapObjectRenderer.DrawWireframe(_copies.Keys.SelectMany(x => x.Faces), true);
             Matrix.Pop();
 
             // Draw in order by the unused coordinate (the up axis for this viewport)
             var ordered = (from point in Points
                            let unused = vp.GetUnusedCoordinate(point.Coordinate)
-                           orderby unused.X + unused.Y + unused.Z
+                           orderby point.IsSelected, unused.X + unused.Y + unused.Z
                            select point).ToList();
             // Render out the point handles
             var z = (double) vp.Zoom;
@@ -743,7 +795,7 @@ namespace Sledge.Editor.Tools
 
             if (_currentTool != null) _currentTool.Render3D(vp);
 
-            TextureHelper.DisableTexturing();
+            TextureHelper.Unbind();
 
             if (_currentTool == null || _currentTool.DrawVertices())
             {
@@ -756,7 +808,7 @@ namespace Sledge.Editor.Tools
 
                 var half = new Coordinate(vp.Width, vp.Height, 0) / 2;
                 // Render out the point handles
-                GL.Begin(BeginMode.Quads);
+                GL.Begin(PrimitiveType.Quads);
                 foreach (var point in Points)
                 {
                     var c = vp.WorldToScreen(point.Coordinate);
@@ -780,12 +832,10 @@ namespace Sledge.Editor.Tools
                 // Get back into 3D rendering
                 Matrix.Set(MatrixMode.Projection);
                 Matrix.Identity();
-                Graphics.Helpers.Viewport.Perspective(0, 0, vp.Width, vp.Height, Sledge.Settings.View.CameraFOV);
+                Graphics.Helpers.Viewport.Perspective(0, 0, vp.Width, vp.Height, View.CameraFOV);
                 Matrix.Set(MatrixMode.Modelview);
                 Matrix.Identity();
                 vp.Camera.Position();
-
-                TextureHelper.EnableTexturing();
             }
 
             var type = vp.Type;
@@ -796,11 +846,26 @@ namespace Sledge.Editor.Tools
             // Render out the solid previews
             GL.Color3(Color.White);
             var faces = _copies.Keys.SelectMany(x => x.Faces).ToList();
-            Rendering.Immediate.MapObjectRenderer.DrawFilled(faces, Color.Empty, textured, shaded);
-            Rendering.Immediate.MapObjectRenderer.DrawFilled(faces.Where(x => !x.IsSelected), Color.FromArgb(64, Color.Green), false, shaded);
-            Rendering.Immediate.MapObjectRenderer.DrawFilled(faces.Where(x => x.IsSelected), Color.FromArgb(64, Color.Red), false, shaded);
-            GL.Color3(Color.Pink);
-            Rendering.Immediate.MapObjectRenderer.DrawWireframe(faces, true);
+
+            if (!wireframe)
+            {
+                if (shaded) MapObjectRenderer.EnableLighting();
+                GL.Enable(EnableCap.Texture2D);
+                MapObjectRenderer.DrawFilled(faces.Where(x => !x.IsSelected), Color.FromArgb(255, 64, 192, 64), textured);
+                MapObjectRenderer.DrawFilled(faces.Where(x => x.IsSelected), Color.FromArgb(255, 255, 128, 128), textured);
+                GL.Disable(EnableCap.Texture2D);
+                MapObjectRenderer.DisableLighting();
+
+                GL.Color3(Color.Pink);
+                MapObjectRenderer.DrawWireframe(faces, true);
+            }
+            else
+            {
+                GL.Color4(Color.FromArgb(255, 64, 192, 64));
+                MapObjectRenderer.DrawWireframe(faces.Where(x => !x.IsSelected), true);
+                GL.Color4(Color.FromArgb(255, 255, 128, 128));
+                MapObjectRenderer.DrawWireframe(faces.Where(x => x.IsSelected), true);
+            }
         }
 
         public override void KeyDown(ViewportBase viewport, ViewportEvent e)
@@ -851,10 +916,10 @@ namespace Sledge.Editor.Tools
             base.KeyUp(viewport, e);
         }
 
-        public override void UpdateFrame(ViewportBase viewport)
+        public override void UpdateFrame(ViewportBase viewport, FrameInfo frame)
         {
-            if (_currentTool != null) _currentTool.UpdateFrame(viewport);
-            base.UpdateFrame(viewport);
+            if (_currentTool != null) _currentTool.UpdateFrame(viewport, frame);
+            base.UpdateFrame(viewport, frame);
         }
 
         public override void PreRender(ViewportBase viewport)

@@ -43,7 +43,7 @@ namespace Sledge.Tests
             var p3 = new Coordinate(100, 100, 100);
             var p4 = new Coordinate(0, 0, 0);
             var refPlane = new Plane(new Coordinate(0, 0, 1), 100);
-            var plane = new Plane(p1, p2, p3);
+            var plane = new Plane(p3, p2, p1);
 
             var o1 = refPlane.OnPlane(p1);
             var o2 = plane.OnPlane(p1);

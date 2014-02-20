@@ -33,6 +33,7 @@ namespace Sledge.Editor.Tools
             Tools.Add(new ClipTool());
             Tools.Add(new VMTool());
             Tools.Add(new CordonTool());
+            //Tools.Add(new SketchTool());
         }
 
         public static void Deactivate(bool preventHistory = false)
@@ -48,7 +49,7 @@ namespace Sledge.Editor.Tools
         public static void SetDocument(Document doc)
         {
             var active = ActiveTool;
-            Deactivate(true);
+            Deactivate();
             Tools.ForEach(x => x.SetDocument(doc));
             Activate(active);
         }

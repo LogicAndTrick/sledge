@@ -60,7 +60,7 @@ namespace Sledge.Editor.Rendering.Helpers
             var normal = Vector3.Subtract(vp.Camera.Location, orig);
 
             var tex = entity.Sprite;
-            TextureHelper.EnableTexturing();
+            GL.Enable(EnableCap.Texture2D);
             GL.Color3(Color.White);
             tex.Bind();
 
@@ -80,7 +80,7 @@ namespace Sledge.Editor.Rendering.Helpers
             var tup = Vector3.Multiply(up, (float)entity.BoundingBox.Height / 2f);
             var tright = Vector3.Multiply(right, (float)entity.BoundingBox.Width / 2f);
 
-            GL.Begin(BeginMode.Quads);
+            GL.Begin(PrimitiveType.Quads);
 
             GL.Normal3(normal); GL.TexCoord2(1, 1); GL.Vertex3(Vector3.Subtract(orig, Vector3.Add(tup, tright)));
             GL.Normal3(normal); GL.TexCoord2(1, 0); GL.Vertex3(Vector3.Add(orig, Vector3.Subtract(tup, tright)));
@@ -88,6 +88,7 @@ namespace Sledge.Editor.Rendering.Helpers
             GL.Normal3(normal); GL.TexCoord2(0, 1); GL.Vertex3(Vector3.Subtract(orig, Vector3.Subtract(tup, tright)));
 
             GL.End();
+            GL.Disable(EnableCap.Texture2D);
         }
 
         public void AfterRender3D(Viewport3D viewport)

@@ -97,7 +97,7 @@ namespace Sledge.Editor.Tools
         public abstract void KeyPress(ViewportBase viewport, ViewportEvent e);
         public abstract void KeyDown(ViewportBase viewport, ViewportEvent e);
         public abstract void KeyUp(ViewportBase viewport, ViewportEvent e);
-        public abstract void UpdateFrame(ViewportBase viewport);
+        public abstract void UpdateFrame(ViewportBase viewport, FrameInfo frame);
         public abstract void Render(ViewportBase viewport);
 
         public virtual void PreRender(ViewportBase viewport)

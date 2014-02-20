@@ -68,7 +68,7 @@ namespace Sledge.Editor.Tools
 
         public override Image GetIcon()
         {
-            return Resources.Tool_Rotate;
+            return Resources.Tool_Camera;
         }
 
         public override string GetName()
@@ -240,7 +240,7 @@ namespace Sledge.Editor.Tools
             //
         }
 
-        public override void UpdateFrame(ViewportBase viewport)
+        public override void UpdateFrame(ViewportBase viewport, FrameInfo frame)
         {
             //
         }

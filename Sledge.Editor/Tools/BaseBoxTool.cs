@@ -410,6 +410,14 @@ namespace Sledge.Editor.Tools
             var now = SnapIfNeeded(viewport.ScreenToWorld(e.X, viewport.Height - e.Y));
             var cstart = viewport.Flatten(State.BoxStart);
             var cend = viewport.Flatten(State.BoxEnd);
+
+            // Proportional scaling
+            var ostart = viewport.Flatten(State.PreTransformBoxStart ?? Coordinate.Zero);
+            var oend = viewport.Flatten(State.PreTransformBoxEnd ?? Coordinate.Zero);
+            var owidth = oend.X - ostart.X;
+            var oheight = oend.Y - ostart.Y;
+            var proportional = KeyboardState.Ctrl && State.Action == BoxAction.Resizing && owidth != 0 && oheight != 0;
+
             switch (State.Handle)
             {
                 case ResizeHandle.TopLeft:
@@ -440,13 +448,42 @@ namespace Sledge.Editor.Tools
                     break;
                 case ResizeHandle.Bottom:
                     cstart.Y = now.Y;
-                    break;
+                    break; 
                 case ResizeHandle.BottomRight:
                     cend.X = now.X;
                     cstart.Y = now.Y;
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
+            }
+            if (proportional)
+            {
+                var nwidth = cend.X - cstart.X;
+                var nheight = cend.Y - cstart.Y;
+                var mult = Math.Max(nwidth / owidth, nheight / oheight);
+                var pwidth = owidth * mult;
+                var pheight = oheight * mult;
+                var wdiff = pwidth - nwidth;
+                var hdiff = pheight - nheight;
+                switch (State.Handle)
+                {
+                    case ResizeHandle.TopLeft:
+                        cstart.X -= wdiff;
+                        cend.Y += hdiff;
+                        break;
+                    case ResizeHandle.TopRight:
+                        cend.X += wdiff;
+                        cend.Y += hdiff;
+                        break;
+                    case ResizeHandle.BottomLeft:
+                        cstart.X -= wdiff;
+                        cstart.Y -= hdiff;
+                        break;
+                    case ResizeHandle.BottomRight:
+                        cend.X += wdiff;
+                        cstart.Y -= hdiff;
+                        break;
+                }
             }
             return SnapBoxCoordinatesIfNeeded(viewport, cstart, cend);
         }
@@ -680,11 +717,11 @@ namespace Sledge.Editor.Tools
         {
             if (!Sledge.Settings.View.DrawBoxText) return;
 
-            var widthText = (boxEnd.X - boxStart.X).ToString("0.00");
-            var heightText = (boxEnd.Y - boxStart.Y).ToString("0.00");
+            var widthText = (boxEnd.X - boxStart.X).ToString("0.0");
+            var heightText = (boxEnd.Y - boxStart.Y).ToString("0.0");
 
             var wid = _printer.Measure(widthText, _printerFont, new RectangleF(0, 0, viewport.Width, viewport.Height));
-            var hei = _printer.Measure(widthText, _printerFont, new RectangleF(0, 0, viewport.Width, viewport.Height));
+            var hei = _printer.Measure(heightText, _printerFont, new RectangleF(0, 0, viewport.Width, viewport.Height));
 
             boxStart = viewport.WorldToScreen(boxStart);
             boxEnd = viewport.WorldToScreen(boxEnd);
@@ -692,8 +729,8 @@ namespace Sledge.Editor.Tools
             var cx = (float)(boxStart.X + (boxEnd.X - boxStart.X) / 2);
             var cy = (float)(boxStart.Y + (boxEnd.Y - boxStart.Y) / 2);
 
-            var wrect = new RectangleF(cx - wid.BoundingBox.Width / 2, viewport.Height - (float)boxEnd.Y - _printerFont.Height - 15, wid.BoundingBox.Width, wid.BoundingBox.Height);
-            var hrect = new RectangleF((float)boxEnd.X + 15, viewport.Height - cy - hei.BoundingBox.Height / 2, hei.BoundingBox.Width, hei.BoundingBox.Height);
+            var wrect = new RectangleF(cx - wid.BoundingBox.Width / 2, viewport.Height - (float)boxEnd.Y - _printerFont.Height - 15, wid.BoundingBox.Width * 1.2f, wid.BoundingBox.Height);
+            var hrect = new RectangleF((float)boxEnd.X + 15, viewport.Height - cy - hei.BoundingBox.Height / 2, hei.BoundingBox.Width * 1.2f, hei.BoundingBox.Height);
 
             GL.Disable(EnableCap.CullFace);
 
@@ -732,8 +769,8 @@ namespace Sledge.Editor.Tools
         protected virtual void Render3DBox(Viewport3D viewport, Coordinate start, Coordinate end)
         {
             var box = new Box(start, end);
-            TextureHelper.DisableTexturing();
-            GL.Begin(BeginMode.Lines);
+            TextureHelper.Unbind();
+            GL.Begin(PrimitiveType.Lines);
             GL.Color4(GetRenderBoxColour());
             foreach (var line in box.GetBoxLines())
             {
@@ -741,7 +778,6 @@ namespace Sledge.Editor.Tools
                 Coord(line.End);
             }
             GL.End();
-            TextureHelper.EnableTexturing();
         }
 
         protected virtual void Render3D(Viewport3D viewport)
@@ -754,7 +790,7 @@ namespace Sledge.Editor.Tools
         }
         #endregion
 
-        public override void UpdateFrame(ViewportBase viewport)
+        public override void UpdateFrame(ViewportBase viewport, FrameInfo frame)
         {
 
         }

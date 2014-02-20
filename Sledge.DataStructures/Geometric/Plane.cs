@@ -54,21 +54,22 @@ namespace Sledge.DataStructures.Geometric
             D = -DistanceFromOrigin;
         }
 
-        /// <summary>Finds if the given point is above, below, or on the plane.</summary>
-        /// <param name="co">The coordinate to test</param>
+        ///  <summary>Finds if the given point is above, below, or on the plane.</summary>
+        ///  <param name="co">The coordinate to test</param>
+        /// <param name="epsilon">Tolerance value</param>
         /// <returns>
-        /// value == -1 if coordinate is below the plane<br />
-        /// value == 1 if coordinate is above the plane<br />
-        /// value == 0 if coordinate is on the plane.
-        ///</returns>
-        public int OnPlane(Coordinate co)
+        ///  value == -1 if coordinate is below the plane<br />
+        ///  value == 1 if coordinate is above the plane<br />
+        ///  value == 0 if coordinate is on the plane.
+        /// </returns>
+        public int OnPlane(Coordinate co, decimal epsilon = 0.5m)
         {
             //eval (s = Ax + By + Cz + D) at point (x,y,z)
             //if s > 0 then point is "above" the plane (same side as normal)
             //if s < 0 then it lies on the opposite side
             //if s = 0 then the point (x,y,z) lies on the plane
             var res = EvalAtPoint(co);
-            if (Math.Abs(res) < 0.00001m) return 0;
+            if (Math.Abs(res) < epsilon) return 0;
             if (res < 0) return -1;
             return 1;
         }

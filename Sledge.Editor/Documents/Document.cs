@@ -410,12 +410,6 @@ namespace Sledge.Editor.Documents
             UpdateDisplayLists();
         }
 
-        public TextureItem GetSelectedTexture()
-        {
-            var sel = GetMemory<string>("SelectedTexture");
-            return sel == null ? null : TextureCollection.GetItem(sel);
-        }
-
         public GameDataObject GetSelectedEntity()
         {
             var sel = GetMemory<string>("SelectedEntity");

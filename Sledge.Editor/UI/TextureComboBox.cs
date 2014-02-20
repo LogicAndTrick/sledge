@@ -23,7 +23,6 @@ namespace Sledge.Editor.UI
             }
         }
 
-        private readonly List<TextureItem> _history;
         private List<TexturePackage> _packages;
         private ITextureStreamSource _streamSource;
         private int _fontHeight;
@@ -36,7 +35,6 @@ namespace Sledge.Editor.UI
             MeasureItem += OwnerMeasureItem;
             DropDown += OpenStream;
             DropDownClosed += CloseStream;
-            _history = new List<TextureItem>();
             _packages = new List<TexturePackage>();
 
             _fontHeight = (int) Font.GetHeight();
@@ -46,7 +44,8 @@ namespace Sledge.Editor.UI
         private void OpenStream(object sender, EventArgs e)
         {
             if (DocumentManager.CurrentDocument == null || !DocumentManager.CurrentDocument.TextureCollection.Packages.Any()) return;
-            _streamSource = DocumentManager.CurrentDocument.TextureCollection.GetStreamSource(_packages.Union(_history.Select(x => x.Package).Distinct()));
+            _streamSource = DocumentManager.CurrentDocument.TextureCollection.GetStreamSource(
+                _packages.Union(DocumentManager.CurrentDocument.TextureCollection.GetRecentTextures().Select(x => x.Package).Distinct()));
         }
 
         private void CloseStream(object sender, EventArgs e)
@@ -65,8 +64,7 @@ namespace Sledge.Editor.UI
 
         private void SetHistory(TextureItem ti)
         {
-            _history.Remove(ti);
-            _history.Insert(0, ti);
+            if (ti == null) return;
             var rem = FindItem(ti.Name, true) ?? GetTexture(ti.Name, true);
             Items.Remove(rem);
             Items.Insert(0, rem);
@@ -96,7 +94,10 @@ namespace Sledge.Editor.UI
             {
                 db.DrawBorder = false;
             }
-            var lh = _history.LastOrDefault();
+
+            if (DocumentManager.CurrentDocument == null) return;
+
+            var lh = DocumentManager.CurrentDocument.TextureCollection.GetRecentTextures().LastOrDefault();
             if (lh == null) return;
 
             var ot = Items.OfType<TextureComboBoxItem>().FirstOrDefault(x => x.Item.Name == lh.Name && x.IsHistory);
@@ -113,20 +114,25 @@ namespace Sledge.Editor.UI
             var packs = DocumentManager.CurrentDocument.TextureCollection.Packages.Where(x => x.PackageFile == package).ToList();
             if (!packs.Any()) packs.AddRange(DocumentManager.CurrentDocument.TextureCollection.Packages);
 
-            if (packs.Count == _packages.Count && !packs.Except(_packages).Any())
-            {
-                // Packages are the same, no need to update.
-                return;
-            }
-
             _packages = packs;
 
             Items.Clear();
             var selected = SelectedItem as TextureComboBoxItem;
             var selectedName = selected == null ? null : selected.Item.Name;
             TextureComboBoxItem reselect = null;
-            var last = _history.LastOrDefault();
-            foreach (var hi in _history)
+            var history = DocumentManager.CurrentDocument.TextureCollection.GetRecentTextures().ToList();
+            var last = history.LastOrDefault();
+            if (selectedName != null)
+            {
+                var item = GetTexture(selectedName, false);
+                if (item != null)
+                {
+                    Items.Add(item);
+                    reselect = item;
+                    if (last == null) item.DrawBorder = true;
+                }
+            }
+            foreach (var hi in history)
             {
                 var item = GetTexture(hi.Name, true);
                 if (item.Item == null) continue;
@@ -140,15 +146,7 @@ namespace Sledge.Editor.UI
                 Items.Add(item);
                 if (reselect == null && selectedName == item.Item.Name) reselect = item;
             }
-            SelectedItem = reselect ?? (Items.Count == 0 ? null : GetDefaultSelection());
-        }
-
-        private TextureComboBoxItem GetDefaultSelection()
-        {
-            var ignored = "{#!~+-0123456789".ToCharArray();
-            return Items.OfType<TextureComboBoxItem>()
-                .OrderBy(x => new string(x.Item.Name.Where(c => !ignored.Contains(c)).ToArray()) + "Z")
-                .FirstOrDefault();
+            SelectedItem = null;
         }
 
         private static TextureComboBoxItem GetTexture(string name, bool isHistory)

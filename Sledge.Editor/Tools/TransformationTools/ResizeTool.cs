@@ -64,6 +64,14 @@ namespace Sledge.Editor.Tools.TransformationTools
             var now = SnapIfNeeded(viewport.ScreenToWorld(e.X, viewport.Height - e.Y), document);
             var cstart = viewport.Flatten(state.BoxStart);
             var cend = viewport.Flatten(state.BoxEnd);
+
+            // Proportional scaling
+            var ostart = viewport.Flatten(state.PreTransformBoxStart ?? Coordinate.Zero);
+            var oend = viewport.Flatten(state.PreTransformBoxEnd ?? Coordinate.Zero);
+            var owidth = oend.X - ostart.X;
+            var oheight = oend.Y - ostart.Y;
+            var proportional = KeyboardState.Ctrl && state.Action == BaseBoxTool.BoxAction.Resizing && owidth != 0 && oheight != 0;
+
             switch (state.Handle)
             {
                 case BaseBoxTool.ResizeHandle.TopLeft:
@@ -101,6 +109,35 @@ namespace Sledge.Editor.Tools.TransformationTools
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
+            }
+            if (proportional)
+            {
+                var nwidth = cend.X - cstart.X;
+                var nheight = cend.Y - cstart.Y;
+                var mult = Math.Max(nwidth / owidth, nheight / oheight);
+                var pwidth = owidth * mult;
+                var pheight = oheight * mult;
+                var wdiff = pwidth - nwidth;
+                var hdiff = pheight - nheight;
+                switch (state.Handle)
+                {
+                    case BaseBoxTool.ResizeHandle.TopLeft:
+                        cstart.X -= wdiff;
+                        cend.Y += hdiff;
+                        break;
+                    case BaseBoxTool.ResizeHandle.TopRight:
+                        cend.X += wdiff;
+                        cend.Y += hdiff;
+                        break;
+                    case BaseBoxTool.ResizeHandle.BottomLeft:
+                        cstart.X -= wdiff;
+                        cstart.Y -= hdiff;
+                        break;
+                    case BaseBoxTool.ResizeHandle.BottomRight:
+                        cend.X += wdiff;
+                        cstart.Y -= hdiff;
+                        break;
+                }
             }
             return SnapBoxCoordinatesIfNeeded(viewport, state, document, cstart, cend);
         }

@@ -184,7 +184,7 @@ namespace Sledge.Editor.Tools.DisplacementTools
                 var easing = SoftEdgeBrush
                                  ? EnumExtensions.FromDescription<EasingType>((string) SoftEdgeBrushModeCombo.SelectedItem)
                                  : EasingType.Constant;
-                return Easing.FromType(easing);
+                return Easing.FromType(easing, EasingDirection.In);
             }
         }
 

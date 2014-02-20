@@ -346,7 +346,7 @@ namespace Sledge.Editor.Documents
         public void ApplyCurrentTextureToSelection()
         {
             if (_document.Selection.IsEmpty() || _document.Selection.InFaceSelection || Editor.Instance == null) return;
-            var texture = _document.GetSelectedTexture();
+            var texture = _document.TextureCollection.SelectedTexture;
             if (texture == null) return;
             var ti = texture.GetTexture();
             if (ti == null) return;
@@ -1035,7 +1035,7 @@ namespace Sledge.Editor.Documents
 
         public void TextureSelected(TextureItem selection)
         {
-            _document.SetMemory("SelectedTexture", selection == null ? null : selection.Name);
+            _document.TextureCollection.SelectedTexture = selection;
         }
 
         public void EntitySelected(GameDataObject selection)

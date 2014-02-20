@@ -13,6 +13,7 @@ namespace Sledge.Editor.UI
     {
         public enum TextureSortOrder
         {
+            None,
             Name,
             Width,
             Height,
@@ -249,6 +250,9 @@ namespace Sledge.Editor.UI
             IEnumerable<TextureItem> sorted;
             switch (SortOrder)
             {
+                case TextureSortOrder.None:
+                    sorted = _textures;
+                    break;
                 case TextureSortOrder.Name:
                     sorted = _textures.OrderBy(x => x.Name);
                     break;

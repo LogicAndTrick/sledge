@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
 using System.Linq;
 using OpenTK;
 using OpenTK.Graphics;
@@ -18,6 +19,7 @@ namespace Sledge.UI
     {
         public RenderContext RenderContext { get; set; }
         protected Timer UpdateTimer { get; set; }
+        private Stopwatch _stopwatch;
         public List<IViewportEventListener> Listeners { get; set; }
         public bool IsFocused { get; private set; }
         private int UnfocusedUpdateCounter { get; set; }
@@ -77,6 +79,7 @@ namespace Sledge.UI
             
             RenderContext.Dispose();
             UpdateTimer.Dispose();
+            _stopwatch.Stop();
             base.Dispose(disposing);
         }
 
@@ -125,6 +128,8 @@ namespace Sledge.UI
         public void Run()
         {
             MakeCurrent();
+            _stopwatch = new Stopwatch();
+            _stopwatch.Start();
             UpdateTimer = new Timer { Interval = 1 };
             UpdateTimer.Tick += (sender, e) => UpdateFrame();
             UpdateTimer.Start();
@@ -160,7 +165,8 @@ namespace Sledge.UI
                 OnRenderException(ex);
             }
 
-            ListenerDo(x => x.UpdateFrame());
+            var frame = new FrameInfo(_stopwatch.ElapsedMilliseconds);
+            ListenerDo(x => x.UpdateFrame(frame));
 
             LoadIdentity();
             UpdateAfterLoadIdentity();
@@ -269,24 +275,37 @@ namespace Sledge.UI
             ListenerDoEvent(new ViewportEvent(this, e), (l, v) => l.MouseLeave(v));
         }
 
+        private Point _mouseDownLocation = new Point(-1, -1);
+
         protected override void OnMouseMove(MouseEventArgs e)
         {
             ListenerDoEvent(new ViewportEvent(this, e), (l, v) => l.MouseMove(v));
+            if (_mouseDownLocation.X >= 0 && _mouseDownLocation.Y >= 0
+                && Math.Abs(_mouseDownLocation.X - e.Location.X) <= 1
+                && Math.Abs(_mouseDownLocation.Y - e.Location.Y) <= 1)
+            {
+                // Moved outside of the click hot spot
+                _mouseDownLocation = new Point(-1, -1);
+            }
         }
 
         protected override void OnMouseUp(MouseEventArgs e)
         {
             ListenerDoEvent(new ViewportEvent(this, e), (l, v) => l.MouseUp(v));
+            if (_mouseDownLocation.X >= 0 && _mouseDownLocation.Y >= 0
+                && Math.Abs(_mouseDownLocation.X - e.Location.X) <= 1
+                && Math.Abs(_mouseDownLocation.Y - e.Location.Y) <= 1)
+            {
+                // Mouse hasn't moved very much, trigger the click event
+                ListenerDoEvent(new ViewportEvent(this, e), (l, v) => l.MouseClick(v));
+            }
+            _mouseDownLocation = new Point(-1, -1);
         }
 
         protected override void OnMouseDown(MouseEventArgs e)
         {
+            _mouseDownLocation = e.Location;
             ListenerDoEvent(new ViewportEvent(this, e), (l, v) => l.MouseDown(v));
-        }
-
-        protected override void OnMouseClick(MouseEventArgs e)
-        {
-            ListenerDoEvent(new ViewportEvent(this, e), (l, v) => l.MouseClick(v));
         }
 
         protected override void OnMouseDoubleClick(MouseEventArgs e)

@@ -231,7 +231,7 @@ namespace Sledge.Editor.Tools.VMTools
 
         }
 
-        public override void UpdateFrame(ViewportBase viewport)
+        public override void UpdateFrame(ViewportBase viewport, FrameInfo frame)
         {
 
         }

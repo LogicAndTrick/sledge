@@ -54,6 +54,11 @@ namespace Sledge.Providers.Model
             }
         }
 
+        public static bool CanLoad(IFile file)
+        {
+            return RegisteredProviders.Any(p => p.IsValidForFile(file));
+        }
+
         private static DataStructures.Models.Model LoadModel(IFile file)
         {
             var path = file.FullPathName;

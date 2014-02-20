@@ -64,6 +64,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="AnglesTest.cs" />
     <Compile Include="ParseTest.cs" />
+    <Compile Include="InvalidSolidTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Sledge.Common\Sledge.Common.csproj">
