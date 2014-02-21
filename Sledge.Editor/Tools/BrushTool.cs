@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -9,10 +8,8 @@ using Sledge.DataStructures.Geometric;
 using Sledge.Editor.Actions;
 using Sledge.Editor.Actions.MapObjects.Operations;
 using Sledge.Editor.Actions.MapObjects.Selection;
-using Sledge.Editor.History;
 using Sledge.Editor.Properties;
 using Sledge.DataStructures.MapObjects;
-using Sledge.Editor.Rendering;
 using Sledge.Editor.Rendering.Immediate;
 using Sledge.Editor.UI;
 using Sledge.Graphics.Helpers;

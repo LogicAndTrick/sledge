@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
@@ -12,11 +9,9 @@ using Sledge.Common.Mediator;
 using Sledge.DataStructures.Geometric;
 using Sledge.Editor.Properties;
 using Sledge.Editor.UI;
-using Sledge.Extensions;
 using Sledge.Graphics;
 using Sledge.Settings;
 using Sledge.UI;
-using Tao.OpenGl;
 using Camera = Sledge.DataStructures.MapObjects.Camera;
 
 namespace Sledge.Editor.Tools

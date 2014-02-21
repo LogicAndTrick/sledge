@@ -1,6 +1,4 @@
-﻿using Sledge.Editor.UI;
-
-namespace Sledge.Editor.Tools
+﻿namespace Sledge.Editor.Tools
 {
     partial class DisplacementForm
     {

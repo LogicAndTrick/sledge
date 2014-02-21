@@ -3,9 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using Sledge.Common.Mediator;
-using Sledge.DataStructures.MapObjects;
 using Sledge.Providers.Texture;
-using Sledge.Editor.Editing;
 using Sledge.Editor.UI;
 using Sledge.Settings;
 

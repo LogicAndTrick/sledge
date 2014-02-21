@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
-using System.Windows.Forms;
 using Sledge.Editor.Tools.DisplacementTools;
 using Sledge.Settings;
 using Sledge.UI;

@@ -1,13 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Sledge.Common.Mediator;
 using Sledge.Editor.Documents;
-using Sledge.Editor.Tools.TransformationTools;
-using Sledge.Editor.UI;
 using Sledge.Settings;
-using Sledge.UI;
 
 namespace Sledge.Editor.Tools
 {
