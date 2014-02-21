@@ -19,7 +19,7 @@ namespace Sledge.Editor.Brushes
         private readonly NumericControl _addHeight;
         private readonly BooleanControl _curvedRamp;
         private readonly NumericControl _tiltAngle;
-        private readonly NumericControl _tiltInterp;
+        private readonly BooleanControl _tiltInterp;
 
         private const decimal Atan_2 = 63.434948822922047218617812884M;
 
@@ -32,7 +32,7 @@ namespace Sledge.Editor.Brushes
             _addHeight = new NumericControl(this) { LabelText = "Add height", Minimum = -1024, Maximum = 1024, Value = 0 };
             _curvedRamp = new BooleanControl(this) { LabelText = "Curved ramp", Checked = false };
             _tiltAngle = new NumericControl(this) { LabelText = "Tilt angle", Minimum = -Atan_2, Maximum = Atan_2, Value = 0, Enabled = false };
-            _tiltInterp = new NumericControl(this) { LabelText = "Tilt interpolation", Minimum = 0, Maximum = 100, Value = 0, Enabled = false };
+            _tiltInterp = new BooleanControl(this) { LabelText = "Tilt interpolation", Checked = false, Enabled = false };
 
             _curvedRamp.ValuesChanged += (s, b) => _tiltAngle.Enabled = _tiltInterp.Enabled = _curvedRamp.GetValue();
         }
@@ -89,8 +89,7 @@ namespace Sledge.Editor.Brushes
             var curvedRamp = _curvedRamp.GetValue();
             var tiltAngle = curvedRamp ? _tiltAngle.GetValue() : 0;
             if (tiltAngle < -Atan_2 || tiltAngle > Atan_2) yield break;
-            var tiltInterp = curvedRamp ? _tiltInterp.GetValue() : 0;
-            if (tiltInterp < 0 || tiltInterp > 100) yield break;
+            var tiltInterp = curvedRamp ? _tiltInterp.GetValue() : false;
             
             // Very similar to the pipe brush, except with options for start angle, arc, height and tilt
             var width = box.Width;
@@ -115,13 +114,7 @@ namespace Sledge.Editor.Brushes
             {
                 var a = start + i * angle;
                 var h = i * addHeight;
-                var interp = 1M;
-                if (tiltInterp != 0)
-                {
-                    var relative = i - numSides / 2M;
-                    interp = (numSides - 2 * DMath.Abs(relative)) / (numSides * tiltInterp / 100);
-                    interp = DMath.Clamp(interp, 0, 1);
-                }
+                var interp = tiltInterp ? DMath.Cos(DMath.PI / numSides * (i - numSides / 2)) : 1;
                 var tiltHeight = wallWidth / 2 * interp * DMath.Tan(tilt);
                 
                 var xval = box.Center.X + majorOut * DMath.Cos(a);
