@@ -92,6 +92,8 @@ namespace Sledge.Editor.Rendering.Immediate
                 {
                     TextureHelper.Unbind();
                 }
+                if (g.Key.Opacity <= 0.9) GL.Disable(EnableCap.DepthTest);
+                else GL.Enable(EnableCap.DepthTest);
                 GL.Begin(PrimitiveType.Triangles);
                 foreach (var f in g)
                 {
@@ -116,6 +118,7 @@ namespace Sledge.Editor.Rendering.Immediate
 
             GL.End();
             GL.Color4(Color.White);
+            GL.Enable(EnableCap.DepthTest);
         }
 
         public static void CreateWireframeList(string displayListName, IEnumerable<Face> faces, bool overrideColor)

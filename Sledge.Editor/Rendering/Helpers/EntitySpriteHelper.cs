@@ -41,15 +41,15 @@ namespace Sledge.Editor.Rendering.Helpers
 
         public void BeforeRender3D(Viewport3D viewport)
         {
-
+            GL.Enable(EnableCap.Texture2D);
+            GL.Enable(EnableCap.AlphaTest);
+            GL.AlphaFunc(AlphaFunction.Greater, 0);
         }
 
         public void Render3D(Viewport3D vp, MapObject o)
         {
-            // These billboards aren't perfect but they'll do (they rotate with the lookat vector rather than the location vector)
-
             var right = vp.Camera.GetRight();
-            var up = vp.Camera.GetUp();
+            var up = Vector3.Cross(right, (vp.Camera.LookAt - vp.Camera.Location).Normalized());
             var entity = (Entity) o;
 
             var orig = new Vector3((float)entity.Origin.X, (float)entity.Origin.Y, (float)entity.Origin.Z);
@@ -60,7 +60,6 @@ namespace Sledge.Editor.Rendering.Helpers
             var normal = Vector3.Subtract(vp.Camera.Location, orig);
 
             var tex = entity.Sprite;
-            GL.Enable(EnableCap.Texture2D);
             GL.Color3(Color.White);
             tex.Bind();
 
@@ -88,12 +87,13 @@ namespace Sledge.Editor.Rendering.Helpers
             GL.Normal3(normal); GL.TexCoord2(0, 1); GL.Vertex3(Vector3.Subtract(orig, Vector3.Subtract(tup, tright)));
 
             GL.End();
-            GL.Disable(EnableCap.Texture2D);
         }
 
         public void AfterRender3D(Viewport3D viewport)
         {
-
+            GL.AlphaFunc(AlphaFunction.Always, 0);
+            GL.Disable(EnableCap.AlphaTest);
+            GL.Disable(EnableCap.Texture2D);
         }
 
         public void RenderDocument(ViewportBase viewport, Document document)
