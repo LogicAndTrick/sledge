@@ -114,7 +114,7 @@ namespace Sledge.Editor.Brushes
             {
                 var a = start + i * angle;
                 var h = i * addHeight;
-                var interp = tiltInterp ? DMath.Cos(DMath.PI / numSides * (i - numSides / 2)) : 1;
+                var interp = tiltInterp ? DMath.Cos(DMath.PI / numSides * (i - numSides / 2M)) : 1;
                 var tiltHeight = wallWidth / 2 * interp * DMath.Tan(tilt);
                 
                 var xval = box.Center.X + majorOut * DMath.Cos(a);
