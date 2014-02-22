@@ -9,17 +9,17 @@ namespace Sledge.Extensions
 
         static DMath()
         {
-            PI = (decimal) Math.PI;
+            PI = (decimal)Math.PI;
         }
 
         public static decimal Sqrt(decimal val)
         {
-            return (decimal) Math.Sqrt((double) val);
+            return (decimal)Math.Sqrt((double) val);
         }
 
         public static decimal Pow(decimal b, decimal e)
         {
-            return (decimal) Math.Pow((double) b, (double) e);
+            return (decimal)Math.Pow((double) b, (double) e);
         }
 
         public static decimal Tan(decimal angle)
@@ -39,7 +39,7 @@ namespace Sledge.Extensions
 
         public static decimal Cos(decimal angle)
         {
-            return (decimal) Math.Cos((double) angle);
+            return (decimal)Math.Cos((double) angle);
         }
 
         public static decimal Sin(decimal angle)
@@ -54,7 +54,7 @@ namespace Sledge.Extensions
 
         public static decimal Acos(decimal value)
         {
-            return (decimal) Math.Acos((double) value);
+            return (decimal)Math.Acos((double) value);
         }
 
         public static decimal DegreesToRadians(decimal degrees)
@@ -70,6 +70,11 @@ namespace Sledge.Extensions
         public static decimal Abs(decimal d)
         {
             return d < 0 ? -d : d;
+        }
+
+        public static decimal Clamp(decimal d, decimal min, decimal max)
+        {
+            return (d < min) ? min : (d > max) ? max : d;
         }
     }
 }

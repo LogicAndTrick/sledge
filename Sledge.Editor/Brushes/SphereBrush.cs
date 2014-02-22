@@ -15,7 +15,7 @@ namespace Sledge.Editor.Brushes
 
         public SphereBrush()
         {
-            _numSides = new NumericControl(this) { LabelText = "Num. sides" };
+            _numSides = new NumericControl(this) { LabelText = "Number of sides" };
         }
 
         public string Name
