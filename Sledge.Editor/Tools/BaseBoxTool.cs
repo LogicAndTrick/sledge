@@ -172,7 +172,7 @@ namespace Sledge.Editor.Tools
             Usage = ToolUsage.Both;
             State = new BoxState();
 
-            _printer = new TextPrinter(TextQuality.High);
+            _printer = new TextPrinter(TextQuality.Low);
             _printerFont = new Font(FontFamily.GenericSansSerif, 18, GraphicsUnit.Pixel);
         }
 
