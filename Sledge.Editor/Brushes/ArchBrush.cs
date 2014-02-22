@@ -25,7 +25,7 @@ namespace Sledge.Editor.Brushes
 
         public ArchBrush()
         {
-            _numSides = new NumericControl(this) { LabelText = "Num. sides" };
+            _numSides = new NumericControl(this) { LabelText = "Number of sides" };
             _wallWidth = new NumericControl(this) { LabelText = "Wall width", Minimum = 1, Maximum = 1024, Value = 16 };
             _arc = new NumericControl(this) { LabelText = "Arc", Minimum = 1, Maximum = 360 * 4, Value = 360 };
             _startAngle = new NumericControl(this) { LabelText = "Start angle", Minimum = 0, Maximum = 359, Value = 0 };
@@ -88,7 +88,7 @@ namespace Sledge.Editor.Brushes
             var addHeight = _addHeight.GetValue();
             var curvedRamp = _curvedRamp.GetValue();
             var tiltAngle = curvedRamp ? _tiltAngle.GetValue() : 0;
-            if (tiltAngle < -Atan_2 || tiltAngle > Atan_2) yield break;
+            if (DMath.Abs(tiltAngle % 180) == 90) yield break;
             var tiltInterp = curvedRamp ? _tiltInterp.GetValue() : false;
             
             // Very similar to the pipe brush, except with options for start angle, arc, height and tilt
