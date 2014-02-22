@@ -116,7 +116,8 @@ namespace Sledge.Editor.UI
 
             _packages = packs;
 
-            Items.Clear();
+            var itemsList = new List<TextureComboBoxItem>();
+
             var selected = SelectedItem as TextureComboBoxItem;
             var selectedName = selected == null ? null : selected.Item.Name;
             TextureComboBoxItem reselect = null;
@@ -127,7 +128,7 @@ namespace Sledge.Editor.UI
                 var item = GetTexture(selectedName, false);
                 if (item != null)
                 {
-                    Items.Add(item);
+                    itemsList.Add(item);
                     reselect = item;
                     if (last == null) item.DrawBorder = true;
                 }
@@ -137,15 +138,21 @@ namespace Sledge.Editor.UI
                 var item = GetTexture(hi.Name, true);
                 if (item.Item == null) continue;
                 if (hi == last) item.DrawBorder = true;
-                Items.Add(item);
+                itemsList.Add(item);
                 if (reselect == null && selectedName == item.Item.Name) reselect = item;
             }
             var textures = _packages.SelectMany(x => x.Items).Select(x => x.Value).OrderBy(x => x.Name);
             foreach (var item in textures.Select(ti => GetTexture(ti.Name, false)))
             {
-                Items.Add(item);
+                itemsList.Add(item);
                 if (reselect == null && selectedName == item.Item.Name) reselect = item;
             }
+
+            BeginUpdate();
+            Items.Clear();
+            Items.AddRange(itemsList.OfType<object>().ToArray());
+            EndUpdate();
+
             SelectedItem = null;
         }
 
