@@ -33,6 +33,7 @@ namespace Sledge.Editor.Tools.TransformationTools
             return null;
         }
 
+        #region 2D Transformation Matrix
         public override Matrix4? GetTransformationMatrix(Viewport2D viewport, ViewportEvent e, BaseBoxTool.BoxState state, Document doc)
         {
             var coords = GetBoxCoordinatesForSelectionResize(viewport, e, state, doc);
@@ -210,6 +211,32 @@ namespace Sledge.Editor.Tools.TransformationTools
                     break;
             }
             return viewport.Expand(new Coordinate(x, y, 0));
+        }
+        #endregion 2D Transformation Matrix
+
+        public override void MouseMove3D(Viewport3D viewport, ViewportEvent ve, Document document)
+        {
+
+        }
+
+        public override void MouseDown3D(Viewport3D viewport, ViewportEvent ve, Document document)
+        {
+
+        }
+
+        public override void MouseUp3D(Viewport3D viewport, ViewportEvent ve, Document document)
+        {
+
+        }
+
+        public override void MouseWheel3D(Viewport3D viewport, ViewportEvent ve, Document document)
+        {
+
+        }
+
+        public override void Render3D(Viewport3D viewport, Document document)
+        {
+            
         }
     }
 }

@@ -61,6 +61,9 @@ namespace Sledge.Editor.Rendering.Renderers
 
         public void Dispose()
         {
+            _array.Dispose();
+            _decalArray.Dispose();
+            foreach (var ma in _modelArrays) ma.Value.Dispose();
             _mapObject2DShader.Dispose();
             _mapObject3DShader.Dispose();
         }

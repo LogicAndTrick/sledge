@@ -51,12 +51,12 @@ namespace Sledge.Editor.UI
         {
             var currMillis = _lastMillis;
             _lastMillis = frame.Milliseconds;
+
             if (currMillis == 0) return;
+            if (!Focus || !Viewport.IsUnlocked(this)) return;
 
             var seconds = (frame.Milliseconds - currMillis) / 1000m;
             var units = Sledge.Settings.View.ForwardSpeed * seconds;
-
-            if (!Focus) return;
 
             var down = KeyboardState.IsAnyKeyDown(Keys.W, Keys.A, Keys.S, Keys.D);
             if (!down) _downMillis = 0;
@@ -134,7 +134,7 @@ namespace Sledge.Editor.UI
 
         public void KeyDown(ViewportEvent e)
         {
-            if (!Focus) return;
+            if (!Focus || !Viewport.IsUnlocked(this)) return;
             if (e.KeyCode == Keys.Z && !e.Alt && !e.Control && !e.Shift)
             {
                 FreeLookToggle = !FreeLookToggle;
@@ -153,6 +153,7 @@ namespace Sledge.Editor.UI
 
         private void SetFreeLook()
         {
+            if (!Viewport.IsUnlocked(this)) return;
             FreeLook = false;
             if (FreeLookToggle)
             {
@@ -173,6 +174,7 @@ namespace Sledge.Editor.UI
                 Viewport.Capture = true;
                 CursorVisible = false;
                 Cursor.Hide();
+                Viewport.AquireInputLock(this);
             }
             else if (!FreeLook && !CursorVisible)
             {
@@ -181,6 +183,7 @@ namespace Sledge.Editor.UI
                 Viewport.Capture = false;
                 CursorVisible = true;
                 Cursor.Show();
+                Viewport.ReleaseInputLock(this);
             }
         }
 
@@ -244,6 +247,7 @@ namespace Sledge.Editor.UI
 
         public void MouseWheel(ViewportEvent e)
         {
+            if (!Viewport.IsUnlocked(this)) return;
             if (!Focus || (ToolManager.ActiveTool != null && ToolManager.ActiveTool.IsCapturingMouseWheel())) return;
             Camera.Advance((e.Delta / Math.Abs(e.Delta)) * Sledge.Settings.View.MouseWheelMoveDistance);
         }
@@ -291,6 +295,7 @@ namespace Sledge.Editor.UI
                     Viewport.Capture = false;
                     CursorVisible = true;
                     Cursor.Show();
+                    Viewport.ReleaseInputLock(this);
                 }
                 PositionKnown = false;
                 Focus = false;

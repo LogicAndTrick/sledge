@@ -36,6 +36,7 @@ namespace Sledge.Editor.Tools.TransformationTools
                        : Cursors.SizeNS;
         }
 
+        #region 2D Transformation Matrix
         public override Matrix4? GetTransformationMatrix(Viewport2D viewport, ViewportEvent e, BaseBoxTool.BoxState state, Document doc)
         {
             var shearUpDown = state.Handle == BaseBoxTool.ResizeHandle.Left || state.Handle == BaseBoxTool.ResizeHandle.Right;
@@ -78,6 +79,32 @@ namespace Sledge.Editor.Tools.TransformationTools
             var stran = Matrix4.CreateTranslation((float)-shearOrigin.X, (float)-shearOrigin.Y, (float)-shearOrigin.Z);
             var shear = Matrix4.Mult(stran, shearMatrix);
             return Matrix4.Mult(shear, Matrix4.Invert(stran));
+        }
+        #endregion 2D Transformation Matrix
+
+        public override void MouseMove3D(Viewport3D viewport, ViewportEvent ve, Document document)
+        {
+
+        }
+
+        public override void MouseDown3D(Viewport3D viewport, ViewportEvent ve, Document document)
+        {
+
+        }
+
+        public override void MouseUp3D(Viewport3D viewport, ViewportEvent ve, Document document)
+        {
+
+        }
+
+        public override void MouseWheel3D(Viewport3D viewport, ViewportEvent ve, Document document)
+        {
+
+        }
+
+        public override void Render3D(Viewport3D viewport, Document document)
+        {
+            
         }
     }
 }

@@ -208,7 +208,17 @@ namespace Sledge.Editor.Tools
         }
         #endregion
 
-        #region 3D selection
+        #region 3D interaction
+
+        protected override void MouseMove3D(Viewport3D viewport, ViewportEvent e)
+        {
+            if (_currentTool != null)
+            {
+                _currentTool.MouseMove3D(viewport, e, Document);
+                if (e.Handled) return;
+            }
+            base.MouseMove3D(viewport, e);
+        }
 
         /// <summary>
         /// When the mouse is pressed in the 3D view, we want to select the clicked object.
@@ -217,6 +227,12 @@ namespace Sledge.Editor.Tools
         /// <param name="e">The click event</param>
         protected override void MouseDown3D(Viewport3D viewport, ViewportEvent e)
         {
+            if (_currentTool != null)
+            {
+                _currentTool.MouseDown3D(viewport, e, Document);
+                if (e.Handled) return;
+            }
+
             // First, get the ray that is cast from the clicked point along the viewport frustrum
             var ray = viewport.CastRayFromScreen(e.X, e.Y);
 
@@ -243,12 +259,35 @@ namespace Sledge.Editor.Tools
         }
 
         /// <summary>
+        /// Once the mouse is released in the 3D view, the 3D select cycle has finished.
+        /// </summary>
+        /// <param name="viewport">The 3D viewport</param>
+        /// <param name="e">The mouse event</param>
+        protected override void MouseUp3D(Viewport3D viewport, ViewportEvent e)
+        {
+            if (_currentTool != null)
+            {
+                _currentTool.MouseUp3D(viewport, e, Document);
+                if (e.Handled) return;
+            }
+
+            IntersectingObjectsFor3DSelection = null;
+            ChosenItemFor3DSelection = null;
+        }
+
+        /// <summary>
         /// When the mouse wheel is scrolled while the mouse is down in the 3D view, cycle through the candidate elements.
         /// </summary>
         /// <param name="viewport">The viewport that was scrolled</param>
         /// <param name="e">The scroll event</param>
         public override void MouseWheel(ViewportBase viewport, ViewportEvent e)
         {
+            if (_currentTool != null && viewport is Viewport3D)
+            {
+                _currentTool.MouseWheel3D((Viewport3D)viewport, e, Document);
+                if (e.Handled) return;
+            }
+
             // If we're not in 3D cycle mode, carry on
             if (!(viewport is Viewport3D)
                 || IntersectingObjectsFor3DSelection == null
@@ -298,17 +337,6 @@ namespace Sledge.Editor.Tools
         public override HotkeyInterceptResult InterceptHotkey(HotkeysMediator hotkeyMessage)
         {
             return HotkeyInterceptResult.Continue;
-        }
-
-        /// <summary>
-        /// Once the mouse is released in the 3D view, the 3D select cycle has finished.
-        /// </summary>
-        /// <param name="viewport">The 3D viewport</param>
-        /// <param name="e">The mouse event</param>
-        protected override void MouseUp3D(Viewport3D viewport, ViewportEvent e)
-        {
-            IntersectingObjectsFor3DSelection = null;
-            ChosenItemFor3DSelection = null;
         }
 
         #endregion
@@ -693,6 +721,15 @@ namespace Sledge.Editor.Tools
             GL.Disable(EnableCap.LineStipple);
 
             RenderBoxText(viewport, s, e);
+        }
+
+        protected override void Render3D(Viewport3D viewport)
+        {
+            if (_currentTool != null)
+            {
+                _currentTool.Render3D(viewport, Document);
+            }
+            base.Render3D(viewport);
         }
 
         #endregion

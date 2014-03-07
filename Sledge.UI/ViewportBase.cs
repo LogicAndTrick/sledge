@@ -24,6 +24,25 @@ namespace Sledge.UI
         public bool IsFocused { get; private set; }
         private int UnfocusedUpdateCounter { get; set; }
 
+        private object _inputLock;
+
+        public bool IsUnlocked(object context)
+        {
+            return _inputLock == null || _inputLock == context;
+        }
+
+        public bool AquireInputLock(object context)
+        {
+            if (_inputLock == null) _inputLock = context;
+            return _inputLock == context;
+        }
+
+        public bool ReleaseInputLock(object context)
+        {
+            if (_inputLock == context) _inputLock = null;
+            return _inputLock == null;
+        }
+
         public delegate void RenderExceptionEventHandler(object sender, Exception exception);
         public event RenderExceptionEventHandler RenderException;
         protected void OnRenderException(Exception ex)

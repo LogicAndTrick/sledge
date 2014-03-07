@@ -15,7 +15,12 @@ namespace Sledge.Editor.Tools.TransformationTools
         public abstract bool FilterHandle(BaseBoxTool.ResizeHandle handle);
         public abstract string GetTransformName();
         public abstract Cursor CursorForHandle(BaseBoxTool.ResizeHandle handle);
-
+        public abstract void Render3D(Viewport3D viewport, Document document);
+        public abstract void MouseMove3D(Viewport3D viewport, ViewportEvent ve, Document document);
+        public abstract void MouseDown3D(Viewport3D viewport, ViewportEvent ve, Document document);
+        public abstract void MouseUp3D(Viewport3D viewport, ViewportEvent ve, Document document);
+        public abstract void MouseWheel3D(Viewport3D viewport, ViewportEvent ve, Document document);
+        
         /// <summary>
         /// Get a list of handles and their standard offset positions
         /// </summary>

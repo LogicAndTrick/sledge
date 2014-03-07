@@ -162,6 +162,7 @@
     <Compile Include="Enums\PasteSpecialStartPoint.cs" />
     <Compile Include="Enums\TransformType.cs" />
     <Compile Include="Environment\GameEnvironment.cs" />
+    <Compile Include="Extensions\GeometricExtensions.cs" />
     <Compile Include="Extensions\ModelExtensions.cs" />
     <Compile Include="Extensions\DecalExtensions.cs" />
     <Compile Include="History\HistoryStack.cs" />
