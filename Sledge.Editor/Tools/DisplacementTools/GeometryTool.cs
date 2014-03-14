@@ -261,7 +261,7 @@ namespace Sledge.Editor.Tools.DisplacementTools
 
             if (_needsRedraw)
             {
-                Document.UpdateDisplayLists(Document.Selection.GetSelectedFaces());
+                // update display lists?
                 _needsRedraw = false;
             }
         }

@@ -50,7 +50,7 @@ namespace Sledge.Editor.Editing
                 SelectedFaces.AddRange(distinct);
                 _changed = false;
             }
-            return SelectedFaces;
+            return new List<Face>(SelectedFaces);
         }
 
         public void SwitchToFaceSelection()

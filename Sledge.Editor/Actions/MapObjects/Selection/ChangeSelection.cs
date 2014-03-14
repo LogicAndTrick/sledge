@@ -27,7 +27,7 @@ namespace Sledge.Editor.Actions.MapObjects.Selection
             document.Selection.Select(_deselected.Where(x => x.BoundingBox != null));
             document.Selection.Deselect(_selected);
 
-            Mediator.Publish(EditorMediator.DocumentTreeObjectsChanged, _selected.Union(_deselected));
+            Mediator.Publish(EditorMediator.DocumentTreeSelectedObjectsChanged, _selected.Union(_deselected));
             Mediator.Publish(EditorMediator.SelectionChanged);
         }
 
@@ -36,7 +36,7 @@ namespace Sledge.Editor.Actions.MapObjects.Selection
             document.Selection.Deselect(_deselected);
             document.Selection.Select(_selected.Where(x => x.BoundingBox != null));
 
-            Mediator.Publish(EditorMediator.DocumentTreeObjectsChanged, _selected.Union(_deselected));
+            Mediator.Publish(EditorMediator.DocumentTreeSelectedObjectsChanged, _selected.Union(_deselected));
             Mediator.Publish(EditorMediator.SelectionChanged);
         }
     }

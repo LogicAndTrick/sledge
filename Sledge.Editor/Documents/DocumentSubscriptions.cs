@@ -52,7 +52,9 @@ namespace Sledge.Editor.Documents
         {
             Mediator.Subscribe(EditorMediator.DocumentTreeStructureChanged, this);
             Mediator.Subscribe(EditorMediator.DocumentTreeObjectsChanged, this);
+            Mediator.Subscribe(EditorMediator.DocumentTreeSelectedObjectsChanged, this);
             Mediator.Subscribe(EditorMediator.DocumentTreeFacesChanged, this);
+            Mediator.Subscribe(EditorMediator.DocumentTreeSelectedFacesChanged, this);
 
             Mediator.Subscribe(EditorMediator.SettingsChanged, this);
 
@@ -171,24 +173,34 @@ namespace Sledge.Editor.Documents
 
         private void DocumentTreeStructureChanged()
         {
-            _document.UpdateDisplayLists();
+            _document.RenderAll();
         }
 
         private void DocumentTreeObjectsChanged(IEnumerable<MapObject> objects)
         {
-            _document.UpdateDisplayLists(objects);
+            _document.RenderObjects(objects);
+        }
+
+        private void DocumentTreeSelectedObjectsChanged(IEnumerable<MapObject> objects)
+        {
+            _document.RenderSelection(objects);
         }
 
         private void DocumentTreeFacesChanged(IEnumerable<Face> faces)
         {
-            _document.UpdateDisplayLists(faces);
+            _document.RenderFaces(faces);
+        }
+
+        private void DocumentTreeSelectedFacesChanged(IEnumerable<Face> faces)
+        {
+            _document.RenderSelection(faces.Select(x => x.Parent).Distinct());
         }
 
         public void SettingsChanged()
         {
             _document.HelperManager.UpdateCache();
             RebuildGrid();
-            _document.UpdateDisplayLists();
+            _document.RenderAll();
         }
 
         public void HistoryUndo()
@@ -926,7 +938,7 @@ namespace Sledge.Editor.Documents
         public void ToggleHideNullTextures()
         {
             _document.Map.HideNullTextures = !_document.Map.HideNullTextures;
-            _document.UpdateDisplayLists();
+            _document.RenderAll();
             Mediator.Publish(EditorMediator.UpdateToolstrip);
         }
 

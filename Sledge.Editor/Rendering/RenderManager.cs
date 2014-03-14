@@ -63,6 +63,11 @@ namespace Sledge.Editor.Rendering
             _renderer.Update();
         }
 
+        public void UpdateSelection(IEnumerable<MapObject> objects)
+        {
+            _renderer.UpdateSelection(objects);
+        }
+
         public void UpdatePartial(IEnumerable<MapObject> objects)
         {
             _renderer.UpdatePartial(objects);

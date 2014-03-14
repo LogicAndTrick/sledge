@@ -63,7 +63,7 @@ namespace Sledge.Editor.Tools
             _form.Show(Editor.Instance);
             Editor.Instance.Focus();
             Document.Selection.SwitchToFaceSelection();
-            Document.UpdateDisplayLists();
+            //todo Document.Update Display Lists(); (see texture tool)
 
             if (_currentTool != null) _currentTool.ToolSelected(preventHistory);
         }
@@ -72,7 +72,7 @@ namespace Sledge.Editor.Tools
         {
             Document.Selection.SwitchToObjectSelection();
             _form.Hide();
-            Document.UpdateDisplayLists();
+            //todo Document.Update Display Lists(); (see texture tool)
 
             if (_currentTool != null) _currentTool.ToolDeselected(preventHistory);
         }

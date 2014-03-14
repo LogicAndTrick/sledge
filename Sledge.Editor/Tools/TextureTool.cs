@@ -170,13 +170,14 @@ namespace Sledge.Editor.Tools
                 var currentSelection = Document.Selection.GetSelectedObjects();
                 Document.Selection.SwitchToFaceSelection();
                 var newSelection = Document.Selection.GetSelectedFaces().Select(x => x.Parent);
-                Document.UpdateDisplayLists(currentSelection.Union(newSelection));
+                Document.RenderSelection(currentSelection.Union(newSelection));
             }
 
             _form.SelectionChanged();
             _form.SelectTexture(Document.TextureCollection.SelectedTexture);
             Mediator.Subscribe(EditorMediator.TextureSelected, this);
             Mediator.Subscribe(EditorMediator.DocumentTreeFacesChanged, this);
+            Mediator.Subscribe(EditorMediator.SelectionChanged, this);
         }
 
         public override void ToolDeselected(bool preventHistory)
@@ -189,7 +190,7 @@ namespace Sledge.Editor.Tools
                 var currentSelection = Document.Selection.GetSelectedFaces().Select(x => x.Parent);
                 Document.Selection.SwitchToObjectSelection();
                 var newSelection = Document.Selection.GetSelectedObjects();
-                Document.UpdateDisplayLists(currentSelection.Union(newSelection));
+                Document.RenderSelection(currentSelection.Union(newSelection));
             }
 
             _form.Clear();
@@ -200,6 +201,11 @@ namespace Sledge.Editor.Tools
         private void TextureSelected(TextureItem texture)
         {
             _form.SelectTexture(texture);
+        }
+
+        private void SelectionChanged()
+        {
+            _form.SelectionChanged();
         }
 
         private void DocumentTreeFacesChanged()

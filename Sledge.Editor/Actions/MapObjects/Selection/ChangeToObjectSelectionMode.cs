@@ -36,7 +36,7 @@ namespace Sledge.Editor.Actions.MapObjects.Selection
 
             ToolManager.Activate(_toolType, true);
 
-            Mediator.Publish(EditorMediator.DocumentTreeFacesChanged, _selection.Union(seln));
+            Mediator.Publish(EditorMediator.DocumentTreeSelectedFacesChanged, _selection.Union(seln));
             Mediator.Publish(EditorMediator.SelectionChanged);
         }
 
@@ -48,7 +48,7 @@ namespace Sledge.Editor.Actions.MapObjects.Selection
 
             ToolManager.Activate(HotkeyTool.Selection, true);
 
-            Mediator.Publish(EditorMediator.DocumentTreeFacesChanged, _selection);
+            Mediator.Publish(EditorMediator.DocumentTreeSelectedFacesChanged, _selection);
             Mediator.Publish(EditorMediator.SelectionChanged);
         }
     }

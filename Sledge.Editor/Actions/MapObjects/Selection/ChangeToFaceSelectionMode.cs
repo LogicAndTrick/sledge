@@ -35,7 +35,7 @@ namespace Sledge.Editor.Actions.MapObjects.Selection
 
             ToolManager.Activate(HotkeyTool.Selection, true);
 
-            Mediator.Publish(EditorMediator.DocumentTreeObjectsChanged, _selection.Union(document.Selection.GetSelectedObjects()));
+            Mediator.Publish(EditorMediator.DocumentTreeSelectedObjectsChanged, _selection.Union(document.Selection.GetSelectedObjects()));
             Mediator.Publish(EditorMediator.SelectionChanged);
         }
 
@@ -47,7 +47,7 @@ namespace Sledge.Editor.Actions.MapObjects.Selection
 
             ToolManager.Activate(_toolType, true);
 
-            Mediator.Publish(EditorMediator.DocumentTreeFacesChanged, document.Selection.GetSelectedFaces());
+            Mediator.Publish(EditorMediator.DocumentTreeSelectedFacesChanged, document.Selection.GetSelectedFaces());
             Mediator.Publish(EditorMediator.SelectionChanged);
         }
     }

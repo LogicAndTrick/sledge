@@ -289,6 +289,11 @@ namespace Sledge.Editor.Rendering.Renderers
             _cache = null;
         }
 
+        public void UpdateSelection(IEnumerable<MapObject> objects)
+        {
+            _cache = null;
+        }
+
         public void UpdateDocumentToggles()
         {
             // Not needed
@@ -301,12 +306,12 @@ namespace Sledge.Editor.Rendering.Renderers
             return list.Where(x => !x.IsCodeHidden).OfType<Entity>().Where(x => x.HasModel());
         }
 
-        private static IEnumerable<Entity> GetDecals(MapObject root)
+        private static IEnumerable<Entity> GetDecals(MapObject root, bool update = true)
         {
             var list = new List<MapObject>();
             FindRecursive(list, root, x => !x.IsVisgroupHidden);
             var results = list.Where(x => !x.IsCodeHidden).OfType<Entity>().Where(x => x.HasDecal()).ToList();
-            results.ForEach(x => x.UpdateDecalGeometry());
+            if (update) results.ForEach(x => x.UpdateDecalGeometry()); // TODO This is a big performance hit, can it be moved elsewhere?
             return results;
         }
 

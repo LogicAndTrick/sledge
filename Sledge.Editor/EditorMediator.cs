@@ -40,7 +40,9 @@ namespace Sledge.Editor
         // Action messages
 
         DocumentTreeStructureChanged,
+        DocumentTreeSelectedObjectsChanged,
         DocumentTreeObjectsChanged,
+        DocumentTreeSelectedFacesChanged,
         DocumentTreeFacesChanged,
 
         EntityDataChanged,

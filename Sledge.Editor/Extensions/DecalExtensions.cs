@@ -12,22 +12,36 @@ namespace Sledge.Editor.Extensions
     public static class DecalExtensions
     {
         private const string DecalMetaKey = "Decal";
+        private const string DecalNameMetaKey = "DecalName";
         private const string DecalGeometryMetaKey = "DecalGeometry";
         private const string DecalBoundingBoxMetaKey = "DecalBoundingBox";
 
-        public static void UpdateDecals(this Map map, Document document)
+        public static bool UpdateDecals(this Map map, Document document)
         {
-            UpdateDecals(document, map.WorldSpawn);
+            return UpdateDecals(document, map.WorldSpawn);
         }
 
-        private static void UpdateDecals(Document document, MapObject mo)
+        public static bool UpdateDecals(this Map map, Document document, IEnumerable<MapObject> objects)
         {
-            mo.Children.ForEach(x => UpdateDecals(document, x));
+            var updated = false;
+            foreach (var mo in objects) updated |= UpdateDecals(document, mo);
+            return updated;
+        }
+
+        private static bool UpdateDecals(Document document, MapObject mo)
+        {
+            var updatedChildren = false;
+            foreach (var child in mo.Children) updatedChildren |= UpdateDecals(document, child);
+
             var e = mo as Entity;
-            if (e == null || !ShouldHaveDecal(e)) return;
-            var tex = e.EntityData.Properties.FirstOrDefault(x => x.Key == "texture");
-            if (tex == null || (HasDecal(e) && string.Equals(GetDecal(e).Name, tex.Value, StringComparison.CurrentCultureIgnoreCase))) return;
-            e.SetDecal(document.GetTexture(tex.Value.ToLowerInvariant()));
+            if (e == null || !ShouldHaveDecal(e)) return updatedChildren;
+
+            var decal = e.EntityData.Properties.FirstOrDefault(x => x.Key == "texture");
+            var existingDecal = e.MetaData.Get<string>(DecalNameMetaKey);
+            if (decal == null || String.Equals(decal.Value, existingDecal, StringComparison.InvariantCultureIgnoreCase)) return updatedChildren;
+
+            e.SetDecal(document.GetTexture(decal.Value.ToLowerInvariant()));
+            return true;
         }
 
         public static bool ShouldHaveDecal(this Entity entity)
@@ -37,7 +51,16 @@ namespace Sledge.Editor.Extensions
 
         public static void SetDecal(this Entity entity, ITexture texture)
         {
-            entity.MetaData.Set(DecalMetaKey, texture);
+            if (texture == null)
+            {
+                entity.MetaData.Unset(DecalMetaKey);
+                entity.MetaData.Unset(DecalNameMetaKey);
+            }
+            else
+            {
+                entity.MetaData.Set(DecalMetaKey, texture);
+                entity.MetaData.Set(DecalNameMetaKey, texture.Name);
+            }
             UpdateDecalGeometry(entity);
         }
 
@@ -54,10 +77,17 @@ namespace Sledge.Editor.Extensions
         public static void UpdateDecalGeometry(this Entity entity)
         {
             var decal = GetDecal(entity);
-            if (decal == null) return;
-            var geometry = CalculateDecalGeometry(entity, decal);
-            entity.MetaData.Set(DecalGeometryMetaKey, geometry);
-            entity.MetaData.Set(DecalBoundingBoxMetaKey, geometry.Any() ? new Box(geometry.SelectMany(x => x.Vertices).Select(x => x.Location)) : null);
+            if (decal == null)
+            {
+                entity.MetaData.Unset(DecalGeometryMetaKey);
+                entity.MetaData.Unset(DecalBoundingBoxMetaKey);
+            }
+            else
+            {
+                var geometry = CalculateDecalGeometry(entity, decal);
+                entity.MetaData.Set(DecalGeometryMetaKey, geometry);
+                entity.MetaData.Set(DecalBoundingBoxMetaKey, geometry.Any() ? new Box(geometry.SelectMany(x => x.Vertices).Select(x => x.Location)) : null);
+            }
         }
 
         public static bool HasDecal(this Entity entity)

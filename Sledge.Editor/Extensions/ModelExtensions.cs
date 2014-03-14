@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Sledge.Common;
 using Sledge.DataStructures.GameData;
 using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.MapObjects;
-using Sledge.DataStructures.Models;
-using Sledge.DataStructures.Transformations;
 using Sledge.Editor.Documents;
 using Sledge.FileSystem;
 using Sledge.Providers.Model;
@@ -16,50 +13,76 @@ namespace Sledge.Editor.Extensions
     public static class ModelExtensions
     {
         private const string ModelMetaKey = "Model";
+        private const string ModelNameMetaKey = "ModelName";
         private const string ModelBoundingBoxMetaKey = "ModelBoundingBox";
 
-        public static void UpdateModels(this Map map, Document document)
+        public static bool UpdateModels(this Map map, Document document)
         {
-            if (Sledge.Settings.View.DisableModelRendering) return;
-            UpdateModels(document, map.WorldSpawn);
+            if (Sledge.Settings.View.DisableModelRendering) return false;
+            return UpdateModels(document, map.WorldSpawn);
         }
 
-        private static void UpdateModels(Document document, MapObject mo)
+        public static bool UpdateModels(this Map map, Document document, IEnumerable<MapObject> objects)
         {
-            mo.Children.ForEach(x => UpdateModels(document, x));
+            if (Sledge.Settings.View.DisableModelRendering) return false;
+
+            var updated = false;
+            foreach (var mo in objects) updated |= UpdateModels(document, mo);
+            return updated;
+        }
+
+        private static bool UpdateModels(Document document, MapObject mo)
+        {
+            var updatedChildren = false;
+            foreach (var child in mo.Children) updatedChildren |= UpdateModels(document, child);
+
             var e = mo as Entity;
-            if (e == null || !ShouldHaveModel(e)) return;
+            if (e == null || !ShouldHaveModel(e)) return updatedChildren;
+
             var model = GetModelName(e);
+            var existingModel = e.MetaData.Get<string>(ModelNameMetaKey);
+            if (String.Equals(model, existingModel, StringComparison.InvariantCultureIgnoreCase)) return updatedChildren; // Already set; No need to continue
+
             var file = document.Environment.Root.TraversePath(model);
-            if (file == null || !ModelProvider.CanLoad(file)) return;
+            if (file == null || !ModelProvider.CanLoad(file))
+            {
+                // Model not valid, get rid of it
+                UnsetModel(e);
+                return true;
+            }
+
             try
             {
                 SetModel(e, ModelProvider.CreateModelReference(file));
+                return true;
             }
             catch
             {
                 // Couldn't load
+                return updatedChildren;
             }
         }
 
-        public static bool ShouldHaveModel(this Entity entity)
+        private static bool ShouldHaveModel(Entity entity)
         {
             return GetModelName(entity) != null;
         }
 
-        public static string GetModelName(this Entity entity)
+        private static string GetModelName(Entity entity)
         {
             if (entity.GameData == null) return null;
-            var studio = entity.GameData.Behaviours.FirstOrDefault(x => String.Equals(x.Name, "studio", StringComparison.InvariantCultureIgnoreCase));
+            var studio = entity.GameData.Behaviours.FirstOrDefault(x => String.Equals(x.Name, "studio", StringComparison.InvariantCultureIgnoreCase))
+                         ?? entity.GameData.Behaviours.FirstOrDefault(x => String.Equals(x.Name, "sprite", StringComparison.InvariantCultureIgnoreCase));
             if (studio == null) return null;
 
             // First see if the studio behaviour forces a model...
-            if (studio.Values.Count == 1 && !String.IsNullOrWhiteSpace(studio.Values[0]))
+            if (String.Equals(studio.Name, "studio", StringComparison.InvariantCultureIgnoreCase)
+                && studio.Values.Count == 1 && !String.IsNullOrWhiteSpace(studio.Values[0]))
             {
                 return studio.Values[0].Trim();
             }
 
-            // Find the first property that is a studio type...
+            // Find the first property that is a studio type, or has a name of "model"...
             var prop = entity.GameData.Properties.FirstOrDefault(x => x.VariableType == VariableType.Studio);
             if (prop == null) prop = entity.GameData.Properties.FirstOrDefault(x => String.Equals(x.Name, "model", StringComparison.InvariantCultureIgnoreCase));
             if (prop != null)
@@ -70,10 +93,18 @@ namespace Sledge.Editor.Extensions
             return null;
         }
 
-        public static void SetModel(this Entity entity, ModelReference model)
+        private static void SetModel(Entity entity, ModelReference model)
         {
             entity.MetaData.Set(ModelMetaKey, model);
+            entity.MetaData.Set(ModelNameMetaKey, GetModelName(entity));
             entity.MetaData.Set(ModelBoundingBoxMetaKey, (Box) null); //todo.
+        }
+
+        private static void UnsetModel(Entity entity)
+        {
+            entity.MetaData.Unset(ModelMetaKey);
+            entity.MetaData.Unset(ModelNameMetaKey);
+            entity.MetaData.Unset(ModelBoundingBoxMetaKey);
         }
 
         public static ModelReference GetModel(this Entity entity)

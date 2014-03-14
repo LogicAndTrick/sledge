@@ -147,7 +147,8 @@ namespace Sledge.Editor.Documents
             ViewportManager.AddContextAll(new HelperRenderable(this));
 
             _subscriptions.Subscribe();
-            HelperManager.UpdateCache();
+
+            RenderAll();
         }
 
         public void SetInactive()
@@ -359,7 +360,7 @@ namespace Sledge.Editor.Documents
             return TextureHelper.Get(name);
         }
 
-        public void UpdateDisplayLists()
+        public void RenderAll()
         {
             Map.PartialPostLoadProcess(GameData, GetTexture, SettingsManager.GetSpecialTextureOpacity);
             Map.UpdateDecals(this);
@@ -369,21 +370,31 @@ namespace Sledge.Editor.Documents
             ViewportManager.Viewports.ForEach(vp => vp.UpdateNextFrame());
         }
 
-        public void UpdateDisplayLists(IEnumerable<MapObject> objects)
+        public void RenderSelection(IEnumerable<MapObject> objects)
         {
-            Map.PartialPostLoadProcess(GameData, GetTexture, SettingsManager.GetSpecialTextureOpacity);
-            Map.UpdateDecals(this);
-            Map.UpdateModels(this);
-            HelperManager.UpdateCache();
-            Renderer.UpdatePartial(objects);
+            Renderer.UpdateSelection(objects);
             ViewportManager.Viewports.ForEach(vp => vp.UpdateNextFrame());
         }
 
-        public void UpdateDisplayLists(IEnumerable<Face> faces)
+        public void RenderObjects(IEnumerable<MapObject> objects)
+        {
+            var objs = objects.ToList();
+            Map.PartialPostLoadProcess(GameData, GetTexture, SettingsManager.GetSpecialTextureOpacity);
+            var decalsUpdated = Map.UpdateDecals(this, objs);
+            var modelsUpdated = Map.UpdateModels(this, objs);
+            HelperManager.UpdateCache();
+
+            // If the models/decals changed, we need to do a full update
+            if (modelsUpdated || decalsUpdated) Renderer.Update();
+            else Renderer.UpdatePartial(objs);
+
+            ViewportManager.Viewports.ForEach(vp => vp.UpdateNextFrame());
+        }
+
+        public void RenderFaces(IEnumerable<Face> faces)
         {
             Map.PartialPostLoadProcess(GameData, GetTexture, SettingsManager.GetSpecialTextureOpacity);
-            Map.UpdateDecals(this);
-            Map.UpdateModels(this);
+            // No need to update decals or models here: they can only be changed via entity properties
             HelperManager.UpdateCache();
             Renderer.UpdatePartial(faces);
             ViewportManager.Viewports.ForEach(vp => vp.UpdateNextFrame());
@@ -397,7 +408,6 @@ namespace Sledge.Editor.Documents
             vp.RenderContext.Add(new ToolRenderable());
             vp.RenderContext.Add(new HelperRenderable(this));
             Renderer.UpdateGrid(Map.GridSpacing, Map.Show2DGrid, Map.Show3DGrid);
-            UpdateDisplayLists();
         }
 
         public void Make2D(ViewportBase viewport, Viewport2D.ViewDirection direction)
@@ -407,7 +417,6 @@ namespace Sledge.Editor.Documents
             vp.RenderContext.Add(new ToolRenderable());
             vp.RenderContext.Add(new HelperRenderable(this));
             Renderer.UpdateGrid(Map.GridSpacing, Map.Show2DGrid, Map.Show3DGrid);
-            UpdateDisplayLists();
         }
 
         public GameDataObject GetSelectedEntity()

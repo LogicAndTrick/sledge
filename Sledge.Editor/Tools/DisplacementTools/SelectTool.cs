@@ -67,7 +67,6 @@ namespace Sledge.Editor.Tools.DisplacementTools
             //        itemToSelect = tex != null ? TexturePackage.GetItem(tex.Texture.Name) : null;
             //    }
             //}
-            //Document.UpdateDisplayLists();
             //_form.SelectionChanged();
             //if (itemToSelect != null)
             //{

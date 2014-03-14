@@ -23,7 +23,7 @@ namespace Sledge.Editor.Actions.MapObjects.Selection
         {
             document.Selection.Select(_objects);
 
-            Mediator.Publish(EditorMediator.DocumentTreeObjectsChanged, _objects);
+            Mediator.Publish(EditorMediator.DocumentTreeSelectedObjectsChanged, _objects);
             Mediator.Publish(EditorMediator.SelectionChanged);
         }
 
@@ -31,7 +31,7 @@ namespace Sledge.Editor.Actions.MapObjects.Selection
         {
             document.Selection.Deselect(_objects);
 
-            Mediator.Publish(EditorMediator.DocumentTreeObjectsChanged, _objects);
+            Mediator.Publish(EditorMediator.DocumentTreeSelectedObjectsChanged, _objects);
             Mediator.Publish(EditorMediator.SelectionChanged);
         }
     }

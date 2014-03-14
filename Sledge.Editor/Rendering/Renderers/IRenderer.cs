@@ -24,6 +24,7 @@ namespace Sledge.Editor.Rendering.Renderers
         void Update();
         void UpdatePartial(IEnumerable<MapObject> objects);
         void UpdatePartial(IEnumerable<Face> faces);
+        void UpdateSelection(IEnumerable<MapObject> objects);
 
         void UpdateDocumentToggles();
     }
