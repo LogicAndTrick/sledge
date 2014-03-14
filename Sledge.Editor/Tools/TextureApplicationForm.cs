@@ -249,35 +249,50 @@ namespace Sledge.Editor.Tools
                     }
                 }
 
-                if (first) ScaleXValue.Value = tex.XScale;
+                if (first)
+                {
+                    ScaleXValue.Value = tex.XScale;
+                }
                 else if (ScaleXValue.Text != "" && ScaleXValue.Value != tex.XScale)
                 {
                     ScaleXValue.Value = 1;
                     ScaleXValue.Text = "";
                 }
 
-                if (first) ScaleYValue.Value = tex.YScale;
+                if (first)
+                {
+                    ScaleYValue.Value = tex.YScale;
+                }
                 else if (ScaleYValue.Text != "" && ScaleYValue.Value != tex.YScale)
                 {
                     ScaleYValue.Value = 1;
                     ScaleYValue.Text = "";
                 }
 
-                if (first) ShiftXValue.Value = tex.XShift;
+                if (first)
+                {
+                    ShiftXValue.Value = tex.XShift;
+                }
                 else if (ShiftXValue.Text != "" && ShiftXValue.Value != tex.XShift)
                 {
                     ShiftXValue.Value = 0;
                     ShiftXValue.Text = "";
                 }
 
-                if (first) ShiftYValue.Value = tex.YShift;
+                if (first)
+                {
+                    ShiftYValue.Value = tex.YShift;
+                }
                 else if (ShiftYValue.Text != "" && ShiftYValue.Value != tex.YShift)
                 {
                     ShiftYValue.Value = 0;
                     ShiftYValue.Text = "";
                 }
 
-                if (first) RotationValue.Value = tex.Rotation;
+                if (first)
+                {
+                    RotationValue.Value = tex.Rotation;
+                }
                 else if (RotationValue.Text != "" && RotationValue.Value != tex.Rotation)
                 {
                     RotationValue.Value = 0;

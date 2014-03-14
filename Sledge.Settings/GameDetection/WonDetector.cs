@@ -61,11 +61,11 @@ namespace Sledge.Settings.GameDetection
             get { return "WON Installed Games"; }
         }
 
-        public void Detect()
+        public IEnumerable<Game> Detect()
         {
             var directoriesToScan = new List<string>();
             var software = Registry.LocalMachine.OpenSubKey("Software");
-            if (software == null) return;
+            if (software == null) yield break;
             var sierra = software.OpenSubKey("Sierra OnLine");
             if (sierra != null)
             {
@@ -116,7 +116,10 @@ namespace Sledge.Settings.GameDetection
             }
             foreach (var directory in directoriesToScan.Select(x => x.ToLower()).Distinct())
             {
-                var games = GoldsourceDirectoryScanner.Scan(directory);
+                foreach (var game in GoldsourceDirectoryScanner.Scan(directory))
+                {
+                    yield return game;
+                }
             }
         }
     }

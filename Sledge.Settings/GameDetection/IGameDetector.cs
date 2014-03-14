@@ -1,9 +1,12 @@
-﻿namespace Sledge.Settings.GameDetection
+﻿using System.Collections.Generic;
+using Sledge.Settings.Models;
+
+namespace Sledge.Settings.GameDetection
 {
     public interface IGameDetector
     {
         string Name { get; }
 
-        void Detect();
+        IEnumerable<Game> Detect();
     }
 }
