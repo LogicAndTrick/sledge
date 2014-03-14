@@ -312,7 +312,6 @@ namespace Sledge.Editor.Tools
             }
             RefreshPoints();
             RefreshMidpoints();
-            Document.UpdateDisplayLists();
         }
 
         public override void ToolSelected(bool preventHistory)
@@ -352,7 +351,6 @@ namespace Sledge.Editor.Tools
             MoveSelection = null;
 
             _form.Hide();
-            Document.UpdateDisplayLists();
             Mediator.UnsubscribeAll(this);
         }
 

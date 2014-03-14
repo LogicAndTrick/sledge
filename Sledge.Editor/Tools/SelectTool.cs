@@ -84,7 +84,6 @@ namespace Sledge.Editor.Tools
             Mediator.Subscribe(EditorMediator.DocumentTreeStructureChanged, this);
             Mediator.Subscribe(EditorMediator.DocumentTreeObjectsChanged, this);
             SelectionChanged();
-            Document.UpdateDisplayLists(Document.Selection.GetSelectedObjects());
         }
 
         public override void ToolDeselected(bool preventHistory)

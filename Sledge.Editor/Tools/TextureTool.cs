@@ -167,8 +167,10 @@ namespace Sledge.Editor.Tools
             if (!preventHistory)
             {
                 Document.History.AddHistoryItem(new HistoryAction("Switch selection mode", new ChangeToFaceSelectionMode(GetType(), Document.Selection.GetSelectedObjects())));
+                var currentSelection = Document.Selection.GetSelectedObjects();
                 Document.Selection.SwitchToFaceSelection();
-                Document.UpdateDisplayLists(Document.Selection.GetSelectedFaces());
+                var newSelection = Document.Selection.GetSelectedFaces().Select(x => x.Parent);
+                Document.UpdateDisplayLists(currentSelection.Union(newSelection));
             }
 
             _form.SelectionChanged();
@@ -184,8 +186,10 @@ namespace Sledge.Editor.Tools
             if (!preventHistory)
             {
                 Document.History.AddHistoryItem(new HistoryAction("Switch selection mode", new ChangeToObjectSelectionMode(GetType(), selected)));
+                var currentSelection = Document.Selection.GetSelectedFaces().Select(x => x.Parent);
                 Document.Selection.SwitchToObjectSelection();
-                Document.UpdateDisplayLists(selected);
+                var newSelection = Document.Selection.GetSelectedObjects();
+                Document.UpdateDisplayLists(currentSelection.Union(newSelection));
             }
 
             _form.Clear();
