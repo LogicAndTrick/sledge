@@ -744,32 +744,27 @@ namespace Sledge.Editor.Tools
         /// <param name="clone">True to create a clone before transforming the original.</param>
         private void ExecuteTransform(string transformationName, IUnitTransformation transform, bool clone)
         {
-            var action = new ActionCollection();
-
             if (clone) transformationName += "-clone";
             var objects = Document.Selection.GetSelectedParents().ToList();
             var name = String.Format("{0} {1} object{2}", transformationName, objects.Count, (objects.Count == 1 ? "" : "s"));
+            
+            var action = new CreateEditDelete();
 
             if (clone)
             {
                 // Copy the selection before transforming
                 var copies = ClipboardManager.CloneFlatHeirarchy(Document, Document.Selection.GetSelectedObjects()).ToList();
-                action.Add(new Create(copies));
+                action.Create(copies);
             }
 
             // Transform the selection
             var keepVisgroups = Sledge.Settings.Select.KeepVisgroupsWhenCloning;
-            action.Add(new Edit(objects, (d, x) =>
-                                             {
-                                                 x.Transform(transform, d.Map.GetTransformFlags());
-                                                 if (!keepVisgroups)
-                                                 {
-                                                     foreach (var o in x.FindAll())
-                                                     {
-                                                         o.Visgroups.Clear();
-                                                     }
-                                                 }
-                                             }));
+            action.Edit(objects, (d, x) =>
+            {
+                x.Transform(transform, d.Map.GetTransformFlags());
+                if (keepVisgroups) return;
+                foreach (var o in x.FindAll()) o.Visgroups.Clear();
+            });
 
             // Execute the action
             Document.PerformAction(name, action);

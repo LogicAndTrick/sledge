@@ -8,7 +8,7 @@ using Sledge.Editor.Documents;
 
 namespace Sledge.Editor.Actions.MapObjects.Operations
 {
-    public abstract class CreateEditDelete : IAction
+    public class CreateEditDelete : IAction
     {
         protected class DeleteReference
         {
@@ -95,39 +95,39 @@ namespace Sledge.Editor.Actions.MapObjects.Operations
 
         private List<EditReference> _editObjects;
 
-        protected CreateEditDelete()
+        public CreateEditDelete()
         {
             _objectsToCreate = new List<MapObject>();
             _idsToDelete = new List<long>();
             _editObjects = new List<EditReference>();
         }
 
-        protected void Create(params MapObject[] objects)
+        public void Create(params MapObject[] objects)
         {
             _objectsToCreate.AddRange(objects);
         }
 
-        protected void Create(IEnumerable<MapObject> objects)
+        public void Create(IEnumerable<MapObject> objects)
         {
             _objectsToCreate.AddRange(objects);
         }
 
-        protected void Delete(params long[] ids)
+        public void Delete(params long[] ids)
         {
             _idsToDelete.AddRange(ids);
         }
 
-        protected void Delete(IEnumerable<long> ids)
+        public void Delete(IEnumerable<long> ids)
         {
             _idsToDelete.AddRange(ids);
         }
 
-        protected void Edit(MapObject before, MapObject after)
+        public void Edit(MapObject before, MapObject after)
         {
             _editObjects.Add(new EditReference(before.ID, before, after));
         }
 
-        protected void Edit(IEnumerable<MapObject> before, IEnumerable<MapObject> after)
+        public void Edit(IEnumerable<MapObject> before, IEnumerable<MapObject> after)
         {
             var b = before.ToList();
             var a = after.ToList();
@@ -135,12 +135,12 @@ namespace Sledge.Editor.Actions.MapObjects.Operations
             _editObjects.AddRange(ids.Select(x => new EditReference(x, b.First(y => y.ID == x), a.First(y => y.ID == x))));
         }
 
-        protected void Edit(MapObject before, Action<Document, MapObject> action)
+        public void Edit(MapObject before, Action<Document, MapObject> action)
         {
             _editObjects.Add(new EditReference(before, action));
         }
 
-        protected void Edit(IEnumerable<MapObject> objects, Action<Document, MapObject> action)
+        public void Edit(IEnumerable<MapObject> objects, Action<Document, MapObject> action)
         {
             _editObjects.AddRange(objects.Select(x => new EditReference(x, action)));
         }
