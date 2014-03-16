@@ -769,22 +769,9 @@ namespace Sledge.Editor.Tools
             Document.PerformAction(name, action);
         }
 
-        /// <summary>
-        /// Convert a Matrix4 into a unit transformation object
-        /// TODO: Move this somewhere better (extension method?)
-        /// </summary>
-        /// <param name="mat">The matrix to convert</param>
-        /// <returns>The unit transformation representation of the matrix</returns>
         private IUnitTransformation CreateMatrixMultTransformation(Matrix4 mat)
         {
-            var dmat = new[]
-                           {
-                               (decimal) mat.M11, (decimal) mat.M21, (decimal) mat.M31, (decimal) mat.M41,
-                               (decimal) mat.M12, (decimal) mat.M22, (decimal) mat.M32, (decimal) mat.M42,
-                               (decimal) mat.M13, (decimal) mat.M23, (decimal) mat.M33, (decimal) mat.M43,
-                               (decimal) mat.M14, (decimal) mat.M24, (decimal) mat.M34, (decimal) mat.M44
-                           };
-            return new UnitMatrixMult(dmat);
+            return new UnitMatrixMult(mat);
         }
 
         #endregion
