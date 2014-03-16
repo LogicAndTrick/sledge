@@ -17,6 +17,8 @@ namespace Sledge.Editor.Tools.Widgets
 {
     public abstract class Widget : BaseTool
     {
+        protected ViewportBase _activeViewport;
+
         private Action<Matrix4?> _transformedCallback = null;
         private Action<Matrix4?> _transformingCallback = null;
 
@@ -43,33 +45,6 @@ namespace Sledge.Editor.Tools.Widgets
                 _transformingCallback = value;
             }
         }
-        /*
-        protected void OnTransformed(Matrix4? transformation)
-        {
-            if (transformation.HasValue)
-            {
-                ExecuteTransform(Document, transformation.Value);
-            }
-
-            Document.EndSelectionTransform();
-        }
-
-        private void ExecuteTransform(Document document, Matrix4 matrix)
-        {
-            var objects = document.Selection.GetSelectedParents().ToList();
-            var name = String.Format("Rotate {0} object{1}", objects.Count, (objects.Count == 1 ? "" : "s"));
-
-            var tform = new UnitMatrixMult(matrix);
-
-            var action = new Edit(objects, (d, x) => x.Transform(tform, d.Map.GetTransformFlags()));
-            document.PerformAction(name, action);
-        }
-
-        protected void OnTransforming(Matrix4? tform)
-        {
-            if (tform.HasValue) Document.SetSelectListTransform(tform.Value);
-        }*/
-
 
         public override Image GetIcon() { return null; }
         public override string GetName() { return "Widget"; }
@@ -80,9 +55,17 @@ namespace Sledge.Editor.Tools.Widgets
         public override void KeyPress(ViewportBase viewport, ViewportEvent e) { }
         public override void MouseClick(ViewportBase viewport, ViewportEvent e) { }
         public override void MouseDoubleClick(ViewportBase viewport, ViewportEvent e) { }
-        public override void MouseEnter(ViewportBase viewport, ViewportEvent e) { }
-        public override void MouseLeave(ViewportBase viewport, ViewportEvent e) { }
         public override void UpdateFrame(ViewportBase viewport, FrameInfo frame) { }
+
+        public override void MouseEnter(ViewportBase viewport, ViewportEvent e)
+        {
+            _activeViewport = viewport;
+        }
+
+        public override void MouseLeave(ViewportBase viewport, ViewportEvent e)
+        {
+            _activeViewport = null;
+        }
     }
 
     public class RotationWidget : Widget
@@ -101,19 +84,32 @@ namespace Sledge.Editor.Tools.Widgets
             Document = document;
         }
 
-        private readonly Dictionary<CircleType, List<Line>> _cachedLines = new Dictionary<CircleType, List<Line>>
+        private class CachedLines
         {
-            {CircleType.X, new List<Line>()},
-            {CircleType.Y, new List<Line>()},
-            {CircleType.Z, new List<Line>()},
-            {CircleType.Outer, new List<Line>()},
-        };
+            public int Width { get; set; }
+            public int Height { get; set; }
+            public Coordinate CameraLocation { get; set; }
+            public Coordinate CameraLookAt { get; set; }
+            public Coordinate PivotPoint { get; set; }
+            public Viewport3D Viewport3D { get; set; }
+            public Dictionary<CircleType, List<Line>> Cache { get; set; }
 
-        private int _cachedWidth;
-        private int _cachedHeight;
-        private Coordinate _cachedCameraLocation;
-        private Coordinate _cachedCameraLookAt;
-        private Coordinate _cachedPivotPoint;
+            public CachedLines(Viewport3D viewport3D)
+            {
+                Viewport3D = viewport3D;
+                Cache = new Dictionary<CircleType, List<Line>>
+                {
+                    {CircleType.Outer, new List<Line>()},
+                    {CircleType.X, new List<Line>()},
+                    {CircleType.Y, new List<Line>()},
+                    {CircleType.Z, new List<Line>()}
+                };
+            }
+        }
+
+        private readonly List<CachedLines> _cachedLines = new List<CachedLines>();
+
+        private Coordinate _pivotPoint;
         private CircleType _mouseOver;
         private CircleType _mouseDown;
         private Coordinate _mouseDownPoint;
@@ -121,7 +117,7 @@ namespace Sledge.Editor.Tools.Widgets
 
         #region Line cache
 
-        private void AddLine(CircleType type, Coordinate start, Coordinate end, Plane test, Viewport3D viewport)
+        private void AddLine(CircleType type, Coordinate start, Coordinate end, Plane test, CachedLines cache)
         {
             var line = new Line(start, end);
             var cls = line.ClassifyAgainstPlane(test);
@@ -132,26 +128,32 @@ namespace Sledge.Editor.Tools.Widgets
                 var first = test.OnPlane(line.Start) > 0 ? line.Start : line.End;
                 line = new Line(first, isect);
             }
-            _cachedLines[type].Add(new Line(viewport.WorldToScreen(line.Start), viewport.WorldToScreen(line.End)));
+            cache.Cache[type].Add(new Line(cache.Viewport3D.WorldToScreen(line.Start), cache.Viewport3D.WorldToScreen(line.End)));
         }
 
         private void UpdateCache(Viewport3D viewport, Document document)
         {
             var ccl = new Coordinate((decimal)viewport.Camera.Location.X, (decimal)viewport.Camera.Location.Y, (decimal)viewport.Camera.Location.Z);
             var ccla = new Coordinate((decimal)viewport.Camera.LookAt.X, (decimal)viewport.Camera.LookAt.Y, (decimal)viewport.Camera.LookAt.Z);
-            var pp = document.Selection.GetSelectionBoundingBox().Center;
-            if (ccl == _cachedCameraLocation && ccla == _cachedCameraLookAt && _cachedPivotPoint == pp && _cachedWidth == viewport.Width && _cachedHeight == viewport.Height) return;
+            _pivotPoint = document.Selection.GetSelectionBoundingBox().Center;
+            var cache = _cachedLines.FirstOrDefault(x => x.Viewport3D == viewport);
+            if (cache == null)
+            {
+                cache = new CachedLines(viewport);
+                _cachedLines.Add(cache);
+            }
+            if (ccl == cache.CameraLocation && ccla == cache.CameraLookAt && cache.PivotPoint == _pivotPoint && cache.Width == viewport.Width && cache.Height == viewport.Height) return;
 
-            var origin = pp;
+            var origin = _pivotPoint;
             var distance = (ccl - origin).VectorMagnitude();
 
             if (distance <= 1) return;
 
-            _cachedCameraLocation = ccl;
-            _cachedCameraLookAt = ccla;
-            _cachedPivotPoint = pp;
-            _cachedWidth = viewport.Width;
-            _cachedHeight = viewport.Height;
+            cache.CameraLocation = ccl;
+            cache.CameraLookAt = ccla;
+            cache.PivotPoint = _pivotPoint;
+            cache.Width = viewport.Width;
+            cache.Height = viewport.Height;
 
             var normal = (ccl - origin).Normalise();
             var right = normal.Cross(Coordinate.UnitZ).Normalise();
@@ -164,10 +166,10 @@ namespace Sledge.Editor.Tools.Widgets
 
             var radius = 0.15m * distance;
 
-            _cachedLines[CircleType.Outer].Clear();
-            _cachedLines[CircleType.X].Clear();
-            _cachedLines[CircleType.Y].Clear();
-            _cachedLines[CircleType.Z].Clear();
+            cache.Cache[CircleType.Outer].Clear();
+            cache.Cache[CircleType.X].Clear();
+            cache.Cache[CircleType.Y].Clear();
+            cache.Cache[CircleType.Z].Clear();
 
             for (var i = 0; i < sides; i++)
             {
@@ -180,7 +182,7 @@ namespace Sledge.Editor.Tools.Widgets
                 AddLine(CircleType.Outer,
                     origin + right * cos1 * radius * 1.2m + up * sin1 * radius * 1.2m,
                     origin + right * cos2 * radius * 1.2m + up * sin2 * radius * 1.2m,
-                    plane, viewport);
+                    plane, cache);
 
                 cos1 *= radius;
                 sin1 *= radius;
@@ -191,19 +193,19 @@ namespace Sledge.Editor.Tools.Widgets
                 AddLine(CircleType.Z,
                     origin + Coordinate.UnitX * cos1 + Coordinate.UnitY * sin1,
                     origin + Coordinate.UnitX * cos2 + Coordinate.UnitY * sin2,
-                    plane, viewport);
+                    plane, cache);
 
                 // Y/Z plane = X axis
                 AddLine(CircleType.X,
                     origin + Coordinate.UnitY * cos1 + Coordinate.UnitZ * sin1,
                     origin + Coordinate.UnitY * cos2 + Coordinate.UnitZ * sin2,
-                    plane, viewport);
+                    plane, cache);
 
                 // X/Z plane = Y axis
                 AddLine(CircleType.Y,
                     origin + Coordinate.UnitZ * cos1 + Coordinate.UnitX * sin1,
                     origin + Coordinate.UnitZ * cos2 + Coordinate.UnitX * sin2,
-                    plane, viewport);
+                    plane, cache);
             }
         }
 
@@ -211,9 +213,9 @@ namespace Sledge.Editor.Tools.Widgets
 
         private Matrix4? GetTransformationMatrix(Viewport3D viewport)
         {
-            if (_mouseMovePoint == null || _mouseDownPoint == null || _cachedPivotPoint == null) return null;
+            if (_mouseMovePoint == null || _mouseDownPoint == null || _pivotPoint == null) return null;
 
-            var originPoint = viewport.WorldToScreen(_cachedPivotPoint);
+            var originPoint = viewport.WorldToScreen(_pivotPoint);
             var origv = (_mouseDownPoint - originPoint).Normalise();
             var newv = (_mouseMovePoint - originPoint).Normalise();
             var angle = DMath.Acos(Math.Max(-1, Math.Min(1, origv.Dot(newv))));
@@ -230,7 +232,7 @@ namespace Sledge.Editor.Tools.Widgets
             }
 
             Vector3 axis;
-            var dir = (viewport.Camera.Location - _cachedPivotPoint.ToVector3()).Normalized();
+            var dir = (viewport.Camera.Location - _pivotPoint.ToVector3()).Normalized();
             switch (_mouseDown)
             {
                 case CircleType.Outer:
@@ -252,14 +254,16 @@ namespace Sledge.Editor.Tools.Widgets
             if (dirAng > 90) angle = -angle;
 
             var rotm = Matrix4.CreateFromAxisAngle(axis, (float)angle);
-            var mov = Matrix4.CreateTranslation(-_cachedPivotPoint.ToVector3());
+            var mov = Matrix4.CreateTranslation(-_pivotPoint.ToVector3());
             var rot = Matrix4.Mult(mov, rotm);
             return Matrix4.Mult(rot, Matrix4.Invert(mov));
         }
 
         private bool MouseOver(CircleType type, ViewportEvent ev, Viewport3D viewport)
         {
-            var lines = _cachedLines[type];
+            var cache = _cachedLines.FirstOrDefault(x => x.Viewport3D == viewport);
+            if (cache == null) return false;
+            var lines = cache.Cache[type];
             var point = new Coordinate(ev.X, viewport.Height - ev.Y, 0);
             return lines.Any(x => (x.ClosestPoint(point) - point).VectorMagnitude() <= 8);
         }
@@ -267,7 +271,7 @@ namespace Sledge.Editor.Tools.Widgets
         public override void MouseMove(ViewportBase viewport, ViewportEvent e)
         {
             var vp = viewport as Viewport3D;
-            if (vp == null) return;
+            if (vp == null || vp != _activeViewport) return;
 
             if (Document.Selection.IsEmpty() || !vp.IsUnlocked(this)) return;
 
@@ -293,7 +297,7 @@ namespace Sledge.Editor.Tools.Widgets
         public override void MouseDown(ViewportBase viewport, ViewportEvent ve)
         {
             var vp = viewport as Viewport3D;
-            if (vp == null) return;
+            if (vp == null || vp != _activeViewport) return;
 
             if (ve.Button != MouseButtons.Left || _mouseOver == CircleType.None) return;
             _mouseDown = _mouseOver;
@@ -306,7 +310,7 @@ namespace Sledge.Editor.Tools.Widgets
         public override void MouseUp(ViewportBase viewport, ViewportEvent ve)
         {
             var vp = viewport as Viewport3D;
-            if (vp == null) return;
+            if (vp == null || vp != _activeViewport) return;
 
             if (_mouseDown != CircleType.None && _mouseMovePoint != null) ve.Handled = true;
 
@@ -319,6 +323,7 @@ namespace Sledge.Editor.Tools.Widgets
 
         public override void MouseWheel(ViewportBase viewport, ViewportEvent ve)
         {
+            if (viewport != _activeViewport) return;
             if (_mouseDown != CircleType.None) ve.Handled = true;
         }
 
@@ -359,11 +364,18 @@ namespace Sledge.Editor.Tools.Widgets
                 c = Color.Blue;
             }
 
-            if (_mouseDown != CircleType.Outer)
+            if (_mouseDown == CircleType.Outer)
+            {
+                var vp3 = _activeViewport as Viewport3D;
+                if (vp3 != null) axis = (vp3.Camera.LookAt - vp3.Camera.Location).Normalized();
+                c = Color.White;
+            }
+
+            if (_activeViewport != viewport || _mouseDown != CircleType.Outer)
             {
                 GL.Begin(PrimitiveType.Lines);
 
-                var zero = new Vector3((float)_cachedPivotPoint.DX, (float)_cachedPivotPoint.DY, (float)_cachedPivotPoint.DZ);
+                var zero = new Vector3((float) _pivotPoint.DX, (float) _pivotPoint.DY, (float) _pivotPoint.DZ);
 
                 GL.Color4(c);
                 GL.Vertex3(zero - axis * 100000);
@@ -372,23 +384,25 @@ namespace Sledge.Editor.Tools.Widgets
                 GL.End();
             }
 
+            if (_activeViewport == viewport)
+            {
+                GL.Disable(EnableCap.DepthTest);
+                GL.Enable(EnableCap.LineStipple);
+                GL.LineStipple(5, 0xAAAA);
+                GL.Begin(PrimitiveType.Lines);
 
-            GL.Disable(EnableCap.DepthTest);
-            GL.Enable(EnableCap.LineStipple);
-            GL.LineStipple(5, 0xAAAA);
-            GL.Begin(PrimitiveType.Lines);
+                GL.Color4(Color.FromArgb(64, Color.Gray));
+                GL.Vertex3(_pivotPoint.ToVector3());
+                GL.Vertex3(viewport.ScreenToWorld(_mouseDownPoint).ToVector3());
 
-            GL.Color4(Color.FromArgb(64, Color.Gray));
-            GL.Vertex3(_cachedPivotPoint.ToVector3());
-            GL.Vertex3(viewport.ScreenToWorld(_mouseDownPoint).ToVector3());
+                GL.Color4(Color.LightGray);
+                GL.Vertex3(_pivotPoint.ToVector3());
+                GL.Vertex3(viewport.ScreenToWorld(_mouseMovePoint).ToVector3());
 
-            GL.Color4(Color.LightGray);
-            GL.Vertex3(_cachedPivotPoint.ToVector3());
-            GL.Vertex3(viewport.ScreenToWorld(_mouseMovePoint).ToVector3());
-
-            GL.End();
-            GL.Disable(EnableCap.LineStipple);
-            GL.Enable(EnableCap.DepthTest);
+                GL.End();
+                GL.Disable(EnableCap.LineStipple);
+                GL.Enable(EnableCap.DepthTest);
+            }
         }
 
         private void RenderCircleTypeNone(Viewport3D viewport, Document document)

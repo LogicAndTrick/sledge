@@ -15,6 +15,7 @@ using Sledge.Editor.Actions.MapObjects.Selection;
 using Sledge.Editor.Clipboard;
 using Sledge.Editor.Properties;
 using Sledge.Editor.Tools.TransformationTools;
+using Sledge.Editor.Tools.Widgets;
 using Sledge.Editor.UI.ObjectProperties;
 using Sledge.Graphics;
 using Sledge.Settings;
@@ -39,6 +40,7 @@ namespace Sledge.Editor.Tools
         private readonly List<TransformationTool> _tools;
         private TransformationTool _lastTool;
         private TransformationTool _currentTool;
+        private List<Widget> _widgets;
 
         private Matrix4? CurrentTransform { get; set; }
 
@@ -51,6 +53,7 @@ namespace Sledge.Editor.Tools
                              new RotateTool(),
                              new SkewTool()
                          };
+            _widgets = new List<Widget>();
         }
 
         public override Image GetIcon()
@@ -102,6 +105,27 @@ namespace Sledge.Editor.Tools
         {
             if (tool != null) _lastTool = tool;
             _currentTool = tool;
+            _widgets = (_currentTool == null) ? new List<Widget>() : _currentTool.GetWidgets(Document).ToList();
+            foreach (var widget in _widgets)
+            {
+                widget.OnTransforming = OnWidgetTransforming;
+                widget.OnTransformed = OnWidgetTransformed;
+            }
+        }
+
+        private void OnWidgetTransformed(Matrix4? transformation)
+        {
+            if (transformation.HasValue)
+            {
+                ExecuteTransform("Manipulate", CreateMatrixMultTransformation(transformation.Value), false);
+            }
+
+            Document.EndSelectionTransform();
+        }
+
+        private void OnWidgetTransforming(Matrix4? transformation)
+        {
+            if (transformation.HasValue) Document.SetSelectListTransform(transformation.Value);
         }
 
         private void DocumentTreeStructureChanged()
@@ -143,6 +167,74 @@ namespace Sledge.Editor.Tools
                 State.BoxEnd = box.End;
             }
             OnBoxChanged();
+        }
+
+        #endregion
+
+        #region Widget
+        private bool WidgetAction(Action<Widget, ViewportBase, ViewportEvent> action, ViewportBase viewport, ViewportEvent ev)
+        {
+            if (_widgets == null) return false;
+            foreach (var widget in _widgets)
+            {
+                action(widget, viewport, ev);
+                if (ev != null && ev.Handled) return true;
+            }
+            return false;
+        }
+
+        public override void MouseMove(ViewportBase viewport, ViewportEvent e)
+        {
+            if (WidgetAction((w, vp, ev) => w.MouseMove(vp, ev), viewport, e)) return;
+            base.MouseMove(viewport, e);
+        }
+
+        public override void MouseDown(ViewportBase viewport, ViewportEvent e)
+        {
+            if (WidgetAction((w, vp, ev) => w.MouseDown(vp, ev), viewport, e)) return;
+            base.MouseDown(viewport, e);
+        }
+
+        public override void MouseUp(ViewportBase viewport, ViewportEvent e)
+        {
+            if (WidgetAction((w, vp, ev) => w.MouseUp(vp, ev), viewport, e)) return;
+            base.MouseUp(viewport, e);
+        }
+
+        public override void MouseClick(ViewportBase viewport, ViewportEvent e)
+        {
+            if (WidgetAction((w, vp, ev) => w.MouseClick(vp, ev), viewport, e)) return;
+            base.MouseClick(viewport, e);
+        }
+
+        public override void MouseEnter(ViewportBase viewport, ViewportEvent e)
+        {
+            if (WidgetAction((w, vp, ev) => w.MouseEnter(vp, ev), viewport, e)) return;
+            base.MouseEnter(viewport, e);
+        }
+
+        public override void MouseLeave(ViewportBase viewport, ViewportEvent e)
+        {
+            if (WidgetAction((w, vp, ev) => w.MouseLeave(vp, ev), viewport, e)) return;
+            base.MouseLeave(viewport, e);
+        }
+
+        public override void PreRender(ViewportBase viewport)
+        {
+            WidgetAction((w, vp, ev) => w.PreRender(vp), viewport, null);
+            base.PreRender(viewport);
+        }
+
+        public override void Render(ViewportBase viewport)
+        {
+            WidgetAction((w, vp, ev) => w.Render(vp), viewport, null);
+            base.Render(viewport);
+        }
+
+        public override void UpdateFrame(ViewportBase viewport, FrameInfo frame)
+        {
+            WidgetAction((w, vp, ev) => w.UpdateFrame(vp, frame), viewport, null);
+            base.UpdateFrame(viewport, frame);
         }
 
         #endregion
@@ -200,6 +292,8 @@ namespace Sledge.Editor.Tools
         #region Double Click
         public override void MouseDoubleClick(ViewportBase viewport, ViewportEvent e)
         {
+            if (WidgetAction((w, vp, ev) => w.MouseDoubleClick(vp, ev), viewport, e)) return;
+
             if (viewport is Viewport3D && !Document.Selection.IsEmpty() && !ObjectPropertiesDialog.IsShowing)
             {
                 Mediator.Publish(HotkeysMediator.ObjectProperties);
@@ -211,11 +305,6 @@ namespace Sledge.Editor.Tools
 
         protected override void MouseMove3D(Viewport3D viewport, ViewportEvent e)
         {
-            if (_currentTool != null)
-            {
-                _currentTool.MouseMove3D(viewport, e, Document);
-                if (e.Handled) return;
-            }
             base.MouseMove3D(viewport, e);
         }
 
@@ -226,12 +315,6 @@ namespace Sledge.Editor.Tools
         /// <param name="e">The click event</param>
         protected override void MouseDown3D(Viewport3D viewport, ViewportEvent e)
         {
-            if (_currentTool != null)
-            {
-                _currentTool.MouseDown3D(viewport, e, Document);
-                if (e.Handled) return;
-            }
-
             // First, get the ray that is cast from the clicked point along the viewport frustrum
             var ray = viewport.CastRayFromScreen(e.X, e.Y);
 
@@ -264,12 +347,6 @@ namespace Sledge.Editor.Tools
         /// <param name="e">The mouse event</param>
         protected override void MouseUp3D(Viewport3D viewport, ViewportEvent e)
         {
-            if (_currentTool != null)
-            {
-                _currentTool.MouseUp3D(viewport, e, Document);
-                if (e.Handled) return;
-            }
-
             IntersectingObjectsFor3DSelection = null;
             ChosenItemFor3DSelection = null;
         }
@@ -281,11 +358,7 @@ namespace Sledge.Editor.Tools
         /// <param name="e">The scroll event</param>
         public override void MouseWheel(ViewportBase viewport, ViewportEvent e)
         {
-            if (_currentTool != null && viewport is Viewport3D)
-            {
-                _currentTool.MouseWheel3D((Viewport3D)viewport, e, Document);
-                if (e.Handled) return;
-            }
+            if (WidgetAction((w, vp, ev) => w.MouseWheel(vp, ev), viewport, e)) return;
 
             // If we're not in 3D cycle mode, carry on
             if (!(viewport is Viewport3D)
@@ -720,15 +793,6 @@ namespace Sledge.Editor.Tools
             GL.Disable(EnableCap.LineStipple);
 
             RenderBoxText(viewport, s, e);
-        }
-
-        protected override void Render3D(Viewport3D viewport)
-        {
-            if (_currentTool != null)
-            {
-                _currentTool.Render3D(viewport, Document);
-            }
-            base.Render3D(viewport);
         }
 
         #endregion

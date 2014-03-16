@@ -1,7 +1,9 @@
-﻿using System.Windows.Forms;
+﻿using System.Collections.Generic;
+using System.Windows.Forms;
 using OpenTK;
 using Sledge.DataStructures.Geometric;
 using Sledge.Editor.Documents;
+using Sledge.Editor.Tools.Widgets;
 using Sledge.UI;
 
 namespace Sledge.Editor.Tools.TransformationTools
@@ -82,29 +84,9 @@ namespace Sledge.Editor.Tools.TransformationTools
         }
         #endregion 2D Transformation Matrix
 
-        public override void MouseMove3D(Viewport3D viewport, ViewportEvent ve, Document document)
+        public override IEnumerable<Widget> GetWidgets(Document document)
         {
-
-        }
-
-        public override void MouseDown3D(Viewport3D viewport, ViewportEvent ve, Document document)
-        {
-
-        }
-
-        public override void MouseUp3D(Viewport3D viewport, ViewportEvent ve, Document document)
-        {
-
-        }
-
-        public override void MouseWheel3D(Viewport3D viewport, ViewportEvent ve, Document document)
-        {
-
-        }
-
-        public override void Render3D(Viewport3D viewport, Document document)
-        {
-            
+            yield break;
         }
     }
 }
