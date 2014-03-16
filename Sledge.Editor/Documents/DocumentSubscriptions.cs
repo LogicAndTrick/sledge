@@ -24,14 +24,12 @@ using Sledge.Editor.UI;
 using Sledge.Editor.UI.ObjectProperties;
 using Sledge.Editor.Visgroups;
 using Sledge.Extensions;
-using Sledge.Providers.Map;
 using Sledge.Providers.Texture;
 using Sledge.QuickForms;
 using Sledge.QuickForms.Items;
 using Sledge.Settings;
 using Sledge.UI;
 using Path = System.IO.Path;
-using Property = Sledge.DataStructures.MapObjects.Property;
 using Quaternion = Sledge.DataStructures.Geometric.Quaternion;
 
 namespace Sledge.Editor.Documents
@@ -729,8 +727,8 @@ namespace Sledge.Editor.Documents
 
         public void CenterAllViewsOnSelection()
         {
-            var box = _document.Selection.GetSelectionBoundingBox();
-            if (box == null) return;
+            var box = _document.Selection.GetSelectionBoundingBox()
+                      ?? new Box(Coordinate.Zero, Coordinate.Zero);
             foreach (var vp in ViewportManager.Viewports)
             {
                 vp.FocusOn(box);
@@ -739,8 +737,8 @@ namespace Sledge.Editor.Documents
 
         public void Center2DViewsOnSelection()
         {
-            var box = _document.Selection.GetSelectionBoundingBox();
-            if (box == null) return;
+            var box = _document.Selection.GetSelectionBoundingBox()
+                      ?? new Box(Coordinate.Zero, Coordinate.Zero);
             foreach (var vp in ViewportManager.Viewports.OfType<Viewport2D>())
             {
                 vp.FocusOn(box);
@@ -749,8 +747,8 @@ namespace Sledge.Editor.Documents
 
         public void Center3DViewsOnSelection()
         {
-            var box = _document.Selection.GetSelectionBoundingBox();
-            if (box == null) return;
+            var box = _document.Selection.GetSelectionBoundingBox()
+                      ?? new Box(Coordinate.Zero, Coordinate.Zero);
             foreach (var vp in ViewportManager.Viewports.OfType<Viewport3D>())
             {
                 vp.FocusOn(box);
