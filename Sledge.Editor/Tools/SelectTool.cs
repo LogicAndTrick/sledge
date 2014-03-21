@@ -110,6 +110,7 @@ namespace Sledge.Editor.Tools
             {
                 widget.OnTransforming = OnWidgetTransforming;
                 widget.OnTransformed = OnWidgetTransformed;
+                widget.SelectionChanged();
             }
         }
 
@@ -147,6 +148,8 @@ namespace Sledge.Editor.Tools
             UpdateBoxBasedOnSelection();
             if (State.Action != BoxAction.ReadyToResize && _currentTool != null) SetCurrentTool(null);
             else if (State.Action == BoxAction.ReadyToResize && _currentTool == null) SetCurrentTool(_lastTool ?? _tools[0]);
+
+            foreach (var widget in _widgets) widget.SelectionChanged();
         }
 
         /// <summary>
@@ -553,8 +556,8 @@ namespace Sledge.Editor.Tools
         {
             if (_currentTool == null) return null;
             return State.Handle == ResizeHandle.Center
-                       ? _tools.OfType<ResizeTool>().First().GetTransformationMatrix(viewport, e, State, Document)
-                       : _currentTool.GetTransformationMatrix(viewport, e, State, Document);
+                       ? _tools.OfType<ResizeTool>().First().GetTransformationMatrix(viewport, e, State, Document, _widgets)
+                       : _currentTool.GetTransformationMatrix(viewport, e, State, Document, _widgets);
         }
 
         protected override void LeftMouseUpDrawing(Viewport2D viewport, ViewportEvent e)

@@ -10,64 +10,12 @@ using Sledge.DataStructures.Geometric;
 using Sledge.Editor.Documents;
 using Sledge.Editor.Extensions;
 using Sledge.Extensions;
+using Sledge.Graphics;
 using Sledge.Settings;
 using Sledge.UI;
 
 namespace Sledge.Editor.Tools.Widgets
 {
-    public abstract class Widget : BaseTool
-    {
-        protected ViewportBase _activeViewport;
-
-        private Action<Matrix4?> _transformedCallback = null;
-        private Action<Matrix4?> _transformingCallback = null;
-
-        public Action<Matrix4?> OnTransformed
-        {
-            get
-            {
-                return _transformedCallback ?? (x => { });
-            }
-            set
-            {
-                _transformedCallback = value;
-            }
-        }
-
-        public Action<Matrix4?> OnTransforming
-        {
-            get
-            {
-                return _transformingCallback ?? (x => { });
-            }
-            set
-            {
-                _transformingCallback = value;
-            }
-        }
-
-        public override Image GetIcon() { return null; }
-        public override string GetName() { return "Widget"; }
-        public override HotkeyTool? GetHotkeyToolType() { return null; }
-        public override HotkeyInterceptResult InterceptHotkey(HotkeysMediator hotkeyMessage) { return HotkeyInterceptResult.Continue; }
-        public override void KeyUp(ViewportBase viewport, ViewportEvent e) { }
-        public override void KeyDown(ViewportBase viewport, ViewportEvent e) { }
-        public override void KeyPress(ViewportBase viewport, ViewportEvent e) { }
-        public override void MouseClick(ViewportBase viewport, ViewportEvent e) { }
-        public override void MouseDoubleClick(ViewportBase viewport, ViewportEvent e) { }
-        public override void UpdateFrame(ViewportBase viewport, FrameInfo frame) { }
-
-        public override void MouseEnter(ViewportBase viewport, ViewportEvent e)
-        {
-            _activeViewport = viewport;
-        }
-
-        public override void MouseLeave(ViewportBase viewport, ViewportEvent e)
-        {
-            _activeViewport = null;
-        }
-    }
-
     public class RotationWidget : Widget
     {
         private enum CircleType
@@ -109,11 +57,28 @@ namespace Sledge.Editor.Tools.Widgets
 
         private readonly List<CachedLines> _cachedLines = new List<CachedLines>();
 
-        private Coordinate _pivotPoint;
+        private bool _autoPivot = true;
+        private bool _movingPivot = false;
+
+        private Coordinate _pivotPoint = Coordinate.Zero;
         private CircleType _mouseOver;
         private CircleType _mouseDown;
         private Coordinate _mouseDownPoint;
         private Coordinate _mouseMovePoint;
+
+        public Coordinate GetPivotPoint()
+        {
+            return _pivotPoint;
+        }
+
+        public override void SelectionChanged()
+        {
+            if (Document.Selection.IsEmpty()) _autoPivot = true;
+            if (!_autoPivot) return;
+
+            var bb = Document.Selection.GetSelectionBoundingBox();
+            _pivotPoint = bb == null ? Coordinate.Zero : bb.Center;
+        }
 
         #region Line cache
 
@@ -135,7 +100,7 @@ namespace Sledge.Editor.Tools.Widgets
         {
             var ccl = new Coordinate((decimal)viewport.Camera.Location.X, (decimal)viewport.Camera.Location.Y, (decimal)viewport.Camera.Location.Z);
             var ccla = new Coordinate((decimal)viewport.Camera.LookAt.X, (decimal)viewport.Camera.LookAt.Y, (decimal)viewport.Camera.LookAt.Z);
-            _pivotPoint = document.Selection.GetSelectionBoundingBox().Center;
+            
             var cache = _cachedLines.FirstOrDefault(x => x.Viewport3D == viewport);
             if (cache == null)
             {
@@ -268,8 +233,46 @@ namespace Sledge.Editor.Tools.Widgets
             return lines.Any(x => (x.ClosestPoint(point) - point).VectorMagnitude() <= 8);
         }
 
+        private bool MouseOverPivot(Viewport2D vp, ViewportEvent e)
+        {
+            if (Document.Selection.IsEmpty()) return false;
+
+            var pivot = vp.WorldToScreen(_pivotPoint);
+            var x = e.X;
+            var y = vp.Height - e.Y;
+            return pivot.X > x - 8 && pivot.X < x + 8 &&
+                   pivot.Y > y - 8 && pivot.Y < y + 8;
+        }
+
+        public override void MouseLeave(ViewportBase viewport, ViewportEvent e)
+        {
+            viewport.Cursor = Cursors.Default;
+        }
+
         public override void MouseMove(ViewportBase viewport, ViewportEvent e)
         {
+            if (viewport is Viewport2D)
+            {
+                var vp2 = (Viewport2D) viewport;
+                if (_movingPivot)
+                {
+                    var pp = SnapToSelection(vp2.ScreenToWorld(e.X, vp2.Height - e.Y), vp2);
+                    _pivotPoint = vp2.GetUnusedCoordinate(_pivotPoint) + vp2.Expand(pp);
+                    _autoPivot = false;
+                    e.Handled = true;
+                }
+                else if (MouseOverPivot(vp2, e))
+                {
+                    vp2.Cursor = Cursors.Cross;
+                    e.Handled = true;
+                }
+                else
+                {
+                    vp2.Cursor = Cursors.Default;
+                }
+                return;
+            }
+
             var vp = viewport as Viewport3D;
             if (vp == null || vp != _activeViewport) return;
 
@@ -296,6 +299,17 @@ namespace Sledge.Editor.Tools.Widgets
 
         public override void MouseDown(ViewportBase viewport, ViewportEvent ve)
         {
+            if (viewport is Viewport2D)
+            {
+                var vp2 = (Viewport2D)viewport;
+                if (ve.Button == MouseButtons.Left && MouseOverPivot(vp2, ve))
+                {
+                    _movingPivot = true;
+                    ve.Handled = true;
+                }
+                return;
+            }
+
             var vp = viewport as Viewport3D;
             if (vp == null || vp != _activeViewport) return;
 
@@ -309,6 +323,17 @@ namespace Sledge.Editor.Tools.Widgets
 
         public override void MouseUp(ViewportBase viewport, ViewportEvent ve)
         {
+            if (viewport is Viewport2D)
+            {
+                // var vp2 = (Viewport2D) viewport;
+                if (_movingPivot && ve.Button == MouseButtons.Left)
+                {
+                    _movingPivot = false;
+                    ve.Handled = true;
+                }
+                return;
+            }
+
             var vp = viewport as Viewport3D;
             if (vp == null || vp != _activeViewport) return;
 
@@ -329,10 +354,17 @@ namespace Sledge.Editor.Tools.Widgets
 
         public override void Render(ViewportBase viewport)
         {
+            if (Document.Selection.IsEmpty()) return;
+
+            if (viewport is Viewport2D)
+            {
+                Render2D((Viewport2D) viewport);
+                return;
+            }
+
             var vp = viewport as Viewport3D;
             if (vp == null) return;
 
-            if (Document.Selection.IsEmpty()) return;
             switch (_mouseMovePoint == null ? CircleType.None : _mouseDown)
             {
                 case CircleType.None:
@@ -345,6 +377,17 @@ namespace Sledge.Editor.Tools.Widgets
                     RenderAxisRotating(vp, Document);
                     break;
             }
+        }
+
+        private void Render2D(Viewport2D viewport)
+        {
+            var pp = viewport.Flatten(_pivotPoint);
+            GL.Begin(PrimitiveType.Lines);
+            GL.Color3(Color.Cyan);
+            GLX.Circle(new Vector2d(pp.DX, pp.DY), 4, (double)viewport.Zoom);
+            GL.Color3(Color.White);
+            GLX.Circle(new Vector2d(pp.DX, pp.DY), 8, (double)viewport.Zoom);
+            GL.End();
         }
 
         private void RenderAxisRotating(Viewport3D viewport, Document document)
@@ -407,7 +450,7 @@ namespace Sledge.Editor.Tools.Widgets
 
         private void RenderCircleTypeNone(Viewport3D viewport, Document document)
         {
-            var center = document.Selection.GetSelectionBoundingBox().Center;
+            var center = _pivotPoint;
             var origin = new Vector3((float)center.DX, (float)center.DY, (float)center.DZ);
             var distance = (viewport.Camera.Location - origin).Length;
 

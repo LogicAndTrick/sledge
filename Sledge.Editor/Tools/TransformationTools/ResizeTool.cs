@@ -36,7 +36,7 @@ namespace Sledge.Editor.Tools.TransformationTools
         }
 
         #region 2D Transformation Matrix
-        public override Matrix4? GetTransformationMatrix(Viewport2D viewport, ViewportEvent e, BaseBoxTool.BoxState state, Document doc)
+        public override Matrix4? GetTransformationMatrix(Viewport2D viewport, ViewportEvent e, BaseBoxTool.BoxState state, Document doc, IEnumerable<Widget> activeWidgets)
         {
             var coords = GetBoxCoordinatesForSelectionResize(viewport, e, state, doc);
             state.BoxStart = coords.Item1;

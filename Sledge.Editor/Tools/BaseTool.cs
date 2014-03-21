@@ -1,7 +1,10 @@
-﻿using System.Windows.Forms;
+﻿using System.Linq;
+using System.Windows.Forms;
 using Sledge.Common.Mediator;
 using Sledge.DataStructures.Geometric;
+using Sledge.DataStructures.MapObjects;
 using Sledge.Editor.UI;
+using Sledge.Extensions;
 using Sledge.Settings;
 using Sledge.UI;
 using System.Drawing;
@@ -20,6 +23,54 @@ namespace Sledge.Editor.Tools
         protected Coordinate SnapIfNeeded(Coordinate c)
         {
             return Document.Snap(c);
+        }
+
+        protected Coordinate SnapToSelection(Coordinate c, Viewport2D vp)
+        {
+            if (!Document.Map.SnapToGrid) return c;
+
+            var snap = (Select.SnapStyle == SnapStyle.SnapOnAlt && KeyboardState.Alt) ||
+                       (Select.SnapStyle == SnapStyle.SnapOffAlt && !KeyboardState.Alt);
+
+            if (!snap) return c;
+
+            var snapped = c.Snap(Document.Map.GridSpacing);
+            if (Document.Selection.InFaceSelection) return snapped;
+
+            var objects = Document.Selection.GetSelectedObjects().ToList();
+
+            foreach (var mo in objects)
+            {
+                if (!(mo is Entity) && !(mo is Solid)) continue;
+                var center = vp.Flatten(mo.BoundingBox.Center);
+                if (DMath.Abs(center.X - c.X) >= mo.BoundingBox.Width / 10) continue;
+                if (DMath.Abs(center.Y - c.Y) >= mo.BoundingBox.Height / 10) continue;
+                return center;
+            }
+
+            var lines = objects.SelectMany(x =>
+            {
+                if (x is Entity) return x.BoundingBox.GetBoxLines();
+                if (x is Solid) return ((Solid) x).Faces.SelectMany(f => f.GetLines());
+                return new Line[0];
+            }).Select(x => new Line(vp.Flatten(x.Start), vp.Flatten(x.End))).ToList();
+
+            var closest = snapped;
+            foreach (var line in lines)
+            {
+                if (line.ClosestPoint(snapped).EquivalentTo(snapped)) return snapped;
+
+                var pointTolerance = (line.End - line.Start).VectorMagnitude() / 10;
+                if ((line.Start - c).VectorMagnitude() < pointTolerance) return line.Start;
+                if ((line.End - c).VectorMagnitude() < pointTolerance) return line.End;
+
+                var center = (line.Start + line.End) / 2;
+                if ((center - c).VectorMagnitude() < pointTolerance) return center;
+
+                var lineSnap = line.ClosestPoint(c);
+                if ((closest - c).VectorMagnitude() > (lineSnap - c).VectorMagnitude()) closest = lineSnap;
+            }
+            return closest;
         }
 
         protected Coordinate GetNudgeValue(Keys k)

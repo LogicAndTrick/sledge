@@ -320,6 +320,7 @@
     <Compile Include="Tools\VMTools\VMSubTool.cs" />
     <Compile Include="Tools\VMTools\StandardTool.cs" />
     <Compile Include="Tools\Widgets\RotationWidget.cs" />
+    <Compile Include="Tools\Widgets\Widget.cs" />
     <Compile Include="UI\AboutDialog.cs">
       <SubType>Form</SubType>
     </Compile>
