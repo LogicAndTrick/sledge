@@ -11,6 +11,7 @@ using Sledge.DataStructures.MapObjects;
 using Sledge.DataStructures.Transformations;
 using Sledge.Editor.Actions;
 using Sledge.Editor.Actions.MapObjects.Operations;
+using Sledge.Editor.Actions.MapObjects.Operations.EditOperations;
 using Sledge.Editor.Actions.MapObjects.Selection;
 using Sledge.Editor.Clipboard;
 using Sledge.Editor.Properties;
@@ -825,12 +826,7 @@ namespace Sledge.Editor.Tools
 
             // Transform the selection
             var keepVisgroups = Sledge.Settings.Select.KeepVisgroupsWhenCloning;
-            action.Edit(objects, (d, x) =>
-            {
-                x.Transform(transform, d.Map.GetTransformFlags());
-                if (keepVisgroups) return;
-                foreach (var o in x.FindAll()) o.Visgroups.Clear();
-            });
+            action.Edit(objects, new TransformEditOperation(transform, Document.Map.GetTransformFlags()) { ClearVisgroups = !keepVisgroups });
 
             // Execute the action
             Document.PerformAction(name, action);

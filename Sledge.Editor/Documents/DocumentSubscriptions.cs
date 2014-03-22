@@ -14,6 +14,7 @@ using Sledge.DataStructures.Transformations;
 using Sledge.Editor.Actions;
 using Sledge.Editor.Actions.MapObjects.Groups;
 using Sledge.Editor.Actions.MapObjects.Operations;
+using Sledge.Editor.Actions.MapObjects.Operations.EditOperations;
 using Sledge.Editor.Actions.MapObjects.Selection;
 using Sledge.Editor.Actions.Visgroups;
 using Sledge.Editor.Clipboard;
@@ -592,7 +593,7 @@ namespace Sledge.Editor.Documents
                 if (transform == null) return;
 
                 var selected = _document.Selection.GetSelectedParents();
-                _document.PerformAction("Transform selection", new Edit(selected, (d, x) => x.Transform(transform, d.Map.GetTransformFlags())));
+                _document.PerformAction("Transform selection", new Edit(selected, new TransformEditOperation(transform, _document.Map.GetTransformFlags())));
             }
         }
 
@@ -617,7 +618,7 @@ namespace Sledge.Editor.Documents
             var box = _document.Selection.GetSelectionBoundingBox();
             var transform = GetSnapTransform(box);
 
-            _document.PerformAction("Snap to grid", new Edit(selected, (d, x) => x.Transform(transform, d.Map.GetTransformFlags())));
+            _document.PerformAction("Snap to grid", new Edit(selected, new TransformEditOperation(transform, _document.Map.GetTransformFlags())));
         }
 
         public void SnapSelectionToGridIndividually()
@@ -626,56 +627,47 @@ namespace Sledge.Editor.Documents
 
             var selected = _document.Selection.GetSelectedParents();
 
-            _document.PerformAction("Snap to grid individually", new Edit(selected, (d, x) => x.Transform(GetSnapTransform(x.BoundingBox), d.Map.GetTransformFlags())));
+            _document.PerformAction("Snap to grid individually", new Edit(selected, new SnapToGridEditOperation(_document.Map.GridSpacing, _document.Map.GetTransformFlags())));
         }
 
-        private IUnitTransformation GetAlignTransform(Box selection, Box item, Func<Box, decimal> extractor, Func<decimal, Coordinate> creator)
-        {
-            var current = extractor(item);
-            var target = extractor(selection);
-            var value = target - current;
-            var translate = creator(value);
-            return new UnitTranslate(translate);
-        }
-
-        private void AlignObjects(Func<Box, decimal> extractor, Func<decimal, Coordinate> creator)
+        private void AlignObjects(AlignObjectsEditOperation.AlignAxis axis, AlignObjectsEditOperation.AlignDirection direction)
         {
             if (_document.Selection.IsEmpty() || _document.Selection.InFaceSelection) return;
 
             var selected = _document.Selection.GetSelectedParents();
             var box = _document.Selection.GetSelectionBoundingBox();
 
-            _document.PerformAction("Align Objects", new Edit(selected, (d, x) => x.Transform(GetAlignTransform(box, x.BoundingBox, extractor, creator), d.Map.GetTransformFlags())));
+            _document.PerformAction("Align Objects", new Edit(selected, new AlignObjectsEditOperation(box, axis, direction, _document.Map.GetTransformFlags())));
         }
 
         public void AlignXMax()
         {
-            AlignObjects(x => x.End.X, x => new Coordinate(x, 0, 0));
+            AlignObjects(AlignObjectsEditOperation.AlignAxis.X, AlignObjectsEditOperation.AlignDirection.Max);
         }
 
         public void AlignXMin()
         {
-            AlignObjects(x => x.Start.X, x => new Coordinate(x, 0, 0));
+            AlignObjects(AlignObjectsEditOperation.AlignAxis.X, AlignObjectsEditOperation.AlignDirection.Min);
         }
 
         public void AlignYMax()
         {
-            AlignObjects(y => y.End.Y, y => new Coordinate(0, y, 0));
+            AlignObjects(AlignObjectsEditOperation.AlignAxis.Y, AlignObjectsEditOperation.AlignDirection.Max);
         }
 
         public void AlignYMin()
         {
-            AlignObjects(y => y.Start.Y, y => new Coordinate(0, y, 0));
+            AlignObjects(AlignObjectsEditOperation.AlignAxis.Y, AlignObjectsEditOperation.AlignDirection.Min);
         }
 
         public void AlignZMax()
         {
-            AlignObjects(z => z.End.Z, z => new Coordinate(0, 0, z));
+            AlignObjects(AlignObjectsEditOperation.AlignAxis.Z, AlignObjectsEditOperation.AlignDirection.Max);
         }
 
         public void AlignZMin()
         {
-            AlignObjects(z => z.Start.Z, z => new Coordinate(0, 0, z));
+            AlignObjects(AlignObjectsEditOperation.AlignAxis.Z, AlignObjectsEditOperation.AlignDirection.Min);
         }
 
         private void FlipObjects(Coordinate scale)
@@ -685,7 +677,8 @@ namespace Sledge.Editor.Documents
             var selected = _document.Selection.GetSelectedParents();
             var box = _document.Selection.GetSelectionBoundingBox();
 
-            _document.PerformAction("Flip Objects", new Edit(selected, (d, x) => x.Transform(new UnitScale(scale, box.Center), d.Map.GetTransformFlags())));
+            var transform = new UnitScale(scale, box.Center);
+            _document.PerformAction("Flip Objects", new Edit(selected, new TransformEditOperation(transform, _document.Map.GetTransformFlags())));
         }
 
         public void FlipX()

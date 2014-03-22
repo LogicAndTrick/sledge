@@ -35,10 +35,16 @@ namespace Sledge.Editor.Tools
             if (!snap) return c;
 
             var snapped = c.Snap(Document.Map.GridSpacing);
-            if (Document.Selection.InFaceSelection) return snapped;
+            if (Document.Selection.InFaceSelection || Document.Selection.IsEmpty()) return snapped;
+
+            // Try and snap the the selection box center
+            var selBox = Document.Selection.GetSelectionBoundingBox();
+            var selCenter = vp.Flatten(selBox.Center);
+            if (DMath.Abs(selCenter.X - c.X) < selBox.Width / 10 && DMath.Abs(selCenter.Y - c.Y) < selBox.Height / 10) return selCenter;
 
             var objects = Document.Selection.GetSelectedObjects().ToList();
 
+            // Try and snap to an object center
             foreach (var mo in objects)
             {
                 if (!(mo is Entity) && !(mo is Solid)) continue;
@@ -48,6 +54,7 @@ namespace Sledge.Editor.Tools
                 return center;
             }
 
+            // Get all the edges of the selected objects
             var lines = objects.SelectMany(x =>
             {
                 if (x is Entity) return x.BoundingBox.GetBoxLines();
@@ -55,11 +62,14 @@ namespace Sledge.Editor.Tools
                 return new Line[0];
             }).Select(x => new Line(vp.Flatten(x.Start), vp.Flatten(x.End))).ToList();
 
+            // Try and snap to an edge
             var closest = snapped;
             foreach (var line in lines)
             {
+                // if the line and the grid are in the same spot, return the snapped point
                 if (line.ClosestPoint(snapped).EquivalentTo(snapped)) return snapped;
 
+                // Test for corners and midpoints within a 10% tolerance
                 var pointTolerance = (line.End - line.Start).VectorMagnitude() / 10;
                 if ((line.Start - c).VectorMagnitude() < pointTolerance) return line.Start;
                 if ((line.End - c).VectorMagnitude() < pointTolerance) return line.End;
@@ -67,6 +77,7 @@ namespace Sledge.Editor.Tools
                 var center = (line.Start + line.End) / 2;
                 if ((center - c).VectorMagnitude() < pointTolerance) return center;
 
+                // If the line is closer to the grid point, return the line
                 var lineSnap = line.ClosestPoint(c);
                 if ((closest - c).VectorMagnitude() > (lineSnap - c).VectorMagnitude()) closest = lineSnap;
             }

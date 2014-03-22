@@ -81,6 +81,11 @@
     <Compile Include="Actions\MapObjects\Operations\Clip.cs" />
     <Compile Include="Actions\MapObjects\Operations\Carve.cs" />
     <Compile Include="Actions\MapObjects\Operations\CreateEditDelete.cs" />
+    <Compile Include="Actions\MapObjects\Operations\EditOperations\AlignObjectsEditOperation.cs" />
+    <Compile Include="Actions\MapObjects\Operations\EditOperations\CopyPropertiesEditOperation.cs" />
+    <Compile Include="Actions\MapObjects\Operations\EditOperations\IEditOperation.cs" />
+    <Compile Include="Actions\MapObjects\Operations\EditOperations\SnapToGridEditOperation.cs" />
+    <Compile Include="Actions\MapObjects\Operations\EditOperations\TransformEditOperation.cs" />
     <Compile Include="Actions\MapObjects\Operations\MakeHollow.cs" />
     <Compile Include="Actions\MapObjects\Operations\Edit.cs" />
     <Compile Include="Actions\MapObjects\Operations\Create.cs" />

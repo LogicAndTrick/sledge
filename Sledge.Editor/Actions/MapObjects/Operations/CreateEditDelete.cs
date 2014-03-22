@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Sledge.Common.Mediator;
 using Sledge.DataStructures.MapObjects;
+using Sledge.Editor.Actions.MapObjects.Operations.EditOperations;
 using Sledge.Editor.Documents;
 
 namespace Sledge.Editor.Actions.MapObjects.Operations
@@ -30,23 +31,13 @@ namespace Sledge.Editor.Actions.MapObjects.Operations
         {
             public long ID { get; set; }
             public MapObject Before { get; set; }
-            public MapObject After { get; set; }
-            public Action<Document, MapObject> Action { get; set; }
+            public IEditOperation EditOperation { get; set; }
 
-            public EditReference(long id, MapObject before, MapObject after)
-            {
-                ID = id;
-                Before = before.Clone();
-                After = after.Clone();
-                Action = null;
-            }
-
-            public EditReference(MapObject obj, Action<Document, MapObject> action)
+            public EditReference(MapObject obj, IEditOperation editOperation)
             {
                 ID = obj.ID;
                 Before = obj.Clone();
-                After = null;
-                Action = action;
+                EditOperation = editOperation;
             }
 
             public void Perform(Document document)
@@ -59,8 +50,7 @@ namespace Sledge.Editor.Actions.MapObjects.Operations
                 var deselect = obj.FindAll().Where(x => x.IsSelected).ToList();
                 document.Selection.Deselect(deselect);
 
-                if (Action != null) Action(document, obj);
-                else obj.Unclone(After);
+                EditOperation.PerformOperation(obj);
 
                 var select = obj.FindAll().Where(x => deselect.Any(y => x.ID == y.ID));
                 document.Selection.Select(select);
@@ -124,7 +114,7 @@ namespace Sledge.Editor.Actions.MapObjects.Operations
 
         public void Edit(MapObject before, MapObject after)
         {
-            _editObjects.Add(new EditReference(before.ID, before, after));
+            _editObjects.Add(new EditReference(before, new CopyPropertiesEditOperation(after)));
         }
 
         public void Edit(IEnumerable<MapObject> before, IEnumerable<MapObject> after)
@@ -132,17 +122,17 @@ namespace Sledge.Editor.Actions.MapObjects.Operations
             var b = before.ToList();
             var a = after.ToList();
             var ids = b.Select(x => x.ID).Where(x => a.Any(y => x == y.ID));
-            _editObjects.AddRange(ids.Select(x => new EditReference(x, b.First(y => y.ID == x), a.First(y => y.ID == x))));
+            _editObjects.AddRange(ids.Select(x => new EditReference(b.First(y => y.ID == x), new CopyPropertiesEditOperation(a.First(y => y.ID == x)))));
         }
 
-        public void Edit(MapObject before, Action<Document, MapObject> action)
+        public void Edit(MapObject before, IEditOperation editOperation)
         {
-            _editObjects.Add(new EditReference(before, action));
+            _editObjects.Add(new EditReference(before, editOperation));
         }
 
-        public void Edit(IEnumerable<MapObject> objects, Action<Document, MapObject> action)
+        public void Edit(IEnumerable<MapObject> objects, IEditOperation editOperation)
         {
-            _editObjects.AddRange(objects.Select(x => new EditReference(x, action)));
+            _editObjects.AddRange(objects.Select(x => new EditReference(x, editOperation)));
         }
 
         public virtual void Dispose()

@@ -9,6 +9,7 @@ using Sledge.DataStructures.MapObjects;
 using Sledge.DataStructures.Transformations;
 using Sledge.Editor.Actions;
 using Sledge.Editor.Actions.MapObjects.Operations;
+using Sledge.Editor.Actions.MapObjects.Operations.EditOperations;
 using Sledge.Editor.Documents;
 using Sledge.Providers.Map;
 
@@ -137,7 +138,7 @@ namespace Sledge.Tests.Actions
         {
             var before = GetRandomObjects(_document, 200).OfType<Solid>().ToList();
             var rot = new UnitRotate(40, new Line(new Coordinate(1, 0, -1), new Coordinate(2, -3, 7)));
-            TestAction(new Edit(before, (d,x) => x.Transform(rot, TransformFlags.None)));
+            TestAction(new Edit(before, new TransformEditOperation(rot, TransformFlags.None)));
         }
 
         [TestMethod]

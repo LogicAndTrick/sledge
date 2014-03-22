@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Sledge.DataStructures.MapObjects;
+using Sledge.Editor.Actions.MapObjects.Operations.EditOperations;
 using Sledge.Editor.Documents;
 
 namespace Sledge.Editor.Actions.MapObjects.Operations
@@ -16,9 +17,9 @@ namespace Sledge.Editor.Actions.MapObjects.Operations
             Edit(before, after);
         }
 
-        public Edit(IEnumerable<MapObject> objects, Action<Document, MapObject> action)
+        public Edit(IEnumerable<MapObject> objects, IEditOperation editOperation)
         {
-            Edit(objects, action);
+            Edit(objects, editOperation);
         }
     }
 }
