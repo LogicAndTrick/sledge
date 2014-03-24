@@ -319,6 +319,9 @@ namespace Sledge.Editor.Tools
         /// <param name="e">The click event</param>
         protected override void MouseDown3D(Viewport3D viewport, ViewportEvent e)
         {
+            // Do not perform selection if space is down
+            if (KeyboardState.IsKeyDown(Keys.Space)) return;
+
             // First, get the ray that is cast from the clicked point along the viewport frustrum
             var ray = viewport.CastRayFromScreen(e.X, e.Y);
 
