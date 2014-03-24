@@ -14,7 +14,7 @@ namespace Sledge.Editor.Brushes
 
         public CylinderBrush()
         {
-            _numSides = new NumericControl(this) { LabelText = "Num. sides" };
+            _numSides = new NumericControl(this) { LabelText = "Number of sides" };
         }
 
         public string Name
