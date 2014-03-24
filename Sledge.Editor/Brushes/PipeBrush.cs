@@ -17,7 +17,7 @@ namespace Sledge.Editor.Brushes
         public PipeBrush()
         {
             _numSides = new NumericControl(this) { LabelText = "Num. sides" };
-            _width = new NumericControl(this) { LabelText = "Wall width", Minimum = 1, Maximum = 1024, Value = 32 };
+            _width = new NumericControl(this) { LabelText = "Wall width", Minimum = 1, Maximum = 1024, Value = 32, Precision = 1 };
         }
 
         public string Name

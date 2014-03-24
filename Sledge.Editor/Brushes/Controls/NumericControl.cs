@@ -41,6 +41,12 @@ namespace Sledge.Editor.Brushes.Controls
             set { Numeric.Enabled = value; }
         }
 
+        public int Precision
+        {
+            get { return Numeric.DecimalPlaces; }
+            set { Numeric.DecimalPlaces = value; }
+        }
+
         public NumericControl(IBrush brush) : base(brush)
         {
             InitializeComponent();
