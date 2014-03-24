@@ -149,7 +149,7 @@ namespace Sledge.Editor.Tools
             var brush = new BlockBrush();
             var ti = Document.TextureCollection.SelectedTexture;
             var texture = ti != null ? ti.GetTexture() : null;
-            var created = brush.Create(idg, bounds, texture).ToList();
+            var created = brush.Create(idg, bounds, texture, 0).ToList();
             if (created.Count > 1)
             {
                 var g = new Group(idg.GetNextObjectID());

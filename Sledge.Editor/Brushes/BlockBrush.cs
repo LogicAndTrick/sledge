@@ -19,7 +19,7 @@ namespace Sledge.Editor.Brushes
             return new List<BrushControl>();
         }
 
-        public IEnumerable<MapObject> Create(IDGenerator generator, Box box, ITexture texture)
+        public IEnumerable<MapObject> Create(IDGenerator generator, Box box, ITexture texture, int roundDecimals)
         {
             var solid = new Solid(generator.GetNextObjectID()) { Colour = Colour.GetRandomBrushColour() };
             foreach (var arr in box.GetBoxFaces())
@@ -31,7 +31,7 @@ namespace Sledge.Editor.Brushes
                     Colour = solid.Colour,
                     Texture = { Texture = texture }
                 };
-                face.Vertices.AddRange(arr.Select(x => new Vertex(x, face)));
+                face.Vertices.AddRange(arr.Select(x => new Vertex(x.Round(roundDecimals), face)));
                 face.UpdateBoundingBox();
                 face.AlignTextureToFace();
                 solid.Faces.Add(face);

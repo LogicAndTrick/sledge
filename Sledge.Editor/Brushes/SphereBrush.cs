@@ -49,7 +49,7 @@ namespace Sledge.Editor.Brushes
             return solid;
         }
 
-        public IEnumerable<MapObject> Create(IDGenerator generator, Box box, ITexture texture)
+        public IEnumerable<MapObject> Create(IDGenerator generator, Box box, ITexture texture, int roundDecimals)
         {
             var numsides = (int)_numSides.GetValue();
             if (numsides < 3) yield break;
@@ -67,9 +67,9 @@ namespace Sledge.Editor.Brushes
             var colour = Colour.GetRandomBrushColour();
 
             var faces = new List<Coordinate[]>();
-            var bottom = new Coordinate(box.Center.X, box.Center.Y, box.Start.Z);
-            var top = new Coordinate(box.Center.X, box.Center.Y, box.End.Z);
-            decimal cx = box.Center.X, cy = box.Center.Y;
+            var bottom = new Coordinate(box.Center.X, box.Center.Y, box.Start.Z).Round(roundDecimals); ;
+            var top = new Coordinate(box.Center.X, box.Center.Y, box.End.Z).Round(roundDecimals); ;
+            
             for (var i = 0; i < numsides; i++)
             {
                 // Top -> bottom
@@ -88,10 +88,10 @@ namespace Sledge.Editor.Brushes
                     var xyStartY = minor * DMath.Sin(xyAngleStart);
                     var xyEndX = major * DMath.Cos(xyAngleEnd);
                     var xyEndY = minor * DMath.Sin(xyAngleEnd);
-                    var one = new Coordinate(xyStartX * zMultStart, xyStartY * zMultStart, zStart) + box.Center;
-                    var two = new Coordinate(xyEndX * zMultStart, xyEndY * zMultStart, zStart) + box.Center;
-                    var three = new Coordinate(xyEndX * zMultEnd, xyEndY * zMultEnd, zEnd) + box.Center;
-                    var four = new Coordinate(xyStartX * zMultEnd, xyStartY * zMultEnd, zEnd) + box.Center;
+                    var one = (new Coordinate(xyStartX * zMultStart, xyStartY * zMultStart, zStart) + box.Center).Round(roundDecimals);
+                    var two = (new Coordinate(xyEndX * zMultStart, xyEndY * zMultStart, zStart) + box.Center).Round(roundDecimals);
+                    var three = (new Coordinate(xyEndX * zMultEnd, xyEndY * zMultEnd, zEnd) + box.Center).Round(roundDecimals);
+                    var four = (new Coordinate(xyStartX * zMultEnd, xyStartY * zMultEnd, zEnd) + box.Center).Round(roundDecimals);
                     if (i == 0)
                     {
                         // Top faces are triangles

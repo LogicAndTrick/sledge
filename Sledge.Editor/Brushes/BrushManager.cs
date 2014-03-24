@@ -27,11 +27,23 @@ namespace Sledge.Editor.Brushes
         private static readonly List<BrushControl> CurrentControls;
         private static Control _brushControl;
         private static ComboBox _comboBox;
+        private static bool _roundCreatedVertices;
+
+        public static bool RoundCreatedVertices
+        {
+            get { return _roundCreatedVertices; }
+            set
+            {
+                _roundCreatedVertices = value;
+                if (CurrentBrush != null) OnValuesChanged(CurrentBrush);
+            }
+        }
 
         static BrushManager()
         {
             Brushes = new List<IBrush>();
             CurrentControls = new List<BrushControl>();
+            RoundCreatedVertices = true;
         }
 
         public static void Init()

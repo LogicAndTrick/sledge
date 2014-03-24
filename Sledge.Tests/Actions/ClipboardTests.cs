@@ -23,7 +23,7 @@ namespace Sledge.Tests.Actions
             ent.EntityData.Properties.Add(new Property { Key = "key1", Value = "value1"});
             ent.EntityData.Properties.Add(new Property { Key = "key2", Value = "value2"});
             ent.EntityData.Flags = 12345;
-            ent.Children.AddRange(new BlockBrush().Create(idGen, box, null));
+            ent.Children.AddRange(new BlockBrush().Create(idGen, box, null, 0));
 
             // Copy and reconstruct
             var gs = VmfProvider.CreateCopyStream(new List<MapObject> {ent});

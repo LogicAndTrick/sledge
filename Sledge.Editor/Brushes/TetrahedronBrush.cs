@@ -19,14 +19,14 @@ namespace Sledge.Editor.Brushes
             return new List<BrushControl>();
         }
 
-        public IEnumerable<MapObject> Create(IDGenerator generator, Box box, ITexture texture)
+        public IEnumerable<MapObject> Create(IDGenerator generator, Box box, ITexture texture, int roundDecimals)
         {
             var solid = new Solid(generator.GetNextObjectID()) { Colour = Colour.GetRandomBrushColour() };
             // The higher Z plane will be triangle, with the lower X value getting the two corners
-            var c1 = new Coordinate(box.Start.X, box.Start.Y, box.End.Z);
-            var c2 = new Coordinate(box.End.X, box.Start.Y, box.End.Z);
-            var c3 = new Coordinate(box.Center.X, box.End.Y, box.End.Z);
-            var c4 = new Coordinate(box.Center.X, box.Center.Y, box.Start.Z);
+            var c1 = new Coordinate(box.Start.X, box.Start.Y, box.End.Z).Round(roundDecimals);
+            var c2 = new Coordinate(box.End.X, box.Start.Y, box.End.Z).Round(roundDecimals);
+            var c3 = new Coordinate(box.Center.X, box.End.Y, box.End.Z).Round(roundDecimals);
+            var c4 = new Coordinate(box.Center.X, box.Center.Y, box.Start.Z).Round(roundDecimals);
             var faces = new[]
                             {
                                 new[] { c3, c2, c1 },

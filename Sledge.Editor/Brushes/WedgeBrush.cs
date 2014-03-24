@@ -19,16 +19,16 @@ namespace Sledge.Editor.Brushes
             return new List<BrushControl>();
         }
 
-        public IEnumerable<MapObject> Create(IDGenerator generator, Box box, ITexture texture)
+        public IEnumerable<MapObject> Create(IDGenerator generator, Box box, ITexture texture, int roundDecimals)
         {
             var solid = new Solid(generator.GetNextObjectID()) { Colour = Colour.GetRandomBrushColour() };
             // The lower Z plane will be base, the x planes will be triangles
-            var c1 = new Coordinate(box.Start.X, box.Start.Y, box.Start.Z);
-            var c2 = new Coordinate(box.End.X, box.Start.Y, box.Start.Z);
-            var c3 = new Coordinate(box.End.X, box.End.Y, box.Start.Z);
-            var c4 = new Coordinate(box.Start.X, box.End.Y, box.Start.Z);
-            var c5 = new Coordinate(box.Center.X, box.Start.Y, box.End.Z);
-            var c6 = new Coordinate(box.Center.X, box.End.Y, box.End.Z);
+            var c1 = new Coordinate(box.Start.X, box.Start.Y, box.Start.Z).Round(roundDecimals);
+            var c2 = new Coordinate(box.End.X, box.Start.Y, box.Start.Z).Round(roundDecimals);
+            var c3 = new Coordinate(box.End.X, box.End.Y, box.Start.Z).Round(roundDecimals);
+            var c4 = new Coordinate(box.Start.X, box.End.Y, box.Start.Z).Round(roundDecimals);
+            var c5 = new Coordinate(box.Center.X, box.Start.Y, box.End.Z).Round(roundDecimals);
+            var c6 = new Coordinate(box.Center.X, box.End.Y, box.End.Z).Round(roundDecimals);
             var faces = new[]
                             {
                                 new[] { c1, c2, c3, c4 },

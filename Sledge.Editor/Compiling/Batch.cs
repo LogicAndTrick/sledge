@@ -175,8 +175,8 @@ namespace Sledge.Editor.Compiling
 
                 var brush = new Brushes.BlockBrush();
 
-                var cordon = (Solid) brush.Create(map.IDGenerator, outside, null).First();
-                var carver = (Solid) brush.Create(map.IDGenerator, inside, null).First();
+                var cordon = (Solid) brush.Create(map.IDGenerator, outside, null, 0).First();
+                var carver = (Solid) brush.Create(map.IDGenerator, inside, null, 0).First();
                 cordon.Faces.ForEach(x => x.Texture.Name = "BLACK");
 
                 // Do a carve (TODO: move carve into helper method?)

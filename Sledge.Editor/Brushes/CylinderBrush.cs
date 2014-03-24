@@ -27,7 +27,7 @@ namespace Sledge.Editor.Brushes
             yield return _numSides;
         }
 
-        public IEnumerable<MapObject> Create(IDGenerator generator, Box box, ITexture texture)
+        public IEnumerable<MapObject> Create(IDGenerator generator, Box box, ITexture texture, int roundDecimals)
         {
             var numsides = (int) _numSides.GetValue();
             if (numsides < 3) yield break;
@@ -49,13 +49,13 @@ namespace Sledge.Editor.Brushes
                 var xval = box.Center.X + major * DMath.Cos(a);
                 var yval = box.Center.Y + minor * DMath.Sin(a);
                 var zval = box.Start.Z;
-                points[i] = new Coordinate(xval, yval, zval).Round(0);
+                points[i] = new Coordinate(xval, yval, zval).Round(roundDecimals);
             }
 
             var faces = new List<Coordinate[]>();
 
             // Add the vertical faces
-            var z = new Coordinate(0, 0, height);
+            var z = new Coordinate(0, 0, height).Round(roundDecimals);
             for (var i = 0; i < numsides; i++)
             {
                 var next = (i + 1) % numsides;

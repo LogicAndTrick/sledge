@@ -52,9 +52,9 @@ namespace Sledge.Editor.Brushes
             return solid;
         }
 
-        public IEnumerable<MapObject> Create(IDGenerator generator, Box box, ITexture texture)
+        public IEnumerable<MapObject> Create(IDGenerator generator, Box box, ITexture texture, int roundDecimals)
         {
-            var wallWidth = (int) _width.GetValue();
+            var wallWidth = _width.GetValue();
             if (wallWidth < 1) yield break;
             var numsides = (int) _numSides.GetValue();
             if (numsides < 3) yield break;
@@ -80,10 +80,10 @@ namespace Sledge.Editor.Brushes
                 var xval = box.Center.X + majorOut * DMath.Cos(a);
                 var yval = box.Center.Y + minorOut * DMath.Sin(a);
                 var zval = box.Start.Z;
-                outer[i] = new Coordinate(xval, yval, zval).Round(0);
+                outer[i] = new Coordinate(xval, yval, zval).Round(roundDecimals);
                 xval = box.Center.X + majorIn * DMath.Cos(a);
                 yval = box.Center.Y + minorIn * DMath.Sin(a);
-                inner[i] = new Coordinate(xval, yval, zval).Round(0);
+                inner[i] = new Coordinate(xval, yval, zval).Round(roundDecimals);
             }
 
             // Create the solids

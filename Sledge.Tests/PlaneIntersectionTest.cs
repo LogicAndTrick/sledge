@@ -60,7 +60,7 @@ namespace Sledge.Tests
         {
             var idg = new IDGenerator();
             var box = new Box(Coordinate.One * -100, Coordinate.One * 100);
-            var planes = new CylinderBrush().Create(idg, box, null).OfType<Solid>().SelectMany(x => x.Faces).Select(x => x.Plane).ToList();
+            var planes = new CylinderBrush().Create(idg, box, null, 2).OfType<Solid>().SelectMany(x => x.Faces).Select(x => x.Plane).ToList();
             var solid = Solid.CreateFromIntersectingPlanes(planes, idg);
             Assert.IsTrue(solid.IsValid());
         }
@@ -70,7 +70,7 @@ namespace Sledge.Tests
         {
             var idg = new IDGenerator();
             var box = new Box(Coordinate.One * -100, Coordinate.One * 100);
-            var planes = new CylinderBrush().Create(idg, box, null).OfType<Solid>().SelectMany(x => x.Faces).Select(x => x.Plane).ToList();
+            var planes = new CylinderBrush().Create(idg, box, null, 2).OfType<Solid>().SelectMany(x => x.Faces).Select(x => x.Plane).ToList();
             var stopwatch = new Stopwatch();
             stopwatch.Start();
             for (var b = 0; b < 1000; b++)

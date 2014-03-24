@@ -20,6 +20,8 @@ namespace Sledge.Editor.UI.Sidebar
             BrushManager.Init();
             BrushManager.SetBrushControl(this);
             Mediator.Subscribe(EditorMediator.ResetSelectedBrushType, this);
+
+            RoundCreatedVerticesCheckbox.Checked = BrushManager.RoundCreatedVertices;
         }
 
         public void ResetSelectedBrushType()
@@ -33,6 +35,11 @@ namespace Sledge.Editor.UI.Sidebar
         public void Notify(string message, object data)
         {
             Mediator.ExecuteDefault(this, message, data);
+        }
+
+        private void RoundCreatedVerticesChanged(object sender, EventArgs e)
+        {
+            BrushManager.RoundCreatedVertices = RoundCreatedVerticesCheckbox.Checked;
         }
     }
 }

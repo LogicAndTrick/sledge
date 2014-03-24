@@ -80,11 +80,11 @@ namespace Sledge.Editor.Brushes
             return solid;
         }
 
-        public IEnumerable<MapObject> Create(IDGenerator generator, Box box, ITexture texture)
+        public IEnumerable<MapObject> Create(IDGenerator generator, Box box, ITexture texture, int roundDecimals)
         {
             var crossSides = (int)_crossSides.GetValue();
             if (crossSides < 3) yield break;
-            var crossWidth = (int) _crossRadius.GetValue() * 2;
+            var crossWidth = _crossRadius.GetValue() * 2;
             if (crossWidth < 1) yield break;
             var crossMakeHollow = _crossMakeHollow.GetValue();
             var crossArc = !crossMakeHollow ? 360 : (int)_crossArc.GetValue();
@@ -137,12 +137,12 @@ namespace Sledge.Editor.Brushes
                     var xval = majorSecondaryOuter * DMath.Cos(cross) * DMath.Cos(ring);
                     var yval = majorSecondaryOuter * DMath.Cos(cross) * DMath.Sin(ring);
                     var zval = minorSecondaryOuter * DMath.Sin(cross);
-                    crossSecOuter[j] = new Coordinate(xval + rxval, yval + ryval, zval + rzval);
+                    crossSecOuter[j] = new Coordinate(xval + rxval, yval + ryval, zval + rzval).Round(roundDecimals);
                     if (!crossMakeHollow) continue;
                     xval = majorSecondaryInner * DMath.Cos(cross) * DMath.Cos(ring);
                     yval = majorSecondaryInner * DMath.Cos(cross) * DMath.Sin(ring);
                     zval = minorSecondaryInner * DMath.Sin(cross);
-                    crossSecInner[j] = new Coordinate(xval + rxval, yval + ryval, zval + rzval);
+                    crossSecInner[j] = new Coordinate(xval + rxval, yval + ryval, zval + rzval).Round(roundDecimals);
                 }
                 ringOuterSections.Add(crossSecOuter);
                 ringInnerSections.Add(crossSecInner);

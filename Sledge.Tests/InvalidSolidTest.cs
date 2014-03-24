@@ -95,7 +95,7 @@ namespace Sledge.Tests
             var map = new Map();
             var block = new BlockBrush();
             var st = Coordinate.One * startLocation;
-            var brush = block.Create(map.IDGenerator, new Box(st, st + Coordinate.One * cubeSize), null).OfType<Solid>().First();
+            var brush = block.Create(map.IDGenerator, new Box(st, st + Coordinate.One * cubeSize), null, 0).OfType<Solid>().First();
             var verts = brush.Faces.SelectMany(x => x.Vertices).Where(x => x.Location == st).ToList();
             verts.ForEach(x => x.Location.X -= variance);
             brush.SetParent(map.WorldSpawn);
