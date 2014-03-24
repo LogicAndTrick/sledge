@@ -62,6 +62,9 @@ namespace Sledge.Settings
                                     new HotkeyDefinition("Tie to Entity", "Tie the selected objects to an entity", HotkeysMediator.TieToEntity, "Ctrl+T"),
                                     new HotkeyDefinition("Move to World", "Move the selected entities to the world", HotkeysMediator.TieToWorld, "Ctrl+Shift+W"),
 
+                                    new HotkeyDefinition("Carve", "Carve the selected objects", HotkeysMediator.Carve, "Ctrl+Shift+C"),
+                                    new HotkeyDefinition("Make Hollow", "Make the selected object hollow", HotkeysMediator.MakeHollow, "Ctrl+Shift+H"),
+
                                     new HotkeyDefinition("Toggle Texture Lock", "Toggles texture locking on and off", HotkeysMediator.ToggleTextureLock, "Shift+L"),
                                     new HotkeyDefinition("Transform", "Open the 'Transform' dialog", HotkeysMediator.Transform, "Ctrl+M"),
                                     new HotkeyDefinition("Check for Problems", "Open the 'Check for Problems' dialog", HotkeysMediator.CheckForProblems, "Alt+P"),
