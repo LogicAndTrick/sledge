@@ -33,6 +33,7 @@
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.SplitButton = new System.Windows.Forms.Button();
+            this.MergeResultsLabel = new Sledge.Editor.Tools.VMTools.FadeLabel();
             this.SuspendLayout();
             // 
             // MergeButton
@@ -71,7 +72,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(3, 89);
+            this.label2.Location = new System.Drawing.Point(3, 101);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(159, 26);
             this.label2.TabIndex = 6;
@@ -79,7 +80,7 @@
             // 
             // SplitButton
             // 
-            this.SplitButton.Location = new System.Drawing.Point(168, 89);
+            this.SplitButton.Location = new System.Drawing.Point(168, 101);
             this.SplitButton.Name = "SplitButton";
             this.SplitButton.Size = new System.Drawing.Size(76, 23);
             this.SplitButton.TabIndex = 8;
@@ -87,17 +88,29 @@
             this.SplitButton.UseVisualStyleBackColor = true;
             this.SplitButton.Click += new System.EventHandler(this.SplitButtonClicked);
             // 
+            // MergeResultsLabel
+            // 
+            this.MergeResultsLabel.AutoSize = true;
+            this.MergeResultsLabel.FadeTime = 2000;
+            this.MergeResultsLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.MergeResultsLabel.Location = new System.Drawing.Point(7, 82);
+            this.MergeResultsLabel.Name = "MergeResultsLabel";
+            this.MergeResultsLabel.Size = new System.Drawing.Size(88, 13);
+            this.MergeResultsLabel.TabIndex = 9;
+            this.MergeResultsLabel.Text = "Merge Results";
+            // 
             // StandardControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.MergeResultsLabel);
             this.Controls.Add(this.SplitButton);
             this.Controls.Add(this.MergeButton);
             this.Controls.Add(this.AutoMerge);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Name = "StandardControl";
-            this.Size = new System.Drawing.Size(250, 126);
+            this.Size = new System.Drawing.Size(250, 136);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -110,5 +123,6 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Button SplitButton;
+        private FadeLabel MergeResultsLabel;
     }
 }

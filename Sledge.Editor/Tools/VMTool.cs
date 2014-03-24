@@ -370,7 +370,7 @@ namespace Sledge.Editor.Tools
             {
                 // Add the vertex points
                 // Group by location per solid, duplicate coordinates are "attached" and moved at the same time
-                foreach (var group in copy.Faces.SelectMany(x => x.Vertices).GroupBy(x => x.Location))
+                foreach (var group in copy.Faces.SelectMany(x => x.Vertices).GroupBy(x => x.Location.Round(2)))
                 {
                     Points.Add(new VMPoint
                     {

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Windows.Forms;
 using Sledge.Common.Mediator;
 using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.MapObjects;
@@ -203,6 +204,7 @@ namespace Sledge.Editor.Tools.VMTools
             if (_state == VMState.Moving)
             {
                 if (AutomaticallyMerge()) CheckMergedVertices();
+                else if (CanMerge() && ConfirmMerge()) CheckMergedVertices();
                 else MainTool.SetDirty(true, true);
             }
             _state = VMState.None;
@@ -219,20 +221,63 @@ namespace Sledge.Editor.Tools.VMTools
             // Not used
         }
 
+        private bool CanMerge()
+        {
+            foreach (var solid in MainTool.GetCopies())
+            {
+                foreach (var face in solid.Faces)
+                {
+                    for (var i = 0; i < face.Vertices.Count; i++)
+                    {
+                        var j = (i + 1) % face.Vertices.Count;
+                        var v1 = face.Vertices[i];
+                        var v2 = face.Vertices[j];
+
+                        if (!v1.Location.EquivalentTo(v2.Location, 0.01m)) continue;
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        private bool ConfirmMerge()
+        {
+            return MessageBox.Show("Merge vertices?", "Overlapping vertices detected", MessageBoxButtons.YesNo) == DialogResult.Yes;
+        }
+
         private void CheckMergedVertices()
         {
-            // adjacent points with the same solid and coordinate need to be merged (erp)
-            foreach (var group in MainTool.GetCopies().SelectMany(x => x.Faces).SelectMany(x => x.Vertices).GroupBy(x => new { x.Parent, x.Location }).Where(x => x.Count() > 1))
+            var mergedVertices = 0;
+            var removedFaces = 0;
+            foreach (var solid in MainTool.GetCopies())
             {
-                var allFaces = group.Select(x => x.Parent).Distinct().ToList();
-                foreach (var face in allFaces)
+                foreach (var face in solid.Faces)
                 {
-                    var distinctVerts = face.Vertices.GroupBy(x => x.Location).Select(x => x.First()).ToList();
-                    if (distinctVerts.Count < 3) face.Parent.Faces.Remove(face); // Remove face
-                    else face.Vertices.RemoveAll(x => !distinctVerts.Contains(x)); // Remove duped verts
+                    // Remove adjacent duplicates
+                    for (var i = 0; i < face.Vertices.Count; i++)
+                    {
+                        // Loop through to the start to cater for when the first & last vertices are equal
+                        var j = (i + 1) % face.Vertices.Count;
+                        var v1 = face.Vertices[i];
+                        var v2 = face.Vertices[j];
+
+                        if (!v1.Location.EquivalentTo(v2.Location, 0.01m)) continue;
+
+                        // Two adjacent vertices are equivalent, remove the latter...
+                        face.Vertices.RemoveAt(j);
+                        mergedVertices++;
+
+                        // Check i again with its new neighbour
+                        i--;
+                    }
                 }
-                // ... this is hard :(
+
+                // Remove empty faces from the solid
+                removedFaces += solid.Faces.RemoveAll(x => x.Vertices.Count < 3);
             }
+
+            ((StandardControl) Control).ShowMergeResult(mergedVertices, removedFaces);
             MainTool.SetDirty(true, true);
         }
 
