@@ -453,7 +453,7 @@ namespace Sledge.Editor.Documents
         {
             if (!_document.Selection.IsEmpty() && !_document.Selection.InFaceSelection)
             {
-                _document.PerformAction("Grouped objects", new GroupAction(_document.Selection.GetSelectedObjects()));
+                _document.PerformAction("Grouped objects", new GroupAction(_document.Selection.GetSelectedParents()));
             }
         }
 
@@ -461,7 +461,7 @@ namespace Sledge.Editor.Documents
         {
             if (!_document.Selection.IsEmpty() && !_document.Selection.InFaceSelection)
             {
-                _document.PerformAction("Ungrouped objects", new UngroupAction(_document.Selection.GetSelectedObjects()));
+                _document.PerformAction("Ungrouped objects", new UngroupAction(_document.Selection.GetSelectedParents()));
             }
         }
 
