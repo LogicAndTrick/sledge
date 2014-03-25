@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using Sledge.Common.Mediator;
+using Sledge.DataStructures.MapObjects;
 using Sledge.Providers.Texture;
 using Sledge.Editor.UI;
 using Sledge.Settings;
@@ -11,11 +12,82 @@ namespace Sledge.Editor.Tools
 {
     public partial class TextureApplicationForm : HotkeyForm
     {
+        public class CurrentTextureProperties : TextureReference
+        {
+            public bool DifferentXScaleValues { get; set; }
+            public bool DifferentYScaleValues { get; set; }
+
+            public bool DifferentXShiftValues { get; set; }
+            public bool DifferentYShiftValues { get; set; }
+
+            public bool DifferentRotationValues { get; set; }
+
+            public bool AllAlignedToFace { get; set; }
+            public bool NoneAlignedToFace { get; set; }
+
+            public bool AllAlignedToWorld { get; set; }
+            public bool NoneAlignedToWorld { get; set; }
+
+            public CurrentTextureProperties()
+            {
+                Reset();
+            }
+
+            public void Reset()
+            {
+                Rotation = XShift = YShift = 0;
+                XScale = YScale = 1;
+                DifferentXScaleValues = DifferentYScaleValues = DifferentXShiftValues = DifferentYShiftValues = false;
+                AllAlignedToFace = AllAlignedToWorld = false;
+                NoneAlignedToFace = NoneAlignedToWorld = true;
+            }
+
+            public void Reset(IEnumerable<Face> faces)
+            {
+                Reset();
+                var num = 0;
+                AllAlignedToWorld = NoneAlignedToWorld = AllAlignedToFace = NoneAlignedToFace = true;
+                foreach (var face in faces)
+                {
+                    if (face.IsTextureAlignedToFace()) NoneAlignedToFace = false;
+                    else AllAlignedToFace = false;
+                    if (face.IsTextureAlignedToWorld()) NoneAlignedToWorld = false;
+                    else AllAlignedToWorld = false;
+
+                    if (num == 0)
+                    {
+                        XScale = face.Texture.XScale;
+                        YScale = face.Texture.YScale;
+                        XShift = face.Texture.XShift;
+                        YShift = face.Texture.YShift;
+                        Rotation = face.Texture.Rotation;
+                    }
+                    else
+                    {
+                        if (face.Texture.XScale != XScale) DifferentXScaleValues = true;
+                        if (face.Texture.YScale != YScale) DifferentYScaleValues = true;
+                        if (face.Texture.XShift != XShift) DifferentXShiftValues = true;
+                        if (face.Texture.YShift != YShift) DifferentYShiftValues = true;
+                        if (face.Texture.Rotation != Rotation) DifferentRotationValues = true;
+                    }
+                    num++;
+                }
+
+                // WinForms hack: use a tiny decimal place so that the NumericUpDown controls work when the value is typed into the box
+                // E.g. Different X scale defaults to value of 1, but if 1 is typed in the box, the ValueChanged event won't fire since the backing value hasn't changed
+                // Setting the value to 1.000001 instead triggers the change event properly, and since the NUD rounds to 4 decimal places, pressing the up/down buttons will start from the rounded value.
+                if (DifferentXScaleValues) XScale = 1.000001m;
+                if (DifferentYScaleValues) YScale = 1.000001m;
+                if (DifferentXShiftValues) XShift = 0.000001m;
+                if (DifferentYShiftValues) YShift = 0.000001m;
+                if (DifferentRotationValues) Rotation = 0.000001m;
+            }
+        }
 
         #region Events
 
         public delegate void TextureSelectBehaviourChangedEventHandler(object sender, TextureTool.SelectBehaviour left, TextureTool.SelectBehaviour right);
-        public delegate void TexturePropertiesChangedEventHandler(object sender, decimal scaleX, decimal scaleY, int shiftX, int shiftY, decimal rotation, int lightmapScale);
+        public delegate void TexturePropertiesChangedEventHandler(object sender, CurrentTextureProperties properties);
         public delegate void TextureChangedEventHandler(object sender, TextureItem texture);
         public delegate void TextureHideMaskToggledEventHandler(object sender, bool hide);
         public delegate void TextureJustifyEventHandler(object sender, TextureTool.JustifyMode justify, bool treatAsOne);
@@ -70,11 +142,11 @@ namespace Sledge.Editor.Tools
             }
         }
 
-        protected virtual void OnPropertyChanged(decimal scaleX, decimal scaleY, int shiftX, int shiftY, decimal rotation, int lightmapScale)
+        protected virtual void OnPropertyChanged(CurrentTextureProperties properties)
         {
             if (PropertyChanged != null)
             {
-                PropertyChanged(this, scaleX, scaleY, shiftX, shiftY, rotation, lightmapScale);
+                PropertyChanged(this, properties);
             }
         }
 
@@ -89,8 +161,8 @@ namespace Sledge.Editor.Tools
         #endregion
 
         private bool _freeze;
-        private decimal _lastScaleX;
-        private decimal _lastScaleY;
+
+        private readonly CurrentTextureProperties _currentTextureProperties;
 
         public Documents.Document Document { get; set; }
 
@@ -101,13 +173,14 @@ namespace Sledge.Editor.Tools
             SelectedTexturesList.SelectionChanged += TextureSelectionChanged;
             RecentTexturesList.SelectionChanged += TextureSelectionChanged;
             _freeze = false;
-            _lastScaleX = _lastScaleY = 1;
+            _currentTextureProperties = new CurrentTextureProperties();
         }
 
         public void Clear()
         {
             SelectedTexturesList.Clear();
             RecentTexturesList.Clear();
+            _currentTextureProperties.Reset();
         }
 
         public TextureItem GetFirstSelectedTexture()
@@ -232,12 +305,33 @@ namespace Sledge.Editor.Tools
         {
             _freeze = true;
 
-            ScaleYValue.Value = ScaleYValue.Value = 1;
-            ShiftXValue.Value = ShiftYValue.Value = 0;
+            var faces = Document.Selection.GetSelectedFaces().ToList();
+            _currentTextureProperties.Reset(faces);
+
+            ScaleXValue.Value = _currentTextureProperties.XScale;
+            ScaleYValue.Value = _currentTextureProperties.YScale;
+            ShiftXValue.Value = _currentTextureProperties.XShift;
+            ShiftYValue.Value = _currentTextureProperties.YShift;
+            RotationValue.Value = _currentTextureProperties.Rotation;
+
+            if (_currentTextureProperties.DifferentXScaleValues) ScaleXValue.Text = "";
+            if (_currentTextureProperties.DifferentYScaleValues) ScaleYValue.Text = "";
+            if (_currentTextureProperties.DifferentXShiftValues) ShiftXValue.Text = "";
+            if (_currentTextureProperties.DifferentYShiftValues) ShiftYValue.Text = "";
+            if (_currentTextureProperties.DifferentRotationValues) RotationValue.Text = "";
+
+            if (_currentTextureProperties.AllAlignedToFace) AlignToFaceCheckbox.CheckState = CheckState.Checked;
+            else if (_currentTextureProperties.NoneAlignedToFace) AlignToFaceCheckbox.CheckState = CheckState.Unchecked;
+            else AlignToFaceCheckbox.CheckState = CheckState.Indeterminate;
+
+            if (_currentTextureProperties.AllAlignedToWorld) AlignToWorldCheckbox.CheckState = CheckState.Checked;
+            else if (_currentTextureProperties.NoneAlignedToWorld) AlignToWorldCheckbox.CheckState = CheckState.Unchecked;
+            else AlignToWorldCheckbox.CheckState = CheckState.Indeterminate;
+
             TextureDetailsLabel.Text = "";
             var textures = new List<TextureItem>();
-            var first = true;
-            foreach (var face in Document.Selection.GetSelectedFaces())
+
+            foreach (var face in faces)
             {
                 var tex = face.Texture;
                 if (tex.Texture != null && textures.All(x => !String.Equals(x.Name, tex.Texture.Name, StringComparison.InvariantCultureIgnoreCase)))
@@ -248,58 +342,6 @@ namespace Sledge.Editor.Tools
                         textures.Add(item);
                     }
                 }
-
-                if (first)
-                {
-                    ScaleXValue.Value = tex.XScale;
-                }
-                else if (ScaleXValue.Text != "" && ScaleXValue.Value != tex.XScale)
-                {
-                    ScaleXValue.Value = 1;
-                    ScaleXValue.Text = "";
-                }
-
-                if (first)
-                {
-                    ScaleYValue.Value = tex.YScale;
-                }
-                else if (ScaleYValue.Text != "" && ScaleYValue.Value != tex.YScale)
-                {
-                    ScaleYValue.Value = 1;
-                    ScaleYValue.Text = "";
-                }
-
-                if (first)
-                {
-                    ShiftXValue.Value = tex.XShift;
-                }
-                else if (ShiftXValue.Text != "" && ShiftXValue.Value != tex.XShift)
-                {
-                    ShiftXValue.Value = 0;
-                    ShiftXValue.Text = "";
-                }
-
-                if (first)
-                {
-                    ShiftYValue.Value = tex.YShift;
-                }
-                else if (ShiftYValue.Text != "" && ShiftYValue.Value != tex.YShift)
-                {
-                    ShiftYValue.Value = 0;
-                    ShiftYValue.Text = "";
-                }
-
-                if (first)
-                {
-                    RotationValue.Value = tex.Rotation;
-                }
-                else if (RotationValue.Text != "" && RotationValue.Value != tex.Rotation)
-                {
-                    RotationValue.Value = 0;
-                    RotationValue.Text = "";
-                }
-
-                first = false;
             }
 
             if (textures.Any())
@@ -322,51 +364,53 @@ namespace Sledge.Editor.Tools
         {
             if (_freeze) return;
 
-            _freeze = true;
-            if (ScaleXValue.Value == 0)
-            {
-                ScaleXValue.Value -= _lastScaleX;
-            }
-            if (ScaleYValue.Value == 0)
-            {
-                ScaleYValue.Value -= _lastScaleY;
-            }
-            _lastScaleX = ScaleXValue.Value;
-            _lastScaleY = ScaleYValue.Value;
-            _freeze = false;
+            if (!_currentTextureProperties.DifferentXScaleValues) _currentTextureProperties.XScale = ScaleXValue.Value;
+            if (!_currentTextureProperties.DifferentYScaleValues) _currentTextureProperties.YScale = ScaleYValue.Value;
+            if (!_currentTextureProperties.DifferentXShiftValues) _currentTextureProperties.XShift = ShiftXValue.Value;
+            if (!_currentTextureProperties.DifferentYShiftValues) _currentTextureProperties.YShift = ShiftYValue.Value;
+            if (!_currentTextureProperties.DifferentRotationValues) _currentTextureProperties.Rotation = RotationValue.Value;
 
-            OnPropertyChanged(ScaleXValue.Value, ScaleYValue.Value,
-                              (int) ShiftXValue.Value, (int) ShiftYValue.Value,
-                              RotationValue.Value, (int) LightmapValue.Value);
+            OnPropertyChanged(_currentTextureProperties);
         }
 
         private void ScaleXValueChanged(object sender, EventArgs e)
         {
+            if (_freeze) return;
+            _currentTextureProperties.DifferentXScaleValues = false;
             PropertiesChanged();
         }
 
         private void ScaleYValueChanged(object sender, EventArgs e)
         {
+            if (_freeze) return;
+            _currentTextureProperties.DifferentYScaleValues = false;
             PropertiesChanged();
         }
 
         private void ShiftXValueChanged(object sender, EventArgs e)
         {
+            if (_freeze) return;
+            _currentTextureProperties.DifferentXShiftValues = false;
             PropertiesChanged();
         }
 
         private void ShiftYValueChanged(object sender, EventArgs e)
         {
+            if (_freeze) return;
+            _currentTextureProperties.DifferentYShiftValues = false;
             PropertiesChanged();
         }
 
         private void RotationValueChanged(object sender, EventArgs e)
         {
+            if (_freeze) return;
+            _currentTextureProperties.DifferentRotationValues = false;
             PropertiesChanged();
         }
 
         private void LightmapValueChanged(object sender, EventArgs e)
         {
+            if (_freeze) return;
             PropertiesChanged();
         }
 

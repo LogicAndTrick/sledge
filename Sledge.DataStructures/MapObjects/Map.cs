@@ -178,7 +178,7 @@ namespace Sledge.DataStructures.MapObjects
                         if (f.Texture.Texture == null)
                         {
                             f.Texture.Texture = textureAccessor(f.Texture.Name.ToLowerInvariant());
-                            f.CalculateTextureCoordinates();
+                            f.CalculateTextureCoordinates(true);
                         }
                         if (disp && !(f is Displacement))
                         {

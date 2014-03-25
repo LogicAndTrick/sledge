@@ -163,7 +163,7 @@ namespace Sledge.DataStructures.MapObjects
                     break;
                 }
             }
-            front.Faces.Union(back.Faces).ToList().ForEach(x => x.CalculateTextureCoordinates());
+            front.Faces.Union(back.Faces).ToList().ForEach(x => x.CalculateTextureCoordinates(true));
 
             return true;
         }

@@ -123,7 +123,7 @@ namespace Sledge.Editor.Tools.VMTools
             };
             f.Vertices.AddRange(verts.Select(x => new Vertex(x, f)));
             f.UpdateBoundingBox();
-            f.CalculateTextureCoordinates();
+            f.CalculateTextureCoordinates(true);
             parent.Faces.Add(f);
         }
 

@@ -105,7 +105,7 @@ namespace Sledge.Editor.UI
                                                     }
                                                     face.Texture.Name = repl.Item2.Name;
                                                     face.Texture.Texture = repl.Item3;
-                                                    face.CalculateTextureCoordinates();
+                                                    face.CalculateTextureCoordinates(true);
                                                 };
             return new EditFace(faces, action, true);
         }

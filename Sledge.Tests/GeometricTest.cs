@@ -78,7 +78,7 @@ namespace Sledge.Tests
                                  new Coordinate(-100, 100, 100)
                              };
             face.Vertices.AddRange(coords.Select(x => new Vertex(x, face)));
-            face.CalculateTextureCoordinates();
+            face.CalculateTextureCoordinates(true);
 
             var passLine = new Line(new Coordinate(0, 0, 0), new Coordinate(0, 0, 200));
             var reversePassLine = passLine.Reverse();

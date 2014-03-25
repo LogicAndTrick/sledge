@@ -34,7 +34,7 @@ namespace Sledge.Editor.Problems
                                                        {
                                                            x.Texture.Name = def.Name;
                                                            x.Texture.Texture = def.GetTexture();
-                                                           x.CalculateTextureCoordinates();
+                                                           x.CalculateTextureCoordinates(true);
                                                        }
                                                    }, true);
         }

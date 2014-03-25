@@ -209,7 +209,7 @@ namespace Sledge.DataStructures.MapObjects
             }
         }
 
-        public override void CalculateTextureCoordinates()
+        public override void CalculateTextureCoordinates(bool minimizeTextureValues)
         {
             var list = new List<Vertex>();
             foreach (var p in Points) list.Add(p.CurrentPosition);

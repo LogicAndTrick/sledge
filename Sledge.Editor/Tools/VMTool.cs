@@ -427,7 +427,7 @@ namespace Sledge.Editor.Tools
         {
             foreach (var face in GetCopies().SelectMany(x => x.Faces))
             {
-                face.CalculateTextureCoordinates();
+                face.CalculateTextureCoordinates(true);
                 if (face.Vertices.Count >= 3) face.Plane = new Plane(face.Vertices[0].Location, face.Vertices[1].Location, face.Vertices[2].Location);
             }
         }

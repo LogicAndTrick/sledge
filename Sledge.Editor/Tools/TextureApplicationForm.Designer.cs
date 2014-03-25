@@ -38,8 +38,8 @@ namespace Sledge.Editor.Tools
             this.label9 = new System.Windows.Forms.Label();
             this.SmoothingGroupsButton = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.AlignWorldButton = new System.Windows.Forms.Button();
-            this.AlignFaceButton = new System.Windows.Forms.Button();
+            this.AlignToFaceCheckbox = new System.Windows.Forms.CheckBox();
+            this.AlignToWorldCheckbox = new System.Windows.Forms.CheckBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.JustifyTopButton = new System.Windows.Forms.Button();
             this.JustifyFitButton = new System.Windows.Forms.Button();
@@ -150,8 +150,8 @@ namespace Sledge.Editor.Tools
             // 
             // groupBox2
             // 
-            this.groupBox2.Controls.Add(this.AlignWorldButton);
-            this.groupBox2.Controls.Add(this.AlignFaceButton);
+            this.groupBox2.Controls.Add(this.AlignToFaceCheckbox);
+            this.groupBox2.Controls.Add(this.AlignToWorldCheckbox);
             this.groupBox2.Location = new System.Drawing.Point(174, 97);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(122, 52);
@@ -159,25 +159,27 @@ namespace Sledge.Editor.Tools
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Align";
             // 
-            // AlignWorldButton
+            // AlignToFaceCheckbox
             // 
-            this.AlignWorldButton.Location = new System.Drawing.Point(6, 19);
-            this.AlignWorldButton.Name = "AlignWorldButton";
-            this.AlignWorldButton.Size = new System.Drawing.Size(53, 20);
-            this.AlignWorldButton.TabIndex = 4;
-            this.AlignWorldButton.Text = "World";
-            this.AlignWorldButton.UseVisualStyleBackColor = true;
-            this.AlignWorldButton.Click += new System.EventHandler(this.AlignToWorldClicked);
+            this.AlignToFaceCheckbox.AutoSize = true;
+            this.AlignToFaceCheckbox.Location = new System.Drawing.Point(63, 22);
+            this.AlignToFaceCheckbox.Name = "AlignToFaceCheckbox";
+            this.AlignToFaceCheckbox.Size = new System.Drawing.Size(50, 17);
+            this.AlignToFaceCheckbox.TabIndex = 0;
+            this.AlignToFaceCheckbox.Text = "Face";
+            this.AlignToFaceCheckbox.UseVisualStyleBackColor = true;
+            this.AlignToFaceCheckbox.Click += new System.EventHandler(this.AlignToFaceClicked);
             // 
-            // AlignFaceButton
+            // AlignToWorldCheckbox
             // 
-            this.AlignFaceButton.Location = new System.Drawing.Point(65, 19);
-            this.AlignFaceButton.Name = "AlignFaceButton";
-            this.AlignFaceButton.Size = new System.Drawing.Size(53, 20);
-            this.AlignFaceButton.TabIndex = 4;
-            this.AlignFaceButton.Text = "Face";
-            this.AlignFaceButton.UseVisualStyleBackColor = true;
-            this.AlignFaceButton.Click += new System.EventHandler(this.AlignToFaceClicked);
+            this.AlignToWorldCheckbox.AutoSize = true;
+            this.AlignToWorldCheckbox.Location = new System.Drawing.Point(7, 22);
+            this.AlignToWorldCheckbox.Name = "AlignToWorldCheckbox";
+            this.AlignToWorldCheckbox.Size = new System.Drawing.Size(54, 17);
+            this.AlignToWorldCheckbox.TabIndex = 0;
+            this.AlignToWorldCheckbox.Text = "World";
+            this.AlignToWorldCheckbox.UseVisualStyleBackColor = true;
+            this.AlignToWorldCheckbox.Click += new System.EventHandler(this.AlignToWorldClicked);
             // 
             // groupBox1
             // 
@@ -385,7 +387,7 @@ namespace Sledge.Editor.Tools
             this.tableLayoutPanel1.ColumnCount = 3;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 65F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 189F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 194F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel1.Controls.Add(this.ScaleXValue, 1, 1);
@@ -649,6 +651,7 @@ namespace Sledge.Editor.Tools
             this.Text = "Texture Application";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.OnClosing);
             this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
             this.groupBox1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.RotationValue)).EndInit();
             this.tableLayoutPanel1.ResumeLayout(false);
@@ -671,8 +674,6 @@ namespace Sledge.Editor.Tools
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.Button SmoothingGroupsButton;
         private System.Windows.Forms.GroupBox groupBox2;
-        private System.Windows.Forms.Button AlignWorldButton;
-        private System.Windows.Forms.Button AlignFaceButton;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.Button JustifyTopButton;
         private System.Windows.Forms.Button JustifyFitButton;
@@ -705,5 +706,7 @@ namespace Sledge.Editor.Tools
         private TextureListPanel SelectedTexturesList;
         private TextureListPanel RecentTexturesList;
         private System.Windows.Forms.ToolTip HoverTip;
+        private System.Windows.Forms.CheckBox AlignToFaceCheckbox;
+        private System.Windows.Forms.CheckBox AlignToWorldCheckbox;
     }
 }

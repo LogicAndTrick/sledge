@@ -110,7 +110,7 @@ namespace Sledge.Editor.Tools
                                       {
                                           face.Texture.Name = texture.Name;
                                           face.Texture.Texture = ti;
-                                          face.CalculateTextureCoordinates();
+                                          face.CalculateTextureCoordinates(false);
                                       };
             // When the texture changes, the entire list needs to be regenerated, can't do a partial update.
             Document.PerformAction("Apply texture", new EditFace(Document.Selection.GetSelectedFaces(), action, true));
@@ -124,21 +124,22 @@ namespace Sledge.Editor.Tools
             {
                 if (align == AlignMode.Face) face.AlignTextureToFace();
                 else if (align == AlignMode.World) face.AlignTextureToWorld();
-                face.CalculateTextureCoordinates();
+                face.CalculateTextureCoordinates(false);
             };
 
             Document.PerformAction("Align texture", new EditFace(Document.Selection.GetSelectedFaces(), action, false));
         }
 
-        private void TexturePropertyChanged(object sender, decimal scalex, decimal scaley, int shiftx, int shifty, decimal rotation, int lightmapscale)
+        private void TexturePropertyChanged(object sender, TextureApplicationForm.CurrentTextureProperties properties)
         {
             Action<Document, Face> action = (document, face) =>
             {
-                face.Texture.XScale = scalex;
-                face.Texture.YScale = scaley;
-                face.Texture.XShift = shiftx;
-                face.Texture.YShift = shifty;
-                face.SetTextureRotation(rotation); // This will recalculate the texture coordinates as well
+                if (!properties.DifferentXScaleValues) face.Texture.XScale = properties.XScale;
+                if (!properties.DifferentYScaleValues) face.Texture.YScale = properties.YScale;
+                if (!properties.DifferentXShiftValues) face.Texture.XShift = properties.XShift;
+                if (!properties.DifferentYShiftValues) face.Texture.YShift = properties.YShift;
+                if (!properties.DifferentRotationValues) face.SetTextureRotation(properties.Rotation);
+                face.CalculateTextureCoordinates(false);
             };
 
             Document.PerformAction("Modify texture properties", new EditFace(Document.Selection.GetSelectedFaces(), action, false));
@@ -286,7 +287,7 @@ namespace Sledge.Editor.Tools
                                                             }
                                                             else
                                                             {
-                                                                face.CalculateTextureCoordinates();
+                                                                face.CalculateTextureCoordinates(true);
                                                             }
                                                         }, true));
                     }
@@ -307,7 +308,7 @@ namespace Sledge.Editor.Tools
                                                         face.Texture.XShift = face.Texture.UAxis.Dot(point);
                                                         face.Texture.YShift = face.Texture.VAxis.Dot(point);
                                                         face.Texture.Rotation = 0;
-                                                        face.CalculateTextureCoordinates();
+                                                        face.CalculateTextureCoordinates(true);
                                                     }, false));
                     break;
                 default:

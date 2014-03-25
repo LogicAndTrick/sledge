@@ -135,9 +135,9 @@ namespace Sledge.DataStructures.MapObjects
             Bottom
         }
 
-        public virtual void CalculateTextureCoordinates()
+        public virtual void CalculateTextureCoordinates(bool minimizeShiftValues)
         {
-            MinimiseTextureShiftValues();
+            if (minimizeShiftValues) MinimiseTextureShiftValues();
             Vertices.ForEach(c => c.TextureU = c.TextureV = 0);
 
             if (Texture.Texture == null) return;
@@ -173,7 +173,7 @@ namespace Sledge.DataStructures.MapObjects
             Texture.VAxis = direction == Coordinate.UnitZ ? -Coordinate.UnitY : -Coordinate.UnitZ;
             Texture.Rotation = 0;
 
-            CalculateTextureCoordinates();
+            CalculateTextureCoordinates(true);
         }
 
         public void AlignTextureToFace()
@@ -189,7 +189,20 @@ namespace Sledge.DataStructures.MapObjects
             Texture.VAxis = Plane.Normal.Cross(Texture.UAxis).Normalise();
             Texture.Rotation = 0;
 
-            CalculateTextureCoordinates();
+            CalculateTextureCoordinates(true);
+        }
+
+        public bool IsTextureAlignedToWorld()
+        {
+            var direction = Plane.GetClosestAxisToNormal();
+            var cp = Texture.UAxis.Cross(Texture.VAxis).Normalise();
+            return cp.EquivalentTo(direction, 0.01m) || cp.EquivalentTo(-direction, 0.01m);
+        }
+
+        public bool IsTextureAlignedToFace()
+        {
+            var cp = Texture.UAxis.Cross(Texture.VAxis).Normalise();
+            return cp.EquivalentTo(Plane.Normal, 0.01m) || cp.EquivalentTo(-Plane.Normal, 0.01m);
         }
 
         public void AlignTextureWithFace(Face face)
@@ -249,7 +262,7 @@ namespace Sledge.DataStructures.MapObjects
             Texture.XScale = face.Texture.XScale;
             Texture.YScale = face.Texture.YScale;
 
-            CalculateTextureCoordinates();
+            CalculateTextureCoordinates(true);
         }
 
         private void MinimiseTextureShiftValues()
@@ -280,7 +293,7 @@ namespace Sledge.DataStructures.MapObjects
             Texture.XShift = -minU / Texture.XScale;
             Texture.YShift = -minV / Texture.YScale;
 
-            CalculateTextureCoordinates();
+            CalculateTextureCoordinates(true);
         }
 
         public void AlignTextureWithPointCloud(Cloud cloud, BoxAlignMode mode)
@@ -316,7 +329,7 @@ namespace Sledge.DataStructures.MapObjects
                     Texture.YShift = -maxV + Texture.Texture.Height;
                     break;
             }
-            CalculateTextureCoordinates();
+            CalculateTextureCoordinates(true);
         }
 
         /// <summary>
@@ -333,7 +346,7 @@ namespace Sledge.DataStructures.MapObjects
             Texture.VAxis = transform.Transform(Texture.VAxis);
             Texture.Rotation = rotate;
 
-            CalculateTextureCoordinates();
+            CalculateTextureCoordinates(false);
         }
 
         #endregion
@@ -385,7 +398,7 @@ namespace Sledge.DataStructures.MapObjects
                 // During rotate/skew operations we'll mess up the texture axes, just reset them.
                 AlignTextureToFace();
             }
-            CalculateTextureCoordinates();
+            CalculateTextureCoordinates(true);
             UpdateBoundingBox();
         }
 

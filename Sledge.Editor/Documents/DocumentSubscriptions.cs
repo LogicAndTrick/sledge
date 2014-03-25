@@ -365,7 +365,7 @@ namespace Sledge.Editor.Documents
             {
                 face.Texture.Name = texture.Name;
                 face.Texture.Texture = ti;
-                face.CalculateTextureCoordinates();
+                face.CalculateTextureCoordinates(true);
             };
             var faces = _document.Selection.GetSelectedObjects().OfType<Solid>().SelectMany(x => x.Faces);
             _document.PerformAction("Apply current texture", new EditFace(faces, action, true));
