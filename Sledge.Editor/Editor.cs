@@ -79,21 +79,6 @@ namespace Sledge.Editor
 
         private void EditorLoad(object sender, EventArgs e)
         {
-            // TODO this is a hack to fix 0.1.0.18/19, fix the updater properly!
-            var specFolder = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Specifications");
-            var spec = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Goldsource.vdf");
-            try
-            {
-                if (!Directory.Exists(specFolder)) Directory.CreateDirectory(specFolder);
-                var specDest = Path.Combine(specFolder, "Goldsource.vdf");
-                if (File.Exists(spec) && !File.Exists(specDest)) File.Move(spec, specDest);
-            }
-            catch
-            {
-                MessageBox.Show("Please run Sledge as an administrator to fix a deployment problem.");
-            }
-            // TODO end of hack
-
             SettingsManager.Read();
 
             if (TaskbarManager.IsPlatformSupported)
