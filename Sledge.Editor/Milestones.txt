@@ -5,7 +5,6 @@ Priorities
     Windows 7 recent file jump list not opening files
     Clip tool is laggy
   Document/Actions
-    Advanced/proper compiling
     Clip tool choose side
   UI
     Game config detection
@@ -22,8 +21,6 @@ Post-Alpha
     Map diff
     History stacks (for VM tool)
   Rendering
-    Change sprite renderables?
-    Further break dependencies between modern renderer and shaders/arrays
     Models
       Attachment chooser
       Sequence chooser
@@ -32,7 +29,6 @@ Post-Alpha
       Set angles value on rotate/transform
     Helpers
       Entity text labels (2D)
-      Box dimension labels (2D)
     Tools
       Select tool
         Advanced manipulator (3D)
@@ -52,7 +48,7 @@ Post-Alpha
   Rendering
     Solids - 100%
     Entities - 80%, path connections
-    Sprites - 95%, billboarding calculation could be improved
+    Sprites - 80%, FGD entities
     Models - 90%
     VBO - 100%
   File System
@@ -65,11 +61,11 @@ Post-Alpha
   Main Tools
     Selection - 100%
     Entity - 100%
-    Brush - 80%, arch, sphere
+    Brush - 100%
     Texture - 100%
     Decal - 100%
     Clip - 80%, choose sides to keep
-    VM - 80%, merge, create vertices
+    VM - 90%, create vertices?
   Secondary Tools
     Carve - 80%, groups
     Hollow - 80%, groups
@@ -77,7 +73,7 @@ Post-Alpha
     Visgroups - 100%
     Cordon - 80%, render
     Texture Lock - 100%
-    Entity/World - 90%, testing
+    Entity/World - 100%
     Texture Replace - 100%
     Undo/Redo - 70%, history UI [post-alpha]
     Manual Transform - 100%
@@ -105,10 +101,10 @@ Post-Alpha
     Right Toolbar Entity/World - 100%
     Right Toolbar History - 10% [post-alpha]
   Compiling
-    Compile flags / UI - 0%
-    Build map - 60%
-    Clean up after compile
-    Run game - 0%
+    Compile flags / UI - 90%, allow tools to be disabled
+    Build map - 100%
+    Clean up after compile - 100%
+    Run game - 100%
 
 2. Source support
 3. Plugins support

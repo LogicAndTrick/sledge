@@ -124,6 +124,8 @@ namespace Sledge.Editor.Settings
             this.CameraFOV = new System.Windows.Forms.NumericUpDown();
             this.label29 = new System.Windows.Forms.Label();
             this.groupBox13 = new System.Windows.Forms.GroupBox();
+            this.label43 = new System.Windows.Forms.Label();
+            this.MouseWheelMoveDistance = new System.Windows.Forms.NumericUpDown();
             this.InvertMouseX = new System.Windows.Forms.CheckBox();
             this.TimeToTopSpeedLabel = new System.Windows.Forms.Label();
             this.InvertMouseY = new System.Windows.Forms.CheckBox();
@@ -321,8 +323,7 @@ namespace Sledge.Editor.Settings
             this.btnCancelSettings = new System.Windows.Forms.Button();
             this.btnApplyAndCloseSettings = new System.Windows.Forms.Button();
             this.btnApplySettings = new System.Windows.Forms.Button();
-            this.label43 = new System.Windows.Forms.Label();
-            this.MouseWheelMoveDistance = new System.Windows.Forms.NumericUpDown();
+            this.DrawEntityNames = new System.Windows.Forms.CheckBox();
             this.tbcSettings.SuspendLayout();
             this.tabGeneral.SuspendLayout();
             this.groupBox23.SuspendLayout();
@@ -347,6 +348,7 @@ namespace Sledge.Editor.Settings
             this.groupBox12.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.CameraFOV)).BeginInit();
             this.groupBox13.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.MouseWheelMoveDistance)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.TimeToTopSpeed)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ForwardSpeed)).BeginInit();
             this.groupBox14.SuspendLayout();
@@ -388,7 +390,6 @@ namespace Sledge.Editor.Settings
             ((System.ComponentModel.ISupportInitialize)(this.trackBar2)).BeginInit();
             this.groupBox7.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.MouseWheelMoveDistance)).BeginInit();
             this.SuspendLayout();
             // 
             // tbcSettings
@@ -705,18 +706,18 @@ namespace Sledge.Editor.Settings
             this.groupBox11.Controls.Add(this.DrawCenterHandles);
             this.groupBox11.Controls.Add(this.BoxSelectByHandlesOnly);
             this.groupBox11.Controls.Add(this.ClickSelectByHandlesOnly);
-            this.groupBox11.Location = new System.Drawing.Point(421, 323);
+            this.groupBox11.Location = new System.Drawing.Point(6, 401);
             this.groupBox11.Name = "groupBox11";
-            this.groupBox11.Size = new System.Drawing.Size(304, 178);
+            this.groupBox11.Size = new System.Drawing.Size(468, 107);
             this.groupBox11.TabIndex = 1;
             this.groupBox11.TabStop = false;
             this.groupBox11.Text = "Center Handles";
             // 
             // CenterHandlesOnlyNearCursor
             // 
-            this.CenterHandlesOnlyNearCursor.Location = new System.Drawing.Point(10, 79);
+            this.CenterHandlesOnlyNearCursor.Location = new System.Drawing.Point(10, 77);
             this.CenterHandlesOnlyNearCursor.Name = "CenterHandlesOnlyNearCursor";
-            this.CenterHandlesOnlyNearCursor.Size = new System.Drawing.Size(257, 24);
+            this.CenterHandlesOnlyNearCursor.Size = new System.Drawing.Size(182, 24);
             this.CenterHandlesOnlyNearCursor.TabIndex = 0;
             this.CenterHandlesOnlyNearCursor.Tag = "";
             this.CenterHandlesOnlyNearCursor.Text = "Render only near cursor position";
@@ -724,9 +725,9 @@ namespace Sledge.Editor.Settings
             // 
             // CenterHandlesActiveViewportOnly
             // 
-            this.CenterHandlesActiveViewportOnly.Location = new System.Drawing.Point(10, 49);
+            this.CenterHandlesActiveViewportOnly.Location = new System.Drawing.Point(10, 47);
             this.CenterHandlesActiveViewportOnly.Name = "CenterHandlesActiveViewportOnly";
-            this.CenterHandlesActiveViewportOnly.Size = new System.Drawing.Size(257, 24);
+            this.CenterHandlesActiveViewportOnly.Size = new System.Drawing.Size(182, 24);
             this.CenterHandlesActiveViewportOnly.TabIndex = 0;
             this.CenterHandlesActiveViewportOnly.Tag = "";
             this.CenterHandlesActiveViewportOnly.Text = "Render only in active viewport";
@@ -736,7 +737,7 @@ namespace Sledge.Editor.Settings
             // 
             this.DrawCenterHandles.Location = new System.Drawing.Point(10, 19);
             this.DrawCenterHandles.Name = "DrawCenterHandles";
-            this.DrawCenterHandles.Size = new System.Drawing.Size(257, 24);
+            this.DrawCenterHandles.Size = new System.Drawing.Size(182, 24);
             this.DrawCenterHandles.TabIndex = 0;
             this.DrawCenterHandles.Tag = "";
             this.DrawCenterHandles.Text = "Render brush center handles";
@@ -744,7 +745,7 @@ namespace Sledge.Editor.Settings
             // 
             // BoxSelectByHandlesOnly
             // 
-            this.BoxSelectByHandlesOnly.Location = new System.Drawing.Point(10, 109);
+            this.BoxSelectByHandlesOnly.Location = new System.Drawing.Point(198, 19);
             this.BoxSelectByHandlesOnly.Name = "BoxSelectByHandlesOnly";
             this.BoxSelectByHandlesOnly.Size = new System.Drawing.Size(257, 24);
             this.BoxSelectByHandlesOnly.TabIndex = 0;
@@ -754,7 +755,7 @@ namespace Sledge.Editor.Settings
             // 
             // ClickSelectByHandlesOnly
             // 
-            this.ClickSelectByHandlesOnly.Location = new System.Drawing.Point(10, 139);
+            this.ClickSelectByHandlesOnly.Location = new System.Drawing.Point(198, 47);
             this.ClickSelectByHandlesOnly.Name = "ClickSelectByHandlesOnly";
             this.ClickSelectByHandlesOnly.Size = new System.Drawing.Size(278, 24);
             this.ClickSelectByHandlesOnly.TabIndex = 0;
@@ -1013,6 +1014,7 @@ namespace Sledge.Editor.Settings
             // 
             // groupBox17
             // 
+            this.groupBox17.Controls.Add(this.DrawEntityNames);
             this.groupBox17.Controls.Add(this.DrawBoxText);
             this.groupBox17.Controls.Add(this.KeepVisgroupsWhenCloning);
             this.groupBox17.Controls.Add(this.AutoSelectBox);
@@ -1023,7 +1025,7 @@ namespace Sledge.Editor.Settings
             this.groupBox17.Controls.Add(this.ScrollWheelZoomMultiplier);
             this.groupBox17.Location = new System.Drawing.Point(421, 126);
             this.groupBox17.Name = "groupBox17";
-            this.groupBox17.Size = new System.Drawing.Size(304, 191);
+            this.groupBox17.Size = new System.Drawing.Size(304, 269);
             this.groupBox17.TabIndex = 0;
             this.groupBox17.TabStop = false;
             this.groupBox17.Text = "Options";
@@ -1040,7 +1042,7 @@ namespace Sledge.Editor.Settings
             // 
             // KeepVisgroupsWhenCloning
             // 
-            this.KeepVisgroupsWhenCloning.Location = new System.Drawing.Point(10, 109);
+            this.KeepVisgroupsWhenCloning.Location = new System.Drawing.Point(10, 139);
             this.KeepVisgroupsWhenCloning.Name = "KeepVisgroupsWhenCloning";
             this.KeepVisgroupsWhenCloning.Size = new System.Drawing.Size(278, 24);
             this.KeepVisgroupsWhenCloning.TabIndex = 2;
@@ -1070,7 +1072,7 @@ namespace Sledge.Editor.Settings
             // 
             // label31
             // 
-            this.label31.Location = new System.Drawing.Point(12, 162);
+            this.label31.Location = new System.Drawing.Point(12, 192);
             this.label31.Name = "label31";
             this.label31.Size = new System.Drawing.Size(204, 20);
             this.label31.TabIndex = 3;
@@ -1079,7 +1081,7 @@ namespace Sledge.Editor.Settings
             // 
             // label30
             // 
-            this.label30.Location = new System.Drawing.Point(12, 136);
+            this.label30.Location = new System.Drawing.Point(12, 166);
             this.label30.Name = "label30";
             this.label30.Size = new System.Drawing.Size(204, 20);
             this.label30.TabIndex = 3;
@@ -1088,7 +1090,7 @@ namespace Sledge.Editor.Settings
             // 
             // SelectionBoxBackgroundOpacity
             // 
-            this.SelectionBoxBackgroundOpacity.Location = new System.Drawing.Point(222, 164);
+            this.SelectionBoxBackgroundOpacity.Location = new System.Drawing.Point(222, 194);
             this.SelectionBoxBackgroundOpacity.Maximum = new decimal(new int[] {
             128,
             0,
@@ -1111,7 +1113,7 @@ namespace Sledge.Editor.Settings
             0,
             0,
             65536});
-            this.ScrollWheelZoomMultiplier.Location = new System.Drawing.Point(222, 138);
+            this.ScrollWheelZoomMultiplier.Location = new System.Drawing.Point(222, 168);
             this.ScrollWheelZoomMultiplier.Maximum = new decimal(new int[] {
             10,
             0,
@@ -1430,6 +1432,32 @@ namespace Sledge.Editor.Settings
             this.groupBox13.TabIndex = 2;
             this.groupBox13.TabStop = false;
             this.groupBox13.Text = "Navigation";
+            // 
+            // label43
+            // 
+            this.label43.Location = new System.Drawing.Point(211, 119);
+            this.label43.Name = "label43";
+            this.label43.Size = new System.Drawing.Size(148, 20);
+            this.label43.TabIndex = 6;
+            this.label43.Text = "Mouse wheel move distance";
+            this.label43.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // MouseWheelMoveDistance
+            // 
+            this.MouseWheelMoveDistance.Location = new System.Drawing.Point(365, 121);
+            this.MouseWheelMoveDistance.Maximum = new decimal(new int[] {
+            1000,
+            0,
+            0,
+            0});
+            this.MouseWheelMoveDistance.Name = "MouseWheelMoveDistance";
+            this.MouseWheelMoveDistance.Size = new System.Drawing.Size(50, 20);
+            this.MouseWheelMoveDistance.TabIndex = 5;
+            this.MouseWheelMoveDistance.Value = new decimal(new int[] {
+            500,
+            0,
+            0,
+            0});
             // 
             // InvertMouseX
             // 
@@ -3548,31 +3576,15 @@ namespace Sledge.Editor.Settings
             this.btnApplySettings.UseVisualStyleBackColor = true;
             this.btnApplySettings.Click += new System.EventHandler(this.Apply);
             // 
-            // label43
+            // DrawEntityNames
             // 
-            this.label43.Location = new System.Drawing.Point(211, 119);
-            this.label43.Name = "label43";
-            this.label43.Size = new System.Drawing.Size(148, 20);
-            this.label43.TabIndex = 6;
-            this.label43.Text = "Mouse wheel move distance";
-            this.label43.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // MouseWheelMoveDistance
-            // 
-            this.MouseWheelMoveDistance.Location = new System.Drawing.Point(365, 121);
-            this.MouseWheelMoveDistance.Maximum = new decimal(new int[] {
-            1000,
-            0,
-            0,
-            0});
-            this.MouseWheelMoveDistance.Name = "MouseWheelMoveDistance";
-            this.MouseWheelMoveDistance.Size = new System.Drawing.Size(50, 20);
-            this.MouseWheelMoveDistance.TabIndex = 5;
-            this.MouseWheelMoveDistance.Value = new decimal(new int[] {
-            500,
-            0,
-            0,
-            0});
+            this.DrawEntityNames.Location = new System.Drawing.Point(10, 109);
+            this.DrawEntityNames.Name = "DrawEntityNames";
+            this.DrawEntityNames.Size = new System.Drawing.Size(225, 24);
+            this.DrawEntityNames.TabIndex = 4;
+            this.DrawEntityNames.Tag = "";
+            this.DrawEntityNames.Text = "Draw entity names in the viewport";
+            this.DrawEntityNames.UseVisualStyleBackColor = true;
             // 
             // SettingsForm
             // 
@@ -3615,6 +3627,7 @@ namespace Sledge.Editor.Settings
             ((System.ComponentModel.ISupportInitialize)(this.CameraFOV)).EndInit();
             this.groupBox13.ResumeLayout(false);
             this.groupBox13.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.MouseWheelMoveDistance)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.TimeToTopSpeed)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.ForwardSpeed)).EndInit();
             this.groupBox14.ResumeLayout(false);
@@ -3666,7 +3679,6 @@ namespace Sledge.Editor.Settings
             ((System.ComponentModel.ISupportInitialize)(this.trackBar2)).EndInit();
             this.groupBox7.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.MouseWheelMoveDistance)).EndInit();
             this.ResumeLayout(false);
 
 		}
@@ -3957,5 +3969,6 @@ namespace Sledge.Editor.Settings
         private System.Windows.Forms.CheckBox DrawBoxText;
         private System.Windows.Forms.Label label43;
         private System.Windows.Forms.NumericUpDown MouseWheelMoveDistance;
+        private System.Windows.Forms.CheckBox DrawEntityNames;
 	}
 }
