@@ -57,8 +57,8 @@ namespace Sledge.Editor.UI
 
     public sealed class TableSplitControl : TableLayoutPanel
     {
-        private bool _inH;
-        private bool _inV;
+        private int _inH;
+        private int _inV;
 
         private bool _resizing;
 
@@ -82,6 +82,8 @@ namespace Sledge.Editor.UI
         {
             RowCount = _configuration.Rows;
             ColumnCount = _configuration.Columns;
+            ColumnStyles.Clear();
+            RowStyles.Clear();
             for (var i = 0; i < ColumnCount; i++) ColumnStyles.Add(new ColumnStyle(SizeType.Percent, (int)(100m / ColumnCount)));
             for (var i = 0; i < RowCount; i++) RowStyles.Add(new RowStyle(SizeType.Percent, (int)(100m / RowCount)));
             ResetViews();
@@ -90,7 +92,8 @@ namespace Sledge.Editor.UI
         public TableSplitControl()
         {
             MinimumViewSize = 2;
-            _resizing = _inH = _inV = false;
+            _resizing = false;
+            _inH = _inV = -1;
             _configuration = TableSplitConfiguration.Default();
             ResetLayout();
         }
@@ -178,38 +181,51 @@ namespace Sledge.Editor.UI
         {
             if (_resizing)
             {
-                if (_inH && Width > 0)
+                if (_inH >= 0 && Width > 0)
                 {
                     ForgetFocus();
                     var mp = e.Y / (float)Height * 100;
-                    mp = Math.Min(MaximumViewSize, Math.Max(MinimumViewSize, mp));
-                    RowStyles[0].Height = mp;
-                    RowStyles[1].Height = 100 - mp;
+                    SetHorizontalSplitPosition(_inH, mp);
                 }
-                if (_inV && Height > 0)
+                if (_inV >= 0 && Height > 0)
                 {
                     ForgetFocus();
                     var mp = e.X / (float)Width * 100;
-                    mp = Math.Min(MaximumViewSize, Math.Max(MinimumViewSize, mp));
-                    ColumnStyles[0].Width = mp;
-                    ColumnStyles[1].Width = 100 - mp;
+                    SetVerticalSplitPosition(_inV, mp);
                 }
             }
             else
             {
                 var cw = GetColumnWidths();
                 var rh = GetRowHeights();
-                var ht = rh[0] - Margin.Bottom;
-                var hb = rh[0] + Margin.Top;
-                var vl = cw[0] - Margin.Right;
-                var vr = cw[0] + Margin.Left;
+                _inH = _inV = -1;
+                int hval = 0, vval = 0;
 
-                _inH = e.X > Margin.Left && e.X < Width - Margin.Right && e.Y > ht && e.Y < hb;
-                _inV = e.Y > Margin.Top && e.Y < Height - Margin.Bottom && e.X > vl && e.X < vr;
+                //todo: rowspan checks
 
-                if (_inH && _inV) Cursor = Cursors.SizeAll;
-                else if (_inV) Cursor = Cursors.SizeWE;
-                else if (_inH) Cursor = Cursors.SizeNS;
+                for (var i = 0; i < rh.Length - 1; i++)
+                {
+                    hval += rh[i];
+                    var top = hval - Margin.Bottom;
+                    var bottom = hval + Margin.Top;
+                    if (e.X <= Margin.Left || e.X >= Width - Margin.Right || e.Y <= top || e.Y >= bottom) continue;
+                    _inH = i;
+                    break;
+                }
+
+                for (var i = 0; i < cw.Length - 1; i++)
+                {
+                    vval += cw[i];
+                    var left = vval - Margin.Right;
+                    var right = vval + Margin.Left;
+                    if (e.Y <= Margin.Top || e.Y >= Height - Margin.Bottom || e.X <= left || e.X >= right) continue;
+                    _inV = i;
+                    break;
+                }
+
+                if (_inH >= 0 && _inV >= 0) Cursor = Cursors.SizeAll;
+                else if (_inV >= 0) Cursor = Cursors.SizeWE;
+                else if (_inH >= 0) Cursor = Cursors.SizeNS;
                 else Cursor = Cursors.Default;
             }
 
@@ -224,7 +240,7 @@ namespace Sledge.Editor.UI
 
         protected override void OnMouseDown(MouseEventArgs e)
         {
-            if (_inV || _inH) _resizing = true;
+            if (_inV >= 0 || _inH >= 0) _resizing = true;
             base.OnMouseDown(e);
         }
 
@@ -236,15 +252,96 @@ namespace Sledge.Editor.UI
 
         protected override void OnMouseDoubleClick(MouseEventArgs e)
         {
-            if (_inH)
+            if (_inH >= 0)
             {
+                //todo: reset behaviour?
                 ForgetFocus();
-                RowStyles[0].Height = RowStyles[1].Height = 50;
+                //RowStyles[_inH].Height = RowStyles[1].Height = 50;
             }
-            if (_inV)
+            if (_inV >= 0)
             {
                 ForgetFocus();
-                ColumnStyles[0].Width = ColumnStyles[1].Width = 50;
+                //ColumnStyles[0].Width = ColumnStyles[1].Width = 50;
+            }
+        }
+
+        private void SetVerticalSplitPosition(int index, float percentage)
+        {
+            percentage = Math.Min(100, Math.Max(0, percentage));
+            if (ColumnCount == 0 || index < 0 || index >= ColumnCount - 1 || Width <= 0) return;
+
+            var widths = ColumnStyles.OfType<ColumnStyle>().Select(x => x.Width).ToList();
+            var currentPercent = widths.GetRange(0, index + 1).Sum();
+            if (percentage < currentPercent)
+            {
+                // <--
+                var diff = currentPercent - percentage;
+                for (var i = index; i >= 0 && diff > 0; i--)
+                {
+                    var w = widths[i];
+                    var nw = Math.Max(MinimumViewSize, w - diff);
+                    widths[i] = nw;
+                    widths[index + 1] += (w - nw);
+                    diff -= (w - nw);
+                }
+            }
+            else if (percentage > currentPercent)
+            {
+                // -->
+                var diff = percentage - currentPercent;
+                for (var i = index + 1; i < widths.Count && diff > 0; i++)
+                {
+                    var w = widths[i];
+                    var nw = Math.Max(MinimumViewSize, w - diff);
+                    widths[i] = nw;
+                    widths[index] += (w - nw);
+                    diff -= (w - nw);
+                }
+            }
+            for (var i = 0; i < ColumnCount; i++)
+            {
+                widths[i] = (float)Math.Round(widths[i] * 10) / 10;
+                ColumnStyles[i].Width = widths[i];
+            }
+        }
+
+        private void SetHorizontalSplitPosition(int index, float percentage)
+        {
+            percentage = Math.Min(100, Math.Max(0, percentage));
+            if (RowCount == 0 || index < 0 || index >= RowCount - 1 || Height <= 0) return;
+
+            var heights = RowStyles.OfType<RowStyle>().Select(x => x.Height).ToList();
+            var currentPercent = heights.GetRange(0, index + 1).Sum();
+            if (percentage < currentPercent)
+            {
+                // <--
+                var diff = currentPercent - percentage;
+                for (var i = index; i >= 0 && diff > 0; i--)
+                {
+                    var h = heights[i];
+                    var nh = Math.Max(MinimumViewSize, h - diff);
+                    heights[i] = nh;
+                    heights[index + 1] += (h - nh);
+                    diff -= (h - nh);
+                }
+            }
+            else if (percentage > currentPercent)
+            {
+                // -->
+                var diff = percentage - currentPercent;
+                for (var i = index + 1; i < heights.Count && diff > 0; i++)
+                {
+                    var h = heights[i];
+                    var nh = Math.Max(MinimumViewSize, h - diff);
+                    heights[i] = nh;
+                    heights[index] += (h - nh);
+                    diff -= (h - nh);
+                }
+            }
+            for (var i = 0; i < RowCount; i++)
+            {
+                heights[i] = (float)Math.Round(heights[i] * 10) / 10;
+                RowStyles[i].Height = heights[i];
             }
         }
     }
