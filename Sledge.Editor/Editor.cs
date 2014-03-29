@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -79,6 +80,21 @@ namespace Sledge.Editor
 
         private void EditorLoad(object sender, EventArgs e)
         {
+            tblQuadView.Configuration = new TableSplitConfiguration
+            {
+                Columns = 3,
+                Rows = 4,
+                Rectangles =
+                {
+                    new Rectangle(0, 0, 2, 2),
+                    new Rectangle(2, 0, 1, 1),
+                    new Rectangle(2, 1, 1, 1),
+                    new Rectangle(0, 2, 1, 2),
+                    new Rectangle(1, 2, 2, 1),
+                    new Rectangle(1, 3, 2, 1)
+                }
+            };
+
             SettingsManager.Read();
 
             if (TaskbarManager.IsPlatformSupported)

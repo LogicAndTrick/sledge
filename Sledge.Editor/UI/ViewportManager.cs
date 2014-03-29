@@ -70,6 +70,13 @@ namespace Sledge.Editor.UI
             var bl = CreateViewport(Layout.ViewportBottomLeft, Viewport2D.ViewDirection.Front);
             var br = CreateViewport(Layout.ViewportBottomRight, Viewport2D.ViewDirection.Side);
 
+            var one = Create2D(Viewport2D.ViewDirection.Top);
+            var two = Create2D(Viewport2D.ViewDirection.Front);
+            var three = Create2D(Viewport2D.ViewDirection.Side);
+            var four = Create3D(Viewport3D.ViewType.Textured);
+
+            Viewports.AddRange(new ViewportBase[] {one,two,three,four});
+
             Viewports.Add(tl);
             Viewports.Add(tr);
             Viewports.Add(bl);
@@ -78,13 +85,18 @@ namespace Sledge.Editor.UI
             Viewports.ForEach(SubscribeExceptions);
 
             MainWindowGrid.Controls.Clear();
-            MainWindowGrid.ColumnCount = 2;
-            MainWindowGrid.RowCount = 2;
+            //MainWindowGrid.ColumnCount = 2;
+            //MainWindowGrid.RowCount = 2;
 
-            MainWindowGrid.Controls.Add(tl, 0, 0);
-            MainWindowGrid.Controls.Add(tr, 1, 0);
-            MainWindowGrid.Controls.Add(bl, 0, 1);
-            MainWindowGrid.Controls.Add(br, 1, 1);
+            MainWindowGrid.Controls.Add(tl);//, 0, 0);
+            MainWindowGrid.Controls.Add(tr);//, 1, 0);
+            MainWindowGrid.Controls.Add(bl);//, 0, 1);
+            MainWindowGrid.Controls.Add(br);//, 1, 1);
+
+            MainWindowGrid.Controls.Add(one);
+            MainWindowGrid.Controls.Add(two);
+            //MainWindowGrid.Controls.Add(three);
+            //MainWindowGrid.Controls.Add(four);
 
             RunAll();
         }

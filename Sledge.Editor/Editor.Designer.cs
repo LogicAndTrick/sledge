@@ -42,7 +42,7 @@ namespace Sledge.Editor
             this.StatusSnapLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.tscToolStrip = new System.Windows.Forms.ToolStripContainer();
             this.DockFill = new Sledge.Editor.UI.DockedPanel();
-            this.tblQuadView = new Sledge.Editor.UI.QuadSplitControl();
+            this.tblQuadView = new Sledge.Editor.UI.TableSplitControl();
             this.DocumentTabs = new Sledge.Editor.UI.ClosableTabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.RightSidebar = new Sledge.Editor.UI.DockedPanel();
@@ -608,7 +608,7 @@ namespace Sledge.Editor
         private System.Windows.Forms.StatusStrip stsStatus;
         private System.Windows.Forms.ToolStripContainer tscToolStrip;
         private System.Windows.Forms.ToolStrip tspTools;
-        private UI.QuadSplitControl tblQuadView;
+        private UI.TableSplitControl tblQuadView;
         private DockedPanel DockRight;
         private System.Windows.Forms.ToolStripStatusLabel StatusTextLabel;
         private System.Windows.Forms.ToolStripStatusLabel StatusSelectionLabel;
