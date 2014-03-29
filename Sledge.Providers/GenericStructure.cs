@@ -1,9 +1,11 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using Sledge.Common.Extensions;
 using Sledge.DataStructures.Geometric;
@@ -268,6 +270,243 @@ namespace Sledge.Providers
             return Children.Where(x => name == null || String.Equals(x.Name, name, StringComparison.CurrentCultureIgnoreCase))
                 .Union(Children.SelectMany(x => x.GetDescendants(name)));
         }
+
+        #region Serialise / Deserialise
+
+	    public static GenericStructure Serialise(object obj)
+	    {
+	        return SerialiseHelper(obj, new List<object>());
+	    }
+
+        private static GenericStructure SerialiseHelper(object obj, List<object> encounteredObjects)
+        {
+            // Handle null
+            if (Equals(obj, null)) return new GenericStructure("Serialise.Null") { Properties = { new GenericStructureProperty("Serialise.Null.Value", "null") } };
+
+            if (encounteredObjects.Contains(obj))
+            {
+                var rf = new GenericStructure("Serialise.Reference");
+                rf.AddProperty("Serialise.Reference.Index", (encounteredObjects.IndexOf(obj) + 1).ToString(CultureInfo.InvariantCulture));
+                return rf;
+            }
+
+	        var ty = obj.GetType();
+
+            // Handle primitive types
+	        if (ty.IsPrimitive || ty == typeof(string) || ty == typeof(decimal))
+	        {
+	            var name = "Primitives.";
+	            if (ty == typeof (bool)) name += "Boolean";
+	            else if (ty == typeof (char) || ty == typeof (string)) name += "String";
+	            else name += "Numeric";
+	            return new GenericStructure(name) {Properties = {new GenericStructureProperty("Primitive.Value", Convert.ToString(obj, CultureInfo.InvariantCulture))}};
+            }
+
+            if (ty == typeof(DateTime))
+            {
+                return new GenericStructure("Primitives.DateTime") { Properties = { new GenericStructureProperty("Primitive.Value", ((DateTime)obj).ToString("u")) } };
+            }
+
+            if (ty == typeof(Color))
+            {
+                var color = (Color)obj;
+                var col = String.Format(CultureInfo.InvariantCulture, "{0} {1} {2} {3}", color.R, color.G, color.B, color.A);
+                return new GenericStructure("Primitives.Colour") { Properties = { new GenericStructureProperty("Primitive.Value", col) } };
+            }
+
+            if (ty == typeof(Coordinate))
+            {
+                return new GenericStructure("Primitives.Coordinate") { Properties = { new GenericStructureProperty("Primitive.Value", obj.ToString()) } };
+            }
+
+            if (ty == typeof(Box))
+            {
+                var b = (Box)obj;
+                return new GenericStructure("Primitives.Box") { Properties = { new GenericStructureProperty("Primitive.Value", b.Start + " " + b.End) } };
+            }
+
+            if (ty == typeof(Plane))
+            {
+                var p = (Plane)obj;
+                return new GenericStructure("Primitives.Plane") { Properties = { new GenericStructureProperty("Primitive.Value", p.Normal + " " + p.DistanceFromOrigin) } };
+            }
+
+            encounteredObjects.Add(obj);
+            var index = encounteredObjects.Count;
+
+            // Handle list
+            var enumerable = obj as IEnumerable;
+            if (enumerable != null)
+            {
+                var children = enumerable.OfType<object>().Select(x => SerialiseHelper(x, encounteredObjects));
+                var list = new GenericStructure("Serialise.List");
+                list.AddProperty("Serialise.Reference", index.ToString(CultureInfo.InvariantCulture));
+                list.Children.AddRange(children);
+                return list;
+            }
+
+            // Handle complex types
+	        var gs = new GenericStructure(ty.FullName);
+            gs.AddProperty("Serialise.Reference", index.ToString(CultureInfo.InvariantCulture));
+	        foreach (var pi in ty.GetProperties(BindingFlags.Public | BindingFlags.Instance))
+	        {
+	            if (!pi.CanRead) continue;
+	            var val = pi.GetValue(obj, null);
+	            var pv = SerialiseHelper(val, encounteredObjects);
+	            if (pv.Name.StartsWith("Primitives."))
+	            {
+                    gs.AddProperty(pi.Name, pv["Primitive.Value"]);
+	            }
+	            else
+	            {
+	                pv.Name = pi.Name;
+	                gs.Children.Add(pv);
+	            }
+	        }
+	        return gs;
+	    }
+
+	    public static T Deserialise<T>(GenericStructure structure)
+	    {
+	        var obj = DeserialiseHelper(typeof (T), structure, new Dictionary<int, object>());
+	        if (obj is T) return (T) obj;
+	        obj = Convert.ChangeType(obj, typeof (T));
+	        if (obj is T) return (T) obj;
+	        return default(T);
+	    }
+
+	    private static object DeserialiseHelper(Type bindingType, GenericStructure structure, Dictionary<int, object> encounteredObjects)
+	    {
+            // Null values
+	        if (structure.Name == "Serialise.Null" || structure["Serialise.Null.Value"] == "null")
+	        {
+	            return bindingType.IsValueType ? Activator.CreateInstance(bindingType) : null;
+	        }
+            
+            // Referenced values
+	        var indexProp = structure.Properties.FirstOrDefault(x => x.Key == "Serialise.Reference.Index");
+	        if (indexProp != null) return encounteredObjects[int.Parse(indexProp.Value)];
+
+            // Primitive objects
+	        if (structure.Name.StartsWith("Primitives.")) return ConvertPrimitive(structure);
+
+            //var instance = Activator.CreateInstance(bindingType);
+            var refProp = structure.Properties.FirstOrDefault(x => x.Key == "Serialise.Reference");
+	        var refVal = refProp != null ? int.Parse(refProp.Value) : -1;
+
+            // List objects
+	        if (structure.Name == "Serialise.List" || typeof(IEnumerable).IsAssignableFrom(bindingType))
+            {
+                var list = Activator.CreateInstance(bindingType);
+                if (refVal >= 0) encounteredObjects[refVal] = list;
+                DeserialiseList(list, bindingType, structure, encounteredObjects);
+	            return list;
+	        }
+
+            // Complex types
+	        var ctor = bindingType.GetConstructor(Type.EmptyTypes) ?? bindingType.GetConstructors().First();
+	        var args = ctor.GetParameters().Select(x => x.ParameterType.IsValueType ? Activator.CreateInstance(x.ParameterType) : null).ToArray();
+            var instance = ctor.Invoke(args);
+
+            if (refVal >= 0) encounteredObjects[refVal] = instance;
+
+	        foreach (var pi in bindingType.GetProperties(BindingFlags.Public | BindingFlags.Instance))
+	        {
+	            if (!pi.CanWrite) continue;
+	            var prop = structure.Properties.FirstOrDefault(x => x.Key == pi.Name);
+	            var child = structure.Children.FirstOrDefault(x => x.Name == pi.Name);
+	            if (prop != null)
+	            {
+	                var prim = ConvertPrimitive(pi.PropertyType, prop.Value);
+                    pi.SetValue(instance, Convert.ChangeType(prim, pi.PropertyType), null);
+	            }
+                else if (child != null)
+                {
+                    var obj = DeserialiseHelper(pi.PropertyType, child, encounteredObjects);
+                    pi.SetValue(instance, obj, null);
+                }
+	        }
+
+	        return instance;
+	    }
+
+	    private static void DeserialiseList(object instance, Type bindingType, GenericStructure structure, Dictionary<int, object> encounteredObjects)
+	    {
+	        Type listType = null;
+            if (bindingType.IsGenericType) listType = bindingType.GetGenericArguments()[0];
+	        var children = structure.Children.Select(x =>
+	        {
+	            var name = x.Name;
+	            var type = AppDomain.CurrentDomain.GetAssemblies().Select(a => a.GetType(name)).FirstOrDefault(t => t != null) ?? (listType ?? typeof(object));
+	            var result = DeserialiseHelper(type, x, encounteredObjects);
+	            return Convert.ChangeType(result, type);
+	        }).ToList();
+	        if (typeof (IList).IsAssignableFrom(bindingType))
+	        {
+	            foreach (var child in children) ((IList) instance).Add(child);
+	        }
+	        else if (typeof (Array).IsAssignableFrom(bindingType))
+	        {
+	            var arr = (object[]) instance;
+	            Array.Resize(ref arr, children.Count);
+	            children.CopyTo(arr);
+	        }
+	    }
+
+	    private static object ConvertPrimitive(GenericStructure structure)
+        {
+            var prim = structure.Name.Substring("Primitives.".Length);
+            var value = structure["Primitive.Value"];
+            return ConvertPrimitive(prim, value);
+        }
+
+        private static object ConvertPrimitive(Type type, string value)
+        {
+            return ConvertPrimitive(GetPrimitiveName(type), value);
+        }
+
+        private static object ConvertPrimitive(string primitiveType, string value)
+	    {
+            var spl = value.Split(' ');
+            switch (primitiveType)
+            {
+                case "Boolean":
+                    return Boolean.Parse(value);
+                case "String":
+                    return value;
+                case "Numeric":
+                    return Decimal.Parse(value, NumberStyles.Float, CultureInfo.InvariantCulture);
+                case "DateTime":
+                    return DateTime.ParseExact(value, "u", CultureInfo.InvariantCulture);
+                case "Colour":
+                    return Color.FromArgb(int.Parse(spl[3]), int.Parse(spl[0]), int.Parse(spl[1]), int.Parse(spl[2]));
+                case "Coordinate":
+                    return Coordinate.Parse(spl[0].TrimStart('('), spl[1], spl[2].TrimEnd(')'));
+                case "Box":
+                    return new Box(
+                        Coordinate.Parse(spl[0].TrimStart('('), spl[1], spl[2].TrimEnd(')')),
+                        Coordinate.Parse(spl[3].TrimStart('('), spl[4], spl[5].TrimEnd(')')));
+                case "Plane":
+                    return new Plane(Coordinate.Parse(spl[0].TrimStart('('), spl[1], spl[2].TrimEnd(')')), Decimal.Parse(spl[3]));
+                default:
+                    throw new ArgumentException();
+            }
+	    }
+
+        private static string GetPrimitiveName(Type ty)
+	    {
+            if (ty == typeof(bool)) return "Boolean";
+            if (ty == typeof(char) || ty == typeof(string)) return "String";
+	        if (ty.IsPrimitive || ty == typeof (decimal)) return "Numeric";
+	        if (ty == typeof (DateTime)) return "DateTime";
+            if (ty == typeof(Color)) return "Colour";
+            if (ty == typeof(Coordinate)) return "Coordinate";
+            if (ty == typeof(Box)) return "Box";
+            if (ty == typeof(Plane)) return "Plane";
+            throw new ArgumentException();
+	    }
+
+        #endregion
 
         #region Printer
         public override string ToString()

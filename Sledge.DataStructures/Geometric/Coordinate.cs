@@ -239,7 +239,7 @@ namespace Sledge.DataStructures.Geometric
 
         public override string ToString()
         {
-            return "(" + X.ToString("0.0000") + " " + Y.ToString("0.0000") + " " + Z.ToString("0.0000") + ")";
+            return "(" + X.ToString("0.0000", CultureInfo.InvariantCulture) + " " + Y.ToString("0.0000", CultureInfo.InvariantCulture) + " " + Z.ToString("0.0000", CultureInfo.InvariantCulture) + ")";
         }
 
         public Coordinate Clone()

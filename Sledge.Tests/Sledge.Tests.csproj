@@ -66,6 +66,7 @@
     <Compile Include="ParseTest.cs" />
     <Compile Include="InvalidSolidTest.cs" />
     <Compile Include="GameDetectionTest.cs" />
+    <Compile Include="SerialisationTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Sledge.Common\Sledge.Common.csproj">
