@@ -17,6 +17,7 @@ namespace Sledge.Settings
         public static List<RecentFile> RecentFiles { get; set; }
         public static List<Setting> Settings { get; set; }
         public static List<Hotkey> Hotkeys { get; set; }
+        private static readonly Dictionary<string, GenericStructure> AdditionalSettings;
 
         public static string SettingsFile { get; set; }
 
@@ -55,6 +56,7 @@ namespace Sledge.Settings
                                               {"tools/toolsskip", 0.5f},
                                               {"tools/toolstrigger", 0.5f}
                                           };
+            AdditionalSettings = new Dictionary<string, GenericStructure>();
 
             var appdata = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
             var sledge = Path.Combine(appdata, "Sledge");
@@ -93,6 +95,7 @@ namespace Sledge.Settings
             RecentFiles.Clear();
             Settings.Clear();
             Hotkeys.Clear();
+            AdditionalSettings.Clear();
 
             var root = ReadSettingsFile();
 
@@ -144,6 +147,15 @@ namespace Sledge.Settings
 
             Serialise.DeserialiseSettings(Settings.ToDictionary(x => x.Key, x => x.Value));
             Sledge.Settings.Hotkeys.SetupHotkeys(Hotkeys);
+
+            var additionalSettings = root.Children.FirstOrDefault(x => x.Name == "AdditionalSettings");
+            if (additionalSettings != null)
+            {
+                foreach (var child in additionalSettings.Children)
+                {
+                    if (child.Children.Count > 0) AdditionalSettings.Add(child.Name, child.Children[0]);
+                }
+            }
 
             if (!File.Exists(SettingsFile))
             {
@@ -207,6 +219,16 @@ namespace Sledge.Settings
             }
             root.Children.Add(hotkeys);
 
+            // Additional
+            var additional = new GenericStructure("AdditionalSettings");
+            foreach (var kv in AdditionalSettings)
+            {
+                var child = new GenericStructure(kv.Key);
+                child.Children.Add(kv.Value);
+                additional.Children.Add(child);
+            }
+            root.Children.Add(additional);
+
             File.WriteAllText(SettingsFile, root.ToString());
         }
 
@@ -238,6 +260,26 @@ namespace Sledge.Settings
                                 return Tuple.Create(file, Games.FirstOrDefault(g => g.ID == id));
                             })
                 .Where(x => File.Exists(x.Item1) && x.Item2 != null);
+        }
+
+        public static T GetAdditionalData<T>(string key)
+        {
+            if (!AdditionalSettings.ContainsKey(key)) return default(T);
+            var additional = AdditionalSettings[key];
+            try
+            {
+                return GenericStructure.Deserialise<T>(additional);
+            }
+            catch
+            {
+                return default(T); // Deserialisation failure
+            }
+        }
+
+        public static void SetAdditionalData<T>(string key, T obj)
+        {
+            if (AdditionalSettings.ContainsKey(key)) AdditionalSettings.Remove(key);
+            AdditionalSettings.Add(key, GenericStructure.Serialise(obj));
         }
     }
 }

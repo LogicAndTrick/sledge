@@ -325,6 +325,12 @@ namespace Sledge.Providers
                 return new GenericStructure("Primitives.Box") { Properties = { new GenericStructureProperty("Primitive.Value", b.Start + " " + b.End) } };
             }
 
+            if (ty == typeof (Rectangle))
+            {
+                var r = (Rectangle) obj;
+                return new GenericStructure("Primitives.Rectangle") { Properties = { new GenericStructureProperty("Primitive.Value", r.X + " " + r.Y + " " + r.Width + " " + r.Height) } };
+            }
+
             if (ty == typeof(Plane))
             {
                 var p = (Plane)obj;
@@ -488,6 +494,8 @@ namespace Sledge.Providers
                         Coordinate.Parse(spl[3].TrimStart('('), spl[4], spl[5].TrimEnd(')')));
                 case "Plane":
                     return new Plane(Coordinate.Parse(spl[0].TrimStart('('), spl[1], spl[2].TrimEnd(')')), Decimal.Parse(spl[3]));
+                case "Rectangle":
+                    return new Rectangle(int.Parse(spl[0]), int.Parse(spl[1]), int.Parse(spl[2]), int.Parse(spl[3]));
                 default:
                     throw new ArgumentException();
             }
@@ -503,6 +511,7 @@ namespace Sledge.Providers
             if (ty == typeof(Coordinate)) return "Coordinate";
             if (ty == typeof(Box)) return "Box";
             if (ty == typeof(Plane)) return "Plane";
+            if (ty == typeof(Rectangle)) return "Rectangle";
             throw new ArgumentException();
 	    }
 

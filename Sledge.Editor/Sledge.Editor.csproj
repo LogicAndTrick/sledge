@@ -539,6 +539,12 @@
     </Compile>
     <Compile Include="UI\ViewportManager.cs" />
     <Compile Include="UI\UpdateReleaseDetails.cs" />
+    <Compile Include="UI\ViewportWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\ViewportWindow.Designer.cs">
+      <DependentUpon>ViewportWindow.cs</DependentUpon>
+    </Compile>
     <Compile Include="Visgroups\VisgroupEditForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -680,6 +686,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UI\UpdaterForm.resx">
       <DependentUpon>UpdaterForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\ViewportWindow.resx">
+      <DependentUpon>ViewportWindow.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Visgroups\VisgroupEditForm.resx">
       <DependentUpon>VisgroupEditForm.cs</DependentUpon>

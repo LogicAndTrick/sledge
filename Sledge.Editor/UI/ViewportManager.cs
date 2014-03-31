@@ -6,6 +6,7 @@ using System.Security.Permissions;
 using System.Windows.Forms;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
+using Sledge.Editor.Actions.MapObjects.Operations;
 using Sledge.Editor.Rendering;
 using Sledge.Graphics.Helpers;
 using Sledge.Graphics.Renderables;
@@ -14,14 +15,29 @@ using Sledge.UI;
 
 namespace Sledge.Editor.UI
 {
+    public class ViewportWindowConfiguration
+    {
+        public int WindowID { get; set; }
+        public Rectangle Size { get; set; }
+        public TableSplitConfiguration Configuration { get; set; }
+        public List<string> Viewports { get; set; }
+
+        public ViewportWindowConfiguration()
+        {
+            Viewports = new List<string>();
+        }
+    }
+
     public static class ViewportManager
     {
-        private static TableLayoutPanel MainWindowGrid { get; set; }
+        private static TableSplitControl MainWindowGrid { get; set; }
         public static List<ViewportBase> Viewports { get; private set; }
+        public static List<ViewportWindow> Windows { get; private set; }
 
         static ViewportManager()
         {
             Viewports = new List<ViewportBase>();
+            Windows = new List<ViewportWindow>();
         }
 
         private static ViewportBase CreateViewport(string setting, Viewport3D.ViewType preferred3D)
@@ -61,44 +77,72 @@ namespace Sledge.Editor.UI
             else return Create2D(preferred2D);
         }
 
-        public static void Init(TableLayoutPanel tlp)
+        public static void Init(TableSplitControl tlp)
         {
             MainWindowGrid = tlp;
 
-            var tl = CreateViewport(Layout.ViewportTopLeft, Viewport3D.ViewType.Textured);
-            var tr = CreateViewport(Layout.ViewportTopRight, Viewport2D.ViewDirection.Top);
-            var bl = CreateViewport(Layout.ViewportBottomLeft, Viewport2D.ViewDirection.Front);
-            var br = CreateViewport(Layout.ViewportBottomRight, Viewport2D.ViewDirection.Side);
+            var configuration = SettingsManager.GetAdditionalData<List<ViewportWindowConfiguration>>("ViewportManagerWindowConfiguration")
+                                ?? new List<ViewportWindowConfiguration>();
+            var main = configuration.FirstOrDefault(x => x.WindowID == 0) ?? GetDefaultWindowConfiguration();
+            LoadViewports(MainWindowGrid, main);
 
-            var one = Create2D(Viewport2D.ViewDirection.Top);
-            var two = Create2D(Viewport2D.ViewDirection.Front);
-            var three = Create2D(Viewport2D.ViewDirection.Side);
-            var four = Create3D(Viewport3D.ViewType.Textured);
-
-            Viewports.AddRange(new ViewportBase[] {one,two,three,four});
-
-            Viewports.Add(tl);
-            Viewports.Add(tr);
-            Viewports.Add(bl);
-            Viewports.Add(br);
-
-            Viewports.ForEach(SubscribeExceptions);
-
-            MainWindowGrid.Controls.Clear();
-            //MainWindowGrid.ColumnCount = 2;
-            //MainWindowGrid.RowCount = 2;
-
-            MainWindowGrid.Controls.Add(tl);//, 0, 0);
-            MainWindowGrid.Controls.Add(tr);//, 1, 0);
-            MainWindowGrid.Controls.Add(bl);//, 0, 1);
-            MainWindowGrid.Controls.Add(br);//, 1, 1);
-
-            MainWindowGrid.Controls.Add(one);
-            MainWindowGrid.Controls.Add(two);
-            //MainWindowGrid.Controls.Add(three);
-            //MainWindowGrid.Controls.Add(four);
+            foreach (var config in configuration.Where(x => x.WindowID > 0))
+            {
+                CreateViewportWindow(config);
+            }
 
             RunAll();
+        }
+
+        private static void CreateViewportWindow(ViewportWindowConfiguration config)
+        {
+            var win = new ViewportWindow(config.Configuration);
+            if (!config.Size.IsEmpty)
+            {
+                win.Location = config.Size.Location;
+                win.Size = config.Size.Size;
+            }
+            LoadViewports(win.TableSplitControl, config);
+            Windows.Add(win);
+            win.Closed += (s, e) =>
+            {
+                Windows.Remove(win);
+                win.Dispose();
+            };
+            win.Show(Editor.Instance);
+        }
+
+        private static void LoadViewports(TableSplitControl tableSplitControl, ViewportWindowConfiguration config)
+        {
+            var defaultViewports = new[]
+            {
+                Tuple.Create(true, Viewport3D.ViewType.Textured, Viewport2D.ViewDirection.Top),
+                Tuple.Create(false, Viewport3D.ViewType.Textured, Viewport2D.ViewDirection.Top),
+                Tuple.Create(false, Viewport3D.ViewType.Textured, Viewport2D.ViewDirection.Front),
+                Tuple.Create(false, Viewport3D.ViewType.Textured, Viewport2D.ViewDirection.Side)
+            };
+
+            var viewports = config.Viewports ?? new List<string>();
+
+            for (int i = 0; i < config.Configuration.Rectangles.Count; i++)
+            {
+                var viewport = viewports.Count > i ? viewports[i] : "";
+                var def = defaultViewports[(i % defaultViewports.Length)];
+                var vp = CreateViewport(viewport, def.Item1, def.Item2, def.Item3);
+                Viewports.Add(vp);
+                SubscribeExceptions(vp);
+                tableSplitControl.Controls.Add(vp);
+            }
+        }
+
+        private static ViewportWindowConfiguration GetDefaultWindowConfiguration()
+        {
+            return new ViewportWindowConfiguration
+            {
+                WindowID = 0,
+                Size = Rectangle.Empty,
+                Configuration = TableSplitConfiguration.Default()
+            };
         }
 
         private static string SerialiseViewport(Control vp)
@@ -116,6 +160,29 @@ namespace Sledge.Editor.UI
             Layout.ViewportTopRight = SerialiseViewport(MainWindowGrid.GetControlFromPosition(1, 0));
             Layout.ViewportBottomLeft = SerialiseViewport(MainWindowGrid.GetControlFromPosition(0, 1));
             Layout.ViewportBottomRight = SerialiseViewport(MainWindowGrid.GetControlFromPosition(1, 1));
+
+            SettingsManager.SetAdditionalData("ViewportManagerWindowConfiguration", GetWindowConfigurations());
+        }
+
+        private static List<ViewportWindowConfiguration> GetWindowConfigurations()
+        {
+            var list = new List<ViewportWindowConfiguration>();
+            list.Add(new ViewportWindowConfiguration
+            {
+                WindowID = 0,
+                Size = Editor.Instance.ClientRectangle,
+                Configuration = MainWindowGrid.Configuration
+            });
+            for (var i = 0; i < Windows.Count; i++)
+            {
+                list.Add(new ViewportWindowConfiguration
+                {
+                    WindowID = i + 1,
+                    Size = Windows[i].ClientRectangle,
+                    Configuration = Windows[i].TableSplitControl.Configuration
+                });
+            }
+            return list;
         }
 
         public static PointF GetSplitterPosition()
@@ -239,34 +306,54 @@ namespace Sledge.Editor.UI
             return viewport;
         }
 
+        private static TableSplitControl GetParentSplitControl(ViewportBase viewport)
+        {
+            var par = viewport.Parent;
+            while (par != null && !(par is TableSplitControl))
+            {
+                par = par.Parent;
+            }
+            return par as TableSplitControl;
+        }
+
         public static Viewport2D Make2D(ViewportBase viewport, Viewport2D.ViewDirection direction)
         {
-            Viewports.Remove(viewport);
-            var pos = MainWindowGrid.GetCellPosition(viewport);
-            MainWindowGrid.Controls.Remove(viewport);
-            viewport.Dispose();
+            var parent = GetParentSplitControl(viewport);
+            if (parent == null) return null;
 
-            viewport = Create2D(direction);
-            Viewports.Add(viewport);
-            SubscribeExceptions(viewport);
-            MainWindowGrid.Controls.Add(viewport, pos.Column, pos.Row);
-            viewport.Run();
-            return (Viewport2D) viewport;
+            Viewports.Remove(viewport);
+            
+            var newViewport = Create2D(direction);
+            SubscribeExceptions(newViewport);
+
+            parent.ReplaceControl(viewport, newViewport);
+
+            Viewports.Add(newViewport);
+
+            viewport.Dispose();
+            newViewport.Run();
+
+            return newViewport;
         }
 
         public static Viewport3D Make3D(ViewportBase viewport, Viewport3D.ViewType type)
         {
-            Viewports.Remove(viewport);
-            var pos = MainWindowGrid.GetCellPosition(viewport);
-            MainWindowGrid.Controls.Remove(viewport);
-            viewport.Dispose();
+            var parent = GetParentSplitControl(viewport);
+            if (parent == null) return null;
 
-            viewport = Create3D(type);
-            Viewports.Add(viewport);
-            SubscribeExceptions(viewport);
-            MainWindowGrid.Controls.Add(viewport, pos.Column, pos.Row);
-            viewport.Run();
-            return (Viewport3D) viewport;
+            Viewports.Remove(viewport);
+
+            var newViewport = Create3D(type);
+            SubscribeExceptions(newViewport);
+
+            parent.ReplaceControl(viewport, newViewport);
+
+            Viewports.Add(newViewport);
+
+            viewport.Dispose();
+            newViewport.Run();
+
+            return newViewport;
         }
     }
 }

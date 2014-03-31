@@ -104,10 +104,24 @@ namespace Sledge.Editor.UI
             var rec = _configuration.Rectangles.FirstOrDefault(t => t.X <= r.Column && t.X + t.Width > r.Column && t.Y <= r.Row && t.Y + t.Height > r.Row);
             if (!rec.IsEmpty)
             {
+                SetRow(e.Control, rec.Y);
+                SetColumn(e.Control, rec.X);
                 SetRowSpan(e.Control, rec.Height);
                 SetColumnSpan(e.Control, rec.Width);
             }
             base.OnControlAdded(e);
+        }
+
+        public void ReplaceControl(Control oldControl, Control newControl)
+        {
+            int col = GetColumn(oldControl),
+                row = GetRow(oldControl),
+                csp = GetColumnSpan(oldControl),
+                rsp = GetRowSpan(oldControl);
+            Controls.Add(newControl, col, row);
+            Controls.Remove(oldControl);
+            SetColumnSpan(newControl, csp);
+            SetRowSpan(newControl, rsp);
         }
 
         public void ResetViews()

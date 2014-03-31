@@ -80,21 +80,6 @@ namespace Sledge.Editor
 
         private void EditorLoad(object sender, EventArgs e)
         {
-            tblQuadView.Configuration = new TableSplitConfiguration
-            {
-                Columns = 3,
-                Rows = 4,
-                Rectangles =
-                {
-                    new Rectangle(0, 0, 2, 2),
-                    new Rectangle(2, 0, 1, 1),
-                    new Rectangle(2, 1, 1, 1),
-                    new Rectangle(0, 2, 1, 2),
-                    new Rectangle(1, 2, 2, 1),
-                    new Rectangle(1, 3, 2, 1)
-                }
-            };
-
             SettingsManager.Read();
 
             if (TaskbarManager.IsPlatformSupported)
@@ -115,7 +100,7 @@ namespace Sledge.Editor
 
             SidebarManager.Init(RightSidebar);
 
-            ViewportManager.Init(tblQuadView);
+            ViewportManager.Init(TableSplitView);
             ToolManager.Init();
 
             foreach (var tool in ToolManager.Tools)
@@ -702,41 +687,41 @@ namespace Sledge.Editor
 
         public void FourViewAutosize()
         {
-            tblQuadView.ResetViews();
+            TableSplitView.ResetViews();
         }
 
         public void FourViewFocusTopLeft()
         {
-            tblQuadView.FocusOn(0, 0);
+            TableSplitView.FocusOn(0, 0);
         }
 
         public void FourViewFocusTopRight()
         {
-            tblQuadView.FocusOn(0, 1);
+            TableSplitView.FocusOn(0, 1);
         }
 
         public void FourViewFocusBottomLeft()
         {
-            tblQuadView.FocusOn(1, 0);
+            TableSplitView.FocusOn(1, 0);
         }
 
         public void FourViewFocusBottomRight()
         {
-            tblQuadView.FocusOn(1, 1);
+            TableSplitView.FocusOn(1, 1);
         }
 
         public void FourViewFocusCurrent()
         {
-            if (tblQuadView.IsFocusing())
+            if (TableSplitView.IsFocusing())
             {
-                tblQuadView.Unfocus();
+                TableSplitView.Unfocus();
             }
             else
             {
                 var focused = ViewportManager.Viewports.FirstOrDefault(x => x.IsFocused);
                 if (focused != null)
                 {
-                    tblQuadView.FocusOn(focused);
+                    TableSplitView.FocusOn(focused);
                 }
             }
         }
