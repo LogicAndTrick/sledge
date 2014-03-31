@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -10,17 +8,14 @@ using System.Reflection;
 using System.Windows.Forms;
 using Microsoft.WindowsAPICodePack.Taskbar;
 using Sledge.Common.Mediator;
-using Sledge.DataStructures.GameData;
 using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.MapObjects;
-using Sledge.Editor.Brushes;
 using Sledge.Editor.Compiling;
 using Sledge.Editor.Documents;
 using Sledge.Editor.Menu;
 using Sledge.Editor.Settings;
 using Sledge.Editor.UI;
 using Sledge.Editor.UI.Sidebar;
-using Sledge.FileSystem;
 using Sledge.Graphics.Helpers;
 using Sledge.Providers;
 using Sledge.Providers.GameData;
@@ -338,6 +333,8 @@ namespace Sledge.Editor
             Mediator.Subscribe(EditorMediator.OpenSettings, this);
             Mediator.Subscribe(EditorMediator.SettingsChanged, this);
 
+            Mediator.Subscribe(EditorMediator.CreateNewLayoutWindow, this);
+
             Mediator.Subscribe(EditorMediator.DocumentActivated, this);
             Mediator.Subscribe(EditorMediator.DocumentSaved, this);
             Mediator.Subscribe(EditorMediator.DocumentOpened, this);
@@ -423,6 +420,11 @@ namespace Sledge.Editor
             {
                 sf.ShowDialog();
             }
+        }
+
+        private static void CreateNewLayoutWindow()
+        {
+            ViewportManager.CreateNewWindow();
         }
 
         private static void SettingsChanged()

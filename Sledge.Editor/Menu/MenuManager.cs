@@ -154,6 +154,9 @@ namespace Sledge.Editor.Menu
             Add("Tools", new MenuSplitter { IsVisible = mapOpen });
             Add("Tools", new SimpleMenuBuilder("Options...", EditorMediator.OpenSettings) { Image = Resources.Menu_Options, ShowInToolStrip = true });
 
+            Add("Layout", new SimpleMenuBuilder("Create New Layout Window", EditorMediator.CreateNewLayoutWindow) {  });
+            Add("Layout", new SimpleMenuBuilder("Layout Window Settings...", EditorMediator.OpenLayoutSettings) {  });
+
             Add("Help", new SimpleMenuBuilder("Online Help", EditorMediator.OpenWebsite, "http://sledge-editor.com/") { Image = Resources.Menu_Help });
             Add("Help", new SimpleMenuBuilder("Sledge Website", EditorMediator.OpenWebsite, "http://sledge-editor.com/") { Image = Resources.Menu_Website });
             Add("Help", new SimpleMenuBuilder("Sledge Community", EditorMediator.OpenWebsite, "http://sledge-editor.com/") { Image = Resources.Menu_Community });

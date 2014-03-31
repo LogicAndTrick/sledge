@@ -2,11 +2,9 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Security.Permissions;
 using System.Windows.Forms;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
-using Sledge.Editor.Actions.MapObjects.Operations;
 using Sledge.Editor.Rendering;
 using Sledge.Graphics.Helpers;
 using Sledge.Graphics.Renderables;
@@ -90,8 +88,16 @@ namespace Sledge.Editor.UI
             {
                 CreateViewportWindow(config);
             }
+        }
 
-            RunAll();
+        public static void CreateNewWindow()
+        {
+            CreateViewportWindow(new ViewportWindowConfiguration
+            {
+                Size = Rectangle.Empty,
+                WindowID = Windows.Count,
+                Configuration = TableSplitConfiguration.Default()
+            });
         }
 
         private static void CreateViewportWindow(ViewportWindowConfiguration config)
@@ -132,6 +138,7 @@ namespace Sledge.Editor.UI
                 Viewports.Add(vp);
                 SubscribeExceptions(vp);
                 tableSplitControl.Controls.Add(vp);
+                vp.Run();
             }
         }
 
@@ -171,7 +178,8 @@ namespace Sledge.Editor.UI
             {
                 WindowID = 0,
                 Size = Editor.Instance.ClientRectangle,
-                Configuration = MainWindowGrid.Configuration
+                Configuration = MainWindowGrid.Configuration,
+                Viewports = GetViewportsForTableSplitControl(MainWindowGrid).Select(SerialiseViewport).ToList()
             });
             for (var i = 0; i < Windows.Count; i++)
             {
@@ -179,10 +187,16 @@ namespace Sledge.Editor.UI
                 {
                     WindowID = i + 1,
                     Size = Windows[i].ClientRectangle,
-                    Configuration = Windows[i].TableSplitControl.Configuration
+                    Configuration = Windows[i].TableSplitControl.Configuration,
+                    Viewports = GetViewportsForTableSplitControl(Windows[i].TableSplitControl).Select(SerialiseViewport).ToList()
                 });
             }
             return list;
+        }
+
+        private static IEnumerable<ViewportBase> GetViewportsForTableSplitControl(TableSplitControl control)
+        {
+            return Viewports.Where(x => GetParentSplitControl(x) == control);
         }
 
         public static PointF GetSplitterPosition()
