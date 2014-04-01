@@ -1,4 +1,4 @@
-﻿namespace Sledge.Editor.UI
+﻿namespace Sledge.Editor.UI.Layout
 {
     partial class ViewportWindow
     {

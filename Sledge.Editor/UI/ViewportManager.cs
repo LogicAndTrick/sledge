@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using Sledge.Editor.Rendering;
+using Sledge.Editor.UI.Layout;
 using Sledge.Graphics.Helpers;
 using Sledge.Graphics.Renderables;
 using Sledge.Settings;
@@ -19,6 +20,7 @@ namespace Sledge.Editor.UI
         public Rectangle Size { get; set; }
         public TableSplitConfiguration Configuration { get; set; }
         public List<string> Viewports { get; set; }
+        public bool Maximised { get; set; }
 
         public ViewportWindowConfiguration()
         {
@@ -82,7 +84,14 @@ namespace Sledge.Editor.UI
             var configuration = SettingsManager.GetAdditionalData<List<ViewportWindowConfiguration>>("ViewportManagerWindowConfiguration")
                                 ?? new List<ViewportWindowConfiguration>();
             var main = configuration.FirstOrDefault(x => x.WindowID == 0) ?? GetDefaultWindowConfiguration();
+            MainWindowGrid.Configuration = main.Configuration;
             LoadViewports(MainWindowGrid, main);
+            if (!main.Size.IsEmpty)
+            {
+                Editor.Instance.Location = main.Size.Location;
+                Editor.Instance.Size = main.Size.Size;
+                Editor.Instance.WindowState = main.Maximised ? FormWindowState.Maximized : FormWindowState.Normal;
+            }
 
             foreach (var config in configuration.Where(x => x.WindowID > 0))
             {
@@ -95,7 +104,7 @@ namespace Sledge.Editor.UI
             CreateViewportWindow(new ViewportWindowConfiguration
             {
                 Size = Rectangle.Empty,
-                WindowID = Windows.Count,
+                WindowID = Windows.Count + 1,
                 Configuration = TableSplitConfiguration.Default()
             });
         }
@@ -103,11 +112,7 @@ namespace Sledge.Editor.UI
         private static void CreateViewportWindow(ViewportWindowConfiguration config)
         {
             var win = new ViewportWindow(config.Configuration);
-            if (!config.Size.IsEmpty)
-            {
-                win.Location = config.Size.Location;
-                win.Size = config.Size.Size;
-            }
+            win.Text += " - Window " + config.WindowID;
             LoadViewports(win.TableSplitControl, config);
             Windows.Add(win);
             win.Closed += (s, e) =>
@@ -116,6 +121,12 @@ namespace Sledge.Editor.UI
                 win.Dispose();
             };
             win.Show(Editor.Instance);
+            if (!config.Size.IsEmpty)
+            {
+                win.Location = config.Size.Location;
+                win.Size = config.Size.Size;
+                win.WindowState = config.Maximised ? FormWindowState.Maximized : FormWindowState.Normal;
+            }
         }
 
         private static void LoadViewports(TableSplitControl tableSplitControl, ViewportWindowConfiguration config)
@@ -148,7 +159,8 @@ namespace Sledge.Editor.UI
             {
                 WindowID = 0,
                 Size = Rectangle.Empty,
-                Configuration = TableSplitConfiguration.Default()
+                Configuration = TableSplitConfiguration.Default(),
+                Maximised = true
             };
         }
 
@@ -163,35 +175,59 @@ namespace Sledge.Editor.UI
 
         public static void SaveLayout()
         {
-            Layout.ViewportTopLeft = SerialiseViewport(MainWindowGrid.GetControlFromPosition(0, 0));
-            Layout.ViewportTopRight = SerialiseViewport(MainWindowGrid.GetControlFromPosition(1, 0));
-            Layout.ViewportBottomLeft = SerialiseViewport(MainWindowGrid.GetControlFromPosition(0, 1));
-            Layout.ViewportBottomRight = SerialiseViewport(MainWindowGrid.GetControlFromPosition(1, 1));
-
             SettingsManager.SetAdditionalData("ViewportManagerWindowConfiguration", GetWindowConfigurations());
         }
 
-        private static List<ViewportWindowConfiguration> GetWindowConfigurations()
+        public static List<ViewportWindowConfiguration> GetWindowConfigurations()
         {
             var list = new List<ViewportWindowConfiguration>();
             list.Add(new ViewportWindowConfiguration
             {
                 WindowID = 0,
-                Size = Editor.Instance.ClientRectangle,
+                Size = new Rectangle(Editor.Instance.Location, Editor.Instance.Size),
                 Configuration = MainWindowGrid.Configuration,
-                Viewports = GetViewportsForTableSplitControl(MainWindowGrid).Select(SerialiseViewport).ToList()
+                Viewports = GetViewportsForTableSplitControl(MainWindowGrid).Select(SerialiseViewport).ToList(),
+                Maximised = Editor.Instance.WindowState == FormWindowState.Maximized
             });
             for (var i = 0; i < Windows.Count; i++)
             {
                 list.Add(new ViewportWindowConfiguration
                 {
                     WindowID = i + 1,
-                    Size = Windows[i].ClientRectangle,
+                    Size = new Rectangle(Windows[i].Location, Windows[i].Size),
                     Configuration = Windows[i].TableSplitControl.Configuration,
-                    Viewports = GetViewportsForTableSplitControl(Windows[i].TableSplitControl).Select(SerialiseViewport).ToList()
+                    Viewports = GetViewportsForTableSplitControl(Windows[i].TableSplitControl).Select(SerialiseViewport).ToList(),
+                    Maximised = Windows[i].WindowState == FormWindowState.Maximized
                 });
             }
             return list;
+        }
+
+        private static void SetConfiguration(TableSplitControl control, ViewportWindowConfiguration configuration)
+        {
+            if (control == null || configuration == null) return;
+
+            control.Configuration = configuration.Configuration;
+            var viewports = GetViewportsForTableSplitControl(control);
+
+            control.Controls.Clear();
+            foreach (var vp in viewports)
+            {
+                vp.Dispose();
+                Viewports.Remove(vp);
+            }
+
+            LoadViewports(control, configuration);
+        }
+
+        public static void SetWindowConfigurations(List<ViewportWindowConfiguration> configurations)
+        {
+            SetConfiguration(MainWindowGrid, configurations.FirstOrDefault(x => x.WindowID == 0));
+            for (var i = 0; i < Windows.Count; i++)
+            {
+                var win = Windows[i];
+                SetConfiguration(win.TableSplitControl, configurations.FirstOrDefault(x => x.WindowID == i + 1));
+            }
         }
 
         private static IEnumerable<ViewportBase> GetViewportsForTableSplitControl(TableSplitControl control)

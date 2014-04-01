@@ -26,6 +26,7 @@ using Sledge.Providers.Texture;
 using Sledge.Settings;
 using Sledge.Settings.Models;
 using Hotkeys = Sledge.Editor.UI.Hotkeys;
+using LayoutSettings = Sledge.Editor.UI.Layout.LayoutSettings;
 using Path = System.IO.Path;
 
 namespace Sledge.Editor
@@ -334,6 +335,7 @@ namespace Sledge.Editor
             Mediator.Subscribe(EditorMediator.SettingsChanged, this);
 
             Mediator.Subscribe(EditorMediator.CreateNewLayoutWindow, this);
+            Mediator.Subscribe(EditorMediator.OpenLayoutSettings, this);
 
             Mediator.Subscribe(EditorMediator.DocumentActivated, this);
             Mediator.Subscribe(EditorMediator.DocumentSaved, this);
@@ -425,6 +427,14 @@ namespace Sledge.Editor
         private static void CreateNewLayoutWindow()
         {
             ViewportManager.CreateNewWindow();
+        }
+
+        private static void OpenLayoutSettings()
+        {
+            using (var dlg = new LayoutSettings(ViewportManager.GetWindowConfigurations()))
+            {
+                dlg.ShowDialog();
+            }
         }
 
         private static void SettingsChanged()
