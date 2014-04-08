@@ -57,21 +57,38 @@ namespace Sledge.Editor.UI.Layout
             panel.DragDrop += PanelDragDrop;
         }
 
+        private void UnregisterPanel(Control panel)
+        {
+            panel.MouseDown -= PanelMouseDown;
+            panel.DragEnter -= PanelDragEnter;
+            panel.DragLeave -= PanelDragLeave;
+            panel.DragDrop -= PanelDragDrop;
+        }
+
+        private Point _dragStart;
+
         private void PanelMouseDown(object sender, MouseEventArgs e)
         {
             var pos = TableLayout.GetPositionFromControl((Control)sender);
-            ((Control)sender).DoDragDrop(new Point(pos.Column, pos.Row), DragDropEffects.Link);
+            _dragStart = new Point(pos.Column, pos.Row);
+            ColourPanels(_dragStart);
+
+            // This call blocks!
+            ((Control)sender).DoDragDrop(_dragStart, DragDropEffects.Link);
+            foreach (Control control in TableLayout.Controls) control.BackColor = Color.Black;
         }
 
         private void PanelDragEnter(object sender, DragEventArgs e)
         {
             var pos = TableLayout.GetPositionFromControl((Control)sender);
+            var point = new Point(pos.Column, pos.Row);
             if (e.Data.GetDataPresent(typeof(Point))) e.Effect = DragDropEffects.Link;
+            ColourPanels(point);
         }
 
         private void PanelDragLeave(object sender, EventArgs e)
         {
-
+            ColourPanels(_dragStart);
         }
 
         private void PanelDragDrop(object sender, DragEventArgs e)
@@ -89,14 +106,29 @@ namespace Sledge.Editor.UI.Layout
             SelectedConfiguration.Configuration.Rectangles.RemoveAll(x => x.IntersectsWith(rectangle));
             SelectedConfiguration.Configuration.Rectangles.Add(rectangle);
             UpdateTableLayout();
+
+            _dragStart = Point.Empty;
         }
 
-        private void UnregisterPanel(Control panel)
+        private void ColourPanels(Point point)
         {
-            panel.MouseDown -= PanelMouseDown;
-            panel.DragEnter -= PanelDragEnter;
-            panel.DragLeave -= PanelDragLeave;
-            panel.DragDrop -= PanelDragDrop;
+            foreach (Control control in TableLayout.Controls) control.BackColor = Color.Black;
+            if (point.X == _dragStart.X && point.Y == _dragStart.Y)
+            {
+                var ctrl = TableLayout.GetControlFromPosition(point.X, point.Y);
+                if (ctrl != null) ctrl.BackColor = Color.Green;
+            }
+            else
+            {
+                for (var i = Math.Min(point.X, _dragStart.X); i <= Math.Max(point.X, _dragStart.X); i++)
+                {
+                    for (var j = Math.Min(point.Y, _dragStart.Y); j <= Math.Max(point.Y, _dragStart.Y); j++)
+                    {
+                        var ctrl = TableLayout.GetControlFromPosition(i, j);
+                        if (ctrl != null) ctrl.BackColor = Color.Blue;
+                    }
+                }
+            }
         }
 
         private void UpdateTableLayout()

@@ -14,6 +14,7 @@ namespace Sledge.Editor
         // Layout messages
         CreateNewLayoutWindow,
         OpenLayoutSettings,
+        ViewportCreated,
 
         // Document messages
         DocumentOpened,

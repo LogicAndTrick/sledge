@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(LayoutSettings));
             this.TableLayout = new System.Windows.Forms.TableLayoutPanel();
             this.Rows = new System.Windows.Forms.NumericUpDown();
             this.label1 = new System.Windows.Forms.Label();
@@ -37,6 +38,7 @@
             this.CancelButton = new System.Windows.Forms.Button();
             this.WindowDropDown = new System.Windows.Forms.ComboBox();
             this.label3 = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.Rows)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.Columns)).BeginInit();
             this.SuspendLayout();
@@ -54,13 +56,13 @@
             this.TableLayout.RowCount = 2;
             this.TableLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.TableLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.TableLayout.Size = new System.Drawing.Size(275, 177);
+            this.TableLayout.Size = new System.Drawing.Size(290, 227);
             this.TableLayout.TabIndex = 0;
             // 
             // Rows
             // 
             this.Rows.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.Rows.Location = new System.Drawing.Point(293, 61);
+            this.Rows.Location = new System.Drawing.Point(308, 61);
             this.Rows.Maximum = new decimal(new int[] {
             4,
             0,
@@ -85,7 +87,7 @@
             // 
             this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(290, 45);
+            this.label1.Location = new System.Drawing.Point(305, 45);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(34, 13);
             this.label1.TabIndex = 2;
@@ -94,7 +96,7 @@
             // Columns
             // 
             this.Columns.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.Columns.Location = new System.Drawing.Point(65, 222);
+            this.Columns.Location = new System.Drawing.Point(65, 272);
             this.Columns.Maximum = new decimal(new int[] {
             4,
             0,
@@ -119,7 +121,7 @@
             // 
             this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(12, 224);
+            this.label2.Location = new System.Drawing.Point(12, 274);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(47, 13);
             this.label2.TabIndex = 2;
@@ -128,7 +130,7 @@
             // ApplyButton
             // 
             this.ApplyButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.ApplyButton.Location = new System.Drawing.Point(263, 222);
+            this.ApplyButton.Location = new System.Drawing.Point(278, 272);
             this.ApplyButton.Name = "ApplyButton";
             this.ApplyButton.Size = new System.Drawing.Size(75, 23);
             this.ApplyButton.TabIndex = 3;
@@ -139,7 +141,7 @@
             // CancelButton
             // 
             this.CancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.CancelButton.Location = new System.Drawing.Point(182, 222);
+            this.CancelButton.Location = new System.Drawing.Point(197, 272);
             this.CancelButton.Name = "CancelButton";
             this.CancelButton.Size = new System.Drawing.Size(75, 23);
             this.CancelButton.TabIndex = 3;
@@ -155,7 +157,7 @@
             this.WindowDropDown.FormattingEnabled = true;
             this.WindowDropDown.Location = new System.Drawing.Point(65, 12);
             this.WindowDropDown.Name = "WindowDropDown";
-            this.WindowDropDown.Size = new System.Drawing.Size(222, 21);
+            this.WindowDropDown.Size = new System.Drawing.Size(237, 21);
             this.WindowDropDown.TabIndex = 4;
             this.WindowDropDown.SelectedIndexChanged += new System.EventHandler(this.WindowDropDownSelectedIndexChanged);
             // 
@@ -168,22 +170,36 @@
             this.label3.TabIndex = 2;
             this.label3.Text = "Window";
             // 
+            // label4
+            // 
+            this.label4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(12, 298);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(347, 39);
+            this.label4.TabIndex = 2;
+            this.label4.Text = "Each rectangle represents a viewport.\r\nClick and drag rectangles (click start, dr" +
+    "ag to end) to combine viewports.\r\nClick a combined viewport to un-combine it.";
+            // 
             // LayoutSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(350, 253);
+            this.ClientSize = new System.Drawing.Size(365, 346);
             this.Controls.Add(this.WindowDropDown);
             this.Controls.Add(this.CancelButton);
             this.Controls.Add(this.ApplyButton);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.Columns);
+            this.Controls.Add(this.label4);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.Rows);
             this.Controls.Add(this.TableLayout);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.MinimizeBox = false;
+            this.MinimumSize = new System.Drawing.Size(380, 380);
             this.Name = "LayoutSettings";
             this.Text = "Layout Settings";
             ((System.ComponentModel.ISupportInitialize)(this.Rows)).EndInit();
@@ -204,5 +220,6 @@
         private System.Windows.Forms.Button CancelButton;
         private System.Windows.Forms.ComboBox WindowDropDown;
         private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label label4;
     }
 }

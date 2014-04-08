@@ -5,6 +5,7 @@ using System.Linq;
 using System.Windows.Forms;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
+using Sledge.Common.Mediator;
 using Sledge.Editor.Rendering;
 using Sledge.Editor.UI.Layout;
 using Sledge.Graphics.Helpers;
@@ -149,6 +150,7 @@ namespace Sledge.Editor.UI
                 Viewports.Add(vp);
                 SubscribeExceptions(vp);
                 tableSplitControl.Controls.Add(vp);
+                Mediator.Publish(EditorMediator.ViewportCreated, vp);
                 vp.Run();
             }
         }
