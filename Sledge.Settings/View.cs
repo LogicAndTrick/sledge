@@ -27,13 +27,13 @@ namespace Sledge.Settings
         public static bool LoadSession { get; set; }
         public static bool KeepCameraPositions { get; set; }
         public static bool KeepSelectedTool { get; set; }
-        public static bool KeepViewportSplitterPosition { get; set; }
 
         public static RenderMode Renderer { get; set; }
         public static bool DisableWadTransparency { get; set; }
         public static bool DisableToolTextureTransparency { get; set; }
         public static bool GloballyDisableTransparency { get; set; }
         public static bool DisableModelRendering { get; set; }
+        public static bool DisableTextureFiltering { get; set; }
 
         public static bool CompileOpenOutput { get; set; }
         public static bool CompileDefaultAdvanced { get; set; }
@@ -64,13 +64,13 @@ namespace Sledge.Settings
             LoadSession = true;
             KeepCameraPositions = false;
             KeepSelectedTool = false;
-            KeepViewportSplitterPosition = false;
 
             Renderer = RenderMode.OpenGL3;
             DisableWadTransparency = false;
             DisableToolTextureTransparency = false;
             GloballyDisableTransparency = false;
             DisableModelRendering = false;
+            DisableTextureFiltering = false;
 
             CompileOpenOutput = true;
             CompileDefaultAdvanced = false;

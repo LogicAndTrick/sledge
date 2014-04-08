@@ -130,6 +130,7 @@ namespace Sledge.Editor
 
             WadProvider.ReplaceTransparentPixels = !Sledge.Settings.View.DisableWadTransparency && !Sledge.Settings.View.GloballyDisableTransparency;
             TextureHelper.EnableTransparency = !Sledge.Settings.View.GloballyDisableTransparency;
+            TextureHelper.DisableTextureFiltering = Sledge.Settings.View.DisableTextureFiltering;
 
             // Sprites are loaded on startup and always retained
             var spritesFolder = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Sprites");
@@ -447,6 +448,7 @@ namespace Sledge.Editor
             ViewportManager.RefreshClearColour();
             WadProvider.ReplaceTransparentPixels = !Sledge.Settings.View.DisableWadTransparency && !Sledge.Settings.View.GloballyDisableTransparency;
             TextureHelper.EnableTransparency = !Sledge.Settings.View.GloballyDisableTransparency;
+            TextureHelper.DisableTextureFiltering = Sledge.Settings.View.DisableTextureFiltering;
         }
 
         private void Exit()

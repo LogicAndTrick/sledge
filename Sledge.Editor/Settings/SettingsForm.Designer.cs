@@ -42,7 +42,6 @@ namespace Sledge.Editor.Settings
             this.CompileDefaultAdvanced = new System.Windows.Forms.CheckBox();
             this.CompileOpenOutput = new System.Windows.Forms.CheckBox();
             this.groupBox20 = new System.Windows.Forms.GroupBox();
-            this.KeepViewportSplitterPosition = new System.Windows.Forms.CheckBox();
             this.KeepSelectedTool = new System.Windows.Forms.CheckBox();
             this.KeepCameraPositions = new System.Windows.Forms.CheckBox();
             this.LoadSession = new System.Windows.Forms.CheckBox();
@@ -93,6 +92,7 @@ namespace Sledge.Editor.Settings
             this.GridHighlight1Distance = new System.Windows.Forms.NumericUpDown();
             this.label8 = new System.Windows.Forms.Label();
             this.groupBox17 = new System.Windows.Forms.GroupBox();
+            this.DrawEntityNames = new System.Windows.Forms.CheckBox();
             this.DrawBoxText = new System.Windows.Forms.CheckBox();
             this.KeepVisgroupsWhenCloning = new System.Windows.Forms.CheckBox();
             this.AutoSelectBox = new System.Windows.Forms.CheckBox();
@@ -323,7 +323,7 @@ namespace Sledge.Editor.Settings
             this.btnCancelSettings = new System.Windows.Forms.Button();
             this.btnApplyAndCloseSettings = new System.Windows.Forms.Button();
             this.btnApplySettings = new System.Windows.Forms.Button();
-            this.DrawEntityNames = new System.Windows.Forms.CheckBox();
+            this.DisableTextureFiltering = new System.Windows.Forms.CheckBox();
             this.tbcSettings.SuspendLayout();
             this.tabGeneral.SuspendLayout();
             this.groupBox23.SuspendLayout();
@@ -430,7 +430,7 @@ namespace Sledge.Editor.Settings
             // 
             this.groupBox23.Controls.Add(this.CompileDefaultAdvanced);
             this.groupBox23.Controls.Add(this.CompileOpenOutput);
-            this.groupBox23.Location = new System.Drawing.Point(369, 258);
+            this.groupBox23.Location = new System.Drawing.Point(6, 381);
             this.groupBox23.Name = "groupBox23";
             this.groupBox23.Size = new System.Drawing.Size(357, 117);
             this.groupBox23.TabIndex = 5;
@@ -459,7 +459,6 @@ namespace Sledge.Editor.Settings
             // 
             // groupBox20
             // 
-            this.groupBox20.Controls.Add(this.KeepViewportSplitterPosition);
             this.groupBox20.Controls.Add(this.KeepSelectedTool);
             this.groupBox20.Controls.Add(this.KeepCameraPositions);
             this.groupBox20.Controls.Add(this.LoadSession);
@@ -469,16 +468,6 @@ namespace Sledge.Editor.Settings
             this.groupBox20.TabIndex = 4;
             this.groupBox20.TabStop = false;
             this.groupBox20.Text = "Multiple Files";
-            // 
-            // KeepViewportSplitterPosition
-            // 
-            this.KeepViewportSplitterPosition.Location = new System.Drawing.Point(12, 109);
-            this.KeepViewportSplitterPosition.Name = "KeepViewportSplitterPosition";
-            this.KeepViewportSplitterPosition.Size = new System.Drawing.Size(339, 24);
-            this.KeepViewportSplitterPosition.TabIndex = 3;
-            this.KeepViewportSplitterPosition.Tag = "";
-            this.KeepViewportSplitterPosition.Text = "Keep viewport splitter position when switching between maps";
-            this.KeepViewportSplitterPosition.UseVisualStyleBackColor = true;
             // 
             // KeepSelectedTool
             // 
@@ -515,12 +504,13 @@ namespace Sledge.Editor.Settings
             this.groupBox21.Controls.Add(this.RenderMode);
             this.groupBox21.Controls.Add(this.GloballyDisableTransparency);
             this.groupBox21.Controls.Add(this.DisableToolTransparency);
+            this.groupBox21.Controls.Add(this.DisableTextureFiltering);
             this.groupBox21.Controls.Add(this.DisableModelRendering);
             this.groupBox21.Controls.Add(this.DisableWadTransparency);
             this.groupBox21.Controls.Add(this.label32);
             this.groupBox21.Location = new System.Drawing.Point(369, 85);
             this.groupBox21.Name = "groupBox21";
-            this.groupBox21.Size = new System.Drawing.Size(357, 167);
+            this.groupBox21.Size = new System.Drawing.Size(357, 214);
             this.groupBox21.TabIndex = 4;
             this.groupBox21.TabStop = false;
             this.groupBox21.Text = "Rendering";
@@ -1029,6 +1019,16 @@ namespace Sledge.Editor.Settings
             this.groupBox17.TabIndex = 0;
             this.groupBox17.TabStop = false;
             this.groupBox17.Text = "Options";
+            // 
+            // DrawEntityNames
+            // 
+            this.DrawEntityNames.Location = new System.Drawing.Point(10, 109);
+            this.DrawEntityNames.Name = "DrawEntityNames";
+            this.DrawEntityNames.Size = new System.Drawing.Size(225, 24);
+            this.DrawEntityNames.TabIndex = 4;
+            this.DrawEntityNames.Tag = "";
+            this.DrawEntityNames.Text = "Draw entity names in the viewport";
+            this.DrawEntityNames.UseVisualStyleBackColor = true;
             // 
             // DrawBoxText
             // 
@@ -3576,15 +3576,15 @@ namespace Sledge.Editor.Settings
             this.btnApplySettings.UseVisualStyleBackColor = true;
             this.btnApplySettings.Click += new System.EventHandler(this.Apply);
             // 
-            // DrawEntityNames
+            // DisableTextureFiltering
             // 
-            this.DrawEntityNames.Location = new System.Drawing.Point(10, 109);
-            this.DrawEntityNames.Name = "DrawEntityNames";
-            this.DrawEntityNames.Size = new System.Drawing.Size(225, 24);
-            this.DrawEntityNames.TabIndex = 4;
-            this.DrawEntityNames.Tag = "";
-            this.DrawEntityNames.Text = "Draw entity names in the viewport";
-            this.DrawEntityNames.UseVisualStyleBackColor = true;
+            this.DisableTextureFiltering.Location = new System.Drawing.Point(12, 169);
+            this.DisableTextureFiltering.Name = "DisableTextureFiltering";
+            this.DisableTextureFiltering.Size = new System.Drawing.Size(339, 24);
+            this.DisableTextureFiltering.TabIndex = 3;
+            this.DisableTextureFiltering.Tag = "";
+            this.DisableTextureFiltering.Text = "Disable texture filtering (try this if textures render incorrectly)";
+            this.DisableTextureFiltering.UseVisualStyleBackColor = true;
             // 
             // SettingsForm
             // 
@@ -3876,7 +3876,6 @@ namespace Sledge.Editor.Settings
         private System.Windows.Forms.CheckBox KeepSelectedTool;
         private System.Windows.Forms.CheckBox KeepCameraPositions;
         private System.Windows.Forms.CheckBox LoadSession;
-        private System.Windows.Forms.CheckBox KeepViewportSplitterPosition;
         private System.Windows.Forms.GroupBox groupBox21;
         private System.Windows.Forms.ComboBox RenderMode;
         private System.Windows.Forms.Label label32;
@@ -3970,5 +3969,6 @@ namespace Sledge.Editor.Settings
         private System.Windows.Forms.Label label43;
         private System.Windows.Forms.NumericUpDown MouseWheelMoveDistance;
         private System.Windows.Forms.CheckBox DrawEntityNames;
+        private System.Windows.Forms.CheckBox DisableTextureFiltering;
 	}
 }

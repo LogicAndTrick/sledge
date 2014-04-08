@@ -248,7 +248,6 @@ namespace Sledge.Editor.Settings
             LoadSession.Checked = Sledge.Settings.View.LoadSession;
             KeepCameraPositions.Checked = Sledge.Settings.View.KeepCameraPositions;
             KeepSelectedTool.Checked = Sledge.Settings.View.KeepSelectedTool;
-            KeepViewportSplitterPosition.Checked = Sledge.Settings.View.KeepViewportSplitterPosition;
 
             RenderMode.SelectedIndex = 0;
             if (Sledge.Settings.View.Renderer == Sledge.Settings.RenderMode.OpenGL1DisplayLists) RenderMode.SelectedIndex = 1;
@@ -258,6 +257,7 @@ namespace Sledge.Editor.Settings
             DisableToolTransparency.Checked = Sledge.Settings.View.DisableToolTextureTransparency;
             GloballyDisableTransparency.Checked = Sledge.Settings.View.GloballyDisableTransparency;
             DisableModelRendering.Checked = Sledge.Settings.View.DisableModelRendering;
+            DisableTextureFiltering.Checked = Sledge.Settings.View.DisableTextureFiltering;
 
             CompileOpenOutput.Checked = Sledge.Settings.View.CompileOpenOutput;
             CompileDefaultAdvanced.Checked = Sledge.Settings.View.CompileDefaultAdvanced;
@@ -352,7 +352,6 @@ namespace Sledge.Editor.Settings
             Sledge.Settings.View.LoadSession = LoadSession.Checked;
             Sledge.Settings.View.KeepCameraPositions = KeepCameraPositions.Checked;
             Sledge.Settings.View.KeepSelectedTool = KeepSelectedTool.Checked;
-            Sledge.Settings.View.KeepViewportSplitterPosition = KeepViewportSplitterPosition.Checked;
 
             Sledge.Settings.View.Renderer = Sledge.Settings.RenderMode.OpenGL3;
             if (RenderMode.SelectedIndex == 1) Sledge.Settings.View.Renderer = Sledge.Settings.RenderMode.OpenGL1DisplayLists;
@@ -362,6 +361,7 @@ namespace Sledge.Editor.Settings
             Sledge.Settings.View.DisableToolTextureTransparency = DisableToolTransparency.Checked;
             Sledge.Settings.View.GloballyDisableTransparency = GloballyDisableTransparency.Checked;
             Sledge.Settings.View.DisableModelRendering = DisableModelRendering.Checked;
+            Sledge.Settings.View.DisableTextureFiltering = DisableTextureFiltering.Checked;
 
             Sledge.Settings.View.CompileOpenOutput = CompileOpenOutput.Checked;
             Sledge.Settings.View.CompileDefaultAdvanced = CompileDefaultAdvanced.Checked;

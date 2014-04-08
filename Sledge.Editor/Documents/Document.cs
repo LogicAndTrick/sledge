@@ -139,7 +139,6 @@ namespace Sledge.Editor.Documents
         {
             if (!Sledge.Settings.View.KeepSelectedTool) ToolManager.Activate(_memory.SelectedTool);
             if (!Sledge.Settings.View.KeepCameraPositions) _memory.RestoreViewports(ViewportManager.Viewports);
-            if (!Sledge.Settings.View.KeepViewportSplitterPosition) ViewportManager.SetSplitterPosition(_memory.SplitterPosition);
 
             ViewportManager.AddContext3D(new WidgetLinesRenderable());
             Renderer.Register(ViewportManager.Viewports);
@@ -155,7 +154,6 @@ namespace Sledge.Editor.Documents
         {
             if (!Sledge.Settings.View.KeepSelectedTool && ToolManager.ActiveTool != null) _memory.SelectedTool = ToolManager.ActiveTool.GetType();
             if (!Sledge.Settings.View.KeepCameraPositions) _memory.RememberViewports(ViewportManager.Viewports);
-            if (!Sledge.Settings.View.KeepViewportSplitterPosition) _memory.SplitterPosition = ViewportManager.GetSplitterPosition();
 
             ViewportManager.ClearContexts();
             HelperManager.ClearCache();
