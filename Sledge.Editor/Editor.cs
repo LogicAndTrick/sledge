@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
@@ -9,17 +8,14 @@ using System.Reflection;
 using System.Windows.Forms;
 using Microsoft.WindowsAPICodePack.Taskbar;
 using Sledge.Common.Mediator;
-using Sledge.DataStructures.GameData;
 using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.MapObjects;
-using Sledge.Editor.Brushes;
 using Sledge.Editor.Compiling;
 using Sledge.Editor.Documents;
 using Sledge.Editor.Menu;
 using Sledge.Editor.Settings;
 using Sledge.Editor.UI;
 using Sledge.Editor.UI.Sidebar;
-using Sledge.FileSystem;
 using Sledge.Graphics.Helpers;
 using Sledge.Providers;
 using Sledge.Providers.GameData;
@@ -30,6 +26,7 @@ using Sledge.Providers.Texture;
 using Sledge.Settings;
 using Sledge.Settings.Models;
 using Hotkeys = Sledge.Editor.UI.Hotkeys;
+using LayoutSettings = Sledge.Editor.UI.Layout.LayoutSettings;
 using Path = System.IO.Path;
 
 namespace Sledge.Editor
@@ -99,7 +96,7 @@ namespace Sledge.Editor
 
             SidebarManager.Init(RightSidebar);
 
-            ViewportManager.Init(tblQuadView);
+            ViewportManager.Init(TableSplitView);
             ToolManager.Init();
 
             foreach (var tool in ToolManager.Tools)
@@ -337,6 +334,9 @@ namespace Sledge.Editor
             Mediator.Subscribe(EditorMediator.OpenSettings, this);
             Mediator.Subscribe(EditorMediator.SettingsChanged, this);
 
+            Mediator.Subscribe(EditorMediator.CreateNewLayoutWindow, this);
+            Mediator.Subscribe(EditorMediator.OpenLayoutSettings, this);
+
             Mediator.Subscribe(EditorMediator.DocumentActivated, this);
             Mediator.Subscribe(EditorMediator.DocumentSaved, this);
             Mediator.Subscribe(EditorMediator.DocumentOpened, this);
@@ -421,6 +421,19 @@ namespace Sledge.Editor
             using (var sf = new SettingsForm())
             {
                 sf.ShowDialog();
+            }
+        }
+
+        private static void CreateNewLayoutWindow()
+        {
+            ViewportManager.CreateNewWindow();
+        }
+
+        private static void OpenLayoutSettings()
+        {
+            using (var dlg = new LayoutSettings(ViewportManager.GetWindowConfigurations()))
+            {
+                dlg.ShowDialog();
             }
         }
 
@@ -686,41 +699,41 @@ namespace Sledge.Editor
 
         public void FourViewAutosize()
         {
-            tblQuadView.ResetViews();
+            TableSplitView.ResetViews();
         }
 
         public void FourViewFocusTopLeft()
         {
-            tblQuadView.FocusOn(0, 0);
+            TableSplitView.FocusOn(0, 0);
         }
 
         public void FourViewFocusTopRight()
         {
-            tblQuadView.FocusOn(0, 1);
+            TableSplitView.FocusOn(0, 1);
         }
 
         public void FourViewFocusBottomLeft()
         {
-            tblQuadView.FocusOn(1, 0);
+            TableSplitView.FocusOn(1, 0);
         }
 
         public void FourViewFocusBottomRight()
         {
-            tblQuadView.FocusOn(1, 1);
+            TableSplitView.FocusOn(1, 1);
         }
 
         public void FourViewFocusCurrent()
         {
-            if (tblQuadView.IsFocusing())
+            if (TableSplitView.IsFocusing())
             {
-                tblQuadView.Unfocus();
+                TableSplitView.Unfocus();
             }
             else
             {
                 var focused = ViewportManager.Viewports.FirstOrDefault(x => x.IsFocused);
                 if (focused != null)
                 {
-                    tblQuadView.FocusOn(focused);
+                    TableSplitView.FocusOn(focused);
                 }
             }
         }

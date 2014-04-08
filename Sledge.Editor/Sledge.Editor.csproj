@@ -374,6 +374,12 @@
     <Compile Include="UI\HotkeyForm.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="UI\Layout\LayoutSettings.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Layout\LayoutSettings.Designer.cs">
+      <DependentUpon>LayoutSettings.cs</DependentUpon>
+    </Compile>
     <Compile Include="UI\MapInformationDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -429,6 +435,9 @@
     </Compile>
     <Compile Include="UI\PasteSpecialDialog.Designer.cs">
       <DependentUpon>PasteSpecialDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\TableSplitControl.cs">
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="UI\Sidebar\BrushSidebarPanel.cs">
       <SubType>UserControl</SubType>
@@ -536,6 +545,12 @@
     </Compile>
     <Compile Include="UI\ViewportManager.cs" />
     <Compile Include="UI\UpdateReleaseDetails.cs" />
+    <Compile Include="UI\Layout\ViewportWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Layout\ViewportWindow.Designer.cs">
+      <DependentUpon>ViewportWindow.cs</DependentUpon>
+    </Compile>
     <Compile Include="Visgroups\VisgroupEditForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -639,6 +654,9 @@
     <EmbeddedResource Include="UI\FileSystem\FileSystemBrowserDialog.resx">
       <DependentUpon>FileSystemBrowserDialog.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="UI\Layout\LayoutSettings.resx">
+      <DependentUpon>LayoutSettings.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="UI\MapInformationDialog.resx">
       <DependentUpon>MapInformationDialog.cs</DependentUpon>
     </EmbeddedResource>
@@ -677,6 +695,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UI\UpdaterForm.resx">
       <DependentUpon>UpdaterForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Layout\ViewportWindow.resx">
+      <DependentUpon>ViewportWindow.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Visgroups\VisgroupEditForm.resx">
       <DependentUpon>VisgroupEditForm.cs</DependentUpon>

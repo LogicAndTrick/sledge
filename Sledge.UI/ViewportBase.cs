@@ -93,7 +93,20 @@ namespace Sledge.UI
 
         protected override void Dispose(bool disposing)
         {
-            Listeners.OfType<IDisposable>().ToList().ForEach(x => x.Dispose());
+            if (Context != null && !Context.IsDisposed)
+            {
+                foreach (var dis in Listeners.OfType<IDisposable>())
+                {
+                    try
+                    {
+                        dis.Dispose();
+                    }
+                    catch
+                    {
+                        // Don't care
+                    }
+                }
+            }
             Listeners.Clear();
             
             RenderContext.Dispose();

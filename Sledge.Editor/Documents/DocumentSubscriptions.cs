@@ -20,6 +20,8 @@ using Sledge.Editor.Actions.Visgroups;
 using Sledge.Editor.Clipboard;
 using Sledge.Editor.Compiling;
 using Sledge.Editor.Enums;
+using Sledge.Editor.Rendering;
+using Sledge.Editor.Rendering.Helpers;
 using Sledge.Editor.Tools;
 using Sledge.Editor.UI;
 using Sledge.Editor.UI.ObjectProperties;
@@ -142,6 +144,8 @@ namespace Sledge.Editor.Documents
             Mediator.Subscribe(EditorMediator.SetZoomValue, this);
             Mediator.Subscribe(EditorMediator.TextureSelected, this);
             Mediator.Subscribe(EditorMediator.EntitySelected, this);
+
+            Mediator.Subscribe(EditorMediator.ViewportCreated, this);
         }
 
         public void Unsubscribe()
@@ -1044,6 +1048,15 @@ namespace Sledge.Editor.Documents
         public void EntitySelected(GameDataObject selection)
         {
             _document.SetMemory("SelectedEntity", selection == null ? null : selection.Name);
+        }
+
+        public void ViewportCreated(ViewportBase viewport)
+        {
+            if (viewport is Viewport3D) viewport.RenderContext.Add(new WidgetLinesRenderable());
+            _document.Renderer.Register(new[] { viewport });
+            viewport.RenderContext.Add(new ToolRenderable());
+            viewport.RenderContext.Add(new HelperRenderable(_document));
+            _document.Renderer.UpdateGrid(_document.Map.GridSpacing, _document.Map.Show2DGrid, _document.Map.Show3DGrid);
         }
     }
 }

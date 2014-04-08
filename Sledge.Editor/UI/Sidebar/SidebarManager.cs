@@ -13,8 +13,8 @@ namespace Sledge.Editor.UI.Sidebar
         {
             _container = new SidebarContainer { Dock = DockStyle.Fill };
 
-            container.Width = Layout.SidebarWidth;
-            container.Resize += (s, e) => Layout.SidebarWidth = container.Width;
+            container.Width = Sledge.Settings.Layout.SidebarWidth;
+            container.Resize += (s, e) => Sledge.Settings.Layout.SidebarWidth = container.Width;
 
             container.Controls.Add(_container);
 
@@ -36,12 +36,12 @@ namespace Sledge.Editor.UI.Sidebar
             var serialised = String.Join(";", _container.GetControls()
                 .OfType<SidebarPanel>()
                 .Select(x => x.Text + ":" + (x.Hidden ? '0' : '1')));
-            Layout.SidebarLayout = serialised;
+            Sledge.Settings.Layout.SidebarLayout = serialised;
         }
 
         private static bool Expanded(string text)
         {
-            return Layout.SidebarLayout.Split(';')
+            return Sledge.Settings.Layout.SidebarLayout.Split(';')
                 .Select(x => x.Split(':'))
                 .Where(x => x.Length == 2 && x[0] == text)
                 .Select(x => x[1])
