@@ -17,10 +17,19 @@ namespace Sledge.Providers.Texture
             Packages = new List<TexturePackage>();
         }
 
+        private static string _cachePath;
+
+        public static void SetCachePath(string path)
+        {
+            _cachePath = path;
+            foreach (var p in RegisteredProviders) p.CachePath = _cachePath;
+        }
+
         #region Registration
 
         public static void Register(TextureProvider provider)
         {
+            provider.CachePath = _cachePath;
             RegisteredProviders.Add(provider);
         }
 
@@ -31,6 +40,7 @@ namespace Sledge.Providers.Texture
 
         #endregion
 
+        protected string CachePath { get; private set; }
         public abstract bool IsValidForPackageFile(string package);
         public abstract TexturePackage CreatePackage(string package);
         public abstract void LoadTexture(TextureItem item);

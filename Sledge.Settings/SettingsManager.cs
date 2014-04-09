@@ -62,6 +62,16 @@ namespace Sledge.Settings
             if (!Directory.Exists(sledge)) Directory.CreateDirectory(sledge);
             SettingsFile = Path.Combine(sledge, "Settings.vdf");
         }
+
+        public static string GetTextureCachePath()
+        {
+            var appdata = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            var sledge = Path.Combine(appdata, "Sledge");
+            if (!Directory.Exists(sledge)) Directory.CreateDirectory(sledge);
+            var cache = Path.Combine(sledge, "TextureCache");
+            if (!Directory.Exists(cache)) Directory.CreateDirectory(cache);
+            return cache;
+        }
         
         public static float GetSpecialTextureOpacity(string name)
         {

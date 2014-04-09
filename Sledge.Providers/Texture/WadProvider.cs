@@ -4,6 +4,7 @@ using System.Drawing.Imaging;
 using System.Globalization;
 using System.Linq;
 using System.IO;
+using System.Threading;
 using Sledge.Graphics;
 using Sledge.Graphics.Helpers;
 using Sledge.Libs.HLLib;
@@ -132,9 +133,48 @@ namespace Sledge.Providers.Texture
             return type == 0x42 || type == 0x43;
         }
 
+        private const char UnitSeparator = (char) 31;
+
+        private bool LoadFromCache(TexturePackage package)
+        {
+            if (CachePath == null || !Directory.Exists(CachePath)) return false;
+            var fi = new FileInfo(package.PackageFile);
+            var cacheFile = Path.Combine(CachePath, fi.Name + "_" + (fi.LastWriteTime.Ticks));
+            if (!File.Exists(cacheFile)) return false;
+            var lines = File.ReadAllLines(cacheFile);
+            if (lines.Length < 3) return false;
+            if (lines[0] != fi.FullName) return false;
+            if (lines[1] != fi.LastWriteTime.ToFileTime().ToString(CultureInfo.InvariantCulture)) return false;
+            if (lines[2] != fi.Length.ToString(CultureInfo.InvariantCulture)) return false;
+            foreach (var line in lines.Skip(3))
+            {
+                var spl = line.Split(UnitSeparator);
+                package.AddTexture(new TextureItem(package, spl[0], int.Parse(spl[1], CultureInfo.InvariantCulture), int.Parse(spl[2], CultureInfo.InvariantCulture)));
+            }
+            return true;
+        }
+
+        private void SaveToCache(TexturePackage package)
+        {
+            if (CachePath == null || !Directory.Exists(CachePath)) return;
+            var fi = new FileInfo(package.PackageFile);
+            var cacheFile = Path.Combine(CachePath, fi.Name + "_" + (fi.LastWriteTime.Ticks));
+            var lines = new List<string>();
+            lines.Add(fi.FullName);
+            lines.Add(fi.LastWriteTime.ToFileTime().ToString(CultureInfo.InvariantCulture));;
+            lines.Add(fi.Length.ToString(CultureInfo.InvariantCulture));
+            foreach (var ti in package.Items.Values)
+            {
+                lines.Add(ti.Name + UnitSeparator + ti.Width.ToString(CultureInfo.InvariantCulture) + UnitSeparator + ti.Height.ToString(CultureInfo.InvariantCulture));
+            }
+            File.WriteAllLines(cacheFile, lines);
+        }
+
         public override TexturePackage CreatePackage(string package)
         {
             var tp = new TexturePackage(package, this);
+            if (LoadFromCache(tp)) return tp;
+
             var list = new List<TextureItem>();
             try
             {
@@ -157,6 +197,7 @@ namespace Sledge.Providers.Texture
             {
                 tp.AddTexture(ti);
             }
+            SaveToCache(tp);
             return tp;
         }
 
