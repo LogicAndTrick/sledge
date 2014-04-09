@@ -383,10 +383,14 @@ namespace Sledge.DataStructures.MapObjects
                 var va = transform.Transform(Texture.VAxis) - origin;
                 // Only do the transform if the axes end up being not perpendicular
                 // Otherwise just make a best-effort guess, same as the scaling lock
-                if (Math.Abs(ua.Dot(va)) < 0.0001m)
+                if (Math.Abs(ua.Dot(va)) < 0.0001m && DMath.Abs(Plane.Normal.Dot(ua.Cross(va).Normalise())) > 0.0001m)
                 {
                     Texture.UAxis = ua;
                     Texture.VAxis = va;
+                }
+                else
+                {
+                    AlignTextureToFace();
                 }
                 // Calculate the new shift values based on the UV values of the vertices
                 var vtx = Vertices[0];
