@@ -107,6 +107,14 @@ namespace Sledge.Graphics
             Location += add;
         }
 
+        //mxd. Ascend/descent in world-space
+        public void AscendAbs(decimal units)
+        {
+            var up = new Vector3(0, 0, (float)units);
+            LookAt += up;
+            Location += up;
+        }
+
         public Vector3 GetUp()
         {
             var temp = LookAt - Location;
