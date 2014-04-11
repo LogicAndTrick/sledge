@@ -312,6 +312,20 @@ namespace Sledge.Editor.Tools
             base.MouseMove3D(viewport, e);
         }
 
+        private Coordinate GetIntersectionPoint(MapObject obj, Line line)
+        {
+            if (obj == null) return null;
+
+            var solid = obj as Solid;
+            if (solid == null) return obj.GetIntersectionPoint(line);
+
+            return solid.Faces.Where(x => x.Opacity > 0 && !x.IsHidden)
+                .Select(x => x.GetIntersectionPoint(line))
+                .Where(x => x != null)
+                .OrderBy(x => (x - line.Start).VectorMagnitude())
+                .FirstOrDefault();
+        }
+
         /// <summary>
         /// When the mouse is pressed in the 3D view, we want to select the clicked object.
         /// </summary>
@@ -330,7 +344,7 @@ namespace Sledge.Editor.Tools
 
             // Sort the list of intersecting elements by distance from ray origin
             IntersectingObjectsFor3DSelection = hits
-                .Select(x => new { Item = x, Intersection = x.GetIntersectionPoint(ray) })
+                .Select(x => new { Item = x, Intersection = GetIntersectionPoint(x, ray) })
                 .Where(x => x.Intersection != null)
                 .OrderBy(x => (x.Intersection - ray.Start).VectorMagnitude())
                 .Select(x => x.Item)
