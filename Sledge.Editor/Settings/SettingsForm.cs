@@ -1,12 +1,16 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
 using System.Globalization;
 using System.IO;
+using System.Linq.Expressions;
+using System.Reflection;
 using System.Windows.Forms;
 using Sledge.Common.Mediator;
 using Sledge.DataStructures.GameData;
 using Sledge.Editor.Compiling;
+using Sledge.Editor.Extensions;
 using Sledge.Providers.GameData;
 using Sledge.QuickForms;
 using Sledge.Settings;
@@ -38,7 +42,7 @@ namespace Sledge.Editor.Settings
 
             UpdateData();
 
-            tbcSettings.SelectTab(3);
+            //tbcSettings.SelectTab(3);
             BindConfigControls();
         }
 
@@ -233,34 +237,100 @@ namespace Sledge.Editor.Settings
 
         #region Load/Apply
 
+        private void AddHeading(string text)
+        {
+            var label = new Label
+            {
+                Font = new Font(Font, FontStyle.Bold),
+                Text = text,
+                AutoSize = true,
+                Padding = new Padding(0, 5, 0, 5)
+            };
+            flowLayoutPanel1.Controls.Add(label);
+        }
+
+        private CheckBox AddSetting(Expression<Func<bool>> prop, string text)
+        {
+            var expression = (MemberExpression) prop.Body;
+            var property = (PropertyInfo) expression.Member;
+            var checkbox = new CheckBox
+            {
+                Text = text,
+                AutoSize = true,
+                Checked = (bool) property.GetValue(null, null),
+                Tag = prop,
+                Padding = new Padding(10, 0, 0, 0)
+            };
+            checkbox.CheckedChanged += (s, e) => property.SetValue(null, checkbox.Checked, null);
+            flowLayoutPanel1.Controls.Add(checkbox);
+
+            return checkbox;
+        }
+
+        private ComboBox AddSetting(Expression<Func<Enum>> prop, string text)
+        {
+            var expression = (MemberExpression) ((UnaryExpression) prop.Body).Operand;
+            var property = (PropertyInfo)expression.Member;
+            var combo = new ComboBox
+            {
+                DropDownStyle = ComboBoxStyle.DropDownList,
+                Width = 300
+            };
+            var vals = Enum.GetValues(property.PropertyType).OfType<Enum>().ToList();
+            foreach (var val in vals)
+            {
+                combo.Items.Add(val.GetDescription());
+            }
+            combo.SelectedIndex = vals.IndexOf((Enum) property.GetValue(null, null));
+            combo.SelectedIndexChanged += (s, e) => property.SetValue(null, vals[combo.SelectedIndex], null);
+            var label = new Label
+            {
+                AutoSize = true,
+                Text = text,
+                Padding = new Padding(0, 5, 0, 5)
+            };
+            var panel = new FlowLayoutPanel
+            {
+                FlowDirection = FlowDirection.LeftToRight,
+                WrapContents = false,
+                AutoSize = true
+            };
+            panel.Controls.Add(label);
+            panel.Controls.Add(combo);
+            flowLayoutPanel1.Controls.Add(panel);
+
+            return combo;
+        }
+
         private void SettingsFormLoad(object sender, EventArgs e)
         {
-            // General
-            SwitchToSelectAfterCreation.Checked = Sledge.Settings.Select.SwitchToSelectAfterCreation;
-            SwitchToSelectAfterEntity.Checked = Sledge.Settings.Select.SwitchToSelectAfterEntity;
-            SelectCreatedBrush.Checked = Sledge.Settings.Select.SelectCreatedBrush;
-            SelectCreatedEntity.Checked = Sledge.Settings.Select.SelectCreatedEntity;
-            DeselectOthersWhenSelectingCreation.Checked = Sledge.Settings.Select.DeselectOthersWhenSelectingCreation;
-            ResetBrushTypeOnCreation.Checked = Sledge.Settings.Select.ResetBrushTypeOnCreation;
+            AddHeading("Object Creation");
+            AddSetting(() => Sledge.Settings.Select.SwitchToSelectAfterCreation, "Switch to selection tool after brush creation");
+            AddSetting(() => Sledge.Settings.Select.SwitchToSelectAfterEntity, "Switch to selection tool after entity creation");
+            AddSetting(() => Sledge.Settings.Select.SelectCreatedBrush, "Automatically select created brush");
+            AddSetting(() => Sledge.Settings.Select.SelectCreatedEntity, "Automatically select created entity");
+            AddSetting(() => Sledge.Settings.Select.DeselectOthersWhenSelectingCreation, "Deselect other objects when automatically selecting created items");
+            AddSetting(() => Sledge.Settings.Select.ResetBrushTypeOnCreation, "Reset to block brush type after creating brush");
 
-            ApplyTextureImmediately.Checked = Sledge.Settings.Select.ApplyTextureImmediately;
+            AddHeading("Multiple Files");
+            AddSetting(() => Sledge.Settings.View.LoadSession, "Load previously opened files on startup");
+            AddSetting(() => Sledge.Settings.View.KeepCameraPositions, "Keep current camera positions when switching between maps");
+            AddSetting(() => Sledge.Settings.View.KeepSelectedTool, "Keep current selected tool when switching between maps");
 
-            LoadSession.Checked = Sledge.Settings.View.LoadSession;
-            KeepCameraPositions.Checked = Sledge.Settings.View.KeepCameraPositions;
-            KeepSelectedTool.Checked = Sledge.Settings.View.KeepSelectedTool;
+            AddHeading("Compiling");
+            AddSetting(() => Sledge.Settings.View.CompileOpenOutput, "Open the output panel on compile start");
+            AddSetting(() => Sledge.Settings.View.CompileDefaultAdvanced, "Use advanced compile dialog by default");
 
-            RenderMode.SelectedIndex = 0;
-            if (Sledge.Settings.View.Renderer == Sledge.Settings.RenderMode.OpenGL1DisplayLists) RenderMode.SelectedIndex = 1;
-            if (Sledge.Settings.View.Renderer == Sledge.Settings.RenderMode.OpenGL1Immediate) RenderMode.SelectedIndex = 2;
+            AddHeading("Textures");
+            AddSetting(() => Sledge.Settings.Select.ApplyTextureImmediately, "Apply texture immediately after browsing in the texture application tool");
 
-            DisableWadTransparency.Checked = Sledge.Settings.View.DisableWadTransparency;
-            DisableToolTransparency.Checked = Sledge.Settings.View.DisableToolTextureTransparency;
-            GloballyDisableTransparency.Checked = Sledge.Settings.View.GloballyDisableTransparency;
-            DisableModelRendering.Checked = Sledge.Settings.View.DisableModelRendering;
-            DisableTextureFiltering.Checked = Sledge.Settings.View.DisableTextureFiltering;
-
-            CompileOpenOutput.Checked = Sledge.Settings.View.CompileOpenOutput;
-            CompileDefaultAdvanced.Checked = Sledge.Settings.View.CompileDefaultAdvanced;
+            AddHeading("Rendering");
+            AddSetting(() => Sledge.Settings.View.Renderer, "Renderer");
+            AddSetting(() => Sledge.Settings.View.DisableWadTransparency, "Disable WAD texture transparency");
+            AddSetting(() => Sledge.Settings.View.DisableToolTextureTransparency, "Disable tool texture transparency");
+            AddSetting(() => Sledge.Settings.View.GloballyDisableTransparency, "Disable transparent textures globally");
+            AddSetting(() => Sledge.Settings.View.DisableModelRendering, "Disable model rendering");
+            AddSetting(() => Sledge.Settings.View.DisableTextureFiltering, "Disable texture filtering (try this if textures render incorrectly)");
 
             // 2D Views
             CrosshairCursorIn2DViews.Checked = Sledge.Settings.View.CrosshairCursorIn2DViews;
@@ -339,33 +409,6 @@ namespace Sledge.Editor.Settings
 
         private void Apply()
         {
-            // General
-            Sledge.Settings.Select.SwitchToSelectAfterCreation = SwitchToSelectAfterCreation.Checked;
-            Sledge.Settings.Select.SwitchToSelectAfterEntity = SwitchToSelectAfterEntity.Checked;
-            Sledge.Settings.Select.SelectCreatedBrush = SelectCreatedBrush.Checked;
-            Sledge.Settings.Select.SelectCreatedEntity = SelectCreatedEntity.Checked;
-            Sledge.Settings.Select.DeselectOthersWhenSelectingCreation = DeselectOthersWhenSelectingCreation.Checked;
-            Sledge.Settings.Select.ResetBrushTypeOnCreation = ResetBrushTypeOnCreation.Checked;
-
-            Sledge.Settings.Select.ApplyTextureImmediately = ApplyTextureImmediately.Checked;
-
-            Sledge.Settings.View.LoadSession = LoadSession.Checked;
-            Sledge.Settings.View.KeepCameraPositions = KeepCameraPositions.Checked;
-            Sledge.Settings.View.KeepSelectedTool = KeepSelectedTool.Checked;
-
-            Sledge.Settings.View.Renderer = Sledge.Settings.RenderMode.OpenGL3;
-            if (RenderMode.SelectedIndex == 1) Sledge.Settings.View.Renderer = Sledge.Settings.RenderMode.OpenGL1DisplayLists;
-            if (RenderMode.SelectedIndex == 2) Sledge.Settings.View.Renderer = Sledge.Settings.RenderMode.OpenGL1Immediate;
-
-            Sledge.Settings.View.DisableWadTransparency = DisableWadTransparency.Checked;
-            Sledge.Settings.View.DisableToolTextureTransparency = DisableToolTransparency.Checked;
-            Sledge.Settings.View.GloballyDisableTransparency = GloballyDisableTransparency.Checked;
-            Sledge.Settings.View.DisableModelRendering = DisableModelRendering.Checked;
-            Sledge.Settings.View.DisableTextureFiltering = DisableTextureFiltering.Checked;
-
-            Sledge.Settings.View.CompileOpenOutput = CompileOpenOutput.Checked;
-            Sledge.Settings.View.CompileDefaultAdvanced = CompileDefaultAdvanced.Checked;
-
             // 2D Views
             Sledge.Settings.View.CrosshairCursorIn2DViews = CrosshairCursorIn2DViews.Checked;
             Sledge.Settings.Select.AutoSelectBox = AutoSelectBox.Checked;

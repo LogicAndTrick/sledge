@@ -38,29 +38,6 @@ namespace Sledge.Editor.Settings
 		{
             this.tbcSettings = new System.Windows.Forms.TabControl();
             this.tabGeneral = new System.Windows.Forms.TabPage();
-            this.groupBox23 = new System.Windows.Forms.GroupBox();
-            this.CompileDefaultAdvanced = new System.Windows.Forms.CheckBox();
-            this.CompileOpenOutput = new System.Windows.Forms.CheckBox();
-            this.groupBox20 = new System.Windows.Forms.GroupBox();
-            this.KeepSelectedTool = new System.Windows.Forms.CheckBox();
-            this.KeepCameraPositions = new System.Windows.Forms.CheckBox();
-            this.LoadSession = new System.Windows.Forms.CheckBox();
-            this.groupBox21 = new System.Windows.Forms.GroupBox();
-            this.RenderMode = new System.Windows.Forms.ComboBox();
-            this.GloballyDisableTransparency = new System.Windows.Forms.CheckBox();
-            this.DisableToolTransparency = new System.Windows.Forms.CheckBox();
-            this.DisableModelRendering = new System.Windows.Forms.CheckBox();
-            this.DisableWadTransparency = new System.Windows.Forms.CheckBox();
-            this.label32 = new System.Windows.Forms.Label();
-            this.groupBox19 = new System.Windows.Forms.GroupBox();
-            this.ApplyTextureImmediately = new System.Windows.Forms.CheckBox();
-            this.groupBox18 = new System.Windows.Forms.GroupBox();
-            this.SwitchToSelectAfterEntity = new System.Windows.Forms.CheckBox();
-            this.SwitchToSelectAfterCreation = new System.Windows.Forms.CheckBox();
-            this.ResetBrushTypeOnCreation = new System.Windows.Forms.CheckBox();
-            this.DeselectOthersWhenSelectingCreation = new System.Windows.Forms.CheckBox();
-            this.SelectCreatedEntity = new System.Windows.Forms.CheckBox();
-            this.SelectCreatedBrush = new System.Windows.Forms.CheckBox();
             this.tab2DViews = new System.Windows.Forms.TabPage();
             this.groupBox11 = new System.Windows.Forms.GroupBox();
             this.CenterHandlesOnlyNearCursor = new System.Windows.Forms.CheckBox();
@@ -265,15 +242,10 @@ namespace Sledge.Editor.Settings
             this.label40 = new System.Windows.Forms.Label();
             this.tabBuildAdvancedSubTabs = new System.Windows.Forms.TabControl();
             this.tabBuildAdvancedCSG = new System.Windows.Forms.TabPage();
-            this.SelectedBuildCsgParameters = new Sledge.Editor.Compiling.CompileParameterPanel();
             this.tabBuildAdvancedBSP = new System.Windows.Forms.TabPage();
-            this.SelectedBuildBspParameters = new Sledge.Editor.Compiling.CompileParameterPanel();
             this.tabBuildAdvancedVIS = new System.Windows.Forms.TabPage();
-            this.SelectedBuildVisParameters = new Sledge.Editor.Compiling.CompileParameterPanel();
             this.tabBuildAdvancedRAD = new System.Windows.Forms.TabPage();
-            this.SelectedBuildRadParameters = new Sledge.Editor.Compiling.CompileParameterPanel();
             this.tabBuildAdvancedShared = new System.Windows.Forms.TabPage();
-            this.SelectedBuildSharedParameters = new Sledge.Editor.Compiling.CompileParameterPanel();
             this.tabBuildAdvancedPreview = new System.Windows.Forms.TabPage();
             this.SelectedBuildProfilePreview = new System.Windows.Forms.TextBox();
             this.RemoveBuild = new System.Windows.Forms.Button();
@@ -323,14 +295,14 @@ namespace Sledge.Editor.Settings
             this.btnCancelSettings = new System.Windows.Forms.Button();
             this.btnApplyAndCloseSettings = new System.Windows.Forms.Button();
             this.btnApplySettings = new System.Windows.Forms.Button();
-            this.DisableTextureFiltering = new System.Windows.Forms.CheckBox();
+            this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
+            this.SelectedBuildCsgParameters = new Sledge.Editor.Compiling.CompileParameterPanel();
+            this.SelectedBuildBspParameters = new Sledge.Editor.Compiling.CompileParameterPanel();
+            this.SelectedBuildVisParameters = new Sledge.Editor.Compiling.CompileParameterPanel();
+            this.SelectedBuildRadParameters = new Sledge.Editor.Compiling.CompileParameterPanel();
+            this.SelectedBuildSharedParameters = new Sledge.Editor.Compiling.CompileParameterPanel();
             this.tbcSettings.SuspendLayout();
             this.tabGeneral.SuspendLayout();
-            this.groupBox23.SuspendLayout();
-            this.groupBox20.SuspendLayout();
-            this.groupBox21.SuspendLayout();
-            this.groupBox19.SuspendLayout();
-            this.groupBox18.SuspendLayout();
             this.tab2DViews.SuspendLayout();
             this.groupBox11.SuspendLayout();
             this.groupBox6.SuspendLayout();
@@ -413,11 +385,7 @@ namespace Sledge.Editor.Settings
             // 
             // tabGeneral
             // 
-            this.tabGeneral.Controls.Add(this.groupBox23);
-            this.tabGeneral.Controls.Add(this.groupBox20);
-            this.tabGeneral.Controls.Add(this.groupBox21);
-            this.tabGeneral.Controls.Add(this.groupBox19);
-            this.tabGeneral.Controls.Add(this.groupBox18);
+            this.tabGeneral.Controls.Add(this.flowLayoutPanel1);
             this.tabGeneral.Location = new System.Drawing.Point(4, 22);
             this.tabGeneral.Name = "tabGeneral";
             this.tabGeneral.Padding = new System.Windows.Forms.Padding(3);
@@ -425,252 +393,6 @@ namespace Sledge.Editor.Settings
             this.tabGeneral.TabIndex = 0;
             this.tabGeneral.Text = "General";
             this.tabGeneral.UseVisualStyleBackColor = true;
-            // 
-            // groupBox23
-            // 
-            this.groupBox23.Controls.Add(this.CompileDefaultAdvanced);
-            this.groupBox23.Controls.Add(this.CompileOpenOutput);
-            this.groupBox23.Location = new System.Drawing.Point(6, 381);
-            this.groupBox23.Name = "groupBox23";
-            this.groupBox23.Size = new System.Drawing.Size(357, 117);
-            this.groupBox23.TabIndex = 5;
-            this.groupBox23.TabStop = false;
-            this.groupBox23.Text = "Compiling";
-            // 
-            // CompileDefaultAdvanced
-            // 
-            this.CompileDefaultAdvanced.Location = new System.Drawing.Point(12, 49);
-            this.CompileDefaultAdvanced.Name = "CompileDefaultAdvanced";
-            this.CompileDefaultAdvanced.Size = new System.Drawing.Size(224, 24);
-            this.CompileDefaultAdvanced.TabIndex = 3;
-            this.CompileDefaultAdvanced.Tag = "";
-            this.CompileDefaultAdvanced.Text = "Use advanced compile dialog by default";
-            this.CompileDefaultAdvanced.UseVisualStyleBackColor = true;
-            // 
-            // CompileOpenOutput
-            // 
-            this.CompileOpenOutput.Location = new System.Drawing.Point(12, 19);
-            this.CompileOpenOutput.Name = "CompileOpenOutput";
-            this.CompileOpenOutput.Size = new System.Drawing.Size(224, 24);
-            this.CompileOpenOutput.TabIndex = 3;
-            this.CompileOpenOutput.Tag = "";
-            this.CompileOpenOutput.Text = "Open the output panel on compile start";
-            this.CompileOpenOutput.UseVisualStyleBackColor = true;
-            // 
-            // groupBox20
-            // 
-            this.groupBox20.Controls.Add(this.KeepSelectedTool);
-            this.groupBox20.Controls.Add(this.KeepCameraPositions);
-            this.groupBox20.Controls.Add(this.LoadSession);
-            this.groupBox20.Location = new System.Drawing.Point(6, 217);
-            this.groupBox20.Name = "groupBox20";
-            this.groupBox20.Size = new System.Drawing.Size(357, 158);
-            this.groupBox20.TabIndex = 4;
-            this.groupBox20.TabStop = false;
-            this.groupBox20.Text = "Multiple Files";
-            // 
-            // KeepSelectedTool
-            // 
-            this.KeepSelectedTool.Location = new System.Drawing.Point(12, 79);
-            this.KeepSelectedTool.Name = "KeepSelectedTool";
-            this.KeepSelectedTool.Size = new System.Drawing.Size(339, 24);
-            this.KeepSelectedTool.TabIndex = 3;
-            this.KeepSelectedTool.Tag = "";
-            this.KeepSelectedTool.Text = "Keep current selected tool when switching between maps";
-            this.KeepSelectedTool.UseVisualStyleBackColor = true;
-            // 
-            // KeepCameraPositions
-            // 
-            this.KeepCameraPositions.Location = new System.Drawing.Point(12, 49);
-            this.KeepCameraPositions.Name = "KeepCameraPositions";
-            this.KeepCameraPositions.Size = new System.Drawing.Size(339, 24);
-            this.KeepCameraPositions.TabIndex = 3;
-            this.KeepCameraPositions.Tag = "";
-            this.KeepCameraPositions.Text = "Keep current camera positions when switching between maps";
-            this.KeepCameraPositions.UseVisualStyleBackColor = true;
-            // 
-            // LoadSession
-            // 
-            this.LoadSession.Location = new System.Drawing.Point(12, 19);
-            this.LoadSession.Name = "LoadSession";
-            this.LoadSession.Size = new System.Drawing.Size(339, 24);
-            this.LoadSession.TabIndex = 3;
-            this.LoadSession.Tag = "";
-            this.LoadSession.Text = "Load previously opened files on startup";
-            this.LoadSession.UseVisualStyleBackColor = true;
-            // 
-            // groupBox21
-            // 
-            this.groupBox21.Controls.Add(this.RenderMode);
-            this.groupBox21.Controls.Add(this.GloballyDisableTransparency);
-            this.groupBox21.Controls.Add(this.DisableToolTransparency);
-            this.groupBox21.Controls.Add(this.DisableTextureFiltering);
-            this.groupBox21.Controls.Add(this.DisableModelRendering);
-            this.groupBox21.Controls.Add(this.DisableWadTransparency);
-            this.groupBox21.Controls.Add(this.label32);
-            this.groupBox21.Location = new System.Drawing.Point(369, 85);
-            this.groupBox21.Name = "groupBox21";
-            this.groupBox21.Size = new System.Drawing.Size(357, 214);
-            this.groupBox21.TabIndex = 4;
-            this.groupBox21.TabStop = false;
-            this.groupBox21.Text = "Rendering";
-            // 
-            // RenderMode
-            // 
-            this.RenderMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.RenderMode.FormattingEnabled = true;
-            this.RenderMode.Items.AddRange(new object[] {
-            "OpenGL 2.1 (Fastest, requires compatible GPU)",
-            "OpenGL 1.0 Display Lists (Should work for most GPUs)",
-            "OpenGL 1.0 Immediate (Slow, most compatible)"});
-            this.RenderMode.Location = new System.Drawing.Point(72, 16);
-            this.RenderMode.Name = "RenderMode";
-            this.RenderMode.Size = new System.Drawing.Size(279, 21);
-            this.RenderMode.TabIndex = 1;
-            // 
-            // GloballyDisableTransparency
-            // 
-            this.GloballyDisableTransparency.Location = new System.Drawing.Point(12, 109);
-            this.GloballyDisableTransparency.Name = "GloballyDisableTransparency";
-            this.GloballyDisableTransparency.Size = new System.Drawing.Size(233, 24);
-            this.GloballyDisableTransparency.TabIndex = 3;
-            this.GloballyDisableTransparency.Tag = "";
-            this.GloballyDisableTransparency.Text = "Disable transparent textures globally";
-            this.GloballyDisableTransparency.UseVisualStyleBackColor = true;
-            // 
-            // DisableToolTransparency
-            // 
-            this.DisableToolTransparency.Location = new System.Drawing.Point(12, 79);
-            this.DisableToolTransparency.Name = "DisableToolTransparency";
-            this.DisableToolTransparency.Size = new System.Drawing.Size(233, 24);
-            this.DisableToolTransparency.TabIndex = 3;
-            this.DisableToolTransparency.Tag = "";
-            this.DisableToolTransparency.Text = "Disable tool texture transparency";
-            this.DisableToolTransparency.UseVisualStyleBackColor = true;
-            // 
-            // DisableModelRendering
-            // 
-            this.DisableModelRendering.Location = new System.Drawing.Point(12, 139);
-            this.DisableModelRendering.Name = "DisableModelRendering";
-            this.DisableModelRendering.Size = new System.Drawing.Size(233, 24);
-            this.DisableModelRendering.TabIndex = 3;
-            this.DisableModelRendering.Tag = "";
-            this.DisableModelRendering.Text = "Disable model rendering";
-            this.DisableModelRendering.UseVisualStyleBackColor = true;
-            // 
-            // DisableWadTransparency
-            // 
-            this.DisableWadTransparency.Location = new System.Drawing.Point(12, 49);
-            this.DisableWadTransparency.Name = "DisableWadTransparency";
-            this.DisableWadTransparency.Size = new System.Drawing.Size(233, 24);
-            this.DisableWadTransparency.TabIndex = 3;
-            this.DisableWadTransparency.Tag = "";
-            this.DisableWadTransparency.Text = "Disable WAD texture transparency";
-            this.DisableWadTransparency.UseVisualStyleBackColor = true;
-            // 
-            // label32
-            // 
-            this.label32.AutoSize = true;
-            this.label32.Location = new System.Drawing.Point(9, 19);
-            this.label32.Name = "label32";
-            this.label32.Size = new System.Drawing.Size(51, 13);
-            this.label32.TabIndex = 0;
-            this.label32.Text = "Renderer";
-            // 
-            // groupBox19
-            // 
-            this.groupBox19.Controls.Add(this.ApplyTextureImmediately);
-            this.groupBox19.Location = new System.Drawing.Point(369, 6);
-            this.groupBox19.Name = "groupBox19";
-            this.groupBox19.Size = new System.Drawing.Size(357, 73);
-            this.groupBox19.TabIndex = 4;
-            this.groupBox19.TabStop = false;
-            this.groupBox19.Text = "Textures";
-            // 
-            // ApplyTextureImmediately
-            // 
-            this.ApplyTextureImmediately.Location = new System.Drawing.Point(12, 19);
-            this.ApplyTextureImmediately.Name = "ApplyTextureImmediately";
-            this.ApplyTextureImmediately.Size = new System.Drawing.Size(339, 24);
-            this.ApplyTextureImmediately.TabIndex = 3;
-            this.ApplyTextureImmediately.Tag = "";
-            this.ApplyTextureImmediately.Text = "Apply texture immediately after browsing in texture application tool";
-            this.ApplyTextureImmediately.UseVisualStyleBackColor = true;
-            // 
-            // groupBox18
-            // 
-            this.groupBox18.Controls.Add(this.SwitchToSelectAfterEntity);
-            this.groupBox18.Controls.Add(this.SwitchToSelectAfterCreation);
-            this.groupBox18.Controls.Add(this.ResetBrushTypeOnCreation);
-            this.groupBox18.Controls.Add(this.DeselectOthersWhenSelectingCreation);
-            this.groupBox18.Controls.Add(this.SelectCreatedEntity);
-            this.groupBox18.Controls.Add(this.SelectCreatedBrush);
-            this.groupBox18.Location = new System.Drawing.Point(6, 6);
-            this.groupBox18.Name = "groupBox18";
-            this.groupBox18.Size = new System.Drawing.Size(357, 205);
-            this.groupBox18.TabIndex = 4;
-            this.groupBox18.TabStop = false;
-            this.groupBox18.Text = "Creation";
-            // 
-            // SwitchToSelectAfterEntity
-            // 
-            this.SwitchToSelectAfterEntity.Location = new System.Drawing.Point(12, 49);
-            this.SwitchToSelectAfterEntity.Name = "SwitchToSelectAfterEntity";
-            this.SwitchToSelectAfterEntity.Size = new System.Drawing.Size(233, 24);
-            this.SwitchToSelectAfterEntity.TabIndex = 3;
-            this.SwitchToSelectAfterEntity.Tag = "";
-            this.SwitchToSelectAfterEntity.Text = "Switch to selection tool after entity creation";
-            this.SwitchToSelectAfterEntity.UseVisualStyleBackColor = true;
-            // 
-            // SwitchToSelectAfterCreation
-            // 
-            this.SwitchToSelectAfterCreation.Location = new System.Drawing.Point(12, 19);
-            this.SwitchToSelectAfterCreation.Name = "SwitchToSelectAfterCreation";
-            this.SwitchToSelectAfterCreation.Size = new System.Drawing.Size(233, 24);
-            this.SwitchToSelectAfterCreation.TabIndex = 3;
-            this.SwitchToSelectAfterCreation.Tag = "";
-            this.SwitchToSelectAfterCreation.Text = "Switch to selection tool after brush creation";
-            this.SwitchToSelectAfterCreation.UseVisualStyleBackColor = true;
-            // 
-            // ResetBrushTypeOnCreation
-            // 
-            this.ResetBrushTypeOnCreation.Location = new System.Drawing.Point(12, 169);
-            this.ResetBrushTypeOnCreation.Name = "ResetBrushTypeOnCreation";
-            this.ResetBrushTypeOnCreation.Size = new System.Drawing.Size(339, 24);
-            this.ResetBrushTypeOnCreation.TabIndex = 2;
-            this.ResetBrushTypeOnCreation.Tag = "";
-            this.ResetBrushTypeOnCreation.Text = "Reset to block brush type after creating brush";
-            this.ResetBrushTypeOnCreation.UseVisualStyleBackColor = true;
-            // 
-            // DeselectOthersWhenSelectingCreation
-            // 
-            this.DeselectOthersWhenSelectingCreation.Location = new System.Drawing.Point(12, 139);
-            this.DeselectOthersWhenSelectingCreation.Name = "DeselectOthersWhenSelectingCreation";
-            this.DeselectOthersWhenSelectingCreation.Size = new System.Drawing.Size(339, 24);
-            this.DeselectOthersWhenSelectingCreation.TabIndex = 2;
-            this.DeselectOthersWhenSelectingCreation.Tag = "";
-            this.DeselectOthersWhenSelectingCreation.Text = "Deselect other objects when automatically selecting created items";
-            this.DeselectOthersWhenSelectingCreation.UseVisualStyleBackColor = true;
-            // 
-            // SelectCreatedEntity
-            // 
-            this.SelectCreatedEntity.Location = new System.Drawing.Point(12, 109);
-            this.SelectCreatedEntity.Name = "SelectCreatedEntity";
-            this.SelectCreatedEntity.Size = new System.Drawing.Size(233, 24);
-            this.SelectCreatedEntity.TabIndex = 2;
-            this.SelectCreatedEntity.Tag = "";
-            this.SelectCreatedEntity.Text = "Automatically select created entity";
-            this.SelectCreatedEntity.UseVisualStyleBackColor = true;
-            // 
-            // SelectCreatedBrush
-            // 
-            this.SelectCreatedBrush.Location = new System.Drawing.Point(12, 79);
-            this.SelectCreatedBrush.Name = "SelectCreatedBrush";
-            this.SelectCreatedBrush.Size = new System.Drawing.Size(233, 24);
-            this.SelectCreatedBrush.TabIndex = 2;
-            this.SelectCreatedBrush.Tag = "";
-            this.SelectCreatedBrush.Text = "Automatically select created brush";
-            this.SelectCreatedBrush.UseVisualStyleBackColor = true;
             // 
             // tab2DViews
             // 
@@ -2997,15 +2719,6 @@ namespace Sledge.Editor.Settings
             this.tabBuildAdvancedCSG.Text = "CSG";
             this.tabBuildAdvancedCSG.UseVisualStyleBackColor = true;
             // 
-            // SelectedBuildCsgParameters
-            // 
-            this.SelectedBuildCsgParameters.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.SelectedBuildCsgParameters.Location = new System.Drawing.Point(0, 0);
-            this.SelectedBuildCsgParameters.MinimumSize = new System.Drawing.Size(300, 250);
-            this.SelectedBuildCsgParameters.Name = "SelectedBuildCsgParameters";
-            this.SelectedBuildCsgParameters.Size = new System.Drawing.Size(449, 408);
-            this.SelectedBuildCsgParameters.TabIndex = 0;
-            // 
             // tabBuildAdvancedBSP
             // 
             this.tabBuildAdvancedBSP.Controls.Add(this.SelectedBuildBspParameters);
@@ -3015,15 +2728,6 @@ namespace Sledge.Editor.Settings
             this.tabBuildAdvancedBSP.TabIndex = 1;
             this.tabBuildAdvancedBSP.Text = "BSP";
             this.tabBuildAdvancedBSP.UseVisualStyleBackColor = true;
-            // 
-            // SelectedBuildBspParameters
-            // 
-            this.SelectedBuildBspParameters.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.SelectedBuildBspParameters.Location = new System.Drawing.Point(0, 0);
-            this.SelectedBuildBspParameters.MinimumSize = new System.Drawing.Size(300, 250);
-            this.SelectedBuildBspParameters.Name = "SelectedBuildBspParameters";
-            this.SelectedBuildBspParameters.Size = new System.Drawing.Size(449, 408);
-            this.SelectedBuildBspParameters.TabIndex = 1;
             // 
             // tabBuildAdvancedVIS
             // 
@@ -3035,15 +2739,6 @@ namespace Sledge.Editor.Settings
             this.tabBuildAdvancedVIS.Text = "VIS";
             this.tabBuildAdvancedVIS.UseVisualStyleBackColor = true;
             // 
-            // SelectedBuildVisParameters
-            // 
-            this.SelectedBuildVisParameters.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.SelectedBuildVisParameters.Location = new System.Drawing.Point(0, 0);
-            this.SelectedBuildVisParameters.MinimumSize = new System.Drawing.Size(300, 250);
-            this.SelectedBuildVisParameters.Name = "SelectedBuildVisParameters";
-            this.SelectedBuildVisParameters.Size = new System.Drawing.Size(449, 408);
-            this.SelectedBuildVisParameters.TabIndex = 1;
-            // 
             // tabBuildAdvancedRAD
             // 
             this.tabBuildAdvancedRAD.Controls.Add(this.SelectedBuildRadParameters);
@@ -3054,15 +2749,6 @@ namespace Sledge.Editor.Settings
             this.tabBuildAdvancedRAD.Text = "RAD";
             this.tabBuildAdvancedRAD.UseVisualStyleBackColor = true;
             // 
-            // SelectedBuildRadParameters
-            // 
-            this.SelectedBuildRadParameters.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.SelectedBuildRadParameters.Location = new System.Drawing.Point(0, 0);
-            this.SelectedBuildRadParameters.MinimumSize = new System.Drawing.Size(300, 250);
-            this.SelectedBuildRadParameters.Name = "SelectedBuildRadParameters";
-            this.SelectedBuildRadParameters.Size = new System.Drawing.Size(449, 408);
-            this.SelectedBuildRadParameters.TabIndex = 1;
-            // 
             // tabBuildAdvancedShared
             // 
             this.tabBuildAdvancedShared.Controls.Add(this.SelectedBuildSharedParameters);
@@ -3072,15 +2758,6 @@ namespace Sledge.Editor.Settings
             this.tabBuildAdvancedShared.TabIndex = 4;
             this.tabBuildAdvancedShared.Text = "Shared";
             this.tabBuildAdvancedShared.UseVisualStyleBackColor = true;
-            // 
-            // SelectedBuildSharedParameters
-            // 
-            this.SelectedBuildSharedParameters.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.SelectedBuildSharedParameters.Location = new System.Drawing.Point(0, 0);
-            this.SelectedBuildSharedParameters.MinimumSize = new System.Drawing.Size(300, 250);
-            this.SelectedBuildSharedParameters.Name = "SelectedBuildSharedParameters";
-            this.SelectedBuildSharedParameters.Size = new System.Drawing.Size(449, 408);
-            this.SelectedBuildSharedParameters.TabIndex = 1;
             // 
             // tabBuildAdvancedPreview
             // 
@@ -3576,15 +3253,61 @@ namespace Sledge.Editor.Settings
             this.btnApplySettings.UseVisualStyleBackColor = true;
             this.btnApplySettings.Click += new System.EventHandler(this.Apply);
             // 
-            // DisableTextureFiltering
+            // flowLayoutPanel1
             // 
-            this.DisableTextureFiltering.Location = new System.Drawing.Point(12, 169);
-            this.DisableTextureFiltering.Name = "DisableTextureFiltering";
-            this.DisableTextureFiltering.Size = new System.Drawing.Size(339, 24);
-            this.DisableTextureFiltering.TabIndex = 3;
-            this.DisableTextureFiltering.Tag = "";
-            this.DisableTextureFiltering.Text = "Disable texture filtering (try this if textures render incorrectly)";
-            this.DisableTextureFiltering.UseVisualStyleBackColor = true;
+            this.flowLayoutPanel1.AutoScroll = true;
+            this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.flowLayoutPanel1.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
+            this.flowLayoutPanel1.Location = new System.Drawing.Point(3, 3);
+            this.flowLayoutPanel1.Name = "flowLayoutPanel1";
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(730, 505);
+            this.flowLayoutPanel1.TabIndex = 6;
+            this.flowLayoutPanel1.WrapContents = false;
+            // 
+            // SelectedBuildCsgParameters
+            // 
+            this.SelectedBuildCsgParameters.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.SelectedBuildCsgParameters.Location = new System.Drawing.Point(0, 0);
+            this.SelectedBuildCsgParameters.MinimumSize = new System.Drawing.Size(300, 250);
+            this.SelectedBuildCsgParameters.Name = "SelectedBuildCsgParameters";
+            this.SelectedBuildCsgParameters.Size = new System.Drawing.Size(449, 408);
+            this.SelectedBuildCsgParameters.TabIndex = 0;
+            // 
+            // SelectedBuildBspParameters
+            // 
+            this.SelectedBuildBspParameters.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.SelectedBuildBspParameters.Location = new System.Drawing.Point(0, 0);
+            this.SelectedBuildBspParameters.MinimumSize = new System.Drawing.Size(300, 250);
+            this.SelectedBuildBspParameters.Name = "SelectedBuildBspParameters";
+            this.SelectedBuildBspParameters.Size = new System.Drawing.Size(449, 408);
+            this.SelectedBuildBspParameters.TabIndex = 1;
+            // 
+            // SelectedBuildVisParameters
+            // 
+            this.SelectedBuildVisParameters.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.SelectedBuildVisParameters.Location = new System.Drawing.Point(0, 0);
+            this.SelectedBuildVisParameters.MinimumSize = new System.Drawing.Size(300, 250);
+            this.SelectedBuildVisParameters.Name = "SelectedBuildVisParameters";
+            this.SelectedBuildVisParameters.Size = new System.Drawing.Size(449, 408);
+            this.SelectedBuildVisParameters.TabIndex = 1;
+            // 
+            // SelectedBuildRadParameters
+            // 
+            this.SelectedBuildRadParameters.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.SelectedBuildRadParameters.Location = new System.Drawing.Point(0, 0);
+            this.SelectedBuildRadParameters.MinimumSize = new System.Drawing.Size(300, 250);
+            this.SelectedBuildRadParameters.Name = "SelectedBuildRadParameters";
+            this.SelectedBuildRadParameters.Size = new System.Drawing.Size(449, 408);
+            this.SelectedBuildRadParameters.TabIndex = 1;
+            // 
+            // SelectedBuildSharedParameters
+            // 
+            this.SelectedBuildSharedParameters.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.SelectedBuildSharedParameters.Location = new System.Drawing.Point(0, 0);
+            this.SelectedBuildSharedParameters.MinimumSize = new System.Drawing.Size(300, 250);
+            this.SelectedBuildSharedParameters.Name = "SelectedBuildSharedParameters";
+            this.SelectedBuildSharedParameters.Size = new System.Drawing.Size(449, 408);
+            this.SelectedBuildSharedParameters.TabIndex = 1;
             // 
             // SettingsForm
             // 
@@ -3602,12 +3325,6 @@ namespace Sledge.Editor.Settings
             this.Load += new System.EventHandler(this.SettingsFormLoad);
             this.tbcSettings.ResumeLayout(false);
             this.tabGeneral.ResumeLayout(false);
-            this.groupBox23.ResumeLayout(false);
-            this.groupBox20.ResumeLayout(false);
-            this.groupBox21.ResumeLayout(false);
-            this.groupBox21.PerformLayout();
-            this.groupBox19.ResumeLayout(false);
-            this.groupBox18.ResumeLayout(false);
             this.tab2DViews.ResumeLayout(false);
             this.groupBox11.ResumeLayout(false);
             this.groupBox6.ResumeLayout(false);
@@ -3858,30 +3575,11 @@ namespace Sledge.Editor.Settings
         private System.Windows.Forms.GroupBox groupBox11;
         private System.Windows.Forms.CheckBox CenterHandlesOnlyNearCursor;
         private System.Windows.Forms.CheckBox CenterHandlesActiveViewportOnly;
-        private System.Windows.Forms.GroupBox groupBox18;
-        private System.Windows.Forms.CheckBox SwitchToSelectAfterEntity;
-        private System.Windows.Forms.CheckBox SwitchToSelectAfterCreation;
-        private System.Windows.Forms.CheckBox DeselectOthersWhenSelectingCreation;
-        private System.Windows.Forms.CheckBox SelectCreatedEntity;
-        private System.Windows.Forms.CheckBox SelectCreatedBrush;
         private System.Windows.Forms.CheckBox KeepVisgroupsWhenCloning;
-        private System.Windows.Forms.CheckBox ResetBrushTypeOnCreation;
         private System.Windows.Forms.Label label30;
         private System.Windows.Forms.NumericUpDown ScrollWheelZoomMultiplier;
-        private System.Windows.Forms.GroupBox groupBox19;
-        private System.Windows.Forms.CheckBox ApplyTextureImmediately;
         private System.Windows.Forms.Label label31;
         private System.Windows.Forms.NumericUpDown SelectionBoxBackgroundOpacity;
-        private System.Windows.Forms.GroupBox groupBox20;
-        private System.Windows.Forms.CheckBox KeepSelectedTool;
-        private System.Windows.Forms.CheckBox KeepCameraPositions;
-        private System.Windows.Forms.CheckBox LoadSession;
-        private System.Windows.Forms.GroupBox groupBox21;
-        private System.Windows.Forms.ComboBox RenderMode;
-        private System.Windows.Forms.Label label32;
-        private System.Windows.Forms.CheckBox GloballyDisableTransparency;
-        private System.Windows.Forms.CheckBox DisableToolTransparency;
-        private System.Windows.Forms.CheckBox DisableWadTransparency;
         private System.Windows.Forms.Label lblBaseGame;
         private System.Windows.Forms.ComboBox SelectedGameBase;
         private System.Windows.Forms.ComboBox SelectedGameOverrideSizeHigh;
@@ -3901,7 +3599,6 @@ namespace Sledge.Editor.Settings
         private System.Windows.Forms.ListView SelectedGameFgdList;
         private System.Windows.Forms.ColumnHeader columnHeader1;
         private System.Windows.Forms.ColumnHeader columnHeader4;
-        private System.Windows.Forms.CheckBox DisableModelRendering;
         private System.Windows.Forms.Button HotkeyRemoveButton;
         private System.Windows.Forms.Label label23;
         private System.Windows.Forms.TextBox HotkeyCombination;
@@ -3926,9 +3623,6 @@ namespace Sledge.Editor.Settings
         private Compiling.CompileParameterPanel SelectedBuildVisParameters;
         private Compiling.CompileParameterPanel SelectedBuildRadParameters;
         private Compiling.CompileParameterPanel SelectedBuildSharedParameters;
-        private System.Windows.Forms.GroupBox groupBox23;
-        private System.Windows.Forms.CheckBox CompileDefaultAdvanced;
-        private System.Windows.Forms.CheckBox CompileOpenOutput;
         private System.Windows.Forms.GroupBox groupBox24;
         private System.Windows.Forms.CheckBox SelectedBuildAfterRunGame;
         private System.Windows.Forms.CheckBox SelectedBuildAfterCopyBsp;
@@ -3969,6 +3663,6 @@ namespace Sledge.Editor.Settings
         private System.Windows.Forms.Label label43;
         private System.Windows.Forms.NumericUpDown MouseWheelMoveDistance;
         private System.Windows.Forms.CheckBox DrawEntityNames;
-        private System.Windows.Forms.CheckBox DisableTextureFiltering;
+        private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
 	}
 }
