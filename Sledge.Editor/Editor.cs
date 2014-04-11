@@ -313,7 +313,7 @@ namespace Sledge.Editor
 
         private void Subscribe()
         {
-            Mediator.Subscribe(HotkeysMediator.FourViewAutosize, this);
+            Mediator.Subscribe(HotkeysMediator.ViewportAutosize, this);
             Mediator.Subscribe(HotkeysMediator.FourViewFocusBottomLeft, this);
             Mediator.Subscribe(HotkeysMediator.FourViewFocusBottomRight, this);
             Mediator.Subscribe(HotkeysMediator.FourViewFocusTopLeft, this);
@@ -700,7 +700,7 @@ namespace Sledge.Editor
             RecentFile(path);
         }
 
-        public void FourViewAutosize()
+        public void ViewportAutosize()
         {
             TableSplitView.ResetViews();
         }

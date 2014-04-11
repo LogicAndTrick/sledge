@@ -14,7 +14,7 @@ namespace Sledge.Settings
         {
             Definitions = new List<HotkeyDefinition>
                                {
-                                    new HotkeyDefinition("Autosize Views", "Reset the position of the 4-view splitter", HotkeysMediator.FourViewAutosize, "Ctrl+A"),
+                                    new HotkeyDefinition("Autosize Views", "Reset the position of the 4-view splitter", HotkeysMediator.ViewportAutosize, "Ctrl+A"),
                                     new HotkeyDefinition("Focus View Top Left", "Focus on the 3D View", HotkeysMediator.FourViewFocusTopLeft, "F5"),
                                     new HotkeyDefinition("Focus View Top Right", "Focus on the XY View", HotkeysMediator.FourViewFocusTopRight, "F2"),
                                     new HotkeyDefinition("Focus View Bottom Left", "Focus on the YZ View", HotkeysMediator.FourViewFocusBottomLeft, "F4"),

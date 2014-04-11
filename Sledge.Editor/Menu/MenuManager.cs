@@ -110,7 +110,7 @@ namespace Sledge.Editor.Menu
             Add("Map", new SimpleMenuBuilder("Load Pointfile...", HotkeysMediator.LoadPointfile) { Image = Resources.Menu_LoadPointfile, IsVisible = mapOpen });
             Add("Map", new SimpleMenuBuilder("Unload Pointfile", HotkeysMediator.UnloadPointfile) { Image = Resources.Menu_UnloadPointfile, IsVisible = mapOpen });
 
-            Add("View", new SimpleMenuBuilder("Autosize 4 Views", HotkeysMediator.FourViewAutosize) { Image = Resources.Menu_AutosizeViews, IsVisible = mapOpen });
+            Add("View", new SimpleMenuBuilder("Autosize All Views", HotkeysMediator.ViewportAutosize) { Image = Resources.Menu_AutosizeViews, IsVisible = mapOpen });
             Add("View", new SimpleMenuBuilder("Center All Views on Selection", HotkeysMediator.CenterAllViewsOnSelection) { Image = Resources.Menu_CenterSelectionAll, IsVisible = mapOpen, IsActive = itemsSelected });
             Add("View", new SimpleMenuBuilder("Center 2D Views on Selection", HotkeysMediator.Center2DViewsOnSelection) { Image = Resources.Menu_CenterSelection2D, IsVisible = mapOpen, IsActive = itemsSelected });
             Add("View", new SimpleMenuBuilder("Center 3D View on Selection", HotkeysMediator.Center3DViewsOnSelection) { Image = Resources.Menu_CenterSelection3D, IsVisible = mapOpen, IsActive = itemsSelected });
@@ -154,8 +154,8 @@ namespace Sledge.Editor.Menu
             Add("Tools", new MenuSplitter { IsVisible = mapOpen });
             Add("Tools", new SimpleMenuBuilder("Options...", EditorMediator.OpenSettings) { Image = Resources.Menu_Options, ShowInToolStrip = true });
 
-            Add("Layout", new SimpleMenuBuilder("Create New Layout Window", EditorMediator.CreateNewLayoutWindow) {  });
-            Add("Layout", new SimpleMenuBuilder("Layout Window Settings...", EditorMediator.OpenLayoutSettings) {  });
+            Add("Layout", new SimpleMenuBuilder("Create New Layout Window", EditorMediator.CreateNewLayoutWindow) {Image = Resources.Menu_NewWindow});
+            Add("Layout", new SimpleMenuBuilder("Layout Window Settings...", EditorMediator.OpenLayoutSettings) {Image = Resources.Menu_WindowSettings});
 
             Add("Help", new SimpleMenuBuilder("Online Help", EditorMediator.OpenWebsite, "http://sledge-editor.com/") { Image = Resources.Menu_Help });
             Add("Help", new SimpleMenuBuilder("Sledge Website", EditorMediator.OpenWebsite, "http://sledge-editor.com/") { Image = Resources.Menu_Website });
