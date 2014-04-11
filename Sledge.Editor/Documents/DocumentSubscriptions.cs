@@ -440,7 +440,7 @@ namespace Sledge.Editor.Documents
                 }
             }
 
-            var qf = new QuickForm("Select wall width").NumericUpDown("Wall width (negative to hollow outwards)", -1024, 1024, 0, 32).OkCancel();
+            var qf = new QuickForm("Select wall width") { UseShortcutKeys = true } .NumericUpDown("Wall width (negative to hollow outwards)", -1024, 1024, 0, 32).OkCancel();
 
             decimal width;
             do
