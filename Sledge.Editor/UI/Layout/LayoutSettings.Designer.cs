@@ -39,6 +39,8 @@
             this.WindowDropDown = new System.Windows.Forms.ComboBox();
             this.label3 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
+            this.label5 = new System.Windows.Forms.Label();
+            this.PresetButtonPanel = new System.Windows.Forms.FlowLayoutPanel();
             ((System.ComponentModel.ISupportInitialize)(this.Rows)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.Columns)).BeginInit();
             this.SuspendLayout();
@@ -56,7 +58,7 @@
             this.TableLayout.RowCount = 2;
             this.TableLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.TableLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.TableLayout.Size = new System.Drawing.Size(290, 227);
+            this.TableLayout.Size = new System.Drawing.Size(290, 233);
             this.TableLayout.TabIndex = 0;
             // 
             // Rows
@@ -96,7 +98,7 @@
             // Columns
             // 
             this.Columns.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.Columns.Location = new System.Drawing.Point(65, 272);
+            this.Columns.Location = new System.Drawing.Point(65, 278);
             this.Columns.Maximum = new decimal(new int[] {
             4,
             0,
@@ -121,7 +123,7 @@
             // 
             this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(12, 274);
+            this.label2.Location = new System.Drawing.Point(12, 280);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(47, 13);
             this.label2.TabIndex = 2;
@@ -130,7 +132,7 @@
             // ApplyButton
             // 
             this.ApplyButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.ApplyButton.Location = new System.Drawing.Point(278, 272);
+            this.ApplyButton.Location = new System.Drawing.Point(278, 278);
             this.ApplyButton.Name = "ApplyButton";
             this.ApplyButton.Size = new System.Drawing.Size(75, 23);
             this.ApplyButton.TabIndex = 3;
@@ -141,7 +143,7 @@
             // CancelButton
             // 
             this.CancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.CancelButton.Location = new System.Drawing.Point(197, 272);
+            this.CancelButton.Location = new System.Drawing.Point(197, 278);
             this.CancelButton.Name = "CancelButton";
             this.CancelButton.Size = new System.Drawing.Size(75, 23);
             this.CancelButton.TabIndex = 3;
@@ -174,18 +176,39 @@
             // 
             this.label4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(12, 298);
+            this.label4.Location = new System.Drawing.Point(12, 304);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(347, 39);
             this.label4.TabIndex = 2;
             this.label4.Text = "Each rectangle represents a viewport.\r\nClick and drag rectangles (click start, dr" +
     "ag to end) to combine viewports.\r\nClick a combined viewport to un-combine it.";
             // 
+            // label5
+            // 
+            this.label5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(12, 352);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(131, 13);
+            this.label5.TabIndex = 2;
+            this.label5.Text = "Click to try a preset layout:";
+            // 
+            // PresetButtonPanel
+            // 
+            this.PresetButtonPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.PresetButtonPanel.Location = new System.Drawing.Point(149, 348);
+            this.PresetButtonPanel.Name = "PresetButtonPanel";
+            this.PresetButtonPanel.Size = new System.Drawing.Size(204, 24);
+            this.PresetButtonPanel.TabIndex = 5;
+            this.PresetButtonPanel.WrapContents = false;
+            // 
             // LayoutSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(365, 346);
+            this.ClientSize = new System.Drawing.Size(365, 382);
+            this.Controls.Add(this.PresetButtonPanel);
             this.Controls.Add(this.WindowDropDown);
             this.Controls.Add(this.CancelButton);
             this.Controls.Add(this.ApplyButton);
@@ -193,6 +216,7 @@
             this.Controls.Add(this.label2);
             this.Controls.Add(this.Columns);
             this.Controls.Add(this.label4);
+            this.Controls.Add(this.label5);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.Rows);
             this.Controls.Add(this.TableLayout);
@@ -221,5 +245,7 @@
         private System.Windows.Forms.ComboBox WindowDropDown;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.FlowLayoutPanel PresetButtonPanel;
     }
 }

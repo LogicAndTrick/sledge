@@ -266,16 +266,15 @@ namespace Sledge.Editor.UI
 
         protected override void OnMouseDoubleClick(MouseEventArgs e)
         {
-            if (_inH >= 0)
+            if (_inH >= 0 && _inH < RowCount - 1)
             {
-                //todo: reset behaviour?
                 ForgetFocus();
-                //RowStyles[_inH].Height = RowStyles[1].Height = 50;
+                SetHorizontalSplitPosition(_inH, (_inH + 1f) / RowCount * 100);
             }
             if (_inV >= 0)
             {
                 ForgetFocus();
-                //ColumnStyles[0].Width = ColumnStyles[1].Width = 50;
+                SetVerticalSplitPosition(_inV, (_inV + 1f) / ColumnCount * 100);
             }
         }
 
