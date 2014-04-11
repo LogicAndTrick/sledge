@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.InteropServices;
 using Sledge.Common;
 using Sledge.DataStructures.GameData;
 using Sledge.DataStructures.Geometric;
@@ -68,6 +69,11 @@ namespace Sledge.DataStructures.MapObjects
                 var sub = new Coordinate(-16, -16, -16);
                 var add = new Coordinate(16, 16, 16);
                 BoundingBox = new Box(Origin + sub, Origin + add);
+            }
+            else if (MetaData.Has<Box>("BoundingBox"))
+            {
+                var box = MetaData.Get<Box>("BoundingBox");
+                BoundingBox = box.Clone().Transform(new UnitTranslate(Origin - box.Center + new Coordinate(0, 0, box.Height / 2)));
             }
             else if (GameData != null && GameData.ClassType == ClassType.Point)
             {

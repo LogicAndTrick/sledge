@@ -19,6 +19,8 @@ namespace Sledge.DataStructures.Models
         public bool BonesTransformMesh { get; set; }
         private bool _preprocessed;
 
+        private Box _boundingBox;
+
         public Model()
         {
             Bones = new List<Bone>();
@@ -27,6 +29,22 @@ namespace Sledge.DataStructures.Models
             Textures = new List<Texture>();
             _preprocessed = false;
             
+        }
+
+        public Box GetBoundingBox()
+        {
+            if (_boundingBox == null)
+            {
+                var transforms = GetTransforms();
+                var list = 
+                    from mesh in GetActiveMeshes()
+                    from vertex in mesh.Vertices
+                    let transform = transforms[vertex.BoneWeightings.First().Bone.BoneIndex]
+                    let cf = vertex.Location * transform
+                    select new Coordinate((decimal) cf.X, (decimal) cf.Y, (decimal) cf.Z);
+                _boundingBox = new Box(list);
+            }
+            return _boundingBox;
         }
 
         public IEnumerable<Mesh> GetActiveMeshes()

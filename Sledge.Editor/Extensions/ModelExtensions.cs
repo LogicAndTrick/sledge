@@ -14,7 +14,7 @@ namespace Sledge.Editor.Extensions
     {
         private const string ModelMetaKey = "Model";
         private const string ModelNameMetaKey = "ModelName";
-        private const string ModelBoundingBoxMetaKey = "ModelBoundingBox";
+        private const string ModelBoundingBoxMetaKey = "BoundingBox";
 
         public static bool UpdateModels(this Map map, Document document)
         {
@@ -97,7 +97,8 @@ namespace Sledge.Editor.Extensions
         {
             entity.MetaData.Set(ModelMetaKey, model);
             entity.MetaData.Set(ModelNameMetaKey, GetModelName(entity));
-            entity.MetaData.Set(ModelBoundingBoxMetaKey, (Box) null); //todo.
+            entity.MetaData.Set(ModelBoundingBoxMetaKey, model.Model.GetBoundingBox());
+            entity.UpdateBoundingBox();
         }
 
         private static void UnsetModel(Entity entity)
@@ -105,6 +106,7 @@ namespace Sledge.Editor.Extensions
             entity.MetaData.Unset(ModelMetaKey);
             entity.MetaData.Unset(ModelNameMetaKey);
             entity.MetaData.Unset(ModelBoundingBoxMetaKey);
+            entity.UpdateBoundingBox();
         }
 
         public static ModelReference GetModel(this Entity entity)
