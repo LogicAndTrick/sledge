@@ -1691,6 +1691,7 @@ namespace Sledge.Editor.Settings
             this.SelectedGameMapDirBrowse.TabIndex = 8;
             this.SelectedGameMapDirBrowse.Text = "Browse...";
             this.SelectedGameMapDirBrowse.UseVisualStyleBackColor = true;
+            this.SelectedGameMapDirBrowse.Click += new System.EventHandler(this.SelectedGameMapDirBrowseClicked);
             // 
             // SelectedGameAutosaveTime
             // 
@@ -1762,6 +1763,7 @@ namespace Sledge.Editor.Settings
             this.SelectedGameDiffAutosaveDirBrowse.TabIndex = 13;
             this.SelectedGameDiffAutosaveDirBrowse.Text = "Browse...";
             this.SelectedGameDiffAutosaveDirBrowse.UseVisualStyleBackColor = true;
+            this.SelectedGameDiffAutosaveDirBrowse.Click += new System.EventHandler(this.SelectedGameDiffAutosaveDirBrowseClicked);
             // 
             // label12
             // 
