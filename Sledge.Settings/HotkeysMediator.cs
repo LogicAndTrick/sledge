@@ -96,7 +96,7 @@ namespace Sledge.Settings
         UnloadPointfile,
 
         [Description("Autosize 4 Viewports")]
-        FourViewAutosize,
+        ViewportAutosize,
         [Description("Maximize Top Left Viewport")]
         FourViewFocusTopLeft,
         [Description("Maximize Top Right Viewport")]
