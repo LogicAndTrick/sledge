@@ -76,6 +76,8 @@ namespace Sledge.Editor.UI
             IfKey(Keys.S, () => Camera.Advance(-move), ignore);
             IfKey(Keys.A, () => Camera.Strafe(-move), ignore);
             IfKey(Keys.D, () => Camera.Strafe(move), ignore);
+            IfKey(Keys.Q, () => Camera.AscendAbs(move), ignore); //mxd
+            IfKey(Keys.E, () => Camera.AscendAbs(-move), ignore); //mxd
             IfKey(Keys.Right, () => Camera.Pan(-tilt), ignore);
             IfKey(Keys.Left, () => Camera.Pan(tilt), ignore);
             IfKey(Keys.Up, () => Camera.Tilt(-tilt), ignore);
