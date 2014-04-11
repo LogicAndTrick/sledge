@@ -12,10 +12,185 @@ namespace Sledge.Editor.UI.Layout
 {
     public partial class LayoutSettings : Form
     {
+        private readonly static TableSplitConfiguration[] Presets;
+        private readonly static Bitmap[] PresetPreviews;
+
+        #region Presets
+
+        static LayoutSettings()
+        {
+            Presets = new[]
+            {
+                // Default
+                new TableSplitConfiguration
+                {
+                    Columns = 2,
+                    Rows = 2,
+                    Rectangles = new List<Rectangle>
+                    {
+                        new Rectangle(0, 0, 1, 1),
+                        new Rectangle(0, 1, 1, 1),
+                        new Rectangle(1, 0, 1, 1),
+                        new Rectangle(1, 1, 1, 1),
+                    }
+                },
+                // Twins
+                new TableSplitConfiguration
+                {
+                    Columns = 2,
+                    Rows = 1,
+                    Rectangles = new List<Rectangle>
+                    {
+                        new Rectangle(0, 0, 1, 1),
+                        new Rectangle(1, 0, 1, 1),
+                    }
+                },
+                // Long left viewport
+                new TableSplitConfiguration
+                {
+                    Columns = 2,
+                    Rows = 2,
+                    Rectangles = new List<Rectangle>
+                    {
+                        new Rectangle(0, 0, 1, 2),
+                        new Rectangle(1, 0, 1, 1),
+                        new Rectangle(1, 1, 1, 1),
+                    }
+                },
+                // 9-grid
+                new TableSplitConfiguration
+                {
+                    Columns = 3,
+                    Rows = 3,
+                    Rectangles = new List<Rectangle>
+                    {
+                        new Rectangle(0, 0, 1, 1),
+                        new Rectangle(0, 1, 1, 1),
+                        new Rectangle(0, 2, 1, 1),
+                        new Rectangle(1, 0, 1, 1),
+                        new Rectangle(1, 1, 1, 1),
+                        new Rectangle(1, 2, 1, 1),
+                        new Rectangle(2, 0, 1, 1),
+                        new Rectangle(2, 1, 1, 1),
+                        new Rectangle(2, 2, 1, 1),
+                    }
+                },
+                // Triplets, vertical
+                new TableSplitConfiguration
+                {
+                    Columns = 1,
+                    Rows = 3,
+                    Rectangles = new List<Rectangle>
+                    {
+                        new Rectangle(0, 0, 1, 1),
+                        new Rectangle(0, 1, 1, 1),
+                        new Rectangle(0, 2, 1, 1),
+                    }
+                },
+                // Triplets, horizontal
+                new TableSplitConfiguration
+                {
+                    Columns = 3,
+                    Rows = 1,
+                    Rectangles = new List<Rectangle>
+                    {
+                        new Rectangle(0, 0, 1, 1),
+                        new Rectangle(1, 0, 1, 1),
+                        new Rectangle(2, 0, 1, 1),
+                    }
+                },
+                // Insanity
+                new TableSplitConfiguration
+                {
+                    Columns = 4,
+                    Rows = 4,
+                    Rectangles = new List<Rectangle>
+                    {
+                        new Rectangle(0, 0, 1, 1),
+                        new Rectangle(0, 1, 1, 1),
+                        new Rectangle(0, 2, 1, 1),
+                        new Rectangle(0, 3, 1, 1),
+                        
+                        new Rectangle(1, 0, 1, 1),
+                        new Rectangle(2, 0, 1, 1),
+
+                        new Rectangle(1, 1, 2, 2),
+                        
+                        new Rectangle(1, 3, 1, 1),
+                        new Rectangle(2, 3, 1, 1),
+                        
+                        new Rectangle(3, 0, 1, 1),
+                        new Rectangle(3, 1, 1, 1),
+                        new Rectangle(3, 2, 1, 1),
+                        new Rectangle(3, 3, 1, 1),
+                    }
+                }
+            };
+            PresetPreviews = new Bitmap[Presets.Length];
+            var sides = new[] { 2, 2, 0, 0 };
+            var blocks = new[] { 12, 5, 4, 3 };
+            var gaps = new[] { 0, 2, 2, 1 };
+            for (var i = 0; i < Presets.Length; i++)
+            {
+                var ps = Presets[i];
+                var img = new Bitmap(16, 16);
+                using (var g = System.Drawing.Graphics.FromImage(img))
+                {
+                    var xi = ps.Columns - 1;
+                    var yi = ps.Rows - 1;
+                    foreach (var rec in ps.Rectangles)
+                    {
+                        var x = sides[xi] + blocks[xi] * rec.X + gaps[xi] * rec.X;
+                        var y = sides[yi] + blocks[yi] * rec.Y + gaps[yi] * rec.Y;
+                        var w = blocks[xi] * rec.Width + gaps[xi] * (rec.Width - 1);
+                        var h = blocks[yi] * rec.Height + gaps[yi] * (rec.Height - 1); ;
+                        g.FillRectangle(System.Drawing.Brushes.Black, x, y, w, h);
+                    }
+                }
+                PresetPreviews[i] = img;
+            }
+        }
+
+        private void LoadPreviews()
+        {
+            for (var i = 0; i < Presets.Length; i++)
+            {
+                var preset = Presets[i];
+                var preview = PresetPreviews[i];
+                var button = new Button
+                {
+                    Width = 24,
+                    Height = 24,
+                    Image = preview,
+                    ImageAlign = ContentAlignment.MiddleCenter,
+                    Padding = new Padding(0),
+                    Margin = new Padding(0)
+                };
+                button.Click += (s, e) =>
+                {
+                    Rows.Value = preset.Rows;
+                    Columns.Value = preset.Columns;
+                    SelectedConfiguration.Configuration = new TableSplitConfiguration
+                    {
+                        Columns = preset.Columns,
+                        Rows = preset.Rows,
+                        Rectangles = new List<Rectangle>(preset.Rectangles)
+                    };
+                    UpdateTableLayout();
+                };
+                PresetButtonPanel.Controls.Add(button);
+            }
+        }
+
+        #endregion
+
+
         private List<ViewportWindowConfiguration> _configurations; 
         public LayoutSettings(IEnumerable<ViewportWindowConfiguration> configs)
         {
             InitializeComponent();
+            LoadPreviews();
+
             _configurations = configs.Select(x => new ViewportWindowConfiguration
             {
                 Maximised = x.Maximised,
