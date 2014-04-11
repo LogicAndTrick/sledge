@@ -98,7 +98,8 @@ namespace Sledge.DataStructures.MapObjects
         /// <returns>The closest intersecting point, or null if the line doesn't intersect.</returns>
         public override Coordinate GetIntersectionPoint(Line line)
         {
-            return Faces.Select(x => x.GetIntersectionPoint(line))
+            return Faces.Where(x => x.Opacity > 0) //mxd
+                .Select(x => x.GetIntersectionPoint(line))
                 .Where(x => x != null)
                 .OrderBy(x => (x - line.Start).VectorMagnitude())
                 .FirstOrDefault();
