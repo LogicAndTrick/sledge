@@ -432,6 +432,20 @@ namespace Sledge.Editor.Tools
             }
         }
 
+        private Coordinate GetIntersectionPoint(MapObject obj, Line line)
+        {
+            if (obj == null) return null;
+
+            var solid = obj as Solid;
+            if (solid == null) return obj.GetIntersectionPoint(line);
+
+            return solid.Faces.Where(x => x.Opacity > 0 && !x.IsHidden)
+                .Select(x => x.GetIntersectionPoint(line))
+                .Where(x => x != null)
+                .OrderBy(x => (x - line.Start).VectorMagnitude())
+                .FirstOrDefault();
+        }
+
         private void MouseDown(Viewport3D vp, ViewportEvent e)
         {
             if (!_currentTool.NoSelection())
@@ -479,7 +493,7 @@ namespace Sledge.Editor.Tools
                 var hits = Document.Map.WorldSpawn.GetAllNodesIntersectingWith(ray, true);
                 var solid = hits
                     .OfType<Solid>()
-                    .Select(x => new { Item = x, Intersection = x.GetIntersectionPoint(ray) })
+                    .Select(x => new { Item = x, Intersection = GetIntersectionPoint(x, ray) })
                     .Where(x => x.Intersection != null)
                     .OrderBy(x => (x.Intersection - ray.Start).VectorMagnitude())
                     .Select(x => x.Item)

@@ -38,6 +38,20 @@ namespace Sledge.Editor.Tools
             return HotkeyTool.Decal;
         }
 
+        private Coordinate GetIntersectionPoint(MapObject obj, Line line)
+        {
+            if (obj == null) return null;
+
+            var solid = obj as Solid;
+            if (solid == null) return obj.GetIntersectionPoint(line);
+
+            return solid.Faces.Where(x => x.Opacity > 0 && !x.IsHidden)
+                .Select(x => x.GetIntersectionPoint(line))
+                .Where(x => x != null)
+                .OrderBy(x => (x - line.Start).VectorMagnitude())
+                .FirstOrDefault();
+        }
+
         public override void MouseDown(ViewportBase viewport, ViewportEvent e)
         {
             var vp = viewport as Viewport3D;
@@ -51,7 +65,7 @@ namespace Sledge.Editor.Tools
 
             // Sort the list of intersecting elements by distance from ray origin and grab the first hit
             var hit = hits
-                .Select(x => new {Item = x, Intersection = x.GetIntersectionPoint(ray)})
+                .Select(x => new {Item = x, Intersection = GetIntersectionPoint(x, ray)})
                 .Where(x => x.Intersection != null)
                 .OrderBy(x => (x.Intersection - ray.Start).VectorMagnitude())
                 .FirstOrDefault();
