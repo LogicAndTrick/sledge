@@ -106,6 +106,11 @@ namespace Sledge.Editor.UI
             // Not used
         }
 
+        public void PostRender()
+        {
+            // Not used
+        }
+
         public void PositionChanged(Coordinate oldPosition, Coordinate newPosition)
         {
             // Not used

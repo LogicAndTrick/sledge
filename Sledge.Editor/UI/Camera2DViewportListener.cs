@@ -195,5 +195,10 @@ namespace Sledge.Editor.UI
         {
             
         }
+
+        public void PostRender()
+        {
+            //
+        }
     }
 }

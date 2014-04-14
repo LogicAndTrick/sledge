@@ -107,6 +107,9 @@ namespace Sledge.Settings
         FourViewFocusBottomRight,
         [Description("Maximize Current Viewport")]
         FourViewFocusCurrent,
+        
+        [Description("Screenshot Current Viewport")]
+        ScreenshotViewport,
 
         [Description("Center All Views on Selection")]
         CenterAllViewsOnSelection,
@@ -200,6 +203,6 @@ namespace Sledge.Settings
         [Description("Go to Previous Tab")]
         PreviousTab,
         [Description("Go to Next Tab")]
-        NextTab,
+        NextTab
     }
 }

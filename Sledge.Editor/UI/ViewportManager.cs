@@ -15,20 +15,6 @@ using Sledge.UI;
 
 namespace Sledge.Editor.UI
 {
-    public class ViewportWindowConfiguration
-    {
-        public int WindowID { get; set; }
-        public Rectangle Size { get; set; }
-        public TableSplitConfiguration Configuration { get; set; }
-        public List<string> Viewports { get; set; }
-        public bool Maximised { get; set; }
-
-        public ViewportWindowConfiguration()
-        {
-            Viewports = new List<string>();
-        }
-    }
-
     public static class ViewportManager
     {
         private static TableSplitControl MainWindowGrid { get; set; }
@@ -406,6 +392,37 @@ namespace Sledge.Editor.UI
             newViewport.Run();
 
             return newViewport;
+        }
+
+        public static Image CreateScreenshot(ViewportBase viewport, int width, int height)
+        {
+            var shot = new ScreenshotViewportListener(viewport);
+            var parent = GetParentSplitControl(viewport);
+            if (parent == null) return null;
+
+            var pos = parent.GetPositionFromControl(viewport);
+            var form = new Form();
+            //form.FormBorderStyle = FormBorderStyle.None;
+            form.TopMost = true;
+            form.Width = width;
+            form.Height = height;
+            form.WindowState = FormWindowState.Maximized;
+            var panel = new Panel {Width = width, Height = height};
+            form.Controls.Add(panel);
+            panel.Controls.Add(viewport);
+
+            viewport.Dock = DockStyle.Top | DockStyle.Left;
+            viewport.Width = width;
+            viewport.Height = height;
+
+            //form.ShowDialog();
+            viewport.Listeners.Add(shot);
+            viewport.UpdateNextFrameImmediately();
+            viewport.Listeners.Remove(shot);
+
+            viewport.Dock = DockStyle.Fill;
+            parent.Controls.Add(viewport, pos.Column, pos.Row);
+            return shot.Screenshot;
         }
     }
 }

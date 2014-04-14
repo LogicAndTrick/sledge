@@ -22,5 +22,6 @@
         void PreRender();
         void Render3D();
         void Render2D();
+        void PostRender();
     }
 }

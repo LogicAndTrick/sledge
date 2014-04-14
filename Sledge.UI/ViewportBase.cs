@@ -12,6 +12,7 @@ using Sledge.Graphics.Helpers;
 using ClearBufferMask = OpenTK.Graphics.OpenGL.ClearBufferMask;
 using GL = OpenTK.Graphics.OpenGL.GL;
 using KeyPressEventArgs = System.Windows.Forms.KeyPressEventArgs;
+using Timer = System.Windows.Forms.Timer;
 
 namespace Sledge.UI
 {
@@ -83,12 +84,18 @@ namespace Sledge.UI
         {
             RenderContext = new RenderContext();
             Listeners = new List<IViewportEventListener>();
+            _stopwatch = new Stopwatch();
+            UpdateTimer = new Timer { Interval = 1 };
+            UpdateTimer.Tick += (sender, e) => UpdateFrame();
         }
 
         protected ViewportBase(RenderContext context) : base(new GraphicsMode(GraphicsMode.Default.ColorFormat, 24))
         {
             RenderContext = context;
             Listeners = new List<IViewportEventListener>();
+            _stopwatch = new Stopwatch();
+            UpdateTimer = new Timer { Interval = 1 };
+            UpdateTimer.Tick += (sender, e) => UpdateFrame();
         }
 
         protected override void Dispose(bool disposing)
@@ -160,16 +167,19 @@ namespace Sledge.UI
         public void Run()
         {
             MakeCurrent();
-            _stopwatch = new Stopwatch();
             _stopwatch.Start();
-            UpdateTimer = new Timer { Interval = 1 };
-            UpdateTimer.Tick += (sender, e) => UpdateFrame();
             UpdateTimer.Start();
         }
 
         public void UpdateNextFrame()
         {
             UnfocusedUpdateCounter = -1;
+        }
+
+        public void UpdateNextFrameImmediately()
+        {
+            UpdateNextFrame();
+            UpdateFrame();
         }
 
         protected void UpdateFrame()
@@ -286,7 +296,7 @@ namespace Sledge.UI
 
         protected virtual void UpdateAfterRender()
         {
-
+            ListenerDo(x => x.PostRender());
         }
 
         protected override void OnMouseWheel(MouseEventArgs e)
