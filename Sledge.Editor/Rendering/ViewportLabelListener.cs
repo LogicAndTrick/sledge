@@ -6,6 +6,7 @@ using System.Text;
 using System.Windows.Forms;
 using OpenTK;
 using OpenTK.Graphics;
+using Sledge.Common.Mediator;
 using Sledge.Editor.Documents;
 using Sledge.Editor.UI;
 using Sledge.Graphics.Helpers;
@@ -58,7 +59,16 @@ namespace Sledge.Editor.Rendering
                                             CreateMenu("2D Top", null, Viewport2D.ViewDirection.Top),
                                             CreateMenu("2D Side", null, Viewport2D.ViewDirection.Side),
                                             CreateMenu("2D Front", null, Viewport2D.ViewDirection.Front),
+                                            new MenuItem("-"), 
+                                            ScreenshotMenuItem()
                                         });
+        }
+
+        private MenuItem ScreenshotMenuItem()
+        {
+            var menu = new MenuItem("Take Screenshot...");
+            menu.Click += (s, e) => Mediator.Publish(HotkeysMediator.ScreenshotViewport, Viewport);
+            return menu;
         }
 
         private MenuItem CreateMenu(string text, Viewport3D.ViewType? type, Viewport2D.ViewDirection? dir)
@@ -134,6 +144,11 @@ namespace Sledge.Editor.Rendering
             _printer.End();
 
             GL.Enable(EnableCap.CullFace);
+        }
+
+        public void PostRender()
+        {
+            // 
         }
 
         public void Dispose()

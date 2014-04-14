@@ -129,6 +129,11 @@ namespace Sledge.Editor.UI
             GL.End();
         }
 
+        public void PostRender()
+        {
+            // Not used
+        }
+
         public void KeyUp(ViewportEvent e)
         {
             SetFreeLook();

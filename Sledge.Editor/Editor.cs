@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -23,8 +24,10 @@ using Sledge.Providers.Map;
 using Sledge.Editor.Tools;
 using Sledge.Providers.Model;
 using Sledge.Providers.Texture;
+using Sledge.QuickForms;
 using Sledge.Settings;
 using Sledge.Settings.Models;
+using Sledge.UI;
 using Hotkeys = Sledge.Editor.UI.Hotkeys;
 using LayoutSettings = Sledge.Editor.UI.Layout.LayoutSettings;
 using Path = System.IO.Path;
@@ -319,6 +322,8 @@ namespace Sledge.Editor
             Mediator.Subscribe(HotkeysMediator.FourViewFocusTopLeft, this);
             Mediator.Subscribe(HotkeysMediator.FourViewFocusTopRight, this);
             Mediator.Subscribe(HotkeysMediator.FourViewFocusCurrent, this);
+
+            Mediator.Subscribe(HotkeysMediator.ScreenshotViewport, this);
 
             Mediator.Subscribe(HotkeysMediator.FileNew, this);
             Mediator.Subscribe(HotkeysMediator.FileOpen, this);
@@ -738,6 +743,39 @@ namespace Sledge.Editor
                 {
                     TableSplitView.FocusOn(focused);
                 }
+            }
+        }
+
+        public void ScreenshotViewport(object parameter)
+        {
+            var focused = (parameter as ViewportBase) ?? ViewportManager.Viewports.FirstOrDefault(x => x.IsFocused);
+            if (focused == null) return;
+
+            var screen = Screen.FromControl(this);
+            var area = screen.Bounds;
+
+            using (var qf = new QuickForm("Select screenshot size") {UseShortcutKeys = true}
+                .NumericUpDown("Width", 640, 5000, 0, area.Width)
+                .NumericUpDown("Height", 480, 5000, 0, area.Height)
+                .OkCancel())
+            {
+                if (qf.ShowDialog() != DialogResult.OK) return;
+
+                var shot = ViewportManager.CreateScreenshot(focused, (int) qf.Decimal("Width"), (int) qf.Decimal("Height"));
+                if (shot == null) return;
+
+                using (var sfd = new SaveFileDialog())
+                {
+                    sfd.FileName = "Sledge - "
+                                   + (DocumentManager.CurrentDocument != null ? DocumentManager.CurrentDocument.MapFileName : "untitled")
+                                   + " - " + DateTime.Now.ToString("yyyy-MM-ddThh-mm-ss") + ".png";
+                    sfd.Filter = "Image Files (*.png, *.jpg, *.bmp)|*.png;*.jpg;*.bmp";
+                    if (sfd.ShowDialog() == DialogResult.OK)
+                    {
+                        shot.Save(sfd.FileName);
+                    }
+                }
+                shot.Dispose();
             }
         }
 

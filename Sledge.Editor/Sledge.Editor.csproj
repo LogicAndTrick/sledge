@@ -436,6 +436,7 @@
     <Compile Include="UI\PasteSpecialDialog.Designer.cs">
       <DependentUpon>PasteSpecialDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="UI\ScreenshotViewportListener.cs" />
     <Compile Include="UI\TableSplitControl.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -551,6 +552,7 @@
     <Compile Include="UI\Layout\ViewportWindow.Designer.cs">
       <DependentUpon>ViewportWindow.cs</DependentUpon>
     </Compile>
+    <Compile Include="UI\ViewportWindowConfiguration.cs" />
     <Compile Include="Visgroups\VisgroupEditForm.cs">
       <SubType>Form</SubType>
     </Compile>
