@@ -5,6 +5,7 @@ using Sledge.Common.Mediator;
 using Sledge.DataStructures.Geometric;
 using Sledge.Extensions;
 using Sledge.UI;
+using System.Drawing;
 
 namespace Sledge.Editor.UI
 {
@@ -29,6 +30,8 @@ namespace Sledge.Editor.UI
             if (e.KeyCode == Keys.Space)
             {
                 Viewport.Cursor = Cursors.Default;
+                _mouseDown = null; //mxd
+                Viewport.Capture = false; //mxd
                 e.Handled = true;
             }
         }
@@ -38,6 +41,9 @@ namespace Sledge.Editor.UI
             if (e.KeyCode == Keys.Space)
             {
                 Viewport.Cursor = Cursors.SizeAll;
+                Viewport.Capture = true; //mxd
+                Point p = e.Sender.PointToClient(Cursor.Position); //TODO: (mxd) Shouldn't ViewportEvent always have proper mouse location?
+                _mouseDown = new Coordinate(p.X, Viewport2D.Height - p.Y, 0); //mxd
                 e.Handled = true;
             }
             var str = e.KeyCode.ToString();
@@ -67,21 +73,17 @@ namespace Sledge.Editor.UI
 
         public void MouseMove(ViewportEvent e)
         {
-            var lmouse = Control.MouseButtons.HasFlag(MouseButtons.Left);
             var mmouse = Control.MouseButtons.HasFlag(MouseButtons.Middle);
             var space = KeyboardState.IsKeyDown(Keys.Space);
             if (space || mmouse)
             {
                 Viewport.Cursor = Cursors.SizeAll;
 
-                if (lmouse || mmouse)
-                {
-                    var point = new Coordinate(e.X, Viewport2D.Height - e.Y, 0);
-                    var difference = _mouseDown - point;
-                    Viewport2D.Position += difference / Viewport2D.Zoom;
-                    _mouseDown = point;
-                    e.Handled = true;
-                }
+                var point = new Coordinate(e.X, Viewport2D.Height - e.Y, 0);
+                var difference = _mouseDown - point;
+                Viewport2D.Position += difference / Viewport2D.Zoom;
+                _mouseDown = point;
+                e.Handled = true;
             }
 
             var pt = Viewport2D.Expand(Viewport2D.ScreenToWorld(new Coordinate(e.X, Viewport2D.Height - e.Y, 0)));
@@ -104,7 +106,7 @@ namespace Sledge.Editor.UI
 
         public void MouseUp(ViewportEvent e)
         {
-            if ((KeyboardState.IsKeyDown(Keys.Space) && e.Button == MouseButtons.Left) || e.Button == MouseButtons.Middle) e.Handled = true;
+            if (KeyboardState.IsKeyDown(Keys.Space) || e.Button == MouseButtons.Middle) e.Handled = true;
             if (e.Button == MouseButtons.Middle) Viewport.Cursor = Cursors.Default;
             _mouseDown = null;
         }
@@ -113,7 +115,7 @@ namespace Sledge.Editor.UI
 
         public void MouseDown(ViewportEvent e)
         {
-            if ((KeyboardState.IsKeyDown(Keys.Space) && e.Button == MouseButtons.Left) || e.Button == MouseButtons.Middle) e.Handled = true;
+            if (KeyboardState.IsKeyDown(Keys.Space) || e.Button == MouseButtons.Middle) e.Handled = true;
             if (e.Button == MouseButtons.Middle) Viewport.Cursor = Cursors.SizeAll;
             _mouseDown = new Coordinate(e.X, Viewport2D.Height - e.Y, 0);
         }
