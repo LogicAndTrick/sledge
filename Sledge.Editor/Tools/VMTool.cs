@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -24,6 +25,13 @@ namespace Sledge.Editor.Tools
 {
     public class VMTool : BaseBoxTool
     {
+        private enum ShowPoints
+        {
+            All,
+            Vertices,
+            Midpoints
+        }
+
         private readonly VMForm _form;
         private readonly List<VMSubTool> _tools;
         private VMSubTool _currentTool;
@@ -40,6 +48,8 @@ namespace Sledge.Editor.Tools
         private Coordinate _snapPointOffset;
         private bool _dirty;
 
+        private ShowPoints _showPoints;
+
         public VMTool()
         {
             _form = new VMForm();
@@ -55,6 +65,8 @@ namespace Sledge.Editor.Tools
             AddTool(new ScaleTool(this));
             AddTool(new EditFaceTool(this));
             _currentTool = _tools.FirstOrDefault();
+
+            _showPoints = ShowPoints.All;
         }
 
         private void SelectError(object sender, VMError error)
@@ -256,12 +268,12 @@ namespace Sledge.Editor.Tools
             var list = new List<VMPoint>();
             foreach (var point in Points.Where(point => point.IsSelected))
             {
-                if (point.IsMidPoint)
+                if (point.IsMidPoint && _showPoints != ShowPoints.Vertices)
                 {
                     if (!list.Contains(point.MidpointStart)) list.Add(point.MidpointStart);
                     if (!list.Contains(point.MidpointEnd)) list.Add(point.MidpointEnd);
                 }
-                else
+                else if (!point.IsMidPoint && _showPoints != ShowPoints.Midpoints)
                 {
                     if (!list.Contains(point)) list.Add(point);
                 }
@@ -748,8 +760,22 @@ namespace Sledge.Editor.Tools
                 case HotkeysMediator.OperationsPaste:
                 case HotkeysMediator.OperationsPasteSpecial:
                     return HotkeyInterceptResult.SwitchToSelectTool;
+                case HotkeysMediator.SwitchTool:
+                    if (parameters is HotkeyTool && (HotkeyTool)parameters == GetHotkeyToolType())
+                    {
+                        CycleShowPoints();
+                        return HotkeyInterceptResult.Abort;
+                    }
+                    break;
             }
             return HotkeyInterceptResult.Continue;
+        }
+
+        private void CycleShowPoints()
+        {
+            var side = (int)_showPoints;
+            side = (side + 1) % (Enum.GetValues(typeof(ShowPoints)).Length);
+            _showPoints = (ShowPoints)side;
         }
 
         public override void BoxDrawnConfirm(ViewportBase viewport)
@@ -784,6 +810,7 @@ namespace Sledge.Editor.Tools
 
             // Draw in order by the unused coordinate (the up axis for this viewport)
             var ordered = (from point in Points
+                           where (point.IsMidPoint && _showPoints != ShowPoints.Vertices) || (!point.IsMidPoint && _showPoints != ShowPoints.Midpoints)
                            let unused = vp.GetUnusedCoordinate(point.Coordinate)
                            orderby point.IsSelected, unused.X + unused.Y + unused.Z
                            select point).ToList();
@@ -823,6 +850,9 @@ namespace Sledge.Editor.Tools
                 GL.Begin(PrimitiveType.Quads);
                 foreach (var point in Points)
                 {
+                    if (point.IsMidPoint && _showPoints == ShowPoints.Vertices) continue;
+                    if (!point.IsMidPoint && _showPoints == ShowPoints.Midpoints) continue;
+
                     var c = vp.WorldToScreen(point.Coordinate);
                     if (c == null || c.Z > 1) continue;
                     c -= half;
