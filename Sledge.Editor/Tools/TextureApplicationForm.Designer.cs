@@ -387,7 +387,7 @@ namespace Sledge.Editor.Tools
             this.tableLayoutPanel1.ColumnCount = 3;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 65F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 194F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 195F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel1.Controls.Add(this.ScaleXValue, 1, 1);
@@ -600,6 +600,7 @@ namespace Sledge.Editor.Tools
             this.RecentTexturesList.SortDescending = false;
             this.RecentTexturesList.SortOrder = Sledge.Editor.UI.TextureListPanel.TextureSortOrder.None;
             this.RecentTexturesList.TabIndex = 38;
+            this.RecentTexturesList.TextureSelected += new Sledge.Editor.UI.TextureListPanel.TextureSelectedEventHandler(this.TexturesListTextureSelected);
             // 
             // SelectedTexturesList
             // 
@@ -614,6 +615,7 @@ namespace Sledge.Editor.Tools
             this.SelectedTexturesList.SortDescending = false;
             this.SelectedTexturesList.SortOrder = Sledge.Editor.UI.TextureListPanel.TextureSortOrder.Name;
             this.SelectedTexturesList.TabIndex = 37;
+            this.SelectedTexturesList.TextureSelected += new Sledge.Editor.UI.TextureListPanel.TextureSelectedEventHandler(this.TexturesListTextureSelected);
             // 
             // TextureApplicationForm
             // 
