@@ -158,7 +158,7 @@ namespace Sledge.Editor.Documents
             HotkeysMediator val;
             if (ToolManager.ActiveTool != null && Enum.TryParse(message, true, out val))
             {
-                var result = ToolManager.ActiveTool.InterceptHotkey(val);
+                var result = ToolManager.ActiveTool.InterceptHotkey(val, data);
                 if (result == HotkeyInterceptResult.Abort) return;
                 if (result == HotkeyInterceptResult.SwitchToSelectTool)
                 {

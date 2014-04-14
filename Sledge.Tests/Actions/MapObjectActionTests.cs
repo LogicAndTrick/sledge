@@ -120,7 +120,7 @@ namespace Sledge.Tests.Actions
         {
             var all = _document.Map.WorldSpawn.FindAll().OfType<Solid>().ToList();
             var plane = new Plane(Coordinate.UnitZ, Coordinate.Zero);
-            TestAction(new Clip(all, plane));
+            TestAction(new Clip(all, plane, true, true));
         }
 
         [TestMethod]

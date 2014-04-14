@@ -334,7 +334,7 @@ namespace Sledge.Editor.Tools
             GL.Vertex3(c.DX, c.DY, c.DZ);
         }
 
-        public override HotkeyInterceptResult InterceptHotkey(HotkeysMediator hotkeyMessage)
+        public override HotkeyInterceptResult InterceptHotkey(HotkeysMediator hotkeyMessage, object parameters)
         {
             if (hotkeyMessage == HotkeysMediator.OperationsDelete)
             {
