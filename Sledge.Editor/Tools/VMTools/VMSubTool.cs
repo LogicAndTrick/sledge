@@ -28,7 +28,7 @@ namespace Sledge.Editor.Tools.VMTools
             return null;
         }
 
-        public override HotkeyInterceptResult InterceptHotkey(HotkeysMediator hotkeyMessage)
+        public override HotkeyInterceptResult InterceptHotkey(HotkeysMediator hotkeyMessage, object parameters)
         {
             switch (hotkeyMessage)
             {

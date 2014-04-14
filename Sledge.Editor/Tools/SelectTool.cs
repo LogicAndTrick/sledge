@@ -427,7 +427,7 @@ namespace Sledge.Editor.Tools
                    && ChosenItemFor3DSelection != null;
         }
 
-        public override HotkeyInterceptResult InterceptHotkey(HotkeysMediator hotkeyMessage)
+        public override HotkeyInterceptResult InterceptHotkey(HotkeysMediator hotkeyMessage, object parameters)
         {
             return HotkeyInterceptResult.Continue;
         }

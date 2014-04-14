@@ -19,7 +19,7 @@ namespace Sledge.Editor.Tools.DisplacementTools
             return null;
         }
 
-        public override HotkeyInterceptResult InterceptHotkey(HotkeysMediator hotkeyMessage)
+        public override HotkeyInterceptResult InterceptHotkey(HotkeysMediator hotkeyMessage, object parameters)
         {
             switch (hotkeyMessage)
             {

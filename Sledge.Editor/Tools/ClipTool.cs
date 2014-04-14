@@ -29,18 +29,27 @@ namespace Sledge.Editor.Tools
             MovingPoint3
         }
 
+        public enum ClipSide
+        {
+            Both,
+            Front,
+            Back
+        }
+
         private Coordinate _clipPlanePoint1;
         private Coordinate _clipPlanePoint2;
         private Coordinate _clipPlanePoint3;
         private Coordinate _drawingPoint;
         private ClipState _prevState;
         private ClipState _state;
+        private ClipSide _side;
 
         public ClipTool()
         {
             Usage = ToolUsage.Both;
             _clipPlanePoint1 = _clipPlanePoint2 = _clipPlanePoint3 = _drawingPoint = null;
             _state = _prevState = ClipState.None;
+            _side = ClipSide.Both;
         }
 
         public override Image GetIcon()
@@ -209,7 +218,7 @@ namespace Sledge.Editor.Tools
         {
             var objects = Document.Selection.GetSelectedObjects().OfType<Solid>().ToList();
             var plane = new Plane(_clipPlanePoint1, _clipPlanePoint2, _clipPlanePoint3);
-            Document.PerformAction("Perform Clip", new Clip(objects, plane));
+            Document.PerformAction("Perform Clip", new Clip(objects, plane, _side != ClipSide.Back, _side != ClipSide.Front));
         }
 
         public override void Render(ViewportBase viewport)
@@ -218,15 +227,29 @@ namespace Sledge.Editor.Tools
             if (viewport is Viewport3D) Render3D((Viewport3D) viewport);
         }
 
-        public override HotkeyInterceptResult InterceptHotkey(HotkeysMediator hotkeyMessage)
+        public override HotkeyInterceptResult InterceptHotkey(HotkeysMediator hotkeyMessage, object parameters)
         {
             switch (hotkeyMessage)
             {
                 case HotkeysMediator.OperationsPasteSpecial:
                 case HotkeysMediator.OperationsPaste:
                     return HotkeyInterceptResult.SwitchToSelectTool;
+                case HotkeysMediator.SwitchTool:
+                    if (parameters is HotkeyTool && (HotkeyTool) parameters == GetHotkeyToolType())
+                    {
+                        CycleClipSide();
+                        return HotkeyInterceptResult.Abort;
+                    }
+                    break;
             }
             return HotkeyInterceptResult.Continue;
+        }
+
+        private void CycleClipSide()
+        {
+            var side = (int) _side;
+            side = (side + 1) % (Enum.GetValues(typeof (ClipSide)).Length);
+            _side = (ClipSide) side;
         }
 
         private void Render2D(Viewport2D vp)
@@ -279,8 +302,8 @@ namespace Sledge.Editor.Tools
                     Solid back, front;
                     if (solid.Split(plane, out back, out front, idg))
                     {
-                        faces.AddRange(back.Faces);
-                        faces.AddRange(front.Faces);
+                        if (_side != ClipSide.Front) faces.AddRange(back.Faces);
+                        if (_side != ClipSide.Back) faces.AddRange(front.Faces);
                     }
                 }
                 GL.LineWidth(2);
@@ -326,8 +349,8 @@ namespace Sledge.Editor.Tools
                     Solid back, front;
                     if (solid.Split(plane, out back, out front, idg))
                     {
-                        faces.AddRange(back.Faces);
-                        faces.AddRange(front.Faces);
+                        if (_side != ClipSide.Front) faces.AddRange(back.Faces);
+                        if (_side != ClipSide.Back) faces.AddRange(front.Faces);
                     }
                 }
                 GL.LineWidth(2);

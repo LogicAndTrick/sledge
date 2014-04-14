@@ -172,8 +172,9 @@ namespace Sledge.Editor.Tools
         /// Intercepts a document hotkey. Returns false if the hotkey should not be executed.
         /// </summary>
         /// <param name="hotkeyMessage">The hotkey message</param>
+        /// <param name="parameters">The hotkey parameters</param>
         /// <returns>False to prevent execution of the document hotkey</returns>
-        public abstract HotkeyInterceptResult InterceptHotkey(HotkeysMediator hotkeyMessage);
+        public abstract HotkeyInterceptResult InterceptHotkey(HotkeysMediator hotkeyMessage, object parameters);
 
         public virtual void OverrideViewportContextMenu(ViewportContextMenu menu, Viewport2D vp, ViewportEvent e)
         {

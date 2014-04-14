@@ -165,7 +165,7 @@ namespace Sledge.Editor.Tools
             // 
         }
 
-        public override HotkeyInterceptResult InterceptHotkey(HotkeysMediator hotkeyMessage)
+        public override HotkeyInterceptResult InterceptHotkey(HotkeysMediator hotkeyMessage, object parameters)
         {
             return HotkeyInterceptResult.Continue;
         }

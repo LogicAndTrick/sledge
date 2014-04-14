@@ -106,7 +106,7 @@ namespace Sledge.Editor
                 tspTools.Items.Add(new ToolStripButton(
                     "",
                     tl.GetIcon(),
-                    (s, ea) => SelectTool(tl),
+                    (s, ea) => Mediator.Publish(HotkeysMediator.SwitchTool, tl.GetHotkeyToolType()),
                     tl.GetName())
                         {
                             Checked = (tl == ToolManager.ActiveTool),

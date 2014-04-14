@@ -17,11 +17,15 @@ namespace Sledge.Editor.Actions.MapObjects.Operations
         private List<Solid> _objects;
         private Dictionary<long, long> _parents;
         private bool _firstRun;
+        private bool _keepFront;
+        private bool _keepBack;
 
-        public Clip(IEnumerable<Solid> objects, Plane plane)
+        public Clip(IEnumerable<Solid> objects, Plane plane, bool keepFront, bool keepBack)
         {
             _objects = objects.Where(x => x.IsValid()).ToList();
             _plane = plane;
+            _keepFront = keepFront;
+            _keepBack = keepBack;
             _firstRun = true;
         }
 
@@ -50,11 +54,13 @@ namespace Sledge.Editor.Actions.MapObjects.Operations
                         back.IsSelected = front.IsSelected = true;
                     }
 
-                    Create(back, front);
+                    if (_keepBack) Create(back);
+                    if (_keepFront) Create(front);
+
                     Delete(solid.ID);
 
-                    _parents.Add(back.ID, solid.Parent.ID);
-                    _parents.Add(front.ID, solid.Parent.ID);
+                    if (_keepBack) _parents.Add(back.ID, solid.Parent.ID);
+                    if (_keepFront) _parents.Add(front.ID, solid.Parent.ID);
                 }
             }
             base.Perform(document);

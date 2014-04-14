@@ -147,7 +147,7 @@ namespace Sledge.Editor.Tools
             if (_currentTool != null) _currentTool.PreRender(viewport);
         }
 
-        public override HotkeyInterceptResult InterceptHotkey(HotkeysMediator hotkeyMessage)
+        public override HotkeyInterceptResult InterceptHotkey(HotkeysMediator hotkeyMessage, object parameters)
         {
             switch (hotkeyMessage)
             {
