@@ -326,6 +326,9 @@ namespace Sledge.Editor.Tools
         #region Double Click
         public override void MouseDoubleClick(ViewportBase viewport, ViewportEvent e)
         {
+            //mxd. Don't show Object Properties while navigating the view, because mouse cursor will be hidden
+            if (!Sledge.Settings.View.Camera3DPanRequiresMouseClick && KeyboardState.IsKeyDown(Keys.Space)) return;
+            
             if (WidgetAction((w, vp, ev) => w.MouseDoubleClick(vp, ev), viewport, e)) return;
 
             if (viewport is Viewport3D && !Document.Selection.IsEmpty() && !ObjectPropertiesDialog.IsShowing)
@@ -364,7 +367,7 @@ namespace Sledge.Editor.Tools
         protected override void MouseDown3D(Viewport3D viewport, ViewportEvent e)
         {
             // Do not perform selection if space is down
-            if (KeyboardState.IsKeyDown(Keys.Space)) return;
+            if (Sledge.Settings.View.Camera3DPanRequiresMouseClick && KeyboardState.IsKeyDown(Keys.Space)) return;
 
             // First, get the ray that is cast from the clicked point along the viewport frustrum
             var ray = viewport.CastRayFromScreen(e.X, e.Y);
