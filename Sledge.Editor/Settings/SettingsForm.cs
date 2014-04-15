@@ -412,6 +412,10 @@ namespace Sledge.Editor.Settings
             AddSetting(() => Sledge.Settings.View.ScrollWheelZoomMultiplier, 1.01m, 10, 2, 0.1m, "Scroll wheel zoom multiplier (default 1.20)");
             AddSetting(() => Sledge.Settings.View.SelectionBoxBackgroundOpacity, 0, 128, "Selection box background opacity");
 
+            AddHeading("Camera");
+            AddSetting(() => Sledge.Settings.View.Camera2DPanRequiresMouseClick, "Require mouse click to pan 2D viewports when holding spacebar");
+
+
             // 2D Views
             CrosshairCursorIn2DViews.Checked = Sledge.Settings.View.CrosshairCursorIn2DViews;
             DrawEntityNames.Checked = Sledge.Settings.View.DrawEntityNames;
