@@ -8,6 +8,7 @@ namespace Sledge.Settings
         public static decimal ScrollWheelZoomMultiplier { get; set; }
         public static int SelectionBoxBackgroundOpacity { get; set; }
         public static bool DrawBoxText { get; set; }
+        public static bool DrawBoxDashedLines { get; set; }
         public static bool DrawEntityNames { get; set; }
         
         public static Color ViewportBackground { get; set; }
@@ -44,6 +45,7 @@ namespace Sledge.Settings
             ScrollWheelZoomMultiplier = 1.2m;
             SelectionBoxBackgroundOpacity = 64;
             DrawBoxText = true;
+            DrawBoxDashedLines = false;
             DrawEntityNames = true;
 
             ViewportBackground = Color.Black;

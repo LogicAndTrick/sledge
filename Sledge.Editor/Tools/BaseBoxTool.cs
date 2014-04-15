@@ -615,8 +615,13 @@ namespace Sledge.Editor.Tools
             Coord(end.DX, end.DY, start.DZ);
             Coord(start.DX, end.DY, start.DZ);
             GL.End();
-            GL.LineStipple(4, 0xAAAA); //mxd
-            GL.Enable(EnableCap.LineStipple); //mxd
+
+            if (Sledge.Settings.View.DrawBoxDashedLines)
+            {
+                GL.LineStipple(4, 0xAAAA);
+                GL.Enable(EnableCap.LineStipple);
+            }
+
             GL.Begin(PrimitiveType.LineLoop);
             GL.Color3(GetRenderBoxColour());
             Coord(start.DX, start.DY, start.DZ);
@@ -624,7 +629,7 @@ namespace Sledge.Editor.Tools
             Coord(end.DX, end.DY, start.DZ);
             Coord(start.DX, end.DY, start.DZ);
             GL.End();
-            GL.Disable(EnableCap.LineStipple); //mxd
+            GL.Disable(EnableCap.LineStipple);
         }
 
         protected virtual bool ShouldRenderResizeBox(Viewport2D viewport)
@@ -720,8 +725,8 @@ namespace Sledge.Editor.Tools
         {
             if (!Sledge.Settings.View.DrawBoxText) return;
 
-            var widthText = (Math.Round(boxEnd.X - boxStart.X, 1)).ToString("G29");
-            var heightText = (Math.Round(boxEnd.Y - boxStart.Y, 1)).ToString("G29");
+            var widthText = (Math.Round(boxEnd.X - boxStart.X, 1)).ToString("#.##");
+            var heightText = (Math.Round(boxEnd.Y - boxStart.Y, 1)).ToString("#.##");
 
             var wid = _printer.Measure(widthText, _printerFont, new RectangleF(0, 0, viewport.Width, viewport.Height));
             var hei = _printer.Measure(heightText, _printerFont, new RectangleF(0, 0, viewport.Width, viewport.Height));

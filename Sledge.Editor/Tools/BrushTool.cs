@@ -203,7 +203,7 @@ namespace Sledge.Editor.Tools
                 Graphics.Helpers.Matrix.Push();
                 var matrix = viewport.GetModelViewMatrix();
                 GL.MultMatrix(ref matrix);
-                Rendering.Immediate.MapObjectRenderer.DrawWireframe(_preview, true);
+                MapObjectRenderer.DrawWireframe(_preview, true);
                 Graphics.Helpers.Matrix.Pop();
             }
         }
