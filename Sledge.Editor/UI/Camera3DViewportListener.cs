@@ -161,17 +161,26 @@ namespace Sledge.Editor.UI
         private void SetFreeLook()
         {
             if (!Viewport.IsUnlocked(this)) return;
-            FreeLook = false;
+            
             if (FreeLookToggle)
             {
                 FreeLook = true;
             }
             else
             {
-                var space = KeyboardState.IsKeyDown(Keys.Space) || ToolManager.ActiveTool is CameraTool;
                 var left = Control.MouseButtons.HasFlag(MouseButtons.Left);
                 var right = Control.MouseButtons.HasFlag(MouseButtons.Right);
-                FreeLook = space && (left || right);
+                
+                if (ToolManager.ActiveTool is CameraTool)
+                {
+                    FreeLook = left || right;
+                }
+                else
+                {
+                    var space = KeyboardState.IsKeyDown(Keys.Space);
+                    var req = Sledge.Settings.View.Camera3DPanRequiresMouseClick; //mxd
+                    FreeLook = space && (!req || left || right);
+                }
             }
 
             if (FreeLook && CursorVisible)
