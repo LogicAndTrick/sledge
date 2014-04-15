@@ -175,7 +175,7 @@ namespace Sledge.Editor.UI
                 Size = new Rectangle(Editor.Instance.Location, Editor.Instance.Size),
                 Configuration = MainWindowGrid.Configuration,
                 Viewports = GetViewportsForTableSplitControl(MainWindowGrid).Select(SerialiseViewport).ToList(),
-                Maximised = Editor.Instance.WindowState == FormWindowState.Maximized
+                Maximised = Editor.Instance.WindowState != FormWindowState.Normal
             });
             for (var i = 0; i < Windows.Count; i++)
             {
@@ -185,7 +185,7 @@ namespace Sledge.Editor.UI
                     Size = new Rectangle(Windows[i].Location, Windows[i].Size),
                     Configuration = Windows[i].TableSplitControl.Configuration,
                     Viewports = GetViewportsForTableSplitControl(Windows[i].TableSplitControl).Select(SerialiseViewport).ToList(),
-                    Maximised = Windows[i].WindowState == FormWindowState.Maximized
+                    Maximised = Windows[i].WindowState != FormWindowState.Normal
                 });
             }
             return list;
