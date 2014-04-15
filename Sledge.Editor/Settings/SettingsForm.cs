@@ -414,6 +414,7 @@ namespace Sledge.Editor.Settings
 
             AddHeading("Camera");
             AddSetting(() => Sledge.Settings.View.Camera2DPanRequiresMouseClick, "Require mouse click to pan 2D viewports when holding spacebar");
+            AddSetting(() => Sledge.Settings.View.Camera3DPanRequiresMouseClick, "Require mouse click to pan 3D viewports when holding spacebar"); //mxd
 
 
             // 2D Views
