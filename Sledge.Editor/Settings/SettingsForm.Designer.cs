@@ -38,13 +38,8 @@ namespace Sledge.Editor.Settings
 		{
             this.tbcSettings = new System.Windows.Forms.TabControl();
             this.tabGeneral = new System.Windows.Forms.TabPage();
+            this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.tab2DViews = new System.Windows.Forms.TabPage();
-            this.groupBox11 = new System.Windows.Forms.GroupBox();
-            this.CenterHandlesOnlyNearCursor = new System.Windows.Forms.CheckBox();
-            this.CenterHandlesActiveViewportOnly = new System.Windows.Forms.CheckBox();
-            this.DrawCenterHandles = new System.Windows.Forms.CheckBox();
-            this.BoxSelectByHandlesOnly = new System.Windows.Forms.CheckBox();
-            this.ClickSelectByHandlesOnly = new System.Windows.Forms.CheckBox();
             this.groupBox6 = new System.Windows.Forms.GroupBox();
             this.RotationStyle_SnapNever = new System.Windows.Forms.RadioButton();
             this.RotationStyle_SnapOnShift = new System.Windows.Forms.RadioButton();
@@ -70,14 +65,7 @@ namespace Sledge.Editor.Settings
             this.label8 = new System.Windows.Forms.Label();
             this.groupBox17 = new System.Windows.Forms.GroupBox();
             this.DrawEntityNames = new System.Windows.Forms.CheckBox();
-            this.DrawBoxText = new System.Windows.Forms.CheckBox();
-            this.KeepVisgroupsWhenCloning = new System.Windows.Forms.CheckBox();
-            this.AutoSelectBox = new System.Windows.Forms.CheckBox();
             this.CrosshairCursorIn2DViews = new System.Windows.Forms.CheckBox();
-            this.label31 = new System.Windows.Forms.Label();
-            this.label30 = new System.Windows.Forms.Label();
-            this.SelectionBoxBackgroundOpacity = new System.Windows.Forms.NumericUpDown();
-            this.ScrollWheelZoomMultiplier = new System.Windows.Forms.NumericUpDown();
             this.groupBox16 = new System.Windows.Forms.GroupBox();
             this.ArrowKeysNudgeSelection = new System.Windows.Forms.CheckBox();
             this.NudgeStyle_GridOnCtrl = new System.Windows.Forms.RadioButton();
@@ -295,7 +283,6 @@ namespace Sledge.Editor.Settings
             this.btnCancelSettings = new System.Windows.Forms.Button();
             this.btnApplyAndCloseSettings = new System.Windows.Forms.Button();
             this.btnApplySettings = new System.Windows.Forms.Button();
-            this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.SelectedBuildCsgParameters = new Sledge.Editor.Compiling.CompileParameterPanel();
             this.SelectedBuildBspParameters = new Sledge.Editor.Compiling.CompileParameterPanel();
             this.SelectedBuildVisParameters = new Sledge.Editor.Compiling.CompileParameterPanel();
@@ -304,13 +291,10 @@ namespace Sledge.Editor.Settings
             this.tbcSettings.SuspendLayout();
             this.tabGeneral.SuspendLayout();
             this.tab2DViews.SuspendLayout();
-            this.groupBox11.SuspendLayout();
             this.groupBox6.SuspendLayout();
             this.groupBox3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.GridHighlight1Distance)).BeginInit();
             this.groupBox17.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.SelectionBoxBackgroundOpacity)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.ScrollWheelZoomMultiplier)).BeginInit();
             this.groupBox16.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.NudgeUnits)).BeginInit();
             this.groupBox4.SuspendLayout();
@@ -394,9 +378,19 @@ namespace Sledge.Editor.Settings
             this.tabGeneral.Text = "General";
             this.tabGeneral.UseVisualStyleBackColor = true;
             // 
+            // flowLayoutPanel1
+            // 
+            this.flowLayoutPanel1.AutoScroll = true;
+            this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.flowLayoutPanel1.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
+            this.flowLayoutPanel1.Location = new System.Drawing.Point(3, 3);
+            this.flowLayoutPanel1.Name = "flowLayoutPanel1";
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(730, 505);
+            this.flowLayoutPanel1.TabIndex = 6;
+            this.flowLayoutPanel1.WrapContents = false;
+            // 
             // tab2DViews
             // 
-            this.tab2DViews.Controls.Add(this.groupBox11);
             this.tab2DViews.Controls.Add(this.groupBox6);
             this.tab2DViews.Controls.Add(this.groupBox3);
             this.tab2DViews.Controls.Add(this.groupBox17);
@@ -410,70 +404,6 @@ namespace Sledge.Editor.Settings
             this.tab2DViews.TabIndex = 1;
             this.tab2DViews.Text = "2D Views";
             this.tab2DViews.UseVisualStyleBackColor = true;
-            // 
-            // groupBox11
-            // 
-            this.groupBox11.Controls.Add(this.CenterHandlesOnlyNearCursor);
-            this.groupBox11.Controls.Add(this.CenterHandlesActiveViewportOnly);
-            this.groupBox11.Controls.Add(this.DrawCenterHandles);
-            this.groupBox11.Controls.Add(this.BoxSelectByHandlesOnly);
-            this.groupBox11.Controls.Add(this.ClickSelectByHandlesOnly);
-            this.groupBox11.Location = new System.Drawing.Point(6, 401);
-            this.groupBox11.Name = "groupBox11";
-            this.groupBox11.Size = new System.Drawing.Size(468, 107);
-            this.groupBox11.TabIndex = 1;
-            this.groupBox11.TabStop = false;
-            this.groupBox11.Text = "Center Handles";
-            // 
-            // CenterHandlesOnlyNearCursor
-            // 
-            this.CenterHandlesOnlyNearCursor.Location = new System.Drawing.Point(10, 77);
-            this.CenterHandlesOnlyNearCursor.Name = "CenterHandlesOnlyNearCursor";
-            this.CenterHandlesOnlyNearCursor.Size = new System.Drawing.Size(182, 24);
-            this.CenterHandlesOnlyNearCursor.TabIndex = 0;
-            this.CenterHandlesOnlyNearCursor.Tag = "";
-            this.CenterHandlesOnlyNearCursor.Text = "Render only near cursor position";
-            this.CenterHandlesOnlyNearCursor.UseVisualStyleBackColor = true;
-            // 
-            // CenterHandlesActiveViewportOnly
-            // 
-            this.CenterHandlesActiveViewportOnly.Location = new System.Drawing.Point(10, 47);
-            this.CenterHandlesActiveViewportOnly.Name = "CenterHandlesActiveViewportOnly";
-            this.CenterHandlesActiveViewportOnly.Size = new System.Drawing.Size(182, 24);
-            this.CenterHandlesActiveViewportOnly.TabIndex = 0;
-            this.CenterHandlesActiveViewportOnly.Tag = "";
-            this.CenterHandlesActiveViewportOnly.Text = "Render only in active viewport";
-            this.CenterHandlesActiveViewportOnly.UseVisualStyleBackColor = true;
-            // 
-            // DrawCenterHandles
-            // 
-            this.DrawCenterHandles.Location = new System.Drawing.Point(10, 19);
-            this.DrawCenterHandles.Name = "DrawCenterHandles";
-            this.DrawCenterHandles.Size = new System.Drawing.Size(182, 24);
-            this.DrawCenterHandles.TabIndex = 0;
-            this.DrawCenterHandles.Tag = "";
-            this.DrawCenterHandles.Text = "Render brush center handles";
-            this.DrawCenterHandles.UseVisualStyleBackColor = true;
-            // 
-            // BoxSelectByHandlesOnly
-            // 
-            this.BoxSelectByHandlesOnly.Location = new System.Drawing.Point(198, 19);
-            this.BoxSelectByHandlesOnly.Name = "BoxSelectByHandlesOnly";
-            this.BoxSelectByHandlesOnly.Size = new System.Drawing.Size(257, 24);
-            this.BoxSelectByHandlesOnly.TabIndex = 0;
-            this.BoxSelectByHandlesOnly.Tag = "";
-            this.BoxSelectByHandlesOnly.Text = "Selection box selects by center handles only";
-            this.BoxSelectByHandlesOnly.UseVisualStyleBackColor = true;
-            // 
-            // ClickSelectByHandlesOnly
-            // 
-            this.ClickSelectByHandlesOnly.Location = new System.Drawing.Point(198, 47);
-            this.ClickSelectByHandlesOnly.Name = "ClickSelectByHandlesOnly";
-            this.ClickSelectByHandlesOnly.Size = new System.Drawing.Size(278, 24);
-            this.ClickSelectByHandlesOnly.TabIndex = 0;
-            this.ClickSelectByHandlesOnly.Tag = "";
-            this.ClickSelectByHandlesOnly.Text = "Clicking in 2D view selects by center handles only";
-            this.ClickSelectByHandlesOnly.UseVisualStyleBackColor = true;
             // 
             // groupBox6
             // 
@@ -727,60 +657,23 @@ namespace Sledge.Editor.Settings
             // groupBox17
             // 
             this.groupBox17.Controls.Add(this.DrawEntityNames);
-            this.groupBox17.Controls.Add(this.DrawBoxText);
-            this.groupBox17.Controls.Add(this.KeepVisgroupsWhenCloning);
-            this.groupBox17.Controls.Add(this.AutoSelectBox);
             this.groupBox17.Controls.Add(this.CrosshairCursorIn2DViews);
-            this.groupBox17.Controls.Add(this.label31);
-            this.groupBox17.Controls.Add(this.label30);
-            this.groupBox17.Controls.Add(this.SelectionBoxBackgroundOpacity);
-            this.groupBox17.Controls.Add(this.ScrollWheelZoomMultiplier);
             this.groupBox17.Location = new System.Drawing.Point(421, 126);
             this.groupBox17.Name = "groupBox17";
-            this.groupBox17.Size = new System.Drawing.Size(304, 269);
+            this.groupBox17.Size = new System.Drawing.Size(304, 85);
             this.groupBox17.TabIndex = 0;
             this.groupBox17.TabStop = false;
             this.groupBox17.Text = "Options";
             // 
             // DrawEntityNames
             // 
-            this.DrawEntityNames.Location = new System.Drawing.Point(10, 109);
+            this.DrawEntityNames.Location = new System.Drawing.Point(10, 49);
             this.DrawEntityNames.Name = "DrawEntityNames";
             this.DrawEntityNames.Size = new System.Drawing.Size(225, 24);
             this.DrawEntityNames.TabIndex = 4;
             this.DrawEntityNames.Tag = "";
             this.DrawEntityNames.Text = "Draw entity names in the viewport";
             this.DrawEntityNames.UseVisualStyleBackColor = true;
-            // 
-            // DrawBoxText
-            // 
-            this.DrawBoxText.Location = new System.Drawing.Point(10, 79);
-            this.DrawBoxText.Name = "DrawBoxText";
-            this.DrawBoxText.Size = new System.Drawing.Size(225, 24);
-            this.DrawBoxText.TabIndex = 4;
-            this.DrawBoxText.Tag = "";
-            this.DrawBoxText.Text = "Draw selection box size in the viewport";
-            this.DrawBoxText.UseVisualStyleBackColor = true;
-            // 
-            // KeepVisgroupsWhenCloning
-            // 
-            this.KeepVisgroupsWhenCloning.Location = new System.Drawing.Point(10, 139);
-            this.KeepVisgroupsWhenCloning.Name = "KeepVisgroupsWhenCloning";
-            this.KeepVisgroupsWhenCloning.Size = new System.Drawing.Size(278, 24);
-            this.KeepVisgroupsWhenCloning.TabIndex = 2;
-            this.KeepVisgroupsWhenCloning.Tag = "";
-            this.KeepVisgroupsWhenCloning.Text = "Keep visgroups when cloning";
-            this.KeepVisgroupsWhenCloning.UseVisualStyleBackColor = true;
-            // 
-            // AutoSelectBox
-            // 
-            this.AutoSelectBox.Location = new System.Drawing.Point(10, 49);
-            this.AutoSelectBox.Name = "AutoSelectBox";
-            this.AutoSelectBox.Size = new System.Drawing.Size(225, 24);
-            this.AutoSelectBox.TabIndex = 0;
-            this.AutoSelectBox.Tag = "";
-            this.AutoSelectBox.Text = "Automatically select when box is drawn";
-            this.AutoSelectBox.UseVisualStyleBackColor = true;
             // 
             // CrosshairCursorIn2DViews
             // 
@@ -791,69 +684,6 @@ namespace Sledge.Editor.Settings
             this.CrosshairCursorIn2DViews.Tag = "";
             this.CrosshairCursorIn2DViews.Text = "Crosshair cursor in 2D views";
             this.CrosshairCursorIn2DViews.UseVisualStyleBackColor = true;
-            // 
-            // label31
-            // 
-            this.label31.Location = new System.Drawing.Point(12, 192);
-            this.label31.Name = "label31";
-            this.label31.Size = new System.Drawing.Size(204, 20);
-            this.label31.TabIndex = 3;
-            this.label31.Text = "Selection box background opacity";
-            this.label31.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // label30
-            // 
-            this.label30.Location = new System.Drawing.Point(12, 166);
-            this.label30.Name = "label30";
-            this.label30.Size = new System.Drawing.Size(204, 20);
-            this.label30.TabIndex = 3;
-            this.label30.Text = "Scroll wheel zoom multiplier (default 1.20)";
-            this.label30.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // SelectionBoxBackgroundOpacity
-            // 
-            this.SelectionBoxBackgroundOpacity.Location = new System.Drawing.Point(222, 194);
-            this.SelectionBoxBackgroundOpacity.Maximum = new decimal(new int[] {
-            128,
-            0,
-            0,
-            0});
-            this.SelectionBoxBackgroundOpacity.Name = "SelectionBoxBackgroundOpacity";
-            this.SelectionBoxBackgroundOpacity.Size = new System.Drawing.Size(50, 20);
-            this.SelectionBoxBackgroundOpacity.TabIndex = 2;
-            this.SelectionBoxBackgroundOpacity.Value = new decimal(new int[] {
-            64,
-            0,
-            0,
-            0});
-            // 
-            // ScrollWheelZoomMultiplier
-            // 
-            this.ScrollWheelZoomMultiplier.DecimalPlaces = 2;
-            this.ScrollWheelZoomMultiplier.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            65536});
-            this.ScrollWheelZoomMultiplier.Location = new System.Drawing.Point(222, 168);
-            this.ScrollWheelZoomMultiplier.Maximum = new decimal(new int[] {
-            10,
-            0,
-            0,
-            0});
-            this.ScrollWheelZoomMultiplier.Minimum = new decimal(new int[] {
-            101,
-            0,
-            0,
-            131072});
-            this.ScrollWheelZoomMultiplier.Name = "ScrollWheelZoomMultiplier";
-            this.ScrollWheelZoomMultiplier.Size = new System.Drawing.Size(50, 20);
-            this.ScrollWheelZoomMultiplier.TabIndex = 2;
-            this.ScrollWheelZoomMultiplier.Value = new decimal(new int[] {
-            12,
-            0,
-            0,
-            65536});
             // 
             // groupBox16
             // 
@@ -3255,17 +3085,6 @@ namespace Sledge.Editor.Settings
             this.btnApplySettings.UseVisualStyleBackColor = true;
             this.btnApplySettings.Click += new System.EventHandler(this.Apply);
             // 
-            // flowLayoutPanel1
-            // 
-            this.flowLayoutPanel1.AutoScroll = true;
-            this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.flowLayoutPanel1.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-            this.flowLayoutPanel1.Location = new System.Drawing.Point(3, 3);
-            this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(730, 505);
-            this.flowLayoutPanel1.TabIndex = 6;
-            this.flowLayoutPanel1.WrapContents = false;
-            // 
             // SelectedBuildCsgParameters
             // 
             this.SelectedBuildCsgParameters.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -3324,17 +3143,15 @@ namespace Sledge.Editor.Settings
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Sledge Settings";
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.SettingsFormClosed);
             this.Load += new System.EventHandler(this.SettingsFormLoad);
             this.tbcSettings.ResumeLayout(false);
             this.tabGeneral.ResumeLayout(false);
             this.tab2DViews.ResumeLayout(false);
-            this.groupBox11.ResumeLayout(false);
             this.groupBox6.ResumeLayout(false);
             this.groupBox3.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.GridHighlight1Distance)).EndInit();
             this.groupBox17.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.SelectionBoxBackgroundOpacity)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.ScrollWheelZoomMultiplier)).EndInit();
             this.groupBox16.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.NudgeUnits)).EndInit();
             this.groupBox4.ResumeLayout(false);
@@ -3558,9 +3375,6 @@ namespace Sledge.Editor.Settings
         private System.Windows.Forms.RadioButton NudgeStyle_GridOnCtrl;
         private System.Windows.Forms.RadioButton NudgeStyle_GridOffCtrl;
         private System.Windows.Forms.GroupBox groupBox17;
-        private System.Windows.Forms.CheckBox AutoSelectBox;
-        private System.Windows.Forms.CheckBox BoxSelectByHandlesOnly;
-        private System.Windows.Forms.CheckBox DrawCenterHandles;
         private System.Windows.Forms.Label label27;
         private System.Windows.Forms.Label label26;
         private System.Windows.Forms.Label label24;
@@ -3573,15 +3387,6 @@ namespace Sledge.Editor.Settings
         private System.Windows.Forms.GroupBox groupBox12;
         private System.Windows.Forms.NumericUpDown CameraFOV;
         private System.Windows.Forms.Label label29;
-        private System.Windows.Forms.CheckBox ClickSelectByHandlesOnly;
-        private System.Windows.Forms.GroupBox groupBox11;
-        private System.Windows.Forms.CheckBox CenterHandlesOnlyNearCursor;
-        private System.Windows.Forms.CheckBox CenterHandlesActiveViewportOnly;
-        private System.Windows.Forms.CheckBox KeepVisgroupsWhenCloning;
-        private System.Windows.Forms.Label label30;
-        private System.Windows.Forms.NumericUpDown ScrollWheelZoomMultiplier;
-        private System.Windows.Forms.Label label31;
-        private System.Windows.Forms.NumericUpDown SelectionBoxBackgroundOpacity;
         private System.Windows.Forms.Label lblBaseGame;
         private System.Windows.Forms.ComboBox SelectedGameBase;
         private System.Windows.Forms.ComboBox SelectedGameOverrideSizeHigh;
@@ -3661,7 +3466,6 @@ namespace Sledge.Editor.Settings
         private System.Windows.Forms.CheckBox SelectedGameUseDiffAutosaveDir;
         private System.Windows.Forms.Label label42;
         private System.Windows.Forms.TextBox SelectedGameRunArguments;
-        private System.Windows.Forms.CheckBox DrawBoxText;
         private System.Windows.Forms.Label label43;
         private System.Windows.Forms.NumericUpDown MouseWheelMoveDistance;
         private System.Windows.Forms.CheckBox DrawEntityNames;

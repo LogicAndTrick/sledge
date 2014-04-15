@@ -42,7 +42,6 @@ namespace Sledge.Editor.Settings
 
             UpdateData();
 
-            //tbcSettings.SelectTab(3);
             BindConfigControls();
         }
 
@@ -269,7 +268,7 @@ namespace Sledge.Editor.Settings
 
         private ComboBox AddSetting(Expression<Func<Enum>> prop, string text)
         {
-            var expression = (MemberExpression) ((UnaryExpression) prop.Body).Operand;
+            var expression = (MemberExpression)((UnaryExpression)prop.Body).Operand;
             var property = (PropertyInfo)expression.Member;
             var combo = new ComboBox
             {
@@ -281,7 +280,7 @@ namespace Sledge.Editor.Settings
             {
                 combo.Items.Add(val.GetDescription());
             }
-            combo.SelectedIndex = vals.IndexOf((Enum) property.GetValue(null, null));
+            combo.SelectedIndex = vals.IndexOf((Enum)property.GetValue(null, null));
             combo.SelectedIndexChanged += (s, e) => property.SetValue(null, vals[combo.SelectedIndex], null);
             var label = new Label
             {
@@ -302,6 +301,72 @@ namespace Sledge.Editor.Settings
             return combo;
         }
 
+        private NumericUpDown AddSetting(Expression<Func<decimal>> prop, decimal min, decimal max, int decimals, decimal increment, string text)
+        {
+            var expression = (MemberExpression)prop.Body;
+            var property = (PropertyInfo)expression.Member;
+            var updown = new NumericUpDown
+            {
+                Minimum = min,
+                Maximum = max,
+                DecimalPlaces = decimals,
+                Increment = increment,
+                Value = Convert.ToDecimal(property.GetValue(null, null)),
+                Width = 50
+            };
+            updown.ValueChanged += (s, e) => property.SetValue(null, updown.Value, null);
+            var label = new Label
+            {
+                AutoSize = true,
+                Text = text,
+                Padding = new Padding(0, 5, 0, 5)
+            };
+            var panel = new FlowLayoutPanel
+            {
+                FlowDirection = FlowDirection.LeftToRight,
+                WrapContents = false,
+                AutoSize = true
+            };
+            panel.Controls.Add(label);
+            panel.Controls.Add(updown);
+            flowLayoutPanel1.Controls.Add(panel);
+
+            return updown;
+        }
+
+        private NumericUpDown AddSetting(Expression<Func<int>> prop, int min, int max, string text)
+        {
+            var expression = (MemberExpression)prop.Body;
+            var property = (PropertyInfo)expression.Member;
+            var updown = new NumericUpDown
+            {
+                Minimum = min,
+                Maximum = max,
+                DecimalPlaces = 0,
+                Increment = 1,
+                Value = Convert.ToDecimal(property.GetValue(null, null)),
+                Width = 50
+            };
+            updown.ValueChanged += (s, e) => property.SetValue(null, (int) updown.Value, null);
+            var label = new Label
+            {
+                AutoSize = true,
+                Text = text,
+                Padding = new Padding(0, 5, 0, 5)
+            };
+            var panel = new FlowLayoutPanel
+            {
+                FlowDirection = FlowDirection.LeftToRight,
+                WrapContents = false,
+                AutoSize = true
+            };
+            panel.Controls.Add(label);
+            panel.Controls.Add(updown);
+            flowLayoutPanel1.Controls.Add(panel);
+
+            return updown;
+        }
+
         private void SettingsFormLoad(object sender, EventArgs e)
         {
             AddHeading("Object Creation");
@@ -311,6 +376,7 @@ namespace Sledge.Editor.Settings
             AddSetting(() => Sledge.Settings.Select.SelectCreatedEntity, "Automatically select created entity");
             AddSetting(() => Sledge.Settings.Select.DeselectOthersWhenSelectingCreation, "Deselect other objects when automatically selecting created items");
             AddSetting(() => Sledge.Settings.Select.ResetBrushTypeOnCreation, "Reset to block brush type after creating brush");
+            AddSetting(() => Sledge.Settings.Select.KeepVisgroupsWhenCloning, "Keep visgroups when cloning");
 
             AddHeading("Multiple Files");
             AddSetting(() => Sledge.Settings.View.LoadSession, "Load previously opened files on startup");
@@ -332,20 +398,27 @@ namespace Sledge.Editor.Settings
             AddSetting(() => Sledge.Settings.View.DisableModelRendering, "Disable model rendering");
             AddSetting(() => Sledge.Settings.View.DisableTextureFiltering, "Disable texture filtering (try this if textures render incorrectly)");
 
+            AddHeading("Center Handles");
+            AddSetting(() => Sledge.Settings.Select.DrawCenterHandles, "Render brush center handles");
+            AddSetting(() => Sledge.Settings.Select.CenterHandlesActiveViewportOnly, "Render center handles only in active viewport");
+            AddSetting(() => Sledge.Settings.Select.CenterHandlesFollowCursor, "Render center handles only near cursor position");
+            AddSetting(() => Sledge.Settings.Select.BoxSelectByCenterHandlesOnly, "Selection box selects by center handles only");
+            AddSetting(() => Sledge.Settings.Select.ClickSelectByCenterHandlesOnly, "Clicking in 2D view selects by center handles only");
+
+            AddHeading("Selection Box");
+            AddSetting(() => Sledge.Settings.Select.AutoSelectBox, "Automatically select when box is drawn");
+            AddSetting(() => Sledge.Settings.View.DrawBoxText, "Draw selection box size in the viewport");
+            AddSetting(() => Sledge.Settings.View.DrawBoxDashedLines, "Draw selection box with dashed lines");
+            AddSetting(() => Sledge.Settings.View.ScrollWheelZoomMultiplier, 1.01m, 10, 2, 0.1m, "Scroll wheel zoom multiplier (default 1.20)");
+            AddSetting(() => Sledge.Settings.View.SelectionBoxBackgroundOpacity, 0, 128, "Selection box background opacity");
+
+            AddHeading("Camera");
+            AddSetting(() => Sledge.Settings.View.Camera2DPanRequiresMouseClick, "Require mouse click to pan 2D viewports when holding spacebar");
+
+
             // 2D Views
             CrosshairCursorIn2DViews.Checked = Sledge.Settings.View.CrosshairCursorIn2DViews;
-            AutoSelectBox.Checked = Sledge.Settings.Select.AutoSelectBox;
-            KeepVisgroupsWhenCloning.Checked = Sledge.Settings.Select.KeepVisgroupsWhenCloning;
-            DrawBoxText.Checked = Sledge.Settings.View.DrawBoxText;
             DrawEntityNames.Checked = Sledge.Settings.View.DrawEntityNames;
-            ScrollWheelZoomMultiplier.Value = Sledge.Settings.View.ScrollWheelZoomMultiplier;
-            SelectionBoxBackgroundOpacity.Value = Sledge.Settings.View.SelectionBoxBackgroundOpacity;
-
-            DrawCenterHandles.Checked = Sledge.Settings.Select.DrawCenterHandles;
-            CenterHandlesActiveViewportOnly.Checked = Sledge.Settings.Select.CenterHandlesActiveViewportOnly;
-            CenterHandlesOnlyNearCursor.Checked = Sledge.Settings.Select.CenterHandlesFollowCursor;
-            BoxSelectByHandlesOnly.Checked = Sledge.Settings.Select.BoxSelectByCenterHandlesOnly;
-            ClickSelectByHandlesOnly.Checked = Sledge.Settings.Select.ClickSelectByCenterHandlesOnly;
 
             RotationStyle_SnapOnShift.Checked = Sledge.Settings.Select.RotationStyle == RotationStyle.SnapOnShift;
             RotationStyle_SnapOffShift.Checked = Sledge.Settings.Select.RotationStyle == RotationStyle.SnapOffShift;
@@ -411,18 +484,7 @@ namespace Sledge.Editor.Settings
         {
             // 2D Views
             Sledge.Settings.View.CrosshairCursorIn2DViews = CrosshairCursorIn2DViews.Checked;
-            Sledge.Settings.Select.AutoSelectBox = AutoSelectBox.Checked;
-            Sledge.Settings.Select.KeepVisgroupsWhenCloning = KeepVisgroupsWhenCloning.Checked;
-            Sledge.Settings.View.DrawBoxText = DrawBoxText.Checked;
             Sledge.Settings.View.DrawEntityNames = DrawEntityNames.Checked;
-            Sledge.Settings.View.ScrollWheelZoomMultiplier = ScrollWheelZoomMultiplier.Value;
-            Sledge.Settings.View.SelectionBoxBackgroundOpacity = (int) SelectionBoxBackgroundOpacity.Value;
-
-            Sledge.Settings.Select.DrawCenterHandles = DrawCenterHandles.Checked;
-            Sledge.Settings.Select.CenterHandlesActiveViewportOnly = CenterHandlesActiveViewportOnly.Checked;
-            Sledge.Settings.Select.CenterHandlesFollowCursor = CenterHandlesOnlyNearCursor.Checked;
-            Sledge.Settings.Select.BoxSelectByCenterHandlesOnly = BoxSelectByHandlesOnly.Checked;
-            Sledge.Settings.Select.ClickSelectByCenterHandlesOnly = ClickSelectByHandlesOnly.Checked;
 
             if (RotationStyle_SnapOnShift.Checked) Sledge.Settings.Select.RotationStyle = RotationStyle.SnapOnShift;
             if (RotationStyle_SnapOffShift.Checked) Sledge.Settings.Select.RotationStyle = RotationStyle.SnapOffShift;
@@ -513,8 +575,12 @@ namespace Sledge.Editor.Settings
 
         private void Close(object sender, MouseEventArgs e)
         {
-            SettingsManager.Read();
             Close();
+        }
+
+        private void SettingsFormClosed(object sender, FormClosedEventArgs e)
+        {
+            SettingsManager.Read();
         }
 
         #endregion

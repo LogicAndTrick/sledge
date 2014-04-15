@@ -5,6 +5,7 @@ using Sledge.Common.Mediator;
 using Sledge.DataStructures.Geometric;
 using Sledge.Extensions;
 using Sledge.UI;
+using System.Drawing;
 
 namespace Sledge.Editor.UI
 {
@@ -29,6 +30,7 @@ namespace Sledge.Editor.UI
             if (e.KeyCode == Keys.Space)
             {
                 Viewport.Cursor = Cursors.Default;
+                Viewport.Capture = false;
                 e.Handled = true;
             }
         }
@@ -38,6 +40,12 @@ namespace Sledge.Editor.UI
             if (e.KeyCode == Keys.Space)
             {
                 Viewport.Cursor = Cursors.SizeAll;
+                if (!Sledge.Settings.View.Camera2DPanRequiresMouseClick)
+                {
+                    Viewport.Capture = true;
+                    var p = e.Sender.PointToClient(Cursor.Position);
+                    _mouseDown = new Coordinate(p.X, Viewport2D.Height - p.Y, 0);
+                }
                 e.Handled = true;
             }
             var str = e.KeyCode.ToString();
@@ -73,8 +81,7 @@ namespace Sledge.Editor.UI
             if (space || mmouse)
             {
                 Viewport.Cursor = Cursors.SizeAll;
-
-                if (lmouse || mmouse)
+                if (lmouse || mmouse || !Sledge.Settings.View.Camera2DPanRequiresMouseClick)
                 {
                     var point = new Coordinate(e.X, Viewport2D.Height - e.Y, 0);
                     var difference = _mouseDown - point;
@@ -104,17 +111,34 @@ namespace Sledge.Editor.UI
 
         public void MouseUp(ViewportEvent e)
         {
-            if ((KeyboardState.IsKeyDown(Keys.Space) && e.Button == MouseButtons.Left) || e.Button == MouseButtons.Middle) e.Handled = true;
-            if (e.Button == MouseButtons.Middle) Viewport.Cursor = Cursors.Default;
-            _mouseDown = null;
+            var space = KeyboardState.IsKeyDown(Keys.Space);
+            var req = Sledge.Settings.View.Camera2DPanRequiresMouseClick;
+            if (space && (!req || e.Button == MouseButtons.Left))
+            {
+                e.Handled = true;
+            }
+            else if (e.Button == MouseButtons.Middle)
+            {
+                e.Handled = true;
+                Viewport.Cursor = Cursors.Default;
+            }
         }
 
         private Coordinate _mouseDown;
 
         public void MouseDown(ViewportEvent e)
         {
-            if ((KeyboardState.IsKeyDown(Keys.Space) && e.Button == MouseButtons.Left) || e.Button == MouseButtons.Middle) e.Handled = true;
-            if (e.Button == MouseButtons.Middle) Viewport.Cursor = Cursors.SizeAll;
+            var space = KeyboardState.IsKeyDown(Keys.Space);
+            var req = Sledge.Settings.View.Camera2DPanRequiresMouseClick;
+            if (space && (!req || e.Button == MouseButtons.Left))
+            {
+                e.Handled = true;
+            }
+            else if (e.Button == MouseButtons.Middle)
+            {
+                e.Handled = true;
+                Viewport.Cursor = Cursors.SizeAll;
+            }
             _mouseDown = new Coordinate(e.X, Viewport2D.Height - e.Y, 0);
         }
 

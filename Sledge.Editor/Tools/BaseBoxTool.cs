@@ -615,6 +615,13 @@ namespace Sledge.Editor.Tools
             Coord(end.DX, end.DY, start.DZ);
             Coord(start.DX, end.DY, start.DZ);
             GL.End();
+
+            if (Sledge.Settings.View.DrawBoxDashedLines)
+            {
+                GL.LineStipple(4, 0xAAAA);
+                GL.Enable(EnableCap.LineStipple);
+            }
+
             GL.Begin(PrimitiveType.LineLoop);
             GL.Color3(GetRenderBoxColour());
             Coord(start.DX, start.DY, start.DZ);
@@ -622,6 +629,7 @@ namespace Sledge.Editor.Tools
             Coord(end.DX, end.DY, start.DZ);
             Coord(start.DX, end.DY, start.DZ);
             GL.End();
+            GL.Disable(EnableCap.LineStipple);
         }
 
         protected virtual bool ShouldRenderResizeBox(Viewport2D viewport)
@@ -643,38 +651,38 @@ namespace Sledge.Editor.Tools
                 case ResizeHandle.TopLeft:
                     x1 = start.DX;
                     x2 = x1 + handleWidth;
-                    y1 = end.DY;
-                    y2 = y1 - handleHeight;
+                    y1 = end.DY - handleHeight;
+                    y2 = end.DY;
                     break;
                 case ResizeHandle.Top:
                     x1 = start.DX;
                     x2 = end.DX;
-                    y1 = end.DY;
-                    y2 = y1 - handleHeight;
+                    y1 = end.DY - handleHeight;
+                    y2 = end.DY;
                     break;
                 case ResizeHandle.TopRight:
                     x1 = end.DX - handleWidth;
                     x2 = end.DX;
-                    y1 = end.DY;
-                    y2 = y1 - handleHeight;
+                    y1 = end.DY - handleHeight;
+                    y2 = end.DY;
                     break;
                 case ResizeHandle.Left:
                     x1 = start.DX;
                     x2 = x1 + handleWidth;
-                    y1 = end.DY;
-                    y2 = start.DY;
+                    y1 = start.DY;
+                    y2 = end.DY;
                     break;
                 case ResizeHandle.Center:
                     x1 = start.DX;
                     x2 = end.DX;
-                    y1 = end.DY;
-                    y2 = start.DY;
+                    y1 = start.DY;
+                    y2 = end.DY;
                     break;
                 case ResizeHandle.Right:
                     x1 = end.DX - handleWidth;
                     x2 = end.DX;
-                    y1 = end.DY;
-                    y2 = start.DY;
+                    y1 = start.DY;
+                    y2 = end.DY;
                     break;
                 case ResizeHandle.BottomLeft:
                     x1 = start.DX;
@@ -717,8 +725,8 @@ namespace Sledge.Editor.Tools
         {
             if (!Sledge.Settings.View.DrawBoxText) return;
 
-            var widthText = (boxEnd.X - boxStart.X).ToString("0.0");
-            var heightText = (boxEnd.Y - boxStart.Y).ToString("0.0");
+            var widthText = (Math.Round(boxEnd.X - boxStart.X, 1)).ToString("#.##");
+            var heightText = (Math.Round(boxEnd.Y - boxStart.Y, 1)).ToString("#.##");
 
             var wid = _printer.Measure(widthText, _printerFont, new RectangleF(0, 0, viewport.Width, viewport.Height));
             var hei = _printer.Measure(heightText, _printerFont, new RectangleF(0, 0, viewport.Width, viewport.Height));
