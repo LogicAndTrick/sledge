@@ -84,9 +84,13 @@ namespace Sledge.Editor.Tools
 
         public override void ToolSelected(bool preventHistory)
         {
+            IgnoreGroupingChanged();
+
             Mediator.Subscribe(EditorMediator.SelectionChanged, this);
             Mediator.Subscribe(EditorMediator.DocumentTreeStructureChanged, this);
             Mediator.Subscribe(EditorMediator.DocumentTreeObjectsChanged, this);
+            Mediator.Subscribe(EditorMediator.IgnoreGroupingChanged, this);
+
             SelectionChanged();
         }
 
@@ -98,6 +102,32 @@ namespace Sledge.Editor.Tools
         private bool IgnoreGrouping()
         {
             return Document.Map.IgnoreGrouping;
+        }
+
+        private void IgnoreGroupingChanged()
+        {
+            var selected = Document.Selection.GetSelectedObjects().ToList();
+            var select = new List<MapObject>();
+            var deselect = new List<MapObject>();
+            if (Document.Map.IgnoreGrouping)
+            {
+                deselect.AddRange(selected.Where(x => x.Children.Any()));
+            }
+            else
+            {
+                var parents = selected.Select(x => x.FindTopmostParent(y => y is Group || y is Entity)).Distinct();
+                foreach (var p in parents)
+                {
+                    var children = p.FindAll();
+                    var leaves = children.Where(x => !x.Children.Any());
+                    if (leaves.All(selected.Contains)) select.AddRange(children.Where(x => !selected.Contains(x)));
+                    else deselect.AddRange(children.Where(selected.Contains));
+                }
+            }
+            if (deselect.Any() || select.Any())
+            {
+                Document.PerformAction("Apply group selection", new ChangeSelection(select, deselect));
+            }
         }
 
         #region Current tool
@@ -296,6 +326,9 @@ namespace Sledge.Editor.Tools
         #region Double Click
         public override void MouseDoubleClick(ViewportBase viewport, ViewportEvent e)
         {
+            // Don't show Object Properties while navigating the view, because mouse cursor will be hidden
+            if (KeyboardState.IsKeyDown(Keys.Space)) return;
+            
             if (WidgetAction((w, vp, ev) => w.MouseDoubleClick(vp, ev), viewport, e)) return;
 
             if (viewport is Viewport3D && !Document.Selection.IsEmpty() && !ObjectPropertiesDialog.IsShowing)
@@ -334,7 +367,7 @@ namespace Sledge.Editor.Tools
         protected override void MouseDown3D(Viewport3D viewport, ViewportEvent e)
         {
             // Do not perform selection if space is down
-            if (KeyboardState.IsKeyDown(Keys.Space)) return;
+            if (Sledge.Settings.View.Camera3DPanRequiresMouseClick && KeyboardState.IsKeyDown(Keys.Space)) return;
 
             // First, get the ray that is cast from the clicked point along the viewport frustrum
             var ray = viewport.CastRayFromScreen(e.X, e.Y);

@@ -76,8 +76,8 @@ namespace Sledge.Editor.UI
             IfKey(Keys.S, () => Camera.Advance(-move), ignore);
             IfKey(Keys.A, () => Camera.Strafe(-move), ignore);
             IfKey(Keys.D, () => Camera.Strafe(move), ignore);
-            IfKey(Keys.Q, () => Camera.AscendAbs(move), ignore); //mxd
-            IfKey(Keys.E, () => Camera.AscendAbs(-move), ignore); //mxd
+            IfKey(Keys.Q, () => Camera.AscendAbsolute(move), ignore);
+            IfKey(Keys.E, () => Camera.AscendAbsolute(-move), ignore);
             IfKey(Keys.Right, () => Camera.Pan(-tilt), ignore);
             IfKey(Keys.Left, () => Camera.Pan(tilt), ignore);
             IfKey(Keys.Up, () => Camera.Tilt(-tilt), ignore);
@@ -162,16 +162,26 @@ namespace Sledge.Editor.UI
         {
             if (!Viewport.IsUnlocked(this)) return;
             FreeLook = false;
+            
             if (FreeLookToggle)
             {
                 FreeLook = true;
             }
             else
             {
-                var space = KeyboardState.IsKeyDown(Keys.Space) || ToolManager.ActiveTool is CameraTool;
                 var left = Control.MouseButtons.HasFlag(MouseButtons.Left);
                 var right = Control.MouseButtons.HasFlag(MouseButtons.Right);
-                FreeLook = space && (left || right);
+                
+                if (ToolManager.ActiveTool is CameraTool)
+                {
+                    FreeLook = left || right;
+                }
+                else
+                {
+                    var space = KeyboardState.IsKeyDown(Keys.Space);
+                    var req = Sledge.Settings.View.Camera3DPanRequiresMouseClick;
+                    FreeLook = space && (!req || left || right);
+                }
             }
 
             if (FreeLook && CursorVisible)

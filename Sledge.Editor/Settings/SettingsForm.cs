@@ -413,7 +413,8 @@ namespace Sledge.Editor.Settings
             AddSetting(() => Sledge.Settings.View.SelectionBoxBackgroundOpacity, 0, 128, "Selection box background opacity");
 
             AddHeading("Camera");
-            AddSetting(() => Sledge.Settings.View.Camera2DPanRequiresMouseClick, "Require mouse click to pan 2D viewports when holding spacebar");
+            AddSetting(() => Sledge.Settings.View.Camera2DPanRequiresMouseClick, "Require mouse click to enable panning in 2D viewports when holding spacebar");
+            AddSetting(() => Sledge.Settings.View.Camera3DPanRequiresMouseClick, "Require mouse click to enable free-look in 3D viewports when holding spacebar");
 
 
             // 2D Views

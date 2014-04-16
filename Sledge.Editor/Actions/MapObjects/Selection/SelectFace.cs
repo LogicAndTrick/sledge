@@ -6,39 +6,14 @@ using Sledge.Editor.Documents;
 
 namespace Sledge.Editor.Actions.MapObjects.Selection
 {
-    public class SelectFace : IAction
+    public class SelectFace : ChangeFaceSelection
     {
-        private List<Face> _objects;
-
-        public SelectFace(IEnumerable<Face> objects)
+        public SelectFace(IEnumerable<Face> objects) : base(objects, new Face[0])
         {
-            _objects = objects.ToList();
         }
 
-        public SelectFace(params Face[] objects)
+        public SelectFace(params Face[] objects) : base(objects, new Face[0])
         {
-            _objects = objects.ToList();
-        }
-
-        public void Dispose()
-        {
-            _objects = null;
-        }
-
-        public void Reverse(Document document)
-        {
-            document.Selection.Deselect(_objects);
-
-            Mediator.Publish(EditorMediator.DocumentTreeSelectedFacesChanged, _objects);
-            Mediator.Publish(EditorMediator.SelectionChanged);
-        }
-
-        public void Perform(Document document)
-        {
-            document.Selection.Select(_objects);
-
-            Mediator.Publish(EditorMediator.DocumentTreeSelectedFacesChanged, _objects);
-            Mediator.Publish(EditorMediator.SelectionChanged);
         }
     }
 }

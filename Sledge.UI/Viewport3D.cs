@@ -49,11 +49,10 @@ namespace Sledge.UI
 
         public override void FocusOn(Box box)
         {
-            decimal dist = System.Math.Max(System.Math.Max(box.Width, box.Length), box.Height); //mxd
-            Vector3 normal = Camera.Location - Camera.LookAt; //mxd
-            Vector v = new Vector(new Coordinate((decimal)normal.X, (decimal)normal.Y, (decimal)normal.Z), dist); //mxd
-
-            FocusOn(box.Center, new Coordinate((decimal)v.X, (decimal)v.Y, (decimal)v.Z)); //mxd
+            var dist = System.Math.Max(System.Math.Max(box.Width, box.Length), box.Height);
+            var normal = Camera.Location - Camera.LookAt;
+            var v = new Vector(new Coordinate((decimal)normal.X, (decimal)normal.Y, (decimal)normal.Z), dist);
+            FocusOn(box.Center, new Coordinate(v.X, v.Y, v.Z));
         }
 
         public override void FocusOn(Coordinate coordinate)

@@ -503,7 +503,6 @@ namespace Sledge.Editor.Tools
             }
         }
 
-        //mxd
         private void TexturesListTextureSelected(object sender, TextureItem item)
         {
             OnTextureApply(item);
