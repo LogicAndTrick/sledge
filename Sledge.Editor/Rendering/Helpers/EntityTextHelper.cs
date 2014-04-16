@@ -49,9 +49,10 @@ namespace Sledge.Editor.Rendering.Helpers
             var nameProp = entityData.GetPropertyValue("targetname");
             if (!String.IsNullOrWhiteSpace(nameProp)) text += ": " + nameProp;
 
-            var wid = _printer.Measure(text, _printerFont, new RectangleF(0, 0, viewport.Width, viewport.Height)); //mxd
-            var cx = (float)(start.X + (end.X - start.X) / 2); //mxd
-            var bounds = new RectangleF(cx - wid.BoundingBox.Width / 2, viewport.Height - (float)end.Y - _printerFont.Height - 6, viewport.Width, viewport.Height); //mxd
+            // Center the text horizontally
+            var wid = _printer.Measure(text, _printerFont, new RectangleF(0, 0, viewport.Width, viewport.Height));
+            var cx = (float)(start.X + (end.X - start.X) / 2);
+            var bounds = new RectangleF(cx - wid.BoundingBox.Width / 2, viewport.Height - (float)end.Y - _printerFont.Height - 6, viewport.Width, viewport.Height);
 
             _printer.Print(text, _printerFont, o.Colour, bounds);
         }

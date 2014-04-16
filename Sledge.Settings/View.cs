@@ -18,7 +18,7 @@ namespace Sledge.Settings
         public static int DetailRenderDistance { get; set; }
 
         public static bool Camera2DPanRequiresMouseClick { get; set; }
-        public static bool Camera3DPanRequiresMouseClick { get; set; } //mxd
+        public static bool Camera3DPanRequiresMouseClick { get; set; }
 
         public static int ForwardSpeed { get; set; }
         public static decimal TimeToTopSpeed { get; set; }
@@ -54,7 +54,7 @@ namespace Sledge.Settings
             ViewportBackground = Color.Black;
 
             Camera2DPanRequiresMouseClick = false;
-            Camera3DPanRequiresMouseClick = false; //mxd
+            Camera3DPanRequiresMouseClick = false;
 
             BackClippingPane = 6000;
             ModelRenderDistance = 2000;

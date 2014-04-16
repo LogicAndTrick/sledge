@@ -76,8 +76,8 @@ namespace Sledge.Editor.UI
             IfKey(Keys.S, () => Camera.Advance(-move), ignore);
             IfKey(Keys.A, () => Camera.Strafe(-move), ignore);
             IfKey(Keys.D, () => Camera.Strafe(move), ignore);
-            IfKey(Keys.Q, () => Camera.AscendAbs(move), ignore); //mxd
-            IfKey(Keys.E, () => Camera.AscendAbs(-move), ignore); //mxd
+            IfKey(Keys.Q, () => Camera.AscendAbsolute(move), ignore);
+            IfKey(Keys.E, () => Camera.AscendAbsolute(-move), ignore);
             IfKey(Keys.Right, () => Camera.Pan(-tilt), ignore);
             IfKey(Keys.Left, () => Camera.Pan(tilt), ignore);
             IfKey(Keys.Up, () => Camera.Tilt(-tilt), ignore);
@@ -161,6 +161,7 @@ namespace Sledge.Editor.UI
         private void SetFreeLook()
         {
             if (!Viewport.IsUnlocked(this)) return;
+            FreeLook = false;
             
             if (FreeLookToggle)
             {
@@ -178,7 +179,7 @@ namespace Sledge.Editor.UI
                 else
                 {
                     var space = KeyboardState.IsKeyDown(Keys.Space);
-                    var req = Sledge.Settings.View.Camera3DPanRequiresMouseClick; //mxd
+                    var req = Sledge.Settings.View.Camera3DPanRequiresMouseClick;
                     FreeLook = space && (!req || left || right);
                 }
             }

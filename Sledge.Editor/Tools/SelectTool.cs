@@ -326,8 +326,8 @@ namespace Sledge.Editor.Tools
         #region Double Click
         public override void MouseDoubleClick(ViewportBase viewport, ViewportEvent e)
         {
-            //mxd. Don't show Object Properties while navigating the view, because mouse cursor will be hidden
-            if (!Sledge.Settings.View.Camera3DPanRequiresMouseClick && KeyboardState.IsKeyDown(Keys.Space)) return;
+            // Don't show Object Properties while navigating the view, because mouse cursor will be hidden
+            if (KeyboardState.IsKeyDown(Keys.Space)) return;
             
             if (WidgetAction((w, vp, ev) => w.MouseDoubleClick(vp, ev), viewport, e)) return;
 
