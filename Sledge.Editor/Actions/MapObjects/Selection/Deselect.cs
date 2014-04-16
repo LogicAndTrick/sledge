@@ -5,34 +5,10 @@ using Sledge.Editor.Documents;
 
 namespace Sledge.Editor.Actions.MapObjects.Selection
 {
-    public class Deselect : IAction
+    public class Deselect : ChangeSelection
     {
-        private List<MapObject> _objects;
-
-        public Deselect(List<MapObject> objects)
+        public Deselect(IEnumerable<MapObject> objects) : base(new MapObject[0], objects)
         {
-            _objects = objects;
-        }
-
-        public void Dispose()
-        {
-            _objects = null;
-        }
-
-        public void Reverse(Document document)
-        {
-            document.Selection.Select(_objects);
-
-            Mediator.Publish(EditorMediator.DocumentTreeSelectedObjectsChanged, _objects);
-            Mediator.Publish(EditorMediator.SelectionChanged);
-        }
-
-        public void Perform(Document document)
-        {
-            document.Selection.Deselect(_objects);
-
-            Mediator.Publish(EditorMediator.DocumentTreeSelectedObjectsChanged, _objects);
-            Mediator.Publish(EditorMediator.SelectionChanged);
         }
     }
 }

@@ -896,6 +896,7 @@ namespace Sledge.Editor.Documents
         public void ToggleIgnoreGrouping()
         {
             _document.Map.IgnoreGrouping = !_document.Map.IgnoreGrouping;
+            Mediator.Publish(EditorMediator.IgnoreGroupingChanged);
             Mediator.Publish(EditorMediator.UpdateToolstrip);
         }
 

@@ -34,6 +34,7 @@ namespace Sledge.Editor
         WorldspawnProperties,
         ResetSelectedBrushType,
         SetZoomValue,
+        IgnoreGroupingChanged,
 
         VisgroupToggled,
         VisgroupsChanged,

@@ -106,7 +106,7 @@ namespace Sledge.Editor.Editing
 
         public void Select(IEnumerable<MapObject> objs)
         {
-            foreach (var obj in objs.SelectMany(x => x.FindAll()).Distinct())
+            foreach (var obj in objs.Distinct())
             {
                 obj.IsSelected = true;
                 SelectedObjects.Add(obj);
@@ -138,7 +138,7 @@ namespace Sledge.Editor.Editing
 
         public void Deselect(IEnumerable<MapObject> objs)
         {
-            foreach (var obj in objs.SelectMany(x => x.FindAll()).Distinct())
+            foreach (var obj in objs.Distinct())
             {
                 SelectedObjects.RemoveAll(x => x == obj);
                 obj.IsSelected = false;
