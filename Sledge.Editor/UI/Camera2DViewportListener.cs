@@ -6,6 +6,7 @@ using Sledge.DataStructures.Geometric;
 using Sledge.Extensions;
 using Sledge.UI;
 using System.Drawing;
+using Sledge.Editor.Documents;
 
 namespace Sledge.Editor.UI
 {
@@ -48,6 +49,31 @@ namespace Sledge.Editor.UI
                 }
                 e.Handled = true;
             }
+
+            //mxd. Move viewport?
+            if (DocumentManager.CurrentDocument.Selection.IsEmpty())
+            {
+                Coordinate shift = new Coordinate(0, 0, 0);
+
+                switch (e.KeyCode)
+                {
+                    case Keys.Left:
+                        shift.X = -Viewport.Width / Viewport2D.Zoom / 4;
+                        break;
+                    case Keys.Right:
+                        shift.X = Viewport.Width / Viewport2D.Zoom / 4;
+                        break;
+                    case Keys.Up:
+                        shift.Y = Viewport.Height / Viewport2D.Zoom / 4;
+                        break;
+                    case Keys.Down:
+                        shift.Y = -Viewport.Height / Viewport2D.Zoom / 4;
+                        break;
+                }
+
+                Viewport2D.Position += shift;
+            }
+
             var str = e.KeyCode.ToString();
             if (str.StartsWith("NumPad") || str.StartsWith("D"))
             {
