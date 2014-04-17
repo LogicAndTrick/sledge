@@ -125,7 +125,7 @@ namespace Sledge.Editor.Rendering.Arrays
 
                     PushOffset(face);
                     var index = PushData(Convert(face));
-                    if (!face.Parent.IsRenderHidden3D) PushIndex(subset, index, Triangulate(face.Vertices.Count));
+                    if (!face.Parent.IsRenderHidden3D && face.Opacity > 0) PushIndex(subset, index, Triangulate(face.Vertices.Count));
                     if (!face.Parent.IsRenderHidden2D) PushIndex(Wireframe, index, Linearise(face.Vertices.Count));
 
                     if (group.Key.Transparent) PushSubset(subset, face);
