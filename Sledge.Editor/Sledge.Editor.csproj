@@ -213,6 +213,7 @@
     <Compile Include="Rendering\Arrays\ModelArray.cs" />
     <Compile Include="Rendering\Arrays\MapObjectArray.cs" />
     <Compile Include="Rendering\Arrays\MapObjectVertex.cs" />
+    <Compile Include="Rendering\Helpers\EntityAngleHelper.cs" />
     <Compile Include="Rendering\Helpers\EntityTextHelper.cs" />
     <Compile Include="Rendering\Helpers\CenterHandlesHelper.cs" />
     <Compile Include="Rendering\Helpers\CordonHelper.cs" />

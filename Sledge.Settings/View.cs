@@ -10,6 +10,7 @@ namespace Sledge.Settings
         public static bool DrawBoxText { get; set; }
         public static bool DrawBoxDashedLines { get; set; }
         public static bool DrawEntityNames { get; set; }
+        public static bool DrawEntityAngles { get; set; } //mxd
         
         public static Color ViewportBackground { get; set; }
 
@@ -50,6 +51,7 @@ namespace Sledge.Settings
             DrawBoxText = true;
             DrawBoxDashedLines = false;
             DrawEntityNames = true;
+            DrawEntityAngles = true; //mxd
 
             ViewportBackground = Color.Black;
 
