@@ -50,10 +50,12 @@ namespace Sledge.Editor.UI
                 e.Handled = true;
             }
 
-            //mxd. Move viewport?
-            if (DocumentManager.CurrentDocument.Selection.IsEmpty())
+            var moveAllowed = DocumentManager.CurrentDocument != null &&
+                              (DocumentManager.CurrentDocument.Selection.IsEmpty()
+                               || !Sledge.Settings.Select.ArrowKeysNudgeSelection);
+            if (moveAllowed)
             {
-                Coordinate shift = new Coordinate(0, 0, 0);
+                var shift = new Coordinate(0, 0, 0);
 
                 switch (e.KeyCode)
                 {
