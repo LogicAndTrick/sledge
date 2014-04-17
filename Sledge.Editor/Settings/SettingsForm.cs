@@ -420,6 +420,7 @@ namespace Sledge.Editor.Settings
             // 2D Views
             CrosshairCursorIn2DViews.Checked = Sledge.Settings.View.CrosshairCursorIn2DViews;
             DrawEntityNames.Checked = Sledge.Settings.View.DrawEntityNames;
+            DrawEntityAngles.Checked = Sledge.Settings.View.DrawEntityAngles; //mxd
 
             RotationStyle_SnapOnShift.Checked = Sledge.Settings.Select.RotationStyle == RotationStyle.SnapOnShift;
             RotationStyle_SnapOffShift.Checked = Sledge.Settings.Select.RotationStyle == RotationStyle.SnapOffShift;
@@ -486,6 +487,7 @@ namespace Sledge.Editor.Settings
             // 2D Views
             Sledge.Settings.View.CrosshairCursorIn2DViews = CrosshairCursorIn2DViews.Checked;
             Sledge.Settings.View.DrawEntityNames = DrawEntityNames.Checked;
+            Sledge.Settings.View.DrawEntityAngles = DrawEntityAngles.Checked; //mxd
 
             if (RotationStyle_SnapOnShift.Checked) Sledge.Settings.Select.RotationStyle = RotationStyle.SnapOnShift;
             if (RotationStyle_SnapOffShift.Checked) Sledge.Settings.Select.RotationStyle = RotationStyle.SnapOffShift;
