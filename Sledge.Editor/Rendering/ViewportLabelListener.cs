@@ -41,7 +41,19 @@ namespace Sledge.Editor.Rendering
             if (Viewport is Viewport2D)
             {
                 var dir = ((Viewport2D)Viewport).Direction;
-                _text = dir.ToString();
+                _text = "";
+                switch (dir)
+                {
+                    case Viewport2D.ViewDirection.Top:
+                        _text = "Top (x/y)";
+                        break;
+                    case Viewport2D.ViewDirection.Front:
+                        _text = "Front (y/z)";
+                        break;
+                    case Viewport2D.ViewDirection.Side:
+                        _text = "Side (x/z)";
+                        break;
+                }
             }
             else if (Viewport is Viewport3D)
             {
@@ -56,9 +68,9 @@ namespace Sledge.Editor.Rendering
                                             CreateMenu("3D Flat", Viewport3D.ViewType.Flat, null),
                                             CreateMenu("3D Wireframe", Viewport3D.ViewType.Wireframe, null),
                                             new MenuItem("-"), 
-                                            CreateMenu("2D Top", null, Viewport2D.ViewDirection.Top),
-                                            CreateMenu("2D Side", null, Viewport2D.ViewDirection.Side),
-                                            CreateMenu("2D Front", null, Viewport2D.ViewDirection.Front),
+                                            CreateMenu("2D Top (x/y)", null, Viewport2D.ViewDirection.Top),
+                                            CreateMenu("2D Side (x/z)", null, Viewport2D.ViewDirection.Side),
+                                            CreateMenu("2D Front (y/z)", null, Viewport2D.ViewDirection.Front),
                                             new MenuItem("-"), 
                                             ScreenshotMenuItem()
                                         });
