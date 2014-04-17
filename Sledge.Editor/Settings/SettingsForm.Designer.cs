@@ -283,6 +283,7 @@ namespace Sledge.Editor.Settings
             this.btnCancelSettings = new System.Windows.Forms.Button();
             this.btnApplyAndCloseSettings = new System.Windows.Forms.Button();
             this.btnApplySettings = new System.Windows.Forms.Button();
+            this.DrawEntityAngles = new System.Windows.Forms.CheckBox();
             this.SelectedBuildCsgParameters = new Sledge.Editor.Compiling.CompileParameterPanel();
             this.SelectedBuildBspParameters = new Sledge.Editor.Compiling.CompileParameterPanel();
             this.SelectedBuildVisParameters = new Sledge.Editor.Compiling.CompileParameterPanel();
@@ -466,7 +467,7 @@ namespace Sledge.Editor.Settings
             this.groupBox3.Controls.Add(this.GridColour);
             this.groupBox3.Controls.Add(this.GridHighlight1Distance);
             this.groupBox3.Controls.Add(this.label8);
-            this.groupBox3.Location = new System.Drawing.Point(6, 217);
+            this.groupBox3.Location = new System.Drawing.Point(6, 245);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Size = new System.Drawing.Size(409, 178);
             this.groupBox3.TabIndex = 0;
@@ -656,11 +657,12 @@ namespace Sledge.Editor.Settings
             // 
             // groupBox17
             // 
+            this.groupBox17.Controls.Add(this.DrawEntityAngles);
             this.groupBox17.Controls.Add(this.DrawEntityNames);
             this.groupBox17.Controls.Add(this.CrosshairCursorIn2DViews);
             this.groupBox17.Location = new System.Drawing.Point(421, 126);
             this.groupBox17.Name = "groupBox17";
-            this.groupBox17.Size = new System.Drawing.Size(304, 85);
+            this.groupBox17.Size = new System.Drawing.Size(304, 113);
             this.groupBox17.TabIndex = 0;
             this.groupBox17.TabStop = false;
             this.groupBox17.Text = "Options";
@@ -802,7 +804,7 @@ namespace Sledge.Editor.Settings
             this.groupBox5.Controls.Add(this.DefaultGridSize);
             this.groupBox5.Location = new System.Drawing.Point(6, 126);
             this.groupBox5.Name = "groupBox5";
-            this.groupBox5.Size = new System.Drawing.Size(409, 85);
+            this.groupBox5.Size = new System.Drawing.Size(409, 113);
             this.groupBox5.TabIndex = 0;
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "Grid Settings";
@@ -3085,6 +3087,16 @@ namespace Sledge.Editor.Settings
             this.btnApplySettings.UseVisualStyleBackColor = true;
             this.btnApplySettings.Click += new System.EventHandler(this.Apply);
             // 
+            // DrawEntityAngles
+            // 
+            this.DrawEntityAngles.Location = new System.Drawing.Point(10, 79);
+            this.DrawEntityAngles.Name = "DrawEntityAngles";
+            this.DrawEntityAngles.Size = new System.Drawing.Size(225, 24);
+            this.DrawEntityAngles.TabIndex = 5;
+            this.DrawEntityAngles.Tag = "";
+            this.DrawEntityAngles.Text = "Draw entity angles in the viewport";
+            this.DrawEntityAngles.UseVisualStyleBackColor = true;
+            // 
             // SelectedBuildCsgParameters
             // 
             this.SelectedBuildCsgParameters.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -3470,5 +3482,6 @@ namespace Sledge.Editor.Settings
         private System.Windows.Forms.NumericUpDown MouseWheelMoveDistance;
         private System.Windows.Forms.CheckBox DrawEntityNames;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
+        private System.Windows.Forms.CheckBox DrawEntityAngles;
 	}
 }
