@@ -17,6 +17,7 @@ namespace Sledge.Settings
         public static List<Setting> Settings { get; set; }
         public static List<Hotkey> Hotkeys { get; set; }
         private static readonly Dictionary<string, GenericStructure> AdditionalSettings;
+        public static List<FavouriteTextureFolder> FavouriteTextureFolders { get; set; }
 
         public static string SettingsFile { get; set; }
 
@@ -56,6 +57,7 @@ namespace Sledge.Settings
                                               {"tools/toolstrigger", 0.5f}
                                           };
             AdditionalSettings = new Dictionary<string, GenericStructure>();
+            FavouriteTextureFolders = new List<FavouriteTextureFolder>();
 
             var appdata = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
             var sledge = Path.Combine(appdata, "Sledge");
@@ -105,6 +107,7 @@ namespace Sledge.Settings
             Settings.Clear();
             Hotkeys.Clear();
             AdditionalSettings.Clear();
+            FavouriteTextureFolders.Clear();
 
             var root = ReadSettingsFile();
 
@@ -163,6 +166,20 @@ namespace Sledge.Settings
                 foreach (var child in additionalSettings.Children)
                 {
                     if (child.Children.Count > 0) AdditionalSettings.Add(child.Name, child.Children[0]);
+                }
+            }
+
+            var favTextures = root.Children.FirstOrDefault(x => x.Name == "FavouriteTextures");
+            if (favTextures != null && favTextures.Children.Any())
+            {
+                try
+                {
+                    var ft = GenericStructure.Deserialise<List<FavouriteTextureFolder>>(favTextures.Children[0]);
+                    if (ft != null) FavouriteTextureFolders.AddRange(ft);
+                }
+                catch
+                {
+                    // Nope
                 }
             }
 
@@ -237,6 +254,11 @@ namespace Sledge.Settings
                 additional.Children.Add(child);
             }
             root.Children.Add(additional);
+
+            // Favourite textures
+            var favTextures = new GenericStructure("FavouriteTextures");
+            favTextures.Children.Add(GenericStructure.Serialise(FavouriteTextureFolders));
+            root.Children.Add(favTextures);
 
             File.WriteAllText(SettingsFile, root.ToString());
         }

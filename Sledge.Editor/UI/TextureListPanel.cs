@@ -120,6 +120,8 @@ namespace Sledge.Editor.UI
             }
         }
 
+        public bool EnableDrag { get; set; }
+
         #endregion
 
         public TextureListPanel()
@@ -183,12 +185,21 @@ namespace Sledge.Editor.UI
             }
         }
 
+        private bool _down;
+        private Point _downPoint;
+
         protected override void OnMouseDown(MouseEventArgs e)
         {
             base.OnMouseDown(e);
-
+            
             if (!AllowSelection) return;
             if (!AllowMultipleSelection || !KeyboardState.Ctrl) _selection.Clear();
+
+            if (e.Button == MouseButtons.Left)
+            {
+                _down = true;
+                _downPoint = e.Location;
+            }
 
             var x = e.X;
             var y = _scrollBar.Value + e.Y;
@@ -221,6 +232,22 @@ namespace Sledge.Editor.UI
             OnSelectionChanged(_selection);
 
             Refresh();
+        }
+
+        protected override void OnMouseMove(MouseEventArgs e)
+        {
+            base.OnMouseMove(e);
+            if (_down && EnableDrag && _selection.Any() && (Math.Abs(e.X - _downPoint.X) > 2 || Math.Abs(e.Y - _downPoint.Y) > 2))
+            {
+                _down = false;
+                DoDragDrop(_selection.ToList(), DragDropEffects.Copy);
+            }
+        }
+
+        protected override void OnMouseUp(MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left) _down = false;
+            base.OnMouseUp(e);
         }
 
         public int GetIndexAt(int x, int y)

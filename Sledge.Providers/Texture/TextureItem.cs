@@ -1,4 +1,5 @@
-﻿using Sledge.Common;
+﻿using System.IO;
+using Sledge.Common;
 using Sledge.Graphics.Helpers;
 
 namespace Sledge.Providers.Texture
@@ -25,6 +26,11 @@ namespace Sledge.Providers.Texture
                 TextureProvider.LoadTextureItem(this);
             }
             return TextureHelper.Get(Name.ToLowerInvariant());
+        }
+
+        public string GetIdentifierKey()
+        {
+            return (Path.GetFileName(Package.PackageFile) ?? "") + ":" + Name;
         }
     }
 }

@@ -42,6 +42,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FavouriteTextureFolder.cs" />
     <Compile Include="GameDetection\GameFiles\SteamGame.cs" />
     <Compile Include="GameDetection\GameFiles\SteamGames.cs" />
     <Compile Include="GameDetection\IGameDetector.cs" />
