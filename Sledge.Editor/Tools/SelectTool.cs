@@ -115,7 +115,7 @@ namespace Sledge.Editor.Tools
             }
             else
             {
-                var parents = selected.Select(x => x.FindTopmostParent(y => y is Group || y is Entity)).Distinct();
+                var parents = selected.Select(x => x.FindTopmostParent(y => y is Group || y is Entity) ?? x).Distinct();
                 foreach (var p in parents)
                 {
                     var children = p.FindAll();

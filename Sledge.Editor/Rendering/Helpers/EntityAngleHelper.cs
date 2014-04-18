@@ -1,5 +1,5 @@
 ﻿using OpenTK;
-using OpenTK.Graphics;
+using OpenTK.Graphics.OpenGL;
 using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.MapObjects;
 using Sledge.DataStructures.Transformations;
@@ -7,7 +7,6 @@ using Sledge.Editor.Documents;
 using Sledge.Extensions;
 using Sledge.UI;
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 
@@ -27,29 +26,22 @@ namespace Sledge.Editor.Rendering.Helpers
             return o is Entity && !o.Children.Any();
         }
 
-        private List<Coordinate> arrow;
-
-        public EntityAngleHelper()
-        {
-            var end = new Coordinate(1.0m, 0.0m, 0.0m);
-            arrow = new List<Coordinate>{
-                new Coordinate(0m, 0m, 0m), end,
-                new Coordinate(0.6m, 0.2m, 0m), end,
-                new Coordinate(0.6m, -0.2m, 0m), end,
-                new Coordinate(0.6m, 0m, 0.2m), end,
-                new Coordinate(0.6m, 0m, -0.2m), end
-            };
-        }
-
         public void BeforeRender2D(Viewport2D viewport)
         {
             GL.Enable(EnableCap.LineSmooth);
+            GL.Enable(EnableCap.PolygonSmooth);
             GL.LineWidth(2);
-            GL.Begin(BeginMode.Lines);
+        }
+
+        protected static void Coord(Coordinate c)
+        {
+            GL.Vertex3(c.DX, c.DY, c.DZ);
         }
 
         public void Render2D(Viewport2D viewport, MapObject o)
         {
+            if (viewport.Zoom < 0.5m) return;
+
             var entityData = o.GetEntityData();
             if (entityData == null) return;
 
@@ -57,26 +49,35 @@ namespace Sledge.Editor.Rendering.Helpers
             if (angles == null) return;
 
             angles = new Coordinate(DMath.DegreesToRadians(angles.Z), DMath.DegreesToRadians(angles.X), DMath.DegreesToRadians(angles.Y));
-            var center = viewport.Flatten(o.BoundingBox.Center);
-            double scale = (double)o.BoundingBox.Width * 0.48d;
-            UnitMatrixMult m = new UnitMatrixMult(Matrix4.CreateRotationX((float)angles.X) 
-                                                * Matrix4.CreateRotationY((float)angles.Y) 
-                                                * Matrix4.CreateRotationZ((float)angles.Z));
+            var m = new UnitMatrixMult(Matrix4.CreateRotationX((float)angles.X) * Matrix4.CreateRotationY((float)angles.Y) * Matrix4.CreateRotationZ((float)angles.Z));
+
+            var min = Math.Min(o.BoundingBox.Width, Math.Min(o.BoundingBox.Height, o.BoundingBox.Length));
+            var p1 = viewport.Flatten(o.BoundingBox.Center);
+            var p2 = p1 + viewport.Flatten(m.Transform(Coordinate.UnitX)) * min * 0.4m;
+
+            var multiplier = 4 / viewport.Zoom;
+            var dir = (p2 - p1).Normalise();
+            var cp = new Coordinate(-dir.Y, dir.X, 0).Normalise();
 
             GL.Color4(Color.FromArgb(255, o.Colour));
-            foreach (Coordinate c in arrow)
-            {
-                var v = m.Transform(c);
-                v = viewport.Flatten(v);
-                GL.Vertex3(center.DX + v.DX * scale, center.DY + v.DY * scale, center.DZ + v.DZ * scale);
-            }
+
+            GL.Begin(PrimitiveType.Lines);
+            Coord(p1);
+            Coord(p2);
+            GL.End();
+
+            GL.Begin(PrimitiveType.Triangles);
+            Coord(p2 - (dir * 2 - cp) * multiplier);
+            Coord(p2 - (dir * 2 + cp) * multiplier);
+            Coord(p2);
+            GL.End();
         }
 
         public void AfterRender2D(Viewport2D viewport)
         {
-            GL.End();
             GL.LineWidth(1);
             GL.Disable(EnableCap.LineSmooth);
+            GL.Disable(EnableCap.PolygonSmooth);
         }
 
         public void BeforeRender3D(Viewport3D viewport)
