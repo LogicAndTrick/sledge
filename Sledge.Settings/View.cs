@@ -39,6 +39,7 @@ namespace Sledge.Settings
         public static bool GloballyDisableTransparency { get; set; }
         public static bool DisableModelRendering { get; set; }
         public static bool DisableTextureFiltering { get; set; }
+        public static bool ForcePowerOfTwoTextureResizing { get; set; }
 
         public static bool CompileOpenOutput { get; set; }
         public static bool CompileDefaultAdvanced { get; set; }
@@ -81,6 +82,7 @@ namespace Sledge.Settings
             GloballyDisableTransparency = false;
             DisableModelRendering = false;
             DisableTextureFiltering = false;
+            ForcePowerOfTwoTextureResizing = false;
 
             CompileOpenOutput = true;
             CompileDefaultAdvanced = false;

@@ -25,6 +25,8 @@ namespace Sledge.Graphics.Helpers
             set { PixelInternalFormat = value ? PixelInternalFormat.Rgba : PixelInternalFormat.Rgb; }
         }
 
+        public static bool ForceNonPowerOfTwoResize { get; set; }
+
         public static bool DisableTextureFiltering { get; set; }
 
         static TextureHelper()
@@ -37,6 +39,18 @@ namespace Sledge.Graphics.Helpers
         {
             Textures.Values.ToList().ForEach(x => x.Dispose());
             Textures.Clear();
+        }
+
+        private static bool? _supportsNpot;
+
+        public static bool SupportsNonPowerOfTwo()
+        {
+            if (!_supportsNpot.HasValue)
+            {
+                var extensions = GL.GetString(StringName.Extensions);
+                _supportsNpot = extensions.Contains("GL_ARB_texture_non_power_of_two");
+            }
+            return _supportsNpot.Value;
         }
 
 
@@ -59,13 +73,34 @@ namespace Sledge.Graphics.Helpers
 
         #region Create
 
+        // http://stackoverflow.com/questions/5525122/c-sharp-math-question-smallest-power-of-2-bigger-than-x
+        // http://aggregate.org/MAGIC/#Next%20Largest%20Power%20of%202
+        private static int NextPowerOfTwo(int num)
+        {
+            var x = (uint) num;
+            x--;
+            x |= (x >> 1);
+            x |= (x >> 2);
+            x |= (x >> 4);
+            x |= (x >> 8);
+            x |= (x >> 16);
+            return (int) (x + 1);
+        }
+
         public static GLTexture Create(string name, Bitmap bitmap, bool hasTransparency)
         {
             if (Exists(name)) {
                 Delete(name);
             }
-            var data = bitmap.LockBits(
-                new Rectangle(0, 0, bitmap.Width, bitmap.Height),
+            var actualBitmap = bitmap;
+            if (ForceNonPowerOfTwoResize || !SupportsNonPowerOfTwo())
+            {
+                var w = NextPowerOfTwo(bitmap.Width);
+                var h = NextPowerOfTwo(bitmap.Height);
+                if (w != bitmap.Width || h != bitmap.Height) actualBitmap = new Bitmap(bitmap, w, h);
+            }
+            var data = actualBitmap.LockBits(
+                new Rectangle(0, 0, actualBitmap.Width, actualBitmap.Height),
                 ImageLockMode.ReadOnly,
                 System.Drawing.Imaging.PixelFormat.Format32bppArgb
                 );
@@ -75,13 +110,19 @@ namespace Sledge.Graphics.Helpers
                 TextureTarget.Texture2D,
                 0,
                 PixelInternalFormat,
-                data.Width, data.Height,
+                data.Width,
+                data.Height,
                 0,
                 PixelFormat.Bgra,
                 PixelType.UnsignedByte,
                 data.Scan0
                 );
-            bitmap.UnlockBits(data);
+
+            actualBitmap.UnlockBits(data);
+            if (actualBitmap != bitmap)
+            {
+                actualBitmap.Dispose();
+            }
             var texobj = new GLTexture(tex, name) { Width = bitmap.Width, Height = bitmap.Height, HasTransparency = hasTransparency, BitmapImage = (Bitmap)bitmap.Clone() };
             Textures.Add(name, texobj);
             return texobj;

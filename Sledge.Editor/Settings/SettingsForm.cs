@@ -397,6 +397,7 @@ namespace Sledge.Editor.Settings
             AddSetting(() => Sledge.Settings.View.GloballyDisableTransparency, "Disable transparent textures globally");
             AddSetting(() => Sledge.Settings.View.DisableModelRendering, "Disable model rendering");
             AddSetting(() => Sledge.Settings.View.DisableTextureFiltering, "Disable texture filtering (try this if textures render incorrectly)");
+            AddSetting(() => Sledge.Settings.View.ForcePowerOfTwoTextureResizing, "Force non power of two textures to be resized (try this if only 64, 128, 256, 512, etc size textures work)");
 
             AddHeading("Center Handles");
             AddSetting(() => Sledge.Settings.Select.DrawCenterHandles, "Render brush center handles");
