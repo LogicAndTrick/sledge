@@ -133,23 +133,36 @@ namespace Sledge.Providers.Texture
             return type == 0x42 || type == 0x43;
         }
 
-        private const char UnitSeparator = (char) 31;
+        private const char NullCharacter = (char) 0;
 
         private bool LoadFromCache(TexturePackage package)
         {
             if (CachePath == null || !Directory.Exists(CachePath)) return false;
+
             var fi = new FileInfo(package.PackageFile);
             var cacheFile = Path.Combine(CachePath, fi.Name + "_" + (fi.LastWriteTime.Ticks));
             if (!File.Exists(cacheFile)) return false;
+
             var lines = File.ReadAllLines(cacheFile);
             if (lines.Length < 3) return false;
             if (lines[0] != fi.FullName) return false;
             if (lines[1] != fi.LastWriteTime.ToFileTime().ToString(CultureInfo.InvariantCulture)) return false;
             if (lines[2] != fi.Length.ToString(CultureInfo.InvariantCulture)) return false;
-            foreach (var line in lines.Skip(3))
+
+            try
             {
-                var spl = line.Split(UnitSeparator);
-                package.AddTexture(new TextureItem(package, spl[0], int.Parse(spl[1], CultureInfo.InvariantCulture), int.Parse(spl[2], CultureInfo.InvariantCulture)));
+                var items = new List<TextureItem>();
+                foreach (var line in lines.Skip(3))
+                {
+                    var spl = line.Split(NullCharacter);
+                    items.Add(new TextureItem(package, spl[0], int.Parse(spl[1], CultureInfo.InvariantCulture), int.Parse(spl[2], CultureInfo.InvariantCulture)));
+                }
+                items.ForEach(package.AddTexture);
+            }
+            catch
+            {
+                // Cache file is no good...
+                return false;
             }
             return true;
         }
@@ -165,7 +178,7 @@ namespace Sledge.Providers.Texture
             lines.Add(fi.Length.ToString(CultureInfo.InvariantCulture));
             foreach (var ti in package.Items.Values)
             {
-                lines.Add(ti.Name + UnitSeparator + ti.Width.ToString(CultureInfo.InvariantCulture) + UnitSeparator + ti.Height.ToString(CultureInfo.InvariantCulture));
+                lines.Add(ti.Name + NullCharacter + ti.Width.ToString(CultureInfo.InvariantCulture) + NullCharacter + ti.Height.ToString(CultureInfo.InvariantCulture));
             }
             File.WriteAllLines(cacheFile, lines);
         }
