@@ -660,13 +660,13 @@ namespace Sledge.Providers.Map
 
             using (var sw = new StreamWriter(stream))
             {
-                sw.Write(versioninfo);
-                sw.Write(visgroups);
-                sw.Write(viewsettings);
-                sw.Write(world);
-                entities.ForEach(sw.Write);
-                sw.Write(cameras);
-                sw.Write(cordon);
+                versioninfo.PrintToStream(sw);
+                visgroups.PrintToStream(sw);
+                viewsettings.PrintToStream(sw);
+                world.PrintToStream(sw);
+                entities.ForEach(e => e.PrintToStream(sw));
+                cameras.PrintToStream(sw);
+                cordon.PrintToStream(sw);
             }
         }
     }

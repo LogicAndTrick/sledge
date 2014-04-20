@@ -520,31 +520,44 @@ namespace Sledge.Providers
         #region Printer
         public override string ToString()
         {
-            var sb = new StringBuilder();
-            Print(sb);
-            return sb.ToString();
+            var sw = new StringWriter();
+            PrintToStream(sw);
+            return sw.ToString();
         }
 
-        private void Print(StringBuilder sb, int tabs = 0)
+        public void PrintToStream(TextWriter tw)
+        {
+            Print(tw);
+        }
+
+        private void Print(TextWriter tw, int tabs = 0)
         {
             var preTabStr = new string(' ', tabs * 4);
             var postTabStr = new string(' ', (tabs + 1) * 4);
-            sb.Append(preTabStr).AppendLine(Name);
-            sb.Append(preTabStr).AppendLine("{");
+            tw.Write(preTabStr);
+            tw.WriteLine(Name);
+            tw.Write(preTabStr);
+            tw.WriteLine("{");
             foreach (var kv in Properties)
             {
-                sb.Append(postTabStr)
-                    .Append('"').Append(kv.Key).Append('"')
-                    .Append(' ')
-                    .Append('"').Append((kv.Value ?? "").Replace('"', '`')).Append('"')
-                    .AppendLine();
+                tw.Write(postTabStr);
+                tw.Write('"');
+                tw.Write(kv.Key);
+                tw.Write('"');
+                tw.Write(' ');
+                tw.Write('"');
+                tw.Write((kv.Value ?? "").Replace('"', '`'));
+                tw.Write('"');
+                tw.WriteLine();
             }
             foreach (var child in Children)
             {
-                child.Print(sb, tabs + 1);
+                child.Print(tw, tabs + 1);
             }
-            sb.Append(preTabStr).AppendLine("}");
+            tw.Write(preTabStr);
+            tw.WriteLine("}");
         }
+
         #endregion
 
         #region Parser

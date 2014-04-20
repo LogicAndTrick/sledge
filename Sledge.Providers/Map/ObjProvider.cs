@@ -3,8 +3,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using OpenTK.Input;
+using Sledge.Common;
 using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.MapObjects;
+using Sledge.Libs;
 
 namespace Sledge.Providers.Map
 {
@@ -53,20 +56,50 @@ namespace Sledge.Providers.Map
             }
         }
 
+        private struct ObjFace
+        {
+            public string Group { get; set; }
+            public List<int> Vertices { get; set; }
+
+            public ObjFace(string group, IEnumerable<int> vertices) : this()
+            {
+                Group = group;
+                Vertices = vertices.ToList();
+            }
+        }
+
         private void Read(DataStructures.MapObjects.Map map, StreamReader reader)
         {
             var points = new List<Coordinate>();
+            var faces = new List<ObjFace>();
+            var currentGroup = "default";
 
             string line;
             while ((line = CleanLine(reader.ReadLine())) != null)
             {
                 string keyword, values;
                 SplitLine(line, out keyword, out values);
+                if (String.IsNullOrWhiteSpace(keyword)) continue;
+
+                var vals = (values ?? "").Split(' ').Where(x => !String.IsNullOrWhiteSpace(x)).ToArray();
                 switch (keyword.ToLower())
                 {
-                    // Vertex data
+                    // Things I care about
                     case "v": // geometric vertices
+                        points.Add(Coordinate.Parse(vals[0], vals[1], vals[2]) * 100);
                         break;
+                    case "f": // face
+                        faces.Add(new ObjFace(currentGroup, vals.Select(x => ParseFaceIndex(points, x))));
+                        break;
+                    case "g": // group name
+                        currentGroup = (values ?? "").Trim();
+                        break;
+
+                    // Things I don't care about
+                    #region Not Implemented
+
+                    // Vertex data
+                    // "v"
                     case "vt": // texture vertices
                         break;
                     case "vn": // vertex normals
@@ -80,8 +113,7 @@ namespace Sledge.Providers.Map
                         break;
 
                     // Elements
-                    case "f": // face
-                        break;
+                    // "f"
                     case "p": // point
                     case "l": // line
                     case "curv": // curve
@@ -106,8 +138,7 @@ namespace Sledge.Providers.Map
                         break;
 
                     // Grouping
-                    case "g": // group name
-                        break;
+                    // "g"
                     case "s": // smoothing group
                         break;
                     case "mg": // merging group
@@ -130,8 +161,126 @@ namespace Sledge.Providers.Map
                     case "stech": // surface approximation technique
                         // not relevant
                         break;
+
+                    #endregion
                 }
             }
+
+            var solids = new List<Solid>();
+
+            // Try and see if we have a valid solid per-group
+            foreach (var g in faces.GroupBy(x => x.Group))
+            {
+                solids.AddRange(CreateSolids(map, points, g));
+            }
+
+            foreach (var solid in solids)
+            {
+                foreach (var face in solid.Faces)
+                {
+                    face.Colour = solid.Colour;
+                    face.AlignTextureToFace();
+                }
+                solid.SetParent(map.WorldSpawn);
+            }
+        }
+
+        private IEnumerable<Solid> CreateSolids(DataStructures.MapObjects.Map map, List<Coordinate> points, IEnumerable<ObjFace> objFaces)
+        {
+            var faces = objFaces.Select(x => CreateFace(map, points, x)).ToList();
+
+            // See if the solid is valid
+            var solid = new Solid(map.IDGenerator.GetNextObjectID());
+            solid.Colour = Colour.GetRandomBrushColour();
+            solid.Faces.AddRange(faces);
+            faces.ForEach(x => x.Parent = solid);
+            if (solid.IsValid())
+            {
+                // Do an additional check to ensure that all edges are shared
+                var edges = solid.Faces.SelectMany(x => x.GetEdges()).ToList();
+                if (edges.All(x => edges.Count(y => x.EquivalentTo(y)) == 2))
+                {
+                    // Valid! let's get out of here!
+                    yield return solid;
+                    yield break;
+                }
+            }
+
+            // Not a valid solid, decompose into tetrahedrons/etc
+            foreach (var face in faces)
+            {
+                var polygon = new Polygon(face.Vertices.Select(x => x.Location));
+                if (!polygon.IsValid() || !polygon.IsConvex())
+                {
+                    // tetrahedrons
+                    foreach (var triangle in face.GetTriangles())
+                    {
+                        var tf = new Face(map.IDGenerator.GetNextFaceID());
+                        tf.Plane = new Plane(triangle[0].Location, triangle[1].Location, triangle[2].Location);
+                        tf.Vertices.AddRange(triangle.Select(x => new Vertex(x.Location, tf)));
+                        tf.UpdateBoundingBox();
+                        yield return SolidifyFace(map, tf);
+                    }
+                }
+                else
+                {
+                    // cone/pyramid/whatever
+                    yield return SolidifyFace(map, face);
+                }
+            }
+        }
+
+        private Solid SolidifyFace(DataStructures.MapObjects.Map map, Face face)
+        {
+            var solid = new Solid(map.IDGenerator.GetNextObjectID());
+            solid.Colour = Colour.GetRandomBrushColour();
+            solid.Faces.Add(face);
+            face.Parent = solid;
+            var offset = face.BoundingBox.Center - face.Plane.Normal * 5;
+            for (var i = 0; i < face.Vertices.Count; i++)
+            {
+                var v1 = face.Vertices[i];
+                var v2 = face.Vertices[(i + 1) % face.Vertices.Count];
+                var f = new Face(map.IDGenerator.GetNextFaceID());
+                f.Parent = solid;
+                f.Plane = new Plane(v1.Location, offset, v2.Location);
+                f.Parent = solid;
+                f.Vertices.Add(new Vertex(offset, f));
+                f.Vertices.Add(new Vertex(v2.Location, f));
+                f.Vertices.Add(new Vertex(v1.Location, f));
+                f.UpdateBoundingBox();
+
+                solid.Faces.Add(f);
+            }
+            return solid;
+        }
+
+
+        private Face CreateFace(DataStructures.MapObjects.Map map, List<Coordinate> points, ObjFace objFace)
+        {
+            var verts = objFace.Vertices.Select(x => points[x]).ToList();
+            var f = new Face(map.IDGenerator.GetNextFaceID());
+            f.Plane = new Plane(verts[2], verts[1], verts[0]);
+            f.Vertices.AddRange(verts.Select(x => new Vertex(x, f)).Reverse());
+            f.UpdateBoundingBox();
+            return f;
+        }
+
+        private int ParseFaceIndex(List<Coordinate> list, string index)
+        {
+            if (index.Contains('/')) index = index.Substring(0, index.IndexOf('/'));
+            var idx = int.Parse(index);
+
+            if (idx < 0)
+            {
+                idx = list.Count + idx;
+            }
+            else
+            {
+                idx -= 1;
+            }
+            //
+            return idx;
         }
 
         private static void SplitLine(string line, out string keyword, out string arguments)
