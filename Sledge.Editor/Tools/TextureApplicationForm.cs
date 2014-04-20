@@ -529,7 +529,7 @@ namespace Sledge.Editor.Tools
             if (e.CloseReason == CloseReason.UserClosing)
             {
                 e.Cancel = true;
-                Mediator.Publish(HotkeysMediator.SwitchTool, HotkeyTool.Texture);
+                Mediator.Publish(HotkeysMediator.SwitchTool, HotkeyTool.Selection);
             }
         }
     }

@@ -174,7 +174,7 @@ namespace Sledge.Editor.Tools
             if (e.CloseReason == CloseReason.UserClosing)
             {
                 e.Cancel = true;
-                Mediator.Publish(HotkeysMediator.SwitchTool, HotkeyTool.VM);
+                Mediator.Publish(HotkeysMediator.SwitchTool, HotkeyTool.Selection);
             }
         }
     }
