@@ -86,6 +86,9 @@ namespace Sledge.Editor
         CheckForUpdates,
         OpenWebsite,
         About,
-        Exit
+        Exit,
+
+        // Single instance
+
     }
 }

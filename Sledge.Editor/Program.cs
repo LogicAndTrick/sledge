@@ -18,7 +18,7 @@ namespace Sledge.Editor
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             RegisterHandlers();
-            Application.Run(new Editor());
+            SingleInstance.Start(typeof(Editor));
         }
 
         private static void RegisterHandlers()

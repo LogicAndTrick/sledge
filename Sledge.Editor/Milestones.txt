@@ -2,15 +2,11 @@
 
 Priorities
   Bugs
-    Windows 7 recent file jump list not opening files
     Clip tool is laggy
-  Document/Actions
-    Clip tool choose side
   UI
     Game config detection
     Object properties dialog data types
     Auto Update
-      Show release notes
       Option to disable
 
 Post-Alpha
@@ -27,8 +23,6 @@ Post-Alpha
       Animation?
       Fix rotations
       Set angles value on rotate/transform
-    Helpers
-      Entity text labels (2D)
     Tools
       Select tool
         Advanced manipulator (3D)

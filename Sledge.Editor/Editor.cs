@@ -53,6 +53,24 @@ namespace Sledge.Editor
             ToolManager.Activate(t);
         }
 
+        public static void ProcessArguments(string[] args)
+        {
+            for (var i = 0; i < args.Length; i++)
+            {
+                switch (args[i])
+                {
+                    case "/doc":
+                        i += 1;
+                        if (i < args.Length && File.Exists(args[i]))
+                        {
+                            Mediator.Publish(EditorMediator.LoadFile, args[i]);
+                        }
+                        break;
+                }
+            }
+            // Mediator.Publish(EditorMediator.LoadFile, file)
+        }
+
         private static void LoadFileGame(string fileName, Game game)
         {
             try
@@ -79,11 +97,14 @@ namespace Sledge.Editor
 
         private void EditorLoad(object sender, EventArgs e)
         {
+            FileTypeRegistration.RegisterFileTypes();
+
             SettingsManager.Read();
 
             if (TaskbarManager.IsPlatformSupported)
             {
-                TaskbarManager.Instance.ApplicationId = Elevation.ProgramId;
+                TaskbarManager.Instance.ApplicationId = FileTypeRegistration.ProgramId;
+                
                 _jumpList = JumpList.CreateJumpList();
                 _jumpList.KnownCategoryToDisplay = JumpListKnownCategoryType.Recent;
                 _jumpList.Refresh();
@@ -154,6 +175,8 @@ namespace Sledge.Editor
                     LoadFileGame(session.Item1, session.Item2);
                 }
             }
+
+            ProcessArguments(System.Environment.GetCommandLineArgs());
         }
 
         #region Updates
@@ -809,7 +832,7 @@ namespace Sledge.Editor
         {
             if (TaskbarManager.IsPlatformSupported)
             {
-                Elevation.RegisterFileType(System.IO.Path.GetExtension(path));
+                //Elevation.RegisterFileType(System.IO.Path.GetExtension(path));
                 JumpList.AddToRecent(path);
                 _jumpList.Refresh();
             }

@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Sledge.Editor")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("Sledge Editor")]
+[assembly: AssemblyDescription("Sledge Editor")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Sledge")]
-[assembly: AssemblyProduct("Sledge.Editor")]
+[assembly: AssemblyProduct("Sledge Editor")]
 [assembly: AssemblyCopyright("Copyright © http://logic-and-trick.com 2014")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

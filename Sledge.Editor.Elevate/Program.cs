@@ -64,6 +64,6 @@ namespace Sledge.Editor.Elevate
             extKey.Close();
 
             root.Close();
-        }//TaskbarDemo False TaskbarDemo "D:\Downloads\sandbox\TaskbarDemo\bin\Debug\TaskbarDemo.exe /doc %1" False .txt
+        }
     }
 }

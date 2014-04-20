@@ -18,3 +18,5 @@ To use:
     * The version text file is at /Out/version.txt
     * The complete build log is at /Out/Build.log
 * If you wish to disable Powershell scripts again, run: Set-ExecutionPolicy restricted
+
+InsertIcons.exe is complied from: https://github.com/einaregilsson/InsertIcons
