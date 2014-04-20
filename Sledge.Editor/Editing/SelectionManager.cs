@@ -9,19 +9,16 @@ namespace Sledge.Editor.Editing
     public class SelectionManager
     {
         private Documents.Document Document { get; set; }
-        private List<MapObject> SelectedObjects { get; set; }
-        private List<Face> SelectedFaces { get; set; }
+        private HashSet<MapObject> SelectedObjects { get; set; }
+        private HashSet<Face> SelectedFaces { get; set; }
         public bool InFaceSelection { get; private set; }
-
-        private bool _changed;
 
         public SelectionManager(Documents.Document doc)
         {
             Document = doc;
-            SelectedObjects = new List<MapObject>();
-            SelectedFaces = new List<Face>();
+            SelectedObjects = new HashSet<MapObject>();
+            SelectedFaces = new HashSet<Face>();
             InFaceSelection = false;
-            _changed = false;
         }
 
         public Box GetSelectionBoundingBox()
@@ -31,51 +28,36 @@ namespace Sledge.Editor.Editing
 
         public IEnumerable<MapObject> GetSelectedObjects()
         {
-            if (_changed)
-            {
-                var distinct = SelectedObjects.Distinct().ToList();
-                SelectedObjects.Clear();
-                SelectedObjects.AddRange(distinct);
-                _changed = false;
-            }
             return new List<MapObject>(SelectedObjects);
         }
 
         public IEnumerable<Face> GetSelectedFaces()
         {
-            if (_changed)
-            {
-                var distinct = SelectedFaces.Distinct().ToList();
-                SelectedFaces.Clear();
-                SelectedFaces.AddRange(distinct);
-                _changed = false;
-            }
             return new List<Face>(SelectedFaces);
         }
 
         public void SwitchToFaceSelection()
         {
             if (InFaceSelection) return;
-            SelectedFaces.ForEach(x => x.IsSelected = false);
+            foreach (var face in SelectedFaces) face.IsSelected = false;
             SelectedFaces.Clear();
 
-            SelectedFaces.AddRange(GetSelectedObjects()
+            SelectedFaces.UnionWith(GetSelectedObjects()
                                        .OfType<Solid>()
                                        .SelectMany(x =>
                                                        {
                                                            var disps = x.Faces.Where(y => y is Displacement);
                                                            return disps.Any() ? disps : x.Faces;
                                                        }));
-            SelectedFaces.ForEach(x => x.IsSelected = true);
 
-            SelectedObjects.ForEach(x => x.IsSelected = false);
+            foreach (var face in SelectedFaces) face.IsSelected = true;
+
+            foreach (var obj in SelectedObjects) obj.IsSelected = false;
             SelectedObjects.Clear();
 
             InFaceSelection = true;
-            _changed = false;
 
             Mediator.Publish(EditorMediator.SelectionTypeChanged, Document);
-
             Mediator.Publish(EditorMediator.SelectionChanged, Document);
         }
 
@@ -92,11 +74,11 @@ namespace Sledge.Editor.Editing
 
         public void Clear()
         {
-            SelectedObjects.ForEach(x => x.IsSelected = false);
+            foreach (var obj in SelectedObjects) obj.IsSelected = false;
             SelectedObjects.Clear();
-            SelectedFaces.ForEach(x => x.IsSelected = false);
+
+            foreach (var face in SelectedFaces) face.IsSelected = false;
             SelectedFaces.Clear();
-            _changed = false;
         }
 
         public void Select(MapObject obj)
@@ -106,29 +88,22 @@ namespace Sledge.Editor.Editing
 
         public void Select(IEnumerable<MapObject> objs)
         {
-            foreach (var obj in objs.Distinct())
-            {
-                obj.IsSelected = true;
-                SelectedObjects.Add(obj);
-            }
-            _changed = true;
+            var list = objs.ToList();
+            foreach (var o in list) o.IsSelected = true;
+            SelectedObjects.UnionWith(list);
         }
 
         public void Select(Face face)
         {
             face.IsSelected = true;
             SelectedFaces.Add(face);
-            _changed = true;
         }
 
         public void Select(IEnumerable<Face> faces)
         {
-            foreach (var face in faces)
-            {
-                face.IsSelected = true;
-                SelectedFaces.Add(face);
-            }
-            _changed = true;
+            var list = faces.ToList();
+            foreach (var face in list) face.IsSelected = true;
+            SelectedFaces.UnionWith(list);
         }
 
         public void Deselect(MapObject obj)
@@ -138,28 +113,22 @@ namespace Sledge.Editor.Editing
 
         public void Deselect(IEnumerable<MapObject> objs)
         {
-            foreach (var obj in objs.Distinct())
-            {
-                SelectedObjects.RemoveAll(x => x == obj);
-                obj.IsSelected = false;
-            }
-            _changed = true;
+            var list = objs.ToList();
+            SelectedObjects.ExceptWith(list);
+            foreach (var o in list) o.IsSelected = false;
         }
 
         public void Deselect(Face face)
         {
-            SelectedFaces.RemoveAll(x => x == face);
+            SelectedFaces.Remove(face);
             face.IsSelected = false;
         }
 
         public void Deselect(IEnumerable<Face> faces)
         {
-            foreach (var face in faces)
-            {
-                SelectedFaces.RemoveAll(x => x == face);
-                face.IsSelected = false;
-            }
-            _changed = true;
+            var list = faces.ToList();
+            SelectedFaces.ExceptWith(list);
+            foreach (var o in list) o.IsSelected = false;
         }
 
         public bool IsEmpty()
