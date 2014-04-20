@@ -31,9 +31,9 @@ namespace Sledge.Settings
             SpecialTextureOpacities = new Dictionary<string, float>
                                           {
                                               {"null", 0},
+                                              {"bevel", 0},
                                               {"tools/toolsnodraw", 0},
                                               {"aaatrigger", 0.5f},
-                                              {"bevel", 0.5f},
                                               {"clip", 0.5f},
                                               {"hint", 0.5f},
                                               {"origin", 0.5f},
