@@ -145,7 +145,7 @@ namespace Sledge.Tests.Actions
         public void TestReparent()
         {
             var parent = _document.Map.WorldSpawn;
-            var objects = _document.Map.WorldSpawn.Children.SelectMany(x => x.FindAll());
+            var objects = _document.Map.WorldSpawn.GetChildren().SelectMany(x => x.FindAll());
             TestAction(new Reparent(parent.ID, objects));
         }
     }

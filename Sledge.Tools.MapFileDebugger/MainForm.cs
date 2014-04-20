@@ -59,7 +59,7 @@ namespace Sledge.Tools.MapFileDebugger
                 var s = (Solid) obj;
                 node.Nodes.Add(GetFacesNode(s.Faces));
             }
-            foreach (var mo in obj.Children)
+            foreach (var mo in obj.GetChildren())
             {
                 LoadMapNode(node, mo);
             }

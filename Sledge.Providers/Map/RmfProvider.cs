@@ -207,8 +207,8 @@ namespace Sledge.Providers.Map
         {
             bw.Write(obj.Visgroups.Except(obj.AutoVisgroups).FirstOrDefault());
             bw.WriteRGBColour(obj.Colour);
-            bw.Write(obj.Children.Count);
-            foreach (var mo in obj.Children)
+            bw.Write(obj.ChildCount);
+            foreach (var mo in obj.GetChildren())
             {
                 WriteMapObject(bw, mo);
             }

@@ -59,7 +59,7 @@ namespace Sledge.DataStructures.MapObjects
 
         private static IEnumerable<string> GetAllTexturesRecursive(MapObject obj)
         {
-            if (obj is Entity && obj.Children.Count == 0)
+            if (obj is Entity && obj.ChildCount == 0)
             {
                 var ent = (Entity) obj;
                 if (ent.EntityData.Name == "infodecal")
@@ -73,7 +73,7 @@ namespace Sledge.DataStructures.MapObjects
                 return ((Solid) obj).Faces.Select(f => f.Texture.Name);
             }
 
-            return obj.Children.SelectMany(GetAllTexturesRecursive);
+            return obj.GetChildren().SelectMany(GetAllTexturesRecursive);
         }
 
         /// <summary>
@@ -102,7 +102,7 @@ namespace Sledge.DataStructures.MapObjects
             UpdateAutoVisgroups(all, false);
 
             // Purge empty groups
-            foreach (var emptyGroup in WorldSpawn.Find(x => x is Group && !x.Children.Any()))
+            foreach (var emptyGroup in WorldSpawn.Find(x => x is Group && !x.HasChildren))
             {
                 emptyGroup.SetParent(null);
             }

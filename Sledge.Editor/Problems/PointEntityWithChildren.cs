@@ -14,7 +14,7 @@ namespace Sledge.Editor.Problems
             foreach (var entity in map.WorldSpawn
                 .Find(x => x is Entity).OfType<Entity>()
                 .Where(x => x.GameData != null)
-                .Where(x => x.GameData.ClassType != ClassType.Solid && x.Children.Any()))
+                .Where(x => x.GameData.ClassType != ClassType.Solid && x.GetChildren().Any()))
             {
                 yield return new Problem(GetType(), map, new[] { entity }, Fix, "Point entity has children", "A point entity with children was found. A point entity cannot have any contents. Fixing the issue will move the children outside of the entity's group.");
             }
@@ -22,7 +22,7 @@ namespace Sledge.Editor.Problems
 
         public IAction Fix(Problem problem)
         {
-            return new Reparent(problem.Objects[0].Parent.ID, problem.Objects[0].Children);
+            return new Reparent(problem.Objects[0].Parent.ID, problem.Objects[0].GetChildren());
         }
     }
 }

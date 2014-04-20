@@ -148,7 +148,7 @@ namespace Sledge.Editor.UI
 
         private bool DoFilters(Entity ent)
         {
-            var hasChildren = ent.Children.Any();
+            var hasChildren = ent.HasChildren;
 
             if (hasChildren && TypePoint.Checked) return false;
             if (!hasChildren && TypeBrush.Checked) return false;

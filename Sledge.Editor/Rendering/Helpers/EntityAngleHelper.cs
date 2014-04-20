@@ -23,7 +23,7 @@ namespace Sledge.Editor.Rendering.Helpers
 
         public bool IsValidFor(MapObject o)
         {
-            return o is Entity && !o.Children.Any();
+            return o is Entity && !o.HasChildren;
         }
 
         public void BeforeRender2D(Viewport2D viewport)

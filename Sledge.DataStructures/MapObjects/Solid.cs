@@ -216,7 +216,7 @@ namespace Sledge.DataStructures.MapObjects
             return !GetCoplanarFaces().Any() // Check coplanar faces
                    && !GetBackwardsFaces(epsilon).Any() // Check faces are pointing outwards
                    && !Faces.Any(x => x.GetNonPlanarVertices(epsilon).Any()) // Check face vertices are all on the plane
-                   && Faces.All(x => x.IsConvex()); // Check all faces are concave
+                   && Faces.All(x => x.IsConvex()); // Check all faces are convex
         }
 
         public Coordinate GetOrigin()

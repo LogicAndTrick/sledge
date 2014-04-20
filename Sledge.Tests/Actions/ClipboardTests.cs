@@ -23,7 +23,9 @@ namespace Sledge.Tests.Actions
             ent.EntityData.Properties.Add(new Property { Key = "key1", Value = "value1"});
             ent.EntityData.Properties.Add(new Property { Key = "key2", Value = "value2"});
             ent.EntityData.Flags = 12345;
-            ent.Children.AddRange(new BlockBrush().Create(idGen, box, null, 0));
+
+            var solids = new BlockBrush().Create(idGen, box, null, 0);
+            foreach (var mo in solids) mo.SetParent(ent);
 
             // Copy and reconstruct
             var gs = VmfProvider.CreateCopyStream(new List<MapObject> {ent});
@@ -48,11 +50,11 @@ namespace Sledge.Tests.Actions
             Assert.AreEqual(k2.Value, "value1");
 
             // Test child
-            Assert.AreEqual(1, pastedEnt.Children.Count);
-            Assert.IsInstanceOfType(pastedEnt.Children[0], typeof(Solid));
+            Assert.AreEqual(1, pastedEnt.ChildCount);
+            Assert.IsInstanceOfType(pastedEnt.GetChildren().ToList()[0], typeof(Solid));
 
             // Check number of sides, values of sides not so important
-            var pastedSolid = (Solid) pastedEnt.Children[0];
+            var pastedSolid = (Solid) pastedEnt.GetChildren().ToList()[0];
             Assert.AreEqual(6, pastedSolid.Faces.Count);
         }
     }

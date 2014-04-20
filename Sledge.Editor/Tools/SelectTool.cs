@@ -111,7 +111,7 @@ namespace Sledge.Editor.Tools
             var deselect = new List<MapObject>();
             if (Document.Map.IgnoreGrouping)
             {
-                deselect.AddRange(selected.Where(x => x.Children.Any()));
+                deselect.AddRange(selected.Where(x => x.HasChildren));
             }
             else
             {
@@ -119,7 +119,7 @@ namespace Sledge.Editor.Tools
                 foreach (var p in parents)
                 {
                     var children = p.FindAll();
-                    var leaves = children.Where(x => !x.Children.Any());
+                    var leaves = children.Where(x => !x.HasChildren);
                     if (leaves.All(selected.Contains)) select.AddRange(children.Where(x => !selected.Contains(x)));
                     else deselect.AddRange(children.Where(selected.Contains));
                 }
@@ -285,7 +285,7 @@ namespace Sledge.Editor.Tools
         private static IEnumerable<MapObject> NormaliseSelection(IEnumerable<MapObject> objects, bool ignoreGrouping)
         {
             return ignoreGrouping
-                       ? objects.Where(x => !x.Children.Any())
+                       ? objects.Where(x => !x.HasChildren)
                        : objects.Select(x => x.FindTopmostParent(y => y is Group || y is Entity) ?? x).Distinct().SelectMany(x => x.FindAll());
         }
 

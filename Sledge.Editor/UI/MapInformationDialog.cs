@@ -30,8 +30,8 @@ namespace Sledge.Editor.UI
             var entities = all.OfType<Entity>().ToList();
             var numSolids = solids.Count;
             var numFaces = faces.Count;
-            var numPointEnts = entities.Count(x => !x.Children.Any());
-            var numSolidEnts = entities.Count(x => x.Children.Any());
+            var numPointEnts = entities.Count(x => !x.HasChildren);
+            var numSolidEnts = entities.Count(x => x.HasChildren);
             var uniqueTextures = faces.Select(x => x.Texture.Name).Distinct().ToList();
             var numUniqueTextures = uniqueTextures.Count;
             var textureMemory = faces.Select(x => x.Texture.Texture)

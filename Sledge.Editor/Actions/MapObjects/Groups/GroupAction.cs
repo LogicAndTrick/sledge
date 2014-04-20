@@ -36,7 +36,7 @@ namespace Sledge.Editor.Actions.MapObjects.Groups
         public void Reverse(Document document)
         {
             var group = document.Map.WorldSpawn.FindByID(_groupId);
-            var children = group.Children.ToList();
+            var children = group.GetChildren().ToList();
             children.ForEach(x => x.SetParent(document.Map.WorldSpawn.FindByID(_originalChildParents[x.ID])));
             children.ForEach(x => x.UpdateBoundingBox());
             group.SetParent(null);

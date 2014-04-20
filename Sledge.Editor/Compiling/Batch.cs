@@ -169,7 +169,7 @@ namespace Sledge.Editor.Compiling
                     var clone = mo.Clone();
                     clone.SetParent(map.WorldSpawn);
                 }
-                var outside = new Box(map.WorldSpawn.Children.Select(x => x.BoundingBox).Union(new[] {document.Map.CordonBounds}));
+                var outside = new Box(map.WorldSpawn.GetChildren().Select(x => x.BoundingBox).Union(new[] { document.Map.CordonBounds }));
                 outside = new Box(outside.Start - Coordinate.One, outside.End + Coordinate.One);
                 var inside = document.Map.CordonBounds;
 

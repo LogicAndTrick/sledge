@@ -72,7 +72,10 @@ namespace Sledge.Editor.Rendering.Helpers
         {
             if (!matcher(root)) return;
             items.Add(root);
-            root.Children.ForEach(x => FindRecursive(items, x, matcher));
+            foreach (var mo in root.GetChildren())
+            {
+                FindRecursive(items, mo, matcher);
+            }
         }
 
         private void ReIndex()

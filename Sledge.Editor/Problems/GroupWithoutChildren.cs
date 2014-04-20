@@ -12,7 +12,7 @@ namespace Sledge.Editor.Problems
         {
             foreach (var group in map.WorldSpawn
                 .Find(x => x is Group).OfType<Group>()
-                .Where(x => !x.Children.Any()))
+                .Where(x => !x.GetChildren().Any()))
             {
                 yield return new Problem(GetType(), map, new[] { @group }, Fix, "Group has no children", "This group is empty. A group must have contents. Fixing the problem will delete the group.");
             }

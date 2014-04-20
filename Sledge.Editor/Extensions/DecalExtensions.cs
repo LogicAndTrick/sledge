@@ -31,7 +31,7 @@ namespace Sledge.Editor.Extensions
         private static bool UpdateDecals(Document document, MapObject mo)
         {
             var updatedChildren = false;
-            foreach (var child in mo.Children) updatedChildren |= UpdateDecals(document, child);
+            foreach (var child in mo.GetChildren()) updatedChildren |= UpdateDecals(document, child);
 
             var e = mo as Entity;
             if (e == null || !ShouldHaveDecal(e)) return updatedChildren;

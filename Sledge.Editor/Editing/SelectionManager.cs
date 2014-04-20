@@ -139,7 +139,7 @@ namespace Sledge.Editor.Editing
         public IEnumerable<MapObject> GetSelectedParents()
         {
             var sel = GetSelectedObjects().ToList();
-            sel.SelectMany(x => x.Children).ToList().ForEach(x => sel.Remove(x));
+            sel.SelectMany(x => x.GetChildren()).ToList().ForEach(x => sel.Remove(x));
             return sel;
         }
     }

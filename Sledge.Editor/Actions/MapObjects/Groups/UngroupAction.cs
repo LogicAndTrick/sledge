@@ -15,7 +15,7 @@ namespace Sledge.Editor.Actions.MapObjects.Groups
         {
             var objs = objects.Where(x => x != null && x.Parent != null).OfType<Group>().ToList();
             _groupsAndParents = objs.ToDictionary(x => x, x => x.Parent.ID);
-            _childrenAndParents = objs.SelectMany(x => x.Children).ToDictionary(x => x.ID, x => x.Parent.ID);
+            _childrenAndParents = objs.SelectMany(x => x.GetChildren()).ToDictionary(x => x.ID, x => x.Parent.ID);
         }
 
         public void Perform(Document document)

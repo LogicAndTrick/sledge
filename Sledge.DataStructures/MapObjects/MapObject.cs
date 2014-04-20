@@ -15,7 +15,7 @@ namespace Sledge.DataStructures.MapObjects
         public string ClassName { get; set; }
         public List<int> Visgroups { get; set; }
         public List<int> AutoVisgroups { get; set; }
-        public List<MapObject> Children { get; set; }
+        protected List<MapObject> Children { get; set; }
         public MapObject Parent { get; private set; }
         public Color Colour { get; set; }
         public bool IsSelected { get; set; }
@@ -33,6 +33,21 @@ namespace Sledge.DataStructures.MapObjects
             AutoVisgroups = new List<int>();
             Children = new List<MapObject>();
             MetaData = new MetaData();
+        }
+
+        public IEnumerable<MapObject> GetChildren()
+        {
+            return Children;
+        }
+
+        public int ChildCount
+        {
+            get { return Children.Count; }
+        }
+
+        public bool HasChildren
+        {
+            get { return Children.Count > 0; }
         }
 
         /// <summary>

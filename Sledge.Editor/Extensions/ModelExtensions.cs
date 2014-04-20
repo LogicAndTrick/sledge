@@ -34,7 +34,7 @@ namespace Sledge.Editor.Extensions
         private static bool UpdateModels(Document document, MapObject mo)
         {
             var updatedChildren = false;
-            foreach (var child in mo.Children) updatedChildren |= UpdateModels(document, child);
+            foreach (var child in mo.GetChildren()) updatedChildren |= UpdateModels(document, child);
 
             var e = mo as Entity;
             if (e == null || !ShouldHaveModel(e)) return updatedChildren;

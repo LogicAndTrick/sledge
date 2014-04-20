@@ -91,7 +91,7 @@ namespace Sledge.Editor.UI
                 var s = (Solid)obj;
                 node.Nodes.AddRange(GetFaceNodes(s.Faces).ToArray());
             }
-            foreach (var mo in obj.Children)
+            foreach (var mo in obj.GetChildren())
             {
                 LoadMapNode(node, mo);
             }
@@ -107,7 +107,7 @@ namespace Sledge.Editor.UI
             }
             if (mo is Group)
             {
-                return " (" + mo.Children.Count + " children)";
+                return " (" + mo.ChildCount + " children)";
             }
             var ed = mo.GetEntityData();
             if (ed != null)

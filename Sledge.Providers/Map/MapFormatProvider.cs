@@ -39,14 +39,14 @@ namespace Sledge.Providers.Map
 
         private void CollectSolids(List<Solid> solids, MapObject parent)
         {
-            solids.AddRange(parent.Children.OfType<Solid>());
-            parent.Children.OfType<Group>().ToList().ForEach(x => CollectSolids(solids, x));
+            solids.AddRange(parent.GetChildren().OfType<Solid>());
+            parent.GetChildren().OfType<Group>().ToList().ForEach(x => CollectSolids(solids, x));
         }
 
         private void CollectEntities(List<Entity> entities, MapObject parent)
         {
-            entities.AddRange(parent.Children.OfType<Entity>());
-            parent.Children.OfType<Group>().ToList().ForEach(x => CollectEntities(entities, x));
+            entities.AddRange(parent.GetChildren().OfType<Entity>());
+            parent.GetChildren().OfType<Group>().ToList().ForEach(x => CollectEntities(entities, x));
         }
 
         private Face ReadFace(string line, IDGenerator generator)
@@ -259,7 +259,7 @@ namespace Sledge.Providers.Map
                 allentities.Remove(worldspawn);
                 map.WorldSpawn.EntityData = worldspawn.EntityData;
                 allentities.ForEach(x => x.SetParent(map.WorldSpawn));
-                foreach (var obj in worldspawn.Children.ToArray())
+                foreach (var obj in worldspawn.GetChildren().ToArray())
                 {
                     obj.SetParent(map.WorldSpawn);
                 }

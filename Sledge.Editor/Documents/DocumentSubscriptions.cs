@@ -553,7 +553,7 @@ namespace Sledge.Editor.Documents
             if (_document.Selection.IsEmpty() || _document.Selection.InFaceSelection) return;
 
             var entities = _document.Selection.GetSelectedObjects().OfType<Entity>().ToList();
-            var children = entities.SelectMany(x => x.Children).ToList();
+            var children = entities.SelectMany(x => x.GetChildren()).ToList();
 
             var ac = new ActionCollection();
             ac.Add(new Reparent(_document.Map.WorldSpawn.ID, children));

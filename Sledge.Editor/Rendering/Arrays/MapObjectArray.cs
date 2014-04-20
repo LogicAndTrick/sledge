@@ -80,7 +80,7 @@ namespace Sledge.Editor.Rendering.Arrays
         public void UpdatePartial(IEnumerable<MapObject> objects)
         {
             UpdatePartial(objects.OfType<Solid>().SelectMany(x => x.Faces));
-            UpdatePartial(objects.OfType<Entity>().Where(x => x.Children.Count == 0));
+            UpdatePartial(objects.OfType<Entity>().Where(x => !x.HasChildren));
         }
 
         public void UpdatePartial(IEnumerable<Face> faces)
@@ -109,7 +109,7 @@ namespace Sledge.Editor.Rendering.Arrays
         {
             var obj = objects.Where(x => !x.IsVisgroupHidden && !x.IsCodeHidden).ToList();
             var faces = obj.OfType<Solid>().SelectMany(x => x.Faces).ToList();
-            var entities = obj.OfType<Entity>().Where(x => x.Children.Count == 0).ToList();
+            var entities = obj.OfType<Entity>().Where(x => !x.HasChildren).ToList();
 
             StartSubset(Wireframe);
 

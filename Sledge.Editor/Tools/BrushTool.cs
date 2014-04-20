@@ -233,7 +233,7 @@ namespace Sledge.Editor.Tools
                 }
                 else if (mo is Entity || mo is Group)
                 {
-                    CollectFaces(faces, mo.Children);
+                    CollectFaces(faces, mo.GetChildren());
                 }
             }
         }

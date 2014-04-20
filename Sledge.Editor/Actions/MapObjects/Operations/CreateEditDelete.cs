@@ -204,7 +204,7 @@ namespace Sledge.Editor.Actions.MapObjects.Operations
             do
             {
                 // Exclude world objects, but we want to remove Group and (brush) Entity objects as they are invalid if empty.
-                emptyParents = objects.Where(x => x.Parent != null && !(x.Parent is World) && x.Parent.Children.All(objects.Contains) && !objects.Contains(x.Parent)).ToList();
+                emptyParents = objects.Where(x => x.Parent != null && !(x.Parent is World) && x.Parent.GetChildren().All(objects.Contains) && !objects.Contains(x.Parent)).ToList();
                 foreach (var ep in emptyParents)
                 {
                     // Add the parent object into the delete list

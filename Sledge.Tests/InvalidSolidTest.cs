@@ -68,7 +68,7 @@ namespace Sledge.Tests
 
                     var map = GenerateInvalidSolidMap(i, 0, 100);
                     //Assert.AreEqual(i <= 0.1666m, ((Solid) map.WorldSpawn.Children[0]).IsValid(), "Solid is not " + (i <= 0.1666m ? "valid" : "invalid") + " when variance = " + i.ToString("#0.0000"));
-                    if (i <= 0.1666m != ((Solid)map.WorldSpawn.Children[0]).IsValid(ep))
+                    if (i <= 0.1666m != ((Solid)map.WorldSpawn.GetChildren().ToList()[0]).IsValid(ep))
                     {
                         allValid = false;
                         break;
@@ -86,7 +86,7 @@ namespace Sledge.Tests
             for (var i = 0m; i <= 1m; i += 0.0001m)
             {
                 var map = GenerateInvalidSolidMap(i, 0, 100);
-                Assert.AreEqual(i <= 0.1666m, ((Solid) map.WorldSpawn.Children[0]).IsValid(), "Solid is not " + (i <= 0.1666m ? "valid" : "invalid") + " when variance = " + i.ToString("#0.0000"));
+                Assert.AreEqual(i <= 0.1666m, ((Solid) map.WorldSpawn.GetChildren().ToList()[0]).IsValid(), "Solid is not " + (i <= 0.1666m ? "valid" : "invalid") + " when variance = " + i.ToString("#0.0000"));
             }
         }
 

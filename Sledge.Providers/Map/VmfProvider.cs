@@ -27,7 +27,7 @@ namespace Sledge.Providers.Map
 
         private static void FlattenTree(MapObject parent, List<Solid> solids, List<Entity> entities, List<Group> groups)
         {
-            foreach (var mo in parent.Children)
+            foreach (var mo in parent.GetChildren())
             {
                 if (mo is Solid)
                 {
@@ -313,12 +313,12 @@ namespace Sledge.Providers.Map
             ret["id"] = ent.ID.ToString(CultureInfo.InvariantCulture);
             ret["classname"] = ent.EntityData.Name;
             WriteEntityData(ret, ent.EntityData);
-            if (ent.Children.Count == 0) ret["origin"] = FormatCoordinate(ent.Origin);
+            if (!ent.HasChildren) ret["origin"] = FormatCoordinate(ent.Origin);
 
             var editor = WriteEditor(ent);
             ret.Children.Add(editor);
 
-            foreach (var solid in ent.Children.SelectMany(x => x.FindAll()).OfType<Solid>().OrderBy(x => x.ID))
+            foreach (var solid in ent.GetChildren().SelectMany(x => x.FindAll()).OfType<Solid>().OrderBy(x => x.ID))
             {
                 ret.Children.Add(WriteSolid(solid));
             }
@@ -499,7 +499,7 @@ namespace Sledge.Providers.Map
                 var entParent = groupid > 0 ? world.Find(x => x.ID == groupid && x is Group).FirstOrDefault() ?? world : world;
                 ent.SetParent(entParent);
             }
-            list.AddRange(world.Children);
+            list.AddRange(world.GetChildren());
             Reindex(list, generator);
             return list;
         }
@@ -510,8 +510,8 @@ namespace Sledge.Providers.Map
             {
                 if (o is Solid) ((Solid) o).Faces.ForEach(x => x.ID = generator.GetNextFaceID());
                 o.ID = generator.GetNextObjectID();
-                if (o.Children.Count == 0) o.UpdateBoundingBox();
-                Reindex(o.Children, generator);
+                if (!o.HasChildren) o.UpdateBoundingBox();
+                Reindex(o.GetChildren(), generator);
             }
         }
 
