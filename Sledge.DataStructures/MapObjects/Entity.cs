@@ -94,7 +94,7 @@ namespace Sledge.DataStructures.MapObjects
             }
             else if (Children.Any())
             {
-                BoundingBox = new Box(Children.SelectMany(x => new[] {x.BoundingBox.Start, x.BoundingBox.End}));
+                BoundingBox = new Box(GetChildren().SelectMany(x => new[] {x.BoundingBox.Start, x.BoundingBox.End}));
             }
             else
             {

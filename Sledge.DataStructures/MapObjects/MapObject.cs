@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Drawing;
 using Sledge.DataStructures.Geometric;
@@ -15,7 +16,7 @@ namespace Sledge.DataStructures.MapObjects
         public string ClassName { get; set; }
         public List<int> Visgroups { get; set; }
         public List<int> AutoVisgroups { get; set; }
-        protected List<MapObject> Children { get; set; }
+        protected Dictionary<long, MapObject> Children { get; set; }
         public MapObject Parent { get; private set; }
         public Color Colour { get; set; }
         public bool IsSelected { get; set; }
@@ -31,13 +32,13 @@ namespace Sledge.DataStructures.MapObjects
             ID = id;
             Visgroups = new List<int>();
             AutoVisgroups = new List<int>();
-            Children = new List<MapObject>();
+            Children = new Dictionary<long, MapObject>();
             MetaData = new MetaData();
         }
 
         public IEnumerable<MapObject> GetChildren()
         {
-            return Children;
+            return Children.Values;
         }
 
         public int ChildCount
@@ -85,7 +86,7 @@ namespace Sledge.DataStructures.MapObjects
             o.IsVisgroupHidden = IsVisgroupHidden;
             o.BoundingBox = BoundingBox.Clone();
             o.MetaData = MetaData.Clone();
-            var children = Children.Select(x => performClone ? x.Clone() : x.Copy(generator));
+            var children = GetChildren().Select(x => performClone ? x.Clone() : x.Copy(generator));
             foreach (var c in children)
             {
                 c.SetParent(o);
@@ -112,7 +113,7 @@ namespace Sledge.DataStructures.MapObjects
             BoundingBox = o.BoundingBox.Clone();
             MetaData = o.MetaData.Clone();
 
-            var children = o.Children.Select(x => performUnclone ? x.Clone() : x.Copy(generator));
+            var children = o.GetChildren().Select(x => performUnclone ? x.Clone() : x.Copy(generator));
             foreach (var c in children)
             {
                 c.SetParent(this);
@@ -123,27 +124,26 @@ namespace Sledge.DataStructures.MapObjects
         {
             if (Parent != null)
             {
-                Parent.Children.Remove(this);
+                Parent.Children.Remove(ID);
                 Parent.UpdateBoundingBox();
             }
             Parent = parent;
             if (Parent != null)
             {
-                Parent.Children.Add(this);
+                Parent.Children.Add(ID, this);
                 UpdateBoundingBox();
             }
         }
 
-        public void RemoveDescendant(MapObject remove)
+        public bool RemoveDescendant(MapObject remove)
         {
-            if (Children.Contains(remove))
+            if (remove == null) return false;
+            if (Children.Remove(remove.ID)) return true;
+            foreach (var child in GetChildren())
             {
-                Children.Remove(remove);
+                if (child.RemoveDescendant(remove)) return true;
             }
-            else
-            {
-                Children.ForEach(x => x.RemoveDescendant(remove));
-            }
+            return false;
         }
 
         public virtual void UpdateBoundingBox(bool cascadeToParent = true)
@@ -156,7 +156,10 @@ namespace Sledge.DataStructures.MapObjects
 
         public virtual void Transform(IUnitTransformation transform, TransformFlags flags)
         {
-            Children.ForEach(c => c.Transform(transform, flags));
+            foreach (var mo in GetChildren())
+            {
+                mo.Transform(transform, flags);
+            }
             UpdateBoundingBox();
         }
 
@@ -221,7 +224,7 @@ namespace Sledge.DataStructures.MapObjects
                 if (BoundingBox == null || !BoundingBox.IntersectsWith(box)) return list;
                 if (this is Solid || this is Entity) list.Add(this);
             }
-            list.AddRange(Children.SelectMany(x => x.GetAllNodesIntersectingWith(box, allowCodeHidden, allowVisgroupHidden)));
+            list.AddRange(GetChildren().SelectMany(x => x.GetAllNodesIntersectingWith(box, allowCodeHidden, allowVisgroupHidden)));
             return list;
         }
 
@@ -241,7 +244,7 @@ namespace Sledge.DataStructures.MapObjects
                 if (BoundingBox == null || !box.CoordinateIsInside(BoundingBox.Center)) return list;
                 if ((this is Solid || this is Entity) && !Children.Any()) list.Add(this);
             }
-            list.AddRange(Children.SelectMany(x => x.GetAllNodesWithCentersContainedWithin(box, allowCodeHidden, allowVisgroupHidden)));
+            list.AddRange(GetChildren().SelectMany(x => x.GetAllNodesWithCentersContainedWithin(box, allowCodeHidden, allowVisgroupHidden)));
             return list;
         }
 
@@ -262,7 +265,7 @@ namespace Sledge.DataStructures.MapObjects
                 if (bbox == null || !bbox.IntersectsWith(line)) return list;
                 if (this is Solid || this is Entity) list.Add(this);
             }
-            list.AddRange(Children.SelectMany(x => x.GetAllNodesIntersectingWith(line, allowCodeHidden, allowVisgroupHidden)));
+            list.AddRange(GetChildren().SelectMany(x => x.GetAllNodesIntersectingWith(line, allowCodeHidden, allowVisgroupHidden)));
             return list;
         }
 
@@ -281,7 +284,7 @@ namespace Sledge.DataStructures.MapObjects
                 if (BoundingBox == null || !BoundingBox.ContainedWithin(box)) return list;
                 if (this is Solid || this is Entity) list.Add(this);
             }
-            list.AddRange(Children.SelectMany(x => x.GetAllNodesContainedWithin(box, allowCodeHidden, allowVisgroupHidden)));
+            list.AddRange(GetChildren().SelectMany(x => x.GetAllNodesContainedWithin(box, allowCodeHidden, allowVisgroupHidden)));
             return list;
         }
 
@@ -317,7 +320,7 @@ namespace Sledge.DataStructures.MapObjects
                     list.Add(this);
                 }
             }
-            list.AddRange(Children.SelectMany(x => x.GetAllNodesIntersecting2DLineTest(box, includeOrigin, forceOrigin, allowCodeHidden, allowVisgroupHidden)));
+            list.AddRange(GetChildren().SelectMany(x => x.GetAllNodesIntersecting2DLineTest(box, includeOrigin, forceOrigin, allowCodeHidden, allowVisgroupHidden)));
             return list;
         }
 
@@ -385,7 +388,13 @@ namespace Sledge.DataStructures.MapObjects
         /// <returns>The object with the matching ID or null if it wasn't found</returns>
         public MapObject FindByID(long id)
         {
-            return ID == id ? this : Children.Select(x => x.FindByID(id)).FirstOrDefault(x => x != null);
+            if (Children.ContainsKey(id)) return Children[id];
+            foreach (var mo in GetChildren())
+            {
+                var by = mo.FindByID(id);
+                if (by != null) return by;
+            }
+            return null;
         }
 
         /// <summary>
@@ -424,7 +433,10 @@ namespace Sledge.DataStructures.MapObjects
                 items.Add(this);
                 if (forceMatchIfParentMatches) matcher = x => true;
             }
-            Children.ForEach(x => x.FindRecursive(items, matcher, forceMatchIfParentMatches));
+            foreach (var mo in GetChildren())
+            {
+                mo.FindRecursive(items, matcher, forceMatchIfParentMatches);
+            }
         }
 
         /// <summary>
@@ -441,7 +453,10 @@ namespace Sledge.DataStructures.MapObjects
                 action(this);
                 if (forceMatchIfParentMatches) matcher = x => true;
             }
-            Children.ForEach(x => x.ForEach(matcher, action, forceMatchIfParentMatches));
+            foreach (var mo in GetChildren())
+            {
+                mo.ForEach(matcher, action, forceMatchIfParentMatches);
+            }
         }
     }
 }

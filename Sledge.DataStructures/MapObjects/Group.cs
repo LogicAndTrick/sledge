@@ -38,9 +38,9 @@ namespace Sledge.DataStructures.MapObjects
 
         public override void UpdateBoundingBox(bool cascadeToParent = true)
         {
-            BoundingBox = Children.All(x => x.BoundingBox == null)
+            BoundingBox = GetChildren().All(x => x.BoundingBox == null)
                               ? null
-                              : new Box(Children.Where(x => x.BoundingBox != null).Select(x => x.BoundingBox));
+                              : new Box(GetChildren().Where(x => x.BoundingBox != null).Select(x => x.BoundingBox));
             base.UpdateBoundingBox(cascadeToParent);
         }
     }
