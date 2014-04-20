@@ -47,7 +47,7 @@ namespace Sledge.Settings
                                     new HotkeyDefinition("Delete", "Delete the current selection", HotkeysMediator.OperationsDelete, "Del"),
                                     
                                     new HotkeyDefinition("Group", "Group the selected objects", HotkeysMediator.GroupingGroup, "Ctrl+G"),
-                                    new HotkeyDefinition("Ungroup", "Ungroup the selected objects", HotkeysMediator.GroupingUngroup, "Ctrl+U", "Ctrl+H"),
+                                    new HotkeyDefinition("Ungroup", "Ungroup the selected objects", HotkeysMediator.GroupingUngroup, "Ctrl+U"),
                                     new HotkeyDefinition("Toggle Ignore Grouping", "Toggle ignore grouping on and off", HotkeysMediator.ToggleIgnoreGrouping, "Ctrl+W"),
                                     
                                     new HotkeyDefinition("Hide Selected", "Hide the selected objects", HotkeysMediator.QuickHideSelected, "H"),
