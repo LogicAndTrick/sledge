@@ -6,6 +6,7 @@ using Sledge.Common;
 using Sledge.DataStructures.GameData;
 using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.Transformations;
+using Sledge.Extensions;
 
 namespace Sledge.DataStructures.MapObjects
 {
@@ -72,8 +73,11 @@ namespace Sledge.DataStructures.MapObjects
             }
             else if (MetaData.Has<Box>("BoundingBox"))
             {
-                var box = MetaData.Get<Box>("BoundingBox");
-                BoundingBox = box.Clone().Transform(new UnitTranslate(Origin - box.Center + new Coordinate(0, 0, box.Height / 2)));
+                var angles = EntityData.GetPropertyCoordinate("angles", Coordinate.Zero);
+                angles = new Coordinate(-DMath.DegreesToRadians(angles.Z), DMath.DegreesToRadians(angles.X), -DMath.DegreesToRadians(angles.Y));
+                var tform = Matrix.Rotation(Quaternion.EulerAngles(angles)).Translate(Origin);
+                BoundingBox = MetaData.Get<Box>("BoundingBox").Transform(new UnitMatrixMult(tform));
+
             }
             else if (GameData != null && GameData.ClassType == ClassType.Point)
             {
