@@ -44,6 +44,44 @@ namespace Sledge.DataStructures.MapObjects
             CordonBounds = new Box(Coordinate.One * -1024, Coordinate.One * 1024);
         }
 
+        public IEnumerable<MapFeature> GetUsedFeatures()
+        {
+            var all = WorldSpawn.FindAll();
+
+            // Too generic: this should be assumed
+            // yield return MapFeature.Worldspawn;
+
+            if (all.Any(x => x is Solid))
+                yield return MapFeature.Solids;
+
+            if (all.Any(x => x is Entity))
+                yield return MapFeature.Entities;
+
+            if (all.Any(x => x is Group))
+                yield return MapFeature.Groups;
+
+            if (all.OfType<Solid>().Any(x => x.Faces.Any(y => y is Displacement)))
+                yield return MapFeature.Displacements;
+            
+            // Not implemented yet
+            // yield return MapFeature.Instances;
+
+            if (Visgroups.Any())
+                yield return MapFeature.SingleVisgroups;
+
+            if (all.Any(x => x.Visgroups.Count > 1))
+                yield return MapFeature.MultipleVisgroups;
+
+            // If we have more than one camera, we care about losing them
+            if (Cameras.Count > 1)
+                yield return MapFeature.Cameras;
+
+            // Not important enough to care about:
+            // yield return MapFeature.Colours;
+            // yield return MapFeature.CordonBounds;
+            // yield return MapFeature.ViewSettings;
+        }
+
         public TransformFlags GetTransformFlags()
         {
             var flags = TransformFlags.None;

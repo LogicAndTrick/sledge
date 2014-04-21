@@ -200,13 +200,32 @@ namespace Sledge.DataStructures.Geometric
         /// <returns>True if the split was successful</returns>
         public bool Split(Plane clip, out Polygon back, out Polygon front)
         {
+            Polygon cFront, cBack;
+            return Split(clip, out back, out front, out cBack, out cFront);
+        }
+
+        /// <summary>
+        /// Splits this polygon by a clipping plane, returning the back and front planes.
+        /// The original polygon is not modified.
+        /// </summary>
+        /// <param name="clip">The clipping plane</param>
+        /// <param name="back">The back polygon</param>
+        /// <param name="front">The front polygon</param>
+        /// <param name="coplanarBack">If the polygon rests on the plane and points backward, this will not be null</param>
+        /// <param name="coplanarFront">If the polygon rests on the plane and points forward, this will not be null</param>
+        /// <returns>True if the split was successful</returns>
+        public bool Split(Plane clip, out Polygon back, out Polygon front, out Polygon coplanarBack, out Polygon coplanarFront)
+        {
             // If the polygon doesn't span the plane, return false.
             var classify = ClassifyAgainstPlane(clip);
             if (classify != PlaneClassification.Spanning)
             {
                 back = front = null;
+                coplanarBack = coplanarFront = null;
                 if (classify == PlaneClassification.Back) back = this;
                 else if (classify == PlaneClassification.Front) front = this;
+                else if (Plane.Normal.Dot(clip.Normal) > 0) coplanarFront = this;
+                else coplanarBack = this;
                 return false;
             }
 
@@ -246,8 +265,15 @@ namespace Sledge.DataStructures.Geometric
 
             back = new Polygon(backVerts);
             front = new Polygon(frontVerts);
+            coplanarBack = coplanarFront = null;
 
             return true;
+        }
+
+        public void Flip()
+        {
+            Vertices.Reverse();
+            Plane = new Plane(-Plane.Normal, Plane.PointOnPlane);
         }
     }
 }

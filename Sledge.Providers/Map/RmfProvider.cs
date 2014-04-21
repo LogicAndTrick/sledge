@@ -12,6 +12,21 @@ namespace Sledge.Providers.Map
 {
     public class RmfProvider : MapProvider
     {
+        protected override IEnumerable<MapFeature> GetFormatFeatures()
+        {
+            return new[]
+            {
+                MapFeature.Worldspawn,
+                MapFeature.Solids,
+                MapFeature.Entities,
+                MapFeature.Groups,
+
+                MapFeature.Colours,
+                MapFeature.SingleVisgroups,
+                MapFeature.Cameras
+            };
+        }
+
         protected override bool IsValidForFileName(string filename)
         {
             return filename.EndsWith(".rmf", true, CultureInfo.InvariantCulture)

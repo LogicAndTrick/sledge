@@ -13,6 +13,27 @@ namespace Sledge.Providers.Map
 {
     public class VmfProvider : MapProvider
     {
+        protected override IEnumerable<MapFeature> GetFormatFeatures()
+        {
+            return new[]
+            {
+                MapFeature.Worldspawn,
+                MapFeature.Solids,
+                MapFeature.Entities,
+                MapFeature.Groups,
+
+                MapFeature.Displacements,
+                MapFeature.Instances,
+
+                MapFeature.Colours,
+                MapFeature.SingleVisgroups,
+                MapFeature.MultipleVisgroups,
+                MapFeature.Cameras,
+                MapFeature.CordonBounds,
+                MapFeature.ViewSettings
+            };
+        }
+
         protected override bool IsValidForFileName(string filename)
         {
             return filename.EndsWith(".vmf", true, CultureInfo.InvariantCulture)

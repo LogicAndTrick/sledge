@@ -50,6 +50,8 @@
     <Compile Include="Geometric\Box.cs" />
     <Compile Include="Geometric\Cloud.cs" />
     <Compile Include="Geometric\CoordinateF.cs" />
+    <Compile Include="Geometric\CsgNode.cs" />
+    <Compile Include="Geometric\CsgSolid.cs" />
     <Compile Include="Geometric\Polygon.cs" />
     <Compile Include="Geometric\QuaternionF.cs" />
     <Compile Include="Geometric\MatrixF.cs" />
@@ -69,6 +71,7 @@
     <Compile Include="GameData\VariableType.cs" />
     <Compile Include="Geometric\Line.cs" />
     <Compile Include="MapObjects\AutoVisgroup.cs" />
+    <Compile Include="MapObjects\MapFeature.cs" />
     <Compile Include="MapObjects\TransformFlags.cs" />
     <Compile Include="MapObjects\VisgroupFilters\IAutoVisgroup.cs" />
     <Compile Include="MapObjects\DisplacementPoint.cs" />

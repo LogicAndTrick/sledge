@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -22,6 +23,14 @@ namespace Sledge.Providers.Map
     /// </summary>
     public class ObjProvider : MapProvider
     {
+        protected override IEnumerable<MapFeature> GetFormatFeatures()
+        {
+            return new[]
+            {
+                MapFeature.Solids
+            };
+        }
+
         protected override bool IsValidForFileName(string filename)
         {
             return filename.EndsWith(".obj");
@@ -73,10 +82,22 @@ namespace Sledge.Providers.Map
             var points = new List<Coordinate>();
             var faces = new List<ObjFace>();
             var currentGroup = "default";
+            var scale = 100m;
 
             string line;
-            while ((line = CleanLine(reader.ReadLine())) != null)
+            while ((line = reader.ReadLine()) != null)
             {
+                if (line.StartsWith("# Scale: "))
+                {
+                    var num = line.Substring(9);
+                    decimal s;
+                    if (decimal.TryParse(num, NumberStyles.Float, CultureInfo.InvariantCulture, out s))
+                    {
+                        scale = s;
+                    }
+                }
+
+                line = CleanLine(line);
                 string keyword, values;
                 SplitLine(line, out keyword, out values);
                 if (String.IsNullOrWhiteSpace(keyword)) continue;
@@ -86,7 +107,7 @@ namespace Sledge.Providers.Map
                 {
                     // Things I care about
                     case "v": // geometric vertices
-                        points.Add(Coordinate.Parse(vals[0], vals[1], vals[2]) * 100);
+                        points.Add(Coordinate.Parse(vals[0], vals[1], vals[2]) * scale);
                         break;
                     case "f": // face
                         faces.Add(new ObjFace(currentGroup, vals.Select(x => ParseFaceIndex(points, x))));
@@ -304,7 +325,79 @@ namespace Sledge.Providers.Map
 
         protected override void SaveToStream(Stream stream, DataStructures.MapObjects.Map map)
         {
-            throw new NotImplementedException();
+            /*
+            // Csg version
+            
+            var csg = new CsgSolid();
+            foreach (var mo in map.WorldSpawn.Find(x => x is Solid).OfType<Solid>())
+            {
+                csg = csg.Union(new CsgSolid(mo.Faces.Select(x => new Polygon(x.Vertices.Select(v => v.Location)))));
+            }
+
+            using (var sw = new StreamWriter(stream))
+            {
+                foreach (var polygon in csg.Polygons)
+                {
+                    foreach (var v in polygon.Vertices)
+                    {
+                        sw.Write("v ");
+                        sw.Write(v.X.ToString("0.0000", CultureInfo.InvariantCulture));
+                        sw.Write(' ');
+                        sw.Write(v.Y.ToString("0.0000", CultureInfo.InvariantCulture));
+                        sw.Write(' ');
+                        sw.Write(v.Z.ToString("0.0000", CultureInfo.InvariantCulture));
+                        sw.WriteLine();
+                    }
+                    
+                    sw.Write("f ");
+                    for (int i = polygon.Vertices.Count; i > 0; i--)
+                    {
+                        sw.Write(-i);
+                        sw.Write(' ');
+                    }
+                    sw.WriteLine();
+                    sw.WriteLine();
+                }
+            }
+            */
+
+            // Semi-recoverable version
+            using (var sw = new StreamWriter(stream))
+            {
+                sw.WriteLine("# Sledge Object Export");
+                sw.WriteLine("# Scale: 1");
+                sw.WriteLine();
+
+                foreach (var solid in map.WorldSpawn.Find(x => x is Solid).OfType<Solid>())
+                {
+                    sw.Write("g solid_");
+                    sw.Write(solid.ID);
+                    sw.WriteLine();
+
+                    foreach (var face in solid.Faces)
+                    {
+                        foreach (var v in face.Vertices)
+                        {
+                            sw.Write("v ");
+                            sw.Write(v.Location.X.ToString("0.0000", CultureInfo.InvariantCulture));
+                            sw.Write(' ');
+                            sw.Write(v.Location.Y.ToString("0.0000", CultureInfo.InvariantCulture));
+                            sw.Write(' ');
+                            sw.Write(v.Location.Z.ToString("0.0000", CultureInfo.InvariantCulture));
+                            sw.WriteLine();
+                        }
+
+                        sw.Write("f ");
+                        for (var i = 1; i <= face.Vertices.Count; i++)
+                        {
+                            sw.Write(-i);
+                            sw.Write(' ');
+                        }
+                        sw.WriteLine();
+                        sw.WriteLine();
+                    }
+                }
+            }
         }
     }
 }

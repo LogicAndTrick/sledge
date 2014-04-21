@@ -12,6 +12,16 @@ namespace Sledge.Providers.Map
 {
     public class MapFormatProvider : MapProvider
     {
+        protected override IEnumerable<MapFeature> GetFormatFeatures()
+        {
+            return new[]
+            {
+                MapFeature.Worldspawn,
+                MapFeature.Solids,
+                MapFeature.Entities
+            };
+        }
+
         protected override bool IsValidForFileName(string filename)
         {
             return filename.EndsWith(".map", true, CultureInfo.InvariantCulture)
