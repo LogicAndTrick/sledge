@@ -35,9 +35,15 @@ namespace Sledge.Editor.Environment
         {
             if (Game.SteamInstall)
             {
+                // SteamPipe folders: game_addon (custom content), game_downloads (downloaded content)
+                yield return Path.Combine(Sledge.Settings.Steam.SteamDirectory, "steamapps", "common", Game.SteamGameDir, Game.ModDir + "_addon");
+                yield return Path.Combine(Sledge.Settings.Steam.SteamDirectory, "steamapps", "common", Game.SteamGameDir, Game.ModDir + "_downloads");
+
+                // Mod and game folders
                 yield return Path.Combine(Sledge.Settings.Steam.SteamDirectory, "steamapps", "common", Game.SteamGameDir, Game.ModDir);
                 if (!String.Equals(Game.BaseDir, Game.ModDir, StringComparison.CurrentCultureIgnoreCase))
                 {
+                    // Do the  SteamPipe folders need to be included here too? Possbly not...
                     yield return Path.Combine(Sledge.Settings.Steam.SteamDirectory, "steamapps", "common", Game.SteamGameDir, Game.BaseDir);
                 }
             }
