@@ -18,6 +18,7 @@ namespace Sledge.Settings.Models
         public string SteamGameDir { get; set; }
         public string BaseDir { get; set; }
         public string ModDir { get; set; }
+        public bool UseHDModels { get; set; }
         public string Executable { get; set; }
         public string ExecutableParameters { get; set; }
         public string MapDir { get; set; }
@@ -58,6 +59,7 @@ namespace Sledge.Settings.Models
             WonGameDir = gs["WonGameDir"];
             SteamGameDir = gs["SteamGameDir"];
             ModDir = gs["ModDir"];
+            UseHDModels = gs.PropertyBoolean("UseHDModels", true);
             BaseDir = gs["BaseDir"];
             Executable = gs["Executable"];
             ExecutableParameters = gs["ExecutableParameters"];
@@ -105,6 +107,7 @@ namespace Sledge.Settings.Models
             gs["WonGameDir"] = WonGameDir;
             gs["SteamGameDir"] = SteamGameDir;
             gs["ModDir"] = ModDir;
+            gs["UseHDModels"] = UseHDModels.ToString(CultureInfo.InvariantCulture);
             gs["BaseDir"] = BaseDir;
             gs["Executable"] = Executable;
             gs["ExecutableParameters"] = ExecutableParameters;

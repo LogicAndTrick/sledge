@@ -201,6 +201,7 @@ namespace Sledge.Editor.Settings
             SelectedGameSteamDir.SelectedIndexChanged += (s, e) => CheckNull(_selectedGame, x => x.SteamGameDir = SelectedGameSteamDir.Text);
             SelectedGameMod.SelectedIndexChanged += (s, e) => CheckNull(_selectedGame, x => x.ModDir = SelectedGameMod.Text);
             SelectedGameBase.SelectedIndexChanged += (s, e) => CheckNull(_selectedGame, x => x.BaseDir = SelectedGameBase.Text);
+            SelectedGameUseHDModels.CheckedChanged += (s, e) => CheckNull(_selectedGame, x => x.UseHDModels = SelectedGameUseHDModels.Checked);
             SelectedGameExecutable.SelectedIndexChanged += (s, e) => CheckNull(_selectedGame, x => x.Executable = SelectedGameExecutable.Text);
             SelectedGameRunArguments.TextChanged += (s, e) => CheckNull(_selectedGame, x => x.ExecutableParameters = SelectedGameRunArguments.Text);
             SelectedGameMapDir.TextChanged += (s, e) => CheckNull(_selectedGame, x => x.MapDir = SelectedGameMapDir.Text);
@@ -826,6 +827,7 @@ namespace Sledge.Editor.Settings
                 BuildID = _builds.Select(x => x.ID).FirstOrDefault(),
                 Autosave = true,
                 MapDir = _games.Select(x => x.MapDir).FirstOrDefault() ?? "",
+                UseHDModels = true,
                 AutosaveDir = _games.Select(x => x.AutosaveDir).FirstOrDefault() ?? "",
                 DefaultLightmapScale = 1,
                 DefaultTextureScale = 1,
@@ -914,6 +916,7 @@ namespace Sledge.Editor.Settings
 
             SelectedGameMod.SelectedText = _selectedGame.ModDir;
             SelectedGameBase.SelectedText = _selectedGame.BaseDir;
+            SelectedGameUseHDModels.Checked = _selectedGame.UseHDModels;
             SelectedGameExecutable.SelectedText = _selectedGame.Executable;
             SelectedGameRunArguments.Text = _selectedGame.ExecutableParameters;
             SelectedGameWonDir.Text = _selectedGame.WonGameDir;
