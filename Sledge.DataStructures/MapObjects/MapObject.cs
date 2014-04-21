@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
 using System.Drawing;
 using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.Meta;
@@ -38,7 +36,7 @@ namespace Sledge.DataStructures.MapObjects
 
         public IEnumerable<MapObject> GetChildren()
         {
-            return Children.Values;
+            return Children.Values.ToList();
         }
 
         public int ChildCount
@@ -124,13 +122,13 @@ namespace Sledge.DataStructures.MapObjects
         {
             if (Parent != null)
             {
-                Parent.Children.Remove(ID);
+                if (Parent.Children.ContainsKey(ID) && Parent.Children[ID] == this) Parent.Children.Remove(ID);
                 Parent.UpdateBoundingBox();
             }
             Parent = parent;
             if (Parent != null)
             {
-                Parent.Children.Add(ID, this);
+                Parent.Children[ID] = this;
                 UpdateBoundingBox();
             }
         }
