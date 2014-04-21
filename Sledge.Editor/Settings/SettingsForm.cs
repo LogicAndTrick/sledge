@@ -39,11 +39,155 @@ namespace Sledge.Editor.Settings
             BindColourPicker(GridHighlight1Colour);
             BindColourPicker(GridHighlight2Colour);
             BindColourPicker(ViewportBackgroundColour);
+            AddColourPresetButtons();
 
             UpdateData();
 
             BindConfigControls();
         }
+
+        #region Colour Presets
+
+        private struct ColourPreset
+        {
+            public string Name { get; set; }
+            public Color Background { get; set; }
+            public Color Grid { get; set; }
+            public Color ZeroAxes { get; set; }
+            public Color Boundaries { get; set; }
+            public Color Highlight1 { get; set; }
+            public Color Highlight2 { get; set; }
+            public bool Highlight1Enabled { get; set; }
+            public bool Highlight2Enabled { get; set; }
+            public int Highlight1Count { get; set; }
+            public int Highlight2Units { get; set; }
+        }
+
+        private static readonly ColourPreset[] Presets = new[]
+        {
+            new ColourPreset
+            {
+                Name = "Sledge Default",
+                Background = Color.Black,
+                Grid = Color.FromArgb(75, 75, 75),
+                ZeroAxes = Color.FromArgb(0, 100, 100),
+                Highlight1 = Color.FromArgb(115, 115, 115),
+                Highlight1Count = 8,
+                Highlight1Enabled = true,
+                Highlight2 = Color.FromArgb(100, 46, 0),
+                Highlight2Units = 1024,
+                Highlight2Enabled = true,
+                Boundaries = Color.Red
+            },
+            new ColourPreset
+            {
+                Name = "Hammer 3",
+                Background = Color.Black,
+                Grid = Color.FromArgb(81, 81, 81),
+                ZeroAxes = Color.FromArgb(0, 100, 100),
+                Highlight1 = Color.FromArgb(120, 120, 120),
+                Highlight1Count = 8,
+                Highlight1Enabled = true,
+                Highlight2 = Color.FromArgb(120, 120, 120),
+                Highlight2Units = 1024,
+                Highlight2Enabled = true,
+                Boundaries = Color.FromArgb(120, 120, 120)
+            },
+            new ColourPreset
+            {
+                Name = "Hammer 4",
+                Background = Color.Black,
+                Grid = Color.FromArgb(81, 81, 81),
+                ZeroAxes = Color.FromArgb(0, 100, 100),
+                Highlight1 = Color.FromArgb(109, 109, 109),
+                Highlight1Count = 8,
+                Highlight1Enabled = true,
+                Highlight2 = Color.FromArgb(100, 46, 1),
+                Highlight2Units = 1024,
+                Highlight2Enabled = true,
+                Boundaries = Color.FromArgb(100, 46, 1)
+            },
+            new ColourPreset
+            {
+                Name = "GtkRadiant",
+                Background = Color.White,
+                Grid = Color.FromArgb(191, 191, 191),
+                ZeroAxes = Color.FromArgb(127, 127, 127),
+                Highlight1 = Color.FromArgb(127, 127, 127),
+                Highlight1Count = 8,
+                Highlight1Enabled = false,
+                Highlight2 = Color.FromArgb(127, 127, 127),
+                Highlight2Units = 64,
+                Highlight2Enabled = true,
+                Boundaries = Color.FromArgb(127, 127, 127)
+            },
+            new ColourPreset
+            {
+                Name = "QuArK",
+                Background = Color.FromArgb(232, 220, 184),
+                Grid = Color.FromArgb(208, 208, 255),
+                ZeroAxes = Color.FromArgb(166, 202, 240),
+                Highlight1 = Color.FromArgb(184, 196, 255),
+                Highlight1Count = 8,
+                Highlight1Enabled = true,
+                Highlight2 = Color.FromArgb(184, 196, 255),
+                Highlight2Units = 1024,
+                Highlight2Enabled = false,
+                Boundaries = Color.FromArgb(166, 202, 240)
+            },
+            new ColourPreset
+            {
+                Name = "Unreal Editor",
+                Background = Color.FromArgb(163, 163, 163),
+                Grid = Color.FromArgb(145, 145, 145),
+                ZeroAxes = Color.FromArgb(119, 119, 119),
+                Highlight1 = Color.FromArgb(127, 127, 127),
+                Highlight1Count = 8,
+                Highlight1Enabled = true,
+                Highlight2 = Color.FromArgb(127, 127, 127),
+                Highlight2Units = 1024,
+                Highlight2Enabled = false,
+                Boundaries = Color.FromArgb(0, 0, 107)
+            }
+        };
+
+        private void AddColourPresetButtons()
+        {
+            ColourPresetPanel.Controls.Clear();
+            foreach (var cp in Presets)
+            {
+                var btn = new Button
+                {
+                    AutoSize = false,
+                    Height = 23,
+                    Width = 95,
+                    Padding = new Padding(0),
+                    Margin = new Padding(2),
+                    Text = cp.Name
+                };
+                var preset = cp;
+                btn.Click += (s, e) => SetColourPreset(preset);
+                ColourPresetPanel.Controls.Add(btn);
+            }
+        }
+
+        private void SetColourPreset(ColourPreset cp)
+        {
+            GridBackgroundColour.BackColor = cp.Background;
+            GridColour.BackColor = cp.Grid;
+            GridZeroAxisColour.BackColor = cp.ZeroAxes;
+            GridBoundaryColour.BackColor = cp.Boundaries;
+
+            GridHighlight1Colour.BackColor = cp.Highlight1;
+            GridHighlight1Distance.Value = cp.Highlight1Count;
+            GridHighlight1On.Checked = cp.Highlight1Enabled;
+
+            GridHighlight2Colour.BackColor = cp.Highlight2;
+            GridHighlight2UnitNum.SelectedItem = cp.Highlight2Units.ToString(CultureInfo.InvariantCulture);
+            GridHighlight2On.Checked = cp.Highlight2Enabled;
+        }
+
+        #endregion
 
         #region Initialisation
         private void BindConfigControls()

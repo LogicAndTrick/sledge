@@ -45,7 +45,9 @@ namespace Sledge.Editor.Settings
             this.RotationStyle_SnapOnShift = new System.Windows.Forms.RadioButton();
             this.RotationStyle_SnapOffShift = new System.Windows.Forms.RadioButton();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.ColourPresetPanel = new System.Windows.Forms.FlowLayoutPanel();
             this.GridHighlight2Colour = new System.Windows.Forms.Panel();
+            this.label30 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
             this.label9 = new System.Windows.Forms.Label();
             this.GridBackgroundColour = new System.Windows.Forms.Panel();
@@ -64,6 +66,7 @@ namespace Sledge.Editor.Settings
             this.GridHighlight1Distance = new System.Windows.Forms.NumericUpDown();
             this.label8 = new System.Windows.Forms.Label();
             this.groupBox17 = new System.Windows.Forms.GroupBox();
+            this.DrawEntityAngles = new System.Windows.Forms.CheckBox();
             this.DrawEntityNames = new System.Windows.Forms.CheckBox();
             this.CrosshairCursorIn2DViews = new System.Windows.Forms.CheckBox();
             this.groupBox16 = new System.Windows.Forms.GroupBox();
@@ -283,7 +286,7 @@ namespace Sledge.Editor.Settings
             this.btnCancelSettings = new System.Windows.Forms.Button();
             this.btnApplyAndCloseSettings = new System.Windows.Forms.Button();
             this.btnApplySettings = new System.Windows.Forms.Button();
-            this.DrawEntityAngles = new System.Windows.Forms.CheckBox();
+            this.button1 = new System.Windows.Forms.Button();
             this.SelectedBuildCsgParameters = new Sledge.Editor.Compiling.CompileParameterPanel();
             this.SelectedBuildBspParameters = new Sledge.Editor.Compiling.CompileParameterPanel();
             this.SelectedBuildVisParameters = new Sledge.Editor.Compiling.CompileParameterPanel();
@@ -294,6 +297,7 @@ namespace Sledge.Editor.Settings
             this.tab2DViews.SuspendLayout();
             this.groupBox6.SuspendLayout();
             this.groupBox3.SuspendLayout();
+            this.ColourPresetPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.GridHighlight1Distance)).BeginInit();
             this.groupBox17.SuspendLayout();
             this.groupBox16.SuspendLayout();
@@ -449,7 +453,9 @@ namespace Sledge.Editor.Settings
             // 
             // groupBox3
             // 
+            this.groupBox3.Controls.Add(this.ColourPresetPanel);
             this.groupBox3.Controls.Add(this.GridHighlight2Colour);
+            this.groupBox3.Controls.Add(this.label30);
             this.groupBox3.Controls.Add(this.label6);
             this.groupBox3.Controls.Add(this.label9);
             this.groupBox3.Controls.Add(this.GridBackgroundColour);
@@ -469,10 +475,20 @@ namespace Sledge.Editor.Settings
             this.groupBox3.Controls.Add(this.label8);
             this.groupBox3.Location = new System.Drawing.Point(6, 245);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(409, 178);
+            this.groupBox3.Size = new System.Drawing.Size(478, 260);
             this.groupBox3.TabIndex = 0;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Grid Colour Settings";
+            // 
+            // ColourPresetPanel
+            // 
+            this.ColourPresetPanel.Controls.Add(this.button1);
+            this.ColourPresetPanel.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
+            this.ColourPresetPanel.Location = new System.Drawing.Point(366, 36);
+            this.ColourPresetPanel.Margin = new System.Windows.Forms.Padding(1);
+            this.ColourPresetPanel.Name = "ColourPresetPanel";
+            this.ColourPresetPanel.Size = new System.Drawing.Size(102, 214);
+            this.ColourPresetPanel.TabIndex = 4;
             // 
             // GridHighlight2Colour
             // 
@@ -482,6 +498,14 @@ namespace Sledge.Editor.Settings
             this.GridHighlight2Colour.Name = "GridHighlight2Colour";
             this.GridHighlight2Colour.Size = new System.Drawing.Size(51, 17);
             this.GridHighlight2Colour.TabIndex = 2;
+            // 
+            // label30
+            // 
+            this.label30.Location = new System.Drawing.Point(363, 16);
+            this.label30.Name = "label30";
+            this.label30.Size = new System.Drawing.Size(94, 17);
+            this.label30.TabIndex = 1;
+            this.label30.Text = "Colour Presets:";
             // 
             // label6
             // 
@@ -666,6 +690,16 @@ namespace Sledge.Editor.Settings
             this.groupBox17.TabIndex = 0;
             this.groupBox17.TabStop = false;
             this.groupBox17.Text = "Options";
+            // 
+            // DrawEntityAngles
+            // 
+            this.DrawEntityAngles.Location = new System.Drawing.Point(10, 79);
+            this.DrawEntityAngles.Name = "DrawEntityAngles";
+            this.DrawEntityAngles.Size = new System.Drawing.Size(225, 24);
+            this.DrawEntityAngles.TabIndex = 5;
+            this.DrawEntityAngles.Tag = "";
+            this.DrawEntityAngles.Text = "Draw entity angles in the viewport";
+            this.DrawEntityAngles.UseVisualStyleBackColor = true;
             // 
             // DrawEntityNames
             // 
@@ -3087,15 +3121,15 @@ namespace Sledge.Editor.Settings
             this.btnApplySettings.UseVisualStyleBackColor = true;
             this.btnApplySettings.Click += new System.EventHandler(this.Apply);
             // 
-            // DrawEntityAngles
+            // button1
             // 
-            this.DrawEntityAngles.Location = new System.Drawing.Point(10, 79);
-            this.DrawEntityAngles.Name = "DrawEntityAngles";
-            this.DrawEntityAngles.Size = new System.Drawing.Size(225, 24);
-            this.DrawEntityAngles.TabIndex = 5;
-            this.DrawEntityAngles.Tag = "";
-            this.DrawEntityAngles.Text = "Draw entity angles in the viewport";
-            this.DrawEntityAngles.UseVisualStyleBackColor = true;
+            this.button1.Location = new System.Drawing.Point(0, 0);
+            this.button1.Margin = new System.Windows.Forms.Padding(0);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(100, 22);
+            this.button1.TabIndex = 0;
+            this.button1.Text = "Colour Preset";
+            this.button1.UseVisualStyleBackColor = true;
             // 
             // SelectedBuildCsgParameters
             // 
@@ -3162,6 +3196,7 @@ namespace Sledge.Editor.Settings
             this.tab2DViews.ResumeLayout(false);
             this.groupBox6.ResumeLayout(false);
             this.groupBox3.ResumeLayout(false);
+            this.ColourPresetPanel.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.GridHighlight1Distance)).EndInit();
             this.groupBox17.ResumeLayout(false);
             this.groupBox16.ResumeLayout(false);
@@ -3483,5 +3518,8 @@ namespace Sledge.Editor.Settings
         private System.Windows.Forms.CheckBox DrawEntityNames;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
         private System.Windows.Forms.CheckBox DrawEntityAngles;
+        private System.Windows.Forms.FlowLayoutPanel ColourPresetPanel;
+        private System.Windows.Forms.Label label30;
+        private System.Windows.Forms.Button button1;
 	}
 }
