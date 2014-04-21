@@ -4,6 +4,8 @@ namespace Sledge.Settings
 {
     public class View
     {
+        public static bool SingleInstance { get; set; }
+
         public static bool CrosshairCursorIn2DViews { get; set; }
         public static decimal ScrollWheelZoomMultiplier { get; set; }
         public static int SelectionBoxBackgroundOpacity { get; set; }
@@ -46,6 +48,8 @@ namespace Sledge.Settings
 
         static View()
         {
+            SingleInstance = true;
+
             CrosshairCursorIn2DViews = false;
             ScrollWheelZoomMultiplier = 1.2m;
             SelectionBoxBackgroundOpacity = 64;

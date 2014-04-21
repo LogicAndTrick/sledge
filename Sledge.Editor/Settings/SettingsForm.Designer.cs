@@ -291,6 +291,8 @@ namespace Sledge.Editor.Settings
             this.tabIntegration = new System.Windows.Forms.TabPage();
             this.groupBox11 = new System.Windows.Forms.GroupBox();
             this.AssociationsPanel = new System.Windows.Forms.FlowLayoutPanel();
+            this.groupBox18 = new System.Windows.Forms.GroupBox();
+            this.SingleInstanceCheckbox = new System.Windows.Forms.CheckBox();
             this.SelectedBuildCsgParameters = new Sledge.Editor.Compiling.CompileParameterPanel();
             this.SelectedBuildBspParameters = new Sledge.Editor.Compiling.CompileParameterPanel();
             this.SelectedBuildVisParameters = new Sledge.Editor.Compiling.CompileParameterPanel();
@@ -357,6 +359,7 @@ namespace Sledge.Editor.Settings
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
             this.tabIntegration.SuspendLayout();
             this.groupBox11.SuspendLayout();
+            this.groupBox18.SuspendLayout();
             this.SuspendLayout();
             // 
             // tbcSettings
@@ -3153,6 +3156,7 @@ namespace Sledge.Editor.Settings
             // 
             // tabIntegration
             // 
+            this.tabIntegration.Controls.Add(this.groupBox18);
             this.tabIntegration.Controls.Add(this.groupBox11);
             this.tabIntegration.Location = new System.Drawing.Point(4, 22);
             this.tabIntegration.Name = "tabIntegration";
@@ -3183,6 +3187,26 @@ namespace Sledge.Editor.Settings
             this.AssociationsPanel.Size = new System.Drawing.Size(275, 258);
             this.AssociationsPanel.TabIndex = 1;
             this.AssociationsPanel.WrapContents = false;
+            // 
+            // groupBox18
+            // 
+            this.groupBox18.Controls.Add(this.SingleInstanceCheckbox);
+            this.groupBox18.Location = new System.Drawing.Point(299, 6);
+            this.groupBox18.Name = "groupBox18";
+            this.groupBox18.Size = new System.Drawing.Size(418, 47);
+            this.groupBox18.TabIndex = 1;
+            this.groupBox18.TabStop = false;
+            this.groupBox18.Text = "Single instance";
+            // 
+            // SingleInstanceCheckbox
+            // 
+            this.SingleInstanceCheckbox.AutoSize = true;
+            this.SingleInstanceCheckbox.Location = new System.Drawing.Point(11, 19);
+            this.SingleInstanceCheckbox.Name = "SingleInstanceCheckbox";
+            this.SingleInstanceCheckbox.Size = new System.Drawing.Size(337, 17);
+            this.SingleInstanceCheckbox.TabIndex = 0;
+            this.SingleInstanceCheckbox.Text = "Only allow one instance of Sledge to run at a time (requires restart)";
+            this.SingleInstanceCheckbox.UseVisualStyleBackColor = true;
             // 
             // SelectedBuildCsgParameters
             // 
@@ -3317,6 +3341,8 @@ namespace Sledge.Editor.Settings
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).EndInit();
             this.tabIntegration.ResumeLayout(false);
             this.groupBox11.ResumeLayout(false);
+            this.groupBox18.ResumeLayout(false);
+            this.groupBox18.PerformLayout();
             this.ResumeLayout(false);
 
 		}
@@ -3580,5 +3606,7 @@ namespace Sledge.Editor.Settings
         private System.Windows.Forms.TabPage tabIntegration;
         private System.Windows.Forms.GroupBox groupBox11;
         private System.Windows.Forms.FlowLayoutPanel AssociationsPanel;
+        private System.Windows.Forms.GroupBox groupBox18;
+        private System.Windows.Forms.CheckBox SingleInstanceCheckbox;
 	}
 }

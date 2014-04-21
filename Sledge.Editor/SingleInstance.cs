@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using Microsoft.VisualBasic.ApplicationServices;
-using Sledge.Common.Mediator;
+using Sledge.Settings;
 
 namespace Sledge.Editor
 {
@@ -14,15 +11,11 @@ namespace Sledge.Editor
         private readonly Type _formType;
         private static SingleInstance _instance;
 
-        public static bool EnableSingleInstance
-        {
-            get { return _instance.IsSingleInstance; }
-            set { _instance.IsSingleInstance = value; }
-        }
-
         public static void Start(Type formType)
         {
+            SettingsManager.Read();
             _instance = new SingleInstance(formType);
+            _instance.IsSingleInstance = Sledge.Settings.View.SingleInstance;
             _instance.Run(System.Environment.GetCommandLineArgs());
         }
 

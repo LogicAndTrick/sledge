@@ -590,6 +590,8 @@ namespace Sledge.Editor.Settings
             AddSetting(() => Sledge.Settings.View.Camera2DPanRequiresMouseClick, "Require mouse click to enable panning in 2D viewports when holding spacebar");
             AddSetting(() => Sledge.Settings.View.Camera3DPanRequiresMouseClick, "Require mouse click to enable free-look in 3D viewports when holding spacebar");
 
+            // Integration
+            SingleInstanceCheckbox.Checked = Sledge.Settings.View.SingleInstance;
 
             // 2D Views
             CrosshairCursorIn2DViews.Checked = Sledge.Settings.View.CrosshairCursorIn2DViews;
@@ -658,6 +660,9 @@ namespace Sledge.Editor.Settings
 
         private void Apply()
         {
+            // Integration
+            Sledge.Settings.View.SingleInstance = SingleInstanceCheckbox.Checked;
+
             // 2D Views
             Sledge.Settings.View.CrosshairCursorIn2DViews = CrosshairCursorIn2DViews.Checked;
             Sledge.Settings.View.DrawEntityNames = DrawEntityNames.Checked;
