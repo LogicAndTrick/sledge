@@ -179,8 +179,8 @@ namespace Sledge.Providers.Map
                                          FormatCoordinate(face.Vertices[1].Location),
                                          FormatCoordinate(face.Vertices[2].Location));
             ret["material"] = face.Texture.Name;
-            ret["uaxis"] = String.Format(CultureInfo.CurrentCulture, "[{0} {1}] {2}", FormatCoordinate(face.Texture.UAxis), face.Texture.XShift, face.Texture.XScale);
-            ret["vaxis"] = String.Format(CultureInfo.CurrentCulture, "[{0} {1}] {2}", FormatCoordinate(face.Texture.VAxis), face.Texture.YShift, face.Texture.YScale);
+            ret["uaxis"] = String.Format(CultureInfo.InvariantCulture, "[{0} {1}] {2}", FormatCoordinate(face.Texture.UAxis), face.Texture.XShift, face.Texture.XScale);
+            ret["vaxis"] = String.Format(CultureInfo.InvariantCulture, "[{0} {1}] {2}", FormatCoordinate(face.Texture.VAxis), face.Texture.YShift, face.Texture.YScale);
             ret["rotation"] = face.Texture.Rotation.ToString(CultureInfo.InvariantCulture);
             // ret["lightmapscale"]
             // ret["smoothing_groups"]
