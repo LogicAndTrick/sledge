@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -795,19 +796,44 @@ namespace Sledge.Editor
                 var shot = ViewportManager.CreateScreenshot(focused, (int) qf.Decimal("Width"), (int) qf.Decimal("Height"));
                 if (shot == null) return;
 
+                var ext = focused is Viewport2D || (focused is Viewport3D && ((Viewport3D)focused).Type != Viewport3D.ViewType.Textured) ? ".png" : ".jpg";
+
                 using (var sfd = new SaveFileDialog())
                 {
                     sfd.FileName = "Sledge - "
                                    + (DocumentManager.CurrentDocument != null ? DocumentManager.CurrentDocument.MapFileName : "untitled")
-                                   + " - " + DateTime.Now.ToString("yyyy-MM-ddThh-mm-ss") + ".png";
+                                   + " - " + DateTime.Now.ToString("yyyy-MM-ddThh-mm-ss") + ext;
                     sfd.Filter = "Image Files (*.png, *.jpg, *.bmp)|*.png;*.jpg;*.bmp";
                     if (sfd.ShowDialog() == DialogResult.OK)
                     {
-                        shot.Save(sfd.FileName);
+                        if (sfd.FileName.EndsWith("jpg"))
+                        {
+                            var encoder = GetJpegEncoder();
+                            if (encoder != null)
+                            {
+                                var p = new EncoderParameter(Encoder.Quality, 90L);
+                                var ep = new EncoderParameters(1);
+                                ep.Param[0] = p;
+                                shot.Save(sfd.FileName, encoder, ep);
+                            }
+                            else
+                            {
+                                shot.Save(sfd.FileName);
+                            }
+                        }
+                        else
+                        {
+                            shot.Save(sfd.FileName);
+                        }
                     }
                 }
                 shot.Dispose();
             }
+        }
+
+        private ImageCodecInfo GetJpegEncoder()
+        {
+            return ImageCodecInfo.GetImageEncoders().FirstOrDefault(x => x.FormatID == ImageFormat.Jpeg.Guid);
         }
 
         protected override bool ProcessDialogKey(Keys keyData)
