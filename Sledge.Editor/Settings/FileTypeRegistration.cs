@@ -1,4 +1,6 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Collections.Generic;
+using System.Reflection;
 using Microsoft.Win32;
 
 namespace Sledge.Editor.Settings
@@ -7,6 +9,21 @@ namespace Sledge.Editor.Settings
     {
         public const string ProgramId = "SledgeEditor";
         public const string ProgramIdVer = "1";
+
+        public static FileType[] GetSupportedExtensions()
+        {
+            return new[]
+            {
+                new FileType(".vmf", "Valve Map File", true),
+                new FileType(".rmf", "Worldcraft RMF", true),
+                new FileType(".map", "Quake MAP Format", true),
+                new FileType(".obj", "Wavefront Model Format", true),
+
+                new FileType(".rmx", "Worldcraft RMF (Hammer Backup)", false),
+                new FileType(".max", "Quake MAP Format (Hammer Backup)", false),
+                new FileType(".vmx", "Valve Map File (Hammer Backup)", false),
+            };
+        }
 
         private static string ExecutableLocation()
         {
@@ -59,15 +76,38 @@ namespace Sledge.Editor.Settings
             }
         }
 
-        public static void RegisterDefaultFileType(string extension)
+        public static IEnumerable<string> GetRegisteredDefaultFileTypes()
+        {
+            using (var root = Registry.CurrentUser.OpenSubKey("Software\\Classes"))
+            {
+                if (root == null) yield break;
+
+                foreach (var ft in GetSupportedExtensions())
+                {
+                    using (var ext = root.OpenSubKey(ft.Extension))
+                    {
+                        if (ext == null) continue;
+                        if (Convert.ToString(ext.GetValue("")) == ProgramId + ft.Extension + "." + ProgramIdVer)
+                        {
+                            yield return ft.Extension;
+                        }
+                    }
+                }
+            }
+        }
+
+        public static void RegisterDefaultFileTypes(IEnumerable<string> extensions)
         {
             #if DEBUG
                 return;
             #endif
 
-            if (!extension.StartsWith(".")) extension = "." + extension;
-
-            AssociateExtensionHandler(extension);
+            foreach (var e in extensions)
+            {
+                var extension = e;
+                if (!extension.StartsWith(".")) extension = "." + extension;
+                AssociateExtensionHandler(extension);
+            }
         }
 
         public static void RegisterFileTypes()
@@ -76,9 +116,10 @@ namespace Sledge.Editor.Settings
                 return;
             #endif
 
-            AddExtensionHandler(".rmf", "Goldsource RMF File");
-            AddExtensionHandler(".map", "Quake MAP File");
-            AddExtensionHandler(".vmf", "Sledge VMF File");
+            foreach (var ft in GetSupportedExtensions())
+            {
+                AddExtensionHandler(ft.Extension, ft.Description);
+            }
 
 
             /*

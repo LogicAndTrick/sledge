@@ -271,6 +271,7 @@
     <Compile Include="Rendering\WidgetLinesRenderable.cs" />
     <Compile Include="Scheduler.cs" />
     <Compile Include="Settings\Elevate.cs" />
+    <Compile Include="Settings\FileType.cs" />
     <Compile Include="Settings\FileTypeRegistration.cs" />
     <Compile Include="SingleInstance.cs" />
     <Compile Include="SledgeCursors.cs" />

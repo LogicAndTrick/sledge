@@ -15,7 +15,8 @@ namespace Sledge.Providers.Map
     {
         protected override bool IsValidForFileName(string filename)
         {
-            return filename.EndsWith(".vmf", true, CultureInfo.InvariantCulture);
+            return filename.EndsWith(".vmf", true, CultureInfo.InvariantCulture)
+                || filename.EndsWith(".vmx", true, CultureInfo.InvariantCulture);
         }
 
         private static long GetObjectID(GenericStructure gs, IDGenerator generator)

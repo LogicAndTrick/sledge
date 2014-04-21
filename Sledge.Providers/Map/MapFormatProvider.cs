@@ -14,7 +14,8 @@ namespace Sledge.Providers.Map
     {
         protected override bool IsValidForFileName(string filename)
         {
-            return filename.EndsWith(".map", true, CultureInfo.InvariantCulture);
+            return filename.EndsWith(".map", true, CultureInfo.InvariantCulture)
+                || filename.EndsWith(".max", true, CultureInfo.InvariantCulture);
         }
 
         private string CleanLine(string line)

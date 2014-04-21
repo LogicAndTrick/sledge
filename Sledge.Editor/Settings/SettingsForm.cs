@@ -40,6 +40,7 @@ namespace Sledge.Editor.Settings
             BindColourPicker(GridHighlight2Colour);
             BindColourPicker(ViewportBackgroundColour);
             AddColourPresetButtons();
+            AddFileTypeBoxes();
 
             UpdateData();
 
@@ -185,6 +186,29 @@ namespace Sledge.Editor.Settings
             GridHighlight2Colour.BackColor = cp.Highlight2;
             GridHighlight2UnitNum.SelectedItem = cp.Highlight2Units.ToString(CultureInfo.InvariantCulture);
             GridHighlight2On.Checked = cp.Highlight2Enabled;
+        }
+
+        #endregion
+
+        #region File Types
+
+        private void AddFileTypeBoxes()
+        {
+            AssociationsPanel.Controls.Clear();
+            var supported = FileTypeRegistration.GetSupportedExtensions();
+            var registered = FileTypeRegistration.GetRegisteredDefaultFileTypes().ToList();
+            foreach (var ft in supported)
+            {
+                var def = registered.Contains(ft.Extension);
+                var cb = new CheckBox
+                {
+                    AutoSize = true,
+                    Checked = def,
+                    Text = ft.Extension + " (" + ft.Description + ")",
+                    Tag = ft
+                };
+                AssociationsPanel.Controls.Add(cb);
+            }
         }
 
         #endregion
@@ -378,8 +402,8 @@ namespace Sledge.Editor.Settings
         }
 
         #endregion
-
-        #region Load/Apply
+        
+        #region Controls
 
         private void AddHeading(string text)
         {
@@ -511,6 +535,10 @@ namespace Sledge.Editor.Settings
 
             return updown;
         }
+
+        #endregion
+
+        #region Load/Apply
 
         private void SettingsFormLoad(object sender, EventArgs e)
         {
@@ -696,6 +724,13 @@ namespace Sledge.Editor.Settings
             SettingsManager.Games.AddRange(_games);
 
             SettingsManager.Write();
+
+            // Update associations
+            var assoc = AssociationsPanel.Controls
+                .OfType<CheckBox>().Where(x => x.Checked)
+                .Select(x => x.Tag).OfType<FileType>()
+                .Select(x => x.Extension);
+            FileTypeRegistration.RegisterDefaultFileTypes(assoc);
 
             Mediator.Publish(EditorMediator.SettingsChanged);
         }

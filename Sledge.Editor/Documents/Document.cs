@@ -18,6 +18,7 @@ using Sledge.Editor.Extensions;
 using Sledge.Editor.History;
 using Sledge.Editor.Rendering;
 using Sledge.Editor.Rendering.Helpers;
+using Sledge.Editor.Settings;
 using Sledge.Editor.Tools;
 using Sledge.Editor.UI;
 using Sledge.Graphics.Helpers;
@@ -175,7 +176,10 @@ namespace Sledge.Editor.Documents
             {
                 using (var sfd = new SaveFileDialog())
                 {
-                    sfd.Filter = @"VMF Files (*.vmf)|*.vmf|RMF Files (*.rmf)|*.rmf|MAP Files (*.map)|*.map";
+                    var filter = String.Join("|", FileTypeRegistration.GetSupportedExtensions()
+                        .Where(x => x.IsPrimaryFormat).Select(x => x.Description + " (*" + x.Extension + ")|*" + x.Extension));
+                    var all = FileTypeRegistration.GetSupportedExtensions().Where(x => x.IsPrimaryFormat).Select(x => "*" + x.Extension).ToArray();
+                    sfd.Filter = "All supported formats (" + String.Join(", ", all) + ")|" + String.Join(";", all) + "|" + filter;
                     if (sfd.ShowDialog() == DialogResult.OK)
                     {
                         path = sfd.FileName;

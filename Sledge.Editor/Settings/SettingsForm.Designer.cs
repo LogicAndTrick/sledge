@@ -234,15 +234,10 @@ namespace Sledge.Editor.Settings
             this.label40 = new System.Windows.Forms.Label();
             this.tabBuildAdvancedSubTabs = new System.Windows.Forms.TabControl();
             this.tabBuildAdvancedCSG = new System.Windows.Forms.TabPage();
-            this.SelectedBuildCsgParameters = new Sledge.Editor.Compiling.CompileParameterPanel();
             this.tabBuildAdvancedBSP = new System.Windows.Forms.TabPage();
-            this.SelectedBuildBspParameters = new Sledge.Editor.Compiling.CompileParameterPanel();
             this.tabBuildAdvancedVIS = new System.Windows.Forms.TabPage();
-            this.SelectedBuildVisParameters = new Sledge.Editor.Compiling.CompileParameterPanel();
             this.tabBuildAdvancedRAD = new System.Windows.Forms.TabPage();
-            this.SelectedBuildRadParameters = new Sledge.Editor.Compiling.CompileParameterPanel();
             this.tabBuildAdvancedShared = new System.Windows.Forms.TabPage();
-            this.SelectedBuildSharedParameters = new Sledge.Editor.Compiling.CompileParameterPanel();
             this.tabBuildAdvancedPreview = new System.Windows.Forms.TabPage();
             this.SelectedBuildProfilePreview = new System.Windows.Forms.TextBox();
             this.RemoveBuild = new System.Windows.Forms.Button();
@@ -293,6 +288,14 @@ namespace Sledge.Editor.Settings
             this.btnApplyAndCloseSettings = new System.Windows.Forms.Button();
             this.btnApplySettings = new System.Windows.Forms.Button();
             this.SelectedGameUseHDModels = new System.Windows.Forms.CheckBox();
+            this.tabIntegration = new System.Windows.Forms.TabPage();
+            this.groupBox11 = new System.Windows.Forms.GroupBox();
+            this.AssociationsPanel = new System.Windows.Forms.FlowLayoutPanel();
+            this.SelectedBuildCsgParameters = new Sledge.Editor.Compiling.CompileParameterPanel();
+            this.SelectedBuildBspParameters = new Sledge.Editor.Compiling.CompileParameterPanel();
+            this.SelectedBuildVisParameters = new Sledge.Editor.Compiling.CompileParameterPanel();
+            this.SelectedBuildRadParameters = new Sledge.Editor.Compiling.CompileParameterPanel();
+            this.SelectedBuildSharedParameters = new Sledge.Editor.Compiling.CompileParameterPanel();
             this.tbcSettings.SuspendLayout();
             this.tabGeneral.SuspendLayout();
             this.tab2DViews.SuspendLayout();
@@ -352,6 +355,8 @@ namespace Sledge.Editor.Settings
             ((System.ComponentModel.ISupportInitialize)(this.trackBar2)).BeginInit();
             this.groupBox7.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
+            this.tabIntegration.SuspendLayout();
+            this.groupBox11.SuspendLayout();
             this.SuspendLayout();
             // 
             // tbcSettings
@@ -360,6 +365,7 @@ namespace Sledge.Editor.Settings
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tbcSettings.Controls.Add(this.tabGeneral);
+            this.tbcSettings.Controls.Add(this.tabIntegration);
             this.tbcSettings.Controls.Add(this.tab2DViews);
             this.tbcSettings.Controls.Add(this.tab3DViews);
             this.tbcSettings.Controls.Add(this.tabGame);
@@ -2599,15 +2605,6 @@ namespace Sledge.Editor.Settings
             this.tabBuildAdvancedCSG.Text = "CSG";
             this.tabBuildAdvancedCSG.UseVisualStyleBackColor = true;
             // 
-            // SelectedBuildCsgParameters
-            // 
-            this.SelectedBuildCsgParameters.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.SelectedBuildCsgParameters.Location = new System.Drawing.Point(0, 0);
-            this.SelectedBuildCsgParameters.MinimumSize = new System.Drawing.Size(300, 250);
-            this.SelectedBuildCsgParameters.Name = "SelectedBuildCsgParameters";
-            this.SelectedBuildCsgParameters.Size = new System.Drawing.Size(449, 408);
-            this.SelectedBuildCsgParameters.TabIndex = 0;
-            // 
             // tabBuildAdvancedBSP
             // 
             this.tabBuildAdvancedBSP.Controls.Add(this.SelectedBuildBspParameters);
@@ -2617,15 +2614,6 @@ namespace Sledge.Editor.Settings
             this.tabBuildAdvancedBSP.TabIndex = 1;
             this.tabBuildAdvancedBSP.Text = "BSP";
             this.tabBuildAdvancedBSP.UseVisualStyleBackColor = true;
-            // 
-            // SelectedBuildBspParameters
-            // 
-            this.SelectedBuildBspParameters.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.SelectedBuildBspParameters.Location = new System.Drawing.Point(0, 0);
-            this.SelectedBuildBspParameters.MinimumSize = new System.Drawing.Size(300, 250);
-            this.SelectedBuildBspParameters.Name = "SelectedBuildBspParameters";
-            this.SelectedBuildBspParameters.Size = new System.Drawing.Size(449, 408);
-            this.SelectedBuildBspParameters.TabIndex = 1;
             // 
             // tabBuildAdvancedVIS
             // 
@@ -2637,15 +2625,6 @@ namespace Sledge.Editor.Settings
             this.tabBuildAdvancedVIS.Text = "VIS";
             this.tabBuildAdvancedVIS.UseVisualStyleBackColor = true;
             // 
-            // SelectedBuildVisParameters
-            // 
-            this.SelectedBuildVisParameters.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.SelectedBuildVisParameters.Location = new System.Drawing.Point(0, 0);
-            this.SelectedBuildVisParameters.MinimumSize = new System.Drawing.Size(300, 250);
-            this.SelectedBuildVisParameters.Name = "SelectedBuildVisParameters";
-            this.SelectedBuildVisParameters.Size = new System.Drawing.Size(449, 408);
-            this.SelectedBuildVisParameters.TabIndex = 1;
-            // 
             // tabBuildAdvancedRAD
             // 
             this.tabBuildAdvancedRAD.Controls.Add(this.SelectedBuildRadParameters);
@@ -2656,15 +2635,6 @@ namespace Sledge.Editor.Settings
             this.tabBuildAdvancedRAD.Text = "RAD";
             this.tabBuildAdvancedRAD.UseVisualStyleBackColor = true;
             // 
-            // SelectedBuildRadParameters
-            // 
-            this.SelectedBuildRadParameters.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.SelectedBuildRadParameters.Location = new System.Drawing.Point(0, 0);
-            this.SelectedBuildRadParameters.MinimumSize = new System.Drawing.Size(300, 250);
-            this.SelectedBuildRadParameters.Name = "SelectedBuildRadParameters";
-            this.SelectedBuildRadParameters.Size = new System.Drawing.Size(449, 408);
-            this.SelectedBuildRadParameters.TabIndex = 1;
-            // 
             // tabBuildAdvancedShared
             // 
             this.tabBuildAdvancedShared.Controls.Add(this.SelectedBuildSharedParameters);
@@ -2674,15 +2644,6 @@ namespace Sledge.Editor.Settings
             this.tabBuildAdvancedShared.TabIndex = 4;
             this.tabBuildAdvancedShared.Text = "Shared";
             this.tabBuildAdvancedShared.UseVisualStyleBackColor = true;
-            // 
-            // SelectedBuildSharedParameters
-            // 
-            this.SelectedBuildSharedParameters.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.SelectedBuildSharedParameters.Location = new System.Drawing.Point(0, 0);
-            this.SelectedBuildSharedParameters.MinimumSize = new System.Drawing.Size(300, 250);
-            this.SelectedBuildSharedParameters.Name = "SelectedBuildSharedParameters";
-            this.SelectedBuildSharedParameters.Size = new System.Drawing.Size(449, 408);
-            this.SelectedBuildSharedParameters.TabIndex = 1;
             // 
             // tabBuildAdvancedPreview
             // 
@@ -3190,6 +3151,84 @@ namespace Sledge.Editor.Settings
             this.SelectedGameUseHDModels.UseVisualStyleBackColor = true;
             this.SelectedGameUseHDModels.CheckedChanged += new System.EventHandler(this.SelectedGameEngineChanged);
             // 
+            // tabIntegration
+            // 
+            this.tabIntegration.Controls.Add(this.groupBox11);
+            this.tabIntegration.Location = new System.Drawing.Point(4, 22);
+            this.tabIntegration.Name = "tabIntegration";
+            this.tabIntegration.Padding = new System.Windows.Forms.Padding(3);
+            this.tabIntegration.Size = new System.Drawing.Size(736, 511);
+            this.tabIntegration.TabIndex = 7;
+            this.tabIntegration.Text = "Integration";
+            this.tabIntegration.UseVisualStyleBackColor = true;
+            // 
+            // groupBox11
+            // 
+            this.groupBox11.Controls.Add(this.AssociationsPanel);
+            this.groupBox11.Location = new System.Drawing.Point(6, 6);
+            this.groupBox11.Name = "groupBox11";
+            this.groupBox11.Size = new System.Drawing.Size(287, 283);
+            this.groupBox11.TabIndex = 0;
+            this.groupBox11.TabStop = false;
+            this.groupBox11.Text = "File associations";
+            // 
+            // AssociationsPanel
+            // 
+            this.AssociationsPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.AssociationsPanel.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
+            this.AssociationsPanel.Location = new System.Drawing.Point(6, 19);
+            this.AssociationsPanel.Name = "AssociationsPanel";
+            this.AssociationsPanel.Size = new System.Drawing.Size(275, 258);
+            this.AssociationsPanel.TabIndex = 1;
+            this.AssociationsPanel.WrapContents = false;
+            // 
+            // SelectedBuildCsgParameters
+            // 
+            this.SelectedBuildCsgParameters.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.SelectedBuildCsgParameters.Location = new System.Drawing.Point(0, 0);
+            this.SelectedBuildCsgParameters.MinimumSize = new System.Drawing.Size(300, 250);
+            this.SelectedBuildCsgParameters.Name = "SelectedBuildCsgParameters";
+            this.SelectedBuildCsgParameters.Size = new System.Drawing.Size(449, 408);
+            this.SelectedBuildCsgParameters.TabIndex = 0;
+            // 
+            // SelectedBuildBspParameters
+            // 
+            this.SelectedBuildBspParameters.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.SelectedBuildBspParameters.Location = new System.Drawing.Point(0, 0);
+            this.SelectedBuildBspParameters.MinimumSize = new System.Drawing.Size(300, 250);
+            this.SelectedBuildBspParameters.Name = "SelectedBuildBspParameters";
+            this.SelectedBuildBspParameters.Size = new System.Drawing.Size(449, 408);
+            this.SelectedBuildBspParameters.TabIndex = 1;
+            // 
+            // SelectedBuildVisParameters
+            // 
+            this.SelectedBuildVisParameters.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.SelectedBuildVisParameters.Location = new System.Drawing.Point(0, 0);
+            this.SelectedBuildVisParameters.MinimumSize = new System.Drawing.Size(300, 250);
+            this.SelectedBuildVisParameters.Name = "SelectedBuildVisParameters";
+            this.SelectedBuildVisParameters.Size = new System.Drawing.Size(449, 408);
+            this.SelectedBuildVisParameters.TabIndex = 1;
+            // 
+            // SelectedBuildRadParameters
+            // 
+            this.SelectedBuildRadParameters.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.SelectedBuildRadParameters.Location = new System.Drawing.Point(0, 0);
+            this.SelectedBuildRadParameters.MinimumSize = new System.Drawing.Size(300, 250);
+            this.SelectedBuildRadParameters.Name = "SelectedBuildRadParameters";
+            this.SelectedBuildRadParameters.Size = new System.Drawing.Size(449, 408);
+            this.SelectedBuildRadParameters.TabIndex = 1;
+            // 
+            // SelectedBuildSharedParameters
+            // 
+            this.SelectedBuildSharedParameters.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.SelectedBuildSharedParameters.Location = new System.Drawing.Point(0, 0);
+            this.SelectedBuildSharedParameters.MinimumSize = new System.Drawing.Size(300, 250);
+            this.SelectedBuildSharedParameters.Name = "SelectedBuildSharedParameters";
+            this.SelectedBuildSharedParameters.Size = new System.Drawing.Size(449, 408);
+            this.SelectedBuildSharedParameters.TabIndex = 1;
+            // 
             // SettingsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -3276,6 +3315,8 @@ namespace Sledge.Editor.Settings
             ((System.ComponentModel.ISupportInitialize)(this.trackBar2)).EndInit();
             this.groupBox7.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).EndInit();
+            this.tabIntegration.ResumeLayout(false);
+            this.groupBox11.ResumeLayout(false);
             this.ResumeLayout(false);
 
 		}
@@ -3536,5 +3577,8 @@ namespace Sledge.Editor.Settings
         private System.Windows.Forms.Label label30;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.CheckBox SelectedGameUseHDModels;
+        private System.Windows.Forms.TabPage tabIntegration;
+        private System.Windows.Forms.GroupBox groupBox11;
+        private System.Windows.Forms.FlowLayoutPanel AssociationsPanel;
 	}
 }

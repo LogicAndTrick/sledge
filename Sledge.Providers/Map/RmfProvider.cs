@@ -14,7 +14,8 @@ namespace Sledge.Providers.Map
     {
         protected override bool IsValidForFileName(string filename)
         {
-            return filename.EndsWith(".rmf", true, CultureInfo.InvariantCulture);
+            return filename.EndsWith(".rmf", true, CultureInfo.InvariantCulture)
+                || filename.EndsWith(".rmx", true, CultureInfo.InvariantCulture);
         }
 
         protected override DataStructures.MapObjects.Map GetFromStream(Stream stream)

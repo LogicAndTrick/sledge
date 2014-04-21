@@ -19,7 +19,7 @@ namespace Sledge.Tools.MapFileDebugger
         private void OpenToolStripButtonClick(object sender, EventArgs e)
         {
             var ofd = new OpenFileDialog();
-            ofd.Filter = @"Map Files (*.rmf, *.vmf, *.map)|*.rmf;*.vmf;*.map";
+            ofd.Filter = @"Map Files (*.rmf, *.vmf, *.map)|*.rmf;*.vmf;*.map;*.rmx;*.vmx;*.max";
             if (ofd.ShowDialog() == DialogResult.OK)
             {
                 try
