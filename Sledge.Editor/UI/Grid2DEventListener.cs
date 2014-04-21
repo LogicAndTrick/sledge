@@ -27,7 +27,7 @@ namespace Sledge.Editor.UI
             var doc = Documents.DocumentManager.CurrentDocument;
             if (doc != null)
             {
-                doc.Renderer.UpdateGrid(doc.Map.GridSpacing, doc.Map.Show2DGrid, doc.Map.Show3DGrid);
+                doc.Renderer.UpdateGrid(doc.Map.GridSpacing, doc.Map.Show2DGrid, doc.Map.Show3DGrid, false);
             }
         }
 

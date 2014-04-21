@@ -718,7 +718,7 @@ namespace Sledge.Editor.Documents
 
         public void RebuildGrid()
         {
-            _document.Renderer.UpdateGrid(_document.Map.GridSpacing, _document.Map.Show2DGrid, _document.Map.Show3DGrid);
+            _document.Renderer.UpdateGrid(_document.Map.GridSpacing, _document.Map.Show2DGrid, _document.Map.Show3DGrid, true);
             Mediator.Publish(EditorMediator.DocumentGridSpacingChanged, _document.Map.GridSpacing);
         }
 
@@ -889,7 +889,7 @@ namespace Sledge.Editor.Documents
                 MessageBox.Show("The 3D grid is only available when the OpenGL 3.0 renderer is used.");
                 _document.Map.Show3DGrid = false;
             }
-            _document.Renderer.UpdateGrid(_document.Map.GridSpacing, _document.Map.Show2DGrid, _document.Map.Show3DGrid);
+            _document.Renderer.UpdateGrid(_document.Map.GridSpacing, _document.Map.Show2DGrid, _document.Map.Show3DGrid, false);
             Mediator.Publish(EditorMediator.UpdateToolstrip);
         }
 
@@ -1057,7 +1057,7 @@ namespace Sledge.Editor.Documents
             _document.Renderer.Register(new[] { viewport });
             viewport.RenderContext.Add(new ToolRenderable());
             viewport.RenderContext.Add(new HelperRenderable(_document));
-            _document.Renderer.UpdateGrid(_document.Map.GridSpacing, _document.Map.Show2DGrid, _document.Map.Show3DGrid);
+            _document.Renderer.UpdateGrid(_document.Map.GridSpacing, _document.Map.Show2DGrid, _document.Map.Show3DGrid, false);
         }
     }
 }

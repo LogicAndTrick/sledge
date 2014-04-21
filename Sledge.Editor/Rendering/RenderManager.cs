@@ -38,9 +38,9 @@ namespace Sledge.Editor.Rendering
             _renderer.Dispose();
         }
 
-        public void UpdateGrid(decimal gridSpacing, bool showIn2D, bool showIn3D)
+        public void UpdateGrid(decimal gridSpacing, bool showIn2D, bool showIn3D, bool force)
         {
-            _renderer.UpdateGrid(gridSpacing, showIn2D, showIn3D);
+            _renderer.UpdateGrid(gridSpacing, showIn2D, showIn3D, force);
         }
 
         public void SetSelectionTransform(Matrix4 selectionTransform)

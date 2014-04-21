@@ -70,7 +70,7 @@ namespace Sledge.Editor.Rendering.Renderers
             GL.DeleteLists(_listUntransformed2D, 6);
         }
 
-        public void UpdateGrid(decimal gridSpacing, bool showIn2D, bool showIn3D)
+        public void UpdateGrid(decimal gridSpacing, bool showIn2D, bool showIn3D, bool force)
         {
             //
         }

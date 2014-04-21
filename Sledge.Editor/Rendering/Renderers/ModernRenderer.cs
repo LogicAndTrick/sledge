@@ -51,7 +51,7 @@ namespace Sledge.Editor.Rendering.Renderers
 
             // Can't use a single grid array as it varies depending on the zoom level (pixel hiding factor)
             GridArrays = ViewportManager.Viewports.OfType<Viewport2D>().ToDictionary(x => x, x => new GridArray());
-            UpdateGrid(document.Map.GridSpacing, document.Map.Show2DGrid, document.Map.Show3DGrid);
+            UpdateGrid(document.Map.GridSpacing, document.Map.Show2DGrid, document.Map.Show3DGrid, false);
 
             _selectionTransformMat = Matrix.Identity;
             _selectionTransform = Matrix4.Identity;
@@ -68,7 +68,7 @@ namespace Sledge.Editor.Rendering.Renderers
             _mapObject3DShader.Dispose();
         }
 
-        public void UpdateGrid(decimal gridSpacing, bool showIn2D, bool showIn3D)
+        public void UpdateGrid(decimal gridSpacing, bool showIn2D, bool showIn3D, bool force)
         {
             foreach (var vp in ViewportManager.Viewports.OfType<Viewport2D>().Where(x => !GridArrays.ContainsKey(x)))
             {
@@ -81,7 +81,7 @@ namespace Sledge.Editor.Rendering.Renderers
             }
             foreach (var kv in GridArrays)
             {
-                kv.Value.Update(Document.GameData.MapSizeLow, Document.GameData.MapSizeHigh, gridSpacing, kv.Key.Zoom);
+                kv.Value.Update(Document.GameData.MapSizeLow, Document.GameData.MapSizeHigh, gridSpacing, kv.Key.Zoom, force);
             }
         }
 

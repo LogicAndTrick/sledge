@@ -39,7 +39,7 @@ namespace Sledge.Editor.Rendering.Renderers
             _cache = null;
         }
 
-        public void UpdateGrid(decimal gridSpacing, bool showIn2D, bool showIn3D)
+        public void UpdateGrid(decimal gridSpacing, bool showIn2D, bool showIn3D, bool force)
         {
             //
         }

@@ -15,7 +15,7 @@ namespace Sledge.Editor.Rendering.Renderers
         Document Document { get; set; }
 
         // Render interface
-        void UpdateGrid(decimal gridSpacing, bool showIn2D, bool showIn3D);
+        void UpdateGrid(decimal gridSpacing, bool showIn2D, bool showIn3D, bool force);
         void SetSelectionTransform(Matrix4 selectionTransform);
         void Draw2D(ViewportBase context, Matrix4 viewport, Matrix4 camera, Matrix4 modelView);
         void Draw3D(ViewportBase context, Matrix4 viewport, Matrix4 camera, Matrix4 modelView);

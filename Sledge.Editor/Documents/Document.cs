@@ -405,7 +405,7 @@ namespace Sledge.Editor.Documents
             Renderer.Register(new[] { vp });
             vp.RenderContext.Add(new ToolRenderable());
             vp.RenderContext.Add(new HelperRenderable(this));
-            Renderer.UpdateGrid(Map.GridSpacing, Map.Show2DGrid, Map.Show3DGrid);
+            Renderer.UpdateGrid(Map.GridSpacing, Map.Show2DGrid, Map.Show3DGrid, false);
         }
 
         public void Make2D(ViewportBase viewport, Viewport2D.ViewDirection direction)
@@ -414,7 +414,7 @@ namespace Sledge.Editor.Documents
             Renderer.Register(new[] { vp });
             vp.RenderContext.Add(new ToolRenderable());
             vp.RenderContext.Add(new HelperRenderable(this));
-            Renderer.UpdateGrid(Map.GridSpacing, Map.Show2DGrid, Map.Show3DGrid);
+            Renderer.UpdateGrid(Map.GridSpacing, Map.Show2DGrid, Map.Show3DGrid, false);
         }
 
         public GameDataObject GetSelectedEntity()
