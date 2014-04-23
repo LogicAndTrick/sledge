@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using OpenTK;
 using OpenTK.Graphics;
+using OpenTK.Graphics.OpenGL;
 using Sledge.Graphics.Arrays;
 using BeginMode = OpenTK.Graphics.OpenGL.BeginMode;
 
@@ -20,7 +21,7 @@ namespace Sledge.Editor.Rendering.Arrays
         {
             foreach (var subset in GetSubsets(Grid))
             {
-                Render(context, BeginMode.Lines, subset);
+                Render(context, PrimitiveType.Lines, subset);
             }
         }
 

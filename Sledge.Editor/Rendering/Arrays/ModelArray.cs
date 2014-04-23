@@ -2,10 +2,10 @@ using System.Collections.Generic;
 using System.Linq;
 using OpenTK;
 using OpenTK.Graphics;
+using OpenTK.Graphics.OpenGL;
 using Sledge.Common;
 using Sledge.DataStructures.Models;
 using Sledge.Graphics.Arrays;
-using BeginMode = OpenTK.Graphics.OpenGL.BeginMode;
 
 namespace Sledge.Editor.Rendering.Arrays
 {
@@ -23,7 +23,7 @@ namespace Sledge.Editor.Rendering.Arrays
             foreach (var subset in GetSubsets<ITexture>(Textured))
             {
                 ((ITexture) subset.Instance).Bind();
-                Render(context, BeginMode.Triangles, subset);
+                Render(context, PrimitiveType.Triangles, subset);
             }
         }
 

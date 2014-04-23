@@ -11,6 +11,7 @@ namespace Sledge.Editor.Rendering.Shaders
         public bool SelectedOnly { set { Shader.Set("drawSelectedOnly", value); } }
         public bool UnselectedOnly { set { Shader.Set("drawUnselectedOnly", value); } }
         public Vector4 SelectedColour { set { Shader.Set("selectedColour", value); } }
+        public Vector4 OverrideColour { set { Shader.Set("overrideColour", value); } }
 
         public Matrix4 Perspective { set { Shader.Set("perspectiveMatrix", value); } }
         public Matrix4 Camera { set { Shader.Set("cameraMatrix", value); } }
@@ -31,6 +32,7 @@ namespace Sledge.Editor.Rendering.Shaders
             Perspective = Camera = ModelView = SelectionTransform = Matrix4.Identity;
             SelectedOnly = UnselectedOnly = false;
             SelectedColour = new Vector4(1, 0, 0, 0.5f);
+            OverrideColour = new Vector4(0, 0, 0, 0);
 
             Shader.Unbind();
         }

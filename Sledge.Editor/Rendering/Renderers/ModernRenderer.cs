@@ -118,12 +118,34 @@ namespace Sledge.Editor.Rendering.Renderers
             _array.RenderWireframe(context.Context);
             _decalArray.RenderWireframe(context.Context);
 
+            if (Sledge.Settings.View.Draw2DVertices)
+            {
+                if (Sledge.Settings.View.OverrideVertexColour)
+                {
+                    var c = Sledge.Settings.View.VertexOverrideColour;
+                    _mapObject2DShader.OverrideColour = new Vector4(c.R / 255f, c.G / 255f, c.B / 255f, 1);
+                }
+                _array.RenderVertices(context.Context, Sledge.Settings.View.VertexPointSize);
+                _mapObject2DShader.OverrideColour = Vector4.Zero;
+            }
+
             // Render wireframe (transformed)
             _mapObject2DShader.SelectionTransform = _selectionTransform;
             _mapObject2DShader.SelectedOnly = true;
             _mapObject2DShader.SelectedColour = new Vector4(1, 0, 0, 1);
             _array.RenderWireframe(context.Context);
             _decalArray.RenderWireframe(context.Context);
+
+            if (Sledge.Settings.View.Draw2DVertices)
+            {
+                if (Sledge.Settings.View.OverrideVertexColour)
+                {
+                    var c = Sledge.Settings.View.VertexOverrideColour;
+                    _mapObject2DShader.OverrideColour = new Vector4(c.R / 255f, c.G / 255f, c.B / 255f, 1);
+                }
+                _array.RenderVertices(context.Context, Sledge.Settings.View.VertexPointSize);
+                _mapObject2DShader.OverrideColour = Vector4.Zero;
+            }
 
             _mapObject2DShader.Unbind();
         }

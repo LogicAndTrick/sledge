@@ -61,7 +61,7 @@ namespace Sledge.Graphics.Arrays
             Commit();
         }
 
-        protected void Render(IGraphicsContext context, BeginMode mode, Subset subset)
+        protected void Render(IGraphicsContext context, PrimitiveType mode, Subset subset)
         {
             GL.BindBuffer(BufferTarget.ArrayBuffer, _array);
             var stride = Specification.Stride;

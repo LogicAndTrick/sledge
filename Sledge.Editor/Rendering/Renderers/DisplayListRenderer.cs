@@ -241,15 +241,15 @@ namespace Sledge.Editor.Rendering.Renderers
             GL.NewList(_listUntransformed2D, ListMode.Compile);
 
             // Draw unselected stuff
-            MapObjectRenderer.DrawWireframe(unselected.Where(x => x.Parent == null || !x.Parent.IsRenderHidden2D), false);
-            MapObjectRenderer.DrawWireframe(decals.Where(x => !x.IsSelected && !x.IsRenderHidden2D).SelectMany(x => x.GetDecalGeometry()), false);
-            MapObjectRenderer.DrawWireframe(_models.Where(x => !x.Item1.IsSelected && !x.Item1.IsRenderHidden2D).SelectMany(x => x.Item1.GetBoxFaces()), false);
+            MapObjectRenderer.DrawWireframe(unselected.Where(x => x.Parent == null || !x.Parent.IsRenderHidden2D), false, true);
+            MapObjectRenderer.DrawWireframe(decals.Where(x => !x.IsSelected && !x.IsRenderHidden2D).SelectMany(x => x.GetDecalGeometry()), false, true);
+            MapObjectRenderer.DrawWireframe(_models.Where(x => !x.Item1.IsSelected && !x.Item1.IsRenderHidden2D).SelectMany(x => x.Item1.GetBoxFaces()), false, true);
 
             // Draw selection (untransformed)
             GL.Color4(Color.FromArgb(128, 0, 0));
-            MapObjectRenderer.DrawWireframe(selected.Where(x => x.Parent == null || !x.Parent.IsRenderHidden2D), true);
-            MapObjectRenderer.DrawWireframe(decals.Where(x => x.IsSelected && !x.IsRenderHidden2D).SelectMany(x => x.GetDecalGeometry()), true);
-            MapObjectRenderer.DrawWireframe(_models.Where(x => x.Item1.IsSelected && !x.Item1.IsRenderHidden2D).SelectMany(x => x.Item1.GetBoxFaces()), true);
+            MapObjectRenderer.DrawWireframe(selected.Where(x => x.Parent == null || !x.Parent.IsRenderHidden2D), true, true);
+            MapObjectRenderer.DrawWireframe(decals.Where(x => x.IsSelected && !x.IsRenderHidden2D).SelectMany(x => x.GetDecalGeometry()), true, true);
+            MapObjectRenderer.DrawWireframe(_models.Where(x => x.Item1.IsSelected && !x.Item1.IsRenderHidden2D).SelectMany(x => x.Item1.GetBoxFaces()), true, true);
 
             GL.EndList();
 
@@ -257,9 +257,9 @@ namespace Sledge.Editor.Rendering.Renderers
 
             // Draw selection (transformed)
             GL.Color4(Color.Red);
-            MapObjectRenderer.DrawWireframe(selected.Where(x => x.Parent == null || !x.Parent.IsRenderHidden2D), true);
-            MapObjectRenderer.DrawWireframe(decals.Where(x => x.IsSelected && !x.IsRenderHidden2D).SelectMany(x => x.GetDecalGeometry()), true);
-            MapObjectRenderer.DrawWireframe(_models.Where(x => x.Item1.IsSelected && !x.Item1.IsRenderHidden2D).SelectMany(x => x.Item1.GetBoxFaces()), true);
+            MapObjectRenderer.DrawWireframe(selected.Where(x => x.Parent == null || !x.Parent.IsRenderHidden2D), true, true);
+            MapObjectRenderer.DrawWireframe(decals.Where(x => x.IsSelected && !x.IsRenderHidden2D).SelectMany(x => x.GetDecalGeometry()), true, true);
+            MapObjectRenderer.DrawWireframe(_models.Where(x => x.Item1.IsSelected && !x.Item1.IsRenderHidden2D).SelectMany(x => x.Item1.GetBoxFaces()), true, true);
 
             GL.EndList();
 
@@ -279,9 +279,9 @@ namespace Sledge.Editor.Rendering.Renderers
             GL.NewList(_listUntransformed3D, ListMode.Compile);
             // Draw selected (wireframe; untransformed)
             GL.Color4(Color.Yellow);
-            MapObjectRenderer.DrawWireframe(sel3D, true);
-            MapObjectRenderer.DrawWireframe(decals.Where(x => x.IsSelected && !x.IsRenderHidden3D).SelectMany(x => x.GetDecalGeometry()), true);
-            MapObjectRenderer.DrawWireframe(_models.Where(x => x.Item1.IsSelected && !x.Item1.IsRenderHidden3D).SelectMany(x => x.Item1.GetBoxFaces()), true);
+            MapObjectRenderer.DrawWireframe(sel3D, true, false);
+            MapObjectRenderer.DrawWireframe(decals.Where(x => x.IsSelected && !x.IsRenderHidden3D).SelectMany(x => x.GetDecalGeometry()), true, false);
+            MapObjectRenderer.DrawWireframe(_models.Where(x => x.Item1.IsSelected && !x.Item1.IsRenderHidden3D).SelectMany(x => x.Item1.GetBoxFaces()), true, false);
             GL.EndList();
 
             GL.NewList(_listTransformed3DTextured, ListMode.Compile);

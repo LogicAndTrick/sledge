@@ -536,6 +536,47 @@ namespace Sledge.Editor.Settings
             return updown;
         }
 
+        private Panel AddSetting(Expression<Func<Color>> prop, string text)
+        {
+            var expression = (MemberExpression)prop.Body;
+            var property = (PropertyInfo)expression.Member;
+            var colour = new Panel
+            {
+                BackColor = (Color) property.GetValue(null, null),
+                Height = 20,
+                Width = 50,
+                BorderStyle = BorderStyle.Fixed3D
+            };
+            colour.Click += (s, e) =>
+            {
+                using (var cpd = new ColorDialog { Color = colour.BackColor })
+                {
+                    if (cpd.ShowDialog() == DialogResult.OK)
+                    {
+                        colour.BackColor = cpd.Color;
+                        property.SetValue(null, cpd.Color, null);
+                    }
+                }
+            };
+            var label = new Label
+            {
+                AutoSize = true,
+                Text = text,
+                Padding = new Padding(0, 5, 0, 5)
+            };
+            var panel = new FlowLayoutPanel
+            {
+                FlowDirection = FlowDirection.LeftToRight,
+                WrapContents = false,
+                AutoSize = true
+            };
+            panel.Controls.Add(label);
+            panel.Controls.Add(colour);
+            flowLayoutPanel1.Controls.Add(panel);
+
+            return colour;
+        }
+
         #endregion
 
         #region Load/Apply
@@ -563,7 +604,7 @@ namespace Sledge.Editor.Settings
             AddHeading("Textures");
             AddSetting(() => Sledge.Settings.Select.ApplyTextureImmediately, "Apply texture immediately after browsing in the texture application tool");
 
-            AddHeading("Rendering");
+            AddHeading("Rendering (these settings will be applied once Sledge to be restarted)");
             AddSetting(() => Sledge.Settings.View.Renderer, "Renderer");
             AddSetting(() => Sledge.Settings.View.DisableWadTransparency, "Disable WAD texture transparency");
             AddSetting(() => Sledge.Settings.View.DisableToolTextureTransparency, "Disable tool texture transparency");
@@ -578,6 +619,12 @@ namespace Sledge.Editor.Settings
             AddSetting(() => Sledge.Settings.Select.CenterHandlesFollowCursor, "Render center handles only near cursor position");
             AddSetting(() => Sledge.Settings.Select.BoxSelectByCenterHandlesOnly, "Selection box selects by center handles only");
             AddSetting(() => Sledge.Settings.Select.ClickSelectByCenterHandlesOnly, "Clicking in 2D view selects by center handles only");
+
+            AddHeading("2D Vertices");
+            AddSetting(() => Sledge.Settings.View.Draw2DVertices, "Render vertices in 2D views");
+            AddSetting(() => Sledge.Settings.View.VertexPointSize, 1, 10, "Vertex point size");
+            AddSetting(() => Sledge.Settings.View.OverrideVertexColour, "Override vertex colour (defaults to the brush colour)");
+            AddSetting(() => Sledge.Settings.View.VertexOverrideColour, "Vertex override colour");
 
             AddHeading("Selection Box");
             AddSetting(() => Sledge.Settings.Select.AutoSelectBox, "Automatically select when box is drawn");

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using OpenTK;
 using OpenTK.Graphics;
+using OpenTK.Graphics.OpenGL;
 using Sledge.Common;
 using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.MapObjects;
@@ -36,7 +37,7 @@ namespace Sledge.Editor.Rendering.Arrays
             {
                 var tex = ((Face) subset.Instance).Texture;
                 tex.Texture.Bind();
-                Render(context, BeginMode.Triangles, subset);
+                Render(context, PrimitiveType.Triangles, subset);
             }
         }
 
@@ -44,7 +45,7 @@ namespace Sledge.Editor.Rendering.Arrays
         {
             foreach (var subset in GetSubsets(Wireframe))
             {
-                Render(context, BeginMode.Lines, subset);
+                Render(context, PrimitiveType.Lines, subset);
             }
         }
 

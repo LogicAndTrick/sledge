@@ -62,15 +62,15 @@ namespace Sledge.Editor.Rendering.Renderers
             GL.MultMatrix(ref modelView);
 
             // Draw unselected stuff
-            MapObjectRenderer.DrawWireframe(_unselected.Where(x => x.Parent == null || !x.Parent.IsRenderHidden2D), false);
-            MapObjectRenderer.DrawWireframe(_decals.Where(x => !x.IsSelected && !x.IsRenderHidden2D).SelectMany(x => x.GetDecalGeometry()), false);
-            MapObjectRenderer.DrawWireframe(_models.Where(x => !x.IsSelected && !x.IsRenderHidden2D).SelectMany(x => x.GetBoxFaces()), false);
+            MapObjectRenderer.DrawWireframe(_unselected.Where(x => x.Parent == null || !x.Parent.IsRenderHidden2D), false, true);
+            MapObjectRenderer.DrawWireframe(_decals.Where(x => !x.IsSelected && !x.IsRenderHidden2D).SelectMany(x => x.GetDecalGeometry()), false, true);
+            MapObjectRenderer.DrawWireframe(_models.Where(x => !x.IsSelected && !x.IsRenderHidden2D).SelectMany(x => x.GetBoxFaces()), false, true);
 
             // Draw selection (untransformed)
             GL.Color4(Color.FromArgb(128, 0, 0));
-            MapObjectRenderer.DrawWireframe(_selected.Where(x => x.Parent == null || !x.Parent.IsRenderHidden2D), true);
-            MapObjectRenderer.DrawWireframe(_decals.Where(x => x.IsSelected && !x.IsRenderHidden2D).SelectMany(x => x.GetDecalGeometry()), true);
-            MapObjectRenderer.DrawWireframe(_models.Where(x => x.IsSelected && !x.IsRenderHidden2D).SelectMany(x => x.GetBoxFaces()), true);
+            MapObjectRenderer.DrawWireframe(_selected.Where(x => x.Parent == null || !x.Parent.IsRenderHidden2D), true, true);
+            MapObjectRenderer.DrawWireframe(_decals.Where(x => x.IsSelected && !x.IsRenderHidden2D).SelectMany(x => x.GetDecalGeometry()), true, true);
+            MapObjectRenderer.DrawWireframe(_models.Where(x => x.IsSelected && !x.IsRenderHidden2D).SelectMany(x => x.GetBoxFaces()), true, true);
 
             GL.LoadMatrix(ref current);
             GL.MultMatrix(ref modelView);
@@ -78,9 +78,9 @@ namespace Sledge.Editor.Rendering.Renderers
 
             // Draw selection (transformed)
             GL.Color4(Color.Red);
-            MapObjectRenderer.DrawWireframe(_selected.Where(x => x.Parent == null || !x.Parent.IsRenderHidden2D), true);
-            MapObjectRenderer.DrawWireframe(_decals.Where(x => x.IsSelected && !x.IsRenderHidden2D).SelectMany(x => x.GetDecalGeometry()), true);
-            MapObjectRenderer.DrawWireframe(_models.Where(x => x.IsSelected && !x.IsRenderHidden2D).SelectMany(x => x.GetBoxFaces()), true);
+            MapObjectRenderer.DrawWireframe(_selected.Where(x => x.Parent == null || !x.Parent.IsRenderHidden2D), true, true);
+            MapObjectRenderer.DrawWireframe(_decals.Where(x => x.IsSelected && !x.IsRenderHidden2D).SelectMany(x => x.GetDecalGeometry()), true, true);
+            MapObjectRenderer.DrawWireframe(_models.Where(x => x.IsSelected && !x.IsRenderHidden2D).SelectMany(x => x.GetBoxFaces()), true, true);
 
             GL.LoadMatrix(ref current);
         }
@@ -158,9 +158,9 @@ namespace Sledge.Editor.Rendering.Renderers
                 MapObjectRenderer.DrawFilled(_unselected.Where(x => x.Parent == null || !x.Parent.IsRenderHidden3D), Color.Empty, textured);
                 // Draw selected (wireframe; untransformed)
                 GL.Color4(Color.Yellow);
-                MapObjectRenderer.DrawWireframe(sel3D, true);
-                MapObjectRenderer.DrawWireframe(_decals.Where(x => x.IsSelected && !x.IsRenderHidden3D).SelectMany(x => x.GetDecalGeometry()), true);
-                MapObjectRenderer.DrawWireframe(_models.Where(x => x.IsSelected && !x.IsRenderHidden3D).SelectMany(x => x.GetBoxFaces()), true);
+                MapObjectRenderer.DrawWireframe(sel3D, true, false);
+                MapObjectRenderer.DrawWireframe(_decals.Where(x => x.IsSelected && !x.IsRenderHidden3D).SelectMany(x => x.GetDecalGeometry()), true, false);
+                MapObjectRenderer.DrawWireframe(_models.Where(x => x.IsSelected && !x.IsRenderHidden3D).SelectMany(x => x.GetBoxFaces()), true, false);
 
                 // Draw models
                 if (!View.DisableModelRendering)
@@ -191,15 +191,15 @@ namespace Sledge.Editor.Rendering.Renderers
             else
             {
                 // Draw unselected stuff
-                MapObjectRenderer.DrawWireframe(_unselected.Where(x => x.Parent == null || !x.Parent.IsRenderHidden2D), false);
-                MapObjectRenderer.DrawWireframe(_decals.Where(x => !x.IsSelected && !x.IsRenderHidden2D).SelectMany(x => x.GetDecalGeometry()), false);
-                MapObjectRenderer.DrawWireframe(_models.Where(x => !x.IsSelected && !x.IsRenderHidden2D).SelectMany(x => x.GetBoxFaces()), false);
+                MapObjectRenderer.DrawWireframe(_unselected.Where(x => x.Parent == null || !x.Parent.IsRenderHidden2D), false, false);
+                MapObjectRenderer.DrawWireframe(_decals.Where(x => !x.IsSelected && !x.IsRenderHidden2D).SelectMany(x => x.GetDecalGeometry()), false, false);
+                MapObjectRenderer.DrawWireframe(_models.Where(x => !x.IsSelected && !x.IsRenderHidden2D).SelectMany(x => x.GetBoxFaces()), false, false);
 
                 // Draw selection (untransformed)
                 GL.Color4(Color.FromArgb(128, 0, 0));
-                MapObjectRenderer.DrawWireframe(_selected.Where(x => x.Parent == null || !x.Parent.IsRenderHidden2D), true);
-                MapObjectRenderer.DrawWireframe(_decals.Where(x => x.IsSelected && !x.IsRenderHidden2D).SelectMany(x => x.GetDecalGeometry()), true);
-                MapObjectRenderer.DrawWireframe(_models.Where(x => x.IsSelected && !x.IsRenderHidden2D).SelectMany(x => x.GetBoxFaces()), true);
+                MapObjectRenderer.DrawWireframe(_selected.Where(x => x.Parent == null || !x.Parent.IsRenderHidden2D), true, false);
+                MapObjectRenderer.DrawWireframe(_decals.Where(x => x.IsSelected && !x.IsRenderHidden2D).SelectMany(x => x.GetDecalGeometry()), true, false);
+                MapObjectRenderer.DrawWireframe(_models.Where(x => x.IsSelected && !x.IsRenderHidden2D).SelectMany(x => x.GetBoxFaces()), true, false);
             }
 
             GL.MultMatrix(ref _selectionTransform);
@@ -219,9 +219,9 @@ namespace Sledge.Editor.Rendering.Renderers
             {
                 // Draw selection (transformed)
                 GL.Color4(Color.Red);
-                MapObjectRenderer.DrawWireframe(_selected.Where(x => x.Parent == null || !x.Parent.IsRenderHidden2D), true);
-                MapObjectRenderer.DrawWireframe(_decals.Where(x => x.IsSelected && !x.IsRenderHidden2D).SelectMany(x => x.GetDecalGeometry()), true);
-                MapObjectRenderer.DrawWireframe(_models.Where(x => x.IsSelected && !x.IsRenderHidden2D).SelectMany(x => x.GetBoxFaces()), true);
+                MapObjectRenderer.DrawWireframe(_selected.Where(x => x.Parent == null || !x.Parent.IsRenderHidden2D), true, false);
+                MapObjectRenderer.DrawWireframe(_decals.Where(x => x.IsSelected && !x.IsRenderHidden2D).SelectMany(x => x.GetDecalGeometry()), true, false);
+                MapObjectRenderer.DrawWireframe(_models.Where(x => x.IsSelected && !x.IsRenderHidden2D).SelectMany(x => x.GetBoxFaces()), true, false);
             }
 
             GL.LoadMatrix(ref current);

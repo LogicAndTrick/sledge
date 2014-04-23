@@ -203,7 +203,7 @@ namespace Sledge.Editor.Tools
                 Graphics.Helpers.Matrix.Push();
                 var matrix = viewport.GetModelViewMatrix();
                 GL.MultMatrix(ref matrix);
-                MapObjectRenderer.DrawWireframe(_preview, true);
+                MapObjectRenderer.DrawWireframe(_preview, true, false);
                 Graphics.Helpers.Matrix.Pop();
             }
         }
@@ -219,7 +219,7 @@ namespace Sledge.Editor.Tools
                 MapObjectRenderer.DrawFilled(_preview, GetRenderColour(), false);
                 MapObjectRenderer.DisableLighting();
                 GL.Color4(Color.GreenYellow);
-                MapObjectRenderer.DrawWireframe(_preview, true);
+                MapObjectRenderer.DrawWireframe(_preview, true, false);
             }
         }
 

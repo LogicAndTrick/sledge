@@ -311,7 +311,7 @@ namespace Sledge.Editor.Tools
                 Matrix.Push();
                 var mat = vp.GetModelViewMatrix();
                 GL.MultMatrix(ref mat);
-                Rendering.Immediate.MapObjectRenderer.DrawWireframe(faces, true);
+                Rendering.Immediate.MapObjectRenderer.DrawWireframe(faces, true, false);
                 Matrix.Pop();
                 GL.LineWidth(1);
             }
@@ -355,7 +355,7 @@ namespace Sledge.Editor.Tools
                 }
                 GL.LineWidth(2);
                 GL.Color3(Color.White);
-                Rendering.Immediate.MapObjectRenderer.DrawWireframe(faces, true);
+                Rendering.Immediate.MapObjectRenderer.DrawWireframe(faces, true, false);
                 GL.LineWidth(1);
 
                 GL.Hint(HintTarget.LineSmoothHint, HintMode.Fastest);

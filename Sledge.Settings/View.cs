@@ -12,7 +12,12 @@ namespace Sledge.Settings
         public static bool DrawBoxText { get; set; }
         public static bool DrawBoxDashedLines { get; set; }
         public static bool DrawEntityNames { get; set; }
-        public static bool DrawEntityAngles { get; set; } //mxd
+        public static bool DrawEntityAngles { get; set; }
+
+        public static bool Draw2DVertices { get; set; }
+        public static int VertexPointSize { get; set; }
+        public static bool OverrideVertexColour { get; set; }
+        public static Color VertexOverrideColour { get; set; }
         
         public static Color ViewportBackground { get; set; }
 
@@ -56,7 +61,12 @@ namespace Sledge.Settings
             DrawBoxText = true;
             DrawBoxDashedLines = false;
             DrawEntityNames = true;
-            DrawEntityAngles = true; //mxd
+            DrawEntityAngles = true;
+
+            Draw2DVertices = false;
+            VertexPointSize = 3;
+            OverrideVertexColour = false;
+            VertexOverrideColour = Color.White;
 
             ViewportBackground = Color.Black;
 

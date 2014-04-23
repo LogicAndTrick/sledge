@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using OpenTK;
 using OpenTK.Graphics;
+using OpenTK.Graphics.OpenGL;
 using Sledge.Common;
 using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.MapObjects;
@@ -11,6 +12,7 @@ using Sledge.Editor.Extensions;
 using Sledge.Graphics.Arrays;
 using Sledge.Graphics.Helpers;
 using BeginMode = OpenTK.Graphics.OpenGL.BeginMode;
+using GL = OpenTK.Graphics.OpenGL.GL;
 
 namespace Sledge.Editor.Rendering.Arrays
 {
@@ -18,7 +20,8 @@ namespace Sledge.Editor.Rendering.Arrays
     {
         private const int Textured = 0;
         private const int Transparent = 1;
-        private const int Wireframe = 2;
+        private const int BrushWireframe = 2;
+        private const int EntityWireframe = 3;
 
         public MapObjectArray(IEnumerable<MapObject> data)
             : base(data)
@@ -31,7 +34,7 @@ namespace Sledge.Editor.Rendering.Arrays
             {
                 var tex = (ITexture)subset.Instance;
                 tex.Bind();
-                Render(context, BeginMode.Triangles, subset);
+                Render(context, PrimitiveType.Triangles, subset);
             }
         }
         public void RenderUntextured(IGraphicsContext context, Coordinate location)
@@ -39,13 +42,13 @@ namespace Sledge.Editor.Rendering.Arrays
             TextureHelper.Unbind();
             foreach (var subset in GetSubsets<ITexture>(Textured).Where(x => x.Instance == null))
             {
-                Render(context, BeginMode.Triangles, subset);
+                Render(context, PrimitiveType.Triangles, subset);
             }
             foreach (var subset in GetSubsets<Entity>(Textured))
             {
                 var e = (Entity) subset.Instance;
                 if (!Sledge.Settings.View.DisableModelRendering && e.HasModel() && e.HideDistance() > (location - e.Origin).VectorMagnitude()) continue;
-                Render(context, BeginMode.Triangles, subset);
+                Render(context, PrimitiveType.Triangles, subset);
             }
         }
 
@@ -65,16 +68,31 @@ namespace Sledge.Editor.Rendering.Arrays
                 else TextureHelper.Unbind();
                 isTextured(tex.Texture != null);
                 //program.Set("isTextured", tex.Texture != null);
-                Render(context, BeginMode.Triangles, subset);
+                Render(context, PrimitiveType.Triangles, subset);
             }
         }
 
         public void RenderWireframe(IGraphicsContext context)
         {
-            foreach (var subset in GetSubsets(Wireframe))
+            foreach (var subset in GetSubsets(BrushWireframe))
             {
-                Render(context, BeginMode.Lines, subset);
+                Render(context, PrimitiveType.Lines, subset);
             }
+
+            foreach (var subset in GetSubsets(EntityWireframe))
+            {
+                Render(context, PrimitiveType.Lines, subset);
+            }
+        }
+
+        public void RenderVertices(IGraphicsContext context, int pointSize)
+        {
+            GL.PointSize(pointSize); //TODO: make this into setting? Restore initial value? Set during propgram startup?
+            foreach (var subset in GetSubsets(BrushWireframe))
+            {
+                Render(context, PrimitiveType.Points, subset);
+            }
+
         }
 
         public void UpdatePartial(IEnumerable<MapObject> objects)
@@ -111,7 +129,7 @@ namespace Sledge.Editor.Rendering.Arrays
             var faces = obj.OfType<Solid>().SelectMany(x => x.Faces).ToList();
             var entities = obj.OfType<Entity>().Where(x => !x.HasChildren).ToList();
 
-            StartSubset(Wireframe);
+            StartSubset(BrushWireframe);
 
             // Render solids
             foreach (var group in faces.GroupBy(x => new { x.Texture.Texture, Transparent = HasTransparency(x) }))
@@ -126,13 +144,16 @@ namespace Sledge.Editor.Rendering.Arrays
                     PushOffset(face);
                     var index = PushData(Convert(face));
                     if (!face.Parent.IsRenderHidden3D && face.Opacity > 0) PushIndex(subset, index, Triangulate(face.Vertices.Count));
-                    if (!face.Parent.IsRenderHidden2D) PushIndex(Wireframe, index, Linearise(face.Vertices.Count));
+                    if (!face.Parent.IsRenderHidden2D) PushIndex(BrushWireframe, index, Linearise(face.Vertices.Count));
 
                     if (group.Key.Transparent) PushSubset(subset, face);
                 }
 
                 if (!group.Key.Transparent) PushSubset(subset, group.Key.Texture);
             }
+
+            PushSubset(BrushWireframe, (object)null);
+            StartSubset(EntityWireframe);
 
             // Render entities
             foreach (var g in entities.GroupBy(x => x.HasModel()))
@@ -148,14 +169,14 @@ namespace Sledge.Editor.Rendering.Arrays
                     {
                         var index = PushData(Convert(face));
                         if (!face.Parent.IsRenderHidden3D) PushIndex(Textured, index, Triangulate(face.Vertices.Count));
-                        if (!face.Parent.IsRenderHidden2D) PushIndex(Wireframe, index, Linearise(face.Vertices.Count));
+                        if (!face.Parent.IsRenderHidden2D) PushIndex(EntityWireframe, index, Linearise(face.Vertices.Count));
                     }
                     if (g.Key) PushSubset(Textured, entity);
                 }
                 if (!g.Key) PushSubset(Textured, (ITexture) null);
             }
 
-            PushSubset(Wireframe, (object)null);
+            PushSubset(EntityWireframe, (object)null);
         }
 
         private bool HasTransparency(Face face)

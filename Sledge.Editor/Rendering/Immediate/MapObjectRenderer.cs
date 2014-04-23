@@ -121,20 +121,12 @@ namespace Sledge.Editor.Rendering.Immediate
             GL.Enable(EnableCap.DepthTest);
         }
 
-        public static void CreateWireframeList(string displayListName, IEnumerable<Face> faces, bool overrideColor)
+        public static void DrawWireframe(IEnumerable<Face> faces, bool overrideColor, bool drawVertices)
         {
-            using (DisplayList.Using(displayListName))
-            {
-                DrawWireframe(faces, overrideColor);
-            }
-        }
+            faces = faces.Where(x => x.Parent == null || !(x.Parent.IsCodeHidden || x.Parent.IsVisgroupHidden || x.Parent.IsRenderHidden2D)).ToList();
 
-        public static void DrawWireframe(IEnumerable<Face> faces, bool overrideColor)
-        {
             TextureHelper.Unbind();
             GL.Begin(PrimitiveType.Lines);
-
-            faces = faces.Where(x => x.Parent == null || !(x.Parent.IsCodeHidden || x.Parent.IsVisgroupHidden || x.Parent.IsRenderHidden2D));
 
             foreach (var f in faces)
             {
@@ -146,6 +138,22 @@ namespace Sledge.Editor.Rendering.Immediate
                 }
             }
 
+            GL.End();
+
+            if (!drawVertices || !Sledge.Settings.View.Draw2DVertices) return;
+
+            GL.PointSize(Sledge.Settings.View.VertexPointSize);
+            GL.Begin(PrimitiveType.Points);
+            GL.Color4(Sledge.Settings.View.VertexOverrideColour);
+            foreach (var f in faces)
+            {
+                if (!Sledge.Settings.View.OverrideVertexColour) GL.Color4(f.Colour);
+                foreach (var line in f.GetLines())
+                {
+                    GLCoordinate(line.Start);
+                    GLCoordinate(line.End);
+                }
+            }
             GL.End();
         }
 

@@ -6,6 +6,7 @@ varying float vertexSelected;
 uniform bool drawSelectedOnly;
 uniform bool drawUnselectedOnly;
 uniform vec4 selectedColour;
+uniform vec4 overrideColour;
 
 void main()
 {
@@ -13,4 +14,5 @@ void main()
     if (drawUnselectedOnly && vertexSelected > 0.9) discard;
 
 	gl_FragColor = mix(vertexColour, selectedColour, vertexSelected);
+	if (overrideColour.w > 0) gl_FragColor = overrideColour;
 }

@@ -805,7 +805,7 @@ namespace Sledge.Editor.Tools
             Matrix.Push();
             var matrix = vp.GetModelViewMatrix();
             GL.MultMatrix(ref matrix);
-            MapObjectRenderer.DrawWireframe(_copies.Keys.SelectMany(x => x.Faces), true);
+            MapObjectRenderer.DrawWireframe(_copies.Keys.SelectMany(x => x.Faces), true, false);
             Matrix.Pop();
 
             // Draw in order by the unused coordinate (the up axis for this viewport)
@@ -899,14 +899,14 @@ namespace Sledge.Editor.Tools
                 MapObjectRenderer.DisableLighting();
 
                 GL.Color3(Color.Pink);
-                MapObjectRenderer.DrawWireframe(faces, true);
+                MapObjectRenderer.DrawWireframe(faces, true, false);
             }
             else
             {
                 GL.Color4(Color.FromArgb(255, 64, 192, 64));
-                MapObjectRenderer.DrawWireframe(faces.Where(x => !x.IsSelected), true);
+                MapObjectRenderer.DrawWireframe(faces.Where(x => !x.IsSelected), true, false);
                 GL.Color4(Color.FromArgb(255, 255, 128, 128));
-                MapObjectRenderer.DrawWireframe(faces.Where(x => x.IsSelected), true);
+                MapObjectRenderer.DrawWireframe(faces.Where(x => x.IsSelected), true, false);
             }
         }
 
