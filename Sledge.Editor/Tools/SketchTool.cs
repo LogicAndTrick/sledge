@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using OpenTK.Graphics;
 using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.MapObjects;
 using Sledge.DataStructures.Transformations;
@@ -9,6 +11,7 @@ using Sledge.Editor.Actions;
 using Sledge.Editor.Actions.MapObjects.Operations;
 using Sledge.Editor.Actions.MapObjects.Selection;
 using Sledge.Editor.Brushes;
+using Sledge.Editor.Extensions;
 using Sledge.Editor.Properties;
 using Sledge.Editor.Rendering.Immediate;
 using Sledge.Settings;
@@ -31,7 +34,8 @@ namespace Sledge.Editor.Tools
         private Face _currentFace;
         private Face _cloneFace;
         private Coordinate _intersection;
-        private Box _drawing;
+        private Polygon _base;
+        private decimal _depth;
         private Plane _volumePlane;
 
         public SketchTool()
@@ -44,7 +48,8 @@ namespace Sledge.Editor.Tools
             _state = SketchState.None;
             _currentFace = _cloneFace = null;
             _intersection = null;
-            _drawing = null;
+            _base = null;
+            _depth = 0;
             _volumePlane = null;
         }
 
@@ -53,7 +58,8 @@ namespace Sledge.Editor.Tools
             _state = SketchState.None;
             _currentFace = _cloneFace = null;
             _intersection = null;
-            _drawing = null;
+            _base = null;
+            _depth = 0;
             _volumePlane = null;
         }
 
@@ -92,7 +98,8 @@ namespace Sledge.Editor.Tools
                     break;
                 case SketchState.Ready:
                     if (e.Button != MouseButtons.Left) break;
-                    _drawing = new Box(_intersection, _intersection);
+                    _base = new Polygon(_currentFace.Plane, 1);
+                    _base.Transform(new UnitTranslate(_intersection - _base.Vertices[0]));
                     _state = SketchState.DrawingBase;
                     break;
                 case SketchState.DrawingBase:
@@ -100,12 +107,12 @@ namespace Sledge.Editor.Tools
                     {
                         // Cancel
                         _state = SketchState.None;
-                        _drawing = null;
+                        _base = null;
                     }
                     else if (e.Button == MouseButtons.Left)
                     {
-                        _drawing = new Box(_drawing.Start, _intersection);
-                        _volumePlane = new Plane(new Coordinate(_drawing.End.X, _drawing.Start.Y, _drawing.Start.Z), _drawing.End, _drawing.End + _currentFace.Plane.Normal);
+                        ExpandBase(_intersection);
+                        _volumePlane = new Plane(_base.Vertices[1], _base.Vertices[2], _base.Vertices[2] + _base.Plane.Normal);
                         _state = SketchState.DrawingVolume;
                     }
                     break;
@@ -117,8 +124,11 @@ namespace Sledge.Editor.Tools
                     }
                     else if (e.Button == MouseButtons.Left)
                     {
-                        CreateBrush(new Box(new[] {_drawing.Start, _drawing.End}));
-                        _drawing = null;
+                        var diff = _intersection - _base.Vertices[2];
+                        var sign = _base.Plane.OnPlane(_intersection) < 0 ? -1 : 1;
+                        _depth = diff.VectorMagnitude() * sign;
+                        CreateBrush(_base, _depth);
+                        _base = null;
                         _volumePlane = null;
                         _state = SketchState.None;
                     }
@@ -128,9 +138,9 @@ namespace Sledge.Editor.Tools
             }
         }
 
-        private void CreateBrush(Box bounds)
+        private void CreateBrush(Polygon poly, decimal depth)
         {
-            var brush = GetBrush(bounds, Document.Map.IDGenerator);
+            var brush = GetBrush(poly, depth, Document.Map.IDGenerator);
             if (brush == null) return;
             IAction action = new Create(brush);
             if (Select.SelectCreatedBrush)
@@ -144,20 +154,9 @@ namespace Sledge.Editor.Tools
             Document.PerformAction("Create " + BrushManager.CurrentBrush.Name.ToLower(), action);
         }
 
-        private MapObject GetBrush(Box bounds, IDGenerator idg)
+        private MapObject GetBrush(Polygon bounds, decimal depth, IDGenerator idGenerator)
         {
-            var brush = new BlockBrush();
-            var ti = Document.TextureCollection.SelectedTexture;
-            var texture = ti != null ? ti.GetTexture() : null;
-            var created = brush.Create(idg, bounds, texture, 0).ToList();
-            if (created.Count > 1)
-            {
-                var g = new Group(idg.GetNextObjectID());
-                created.ForEach(x => x.SetParent(g));
-                g.UpdateBoundingBox();
-                return g;
-            }
-            return created.FirstOrDefault();
+            return null;
         }
 
         public override void MouseClick(ViewportBase viewport, ViewportEvent e)
@@ -194,6 +193,35 @@ namespace Sledge.Editor.Tools
             //
         }
 
+        private void ExpandBase(Coordinate endPoint)
+        {
+            var axis = _base.Plane.GetClosestAxisToNormal();
+            var start = _base.Vertices[0] - _base.Vertices[0].ComponentMultiply(axis);
+            var end = endPoint - endPoint.ComponentMultiply(axis);
+            var diff = end - start;
+            Coordinate addx, addy;
+            if (axis == Coordinate.UnitX)
+            {
+                addx = diff.ComponentMultiply(Coordinate.UnitY);
+                addy = diff.ComponentMultiply(Coordinate.UnitZ);
+            }
+            else if (axis == Coordinate.UnitY)
+            {
+                addx = diff.ComponentMultiply(Coordinate.UnitX);
+                addy = diff.ComponentMultiply(Coordinate.UnitZ);
+            }
+            else
+            {
+                addx = diff.ComponentMultiply(Coordinate.UnitX);
+                addy = diff.ComponentMultiply(Coordinate.UnitY);
+            }
+            var linex = new Line(start + addx, start + addx + axis);
+            var liney = new Line(start + addy, start + addy + axis);
+            _base.Vertices[1] = _base.Plane.GetIntersectionPoint(linex, true, true);
+            _base.Vertices[2] = endPoint;
+            _base.Vertices[3] = _base.Plane.GetIntersectionPoint(liney, true, true);
+        }
+
         public override void MouseMove(ViewportBase viewport, ViewportEvent e)
         {
             var vp = viewport as Viewport3D;
@@ -208,10 +236,13 @@ namespace Sledge.Editor.Tools
                     // face detect
                     break;
                 case SketchState.DrawingBase:
-                    _drawing = new Box(_drawing.Start, _intersection);
+                    ExpandBase(_intersection);
                     break;
                 case SketchState.DrawingVolume:
-                    _drawing = new Box(_drawing.Start, _intersection);
+                    var diff = _intersection - _base.Vertices[2];
+                    diff = diff.ComponentMultiply(_base.Plane.GetClosestAxisToNormal());
+                    var sign = _base.Plane.OnPlane(_intersection) < 0 ? -1 : 1;
+                    _depth = diff.VectorMagnitude() * sign;
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -291,18 +322,42 @@ namespace Sledge.Editor.Tools
             //
         }
 
+        private IEnumerable<Face> GetSides()
+        {
+            if (_state == SketchState.None || _state == SketchState.Ready || _base == null) yield break;
+
+            var b = new Face(0) {Plane = _base.Plane};
+            b.Vertices.AddRange(_base.Vertices.Select(x => new Vertex(x, b)));
+            b.UpdateBoundingBox();
+            yield return b;
+
+            if (_state != SketchState.DrawingVolume) yield break;
+
+            var t = new Face(0) { Plane = new Plane(_base.Plane.Normal, _base.Plane.PointOnPlane + _base.Plane.Normal * _depth) };
+            t.Vertices.AddRange(_base.Vertices.Select(x => new Vertex(x + _base.Plane.Normal * _depth, t)));
+            t.UpdateBoundingBox();
+            yield return t;
+        }
+
         public override void Render(ViewportBase viewport)
         {
             // Render
-            if (_drawing != null)
-            {
+            if (_base != null)
+            {/*
                 var faces = _drawing.GetBoxFaces().Select(x =>
                 {
                     var f = new Face(0) { Plane = new Plane(x[0], x[1], x[2])};
                     f.Vertices.AddRange(x.Select(v => new Vertex(v + f.Plane.Normal * 0.1m, f)));
                     return f;
-                });
+                });*
+              */
+                var vp3 = viewport as Viewport3D;
+                if (vp3 == null) return;
+
+                GL.Disable(EnableCap.CullFace);
+                var faces = GetSides().OrderByDescending(x => (vp3.Camera.LookAt.ToCoordinate() - x.BoundingBox.Center).LengthSquared()).ToList();
                 MapObjectRenderer.DrawFilled(faces, Color.FromArgb(64, Color.DodgerBlue), false, false);
+                GL.Enable(EnableCap.CullFace);
             }
             else if (_cloneFace != null)
             {
