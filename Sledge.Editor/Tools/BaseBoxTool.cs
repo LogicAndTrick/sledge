@@ -8,6 +8,7 @@ using Sledge.DataStructures.Geometric;
 using OpenTK.Graphics.OpenGL;
 using TextPrinter = OpenTK.Graphics.TextPrinter;
 using TextQuality = OpenTK.Graphics.TextQuality;
+using Sledge.Editor.Documents;
 
 namespace Sledge.Editor.Tools
 {
@@ -173,7 +174,7 @@ namespace Sledge.Editor.Tools
             State = new BoxState();
 
             _printer = new TextPrinter(TextQuality.Low);
-            _printerFont = new Font(FontFamily.GenericSansSerif, 18, GraphicsUnit.Pixel);
+            _printerFont = new Font(FontFamily.GenericSansSerif, 16, GraphicsUnit.Pixel);
         }
 
         protected virtual void OnBoxChanged()
@@ -737,8 +738,8 @@ namespace Sledge.Editor.Tools
             var cx = (float)(boxStart.X + (boxEnd.X - boxStart.X) / 2);
             var cy = (float)(boxStart.Y + (boxEnd.Y - boxStart.Y) / 2);
 
-            var wrect = new RectangleF(cx - wid.BoundingBox.Width / 2, viewport.Height - (float)boxEnd.Y - _printerFont.Height - 15, wid.BoundingBox.Width * 1.2f, wid.BoundingBox.Height);
-            var hrect = new RectangleF((float)boxEnd.X + 15, viewport.Height - cy - hei.BoundingBox.Height / 2, hei.BoundingBox.Width * 1.2f, hei.BoundingBox.Height);
+            var wrect = new RectangleF(cx - wid.BoundingBox.Width / 2, viewport.Height - (float)boxEnd.Y - _printerFont.Height - 18, wid.BoundingBox.Width * 1.2f, wid.BoundingBox.Height);
+            var hrect = new RectangleF((float)boxEnd.X + 18, viewport.Height - cy - hei.BoundingBox.Height * 0.75f, hei.BoundingBox.Width * 1.2f, hei.BoundingBox.Height);
 
             GL.Disable(EnableCap.CullFace);
 
@@ -747,7 +748,7 @@ namespace Sledge.Editor.Tools
             _printer.Print(heightText, _printerFont, BoxColour, hrect);
             _printer.End();
 
-            GL.Enable(OpenTK.Graphics.OpenGL.EnableCap.CullFace);
+            GL.Enable(EnableCap.CullFace);
         }
 
         protected virtual void Render2D(Viewport2D viewport)
