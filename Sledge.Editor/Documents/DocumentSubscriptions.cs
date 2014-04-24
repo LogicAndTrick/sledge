@@ -144,6 +144,7 @@ namespace Sledge.Editor.Documents
             Mediator.Subscribe(EditorMediator.SetZoomValue, this);
             Mediator.Subscribe(EditorMediator.TextureSelected, this);
             Mediator.Subscribe(EditorMediator.EntitySelected, this);
+            Mediator.Subscribe(EditorMediator.SelectMatchingTextures, this);
 
             Mediator.Subscribe(EditorMediator.ViewportCreated, this);
         }
@@ -1058,6 +1059,26 @@ namespace Sledge.Editor.Documents
             viewport.RenderContext.Add(new ToolRenderable());
             viewport.RenderContext.Add(new HelperRenderable(_document));
             _document.Renderer.UpdateGrid(_document.Map.GridSpacing, _document.Map.Show2DGrid, _document.Map.Show3DGrid, false);
+        }
+
+        public void SelectMatchingTextures(IEnumerable<string> textureList)
+        {
+            var list = textureList.ToList();
+            var allFaces = _document.Map.WorldSpawn.Find(x => x is Solid).OfType<Solid>().SelectMany(x => x.Faces).ToList();
+            var matchingFaces = allFaces.Where(x => list.Contains(x.Texture.Name, StringComparer.CurrentCultureIgnoreCase)).ToList();
+            var fc = matchingFaces.Count;
+            if (_document.Selection.InFaceSelection)
+            {
+                _document.PerformAction("Select Faces by Texture", new ChangeFaceSelection(matchingFaces, _document.Selection.GetSelectedFaces()));
+                MessageBox.Show(fc + " face" + (fc == 1 ? "" : "s") + " selected.");
+            }
+            else
+            {
+                var objects = matchingFaces.Select(x => x.Parent).Distinct().ToList();
+                _document.PerformAction("Select Objects by Texture", new ChangeSelection(objects, _document.Selection.GetSelectedObjects()));
+                var oc = objects.Count;
+                MessageBox.Show(fc + " face" + (fc == 1 ? "" : "s") + " found, " + oc + " object" + (oc == 1 ? "" : "s") + " selected.");
+            }
         }
     }
 }

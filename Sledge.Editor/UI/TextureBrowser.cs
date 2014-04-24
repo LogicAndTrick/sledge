@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using Sledge.Common.Mediator;
 using Sledge.DataStructures.MapObjects;
 using Sledge.Editor.Documents;
 using Sledge.Providers.Texture;
@@ -401,6 +402,14 @@ namespace Sledge.Editor.UI
             nodes.ForEach(x => x.Items.RemoveAll(selection.Contains));
             UpdateFavouritesList();
             UpdateTextureList();
+        }
+
+        private void SelectButtonClicked(object sender, EventArgs e)
+        {
+            var sel = TextureList.GetSelectedTextures().ToList();
+            if (!sel.Any()) return;
+            Mediator.Publish(EditorMediator.SelectMatchingTextures, sel.Select(x => x.Name).ToList());
+            Close();
         }
     }
 }

@@ -35,6 +35,7 @@ namespace Sledge.Editor
         ResetSelectedBrushType,
         SetZoomValue,
         IgnoreGroupingChanged,
+        SelectMatchingTextures,
 
         VisgroupToggled,
         VisgroupsChanged,

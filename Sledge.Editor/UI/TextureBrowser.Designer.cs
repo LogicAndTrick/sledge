@@ -37,17 +37,17 @@
             this.TextureSizeLabel = new System.Windows.Forms.Label();
             this.TextureNameLabel = new System.Windows.Forms.Label();
             this.button2 = new System.Windows.Forms.Button();
-            this.button1 = new System.Windows.Forms.Button();
+            this.SelectButton = new System.Windows.Forms.Button();
             this.UsedTexturesOnlyBox = new System.Windows.Forms.CheckBox();
             this.label2 = new System.Windows.Forms.Label();
             this.FilterTextbox = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.FavouritesTree = new System.Windows.Forms.TreeView();
             this.LeftbarPanel = new System.Windows.Forms.Panel();
-            this.label4 = new System.Windows.Forms.Label();
-            this.AddFavouriteFolderButton = new System.Windows.Forms.Button();
             this.DeleteFavouriteFolderButton = new System.Windows.Forms.Button();
             this.RemoveFavouriteItemButton = new System.Windows.Forms.Button();
+            this.AddFavouriteFolderButton = new System.Windows.Forms.Button();
+            this.label4 = new System.Windows.Forms.Label();
             this.TextureList = new Sledge.Editor.UI.TextureListPanel();
             this.panel1.SuspendLayout();
             this.LeftbarPanel.SuspendLayout();
@@ -72,7 +72,7 @@
             this.panel1.Controls.Add(this.TextureSizeLabel);
             this.panel1.Controls.Add(this.TextureNameLabel);
             this.panel1.Controls.Add(this.button2);
-            this.panel1.Controls.Add(this.button1);
+            this.panel1.Controls.Add(this.SelectButton);
             this.panel1.Controls.Add(this.UsedTexturesOnlyBox);
             this.panel1.Controls.Add(this.label2);
             this.panel1.Controls.Add(this.FilterTextbox);
@@ -159,14 +159,15 @@
             this.button2.Text = "Replace";
             this.button2.UseVisualStyleBackColor = true;
             // 
-            // button1
+            // SelectButton
             // 
-            this.button1.Location = new System.Drawing.Point(232, 32);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(57, 20);
-            this.button1.TabIndex = 5;
-            this.button1.Text = "Select";
-            this.button1.UseVisualStyleBackColor = true;
+            this.SelectButton.Location = new System.Drawing.Point(232, 32);
+            this.SelectButton.Name = "SelectButton";
+            this.SelectButton.Size = new System.Drawing.Size(57, 20);
+            this.SelectButton.TabIndex = 5;
+            this.SelectButton.Text = "Select";
+            this.SelectButton.UseVisualStyleBackColor = true;
+            this.SelectButton.Click += new System.EventHandler(this.SelectButtonClicked);
             // 
             // UsedTexturesOnlyBox
             // 
@@ -236,26 +237,6 @@
             this.LeftbarPanel.Size = new System.Drawing.Size(193, 495);
             this.LeftbarPanel.TabIndex = 3;
             // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(3, 320);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(170, 13);
-            this.label4.TabIndex = 2;
-            this.label4.Text = "Favourite Textures (drag and drop)";
-            // 
-            // AddFavouriteFolderButton
-            // 
-            this.AddFavouriteFolderButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.AddFavouriteFolderButton.Location = new System.Drawing.Point(3, 446);
-            this.AddFavouriteFolderButton.Name = "AddFavouriteFolderButton";
-            this.AddFavouriteFolderButton.Size = new System.Drawing.Size(100, 23);
-            this.AddFavouriteFolderButton.TabIndex = 3;
-            this.AddFavouriteFolderButton.Text = "Add Folder";
-            this.AddFavouriteFolderButton.UseVisualStyleBackColor = true;
-            this.AddFavouriteFolderButton.Click += new System.EventHandler(this.AddFavouriteFolderButtonClicked);
-            // 
             // DeleteFavouriteFolderButton
             // 
             this.DeleteFavouriteFolderButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
@@ -277,6 +258,26 @@
             this.RemoveFavouriteItemButton.Text = "Remove Selection From Folder";
             this.RemoveFavouriteItemButton.UseVisualStyleBackColor = true;
             this.RemoveFavouriteItemButton.Click += new System.EventHandler(this.RemoveFavouriteItemButtonClicked);
+            // 
+            // AddFavouriteFolderButton
+            // 
+            this.AddFavouriteFolderButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.AddFavouriteFolderButton.Location = new System.Drawing.Point(3, 446);
+            this.AddFavouriteFolderButton.Name = "AddFavouriteFolderButton";
+            this.AddFavouriteFolderButton.Size = new System.Drawing.Size(100, 23);
+            this.AddFavouriteFolderButton.TabIndex = 3;
+            this.AddFavouriteFolderButton.Text = "Add Folder";
+            this.AddFavouriteFolderButton.UseVisualStyleBackColor = true;
+            this.AddFavouriteFolderButton.Click += new System.EventHandler(this.AddFavouriteFolderButtonClicked);
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(3, 320);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(170, 13);
+            this.label4.TabIndex = 2;
+            this.label4.Text = "Favourite Textures (drag and drop)";
             // 
             // TextureList
             // 
@@ -323,7 +324,7 @@
         private System.Windows.Forms.Label TextureSizeLabel;
         private System.Windows.Forms.Label TextureNameLabel;
         private System.Windows.Forms.Button button2;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button SelectButton;
         private System.Windows.Forms.CheckBox UsedTexturesOnlyBox;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox FilterTextbox;
