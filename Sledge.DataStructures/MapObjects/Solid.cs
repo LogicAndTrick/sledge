@@ -208,7 +208,7 @@ namespace Sledge.DataStructures.MapObjects
         public IEnumerable<Face> GetBackwardsFaces(decimal epsilon = 0.001m)
         {
             var origin = GetOrigin();
-            return Faces.Where(x => x.Plane.OnPlane(origin, epsilon) >= 0);
+            return Faces.Where(x => x.Plane.OnPlane(origin, epsilon) > 0);
         }
 
         public bool IsValid(decimal epsilon = 0.5m)
