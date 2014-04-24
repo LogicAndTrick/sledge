@@ -601,6 +601,10 @@ namespace Sledge.Editor.Tools
                 return;
             }
 
+            var vtx = vtxs.First();
+
+            // When clicking, only select vertices in a single solid
+            vtxs = vtxs.Where(x => x.Solid == vtx.Solid).ToList();
 
             // If any vertices are selected, don't change the selection yet
             if (!vtxs.Any(x => x.IsSelected))
@@ -613,8 +617,7 @@ namespace Sledge.Editor.Tools
             vtxs = vtxs.Where(x => x.IsSelected).ToList();
             if (!vtxs.Any()) return;
 
-            // Use the topmost vertex as the control point
-            var vtx = vtxs.First();
+            // Use the fist vertex as the control point
             _currentTool.DragStart(vtxs);
             MoveSelection = vtxs;
             _snapPointOffset = SnapIfNeeded(viewport.Expand(viewport.ScreenToWorld(e.X, viewport.Height - e.Y))) - viewport.ZeroUnusedCoordinate(vtx.Coordinate);
