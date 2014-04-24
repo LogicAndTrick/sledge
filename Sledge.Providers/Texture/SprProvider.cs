@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using Sledge.Graphics.Helpers;
 
@@ -11,6 +13,14 @@ namespace Sledge.Providers.Texture
 {
     public class SprProvider : TextureProvider
     {
+        private enum SpriteRenderMode
+        {
+            Normal = 0,     // No transparency
+            Additive = 1,   // R/G/B = R/G/B, A = (R+G+B)/3
+            IndexAlpha = 2, // R/G/B = Palette index 255, A = (R+G+B)/3
+            AlphaTest = 3   // R/G/B = R/G/B, Palette index 255 = transparent
+        }
+
         public override bool IsValidForPackageFile(string package)
         {
             return Directory.Exists(package);
@@ -25,8 +35,8 @@ namespace Sledge.Providers.Texture
                 if (idst != "IDSP") return null;
                 var version = br.ReadInt32();
                 if (version != 2) return null;
-                var type = br.ReadInt32();
-                var texFormat = br.ReadInt32();
+                var type = (SpriteOrientation) br.ReadInt32();
+                var texFormat = (SpriteRenderMode) br.ReadInt32();
                 var boundingRadius = br.ReadSingle();
                 var width = br.ReadInt32();
                 var height = br.ReadInt32();
@@ -35,6 +45,17 @@ namespace Sledge.Providers.Texture
                 var synctype = br.ReadInt32();
                 var paletteSize = br.ReadInt16();
                 var palette = br.ReadBytes(paletteSize * 3);
+
+                if (paletteSize > 256) paletteSize = 256; // Don't accept anything higher
+                var colours = new Color[256];
+                for (var i = 0; i < paletteSize; i++)
+                {
+                    var r = palette[i * 3 + 0];
+                    var g = palette[i * 3 + 1];
+                    var b = palette[i * 3 + 2];
+                    colours[i] = Color.FromArgb(255, r, g, b);
+                }
+
                 // Only read the first frame.
                 var frametype = br.ReadInt32();
                 if (frametype != 0)
@@ -47,21 +68,38 @@ namespace Sledge.Providers.Texture
                 var framewidth = br.ReadInt32();
                 var frameheight = br.ReadInt32();
                 var pixels = br.ReadBytes(framewidth * frameheight);
-                var bitmap = new Bitmap(framewidth, frameheight);
-                for (var y = 0; y < frameheight; y++)
+
+                var bitmap = new Bitmap(framewidth, frameheight, PixelFormat.Format8bppIndexed);
+
+                // Pre-process the palette
+                var pal = bitmap.Palette;
+                var last = colours[255];
+                for (var i = 0; i < paletteSize; i++)
                 {
-                    for (var x = 0; x < framewidth; x++)
+                    var c = colours[i];
+                    if (texFormat == SpriteRenderMode.Additive)
                     {
-                        var idx = pixels[framewidth * y + x] * 3;
-                        var a = 255;
-                        var r = palette[idx + 0];
-                        var g = palette[idx + 1];
-                        var b = palette[idx + 2];
-                        if (b == 255 && r == 0 && g == 0) a = b = 0; // blue pixels are transparent
-                        var col = Color.FromArgb(a, r, g, b);
-                        bitmap.SetPixel(x, y, col);
+                        var a = (int) ((c.R + c.G + c.B) / 255f);
+                        c = Color.FromArgb(a, c);
                     }
+                    else if (texFormat == SpriteRenderMode.IndexAlpha && i < 255)
+                    {
+                        var a = (int) ((c.R + c.G + c.B) / 255f);
+                        c = Color.FromArgb(a, last);
+                    }
+                    pal.Entries[i] = c;
                 }
+                if (texFormat == SpriteRenderMode.AlphaTest)
+                {
+                    pal.Entries[255] = Color.FromArgb(0, 0, 0, 0);
+                }
+                bitmap.Palette = pal;
+
+                // Set the pixel data
+                var data = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.ReadWrite, bitmap.PixelFormat);
+                Marshal.Copy(pixels, 0, data.Scan0, data.Width * data.Height);
+                bitmap.UnlockBits(data);
+
                 return bitmap;
             }
         }
