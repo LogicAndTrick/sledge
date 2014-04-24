@@ -66,14 +66,17 @@ namespace Sledge.Editor.UI.ObjectProperties
                 .Where(x => x.GetCustomAttributes(typeof(SmartEditAttribute), false).Any());
             foreach (var type in types)
             {
-                var attr = (SmartEditAttribute) type.GetCustomAttributes(typeof (SmartEditAttribute), false).First();
-                var inst = (SmartEditControl) Activator.CreateInstance(type);
+                var attrs = type.GetCustomAttributes(typeof (SmartEditAttribute), false);
+                foreach (SmartEditAttribute attr in attrs)
+                {
+                    var inst = (SmartEditControl) Activator.CreateInstance(type);
 
-                inst.Document = Document;
-                inst.ValueChanged += PropertyValueChanged;
-                inst.Dock = DockStyle.Fill;
+                    inst.Document = Document;
+                    inst.ValueChanged += PropertyValueChanged;
+                    inst.Dock = DockStyle.Fill;
 
-                _smartEditControls.Add(attr.VariableType, inst);
+                    _smartEditControls.Add(attr.VariableType, inst);
+                }
             }
         }
 

@@ -113,7 +113,7 @@ namespace Sledge.Editor.UI.FileSystem
             }
             else
             {
-                // File selected
+                OnConfirmed(FileList.SelectedItems.OfType<ListViewItem>().Select(x => x.Tag).OfType<IFile>());
             }
         }
 

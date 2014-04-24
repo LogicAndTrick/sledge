@@ -413,6 +413,9 @@
     <Compile Include="UI\MapTreeWindow.Designer.cs">
       <DependentUpon>MapTreeWindow.cs</DependentUpon>
     </Compile>
+    <Compile Include="UI\ObjectProperties\SmartEdit\SmartEditBoolean.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="UI\ObjectProperties\SmartEdit\SmartEditColor1.cs">
       <SubType>Component</SubType>
     </Compile>

@@ -9,6 +9,7 @@ using Sledge.FileSystem;
 namespace Sledge.Editor.UI.ObjectProperties.SmartEdit
 {
     [SmartEdit(VariableType.Studio)]
+    [SmartEdit(VariableType.Sprite)]
     internal class SmartEditStudio : SmartEditControl
     {
         private readonly TextBox _textBox;
@@ -26,7 +27,7 @@ namespace Sledge.Editor.UI.ObjectProperties.SmartEdit
         private void OpenModelBrowser(object sender, EventArgs e)
         {
             var rt = Document.Environment.Root;
-            using (var fb = new FileSystem.FileSystemBrowserDialog(rt) { Filter =  "*.mdl", FilterText = "Models (*.mdl)"})
+            using (var fb = new FileSystem.FileSystemBrowserDialog(rt) { Filter =  "*.mdl,*.spr", FilterText = "Models/Sprites (*.mdl, *.spr)"})
             {
                 if (fb.ShowDialog() == DialogResult.OK && fb.SelectedFiles.Any())
                 {
