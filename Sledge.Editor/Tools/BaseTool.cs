@@ -86,6 +86,7 @@ namespace Sledge.Editor.Tools
 
         protected Coordinate GetNudgeValue(Keys k)
         {
+            if (!Select.ArrowKeysNudgeSelection) return null;
             var ctrl = KeyboardState.Ctrl;
             var gridoff = Select.NudgeStyle == NudgeStyle.GridOffCtrl;
             var grid = (gridoff && !ctrl) || (!gridoff && ctrl);
