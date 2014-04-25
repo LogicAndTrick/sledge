@@ -293,7 +293,7 @@ namespace Sledge.Editor.UI
                     sorted = _textures.OrderBy(x => x.Width * x.Height).ThenBy(x => x.Name);
                     break;
                 case TextureSortOrder.Package:
-                    sorted = _textures.OrderBy(x => System.IO.Path.GetFileName(x.Package.PackageFile)).ThenBy(x => x.Name);
+                    sorted = _textures.OrderBy(x => x.ToString()).ThenBy(x => x.Name);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();

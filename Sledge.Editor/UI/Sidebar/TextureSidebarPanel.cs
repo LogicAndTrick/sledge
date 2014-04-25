@@ -57,7 +57,7 @@ namespace Sledge.Editor.UI.Sidebar
         private void GroupChanged(object sender, EventArgs e)
         {
             var tp = GroupComboBox.SelectedItem as TexturePackage;
-            TextureComboBox.Update(tp == null ? null : tp.PackageFile);
+            TextureComboBox.Update(tp == null ? null : tp.ToString());
         }
 
         private void TextureSelectionChanged(object sender, EventArgs e)

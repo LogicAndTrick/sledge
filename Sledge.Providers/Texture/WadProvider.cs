@@ -5,6 +5,7 @@ using System.Globalization;
 using System.Linq;
 using System.IO;
 using System.Threading;
+using Sledge.FileSystem;
 using Sledge.Graphics;
 using Sledge.Graphics.Helpers;
 using Sledge.Libs.HLLib;
@@ -69,17 +70,17 @@ namespace Sledge.Providers.Texture
         private class WadStreamSource : ITextureStreamSource
         {
             private readonly List<TexturePackage> _texturePackages;
-            private readonly Dictionary<string, Tuple<HLLib.Package, HLLib.Folder>> _packages;
+            private readonly Dictionary<IFile, Tuple<HLLib.Package, HLLib.Folder>> _packages;
 
             public WadStreamSource(IEnumerable<TexturePackage> packages)
             {
                 _texturePackages = new List<TexturePackage>();
-                _packages = new Dictionary<string, Tuple<HLLib.Package, HLLib.Folder>>();
+                _packages = new Dictionary<IFile, Tuple<HLLib.Package, HLLib.Folder>>();
                 HLLib.Initialize();
                 foreach (var tp in packages)
                 {
                     if (_packages.ContainsKey(tp.PackageFile)) continue;
-                    var pack = new HLLib.Package(tp.PackageFile);
+                    var pack = new HLLib.Package(tp.PackageFile.FullPathName);
                     _texturePackages.Add(tp);
                     _packages.Add(tp.PackageFile, Tuple.Create(pack, pack.GetRootFolder()));
                 }
@@ -123,9 +124,9 @@ namespace Sledge.Providers.Texture
             }
         }
 
-        public override bool IsValidForPackageFile(string package)
+        public override bool IsValidForPackageFile(IFile package)
         {
-            return package.EndsWith(".wad", true, CultureInfo.InvariantCulture) && File.Exists(package);
+            return package.FullPathName.EndsWith(".wad", true, CultureInfo.InvariantCulture) && File.Exists(package.FullPathName);
         }
 
         private bool IsValidLumpType(uint type)
@@ -139,7 +140,7 @@ namespace Sledge.Providers.Texture
         {
             if (CachePath == null || !Directory.Exists(CachePath)) return false;
 
-            var fi = new FileInfo(package.PackageFile);
+            var fi = new FileInfo(package.PackageFile.FullPathName);
             var cacheFile = Path.Combine(CachePath, fi.Name + "_" + (fi.LastWriteTime.Ticks));
             if (!File.Exists(cacheFile)) return false;
 
@@ -170,7 +171,7 @@ namespace Sledge.Providers.Texture
         private void SaveToCache(TexturePackage package)
         {
             if (CachePath == null || !Directory.Exists(CachePath)) return;
-            var fi = new FileInfo(package.PackageFile);
+            var fi = new FileInfo(package.PackageFile.FullPathName);
             var cacheFile = Path.Combine(CachePath, fi.Name + "_" + (fi.LastWriteTime.Ticks));
             var lines = new List<string>();
             lines.Add(fi.FullName);
@@ -183,7 +184,7 @@ namespace Sledge.Providers.Texture
             File.WriteAllLines(cacheFile, lines);
         }
 
-        public override TexturePackage CreatePackage(string package)
+        public override TexturePackage CreatePackage(IFile package)
         {
             var tp = new TexturePackage(package, this);
             if (LoadFromCache(tp)) return tp;
@@ -192,7 +193,7 @@ namespace Sledge.Providers.Texture
             try
             {
                 HLLib.Initialize();
-                using (var pack = new HLLib.Package(package))
+                using (var pack = new HLLib.Package(package.FullPathName))
                 {
                     var folder = pack.GetRootFolder();
                     var items = folder.GetItems();
@@ -238,7 +239,7 @@ namespace Sledge.Providers.Texture
                 foreach (var package in packages)
                 {
                     var p = package;
-                    using (var pack = new HLLib.Package(p.PackageFile))
+                    using (var pack = new HLLib.Package(p.PackageFile.FullPathName))
                     {
                         var folder = pack.GetRootFolder();
                         foreach (var ti in list.Where(x => x.Package == p))

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Sledge.FileSystem;
 
 namespace Sledge.Providers.Texture
 {
@@ -41,18 +42,18 @@ namespace Sledge.Providers.Texture
         #endregion
 
         protected string CachePath { get; private set; }
-        public abstract bool IsValidForPackageFile(string package);
-        public abstract TexturePackage CreatePackage(string package);
+        public abstract bool IsValidForPackageFile(IFile package);
+        public abstract TexturePackage CreatePackage(IFile package);
         public abstract void LoadTexture(TextureItem item);
         public abstract void LoadTextures(IEnumerable<TextureItem> items);
         public abstract ITextureStreamSource GetStreamSource(IEnumerable<TexturePackage> packages);
 
-        public static TextureCollection CreateCollection(IEnumerable<string> packages)
+        public static TextureCollection CreateCollection(IEnumerable<IFile> packages)
         {
             var pkgs = new List<TexturePackage>();
             foreach (var package in packages)
             {
-                var existing = Packages.FirstOrDefault(x => String.Equals(x.PackageFile, package, StringComparison.InvariantCultureIgnoreCase));
+                var existing = Packages.FirstOrDefault(x => String.Equals(x.PackageFile.FullPathName, package.FullPathName, StringComparison.InvariantCultureIgnoreCase));
                 if (existing != null)
                 {
                     // Package already loaded in another map

@@ -111,7 +111,7 @@ namespace Sledge.Editor.UI
                 Items.Clear();
                 return;
             }
-            var packs = DocumentManager.CurrentDocument.TextureCollection.Packages.Where(x => x.PackageFile == package).ToList();
+            var packs = DocumentManager.CurrentDocument.TextureCollection.Packages.Where(x => x.ToString() == package).ToList();
             if (!packs.Any()) packs.AddRange(DocumentManager.CurrentDocument.TextureCollection.Packages);
 
             _packages = packs;

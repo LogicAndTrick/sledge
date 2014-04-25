@@ -151,7 +151,7 @@ namespace Sledge.Editor.UI
             TreeNode reselect = null;
             foreach (var tp in packages)
             {
-                var node = parent.Nodes.Add(tp.PackageFile, tp + " (" + tp.Items.Count + ")");
+                var node = parent.Nodes.Add(tp.ToString(), tp + " (" + tp.Items.Count + ")");
                 if (selectedKey == node.Name) reselect = node;
             }
             PackageTree.SelectedNode = reselect;
@@ -194,7 +194,7 @@ namespace Sledge.Editor.UI
             var package = PackageTree.SelectedNode;
             var key = package == null ? null : package.Name;
             if (String.IsNullOrWhiteSpace(key)) key = null;
-            return _textures.Where(x => key == null || key == x.Package.PackageFile);
+            return _textures.Where(x => key == null || key == x.Package.ToString());
         }
 
         private IEnumerable<TextureItem> GetFavouriteFolderTextures()

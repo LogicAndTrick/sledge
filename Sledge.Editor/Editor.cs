@@ -18,6 +18,7 @@ using Sledge.Editor.Menu;
 using Sledge.Editor.Settings;
 using Sledge.Editor.UI;
 using Sledge.Editor.UI.Sidebar;
+using Sledge.FileSystem;
 using Sledge.Graphics.Helpers;
 using Sledge.Providers;
 using Sledge.Providers.GameData;
@@ -162,7 +163,7 @@ namespace Sledge.Editor
 
             // Sprites are loaded on startup and always retained
             var spritesFolder = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Sprites");
-            var collection = TextureProvider.CreateCollection(new[] { spritesFolder });
+            var collection = TextureProvider.CreateCollection(new[] { new NativeFile(spritesFolder) });
             collection.LoadTextureItems(collection.GetAllItems());
 
             Subscribe();

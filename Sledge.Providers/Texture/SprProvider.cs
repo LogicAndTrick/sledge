@@ -6,8 +6,8 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using Sledge.FileSystem;
 using Sledge.Graphics.Helpers;
-
 
 namespace Sledge.Providers.Texture
 {
@@ -21,15 +21,15 @@ namespace Sledge.Providers.Texture
             AlphaTest = 3   // R/G/B = R/G/B, Palette index 255 = transparent
         }
 
-        public override bool IsValidForPackageFile(string package)
+        public override bool IsValidForPackageFile(IFile package)
         {
-            return Directory.Exists(package);
+            return package.IsContainer && package.Exists;
         }
 
-        private static Bitmap Parse(FileInfo file)
+        private static Bitmap Parse(IFile file)
         {
             // Sprite file spec taken from the spritegen source in the Half-Life SDK.
-            using (var br = new BinaryReader(file.OpenRead()))
+            using (var br = new BinaryReader(file.Open()))
             {
                 var idst = br.ReadFixedLengthString(Encoding.ASCII, 4);
                 if (idst != "IDSP") return null;
@@ -113,24 +113,24 @@ namespace Sledge.Providers.Texture
         {
             foreach (var item in items)
             {
-                var file = new FileInfo(Path.Combine(item.Package.PackageFile, item.Name));
-                if (file.Exists)
+                var file = item.Package.PackageFile.GetFile(item.Name);
+                if (file != null && file.Exists)
                 {
                     TextureHelper.Create("sprites/" + item.Name.ToLowerInvariant(), Parse(file), true);
                 }
             }
         }
 
-        private TextureItem CreateTextureItem(TexturePackage package, string name)
+        private TextureItem CreateTextureItem(TexturePackage package, IFile file)
         {
-            var bmp = Parse(new FileInfo(name));
-            return new TextureItem(package, name.Substring(package.PackageFile.Length).TrimStart(Path.DirectorySeparatorChar), bmp.Width, bmp.Height);
+            var bmp = Parse(file);
+            return new TextureItem(package, file.Name, bmp.Width, bmp.Height);
         }
 
-        public override TexturePackage CreatePackage(string package)
+        public override TexturePackage CreatePackage(IFile package)
         {
             var tp = new TexturePackage(package, this);
-            var items = Directory.GetFiles(package, "*.spr", SearchOption.AllDirectories)
+            var items = package.GetFiles(".*\\.spr$", true)
                 .Select(x => CreateTextureItem(tp, x));
             foreach (var ti in items)
             {

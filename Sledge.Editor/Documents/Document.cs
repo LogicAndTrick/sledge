@@ -21,6 +21,7 @@ using Sledge.Editor.Rendering.Helpers;
 using Sledge.Editor.Settings;
 using Sledge.Editor.Tools;
 using Sledge.Editor.UI;
+using Sledge.FileSystem;
 using Sledge.Graphics.Helpers;
 using Sledge.Providers;
 using Sledge.Providers.GameData;
@@ -104,7 +105,7 @@ namespace Sledge.Editor.Documents
                 GameData.MapSizeHigh = game.OverrideMapSizeHigh;
             }
 
-            TextureCollection = TextureProvider.CreateCollection(game.Wads.Select(x => x.Path).Distinct());
+            TextureCollection = TextureProvider.CreateCollection(game.Wads.Select(x => x.Path).Distinct().Select(x => new NativeFile(x)));
             var texList = Map.GetAllTextures();
             var items = TextureCollection.GetItems(texList);
             TextureCollection.LoadTextureItems(items);

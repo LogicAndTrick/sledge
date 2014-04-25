@@ -1,4 +1,7 @@
+using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace Sledge.FileSystem
 {
@@ -47,6 +50,23 @@ namespace Sledge.FileSystem
                 }
             }
             return f;
+        }
+
+        private static IEnumerable<IFile> CollectFiles(IFile file, Func<IFile, IEnumerable<IFile>> collector)
+        {
+            var files = collector(file).ToList();
+            files.AddRange(files.SelectMany(x => CollectFiles(x, collector)));
+            return files;
+        }
+
+        public static IEnumerable<IFile> GetFiles(this IFile file, bool recursive)
+        {
+            return !recursive ? file.GetFiles() : CollectFiles(file, x => x.GetFiles());
+        }
+
+        public static IEnumerable<IFile> GetFiles(this IFile file, string regex, bool recursive)
+        {
+            return !recursive ? file.GetFiles(regex) : CollectFiles(file, x => x.GetFiles(regex));
         }
     }
 }

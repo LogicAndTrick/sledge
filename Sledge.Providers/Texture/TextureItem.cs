@@ -30,7 +30,7 @@ namespace Sledge.Providers.Texture
 
         public string GetIdentifierKey()
         {
-            return (Path.GetFileName(Package.PackageFile) ?? "") + ":" + Name;
+            return Package.PackageFile.Name + ":" + Name;
         }
     }
 }

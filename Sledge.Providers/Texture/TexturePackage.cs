@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
+using Sledge.FileSystem;
 using Sledge.Graphics;
 using Sledge.Graphics.Helpers;
 
@@ -11,11 +12,11 @@ namespace Sledge.Providers.Texture
     public class TexturePackage : IDisposable
     {
         internal TextureProvider Provider { get; private set; }
-        public string PackageFile { get; private set; }
+        public IFile PackageFile { get; private set; }
         public Dictionary<string, TextureItem> Items { get; private set; }
         private readonly Dictionary<string, TextureItem> _loadedItems;
 
-        public TexturePackage(string packageFile, TextureProvider provider)
+        public TexturePackage(IFile packageFile, TextureProvider provider)
         {
             Provider = provider;
             PackageFile = packageFile;
@@ -54,8 +55,7 @@ namespace Sledge.Providers.Texture
 
         public override string ToString()
         {
-            var str = PackageFile;
-            return Path.GetFileNameWithoutExtension(str) ?? PackageFile;
+            return PackageFile.NameWithoutExtension;
         }
 
         public void Dispose()
