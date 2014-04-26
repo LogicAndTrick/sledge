@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using OpenTK;
@@ -6,6 +7,7 @@ using OpenTK.Graphics.OpenGL;
 using Sledge.DataStructures.GameData;
 using Sledge.DataStructures.MapObjects;
 using Sledge.Editor.Documents;
+using Sledge.Editor.Extensions;
 using Sledge.Graphics.Helpers;
 using Sledge.UI;
 
@@ -21,7 +23,7 @@ namespace Sledge.Editor.Rendering.Helpers
 
         public bool IsValidFor(MapObject o)
         {
-            return o is Entity && ((Entity) o).Sprite != null;
+            return !Sledge.Settings.View.DisableSpriteRendering && o is Entity && ((Entity) o).HasSprite();
         }
 
         public void BeforeRender2D(Viewport2D viewport)
@@ -59,9 +61,11 @@ namespace Sledge.Editor.Rendering.Helpers
             }
             var normal = Vector3.Subtract(vp.Camera.Location, orig);
 
-            var tex = entity.Sprite;
+            var tex = Document.GetTexture(entity.GetSprite());
+            if (tex == null) TextureHelper.Unbind();
+            else tex.Bind();
+
             GL.Color3(Color.White);
-            tex.Bind();
 
             if (entity.GameData != null)
             {
@@ -75,6 +79,8 @@ namespace Sledge.Editor.Rendering.Helpers
                     }
                 }
             }
+
+            // todo rotation/orientation types
 
             var tup = Vector3.Multiply(up, (float)entity.BoundingBox.Height / 2f);
             var tright = Vector3.Multiply(right, (float)entity.BoundingBox.Width / 2f);
@@ -99,6 +105,14 @@ namespace Sledge.Editor.Rendering.Helpers
         public void RenderDocument(ViewportBase viewport, Document document)
         {
             throw new NotImplementedException();
+        }
+
+        public IEnumerable<MapObject> Order(ViewportBase viewport, IEnumerable<MapObject> mapObjects)
+        {
+            var vp3 = viewport as Viewport3D;
+            if (vp3 == null) return mapObjects;
+            var cam = vp3.Camera.Location.ToCoordinate();
+            return mapObjects.OrderByDescending(x => (x.BoundingBox.Center - cam).LengthSquared());
         }
     }
 }

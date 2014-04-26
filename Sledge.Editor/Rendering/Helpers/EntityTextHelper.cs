@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using OpenTK.Graphics;
 using Sledge.DataStructures.MapObjects;
@@ -80,6 +81,11 @@ namespace Sledge.Editor.Rendering.Helpers
         public void RenderDocument(ViewportBase viewport, Document document)
         {
             throw new NotImplementedException();
+        }
+
+        public IEnumerable<MapObject> Order(ViewportBase viewport, IEnumerable<MapObject> mapObjects)
+        {
+            return mapObjects;
         }
     }
 }

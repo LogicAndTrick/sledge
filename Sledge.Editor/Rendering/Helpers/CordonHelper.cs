@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using OpenTK.Graphics.OpenGL;
 using Sledge.DataStructures.Geometric;
@@ -30,6 +31,11 @@ namespace Sledge.Editor.Rendering.Helpers
             if (ToolManager.ActiveTool != null && ToolManager.ActiveTool.GetHotkeyToolType() == HotkeyTool.Cordon) return;
             if (viewport is Viewport2D) Render2D((Viewport2D)viewport, document);
             if (viewport is Viewport3D) Render3D((Viewport3D)viewport, document);
+        }
+
+        public IEnumerable<MapObject> Order(ViewportBase viewport, IEnumerable<MapObject> mapObjects)
+        {
+            return mapObjects;
         }
 
         private void Render2D(Viewport2D viewport, Document document)

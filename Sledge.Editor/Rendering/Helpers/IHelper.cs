@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Sledge.DataStructures.MapObjects;
 using Sledge.Editor.Documents;
 using Sledge.UI;
@@ -19,5 +20,6 @@ namespace Sledge.Editor.Rendering.Helpers
         void Render3D(Viewport3D viewport, MapObject o);
         void AfterRender3D(Viewport3D viewport);
         void RenderDocument(ViewportBase viewport, Document document);
+        IEnumerable<MapObject> Order(ViewportBase viewport, IEnumerable<MapObject> mapObjects);
     }
 }

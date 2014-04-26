@@ -161,11 +161,6 @@ namespace Sledge.Editor
             TextureHelper.DisableTextureFiltering = Sledge.Settings.View.DisableTextureFiltering;
             TextureHelper.ForceNonPowerOfTwoResize = Sledge.Settings.View.ForcePowerOfTwoTextureResizing;
 
-            // Sprites are loaded on startup and always retained
-            var spritesFolder = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Sprites");
-            var collection = TextureProvider.CreateCollection(new[] { new NativeFile(spritesFolder) });
-            collection.LoadTextureItems(collection.GetAllItems());
-
             Subscribe();
 
             Mediator.MediatorException += (msg, ex) => Logging.Logger.ShowException(ex, "Mediator Error: " + msg);

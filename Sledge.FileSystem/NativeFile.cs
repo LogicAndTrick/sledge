@@ -39,7 +39,7 @@ namespace Sledge.FileSystem
 
         public IFile Parent
         {
-            get { return new NativeFile(IsContainer ? DirectoryInfo.Parent : FileInfo.Directory); }
+            get { return IsContainer ? (DirectoryInfo.Parent == null ? null : new NativeFile(DirectoryInfo.Parent)) : new NativeFile(FileInfo.Directory); }
         }
 
         public string FullPathName
@@ -157,7 +157,7 @@ namespace Sledge.FileSystem
 
         public IEnumerable<IFile> GetChildren(string regex)
         {
-            return GetChildren().Where(x => Regex.IsMatch(x.Name, regex));
+            return GetChildren().Where(x => Regex.IsMatch(x.Name, regex, RegexOptions.IgnoreCase));
         }
 
         public IFile GetFile(string name)
@@ -182,7 +182,7 @@ namespace Sledge.FileSystem
 
         public IEnumerable<IFile> GetFiles(string regex)
         {
-            return GetFiles().Where(x => Regex.IsMatch(x.Name, regex));
+            return GetFiles().Where(x => Regex.IsMatch(x.Name, regex, RegexOptions.IgnoreCase));
         }
 
         public IEnumerable<IFile> GetFilesWithExtension(string extension)

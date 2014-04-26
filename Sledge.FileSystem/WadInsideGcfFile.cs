@@ -198,7 +198,7 @@ namespace Sledge.FileSystem
                             {
                                 var root = wadPack.GetRootFolder();
                                 var files = root.GetItems().Where(x => x.Type == HLLib.DirectoryItemType.File);
-                                _relatedFiles.AddRange(files.Where(x => Regex.IsMatch(x.Name, pattern)).Select(i => new WadInsideGcfFile(GcfFileName, WadFileName, i.Name)));
+                                _relatedFiles.AddRange(files.Where(x => Regex.IsMatch(x.Name, pattern, RegexOptions.IgnoreCase)).Select(i => new WadInsideGcfFile(GcfFileName, WadFileName, i.Name)));
                             }
                         }
                     }
@@ -264,7 +264,7 @@ namespace Sledge.FileSystem
 
         public IEnumerable<IFile> GetFiles(string regex)
         {
-            return GetFiles().Where(x => Regex.IsMatch(x.Name, regex));
+            return GetFiles().Where(x => Regex.IsMatch(x.Name, regex, RegexOptions.IgnoreCase));
         }
 
         public IEnumerable<IFile> GetFilesWithExtension(string extension)

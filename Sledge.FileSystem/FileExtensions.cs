@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 
 namespace Sledge.FileSystem
 {
@@ -52,21 +53,35 @@ namespace Sledge.FileSystem
             return f;
         }
 
-        private static IEnumerable<IFile> CollectFiles(IFile file, Func<IFile, IEnumerable<IFile>> collector)
+        private static IEnumerable<IFile> CollectChildren(IFile file)
         {
-            var files = collector(file).ToList();
-            files.AddRange(files.SelectMany(x => CollectFiles(x, collector)));
+            var files = new List<IFile> {file};
+            files.AddRange(file.GetChildren().SelectMany(CollectChildren));
             return files;
         }
 
         public static IEnumerable<IFile> GetFiles(this IFile file, bool recursive)
         {
-            return !recursive ? file.GetFiles() : CollectFiles(file, x => x.GetFiles());
+            return !recursive ? file.GetFiles() : CollectChildren(file).SelectMany(x => x.GetFiles());
         }
 
         public static IEnumerable<IFile> GetFiles(this IFile file, string regex, bool recursive)
         {
-            return !recursive ? file.GetFiles(regex) : CollectFiles(file, x => x.GetFiles(regex));
+            return !recursive ? file.GetFiles(regex) : CollectChildren(file).SelectMany(x => x.GetFiles(regex));
+        }
+
+        public static string GetRelativePath(this IFile file, IFile relative)
+        {
+            var path = file.Name;
+            var par = file;
+            while (par != null && par.FullPathName != relative.FullPathName)
+            {
+                if (par.Parent != null) path = par.Parent.Name + "/" + path;
+                par = par.Parent;
+            }
+            if (par == null) return file.FullPathName;
+            return path;
+
         }
     }
 }

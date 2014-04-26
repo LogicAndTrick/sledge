@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Sledge.Common;
+using Sledge.DataStructures.GameData;
 using Sledge.DataStructures.Geometric;
 
 namespace Sledge.DataStructures.MapObjects
@@ -199,11 +200,6 @@ namespace Sledge.DataStructures.MapObjects
                     {
                         var gd = gameData.Classes.FirstOrDefault(x => x.Name == ent.EntityData.Name);
                         ent.GameData = gd;
-                        if (gd != null)
-                        {
-                            var beh = gd.Behaviours.FirstOrDefault(x => x.Name == "iconsprite");
-                            if (beh != null && beh.Values.Count == 1) ent.Sprite = textureAccessor(beh.Values[0].ToLowerInvariant());
-                        }
                         ent.UpdateBoundingBox();
                     }
                 }

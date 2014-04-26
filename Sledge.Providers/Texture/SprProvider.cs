@@ -26,6 +26,24 @@ namespace Sledge.Providers.Texture
             return package.IsContainer && package.Exists;
         }
 
+        private static Size GetSize(IFile file)
+        {
+            using (var br = new BinaryReader(file.Open()))
+            {
+                var idst = br.ReadFixedLengthString(Encoding.ASCII, 4);
+                if (idst != "IDSP") return Size.Empty;
+                var version = br.ReadInt32();
+                if (version != 2) return Size.Empty;
+                var type = (SpriteOrientation) br.ReadInt32();
+                var texFormat = (SpriteRenderMode) br.ReadInt32();
+                var boundingRadius = br.ReadSingle();
+                var width = br.ReadInt32();
+                var height = br.ReadInt32();
+
+                return new Size(width, height);
+            }
+        }
+
         private static Bitmap Parse(IFile file)
         {
             // Sprite file spec taken from the spritegen source in the Half-Life SDK.
@@ -79,12 +97,12 @@ namespace Sledge.Providers.Texture
                     var c = colours[i];
                     if (texFormat == SpriteRenderMode.Additive)
                     {
-                        var a = (int) ((c.R + c.G + c.B) / 255f);
+                        var a = (int) ((c.R + c.G + c.B) / 3f);
                         c = Color.FromArgb(a, c);
                     }
                     else if (texFormat == SpriteRenderMode.IndexAlpha && i < 255)
                     {
-                        var a = (int) ((c.R + c.G + c.B) / 255f);
+                        var a = (int) ((c.R + c.G + c.B) / 3f);
                         c = Color.FromArgb(a, last);
                     }
                     pal.Entries[i] = c;
@@ -113,18 +131,25 @@ namespace Sledge.Providers.Texture
         {
             foreach (var item in items)
             {
-                var file = item.Package.PackageFile.GetFile(item.Name);
-                if (file != null && file.Exists)
+                var file = item.Package.PackageFile.TraversePath("../" + item.Name);
+                if (file != null && file.Exists && !file.IsContainer)
                 {
-                    TextureHelper.Create("sprites/" + item.Name.ToLowerInvariant(), Parse(file), true);
+                    TextureHelper.Create(GetFileName(item.Package, file), Parse(file), true);
                 }
             }
         }
 
         private TextureItem CreateTextureItem(TexturePackage package, IFile file)
         {
-            var bmp = Parse(file);
-            return new TextureItem(package, file.Name, bmp.Width, bmp.Height);
+            var size = GetSize(file);
+            return new TextureItem(package, GetFileName(package, file), size.Width, size.Height);
+        }
+
+        private string GetFileName(TexturePackage package, IFile file)
+        {
+            var path = file.GetRelativePath(package.PackageFile).ToLower();
+            path = path.Replace('\\', '/');
+            return path;
         }
 
         public override TexturePackage CreatePackage(IFile package)
@@ -141,7 +166,38 @@ namespace Sledge.Providers.Texture
 
         public override ITextureStreamSource GetStreamSource(IEnumerable<TexturePackage> packages)
         {
-            throw new NotImplementedException();
+            return new SpriteTextureStreamSource(packages);
+        }
+
+        private class SpriteTextureStreamSource : ITextureStreamSource
+        {
+            private readonly List<TexturePackage> _packages;
+
+            public SpriteTextureStreamSource(IEnumerable<TexturePackage> packages)
+            {
+                _packages = packages.ToList();
+            }
+
+            public bool HasImage(TextureItem item)
+            {
+                return _packages.Any(x => x.Items.ContainsValue(item));
+            }
+
+            public Bitmap GetImage(TextureItem item)
+            {
+                var file = item.Package.PackageFile;
+                var child = file.GetFile(item.Name);
+                if (child != null && child.Exists)
+                {
+                    return Parse(child);
+                }
+                return null;
+            }
+
+            public void Dispose()
+            {
+                _packages.Clear();
+            }
         }
     }
 }

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
@@ -52,6 +53,7 @@ namespace Sledge.Editor.Documents
         public HistoryManager History { get; private set; }
         public HelperManager HelperManager { get; set; }
         public TextureCollection TextureCollection { get; set; }
+        public TextureCollection SpriteCollection { get; set; }
 
         private readonly DocumentSubscriptions _subscriptions;
         private readonly DocumentMemory _memory;
@@ -62,6 +64,7 @@ namespace Sledge.Editor.Documents
             History = new HistoryManager(this);
             HelperManager = new HelperManager(this);
             TextureCollection = new TextureCollection(new List<TexturePackage>());
+            SpriteCollection = new TextureCollection(new List<TexturePackage>());
         }
 
         public Document(string mapFile, Map map, Game game)
@@ -106,6 +109,8 @@ namespace Sledge.Editor.Documents
             }
 
             TextureCollection = TextureProvider.CreateCollection(game.Wads.Select(x => x.Path).Distinct().Select(x => new NativeFile(x)));
+            SpriteCollection = TextureProvider.CreateCollection(Environment.GetEditorRoot().GetChildren("sprites"));
+
             var texList = Map.GetAllTextures();
             var items = TextureCollection.GetItems(texList);
             TextureCollection.LoadTextureItems(items);
@@ -113,6 +118,7 @@ namespace Sledge.Editor.Documents
             Map.PostLoadProcess(GameData, GetTexture, SettingsManager.GetSpecialTextureOpacity);
             Map.UpdateDecals(this);
             Map.UpdateModels(this);
+            Map.UpdateSprites(this);
 
             HelperManager = new HelperManager(this);
             Renderer = new RenderManager(this);
@@ -167,6 +173,7 @@ namespace Sledge.Editor.Documents
         {
             Scheduler.Clear(this);
             TextureProvider.DeleteCollection(TextureCollection);
+            TextureProvider.DeleteCollection(SpriteCollection);
             Renderer.Dispose();
         }
 
@@ -357,8 +364,15 @@ namespace Sledge.Editor.Documents
             if (!TextureHelper.Exists(name))
             {
                 var ti = TextureCollection.GetItem(name);
-                if (ti == null) return null;
-                TextureCollection.LoadTextureItem(ti);
+                if (ti != null)
+                {
+                    TextureCollection.LoadTextureItem(ti);
+                }
+                else
+                {
+                    ti = SpriteCollection.GetItem(name);
+                    if (ti != null) SpriteCollection.LoadTextureItem(ti);
+                }
             }
             return TextureHelper.Get(name);
         }
@@ -368,6 +382,7 @@ namespace Sledge.Editor.Documents
             Map.PartialPostLoadProcess(GameData, GetTexture, SettingsManager.GetSpecialTextureOpacity);
             Map.UpdateDecals(this);
             Map.UpdateModels(this);
+            Map.UpdateSprites(this);
             HelperManager.UpdateCache();
             Renderer.Update();
             ViewportManager.Viewports.ForEach(vp => vp.UpdateNextFrame());
@@ -385,10 +400,11 @@ namespace Sledge.Editor.Documents
             Map.PartialPostLoadProcess(GameData, GetTexture, SettingsManager.GetSpecialTextureOpacity);
             var decalsUpdated = Map.UpdateDecals(this, objs);
             var modelsUpdated = Map.UpdateModels(this, objs);
+            var spritesUpdated = Map.UpdateSprites(this, objs);
             HelperManager.UpdateCache();
 
             // If the models/decals changed, we need to do a full update
-            if (modelsUpdated || decalsUpdated) Renderer.Update();
+            if (modelsUpdated || decalsUpdated || spritesUpdated) Renderer.Update();
             else Renderer.UpdatePartial(objs);
 
             ViewportManager.Viewports.ForEach(vp => vp.UpdateNextFrame());

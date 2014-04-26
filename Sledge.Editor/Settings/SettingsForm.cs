@@ -604,12 +604,13 @@ namespace Sledge.Editor.Settings
             AddHeading("Textures");
             AddSetting(() => Sledge.Settings.Select.ApplyTextureImmediately, "Apply texture immediately after browsing in the texture application tool");
 
-            AddHeading("Rendering (these settings will be applied once Sledge to be restarted)");
+            AddHeading("Rendering (these settings will be applied after Sledge is restarted)");
             AddSetting(() => Sledge.Settings.View.Renderer, "Renderer");
             AddSetting(() => Sledge.Settings.View.DisableWadTransparency, "Disable WAD texture transparency");
             AddSetting(() => Sledge.Settings.View.DisableToolTextureTransparency, "Disable tool texture transparency");
             AddSetting(() => Sledge.Settings.View.GloballyDisableTransparency, "Disable transparent textures globally");
             AddSetting(() => Sledge.Settings.View.DisableModelRendering, "Disable model rendering");
+            AddSetting(() => Sledge.Settings.View.DisableSpriteRendering, "Disable sprite rendering");
             AddSetting(() => Sledge.Settings.View.DisableTextureFiltering, "Disable texture filtering (try this if textures render incorrectly)");
             AddSetting(() => Sledge.Settings.View.ForcePowerOfTwoTextureResizing, "Force non power of two textures to be resized (try this if only 64, 128, 256, 512, etc size textures work)");
 

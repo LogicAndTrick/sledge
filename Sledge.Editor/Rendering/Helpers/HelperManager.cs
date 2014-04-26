@@ -118,7 +118,7 @@ namespace Sledge.Editor.Rendering.Helpers
                 if (helper.Is2DHelper && vp2 != null && _helperCache.ContainsKey(helper))
                 {
                     helper.BeforeRender2D(vp2);
-                    foreach (var obj in _helperCache[helper])
+                    foreach (var obj in helper.Order(vp2, _helperCache[helper]))
                     {
                         helper.Render2D(vp2, obj);
                     }
@@ -128,7 +128,7 @@ namespace Sledge.Editor.Rendering.Helpers
                 if (helper.Is3DHelper && vp3 != null && _helperCache.ContainsKey(helper))
                 {
                     helper.BeforeRender3D(vp3);
-                    foreach (var obj in _helperCache[helper])
+                    foreach (var obj in helper.Order(vp3, _helperCache[helper]))
                     {
                         helper.Render3D(vp3, obj);
                     }

@@ -45,6 +45,7 @@ namespace Sledge.Settings
         public static bool DisableToolTextureTransparency { get; set; }
         public static bool GloballyDisableTransparency { get; set; }
         public static bool DisableModelRendering { get; set; }
+        public static bool DisableSpriteRendering { get; set; }
         public static bool DisableTextureFiltering { get; set; }
         public static bool ForcePowerOfTwoTextureResizing { get; set; }
 
@@ -95,6 +96,7 @@ namespace Sledge.Settings
             DisableToolTextureTransparency = false;
             GloballyDisableTransparency = false;
             DisableModelRendering = false;
+            DisableSpriteRendering = false;
             DisableTextureFiltering = false;
             ForcePowerOfTwoTextureResizing = false;
 

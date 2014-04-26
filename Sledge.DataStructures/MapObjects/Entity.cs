@@ -15,8 +15,6 @@ namespace Sledge.DataStructures.MapObjects
         public GameDataObject GameData { get; set; }
         public EntityData EntityData { get; set; }
         public Coordinate Origin { get; set; }
-        public ITexture Sprite { get; set; }
-        public ITexture Decal { get; set; }
 
         public Entity(long id) : base(id)
         {
@@ -76,8 +74,8 @@ namespace Sledge.DataStructures.MapObjects
                 var angles = EntityData.GetPropertyCoordinate("angles", Coordinate.Zero);
                 angles = new Coordinate(-DMath.DegreesToRadians(angles.Z), DMath.DegreesToRadians(angles.X), -DMath.DegreesToRadians(angles.Y));
                 var tform = Matrix.Rotation(Quaternion.EulerAngles(angles)).Translate(Origin);
+                if (MetaData.Has<bool>("RotateBoundingBox") && !MetaData.Get<bool>("RotateBoundingBox")) tform = Matrix.Translation(Origin);
                 BoundingBox = MetaData.Get<Box>("BoundingBox").Transform(new UnitMatrixMult(tform));
-
             }
             else if (GameData != null && GameData.ClassType == ClassType.Point)
             {

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using Sledge.FileSystem;
 using Sledge.Settings.Models;
 
@@ -29,6 +30,17 @@ namespace Sledge.Editor.Environment
         public GameEnvironment(Game game)
         {
             Game = game;
+        }
+
+        public IFile GetEditorRoot()
+        {
+            // Add the editor location to the path, for sprites and the like
+            var dirs = GetGameDirectories().ToList();
+            dirs.Add(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location));
+            dirs.RemoveAll(x => !Directory.Exists(x));
+
+            if (dirs.Any()) return new RootFile(Game.Name, dirs.Select(x => new NativeFile(x)));
+            return new VirtualFile(null, "");
         }
 
         public IEnumerable<string> GetGameDirectories()

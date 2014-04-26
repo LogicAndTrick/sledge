@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using OpenTK.Graphics.OpenGL;
 using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.MapObjects;
@@ -55,6 +56,11 @@ namespace Sledge.Editor.Rendering.Helpers
 
             GL.End();
             GL.LineWidth(1);
+        }
+
+        public IEnumerable<MapObject> Order(ViewportBase viewport, IEnumerable<MapObject> mapObjects)
+        {
+            return mapObjects;
         }
 
         public bool IsValidFor(MapObject o)

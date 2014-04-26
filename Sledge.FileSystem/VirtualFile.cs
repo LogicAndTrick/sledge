@@ -86,7 +86,7 @@ namespace Sledge.FileSystem
 
         public IEnumerable<IFile> GetChildren(string regex)
         {
-            return GetChildren().Where(x => Regex.IsMatch(x.Name, regex));
+            return GetChildren().Where(x => Regex.IsMatch(x.Name, regex, RegexOptions.IgnoreCase));
         }
 
         public IFile GetFile(string name)
@@ -101,7 +101,7 @@ namespace Sledge.FileSystem
 
         public IEnumerable<IFile> GetFiles(string regex)
         {
-            return GetFiles().Where(x => Regex.IsMatch(x.Name, regex));
+            return GetFiles().Where(x => Regex.IsMatch(x.Name, regex, RegexOptions.IgnoreCase));
         }
 
         public IEnumerable<IFile> GetFilesWithExtension(string extension)
