@@ -1,3 +1,3 @@
-0.1.0.22
-2014-04-19T04:34:34Z
-https://github.com/LogicAndTrick/sledge/releases/download/0.1.0.22/Sledge.Editor.0.1.0.22.zip
+0.1.0.23
+2014-04-26T03:19:01Z
+https://github.com/LogicAndTrick/sledge/releases/download/0.1.0.23/Sledge.Editor.0.1.0.23.zip
