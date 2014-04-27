@@ -237,5 +237,10 @@ namespace Sledge.Editor.UI
             SelectEntity(selected);
             Mediator.Publish(HotkeysMediator.ObjectProperties);
         }
+
+        private void CloseButtonClicked(object sender, EventArgs e)
+        {
+            Close();
+        }
     }
 }
