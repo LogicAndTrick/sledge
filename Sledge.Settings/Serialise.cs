@@ -28,7 +28,11 @@ namespace Sledge.Settings
 
         private static object FromString(Type t, string str)
         {
-            if (t.IsEnum) return Enum.Parse(t, str);
+            if (t.IsEnum)
+            {
+                return t.GetEnumValues().OfType<Enum>().FirstOrDefault(x => String.Equals(str, x.ToString(), StringComparison.CurrentCultureIgnoreCase))
+                       ?? t.GetEnumValues().OfType<Enum>().FirstOrDefault();
+            }
             if (t == typeof(decimal))
             {
                 // Settings were saved with culture before, need backwards compatibility

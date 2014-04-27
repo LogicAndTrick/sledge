@@ -25,9 +25,6 @@ namespace Sledge.Editor.Rendering
                 case RenderMode.OpenGL1DisplayLists:
                     _renderer = new DisplayListRenderer(_document);
                     break;
-                case RenderMode.OpenGL1Immediate:
-                    _renderer = new ImmediateRenderer(_document);
-                    break;
                 default:
                     throw new ArgumentOutOfRangeException("This isn't a valid render mode.");
             }

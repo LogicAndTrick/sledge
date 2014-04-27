@@ -56,14 +56,6 @@ namespace Sledge.Editor.Rendering.Immediate
             return face.Opacity;
         }
 
-        public static void CreateFilledList(string displayListName, IEnumerable<Face> faces, bool textured, Color color = new Color())
-        {
-            using (DisplayList.Using(displayListName))
-            {
-                DrawFilled(faces, color, textured);
-            }
-        }
-
         public static void DrawFilled(IEnumerable<Face> faces, Color color, bool textured, bool blend = true)
         {
             if (color.IsEmpty) color = Color.White;
@@ -73,14 +65,19 @@ namespace Sledge.Editor.Rendering.Immediate
             GL.Color4(color);
 
             var texgroups = from f in faces
-                            group f by new { f.Texture.Texture, Opacity = GetOpacity(f.Texture.Texture, f) }
-                            into g
-                            select g;
-            foreach (var g in texgroups.OrderBy(x => x.Key.Opacity > 0.9 ? 0 : 1))
+                            group f by new
+                            {
+                                f.Texture.Texture,
+                                Opacity = GetOpacity(f.Texture.Texture, f),
+                                Transparent = GetOpacity(f.Texture.Texture, f) < 0.9 || (f.Texture.Texture != null && f.Texture.Texture.HasTransparency)
+                            }
+                                into g
+                                select g;
+            foreach (var g in texgroups.OrderBy(x => x.Key.Transparent ? 1 : 0))
             {
                 var texture = false;
                 var alpha = g.Key.Opacity * 255;
-                var blendAlpha = (byte) ((color.A) / 255f * (alpha / 255f) * 255);
+                var blendAlpha = (byte)((color.A) / 255f * (alpha / 255f) * 255);
                 GL.End();
                 if (g.Key.Texture != null && textured)
                 {
@@ -92,8 +89,6 @@ namespace Sledge.Editor.Rendering.Immediate
                 {
                     TextureHelper.Unbind();
                 }
-                if (g.Key.Opacity <= 0.9) GL.Disable(EnableCap.DepthTest);
-                else GL.Enable(EnableCap.DepthTest);
                 GL.Begin(PrimitiveType.Triangles);
                 foreach (var f in g)
                 {
@@ -118,7 +113,6 @@ namespace Sledge.Editor.Rendering.Immediate
 
             GL.End();
             GL.Color4(Color.White);
-            GL.Enable(EnableCap.DepthTest);
         }
 
         public static void DrawWireframe(IEnumerable<Face> faces, bool overrideColor, bool drawVertices)

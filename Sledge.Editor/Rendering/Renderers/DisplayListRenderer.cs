@@ -11,8 +11,6 @@ using Sledge.Editor.Documents;
 using Sledge.Editor.Extensions;
 using Sledge.Editor.Rendering.Immediate;
 using Sledge.Extensions;
-using Sledge.Graphics.Helpers;
-using Sledge.Graphics.Renderables;
 using Sledge.Settings;
 using Sledge.UI;
 using Matrix = Sledge.DataStructures.Geometric.Matrix;
@@ -35,12 +33,11 @@ namespace Sledge.Editor.Rendering.Renderers
 
         private readonly int _listUntransformed3DTextured;
         private readonly int _listTransformed3DTextured;
-        private readonly int _listUntransformedDecals3DTextured;
 
         private readonly int _listUntransformed3DFlat;
         private readonly int _listTransformed3DFlat;
-        private readonly int _listUntransformedDecals3DFlat;
 
+        private readonly List<Face> _transparentFaces;
         private readonly Dictionary<Model, int> _modelLists;
         private readonly List<Tuple<Entity, Model>> _models;
 
@@ -50,10 +47,11 @@ namespace Sledge.Editor.Rendering.Renderers
             _update = true;
             _selectionTransformMat = Matrix.Identity;
             _selectionTransform = Matrix4.Identity;
+            _transparentFaces = new List<Face>();
             _models = new List<Tuple<Entity, Model>>();
             _modelLists = new Dictionary<Model, int>();
 
-            var idx = GL.GenLists(9);
+            var idx = GL.GenLists(7);
             _listUntransformed2D = idx + 0;
             _listTransformed2D = idx + 1;
             _listUntransformed3D = idx + 2;
@@ -61,8 +59,6 @@ namespace Sledge.Editor.Rendering.Renderers
             _listUntransformed3DFlat = idx + 4;
             _listTransformed3DTextured = idx + 5;
             _listTransformed3DFlat = idx + 6;
-            _listUntransformedDecals3DTextured = idx + 7;
-            _listUntransformedDecals3DFlat = idx + 8;
         }
 
         public void Dispose()
@@ -117,7 +113,7 @@ namespace Sledge.Editor.Rendering.Renderers
                     actualDist *= Grid.HideFactor;
                 }
             }
-            GL.Begin(BeginMode.Lines);
+            GL.Begin(PrimitiveType.Lines);
             for (decimal i = lower; i <= upper; i += step)
             {
                 var c = Grid.GridLines;
@@ -218,7 +214,26 @@ namespace Sledge.Editor.Rendering.Renderers
 
             if (!wireframe)
             {
-                GL.CallList(textured ? _listUntransformedDecals3DTextured : _listUntransformedDecals3DFlat);
+                foreach (var face in _transparentFaces.OrderByDescending(x => (location - x.BoundingBox.Center).LengthSquared()))
+                {
+                    var sel = (!Document.Map.HideFaceMask || !Document.Selection.InFaceSelection) && (face.IsSelected || (face.Parent != null && face.Parent.IsSelected));
+                    if (sel) GL.MultMatrix(ref _selectionTransform);
+                    MapObjectRenderer.DrawFilled(new[] {face}, sel ? Color.FromArgb(255, 255, 128, 128) : Color.Empty, true);
+                    GL.LoadMatrix(ref current);
+                }
+            }
+            else
+            {
+                if (Document.Map.HideFaceMask && Document.Selection.InFaceSelection)
+                {
+                    MapObjectRenderer.DrawWireframe(_transparentFaces, false, true);
+                }
+                else
+                {
+                    MapObjectRenderer.DrawWireframe(_transparentFaces.Where(x => !x.IsSelected && (x.Parent == null || !x.Parent.IsSelected)), false, true);
+                    GL.Color4(Color.Red);
+                    MapObjectRenderer.DrawWireframe(_transparentFaces.Where(x => x.IsSelected || (x.Parent != null && x.Parent.IsSelected)), true, true);
+                }
             }
 
             MapObjectRenderer.DisableLighting();
@@ -263,9 +278,15 @@ namespace Sledge.Editor.Rendering.Renderers
 
             GL.EndList();
 
-            var sel3D = selected.Where(x => x.Parent == null || !x.Parent.IsRenderHidden3D).ToList();
-            var sel3DDecals = decals.Where(x => x.IsSelected && !x.IsRenderHidden3D).ToList();
+            _transparentFaces.Clear();
+            _transparentFaces.AddRange(selected.Where(x => x.Opacity < 0.9 || (x.Texture.Texture != null && x.Texture.Texture.HasTransparency)));
+            _transparentFaces.AddRange(unselected.Where(x => x.Opacity < 0.9 || (x.Texture.Texture != null && x.Texture.Texture.HasTransparency)));
+            _transparentFaces.AddRange(decals.SelectMany(x => x.GetDecalGeometry()));
 
+            selected.RemoveAll(_transparentFaces.Contains);
+            unselected.RemoveAll(_transparentFaces.Contains);
+
+            var sel3D = selected.Where(x => x.Parent == null || !x.Parent.IsRenderHidden3D).ToList();
 
             // Draw unselected
             GL.NewList(_listUntransformed3DTextured, ListMode.Compile);
@@ -280,36 +301,23 @@ namespace Sledge.Editor.Rendering.Renderers
             // Draw selected (wireframe; untransformed)
             GL.Color4(Color.Yellow);
             MapObjectRenderer.DrawWireframe(sel3D, true, false);
-            MapObjectRenderer.DrawWireframe(decals.Where(x => x.IsSelected && !x.IsRenderHidden3D).SelectMany(x => x.GetDecalGeometry()), true, false);
             MapObjectRenderer.DrawWireframe(_models.Where(x => x.Item1.IsSelected && !x.Item1.IsRenderHidden3D).SelectMany(x => x.Item1.GetBoxFaces()), true, false);
             GL.EndList();
 
             GL.NewList(_listTransformed3DTextured, ListMode.Compile);
             MapObjectRenderer.DrawFilled(sel3D, Color.Empty, true);
-            MapObjectRenderer.DrawFilled(sel3DDecals.SelectMany(x => x.GetDecalGeometry()), Color.Empty, true);
             if (!Document.Map.HideFaceMask || !Document.Selection.InFaceSelection)
             {
                 MapObjectRenderer.DrawFilled(sel3D, Color.FromArgb(255, 255, 128, 128), true);
-                MapObjectRenderer.DrawFilled(sel3DDecals.SelectMany(x => x.GetDecalGeometry()), Color.FromArgb(255, 255, 128, 128), true);
             }
             GL.EndList();
 
             GL.NewList(_listTransformed3DFlat, ListMode.Compile);
             MapObjectRenderer.DrawFilled(sel3D, Color.Empty, false);
-            MapObjectRenderer.DrawFilled(sel3DDecals.SelectMany(x => x.GetDecalGeometry()), Color.Empty, false);
             if (!Document.Map.HideFaceMask || !Document.Selection.InFaceSelection)
             {
                 MapObjectRenderer.DrawFilled(sel3D, Color.FromArgb(255, 255, 128, 128), false);
-                MapObjectRenderer.DrawFilled(sel3DDecals.SelectMany(x => x.GetDecalGeometry()), Color.FromArgb(255, 255, 128, 128), false);
             }
-            GL.EndList();
-
-            GL.NewList(_listUntransformedDecals3DTextured, ListMode.Compile);
-            MapObjectRenderer.DrawFilled(decals.Where(x => !x.IsSelected && !x.IsRenderHidden3D).SelectMany(x => x.GetDecalGeometry()), Color.Empty, true);
-            GL.EndList();
-
-            GL.NewList(_listUntransformedDecals3DFlat, ListMode.Compile);
-            MapObjectRenderer.DrawFilled(decals.Where(x => !x.IsSelected && !x.IsRenderHidden3D).SelectMany(x => x.GetDecalGeometry()), Color.Empty, false);
             GL.EndList();
 
             _update = false;

@@ -8,9 +8,6 @@ namespace Sledge.Settings
         OpenGL3,
 
         [Description("OpenGL 1.0 Display Lists (Should work for most GPUs)")]
-        OpenGL1DisplayLists,
-
-        [Description("OpenGL 1.0 Immediate (Slow, most compatible)")]
-        OpenGL1Immediate
+        OpenGL1DisplayLists
     }
 }

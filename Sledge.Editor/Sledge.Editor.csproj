@@ -245,7 +245,6 @@
     <Compile Include="Rendering\Immediate\MapObjectRenderer.cs" />
     <Compile Include="Rendering\Renderers\ModernRenderer.cs" />
     <Compile Include="Rendering\Renderers\DisplayListRenderer.cs" />
-    <Compile Include="Rendering\Renderers\ImmediateRenderer.cs" />
     <Compile Include="Rendering\Renderers\IRenderer.cs" />
     <Compile Include="Rendering\RenderManager.cs" />
     <Compile Include="Editing\SelectionManager.cs" />
