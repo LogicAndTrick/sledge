@@ -386,6 +386,7 @@ namespace Sledge.DataStructures.MapObjects
         /// <returns>The object with the matching ID or null if it wasn't found</returns>
         public MapObject FindByID(long id)
         {
+            if (ID == id) return this;
             if (Children.ContainsKey(id)) return Children[id];
             foreach (var mo in GetChildren())
             {
