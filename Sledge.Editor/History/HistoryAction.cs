@@ -10,11 +10,15 @@ namespace Sledge.Editor.History
         private readonly List<IAction> _actions;
 
         public string Name { get; private set; }
+        public bool SkipInStack { get; private set; }
+        public bool ModifiesState { get; private set; }
 
         public HistoryAction(string name, params IAction[] actions)
         {
             Name = name;
             _actions = actions.ToList();
+            SkipInStack = actions.All(x => x.SkipInStack);
+            ModifiesState = actions.Any(x => x.ModifiesState);
         }
 
         public void Undo(Document document)

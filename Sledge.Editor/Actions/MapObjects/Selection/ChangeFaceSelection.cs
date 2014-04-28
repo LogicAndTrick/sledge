@@ -10,6 +10,9 @@ namespace Sledge.Editor.Actions.MapObjects.Selection
 {
     public class ChangeFaceSelection : IAction
     {
+        public bool SkipInStack { get { return true; } } // todo
+        public bool ModifiesState { get { return false; } }
+
         private List<Face> _selected;
         private List<Face> _deselected;
 

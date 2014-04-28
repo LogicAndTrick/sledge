@@ -9,6 +9,9 @@ namespace Sledge.Editor.Actions.Visgroups
 {
     public class ToggleVisgroup : IAction
     {
+        public bool SkipInStack { get { return false; } } //todo ?
+        public bool ModifiesState { get { return false; } }
+
         private readonly int _visgroupId;
         private readonly bool _hide;
         private List<MapObject> _changed;

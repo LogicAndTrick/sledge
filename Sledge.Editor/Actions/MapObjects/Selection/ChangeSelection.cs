@@ -8,6 +8,9 @@ namespace Sledge.Editor.Actions.MapObjects.Selection
 {
     public class ChangeSelection : IAction
     {
+        public bool SkipInStack { get { return true; } } // todo 
+        public bool ModifiesState { get { return false; } }
+
         private List<MapObject> _selected;
         private List<MapObject> _deselected;
 

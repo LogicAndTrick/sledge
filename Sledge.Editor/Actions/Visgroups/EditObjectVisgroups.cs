@@ -8,6 +8,9 @@ namespace Sledge.Editor.Actions.Visgroups
 {
     public class EditObjectVisgroups : IAction
     {
+        public bool SkipInStack { get { return false; } }
+        public bool ModifiesState { get { return true; } }
+
         private List<MapObject> _objects;
         private List<int> _add;
         private List<int> _remove;

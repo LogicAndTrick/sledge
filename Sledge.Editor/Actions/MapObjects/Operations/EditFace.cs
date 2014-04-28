@@ -64,6 +64,9 @@ namespace Sledge.Editor.Actions.MapObjects.Operations
             }
         }
 
+        public bool SkipInStack { get { return false; } }
+        public bool ModifiesState { get { return true; } }
+
         private List<EditFaceReference> _objects;
         private readonly bool _textureChange;
 

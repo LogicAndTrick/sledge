@@ -16,6 +16,9 @@ namespace Sledge.Editor.Actions.MapObjects.Entities
             public EntityData After { get; set; }
         }
 
+        public bool SkipInStack { get { return false; } }
+        public bool ModifiesState { get { return true; } }
+
         private List<EntityReference> _objects;
 
         public EditEntityData()

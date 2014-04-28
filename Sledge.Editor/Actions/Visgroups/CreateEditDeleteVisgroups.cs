@@ -10,6 +10,9 @@ namespace Sledge.Editor.Actions.Visgroups
 {
     public class CreateEditDeleteVisgroups : IAction
     {
+        public bool SkipInStack { get { return false; } }
+        public bool ModifiesState { get { return true; } }
+
         private List<Visgroup> _newVisgroups;
         private List<Tuple<int, string, Color>> _beforeChanges;
         private List<Tuple<int, string, Color>> _afterchanges;

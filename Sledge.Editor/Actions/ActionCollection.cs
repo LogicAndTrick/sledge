@@ -8,6 +8,9 @@ namespace Sledge.Editor.Actions
     {
         private List<IAction> Actions { get; set; }
 
+        public bool SkipInStack { get { return Actions.All(x => x.SkipInStack); } }
+        public bool ModifiesState { get { return Actions.Any(x => x.ModifiesState); } }
+
         public ActionCollection(params IAction[] actions)
         {
             Actions = actions.ToList();

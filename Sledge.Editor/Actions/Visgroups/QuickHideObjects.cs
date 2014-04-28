@@ -8,6 +8,9 @@ namespace Sledge.Editor.Actions.Visgroups
 {
     public class QuickHideObjects : IAction
     {
+        public bool SkipInStack { get { return false; } } //todo ?
+        public bool ModifiesState { get { return false; } }
+
         private List<MapObject> _objects;
         private List<MapObject> _selection;
         private int _added;

@@ -29,6 +29,9 @@ namespace Sledge.Editor.Actions.MapObjects.Operations
             }
         }
 
+        public bool SkipInStack { get { return false; } }
+        public bool ModifiesState { get { return true; } }
+
         private readonly decimal _width;
         private List<Solid> _objects;
 

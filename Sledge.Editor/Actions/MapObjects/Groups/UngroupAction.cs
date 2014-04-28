@@ -11,6 +11,9 @@ namespace Sledge.Editor.Actions.MapObjects.Groups
         private Dictionary<Group, long> _groupsAndParents;
         private Dictionary<long, long> _childrenAndParents;
 
+        public bool SkipInStack { get { return false; } }
+        public bool ModifiesState { get { return true; } }
+
         public UngroupAction(IEnumerable<MapObject> objects)
         {
             var objs = objects.Where(x => x != null && x.Parent != null).OfType<Group>().ToList();

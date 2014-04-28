@@ -12,6 +12,9 @@ namespace Sledge.Editor.Actions.MapObjects.Groups
         private long _groupId;
         private Dictionary<long, long> _originalChildParents;
 
+        public bool SkipInStack { get { return false; } }
+        public bool ModifiesState { get { return true; } }
+
         public GroupAction(IEnumerable<MapObject> groupedObjects)
         {
             _groupedObjects = groupedObjects.Select(x => x.ID).ToList();

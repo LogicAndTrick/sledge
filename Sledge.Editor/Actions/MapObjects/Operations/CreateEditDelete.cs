@@ -89,6 +89,9 @@ namespace Sledge.Editor.Actions.MapObjects.Operations
             }
         }
 
+        public bool SkipInStack { get { return false; } }
+        public bool ModifiesState { get { return true; } }
+
         private List<long> _createdIds;
         private List<CreateReference> _objectsToCreate;
 

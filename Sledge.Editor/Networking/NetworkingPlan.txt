@@ -18,6 +18,28 @@ Sledge Networking Plan
     - Chat functionality?
     - Login?
 
+## Architecture
+
+IAction (OR INetworkAction : IAction?)
+
+:: IsNetworkable() - If IAction is used instead of INetworkAction
+
+:: GetAffectedObjectIDs() - Conflict detection
+Performing: Can always perform an action
+Undo/Redo: Can only undo/redo if the objects have not been modified by anyone else between the perform/undo action and the undo/redo action
+
+:: NetworkSerialise();
+:: NetworkDeserialise();
+When sending across the network:
+CLIENT                      SERVER
+Perform action
+IsNetworkable = true
+Lock control
+o = NetworkSerialise(a) --> a = NetworkDeserialise(o)
+                            PerformAction(a)
+PerformAction(a)        <-- SendToClients(a)
+Control returns
+  
 
 ## Map editing
 
