@@ -44,7 +44,6 @@ namespace Sledge.Editor.Rendering.Shaders
             Perspective = options.Viewport;
             Camera = options.Camera;
             ModelView = options.ModelView;
-            // todo selection transform
         }
 
         public void Unbind()

@@ -142,7 +142,6 @@ namespace Sledge.Editor.UI
 
         public void FocusOn(int rowIndex, int columnIndex)
         {
-            // todo
             if (rowIndex < 0 || rowIndex > 1 || columnIndex < 0 || columnIndex > 1) return;
             RememberFocus();
             ColumnStyles[columnIndex].Width = MaximumViewSize;

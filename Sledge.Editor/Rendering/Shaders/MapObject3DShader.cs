@@ -65,7 +65,6 @@ namespace Sledge.Editor.Rendering.Shaders
             IsLit = options.Shaded;
             Show3DGrid = options.ShowGrid;
             GridSpacing = (float) options.GridSpacing;
-            // todo selection transform
         }
 
         public void Unbind()

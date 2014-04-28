@@ -87,7 +87,7 @@ namespace Sledge.Editor.Rendering.Arrays
 
         public void RenderVertices(IGraphicsContext context, int pointSize)
         {
-            GL.PointSize(pointSize); //TODO: make this into setting? Restore initial value? Set during propgram startup?
+            GL.PointSize(pointSize);
             foreach (var subset in GetSubsets(BrushWireframe))
             {
                 Render(context, PrimitiveType.Points, subset);
