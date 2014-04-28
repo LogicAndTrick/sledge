@@ -70,6 +70,7 @@ namespace Sledge.Editor.UI
 
             var move = units;
             var tilt = 2m;
+
             // These keys are used for hotkeys, don't want the 3D view to move about when trying to use hotkeys.
             var ignore = KeyboardState.IsAnyKeyDown(Keys.ShiftKey, Keys.ControlKey, Keys.Alt);
             IfKey(Keys.W, () => Camera.Advance(move), ignore);
@@ -78,10 +79,15 @@ namespace Sledge.Editor.UI
             IfKey(Keys.D, () => Camera.Strafe(move), ignore);
             IfKey(Keys.Q, () => Camera.AscendAbsolute(move), ignore);
             IfKey(Keys.E, () => Camera.AscendAbsolute(-move), ignore);
-            IfKey(Keys.Right, () => Camera.Pan(-tilt), ignore);
-            IfKey(Keys.Left, () => Camera.Pan(tilt), ignore);
-            IfKey(Keys.Up, () => Camera.Tilt(-tilt), ignore);
-            IfKey(Keys.Down, () => Camera.Tilt(tilt), ignore);
+
+            // Arrow keys are not really used for hotkeys all that much, so we allow shift+arrows to match Hammer's keys
+            var shiftDown = KeyboardState.IsKeyDown(Keys.ShiftKey);
+            var otherDown = KeyboardState.IsAnyKeyDown(Keys.ControlKey, Keys.Alt);
+
+            IfKey(Keys.Right, () => { if (shiftDown) Camera.Strafe(move); else Camera.Pan(-tilt); }, otherDown);
+            IfKey(Keys.Left, () => { if (shiftDown) Camera.Strafe(-move); else Camera.Pan(tilt); }, otherDown);
+            IfKey(Keys.Up, () => { if (shiftDown) Camera.Ascend(move); else Camera.Tilt(-tilt); }, otherDown);
+            IfKey(Keys.Down, () => { if (shiftDown) Camera.Ascend(-move); else Camera.Tilt(tilt); }, otherDown);
         }
 
         private void IfKey(Keys key, Action action, bool ignoreKeyboard)
