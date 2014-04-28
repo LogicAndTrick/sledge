@@ -14,11 +14,13 @@ namespace Sledge.Editor.Actions.MapObjects.Operations
         private class CreateReference
         {
             public long ParentID { get; set; }
+            public bool IsSelected { get; set; }
             public MapObject MapObject { get; set; }
 
             public CreateReference(long parentID, MapObject mapObject)
             {
                 ParentID = parentID;
+                IsSelected = mapObject.IsSelected;
                 MapObject = mapObject;
             }
         }
@@ -204,7 +206,7 @@ namespace Sledge.Editor.Actions.MapObjects.Operations
             _objectsToCreate.ForEach(x => x.MapObject.SetParent(document.Map.WorldSpawn.FindByID(x.ParentID)));
 
             // Select objects if IsSelected is true
-            var sel = _objectsToCreate.Where(x => x.MapObject.IsSelected).ToList();
+            var sel = _objectsToCreate.Where(x => x.IsSelected).ToList();
             sel.RemoveAll(x => x.MapObject.BoundingBox == null); // Don't select objects with no bbox
             if (sel.Any()) document.Selection.Select(sel.Select(x => x.MapObject));
 
