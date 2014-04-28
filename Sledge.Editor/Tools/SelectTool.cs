@@ -871,7 +871,7 @@ namespace Sledge.Editor.Tools
             {
                 // Copy the selection before transforming
                 var copies = ClipboardManager.CloneFlatHeirarchy(Document, Document.Selection.GetSelectedObjects()).ToList();
-                action.Create(copies);
+                action.Create(Document.Map.WorldSpawn.ID, copies);
             }
 
             // Transform the selection

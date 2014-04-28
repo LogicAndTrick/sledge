@@ -297,7 +297,7 @@ namespace Sledge.Editor.Documents
             var selected = _document.Selection.GetSelectedObjects().ToList();
             _document.PerformAction(name, new ActionCollection(
                                               new Deselect(selected), // Deselect the current objects
-                                              new Create(list))); // Add and select the new objects
+                                              new Create(_document.Map.WorldSpawn.ID, list))); // Add and select the new objects
         }
 
         public void OperationsPasteSpecial()
@@ -537,7 +537,7 @@ namespace Sledge.Editor.Documents
                                    ClassName = entity.Name,
                                    Colour = Colour.GetDefaultEntityColour()
                                };
-                ac.Add(new Create(existing));
+                ac.Add(new Create(_document.Map.WorldSpawn.ID, existing));
             }
                 
             var reparent = _document.Selection.GetSelectedObjects().Where(x => x != existing).ToList();

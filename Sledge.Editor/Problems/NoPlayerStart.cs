@@ -19,7 +19,7 @@ namespace Sledge.Editor.Problems
 
         public IAction Fix(Problem problem)
         {
-            return new Create(new Entity(problem.Map.IDGenerator.GetNextObjectID())
+            return new Create(problem.Map.WorldSpawn.ID, new Entity(problem.Map.IDGenerator.GetNextObjectID())
                                   {
                                       EntityData = new EntityData { Name = "info_player_start" },
                                       ClassName = "info_player_start",

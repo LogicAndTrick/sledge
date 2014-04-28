@@ -102,7 +102,7 @@ namespace Sledge.Editor.Tools
             decal.SetDecal(TextureHelper.Get(textureName.ToLowerInvariant()));
             decal.EntityData.SetPropertyValue("texture", textureName);
 
-            Document.PerformAction("Apply decal", new Create(decal));
+            Document.PerformAction("Apply decal", new Create(Document.Map.WorldSpawn.ID, decal));
         }
 
         public override void MouseEnter(ViewportBase viewport, ViewportEvent e)

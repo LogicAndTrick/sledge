@@ -12,14 +12,14 @@ namespace Sledge.Editor.Actions.MapObjects.Operations
     /// </summary>
     public class Create : CreateEditDelete
     {
-        public Create(IEnumerable<MapObject> objects)
+        public Create(long parentId, IEnumerable<MapObject> objects)
         {
-            Create(objects);
+            Create(parentId, objects);
         }
 
-        public Create(params MapObject[] objects)
+        public Create(long parentId, params MapObject[] objects)
         {
-            Create(objects);
+            Create(parentId, objects);
         }
     }
 }

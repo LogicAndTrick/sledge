@@ -98,7 +98,7 @@ namespace Sledge.Editor.Actions.MapObjects.Operations
                 }
 
                 // Mark the objects to be created
-                Create(objects);
+                Create(document.Map.WorldSpawn.ID, objects);
 
                 // We don't need to calculate this again.
                 _firstRun = false;

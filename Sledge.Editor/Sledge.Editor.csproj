@@ -823,6 +823,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Milestones.txt" />
+    <Content Include="Networking\NetworkingPlan.txt" />
     <Content Include="Resources\Arrow_Down.png" />
     <Content Include="Resources\Arrow_Up.png" />
     <None Include="Resources\Logo\Logo.svg" />

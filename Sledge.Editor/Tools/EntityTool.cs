@@ -166,7 +166,7 @@ namespace Sledge.Editor.Tools
                 Origin = origin
             };
 
-            IAction action = new Create(entity);
+            IAction action = new Create(Document.Map.WorldSpawn.ID, entity);
             if (Select.SelectCreatedEntity)
             {
                 entity.IsSelected = true;

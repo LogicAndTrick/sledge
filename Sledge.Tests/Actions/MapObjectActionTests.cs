@@ -112,7 +112,7 @@ namespace Sledge.Tests.Actions
             var random = GetRandomObjects(_document, 50).ToList();
             random.ForEach(x => x.SetParent(null));
             SaveBefore();
-            TestAction(new Create(random));
+            TestAction(new Create(_document.Map.WorldSpawn.ID, random));
         }
 
         [TestMethod]

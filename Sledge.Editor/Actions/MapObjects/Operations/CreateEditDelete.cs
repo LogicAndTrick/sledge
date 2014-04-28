@@ -11,6 +11,18 @@ namespace Sledge.Editor.Actions.MapObjects.Operations
 {
     public class CreateEditDelete : IAction
     {
+        private class CreateReference
+        {
+            public long ParentID { get; set; }
+            public MapObject MapObject { get; set; }
+
+            public CreateReference(long parentID, MapObject mapObject)
+            {
+                ParentID = parentID;
+                MapObject = mapObject;
+            }
+        }
+
         protected class DeleteReference
         {
             public long ParentID { get; set; }
@@ -78,7 +90,7 @@ namespace Sledge.Editor.Actions.MapObjects.Operations
         }
 
         private List<long> _createdIds;
-        private List<MapObject> _objectsToCreate;
+        private List<CreateReference> _objectsToCreate;
 
         private List<long> _idsToDelete;
         private List<DeleteReference> _deletedObjects;
@@ -87,19 +99,19 @@ namespace Sledge.Editor.Actions.MapObjects.Operations
 
         public CreateEditDelete()
         {
-            _objectsToCreate = new List<MapObject>();
+            _objectsToCreate = new List<CreateReference>();
             _idsToDelete = new List<long>();
             _editObjects = new List<EditReference>();
         }
 
-        public void Create(params MapObject[] objects)
+        public void Create(long parentId, params MapObject[] objects)
         {
-            _objectsToCreate.AddRange(objects);
+            _objectsToCreate.AddRange(objects.Select(x => new CreateReference(parentId, x)));
         }
 
-        public void Create(IEnumerable<MapObject> objects)
+        public void Create(long parentId, IEnumerable<MapObject> objects)
         {
-            _objectsToCreate.AddRange(objects);
+            _objectsToCreate.AddRange(objects.Select(x => new CreateReference(parentId, x)));
         }
 
         public void Delete(params long[] ids)
@@ -152,12 +164,12 @@ namespace Sledge.Editor.Actions.MapObjects.Operations
             _editObjects.ForEach(x => x.Reverse(document));
 
             // Create
-            _objectsToCreate = document.Map.WorldSpawn.Find(x => _createdIds.Contains(x.ID));
-            if (_objectsToCreate.Any(x => x.IsSelected))
+            _objectsToCreate = document.Map.WorldSpawn.Find(x => _createdIds.Contains(x.ID)).Select(x => new CreateReference(x.Parent.ID, x)).ToList();
+            if (_objectsToCreate.Any(x => x.MapObject.IsSelected))
             {
-                document.Selection.Deselect(_objectsToCreate.Where(x => x.IsSelected));
+                document.Selection.Deselect(_objectsToCreate.Where(x => x.MapObject.IsSelected).Select(x => x.MapObject));
             }
-            _objectsToCreate.ForEach(x => x.SetParent(null));
+            _objectsToCreate.ForEach(x => x.MapObject.SetParent(null));
             _createdIds = null;
 
             // Delete
@@ -185,15 +197,15 @@ namespace Sledge.Editor.Actions.MapObjects.Operations
         public virtual void Perform(Document document)
         {
             // Create
-            _createdIds = _objectsToCreate.Select(x => x.ID).ToList();
-            _objectsToCreate.ForEach(x => x.SetParent(document.Map.WorldSpawn));
+            _createdIds = _objectsToCreate.Select(x => x.MapObject.ID).ToList();
+            _objectsToCreate.ForEach(x => x.MapObject.SetParent(document.Map.WorldSpawn.FindByID(x.ParentID)));
 
             // Select objects if IsSelected is true
-            var sel = _objectsToCreate.Where(x => x.IsSelected).ToList();
-            sel.RemoveAll(x => x.BoundingBox == null); // Don't select objects with no bbox
-            if (sel.Any()) document.Selection.Select(sel);
+            var sel = _objectsToCreate.Where(x => x.MapObject.IsSelected).ToList();
+            sel.RemoveAll(x => x.MapObject.BoundingBox == null); // Don't select objects with no bbox
+            if (sel.Any()) document.Selection.Select(sel.Select(x => x.MapObject));
 
-            document.Map.UpdateAutoVisgroups(_objectsToCreate, true);
+            document.Map.UpdateAutoVisgroups(_objectsToCreate.Select(x => x.MapObject.Parent is World ? x.MapObject : x.MapObject.Parent), true);
             _objectsToCreate = null;
 
             // Delete
