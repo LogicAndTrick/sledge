@@ -326,7 +326,8 @@ namespace Sledge.Editor.Tools
             if (_state == ClipState.None
                 || _clipPlanePoint1 == null
                 || _clipPlanePoint2 == null
-                || _clipPlanePoint3 == null) return; // Nothing to draw at this point
+                || _clipPlanePoint3 == null
+                || Document.Selection.IsEmpty()) return; // Nothing to draw at this point
 
             TextureHelper.Unbind();
 
@@ -362,21 +363,21 @@ namespace Sledge.Editor.Tools
                 GL.Disable(EnableCap.LineSmooth);
 
                 // Draw the clipping plane
-                var u = plane.Normal.Cross(plane.GetClosestAxisToNormal() == Coordinate.UnitZ ? Coordinate.UnitX : Coordinate.UnitZ);
-                var v = plane.Normal.Cross(u);
-                var point = (_clipPlanePoint1 + _clipPlanePoint2 + _clipPlanePoint3) / 3;
-                var dx = u * 10000;
-                var dy = v * 10000;
-                GL.Disable(EnableCap.CullFace);
-                GL.Begin(PrimitiveType.Quads);
-                GL.Color4(Color.FromArgb(100, Color.Turquoise));
-                Action<Coordinate> render = c => GL.Vertex3(c.DX, c.DY, c.DZ);
-                render(point - dx - dy);
-                render(point + dx - dy);
-                render(point + dx + dy);
-                render(point - dx + dy);
-                GL.End();
+                var poly = new Polygon(plane);
+                var bbox = Document.Selection.GetSelectionBoundingBox();
+                var point = bbox.Center;
+                foreach (var boxPlane in bbox.GetBoxPlanes())
+                {
+                    var proj = boxPlane.Project(point);
+                    var dist = (point - proj).VectorMagnitude() * 0.1m;
+                    poly.Split(new Plane(boxPlane.Normal, proj + boxPlane.Normal * Math.Max(dist, 100)));
+                }
 
+                GL.Disable(EnableCap.CullFace);
+                GL.Begin(PrimitiveType.Polygon);
+                GL.Color4(Color.FromArgb(100, Color.Turquoise));
+                foreach (var c in poly.Vertices) GL.Vertex3(c.DX, c.DY, c.DZ);
+                GL.End();
                 GL.Enable(EnableCap.CullFace);
             }
         }
