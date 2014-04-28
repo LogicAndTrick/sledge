@@ -163,7 +163,7 @@ namespace Sledge.Editor
 
             Subscribe();
 
-            Mediator.MediatorException += (msg, ex) => Logging.Logger.ShowException(ex, "Mediator Error: " + msg);
+            Mediator.MediatorException += (mthd, ex) => Logging.Logger.ShowException(ex.Exception, "Mediator Error: " + ex.Message);
 
             if (Sledge.Settings.View.LoadSession)
             {

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 
 namespace Sledge.Common.Mediator
 {
@@ -10,8 +11,19 @@ namespace Sledge.Common.Mediator
     /// </summary>
     /// <typeparam name="T">The type of the key</typeparam>
     /// <typeparam name="TK">The type of the list contents</typeparam>
+    [Serializable]
     public class MultiDictionary<T, TK> : Dictionary<T, List<TK>>
     {
+        public MultiDictionary()
+        {
+            
+        }
+
+        protected MultiDictionary(SerializationInfo info, StreamingContext context) : base(info, context)
+        {
+            
+        } 
+
         //checks if the key is already present
         private void EnsureKey(T key)
         {

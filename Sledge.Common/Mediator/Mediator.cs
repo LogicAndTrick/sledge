@@ -12,9 +12,9 @@ namespace Sledge.Common.Mediator
     /// </summary>
     public static class Mediator
     {
-        public delegate void MediatorExceptionEventHandler(string message, Exception exception);
+        public delegate void MediatorExceptionEventHandler(object sender, MediatorExceptionEventArgs e);
         public static event MediatorExceptionEventHandler MediatorException;
-        private static void OnMediatorException(string message, object parameter, Exception ex)
+        private static void OnMediatorException(object sender, string message, object parameter, Exception ex)
         {
             if (MediatorException != null)
             {
@@ -26,7 +26,7 @@ namespace Sledge.Common.Mediator
                     var method = frame.GetMethod();
                     msg += "\r\n    " + method.ReflectedType.FullName + "." + method.Name;
                 }
-                MediatorException(message, new Exception(msg, ex));
+                MediatorException(sender, new MediatorExceptionEventArgs(message, new Exception(msg, ex)));
             }
         }
 
@@ -129,7 +129,7 @@ namespace Sledge.Common.Mediator
                         }
                         catch (Exception ex)
                         {
-                            OnMediatorException(message, parameter, ex);
+                            OnMediatorException(method, message, parameter, ex);
                         }
                     }
                 }
