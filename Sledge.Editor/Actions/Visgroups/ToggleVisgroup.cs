@@ -9,7 +9,7 @@ namespace Sledge.Editor.Actions.Visgroups
 {
     public class ToggleVisgroup : IAction
     {
-        public bool SkipInStack { get { return false; } } //todo ?
+        public bool SkipInStack { get { return Sledge.Settings.Select.SkipVisibilityInUndoStack; } }
         public bool ModifiesState { get { return false; } }
 
         private readonly int _visgroupId;

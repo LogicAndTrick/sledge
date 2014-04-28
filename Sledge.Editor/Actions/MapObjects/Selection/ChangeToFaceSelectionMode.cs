@@ -11,7 +11,7 @@ namespace Sledge.Editor.Actions.MapObjects.Selection
 {
     public class ChangeToFaceSelectionMode : IAction
     {
-        public bool SkipInStack { get { return true; } } //todo
+        public bool SkipInStack { get { return Sledge.Settings.Select.SkipSelectionInUndoStack; } }
         public bool ModifiesState { get { return false; } }
 
         private readonly Type _toolType;

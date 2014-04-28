@@ -8,7 +8,7 @@ namespace Sledge.Editor.Actions.Visgroups
 {
     public class ShowAllVisgroups : IAction
     {
-        public bool SkipInStack { get { return false; } } //todo ?
+        public bool SkipInStack { get { return Sledge.Settings.Select.SkipVisibilityInUndoStack; } }
         public bool ModifiesState { get { return false; } }
 
         private List<MapObject> _shown;

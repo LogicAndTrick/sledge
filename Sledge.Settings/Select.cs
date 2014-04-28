@@ -27,6 +27,10 @@
 
         public static bool ApplyTextureImmediately { get; set; }
 
+        public static bool SkipSelectionInUndoStack { get; set; }
+        public static bool SkipVisibilityInUndoStack { get; set; }
+        public static int UndoStackSize { get; set; }
+
         static Select()
         {
             SnapStyle = SnapStyle.SnapOffAlt;
@@ -51,6 +55,10 @@
             CenterHandlesFollowCursor = true;
             ClickSelectByCenterHandlesOnly = false;
             BoxSelectByCenterHandlesOnly = false;
+
+            SkipSelectionInUndoStack = false;
+            SkipVisibilityInUndoStack = false;
+            UndoStackSize = 50;
         }
     }
 }

@@ -638,6 +638,11 @@ namespace Sledge.Editor.Settings
             AddSetting(() => Sledge.Settings.View.Camera2DPanRequiresMouseClick, "Require mouse click to enable panning in 2D viewports when holding spacebar");
             AddSetting(() => Sledge.Settings.View.Camera3DPanRequiresMouseClick, "Require mouse click to enable free-look in 3D viewports when holding spacebar");
 
+            AddHeading("Undo Stack");
+            AddSetting(() => Sledge.Settings.Select.UndoStackSize, 1, 1000, "Undo stack size (caution: setting too high may result in an out of memory crash!)");
+            AddSetting(() => Sledge.Settings.Select.SkipSelectionInUndoStack, "Skip selection operations in the undo stack (selection, deselection)");
+            AddSetting(() => Sledge.Settings.Select.SkipVisibilityInUndoStack, "Skip visibility operations in the undo stack (visgroup visibility, quick show/hide)");
+
             // Integration
             SingleInstanceCheckbox.Checked = Sledge.Settings.View.SingleInstance;
 

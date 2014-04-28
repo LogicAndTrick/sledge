@@ -8,7 +8,7 @@ namespace Sledge.Editor.Actions.MapObjects.Selection
 {
     public class ChangeSelection : IAction
     {
-        public bool SkipInStack { get { return true; } } // todo 
+        public bool SkipInStack { get { return Sledge.Settings.Select.SkipSelectionInUndoStack; } } 
         public bool ModifiesState { get { return false; } }
 
         private List<MapObject> _selected;
