@@ -640,8 +640,8 @@ namespace Sledge.Editor.Settings
 
             AddHeading("Undo Stack");
             AddSetting(() => Sledge.Settings.Select.UndoStackSize, 1, 1000, "Undo stack size (caution: setting too high may result in an out of memory crash!)");
-            AddSetting(() => Sledge.Settings.Select.SkipSelectionInUndoStack, "Skip selection operations in the undo stack (selection, deselection)");
-            AddSetting(() => Sledge.Settings.Select.SkipVisibilityInUndoStack, "Skip visibility operations in the undo stack (visgroup visibility, quick show/hide)");
+            AddSetting(() => Sledge.Settings.Select.SkipSelectionInUndoStack, "Fast-forward selection operations when performing undo/redo (selection, deselection)");
+            AddSetting(() => Sledge.Settings.Select.SkipVisibilityInUndoStack, "Fast-forward visibility operations when performing undo/redo (visgroup visibility, quick show/hide)");
 
             // Integration
             SingleInstanceCheckbox.Checked = Sledge.Settings.View.SingleInstance;

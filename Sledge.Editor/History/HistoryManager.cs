@@ -16,7 +16,7 @@ namespace Sledge.Editor.History
         {
             _document = doc;
             _stacks = new Stack<HistoryStack>();
-            _stacks.Push(new HistoryStack("base", 100));
+            _stacks.Push(new HistoryStack("base", Sledge.Settings.Select.UndoStackSize));
         }
 
         public void AddHistoryItem(IHistoryItem item)
@@ -49,11 +49,21 @@ namespace Sledge.Editor.History
         public void Undo()
         {
             if (!CanUndo()) return;
-            _stacks.Peek().Undo(_document);
+
+            var modifiesCount = 0;
+
+            while (CanUndo())
+            {
+                var u = _stacks.Peek().NextUndo();
+                if (u.ModifiesState) modifiesCount++;
+                _stacks.Peek().Undo(_document);
+                if (!u.SkipInStack) break;
+            }
+
             if (_stacks.Count == 1)
             {
-                TotalActionsSinceLastSave--;
-                TotalActionsSinceLastAutoSave--;
+                TotalActionsSinceLastSave -= modifiesCount;
+                TotalActionsSinceLastAutoSave -= modifiesCount;
             }
             Mediator.Publish(EditorMediator.HistoryChanged);
         }
@@ -61,11 +71,22 @@ namespace Sledge.Editor.History
         public void Redo()
         {
             if (!CanRedo()) return;
+
+            var modifiesCount = _stacks.Peek().NextRedo().ModifiesState ? 1 : 0;
             _stacks.Peek().Redo(_document);
+
+            while (CanRedo())
+            {
+                var r = _stacks.Peek().NextRedo();
+                if (!r.SkipInStack) break;
+                if (r.ModifiesState) modifiesCount++;
+                _stacks.Peek().Redo(_document);
+            }
+
             if (_stacks.Count == 1)
             {
-                TotalActionsSinceLastSave++;
-                TotalActionsSinceLastAutoSave++;
+                TotalActionsSinceLastSave += modifiesCount;
+                TotalActionsSinceLastAutoSave += modifiesCount;
             }
             Mediator.Publish(EditorMediator.HistoryChanged);
         }

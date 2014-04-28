@@ -58,7 +58,7 @@
 
             SkipSelectionInUndoStack = false;
             SkipVisibilityInUndoStack = false;
-            UndoStackSize = 50;
+            UndoStackSize = 100;
         }
     }
 }

@@ -75,9 +75,19 @@ namespace Sledge.Editor.History
             return _currentIndex >= 0;
         }
 
+        public IHistoryItem NextUndo()
+        {
+            return _items[_currentIndex];
+        }
+
         public bool CanRedo()
         {
             return _currentIndex + 1 <= _items.Count - 1;
+        }
+
+        public IHistoryItem NextRedo()
+        {
+            return _items[_currentIndex + 1];
         }
     }
 }
