@@ -24,7 +24,7 @@ namespace Sledge.Editor.History
             var stack = _stacks.Peek();
             stack.Add(item);
 
-            if (_stacks.Count == 1)
+            if (_stacks.Count == 1 && item.ModifiesState)
             {
                 TotalActionsSinceLastSave++;
                 TotalActionsSinceLastAutoSave++;
