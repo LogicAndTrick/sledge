@@ -86,21 +86,21 @@ namespace Sledge.Providers.GameData
             }
             else if (type.Equals("mapsize", StringComparison.InvariantCultureIgnoreCase))
             {
-                Expect(iterator, LexType.So);
+                Expect(iterator, LexType.OpenParen);
                 Expect(iterator, LexType.Value);
                 gd.MapSizeLow = Int32.Parse(iterator.Current.Value);
                 Expect(iterator, LexType.Comma);
                 Expect(iterator, LexType.Value);
                 gd.MapSizeHigh = Int32.Parse(iterator.Current.Value);
-                Expect(iterator, LexType.Already);
+                Expect(iterator, LexType.CloseParen);
             }
             else if (type.Equals("materialexclusion", StringComparison.InvariantCultureIgnoreCase))
             {
-                Expect(iterator, LexType.Open);
+                Expect(iterator, LexType.OpenBracket);
                 iterator.MoveNext();
-                while (iterator.Current.Type != LexType.Close)
+                while (iterator.Current.Type != LexType.CloseBracket)
                 {
-                    Assert(iterator.Current.IsValueOrString(), "Expected value type, got " + iterator.Current.Type + ".");
+                    Assert(iterator.Current, iterator.Current.IsValueOrString(), "Expected value type, got " + iterator.Current.Type + ".");
                     var exclusion = iterator.Current.GetValue();
                     gd.MaterialExclusions.Add(exclusion);
                     iterator.MoveNext();
@@ -111,23 +111,23 @@ namespace Sledge.Providers.GameData
                 Expect(iterator, LexType.Equals);
 
                 iterator.MoveNext();
-                Assert(iterator.Current.IsValueOrString(), "Expected value type, got " + iterator.Current.Type + ".");
+                Assert(iterator.Current, iterator.Current.IsValueOrString(), "Expected value type, got " + iterator.Current.Type + ".");
                 var sectionName = iterator.Current.GetValue();
                 var sect = new AutoVisgroupSection {Name = sectionName};
 
-                Expect(iterator, LexType.Open);
+                Expect(iterator, LexType.OpenBracket);
                 iterator.MoveNext();
-                while (iterator.Current.Type != LexType.Close)
+                while (iterator.Current.Type != LexType.CloseBracket)
                 {
-                    Assert(iterator.Current.IsValueOrString(), "Expected value type, got " + iterator.Current.Type + ".");
+                    Assert(iterator.Current, iterator.Current.IsValueOrString(), "Expected value type, got " + iterator.Current.Type + ".");
                     var groupName = iterator.Current.GetValue();
                     var grp = new AutoVisgroup {Name = groupName};
 
-                    Expect(iterator, LexType.Open);
+                    Expect(iterator, LexType.OpenBracket);
                     iterator.MoveNext();
-                    while (iterator.Current.Type != LexType.Close)
+                    while (iterator.Current.Type != LexType.CloseBracket)
                     {
-                        Assert(iterator.Current.IsValueOrString(), "Expected value type, got " + iterator.Current.Type + ".");
+                        Assert(iterator.Current, iterator.Current.IsValueOrString(), "Expected value type, got " + iterator.Current.Type + ".");
                         var entity = iterator.Current.GetValue();
                         grp.EntityNames.Add(entity);
                         iterator.MoveNext();
@@ -142,7 +142,7 @@ namespace Sledge.Providers.GameData
             {
                 // Parsing:
                 // @TypeClass name(param, param) name()
-                var ct = ParseClassType(type);
+                var ct = ParseClassType(type, iterator.Current);
                 var gdo = new GameDataObject("", "", ct);
                 iterator.MoveNext();
                 while (iterator.Current.Type == LexType.Value)
@@ -158,15 +158,15 @@ namespace Sledge.Providers.GameData
                         // @PointClass {halfgridsnap} base(Targetname)
                         continue;
                     }
-                    Assert(iterator.Current.Type == LexType.So, "Unexpected " + iterator.Current.Type);
+                    Assert(iterator.Current, iterator.Current.Type == LexType.OpenParen, "Unexpected " + iterator.Current.Type);
                     iterator.MoveNext();
-                    while (iterator.Current.Type != LexType.Already)
+                    while (iterator.Current.Type != LexType.CloseParen)
                     {
                         // Parsing:
                         // name({param, param})
                         if (iterator.Current.Type != LexType.Comma)
                         {
-                            Assert(iterator.Current.Type == LexType.Value || iterator.Current.Type == LexType.String,
+                            Assert(iterator.Current, iterator.Current.Type == LexType.Value || iterator.Current.Type == LexType.String,
                                 "Unexpected " + iterator.Current.Type + ".");
                             var value = iterator.Current.Value;
                             if (iterator.Current.Type == LexType.String) value = value.Trim('"');
@@ -174,7 +174,7 @@ namespace Sledge.Providers.GameData
                         }
                         iterator.MoveNext();
                     }
-                    Assert(iterator.Current.Type == LexType.Already, "Unexpected " + iterator.Current.Type);
+                    Assert(iterator.Current, iterator.Current.Type == LexType.CloseParen, "Unexpected " + iterator.Current.Type);
                     // Treat base behaviour as a special case
                     if (bh.Name == "base")
                     {
@@ -187,7 +187,7 @@ namespace Sledge.Providers.GameData
                     iterator.MoveNext();
                 }
                 // = class_name : "Descr" + "iption" [
-                Assert(iterator.Current.Type == LexType.Equals, "Expected equals, got " + iterator.Current.Type);
+                Assert(iterator.Current, iterator.Current.Type == LexType.Equals, "Expected equals, got " + iterator.Current.Type);
                 Expect(iterator, LexType.Value);
                 gdo.Name = iterator.Current.Value;
                 iterator.MoveNext();
@@ -198,16 +198,16 @@ namespace Sledge.Providers.GameData
                     iterator.MoveNext();
                     gdo.Description = ParsePlusString(iterator);
                 }
-                Assert(iterator.Current.Type == LexType.Open, "Unexpected " + iterator.Current.Type);
+                Assert(iterator.Current, iterator.Current.Type == LexType.OpenBracket, "Unexpected " + iterator.Current.Type);
 
                 // Parsing:
                 // name(type) : "Desc" : "Default" : "Long Desc" = [ ... ]
                 // input name(type) : "Description"
                 // output name(type) : "Description"
                 iterator.MoveNext();
-                while (iterator.Current.Type != LexType.Close)
+                while (iterator.Current.Type != LexType.CloseBracket)
                 {
-                    Assert(iterator.Current.Type == LexType.Value, "Unexpected " + iterator.Current.Type);
+                    Assert(iterator.Current, iterator.Current.Type == LexType.Value, "Unexpected " + iterator.Current.Type);
                     var pt = iterator.Current.Value;
                     if (pt == "input" || pt == "output") // IO
                     {
@@ -216,10 +216,10 @@ namespace Sledge.Providers.GameData
                         Expect(iterator, LexType.Value);
                         io.IOType = (IOType) Enum.Parse(typeof (IOType), pt, true);
                         io.Name = iterator.Current.Value;
-                        Expect(iterator, LexType.So);
+                        Expect(iterator, LexType.OpenParen);
                         Expect(iterator, LexType.Value);
-                        io.VariableType = ParseVariableType(iterator.Current.Value);
-                        Expect(iterator, LexType.Already);
+                        io.VariableType = ParseVariableType(iterator.Current);
+                        Expect(iterator, LexType.CloseParen);
                         iterator.MoveNext(); // if not colon, this will be the value of the next io/property, or close
                         if (iterator.Current.Type == LexType.Colon)
                         {
@@ -230,10 +230,10 @@ namespace Sledge.Providers.GameData
                     }
                     else // Property
                     {
-                        Expect(iterator, LexType.So);
+                        Expect(iterator, LexType.OpenParen);
                         Expect(iterator, LexType.Value);
-                        var vartype = ParseVariableType(iterator.Current.Value);
-                        Expect(iterator, LexType.Already);
+                        var vartype = ParseVariableType(iterator.Current);
+                        Expect(iterator, LexType.CloseParen);
                         var prop = new Property(pt, vartype);
                         iterator.MoveNext();
                             // if not colon or equals, this will be the value of the next io/property, or close
@@ -272,7 +272,7 @@ namespace Sledge.Providers.GameData
                                 }
                                 else
                                 {
-                                    Assert(iterator.Current.Type == LexType.Value, "Unexpected " + iterator.Current.Type);
+                                    Assert(iterator.Current, iterator.Current.Type == LexType.Value, "Unexpected " + iterator.Current.Type);
                                     prop.DefaultValue = iterator.Current.Value;
                                 }
                                 iterator.MoveNext();
@@ -285,7 +285,7 @@ namespace Sledge.Providers.GameData
                         } while (false);
                         if (iterator.Current.Type == LexType.Equals)
                         {
-                            Expect(iterator, LexType.Open);
+                            Expect(iterator, LexType.OpenBracket);
                             // Parsing property options:
                             // value : description
                             // value : description : 0
@@ -300,7 +300,7 @@ namespace Sledge.Providers.GameData
 
                                 // Some FGDs use values for property descriptions instead of strings
                                 iterator.MoveNext();
-                                Assert(iterator.Current.IsValueOrString(), "Choices value must be value or string type.");
+                                Assert(iterator.Current, iterator.Current.IsValueOrString(), "Choices value must be value or string type.");
                                 if (iterator.Current.Type == LexType.String)
                                 {
                                     opt.Description = ParsePlusString(iterator);
@@ -321,13 +321,13 @@ namespace Sledge.Providers.GameData
                                 opt.On = iterator.Current.Value == "1";
                                 iterator.MoveNext();
                             }
-                            Assert(iterator.Current.Type == LexType.Close, "Unexpected " + iterator.Current.Type);
+                            Assert(iterator.Current, iterator.Current.Type == LexType.CloseBracket, "Unexpected " + iterator.Current.Type);
                             iterator.MoveNext();
                         }
                         gdo.Properties.Add(prop);
                     }
                 }
-                Assert(iterator.Current.Type == LexType.Close, "Unexpected " + iterator.Current.Type);
+                Assert(iterator.Current, iterator.Current.Type == LexType.CloseBracket, "Unexpected " + iterator.Current.Type);
                 gd.Classes.Add(gdo);
             }
         }
@@ -346,7 +346,7 @@ namespace Sledge.Providers.GameData
                 if (iterator.Current.Type != LexType.Plus)
                 {
                     if (plustime) break;
-                    Assert(iterator.Current.Type == LexType.String, "Unexpected " + iterator.Current.Type);
+                    Assert(iterator.Current, iterator.Current.Type == LexType.String, "Unexpected " + iterator.Current.Type);
                     result += iterator.Current.Value.Trim('"');
                 }
                 else
@@ -359,7 +359,7 @@ namespace Sledge.Providers.GameData
             return result;
         }
 
-        private static ClassType ParseClassType(string type)
+        private static ClassType ParseClassType(string type, LexObject obj)
         {
             type = type.ToLower().Replace("class", "");
             ClassType ct;
@@ -367,18 +367,20 @@ namespace Sledge.Providers.GameData
             {
                 return ct;
             }
-            throw new ProviderException("Unable to parse FGD. Invalid class type: " + type + ".");
+            throw new ProviderException("Unable to parse FGD. Invalid class type: " + type + ".\n" +
+                                        "On line " + obj.LineNumber + ", character " + obj.CharacterNumber);
         }
 
-        private static VariableType ParseVariableType(string type)
+        private static VariableType ParseVariableType(LexObject obj)
         {
-            type = type.ToLower().Replace("_", "");
+            var type = obj.Value.ToLower().Replace("_", "");
             VariableType vt;
             if (Enum.TryParse(type, true, out vt))
             {
                 return vt;
             }
-            throw new ProviderException("Unable to parse FGD. Invalid variable type: " + type + ".");
+            throw new ProviderException("Unable to parse FGD. Invalid variable type: " + type + ".\n" +
+                                        "On line " + obj.LineNumber + ", character " + obj.CharacterNumber);
         }
 
         private static void Expect(IEnumerator<LexObject> iterator, LexType lexType)
@@ -386,31 +388,33 @@ namespace Sledge.Providers.GameData
             iterator.MoveNext();
             if (iterator.Current.Type != lexType)
             {
-                throw new ProviderException("Unable to parse FGD. Expected " + lexType + ", got " + iterator.Current.Type + ".");
+                throw new ProviderException("Unable to parse FGD. Expected " + lexType + ", got " + iterator.Current.Type + ".\n" +
+                                            "On line " + iterator.Current.LineNumber + ", character " + iterator.Current.CharacterNumber);
             }
         }
 
-        private static void Assert(bool value, string error)
+        private static void Assert(LexObject obj, bool value, string error)
         {
             if (!value)
             {
-                throw new ProviderException("Unable to parse FGD. " + error);
+                throw new ProviderException("Unable to parse FGD. " + error.Trim() + "\n" +
+                                            "On line " + obj.LineNumber + ", character " + obj.CharacterNumber);
             }
         }
 
         private enum LexType
         {
-            At,     // @
-            Equals, // =
-            Colon,  // :
-            Open,   // [
-            Close,  // ]
-            So,     // (
-            Already,// )
-            Plus,   // +
-            Comma,  // ,
-            Value,  // Any unquoted string not in the above list
-            String, // Any quoted string (including quotes)
+            At,             // @
+            Equals,         // =
+            Colon,          // :
+            OpenBracket,    // [
+            CloseBracket,   // ]
+            OpenParen,      // (
+            CloseParen,     // )
+            Plus,           // +
+            Comma,          // ,
+            Value,          // Any unquoted string not in the above list
+            String,         // Any quoted string (including quotes)
             Comment
         }
 
@@ -418,9 +422,13 @@ namespace Sledge.Providers.GameData
         {
             public LexType Type { get; private set; }
             public string Value { get; set; }
+            public int LineNumber { get; private set; }
+            public int CharacterNumber { get; private set; }
 
-            public LexObject(LexType type, string value = "")
+            public LexObject(int lineNum, int charNum, LexType type, string value = "")
             {
+                LineNumber = lineNum;
+                CharacterNumber = charNum;
                 Type = type;
                 Value = value;
             }
@@ -438,18 +446,29 @@ namespace Sledge.Providers.GameData
 
         private static IEnumerable<LexObject> Lex(TextReader reader)
         {
+            var lineNum = 1;
+            var charNum = 0;
             int i;
             LexObject current = null;
             while ((i = reader.Read()) >= 0)
             {
                 var c = Convert.ToChar(i);
-                if (current == null)
+                if (c == '\n')
                 {
-                    current = LexNew(c);
+                    lineNum++;
+                    charNum = 0;
                 }
                 else
                 {
-                    var le = LexExisting(c, current);
+                    charNum++;
+                }
+                if (current == null)
+                {
+                    current = LexNew(lineNum, charNum, c);
+                }
+                else
+                {
+                    var le = LexExisting(lineNum, charNum, c, current);
                     if (le != current)
                     {
                         yield return current;
@@ -463,7 +482,7 @@ namespace Sledge.Providers.GameData
             }
         }
 
-        private static LexObject LexNew(char c)
+        private static LexObject LexNew(int lineNum, int charNum, char c)
         {
             if (Char.IsWhiteSpace(c))
             {
@@ -471,49 +490,49 @@ namespace Sledge.Providers.GameData
             }
             if (c == '@')
             {
-                return new LexObject(LexType.At);
+                return new LexObject(lineNum, charNum, LexType.At);
             }
             if (c == '=')
             {
-                return new LexObject(LexType.Equals);
+                return new LexObject(lineNum, charNum, LexType.Equals);
             }
             if (c == ':')
             {
-                return new LexObject(LexType.Colon);
+                return new LexObject(lineNum, charNum, LexType.Colon);
             }
             if (c == '[')
             {
-                return new LexObject(LexType.Open);
+                return new LexObject(lineNum, charNum, LexType.OpenBracket);
             }
             if (c == ']')
             {
-                return new LexObject(LexType.Close);
+                return new LexObject(lineNum, charNum, LexType.CloseBracket);
             }
             if (c == '(')
             {
-                return new LexObject(LexType.So);
+                return new LexObject(lineNum, charNum, LexType.OpenParen);
             }
             if (c == ')')
             {
-                return new LexObject(LexType.Already);
+                return new LexObject(lineNum, charNum, LexType.CloseParen);
             }
             if (c == '+')
             {
-                return new LexObject(LexType.Plus);
+                return new LexObject(lineNum, charNum, LexType.Plus);
             }
             if (c == ',')
             {
-                return new LexObject(LexType.Comma);
+                return new LexObject(lineNum, charNum, LexType.Comma);
             }
             if (c == '/')
             {
-                return new LexObject(LexType.Comment);
+                return new LexObject(lineNum, charNum, LexType.Comment);
             }
             if (c == '"')
             {
-                return new LexObject(LexType.String, c.ToString());
+                return new LexObject(lineNum, charNum, LexType.String, c.ToString(CultureInfo.InvariantCulture));
             }
-            return new LexObject(LexType.Value, c.ToString());
+            return new LexObject(lineNum, charNum, LexType.Value, c.ToString(CultureInfo.InvariantCulture));
         }
 
         private static readonly char[] NonValueCharacters =
@@ -521,7 +540,7 @@ namespace Sledge.Providers.GameData
             '@', '=', ':', '[', ']', '(', ')', '+', ','
         };
 
-        private static LexObject LexExisting(char c, LexObject existing)
+        private static LexObject LexExisting(int lineNum, int charNum, char c, LexObject existing)
         {
             switch (existing.Type)
             {
@@ -532,17 +551,17 @@ namespace Sledge.Providers.GameData
                     }
                     if (NonValueCharacters.Contains(c))
                     {
-                        return LexNew(c);
+                        return LexNew(lineNum, charNum, c);
                     }
-                    existing.Value += c.ToString();
+                    existing.Value += c.ToString(CultureInfo.InvariantCulture);
                     return existing;
                 case LexType.String:
-                    existing.Value += c.ToString();
+                    existing.Value += c.ToString(CultureInfo.InvariantCulture);
                     return c == '"' ? null : existing;
                 case LexType.Comment:
                     return c == '\n' ? null : existing;
                 default:
-                    return LexNew(c);
+                    return LexNew(lineNum, charNum, c);
             }
         }
     }

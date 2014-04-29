@@ -1105,7 +1105,11 @@ namespace Sledge.Editor.Settings
             }
             catch (Exception ex)
             {
-                MessageBox.Show("There was an error loading the provided FGDs, please ensure that you have loaded all dependant FGDs.\nError was: "+ex.Message);
+                MessageBox.Show(
+                    "There was an error loading the provided FGDs, please ensure that you have loaded all dependant FGDs and that all FGDs are valid.\n" +
+                    "Check the location in the FGD file specified by the error message for more information.\n\n" +
+                    "Error was: " + ex.Message,
+                    "Error parsing FGD file", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
