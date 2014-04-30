@@ -198,7 +198,7 @@ namespace Sledge.DataStructures.MapObjects
                     var ent = (Entity) obj;
                     if (ent.GameData == null || !String.Equals(ent.GameData.Name, ent.EntityData.Name, StringComparison.InvariantCultureIgnoreCase))
                     {
-                        var gd = gameData.Classes.FirstOrDefault(x => x.Name == ent.EntityData.Name);
+                        var gd = gameData.Classes.FirstOrDefault(x => String.Equals(x.Name, ent.EntityData.Name, StringComparison.CurrentCultureIgnoreCase) && x.ClassType != ClassType.Base);
                         ent.GameData = gd;
                         ent.UpdateBoundingBox();
                     }

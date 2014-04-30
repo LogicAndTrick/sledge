@@ -37,7 +37,12 @@ namespace Sledge.Editor.Extensions
             foreach (var child in mo.GetChildren()) updatedChildren |= UpdateModels(document, child);
 
             var e = mo as Entity;
-            if (e == null || !ShouldHaveModel(e)) return updatedChildren;
+            if (e == null || !ShouldHaveModel(e))
+            {
+                var has = e != null && HasModel(e);
+                if (has) UnsetModel(e);
+                return updatedChildren || has;
+            }
 
             var model = GetModelName(e);
             var existingModel = e.MetaData.Get<string>(ModelNameMetaKey);

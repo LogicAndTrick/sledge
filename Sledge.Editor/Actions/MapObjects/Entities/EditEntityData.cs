@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Sledge.Common.Mediator;
@@ -67,6 +68,8 @@ namespace Sledge.Editor.Actions.MapObjects.Entities
                 changed.Add(obj);
                 if (obj is Entity) SetEntityData((Entity) obj, r.After, document.GameData);
                 else if (obj is World) SetEntityData((World) obj, r.After);
+
+                if (obj != null) obj.UpdateBoundingBox();
             }
             Mediator.Publish(EditorMediator.EntityDataChanged, changed);
             Mediator.Publish(EditorMediator.DocumentTreeObjectsChanged, changed);
@@ -78,7 +81,7 @@ namespace Sledge.Editor.Actions.MapObjects.Entities
         private void SetEntityData(Entity ent, EntityData data, GameData gameData)
         {
             ent.EntityData = data;
-            ent.GameData = gameData.Classes.FirstOrDefault(x => x.Name.ToLower() == data.Name.ToLower());
+            ent.GameData = gameData.Classes.FirstOrDefault(x => String.Equals(x.Name, data.Name, StringComparison.CurrentCultureIgnoreCase) && x.ClassType != ClassType.Base);
         }
 
         private void SetEntityData(World world, EntityData data)

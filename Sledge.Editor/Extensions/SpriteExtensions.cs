@@ -37,7 +37,12 @@ namespace Sledge.Editor.Extensions
             foreach (var child in mo.GetChildren()) updatedChildren |= UpdateSprites(document, child);
 
             var e = mo as Entity;
-            if (e == null || !ShouldHaveSprite(e)) return updatedChildren;
+            if (e == null || !ShouldHaveSprite(e))
+            {
+                var has = e != null && HasSprite(e);
+                if (has) UnsetSprite(e);
+                return updatedChildren || has;
+            }
 
             var sprite = GetSpriteName(e);
             var existingSprite = e.MetaData.Get<string>(SpriteMetaKey);

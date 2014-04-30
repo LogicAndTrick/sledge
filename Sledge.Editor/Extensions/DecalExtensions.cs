@@ -34,7 +34,12 @@ namespace Sledge.Editor.Extensions
             foreach (var child in mo.GetChildren()) updatedChildren |= UpdateDecals(document, child);
 
             var e = mo as Entity;
-            if (e == null || !ShouldHaveDecal(e)) return updatedChildren;
+            if (e == null || !ShouldHaveDecal(e))
+            {
+                var has = e != null && HasDecal(e);
+                if (has) SetDecal(e, null);
+                return updatedChildren || has;
+            }
 
             var decal = e.EntityData.Properties.FirstOrDefault(x => x.Key == "texture");
             var existingDecal = e.MetaData.Get<string>(DecalNameMetaKey);

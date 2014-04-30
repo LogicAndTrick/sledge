@@ -97,15 +97,14 @@ namespace Sledge.Editor.Tools
         {
             var brush = GetBrush(bounds, Document.Map.IDGenerator);
             if (brush == null) return;
+
+            brush.IsSelected = Select.SelectCreatedBrush;
             IAction action = new Create(Document.Map.WorldSpawn.ID, brush);
-            if (Select.SelectCreatedBrush)
+            if (Select.SelectCreatedBrush && Select.DeselectOthersWhenSelectingCreation)
             {
-                brush.IsSelected = true;
-                if (Select.DeselectOthersWhenSelectingCreation)
-                {
-                    action = new ActionCollection(new ChangeSelection(new MapObject[0], Document.Selection.GetSelectedObjects()), action);
-                }
+                action = new ActionCollection(new ChangeSelection(new MapObject[0], Document.Selection.GetSelectedObjects()), action);
             }
+
             Document.PerformAction("Create " + BrushManager.CurrentBrush.Name.ToLower(), action);
         }
 

@@ -380,9 +380,12 @@ namespace Sledge.Editor.Documents
         public void RenderAll()
         {
             Map.PartialPostLoadProcess(GameData, GetTexture, SettingsManager.GetSpecialTextureOpacity);
-            Map.UpdateDecals(this);
-            Map.UpdateModels(this);
-            Map.UpdateSprites(this);
+
+            var decalsUpdated = Map.UpdateDecals(this);
+            var modelsUpdated = Map.UpdateModels(this);
+            var spritesUpdated = Map.UpdateSprites(this);
+            if (decalsUpdated || modelsUpdated || spritesUpdated) Mediator.Publish(EditorMediator.SelectionChanged);
+
             HelperManager.UpdateCache();
             Renderer.Update();
             ViewportManager.Viewports.ForEach(vp => vp.UpdateNextFrame());
@@ -398,9 +401,12 @@ namespace Sledge.Editor.Documents
         {
             var objs = objects.ToList();
             Map.PartialPostLoadProcess(GameData, GetTexture, SettingsManager.GetSpecialTextureOpacity);
+
             var decalsUpdated = Map.UpdateDecals(this, objs);
             var modelsUpdated = Map.UpdateModels(this, objs);
             var spritesUpdated = Map.UpdateSprites(this, objs);
+            if (decalsUpdated || modelsUpdated || spritesUpdated) Mediator.Publish(EditorMediator.SelectionChanged);
+
             HelperManager.UpdateCache();
 
             // If the models/decals changed, we need to do a full update
