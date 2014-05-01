@@ -540,7 +540,7 @@ namespace Sledge.Editor.Documents
                 ac.Add(new Create(_document.Map.WorldSpawn.ID, existing));
             }
                 
-            var reparent = _document.Selection.GetSelectedObjects().Where(x => x != existing).ToList();
+            var reparent = _document.Selection.GetSelectedParents().Where(x => x != existing).ToList();
             ac.Add(new Reparent(existing.ID, reparent));
             ac.Add(new Actions.MapObjects.Selection.Select(existing));
 

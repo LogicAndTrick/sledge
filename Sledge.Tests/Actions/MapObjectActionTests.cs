@@ -38,7 +38,7 @@ namespace Sledge.Tests.Actions
             MapProvider.Register(new RmfProvider());
             MapProvider.Register(new VmfProvider());
 
-            var fi = new FileInfo("verc_18.rmf");
+            var fi = new FileInfo(@"verc_18.rmf");
             var ctor = typeof (Document).GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, Type.EmptyTypes, null);
             _document = (Document) ctor.Invoke(null);
             _document.Map = MapProvider.GetMapFromFile(fi.FullName);
@@ -83,6 +83,14 @@ namespace Sledge.Tests.Actions
 
         private void TestAction(IAction action)
         {
+            action.Perform(_document);
+            Compare(true);
+            action.Reverse(_document);
+            Compare(false);
+            action.Perform(_document);
+            Compare(true);
+            action.Reverse(_document);
+            Compare(false);
             action.Perform(_document);
             Compare(true);
             action.Reverse(_document);
