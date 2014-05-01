@@ -71,7 +71,14 @@ namespace Sledge.DataStructures.MapObjects
 
         protected void CopyBase(MapObject o, IDGenerator generator, bool performClone = false)
         {
-            if (performClone) o.ID = ID;
+            if (performClone)
+            {
+                var parent = o.Parent;
+                var setPar = o.Parent != null && o.Parent.Children.ContainsKey(o.ID) && o.Parent.Children[o.ID] == o;
+                if (setPar) o.SetParent(null);
+                o.ID = ID;
+                if (setPar) o.SetParent(parent);
+            }
             o.ClassName = ClassName;
             o.Visgroups.AddRange(Visgroups);
             o.AutoVisgroups.AddRange(AutoVisgroups);
@@ -97,7 +104,14 @@ namespace Sledge.DataStructures.MapObjects
             AutoVisgroups.Clear();
             Children.Clear();
 
-            if (performUnclone) ID = o.ID;
+            if (performUnclone)
+            {
+                var parent = Parent;
+                var setPar = Parent != null && Parent.Children.ContainsKey(ID) && Parent.Children[ID] == this;
+                if (setPar) SetParent(null);
+                ID = o.ID;
+                if (setPar) SetParent(parent);
+            }
             ClassName = o.ClassName;
             Visgroups.AddRange(o.Visgroups);
             AutoVisgroups.AddRange(o.AutoVisgroups);
