@@ -531,9 +531,21 @@ namespace Sledge.Providers.Map
             foreach (var o in objs)
             {
                 if (o is Solid) ((Solid) o).Faces.ForEach(x => x.ID = generator.GetNextFaceID());
+
+                // Remove the children
+                var children = o.GetChildren().ToList();
+                children.ForEach(x => x.SetParent(null));
+
+                // re-index the children
+                Reindex(children, generator);
+
+                // Change the ID
                 o.ID = generator.GetNextObjectID();
+
+                // Re-add the children
+                children.ForEach(x => x.SetParent(o));
+
                 if (!o.HasChildren) o.UpdateBoundingBox();
-                Reindex(o.GetChildren(), generator);
             }
         }
 
