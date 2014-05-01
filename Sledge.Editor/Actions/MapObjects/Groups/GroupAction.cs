@@ -27,11 +27,19 @@ namespace Sledge.Editor.Actions.MapObjects.Groups
                 .Where(x => x != null && x.Parent != null)
                 .ToList();
             _originalChildParents = objects.ToDictionary(x => x.ID, x => x.Parent.ID);
-            _groupId = document.Map.IDGenerator.GetNextObjectID();
+
+            if (_groupId == 0) _groupId = document.Map.IDGenerator.GetNextObjectID();
             var group = new Group(_groupId);
+
             objects.ForEach(x => x.SetParent(group));
             group.SetParent(document.Map.WorldSpawn);
             group.UpdateBoundingBox();
+
+            if (group.GetChildren().All(x => x.IsSelected))
+            {
+                document.Selection.Select(group);
+                Mediator.Publish(EditorMediator.SelectionChanged);
+            }
 
             Mediator.Publish(EditorMediator.DocumentTreeStructureChanged);
         }
@@ -43,7 +51,14 @@ namespace Sledge.Editor.Actions.MapObjects.Groups
             children.ForEach(x => x.SetParent(document.Map.WorldSpawn.FindByID(_originalChildParents[x.ID])));
             children.ForEach(x => x.UpdateBoundingBox());
             group.SetParent(null);
-            Dispose();
+
+            if (group.IsSelected)
+            {
+                document.Selection.Deselect(group);
+                Mediator.Publish(EditorMediator.SelectionChanged);
+            }
+
+            _originalChildParents.Clear();
 
             Mediator.Publish(EditorMediator.DocumentTreeStructureChanged);
         }
@@ -51,7 +66,6 @@ namespace Sledge.Editor.Actions.MapObjects.Groups
         public void Dispose()
         {
             _originalChildParents = null;
-            _groupId = 0;
         }
     }
 }
