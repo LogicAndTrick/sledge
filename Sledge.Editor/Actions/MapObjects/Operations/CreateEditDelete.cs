@@ -196,6 +196,7 @@ namespace Sledge.Editor.Actions.MapObjects.Operations
                 Mediator.Publish(EditorMediator.DocumentTreeStructureChanged, _editObjects.Select(x => document.Map.WorldSpawn.FindByID(x.ID)));
             }
 
+            Mediator.Publish(EditorMediator.SelectionChanged);
             Mediator.Publish(EditorMediator.VisgroupsChanged);
         }
 
@@ -249,6 +250,7 @@ namespace Sledge.Editor.Actions.MapObjects.Operations
                 Mediator.Publish(EditorMediator.DocumentTreeStructureChanged, _editObjects.Select(x => document.Map.WorldSpawn.FindByID(x.ID)));
             }
 
+            Mediator.Publish(EditorMediator.SelectionChanged);
             Mediator.Publish(EditorMediator.VisgroupsChanged);
         }
     }
