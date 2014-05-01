@@ -13,13 +13,13 @@ namespace Sledge.Editor.Actions.MapObjects.Selection
         public bool SkipInStack { get { return Sledge.Settings.Select.SkipSelectionInUndoStack; } }
         public bool ModifiesState { get { return false; } }
 
-        private List<Face> _selected;
-        private List<Face> _deselected;
+        private Dictionary<long, long> _selected;
+        private Dictionary<long, long> _deselected;
 
         public ChangeFaceSelection(IEnumerable<Face> selected, IEnumerable<Face> deselected)
         {
-            _selected = selected.ToList();
-            _deselected = deselected.ToList();
+            _selected = selected.Where(x => x.Parent != null).ToDictionary(x => x.ID, x => x.Parent.ID);
+            _deselected = deselected.Where(x => x.Parent != null).ToDictionary(x => x.ID, x => x.Parent.ID);
         }
 
         public void Dispose()
@@ -27,21 +27,34 @@ namespace Sledge.Editor.Actions.MapObjects.Selection
             _selected = _deselected = null;
         }
 
+        private Face FindFace(Document document, long faceId, long parentId)
+        {
+            var par = document.Map.WorldSpawn.FindByID(parentId) as Solid;
+            if (par == null) return null;
+            return par.Faces.FirstOrDefault(x => x.ID == faceId);
+        }
+
         public void Reverse(Document document)
         {
-            document.Selection.Select(_deselected);
-            document.Selection.Deselect(_selected);
+            var desel = _deselected.Select(x => FindFace(document, x.Key, x.Value)).Where(x => x != null).ToList();
+            var sel = _selected.Select(x => FindFace(document, x.Key, x.Value)).Where(x => x != null).ToList();
 
-            Mediator.Publish(EditorMediator.DocumentTreeSelectedFacesChanged, _selected.Union(_deselected));
+            document.Selection.Select(desel);
+            document.Selection.Deselect(sel);
+
+            Mediator.Publish(EditorMediator.DocumentTreeSelectedFacesChanged, sel.Union(desel));
             Mediator.Publish(EditorMediator.SelectionChanged);
         }
 
         public void Perform(Document document)
         {
-            document.Selection.Deselect(_deselected);
-            document.Selection.Select(_selected);
+            var desel = _deselected.Select(x => FindFace(document, x.Key, x.Value)).Where(x => x != null).ToList();
+            var sel = _selected.Select(x => FindFace(document, x.Key, x.Value)).Where(x => x != null).ToList();
 
-            Mediator.Publish(EditorMediator.DocumentTreeSelectedFacesChanged, _selected.Union(_deselected));
+            document.Selection.Deselect(desel);
+            document.Selection.Select(sel);
+
+            Mediator.Publish(EditorMediator.DocumentTreeSelectedFacesChanged, sel.Union(desel));
             Mediator.Publish(EditorMediator.SelectionChanged);
         }
     }

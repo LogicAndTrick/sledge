@@ -11,10 +11,16 @@ namespace Sledge.Editor.Actions.MapObjects.Selection
         public bool SkipInStack { get { return Sledge.Settings.Select.SkipSelectionInUndoStack; } } 
         public bool ModifiesState { get { return false; } }
 
-        private List<MapObject> _selected;
-        private List<MapObject> _deselected;
+        private List<long> _selected;
+        private List<long> _deselected;
 
         public ChangeSelection(IEnumerable<MapObject> selected, IEnumerable<MapObject> deselected)
+        {
+            _selected = selected.Select(x => x.ID).ToList();
+            _deselected = deselected.Select(x => x.ID).ToList();
+        }
+
+        public ChangeSelection(IEnumerable<long> selected, IEnumerable<long> deselected)
         {
             _selected = selected.ToList();
             _deselected = deselected.ToList();
@@ -27,19 +33,25 @@ namespace Sledge.Editor.Actions.MapObjects.Selection
 
         public void Reverse(Document document)
         {
-            document.Selection.Select(_deselected.Where(x => x.BoundingBox != null));
-            document.Selection.Deselect(_selected);
+            var sel = _selected.Select(x => document.Map.WorldSpawn.FindByID(x)).Where(x => x != null).ToList();
+            var desel = _deselected.Select(x => document.Map.WorldSpawn.FindByID(x)).Where(x => x != null && x.BoundingBox != null).ToList();
 
-            Mediator.Publish(EditorMediator.DocumentTreeSelectedObjectsChanged, _selected.Union(_deselected));
+            document.Selection.Select(desel);
+            document.Selection.Deselect(sel);
+
+            Mediator.Publish(EditorMediator.DocumentTreeSelectedObjectsChanged, sel.Union(desel));
             Mediator.Publish(EditorMediator.SelectionChanged);
         }
 
         public void Perform(Document document)
         {
-            document.Selection.Deselect(_deselected);
-            document.Selection.Select(_selected.Where(x => x.BoundingBox != null));
+            var desel = _deselected.Select(x => document.Map.WorldSpawn.FindByID(x)).Where(x => x != null).ToList();
+            var sel = _selected.Select(x => document.Map.WorldSpawn.FindByID(x)).Where(x => x != null && x.BoundingBox != null).ToList();
 
-            Mediator.Publish(EditorMediator.DocumentTreeSelectedObjectsChanged, _selected.Union(_deselected));
+            document.Selection.Deselect(desel);
+            document.Selection.Select(sel);
+
+            Mediator.Publish(EditorMediator.DocumentTreeSelectedObjectsChanged, sel.Union(desel));
             Mediator.Publish(EditorMediator.SelectionChanged);
         }
     }
