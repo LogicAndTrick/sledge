@@ -681,17 +681,18 @@ namespace Sledge.Editor.Settings
 
             // 3D Views
             ViewportBackgroundColour.BackColor = Sledge.Settings.View.ViewportBackground;
-            BackClippingPane.Value = Sledge.Settings.View.BackClippingPane;
-            ModelRenderDistance.Value = Sledge.Settings.View.ModelRenderDistance;
-            DetailRenderDistance.Value = Sledge.Settings.View.DetailRenderDistance;
+            BackClippingPlaneUpDown.Value = BackClippingPane.Value = Sledge.Settings.View.BackClippingPane;
+            ModelRenderDistanceUpDown.Value = ModelRenderDistance.Value = Sledge.Settings.View.ModelRenderDistance;
+            DetailRenderDistanceUpDown.Value = DetailRenderDistance.Value = Sledge.Settings.View.DetailRenderDistance;
             BackClippingPaneChanged(null, null);
             ModelRenderDistanceChanged(null, null);
             DetailRenderDistanceChanged(null, null);
 
-            ForwardSpeed.Value = Sledge.Settings.View.ForwardSpeed;
+            ForwardSpeedUpDown.Value = ForwardSpeed.Value = Sledge.Settings.View.ForwardSpeed;
             ForwardSpeedChanged(null, null);
 
             TimeToTopSpeed.Value = (int) (Sledge.Settings.View.TimeToTopSpeed / 100);
+            TimeToTopSpeedUpDown.Value = Sledge.Settings.View.TimeToTopSpeed / 1000;
             TimeToTopSpeedChanged(null, null);
 
             InvertMouseX.Checked = Sledge.Settings.View.InvertX;
@@ -841,27 +842,52 @@ namespace Sledge.Editor.Settings
 
         private void BackClippingPaneChanged(object sender, EventArgs e)
         {
-            BackClippingPaneLabel.Text = BackClippingPane.Value.ToString(CultureInfo.InvariantCulture);
+            if (BackClippingPane.Value != BackClippingPlaneUpDown.Value) BackClippingPlaneUpDown.Value = BackClippingPane.Value;
+        }
+
+        private void BackClippingPlaneUpDownValueChanged(object sender, EventArgs e)
+        {
+            if (BackClippingPlaneUpDown.Value != BackClippingPane.Value) BackClippingPane.Value = (int) BackClippingPlaneUpDown.Value;
         }
 
         private void ModelRenderDistanceChanged(object sender, EventArgs e)
         {
-            ModelRenderDistanceLabel.Text = ModelRenderDistance.Value.ToString(CultureInfo.InvariantCulture);
+            if (ModelRenderDistance.Value != ModelRenderDistanceUpDown.Value) ModelRenderDistanceUpDown.Value = ModelRenderDistance.Value;
+        }
+
+        private void ModelRenderDistanceUpDownValueChanged(object sender, EventArgs e)
+        {
+            if (ModelRenderDistanceUpDown.Value != ModelRenderDistance.Value) ModelRenderDistance.Value = (int)ModelRenderDistanceUpDown.Value;
         }
 
         private void DetailRenderDistanceChanged(object sender, EventArgs e)
         {
-            DetailRenderDistanceLabel.Text = DetailRenderDistance.Value.ToString(CultureInfo.InvariantCulture);
+            if (DetailRenderDistance.Value != DetailRenderDistanceUpDown.Value) DetailRenderDistanceUpDown.Value = DetailRenderDistance.Value;
+        }
+
+        private void DetailRenderDistanceUpDownValueChanged(object sender, EventArgs e)
+        {
+            if (DetailRenderDistanceUpDown.Value != DetailRenderDistance.Value) DetailRenderDistance.Value = (int)DetailRenderDistanceUpDown.Value;
         }
 
         private void ForwardSpeedChanged(object sender, EventArgs e)
         {
-            ForwardSpeedLabel.Text = ForwardSpeed.Value + @" units/sec";
+            if (ForwardSpeed.Value != ForwardSpeedUpDown.Value) ForwardSpeedUpDown.Value = ForwardSpeed.Value;
+        }
+
+        private void ForwardSpeedUpDownValueChanged(object sender, EventArgs e)
+        {
+            if (ForwardSpeedUpDown.Value != ForwardSpeed.Value) ForwardSpeed.Value = (int)ForwardSpeedUpDown.Value;
         }
 
         private void TimeToTopSpeedChanged(object sender, EventArgs e)
         {
-            TimeToTopSpeedLabel.Text = TimeToTopSpeed.Value / 10m + @" sec";
+            if (TimeToTopSpeed.Value != TimeToTopSpeedUpDown.Value) TimeToTopSpeedUpDown.Value = TimeToTopSpeed.Value / 10m;
+        }
+
+        private void TimeToTopSpeedUpDownValueChanged(object sender, EventArgs e)
+        {
+            if (TimeToTopSpeedUpDown.Value != TimeToTopSpeed.Value) TimeToTopSpeed.Value = (int)(TimeToTopSpeedUpDown.Value * 10);
         }
 
         private void SteamInstallDirBrowseClicked(object sender, EventArgs e)
