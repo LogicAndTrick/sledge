@@ -71,7 +71,7 @@ namespace Sledge.DataStructures.MapObjects
 
         protected void CopyBase(MapObject o, IDGenerator generator, bool performClone = false)
         {
-            if (performClone)
+            if (performClone && o.ID != ID)
             {
                 var parent = o.Parent;
                 var setPar = o.Parent != null && o.Parent.Children.ContainsKey(o.ID) && o.Parent.Children[o.ID] == o;
@@ -104,7 +104,7 @@ namespace Sledge.DataStructures.MapObjects
             AutoVisgroups.Clear();
             Children.Clear();
 
-            if (performUnclone)
+            if (performUnclone && o.ID != ID)
             {
                 var parent = Parent;
                 var setPar = Parent != null && Parent.Children.ContainsKey(ID) && Parent.Children[ID] == this;

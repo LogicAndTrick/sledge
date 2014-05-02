@@ -351,6 +351,8 @@ namespace Sledge.Editor.Tools
 
         public override void ToolDeselected(bool preventHistory)
         {
+            Mediator.UnsubscribeAll(this);
+
             if (_currentTool != null) _currentTool.ToolDeselected(preventHistory);
 
             // Commit the changes
@@ -363,7 +365,6 @@ namespace Sledge.Editor.Tools
             MoveSelection = null;
 
             _form.Hide();
-            Mediator.UnsubscribeAll(this);
         }
 
         private void VertexSelectionChanged()
