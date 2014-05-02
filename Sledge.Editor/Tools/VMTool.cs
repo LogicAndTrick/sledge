@@ -300,7 +300,7 @@ namespace Sledge.Editor.Tools
             if (_dirty)
             {
                 // Commit the changes
-                var edit = new Edit(kvs.Select(x => x.Value), kvs.Select(x => x.Key));
+                var edit = new ReplaceObjects(kvs.Select(x => x.Value), kvs.Select(x => x.Key));
                 Document.PerformAction("Vertex Manipulation", edit);
             }
         }

@@ -25,11 +25,13 @@ namespace Sledge.Tests.Actions
         {
             var random = new Random();
             var flat = doc.Map.WorldSpawn.FindAll();
+            var list = new List<MapObject>();
             for (var i = 0; i < count; i++)
             {
                 var r = random.Next(0, flat.Count);
-                yield return flat[r];
+                if (!list.Contains(flat[r])) list.Add(flat[r]);
             }
+            return list;
         }
 
         [TestInitialize]
@@ -139,6 +141,16 @@ namespace Sledge.Tests.Actions
             var rot = new UnitRotate(40, new Line(new Coordinate(1, 0, -1), new Coordinate(2, -3, 7)));
             after.ForEach(x => x.Transform(rot, TransformFlags.None));
             TestAction(new Edit(before, after));
+        }
+
+        [TestMethod]
+        public void TestReplaceObjects()
+        {
+            var before = GetRandomObjects(_document, 200).OfType<Solid>().ToList();
+            var after = before.Select(x => x.Clone()).ToList();
+            var rot = new UnitRotate(40, new Line(new Coordinate(1, 0, -1), new Coordinate(2, -3, 7)));
+            after.ForEach(x => x.Transform(rot, TransformFlags.None));
+            TestAction(new ReplaceObjects(before, after));
         }
 
         [TestMethod]

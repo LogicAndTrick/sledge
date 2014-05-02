@@ -23,7 +23,7 @@ namespace Sledge.Editor.Problems
 
         public IAction Fix(Problem problem)
         {
-            return new Edit(problem.Objects, problem.Objects.Select(x =>
+            return new ReplaceObjects(problem.Objects, problem.Objects.Select(x =>
             {
                 var c = x.Clone();
                 c.ID = problem.Map.IDGenerator.GetNextObjectID();

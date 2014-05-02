@@ -110,6 +110,7 @@
     <Compile Include="Actions\MapObjects\Operations\EditFace.cs" />
     <Compile Include="Actions\MapObjects\Operations\PasteSpecial.cs" />
     <Compile Include="Actions\MapObjects\Operations\Reparent.cs" />
+    <Compile Include="Actions\MapObjects\Operations\ReplaceObjects.cs" />
     <Compile Include="Actions\MapObjects\Selection\ChangeFaceSelection.cs" />
     <Compile Include="Actions\MapObjects\Selection\ChangeSelection.cs" />
     <Compile Include="Actions\MapObjects\Selection\ChangeToObjectSelectionMode.cs" />
