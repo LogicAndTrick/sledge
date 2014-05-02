@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Sledge.Common.Mediator;
 
 namespace Sledge.Editor.UI
 {
@@ -21,6 +23,8 @@ namespace Sledge.Editor.UI
 
             InitializeComponent();
 
+            Text = "Update Available! Current version: " + FileVersionInfo.GetVersionInfo(typeof (Editor).Assembly.Location).FileVersion;
+            
             StatusLabel.Text = "A new version of Sledge is available!\nWould you like to download it now?";
             ReleaseDetails.Text = _details.Name + "\r\n\r\n" + _details.Changelog.Replace("\r", "").Replace("\n", "\r\n");
         }
@@ -39,6 +43,8 @@ namespace Sledge.Editor.UI
 
         private Task DownloadUpdate(string url, string file, CancellationToken token)
         {
+            StartButton.Enabled = false;
+
             var tcs = new TaskCompletionSource<bool>();
             var wc = new WebClient();
 
@@ -69,6 +75,11 @@ namespace Sledge.Editor.UI
         private void CancelButtonClicked(object sender, EventArgs e)
         {
             Close();
+        }
+
+        private void ReleaseNotesLinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            Mediator.Publish(EditorMediator.OpenWebsite, "https://github.com/LogicAndTrick/sledge/releases");
         }
     }
 }
