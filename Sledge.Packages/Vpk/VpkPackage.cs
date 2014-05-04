@@ -9,21 +9,21 @@ namespace Sledge.Packages.Vpk
     {
         private const uint Signature = 0x55aa1234;
         private const string DirString = "_dir";
-        private const ushort DirectoryIndex = 0x7fff;
+        internal const ushort DirectoryIndex = 0x7fff;
 
         public FileInfo File { get; private set; }
         public uint Version { get; private set; }
         internal uint TreeLength { get; private set; }
         internal uint HeaderLength { get; private set; }
 
-        private readonly List<VpkEntry> _entries;
-        private readonly Dictionary<ushort, FileInfo> _chunks;
+        internal List<VpkEntry> Entries { get; private set; }
+        internal Dictionary<ushort, FileInfo> Chunks { get; private set; }
 
         public VpkDirectory(FileInfo file)
         {
             File = file;
-            _entries = new List<VpkEntry>();
-            _chunks = new Dictionary<ushort, FileInfo>();
+            Entries = new List<VpkEntry>();
+            Chunks = new Dictionary<ushort, FileInfo>();
 
             var nameWithoutExt = Path.GetFileNameWithoutExtension(file.Name);
             var ext = Path.GetExtension(file.Name);
@@ -39,10 +39,10 @@ namespace Sledge.Packages.Vpk
                 ushort num;
                 if (ushort.TryParse(index, out num))
                 {
-                    _chunks.Add(num, mf);
+                    Chunks.Add(num, mf);
                 }
             }
-            _chunks[DirectoryIndex] = File;
+            Chunks[DirectoryIndex] = File;
 
             // Read the data from the vpk
             using (var br = new BinaryReader(OpenFile(file)))
@@ -73,7 +73,7 @@ namespace Sledge.Packages.Vpk
             }
         }
         
-        private FileStream OpenFile(FileInfo file)
+        internal FileStream OpenFile(FileInfo file)
         {
             return new FileStream(file.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, 4096, FileOptions.RandomAccess);
         }
@@ -91,7 +91,7 @@ namespace Sledge.Packages.Vpk
                     {
                         // get me some file information
                         var entry = ReadEntry(br, path + "/" + filename + "." + extension);
-                        _entries.Add(entry);
+                        Entries.Add(entry);
                     }
                 }
             }
@@ -113,7 +113,7 @@ namespace Sledge.Packages.Vpk
 
         public IEnumerable<VpkEntry> GetEntries()
         {
-            return _entries;
+            return Entries;
         }
 
         public byte[] ExtractEntry(VpkEntry entry)
@@ -131,17 +131,22 @@ namespace Sledge.Packages.Vpk
 
         internal Stream OpenChunk(VpkEntry entry)
         {
-            var file = _chunks[entry.ArchiveIndex];
+            var file = Chunks[entry.ArchiveIndex];
             var stream = OpenFile(file);
             var offset = entry.ArchiveIndex == DirectoryIndex ? HeaderLength + TreeLength + entry.EntryOffset : entry.EntryOffset;
             stream.Position = offset;
             return stream;
         }
 
+        public IPackageStreamSource GetStreamSource()
+        {
+            return new VpkPackageStreamSource(this);
+        }
+
         public void Dispose()
         {
-            _entries.Clear();
-            _chunks.Clear();
+            Entries.Clear();
+            Chunks.Clear();
         }
     }
 }

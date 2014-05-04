@@ -38,6 +38,13 @@ namespace Sledge.Packages.Vpk
             _streamStart = _stream.Position;
         }
 
+        public VpkEntryStream(VpkEntry entry, Stream stream)
+        {
+            _entry = entry;
+            _stream = stream;
+            _streamStart = stream.Position;
+        }
+
         public override long Seek(long offset, SeekOrigin origin)
         {
             switch (origin)
