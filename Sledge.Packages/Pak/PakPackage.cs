@@ -30,7 +30,7 @@ namespace Sledge.Packages.Pak
                 TreeLength = br.ReadInt32();
 
                 // Read all the entries from the pak
-                ReadDirectoryEntries(br);
+                ReadPackageEntries(br);
             }
         }
         
@@ -39,7 +39,7 @@ namespace Sledge.Packages.Pak
             return new FileStream(file.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, 4096, FileOptions.RandomAccess);
         }
 
-        private void ReadDirectoryEntries(BinaryReader br)
+        private void ReadPackageEntries(BinaryReader br)
         {
             br.BaseStream.Position = TreeOffset;
             var numEntries = TreeLength / 64;

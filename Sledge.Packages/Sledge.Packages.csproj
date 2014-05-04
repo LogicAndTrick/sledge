@@ -51,6 +51,11 @@
     <Compile Include="Vpk\VpkEntryStream.cs" />
     <Compile Include="Vpk\VpkDirectory.cs" />
     <Compile Include="Vpk\VpkPackageStreamSource.cs" />
+    <Compile Include="Wad\WadEntry.cs" />
+    <Compile Include="Wad\WadEntryType.cs" />
+    <Compile Include="Wad\WadImageStream.cs" />
+    <Compile Include="Wad\WadPackage.cs" />
+    <Compile Include="Wad\WadPackageStreamSource.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
