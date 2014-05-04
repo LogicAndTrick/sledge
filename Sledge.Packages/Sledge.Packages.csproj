@@ -41,12 +41,15 @@
   <ItemGroup>
     <Compile Include="BinaryExtensions.cs" />
     <Compile Include="IPackageStreamSource.cs" />
+    <Compile Include="Pak\PakPackage.cs" />
+    <Compile Include="Pak\PakEntry.cs" />
+    <Compile Include="Pak\PakPackageStreamSource.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PackageException.cs" />
     <Compile Include="SubStream.cs" />
     <Compile Include="Vpk\VpkEntry.cs" />
     <Compile Include="Vpk\VpkEntryStream.cs" />
-    <Compile Include="Vpk\VpkPackage.cs" />
+    <Compile Include="Vpk\VpkDirectory.cs" />
     <Compile Include="Vpk\VpkPackageStreamSource.cs" />
   </ItemGroup>
   <ItemGroup />

@@ -60,6 +60,7 @@
     <Compile Include="DecalGeometryTest.cs" />
     <Compile Include="GeometricTest.cs" />
     <Compile Include="FileSystemTest.cs" />
+    <Compile Include="Packages\PakTest.cs" />
     <Compile Include="Packages\VpkTest.cs" />
     <Compile Include="PlaneIntersectionTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

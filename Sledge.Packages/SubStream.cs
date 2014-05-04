@@ -23,6 +23,8 @@ namespace Sledge.Packages
         public override long Position { get; set; }
         public override long Length { get { return _length; } }
 
+        public bool CloseParentOnDispose { get; set; }
+
         private Stream _stream;
         private long _offset;
         private long _length;
@@ -32,6 +34,7 @@ namespace Sledge.Packages
             _stream = stream;
             _offset = offset;
             _length = length;
+            CloseParentOnDispose = false;
         }
 
         public override long Seek(long offset, SeekOrigin origin)
@@ -62,6 +65,12 @@ namespace Sledge.Packages
             Position += count;
             _stream.Position = pos;
             return count;
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && CloseParentOnDispose) _stream.Dispose();
+            base.Dispose(disposing);
         }
 
         //
