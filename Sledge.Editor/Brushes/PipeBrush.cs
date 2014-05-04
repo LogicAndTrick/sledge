@@ -56,8 +56,8 @@ namespace Sledge.Editor.Brushes
         {
             var wallWidth = _width.GetValue();
             if (wallWidth < 1) yield break;
-            var numsides = (int) _numSides.GetValue();
-            if (numsides < 3) yield break;
+            var numSides = (int) _numSides.GetValue();
+            if (numSides < 3) yield break;
 
             // Very similar to the cylinder, except we have multiple solids this time
             var width = box.Width;
@@ -67,14 +67,12 @@ namespace Sledge.Editor.Brushes
             var majorIn = majorOut - wallWidth;
             var minorOut = length / 2;
             var minorIn = minorOut - wallWidth;
-            var angle = 2 * DMath.PI / numsides;
-
-            var colour = Colour.GetRandomBrushColour();
+            var angle = 2 * DMath.PI / numSides;
 
             // Calculate the X and Y points for the inner and outer ellipses
-            var outer = new Coordinate[numsides];
-            var inner = new Coordinate[numsides];
-            for (var i = 0; i < numsides; i++)
+            var outer = new Coordinate[numSides];
+            var inner = new Coordinate[numSides];
+            for (var i = 0; i < numSides; i++)
             {
                 var a = i * angle;
                 var xval = box.Center.X + majorOut * DMath.Cos(a);
@@ -87,11 +85,12 @@ namespace Sledge.Editor.Brushes
             }
 
             // Create the solids
+            var colour = Colour.GetRandomBrushColour();
             var z = new Coordinate(0, 0, height);
-            for (var i = 0; i < numsides; i++)
+            for (var i = 0; i < numSides; i++)
             {
                 var faces = new List<Coordinate[]>();
-                var next = (i + 1) % numsides;
+                var next = (i + 1) % numSides;
                 faces.Add(new[] { outer[i], outer[i] + z, outer[next] + z, outer[next] });
                 faces.Add(new[] { inner[next], inner[next] + z, inner[i] + z, inner[i] });
                 faces.Add(new[] { outer[next], outer[next] + z, inner[next] + z, inner[next] });

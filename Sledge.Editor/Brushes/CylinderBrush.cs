@@ -29,8 +29,8 @@ namespace Sledge.Editor.Brushes
 
         public IEnumerable<MapObject> Create(IDGenerator generator, Box box, ITexture texture, int roundDecimals)
         {
-            var numsides = (int) _numSides.GetValue();
-            if (numsides < 3) yield break;
+            var numSides = (int) _numSides.GetValue();
+            if (numSides < 3) yield break;
 
             // Cylinders can be elliptical so use both major and minor rather than just the radius
             // NOTE: when a low number (< 10ish) of faces are selected this will cause the cylinder to not touch all the edges of the box.
@@ -39,11 +39,11 @@ namespace Sledge.Editor.Brushes
             var height = box.Height;
             var major = width / 2;
             var minor = length / 2;
-            var angle = 2 * DMath.PI / numsides;
+            var angle = 2 * DMath.PI / numSides;
 
             // Calculate the X and Y points for the ellipse
-            var points = new Coordinate[numsides];
-            for (var i = 0; i < numsides; i++)
+            var points = new Coordinate[numSides];
+            for (var i = 0; i < numSides; i++)
             {
                 var a = i * angle;
                 var xval = box.Center.X + major * DMath.Cos(a);
@@ -56,9 +56,9 @@ namespace Sledge.Editor.Brushes
 
             // Add the vertical faces
             var z = new Coordinate(0, 0, height).Round(roundDecimals);
-            for (var i = 0; i < numsides; i++)
+            for (var i = 0; i < numSides; i++)
             {
-                var next = (i + 1) % numsides;
+                var next = (i + 1) % numSides;
                 faces.Add(new[] {points[i], points[i] + z, points[next] + z, points[next]});
             }
             // Add the elliptical top and bottom faces
