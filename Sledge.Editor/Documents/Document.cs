@@ -60,6 +60,7 @@ namespace Sledge.Editor.Documents
 
         private Document()
         {
+            Map = new Map();
             Selection = new SelectionManager(this);
             History = new HistoryManager(this);
             HelperManager = new HelperManager(this);

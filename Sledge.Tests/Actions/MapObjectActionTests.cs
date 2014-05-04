@@ -25,11 +25,13 @@ namespace Sledge.Tests.Actions
         {
             var random = new Random();
             var flat = doc.Map.WorldSpawn.FindAll();
+            var list = new List<MapObject>();
             for (var i = 0; i < count; i++)
             {
                 var r = random.Next(0, flat.Count);
-                yield return flat[r];
+                if (!list.Contains(flat[r])) list.Add(flat[r]);
             }
+            return list;
         }
 
         [TestInitialize]
@@ -38,7 +40,7 @@ namespace Sledge.Tests.Actions
             MapProvider.Register(new RmfProvider());
             MapProvider.Register(new VmfProvider());
 
-            var fi = new FileInfo("verc_18.rmf");
+            var fi = new FileInfo(@"verc_18.rmf");
             var ctor = typeof (Document).GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, Type.EmptyTypes, null);
             _document = (Document) ctor.Invoke(null);
             _document.Map = MapProvider.GetMapFromFile(fi.FullName);
@@ -87,6 +89,14 @@ namespace Sledge.Tests.Actions
             Compare(true);
             action.Reverse(_document);
             Compare(false);
+            action.Perform(_document);
+            Compare(true);
+            action.Reverse(_document);
+            Compare(false);
+            action.Perform(_document);
+            Compare(true);
+            action.Reverse(_document);
+            Compare(false);
         }
 
         [TestCleanup]
@@ -131,6 +141,16 @@ namespace Sledge.Tests.Actions
             var rot = new UnitRotate(40, new Line(new Coordinate(1, 0, -1), new Coordinate(2, -3, 7)));
             after.ForEach(x => x.Transform(rot, TransformFlags.None));
             TestAction(new Edit(before, after));
+        }
+
+        [TestMethod]
+        public void TestReplaceObjects()
+        {
+            var before = GetRandomObjects(_document, 200).OfType<Solid>().ToList();
+            var after = before.Select(x => x.Clone()).ToList();
+            var rot = new UnitRotate(40, new Line(new Coordinate(1, 0, -1), new Coordinate(2, -3, 7)));
+            after.ForEach(x => x.Transform(rot, TransformFlags.None));
+            TestAction(new ReplaceObjects(before, after));
         }
 
         [TestMethod]

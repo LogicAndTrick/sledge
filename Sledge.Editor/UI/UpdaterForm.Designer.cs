@@ -33,6 +33,7 @@
             this.CancelButton = new System.Windows.Forms.Button();
             this.StartButton = new System.Windows.Forms.Button();
             this.ReleaseDetails = new System.Windows.Forms.TextBox();
+            this.ReleaseNotesLink = new System.Windows.Forms.LinkLabel();
             this.SuspendLayout();
             // 
             // StatusLabel
@@ -87,14 +88,28 @@
             this.ReleaseDetails.Multiline = true;
             this.ReleaseDetails.Name = "ReleaseDetails";
             this.ReleaseDetails.ReadOnly = true;
-            this.ReleaseDetails.Size = new System.Drawing.Size(371, 186);
+            this.ReleaseDetails.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.ReleaseDetails.Size = new System.Drawing.Size(371, 170);
             this.ReleaseDetails.TabIndex = 3;
+            // 
+            // ReleaseNotesLink
+            // 
+            this.ReleaseNotesLink.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.ReleaseNotesLink.AutoSize = true;
+            this.ReleaseNotesLink.Location = new System.Drawing.Point(12, 218);
+            this.ReleaseNotesLink.Name = "ReleaseNotesLink";
+            this.ReleaseNotesLink.Size = new System.Drawing.Size(252, 13);
+            this.ReleaseNotesLink.TabIndex = 7;
+            this.ReleaseNotesLink.TabStop = true;
+            this.ReleaseNotesLink.Text = "Click here to see release notes for previous releases";
+            this.ReleaseNotesLink.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.ReleaseNotesLinkClicked);
             // 
             // UpdaterForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(398, 266);
+            this.Controls.Add(this.ReleaseNotesLink);
             this.Controls.Add(this.ReleaseDetails);
             this.Controls.Add(this.StartButton);
             this.Controls.Add(this.CancelButton);
@@ -120,6 +135,7 @@
         private System.Windows.Forms.Button CancelButton;
         private System.Windows.Forms.Button StartButton;
         private System.Windows.Forms.TextBox ReleaseDetails;
+        private System.Windows.Forms.LinkLabel ReleaseNotesLink;
     }
 }
 

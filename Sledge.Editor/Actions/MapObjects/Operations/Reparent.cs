@@ -13,7 +13,6 @@ namespace Sledge.Editor.Actions.MapObjects.Operations
         {
             public long ID { get; set; }
             public long OriginalParentID { get; set; }
-            public MapObject MapObject { get; set; }
         }
 
         public bool SkipInStack { get { return false; } }
@@ -28,8 +27,7 @@ namespace Sledge.Editor.Actions.MapObjects.Operations
             _objects = objects.Select(x => new ReparentReference
                                                {
                                                    ID = x.ID,
-                                                   OriginalParentID = x.Parent.ID,
-                                                   MapObject = x
+                                                   OriginalParentID = x.Parent.ID
                                                }).ToList();
         }
 
@@ -45,8 +43,11 @@ namespace Sledge.Editor.Actions.MapObjects.Operations
                 .ToDictionary(x => x, x => document.Map.WorldSpawn.FindByID(x));
             foreach (var o in _objects)
             {
-                o.MapObject.SetParent(parents[o.OriginalParentID]);
-                document.Map.UpdateAutoVisgroups(o.MapObject, true);
+                var obj = document.Map.WorldSpawn.FindByID(o.ID);
+                if (obj == null) continue;
+
+                obj.SetParent(parents[o.OriginalParentID]);
+                document.Map.UpdateAutoVisgroups(obj, true);
             }
 
             Mediator.Publish(EditorMediator.DocumentTreeStructureChanged);
@@ -56,8 +57,13 @@ namespace Sledge.Editor.Actions.MapObjects.Operations
         public void Perform(Document document)
         {
             var parent = document.Map.WorldSpawn.FindByID(_parentId);
-            _objects.ForEach(x => x.MapObject.SetParent(parent));
-            document.Map.UpdateAutoVisgroups(_objects.Select(x => x.MapObject), true);
+            foreach (var o in _objects)
+            {
+                var obj = document.Map.WorldSpawn.FindByID(o.ID);
+                if (obj == null) continue;
+                obj.SetParent(parent);
+                document.Map.UpdateAutoVisgroups(obj, true);
+            }
 
             Mediator.Publish(EditorMediator.DocumentTreeStructureChanged);
             Mediator.Publish(EditorMediator.VisgroupsChanged);

@@ -15,12 +15,12 @@ namespace Sledge.Editor.Actions.MapObjects.Selection
         public bool ModifiesState { get { return false; } }
 
         private readonly Type _toolType;
-        private readonly List<MapObject> _selection;
+        private readonly List<long> _selection;
 
         public ChangeToFaceSelectionMode(Type toolType, IEnumerable<MapObject> selection)
         {
             _toolType = toolType;
-            _selection = new List<MapObject>(selection);
+            _selection = selection.Select(x => x.ID).ToList();
         }
 
         public void Dispose()
@@ -34,11 +34,13 @@ namespace Sledge.Editor.Actions.MapObjects.Selection
 
             document.Selection.SwitchToObjectSelection();
             document.Selection.Clear();
-            document.Selection.Select(_selection);
+
+            var sel = _selection.Select(x => document.Map.WorldSpawn.FindByID(x)).Where(x => x != null && x.BoundingBox != null).ToList();
+            document.Selection.Select(sel);
 
             ToolManager.Activate(HotkeyTool.Selection, true);
 
-            Mediator.Publish(EditorMediator.DocumentTreeSelectedObjectsChanged, _selection.Union(document.Selection.GetSelectedObjects()));
+            Mediator.Publish(EditorMediator.DocumentTreeSelectedObjectsChanged, sel.Union(document.Selection.GetSelectedObjects()));
             Mediator.Publish(EditorMediator.SelectionChanged);
         }
 

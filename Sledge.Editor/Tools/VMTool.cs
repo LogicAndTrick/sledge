@@ -300,7 +300,7 @@ namespace Sledge.Editor.Tools
             if (_dirty)
             {
                 // Commit the changes
-                var edit = new Edit(kvs.Select(x => x.Value), kvs.Select(x => x.Key));
+                var edit = new ReplaceObjects(kvs.Select(x => x.Value), kvs.Select(x => x.Key));
                 Document.PerformAction("Vertex Manipulation", edit);
             }
         }
@@ -351,6 +351,8 @@ namespace Sledge.Editor.Tools
 
         public override void ToolDeselected(bool preventHistory)
         {
+            Mediator.UnsubscribeAll(this);
+
             if (_currentTool != null) _currentTool.ToolDeselected(preventHistory);
 
             // Commit the changes
@@ -363,7 +365,6 @@ namespace Sledge.Editor.Tools
             MoveSelection = null;
 
             _form.Hide();
-            Mediator.UnsubscribeAll(this);
         }
 
         private void VertexSelectionChanged()

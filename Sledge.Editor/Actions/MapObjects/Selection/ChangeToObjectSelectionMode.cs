@@ -15,17 +15,24 @@ namespace Sledge.Editor.Actions.MapObjects.Selection
         public bool ModifiesState { get { return false; } }
 
         private readonly Type _toolType;
-        private readonly List<Face> _selection;
+        private readonly Dictionary<long, long> _selection;
 
         public ChangeToObjectSelectionMode(Type toolType, IEnumerable<Face> selection)
         {
             _toolType = toolType;
-            _selection = new List<Face>(selection);
+            _selection = selection.Where(x => x.Parent != null).ToDictionary(x => x.ID, x => x.Parent.ID);
         }
 
         public void Dispose()
         {
             _selection.Clear();
+        }
+
+        private Face FindFace(Document document, long faceId, long parentId)
+        {
+            var par = document.Map.WorldSpawn.FindByID(parentId) as Solid;
+            if (par == null) return null;
+            return par.Faces.FirstOrDefault(x => x.ID == faceId);
         }
 
         public void Reverse(Document document)
@@ -35,11 +42,13 @@ namespace Sledge.Editor.Actions.MapObjects.Selection
             document.Selection.SwitchToFaceSelection();
             var seln = document.Selection.GetSelectedFaces();
             document.Selection.Clear();
-            document.Selection.Select(_selection);
+
+            var sel = _selection.Select(x => FindFace(document, x.Key, x.Value)).Where(x => x != null).ToList();
+            document.Selection.Select(sel);
 
             ToolManager.Activate(_toolType, true);
 
-            Mediator.Publish(EditorMediator.DocumentTreeSelectedFacesChanged, _selection.Union(seln));
+            Mediator.Publish(EditorMediator.DocumentTreeSelectedFacesChanged, sel.Union(seln));
             Mediator.Publish(EditorMediator.SelectionChanged);
         }
 

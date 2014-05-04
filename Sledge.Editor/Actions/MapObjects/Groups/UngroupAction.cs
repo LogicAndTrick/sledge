@@ -8,7 +8,7 @@ namespace Sledge.Editor.Actions.MapObjects.Groups
 {
     public class UngroupAction : IAction
     {
-        private Dictionary<Group, long> _groupsAndParents;
+        private Dictionary<long, long> _groupsAndParents;
         private Dictionary<long, long> _childrenAndParents;
 
         public bool SkipInStack { get { return false; } }
@@ -17,7 +17,7 @@ namespace Sledge.Editor.Actions.MapObjects.Groups
         public UngroupAction(IEnumerable<MapObject> objects)
         {
             var objs = objects.Where(x => x != null && x.Parent != null).OfType<Group>().ToList();
-            _groupsAndParents = objs.ToDictionary(x => x, x => x.Parent.ID);
+            _groupsAndParents = objs.ToDictionary(x => x.ID, x => x.Parent.ID);
             _childrenAndParents = objs.SelectMany(x => x.GetChildren()).ToDictionary(x => x.ID, x => x.Parent.ID);
         }
 
@@ -29,12 +29,20 @@ namespace Sledge.Editor.Actions.MapObjects.Groups
                 child.UpdateBoundingBox();
             }
 
-            foreach (var group in _groupsAndParents.Keys)
+            foreach (var groupId in _groupsAndParents.Keys)
             {
-                document.Selection.Deselect(group);
+                var group = document.Map.WorldSpawn.FindByID(groupId);
+                if (group == null) continue;
+
+                if (group.IsSelected)
+                {
+                    document.Selection.Deselect(group);
+                }
+
                 group.SetParent(null);
             }
 
+            Mediator.Publish(EditorMediator.SelectionChanged);
             Mediator.Publish(EditorMediator.DocumentTreeStructureChanged);
         }
 
@@ -42,7 +50,7 @@ namespace Sledge.Editor.Actions.MapObjects.Groups
         {
             foreach (var gp in _groupsAndParents)
             {
-                var group = gp.Key;
+                var group = new Group(gp.Key);
                 var parent = document.Map.WorldSpawn.FindByID(gp.Value);
                 group.SetParent(parent);
             }
@@ -53,9 +61,13 @@ namespace Sledge.Editor.Actions.MapObjects.Groups
                 child.SetParent(parent);
                 child.UpdateBoundingBox();
             }
+            foreach (var gp in _groupsAndParents)
+            {
+                var group = document.Map.WorldSpawn.FindByID(gp.Key);
+                if (group.GetChildren().All(x => x.IsSelected)) document.Selection.Select(group);
+            }
 
-            Dispose();
-
+            Mediator.Publish(EditorMediator.SelectionChanged);
             Mediator.Publish(EditorMediator.DocumentTreeStructureChanged);
         }
 

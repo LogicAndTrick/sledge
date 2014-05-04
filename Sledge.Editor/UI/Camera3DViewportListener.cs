@@ -245,6 +245,9 @@ namespace Sledge.Editor.UI
             var updown = !left && right;
             var forwardback = left && right;
 
+            if (Sledge.Settings.View.InvertX) dx = -dx;
+            if (Sledge.Settings.View.InvertY) dy = -dy;
+
             if (updown)
             {
                 Camera.Strafe(-dx);

@@ -39,6 +39,11 @@ namespace Sledge.Editor.Settings
             this.tbcSettings = new System.Windows.Forms.TabControl();
             this.tabGeneral = new System.Windows.Forms.TabPage();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
+            this.tabIntegration = new System.Windows.Forms.TabPage();
+            this.groupBox18 = new System.Windows.Forms.GroupBox();
+            this.SingleInstanceCheckbox = new System.Windows.Forms.CheckBox();
+            this.groupBox11 = new System.Windows.Forms.GroupBox();
+            this.AssociationsPanel = new System.Windows.Forms.FlowLayoutPanel();
             this.tab2DViews = new System.Windows.Forms.TabPage();
             this.groupBox6 = new System.Windows.Forms.GroupBox();
             this.RotationStyle_SnapNever = new System.Windows.Forms.RadioButton();
@@ -96,28 +101,24 @@ namespace Sledge.Editor.Settings
             this.label43 = new System.Windows.Forms.Label();
             this.MouseWheelMoveDistance = new System.Windows.Forms.NumericUpDown();
             this.InvertMouseX = new System.Windows.Forms.CheckBox();
-            this.TimeToTopSpeedLabel = new System.Windows.Forms.Label();
             this.InvertMouseY = new System.Windows.Forms.CheckBox();
             this.TimeToTopSpeed = new System.Windows.Forms.TrackBar();
             this.label28 = new System.Windows.Forms.Label();
             this.label27 = new System.Windows.Forms.Label();
-            this.ForwardSpeedLabel = new System.Windows.Forms.Label();
             this.ForwardSpeed = new System.Windows.Forms.TrackBar();
             this.groupBox14 = new System.Windows.Forms.GroupBox();
             this.label26 = new System.Windows.Forms.Label();
             this.label24 = new System.Windows.Forms.Label();
             this.label22 = new System.Windows.Forms.Label();
             this.DetailRenderDistance = new System.Windows.Forms.TrackBar();
-            this.DetailRenderDistanceLabel = new System.Windows.Forms.Label();
             this.ModelRenderDistance = new System.Windows.Forms.TrackBar();
-            this.ModelRenderDistanceLabel = new System.Windows.Forms.Label();
             this.BackClippingPane = new System.Windows.Forms.TrackBar();
-            this.BackClippingPaneLabel = new System.Windows.Forms.Label();
             this.tabGame = new System.Windows.Forms.TabPage();
             this.GameSubTabs = new System.Windows.Forms.TabControl();
             this.tabConfigDirectories = new System.Windows.Forms.TabPage();
             this.SelectedGameRunArguments = new System.Windows.Forms.TextBox();
             this.lblBaseGame = new System.Windows.Forms.Label();
+            this.SelectedGameUseHDModels = new System.Windows.Forms.CheckBox();
             this.SelectedGameSteamInstall = new System.Windows.Forms.CheckBox();
             this.SelectedGameBase = new System.Windows.Forms.ComboBox();
             this.SelectedGameWonDir = new System.Windows.Forms.TextBox();
@@ -287,12 +288,13 @@ namespace Sledge.Editor.Settings
             this.btnCancelSettings = new System.Windows.Forms.Button();
             this.btnApplyAndCloseSettings = new System.Windows.Forms.Button();
             this.btnApplySettings = new System.Windows.Forms.Button();
-            this.SelectedGameUseHDModels = new System.Windows.Forms.CheckBox();
-            this.tabIntegration = new System.Windows.Forms.TabPage();
-            this.groupBox11 = new System.Windows.Forms.GroupBox();
-            this.AssociationsPanel = new System.Windows.Forms.FlowLayoutPanel();
-            this.groupBox18 = new System.Windows.Forms.GroupBox();
-            this.SingleInstanceCheckbox = new System.Windows.Forms.CheckBox();
+            this.BackClippingPlaneUpDown = new System.Windows.Forms.NumericUpDown();
+            this.ModelRenderDistanceUpDown = new System.Windows.Forms.NumericUpDown();
+            this.DetailRenderDistanceUpDown = new System.Windows.Forms.NumericUpDown();
+            this.label31 = new System.Windows.Forms.Label();
+            this.label32 = new System.Windows.Forms.Label();
+            this.ForwardSpeedUpDown = new System.Windows.Forms.NumericUpDown();
+            this.TimeToTopSpeedUpDown = new System.Windows.Forms.NumericUpDown();
             this.SelectedBuildCsgParameters = new Sledge.Editor.Compiling.CompileParameterPanel();
             this.SelectedBuildBspParameters = new Sledge.Editor.Compiling.CompileParameterPanel();
             this.SelectedBuildVisParameters = new Sledge.Editor.Compiling.CompileParameterPanel();
@@ -300,6 +302,9 @@ namespace Sledge.Editor.Settings
             this.SelectedBuildSharedParameters = new Sledge.Editor.Compiling.CompileParameterPanel();
             this.tbcSettings.SuspendLayout();
             this.tabGeneral.SuspendLayout();
+            this.tabIntegration.SuspendLayout();
+            this.groupBox18.SuspendLayout();
+            this.groupBox11.SuspendLayout();
             this.tab2DViews.SuspendLayout();
             this.groupBox6.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -357,9 +362,11 @@ namespace Sledge.Editor.Settings
             ((System.ComponentModel.ISupportInitialize)(this.trackBar2)).BeginInit();
             this.groupBox7.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
-            this.tabIntegration.SuspendLayout();
-            this.groupBox11.SuspendLayout();
-            this.groupBox18.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.BackClippingPlaneUpDown)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ModelRenderDistanceUpDown)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.DetailRenderDistanceUpDown)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ForwardSpeedUpDown)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.TimeToTopSpeedUpDown)).BeginInit();
             this.SuspendLayout();
             // 
             // tbcSettings
@@ -403,6 +410,60 @@ namespace Sledge.Editor.Settings
             this.flowLayoutPanel1.Size = new System.Drawing.Size(730, 505);
             this.flowLayoutPanel1.TabIndex = 6;
             this.flowLayoutPanel1.WrapContents = false;
+            // 
+            // tabIntegration
+            // 
+            this.tabIntegration.Controls.Add(this.groupBox18);
+            this.tabIntegration.Controls.Add(this.groupBox11);
+            this.tabIntegration.Location = new System.Drawing.Point(4, 22);
+            this.tabIntegration.Name = "tabIntegration";
+            this.tabIntegration.Padding = new System.Windows.Forms.Padding(3);
+            this.tabIntegration.Size = new System.Drawing.Size(736, 511);
+            this.tabIntegration.TabIndex = 7;
+            this.tabIntegration.Text = "Integration";
+            this.tabIntegration.UseVisualStyleBackColor = true;
+            // 
+            // groupBox18
+            // 
+            this.groupBox18.Controls.Add(this.SingleInstanceCheckbox);
+            this.groupBox18.Location = new System.Drawing.Point(299, 6);
+            this.groupBox18.Name = "groupBox18";
+            this.groupBox18.Size = new System.Drawing.Size(418, 47);
+            this.groupBox18.TabIndex = 1;
+            this.groupBox18.TabStop = false;
+            this.groupBox18.Text = "Single instance";
+            // 
+            // SingleInstanceCheckbox
+            // 
+            this.SingleInstanceCheckbox.AutoSize = true;
+            this.SingleInstanceCheckbox.Location = new System.Drawing.Point(11, 19);
+            this.SingleInstanceCheckbox.Name = "SingleInstanceCheckbox";
+            this.SingleInstanceCheckbox.Size = new System.Drawing.Size(337, 17);
+            this.SingleInstanceCheckbox.TabIndex = 0;
+            this.SingleInstanceCheckbox.Text = "Only allow one instance of Sledge to run at a time (requires restart)";
+            this.SingleInstanceCheckbox.UseVisualStyleBackColor = true;
+            // 
+            // groupBox11
+            // 
+            this.groupBox11.Controls.Add(this.AssociationsPanel);
+            this.groupBox11.Location = new System.Drawing.Point(6, 6);
+            this.groupBox11.Name = "groupBox11";
+            this.groupBox11.Size = new System.Drawing.Size(287, 283);
+            this.groupBox11.TabIndex = 0;
+            this.groupBox11.TabStop = false;
+            this.groupBox11.Text = "File associations";
+            // 
+            // AssociationsPanel
+            // 
+            this.AssociationsPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.AssociationsPanel.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
+            this.AssociationsPanel.Location = new System.Drawing.Point(6, 19);
+            this.AssociationsPanel.Name = "AssociationsPanel";
+            this.AssociationsPanel.Size = new System.Drawing.Size(275, 258);
+            this.AssociationsPanel.TabIndex = 1;
+            this.AssociationsPanel.WrapContents = false;
             // 
             // tab2DViews
             // 
@@ -967,9 +1028,9 @@ namespace Sledge.Editor.Settings
             this.groupBox12.Controls.Add(this.ViewportBackgroundColour);
             this.groupBox12.Controls.Add(this.CameraFOV);
             this.groupBox12.Controls.Add(this.label29);
-            this.groupBox12.Location = new System.Drawing.Point(438, 6);
+            this.groupBox12.Location = new System.Drawing.Point(475, 6);
             this.groupBox12.Name = "groupBox12";
-            this.groupBox12.Size = new System.Drawing.Size(292, 91);
+            this.groupBox12.Size = new System.Drawing.Size(255, 91);
             this.groupBox12.TabIndex = 4;
             this.groupBox12.TabStop = false;
             this.groupBox12.Text = "General";
@@ -1024,26 +1085,28 @@ namespace Sledge.Editor.Settings
             // 
             // groupBox13
             // 
+            this.groupBox13.Controls.Add(this.label32);
             this.groupBox13.Controls.Add(this.label43);
+            this.groupBox13.Controls.Add(this.label31);
+            this.groupBox13.Controls.Add(this.TimeToTopSpeedUpDown);
+            this.groupBox13.Controls.Add(this.ForwardSpeedUpDown);
             this.groupBox13.Controls.Add(this.MouseWheelMoveDistance);
             this.groupBox13.Controls.Add(this.InvertMouseX);
-            this.groupBox13.Controls.Add(this.TimeToTopSpeedLabel);
             this.groupBox13.Controls.Add(this.InvertMouseY);
             this.groupBox13.Controls.Add(this.TimeToTopSpeed);
             this.groupBox13.Controls.Add(this.label28);
             this.groupBox13.Controls.Add(this.label27);
-            this.groupBox13.Controls.Add(this.ForwardSpeedLabel);
             this.groupBox13.Controls.Add(this.ForwardSpeed);
             this.groupBox13.Location = new System.Drawing.Point(6, 187);
             this.groupBox13.Name = "groupBox13";
-            this.groupBox13.Size = new System.Drawing.Size(426, 180);
+            this.groupBox13.Size = new System.Drawing.Size(463, 180);
             this.groupBox13.TabIndex = 2;
             this.groupBox13.TabStop = false;
             this.groupBox13.Text = "Navigation";
             // 
             // label43
             // 
-            this.label43.Location = new System.Drawing.Point(211, 119);
+            this.label43.Location = new System.Drawing.Point(238, 148);
             this.label43.Name = "label43";
             this.label43.Size = new System.Drawing.Size(148, 20);
             this.label43.TabIndex = 6;
@@ -1052,7 +1115,7 @@ namespace Sledge.Editor.Settings
             // 
             // MouseWheelMoveDistance
             // 
-            this.MouseWheelMoveDistance.Location = new System.Drawing.Point(365, 121);
+            this.MouseWheelMoveDistance.Location = new System.Drawing.Point(392, 148);
             this.MouseWheelMoveDistance.Maximum = new decimal(new int[] {
             1000,
             0,
@@ -1076,15 +1139,6 @@ namespace Sledge.Editor.Settings
             this.InvertMouseX.Text = "Invert Mouselook X Axis";
             this.InvertMouseX.UseVisualStyleBackColor = true;
             // 
-            // TimeToTopSpeedLabel
-            // 
-            this.TimeToTopSpeedLabel.Location = new System.Drawing.Point(354, 68);
-            this.TimeToTopSpeedLabel.Name = "TimeToTopSpeedLabel";
-            this.TimeToTopSpeedLabel.Size = new System.Drawing.Size(65, 42);
-            this.TimeToTopSpeedLabel.TabIndex = 1;
-            this.TimeToTopSpeedLabel.Text = "0.5\r\nseconds";
-            this.TimeToTopSpeedLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
             // InvertMouseY
             // 
             this.InvertMouseY.Location = new System.Drawing.Point(12, 118);
@@ -1101,9 +1155,9 @@ namespace Sledge.Editor.Settings
             this.TimeToTopSpeed.Location = new System.Drawing.Point(125, 68);
             this.TimeToTopSpeed.Maximum = 50;
             this.TimeToTopSpeed.Name = "TimeToTopSpeed";
-            this.TimeToTopSpeed.Size = new System.Drawing.Size(231, 42);
+            this.TimeToTopSpeed.Size = new System.Drawing.Size(261, 42);
             this.TimeToTopSpeed.TabIndex = 0;
-            this.TimeToTopSpeed.TickFrequency = 10000;
+            this.TimeToTopSpeed.TickFrequency = 10;
             this.TimeToTopSpeed.TickStyle = System.Windows.Forms.TickStyle.Both;
             this.TimeToTopSpeed.Value = 5;
             this.TimeToTopSpeed.Scroll += new System.EventHandler(this.TimeToTopSpeedChanged);
@@ -1126,15 +1180,6 @@ namespace Sledge.Editor.Settings
             this.label27.TabIndex = 4;
             this.label27.Text = "Forward speed";
             // 
-            // ForwardSpeedLabel
-            // 
-            this.ForwardSpeedLabel.Location = new System.Drawing.Point(362, 20);
-            this.ForwardSpeedLabel.Name = "ForwardSpeedLabel";
-            this.ForwardSpeedLabel.Size = new System.Drawing.Size(57, 42);
-            this.ForwardSpeedLabel.TabIndex = 1;
-            this.ForwardSpeedLabel.Text = "1000\r\nunits/sec";
-            this.ForwardSpeedLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
             // ForwardSpeed
             // 
             this.ForwardSpeed.AutoSize = false;
@@ -1143,9 +1188,9 @@ namespace Sledge.Editor.Settings
             this.ForwardSpeed.Maximum = 5000;
             this.ForwardSpeed.Minimum = 100;
             this.ForwardSpeed.Name = "ForwardSpeed";
-            this.ForwardSpeed.Size = new System.Drawing.Size(231, 42);
+            this.ForwardSpeed.Size = new System.Drawing.Size(261, 42);
             this.ForwardSpeed.TabIndex = 0;
-            this.ForwardSpeed.TickFrequency = 10000;
+            this.ForwardSpeed.TickFrequency = 1000;
             this.ForwardSpeed.TickStyle = System.Windows.Forms.TickStyle.Both;
             this.ForwardSpeed.Value = 1000;
             this.ForwardSpeed.Scroll += new System.EventHandler(this.ForwardSpeedChanged);
@@ -1153,17 +1198,17 @@ namespace Sledge.Editor.Settings
             // groupBox14
             // 
             this.groupBox14.Controls.Add(this.label26);
+            this.groupBox14.Controls.Add(this.DetailRenderDistanceUpDown);
+            this.groupBox14.Controls.Add(this.ModelRenderDistanceUpDown);
+            this.groupBox14.Controls.Add(this.BackClippingPlaneUpDown);
             this.groupBox14.Controls.Add(this.label24);
             this.groupBox14.Controls.Add(this.label22);
             this.groupBox14.Controls.Add(this.DetailRenderDistance);
-            this.groupBox14.Controls.Add(this.DetailRenderDistanceLabel);
             this.groupBox14.Controls.Add(this.ModelRenderDistance);
-            this.groupBox14.Controls.Add(this.ModelRenderDistanceLabel);
             this.groupBox14.Controls.Add(this.BackClippingPane);
-            this.groupBox14.Controls.Add(this.BackClippingPaneLabel);
             this.groupBox14.Location = new System.Drawing.Point(6, 6);
             this.groupBox14.Name = "groupBox14";
-            this.groupBox14.Size = new System.Drawing.Size(426, 175);
+            this.groupBox14.Size = new System.Drawing.Size(463, 175);
             this.groupBox14.TabIndex = 2;
             this.groupBox14.TabStop = false;
             this.groupBox14.Text = "Performance";
@@ -1200,72 +1245,45 @@ namespace Sledge.Editor.Settings
             this.DetailRenderDistance.AutoSize = false;
             this.DetailRenderDistance.BackColor = System.Drawing.SystemColors.Window;
             this.DetailRenderDistance.Location = new System.Drawing.Point(125, 122);
-            this.DetailRenderDistance.Maximum = 10000;
+            this.DetailRenderDistance.Maximum = 30000;
             this.DetailRenderDistance.Minimum = 200;
             this.DetailRenderDistance.Name = "DetailRenderDistance";
-            this.DetailRenderDistance.Size = new System.Drawing.Size(232, 41);
+            this.DetailRenderDistance.Size = new System.Drawing.Size(262, 41);
             this.DetailRenderDistance.TabIndex = 0;
             this.DetailRenderDistance.TickFrequency = 10000;
             this.DetailRenderDistance.TickStyle = System.Windows.Forms.TickStyle.Both;
             this.DetailRenderDistance.Value = 5000;
             this.DetailRenderDistance.Scroll += new System.EventHandler(this.DetailRenderDistanceChanged);
             // 
-            // DetailRenderDistanceLabel
-            // 
-            this.DetailRenderDistanceLabel.Location = new System.Drawing.Point(351, 131);
-            this.DetailRenderDistanceLabel.Name = "DetailRenderDistanceLabel";
-            this.DetailRenderDistanceLabel.Size = new System.Drawing.Size(69, 23);
-            this.DetailRenderDistanceLabel.TabIndex = 1;
-            this.DetailRenderDistanceLabel.Text = "4000";
-            this.DetailRenderDistanceLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
             // ModelRenderDistance
             // 
             this.ModelRenderDistance.AutoSize = false;
             this.ModelRenderDistance.BackColor = System.Drawing.SystemColors.Window;
             this.ModelRenderDistance.Location = new System.Drawing.Point(125, 67);
-            this.ModelRenderDistance.Maximum = 10000;
+            this.ModelRenderDistance.Maximum = 30000;
             this.ModelRenderDistance.Minimum = 200;
             this.ModelRenderDistance.Name = "ModelRenderDistance";
-            this.ModelRenderDistance.Size = new System.Drawing.Size(232, 41);
+            this.ModelRenderDistance.Size = new System.Drawing.Size(262, 41);
             this.ModelRenderDistance.TabIndex = 0;
             this.ModelRenderDistance.TickFrequency = 10000;
             this.ModelRenderDistance.TickStyle = System.Windows.Forms.TickStyle.Both;
             this.ModelRenderDistance.Value = 5000;
             this.ModelRenderDistance.Scroll += new System.EventHandler(this.ModelRenderDistanceChanged);
             // 
-            // ModelRenderDistanceLabel
-            // 
-            this.ModelRenderDistanceLabel.Location = new System.Drawing.Point(351, 76);
-            this.ModelRenderDistanceLabel.Name = "ModelRenderDistanceLabel";
-            this.ModelRenderDistanceLabel.Size = new System.Drawing.Size(69, 23);
-            this.ModelRenderDistanceLabel.TabIndex = 1;
-            this.ModelRenderDistanceLabel.Text = "4000";
-            this.ModelRenderDistanceLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
             // BackClippingPane
             // 
             this.BackClippingPane.AutoSize = false;
             this.BackClippingPane.BackColor = System.Drawing.SystemColors.Window;
             this.BackClippingPane.Location = new System.Drawing.Point(124, 20);
-            this.BackClippingPane.Maximum = 10000;
+            this.BackClippingPane.Maximum = 30000;
             this.BackClippingPane.Minimum = 2000;
             this.BackClippingPane.Name = "BackClippingPane";
-            this.BackClippingPane.Size = new System.Drawing.Size(232, 41);
+            this.BackClippingPane.Size = new System.Drawing.Size(262, 41);
             this.BackClippingPane.TabIndex = 0;
             this.BackClippingPane.TickFrequency = 10000;
             this.BackClippingPane.TickStyle = System.Windows.Forms.TickStyle.Both;
             this.BackClippingPane.Value = 5000;
             this.BackClippingPane.Scroll += new System.EventHandler(this.BackClippingPaneChanged);
-            // 
-            // BackClippingPaneLabel
-            // 
-            this.BackClippingPaneLabel.Location = new System.Drawing.Point(350, 29);
-            this.BackClippingPaneLabel.Name = "BackClippingPaneLabel";
-            this.BackClippingPaneLabel.Size = new System.Drawing.Size(69, 23);
-            this.BackClippingPaneLabel.TabIndex = 1;
-            this.BackClippingPaneLabel.Text = "4000";
-            this.BackClippingPaneLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // tabGame
             // 
@@ -1342,6 +1360,18 @@ namespace Sledge.Editor.Settings
             this.lblBaseGame.TabIndex = 11;
             this.lblBaseGame.Text = "Base Game Directory (e.g. \'valve\')";
             this.lblBaseGame.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // SelectedGameUseHDModels
+            // 
+            this.SelectedGameUseHDModels.Checked = true;
+            this.SelectedGameUseHDModels.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.SelectedGameUseHDModels.Location = new System.Drawing.Point(216, 209);
+            this.SelectedGameUseHDModels.Name = "SelectedGameUseHDModels";
+            this.SelectedGameUseHDModels.Size = new System.Drawing.Size(177, 24);
+            this.SelectedGameUseHDModels.TabIndex = 21;
+            this.SelectedGameUseHDModels.Text = "Use HD Models (if available)";
+            this.SelectedGameUseHDModels.UseVisualStyleBackColor = true;
+            this.SelectedGameUseHDModels.CheckedChanged += new System.EventHandler(this.SelectedGameEngineChanged);
             // 
             // SelectedGameSteamInstall
             // 
@@ -3142,71 +3172,161 @@ namespace Sledge.Editor.Settings
             this.btnApplySettings.UseVisualStyleBackColor = true;
             this.btnApplySettings.Click += new System.EventHandler(this.Apply);
             // 
-            // SelectedGameUseHDModels
+            // BackClippingPlaneUpDown
             // 
-            this.SelectedGameUseHDModels.Checked = true;
-            this.SelectedGameUseHDModels.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.SelectedGameUseHDModels.Location = new System.Drawing.Point(216, 209);
-            this.SelectedGameUseHDModels.Name = "SelectedGameUseHDModels";
-            this.SelectedGameUseHDModels.Size = new System.Drawing.Size(177, 24);
-            this.SelectedGameUseHDModels.TabIndex = 21;
-            this.SelectedGameUseHDModels.Text = "Use HD Models (if available)";
-            this.SelectedGameUseHDModels.UseVisualStyleBackColor = true;
-            this.SelectedGameUseHDModels.CheckedChanged += new System.EventHandler(this.SelectedGameEngineChanged);
+            this.BackClippingPlaneUpDown.Increment = new decimal(new int[] {
+            100,
+            0,
+            0,
+            0});
+            this.BackClippingPlaneUpDown.Location = new System.Drawing.Point(392, 32);
+            this.BackClippingPlaneUpDown.Maximum = new decimal(new int[] {
+            30000,
+            0,
+            0,
+            0});
+            this.BackClippingPlaneUpDown.Minimum = new decimal(new int[] {
+            2000,
+            0,
+            0,
+            0});
+            this.BackClippingPlaneUpDown.Name = "BackClippingPlaneUpDown";
+            this.BackClippingPlaneUpDown.Size = new System.Drawing.Size(65, 20);
+            this.BackClippingPlaneUpDown.TabIndex = 5;
+            this.BackClippingPlaneUpDown.Value = new decimal(new int[] {
+            2000,
+            0,
+            0,
+            0});
+            this.BackClippingPlaneUpDown.ValueChanged += new System.EventHandler(this.BackClippingPlaneUpDownValueChanged);
             // 
-            // tabIntegration
+            // ModelRenderDistanceUpDown
             // 
-            this.tabIntegration.Controls.Add(this.groupBox18);
-            this.tabIntegration.Controls.Add(this.groupBox11);
-            this.tabIntegration.Location = new System.Drawing.Point(4, 22);
-            this.tabIntegration.Name = "tabIntegration";
-            this.tabIntegration.Padding = new System.Windows.Forms.Padding(3);
-            this.tabIntegration.Size = new System.Drawing.Size(736, 511);
-            this.tabIntegration.TabIndex = 7;
-            this.tabIntegration.Text = "Integration";
-            this.tabIntegration.UseVisualStyleBackColor = true;
+            this.ModelRenderDistanceUpDown.Increment = new decimal(new int[] {
+            100,
+            0,
+            0,
+            0});
+            this.ModelRenderDistanceUpDown.Location = new System.Drawing.Point(392, 79);
+            this.ModelRenderDistanceUpDown.Maximum = new decimal(new int[] {
+            30000,
+            0,
+            0,
+            0});
+            this.ModelRenderDistanceUpDown.Minimum = new decimal(new int[] {
+            200,
+            0,
+            0,
+            0});
+            this.ModelRenderDistanceUpDown.Name = "ModelRenderDistanceUpDown";
+            this.ModelRenderDistanceUpDown.Size = new System.Drawing.Size(65, 20);
+            this.ModelRenderDistanceUpDown.TabIndex = 5;
+            this.ModelRenderDistanceUpDown.Value = new decimal(new int[] {
+            500,
+            0,
+            0,
+            0});
+            this.ModelRenderDistanceUpDown.ValueChanged += new System.EventHandler(this.ModelRenderDistanceUpDownValueChanged);
             // 
-            // groupBox11
+            // DetailRenderDistanceUpDown
             // 
-            this.groupBox11.Controls.Add(this.AssociationsPanel);
-            this.groupBox11.Location = new System.Drawing.Point(6, 6);
-            this.groupBox11.Name = "groupBox11";
-            this.groupBox11.Size = new System.Drawing.Size(287, 283);
-            this.groupBox11.TabIndex = 0;
-            this.groupBox11.TabStop = false;
-            this.groupBox11.Text = "File associations";
+            this.DetailRenderDistanceUpDown.Increment = new decimal(new int[] {
+            100,
+            0,
+            0,
+            0});
+            this.DetailRenderDistanceUpDown.Location = new System.Drawing.Point(392, 134);
+            this.DetailRenderDistanceUpDown.Maximum = new decimal(new int[] {
+            30000,
+            0,
+            0,
+            0});
+            this.DetailRenderDistanceUpDown.Minimum = new decimal(new int[] {
+            200,
+            0,
+            0,
+            0});
+            this.DetailRenderDistanceUpDown.Name = "DetailRenderDistanceUpDown";
+            this.DetailRenderDistanceUpDown.Size = new System.Drawing.Size(65, 20);
+            this.DetailRenderDistanceUpDown.TabIndex = 5;
+            this.DetailRenderDistanceUpDown.Value = new decimal(new int[] {
+            500,
+            0,
+            0,
+            0});
+            this.DetailRenderDistanceUpDown.ValueChanged += new System.EventHandler(this.DetailRenderDistanceUpDownValueChanged);
             // 
-            // AssociationsPanel
+            // label31
             // 
-            this.AssociationsPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.AssociationsPanel.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-            this.AssociationsPanel.Location = new System.Drawing.Point(6, 19);
-            this.AssociationsPanel.Name = "AssociationsPanel";
-            this.AssociationsPanel.Size = new System.Drawing.Size(275, 258);
-            this.AssociationsPanel.TabIndex = 1;
-            this.AssociationsPanel.WrapContents = false;
+            this.label31.AutoSize = true;
+            this.label31.Location = new System.Drawing.Point(399, 56);
+            this.label31.Name = "label31";
+            this.label31.Size = new System.Drawing.Size(51, 13);
+            this.label31.TabIndex = 7;
+            this.label31.Text = "units/sec";
+            this.label31.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
-            // groupBox18
+            // label32
             // 
-            this.groupBox18.Controls.Add(this.SingleInstanceCheckbox);
-            this.groupBox18.Location = new System.Drawing.Point(299, 6);
-            this.groupBox18.Name = "groupBox18";
-            this.groupBox18.Size = new System.Drawing.Size(418, 47);
-            this.groupBox18.TabIndex = 1;
-            this.groupBox18.TabStop = false;
-            this.groupBox18.Text = "Single instance";
+            this.label32.AutoSize = true;
+            this.label32.Location = new System.Drawing.Point(400, 104);
+            this.label32.Name = "label32";
+            this.label32.Size = new System.Drawing.Size(47, 13);
+            this.label32.TabIndex = 7;
+            this.label32.Text = "seconds";
+            this.label32.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
-            // SingleInstanceCheckbox
+            // ForwardSpeedUpDown
             // 
-            this.SingleInstanceCheckbox.AutoSize = true;
-            this.SingleInstanceCheckbox.Location = new System.Drawing.Point(11, 19);
-            this.SingleInstanceCheckbox.Name = "SingleInstanceCheckbox";
-            this.SingleInstanceCheckbox.Size = new System.Drawing.Size(337, 17);
-            this.SingleInstanceCheckbox.TabIndex = 0;
-            this.SingleInstanceCheckbox.Text = "Only allow one instance of Sledge to run at a time (requires restart)";
-            this.SingleInstanceCheckbox.UseVisualStyleBackColor = true;
+            this.ForwardSpeedUpDown.Increment = new decimal(new int[] {
+            100,
+            0,
+            0,
+            0});
+            this.ForwardSpeedUpDown.Location = new System.Drawing.Point(392, 33);
+            this.ForwardSpeedUpDown.Maximum = new decimal(new int[] {
+            5000,
+            0,
+            0,
+            0});
+            this.ForwardSpeedUpDown.Minimum = new decimal(new int[] {
+            100,
+            0,
+            0,
+            0});
+            this.ForwardSpeedUpDown.Name = "ForwardSpeedUpDown";
+            this.ForwardSpeedUpDown.Size = new System.Drawing.Size(65, 20);
+            this.ForwardSpeedUpDown.TabIndex = 5;
+            this.ForwardSpeedUpDown.Value = new decimal(new int[] {
+            500,
+            0,
+            0,
+            0});
+            this.ForwardSpeedUpDown.ValueChanged += new System.EventHandler(this.ForwardSpeedUpDownValueChanged);
+            // 
+            // TimeToTopSpeedUpDown
+            // 
+            this.TimeToTopSpeedUpDown.DecimalPlaces = 1;
+            this.TimeToTopSpeedUpDown.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            this.TimeToTopSpeedUpDown.Location = new System.Drawing.Point(392, 81);
+            this.TimeToTopSpeedUpDown.Maximum = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
+            this.TimeToTopSpeedUpDown.Name = "TimeToTopSpeedUpDown";
+            this.TimeToTopSpeedUpDown.Size = new System.Drawing.Size(65, 20);
+            this.TimeToTopSpeedUpDown.TabIndex = 5;
+            this.TimeToTopSpeedUpDown.Value = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
+            this.TimeToTopSpeedUpDown.ValueChanged += new System.EventHandler(this.TimeToTopSpeedUpDownValueChanged);
             // 
             // SelectedBuildCsgParameters
             // 
@@ -3270,6 +3390,10 @@ namespace Sledge.Editor.Settings
             this.Load += new System.EventHandler(this.SettingsFormLoad);
             this.tbcSettings.ResumeLayout(false);
             this.tabGeneral.ResumeLayout(false);
+            this.tabIntegration.ResumeLayout(false);
+            this.groupBox18.ResumeLayout(false);
+            this.groupBox18.PerformLayout();
+            this.groupBox11.ResumeLayout(false);
             this.tab2DViews.ResumeLayout(false);
             this.groupBox6.ResumeLayout(false);
             this.groupBox3.ResumeLayout(false);
@@ -3339,10 +3463,11 @@ namespace Sledge.Editor.Settings
             ((System.ComponentModel.ISupportInitialize)(this.trackBar2)).EndInit();
             this.groupBox7.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).EndInit();
-            this.tabIntegration.ResumeLayout(false);
-            this.groupBox11.ResumeLayout(false);
-            this.groupBox18.ResumeLayout(false);
-            this.groupBox18.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.BackClippingPlaneUpDown)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ModelRenderDistanceUpDown)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.DetailRenderDistanceUpDown)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ForwardSpeedUpDown)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.TimeToTopSpeedUpDown)).EndInit();
             this.ResumeLayout(false);
 
 		}
@@ -3433,12 +3558,9 @@ namespace Sledge.Editor.Settings
 		private System.Windows.Forms.Label label18;
 		private System.Windows.Forms.Button ListAvailableGamesButton;
 		private System.Windows.Forms.Label label17;
-		private System.Windows.Forms.TabPage tabSteam;
-		private System.Windows.Forms.Label BackClippingPaneLabel;
-		private System.Windows.Forms.GroupBox groupBox14;
-		private System.Windows.Forms.Label ForwardSpeedLabel;
-		private System.Windows.Forms.GroupBox groupBox13;
-        private System.Windows.Forms.Label TimeToTopSpeedLabel;
+        private System.Windows.Forms.TabPage tabSteam;
+        private System.Windows.Forms.GroupBox groupBox14;
+        private System.Windows.Forms.GroupBox groupBox13;
 		private System.Windows.Forms.TabPage tab3DViews;
 		private System.Windows.Forms.CheckBox checkBox5;
 		private System.Windows.Forms.CheckBox checkBox6;
@@ -3508,9 +3630,7 @@ namespace Sledge.Editor.Settings
         private System.Windows.Forms.Label label24;
         private System.Windows.Forms.Label label22;
         private System.Windows.Forms.TrackBar DetailRenderDistance;
-        private System.Windows.Forms.Label DetailRenderDistanceLabel;
         private System.Windows.Forms.TrackBar ModelRenderDistance;
-        private System.Windows.Forms.Label ModelRenderDistanceLabel;
         private System.Windows.Forms.Label label28;
         private System.Windows.Forms.GroupBox groupBox12;
         private System.Windows.Forms.NumericUpDown CameraFOV;
@@ -3608,5 +3728,12 @@ namespace Sledge.Editor.Settings
         private System.Windows.Forms.FlowLayoutPanel AssociationsPanel;
         private System.Windows.Forms.GroupBox groupBox18;
         private System.Windows.Forms.CheckBox SingleInstanceCheckbox;
+        private System.Windows.Forms.NumericUpDown DetailRenderDistanceUpDown;
+        private System.Windows.Forms.NumericUpDown ModelRenderDistanceUpDown;
+        private System.Windows.Forms.NumericUpDown BackClippingPlaneUpDown;
+        private System.Windows.Forms.Label label32;
+        private System.Windows.Forms.Label label31;
+        private System.Windows.Forms.NumericUpDown TimeToTopSpeedUpDown;
+        private System.Windows.Forms.NumericUpDown ForwardSpeedUpDown;
 	}
 }
