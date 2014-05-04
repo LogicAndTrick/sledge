@@ -12,12 +12,12 @@ namespace Sledge.Editor.Brushes
     public class PipeBrush : IBrush
     {
         private readonly NumericControl _numSides;
-        private readonly NumericControl _width;
+        private readonly NumericControl _wallWidth;
 
         public PipeBrush()
         {
             _numSides = new NumericControl(this) { LabelText = "Number of sides" };
-            _width = new NumericControl(this) { LabelText = "Wall width", Minimum = 1, Maximum = 1024, Value = 32, Precision = 1 };
+            _wallWidth = new NumericControl(this) { LabelText = "Wall width", Minimum = 1, Maximum = 1024, Value = 32, Precision = 1 };
         }
 
         public string Name
@@ -28,7 +28,7 @@ namespace Sledge.Editor.Brushes
         public IEnumerable<BrushControl> GetControls()
         {
             yield return _numSides;
-            yield return _width;
+            yield return _wallWidth;
         }
 
         private Solid MakeSolid(IDGenerator generator, IEnumerable<Coordinate[]> faces, ITexture texture, Color col)
@@ -54,7 +54,7 @@ namespace Sledge.Editor.Brushes
 
         public IEnumerable<MapObject> Create(IDGenerator generator, Box box, ITexture texture, int roundDecimals)
         {
-            var wallWidth = _width.GetValue();
+            var wallWidth = _wallWidth.GetValue();
             if (wallWidth < 1) yield break;
             var numSides = (int) _numSides.GetValue();
             if (numSides < 3) yield break;
@@ -86,7 +86,7 @@ namespace Sledge.Editor.Brushes
 
             // Create the solids
             var colour = Colour.GetRandomBrushColour();
-            var z = new Coordinate(0, 0, height);
+            var z = new Coordinate(0, 0, height).Round(roundDecimals);
             for (var i = 0; i < numSides; i++)
             {
                 var faces = new List<Coordinate[]>();
