@@ -21,19 +21,9 @@ namespace Sledge.FileSystem
         Zip,
 
         /// <summary>
-        /// A GoldSource WAD texture file
+        /// A GoldSource PAK container or Valve VPK container file
         /// </summary>
-        Wad,
-
-        /// <summary>
-        /// A WON GoldSource PAK container file
-        /// </summary>
-        Pak,
-
-        /// <summary>
-        /// A Valve VPK file
-        /// </summary>
-        Vpk,
+        Package,
 
         /// <summary>
         /// A file that doesn't exist on the disk
