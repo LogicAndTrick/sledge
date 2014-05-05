@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace Sledge.Packages.Wad
 {
@@ -12,18 +13,18 @@ namespace Sledge.Packages.Wad
     {
         private const string Signature = "WAD3";
 
-        public FileInfo File { get; private set; }
+        public FileInfo PackageFile { get; private set; }
         internal uint NumTextures { get; private set; }
         internal uint LumpOffset { get; private set; }
         internal List<WadEntry> Entries { get; private set; }
 
-        public WadPackage(FileInfo file)
+        public WadPackage(FileInfo packageFile)
         {
-            File = file;
+            PackageFile = packageFile;
             Entries = new List<WadEntry>();
 
             // Read the data from the wad
-            using (var br = new BinaryReader(OpenFile(file)))
+            using (var br = new BinaryReader(OpenFile(packageFile)))
             {
                 var sig = br.ReadFixedLengthString(Encoding.ASCII, 4);
                 if (sig != Signature) throw new PackageException("Unknown package signature: Expected '" + Signature + "', got '" + sig + "'.");
@@ -34,6 +35,7 @@ namespace Sledge.Packages.Wad
                 // Read all the entries from the wad
                 ReadTextureEntries(br);
                 SetAdditionalEntryData(br);
+                BuildDirectories();
             }
         }
         
@@ -73,6 +75,11 @@ namespace Sledge.Packages.Wad
         public IEnumerable<IPackageEntry> GetEntries()
         {
             return Entries;
+        }
+
+        public IPackageEntry GetEntry(string path)
+        {
+            return _files.ContainsKey(path) ? _files[path] : null;
         }
 
         public byte[] ExtractEntry(IPackageEntry entry)
@@ -141,6 +148,42 @@ namespace Sledge.Packages.Wad
             e.PaletteSize = paletteSize;
             e.TextureDataOffset = textureDataOffset;
             e.PaletteDataOffset = paletteDataOffset;
+        }
+
+        private Dictionary<string, WadEntry> _files;
+
+        private void BuildDirectories()
+        {
+            _files = GetEntries().OfType<WadEntry>().ToDictionary(x => x.Name, x => x);
+        }
+
+        public IEnumerable<string> GetDirectories(string path)
+        {
+            return new string[0];
+        }
+
+        public IEnumerable<string> GetFiles(string path)
+        {
+            if (path != "") return new string[0];
+            return _files.Keys;
+        }
+
+        public IEnumerable<string> SearchDirectories(string path, string regex, bool recursive)
+        {
+            return new string[0];
+        }
+
+        public IEnumerable<string> SearchFiles(string path, string regex, bool recursive)
+        {
+            var files = GetFiles(path);
+            return files.Where(x => Regex.IsMatch(x, regex, RegexOptions.IgnoreCase));
+        }
+
+        public Stream OpenFile(string path)
+        {
+            var entry = GetEntry(path);
+            if (entry == null) throw new FileNotFoundException();
+            return OpenStream(entry);
         }
     }
 }

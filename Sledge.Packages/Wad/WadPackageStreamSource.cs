@@ -13,7 +13,7 @@ namespace Sledge.Packages.Wad
 
         public WadPackageStreamSource(WadPackage package)
         {
-            _stream = package.OpenFile(package.File);
+            _stream = package.OpenFile(package.PackageFile);
             _files = package.GetEntries().OfType<WadEntry>().ToDictionary(x => x.Name, x => x);
         }
 

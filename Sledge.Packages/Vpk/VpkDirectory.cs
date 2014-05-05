@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace Sledge.Packages.Vpk
 {
@@ -11,7 +13,7 @@ namespace Sledge.Packages.Vpk
         private const string DirString = "_dir";
         internal const ushort DirectoryIndex = 0x7fff;
 
-        public FileInfo File { get; private set; }
+        public FileInfo PackageFile { get; private set; }
         public uint Version { get; private set; }
         internal uint TreeLength { get; private set; }
         internal uint HeaderLength { get; private set; }
@@ -19,20 +21,20 @@ namespace Sledge.Packages.Vpk
         internal List<VpkEntry> Entries { get; private set; }
         internal Dictionary<ushort, FileInfo> Chunks { get; private set; }
 
-        public VpkDirectory(FileInfo file)
+        public VpkDirectory(FileInfo packageFile)
         {
-            File = file;
+            PackageFile = packageFile;
             Entries = new List<VpkEntry>();
             Chunks = new Dictionary<ushort, FileInfo>();
 
-            var nameWithoutExt = Path.GetFileNameWithoutExtension(file.Name);
-            var ext = Path.GetExtension(file.Name);
+            var nameWithoutExt = Path.GetFileNameWithoutExtension(packageFile.Name);
+            var ext = Path.GetExtension(packageFile.Name);
             if (!nameWithoutExt.EndsWith(DirString)) throw new PackageException("This is not a valid VPK directory file.");
             
             var baseName = nameWithoutExt.Substring(0, nameWithoutExt.Length - DirString.Length);
 
             // Scan and find all chunk files that match this vpk directory
-            var matchingFiles = file.Directory.GetFiles(baseName + "_???" + ext);
+            var matchingFiles = packageFile.Directory.GetFiles(baseName + "_???" + ext);
             foreach (var mf in matchingFiles)
             {
                 var index = mf.Name.Substring(baseName.Length + 1, 3);
@@ -42,10 +44,10 @@ namespace Sledge.Packages.Vpk
                     Chunks.Add(num, mf);
                 }
             }
-            Chunks[DirectoryIndex] = File;
+            Chunks[DirectoryIndex] = PackageFile;
 
             // Read the data from the vpk
-            using (var br = new BinaryReader(OpenFile(file)))
+            using (var br = new BinaryReader(OpenFile(packageFile)))
             {
                 var sig = br.ReadUInt32();
                 if (sig != Signature) throw new PackageException("Unknown package signature: Expected 0x" + Signature.ToString("x8") + ", got 0x" + sig.ToString("x8") + ".");
@@ -70,6 +72,7 @@ namespace Sledge.Packages.Vpk
 
                 // Read all the entries from the vpk
                 ReadDirectoryEntries(br);
+                BuildDirectories();
             }
         }
         
@@ -116,6 +119,11 @@ namespace Sledge.Packages.Vpk
             return Entries;
         }
 
+        public IPackageEntry GetEntry(string path)
+        {
+            return GetEntries().FirstOrDefault(x => x.FullName == path);
+        }
+
         public byte[] ExtractEntry(IPackageEntry entry)
         {
             using (var sr = new BinaryReader(OpenStream(entry)))
@@ -149,6 +157,101 @@ namespace Sledge.Packages.Vpk
         {
             Entries.Clear();
             Chunks.Clear();
+        }
+
+        private Dictionary<string, HashSet<string>> _folders;
+        private Dictionary<string, HashSet<string>> _files;
+
+        private void BuildDirectories()
+        {
+            _folders = new Dictionary<string, HashSet<string>>();
+            _files = new Dictionary<string, HashSet<string>>();
+            foreach (var entry in GetEntries())
+            {
+                var split = entry.FullName.Split('/');
+                var joined = "";
+                for (var i = 0; i < split.Length; i++)
+                {
+                    var sub = split[i];
+                    var name = joined.Length == 0 ? sub : joined + '/' + sub;
+                    if (i == split.Length - 1)
+                    {
+                        // File name
+                        if (!_files.ContainsKey(joined)) _files.Add(joined, new HashSet<string>());
+                        _files[joined].Add(name);
+                    }
+                    else
+                    {
+                        // Folder name
+                        if (!_folders.ContainsKey(joined)) _folders.Add(joined, new HashSet<string>());
+                        if (!_folders[joined].Contains(sub)) _folders[joined].Add(name);
+                    }
+                    joined = joined.Length == 0 ? sub : joined + '/' + sub;
+                }
+            }
+        }
+
+        public IEnumerable<string> GetDirectories(string path)
+        {
+            if (!_folders.ContainsKey(path)) return new string[0];
+            return _folders[path].Where(x => x.Length > 0);
+        }
+
+        public IEnumerable<string> GetFiles(string path)
+        {
+            if (!_files.ContainsKey(path)) return new string[0];
+            return _files[path];
+        }
+
+        public IEnumerable<string> SearchDirectories(string path, string regex, bool recursive)
+        {
+            var files = recursive ? CollectDirectories(path) : GetDirectories(path);
+            return files.Where(x => Regex.IsMatch(GetName(x), regex, RegexOptions.IgnoreCase));
+        }
+
+        public IEnumerable<string> SearchFiles(string path, string regex, bool recursive)
+        {
+            var files = recursive ? CollectFiles(path) : GetFiles(path);
+            return files.Where(x => Regex.IsMatch(GetName(x), regex, RegexOptions.IgnoreCase));
+        }
+
+        private string GetName(string path)
+        {
+            var idx = path.LastIndexOf('/');
+            if (idx < 0) return path;
+            return path.Substring(idx + 1);
+        }
+
+        private IEnumerable<string> CollectDirectories(string path)
+        {
+            var files = new List<string>();
+            if (_folders.ContainsKey(path))
+            {
+                files.AddRange(_folders[path].Where(x => x.Length > 0));
+                files.AddRange(_folders[path].SelectMany(CollectDirectories));
+            }
+            return files;
+        }
+
+        private IEnumerable<string> CollectFiles(string path)
+        {
+            var files = new List<string>();
+            if (_folders.ContainsKey(path))
+            {
+                files.AddRange(_folders[path].SelectMany(CollectFiles));
+            }
+            if (_files.ContainsKey(path))
+            {
+                files.AddRange(_files[path]);
+            }
+            return files;
+        }
+
+        public Stream OpenFile(string path)
+        {
+            var entry = GetEntry(path);
+            if (entry == null) throw new FileNotFoundException();
+            return OpenStream(entry);
         }
     }
 }

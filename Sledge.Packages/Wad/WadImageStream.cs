@@ -36,7 +36,7 @@ namespace Sledge.Packages.Wad
         public WadImageStream(WadEntry entry, WadPackage package)
         {
             _entry = entry;
-            using (var br = new BinaryReader(package.OpenFile(package.File)))
+            using (var br = new BinaryReader(package.OpenFile(package.PackageFile)))
             {
                 br.BaseStream.Position = entry.Offset;
                 PrepareData(br);

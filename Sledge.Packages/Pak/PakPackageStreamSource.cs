@@ -15,7 +15,7 @@ namespace Sledge.Packages.Pak
         public PakPackageStreamSource(PakPackage package)
         {
             _package = package;
-            _stream = package.OpenFile(package.File);
+            _stream = package.OpenFile(package.PackageFile);
             _folders = new Dictionary<string, HashSet<string>>();
             _files = new Dictionary<string, HashSet<string>>();
             foreach (var entry in package.GetEntries())
