@@ -20,7 +20,7 @@ namespace Sledge.Packages.Vpk
             _files = new Dictionary<string, HashSet<string>>();
             foreach (var entry in directory.GetEntries())
             {
-                var split = entry.Path.Split('/');
+                var split = entry.FullName.Split('/');
                 var joined = "";
                 for (var i = 0; i < split.Length; i++)
                 {
@@ -108,7 +108,7 @@ namespace Sledge.Packages.Vpk
 
         private VpkEntry GetEntry(string path)
         {
-            return _directory.GetEntries().FirstOrDefault(x => x.Path == path);
+            return _directory.GetEntries().FirstOrDefault(x => x.FullName == path) as VpkEntry;
         }
 
         public Stream OpenFile(string path)
@@ -118,7 +118,6 @@ namespace Sledge.Packages.Vpk
 
             if (!_streams.ContainsKey(entry.ArchiveIndex))
             {
-                System.Console.WriteLine(" ------ ARCHIVE OPENED: " + entry.ArchiveIndex);
                 var file = _directory.Chunks[entry.ArchiveIndex];
                 var stream = _directory.OpenFile(file);
                 _streams.Add(entry.ArchiveIndex, stream);

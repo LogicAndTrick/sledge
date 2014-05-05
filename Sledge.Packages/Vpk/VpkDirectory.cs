@@ -5,7 +5,7 @@ using System.IO;
 namespace Sledge.Packages.Vpk
 {
     // https://developer.valvesoftware.com/wiki/VPK_File_Format
-    public class VpkDirectory : IDisposable
+    public class VpkDirectory : IPackage
     {
         private const uint Signature = 0x55aa1234;
         private const string DirString = "_dir";
@@ -108,25 +108,27 @@ namespace Sledge.Packages.Vpk
             if (terminator != VpkEntry.EntryTerminator) throw new PackageException("Invalid terminator. Expected " + VpkEntry.EntryTerminator.ToString("x8") + ", got " + terminator.ToString("x8") + ".");
 
             var preloadData = br.ReadBytes(preloadBytes);
-            return new VpkEntry(path, crc, preloadData, archiveIndex, entryOffset, entryLength);
+            return new VpkEntry(this, path, crc, preloadData, archiveIndex, entryOffset, entryLength);
         }
 
-        public IEnumerable<VpkEntry> GetEntries()
+        public IEnumerable<IPackageEntry> GetEntries()
         {
             return Entries;
         }
 
-        public byte[] ExtractEntry(VpkEntry entry)
+        public byte[] ExtractEntry(IPackageEntry entry)
         {
             using (var sr = new BinaryReader(OpenStream(entry)))
             {
-                return sr.ReadBytes(entry.TotalLength);
+                return sr.ReadBytes((int) sr.BaseStream.Length);
             }
         }
 
-        public Stream OpenStream(VpkEntry entry)
+        public Stream OpenStream(IPackageEntry entry)
         {
-            return new VpkEntryStream(entry, this);
+            var pe = entry as VpkEntry;
+            if (pe == null) throw new ArgumentException("This package is only compatible with VpkEntry objects.");
+            return new VpkEntryStream(pe, this);
         }
 
         internal Stream OpenChunk(VpkEntry entry)

@@ -21,11 +21,6 @@ namespace Sledge.FileSystem
         Zip,
 
         /// <summary>
-        /// A Steam GCF file
-        /// </summary>
-        Gcf,
-
-        /// <summary>
         /// A GoldSource WAD texture file
         /// </summary>
         Wad,

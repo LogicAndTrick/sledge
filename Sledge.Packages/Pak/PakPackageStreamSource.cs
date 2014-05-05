@@ -20,7 +20,7 @@ namespace Sledge.Packages.Pak
             _files = new Dictionary<string, HashSet<string>>();
             foreach (var entry in package.GetEntries())
             {
-                var split = entry.Path.Split('/');
+                var split = entry.FullName.Split('/');
                 var joined = "";
                 for (var i = 0; i < split.Length; i++)
                 {
@@ -108,7 +108,7 @@ namespace Sledge.Packages.Pak
 
         private PakEntry GetEntry(string path)
         {
-            return _package.GetEntries().FirstOrDefault(x => x.Path == path);
+            return _package.GetEntries().FirstOrDefault(x => x.FullName == path) as PakEntry;
         }
 
         public Stream OpenFile(string path)

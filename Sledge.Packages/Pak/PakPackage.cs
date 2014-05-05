@@ -6,7 +6,7 @@ using System.Text;
 namespace Sledge.Packages.Pak
 {
     // http://quakewiki.org/wiki/.pak
-    public class PakPackage : IDisposable
+    public class PakPackage : IPackage
     {
         private const string Signature = "PACK";
 
@@ -48,26 +48,28 @@ namespace Sledge.Packages.Pak
                 var path = br.ReadFixedLengthString(Encoding.ASCII, 56);
                 var offset = br.ReadInt32();
                 var length = br.ReadInt32();
-                Entries.Add(new PakEntry(path, offset, length));
+                Entries.Add(new PakEntry(this, path, offset, length));
             }
         }
 
-        public IEnumerable<PakEntry> GetEntries()
+        public IEnumerable<IPackageEntry> GetEntries()
         {
             return Entries;
         }
 
-        public byte[] ExtractEntry(PakEntry entry)
+        public byte[] ExtractEntry(IPackageEntry entry)
         {
             using (var sr = new BinaryReader(OpenStream(entry)))
             {
-                return sr.ReadBytes(entry.Length);
+                return sr.ReadBytes((int) sr.BaseStream.Length);
             }
         }
 
-        public Stream OpenStream(PakEntry entry)
+        public Stream OpenStream(IPackageEntry entry)
         {
-            return new SubStream(OpenFile(File), entry.Offset, entry.Length) { CloseParentOnDispose = true };
+            var pe = entry as PakEntry;
+            if (pe == null) throw new ArgumentException("This package is only compatible with PakEntry objects.");
+            return new SubStream(OpenFile(File), pe.Offset, pe.Length) { CloseParentOnDispose = true };
         }
 
         public IPackageStreamSource GetStreamSource()

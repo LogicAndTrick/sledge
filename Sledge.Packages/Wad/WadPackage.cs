@@ -8,7 +8,7 @@ namespace Sledge.Packages.Wad
 {
     // http://yuraj.ucoz.com/half-life-formats.pdf
     // https://developer.valvesoftware.com/wiki/WAD
-    public class WadPackage : IDisposable
+    public class WadPackage : IPackage
     {
         private const string Signature = "WAD3";
 
@@ -57,7 +57,7 @@ namespace Sledge.Packages.Wad
                 var name = br.ReadFixedLengthString(Encoding.ASCII, 16);
 
                 if (!validTypes.Contains(type)) continue; // Skip unsupported types
-                Entries.Add(new WadEntry(name, (WadEntryType) type, offset, compressionType, compressedLength, fullLength));
+                Entries.Add(new WadEntry(this, name, (WadEntryType) type, offset, compressionType, compressedLength, fullLength));
             }
         }
 
@@ -70,22 +70,24 @@ namespace Sledge.Packages.Wad
             }
         }
 
-        public IEnumerable<WadEntry> GetEntries()
+        public IEnumerable<IPackageEntry> GetEntries()
         {
             return Entries;
         }
 
-        public byte[] ExtractEntry(WadEntry entry)
+        public byte[] ExtractEntry(IPackageEntry entry)
         {
             using (var sr = new BinaryReader(OpenStream(entry)))
             {
-                return sr.ReadBytes((int) entry.CompressedLength);
+                return sr.ReadBytes((int) sr.BaseStream.Length);
             }
         }
 
-        public Stream OpenStream(WadEntry entry)
+        public Stream OpenStream(IPackageEntry entry)
         {
-            return new WadImageStream(entry, this);
+            var pe = entry as WadEntry;
+            if (pe == null) throw new ArgumentException("This package is only compatible with WadEntry objects.");
+            return new WadImageStream(pe, this);
         }
 
         public IPackageStreamSource GetStreamSource()

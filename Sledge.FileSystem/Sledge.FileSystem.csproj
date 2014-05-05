@@ -38,7 +38,6 @@
     <Compile Include="CompositeFile.cs" />
     <Compile Include="FileExtensions.cs" />
     <Compile Include="PakFile.cs" />
-    <Compile Include="GcfFile.cs" />
     <Compile Include="FileSource.cs" />
     <Compile Include="FileSystemFactory.cs" />
     <Compile Include="FileSystemType.cs" />
@@ -48,7 +47,6 @@
     <Compile Include="RootFile.cs" />
     <Compile Include="VirtualFile.cs" />
     <Compile Include="WadFile.cs" />
-    <Compile Include="WadInsideGcfFile.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Sledge.Libs\Sledge.Libs.csproj">

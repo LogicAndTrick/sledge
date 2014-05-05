@@ -14,7 +14,7 @@ namespace Sledge.Packages.Wad
         public WadPackageStreamSource(WadPackage package)
         {
             _stream = package.OpenFile(package.File);
-            _files = package.GetEntries().ToDictionary(x => x.Name, x => x);
+            _files = package.GetEntries().OfType<WadEntry>().ToDictionary(x => x.Name, x => x);
         }
 
         public IEnumerable<string> GetDirectories(string path)
@@ -48,7 +48,7 @@ namespace Sledge.Packages.Wad
         {
             var entry = GetEntry(path);
             if (entry == null) throw new FileNotFoundException();
-            return new WadImageStream(entry, new SubStream(_stream, entry.Offset, entry.FullLength));
+            return new WadImageStream(entry, new SubStream(_stream, entry.Offset, entry.Length));
         }
 
         public void Dispose()
