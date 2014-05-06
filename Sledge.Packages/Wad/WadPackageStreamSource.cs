@@ -17,6 +17,16 @@ namespace Sledge.Packages.Wad
             _files = package.GetEntries().OfType<WadEntry>().ToDictionary(x => x.Name, x => x);
         }
 
+        public bool HasDirectory(string path)
+        {
+            return false;
+        }
+
+        public bool HasFile(string path)
+        {
+            return _files.ContainsKey(path);
+        }
+
         public IEnumerable<string> GetDirectories(string path)
         {
             return new String[0];

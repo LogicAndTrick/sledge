@@ -57,6 +57,16 @@ namespace Sledge.Packages.Pak
             return path.Substring(0, idx);
         }
 
+        public bool HasDirectory(string path)
+        {
+            return _folders.ContainsKey(path);
+        }
+
+        public bool HasFile(string path)
+        {
+            return _files.ContainsKey(path);
+        }
+
         public IEnumerable<string> GetDirectories(string path)
         {
             if (!_folders.ContainsKey(path)) return new string[0];

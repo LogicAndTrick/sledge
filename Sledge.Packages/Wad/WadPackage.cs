@@ -132,6 +132,7 @@ namespace Sledge.Packages.Wad
                     paletteSize = br.ReadUInt16();
                     paletteDataOffset = br.BaseStream.Position;
                     break;
+                    /*
                 case WadEntryType.Font:
                     width = br.ReadUInt32();
                     height = br.ReadUInt32();
@@ -139,7 +140,7 @@ namespace Sledge.Packages.Wad
                     br.BaseStream.Position += 8 + (256 * 4) + (width * height); // Skip font data, texture data
                     paletteSize = br.ReadUInt16();
                     paletteDataOffset = br.BaseStream.Position;
-                    break;
+                    break;*/
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -155,6 +156,16 @@ namespace Sledge.Packages.Wad
         private void BuildDirectories()
         {
             _files = GetEntries().OfType<WadEntry>().ToDictionary(x => x.Name, x => x);
+        }
+
+        public bool HasDirectory(string path)
+        {
+            return false;
+        }
+
+        public bool HasFile(string path)
+        {
+            return _files.ContainsKey(path);
         }
 
         public IEnumerable<string> GetDirectories(string path)
