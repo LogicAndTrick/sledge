@@ -90,7 +90,14 @@ namespace Sledge.Editor.Extensions
         private static void SetSprite(Entity entity, TextureItem tex)
         {
             entity.MetaData.Set(SpriteMetaKey, tex.Name);
-            var bb = new Coordinate(tex.Width, tex.Width, tex.Height);
+            var scale = 1m;
+            if (entity.GameData != null && entity.GameData.Properties.Any(x => String.Equals(x.Name, "scale", StringComparison.CurrentCultureIgnoreCase)))
+            {
+                var scaleStr = entity.GetEntityData().GetPropertyValue("scale");
+                if (!Decimal.TryParse(scaleStr, out scale)) scale = 1;
+                if (scale <= 0.1m) scale = 1;
+            }
+            var bb = new Coordinate(tex.Width, tex.Width, tex.Height) * scale;
 
             // Don't set the bounding box if the sprite comes from the iconsprite gamedata
             if (entity.GameData == null || !entity.GameData.Behaviours.Any(x => String.Equals(x.Name, "iconsprite", StringComparison.CurrentCultureIgnoreCase)))
