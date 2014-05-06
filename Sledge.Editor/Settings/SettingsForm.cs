@@ -1178,11 +1178,8 @@ namespace Sledge.Editor.Settings
         {
             if (_selectedGame == null) return;
             var steamdir = Path.Combine(SteamInstallDir.Text, "steamapps");
-            var username = SteamUsername.Text;
-            var userdir = Path.Combine(steamdir, username);
             var commondir = Path.Combine(steamdir, "common");
             var games = new List<string>();
-            if (Directory.Exists(userdir)) games.AddRange(Directory.GetDirectories(userdir).Select(Path.GetFileName));
             if (Directory.Exists(commondir)) games.AddRange(Directory.GetDirectories(commondir).Select(Path.GetFileName));
             var includeGoldsource = new[]
                               {
@@ -1249,8 +1246,7 @@ namespace Sledge.Editor.Settings
             SelectedGameBase.Items.Clear();
             SelectedGameExecutable.Items.Clear();
 
-            var dir = Path.Combine(SteamInstallDir.Text, "steamapps", SteamUsername.Text, SelectedGameSteamDir.Text);
-            if (!Directory.Exists(dir)) dir = Path.Combine(SteamInstallDir.Text, "steamapps", "common", SelectedGameSteamDir.Text);
+            var dir = Path.Combine(SteamInstallDir.Text, "steamapps", "common", SelectedGameSteamDir.Text);
             if (!Directory.Exists(dir)) return;
 
             var mods = Directory.GetDirectories(dir).Select(Path.GetFileName);
