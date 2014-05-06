@@ -525,19 +525,28 @@ namespace Sledge.Editor.Documents
             {
                 var def = _document.Game.DefaultBrushEntity;
                 var entity = _document.GameData.Classes.FirstOrDefault(x => x.Name.ToLower() == def.ToLower())
-                             ?? _document.GameData.Classes.Where(x => x.ClassType == ClassType.Solid).OrderBy(x => x.Name.StartsWith("trigger_once") ? 0 : 1).FirstOrDefault();
+                             ?? _document.GameData.Classes.Where(x => x.ClassType == ClassType.Solid)
+                                 .OrderBy(x => x.Name.StartsWith("trigger_once") ? 0 : 1)
+                                 .FirstOrDefault();
                 if (entity == null)
                 {
                     MessageBox.Show("No solid entities found. Please make sure your FGDs are configured correctly.", "No entities found!");
                     return;
                 }
                 existing = new Entity(_document.Map.IDGenerator.GetNextObjectID())
-                               {
-                                   EntityData = new EntityData(entity),
-                                   ClassName = entity.Name,
-                                   Colour = Colour.GetDefaultEntityColour()
-                               };
+                {
+                    EntityData = new EntityData(entity),
+                    ClassName = entity.Name,
+                    Colour = Colour.GetDefaultEntityColour()
+                };
                 ac.Add(new Create(_document.Map.WorldSpawn.ID, existing));
+            }
+            else
+            {
+                // Move the new parent to the root, in case it is a descendant of a selected parent...
+                ac.Add(new Reparent(_document.Map.WorldSpawn.ID, new[] { existing }));
+
+                // todo: get rid of all the other entities...
             }
                 
             var reparent = _document.Selection.GetSelectedParents().Where(x => x != existing).ToList();
