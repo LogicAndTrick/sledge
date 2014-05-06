@@ -51,8 +51,8 @@ namespace Sledge.Editor.Brushes
 
         public IEnumerable<MapObject> Create(IDGenerator generator, Box box, ITexture texture, int roundDecimals)
         {
-            var numsides = (int)_numSides.GetValue();
-            if (numsides < 3) yield break;
+            var numSides = (int)_numSides.GetValue();
+            if (numSides < 3) yield break;
 
             var width = box.Width;
             var length = box.Length;
@@ -61,16 +61,14 @@ namespace Sledge.Editor.Brushes
             var minor = length / 2;
             var heightRadius = height / 2;
             
-            var angleV = DMath.DegreesToRadians(180) / numsides;
-            var angleH = DMath.DegreesToRadians(360) / numsides;
-
-            var colour = Colour.GetRandomBrushColour();
+            var angleV = DMath.DegreesToRadians(180) / numSides;
+            var angleH = DMath.DegreesToRadians(360) / numSides;
 
             var faces = new List<Coordinate[]>();
-            var bottom = new Coordinate(box.Center.X, box.Center.Y, box.Start.Z).Round(roundDecimals); ;
-            var top = new Coordinate(box.Center.X, box.Center.Y, box.End.Z).Round(roundDecimals); ;
+            var bottom = new Coordinate(box.Center.X, box.Center.Y, box.Start.Z).Round(roundDecimals);
+            var top = new Coordinate(box.Center.X, box.Center.Y, box.End.Z).Round(roundDecimals);
             
-            for (var i = 0; i < numsides; i++)
+            for (var i = 0; i < numSides; i++)
             {
                 // Top -> bottom
                 var zAngleStart = angleV * i;
@@ -79,11 +77,11 @@ namespace Sledge.Editor.Brushes
                 var zEnd = heightRadius * DMath.Cos(zAngleEnd);
                 var zMultStart = DMath.Sin(zAngleStart);
                 var zMultEnd = DMath.Sin(zAngleEnd);
-                for (var j = 0; j < numsides; j++)
+                for (var j = 0; j < numSides; j++)
                 {
                     // Go around the circle in X/Y
                     var xyAngleStart = angleH * j;
-                    var xyAngleEnd = angleH * ((j + 1) % numsides);
+                    var xyAngleEnd = angleH * ((j + 1) % numSides);
                     var xyStartX = major * DMath.Cos(xyAngleStart);
                     var xyStartY = minor * DMath.Sin(xyAngleStart);
                     var xyEndX = major * DMath.Cos(xyAngleEnd);
@@ -97,7 +95,7 @@ namespace Sledge.Editor.Brushes
                         // Top faces are triangles
                         faces.Add(new[] { top, three, four });
                     }
-                    else if (i == numsides - 1)
+                    else if (i == numSides - 1)
                     {
                         // Bottom faces are also triangles
                         faces.Add(new[] { bottom, one, two });
@@ -109,7 +107,7 @@ namespace Sledge.Editor.Brushes
                     }
                 }
             }
-            yield return MakeSolid(generator, faces, texture, colour);
+            yield return MakeSolid(generator, faces, texture, Colour.GetRandomBrushColour());
         }
     }
 }

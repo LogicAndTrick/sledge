@@ -14,6 +14,7 @@ namespace Sledge.Editor.UI
     public partial class TransformDialog : Form
     {
         private readonly Box _source;
+        private decimal zeroValue = 0;
 
         public Coordinate TransformValue
         {
@@ -56,9 +57,9 @@ namespace Sledge.Editor.UI
             _source = source;
             InitializeComponent();
 
-            ZeroValueXButton.Click += (sender, e) => ValueX.Value = 0;
-            ZeroValueYButton.Click += (sender, e) => ValueY.Value = 0;
-            ZeroValueZButton.Click += (sender, e) => ValueZ.Value = 0;
+            ZeroValueXButton.Click += (sender, e) => ValueX.Value = zeroValue;
+            ZeroValueYButton.Click += (sender, e) => ValueY.Value = zeroValue;
+            ZeroValueZButton.Click += (sender, e) => ValueZ.Value = zeroValue;
 
             SourceValueXButton.Click += (sender, e) => ValueX.Value = _source.Width;
             SourceValueYButton.Click += (sender, e) => ValueY.Value = _source.Length;
@@ -73,17 +74,23 @@ namespace Sledge.Editor.UI
                 = SourceValueYButton.Visible
                   = SourceValueZButton.Visible
                     = Translate.Checked;
+            ZeroValueXButton.Text
+                = ZeroValueYButton.Text
+                  = ZeroValueZButton.Text
+                    = Scale.Checked ? "1" : "0";
             if (Scale.Checked)
             {
                 if (ValueX.Value == 0) ValueX.Value = 1;
                 if (ValueY.Value == 0) ValueY.Value = 1;
                 if (ValueZ.Value == 0) ValueZ.Value = 1;
+                zeroValue = 1;
             }
             else
             {
                 if (ValueX.Value == 1) ValueX.Value = 0;
                 if (ValueY.Value == 1) ValueY.Value = 0;
                 if (ValueZ.Value == 1) ValueZ.Value = 0;
+                zeroValue = 0;
             }
         }
 

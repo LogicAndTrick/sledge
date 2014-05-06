@@ -118,8 +118,6 @@ namespace Sledge.Editor.Brushes
             var crossAngle = DMath.DegreesToRadians(crossArc) / crossSides;
             var heightAdd = rotationHeight / ringSides;
 
-            var colour = Colour.GetRandomBrushColour();
-
             // Rotate around the ring, generating each cross section
             var ringOuterSections = new List<Coordinate[]>();
             var ringInnerSections = new List<Coordinate[]>();
@@ -149,6 +147,7 @@ namespace Sledge.Editor.Brushes
             }
 
             // Create the solids
+            var colour = Colour.GetRandomBrushColour();
             for (var i = 0; i < ringSides; i++)
             {
                 var vertical = Coordinate.UnitZ * heightAdd * i;

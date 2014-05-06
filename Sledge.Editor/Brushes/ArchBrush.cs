@@ -26,7 +26,7 @@ namespace Sledge.Editor.Brushes
         public ArchBrush()
         {
             _numSides = new NumericControl(this) { LabelText = "Number of sides" };
-            _wallWidth = new NumericControl(this) { LabelText = "Wall width", Minimum = 1, Maximum = 1024, Value = 16, Precision = 1 };
+            _wallWidth = new NumericControl(this) { LabelText = "Wall width", Minimum = 1, Maximum = 1024, Value = 32, Precision = 1 };
             _arc = new NumericControl(this) { LabelText = "Arc", Minimum = 1, Maximum = 360 * 4, Value = 360 };
             _startAngle = new NumericControl(this) { LabelText = "Start angle", Minimum = 0, Maximum = 359, Value = 0 };
             _addHeight = new NumericControl(this) { LabelText = "Add height", Minimum = -1024, Maximum = 1024, Value = 0, Precision = 1 };
@@ -105,8 +105,6 @@ namespace Sledge.Editor.Brushes
             var tilt = DMath.DegreesToRadians(tiltAngle);
             var angle = DMath.DegreesToRadians(arc) / numSides;
 
-            var colour = Colour.GetRandomBrushColour();
-
             // Calculate the coordinates of the inner and outer ellipses' points
             var outer = new Coordinate[numSides + 1];
             var inner = new Coordinate[numSides + 1];
@@ -129,10 +127,11 @@ namespace Sledge.Editor.Brushes
             }
 
             // Create the solids
+            var colour = Colour.GetRandomBrushColour();
+            var z = new Coordinate(0, 0, height).Round(roundDecimals);
             for (var i = 0; i < numSides; i++)
             {
                 var faces = new List<Coordinate[]>();
-                var z = new Coordinate(0, 0, height).Round(roundDecimals);
 
                 // Since we are triangulating/splitting each arch segment, we need to generate 2 brushes per side
                 if (curvedRamp)

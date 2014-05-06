@@ -29,18 +29,18 @@ namespace Sledge.Editor.Brushes
 
         public IEnumerable<MapObject> Create(IDGenerator generator, Box box, ITexture texture, int roundDecimals)
         {
-            var numsides = (int) _numSides.GetValue();
-            if (numsides < 3) yield break;
+            var numSides = (int) _numSides.GetValue();
+            if (numSides < 3) yield break;
 
             // This is all very similar to the cylinder brush.
             var width = box.Width;
             var length = box.Length;
             var major = width / 2;
             var minor = length / 2;
-            var angle = 2 * DMath.PI / numsides;
+            var angle = 2 * DMath.PI / numSides;
 
-            var points = new Coordinate[numsides];
-            for (var i = 0; i < numsides; i++)
+            var points = new Coordinate[numSides];
+            for (var i = 0; i < numSides; i++)
             {
                 var a = i * angle;
                 var xval = box.Center.X + major * DMath.Cos(a);
@@ -52,9 +52,9 @@ namespace Sledge.Editor.Brushes
             var faces = new List<Coordinate[]>();
 
             var point = new Coordinate(box.Center.X, box.Center.Y, box.End.Z).Round(roundDecimals);
-            for (var i = 0; i < numsides; i++)
+            for (var i = 0; i < numSides; i++)
             {
-                var next = (i + 1) % numsides;
+                var next = (i + 1) % numSides;
                 faces.Add(new[] {points[i], point, points[next]});
             }
             faces.Add(points.ToArray());
