@@ -60,6 +60,9 @@
     <Compile Include="DecalGeometryTest.cs" />
     <Compile Include="GeometricTest.cs" />
     <Compile Include="FileSystemTest.cs" />
+    <Compile Include="Packages\PakTest.cs" />
+    <Compile Include="Packages\WadTest.cs" />
+    <Compile Include="Packages\VpkTest.cs" />
     <Compile Include="PlaneIntersectionTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="AnglesTest.cs" />
@@ -89,9 +92,9 @@
       <Project>{614D4144-8920-4975-AC67-DBBA5CB1EB43}</Project>
       <Name>Sledge.Graphics</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Sledge.Libs\Sledge.Libs.csproj">
-      <Project>{111EA4FC-CBFB-4C0F-9E4B-F3B050BEC459}</Project>
-      <Name>Sledge.Libs</Name>
+    <ProjectReference Include="..\Sledge.Packages\Sledge.Packages.csproj">
+      <Project>{BB1AF818-8CCA-4BC8-A4A8-B7A0627B68DD}</Project>
+      <Name>Sledge.Packages</Name>
     </ProjectReference>
     <ProjectReference Include="..\Sledge.Providers\Sledge.Providers.csproj">
       <Project>{C7BD4AC8-1F8D-4520-AF2D-D279C0601AB4}</Project>

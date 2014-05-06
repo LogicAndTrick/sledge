@@ -21,24 +21,9 @@ namespace Sledge.FileSystem
         Zip,
 
         /// <summary>
-        /// A Steam GCF file
+        /// A GoldSource PAK container or Valve VPK container file
         /// </summary>
-        Gcf,
-
-        /// <summary>
-        /// A GoldSource WAD texture file
-        /// </summary>
-        Wad,
-
-        /// <summary>
-        /// A WON GoldSource PAK container file
-        /// </summary>
-        Pak,
-
-        /// <summary>
-        /// A Valve VPK file
-        /// </summary>
-        Vpk,
+        Package,
 
         /// <summary>
         /// A file that doesn't exist on the disk

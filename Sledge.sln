@@ -12,8 +12,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sledge.Editor", "Sledge.Edi
 		{262FC468-01B6-451A-ABE9-9B6E00B29F81} = {262FC468-01B6-451A-ABE9-9B6E00B29F81}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sledge.Libs", "Sledge.Libs\Sledge.Libs.csproj", "{111EA4FC-CBFB-4C0F-9E4B-F3B050BEC459}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sledge.Providers", "Sledge.Providers\Sledge.Providers.csproj", "{C7BD4AC8-1F8D-4520-AF2D-D279C0601AB4}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sledge.DataStructures", "Sledge.DataStructures\Sledge.DataStructures.csproj", "{26A974C9-E495-4FA3-8E87-1E00019D04F5}"
@@ -41,6 +39,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sledge.Editor.Elevate", "Sledge.Editor.Elevate\Sledge.Editor.Elevate.csproj", "{262FC468-01B6-451A-ABE9-9B6E00B29F81}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sledge.Packages", "Sledge.Packages\Sledge.Packages.csproj", "{BB1AF818-8CCA-4BC8-A4A8-B7A0627B68DD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -88,18 +88,6 @@ Global
 		{DFF00869-B064-483D-95C0-A88039C471C7}.Release|Mixed Platforms.Build.0 = Release|x86
 		{DFF00869-B064-483D-95C0-A88039C471C7}.Release|x86.ActiveCfg = Release|x86
 		{DFF00869-B064-483D-95C0-A88039C471C7}.Release|x86.Build.0 = Release|x86
-		{111EA4FC-CBFB-4C0F-9E4B-F3B050BEC459}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{111EA4FC-CBFB-4C0F-9E4B-F3B050BEC459}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{111EA4FC-CBFB-4C0F-9E4B-F3B050BEC459}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{111EA4FC-CBFB-4C0F-9E4B-F3B050BEC459}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{111EA4FC-CBFB-4C0F-9E4B-F3B050BEC459}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{111EA4FC-CBFB-4C0F-9E4B-F3B050BEC459}.Debug|x86.Build.0 = Debug|Any CPU
-		{111EA4FC-CBFB-4C0F-9E4B-F3B050BEC459}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{111EA4FC-CBFB-4C0F-9E4B-F3B050BEC459}.Release|Any CPU.Build.0 = Release|Any CPU
-		{111EA4FC-CBFB-4C0F-9E4B-F3B050BEC459}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{111EA4FC-CBFB-4C0F-9E4B-F3B050BEC459}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{111EA4FC-CBFB-4C0F-9E4B-F3B050BEC459}.Release|x86.ActiveCfg = Release|Any CPU
-		{111EA4FC-CBFB-4C0F-9E4B-F3B050BEC459}.Release|x86.Build.0 = Release|Any CPU
 		{C7BD4AC8-1F8D-4520-AF2D-D279C0601AB4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{C7BD4AC8-1F8D-4520-AF2D-D279C0601AB4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C7BD4AC8-1F8D-4520-AF2D-D279C0601AB4}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
@@ -214,6 +202,16 @@ Global
 		{262FC468-01B6-451A-ABE9-9B6E00B29F81}.Release|Mixed Platforms.Build.0 = Release|x86
 		{262FC468-01B6-451A-ABE9-9B6E00B29F81}.Release|x86.ActiveCfg = Release|x86
 		{262FC468-01B6-451A-ABE9-9B6E00B29F81}.Release|x86.Build.0 = Release|x86
+		{BB1AF818-8CCA-4BC8-A4A8-B7A0627B68DD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BB1AF818-8CCA-4BC8-A4A8-B7A0627B68DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BB1AF818-8CCA-4BC8-A4A8-B7A0627B68DD}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{BB1AF818-8CCA-4BC8-A4A8-B7A0627B68DD}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{BB1AF818-8CCA-4BC8-A4A8-B7A0627B68DD}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{BB1AF818-8CCA-4BC8-A4A8-B7A0627B68DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BB1AF818-8CCA-4BC8-A4A8-B7A0627B68DD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BB1AF818-8CCA-4BC8-A4A8-B7A0627B68DD}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{BB1AF818-8CCA-4BC8-A4A8-B7A0627B68DD}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{BB1AF818-8CCA-4BC8-A4A8-B7A0627B68DD}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

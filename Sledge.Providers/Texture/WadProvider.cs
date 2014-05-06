@@ -1,15 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing.Imaging;
 using System.Globalization;
 using System.Linq;
 using System.IO;
-using System.Threading;
 using Sledge.FileSystem;
-using Sledge.Graphics;
 using Sledge.Graphics.Helpers;
-using Sledge.Libs.HLLib;
 using System.Drawing;
+using Sledge.Packages;
+using Sledge.Packages.Wad;
 
 namespace Sledge.Providers.Texture
 {
@@ -69,69 +67,39 @@ namespace Sledge.Providers.Texture
 
         private class WadStreamSource : ITextureStreamSource
         {
-            private readonly List<TexturePackage> _texturePackages;
-            private readonly Dictionary<IFile, Tuple<HLLib.Package, HLLib.Folder>> _packages;
+            private readonly List<WadPackage> _packages;
+            private readonly List<IPackageStreamSource> _streams;
 
             public WadStreamSource(IEnumerable<TexturePackage> packages)
             {
-                _texturePackages = new List<TexturePackage>();
-                _packages = new Dictionary<IFile, Tuple<HLLib.Package, HLLib.Folder>>();
-                HLLib.Initialize();
-                foreach (var tp in packages)
-                {
-                    if (_packages.ContainsKey(tp.PackageFile)) continue;
-                    var pack = new HLLib.Package(tp.PackageFile.FullPathName);
-                    _texturePackages.Add(tp);
-                    _packages.Add(tp.PackageFile, Tuple.Create(pack, pack.GetRootFolder()));
-                }
+                _packages = packages.Select(x => new WadPackage(new FileInfo(x.PackageFile.FullPathName))).ToList();
+                _streams = _packages.Select(x => x.GetStreamSource()).ToList();
             }
 
             public bool HasImage(TextureItem item)
             {
-                return _texturePackages.Any(x => x.Items.ContainsValue(item));
+                return _streams.Any(x => x.HasFile(item.Name));
             }
 
             public Bitmap GetImage(TextureItem item)
             {
-                var root = _packages[item.Package.PackageFile];
-                var search = root.Item2.GetItemByName(item.Name + ".bmp", HLLib.FindType.Files);
-                if (search.Exists)
+                using (var stream = _streams.First(x => x.HasFile(item.Name)).OpenFile(item.Name))
                 {
-                    using (var stream = root.Item1.CreateStream(search))
-                    {
-                        var bmp = new Bitmap(new MemoryStream(stream.ReadAll()));
-                        bool hasTransparency;
-                        return PostProcessBitmap(item.Name, bmp, out hasTransparency);
-                    }
+                    bool hasTransparency;
+                    return PostProcessBitmap(item.Name, new Bitmap(stream), out hasTransparency);
                 }
-                return null;
             }
 
             public void Dispose()
             {
-                foreach (var root in _packages)
-                {
-                    try
-                    {
-                        root.Value.Item1.Dispose();
-                    }
-                    catch
-                    {
-                        // Continue regardless
-                    }
-                }
-                HLLib.Shutdown();
+                _streams.ForEach(x => x.Dispose());
+                _packages.ForEach(x => x.Dispose());
             }
         }
 
         public override bool IsValidForPackageFile(IFile package)
         {
             return package.FullPathName.EndsWith(".wad", true, CultureInfo.InvariantCulture) && File.Exists(package.FullPathName);
-        }
-
-        private bool IsValidLumpType(uint type)
-        {
-            return type == 0x42 || type == 0x43;
         }
 
         private const char NullCharacter = (char) 0;
@@ -186,26 +154,15 @@ namespace Sledge.Providers.Texture
 
         public override TexturePackage CreatePackage(IFile package)
         {
+            if (!File.Exists(package.FullPathName)) throw new ProviderException("The WAD Provider only supports the native file system.");
+
             var tp = new TexturePackage(package, this);
             if (LoadFromCache(tp)) return tp;
 
             var list = new List<TextureItem>();
-            try
+            using (var pack = new WadPackage(new FileInfo(package.FullPathName)))
             {
-                HLLib.Initialize();
-                using (var pack = new HLLib.Package(package.FullPathName))
-                {
-                    var folder = pack.GetRootFolder();
-                    var items = folder.GetItems();
-                    list.AddRange(items
-                        .Select(item => new HLLib.WADFile(item))
-                        .Where(wad => IsValidLumpType(wad.GetLumpType()))
-                        .Select(wad => new TextureItem(tp, StripExtension(wad.Name), wad.Width, wad.Height)));
-                }
-            }
-            finally
-            {
-                HLLib.Shutdown();
+                list.AddRange(pack.GetEntries().OfType<WadEntry>().Select(x => new TextureItem(tp, x.Name, (int) x.Width, (int) x.Height)));
             }
             foreach (var ti in list)
             {
@@ -213,15 +170,6 @@ namespace Sledge.Providers.Texture
             }
             SaveToCache(tp);
             return tp;
-        }
-
-        public static string StripExtension(string path)
-        {
-            // WAD seems to support texture names that aren't valid in Windows, so Path.GetFileNameWithoutExtension throws an error.
-            // Replicate the results with StripExtension.
-            // Input = FILE_NAME.bmp
-            var idx = path.LastIndexOf('.');
-            return idx < 0 ? path : path.Substring(0, idx);
         }
 
         public override void LoadTexture(TextureItem item)
@@ -232,36 +180,25 @@ namespace Sledge.Providers.Texture
         public override void LoadTextures(IEnumerable<TextureItem> items)
         {
             var list = items.ToList();
-            var packages = list.Select(x => x.Package).Distinct();
-            try
+            var packages = list.Select(x => x.Package).Distinct().ToList();
+            var packs = packages.Select(x => new WadPackage(new FileInfo(x.PackageFile.FullPathName))).ToList();
+            var streams = packs.Select(x => x.GetStreamSource()).ToList();
+            foreach (var ti in list)
             {
-                HLLib.Initialize();
-                foreach (var package in packages)
+                foreach (var stream in streams)
                 {
-                    var p = package;
-                    using (var pack = new HLLib.Package(p.PackageFile.FullPathName))
-                    {
-                        var folder = pack.GetRootFolder();
-                        foreach (var ti in list.Where(x => x.Package == p))
-                        {
-                            var item = folder.GetItemByName(ti.Name + ".bmp", HLLib.FindType.Files);
-                            if (!item.Exists) continue;
-                            using (var stream = pack.CreateStream(item))
-                            {
-                                var bmp = new Bitmap(new MemoryStream(stream.ReadAll()));
-                                bool hasTransparency;
-                                bmp = PostProcessBitmap(ti.Name, bmp, out hasTransparency);
-                                TextureHelper.Create(ti.Name.ToLowerInvariant(), bmp, hasTransparency);
-                                bmp.Dispose();
-                            }
-                        }
-                    }
+                    var open = stream.OpenFile(ti.Name);
+                    if (open == null) continue;
+                    var bmp = new Bitmap(open);
+                    bool hasTransparency;
+                    bmp = PostProcessBitmap(ti.Name, bmp, out hasTransparency);
+                    TextureHelper.Create(ti.Name.ToLowerInvariant(), bmp, hasTransparency);
+                    bmp.Dispose();
+                    open.Dispose();
+                    break;
                 }
             }
-            finally
-            {
-                HLLib.Shutdown();
-            }
+            foreach (var pack in packs) pack.Dispose();
         }
 
         public override ITextureStreamSource GetStreamSource(IEnumerable<TexturePackage> packages)

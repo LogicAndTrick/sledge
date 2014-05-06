@@ -3,12 +3,9 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Text;
-using OpenTK.Input;
 using Sledge.Common;
 using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.MapObjects;
-using Sledge.Libs;
 
 namespace Sledge.Providers.Map
 {

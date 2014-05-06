@@ -14,7 +14,7 @@ namespace Sledge.FileSystem
         protected FileInfo FileInfo { get; set; }
         protected DirectoryInfo DirectoryInfo { get; set; }
 
-        private IEnumerable<PakFile> _pakFiles;
+        private IEnumerable<InlinePackageFile> _packages;
 
         public NativeFile(FileInfo fileInfo)
         {
@@ -118,10 +118,12 @@ namespace Sledge.FileSystem
             return GetRelatedFiles().FirstOrDefault(x => String.Equals(x.Extension, extension, StringComparison.CurrentCultureIgnoreCase));
         }
 
-        private void LoadPakFiles()
+        private void LoadPackages()
         {
-            if (_pakFiles != null) return;
-            _pakFiles = DirectoryInfo.GetFiles("*.pak").Select(x => new PakFile(x.FullName)).ToList();
+            if (_packages != null) return;
+            var paks = DirectoryInfo.GetFiles("*.pak").Select(x => new InlinePackageFile(x.FullName)).ToList();
+            var vpks = DirectoryInfo.GetFiles("*_dir.vpk").Select(x => new InlinePackageFile(x.FullName)).ToList();
+            _packages = paks.Union(vpks).ToList();
         }
 
         public IFile GetChild(string name)
@@ -132,8 +134,8 @@ namespace Sledge.FileSystem
         public IEnumerable<IFile> GetChildren()
         {
             if (!IsContainer) return new List<IFile>();
-            LoadPakFiles();
-            var children = _pakFiles.SelectMany(x => x.GetChildren()).ToList();
+            LoadPackages();
+            var children = _packages.SelectMany(x => x.GetChildren()).ToList();
             var dirs = DirectoryInfo.GetDirectories().Select<DirectoryInfo, IFile>(x =>
             {
                 var nf = new NativeFile(x);
@@ -168,9 +170,9 @@ namespace Sledge.FileSystem
         public IEnumerable<IFile> GetFiles()
         {
             if (!IsContainer) return new List<IFile>();
-            LoadPakFiles();
+            LoadPackages();
             var files = DirectoryInfo.GetFiles().Select(fileInfo => new NativeFile(fileInfo)).ToList<IFile>();
-            foreach (var f in _pakFiles.SelectMany(x => x.GetFiles()))
+            foreach (var f in _packages.SelectMany(x => x.GetFiles()))
             {
                 if (!files.Any(x => String.Equals(x.Name, f.Name, StringComparison.CurrentCultureIgnoreCase)))
                 {
