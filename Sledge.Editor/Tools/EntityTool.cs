@@ -1,9 +1,12 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using OpenTK.Graphics.OpenGL;
 using Sledge.Common;
 using Sledge.Common.Mediator;
+using Sledge.DataStructures.GameData;
 using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.MapObjects;
 using Sledge.Editor.Actions;
@@ -28,6 +31,7 @@ namespace Sledge.Editor.Tools
 
         private Coordinate _location;
         private EntityState _state;
+        private ToolStripItem[] _menu;
 
         public EntityTool()
         {
@@ -44,6 +48,56 @@ namespace Sledge.Editor.Tools
         public override string GetName()
         {
             return "Entity Tool";
+        }
+        
+        public override void ToolSelected(bool preventHistory)
+        {
+            System.Threading.Tasks.Task.Factory.StartNew(BuildMenu);
+        }
+
+        public override void ToolDeselected(bool preventHistory)
+        {
+            if (_menu != null)
+            {
+                foreach (var m in _menu) m.Dispose();
+            }
+            _menu = null;
+        }
+
+        private void BuildMenu()
+        {
+            var items = new List<ToolStripItem>();
+            var classes = Document.GameData.Classes.Where(x => x.ClassType != ClassType.Base && x.ClassType != ClassType.Solid).ToList();
+            var groups = classes.GroupBy(x => x.Name.Split('_')[0]);
+            foreach (var g in groups)
+            {
+                var mi = new ToolStripMenuItem(g.Key);
+                var l = g.ToList();
+                if (l.Count == 1)
+                {
+                    var cls = l[0];
+                    mi.Text = cls.Name;
+                    mi.Tag = cls;
+                    mi.Click += ClickMenuItem;
+                }
+                else
+                {
+                    var subs = l.Select(x =>
+                    {
+                        var item = new ToolStripMenuItem(x.Name) { Tag = x };
+                        item.Click += ClickMenuItem;
+                        return item;
+                    }).OfType<ToolStripItem>().ToArray();
+                    mi.DropDownItems.AddRange(subs);
+                }
+                items.Add(mi);
+            }
+            _menu = items.ToArray();
+        }
+
+        private void ClickMenuItem(object sender, EventArgs e)
+        {
+            CreateEntity(_location, ((ToolStripItem)sender).Tag as GameDataObject);
         }
 
         public override HotkeyTool? GetHotkeyToolType()
@@ -68,7 +122,7 @@ namespace Sledge.Editor.Tools
                 MouseDown((Viewport3D) viewport, e);
                 return;
             }
-            if (e.Button != MouseButtons.Left) return;
+            if (e.Button != MouseButtons.Left && e.Button != MouseButtons.Right) return;
 
             _state = EntityState.Moving;
             var vp = (Viewport2D) viewport;
@@ -150,9 +204,9 @@ namespace Sledge.Editor.Tools
             }
         }
 
-        private void CreateEntity(Coordinate origin)
+        private void CreateEntity(Coordinate origin, GameDataObject gd = null)
         {
-            var gd = Document.GetSelectedEntity();
+            if (gd == null) gd = Document.GetSelectedEntity();
             if (gd == null) return;
 
             var col = gd.Behaviours.Where(x => x.Name == "color").ToArray();
@@ -166,14 +220,13 @@ namespace Sledge.Editor.Tools
                 Origin = origin
             };
 
+            if (Select.SelectCreatedEntity) entity.IsSelected = true;
+
             IAction action = new Create(Document.Map.WorldSpawn.ID, entity);
-            if (Select.SelectCreatedEntity)
+
+            if (Select.SelectCreatedEntity && Select.DeselectOthersWhenSelectingCreation)
             {
-                entity.IsSelected = true;
-                if (Select.DeselectOthersWhenSelectingCreation)
-                {
-                    action = new ActionCollection(new ChangeSelection(new MapObject[0], Document.Selection.GetSelectedObjects()), action);
-                }
+                action = new ActionCollection(new ChangeSelection(new MapObject[0], Document.Selection.GetSelectedObjects()), action);
             }
 
             Document.PerformAction("Create entity: " + gd.Name, action);
@@ -264,16 +317,24 @@ namespace Sledge.Editor.Tools
             }
             return HotkeyInterceptResult.Continue;
         }
+
         public override void OverrideViewportContextMenu(ViewportContextMenu menu, Viewport2D vp, ViewportEvent e)
         {
             menu.Items.Clear();
-            var point = vp.ScreenToWorld(e.X, vp.Height - e.Y);
-            var loc = vp.Flatten(_location);
-            if ((loc-point).VectorMagnitude() < 10)
+            if (_location == null) return;
+
+            var gd = Document.GetSelectedEntity();
+            if (gd != null)
             {
-                var item = new ToolStripMenuItem("Create Object");
+                var item = new ToolStripMenuItem("Create " + gd.Name);
                 item.Click += (sender, args) => CreateEntity(_location);
                 menu.Items.Add(item);
+                menu.Items.Add(new ToolStripSeparator());
+            }
+
+            if (_menu != null)
+            {
+                menu.Items.AddRange(_menu);
             }
         }
     }
