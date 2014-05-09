@@ -9,6 +9,7 @@ namespace Sledge.Editor.Compiling
         public string Name { get; set; }
         public string Description { get; set; }
         public int Order { get; set; }
+        public bool Enabled { get; set; }
         public List<CompileParameter> Parameters { get; private set; }
 
         public CompileTool()
@@ -22,7 +23,8 @@ namespace Sledge.Editor.Compiling
             {
                 Name = gs["Name"] ?? "",
                 Description = gs["Description"] ?? "",
-                Order = gs.PropertyInteger("Order")
+                Order = gs.PropertyInteger("Order"),
+                Enabled = gs.PropertyBoolean("Enabled", true)
             };
             var parameters = gs.GetChildren("Parameter");
             tool.Parameters.AddRange(parameters.Select(CompileParameter.Parse));

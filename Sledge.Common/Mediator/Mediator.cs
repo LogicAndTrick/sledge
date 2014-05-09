@@ -45,7 +45,7 @@ namespace Sledge.Common.Mediator
             if (parameter is object[])
             {
                 var arr = (object[]) parameter;
-                method = t.GetMethod(message, flags, null, arr.Select(x => x.GetType()).ToArray(), null);
+                method = t.GetMethod(message, flags, null, arr.Select(x => x == null ? typeof (object) : x.GetType()).ToArray(), null);
                 parameters = arr;
             }
             if (method == null && parameter != null)

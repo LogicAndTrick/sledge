@@ -98,7 +98,11 @@ namespace Sledge.Editor.Settings
             this.CameraFOV = new System.Windows.Forms.NumericUpDown();
             this.label29 = new System.Windows.Forms.Label();
             this.groupBox13 = new System.Windows.Forms.GroupBox();
+            this.label32 = new System.Windows.Forms.Label();
             this.label43 = new System.Windows.Forms.Label();
+            this.label31 = new System.Windows.Forms.Label();
+            this.TimeToTopSpeedUpDown = new System.Windows.Forms.NumericUpDown();
+            this.ForwardSpeedUpDown = new System.Windows.Forms.NumericUpDown();
             this.MouseWheelMoveDistance = new System.Windows.Forms.NumericUpDown();
             this.InvertMouseX = new System.Windows.Forms.CheckBox();
             this.InvertMouseY = new System.Windows.Forms.CheckBox();
@@ -108,6 +112,9 @@ namespace Sledge.Editor.Settings
             this.ForwardSpeed = new System.Windows.Forms.TrackBar();
             this.groupBox14 = new System.Windows.Forms.GroupBox();
             this.label26 = new System.Windows.Forms.Label();
+            this.DetailRenderDistanceUpDown = new System.Windows.Forms.NumericUpDown();
+            this.ModelRenderDistanceUpDown = new System.Windows.Forms.NumericUpDown();
+            this.BackClippingPlaneUpDown = new System.Windows.Forms.NumericUpDown();
             this.label24 = new System.Windows.Forms.Label();
             this.label22 = new System.Windows.Forms.Label();
             this.DetailRenderDistance = new System.Windows.Forms.TrackBar();
@@ -234,11 +241,21 @@ namespace Sledge.Editor.Settings
             this.SelectedBuildProfile = new System.Windows.Forms.ComboBox();
             this.label40 = new System.Windows.Forms.Label();
             this.tabBuildAdvancedSubTabs = new System.Windows.Forms.TabControl();
+            this.tabBuildAdvancedSteps = new System.Windows.Forms.TabPage();
+            this.SelectedBuildRunRadCheckbox = new System.Windows.Forms.CheckBox();
+            this.SelectedBuildRunVisCheckbox = new System.Windows.Forms.CheckBox();
+            this.SelectedBuildRunBspCheckbox = new System.Windows.Forms.CheckBox();
+            this.SelectedBuildRunCsgCheckbox = new System.Windows.Forms.CheckBox();
             this.tabBuildAdvancedCSG = new System.Windows.Forms.TabPage();
+            this.SelectedBuildCsgParameters = new Sledge.Editor.Compiling.CompileParameterPanel();
             this.tabBuildAdvancedBSP = new System.Windows.Forms.TabPage();
+            this.SelectedBuildBspParameters = new Sledge.Editor.Compiling.CompileParameterPanel();
             this.tabBuildAdvancedVIS = new System.Windows.Forms.TabPage();
+            this.SelectedBuildVisParameters = new Sledge.Editor.Compiling.CompileParameterPanel();
             this.tabBuildAdvancedRAD = new System.Windows.Forms.TabPage();
+            this.SelectedBuildRadParameters = new Sledge.Editor.Compiling.CompileParameterPanel();
             this.tabBuildAdvancedShared = new System.Windows.Forms.TabPage();
+            this.SelectedBuildSharedParameters = new Sledge.Editor.Compiling.CompileParameterPanel();
             this.tabBuildAdvancedPreview = new System.Windows.Forms.TabPage();
             this.SelectedBuildProfilePreview = new System.Windows.Forms.TextBox();
             this.RemoveBuild = new System.Windows.Forms.Button();
@@ -288,18 +305,7 @@ namespace Sledge.Editor.Settings
             this.btnCancelSettings = new System.Windows.Forms.Button();
             this.btnApplyAndCloseSettings = new System.Windows.Forms.Button();
             this.btnApplySettings = new System.Windows.Forms.Button();
-            this.BackClippingPlaneUpDown = new System.Windows.Forms.NumericUpDown();
-            this.ModelRenderDistanceUpDown = new System.Windows.Forms.NumericUpDown();
-            this.DetailRenderDistanceUpDown = new System.Windows.Forms.NumericUpDown();
-            this.label31 = new System.Windows.Forms.Label();
-            this.label32 = new System.Windows.Forms.Label();
-            this.ForwardSpeedUpDown = new System.Windows.Forms.NumericUpDown();
-            this.TimeToTopSpeedUpDown = new System.Windows.Forms.NumericUpDown();
-            this.SelectedBuildCsgParameters = new Sledge.Editor.Compiling.CompileParameterPanel();
-            this.SelectedBuildBspParameters = new Sledge.Editor.Compiling.CompileParameterPanel();
-            this.SelectedBuildVisParameters = new Sledge.Editor.Compiling.CompileParameterPanel();
-            this.SelectedBuildRadParameters = new Sledge.Editor.Compiling.CompileParameterPanel();
-            this.SelectedBuildSharedParameters = new Sledge.Editor.Compiling.CompileParameterPanel();
+            this.SelectedBuildDontRedirectOutput = new System.Windows.Forms.CheckBox();
             this.tbcSettings.SuspendLayout();
             this.tabGeneral.SuspendLayout();
             this.tabIntegration.SuspendLayout();
@@ -320,10 +326,15 @@ namespace Sledge.Editor.Settings
             this.groupBox12.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.CameraFOV)).BeginInit();
             this.groupBox13.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.TimeToTopSpeedUpDown)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ForwardSpeedUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.MouseWheelMoveDistance)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.TimeToTopSpeed)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ForwardSpeed)).BeginInit();
             this.groupBox14.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.DetailRenderDistanceUpDown)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ModelRenderDistanceUpDown)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.BackClippingPlaneUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.DetailRenderDistance)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ModelRenderDistance)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.BackClippingPane)).BeginInit();
@@ -346,6 +357,7 @@ namespace Sledge.Editor.Settings
             this.tabBuildExecutables.SuspendLayout();
             this.tabBuildAdvanced.SuspendLayout();
             this.tabBuildAdvancedSubTabs.SuspendLayout();
+            this.tabBuildAdvancedSteps.SuspendLayout();
             this.tabBuildAdvancedCSG.SuspendLayout();
             this.tabBuildAdvancedBSP.SuspendLayout();
             this.tabBuildAdvancedVIS.SuspendLayout();
@@ -362,11 +374,6 @@ namespace Sledge.Editor.Settings
             ((System.ComponentModel.ISupportInitialize)(this.trackBar2)).BeginInit();
             this.groupBox7.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.BackClippingPlaneUpDown)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.ModelRenderDistanceUpDown)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.DetailRenderDistanceUpDown)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.ForwardSpeedUpDown)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.TimeToTopSpeedUpDown)).BeginInit();
             this.SuspendLayout();
             // 
             // tbcSettings
@@ -1104,6 +1111,16 @@ namespace Sledge.Editor.Settings
             this.groupBox13.TabStop = false;
             this.groupBox13.Text = "Navigation";
             // 
+            // label32
+            // 
+            this.label32.AutoSize = true;
+            this.label32.Location = new System.Drawing.Point(400, 104);
+            this.label32.Name = "label32";
+            this.label32.Size = new System.Drawing.Size(47, 13);
+            this.label32.TabIndex = 7;
+            this.label32.Text = "seconds";
+            this.label32.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
             // label43
             // 
             this.label43.Location = new System.Drawing.Point(238, 148);
@@ -1112,6 +1129,68 @@ namespace Sledge.Editor.Settings
             this.label43.TabIndex = 6;
             this.label43.Text = "Mouse wheel move distance";
             this.label43.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // label31
+            // 
+            this.label31.AutoSize = true;
+            this.label31.Location = new System.Drawing.Point(399, 56);
+            this.label31.Name = "label31";
+            this.label31.Size = new System.Drawing.Size(51, 13);
+            this.label31.TabIndex = 7;
+            this.label31.Text = "units/sec";
+            this.label31.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // TimeToTopSpeedUpDown
+            // 
+            this.TimeToTopSpeedUpDown.DecimalPlaces = 1;
+            this.TimeToTopSpeedUpDown.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            this.TimeToTopSpeedUpDown.Location = new System.Drawing.Point(392, 81);
+            this.TimeToTopSpeedUpDown.Maximum = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
+            this.TimeToTopSpeedUpDown.Name = "TimeToTopSpeedUpDown";
+            this.TimeToTopSpeedUpDown.Size = new System.Drawing.Size(65, 20);
+            this.TimeToTopSpeedUpDown.TabIndex = 5;
+            this.TimeToTopSpeedUpDown.Value = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
+            this.TimeToTopSpeedUpDown.ValueChanged += new System.EventHandler(this.TimeToTopSpeedUpDownValueChanged);
+            // 
+            // ForwardSpeedUpDown
+            // 
+            this.ForwardSpeedUpDown.Increment = new decimal(new int[] {
+            100,
+            0,
+            0,
+            0});
+            this.ForwardSpeedUpDown.Location = new System.Drawing.Point(392, 33);
+            this.ForwardSpeedUpDown.Maximum = new decimal(new int[] {
+            5000,
+            0,
+            0,
+            0});
+            this.ForwardSpeedUpDown.Minimum = new decimal(new int[] {
+            100,
+            0,
+            0,
+            0});
+            this.ForwardSpeedUpDown.Name = "ForwardSpeedUpDown";
+            this.ForwardSpeedUpDown.Size = new System.Drawing.Size(65, 20);
+            this.ForwardSpeedUpDown.TabIndex = 5;
+            this.ForwardSpeedUpDown.Value = new decimal(new int[] {
+            500,
+            0,
+            0,
+            0});
+            this.ForwardSpeedUpDown.ValueChanged += new System.EventHandler(this.ForwardSpeedUpDownValueChanged);
             // 
             // MouseWheelMoveDistance
             // 
@@ -1221,6 +1300,90 @@ namespace Sledge.Editor.Settings
             this.label26.Size = new System.Drawing.Size(110, 13);
             this.label26.TabIndex = 4;
             this.label26.Text = "Detail render distance";
+            // 
+            // DetailRenderDistanceUpDown
+            // 
+            this.DetailRenderDistanceUpDown.Increment = new decimal(new int[] {
+            100,
+            0,
+            0,
+            0});
+            this.DetailRenderDistanceUpDown.Location = new System.Drawing.Point(392, 134);
+            this.DetailRenderDistanceUpDown.Maximum = new decimal(new int[] {
+            30000,
+            0,
+            0,
+            0});
+            this.DetailRenderDistanceUpDown.Minimum = new decimal(new int[] {
+            200,
+            0,
+            0,
+            0});
+            this.DetailRenderDistanceUpDown.Name = "DetailRenderDistanceUpDown";
+            this.DetailRenderDistanceUpDown.Size = new System.Drawing.Size(65, 20);
+            this.DetailRenderDistanceUpDown.TabIndex = 5;
+            this.DetailRenderDistanceUpDown.Value = new decimal(new int[] {
+            500,
+            0,
+            0,
+            0});
+            this.DetailRenderDistanceUpDown.ValueChanged += new System.EventHandler(this.DetailRenderDistanceUpDownValueChanged);
+            // 
+            // ModelRenderDistanceUpDown
+            // 
+            this.ModelRenderDistanceUpDown.Increment = new decimal(new int[] {
+            100,
+            0,
+            0,
+            0});
+            this.ModelRenderDistanceUpDown.Location = new System.Drawing.Point(392, 79);
+            this.ModelRenderDistanceUpDown.Maximum = new decimal(new int[] {
+            30000,
+            0,
+            0,
+            0});
+            this.ModelRenderDistanceUpDown.Minimum = new decimal(new int[] {
+            200,
+            0,
+            0,
+            0});
+            this.ModelRenderDistanceUpDown.Name = "ModelRenderDistanceUpDown";
+            this.ModelRenderDistanceUpDown.Size = new System.Drawing.Size(65, 20);
+            this.ModelRenderDistanceUpDown.TabIndex = 5;
+            this.ModelRenderDistanceUpDown.Value = new decimal(new int[] {
+            500,
+            0,
+            0,
+            0});
+            this.ModelRenderDistanceUpDown.ValueChanged += new System.EventHandler(this.ModelRenderDistanceUpDownValueChanged);
+            // 
+            // BackClippingPlaneUpDown
+            // 
+            this.BackClippingPlaneUpDown.Increment = new decimal(new int[] {
+            100,
+            0,
+            0,
+            0});
+            this.BackClippingPlaneUpDown.Location = new System.Drawing.Point(392, 32);
+            this.BackClippingPlaneUpDown.Maximum = new decimal(new int[] {
+            30000,
+            0,
+            0,
+            0});
+            this.BackClippingPlaneUpDown.Minimum = new decimal(new int[] {
+            2000,
+            0,
+            0,
+            0});
+            this.BackClippingPlaneUpDown.Name = "BackClippingPlaneUpDown";
+            this.BackClippingPlaneUpDown.Size = new System.Drawing.Size(65, 20);
+            this.BackClippingPlaneUpDown.TabIndex = 5;
+            this.BackClippingPlaneUpDown.Value = new decimal(new int[] {
+            2000,
+            0,
+            0,
+            0});
+            this.BackClippingPlaneUpDown.ValueChanged += new System.EventHandler(this.BackClippingPlaneUpDownValueChanged);
             // 
             // label24
             // 
@@ -2153,6 +2316,7 @@ namespace Sledge.Editor.Settings
             // 
             // tabBuildGeneral
             // 
+            this.tabBuildGeneral.Controls.Add(this.SelectedBuildDontRedirectOutput);
             this.tabBuildGeneral.Controls.Add(this.groupBox26);
             this.tabBuildGeneral.Controls.Add(this.groupBox25);
             this.tabBuildGeneral.Controls.Add(this.groupBox24);
@@ -2179,7 +2343,7 @@ namespace Sledge.Editor.Settings
             this.groupBox26.Controls.Add(this.SelectedBuildCopyRes);
             this.groupBox26.Controls.Add(this.SelectedBuildCopyMap);
             this.groupBox26.Controls.Add(this.SelectedBuildCopyBsp);
-            this.groupBox26.Location = new System.Drawing.Point(6, 295);
+            this.groupBox26.Location = new System.Drawing.Point(6, 324);
             this.groupBox26.Name = "groupBox26";
             this.groupBox26.Size = new System.Drawing.Size(457, 107);
             this.groupBox26.TabIndex = 38;
@@ -2268,7 +2432,7 @@ namespace Sledge.Editor.Settings
             this.groupBox25.Controls.Add(this.SelectedBuildWorkingDirSub);
             this.groupBox25.Controls.Add(this.SelectedBuildWorkingDirSame);
             this.groupBox25.Controls.Add(this.SelectedBuildWorkingDirTemp);
-            this.groupBox25.Location = new System.Drawing.Point(6, 86);
+            this.groupBox25.Location = new System.Drawing.Point(6, 115);
             this.groupBox25.Name = "groupBox25";
             this.groupBox25.Size = new System.Drawing.Size(457, 90);
             this.groupBox25.TabIndex = 37;
@@ -2313,7 +2477,7 @@ namespace Sledge.Editor.Settings
             this.groupBox24.Controls.Add(this.SelectedBuildAfterRunGame);
             this.groupBox24.Controls.Add(this.SelectedBuildAfterCopyBsp);
             this.groupBox24.Controls.Add(this.SelectedBuildAskBeforeRun);
-            this.groupBox24.Location = new System.Drawing.Point(6, 182);
+            this.groupBox24.Location = new System.Drawing.Point(6, 211);
             this.groupBox24.Name = "groupBox24";
             this.groupBox24.Size = new System.Drawing.Size(457, 107);
             this.groupBox24.TabIndex = 20;
@@ -2616,6 +2780,7 @@ namespace Sledge.Editor.Settings
             // 
             // tabBuildAdvancedSubTabs
             // 
+            this.tabBuildAdvancedSubTabs.Controls.Add(this.tabBuildAdvancedSteps);
             this.tabBuildAdvancedSubTabs.Controls.Add(this.tabBuildAdvancedCSG);
             this.tabBuildAdvancedSubTabs.Controls.Add(this.tabBuildAdvancedBSP);
             this.tabBuildAdvancedSubTabs.Controls.Add(this.tabBuildAdvancedVIS);
@@ -2628,6 +2793,59 @@ namespace Sledge.Editor.Settings
             this.tabBuildAdvancedSubTabs.Size = new System.Drawing.Size(457, 434);
             this.tabBuildAdvancedSubTabs.TabIndex = 19;
             // 
+            // tabBuildAdvancedSteps
+            // 
+            this.tabBuildAdvancedSteps.Controls.Add(this.SelectedBuildRunRadCheckbox);
+            this.tabBuildAdvancedSteps.Controls.Add(this.SelectedBuildRunVisCheckbox);
+            this.tabBuildAdvancedSteps.Controls.Add(this.SelectedBuildRunBspCheckbox);
+            this.tabBuildAdvancedSteps.Controls.Add(this.SelectedBuildRunCsgCheckbox);
+            this.tabBuildAdvancedSteps.Location = new System.Drawing.Point(4, 22);
+            this.tabBuildAdvancedSteps.Name = "tabBuildAdvancedSteps";
+            this.tabBuildAdvancedSteps.Size = new System.Drawing.Size(449, 408);
+            this.tabBuildAdvancedSteps.TabIndex = 6;
+            this.tabBuildAdvancedSteps.Text = "Steps to run";
+            this.tabBuildAdvancedSteps.UseVisualStyleBackColor = true;
+            // 
+            // SelectedBuildRunRadCheckbox
+            // 
+            this.SelectedBuildRunRadCheckbox.AutoSize = true;
+            this.SelectedBuildRunRadCheckbox.Location = new System.Drawing.Point(6, 75);
+            this.SelectedBuildRunRadCheckbox.Name = "SelectedBuildRunRadCheckbox";
+            this.SelectedBuildRunRadCheckbox.Size = new System.Drawing.Size(72, 17);
+            this.SelectedBuildRunRadCheckbox.TabIndex = 1;
+            this.SelectedBuildRunRadCheckbox.Text = "Run RAD";
+            this.SelectedBuildRunRadCheckbox.UseVisualStyleBackColor = true;
+            // 
+            // SelectedBuildRunVisCheckbox
+            // 
+            this.SelectedBuildRunVisCheckbox.AutoSize = true;
+            this.SelectedBuildRunVisCheckbox.Location = new System.Drawing.Point(6, 52);
+            this.SelectedBuildRunVisCheckbox.Name = "SelectedBuildRunVisCheckbox";
+            this.SelectedBuildRunVisCheckbox.Size = new System.Drawing.Size(66, 17);
+            this.SelectedBuildRunVisCheckbox.TabIndex = 2;
+            this.SelectedBuildRunVisCheckbox.Text = "Run VIS";
+            this.SelectedBuildRunVisCheckbox.UseVisualStyleBackColor = true;
+            // 
+            // SelectedBuildRunBspCheckbox
+            // 
+            this.SelectedBuildRunBspCheckbox.AutoSize = true;
+            this.SelectedBuildRunBspCheckbox.Location = new System.Drawing.Point(6, 29);
+            this.SelectedBuildRunBspCheckbox.Name = "SelectedBuildRunBspCheckbox";
+            this.SelectedBuildRunBspCheckbox.Size = new System.Drawing.Size(70, 17);
+            this.SelectedBuildRunBspCheckbox.TabIndex = 3;
+            this.SelectedBuildRunBspCheckbox.Text = "Run BSP";
+            this.SelectedBuildRunBspCheckbox.UseVisualStyleBackColor = true;
+            // 
+            // SelectedBuildRunCsgCheckbox
+            // 
+            this.SelectedBuildRunCsgCheckbox.AutoSize = true;
+            this.SelectedBuildRunCsgCheckbox.Location = new System.Drawing.Point(6, 6);
+            this.SelectedBuildRunCsgCheckbox.Name = "SelectedBuildRunCsgCheckbox";
+            this.SelectedBuildRunCsgCheckbox.Size = new System.Drawing.Size(71, 17);
+            this.SelectedBuildRunCsgCheckbox.TabIndex = 4;
+            this.SelectedBuildRunCsgCheckbox.Text = "Run CSG";
+            this.SelectedBuildRunCsgCheckbox.UseVisualStyleBackColor = true;
+            // 
             // tabBuildAdvancedCSG
             // 
             this.tabBuildAdvancedCSG.Controls.Add(this.SelectedBuildCsgParameters);
@@ -2637,6 +2855,15 @@ namespace Sledge.Editor.Settings
             this.tabBuildAdvancedCSG.TabIndex = 0;
             this.tabBuildAdvancedCSG.Text = "CSG";
             this.tabBuildAdvancedCSG.UseVisualStyleBackColor = true;
+            // 
+            // SelectedBuildCsgParameters
+            // 
+            this.SelectedBuildCsgParameters.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.SelectedBuildCsgParameters.Location = new System.Drawing.Point(0, 0);
+            this.SelectedBuildCsgParameters.MinimumSize = new System.Drawing.Size(300, 250);
+            this.SelectedBuildCsgParameters.Name = "SelectedBuildCsgParameters";
+            this.SelectedBuildCsgParameters.Size = new System.Drawing.Size(449, 408);
+            this.SelectedBuildCsgParameters.TabIndex = 0;
             // 
             // tabBuildAdvancedBSP
             // 
@@ -2648,6 +2875,15 @@ namespace Sledge.Editor.Settings
             this.tabBuildAdvancedBSP.Text = "BSP";
             this.tabBuildAdvancedBSP.UseVisualStyleBackColor = true;
             // 
+            // SelectedBuildBspParameters
+            // 
+            this.SelectedBuildBspParameters.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.SelectedBuildBspParameters.Location = new System.Drawing.Point(0, 0);
+            this.SelectedBuildBspParameters.MinimumSize = new System.Drawing.Size(300, 250);
+            this.SelectedBuildBspParameters.Name = "SelectedBuildBspParameters";
+            this.SelectedBuildBspParameters.Size = new System.Drawing.Size(449, 408);
+            this.SelectedBuildBspParameters.TabIndex = 1;
+            // 
             // tabBuildAdvancedVIS
             // 
             this.tabBuildAdvancedVIS.Controls.Add(this.SelectedBuildVisParameters);
@@ -2657,6 +2893,15 @@ namespace Sledge.Editor.Settings
             this.tabBuildAdvancedVIS.TabIndex = 2;
             this.tabBuildAdvancedVIS.Text = "VIS";
             this.tabBuildAdvancedVIS.UseVisualStyleBackColor = true;
+            // 
+            // SelectedBuildVisParameters
+            // 
+            this.SelectedBuildVisParameters.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.SelectedBuildVisParameters.Location = new System.Drawing.Point(0, 0);
+            this.SelectedBuildVisParameters.MinimumSize = new System.Drawing.Size(300, 250);
+            this.SelectedBuildVisParameters.Name = "SelectedBuildVisParameters";
+            this.SelectedBuildVisParameters.Size = new System.Drawing.Size(449, 408);
+            this.SelectedBuildVisParameters.TabIndex = 1;
             // 
             // tabBuildAdvancedRAD
             // 
@@ -2668,6 +2913,15 @@ namespace Sledge.Editor.Settings
             this.tabBuildAdvancedRAD.Text = "RAD";
             this.tabBuildAdvancedRAD.UseVisualStyleBackColor = true;
             // 
+            // SelectedBuildRadParameters
+            // 
+            this.SelectedBuildRadParameters.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.SelectedBuildRadParameters.Location = new System.Drawing.Point(0, 0);
+            this.SelectedBuildRadParameters.MinimumSize = new System.Drawing.Size(300, 250);
+            this.SelectedBuildRadParameters.Name = "SelectedBuildRadParameters";
+            this.SelectedBuildRadParameters.Size = new System.Drawing.Size(449, 408);
+            this.SelectedBuildRadParameters.TabIndex = 1;
+            // 
             // tabBuildAdvancedShared
             // 
             this.tabBuildAdvancedShared.Controls.Add(this.SelectedBuildSharedParameters);
@@ -2677,6 +2931,15 @@ namespace Sledge.Editor.Settings
             this.tabBuildAdvancedShared.TabIndex = 4;
             this.tabBuildAdvancedShared.Text = "Shared";
             this.tabBuildAdvancedShared.UseVisualStyleBackColor = true;
+            // 
+            // SelectedBuildSharedParameters
+            // 
+            this.SelectedBuildSharedParameters.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.SelectedBuildSharedParameters.Location = new System.Drawing.Point(0, 0);
+            this.SelectedBuildSharedParameters.MinimumSize = new System.Drawing.Size(300, 250);
+            this.SelectedBuildSharedParameters.Name = "SelectedBuildSharedParameters";
+            this.SelectedBuildSharedParameters.Size = new System.Drawing.Size(449, 408);
+            this.SelectedBuildSharedParameters.TabIndex = 1;
             // 
             // tabBuildAdvancedPreview
             // 
@@ -3172,206 +3435,14 @@ namespace Sledge.Editor.Settings
             this.btnApplySettings.UseVisualStyleBackColor = true;
             this.btnApplySettings.Click += new System.EventHandler(this.Apply);
             // 
-            // BackClippingPlaneUpDown
+            // SelectedBuildDontRedirectOutput
             // 
-            this.BackClippingPlaneUpDown.Increment = new decimal(new int[] {
-            100,
-            0,
-            0,
-            0});
-            this.BackClippingPlaneUpDown.Location = new System.Drawing.Point(392, 32);
-            this.BackClippingPlaneUpDown.Maximum = new decimal(new int[] {
-            30000,
-            0,
-            0,
-            0});
-            this.BackClippingPlaneUpDown.Minimum = new decimal(new int[] {
-            2000,
-            0,
-            0,
-            0});
-            this.BackClippingPlaneUpDown.Name = "BackClippingPlaneUpDown";
-            this.BackClippingPlaneUpDown.Size = new System.Drawing.Size(65, 20);
-            this.BackClippingPlaneUpDown.TabIndex = 5;
-            this.BackClippingPlaneUpDown.Value = new decimal(new int[] {
-            2000,
-            0,
-            0,
-            0});
-            this.BackClippingPlaneUpDown.ValueChanged += new System.EventHandler(this.BackClippingPlaneUpDownValueChanged);
-            // 
-            // ModelRenderDistanceUpDown
-            // 
-            this.ModelRenderDistanceUpDown.Increment = new decimal(new int[] {
-            100,
-            0,
-            0,
-            0});
-            this.ModelRenderDistanceUpDown.Location = new System.Drawing.Point(392, 79);
-            this.ModelRenderDistanceUpDown.Maximum = new decimal(new int[] {
-            30000,
-            0,
-            0,
-            0});
-            this.ModelRenderDistanceUpDown.Minimum = new decimal(new int[] {
-            200,
-            0,
-            0,
-            0});
-            this.ModelRenderDistanceUpDown.Name = "ModelRenderDistanceUpDown";
-            this.ModelRenderDistanceUpDown.Size = new System.Drawing.Size(65, 20);
-            this.ModelRenderDistanceUpDown.TabIndex = 5;
-            this.ModelRenderDistanceUpDown.Value = new decimal(new int[] {
-            500,
-            0,
-            0,
-            0});
-            this.ModelRenderDistanceUpDown.ValueChanged += new System.EventHandler(this.ModelRenderDistanceUpDownValueChanged);
-            // 
-            // DetailRenderDistanceUpDown
-            // 
-            this.DetailRenderDistanceUpDown.Increment = new decimal(new int[] {
-            100,
-            0,
-            0,
-            0});
-            this.DetailRenderDistanceUpDown.Location = new System.Drawing.Point(392, 134);
-            this.DetailRenderDistanceUpDown.Maximum = new decimal(new int[] {
-            30000,
-            0,
-            0,
-            0});
-            this.DetailRenderDistanceUpDown.Minimum = new decimal(new int[] {
-            200,
-            0,
-            0,
-            0});
-            this.DetailRenderDistanceUpDown.Name = "DetailRenderDistanceUpDown";
-            this.DetailRenderDistanceUpDown.Size = new System.Drawing.Size(65, 20);
-            this.DetailRenderDistanceUpDown.TabIndex = 5;
-            this.DetailRenderDistanceUpDown.Value = new decimal(new int[] {
-            500,
-            0,
-            0,
-            0});
-            this.DetailRenderDistanceUpDown.ValueChanged += new System.EventHandler(this.DetailRenderDistanceUpDownValueChanged);
-            // 
-            // label31
-            // 
-            this.label31.AutoSize = true;
-            this.label31.Location = new System.Drawing.Point(399, 56);
-            this.label31.Name = "label31";
-            this.label31.Size = new System.Drawing.Size(51, 13);
-            this.label31.TabIndex = 7;
-            this.label31.Text = "units/sec";
-            this.label31.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // label32
-            // 
-            this.label32.AutoSize = true;
-            this.label32.Location = new System.Drawing.Point(400, 104);
-            this.label32.Name = "label32";
-            this.label32.Size = new System.Drawing.Size(47, 13);
-            this.label32.TabIndex = 7;
-            this.label32.Text = "seconds";
-            this.label32.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // ForwardSpeedUpDown
-            // 
-            this.ForwardSpeedUpDown.Increment = new decimal(new int[] {
-            100,
-            0,
-            0,
-            0});
-            this.ForwardSpeedUpDown.Location = new System.Drawing.Point(392, 33);
-            this.ForwardSpeedUpDown.Maximum = new decimal(new int[] {
-            5000,
-            0,
-            0,
-            0});
-            this.ForwardSpeedUpDown.Minimum = new decimal(new int[] {
-            100,
-            0,
-            0,
-            0});
-            this.ForwardSpeedUpDown.Name = "ForwardSpeedUpDown";
-            this.ForwardSpeedUpDown.Size = new System.Drawing.Size(65, 20);
-            this.ForwardSpeedUpDown.TabIndex = 5;
-            this.ForwardSpeedUpDown.Value = new decimal(new int[] {
-            500,
-            0,
-            0,
-            0});
-            this.ForwardSpeedUpDown.ValueChanged += new System.EventHandler(this.ForwardSpeedUpDownValueChanged);
-            // 
-            // TimeToTopSpeedUpDown
-            // 
-            this.TimeToTopSpeedUpDown.DecimalPlaces = 1;
-            this.TimeToTopSpeedUpDown.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            65536});
-            this.TimeToTopSpeedUpDown.Location = new System.Drawing.Point(392, 81);
-            this.TimeToTopSpeedUpDown.Maximum = new decimal(new int[] {
-            5,
-            0,
-            0,
-            0});
-            this.TimeToTopSpeedUpDown.Name = "TimeToTopSpeedUpDown";
-            this.TimeToTopSpeedUpDown.Size = new System.Drawing.Size(65, 20);
-            this.TimeToTopSpeedUpDown.TabIndex = 5;
-            this.TimeToTopSpeedUpDown.Value = new decimal(new int[] {
-            5,
-            0,
-            0,
-            0});
-            this.TimeToTopSpeedUpDown.ValueChanged += new System.EventHandler(this.TimeToTopSpeedUpDownValueChanged);
-            // 
-            // SelectedBuildCsgParameters
-            // 
-            this.SelectedBuildCsgParameters.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.SelectedBuildCsgParameters.Location = new System.Drawing.Point(0, 0);
-            this.SelectedBuildCsgParameters.MinimumSize = new System.Drawing.Size(300, 250);
-            this.SelectedBuildCsgParameters.Name = "SelectedBuildCsgParameters";
-            this.SelectedBuildCsgParameters.Size = new System.Drawing.Size(449, 408);
-            this.SelectedBuildCsgParameters.TabIndex = 0;
-            // 
-            // SelectedBuildBspParameters
-            // 
-            this.SelectedBuildBspParameters.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.SelectedBuildBspParameters.Location = new System.Drawing.Point(0, 0);
-            this.SelectedBuildBspParameters.MinimumSize = new System.Drawing.Size(300, 250);
-            this.SelectedBuildBspParameters.Name = "SelectedBuildBspParameters";
-            this.SelectedBuildBspParameters.Size = new System.Drawing.Size(449, 408);
-            this.SelectedBuildBspParameters.TabIndex = 1;
-            // 
-            // SelectedBuildVisParameters
-            // 
-            this.SelectedBuildVisParameters.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.SelectedBuildVisParameters.Location = new System.Drawing.Point(0, 0);
-            this.SelectedBuildVisParameters.MinimumSize = new System.Drawing.Size(300, 250);
-            this.SelectedBuildVisParameters.Name = "SelectedBuildVisParameters";
-            this.SelectedBuildVisParameters.Size = new System.Drawing.Size(449, 408);
-            this.SelectedBuildVisParameters.TabIndex = 1;
-            // 
-            // SelectedBuildRadParameters
-            // 
-            this.SelectedBuildRadParameters.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.SelectedBuildRadParameters.Location = new System.Drawing.Point(0, 0);
-            this.SelectedBuildRadParameters.MinimumSize = new System.Drawing.Size(300, 250);
-            this.SelectedBuildRadParameters.Name = "SelectedBuildRadParameters";
-            this.SelectedBuildRadParameters.Size = new System.Drawing.Size(449, 408);
-            this.SelectedBuildRadParameters.TabIndex = 1;
-            // 
-            // SelectedBuildSharedParameters
-            // 
-            this.SelectedBuildSharedParameters.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.SelectedBuildSharedParameters.Location = new System.Drawing.Point(0, 0);
-            this.SelectedBuildSharedParameters.MinimumSize = new System.Drawing.Size(300, 250);
-            this.SelectedBuildSharedParameters.Name = "SelectedBuildSharedParameters";
-            this.SelectedBuildSharedParameters.Size = new System.Drawing.Size(449, 408);
-            this.SelectedBuildSharedParameters.TabIndex = 1;
+            this.SelectedBuildDontRedirectOutput.Location = new System.Drawing.Point(84, 86);
+            this.SelectedBuildDontRedirectOutput.Name = "SelectedBuildDontRedirectOutput";
+            this.SelectedBuildDontRedirectOutput.Size = new System.Drawing.Size(241, 23);
+            this.SelectedBuildDontRedirectOutput.TabIndex = 39;
+            this.SelectedBuildDontRedirectOutput.Text = "Don\'t hide the console window";
+            this.SelectedBuildDontRedirectOutput.UseVisualStyleBackColor = true;
             // 
             // SettingsForm
             // 
@@ -3411,11 +3482,16 @@ namespace Sledge.Editor.Settings
             ((System.ComponentModel.ISupportInitialize)(this.CameraFOV)).EndInit();
             this.groupBox13.ResumeLayout(false);
             this.groupBox13.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.TimeToTopSpeedUpDown)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ForwardSpeedUpDown)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.MouseWheelMoveDistance)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.TimeToTopSpeed)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.ForwardSpeed)).EndInit();
             this.groupBox14.ResumeLayout(false);
             this.groupBox14.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.DetailRenderDistanceUpDown)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ModelRenderDistanceUpDown)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.BackClippingPlaneUpDown)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.DetailRenderDistance)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.ModelRenderDistance)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.BackClippingPane)).EndInit();
@@ -3444,6 +3520,8 @@ namespace Sledge.Editor.Settings
             this.tabBuildAdvanced.ResumeLayout(false);
             this.tabBuildAdvanced.PerformLayout();
             this.tabBuildAdvancedSubTabs.ResumeLayout(false);
+            this.tabBuildAdvancedSteps.ResumeLayout(false);
+            this.tabBuildAdvancedSteps.PerformLayout();
             this.tabBuildAdvancedCSG.ResumeLayout(false);
             this.tabBuildAdvancedBSP.ResumeLayout(false);
             this.tabBuildAdvancedVIS.ResumeLayout(false);
@@ -3463,11 +3541,6 @@ namespace Sledge.Editor.Settings
             ((System.ComponentModel.ISupportInitialize)(this.trackBar2)).EndInit();
             this.groupBox7.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.BackClippingPlaneUpDown)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.ModelRenderDistanceUpDown)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.DetailRenderDistanceUpDown)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.ForwardSpeedUpDown)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.TimeToTopSpeedUpDown)).EndInit();
             this.ResumeLayout(false);
 
 		}
@@ -3735,5 +3808,11 @@ namespace Sledge.Editor.Settings
         private System.Windows.Forms.Label label31;
         private System.Windows.Forms.NumericUpDown TimeToTopSpeedUpDown;
         private System.Windows.Forms.NumericUpDown ForwardSpeedUpDown;
+        private System.Windows.Forms.TabPage tabBuildAdvancedSteps;
+        private System.Windows.Forms.CheckBox SelectedBuildRunRadCheckbox;
+        private System.Windows.Forms.CheckBox SelectedBuildRunVisCheckbox;
+        private System.Windows.Forms.CheckBox SelectedBuildRunBspCheckbox;
+        private System.Windows.Forms.CheckBox SelectedBuildRunCsgCheckbox;
+        private System.Windows.Forms.CheckBox SelectedBuildDontRedirectOutput;
 	}
 }

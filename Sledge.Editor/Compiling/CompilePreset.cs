@@ -10,6 +10,10 @@ namespace Sledge.Editor.Compiling
         public string Bsp { get; set; }
         public string Vis { get; set; }
         public string Rad { get; set; }
+        public bool RunCsg { get; set; }
+        public bool RunBsp { get; set; }
+        public bool RunVis { get; set; }
+        public bool RunRad { get; set; }
 
         public static CompilePreset Parse(GenericStructure gs)
         {
@@ -20,7 +24,11 @@ namespace Sledge.Editor.Compiling
                 Csg = gs["Csg"] ?? "",
                 Bsp = gs["Bsp"] ?? "",
                 Vis = gs["Vis"] ?? "",
-                Rad = gs["Rad"] ?? ""
+                Rad = gs["Rad"] ?? "",
+                RunCsg = gs.PropertyBoolean("RunCsg", true),
+                RunBsp = gs.PropertyBoolean("RunBsp", true),
+                RunVis = gs.PropertyBoolean("RunVis", true),
+                RunRad = gs.PropertyBoolean("RunRad", true)
             };
         }
     }

@@ -77,5 +77,11 @@ namespace Sledge.Editor.Compiling
                 ? ""
                 : String.Join(" ", tool.Parameters.Select(x => x.GetDefaultArgumentString()).Where(x => !String.IsNullOrWhiteSpace(x)));
         }
+
+        public bool GetDefaultRun(string name)
+        {
+            var tool = GetTool(name);
+            return tool != null && tool.Enabled;
+        }
     }
 }

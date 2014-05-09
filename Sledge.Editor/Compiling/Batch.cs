@@ -48,29 +48,39 @@ namespace Sledge.Editor.Compiling
 
             var fileFlag = '"' + TargetFile + '"';
 
-            Steps = new List<BatchCompileStep>
+            Steps = new List<BatchCompileStep>();
+            if (profile.RunCsg)
             {
-                new BatchCompileStep
+                Steps.Add(new BatchCompileStep
                 {
                     Operation = Path.Combine(build.Path, build.Csg),
                     Flags = (profile.FullCsgParameters + ' ' + fileFlag).Trim()
-                },
-                new BatchCompileStep
+                });
+            }
+            if (profile.RunBsp)
+            {
+                Steps.Add(new BatchCompileStep
                 {
                     Operation = Path.Combine(build.Path, build.Bsp),
                     Flags = (profile.FullBspParameters + ' ' + fileFlag).Trim()
-                },
-                new BatchCompileStep
+                });
+            }
+            if (profile.RunVis)
+            {
+                Steps.Add(new BatchCompileStep
                 {
                     Operation = Path.Combine(build.Path, build.Vis),
                     Flags = (profile.FullVisParameters + ' ' + fileFlag).Trim()
-                },
-                new BatchCompileStep
+                });
+            }
+            if (profile.RunRad)
+            {
+                Steps.Add(new BatchCompileStep
                 {
                     Operation = Path.Combine(build.Path, build.Rad),
                     Flags = (profile.FullRadParameters + ' ' + fileFlag).Trim()
-                }
-            };
+                });
+            }
         }
 
         public void Compile()
@@ -81,7 +91,19 @@ namespace Sledge.Editor.Compiling
         private void DoCompile()
         {
             Mediator.Publish(EditorMediator.CompileStarted, this);
-            var logger = new CompileLogTracer();
+
+            if (Build.DontRedirectOutput) DoBatch();
+            else DoRedirected();
+
+            var errFile = Path.ChangeExtension(TargetFile, "err");
+            if (File.Exists(errFile))
+            {
+                CompileLogTracer.AddErrorLine("The following errors were detected:\r\n\r\n" + File.ReadAllText(errFile).Trim());
+            }
+        }
+
+        private void DoRedirected()
+        {
             foreach (var step in Steps)
             {
                 var process = new Process
@@ -90,21 +112,49 @@ namespace Sledge.Editor.Compiling
                     {
                         CreateNoWindow = true,
                         UseShellExecute = false,
-                        RedirectStandardError = true,
                         RedirectStandardOutput = true,
                         WorkingDirectory = Path.GetDirectoryName(TargetFile)
                     }
                 };
-                process.OutputDataReceived += (sender, args) => logger.AddLine(args.Data);
+                process.OutputDataReceived += (sender, args) => CompileLogTracer.AddLine(args.Data);
                 process.Start();
                 process.BeginOutputReadLine();
                 process.WaitForExit();
             }
-            var errFile = Path.ChangeExtension(TargetFile, "err");
-            if (File.Exists(errFile))
+            CompileLogTracer.AddLine("Compilation complete.");
+        }
+
+        private void DoBatch()
+        {
+            var logFile = Path.ChangeExtension(TargetFile, ".log");
+            var batchFile = Path.ChangeExtension(TargetFile, ".bat");
+            var batch = "";
+            batch += "cd " + '"' + Path.GetDirectoryName(TargetFile) + '"' + "\n";
+            foreach (var step in Steps)
             {
-                logger.AddErrorLine("The following errors were detected:\r\n\r\n" + File.ReadAllText(errFile).Trim());
+                batch += '"' + step.Operation + '"' + ' ' + step.Flags + "\n";
             }
+            File.WriteAllText(batchFile, batch);
+
+            var process = new Process
+            {
+                StartInfo = new ProcessStartInfo(batchFile)
+                {
+                    WorkingDirectory = Path.GetDirectoryName(TargetFile)
+                }
+            };
+            CompileLogTracer.AddLine("Compile started (not redirected; output in console window)");
+            process.Start();
+            process.WaitForExit();
+            if (File.Exists(logFile))
+            {
+                using (var fs = new StreamReader(File.Open(logFile, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)))
+                {
+                    var str = fs.ReadToEnd();
+                    CompileLogTracer.Add(str);
+                }
+            }
+            CompileLogTracer.AddLine("Compilation complete.");
         }
 
         private void CopyInto(string extension, string folder)

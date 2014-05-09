@@ -170,6 +170,10 @@ namespace Sledge.Editor.Compiling
 
         private void UpdateParameters(BuildProfile prof)
         {
+            RunCsgCheckbox.Checked = prof.RunCsg;
+            RunBspCheckbox.Checked = prof.RunBsp;
+            RunVisCheckbox.Checked = prof.RunVis;
+            RunRadCheckbox.Checked = prof.RunRad;
             CsgParameters.SetCommands(prof.GeneratedCsgParameters ?? "", prof.AdditionalCsgParameters ?? "");
             BspParameters.SetCommands(prof.GeneratedBspParameters ?? "", prof.AdditionalBspParameters ?? "");
             VisParameters.SetCommands(prof.GeneratedVisParameters ?? "", prof.AdditionalVisParameters ?? "");
@@ -240,6 +244,10 @@ namespace Sledge.Editor.Compiling
                 ID = _build.Profiles.Any() ? _build.Profiles.Max(x => x.ID) + 1 : 1,
                 BuildID = _build.ID,
                 Name = name,
+                RunCsg = _specification.GetDefaultRun("csg"),
+                RunBsp = _specification.GetDefaultRun("bsp"),
+                RunVis = _specification.GetDefaultRun("vis"),
+                RunRad = _specification.GetDefaultRun("rad"),
                 GeneratedCsgParameters = _specification.GetDefaultParameters("csg"),
                 GeneratedBspParameters = _specification.GetDefaultParameters("bsp"),
                 GeneratedVisParameters = _specification.GetDefaultParameters("vis"),
@@ -263,6 +271,10 @@ namespace Sledge.Editor.Compiling
                 ID = _build.Profiles.Any() ? _build.Profiles.Max(x => x.ID) + 1 : 1,
                 BuildID = _build.ID,
                 Name = name,
+                RunCsg = RunCsgCheckbox.Checked,
+                RunBsp = RunBspCheckbox.Checked,
+                RunVis = RunVisCheckbox.Checked,
+                RunRad = RunRadCheckbox.Checked,
                 GeneratedCsgParameters = CsgParameters.GeneratedCommands,
                 GeneratedBspParameters = BspParameters.GeneratedCommands,
                 GeneratedVisParameters = VisParameters.GeneratedCommands,
@@ -282,6 +294,10 @@ namespace Sledge.Editor.Compiling
         private void SaveProfileButtonClicked(object sender, EventArgs e)
         {
             if (_profile == null) return;
+            _profile.RunCsg = RunCsgCheckbox.Checked;
+            _profile.RunBsp = RunBspCheckbox.Checked;
+            _profile.RunVis = RunVisCheckbox.Checked;
+            _profile.RunRad = RunRadCheckbox.Checked;
             _profile.GeneratedCsgParameters = CsgParameters.GeneratedCommands;
             _profile.GeneratedBspParameters = BspParameters.GeneratedCommands;
             _profile.GeneratedVisParameters = VisParameters.GeneratedCommands;
@@ -320,26 +336,38 @@ namespace Sledge.Editor.Compiling
         {
             ProfilePreview.Text = "";
             if (_profile == null) return;
-            var str = _build.Csg
-                      + ' ' + (CsgParameters.GeneratedCommands
-                      + ' ' + CsgParameters.AdditionalCommands
-                      + ' ' + SharedParameters.GeneratedCommands
-                      + ' ' + SharedParameters.AdditionalCommands).Trim() + " <mapname>\r\n\r\n"
-                      + _build.Bsp
-                      + ' ' + (BspParameters.GeneratedCommands
-                      + ' ' + BspParameters.AdditionalCommands
-                      + ' ' + SharedParameters.GeneratedCommands
-                      + ' ' + SharedParameters.AdditionalCommands).Trim() + " <mapname>\r\n\r\n"
-                      + _build.Vis
-                      + ' ' + (VisParameters.GeneratedCommands
-                      + ' ' + VisParameters.AdditionalCommands
-                      + ' ' + SharedParameters.GeneratedCommands
-                      + ' ' + SharedParameters.AdditionalCommands).Trim() + " <mapname>\r\n\r\n"
-                      + _build.Rad
-                      + ' ' + (RadParameters.GeneratedCommands
-                      + ' ' + RadParameters.AdditionalCommands
-                      + ' ' + SharedParameters.GeneratedCommands
-                      + ' ' + SharedParameters.AdditionalCommands).Trim() + " <mapname>\r\n\r\n";
+            var str = "";
+            if (RunCsgCheckbox.Checked)
+            {
+                str += _build.Csg + ' ' + (CsgParameters.GeneratedCommands
+                                           + ' ' + CsgParameters.AdditionalCommands
+                                           + ' ' + SharedParameters.GeneratedCommands
+                                           + ' ' + SharedParameters.AdditionalCommands).Trim() + " <mapname>\r\n\r\n";
+            }
+            if (RunBspCheckbox.Checked)
+            {
+                str += _build.Bsp
+                       + ' ' + (BspParameters.GeneratedCommands
+                                + ' ' + BspParameters.AdditionalCommands
+                                + ' ' + SharedParameters.GeneratedCommands
+                                + ' ' + SharedParameters.AdditionalCommands).Trim() + " <mapname>\r\n\r\n";
+            }
+            if (RunVisCheckbox.Checked)
+            {
+                str += _build.Vis
+                       + ' ' + (VisParameters.GeneratedCommands
+                                + ' ' + VisParameters.AdditionalCommands
+                                + ' ' + SharedParameters.GeneratedCommands
+                                + ' ' + SharedParameters.AdditionalCommands).Trim() + " <mapname>\r\n\r\n";
+            }
+            if (RunRadCheckbox.Checked)
+            {
+                str += _build.Rad
+                       + ' ' + (RadParameters.GeneratedCommands
+                                + ' ' + RadParameters.AdditionalCommands
+                                + ' ' + SharedParameters.GeneratedCommands
+                                + ' ' + SharedParameters.AdditionalCommands).Trim() + " <mapname>\r\n\r\n";
+            }
             ProfilePreview.Text = str;
         }
 
@@ -351,6 +379,10 @@ namespace Sledge.Editor.Compiling
                 {
                     BuildID = _build.ID,
                     Name = _preset.Name,
+                    RunCsg = _preset.RunCsg,
+                    RunBsp = _preset.RunBsp,
+                    RunVis = _preset.RunVis,
+                    RunRad = _preset.RunRad,
                     GeneratedCsgParameters = _preset.Csg,
                     GeneratedBspParameters = _preset.Bsp,
                     GeneratedVisParameters = _preset.Vis,
@@ -361,6 +393,10 @@ namespace Sledge.Editor.Compiling
             {
                 BuildID = _build.ID,
                 Name = _profile == null ? "" : _profile.Name,
+                RunCsg = RunCsgCheckbox.Checked,
+                RunBsp = RunBspCheckbox.Checked,
+                RunVis = RunVisCheckbox.Checked,
+                RunRad = RunRadCheckbox.Checked,
                 GeneratedCsgParameters = CsgParameters.GeneratedCommands,
                 GeneratedBspParameters = BspParameters.GeneratedCommands,
                 GeneratedVisParameters = VisParameters.GeneratedCommands,

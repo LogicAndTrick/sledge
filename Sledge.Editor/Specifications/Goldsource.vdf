@@ -14,6 +14,10 @@ Specification
 	{
 		Name "Fast"
 		Description "Run the compile in fast mode to get a quick lower-quality preview of your work"
+        RunCsg "True"
+        RunBsp "True"
+        RunVis "True"
+        RunRad "True"
 		Csg "-wadautodetect -low -estimate -noinfo"
 		Bsp "-low -estimate -noinfo"
 		Vis "-fast -low -estimate -noinfo"
@@ -24,6 +28,10 @@ Specification
 	{
 		Name "Normal"
 		Description "Run the compile using the standard settings"
+        RunCsg "True"
+        RunBsp "True"
+        RunVis "True"
+        RunRad "True"
 		Csg "-wadautodetect -low -estimate -noinfo"
 		Bsp "-low -estimate -noinfo"
 		Vis "-low -estimate -noinfo"
@@ -34,6 +42,10 @@ Specification
 	{
 		Name "Final"
 		Description "Runs the compile tools in full mode to get the best possible quality result"
+        RunCsg "True"
+        RunBsp "True"
+        RunVis "True"
+        RunRad "True"
 		Csg "-wadautodetect -low -estimate -noinfo"
 		Bsp "-low -estimate -noinfo"
 		Vis "-full -low -estimate -noinfo"
@@ -45,6 +57,7 @@ Specification
 		Name "CSG"
 		Description "Constructive Solid Geometry"
 		Order "1"
+        Enabled "True"
 
 		Parameter
 		{
@@ -199,6 +212,7 @@ Specification
 		Name "BSP"
 		Description "Binary Space Partition"
 		Order "2"
+        Enabled "True"
 
 		Parameter
 		{
@@ -305,6 +319,7 @@ Specification
 		Name "VIS"
 		Description "Visibility Index Set"
 		Order "3"
+        Enabled "True"
 		
 		Parameter
 		{
@@ -337,6 +352,7 @@ Specification
 		Name "RAD"
 		Description "Radiosity"
 		Order "4"
+        Enabled "True"
 		
 		Parameter
 		{
@@ -778,6 +794,7 @@ Specification
 		Name "Shared"
 		Description "Options shared between all tools"
 		Order "5"
+        Enabled "True"
 		
 		Parameter
 		{

@@ -10,6 +10,11 @@ namespace Sledge.Settings.Models
         public int BuildID { get; set; }
         public string Name { get; set; }
 
+        public bool RunCsg { get; set; }
+        public bool RunBsp { get; set; }
+        public bool RunVis { get; set; }
+        public bool RunRad { get; set; }
+
         public string GeneratedCsgParameters { get; set; }
         public string GeneratedBspParameters { get; set; }
         public string GeneratedVisParameters { get; set; }
@@ -71,10 +76,16 @@ namespace Sledge.Settings.Models
             foreach (var pi in GetType().GetProperties().Where(x => x.CanWrite))
             {
                 var val = gs[pi.Name] ?? "";
-                if (pi.PropertyType == typeof (int))
+                if (pi.PropertyType == typeof(int))
                 {
                     int i;
                     pi.SetValue(this, Int32.TryParse(val, out i) ? i : 0, null);
+                }
+                else if (pi.PropertyType == typeof(bool))
+                {
+                    bool b;
+                    if (!bool.TryParse(val, out b)) b = true;
+                    pi.SetValue(this, b, null);
                 }
                 else
                 {

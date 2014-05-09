@@ -11,6 +11,7 @@ namespace Sledge.Settings.Models
         public string Name { get; set; }
         public Engine Engine { get; set; }
         public string Specification { get; set; }
+        public bool DontRedirectOutput { get; set; }
         public string Path { get; set; }
         public string Bsp { get; set; }
         public string Csg { get; set; }
@@ -42,6 +43,7 @@ namespace Sledge.Settings.Models
             Name = gs["Name"];
             Specification = gs["Specification"];
             Engine = (Engine)Enum.Parse(typeof(Engine), gs["EngineID"]);
+            DontRedirectOutput = gs.PropertyBoolean("DontRedirectOutput");
             Path = gs["Path"];
             Bsp = gs["Bsp"];
             Csg = gs["Csg"];
@@ -75,6 +77,7 @@ namespace Sledge.Settings.Models
             gs["Name"] = Name;
             gs["Specification"] = Specification;
             gs["EngineID"] = Engine.ToString();
+            gs["DontRedirectOutput"] = DontRedirectOutput.ToString(CultureInfo.InvariantCulture);
             gs["Path"] = Path;
             gs["Bsp"] = Bsp;
             gs["Csg"] = Csg;

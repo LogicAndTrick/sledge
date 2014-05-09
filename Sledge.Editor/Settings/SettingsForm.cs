@@ -247,6 +247,7 @@ namespace Sledge.Editor.Settings
             // Build Configurations
             SelectedBuildName.TextChanged += (s, e) => CheckNull(_selectedBuild, x => x.Name = SelectedBuildName.Text);
             SelectedBuildEngine.SelectedIndexChanged += (s, e) => CheckNull(_selectedBuild, x => x.Engine = (Engine) SelectedBuildEngine.SelectedItem);
+            SelectedBuildDontRedirectOutput.CheckedChanged += (s, e) => CheckNull(_selectedBuild, x => x.DontRedirectOutput = SelectedBuildDontRedirectOutput.Checked);
             SelectedBuildExeFolder.TextChanged += (s, e) => CheckNull(_selectedBuild, x => x.Path = SelectedBuildExeFolder.Text);
             SelectedBuildBsp.SelectedIndexChanged += (s, e) => CheckNull(_selectedBuild, x => x.Bsp = SelectedBuildBsp.Text);
             SelectedBuildCsg.SelectedIndexChanged += (s, e) => CheckNull(_selectedBuild, x => x.Csg = SelectedBuildCsg.Text);
@@ -270,32 +271,62 @@ namespace Sledge.Editor.Settings
             SelectedBuildCopyErr.CheckedChanged += (s, e) => CheckNull(_selectedBuild, x => x.CopyErr = SelectedBuildCopyErr.Checked);
 
             // Build Profiles
+            SelectedBuildRunCsgCheckbox.CheckedChanged += (s, e) => CheckNull(_selectedProfile, x =>
+            {
+                if (_pauseProfileUpdates) return;
+                x.RunCsg = SelectedBuildRunCsgCheckbox.Checked;
+                UpdateSelectedBuildProfilePreview();
+            });
+            SelectedBuildRunBspCheckbox.CheckedChanged += (s, e) => CheckNull(_selectedProfile, x =>
+            {
+                if (_pauseProfileUpdates) return;
+                x.RunBsp = SelectedBuildRunBspCheckbox.Checked;
+                UpdateSelectedBuildProfilePreview();
+            });
+            SelectedBuildRunVisCheckbox.CheckedChanged += (s, e) => CheckNull(_selectedProfile, x =>
+            {
+                if (_pauseProfileUpdates) return;
+                x.RunVis = SelectedBuildRunVisCheckbox.Checked;
+                UpdateSelectedBuildProfilePreview();
+            });
+            SelectedBuildRunRadCheckbox.CheckedChanged += (s, e) => CheckNull(_selectedProfile, x =>
+            {
+                if (_pauseProfileUpdates) return;
+                x.RunRad = SelectedBuildRunRadCheckbox.Checked;
+                UpdateSelectedBuildProfilePreview();
+            });
+
             SelectedBuildCsgParameters.ValueChanged += (s, e) => CheckNull(_selectedProfile, x =>
             {
+                if (_pauseProfileUpdates) return;
                 x.GeneratedCsgParameters = SelectedBuildCsgParameters.GeneratedCommands;
                 x.AdditionalCsgParameters = SelectedBuildCsgParameters.AdditionalCommands;
                 UpdateSelectedBuildProfilePreview();
             });
             SelectedBuildBspParameters.ValueChanged += (s, e) => CheckNull(_selectedProfile, x =>
             {
+                if (_pauseProfileUpdates) return;
                 x.GeneratedBspParameters = SelectedBuildBspParameters.GeneratedCommands;
                 x.AdditionalBspParameters = SelectedBuildBspParameters.AdditionalCommands;
                 UpdateSelectedBuildProfilePreview();
             });
             SelectedBuildVisParameters.ValueChanged += (s, e) => CheckNull(_selectedProfile, x =>
             {
+                if (_pauseProfileUpdates) return;
                 x.GeneratedVisParameters = SelectedBuildVisParameters.GeneratedCommands;
                 x.AdditionalVisParameters = SelectedBuildVisParameters.AdditionalCommands;
                 UpdateSelectedBuildProfilePreview();
             });
             SelectedBuildRadParameters.ValueChanged += (s, e) => CheckNull(_selectedProfile, x =>
             {
+                if (_pauseProfileUpdates) return;
                 x.GeneratedRadParameters = SelectedBuildRadParameters.GeneratedCommands;
                 x.AdditionalRadParameters = SelectedBuildRadParameters.AdditionalCommands;
                 UpdateSelectedBuildProfilePreview();
             });
             SelectedBuildSharedParameters.ValueChanged += (s, e) => CheckNull(_selectedProfile, x =>
             {
+                if (_pauseProfileUpdates) return;
                 x.GeneratedSharedParameters = SelectedBuildSharedParameters.GeneratedCommands;
                 x.AdditionalSharedParameters = SelectedBuildSharedParameters.AdditionalCommands;
                 UpdateSelectedBuildProfilePreview();
@@ -1479,6 +1510,10 @@ namespace Sledge.Editor.Settings
 
             if (setDefault)
             {
+                _selectedProfile.RunCsg = SelectedBuildRunCsgCheckbox.Checked;
+                _selectedProfile.RunBsp = SelectedBuildRunBspCheckbox.Checked;
+                _selectedProfile.RunVis = SelectedBuildRunVisCheckbox.Checked;
+                _selectedProfile.RunRad = SelectedBuildRunRadCheckbox.Checked;
                 _selectedProfile.GeneratedCsgParameters = SelectedBuildCsgParameters.GeneratedCommands;
                 _selectedProfile.AdditionalCsgParameters = SelectedBuildCsgParameters.AdditionalCommands;
                 _selectedProfile.GeneratedBspParameters = SelectedBuildBspParameters.GeneratedCommands;
@@ -1504,6 +1539,7 @@ namespace Sledge.Editor.Settings
             SelectedBuildName.Text = _selectedBuild.Name;
             SelectedBuildEngine.SelectedIndex = Math.Max(0, Enum.GetValues(typeof(Engine)).OfType<Engine>().ToList<Engine>().FindIndex(x => x == _selectedBuild.Engine));
             SelectedBuildSpecification.SelectedIndex = Math.Max(0, CompileSpecification.Specifications.FindIndex(x => x.ID == _selectedBuild.Specification));
+            SelectedBuildDontRedirectOutput.Checked = _selectedBuild.DontRedirectOutput;
             SelectedBuildExeFolder.Text = _selectedBuild.Path;
             SelectedBuildBsp.SelectedText = _selectedBuild.Bsp;
             SelectedBuildCsg.SelectedText = _selectedBuild.Csg;
@@ -1567,12 +1603,18 @@ namespace Sledge.Editor.Settings
             SelectedBuildVisParameters.ClearParameters();
             SelectedBuildRadParameters.ClearParameters();
             SelectedBuildSharedParameters.ClearParameters();
+            SelectedBuildRunCsgCheckbox.Checked = SelectedBuildRunBspCheckbox.Checked = SelectedBuildRunVisCheckbox.Checked = SelectedBuildRunRadCheckbox.Checked = false;
 
             var spec = CompileSpecification.Specifications.FirstOrDefault(x => x.ID == _selectedBuild.Specification);
             if (spec == null) return;
 
             var prof = SelectedBuildProfile.SelectedItem as BuildProfile;
             if (prof == null) return;
+
+            SelectedBuildRunCsgCheckbox.Checked = spec.GetDefaultRun("csg");
+            SelectedBuildRunBspCheckbox.Checked = spec.GetDefaultRun("bsp");
+            SelectedBuildRunVisCheckbox.Checked = spec.GetDefaultRun("vis");
+            SelectedBuildRunRadCheckbox.Checked = spec.GetDefaultRun("rad");
 
             var csg = spec.GetTool("csg");
             if (csg != null)
@@ -1616,6 +1658,10 @@ namespace Sledge.Editor.Settings
                 SelectedBuildVisParameters.SetCommands(prof.GeneratedVisParameters ?? "", prof.AdditionalVisParameters ?? "");
                 SelectedBuildRadParameters.SetCommands(prof.GeneratedRadParameters ?? "", prof.AdditionalRadParameters ?? "");
                 SelectedBuildSharedParameters.SetCommands(prof.GeneratedSharedParameters ?? "", prof.AdditionalSharedParameters ?? "");
+                SelectedBuildRunCsgCheckbox.Checked = prof.RunCsg;
+                SelectedBuildRunBspCheckbox.Checked = prof.RunBsp;
+                SelectedBuildRunVisCheckbox.Checked = prof.RunVis;
+                SelectedBuildRunRadCheckbox.Checked = prof.RunRad;
             }
         }
 
@@ -1677,26 +1723,35 @@ namespace Sledge.Editor.Settings
         {
             SelectedBuildProfilePreview.Text = "";
             if (_selectedProfile == null || _selectedBuild == null) return;
-            var str = _selectedBuild.Csg
-                      + ' ' + (_selectedProfile.GeneratedCsgParameters
-                      + ' ' + _selectedProfile.AdditionalCsgParameters
-                      + ' ' + _selectedProfile.GeneratedSharedParameters
-                      + ' ' + _selectedProfile.AdditionalSharedParameters).Trim() + " <mapname>\r\n\r\n"
-                      + _selectedBuild.Bsp
-                      + ' ' + (_selectedProfile.GeneratedBspParameters
-                      + ' ' + _selectedProfile.AdditionalBspParameters
-                      + ' ' + _selectedProfile.GeneratedSharedParameters
-                      + ' ' + _selectedProfile.AdditionalSharedParameters).Trim() + " <mapname>\r\n\r\n"
-                      + _selectedBuild.Vis
-                      + ' ' + (_selectedProfile.GeneratedVisParameters
-                      + ' ' + _selectedProfile.AdditionalVisParameters
-                      + ' ' + _selectedProfile.GeneratedSharedParameters
-                      + ' ' + _selectedProfile.AdditionalSharedParameters).Trim() + " <mapname>\r\n\r\n"
-                      + _selectedBuild.Rad
-                      + ' ' + (_selectedProfile.GeneratedRadParameters
-                      + ' ' + _selectedProfile.AdditionalRadParameters
-                      + ' ' + _selectedProfile.GeneratedSharedParameters
-                      + ' ' + _selectedProfile.AdditionalSharedParameters).Trim() + " <mapname>\r\n\r\n";
+            var str = "";
+            if (SelectedBuildRunCsgCheckbox.Checked)
+            {
+                str += _selectedBuild.Csg + ' ' + (_selectedProfile.GeneratedCsgParameters
+                                                   + ' ' + _selectedProfile.AdditionalCsgParameters
+                                                   + ' ' + _selectedProfile.GeneratedSharedParameters
+                                                   + ' ' + _selectedProfile.AdditionalSharedParameters).Trim() + " <mapname>\r\n\r\n";
+            }
+            if (SelectedBuildRunBspCheckbox.Checked)
+            {
+                str += _selectedBuild.Bsp + ' ' + (_selectedProfile.GeneratedBspParameters
+                                                   + ' ' + _selectedProfile.AdditionalBspParameters
+                                                   + ' ' + _selectedProfile.GeneratedSharedParameters
+                                                   + ' ' + _selectedProfile.AdditionalSharedParameters).Trim() + " <mapname>\r\n\r\n";
+            }
+            if (SelectedBuildRunVisCheckbox.Checked)
+            {
+                str += _selectedBuild.Vis + ' ' + (_selectedProfile.GeneratedVisParameters
+                                                   + ' ' + _selectedProfile.AdditionalVisParameters
+                                                   + ' ' + _selectedProfile.GeneratedSharedParameters
+                                                   + ' ' + _selectedProfile.AdditionalSharedParameters).Trim() + " <mapname>\r\n\r\n";
+            }
+            if (SelectedBuildRunRadCheckbox.Checked)
+            {
+                str += _selectedBuild.Rad + ' ' + (_selectedProfile.GeneratedRadParameters
+                                                   + ' ' + _selectedProfile.AdditionalRadParameters
+                                                   + ' ' + _selectedProfile.GeneratedSharedParameters
+                                                   + ' ' + _selectedProfile.AdditionalSharedParameters).Trim() + " <mapname>\r\n\r\n";
+            }
             SelectedBuildProfilePreview.Text = str;
         }
 

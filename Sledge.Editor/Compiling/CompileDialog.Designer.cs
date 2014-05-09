@@ -32,10 +32,15 @@
             this.label40 = new System.Windows.Forms.Label();
             this.ToolTabs = new System.Windows.Forms.TabControl();
             this.tabBuildAdvancedCSG = new System.Windows.Forms.TabPage();
+            this.CsgParameters = new Sledge.Editor.Compiling.CompileParameterPanel();
             this.tabBuildAdvancedBSP = new System.Windows.Forms.TabPage();
+            this.BspParameters = new Sledge.Editor.Compiling.CompileParameterPanel();
             this.tabBuildAdvancedVIS = new System.Windows.Forms.TabPage();
+            this.VisParameters = new Sledge.Editor.Compiling.CompileParameterPanel();
             this.tabBuildAdvancedRAD = new System.Windows.Forms.TabPage();
+            this.RadParameters = new Sledge.Editor.Compiling.CompileParameterPanel();
             this.tabBuildAdvancedShared = new System.Windows.Forms.TabPage();
+            this.SharedParameters = new Sledge.Editor.Compiling.CompileParameterPanel();
             this.tabBuildAdvancedPreview = new System.Windows.Forms.TabPage();
             this.ProfilePreview = new System.Windows.Forms.TextBox();
             this.CompileButton = new System.Windows.Forms.Button();
@@ -50,11 +55,11 @@
             this.SimplePanel = new System.Windows.Forms.Panel();
             this.AdvancedModeButton = new System.Windows.Forms.Button();
             this.PresetTable = new System.Windows.Forms.TableLayoutPanel();
-            this.CsgParameters = new Sledge.Editor.Compiling.CompileParameterPanel();
-            this.BspParameters = new Sledge.Editor.Compiling.CompileParameterPanel();
-            this.VisParameters = new Sledge.Editor.Compiling.CompileParameterPanel();
-            this.RadParameters = new Sledge.Editor.Compiling.CompileParameterPanel();
-            this.SharedParameters = new Sledge.Editor.Compiling.CompileParameterPanel();
+            this.tabSteps = new System.Windows.Forms.TabPage();
+            this.RunCsgCheckbox = new System.Windows.Forms.CheckBox();
+            this.RunBspCheckbox = new System.Windows.Forms.CheckBox();
+            this.RunVisCheckbox = new System.Windows.Forms.CheckBox();
+            this.RunRadCheckbox = new System.Windows.Forms.CheckBox();
             this.ToolTabs.SuspendLayout();
             this.tabBuildAdvancedCSG.SuspendLayout();
             this.tabBuildAdvancedBSP.SuspendLayout();
@@ -64,6 +69,7 @@
             this.tabBuildAdvancedPreview.SuspendLayout();
             this.AdvancedPanel.SuspendLayout();
             this.SimplePanel.SuspendLayout();
+            this.tabSteps.SuspendLayout();
             this.SuspendLayout();
             // 
             // ProfileSelect
@@ -90,6 +96,7 @@
             this.ToolTabs.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.ToolTabs.Controls.Add(this.tabSteps);
             this.ToolTabs.Controls.Add(this.tabBuildAdvancedCSG);
             this.ToolTabs.Controls.Add(this.tabBuildAdvancedBSP);
             this.ToolTabs.Controls.Add(this.tabBuildAdvancedVIS);
@@ -112,6 +119,16 @@
             this.tabBuildAdvancedCSG.Text = "CSG";
             this.tabBuildAdvancedCSG.UseVisualStyleBackColor = true;
             // 
+            // CsgParameters
+            // 
+            this.CsgParameters.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.CsgParameters.Location = new System.Drawing.Point(0, 0);
+            this.CsgParameters.MinimumSize = new System.Drawing.Size(300, 250);
+            this.CsgParameters.Name = "CsgParameters";
+            this.CsgParameters.Size = new System.Drawing.Size(610, 257);
+            this.CsgParameters.TabIndex = 0;
+            this.CsgParameters.ValueChanged += new System.EventHandler(this.UpdatePreview);
+            // 
             // tabBuildAdvancedBSP
             // 
             this.tabBuildAdvancedBSP.Controls.Add(this.BspParameters);
@@ -121,6 +138,16 @@
             this.tabBuildAdvancedBSP.TabIndex = 1;
             this.tabBuildAdvancedBSP.Text = "BSP";
             this.tabBuildAdvancedBSP.UseVisualStyleBackColor = true;
+            // 
+            // BspParameters
+            // 
+            this.BspParameters.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.BspParameters.Location = new System.Drawing.Point(0, 0);
+            this.BspParameters.MinimumSize = new System.Drawing.Size(300, 250);
+            this.BspParameters.Name = "BspParameters";
+            this.BspParameters.Size = new System.Drawing.Size(610, 257);
+            this.BspParameters.TabIndex = 1;
+            this.BspParameters.ValueChanged += new System.EventHandler(this.UpdatePreview);
             // 
             // tabBuildAdvancedVIS
             // 
@@ -132,6 +159,16 @@
             this.tabBuildAdvancedVIS.Text = "VIS";
             this.tabBuildAdvancedVIS.UseVisualStyleBackColor = true;
             // 
+            // VisParameters
+            // 
+            this.VisParameters.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.VisParameters.Location = new System.Drawing.Point(0, 0);
+            this.VisParameters.MinimumSize = new System.Drawing.Size(300, 250);
+            this.VisParameters.Name = "VisParameters";
+            this.VisParameters.Size = new System.Drawing.Size(610, 257);
+            this.VisParameters.TabIndex = 1;
+            this.VisParameters.ValueChanged += new System.EventHandler(this.UpdatePreview);
+            // 
             // tabBuildAdvancedRAD
             // 
             this.tabBuildAdvancedRAD.Controls.Add(this.RadParameters);
@@ -142,6 +179,16 @@
             this.tabBuildAdvancedRAD.Text = "RAD";
             this.tabBuildAdvancedRAD.UseVisualStyleBackColor = true;
             // 
+            // RadParameters
+            // 
+            this.RadParameters.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.RadParameters.Location = new System.Drawing.Point(0, 0);
+            this.RadParameters.MinimumSize = new System.Drawing.Size(300, 250);
+            this.RadParameters.Name = "RadParameters";
+            this.RadParameters.Size = new System.Drawing.Size(610, 257);
+            this.RadParameters.TabIndex = 1;
+            this.RadParameters.ValueChanged += new System.EventHandler(this.UpdatePreview);
+            // 
             // tabBuildAdvancedShared
             // 
             this.tabBuildAdvancedShared.Controls.Add(this.SharedParameters);
@@ -151,6 +198,16 @@
             this.tabBuildAdvancedShared.TabIndex = 4;
             this.tabBuildAdvancedShared.Text = "Shared";
             this.tabBuildAdvancedShared.UseVisualStyleBackColor = true;
+            // 
+            // SharedParameters
+            // 
+            this.SharedParameters.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.SharedParameters.Location = new System.Drawing.Point(0, 0);
+            this.SharedParameters.MinimumSize = new System.Drawing.Size(300, 250);
+            this.SharedParameters.Name = "SharedParameters";
+            this.SharedParameters.Size = new System.Drawing.Size(610, 257);
+            this.SharedParameters.TabIndex = 1;
+            this.SharedParameters.ValueChanged += new System.EventHandler(this.UpdatePreview);
             // 
             // tabBuildAdvancedPreview
             // 
@@ -312,81 +369,84 @@
             this.PresetTable.Padding = new System.Windows.Forms.Padding(0, 0, 20, 0);
             this.PresetTable.RowCount = 1;
             this.PresetTable.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.PresetTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 291F));
-            this.PresetTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 291F));
-            this.PresetTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 291F));
-            this.PresetTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 291F));
-            this.PresetTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 291F));
-            this.PresetTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 291F));
-            this.PresetTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 291F));
-            this.PresetTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 291F));
-            this.PresetTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 291F));
-            this.PresetTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 291F));
-            this.PresetTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 291F));
-            this.PresetTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 291F));
-            this.PresetTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 291F));
-            this.PresetTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 291F));
-            this.PresetTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 291F));
-            this.PresetTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 291F));
-            this.PresetTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 291F));
-            this.PresetTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 291F));
-            this.PresetTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 291F));
-            this.PresetTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 291F));
-            this.PresetTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 291F));
-            this.PresetTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 291F));
-            this.PresetTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 291F));
+            this.PresetTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 312F));
+            this.PresetTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 312F));
+            this.PresetTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 312F));
+            this.PresetTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 312F));
+            this.PresetTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 312F));
+            this.PresetTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 312F));
+            this.PresetTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 312F));
+            this.PresetTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 312F));
+            this.PresetTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 312F));
+            this.PresetTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 312F));
+            this.PresetTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 312F));
+            this.PresetTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 312F));
+            this.PresetTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 312F));
+            this.PresetTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 312F));
+            this.PresetTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 312F));
+            this.PresetTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 312F));
+            this.PresetTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 312F));
+            this.PresetTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 312F));
+            this.PresetTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 312F));
+            this.PresetTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 312F));
+            this.PresetTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 312F));
+            this.PresetTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 312F));
+            this.PresetTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 312F));
             this.PresetTable.Size = new System.Drawing.Size(240, 312);
             this.PresetTable.TabIndex = 24;
             // 
-            // CsgParameters
+            // tabSteps
             // 
-            this.CsgParameters.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.CsgParameters.Location = new System.Drawing.Point(0, 0);
-            this.CsgParameters.MinimumSize = new System.Drawing.Size(300, 250);
-            this.CsgParameters.Name = "CsgParameters";
-            this.CsgParameters.Size = new System.Drawing.Size(610, 257);
-            this.CsgParameters.TabIndex = 0;
-            this.CsgParameters.ValueChanged += new System.EventHandler(this.UpdatePreview);
+            this.tabSteps.Controls.Add(this.RunRadCheckbox);
+            this.tabSteps.Controls.Add(this.RunVisCheckbox);
+            this.tabSteps.Controls.Add(this.RunBspCheckbox);
+            this.tabSteps.Controls.Add(this.RunCsgCheckbox);
+            this.tabSteps.Location = new System.Drawing.Point(4, 22);
+            this.tabSteps.Name = "tabSteps";
+            this.tabSteps.Size = new System.Drawing.Size(610, 257);
+            this.tabSteps.TabIndex = 6;
+            this.tabSteps.Text = "Steps to run";
+            this.tabSteps.UseVisualStyleBackColor = true;
             // 
-            // BspParameters
+            // RunCsgCheckbox
             // 
-            this.BspParameters.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.BspParameters.Location = new System.Drawing.Point(0, 0);
-            this.BspParameters.MinimumSize = new System.Drawing.Size(300, 250);
-            this.BspParameters.Name = "BspParameters";
-            this.BspParameters.Size = new System.Drawing.Size(610, 257);
-            this.BspParameters.TabIndex = 1;
-            this.BspParameters.ValueChanged += new System.EventHandler(this.UpdatePreview);
+            this.RunCsgCheckbox.AutoSize = true;
+            this.RunCsgCheckbox.Location = new System.Drawing.Point(7, 9);
+            this.RunCsgCheckbox.Name = "RunCsgCheckbox";
+            this.RunCsgCheckbox.Size = new System.Drawing.Size(71, 17);
+            this.RunCsgCheckbox.TabIndex = 0;
+            this.RunCsgCheckbox.Text = "Run CSG";
+            this.RunCsgCheckbox.UseVisualStyleBackColor = true;
             // 
-            // VisParameters
+            // RunBspCheckbox
             // 
-            this.VisParameters.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.VisParameters.Location = new System.Drawing.Point(0, 0);
-            this.VisParameters.MinimumSize = new System.Drawing.Size(300, 250);
-            this.VisParameters.Name = "VisParameters";
-            this.VisParameters.Size = new System.Drawing.Size(610, 257);
-            this.VisParameters.TabIndex = 1;
-            this.VisParameters.ValueChanged += new System.EventHandler(this.UpdatePreview);
+            this.RunBspCheckbox.AutoSize = true;
+            this.RunBspCheckbox.Location = new System.Drawing.Point(7, 32);
+            this.RunBspCheckbox.Name = "RunBspCheckbox";
+            this.RunBspCheckbox.Size = new System.Drawing.Size(70, 17);
+            this.RunBspCheckbox.TabIndex = 0;
+            this.RunBspCheckbox.Text = "Run BSP";
+            this.RunBspCheckbox.UseVisualStyleBackColor = true;
             // 
-            // RadParameters
+            // RunVisCheckbox
             // 
-            this.RadParameters.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.RadParameters.Location = new System.Drawing.Point(0, 0);
-            this.RadParameters.MinimumSize = new System.Drawing.Size(300, 250);
-            this.RadParameters.Name = "RadParameters";
-            this.RadParameters.Size = new System.Drawing.Size(610, 257);
-            this.RadParameters.TabIndex = 1;
-            this.RadParameters.ValueChanged += new System.EventHandler(this.UpdatePreview);
+            this.RunVisCheckbox.AutoSize = true;
+            this.RunVisCheckbox.Location = new System.Drawing.Point(7, 55);
+            this.RunVisCheckbox.Name = "RunVisCheckbox";
+            this.RunVisCheckbox.Size = new System.Drawing.Size(66, 17);
+            this.RunVisCheckbox.TabIndex = 0;
+            this.RunVisCheckbox.Text = "Run VIS";
+            this.RunVisCheckbox.UseVisualStyleBackColor = true;
             // 
-            // SharedParameters
+            // RunRadCheckbox
             // 
-            this.SharedParameters.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.SharedParameters.Location = new System.Drawing.Point(0, 0);
-            this.SharedParameters.MinimumSize = new System.Drawing.Size(300, 250);
-            this.SharedParameters.Name = "SharedParameters";
-            this.SharedParameters.Size = new System.Drawing.Size(610, 257);
-            this.SharedParameters.TabIndex = 1;
-            this.SharedParameters.ValueChanged += new System.EventHandler(this.UpdatePreview);
+            this.RunRadCheckbox.AutoSize = true;
+            this.RunRadCheckbox.Location = new System.Drawing.Point(7, 78);
+            this.RunRadCheckbox.Name = "RunRadCheckbox";
+            this.RunRadCheckbox.Size = new System.Drawing.Size(72, 17);
+            this.RunRadCheckbox.TabIndex = 0;
+            this.RunRadCheckbox.Text = "Run RAD";
+            this.RunRadCheckbox.UseVisualStyleBackColor = true;
             // 
             // CompileDialog
             // 
@@ -413,6 +473,8 @@
             this.AdvancedPanel.ResumeLayout(false);
             this.AdvancedPanel.PerformLayout();
             this.SimplePanel.ResumeLayout(false);
+            this.tabSteps.ResumeLayout(false);
+            this.tabSteps.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -446,5 +508,10 @@
         private System.Windows.Forms.TableLayoutPanel PresetTable;
         private System.Windows.Forms.Button AdvancedModeButton;
         private System.Windows.Forms.Button SimpleModeButton;
+        private System.Windows.Forms.TabPage tabSteps;
+        private System.Windows.Forms.CheckBox RunRadCheckbox;
+        private System.Windows.Forms.CheckBox RunVisCheckbox;
+        private System.Windows.Forms.CheckBox RunBspCheckbox;
+        private System.Windows.Forms.CheckBox RunCsgCheckbox;
     }
 }
