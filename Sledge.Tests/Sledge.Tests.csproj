@@ -70,6 +70,7 @@
     <Compile Include="InvalidSolidTest.cs" />
     <Compile Include="GameDetectionTest.cs" />
     <Compile Include="SerialisationTest.cs" />
+    <Compile Include="Vtf\VtfTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Sledge.Common\Sledge.Common.csproj">
