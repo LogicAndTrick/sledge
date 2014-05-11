@@ -18,13 +18,13 @@ namespace Sledge.Packages.Vpk
         internal uint TreeLength { get; private set; }
         internal uint HeaderLength { get; private set; }
 
-        internal List<VpkEntry> Entries { get; private set; }
+        internal Dictionary<string, VpkEntry> Entries { get; private set; }
         internal Dictionary<ushort, FileInfo> Chunks { get; private set; }
 
         public VpkDirectory(FileInfo packageFile)
         {
             PackageFile = packageFile;
-            Entries = new List<VpkEntry>();
+            Entries = new Dictionary<string, VpkEntry>();
             Chunks = new Dictionary<ushort, FileInfo>();
 
             var nameWithoutExt = Path.GetFileNameWithoutExtension(packageFile.Name);
@@ -94,7 +94,7 @@ namespace Sledge.Packages.Vpk
                     {
                         // get me some file information
                         var entry = ReadEntry(br, path + "/" + filename + "." + extension);
-                        Entries.Add(entry);
+                        Entries.Add(entry.FullName, entry);
                     }
                 }
             }
@@ -116,12 +116,12 @@ namespace Sledge.Packages.Vpk
 
         public IEnumerable<IPackageEntry> GetEntries()
         {
-            return Entries;
+            return Entries.Values;
         }
 
         public IPackageEntry GetEntry(string path)
         {
-            return GetEntries().FirstOrDefault(x => x.FullName == path);
+            return Entries.ContainsKey(path) ? Entries[path] : null;
         }
 
         public byte[] ExtractEntry(IPackageEntry entry)

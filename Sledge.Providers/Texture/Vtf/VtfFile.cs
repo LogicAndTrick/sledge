@@ -159,6 +159,9 @@ namespace Sledge.Providers.Texture.Vtf
                 var lowResWidth = br.ReadByte();
                 var lowResHeight = br.ReadByte();
 
+                //if (highResImageFormat != VtfImageFormat.Dxt1 && highResImageFormat != VtfImageFormat.Dxt1Onebitalpha && highResImageFormat != VtfImageFormat.Dxt5 && highResImageFormat != VtfImageFormat.Bgra8888)
+                //    throw new Exception("This one! " + file.Name);
+
                 ushort depth = 1;
                 uint numResources = 0;
 
@@ -211,13 +214,15 @@ namespace Sledge.Providers.Texture.Vtf
                     //return thumbImage;
                 }
 
+                var mipNum = GetMipToLoad(width, height, 64, mipmapCount);
+
                 for (var frame = 0; frame < numFrames; frame++)
                 {
                     for (var face = 0; face < faces; face++)
                     {
                         for (var slice = 0; slice < depth; slice++)
                         {
-                            for (var mip = 0; mip < mipmapCount; mip++)
+                            for (var mip = mipNum; mip < mipmapCount; mip++)
                             {
                                 var wid = MipmapResize(width, mip);
                                 var hei = MipmapResize(height, mip);
@@ -226,7 +231,7 @@ namespace Sledge.Providers.Texture.Vtf
 
                                 var img = LoadImage(br, (uint) wid, (uint) hei, highResImageFormat);
                                 //img.Save(String.Format(@"D:\Github\sledge\_Resources\VTF\_test_fr{0}_fa{1}_sl{2}_m{3}.png", frame, face, slice, mip));
-                                //return img;
+                                return img;
                             }
                         }
                     }
@@ -235,6 +240,18 @@ namespace Sledge.Providers.Texture.Vtf
 
                 return null;
             }
+        }
+
+        private static int GetMipToLoad(uint width, uint height, int max, int mipCount)
+        {
+            var mip = 0;
+            while (mip < mipCount - 1 && (width > max || height > max))
+            {
+                mip++;
+                width >>= 1;
+                height >>= 1;
+            }
+            return mip;
         }
 
         private static long GetImageDataLocation(int frame, int face, int slice, int mip, VtfImageFormat format, int width, int height, int numFrames, int numFaces, int depth, int numMips)
@@ -265,57 +282,138 @@ namespace Sledge.Providers.Texture.Vtf
             return res;
         }
 
+        private static void TransformBytes(byte[] buffer, BinaryReader br, uint width, uint height, int bpp, int a, int r, int g, int b, bool bluescreen)
+        {
+            var bytes = br.ReadBytes((int) (width * height * bpp));
+            for (var i = 0; i < bytes.Length; i += bpp)
+            {
+                buffer[i + 0] = (b >= 0) ? bytes[i + b] : (byte) 0; // b
+                buffer[i + 1] = (g >= 0) ? bytes[i + g] : (byte) 0; // g
+                buffer[i + 2] = (r >= 0) ? bytes[i + r] : (byte) 0; // r
+                buffer[i + 3] = (a >= 0) ? bytes[i + a] : (byte) 255; // a
+                if (bluescreen && buffer[i + 0] == 255 && buffer[i + 1] == 0 && buffer[i + 2] == 0) buffer[i + 3] = 0;
+            }
+        }
+
         private static Bitmap LoadImage(BinaryReader br, uint width, uint height, VtfImageFormat format)
         {
             var buffer = new byte[width * height * 4];
             switch (format)
             {
+                case VtfImageFormat.Rgba8888:
+                    TransformBytes(buffer, br, width, height, 4, 3, 0, 1, 2, false);
+                    break;
+                case VtfImageFormat.Abgr8888:
+                    TransformBytes(buffer, br, width, height, 4, 0, 3, 2, 1, false);
+                    break;
+                case VtfImageFormat.Rgb888:
+                    TransformBytes(buffer, br, width, height, 3, -1, 0, 1, 2, false);
+                    break;
+                case VtfImageFormat.Bgr888:
+                    TransformBytes(buffer, br, width, height, 3, -1, 2, 1, 0, false);
+                    break;
+                case VtfImageFormat.Rgb565:
+                    throw new NotImplementedException();
+                    break;
+                case VtfImageFormat.I8:
+                    throw new NotImplementedException();
+                    break;
+                case VtfImageFormat.Ia88:
+                    throw new NotImplementedException();
+                    break;
+                case VtfImageFormat.P8:
+                    throw new NotImplementedException();
+                    break;
+                case VtfImageFormat.A8:
+                    throw new NotImplementedException();
+                    break;
+                case VtfImageFormat.Rgb888Bluescreen:
+                    TransformBytes(buffer, br, width, height, 3, -1, 0, 1, 2, true);
+                    break;
+                case VtfImageFormat.Bgr888Bluescreen:
+                    TransformBytes(buffer, br, width, height, 3, -1, 2, 1, 0, true);
+                    break;
+                case VtfImageFormat.Argb8888:
+                    TransformBytes(buffer, br, width, height, 4, 0, 1, 2, 3, false);
+                    break;
+                case VtfImageFormat.Bgra8888:
+                    br.Read(buffer, 0, buffer.Length);
+                    break;
                 case VtfImageFormat.Dxt1:
                 case VtfImageFormat.Dxt1Onebitalpha:
-                    var c = new Color[4];
-
-                    for (var y = 0; y < height; y += 4)
-                    {
-                        for (var x = 0; x < width; x += 4)
-                        {
-                            var c0 = br.ReadUInt16();
-                            var c1 = br.ReadUInt16();
-                            c[0] = ColourFromRgb565(c0);
-                            c[1] = ColourFromRgb565(c1);
-                            if (c0 > c1 || format == VtfImageFormat.Dxt1)
-                            {
-                                // No alpha channel
-                                c[2] = LerpColours(c[0], c[1], 1 / 3f);
-                                c[3] = LerpColours(c[0], c[1], 2 / 3f);
-                            }
-                            else
-                            {
-                                // 1-bit alpha channel
-                                c[2] = LerpColours(c[0], c[1], 0.5f);
-                                c[3] = Color.Transparent;
-                            }
-
-                            var bytes = br.ReadUInt32();
-                            for (var yy = 0; yy < 4; yy++)
-                            {
-                                for (var xx = 0; xx < 4; xx++)
-                                {
-                                    var xpos = x + xx;
-                                    var ypos = y + yy;
-                                    if (xpos >= width || ypos >= height) continue;
-
-                                    var index = bytes & 0x0003;
-                                    var colour = c[index];
-                                    var pointer = ypos * width * 4 + xpos * 4;
-                                    buffer[pointer + 0] = colour.B; // b
-                                    buffer[pointer + 1] = colour.G; // g
-                                    buffer[pointer + 2] = colour.R; // r
-                                    buffer[pointer + 3] = colour.A; // a
-                                    bytes >>= 2;
-                                }
-                            }
-                        }
-                    }
+                    DecompressDxt1(buffer, br, width, height);
+                    break;
+                case VtfImageFormat.Dxt3:
+                    throw new NotImplementedException();
+                    break;
+                case VtfImageFormat.Dxt5:
+                    DecompressDxt5(buffer, br, width, height);
+                    break;
+                case VtfImageFormat.Bgrx8888:
+                    TransformBytes(buffer, br, width, height, 4, -1, 2, 1, 0, false);
+                    break;
+                case VtfImageFormat.Bgr565:
+                    throw new NotImplementedException();
+                    break;
+                case VtfImageFormat.Bgrx5551:
+                    throw new NotImplementedException();
+                    break;
+                case VtfImageFormat.Bgra4444:
+                    throw new NotImplementedException();
+                    break;
+                case VtfImageFormat.Bgra5551:
+                    throw new NotImplementedException();
+                    break;
+                case VtfImageFormat.Uv88:
+                    throw new NotImplementedException();
+                    break;
+                case VtfImageFormat.Uvwq8888:
+                    throw new NotImplementedException();
+                    break;
+                case VtfImageFormat.Rgba16161616F:
+                    throw new NotImplementedException();
+                    break;
+                case VtfImageFormat.Rgba16161616:
+                    throw new NotImplementedException();
+                    break;
+                case VtfImageFormat.Uvlx8888:
+                    throw new NotImplementedException();
+                    break;
+                case VtfImageFormat.R32F:
+                    throw new NotImplementedException();
+                    break;
+                case VtfImageFormat.Rgb323232F:
+                    throw new NotImplementedException();
+                    break;
+                case VtfImageFormat.Rgba32323232F:
+                    throw new NotImplementedException();
+                    break;
+                case VtfImageFormat.NvDst16:
+                    throw new NotImplementedException();
+                    break;
+                case VtfImageFormat.NvDst24:
+                    throw new NotImplementedException();
+                    break;
+                case VtfImageFormat.NvIntz:
+                    throw new NotImplementedException();
+                    break;
+                case VtfImageFormat.NvRawz:
+                    throw new NotImplementedException();
+                    break;
+                case VtfImageFormat.AtiDst16:
+                    throw new NotImplementedException();
+                    break;
+                case VtfImageFormat.AtiDst24:
+                    throw new NotImplementedException();
+                    break;
+                case VtfImageFormat.NvNull:
+                    throw new NotImplementedException();
+                    break;
+                case VtfImageFormat.Ati2N:
+                    throw new NotImplementedException();
+                    break;
+                case VtfImageFormat.Ati1N:
+                    throw new NotImplementedException();
                     break;
             }
             var bmp = new Bitmap((int)width, (int)height, PixelFormat.Format32bppArgb);
@@ -323,6 +421,122 @@ namespace Sledge.Providers.Texture.Vtf
             Marshal.Copy(buffer, 0, bits.Scan0, buffer.Length);
             bmp.UnlockBits(bits);
             return bmp;
+        }
+
+        private static void DecompressDxt1(byte[] buffer, BinaryReader br, uint width, uint height)
+        {
+            var c = new Color[4];
+            for (var y = 0; y < height; y += 4)
+            {
+                for (var x = 0; x < width; x += 4)
+                {
+                    var c0 = br.ReadUInt16();
+                    var c1 = br.ReadUInt16();
+                    c[0] = ColourFromRgb565(c0);
+                    c[1] = ColourFromRgb565(c1);
+                    if (c0 > c1)
+                    {
+                        // No alpha channel
+                        c[2] = LerpColours(c[0], c[1], 1 / 3f);
+                        c[3] = LerpColours(c[0], c[1], 2 / 3f);
+                    }
+                    else
+                    {
+                        // 1-bit alpha channel
+                        c[2] = LerpColours(c[0], c[1], 0.5f);
+                        c[3] = Color.Transparent;
+                    }
+
+                    var bytes = br.ReadUInt32();
+                    for (var yy = 0; yy < 4; yy++)
+                    {
+                        for (var xx = 0; xx < 4; xx++)
+                        {
+                            var xpos = x + xx;
+                            var ypos = y + yy;
+                            if (xpos < width && ypos < height)
+                            {
+                                var index = bytes & 0x0003;
+                                var colour = c[index];
+                                var pointer = ypos * width * 4 + xpos * 4;
+                                buffer[pointer + 0] = colour.B; // b
+                                buffer[pointer + 1] = colour.G; // g
+                                buffer[pointer + 2] = colour.R; // r
+                                buffer[pointer + 3] = colour.A; // a
+                            }
+                            bytes >>= 2;
+                        }
+                    }
+                }
+            }
+        }
+
+        private static void DecompressDxt5(byte[] buffer, BinaryReader br, uint width, uint height)
+        {
+            var c = new Color[4];
+            var a = new int[8];
+            for (var y = 0; y < height; y += 4)
+            {
+                for (var x = 0; x < width; x += 4)
+                {
+                    var a0 = br.ReadByte();
+                    var a1 = br.ReadByte();
+                    a[0] = a0;
+                    a[1] = a1;
+
+                    if (a0 > a1)
+                    {
+                        a[2] = (6 * a[0] + 1 * a[1] + 3) / 7;
+                        a[3] = (5 * a[0] + 2 * a[1] + 3) / 7;
+                        a[4] = (4 * a[0] + 3 * a[1] + 3) / 7;
+                        a[5] = (3 * a[0] + 4 * a[1] + 3) / 7;
+                        a[6] = (2 * a[0] + 5 * a[1] + 3) / 7;
+                        a[7] = (1 * a[0] + 6 * a[1] + 3) / 7;
+                    }
+                    else
+                    {
+                        a[2] = (4 * a[0] + 1 * a[1] + 2) / 5;
+                        a[3] = (3 * a[0] + 2 * a[1] + 2) / 5;
+                        a[4] = (2 * a[0] + 3 * a[1] + 2) / 5;
+                        a[5] = (1 * a[0] + 4 * a[1] + 2) / 5;
+                        a[6] = 0x00;
+                        a[7] = 0xFF;
+                    }
+
+                    var aindex = 0L;
+                    for (var i = 0; i < 6; i++) aindex |= ((long) br.ReadByte()) << (8 * i);
+
+                    var c0 = br.ReadUInt16();
+                    var c1 = br.ReadUInt16();
+                    c[0] = ColourFromRgb565(c0);
+                    c[1] = ColourFromRgb565(c1);
+                    c[2] = LerpColours(c[0], c[1], 1 / 3f);
+                    c[3] = LerpColours(c[0], c[1], 2 / 3f);
+
+                    var bytes = br.ReadUInt32();
+                    for (var yy = 0; yy < 4; yy++)
+                    {
+                        for (var xx = 0; xx < 4; xx++)
+                        {
+                            var xpos = x + xx;
+                            var ypos = y + yy;
+                            if (xpos < width && ypos < height)
+                            {
+                                var index = bytes & 0x0003;
+                                var colour = c[index];
+                                var alpha = (byte) a[aindex & 0x07];
+                                var pointer = ypos * width * 4 + xpos * 4;
+                                buffer[pointer + 0] = colour.B; // b
+                                buffer[pointer + 1] = colour.G; // g
+                                buffer[pointer + 2] = colour.R; // r
+                                buffer[pointer + 3] = alpha; // a
+                            }
+                            bytes >>= 2;
+                            aindex >>= 3;
+                        }
+                    }
+                }
+            }
         }
 
         private static Color ColourFromRgb565(ushort c)
