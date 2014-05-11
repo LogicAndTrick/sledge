@@ -33,7 +33,7 @@ namespace Sledge.Tests.Vtf
         public void BulkExtractEverything()
         {
             var fs = new InlinePackageFile(@"F:\Steam\SteamApps\common\Team Fortress 2\tf\tf2_textures_dir.vpk");
-            var files = fs.GetFiles("\\.vtf$", true).OrderBy(x => x.Name).Take(200).ToList();
+            var files = fs.GetFiles("\\.vtf$", true).OrderBy(x => x.Name).Take(100).ToList();
             //return;
             /*for (var i = 0; i < files.Count; i++)
             {
@@ -44,7 +44,27 @@ namespace Sledge.Tests.Vtf
             Parallel.ForEach(files, x =>
             {
                 var vtf = VtfProvider.GetImage(x);
+                //Console.WriteLine(vtf.Height);
                 //vtf.Save(@"D:\Github\sledge\_Resources\VTF\extract\" + x.Name + ".png");
+            });
+        }
+
+        [TestMethod]
+        public void BulkExtractEverything2()
+        {
+            var files = Directory.GetFiles(@"D:\Github\sledge\_Resources\VTF", "*.vtf").Take(50);
+            //return;
+            /*for (var i = 0; i < files.Count; i++)
+            {
+                var vtf = VtfProvider.GetImage(files[i]);
+                //vtf.Save(@"D:\Github\sledge\_Resources\VTF\extract\" + files[i].Name + ".png");
+                //if (i > 1) break;
+            }*/
+            Parallel.ForEach(files, x =>
+            {
+                var vtf = VtfProvider.GetImage(new NativeFile(x));
+                //Console.WriteLine(vtf.Height);
+                vtf.Save(@"D:\Github\sledge\_Resources\VTF\extract\" + Path.GetFileName(x) + ".png");
             });
         }
     }

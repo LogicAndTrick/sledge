@@ -11,6 +11,30 @@ using Sledge.FileSystem;
 
 namespace Sledge.Providers.Texture.Vtf
 {
+    struct Color
+    {
+        public byte A;
+        public byte R;
+        public byte G;
+        public byte B;
+
+        public Color(byte a, byte r, byte g, byte b)
+        {
+            A = a;
+            R = r;
+            G = g;
+            B = b;
+        }
+
+        public Color(int r, int g, int b)
+        {
+            A = 255;
+            R = (byte) r;
+            G = (byte) g;
+            B = (byte) b;
+        }
+    }
+
     public enum VtfImageFormat : int
     {
         None = -1,
@@ -214,7 +238,7 @@ namespace Sledge.Providers.Texture.Vtf
                     //return thumbImage;
                 }
 
-                var mipNum = GetMipToLoad(width, height, 64, mipmapCount);
+                var mipNum = GetMipToLoad(width, height, 512, mipmapCount);
 
                 for (var frame = 0; frame < numFrames; frame++)
                 {
@@ -425,26 +449,50 @@ namespace Sledge.Providers.Texture.Vtf
 
         private static void DecompressDxt1(byte[] buffer, BinaryReader br, uint width, uint height)
         {
-            var c = new Color[4];
+            var c = new byte[16];
             for (var y = 0; y < height; y += 4)
             {
                 for (var x = 0; x < width; x += 4)
                 {
                     var c0 = br.ReadUInt16();
                     var c1 = br.ReadUInt16();
-                    c[0] = ColourFromRgb565(c0);
-                    c[1] = ColourFromRgb565(c1);
+
+                    c[0] = (byte)((c0 & 0xF800) >> 8);
+                    c[1] = (byte)((c0 & 0x07E0) >> 3);
+                    c[2] = (byte)((c0 & 0x001F) << 3);
+                    c[3] = 255;
+
+                    c[4] = (byte)((c1 & 0xF800) >> 8);
+                    c[5] = (byte)((c1 & 0x07E0) >> 3);
+                    c[6] = (byte)((c1 & 0x001F) << 3);
+                    c[7] = 255;
+
                     if (c0 > c1)
                     {
                         // No alpha channel
-                        c[2] = LerpColours(c[0], c[1], 1 / 3f);
-                        c[3] = LerpColours(c[0], c[1], 2 / 3f);
+
+                        c[8 ] = (byte)((2 * c[0] + c[4]) / 3);
+                        c[9 ] = (byte)((2 * c[1] + c[5]) / 3);
+                        c[10] = (byte)((2 * c[2] + c[6]) / 3);
+                        c[11] = 255;
+
+                        c[12] = (byte)((c[0] + 2 * c[4]) / 3);
+                        c[13] = (byte)((c[1] + 2 * c[5]) / 3);
+                        c[14] = (byte)((c[2] + 2 * c[6]) / 3);
+                        c[15] = 255;
                     }
                     else
                     {
                         // 1-bit alpha channel
-                        c[2] = LerpColours(c[0], c[1], 0.5f);
-                        c[3] = Color.Transparent;
+
+                        c[8] = (byte)((c[0] + c[4]) / 2);
+                        c[9] = (byte)((c[1] + c[5]) / 2);
+                        c[10] = (byte)((c[2] + c[6]) / 2);
+                        c[11] = 255;
+                        c[12] = 0;
+                        c[13] = 0;
+                        c[14] = 0;
+                        c[15] = 0;
                     }
 
                     var bytes = br.ReadUInt32();
@@ -457,12 +505,12 @@ namespace Sledge.Providers.Texture.Vtf
                             if (xpos < width && ypos < height)
                             {
                                 var index = bytes & 0x0003;
-                                var colour = c[index];
+                                index *= 4;
                                 var pointer = ypos * width * 4 + xpos * 4;
-                                buffer[pointer + 0] = colour.B; // b
-                                buffer[pointer + 1] = colour.G; // g
-                                buffer[pointer + 2] = colour.R; // r
-                                buffer[pointer + 3] = colour.A; // a
+                                buffer[pointer + 0] = c[index + 2]; // b
+                                buffer[pointer + 1] = c[index + 1]; // g
+                                buffer[pointer + 2] = c[index + 0]; // r
+                                buffer[pointer + 3] = c[index + 3]; // a
                             }
                             bytes >>= 2;
                         }
@@ -510,8 +558,8 @@ namespace Sledge.Providers.Texture.Vtf
                     var c1 = br.ReadUInt16();
                     c[0] = ColourFromRgb565(c0);
                     c[1] = ColourFromRgb565(c1);
-                    c[2] = LerpColours(c[0], c[1], 1 / 3f);
-                    c[3] = LerpColours(c[0], c[1], 2 / 3f);
+                    c[2] = LerpColours(c[0], c[1], 1, 3);
+                    c[3] = LerpColours(c[0], c[1], 2, 3);
 
                     var bytes = br.ReadUInt32();
                     for (var yy = 0; yy < 4; yy++)
@@ -544,17 +592,17 @@ namespace Sledge.Providers.Texture.Vtf
             var r = (c & 0xF800) >> 8;
             var g = (c & 0x07E0) >> 3;
             var b = (c & 0x001F) << 3;
-            return Color.FromArgb(r, g, b);
+            return new Color(r, g, b);
         }
 
-        private static Color LerpColours(Color min, Color max, float val)
+        private static Color LerpColours(Color min, Color max, int num, int total)
         {
-            var d1 = 1 - val;
-            var d2 = val;
-            var r = (int) (min.R * d1 + max.R * d2);
-            var g = (int) (min.G * d1 + max.G * d2);
-            var b = (int) (min.B * d1 + max.B * d2);
-            return Color.FromArgb(r, g, b);
+            var d1 = 1 - num;
+            var d2 = num;
+            var r = (min.R * d1 + max.R * d2) / total;
+            var g = (min.G * d1 + max.G * d2) / total;
+            var b = (min.B * d1 + max.B * d2) / total;
+            return new Color(r, g, b);
         }
 
         private static VtfImageFormatInfo GetImageFormatInfo(VtfImageFormat imageFormat)
