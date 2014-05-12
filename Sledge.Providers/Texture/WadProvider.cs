@@ -3,6 +3,7 @@ using System.Drawing.Imaging;
 using System.Globalization;
 using System.Linq;
 using System.IO;
+using System.Threading.Tasks;
 using Sledge.FileSystem;
 using Sledge.Graphics.Helpers;
 using System.Drawing;
@@ -183,7 +184,7 @@ namespace Sledge.Providers.Texture
             var packages = list.Select(x => x.Package).Distinct().ToList();
             var packs = packages.Select(x => new WadPackage(new FileInfo(x.PackageFile.FullPathName))).ToList();
             var streams = packs.Select(x => x.GetStreamSource()).ToList();
-            foreach (var ti in list)
+            Parallel.ForEach(list, ti =>
             {
                 foreach (var stream in streams)
                 {
@@ -197,7 +198,7 @@ namespace Sledge.Providers.Texture
                     open.Dispose();
                     break;
                 }
-            }
+            });
             foreach (var pack in packs) pack.Dispose();
         }
 

@@ -6,35 +6,12 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using OpenTK;
 using Sledge.DataStructures.GameData;
 using Sledge.FileSystem;
 
 namespace Sledge.Providers.Texture.Vtf
 {
-    struct Color
-    {
-        public byte A;
-        public byte R;
-        public byte G;
-        public byte B;
-
-        public Color(byte a, byte r, byte g, byte b)
-        {
-            A = a;
-            R = r;
-            G = g;
-            B = b;
-        }
-
-        public Color(int r, int g, int b)
-        {
-            A = 255;
-            R = (byte) r;
-            G = (byte) g;
-            B = (byte) b;
-        }
-    }
-
     public enum VtfImageFormat : int
     {
         None = -1,
@@ -186,6 +163,9 @@ namespace Sledge.Providers.Texture.Vtf
                 //if (highResImageFormat != VtfImageFormat.Dxt1 && highResImageFormat != VtfImageFormat.Dxt1Onebitalpha && highResImageFormat != VtfImageFormat.Dxt5 && highResImageFormat != VtfImageFormat.Bgra8888)
                 //    throw new Exception("This one! " + file.Name);
 
+                if (highResImageFormat == VtfImageFormat.Rgba16161616F)
+                    Console.WriteLine(file.Name);
+
                 ushort depth = 1;
                 uint numResources = 0;
 
@@ -238,7 +218,7 @@ namespace Sledge.Providers.Texture.Vtf
                     //return thumbImage;
                 }
 
-                var mipNum = GetMipToLoad(width, height, 512, mipmapCount);
+                var mipNum = GetMipToLoad(width, height, 256, mipmapCount);
 
                 for (var frame = 0; frame < numFrames; frame++)
                 {
@@ -308,14 +288,85 @@ namespace Sledge.Providers.Texture.Vtf
 
         private static void TransformBytes(byte[] buffer, BinaryReader br, uint width, uint height, int bpp, int a, int r, int g, int b, bool bluescreen)
         {
-            var bytes = br.ReadBytes((int) (width * height * bpp));
-            for (var i = 0; i < bytes.Length; i += bpp)
+            var bytes = br.ReadBytes((int)(width * height * bpp));
+            for (int i = 0, j = 0; i < bytes.Length; i += bpp, j += 4)
             {
-                buffer[i + 0] = (b >= 0) ? bytes[i + b] : (byte) 0; // b
-                buffer[i + 1] = (g >= 0) ? bytes[i + g] : (byte) 0; // g
-                buffer[i + 2] = (r >= 0) ? bytes[i + r] : (byte) 0; // r
-                buffer[i + 3] = (a >= 0) ? bytes[i + a] : (byte) 255; // a
-                if (bluescreen && buffer[i + 0] == 255 && buffer[i + 1] == 0 && buffer[i + 2] == 0) buffer[i + 3] = 0;
+                buffer[j + 0] = (b >= 0) ? bytes[i + b] : (byte)0; // b
+                buffer[j + 1] = (g >= 0) ? bytes[i + g] : (byte)0; // g
+                buffer[j + 2] = (r >= 0) ? bytes[i + r] : (byte)0; // r
+                buffer[j + 3] = (a >= 0) ? bytes[i + a] : (byte)255; // a
+                if (bluescreen && buffer[j + 0] == 255 && buffer[j + 1] == 0 && buffer[j + 2] == 0) buffer[j + 3] = 0;
+            }
+        }
+
+        private static void TransformShorts(byte[] buffer, BinaryReader br, uint width, uint height, int bpp, int a, int r, int g, int b)
+        {
+            a *= 2;
+            r *= 2;
+            g *= 2;
+            b *= 2;
+            var bytes = br.ReadBytes((int)(width * height * bpp));
+            for (int i = 0, j = 0; i < bytes.Length; i += bpp, j += 4)
+            {
+                buffer[j + 0] = (b >= 0) ? (byte)((bytes[i + b] | bytes[i + b + 1] << 8) / 256) : (byte)0; // b
+                buffer[j + 1] = (g >= 0) ? (byte)((bytes[i + g] | bytes[i + g + 1] << 8) / 256) : (byte)0; // g
+                buffer[j + 2] = (r >= 0) ? (byte)((bytes[i + r] | bytes[i + r + 1] << 8) / 256) : (byte)0; // r
+                buffer[j + 3] = (a >= 0) ? (byte)((bytes[i + a] | bytes[i + a + 1] << 8) / 256) : (byte)255; // a
+            }
+        }
+
+        private static void TransformRgba16161616F(byte[] buffer, BinaryReader br, uint width, uint height)
+        {
+            // I have no idea how this works. It's just converted straight from VTFLib.
+            // I think the half format is slightly different to what it should be, which causes the result to be different to VTFLib.
+            // Fortunately Sledge does not need to care about cubemaps, which is what this format seems to be used for...
+            const int a = 6;
+            const int r = 0;
+            const int g = 2;
+            const int b = 4;
+            var bytes = br.ReadBytes((int)(width * height * 8));
+
+            var log = 0d;
+            for (int i = 0, j = 0; i < bytes.Length; i += 8, j += 4)
+            {
+                var hb = Half.FromBytes(bytes, i + b).ToSingle();
+                var hg = Half.FromBytes(bytes, i + g).ToSingle();
+                var hr = Half.FromBytes(bytes, i + r).ToSingle();
+                var lum = hr * 0.299f + hg * 0.587f + hb * 0.114f;
+                log += Math.Log(0.0000000001d + lum);
+            }
+            log = Math.Exp(log / (width * height));
+
+            for (int i = 0, j = 0; i < bytes.Length; i += 8, j += 4)
+            {
+                var hb = Half.FromBytes(bytes, i + b).ToSingle();
+                var hg = Half.FromBytes(bytes, i + g).ToSingle();
+                var hr = Half.FromBytes(bytes, i + r).ToSingle();
+                var ha = Half.FromBytes(bytes, i + a).ToSingle();
+
+                var y = hr * 0.299f + hg * 0.587f + hb * 0.114f;
+                var u = (hb - y) * 0.565f;
+                var v = (hr - y) * 0.713f;
+
+                var mul = 4 * y / log;
+                mul = mul / (1 + mul);
+                mul /= y;
+
+                hr = (float) Math.Pow((y + 1.403f * v) * mul, 2.25f);
+                hg = (float) Math.Pow((y - 0.344f * u - 0.714f * v) * mul, 2.25f);
+                hb = (float)Math.Pow((y + 1.770f * u) * mul, 2.25f);
+
+                if (hr < 0) hr = 0;
+                if (hr > 1) hr = 1;
+                if (hg < 0) hg = 0;
+                if (hg > 1) hg = 1;
+                if (hb < 0) hb = 0;
+                if (hb > 1) hb = 1;
+
+                buffer[j + 0] = (byte)(hb * 255); // b
+                buffer[j + 1] = (byte)(hg * 255); // g
+                buffer[j + 2] = (byte)(hr * 255); // r
+                buffer[j + 3] = (byte)(ha * 255); // a
             }
         }
 
@@ -389,16 +440,16 @@ namespace Sledge.Providers.Texture.Vtf
                     throw new NotImplementedException();
                     break;
                 case VtfImageFormat.Uv88:
-                    throw new NotImplementedException();
+                    TransformBytes(buffer, br, width, height, 2, -1, 0, 1, -1, false);
                     break;
                 case VtfImageFormat.Uvwq8888:
                     throw new NotImplementedException();
                     break;
                 case VtfImageFormat.Rgba16161616F:
-                    throw new NotImplementedException();
+                    TransformRgba16161616F(buffer, br, width, height);
                     break;
                 case VtfImageFormat.Rgba16161616:
-                    throw new NotImplementedException();
+                    TransformShorts(buffer, br, width, height, 8, 3, 0, 1, 2);
                     break;
                 case VtfImageFormat.Uvlx8888:
                     throw new NotImplementedException();
@@ -449,13 +500,19 @@ namespace Sledge.Providers.Texture.Vtf
 
         private static void DecompressDxt1(byte[] buffer, BinaryReader br, uint width, uint height)
         {
+            var num = ((width + 3) / 4) * ((height + 3) / 4) * 8;
+            var all = br.ReadBytes((int) num);
+            var pos = 0;
             var c = new byte[16];
             for (var y = 0; y < height; y += 4)
             {
                 for (var x = 0; x < width; x += 4)
                 {
-                    var c0 = br.ReadUInt16();
-                    var c1 = br.ReadUInt16();
+                    int c0 = all[pos++];
+                    c0 |= all[pos++] << 8;
+
+                    int c1 = all[pos++];
+                    c1 |= all[pos++] << 8;
 
                     c[0] = (byte)((c0 & 0xF800) >> 8);
                     c[1] = (byte)((c0 & 0x07E0) >> 3);
@@ -495,7 +552,11 @@ namespace Sledge.Providers.Texture.Vtf
                         c[15] = 0;
                     }
 
-                    var bytes = br.ReadUInt32();
+                    int bytes = all[pos++];
+                    bytes |= all[pos++] << 8;
+                    bytes |= all[pos++] << 16;
+                    bytes |= all[pos++] << 24;
+
                     for (var yy = 0; yy < 4; yy++)
                     {
                         for (var xx = 0; xx < 4; xx++)
@@ -521,14 +582,18 @@ namespace Sledge.Providers.Texture.Vtf
 
         private static void DecompressDxt5(byte[] buffer, BinaryReader br, uint width, uint height)
         {
-            var c = new Color[4];
+            var num = ((width + 3) / 4) * ((height + 3) / 4) * 16;
+            var all = br.ReadBytes((int) num);
+            var pos = 0;
+            var c = new byte[16];
             var a = new int[8];
             for (var y = 0; y < height; y += 4)
             {
                 for (var x = 0; x < width; x += 4)
                 {
-                    var a0 = br.ReadByte();
-                    var a1 = br.ReadByte();
+                    var a0 = all[pos++];
+                    var a1 = all[pos++];
+
                     a[0] = a0;
                     a[1] = a1;
 
@@ -552,16 +617,39 @@ namespace Sledge.Providers.Texture.Vtf
                     }
 
                     var aindex = 0L;
-                    for (var i = 0; i < 6; i++) aindex |= ((long) br.ReadByte()) << (8 * i);
+                    for (var i = 0; i < 6; i++) aindex |= ((long)all[pos++]) << (8 * i);
 
-                    var c0 = br.ReadUInt16();
-                    var c1 = br.ReadUInt16();
-                    c[0] = ColourFromRgb565(c0);
-                    c[1] = ColourFromRgb565(c1);
-                    c[2] = LerpColours(c[0], c[1], 1, 3);
-                    c[3] = LerpColours(c[0], c[1], 2, 3);
+                    int c0 = all[pos++];
+                    c0 |= all[pos++] << 8;
 
-                    var bytes = br.ReadUInt32();
+                    int c1 = all[pos++];
+                    c1 |= all[pos++] << 8;
+
+                    c[0] = (byte)((c0 & 0xF800) >> 8);
+                    c[1] = (byte)((c0 & 0x07E0) >> 3);
+                    c[2] = (byte)((c0 & 0x001F) << 3);
+                    c[3] = 255;
+
+                    c[4] = (byte)((c1 & 0xF800) >> 8);
+                    c[5] = (byte)((c1 & 0x07E0) >> 3);
+                    c[6] = (byte)((c1 & 0x001F) << 3);
+                    c[7] = 255;
+
+                    c[8] = (byte)((2 * c[0] + c[4]) / 3);
+                    c[9] = (byte)((2 * c[1] + c[5]) / 3);
+                    c[10] = (byte)((2 * c[2] + c[6]) / 3);
+                    c[11] = 255;
+
+                    c[12] = (byte)((c[0] + 2 * c[4]) / 3);
+                    c[13] = (byte)((c[1] + 2 * c[5]) / 3);
+                    c[14] = (byte)((c[2] + 2 * c[6]) / 3);
+                    c[15] = 255;
+
+                    int bytes = all[pos++];
+                    bytes |= all[pos++] << 8;
+                    bytes |= all[pos++] << 16;
+                    bytes |= all[pos++] << 24;
+
                     for (var yy = 0; yy < 4; yy++)
                     {
                         for (var xx = 0; xx < 4; xx++)
@@ -571,12 +659,12 @@ namespace Sledge.Providers.Texture.Vtf
                             if (xpos < width && ypos < height)
                             {
                                 var index = bytes & 0x0003;
-                                var colour = c[index];
+                                index *= 4;
                                 var alpha = (byte) a[aindex & 0x07];
                                 var pointer = ypos * width * 4 + xpos * 4;
-                                buffer[pointer + 0] = colour.B; // b
-                                buffer[pointer + 1] = colour.G; // g
-                                buffer[pointer + 2] = colour.R; // r
+                                buffer[pointer + 0] = c[index + 2]; // b
+                                buffer[pointer + 1] = c[index + 1]; // g
+                                buffer[pointer + 2] = c[index + 0]; // r
                                 buffer[pointer + 3] = alpha; // a
                             }
                             bytes >>= 2;
@@ -585,24 +673,6 @@ namespace Sledge.Providers.Texture.Vtf
                     }
                 }
             }
-        }
-
-        private static Color ColourFromRgb565(ushort c)
-        {
-            var r = (c & 0xF800) >> 8;
-            var g = (c & 0x07E0) >> 3;
-            var b = (c & 0x001F) << 3;
-            return new Color(r, g, b);
-        }
-
-        private static Color LerpColours(Color min, Color max, int num, int total)
-        {
-            var d1 = 1 - num;
-            var d2 = num;
-            var r = (min.R * d1 + max.R * d2) / total;
-            var g = (min.G * d1 + max.G * d2) / total;
-            var b = (min.B * d1 + max.B * d2) / total;
-            return new Color(r, g, b);
         }
 
         private static VtfImageFormatInfo GetImageFormatInfo(VtfImageFormat imageFormat)

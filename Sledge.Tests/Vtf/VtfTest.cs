@@ -22,41 +22,53 @@ namespace Sledge.Tests.Vtf
         [TestMethod]
         public void TestLoadVtfImage()
         {
-            var file = new NativeFile(@"D:\Github\sledge\_Resources\VTF\mudground001_height-ssbump.vtf");
+            //var file = new NativeFile(@"D:\Github\sledge\_Resources\VTF\mudground001_height-ssbump.vtf");
             //var file = new NativeFile(@"D:\Github\sledge\_Resources\VTF\dirtroad001a.vtf");
-            //file = new NativeFile(@"D:\Github\sledge\_Resources\VTF\rockground001.vtf");
+            //var file = new NativeFile(@"D:\Github\sledge\_Resources\VTF\rockground001.vtf");
+            //var file = new NativeFile(@"D:\Github\sledge\_Resources\VTF\class_demo_dudv.vtf");
+            var file = new NativeFile(@"D:\Github\sledge\_Resources\VTF\cubemap_gold001.hdr.vtf");
+            //var file = new NativeFile(@"D:\Github\sledge\_Resources\VTF\800corner.vtf");
             var image = VtfProvider.GetImage(file);
-            //image.Save(@"D:\Github\sledge\_Resources\VTF\_test2.png");
+            image.Save(@"D:\Github\sledge\_Resources\VTF\_test2.png");
         }
 
         [TestMethod]
         public void BulkExtractEverything()
         {
-            var fs = new InlinePackageFile(@"F:\Steam\SteamApps\common\Team Fortress 2\tf\tf2_textures_dir.vpk");
-            var files = fs.GetFiles("\\.vtf$", true).OrderBy(x => x.Name).Take(100).ToList();
+            //var fs = new InlinePackageFile(@"F:\Steam\SteamApps\common\Team Fortress 2\tf\tf2_textures_dir.vpk");
+            var fs = new InlinePackageFile(@"F:\Steam\SteamApps\common\dota 2 beta\dota\pak01_dir.vpk");
+            var files = fs.GetFiles("\\.vtf$", true).OrderBy(x => x.Name).Take(20000).GroupBy(x => x.Name).Select(x => x.First()).ToList();
             //return;
-            /*for (var i = 0; i < files.Count; i++)
+            /*foreach (var f in files)
             {
-                var vtf = VtfProvider.GetImage(files[i]);
-                //vtf.Save(@"D:\Github\sledge\_Resources\VTF\extract\" + files[i].Name + ".png");
+                var vtf = VtfProvider.GetImage(f);
+                //Console.WriteLine(f.Name + " " + vtf.Height);
+                //vtf.Save(@"D:\Github\sledge\_Resources\VTF\extract\" + f.Name + ".png");
                 //if (i > 1) break;
             }*/
             Parallel.ForEach(files, x =>
             {
-                var vtf = VtfProvider.GetImage(x);
-                //Console.WriteLine(vtf.Height);
-                //vtf.Save(@"D:\Github\sledge\_Resources\VTF\extract\" + x.Name + ".png");
+                try
+                {
+                    var vtf = VtfProvider.GetImage(x);
+                    //Console.WriteLine(vtf.Height);
+                    //vtf.Save(@"D:\Github\sledge\_Resources\VTF\extract\" + x.Name + ".png");
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception(x.Name + " " + ex.Message);
+                }
             });
         }
 
         [TestMethod]
         public void BulkExtractEverything2()
         {
-            var files = Directory.GetFiles(@"D:\Github\sledge\_Resources\VTF", "*.vtf").Take(50);
+            var files = Directory.GetFiles(@"D:\Github\sledge\_Resources\VTF", "*.vtf");
             //return;
-            /*for (var i = 0; i < files.Count; i++)
+            /*foreach (var file in files)
             {
-                var vtf = VtfProvider.GetImage(files[i]);
+                var vtf = VtfProvider.GetImage(new NativeFile(file));
                 //vtf.Save(@"D:\Github\sledge\_Resources\VTF\extract\" + files[i].Name + ".png");
                 //if (i > 1) break;
             }*/
