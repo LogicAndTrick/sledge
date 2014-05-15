@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing.Imaging;
 using System.Globalization;
 using System.Linq;
@@ -16,7 +17,7 @@ namespace Sledge.Providers.Texture
     {
         public static bool ReplaceTransparentPixels = true;
 
-        private static Bitmap PostProcessBitmap(string name, Bitmap bmp, out bool hasTransparency)
+        private static Bitmap PostProcessBitmap(string packageName, string name, Bitmap bmp, out bool hasTransparency)
         {
             hasTransparency = false;
             // Transparent textures are named like: {Name
@@ -27,6 +28,7 @@ namespace Sledge.Providers.Texture
 
                 // Two transparency types: "blue" transparency and "decal" transparency
                 // Decal transparency is all greyscale and doesn't contain any of palette #255 colour
+                /*
                 var blueTransparency = false;
                 for (var i = 0; i < palette.Entries.Length - 1; i++)
                 {
@@ -36,7 +38,10 @@ namespace Sledge.Providers.Texture
                         blueTransparency = true;
                         break;
                     }
-                }
+                }*/
+
+                // Can't be clever and detect the transparency type automatically - Goldsource is too unpredictable
+                var blueTransparency = packageName.IndexOf("decal", StringComparison.CurrentCultureIgnoreCase) < 0;
 
                 if (blueTransparency)
                 {
@@ -47,9 +52,11 @@ namespace Sledge.Providers.Texture
                 {
                     // If we didn't find the last index, we have a decal
                     var last = palette.Entries[palette.Entries.Length - 1];
+                    // If the first item is black, we need to flip the transparency calculation (I think...)
+                    var isBlack = palette.Entries[0].R == 0 && palette.Entries[0].G == 0 && palette.Entries[0].B == 0;
                     for (var i = 0; i < palette.Entries.Length - 1; i++)
                     {
-                        palette.Entries[i] = Color.FromArgb(255 - palette.Entries[i].R, last);
+                        palette.Entries[i] = Color.FromArgb(isBlack ? palette.Entries[i].R : 255 - palette.Entries[i].R, last);
                     }
                 }
                 bmp.Palette = palette;
@@ -87,7 +94,7 @@ namespace Sledge.Providers.Texture
                 using (var stream = _streams.First(x => x.HasFile(item.Name)).OpenFile(item.Name))
                 {
                     bool hasTransparency;
-                    return PostProcessBitmap(item.Name, new Bitmap(stream), out hasTransparency);
+                    return PostProcessBitmap(item.Package.PackageFile.NameWithoutExtension, item.Name, new Bitmap(stream), out hasTransparency);
                 }
             }
 
@@ -144,7 +151,7 @@ namespace Sledge.Providers.Texture
             var cacheFile = Path.Combine(CachePath, fi.Name + "_" + (fi.LastWriteTime.Ticks));
             var lines = new List<string>();
             lines.Add(fi.FullName);
-            lines.Add(fi.LastWriteTime.ToFileTime().ToString(CultureInfo.InvariantCulture));;
+            lines.Add(fi.LastWriteTime.ToFileTime().ToString(CultureInfo.InvariantCulture));
             lines.Add(fi.Length.ToString(CultureInfo.InvariantCulture));
             foreach (var ti in package.Items.Values)
             {
@@ -184,7 +191,9 @@ namespace Sledge.Providers.Texture
             var packages = list.Select(x => x.Package).Distinct().ToList();
             var packs = packages.Select(x => new WadPackage(new FileInfo(x.PackageFile.FullPathName))).ToList();
             var streams = packs.Select(x => x.GetStreamSource()).ToList();
-            Parallel.ForEach(list, ti =>
+
+            // Process the bitmaps in parallel
+            var bitmaps = list.AsParallel().Select(ti =>
             {
                 foreach (var stream in streams)
                 {
@@ -192,13 +201,24 @@ namespace Sledge.Providers.Texture
                     if (open == null) continue;
                     var bmp = new Bitmap(open);
                     bool hasTransparency;
-                    bmp = PostProcessBitmap(ti.Name, bmp, out hasTransparency);
-                    TextureHelper.Create(ti.Name.ToLowerInvariant(), bmp, hasTransparency);
-                    bmp.Dispose();
+                    bmp = PostProcessBitmap(ti.Package.PackageFile.NameWithoutExtension, ti.Name, bmp, out hasTransparency);
                     open.Dispose();
-                    break;
+                    return new
+                    {
+                        Bitmap = bmp,
+                        Name = ti.Name.ToLowerInvariant(),
+                        HasTransparency = hasTransparency
+                    };
                 }
-            });
+                return null;
+            }).Where(x => x != null);
+
+            // TextureHelper.Create must run on the UI thread
+            foreach (var bmp in bitmaps)
+            {
+                TextureHelper.Create(bmp.Name, bmp.Bitmap, bmp.HasTransparency);
+                bmp.Bitmap.Dispose();
+            }
             foreach (var pack in packs) pack.Dispose();
         }
 
