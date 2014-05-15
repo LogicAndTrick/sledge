@@ -37,9 +37,9 @@ namespace Sledge.Packages.Pak
             }
         }
 
-        internal FileStream OpenFile(FileInfo file)
+        internal Stream OpenFile(FileInfo file)
         {
-            return new FileStream(file.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, 4096, FileOptions.RandomAccess);
+            return Stream.Synchronized(new FileStream(file.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, 4096, FileOptions.RandomAccess));
         }
 
         private void ReadPackageEntries(BinaryReader br)

@@ -51,7 +51,7 @@ namespace Sledge.Tests.Vtf
                 try
                 {
                     var vtf = VtfProvider.GetImage(x);
-                    //Console.WriteLine(vtf.Height);
+                    //Console.WriteLine(x.Name);
                     //vtf.Save(@"D:\Github\sledge\_Resources\VTF\extract\" + x.Name + ".png");
                 }
                 catch (Exception ex)
