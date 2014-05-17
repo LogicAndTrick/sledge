@@ -42,16 +42,20 @@ namespace Sledge.Providers.Texture
         #endregion
 
         protected string CachePath { get; private set; }
-        public abstract bool IsValidForPackageFile(IFile package);
-        public abstract TexturePackage CreatePackage(IFile package);
-        public abstract void LoadTexture(TextureItem item);
+        public abstract IEnumerable<TexturePackage> CreatePackages(IEnumerable<string> sourceRoots);
+        public abstract void DeletePackages(IEnumerable<TexturePackage> packages);
         public abstract void LoadTextures(IEnumerable<TextureItem> items);
-        public abstract ITextureStreamSource GetStreamSource(IEnumerable<TexturePackage> packages);
+        public abstract ITextureStreamSource GetStreamSource(int maxWidth, int maxHeight, IEnumerable<TexturePackage> packages);
 
-        public static TextureCollection CreateCollection(IEnumerable<IFile> packages)
+        public static TextureCollection CreateCollection(IEnumerable<string> sourceRoots)
         {
+            var list = sourceRoots.ToList();
             var pkgs = new List<TexturePackage>();
-            foreach (var package in packages)
+            foreach (var provider in RegisteredProviders)
+            {
+                pkgs.AddRange(provider.CreatePackages(list));
+            }
+            /*foreach (var package in packages)
             {
                 var existing = Packages.FirstOrDefault(x => String.Equals(x.PackageFile.FullPathName, package.FullPathName, StringComparison.InvariantCultureIgnoreCase));
                 if (existing != null)
@@ -62,13 +66,19 @@ namespace Sledge.Providers.Texture
                 else
                 {
                     // Load the package
-                    var provider = RegisteredProviders.FirstOrDefault(p => p.IsValidForPackageFile(package));
-                    if (provider == null) throw new ProviderNotFoundException("No texture provider was found for package: " + package);
-                    var pkg = provider.CreatePackage(package);
-                    Packages.Add(pkg);
-                    pkgs.Add(pkg);
+                    foreach (var provider in RegisteredProviders.Where(p => p.IsValidForPackageFile(package)).ToList())
+                    {
+                        var pkg = provider.CreatePackage(package);
+                        Packages.Add(pkg);
+                        pkgs.Add(pkg);
+                    }
+                    //var provider = RegisteredProviders.FirstOrDefault(p => p.IsValidForPackageFile(package));
+                    //if (provider == null) throw new ProviderNotFoundException("No texture provider was found for package: " + package);
+                    //var pkg = provider.CreatePackage(package);
+                    //Packages.Add(pkg);
+                    //pkgs.Add(pkg);
                 }
-            }
+            }*/
             var tc = new TextureCollection(pkgs);
             Collections.Add(tc);
             return tc;
@@ -89,7 +99,7 @@ namespace Sledge.Providers.Texture
 
         public static void LoadTextureItem(TextureItem item)
         {
-            item.Package.LoadTexture(item);
+            item.Package.LoadTextures(new[] {item});
         }
 
         public static void LoadTextureItems(IEnumerable<TextureItem> items)

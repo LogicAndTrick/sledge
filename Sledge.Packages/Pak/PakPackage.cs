@@ -77,7 +77,7 @@ namespace Sledge.Packages.Pak
         {
             var pe = entry as PakEntry;
             if (pe == null) throw new ArgumentException("This package is only compatible with PakEntry objects.");
-            return new SubStream(OpenFile(PackageFile), pe.Offset, pe.Length) { CloseParentOnDispose = true };
+            return new BufferedStream(new SubStream(OpenFile(PackageFile), pe.Offset, pe.Length) { CloseParentOnDispose = true });
         }
 
         public IPackageStreamSource GetStreamSource()
@@ -130,6 +130,16 @@ namespace Sledge.Packages.Pak
         public bool HasFile(string path)
         {
             return _files.ContainsKey(path);
+        }
+
+        public IEnumerable<string> GetDirectories()
+        {
+            return _files.Keys;
+        }
+
+        public IEnumerable<string> GetFiles()
+        {
+            return _files.Values.SelectMany(x => x);
         }
 
         public IEnumerable<string> GetDirectories(string path)

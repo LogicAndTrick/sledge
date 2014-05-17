@@ -67,6 +67,16 @@ namespace Sledge.Packages.Pak
             return _files.ContainsKey(path);
         }
 
+        public IEnumerable<string> GetDirectories()
+        {
+            return _files.Keys;
+        }
+
+        public IEnumerable<string> GetFiles()
+        {
+            return _files.Values.SelectMany(x => x);
+        }
+
         public IEnumerable<string> GetDirectories(string path)
         {
             if (!_folders.ContainsKey(path)) return new string[0];
@@ -125,7 +135,7 @@ namespace Sledge.Packages.Pak
         {
             var entry = GetEntry(path);
             if (entry == null) throw new FileNotFoundException();
-            return new SubStream(_stream, entry.Offset, entry.Length);
+            return new BufferedStream(new SubStream(_stream, entry.Offset, entry.Length));
         }
 
         public void Dispose()

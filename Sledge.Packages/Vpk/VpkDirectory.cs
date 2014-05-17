@@ -136,7 +136,7 @@ namespace Sledge.Packages.Vpk
         {
             var pe = entry as VpkEntry;
             if (pe == null) throw new ArgumentException("This package is only compatible with VpkEntry objects.");
-            return new VpkEntryStream(pe, this);
+            return new BufferedStream(new VpkEntryStream(pe, this));
         }
 
         internal Stream OpenChunk(VpkEntry entry)
@@ -199,6 +199,16 @@ namespace Sledge.Packages.Vpk
         public bool HasFile(string path)
         {
             return _files.ContainsKey(path);
+        }
+
+        public IEnumerable<string> GetDirectories()
+        {
+            return _files.Keys;
+        }
+
+        public IEnumerable<string> GetFiles()
+        {
+            return _files.Values.SelectMany(x => x);
         }
 
         public IEnumerable<string> GetDirectories(string path)

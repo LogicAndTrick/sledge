@@ -7,10 +7,15 @@ namespace Sledge.Providers.Texture
 {
     public class TextureCollection
     {
-        public List<TexturePackage> Packages { get; set; }
+        public IEnumerable<TexturePackage> Packages
+        {
+            get { return _packages; }
+        }
 
         private string _selectedTexture;
-        private List<string> _recentTextures;
+        private readonly List<string> _recentTextures;
+        private readonly List<TexturePackage> _packages;
+        private readonly Dictionary<string, TextureItem> _items;
 
         public TextureItem SelectedTexture
         {
@@ -32,7 +37,13 @@ namespace Sledge.Providers.Texture
 
         public TextureCollection(List<TexturePackage> packages)
         {
-            Packages = packages;
+            _packages = packages;
+            _items = new Dictionary<string, TextureItem>();
+            foreach (var item in packages.SelectMany(x => x.Items))
+            {
+                var k = item.Key.ToLowerInvariant();
+                if (!_items.ContainsKey(k)) _items.Add(k, item.Value);
+            }
             _recentTextures = new List<string>();
             SelectedTexture = GetDefaultSelection();
         }
@@ -50,41 +61,36 @@ namespace Sledge.Providers.Texture
             return _recentTextures.Select(GetItem);
         }
 
-        public ITextureStreamSource GetStreamSource()
+        public ITextureStreamSource GetStreamSource(int maxWidth, int maxHeight)
         {
-            return GetStreamSource(Packages);
+            return GetStreamSource(maxWidth, maxHeight, _packages);
         }
 
-        public ITextureStreamSource GetStreamSource(IEnumerable<TexturePackage> packages)
+        public ITextureStreamSource GetStreamSource(int maxWidth, int maxHeight, IEnumerable<TexturePackage> packages)
         {
-            var streams = packages.GroupBy(x => x.Provider).Select(x => x.Key.GetStreamSource(x));
+            var streams = packages.GroupBy(x => x.Provider).Select(x => x.Key.GetStreamSource(maxWidth, maxHeight, x));
             return new MultiTextureStreamSource(streams);
         }
 
         public IEnumerable<TextureItem> GetAllItems()
         {
-            return Packages.SelectMany(x => x.Items.Values).ToList();
+            return _items.Values;
         }
 
         public IEnumerable<TextureItem> GetItems(IEnumerable<string> names)
         {
-            var all = Packages.SelectMany(x => x.Items.Values).ToList();
-            return names.Select(x => all.FirstOrDefault(y => String.Equals(x, y.Name, StringComparison.InvariantCultureIgnoreCase))).Where(x => x != null);
+            return names.Select(x => x.ToLowerInvariant()).Where(x => _items.ContainsKey(x)).Select(x => _items[x]);
         }
 
         public TextureItem GetItem(string textureName)
         {
             textureName = textureName.ToLowerInvariant();
-            foreach (var package in Packages)
-            {
-                if (package.Items.ContainsKey(textureName)) return package.Items[textureName];
-            }
-            return null;
+            return _items.ContainsKey(textureName) ? _items[textureName] : null;
         }
 
         public void LoadTextureItem(TextureItem item)
         {
-            item.Package.LoadTexture(item);
+            item.Package.LoadTextures(new[] {item});
         }
 
         public void LoadTextureItems(IEnumerable<TextureItem> items)

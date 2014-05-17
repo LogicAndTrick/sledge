@@ -61,6 +61,7 @@
     <Compile Include="ProviderException.cs" />
     <Compile Include="ProviderNotFoundException.cs" />
     <Compile Include="Map\RmfProvider.cs" />
+    <Compile Include="Texture\NewVtfProvider.cs" />
     <Compile Include="Texture\SpriteOrientation.cs" />
     <Compile Include="Texture\SprProvider.cs" />
     <Compile Include="Texture\TextureCollection.cs" />
@@ -68,6 +69,7 @@
     <Compile Include="Texture\TexturePackage.cs" />
     <Compile Include="Texture\TextureProvider.cs" />
     <Compile Include="Texture\ITextureStreamSource.cs" />
+    <Compile Include="Texture\VtfProvider.cs" />
     <Compile Include="Texture\Vtf\VtfFile.cs" />
     <Compile Include="Texture\WadProvider.cs" />
   </ItemGroup>

@@ -8,7 +8,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using Sledge.FileSystem;
 using Sledge.Graphics.Helpers;
-
+/*
 namespace Sledge.Providers.Texture
 {
     public class SprProvider : TextureProvider
@@ -201,3 +201,4 @@ namespace Sledge.Providers.Texture
         }
     }
 }
+*/

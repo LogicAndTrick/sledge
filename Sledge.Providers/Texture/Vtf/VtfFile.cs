@@ -109,7 +109,12 @@ namespace Sledge.Providers.Texture.Vtf
 
         public static Size GetSize(IFile file)
         {
-            using (var br = new BinaryReader(file.Open()))
+            return GetSize(file.Open());
+        }
+
+        public static Size GetSize(Stream stream)
+        {
+            using (var br = new BinaryReader(stream))
             {
                 var header = br.ReadFixedLengthString(Encoding.ASCII, 4);
                 if (header != VtfHeader) throw new ProviderException("Invalid VTF header. Expected '" + VtfHeader + "', got '" + header + "'.");
@@ -126,9 +131,14 @@ namespace Sledge.Providers.Texture.Vtf
             }
         }
 
-        public static Bitmap GetImage(IFile file)
+        public static Bitmap GetImage(IFile file, int maxWidth = 0, int maxHeight = 0)
         {
-            using (var br = new BinaryReader(file.Open()))
+            return GetImage(file.Open(), maxWidth, maxHeight);
+        }
+
+        public static Bitmap GetImage(Stream stream, int maxWidth = 0, int maxHeight = 0)
+        {
+            using (var br = new BinaryReader(stream))
             {
                 var header = br.ReadFixedLengthString(Encoding.ASCII, 4);
                 if (header != VtfHeader) throw new ProviderException("Invalid VTF header. Expected '" + VtfHeader + "', got '" + header + "'.");
@@ -159,12 +169,6 @@ namespace Sledge.Providers.Texture.Vtf
                 var lowResImageFormat = (VtfImageFormat) br.ReadUInt32();
                 var lowResWidth = br.ReadByte();
                 var lowResHeight = br.ReadByte();
-
-                //if (highResImageFormat != VtfImageFormat.Dxt1 && highResImageFormat != VtfImageFormat.Dxt1Onebitalpha && highResImageFormat != VtfImageFormat.Dxt5 && highResImageFormat != VtfImageFormat.Bgra8888)
-                //    throw new Exception("This one! " + file.Name);
-
-                if (highResImageFormat == VtfImageFormat.Rgba16161616F)
-                    Console.WriteLine(file.Name);
 
                 ushort depth = 1;
                 uint numResources = 0;
@@ -218,7 +222,8 @@ namespace Sledge.Providers.Texture.Vtf
                     //return thumbImage;
                 }
 
-                var mipNum = GetMipToLoad(width, height, 256, mipmapCount);
+                var mipNum = 0;
+                if (maxWidth > 0 || maxHeight > 0) mipNum = GetMipToLoad(width, height, maxWidth > 0 ? maxWidth : width, maxHeight > 0 ? maxHeight : height, mipmapCount);
 
                 for (var frame = 0; frame < numFrames; frame++)
                 {
@@ -246,10 +251,10 @@ namespace Sledge.Providers.Texture.Vtf
             }
         }
 
-        private static int GetMipToLoad(uint width, uint height, int max, int mipCount)
+        private static int GetMipToLoad(uint width, uint height, int maxWidth, int maxHeight, int mipCount)
         {
             var mip = 0;
-            while (mip < mipCount - 1 && (width > max || height > max))
+            while (mip < mipCount - 1 && (width > maxWidth || height > maxHeight))
             {
                 mip++;
                 width >>= 1;

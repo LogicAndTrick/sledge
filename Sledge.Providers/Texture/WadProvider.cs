@@ -10,7 +10,7 @@ using Sledge.Graphics.Helpers;
 using System.Drawing;
 using Sledge.Packages;
 using Sledge.Packages.Wad;
-
+/*
 namespace Sledge.Providers.Texture
 {
     public class WadProvider : TextureProvider
@@ -38,7 +38,7 @@ namespace Sledge.Providers.Texture
                         blueTransparency = true;
                         break;
                     }
-                }*/
+                }* /
 
                 // Can't be clever and detect the transparency type automatically - Goldsource is too unpredictable
                 var blueTransparency = packageName.IndexOf("decal", StringComparison.CurrentCultureIgnoreCase) < 0;
@@ -228,3 +228,4 @@ namespace Sledge.Providers.Texture
         }
     }
 }
+*/

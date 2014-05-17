@@ -152,11 +152,13 @@ namespace Sledge.Editor
             MapProvider.Register(new VmfProvider());
             MapProvider.Register(new ObjProvider());
             GameDataProvider.Register(new FgdProvider());
-            TextureProvider.Register(new WadProvider());
-            TextureProvider.Register(new SprProvider());
+            //TextureProvider.Register(new WadProvider());
+            //TextureProvider.Register(new SprProvider());
+            //TextureProvider.Register(new VtfProvider());
+            TextureProvider.Register(new NewVtfProvider());
             ModelProvider.Register(new MdlProvider());
 
-            WadProvider.ReplaceTransparentPixels = !Sledge.Settings.View.DisableWadTransparency && !Sledge.Settings.View.GloballyDisableTransparency;
+            //WadProvider.ReplaceTransparentPixels = !Sledge.Settings.View.DisableWadTransparency && !Sledge.Settings.View.GloballyDisableTransparency;
             TextureHelper.EnableTransparency = !Sledge.Settings.View.GloballyDisableTransparency;
             TextureHelper.DisableTextureFiltering = Sledge.Settings.View.DisableTextureFiltering;
             TextureHelper.ForceNonPowerOfTwoResize = Sledge.Settings.View.ForcePowerOfTwoTextureResizing;
@@ -479,7 +481,7 @@ namespace Sledge.Editor
                 vp.Camera.ClipDistance = Sledge.Settings.View.BackClippingPane;
             }
             ViewportManager.RefreshClearColour();
-            WadProvider.ReplaceTransparentPixels = !Sledge.Settings.View.DisableWadTransparency && !Sledge.Settings.View.GloballyDisableTransparency;
+            //WadProvider.ReplaceTransparentPixels = !Sledge.Settings.View.DisableWadTransparency && !Sledge.Settings.View.GloballyDisableTransparency;
             TextureHelper.EnableTransparency = !Sledge.Settings.View.GloballyDisableTransparency;
             TextureHelper.DisableTextureFiltering = Sledge.Settings.View.DisableTextureFiltering;
             TextureHelper.ForceNonPowerOfTwoResize = Sledge.Settings.View.ForcePowerOfTwoTextureResizing;

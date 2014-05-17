@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Sledge.FileSystem;
 using Sledge.Packages.Vpk;
+using Sledge.Providers.Texture;
 using Sledge.Providers.Texture.Vtf;
 
 namespace Sledge.Tests.Vtf
@@ -77,6 +78,16 @@ namespace Sledge.Tests.Vtf
                 var vtf = VtfProvider.GetImage(new NativeFile(x));
                 //Console.WriteLine(vtf.Height);
                 vtf.Save(@"D:\Github\sledge\_Resources\VTF\extract\" + Path.GetFileName(x) + ".png");
+            });
+        }
+
+        [TestMethod]
+        public void VpkVtfCollectionTest()
+        {
+            TextureProvider.Register(new NewVtfProvider());
+            var collection = TextureProvider.CreateCollection(new[]
+            {
+                @"F:\Steam\SteamApps\common\Team Fortress 2\tf"
             });
         }
     }

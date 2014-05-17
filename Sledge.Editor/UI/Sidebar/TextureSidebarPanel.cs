@@ -100,16 +100,19 @@ namespace Sledge.Editor.UI.Sidebar
             SizeLabel.Text = "";
             if (selection == null || DocumentManager.CurrentDocument == null) return;
             TextureComboBox.SetSelectedTexture(selection);
-            using (var tp = DocumentManager.CurrentDocument.TextureCollection.GetStreamSource())
+            using (var tp = DocumentManager.CurrentDocument.TextureCollection.GetStreamSource(128, 128))
             {
                 var bmp = tp.GetImage(selection);
-                if (bmp.Width > SelectionPictureBox.Width || bmp.Height > SelectionPictureBox.Height)
+                if (bmp != null)
                 {
-                    SelectionPictureBox.SizeMode = PictureBoxSizeMode.Zoom;
-                }
-                else
-                {
-                    SelectionPictureBox.SizeMode = PictureBoxSizeMode.CenterImage;
+                    if (bmp.Width > SelectionPictureBox.Width || bmp.Height > SelectionPictureBox.Height)
+                    {
+                        SelectionPictureBox.SizeMode = PictureBoxSizeMode.Zoom;
+                    }
+                    else
+                    {
+                        SelectionPictureBox.SizeMode = PictureBoxSizeMode.CenterImage;
+                    }
                 }
                 SelectionPictureBox.Image = bmp;
             }

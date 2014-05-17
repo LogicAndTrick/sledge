@@ -8,6 +8,7 @@ namespace Sledge.Packages.Vpk
     internal class VpkPackageStreamSource : IPackageStreamSource
     {
         private readonly VpkDirectory _directory;
+        private readonly Dictionary<string, VpkEntry> _entries;
         private readonly Dictionary<ushort, Stream> _streams;
         private readonly Dictionary<string, HashSet<string>> _folders;
         private readonly Dictionary<string, HashSet<string>> _files;
@@ -15,12 +16,15 @@ namespace Sledge.Packages.Vpk
         public VpkPackageStreamSource(VpkDirectory directory)
         {
             _directory = directory;
+            _entries = new Dictionary<string, VpkEntry>();
             _streams = new Dictionary<ushort, Stream>();
             _folders = new Dictionary<string, HashSet<string>>();
             _files = new Dictionary<string, HashSet<string>>();
-            foreach (var entry in directory.GetEntries())
+            foreach (var entry in directory.GetEntries().OfType<VpkEntry>())
             {
-                var split = entry.FullName.Split('/');
+                var fn = entry.FullName;
+                _entries.Add(fn, entry);
+                var split = fn.Split('/');
                 var joined = "";
                 for (var i = 0; i < split.Length; i++)
                 {
@@ -64,7 +68,19 @@ namespace Sledge.Packages.Vpk
 
         public bool HasFile(string path)
         {
-            return _files.ContainsKey(path);
+            var idx = path.LastIndexOf('/');
+            var fol = idx >= 0 ? path.Substring(0, idx) : "";
+            return _files.ContainsKey(fol) && _files[fol].Contains(path);
+        }
+
+        public IEnumerable<string> GetDirectories()
+        {
+            return _files.Keys;
+        }
+
+        public IEnumerable<string> GetFiles()
+        {
+            return _files.Values.SelectMany(x => x);
         }
 
         public IEnumerable<string> GetDirectories(string path)
@@ -118,7 +134,7 @@ namespace Sledge.Packages.Vpk
 
         private VpkEntry GetEntry(string path)
         {
-            return _directory.GetEntries().FirstOrDefault(x => x.FullName == path) as VpkEntry;
+            return _entries.ContainsKey(path) ? _entries[path] : null;
         }
 
         public Stream OpenFile(string path)
@@ -126,16 +142,19 @@ namespace Sledge.Packages.Vpk
             var entry = GetEntry(path);
             if (entry == null) throw new FileNotFoundException();
 
-            if (!_streams.ContainsKey(entry.ArchiveIndex))
+            lock (this)
             {
-                var file = _directory.Chunks[entry.ArchiveIndex];
-                var stream = _directory.OpenFile(file);
-                _streams.Add(entry.ArchiveIndex, stream);
+                if (!_streams.ContainsKey(entry.ArchiveIndex))
+                {
+                    var file = _directory.Chunks[entry.ArchiveIndex];
+                    var stream = _directory.OpenFile(file);
+                    _streams.Add(entry.ArchiveIndex, stream);
+                }
             }
-            
+
             var offset = entry.ArchiveIndex == VpkDirectory.DirectoryIndex ? _directory.HeaderLength + _directory.TreeLength + entry.EntryOffset : entry.EntryOffset;
             var sub = new SubStream(_streams[entry.ArchiveIndex], offset, entry.EntryLength);
-            return new VpkEntryStream(entry, sub);
+            return new BufferedStream(new VpkEntryStream(entry, sub));
         }
 
         public void Dispose()

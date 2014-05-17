@@ -12,14 +12,16 @@ namespace Sledge.Providers.Texture
     public class TexturePackage : IDisposable
     {
         internal TextureProvider Provider { get; private set; }
-        public IFile PackageFile { get; private set; }
+        public string PackageRoot { get; private set; }
+        public string PackageRelativePath { get; private set; }
         public Dictionary<string, TextureItem> Items { get; private set; }
         private readonly Dictionary<string, TextureItem> _loadedItems;
 
-        public TexturePackage(IFile packageFile, TextureProvider provider)
+        public TexturePackage(string packageRoot, string packageRelativePath, TextureProvider provider)
         {
             Provider = provider;
-            PackageFile = packageFile;
+            PackageRoot = packageRoot;
+            PackageRelativePath = packageRelativePath;
             Items = new Dictionary<string, TextureItem>();
             _loadedItems = new Dictionary<string, TextureItem>();
         }
@@ -30,13 +32,9 @@ namespace Sledge.Providers.Texture
             Items.Add(item.Name.ToLowerInvariant(), item);
         }
 
-        public void LoadTexture(TextureItem item)
+        public bool HasTexture(string name)
         {
-            if (!_loadedItems.ContainsKey(item.Name.ToLowerInvariant()))
-            {
-                Provider.LoadTexture(item);
-                _loadedItems.Add(item.Name.ToLowerInvariant(), item);
-            }
+            return Items.ContainsKey(name.ToLowerInvariant());
         }
 
         public void LoadTextures(IEnumerable<TextureItem> items)
@@ -55,7 +53,7 @@ namespace Sledge.Providers.Texture
 
         public override string ToString()
         {
-            return PackageFile.NameWithoutExtension;
+            return PackageRelativePath;
         }
 
         public void Dispose()
