@@ -57,6 +57,7 @@
   <ItemGroup>
     <Compile Include="Actions\ClipboardTests.cs" />
     <Compile Include="Actions\MapObjectActionTests.cs" />
+    <Compile Include="ActualTests\GenericStructureTest.cs" />
     <Compile Include="DecalGeometryTest.cs" />
     <Compile Include="GeometricTest.cs" />
     <Compile Include="FileSystemTest.cs" />

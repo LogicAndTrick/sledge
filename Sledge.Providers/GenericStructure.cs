@@ -612,11 +612,17 @@ namespace Sledge.Providers
         /// <returns>The parsed structure</returns>
 		private static GenericStructure ParseStructure(TextReader reader, string name)
         {
-            var gs = new GenericStructure(name.SplitWithQuotes()[0]);
-	        var line = CleanLine(reader.ReadLine());
-			if (line != "{") {
-				return gs;
-			}
+            var spl = name.SplitWithQuotes();
+            var gs = new GenericStructure(spl[0]);
+            string line;
+            if (spl.Length != 2 || spl[1] != "{")
+            {
+                line = CleanLine(reader.ReadLine());
+                if (line != "{")
+                {
+                    return gs;
+                }
+            }
             while ((line = CleanLine(reader.ReadLine())) != null)
 			{
 				if (line == "}") break;
@@ -636,7 +642,7 @@ namespace Sledge.Providers
 		{
 			if (string.IsNullOrEmpty(s)) return false;
             var split = s.SplitWithQuotes();
-            return split.Length == 1;
+            return split.Length == 1 || (split.Length == 2 && split[1] == "{");
 		}
 
         /// <summary>

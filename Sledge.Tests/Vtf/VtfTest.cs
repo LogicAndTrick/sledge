@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Sledge.FileSystem;
 using Sledge.Packages.Vpk;
+using Sledge.Providers;
+using Sledge.Providers.Map;
 using Sledge.Providers.Texture;
 using Sledge.Providers.Texture.Vtf;
 
@@ -89,6 +92,71 @@ namespace Sledge.Tests.Vtf
             {
                 @"F:\Steam\SteamApps\common\Team Fortress 2\tf"
             });
+        }
+
+        [TestMethod]
+        public void VmtStatsCollectorTest()
+        {
+            var exclude = new[]
+            {
+                	"ambulance"             ,
+	                "backpack"              ,
+	                "cable"                 ,
+	                "console"               ,
+	                "cp_bloodstained"       ,
+	                "customcubemaps"        ,
+	                "detail"                ,
+	                "debug"                 ,
+	                "effects"               ,
+	                "engine"                ,
+	                "environment maps"      ,
+	                "halflife"              ,
+	                "matsys_regressiontest" ,
+	                "hlmv"                  ,
+	                "hud"                   ,
+	                "logo"                  ,
+	                "maps"                  ,
+	                "models"                ,
+	                "overviews"             ,
+	                "particle"              ,
+	                "particles"             ,
+	                "perftest"              ,
+	                "pl_halfacre"           ,
+	                "pl_hoodoo"             ,
+	                "scripted"              ,
+	                "shadertest"            ,
+	                "sprites"               ,
+	                "sun"                   ,
+	                "vgui"                  ,
+	                "voice"                 ,
+
+            };
+
+            var stats = new Dictionary<string, int>();
+            using (var fs = new VpkDirectory(new FileInfo(@"F:\Steam\SteamApps\common\Team Fortress 2\tf\tf2_misc_dir.vpk")))
+            {
+                using (var ss = fs.GetStreamSource())
+                {
+                    //var vmts = fs.SearchFiles("materials", ".vmt$", true);
+                    var subs = fs.GetDirectories("materials").Where(x => !exclude.Contains(x.Split('/')[1]));
+                    var vmts = subs.SelectMany(x => fs.SearchFiles(x, ".vmt$", true));
+                    foreach (var vmt in vmts)
+                    {
+                        using (var sr = new StreamReader(ss.OpenFile(vmt)))
+                        {
+                            var parsed = GenericStructure.Parse(sr).First();
+                            var type = parsed.Name.ToLowerInvariant();
+                            if (!stats.ContainsKey(type)) stats.Add(type, 0);
+                            stats[type]++;
+                            if (type == "refract" || type == "replacements" || type == "modulate") Console.WriteLine(type + " " + vmt);
+                        }
+                    }
+                }
+            }
+            foreach (var kv in stats.OrderByDescending(x => x.Value))
+            {
+                Console.WriteLine(kv.Key + " - " + kv.Value);
+            }
         }
     }
 }
