@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using Sledge.FileSystem;
@@ -77,6 +78,21 @@ namespace Sledge.Providers.Texture
             
         }
 
+        private bool QuickCheckTransparent(Bitmap img)
+        {
+            if (((ImageFlags) img.Flags).HasFlag(ImageFlags.HasTranslucent)) return true;
+            // Sample some pixels (edges, center, quarter midpoints)
+            return img.GetPixel(0, 0).A < 255 ||
+                   img.GetPixel(img.Width - 1, 0).A < 255 ||
+                   img.GetPixel(img.Width - 1, img.Height - 1).A < 255 ||
+                   img.GetPixel(0, img.Height - 1).A < 255 ||
+                   img.GetPixel(img.Width / 2, img.Height / 2).A < 255 ||
+                   img.GetPixel(img.Width / 4, img.Height / 2).A < 255 ||
+                   img.GetPixel(3 * img.Width / 4, img.Height / 2).A < 255 ||
+                   img.GetPixel(img.Width / 2, img.Height / 4).A < 255 ||
+                   img.GetPixel(img.Width / 2, 3 * img.Height / 4).A < 255;
+        }
+
         public override void LoadTextures(IEnumerable<TextureItem> items)
         {
             var groups = items.GroupBy(x => x.Package.PackageRoot);
@@ -94,7 +110,7 @@ namespace Sledge.Providers.Texture
                                 if (!stream.HasFile(name)) continue;
                                 using (var bmp = Vtf.VtfProvider.GetImage(stream.OpenFile(name)))
                                 {
-                                    TextureHelper.Create(ti.Name.ToLowerInvariant(), bmp, false);
+                                    TextureHelper.Create(ti.Name.ToLowerInvariant(), bmp, QuickCheckTransparent(bmp));
                                 }
                             }
                         }
@@ -108,7 +124,7 @@ namespace Sledge.Providers.Texture
                         if (!File.Exists(file)) continue;
                         using (var bmp = Vtf.VtfProvider.GetImage(File.Open(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)))
                         {
-                            TextureHelper.Create(ti.Name.ToLowerInvariant(), bmp, false);
+                            TextureHelper.Create(ti.Name.ToLowerInvariant(), bmp, QuickCheckTransparent(bmp));
                         }
                     }
                 }
