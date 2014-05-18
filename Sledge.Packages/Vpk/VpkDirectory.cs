@@ -111,7 +111,7 @@ namespace Sledge.Packages.Vpk
             if (terminator != VpkEntry.EntryTerminator) throw new PackageException("Invalid terminator. Expected " + VpkEntry.EntryTerminator.ToString("x8") + ", got " + terminator.ToString("x8") + ".");
 
             var preloadData = br.ReadBytes(preloadBytes);
-            return new VpkEntry(this, path, crc, preloadData, archiveIndex, entryOffset, entryLength);
+            return new VpkEntry(this, path.ToLowerInvariant(), crc, preloadData, archiveIndex, entryOffset, entryLength);
         }
 
         public IEnumerable<IPackageEntry> GetEntries()
@@ -121,6 +121,7 @@ namespace Sledge.Packages.Vpk
 
         public IPackageEntry GetEntry(string path)
         {
+            path = path.ToLowerInvariant();
             return Entries.ContainsKey(path) ? Entries[path] : null;
         }
 
@@ -198,7 +199,7 @@ namespace Sledge.Packages.Vpk
 
         public bool HasFile(string path)
         {
-            return _files.ContainsKey(path);
+            return _files.ContainsKey(path.ToLowerInvariant());
         }
 
         public IEnumerable<string> GetDirectories()

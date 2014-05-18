@@ -87,6 +87,12 @@ namespace Sledge.Providers
             return Properties.Where(x => x.Key == key).Select(x => x.Value);
         }
 
+	    public string GetPropertyValue(string name, bool ignoreCase)
+	    {
+            var prop = Properties.FirstOrDefault(x => String.Equals(x.Key, name, ignoreCase ? StringComparison.CurrentCultureIgnoreCase : StringComparison.CurrentCulture));
+            return prop == null ? null : prop.Value;
+	    }
+
         public bool PropertyBoolean(string name, bool defaultValue = false)
         {
             var prop = this[name];

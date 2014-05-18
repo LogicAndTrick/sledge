@@ -68,6 +68,7 @@ namespace Sledge.Packages.Vpk
 
         public bool HasFile(string path)
         {
+            path = path.ToLowerInvariant();
             var idx = path.LastIndexOf('/');
             var fol = idx >= 0 ? path.Substring(0, idx) : "";
             return _files.ContainsKey(fol) && _files[fol].Contains(path);
@@ -134,6 +135,7 @@ namespace Sledge.Packages.Vpk
 
         private VpkEntry GetEntry(string path)
         {
+            path = path.ToLowerInvariant();
             return _entries.ContainsKey(path) ? _entries[path] : null;
         }
 

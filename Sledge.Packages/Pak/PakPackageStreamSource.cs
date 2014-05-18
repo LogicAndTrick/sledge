@@ -64,7 +64,7 @@ namespace Sledge.Packages.Pak
 
         public bool HasFile(string path)
         {
-            return _files.ContainsKey(path);
+            return _files.ContainsKey(path.ToLowerInvariant());
         }
 
         public IEnumerable<string> GetDirectories()
@@ -128,6 +128,7 @@ namespace Sledge.Packages.Pak
 
         private PakEntry GetEntry(string path)
         {
+            path = path.ToLowerInvariant();
             return _package.GetEntries().FirstOrDefault(x => x.FullName == path) as PakEntry;
         }
 

@@ -48,7 +48,7 @@ namespace Sledge.Packages.Pak
             var numEntries = TreeLength / 64;
             for (int i = 0; i < numEntries; i++)
             {
-                var path = br.ReadFixedLengthString(Encoding.ASCII, 56);
+                var path = br.ReadFixedLengthString(Encoding.ASCII, 56).ToLowerInvariant();
                 var offset = br.ReadInt32();
                 var length = br.ReadInt32();
                 Entries.Add(new PakEntry(this, path, offset, length));
@@ -62,6 +62,7 @@ namespace Sledge.Packages.Pak
 
         public IPackageEntry GetEntry(string path)
         {
+            path = path.ToLowerInvariant();
             return GetEntries().FirstOrDefault(x => x.FullName == path);
         }
 
@@ -129,7 +130,7 @@ namespace Sledge.Packages.Pak
 
         public bool HasFile(string path)
         {
-            return _files.ContainsKey(path);
+            return _files.ContainsKey(path.ToLowerInvariant());
         }
 
         public IEnumerable<string> GetDirectories()
