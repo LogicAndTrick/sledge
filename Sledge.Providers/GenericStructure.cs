@@ -623,7 +623,10 @@ namespace Sledge.Providers
             string line;
             if (spl.Length != 2 || spl[1] != "{")
             {
-                line = CleanLine(reader.ReadLine());
+                do
+                {
+                    line = CleanLine(reader.ReadLine());
+                } while (String.IsNullOrWhiteSpace(line));
                 if (line != "{")
                 {
                     return gs;

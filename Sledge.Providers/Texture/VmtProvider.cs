@@ -4,7 +4,6 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
-using Sledge.FileSystem;
 using Sledge.Graphics.Helpers;
 using Sledge.Packages;
 using Sledge.Packages.Vpk;
