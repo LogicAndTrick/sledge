@@ -35,10 +35,16 @@ namespace Sledge.Packages.Wad
                 // Read all the entries from the wad
                 ReadTextureEntries(br);
                 SetAdditionalEntryData(br);
+                RemoveInvalidEntries();
                 BuildDirectories();
             }
         }
-        
+
+        private void RemoveInvalidEntries()
+        {
+            Entries.RemoveAll(e => (e.PaletteDataOffset + e.PaletteSize * 3) - e.Offset > e.Length);
+        }
+
         internal Stream OpenFile(FileInfo file)
         {
             return Stream.Synchronized(new FileStream(file.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, 4096, FileOptions.RandomAccess));

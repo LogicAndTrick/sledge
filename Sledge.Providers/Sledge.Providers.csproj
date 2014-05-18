@@ -70,7 +70,6 @@
     <Compile Include="Texture\TextureProvider.cs" />
     <Compile Include="Texture\ITextureStreamSource.cs" />
     <Compile Include="Texture\TextureSubItem.cs" />
-    <Compile Include="Texture\VtfProvider.cs" />
     <Compile Include="Texture\Vtf\VtfFile.cs" />
     <Compile Include="Texture\WadProvider.cs" />
   </ItemGroup>

@@ -113,11 +113,11 @@ namespace Sledge.Editor.Documents
             //    new [] {new NativeFile(@"F:\Steam\SteamApps\common\Team Fortress 2\tf").TraversePath("materials/concrete")}
             //));
             //SpriteCollection = TextureProvider.CreateCollection(Environment.GetEditorRoot().GetChildren("sprites"));
-            //TextureCollection = TextureProvider.CreateCollection(Environment.GetGameDirectories());
-            TextureCollection = TextureProvider.CreateCollection(new[]
+            TextureCollection = TextureProvider.CreateCollection(Environment.GetGameDirectories());
+            /*TextureCollection = TextureProvider.CreateCollection(new[]
             {
                 @"F:\Steam\SteamApps\common\Half-life 2\hl2"
-            });
+            });*/
             SpriteCollection = new TextureCollection(new List<TexturePackage>());
 
             var texList = Map.GetAllTextures();

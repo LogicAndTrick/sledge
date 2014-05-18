@@ -23,7 +23,7 @@ namespace Sledge.Sandbox
             MapProvider.Register(new RmfProvider());
             MapProvider.Register(new VmfProvider());
             GameDataProvider.Register(new FgdProvider());
-            //TextureProvider.Register(new WadProvider());
+            TextureProvider.Register(new WadProvider());
 
            // var editor = new Editor.Editor();
            // editor.Load += (sender, e) => PostStart(sender as Editor.Editor);

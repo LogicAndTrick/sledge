@@ -171,8 +171,9 @@ namespace Sledge.Providers.Texture
                 _streams = streams.Select(x => x.Stream).ToList();
                 _files = _streams
                     .SelectMany(x => x.SearchFiles(baseFolder, "\\" + extension + "$", true))
-                    .Union(_roots.SelectMany(x => Directory.GetFiles(Path.Combine(x, baseFolder), "*" + extension, SearchOption.AllDirectories)
-                        .Select(f => MakeRelative(x, f))))
+                    .Union(_roots.Where(x => Directory.Exists(Path.Combine(x, baseFolder)))
+                        .SelectMany(x => Directory.GetFiles(Path.Combine(x, baseFolder), "*" + extension, SearchOption.AllDirectories)
+                            .Select(f => MakeRelative(x, f))))
                     .GroupBy(x => x)
                     .Select(x => StripBase(x.First()))
                     .ToList();
