@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 
@@ -86,19 +87,6 @@ namespace Sledge.Providers.Texture
         {
             textureName = textureName.ToLowerInvariant();
             return _items.ContainsKey(textureName) ? _items[textureName] : null;
-        }
-
-        public void LoadTextureItem(TextureItem item)
-        {
-            item.Package.LoadTextures(new[] {item});
-        }
-
-        public void LoadTextureItems(IEnumerable<TextureItem> items)
-        {
-            foreach (var g in items.GroupBy(x => x.Package))
-            {
-                g.Key.LoadTextures(g);
-            }
         }
     }
 }

@@ -75,8 +75,8 @@ namespace Sledge.Editor.UI
 
                 var item = _document.TextureCollection.GetItem(n);
                 if (item == null) continue;
-                
-                list.Add(Tuple.Create(name, item, item.GetTexture()));
+
+                list.Add(Tuple.Create(name, item, item.GetTexture(Editor.Instance)));
             }
             return list;
         }

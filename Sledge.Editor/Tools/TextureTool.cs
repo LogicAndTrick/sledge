@@ -105,7 +105,7 @@ namespace Sledge.Editor.Tools
 
         private void TextureApplied(object sender, TextureItem texture)
         {
-            var ti = texture.GetTexture();
+            var ti = texture.GetTexture(Editor.Instance);
             Action<Document, Face> action = (document, face) =>
                                       {
                                           face.Texture.Name = texture.Name;
@@ -275,7 +275,7 @@ namespace Sledge.Editor.Tools
                     var item = _form.GetFirstSelectedTexture();
                     if (item != null)
                     {
-                        var texture = item.GetTexture();
+                        var texture = item.GetTexture(Editor.Instance);
                         ac.Add(new EditFace(faces, (document, face) =>
                                                         {
                                                             face.Texture.Name = item.Name;

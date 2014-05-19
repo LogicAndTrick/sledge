@@ -1,9 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using Sledge.Common.Mediator;
 using Sledge.Graphics.Helpers;
 using Sledge.Packages;
 using Sledge.Packages.Vpk;
@@ -12,6 +16,8 @@ namespace Sledge.Providers.Texture
 {
     public class VmtProvider : TextureProvider
     {
+        private Dictionary<TexturePackage, QuickRoot> _roots = new Dictionary<TexturePackage, QuickRoot>();
+
         public override IEnumerable<TexturePackage> CreatePackages(IEnumerable<string> sourceRoots)
         {
             var roots = sourceRoots.ToList();
@@ -59,15 +65,28 @@ namespace Sledge.Providers.Texture
                 packages[dir].AddTexture(new TextureItem(packages[dir], vmt, baseTexture, size.Width, size.Height));
             }
 
-            vtfRoot.Dispose();
             vmtRoot.Dispose();
+
+            foreach (var tp in packages.Values)
+            {
+                _roots.Add(tp, vtfRoot);
+            }
 
             return packages.Values;
         }
 
         public override void DeletePackages(IEnumerable<TexturePackage> packages)
         {
-            
+            var packs = packages.ToList();
+            var roots = _roots.Where(x => packs.Contains(x.Key)).Select(x => x.Value).ToList();
+            foreach (var tp in packs)
+            {
+                _roots.Remove(tp);
+            }
+            foreach (var root in roots.Where(x => !_roots.ContainsValue(x)))
+            {
+                root.Dispose();
+            }
         }
 
         private bool QuickCheckTransparent(Bitmap img)
@@ -85,18 +104,34 @@ namespace Sledge.Providers.Texture
                    img.GetPixel(img.Width / 2, 3 * img.Height / 4).A < 255;
         }
 
-        public override void LoadTextures(IEnumerable<TextureItem> items)
+        public override void LoadTextures(IEnumerable<TextureItem> items, ISynchronizeInvoke invokable)
         {
-            var groups = items.GroupBy(x => x.Package.PackageRoot);
+            var groups = items.GroupBy(x => x.Package);
             foreach (var group in groups)
             {
-                var root = new QuickRoot(group.Key.Split(';'), "materials", ".vtf");
-                foreach (var ti in group)
+                var root = _roots[group.Key];
+                var files = group.Where(ti => root.HasFile(ti.PrimarySubItem.Name)).ToList();
+                if (invokable != null)
                 {
-                    if (!root.HasFile(ti.PrimarySubItem.Name)) continue;
-                    using (var bmp = Vtf.VtfProvider.GetImage(root.OpenFile(ti.PrimarySubItem.Name)))
+                    Parallel.ForEach(files, ti =>
                     {
-                        TextureHelper.Create(ti.Name.ToLowerInvariant(), bmp, QuickCheckTransparent(bmp));
+                        var bmp = Vtf.VtfProvider.GetImage(root.OpenFile(ti.PrimarySubItem.Name));
+                        var hasTransparency = QuickCheckTransparent(bmp);
+                        invokable.BeginInvoke(new Action(() =>
+                        {
+                            TextureHelper.Update(ti.Name.ToLowerInvariant(), bmp, ti.Width, ti.Height, hasTransparency);
+                            bmp.Dispose();
+                        }), null);
+                    });
+                }
+                else
+                {
+                    foreach (var ti in files)
+                    {
+                        using (var bmp = Vtf.VtfProvider.GetImage(root.OpenFile(ti.PrimarySubItem.Name)))
+                        {
+                            TextureHelper.Create(ti.Name.ToLowerInvariant(), bmp, ti.Width, ti.Height, QuickCheckTransparent(bmp));
+                        }
                     }
                 }
             }
@@ -104,7 +139,7 @@ namespace Sledge.Providers.Texture
 
         public override ITextureStreamSource GetStreamSource(int maxWidth, int maxHeight, IEnumerable<TexturePackage> packages)
         {
-            return new NewVtfStreamSource(maxWidth, maxHeight, packages);
+            return new NewVtfStreamSource(maxWidth, maxHeight, packages, packages.Select(x => _roots[x]));
         }
 
         private class NewVtfStreamSource : ITextureStreamSource
@@ -113,12 +148,13 @@ namespace Sledge.Providers.Texture
             private readonly int _maxHeight;
             private readonly List<QuickRoot> _roots;
             
-            public NewVtfStreamSource(int maxWidth, int maxHeight, IEnumerable<TexturePackage> packages)
+            public NewVtfStreamSource(int maxWidth, int maxHeight, IEnumerable<TexturePackage> packages, IEnumerable<QuickRoot> roots)
             {
                 _maxWidth = maxWidth;
                 _maxHeight = maxHeight;
-                var groups = packages.GroupBy(x => x.PackageRoot);
-                _roots = groups.Select(x => new QuickRoot(x.Key.Split(';'), "materials", ".vtf")).ToList();
+                //var groups = packages.GroupBy(x => x.PackageRoot);
+                //_roots = groups.Select(x => new QuickRoot(x.Key.Split(';'), "materials", ".vtf")).ToList();
+                _roots = roots.ToList();
             }
             
             public bool HasImage(TextureItem item)
@@ -141,7 +177,7 @@ namespace Sledge.Providers.Texture
             
             public void Dispose()
             {
-                _roots.ForEach(x => x.Dispose());
+
             }
         }
 
@@ -164,6 +200,7 @@ namespace Sledge.Providers.Texture
                     .SelectMany(x => Directory.GetFiles(x, "*_dir.vpk"))
                     .Select(x => new FileInfo(x))
                     .Where(x => x.Exists)
+                    .AsParallel()
                     .Select(x => new VpkDirectory(x))
                     .Select(x => new { Directory = x, Stream = x.GetStreamSource() })
                     .ToList();

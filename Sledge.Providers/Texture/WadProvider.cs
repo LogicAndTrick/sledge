@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing.Imaging;
 using System.Globalization;
 using System.Linq;
 using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 using Sledge.Graphics.Helpers;
 using System.Drawing;
 using Sledge.Packages;
@@ -84,15 +87,15 @@ namespace Sledge.Providers.Texture
 
             public bool HasImage(TextureItem item)
             {
-                return _streams.Any(x => x.HasFile(item.Name));
+                return _streams.Any(x => x.HasFile(item.Name.ToLowerInvariant()));
             }
 
             public Bitmap GetImage(TextureItem item)
             {
-                using (var stream = _streams.First(x => x.HasFile(item.Name)).OpenFile(item.Name))
+                using (var stream = _streams.First(x => x.HasFile(item.Name.ToLowerInvariant())).OpenFile(item.Name.ToLowerInvariant()))
                 {
                     bool hasTransparency;
-                    return PostProcessBitmap(item.Package.PackageRelativePath, item.Name, new Bitmap(stream), out hasTransparency);
+                    return PostProcessBitmap(item.Package.PackageRelativePath, item.Name.ToLowerInvariant(), new Bitmap(stream), out hasTransparency);
                 }
             }
 
@@ -184,39 +187,67 @@ namespace Sledge.Providers.Texture
 
         }
 
-        public override void LoadTextures(IEnumerable<TextureItem> items)
+        public override void LoadTextures(IEnumerable<TextureItem> items, ISynchronizeInvoke invokable)
         {
             var list = items.ToList();
             var packages = list.Select(x => x.Package).Distinct().ToList();
             var packs = packages.Select(x => new WadPackage(new FileInfo(x.PackageRoot))).ToList();
             var streams = packs.Select(x => x.GetStreamSource()).ToList();
 
-            // Process the bitmaps in parallel
-            var bitmaps = list.AsParallel().Select(ti =>
+
+            if (invokable != null)
             {
-                foreach (var stream in streams)
+                foreach (var ti in list)
                 {
-                    var open = stream.OpenFile(ti.Name);
+                    var stream = streams.FirstOrDefault(x => x.HasFile(ti.Name.ToLowerInvariant()));
+                    if (stream == null) continue;
+
+                    var open = stream.OpenFile(ti.Name.ToLowerInvariant());
                     if (open == null) continue;
+
                     var bmp = new Bitmap(open);
                     bool hasTransparency;
                     bmp = PostProcessBitmap(ti.Package.PackageRelativePath, ti.Name, bmp, out hasTransparency);
+                    open.Dispose();
+                    var ti1 = ti;
+                    invokable.BeginInvoke(new Action(() =>
+                    {
+                        TextureHelper.Update(ti1.Name.ToLowerInvariant(), bmp, ti1.Width, ti1.Height, hasTransparency);
+                        bmp.Dispose();
+                    }), null);
+                }
+            }
+            else
+            {
+                // Process the bitmaps in parallel
+                var bitmaps = list.AsParallel().Select(ti =>
+                {
+                    var stream = streams.FirstOrDefault(x => x.HasFile(ti.Name.ToLowerInvariant()));
+                    if (stream == null) return null;
+
+                    var open = stream.OpenFile(ti.Name.ToLowerInvariant());
+                    if (open == null) return null;
+
+                    var bmp = new Bitmap(open);
+                    bool hasTransparency;
+                    bmp = PostProcessBitmap(ti.Package.PackageRelativePath, ti.Name.ToLowerInvariant(), bmp, out hasTransparency);
                     open.Dispose();
                     return new
                     {
                         Bitmap = bmp,
                         Name = ti.Name.ToLowerInvariant(),
+                        ti.Width,
+                        ti.Height,
                         HasTransparency = hasTransparency
                     };
-                }
-                return null;
-            }).Where(x => x != null);
+                }).Where(x => x != null);
 
-            // TextureHelper.Create must run on the UI thread
-            foreach (var bmp in bitmaps)
-            {
-                TextureHelper.Create(bmp.Name, bmp.Bitmap, bmp.HasTransparency);
-                bmp.Bitmap.Dispose();
+                // TextureHelper.Create must run on the UI thread
+                foreach (var bmp in bitmaps)
+                {
+                    TextureHelper.Create(bmp.Name, bmp.Bitmap, bmp.Width, bmp.Height, bmp.HasTransparency);
+                    bmp.Bitmap.Dispose();
+                }
             }
             foreach (var pack in packs) pack.Dispose();
         }

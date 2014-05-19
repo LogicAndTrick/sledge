@@ -1,7 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Drawing;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Sledge.FileSystem;
+using Sledge.Graphics.Helpers;
 
 namespace Sledge.Providers.Texture
 {
@@ -44,7 +49,7 @@ namespace Sledge.Providers.Texture
         protected string CachePath { get; private set; }
         public abstract IEnumerable<TexturePackage> CreatePackages(IEnumerable<string> sourceRoots);
         public abstract void DeletePackages(IEnumerable<TexturePackage> packages);
-        public abstract void LoadTextures(IEnumerable<TextureItem> items);
+        public abstract void LoadTextures(IEnumerable<TextureItem> items, ISynchronizeInvoke invokable);
         public abstract ITextureStreamSource GetStreamSource(int maxWidth, int maxHeight, IEnumerable<TexturePackage> packages);
 
         public static TextureCollection CreateCollection(IEnumerable<string> sourceRoots)
@@ -55,31 +60,8 @@ namespace Sledge.Providers.Texture
             {
                 pkgs.AddRange(provider.CreatePackages(list));
             }
-            /*foreach (var package in packages)
-            {
-                var existing = Packages.FirstOrDefault(x => String.Equals(x.PackageFile.FullPathName, package.FullPathName, StringComparison.InvariantCultureIgnoreCase));
-                if (existing != null)
-                {
-                    // Package already loaded in another map
-                    pkgs.Add(existing);
-                }
-                else
-                {
-                    // Load the package
-                    foreach (var provider in RegisteredProviders.Where(p => p.IsValidForPackageFile(package)).ToList())
-                    {
-                        var pkg = provider.CreatePackage(package);
-                        Packages.Add(pkg);
-                        pkgs.Add(pkg);
-                    }
-                    //var provider = RegisteredProviders.FirstOrDefault(p => p.IsValidForPackageFile(package));
-                    //if (provider == null) throw new ProviderNotFoundException("No texture provider was found for package: " + package);
-                    //var pkg = provider.CreatePackage(package);
-                    //Packages.Add(pkg);
-                    //pkgs.Add(pkg);
-                }
-            }*/
             var tc = new TextureCollection(pkgs);
+            Packages.AddRange(pkgs);
             Collections.Add(tc);
             return tc;
         }
@@ -87,26 +69,50 @@ namespace Sledge.Providers.Texture
         public static void DeleteCollection(TextureCollection collection)
         {
             Collections.RemoveAll(x => x == collection);
-            foreach (var package in Packages.ToArray())
+            var remove = Packages.Where(package => !Collections.Any(x => x.Packages.Contains(package))).ToList();
+            foreach (var package in remove)
             {
-                if (!Collections.Any(x => x.Packages.Contains(package)))
-                {
-                    Packages.Remove(package);
-                    package.Dispose();
-                }
+                Packages.Remove(package);
+                package.Provider.DeletePackages(new[] {package});
+                package.Dispose();
             }
         }
 
-        public static void LoadTextureItem(TextureItem item)
+        public static void LoadTextureItem(TextureItem item, ISynchronizeInvoke invokable)
         {
-            item.Package.LoadTextures(new[] {item});
+            item.Package.Provider.LoadTextures(new[] { item }, invokable);
         }
 
-        public static void LoadTextureItems(IEnumerable<TextureItem> items)
+        public static void LoadTextureItems(IEnumerable<TextureItem> items, ISynchronizeInvoke invokable)
         {
-            foreach (var g in items.GroupBy(x => x.Package))
+            var list = items.ToList();
+
+            foreach (var g in list.GroupBy(x => x.Package.Provider))
             {
-                g.Key.LoadTextures(g);
+                LoadTextures(g.Key, g, invokable);
+            }
+        }
+
+        private static void LoadTextures(TextureProvider provider, IEnumerable<TextureItem> items, ISynchronizeInvoke invokable)
+        {
+            var all = items.Where(x => !TextureHelper.Exists(x.Name.ToLowerInvariant())).ToList();
+            if (!all.Any()) return;
+
+            if (TextureHelper.PrecacheImage != null && invokable != null)
+            {
+                foreach (var ti in all)
+                {
+                    TextureHelper.Create(ti.Name.ToLowerInvariant(), TextureHelper.PrecacheImage, ti.Width, ti.Height, false);
+                }
+                Task.Factory.StartNew(() =>
+                {
+                    Thread.Sleep(1000);
+                    provider.LoadTextures(all, invokable);
+                });
+            }
+            else
+            {
+                provider.LoadTextures(all, invokable);
             }
         }
     }

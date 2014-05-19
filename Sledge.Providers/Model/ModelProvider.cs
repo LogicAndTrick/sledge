@@ -73,7 +73,7 @@ namespace Sledge.Providers.Model
                 for (var i = 0; i < model.Textures.Count; i++)
                 {
                     var t = model.Textures[i];
-                    t.TextureObject = TextureHelper.Create(String.Format("ModelProvier: {0}/{1}/{2}", path, t.Name, i), t.Image, false);
+                    t.TextureObject = TextureHelper.Create(String.Format("ModelProvider: {0}/{1}/{2}", path, t.Name, i), t.Image, t.Image.Width, t.Image.Height, false);
                 }
                 Models[path] = model;
                 return model;

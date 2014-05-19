@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 using Sledge.FileSystem;
 using Sledge.Graphics;
 using Sledge.Graphics.Helpers;
@@ -35,20 +38,6 @@ namespace Sledge.Providers.Texture
         public bool HasTexture(string name)
         {
             return Items.ContainsKey(name.ToLowerInvariant());
-        }
-
-        public void LoadTextures(IEnumerable<TextureItem> items)
-        {
-            var all = items.Where(x => !_loadedItems.ContainsKey(x.Name.ToLowerInvariant())).ToList();
-            if (!all.Any()) return;
-            Provider.LoadTextures(all);
-            foreach (var ti in all)
-            {
-                if (!_loadedItems.ContainsKey(ti.Name.ToLowerInvariant()))
-                {
-                    _loadedItems.Add(ti.Name.ToLowerInvariant(), ti);
-                }
-            }
         }
 
         public override string ToString()

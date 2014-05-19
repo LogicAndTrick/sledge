@@ -114,15 +114,15 @@ namespace Sledge.Editor.Documents
             //));
             //SpriteCollection = TextureProvider.CreateCollection(Environment.GetEditorRoot().GetChildren("sprites"));
             TextureCollection = TextureProvider.CreateCollection(Environment.GetGameDirectories());
-            /*TextureCollection = TextureProvider.CreateCollection(new[]
-            {
-                @"F:\Steam\SteamApps\common\Half-life 2\hl2"
-            });*/
+            //TextureCollection = TextureProvider.CreateCollection(new[]
+            //{
+            //    @"F:\Steam\SteamApps\common\Half-life 2\hl2"
+            //});
             SpriteCollection = new TextureCollection(new List<TexturePackage>());
 
             var texList = Map.GetAllTextures();
             var items = TextureCollection.GetItems(texList);
-            TextureCollection.LoadTextureItems(items);
+            TextureProvider.LoadTextureItems(items, Editor.Instance);
 
             Map.PostLoadProcess(GameData, GetTexture, SettingsManager.GetSpecialTextureOpacity);
             Map.UpdateDecals(this);
@@ -375,12 +375,12 @@ namespace Sledge.Editor.Documents
                 var ti = TextureCollection.GetItem(name);
                 if (ti != null)
                 {
-                    TextureCollection.LoadTextureItem(ti);
+                    TextureProvider.LoadTextureItem(ti, Editor.Instance);
                 }
                 else
                 {
                     ti = SpriteCollection.GetItem(name);
-                    if (ti != null) SpriteCollection.LoadTextureItem(ti);
+                    if (ti != null) TextureProvider.LoadTextureItem(ti, Editor.Instance);
                 }
             }
             return TextureHelper.Get(name);

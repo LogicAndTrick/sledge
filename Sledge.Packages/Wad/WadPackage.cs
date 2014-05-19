@@ -62,7 +62,7 @@ namespace Sledge.Packages.Wad
                 var type =  br.ReadByte();
                 var compressionType = br.ReadByte();
                 br.ReadBytes(2); // struct padding
-                var name = br.ReadFixedLengthString(Encoding.ASCII, 16);
+                var name = br.ReadFixedLengthString(Encoding.ASCII, 16).ToLowerInvariant();
 
                 if (!validTypes.Contains(type)) continue; // Skip unsupported types
                 Entries.Add(new WadEntry(this, name, (WadEntryType) type, offset, compressionType, compressedLength, fullLength));

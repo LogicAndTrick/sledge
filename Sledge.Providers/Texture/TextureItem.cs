@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using Sledge.Common;
 using Sledge.Graphics.Helpers;
@@ -52,11 +53,11 @@ namespace Sledge.Providers.Texture
             return si;
         }
 
-        public ITexture GetTexture()
+        public ITexture GetTexture(ISynchronizeInvoke invokable)
         {
             if (!TextureHelper.Exists(Name.ToLowerInvariant()))
             {
-                TextureProvider.LoadTextureItem(this);
+                TextureProvider.LoadTextureItem(this, invokable);
             }
             return TextureHelper.Get(Name.ToLowerInvariant());
         }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using Sledge.Common;
 using Sledge.DataStructures.GameData;
 using Sledge.DataStructures.Geometric;
@@ -191,21 +192,23 @@ namespace Sledge.DataStructures.MapObjects
         public void PartialPostLoadProcess(GameData.GameData gameData, Func<string, ITexture> textureAccessor, Func<string, float> textureOpacity)
         {
             var objects = WorldSpawn.FindAll();
-            foreach (var obj in objects)
+            Parallel.ForEach(objects, obj =>
             {
                 if (obj is Entity)
                 {
                     var ent = (Entity) obj;
                     if (ent.GameData == null || !String.Equals(ent.GameData.Name, ent.EntityData.Name, StringComparison.InvariantCultureIgnoreCase))
                     {
-                        var gd = gameData.Classes.FirstOrDefault(x => String.Equals(x.Name, ent.EntityData.Name, StringComparison.CurrentCultureIgnoreCase) && x.ClassType != ClassType.Base);
+                        var gd =
+                            gameData.Classes.FirstOrDefault(
+                                x => String.Equals(x.Name, ent.EntityData.Name, StringComparison.CurrentCultureIgnoreCase) && x.ClassType != ClassType.Base);
                         ent.GameData = gd;
                         ent.UpdateBoundingBox();
                     }
                 }
                 else if (obj is Solid)
                 {
-                    var s = ((Solid)obj);
+                    var s = ((Solid) obj);
                     var disp = HideDisplacementSolids && s.Faces.Any(x => x is Displacement);
                     s.Faces.ForEach(f =>
                     {
@@ -225,7 +228,7 @@ namespace Sledge.DataStructures.MapObjects
                         }
                     });
                 }
-            }
+            });
         }
 
         public Camera GetActiveCamera()

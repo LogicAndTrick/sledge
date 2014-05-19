@@ -412,9 +412,10 @@ namespace Sledge.Providers.Map
             }
 
             // Load visible solids
-            foreach (var solid in world.GetChildren("solid"))
+            foreach (var read in world.GetChildren("solid").AsParallel().Select(x => new { Solid = ReadSolid(x, generator), Structure = x}))
             {
-                var s = ReadSolid(solid, generator);
+                var s = read.Solid;
+                var solid = read.Structure;
                 if (s == null) continue;
 
                 var editor = solid.GetChildren("editor").FirstOrDefault() ?? new GenericStructure("editor");
