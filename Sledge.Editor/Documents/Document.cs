@@ -107,15 +107,7 @@ namespace Sledge.Editor.Documents
                 GameData.MapSizeHigh = game.OverrideMapSizeHigh;
             }
 
-            //TextureCollection = TextureProvider.CreateCollection(game.Wads.Select(x => x.Path).Distinct().Select(x => new NativeFile(x)).Union(
-            //    new [] {new NativeFile(@"F:\Steam\SteamApps\common\Team Fortress 2\tf").TraversePath("materials/concrete")}
-            //));
-            //SpriteCollection = TextureProvider.CreateCollection(Environment.GetEditorRoot().GetChildren("sprites"));
-            TextureCollection = TextureProvider.CreateCollection(Environment.GetGameDirectories(), Game.Wads.Select(x => x.Path));
-            //TextureCollection = TextureProvider.CreateCollection(new[]
-            //{
-            //    @"F:\Steam\SteamApps\common\Half-life 2\hl2"
-            //});
+            TextureCollection = TextureProvider.CreateCollection(Environment.GetGameDirectories(), Game.AdditionalPackages);
 
             var texList = Map.GetAllTextures();
             var items = TextureCollection.GetItems(texList);
@@ -218,7 +210,7 @@ namespace Sledge.Editor.Documents
                 Map.ActiveCamera.EyePosition = new Coordinate((decimal)loc.X, (decimal)loc.Y, (decimal)loc.Z);
                 Map.ActiveCamera.LookPosition = new Coordinate((decimal)look.X, (decimal)look.Y, (decimal)look.Z);
             }
-            Map.WorldSpawn.EntityData.SetPropertyValue("wad", string.Join(";", Game.Wads.Select(x => x.Path)));
+            Map.WorldSpawn.EntityData.SetPropertyValue("wad", string.Join(";", GetUsedTexturePackages().Select(x => x.PackageRoot).Where(x => x.EndsWith(".wad"))));
             MapProvider.SaveMapToFile(path, Map);
             if (switchPath)
             {
@@ -448,6 +440,17 @@ namespace Sledge.Editor.Documents
         {
             var sel = GetMemory<string>("SelectedEntity");
             return sel == null ? null : GameData.Classes.FirstOrDefault(x => x.Name == sel);
+        }
+
+        public IEnumerable<string> GetUsedTextures()
+        {
+            return Map.WorldSpawn.Find(x => x is Solid).OfType<Solid>().SelectMany(x => x.Faces).Select(x => x.Texture.Name).Distinct();
+        }
+
+        public IEnumerable<TexturePackage> GetUsedTexturePackages()
+        {
+            var used = GetUsedTextures().ToList();
+            return TextureCollection.Packages.Where(x => used.Any(x.HasTexture));
         }
     }
 }

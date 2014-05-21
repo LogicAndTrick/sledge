@@ -38,12 +38,12 @@ namespace Sledge.Settings.Models
         public int OverrideMapSizeHigh { get; set; }
 
         public List<Fgd> Fgds { get; set; }
-        public List<Wad> Wads { get; set; }
+        public List<string> AdditionalPackages { get; set; }
 
         public Game()
         {
             Fgds = new List<Fgd>();
-            Wads = new List<Wad>();
+            AdditionalPackages = new List<string>();
             AutosaveTime = 5;
             AutosaveLimit = 5;
             AutosaveOnlyOnChanged = true;
@@ -78,12 +78,12 @@ namespace Sledge.Settings.Models
             OverrideMapSizeLow = gs.PropertyInteger("OverrideMapSizeLow");
             OverrideMapSizeHigh = gs.PropertyInteger("OverrideMapSizeHigh");
 
-            var wads = gs.Children.FirstOrDefault(x => x.Name == "Wads");
-            if (wads != null)
+            var additional = gs.Children.FirstOrDefault(x => x.Name == "AdditionalPackages");
+            if (additional != null)
             {
-                foreach (var key in wads.GetPropertyKeys())
+                foreach (var key in additional.GetPropertyKeys())
                 {
-                    Wads.Add(new Wad { Path = wads[key] });
+                    AdditionalPackages.Add(additional[key]);
                 }
             }
 
@@ -126,14 +126,14 @@ namespace Sledge.Settings.Models
             gs["OverrideMapSizeLow"] = OverrideMapSizeLow.ToString(CultureInfo.InvariantCulture);
             gs["OverrideMapSizeHigh"] = OverrideMapSizeHigh.ToString(CultureInfo.InvariantCulture);
 
-            var wads = new GenericStructure("Wads");
+            var additional = new GenericStructure("AdditionalPackages");
             var i = 1;
-            foreach (var wad in Wads)
+            foreach (var add in AdditionalPackages)
             {
-                wads.AddProperty(i.ToString(CultureInfo.InvariantCulture), wad.Path);
+                additional.AddProperty(i.ToString(CultureInfo.InvariantCulture), add);
                 i++;
             }
-            gs.Children.Add(wads);
+            gs.Children.Add(additional);
 
             var fgds = new GenericStructure("Fgds");
             i = 1;

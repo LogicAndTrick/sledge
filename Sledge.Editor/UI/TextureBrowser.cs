@@ -233,8 +233,7 @@ namespace Sledge.Editor.UI
             }
             if (UsedTexturesOnlyBox.Checked && DocumentManager.CurrentDocument != null)
             {
-                var used = DocumentManager.CurrentDocument.Map.WorldSpawn.Find(x => x is Solid).OfType<Solid>()
-                    .SelectMany(x => x.Faces).Select(x => x.Texture.Name).Distinct().ToList();
+                var used = DocumentManager.CurrentDocument.GetUsedTextures().ToList();
                 list = list.Where(x => used.Any(y => String.Equals(x.Name, y, StringComparison.InvariantCultureIgnoreCase)));
             }
             var l = list.ToList();
