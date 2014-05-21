@@ -53,7 +53,6 @@ namespace Sledge.Editor.Documents
         public HistoryManager History { get; private set; }
         public HelperManager HelperManager { get; set; }
         public TextureCollection TextureCollection { get; set; }
-        public TextureCollection SpriteCollection { get; set; }
 
         private readonly DocumentSubscriptions _subscriptions;
         private readonly DocumentMemory _memory;
@@ -65,7 +64,6 @@ namespace Sledge.Editor.Documents
             History = new HistoryManager(this);
             HelperManager = new HelperManager(this);
             TextureCollection = new TextureCollection(new List<TexturePackage>());
-            SpriteCollection = new TextureCollection(new List<TexturePackage>());
         }
 
         public Document(string mapFile, Map map, Game game)
@@ -113,16 +111,15 @@ namespace Sledge.Editor.Documents
             //    new [] {new NativeFile(@"F:\Steam\SteamApps\common\Team Fortress 2\tf").TraversePath("materials/concrete")}
             //));
             //SpriteCollection = TextureProvider.CreateCollection(Environment.GetEditorRoot().GetChildren("sprites"));
-            TextureCollection = TextureProvider.CreateCollection(Environment.GetGameDirectories());
+            TextureCollection = TextureProvider.CreateCollection(Environment.GetGameDirectories(), Game.Wads.Select(x => x.Path));
             //TextureCollection = TextureProvider.CreateCollection(new[]
             //{
             //    @"F:\Steam\SteamApps\common\Half-life 2\hl2"
             //});
-            SpriteCollection = new TextureCollection(new List<TexturePackage>());
 
             var texList = Map.GetAllTextures();
             var items = TextureCollection.GetItems(texList);
-            TextureProvider.LoadTextureItems(items, Editor.Instance);
+            TextureProvider.LoadTextureItems(items);
 
             Map.PostLoadProcess(GameData, GetTexture, SettingsManager.GetSpecialTextureOpacity);
             Map.UpdateDecals(this);
@@ -182,7 +179,6 @@ namespace Sledge.Editor.Documents
         {
             Scheduler.Clear(this);
             TextureProvider.DeleteCollection(TextureCollection);
-            TextureProvider.DeleteCollection(SpriteCollection);
             Renderer.Dispose();
         }
 
@@ -375,12 +371,7 @@ namespace Sledge.Editor.Documents
                 var ti = TextureCollection.GetItem(name);
                 if (ti != null)
                 {
-                    TextureProvider.LoadTextureItem(ti, Editor.Instance);
-                }
-                else
-                {
-                    ti = SpriteCollection.GetItem(name);
-                    if (ti != null) TextureProvider.LoadTextureItem(ti, Editor.Instance);
+                    TextureProvider.LoadTextureItem(ti);
                 }
             }
             return TextureHelper.Get(name);

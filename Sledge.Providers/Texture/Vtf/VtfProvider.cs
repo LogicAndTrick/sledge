@@ -1,109 +1,18 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
-using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using OpenTK;
-using Sledge.DataStructures.GameData;
 using Sledge.FileSystem;
 
 namespace Sledge.Providers.Texture.Vtf
 {
-    public enum VtfImageFormat : int
-    {
-        None = -1,
-        Rgba8888 = 0,
-        Abgr8888,
-        Rgb888,
-        Bgr888,
-        Rgb565,
-        I8,
-        Ia88,
-        P8,
-        A8,
-        Rgb888Bluescreen,
-        Bgr888Bluescreen,
-        Argb8888,
-        Bgra8888,
-        Dxt1,
-        Dxt3,
-        Dxt5,
-        Bgrx8888,
-        Bgr565,
-        Bgrx5551,
-        Bgra4444,
-        Dxt1Onebitalpha,
-        Bgra5551,
-        Uv88,
-        Uvwq8888,
-        Rgba16161616F,
-        Rgba16161616,
-        Uvlx8888,
-        R32F,
-        Rgb323232F,
-        Rgba32323232F,
-        NvDst16,
-        NvDst24,	
-        NvIntz,
-        NvRawz,
-        AtiDst16,
-        AtiDst24,
-        NvNull,
-        Ati2N,	
-        Ati1N,
-    }
-
-    [Flags]
-    public enum VtfImageFlag : uint
-    {
-        Pointsample = 0x00000001,
-        Trilinear = 0x00000002,
-        Clamps = 0x00000004,
-        Clampt = 0x00000008,
-        Anisotropic = 0x00000010,
-        HintDxt5 = 0x00000020,
-        Srgb = 0x00000040,
-        DeprecatedNocompress = 0x00000040,
-        Normal = 0x00000080,
-        Nomip = 0x00000100,
-        Nolod = 0x00000200,
-        Minmip = 0x00000400,
-        Procedural = 0x00000800,
-        Onebitalpha = 0x00001000,
-        Eightbitalpha = 0x00002000,
-        Envmap = 0x00004000,
-        Rendertarget = 0x00008000,
-        Depthrendertarget = 0x00010000,
-        Nodebugoverride = 0x00020000,
-        Singlecopy = 0x00040000,
-        Unused0 = 0x00080000,
-        DeprecatedOneovermiplevelinalpha = 0x00080000,
-        Unused1 = 0x00100000,
-        DeprecatedPremultcolorbyoneovermiplevel = 0x00100000,
-        Unused2 = 0x00200000,
-        DeprecatedNormaltodudv = 0x00200000,
-        Unused3 = 0x00400000,
-        DeprecatedAlphatestmipgeneration = 0x00400000,
-        Nodepthbuffer = 0x00800000,
-        Unused4 = 0x01000000,
-        DeprecatedNicefiltered = 0x01000000,
-        Clampu = 0x02000000,
-        Vertextexture = 0x04000000,
-        Ssbump = 0x08000000,
-        Unused5 = 0x10000000,
-        DeprecatedUnfilterableOk = 0x10000000,
-        Border = 0x20000000,
-        DeprecatedSpecvarRed = 0x40000000,
-        DeprecatedSpecvarAlpha = 0x80000000,
-        Last = 0x20000000
-    }
-
     // Uses a lot of code from the excellent VtfLib
     // Re-created natively for flexibility and portability
-    public class VtfProvider
+    public static class VtfProvider
     {
         private const string VtfHeader = "VTF";
 

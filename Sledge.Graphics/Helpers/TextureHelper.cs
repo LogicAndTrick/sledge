@@ -29,17 +29,10 @@ namespace Sledge.Graphics.Helpers
 
         public static bool DisableTextureFiltering { get; set; }
 
-        public static Bitmap PrecacheImage { get; private set; }
-
         static TextureHelper()
         {
             Textures = new Dictionary<string, GLTexture>();
             PixelInternalFormat = PixelInternalFormat.Rgba;
-            PrecacheImage = new Bitmap(4, 4);
-            using (var g = System.Drawing.Graphics.FromImage(PrecacheImage))
-            {
-                g.FillRectangle(Brushes.White, 0, 0, 4, 4);
-            }
         }
 
         public static void ClearLoadedTextures()
@@ -133,49 +126,6 @@ namespace Sledge.Graphics.Helpers
             var texobj = new GLTexture(tex, name) { Width = width, Height = height, HasTransparency = hasTransparency, BitmapImage = (Bitmap)bitmap.Clone() };
             Textures.Add(name, texobj);
             return texobj;
-        }
-
-        public static void Update(string name, Bitmap bitmap, int width, int height, bool hasTransparency)
-        {
-            if (!Textures.ContainsKey(name)) return;
-
-            var actualBitmap = bitmap;
-            if (ForceNonPowerOfTwoResize || !SupportsNonPowerOfTwo())
-            {
-                var w = NextPowerOfTwo(bitmap.Width);
-                var h = NextPowerOfTwo(bitmap.Height);
-                if (w != bitmap.Width || h != bitmap.Height) actualBitmap = new Bitmap(bitmap, w, h);
-            }
-            var data = actualBitmap.LockBits(
-                new Rectangle(0, 0, actualBitmap.Width, actualBitmap.Height),
-                ImageLockMode.ReadOnly,
-                System.Drawing.Imaging.PixelFormat.Format32bppArgb
-                );
-
-            var tex = Textures[name];
-            tex.Bind();
-            GL.TexImage2D(
-                TextureTarget.Texture2D,
-                0,
-                PixelInternalFormat,
-                data.Width,
-                data.Height,
-                0,
-                PixelFormat.Bgra,
-                PixelType.UnsignedByte,
-                data.Scan0
-                );
-
-            actualBitmap.UnlockBits(data);
-            if (actualBitmap != bitmap)
-            {
-                actualBitmap.Dispose();
-            }
-            tex.Width = width;
-            tex.Height = height;
-            tex.HasTransparency = hasTransparency;
-            if (tex.BitmapImage != null) tex.BitmapImage.Dispose();
-            tex.BitmapImage = (Bitmap) bitmap.Clone();
         }
 
         private static int CreateAndBindTexture()

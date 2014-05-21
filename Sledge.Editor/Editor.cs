@@ -153,7 +153,7 @@ namespace Sledge.Editor
             MapProvider.Register(new ObjProvider());
             GameDataProvider.Register(new FgdProvider());
             TextureProvider.Register(new WadProvider());
-            //TextureProvider.Register(new SprProvider());
+            TextureProvider.Register(new SprProvider());
             TextureProvider.Register(new VmtProvider());
             ModelProvider.Register(new MdlProvider());
 

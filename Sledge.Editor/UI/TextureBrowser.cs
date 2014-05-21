@@ -149,7 +149,7 @@ namespace Sledge.Editor.UI
             PackageTree.Nodes.Clear();
             var parent = PackageTree.Nodes.Add("", "All Packages");
             TreeNode reselect = null;
-            foreach (var tp in packages)
+            foreach (var tp in packages.OrderBy(x => x.ToString()))
             {
                 var node = parent.Nodes.Add(tp.ToString(), tp + " (" + tp.Items.Count + ")");
                 if (selectedKey == node.Name) reselect = node;
@@ -194,6 +194,8 @@ namespace Sledge.Editor.UI
             var package = PackageTree.SelectedNode;
             var key = package == null ? null : package.Name;
             if (String.IsNullOrWhiteSpace(key)) key = null;
+            var p = _packages.FirstOrDefault(x => x.ToString() == key);
+            if (p != null) return p.Items.Values;
             return _textures.Where(x => key == null || key == x.Package.ToString());
         }
 

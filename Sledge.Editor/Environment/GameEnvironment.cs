@@ -32,17 +32,6 @@ namespace Sledge.Editor.Environment
             Game = game;
         }
 
-        public IFile GetEditorRoot()
-        {
-            // Add the editor location to the path, for sprites and the like
-            var dirs = GetGameDirectories().ToList();
-            dirs.Add(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location));
-            dirs.RemoveAll(x => !Directory.Exists(x));
-
-            if (dirs.Any()) return new RootFile(Game.Name, dirs.Select(x => new NativeFile(x)));
-            return new VirtualFile(null, "");
-        }
-
         public IEnumerable<string> GetGameDirectories()
         {
             if (Game.SteamInstall)
@@ -73,6 +62,9 @@ namespace Sledge.Editor.Environment
                     yield return Path.Combine(Game.WonGameDir, Game.BaseDir);
                 }
             }
+
+            // Editor location to the path, for sprites and the like
+            yield return Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
         }
     }
 }

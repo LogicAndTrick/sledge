@@ -1,13 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using Sledge.Common.Mediator;
 using Sledge.Graphics.Helpers;
 using Sledge.Packages;
 using Sledge.Packages.Vpk;
@@ -18,7 +14,7 @@ namespace Sledge.Providers.Texture
     {
         private Dictionary<TexturePackage, QuickRoot> _roots = new Dictionary<TexturePackage, QuickRoot>();
 
-        public override IEnumerable<TexturePackage> CreatePackages(IEnumerable<string> sourceRoots)
+        public override IEnumerable<TexturePackage> CreatePackages(IEnumerable<string> sourceRoots, IEnumerable<string> additionalPackages)
         {
             var roots = sourceRoots.ToList();
             var packages = new Dictionary<string, TexturePackage>();
@@ -41,9 +37,10 @@ namespace Sledge.Providers.Texture
             };
 
             var packageRoot = String.Join(";", roots);
+            var add = additionalPackages.ToList();
 
-            var vmtRoot = new QuickRoot(roots, "materials", ".vmt");
-            var vtfRoot = new QuickRoot(roots, "materials", ".vtf");
+            var vmtRoot = new QuickRoot(roots, add, "materials", ".vmt");
+            var vtfRoot = new QuickRoot(roots, add, "materials", ".vtf");
 
             foreach (var vmt in vmtRoot.GetFiles())
             {
@@ -104,34 +101,18 @@ namespace Sledge.Providers.Texture
                    img.GetPixel(img.Width / 2, 3 * img.Height / 4).A < 255;
         }
 
-        public override void LoadTextures(IEnumerable<TextureItem> items, ISynchronizeInvoke invokable)
+        public override void LoadTextures(IEnumerable<TextureItem> items)
         {
-            var groups = items.GroupBy(x => x.Package);
+            var groups = items.GroupBy(x => x.Package).ToList();
             foreach (var group in groups)
             {
                 var root = _roots[group.Key];
                 var files = group.Where(ti => root.HasFile(ti.PrimarySubItem.Name)).ToList();
-                if (invokable != null)
+                foreach (var ti in files)
                 {
-                    Parallel.ForEach(files, ti =>
+                    using (var bmp = Vtf.VtfProvider.GetImage(root.OpenFile(ti.PrimarySubItem.Name)))
                     {
-                        var bmp = Vtf.VtfProvider.GetImage(root.OpenFile(ti.PrimarySubItem.Name));
-                        var hasTransparency = QuickCheckTransparent(bmp);
-                        invokable.BeginInvoke(new Action(() =>
-                        {
-                            TextureHelper.Update(ti.Name.ToLowerInvariant(), bmp, ti.Width, ti.Height, hasTransparency);
-                            bmp.Dispose();
-                        }), null);
-                    });
-                }
-                else
-                {
-                    foreach (var ti in files)
-                    {
-                        using (var bmp = Vtf.VtfProvider.GetImage(root.OpenFile(ti.PrimarySubItem.Name)))
-                        {
-                            TextureHelper.Create(ti.Name.ToLowerInvariant(), bmp, ti.Width, ti.Height, QuickCheckTransparent(bmp));
-                        }
+                        TextureHelper.Create(ti.Name.ToLowerInvariant(), bmp, ti.Width, ti.Height, QuickCheckTransparent(bmp));
                     }
                 }
             }
@@ -152,8 +133,6 @@ namespace Sledge.Providers.Texture
             {
                 _maxWidth = maxWidth;
                 _maxHeight = maxHeight;
-                //var groups = packages.GroupBy(x => x.PackageRoot);
-                //_roots = groups.Select(x => new QuickRoot(x.Key.Split(';'), "materials", ".vtf")).ToList();
                 _roots = roots.ToList();
             }
             
@@ -190,7 +169,7 @@ namespace Sledge.Providers.Texture
             private readonly string _baseFolder;
             private readonly string _extension;
 
-            public QuickRoot(IEnumerable<string> roots, string baseFolder, string extension)
+            public QuickRoot(IEnumerable<string> roots, IEnumerable<string> additional, string baseFolder, string extension)
             {
                 _baseFolder = baseFolder;
                 _extension = extension;
@@ -206,11 +185,14 @@ namespace Sledge.Providers.Texture
                     .ToList();
                 _vpks = streams.Select(x => x.Directory).ToList();
                 _streams = streams.Select(x => x.Stream).ToList();
+                var extras = additional.Select(x => Directory.Exists(Path.Combine(x, baseFolder)) ? Path.Combine(x, baseFolder) : x).Where(Directory.Exists);
                 _files = _streams
                     .SelectMany(x => x.SearchFiles(baseFolder, "\\" + extension + "$", true))
                     .Union(_roots.Where(x => Directory.Exists(Path.Combine(x, baseFolder)))
                         .SelectMany(x => Directory.GetFiles(Path.Combine(x, baseFolder), "*" + extension, SearchOption.AllDirectories)
                             .Select(f => MakeRelative(x, f))))
+                    .Union(extras.SelectMany(x => Directory.GetFiles(x, "*" + extension, SearchOption.AllDirectories)
+                        .Select(f => MakeRelative(x, f))))
                     .GroupBy(x => x)
                     .Select(x => StripBase(x.First()))
                     .ToList();

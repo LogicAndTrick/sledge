@@ -1,13 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
-using Sledge.FileSystem;
-using Sledge.Graphics;
 using Sledge.Graphics.Helpers;
 
 namespace Sledge.Providers.Texture

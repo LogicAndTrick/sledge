@@ -171,6 +171,7 @@ namespace Sledge.Packages.Wad
 
         public bool HasFile(string path)
         {
+            path = path.ToLowerInvariant();
             return _files.ContainsKey(path);
         }
 
