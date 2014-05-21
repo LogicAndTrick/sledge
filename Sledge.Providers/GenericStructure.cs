@@ -87,6 +87,12 @@ namespace Sledge.Providers
             return Properties.Where(x => x.Key == key).Select(x => x.Value);
         }
 
+	    public string GetPropertyValue(string name, bool ignoreCase)
+	    {
+            var prop = Properties.FirstOrDefault(x => String.Equals(x.Key, name, ignoreCase ? StringComparison.CurrentCultureIgnoreCase : StringComparison.CurrentCulture));
+            return prop == null ? null : prop.Value;
+	    }
+
         public bool PropertyBoolean(string name, bool defaultValue = false)
         {
             var prop = this[name];
@@ -612,11 +618,20 @@ namespace Sledge.Providers
         /// <returns>The parsed structure</returns>
 		private static GenericStructure ParseStructure(TextReader reader, string name)
         {
-            var gs = new GenericStructure(name.SplitWithQuotes()[0]);
-	        var line = CleanLine(reader.ReadLine());
-			if (line != "{") {
-				return gs;
-			}
+            var spl = name.SplitWithQuotes();
+            var gs = new GenericStructure(spl[0]);
+            string line;
+            if (spl.Length != 2 || spl[1] != "{")
+            {
+                do
+                {
+                    line = CleanLine(reader.ReadLine());
+                } while (String.IsNullOrWhiteSpace(line));
+                if (line != "{")
+                {
+                    return gs;
+                }
+            }
             while ((line = CleanLine(reader.ReadLine())) != null)
 			{
 				if (line == "}") break;
@@ -636,7 +651,7 @@ namespace Sledge.Providers
 		{
 			if (string.IsNullOrEmpty(s)) return false;
             var split = s.SplitWithQuotes();
-            return split.Length == 1;
+            return split.Length == 1 || (split.Length == 2 && split[1] == "{");
 		}
 
         /// <summary>

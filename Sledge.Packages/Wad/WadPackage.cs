@@ -35,13 +35,19 @@ namespace Sledge.Packages.Wad
                 // Read all the entries from the wad
                 ReadTextureEntries(br);
                 SetAdditionalEntryData(br);
+                RemoveInvalidEntries();
                 BuildDirectories();
             }
         }
-        
-        internal FileStream OpenFile(FileInfo file)
+
+        private void RemoveInvalidEntries()
         {
-            return new FileStream(file.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, 4096, FileOptions.RandomAccess);
+            Entries.RemoveAll(e => (e.PaletteDataOffset + e.PaletteSize * 3) - e.Offset > e.Length);
+        }
+
+        internal Stream OpenFile(FileInfo file)
+        {
+            return Stream.Synchronized(new FileStream(file.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, 4096, FileOptions.RandomAccess));
         }
 
         private void ReadTextureEntries(BinaryReader br)
@@ -56,7 +62,7 @@ namespace Sledge.Packages.Wad
                 var type =  br.ReadByte();
                 var compressionType = br.ReadByte();
                 br.ReadBytes(2); // struct padding
-                var name = br.ReadFixedLengthString(Encoding.ASCII, 16);
+                var name = br.ReadFixedLengthString(Encoding.ASCII, 16).ToLowerInvariant();
 
                 if (!validTypes.Contains(type)) continue; // Skip unsupported types
                 Entries.Add(new WadEntry(this, name, (WadEntryType) type, offset, compressionType, compressedLength, fullLength));
@@ -165,7 +171,18 @@ namespace Sledge.Packages.Wad
 
         public bool HasFile(string path)
         {
+            path = path.ToLowerInvariant();
             return _files.ContainsKey(path);
+        }
+
+        public IEnumerable<string> GetDirectories()
+        {
+            return _files.Keys;
+        }
+
+        public IEnumerable<string> GetFiles()
+        {
+            return _files.Values.Select(x => x.Name);
         }
 
         public IEnumerable<string> GetDirectories(string path)

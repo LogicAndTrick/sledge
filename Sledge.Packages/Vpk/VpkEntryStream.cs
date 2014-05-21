@@ -85,10 +85,13 @@ namespace Sledge.Packages.Vpk
                 var copyLength = (int) Math.Min(count, remainingEntry);
                 if (copyLength > 0)
                 {
-                    _stream.Position = _streamStart + currentEntry;
-                    var read = _stream.Read(buffer, offset, copyLength);
-                    ret += read;
-                    Position += read;
+                    lock (_stream)
+                    {
+                        _stream.Position = _streamStart + currentEntry;
+                        var read = _stream.Read(buffer, offset, copyLength);
+                        ret += read;
+                        Position += read;
+                    }
                 }
             }
             return ret;

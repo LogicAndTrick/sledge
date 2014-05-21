@@ -18,13 +18,13 @@ namespace Sledge.Packages.Vpk
         internal uint TreeLength { get; private set; }
         internal uint HeaderLength { get; private set; }
 
-        internal List<VpkEntry> Entries { get; private set; }
+        internal Dictionary<string, VpkEntry> Entries { get; private set; }
         internal Dictionary<ushort, FileInfo> Chunks { get; private set; }
 
         public VpkDirectory(FileInfo packageFile)
         {
             PackageFile = packageFile;
-            Entries = new List<VpkEntry>();
+            Entries = new Dictionary<string, VpkEntry>();
             Chunks = new Dictionary<ushort, FileInfo>();
 
             var nameWithoutExt = Path.GetFileNameWithoutExtension(packageFile.Name);
@@ -76,9 +76,9 @@ namespace Sledge.Packages.Vpk
             }
         }
         
-        internal FileStream OpenFile(FileInfo file)
+        internal Stream OpenFile(FileInfo file)
         {
-            return new FileStream(file.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, 4096, FileOptions.RandomAccess);
+            return Stream.Synchronized(new FileStream(file.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, 4096, FileOptions.RandomAccess));
         }
 
         private void ReadDirectoryEntries(BinaryReader br)
@@ -94,7 +94,7 @@ namespace Sledge.Packages.Vpk
                     {
                         // get me some file information
                         var entry = ReadEntry(br, path + "/" + filename + "." + extension);
-                        Entries.Add(entry);
+                        Entries.Add(entry.FullName, entry);
                     }
                 }
             }
@@ -111,17 +111,18 @@ namespace Sledge.Packages.Vpk
             if (terminator != VpkEntry.EntryTerminator) throw new PackageException("Invalid terminator. Expected " + VpkEntry.EntryTerminator.ToString("x8") + ", got " + terminator.ToString("x8") + ".");
 
             var preloadData = br.ReadBytes(preloadBytes);
-            return new VpkEntry(this, path, crc, preloadData, archiveIndex, entryOffset, entryLength);
+            return new VpkEntry(this, path.ToLowerInvariant(), crc, preloadData, archiveIndex, entryOffset, entryLength);
         }
 
         public IEnumerable<IPackageEntry> GetEntries()
         {
-            return Entries;
+            return Entries.Values;
         }
 
         public IPackageEntry GetEntry(string path)
         {
-            return GetEntries().FirstOrDefault(x => x.FullName == path);
+            path = path.ToLowerInvariant();
+            return Entries.ContainsKey(path) ? Entries[path] : null;
         }
 
         public byte[] ExtractEntry(IPackageEntry entry)
@@ -136,7 +137,7 @@ namespace Sledge.Packages.Vpk
         {
             var pe = entry as VpkEntry;
             if (pe == null) throw new ArgumentException("This package is only compatible with VpkEntry objects.");
-            return new VpkEntryStream(pe, this);
+            return new BufferedStream(new VpkEntryStream(pe, this));
         }
 
         internal Stream OpenChunk(VpkEntry entry)
@@ -198,7 +199,17 @@ namespace Sledge.Packages.Vpk
 
         public bool HasFile(string path)
         {
-            return _files.ContainsKey(path);
+            return _files.ContainsKey(path.ToLowerInvariant());
+        }
+
+        public IEnumerable<string> GetDirectories()
+        {
+            return _files.Keys;
+        }
+
+        public IEnumerable<string> GetFiles()
+        {
+            return _files.Values.SelectMany(x => x);
         }
 
         public IEnumerable<string> GetDirectories(string path)

@@ -243,7 +243,7 @@ namespace Sledge.Editor.Compiling
                     filename = Path.GetFileNameWithoutExtension(filename) + "_cordon.map";
                 }
             }
-            map.WorldSpawn.EntityData.SetPropertyValue("wad", string.Join(";", Game.Wads.Select(x => x.Path)));
+            map.WorldSpawn.EntityData.SetPropertyValue("wad", string.Join(";", document.GetUsedTexturePackages().Select(x => x.PackageRoot).Where(x => x.EndsWith(".wad"))));
             filename = Path.Combine(folder, filename);
             MapProvider.SaveMapToFile(filename, map);
             return filename;

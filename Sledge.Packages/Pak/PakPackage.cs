@@ -37,9 +37,9 @@ namespace Sledge.Packages.Pak
             }
         }
 
-        internal FileStream OpenFile(FileInfo file)
+        internal Stream OpenFile(FileInfo file)
         {
-            return new FileStream(file.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, 4096, FileOptions.RandomAccess);
+            return Stream.Synchronized(new FileStream(file.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, 4096, FileOptions.RandomAccess));
         }
 
         private void ReadPackageEntries(BinaryReader br)
@@ -48,7 +48,7 @@ namespace Sledge.Packages.Pak
             var numEntries = TreeLength / 64;
             for (int i = 0; i < numEntries; i++)
             {
-                var path = br.ReadFixedLengthString(Encoding.ASCII, 56);
+                var path = br.ReadFixedLengthString(Encoding.ASCII, 56).ToLowerInvariant();
                 var offset = br.ReadInt32();
                 var length = br.ReadInt32();
                 Entries.Add(new PakEntry(this, path, offset, length));
@@ -62,6 +62,7 @@ namespace Sledge.Packages.Pak
 
         public IPackageEntry GetEntry(string path)
         {
+            path = path.ToLowerInvariant();
             return GetEntries().FirstOrDefault(x => x.FullName == path);
         }
 
@@ -77,7 +78,7 @@ namespace Sledge.Packages.Pak
         {
             var pe = entry as PakEntry;
             if (pe == null) throw new ArgumentException("This package is only compatible with PakEntry objects.");
-            return new SubStream(OpenFile(PackageFile), pe.Offset, pe.Length) { CloseParentOnDispose = true };
+            return new BufferedStream(new SubStream(OpenFile(PackageFile), pe.Offset, pe.Length) { CloseParentOnDispose = true });
         }
 
         public IPackageStreamSource GetStreamSource()
@@ -129,7 +130,17 @@ namespace Sledge.Packages.Pak
 
         public bool HasFile(string path)
         {
-            return _files.ContainsKey(path);
+            return _files.ContainsKey(path.ToLowerInvariant());
+        }
+
+        public IEnumerable<string> GetDirectories()
+        {
+            return _files.Keys;
+        }
+
+        public IEnumerable<string> GetFiles()
+        {
+            return _files.Values.SelectMany(x => x);
         }
 
         public IEnumerable<string> GetDirectories(string path)

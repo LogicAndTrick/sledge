@@ -112,7 +112,7 @@ namespace Sledge.Editor.Tools
         {
             var brush = BrushManager.CurrentBrush;
             var ti = Document.TextureCollection.SelectedTexture;
-            var texture = ti != null ? ti.GetTexture() : null;
+            var texture = ti != null ? ti.GetTexture(Editor.Instance) : null;
             var created = brush.Create(idg, bounds, texture, BrushManager.RoundCreatedVertices ? 0 : 2).ToList();
             if (created.Count > 1)
             {

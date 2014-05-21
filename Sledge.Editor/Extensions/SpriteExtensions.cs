@@ -48,7 +48,7 @@ namespace Sledge.Editor.Extensions
             var existingSprite = e.MetaData.Get<string>(SpriteMetaKey);
             if (String.Equals(sprite, existingSprite, StringComparison.InvariantCultureIgnoreCase)) return updatedChildren; // Already set; No need to continue
 
-            var tex = document.SpriteCollection.GetItem(sprite);
+            var tex = document.TextureCollection.GetItem(sprite);
             if (tex == null)
             {
                 UnsetSprite(e);

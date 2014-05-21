@@ -21,14 +21,9 @@ namespace Sledge.Providers.Texture
             AlphaTest = 3   // R/G/B = R/G/B, Palette index 255 = transparent
         }
 
-        public override bool IsValidForPackageFile(IFile package)
+        private static Size GetSize(string file)
         {
-            return package.IsContainer && package.Exists;
-        }
-
-        private static Size GetSize(IFile file)
-        {
-            using (var br = new BinaryReader(file.Open()))
+            using (var br = new BinaryReader(File.Open(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)))
             {
                 var idst = br.ReadFixedLengthString(Encoding.ASCII, 4);
                 if (idst != "IDSP") return Size.Empty;
@@ -44,10 +39,10 @@ namespace Sledge.Providers.Texture
             }
         }
 
-        private static Bitmap Parse(IFile file)
+        private static Bitmap Parse(string file)
         {
             // Sprite file spec taken from the spritegen source in the Half-Life SDK.
-            using (var br = new BinaryReader(file.Open()))
+            using (var br = new BinaryReader(File.Open(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)))
             {
                 var idst = br.ReadFixedLengthString(Encoding.ASCII, 4);
                 if (idst != "IDSP") return null;
@@ -122,49 +117,48 @@ namespace Sledge.Providers.Texture
             }
         }
 
-        public override void LoadTexture(TextureItem item)
-        {
-            LoadTextures(new[] {item});
-        }
-
         public override void LoadTextures(IEnumerable<TextureItem> items)
         {
             foreach (var item in items)
             {
-                var file = item.Package.PackageFile.TraversePath("../" + item.Name);
-                if (file != null && file.Exists && !file.IsContainer)
+                foreach (var root in item.Package.PackageRoot.Split(';'))
                 {
-                    TextureHelper.Create(GetFileName(item.Package, file), Parse(file), true);
+                    var file = Path.Combine(root, item.Name);
+                    if (File.Exists(file))
+                    {
+                        TextureHelper.Create(item.Name, Parse(file), item.Width, item.Height, true);
+                        break;
+                    }
                 }
             }
         }
 
-        private TextureItem CreateTextureItem(TexturePackage package, IFile file)
+        public override IEnumerable<TexturePackage> CreatePackages(IEnumerable<string> sourceRoots, IEnumerable<string> additionalPackages)
         {
-            var size = GetSize(file);
-            return new TextureItem(package, GetFileName(package, file), size.Width, size.Height);
-        }
-
-        private string GetFileName(TexturePackage package, IFile file)
-        {
-            var path = file.GetRelativePath(package.PackageFile).ToLower();
-            path = path.Replace('\\', '/');
-            return path;
-        }
-
-        public override TexturePackage CreatePackage(IFile package)
-        {
-            var tp = new TexturePackage(package, this);
-            var items = package.GetFiles(".*\\.spr$", true)
-                .Select(x => CreateTextureItem(tp, x));
-            foreach (var ti in items)
+            var dirs = sourceRoots.Union(additionalPackages).Where(Directory.Exists).Select(Path.GetFullPath).Select(x => x.ToLowerInvariant()).Distinct().ToList();
+            var tp = new TexturePackage(String.Join(";", dirs), "sprites", this);
+            foreach (var dir in dirs)
             {
-                tp.AddTexture(ti);
+                var sprs = Directory.GetFiles(dir, "*.spr", SearchOption.AllDirectories);
+                if (!sprs.Any()) continue;
+
+                foreach (var spr in sprs)
+                {
+                    var size = GetSize(spr);
+                    var rel = Path.GetFullPath(spr).Substring(dir.Length).TrimStart('/', '\\').Replace('\\', '/');
+                    tp.AddTexture(new TextureItem(tp, rel.ToLowerInvariant(), size.Width, size.Height));
+                }
             }
-            return tp;
+            if (!tp.Items.Any()) yield break;
+            yield return tp;
         }
 
-        public override ITextureStreamSource GetStreamSource(IEnumerable<TexturePackage> packages)
+        public override void DeletePackages(IEnumerable<TexturePackage> packages)
+        {
+
+        }
+
+        public override ITextureStreamSource GetStreamSource(int maxWidth, int maxHeight, IEnumerable<TexturePackage> packages)
         {
             return new SpriteTextureStreamSource(packages);
         }
@@ -185,11 +179,10 @@ namespace Sledge.Providers.Texture
 
             public Bitmap GetImage(TextureItem item)
             {
-                var file = item.Package.PackageFile;
-                var child = file.GetFile(item.Name);
-                if (child != null && child.Exists)
+                foreach (var root in item.Package.PackageRoot.Split(';'))
                 {
-                    return Parse(child);
+                    var file = Path.Combine(root, item.Name);
+                    if (File.Exists(file)) return Parse(file);
                 }
                 return null;
             }

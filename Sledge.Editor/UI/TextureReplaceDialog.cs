@@ -75,8 +75,8 @@ namespace Sledge.Editor.UI
 
                 var item = _document.TextureCollection.GetItem(n);
                 if (item == null) continue;
-                
-                list.Add(Tuple.Create(name, item, item.GetTexture()));
+
+                list.Add(Tuple.Create(name, item, item.GetTexture(Editor.Instance)));
             }
             return list;
         }
@@ -140,7 +140,7 @@ namespace Sledge.Editor.UI
                 return;
             }
 
-            using (var tp = _document.TextureCollection.GetStreamSource())
+            using (var tp = _document.TextureCollection.GetStreamSource(128, 128))
             {
                 var bmp = tp.GetImage(item);
                 image.SizeMode = bmp.Width > image.Width || bmp.Height > image.Height

@@ -29,7 +29,7 @@ namespace Sledge.DataStructures.Geometric
             set
             {
                 _x = value;
-                _dx = (double) value;
+                _dx = (double)value;
             }
         }
 
@@ -86,16 +86,19 @@ namespace Sledge.DataStructures.Geometric
         
         public Coordinate(decimal x, decimal y, decimal z)
         {
-            X = x;
-            Y = y;
-            Z = z;
+            _x = x;
+            _y = y;
+            _z = z;
+            _dx = (double) x;
+            _dy = (double) y;
+            _dz = (double) z;
         }
 
         public bool EquivalentTo(Coordinate test, decimal delta = 0.0001m)
         {
-            var xd = Math.Abs(X - test.X);
-            var yd = Math.Abs(Y - test.Y);
-            var zd = Math.Abs(Z - test.Z);
+            var xd = Math.Abs(_x - test._x);
+            var yd = Math.Abs(_y - test._y);
+            var zd = Math.Abs(_z - test._z);
             return (xd < delta) && (yd < delta) && (zd < delta);
         }
 
@@ -117,37 +120,37 @@ namespace Sledge.DataStructures.Geometric
         {
             unchecked
             {
-                var result = X.GetHashCode();
-                result = (result*397) ^ Y.GetHashCode();
-                result = (result*397) ^ Z.GetHashCode();
+                var result = _x.GetHashCode();
+                result = (result*397) ^ _y.GetHashCode();
+                result = (result*397) ^ _z.GetHashCode();
                 return result;
             }
         }
 
         public decimal Dot(Coordinate c)
         {
-            return ((X * c.X) + (Y * c.Y) + (Z * c.Z));
+            return ((_x * c._x) + (_y * c._y) + (_z * c._z));
         }
 
         public Coordinate Cross(Coordinate that)
         {
-            var xv = (Y * that.Z) - (Z * that.Y);
-            var yv = (Z * that.X) - (X * that.Z);
-            var zv = (X * that.Y) - (Y * that.X);
+            var xv = (_y * that._z) - (_z * that._y);
+            var yv = (_z * that._x) - (_x * that._z);
+            var zv = (_x * that._y) - (_y * that._x);
             return new Coordinate(xv, yv, zv);
         }
 
         public Coordinate Round(int num = 8)
         {
-            return new Coordinate(Math.Round(X, num), Math.Round(Y, num), Math.Round(Z, num));
+            return new Coordinate(Math.Round(_x, num), Math.Round(_y, num), Math.Round(_z, num));
         }
 
         public Coordinate Snap(decimal snapTo)
         {
             return new Coordinate(
-                Math.Round(X / snapTo) * snapTo,
-                Math.Round(Y / snapTo) * snapTo,
-                Math.Round(Z / snapTo) * snapTo
+                Math.Round(_x / snapTo) * snapTo,
+                Math.Round(_y / snapTo) * snapTo,
+                Math.Round(_z / snapTo) * snapTo
             );
         }
 
@@ -164,12 +167,12 @@ namespace Sledge.DataStructures.Geometric
         public Coordinate Normalise()
         {
             var len = VectorMagnitude();
-            return len == 0 ? new Coordinate(0, 0, 0) : new Coordinate(X / len, Y / len, Z / len);
+            return len == 0 ? new Coordinate(0, 0, 0) : new Coordinate(_x / len, _y / len, _z / len);
         }
 
         public Coordinate Absolute()
         {
-            return new Coordinate(Math.Abs(X), Math.Abs(Y), Math.Abs(Z));
+            return new Coordinate(Math.Abs(_x), Math.Abs(_y), Math.Abs(_z));
         }
 
         public static bool operator ==(Coordinate c1, Coordinate c2)
@@ -184,27 +187,27 @@ namespace Sledge.DataStructures.Geometric
 
         public static Coordinate operator +(Coordinate c1, Coordinate c2)
         {
-            return new Coordinate(c1.X + c2.X, c1.Y + c2.Y, c1.Z + c2.Z);
+            return new Coordinate(c1._x + c2._x, c1._y + c2._y, c1._z + c2._z);
         }
 
         public static Coordinate operator -(Coordinate c1, Coordinate c2)
         {
-            return new Coordinate(c1.X - c2.X, c1.Y - c2.Y, c1.Z - c2.Z);
+            return new Coordinate(c1._x - c2._x, c1._y - c2._y, c1._z - c2._z);
         }
 
         public static Coordinate operator -(Coordinate c1)
         {
-            return new Coordinate(-c1.X, -c1.Y, -c1.Z);
+            return new Coordinate(-c1._x, -c1._y, -c1._z);
         }
 
         public static Coordinate operator /(Coordinate c, decimal f)
         {
-            return f == 0 ? new Coordinate(0, 0, 0) : new Coordinate(c.X / f, c.Y / f, c.Z / f);
+            return f == 0 ? new Coordinate(0, 0, 0) : new Coordinate(c._x / f, c._y / f, c._z / f);
         }
 
         public static Coordinate operator *(Coordinate c, decimal f)
         {
-            return new Coordinate(c.X * f, c.Y * f, c.Z * f);
+            return new Coordinate(c._x * f, c._y * f, c._z * f);
         }
 
         public static Coordinate operator *(decimal f, Coordinate c)
@@ -214,15 +217,15 @@ namespace Sledge.DataStructures.Geometric
 
         public Coordinate ComponentMultiply(Coordinate c)
         {
-            return new Coordinate(X * c.X, Y * c.Y, Z * c.Z);
+            return new Coordinate(_x * c._x, _y * c._y, _z * c._z);
         }
 
         public Coordinate ComponentDivide(Coordinate c)
         {
-            var x = c.X == 0 ? 1 : c.X;
-            var y = c.Y == 0 ? 1 : c.Y;
-            var z = c.Z == 0 ? 1 : c.Z;
-            return new Coordinate(X / x, Y / y, Z / z);
+            var x = c._x == 0 ? 1 : c._x;
+            var y = c._y == 0 ? 1 : c._y;
+            var z = c._z == 0 ? 1 : c._z;
+            return new Coordinate(_x / x, _y / y, _z / z);
         }
 
         /// <summary>
@@ -232,19 +235,19 @@ namespace Sledge.DataStructures.Geometric
         public Coordinate ToEulerAngles()
         {
             // http://www.gamedev.net/topic/399701-convert-vector-to-euler-cardan-angles/#entry3651854
-            var yaw = DMath.Atan2(Y, X);
-            var pitch = DMath.Atan2(-Z, DMath.Sqrt(X * X + Y * Y));
+            var yaw = DMath.Atan2(_y, _x);
+            var pitch = DMath.Atan2(-_z, DMath.Sqrt(_x * _x + _y * _y));
             return new Coordinate(0, pitch, yaw); // HL FGD has X = roll, Y = pitch, Z = yaw
         }
 
         public override string ToString()
         {
-            return "(" + X.ToString("0.0000", CultureInfo.InvariantCulture) + " " + Y.ToString("0.0000", CultureInfo.InvariantCulture) + " " + Z.ToString("0.0000", CultureInfo.InvariantCulture) + ")";
+            return "(" + _x.ToString("0.0000", CultureInfo.InvariantCulture) + " " + _y.ToString("0.0000", CultureInfo.InvariantCulture) + " " + _z.ToString("0.0000", CultureInfo.InvariantCulture) + ")";
         }
 
         public Coordinate Clone()
         {
-            return new Coordinate(X, Y, Z);
+            return new Coordinate(_x, _y, _z);
         }
 
         public static Coordinate Parse(string x, string y, string z)
@@ -255,7 +258,7 @@ namespace Sledge.DataStructures.Geometric
 
         public CoordinateF ToCoordinateF()
         {
-            return new CoordinateF((float) DX, (float) DY, (float) DZ);
+            return new CoordinateF((float) _dx, (float) _dy, (float) _dz);
         }
     }
 }

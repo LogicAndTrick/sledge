@@ -53,7 +53,6 @@ namespace Sledge.Editor.Documents
         public HistoryManager History { get; private set; }
         public HelperManager HelperManager { get; set; }
         public TextureCollection TextureCollection { get; set; }
-        public TextureCollection SpriteCollection { get; set; }
 
         private readonly DocumentSubscriptions _subscriptions;
         private readonly DocumentMemory _memory;
@@ -65,7 +64,6 @@ namespace Sledge.Editor.Documents
             History = new HistoryManager(this);
             HelperManager = new HelperManager(this);
             TextureCollection = new TextureCollection(new List<TexturePackage>());
-            SpriteCollection = new TextureCollection(new List<TexturePackage>());
         }
 
         public Document(string mapFile, Map map, Game game)
@@ -109,12 +107,11 @@ namespace Sledge.Editor.Documents
                 GameData.MapSizeHigh = game.OverrideMapSizeHigh;
             }
 
-            TextureCollection = TextureProvider.CreateCollection(game.Wads.Select(x => x.Path).Distinct().Select(x => new NativeFile(x)));
-            SpriteCollection = TextureProvider.CreateCollection(Environment.GetEditorRoot().GetChildren("sprites"));
+            TextureCollection = TextureProvider.CreateCollection(Environment.GetGameDirectories(), Game.AdditionalPackages);
 
             var texList = Map.GetAllTextures();
             var items = TextureCollection.GetItems(texList);
-            TextureCollection.LoadTextureItems(items);
+            TextureProvider.LoadTextureItems(items);
 
             Map.PostLoadProcess(GameData, GetTexture, SettingsManager.GetSpecialTextureOpacity);
             Map.UpdateDecals(this);
@@ -174,7 +171,6 @@ namespace Sledge.Editor.Documents
         {
             Scheduler.Clear(this);
             TextureProvider.DeleteCollection(TextureCollection);
-            TextureProvider.DeleteCollection(SpriteCollection);
             Renderer.Dispose();
         }
 
@@ -214,7 +210,7 @@ namespace Sledge.Editor.Documents
                 Map.ActiveCamera.EyePosition = new Coordinate((decimal)loc.X, (decimal)loc.Y, (decimal)loc.Z);
                 Map.ActiveCamera.LookPosition = new Coordinate((decimal)look.X, (decimal)look.Y, (decimal)look.Z);
             }
-            Map.WorldSpawn.EntityData.SetPropertyValue("wad", string.Join(";", Game.Wads.Select(x => x.Path)));
+            Map.WorldSpawn.EntityData.SetPropertyValue("wad", string.Join(";", GetUsedTexturePackages().Select(x => x.PackageRoot).Where(x => x.EndsWith(".wad"))));
             MapProvider.SaveMapToFile(path, Map);
             if (switchPath)
             {
@@ -367,12 +363,7 @@ namespace Sledge.Editor.Documents
                 var ti = TextureCollection.GetItem(name);
                 if (ti != null)
                 {
-                    TextureCollection.LoadTextureItem(ti);
-                }
-                else
-                {
-                    ti = SpriteCollection.GetItem(name);
-                    if (ti != null) SpriteCollection.LoadTextureItem(ti);
+                    TextureProvider.LoadTextureItem(ti);
                 }
             }
             return TextureHelper.Get(name);
@@ -449,6 +440,17 @@ namespace Sledge.Editor.Documents
         {
             var sel = GetMemory<string>("SelectedEntity");
             return sel == null ? null : GameData.Classes.FirstOrDefault(x => x.Name == sel);
+        }
+
+        public IEnumerable<string> GetUsedTextures()
+        {
+            return Map.WorldSpawn.Find(x => x is Solid).OfType<Solid>().SelectMany(x => x.Faces).Select(x => x.Texture.Name).Distinct();
+        }
+
+        public IEnumerable<TexturePackage> GetUsedTexturePackages()
+        {
+            var used = GetUsedTextures().ToList();
+            return TextureCollection.Packages.Where(x => used.Any(x.HasTexture));
         }
     }
 }

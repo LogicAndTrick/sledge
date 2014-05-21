@@ -62,7 +62,6 @@
     <Compile Include="Models\Hotkey.cs" />
     <Compile Include="Models\RecentFile.cs" />
     <Compile Include="Models\Setting.cs" />
-    <Compile Include="Models\Wad.cs" />
     <Compile Include="NudgeStyle.cs" />
     <Compile Include="RenderMode.cs" />
     <Compile Include="RotationStyle.cs" />

@@ -412,24 +412,25 @@ namespace Sledge.Providers.Map
             }
 
             // Load visible solids
-            foreach (var solid in world.GetChildren("solid"))
+            foreach (var read in world.GetChildren("solid").AsParallel().Select(x => new { Solid = ReadSolid(x, generator), Structure = x}))
             {
-                var s = ReadSolid(solid, generator);
+                var s = read.Solid;
+                var solid = read.Structure;
                 if (s == null) continue;
 
                 var editor = solid.GetChildren("editor").FirstOrDefault() ?? new GenericStructure("editor");
                 var gid = editor.PropertyLong("groupid");
                 var parent = gid > 0 ? assignedGroups.FirstOrDefault(x => x.ID == gid) ?? (MapObject) ret : ret;
                 s.SetParent(parent);
-                parent.UpdateBoundingBox();
             }
 
             // Load hidden solids
             foreach (var hidden in world.GetChildren("hidden"))
             {
-                foreach (var solid in hidden.GetChildren("solid"))
+                foreach (var read in hidden.GetChildren("solid").AsParallel().Select(x => new { Solid = ReadSolid(x, generator), Structure = x }))
                 {
-                    var s = ReadSolid(solid, generator);
+                    var s = read.Solid;
+                    var solid = read.Structure;
                     if (s == null) continue;
 
                     s.IsVisgroupHidden = true;
@@ -438,7 +439,6 @@ namespace Sledge.Providers.Map
                     var gid = editor.PropertyLong("groupid");
                     var parent = gid > 0 ? assignedGroups.FirstOrDefault(x => x.ID == gid) ?? (MapObject)ret : ret;
                     s.SetParent(parent);
-                    parent.UpdateBoundingBox();
                 }
             }
 

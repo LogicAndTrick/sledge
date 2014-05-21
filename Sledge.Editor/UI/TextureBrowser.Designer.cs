@@ -59,7 +59,7 @@
             this.PackageTree.HideSelection = false;
             this.PackageTree.Location = new System.Drawing.Point(0, 0);
             this.PackageTree.Name = "PackageTree";
-            this.PackageTree.Size = new System.Drawing.Size(193, 317);
+            this.PackageTree.Size = new System.Drawing.Size(226, 413);
             this.PackageTree.TabIndex = 1;
             this.PackageTree.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.SelectedPackageChanged);
             // 
@@ -213,9 +213,9 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.FavouritesTree.HideSelection = false;
-            this.FavouritesTree.Location = new System.Drawing.Point(0, 336);
+            this.FavouritesTree.Location = new System.Drawing.Point(0, 432);
             this.FavouritesTree.Name = "FavouritesTree";
-            this.FavouritesTree.Size = new System.Drawing.Size(193, 109);
+            this.FavouritesTree.Size = new System.Drawing.Size(226, 13);
             this.FavouritesTree.TabIndex = 1;
             this.FavouritesTree.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.SelectedFavouriteChanged);
             this.FavouritesTree.DragDrop += new System.Windows.Forms.DragEventHandler(this.FavouritesTreeDragDrop);
@@ -234,7 +234,7 @@
             this.LeftbarPanel.Dock = System.Windows.Forms.DockStyle.Left;
             this.LeftbarPanel.Location = new System.Drawing.Point(0, 0);
             this.LeftbarPanel.Name = "LeftbarPanel";
-            this.LeftbarPanel.Size = new System.Drawing.Size(193, 495);
+            this.LeftbarPanel.Size = new System.Drawing.Size(226, 495);
             this.LeftbarPanel.TabIndex = 3;
             // 
             // DeleteFavouriteFolderButton
@@ -273,7 +273,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(3, 320);
+            this.label4.Location = new System.Drawing.Point(3, 416);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(170, 13);
             this.label4.TabIndex = 2;
@@ -288,9 +288,9 @@
             this.TextureList.Dock = System.Windows.Forms.DockStyle.Fill;
             this.TextureList.EnableDrag = true;
             this.TextureList.ImageSize = 128;
-            this.TextureList.Location = new System.Drawing.Point(193, 0);
+            this.TextureList.Location = new System.Drawing.Point(226, 0);
             this.TextureList.Name = "TextureList";
-            this.TextureList.Size = new System.Drawing.Size(747, 495);
+            this.TextureList.Size = new System.Drawing.Size(714, 495);
             this.TextureList.SortDescending = false;
             this.TextureList.SortOrder = Sledge.Editor.UI.TextureListPanel.TextureSortOrder.Name;
             this.TextureList.TabIndex = 0;

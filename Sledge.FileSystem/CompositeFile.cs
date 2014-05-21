@@ -25,6 +25,11 @@ namespace Sledge.FileSystem
             get { return FileSystemType.Composite; }
         }
 
+        public IEnumerable<IFile> GetCompositeFiles()
+        {
+            return new List<IFile>(Files);
+        }
+
         public IFile Parent { get; set; }
 
         public virtual string FullPathName

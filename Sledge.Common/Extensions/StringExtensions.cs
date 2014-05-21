@@ -23,7 +23,8 @@ namespace Sledge.Common.Extensions
             for (var i = 0; i < line.Length; i++)
             {
                 var c = line[i];
-                if (splitTest(c) && index == i)
+                var isSplitter = splitTest(c);
+                if (isSplitter && index == i)
                 {
                     index = i + 1;
                 }
@@ -31,7 +32,7 @@ namespace Sledge.Common.Extensions
                 {
                     inQuote = !inQuote;
                 }
-                else if (splitTest(c) && !inQuote)
+                else if (isSplitter && !inQuote)
                 {
                     result.Add(line.Substring(index, i - index).Trim(quoteChar));
                     index = i + 1;

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Text.RegularExpressions;
 
 namespace Sledge.FileSystem
 {
@@ -55,7 +56,7 @@ namespace Sledge.FileSystem
 
         private static IEnumerable<IFile> CollectChildren(IFile file)
         {
-            var files = new List<IFile> {file};
+            var files = new List<IFile> { file };
             files.AddRange(file.GetChildren().SelectMany(CollectChildren));
             return files;
         }
@@ -68,6 +69,16 @@ namespace Sledge.FileSystem
         public static IEnumerable<IFile> GetFiles(this IFile file, string regex, bool recursive)
         {
             return !recursive ? file.GetFiles(regex) : CollectChildren(file).SelectMany(x => x.GetFiles(regex));
+        }
+
+        public static IEnumerable<IFile> GetChildren(this IFile file, bool recursive)
+        {
+            return !recursive ? file.GetChildren() : CollectChildren(file);
+        }
+
+        public static IEnumerable<IFile> GetChildren(this IFile file, string regex, bool recursive)
+        {
+            return !recursive ? file.GetChildren(regex) : CollectChildren(file).Where(x => Regex.IsMatch(x.Name, regex, RegexOptions.IgnoreCase));
         }
 
         public static string GetRelativePath(this IFile file, IFile relative)

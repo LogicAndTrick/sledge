@@ -364,7 +364,7 @@ namespace Sledge.Editor.Documents
             if (_document.Selection.IsEmpty() || _document.Selection.InFaceSelection || Editor.Instance == null) return;
             var texture = _document.TextureCollection.SelectedTexture;
             if (texture == null) return;
-            var ti = texture.GetTexture();
+            var ti = texture.GetTexture(Editor.Instance);
             if (ti == null) return;
             Action<Document, Face> action = (document, face) =>
             {

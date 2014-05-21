@@ -87,7 +87,7 @@ namespace Sledge.Graphics.Helpers
             return (int) (x + 1);
         }
 
-        public static GLTexture Create(string name, Bitmap bitmap, bool hasTransparency)
+        public static GLTexture Create(string name, Bitmap bitmap, int width, int height, bool hasTransparency)
         {
             if (Exists(name)) {
                 Delete(name);
@@ -123,7 +123,7 @@ namespace Sledge.Graphics.Helpers
             {
                 actualBitmap.Dispose();
             }
-            var texobj = new GLTexture(tex, name) { Width = bitmap.Width, Height = bitmap.Height, HasTransparency = hasTransparency, BitmapImage = (Bitmap)bitmap.Clone() };
+            var texobj = new GLTexture(tex, name) { Width = width, Height = height, HasTransparency = hasTransparency, BitmapImage = (Bitmap)bitmap.Clone() };
             Textures.Add(name, texobj);
             return texobj;
         }

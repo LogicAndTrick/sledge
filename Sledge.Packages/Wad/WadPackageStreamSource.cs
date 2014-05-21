@@ -24,7 +24,18 @@ namespace Sledge.Packages.Wad
 
         public bool HasFile(string path)
         {
+            path = path.ToLowerInvariant();
             return _files.ContainsKey(path);
+        }
+
+        public IEnumerable<string> GetDirectories()
+        {
+            return _files.Keys;
+        }
+
+        public IEnumerable<string> GetFiles()
+        {
+            return _files.Values.Select(x => x.Name);
         }
 
         public IEnumerable<string> GetDirectories(string path)

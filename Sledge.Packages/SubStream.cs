@@ -58,13 +58,16 @@ namespace Sledge.Packages
 
         public override int Read(byte[] buffer, int offset, int count)
         {
-            var pos = _stream.Position;
-            _stream.Position = _offset + Position;
-            count = (int) Math.Min(count, _length - Position);
-            count = _stream.Read(buffer, offset, count);
-            Position += count;
-            _stream.Position = pos;
-            return count;
+            lock (_stream)
+            {
+                var pos = _stream.Position;
+                _stream.Position = _offset + Position;
+                count = (int) Math.Min(count, _length - Position);
+                count = _stream.Read(buffer, offset, count);
+                Position += count;
+                _stream.Position = pos;
+                return count;
+            }
         }
 
         protected override void Dispose(bool disposing)

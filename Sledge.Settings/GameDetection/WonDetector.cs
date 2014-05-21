@@ -28,7 +28,6 @@ namespace Sledge.Settings.GameDetection
                     game.ModDir = di.Name;
                     game.Name = dict["game"];
                     game.SteamInstall = false;
-                    game.Wads.AddRange(Directory.GetFiles(d, "*.wad").Select(x => new Wad { Path = x }));
                     game.WonGameDir = dir;
                     yield return game;
                 }

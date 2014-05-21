@@ -44,7 +44,7 @@ namespace Sledge.Editor.UI
         private void OpenStream(object sender, EventArgs e)
         {
             if (DocumentManager.CurrentDocument == null || !DocumentManager.CurrentDocument.TextureCollection.Packages.Any()) return;
-            _streamSource = DocumentManager.CurrentDocument.TextureCollection.GetStreamSource(
+            _streamSource = DocumentManager.CurrentDocument.TextureCollection.GetStreamSource(64, 64,
                 _packages.Union(DocumentManager.CurrentDocument.TextureCollection.GetRecentTextures().Select(x => x.Package).Distinct()));
         }
 
@@ -106,6 +106,8 @@ namespace Sledge.Editor.UI
 
         public void Update(string package)
         {
+            // todo: optimisation point 1
+
             if (DocumentManager.CurrentDocument == null)
             {
                 Items.Clear();

@@ -982,7 +982,7 @@ namespace Sledge.Editor.Settings
                 DefaultLightmapScale = 1,
                 DefaultTextureScale = 1,
                 Fgds = new List<Fgd>(),
-                Wads = new List<Wad>()
+                AdditionalPackages = new List<string>()
             });
             ReIndex();
             UpdateGameTree();
@@ -1104,22 +1104,22 @@ namespace Sledge.Editor.Settings
             SelectedGameEngineChanged(null, null);
             SelectedGameUpdateSteamGames();
             SelectedGameUpdateFgds();
-            SelectedGameUpdateWads();
+            SelectedGameUpdateAdditionalPackages();
         }
 
-        private void SelectedGameUpdateWads()
+        private void SelectedGameUpdateAdditionalPackages()
         {
-            SelectedGameWadList.Items.Clear();
-            foreach (var wad in _selectedGame.Wads)
+            SelectedGameAdditionalPackageList.Items.Clear();
+            foreach (var additionalPackage in _selectedGame.AdditionalPackages)
             {
                 var item = new ListViewItem(new[]
                 {
-                    Path.GetFileName(wad.Path),
-                    wad.Path
-                }) {ToolTipText = wad.Path};
-                SelectedGameWadList.Items.Add(item);
+                    Path.GetFileName(additionalPackage),
+                    additionalPackage
+                }) {ToolTipText = additionalPackage};
+                SelectedGameAdditionalPackageList.Items.Add(item);
             }
-            SelectedGameWadList.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
+            SelectedGameAdditionalPackageList.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
         }
 
         private void SelectedGameUpdateFgds()
@@ -1375,7 +1375,7 @@ namespace Sledge.Editor.Settings
             SelectedGameOverrideSizeHigh.Enabled = SelectedGameOverrideSizeLow.Enabled = SelectedGameOverrideMapSize.Checked;
         }
 
-        private void SelectedGameAddWadClicked(object sender, EventArgs e)
+        private void SelectedGameAddAdditionalPackageFileClicked(object sender, EventArgs e)
         {
             using (var ofd = new OpenFileDialog { Filter = "WAD files (*.wad)|*.wad", Multiselect = true })
             {
@@ -1383,22 +1383,34 @@ namespace Sledge.Editor.Settings
                 {
                     foreach (var fileName in ofd.FileNames)
                     {
-                        _selectedGame.Wads.Add(new Wad { Path = fileName });
+                        _selectedGame.AdditionalPackages.Add(fileName);
                     }
-                    SelectedGameUpdateWads();
+                    SelectedGameUpdateAdditionalPackages();
                 }
             }
         }
 
-        private void SelectedGameRemoveWadClicked(object sender, EventArgs e)
+        private void SelectedGameAddAdditionalPackageFolderClicked(object sender, EventArgs e)
         {
-            if (SelectedGameWadList.SelectedIndices.Count > 0)
+            using (var ofd = new FolderBrowserDialog())
             {
-                foreach (var idx in SelectedGameWadList.SelectedIndices.OfType<int>().OrderByDescending(x => x).ToArray())
+                if (ofd.ShowDialog() == DialogResult.OK)
                 {
-                    _selectedGame.Wads.RemoveAt(idx);
+                    _selectedGame.AdditionalPackages.Add(ofd.SelectedPath);
+                    SelectedGameUpdateAdditionalPackages();
                 }
-                SelectedGameUpdateWads();
+            }
+        }
+
+        private void SelectedGameRemoveAdditionalPackageClicked(object sender, EventArgs e)
+        {
+            if (SelectedGameAdditionalPackageList.SelectedIndices.Count > 0)
+            {
+                foreach (var idx in SelectedGameAdditionalPackageList.SelectedIndices.OfType<int>().OrderByDescending(x => x).ToArray())
+                {
+                    _selectedGame.AdditionalPackages.RemoveAt(idx);
+                }
+                SelectedGameUpdateAdditionalPackages();
             }
         }
 

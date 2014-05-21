@@ -39,8 +39,6 @@ namespace Sledge.Editor.UI
                 .Distinct()
                 .Sum(x => x.Width * x.Height * 3); // 3 bytes per pixel
             var textureMemoryMb = textureMemory / (1024m * 1024m);
-            var items = document.TextureCollection.GetItems(uniqueTextures);
-            var packages = items.Select(x => x.Package).Distinct();
             // todo texture memory, texture packages
 
             NumSolids.Text = numSolids.ToString(CultureInfo.CurrentCulture);
@@ -51,7 +49,7 @@ namespace Sledge.Editor.UI
             // TextureMemory.Text = textureMemory.ToString(CultureInfo.CurrentCulture);
             TextureMemory.Text = textureMemory.ToString("#,##0", CultureInfo.CurrentCulture)
                 + " bytes (" + textureMemoryMb.ToString("0.00", CultureInfo.CurrentCulture) + " MB)";
-            foreach (var tp in packages)
+            foreach (var tp in document.GetUsedTexturePackages())
             {
                 TexturePackages.Items.Add(tp);
             }

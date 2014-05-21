@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Sledge.Editor.Documents;
 using Sledge.Providers.Texture;
@@ -96,6 +97,14 @@ namespace Sledge.Editor.UI
             set
             {
                 _imageSize = value;
+
+                if (DocumentManager.CurrentDocument != null)
+                {
+                    var packs = _textures.Select(t => t.Package).Distinct();
+                    if (_streamSource != null) _streamSource.Dispose();
+                    _streamSource = DocumentManager.CurrentDocument.TextureCollection.GetStreamSource(_imageSize, _imageSize, packs);
+                }
+
                 UpdateRectangles();
             }
         }
@@ -307,11 +316,17 @@ namespace Sledge.Editor.UI
             return _selection;
         }
 
+        private ITextureStreamSource _streamSource;
+
         public void RemoveAllTextures()
         {
             _textures.Clear();
             _lastSelectedItem = null;
             _selection.Clear();
+
+            if (_streamSource != null) _streamSource.Dispose();
+            _streamSource = null;
+
             OnSelectionChanged(_selection);
             UpdateRectangles();
         }
@@ -322,22 +337,31 @@ namespace Sledge.Editor.UI
             _lastSelectedItem = null;
             _selection.Clear();
             _textures.AddRange(textures);
-            OnSelectionChanged(_selection);
-            UpdateRectangles();
-        }
 
-        public void AddTextures(IEnumerable<TextureItem> textures)
-        {
-            _textures.AddRange(textures);
+            var packs = _textures.Select(t => t.Package).Distinct();
+            if (_streamSource != null) _streamSource.Dispose();
+            _streamSource = DocumentManager.CurrentDocument.TextureCollection.GetStreamSource(_imageSize, _imageSize, packs);
+
+            OnSelectionChanged(_selection);
             UpdateRectangles();
         }
 
         public void Clear()
         {
             _textures.Clear();
-            _selection.Clear();
             _lastSelectedItem = null;
+            _selection.Clear();
+
+            if (_streamSource != null) _streamSource.Dispose();
+            _streamSource = null;
+
             OnSelectionChanged(_selection);
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing) Clear();
+            base.Dispose(disposing);
         }
 
         #endregion
@@ -437,6 +461,47 @@ namespace Sledge.Editor.UI
 
         #region Rendering
 
+        private Dictionary<TextureItem, Bitmap> _renderCache = new Dictionary<TextureItem, Bitmap>();
+
+        private void UpdateCacheableItems(int y, int height)
+        {
+            if (_streamSource == null) return;
+
+            var texs = GetTextures().ToList();
+            var cacheable = new List<TextureItem>();
+            for (var i = 0; i < texs.Count; i++)
+            {
+                var rec = _rectangles[i];
+                if (rec.Bottom < y) continue;
+                if (rec.Top > y + height) break;
+                cacheable.Add(texs[i]);
+            }
+            foreach (var ti in _renderCache.Keys.ToList())
+            {
+                if (!cacheable.Contains(ti))
+                {
+                    if (_renderCache[ti] != null) _renderCache[ti].Dispose();
+                    _renderCache.Remove(ti);
+                }
+            }
+            foreach (var ti in cacheable)
+            {
+                if (!_renderCache.ContainsKey(ti))
+                {
+                    _renderCache.Add(ti, null);
+                }
+            }
+
+            Parallel.ForEach(cacheable, item =>
+            {
+                if (_streamSource == null) return;
+                var img = _streamSource.GetImage(item);
+                if (img == null) return;
+                if (_renderCache.ContainsKey(item)) _renderCache[item] = img;
+                else img.Dispose();
+            });
+        }
+
         protected override void OnPaint(PaintEventArgs e)
         {
             base.OnPaint(e);
@@ -449,23 +514,21 @@ namespace Sledge.Editor.UI
 
             var y = _scrollBar.Value;
             var height = ClientRectangle.Height;
+            UpdateCacheableItems(y, height);
 
             var texs = GetTextures().ToList();
-            var packs = _textures.Select(t => t.Package).Distinct();
-            using (var stream = DocumentManager.CurrentDocument.TextureCollection.GetStreamSource(packs))
+            for (var i = 0; i < texs.Count; i++)
             {
-                for (var i = 0; i < texs.Count; i++)
-                {
-                    var rec = _rectangles[i];
-                    if (rec.Bottom < y) continue;
-                    if (rec.Top > y + height) break;
-                    var tex = texs[i];
+                var rec = _rectangles[i];
+                if (rec.Bottom < y) continue;
+                if (rec.Top > y + height) break;
+                var tex = texs[i];
 
-                    using (var bmp = stream.GetImage(tex))
-                    {
-                        DrawImage(g, bmp, tex, rec.X, rec.Y - y, rec.Width, rec.Height);
-                    }
-                }
+                if (!_renderCache.ContainsKey(tex)) continue;
+                var bmp = _renderCache[tex];
+                if (bmp == null) continue;
+
+                DrawImage(g, bmp, tex, rec.X, rec.Y - y, rec.Width, rec.Height);
             }
         }
 

@@ -8,6 +8,8 @@ namespace Sledge.Packages
     {
         bool HasDirectory(string path);
         bool HasFile(string path);
+        IEnumerable<string> GetDirectories();
+        IEnumerable<string> GetFiles();
         IEnumerable<string> GetDirectories(string path);
         IEnumerable<string> GetFiles(string path);
         IEnumerable<string> SearchDirectories(string path, string regex, bool recursive);

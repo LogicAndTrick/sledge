@@ -57,9 +57,11 @@
   <ItemGroup>
     <Compile Include="Actions\ClipboardTests.cs" />
     <Compile Include="Actions\MapObjectActionTests.cs" />
+    <Compile Include="ActualTests\GenericStructureTest.cs" />
     <Compile Include="DecalGeometryTest.cs" />
     <Compile Include="GeometricTest.cs" />
     <Compile Include="FileSystemTest.cs" />
+    <Compile Include="MapProviders\MapPerformanceTest.cs" />
     <Compile Include="Packages\PakTest.cs" />
     <Compile Include="Packages\WadTest.cs" />
     <Compile Include="Packages\VpkTest.cs" />
@@ -70,6 +72,7 @@
     <Compile Include="InvalidSolidTest.cs" />
     <Compile Include="GameDetectionTest.cs" />
     <Compile Include="SerialisationTest.cs" />
+    <Compile Include="Vtf\VtfTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Sledge.Common\Sledge.Common.csproj">
