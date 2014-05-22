@@ -53,7 +53,7 @@ namespace Sledge.Editor.Elevate
             shell.SetValue(String.Empty, "Open");
             shell = shell.CreateSubKey("Open");
             shell = shell.CreateSubKey("Command");
-            shell.SetValue(String.Empty, execuatablePath + " /doc %1");
+            shell.SetValue(String.Empty, execuatablePath + " %1");
             shell.Close();
             progKey.Close();
 

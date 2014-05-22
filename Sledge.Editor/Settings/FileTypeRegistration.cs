@@ -48,7 +48,7 @@ namespace Sledge.Editor.Settings
 
                     using (var comm = progId.CreateSubKey("shell\\open\\command"))
                     {
-                        if (comm != null) comm.SetValue("", "\"" + ExecutableLocation() + "\" /doc \"%1\"");
+                        if (comm != null) comm.SetValue("", "\"" + ExecutableLocation() + "\" \"%1\"");
                     }
 
                     progId.SetValue("AppUserModelID", ProgramId);
@@ -132,7 +132,7 @@ namespace Sledge.Editor.Settings
             shell.SetValue(String.Empty, "Open");
             shell = shell.CreateSubKey("Open");
             shell = shell.CreateSubKey("Command");
-            shell.SetValue(String.Empty, execuatablePath + " /doc %1");
+            shell.SetValue(String.Empty, execuatablePath + " %1");
             shell.Close();
             progKey.Close();
 

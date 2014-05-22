@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -55,22 +56,12 @@ namespace Sledge.Editor
             ToolManager.Activate(t);
         }
 
-        public static void ProcessArguments(string[] args)
+        public static void ProcessArguments(IEnumerable<string> args)
         {
-            for (var i = 0; i < args.Length; i++)
+            foreach (var file in args.Skip(1).Where(File.Exists))
             {
-                switch (args[i])
-                {
-                    case "/doc":
-                        i += 1;
-                        if (i < args.Length && File.Exists(args[i]))
-                        {
-                            Mediator.Publish(EditorMediator.LoadFile, args[i]);
-                        }
-                        break;
-                }
+                Mediator.Publish(EditorMediator.LoadFile, file);
             }
-            // Mediator.Publish(EditorMediator.LoadFile, file)
         }
 
         private static void LoadFileGame(string fileName, Game game)
