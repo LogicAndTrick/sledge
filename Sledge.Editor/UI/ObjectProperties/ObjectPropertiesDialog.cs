@@ -10,6 +10,7 @@ using Sledge.Editor.Actions;
 using Sledge.Editor.Actions.MapObjects.Entities;
 using Sledge.Editor.Actions.Visgroups;
 using Sledge.Editor.UI.ObjectProperties.SmartEdit;
+using Sledge.QuickForms;
 using Sledge.Settings.Models;
 
 namespace Sledge.Editor.UI.ObjectProperties
@@ -617,25 +618,31 @@ namespace Sledge.Editor.UI.ObjectProperties
         private void AddPropertyClicked(object sender, EventArgs e)
         {
             if (_changingClass) return;
-            // Generate a new unique key name
-            var key = 1;
-            string name;
-            do
+
+            using (var qf = new QuickForm("Add Property") { UseShortcutKeys = true }.TextBox("Key").TextBox("Value").OkCancel())
             {
-                name = "key" + key;
-                key++;
-            } while (_values.Any(x => String.Equals(x.OriginalKey, name, StringComparison.InvariantCultureIgnoreCase)));
-            _values.Add(new TableValue
-                            {
-                                Class = Class.Text,
-                                OriginalKey = name,
-                                NewKey = name,
-                                Value = "value",
-                                IsAdded = true,
-                                IsModified = true,
-                                IsRemoved = false
-                            });
-            PropertyValueChanged(this, name, "value");
+                if (qf.ShowDialog(this) != DialogResult.OK) return;
+
+                var name = qf.String("Key");
+                var newName = name;
+                var num = 1;
+                while (_values.Any(x => String.Equals(x.OriginalKey, newName, StringComparison.InvariantCultureIgnoreCase)))
+                {
+                    newName = name + "#" + (num++);
+                }
+
+                _values.Add(new TableValue
+                {
+                    Class = Class.Text,
+                    OriginalKey = newName,
+                    NewKey = newName,
+                    Value = qf.String("Value"),
+                    IsAdded = true,
+                    IsModified = true,
+                    IsRemoved = false
+                });
+                PropertyValueChanged(this, newName, qf.String("Value"));
+            }
         }
 
         private void RemovePropertyClicked(object sender, EventArgs e)
