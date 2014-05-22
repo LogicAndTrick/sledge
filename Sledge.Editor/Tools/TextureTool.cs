@@ -132,6 +132,8 @@ namespace Sledge.Editor.Tools
 
         private void TexturePropertyChanged(object sender, TextureApplicationForm.CurrentTextureProperties properties)
         {
+            if (Document.Selection.IsEmpty()) return;
+
             Action<Document, Face> action = (document, face) =>
             {
                 if (!properties.DifferentXScaleValues) face.Texture.XScale = properties.XScale;
@@ -280,10 +282,18 @@ namespace Sledge.Editor.Tools
                                                         {
                                                             face.Texture.Name = item.Name;
                                                             face.Texture.Texture = texture;
-                                                            if (behaviour == SelectBehaviour.ApplyWithValues)
+                                                            if (behaviour == SelectBehaviour.ApplyWithValues && firstSelected != null)
                                                             {
                                                                 // Calculates the texture coordinates
                                                                 face.AlignTextureWithFace(firstSelected);
+                                                            }
+                                                            else if (behaviour == SelectBehaviour.ApplyWithValues)
+                                                            {
+                                                                face.Texture.XScale = _form.CurrentProperties.XScale;
+                                                                face.Texture.YScale = _form.CurrentProperties.YScale;
+                                                                face.Texture.XShift = _form.CurrentProperties.XShift;
+                                                                face.Texture.YShift = _form.CurrentProperties.YShift;
+                                                                face.SetTextureRotation(_form.CurrentProperties.Rotation);
                                                             }
                                                             else
                                                             {

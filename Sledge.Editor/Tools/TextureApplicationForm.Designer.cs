@@ -387,7 +387,7 @@ namespace Sledge.Editor.Tools
             this.tableLayoutPanel1.ColumnCount = 3;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 65F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 195F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 196F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel1.Controls.Add(this.ScaleXValue, 1, 1);
@@ -593,6 +593,7 @@ namespace Sledge.Editor.Tools
             this.RecentTexturesList.AllowSelection = true;
             this.RecentTexturesList.AutoScroll = true;
             this.RecentTexturesList.BackColor = System.Drawing.Color.Black;
+            this.RecentTexturesList.EnableDrag = false;
             this.RecentTexturesList.ImageSize = 64;
             this.RecentTexturesList.Location = new System.Drawing.Point(318, 178);
             this.RecentTexturesList.Name = "RecentTexturesList";
@@ -608,6 +609,7 @@ namespace Sledge.Editor.Tools
             this.SelectedTexturesList.AllowSelection = true;
             this.SelectedTexturesList.AutoScroll = true;
             this.SelectedTexturesList.BackColor = System.Drawing.Color.Black;
+            this.SelectedTexturesList.EnableDrag = false;
             this.SelectedTexturesList.ImageSize = 64;
             this.SelectedTexturesList.Location = new System.Drawing.Point(12, 178);
             this.SelectedTexturesList.Name = "SelectedTexturesList";

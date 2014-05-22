@@ -163,6 +163,7 @@ namespace Sledge.Editor.Tools
         private bool _freeze;
 
         private readonly CurrentTextureProperties _currentTextureProperties;
+        public TextureReference CurrentProperties { get { return _currentTextureProperties; } }
 
         public Documents.Document Document { get; set; }
 
