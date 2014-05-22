@@ -262,14 +262,14 @@ namespace Sledge.Editor.UI
             if (e.KeyChar == 8 && FilterTextbox.Text.Length > 0)
             {
                 FilterTextbox.Text = FilterTextbox.Text.Substring(0, FilterTextbox.Text.Length - 1);
-                UpdateTextureList();
+                FilterTextboxKeyUp(null, null);
             }
             else if ((e.KeyChar >= 'a' && e.KeyChar <= 'z')
                 || (e.KeyChar >= '0' && e.KeyChar <= '9')
                 || AllowedSpecialChars.Contains(e.KeyChar))
             {
                 FilterTextbox.Text += e.KeyChar;
-                UpdateTextureList();
+                FilterTextboxKeyUp(null, null);
             }
         }
 
