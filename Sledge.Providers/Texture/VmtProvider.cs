@@ -168,6 +168,7 @@ namespace Sledge.Providers.Texture
             private readonly List<string> _files;
             private readonly string _baseFolder;
             private readonly string _extension;
+            private List<string> _extras;
 
             public QuickRoot(IEnumerable<string> roots, IEnumerable<string> additional, string baseFolder, string extension)
             {
@@ -185,13 +186,13 @@ namespace Sledge.Providers.Texture
                     .ToList();
                 _vpks = streams.Select(x => x.Directory).ToList();
                 _streams = streams.Select(x => x.Stream).ToList();
-                var extras = additional.Select(x => Directory.Exists(Path.Combine(x, baseFolder)) ? Path.Combine(x, baseFolder) : x).Where(Directory.Exists);
+                _extras = additional.Select(x => Directory.Exists(Path.Combine(x, baseFolder)) ? Path.Combine(x, baseFolder) : x).Where(Directory.Exists).ToList();
                 _files = _streams
                     .SelectMany(x => x.SearchFiles(baseFolder, "\\" + extension + "$", true))
                     .Union(_roots.Where(x => Directory.Exists(Path.Combine(x, baseFolder)))
                         .SelectMany(x => Directory.GetFiles(Path.Combine(x, baseFolder), "*" + extension, SearchOption.AllDirectories)
                             .Select(f => MakeRelative(x, f))))
-                    .Union(extras.SelectMany(x => Directory.GetFiles(x, "*" + extension, SearchOption.AllDirectories)
+                    .Union(_extras.SelectMany(x => Directory.GetFiles(x, "*" + extension, SearchOption.AllDirectories)
                         .Select(f => MakeRelative(x, f))))
                     .GroupBy(x => x)
                     .Select(x => StripBase(x.First()))
@@ -217,12 +218,21 @@ namespace Sledge.Providers.Texture
 
             public bool HasFile(string path)
             {
-                return _roots.Any(x => File.Exists(Path.Combine(x, _baseFolder, path + _extension)))
+                return _extras.Any(x => File.Exists(Path.Combine(x, path + _extension)))
+                       || _roots.Any(x => File.Exists(Path.Combine(x, _baseFolder, path + _extension)))
                        || _streams.Any(x => x.HasFile(_baseFolder + "/" + path + _extension));
             }
 
             public Stream OpenFile(string path)
             {
+                foreach (var extra in _extras)
+                {
+                    var p = Path.Combine(extra, path + _extension);
+                    if (File.Exists(p))
+                    {
+                        return File.Open(p, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+                    }
+                }
                 foreach (var root in _roots)
                 {
                     var p = Path.Combine(root, _baseFolder, path + _extension);
