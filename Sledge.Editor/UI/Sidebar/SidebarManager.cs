@@ -33,6 +33,7 @@ namespace Sledge.Editor.UI.Sidebar
 
         public static void SaveLayout()
         {
+            if (_container == null) return;
             var serialised = String.Join(";", _container.GetControls()
                 .OfType<SidebarPanel>()
                 .Select(x => x.Text + ":" + (x.Hidden ? '0' : '1')));

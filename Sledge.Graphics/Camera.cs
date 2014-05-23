@@ -38,6 +38,7 @@ namespace Sledge.Graphics
             temp.Normalize();
             var rot = Math.Atan2(temp.Y, temp.X);
             if (rot < 0) rot += 2 * Math.PI;
+            if (rot > 2 * Math.PI) rot = rot % (2 * Math.PI);
             return (decimal) rot;
         }
 

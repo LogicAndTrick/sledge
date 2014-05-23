@@ -139,6 +139,7 @@
             this.FullError.Location = new System.Drawing.Point(184, 255);
             this.FullError.Multiline = true;
             this.FullError.Name = "FullError";
+            this.FullError.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.FullError.Size = new System.Drawing.Size(288, 64);
             this.FullError.TabIndex = 3;
             // 
