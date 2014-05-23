@@ -64,7 +64,8 @@ namespace Sledge.Providers.Map
         {
             const NumberStyles ns = NumberStyles.Float;
 
-            var parts = line.Split(' ').Where(x => !String.IsNullOrWhiteSpace(x)).ToArray();
+            var parts = line.Split(' ').Where(x => !String.IsNullOrWhiteSpace(x)).ToList();
+
 
             Assert(parts[0] == "(");
             Assert(parts[4] == ")");
@@ -72,28 +73,42 @@ namespace Sledge.Providers.Map
             Assert(parts[9] == ")");
             Assert(parts[10] == "(");
             Assert(parts[14] == ")");
-            Assert(parts[16] == "[");
-            Assert(parts[21] == "]");
-            Assert(parts[22] == "[");
-            Assert(parts[27] == "]");
 
-            return new Face(generator.GetNextFaceID())
-                       {
-                           Plane = new Plane(Coordinate.Parse(parts[1], parts[2], parts[3]),
-                                             Coordinate.Parse(parts[6], parts[7], parts[8]),
-                                             Coordinate.Parse(parts[11], parts[12], parts[13])),
-                           Texture =
-                               {
-                                   Name = parts[15],
-                                   UAxis = Coordinate.Parse(parts[17], parts[18], parts[19]),
-                                   XShift = decimal.Parse(parts[20], ns,CultureInfo.InvariantCulture),
-                                   VAxis = Coordinate.Parse(parts[23], parts[24], parts[25]),
-                                   YShift = decimal.Parse(parts[26], ns, CultureInfo.InvariantCulture),
-                                   Rotation = decimal.Parse(parts[28], ns, CultureInfo.InvariantCulture),
-                                   XScale = decimal.Parse(parts[29], ns, CultureInfo.InvariantCulture),
-                                   YScale = decimal.Parse(parts[30], ns, CultureInfo.InvariantCulture)
-                               }
-                       };
+            var face = new Face(generator.GetNextFaceID())
+            {
+                Plane = new Plane(Coordinate.Parse(parts[1], parts[2], parts[3]),
+                    Coordinate.Parse(parts[6], parts[7], parts[8]),
+                    Coordinate.Parse(parts[11], parts[12], parts[13])),
+                Texture = {Name = parts[15]}
+            };
+
+            // Cater for older-style map formats
+            if (parts.Count == 21)
+            {
+                face.AlignTextureToFace();
+                face.Texture.XShift = decimal.Parse(parts[16], ns, CultureInfo.InvariantCulture);
+                face.Texture.YShift = decimal.Parse(parts[17], ns, CultureInfo.InvariantCulture);
+                face.Texture.Rotation = decimal.Parse(parts[18], ns, CultureInfo.InvariantCulture);
+                face.Texture.XScale = decimal.Parse(parts[19], ns, CultureInfo.InvariantCulture);
+                face.Texture.YScale = decimal.Parse(parts[20], ns, CultureInfo.InvariantCulture);
+            }
+            else
+            {
+                Assert(parts[16] == "[");
+                Assert(parts[21] == "]");
+                Assert(parts[22] == "[");
+                Assert(parts[27] == "]");
+
+                face.Texture.UAxis = Coordinate.Parse(parts[17], parts[18], parts[19]);
+                face.Texture.XShift = decimal.Parse(parts[20], ns, CultureInfo.InvariantCulture);
+                face.Texture.VAxis = Coordinate.Parse(parts[23], parts[24], parts[25]);
+                face.Texture.YShift = decimal.Parse(parts[26], ns, CultureInfo.InvariantCulture);
+                face.Texture.Rotation = decimal.Parse(parts[28], ns, CultureInfo.InvariantCulture);
+                face.Texture.XScale = decimal.Parse(parts[29], ns, CultureInfo.InvariantCulture);
+                face.Texture.YScale = decimal.Parse(parts[30], ns, CultureInfo.InvariantCulture);
+            }
+
+            return face;
         }
 
         private void WriteFace(StreamWriter sw, Face face)
@@ -121,6 +136,7 @@ namespace Sledge.Providers.Map
             string line;
             while ((line = CleanLine(rdr.ReadLine())) != null)
             {
+                if (String.IsNullOrWhiteSpace(line)) continue;
                 if (line == "}")
                 {
                     var ret = Solid.CreateFromIntersectingPlanes(faces.Select(x => x.Plane), generator);
@@ -191,8 +207,13 @@ namespace Sledge.Providers.Map
             string line;
             while ((line = CleanLine(rdr.ReadLine())) != null)
             {
+                if (String.IsNullOrWhiteSpace(line)) continue;
                 if (line[0] == '"') ReadProperty(ent, line);
-                else if (line[0] == '{') ReadSolid(rdr, generator).SetParent(ent);
+                else if (line[0] == '{')
+                {
+                    var s = ReadSolid(rdr, generator);
+                    if (s != null) s.SetParent(ent);
+                }
                 else if (line[0] == '}') break;
             }
             ent.UpdateBoundingBox(false);
@@ -249,6 +270,7 @@ namespace Sledge.Providers.Map
             string line;
             while ((line = CleanLine(rdr.ReadLine())) != null)
             {
+                if (String.IsNullOrWhiteSpace(line)) continue;
                 if (line == "{") list.Add(ReadEntity(rdr, generator));
             }
             return list;
