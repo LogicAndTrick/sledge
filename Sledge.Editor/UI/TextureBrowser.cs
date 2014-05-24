@@ -105,6 +105,11 @@ namespace Sledge.Editor.UI
             TextureList.SetSelectedTextures(items);
         }
 
+        public void SetFilterText(string text)
+        {
+            if (text != null) FilterTextbox.Text = text;
+        }
+
         private void FilterTextboxKeyUp(object sender, KeyEventArgs e)
         {
             SetMemory("Filter", FilterTextbox.Text);

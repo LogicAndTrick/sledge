@@ -8,7 +8,6 @@ using Sledge.FileSystem;
 namespace Sledge.Editor.UI.ObjectProperties.SmartEdit
 {
     [SmartEdit(VariableType.Studio)]
-    [SmartEdit(VariableType.Sprite)]
     [SmartEdit(VariableType.Sound)]
     internal class SmartEditFileBrowser : SmartEditControl
     {
