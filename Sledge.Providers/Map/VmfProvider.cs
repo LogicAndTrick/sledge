@@ -323,7 +323,7 @@ namespace Sledge.Providers.Map
             ret.Visgroups.AddRange(editor.GetAllPropertyValues("visgroupid").Select(int.Parse));
             foreach (var child in entity.GetChildren("solid").Select(solid => ReadSolid(solid, generator)).Where(s => s != null))
             {
-                child.SetParent(ret);
+                child.SetParent(ret, false);
             }
             ret.UpdateBoundingBox(false);
             return ret;
@@ -391,7 +391,7 @@ namespace Sledge.Providers.Map
             foreach (var ag in assignedGroups)
             {
                 // Add the groups with no parent
-                ag.SetParent(ret);
+                ag.SetParent(ret, false);
                 groups.Remove(ag);
             }
             while (groups.Any())
@@ -405,7 +405,7 @@ namespace Sledge.Providers.Map
                 {
                     // Add the group to the tree and the assigned list, remove it from the groups list
                     var parent = assignedGroups.First(y => y.ID == kv.Value);
-                    kv.Key.SetParent(parent);
+                    kv.Key.SetParent(parent, false);
                     assignedGroups.Add(kv.Key);
                     groups.Remove(kv.Key);
                 }
@@ -421,7 +421,7 @@ namespace Sledge.Providers.Map
                 var editor = solid.GetChildren("editor").FirstOrDefault() ?? new GenericStructure("editor");
                 var gid = editor.PropertyLong("groupid");
                 var parent = gid > 0 ? assignedGroups.FirstOrDefault(x => x.ID == gid) ?? (MapObject) ret : ret;
-                s.SetParent(parent);
+                s.SetParent(parent, false);
             }
 
             // Load hidden solids
@@ -438,11 +438,12 @@ namespace Sledge.Providers.Map
                     var editor = solid.GetChildren("editor").FirstOrDefault() ?? new GenericStructure("editor");
                     var gid = editor.PropertyLong("groupid");
                     var parent = gid > 0 ? assignedGroups.FirstOrDefault(x => x.ID == gid) ?? (MapObject)ret : ret;
-                    s.SetParent(parent);
+                    s.SetParent(parent, false);
                 }
             }
 
             assignedGroups.ForEach(x => x.UpdateBoundingBox(false));
+            ret.UpdateBoundingBox(false);
 
             return ret;
         }

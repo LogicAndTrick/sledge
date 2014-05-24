@@ -212,7 +212,7 @@ namespace Sledge.Providers.Map
                 else if (line[0] == '{')
                 {
                     var s = ReadSolid(rdr, generator);
-                    if (s != null) s.SetParent(ent);
+                    if (s != null) s.SetParent(ent, false);
                 }
                 else if (line[0] == '}') break;
             }
@@ -291,10 +291,10 @@ namespace Sledge.Providers.Map
                                  ?? new Entity(0) {EntityData = {Name = "worldspawn"}};
                 allentities.Remove(worldspawn);
                 map.WorldSpawn.EntityData = worldspawn.EntityData;
-                allentities.ForEach(x => x.SetParent(map.WorldSpawn));
+                allentities.ForEach(x => x.SetParent(map.WorldSpawn, false));
                 foreach (var obj in worldspawn.GetChildren().ToArray())
                 {
-                    obj.SetParent(map.WorldSpawn);
+                    obj.SetParent(map.WorldSpawn, false);
                 }
                 map.WorldSpawn.UpdateBoundingBox(false);
                 return map;

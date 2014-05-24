@@ -132,18 +132,18 @@ namespace Sledge.DataStructures.MapObjects
             }
         }
 
-        public void SetParent(MapObject parent)
+        public void SetParent(MapObject parent, bool updateBoundingBox = true)
         {
             if (Parent != null)
             {
                 if (Parent.Children.ContainsKey(ID) && Parent.Children[ID] == this) Parent.Children.Remove(ID);
-                Parent.UpdateBoundingBox();
+                if (updateBoundingBox) Parent.UpdateBoundingBox();
             }
             Parent = parent;
             if (Parent != null)
             {
                 Parent.Children[ID] = this;
-                UpdateBoundingBox();
+                if (updateBoundingBox) UpdateBoundingBox();
             }
         }
 
