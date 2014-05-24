@@ -136,7 +136,7 @@ namespace Sledge.Providers.Texture
         public override IEnumerable<TexturePackage> CreatePackages(IEnumerable<string> sourceRoots, IEnumerable<string> additionalPackages)
         {
             var dirs = sourceRoots.Union(additionalPackages).Where(Directory.Exists).Select(Path.GetFullPath).Select(x => x.ToLowerInvariant()).Distinct().ToList();
-            var tp = new TexturePackage(String.Join(";", dirs), "sprites", this);
+            var tp = new TexturePackage(String.Join(";", dirs), "sprites", this) {IsBrowsable = false};
             foreach (var dir in dirs)
             {
                 var sprs = Directory.GetFiles(dir, "*.spr", SearchOption.AllDirectories);

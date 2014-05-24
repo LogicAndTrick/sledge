@@ -121,7 +121,7 @@ namespace Sledge.Editor.UI
         {
             using (var tb = new TextureBrowser())
             {
-                tb.SetTextureList(_document.TextureCollection.GetAllItems());
+                tb.SetTextureList(_document.TextureCollection.GetAllBrowsableItems());
                 tb.ShowDialog();
                 if (tb.SelectedTexture != null)
                 {

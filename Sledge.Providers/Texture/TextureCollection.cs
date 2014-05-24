@@ -49,7 +49,7 @@ namespace Sledge.Providers.Texture
         private TextureItem GetDefaultSelection()
         {
             var ignored = "{#!~+-0123456789".ToCharArray();
-            return GetAllItems()
+            return GetAllBrowsableItems()
                 .OrderBy(x => new string(x.Name.Where(c => !ignored.Contains(c)).ToArray()) + "Z")
                 .FirstOrDefault();
         }
@@ -73,6 +73,11 @@ namespace Sledge.Providers.Texture
         public IEnumerable<TextureItem> GetAllItems()
         {
             return _items.Values;
+        }
+
+        public IEnumerable<TextureItem> GetAllBrowsableItems()
+        {
+            return _items.Values.Where(x => x.Package.IsBrowsable);
         }
 
         public IEnumerable<TextureItem> GetItems(IEnumerable<string> names)

@@ -40,7 +40,7 @@ namespace Sledge.Editor.UI.Sidebar
             if (DocumentManager.CurrentDocument == null) return;
             using (var tb = new TextureBrowser())
             {
-                tb.SetTextureList(DocumentManager.CurrentDocument.TextureCollection.GetAllItems());
+                tb.SetTextureList(DocumentManager.CurrentDocument.TextureCollection.GetAllBrowsableItems());
                 tb.ShowDialog();
                 if (tb.SelectedTexture != null)
                 {

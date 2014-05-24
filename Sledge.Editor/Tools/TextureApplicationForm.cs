@@ -483,7 +483,7 @@ namespace Sledge.Editor.Tools
         {
             using (var browser = new TextureBrowser())
             {
-                browser.SetTextureList(Document.TextureCollection.GetAllItems());
+                browser.SetTextureList(Document.TextureCollection.GetAllBrowsableItems());
                 browser.ShowDialog();
 
                 if (browser.SelectedTexture == null) return;

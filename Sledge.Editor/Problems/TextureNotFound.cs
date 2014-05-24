@@ -27,7 +27,7 @@ namespace Sledge.Editor.Problems
             return new EditFace(problem.Faces, (d, x) =>
                                                    {
                                                        var ignored = "{#!~+-0123456789".ToCharArray();
-                                                       var def = d.TextureCollection.GetAllItems()
+                                                       var def = d.TextureCollection.GetAllBrowsableItems()
                                                            .OrderBy(i => new string(i.Name.Where(c => !ignored.Contains(c)).ToArray()) + "Z")
                                                            .FirstOrDefault();
                                                        if (def != null)
