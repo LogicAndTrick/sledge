@@ -33,6 +33,7 @@ namespace Sledge.Settings.Models
         public decimal DefaultTextureScale { get; set; }
         public decimal DefaultLightmapScale { get; set; }
 
+        public bool IncludeFgdDirectoriesInEnvironment { get; set; }
         public bool OverrideMapSize { get; set; }
         public int OverrideMapSizeLow { get; set; }
         public int OverrideMapSizeHigh { get; set; }
@@ -74,6 +75,7 @@ namespace Sledge.Settings.Models
             DefaultBrushEntity = gs["DefaultBrushEntity"];
             DefaultTextureScale = gs.PropertyDecimal("DefaultTextureScale");
             DefaultLightmapScale = gs.PropertyDecimal("DefaultLightmapScale");
+            IncludeFgdDirectoriesInEnvironment = gs.PropertyBoolean("IncludeFgdDirectoriesInEnvironment", true);
             OverrideMapSize = gs.PropertyBoolean("OverrideMapSize");
             OverrideMapSizeLow = gs.PropertyInteger("OverrideMapSizeLow");
             OverrideMapSizeHigh = gs.PropertyInteger("OverrideMapSizeHigh");
@@ -122,6 +124,7 @@ namespace Sledge.Settings.Models
             gs["DefaultBrushEntity"] = DefaultBrushEntity;
             gs["DefaultTextureScale"] = DefaultTextureScale.ToString(CultureInfo.InvariantCulture);
             gs["DefaultLightmapScale"] = DefaultLightmapScale.ToString(CultureInfo.InvariantCulture);
+            gs["IncludeFgdDirectoriesInEnvironment"] = IncludeFgdDirectoriesInEnvironment.ToString(CultureInfo.InvariantCulture);
             gs["OverrideMapSize"] = OverrideMapSize.ToString(CultureInfo.InvariantCulture);
             gs["OverrideMapSizeLow"] = OverrideMapSizeLow.ToString(CultureInfo.InvariantCulture);
             gs["OverrideMapSizeHigh"] = OverrideMapSizeHigh.ToString(CultureInfo.InvariantCulture);
@@ -162,6 +165,11 @@ namespace Sledge.Settings.Models
             return SteamInstall
                 ? Path.Combine(Steam.SteamDirectory, "steamapps", "common", SteamGameDir, BaseDir)
                 : Path.Combine(WonGameDir, BaseDir);
+        }
+
+        public IEnumerable<string> GetFgdDirectories()
+        {
+            return Fgds.Select(x => Path.GetDirectoryName(Path.GetFullPath(x.Path))).Distinct();
         }
 
         public string GetExecutable()

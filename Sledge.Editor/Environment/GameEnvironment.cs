@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using Sledge.FileSystem;
+using Sledge.Settings;
 using Sledge.Settings.Models;
 
 namespace Sledge.Editor.Environment
@@ -11,6 +12,15 @@ namespace Sledge.Editor.Environment
     public class GameEnvironment
     {
         public Game Game { get; private set; }
+
+        public Build Build
+        {
+            get
+            {
+                return SettingsManager.Builds.FirstOrDefault(x => x.ID == Game.BuildID);
+            }
+        }
+
         private IFile _root;
 
         public IFile Root
@@ -61,6 +71,17 @@ namespace Sledge.Editor.Environment
                 {
                     yield return Path.Combine(Game.WonGameDir, Game.BaseDir);
                 }
+            }
+
+            var b = Build;
+            if (b != null && b.IncludePathInEnvironment)
+            {
+                yield return b.Path;
+            }
+
+            if (Game.IncludeFgdDirectoriesInEnvironment)
+            {
+                foreach (var d in Game.GetFgdDirectories()) yield return d;
             }
 
             // Editor location to the path, for sprites and the like

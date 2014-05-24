@@ -17,6 +17,7 @@ namespace Sledge.Settings.Models
         public string Csg { get; set; }
         public string Vis { get; set; }
         public string Rad { get; set; }
+        public bool IncludePathInEnvironment { get; set; }
         public List<BuildProfile> Profiles { get; private set; }
 
         public CompileWorkingDirectory WorkingDirectory { get; set; }
@@ -49,6 +50,7 @@ namespace Sledge.Settings.Models
             Csg = gs["Csg"];
             Vis = gs["Vis"];
             Rad = gs["Rad"];
+            IncludePathInEnvironment = gs.PropertyBoolean("IncludePathInEnvironment", true);
 
             WorkingDirectory = gs.PropertyEnum("WorkingDirectory", CompileWorkingDirectory.TemporaryDirectory);
             AfterCopyBsp = gs.PropertyBoolean("AfterCopyBsp");
@@ -83,6 +85,7 @@ namespace Sledge.Settings.Models
             gs["Csg"] = Csg;
             gs["Vis"] = Vis;
             gs["Rad"] = Rad;
+            gs["IncludePathInEnvironment"] = IncludePathInEnvironment.ToString(CultureInfo.InvariantCulture);
 
             gs["WorkingDirectory"] = WorkingDirectory.ToString();
             gs["AfterCopyBsp"] = AfterCopyBsp.ToString(CultureInfo.InvariantCulture);

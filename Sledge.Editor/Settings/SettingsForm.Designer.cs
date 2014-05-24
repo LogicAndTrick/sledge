@@ -187,9 +187,12 @@ namespace Sledge.Editor.Settings
             this.SelectedGameAdditionalPackageList = new System.Windows.Forms.ListView();
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.label44 = new System.Windows.Forms.Label();
+            this.label45 = new System.Windows.Forms.Label();
             this.lblGameWAD = new System.Windows.Forms.Label();
             this.SelectedGameLightmapScale = new System.Windows.Forms.NumericUpDown();
             this.lblConfigLightmapScale = new System.Windows.Forms.Label();
+            this.SelectedGameAddAdditionalPackageFolder = new System.Windows.Forms.Button();
             this.SelectedGameAddAdditionalPackageFile = new System.Windows.Forms.Button();
             this.SelectedGameTextureScale = new System.Windows.Forms.NumericUpDown();
             this.lblConfigTextureScale = new System.Windows.Forms.Label();
@@ -224,7 +227,7 @@ namespace Sledge.Editor.Settings
             this.SelectedBuildSpecification = new System.Windows.Forms.ComboBox();
             this.SelectedBuildEngine = new System.Windows.Forms.ComboBox();
             this.tabBuildExecutables = new System.Windows.Forms.TabPage();
-            this.SelectedBuildIncludeWads = new System.Windows.Forms.CheckBox();
+            this.SelectedBuildIncludePathInEnvironment = new System.Windows.Forms.CheckBox();
             this.lblBuildExeFolder = new System.Windows.Forms.Label();
             this.lblBuildBSP = new System.Windows.Forms.Label();
             this.SelectedBuildExeFolder = new System.Windows.Forms.TextBox();
@@ -249,15 +252,10 @@ namespace Sledge.Editor.Settings
             this.SelectedBuildRunBspCheckbox = new System.Windows.Forms.CheckBox();
             this.SelectedBuildRunCsgCheckbox = new System.Windows.Forms.CheckBox();
             this.tabBuildAdvancedCSG = new System.Windows.Forms.TabPage();
-            this.SelectedBuildCsgParameters = new Sledge.Editor.Compiling.CompileParameterPanel();
             this.tabBuildAdvancedBSP = new System.Windows.Forms.TabPage();
-            this.SelectedBuildBspParameters = new Sledge.Editor.Compiling.CompileParameterPanel();
             this.tabBuildAdvancedVIS = new System.Windows.Forms.TabPage();
-            this.SelectedBuildVisParameters = new Sledge.Editor.Compiling.CompileParameterPanel();
             this.tabBuildAdvancedRAD = new System.Windows.Forms.TabPage();
-            this.SelectedBuildRadParameters = new Sledge.Editor.Compiling.CompileParameterPanel();
             this.tabBuildAdvancedShared = new System.Windows.Forms.TabPage();
-            this.SelectedBuildSharedParameters = new Sledge.Editor.Compiling.CompileParameterPanel();
             this.tabBuildAdvancedPreview = new System.Windows.Forms.TabPage();
             this.SelectedBuildProfilePreview = new System.Windows.Forms.TextBox();
             this.RemoveBuild = new System.Windows.Forms.Button();
@@ -307,9 +305,12 @@ namespace Sledge.Editor.Settings
             this.btnCancelSettings = new System.Windows.Forms.Button();
             this.btnApplyAndCloseSettings = new System.Windows.Forms.Button();
             this.btnApplySettings = new System.Windows.Forms.Button();
-            this.label44 = new System.Windows.Forms.Label();
-            this.label45 = new System.Windows.Forms.Label();
-            this.SelectedGameAddAdditionalPackageFolder = new System.Windows.Forms.Button();
+            this.SelectedBuildCsgParameters = new Sledge.Editor.Compiling.CompileParameterPanel();
+            this.SelectedBuildBspParameters = new Sledge.Editor.Compiling.CompileParameterPanel();
+            this.SelectedBuildVisParameters = new Sledge.Editor.Compiling.CompileParameterPanel();
+            this.SelectedBuildRadParameters = new Sledge.Editor.Compiling.CompileParameterPanel();
+            this.SelectedBuildSharedParameters = new Sledge.Editor.Compiling.CompileParameterPanel();
+            this.SelectedGameIncludeFgdDirectoriesInEnvironment = new System.Windows.Forms.CheckBox();
             this.tbcSettings.SuspendLayout();
             this.tabGeneral.SuspendLayout();
             this.tabIntegration.SuspendLayout();
@@ -1916,6 +1917,7 @@ namespace Sledge.Editor.Settings
             this.tabConfigEntities.Controls.Add(this.label35);
             this.tabConfigEntities.Controls.Add(this.SelectedGameOverrideSizeLow);
             this.tabConfigEntities.Controls.Add(this.label33);
+            this.tabConfigEntities.Controls.Add(this.SelectedGameIncludeFgdDirectoriesInEnvironment);
             this.tabConfigEntities.Controls.Add(this.SelectedGameOverrideMapSize);
             this.tabConfigEntities.Controls.Add(this.lblGameFGD);
             this.tabConfigEntities.Controls.Add(this.SelectedGameAddFgd);
@@ -1958,7 +1960,7 @@ namespace Sledge.Editor.Settings
             // 
             // label38
             // 
-            this.label38.Location = new System.Drawing.Point(18, 303);
+            this.label38.Location = new System.Drawing.Point(18, 328);
             this.label38.Name = "label38";
             this.label38.Size = new System.Drawing.Size(137, 20);
             this.label38.TabIndex = 25;
@@ -1968,7 +1970,7 @@ namespace Sledge.Editor.Settings
             // SelectedGameDetectedSizeHigh
             // 
             this.SelectedGameDetectedSizeHigh.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.SelectedGameDetectedSizeHigh.Location = new System.Drawing.Point(306, 303);
+            this.SelectedGameDetectedSizeHigh.Location = new System.Drawing.Point(306, 328);
             this.SelectedGameDetectedSizeHigh.Name = "SelectedGameDetectedSizeHigh";
             this.SelectedGameDetectedSizeHigh.Size = new System.Drawing.Size(57, 20);
             this.SelectedGameDetectedSizeHigh.TabIndex = 24;
@@ -1977,7 +1979,7 @@ namespace Sledge.Editor.Settings
             // SelectedGameDetectedSizeLow
             // 
             this.SelectedGameDetectedSizeLow.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.SelectedGameDetectedSizeLow.Location = new System.Drawing.Point(202, 303);
+            this.SelectedGameDetectedSizeLow.Location = new System.Drawing.Point(202, 328);
             this.SelectedGameDetectedSizeLow.Name = "SelectedGameDetectedSizeLow";
             this.SelectedGameDetectedSizeLow.Size = new System.Drawing.Size(57, 20);
             this.SelectedGameDetectedSizeLow.TabIndex = 24;
@@ -1985,7 +1987,7 @@ namespace Sledge.Editor.Settings
             // 
             // label36
             // 
-            this.label36.Location = new System.Drawing.Point(161, 303);
+            this.label36.Location = new System.Drawing.Point(161, 328);
             this.label36.Name = "label36";
             this.label36.Size = new System.Drawing.Size(35, 20);
             this.label36.TabIndex = 24;
@@ -2002,14 +2004,14 @@ namespace Sledge.Editor.Settings
             "16384",
             "32768",
             "65536"});
-            this.SelectedGameOverrideSizeHigh.Location = new System.Drawing.Point(306, 331);
+            this.SelectedGameOverrideSizeHigh.Location = new System.Drawing.Point(306, 356);
             this.SelectedGameOverrideSizeHigh.Name = "SelectedGameOverrideSizeHigh";
             this.SelectedGameOverrideSizeHigh.Size = new System.Drawing.Size(57, 21);
             this.SelectedGameOverrideSizeHigh.TabIndex = 23;
             // 
             // label37
             // 
-            this.label37.Location = new System.Drawing.Point(265, 303);
+            this.label37.Location = new System.Drawing.Point(265, 328);
             this.label37.Name = "label37";
             this.label37.Size = new System.Drawing.Size(35, 20);
             this.label37.TabIndex = 22;
@@ -2018,7 +2020,7 @@ namespace Sledge.Editor.Settings
             // 
             // label35
             // 
-            this.label35.Location = new System.Drawing.Point(265, 330);
+            this.label35.Location = new System.Drawing.Point(265, 355);
             this.label35.Name = "label35";
             this.label35.Size = new System.Drawing.Size(35, 20);
             this.label35.TabIndex = 22;
@@ -2035,14 +2037,14 @@ namespace Sledge.Editor.Settings
             "-16384",
             "-32768",
             "-65536"});
-            this.SelectedGameOverrideSizeLow.Location = new System.Drawing.Point(202, 331);
+            this.SelectedGameOverrideSizeLow.Location = new System.Drawing.Point(202, 356);
             this.SelectedGameOverrideSizeLow.Name = "SelectedGameOverrideSizeLow";
             this.SelectedGameOverrideSizeLow.Size = new System.Drawing.Size(57, 21);
             this.SelectedGameOverrideSizeLow.TabIndex = 21;
             // 
             // label33
             // 
-            this.label33.Location = new System.Drawing.Point(15, 258);
+            this.label33.Location = new System.Drawing.Point(15, 283);
             this.label33.Name = "label33";
             this.label33.Size = new System.Drawing.Size(368, 40);
             this.label33.TabIndex = 20;
@@ -2055,7 +2057,7 @@ namespace Sledge.Editor.Settings
             // 
             this.SelectedGameOverrideMapSize.Checked = true;
             this.SelectedGameOverrideMapSize.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.SelectedGameOverrideMapSize.Location = new System.Drawing.Point(18, 329);
+            this.SelectedGameOverrideMapSize.Location = new System.Drawing.Point(18, 354);
             this.SelectedGameOverrideMapSize.Name = "SelectedGameOverrideMapSize";
             this.SelectedGameOverrideMapSize.Size = new System.Drawing.Size(137, 24);
             this.SelectedGameOverrideMapSize.TabIndex = 19;
@@ -2084,7 +2086,7 @@ namespace Sledge.Editor.Settings
             // 
             // label34
             // 
-            this.label34.Location = new System.Drawing.Point(161, 330);
+            this.label34.Location = new System.Drawing.Point(161, 355);
             this.label34.Name = "label34";
             this.label34.Size = new System.Drawing.Size(35, 20);
             this.label34.TabIndex = 9;
@@ -2189,6 +2191,25 @@ namespace Sledge.Editor.Settings
             // 
             this.columnHeader3.Text = "Path";
             // 
+            // label44
+            // 
+            this.label44.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label44.Location = new System.Drawing.Point(6, 9);
+            this.label44.Name = "label44";
+            this.label44.Size = new System.Drawing.Size(427, 20);
+            this.label44.TabIndex = 9;
+            this.label44.Text = "Sledge automatically includes textures from your game/mod directories.";
+            this.label44.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // label45
+            // 
+            this.label45.Location = new System.Drawing.Point(6, 32);
+            this.label45.Name = "label45";
+            this.label45.Size = new System.Drawing.Size(457, 121);
+            this.label45.TabIndex = 9;
+            this.label45.Text = resources.GetString("label45.Text");
+            this.label45.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
             // lblGameWAD
             // 
             this.lblGameWAD.Location = new System.Drawing.Point(6, 161);
@@ -2218,6 +2239,16 @@ namespace Sledge.Editor.Settings
             this.lblConfigLightmapScale.TabIndex = 9;
             this.lblConfigLightmapScale.Text = "Default Lightmap Scale";
             this.lblConfigLightmapScale.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // SelectedGameAddAdditionalPackageFolder
+            // 
+            this.SelectedGameAddAdditionalPackageFolder.Location = new System.Drawing.Point(376, 213);
+            this.SelectedGameAddAdditionalPackageFolder.Name = "SelectedGameAddAdditionalPackageFolder";
+            this.SelectedGameAddAdditionalPackageFolder.Size = new System.Drawing.Size(87, 23);
+            this.SelectedGameAddAdditionalPackageFolder.TabIndex = 1;
+            this.SelectedGameAddAdditionalPackageFolder.Text = "Add Folder...";
+            this.SelectedGameAddAdditionalPackageFolder.UseVisualStyleBackColor = true;
+            this.SelectedGameAddAdditionalPackageFolder.Click += new System.EventHandler(this.SelectedGameAddAdditionalPackageFolderClicked);
             // 
             // SelectedGameAddAdditionalPackageFile
             // 
@@ -2597,7 +2628,7 @@ namespace Sledge.Editor.Settings
             // 
             // tabBuildExecutables
             // 
-            this.tabBuildExecutables.Controls.Add(this.SelectedBuildIncludeWads);
+            this.tabBuildExecutables.Controls.Add(this.SelectedBuildIncludePathInEnvironment);
             this.tabBuildExecutables.Controls.Add(this.lblBuildExeFolder);
             this.tabBuildExecutables.Controls.Add(this.lblBuildBSP);
             this.tabBuildExecutables.Controls.Add(this.SelectedBuildExeFolder);
@@ -2617,16 +2648,16 @@ namespace Sledge.Editor.Settings
             this.tabBuildExecutables.Text = "Build Programs";
             this.tabBuildExecutables.UseVisualStyleBackColor = true;
             // 
-            // SelectedBuildIncludeWads
+            // SelectedBuildIncludePathInEnvironment
             // 
-            this.SelectedBuildIncludeWads.Checked = true;
-            this.SelectedBuildIncludeWads.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.SelectedBuildIncludeWads.Location = new System.Drawing.Point(95, 163);
-            this.SelectedBuildIncludeWads.Name = "SelectedBuildIncludeWads";
-            this.SelectedBuildIncludeWads.Size = new System.Drawing.Size(293, 24);
-            this.SelectedBuildIncludeWads.TabIndex = 21;
-            this.SelectedBuildIncludeWads.Text = "Automatically include WAD files found in this directory";
-            this.SelectedBuildIncludeWads.UseVisualStyleBackColor = true;
+            this.SelectedBuildIncludePathInEnvironment.Checked = true;
+            this.SelectedBuildIncludePathInEnvironment.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.SelectedBuildIncludePathInEnvironment.Location = new System.Drawing.Point(95, 163);
+            this.SelectedBuildIncludePathInEnvironment.Name = "SelectedBuildIncludePathInEnvironment";
+            this.SelectedBuildIncludePathInEnvironment.Size = new System.Drawing.Size(293, 24);
+            this.SelectedBuildIncludePathInEnvironment.TabIndex = 21;
+            this.SelectedBuildIncludePathInEnvironment.Text = "Automatically include textures found in this directory";
+            this.SelectedBuildIncludePathInEnvironment.UseVisualStyleBackColor = true;
             // 
             // lblBuildExeFolder
             // 
@@ -2872,15 +2903,6 @@ namespace Sledge.Editor.Settings
             this.tabBuildAdvancedCSG.Text = "CSG";
             this.tabBuildAdvancedCSG.UseVisualStyleBackColor = true;
             // 
-            // SelectedBuildCsgParameters
-            // 
-            this.SelectedBuildCsgParameters.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.SelectedBuildCsgParameters.Location = new System.Drawing.Point(0, 0);
-            this.SelectedBuildCsgParameters.MinimumSize = new System.Drawing.Size(300, 250);
-            this.SelectedBuildCsgParameters.Name = "SelectedBuildCsgParameters";
-            this.SelectedBuildCsgParameters.Size = new System.Drawing.Size(449, 408);
-            this.SelectedBuildCsgParameters.TabIndex = 0;
-            // 
             // tabBuildAdvancedBSP
             // 
             this.tabBuildAdvancedBSP.Controls.Add(this.SelectedBuildBspParameters);
@@ -2890,15 +2912,6 @@ namespace Sledge.Editor.Settings
             this.tabBuildAdvancedBSP.TabIndex = 1;
             this.tabBuildAdvancedBSP.Text = "BSP";
             this.tabBuildAdvancedBSP.UseVisualStyleBackColor = true;
-            // 
-            // SelectedBuildBspParameters
-            // 
-            this.SelectedBuildBspParameters.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.SelectedBuildBspParameters.Location = new System.Drawing.Point(0, 0);
-            this.SelectedBuildBspParameters.MinimumSize = new System.Drawing.Size(300, 250);
-            this.SelectedBuildBspParameters.Name = "SelectedBuildBspParameters";
-            this.SelectedBuildBspParameters.Size = new System.Drawing.Size(449, 408);
-            this.SelectedBuildBspParameters.TabIndex = 1;
             // 
             // tabBuildAdvancedVIS
             // 
@@ -2910,15 +2923,6 @@ namespace Sledge.Editor.Settings
             this.tabBuildAdvancedVIS.Text = "VIS";
             this.tabBuildAdvancedVIS.UseVisualStyleBackColor = true;
             // 
-            // SelectedBuildVisParameters
-            // 
-            this.SelectedBuildVisParameters.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.SelectedBuildVisParameters.Location = new System.Drawing.Point(0, 0);
-            this.SelectedBuildVisParameters.MinimumSize = new System.Drawing.Size(300, 250);
-            this.SelectedBuildVisParameters.Name = "SelectedBuildVisParameters";
-            this.SelectedBuildVisParameters.Size = new System.Drawing.Size(449, 408);
-            this.SelectedBuildVisParameters.TabIndex = 1;
-            // 
             // tabBuildAdvancedRAD
             // 
             this.tabBuildAdvancedRAD.Controls.Add(this.SelectedBuildRadParameters);
@@ -2929,15 +2933,6 @@ namespace Sledge.Editor.Settings
             this.tabBuildAdvancedRAD.Text = "RAD";
             this.tabBuildAdvancedRAD.UseVisualStyleBackColor = true;
             // 
-            // SelectedBuildRadParameters
-            // 
-            this.SelectedBuildRadParameters.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.SelectedBuildRadParameters.Location = new System.Drawing.Point(0, 0);
-            this.SelectedBuildRadParameters.MinimumSize = new System.Drawing.Size(300, 250);
-            this.SelectedBuildRadParameters.Name = "SelectedBuildRadParameters";
-            this.SelectedBuildRadParameters.Size = new System.Drawing.Size(449, 408);
-            this.SelectedBuildRadParameters.TabIndex = 1;
-            // 
             // tabBuildAdvancedShared
             // 
             this.tabBuildAdvancedShared.Controls.Add(this.SelectedBuildSharedParameters);
@@ -2947,15 +2942,6 @@ namespace Sledge.Editor.Settings
             this.tabBuildAdvancedShared.TabIndex = 4;
             this.tabBuildAdvancedShared.Text = "Shared";
             this.tabBuildAdvancedShared.UseVisualStyleBackColor = true;
-            // 
-            // SelectedBuildSharedParameters
-            // 
-            this.SelectedBuildSharedParameters.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.SelectedBuildSharedParameters.Location = new System.Drawing.Point(0, 0);
-            this.SelectedBuildSharedParameters.MinimumSize = new System.Drawing.Size(300, 250);
-            this.SelectedBuildSharedParameters.Name = "SelectedBuildSharedParameters";
-            this.SelectedBuildSharedParameters.Size = new System.Drawing.Size(449, 408);
-            this.SelectedBuildSharedParameters.TabIndex = 1;
             // 
             // tabBuildAdvancedPreview
             // 
@@ -3451,34 +3437,62 @@ namespace Sledge.Editor.Settings
             this.btnApplySettings.UseVisualStyleBackColor = true;
             this.btnApplySettings.Click += new System.EventHandler(this.Apply);
             // 
-            // label44
+            // SelectedBuildCsgParameters
             // 
-            this.label44.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label44.Location = new System.Drawing.Point(6, 9);
-            this.label44.Name = "label44";
-            this.label44.Size = new System.Drawing.Size(427, 20);
-            this.label44.TabIndex = 9;
-            this.label44.Text = "Sledge automatically includes textures from your game/mod directories.";
-            this.label44.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.SelectedBuildCsgParameters.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.SelectedBuildCsgParameters.Location = new System.Drawing.Point(0, 0);
+            this.SelectedBuildCsgParameters.MinimumSize = new System.Drawing.Size(300, 250);
+            this.SelectedBuildCsgParameters.Name = "SelectedBuildCsgParameters";
+            this.SelectedBuildCsgParameters.Size = new System.Drawing.Size(449, 408);
+            this.SelectedBuildCsgParameters.TabIndex = 0;
             // 
-            // label45
+            // SelectedBuildBspParameters
             // 
-            this.label45.Location = new System.Drawing.Point(6, 32);
-            this.label45.Name = "label45";
-            this.label45.Size = new System.Drawing.Size(457, 121);
-            this.label45.TabIndex = 9;
-            this.label45.Text = resources.GetString("label45.Text");
-            this.label45.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.SelectedBuildBspParameters.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.SelectedBuildBspParameters.Location = new System.Drawing.Point(0, 0);
+            this.SelectedBuildBspParameters.MinimumSize = new System.Drawing.Size(300, 250);
+            this.SelectedBuildBspParameters.Name = "SelectedBuildBspParameters";
+            this.SelectedBuildBspParameters.Size = new System.Drawing.Size(449, 408);
+            this.SelectedBuildBspParameters.TabIndex = 1;
             // 
-            // SelectedGameAddAdditionalPackageFolder
+            // SelectedBuildVisParameters
             // 
-            this.SelectedGameAddAdditionalPackageFolder.Location = new System.Drawing.Point(376, 213);
-            this.SelectedGameAddAdditionalPackageFolder.Name = "SelectedGameAddAdditionalPackageFolder";
-            this.SelectedGameAddAdditionalPackageFolder.Size = new System.Drawing.Size(87, 23);
-            this.SelectedGameAddAdditionalPackageFolder.TabIndex = 1;
-            this.SelectedGameAddAdditionalPackageFolder.Text = "Add Folder...";
-            this.SelectedGameAddAdditionalPackageFolder.UseVisualStyleBackColor = true;
-            this.SelectedGameAddAdditionalPackageFolder.Click += new System.EventHandler(this.SelectedGameAddAdditionalPackageFolderClicked);
+            this.SelectedBuildVisParameters.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.SelectedBuildVisParameters.Location = new System.Drawing.Point(0, 0);
+            this.SelectedBuildVisParameters.MinimumSize = new System.Drawing.Size(300, 250);
+            this.SelectedBuildVisParameters.Name = "SelectedBuildVisParameters";
+            this.SelectedBuildVisParameters.Size = new System.Drawing.Size(449, 408);
+            this.SelectedBuildVisParameters.TabIndex = 1;
+            // 
+            // SelectedBuildRadParameters
+            // 
+            this.SelectedBuildRadParameters.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.SelectedBuildRadParameters.Location = new System.Drawing.Point(0, 0);
+            this.SelectedBuildRadParameters.MinimumSize = new System.Drawing.Size(300, 250);
+            this.SelectedBuildRadParameters.Name = "SelectedBuildRadParameters";
+            this.SelectedBuildRadParameters.Size = new System.Drawing.Size(449, 408);
+            this.SelectedBuildRadParameters.TabIndex = 1;
+            // 
+            // SelectedBuildSharedParameters
+            // 
+            this.SelectedBuildSharedParameters.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.SelectedBuildSharedParameters.Location = new System.Drawing.Point(0, 0);
+            this.SelectedBuildSharedParameters.MinimumSize = new System.Drawing.Size(300, 250);
+            this.SelectedBuildSharedParameters.Name = "SelectedBuildSharedParameters";
+            this.SelectedBuildSharedParameters.Size = new System.Drawing.Size(449, 408);
+            this.SelectedBuildSharedParameters.TabIndex = 1;
+            // 
+            // SelectedGameIncludeFgdDirectoriesInEnvironment
+            // 
+            this.SelectedGameIncludeFgdDirectoriesInEnvironment.Checked = true;
+            this.SelectedGameIncludeFgdDirectoriesInEnvironment.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.SelectedGameIncludeFgdDirectoriesInEnvironment.Location = new System.Drawing.Point(184, 246);
+            this.SelectedGameIncludeFgdDirectoriesInEnvironment.Name = "SelectedGameIncludeFgdDirectoriesInEnvironment";
+            this.SelectedGameIncludeFgdDirectoriesInEnvironment.Size = new System.Drawing.Size(264, 24);
+            this.SelectedGameIncludeFgdDirectoriesInEnvironment.TabIndex = 19;
+            this.SelectedGameIncludeFgdDirectoriesInEnvironment.Text = "Load sprites and models from FGD directories";
+            this.SelectedGameIncludeFgdDirectoriesInEnvironment.UseVisualStyleBackColor = true;
+            this.SelectedGameIncludeFgdDirectoriesInEnvironment.CheckedChanged += new System.EventHandler(this.SelectedGameOverrideMapSizeChanged);
             // 
             // SettingsForm
             // 
@@ -3729,7 +3743,7 @@ namespace Sledge.Editor.Settings
         private System.Windows.Forms.CheckBox HideGridOn;
         private System.Windows.Forms.DomainUpDown GridHighlight2UnitNum;
         private System.Windows.Forms.CheckBox SelectedGameSteamInstall;
-        private System.Windows.Forms.CheckBox SelectedBuildIncludeWads;
+        private System.Windows.Forms.CheckBox SelectedBuildIncludePathInEnvironment;
         private System.Windows.Forms.GroupBox groupBox16;
         private System.Windows.Forms.RadioButton NudgeStyle_GridOnCtrl;
         private System.Windows.Forms.RadioButton NudgeStyle_GridOffCtrl;
@@ -3853,5 +3867,6 @@ namespace Sledge.Editor.Settings
         private System.Windows.Forms.Label label44;
         private System.Windows.Forms.Label label45;
         private System.Windows.Forms.Button SelectedGameAddAdditionalPackageFolder;
+        private System.Windows.Forms.CheckBox SelectedGameIncludeFgdDirectoriesInEnvironment;
 	}
 }

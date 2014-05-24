@@ -239,6 +239,7 @@ namespace Sledge.Editor.Settings
             SelectedGameDefaultBrushEnt.SelectedIndexChanged += (s, e) => CheckNull(_selectedGame, x => x.DefaultBrushEntity = SelectedGameDefaultBrushEnt.Text);
             SelectedGameTextureScale.ValueChanged += (s, e) => CheckNull(_selectedGame, x => x.DefaultTextureScale = SelectedGameTextureScale.Value);
             SelectedGameLightmapScale.ValueChanged += (s, e) => CheckNull(_selectedGame, x => x.DefaultLightmapScale = SelectedGameLightmapScale.Value);
+            SelectedGameIncludeFgdDirectoriesInEnvironment.CheckedChanged += (s, e) => CheckNull(_selectedGame, x => x.IncludeFgdDirectoriesInEnvironment = SelectedGameIncludeFgdDirectoriesInEnvironment.Checked);
             SelectedGameOverrideMapSize.CheckedChanged += (s, e) => CheckNull(_selectedGame, x => x.OverrideMapSize = SelectedGameOverrideMapSize.Checked);
             var sizes = new[] {4096, 8192, 16384, 32768, 65536};
             SelectedGameOverrideSizeLow.SelectedIndexChanged += (s, e) => CheckNull(_selectedGame, x => x.OverrideMapSizeLow = SelectedGameOverrideSizeLow.SelectedIndex < 0 ? 0 : -sizes[SelectedGameOverrideSizeLow.SelectedIndex]);
@@ -253,6 +254,7 @@ namespace Sledge.Editor.Settings
             SelectedBuildCsg.SelectedIndexChanged += (s, e) => CheckNull(_selectedBuild, x => x.Csg = SelectedBuildCsg.Text);
             SelectedBuildVis.SelectedIndexChanged += (s, e) => CheckNull(_selectedBuild, x => x.Vis = SelectedBuildVis.Text);
             SelectedBuildRad.SelectedIndexChanged += (s, e) => CheckNull(_selectedBuild, x => x.Rad = SelectedBuildRad.Text);
+            SelectedBuildIncludePathInEnvironment.CheckedChanged += (s, e) => CheckNull(_selectedBuild, x => x.IncludePathInEnvironment = SelectedBuildIncludePathInEnvironment.Checked);
 
             SelectedBuildWorkingDirTemp.CheckedChanged += (s, e) => { if (SelectedBuildWorkingDirTemp.Checked) CheckNull(_selectedBuild, x => x.WorkingDirectory = CompileWorkingDirectory.TemporaryDirectory); };
             SelectedBuildWorkingDirSame.CheckedChanged += (s, e) => { if (SelectedBuildWorkingDirSame.Checked) CheckNull(_selectedBuild, x => x.WorkingDirectory = CompileWorkingDirectory.SameDirectory); };
@@ -1057,6 +1059,7 @@ namespace Sledge.Editor.Settings
             SelectedGameDefaultBrushEnt.SelectedText = _selectedGame.DefaultBrushEntity;
             SelectedGameTextureScale.Value = _selectedGame.DefaultTextureScale;
             SelectedGameLightmapScale.Value = _selectedGame.DefaultLightmapScale;
+            SelectedGameIncludeFgdDirectoriesInEnvironment.Checked = _selectedGame.IncludeFgdDirectoriesInEnvironment;
             SelectedGameOverrideMapSize.Checked = _selectedGame.OverrideMapSize;
             var sizes = new[] { 4096, 8192, 16384, 32768, 65536 };
             SelectedGameOverrideSizeLow.SelectedIndex = Array.IndexOf(sizes, -_selectedGame.OverrideMapSizeLow);
@@ -1463,7 +1466,7 @@ namespace Sledge.Editor.Settings
             var change = eng != _selectedBuild.Engine;
             _selectedBuild.Engine = eng;
             var gs = eng == Engine.Goldsource;
-            SelectedBuildCsg.Enabled = SelectedBuildIncludeWads.Enabled = gs;
+            SelectedBuildCsg.Enabled = gs;
             if (change)
             {
 
@@ -1557,6 +1560,7 @@ namespace Sledge.Editor.Settings
             SelectedBuildCsg.SelectedText = _selectedBuild.Csg;
             SelectedBuildVis.SelectedText = _selectedBuild.Vis;
             SelectedBuildRad.SelectedText = _selectedBuild.Rad;
+            SelectedBuildIncludePathInEnvironment.Checked = _selectedBuild.IncludePathInEnvironment;
 
             SelectedBuildWorkingDirTemp.Checked = _selectedBuild.WorkingDirectory == CompileWorkingDirectory.TemporaryDirectory;
             SelectedBuildWorkingDirSame.Checked = _selectedBuild.WorkingDirectory == CompileWorkingDirectory.SameDirectory;
