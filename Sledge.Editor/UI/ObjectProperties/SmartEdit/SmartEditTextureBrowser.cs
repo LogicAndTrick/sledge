@@ -1,19 +1,15 @@
 using System;
-using System.Drawing;
-using System.Globalization;
-using System.Linq;
 using System.Windows.Forms;
 using Sledge.DataStructures.GameData;
-using Sledge.FileSystem;
 
 namespace Sledge.Editor.UI.ObjectProperties.SmartEdit
 {
-    [SmartEdit(VariableType.Studio)]
-    [SmartEdit(VariableType.Sprite)]
-    internal class SmartEditStudio : SmartEditControl
+    [SmartEdit(VariableType.Decal)]
+    [SmartEdit(VariableType.Material)]
+    internal class SmartEditTextureBrowser : SmartEditControl
     {
         private readonly TextBox _textBox;
-        public SmartEditStudio()
+        public SmartEditTextureBrowser()
         {
             _textBox = new TextBox { Width = 180 };
             _textBox.TextChanged += (sender, e) => OnValueChanged();
@@ -26,26 +22,15 @@ namespace Sledge.Editor.UI.ObjectProperties.SmartEdit
 
         private void OpenModelBrowser(object sender, EventArgs e)
         {
-            var rt = Document.Environment.Root;
-            using (var fb = new FileSystem.FileSystemBrowserDialog(rt) { Filter =  "*.mdl,*.spr", FilterText = "Models/Sprites (*.mdl, *.spr)"})
+            using (var tb = new TextureBrowser())
             {
-                if (fb.ShowDialog() == DialogResult.OK && fb.SelectedFiles.Any())
+                tb.SetTextureList(Document.TextureCollection.GetAllBrowsableItems());
+                tb.ShowDialog();
+                if (tb.SelectedTexture != null)
                 {
-                    var f = fb.SelectedFiles.First();
-                    _textBox.Text = GetPath(f);
+                    _textBox.Text = tb.SelectedTexture.Name;
                 }
             }
-        }
-
-        private string GetPath(IFile file)
-        {
-            var path = "";
-            while (file != null && !(file is RootFile))
-            {
-                path = "/" + file.Name + path;
-                file = file.Parent;
-            }
-            return path.TrimStart('/');
         }
 
         protected override string GetName()

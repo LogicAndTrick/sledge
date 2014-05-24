@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Sledge.Providers.GameData;
 
@@ -23,6 +24,19 @@ namespace Sledge.Tests
             var gd = GameDataProvider.GetGameDataFromFile(tf2);
             Assert.IsTrue(gd.MaterialExclusions.Count > 0);
             Assert.IsTrue(gd.AutoVisgroups.Count > 0);
+        }
+
+        [TestMethod]
+        public void ParseGoldsourceFgd()
+        {
+            var gs = @"D:\Github\sledge\_Resources\FGD\Half-Life.fgd";
+            GameDataProvider.Register(new FgdProvider());
+            var gd = GameDataProvider.GetGameDataFromFile(gs);
+            var types = gd.Classes.SelectMany(x => x.Properties).Select(x => x.VariableType).Distinct();
+            foreach (var variableType in types)
+            {
+                Console.WriteLine(variableType);
+            }
         }
     }
 }

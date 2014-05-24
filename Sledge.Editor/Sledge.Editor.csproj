@@ -423,7 +423,10 @@
     <Compile Include="UI\ObjectProperties\SmartEdit\SmartEditColor255.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="UI\ObjectProperties\SmartEdit\SmartEditStudio.cs">
+    <Compile Include="UI\ObjectProperties\SmartEdit\SmartEditTextureBrowser.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UI\ObjectProperties\SmartEdit\SmartEditFileBrowser.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="UI\ObjectProperties\SmartEdit\SmartEditTargetDestination.cs">
