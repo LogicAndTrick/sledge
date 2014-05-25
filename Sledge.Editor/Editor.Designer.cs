@@ -31,6 +31,7 @@ namespace Sledge.Editor
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            Sledge.Editor.UI.TableSplitConfiguration tableSplitConfiguration1 = new Sledge.Editor.UI.TableSplitConfiguration();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Editor));
             this.mnuMain = new System.Windows.Forms.MenuStrip();
             this.stsStatus = new System.Windows.Forms.StatusStrip();
@@ -48,9 +49,9 @@ namespace Sledge.Editor
             this.RightSidebar = new Sledge.Editor.UI.DockedPanel();
             this.DockLeft = new Sledge.Editor.UI.DockedPanel();
             this.DockBottom = new Sledge.Editor.UI.DockedPanel();
+            this.outputMessagePanel1 = new Sledge.Editor.UI.DockPanels.OutputMessagePanel();
             this.DockRight = new Sledge.Editor.UI.DockedPanel();
             this.tspTools = new System.Windows.Forms.ToolStrip();
-            this.outputMessagePanel1 = new Sledge.Editor.UI.DockPanels.OutputMessagePanel();
             this.stsStatus.SuspendLayout();
             this.tscToolStrip.ContentPanel.SuspendLayout();
             this.tscToolStrip.LeftToolStripPanel.SuspendLayout();
@@ -169,7 +170,7 @@ namespace Sledge.Editor
             this.DockFill.Size = new System.Drawing.Size(567, 528);
             this.DockFill.TabIndex = 4;
             // 
-            // tblQuadView
+            // TableSplitView
             // 
             this.TableSplitView.ColumnCount = 2;
             this.TableSplitView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
@@ -324,11 +325,19 @@ namespace Sledge.Editor
             this.TableSplitView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.TableSplitView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.TableSplitView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.TableSplitView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.TableSplitView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            tableSplitConfiguration1.Columns = 2;
+            tableSplitConfiguration1.Rectangles = ((System.Collections.Generic.List<System.Drawing.Rectangle>)(resources.GetObject("tableSplitConfiguration1.Rectangles")));
+            tableSplitConfiguration1.Rows = 2;
+            this.TableSplitView.Configuration = tableSplitConfiguration1;
             this.TableSplitView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.TableSplitView.Location = new System.Drawing.Point(0, 24);
             this.TableSplitView.MinimumViewSize = 2;
             this.TableSplitView.Name = "TableSplitView";
             this.TableSplitView.RowCount = 2;
+            this.TableSplitView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.TableSplitView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.TableSplitView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.TableSplitView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.TableSplitView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
@@ -541,6 +550,14 @@ namespace Sledge.Editor
             this.DockBottom.Size = new System.Drawing.Size(823, 149);
             this.DockBottom.TabIndex = 3;
             // 
+            // outputMessagePanel1
+            // 
+            this.outputMessagePanel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.outputMessagePanel1.Location = new System.Drawing.Point(0, 8);
+            this.outputMessagePanel1.Name = "outputMessagePanel1";
+            this.outputMessagePanel1.Size = new System.Drawing.Size(823, 141);
+            this.outputMessagePanel1.TabIndex = 0;
+            // 
             // DockRight
             // 
             this.DockRight.Dock = System.Windows.Forms.DockStyle.Right;
@@ -562,16 +579,9 @@ namespace Sledge.Editor
             this.tspTools.Size = new System.Drawing.Size(34, 117);
             this.tspTools.TabIndex = 0;
             // 
-            // outputMessagePanel1
-            // 
-            this.outputMessagePanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.outputMessagePanel1.Location = new System.Drawing.Point(0, 8);
-            this.outputMessagePanel1.Name = "outputMessagePanel1";
-            this.outputMessagePanel1.Size = new System.Drawing.Size(823, 141);
-            this.outputMessagePanel1.TabIndex = 0;
-            // 
             // Editor
             // 
+            this.AllowDrop = true;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(879, 750);

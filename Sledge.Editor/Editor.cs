@@ -326,6 +326,32 @@ namespace Sledge.Editor
             }
         }
 
+        protected override void OnDragDrop(DragEventArgs drgevent)
+        {
+            if (drgevent.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                var supported = FileTypeRegistration.GetSupportedExtensions();
+                var files = (drgevent.Data.GetData(DataFormats.FileDrop) as IEnumerable<string> ?? new string[0])
+                    .Where(x => supported.Any(f => x.EndsWith(f.Extension, StringComparison.InvariantCultureIgnoreCase)))
+                    .ToList();
+                foreach (var file in files) LoadFile(file);
+            }
+            base.OnDragDrop(drgevent);
+        }
+
+        protected override void OnDragEnter(DragEventArgs drgevent)
+        {
+            if (drgevent.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                var supported = FileTypeRegistration.GetSupportedExtensions();
+                var files = (drgevent.Data.GetData(DataFormats.FileDrop) as IEnumerable<string> ?? new string[0])
+                    .Where(x => supported.Any(f => x.EndsWith(f.Extension, StringComparison.InvariantCultureIgnoreCase)))
+                    .ToList();
+                drgevent.Effect = files.Any() ? DragDropEffects.Link : DragDropEffects.None;
+            }
+            base.OnDragEnter(drgevent);
+        }
+
         #region Mediator
 
         private void Subscribe()
