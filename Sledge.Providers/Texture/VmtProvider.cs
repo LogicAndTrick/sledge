@@ -16,8 +16,8 @@ namespace Sledge.Providers.Texture
 
         public override IEnumerable<TexturePackage> CreatePackages(IEnumerable<string> sourceRoots, IEnumerable<string> additionalPackages, IEnumerable<string> blacklist, IEnumerable<string> whitelist)
         {
-            var blist = blacklist.Select(x => x.TrimEnd('/', '\\')).Where(x => !String.IsNullOrWhiteSpace(x)).Select(x => x + '/').ToList();
-            var wlist = whitelist.Select(x => x.TrimEnd('/', '\\')).Where(x => !String.IsNullOrWhiteSpace(x)).Select(x => x + '/').ToList();
+            var blist = blacklist.Select(x => x.TrimEnd('/', '\\')).Where(x => !String.IsNullOrWhiteSpace(x)).ToList();
+            var wlist = whitelist.Select(x => x.TrimEnd('/', '\\')).Where(x => !String.IsNullOrWhiteSpace(x)).ToList();
 
             var roots = sourceRoots.ToList();
             var packages = new Dictionary<string, TexturePackage>();
@@ -45,10 +45,19 @@ namespace Sledge.Providers.Texture
             var vmtRoot = new QuickRoot(roots, add, "materials", ".vmt");
             var vtfRoot = new QuickRoot(roots, add, "materials", ".vtf");
 
+            const StringComparison ctype = StringComparison.InvariantCultureIgnoreCase;
+
             foreach (var vmt in vmtRoot.GetFiles())
             {
                 var idx = vmt.LastIndexOf('/');
                 var dir = idx >= 0 ? vmt.Substring(0, idx) : "";
+
+                if ((blist.Any(x => dir.Equals(x, ctype) || dir.StartsWith(x + '/', ctype))) ||
+                    (wlist.Any() && !wlist.Any(x => dir.Equals(x, ctype) || dir.StartsWith(x + '/', ctype))))
+                {
+                    continue;
+                }
+
                 if (!packages.ContainsKey(dir)) packages.Add(dir, new TexturePackage(packageRoot, dir, this));
                 if (packages[dir].HasTexture(vmt)) continue;
 
@@ -63,15 +72,6 @@ namespace Sledge.Providers.Texture
 
                 var size = Vtf.VtfProvider.GetSize(vtfRoot.OpenFile(baseTexture));
                 packages[dir].AddTexture(new TextureItem(packages[dir], vmt, baseTexture, size.Width, size.Height));
-            }
-
-            foreach (var key in packages.Keys.ToList())
-            {
-                if ((blist.Any(x => x.StartsWith(key, StringComparison.InvariantCultureIgnoreCase))) ||
-                    (wlist.Any() && !wlist.Any(x => x.StartsWith(key, StringComparison.InvariantCultureIgnoreCase))))
-                {
-                    packages.Remove(key);
-                }
             }
 
             vmtRoot.Dispose();

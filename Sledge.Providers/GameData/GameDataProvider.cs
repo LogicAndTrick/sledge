@@ -32,6 +32,7 @@ namespace Sledge.Providers.GameData
                 gd.MapSizeHigh = d.MapSizeHigh;
                 gd.MapSizeLow = d.MapSizeLow;
                 gd.Classes.AddRange(d.Classes);
+                gd.MaterialExclusions.AddRange(d.MaterialExclusions);
             }
             gd.CreateDependencies();
             gd.RemoveDuplicates();
