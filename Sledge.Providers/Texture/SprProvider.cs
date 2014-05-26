@@ -133,8 +133,9 @@ namespace Sledge.Providers.Texture
             }
         }
 
-        public override IEnumerable<TexturePackage> CreatePackages(IEnumerable<string> sourceRoots, IEnumerable<string> additionalPackages)
+        public override IEnumerable<TexturePackage> CreatePackages(IEnumerable<string> sourceRoots, IEnumerable<string> additionalPackages, IEnumerable<string> blacklist, IEnumerable<string> whitelist)
         {
+            // Sprite provider ignores the black/whitelists
             var dirs = sourceRoots.Union(additionalPackages).Where(Directory.Exists).Select(Path.GetFullPath).Select(x => x.ToLowerInvariant()).Distinct().ToList();
             var tp = new TexturePackage(String.Join(";", dirs), "sprites", this) {IsBrowsable = false};
             foreach (var dir in dirs)

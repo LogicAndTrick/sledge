@@ -36,6 +36,7 @@ namespace Sledge.Editor.Settings
 		/// </summary>
 		private void InitializeComponent()
 		{
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SettingsForm));
             this.tbcSettings = new System.Windows.Forms.TabControl();
             this.tabGeneral = new System.Windows.Forms.TabPage();
@@ -174,6 +175,7 @@ namespace Sledge.Editor.Settings
             this.label35 = new System.Windows.Forms.Label();
             this.SelectedGameOverrideSizeLow = new System.Windows.Forms.ComboBox();
             this.label33 = new System.Windows.Forms.Label();
+            this.SelectedGameIncludeFgdDirectoriesInEnvironment = new System.Windows.Forms.CheckBox();
             this.SelectedGameOverrideMapSize = new System.Windows.Forms.CheckBox();
             this.lblGameFGD = new System.Windows.Forms.Label();
             this.SelectedGameAddFgd = new System.Windows.Forms.Button();
@@ -188,7 +190,6 @@ namespace Sledge.Editor.Settings
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.label44 = new System.Windows.Forms.Label();
-            this.label45 = new System.Windows.Forms.Label();
             this.lblGameWAD = new System.Windows.Forms.Label();
             this.SelectedGameLightmapScale = new System.Windows.Forms.NumericUpDown();
             this.lblConfigLightmapScale = new System.Windows.Forms.Label();
@@ -305,12 +306,17 @@ namespace Sledge.Editor.Settings
             this.btnCancelSettings = new System.Windows.Forms.Button();
             this.btnApplyAndCloseSettings = new System.Windows.Forms.Button();
             this.btnApplySettings = new System.Windows.Forms.Button();
+            this.HelpTooltip = new System.Windows.Forms.ToolTip(this.components);
             this.SelectedBuildCsgParameters = new Sledge.Editor.Compiling.CompileParameterPanel();
             this.SelectedBuildBspParameters = new Sledge.Editor.Compiling.CompileParameterPanel();
             this.SelectedBuildVisParameters = new Sledge.Editor.Compiling.CompileParameterPanel();
             this.SelectedBuildRadParameters = new Sledge.Editor.Compiling.CompileParameterPanel();
             this.SelectedBuildSharedParameters = new Sledge.Editor.Compiling.CompileParameterPanel();
-            this.SelectedGameIncludeFgdDirectoriesInEnvironment = new System.Windows.Forms.CheckBox();
+            this.SelectedGameBlacklistTextbox = new System.Windows.Forms.TextBox();
+            this.label45 = new System.Windows.Forms.Label();
+            this.SelectedGameWhitelistTextbox = new System.Windows.Forms.TextBox();
+            this.label46 = new System.Windows.Forms.Label();
+            this.groupBox19 = new System.Windows.Forms.GroupBox();
             this.tbcSettings.SuspendLayout();
             this.tabGeneral.SuspendLayout();
             this.tabIntegration.SuspendLayout();
@@ -379,6 +385,7 @@ namespace Sledge.Editor.Settings
             ((System.ComponentModel.ISupportInitialize)(this.trackBar2)).BeginInit();
             this.groupBox7.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
+            this.groupBox19.SuspendLayout();
             this.SuspendLayout();
             // 
             // tbcSettings
@@ -2053,6 +2060,18 @@ namespace Sledge.Editor.Settings
     "en below.";
             this.label33.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
+            // SelectedGameIncludeFgdDirectoriesInEnvironment
+            // 
+            this.SelectedGameIncludeFgdDirectoriesInEnvironment.Checked = true;
+            this.SelectedGameIncludeFgdDirectoriesInEnvironment.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.SelectedGameIncludeFgdDirectoriesInEnvironment.Location = new System.Drawing.Point(184, 246);
+            this.SelectedGameIncludeFgdDirectoriesInEnvironment.Name = "SelectedGameIncludeFgdDirectoriesInEnvironment";
+            this.SelectedGameIncludeFgdDirectoriesInEnvironment.Size = new System.Drawing.Size(264, 24);
+            this.SelectedGameIncludeFgdDirectoriesInEnvironment.TabIndex = 19;
+            this.SelectedGameIncludeFgdDirectoriesInEnvironment.Text = "Load sprites and models from FGD directories";
+            this.SelectedGameIncludeFgdDirectoriesInEnvironment.UseVisualStyleBackColor = true;
+            this.SelectedGameIncludeFgdDirectoriesInEnvironment.CheckedChanged += new System.EventHandler(this.SelectedGameOverrideMapSizeChanged);
+            // 
             // SelectedGameOverrideMapSize
             // 
             this.SelectedGameOverrideMapSize.Checked = true;
@@ -2149,9 +2168,9 @@ namespace Sledge.Editor.Settings
             // 
             // tabConfigTextures
             // 
+            this.tabConfigTextures.Controls.Add(this.groupBox19);
             this.tabConfigTextures.Controls.Add(this.SelectedGameAdditionalPackageList);
             this.tabConfigTextures.Controls.Add(this.label44);
-            this.tabConfigTextures.Controls.Add(this.label45);
             this.tabConfigTextures.Controls.Add(this.lblGameWAD);
             this.tabConfigTextures.Controls.Add(this.SelectedGameLightmapScale);
             this.tabConfigTextures.Controls.Add(this.lblConfigLightmapScale);
@@ -2175,10 +2194,10 @@ namespace Sledge.Editor.Settings
             this.columnHeader3});
             this.SelectedGameAdditionalPackageList.FullRowSelect = true;
             this.SelectedGameAdditionalPackageList.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
-            this.SelectedGameAdditionalPackageList.Location = new System.Drawing.Point(6, 184);
+            this.SelectedGameAdditionalPackageList.Location = new System.Drawing.Point(6, 108);
             this.SelectedGameAdditionalPackageList.Name = "SelectedGameAdditionalPackageList";
             this.SelectedGameAdditionalPackageList.ShowItemToolTips = true;
-            this.SelectedGameAdditionalPackageList.Size = new System.Drawing.Size(364, 160);
+            this.SelectedGameAdditionalPackageList.Size = new System.Drawing.Size(364, 123);
             this.SelectedGameAdditionalPackageList.TabIndex = 18;
             this.SelectedGameAdditionalPackageList.UseCompatibleStateImageBehavior = false;
             this.SelectedGameAdditionalPackageList.View = System.Windows.Forms.View.Details;
@@ -2194,34 +2213,27 @@ namespace Sledge.Editor.Settings
             // label44
             // 
             this.label44.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label44.Location = new System.Drawing.Point(6, 9);
+            this.label44.Location = new System.Drawing.Point(6, 48);
             this.label44.Name = "label44";
-            this.label44.Size = new System.Drawing.Size(427, 20);
+            this.label44.Size = new System.Drawing.Size(457, 33);
             this.label44.TabIndex = 9;
-            this.label44.Text = "Sledge automatically includes textures from your game/mod directories.";
+            this.label44.Text = "Sledge automatically includes textures from your game/mod directories.\r\nYou can c" +
+    "hange or override this behaviour with these options.";
             this.label44.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // label45
-            // 
-            this.label45.Location = new System.Drawing.Point(6, 32);
-            this.label45.Name = "label45";
-            this.label45.Size = new System.Drawing.Size(457, 121);
-            this.label45.TabIndex = 9;
-            this.label45.Text = resources.GetString("label45.Text");
-            this.label45.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // lblGameWAD
             // 
-            this.lblGameWAD.Location = new System.Drawing.Point(6, 161);
+            this.lblGameWAD.Location = new System.Drawing.Point(6, 85);
             this.lblGameWAD.Name = "lblGameWAD";
-            this.lblGameWAD.Size = new System.Drawing.Size(220, 20);
+            this.lblGameWAD.Size = new System.Drawing.Size(364, 20);
             this.lblGameWAD.TabIndex = 9;
-            this.lblGameWAD.Text = "Additional Texture Packages";
+            this.lblGameWAD.Text = "Additional Texture Packages (mouse over here for more information)";
             this.lblGameWAD.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.HelpTooltip.SetToolTip(this.lblGameWAD, resources.GetString("lblGameWAD.ToolTip"));
             // 
             // SelectedGameLightmapScale
             // 
-            this.SelectedGameLightmapScale.Location = new System.Drawing.Point(319, 376);
+            this.SelectedGameLightmapScale.Location = new System.Drawing.Point(359, 12);
             this.SelectedGameLightmapScale.Name = "SelectedGameLightmapScale";
             this.SelectedGameLightmapScale.Size = new System.Drawing.Size(51, 20);
             this.SelectedGameLightmapScale.TabIndex = 17;
@@ -2233,7 +2245,7 @@ namespace Sledge.Editor.Settings
             // 
             // lblConfigLightmapScale
             // 
-            this.lblConfigLightmapScale.Location = new System.Drawing.Point(196, 376);
+            this.lblConfigLightmapScale.Location = new System.Drawing.Point(236, 12);
             this.lblConfigLightmapScale.Name = "lblConfigLightmapScale";
             this.lblConfigLightmapScale.Size = new System.Drawing.Size(117, 20);
             this.lblConfigLightmapScale.TabIndex = 9;
@@ -2242,7 +2254,7 @@ namespace Sledge.Editor.Settings
             // 
             // SelectedGameAddAdditionalPackageFolder
             // 
-            this.SelectedGameAddAdditionalPackageFolder.Location = new System.Drawing.Point(376, 213);
+            this.SelectedGameAddAdditionalPackageFolder.Location = new System.Drawing.Point(376, 137);
             this.SelectedGameAddAdditionalPackageFolder.Name = "SelectedGameAddAdditionalPackageFolder";
             this.SelectedGameAddAdditionalPackageFolder.Size = new System.Drawing.Size(87, 23);
             this.SelectedGameAddAdditionalPackageFolder.TabIndex = 1;
@@ -2252,7 +2264,7 @@ namespace Sledge.Editor.Settings
             // 
             // SelectedGameAddAdditionalPackageFile
             // 
-            this.SelectedGameAddAdditionalPackageFile.Location = new System.Drawing.Point(376, 184);
+            this.SelectedGameAddAdditionalPackageFile.Location = new System.Drawing.Point(376, 108);
             this.SelectedGameAddAdditionalPackageFile.Name = "SelectedGameAddAdditionalPackageFile";
             this.SelectedGameAddAdditionalPackageFile.Size = new System.Drawing.Size(87, 23);
             this.SelectedGameAddAdditionalPackageFile.TabIndex = 1;
@@ -2268,7 +2280,7 @@ namespace Sledge.Editor.Settings
             0,
             0,
             131072});
-            this.SelectedGameTextureScale.Location = new System.Drawing.Point(319, 350);
+            this.SelectedGameTextureScale.Location = new System.Drawing.Point(133, 10);
             this.SelectedGameTextureScale.Name = "SelectedGameTextureScale";
             this.SelectedGameTextureScale.Size = new System.Drawing.Size(51, 20);
             this.SelectedGameTextureScale.TabIndex = 17;
@@ -2280,7 +2292,7 @@ namespace Sledge.Editor.Settings
             // 
             // lblConfigTextureScale
             // 
-            this.lblConfigTextureScale.Location = new System.Drawing.Point(196, 350);
+            this.lblConfigTextureScale.Location = new System.Drawing.Point(10, 10);
             this.lblConfigTextureScale.Name = "lblConfigTextureScale";
             this.lblConfigTextureScale.Size = new System.Drawing.Size(117, 20);
             this.lblConfigTextureScale.TabIndex = 9;
@@ -2289,7 +2301,7 @@ namespace Sledge.Editor.Settings
             // 
             // SelectedGameRemoveAdditionalPackage
             // 
-            this.SelectedGameRemoveAdditionalPackage.Location = new System.Drawing.Point(376, 242);
+            this.SelectedGameRemoveAdditionalPackage.Location = new System.Drawing.Point(376, 166);
             this.SelectedGameRemoveAdditionalPackage.Name = "SelectedGameRemoveAdditionalPackage";
             this.SelectedGameRemoveAdditionalPackage.Size = new System.Drawing.Size(87, 23);
             this.SelectedGameRemoveAdditionalPackage.TabIndex = 3;
@@ -3437,6 +3449,16 @@ namespace Sledge.Editor.Settings
             this.btnApplySettings.UseVisualStyleBackColor = true;
             this.btnApplySettings.Click += new System.EventHandler(this.Apply);
             // 
+            // HelpTooltip
+            // 
+            this.HelpTooltip.AutomaticDelay = 0;
+            this.HelpTooltip.AutoPopDelay = 32000;
+            this.HelpTooltip.InitialDelay = 500;
+            this.HelpTooltip.IsBalloon = true;
+            this.HelpTooltip.ReshowDelay = 100;
+            this.HelpTooltip.UseAnimation = false;
+            this.HelpTooltip.UseFading = false;
+            // 
             // SelectedBuildCsgParameters
             // 
             this.SelectedBuildCsgParameters.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -3482,17 +3504,59 @@ namespace Sledge.Editor.Settings
             this.SelectedBuildSharedParameters.Size = new System.Drawing.Size(449, 408);
             this.SelectedBuildSharedParameters.TabIndex = 1;
             // 
-            // SelectedGameIncludeFgdDirectoriesInEnvironment
+            // SelectedGameBlacklistTextbox
             // 
-            this.SelectedGameIncludeFgdDirectoriesInEnvironment.Checked = true;
-            this.SelectedGameIncludeFgdDirectoriesInEnvironment.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.SelectedGameIncludeFgdDirectoriesInEnvironment.Location = new System.Drawing.Point(184, 246);
-            this.SelectedGameIncludeFgdDirectoriesInEnvironment.Name = "SelectedGameIncludeFgdDirectoriesInEnvironment";
-            this.SelectedGameIncludeFgdDirectoriesInEnvironment.Size = new System.Drawing.Size(264, 24);
-            this.SelectedGameIncludeFgdDirectoriesInEnvironment.TabIndex = 19;
-            this.SelectedGameIncludeFgdDirectoriesInEnvironment.Text = "Load sprites and models from FGD directories";
-            this.SelectedGameIncludeFgdDirectoriesInEnvironment.UseVisualStyleBackColor = true;
-            this.SelectedGameIncludeFgdDirectoriesInEnvironment.CheckedChanged += new System.EventHandler(this.SelectedGameOverrideMapSizeChanged);
+            this.SelectedGameBlacklistTextbox.Location = new System.Drawing.Point(6, 53);
+            this.SelectedGameBlacklistTextbox.Multiline = true;
+            this.SelectedGameBlacklistTextbox.Name = "SelectedGameBlacklistTextbox";
+            this.SelectedGameBlacklistTextbox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.SelectedGameBlacklistTextbox.Size = new System.Drawing.Size(208, 144);
+            this.SelectedGameBlacklistTextbox.TabIndex = 19;
+            // 
+            // label45
+            // 
+            this.label45.Location = new System.Drawing.Point(6, 10);
+            this.label45.Name = "label45";
+            this.label45.Size = new System.Drawing.Size(208, 40);
+            this.label45.TabIndex = 20;
+            this.label45.Text = "Blacklisted Packages (one per line)\r\n(mouse over here for more information)";
+            this.label45.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
+            this.HelpTooltip.SetToolTip(this.label45, "Type the names of all the packages or folders you\r\nwant to exclude from the textu" +
+        "re list. The name must\r\nmatch exactly: \"test\" will only match \"test.wad\", not \"t" +
+        "est1.wad\".\r\n");
+            // 
+            // SelectedGameWhitelistTextbox
+            // 
+            this.SelectedGameWhitelistTextbox.Location = new System.Drawing.Point(232, 53);
+            this.SelectedGameWhitelistTextbox.Multiline = true;
+            this.SelectedGameWhitelistTextbox.Name = "SelectedGameWhitelistTextbox";
+            this.SelectedGameWhitelistTextbox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.SelectedGameWhitelistTextbox.Size = new System.Drawing.Size(208, 144);
+            this.SelectedGameWhitelistTextbox.TabIndex = 19;
+            // 
+            // label46
+            // 
+            this.label46.Location = new System.Drawing.Point(232, 10);
+            this.label46.Name = "label46";
+            this.label46.Size = new System.Drawing.Size(208, 40);
+            this.label46.TabIndex = 20;
+            this.label46.Text = "Whitelisted Packages (one per line)\r\nUse with caution!\r\n(mouse over here for more" +
+    " information)";
+            this.label46.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
+            this.HelpTooltip.SetToolTip(this.label46, resources.GetString("label46.ToolTip"));
+            // 
+            // groupBox19
+            // 
+            this.groupBox19.Controls.Add(this.label45);
+            this.groupBox19.Controls.Add(this.label46);
+            this.groupBox19.Controls.Add(this.SelectedGameBlacklistTextbox);
+            this.groupBox19.Controls.Add(this.SelectedGameWhitelistTextbox);
+            this.groupBox19.Location = new System.Drawing.Point(6, 237);
+            this.groupBox19.Name = "groupBox19";
+            this.groupBox19.Size = new System.Drawing.Size(457, 203);
+            this.groupBox19.TabIndex = 21;
+            this.groupBox19.TabStop = false;
+            this.groupBox19.Text = "Blacklisting/Whitelisting";
             // 
             // SettingsForm
             // 
@@ -3591,6 +3655,8 @@ namespace Sledge.Editor.Settings
             ((System.ComponentModel.ISupportInitialize)(this.trackBar2)).EndInit();
             this.groupBox7.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).EndInit();
+            this.groupBox19.ResumeLayout(false);
+            this.groupBox19.PerformLayout();
             this.ResumeLayout(false);
 
 		}
@@ -3865,8 +3931,13 @@ namespace Sledge.Editor.Settings
         private System.Windows.Forms.CheckBox SelectedBuildRunCsgCheckbox;
         private System.Windows.Forms.CheckBox SelectedBuildDontRedirectOutput;
         private System.Windows.Forms.Label label44;
-        private System.Windows.Forms.Label label45;
         private System.Windows.Forms.Button SelectedGameAddAdditionalPackageFolder;
         private System.Windows.Forms.CheckBox SelectedGameIncludeFgdDirectoriesInEnvironment;
+        private System.Windows.Forms.ToolTip HelpTooltip;
+        private System.Windows.Forms.Label label46;
+        private System.Windows.Forms.Label label45;
+        private System.Windows.Forms.TextBox SelectedGameWhitelistTextbox;
+        private System.Windows.Forms.TextBox SelectedGameBlacklistTextbox;
+        private System.Windows.Forms.GroupBox groupBox19;
 	}
 }

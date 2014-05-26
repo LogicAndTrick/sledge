@@ -239,6 +239,8 @@ namespace Sledge.Editor.Settings
             SelectedGameDefaultBrushEnt.SelectedIndexChanged += (s, e) => CheckNull(_selectedGame, x => x.DefaultBrushEntity = SelectedGameDefaultBrushEnt.Text);
             SelectedGameTextureScale.ValueChanged += (s, e) => CheckNull(_selectedGame, x => x.DefaultTextureScale = SelectedGameTextureScale.Value);
             SelectedGameLightmapScale.ValueChanged += (s, e) => CheckNull(_selectedGame, x => x.DefaultLightmapScale = SelectedGameLightmapScale.Value);
+            SelectedGameBlacklistTextbox.TextChanged += (s, e) => CheckNull(_selectedGame, x => x.PackageBlacklist = SelectedGameBlacklistTextbox.Text.Trim());
+            SelectedGameWhitelistTextbox.TextChanged += (s, e) => CheckNull(_selectedGame, x => x.PackageWhitelist = SelectedGameWhitelistTextbox.Text.Trim());
             SelectedGameIncludeFgdDirectoriesInEnvironment.CheckedChanged += (s, e) => CheckNull(_selectedGame, x => x.IncludeFgdDirectoriesInEnvironment = SelectedGameIncludeFgdDirectoriesInEnvironment.Checked);
             SelectedGameOverrideMapSize.CheckedChanged += (s, e) => CheckNull(_selectedGame, x => x.OverrideMapSize = SelectedGameOverrideMapSize.Checked);
             var sizes = new[] {4096, 8192, 16384, 32768, 65536};
@@ -1059,6 +1061,8 @@ namespace Sledge.Editor.Settings
             SelectedGameDefaultBrushEnt.SelectedText = _selectedGame.DefaultBrushEntity;
             SelectedGameTextureScale.Value = _selectedGame.DefaultTextureScale;
             SelectedGameLightmapScale.Value = _selectedGame.DefaultLightmapScale;
+            SelectedGameBlacklistTextbox.Text = _selectedGame.PackageBlacklist ?? "";
+            SelectedGameWhitelistTextbox.Text = _selectedGame.PackageWhitelist ?? "";
             SelectedGameIncludeFgdDirectoriesInEnvironment.Checked = _selectedGame.IncludeFgdDirectoriesInEnvironment;
             SelectedGameOverrideMapSize.Checked = _selectedGame.OverrideMapSize;
             var sizes = new[] { 4096, 8192, 16384, 32768, 65536 };

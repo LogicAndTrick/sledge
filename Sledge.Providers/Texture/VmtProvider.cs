@@ -12,10 +12,13 @@ namespace Sledge.Providers.Texture
 {
     public class VmtProvider : TextureProvider
     {
-        private Dictionary<TexturePackage, QuickRoot> _roots = new Dictionary<TexturePackage, QuickRoot>();
+        private readonly Dictionary<TexturePackage, QuickRoot> _roots = new Dictionary<TexturePackage, QuickRoot>();
 
-        public override IEnumerable<TexturePackage> CreatePackages(IEnumerable<string> sourceRoots, IEnumerable<string> additionalPackages)
+        public override IEnumerable<TexturePackage> CreatePackages(IEnumerable<string> sourceRoots, IEnumerable<string> additionalPackages, IEnumerable<string> blacklist, IEnumerable<string> whitelist)
         {
+            var blist = blacklist.Select(x => x.TrimEnd('/', '\\')).Where(x => !String.IsNullOrWhiteSpace(x)).Select(x => x + '/').ToList();
+            var wlist = whitelist.Select(x => x.TrimEnd('/', '\\')).Where(x => !String.IsNullOrWhiteSpace(x)).Select(x => x + '/').ToList();
+
             var roots = sourceRoots.ToList();
             var packages = new Dictionary<string, TexturePackage>();
 
@@ -60,6 +63,15 @@ namespace Sledge.Providers.Texture
 
                 var size = Vtf.VtfProvider.GetSize(vtfRoot.OpenFile(baseTexture));
                 packages[dir].AddTexture(new TextureItem(packages[dir], vmt, baseTexture, size.Width, size.Height));
+            }
+
+            foreach (var key in packages.Keys.ToList())
+            {
+                if ((blist.Any(x => x.StartsWith(key, StringComparison.InvariantCultureIgnoreCase))) ||
+                    (wlist.Any() && !wlist.Any(x => x.StartsWith(key, StringComparison.InvariantCultureIgnoreCase))))
+                {
+                    packages.Remove(key);
+                }
             }
 
             vmtRoot.Dispose();

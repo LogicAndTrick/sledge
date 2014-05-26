@@ -117,14 +117,33 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="label45.Text" xml:space="preserve">
-    <value>Only add entries in this section if you want to load textures that do not exist on your game path. They will not appear in-game unless you include them in the BSP using the compile tools.
+  <metadata name="HelpTooltip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>17, 17</value>
+  </metadata>
+  <data name="label46.ToolTip" xml:space="preserve">
+    <value>Type the names of all the packages or folders you
+want to include in the texture list. If packages are
+specified in this list, no other packages will be loaded.
+Put each package name on a line. The name must match
+exactly: "test" will only match "test.wad", not "test1.wad".
 
-For Goldsource: Add WAD files or a folder containing WAD files (subfolders are not scanned). Auto-detection of wads is automatically performed when saving your map.
+If this list is not blank, all other texture packages will be ignored!</value>
+  </data>
+  <data name="lblGameWAD.ToolTip" xml:space="preserve">
+    <value>Only add entries in this section if you want to load textures that
+do not exist on your game path. They will not appear in-game
+unless you include them in the BSP using the compile tools.
 
-For Source: Add a folder containing VMT/VTF files (optionally, in a subfolder called "materials"). All subfolders are scanned. The VMT and VTF files must be in their correct relative locations within the folder, or they will not be loaded.</value>
+For Goldsource: Add WAD files or a folder containing WAD files
+(subfolders are not scanned). Auto-detection of wads is
+automatically performed when saving your map.
+
+For Source: Add a folder containing VMT/VTF files (optionally,
+in a subfolder called "materials"). All subfolders are scanned.
+The VMT and VTF files must be in their correct relative locations
+within the folder, or they will not be loaded.</value>
   </data>
   <metadata name="$this.TrayHeight" type="System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>36</value>
+    <value>66</value>
   </metadata>
 </root>

@@ -155,33 +155,47 @@ namespace Sledge.Providers.Texture
 
         private TexturePackage CreatePackage(string package)
         {
-            if (!File.Exists(package)) return null;
-
-            var tp = new TexturePackage(package, Path.GetFileNameWithoutExtension(package), this);
-            if (LoadFromCache(tp)) return tp;
-
-            var list = new List<TextureItem>();
-            using (var pack = new WadPackage(new FileInfo(package)))
+            try
             {
-                list.AddRange(pack.GetEntries().OfType<WadEntry>().Select(x => new TextureItem(tp, x.Name, (int) x.Width, (int) x.Height)));
+                if (!File.Exists(package)) return null;
+
+                var tp = new TexturePackage(package, Path.GetFileNameWithoutExtension(package), this);
+                if (LoadFromCache(tp)) return tp;
+
+                var list = new List<TextureItem>();
+                using (var pack = new WadPackage(new FileInfo(package)))
+                {
+                    list.AddRange(pack.GetEntries().OfType<WadEntry>().Select(x => new TextureItem(tp, x.Name, (int) x.Width, (int) x.Height)));
+                }
+                foreach (var ti in list)
+                {
+                    tp.AddTexture(ti);
+                }
+                SaveToCache(tp);
+                return tp;
             }
-            foreach (var ti in list)
+            catch
             {
-                tp.AddTexture(ti);
+                return null;
             }
-            SaveToCache(tp);
-            return tp;
         }
 
-        public override IEnumerable<TexturePackage> CreatePackages(IEnumerable<string> sourceRoots, IEnumerable<string> additionalPackages)
+        public override IEnumerable<TexturePackage> CreatePackages(IEnumerable<string> sourceRoots, IEnumerable<string> additionalPackages, IEnumerable<string> blacklist, IEnumerable<string> whitelist)
         {
+            var blist = blacklist.Select(x => x.EndsWith(".wad") ? x.Substring(0, x.Length - 4) : x).Where(x => !String.IsNullOrWhiteSpace(x)).ToList();
+            var wlist = whitelist.Select(x => x.EndsWith(".wad") ? x.Substring(0, x.Length - 4) : x).Where(x => !String.IsNullOrWhiteSpace(x)).ToList();
             var wads = sourceRoots.Union(additionalPackages)
                 .Where(Directory.Exists)
                 .SelectMany(x => Directory.GetFiles(x, "*.wad", SearchOption.TopDirectoryOnly))
                 .Union(additionalPackages.Where(x => x.EndsWith(".wad") && File.Exists(x)))
                 .GroupBy(Path.GetFileNameWithoutExtension)
-                .Select(x => x.First());
-            return wads.AsParallel().Select(CreatePackage);
+                .Select(x => x.First())
+                .Where(x => !blist.Any(b => String.Equals(Path.GetFileNameWithoutExtension(x) ?? x, b, StringComparison.InvariantCultureIgnoreCase)));
+            if (wlist.Any())
+            {
+                wads = wads.Where(x => wlist.Contains(Path.GetFileNameWithoutExtension(x) ?? x, StringComparer.InvariantCultureIgnoreCase));
+            }
+            return wads.AsParallel().Select(CreatePackage).Where(x => x != null);
         }
 
         public override void DeletePackages(IEnumerable<TexturePackage> packages)

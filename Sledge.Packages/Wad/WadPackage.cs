@@ -65,6 +65,7 @@ namespace Sledge.Packages.Wad
                 var name = br.ReadFixedLengthString(Encoding.ASCII, 16).ToLowerInvariant();
 
                 if (!validTypes.Contains(type)) continue; // Skip unsupported types
+                if (Entries.Any(x => x.Name == name)) continue; // Don't add duplicates
                 Entries.Add(new WadEntry(this, name, (WadEntryType) type, offset, compressionType, compressedLength, fullLength));
             }
         }

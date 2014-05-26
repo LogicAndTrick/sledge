@@ -41,19 +41,21 @@ namespace Sledge.Providers.Texture
         #endregion
 
         protected string CachePath { get; private set; }
-        public abstract IEnumerable<TexturePackage> CreatePackages(IEnumerable<string> sourceRoots, IEnumerable<string> additionalPackages);
+        public abstract IEnumerable<TexturePackage> CreatePackages(IEnumerable<string> sourceRoots, IEnumerable<string> additionalPackages, IEnumerable<string> blacklist, IEnumerable<string> whitelist);
         public abstract void DeletePackages(IEnumerable<TexturePackage> packages);
         public abstract void LoadTextures(IEnumerable<TextureItem> items);
         public abstract ITextureStreamSource GetStreamSource(int maxWidth, int maxHeight, IEnumerable<TexturePackage> packages);
 
-        public static TextureCollection CreateCollection(IEnumerable<string> sourceRoots, IEnumerable<string> additionalPackages = null)
+        public static TextureCollection CreateCollection(IEnumerable<string> sourceRoots, IEnumerable<string> additionalPackages, IEnumerable<string> blacklist, IEnumerable<string> whitelist)
         {
             var list = sourceRoots.ToList();
             var additional = additionalPackages == null ? new List<string>() : additionalPackages.ToList();
+            var wl = whitelist == null ? new List<string>() : whitelist.ToList();
+            var bl = blacklist == null ? new List<string>() : blacklist.ToList();
             var pkgs = new List<TexturePackage>();
             foreach (var provider in RegisteredProviders)
             {
-                pkgs.AddRange(provider.CreatePackages(list, additional));
+                pkgs.AddRange(provider.CreatePackages(list, additional, bl, wl));
             }
             var tc = new TextureCollection(pkgs);
             Packages.AddRange(pkgs);

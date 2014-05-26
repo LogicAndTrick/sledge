@@ -40,6 +40,8 @@ namespace Sledge.Settings.Models
 
         public List<Fgd> Fgds { get; set; }
         public List<string> AdditionalPackages { get; set; }
+        public string PackageBlacklist { get; set; }
+        public string PackageWhitelist { get; set; }
 
         public Game()
         {
@@ -89,6 +91,9 @@ namespace Sledge.Settings.Models
                 }
             }
 
+            PackageBlacklist = gs["PackageBlacklist"] ?? "";
+            PackageWhitelist = gs["PackageWhitelist"] ?? "";
+
             var fgds = gs.Children.FirstOrDefault(x => x.Name == "Fgds");
             if (fgds != null)
             {
@@ -137,6 +142,9 @@ namespace Sledge.Settings.Models
                 i++;
             }
             gs.Children.Add(additional);
+
+            gs["PackageBlacklist"] = PackageBlacklist ?? "";
+            gs["PackageWhitelist"] = PackageWhitelist ?? "";
 
             var fgds = new GenericStructure("Fgds");
             i = 1;
@@ -192,6 +200,23 @@ namespace Sledge.Settings.Models
                 if (mod != "valve") return "-game " + mod;
                 return "";
             }
+        }
+
+        public IEnumerable<string> GetTextureBlacklist()
+        {
+            var bl = new List<string>();
+            if (Engine == Engine.Goldsource)
+            {
+                bl.Add("cached");
+                bl.Add("gfx");
+            }
+            bl.AddRange((PackageBlacklist ?? "").Trim().Split('\n').Select(x => x.Trim()).Where(x => !String.IsNullOrWhiteSpace(x)));
+            return bl;
+        }
+
+        public IEnumerable<string> GetTextureWhitelist()
+        {
+            return (PackageWhitelist ?? "").Trim().Split('\n').Select(x => x.Trim()).Where(x => !String.IsNullOrWhiteSpace(x));
         }
 
         private int GetSteamAppId()
