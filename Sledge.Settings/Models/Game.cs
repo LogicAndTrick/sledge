@@ -91,8 +91,8 @@ namespace Sledge.Settings.Models
                 }
             }
 
-            PackageBlacklist = gs["PackageBlacklist"] ?? "";
-            PackageWhitelist = gs["PackageWhitelist"] ?? "";
+            PackageBlacklist = (gs["PackageBlacklist"] ?? "").Replace(";", "\r\n");
+            PackageWhitelist = (gs["PackageWhitelist"] ?? "").Replace(";", "\r\n");
 
             var fgds = gs.Children.FirstOrDefault(x => x.Name == "Fgds");
             if (fgds != null)
@@ -143,8 +143,8 @@ namespace Sledge.Settings.Models
             }
             gs.Children.Add(additional);
 
-            gs["PackageBlacklist"] = PackageBlacklist ?? "";
-            gs["PackageWhitelist"] = PackageWhitelist ?? "";
+            gs["PackageBlacklist"] = (PackageBlacklist ?? "").Replace("\r", "").Replace('\n', ';');
+            gs["PackageWhitelist"] = (PackageWhitelist ?? "").Replace("\r", "").Replace('\n', ';');
 
             var fgds = new GenericStructure("Fgds");
             i = 1;
