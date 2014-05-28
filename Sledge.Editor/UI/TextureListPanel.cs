@@ -340,7 +340,8 @@ namespace Sledge.Editor.UI
 
             var packs = _textures.Select(t => t.Package).Distinct();
             if (_streamSource != null) _streamSource.Dispose();
-            _streamSource = DocumentManager.CurrentDocument.TextureCollection.GetStreamSource(_imageSize, _imageSize, packs);
+            if (DocumentManager.CurrentDocument == null) _streamSource = null;
+            else _streamSource = DocumentManager.CurrentDocument.TextureCollection.GetStreamSource(_imageSize, _imageSize, packs);
 
             OnSelectionChanged(_selection);
             UpdateRectangles();

@@ -123,7 +123,7 @@ namespace Sledge.Graphics.Helpers
             {
                 actualBitmap.Dispose();
             }
-            var texobj = new GLTexture(tex, name) { Width = width, Height = height, HasTransparency = hasTransparency, BitmapImage = (Bitmap)bitmap.Clone() };
+            var texobj = new GLTexture(tex, name) { Width = width, Height = height, HasTransparency = hasTransparency };
             Textures.Add(name, texobj);
             return texobj;
         }

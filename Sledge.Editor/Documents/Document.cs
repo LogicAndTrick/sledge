@@ -107,7 +107,8 @@ namespace Sledge.Editor.Documents
                 GameData.MapSizeHigh = game.OverrideMapSizeHigh;
             }
 
-            TextureCollection = TextureProvider.CreateCollection(Environment.GetGameDirectories(), Game.AdditionalPackages, Game.GetTextureBlacklist().Union(GameData.MaterialExclusions), Game.GetTextureWhitelist());
+            TextureCollection = TextureProvider.CreateCollection(Environment.GetGameDirectories(), Game.AdditionalPackages, Game.GetTextureBlacklist(), Game.GetTextureWhitelist());
+            /* .Union(GameData.MaterialExclusions) */ // todo material exclusions
 
             var texList = Map.GetAllTextures();
             var items = TextureCollection.GetItems(texList);

@@ -126,7 +126,10 @@ namespace Sledge.Providers.Texture
                     var file = Path.Combine(root, item.Name);
                     if (File.Exists(file))
                     {
-                        TextureHelper.Create(item.Name, Parse(file), item.Width, item.Height, true);
+                        using (var bmp = Parse(file))
+                        {
+                            TextureHelper.Create(item.Name, bmp, item.Width, item.Height, true);
+                        }
                         break;
                     }
                 }

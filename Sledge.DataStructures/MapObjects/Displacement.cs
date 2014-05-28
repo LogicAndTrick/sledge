@@ -177,6 +177,53 @@ namespace Sledge.DataStructures.MapObjects
             }
         }
 
+        public override IEnumerable<Vertex> GetIndexedVertices()
+        {
+            return Points.OfType<DisplacementPoint>().Select(x => x.CurrentPosition);
+        }
+
+        public override IEnumerable<uint> GetTriangleIndices()
+        {
+            var res = (uint) Resolution + 1;
+            for (uint i = 0; i < res - 1; i++)
+            {
+                var flip = (i % 2 != 0);
+                for (uint j = 0; j < res - 1; j++)
+                {
+                    var t = i;
+                    var b = i;
+                    if (flip) t++;
+                    else b++;
+
+                    yield return (i) * res + (j);
+                    yield return (i + 1) * res + (j);
+                    yield return (b) * res + (j + 1);
+
+                    yield return (t) * res + (j);
+                    yield return (i + 1) * res + (j + 1);
+                    yield return (i) * res + (j + 1);
+
+                    flip = !flip;
+                }
+            }
+        }
+
+        public override IEnumerable<uint> GetLineIndices()
+        {
+            var tv = GetTriangleIndices().ToList();
+            for (var i = 0; i < tv.Count; i += 3)
+            {
+                yield return tv[i + 0];
+                yield return tv[i + 1];
+
+                yield return tv[i + 1];
+                yield return tv[i + 2];
+
+                yield return tv[i + 2];
+                yield return tv[i + 0];
+            }
+        }
+
         public override IEnumerable<Vertex[]> GetTriangles()
         {
             var res = Resolution;

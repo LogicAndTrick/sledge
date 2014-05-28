@@ -143,8 +143,8 @@ namespace Sledge.Editor.Rendering.Arrays
 
                     PushOffset(face);
                     var index = PushData(Convert(face));
-                    if (!face.Parent.IsRenderHidden3D && face.Opacity > 0) PushIndex(subset, index, Triangulate(face.Vertices.Count));
-                    if (!face.Parent.IsRenderHidden2D) PushIndex(BrushWireframe, index, Linearise(face.Vertices.Count));
+                    if (!face.Parent.IsRenderHidden3D && face.Opacity > 0) PushIndex(subset, index, face.GetTriangleIndices());
+                    if (!face.Parent.IsRenderHidden2D) PushIndex(BrushWireframe, index, face.GetLineIndices());
 
                     if (group.Key.Transparent) PushSubset(subset, face);
                 }
@@ -168,8 +168,8 @@ namespace Sledge.Editor.Rendering.Arrays
                     foreach (var face in entity.GetBoxFaces())
                     {
                         var index = PushData(Convert(face));
-                        if (!face.Parent.IsRenderHidden3D) PushIndex(Textured, index, Triangulate(face.Vertices.Count));
-                        if (!face.Parent.IsRenderHidden2D) PushIndex(EntityWireframe, index, Linearise(face.Vertices.Count));
+                        if (!face.Parent.IsRenderHidden3D) PushIndex(Textured, index, face.GetTriangleIndices());
+                        if (!face.Parent.IsRenderHidden2D) PushIndex(EntityWireframe, index, face.GetLineIndices());
                     }
                     if (g.Key) PushSubset(Textured, entity);
                 }
@@ -194,7 +194,7 @@ namespace Sledge.Editor.Rendering.Arrays
                   g = face.Colour.G / 255f,
                   b = face.Colour.B / 255f,
                   a = face.Opacity;
-            return face.Vertices.Select(vert => new MapObjectVertex
+            return face.GetIndexedVertices().Select(vert => new MapObjectVertex
             {
                 Position = new Vector3((float)vert.Location.DX, (float)vert.Location.DY, (float)vert.Location.DZ),
                 Normal = new Vector3(nx, ny, nz),

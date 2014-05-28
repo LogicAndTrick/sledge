@@ -12,7 +12,6 @@ namespace Sledge.Graphics
         public int Width { get; set; }
         public int Height { get; set; }
         public bool HasTransparency { get; set; }
-        public Bitmap BitmapImage { get; set; }
 
         internal GLTexture(int reference, string name)
         {
@@ -32,7 +31,6 @@ namespace Sledge.Graphics
 
         public void Dispose()
         {
-            BitmapImage.Dispose();
             TextureHelper.DeleteTexture(Reference);
             TextureHelper.Textures.Remove(Name);
         }

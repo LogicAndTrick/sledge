@@ -71,38 +71,6 @@ namespace Sledge.Providers.Texture
             return bmp;
         }
 
-        private class WadStreamSource : ITextureStreamSource
-        {
-            private readonly List<WadPackage> _packages;
-            private readonly List<IPackageStreamSource> _streams;
-
-            public WadStreamSource(IEnumerable<TexturePackage> packages)
-            {
-                _packages = packages.Select(x => new WadPackage(new FileInfo(x.PackageRoot))).ToList();
-                _streams = _packages.Select(x => x.GetStreamSource()).ToList();
-            }
-
-            public bool HasImage(TextureItem item)
-            {
-                return _streams.Any(x => x.HasFile(item.Name.ToLowerInvariant()));
-            }
-
-            public Bitmap GetImage(TextureItem item)
-            {
-                using (var stream = _streams.First(x => x.HasFile(item.Name.ToLowerInvariant())).OpenFile(item.Name.ToLowerInvariant()))
-                {
-                    bool hasTransparency;
-                    return PostProcessBitmap(item.Package.PackageRelativePath, item.Name.ToLowerInvariant(), new Bitmap(stream), out hasTransparency);
-                }
-            }
-
-            public void Dispose()
-            {
-                _streams.ForEach(x => x.Dispose());
-                _packages.ForEach(x => x.Dispose());
-            }
-        }
-
         private const char NullCharacter = (char) 0;
 
         private bool LoadFromCache(TexturePackage package)
@@ -153,20 +121,24 @@ namespace Sledge.Providers.Texture
             File.WriteAllLines(cacheFile, lines);
         }
 
+        private readonly Dictionary<TexturePackage, WadStream> _roots = new Dictionary<TexturePackage, WadStream>();
+
         private TexturePackage CreatePackage(string package)
         {
             try
             {
-                if (!File.Exists(package)) return null;
+                var fi = new FileInfo(package);
+                if (!fi.Exists) return null;
 
                 var tp = new TexturePackage(package, Path.GetFileNameWithoutExtension(package), this);
                 if (LoadFromCache(tp)) return tp;
 
                 var list = new List<TextureItem>();
-                using (var pack = new WadPackage(new FileInfo(package)))
-                {
-                    list.AddRange(pack.GetEntries().OfType<WadEntry>().Select(x => new TextureItem(tp, x.Name, (int) x.Width, (int) x.Height)));
-                }
+
+                var pack = _roots.Values.FirstOrDefault(x => x.Package.PackageFile.FullName == fi.FullName);
+                if (pack == null) _roots.Add(tp, pack = new WadStream(new WadPackage(fi)));
+
+                list.AddRange(pack.Package.GetEntries().OfType<WadEntry>().Select(x => new TextureItem(tp, x.Name, (int) x.Width, (int) x.Height)));
                 foreach (var ti in list)
                 {
                     tp.AddTexture(ti);
@@ -200,15 +172,33 @@ namespace Sledge.Providers.Texture
 
         public override void DeletePackages(IEnumerable<TexturePackage> packages)
         {
-
+            var packs = packages.ToList();
+            var roots = _roots.Where(x => packs.Contains(x.Key)).Select(x => x.Value).ToList();
+            foreach (var tp in packs)
+            {
+                _roots.Remove(tp);
+            }
+            foreach (var root in roots.Where(x => !_roots.ContainsValue(x)))
+            {
+                root.Dispose();
+            }
         }
 
         public override void LoadTextures(IEnumerable<TextureItem> items)
         {
             var list = items.ToList();
             var packages = list.Select(x => x.Package).Distinct().ToList();
-            var packs = packages.Select(x => new WadPackage(new FileInfo(x.PackageRoot))).ToList();
-            var streams = packs.Select(x => x.GetStreamSource()).ToList();
+            var packs = packages.Select(x =>
+            {
+                if (!_roots.ContainsKey(x))
+                {
+                    var wp = new WadStream(new WadPackage(new FileInfo(x.PackageRoot)));
+                    _roots.Add(x, wp);
+                }
+                return _roots[x];
+
+            }).ToList();
+            var streams = packs.Select(x => x.StreamSource).ToList();
 
             // Process the bitmaps in parallel
             var bitmaps = list.AsParallel().Select(ti =>
@@ -240,12 +230,69 @@ namespace Sledge.Providers.Texture
                 TextureHelper.Create(bmp.Name, bmp.Bitmap, bmp.Width, bmp.Height, bmp.HasTransparency);
                 bmp.Bitmap.Dispose();
             }
-            foreach (var pack in packs) pack.Dispose();
         }
 
         public override ITextureStreamSource GetStreamSource(int maxWidth, int maxHeight, IEnumerable<TexturePackage> packages)
         {
-            return new WadStreamSource(packages);
+            var packs = packages.Select(x =>
+            {
+                if (!_roots.ContainsKey(x))
+                {
+                    var wp = new WadStream(new WadPackage(new FileInfo(x.PackageRoot)));
+                    _roots.Add(x, wp);
+                }
+                return _roots[x];
+
+            }).ToList();
+            var streams = packs.Select(x => x.StreamSource).ToList();
+            return new WadStreamSource(streams);
+        }
+
+        private class WadStreamSource : ITextureStreamSource
+        {
+            private readonly List<IPackageStreamSource> _streams;
+
+            public WadStreamSource(IEnumerable<IPackageStreamSource> streams)
+            {
+                _streams = streams.ToList();
+            }
+
+            public bool HasImage(TextureItem item)
+            {
+                return _streams.Any(x => x.HasFile(item.Name.ToLowerInvariant()));
+            }
+
+            public Bitmap GetImage(TextureItem item)
+            {
+                using (var stream = _streams.First(x => x.HasFile(item.Name.ToLowerInvariant())).OpenFile(item.Name.ToLowerInvariant()))
+                {
+                    bool hasTransparency;
+                    return PostProcessBitmap(item.Package.PackageRelativePath, item.Name.ToLowerInvariant(), new Bitmap(stream), out hasTransparency);
+                }
+            }
+
+            public void Dispose()
+            {
+
+            }
+        }
+
+        private class WadStream : IDisposable
+        {
+            public WadPackage Package { get; set; }
+            public IPackageStreamSource StreamSource { get; private set; }
+
+            public WadStream(WadPackage package)
+            {
+                Package = package;
+                StreamSource = package.GetStreamSource();
+            }
+
+            public void Dispose()
+            {
+                StreamSource.Dispose();
+                Package.Dispose();
+            }
         }
     }
 }

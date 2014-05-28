@@ -59,14 +59,12 @@ namespace Sledge.Tests
             public int Width { get; set; }
             public int Height { get; set; }
             public bool HasTransparency { get; set; }
-            public Bitmap BitmapImage { get; set; }
 
             public MockTexture(int width, int height, string name)
             {
                 Width = width;
                 Height = height;
                 Name = name;
-                BitmapImage = new Bitmap(width, height);
             }
 
             public void Bind()

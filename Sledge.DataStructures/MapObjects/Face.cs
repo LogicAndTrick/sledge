@@ -36,7 +36,7 @@ namespace Sledge.DataStructures.MapObjects
             Opacity = 1;
         }
 
-        public Face Copy(IDGenerator generator)
+        public virtual Face Copy(IDGenerator generator)
         {
             var f = new Face(generator.GetNextFaceID())
                         {
@@ -57,14 +57,14 @@ namespace Sledge.DataStructures.MapObjects
             return f;
         }
 
-        public Face Clone()
+        public virtual Face Clone()
         {
             var f = Copy(new IDGenerator());
             f.ID = ID;
             return f;
         }
 
-        public void Paste(Face f)
+        public virtual void Paste(Face f)
         {
             Plane = f.Plane.Clone();
             Colour = f.Colour;
@@ -82,7 +82,7 @@ namespace Sledge.DataStructures.MapObjects
             }
         }
 
-        public void Unclone(Face f)
+        public virtual void Unclone(Face f)
         {
             Paste(f);
             ID = f.ID;
@@ -93,11 +93,36 @@ namespace Sledge.DataStructures.MapObjects
             return GetEdges();
         }
 
-        public IEnumerable<Line> GetEdges()
+        public virtual IEnumerable<Line> GetEdges()
         {
             for (var i = 0; i < Vertices.Count; i++)
             {
                 yield return new Line(Vertices[i].Location, Vertices[(i + 1) % Vertices.Count].Location);
+            }
+        }
+
+        public virtual IEnumerable<Vertex> GetIndexedVertices()
+        {
+            return Vertices;
+        }
+
+        public virtual IEnumerable<uint> GetTriangleIndices()
+        {
+            for (uint i = 1; i < Vertices.Count - 1; i++)
+            {
+                yield return 0;
+                yield return i;
+                yield return i + 1;
+            }
+        }
+
+        public virtual IEnumerable<uint> GetLineIndices()
+        {
+            for (uint i = 0; i < Vertices.Count; i++)
+            {
+                var ni = (uint)((i + 1) % Vertices.Count);
+                yield return i;
+                yield return ni;
             }
         }
 
