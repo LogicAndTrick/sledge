@@ -176,6 +176,7 @@ namespace Sledge.Settings
                 {
                     var ft = GenericStructure.Deserialise<List<FavouriteTextureFolder>>(favTextures.Children[0]);
                     if (ft != null) FavouriteTextureFolders.AddRange(ft);
+                    FixFavouriteNames(FavouriteTextureFolders);
                 }
                 catch
                 {
@@ -186,6 +187,20 @@ namespace Sledge.Settings
             if (!File.Exists(SettingsFile))
             {
                 Write();
+            }
+        }
+
+        private static void FixFavouriteNames(IEnumerable<FavouriteTextureFolder> folders)
+        {
+            foreach (var f in folders)
+            {
+                FixFavouriteNames(f.Children);
+                f.Items = f.Items.Select(x =>
+                {
+                    var i = x.IndexOf(':');
+                    if (i >= 0) x = x.Substring(i + 1);
+                    return x;
+                }).ToList();
             }
         }
 

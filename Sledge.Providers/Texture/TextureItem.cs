@@ -60,10 +60,5 @@ namespace Sledge.Providers.Texture
             }
             return TextureHelper.Get(Name.ToLowerInvariant());
         }
-
-        public string GetIdentifierKey()
-        {
-            return Package.PackageRoot + "/" + ":" + Name;
-        }
     }
 }

@@ -215,9 +215,9 @@ namespace Sledge.Editor.UI
             return _textures.Where(x => InFavouriteList(favs, x));
         }
 
-        private bool InFavouriteList(List<string> favs, TextureItem ti)
+        private bool InFavouriteList(IEnumerable<string> favs, TextureItem ti)
         {
-            return favs.Contains(ti.GetIdentifierKey());
+            return favs.Contains(ti.Name, StringComparer.InvariantCultureIgnoreCase);
         }
 
         private void CollectNodes(List<FavouriteTextureFolder> favs, IEnumerable<FavouriteTextureFolder> folders)
@@ -359,8 +359,7 @@ namespace Sledge.Editor.UI
                     var folder = (FavouriteTextureFolder) dest.Tag;
                     foreach (var ti in data)
                     {
-                        var str = ti.GetIdentifierKey();
-                        if (!folder.Items.Contains(str)) folder.Items.Add(str);
+                        if (!folder.Items.Contains(ti.Name, StringComparer.InvariantCultureIgnoreCase)) folder.Items.Add(ti.Name);
                     }
                     UpdateFavouritesList();
                 }
@@ -397,7 +396,7 @@ namespace Sledge.Editor.UI
 
         private void RemoveFavouriteItemButtonClicked(object sender, EventArgs e)
         {
-            var selection = TextureList.GetSelectedTextures().Select(x => x.GetIdentifierKey());
+            var selection = TextureList.GetSelectedTextures().Select(x => x.Name);
 
             var folder = FavouritesTree.SelectedNode;
             var node = folder == null ? null : folder.Tag as FavouriteTextureFolder;
