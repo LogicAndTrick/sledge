@@ -30,6 +30,7 @@ namespace Sledge.Editor.UI
         {
             DoCheck();
             base.OnLoad(e);
+            CloseButton.Select();
         }
 
         private List<Problem> _problems;
