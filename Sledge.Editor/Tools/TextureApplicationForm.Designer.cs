@@ -342,6 +342,7 @@ namespace Sledge.Editor.Tools
             this.RotationValue.Size = new System.Drawing.Size(57, 20);
             this.RotationValue.TabIndex = 18;
             this.RotationValue.ValueChanged += new System.EventHandler(this.RotationValueChanged);
+            this.RotationValue.Enter += new System.EventHandler(this.FocusTextInControl);
             // 
             // ReplaceButton
             // 
@@ -387,7 +388,7 @@ namespace Sledge.Editor.Tools
             this.tableLayoutPanel1.ColumnCount = 3;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 65F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 199F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 202F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel1.Controls.Add(this.ScaleXValue, 1, 1);
@@ -435,6 +436,7 @@ namespace Sledge.Editor.Tools
             0,
             131072});
             this.ScaleXValue.ValueChanged += new System.EventHandler(this.ScaleXValueChanged);
+            this.ScaleXValue.Enter += new System.EventHandler(this.FocusTextInControl);
             // 
             // label1
             // 
@@ -500,6 +502,7 @@ namespace Sledge.Editor.Tools
             0,
             131072});
             this.ScaleYValue.ValueChanged += new System.EventHandler(this.ScaleYValueChanged);
+            this.ScaleYValue.Enter += new System.EventHandler(this.FocusTextInControl);
             // 
             // ShiftXValue
             // 
@@ -523,6 +526,7 @@ namespace Sledge.Editor.Tools
             0,
             65536});
             this.ShiftXValue.ValueChanged += new System.EventHandler(this.ShiftXValueChanged);
+            this.ShiftXValue.Enter += new System.EventHandler(this.FocusTextInControl);
             // 
             // ShiftYValue
             // 
@@ -546,6 +550,7 @@ namespace Sledge.Editor.Tools
             0,
             65536});
             this.ShiftYValue.ValueChanged += new System.EventHandler(this.ShiftYValueChanged);
+            this.ShiftYValue.Enter += new System.EventHandler(this.FocusTextInControl);
             // 
             // label8
             // 
@@ -579,6 +584,7 @@ namespace Sledge.Editor.Tools
             0,
             0});
             this.LightmapValue.ValueChanged += new System.EventHandler(this.LightmapValueChanged);
+            this.LightmapValue.Enter += new System.EventHandler(this.FocusTextInControl);
             // 
             // HoverTip
             // 

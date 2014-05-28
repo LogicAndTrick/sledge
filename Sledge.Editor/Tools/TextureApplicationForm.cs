@@ -533,5 +533,11 @@ namespace Sledge.Editor.Tools
                 Mediator.Publish(HotkeysMediator.SwitchTool, HotkeyTool.Selection);
             }
         }
+
+        private void FocusTextInControl(object sender, EventArgs e)
+        {
+            var nud = sender as NumericUpDown;
+            if (nud != null) nud.Select(0, nud.Text.Length);
+        }
     }
 }
