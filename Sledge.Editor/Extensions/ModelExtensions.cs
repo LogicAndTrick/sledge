@@ -19,22 +19,37 @@ namespace Sledge.Editor.Extensions
         public static bool UpdateModels(this Map map, Document document)
         {
             if (Sledge.Settings.View.DisableModelRendering) return false;
-            return UpdateModels(document, map.WorldSpawn);
+
+            var cache = document.GetMemory<Dictionary<string, ModelReference>>("ModelCache");
+            if (cache == null)
+            {
+                cache = new Dictionary<string, ModelReference>();
+                document.SetMemory("ModelCache", cache);
+            }
+
+            return UpdateModels(document, map.WorldSpawn, cache);
         }
 
         public static bool UpdateModels(this Map map, Document document, IEnumerable<MapObject> objects)
         {
             if (Sledge.Settings.View.DisableModelRendering) return false;
 
+            var cache = document.GetMemory<Dictionary<string, ModelReference>>("ModelCache");
+            if (cache == null)
+            {
+                cache = new Dictionary<string, ModelReference>();
+                document.SetMemory("ModelCache", cache);
+            }
+
             var updated = false;
-            foreach (var mo in objects) updated |= UpdateModels(document, mo);
+            foreach (var mo in objects) updated |= UpdateModels(document, mo, cache);
             return updated;
         }
 
-        private static bool UpdateModels(Document document, MapObject mo)
+        private static bool UpdateModels(Document document, MapObject mo, Dictionary<string, ModelReference> cache)
         {
             var updatedChildren = false;
-            foreach (var child in mo.GetChildren()) updatedChildren |= UpdateModels(document, child);
+            foreach (var child in mo.GetChildren()) updatedChildren |= UpdateModels(document, child, cache);
 
             var e = mo as Entity;
             if (e == null || !ShouldHaveModel(e))
@@ -48,23 +63,37 @@ namespace Sledge.Editor.Extensions
             var existingModel = e.MetaData.Get<string>(ModelNameMetaKey);
             if (String.Equals(model, existingModel, StringComparison.InvariantCultureIgnoreCase)) return updatedChildren; // Already set; No need to continue
 
-            var file = document.Environment.Root.TraversePath(model);
-            if (file == null || !ModelProvider.CanLoad(file))
+            if (cache.ContainsKey(model))
             {
-                // Model not valid, get rid of it
-                UnsetModel(e);
+                var mr = cache[model];
+                if (mr == null) UnsetModel(e);
+                else SetModel(e, mr);
                 return true;
             }
+            else
+            {
+                var file = document.Environment.Root.TraversePath(model);
+                if (file == null || !ModelProvider.CanLoad(file))
+                {
+                    // Model not valid, get rid of it
+                    UnsetModel(e);
+                    cache.Add(model, null);
+                    return true;
+                }
 
-            try
-            {
-                SetModel(e, ModelProvider.CreateModelReference(file));
-                return true;
-            }
-            catch
-            {
-                // Couldn't load
-                return updatedChildren;
+                try
+                {
+                    var mr = ModelProvider.CreateModelReference(file);
+                    SetModel(e, mr);
+                    cache.Add(model, mr);
+                    return true;
+                }
+                catch
+                {
+                    // Couldn't load
+                    cache.Add(model, null);
+                    return updatedChildren;
+                }
             }
         }
 
