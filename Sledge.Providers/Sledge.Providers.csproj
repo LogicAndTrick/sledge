@@ -61,6 +61,7 @@
     <Compile Include="ProviderException.cs" />
     <Compile Include="ProviderNotFoundException.cs" />
     <Compile Include="Map\RmfProvider.cs" />
+    <Compile Include="Texture\TextureSubItemType.cs" />
     <Compile Include="Texture\VmtProvider.cs" />
     <Compile Include="Texture\SpriteOrientation.cs" />
     <Compile Include="Texture\SprProvider.cs" />

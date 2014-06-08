@@ -112,8 +112,11 @@ namespace Sledge.Editor.UI
                 if (lmouse || mmouse || !Sledge.Settings.View.Camera2DPanRequiresMouseClick)
                 {
                     var point = new Coordinate(e.X, Viewport2D.Height - e.Y, 0);
-                    var difference = _mouseDown - point;
-                    Viewport2D.Position += difference / Viewport2D.Zoom;
+                    if (_mouseDown != null)
+                    {
+                        var difference = _mouseDown - point;
+                        Viewport2D.Position += difference / Viewport2D.Zoom;
+                    }
                     _mouseDown = point;
                     e.Handled = true;
                 }
