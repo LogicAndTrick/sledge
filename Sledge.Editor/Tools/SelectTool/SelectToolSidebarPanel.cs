@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using Sledge.Common.Mediator;
 using Sledge.Editor.Brushes;
 using Sledge.Editor.Tools.TransformationTools;
+using Sledge.Settings;
 
 namespace Sledge.Editor.Tools.SelectTool
 {
@@ -100,6 +101,16 @@ namespace Sledge.Editor.Tools.SelectTool
         private void Show3DWidgetsChecked(object sender, EventArgs e)
         {
             OnToggleShow3DWidgets(Show3DWidgetsCheckbox.Checked);
+        }
+
+        private void MoveToWorldButtonClicked(object sender, EventArgs e)
+        {
+            Mediator.Publish(HotkeysMediator.TieToWorld);
+        }
+
+        private void TieToEntityButtonClicked(object sender, EventArgs e)
+        {
+            Mediator.Publish(HotkeysMediator.TieToEntity);
         }
     }
 }

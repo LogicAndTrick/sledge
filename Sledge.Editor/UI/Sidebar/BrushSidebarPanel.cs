@@ -17,8 +17,6 @@ namespace Sledge.Editor.UI.Sidebar
         {
             InitializeComponent();
 
-            BrushManager.Init();
-            BrushManager.SetBrushControl(this);
             Mediator.Subscribe(EditorMediator.ResetSelectedBrushType, this);
 
             RoundCreatedVerticesCheckbox.Checked = BrushManager.RoundCreatedVertices;

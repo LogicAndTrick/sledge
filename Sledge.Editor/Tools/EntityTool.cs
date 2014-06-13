@@ -14,6 +14,7 @@ using Sledge.Editor.Actions.MapObjects.Operations;
 using Sledge.Editor.Actions.MapObjects.Selection;
 using Sledge.Editor.Properties;
 using Sledge.Editor.UI;
+using Sledge.Editor.UI.Sidebar;
 using Sledge.Settings;
 using Sledge.UI;
 using Select = Sledge.Settings.Select;
@@ -32,12 +33,14 @@ namespace Sledge.Editor.Tools
         private Coordinate _location;
         private EntityState _state;
         private ToolStripItem[] _menu;
+        private EntitySidebarPanel _sidebarPanel;
 
         public EntityTool()
         {
             Usage = ToolUsage.Both;
             _location = new Coordinate(0, 0, 0);
             _state = EntityState.None;
+            _sidebarPanel = new EntitySidebarPanel();
         }
 
         public override Image GetIcon()
@@ -49,7 +52,12 @@ namespace Sledge.Editor.Tools
         {
             return "Entity Tool";
         }
-        
+
+        public override Control GetSidebarControl()
+        {
+            return _sidebarPanel;
+        }
+
         public override void ToolSelected(bool preventHistory)
         {
             System.Threading.Tasks.Task.Factory.StartNew(BuildMenu);

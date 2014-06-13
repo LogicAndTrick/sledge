@@ -33,8 +33,8 @@ namespace Sledge.Editor.UI.Sidebar
 
             CreatePanel("Textures", new TextureSidebarPanel());
             CreatePanel("Visgroups", new VisgroupSidebarPanel());
-            CreatePanel("Entities", new EntitySidebarPanel());
-            CreatePanel("Brushes", new BrushSidebarPanel());
+            //CreatePanel("Entities", new EntitySidebarPanel());
+            //CreatePanel("Brushes", new BrushSidebarPanel());
         }
 
         private static SidebarPanel CreatePanel(string text, Control contents, bool insert = false)
@@ -80,7 +80,7 @@ namespace Sledge.Editor.UI.Sidebar
             var control = ToolManager.ActiveTool.GetSidebarControl();
             if (control == null) return;
 
-            _toolPanel = CreatePanel(ToolManager.ActiveTool.GetName(), control, true);
+            _toolPanel = CreatePanel(ToolManager.ActiveTool.GetName(), control);
         }
 
         public void Notify(string message, object data)

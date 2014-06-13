@@ -13,6 +13,7 @@ using Microsoft.WindowsAPICodePack.Taskbar;
 using Sledge.Common.Mediator;
 using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.MapObjects;
+using Sledge.Editor.Brushes;
 using Sledge.Editor.Compiling;
 using Sledge.Editor.Documents;
 using Sledge.Editor.Menu;
@@ -111,6 +112,7 @@ namespace Sledge.Editor
             MenuManager.Init(mnuMain, tscToolStrip);
             MenuManager.Rebuild();
 
+            BrushManager.Init();
             SidebarManager.Init(RightSidebar);
 
             ViewportManager.Init(TableSplitView);

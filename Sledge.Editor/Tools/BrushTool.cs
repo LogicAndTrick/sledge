@@ -41,6 +41,11 @@ namespace Sledge.Editor.Tools
             return HotkeyTool.Brush;
         }
 
+        public override Control GetSidebarControl()
+        {
+            return BrushManager.SidebarControl;
+        }
+
         protected override Color BoxColour
         {
             get { return Color.Turquoise; }

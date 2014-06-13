@@ -78,6 +78,11 @@ namespace Sledge.Editor.Tools
             return HotkeyTool.Sketch;
         }
 
+        public override Control GetSidebarControl()
+        {
+            return BrushManager.SidebarControl;
+        }
+
         public override void MouseEnter(ViewportBase viewport, ViewportEvent e)
         {
             // 

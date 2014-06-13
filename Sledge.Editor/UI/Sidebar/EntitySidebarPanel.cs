@@ -23,16 +23,6 @@ namespace Sledge.Editor.UI.Sidebar
             Mediator.Subscribe(EditorMediator.DocumentAllClosed, this);
         }
 
-        private void MoveToWorldButtonClicked(object sender, EventArgs e)
-        {
-            Mediator.Publish(HotkeysMediator.TieToWorld);
-        }
-
-        private void TieToEntityButtonClicked(object sender, EventArgs e)
-        {
-            Mediator.Publish(HotkeysMediator.TieToEntity);
-        }
-
         private void DocumentActivated(Document doc)
         {
             var selEnt = EntityTypeList.SelectedItem as GameDataObject;

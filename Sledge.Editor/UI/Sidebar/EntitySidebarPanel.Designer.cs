@@ -30,8 +30,6 @@
         {
             this.label2 = new System.Windows.Forms.Label();
             this.EntityTypeList = new System.Windows.Forms.ComboBox();
-            this.MoveToWorldButton = new System.Windows.Forms.Button();
-            this.MoveToEntityButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // label2
@@ -55,37 +53,15 @@
             this.EntityTypeList.TabIndex = 5;
             this.EntityTypeList.SelectedIndexChanged += new System.EventHandler(this.SelectedEntityChanged);
             // 
-            // MoveToWorldButton
-            // 
-            this.MoveToWorldButton.Location = new System.Drawing.Point(3, 47);
-            this.MoveToWorldButton.Name = "MoveToWorldButton";
-            this.MoveToWorldButton.Size = new System.Drawing.Size(86, 23);
-            this.MoveToWorldButton.TabIndex = 6;
-            this.MoveToWorldButton.Text = "Move to World";
-            this.MoveToWorldButton.UseVisualStyleBackColor = true;
-            this.MoveToWorldButton.Click += new System.EventHandler(this.MoveToWorldButtonClicked);
-            // 
-            // MoveToEntityButton
-            // 
-            this.MoveToEntityButton.Location = new System.Drawing.Point(95, 47);
-            this.MoveToEntityButton.Name = "MoveToEntityButton";
-            this.MoveToEntityButton.Size = new System.Drawing.Size(84, 23);
-            this.MoveToEntityButton.TabIndex = 7;
-            this.MoveToEntityButton.Text = "Tie to Entity";
-            this.MoveToEntityButton.UseVisualStyleBackColor = true;
-            this.MoveToEntityButton.Click += new System.EventHandler(this.TieToEntityButtonClicked);
-            // 
             // EntitySidebarPanel
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.label2);
             this.Controls.Add(this.EntityTypeList);
-            this.Controls.Add(this.MoveToWorldButton);
-            this.Controls.Add(this.MoveToEntityButton);
-            this.MinimumSize = new System.Drawing.Size(200, 80);
+            this.MinimumSize = new System.Drawing.Size(200, 50);
             this.Name = "EntitySidebarPanel";
-            this.Size = new System.Drawing.Size(200, 80);
+            this.Size = new System.Drawing.Size(200, 50);
             this.ResumeLayout(false);
 
         }
@@ -94,7 +70,5 @@
 
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.ComboBox EntityTypeList;
-        private System.Windows.Forms.Button MoveToWorldButton;
-        private System.Windows.Forms.Button MoveToEntityButton;
     }
 }

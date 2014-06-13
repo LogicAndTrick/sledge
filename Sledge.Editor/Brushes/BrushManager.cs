@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using Sledge.Editor.Brushes.Controls;
+using Sledge.Editor.UI.Sidebar;
 
 namespace Sledge.Editor.Brushes
 {
@@ -25,7 +26,6 @@ namespace Sledge.Editor.Brushes
 
         private static readonly List<IBrush> Brushes;
         private static readonly List<BrushControl> CurrentControls;
-        private static Control _brushControl;
         private static ComboBox _comboBox;
         private static bool _roundCreatedVertices;
 
@@ -38,6 +38,8 @@ namespace Sledge.Editor.Brushes
                 if (CurrentBrush != null) OnValuesChanged(CurrentBrush);
             }
         }
+
+        public static Control SidebarControl { get; private set; }
 
         static BrushManager()
         {
@@ -58,6 +60,8 @@ namespace Sledge.Editor.Brushes
             Brushes.Add(new ArchBrush());
             Brushes.Add(new SphereBrush());
             Brushes.Add(new TorusBrush());
+
+            SetBrushControl(new BrushSidebarPanel());
         }
 
         private static ComboBox FindComboBox(Control parent)
@@ -68,8 +72,8 @@ namespace Sledge.Editor.Brushes
 
         public static void SetBrushControl(Control brushControl)
         {
-            _brushControl = brushControl;
-            _comboBox = FindComboBox(_brushControl);
+            SidebarControl = brushControl;
+            _comboBox = FindComboBox(SidebarControl);
             if (_comboBox != null)
             {
                 _comboBox.SelectedIndexChanged += (sender, e) => UpdateSelectedBrush(Brushes[((ComboBox) sender).SelectedIndex]);
@@ -80,7 +84,7 @@ namespace Sledge.Editor.Brushes
         private static void UpdateSelectedBrush(IBrush brush)
         {
             CurrentControls.ForEach(x => x.ValuesChanged -= ControlValuesChanged);
-            CurrentControls.ForEach(x => _brushControl.Controls.Remove(x));
+            CurrentControls.ForEach(x => SidebarControl.Controls.Remove(x));
             CurrentControls.Clear();
             CurrentBrush = brush;
             if (CurrentBrush == null) return;
@@ -90,8 +94,8 @@ namespace Sledge.Editor.Brushes
                 var ctrl = CurrentControls[i];
                 ctrl.Dock = DockStyle.Top;
                 ctrl.ValuesChanged += ControlValuesChanged;
-                _brushControl.Controls.Add(ctrl);
-                _brushControl.Controls.SetChildIndex(ctrl, i);
+                SidebarControl.Controls.Add(ctrl);
+                SidebarControl.Controls.SetChildIndex(ctrl, i);
             }
             //_brushControl.MinimumSize = new Size(0, _brushControl.Controls.OfType<Control>().Sum(x => x.Height + 6));
             OnValuesChanged(CurrentBrush);
@@ -110,7 +114,7 @@ namespace Sledge.Editor.Brushes
 
         private static void UpdateBrushControl()
         {
-            if (_brushControl == null || _comboBox == null) return;
+            if (SidebarControl == null || _comboBox == null) return;
             var sel = _comboBox.SelectedIndex;
             _comboBox.Items.Clear();
             _comboBox.Items.AddRange(Brushes.Select(x => x.Name).OfType<object>().ToArray());
