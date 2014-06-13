@@ -38,23 +38,6 @@ namespace Sledge.Settings
                                               {"hint", 0.5f},
                                               {"origin", 0.5f},
                                               {"skip", 0.5f},
-                                              {"tools/toolsareaportal", 0.5f},
-                                              {"tools/toolsblock_los", 0.5f},
-                                              {"tools/toolsblockbullets", 0.5f},
-                                              {"tools/toolsblocklight", 0.5f},
-                                              {"tools/toolsclip", 0.5f},
-                                              {"tools/toolscontrolclip", 0.5f},
-                                              {"tools/toolsfog", 0.5f},
-                                              {"tools/toolshint", 0.5f},
-                                              {"tools/toolsinvisible", 0.5f},
-                                              {"tools/toolsinvisibledisplacement", 0.5f},
-                                              {"tools/toolsinvisibleladder", 0.5f},
-                                              {"tools/toolsnpcclip", 0.5f},
-                                              {"tools/toolsoccluder", 0.5f},
-                                              {"tools/toolsorigin", 0.5f},
-                                              {"tools/toolsplayerclip", 0.5f},
-                                              {"tools/toolsskip", 0.5f},
-                                              {"tools/toolstrigger", 0.5f}
                                           };
             AdditionalSettings = new Dictionary<string, GenericStructure>();
             FavouriteTextureFolders = new List<FavouriteTextureFolder>();

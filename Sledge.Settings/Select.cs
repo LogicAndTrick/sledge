@@ -25,6 +25,8 @@
         public static bool ClickSelectByCenterHandlesOnly { get; set; }
         public static bool BoxSelectByCenterHandlesOnly { get; set; }
 
+        public static bool Show3DSelectionWidgets { get; set; }
+
         public static bool ApplyTextureImmediately { get; set; }
 
         public static bool SkipSelectionInUndoStack { get; set; }
@@ -55,6 +57,10 @@
             CenterHandlesFollowCursor = true;
             ClickSelectByCenterHandlesOnly = false;
             BoxSelectByCenterHandlesOnly = false;
+
+            Show3DSelectionWidgets = true;
+
+            ApplyTextureImmediately = false;
 
             SkipSelectionInUndoStack = false;
             SkipVisibilityInUndoStack = false;

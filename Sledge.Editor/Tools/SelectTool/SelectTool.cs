@@ -9,7 +9,6 @@ using Sledge.Common.Mediator;
 using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.MapObjects;
 using Sledge.DataStructures.Transformations;
-using Sledge.Editor.Actions;
 using Sledge.Editor.Actions.MapObjects.Operations;
 using Sledge.Editor.Actions.MapObjects.Operations.EditOperations;
 using Sledge.Editor.Actions.MapObjects.Selection;
@@ -21,11 +20,8 @@ using Sledge.Editor.UI.ObjectProperties;
 using Sledge.Graphics;
 using Sledge.Settings;
 using Sledge.UI;
-using BeginMode = OpenTK.Graphics.OpenGL.BeginMode;
-using EnableCap = OpenTK.Graphics.OpenGL.EnableCap;
-using GL = OpenTK.Graphics.OpenGL.GL;
 
-namespace Sledge.Editor.Tools
+namespace Sledge.Editor.Tools.SelectTool
 {
     /// <summary>
     /// The select tool is used to select objects in several different ways:
@@ -43,6 +39,8 @@ namespace Sledge.Editor.Tools
         private TransformationTool _currentTool;
         private List<Widget> _widgets;
 
+        private readonly SelectToolSidebarPanel _sidebarPanel;
+
         private Matrix4? CurrentTransform { get; set; }
 
         public SelectTool()
@@ -55,6 +53,18 @@ namespace Sledge.Editor.Tools
                              new SkewTool()
                          };
             _widgets = new List<Widget>();
+
+            _sidebarPanel = new SelectToolSidebarPanel();
+            _sidebarPanel.ChangeTransformationTool += (sender, type) =>
+            {
+                var tool = _tools.FirstOrDefault(x => x.GetType() == type);
+                if (tool != null) SetCurrentTool(tool);
+            };
+            _sidebarPanel.ToggleShow3DWidgets += (sender, show) =>
+            {
+                Sledge.Settings.Select.Show3DSelectionWidgets = show;
+                SetCurrentTool(_currentTool);
+            };
         }
 
         public override Image GetIcon()
@@ -82,8 +92,14 @@ namespace Sledge.Editor.Tools
             get { return Color.FromArgb(Sledge.Settings.View.SelectionBoxBackgroundOpacity, Color.Gray); }
         }
 
+        public override Control GetSidebarControl()
+        {
+            return _sidebarPanel;
+        }
+
         public override void ToolSelected(bool preventHistory)
         {
+            SetCurrentTool(_currentTool);
             IgnoreGroupingChanged();
 
             Mediator.Subscribe(EditorMediator.SelectionChanged, this);
@@ -136,7 +152,8 @@ namespace Sledge.Editor.Tools
         {
             if (tool != null) _lastTool = tool;
             _currentTool = tool;
-            _widgets = (_currentTool == null) ? new List<Widget>() : _currentTool.GetWidgets(Document).ToList();
+            _sidebarPanel.TransformationToolChanged(_currentTool);
+            _widgets = (_currentTool == null || !Sledge.Settings.Select.Show3DSelectionWidgets) ? new List<Widget>() : _currentTool.GetWidgets(Document).ToList();
             foreach (var widget in _widgets)
             {
                 widget.OnTransforming = OnWidgetTransforming;

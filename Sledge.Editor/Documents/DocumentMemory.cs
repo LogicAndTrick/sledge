@@ -4,6 +4,7 @@ using System.Drawing;
 using OpenTK;
 using Sledge.DataStructures.Geometric;
 using Sledge.Editor.Tools;
+using Sledge.Editor.Tools.SelectTool;
 using Sledge.UI;
 
 namespace Sledge.Editor.Documents

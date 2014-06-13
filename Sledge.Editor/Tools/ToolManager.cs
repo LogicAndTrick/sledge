@@ -19,7 +19,7 @@ namespace Sledge.Editor.Tools
 
         public static void Init()
         {
-            Tools.Add(new SelectTool());
+            Tools.Add(new SelectTool.SelectTool());
             Tools.Add(new CameraTool());
             Tools.Add(new EntityTool());
             Tools.Add(new BrushTool());

@@ -237,7 +237,7 @@ namespace Sledge.Editor.Tools.Widgets
         {
             if (Document.Selection.IsEmpty()) return false;
 
-            var pivot = vp.WorldToScreen(_pivotPoint);
+            var pivot = vp.WorldToScreen(vp.Flatten(_pivotPoint));
             var x = e.X;
             var y = vp.Height - e.Y;
             return pivot.X > x - 8 && pivot.X < x + 8 &&

@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.ComponentModel;
 using Sledge.Common;
 using Sledge.Graphics.Helpers;
 
@@ -9,6 +8,7 @@ namespace Sledge.Providers.Texture
     {
         public TexturePackage Package { get; private set; }
         public string Name { get; private set; }
+        public TextureFlags Flags { get; set; }
 
         public TextureSubItem PrimarySubItem
         {
@@ -25,26 +25,29 @@ namespace Sledge.Providers.Texture
         public int Width { get { return PrimarySubItem.Width; } }
         public int Height { get { return PrimarySubItem.Height; } }
 
-        public TextureItem(TexturePackage package, string name, int width, int height)
+        public TextureItem(TexturePackage package, string name, TextureFlags flags, int width, int height)
         {
             Package = package;
             Name = name;
+            Flags = flags;
             var baseItem = new TextureSubItem(TextureSubItemType.Base, this, name, width, height);
             _subItems = new Dictionary<TextureSubItemType, TextureSubItem> {{TextureSubItemType.Base, baseItem}};
         }
 
-        public TextureItem(TexturePackage package, string name, string primarySubItemName, int width, int height)
+        public TextureItem(TexturePackage package, string name, TextureFlags flags, string primarySubItemName, int width, int height)
         {
             Package = package;
             Name = name;
+            Flags = flags;
             var baseItem = new TextureSubItem(TextureSubItemType.Base, this, primarySubItemName, width, height);
             _subItems = new Dictionary<TextureSubItemType, TextureSubItem> {{TextureSubItemType.Base, baseItem}};
         }
 
-        public TextureItem(TexturePackage package, string name)
+        public TextureItem(TexturePackage package, string name, TextureFlags flags)
         {
             Package = package;
             Name = name;
+            Flags = flags;
             _subItems = new Dictionary<TextureSubItemType, TextureSubItem>();
         }
 
@@ -55,7 +58,7 @@ namespace Sledge.Providers.Texture
             return si;
         }
 
-        public ITexture GetTexture(ISynchronizeInvoke invokable)
+        public ITexture GetTexture()
         {
             if (!TextureHelper.Exists(Name.ToLowerInvariant()))
             {

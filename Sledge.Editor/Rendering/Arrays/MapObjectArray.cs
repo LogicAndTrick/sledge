@@ -182,7 +182,7 @@ namespace Sledge.Editor.Rendering.Arrays
         private bool HasTransparency(Face face)
         {
             return face.Opacity < 0.95
-                   || (face.Texture.Texture != null && face.Texture.Texture.HasTransparency);
+                   || (face.Texture.Texture != null && face.Texture.Texture.HasTransparency());
         }
 
         protected IEnumerable<MapObjectVertex> Convert(Face face)

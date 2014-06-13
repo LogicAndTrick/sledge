@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
+using Sledge.Common;
 using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.MapObjects;
 using Sledge.DataStructures.Models;
@@ -279,8 +280,8 @@ namespace Sledge.Editor.Rendering.Renderers
             GL.EndList();
 
             _transparentFaces.Clear();
-            _transparentFaces.AddRange(selected.Where(x => x.Opacity < 0.9 || (x.Texture.Texture != null && x.Texture.Texture.HasTransparency)));
-            _transparentFaces.AddRange(unselected.Where(x => x.Opacity < 0.9 || (x.Texture.Texture != null && x.Texture.Texture.HasTransparency)));
+            _transparentFaces.AddRange(selected.Where(x => x.Opacity < 0.9 || (x.Texture.Texture != null && x.Texture.Texture.HasTransparency())));
+            _transparentFaces.AddRange(unselected.Where(x => x.Opacity < 0.9 || (x.Texture.Texture != null && x.Texture.Texture.HasTransparency())));
             _transparentFaces.AddRange(decals.SelectMany(x => x.GetDecalGeometry()));
 
             selected.RemoveAll(_transparentFaces.Contains);

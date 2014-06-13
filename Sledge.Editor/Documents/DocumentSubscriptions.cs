@@ -23,6 +23,7 @@ using Sledge.Editor.Enums;
 using Sledge.Editor.Rendering;
 using Sledge.Editor.Rendering.Helpers;
 using Sledge.Editor.Tools;
+using Sledge.Editor.Tools.SelectTool;
 using Sledge.Editor.UI;
 using Sledge.Editor.UI.ObjectProperties;
 using Sledge.Editor.Visgroups;
@@ -364,7 +365,7 @@ namespace Sledge.Editor.Documents
             if (_document.Selection.IsEmpty() || _document.Selection.InFaceSelection || Editor.Instance == null) return;
             var texture = _document.TextureCollection.SelectedTexture;
             if (texture == null) return;
-            var ti = texture.GetTexture(Editor.Instance);
+            var ti = texture.GetTexture();
             if (ti == null) return;
             Action<Document, Face> action = (document, face) =>
             {

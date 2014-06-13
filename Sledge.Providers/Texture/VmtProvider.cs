@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using Sledge.Common;
 using Sledge.Graphics.Helpers;
 using Sledge.Packages;
 using Sledge.Packages.Vpk;
@@ -71,7 +72,7 @@ namespace Sledge.Providers.Texture
                 if (!vtfRoot.HasFile(baseTexture)) continue;
 
                 var size = Vtf.VtfProvider.GetSize(vtfRoot.OpenFile(baseTexture));
-                packages[dir].AddTexture(new TextureItem(packages[dir], vmt, baseTexture, size.Width, size.Height));
+                packages[dir].AddTexture(new TextureItem(packages[dir], vmt, GetFlags(gs), baseTexture, size.Width, size.Height));
             }
 
             vmtRoot.Dispose();
@@ -82,6 +83,14 @@ namespace Sledge.Providers.Texture
             }
 
             return packages.Values;
+        }
+
+        private TextureFlags GetFlags(GenericStructure vmt)
+        {
+            var flags = TextureFlags.None;
+            var tp = vmt.PropertyInteger("$translucent") + vmt.PropertyInteger("$alphatest");
+            if (tp > 0) flags |= TextureFlags.Transparent;
+            return flags;
         }
 
         public override void DeletePackages(IEnumerable<TexturePackage> packages)
@@ -98,21 +107,6 @@ namespace Sledge.Providers.Texture
             }
         }
 
-        private bool QuickCheckTransparent(Bitmap img)
-        {
-            if (((ImageFlags) img.Flags).HasFlag(ImageFlags.HasTranslucent)) return true;
-            // Sample some pixels (edges, center, quarter midpoints)
-            return img.GetPixel(0, 0).A < 255 ||
-                   img.GetPixel(img.Width - 1, 0).A < 255 ||
-                   img.GetPixel(img.Width - 1, img.Height - 1).A < 255 ||
-                   img.GetPixel(0, img.Height - 1).A < 255 ||
-                   img.GetPixel(img.Width / 2, img.Height / 2).A < 255 ||
-                   img.GetPixel(img.Width / 4, img.Height / 2).A < 255 ||
-                   img.GetPixel(3 * img.Width / 4, img.Height / 2).A < 255 ||
-                   img.GetPixel(img.Width / 2, img.Height / 4).A < 255 ||
-                   img.GetPixel(img.Width / 2, 3 * img.Height / 4).A < 255;
-        }
-
         public override void LoadTextures(IEnumerable<TextureItem> items)
         {
             var groups = items.GroupBy(x => x.Package).ToList();
@@ -124,7 +118,7 @@ namespace Sledge.Providers.Texture
                 {
                     using (var bmp = Vtf.VtfProvider.GetImage(root.OpenFile(ti.PrimarySubItem.Name)))
                     {
-                        TextureHelper.Create(ti.Name.ToLowerInvariant(), bmp, ti.Width, ti.Height, QuickCheckTransparent(bmp));
+                        TextureHelper.Create(ti.Name.ToLowerInvariant(), bmp, ti.Width, ti.Height, ti.Flags);
                     }
                 }
             }

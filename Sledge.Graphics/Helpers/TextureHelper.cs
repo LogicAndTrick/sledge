@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Linq;
 using OpenTK.Graphics.OpenGL;
+using Sledge.Common;
 using PixelFormat = OpenTK.Graphics.OpenGL.PixelFormat;
 
 namespace Sledge.Graphics.Helpers
@@ -87,7 +88,7 @@ namespace Sledge.Graphics.Helpers
             return (int) (x + 1);
         }
 
-        public static GLTexture Create(string name, Bitmap bitmap, int width, int height, bool hasTransparency)
+        public static GLTexture Create(string name, Bitmap bitmap, int width, int height, TextureFlags flags)
         {
             if (Exists(name)) {
                 Delete(name);
@@ -123,7 +124,7 @@ namespace Sledge.Graphics.Helpers
             {
                 actualBitmap.Dispose();
             }
-            var texobj = new GLTexture(tex, name) { Width = width, Height = height, HasTransparency = hasTransparency };
+            var texobj = new GLTexture(tex, name, flags) { Width = width, Height = height };
             Textures.Add(name, texobj);
             return texobj;
         }

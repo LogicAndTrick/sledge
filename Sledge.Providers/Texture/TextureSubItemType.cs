@@ -1,4 +1,6 @@
-﻿namespace Sledge.Providers.Texture
+﻿using System;
+
+namespace Sledge.Providers.Texture
 {
     public enum TextureSubItemType
     {

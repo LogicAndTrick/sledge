@@ -280,6 +280,12 @@
     <Compile Include="Tools\BaseTool.cs" />
     <Compile Include="Tools\BrushTool.cs" />
     <Compile Include="Tools\ClipTool.cs" />
+    <Compile Include="Tools\SelectTool\SelectToolSidebarPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Tools\SelectTool\SelectToolSidebarPanel.Designer.cs">
+      <DependentUpon>SelectToolSidebarPanel.cs</DependentUpon>
+    </Compile>
     <Compile Include="Tools\SketchTool.cs" />
     <Compile Include="Tools\VMTools\VMError.cs" />
     <Compile Include="Tools\VMForm.cs">
@@ -316,7 +322,7 @@
     <Compile Include="Tools\TransformationTools\RotateTool.cs" />
     <Compile Include="Tools\TransformationTools\SkewTool.cs" />
     <Compile Include="Tools\TransformationTools\ResizeTool.cs" />
-    <Compile Include="Tools\SelectTool.cs" />
+    <Compile Include="Tools\SelectTool\SelectTool.cs" />
     <Compile Include="Tools\TextureApplicationForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -632,6 +638,9 @@
     </Compile>
     <EmbeddedResource Include="Settings\SettingsForm.resx">
       <DependentUpon>SettingsForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Tools\SelectTool\SelectToolSidebarPanel.resx">
+      <DependentUpon>SelectToolSidebarPanel.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Tools\VMForm.resx">
       <DependentUpon>VMForm.cs</DependentUpon>

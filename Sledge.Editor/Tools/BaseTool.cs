@@ -113,6 +113,11 @@ namespace Sledge.Editor.Tools
         public abstract string GetName();
         public abstract HotkeyTool? GetHotkeyToolType();
 
+        public virtual Control GetSidebarControl()
+        {
+            return null;
+        }
+
         protected BaseTool()
         {
             Viewport = null;

@@ -69,7 +69,7 @@ namespace Sledge.Editor.Rendering.Immediate
                             {
                                 f.Texture.Texture,
                                 Opacity = GetOpacity(f.Texture.Texture, f),
-                                Transparent = GetOpacity(f.Texture.Texture, f) < 0.9 || (f.Texture.Texture != null && f.Texture.Texture.HasTransparency)
+                                Transparent = GetOpacity(f.Texture.Texture, f) < 0.9 || (f.Texture.Texture != null && f.Texture.Texture.HasTransparency())
                             }
                                 into g
                                 select g;

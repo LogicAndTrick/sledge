@@ -37,6 +37,7 @@ namespace Sledge.Packages.Vpk
 
         public Stream Open()
         {
+            if (EntryLength == 0) return new MemoryStream(PreloadData);
             return Directory.OpenStream(this);
         }
 

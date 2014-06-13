@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using Sledge.Common;
 using Sledge.FileSystem;
 using Sledge.Graphics.Helpers;
 
@@ -128,7 +129,7 @@ namespace Sledge.Providers.Texture
                     {
                         using (var bmp = Parse(file))
                         {
-                            TextureHelper.Create(item.Name, bmp, item.Width, item.Height, true);
+                            TextureHelper.Create(item.Name, bmp, item.Width, item.Height, item.Flags);
                         }
                         break;
                     }
@@ -150,7 +151,7 @@ namespace Sledge.Providers.Texture
                 {
                     var size = GetSize(spr);
                     var rel = Path.GetFullPath(spr).Substring(dir.Length).TrimStart('/', '\\').Replace('\\', '/');
-                    tp.AddTexture(new TextureItem(tp, rel.ToLowerInvariant(), size.Width, size.Height));
+                    tp.AddTexture(new TextureItem(tp, rel.ToLowerInvariant(), TextureFlags.Transparent, size.Width, size.Height));
                 }
             }
             if (!tp.Items.Any()) yield break;

@@ -97,6 +97,13 @@ namespace Sledge.Editor.UI.Sidebar
                     e.Graphics.FillRectangle(brush, new Rectangle(0, 3, Width, Height - Padding.Vertical));
                 }
             }
+            else
+            {
+                using (var brush = new SolidBrush(BackColor.Darken(10)))
+                {
+                    e.Graphics.FillRectangle(brush, new Rectangle(0, Height - Padding.Vertical + 2, Width, 1));
+                }
+            }
             using (var brush = new SolidBrush(ForeColor))
             {
                 e.Graphics.FillPolygon(brush, GetTrianglePoints());

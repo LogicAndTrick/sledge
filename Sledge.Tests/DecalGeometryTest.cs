@@ -55,6 +55,7 @@ namespace Sledge.Tests
 
         class MockTexture : ITexture
         {
+            public TextureFlags Flags { get; private set; }
             public string Name { get; set; }
             public int Width { get; set; }
             public int Height { get; set; }

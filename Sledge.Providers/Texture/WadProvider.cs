@@ -4,6 +4,7 @@ using System.Drawing.Imaging;
 using System.Globalization;
 using System.Linq;
 using System.IO;
+using Sledge.Common;
 using Sledge.Graphics.Helpers;
 using System.Drawing;
 using Sledge.Packages;
@@ -93,7 +94,7 @@ namespace Sledge.Providers.Texture
                 foreach (var line in lines.Skip(3))
                 {
                     var spl = line.Split(NullCharacter);
-                    items.Add(new TextureItem(package, spl[0], int.Parse(spl[1], CultureInfo.InvariantCulture), int.Parse(spl[2], CultureInfo.InvariantCulture)));
+                    items.Add(new TextureItem(package, spl[0], GetFlags(spl[0]), int.Parse(spl[1], CultureInfo.InvariantCulture), int.Parse(spl[2], CultureInfo.InvariantCulture)));
                 }
                 items.ForEach(package.AddTexture);
             }
@@ -103,6 +104,14 @@ namespace Sledge.Providers.Texture
                 return false;
             }
             return true;
+        }
+
+        private TextureFlags GetFlags(string name)
+        {
+            var flags = TextureFlags.None;
+            var tp = ReplaceTransparentPixels && name.StartsWith("{");
+            if (tp) flags |= TextureFlags.Transparent;
+            return flags;
         }
 
         private void SaveToCache(TexturePackage package)
@@ -138,7 +147,7 @@ namespace Sledge.Providers.Texture
                 var pack = _roots.Values.FirstOrDefault(x => x.Package.PackageFile.FullName == fi.FullName);
                 if (pack == null) _roots.Add(tp, pack = new WadStream(new WadPackage(fi)));
 
-                list.AddRange(pack.Package.GetEntries().OfType<WadEntry>().Select(x => new TextureItem(tp, x.Name, (int) x.Width, (int) x.Height)));
+                list.AddRange(pack.Package.GetEntries().OfType<WadEntry>().Select(x => new TextureItem(tp, x.Name, GetFlags(x.Name), (int) x.Width, (int) x.Height)));
                 foreach (var ti in list)
                 {
                     tp.AddTexture(ti);
@@ -220,14 +229,14 @@ namespace Sledge.Providers.Texture
                     Name = ti.Name.ToLowerInvariant(),
                     ti.Width,
                     ti.Height,
-                    HasTransparency = hasTransparency
+                    ti.Flags
                 };
             }).Where(x => x != null);
 
             // TextureHelper.Create must run on the UI thread
             foreach (var bmp in bitmaps)
             {
-                TextureHelper.Create(bmp.Name, bmp.Bitmap, bmp.Width, bmp.Height, bmp.HasTransparency);
+                TextureHelper.Create(bmp.Name, bmp.Bitmap, bmp.Width, bmp.Height, bmp.Flags);
                 bmp.Bitmap.Dispose();
             }
         }
