@@ -158,6 +158,17 @@ namespace Sledge.Editor.Tools.VMTools
             return "Standard Mode";
         }
 
+        public override string GetContextualHelp()
+        {
+            return
+@"*Click* a vertex to select all points under the cursor.
+ - Hold *control* to select multiple points.
+ - Hold *shift* to only select the topmost point.
+Drag vertices to move them around.
+
+Select two (non-adjacent) points on a face to enable splitting.";
+        }
+
         public override void ToolSelected(bool preventHistory)
         {
             _state = VMState.None;

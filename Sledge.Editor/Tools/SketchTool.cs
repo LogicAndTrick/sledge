@@ -78,6 +78,14 @@ namespace Sledge.Editor.Tools
             return HotkeyTool.Sketch;
         }
 
+        public override string GetContextualHelp()
+        {
+            return "*Click* a face to start sketching the base of the brush.\n" +
+                   "*Click* again to choose the height of the brush.\n" +
+                   "*Click* a third time to create the brush.\n" +
+                   "*Right click* at any time to go back one step.";
+        }
+
         public override Control GetSidebarControl()
         {
             return BrushManager.SidebarControl;

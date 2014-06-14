@@ -33,15 +33,16 @@ namespace Sledge.Editor.UI.Sidebar
 
             CreatePanel("Textures", new TextureSidebarPanel());
             CreatePanel("Visgroups", new VisgroupSidebarPanel());
+            CreatePanel("Contextual Help", new HelpSidebarPanel());
             //CreatePanel("Entities", new EntitySidebarPanel());
             //CreatePanel("Brushes", new BrushSidebarPanel());
         }
 
         private static SidebarPanel CreatePanel(string text, Control contents, bool insert = false)
         {
-            var panel = new SidebarPanel { Text = text, Dock = DockStyle.Fill, Hidden = !Expanded(text) };
+            var panel = new SidebarPanel { Text = text, Name = text, Dock = DockStyle.Fill, Hidden = !Expanded(text) };
             panel.AddControl(contents);
-            if (insert) _container.Insert(panel, 0);
+            if (insert) _container.Insert(panel, _container.Controls.Count);
             else _container.Add(panel);
             return panel;
         }
@@ -71,7 +72,7 @@ namespace Sledge.Editor.UI.Sidebar
                 .FirstOrDefault() != "0";
         }
 
-        public static void ToolSelected()
+        private static void ToolSelected()
         {
             if (_toolPanel != null) RemovePanel(_toolPanel);
             _toolPanel = null;
@@ -80,7 +81,7 @@ namespace Sledge.Editor.UI.Sidebar
             var control = ToolManager.ActiveTool.GetSidebarControl();
             if (control == null) return;
 
-            _toolPanel = CreatePanel(ToolManager.ActiveTool.GetName(), control);
+            _toolPanel = CreatePanel(ToolManager.ActiveTool.GetName(), control, true);
         }
 
         public void Notify(string message, object data)

@@ -67,6 +67,13 @@ namespace Sledge.Editor.Tools
             return HotkeyTool.Clip;
         }
 
+        public override string GetContextualHelp()
+        {
+            return "*Click* and drag to define the clipping plane.\n" +
+                   "*Click* and drag any of the three points to change the orientation of the plane.\n" +
+                   "Press *enter* to cut the selected solids along the clipping plane.";
+        }
+
         private ClipState GetStateAtPoint(int x, int y, Viewport2D viewport)
         {
             if (_clipPlanePoint1 == null || _clipPlanePoint2 == null || _clipPlanePoint3 == null) return ClipState.None;

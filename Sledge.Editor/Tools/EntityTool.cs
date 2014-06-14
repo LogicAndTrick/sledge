@@ -53,23 +53,22 @@ namespace Sledge.Editor.Tools
             return "Entity Tool";
         }
 
+        public override string GetContextualHelp()
+        {
+            return "In the 3D view, *click* a face to place an entity there.\n" +
+                   "In the 2D view, *click* to place a point and press *enter* to create.\n" +
+                   "*Right click* in the 2D view to quickly choose and create any entity type.";
+        }
+
         public override Control GetSidebarControl()
         {
             return _sidebarPanel;
         }
 
-        public override void ToolSelected(bool preventHistory)
+        public override void DocumentChanged()
         {
             System.Threading.Tasks.Task.Factory.StartNew(BuildMenu);
-        }
-
-        public override void ToolDeselected(bool preventHistory)
-        {
-            if (_menu != null)
-            {
-                foreach (var m in _menu) m.Dispose();
-            }
-            _menu = null;
+            _sidebarPanel.RefreshEntities(Document);
         }
 
         private void BuildMenu()
@@ -214,7 +213,7 @@ namespace Sledge.Editor.Tools
 
         private void CreateEntity(Coordinate origin, GameDataObject gd = null)
         {
-            if (gd == null) gd = Document.GetSelectedEntity();
+            if (gd == null) gd = _sidebarPanel.GetSelectedEntity();
             if (gd == null) return;
 
             var col = gd.Behaviours.Where(x => x.Name == "color").ToArray();
@@ -331,7 +330,7 @@ namespace Sledge.Editor.Tools
             menu.Items.Clear();
             if (_location == null) return;
 
-            var gd = Document.GetSelectedEntity();
+            var gd = _sidebarPanel.GetSelectedEntity();
             if (gd != null)
             {
                 var item = new ToolStripMenuItem("Create " + gd.Name);

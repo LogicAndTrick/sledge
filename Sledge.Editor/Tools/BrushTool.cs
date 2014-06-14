@@ -46,6 +46,13 @@ namespace Sledge.Editor.Tools
             return BrushManager.SidebarControl;
         }
 
+        public override string GetContextualHelp()
+        {
+            return "Draw a box in the 2D view to define the size of the brush.\n" +
+                   "Select the type of the brush to create in the sidebar.\n" +
+                   "Press *enter* in the 2D view to create the brush.";
+        }
+
         protected override Color BoxColour
         {
             get { return Color.Turquoise; }

@@ -128,7 +128,7 @@ namespace Sledge.Editor.UI
             if (selectedName != null)
             {
                 var item = GetTexture(selectedName, false);
-                if (item != null)
+                if (item != null && item.Item != null)
                 {
                     itemsList.Add(item);
                     reselect = item;
@@ -144,7 +144,7 @@ namespace Sledge.Editor.UI
                 if (reselect == null && selectedName == item.Item.Name) reselect = item;
             }
             var textures = _packages.SelectMany(x => x.Items).Select(x => x.Value).OrderBy(x => x.Name);
-            foreach (var item in textures.Select(ti => GetTexture(ti.Name, false)))
+            foreach (var item in textures.Select(ti => GetTexture(ti.Name, false)).Where(x => x.Item != null))
             {
                 itemsList.Add(item);
                 if (reselect == null && selectedName == item.Item.Name) reselect = item;

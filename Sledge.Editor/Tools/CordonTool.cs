@@ -24,6 +24,11 @@ namespace Sledge.Editor.Tools
             return HotkeyTool.Cordon;
         }
 
+        public override string GetContextualHelp()
+        {
+            return "Manipulate the box to define the cordon bounds for the map.";
+        }
+
         public override HotkeyInterceptResult InterceptHotkey(HotkeysMediator hotkeyMessage, object parameters)
         {
             switch (hotkeyMessage)

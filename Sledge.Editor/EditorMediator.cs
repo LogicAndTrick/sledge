@@ -28,8 +28,8 @@ namespace Sledge.Editor
 
         // Editing messages
         TextureSelected,
-        EntitySelected,
         ToolSelected,
+        ContextualHelpChanged,
         ViewportRightClick,
         WorldspawnProperties,
         ResetSelectedBrushType,

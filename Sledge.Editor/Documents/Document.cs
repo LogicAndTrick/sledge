@@ -437,12 +437,6 @@ namespace Sledge.Editor.Documents
             Renderer.UpdateGrid(Map.GridSpacing, Map.Show2DGrid, Map.Show3DGrid, false);
         }
 
-        public GameDataObject GetSelectedEntity()
-        {
-            var sel = GetMemory<string>("SelectedEntity");
-            return sel == null ? null : GameData.Classes.FirstOrDefault(x => x.Name == sel);
-        }
-
         public IEnumerable<string> GetUsedTextures()
         {
             return Map.WorldSpawn.Find(x => x is Solid).OfType<Solid>().SelectMany(x => x.Faces).Select(x => x.Texture.Name).Distinct();

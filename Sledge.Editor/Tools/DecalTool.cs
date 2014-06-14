@@ -38,6 +38,12 @@ namespace Sledge.Editor.Tools
             return HotkeyTool.Decal;
         }
 
+        public override string GetContextualHelp()
+        {
+            return "Select a decal texture from the textures sidebar.\n" +
+                   "*Click* a face in the 3D view to place the decal onto that face.";
+        }
+
         private Coordinate GetIntersectionPoint(MapObject obj, Line line)
         {
             if (obj == null) return null;

@@ -471,6 +471,12 @@
       <DependentUpon>PasteSpecialDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="UI\ScreenshotViewportListener.cs" />
+    <Compile Include="UI\Sidebar\HelpSidebarPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\Sidebar\HelpSidebarPanel.Designer.cs">
+      <DependentUpon>HelpSidebarPanel.cs</DependentUpon>
+    </Compile>
     <Compile Include="UI\TableSplitControl.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -710,6 +716,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UI\Sidebar\BrushSidebarPanel.resx">
       <DependentUpon>BrushSidebarPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Sidebar\HelpSidebarPanel.resx">
+      <DependentUpon>HelpSidebarPanel.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\Sidebar\EntitySidebarPanel.resx">
       <DependentUpon>EntitySidebarPanel.cs</DependentUpon>

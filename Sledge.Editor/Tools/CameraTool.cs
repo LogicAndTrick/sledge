@@ -76,6 +76,12 @@ namespace Sledge.Editor.Tools
             return HotkeyTool.Camera;
         }
 
+        public override string GetContextualHelp()
+        {
+            return "*Click* the camera origin or direction arrow to move the camera.\n" +
+                   "Hold *shift* and *click* to create multiple cameras.";
+        }
+
         private Tuple<Coordinate, Coordinate> GetViewportCamera()
         {
             var cam = ViewportManager.Viewports.OfType<Viewport3D>().Select(x => x.Camera).FirstOrDefault();

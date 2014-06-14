@@ -105,6 +105,12 @@ namespace Sledge.Editor.Tools.VMTools
             return "Edit Face Mode";
         }
 
+        public override string GetContextualHelp()
+        {
+            return "*Click* a face in the 3D view to select it.\n" +
+                   "Hold *control* to select multiple faces.";
+        }
+
         public override void ToolSelected(bool preventHistory)
         {
             _selection = new List<Face>();

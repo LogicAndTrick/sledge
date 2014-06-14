@@ -162,6 +162,13 @@ namespace Sledge.Editor.Tools
             return HotkeyTool.Texture;
         }
 
+        public override string GetContextualHelp()
+        {
+            return "*Click* a face to select it\n" +
+                   "*Ctrl+Click* to select multiple\n" +
+                   "*Shift+Click* to select all faces of a solid";
+        }
+
         public override void ToolSelected(bool preventHistory)
         {
             _form.Show(Editor.Instance);

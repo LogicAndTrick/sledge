@@ -112,6 +112,7 @@ namespace Sledge.Editor.Tools
         public abstract Image GetIcon();
         public abstract string GetName();
         public abstract HotkeyTool? GetHotkeyToolType();
+        public abstract string GetContextualHelp();
 
         public virtual Control GetSidebarControl()
         {

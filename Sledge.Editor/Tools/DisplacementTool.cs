@@ -58,6 +58,12 @@ namespace Sledge.Editor.Tools
             return HotkeyTool.Displacement;
         }
 
+        public override string GetContextualHelp()
+        {
+            // todo sub tools
+            return "*Click* a displacement to select it.";
+        }
+
         public override void ToolSelected(bool preventHistory)
         {
             _form.Show(Editor.Instance);

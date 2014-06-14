@@ -40,6 +40,8 @@ namespace Sledge.Editor.Tools.Widgets
         public override Image GetIcon() { return null; }
         public override string GetName() { return "Widget"; }
         public override HotkeyTool? GetHotkeyToolType() { return null; }
+        public override string GetContextualHelp() { return ""; }
+
         public override HotkeyInterceptResult InterceptHotkey(HotkeysMediator hotkeyMessage, object parameters) { return HotkeyInterceptResult.Continue; }
         public override void KeyUp(ViewportBase viewport, ViewportEvent e) { }
         public override void KeyDown(ViewportBase viewport, ViewportEvent e) { }

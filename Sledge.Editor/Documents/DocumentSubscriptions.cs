@@ -144,7 +144,6 @@ namespace Sledge.Editor.Documents
             Mediator.Subscribe(EditorMediator.VisgroupToggled, this);
             Mediator.Subscribe(EditorMediator.SetZoomValue, this);
             Mediator.Subscribe(EditorMediator.TextureSelected, this);
-            Mediator.Subscribe(EditorMediator.EntitySelected, this);
             Mediator.Subscribe(EditorMediator.SelectMatchingTextures, this);
 
             Mediator.Subscribe(EditorMediator.ViewportCreated, this);
@@ -1055,11 +1054,6 @@ namespace Sledge.Editor.Documents
         public void TextureSelected(TextureItem selection)
         {
             _document.TextureCollection.SelectedTexture = selection;
-        }
-
-        public void EntitySelected(GameDataObject selection)
-        {
-            _document.SetMemory("SelectedEntity", selection == null ? null : selection.Name);
         }
 
         public void ViewportCreated(ViewportBase viewport)

@@ -97,6 +97,13 @@ namespace Sledge.Editor.Tools.SelectTool
             return _sidebarPanel;
         }
 
+        public override string GetContextualHelp()
+        {
+            return "*Click* to select an object.\n" +
+                   "In the 3D view, *click and hold* and use the *mouse wheel* to cycle through objects behind the cursor.\n" +
+                   "In the 2D view, *click the selection box* to cycle between manipulation modes.";
+        }
+
         public override void ToolSelected(bool preventHistory)
         {
             SetCurrentTool(_currentTool);

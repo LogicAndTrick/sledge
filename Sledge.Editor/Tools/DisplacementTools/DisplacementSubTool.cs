@@ -19,6 +19,12 @@ namespace Sledge.Editor.Tools.DisplacementTools
             return null;
         }
 
+        public override string GetContextualHelp()
+        {
+            // todo 
+            throw new NotImplementedException();
+        }
+
         public override HotkeyInterceptResult InterceptHotkey(HotkeysMediator hotkeyMessage, object parameters)
         {
             switch (hotkeyMessage)

@@ -51,7 +51,6 @@
             this.EntityTypeList.Name = "EntityTypeList";
             this.EntityTypeList.Size = new System.Drawing.Size(194, 21);
             this.EntityTypeList.TabIndex = 5;
-            this.EntityTypeList.SelectedIndexChanged += new System.EventHandler(this.SelectedEntityChanged);
             // 
             // EntitySidebarPanel
             // 

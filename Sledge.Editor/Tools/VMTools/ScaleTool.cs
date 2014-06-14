@@ -104,6 +104,15 @@ namespace Sledge.Editor.Tools.VMTools
             return "Scale Mode";
         }
 
+        public override string GetContextualHelp()
+        {
+            return
+@"*Click* a vertex to select all points under the cursor.
+ - Hold *control* to select multiple points.
+ - Hold *shift* to only select the topmost point.
+Move the origin point around by *clicking and dragging* it.";
+        }
+
         public override void ToolSelected(bool preventHistory)
         {
             _state = VMState.None;

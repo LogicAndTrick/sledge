@@ -120,6 +120,8 @@ namespace Sledge.Editor.Tools
             if (_currentTool != null) _currentTool.ToolDeselected(false);
             _currentTool = tool;
             if (_currentTool != null) _currentTool.ToolSelected(false);
+
+            Mediator.Publish(EditorMediator.ContextualHelpChanged);
         }
 
         private void AddTool(VMSubTool tool)
@@ -162,6 +164,12 @@ namespace Sledge.Editor.Tools
         public override HotkeyTool? GetHotkeyToolType()
         {
             return HotkeyTool.VM;
+        }
+
+        public override string GetContextualHelp()
+        {
+            if (_currentTool != null) return _currentTool.GetContextualHelp();
+            return "Select a VM mode for more information";
         }
 
         protected override Color BoxColour
