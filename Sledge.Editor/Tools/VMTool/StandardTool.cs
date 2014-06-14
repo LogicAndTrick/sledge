@@ -7,7 +7,7 @@ using Sledge.DataStructures.MapObjects;
 using Sledge.Settings;
 using Sledge.UI;
 
-namespace Sledge.Editor.Tools.VMTools
+namespace Sledge.Editor.Tools.VMTool
 {
     public class StandardTool : VMSubTool
     {
@@ -155,7 +155,7 @@ namespace Sledge.Editor.Tools.VMTools
 
         public override string GetName()
         {
-            return "Standard Mode";
+            return "Standard";
         }
 
         public override string GetContextualHelp()

@@ -2,9 +2,8 @@
 using System.Drawing;
 using System.Windows.Forms;
 using Sledge.Common.Easings;
-using Sledge.Extensions;
 
-namespace Sledge.Editor.Tools.VMTools
+namespace Sledge.Editor.Tools.VMTool
 {
     public partial class StandardControl : UserControl
     {
@@ -59,6 +58,7 @@ namespace Sledge.Editor.Tools.VMTools
 
         public void ShowMergeResult(int mergedVertices, int removedFaces)
         {
+            if (mergedVertices + removedFaces <= 0) return;
             MergeResultsLabel.Text = String.Format("{0} vert{1} merged, {2} face{3} removed",
                 mergedVertices, mergedVertices == 1 ? "ex" : "ices",
                 removedFaces, removedFaces == 1 ? "" : "s");

@@ -32,6 +32,11 @@ namespace Sledge.Editor.UI.Sidebar
             DoLayout(null, null);
         }
 
+        public int Count()
+        {
+            return ContentPanel.Controls.Count;
+        }
+
         public void Remove(Control c)
         {
             ContentPanel.Controls.Remove(c);

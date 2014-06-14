@@ -27,7 +27,7 @@ namespace Sledge.Editor.Tools
             Tools.Add(new DecalTool());
             //Tools.Add(new DisplacementTool());
             Tools.Add(new ClipTool());
-            Tools.Add(new VMTool());
+            Tools.Add(new VMTool.VMTool());
             Tools.Add(new CordonTool());
             //Tools.Add(new SketchTool());
         }

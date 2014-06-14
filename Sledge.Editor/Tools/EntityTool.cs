@@ -60,9 +60,9 @@ namespace Sledge.Editor.Tools
                    "*Right click* in the 2D view to quickly choose and create any entity type.";
         }
 
-        public override Control GetSidebarControl()
+        public override IEnumerable<KeyValuePair<string, Control>> GetSidebarControls()
         {
-            return _sidebarPanel;
+            yield return new KeyValuePair<string, Control>(GetName(), _sidebarPanel);
         }
 
         public override void DocumentChanged()

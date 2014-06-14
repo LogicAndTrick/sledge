@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
@@ -18,7 +19,7 @@ namespace Sledge.Editor.UI.Sidebar
         }
 
         private static SidebarContainer _container;
-        private static SidebarPanel _toolPanel;
+        private static List<SidebarPanel> _toolPanels;
 
         public static void Init(Control container)
         {
@@ -42,7 +43,7 @@ namespace Sledge.Editor.UI.Sidebar
         {
             var panel = new SidebarPanel { Text = text, Name = text, Dock = DockStyle.Fill, Hidden = !Expanded(text) };
             panel.AddControl(contents);
-            if (insert) _container.Insert(panel, _container.Controls.Count);
+            if (insert) _container.Insert(panel, _container.Count() - 1);
             else _container.Add(panel);
             return panel;
         }
@@ -74,14 +75,14 @@ namespace Sledge.Editor.UI.Sidebar
 
         private static void ToolSelected()
         {
-            if (_toolPanel != null) RemovePanel(_toolPanel);
-            _toolPanel = null;
+            if (_toolPanels != null) _toolPanels.ForEach(RemovePanel);
+            _toolPanels = null;
             if (ToolManager.ActiveTool == null) return;
 
-            var control = ToolManager.ActiveTool.GetSidebarControl();
-            if (control == null) return;
+            var controls = ToolManager.ActiveTool.GetSidebarControls().ToList();
+            if (!controls.Any()) return;
 
-            _toolPanel = CreatePanel(ToolManager.ActiveTool.GetName(), control, true);
+            _toolPanels = controls.Select(x => CreatePanel(x.Key, x.Value, true)).ToList();
         }
 
         public void Notify(string message, object data)

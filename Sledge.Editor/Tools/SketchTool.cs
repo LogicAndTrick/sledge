@@ -86,9 +86,9 @@ namespace Sledge.Editor.Tools
                    "*Right click* at any time to go back one step.";
         }
 
-        public override Control GetSidebarControl()
+        public override IEnumerable<KeyValuePair<string, Control>> GetSidebarControls()
         {
-            return BrushManager.SidebarControl;
+            yield return new KeyValuePair<string, Control>(GetName(), BrushManager.SidebarControl);
         }
 
         public override void MouseEnter(ViewportBase viewport, ViewportEvent e)

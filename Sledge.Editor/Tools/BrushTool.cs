@@ -41,9 +41,9 @@ namespace Sledge.Editor.Tools
             return HotkeyTool.Brush;
         }
 
-        public override Control GetSidebarControl()
+        public override IEnumerable<KeyValuePair<string, Control>> GetSidebarControls()
         {
-            return BrushManager.SidebarControl;
+            yield return new KeyValuePair<string, Control>(GetName(), BrushManager.SidebarControl);
         }
 
         public override string GetContextualHelp()

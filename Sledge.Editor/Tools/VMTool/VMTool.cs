@@ -12,7 +12,6 @@ using Sledge.Editor.Actions.MapObjects.Operations;
 using Sledge.Editor.Actions.MapObjects.Selection;
 using Sledge.Editor.Properties;
 using Sledge.Editor.Rendering.Immediate;
-using Sledge.Editor.Tools.VMTools;
 using Sledge.Graphics;
 using Sledge.Graphics.Helpers;
 using Sledge.Settings;
@@ -21,7 +20,7 @@ using Matrix = Sledge.Graphics.Helpers.Matrix;
 using Select = Sledge.Settings.Select;
 using View = Sledge.Settings.View;
 
-namespace Sledge.Editor.Tools
+namespace Sledge.Editor.Tools.VMTool
 {
     public class VMTool : BaseBoxTool
     {
@@ -32,7 +31,9 @@ namespace Sledge.Editor.Tools
             Midpoints
         }
 
-        private readonly VMForm _form;
+        //private readonly VMForm _form;
+        private readonly VMSidebarPanel _controlPanel;
+        private readonly VMErrorsSidebarPanel _errorPanel;
         private readonly List<VMSubTool> _tools;
         private VMSubTool _currentTool;
 
@@ -52,13 +53,16 @@ namespace Sledge.Editor.Tools
 
         public VMTool()
         {
-            _form = new VMForm();
-            _form.ToolSelected += VMToolSelected;
-            _form.DeselectAll += DeselectAll;
-            _form.Reset += Reset;
-            _form.SelectError += SelectError;
-            _form.FixAllErrors += FixAllErrors;
-            _form.FixError += FixError;
+            _controlPanel = new VMSidebarPanel();
+            _controlPanel.ToolSelected += VMToolSelected;
+            _controlPanel.DeselectAll += DeselectAll;
+            _controlPanel.Reset += Reset;
+
+            _errorPanel = new VMErrorsSidebarPanel();
+            _errorPanel.SelectError += SelectError;
+            _errorPanel.FixError += FixError;
+            _errorPanel.FixAllErrors += FixAllErrors;
+
             _tools = new List<VMSubTool>();
 
             AddTool(new StandardTool(this));
@@ -116,7 +120,7 @@ namespace Sledge.Editor.Tools
         private void VMToolSelected(object sender, VMSubTool tool)
         {
             if (_currentTool == tool) return;
-            _form.SetSelectedTool(tool);
+            _controlPanel.SetSelectedTool(tool);
             if (_currentTool != null) _currentTool.ToolDeselected(false);
             _currentTool = tool;
             if (_currentTool != null) _currentTool.ToolSelected(false);
@@ -126,7 +130,7 @@ namespace Sledge.Editor.Tools
 
         private void AddTool(VMSubTool tool)
         {
-            _form.AddTool(tool);
+            _controlPanel.AddTool(tool);
             _tools.Add(tool);
         }
 
@@ -147,7 +151,7 @@ namespace Sledge.Editor.Tools
 
         public override void DocumentChanged()
         {
-            _form.Document = Document;
+            _controlPanel.Document = Document;
             _tools.ForEach(x => x.SetDocument(Document));
         }
 
@@ -164,6 +168,12 @@ namespace Sledge.Editor.Tools
         public override HotkeyTool? GetHotkeyToolType()
         {
             return HotkeyTool.VM;
+        }
+
+        public override IEnumerable<KeyValuePair<string, Control>> GetSidebarControls()
+        {
+            yield return new KeyValuePair<string, Control>(GetName(), _controlPanel);
+            yield return new KeyValuePair<string, Control>("VM Errors", _errorPanel);
         }
 
         public override string GetContextualHelp()
@@ -187,7 +197,7 @@ namespace Sledge.Editor.Tools
             UpdateEditedFaces();
             if (points) RefreshPoints();
             if (midpoints) RefreshMidpoints();
-            _form.SetErrorList(GetErrors());
+            _errorPanel.SetErrorList(GetErrors());
             _dirty = true;
         }
 
@@ -336,7 +346,6 @@ namespace Sledge.Editor.Tools
 
         public override void ToolSelected(bool preventHistory)
         {
-            _form.Show(Editor.Instance);
             Editor.Instance.Focus();
 
             // Init the points and copy caches
@@ -371,8 +380,6 @@ namespace Sledge.Editor.Tools
             _snapPointOffset = null;
             _movingPoint = null;
             MoveSelection = null;
-
-            _form.Hide();
         }
 
         private void VertexSelectionChanged()

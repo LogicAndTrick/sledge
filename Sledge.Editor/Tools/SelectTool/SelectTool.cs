@@ -92,9 +92,9 @@ namespace Sledge.Editor.Tools.SelectTool
             get { return Color.FromArgb(Sledge.Settings.View.SelectionBoxBackgroundOpacity, Color.Gray); }
         }
 
-        public override Control GetSidebarControl()
+        public override IEnumerable<KeyValuePair<string, Control>> GetSidebarControls()
         {
-            return _sidebarPanel;
+            yield return new KeyValuePair<string, Control>(GetName(), _sidebarPanel);
         }
 
         public override string GetContextualHelp()

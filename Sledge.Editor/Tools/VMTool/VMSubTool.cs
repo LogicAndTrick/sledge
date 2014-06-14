@@ -6,7 +6,7 @@ using Sledge.DataStructures.Geometric;
 using Sledge.Settings;
 using Sledge.UI;
 
-namespace Sledge.Editor.Tools.VMTools
+namespace Sledge.Editor.Tools.VMTool
 {
     public abstract class VMSubTool : BaseTool
     {

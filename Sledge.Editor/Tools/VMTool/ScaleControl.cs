@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 
-namespace Sledge.Editor.Tools.VMTools
+namespace Sledge.Editor.Tools.VMTool
 {
     public partial class ScaleControl : UserControl
     {

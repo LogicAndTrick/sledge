@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Sledge.DataStructures.MapObjects;
 
-namespace Sledge.Editor.Tools.VMTools
+namespace Sledge.Editor.Tools.VMTool
 {
     public class VMError
     {

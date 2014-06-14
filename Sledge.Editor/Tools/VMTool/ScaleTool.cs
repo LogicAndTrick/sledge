@@ -9,7 +9,7 @@ using Sledge.Graphics;
 using Sledge.UI;
 using Vertex = Sledge.DataStructures.MapObjects.Vertex;
 
-namespace Sledge.Editor.Tools.VMTools
+namespace Sledge.Editor.Tools.VMTool
 {
     public class ScaleTool : VMSubTool
     {
@@ -101,7 +101,7 @@ namespace Sledge.Editor.Tools.VMTools
 
         public override string GetName()
         {
-            return "Scale Mode";
+            return "Scale";
         }
 
         public override string GetContextualHelp()

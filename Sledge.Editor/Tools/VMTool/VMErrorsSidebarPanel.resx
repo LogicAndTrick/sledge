@@ -117,11 +117,4 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="label1.Text" xml:space="preserve">
-    <value>Click a vertex to select all points under the cursor.
- - Hold control to select multiple points.
- - Hold shift to only select the topmost point.
-Move the origin point around by clicking and dragging it.
-</value>
-  </data>
 </root>

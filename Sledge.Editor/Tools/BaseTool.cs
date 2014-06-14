@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
 using Sledge.Common.Mediator;
 using Sledge.DataStructures.Geometric;
@@ -114,9 +115,9 @@ namespace Sledge.Editor.Tools
         public abstract HotkeyTool? GetHotkeyToolType();
         public abstract string GetContextualHelp();
 
-        public virtual Control GetSidebarControl()
+        public virtual IEnumerable<KeyValuePair<string, Control>> GetSidebarControls()
         {
-            return null;
+            yield break;
         }
 
         protected BaseTool()

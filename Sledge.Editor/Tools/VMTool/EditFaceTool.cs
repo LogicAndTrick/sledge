@@ -6,7 +6,7 @@ using Sledge.DataStructures.MapObjects;
 using Sledge.DataStructures.Transformations;
 using Sledge.UI;
 
-namespace Sledge.Editor.Tools.VMTools
+namespace Sledge.Editor.Tools.VMTool
 {
     public class EditFaceTool : VMSubTool
     {
@@ -102,7 +102,7 @@ namespace Sledge.Editor.Tools.VMTools
 
         public override string GetName()
         {
-            return "Edit Face Mode";
+            return "Edit Face";
         }
 
         public override string GetContextualHelp()
