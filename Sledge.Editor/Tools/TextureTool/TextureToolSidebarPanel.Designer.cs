@@ -92,6 +92,11 @@
             this.RandomShiftMax.Name = "RandomShiftMax";
             this.RandomShiftMax.Size = new System.Drawing.Size(46, 20);
             this.RandomShiftMax.TabIndex = 1;
+            this.RandomShiftMax.Value = new decimal(new int[] {
+            256,
+            0,
+            0,
+            0});
             // 
             // label3
             // 

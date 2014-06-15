@@ -73,6 +73,10 @@ namespace Sledge.Editor.Tools
 
         private void BuildMenu()
         {
+            if (_menu != null) foreach (var item in _menu) item.Dispose();
+            _menu = null;
+            if (Document == null) return;
+
             var items = new List<ToolStripItem>();
             var classes = Document.GameData.Classes.Where(x => x.ClassType != ClassType.Base && x.ClassType != ClassType.Solid).ToList();
             var groups = classes.GroupBy(x => x.Name.Split('_')[0]);

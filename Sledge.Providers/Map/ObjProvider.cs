@@ -254,7 +254,8 @@ namespace Sledge.Providers.Map
             solid.Colour = Colour.GetRandomBrushColour();
             solid.Faces.Add(face);
             face.Parent = solid;
-            var offset = face.BoundingBox.Center - face.Plane.Normal * 5;
+            var center = face.Vertices.Aggregate(Coordinate.Zero, (sum, v) => sum + v.Location) / face.Vertices.Count;
+            var offset = center - face.Plane.Normal * 5;
             for (var i = 0; i < face.Vertices.Count; i++)
             {
                 var v1 = face.Vertices[i];
