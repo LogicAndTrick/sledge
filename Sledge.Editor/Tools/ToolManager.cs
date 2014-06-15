@@ -23,7 +23,7 @@ namespace Sledge.Editor.Tools
             Tools.Add(new CameraTool());
             Tools.Add(new EntityTool());
             Tools.Add(new BrushTool());
-            Tools.Add(new TextureTool());
+            Tools.Add(new TextureTool.TextureTool());
             Tools.Add(new DecalTool());
             //Tools.Add(new DisplacementTool());
             Tools.Add(new ClipTool());

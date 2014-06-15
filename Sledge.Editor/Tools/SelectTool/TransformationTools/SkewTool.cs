@@ -6,7 +6,7 @@ using Sledge.Editor.Documents;
 using Sledge.Editor.Tools.Widgets;
 using Sledge.UI;
 
-namespace Sledge.Editor.Tools.TransformationTools
+namespace Sledge.Editor.Tools.SelectTool.TransformationTools
 {
     /// <summary>
     /// Allows the selected objects to be skewed

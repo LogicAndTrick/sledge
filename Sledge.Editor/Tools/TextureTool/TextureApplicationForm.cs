@@ -4,11 +4,11 @@ using System.Linq;
 using System.Windows.Forms;
 using Sledge.Common.Mediator;
 using Sledge.DataStructures.MapObjects;
-using Sledge.Providers.Texture;
 using Sledge.Editor.UI;
+using Sledge.Providers.Texture;
 using Sledge.Settings;
 
-namespace Sledge.Editor.Tools
+namespace Sledge.Editor.Tools.TextureTool
 {
     public partial class TextureApplicationForm : HotkeyForm
     {
@@ -538,6 +538,11 @@ namespace Sledge.Editor.Tools
         {
             var nud = sender as NumericUpDown;
             if (nud != null) nud.Select(0, nud.Text.Length);
+        }
+
+        public bool ShouldTreatAsOne()
+        {
+            return TreatAsOneCheckbox.Checked;
         }
     }
 }

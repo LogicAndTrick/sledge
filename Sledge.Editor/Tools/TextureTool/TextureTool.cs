@@ -3,22 +3,22 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using OpenTK.Graphics.OpenGL;
 using Sledge.Common.Mediator;
+using Sledge.DataStructures.Geometric;
+using Sledge.DataStructures.MapObjects;
 using Sledge.Editor.Actions;
 using Sledge.Editor.Actions.MapObjects.Operations;
 using Sledge.Editor.Actions.MapObjects.Selection;
 using Sledge.Editor.Documents;
 using Sledge.Editor.History;
+using Sledge.Editor.Properties;
+using Sledge.Graphics.Helpers;
 using Sledge.Providers.Texture;
 using Sledge.Settings;
 using Sledge.UI;
-using Sledge.Editor.Properties;
-using Sledge.Graphics.Helpers;
-using OpenTK.Graphics.OpenGL;
-using Sledge.DataStructures.MapObjects;
-using Sledge.DataStructures.Geometric;
 
-namespace Sledge.Editor.Tools
+namespace Sledge.Editor.Tools.TextureTool
 {
     public class TextureTool : BaseTool
     {
@@ -54,6 +54,7 @@ namespace Sledge.Editor.Tools
         #endregion
 
         private readonly TextureApplicationForm _form;
+        private readonly TextureToolSidebarPanel _sidebarPanel;
 
         public TextureTool()
         {
@@ -64,6 +65,11 @@ namespace Sledge.Editor.Tools
             _form.TextureApply += TextureApplied;
             _form.TextureJustify += TextureJustified;
             _form.HideMaskToggled += HideMaskToggled;
+
+            _sidebarPanel = new TextureToolSidebarPanel();
+            _sidebarPanel.TileFit += TileFit;
+            _sidebarPanel.RandomiseXShiftValues += RandomiseXShiftValues;
+            _sidebarPanel.RandomiseYShiftValues += RandomiseYShiftValues;
         }
 
         public override void DocumentChanged()
@@ -77,7 +83,43 @@ namespace Sledge.Editor.Tools
             Mediator.Publish(HotkeysMediator.ToggleHideFaceMask);
         }
 
+        private void RandomiseXShiftValues(object sender, int min, int max)
+        {
+            if (Document.Selection.IsEmpty()) return;
+
+            var rand = new Random();
+            Action<Document, Face> action = (d, f) =>
+            {
+                f.Texture.XShift = rand.Next(min, max + 1); // Upper bound is exclusive
+                f.CalculateTextureCoordinates(true);
+            };
+            Document.PerformAction("Randomise X shift values", new EditFace(Document.Selection.GetSelectedFaces(), action, false));
+        }
+
+        private void RandomiseYShiftValues(object sender, int min, int max)
+        {
+            if (Document.Selection.IsEmpty()) return;
+
+            var rand = new Random();
+            Action<Document, Face> action = (d, f) =>
+            {
+                f.Texture.YShift = rand.Next(min, max + 1); // Upper bound is exclusive
+                f.CalculateTextureCoordinates(true);
+            };
+            Document.PerformAction("Randomise Y shift values", new EditFace(Document.Selection.GetSelectedFaces(), action, false));
+        }
+
         private void TextureJustified(object sender, JustifyMode justifymode, bool treatasone)
+        {
+            TextureJustified(justifymode, treatasone, 1, 1);
+        }
+
+        private void TileFit(object sender, int tileX, int tileY)
+        {
+            TextureJustified(JustifyMode.Fit, _form.ShouldTreatAsOne(), tileX, tileY);
+        }
+
+        private void TextureJustified(JustifyMode justifymode, bool treatasone, int tileX, int tileY)
         {
             if (Document.Selection.IsEmpty()) return;
             var boxAlignMode = (justifymode == JustifyMode.Fit)
@@ -93,7 +135,7 @@ namespace Sledge.Editor.Tools
 
             if (justifymode == JustifyMode.Fit)
             {
-                action = (d, x) => x.FitTextureToPointCloud(cloud ?? new Cloud(x.Vertices.Select(y => y.Location)));
+                action = (d, x) => x.FitTextureToPointCloud(cloud ?? new Cloud(x.Vertices.Select(y => y.Location)), tileX, tileY);
             }
             else
             {
@@ -167,6 +209,11 @@ namespace Sledge.Editor.Tools
             return "*Click* a face to select it\n" +
                    "*Ctrl+Click* to select multiple\n" +
                    "*Shift+Click* to select all faces of a solid";
+        }
+
+        public override IEnumerable<KeyValuePair<string, Control>> GetSidebarControls()
+        {
+            yield return new KeyValuePair<string, Control>("Texture Power Tools", _sidebarPanel);
         }
 
         public override void ToolSelected(bool preventHistory)

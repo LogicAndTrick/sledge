@@ -287,6 +287,12 @@
       <DependentUpon>SelectToolSidebarPanel.cs</DependentUpon>
     </Compile>
     <Compile Include="Tools\SketchTool.cs" />
+    <Compile Include="Tools\TextureTool\TextureToolSidebarPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Tools\TextureTool\TextureToolSidebarPanel.Designer.cs">
+      <DependentUpon>TextureToolSidebarPanel.cs</DependentUpon>
+    </Compile>
     <Compile Include="Tools\VMTool\VMErrorsSidebarPanel.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -325,17 +331,17 @@
       <DependentUpon>SelectControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Tools\EntityTool.cs" />
-    <Compile Include="Tools\TransformationTools\RotateTool.cs" />
-    <Compile Include="Tools\TransformationTools\SkewTool.cs" />
-    <Compile Include="Tools\TransformationTools\ResizeTool.cs" />
+    <Compile Include="Tools\SelectTool\TransformationTools\RotateTool.cs" />
+    <Compile Include="Tools\SelectTool\TransformationTools\SkewTool.cs" />
+    <Compile Include="Tools\SelectTool\TransformationTools\ResizeTool.cs" />
     <Compile Include="Tools\SelectTool\SelectTool.cs" />
-    <Compile Include="Tools\TextureApplicationForm.cs">
+    <Compile Include="Tools\TextureTool\TextureApplicationForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Tools\TextureApplicationForm.Designer.cs">
+    <Compile Include="Tools\TextureTool\TextureApplicationForm.Designer.cs">
       <DependentUpon>TextureApplicationForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Tools\TransformationTools\TransformationTool.cs" />
+    <Compile Include="Tools\SelectTool\TransformationTools\TransformationTool.cs" />
     <Compile Include="Tools\VMTool\EditFaceTool.cs" />
     <Compile Include="Tools\VMTool\ScaleTool.cs" />
     <Compile Include="Tools\VMTool\EditFaceControl.cs">
@@ -567,7 +573,7 @@
     <Compile Include="UI\TextureListPanel.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Tools\TextureTool.cs" />
+    <Compile Include="Tools\TextureTool\TextureTool.cs" />
     <Compile Include="Tools\ToolManager.cs" />
     <Compile Include="UI\Camera2DViewportListener.cs" />
     <Compile Include="UI\Camera3DViewportListener.cs" />
@@ -654,6 +660,9 @@
     <EmbeddedResource Include="Tools\SelectTool\SelectToolSidebarPanel.resx">
       <DependentUpon>SelectToolSidebarPanel.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Tools\TextureTool\TextureToolSidebarPanel.resx">
+      <DependentUpon>TextureToolSidebarPanel.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Tools\VMTool\VMErrorsSidebarPanel.resx">
       <DependentUpon>VMErrorsSidebarPanel.cs</DependentUpon>
     </EmbeddedResource>
@@ -670,7 +679,7 @@
     <EmbeddedResource Include="Tools\DisplacementTools\SelectControl.resx">
       <DependentUpon>SelectControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Tools\TextureApplicationForm.resx">
+    <EmbeddedResource Include="Tools\TextureTool\TextureApplicationForm.resx">
       <DependentUpon>TextureApplicationForm.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>

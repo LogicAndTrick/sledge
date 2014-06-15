@@ -7,7 +7,7 @@ using Sledge.Editor.Documents;
 using Sledge.Editor.Tools.Widgets;
 using Sledge.UI;
 
-namespace Sledge.Editor.Tools.TransformationTools
+namespace Sledge.Editor.Tools.SelectTool.TransformationTools
 {
     public abstract class TransformationTool
     {

@@ -14,7 +14,7 @@ using Sledge.Editor.Actions.MapObjects.Operations.EditOperations;
 using Sledge.Editor.Actions.MapObjects.Selection;
 using Sledge.Editor.Clipboard;
 using Sledge.Editor.Properties;
-using Sledge.Editor.Tools.TransformationTools;
+using Sledge.Editor.Tools.SelectTool.TransformationTools;
 using Sledge.Editor.Tools.Widgets;
 using Sledge.Editor.UI.ObjectProperties;
 using Sledge.Graphics;

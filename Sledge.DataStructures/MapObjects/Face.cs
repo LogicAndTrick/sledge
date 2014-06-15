@@ -300,9 +300,11 @@ namespace Sledge.DataStructures.MapObjects
             if (Texture.YShift < -Texture.Texture.Height / 2m) Texture.YShift += Texture.Texture.Height;
         }
 
-        public void FitTextureToPointCloud(Cloud cloud)
+        public void FitTextureToPointCloud(Cloud cloud, int tileX, int tileY)
         {
             if (Texture.Texture == null) return;
+            if (tileX <= 0) tileX = 1;
+            if (tileY <= 0) tileY = 1;
 
             // Scale will change, no need to use it in the calculations
             var xvals = cloud.GetExtents().Select(x => x.Dot(Texture.UAxis)).ToList();
@@ -313,8 +315,8 @@ namespace Sledge.DataStructures.MapObjects
             var maxU = xvals.Max();
             var maxV = yvals.Max();
 
-            Texture.XScale = (maxU - minU) / Texture.Texture.Width;
-            Texture.YScale = (maxV - minV) / Texture.Texture.Height;
+            Texture.XScale = (maxU - minU) / (Texture.Texture.Width * tileX);
+            Texture.YScale = (maxV - minV) / (Texture.Texture.Height * tileY);
             Texture.XShift = -minU / Texture.XScale;
             Texture.YShift = -minV / Texture.YScale;
 

@@ -9,7 +9,7 @@ using Sledge.Extensions;
 using Sledge.Settings;
 using Sledge.UI;
 
-namespace Sledge.Editor.Tools.TransformationTools
+namespace Sledge.Editor.Tools.SelectTool.TransformationTools
 {
     /// <summary>
     /// Allows the selected objects to be rotated
