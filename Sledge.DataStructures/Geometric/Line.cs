@@ -1,8 +1,11 @@
-﻿using Sledge.DataStructures.Transformations;
+﻿using System;
+using System.Runtime.Serialization;
+using Sledge.DataStructures.Transformations;
 
 namespace Sledge.DataStructures.Geometric
 {
-    public class Line
+    [Serializable]
+    public class Line : ISerializable
     {
         public Coordinate Start { get; set; }
         public Coordinate End { get; set; }
@@ -15,6 +18,18 @@ namespace Sledge.DataStructures.Geometric
         {
             Start = start;
             End = end;
+        }
+
+        protected Line(SerializationInfo info, StreamingContext context)
+        {
+            Start = (Coordinate) info.GetValue("Start", typeof (Coordinate));
+            End = (Coordinate) info.GetValue("End", typeof (Coordinate));
+        }
+
+        public void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            info.AddValue("Start", Start);
+            info.AddValue("End", End);
         }
 
         public Line Reverse()

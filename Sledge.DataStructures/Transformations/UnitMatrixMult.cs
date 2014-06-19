@@ -1,8 +1,11 @@
-﻿using OpenTK;
+﻿using System;
+using System.Runtime.Serialization;
+using OpenTK;
 using Sledge.DataStructures.Geometric;
 
 namespace Sledge.DataStructures.Transformations
 {
+    [Serializable]
     public class UnitMatrixMult : IUnitTransformation
     {
         public Matrix Matrix { get; set; }
@@ -26,6 +29,16 @@ namespace Sledge.DataStructures.Transformations
                 (decimal) mat.M13, (decimal) mat.M23, (decimal) mat.M33, (decimal) mat.M43,
                 (decimal) mat.M14, (decimal) mat.M24, (decimal) mat.M34, (decimal) mat.M44
             });
+        }
+
+        protected UnitMatrixMult(SerializationInfo info, StreamingContext context)
+        {
+            Matrix = (Matrix) info.GetValue("Matrix", typeof (Matrix));
+        }
+
+        public void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            info.AddValue("Matrix", Matrix);
         }
 
         public Coordinate Transform(Coordinate c)

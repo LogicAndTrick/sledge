@@ -1,15 +1,24 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using System.Runtime.Serialization;
 using Sledge.DataStructures.Geometric;
 
 namespace Sledge.DataStructures.MapObjects
 {
+    [Serializable]
     public class Group : MapObject
     {
         public Group(long id) : base(id)
         {
+        }
+
+        protected Group(SerializationInfo info, StreamingContext context) : base(info, context)
+        {
+        }
+
+        public override void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            base.GetObjectData(info, context);
         }
 
         public override MapObject Copy(IDGenerator generator)

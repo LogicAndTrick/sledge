@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using System.Runtime.Serialization;
 
 namespace Sledge.DataStructures.MapObjects
 {
+    [Serializable]
     public class World : MapObject
     {
         public EntityData EntityData { get; set; }
@@ -14,6 +15,19 @@ namespace Sledge.DataStructures.MapObjects
         {
             Paths = new List<Path>();
             EntityData = new EntityData {Name = "worldspawn"};
+        }
+
+        protected World(SerializationInfo info, StreamingContext context) : base(info, context)
+        {
+            EntityData = (EntityData) info.GetValue("EntityData", typeof (EntityData));
+            Paths = ((Path[])info.GetValue("Paths", typeof(Path[]))).ToList();
+        }
+
+        public override void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            base.GetObjectData(info, context);
+            info.AddValue("EntityData", EntityData);
+            info.AddValue("Paths", Paths.ToArray());
         }
 
         public override MapObject Copy(IDGenerator generator)

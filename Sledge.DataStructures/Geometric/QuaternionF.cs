@@ -1,11 +1,13 @@
 ﻿using System;
+using System.Runtime.Serialization;
 
 namespace Sledge.DataStructures.Geometric
 {
     /// <summary>
     /// Represents a QuaternionF. Shamelessly taken in its entirety from OpenTK's QuaternionF structure. http://www.opentk.com/
     /// </summary>
-    public class QuaternionF
+    [Serializable]
+    public class QuaternionF : ISerializable
     {
         public static QuaternionF Identity
         {
@@ -35,6 +37,18 @@ namespace Sledge.DataStructures.Geometric
         public float Dot(QuaternionF c)
         {
             return Vector.Dot(c.Vector) + Scalar * c.Scalar;
+        }
+
+        protected QuaternionF(SerializationInfo info, StreamingContext context)
+        {
+            Vector = (CoordinateF) info.GetValue("Vector", typeof (CoordinateF));
+            Scalar = info.GetSingle("Scalar");
+        }
+
+        public void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            info.AddValue("Vector", Vector);
+            info.AddValue("Scalar", Scalar);
         }
 
         public float Magnitude()

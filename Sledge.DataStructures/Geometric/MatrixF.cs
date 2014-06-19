@@ -1,15 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using Sledge.Extensions;
+using System.Runtime.Serialization;
 
 namespace Sledge.DataStructures.Geometric
 {
     /// <summary>
     /// Represents a 4x4 MatrixF. Shamelessly taken in its entirety from OpenTK's MatrixF4 structure. http://www.opentk.com/
     /// </summary>
-    public class MatrixF
+    [Serializable]
+    public class MatrixF : ISerializable
     {
         public static MatrixF Zero
         {
@@ -49,6 +48,16 @@ namespace Sledge.DataStructures.Geometric
                              0, 0, 0, 0,
                              0, 0, 0, 0
                          };
+        }
+
+        protected MatrixF(SerializationInfo info, StreamingContext context)
+        {
+            Values = (float[]) info.GetValue("Values", typeof (float[]));
+        }
+
+        public void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            info.AddValue("Values", Values);
         }
 
         public MatrixF(params float[] values)

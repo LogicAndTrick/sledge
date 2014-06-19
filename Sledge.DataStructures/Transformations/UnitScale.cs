@@ -1,7 +1,10 @@
-﻿using Sledge.DataStructures.Geometric;
+﻿using System;
+using System.Runtime.Serialization;
+using Sledge.DataStructures.Geometric;
 
 namespace Sledge.DataStructures.Transformations
 {
+    [Serializable]
     public class UnitScale : IUnitTransformation
     {
         public Coordinate Scalar { get; set; }
@@ -11,6 +14,18 @@ namespace Sledge.DataStructures.Transformations
         {
             Scalar = scalar;
             Origin = origin;
+        }
+
+        protected UnitScale(SerializationInfo info, StreamingContext context)
+        {
+            Scalar = (Coordinate) info.GetValue("Scalar", typeof (Coordinate));
+            Origin = (Coordinate) info.GetValue("Origin", typeof (Coordinate));
+        }
+
+        public void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            info.AddValue("Scalar", Scalar);
+            info.AddValue("Origin", Origin);
         }
 
         public Coordinate Transform(Coordinate c)

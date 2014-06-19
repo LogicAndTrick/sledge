@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Runtime.Serialization;
 using Sledge.DataStructures.Geometric;
 
 namespace Sledge.DataStructures.MapObjects
 {
-    public class Vertex
+    [Serializable]
+    public class Vertex : ISerializable
     {
         private decimal _textureU;
         private decimal _textureV;
@@ -63,6 +62,20 @@ namespace Sledge.DataStructures.MapObjects
             Location = location;
             Parent = parent;
             TextureV = TextureU = 0;
+        }
+
+        protected Vertex(SerializationInfo info, StreamingContext context)
+        {
+            TextureU = info.GetDecimal("TextureU");
+            TextureV = info.GetDecimal("TextureV");
+            Location = (Coordinate) info.GetValue("Location", typeof (Coordinate));
+        }
+
+        public void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            info.AddValue("TextureU", TextureU);
+            info.AddValue("TextureV", TextureV);
+            info.AddValue("Location", Location);
         }
 
         public Vertex Clone()

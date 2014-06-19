@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Runtime.InteropServices;
-using Sledge.Common;
+using System.Runtime.Serialization;
 using Sledge.DataStructures.GameData;
 using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.Transformations;
@@ -10,6 +10,7 @@ using Sledge.Extensions;
 
 namespace Sledge.DataStructures.MapObjects
 {
+    [Serializable]
     public class Entity : MapObject
     {
         public GameDataObject GameData { get; set; }
@@ -20,6 +21,19 @@ namespace Sledge.DataStructures.MapObjects
         {
             Origin = new Coordinate(0, 0, 0);
             EntityData = new EntityData();
+        }
+
+        protected Entity(SerializationInfo info, StreamingContext context) : base(info, context)
+        {
+            EntityData = (EntityData) info.GetValue("EntityData", typeof (EntityData));
+            Origin = (Coordinate) info.GetValue("Origin", typeof (Coordinate));
+        }
+
+        public override void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            base.GetObjectData(info, context);
+            info.AddValue("EntityData", EntityData);
+            info.AddValue("Origin", Origin);
         }
 
         public override MapObject Copy(IDGenerator generator)

@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Runtime.Serialization;
 using Sledge.Extensions;
 
 namespace Sledge.DataStructures.Geometric
@@ -9,7 +7,8 @@ namespace Sledge.DataStructures.Geometric
     /// <summary>
     /// Represents a quaternion. Shamelessly taken in its entirety from OpenTK's Quaternion structure. http://www.opentk.com/
     /// </summary>
-    public class Quaternion
+    [Serializable]
+    public class Quaternion : ISerializable
     {
         public static Quaternion Identity
         {
@@ -34,6 +33,18 @@ namespace Sledge.DataStructures.Geometric
         {
             Vector = new Coordinate(x, y, z);
             Scalar = w;
+        }
+
+        protected Quaternion(SerializationInfo info, StreamingContext context)
+        {
+            Vector = (Coordinate) info.GetValue("Vector", typeof (Coordinate));
+            Scalar = info.GetDecimal("Scalar");
+        }
+
+        public void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            info.AddValue("Vector", Vector);
+            info.AddValue("Scalar", Scalar);
         }
 
         public decimal Dot(Quaternion c)

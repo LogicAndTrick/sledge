@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Globalization;
+using System.Runtime.Serialization;
 using Sledge.Extensions;
 
 namespace Sledge.DataStructures.Geometric
 {
-    public class Coordinate
+    [Serializable]
+    public class Coordinate : ISerializable
     {
         public readonly static Coordinate MaxValue = new Coordinate(Decimal.MaxValue, Decimal.MaxValue, Decimal.MaxValue);
         public readonly static Coordinate MinValue = new Coordinate(Decimal.MinValue, Decimal.MinValue, Decimal.MinValue);
@@ -92,6 +94,20 @@ namespace Sledge.DataStructures.Geometric
             _dx = (double) x;
             _dy = (double) y;
             _dz = (double) z;
+        }
+
+        protected Coordinate(SerializationInfo info, StreamingContext context)
+        {
+            X = info.GetDecimal("X");
+            Y = info.GetDecimal("Y");
+            Z = info.GetDecimal("Z");
+        }
+
+        public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            info.AddValue("X", X);
+            info.AddValue("Y", Y);
+            info.AddValue("Z", Z);
         }
 
         public bool EquivalentTo(Coordinate test, decimal delta = 0.0001m)

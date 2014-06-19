@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Runtime.Serialization;
 
 namespace Sledge.DataStructures.Geometric
 {
-    public class CoordinateF
+    [Serializable]
+    public class CoordinateF : ISerializable
     {
         public readonly static CoordinateF MaxValue = new CoordinateF(float.MaxValue, float.MaxValue, float.MaxValue);
         public readonly static CoordinateF MinValue = new CoordinateF(float.MinValue, float.MinValue, float.MinValue);
@@ -21,6 +23,20 @@ namespace Sledge.DataStructures.Geometric
             X = x;
             Y = y;
             Z = z;
+        }
+
+        protected CoordinateF(SerializationInfo info, StreamingContext context)
+        {
+            X = info.GetSingle("X");
+            Y = info.GetSingle("Y");
+            Z = info.GetSingle("Z");
+        }
+
+        public void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            info.AddValue("X", X);
+            info.AddValue("Y", Y);
+            info.AddValue("Z", Z);
         }
 
         public bool EquivalentTo(CoordinateF test, float delta = 0.0001f)

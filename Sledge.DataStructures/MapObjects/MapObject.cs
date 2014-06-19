@@ -1,14 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Drawing;
+using System.Runtime.Serialization;
 using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.Meta;
 using Sledge.DataStructures.Transformations;
 
 namespace Sledge.DataStructures.MapObjects
 {
-    public abstract class MapObject
+    [Serializable]
+    public abstract class MapObject : ISerializable
     {
         public long ID { get; set; }
         public string ClassName { get; set; }
@@ -32,6 +35,31 @@ namespace Sledge.DataStructures.MapObjects
             AutoVisgroups = new List<int>();
             Children = new Dictionary<long, MapObject>();
             MetaData = new MetaData();
+        }
+
+        protected MapObject(SerializationInfo info, StreamingContext context)
+        {
+            ID = info.GetInt64("ID");
+            ClassName = info.GetString("ClassName");
+            Visgroups = info.GetString("Visgroups").Split(',').Select(x => int.Parse(x, CultureInfo.InvariantCulture)).ToList();
+            AutoVisgroups = info.GetString("AutoVisgroups").Split(',').Select(x => int.Parse(x, CultureInfo.InvariantCulture)).ToList();
+            Colour = Color.FromArgb(info.GetInt32("Colour"));
+
+            var children = (MapObject[]) info.GetValue("Children", typeof (MapObject[]));
+            foreach (var child in children)
+            {
+                child.SetParent(this);
+            }
+        }
+
+        public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            info.AddValue("ID", ID);
+            info.AddValue("ClassName", ClassName);
+            info.AddValue("Visgroups", String.Join(",", Visgroups.Select(x => x.ToString(CultureInfo.InvariantCulture))));
+            info.AddValue("AutoVisgroups", String.Join(",", AutoVisgroups.Select(x => x.ToString(CultureInfo.InvariantCulture))));
+            info.AddValue("Colour", Colour.ToArgb());
+            info.AddValue("Children", GetChildren().ToArray());
         }
 
         public IEnumerable<MapObject> GetChildren()

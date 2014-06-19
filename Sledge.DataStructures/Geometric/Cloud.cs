@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Runtime.Serialization;
 
 namespace Sledge.DataStructures.Geometric
 {
@@ -9,7 +8,8 @@ namespace Sledge.DataStructures.Geometric
     /// A cloud is a wrapper around a collection of points, allowing
     /// various useful operations to be performed on them.
     /// </summary>
-    public class Cloud
+    [Serializable]
+    public class Cloud : ISerializable
     {
         public List<Coordinate> Points { get; private set; }
         public Box BoundingBox { get; private set; }
@@ -37,6 +37,16 @@ namespace Sledge.DataStructures.Geometric
             }
         }
 
+        protected Cloud(SerializationInfo info, StreamingContext context) : this((Coordinate[]) info.GetValue("Points", typeof(Coordinate[])))
+        {
+
+        }
+
+        public void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            info.AddValue("Points", Points.ToArray());
+        }
+
         /// <summary>
         /// Get a list of the 6 points that define the outermost extents of this cloud.
         /// </summary>
@@ -47,7 +57,7 @@ namespace Sledge.DataStructures.Geometric
                        {
                            MinX, MinY, MinZ,
                            MaxX, MaxY, MaxZ
-                       };
+                        };
         }
     }
 }

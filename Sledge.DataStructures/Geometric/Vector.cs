@@ -1,5 +1,9 @@
-﻿namespace Sledge.DataStructures.Geometric
+﻿using System;
+using System.Runtime.Serialization;
+
+namespace Sledge.DataStructures.Geometric
 {
+    [Serializable]
     public class Vector : Coordinate
     {
         public Coordinate Normal { get; set; }
@@ -20,6 +24,19 @@
             : base(0, 0, 0)
         {
             Set(offsets);
+        }
+
+        protected Vector(SerializationInfo info, StreamingContext context) : base(info, context)
+        {
+            Normal = (Coordinate) info.GetValue("Normal", typeof (Coordinate));
+            Distance = info.GetDecimal("Distance");
+        }
+
+        public override void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            base.GetObjectData(info, context);
+            info.AddValue("Normal", Normal);
+            info.AddValue("Distance", Distance);
         }
 
         public void SetToZero()

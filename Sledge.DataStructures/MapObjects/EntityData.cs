@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using System.Runtime.Serialization;
 using Sledge.DataStructures.Geometric;
 
 namespace Sledge.DataStructures.MapObjects
 {
-    public class EntityData
+    [Serializable]
+    public class EntityData : ISerializable
     {
         public string Name { get; set; }
         public int Flags { get; set; }
@@ -29,6 +30,22 @@ namespace Sledge.DataStructures.MapObjects
             {
                 Properties.Add(new Property {Key = prop.Name, Value = prop.DefaultValue});
             }
+        }
+
+        protected EntityData(SerializationInfo info, StreamingContext context)
+        {
+            Name = info.GetString("Name");
+            Flags = info.GetInt32("Flags");
+            Properties = ((Property[]) info.GetValue("Properties", typeof (Property[]))).ToList();
+            Outputs = ((Output[]) info.GetValue("Outputs", typeof (Output[]))).ToList();
+        }
+
+        public void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            info.AddValue("Name", Name);
+            info.AddValue("Flags", Flags);
+            info.AddValue("Properties", Properties.ToArray());
+            info.AddValue("Outputs", Outputs.ToArray());
         }
 
         public EntityData Clone()

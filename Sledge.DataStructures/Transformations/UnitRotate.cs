@@ -1,8 +1,11 @@
-﻿using Sledge.DataStructures.Geometric;
+﻿using System;
+using System.Runtime.Serialization;
+using Sledge.DataStructures.Geometric;
 using Sledge.Extensions;
 
 namespace Sledge.DataStructures.Transformations
 {
+    [Serializable]
     public class UnitRotate : IUnitTransformation
     {
         public decimal Rotation { get; set; }
@@ -12,6 +15,18 @@ namespace Sledge.DataStructures.Transformations
         {
             Rotation = scalar;
             Axis = axis;
+        }
+
+        protected UnitRotate(SerializationInfo info, StreamingContext context)
+        {
+            Rotation = info.GetInt32("Rotation");
+            Axis = (Line) info.GetValue("Axis", typeof (Line));
+        }
+
+        public void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            info.AddValue("Rotation", Rotation);
+            info.AddValue("Axis", Axis);
         }
 
         /**

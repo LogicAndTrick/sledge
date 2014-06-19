@@ -1,17 +1,32 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Globalization;
-using System.Linq;
-using System.Text;
+using System.Runtime.Serialization;
 using Sledge.DataStructures.Geometric;
 
 namespace Sledge.DataStructures.MapObjects
 {
-    public class Property
+    [Serializable]
+    public class Property : ISerializable
     {
         public string Key { get; set; }
         public string Value { get; set; }
+
+        public Property()
+        {
+        }
+
+        protected Property(SerializationInfo info, StreamingContext context)
+        {
+            Key = info.GetString("Key");
+            Value = info.GetString("Value");
+        }
+
+        public void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            info.AddValue("Key", Key);
+            info.AddValue("Value", Value);
+        }
 
         public Color GetColour(Color defaultIfInvalid)
         {

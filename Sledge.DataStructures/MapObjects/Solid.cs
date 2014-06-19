@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using Sledge.DataStructures.Geometric;
 
 namespace Sledge.DataStructures.MapObjects
 {
+    [Serializable]
     public class Solid : MapObject
     {
         public List<Face> Faces { get; private set; }
@@ -12,6 +14,18 @@ namespace Sledge.DataStructures.MapObjects
         public Solid(long id) : base(id)
         {
             Faces = new List<Face>();
+        }
+
+        protected Solid(SerializationInfo info, StreamingContext context) : base(info, context)
+        {
+            Faces = ((Face[]) info.GetValue("Faces", typeof (Face[]))).ToList();
+            Faces.ForEach(x => x.Parent = this);
+        }
+
+        public override void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            base.GetObjectData(info, context);
+            info.AddValue("Faces", Faces.ToArray());
         }
 
         public override MapObject Copy(IDGenerator generator)

@@ -1,16 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using System.Runtime.Serialization;
 using Sledge.DataStructures.Transformations;
-using Sledge.Extensions;
 
 namespace Sledge.DataStructures.Geometric
 {
     /// <summary>
     /// Represents a coplanar, directed polygon with at least 3 vertices.
     /// </summary>
-    public class Polygon
+    [Serializable]
+    public class Polygon : ISerializable
     {
         public List<Coordinate> Vertices { get; set; }
         public Plane Plane { get; set; }
@@ -50,6 +50,18 @@ namespace Sledge.DataStructures.Geometric
                                plane.PointOnPlane + right - up, // Bottom right
                            };
             Expand(radius);
+        }
+
+        protected Polygon(SerializationInfo info, StreamingContext context)
+        {
+            Vertices = ((Coordinate[]) info.GetValue("Vertices", typeof (Coordinate[]))).ToList();
+            Plane = (Plane) info.GetValue("Plane", typeof (Plane));
+        }
+
+        public void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            info.AddValue("Vertices", Vertices.ToArray());
+            info.AddValue("Plane", Plane);
         }
 
         public Polygon Clone()

@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using System.Runtime.Serialization;
 
 namespace Sledge.DataStructures.MapObjects
 {
-    public class Path
+    [Serializable]
+    public class Path : ISerializable
     {
         public string Name { get; set; }
         public string Type { get; set; }
@@ -15,6 +16,23 @@ namespace Sledge.DataStructures.MapObjects
         public Path()
         {
             Nodes = new List<PathNode>();
+        }
+
+        protected Path(SerializationInfo info, StreamingContext context)
+        {
+            Name = info.GetString("Name");
+            Type = info.GetString("Type");
+            Direction = (PathDirection) info.GetValue("Direction", typeof (PathDirection));
+            Nodes = ((PathNode[]) info.GetValue("Nodes", typeof (PathNode[]))).ToList();
+            Nodes.ForEach(x => x.Parent = this);
+        }
+
+        public void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            info.AddValue("Name", Name);
+            info.AddValue("Type", Type);
+            info.AddValue("Direction", Direction);
+            info.AddValue("Nodes", Nodes.ToArray());
         }
 
         public Path Clone()

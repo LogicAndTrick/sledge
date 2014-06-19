@@ -1,12 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Drawing;
-using Sledge.DataStructures.GameData;
+using System.Runtime.Serialization;
 
 namespace Sledge.DataStructures.MapObjects
 {
-    public class Visgroup
+    [Serializable]
+    public class Visgroup : ISerializable
     {
         public int ID { get; set; }
         public string Name { get; set; }
@@ -20,6 +21,25 @@ namespace Sledge.DataStructures.MapObjects
         public Visgroup()
         {
             Children = new List<Visgroup>();
+        }
+
+        protected Visgroup(SerializationInfo info, StreamingContext context)
+        {
+            ID = info.GetInt32("ID");
+            Name = info.GetString("Name");
+            Visible = info.GetBoolean("Visible");
+            Colour = Color.FromArgb(info.GetInt32("Colour"));
+            Children = ((Visgroup[]) info.GetValue("Children", typeof (Visgroup[]))).ToList();
+            Children.ForEach(x => x.Parent = this);
+        }
+
+        public void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            info.AddValue("ID", ID);
+            info.AddValue("Name", Name);
+            info.AddValue("Visible", Visible);
+            info.AddValue("Colour", Colour.ToArgb());
+            info.AddValue("Children", Children.ToArray());
         }
 
         public virtual Visgroup Clone()

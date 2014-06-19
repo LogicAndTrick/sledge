@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using Sledge.DataStructures.Transformations;
 
 namespace Sledge.DataStructures.Geometric
 {
-    public class Box
+    [Serializable]
+    public class Box : ISerializable
     {
         public readonly static Box Empty = new Box(Coordinate.Zero, Coordinate.Zero);
 
@@ -91,6 +93,19 @@ namespace Sledge.DataStructures.Geometric
             Start = min;
             End = max;
             Center = (Start + End) / 2;
+        }
+
+        protected Box(SerializationInfo info, StreamingContext context)
+        {
+            Start = (Coordinate) info.GetValue("Start", typeof (Coordinate));
+            End = (Coordinate) info.GetValue("End", typeof (Coordinate));
+            Center = (Start + End) / 2;
+        }
+
+        public void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            info.AddValue("Start", Start);
+            info.AddValue("End", End);
         }
 
         public bool IsEmpty()

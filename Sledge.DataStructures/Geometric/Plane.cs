@@ -1,11 +1,13 @@
 ﻿using System;
+using System.Runtime.Serialization;
 
 namespace Sledge.DataStructures.Geometric
 {
     /// <summary>
     /// Defines a plane in the form Ax + By + Cz + D = 0
     /// </summary>
-    public class Plane
+    [Serializable]
+    public class Plane : ISerializable
     {
         public Coordinate Normal { get; private set; }
         public decimal DistanceFromOrigin { get; private set; }
@@ -52,6 +54,17 @@ namespace Sledge.DataStructures.Geometric
             B = Normal.Y;
             C = Normal.Z;
             D = -DistanceFromOrigin;
+        }
+
+        protected Plane(SerializationInfo info, StreamingContext context) : this((Coordinate)info.GetValue("Normal", typeof(Coordinate)), info.GetDecimal("DistanceFromOrigin"))
+        {
+
+        }
+
+        public void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            info.AddValue("Normal", Normal);
+            info.AddValue("DistanceFromOrigin", DistanceFromOrigin);
         }
 
         ///  <summary>Finds if the given point is above, below, or on the plane.</summary>

@@ -1,16 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
-using System.Text;
+using System.Runtime.Serialization;
 using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.Transformations;
 using Sledge.Extensions;
 
 namespace Sledge.DataStructures.MapObjects
 {
-    public class Face
+    [Serializable]
+    public class Face : ISerializable
     {
         public long ID { get; set; }
         public Color Colour { get; set; }
@@ -34,6 +34,25 @@ namespace Sledge.DataStructures.MapObjects
             Vertices = new List<Vertex>();
             IsSelected = false;
             Opacity = 1;
+        }
+
+        protected Face(SerializationInfo info, StreamingContext context)
+        {
+            ID = info.GetInt64("ID");
+            Colour = Color.FromArgb(info.GetInt32("Colour"));
+            Plane = (Plane) info.GetValue("Plane", typeof (Plane));
+            Texture = (TextureReference) info.GetValue("Texture", typeof (TextureReference));
+            Vertices = ((Vertex[]) info.GetValue("Vertices", typeof (Vertex[]))).ToList();
+            Vertices.ForEach(x => x.Parent = this);
+        }
+
+        public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            info.AddValue("ID", ID);
+            info.AddValue("Colour", Colour.ToArgb());
+            info.AddValue("Plane", Plane);
+            info.AddValue("Texture", Texture);
+            info.AddValue("Vertices", Vertices.ToArray());
         }
 
         public virtual Face Copy(IDGenerator generator)

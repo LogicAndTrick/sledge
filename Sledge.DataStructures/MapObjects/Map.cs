@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using System.Runtime.Serialization;
 using System.Threading.Tasks;
 using Sledge.Common;
 using Sledge.DataStructures.GameData;
@@ -9,7 +9,8 @@ using Sledge.DataStructures.Geometric;
 
 namespace Sledge.DataStructures.MapObjects
 {
-    public class Map
+    [Serializable]
+    public class Map : ISerializable
     {
         public decimal Version { get; set; }
         public List<Visgroup> Visgroups { get; private set; }
@@ -44,6 +45,27 @@ namespace Sledge.DataStructures.MapObjects
             TextureLock = true;
             HideDisplacementSolids = true;
             CordonBounds = new Box(Coordinate.One * -1024, Coordinate.One * 1024);
+        }
+
+        protected Map(SerializationInfo info, StreamingContext context)
+        {
+            Version = info.GetDecimal("Version");
+            Visgroups = ((Visgroup[]) info.GetValue("Visgroups", typeof (Visgroup[]))).ToList();
+            Cameras = ((Camera[]) info.GetValue("Cameras", typeof (Camera[]))).ToList();
+            var activeCamera = info.GetInt32("ActiveCameraID");
+            ActiveCamera = activeCamera >= 0 ? Cameras[activeCamera] : null;
+            WorldSpawn = (World) info.GetValue("WorldSpawn", typeof (World));
+            IDGenerator = (IDGenerator) info.GetValue("IDGenerator", typeof (IDGenerator));
+        }
+
+        public void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            info.AddValue("Version", Version);
+            info.AddValue("Visgroups", Visgroups.ToArray());
+            info.AddValue("Cameras", Cameras.ToArray());
+            info.AddValue("ActiveCameraID", Cameras.IndexOf(ActiveCamera));
+            info.AddValue("WorldSpawn", WorldSpawn);
+            info.AddValue("IDGenerator", IDGenerator);
         }
 
         public IEnumerable<MapFeature> GetUsedFeatures()

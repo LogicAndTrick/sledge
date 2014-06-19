@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using System.Runtime.Serialization;
 using Sledge.Common.Easings;
 using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.Transformations;
 
 namespace Sledge.DataStructures.MapObjects
 {
+    [Serializable]
     public class Displacement : Face
     {
         public int Power { get; private set; }
@@ -23,6 +24,25 @@ namespace Sledge.DataStructures.MapObjects
             StartPosition = new Coordinate(0, 0, 0);
             Elevation = 0;
             SubDiv = false;
+        }
+
+        protected Displacement(SerializationInfo info, StreamingContext context) : base(info, context)
+        {
+            Power = info.GetInt32("Power");
+            StartPosition = (Coordinate) info.GetValue("StartPosition", typeof (Coordinate));
+            Elevation = info.GetDecimal("Elevation");
+            SubDiv = info.GetBoolean("SubDiv");
+            Points = (DisplacementPoint[,]) info.GetValue("Points", typeof (DisplacementPoint[,]));
+            Points.OfType<DisplacementPoint>().ToList().ForEach(x => x.Parent = this);
+        }
+
+        public override void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            info.AddValue("Power", Power);
+            info.AddValue("StartPosition", StartPosition);
+            info.AddValue("Elevation", Elevation);
+            info.AddValue("SubDiv", SubDiv);
+            info.AddValue("Points", Points);
         }
 
         /// <summary>

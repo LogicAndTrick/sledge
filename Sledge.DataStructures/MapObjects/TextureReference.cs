@@ -1,9 +1,12 @@
-﻿using Sledge.Common;
+﻿using System;
+using System.Runtime.Serialization;
+using Sledge.Common;
 using Sledge.DataStructures.Geometric;
 
 namespace Sledge.DataStructures.MapObjects
 {
-    public class TextureReference
+    [Serializable]
+    public class TextureReference : ISerializable
     {
         public string Name { get; set; }
         private ITexture _texture;
@@ -48,6 +51,30 @@ namespace Sledge.DataStructures.MapObjects
             _vAxis = Coordinate.UnitX;
             XShift = YShift = 0;
             XScale = YScale = 1;
+        }
+
+        protected TextureReference(SerializationInfo info, StreamingContext context)
+        {
+            Name = info.GetString("Name");
+            Rotation = info.GetInt32("Rotation");
+            _uAxis = (Coordinate) info.GetValue("UAxis", typeof (Coordinate));
+            _vAxis = (Coordinate) info.GetValue("VAxis", typeof (Coordinate));
+            XShift = info.GetDecimal("XShift");
+            XScale = info.GetDecimal("XScale");
+            YShift = info.GetDecimal("YShift");
+            YScale = info.GetDecimal("YScale");
+        }
+
+        public void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            info.AddValue("Name", Name);
+            info.AddValue("Rotation", Rotation);
+            info.AddValue("UAxis", _uAxis);
+            info.AddValue("VAxis", _vAxis);
+            info.AddValue("XShift", XShift);
+            info.AddValue("XScale", XScale);
+            info.AddValue("YShift", YShift);
+            info.AddValue("YScale", YScale);
         }
 
         public Coordinate GetNormal()

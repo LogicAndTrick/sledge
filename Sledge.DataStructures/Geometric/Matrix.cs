@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Runtime.Serialization;
 using OpenTK;
 using Sledge.Extensions;
 
@@ -10,7 +8,8 @@ namespace Sledge.DataStructures.Geometric
     /// <summary>
     /// Represents a 4x4 matrix. Shamelessly taken in its entirety from OpenTK's Matrix4 structure. http://www.opentk.com/
     /// </summary>
-    public class Matrix
+    [Serializable]
+    public class Matrix : ISerializable
     {
         public static Matrix Zero
         {
@@ -50,6 +49,16 @@ namespace Sledge.DataStructures.Geometric
                              0, 0, 0, 0,
                              0, 0, 0, 0
                          };
+        }
+
+        protected Matrix(SerializationInfo info, StreamingContext context)
+        {
+            Values = (decimal[]) info.GetValue("Values", typeof (decimal[]));
+        }
+
+        public void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            info.AddValue("Values", Values);
         }
 
         public Matrix(params decimal[] values)
