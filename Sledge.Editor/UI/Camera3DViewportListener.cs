@@ -53,7 +53,15 @@ namespace Sledge.Editor.UI
             _lastMillis = frame.Milliseconds;
 
             if (currMillis == 0) return;
-            if (!Focus || !Viewport.IsUnlocked(this)) return;
+            if (!Focus || !Viewport.IsUnlocked(this) || !Viewport.IsFocused)
+            {
+                if (FreeLook || FreeLookToggle)
+                {
+                    FreeLook = FreeLookToggle = false;
+                    SetFreeLook();
+                }
+                return;
+            }
 
             var seconds = (frame.Milliseconds - currMillis) / 1000m;
             var units = Sledge.Settings.View.ForwardSpeed * seconds;
