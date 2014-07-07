@@ -229,8 +229,8 @@ namespace Sledge.DataStructures.MapObjects
             var direction = Plane.GetClosestAxisToNormal();
 
             var tempV = direction == Coordinate.UnitZ ? -Coordinate.UnitY : -Coordinate.UnitZ;
-            Texture.UAxis = tempV.Cross(Plane.Normal).Normalise();
-            Texture.VAxis = Plane.Normal.Cross(Texture.UAxis).Normalise();
+            Texture.UAxis = Plane.Normal.Cross(tempV).Normalise();
+            Texture.VAxis = Texture.UAxis.Cross(Plane.Normal).Normalise();
             Texture.Rotation = 0;
 
             CalculateTextureCoordinates(true);
