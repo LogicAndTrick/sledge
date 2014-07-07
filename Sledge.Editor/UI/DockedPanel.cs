@@ -11,7 +11,7 @@ using Sledge.Editor.Properties;
 
 namespace Sledge.Editor.UI
 {
-    class DockedPanel : Panel
+    public class DockedPanel : Panel
     {
         public int DockDimension
         {

@@ -21,14 +21,15 @@ namespace Sledge.Editor.UI.Sidebar
         private static SidebarContainer _container;
         private static List<SidebarPanel> _toolPanels;
 
-        public static void Init(Control container)
+        public static void Init(DockedPanel container)
         {
             _instance = new SidebarManager();
 
             _container = new SidebarContainer { Dock = DockStyle.Fill };
 
-            container.Width = Sledge.Settings.Layout.SidebarWidth;
-            container.Resize += (s, e) => Sledge.Settings.Layout.SidebarWidth = container.Width;
+            if (Sledge.Settings.Layout.SidebarWidth <= 10) container.Hidden = true;
+            else container.Width = Sledge.Settings.Layout.SidebarWidth;
+            container.Resize += (s, e) => Sledge.Settings.Layout.SidebarWidth = container.Hidden ? 0 : container.Width;
 
             container.Controls.Add(_container);
 
