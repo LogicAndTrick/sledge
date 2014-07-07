@@ -267,6 +267,11 @@ namespace Sledge.Editor.Documents
                 // Publish event
                 Mediator.Publish(EditorMediator.FileAutosaved, this);
                 History.TotalActionsSinceLastAutoSave = 0;
+
+                if (Game.AutosaveTriggerFileSave && MapFile != null)
+                {
+                    SaveFile();
+                }
             }
 
             // Reschedule autosave

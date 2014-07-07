@@ -317,6 +317,7 @@ namespace Sledge.Editor.Settings
             this.btnApplyAndCloseSettings = new System.Windows.Forms.Button();
             this.btnApplySettings = new System.Windows.Forms.Button();
             this.HelpTooltip = new System.Windows.Forms.ToolTip(this.components);
+            this.SelectedGameAutosaveTriggerFileSave = new System.Windows.Forms.CheckBox();
             this.tbcSettings.SuspendLayout();
             this.tabGeneral.SuspendLayout();
             this.tabIntegration.SuspendLayout();
@@ -1737,6 +1738,7 @@ namespace Sledge.Editor.Settings
             this.tabConfigSaving.Controls.Add(this.SelectedGameAutosaveTime);
             this.tabConfigSaving.Controls.Add(this.SelectedGameUseDiffAutosaveDir);
             this.tabConfigSaving.Controls.Add(this.label15);
+            this.tabConfigSaving.Controls.Add(this.SelectedGameAutosaveTriggerFileSave);
             this.tabConfigSaving.Controls.Add(this.SelectedGameAutosaveOnlyOnChange);
             this.tabConfigSaving.Controls.Add(this.label14);
             this.tabConfigSaving.Controls.Add(this.SelectedGameDiffAutosaveDirBrowse);
@@ -3559,6 +3561,17 @@ namespace Sledge.Editor.Settings
             this.HelpTooltip.UseAnimation = false;
             this.HelpTooltip.UseFading = false;
             // 
+            // SelectedGameAutosaveTriggerFileSave
+            // 
+            this.SelectedGameAutosaveTriggerFileSave.Checked = true;
+            this.SelectedGameAutosaveTriggerFileSave.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.SelectedGameAutosaveTriggerFileSave.Location = new System.Drawing.Point(99, 199);
+            this.SelectedGameAutosaveTriggerFileSave.Name = "SelectedGameAutosaveTriggerFileSave";
+            this.SelectedGameAutosaveTriggerFileSave.Size = new System.Drawing.Size(330, 20);
+            this.SelectedGameAutosaveTriggerFileSave.TabIndex = 14;
+            this.SelectedGameAutosaveTriggerFileSave.Text = "Also save the actual file when autosaving (i.e. automatic Ctrl+S)";
+            this.SelectedGameAutosaveTriggerFileSave.UseVisualStyleBackColor = true;
+            // 
             // SettingsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -3940,5 +3953,6 @@ namespace Sledge.Editor.Settings
         private System.Windows.Forms.TextBox SelectedGameWhitelistTextbox;
         private System.Windows.Forms.TextBox SelectedGameBlacklistTextbox;
         private System.Windows.Forms.GroupBox groupBox19;
+        private System.Windows.Forms.CheckBox SelectedGameAutosaveTriggerFileSave;
 	}
 }

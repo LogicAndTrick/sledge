@@ -28,6 +28,7 @@ namespace Sledge.Settings.Models
         public int AutosaveTime { get; set; }
         public int AutosaveLimit { get; set; }
         public bool AutosaveOnlyOnChanged { get; set; }
+        public bool AutosaveTriggerFileSave { get; set; }
         public string DefaultPointEntity { get; set; }
         public string DefaultBrushEntity { get; set; }
         public decimal DefaultTextureScale { get; set; }
@@ -50,6 +51,7 @@ namespace Sledge.Settings.Models
             AutosaveTime = 5;
             AutosaveLimit = 5;
             AutosaveOnlyOnChanged = true;
+            AutosaveTriggerFileSave = true;
         }
 
         public void Read(GenericStructure gs)
@@ -72,7 +74,8 @@ namespace Sledge.Settings.Models
             AutosaveDir = gs["AutosaveDir"];
             AutosaveTime = gs.PropertyInteger("AutosaveTime");
             AutosaveLimit = gs.PropertyInteger("AutosaveLimit");
-            AutosaveOnlyOnChanged = gs.PropertyBoolean("AutosaveOnlyOnChanged");
+            AutosaveOnlyOnChanged = gs.PropertyBoolean("AutosaveOnlyOnChanged", true);
+            AutosaveTriggerFileSave = gs.PropertyBoolean("AutosaveTriggerFileChange", true);
             DefaultPointEntity = gs["DefaultPointEntity"];
             DefaultBrushEntity = gs["DefaultBrushEntity"];
             DefaultTextureScale = gs.PropertyDecimal("DefaultTextureScale");
@@ -125,6 +128,7 @@ namespace Sledge.Settings.Models
             gs["AutosaveTime"] = AutosaveTime.ToString(CultureInfo.InvariantCulture);
             gs["AutosaveLimit"] = AutosaveLimit.ToString(CultureInfo.InvariantCulture);
             gs["AutosaveOnlyOnChanged"] = AutosaveOnlyOnChanged.ToString(CultureInfo.InvariantCulture);
+            gs["AutosaveTriggerFileChange"] = AutosaveTriggerFileSave.ToString(CultureInfo.InvariantCulture);
             gs["DefaultPointEntity"] = DefaultPointEntity;
             gs["DefaultBrushEntity"] = DefaultBrushEntity;
             gs["DefaultTextureScale"] = DefaultTextureScale.ToString(CultureInfo.InvariantCulture);

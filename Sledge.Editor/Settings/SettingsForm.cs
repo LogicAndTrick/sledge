@@ -235,6 +235,7 @@ namespace Sledge.Editor.Settings
             SelectedGameAutosaveTime.ValueChanged += (s, e) => CheckNull(_selectedGame, x => x.AutosaveTime = (int) SelectedGameAutosaveTime.Value);
             SelectedGameAutosaveLimit.ValueChanged += (s, e) => CheckNull(_selectedGame, x => x.AutosaveLimit = (int)SelectedGameAutosaveLimit.Value);
             SelectedGameAutosaveOnlyOnChange.CheckedChanged += (s, e) => CheckNull(_selectedGame, x => x.AutosaveOnlyOnChanged = SelectedGameAutosaveOnlyOnChange.Checked);
+            SelectedGameAutosaveTriggerFileSave.CheckedChanged += (s, e) => CheckNull(_selectedGame, x => x.AutosaveTriggerFileSave = SelectedGameAutosaveTriggerFileSave.Checked);
             SelectedGameDefaultPointEnt.SelectedIndexChanged += (s, e) => CheckNull(_selectedGame, x => x.DefaultPointEntity = SelectedGameDefaultPointEnt.Text);
             SelectedGameDefaultBrushEnt.SelectedIndexChanged += (s, e) => CheckNull(_selectedGame, x => x.DefaultBrushEntity = SelectedGameDefaultBrushEnt.Text);
             SelectedGameTextureScale.ValueChanged += (s, e) => CheckNull(_selectedGame, x => x.DefaultTextureScale = SelectedGameTextureScale.Value);
@@ -1056,6 +1057,7 @@ namespace Sledge.Editor.Settings
             SelectedGameEnableAutosave.Checked = _selectedGame.Autosave;
             SelectedGameUseDiffAutosaveDir.Checked = _selectedGame.UseCustomAutosaveDir;
             SelectedGameAutosaveOnlyOnChange.Checked = _selectedGame.AutosaveOnlyOnChanged;
+            SelectedGameAutosaveTriggerFileSave.Checked = _selectedGame.AutosaveTriggerFileSave;
             SelectedGameDiffAutosaveDir.Text = _selectedGame.AutosaveDir;
             SelectedGameDiffAutosaveDir.Enabled = SelectedGameUseDiffAutosaveDir.Checked;
             SelectedGameDefaultPointEnt.SelectedText = _selectedGame.DefaultPointEntity;
