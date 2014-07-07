@@ -523,9 +523,9 @@ namespace Sledge.Editor
             SelectionChanged();
             DocumentGridSpacingChanged(doc.Map.GridSpacing);
 
-            Text = "Sledge - " + (String.IsNullOrWhiteSpace(doc.MapFile) ? "Untitled" : System.IO.Path.GetFileName(doc.MapFile));
-
             DocumentTabs.SelectedIndex = DocumentManager.Documents.IndexOf(doc);
+
+            UpdateTitle();
         }
 
         private void UpdateDocumentTabs()
@@ -648,6 +648,20 @@ namespace Sledge.Editor
         {
             FileOpened(doc.MapFile);
             UpdateDocumentTabs();
+            UpdateTitle();
+        }
+
+        private void UpdateTitle()
+        {
+            if (DocumentManager.CurrentDocument != null)
+            {
+                var doc = DocumentManager.CurrentDocument;
+                Text = "Sledge - " + (String.IsNullOrWhiteSpace(doc.MapFile) ? "Untitled" : System.IO.Path.GetFileName(doc.MapFile));
+            }
+            else
+            {
+                Text = "Sledge";
+            }
         }
 
         private void DocumentClosed(Document doc)
