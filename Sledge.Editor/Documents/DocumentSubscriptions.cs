@@ -310,6 +310,11 @@ namespace Sledge.Editor.Documents
             var list = content.ToList();
             if (!list.Any()) return;
 
+            foreach (var face in list.SelectMany(x => x.FindAll().OfType<Solid>().SelectMany(y => y.Faces)))
+            {
+                face.Texture.Texture = _document.GetTexture(face.Texture.Name);
+            }
+
             var box = new Box(list.Select(x => x.BoundingBox));
 
             using (var psd = new PasteSpecialDialog(box))

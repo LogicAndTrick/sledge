@@ -43,7 +43,7 @@ namespace Sledge.Settings
                                     new HotkeyDefinition("Copy", "Copy the current selection", HotkeysMediator.OperationsCopy, "Ctrl+C", "Ctrl+Ins"),
                                     new HotkeyDefinition("Cut", "Cut the current selection", HotkeysMediator.OperationsCut, "Ctrl+X", "Shift+Del"),
                                     new HotkeyDefinition("Paste", "Paste the clipboard contents", HotkeysMediator.OperationsPaste, "Ctrl+V", "Shift+Ins"),
-                                    new HotkeyDefinition("Paste Special", "Paste special the clipboard contents", HotkeysMediator.OperationsPasteSpecial, "Ctrl+B"),
+                                    new HotkeyDefinition("Paste Special", "Paste special the clipboard contents", HotkeysMediator.OperationsPasteSpecial, "Ctrl+Shift+V"),
                                     new HotkeyDefinition("Delete", "Delete the current selection", HotkeysMediator.OperationsDelete, "Del"),
                                     
                                     new HotkeyDefinition("Group", "Group the selected objects", HotkeysMediator.GroupingGroup, "Ctrl+G"),

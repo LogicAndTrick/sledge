@@ -36,6 +36,7 @@ namespace Sledge.DataStructures.MapObjects
                 f.Parent = e;
                 e.Faces.Add(f);
                 f.UpdateBoundingBox();
+                f.CalculateTextureCoordinates(true);
             }
             CopyBase(e, generator);
             return e;

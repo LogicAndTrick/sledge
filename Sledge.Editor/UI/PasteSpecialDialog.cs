@@ -115,6 +115,14 @@ namespace Sledge.Editor.UI
             set { EntityPrefix.Text = value; }
         }
 
+        private static decimal _lastNumCopies = 1;
+        private static decimal _lastXOffset = 0;
+        private static decimal _lastYOffset = 0;
+        private static decimal _lastZOffset = 0;
+        private static decimal _lastXRotation = 0;
+        private static decimal _lastYRotation = 0;
+        private static decimal _lastZRotation = 0;
+
         public PasteSpecialDialog(Box source)
         {
             _source = source;
@@ -134,6 +142,33 @@ namespace Sledge.Editor.UI
             ZeroRotationZButton.Click += (sender, e) => RotationZ.Value = 0;
 
             PrefixEntityNamesCheckbox.CheckedChanged += (sender, e) => EntityPrefix.Enabled = PrefixEntityNamesCheckbox.Checked;
+
+            NumCopies.Value = _lastNumCopies;
+            OffsetX.Value = _lastXOffset;
+            OffsetY.Value = _lastYOffset;
+            OffsetZ.Value = _lastZOffset;
+            RotationX.Value = _lastXRotation;
+            RotationY.Value = _lastYRotation;
+            RotationZ.Value = _lastZRotation;
+        }
+
+        protected override void OnLoad(EventArgs e)
+        {
+            NumCopies.Focus();
+            NumCopies.Select(0, NumCopies.Text.Length);
+
+            base.OnLoad(e);
+        }
+
+        private void OkButtonClicked(object sender, EventArgs e)
+        {
+            _lastNumCopies = NumCopies.Value;
+            _lastXOffset = OffsetX.Value;
+            _lastYOffset = OffsetY.Value;
+            _lastZOffset = OffsetZ.Value;
+            _lastXRotation = RotationX.Value;
+            _lastYRotation = RotationY.Value;
+            _lastZRotation = RotationZ.Value;
         }
     }
 }

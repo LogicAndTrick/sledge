@@ -421,12 +421,12 @@ namespace Sledge.DataStructures.MapObjects
                 Texture.XScale *= ua.VectorMagnitude();
                 Texture.YScale *= va.VectorMagnitude();
             }
-            if (flags.HasFlag(TransformFlags.TextureLock) && Texture.Texture != null)
             {
                 // Transform the texture axes and move them back to the origin
                 var origin = transform.Transform(Coordinate.Zero);
                 var ua = transform.Transform(Texture.UAxis) - origin;
                 var va = transform.Transform(Texture.VAxis) - origin;
+
                 // Only do the transform if the axes end up being not perpendicular
                 // Otherwise just make a best-effort guess, same as the scaling lock
                 if (Math.Abs(ua.Dot(va)) < 0.0001m && DMath.Abs(Plane.Normal.Dot(ua.Cross(va).Normalise())) > 0.0001m)
@@ -438,15 +438,14 @@ namespace Sledge.DataStructures.MapObjects
                 {
                     AlignTextureToFace();
                 }
-                // Calculate the new shift values based on the UV values of the vertices
-                var vtx = Vertices[0];
-                Texture.XShift = Texture.Texture.Width * vtx.TextureU - (vtx.Location.Dot(Texture.UAxis)) / Texture.XScale;
-                Texture.YShift = Texture.Texture.Height * vtx.TextureV - (vtx.Location.Dot(Texture.VAxis)) / Texture.YScale;
-            }
-            else
-            {
-                // During rotate/skew operations we'll mess up the texture axes, just reset them.
-                AlignTextureToFace();
+
+                if (flags.HasFlag(TransformFlags.TextureLock) && Texture.Texture != null)
+                {
+                    // Calculate the new shift values based on the UV values of the vertices
+                    var vtx = Vertices[0];
+                    Texture.XShift = Texture.Texture.Width * vtx.TextureU - (vtx.Location.Dot(Texture.UAxis)) / Texture.XScale;
+                    Texture.YShift = Texture.Texture.Height * vtx.TextureV - (vtx.Location.Dot(Texture.VAxis)) / Texture.YScale;
+                }
             }
             CalculateTextureCoordinates(true);
             UpdateBoundingBox();
