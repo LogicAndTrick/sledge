@@ -186,6 +186,11 @@ namespace Sledge.Editor.Settings
             this.SelectedGameDefaultBrushEnt = new System.Windows.Forms.ComboBox();
             this.SelectedGameDefaultPointEnt = new System.Windows.Forms.ComboBox();
             this.tabConfigTextures = new System.Windows.Forms.TabPage();
+            this.groupBox19 = new System.Windows.Forms.GroupBox();
+            this.label45 = new System.Windows.Forms.Label();
+            this.label46 = new System.Windows.Forms.Label();
+            this.SelectedGameBlacklistTextbox = new System.Windows.Forms.TextBox();
+            this.SelectedGameWhitelistTextbox = new System.Windows.Forms.TextBox();
             this.SelectedGameAdditionalPackageList = new System.Windows.Forms.ListView();
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -253,10 +258,15 @@ namespace Sledge.Editor.Settings
             this.SelectedBuildRunBspCheckbox = new System.Windows.Forms.CheckBox();
             this.SelectedBuildRunCsgCheckbox = new System.Windows.Forms.CheckBox();
             this.tabBuildAdvancedCSG = new System.Windows.Forms.TabPage();
+            this.SelectedBuildCsgParameters = new Sledge.Editor.Compiling.CompileParameterPanel();
             this.tabBuildAdvancedBSP = new System.Windows.Forms.TabPage();
+            this.SelectedBuildBspParameters = new Sledge.Editor.Compiling.CompileParameterPanel();
             this.tabBuildAdvancedVIS = new System.Windows.Forms.TabPage();
+            this.SelectedBuildVisParameters = new Sledge.Editor.Compiling.CompileParameterPanel();
             this.tabBuildAdvancedRAD = new System.Windows.Forms.TabPage();
+            this.SelectedBuildRadParameters = new Sledge.Editor.Compiling.CompileParameterPanel();
             this.tabBuildAdvancedShared = new System.Windows.Forms.TabPage();
+            this.SelectedBuildSharedParameters = new Sledge.Editor.Compiling.CompileParameterPanel();
             this.tabBuildAdvancedPreview = new System.Windows.Forms.TabPage();
             this.SelectedBuildProfilePreview = new System.Windows.Forms.TextBox();
             this.RemoveBuild = new System.Windows.Forms.Button();
@@ -307,16 +317,6 @@ namespace Sledge.Editor.Settings
             this.btnApplyAndCloseSettings = new System.Windows.Forms.Button();
             this.btnApplySettings = new System.Windows.Forms.Button();
             this.HelpTooltip = new System.Windows.Forms.ToolTip(this.components);
-            this.SelectedBuildCsgParameters = new Sledge.Editor.Compiling.CompileParameterPanel();
-            this.SelectedBuildBspParameters = new Sledge.Editor.Compiling.CompileParameterPanel();
-            this.SelectedBuildVisParameters = new Sledge.Editor.Compiling.CompileParameterPanel();
-            this.SelectedBuildRadParameters = new Sledge.Editor.Compiling.CompileParameterPanel();
-            this.SelectedBuildSharedParameters = new Sledge.Editor.Compiling.CompileParameterPanel();
-            this.SelectedGameBlacklistTextbox = new System.Windows.Forms.TextBox();
-            this.label45 = new System.Windows.Forms.Label();
-            this.SelectedGameWhitelistTextbox = new System.Windows.Forms.TextBox();
-            this.label46 = new System.Windows.Forms.Label();
-            this.groupBox19 = new System.Windows.Forms.GroupBox();
             this.tbcSettings.SuspendLayout();
             this.tabGeneral.SuspendLayout();
             this.tabIntegration.SuspendLayout();
@@ -357,6 +357,7 @@ namespace Sledge.Editor.Settings
             ((System.ComponentModel.ISupportInitialize)(this.SelectedGameAutosaveTime)).BeginInit();
             this.tabConfigEntities.SuspendLayout();
             this.tabConfigTextures.SuspendLayout();
+            this.groupBox19.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.SelectedGameLightmapScale)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.SelectedGameTextureScale)).BeginInit();
             this.tabBuild.SuspendLayout();
@@ -385,7 +386,6 @@ namespace Sledge.Editor.Settings
             ((System.ComponentModel.ISupportInitialize)(this.trackBar2)).BeginInit();
             this.groupBox7.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
-            this.groupBox19.SuspendLayout();
             this.SuspendLayout();
             // 
             // tbcSettings
@@ -1817,6 +1817,7 @@ namespace Sledge.Editor.Settings
             this.SelectedGameUseDiffAutosaveDir.TabIndex = 14;
             this.SelectedGameUseDiffAutosaveDir.Text = "Use a different directory for autosaves";
             this.SelectedGameUseDiffAutosaveDir.UseVisualStyleBackColor = true;
+            this.SelectedGameUseDiffAutosaveDir.CheckedChanged += new System.EventHandler(this.SelectedGameUseDiffAutosaveDirChanged);
             // 
             // label15
             // 
@@ -2186,6 +2187,60 @@ namespace Sledge.Editor.Settings
             this.tabConfigTextures.TabIndex = 2;
             this.tabConfigTextures.Text = "Textures";
             this.tabConfigTextures.UseVisualStyleBackColor = true;
+            // 
+            // groupBox19
+            // 
+            this.groupBox19.Controls.Add(this.label45);
+            this.groupBox19.Controls.Add(this.label46);
+            this.groupBox19.Controls.Add(this.SelectedGameBlacklistTextbox);
+            this.groupBox19.Controls.Add(this.SelectedGameWhitelistTextbox);
+            this.groupBox19.Location = new System.Drawing.Point(6, 237);
+            this.groupBox19.Name = "groupBox19";
+            this.groupBox19.Size = new System.Drawing.Size(457, 203);
+            this.groupBox19.TabIndex = 21;
+            this.groupBox19.TabStop = false;
+            this.groupBox19.Text = "Blacklisting/Whitelisting";
+            // 
+            // label45
+            // 
+            this.label45.Location = new System.Drawing.Point(6, 10);
+            this.label45.Name = "label45";
+            this.label45.Size = new System.Drawing.Size(208, 40);
+            this.label45.TabIndex = 20;
+            this.label45.Text = "Blacklisted Packages (one per line)\r\n(mouse over here for more information)";
+            this.label45.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
+            this.HelpTooltip.SetToolTip(this.label45, "Type the names of all the packages or folders you\r\nwant to exclude from the textu" +
+        "re list. The name must\r\nmatch exactly: \"test\" will only match \"test.wad\", not \"t" +
+        "est1.wad\".\r\n");
+            // 
+            // label46
+            // 
+            this.label46.Location = new System.Drawing.Point(232, 10);
+            this.label46.Name = "label46";
+            this.label46.Size = new System.Drawing.Size(208, 40);
+            this.label46.TabIndex = 20;
+            this.label46.Text = "Whitelisted Packages (one per line)\r\nUse with caution!\r\n(mouse over here for more" +
+    " information)";
+            this.label46.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
+            this.HelpTooltip.SetToolTip(this.label46, resources.GetString("label46.ToolTip"));
+            // 
+            // SelectedGameBlacklistTextbox
+            // 
+            this.SelectedGameBlacklistTextbox.Location = new System.Drawing.Point(6, 53);
+            this.SelectedGameBlacklistTextbox.Multiline = true;
+            this.SelectedGameBlacklistTextbox.Name = "SelectedGameBlacklistTextbox";
+            this.SelectedGameBlacklistTextbox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.SelectedGameBlacklistTextbox.Size = new System.Drawing.Size(208, 144);
+            this.SelectedGameBlacklistTextbox.TabIndex = 19;
+            // 
+            // SelectedGameWhitelistTextbox
+            // 
+            this.SelectedGameWhitelistTextbox.Location = new System.Drawing.Point(232, 53);
+            this.SelectedGameWhitelistTextbox.Multiline = true;
+            this.SelectedGameWhitelistTextbox.Name = "SelectedGameWhitelistTextbox";
+            this.SelectedGameWhitelistTextbox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.SelectedGameWhitelistTextbox.Size = new System.Drawing.Size(208, 144);
+            this.SelectedGameWhitelistTextbox.TabIndex = 19;
             // 
             // SelectedGameAdditionalPackageList
             // 
@@ -2915,6 +2970,15 @@ namespace Sledge.Editor.Settings
             this.tabBuildAdvancedCSG.Text = "CSG";
             this.tabBuildAdvancedCSG.UseVisualStyleBackColor = true;
             // 
+            // SelectedBuildCsgParameters
+            // 
+            this.SelectedBuildCsgParameters.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.SelectedBuildCsgParameters.Location = new System.Drawing.Point(0, 0);
+            this.SelectedBuildCsgParameters.MinimumSize = new System.Drawing.Size(300, 250);
+            this.SelectedBuildCsgParameters.Name = "SelectedBuildCsgParameters";
+            this.SelectedBuildCsgParameters.Size = new System.Drawing.Size(449, 408);
+            this.SelectedBuildCsgParameters.TabIndex = 0;
+            // 
             // tabBuildAdvancedBSP
             // 
             this.tabBuildAdvancedBSP.Controls.Add(this.SelectedBuildBspParameters);
@@ -2924,6 +2988,15 @@ namespace Sledge.Editor.Settings
             this.tabBuildAdvancedBSP.TabIndex = 1;
             this.tabBuildAdvancedBSP.Text = "BSP";
             this.tabBuildAdvancedBSP.UseVisualStyleBackColor = true;
+            // 
+            // SelectedBuildBspParameters
+            // 
+            this.SelectedBuildBspParameters.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.SelectedBuildBspParameters.Location = new System.Drawing.Point(0, 0);
+            this.SelectedBuildBspParameters.MinimumSize = new System.Drawing.Size(300, 250);
+            this.SelectedBuildBspParameters.Name = "SelectedBuildBspParameters";
+            this.SelectedBuildBspParameters.Size = new System.Drawing.Size(449, 408);
+            this.SelectedBuildBspParameters.TabIndex = 1;
             // 
             // tabBuildAdvancedVIS
             // 
@@ -2935,6 +3008,15 @@ namespace Sledge.Editor.Settings
             this.tabBuildAdvancedVIS.Text = "VIS";
             this.tabBuildAdvancedVIS.UseVisualStyleBackColor = true;
             // 
+            // SelectedBuildVisParameters
+            // 
+            this.SelectedBuildVisParameters.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.SelectedBuildVisParameters.Location = new System.Drawing.Point(0, 0);
+            this.SelectedBuildVisParameters.MinimumSize = new System.Drawing.Size(300, 250);
+            this.SelectedBuildVisParameters.Name = "SelectedBuildVisParameters";
+            this.SelectedBuildVisParameters.Size = new System.Drawing.Size(449, 408);
+            this.SelectedBuildVisParameters.TabIndex = 1;
+            // 
             // tabBuildAdvancedRAD
             // 
             this.tabBuildAdvancedRAD.Controls.Add(this.SelectedBuildRadParameters);
@@ -2945,6 +3027,15 @@ namespace Sledge.Editor.Settings
             this.tabBuildAdvancedRAD.Text = "RAD";
             this.tabBuildAdvancedRAD.UseVisualStyleBackColor = true;
             // 
+            // SelectedBuildRadParameters
+            // 
+            this.SelectedBuildRadParameters.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.SelectedBuildRadParameters.Location = new System.Drawing.Point(0, 0);
+            this.SelectedBuildRadParameters.MinimumSize = new System.Drawing.Size(300, 250);
+            this.SelectedBuildRadParameters.Name = "SelectedBuildRadParameters";
+            this.SelectedBuildRadParameters.Size = new System.Drawing.Size(449, 408);
+            this.SelectedBuildRadParameters.TabIndex = 1;
+            // 
             // tabBuildAdvancedShared
             // 
             this.tabBuildAdvancedShared.Controls.Add(this.SelectedBuildSharedParameters);
@@ -2954,6 +3045,15 @@ namespace Sledge.Editor.Settings
             this.tabBuildAdvancedShared.TabIndex = 4;
             this.tabBuildAdvancedShared.Text = "Shared";
             this.tabBuildAdvancedShared.UseVisualStyleBackColor = true;
+            // 
+            // SelectedBuildSharedParameters
+            // 
+            this.SelectedBuildSharedParameters.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.SelectedBuildSharedParameters.Location = new System.Drawing.Point(0, 0);
+            this.SelectedBuildSharedParameters.MinimumSize = new System.Drawing.Size(300, 250);
+            this.SelectedBuildSharedParameters.Name = "SelectedBuildSharedParameters";
+            this.SelectedBuildSharedParameters.Size = new System.Drawing.Size(449, 408);
+            this.SelectedBuildSharedParameters.TabIndex = 1;
             // 
             // tabBuildAdvancedPreview
             // 
@@ -3459,105 +3559,6 @@ namespace Sledge.Editor.Settings
             this.HelpTooltip.UseAnimation = false;
             this.HelpTooltip.UseFading = false;
             // 
-            // SelectedBuildCsgParameters
-            // 
-            this.SelectedBuildCsgParameters.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.SelectedBuildCsgParameters.Location = new System.Drawing.Point(0, 0);
-            this.SelectedBuildCsgParameters.MinimumSize = new System.Drawing.Size(300, 250);
-            this.SelectedBuildCsgParameters.Name = "SelectedBuildCsgParameters";
-            this.SelectedBuildCsgParameters.Size = new System.Drawing.Size(449, 408);
-            this.SelectedBuildCsgParameters.TabIndex = 0;
-            // 
-            // SelectedBuildBspParameters
-            // 
-            this.SelectedBuildBspParameters.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.SelectedBuildBspParameters.Location = new System.Drawing.Point(0, 0);
-            this.SelectedBuildBspParameters.MinimumSize = new System.Drawing.Size(300, 250);
-            this.SelectedBuildBspParameters.Name = "SelectedBuildBspParameters";
-            this.SelectedBuildBspParameters.Size = new System.Drawing.Size(449, 408);
-            this.SelectedBuildBspParameters.TabIndex = 1;
-            // 
-            // SelectedBuildVisParameters
-            // 
-            this.SelectedBuildVisParameters.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.SelectedBuildVisParameters.Location = new System.Drawing.Point(0, 0);
-            this.SelectedBuildVisParameters.MinimumSize = new System.Drawing.Size(300, 250);
-            this.SelectedBuildVisParameters.Name = "SelectedBuildVisParameters";
-            this.SelectedBuildVisParameters.Size = new System.Drawing.Size(449, 408);
-            this.SelectedBuildVisParameters.TabIndex = 1;
-            // 
-            // SelectedBuildRadParameters
-            // 
-            this.SelectedBuildRadParameters.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.SelectedBuildRadParameters.Location = new System.Drawing.Point(0, 0);
-            this.SelectedBuildRadParameters.MinimumSize = new System.Drawing.Size(300, 250);
-            this.SelectedBuildRadParameters.Name = "SelectedBuildRadParameters";
-            this.SelectedBuildRadParameters.Size = new System.Drawing.Size(449, 408);
-            this.SelectedBuildRadParameters.TabIndex = 1;
-            // 
-            // SelectedBuildSharedParameters
-            // 
-            this.SelectedBuildSharedParameters.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.SelectedBuildSharedParameters.Location = new System.Drawing.Point(0, 0);
-            this.SelectedBuildSharedParameters.MinimumSize = new System.Drawing.Size(300, 250);
-            this.SelectedBuildSharedParameters.Name = "SelectedBuildSharedParameters";
-            this.SelectedBuildSharedParameters.Size = new System.Drawing.Size(449, 408);
-            this.SelectedBuildSharedParameters.TabIndex = 1;
-            // 
-            // SelectedGameBlacklistTextbox
-            // 
-            this.SelectedGameBlacklistTextbox.Location = new System.Drawing.Point(6, 53);
-            this.SelectedGameBlacklistTextbox.Multiline = true;
-            this.SelectedGameBlacklistTextbox.Name = "SelectedGameBlacklistTextbox";
-            this.SelectedGameBlacklistTextbox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.SelectedGameBlacklistTextbox.Size = new System.Drawing.Size(208, 144);
-            this.SelectedGameBlacklistTextbox.TabIndex = 19;
-            // 
-            // label45
-            // 
-            this.label45.Location = new System.Drawing.Point(6, 10);
-            this.label45.Name = "label45";
-            this.label45.Size = new System.Drawing.Size(208, 40);
-            this.label45.TabIndex = 20;
-            this.label45.Text = "Blacklisted Packages (one per line)\r\n(mouse over here for more information)";
-            this.label45.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
-            this.HelpTooltip.SetToolTip(this.label45, "Type the names of all the packages or folders you\r\nwant to exclude from the textu" +
-        "re list. The name must\r\nmatch exactly: \"test\" will only match \"test.wad\", not \"t" +
-        "est1.wad\".\r\n");
-            // 
-            // SelectedGameWhitelistTextbox
-            // 
-            this.SelectedGameWhitelistTextbox.Location = new System.Drawing.Point(232, 53);
-            this.SelectedGameWhitelistTextbox.Multiline = true;
-            this.SelectedGameWhitelistTextbox.Name = "SelectedGameWhitelistTextbox";
-            this.SelectedGameWhitelistTextbox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.SelectedGameWhitelistTextbox.Size = new System.Drawing.Size(208, 144);
-            this.SelectedGameWhitelistTextbox.TabIndex = 19;
-            // 
-            // label46
-            // 
-            this.label46.Location = new System.Drawing.Point(232, 10);
-            this.label46.Name = "label46";
-            this.label46.Size = new System.Drawing.Size(208, 40);
-            this.label46.TabIndex = 20;
-            this.label46.Text = "Whitelisted Packages (one per line)\r\nUse with caution!\r\n(mouse over here for more" +
-    " information)";
-            this.label46.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
-            this.HelpTooltip.SetToolTip(this.label46, resources.GetString("label46.ToolTip"));
-            // 
-            // groupBox19
-            // 
-            this.groupBox19.Controls.Add(this.label45);
-            this.groupBox19.Controls.Add(this.label46);
-            this.groupBox19.Controls.Add(this.SelectedGameBlacklistTextbox);
-            this.groupBox19.Controls.Add(this.SelectedGameWhitelistTextbox);
-            this.groupBox19.Location = new System.Drawing.Point(6, 237);
-            this.groupBox19.Name = "groupBox19";
-            this.groupBox19.Size = new System.Drawing.Size(457, 203);
-            this.groupBox19.TabIndex = 21;
-            this.groupBox19.TabStop = false;
-            this.groupBox19.Text = "Blacklisting/Whitelisting";
-            // 
             // SettingsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -3619,6 +3620,8 @@ namespace Sledge.Editor.Settings
             ((System.ComponentModel.ISupportInitialize)(this.SelectedGameAutosaveTime)).EndInit();
             this.tabConfigEntities.ResumeLayout(false);
             this.tabConfigTextures.ResumeLayout(false);
+            this.groupBox19.ResumeLayout(false);
+            this.groupBox19.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.SelectedGameLightmapScale)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.SelectedGameTextureScale)).EndInit();
             this.tabBuild.ResumeLayout(false);
@@ -3655,8 +3658,6 @@ namespace Sledge.Editor.Settings
             ((System.ComponentModel.ISupportInitialize)(this.trackBar2)).EndInit();
             this.groupBox7.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).EndInit();
-            this.groupBox19.ResumeLayout(false);
-            this.groupBox19.PerformLayout();
             this.ResumeLayout(false);
 
 		}

@@ -1057,6 +1057,7 @@ namespace Sledge.Editor.Settings
             SelectedGameUseDiffAutosaveDir.Checked = _selectedGame.UseCustomAutosaveDir;
             SelectedGameAutosaveOnlyOnChange.Checked = _selectedGame.AutosaveOnlyOnChanged;
             SelectedGameDiffAutosaveDir.Text = _selectedGame.AutosaveDir;
+            SelectedGameDiffAutosaveDir.Enabled = SelectedGameUseDiffAutosaveDir.Checked;
             SelectedGameDefaultPointEnt.SelectedText = _selectedGame.DefaultPointEntity;
             SelectedGameDefaultBrushEnt.SelectedText = _selectedGame.DefaultBrushEntity;
             SelectedGameTextureScale.Value = _selectedGame.DefaultTextureScale;
@@ -1315,6 +1316,11 @@ namespace Sledge.Editor.Settings
             var idx = _games.IndexOf(_selectedGame).ToString(CultureInfo.InvariantCulture);
             var node = GameTree.Nodes.OfType<TreeNode>().SelectMany(x => x.Nodes.OfType<TreeNode>()).First(x => x.Name == idx);
             node.Text = SelectedGameName.Text;
+        }
+
+        private void SelectedGameUseDiffAutosaveDirChanged(object sender, EventArgs e)
+        {
+            SelectedGameDiffAutosaveDir.Enabled = SelectedGameUseDiffAutosaveDir.Checked;
         }
 
         private void SelectedGameDirBrowseClicked(object sender, EventArgs e)
