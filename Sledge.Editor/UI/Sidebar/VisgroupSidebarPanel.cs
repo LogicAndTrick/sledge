@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using Sledge.Common.Mediator;
 using Sledge.DataStructures.MapObjects;
 using Sledge.Editor.Documents;
+using Sledge.Settings;
 
 namespace Sledge.Editor.UI.Sidebar
 {
@@ -88,6 +89,11 @@ namespace Sledge.Editor.UI.Sidebar
         private void ShowAllButtonClicked(object sender, EventArgs e)
         {
             Mediator.Publish(EditorMediator.VisgroupShowAll);
+        }
+
+        private void NewButtonClicked(object sender, EventArgs e)
+        {
+            Mediator.Publish(HotkeysMediator.VisgroupCreateNew);
         }
 
         private void VisgroupToggled(object sender, int visgroupId, CheckState state)

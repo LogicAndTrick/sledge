@@ -166,14 +166,15 @@ namespace Sledge.QuickForms
             return this;
         }
 
-        /// <summary>
-        /// Add a checkbox to the form.
-        /// </summary>
-        /// <param name="name">The name of the control</param>
-        /// <returns>This object, for method chaining</returns>
-        public QuickForm CheckBox(string name)
+	    /// <summary>
+	    /// Add a checkbox to the form.
+	    /// </summary>
+	    /// <param name="name">The name of the control</param>
+	    /// <param name="value">The initial value of the checkbox</param>
+	    /// <returns>This object, for method chaining</returns>
+	    public QuickForm CheckBox(string name, bool value = false)
 		{
-            AddItem(new QuickFormCheckBox(name));
+            AddItem(new QuickFormCheckBox(name, value));
             return this;
 		}
 

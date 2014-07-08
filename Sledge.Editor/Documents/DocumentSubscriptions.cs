@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
@@ -142,6 +143,7 @@ namespace Sledge.Editor.Documents
             Mediator.Subscribe(EditorMediator.VisgroupShowAll, this);
             Mediator.Subscribe(EditorMediator.VisgroupShowEditor, this);
             Mediator.Subscribe(EditorMediator.VisgroupToggled, this);
+            Mediator.Subscribe(HotkeysMediator.VisgroupCreateNew, this);
             Mediator.Subscribe(EditorMediator.SetZoomValue, this);
             Mediator.Subscribe(EditorMediator.TextureSelected, this);
             Mediator.Subscribe(EditorMediator.SelectMatchingTextures, this);
@@ -1045,6 +1047,34 @@ namespace Sledge.Editor.Documents
             if (state == CheckState.Indeterminate) return;
             var visible = state == CheckState.Checked;
             _document.PerformAction((visible ? "Show" : "Hide") + " visgroup", new ToggleVisgroup(visgroupId, visible));
+        }
+
+        public void VisgroupCreateNew()
+        {
+            using (var qf = new QuickForm("Create New Visgroup") {UseShortcutKeys = true}.TextBox("Name").CheckBox("Add selection to visgroup", true).OkCancel())
+            {
+                if (qf.ShowDialog() != DialogResult.OK) return;
+
+                var ids = _document.Map.Visgroups.Select(x => x.ID).ToList();
+                var id = ids.Any() ? ids.Max() + 1 : 1;
+                
+                var name = qf.String("Name");
+                if (String.IsNullOrWhiteSpace(name)) name = "Visgroup " + id.ToString(CultureInfo.InvariantCulture);
+
+                var vg = new Visgroup
+                {
+                    ID = id,
+                    Colour = Colour.GetRandomLightColour(),
+                    Name = name,
+                    Visible = true
+                };
+                IAction action = new CreateEditDeleteVisgroups(new[] {vg}, new Visgroup[0], new Visgroup[0]);
+                if (qf.Bool("Add selection to visgroup") && !_document.Selection.IsEmpty())
+                {
+                    action = new ActionCollection(action, new EditObjectVisgroups(_document.Selection.GetSelectedObjects(), new[] {id}, new int[0]));
+                }
+                _document.PerformAction("Create visgroup", action);
+            }
         }
 
         public void SetZoomValue(decimal value)

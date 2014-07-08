@@ -132,6 +132,8 @@ namespace Sledge.Settings
         [Description("Show Hidden Objects")]
         QuickHideShowAll,
 
+        [Description("Create New Visgroup")]
+        VisgroupCreateNew,
 
         [Description("Carve")]
         Carve,

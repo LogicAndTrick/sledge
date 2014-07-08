@@ -9,15 +9,18 @@ namespace Sledge.QuickForms.Items
 	/// </summary>
 	public class QuickFormCheckBox : QuickFormItem
 	{
-		public QuickFormCheckBox(string cbname)
+	    private readonly bool _value;
+
+	    public QuickFormCheckBox(string cbname, bool value)
 		{
-			Name = cbname;
+		    _value = value;
+		    Name = cbname;
 		}
-		
-		public override List<Control> GetControls(QuickForm qf)
+
+	    public override List<Control> GetControls(QuickForm qf)
 		{
 			var controls = new List<Control>();
-		    var c = new CheckBox {Text = Name, Name = Name};
+	        var c = new CheckBox {Text = Name, Name = Name, Checked = _value};
 		    Size(c, qf, 0);
 			c.TextAlign = ContentAlignment.MiddleLeft;
 			Location(c, qf, true);
