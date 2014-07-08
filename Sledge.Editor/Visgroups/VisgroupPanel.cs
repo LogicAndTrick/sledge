@@ -111,7 +111,7 @@ namespace Sledge.Editor.Visgroups
             if (document == null) return;
             var states = document.Map.WorldSpawn
                 .FindAll()
-                .SelectMany(x => x.Visgroups.Select(y => new {ID = y, Hidden = x.IsVisgroupHidden}))
+                .SelectMany(x => x.GetVisgroups(true).Select(y => new {ID = y, Hidden = x.IsVisgroupHidden}))
                 .GroupBy(x => x.ID)
                 .ToDictionary(x => x.Key, x => GetCheckState(x.Select(y => y.Hidden)));
             foreach (var v in Sort(document.Map.Visgroups))

@@ -49,7 +49,7 @@ namespace Sledge.Editor.UI.Sidebar
             SetCheckState(visgroupId, visItems);
 
             // Update any other visgroups those objects are in
-            var otherGroups = visItems.SelectMany(x => x.Visgroups).Distinct().Where(x => x != visgroupId);
+            var otherGroups = visItems.SelectMany(x => x.GetVisgroups(true)).Distinct().Where(x => x != visgroupId);
             foreach (var oid in otherGroups)
             {
                 SetCheckState(oid, GetVisgroupItems(oid, doc));
@@ -70,7 +70,7 @@ namespace Sledge.Editor.UI.Sidebar
 
         private static List<MapObject> GetVisgroupItems(int visgroupId, Document doc)
         {
-            var visItems = doc.Map.WorldSpawn.Find(x => x.IsInVisgroup(visgroupId), true);
+            var visItems = doc.Map.WorldSpawn.Find(x => x.IsInVisgroup(visgroupId, true), true);
             return visItems;
         }
 

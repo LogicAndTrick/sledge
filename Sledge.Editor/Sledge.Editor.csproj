@@ -617,12 +617,6 @@
     <Compile Include="Visgroups\VisgroupPanel.Designer.cs">
       <DependentUpon>VisgroupPanel.cs</DependentUpon>
     </Compile>
-    <Compile Include="Visgroups\VisgroupToolbarPanel.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Visgroups\VisgroupToolbarPanel.Designer.cs">
-      <DependentUpon>VisgroupToolbarPanel.cs</DependentUpon>
-    </Compile>
     <EmbeddedResource Include="Brushes\Controls\BooleanControl.resx">
       <DependentUpon>BooleanControl.cs</DependentUpon>
     </EmbeddedResource>
@@ -769,9 +763,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Visgroups\VisgroupPanel.resx">
       <DependentUpon>VisgroupPanel.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Visgroups\VisgroupToolbarPanel.resx">
-      <DependentUpon>VisgroupToolbarPanel.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="App.config" />
     <None Include="app.manifest" />

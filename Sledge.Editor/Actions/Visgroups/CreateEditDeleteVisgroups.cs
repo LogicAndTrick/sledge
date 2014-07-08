@@ -87,7 +87,7 @@ namespace Sledge.Editor.Actions.Visgroups
             {
                 var id = del.ID;
                 document.Map.Visgroups.RemoveAll(x => x.ID == id);
-                var rem = all.Where(x => x.IsInVisgroup(id)).ToList();
+                var rem = all.Where(x => x.IsInVisgroup(id, false)).ToList();
                 _removedObjects.Add(id, rem);
                 foreach (var mo in rem)
                 {

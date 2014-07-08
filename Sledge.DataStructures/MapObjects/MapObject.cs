@@ -365,13 +365,25 @@ namespace Sledge.DataStructures.MapObjects
         }
 
         /// <summary>
+        /// Get the visgroups for this object.
+        /// </summary>
+        /// <param name="inherit">True to include inherited visgroups</param>
+        /// <returns>The list of visgroups</returns>
+        public IEnumerable<int> GetVisgroups(bool inherit)
+        {
+            if (!inherit || Parent == null) return Visgroups;
+            return Visgroups.Union(Parent.GetVisgroups(true));
+        }
+
+        /// <summary>
         /// Returns true if this object is in the given visgroup.
         /// </summary>
         /// <param name="visgroup">The visgroup to check</param>
+        /// <param name="inherit">True to consider inherited visgroups</param>
         /// <returns>True if this object is in the visgroup</returns>
-        public bool IsInVisgroup(int visgroup)
+        public bool IsInVisgroup(int visgroup, bool inherit)
         {
-            return Visgroups.Contains(visgroup);
+            return GetVisgroups(inherit).Contains(visgroup);
         }
 
         /// <summary>

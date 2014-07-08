@@ -194,7 +194,7 @@ namespace Sledge.Editor.UI.ObjectProperties
             var add = states.Where(x => x.Value == CheckState.Checked).Select(x => x.Key).ToList();
             var rem = states.Where(x => x.Value == CheckState.Unchecked).Select(x => x.Key).ToList();
             // If all the objects are in the add groups and none are in the remove groups, nothing needs to be changed
-            if (Objects.All(x => add.All(x.IsInVisgroup) && !rem.Any(x.IsInVisgroup))) return null;
+            if (Objects.All(x => add.All(y => x.IsInVisgroup(y, false)) && !rem.Any(y => x.IsInVisgroup(y, false)))) return null;
             return new EditObjectVisgroups(Objects, add, rem);
         }
 

@@ -49,7 +49,7 @@ namespace Sledge.Editor.Actions.Visgroups
 
         public void Perform(Document document)
         {
-            _changed = document.Map.WorldSpawn.Find(x => x.IsInVisgroup(_visgroupId), true)
+            _changed = document.Map.WorldSpawn.Find(x => x.IsInVisgroup(_visgroupId, true), true)
                 .Where(x => x.IsVisgroupHidden != _hide).ToList();
             _changed.ForEach(x => x.IsVisgroupHidden = _hide);
 

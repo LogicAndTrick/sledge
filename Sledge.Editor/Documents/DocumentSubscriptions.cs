@@ -408,7 +408,7 @@ namespace Sledge.Editor.Documents
             var autohide = _document.Map.GetAllVisgroups().FirstOrDefault(x => x.Name == "Autohide");
             if (autohide == null) return;
 
-            var objects = _document.Map.WorldSpawn.Find(x => x.IsInVisgroup(autohide.ID));
+            var objects = _document.Map.WorldSpawn.Find(x => x.IsInVisgroup(autohide.ID, true));
             _document.PerformAction("Show hidden objects", new QuickShowObjects(objects));
         }
 
@@ -1013,7 +1013,7 @@ namespace Sledge.Editor.Documents
         public void VisgroupSelect(int visgroupId)
         {
             if (_document.Selection.InFaceSelection) return;
-            var objects = _document.Map.WorldSpawn.Find(x => x.IsInVisgroup(visgroupId), true).Where(x => !x.IsVisgroupHidden);
+            var objects = _document.Map.WorldSpawn.Find(x => x.IsInVisgroup(visgroupId, true), true).Where(x => !x.IsVisgroupHidden);
             _document.PerformAction("Select visgroup", new ChangeSelection(objects, _document.Selection.GetSelectedObjects()));
         }
 
