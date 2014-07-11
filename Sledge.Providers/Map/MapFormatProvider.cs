@@ -181,7 +181,7 @@ namespace Sledge.Providers.Map
             {
                 ent.EntityData.Name = val;
             }
-            else if (key == "flags")
+            else if (key == "spawnflags")
             {
                 ent.EntityData.Flags = int.Parse(val);
             }

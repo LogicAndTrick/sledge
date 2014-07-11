@@ -454,14 +454,8 @@ namespace Sledge.Providers.Map
             var ret = new GenericStructure("world");
             ret["id"] = world.ID.ToString(CultureInfo.InvariantCulture);
             ret["classname"] = "worldspawn";
-            WriteEntityData(ret, world.EntityData);
-
-            //TODO these properties
             ret["mapversion"] = map.Version.ToString(CultureInfo.InvariantCulture);
-            ret["detailmaterial"] = "detail/detailsprites";
-            ret["detailvbsp"] = "detail.vbsp";
-            ret["maxpropscreenwidth"] = "-1";
-            ret["skyname"] = "sky_day01_01";
+            WriteEntityData(ret, world.EntityData);
 
             foreach (var solid in solids.OrderBy(x => x.ID))
             {
