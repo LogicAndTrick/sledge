@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using Sledge.Common.Easings;
+using Sledge.Common.Mediator;
 using Sledge.Graphics;
+using Sledge.Settings;
 using Sledge.UI;
 using OpenTK.Graphics.OpenGL;
 using Sledge.Editor.Tools;
@@ -12,7 +14,7 @@ using KeyboardState = Sledge.UI.KeyboardState;
 
 namespace Sledge.Editor.UI
 {
-    public class Camera3DViewportListener : IViewportEventListener
+    public class Camera3DViewportListener : IViewportEventListener, IMediatorListener
     {
         public ViewportBase Viewport { get; set; }
 
@@ -43,6 +45,16 @@ namespace Sledge.Editor.UI
             _downKeys = new List<Keys>();
             _downMillis = _lastMillis = 0;
             _easing = Easing.FromType(EasingType.Sinusoidal, EasingDirection.Out);
+            Mediator.Subscribe(EditorMediator.ToolSelected, this);
+        }
+
+        private void ToolSelected(HotkeyTool tool)
+        {
+            if (FreeLook || FreeLookToggle)
+            {
+                FreeLook = FreeLookToggle = false;
+                SetFreeLook();
+            }
         }
 
         private readonly List<Keys> _downKeys;
@@ -334,6 +346,11 @@ namespace Sledge.Editor.UI
                 PositionKnown = false;
                 Focus = false;
             }
+        }
+
+        public void Notify(string message, object data)
+        {
+            Mediator.ExecuteDefault(this, message, data);
         }
     }
 }

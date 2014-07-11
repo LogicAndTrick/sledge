@@ -4,13 +4,14 @@ using System.Windows.Forms;
 using Sledge.Common.Mediator;
 using Sledge.DataStructures.Geometric;
 using Sledge.Extensions;
+using Sledge.Settings;
 using Sledge.UI;
 using System.Drawing;
 using Sledge.Editor.Documents;
 
 namespace Sledge.Editor.UI
 {
-    public class Camera2DViewportListener : IViewportEventListener
+    public class Camera2DViewportListener : IViewportEventListener, IMediatorListener
     {
         public ViewportBase Viewport
         {
@@ -254,6 +255,11 @@ namespace Sledge.Editor.UI
         public void PostRender()
         {
             //
+        }
+
+        public void Notify(string message, object data)
+        {
+            Mediator.ExecuteDefault(this, message, data);
         }
     }
 }
