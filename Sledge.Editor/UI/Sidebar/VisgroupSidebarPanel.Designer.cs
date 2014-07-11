@@ -82,7 +82,7 @@
             this.VisgroupPanel.Name = "VisgroupPanel";
             this.VisgroupPanel.ShowCheckboxes = true;
             this.VisgroupPanel.ShowHidden = false;
-            this.VisgroupPanel.Size = new System.Drawing.Size(214, 166);
+            this.VisgroupPanel.Size = new System.Drawing.Size(196, 166);
             this.VisgroupPanel.SortAutomaticFirst = true;
             this.VisgroupPanel.TabIndex = 8;
             this.VisgroupPanel.VisgroupToggled += new Sledge.Editor.Visgroups.VisgroupPanel.VisgroupToggledEventHandler(this.VisgroupToggled);
@@ -112,7 +112,7 @@
             this.MaximumSize = new System.Drawing.Size(0, 250);
             this.MinimumSize = new System.Drawing.Size(200, 165);
             this.Name = "VisgroupSidebarPanel";
-            this.Size = new System.Drawing.Size(220, 200);
+            this.Size = new System.Drawing.Size(200, 200);
             this.ResumeLayout(false);
 
         }

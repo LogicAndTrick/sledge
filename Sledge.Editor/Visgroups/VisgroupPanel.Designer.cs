@@ -44,9 +44,12 @@
             this.VisgroupTree.Size = new System.Drawing.Size(244, 228);
             this.VisgroupTree.StateImageList = this.CheckboxImages;
             this.VisgroupTree.TabIndex = 0;
+            this.VisgroupTree.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.OnItemDrag);
             this.VisgroupTree.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.NodeSelected);
             this.VisgroupTree.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.NodeMouseClick);
             this.VisgroupTree.NodeMouseDoubleClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.NodeMouseClick);
+            this.VisgroupTree.DragDrop += new System.Windows.Forms.DragEventHandler(this.OnDragDrop);
+            this.VisgroupTree.DragEnter += new System.Windows.Forms.DragEventHandler(this.OnDragEnter);
             // 
             // CheckboxImages
             // 

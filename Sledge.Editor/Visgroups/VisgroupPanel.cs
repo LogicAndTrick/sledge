@@ -251,5 +251,21 @@ namespace Sledge.Editor.Visgroups
         {
             OnVisgroupSelected(GetSelectedVisgroup());
         }
+
+        private void OnItemDrag(object sender, ItemDragEventArgs e)
+        {
+            // todo ordering
+            //DoDragDrop(e.Item, DragDropEffects.Move);
+        }
+
+        private void OnDragDrop(object sender, DragEventArgs e)
+        {
+            //MessageBox.Show("blah?");
+        }
+
+        private void OnDragEnter(object sender, DragEventArgs e)
+        {
+            //if (e.Data.GetData(typeof (TreeNode)) != null) e.Effect = DragDropEffects.Move;
+        }
     }
 }
