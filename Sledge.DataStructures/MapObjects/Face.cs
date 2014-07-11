@@ -441,10 +441,18 @@ namespace Sledge.DataStructures.MapObjects
 
                 if (flags.HasFlag(TransformFlags.TextureLock) && Texture.Texture != null)
                 {
-                    // Calculate the new shift values based on the UV values of the vertices
-                    var vtx = Vertices[0];
-                    Texture.XShift = Texture.Texture.Width * vtx.TextureU - (vtx.Location.Dot(Texture.UAxis)) / Texture.XScale;
-                    Texture.YShift = Texture.Texture.Height * vtx.TextureV - (vtx.Location.Dot(Texture.VAxis)) / Texture.YScale;
+                    // Check some original reference points to see how the transform mutates them
+                    var scaled = (transform.Transform(Coordinate.One) - transform.Transform(Coordinate.Zero)).VectorMagnitude();
+                    var original = (Coordinate.One - Coordinate.Zero).VectorMagnitude();
+
+                    // Ignore texture lock when the transformation contains a scale
+                    if (DMath.Abs(scaled - original) <= 0.01m)
+                    {
+                        // Calculate the new shift values based on the UV values of the vertices
+                        var vtx = Vertices[0];
+                        Texture.XShift = Texture.Texture.Width * vtx.TextureU - (vtx.Location.Dot(Texture.UAxis)) / Texture.XScale;
+                        Texture.YShift = Texture.Texture.Height * vtx.TextureV - (vtx.Location.Dot(Texture.VAxis)) / Texture.YScale;
+                    }
                 }
             }
             CalculateTextureCoordinates(true);
