@@ -4,9 +4,11 @@ using System.Linq;
 using System.Windows.Forms;
 using Sledge.Common.Mediator;
 using Sledge.DataStructures.MapObjects;
+using Sledge.Editor.Documents;
 using Sledge.Editor.UI;
 using Sledge.Providers.Texture;
 using Sledge.Settings;
+using Sledge.Settings.Models;
 
 namespace Sledge.Editor.Tools.TextureTool
 {
@@ -163,9 +165,19 @@ namespace Sledge.Editor.Tools.TextureTool
         private bool _freeze;
 
         private readonly CurrentTextureProperties _currentTextureProperties;
+        private Document _document;
         public TextureReference CurrentProperties { get { return _currentTextureProperties; } }
 
-        public Documents.Document Document { get; set; }
+        public Documents.Document Document
+        {
+            get { return _document; }
+            set
+            {
+                _document = value;
+                var precision = _document != null && _document.Game != null && _document.Game.Engine == Engine.Goldsource ? 2 : 4;
+                ScaleXValue.DecimalPlaces = ScaleYValue.DecimalPlaces = precision;
+            }
+        }
 
         public TextureApplicationForm()
         {
