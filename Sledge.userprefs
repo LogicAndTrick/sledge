@@ -1,0 +1,13 @@
+﻿<Properties>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Sledge.ModelViewer\GLWidget.cs">
+    <Files>
+      <File FileName="Sledge.ModelViewer\MainWindow.cs" Line="17" Column="1" />
+      <File FileName="Sledge.ModelViewer\GLWidget.cs" Line="19" Column="7" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+</Properties>
