@@ -46,6 +46,12 @@ namespace Sledge.Editor.UI
             SelectionChanged(null, TextureList.GetSelectedTextures());
         }
 
+        protected override void OnLoad(EventArgs e)
+        {
+            FilterTextbox.SelectAll();
+            base.OnLoad(e);
+        }
+
         private void SelectionChanged(object sender, IEnumerable<TextureItem> selection)
         {
             var list = selection.ToList();
@@ -266,14 +272,42 @@ namespace Sledge.Editor.UI
 
             if (e.KeyChar == 8 && FilterTextbox.Text.Length > 0)
             {
-                FilterTextbox.Text = FilterTextbox.Text.Substring(0, FilterTextbox.Text.Length - 1);
+                if (FilterTextbox.SelectionLength > 0)
+                {
+                    FilterTextbox.Text = FilterTextbox.Text.Substring(0, FilterTextbox.SelectionStart) +
+                                         FilterTextbox.Text.Substring(FilterTextbox.SelectionStart + FilterTextbox.SelectionLength);
+                }
+                else
+                {
+                    FilterTextbox.Text = FilterTextbox.Text.Substring(0, FilterTextbox.Text.Length - 1);
+                }
                 FilterTextboxKeyUp(null, null);
             }
             else if ((e.KeyChar >= 'a' && e.KeyChar <= 'z')
                 || (e.KeyChar >= '0' && e.KeyChar <= '9')
                 || AllowedSpecialChars.Contains(e.KeyChar))
             {
-                FilterTextbox.Text += e.KeyChar;
+                if (FilterTextbox.SelectionLength > 0)
+                {
+
+                    FilterTextbox.Text = FilterTextbox.Text.Substring(0, FilterTextbox.SelectionStart) +
+                                         e.KeyChar +
+                                         FilterTextbox.Text.Substring(FilterTextbox.SelectionStart + FilterTextbox.SelectionLength);
+                }
+                else
+                {
+                    FilterTextbox.Text += e.KeyChar;
+                }
+                FilterTextboxKeyUp(null, null);
+            }
+        }
+
+        private void TextureBrowserKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Delete && FilterTextbox.SelectionLength > 0)
+            {
+                FilterTextbox.Text = FilterTextbox.Text.Substring(0, FilterTextbox.SelectionStart) +
+                                         FilterTextbox.Text.Substring(FilterTextbox.SelectionStart + FilterTextbox.SelectionLength);
                 FilterTextboxKeyUp(null, null);
             }
         }

@@ -191,6 +191,7 @@
             // 
             // FilterTextbox
             // 
+            this.FilterTextbox.HideSelection = false;
             this.FilterTextbox.Location = new System.Drawing.Point(47, 6);
             this.FilterTextbox.Name = "FilterTextbox";
             this.FilterTextbox.Size = new System.Drawing.Size(179, 20);
@@ -308,6 +309,7 @@
             this.Name = "TextureBrowser";
             this.Text = "Texture Browser";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.TextureBrowserKeyDown);
             this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TextureBrowserKeyPress);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
