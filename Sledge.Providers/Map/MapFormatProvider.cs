@@ -169,11 +169,12 @@ namespace Sledge.Providers.Map
             sw.WriteLine("}");
         }
 
+        private static readonly string[] ExcludedKeys = new[] { "spawnflags", "classname", "origin", "wad", "mapversion" };
+
         private static void ReadProperty(Entity ent, string line)
         {
             var split = line.Split(' ');
             var key = split[0].Trim('"');
-            if (key == "wad" || key == "mapversion") { return; }
 
             var val = String.Join(" ", split.Skip(1)).Trim('"');
 
@@ -190,7 +191,7 @@ namespace Sledge.Providers.Map
                 var osp = val.Split(' ');
                 ent.Origin = Coordinate.Parse(osp[0], osp[1], osp[2]);
             }
-            else
+            else if (!ExcludedKeys.Contains(key.ToLower()))
             {
                 ent.EntityData.SetPropertyValue(key, val);
             }
@@ -227,10 +228,26 @@ namespace Sledge.Providers.Map
 
             sw.WriteLine("{");
             WriteProperty(sw, "classname", ent.EntityData.Name);
-            WriteProperty(sw, "spawnflags", ent.EntityData.Flags.ToString(CultureInfo.InvariantCulture));
+
+            if (ent.EntityData.Flags > 0)
+            {
+                // VHE doesn't write the spawnflags when they are zero
+                WriteProperty(sw, "spawnflags", ent.EntityData.Flags.ToString(CultureInfo.InvariantCulture));
+            }
             foreach (var prop in ent.EntityData.Properties)
             {
-                if (prop.Key == "classname" || prop.Key == "spawnflags") continue;
+                if (prop.Key == "classname" || prop.Key == "spawnflags" || prop.Key == "origin") continue;
+
+                // VHE doesn't write empty or zero values to the .map file
+                var gameDataProp = ent.GameData != null ? ent.GameData.Properties.FirstOrDefault(x => String.Equals(x.Name, prop.Key, StringComparison.InvariantCultureIgnoreCase)) : null;
+                if (gameDataProp != null)
+                {
+                    var emptyGd = String.IsNullOrWhiteSpace(gameDataProp.DefaultValue) || gameDataProp.DefaultValue == "0";
+                    var emptyProp = String.IsNullOrWhiteSpace(prop.Value) || prop.Value == "0";
+
+                    // The value hasn't changed from the default, don't write if it's an empty value
+                    if (emptyGd && emptyProp) continue;
+                }
                 WriteProperty(sw, prop.Key, prop.Value);
             }
 

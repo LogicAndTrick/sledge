@@ -133,6 +133,8 @@ namespace Sledge.Providers.Map
             }
         }
 
+        private static readonly string[] ExcludedKeys = new[] { "spawnflags", "classname", "origin", "wad", "mapversion" };
+
         private static EntityData ReadEntityData(BinaryReader br)
         {
             var data = new EntityData
@@ -148,6 +150,7 @@ namespace Sledge.Providers.Map
             for (var i = 0; i < numProperties; i++)
             {
                 var prop = ReadProperty(br);
+                if (ExcludedKeys.Contains(prop.Key.ToLower())) continue;
                 data.SetPropertyValue(prop.Key, prop.Value);
             }
 

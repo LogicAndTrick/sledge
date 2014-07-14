@@ -81,7 +81,7 @@ namespace Sledge.Providers.Map
                 + " " + c.B.ToString(CultureInfo.InvariantCulture);
         }
 
-        private static readonly string[] ExcludedKeys = new[] {"id", "spawnflags", "classname"};
+        private static readonly string[] ExcludedKeys = new[] {"id", "spawnflags", "classname", "origin", "wad", "mapversion"};
 
         private static EntityData ReadEntityData(GenericStructure structure)
         {
