@@ -414,7 +414,7 @@ namespace Sledge.Editor.Tools.VMTool
         /// <summary>
         /// Updates the positions of all midpoints.
         /// </summary>
-        public void RefreshMidpoints(bool recreate = true)
+        private void RefreshMidpoints(bool recreate = true)
         {
             var selected = Points.Where(x => x.IsMidPoint && x.IsSelected).Select(x => new { Start = x.MidpointStart.Coordinate, End = x.MidpointEnd.Coordinate, x.Solid }).ToList();
             if (recreate) Points.RemoveAll(x => x.IsMidPoint);
@@ -448,6 +448,14 @@ namespace Sledge.Editor.Tools.VMTool
                         }
                     }
                 }
+            }
+        }
+
+        private void UpdateMidpoints()
+        {
+            foreach (var mp in Points.Where(x => x.IsMidPoint))
+            {
+                mp.Coordinate = (mp.MidpointStart.Coordinate + mp.MidpointEnd.Coordinate) / 2;
             }
         }
 
@@ -763,7 +771,8 @@ namespace Sledge.Editor.Tools.VMTool
                 }
                 var moveDistance = point - viewport.ZeroUnusedCoordinate(_movingPoint.Coordinate);
                 _currentTool.DragMove(moveDistance);
-                RefreshMidpoints(false);
+                //RefreshMidpoints(false);
+                UpdateMidpoints();
                 MoveSelection = null;
             }
         }
@@ -802,7 +811,7 @@ namespace Sledge.Editor.Tools.VMTool
             Box box;
             if (GetSelectionBox(out box))
             {
-                foreach (var point in Points.Where(x => box.CoordinateIsInside(x.Coordinate)))
+                foreach (var point in Points.Where(x => !x.IsMidPoint && box.CoordinateIsInside(x.Coordinate)))
                 {
                     // Select all the points in the box
                     point.IsSelected = true;
