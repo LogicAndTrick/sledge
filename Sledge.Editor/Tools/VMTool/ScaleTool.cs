@@ -37,7 +37,8 @@ namespace Sledge.Editor.Tools.VMTool
 
         private void ResetOrigin(object sender)
         {
-            var points = MainTool.Points.Where(x => !x.IsMidPoint).Select(x => x.Coordinate).ToList();
+            var points = MainTool.Points.Where(x => !x.IsMidPoint && x.IsSelected).Select(x => x.Coordinate).ToList();
+            if (!points.Any()) points = MainTool.Points.Where(x => !x.IsMidPoint).Select(x => x.Coordinate).ToList();
             if (!points.Any()) _origin.Coordinate = Coordinate.Zero;
             else _origin.Coordinate = points.Aggregate(Coordinate.Zero, (a, b) => a + b) / points.Count;
         }

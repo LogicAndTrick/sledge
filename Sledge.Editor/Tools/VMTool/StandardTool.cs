@@ -207,7 +207,7 @@ Select two (non-adjacent) points on a face to enable splitting.";
                 p.Move(distance);
             }
 
-            MainTool.SetDirty(false, false);
+            //MainTool.SetDirty(false, false);
         }
 
         public override void DragEnd()
