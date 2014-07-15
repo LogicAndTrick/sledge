@@ -210,13 +210,13 @@ namespace Sledge.Editor.Tools.VMTool
                 {
                     yield return new VMError("Coplanar faces", s, g);
                 }
-                foreach (var f in s.GetBackwardsFaces())
+                foreach (var f in s.GetBackwardsFaces(0.5m))
                 {
                     yield return new VMError("Backwards face", s, new[] { f });
                 }
                 foreach (var f in s.Faces)
                 {
-                    var np = f.GetNonPlanarVertices().ToList();
+                    var np = f.GetNonPlanarVertices(0.5m).ToList();
                     var found = false;
                     if (np.Any())
                     {
@@ -463,8 +463,9 @@ namespace Sledge.Editor.Tools.VMTool
         {
             foreach (var face in GetCopies().SelectMany(x => x.Faces))
             {
-                face.CalculateTextureCoordinates(true);
                 if (face.Vertices.Count >= 3) face.Plane = new Plane(face.Vertices[0].Location, face.Vertices[1].Location, face.Vertices[2].Location);
+                face.CalculateTextureCoordinates(true);
+                face.UpdateBoundingBox();
             }
         }
 

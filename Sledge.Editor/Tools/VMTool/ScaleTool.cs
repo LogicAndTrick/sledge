@@ -37,19 +37,19 @@ namespace Sledge.Editor.Tools.VMTool
 
         private void ResetOrigin(object sender)
         {
-            var points = MainTool.Points.Where(x => !x.IsMidPoint && x.IsSelected).Select(x => x.Coordinate).ToList();
+            var points = MainTool.GetSelectedPoints().Select(x => x.Coordinate).ToList();
             if (!points.Any()) points = MainTool.Points.Where(x => !x.IsMidPoint).Select(x => x.Coordinate).ToList();
             if (!points.Any()) _origin.Coordinate = Coordinate.Zero;
             else _origin.Coordinate = points.Aggregate(Coordinate.Zero, (a, b) => a + b) / points.Count;
         }
 
-        private void ValueChanged(object sender, decimal value, bool relative)
+        private void ValueChanged(object sender, decimal value)
         {
-            MovePoints(value, relative);
+            MovePoints(value);
             _prevValue = value;
         }
 
-        private void ValueReset(object sender, decimal value, bool relative)
+        private void ValueReset(object sender, decimal value)
         {
             _prevValue = value;
             _originals = MainTool.Points.ToDictionary(x => x, x => x.Coordinate);
@@ -58,6 +58,7 @@ namespace Sledge.Editor.Tools.VMTool
         public override void SelectionChanged()
         {
             ((ScaleControl) Control).ResetValue();
+            if (MainTool.GetSelectedPoints().Any()) ResetOrigin(null);
         }
 
         public override bool ShouldDeselect(List<VMPoint> vtxs)
@@ -80,7 +81,7 @@ namespace Sledge.Editor.Tools.VMTool
             return true;
         }
 
-        private void MovePoints(decimal value, bool relative)
+        private void MovePoints(decimal value)
         {
             var o = _origin.Coordinate;
             // Move each selected point by the computed offset from the origin
@@ -88,16 +89,10 @@ namespace Sledge.Editor.Tools.VMTool
             {
                 var orig = _originals[p];
                 var diff = orig - o;
-                var direction = diff.Normalise();
-                var move = relative ? o + diff * value / 100 : orig + direction * value;
+                var move = o + diff * value / 100;
                 p.Move(move - p.Coordinate);
             }
             MainTool.SetDirty(false, true);
-        }
-
-        private void DocumentGridSpacingChanged(decimal gridSpacing)
-        {
-            ((ScaleControl)Control).SetGridSpacing(gridSpacing);
         }
 
         public override string GetName()
@@ -118,9 +113,7 @@ Move the origin point around by *clicking and dragging* it.";
         {
             _state = VMState.None;
             _originals = MainTool.Points.ToDictionary(x => x, x => x.Coordinate);
-            DocumentGridSpacingChanged(Document.Map.GridSpacing);
             ResetOrigin(null);
-            Mediator.Subscribe(EditorMediator.DocumentGridSpacingChanged, this);
         }
 
         public override void ToolDeselected(bool preventHistory)
