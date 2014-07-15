@@ -442,8 +442,8 @@ namespace Sledge.Providers.Map
                 }
             }
 
-            assignedGroups.ForEach(x => x.UpdateBoundingBox(false));
-            ret.UpdateBoundingBox(false);
+            assignedGroups.ForEach(x => x.UpdateBoundingBox());
+            ret.UpdateBoundingBox();
 
             return ret;
         }
