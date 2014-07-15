@@ -23,7 +23,7 @@ namespace Sledge.Editor.Problems
 
         public IAction Fix(Problem problem)
         {
-            return new EditFace(problem.Faces, (d, x) => x.ID = d.Map.IDGenerator.GetNextFaceID(), false);
+            return new EditFace(problem.Faces, (d, x) => x.ID = d.Map.IDGenerator.GetNextFaceID(), true);
         }
     }
 }

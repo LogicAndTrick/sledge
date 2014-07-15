@@ -68,21 +68,21 @@ namespace Sledge.Editor.Actions.MapObjects.Operations
         public bool ModifiesState { get { return true; } }
 
         private List<EditFaceReference> _objects;
-        private readonly bool _textureChange;
+        private readonly bool _textureOrIdChange;
 
-        public EditFace(IEnumerable<Face> before, IEnumerable<Face> after, bool textureChange)
+        public EditFace(IEnumerable<Face> before, IEnumerable<Face> after, bool textureOrIdChange)
         {
             var b = before.ToList();
             var a = after.ToList();
             var ids = b.Select(x => x.ID).Where(x => a.Any(y => x == y.ID));
             _objects = ids.Select(x => new EditFaceReference(x, b.First(y => y.ID == x), a.First(y => y.ID == x))).ToList();
-            _textureChange = textureChange;
+            _textureOrIdChange = textureOrIdChange;
         }
 
-        public EditFace(IEnumerable<Face> objects, Action<Document, Face> action, bool textureChange)
+        public EditFace(IEnumerable<Face> objects, Action<Document, Face> action, bool textureOrIdChange)
         {
             _objects = objects.Select(x => new EditFaceReference(x, action)).ToList();
-            _textureChange = textureChange;
+            _textureOrIdChange = textureOrIdChange;
         }
 
         public void Dispose()
@@ -95,7 +95,7 @@ namespace Sledge.Editor.Actions.MapObjects.Operations
             _objects.ForEach(x => x.Reverse(document));
 
             var faces = _objects.Select(x => x.GetFace(document.Map.WorldSpawn));
-            if (_textureChange)
+            if (_textureOrIdChange)
             {
                 document.Map.UpdateAutoVisgroups(faces.Where(x => x != null).Select(x => x.Parent).Distinct(), false);
                 Mediator.Publish(EditorMediator.DocumentTreeStructureChanged);  
@@ -112,7 +112,7 @@ namespace Sledge.Editor.Actions.MapObjects.Operations
             _objects.ForEach(x => x.Perform(document));
             
             var faces = _objects.Select(x => x.GetFace(document.Map.WorldSpawn));
-            if (_textureChange)
+            if (_textureOrIdChange)
             {
                 document.Map.UpdateAutoVisgroups(faces.Where(x => x != null).Select(x => x.Parent).Distinct(), false);
                 Mediator.Publish(EditorMediator.DocumentTreeStructureChanged);
