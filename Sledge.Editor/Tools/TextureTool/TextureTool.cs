@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using OpenTK.Graphics.OpenGL;
+using Sledge.Common;
 using Sledge.Common.Mediator;
 using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.MapObjects;
@@ -65,6 +66,7 @@ namespace Sledge.Editor.Tools.TextureTool
             _form.TextureApply += TextureApplied;
             _form.TextureJustify += TextureJustified;
             _form.HideMaskToggled += HideMaskToggled;
+            _form.TextureChanged += TextureChanged;
 
             _sidebarPanel = new TextureToolSidebarPanel();
             _sidebarPanel.TileFit += TileFit;
@@ -189,6 +191,11 @@ namespace Sledge.Editor.Tools.TextureTool
             Document.PerformAction("Modify texture properties", new EditFace(Document.Selection.GetSelectedFaces(), action, false));
         }
 
+        private void TextureChanged(object sender, TextureItem texture)
+        {
+            Mediator.Publish(EditorMediator.TextureSelected, texture);
+        }
+
         public override Image GetIcon()
         {
             return Resources.Tool_Texture;
@@ -231,7 +238,16 @@ namespace Sledge.Editor.Tools.TextureTool
             }
 
             _form.SelectionChanged();
+
+            var selection = Document.Selection.GetSelectedFaces().OrderBy(x => x.Texture.Texture == null ? 1 : 0).FirstOrDefault();
+            if (selection != null)
+            {
+                var itemToSelect = Document.TextureCollection.GetItem(selection.Texture.Name)
+                                   ?? new TextureItem(null, selection.Texture.Name, TextureFlags.Missing, 64, 64);
+                Mediator.Publish(EditorMediator.TextureSelected, itemToSelect);
+            }
             _form.SelectTexture(Document.TextureCollection.SelectedTexture);
+
             Mediator.Subscribe(EditorMediator.TextureSelected, this);
             Mediator.Subscribe(EditorMediator.DocumentTreeFacesChanged, this);
             Mediator.Subscribe(EditorMediator.SelectionChanged, this);
@@ -295,7 +311,7 @@ namespace Sledge.Editor.Tools.TextureTool
             else faces.Add(clickedFace);
 
             var firstSelected = Document.Selection.GetSelectedFaces().FirstOrDefault();
-            var firstClicked = faces.FirstOrDefault(face => face.Texture.Texture != null);
+            var firstClicked = faces.FirstOrDefault(face => !String.IsNullOrWhiteSpace(face.Texture.Name));
 
             var ac = new ActionCollection();
 
@@ -304,15 +320,12 @@ namespace Sledge.Editor.Tools.TextureTool
                 KeyboardState.Ctrl ? faces.Where(x => x.IsSelected) : Document.Selection.GetSelectedFaces().Where(x => !faces.Contains(x)));
 
             Action lift = () =>
-                              {
-                                  var itemToSelect = firstClicked != null
-                                                         ? Document.TextureCollection.GetItem(firstClicked.Texture.Name)
-                                                         : null;
-                                  if (itemToSelect != null)
-                                  {
-                                      Mediator.Publish(EditorMediator.TextureSelected, itemToSelect);
-                                  }
-                              };
+            {
+                if (firstClicked == null) return;
+                var itemToSelect = Document.TextureCollection.GetItem(firstClicked.Texture.Name)
+                                   ?? new TextureItem(null, firstClicked.Texture.Name, TextureFlags.Missing, 64, 64);
+                Mediator.Publish(EditorMediator.TextureSelected, itemToSelect);
+            };
 
             switch (behaviour)
             {
@@ -391,6 +404,8 @@ namespace Sledge.Editor.Tools.TextureTool
 
         public override void Render(ViewportBase viewport)
         {
+            if (Document.Map.HideFaceMask) return;
+
             TextureHelper.Unbind();
             GL.Begin(PrimitiveType.Lines);
             foreach (var face in Document.Selection.GetSelectedFaces())

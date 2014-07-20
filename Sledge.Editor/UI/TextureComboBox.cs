@@ -65,13 +65,13 @@ namespace Sledge.Editor.UI
         private void SetHistory(TextureItem ti)
         {
             if (ti == null) return;
-            var rem = FindItem(ti.Name, true) ?? GetTexture(ti.Name, true);
+            var rem = FindItem(ti.Name, true) ?? GetTexture(ti, true);
             Items.Remove(rem);
             Items.Insert(0, rem);
             FixHistoryBorder();
             SelectedItem = rem;
         }
-
+        
         public TextureItem GetSelectedTexture()
         {
             var si = SelectedItem as TextureComboBoxItem;
@@ -162,6 +162,11 @@ namespace Sledge.Editor.UI
         {
             var item = DocumentManager.CurrentDocument == null ? null : DocumentManager.CurrentDocument.TextureCollection.GetItem(name);
             return new TextureComboBoxItem {DrawBorder = false, IsHistory = isHistory, Item = item};
+        }
+
+        private TextureComboBoxItem GetTexture(TextureItem item, bool isHistory)
+        {
+            return new TextureComboBoxItem { DrawBorder = false, IsHistory = isHistory, Item = item };
         }
 
         private void OwnerMeasureItem(object sender, MeasureItemEventArgs e)

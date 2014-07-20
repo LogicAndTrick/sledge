@@ -132,13 +132,15 @@ namespace Sledge.Editor.UI
 
         private void UpdateTexture(string text, PictureBox image, Label info)
         {
-            var item = _document.TextureCollection.GetItem(text);
-            if (item == null)
+            if (String.IsNullOrWhiteSpace(text))
             {
                 image.Image = null;
                 info.Text = "No Image";
                 return;
             }
+
+            var item = _document.TextureCollection.GetItem(text)
+                       ?? new TextureItem(null, text, TextureFlags.Missing, 64, 64);
 
             using (var tp = _document.TextureCollection.GetStreamSource(128, 128))
             {
@@ -149,7 +151,8 @@ namespace Sledge.Editor.UI
                 image.Image = bmp;
             }
 
-            info.Text = string.Format("{0} x {1}", item.Width, item.Height);
+            var format = item.Flags.HasFlag(TextureFlags.Missing) ? "Invalid texture" : "{0} x {1}";
+            info.Text = string.Format(format, item.Width, item.Height);
         }
     }
 }

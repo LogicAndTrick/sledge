@@ -77,6 +77,7 @@ namespace Sledge.Providers.Texture
 
         public static void LoadTextureItem(TextureItem item)
         {
+            if (item == null || item.Package == null) return;
             item.Package.Provider.LoadTextures(new[] { item });
         }
 

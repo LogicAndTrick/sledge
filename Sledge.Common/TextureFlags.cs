@@ -3,9 +3,11 @@
 namespace Sledge.Common
 {
     [Flags]
-    public enum TextureFlags
+    public enum TextureFlags : uint
     {
-        None = 0x01,
-        Transparent = 0x02,
+        None = 1u << 0,
+        Transparent = 1u << 1,
+
+        Missing = 1u << 31
     }
 }

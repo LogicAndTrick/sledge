@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
+using Sledge.Common;
 using Sledge.Common.Mediator;
 using Sledge.DataStructures.MapObjects;
 using Sledge.Editor.Documents;
@@ -233,6 +234,7 @@ namespace Sledge.Editor.Tools.TextureTool
             if (item != null)
             {
                 TextureDetailsLabel.Text = string.Format("{0} ({1} x {2})", item.Name, item.Width, item.Height);
+                OnTextureChanged(item);
             }
             _freeze = false;
         }
@@ -244,6 +246,8 @@ namespace Sledge.Editor.Tools.TextureTool
 
         public void SelectTexture(TextureItem item)
         {
+            if (_freeze) return;
+
             if (item == null)
             {
                 SelectedTexturesList.SetSelectedTextures(new TextureItem[0]);
@@ -254,7 +258,7 @@ namespace Sledge.Editor.Tools.TextureTool
 
             // If the texture is in the list of selected faces, select the texture in that list
             var sl = SelectedTexturesList.GetTextures();
-            if (sl.Contains(item))
+            if (sl.Any(x => String.Equals(x.Name, item.Name, StringComparison.InvariantCultureIgnoreCase)))
             {
                 SelectedTexturesList.SetSelectedTextures(new[] { item });
                 SelectedTexturesList.ScrollToItem(item);
@@ -347,20 +351,19 @@ namespace Sledge.Editor.Tools.TextureTool
             foreach (var face in faces)
             {
                 var tex = face.Texture;
-                if (tex.Texture != null && textures.All(x => !String.Equals(x.Name, tex.Texture.Name, StringComparison.InvariantCultureIgnoreCase)))
-                {
-                    var item = Document.TextureCollection.GetItem(tex.Texture.Name);
-                    if (item != null)
-                    {
-                        textures.Add(item);
-                    }
-                }
+
+                var name = tex.Texture == null ? tex.Name : tex.Texture.Name;
+                if (textures.Any(x => String.Equals(x.Name, name, StringComparison.InvariantCultureIgnoreCase))) continue;
+
+                var item = Document.TextureCollection.GetItem(name) ?? new TextureItem(null, name, TextureFlags.Missing, 64, 64);
+                textures.Add(item);
             }
 
             if (textures.Any())
             {
                 var t = textures[0];
-                TextureDetailsLabel.Text = string.Format("{0} ({1}x{2})", t.Name, t.Width, t.Height);
+                var format = t.Flags.HasFlag(TextureFlags.Missing) ? "{0}" : "{0} ({1}x{2})";
+                TextureDetailsLabel.Text = string.Format(format, t.Name, t.Width, t.Height);
             }
 
             SelectedTexturesList.SetTextureList(textures);

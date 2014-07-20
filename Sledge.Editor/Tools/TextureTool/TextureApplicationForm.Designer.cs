@@ -377,7 +377,7 @@ namespace Sledge.Editor.Tools.TextureTool
             // 
             this.TextureDetailsLabel.Location = new System.Drawing.Point(12, 152);
             this.TextureDetailsLabel.Name = "TextureDetailsLabel";
-            this.TextureDetailsLabel.Size = new System.Drawing.Size(156, 23);
+            this.TextureDetailsLabel.Size = new System.Drawing.Size(393, 23);
             this.TextureDetailsLabel.TabIndex = 21;
             this.TextureDetailsLabel.Text = "TEXTURENAMEANDSIZE";
             this.TextureDetailsLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -388,7 +388,7 @@ namespace Sledge.Editor.Tools.TextureTool
             this.tableLayoutPanel1.ColumnCount = 3;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 65F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 203F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 206F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel1.Controls.Add(this.ScaleXValue, 1, 1);
@@ -630,11 +630,11 @@ namespace Sledge.Editor.Tools.TextureTool
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(417, 420);
+            this.Controls.Add(this.HideMaskCheckbox);
             this.Controls.Add(this.RecentTexturesList);
             this.Controls.Add(this.SelectedTexturesList);
             this.Controls.Add(this.label11);
             this.Controls.Add(this.label10);
-            this.Controls.Add(this.HideMaskCheckbox);
             this.Controls.Add(this.RecentFilterTextbox);
             this.Controls.Add(this.label9);
             this.Controls.Add(this.SmoothingGroupsButton);
