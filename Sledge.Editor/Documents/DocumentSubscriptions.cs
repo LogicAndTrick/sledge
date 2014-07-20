@@ -1055,8 +1055,8 @@ namespace Sledge.Editor.Documents
             {
                 if (qf.ShowDialog() != DialogResult.OK) return;
 
-                var ids = _document.Map.Visgroups.Select(x => x.ID).ToList();
-                var id = ids.Any() ? ids.Max() + 1 : 1;
+                var ids = _document.Map.Visgroups.Where(x => !x.IsAutomatic).Select(x => x.ID).ToList();
+                var id = Math.Max(1, ids.Any() ? ids.Max() + 1 : 1);
                 
                 var name = qf.String("Name");
                 if (String.IsNullOrWhiteSpace(name)) name = "Visgroup " + id.ToString(CultureInfo.InvariantCulture);

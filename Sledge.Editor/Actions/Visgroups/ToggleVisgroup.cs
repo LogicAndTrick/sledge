@@ -33,6 +33,8 @@ namespace Sledge.Editor.Actions.Visgroups
         public void Reverse(Document document)
         {
             _changed.ForEach(x => x.IsVisgroupHidden = !_hide);
+            var vg = document.Map.Visgroups.FirstOrDefault(x => x.ID == _visgroupId);
+            if (vg != null) vg.Visible = _hide;
 
             if (_deselected != null)
             {
@@ -49,9 +51,12 @@ namespace Sledge.Editor.Actions.Visgroups
 
         public void Perform(Document document)
         {
-            _changed = document.Map.WorldSpawn.Find(x => x.IsInVisgroup(_visgroupId, true), true)
+            _changed = document.Map.WorldSpawn
+                .Find(x => x.IsInVisgroup(_visgroupId, true), true)
                 .Where(x => x.IsVisgroupHidden != _hide).ToList();
             _changed.ForEach(x => x.IsVisgroupHidden = _hide);
+            var vg = document.Map.Visgroups.FirstOrDefault(x => x.ID == _visgroupId);
+            if (vg != null) vg.Visible = !_hide;
 
             if (_hide)
             {

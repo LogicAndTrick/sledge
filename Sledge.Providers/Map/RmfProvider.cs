@@ -425,6 +425,7 @@ namespace Sledge.Providers.Map
 
         private static IEnumerable<Visgroup> ReadVisgroups(BinaryReader br)
         {
+            var list = new List<Visgroup>();
             var numVisgroups = br.ReadInt32();
             for (var i = 0; i < numVisgroups; i++)
             {
@@ -437,8 +438,14 @@ namespace Sledge.Providers.Map
                     };
                 vis.Colour = Color.FromArgb(255, vis.Colour);
                 br.ReadBytes(3);
-                yield return vis;
+                list.Add(vis);
             }
+            // Get rid of zero groups
+            foreach (var vg in list.Where(x => x.ID == 0))
+            {
+                vg.ID = list.Max(x => x.ID) + 1;
+            }
+            return list;
         }
 
         private static void WriteVisgroups(BinaryWriter bw, IEnumerable<Visgroup> visgroups)

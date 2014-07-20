@@ -17,7 +17,7 @@ namespace Sledge.Editor.Visgroups
         public VisgroupEditForm(Document doc)
         {
             InitializeComponent();
-            _visgroups = new List<Visgroup>(doc.Map.Visgroups.Select(x => x.Clone()));
+            _visgroups = new List<Visgroup>(doc.Map.Visgroups.Where(x => !x.IsAutomatic).Select(x => x.Clone()));
             _deleted = new List<Visgroup>();
             UpdateVisgroups();
         }
@@ -57,7 +57,7 @@ namespace Sledge.Editor.Visgroups
         private int GetNewID()
         {
             var ids = _visgroups.Select(x => x.ID).Union(_deleted.Select(x => x.ID)).ToList();
-            return ids.Any() ? ids.Max() + 1 : 1;
+            return Math.Max(1, ids.Any() ? ids.Max() + 1 : 1);
         }
 
         private void AddGroup(object sender, EventArgs e)

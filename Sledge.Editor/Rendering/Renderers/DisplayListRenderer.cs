@@ -167,7 +167,11 @@ namespace Sledge.Editor.Rendering.Renderers
             if (!wireframe)
             {
                 GL.CallList(textured ? _listUntransformed3DTextured : _listUntransformed3DFlat);
-                GL.CallList(_listUntransformed3D);
+                
+                if (!Document.Selection.InFaceSelection || !Document.Map.HideFaceMask)
+                {
+                    GL.CallList(_listUntransformed3D);
+                }
 
                 // Render models
                 if (!View.DisableModelRendering)

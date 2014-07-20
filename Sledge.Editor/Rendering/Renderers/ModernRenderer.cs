@@ -225,10 +225,13 @@ namespace Sledge.Editor.Rendering.Renderers
                 _decalArray.RenderWireframe(context.Context);
             }
 
-            _mapObject2DShader.SelectedOnly = true;
-            _mapObject2DShader.SelectionTransform = Matrix4.Identity;
-            _array.RenderWireframe(context.Context);
-            _decalArray.RenderWireframe(context.Context);
+            if (!Document.Selection.InFaceSelection || !Document.Map.HideFaceMask)
+            {
+                _mapObject2DShader.SelectedOnly = true;
+                _mapObject2DShader.SelectionTransform = Matrix4.Identity;
+                _array.RenderWireframe(context.Context);
+                _decalArray.RenderWireframe(context.Context);
+            }
 
             _mapObject2DShader.Unbind();
 
