@@ -79,7 +79,8 @@ namespace Sledge.Editor.Tools
         public override string GetContextualHelp()
         {
             return "*Click* the camera origin or direction arrow to move the camera.\n" +
-                   "Hold *shift* and *click* to create multiple cameras.";
+                   "Hold *shift* and *click* to create multiple cameras.\n" +
+                   "Press *Tab* to cycle between cameras";
         }
 
         private Tuple<Coordinate, Coordinate> GetViewportCamera()
