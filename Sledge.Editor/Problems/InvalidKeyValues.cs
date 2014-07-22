@@ -9,11 +9,12 @@ namespace Sledge.Editor.Problems
 {
     public class InvalidKeyValues : IProblemCheck
     {
-        public IEnumerable<Problem> Check(Map map)
+        public IEnumerable<Problem> Check(Map map, bool visibleOnly)
         {
             // MultiManagers require invalid key/values to work, exclude them from the search
             var entities = map.WorldSpawn
-                .Find(x => x is Entity).OfType<Entity>()
+                .Find(x => x is Entity && (!visibleOnly || (!x.IsVisgroupHidden && !x.IsCodeHidden)))
+                .OfType<Entity>()
                 .Where(x => x.GameData != null)
                 .Where(x => !String.Equals(x.EntityData.Name, "multi_manager", StringComparison.InvariantCultureIgnoreCase))
                 .ToList();

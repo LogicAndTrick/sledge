@@ -29,9 +29,9 @@ namespace Sledge.Editor.Problems
             Checkers.RemoveAll(x => x.GetType() == typeof(T));
         }
 
-        public static IEnumerable<Problem> Check(Map map)
+        public static IEnumerable<Problem> Check(Map map, bool visibleOnly)
         {
-            return Checkers.SelectMany(x => x.Check(map));
+            return Checkers.SelectMany(x => x.Check(map, visibleOnly));
         }
     }
 }

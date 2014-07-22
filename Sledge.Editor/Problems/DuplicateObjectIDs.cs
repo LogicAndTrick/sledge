@@ -8,9 +8,9 @@ namespace Sledge.Editor.Problems
 {
     public class DuplicateObjectIDs : IProblemCheck
     {
-        public IEnumerable<Problem> Check(Map map)
+        public IEnumerable<Problem> Check(Map map, bool visibleOnly)
         {
-            var dupes = from o in map.WorldSpawn.FindAll()
+            var dupes = from o in map.WorldSpawn.Find(x => (!visibleOnly || (!x.IsVisgroupHidden && !x.IsCodeHidden)))
                         group o by o.ID
                         into g
                         where g.Count() > 1

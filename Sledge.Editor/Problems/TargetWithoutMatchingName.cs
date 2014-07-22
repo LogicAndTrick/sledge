@@ -9,10 +9,11 @@ namespace Sledge.Editor.Problems
 {
     public class TargetWithoutMatchingName : IProblemCheck
     {
-        public IEnumerable<Problem> Check(Map map)
+        public IEnumerable<Problem> Check(Map map, bool visibleOnly)
         {
             var entities = map.WorldSpawn
-                .Find(x => x is Entity).OfType<Entity>()
+                .Find(x => x is Entity && (!visibleOnly || (!x.IsVisgroupHidden && !x.IsCodeHidden)))
+                .OfType<Entity>()
                 .Where(x => x.GameData != null).ToList();
             foreach (var entity in entities.Where(x => !String.IsNullOrWhiteSpace(x.EntityData.GetPropertyValue("target"))))
             {

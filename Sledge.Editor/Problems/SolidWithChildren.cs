@@ -8,10 +8,11 @@ namespace Sledge.Editor.Problems
 {
     public class SolidWithChildren : IProblemCheck
     {
-        public IEnumerable<Problem> Check(Map map)
+        public IEnumerable<Problem> Check(Map map, bool visibleOnly)
         {
             foreach (var solid in map.WorldSpawn
-                .Find(x => x is Solid).OfType<Solid>()
+                .Find(x => x is Solid && (!visibleOnly || (!x.IsVisgroupHidden && !x.IsCodeHidden)))
+                .OfType<Solid>()
                 .Where(x => x.HasChildren))
             {
                 yield return new Problem(GetType(), map, new[] { solid }, Fix, "Solid has children", "A solid with children was found. A solid cannot have any contents. Fixing the issue will move the children outside of the solid's group.");

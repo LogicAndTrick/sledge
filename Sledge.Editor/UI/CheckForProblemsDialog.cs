@@ -37,7 +37,7 @@ namespace Sledge.Editor.UI
 
         private void DoCheck()
         {
-            _problems = ProblemChecker.Check(_document.Map).ToList();
+            _problems = ProblemChecker.Check(_document.Map, VisibleOnlyCheckbox.Checked).ToList();
             ProblemsList.BeginUpdate();
             ProblemsList.Items.Clear();
             ProblemsList.Items.AddRange(_problems.OfType<object>().ToArray());
@@ -97,6 +97,11 @@ namespace Sledge.Editor.UI
         private void FixAll(object sender, EventArgs e)
         {
             FixErrors(_problems.ToArray());
+        }
+
+        private void VisibleOnlyCheckboxChanged(object sender, EventArgs e)
+        {
+            DoCheck();
         }
     }
 }

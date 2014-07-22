@@ -8,10 +8,11 @@ namespace Sledge.Editor.Problems
 {
     public class GroupWithoutChildren : IProblemCheck
     {
-        public IEnumerable<Problem> Check(Map map)
+        public IEnumerable<Problem> Check(Map map, bool visibleOnly)
         {
             foreach (var group in map.WorldSpawn
-                .Find(x => x is Group).OfType<Group>()
+                .Find(x => x is Group && (!visibleOnly || (!x.IsVisgroupHidden && !x.IsCodeHidden)))
+                .OfType<Group>()
                 .Where(x => !x.GetChildren().Any()))
             {
                 yield return new Problem(GetType(), map, new[] { @group }, Fix, "Group has no children", "This group is empty. A group must have contents. Fixing the problem will delete the group.");

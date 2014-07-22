@@ -9,10 +9,11 @@ namespace Sledge.Editor.Problems
 {
     public class TextureAxisPerpendicularToFace : IProblemCheck
     {
-        public IEnumerable<Problem> Check(Map map)
+        public IEnumerable<Problem> Check(Map map, bool visibleOnly)
         {
             var faces = map.WorldSpawn
-                .Find(x => x is Solid).OfType<Solid>()
+                .Find(x => x is Solid && (!visibleOnly || (!x.IsVisgroupHidden && !x.IsCodeHidden)))
+                .OfType<Solid>()
                 .SelectMany(x => x.Faces)
                 .ToList();
             foreach (var face in faces)

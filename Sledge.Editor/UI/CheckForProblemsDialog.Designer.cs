@@ -36,6 +36,7 @@
             this.FixAllButton = new System.Windows.Forms.Button();
             this.CloseButton = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.VisibleOnlyCheckbox = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -134,11 +135,25 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Details";
             // 
+            // VisibleOnlyCheckbox
+            // 
+            this.VisibleOnlyCheckbox.AutoSize = true;
+            this.VisibleOnlyCheckbox.Checked = true;
+            this.VisibleOnlyCheckbox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.VisibleOnlyCheckbox.Location = new System.Drawing.Point(18, 317);
+            this.VisibleOnlyCheckbox.Name = "VisibleOnlyCheckbox";
+            this.VisibleOnlyCheckbox.Size = new System.Drawing.Size(115, 17);
+            this.VisibleOnlyCheckbox.TabIndex = 4;
+            this.VisibleOnlyCheckbox.Text = "Visible objects only";
+            this.VisibleOnlyCheckbox.UseVisualStyleBackColor = true;
+            this.VisibleOnlyCheckbox.CheckedChanged += new System.EventHandler(this.VisibleOnlyCheckboxChanged);
+            // 
             // CheckForProblemsDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(412, 345);
+            this.Controls.Add(this.VisibleOnlyCheckbox);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.CloseButton);
             this.Controls.Add(this.ProblemsList);
@@ -151,6 +166,7 @@
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -164,5 +180,6 @@
         private System.Windows.Forms.Button FixAllButton;
         private System.Windows.Forms.Button CloseButton;
         private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.CheckBox VisibleOnlyCheckbox;
     }
 }

@@ -9,9 +9,9 @@ namespace Sledge.Editor.Problems
 {
     public class DuplicateKeyValues : IProblemCheck
     {
-        public IEnumerable<Problem> Check(Map map)
+        public IEnumerable<Problem> Check(Map map, bool visibleOnly)
         {
-            var entities = map.WorldSpawn.Find(x => x is Entity).OfType<Entity>().ToList();
+            var entities = map.WorldSpawn.Find(x => x is Entity && (!visibleOnly || (!x.IsVisgroupHidden && !x.IsCodeHidden))).OfType<Entity>().ToList();
             foreach (var entity in entities)
             {
                 var dupes = from p in entity.EntityData.Properties
