@@ -877,11 +877,6 @@ namespace Sledge.Editor
             return base.ProcessDialogKey(keyData);
         }
 
-        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
-        {
-            return Hotkeys.HotkeyDown(keyData) || base.ProcessCmdKey(ref msg, keyData);
-        }
-
         public void Notify(string message, object data)
         {
             Mediator.ExecuteDefault(this, message, data);

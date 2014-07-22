@@ -60,6 +60,7 @@ namespace Sledge.Editor.Brushes
             Brushes.Add(new ArchBrush());
             Brushes.Add(new SphereBrush());
             Brushes.Add(new TorusBrush());
+            Brushes.Add(new TextBrush());
 
             SetBrushControl(new BrushSidebarPanel());
         }

@@ -47,6 +47,12 @@ namespace Sledge.Editor.Brushes.Controls
             set { Numeric.DecimalPlaces = value; }
         }
 
+        public decimal Increment
+        {
+            get { return Numeric.Increment; }
+            set { Numeric.Increment = value; }
+        }
+
         public NumericControl(IBrush brush) : base(brush)
         {
             InitializeComponent();

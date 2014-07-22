@@ -18,6 +18,9 @@ namespace Sledge.Editor.UI
 
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
+            var source = FromHandle(msg.HWnd);
+            if (source != null && source.Tag == Hotkeys.SuppressHotkeysTag) return base.ProcessCmdKey(ref msg, keyData);
+
             if (PreventSimpleHotkeyPassthrough)
             {
                 var str = KeyboardState.KeysToString(keyData).ToLowerInvariant();

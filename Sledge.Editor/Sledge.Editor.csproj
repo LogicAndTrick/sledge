@@ -79,6 +79,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\OpenTK.GLControl.dll</HintPath>
     </Reference>
+    <Reference Include="Poly2Tri">
+      <HintPath>..\Poly2Tri.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -126,6 +129,18 @@
     <Compile Include="Actions\Visgroups\CreateEditDeleteVisgroups.cs" />
     <Compile Include="Actions\Visgroups\ShowAllVisgroups.cs" />
     <Compile Include="Actions\Visgroups\ToggleVisgroup.cs" />
+    <Compile Include="Brushes\Controls\FontChooserControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Brushes\Controls\FontChooserControl.Designer.cs">
+      <DependentUpon>FontChooserControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Brushes\Controls\NumericControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Brushes\Controls\NumericControl.Designer.cs">
+      <DependentUpon>NumericControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="Brushes\SphereBrush.cs" />
     <Compile Include="Brushes\BlockBrush.cs" />
     <Compile Include="Brushes\BrushManager.cs" />
@@ -138,14 +153,15 @@
     <Compile Include="Brushes\Controls\BooleanControl.Designer.cs">
       <DependentUpon>BooleanControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="Brushes\Controls\NumericControl.cs">
+    <Compile Include="Brushes\Controls\TextControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Brushes\Controls\NumericControl.Designer.cs">
-      <DependentUpon>NumericControl.cs</DependentUpon>
+    <Compile Include="Brushes\Controls\TextControl.Designer.cs">
+      <DependentUpon>TextControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Brushes\ConeBrush.cs" />
     <Compile Include="Brushes\ArchBrush.cs" />
+    <Compile Include="Brushes\TextBrush.cs" />
     <Compile Include="Brushes\TorusBrush.cs" />
     <Compile Include="Brushes\PipeBrush.cs" />
     <Compile Include="Brushes\CylinderBrush.cs" />
@@ -620,8 +636,14 @@
     <EmbeddedResource Include="Brushes\Controls\BooleanControl.resx">
       <DependentUpon>BooleanControl.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Brushes\Controls\FontChooserControl.resx">
+      <DependentUpon>FontChooserControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Brushes\Controls\NumericControl.resx">
       <DependentUpon>NumericControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Brushes\Controls\TextControl.resx">
+      <DependentUpon>TextControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Compiling\CompileDialog.resx">
       <DependentUpon>CompileDialog.cs</DependentUpon>

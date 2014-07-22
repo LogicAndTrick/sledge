@@ -20,5 +20,7 @@ namespace Sledge.Editor.UI
             }
             return false;
         }
+
+        public static readonly object SuppressHotkeysTag = new object();
     }
 }
