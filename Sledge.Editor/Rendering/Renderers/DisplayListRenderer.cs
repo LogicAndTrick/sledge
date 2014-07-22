@@ -82,7 +82,10 @@ namespace Sledge.Editor.Rendering.Renderers
         {
             UpdateCache();
 
-            RenderGrid(((Viewport2D)context).Zoom);
+            if (Document.Map.Show2DGrid)
+            {
+                RenderGrid(((Viewport2D) context).Zoom);
+            }
 
             Matrix4 current;
             GL.GetFloat(GetPName.ModelviewMatrix, out current);
