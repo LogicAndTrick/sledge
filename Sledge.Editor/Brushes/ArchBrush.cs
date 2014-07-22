@@ -42,6 +42,8 @@ namespace Sledge.Editor.Brushes
             get { return "Arch"; }
         }
 
+        public bool CanRound { get { return true; } }
+
         public IEnumerable<BrushControl> GetControls()
         {
             yield return _numSides;

@@ -39,7 +39,7 @@ namespace Sledge.Editor.Brushes
             }
         }
 
-        public static Control SidebarControl { get; private set; }
+        public static BrushSidebarPanel SidebarControl { get; private set; }
 
         static BrushManager()
         {
@@ -71,7 +71,7 @@ namespace Sledge.Editor.Brushes
             return parent.Controls.OfType<Control>().Select(FindComboBox).FirstOrDefault(x => x != null);
         }
 
-        public static void SetBrushControl(Control brushControl)
+        public static void SetBrushControl(BrushSidebarPanel brushControl)
         {
             SidebarControl = brushControl;
             _comboBox = FindComboBox(SidebarControl);
@@ -89,6 +89,7 @@ namespace Sledge.Editor.Brushes
             CurrentControls.Clear();
             CurrentBrush = brush;
             if (CurrentBrush == null) return;
+            SidebarControl.RoundCheckboxEnabled = CurrentBrush.CanRound;
             CurrentControls.AddRange(CurrentBrush.GetControls().Reverse());
             for (var i = 0; i < CurrentControls.Count; i++)
             {

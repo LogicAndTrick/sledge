@@ -25,6 +25,8 @@ namespace Sledge.Editor.Brushes
             get { return "Pipe"; }
         }
 
+        public bool CanRound { get { return true; } }
+
         public IEnumerable<BrushControl> GetControls()
         {
             yield return _numSides;

@@ -30,6 +30,8 @@ namespace Sledge.Editor.Brushes
 
         public string Name { get { return "Text"; } }
 
+        public bool CanRound { get { return true; } }
+
         public IEnumerable<BrushControl> GetControls()
         {
             yield return _fontChooser;

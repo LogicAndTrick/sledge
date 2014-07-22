@@ -45,6 +45,8 @@ namespace Sledge.Editor.Brushes
             get { return "Torus"; }
         }
 
+        public bool CanRound { get { return true; } }
+
         public IEnumerable<BrushControl> GetControls()
         {
             yield return _crossSides;

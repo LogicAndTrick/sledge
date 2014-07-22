@@ -21,6 +21,8 @@ namespace Sledge.Editor.Brushes
             get { return "Tetrahedron"; }
         }
 
+        public bool CanRound { get { return true; } }
+
         public IEnumerable<BrushControl> GetControls()
         {
             yield return _useCentroid;

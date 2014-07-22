@@ -23,6 +23,8 @@ namespace Sledge.Editor.Brushes
             get { return "Sphere"; }
         }
 
+        public bool CanRound { get { return false; } }
+
         public IEnumerable<BrushControl> GetControls()
         {
             yield return _numSides;
@@ -53,6 +55,8 @@ namespace Sledge.Editor.Brushes
         {
             var numSides = (int)_numSides.GetValue();
             if (numSides < 3) yield break;
+
+            roundDecimals = 2; // don't support rounding
 
             var width = box.Width;
             var length = box.Length;

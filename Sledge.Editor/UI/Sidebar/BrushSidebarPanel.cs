@@ -13,6 +13,12 @@ namespace Sledge.Editor.UI.Sidebar
 {
     public partial class BrushSidebarPanel : UserControl, IMediatorListener
     {
+        public bool RoundCheckboxEnabled
+        {
+            get { return RoundCreatedVerticesCheckbox.Enabled; }
+            set { RoundCreatedVerticesCheckbox.Enabled = value; }
+        }
+
         public BrushSidebarPanel()
         {
             InitializeComponent();

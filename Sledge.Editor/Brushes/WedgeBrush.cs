@@ -14,6 +14,8 @@ namespace Sledge.Editor.Brushes
             get { return "Wedge"; }
         }
 
+        public bool CanRound { get { return true; } }
+
         public IEnumerable<BrushControl> GetControls()
         {
             return new List<BrushControl>();
