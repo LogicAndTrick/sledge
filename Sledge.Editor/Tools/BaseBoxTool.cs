@@ -527,6 +527,7 @@ namespace Sledge.Editor.Tools
 
         public override void KeyDown(ViewportBase viewport, ViewportEvent e)
         {
+            if (State.Action == BoxAction.ReadyToDraw || State.Action == BoxAction.DownToDraw) return;
             switch (e.KeyCode)
             {
                 case Keys.Enter:
