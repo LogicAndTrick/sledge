@@ -144,7 +144,7 @@ namespace Sledge.Editor.Brushes
             {
                 foreach (var t in polygon.Triangles)
                 {
-                    var points = t.Points.Select(x => new Coordinate((decimal) x.X, (decimal) x.Y, zOffset)).ToList();
+                    var points = t.Points.Select(x => new Coordinate((decimal) x.X, (decimal) x.Y, zOffset).Round(roundDecimals)).ToList();
 
                     var faces = new List<Coordinate[]>();
 
