@@ -1103,7 +1103,7 @@ namespace Sledge.Editor.Documents
         public void SelectMatchingTextures(IEnumerable<string> textureList)
         {
             var list = textureList.ToList();
-            var allFaces = _document.Map.WorldSpawn.Find(x => x is Solid).OfType<Solid>().SelectMany(x => x.Faces).ToList();
+            var allFaces = _document.Map.WorldSpawn.Find(x => x is Solid && !x.IsCodeHidden && !x.IsVisgroupHidden).OfType<Solid>().SelectMany(x => x.Faces).ToList();
             var matchingFaces = allFaces.Where(x => list.Contains(x.Texture.Name, StringComparer.CurrentCultureIgnoreCase)).ToList();
             var fc = matchingFaces.Count;
             if (_document.Selection.InFaceSelection)
