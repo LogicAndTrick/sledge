@@ -6,15 +6,13 @@ layout(location = 2) in vec2 texture;
 layout(location = 3) in vec4 colour;
 layout(location = 4) in float selected;
 
-const vec3 light1direction = vec3(-1, -2, 3);
-const vec3 light2direction = vec3(1, 2, 3);
-const vec4 light1intensity = vec4(0.6, 0.6, 0.6, 1.0);
-const vec4 light2intensity = vec4(0.3, 0.3, 0.3, 1.0);
-const vec4 ambient = vec4(0.5, 0.5, 0.5, 1.0);
+const vec3 lightDirection = normalize(vec3(1, 2, 3));
+const float lightIntensity = 0.5;
+const float ambient = 0.8;
 
 varying vec4 worldPosition;
 varying vec4 worldNormal;
-varying vec4 vertexLighting;
+varying float vertexLighting;
 varying vec4 vertexColour;
 varying vec2 texCoord;
 varying float vertexSelected;
@@ -43,18 +41,11 @@ void main()
 
     worldPosition = pos;
     worldNormal = npos;
-
-    float incidence1 = dot(normalPos, light1direction);
-    float incidence2 = dot(normalPos, light2direction);
-
-    incidence1 = clamp(incidence1, 0, 1);
-    incidence2 = clamp(incidence2, 0, 1);
-
+    
 	vertexColour = colour;
-    vertexLighting = (vec4(1,1,1,1) * light1intensity * incidence1) * 0.5
-                   + (vec4(1,1,1,1) * light2intensity * incidence2) * 0.5
-                   + (vec4(1,1,1,1) * ambient);
-    vertexLighting.w = 1.0; // Reset the alpha channel or transparency gets messed up later
+    float incidence = dot(normalPos, lightDirection);
+    vertexLighting = lightIntensity * incidence + ambient;
+
     texCoord = texture;
     vertexSelected = selected;
 }

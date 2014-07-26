@@ -3,7 +3,7 @@
 varying vec4 worldPosition;
 varying vec4 worldNormal;
 varying vec4 vertexColour;
-varying vec4 vertexLighting;
+varying float vertexLighting;
 varying vec2 texCoord;
 varying float vertexSelected;
 
@@ -17,8 +17,8 @@ uniform sampler2D currentTexture;
 void main()
 {
     vec4 outputColor;
-	vec4 lighting = vertexLighting;
-	if (!isLit) lighting = vec4(1,1,1,1);
+	float lighting = vertexLighting;
+	if (!isLit) lighting = 1;
     float alpha = vertexColour.w;
 
     if (isTextured) {

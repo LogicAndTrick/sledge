@@ -153,13 +153,16 @@ namespace Sledge.Editor.Rendering.Immediate
 
         public static void EnableLighting()
         {
-            GL.Light(LightName.Light0, LightParameter.Position, new float[] { -10000, -20000, 30000, 1 });
-            GL.Light(LightName.Light1, LightParameter.Position, new float[] { 10000, 20000, 30000, 1 });
+            GL.Light(LightName.Light0, LightParameter.Position, new float[] { -10000, -20000, -30000, 1 });
             GL.Light(LightName.Light0, LightParameter.Ambient, new float[] { 0.0f, 0.0f, 0.0f, 1 });
-            GL.Light(LightName.Light0, LightParameter.Diffuse, new float[] { 0.6f, 0.6f, 0.6f, 1.0f });
+            GL.Light(LightName.Light0, LightParameter.Diffuse, new float[] { 0.2f, 0.2f, 0.2f, 1.0f });
+
+            GL.Light(LightName.Light1, LightParameter.Position, new float[] { 10000, 20000, 30000, 1 });
             GL.Light(LightName.Light1, LightParameter.Ambient, new float[] { 0.0f, 0.0f, 0.0f, 1 });
-            GL.Light(LightName.Light1, LightParameter.Diffuse, new float[] { 0.3f, 0.3f, 0.3f, 1.0f });
-            GL.LightModel(LightModelParameter.LightModelAmbient, new float[] { 0.5f, 0.5f, 0.5f, 1.0f });
+            GL.Light(LightName.Light1, LightParameter.Diffuse, new float[] { 0.5f, 0.5f, 0.5f, 1.0f });
+
+            GL.LightModel(LightModelParameter.LightModelAmbient, new float[] { 0.8f, 0.8f, 0.8f, 1.0f });
+
             GL.Enable(EnableCap.Lighting);
             GL.Enable(EnableCap.Light0);
             GL.Enable(EnableCap.Light1);
