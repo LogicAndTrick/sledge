@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
 using OpenTK;
 using Sledge.DataStructures.Geometric;
+using Sledge.DataStructures.MapObjects;
 using Sledge.Editor.Documents;
 using Sledge.Editor.Tools.Widgets;
 using Sledge.UI;
@@ -61,6 +63,29 @@ namespace Sledge.Editor.Tools.SelectTool.TransformationTools
             return resizeMatrix;
         }
 
+        private Coordinate GetResizeOrigin(Viewport2D viewport, BaseBoxTool.BoxState state, Document document)
+        {
+            if (state.Action != BaseBoxTool.BoxAction.Resizing || state.Handle != BaseBoxTool.ResizeHandle.Center) return null;
+            var sel = document.Selection.GetSelectedParents().ToList();
+            if (sel.Count == 1 && sel[0] is Entity && !sel[0].HasChildren)
+            {
+                return viewport.Flatten(((Entity) sel[0]).Origin);
+            }
+            var st = viewport.Flatten(state.PreTransformBoxStart);
+            var ed = viewport.Flatten(state.PreTransformBoxEnd);
+            var points = new[] {st, ed, new Coordinate(st.X, ed.Y, 0), new Coordinate(ed.X, st.Y, 0)};
+            return points.OrderBy(x => (state.MoveStart - x).LengthSquared()).First();
+        }
+
+        private Coordinate GetResizeDistance(Viewport2D viewport, ViewportEvent e, BaseBoxTool.BoxState state, Document document)
+        {
+            var origin = GetResizeOrigin(viewport, state, document);
+            if (origin == null) return null;
+            var before = state.MoveStart;
+            var after = viewport.ScreenToWorld(e.X, viewport.Height - e.Y);
+            return SnapIfNeeded(origin + after - before, document) - origin;
+        }
+
         private Tuple<Coordinate, Coordinate> GetBoxCoordinatesForSelectionResize(Viewport2D viewport, ViewportEvent e, BaseBoxTool.BoxState state, Document document)
         {
             if (state.Action != BaseBoxTool.BoxAction.Resizing) return Tuple.Create(state.BoxStart, state.BoxEnd);
@@ -93,7 +118,10 @@ namespace Sledge.Editor.Tools.SelectTool.TransformationTools
                     break;
                 case BaseBoxTool.ResizeHandle.Center:
                     var cdiff = cend - cstart;
-                    cstart = viewport.Flatten(state.PreTransformBoxStart) + now - SnapIfNeeded(state.MoveStart, document);
+                    
+                    var distance = GetResizeDistance(viewport, e, state, document);
+                    if (distance == null) cstart = viewport.Flatten(state.PreTransformBoxStart) + now - SnapIfNeeded(state.MoveStart, document);
+                    else cstart = viewport.Flatten(state.PreTransformBoxStart) + distance;
                     cend = cstart + cdiff;
                     break;
                 case BaseBoxTool.ResizeHandle.Right:
@@ -142,37 +170,9 @@ namespace Sledge.Editor.Tools.SelectTool.TransformationTools
                         break;
                 }
             }
-            return SnapBoxCoordinatesIfNeeded(viewport, state, document, cstart, cend);
-        }
 
-        private Tuple<Coordinate, Coordinate> SnapBoxCoordinatesIfNeeded(Viewport2D viewport, BaseBoxTool.BoxState state, Document document, Coordinate start, Coordinate end)
-        {
-            if (state.Action == BaseBoxTool.BoxAction.Resizing && state.Handle == BaseBoxTool.ResizeHandle.Center)
-            {
-                // Pick the corner to snap
-                var ms = state.MoveStart;
-                var pts = viewport.Flatten(state.PreTransformBoxStart);
-                var pte = viewport.Flatten(state.PreTransformBoxEnd);
-                var ss = SnapIfNeeded(start, document);
-                var se = SnapIfNeeded(end, document);
-                var middle = (pts + pte) / 2;
-                var delta = ss - start;
-                if (ms.Y > middle.Y)
-                {
-                    // Top
-                    delta.Y = se.Y - end.Y;
-                }
-                if (ms.X > middle.X)
-                {
-                    // Right
-                    delta.X = se.X - end.X;
-                }
-                start += delta;
-                end += delta;
-            }
-
-            var cstart = viewport.Expand(start) + viewport.GetUnusedCoordinate(state.BoxStart);
-            var cend = viewport.Expand(end) + viewport.GetUnusedCoordinate(state.BoxEnd);
+            cstart = viewport.Expand(cstart) + viewport.GetUnusedCoordinate(state.BoxStart);
+            cend = viewport.Expand(cend) + viewport.GetUnusedCoordinate(state.BoxEnd);
             return Tuple.Create(cstart, cend);
         }
 

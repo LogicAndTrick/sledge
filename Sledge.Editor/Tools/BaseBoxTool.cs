@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Windows.Forms;
 using Sledge.Common.Mediator;
 using Sledge.Graphics.Helpers;
@@ -405,6 +406,24 @@ namespace Sledge.Editor.Tools
             // Nope.
         }
 
+        protected virtual Coordinate GetResizeOrigin(Viewport2D viewport)
+        {
+            if (State.Action != BoxAction.Resizing || State.Handle != ResizeHandle.Center) return null;
+            var st = viewport.Flatten(State.PreTransformBoxStart);
+            var ed = viewport.Flatten(State.PreTransformBoxEnd);
+            var points = new[] { st, ed, new Coordinate(st.X, ed.Y, 0), new Coordinate(ed.X, st.Y, 0) };
+            return points.OrderBy(x => (State.MoveStart - x).LengthSquared()).First();
+        }
+
+        protected virtual Coordinate GetResizeDistance(Viewport2D viewport, ViewportEvent e)
+        {
+            var origin = GetResizeOrigin(viewport);
+            if (origin == null) return null;
+            var before = State.MoveStart;
+            var after = viewport.ScreenToWorld(e.X, viewport.Height - e.Y);
+            return SnapIfNeeded(origin + after - before) - origin;
+        }
+
         protected Tuple<Coordinate, Coordinate> GetResizedBoxCoordinates(Viewport2D viewport, ViewportEvent e)
         {
             if (State.Action != BoxAction.Resizing && State.Action != BoxAction.Drawing) return Tuple.Create(State.BoxStart, State.BoxEnd);
@@ -437,7 +456,9 @@ namespace Sledge.Editor.Tools
                     break;
                 case ResizeHandle.Center:
                     var cdiff = cend - cstart;
-                    cstart = viewport.Flatten(State.PreTransformBoxStart) + now - SnapIfNeeded(State.MoveStart);
+                    var distance = GetResizeDistance(viewport, e);
+                    if (distance == null) cstart = viewport.Flatten(State.PreTransformBoxStart) + now - SnapIfNeeded(State.MoveStart);
+                    else cstart = viewport.Flatten(State.PreTransformBoxStart) + distance;
                     cend = cstart + cdiff;
                     break;
                 case ResizeHandle.Right:
@@ -486,37 +507,8 @@ namespace Sledge.Editor.Tools
                         break;
                 }
             }
-            return SnapBoxCoordinatesIfNeeded(viewport, cstart, cend);
-        }
-
-        private Tuple<Coordinate, Coordinate> SnapBoxCoordinatesIfNeeded(Viewport2D viewport, Coordinate start, Coordinate end)
-        {
-            if (State.Action == BoxAction.Resizing && State.Handle == ResizeHandle.Center)
-            {
-                // Pick the corner to snap
-                var ms = State.MoveStart;
-                var pts = viewport.Flatten(State.PreTransformBoxStart);
-                var pte = viewport.Flatten(State.PreTransformBoxEnd);
-                var ss = SnapIfNeeded(start);
-                var se = SnapIfNeeded(end);
-                var middle = (pts + pte) / 2;
-                var delta = ss - start;
-                if (ms.Y > middle.Y)
-                {
-                    // Top
-                    delta.Y = se.Y - end.Y;
-                }
-                if (ms.X > middle.X)
-                {
-                    // Right
-                    delta.X = se.X - end.X;
-                }
-                start += delta;
-                end += delta;
-            }
-
-            var cstart = viewport.Expand(start) + viewport.GetUnusedCoordinate(State.BoxStart);
-            var cend = viewport.Expand(end) + viewport.GetUnusedCoordinate(State.BoxEnd);
+            cstart = viewport.Expand(cstart) + viewport.GetUnusedCoordinate(State.BoxStart);
+            cend = viewport.Expand(cend) + viewport.GetUnusedCoordinate(State.BoxEnd);
             return Tuple.Create(cstart, cend);
         }
 
@@ -598,6 +590,11 @@ namespace Sledge.Editor.Tools
             return BoxColour;
         }
 
+        protected virtual Color GetRenderSnapHandleColour()
+        {
+            return BoxColour;
+        }
+
         protected virtual Color GetRenderTextColour()
         {
             return BoxColour;
@@ -632,6 +629,28 @@ namespace Sledge.Editor.Tools
             Coord(start.DX, end.DY, start.DZ);
             GL.End();
             GL.Disable(EnableCap.LineStipple);
+        }
+
+        protected virtual bool ShouldRenderSnapHandle(Viewport2D viewport)
+        {
+            return State.Action == BoxAction.Resizing && State.Handle == ResizeHandle.Center;
+        }
+
+        protected virtual void RenderSnapHandle(Viewport2D viewport)
+        {
+            var start = GetResizeOrigin(viewport);
+            if (start == null) return;
+            const int size = 6;
+            var dist = (double) (size / viewport.Zoom);
+
+            var origin = start + viewport.Flatten(State.BoxStart - State.PreTransformBoxStart);
+            GL.Begin(PrimitiveType.Lines);
+            GL.Color4(GetRenderSnapHandleColour());
+            Coord(origin.DX - dist, origin.DY + dist, 0);
+            Coord(origin.DX + dist, origin.DY - dist, 0);
+            Coord(origin.DX + dist, origin.DY + dist, 0);
+            Coord(origin.DX - dist, origin.DY - dist, 0);
+            GL.End();
         }
 
         protected virtual bool ShouldRenderResizeBox(Viewport2D viewport)
@@ -760,6 +779,10 @@ namespace Sledge.Editor.Tools
             if (ShouldDrawBox(viewport))
             {
                 RenderBox(viewport, start, end);
+            }
+            if (ShouldRenderSnapHandle(viewport))
+            {
+                RenderSnapHandle(viewport);
             }
             if (ShouldRenderResizeBox(viewport))
             {

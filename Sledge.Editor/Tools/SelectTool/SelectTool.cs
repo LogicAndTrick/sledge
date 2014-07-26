@@ -666,6 +666,19 @@ namespace Sledge.Editor.Tools.SelectTool
             SelectionChanged();
         }
 
+        protected override Coordinate GetResizeOrigin(Viewport2D viewport)
+        {
+            if (State.Action == BoxAction.Resizing && State.Handle == ResizeHandle.Center && !Document.Selection.IsEmpty())
+            {
+                var sel = Document.Selection.GetSelectedParents().ToList();
+                if (sel.Count == 1 && sel[0] is Entity && !sel[0].HasChildren)
+                {
+                    return viewport.Flatten(((Entity) sel[0]).Origin);
+                }
+            }
+            return base.GetResizeOrigin(viewport);
+        }
+
         protected override void MouseDraggingToResize(Viewport2D viewport, ViewportEvent e)
         {
             if (_currentTool == null)
@@ -818,6 +831,11 @@ namespace Sledge.Editor.Tools.SelectTool
             if (ShouldDrawBox(viewport))
             {
                 RenderBox(viewport, start, end);
+            }
+
+            if (ShouldRenderSnapHandle(viewport))
+            {
+                RenderSnapHandle(viewport);
             }
 
             if (ShouldRenderResizeBox(viewport))
