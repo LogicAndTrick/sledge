@@ -536,6 +536,12 @@ namespace Sledge.Providers
             Print(tw);
         }
 
+	    private static string LengthLimit(string str, int limit)
+	    {
+	        if (str.Length >= limit) return str.Substring(0, limit - 1);
+	        return str;
+	    }
+
         private void Print(TextWriter tw, int tabs = 0)
         {
             var preTabStr = new string(' ', tabs * 4);
@@ -548,11 +554,11 @@ namespace Sledge.Providers
             {
                 tw.Write(postTabStr);
                 tw.Write('"');
-                tw.Write(kv.Key);
+                tw.Write(LengthLimit(kv.Key, 1024));
                 tw.Write('"');
                 tw.Write(' ');
                 tw.Write('"');
-                tw.Write((kv.Value ?? "").Replace('"', '`'));
+                tw.Write(LengthLimit((kv.Value ?? "").Replace('"', '`'), 1024));
                 tw.Write('"');
                 tw.WriteLine();
             }
