@@ -86,6 +86,9 @@ namespace Sledge.Editor.Documents
             Mediator.Subscribe(HotkeysMediator.SwitchTool, this);
             Mediator.Subscribe(HotkeysMediator.ApplyCurrentTextureToSelection, this);
 
+            Mediator.Subscribe(HotkeysMediator.RotateClockwise, this);
+            Mediator.Subscribe(HotkeysMediator.RotateCounterClockwise, this);
+
             Mediator.Subscribe(HotkeysMediator.Carve, this);
             Mediator.Subscribe(HotkeysMediator.MakeHollow, this);
             Mediator.Subscribe(HotkeysMediator.GroupingGroup, this);
@@ -616,6 +619,30 @@ namespace Sledge.Editor.Documents
                 var selected = _document.Selection.GetSelectedParents();
                 _document.PerformAction("Transform selection", new Edit(selected, new TransformEditOperation(transform, _document.Map.GetTransformFlags())));
             }
+        }
+
+        public void RotateClockwise()
+        {
+            if (_document.Selection.IsEmpty() || _document.Selection.InFaceSelection) return;
+            var focused = ViewportManager.Viewports.FirstOrDefault(x => x.IsFocused && x is Viewport2D) as Viewport2D;
+            if (focused == null) return;
+            var center = new Box(_document.Selection.GetSelectedObjects().Select(x => x.BoundingBox).Where(x => x != null)).Center;
+            var axis = focused.GetUnusedCoordinate(Coordinate.One);
+            var transform = new UnitRotate(DMath.DegreesToRadians(90), new Line(center, center + axis));
+            var selected = _document.Selection.GetSelectedParents();
+            _document.PerformAction("Transform selection", new Edit(selected, new TransformEditOperation(transform, _document.Map.GetTransformFlags())));
+        }
+
+        public void RotateCounterClockwise()
+        {
+            if (_document.Selection.IsEmpty() || _document.Selection.InFaceSelection) return;
+            var focused = ViewportManager.Viewports.FirstOrDefault(x => x.IsFocused && x is Viewport2D) as Viewport2D;
+            if (focused == null) return;
+            var center = new Box(_document.Selection.GetSelectedObjects().Select(x => x.BoundingBox).Where(x => x != null)).Center;
+            var axis = focused.GetUnusedCoordinate(Coordinate.One);
+            var transform = new UnitRotate(DMath.DegreesToRadians(-90), new Line(center, center + axis));
+            var selected = _document.Selection.GetSelectedParents();
+            _document.PerformAction("Transform selection", new Edit(selected, new TransformEditOperation(transform, _document.Map.GetTransformFlags())));
         }
 
         public void ReplaceTextures()

@@ -132,6 +132,11 @@ namespace Sledge.Settings
         [Description("Show Hidden Objects")]
         QuickHideShowAll,
 
+        [Description("Rotate Selected Objects Clockwise")]
+        RotateClockwise,
+        [Description("Rotate Selected Objects Counter-Clockwise")]
+        RotateCounterClockwise,
+
         [Description("Create New Visgroup")]
         VisgroupCreateNew,
 

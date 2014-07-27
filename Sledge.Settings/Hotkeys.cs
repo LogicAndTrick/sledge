@@ -53,6 +53,9 @@ namespace Sledge.Settings
                                     new HotkeyDefinition("Hide Selected", "Hide the selected objects", HotkeysMediator.QuickHideSelected, "H"),
                                     new HotkeyDefinition("Hide Unselected", "Hide the unselected objects", HotkeysMediator.QuickHideUnselected, "Ctrl+H"),
                                     new HotkeyDefinition("Unhide All", "Show all hidden objects", HotkeysMediator.QuickHideShowAll, "U"),
+                                    
+                                    new HotkeyDefinition("Rotate Selection Clockwise", "Rotate the selected objects 90 degrees clockwise", HotkeysMediator.RotateClockwise, "N"),
+                                    new HotkeyDefinition("Rotate Selection Counter-Clockwise", "Rotate the selected objects 90 degrees counter-clockwise", HotkeysMediator.RotateCounterClockwise, "M"),
 
                                     new HotkeyDefinition("Create New Visgroup", "Create a new visgroup", HotkeysMediator.VisgroupCreateNew, "Alt+V"),
                                     
