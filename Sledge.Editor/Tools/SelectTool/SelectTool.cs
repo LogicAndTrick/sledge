@@ -9,6 +9,7 @@ using Sledge.Common.Mediator;
 using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.MapObjects;
 using Sledge.DataStructures.Transformations;
+using Sledge.Editor.Actions;
 using Sledge.Editor.Actions.MapObjects.Operations;
 using Sledge.Editor.Actions.MapObjects.Operations.EditOperations;
 using Sledge.Editor.Actions.MapObjects.Selection;
@@ -906,19 +907,29 @@ namespace Sledge.Editor.Tools.SelectTool
             if (clone) transformationName += "-clone";
             var objects = Document.Selection.GetSelectedParents().ToList();
             var name = String.Format("{0} {1} object{2}", transformationName, objects.Count, (objects.Count == 1 ? "" : "s"));
-            
-            var action = new CreateEditDelete();
+
+            var cad = new CreateEditDelete();
+            var action = new ActionCollection(cad);
 
             if (clone)
             {
-                // Copy the selection before transforming
+                // Copy the selection, transform it, and reselect
                 var copies = ClipboardManager.CloneFlatHeirarchy(Document, Document.Selection.GetSelectedObjects()).ToList();
-                action.Create(Document.Map.WorldSpawn.ID, copies);
+                foreach (var mo in copies)
+                {
+                    mo.Transform(transform, Document.Map.GetTransformFlags());
+                    if (Sledge.Settings.Select.KeepVisgroupsWhenCloning) continue;
+                    foreach (var o in mo.FindAll()) o.Visgroups.Clear();
+                }
+                cad.Create(Document.Map.WorldSpawn.ID, copies);
+                var sel = new ChangeSelection(copies.SelectMany(x => x.FindAll()), Document.Selection.GetSelectedObjects());
+                action.Add(sel);
             }
-
-            // Transform the selection
-            var keepVisgroups = Sledge.Settings.Select.KeepVisgroupsWhenCloning;
-            action.Edit(objects, new TransformEditOperation(transform, Document.Map.GetTransformFlags()) { ClearVisgroups = !keepVisgroups });
+            else
+            {
+                // Transform the selection
+                cad.Edit(objects, new TransformEditOperation(transform, Document.Map.GetTransformFlags()));
+            }
 
             // Execute the action
             Document.PerformAction(name, action);
