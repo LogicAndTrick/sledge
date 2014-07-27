@@ -172,7 +172,8 @@ namespace Sledge.Editor.Extensions
                 }
 
                 // Extract out the original face
-                decalFace = fake.Faces.First(x => x.Plane.EquivalentTo(face.Plane, 0.05m));
+                decalFace = fake.Faces.FirstOrDefault(x => x.Plane.EquivalentTo(face.Plane, 0.05m));
+                if (decalFace == null) continue;
 
                 // Add a tiny bit to the normal axis to ensure the decal is rendered in front of the face
                 var normalAdd = face.Plane.Normal * 0.2m;

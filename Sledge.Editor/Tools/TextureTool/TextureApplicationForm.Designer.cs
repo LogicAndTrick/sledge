@@ -388,7 +388,7 @@ namespace Sledge.Editor.Tools.TextureTool
             this.tableLayoutPanel1.ColumnCount = 3;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 65F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 206F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 207F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel1.Controls.Add(this.ScaleXValue, 1, 1);
@@ -418,12 +418,12 @@ namespace Sledge.Editor.Tools.TextureTool
             131072});
             this.ScaleXValue.Location = new System.Drawing.Point(25, 30);
             this.ScaleXValue.Maximum = new decimal(new int[] {
-            100000,
+            4096,
             0,
             0,
             0});
             this.ScaleXValue.Minimum = new decimal(new int[] {
-            100000,
+            4096,
             0,
             0,
             -2147483648});
@@ -484,12 +484,12 @@ namespace Sledge.Editor.Tools.TextureTool
             131072});
             this.ScaleYValue.Location = new System.Drawing.Point(25, 56);
             this.ScaleYValue.Maximum = new decimal(new int[] {
-            100000,
+            4096,
             0,
             0,
             0});
             this.ScaleYValue.Minimum = new decimal(new int[] {
-            100000,
+            4096,
             0,
             0,
             -2147483648});

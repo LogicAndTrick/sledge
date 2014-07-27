@@ -4,6 +4,7 @@
     {
         public static SnapStyle SnapStyle { get; set; }
         public static RotationStyle RotationStyle { get; set; }
+        public static DoubleClick3DAction DoubleClick3DAction { get; set; }
 
         public static bool ArrowKeysNudgeSelection { get; set; }
         public static decimal NudgeUnits { get; set; }
@@ -29,6 +30,8 @@
 
         public static bool ApplyTextureImmediately { get; set; }
 
+        public static bool OpenObjectPropertiesWhenCreatingEntity { get; set; }
+
         public static bool SkipSelectionInUndoStack { get; set; }
         public static bool SkipVisibilityInUndoStack { get; set; }
         public static int UndoStackSize { get; set; }
@@ -37,6 +40,7 @@
         {
             SnapStyle = SnapStyle.SnapOffAlt;
             RotationStyle = RotationStyle.SnapOnShift;
+            DoubleClick3DAction = DoubleClick3DAction.ObjectProperties;
 
             ArrowKeysNudgeSelection = true;
             NudgeUnits = 1;
@@ -61,6 +65,8 @@
             Show3DSelectionWidgets = true;
 
             ApplyTextureImmediately = false;
+
+            OpenObjectPropertiesWhenCreatingEntity = true;
 
             SkipSelectionInUndoStack = false;
             SkipVisibilityInUndoStack = false;

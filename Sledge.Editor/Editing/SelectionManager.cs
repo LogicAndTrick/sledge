@@ -23,7 +23,10 @@ namespace Sledge.Editor.Editing
 
         public Box GetSelectionBoundingBox()
         {
-            return IsEmpty() ? null : new Box(GetSelectedObjects().Select(x => x.BoundingBox));
+            if (IsEmpty()) return null;
+            return InFaceSelection
+                ? new Box(GetSelectedFaces().Select(x => x.BoundingBox))
+                : new Box(GetSelectedObjects().Select(x => x.BoundingBox));
         }
 
         public IEnumerable<MapObject> GetSelectedObjects()

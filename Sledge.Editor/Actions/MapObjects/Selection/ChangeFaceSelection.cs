@@ -18,8 +18,8 @@ namespace Sledge.Editor.Actions.MapObjects.Selection
 
         public ChangeFaceSelection(IEnumerable<Face> selected, IEnumerable<Face> deselected)
         {
-            _selected = selected.Where(x => x.Parent != null).ToDictionary(x => x.ID, x => x.Parent.ID);
-            _deselected = deselected.Where(x => x.Parent != null).ToDictionary(x => x.ID, x => x.Parent.ID);
+            _selected = selected.Where(x => x.Parent != null).GroupBy(x => x.ID).ToDictionary(x => x.Key, x => x.First().Parent.ID);
+            _deselected = deselected.Where(x => x.Parent != null).GroupBy(x => x.ID).ToDictionary(x => x.Key, x => x.First().Parent.ID);
         }
 
         public void Dispose()

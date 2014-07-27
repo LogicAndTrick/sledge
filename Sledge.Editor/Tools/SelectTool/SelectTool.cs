@@ -356,9 +356,17 @@ namespace Sledge.Editor.Tools.SelectTool
             
             if (WidgetAction((w, vp, ev) => w.MouseDoubleClick(vp, ev), viewport, e)) return;
 
-            if (viewport is Viewport3D && !Document.Selection.IsEmpty() && !ObjectPropertiesDialog.IsShowing)
+            if (Sledge.Settings.Select.DoubleClick3DAction == DoubleClick3DAction.Nothing) return;
+            if (viewport is Viewport3D && !Document.Selection.IsEmpty())
             {
-                Mediator.Publish(HotkeysMediator.ObjectProperties);
+                if (Sledge.Settings.Select.DoubleClick3DAction == DoubleClick3DAction.ObjectProperties && !ObjectPropertiesDialog.IsShowing)
+                {
+                    Mediator.Publish(HotkeysMediator.ObjectProperties);
+                }
+                else if (Sledge.Settings.Select.DoubleClick3DAction == DoubleClick3DAction.TextureTool)
+                {
+                    Mediator.Publish(HotkeysMediator.SwitchTool, HotkeyTool.Texture);
+                }
             }
         }
         #endregion

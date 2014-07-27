@@ -62,8 +62,8 @@ namespace Sledge.Providers.Texture
                 if (!packages.ContainsKey(dir)) packages.Add(dir, new TexturePackage(packageRoot, dir, this));
                 if (packages[dir].HasTexture(vmt)) continue;
 
-                var gs = GenericStructure.Parse(new StreamReader(vmtRoot.OpenFile(vmt))).First();
-                if (!types.Contains(gs.Name.ToLowerInvariant())) continue;
+                var gs = GenericStructure.Parse(new StreamReader(vmtRoot.OpenFile(vmt))).FirstOrDefault();
+                if (gs == null || !types.Contains(gs.Name.ToLowerInvariant())) continue;
 
                 var baseTexture = gs.GetPropertyValue("$basetexture", true);
                 if (baseTexture == null) continue;

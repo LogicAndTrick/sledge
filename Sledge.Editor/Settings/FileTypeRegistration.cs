@@ -116,9 +116,16 @@ namespace Sledge.Editor.Settings
                 return;
             #endif
 
-            foreach (var ft in GetSupportedExtensions())
+            try
             {
-                AddExtensionHandler(ft.Extension, ft.Description);
+                foreach (var ft in GetSupportedExtensions())
+                {
+                    AddExtensionHandler(ft.Extension, ft.Description);
+                }
+            }
+            catch (UnauthorizedAccessException)
+            {
+                // security exception or some such
             }
 
 

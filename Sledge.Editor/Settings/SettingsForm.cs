@@ -657,6 +657,10 @@ namespace Sledge.Editor.Settings
             AddSetting(() => Sledge.Settings.Select.BoxSelectByCenterHandlesOnly, "Selection box selects by center handles only");
             AddSetting(() => Sledge.Settings.Select.ClickSelectByCenterHandlesOnly, "Clicking in 2D view selects by center handles only");
 
+            AddHeading("Interaction");
+            AddSetting(() => Sledge.Settings.Select.DoubleClick3DAction, "Action to perform when double-clicking an object in the 3D view");
+            AddSetting(() => Sledge.Settings.Select.OpenObjectPropertiesWhenCreatingEntity, "Open object properties when creating an entity");
+
             AddHeading("2D Vertices");
             AddSetting(() => Sledge.Settings.View.Draw2DVertices, "Render vertices in 2D views");
             AddSetting(() => Sledge.Settings.View.VertexPointSize, 1, 10, "Vertex point size");
@@ -951,8 +955,11 @@ namespace Sledge.Editor.Settings
         private void UpdateSteamUsernames()
         {
             SteamUsername.Items.Clear();
+            if (Path.GetInvalidPathChars().Any(x => SteamInstallDir.Text.Contains(x))) return;
+
             var steamdir = Path.Combine(SteamInstallDir.Text, "steamapps");
             if (!Directory.Exists(steamdir)) return;
+
             var usernames = Directory.GetDirectories(steamdir).Select(Path.GetFileName);
             var ignored = new[] {"common", "downloading", "media", "sourcemods", "temp"};
             SteamUsername.Items.AddRange(usernames.Where(x => !ignored.Contains(x.ToLower())).OfType<object>().ToArray());

@@ -20,7 +20,7 @@ namespace Sledge.Editor.Actions.MapObjects.Selection
         public ChangeToObjectSelectionMode(Type toolType, IEnumerable<Face> selection)
         {
             _toolType = toolType;
-            _selection = selection.Where(x => x.Parent != null).ToDictionary(x => x.ID, x => x.Parent.ID);
+            _selection = selection.Where(x => x.Parent != null).GroupBy(x => x.ID).ToDictionary(x => x.Key, x => x.First().Parent.ID);
         }
 
         public void Dispose()

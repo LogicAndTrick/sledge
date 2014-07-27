@@ -84,6 +84,12 @@ namespace Sledge.Editor.Tools.TextureTool
                 if (DifferentXShiftValues) XShift = 0.000001m;
                 if (DifferentYShiftValues) YShift = 0.000001m;
                 if (DifferentRotationValues) Rotation = 0.000001m;
+
+                if (XScale < -4096 || XScale > 4096) XScale = 1;
+                if (YScale < -4096 || YScale > 4096) YScale = 1;
+                if (XShift < -4096 || XShift > 4096) XShift = 1;
+                if (YShift < -4096 || YShift > 4096) YShift = 1;
+                Rotation = (Rotation % 360 + 360) % 360;
             }
         }
 

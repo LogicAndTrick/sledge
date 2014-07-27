@@ -761,6 +761,16 @@ namespace Sledge.Editor.Tools
             var wrect = new RectangleF(cx - wid.BoundingBox.Width / 2, viewport.Height - (float)boxEnd.Y - _printerFont.Height - 18, wid.BoundingBox.Width * 1.2f, wid.BoundingBox.Height);
             var hrect = new RectangleF((float)boxEnd.X + 18, viewport.Height - cy - hei.BoundingBox.Height * 0.75f, hei.BoundingBox.Width * 1.2f, hei.BoundingBox.Height);
 
+            if (wrect.X < 10) wrect.X = 10;
+            if (wrect.X + wrect.Width + 10 > viewport.Width) wrect.X = viewport.Width - 10 - wrect.Width;
+            if (wrect.Y < 10) wrect.Y = 10;
+            if (wrect.Y + wrect.Height + 10 > viewport.Height) wrect.Y = viewport.Height - 10 - wrect.Height;
+
+            if (hrect.X < 10) hrect.X = 10;
+            if (hrect.X + hrect.Width + 10 > viewport.Width) hrect.X = viewport.Width - 10 - hrect.Width;
+            if (hrect.Y < 10) hrect.Y = 10;
+            if (hrect.Y + hrect.Height + 10 > viewport.Height) hrect.Y = viewport.Height - 10 - hrect.Height;
+
             GL.Disable(EnableCap.CullFace);
 
             _printer.Begin();

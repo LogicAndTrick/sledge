@@ -567,7 +567,10 @@ namespace Sledge.Editor.Documents
 
             _document.PerformAction("Tie to Entity", ac);
 
-            Mediator.Publish(HotkeysMediator.ObjectProperties);
+            if (Sledge.Settings.Select.OpenObjectPropertiesWhenCreatingEntity && !ObjectPropertiesDialog.IsShowing)
+            {
+                Mediator.Publish(HotkeysMediator.ObjectProperties);
+            }
         }
 
         public void TieToWorld()
