@@ -109,7 +109,7 @@ namespace Sledge.Providers.Map
         {
             var editor = new GenericStructure("editor");
             editor["color"] = FormatColor(obj.Colour);
-            foreach (var visgroup in obj.Visgroups.OrderBy(x => x)) 
+            foreach (var visgroup in obj.Visgroups.Except(obj.AutoVisgroups).OrderBy(x => x)) 
             {
                 editor.AddProperty("visgroupid", visgroup.ToString(CultureInfo.InvariantCulture));
             }
@@ -269,7 +269,7 @@ namespace Sledge.Providers.Map
             }
 
             ret.Colour = editor.PropertyColour("color", Colour.GetRandomBrushColour());
-            ret.Visgroups.AddRange(editor.GetAllPropertyValues("visgroupid").Select(int.Parse));
+            ret.Visgroups.AddRange(editor.GetAllPropertyValues("visgroupid").Select(int.Parse).Where(x => x > 0));
             foreach (var face in ret.Faces)
             {
                 face.Parent = ret;
@@ -320,7 +320,7 @@ namespace Sledge.Providers.Map
                           };
             var editor = entity.GetChildren("editor").FirstOrDefault() ?? new GenericStructure("editor");
             ret.Colour = editor.PropertyColour("color", Colour.GetRandomBrushColour());
-            ret.Visgroups.AddRange(editor.GetAllPropertyValues("visgroupid").Select(int.Parse));
+            ret.Visgroups.AddRange(editor.GetAllPropertyValues("visgroupid").Select(int.Parse).Where(x => x > 0));
             foreach (var child in entity.GetChildren("solid").Select(solid => ReadSolid(solid, generator)).Where(s => s != null))
             {
                 child.SetParent(ret, false);
@@ -353,7 +353,7 @@ namespace Sledge.Providers.Map
             var g = new Group(GetObjectID(group, generator));
             var editor = group.GetChildren("editor").FirstOrDefault() ?? new GenericStructure("editor");
             g.Colour = editor.PropertyColour("color", Colour.GetRandomBrushColour());
-            g.Visgroups.AddRange(editor.GetAllPropertyValues("visgroupid").Select(int.Parse));
+            g.Visgroups.AddRange(editor.GetAllPropertyValues("visgroupid").Select(int.Parse).Where(x => x > 0));
             return g;
         }
 
