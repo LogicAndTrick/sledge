@@ -289,13 +289,15 @@ namespace Sledge.Editor.Documents
 
         public void OperationsPaste()
         {
+            if (!ClipboardManager.CanPaste()) return;
+
             var content = ClipboardManager.GetPastedContent(_document);
             if (content == null) return;
 
             var list = content.ToList();
             if (!list.Any()) return;
 
-            list.ForEach(x => x.IsSelected = true);
+            list.SelectMany(x => x.FindAll()).ToList().ForEach(x => x.IsSelected = true);
             _document.Selection.SwitchToObjectSelection();
 
             var name = "Pasted " + list.Count + " item" + (list.Count == 1 ? "" : "s");
