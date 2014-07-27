@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Sledge.Common;
 using Sledge.Common.Mediator;
 using Sledge.DataStructures.MapObjects;
 using Sledge.Editor.Documents;
@@ -27,6 +28,7 @@ namespace Sledge.Editor.Actions.MapObjects.Groups
             {
                 child.SetParent(document.Map.WorldSpawn);
                 child.UpdateBoundingBox();
+                child.Colour = Colour.GetRandomBrushColour();
             }
 
             foreach (var groupId in _groupsAndParents.Keys)
@@ -50,7 +52,7 @@ namespace Sledge.Editor.Actions.MapObjects.Groups
         {
             foreach (var gp in _groupsAndParents)
             {
-                var group = new Group(gp.Key);
+                var group = new Group(gp.Key) {Colour = Colour.GetRandomGroupColour()};
                 var parent = document.Map.WorldSpawn.FindByID(gp.Value);
                 group.SetParent(parent);
             }
@@ -60,6 +62,7 @@ namespace Sledge.Editor.Actions.MapObjects.Groups
                 var parent = document.Map.WorldSpawn.FindByID(cp.Value);
                 child.SetParent(parent);
                 child.UpdateBoundingBox();
+                child.Colour = parent.Colour.Vary();
             }
             foreach (var gp in _groupsAndParents)
             {

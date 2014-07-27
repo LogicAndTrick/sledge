@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Runtime.Serialization;
 using Sledge.DataStructures.Geometric;
@@ -10,6 +11,15 @@ namespace Sledge.DataStructures.MapObjects
     public class Solid : MapObject
     {
         public List<Face> Faces { get; private set; }
+
+        public override Color Colour {
+            get { return base.Colour; }
+            set
+            {
+                base.Colour = value;
+                Faces.ForEach(x => x.Colour = value);
+            }
+        }
 
         public Solid(long id) : base(id)
         {

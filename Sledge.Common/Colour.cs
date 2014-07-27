@@ -28,6 +28,14 @@ namespace Sledge.Common
             return Color.FromArgb(255, 0, Rand.Next(128, 256), Rand.Next(128, 256));
         }
 
+        /// <summary>
+        /// Group colours only vary from shades of green and red
+        /// </summary>
+        public static Color GetRandomGroupColour()
+        {
+            return Color.FromArgb(255, Rand.Next(128, 256), Rand.Next(128, 256), 0);
+        }
+
         public static Color GetRandomLightColour()
         {
             return Color.FromArgb(255, Rand.Next(128, 256), Rand.Next(128, 256), Rand.Next(128, 256));
@@ -41,6 +49,12 @@ namespace Sledge.Common
         public static Color GetDefaultEntityColour()
         {
             return Color.FromArgb(255, 255, 0, 255);
+        }
+
+        public static Color Vary(this Color color, int by = 10)
+        {
+            by = Rand.Next(-by, by);
+            return Color.FromArgb(color.A, Math.Min(255, Math.Max(0, color.R + by)), Math.Min(255, Math.Max(0, color.G + by)), Math.Min(255, Math.Max(0, color.B + by)));
         }
 
         public static Color Darken(this Color color, int by = 20)

@@ -19,7 +19,7 @@ namespace Sledge.DataStructures.MapObjects
         public List<int> AutoVisgroups { get; set; }
         protected Dictionary<long, MapObject> Children { get; set; }
         public MapObject Parent { get; private set; }
-        public Color Colour { get; set; }
+        public virtual Color Colour { get; set; }
         public bool IsSelected { get; set; }
         public bool IsCodeHidden { get; set; }
         public bool IsRenderHidden2D { get; set; }
