@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -18,6 +18,7 @@
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
     <PlatformTarget>x86</PlatformTarget>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>full</DebugType>
@@ -26,8 +27,13 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="OpenTK, Version=1.1.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\OpenTK.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="gtk-sharp, Version=2.4.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
       <SpecificVersion>False</SpecificVersion>
@@ -48,25 +54,173 @@
       <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Reference Include="Mono.Posix, Version=2.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756" />
-    <Reference Include="OpenTK">
-      <HintPath>..\OpenTK.dll</HintPath>
+    <Reference Include="System.Drawing" />
+    <Reference Include="Mono.Cairo, Version=4.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml" />
+    <Reference Include="Xwt">
+      <HintPath>..\Xwt.dll</HintPath>
     </Reference>
-    <Reference Include="OpenTK.Compatibility">
-      <HintPath>..\OpenTK.Compatibility.dll</HintPath>
+    <Reference Include="Xwt.Gtk">
+      <HintPath>..\Xwt.Gtk.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Docking\icons\light\pad-close-9.png">
+      <LogicalName>pad-close-light-9.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Docking\icons\light\pad-dock-9.png">
+      <LogicalName>pad-dock-light-9.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Docking\icons\light\pad-minimize-9.png">
+      <LogicalName>pad-minimize-light-9.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Docking\icons\light\popup-close-16.png">
+      <LogicalName>popup-close-light-16.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Docking\icons\light\tabbar-next-12.png">
+      <LogicalName>tabbar-next-light-12.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Docking\icons\light\tabbar-prev-12.png">
+      <LogicalName>tabbar-prev-light-12.png</LogicalName>
+    </EmbeddedResource>
     <EmbeddedResource Include="gtk-gui\gui.stetic">
       <LogicalName>gui.stetic</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Components\TabStrip.cs" />
+    <Compile Include="Docking\AutoHideBox.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Docking\Components\CairoExtensions.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Docking\Components\ExtendedLabel.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Docking\Components\GtkUtil.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Docking\Components\GtkWorkarounds.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Docking\Components\HelperMethods.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Docking\Components\ImageButton.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Docking\Components\ImageView.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Docking\Components\MenuButton.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Docking\Components\MouseTracker.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Docking\Components\PangoUtil.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Docking\Components\Platform.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Docking\Components\Styles.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Docking\Components\TabLabel.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Docking\Components\Tabstrip.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Docking\DockBar.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Docking\DockBarItem.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Docking\DockContainer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Docking\DockFrame.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Docking\DockFrameTopLevel.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Docking\DockGroup.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Docking\DockGroupItem.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Docking\DockGroupType.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Docking\DockItem.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Docking\DockItemBehavior.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Docking\DockItemContainer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Docking\DockItemStatus.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Docking\DockItemTitleTab.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Docking\DockItemToolbar.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Docking\DockLayout.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Docking\DockObject.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Docking\DockPosition.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Docking\DockVisualStyle.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Docking\PlaceholderWindow.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Docking\TabStrip.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FrameInfo.cs" />
     <Compile Include="gtk-gui\generated.cs" />
+    <Compile Include="IViewportEventListener.cs" />
     <Compile Include="MainWindow.cs" />
     <Compile Include="gtk-gui\MainWindow.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="GLWidget.cs" />
+    <Compile Include="SampleListener.cs" />
+    <Compile Include="ViewportBase.cs" />
+    <Compile Include="ViewportEvent.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <ProjectReference Include="..\Sledge.DataStructures\Sledge.DataStructures.csproj">
+      <Project>{26A974C9-E495-4FA3-8E87-1E00019D04F5}</Project>
+      <Name>Sledge.DataStructures</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Docking\icons\light\pad-close-9%402x.png" />
+    <None Include="Docking\icons\light\pad-dock-9%402x.png" />
+    <None Include="Docking\icons\light\pad-minimize-9%402x.png" />
+    <None Include="Docking\icons\light\popup-close-16%402x.png" />
+    <None Include="Docking\icons\light\tabbar-next-12%402x.png" />
+    <None Include="Docking\icons\light\tabbar-prev-12%402x.png" />
+  </ItemGroup>
 </Project>

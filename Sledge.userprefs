@@ -1,9 +1,9 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Sledge.ModelViewer\GLWidget.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Sledge.ModelViewer\MainWindow.cs">
     <Files>
-      <File FileName="Sledge.ModelViewer\MainWindow.cs" Line="17" Column="1" />
-      <File FileName="Sledge.ModelViewer\GLWidget.cs" Line="19" Column="7" />
+      <File FileName="Sledge.ModelViewer\MainWindow.cs" Line="17" Column="17" />
+      <File FileName="Sledge.ModelViewer\Docking\TabStrip\TabStrip.cs" Line="57" Column="57" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

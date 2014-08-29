@@ -231,16 +231,18 @@ namespace Gtk
 				}
 
 				OnInitialized();
+                graphicsContext.MakeCurrent(null);
 			}
 			else
 			{
-				graphicsContext.MakeCurrent(windowInfo);
+				//graphicsContext.MakeCurrent(windowInfo);
 			}
 
 			bool result = base.OnExposeEvent(eventExpose);
-			OnRenderFrame();
-			eventExpose.Window.Display.Sync(); // Add Sync call to fix resize rendering problem (Jay L. T. Cornwall) - How does this affect VSync?
-			graphicsContext.SwapBuffers();
+			//OnRenderFrame();
+			//eventExpose.Window.Display.Sync(); // Add Sync call to fix resize rendering problem (Jay L. T. Cornwall) - How does this affect VSync?
+			//graphicsContext.SwapBuffers();
+            //graphicsContext.MakeCurrent(null);
 			return result;
 		}
 
@@ -252,7 +254,25 @@ namespace Gtk
 			return result;
 		}
 
-		[SuppressUnmanagedCodeSecurity, DllImport("libgdk-win32-2.0-0.dll")]
+	    protected void MakeCurrent()
+	    {
+            if (!graphicsContext.IsCurrent) graphicsContext.MakeCurrent(windowInfo);
+	    }
+
+	    protected void UnmakeCurrent()
+	    {
+	        if (graphicsContext.IsCurrent) graphicsContext.MakeCurrent(null);
+	    }
+
+	    protected void SwapBuffers()
+	    {
+	        graphicsContext.SwapBuffers();
+	    }
+
+        protected bool IsInitialised { get { return graphicsContext != null; } }
+	    protected bool IsDisposed { get { return graphicsContext != null && graphicsContext.IsDisposed; } }
+
+        [SuppressUnmanagedCodeSecurity, DllImport("libgdk-win32-2.0-0.dll", CallingConvention = CallingConvention.Cdecl)]
 		public static extern IntPtr gdk_win32_drawable_get_handle(IntPtr d);
 
 		public enum XVisualClass : int
@@ -302,7 +322,7 @@ namespace Gtk
 			All = 0x1FF,
 		}
 
-		[DllImport("libX11", EntryPoint = "XGetVisualInfo")]
+        [DllImport("libX11", EntryPoint = "XGetVisualInfo", CallingConvention = CallingConvention.Cdecl)]
 		static extern IntPtr XGetVisualInfoInternal(IntPtr display, IntPtr vinfo_mask, ref XVisualInfo template, out int nitems);
 		static IntPtr XGetVisualInfo(IntPtr display, XVisualInfoMask vinfo_mask, ref XVisualInfo template, out int nitems)
 		{
@@ -311,7 +331,7 @@ namespace Gtk
 
 		const string linux_libx11_name = "libX11.so.6";
 
-		[SuppressUnmanagedCodeSecurity, DllImport(linux_libx11_name)]
+        [SuppressUnmanagedCodeSecurity, DllImport(linux_libx11_name, CallingConvention = CallingConvention.Cdecl)]
 		static extern void XFree(IntPtr handle);
 
 		const string linux_libgdk_x11_name = "libgdk-x11-2.0.so.0";
@@ -320,14 +340,14 @@ namespace Gtk
 		/// <remarks> XID gdk_x11_drawable_get_xid(GdkDrawable *drawable); </remarks>
 		/// <param name="gdkDisplay"> The GdkDrawable. </param>
 		/// <returns> The ID of drawable's X resource. </returns>
-		[SuppressUnmanagedCodeSecurity, DllImport(linux_libgdk_x11_name)]
+        [SuppressUnmanagedCodeSecurity, DllImport(linux_libgdk_x11_name, CallingConvention = CallingConvention.Cdecl)]
 		static extern IntPtr gdk_x11_drawable_get_xid(IntPtr gdkDisplay);
 
 		/// <summary> Returns the X display of a GdkDisplay. </summary>
 		/// <remarks> Display* gdk_x11_display_get_xdisplay(GdkDisplay *display); </remarks>
 		/// <param name="gdkDisplay"> The GdkDrawable. </param>
 		/// <returns> The X Display of the GdkDisplay. </returns>
-		[SuppressUnmanagedCodeSecurity, DllImport(linux_libgdk_x11_name)]
+        [SuppressUnmanagedCodeSecurity, DllImport(linux_libgdk_x11_name, CallingConvention = CallingConvention.Cdecl)]
 		static extern IntPtr gdk_x11_display_get_xdisplay(IntPtr gdkDisplay);
 
 		IntPtr GetVisualInfo(IntPtr display)
@@ -419,7 +439,7 @@ namespace Gtk
 
 		const string linux_libgl_name = "libGL.so.1";
 
-		[SuppressUnmanagedCodeSecurity, DllImport(linux_libgl_name)]
+        [SuppressUnmanagedCodeSecurity, DllImport(linux_libgl_name, CallingConvention = CallingConvention.Cdecl)]
 		static extern IntPtr glXChooseVisual(IntPtr display, int screen, int[] attr);
 	}
 }
