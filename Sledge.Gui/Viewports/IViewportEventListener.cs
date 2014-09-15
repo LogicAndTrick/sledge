@@ -1,8 +1,8 @@
-﻿namespace Sledge.UI
+﻿namespace Sledge.Gui.Viewports
 {
     public interface IViewportEventListener
     {
-        ViewportBase Viewport { get; set; }
+        IViewport Viewport { get; set; }
 
         void KeyUp(ViewportEvent e);
         void KeyDown(ViewportEvent e);

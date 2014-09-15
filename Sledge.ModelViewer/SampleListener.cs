@@ -71,9 +71,18 @@ namespace Sledge.UI
         {
         }
 
+        Color c = Color.Aqua;
         public void Render3D()
         {
-
+            GL.Disable(EnableCap.CullFace);
+            //c = c == Color.Aqua ? Color.Aquamarine : Color.Aqua;
+            GL.Color3(c);
+            GL.Begin(PrimitiveType.Quads);
+            GL.Vertex3(-100, 100, -10);
+            GL.Vertex3(100, 100, -10);
+            GL.Vertex3(100, -100, -10);
+            GL.Vertex3(-100, -100, -10);
+            GL.End();
         }
 
         public void Render2D()
@@ -81,16 +90,9 @@ namespace Sledge.UI
 
         }
 
-        Color c = Color.Red;
         public void PostRender()
         {
-            c = c == Color.Red ? Color.Blue : Color.Red;
-            GL.Color3(c);
-            GL.Begin(PrimitiveType.Triangles);
-            GL.Vertex2(-1, 1);
-            GL.Vertex2(1, 1);
-            GL.Vertex2(1, -1);
-            GL.End();
+
         }
     }
 }

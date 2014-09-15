@@ -2,25 +2,19 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Threading.Tasks;
-using System.Timers;
 using Gdk;
-using GLib;
 using Gtk;
 using OpenTK;
 using OpenTK.Graphics;
-using OpenTK.Graphics.ES10;
-using OpenTK.Input;
+using OpenTK.Graphics.OpenGL;
 using Sledge.DataStructures.Geometric;
 using Sledge.Graphics;
+using Sledge.Gui.Viewports;
 using Box = Sledge.DataStructures.Geometric.Box;
-using ClearBufferMask = OpenTK.Graphics.OpenGL.ClearBufferMask;
-using GL = OpenTK.Graphics.OpenGL.GL;
-using Point = System.Drawing.Point;
 
-namespace Sledge.UI
+namespace Sledge.Gui.Gtk.Viewports
 {
-    public class ViewportBase : GLWidget
+    public abstract class ViewportBase : GLWidget, IViewport
     {
         public RenderContext RenderContext { get; set; }
         private Stopwatch _stopwatch;
@@ -33,6 +27,8 @@ namespace Sledge.UI
 
         private object _inputLock;
         private uint _timer;
+
+        public bool Is3D { get; protected set; }
 
         public bool IsUnlocked(object context)
         {
@@ -168,7 +164,7 @@ namespace Sledge.UI
         {
             return Matrix4.Identity;
         }
-
+        
         public virtual void FocusOn(Box box)
         {
             FocusOn(box.Center);
@@ -461,5 +457,8 @@ namespace Sledge.UI
             }
             return base.OnKeyReleaseEvent(evnt);
         }
+        
+        public abstract Coordinate ScreenToWorld(Coordinate screen);
+        public abstract Coordinate WorldToScreen(Coordinate world);
     }
 }

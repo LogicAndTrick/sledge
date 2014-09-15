@@ -1,49 +1,35 @@
-﻿using System;
-using System.Collections.Generic;
+using System;
 using System.Diagnostics;
-using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
-using Sledge.Editor.Properties;
-using Sledge.Gui;
-using Sledge.Gui.Gtk;
+using Sledge.Gui.Attributes;
 using Sledge.Gui.Shell;
-using Sledge.Gui.WinForms;
+using Sledge.Gui.WinForms.Shell;
 
-namespace Sledge.Editor
+namespace Sledge.Gui.WinForms
 {
-    static class Program
+    [UIImplementation("WinForms", 10, UIPlatform.Windows)]
+    public class WinFormsUIManager : IUIManager
     {
-        /// <summary>
-        /// The main entry point for the application.
-        /// </summary>
-        [STAThread]
-        static void Main()
+        private readonly WinFormsShell _shell;
+
+        public IShell Shell
         {
-            IUIManager man;
-            man = new WinFormsUIManager();
-            //man = new GtkUIManager();
+            get { return _shell; }
+        }
 
-            man.Shell.WindowLoaded += (sender, args) =>
-            {
-                // we be loaded
-                man.Shell.Title = "Sledge Editor";
-                man.Shell.AddMenu();
-                var m = man.Shell.Menu.AddMenuItem("File", "File").AddSubMenuItem("New", "New");
-                m.Icon = Resources.Menu_New;
-                m.Clicked += (o, eventArgs) =>
-                {
-                    Debug.WriteLine("asdf");
-                };
-            };
-
-            man.Start();
-            return;
-
+        public WinFormsUIManager()
+        {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             RegisterHandlers();
-            SingleInstance.Start(typeof(Editor));
+
+            _shell = new WinFormsShell();
+        }
+
+        public void Start()
+        {
+            Application.Run(_shell);
         }
 
         private static void RegisterHandlers()
@@ -55,7 +41,7 @@ namespace Sledge.Editor
 
         private static void UnhandledException(object sender, UnhandledExceptionEventArgs args)
         {
-            LogException((Exception) args.ExceptionObject);
+            LogException((Exception)args.ExceptionObject);
         }
 
         private static void ThreadException(object sender, ThreadExceptionEventArgs args)
@@ -73,7 +59,8 @@ namespace Sledge.Editor
                 var method = frame.GetMethod();
                 msg += "\r\n    " + method.ReflectedType.FullName + "." + method.Name;
             }
-            Logging.Logger.ShowException(new Exception(msg, ex), "Unhandled exception");
+            Debug.WriteLine(msg);
+            // todo Logging.Logger.ShowException(new Exception(msg, ex), "Unhandled exception");
         }
     }
 }

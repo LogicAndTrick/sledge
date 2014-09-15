@@ -1,12 +1,12 @@
 using System;
 using OpenTK.Input;
-using Point = System.Drawing.Point;
+using Sledge.DataStructures.Geometric;
 
-namespace Sledge.UI
+namespace Sledge.Gui.Viewports
 {
     public class ViewportEvent : EventArgs
     {
-        public ViewportBase Sender { get; set; }
+        public IViewport Sender { get; set; }
 
         public bool Handled { get; set; }
 
@@ -22,33 +22,33 @@ namespace Sledge.UI
         public int X { get; set; }
         public int Y { get; set; }
         public int Delta { get; set; }
-        public Point Location { get; set; }
+        public Coordinate Location { get; set; }
 
-        public ViewportEvent(ViewportBase sender, EventArgs e)
+        public ViewportEvent(IViewport sender, EventArgs e)
         {
             Sender = sender;
         }
 
-        public ViewportEvent(ViewportBase sender)
+        public ViewportEvent(IViewport sender)
         {
             Sender = sender;
         }
 
-        public ViewportEvent(ViewportBase sender, double x, double y)
+        public ViewportEvent(IViewport sender, double x, double y)
         {
             Sender = sender;
             X = (int)x;
             Y = (int)y;
-            Location = new Point(X, Y);
+            Location = new Coordinate(X, Y, 0);
         }
 
-        public ViewportEvent(ViewportBase sender, double x, double y, int delta)
+        public ViewportEvent(IViewport sender, double x, double y, int delta)
             : this(sender, x, y)
         {
             Delta = delta;
         }
 
-        public ViewportEvent(ViewportBase sender, double x, double y, uint mouseButton)
+        public ViewportEvent(IViewport sender, double x, double y, uint mouseButton)
             : this(sender, x, y)
         {
             switch (mouseButton)
@@ -72,7 +72,7 @@ namespace Sledge.UI
             }
         }
 
-        public ViewportEvent(ViewportBase sender, Key key, bool control, bool shift, bool alt)
+        public ViewportEvent(IViewport sender, Key key, bool control, bool shift, bool alt)
         {
             Sender = sender;
             KeyValue = key;
