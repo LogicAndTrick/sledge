@@ -51,6 +51,12 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Shell\WinFormsToolbar.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Shell\WinFormsToolbarItem.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="WinFormsUIManager.cs" />
   </ItemGroup>
   <ItemGroup>

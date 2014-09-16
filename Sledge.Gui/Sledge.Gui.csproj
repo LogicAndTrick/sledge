@@ -50,6 +50,8 @@
     <Compile Include="Shell\IMenuItem.cs" />
     <Compile Include="Shell\IShell.cs" />
     <Compile Include="IUIManager.cs" />
+    <Compile Include="Shell\IToolbar.cs" />
+    <Compile Include="Shell\IToolbarItem.cs" />
     <Compile Include="Shell\IWindow.cs" />
     <Compile Include="UIPlatform.cs" />
     <Compile Include="Viewports\FrameInfo.cs" />

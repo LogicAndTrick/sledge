@@ -10,13 +10,17 @@ namespace Sledge.Gui.Gtk.Shell
     public class GtkShell : Window, IShell
     {
         private GtkMenu _menu;
+        private GtkToolbar _toolbar;
 
         public IMenu Menu
         {
             get { return _menu; }
         }
 
-        public IToolbar Toolbar { get; private set; }
+        public IToolbar Toolbar
+        {
+            get { return _toolbar; }
+        }
 
         private VBox _container;
         private Widget _main;
@@ -48,9 +52,10 @@ namespace Sledge.Gui.Gtk.Shell
 
         public void AddToolbar()
         {
-            throw new NotImplementedException();
             _container.Remove(_main);
-            //
+            _toolbar = new GtkToolbar();
+            _container.PackStart(_toolbar, false, false, 0);
+            _toolbar.Show();
             _container.PackEnd(_main, true, true, 0);
         }
 

@@ -51,6 +51,8 @@
     <Compile Include="GtkUIManager.cs" />
     <Compile Include="Shell\GtkMenu.cs" />
     <Compile Include="Shell\GtkMenuItem.cs" />
+    <Compile Include="Shell\GtkToolbar.cs" />
+    <Compile Include="Shell\GtkToolbarItem.cs" />
     <Compile Include="Viewports\GLWidget.cs" />
     <Compile Include="Viewports\GtkOpenTkKeyMap.cs" />
     <Compile Include="Shell\GtkShell.cs" />

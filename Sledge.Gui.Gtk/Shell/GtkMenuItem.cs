@@ -25,11 +25,19 @@ namespace Sledge.Gui.Gtk.Shell
         {
             set
             {
-                using (var ms = new MemoryStream())
+                if (Image != null)
                 {
-                    value.Save(ms, ImageFormat.Png);
-                    ms.Seek(0, SeekOrigin.Begin);
-                    Image = new global::Gtk.Image(ms);
+                    Image.Dispose();
+                    Image = null;
+                }
+                if (value != null)
+                {
+                    using (var ms = new MemoryStream())
+                    {
+                        value.Save(ms, ImageFormat.Png);
+                        ms.Seek(0, SeekOrigin.Begin);
+                        Image = new global::Gtk.Image(ms);
+                    }
                 }
             }
         }

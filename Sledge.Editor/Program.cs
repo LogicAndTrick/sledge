@@ -29,11 +29,20 @@ namespace Sledge.Editor
                 // we be loaded
                 man.Shell.Title = "Sledge Editor";
                 man.Shell.AddMenu();
+                man.Shell.AddToolbar();
+
                 var m = man.Shell.Menu.AddMenuItem("File", "File").AddSubMenuItem("New", "New");
                 m.Icon = Resources.Menu_New;
                 m.Clicked += (o, eventArgs) =>
                 {
-                    Debug.WriteLine("asdf");
+                    Debug.WriteLine("New");
+                };
+
+                var t = man.Shell.Toolbar.AddToolbarItem("Open", "Open");
+                t.Icon = Resources.Menu_Open;
+                t.Clicked += (o, eventArgs) =>
+                {
+                    Debug.WriteLine("Open");
                 };
             };
 

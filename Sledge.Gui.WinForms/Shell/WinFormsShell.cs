@@ -7,19 +7,30 @@ namespace Sledge.Gui.WinForms.Shell
 {
     public class WinFormsShell : Form, IShell
     {
+        private ToolStripContainer _container;
         private WinFormsMenu _menu;
+        private WinFormsToolbar _toolbar;
 
         public new IMenu Menu
         {
             get { return _menu; }
         }
 
-        public IToolbar Toolbar { get; private set; }
+        public IToolbar Toolbar
+        {
+            get { return _toolbar; }
+        }
 
         public string Title
         {
             get { return Text; }
             set { Text = value; }
+        }
+
+        public WinFormsShell()
+        {
+            _container = new ToolStripContainer { Dock = DockStyle.Fill };
+            Controls.Add(_container);
         }
 
         public void AddMenu()
@@ -31,7 +42,8 @@ namespace Sledge.Gui.WinForms.Shell
 
         public void AddToolbar()
         {
-            throw new NotImplementedException();
+            _toolbar = new WinFormsToolbar();
+            _container.TopToolStripPanel.Controls.Add(_toolbar);
         }
 
         public event EventHandler WindowLoaded

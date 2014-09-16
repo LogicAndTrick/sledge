@@ -13,17 +13,6 @@ namespace Sledge.Gui.Shell
         void AddToolbar();
     }
 
-    public interface IToolbar : IDisposable
-    {
-        
-    }
-
-    public interface IToolbarItem : IDisposable
-    {
-        string Text { get; set; }
-
-    }
-
     public interface ISidebar : IDisposable
     {
         
