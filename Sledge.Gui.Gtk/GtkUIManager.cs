@@ -3,6 +3,7 @@ using System.Linq;
 using System.Text;
 using Gtk;
 using Sledge.Gui.Attributes;
+using Sledge.Gui.Controls;
 using Sledge.Gui.Gtk.Shell;
 using Sledge.Gui.Shell;
 
@@ -28,6 +29,16 @@ namespace Sledge.Gui.Gtk
         {
             _shell.Show();
             Application.Run();
+        }
+
+        public IWindow CreateWindow()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public T Construct<T>() where T : IControl
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

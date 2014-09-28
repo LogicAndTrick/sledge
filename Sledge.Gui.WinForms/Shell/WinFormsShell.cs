@@ -1,11 +1,14 @@
 ﻿using System;
-using System.ComponentModel;
+using System.Drawing;
 using System.Windows.Forms;
+using Sledge.Gui.Controls;
 using Sledge.Gui.Shell;
+using Sledge.Gui.WinForms.Controls;
+using IContainer = Sledge.Gui.Controls.IContainer;
 
 namespace Sledge.Gui.WinForms.Shell
 {
-    public class WinFormsShell : Form, IShell
+    public class WinFormsShell : WinFormsWindow, IShell
     {
         private ToolStripContainer _container;
         private WinFormsMenu _menu;
@@ -21,16 +24,24 @@ namespace Sledge.Gui.WinForms.Shell
             get { return _toolbar; }
         }
 
-        public string Title
+        public new ICell Container
         {
-            get { return Text; }
-            set { Text = value; }
+            get { return _containerWrapper; }
         }
 
-        public WinFormsShell()
+        protected override void CreateWrapper()
         {
             _container = new ToolStripContainer { Dock = DockStyle.Fill };
             Controls.Add(_container);
+            var dockFill = new WinFormsDockedPanel { Dock = DockStyle.Fill };
+            _container.ContentPanel.Controls.Add(dockFill);
+            _containerWrapper = new WinFormsCellContainerWrapper(dockFill);
+            _containerWrapper.PreferredSizeChanged += ContainerPreferredSizeChanged;
+        }
+
+        private void ContainerPreferredSizeChanged(object sender, EventArgs e)
+        {
+            OnPreferredSizeChanged();
         }
 
         public void AddMenu()
@@ -46,29 +57,42 @@ namespace Sledge.Gui.WinForms.Shell
             _container.TopToolStripPanel.Controls.Add(_toolbar);
         }
 
-        public event EventHandler WindowLoaded
-        {
-            add { Shown += value; }
-            remove { Shown -= value; }
-        }
+        public IVerticalBox _leftPanel;
+        public IVerticalBox _rightPanel;
 
-        public event EventHandler<HandledEventArgs> WindowClosing;
-
-        public event EventHandler WindowClosed
+        public void AddSidebarPanel(IControl panel, SidebarPanelLocation defaultLocation)
         {
-            add { Closed += value; }
-            remove { Closed -= value; }
-        }
-
-        protected override void OnClosing(CancelEventArgs e)
-        {
-            if (WindowClosing != null)
+            switch (defaultLocation)
             {
-                var hea = new HandledEventArgs();
-                WindowClosing(this, hea);
-                if (hea.Handled) e.Cancel = true;
+                case SidebarPanelLocation.Left:
+                    if (_leftPanel == null)
+                    {
+                        var lp = new WinFormsDockedPanel { Dock = DockStyle.Left };
+                        var cont = new WinFormsVerticalScrollContainer();
+                        cont.Set(_leftPanel = new WinFormsVerticalBox());
+                        cont.Control.Dock = DockStyle.Fill;
+                        lp.Controls.Add(cont.Control);
+                        _container.ContentPanel.Controls.Add(lp);
+                    }
+                    _leftPanel.Add(panel);
+                    break;
+                case SidebarPanelLocation.Right:
+                    if (_rightPanel == null)
+                    {
+                        var rp = new WinFormsDockedPanel { Dock = DockStyle.Right };
+                        var cont = new WinFormsVerticalScrollContainer();
+                        cont.Set(_rightPanel = new WinFormsVerticalBox());
+                        cont.Control.Dock = DockStyle.Fill;
+                        rp.Controls.Add(cont.Control);
+                        _container.ContentPanel.Controls.Add(rp);
+                    }
+                    _rightPanel.Add(panel);
+                    break;
+                case SidebarPanelLocation.Bottom:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
-            base.OnClosing(e);
         }
     }
 }

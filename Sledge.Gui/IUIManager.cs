@@ -1,4 +1,5 @@
 ﻿using System;
+using Sledge.Gui.Controls;
 using Sledge.Gui.Shell;
 
 namespace Sledge.Gui
@@ -8,6 +9,9 @@ namespace Sledge.Gui
         IShell Shell { get; }
 
         void Start();
+
+        IWindow CreateWindow();
+        T Construct<T>() where T : IControl;
 
         // other stuff...
 

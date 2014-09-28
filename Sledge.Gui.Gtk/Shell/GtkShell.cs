@@ -1,7 +1,9 @@
 ﻿using System;
 using Gdk;
 using Gtk;
+using Sledge.Gui.Controls;
 using Sledge.Gui.Shell;
+using Size = Sledge.Gui.Controls.Size;
 using Window = Gtk.Window;
 using WindowType = Gtk.WindowType;
 
@@ -22,6 +24,16 @@ namespace Sledge.Gui.Gtk.Shell
             get { return _toolbar; }
         }
 
+        public bool AutoSize { get; set; }
+
+        public ICell Container
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
         private VBox _container;
         private Widget _main;
 
@@ -33,6 +45,39 @@ namespace Sledge.Gui.Gtk.Shell
             _main = new VBox();
             _container.PackEnd(_main);
             _container.ShowAll();
+        }
+
+        public object BindingSource { get; set; }
+        public Size ActualSize { get; private set; }
+        public Size PreferredSize { get; private set; }
+
+        public event EventHandler ActualSizeChanged;
+        public event EventHandler PreferredSizeChanged;
+
+        protected virtual void OnActualSizeChanged()
+        {
+            if (ActualSizeChanged != null)
+            {
+                ActualSizeChanged(this, EventArgs.Empty);
+            }
+        }
+
+        protected virtual void OnPreferredSizeChanged()
+        {
+            if (PreferredSizeChanged != null)
+            {
+                PreferredSizeChanged(this, EventArgs.Empty);
+            }
+        }
+
+        public void Open()
+        {
+            Show();
+        }
+
+        public void Close()
+        {
+            Hide();
         }
 
         public event EventHandler WindowLoaded;
@@ -57,6 +102,11 @@ namespace Sledge.Gui.Gtk.Shell
             _container.PackStart(_toolbar, false, false, 0);
             _toolbar.Show();
             _container.PackEnd(_main, true, true, 0);
+        }
+
+        public void AddSidebarPanel(IControl panel, SidebarPanelLocation defaultLocation)
+        {
+            throw new NotImplementedException();
         }
 
         protected override bool OnDeleteEvent(Event evnt)

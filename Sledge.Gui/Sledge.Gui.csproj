@@ -44,8 +44,32 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Attributes\ControlImplementationAttribute.cs" />
+    <Compile Include="Attributes\ControlInterfaceAttribute.cs" />
+    <Compile Include="Attributes\DialogImplementationAttribute.cs" />
+    <Compile Include="Attributes\SidebarPanelImplementationAttribute.cs" />
     <Compile Include="Attributes\UIImplementationAttribute.cs" />
+    <Compile Include="Bindings\Binding.cs" />
+    <Compile Include="Controls\ContainerExtensions.cs" />
+    <Compile Include="Controls\ContainerMetadata.cs" />
+    <Compile Include="Controls\IBox.cs" />
+    <Compile Include="Controls\IButton.cs" />
+    <Compile Include="Controls\ICell.cs" />
+    <Compile Include="Controls\ICollapsible.cs" />
+    <Compile Include="Controls\IContainer.cs" />
+    <Compile Include="Controls\IControl.cs" />
+    <Compile Include="Controls\IHorizontalBox.cs" />
+    <Compile Include="Controls\IHorizontalScrollContainer.cs" />
+    <Compile Include="Controls\IResizableTable.cs" />
+    <Compile Include="Controls\IVerticalScrollContainer.cs" />
+    <Compile Include="Controls\ITable.cs" />
+    <Compile Include="Controls\IVerticalBox.cs" />
+    <Compile Include="Controls\Padding.cs" />
+    <Compile Include="Controls\Size.cs" />
+    <Compile Include="Controls\Point.cs" />
+    <Compile Include="Controls\Rectangle.cs" />
     <Compile Include="HandledEventArgs.cs" />
+    <Compile Include="Shell\IDialogWindow.cs" />
     <Compile Include="Shell\IMenu.cs" />
     <Compile Include="Shell\IMenuItem.cs" />
     <Compile Include="Shell\IShell.cs" />
