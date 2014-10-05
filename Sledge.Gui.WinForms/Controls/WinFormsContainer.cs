@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
-using Sledge.Gui.Controls;
-using Padding = Sledge.Gui.Controls.Padding;
+using Sledge.Gui.Interfaces;
+using Padding = Sledge.Gui.Interfaces.Padding;
 
 namespace Sledge.Gui.WinForms.Controls
 {
@@ -21,7 +21,7 @@ namespace Sledge.Gui.WinForms.Controls
             get { return Children; }
         }
 
-        public override Size PreferredSize
+        protected override Size DefaultPreferredSize
         {
             get
             {
@@ -75,10 +75,11 @@ namespace Sledge.Gui.WinForms.Controls
 
         public void Insert(int index, IControl child, ContainerMetadata metadata)
         {
+            var c = (WinFormsControl) child.Implementation;
             BindChildEvents(child);
-            AppendChild(index, (WinFormsControl) child);
-            Children.Insert(index, (WinFormsControl) child);
-            Metadata.Add((WinFormsControl) child, metadata);
+            AppendChild(index, c);
+            Children.Insert(index, c);
+            Metadata.Add(c, metadata);
             CalculateLayout();
         }
 

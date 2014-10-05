@@ -1,5 +1,5 @@
 ﻿using System.Windows.Forms;
-using Sledge.Gui.Controls;
+using Sledge.Gui.Interfaces;
 
 namespace Sledge.Gui.WinForms.Controls
 {

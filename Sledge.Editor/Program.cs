@@ -1,21 +1,106 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
-using System.Globalization;
-using System.Linq;
+using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
-using System.Windows.Forms.VisualStyles;
 using Sledge.Editor.Properties;
 using Sledge.Gui;
 using Sledge.Gui.Controls;
-using Sledge.Gui.Gtk;
+using Sledge.Gui.Interfaces;
 using Sledge.Gui.Shell;
 using Sledge.Gui.WinForms;
-using Padding = Sledge.Gui.Controls.Padding;
+using Button = Sledge.Gui.Controls.Button;
+using ComboBox = Sledge.Gui.Controls.ComboBox;
+using IContainer = Sledge.Gui.Interfaces.IContainer;
+using Label = Sledge.Gui.Controls.Label;
+using PictureBox = Sledge.Gui.Controls.PictureBox;
+using Size = Sledge.Gui.Interfaces.Size;
+using TextBox = Sledge.Gui.Controls.TextBox;
 
 namespace Sledge.Editor
 {
+    class BindingObject : INotifyPropertyChanged
+    {
+        private string _value1;
+        private string _value2;
+
+        public string Value1
+        {
+            get { return _value1; }
+            set
+            {
+                if (value == _value1) return;
+                _value1 = value;
+                OnPropertyChanged("Value1");
+            }
+        }
+
+        public string Value2
+        {
+            get { return _value2; }
+            set
+            {
+                if (value == _value2) return;
+                _value2 = value;
+                OnPropertyChanged("Value2");
+            }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            var handler = PropertyChanged;
+            if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+
+    class BindingControl : VerticalBox
+    {
+        public BindingObject BindingObject { get; set; }
+
+        public BindingControl(IUIManager man)
+        {
+            var hbox1 = new HorizontalBox();
+            var hbox2 = new HorizontalBox();
+            var label1 = new Label();
+            var textbox1 = new TextBox();
+            var pic = new PictureBox();
+
+            var label2 = new Label();
+            var combo2 = new ComboBox();
+
+            BindingSource = BindingObject;
+            label1.Text = "Value 1";
+            label2.Text = "Value 2";
+
+            combo2.Items.Add("Item 1");
+            combo2.Items.Add("Item 2");
+            combo2.Items.Add("Item 3");
+            combo2.SelectedItem = "Item 2";
+            combo2.SelectedIndexChanged += (sender, args) => Debug.WriteLine(combo2.SelectedIndex);
+
+            var bmp = new Bitmap(100, 100);
+            using (var g = System.Drawing.Graphics.FromImage(bmp))
+            {
+                g.FillRectangle(System.Drawing.Brushes.Red, 0, 0, 100, 100);
+                g.FillRectangle(System.Drawing.Brushes.Blue, 25, 25, 50, 50);
+            }
+            pic.Image = bmp;
+
+            hbox1.Add(label1);
+            hbox1.Add(textbox1, true);
+            this.Add(hbox1);
+
+            hbox2.Add(label2);
+            hbox2.Add(combo2);
+            this.Add(hbox2);
+
+            this.Add(pic);
+        }
+    }
+
     static class Program
     {
         /// <summary>
@@ -28,11 +113,14 @@ namespace Sledge.Editor
             man = new WinFormsUIManager();
             //man = new GtkUIManager();
 
+            UIManager.Manager = man; // todo
+
             man.Shell.WindowLoaded += (sender, args) =>
             {
-                var vbox = man.Construct<IVerticalBox>();
+                var vbox = new VerticalBox();
 
-                var button = man.Construct<IButton>();
+                // var button = man.Construct<IButton>();
+                var button = new Button();
                 button.Text = "Button";
                 button.Enabled = true;
                 button.Clicked += (o, eventArgs) =>
@@ -41,33 +129,34 @@ namespace Sledge.Editor
                     window.Title = "Test Window";
                     window.AutoSize = true;
 
-                    var box = man.Construct<IVerticalBox>();
-                    var btn = man.Construct<IButton>();
+                    var box = new VerticalBox();
+                    var btn = new Button();
                     btn.Text = "Add Button";
                     box.Add(btn);
                     window.Container.Set(box);
 
-                    var col = man.Construct<ICollapsible>();
-                    col.Set(man.Construct<IButton>());
+                    var col = new Collapsible();
+                    col.Set(new Button());
                     box.Add(col);
 
                     btn.Clicked += (sender1, args1) =>
                     {
-                        box.Add(man.Construct<IButton>());
+                        box.Add(new Button());
                     };
 
                     window.Open();
                 };
                 vbox.Add(button);
 
-                var button2 = man.Construct<IButton>();
+                var button2 = new Button();
                 button2.Text = "This is another button";
+                button2.PreferredSize = new Size(50, 100);
                 vbox.Add(button2);
 
                 var table = man.Construct<IResizableTable>();
-                table.Insert(0, 0, man.Construct<IButton>());
-                table.Insert(0, 1, man.Construct<IButton>());
-                table.Insert(1, 0, man.Construct<IButton>());
+                table.Insert(0, 0, new Button());
+                table.Insert(0, 1, new Button());
+                table.Insert(1, 0, new Button());
 
                 //var scroll = man.Construct<IVerticalScrollContainer>();
                 //var scrollInner = man.Construct<IVerticalBox>();
@@ -84,15 +173,20 @@ namespace Sledge.Editor
 
                 for (int j = 0; j < 2; j++)
                 {
-                    var tempSidebar = man.Construct<ICollapsible>();
-                    var sideBox = man.Construct<IVerticalBox>();
+                    var tempSidebar = new Collapsible();
+                    var sideBox = new VerticalBox();
                     for (int i = 0; i < 3; i++)
                     {
-                        sideBox.Add(man.Construct<IButton>());
+                        sideBox.Add(new TextBox());
                     }
                     tempSidebar.Set(sideBox);
                     man.Shell.AddSidebarPanel(tempSidebar, SidebarPanelLocation.Right);
                 }
+
+                var sb = new Collapsible();
+                var bc = new BindingControl(man);
+                sb.Set(bc);
+                man.Shell.AddSidebarPanel(sb, SidebarPanelLocation.Right);
 
                 man.Shell.Container.Set(vbox);
 

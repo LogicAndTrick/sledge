@@ -1,6 +1,6 @@
 ﻿using Sledge.Gui.Attributes;
 
-namespace Sledge.Gui.Controls
+namespace Sledge.Gui.Interfaces
 {
     /// <summary>
     /// Vertical Box: contains multiple children stacked vertically with the same width. The stack will always use 100% of the available height.

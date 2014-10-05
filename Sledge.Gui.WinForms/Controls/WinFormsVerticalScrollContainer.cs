@@ -2,7 +2,7 @@
 using System.Drawing;
 using System.Windows.Forms;
 using Sledge.Gui.Attributes;
-using Sledge.Gui.Controls;
+using Sledge.Gui.Interfaces;
 using Padding = System.Windows.Forms.Padding;
 using Point = System.Drawing.Point;
 using Size = System.Drawing.Size;

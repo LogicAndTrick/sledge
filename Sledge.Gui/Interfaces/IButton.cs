@@ -1,16 +1,15 @@
 ﻿using System;
+using System.Collections;
 using Sledge.Gui.Attributes;
 
-namespace Sledge.Gui.Controls
+namespace Sledge.Gui.Interfaces
 {
     /// <summary>
     /// Button: thing that gets clicked
     /// </summary>
     [ControlInterface]
-    public interface IButton : IControl
+    public interface IButton : ITextControl
     {
-        string Text { get; set; }
-        bool Enabled { get; set; }
         event EventHandler Clicked;
     }
 }

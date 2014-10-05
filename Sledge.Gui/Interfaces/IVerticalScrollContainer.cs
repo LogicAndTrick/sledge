@@ -1,6 +1,6 @@
 ﻿using Sledge.Gui.Attributes;
 
-namespace Sledge.Gui.Controls
+namespace Sledge.Gui.Interfaces
 {
     /// <summary>
     /// Vertical scroll container: a cell container with a vertical scroll bar

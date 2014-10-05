@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Sledge.Gui.Attributes;
 
-namespace Sledge.Gui.Controls
+namespace Sledge.Gui.Interfaces
 {
     /// <summary>
     /// Horizontal Box: contains multiple children stacked horizontally with the same height. The stack will always use 100% of the available width.

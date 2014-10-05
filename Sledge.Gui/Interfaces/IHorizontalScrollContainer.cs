@@ -1,6 +1,6 @@
 ﻿using Sledge.Gui.Attributes;
 
-namespace Sledge.Gui.Controls
+namespace Sledge.Gui.Interfaces
 {
     /// <summary>
     /// Horizontal scroll container: a cell container with a horizontal scroll bar

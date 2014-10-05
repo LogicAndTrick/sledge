@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Windows.Forms;
 using Sledge.Gui.Attributes;
-using Sledge.Gui.Controls;
+using Sledge.Gui.Interfaces;
 using Sledge.Gui.WinForms.Shell;
-using Size = Sledge.Gui.Controls.Size;
+using Size = Sledge.Gui.Interfaces.Size;
 
 namespace Sledge.Gui.WinForms.Controls
 {

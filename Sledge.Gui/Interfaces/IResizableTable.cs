@@ -1,6 +1,6 @@
 ﻿using Sledge.Gui.Attributes;
 
-namespace Sledge.Gui.Controls
+namespace Sledge.Gui.Interfaces
 {
     [ControlInterface]
     public interface IResizableTable : ITable

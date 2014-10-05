@@ -50,24 +50,44 @@
     <Compile Include="Attributes\SidebarPanelImplementationAttribute.cs" />
     <Compile Include="Attributes\UIImplementationAttribute.cs" />
     <Compile Include="Bindings\Binding.cs" />
-    <Compile Include="Controls\ContainerExtensions.cs" />
-    <Compile Include="Controls\ContainerMetadata.cs" />
-    <Compile Include="Controls\IBox.cs" />
-    <Compile Include="Controls\IButton.cs" />
-    <Compile Include="Controls\ICell.cs" />
-    <Compile Include="Controls\ICollapsible.cs" />
-    <Compile Include="Controls\IContainer.cs" />
-    <Compile Include="Controls\IControl.cs" />
-    <Compile Include="Controls\IHorizontalBox.cs" />
-    <Compile Include="Controls\IHorizontalScrollContainer.cs" />
-    <Compile Include="Controls\IResizableTable.cs" />
-    <Compile Include="Controls\IVerticalScrollContainer.cs" />
-    <Compile Include="Controls\ITable.cs" />
-    <Compile Include="Controls\IVerticalBox.cs" />
-    <Compile Include="Controls\Padding.cs" />
-    <Compile Include="Controls\Size.cs" />
-    <Compile Include="Controls\Point.cs" />
-    <Compile Include="Controls\Rectangle.cs" />
+    <Compile Include="Controls\BoxBase.cs" />
+    <Compile Include="Controls\Button.cs" />
+    <Compile Include="Controls\CellBase.cs" />
+    <Compile Include="Controls\Collapsible.cs" />
+    <Compile Include="Controls\ComboBox.cs" />
+    <Compile Include="Controls\ContainerBase.cs" />
+    <Compile Include="Controls\ControlBase.cs" />
+    <Compile Include="Controls\HorizontalBox.cs" />
+    <Compile Include="Controls\HorizontalScrollContainer.cs" />
+    <Compile Include="Controls\Label.cs" />
+    <Compile Include="Controls\PictureBox.cs" />
+    <Compile Include="Controls\TextBox.cs" />
+    <Compile Include="Controls\TextControlBase.cs" />
+    <Compile Include="Controls\VerticalBox.cs" />
+    <Compile Include="Controls\VerticalScrollContainer.cs" />
+    <Compile Include="Events\ViewportEvent.cs" />
+    <Compile Include="Interfaces\ContainerExtensions.cs" />
+    <Compile Include="Interfaces\ContainerMetadata.cs" />
+    <Compile Include="Interfaces\IBox.cs" />
+    <Compile Include="Interfaces\IButton.cs" />
+    <Compile Include="Interfaces\ICell.cs" />
+    <Compile Include="Interfaces\ICollapsible.cs" />
+    <Compile Include="Interfaces\IComboBox.cs" />
+    <Compile Include="Interfaces\IContainer.cs" />
+    <Compile Include="Interfaces\IControl.cs" />
+    <Compile Include="Interfaces\IHorizontalBox.cs" />
+    <Compile Include="Interfaces\IHorizontalScrollContainer.cs" />
+    <Compile Include="Interfaces\ILabel.cs" />
+    <Compile Include="Interfaces\IResizableTable.cs" />
+    <Compile Include="Interfaces\ITextBox.cs" />
+    <Compile Include="Interfaces\ITextControl.cs" />
+    <Compile Include="Interfaces\IVerticalScrollContainer.cs" />
+    <Compile Include="Interfaces\ITable.cs" />
+    <Compile Include="Interfaces\IVerticalBox.cs" />
+    <Compile Include="Interfaces\Padding.cs" />
+    <Compile Include="Interfaces\Size.cs" />
+    <Compile Include="Interfaces\Point.cs" />
+    <Compile Include="Interfaces\Rectangle.cs" />
     <Compile Include="HandledEventArgs.cs" />
     <Compile Include="Shell\IDialogWindow.cs" />
     <Compile Include="Shell\IMenu.cs" />
@@ -77,6 +97,7 @@
     <Compile Include="Shell\IToolbar.cs" />
     <Compile Include="Shell\IToolbarItem.cs" />
     <Compile Include="Shell\IWindow.cs" />
+    <Compile Include="UIManager.cs" />
     <Compile Include="UIPlatform.cs" />
     <Compile Include="Viewports\FrameInfo.cs" />
     <Compile Include="Viewports\IViewport.cs" />
@@ -109,6 +130,7 @@
   <ItemGroup>
     <None Include="Sledge GUI methodology.md" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

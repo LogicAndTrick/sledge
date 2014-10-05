@@ -1,5 +1,5 @@
 ﻿using System;
-using Sledge.Gui.Controls;
+using Sledge.Gui.Interfaces;
 
 namespace Sledge.Gui.Shell
 {

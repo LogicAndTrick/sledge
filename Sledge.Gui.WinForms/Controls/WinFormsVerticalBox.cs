@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Windows.Forms;
 using Sledge.Gui.Attributes;
-using Sledge.Gui.Controls;
+using Sledge.Gui.Interfaces;
 using Padding = System.Windows.Forms.Padding;
 
 namespace Sledge.Gui.WinForms.Controls

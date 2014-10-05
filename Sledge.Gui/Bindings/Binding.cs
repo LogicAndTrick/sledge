@@ -11,6 +11,8 @@ namespace Sledge.Gui.Bindings
     public interface IBindingTarget
     {
         object BindingSource { get; set; }
+        //Binding Bind(string property, string sourceProperty, BindingDirection direction = BindingDirection.Dual);
+        //void Unbind(string property);
     }
 
     public class Binding

@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Forms;
 using Sledge.Gui.Attributes;
-using Sledge.Gui.Controls;
+using Sledge.Gui.Interfaces;
 using Sledge.Gui.Shell;
 using Sledge.Gui.WinForms.Shell;
 
@@ -53,7 +53,7 @@ namespace Sledge.Gui.WinForms
 
         public void Start()
         {
-            Application.Run(_shell);
+            Application.Run(_shell.Form);
         }
 
         public IWindow CreateWindow()

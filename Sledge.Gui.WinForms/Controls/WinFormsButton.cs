@@ -1,44 +1,33 @@
 ﻿using System;
+using System.Drawing;
 using System.Windows.Forms;
 using Sledge.Gui.Attributes;
-using Sledge.Gui.Controls;
+using Sledge.Gui.Interfaces;
+using Size = Sledge.Gui.Interfaces.Size;
 
 namespace Sledge.Gui.WinForms.Controls
 {
     [ControlImplementation("WinForms")]
     public class WinFormsButton : WinFormsControl, IButton
     {
-        private Button _button;
-
-        public string Text
+        public WinFormsButton()
+            : base(new Button())
         {
-            get { return _button.Text; }
-            set { _button.Text = value; }
+
         }
 
-        public bool Enabled
+        protected override Size DefaultPreferredSize
         {
-            get { return _button.Enabled; }
-            set { _button.Enabled = value; }
+            get
+            {
+                return new Size(100, FontSize * 2);
+            }
         }
 
         public event EventHandler Clicked
         {
-            add { _button.Click += value; }
-            remove { _button.Click -= value; }
-        }
-
-        public WinFormsButton() : base(new Button())
-        {
-            _button = (Button) Control;
-        }
-
-        public override Size PreferredSize
-        {
-            get
-            {
-                return new Size(100, 25);
-            }
+            add { Control.Click += value; }
+            remove { Control.Click -= value; }
         }
     }
 }

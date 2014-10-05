@@ -1,15 +1,17 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Windows.Forms;
-using Sledge.Gui.Controls;
+using Sledge.Gui.Interfaces;
 using Sledge.Gui.Shell;
 using Sledge.Gui.WinForms.Controls;
 using Size = System.Drawing.Size;
 
 namespace Sledge.Gui.WinForms.Shell
 {
-    public class WinFormsWindow : Form, IWindow
+    public class WinFormsWindow : WinFormsControl, IWindow
     {
+        internal Form Form { get; private set; }
+
         public new bool AutoSize
         {
             get { return _autoSize; }
@@ -20,9 +22,7 @@ namespace Sledge.Gui.WinForms.Shell
             }
         }
 
-        public object BindingSource { get; set; }
-
-        protected WinFormsCellContainerWrapper _containerWrapper;
+        protected WinFormsCellContainerWrapper ContainerWrapper;
         private bool _autoSize;
 
         public string Title
@@ -31,33 +31,37 @@ namespace Sledge.Gui.WinForms.Shell
             set { Text = value; }
         }
 
-        public new ICell Container
+        public ICell Container
         {
-            get { return _containerWrapper; }
+            get { return ContainerWrapper; }
         }
 
-        public Gui.Controls.Size ActualSize
+        protected override Interfaces.Size DefaultPreferredSize
         {
-            get { return new Gui.Controls.Size(Width, Height); }
+            get { return new Interfaces.Size(200, 200); }
         }
 
-        public new Gui.Controls.Size PreferredSize
+        public new Interfaces.Size PreferredSize
         {
-            get { return _containerWrapper.PreferredSize; }
+            get { return ContainerWrapper.PreferredSize; }
+            set { ContainerWrapper.PreferredSize = value; }
         }
 
-        public WinFormsWindow()
+        public WinFormsWindow() : base(new Form())
         {
-            Size = new Size(800, 600);
+            Form = (Form) Control;
+            Form.Size = new Size(800, 600);
             CreateWrapper();
+            Form.Resize += OnResize;
+            Form.Closing += OnClosing;
         }
 
         protected virtual void CreateWrapper()
         {
             var panel = new Panel {Dock = DockStyle.Fill};
-            Controls.Add(panel);
-            _containerWrapper = new WinFormsCellContainerWrapper(panel);
-            _containerWrapper.PreferredSizeChanged += ContainerPreferredSizeChanged;
+            Form.Controls.Add(panel);
+            ContainerWrapper = new WinFormsCellContainerWrapper(panel);
+            ContainerWrapper.PreferredSizeChanged += ContainerPreferredSizeChanged;
         }
 
         private void ContainerPreferredSizeChanged(object sender, EventArgs e)
@@ -65,56 +69,46 @@ namespace Sledge.Gui.WinForms.Shell
             OnPreferredSizeChanged();
         }
 
-        protected override void OnResize(EventArgs e)
+        private void OnResize(object sender, EventArgs eventArgs)
         {
             OnActualSizeChanged();
-            base.OnResize(e);
         }
 
-        public event EventHandler ActualSizeChanged;
-        public event EventHandler PreferredSizeChanged;
-
-        protected virtual void OnActualSizeChanged()
-        {
-            if (ActualSizeChanged != null)
-            {
-                ActualSizeChanged(this, EventArgs.Empty);
-            }
-        }
-
-        protected virtual void OnPreferredSizeChanged()
+        protected override void OnPreferredSizeChanged()
         {
             if (_autoSize)
             {
                 var ps = PreferredSize;
-                this.ClientSize = new Size(ps.Width, ps.Height);
+                Form.ClientSize = new Size(ps.Width, ps.Height);
             }
-            if (PreferredSizeChanged != null)
-            {
-                PreferredSizeChanged(this, EventArgs.Empty);
-            }
+            base.OnPreferredSizeChanged();
         }
 
         public void Open()
         {
-            Show();
+            Form.Show();
+        }
+
+        public void Close()
+        {
+            Form.Close();
         }
 
         public event EventHandler WindowLoaded
         {
-            add { Shown += value; }
-            remove { Shown -= value; }
+            add { Form.Shown += value; }
+            remove { Form.Shown -= value; }
         }
 
         public event EventHandler<HandledEventArgs> WindowClosing;
 
         public event EventHandler WindowClosed
         {
-            add { Closed += value; }
-            remove { Closed -= value; }
+            add { Form.Closed += value; }
+            remove { Form.Closed -= value; }
         }
 
-        protected override void OnClosing(CancelEventArgs e)
+        private void OnClosing(object sender, CancelEventArgs e)
         {
             if (WindowClosing != null)
             {
@@ -122,7 +116,6 @@ namespace Sledge.Gui.WinForms.Shell
                 WindowClosing(this, hea);
                 if (hea.Handled) e.Cancel = true;
             }
-            base.OnClosing(e);
         }
     }
 }

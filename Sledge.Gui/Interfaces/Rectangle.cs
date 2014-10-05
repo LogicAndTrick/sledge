@@ -1,6 +1,4 @@
-﻿using System.Security.Policy;
-
-namespace Sledge.Gui.Controls
+﻿namespace Sledge.Gui.Interfaces
 {
     public struct Rectangle
     {

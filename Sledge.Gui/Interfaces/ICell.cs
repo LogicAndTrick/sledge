@@ -1,6 +1,6 @@
 ﻿using Sledge.Gui.Attributes;
 
-namespace Sledge.Gui.Controls
+namespace Sledge.Gui.Interfaces
 {
     /// <summary>
     /// Cell: contains a single child that fills the entire available space

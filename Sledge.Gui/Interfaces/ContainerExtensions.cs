@@ -1,4 +1,4 @@
-﻿namespace Sledge.Gui.Controls
+﻿namespace Sledge.Gui.Interfaces
 {
     public static class ContainerExtensions
     {

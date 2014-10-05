@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
-using Sledge.Gui.Controls;
+using Sledge.Gui.Interfaces;
 using Sledge.Gui.Shell;
 using Sledge.Gui.WinForms.Controls;
-using IContainer = Sledge.Gui.Controls.IContainer;
+using IContainer = Sledge.Gui.Interfaces.IContainer;
 
 namespace Sledge.Gui.WinForms.Shell
 {
@@ -26,17 +26,17 @@ namespace Sledge.Gui.WinForms.Shell
 
         public new ICell Container
         {
-            get { return _containerWrapper; }
+            get { return ContainerWrapper; }
         }
 
         protected override void CreateWrapper()
         {
             _container = new ToolStripContainer { Dock = DockStyle.Fill };
-            Controls.Add(_container);
+            Form.Controls.Add(_container);
             var dockFill = new WinFormsDockedPanel { Dock = DockStyle.Fill };
             _container.ContentPanel.Controls.Add(dockFill);
-            _containerWrapper = new WinFormsCellContainerWrapper(dockFill);
-            _containerWrapper.PreferredSizeChanged += ContainerPreferredSizeChanged;
+            ContainerWrapper = new WinFormsCellContainerWrapper(dockFill);
+            ContainerWrapper.PreferredSizeChanged += ContainerPreferredSizeChanged;
         }
 
         private void ContainerPreferredSizeChanged(object sender, EventArgs e)
@@ -47,8 +47,8 @@ namespace Sledge.Gui.WinForms.Shell
         public void AddMenu()
         {
             _menu = new WinFormsMenu();
-            MainMenuStrip = _menu;
-            Controls.Add(_menu);
+            Form.MainMenuStrip = _menu;
+            Form.Controls.Add(_menu);
         }
 
         public void AddToolbar()

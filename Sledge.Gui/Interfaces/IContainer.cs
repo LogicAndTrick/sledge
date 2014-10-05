@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Sledge.Gui.Controls
+namespace Sledge.Gui.Interfaces
 {
     public interface IContainer : IControl
     {

@@ -3,8 +3,8 @@ using System.Linq;
 using System.Text;
 using Gtk;
 using Sledge.Gui.Attributes;
-using Sledge.Gui.Controls;
 using Sledge.Gui.Gtk.Shell;
+using Sledge.Gui.Interfaces;
 using Sledge.Gui.Shell;
 
 namespace Sledge.Gui.Gtk

@@ -1,8 +1,4 @@
-﻿using System.ComponentModel;
-using System.Linq;
-using System.Text;
-
-namespace Sledge.Gui.Controls
+﻿namespace Sledge.Gui.Interfaces
 {
     public struct Size
     {

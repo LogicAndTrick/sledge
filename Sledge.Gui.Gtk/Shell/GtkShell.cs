@@ -1,9 +1,10 @@
 ﻿using System;
 using Gdk;
 using Gtk;
-using Sledge.Gui.Controls;
+using Sledge.Gui.Events;
+using Sledge.Gui.Interfaces;
 using Sledge.Gui.Shell;
-using Size = Sledge.Gui.Controls.Size;
+using Size = Sledge.Gui.Interfaces.Size;
 using Window = Gtk.Window;
 using WindowType = Gtk.WindowType;
 
@@ -48,11 +49,24 @@ namespace Sledge.Gui.Gtk.Shell
         }
 
         public object BindingSource { get; set; }
+
+        public IControl Implementation { get { return this; } }
+
+        public bool Enabled { get; set; }
+        public new bool Focused { get; private set; }
         public Size ActualSize { get; private set; }
-        public Size PreferredSize { get; private set; }
+        public Size PreferredSize { get; set; }
 
         public event EventHandler ActualSizeChanged;
         public event EventHandler PreferredSizeChanged;
+        public event MouseEventHandler MouseDown;
+        public event MouseEventHandler MouseUp;
+        public event MouseEventHandler MouseWheel;
+        public event MouseEventHandler MouseMove;
+        public event MouseEventHandler MouseClick;
+        public event EventHandler MouseDoubleClick;
+        public event EventHandler MouseEnter;
+        public event EventHandler MouseLeave;
 
         protected virtual void OnActualSizeChanged()
         {
@@ -78,6 +92,12 @@ namespace Sledge.Gui.Gtk.Shell
         public void Close()
         {
             Hide();
+        }
+
+        public event EventHandler Click
+        {
+            add { throw new NotImplementedException(); }
+            remove { throw new NotImplementedException(); }
         }
 
         public event EventHandler WindowLoaded;
