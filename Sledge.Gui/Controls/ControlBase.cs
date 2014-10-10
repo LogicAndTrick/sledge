@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Net;
 using System.Text;
+using Sledge.Gui.Bindings;
 using Sledge.Gui.Events;
 using Sledge.Gui.Interfaces;
 
@@ -10,6 +11,11 @@ namespace Sledge.Gui.Controls
     public abstract class ControlBase<T> : IControl where T : IControl
     {
         internal T Control { get; private set; }
+
+        public IContainer Parent
+        {
+            get { return Control.Parent; }
+        }
 
         public IControl Implementation
         {
@@ -25,6 +31,21 @@ namespace Sledge.Gui.Controls
         {
             get { return Control.BindingSource; }
             set { Control.BindingSource = value; }
+        }
+
+        public Binding Bind(string property, string sourceProperty, BindingDirection direction = BindingDirection.Dual)
+        {
+            return Control.Bind(property, sourceProperty, direction);
+        }
+
+        public void UnbindAll()
+        {
+            Control.UnbindAll();
+        }
+
+        public void Unbind(string property)
+        {
+            Control.Unbind(property);
         }
 
         public bool Enabled

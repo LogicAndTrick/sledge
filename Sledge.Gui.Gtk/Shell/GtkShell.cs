@@ -1,9 +1,11 @@
 ﻿using System;
 using Gdk;
 using Gtk;
+using Sledge.Gui.Bindings;
 using Sledge.Gui.Events;
 using Sledge.Gui.Interfaces;
 using Sledge.Gui.Shell;
+using Action = System.Action;
 using Size = Sledge.Gui.Interfaces.Size;
 using Window = Gtk.Window;
 using WindowType = Gtk.WindowType;
@@ -49,7 +51,22 @@ namespace Sledge.Gui.Gtk.Shell
         }
 
         public object BindingSource { get; set; }
+        public Binding Bind(string property, string sourceProperty, BindingDirection direction = BindingDirection.Dual)
+        {
+            throw new NotImplementedException();
+        }
 
+        public void UnbindAll()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Unbind(string property)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IContainer Parent { get; private set; }
         public IControl Implementation { get { return this; } }
 
         public bool Enabled { get; set; }

@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
+using System.Windows.Forms.VisualStyles;
 using Sledge.Editor.Properties;
 using Sledge.Gui;
 using Sledge.Gui.Controls;
@@ -23,7 +24,8 @@ namespace Sledge.Editor
     class BindingObject : INotifyPropertyChanged
     {
         private string _value1;
-        private string _value2;
+        private ComboBoxItem _value2;
+        private string _buttonText;
 
         public string Value1
         {
@@ -36,7 +38,7 @@ namespace Sledge.Editor
             }
         }
 
-        public string Value2
+        public ComboBoxItem Value2
         {
             get { return _value2; }
             set
@@ -45,6 +47,22 @@ namespace Sledge.Editor
                 _value2 = value;
                 OnPropertyChanged("Value2");
             }
+        }
+
+        public string ButtonText
+        {
+            get { return _buttonText; }
+            set
+            {
+                if (value == _buttonText) return;
+                _buttonText = value;
+                OnPropertyChanged("ButtonText");
+            }
+        }
+
+        public void ButtonClicked(object sender, EventArgs e)
+        {
+            ButtonText = new Random().NextDouble().ToString("N");
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -58,10 +76,13 @@ namespace Sledge.Editor
 
     class BindingControl : VerticalBox
     {
-        public BindingObject BindingObject { get; set; }
-
-        public BindingControl(IUIManager man)
+        public BindingControl()
         {
+            var source = new BindingObject();
+            source.Value1 = "A";
+            source.Value2 = "B";
+            source.ButtonText = "Click me!";
+
             var hbox1 = new HorizontalBox();
             var hbox2 = new HorizontalBox();
             var label1 = new Label();
@@ -71,15 +92,8 @@ namespace Sledge.Editor
             var label2 = new Label();
             var combo2 = new ComboBox();
 
-            BindingSource = BindingObject;
             label1.Text = "Value 1";
             label2.Text = "Value 2";
-
-            combo2.Items.Add("Item 1");
-            combo2.Items.Add("Item 2");
-            combo2.Items.Add("Item 3");
-            combo2.SelectedItem = "Item 2";
-            combo2.SelectedIndexChanged += (sender, args) => Debug.WriteLine(combo2.SelectedIndex);
 
             var bmp = new Bitmap(100, 100);
             using (var g = System.Drawing.Graphics.FromImage(bmp))
@@ -89,15 +103,40 @@ namespace Sledge.Editor
             }
             pic.Image = bmp;
 
+            combo2.Items.Add(new ComboBoxItem { Text = "Item 1" });
+            combo2.Items.Add(new ComboBoxItem { Text = "Item 2", DrawBorder = true });
+            combo2.Items.Add(new ComboBoxItem { Text = "Item 3", DisplayText = "Item 3\n100x100", Image = bmp });
+            combo2.Items.Add("Item 4");
+            combo2.Items.Add(new ComboBoxItem { Text = "Item 5", Value = "B" });
+            combo2.Items.Add("Item 6");
+            combo2.Items.Add("Item 7");
+            combo2.Items.Add("Item 8");
+            combo2.SelectedItem = combo2.Items[1];
+
             hbox1.Add(label1);
             hbox1.Add(textbox1, true);
             this.Add(hbox1);
 
             hbox2.Add(label2);
-            hbox2.Add(combo2);
+            hbox2.Add(combo2, true);
             this.Add(hbox2);
 
+            var b1 = new Button();
+            b1.Text = "Set Value 1";
+            b1.Clicked += (sender, args) => { source.Value1 = new Random().NextDouble().ToString("N"); };
+            this.Add(b1);
+
+            var b2 = new Button();
+            this.Add(b2);
+
             this.Add(pic);
+
+            BindingSource = source;
+            textbox1.Bind("Text", "Value1");
+            combo2.Bind("SelectedItem", "Value2");
+
+            b2.Bind("Text", "ButtonText");
+            b2.Bind("Clicked", "ButtonClicked");
         }
     }
 
@@ -109,6 +148,7 @@ namespace Sledge.Editor
         [STAThread]
         static void Main()
         {
+            //*/
             IUIManager man;
             man = new WinFormsUIManager();
             //man = new GtkUIManager();
@@ -184,7 +224,7 @@ namespace Sledge.Editor
                 }
 
                 var sb = new Collapsible();
-                var bc = new BindingControl(man);
+                var bc = new BindingControl();
                 sb.Set(bc);
                 man.Shell.AddSidebarPanel(sb, SidebarPanelLocation.Right);
 
@@ -213,6 +253,7 @@ namespace Sledge.Editor
 
             man.Start();
             return;
+            //*/
 
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);

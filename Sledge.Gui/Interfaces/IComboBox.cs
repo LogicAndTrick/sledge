@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using Sledge.Gui.Attributes;
 
 namespace Sledge.Gui.Interfaces
@@ -8,18 +7,16 @@ namespace Sledge.Gui.Interfaces
     [ControlInterface]
     public interface IComboBox : ITextControl
     {
-        object SelectedItem { get; set; }
+        ComboBoxItem SelectedItem { get; set; }
         int SelectedIndex { get; set; }
+        int MaxHeight { get; set; }
 
-        IList<object> Items { get; }
+        ItemList<ComboBoxItem> Items { get; }
 
         event EventHandler SelectedItemChanged;
         event EventHandler SelectedIndexChanged;
-    }
 
-    [ControlInterface]
-    public interface IPictureBox : IControl
-    {
-        Image Image { get; set; }
+        event EventHandler DropDownOpened;
+        event EventHandler DropDownClosed;
     }
 }

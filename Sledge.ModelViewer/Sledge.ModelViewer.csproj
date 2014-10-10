@@ -30,10 +30,6 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="OpenTK, Version=1.1.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\OpenTK.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="gtk-sharp, Version=2.4.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
       <SpecificVersion>False</SpecificVersion>
@@ -64,6 +60,9 @@
     </Reference>
     <Reference Include="Xwt.Gtk">
       <HintPath>..\Xwt.Gtk.dll</HintPath>
+    </Reference>
+    <Reference Include="OpenTK">
+      <HintPath>..\OpenTK.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -210,6 +209,8 @@
     <Compile Include="Viewport.cs" />
     <Compile Include="ViewportBase.cs" />
     <Compile Include="ViewportEvent.cs" />
+    <Compile Include="Dialog.cs" />
+    <Compile Include="gtk-gui\Sledge.ModelViewer.Dialog.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -222,7 +223,7 @@
       <Name>Sledge.DataStructures</Name>
     </ProjectReference>
     <ProjectReference Include="..\Sledge.Editor\Sledge.Editor.csproj">
-      <Project>{dff00869-b064-483d-95c0-a88039c471c7}</Project>
+      <Project>{DFF00869-B064-483D-95C0-A88039C471C7}</Project>
       <Name>Sledge.Editor</Name>
     </ProjectReference>
     <ProjectReference Include="..\Sledge.Graphics\Sledge.Graphics.csproj">

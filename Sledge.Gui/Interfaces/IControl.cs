@@ -6,6 +6,7 @@ namespace Sledge.Gui.Interfaces
 {
     public interface IControl : IBindingTarget
     {
+        IContainer Parent { get; }
         IControl Implementation { get; }
         bool Enabled { get; set; }
         bool Focused { get; }

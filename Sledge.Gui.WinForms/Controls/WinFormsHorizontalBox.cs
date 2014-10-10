@@ -38,6 +38,9 @@ namespace Sledge.Gui.WinForms.Controls
             _table.Margin = new Padding(0);
             Uniform = false;
             ControlPadding = 3;
+
+            _table.RowCount = 1;
+            _table.RowStyles.Add(new RowStyle(SizeType.Absolute, 10));
         }
 
         public void Insert(int index, IControl child, bool fill)

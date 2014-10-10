@@ -76,6 +76,7 @@ namespace Sledge.Gui.WinForms.Controls
         public void Insert(int index, IControl child, ContainerMetadata metadata)
         {
             var c = (WinFormsControl) child.Implementation;
+            c.Parent = this;
             BindChildEvents(child);
             AppendChild(index, c);
             Children.Insert(index, c);
@@ -102,6 +103,13 @@ namespace Sledge.Gui.WinForms.Controls
         protected virtual void ChildActualSizeChanged(object sender, EventArgs e)
         {
 
+        }
+
+        internal override void OnBindingSourceChanged()
+        {
+            if (BindingSource == null) Children.ForEach(x => x.OnBindingSourceChanged());
+
+            base.OnBindingSourceChanged();
         }
 
         // protected virtual void BuildContainer()

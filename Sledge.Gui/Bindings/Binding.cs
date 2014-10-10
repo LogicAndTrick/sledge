@@ -6,38 +6,19 @@ using System.Text;
 
 namespace Sledge.Gui.Bindings
 {
-
-
-    public interface IBindingTarget
+    public class Binding : Dictionary<string, object>
     {
-        object BindingSource { get; set; }
-        //Binding Bind(string property, string sourceProperty, BindingDirection direction = BindingDirection.Dual);
-        //void Unbind(string property);
-    }
+        public IBindingTarget Target { get; private set; }
+        public string SourceProperty { get; private set; }
+        public string TargetProperty { get; private set; }
+        public BindingDirection Direction { get; private set; }
 
-    public class Binding
-    {
-        IBindingTarget Target { get; set; }
-        string SourceProperty { get; set; }
-        string TargetProperty { get; set; }
-        BindingDirection Direction { get; set; }
-
-        public void Bind()
+        public Binding(IBindingTarget target, string targetProperty, string sourceProperty, BindingDirection direction)
         {
-            
+            Target = target;
+            TargetProperty = targetProperty;
+            SourceProperty = sourceProperty;
+            Direction = direction;
         }
-
-        public void Update()
-        {
-            
-        }
-    }
-
-    public enum BindingDirection
-    {
-        Dual, // binding works in two directions
-        Forwards, // source -> target only
-        Backwards, // target -> source only 
-        None // why???
     }
 }

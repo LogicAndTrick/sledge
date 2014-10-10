@@ -50,6 +50,8 @@
     <Compile Include="Attributes\SidebarPanelImplementationAttribute.cs" />
     <Compile Include="Attributes\UIImplementationAttribute.cs" />
     <Compile Include="Bindings\Binding.cs" />
+    <Compile Include="Bindings\BindingDirection.cs" />
+    <Compile Include="Bindings\IBindingTarget.cs" />
     <Compile Include="Controls\BoxBase.cs" />
     <Compile Include="Controls\Button.cs" />
     <Compile Include="Controls\CellBase.cs" />
@@ -66,6 +68,7 @@
     <Compile Include="Controls\VerticalBox.cs" />
     <Compile Include="Controls\VerticalScrollContainer.cs" />
     <Compile Include="Events\ViewportEvent.cs" />
+    <Compile Include="Interfaces\ComboBoxItem.cs" />
     <Compile Include="Interfaces\ContainerExtensions.cs" />
     <Compile Include="Interfaces\ContainerMetadata.cs" />
     <Compile Include="Interfaces\IBox.cs" />
@@ -78,6 +81,7 @@
     <Compile Include="Interfaces\IHorizontalBox.cs" />
     <Compile Include="Interfaces\IHorizontalScrollContainer.cs" />
     <Compile Include="Interfaces\ILabel.cs" />
+    <Compile Include="Interfaces\IPictureBox.cs" />
     <Compile Include="Interfaces\IResizableTable.cs" />
     <Compile Include="Interfaces\ITextBox.cs" />
     <Compile Include="Interfaces\ITextControl.cs" />
@@ -89,6 +93,7 @@
     <Compile Include="Interfaces\Point.cs" />
     <Compile Include="Interfaces\Rectangle.cs" />
     <Compile Include="HandledEventArgs.cs" />
+    <Compile Include="ItemList.cs" />
     <Compile Include="Shell\IDialogWindow.cs" />
     <Compile Include="Shell\IMenu.cs" />
     <Compile Include="Shell\IMenuItem.cs" />

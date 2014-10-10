@@ -81,7 +81,20 @@ public partial class MainWindow: Gtk.Window
 		//item2.Label = "Test2";
 		//item2.Content = new Label () { Name = "SomethingElse", Text = "This is another test" };
 
-		this.vbox1.Add (frame);
+        this.vbox1.Add(frame);
+
+	    var cb = ComboBox.NewText();
+        cb.AddNotification("popup-shown", (o, args) =>
+        {
+            int i = 0;
+        });
+        cb.AppendText("one");
+        cb.AppendText("two");
+        cb.AppendText("three");
+        cb.ShowAll();
+        cb.AddEvents((int) (EventType.PropertyNotify));
+	    var z = frame.AddItem("zzz");
+	    z.Content = cb;
 
         //var tab2 = new Sledge.ModelViewer.Components.TabStrip();
         //tab2.HeightRequest = 30;
@@ -115,5 +128,11 @@ public partial class MainWindow: Gtk.Window
 	{
 		Application.Quit ();
 		a.RetVal = true;
+	}
+
+	protected void OpenDialog (object sender, EventArgs e)
+	{
+		var d = new Sledge.ModelViewer.Dialog();
+		d.ShowAll();
 	}
 }
