@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.Serialization;
 
 namespace Sledge.Common.Mediator
@@ -82,6 +83,27 @@ namespace Sledge.Common.Mediator
             this[key].RemoveAll(match);
             if (this[key].Count == 0) this.Remove(key);
             return true;
+        }
+
+        /// <summary>
+        /// Gets the first key for the specified value.
+        /// </summary>
+        /// <param name="value">The value to search for</param>
+        /// <returns>The first key for the located value, or default(key) if the value is not found</returns>
+        public T GetKeyForValue(TK value)
+        {
+            var kv = this.FirstOrDefault(x => x.Value.Contains(value));
+            return kv.Key;
+        }
+
+        /// <summary>
+        /// Get the list of values matching the given key. Returns a blank list if the key is not found.
+        /// </summary>
+        /// <param name="key">The key to get the values for</param>
+        /// <returns>List of matching values</returns>
+        public IEnumerable<TK> GetValues(T key)
+        {
+            return !ContainsKey(key) ? (IEnumerable<TK>) new TK[0] : this[key].ToList();
         }
     }
 }

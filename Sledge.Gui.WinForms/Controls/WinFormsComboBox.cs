@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Drawing;
@@ -17,14 +18,14 @@ namespace Sledge.Gui.WinForms.Controls
     public class WinFormsComboBox : WinFormsControl, IComboBox
     {
         private readonly ComboBox _combo;
-        private readonly ItemList<ComboBoxItem> _items;
+        private readonly ItemList<IComboBoxItem> _items;
         private int _numImages;
         private int _numBorders;
 
         public WinFormsComboBox() : base(new ComboBox())
         {
             _combo = (ComboBox) Control;
-            _items = new ItemList<ComboBoxItem>();
+            _items = new ItemList<IComboBoxItem>();
             _items.CollectionChanged += CollectionChanged;
             _numImages = 0;
             MaxHeight = 64;
@@ -72,6 +73,9 @@ namespace Sledge.Gui.WinForms.Controls
         {
             switch (binding.TargetProperty)
             {
+                case "Items":
+                    ApplyListBinding(binding, GetInheritedBindingSource(), AddBoundItem, RemoveBoundItem);
+                    return;
                 case "SelectedItem":
                     ApplyManualEventBinding(binding, GetInheritedBindingSource(), "SelectedIndexChanged");
                     return;
@@ -79,12 +83,31 @@ namespace Sledge.Gui.WinForms.Controls
             base.ApplyBinding(binding);
         }
 
+        private void AddBoundItem(Binding binding, IList list, int index, object item)
+        {
+            if (ReferenceEquals(list, Items))
+            {
+                if (item is string) item = new ComboBoxItem {Text = (string) item};
+                else if (!(item is ComboBoxItem)) item = new ComboBoxItem {Value = item};
+            }
+            list.Insert(index, item);
+        }
+
+        private void RemoveBoundItem(Binding binding, IList list, object item)
+        {
+            if (ReferenceEquals(list, Items))
+            {
+                if (!(item is IComboBoxItem)) item = Items.FirstOrDefault(x => x.Value == item) ?? Items.FirstOrDefault(x => Equals(x.Text, item));
+            }
+            list.Remove(item);
+        }
+
         protected override Size DefaultPreferredSize
         {
             get { return new Size(150, FontSize * 2); }
         }
 
-        public ComboBoxItem SelectedItem
+        public IComboBoxItem SelectedItem
         {
             get { return (ComboBoxItem) _combo.SelectedItem; }
             set { _combo.SelectedItem = value; }
@@ -98,7 +121,7 @@ namespace Sledge.Gui.WinForms.Controls
 
         public int MaxHeight { get; set; }
 
-        public ItemList<ComboBoxItem> Items
+        public ItemList<IComboBoxItem> Items
         {
             get { return _items; }
         }

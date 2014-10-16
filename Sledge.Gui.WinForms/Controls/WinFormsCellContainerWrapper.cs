@@ -11,10 +11,14 @@ namespace Sledge.Gui.WinForms.Controls
 
         protected override void CalculateLayout()
         {
+            Control.SuspendLayout();
+
             foreach (var winFormsControl in Children)
             {
                 winFormsControl.Control.Dock = DockStyle.Fill;
             }
+
+            Control.ResumeLayout();
         }
 
         public void Set(IControl child)

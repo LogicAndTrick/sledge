@@ -56,6 +56,10 @@ namespace Sledge.Gui.WinForms.Controls
 
         protected override void CalculateLayout()
         {
+            if (_table == null) return;
+
+            Control.SuspendLayout();
+
             while (_table.ColumnStyles.Count > NumChildren) _table.ColumnStyles.RemoveAt(0);
             while (_table.ColumnStyles.Count < NumChildren) _table.ColumnStyles.Add(new ColumnStyle());
             _table.ColumnCount = NumChildren;
@@ -87,6 +91,8 @@ namespace Sledge.Gui.WinForms.Controls
                 _table.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
                 _table.ColumnCount += 1;
             }
+
+            Control.ResumeLayout();
         }
     }
 }

@@ -24,6 +24,7 @@ namespace Sledge.Gui.WinForms.Controls
             get { return _hideHeading; }
             set
             {
+                if (_hideHeading == value) return;
                 _hideHeading = value;
                 OnPreferredSizeChanged();
             }
@@ -34,6 +35,7 @@ namespace Sledge.Gui.WinForms.Controls
             get { return _isCollapsed; }
             set
             {
+                if (_isCollapsed == value) return;
                 _isCollapsed = value;
                 OnPreferredSizeChanged();
             }
@@ -88,9 +90,13 @@ namespace Sledge.Gui.WinForms.Controls
         {
             if (NumChildren != 1) return;
 
+            Control.SuspendLayout();
+
             var child = Children[0];
             child.Control.Dock = DockStyle.Fill;
             _contentPanel.Height = IsCollapsed ? 0 : child.PreferredSize.Height;
+
+            Control.ResumeLayout();
         }
 
         protected override void AppendChild(int index, WinFormsControl child)

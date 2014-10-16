@@ -5,7 +5,7 @@ namespace Sledge.Gui.Controls
 {
     public class ComboBox : TextControlBase<IComboBox>, IComboBox
     {
-        public ComboBoxItem SelectedItem
+        public IComboBoxItem SelectedItem
         {
             get { return Control.SelectedItem; }
             set { Control.SelectedItem = value; }
@@ -23,7 +23,7 @@ namespace Sledge.Gui.Controls
             set { Control.MaxHeight = value; }
         }
 
-        public ItemList<ComboBoxItem> Items
+        public ItemList<IComboBoxItem> Items
         {
             get { return Control.Items; }
         }

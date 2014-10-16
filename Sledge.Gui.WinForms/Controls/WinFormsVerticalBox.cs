@@ -55,6 +55,10 @@ namespace Sledge.Gui.WinForms.Controls
 
         protected override void CalculateLayout()
         {
+            if (_table == null) return;
+
+            Control.SuspendLayout();
+
             while (_table.RowStyles.Count > NumChildren) _table.RowStyles.RemoveAt(0);
             while (_table.RowStyles.Count < NumChildren) _table.RowStyles.Add(new RowStyle());
             _table.RowCount = NumChildren;
@@ -86,6 +90,8 @@ namespace Sledge.Gui.WinForms.Controls
                 _table.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
                 _table.RowCount += 1;
             }
+
+            Control.ResumeLayout();
         }
     }
 }

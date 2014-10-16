@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
+using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
@@ -11,6 +14,8 @@ using Sledge.Gui.Controls;
 using Sledge.Gui.Interfaces;
 using Sledge.Gui.Shell;
 using Sledge.Gui.WinForms;
+using Sledge.Gui.WinForms.Controls;
+using BindingDirection = Sledge.Gui.Bindings.BindingDirection;
 using Button = Sledge.Gui.Controls.Button;
 using ComboBox = Sledge.Gui.Controls.ComboBox;
 using IContainer = Sledge.Gui.Interfaces.IContainer;
@@ -18,14 +23,26 @@ using Label = Sledge.Gui.Controls.Label;
 using PictureBox = Sledge.Gui.Controls.PictureBox;
 using Size = Sledge.Gui.Interfaces.Size;
 using TextBox = Sledge.Gui.Controls.TextBox;
+using TreeNode = Sledge.Gui.Interfaces.TreeNode;
+using TreeView = Sledge.Gui.Controls.TreeView;
 
 namespace Sledge.Editor
 {
     class BindingObject : INotifyPropertyChanged
     {
         private string _value1;
-        private ComboBoxItem _value2;
+        private object _value2;
         private string _buttonText;
+        public ObservableCollection<string> StringItems { get; set; }
+        public ObservableCollection<object> ObjectItems { get; set; }
+        public ObservableCollection<ComboBoxItem> ComboBoxItems { get; set; }
+
+        public BindingObject()
+        {
+            StringItems = new ObservableCollection<string>();
+            ObjectItems = new ObservableCollection<object>();
+            ComboBoxItems = new ObservableCollection<ComboBoxItem>();
+        }
 
         public string Value1
         {
@@ -38,7 +55,7 @@ namespace Sledge.Editor
             }
         }
 
-        public ComboBoxItem Value2
+        public object Value2
         {
             get { return _value2; }
             set
@@ -62,7 +79,14 @@ namespace Sledge.Editor
 
         public void ButtonClicked(object sender, EventArgs e)
         {
-            ButtonText = new Random().NextDouble().ToString("N");
+            var r = new Random();
+            ButtonText = r.NextDouble().ToString("N");
+
+            StringItems.Add("String: " + r.NextDouble());
+            ObjectItems.Add(r.NextDouble());
+            ComboBoxItems.Add(new ComboBoxItem{Text = "Item: " + r.NextDouble(), DrawBorder = r.NextDouble() > 0.5});
+
+            Value2 = ComboBoxItems.Last();
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -106,11 +130,11 @@ namespace Sledge.Editor
             combo2.Items.Add(new ComboBoxItem { Text = "Item 1" });
             combo2.Items.Add(new ComboBoxItem { Text = "Item 2", DrawBorder = true });
             combo2.Items.Add(new ComboBoxItem { Text = "Item 3", DisplayText = "Item 3\n100x100", Image = bmp });
-            combo2.Items.Add("Item 4");
+            combo2.Items.Add((ComboBoxItem) "Item 4");
             combo2.Items.Add(new ComboBoxItem { Text = "Item 5", Value = "B" });
-            combo2.Items.Add("Item 6");
-            combo2.Items.Add("Item 7");
-            combo2.Items.Add("Item 8");
+            combo2.Items.Add((ComboBoxItem) "Item 6");
+            combo2.Items.Add((ComboBoxItem) "Item 7");
+            combo2.Items.Add((ComboBoxItem) "Item 8");
             combo2.SelectedItem = combo2.Items[1];
 
             hbox1.Add(label1);
@@ -131,12 +155,28 @@ namespace Sledge.Editor
 
             this.Add(pic);
 
+            var bbox = new VerticalBox();
+            this.Add(bbox);
+
             BindingSource = source;
             textbox1.Bind("Text", "Value1");
-            combo2.Bind("SelectedItem", "Value2");
+            combo2.Bind("SelectedValue", "Value2");
+            combo2.Bind("Items", "ComboBoxItems");
 
             b2.Bind("Text", "ButtonText");
             b2.Bind("Clicked", "ButtonClicked");
+
+            bbox.Bind("Children", "ComboBoxItems", meta: new Dictionary<string, object> { { "Control", typeof(ChildItemControl) } });
+        }
+    }
+
+    public class ChildItemControl : HorizontalBox
+    {
+        public ChildItemControl()
+        {
+            var lbl = new Label();
+            this.Add(lbl, true);
+            lbl.Bind("Text", "Text");
         }
     }
 
@@ -227,6 +267,17 @@ namespace Sledge.Editor
                 var bc = new BindingControl();
                 sb.Set(bc);
                 man.Shell.AddSidebarPanel(sb, SidebarPanelLocation.Right);
+
+                var tvc = new Collapsible();
+                var tv = new TreeView{ShowCheckboxes = true};
+                tvc.Set(tv);
+                man.Shell.AddSidebarPanel(tvc, SidebarPanelLocation.Right);
+
+                var r1 = new TreeNode { Text = "Root 1", Indeterminate = true };
+                tv.Model.AddRootNode(r1);
+                tv.Model.AddChildNode(r1, new TreeNode { Text = "Child 1", Checked = true });
+                var r2 = new TreeNode { Text = "Root 2", Checked = false };
+                tv.Model.AddRootNode(r2);
 
                 man.Shell.Container.Set(vbox);
 

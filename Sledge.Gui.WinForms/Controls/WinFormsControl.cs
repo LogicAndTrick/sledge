@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
@@ -92,9 +94,9 @@ namespace Sledge.Gui.WinForms.Controls
 
         protected WinFormsControl(Control control)
         {
+            control.AutoSize = false;
+            control.MinimumSize = control.Size = System.Drawing.Size.Empty;
             Control = control;
-            Control.AutoSize = false;
-            Control.MinimumSize = Control.Size = System.Drawing.Size.Empty;
         }
 
         #region Binding
@@ -128,12 +130,16 @@ namespace Sledge.Gui.WinForms.Controls
         {
             RemoveWinFormsBinding(binding);
             RemoveEventBinding(binding);
+            RemoveListBinding(binding);
         }
 
         internal virtual void OnBindingSourceChanged()
         {
-            Control.DataBindings.Clear();
-            foreach (var b in _bindings) ApplyBinding(b);
+            foreach (var b in _bindings)
+            {
+                RemoveBinding(b);
+                ApplyBinding(b);
+            }
         }
 
         protected virtual object GetInheritedBindingSource()
@@ -141,9 +147,13 @@ namespace Sledge.Gui.WinForms.Controls
             return _bindingSource ?? (Parent == null ? null : _parent.GetInheritedBindingSource());
         }
 
-        public Binding Bind(string property, string sourceProperty, BindingDirection direction = BindingDirection.Dual)
+        public Binding Bind(string property, string sourceProperty, BindingDirection direction = BindingDirection.Auto, Dictionary<string, object> meta = null)
         {
             var b = new Binding(this, property, sourceProperty, direction);
+            if (meta != null)
+            {
+                foreach (var kv in meta) b.Add(kv.Key, kv.Value);
+            }
             ApplyBinding(b);
             _bindings.Add(b);
             return b;
@@ -166,8 +176,11 @@ namespace Sledge.Gui.WinForms.Controls
 
         protected System.Windows.Forms.Binding ApplyWinFormsBinding(Binding binding, object bindingSource, string targetPropertyOverride = null)
         {
-            var db = Control.DataBindings.Add(targetPropertyOverride ?? binding.TargetProperty, bindingSource, binding.SourceProperty, false, DataSourceUpdateMode.OnPropertyChanged);
+            var dir = binding.Direction.HasFlag(BindingDirection.Auto) ? BindingDirection.Dual : binding.Direction;
+            var db = Control.DataBindings.Add(targetPropertyOverride ?? binding.TargetProperty, bindingSource, binding.SourceProperty, false);
             db.DataSourceNullValue = null;
+            db.ControlUpdateMode = dir.HasFlag(BindingDirection.Forwards) ? ControlUpdateMode.OnPropertyChanged : ControlUpdateMode.Never;
+            db.DataSourceUpdateMode = dir.HasFlag(BindingDirection.Backwards) ? DataSourceUpdateMode.OnPropertyChanged : DataSourceUpdateMode.Never;
             binding["WinFormsBinding"] = db;
             return db;
         }
@@ -206,7 +219,7 @@ namespace Sledge.Gui.WinForms.Controls
 
             var handler = Expression.Lambda(ev.EventHandlerType, Expression.Call(Expression.Constant(act), "Invoke", null, exParams), parameters).Compile();
             ev.AddEventHandler(this, handler);
-            binding["EventInfo"] = handler;
+            binding["EventInfo"] = ev;
             binding["EventHandler"] = handler;
         }
 
@@ -221,8 +234,10 @@ namespace Sledge.Gui.WinForms.Controls
             var ev = GetType().GetEvent(eventName);
             if (ev == null) return;
 
+            var dir = binding.Direction.HasFlag(BindingDirection.Auto) ? BindingDirection.Dual : binding.Direction;
+
             var npc = bindingSource as INotifyPropertyChanged;
-            if (npc != null)
+            if (npc != null && dir.HasFlag(BindingDirection.Forwards))
             {
                 PropertyChangedEventHandler act = (o, args) =>
                 {
@@ -232,20 +247,84 @@ namespace Sledge.Gui.WinForms.Controls
                     }
                 };
                 npc.PropertyChanged += act;
+                Action unbind = () => npc.PropertyChanged -= act;
+                binding["PropertyChangedUnbind"] = unbind;
             }
 
-            Action apply = () => sourceProp.SetValue(bindingSource, prop.GetValue(this, null), null);
-            var parameters = ev.EventHandlerType.GetMethod("Invoke").GetParameters().Select(x => Expression.Parameter(x.ParameterType)).ToArray();
-            var handler = Expression.Lambda(ev.EventHandlerType, Expression.Call(Expression.Constant(apply), "Invoke", null), parameters).Compile();
-            ev.AddEventHandler(this, handler);
-            binding["EventInfo"] = handler;
-            binding["EventHandler"] = handler;
+            if (dir.HasFlag(BindingDirection.Backwards))
+            {
+                Action apply = () => sourceProp.SetValue(bindingSource, prop.GetValue(this, null), null);
+                var parameters = ev.EventHandlerType.GetMethod("Invoke").GetParameters().Select(x => Expression.Parameter(x.ParameterType)).ToArray();
+                var handler = Expression.Lambda(ev.EventHandlerType, Expression.Call(Expression.Constant(apply), "Invoke", null), parameters).Compile();
+                ev.AddEventHandler(this, handler);
+                binding["EventInfo"] = ev;
+                binding["EventHandler"] = handler;
+            }
+
+            prop.SetValue(this, sourceProp.GetValue(bindingSource, null), null); // apply the binding immediately
         }
 
         protected void RemoveEventBinding(Binding binding)
         {
-            if (!binding.ContainsKey("EventHandler") || !binding.ContainsKey("EventInfo")) return;
-            ((EventInfo) binding["EventInfo"]).RemoveEventHandler(this, (Delegate) binding["EventHandler"]);
+            if (binding.ContainsKey("EventHandler") && binding.ContainsKey("EventInfo"))
+            {
+                ((EventInfo) binding["EventInfo"]).RemoveEventHandler(this, (Delegate) binding["EventHandler"]);
+            }
+            if (binding.ContainsKey("PropertyChangedUnbind"))
+            {
+                ((Action) binding["PropertyChangedUnbind"]).Invoke();
+            }
+        }
+
+        protected void ApplyListBinding(Binding binding, object bindingSource, Action<Binding, IList, int, object> addFunc, Action<Binding, IList, object> removeFunc)
+        {
+            var prop = GetType().GetProperty(binding.TargetProperty, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
+            if (prop == null || !typeof(IList).IsAssignableFrom(prop.PropertyType)) return;
+
+            var sourceProp = bindingSource.GetType().GetProperty(binding.SourceProperty);
+            if (sourceProp == null || !typeof(IList).IsAssignableFrom(sourceProp.PropertyType)) return;
+
+            var value = (IList)prop.GetValue(this, null);
+            var source = (IList)sourceProp.GetValue(bindingSource, null);
+
+            var npc = sourceProp.GetValue(bindingSource, null) as INotifyCollectionChanged;
+            if (npc != null)
+            {
+                NotifyCollectionChangedEventHandler act = (o, args) =>
+                {
+                    if (args.OldItems != null)
+                    {
+                        foreach (var oldItem in args.OldItems)
+                        {
+                            removeFunc(binding, value, oldItem);
+                        }
+                    }
+                    if (args.NewItems != null)
+                    {
+                        var idx = args.NewStartingIndex;
+                        foreach (var add in args.NewItems)
+                        {
+                            addFunc(binding, value, idx, add);
+                            idx++;
+                        }
+                    }
+                };
+                npc.CollectionChanged += act;
+                Action unbind = () => npc.CollectionChanged -= act;
+                binding["CollectionChangedUnbind"] = unbind;
+            }
+
+            // Apply binding
+            foreach (var val in value.OfType<object>().ToList()) removeFunc(binding, value, val);
+            for (var i = 0; i < source.Count; i++) addFunc(binding, value, i, source[i]);
+        }
+
+        protected void RemoveListBinding(Binding binding)
+        {
+            if (binding.ContainsKey("CollectionChangedUnbind"))
+            {
+                ((Action)binding["CollectionChangedUnbind"]).Invoke();
+            }
         }
 
         #endregion

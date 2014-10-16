@@ -45,6 +45,7 @@
     <Compile Include="Controls\TableSplitControl.cs" />
     <Compile Include="Controls\WinFormsComboBox.cs" />
     <Compile Include="Controls\WinFormsPictureBox.cs" />
+    <Compile Include="Controls\WinFormsTreeView.cs" />
     <Compile Include="WinFormsExtensions.cs" />
     <Compile Include="Controls\WinFormsButton.cs" />
     <Compile Include="Controls\WinFormsCellContainerWrapper.cs" />

@@ -7,11 +7,11 @@ namespace Sledge.Gui.Interfaces
     [ControlInterface]
     public interface IComboBox : ITextControl
     {
-        ComboBoxItem SelectedItem { get; set; }
+        IComboBoxItem SelectedItem { get; set; }
         int SelectedIndex { get; set; }
         int MaxHeight { get; set; }
 
-        ItemList<ComboBoxItem> Items { get; }
+        ItemList<IComboBoxItem> Items { get; }
 
         event EventHandler SelectedItemChanged;
         event EventHandler SelectedIndexChanged;

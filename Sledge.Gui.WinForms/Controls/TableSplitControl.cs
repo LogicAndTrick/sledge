@@ -67,12 +67,16 @@ namespace Sledge.Gui.WinForms.Controls
 
         protected override void CalculateLayout()
         {
+            Control.SuspendLayout();
+
             foreach (var child in Children)
             {
                 child.Control.Dock = DockStyle.Fill;
                 var meta = Metadata[child];
                 _table.SetCellPosition(child.Control, new TableLayoutPanelCellPosition(meta.Get<int>("Column"), meta.Get<int>("Row")));
             }
+
+            Control.ResumeLayout();
         }
 
         public int[] GetColumnWidths()

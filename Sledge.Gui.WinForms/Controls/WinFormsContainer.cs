@@ -1,15 +1,18 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
 using Sledge.Gui.Interfaces;
 using Padding = Sledge.Gui.Interfaces.Padding;
+using Binding = Sledge.Gui.Bindings.Binding;
 
 namespace Sledge.Gui.WinForms.Controls
 {
     public abstract class WinFormsContainer : WinFormsControl, IContainer
     {
-        public List<WinFormsControl> Children;
-        public Dictionary<WinFormsControl, ContainerMetadata> Metadata;
+        protected List<WinFormsControl> Children { get; private set; }
+        protected Dictionary<WinFormsControl, ContainerMetadata> Metadata { get; private set; }
 
         public int NumChildren
         {
@@ -53,12 +56,11 @@ namespace Sledge.Gui.WinForms.Controls
         {
             Children = new List<WinFormsControl>();
             Metadata = new Dictionary<WinFormsControl, ContainerMetadata>();
-            container.Resize += Resize;
-            container.ControlAdded += Resize;
-            container.ControlRemoved += Resize;
+            container.ControlAdded += ChildrenChanged;
+            container.ControlRemoved += ChildrenChanged;
         }
 
-        private void Resize(object sender, EventArgs e)
+        private void ChildrenChanged(object sender, EventArgs e)
         {
             OnPreferredSizeChanged();
         }
@@ -100,6 +102,12 @@ namespace Sledge.Gui.WinForms.Controls
             OnPreferredSizeChanged();
         }
 
+        protected override void OnActualSizeChanged()
+        {
+            CalculateLayout();
+            base.OnActualSizeChanged();
+        }
+
         protected virtual void ChildActualSizeChanged(object sender, EventArgs e)
         {
 
@@ -107,9 +115,53 @@ namespace Sledge.Gui.WinForms.Controls
 
         internal override void OnBindingSourceChanged()
         {
-            if (BindingSource == null) Children.ForEach(x => x.OnBindingSourceChanged());
-
+            Children.ForEach(x => x.OnBindingSourceChanged());
             base.OnBindingSourceChanged();
+        }
+
+        protected override void ApplyBinding(Binding binding)
+        {
+            switch (binding.TargetProperty)
+            {
+                case "Children":
+                    ApplyListBinding(binding, GetInheritedBindingSource(), AddBoundControl, RemoveBoundControl);
+                    return;
+            }
+            base.ApplyBinding(binding);
+        }
+
+        private void AddBoundControl(Binding binding, IList list, int index, object item)
+        {
+            if (ReferenceEquals(list, Children))
+            {
+                if (!(item is IControl))
+                {
+                    var bindingSource = item;
+                    var type = binding.ContainsKey("Control") ? binding["Control"] : null;
+                    if (type is IControl) item = type;
+                    else if (type is Type) item = Activator.CreateInstance((Type) type);
+                    else if (type is Func<object>) item = ((Func<object>) type).Invoke();
+                    ((IControl) item).BindingSource = bindingSource;
+                }
+                this.Insert(index, (IControl) item);
+            }
+            else
+            {
+                list.Insert(index, item);
+            }
+        }
+
+        private void RemoveBoundControl(Binding binding, IList list, object item)
+        {
+            if (ReferenceEquals(list, Children))
+            {
+                if (!(item is IControl)) item = Children.FirstOrDefault(x => x.BindingSource == item);
+                // todo remove bound control
+            }
+            else
+            {
+                list.Remove(item);
+            }
         }
 
         // protected virtual void BuildContainer()

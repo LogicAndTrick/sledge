@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -33,9 +34,9 @@ namespace Sledge.Gui.Controls
             set { Control.BindingSource = value; }
         }
 
-        public Binding Bind(string property, string sourceProperty, BindingDirection direction = BindingDirection.Dual)
+        public Binding Bind(string property, string sourceProperty, BindingDirection direction = BindingDirection.Auto, Dictionary<string, object> meta = null)
         {
-            return Control.Bind(property, sourceProperty, direction);
+            return Control.Bind(property, sourceProperty, direction, meta);
         }
 
         public void UnbindAll()

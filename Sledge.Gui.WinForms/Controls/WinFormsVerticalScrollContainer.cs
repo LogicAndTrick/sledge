@@ -44,12 +44,15 @@ namespace Sledge.Gui.WinForms.Controls
         protected override void OnPreferredSizeChanged()
         {
             CalculateLayout();
-            base.OnPreferredSizeChanged();
+            // Intentionally stop propagation
+            // base.OnPreferredSizeChanged();
         }
 
         protected override void CalculateLayout()
         {
             if (NumChildren != 1) return;
+
+            Control.SuspendLayout();
 
             var child = Children[0];
             child.Control.Dock = DockStyle.Fill;
@@ -69,6 +72,9 @@ namespace Sledge.Gui.WinForms.Controls
                 _contentPanel.Size = new Size(ActualSize.Width, height);
             }
 
+            child.Control.Height = height;
+
+            Control.ResumeLayout();
         }
 
         protected override void AppendChild(int index, WinFormsControl child)

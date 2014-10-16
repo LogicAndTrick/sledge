@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Gdk;
 using Gtk;
 using Sledge.Gui.Bindings;
@@ -51,7 +52,7 @@ namespace Sledge.Gui.Gtk.Shell
         }
 
         public object BindingSource { get; set; }
-        public Binding Bind(string property, string sourceProperty, BindingDirection direction = BindingDirection.Dual)
+        public Binding Bind(string property, string sourceProperty, BindingDirection direction = BindingDirection.Auto, Dictionary<string, object> meta = null)
         {
             throw new NotImplementedException();
         }
