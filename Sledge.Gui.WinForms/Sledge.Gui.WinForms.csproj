@@ -42,9 +42,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Controls\TableSplitControl.cs" />
+    <Compile Include="Controls\WinFormsTabStrip.cs" />
+    <Compile Include="Controls\WinformsResizableTable.cs" />
+    <Compile Include="Controls\WinFormsCheckbox.cs" />
     <Compile Include="Controls\WinFormsComboBox.cs" />
     <Compile Include="Controls\WinFormsPictureBox.cs" />
+    <Compile Include="Controls\WinFormsTable.cs" />
     <Compile Include="Controls\WinFormsTreeView.cs" />
     <Compile Include="WinFormsExtensions.cs" />
     <Compile Include="Controls\WinFormsButton.cs" />

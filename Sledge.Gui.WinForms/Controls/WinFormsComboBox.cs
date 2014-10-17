@@ -41,7 +41,7 @@ namespace Sledge.Gui.WinForms.Controls
             var befBorder = _numBorders > 0;
             if (e.OldItems != null)
             {
-                foreach (ComboBoxItem rem in e.OldItems)
+                foreach (IComboBoxItem rem in e.OldItems)
                 {
                     _combo.Items.Remove(rem);
                     if (rem.HasImage) _numImages--;
@@ -52,7 +52,7 @@ namespace Sledge.Gui.WinForms.Controls
             if (e.NewItems != null)
             {
                 var idx = e.NewStartingIndex;
-                foreach (ComboBoxItem add in e.NewItems)
+                foreach (IComboBoxItem add in e.NewItems)
                 {
                     _combo.Items.Insert(idx, add);
                     idx++;
@@ -109,7 +109,7 @@ namespace Sledge.Gui.WinForms.Controls
 
         public IComboBoxItem SelectedItem
         {
-            get { return (ComboBoxItem) _combo.SelectedItem; }
+            get { return (IComboBoxItem) _combo.SelectedItem; }
             set { _combo.SelectedItem = value; }
         }
 
@@ -152,7 +152,7 @@ namespace Sledge.Gui.WinForms.Controls
 
         private void OwnerMeasureItem(object sender, MeasureItemEventArgs e)
         {
-            var item = (ComboBoxItem) _combo.Items[e.Index];
+            var item = (IComboBoxItem) _combo.Items[e.Index];
             int minHeight = _combo.ItemHeight, height = 0;
             if (item.HasImage)
             {
@@ -170,14 +170,14 @@ namespace Sledge.Gui.WinForms.Controls
         {
             if (e.Index < 0) return;
 
-            var item = (ComboBoxItem) _combo.Items[e.Index];
+            var item = (IComboBoxItem) _combo.Items[e.Index];
 
             e.DrawBackground();
             OwnerDrawItem(e.Graphics, item, e.Bounds, e.ForeColor, e.Font);
             e.DrawFocusRectangle();
         }
 
-        private void OwnerDrawItem(Graphics g, ComboBoxItem item, Rectangle bounds, Color textColour, Font font)
+        private void OwnerDrawItem(Graphics g, IComboBoxItem item, Rectangle bounds, Color textColour, Font font)
         {
             var imageSize = bounds.Height - 9;
 

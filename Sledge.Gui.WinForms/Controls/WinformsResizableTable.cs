@@ -10,7 +10,7 @@ using Padding = System.Windows.Forms.Padding;
 namespace Sledge.Gui.WinForms.Controls
 {
     [ControlImplementation("WinForms")]
-    public sealed class TableSplitControl : WinFormsContainer, IResizableTable
+    public sealed class WinformsResizableTable : WinFormsContainer, IResizableTable
     {
         private TableLayoutPanel _table;
 
@@ -46,7 +46,7 @@ namespace Sledge.Gui.WinForms.Controls
             ResetViews();
         }
 
-        public TableSplitControl() : base(new TableLayoutPanel())
+        public WinformsResizableTable() : base(new TableLayoutPanel())
         {
             _table = (TableLayoutPanel) Control;
             _table.Margin = new Padding(3);
@@ -91,7 +91,7 @@ namespace Sledge.Gui.WinForms.Controls
 
         public int ControlPadding { get; set; } // todo
 
-        public void Insert(int row, int column, IControl child, int rowSpan = 1, int columnSpan = 1)
+        public void Insert(int row, int column, IControl child, int rowSpan = 1, int columnSpan = 1, bool rowFill = false, bool columnFill = false)
         {
             Insert(NumChildren, child, new ContainerMetadata {{"Row", row}, {"Column", column}});
         }

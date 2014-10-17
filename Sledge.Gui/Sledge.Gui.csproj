@@ -55,6 +55,7 @@
     <Compile Include="Controls\BoxBase.cs" />
     <Compile Include="Controls\Button.cs" />
     <Compile Include="Controls\CellBase.cs" />
+    <Compile Include="Controls\CheckBox.cs" />
     <Compile Include="Controls\Collapsible.cs" />
     <Compile Include="Controls\ComboBox.cs" />
     <Compile Include="Controls\ContainerBase.cs" />
@@ -63,6 +64,8 @@
     <Compile Include="Controls\HorizontalScrollContainer.cs" />
     <Compile Include="Controls\Label.cs" />
     <Compile Include="Controls\PictureBox.cs" />
+    <Compile Include="Controls\Table.cs" />
+    <Compile Include="Controls\TabStrip.cs" />
     <Compile Include="Controls\TextBox.cs" />
     <Compile Include="Controls\TextControlBase.cs" />
     <Compile Include="Controls\TreeView.cs" />
@@ -76,6 +79,7 @@
     <Compile Include="Interfaces\IBox.cs" />
     <Compile Include="Interfaces\IButton.cs" />
     <Compile Include="Interfaces\ICell.cs" />
+    <Compile Include="Interfaces\ICheckbox.cs" />
     <Compile Include="Interfaces\ICheckboxListItem.cs" />
     <Compile Include="Interfaces\ICollapsible.cs" />
     <Compile Include="Interfaces\IComboBox.cs" />
@@ -90,6 +94,8 @@
     <Compile Include="Interfaces\ImageListItem.cs" />
     <Compile Include="Interfaces\IPictureBox.cs" />
     <Compile Include="Interfaces\IResizableTable.cs" />
+    <Compile Include="Interfaces\ITab.cs" />
+    <Compile Include="Interfaces\ITabStrip.cs" />
     <Compile Include="Interfaces\ITextBox.cs" />
     <Compile Include="Interfaces\ITextControl.cs" />
     <Compile Include="Interfaces\ITreeModel.cs" />
@@ -105,6 +111,8 @@
     <Compile Include="Interfaces\Point.cs" />
     <Compile Include="Interfaces\Rectangle.cs" />
     <Compile Include="HandledEventArgs.cs" />
+    <Compile Include="Interfaces\Tab.cs" />
+    <Compile Include="Interfaces\TabEventHandler.cs" />
     <Compile Include="Interfaces\TreeModel.cs" />
     <Compile Include="Interfaces\TreeNode.cs" />
     <Compile Include="ItemList.cs" />

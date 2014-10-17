@@ -75,7 +75,7 @@ namespace Sledge.Gui.WinForms.Controls
             return new ContainerMetadata();
         }
 
-        public void Insert(int index, IControl child, ContainerMetadata metadata)
+        public virtual void Insert(int index, IControl child, ContainerMetadata metadata)
         {
             var c = (WinFormsControl) child.Implementation;
             c.Parent = this;

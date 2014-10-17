@@ -233,6 +233,21 @@ namespace Sledge.Editor
                 button2.PreferredSize = new Size(50, 100);
                 vbox.Add(button2);
 
+                var tc = new Table();
+                tc.Insert(0, 0, new Button { Text = "asdf 1" });
+                tc.Insert(0, 1, new Button { Text = "asdf 2" });
+                tc.Insert(1, 1, new Button { Text = "asdf 3" });
+                tc.Insert(1, 2, new Button { Text = "asdf 4" }, columnFill: true, rowFill:true);
+                tc.Insert(2, 0, new Button { Text = "asdf 5" }, columnSpan: 2);
+                vbox.Add(tc);
+
+                var ts = new TabStrip();
+                ts.Tabs.Add(new Tab { Text = "Tab 1", Dirty = true });
+                ts.Tabs.Add(new Tab { Text = "Tab 2" });
+                ts.Tabs.Add(new Tab { Text = "Tab 3", Closable = false });
+                ts.SelectedIndex = 1;
+                vbox.Add(ts);
+
                 var table = man.Construct<IResizableTable>();
                 table.Insert(0, 0, new Button());
                 table.Insert(0, 1, new Button());
