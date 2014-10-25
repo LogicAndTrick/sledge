@@ -5,33 +5,6 @@ using Point = System.Drawing.Point;
 
 namespace Sledge.Gui.Events
 {
-    public delegate void MouseEventHandler(object sender, IMouseEvent e);
-    public delegate void KeyboardEventHandler(object sender, IKeyboardEvent e);
-
-    public interface IEvent
-    {
-        IControl Sender { get; }
-        bool Handled { get; set; }
-    }
-
-    public interface IMouseEvent : IEvent
-    {
-        MouseButton Button { get; }
-        int Clicks { get; }
-        int X { get; }
-        int Y { get; }
-        int Delta { get; }
-        Point Location { get; }
-    }
-
-    public interface IKeyboardEvent : IEvent
-    {
-        bool Control { get; }
-        bool Shift { get; }
-        bool Alt { get; }
-        Key KeyValue { get; }
-    }
-
     public class ControlEvent : EventArgs, IMouseEvent, IKeyboardEvent
     {
         public IControl Sender { get; set; }

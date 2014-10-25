@@ -119,8 +119,11 @@ namespace Sledge.Gui.WinForms.Controls
             #region Overrides
             protected override void Dispose(bool disposing)
             {
-                UpdateTimer.Dispose();
-                _stopwatch.Stop();
+                if (disposing)
+                {
+                    UpdateTimer.Dispose();
+                    _stopwatch.Stop();
+                }
                 base.Dispose(disposing);
             }
 

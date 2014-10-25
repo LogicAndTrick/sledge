@@ -71,7 +71,11 @@
     <Compile Include="Controls\TreeView.cs" />
     <Compile Include="Containers\VerticalBox.cs" />
     <Compile Include="Containers\VerticalScrollContainer.cs" />
-    <Compile Include="_temp\ViewportEvent2.cs" />
+    <Compile Include="Events\IEvent.cs" />
+    <Compile Include="Events\IKeyboardEvent.cs" />
+    <Compile Include="Events\IMouseEvent.cs" />
+    <Compile Include="Events\KeyboardEventHandler.cs" />
+    <Compile Include="Events\MouseEventHandler.cs" />
     <Compile Include="Structures\ResizableTableConfiguration.cs" />
     <Compile Include="Models\CheckboxListItem.cs" />
     <Compile Include="Models\ComboBoxItem.cs" />
@@ -131,13 +135,28 @@
     <Compile Include="UIPlatform.cs" />
     <Compile Include="Structures\Frame.cs" />
     <Compile Include="Interfaces\Controls\IViewport.cs" />
-    <Compile Include="_temp\IViewport2D.cs" />
-    <Compile Include="_temp\IViewport3D.cs" />
-    <Compile Include="_temp\IViewportEventListener.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="_temp\ViewDirection.cs" />
-    <Compile Include="_temp\ViewportEvent.cs" />
-    <Compile Include="_temp\ViewType.cs" />
+    <Compile Include="Events\ControlEvent.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="_temp\IViewport2D.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="_temp\IViewport3D.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="_temp\IViewportEventListener.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="_temp\ViewDirection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="_temp\ViewportEvent.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="_temp\ViewType.cs">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Sledge.Common\Sledge.Common.csproj">
