@@ -5,7 +5,7 @@ using Gtk;
 using Sledge.Gui.Attributes;
 using Sledge.Gui.Gtk.Shell;
 using Sledge.Gui.Interfaces;
-using Sledge.Gui.Shell;
+using Sledge.Gui.Interfaces.Shell;
 
 namespace Sledge.Gui.Gtk
 {

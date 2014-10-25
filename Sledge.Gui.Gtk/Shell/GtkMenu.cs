@@ -3,7 +3,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
 using Gtk;
-using Sledge.Gui.Shell;
+using Sledge.Gui.Interfaces.Shell;
 
 namespace Sledge.Gui.Gtk.Shell
 {

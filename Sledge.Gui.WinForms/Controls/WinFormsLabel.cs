@@ -1,6 +1,8 @@
 ﻿using System.Windows.Forms;
 using Sledge.Gui.Attributes;
 using Sledge.Gui.Interfaces;
+using Sledge.Gui.Interfaces.Controls;
+using Sledge.Gui.Structures;
 
 namespace Sledge.Gui.WinForms.Controls
 {

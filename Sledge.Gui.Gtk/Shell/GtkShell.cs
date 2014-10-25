@@ -5,9 +5,10 @@ using Gtk;
 using Sledge.Gui.Bindings;
 using Sledge.Gui.Events;
 using Sledge.Gui.Interfaces;
-using Sledge.Gui.Shell;
+using Sledge.Gui.Interfaces.Containers;
+using Sledge.Gui.Interfaces.Shell;
 using Action = System.Action;
-using Size = Sledge.Gui.Interfaces.Size;
+using Size = Sledge.Gui.Structures.Size;
 using Window = Gtk.Window;
 using WindowType = Gtk.WindowType;
 

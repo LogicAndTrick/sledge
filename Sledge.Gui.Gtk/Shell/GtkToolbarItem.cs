@@ -3,7 +3,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using Gtk;
-using Sledge.Gui.Shell;
+using Sledge.Gui.Interfaces.Shell;
 
 namespace Sledge.Gui.Gtk.Shell
 {

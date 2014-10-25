@@ -1,7 +1,7 @@
 using System;
 using System.Drawing;
 using System.Windows.Forms;
-using Sledge.Gui.Shell;
+using Sledge.Gui.Interfaces.Shell;
 
 namespace Sledge.Gui.WinForms.Shell
 {

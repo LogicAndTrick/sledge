@@ -10,9 +10,12 @@ using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
 using Sledge.Editor.Properties;
 using Sledge.Gui;
+using Sledge.Gui.Containers;
 using Sledge.Gui.Controls;
 using Sledge.Gui.Interfaces;
-using Sledge.Gui.Shell;
+using Sledge.Gui.Interfaces.Containers;
+using Sledge.Gui.Interfaces.Shell;
+using Sledge.Gui.Models;
 using Sledge.Gui.WinForms;
 using Sledge.Gui.WinForms.Controls;
 using BindingDirection = Sledge.Gui.Bindings.BindingDirection;
@@ -21,9 +24,9 @@ using ComboBox = Sledge.Gui.Controls.ComboBox;
 using IContainer = Sledge.Gui.Interfaces.IContainer;
 using Label = Sledge.Gui.Controls.Label;
 using PictureBox = Sledge.Gui.Controls.PictureBox;
-using Size = Sledge.Gui.Interfaces.Size;
+using Size = Sledge.Gui.Structures.Size;
 using TextBox = Sledge.Gui.Controls.TextBox;
-using TreeNode = Sledge.Gui.Interfaces.TreeNode;
+using TreeNode = Sledge.Gui.Models.TreeNode;
 using TreeView = Sledge.Gui.Controls.TreeView;
 
 namespace Sledge.Editor
@@ -252,6 +255,7 @@ namespace Sledge.Editor
                 table.Insert(0, 0, new Button());
                 table.Insert(0, 1, new Button());
                 table.Insert(1, 0, new Button());
+                
 
                 //var scroll = man.Construct<IVerticalScrollContainer>();
                 //var scrollInner = man.Construct<IVerticalBox>();

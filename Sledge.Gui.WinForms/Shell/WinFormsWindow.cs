@@ -2,8 +2,11 @@
 using System.ComponentModel;
 using System.Windows.Forms;
 using Sledge.Gui.Interfaces;
-using Sledge.Gui.Shell;
+using Sledge.Gui.Interfaces.Containers;
+using Sledge.Gui.Interfaces.Shell;
+using Sledge.Gui.WinForms.Containers;
 using Sledge.Gui.WinForms.Controls;
+using HandledEventArgs = Sledge.Gui.Events.HandledEventArgs;
 using Size = System.Drawing.Size;
 
 namespace Sledge.Gui.WinForms.Shell
@@ -36,12 +39,12 @@ namespace Sledge.Gui.WinForms.Shell
             get { return ContainerWrapper; }
         }
 
-        protected override Interfaces.Size DefaultPreferredSize
+        protected override Structures.Size DefaultPreferredSize
         {
-            get { return new Interfaces.Size(200, 200); }
+            get { return new Structures.Size(200, 200); }
         }
 
-        public new Interfaces.Size PreferredSize
+        public new Structures.Size PreferredSize
         {
             get { return ContainerWrapper.PreferredSize; }
             set { ContainerWrapper.PreferredSize = value; }

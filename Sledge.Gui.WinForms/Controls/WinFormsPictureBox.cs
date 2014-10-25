@@ -3,7 +3,8 @@ using System.Drawing;
 using System.Windows.Forms;
 using Sledge.Gui.Attributes;
 using Sledge.Gui.Interfaces;
-using Size = Sledge.Gui.Interfaces.Size;
+using Sledge.Gui.Interfaces.Controls;
+using Size = Sledge.Gui.Structures.Size;
 
 namespace Sledge.Gui.WinForms.Controls
 {

@@ -1,4 +1,6 @@
 using Sledge.Gui.Interfaces;
+using Sledge.Gui.Interfaces.Controls;
+using Sledge.Gui.Interfaces.Models;
 
 namespace Sledge.Gui.Controls
 {

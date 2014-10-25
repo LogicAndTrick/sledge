@@ -11,11 +11,13 @@ using System.Windows.Forms;
 using Sledge.Gui.Controls;
 using Sledge.Gui.Events;
 using Sledge.Gui.Interfaces;
+using Sledge.Gui.Interfaces.Controls;
+using Sledge.Gui.WinForms.Containers;
 using Binding = Sledge.Gui.Bindings.Binding;
 using BindingDirection = Sledge.Gui.Bindings.BindingDirection;
 using IContainer = Sledge.Gui.Interfaces.IContainer;
 using MouseEventHandler = Sledge.Gui.Events.MouseEventHandler;
-using Size = Sledge.Gui.Interfaces.Size;
+using Size = Sledge.Gui.Structures.Size;
 
 namespace Sledge.Gui.WinForms.Controls
 {
@@ -25,7 +27,7 @@ namespace Sledge.Gui.WinForms.Controls
         private Control _control;
         private Size _preferredSize;
 
-        public Control Control
+        public virtual Control Control
         {
             get { return _control; }
             private set
@@ -40,7 +42,7 @@ namespace Sledge.Gui.WinForms.Controls
             }
         }
 
-        public IContainer Parent
+        public virtual IContainer Parent
         {
             get { return _parent; }
             internal set
@@ -50,12 +52,12 @@ namespace Sledge.Gui.WinForms.Controls
             }
         }
 
-        public IControl Implementation
+        public virtual IControl Implementation
         {
             get { return this; }
         }
 
-        public string Text
+        public virtual string Text
         {
             get { return _control.Text; }
             set { _control.Text = value; }
@@ -64,30 +66,30 @@ namespace Sledge.Gui.WinForms.Controls
         private bool _bold;
         private bool _italic;
 
-        public int FontSize
+        public virtual int FontSize
         {
             get { return (int) _control.Font.GetHeight(); }
         }
 
-        public bool Bold
+        public virtual bool Bold
         {
             get { return _bold; }
             set { _bold = value; } // todo
         }
 
-        public bool Italic
+        public virtual bool Italic
         {
             get { return _italic; }
             set { _italic = value; } // todo
         }
 
-        public bool Enabled
+        public virtual bool Enabled
         {
             get { return _control.Enabled; }
             set { _control.Enabled = value; }
         }
 
-        public bool Focused
+        public virtual bool Focused
         {
             get { return _control.Focused; }
         }
@@ -104,7 +106,7 @@ namespace Sledge.Gui.WinForms.Controls
         private readonly List<Binding> _bindings = new List<Binding>();
         private object _bindingSource;
 
-        public object BindingSource
+        public virtual object BindingSource
         {
             get { return _bindingSource; }
             set
@@ -147,7 +149,7 @@ namespace Sledge.Gui.WinForms.Controls
             return _bindingSource ?? (Parent == null ? null : _parent.GetInheritedBindingSource());
         }
 
-        public Binding Bind(string property, string sourceProperty, BindingDirection direction = BindingDirection.Auto, Dictionary<string, object> meta = null)
+        public virtual Binding Bind(string property, string sourceProperty, BindingDirection direction = BindingDirection.Auto, Dictionary<string, object> meta = null)
         {
             var b = new Binding(this, property, sourceProperty, direction);
             if (meta != null)
@@ -159,13 +161,13 @@ namespace Sledge.Gui.WinForms.Controls
             return b;
         }
 
-        public void UnbindAll()
+        public virtual void UnbindAll()
         {
             foreach (var b in _bindings) RemoveBinding(b);
             _bindings.Clear();
         }
 
-        public void Unbind(string property)
+        public virtual void Unbind(string property)
         {
             foreach (var b in _bindings.Where(x => x.TargetProperty == property).ToList())
             {
@@ -174,7 +176,7 @@ namespace Sledge.Gui.WinForms.Controls
             }
         }
 
-        protected System.Windows.Forms.Binding ApplyWinFormsBinding(Binding binding, object bindingSource, string targetPropertyOverride = null)
+        protected virtual System.Windows.Forms.Binding ApplyWinFormsBinding(Binding binding, object bindingSource, string targetPropertyOverride = null)
         {
             var dir = binding.Direction.HasFlag(BindingDirection.Auto) ? BindingDirection.Dual : binding.Direction;
             var db = Control.DataBindings.Add(targetPropertyOverride ?? binding.TargetProperty, bindingSource, binding.SourceProperty, false);
@@ -185,13 +187,13 @@ namespace Sledge.Gui.WinForms.Controls
             return db;
         }
 
-        protected void RemoveWinFormsBinding(Binding binding)
+        protected virtual void RemoveWinFormsBinding(Binding binding)
         {
             if (!binding.ContainsKey("WinFormsBinding")) return;
             Control.DataBindings.Remove((System.Windows.Forms.Binding)binding["WinFormsBinding"]);
         }
 
-        protected void ApplyEventBinding(Binding binding, EventInfo ev, object bindingSource)
+        protected virtual void ApplyEventBinding(Binding binding, EventInfo ev, object bindingSource)
         {
             var method = bindingSource.GetType().GetMethod(binding.SourceProperty);
             if (method == null) return;
@@ -223,7 +225,7 @@ namespace Sledge.Gui.WinForms.Controls
             binding["EventHandler"] = handler;
         }
 
-        protected void ApplyManualEventBinding(Binding binding, object bindingSource, string eventName)
+        protected virtual void ApplyManualEventBinding(Binding binding, object bindingSource, string eventName)
         {
             var prop = GetType().GetProperty(binding.TargetProperty);
             if (prop == null) return;
@@ -264,7 +266,7 @@ namespace Sledge.Gui.WinForms.Controls
             prop.SetValue(this, sourceProp.GetValue(bindingSource, null), null); // apply the binding immediately
         }
 
-        protected void RemoveEventBinding(Binding binding)
+        protected virtual void RemoveEventBinding(Binding binding)
         {
             if (binding.ContainsKey("EventHandler") && binding.ContainsKey("EventInfo"))
             {
@@ -276,7 +278,7 @@ namespace Sledge.Gui.WinForms.Controls
             }
         }
 
-        protected void ApplyListBinding(Binding binding, object bindingSource, Action<Binding, IList, int, object> addFunc, Action<Binding, IList, object> removeFunc)
+        protected virtual void ApplyListBinding(Binding binding, object bindingSource, Action<Binding, IList, int, object> addFunc, Action<Binding, IList, object> removeFunc)
         {
             var prop = GetType().GetProperty(binding.TargetProperty, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
             if (prop == null || !typeof(IList).IsAssignableFrom(prop.PropertyType)) return;
@@ -319,7 +321,7 @@ namespace Sledge.Gui.WinForms.Controls
             for (var i = 0; i < source.Count; i++) addFunc(binding, value, i, source[i]);
         }
 
-        protected void RemoveListBinding(Binding binding)
+        protected virtual void RemoveListBinding(Binding binding)
         {
             if (binding.ContainsKey("CollectionChangedUnbind"))
             {
@@ -330,61 +332,61 @@ namespace Sledge.Gui.WinForms.Controls
         #endregion
 
         #region Events
-        public event MouseEventHandler MouseDown
+        public virtual event MouseEventHandler MouseDown
         {
             add { _control.MouseDown += ConvertDelegate(value, true); }
             remove { _control.MouseDown -= ConvertDelegate(value, false); }
         }
 
-        public event MouseEventHandler MouseUp
+        public virtual event MouseEventHandler MouseUp
         {
             add { _control.MouseUp += ConvertDelegate(value, true); }
             remove { _control.MouseUp -= ConvertDelegate(value, false); }
         }
 
-        public event MouseEventHandler MouseWheel
+        public virtual event MouseEventHandler MouseWheel
         {
             add { _control.MouseWheel += ConvertDelegate(value, true); }
             remove { _control.MouseWheel -= ConvertDelegate(value, false); }
         }
 
-        public event MouseEventHandler MouseMove
+        public virtual event MouseEventHandler MouseMove
         {
             add { _control.MouseMove += ConvertDelegate(value, true); }
             remove { _control.MouseMove -= ConvertDelegate(value, false); }
         }
 
-        public event MouseEventHandler MouseClick
+        public virtual event MouseEventHandler MouseClick
         {
             add { _control.MouseClick += ConvertDelegate(value, true); }
             remove { _control.MouseClick -= ConvertDelegate(value, false); }
         }
 
-        public event EventHandler MouseDoubleClick
+        public virtual event EventHandler MouseDoubleClick
         {
             add { _control.DoubleClick += value; }
             remove { _control.DoubleClick -= value; }
         }
 
-        public event EventHandler MouseEnter
+        public virtual event EventHandler MouseEnter
         {
             add { _control.MouseEnter += value; }
             remove { _control.MouseEnter -= value; }
         }
 
-        public event EventHandler MouseLeave
+        public virtual event EventHandler MouseLeave
         {
             add { _control.MouseLeave += value; }
             remove { _control.MouseLeave -= value; }
         }
 
-        public event EventHandler Click
+        public virtual event EventHandler Click
         {
             add { _control.Click += value; }
             remove { _control.Click -= value; }
         }
 
-        public event EventHandler TextChanged
+        public virtual event EventHandler TextChanged
         {
             add { _control.TextChanged += value; }
             remove { _control.TextChanged -= value; }
@@ -392,7 +394,7 @@ namespace Sledge.Gui.WinForms.Controls
 
         private readonly Dictionary<Delegate, Delegate> _delegateCache = new Dictionary<Delegate, Delegate>();
 
-        protected System.Windows.Forms.MouseEventHandler ConvertDelegate(MouseEventHandler value, bool adding)
+        protected virtual System.Windows.Forms.MouseEventHandler ConvertDelegate(MouseEventHandler value, bool adding)
         {
             if (!_delegateCache.ContainsKey(value)) _delegateCache.Add(value, value.ToMouseEventHandler(this));
             var val = (System.Windows.Forms.MouseEventHandler) _delegateCache[value];
@@ -425,13 +427,13 @@ namespace Sledge.Gui.WinForms.Controls
             OnActualSizeChanged();
         }
 
-        public Size ActualSize
+        public virtual Size ActualSize
         {
             get { return new Size(Control.Width, Control.Height); }
         }
 
-        public event EventHandler ActualSizeChanged;
-        public event EventHandler PreferredSizeChanged;
+        public virtual event EventHandler ActualSizeChanged;
+        public virtual event EventHandler PreferredSizeChanged;
 
         protected virtual void OnActualSizeChanged()
         {

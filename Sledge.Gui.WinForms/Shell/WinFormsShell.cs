@@ -2,7 +2,9 @@
 using System.Drawing;
 using System.Windows.Forms;
 using Sledge.Gui.Interfaces;
-using Sledge.Gui.Shell;
+using Sledge.Gui.Interfaces.Containers;
+using Sledge.Gui.Interfaces.Shell;
+using Sledge.Gui.WinForms.Containers;
 using Sledge.Gui.WinForms.Controls;
 using IContainer = Sledge.Gui.Interfaces.IContainer;
 

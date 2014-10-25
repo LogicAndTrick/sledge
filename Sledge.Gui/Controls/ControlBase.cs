@@ -6,6 +6,7 @@ using System.Text;
 using Sledge.Gui.Bindings;
 using Sledge.Gui.Events;
 using Sledge.Gui.Interfaces;
+using Sledge.Gui.Structures;
 
 namespace Sledge.Gui.Controls
 {

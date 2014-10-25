@@ -1,6 +1,7 @@
 using System;
 using Sledge.Gui.Bindings;
 using Sledge.Gui.Events;
+using Sledge.Gui.Structures;
 
 namespace Sledge.Gui.Interfaces
 {

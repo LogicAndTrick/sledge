@@ -7,8 +7,11 @@ using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
 using Sledge.Gui.Attributes;
 using Sledge.Gui.Interfaces;
+using Sledge.Gui.Interfaces.Controls;
+using Sledge.Gui.Interfaces.Models;
+using Sledge.Gui.Models;
 using Point = System.Drawing.Point;
-using Size = Sledge.Gui.Interfaces.Size;
+using Size = Sledge.Gui.Structures.Size;
 using TreeNode = System.Windows.Forms.TreeNode;
 
 namespace Sledge.Gui.WinForms.Controls
@@ -134,7 +137,7 @@ namespace Sledge.Gui.WinForms.Controls
         {
             /* http://stackoverflow.com/questions/5626031/tri-state-checkboxes-in-winforms-treeview */
             var bmp = new Bitmap(16, 16);
-            using (var g = Graphics.FromImage(bmp))
+            using (var g = System.Drawing.Graphics.FromImage(bmp))
             {
                 CheckBoxRenderer.DrawCheckBox(g, new Point(0, 1), state);
             }

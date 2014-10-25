@@ -6,8 +6,8 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
-using Sledge.Gui.Shell;
 using Gtk;
+using Sledge.Gui.Interfaces.Shell;
 
 namespace Sledge.Gui.Gtk.Shell
 {

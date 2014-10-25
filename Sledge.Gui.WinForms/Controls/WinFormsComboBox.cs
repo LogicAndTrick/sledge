@@ -1,16 +1,18 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Specialized;
-using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Windows.Forms;
 using Sledge.Gui.Attributes;
 using Sledge.Gui.Interfaces;
+using Sledge.Gui.Interfaces.Controls;
+using Sledge.Gui.Interfaces.Models;
+using Sledge.Gui.Models;
+using Sledge.Gui.Structures;
 using Binding = Sledge.Gui.Bindings.Binding;
 using Rectangle = System.Drawing.Rectangle;
-using Size = Sledge.Gui.Interfaces.Size;
+using Size = Sledge.Gui.Structures.Size;
 
 namespace Sledge.Gui.WinForms.Controls
 {
@@ -177,7 +179,7 @@ namespace Sledge.Gui.WinForms.Controls
             e.DrawFocusRectangle();
         }
 
-        private void OwnerDrawItem(Graphics g, IComboBoxItem item, Rectangle bounds, Color textColour, Font font)
+        private void OwnerDrawItem(System.Drawing.Graphics g, IComboBoxItem item, Rectangle bounds, Color textColour, Font font)
         {
             var imageSize = bounds.Height - 9;
 

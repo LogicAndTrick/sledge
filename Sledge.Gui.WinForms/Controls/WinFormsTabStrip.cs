@@ -7,10 +7,14 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using Sledge.Gui.Attributes;
+using Sledge.Gui.Events;
 using Sledge.Gui.Interfaces;
+using Sledge.Gui.Interfaces.Controls;
+using Sledge.Gui.Interfaces.Models;
+using Sledge.Gui.Structures;
 using Point = System.Drawing.Point;
 using Rectangle = System.Drawing.Rectangle;
-using Size = Sledge.Gui.Interfaces.Size;
+using Size = Sledge.Gui.Structures.Size;
 
 namespace Sledge.Gui.WinForms.Controls
 {

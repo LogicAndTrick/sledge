@@ -5,8 +5,9 @@ using System.Windows.Forms;
 using OpenTK.Input;
 using Sledge.Gui.Events;
 using Sledge.Gui.Interfaces;
+using Sledge.Gui.Structures;
 using MouseEventHandler = Sledge.Gui.Events.MouseEventHandler;
-using Padding = Sledge.Gui.Interfaces.Padding;
+using Padding = Sledge.Gui.Structures.Padding;
 using SWF = System.Windows.Forms;
 
 namespace Sledge.Gui.WinForms

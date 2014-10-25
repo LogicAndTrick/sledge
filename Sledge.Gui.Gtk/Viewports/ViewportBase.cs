@@ -9,12 +9,13 @@ using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 using Sledge.DataStructures.Geometric;
 using Sledge.Graphics;
-using Sledge.Gui.Viewports;
+using Sledge.Gui.Interfaces.Viewports;
 using Box = Sledge.DataStructures.Geometric.Box;
+using Frame = Sledge.Gui.Structures.Frame;
 
 namespace Sledge.Gui.Gtk.Viewports
 {
-    public abstract class ViewportBase : GLWidget, IViewport
+    public abstract class ViewportBase : GLWidget
     {
         public RenderContext RenderContext { get; set; }
         private Stopwatch _stopwatch;
@@ -264,7 +265,7 @@ namespace Sledge.Gui.Gtk.Viewports
                 OnRenderException(ex);
             }
         
-            var frame = new FrameInfo(_stopwatch.ElapsedMilliseconds);
+            var frame = new Frame(_stopwatch.ElapsedMilliseconds);
             ListenerDo(x => x.UpdateFrame(frame));
         
             LoadIdentity();
@@ -358,7 +359,7 @@ namespace Sledge.Gui.Gtk.Viewports
         {
             ListenerDo(x => x.PostRender());
         }
-
+        /*
         protected override bool OnScrollEvent(EventScroll evnt)
         {
             if (IsFocused)
@@ -456,7 +457,7 @@ namespace Sledge.Gui.Gtk.Viewports
                     evnt.State.HasFlag(ModifierType.Mod1Mask)), (l, v) => l.KeyUp(v));
             }
             return base.OnKeyReleaseEvent(evnt);
-        }
+        }*/
         
         public abstract Coordinate ScreenToWorld(Coordinate screen);
         public abstract Coordinate WorldToScreen(Coordinate world);

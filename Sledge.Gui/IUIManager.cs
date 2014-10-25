@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 using Sledge.Gui.Interfaces;
-using Sledge.Gui.Shell;
+using Sledge.Gui.Interfaces.Shell;
 
 namespace Sledge.Gui
 {

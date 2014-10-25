@@ -5,7 +5,7 @@ using System.Collections.Specialized;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using Sledge.Gui.Shell;
+using Sledge.Gui.Interfaces.Shell;
 
 namespace Sledge.Gui.WinForms.Shell
 {

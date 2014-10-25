@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Sledge.Gui.Structures;
 
 namespace Sledge.Gui.Interfaces
 {

@@ -2,11 +2,11 @@
 using OpenTK.Graphics.OpenGL;
 using Sledge.DataStructures.Geometric;
 using Sledge.Graphics;
-using Sledge.Gui.Viewports;
+using Sledge.Gui.Interfaces.Viewports;
 
 namespace Sledge.Gui.Gtk.Viewports
 {
-    public class Viewport : ViewportBase, IViewport3D
+    public class Viewport : ViewportBase
     {
         #region 3D Methods
 
