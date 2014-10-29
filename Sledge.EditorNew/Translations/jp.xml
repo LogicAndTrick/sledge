@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<language name="jp" parent="en" display-name="日本語" display-name-en="Japanese">
+    <group name="CommandGroup">
+        <string key="File" value="ファイル" />
+    </group>
+    <group name="Command">
+        <string key="File.New" value="新しい" />
+        <string key="File.Open" value="開く" />
+        <string key="File.Save" value="保存" />
+    </group>
+</language>

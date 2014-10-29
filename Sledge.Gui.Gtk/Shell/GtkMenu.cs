@@ -36,9 +36,9 @@ namespace Sledge.Gui.Gtk.Shell
             }
         }
 
-        public IMenuItem AddMenuItem(string identifier, string text)
+        public IMenuItem AddMenuItem(string key, string text = null)
         {
-            var item = new GtkMenuItem(identifier, text);
+            var item = new GtkMenuItem(key, text);
             Items.Add(item);
             item.Show();
             return item;

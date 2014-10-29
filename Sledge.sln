@@ -48,6 +48,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sledge.Gui.WinForms", "Sled
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sledge.Gui.Gtk", "Sledge.Gui.Gtk\Sledge.Gui.Gtk.csproj", "{86BDE9C5-9DBB-4FC5-907D-4695E72DBDCF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sledge.EditorNew", "Sledge.EditorNew\Sledge.EditorNew.csproj", "{B2DD59ED-C43D-4343-9247-68F828AFF8FC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -258,12 +260,19 @@ Global
 		{86BDE9C5-9DBB-4FC5-907D-4695E72DBDCF}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{86BDE9C5-9DBB-4FC5-907D-4695E72DBDCF}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{86BDE9C5-9DBB-4FC5-907D-4695E72DBDCF}.Release|x86.ActiveCfg = Release|Any CPU
+		{B2DD59ED-C43D-4343-9247-68F828AFF8FC}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{B2DD59ED-C43D-4343-9247-68F828AFF8FC}.Debug|Any CPU.Build.0 = Debug|x86
+		{B2DD59ED-C43D-4343-9247-68F828AFF8FC}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{B2DD59ED-C43D-4343-9247-68F828AFF8FC}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{B2DD59ED-C43D-4343-9247-68F828AFF8FC}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{B2DD59ED-C43D-4343-9247-68F828AFF8FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B2DD59ED-C43D-4343-9247-68F828AFF8FC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B2DD59ED-C43D-4343-9247-68F828AFF8FC}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{B2DD59ED-C43D-4343-9247-68F828AFF8FC}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{B2DD59ED-C43D-4343-9247-68F828AFF8FC}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(Performance) = preSolution
-		HasPerformanceSessions = true
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = Sledge.ModelViewer\Sledge.ModelViewer.csproj

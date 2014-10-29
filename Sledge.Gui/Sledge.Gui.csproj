@@ -76,6 +76,8 @@
     <Compile Include="Events\IMouseEvent.cs" />
     <Compile Include="Events\KeyboardEventHandler.cs" />
     <Compile Include="Events\MouseEventHandler.cs" />
+    <Compile Include="Resources\IStringProvider.cs" />
+    <Compile Include="Resources\PassthroughStringProvider.cs" />
     <Compile Include="Structures\ResizableTableConfiguration.cs" />
     <Compile Include="Models\CheckboxListItem.cs" />
     <Compile Include="Models\ComboBoxItem.cs" />

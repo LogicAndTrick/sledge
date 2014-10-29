@@ -13,7 +13,7 @@ namespace Sledge.Gui.Gtk.Shell
 {
     public class GtkMenuItem : ImageMenuItem, IMenuItem
     {
-        public string Identifier { get; set; }
+        public string TextKey { get; set; }
 
         public string Text
         {
@@ -21,7 +21,7 @@ namespace Sledge.Gui.Gtk.Shell
             set { _textLabel.TextWithMnemonic = value; }
         }
 
-        public Bitmap Icon
+        public System.Drawing.Image Icon
         {
             set
             {
@@ -48,9 +48,9 @@ namespace Sledge.Gui.Gtk.Shell
         private Menu _subMenu;
         private readonly AccelLabel _textLabel;
 
-        public GtkMenuItem(string identifier, string text)
+        public GtkMenuItem(string textKey, string text)
         {
-            Identifier = identifier;
+            TextKey = textKey;
             var list = new ObservableCollection<IMenuItem>();
             list.CollectionChanged += CollectionChanged;
             SubItems = list;
@@ -109,9 +109,9 @@ namespace Sledge.Gui.Gtk.Shell
             }
         }
 
-        public IMenuItem AddSubMenuItem(string identifier, string text)
+        public IMenuItem AddSubMenuItem(string key, string text = null)
         {
-            var item = new GtkMenuItem(identifier, text);
+            var item = new GtkMenuItem(key, text);
             SubItems.Add(item);
             item.Show();
             return item;

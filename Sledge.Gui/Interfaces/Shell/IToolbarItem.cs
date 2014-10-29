@@ -5,9 +5,9 @@ namespace Sledge.Gui.Interfaces.Shell
 {
     public interface IToolbarItem : IDisposable
     {
-        string Identifier { get; set; }
+        string TextKey { get; set; }
         string Text { get; set; }
-        Bitmap Icon { set; }
+        Image Icon { set; }
         event EventHandler Clicked;
     }
 }

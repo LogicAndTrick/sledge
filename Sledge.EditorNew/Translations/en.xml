@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<language name="en" display-name="English" display-name-en="English">
+    <group name="CommandGroup">
+        <string key="File" value="File" />
+    </group>
+    <group name="Command">
+        <string key="File.New" value="New" />
+        <string key="File.Open" value="Open" />
+        <string key="File.Save" value="Save" />
+    </group>
+</language>

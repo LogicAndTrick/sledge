@@ -6,6 +6,7 @@ using Sledge.Gui.Attributes;
 using Sledge.Gui.Gtk.Shell;
 using Sledge.Gui.Interfaces;
 using Sledge.Gui.Interfaces.Shell;
+using Sledge.Gui.Resources;
 
 namespace Sledge.Gui.Gtk
 {
@@ -18,6 +19,8 @@ namespace Sledge.Gui.Gtk
         {
             get { return _shell; }
         }
+
+        public IStringProvider StringProvider { get; set; }
 
         public GtkUIManager()
         {

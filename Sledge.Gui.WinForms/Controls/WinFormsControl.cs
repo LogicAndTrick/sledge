@@ -26,6 +26,7 @@ namespace Sledge.Gui.WinForms.Controls
         private WinFormsContainer _parent;
         private Control _control;
         private Size _preferredSize;
+        private string _textKey;
 
         public virtual Control Control
         {
@@ -57,10 +58,24 @@ namespace Sledge.Gui.WinForms.Controls
             get { return this; }
         }
 
+        public string TextKey
+        {
+            get { return _textKey; }
+            set
+            {
+                _textKey = value;
+                _control.Text = UIManager.Manager.StringProvider.Fetch(_textKey);
+            }
+        }
+
         public virtual string Text
         {
             get { return _control.Text; }
-            set { _control.Text = value; }
+            set
+            {
+                _control.Text = value;
+                _textKey = null;
+            }
         }
 
         private bool _bold;

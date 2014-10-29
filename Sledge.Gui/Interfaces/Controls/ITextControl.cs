@@ -4,6 +4,7 @@ namespace Sledge.Gui.Interfaces.Controls
 {
     public interface ITextControl : IControl
     {
+        string TextKey { get; set; }
         string Text { get; set; }
         int FontSize { get; }
         bool Bold { get; set; }

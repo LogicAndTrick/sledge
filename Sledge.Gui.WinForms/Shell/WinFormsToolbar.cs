@@ -36,7 +36,7 @@ namespace Sledge.Gui.WinForms.Shell
             }
         }
 
-        public IToolbarItem AddToolbarItem(string identifier, string text)
+        public IToolbarItem AddToolbarItem(string identifier, string text = null)
         {
             var item = new WinFormsToolbarItem(identifier, text);
             Items.Add(item);

@@ -36,9 +36,9 @@ namespace Sledge.Gui.WinForms.Shell
             }
         }
 
-        public IMenuItem AddMenuItem(string identifier, string text)
+        public IMenuItem AddMenuItem(string key, string text = null)
         {
-            var item = new WinFormsMenuItem(identifier, text);
+            var item = new WinFormsMenuItem(key, text);
             Items.Add(item);
             return item;
         }

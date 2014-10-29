@@ -11,8 +11,8 @@ namespace Sledge.Gui.WinForms.Shell
 {
     public class WinFormsMenuItem : ToolStripMenuItem, IMenuItem
     {
-        public string Identifier { get; set; }
-        public Bitmap Icon { set { Image = value; } }
+        public string TextKey { get; set; }
+        public Image Icon { set { Image = value; } }
         public IList<IMenuItem> SubItems { get; private set; }
         public event EventHandler Clicked
         {
@@ -20,10 +20,11 @@ namespace Sledge.Gui.WinForms.Shell
             remove { Click -= value; }
         }
 
-        public WinFormsMenuItem(string identifier, string text)
+        public WinFormsMenuItem(string textKey, string text)
         {
+            text = text ?? UIManager.Manager.StringProvider.Fetch(textKey);
             base.Text = text;
-            Identifier = identifier;
+            TextKey = textKey;
             var list = new ObservableCollection<IMenuItem>();
             list.CollectionChanged += CollectionChanged;
             SubItems = list;
@@ -48,9 +49,9 @@ namespace Sledge.Gui.WinForms.Shell
             }
         }
 
-        public IMenuItem AddSubMenuItem(string identifier, string text)
+        public IMenuItem AddSubMenuItem(string key, string text = null)
         {
-            var item = new WinFormsMenuItem(identifier, text);
+            var item = new WinFormsMenuItem(key, text);
             SubItems.Add(item);
             return item;
         }

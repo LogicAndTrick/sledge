@@ -6,6 +6,12 @@ namespace Sledge.Gui.Controls
 {
     public class TextControlBase<T> : ControlBase<T>, ITextControl where T : ITextControl
     {
+        public string TextKey
+        {
+            get { return Control.TextKey; }
+            set { Control.TextKey = value; }
+        }
+
         public string Text
         {
             get { return Control.Text; }

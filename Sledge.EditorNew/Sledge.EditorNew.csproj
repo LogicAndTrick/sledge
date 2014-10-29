@@ -1,0 +1,259 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{B2DD59ED-C43D-4343-9247-68F828AFF8FC}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Sledge.EditorNew</RootNamespace>
+    <AssemblyName>Sledge.EditorNew</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Bootstrap\Bootstrapper.cs" />
+    <Compile Include="Bootstrap\DefaultCommandGroups.cs" />
+    <Compile Include="Bootstrap\DefaultCommands.cs" />
+    <Compile Include="Commands\Command.cs" />
+    <Compile Include="Commands\CommandManager.cs" />
+    <Compile Include="Commands\DefaultCommandContexts.cs" />
+    <Compile Include="Commands\MediatorCommand.cs" />
+    <Compile Include="Language\Translate.cs" />
+    <Compile Include="Language\TranslationStringCollection.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UI\Menus\MenuManager.cs" />
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <None Include="Resources\MAPFiles.pdf" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Sledge.Common\Sledge.Common.csproj">
+      <Project>{5d414ac8-8b93-489f-9960-877923400fed}</Project>
+      <Name>Sledge.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Sledge.DataStructures\Sledge.DataStructures.csproj">
+      <Project>{26a974c9-e495-4fa3-8e87-1e00019d04f5}</Project>
+      <Name>Sledge.DataStructures</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Sledge.FileSystem\Sledge.FileSystem.csproj">
+      <Project>{1c2c012d-dba5-4c7f-994f-e3034ac60dcc}</Project>
+      <Name>Sledge.FileSystem</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Sledge.Graphics\Sledge.Graphics.csproj">
+      <Project>{614d4144-8920-4975-ac67-dbba5cb1eb43}</Project>
+      <Name>Sledge.Graphics</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Sledge.Gui.Gtk\Sledge.Gui.Gtk.csproj">
+      <Project>{86bde9c5-9dbb-4fc5-907d-4695e72dbdcf}</Project>
+      <Name>Sledge.Gui.Gtk</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Sledge.Gui.WinForms\Sledge.Gui.WinForms.csproj">
+      <Project>{6996a6ee-f6b8-4883-bc9e-14db6914b9f8}</Project>
+      <Name>Sledge.Gui.WinForms</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Sledge.Gui\Sledge.Gui.csproj">
+      <Project>{63e145e2-ba6e-403e-b650-acebb79469e4}</Project>
+      <Name>Sledge.Gui</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Sledge.Packages\Sledge.Packages.csproj">
+      <Project>{bb1af818-8cca-4bc8-a4a8-b7a0627b68dd}</Project>
+      <Name>Sledge.Packages</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Sledge.Providers\Sledge.Providers.csproj">
+      <Project>{c7bd4ac8-1f8d-4520-af2d-d279c0601ab4}</Project>
+      <Name>Sledge.Providers</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Sledge.QuickForms\Sledge.QuickForms.csproj">
+      <Project>{7fed88f3-717c-408a-85d9-28dd125db61a}</Project>
+      <Name>Sledge.QuickForms</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Sledge.Settings\Sledge.Settings.csproj">
+      <Project>{a79ff02f-3eaa-4ff1-a060-2e2ffe983ef3}</Project>
+      <Name>Sledge.Settings</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Resources\Arrow_Down.png" />
+    <Content Include="Resources\Arrow_Up.png" />
+    <Content Include="Resources\embedded_icons.txt" />
+    <Content Include="Resources\Menu_Align.png" />
+    <Content Include="Resources\Menu_AutosizeViews.png" />
+    <Content Include="Resources\Menu_Carve.png" />
+    <Content Include="Resources\Menu_CenterSelection2D.png" />
+    <Content Include="Resources\Menu_CenterSelection3D.png" />
+    <Content Include="Resources\Menu_CenterSelectionAll.png" />
+    <Content Include="Resources\Menu_CheckForProblems.png" />
+    <Content Include="Resources\Menu_ClearSelection.png" />
+    <Content Include="Resources\Menu_Close.png" />
+    <Content Include="Resources\Menu_Community.png" />
+    <Content Include="Resources\Menu_Copy.png" />
+    <Content Include="Resources\Menu_Cordon.png" />
+    <Content Include="Resources\Menu_Cut.png" />
+    <Content Include="Resources\Menu_Delete.png" />
+    <Content Include="Resources\Menu_EntityReport.png" />
+    <Content Include="Resources\Menu_Export.png" />
+    <Content Include="Resources\Menu_Flip.png" />
+    <Content Include="Resources\Menu_GoToBrushID.png" />
+    <Content Include="Resources\Menu_GoToCoordinates.png" />
+    <Content Include="Resources\Menu_Group.png" />
+    <Content Include="Resources\Menu_Help.png" />
+    <Content Include="Resources\Menu_HideNullTextures.png" />
+    <Content Include="Resources\Menu_HideSelected.png" />
+    <Content Include="Resources\Menu_HideUnselected.png" />
+    <Content Include="Resources\Menu_Hollow.png" />
+    <Content Include="Resources\Menu_IgnoreGrouping.png" />
+    <Content Include="Resources\Menu_LargerGrid.png" />
+    <Content Include="Resources\Menu_LoadPointfile.png" />
+    <Content Include="Resources\Menu_MapProperties.png" />
+    <Content Include="Resources\Menu_New.png" />
+    <Content Include="Resources\Menu_NewWindow.png" />
+    <Content Include="Resources\Menu_ObjectProperties.png" />
+    <Content Include="Resources\Menu_Open.png" />
+    <Content Include="Resources\Menu_Options.png" />
+    <Content Include="Resources\Menu_Paste.png" />
+    <Content Include="Resources\Menu_PasteSpecial.png" />
+    <Content Include="Resources\Menu_QuickLoadPointfile.png" />
+    <Content Include="Resources\Menu_Redo.png" />
+    <Content Include="Resources\Menu_ReplaceTextures.png" />
+    <Content Include="Resources\Menu_Run.png" />
+    <Content Include="Resources\Menu_Save.png" />
+    <Content Include="Resources\Menu_SaveAs.png" />
+    <Content Include="Resources\Menu_SelectAll.png" />
+    <Content Include="Resources\Menu_Show2DGrid.png" />
+    <Content Include="Resources\Menu_Show3DGrid.png" />
+    <Content Include="Resources\Menu_ShowBrushID.png" />
+    <Content Include="Resources\Menu_ShowHidden.png" />
+    <Content Include="Resources\Menu_ShowInformation.png" />
+    <Content Include="Resources\Menu_ShowLogicalTree.png" />
+    <Content Include="Resources\Menu_SmallerGrid.png" />
+    <Content Include="Resources\Menu_SnapSelection.png" />
+    <Content Include="Resources\Menu_SnapSelectionIndividual.png" />
+    <Content Include="Resources\Menu_SnapToGrid.png" />
+    <Content Include="Resources\Menu_TextureLock.png" />
+    <Content Include="Resources\Menu_TextureScalingLock.png" />
+    <Content Include="Resources\Menu_TieToEntity.png" />
+    <Content Include="Resources\Menu_TieToWorld.png" />
+    <Content Include="Resources\Menu_Transform.png" />
+    <Content Include="Resources\Menu_Undo.png" />
+    <Content Include="Resources\Menu_Ungroup.png" />
+    <Content Include="Resources\Menu_UnloadPointfile.png" />
+    <Content Include="Resources\Menu_Update.png" />
+    <Content Include="Resources\Menu_Website.png" />
+    <Content Include="Resources\Menu_WindowSettings.png" />
+    <Content Include="Resources\Tool_Brush.png" />
+    <Content Include="Resources\Tool_Clip.png" />
+    <Content Include="Resources\Tool_Cordon.png" />
+    <Content Include="Resources\Tool_Decal.png" />
+    <Content Include="Resources\Tool_Entity.png" />
+    <Content Include="Resources\Tool_Rotate.png" />
+    <Content Include="Resources\Tool_Skew.png" />
+    <Content Include="Resources\Tool_Transform.png" />
+    <Content Include="Resources\Tool_Translate.png" />
+    <Content Include="Resources\Tool_VM.png" />
+    <Content Include="Translations\en-us.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Translations\jp.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Translations\en.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <None Include="Resources\Tool_Zoom.png" />
+    <None Include="Resources\Tool_Texture.png" />
+    <None Include="Resources\Tool_Test.png" />
+    <None Include="Resources\Tool_Select.png" />
+    <None Include="Resources\Tool_Camera.png" />
+    <None Include="Resources\Sledge_Large.png" />
+    <None Include="Resources\Sledge.ico" />
+    <None Include="Resources\Logo\Sledge.ico" />
+    <None Include="Resources\Logo\Sledge Trace.png" />
+    <None Include="Resources\Logo\Sledge Trace Deus.png" />
+    <None Include="Resources\Logo\Sledge Render.png" />
+    <None Include="Resources\Logo\Sledge Render 64.png" />
+    <None Include="Resources\Logo\Sledge Render 48.png" />
+    <None Include="Resources\Logo\Sledge Render 32.png" />
+    <None Include="Resources\Logo\Sledge Render 256.png" />
+    <None Include="Resources\Logo\Sledge Render 16.png" />
+    <None Include="Resources\Logo\Sledge Render 128.png" />
+    <None Include="Resources\Logo\Logo.svg" />
+    <None Include="Resources\Cursor_Rotate.cur" />
+    <None Include="Resources\Button_ColourPicker.png" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

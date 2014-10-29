@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<language name="en-us" parent="en" display-name="English (US)" display-name-en="English (US)">
+    <group name="CommandGroup">
+    </group>
+    <group name="Command">
+    </group>
+</language>

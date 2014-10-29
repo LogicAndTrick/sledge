@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using Sledge.Gui.Attributes;
 using Sledge.Gui.Interfaces;
 using Sledge.Gui.Interfaces.Shell;
+using Sledge.Gui.Resources;
 using Sledge.Gui.WinForms.Shell;
 
 namespace Sledge.Gui.WinForms
@@ -16,10 +17,17 @@ namespace Sledge.Gui.WinForms
     public class WinFormsUIManager : IUIManager
     {
         private readonly WinFormsShell _shell;
+        private IStringProvider _stringProvider = new PassthroughStringProvider();
 
         public IShell Shell
         {
             get { return _shell; }
+        }
+
+        public IStringProvider StringProvider
+        {
+            get { return _stringProvider; }
+            set { _stringProvider = value ?? new PassthroughStringProvider(); }
         }
 
         public WinFormsUIManager()

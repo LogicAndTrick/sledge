@@ -9,7 +9,7 @@ namespace Sledge.Gui.Gtk.Shell
 {
     public class GtkToolbarItem : ToolButton, IToolbarItem
     {
-        public string Identifier { get; set; }
+        public string TextKey { get; set; }
 
         public string Text
         {
@@ -17,7 +17,7 @@ namespace Sledge.Gui.Gtk.Shell
             set { Label = value; }
         }
 
-        public Bitmap Icon
+        public System.Drawing.Image Icon
         {
             set
             {
@@ -41,9 +41,9 @@ namespace Sledge.Gui.Gtk.Shell
 
         public new  event EventHandler Clicked;
 
-        public GtkToolbarItem(string identifier, string text) : base(null, text)
+        public GtkToolbarItem(string textKey, string text) : base(null, text)
         {
-            Identifier = identifier;
+            TextKey = textKey;
         }
 
         protected override void OnClicked()

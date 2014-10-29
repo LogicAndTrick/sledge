@@ -37,7 +37,7 @@ namespace Sledge.Gui.Gtk.Shell
             }
         }
 
-        public IToolbarItem AddToolbarItem(string identifier, string text)
+        public IToolbarItem AddToolbarItem(string identifier, string text = null)
         {
             var item = new GtkToolbarItem(identifier, text);
             Items.Add(item);
