@@ -7,6 +7,7 @@ using System.Threading;
 using System.Windows.Forms;
 using Sledge.Gui.Attributes;
 using Sledge.Gui.Interfaces;
+using Sledge.Gui.Interfaces.Dialogs;
 using Sledge.Gui.Interfaces.Shell;
 using Sledge.Gui.Resources;
 using Sledge.Gui.WinForms.Shell;
@@ -72,6 +73,11 @@ namespace Sledge.Gui.WinForms
         public T Construct<T>() where T : IControl
         {
             return (T) Activator.CreateInstance(_implementations[typeof (T)]);
+        }
+
+        public T ConstructDialog<T>() where T : IDialog
+        {
+            return (T) Activator.CreateInstance(_implementations[typeof(T)]);
         }
 
         private static void RegisterHandlers()

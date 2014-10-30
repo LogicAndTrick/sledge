@@ -1,6 +1,7 @@
 ﻿using Sledge.EditorNew.Commands;
 using Sledge.EditorNew.Language;
 using Sledge.EditorNew.Properties;
+using Sledge.EditorNew.UI;
 using Sledge.EditorNew.UI.Menus;
 using Sledge.Gui;
 using Sledge.Settings;
@@ -15,6 +16,7 @@ namespace Sledge.EditorNew.Bootstrap
             Translate.SetLanguage("en");
             UIManager.Manager.StringProvider = Translate.StringProvider;
 
+            Shell.Bootstrap();
             CommandBootstrapper.Bootstrap();
             MenuBootstrapper.Bootstrap();
         }

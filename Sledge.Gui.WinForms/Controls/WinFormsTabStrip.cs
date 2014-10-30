@@ -79,6 +79,18 @@ namespace Sledge.Gui.WinForms.Controls
             _pages = new Dictionary<ITab, TabPage>();
             Tabs.CollectionChanged += CollectionChanged;
             _tab.RequestClose += RequestClose;
+            _tab.SelectedIndexChanged += SelectedIndexChanged;
+        }
+
+        private void SelectedIndexChanged(object sender, EventArgs e)
+        {
+            _selectedIndex = _tab.SelectedIndex;
+            _selectedTab = _tab.SelectedIndex >= 0 ? Tabs[_tab.SelectedIndex] : null;
+            foreach (var tab in Tabs)
+            {
+                tab.Selected = tab == _selectedTab;
+            }
+            OnTabSelected();
         }
 
         private void CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)

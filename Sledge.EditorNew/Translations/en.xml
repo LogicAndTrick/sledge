@@ -8,4 +8,7 @@
         <string key="File.Open" value="Open" />
         <string key="File.Save" value="Save" />
     </group>
+  <group name="Shell">
+    <string key="Window.Title" value="Sledge Editor"/>
+  </group>
 </language>

@@ -53,6 +53,7 @@
     <Compile Include="Bindings\BindingDirection.cs" />
     <Compile Include="Bindings\IBindingTarget.cs" />
     <Compile Include="Containers\BoxBase.cs" />
+    <Compile Include="Containers\ResizableTable.cs" />
     <Compile Include="Controls\Button.cs" />
     <Compile Include="Containers\CellBase.cs" />
     <Compile Include="Controls\CheckBox.cs" />
@@ -76,6 +77,7 @@
     <Compile Include="Events\IMouseEvent.cs" />
     <Compile Include="Events\KeyboardEventHandler.cs" />
     <Compile Include="Events\MouseEventHandler.cs" />
+    <Compile Include="Interfaces\Dialogs\IDialog.cs" />
     <Compile Include="Resources\IStringProvider.cs" />
     <Compile Include="Resources\PassthroughStringProvider.cs" />
     <Compile Include="Structures\ResizableTableConfiguration.cs" />

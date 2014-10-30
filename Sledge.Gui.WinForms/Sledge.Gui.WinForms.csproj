@@ -46,6 +46,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Dialogs\WinFormsFileOpenDialog.cs" />
     <Compile Include="WinFormsOpenTkKeyMap.cs" />
     <Compile Include="Controls\WinFormsViewport.cs" />
     <Compile Include="Controls\WinFormsTabStrip.cs" />
