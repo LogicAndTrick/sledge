@@ -33,13 +33,13 @@ namespace Sledge.EditorNew.UI
             _shell = shell;
             Build();
 
-            Mediator.Subscribe(EditorMediator.DocumentOpened, this);
-            Mediator.Subscribe(EditorMediator.DocumentClosed, this);
-            Mediator.Subscribe(EditorMediator.DocumentActivated, this);
-            Mediator.Subscribe(EditorMediator.DocumentAllClosed, this);
-
-            Mediator.Subscribe(HotkeysMediator.FileOpen, this);
-            Mediator.Subscribe(HotkeysMediator.FileNew, this);
+            // Mediator.Subscribe(EditorMediator.DocumentOpened, this);
+            // Mediator.Subscribe(EditorMediator.DocumentClosed, this);
+            // Mediator.Subscribe(EditorMediator.DocumentActivated, this);
+            // Mediator.Subscribe(EditorMediator.DocumentAllClosed, this);
+            // 
+            // Mediator.Subscribe(HotkeysMediator.FileOpen, this);
+            // Mediator.Subscribe(HotkeysMediator.FileNew, this);
 
             DocumentManager.Add(new DummyDocument("Test 1!"));
             DocumentManager.Add(new DummyDocument("Test 2!"));
@@ -50,6 +50,7 @@ namespace Sledge.EditorNew.UI
         {
             var vbox = new VerticalBox();
 
+            /*
             _tabs = new TabStrip();
             _tabs.TabCloseRequested += TabCloseRequested;
             _tabs.TabSelected += TabSelected;
@@ -58,6 +59,11 @@ namespace Sledge.EditorNew.UI
 
             vbox.Add(_tabs);
             vbox.Add(_table, true);
+            */
+
+            var co = new Collapsible {Text = "Blah Blah"};
+            vbox.Add(co);
+            co.Set(new Label{TextKey = "TEST!"});
 
             _shell.Container.Set(vbox);
             UpdateTitle();

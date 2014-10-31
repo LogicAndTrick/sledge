@@ -25,7 +25,7 @@ namespace Sledge.Gui.WinForms.Shell
             }
         }
 
-        protected WinFormsCellContainerWrapper ContainerWrapper;
+        protected WinFormsCell ContainerWrapper;
         private bool _autoSize;
 
         public string Title
@@ -63,7 +63,7 @@ namespace Sledge.Gui.WinForms.Shell
         {
             var panel = new Panel {Dock = DockStyle.Fill};
             Form.Controls.Add(panel);
-            ContainerWrapper = new WinFormsCellContainerWrapper(panel);
+            ContainerWrapper = new WinFormsCell(panel);
             ContainerWrapper.PreferredSizeChanged += ContainerPreferredSizeChanged;
         }
 

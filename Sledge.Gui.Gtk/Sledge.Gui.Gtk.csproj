@@ -38,6 +38,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\OpenTK.dll</HintPath>
     </Reference>
+    <Reference Include="pango-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
@@ -48,11 +49,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Containers\GtkCollapsible.cs" />
+    <Compile Include="Containers\GtkHorizontalBox.cs" />
+    <Compile Include="Containers\GtkVerticalBox.cs" />
+    <Compile Include="Containers\GtkContainer.cs" />
+    <Compile Include="Containers\GtkCell.cs" />
+    <Compile Include="Controls\GtkControl.cs" />
+    <Compile Include="Controls\GtkLabel.cs" />
     <Compile Include="GtkUIManager.cs" />
     <Compile Include="Shell\GtkMenu.cs" />
     <Compile Include="Shell\GtkMenuItem.cs" />
     <Compile Include="Shell\GtkToolbar.cs" />
     <Compile Include="Shell\GtkToolbarItem.cs" />
+    <Compile Include="Shell\GtkWindow.cs" />
     <Compile Include="Viewports\GLWidget.cs" />
     <Compile Include="Viewports\GtkOpenTkKeyMap.cs" />
     <Compile Include="Shell\GtkShell.cs" />

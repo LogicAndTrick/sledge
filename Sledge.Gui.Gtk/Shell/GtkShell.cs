@@ -1,20 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using Gdk;
 using Gtk;
-using Sledge.Gui.Bindings;
-using Sledge.Gui.Events;
+using Sledge.Gui.Gtk.Containers;
 using Sledge.Gui.Interfaces;
-using Sledge.Gui.Interfaces.Containers;
 using Sledge.Gui.Interfaces.Shell;
-using Action = System.Action;
-using Size = Sledge.Gui.Structures.Size;
-using Window = Gtk.Window;
-using WindowType = Gtk.WindowType;
 
 namespace Sledge.Gui.Gtk.Shell
 {
-    public class GtkShell : Window, IShell
+    public class GtkShell : GtkWindow, IShell
     {
         private GtkMenu _menu;
         private GtkToolbar _toolbar;
@@ -29,148 +21,49 @@ namespace Sledge.Gui.Gtk.Shell
             get { return _toolbar; }
         }
 
-        public bool AutoSize { get; set; }
+        private readonly VBox _container;
 
-        public ICell Container
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
-
-        private VBox _container;
-        private Widget _main;
-
-        public GtkShell() : base((WindowType) WindowType.Toplevel)
+        public GtkShell()
         {
             Title = "";
             _container = new VBox { Spacing = 1 };
-            Add(_container);
-            _main = new VBox();
-            _container.PackEnd(_main);
+            Window.Add(_container);
+            _container.PackEnd(ContainerWrapper.Control);
             _container.ShowAll();
         }
 
-        public object BindingSource { get; set; }
-        public Binding Bind(string property, string sourceProperty, BindingDirection direction = BindingDirection.Auto, Dictionary<string, object> meta = null)
+        protected override void CreateWrapper()
         {
-            throw new NotImplementedException();
+            ContainerWrapper = new GtkCell();
+            ContainerWrapper.PreferredSizeChanged += ContainerPreferredSizeChanged;
         }
 
-        public void UnbindAll()
+        private void ContainerPreferredSizeChanged(object sender, EventArgs e)
         {
-            throw new NotImplementedException();
+            OnPreferredSizeChanged();
         }
-
-        public void Unbind(string property)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IContainer Parent { get; private set; }
-        public IControl Implementation { get { return this; } }
-
-        public bool Enabled { get; set; }
-        public new bool Focused { get; private set; }
-        public Size ActualSize { get; private set; }
-        public Size PreferredSize { get; set; }
-
-        public event EventHandler ActualSizeChanged;
-        public event EventHandler PreferredSizeChanged;
-        public event MouseEventHandler MouseDown;
-        public event MouseEventHandler MouseUp;
-        public event MouseEventHandler MouseWheel;
-        public event MouseEventHandler MouseMove;
-        public event MouseEventHandler MouseClick;
-        public event EventHandler MouseDoubleClick;
-        public event EventHandler MouseEnter;
-        public event EventHandler MouseLeave;
-
-        protected virtual void OnActualSizeChanged()
-        {
-            if (ActualSizeChanged != null)
-            {
-                ActualSizeChanged(this, EventArgs.Empty);
-            }
-        }
-
-        protected virtual void OnPreferredSizeChanged()
-        {
-            if (PreferredSizeChanged != null)
-            {
-                PreferredSizeChanged(this, EventArgs.Empty);
-            }
-        }
-
-        public void Open()
-        {
-            Show();
-        }
-
-        public void Close()
-        {
-            Hide();
-        }
-
-        public event EventHandler Click
-        {
-            add { throw new NotImplementedException(); }
-            remove { throw new NotImplementedException(); }
-        }
-
-        public event EventHandler WindowLoaded;
-
-        public event EventHandler<HandledEventArgs> WindowClosing;
-
-        public event EventHandler WindowClosed;
 
         public void AddMenu()
         {
-            _container.Remove(_main);
+            _container.Remove(ContainerWrapper.Control);
             _menu = new GtkMenu();
             _container.PackStart(_menu, false, false, 0);
             _menu.Show();
-            _container.PackEnd(_main, true, true, 0);
+            _container.PackEnd(ContainerWrapper.Control, true, true, 0);
         }
 
         public void AddToolbar()
         {
-            _container.Remove(_main);
+            _container.Remove(ContainerWrapper.Control);
             _toolbar = new GtkToolbar();
             _container.PackStart(_toolbar, false, false, 0);
             _toolbar.Show();
-            _container.PackEnd(_main, true, true, 0);
+            _container.PackEnd(ContainerWrapper.Control, true, true, 0);
         }
 
         public void AddSidebarPanel(IControl panel, SidebarPanelLocation defaultLocation)
         {
             throw new NotImplementedException();
-        }
-
-        protected override bool OnDeleteEvent(Event evnt)
-        {
-            if (WindowClosing != null)
-            {
-                var hea = new HandledEventArgs();
-                WindowClosing(this, hea);
-                if (hea.Handled) return true;
-            }
-            Application.Quit();
-            if (WindowClosed != null)
-            {
-                WindowClosed(this, EventArgs.Empty);
-            }
-            return base.OnDeleteEvent(evnt);
-        }
-
-        protected override void OnRealized()
-        {
-            if (WindowLoaded != null)
-            {
-                WindowLoaded(this, EventArgs.Empty);
-            }
-            base.OnRealized();
         }
     }
 }

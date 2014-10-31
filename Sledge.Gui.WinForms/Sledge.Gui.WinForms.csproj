@@ -58,7 +58,7 @@
     <Compile Include="Controls\WinFormsTreeView.cs" />
     <Compile Include="WinFormsExtensions.cs" />
     <Compile Include="Controls\WinFormsButton.cs" />
-    <Compile Include="Containers\WinFormsCellContainerWrapper.cs" />
+    <Compile Include="Containers\WinFormsCell.cs" />
     <Compile Include="Containers\WinFormsContainer.cs" />
     <Compile Include="Controls\WinFormsControl.cs" />
     <Compile Include="Containers\WinFormsHorizontalBox.cs" />

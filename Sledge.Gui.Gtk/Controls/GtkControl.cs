@@ -6,36 +6,35 @@ using System.ComponentModel;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using System.Windows.Forms;
+using Gtk;
+using Sledge.Gui.Gtk.Containers;
 using Sledge.Gui.Interfaces;
-using Sledge.Gui.Interfaces.Controls;
-using Sledge.Gui.WinForms.Containers;
+using Action = System.Action;
 using Binding = Sledge.Gui.Bindings.Binding;
 using BindingDirection = Sledge.Gui.Bindings.BindingDirection;
 using IContainer = Sledge.Gui.Interfaces.IContainer;
 using MouseEventHandler = Sledge.Gui.Events.MouseEventHandler;
 using Size = Sledge.Gui.Structures.Size;
 
-namespace Sledge.Gui.WinForms.Controls
+namespace Sledge.Gui.Gtk.Controls
 {
-    public abstract class WinFormsControl : ITextControl
+    public abstract class GtkControl : IControl
     {
-        private WinFormsContainer _parent;
-        private Control _control;
+        private GtkContainer _parent;
+        private Widget _control;
         private Size _preferredSize;
         private string _textKey;
 
-        public virtual Control Control
+        public virtual Widget Control
         {
             get { return _control; }
             private set
             {
-                if (_control != null) _control.Resize -= ControlResized;
+                if (_control != null) _control.SizeAllocated -= ControlResized;
                 _control = value;
                 if (_control != null)
                 {
-                    _control.Resize += ControlResized;
-                    _control.AutoSize = false;
+                    _control.SizeAllocated += ControlResized;
                 }
             }
         }
@@ -45,7 +44,7 @@ namespace Sledge.Gui.WinForms.Controls
             get { return _parent; }
             internal set
             {
-                _parent = (WinFormsContainer)value;
+                _parent = (GtkContainer)value;
                 OnBindingSourceChanged();
             }
         }
@@ -54,7 +53,7 @@ namespace Sledge.Gui.WinForms.Controls
         {
             get { return this; }
         }
-
+        /*
         public string TextKey
         {
             get { return _textKey; }
@@ -73,43 +72,21 @@ namespace Sledge.Gui.WinForms.Controls
                 _control.Text = value;
                 _textKey = null;
             }
-        }
-
-        private bool _bold;
-        private bool _italic;
-
-        public virtual int FontSize
-        {
-            get { return (int) _control.Font.GetHeight(); }
-        }
-
-        public virtual bool Bold
-        {
-            get { return _bold; }
-            set { _bold = value; } // todo
-        }
-
-        public virtual bool Italic
-        {
-            get { return _italic; }
-            set { _italic = value; } // todo
-        }
+        }*/
 
         public virtual bool Enabled
         {
-            get { return _control.Enabled; }
-            set { _control.Enabled = value; }
+            get { return _control.Sensitive; }
+            set { _control.Sensitive = value; }
         }
 
         public virtual bool Focused
         {
-            get { return _control.Focused; }
+            get { return _control.HasFocus; }
         }
 
-        protected WinFormsControl(Control control)
+        protected GtkControl(Widget control)
         {
-            control.AutoSize = false;
-            control.MinimumSize = control.Size = System.Drawing.Size.Empty;
             Control = control;
         }
 
@@ -134,7 +111,7 @@ namespace Sledge.Gui.WinForms.Controls
             if (bs == null) return;
 
             var prop = Control.GetType().GetProperty(binding.TargetProperty);
-            if (prop != null) ApplyWinFormsBinding(binding, bs);
+            // if (prop != null) ApplyWinFormsBinding(binding, bs);
 
             var ev = GetType().GetEvent(binding.TargetProperty);
             if (ev != null) ApplyEventBinding(binding, ev, bs);
@@ -142,7 +119,7 @@ namespace Sledge.Gui.WinForms.Controls
 
         protected virtual void RemoveBinding(Binding binding)
         {
-            RemoveWinFormsBinding(binding);
+            // RemoveWinFormsBinding(binding);
             RemoveEventBinding(binding);
             RemoveListBinding(binding);
         }
@@ -188,6 +165,7 @@ namespace Sledge.Gui.WinForms.Controls
             }
         }
 
+        /*
         protected virtual System.Windows.Forms.Binding ApplyWinFormsBinding(Binding binding, object bindingSource, string targetPropertyOverride = null)
         {
             var dir = binding.Direction.HasFlag(BindingDirection.Auto) ? BindingDirection.Dual : binding.Direction;
@@ -204,6 +182,7 @@ namespace Sledge.Gui.WinForms.Controls
             if (!binding.ContainsKey("WinFormsBinding")) return;
             Control.DataBindings.Remove((System.Windows.Forms.Binding)binding["WinFormsBinding"]);
         }
+        */
 
         protected virtual void ApplyEventBinding(Binding binding, EventInfo ev, object bindingSource)
         {
@@ -344,28 +323,29 @@ namespace Sledge.Gui.WinForms.Controls
         #endregion
 
         #region Events
+        /*
         public virtual event MouseEventHandler MouseDown
         {
-            add { _control.MouseDown += ConvertDelegate(value, true); }
-            remove { _control.MouseDown -= ConvertDelegate(value, false); }
+            add { _control.ButtonPressEvent += ConvertDelegate(value, true); }
+            remove { _control.ButtonPressEvent -= ConvertDelegate(value, false); }
         }
 
         public virtual event MouseEventHandler MouseUp
         {
-            add { _control.MouseUp += ConvertDelegate(value, true); }
-            remove { _control.MouseUp -= ConvertDelegate(value, false); }
+            add { _control.ButtonReleaseEvent += ConvertDelegate(value, true); }
+            remove { _control.ButtonReleaseEvent -= ConvertDelegate(value, false); }
         }
 
         public virtual event MouseEventHandler MouseWheel
         {
-            add { _control.MouseWheel += ConvertDelegate(value, true); }
-            remove { _control.MouseWheel -= ConvertDelegate(value, false); }
+            add { _control.ScrollEvent += ConvertDelegate(value, true); }
+            remove { _control.ScrollEvent -= ConvertDelegate(value, false); }
         }
 
         public virtual event MouseEventHandler MouseMove
         {
-            add { _control.MouseMove += ConvertDelegate(value, true); }
-            remove { _control.MouseMove -= ConvertDelegate(value, false); }
+            add { _control.MotionNotifyEvent += ConvertDelegate(value, true); }
+            remove { _control.MotionNotifyEvent -= ConvertDelegate(value, false); }
         }
 
         public virtual event MouseEventHandler MouseClick
@@ -378,38 +358,33 @@ namespace Sledge.Gui.WinForms.Controls
         {
             add { _control.DoubleClick += value; }
             remove { _control.DoubleClick -= value; }
-        }
+        }*/
+
+        public event MouseEventHandler MouseDown;
+        public event MouseEventHandler MouseUp;
+        public event MouseEventHandler MouseWheel;
+        public event MouseEventHandler MouseMove;
+        public event MouseEventHandler MouseClick;
+        public event EventHandler MouseDoubleClick;
 
         public virtual event EventHandler MouseEnter
         {
-            add { _control.MouseEnter += value; }
-            remove { _control.MouseEnter -= value; }
+            add { _control.EnterNotifyEvent += ConvertDelegate<EnterNotifyEventHandler>(value, x => (o, args) => x(o, args), true); }
+            remove { _control.EnterNotifyEvent -= ConvertDelegate<EnterNotifyEventHandler>(value, x => (o, args) => x(o, args), false); }
         }
 
         public virtual event EventHandler MouseLeave
         {
-            add { _control.MouseLeave += value; }
-            remove { _control.MouseLeave -= value; }
-        }
-
-        public virtual event EventHandler Click
-        {
-            add { _control.Click += value; }
-            remove { _control.Click -= value; }
-        }
-
-        public virtual event EventHandler TextChanged
-        {
-            add { _control.TextChanged += value; }
-            remove { _control.TextChanged -= value; }
+            add { _control.LeaveNotifyEvent += ConvertDelegate<LeaveNotifyEventHandler>(value, x => (o, args) => x(o, EventArgs.Empty), true); }
+            remove { _control.LeaveNotifyEvent -= ConvertDelegate<LeaveNotifyEventHandler>(value, x => (o, args) => x(o, EventArgs.Empty), false); }
         }
 
         private readonly Dictionary<Delegate, Delegate> _delegateCache = new Dictionary<Delegate, Delegate>();
 
-        protected virtual System.Windows.Forms.MouseEventHandler ConvertDelegate(MouseEventHandler value, bool adding)
+        protected virtual T ConvertDelegate<T>(EventHandler value, Func<EventHandler, T> converter, bool adding)
         {
-            if (!_delegateCache.ContainsKey(value)) _delegateCache.Add(value, value.ToMouseEventHandler(this));
-            var val = (System.Windows.Forms.MouseEventHandler) _delegateCache[value];
+            if (!_delegateCache.ContainsKey(value)) _delegateCache.Add(value, (Delegate) Convert.ChangeType(converter(value), typeof(Delegate)));
+            var val = (T) Convert.ChangeType(_delegateCache[value], typeof(T));
             if (!adding) _delegateCache.Remove(value);
             return val;
         }
@@ -417,7 +392,15 @@ namespace Sledge.Gui.WinForms.Controls
         #endregion
 
         #region Size
-        protected abstract Size DefaultPreferredSize { get; }
+
+        protected virtual Size DefaultPreferredSize
+        {
+            get
+            {
+                var sr = Control.SizeRequest();
+                return new Size(sr.Width, sr.Height);
+            }
+        }
 
         public virtual Size PreferredSize
         {
@@ -441,7 +424,7 @@ namespace Sledge.Gui.WinForms.Controls
 
         public virtual Size ActualSize
         {
-            get { return new Size(Control.Width, Control.Height); }
+            get { return new Size(Control.Allocation.Width, Control.Allocation.Height); }
         }
 
         public event EventHandler ActualSizeChanged;

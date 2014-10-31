@@ -4,9 +4,14 @@ using Sledge.Gui.Interfaces.Containers;
 
 namespace Sledge.Gui.WinForms.Containers
 {
-    public class WinFormsCellContainerWrapper : WinFormsContainer, ICell
+    public class WinFormsCell : WinFormsContainer, ICell
     {
-        public WinFormsCellContainerWrapper(Control container) : base(container)
+        public WinFormsCell() : base(new Panel())
+        {
+            
+        }
+
+        internal WinFormsCell(Control container) : base(container)
         {
         }
 

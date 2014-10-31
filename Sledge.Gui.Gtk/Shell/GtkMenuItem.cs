@@ -50,6 +50,7 @@ namespace Sledge.Gui.Gtk.Shell
 
         public GtkMenuItem(string textKey, string text)
         {
+            text = text ?? UIManager.Manager.StringProvider.Fetch(textKey);
             TextKey = textKey;
             var list = new ObservableCollection<IMenuItem>();
             list.CollectionChanged += CollectionChanged;

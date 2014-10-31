@@ -36,6 +36,7 @@ namespace Sledge.Gui
         public static void Initialise(string implementation)
         {
             if (String.IsNullOrEmpty(implementation)) implementation = DetectImplementation(Platform);
+            if (implementation == "GTK") implementation = "Gtk";
             var assembly = Assembly.Load("Sledge.Gui." + implementation);
             var manager = assembly.GetTypes().First(x => typeof (IUIManager).IsAssignableFrom(x));
             Manager = (IUIManager) Activator.CreateInstance(manager);

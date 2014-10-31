@@ -43,7 +43,9 @@ namespace Sledge.Gui.Gtk.Shell
 
         public GtkToolbarItem(string textKey, string text) : base(null, text)
         {
+            text = text ?? UIManager.Manager.StringProvider.Fetch(textKey);
             TextKey = textKey;
+            Text = text;
         }
 
         protected override void OnClicked()

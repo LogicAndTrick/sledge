@@ -37,7 +37,7 @@ namespace Sledge.Gui.WinForms.Shell
             Form.Controls.Add(_container);
             var dockFill = new WinFormsDockedPanel { Dock = DockStyle.Fill };
             _container.ContentPanel.Controls.Add(dockFill);
-            ContainerWrapper = new WinFormsCellContainerWrapper(dockFill);
+            ContainerWrapper = new WinFormsCell(dockFill);
             ContainerWrapper.PreferredSizeChanged += ContainerPreferredSizeChanged;
         }
 
