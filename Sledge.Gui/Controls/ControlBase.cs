@@ -26,7 +26,12 @@ namespace Sledge.Gui.Controls
 
         protected ControlBase()
         {
-            Control = UIManager.Manager.Construct<T>();
+            Control = CreateControl();
+        }
+
+        protected virtual T CreateControl()
+        {
+            return UIManager.Manager.Construct<T>();
         }
 
         public object BindingSource

@@ -78,8 +78,14 @@
     <Compile Include="Events\KeyboardEventHandler.cs" />
     <Compile Include="Events\MouseEventHandler.cs" />
     <Compile Include="Interfaces\Dialogs\IDialog.cs" />
+    <Compile Include="QuickForms\Items\IQuickFormItem.cs" />
+    <Compile Include="QuickForms\Items\QuickFormLabel.cs" />
+    <Compile Include="QuickForms\Items\QuickFormOkCancel.cs" />
+    <Compile Include="QuickForms\Items\QuickFormTextBox.cs" />
+    <Compile Include="QuickForms\QuickForm.cs" />
     <Compile Include="Resources\IStringProvider.cs" />
     <Compile Include="Resources\PassthroughStringProvider.cs" />
+    <Compile Include="Shell\Window.cs" />
     <Compile Include="Structures\ResizableTableConfiguration.cs" />
     <Compile Include="Models\CheckboxListItem.cs" />
     <Compile Include="Models\ComboBoxItem.cs" />

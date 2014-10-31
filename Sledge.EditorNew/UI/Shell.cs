@@ -15,6 +15,7 @@ using Sledge.Gui.Interfaces.Dialogs;
 using Sledge.Gui.Interfaces.Models;
 using Sledge.Gui.Interfaces.Shell;
 using Sledge.Gui.Models;
+using Sledge.Gui.QuickForms;
 using Sledge.Settings;
 using Sledge.Settings.Models;
 
@@ -38,6 +39,7 @@ namespace Sledge.EditorNew.UI
             Mediator.Subscribe(EditorMediator.DocumentAllClosed, this);
 
             Mediator.Subscribe(HotkeysMediator.FileOpen, this);
+            Mediator.Subscribe(HotkeysMediator.FileNew, this);
 
             DocumentManager.Add(new DummyDocument("Test 1!"));
             DocumentManager.Add(new DummyDocument("Test 2!"));
@@ -94,6 +96,12 @@ namespace Sledge.EditorNew.UI
         private void DocumentAllClosed()
         {
             UpdateTitle();
+        }
+
+        private void FileNew()
+        {
+            var qf = new QuickForm("Test Form").Label("This is a label").TextBox("Text Box", "Blah").OkCancel();
+            qf.Open();
         }
 
         private void FileOpen()
