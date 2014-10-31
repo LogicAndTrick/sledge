@@ -32,10 +32,10 @@ namespace Sledge.Gui.Gtk.Containers
 
         protected override void AppendChild(int index, GtkControl child)
         {
+            base.AppendChild(index, child);
             var meta = Metadata[child];
             var fill = meta.Get<bool>("Fill");
-            _vbox.SetChildPacking(child.Control, fill, fill, 0, PackType.Start);
-            base.AppendChild(index, child);
+            _vbox.SetChildPacking(child.Control, fill, true, 0, PackType.Start);
         }
 
         protected override void CalculateLayout()

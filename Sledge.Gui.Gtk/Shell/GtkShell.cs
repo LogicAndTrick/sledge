@@ -28,8 +28,11 @@ namespace Sledge.Gui.Gtk.Shell
             Title = "";
             _container = new VBox { Spacing = 1 };
             Window.Add(_container);
+            Window.SetSizeRequest(800, 600);
             _container.PackEnd(ContainerWrapper.Control);
             _container.ShowAll();
+
+            WindowClosed += (sender, args) => Application.Quit();
         }
 
         protected override void CreateWrapper()

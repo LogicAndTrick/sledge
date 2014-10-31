@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using Gdk;
 using Gtk;
 using Sledge.Gui.Events;
@@ -10,7 +11,7 @@ using Window = Gtk.Window;
 
 namespace Sledge.Gui.Gtk.Shell
 {
-    public class GtkWindow : GtkControl, IWindow
+    public class GtkWindow : GtkContainer, IWindow
     {
         protected GtkCell ContainerWrapper;
 
@@ -41,15 +42,17 @@ namespace Sledge.Gui.Gtk.Shell
         public GtkWindow() : base(new Window(""))
         {
             Window = (Window) Control;
-            Window.SetSizeRequest(800, 600);
             CreateWrapper();
+            Children.Add(ContainerWrapper);
             Window.SizeAllocated += OnResize;
             Window.DeleteEvent += (o, args) => args.RetVal = OnDeleteEvent(args.Event);
         }
 
         protected virtual void CreateWrapper()
         {
-            ContainerWrapper = new GtkCell(Window);
+            ContainerWrapper = new GtkCell();
+            Window.Add(ContainerWrapper.Control);
+            Window.ShowAll();
             ContainerWrapper.PreferredSizeChanged += ContainerPreferredSizeChanged;
         }
 
@@ -67,8 +70,9 @@ namespace Sledge.Gui.Gtk.Shell
         {
             if (_autoSize)
             {
-                var ps = PreferredSize;
+                var ps = ContainerWrapper.PreferredSize;
                 Window.SetSizeRequest(ps.Width, ps.Height);
+                Window.Resize(ps.Width, ps.Height);
             }
             base.OnPreferredSizeChanged();
         }
@@ -76,6 +80,7 @@ namespace Sledge.Gui.Gtk.Shell
         public void Open()
         {
             Window.Show();
+            OnPreferredSizeChanged();
         }
 
         public void Close()
@@ -101,12 +106,16 @@ namespace Sledge.Gui.Gtk.Shell
                 WindowClosing(this, hea);
                 if (hea.Handled) return true;
             }
-            Application.Quit();
             if (WindowClosed != null)
             {
                 WindowClosed(this, EventArgs.Empty);
             }
             return false;
+        }
+
+        protected override void CalculateLayout()
+        {
+            
         }
     }
 }

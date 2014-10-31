@@ -27,24 +27,6 @@ namespace Sledge.Gui.Gtk.Containers
             get { return Children; }
         }
 
-        protected override Size DefaultPreferredSize
-        {
-            get
-            {
-                var width = 0;
-                var height = 0;
-                foreach (var child in Children)
-                {
-                    var ps = child.PreferredSize;
-                    width = Math.Max(width, ps.Width);
-                    height = Math.Max(height, ps.Height);
-                }
-                width += Margin.Left + Margin.Right;
-                height += Margin.Top + Margin.Bottom;
-                return new Size(width, height);
-            }
-        }
-
         public Padding Margin
         {
             get

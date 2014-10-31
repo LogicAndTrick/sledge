@@ -39,7 +39,7 @@ namespace Sledge.EditorNew.UI
             // Mediator.Subscribe(EditorMediator.DocumentAllClosed, this);
             // 
             // Mediator.Subscribe(HotkeysMediator.FileOpen, this);
-            // Mediator.Subscribe(HotkeysMediator.FileNew, this);
+            Mediator.Subscribe(HotkeysMediator.FileNew, this);
 
             DocumentManager.Add(new DummyDocument("Test 1!"));
             DocumentManager.Add(new DummyDocument("Test 2!"));

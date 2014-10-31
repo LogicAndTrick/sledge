@@ -12,7 +12,7 @@ namespace Sledge.EditorNew
         [STAThread]
         static void Main()
         {
-            string preferredUiImplementation = null; // "WinForms"
+            string preferredUiImplementation = "GTK"; // "WinForms"
             // preferredUiImplementation = Sledge.Settings.Something.PreferredUiImplementation
             UIManager.Initialise(preferredUiImplementation);
             UIManager.Manager.Shell.WindowLoaded += (sender, args) => Bootstrapper.Bootstrap();

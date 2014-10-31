@@ -22,7 +22,6 @@ namespace Sledge.Gui.Gtk.Controls
     {
         private GtkContainer _parent;
         private Widget _control;
-        private Size _preferredSize;
         private string _textKey;
 
         public virtual Widget Control
@@ -396,7 +395,7 @@ namespace Sledge.Gui.Gtk.Controls
         protected virtual Size DefaultPreferredSize
         {
             get
-            {
+            { // todo maybe?
                 var sr = Control.SizeRequest();
                 return new Size(sr.Width, sr.Height);
             }
@@ -406,13 +405,12 @@ namespace Sledge.Gui.Gtk.Controls
         {
             get
             {
-                var ps = _preferredSize;
-                var dps = DefaultPreferredSize;
-                return new Size(ps.Width == 0 ? dps.Width : ps.Width, ps.Height == 0 ? dps.Height : ps.Height);
+                var sr = Control.SizeRequest();
+                return new Size(sr.Width, sr.Height);
             }
             set
             {
-                _preferredSize = value;
+                Control.SetSizeRequest(value.Width, value.Height);
                 OnPreferredSizeChanged();
             }
         }

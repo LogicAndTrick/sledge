@@ -54,8 +54,11 @@
     <Compile Include="Containers\GtkVerticalBox.cs" />
     <Compile Include="Containers\GtkContainer.cs" />
     <Compile Include="Containers\GtkCell.cs" />
+    <Compile Include="Controls\GtkButton.cs" />
     <Compile Include="Controls\GtkControl.cs" />
     <Compile Include="Controls\GtkLabel.cs" />
+    <Compile Include="Controls\GtkTextBox.cs" />
+    <Compile Include="Controls\GtkTextControl.cs" />
     <Compile Include="GtkUIManager.cs" />
     <Compile Include="Shell\GtkMenu.cs" />
     <Compile Include="Shell\GtkMenuItem.cs" />
