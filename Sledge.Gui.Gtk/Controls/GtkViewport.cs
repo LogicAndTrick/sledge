@@ -1,24 +1,27 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Windows.Forms;
-using OpenTK;
+using Gdk;
+using GLib;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 using Sledge.Gui.Attributes;
 using Sledge.Gui.Events;
+using Sledge.Gui.Gtk.Controls.Implementations;
+using Sledge.Gui.Gtk.Viewports;
 using Sledge.Gui.Interfaces.Controls;
 using Sledge.Gui.Structures;
 
-namespace Sledge.Gui.WinForms.Controls
+namespace Sledge.Gui.Gtk.Controls
 {
-    [ControlImplementation("WinForms")]
-    public class WinFormsViewport : WinFormsControl, IViewport
+    [ControlImplementation("GTK")]
+    public class GtkViewport : GtkControl, IViewport
     {
         private readonly Viewport _viewport;
 
-        public WinFormsViewport() : base(new Viewport())
+        public GtkViewport() : base(new Viewport())
         {
             _viewport = (Viewport) Control;
+            
         }
 
         public event FrameEventHandler Update
@@ -54,20 +57,16 @@ namespace Sledge.Gui.WinForms.Controls
             get { return _viewport.IsFocused; }
         }
 
-        protected override Size DefaultPreferredSize
+        private class Viewport : GLWidget
         {
-            get { return new Size(100, 100); }
-        }
-
-        private class Viewport : GLControl
-        {
-            private Timer UpdateTimer { get; set; }
             private readonly Stopwatch _stopwatch;
             public bool IsFocused { get; private set; }
             private int UnfocusedUpdateCounter { get; set; }
+            private uint _timer;
 
             #region Events
-            public new event FrameEventHandler Update;
+
+            public event FrameEventHandler Update;
             public event FrameEventHandler Render;
             public event RenderExceptionEventHandler RenderException;
 
@@ -95,20 +94,34 @@ namespace Sledge.Gui.WinForms.Controls
                 }
                 RenderException(this, new Exception(msg, ex));
             }
+
             #endregion
 
             public Viewport() : base(new GraphicsMode(GraphicsMode.Default.ColorFormat, 24))
             {
                 _stopwatch = new Stopwatch();
-                UpdateTimer = new Timer { Interval = 1 };
-                UpdateTimer.Tick += (sender, e) => UpdateFrame();
+                CanFocus = true;
+            }
+
+            public override void Dispose(bool disposing)
+            {
+                if (disposing)
+                {
+                    Source.Remove(_timer);
+                    _stopwatch.Stop();
+                }
+                base.Dispose(disposing);
             }
 
             public void Run()
             {
-                MakeCurrent();
                 _stopwatch.Start();
-                UpdateTimer.Start();
+                _timer = Timeout.Add(10, delegate
+                {
+                    UpdateFrame();
+                    return true;
+                });
+                Idle.Add(IdleHandlerMethod);
             }
 
             public void UpdateNextFrame()
@@ -117,43 +130,62 @@ namespace Sledge.Gui.WinForms.Controls
             }
 
             #region Overrides
-            protected override void Dispose(bool disposing)
+
+            protected override void OnInitialized()
             {
-                if (disposing)
+                AddEvents((int) (EventMask.AllEventsMask));
+                base.OnInitialized();
+            }
+
+            // Resize event = configure
+            protected override bool OnConfigureEvent(EventConfigure evnt)
+            {
+                if (IsInitialised)
                 {
-                    UpdateTimer.Dispose();
-                    _stopwatch.Stop();
+                    MakeCurrent();
+                    SetViewport();
+                    UnmakeCurrent();
                 }
-                base.Dispose(disposing);
+                return base.OnConfigureEvent(evnt);
             }
 
-            protected override void OnResize(EventArgs e)
+            protected override bool OnFocusInEvent(EventFocus evnt)
             {
-                MakeCurrent();
-                SetViewport();
-                base.OnResize(e);
+                HasFocus = true;
+                return base.OnFocusInEvent(evnt);
             }
 
-            protected override void OnMouseEnter(EventArgs e)
+            protected override bool OnFocusOutEvent(EventFocus evnt)
             {
-                Focus();
-                IsFocused = true;
+                HasFocus = false;
+                return base.OnFocusOutEvent(evnt);
             }
 
-            protected override void OnMouseLeave(EventArgs e)
-            {
-                IsFocused = false;
-            }
             #endregion
 
             #region Update loop
+
+            private bool IdleHandlerMethod()
+            {
+                UpdateFrame();
+                return true;
+            }
+
+            protected override void OnRenderFrame()
+            {
+                UpdateFrame();
+                base.OnRenderFrame();
+            }
+
             private void UpdateFrame()
             {
+                if (!IsInitialised) return;
+
                 if (!IsFocused) // Change this if things start to get choppy
                 {
                     UnfocusedUpdateCounter++;
                     // Update every 10th frame
-                    if (UnfocusedUpdateCounter % 10 != 0)
+                    if (UnfocusedUpdateCounter % 100 != 0)
                     {
                         return;
                     }
@@ -162,10 +194,7 @@ namespace Sledge.Gui.WinForms.Controls
 
                 try
                 {
-                    if (!Context.IsCurrent)
-                    {
-                        MakeCurrent();
-                    }
+                    MakeCurrent();
 
                     var frame = new Frame(_stopwatch.ElapsedMilliseconds);
                     OnUpdate(frame);
@@ -195,11 +224,12 @@ namespace Sledge.Gui.WinForms.Controls
                 GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
             }
 
-            private void SetViewport()
+            protected virtual void SetViewport()
             {
-                GL.Viewport(0, 0, Width, Height);
-                GL.Scissor(0, 0, Width, Height);
+                GL.Viewport(0, 0, Allocation.Width, Allocation.Height);
+                GL.Scissor(0, 0, Allocation.Width, Allocation.Height);
             }
+
             #endregion
         }
     }

@@ -72,6 +72,7 @@
     <Compile Include="Controls\TreeView.cs" />
     <Compile Include="Containers\VerticalBox.cs" />
     <Compile Include="Containers\VerticalScrollContainer.cs" />
+    <Compile Include="Controls\Viewport.cs" />
     <Compile Include="Events\IEvent.cs" />
     <Compile Include="Events\IKeyboardEvent.cs" />
     <Compile Include="Events\IMouseEvent.cs" />

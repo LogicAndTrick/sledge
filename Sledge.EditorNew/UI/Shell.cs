@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
+using OpenTK.Graphics.OpenGL;
 using Sledge.Common.Mediator;
 using Sledge.EditorNew.Bootstrap;
 using Sledge.EditorNew.Documents;
@@ -16,6 +18,7 @@ using Sledge.Gui.Interfaces.Models;
 using Sledge.Gui.Interfaces.Shell;
 using Sledge.Gui.Models;
 using Sledge.Gui.QuickForms;
+using Sledge.Gui.Structures;
 using Sledge.Settings;
 using Sledge.Settings.Models;
 
@@ -44,11 +47,6 @@ namespace Sledge.EditorNew.UI
             DocumentManager.Add(new DummyDocument("Test 1!"));
             DocumentManager.Add(new DummyDocument("Test 2!"));
             DocumentManager.AddAndSwitch(new DummyDocument("Test 3!"));
-
-            for (int i = 0; i < 20; i++)
-            {
-                DocumentManager.Add(new DummyDocument("Tab " + i));
-            }
         }
 
         private void Build()
@@ -66,12 +64,34 @@ namespace Sledge.EditorNew.UI
             vbox.Add(_table, true);
             */
 
-            var co = new Collapsible {Text = "Blah Blah"};
-            vbox.Add(co);
-            co.Set(new Label{TextKey = "TEST!"});
+            var viewport = new Viewport();
+            viewport.Render += Render;
+            vbox.Add(viewport, true);
 
             _shell.Container.Set(vbox);
             UpdateTitle();
+
+            viewport.Run();
+        }
+
+        private void Render(object sender, Frame frame)
+        {
+            GL.ClearColor(Color.Black);
+            GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+            GL.Ortho(0, 80, 0, 80, -1, 1);
+
+            GL.Begin(PrimitiveType.Triangles);
+
+            var cols = new [] { Color.Red, Color.Orange, Color.Yellow, Color.Green, Color.Blue, Color.Indigo, Color.Violet };
+            for (var i = 0; i < cols.Length; i++)
+            {
+                GL.Color3(cols[i]);
+                GL.Vertex2(10 * i, 10 * i);
+                GL.Vertex2(10 * (i + 1), 10 * i);
+                GL.Vertex2(10 * (i + 1), 10 * (i + 1));
+            }
+
+            GL.End();
         }
 
         private void TabSelected(object sender, ITab tab)

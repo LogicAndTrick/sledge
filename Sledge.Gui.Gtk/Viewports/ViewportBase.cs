@@ -5,6 +5,7 @@ using GLib;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 using Sledge.Gui.Events;
+using Sledge.Gui.Gtk.Controls.Implementations;
 using Frame = Sledge.Gui.Structures.Frame;
 using FrameEventHandler = Sledge.Gui.Events.FrameEventHandler;
 using Timeout = GLib.Timeout;

@@ -20,18 +20,21 @@ Usage:
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Security;
 using System.Threading;
 using Gtk;
 using OpenTK;
 using OpenTK.Graphics;
+using OpenTK.Graphics.ES10;
 using OpenTK.Platform;
+using OpenTK.Platform.MacOS;
 
-namespace Sledge.Gui.Gtk.Viewports
+namespace Sledge.Gui.Gtk.Controls.Implementations
 {
 	[ToolboxItem(true)]
-	public class GLWidget : DrawingArea, IDisposable
+	public class GLWidget : EventBox, IDisposable
 	{
 		IGraphicsContext graphicsContext;
 		static int graphicsContextCount;
@@ -181,10 +184,25 @@ namespace Sledge.Gui.Gtk.Viewports
 				}
 				else if (Configuration.RunningOnMacOS)
 				{
-					IntPtr windowHandle = gdk_x11_drawable_get_xid(GdkWindow.Handle);
-					bool ownHandle = true;
-					bool isControl = true;
-					windowInfo = OpenTK.Platform.Utilities.CreateMacOSCarbonWindowInfo(windowHandle, ownHandle, isControl);
+                    // this.GdkWindow.Handle
+                    // IntPtr windowHandle = gdk_x11_drawable_get_xid(GdkWindow.Handle);
+                    IntPtr windowHandle = gdk_quartz_window_get_nswindow(GdkWindow.Handle);
+
+                    //var nsBox = Class.Get("NSBox");
+				    //var box = Cocoa.SendIntPtr(Cocoa.SendIntPtr(nsBox, Selector.Alloc), Selector.Get("initWithFrame:"), new RectangleF(Allocation.X, Allocation.Y, Allocation.Width, Allocation.Height));
+				    // var frame = Cocoa.SendIntPtr(box, Selector.Get("frame"));
+				    //var wrap = gtk_ns_view_new(box);
+				    //var widget = new Widget(wrap);
+                    //this.Add(widget);
+                    // uhh? dunno.
+
+
+                    //IntPtr num2 = Cocoa.SendIntPtr(Cocoa.SendIntPtr(CocoaContext.NSOpenGLContext, Selector.Alloc), Selector.Get("initWithFormat:shareContext:"), num1, shareContextRef);
+
+                    //IntPtr viewHandle = gdk_quartz_window_get_nsview(GdkWindow.Handle);
+					//windowInfo = OpenTK.Platform.Utilities.CreateMacOSWindowInfo(windowHandle, box);
+                    // windowInfo = OpenTK.Platform.Utilities.CreateMacOSCarbonWindowInfo(windowHandle, false, true);
+                    // graphicsContext = new AglContext(graphicsMode, windowInfo, GraphicsContext.CurrentContext, () => Allocation.X, () => Allocation.Y); 
 				}
 				else if (Configuration.RunningOnX11)
 				{
@@ -209,10 +227,12 @@ namespace Sledge.Gui.Gtk.Viewports
 					windowInfo = OpenTK.Platform.Utilities.CreateX11WindowInfo(display, screen, windowHandle, rootWindow, visualInfo);
 					XFree(visualInfo);
 				}
-				else throw new PlatformNotSupportedException();
+                else throw new PlatformNotSupportedException();
+                return true;
 
 				// GraphicsContext
-				graphicsContext = new GraphicsContext(graphicsMode, windowInfo, GlVersionMajor, GlVersionMinor, graphicsContextFlags);
+				if (graphicsContext == null) graphicsContext = new GraphicsContext(graphicsMode, windowInfo, GlVersionMajor, GlVersionMinor, graphicsContextFlags);
+
 				graphicsContext.MakeCurrent(windowInfo);
 
 				if (GraphicsContext.ShareContexts)
@@ -351,6 +371,14 @@ namespace Sledge.Gui.Gtk.Viewports
 		/// <returns> The X Display of the GdkDisplay. </returns>
         [SuppressUnmanagedCodeSecurity, DllImport(linux_libgdk_x11_name, CallingConvention = CallingConvention.Cdecl)]
 		static extern IntPtr gdk_x11_display_get_xdisplay(IntPtr gdkDisplay);
+
+
+        [SuppressUnmanagedCodeSecurity, DllImport("libgdk-quartz-2.0.dylib", CallingConvention = CallingConvention.Cdecl)]
+        static extern IntPtr gdk_quartz_window_get_nswindow(IntPtr gdkDisplay);
+        [SuppressUnmanagedCodeSecurity, DllImport("libgdk-quartz-2.0.dylib", CallingConvention = CallingConvention.Cdecl)]
+        static extern IntPtr gdk_quartz_window_get_nsview(IntPtr gdkDisplay);
+        [SuppressUnmanagedCodeSecurity, DllImport("libgtk-quartz-2.0", CallingConvention = CallingConvention.Cdecl)]
+        extern static IntPtr gtk_ns_view_new(IntPtr nsview);
 
 		IntPtr GetVisualInfo(IntPtr display)
 		{

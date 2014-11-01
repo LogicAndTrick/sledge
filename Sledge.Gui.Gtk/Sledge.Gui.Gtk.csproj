@@ -20,6 +20,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -61,13 +62,34 @@
     <Compile Include="Controls\GtkTabStrip.cs" />
     <Compile Include="Controls\GtkTextBox.cs" />
     <Compile Include="Controls\GtkTextControl.cs" />
+    <Compile Include="Controls\GtkViewport.cs" />
+    <Compile Include="Controls\Implementations\Agl.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Controls\Implementations\AglContext.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Controls\Implementations\AglGraphicsMode.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Controls\Implementations\Carbon.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Controls\Implementations\Class.cs" />
+    <Compile Include="Controls\Implementations\Cocoa.cs" />
+    <Compile Include="Controls\Implementations\NS.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Controls\Implementations\NSBitmapFormat.cs" />
+    <Compile Include="Controls\Implementations\NSFloat.cs" />
+    <Compile Include="Controls\Implementations\Selector.cs" />
     <Compile Include="GtkUIManager.cs" />
     <Compile Include="Shell\GtkMenu.cs" />
     <Compile Include="Shell\GtkMenuItem.cs" />
     <Compile Include="Shell\GtkToolbar.cs" />
     <Compile Include="Shell\GtkToolbarItem.cs" />
     <Compile Include="Shell\GtkWindow.cs" />
-    <Compile Include="Viewports\GLWidget.cs" />
+    <Compile Include="Controls\Implementations\GLWidget.cs" />
     <Compile Include="Viewports\GtkOpenTkKeyMap.cs" />
     <Compile Include="Shell\GtkShell.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

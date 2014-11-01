@@ -1,7 +1,9 @@
-﻿using Sledge.Gui.Events;
+﻿using Sledge.Gui.Attributes;
+using Sledge.Gui.Events;
 
 namespace Sledge.Gui.Interfaces.Controls
 {
+    [ControlInterface]
     public interface IViewport : IControl
     {
         event FrameEventHandler Update;
