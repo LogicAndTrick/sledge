@@ -33,10 +33,10 @@ namespace Sledge.EditorNew.UI
             _shell = shell;
             Build();
 
-            // Mediator.Subscribe(EditorMediator.DocumentOpened, this);
-            // Mediator.Subscribe(EditorMediator.DocumentClosed, this);
-            // Mediator.Subscribe(EditorMediator.DocumentActivated, this);
-            // Mediator.Subscribe(EditorMediator.DocumentAllClosed, this);
+            Mediator.Subscribe(EditorMediator.DocumentOpened, this);
+            Mediator.Subscribe(EditorMediator.DocumentClosed, this);
+            Mediator.Subscribe(EditorMediator.DocumentActivated, this);
+            Mediator.Subscribe(EditorMediator.DocumentAllClosed, this);
             // 
             // Mediator.Subscribe(HotkeysMediator.FileOpen, this);
             Mediator.Subscribe(HotkeysMediator.FileNew, this);
@@ -44,20 +44,25 @@ namespace Sledge.EditorNew.UI
             DocumentManager.Add(new DummyDocument("Test 1!"));
             DocumentManager.Add(new DummyDocument("Test 2!"));
             DocumentManager.AddAndSwitch(new DummyDocument("Test 3!"));
+
+            for (int i = 0; i < 20; i++)
+            {
+                DocumentManager.Add(new DummyDocument("Tab " + i));
+            }
         }
 
         private void Build()
         {
             var vbox = new VerticalBox();
 
-            /*
+            
             _tabs = new TabStrip();
             _tabs.TabCloseRequested += TabCloseRequested;
             _tabs.TabSelected += TabSelected;
-
-            _table = new ResizableTable();
-
             vbox.Add(_tabs);
+
+            /*_table = new ResizableTable();
+
             vbox.Add(_table, true);
             */
 

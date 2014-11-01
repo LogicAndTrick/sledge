@@ -25,18 +25,4 @@ namespace Sledge.Gui.Interfaces.Shell
     {
         
     }
-
-    public interface ITabStrip : IDisposable
-    {
-        TabStripItem ActiveTab { get; set; }
-        IList<TabStripItem> Tabs { get; }
-        event EventHandler TabSelected;
-    }
-
-    public class TabStripItem
-    {
-        public string Identifier { get; set; }
-        public string Text { get; set; }
-        public bool Dirty { get; set; }
-    }
 }

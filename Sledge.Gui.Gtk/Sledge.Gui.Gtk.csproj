@@ -34,6 +34,7 @@
     <Reference Include="gdk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f, processorArchitecture=MSIL" />
     <Reference Include="glib-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f, processorArchitecture=MSIL" />
     <Reference Include="gtk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f, processorArchitecture=MSIL" />
+    <Reference Include="Mono.Cairo, Version=4.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL" />
     <Reference Include="OpenTK, Version=1.1.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\OpenTK.dll</HintPath>
@@ -57,6 +58,7 @@
     <Compile Include="Controls\GtkButton.cs" />
     <Compile Include="Controls\GtkControl.cs" />
     <Compile Include="Controls\GtkLabel.cs" />
+    <Compile Include="Controls\GtkTabStrip.cs" />
     <Compile Include="Controls\GtkTextBox.cs" />
     <Compile Include="Controls\GtkTextControl.cs" />
     <Compile Include="GtkUIManager.cs" />
