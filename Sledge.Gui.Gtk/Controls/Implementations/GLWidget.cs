@@ -228,7 +228,6 @@ namespace Sledge.Gui.Gtk.Controls.Implementations
 					XFree(visualInfo);
 				}
                 else throw new PlatformNotSupportedException();
-                return true;
 
 				// GraphicsContext
 				if (graphicsContext == null) graphicsContext = new GraphicsContext(graphicsMode, windowInfo, GlVersionMajor, GlVersionMinor, graphicsContextFlags);
