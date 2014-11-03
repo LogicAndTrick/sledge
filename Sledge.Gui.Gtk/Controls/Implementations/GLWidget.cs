@@ -184,9 +184,10 @@ namespace Sledge.Gui.Gtk.Controls.Implementations
 				}
 				else if (Configuration.RunningOnMacOS)
 				{
+                    throw new PlatformNotSupportedException("OpenGL on GTK/OSX is too hard :(");
                     // this.GdkWindow.Handle
                     // IntPtr windowHandle = gdk_x11_drawable_get_xid(GdkWindow.Handle);
-                    IntPtr windowHandle = gdk_quartz_window_get_nswindow(GdkWindow.Handle);
+                    // IntPtr windowHandle = gdk_quartz_window_get_nswindow(GdkWindow.Handle);
 
                     //var nsBox = Class.Get("NSBox");
 				    //var box = Cocoa.SendIntPtr(Cocoa.SendIntPtr(nsBox, Selector.Alloc), Selector.Get("initWithFrame:"), new RectangleF(Allocation.X, Allocation.Y, Allocation.Width, Allocation.Height));

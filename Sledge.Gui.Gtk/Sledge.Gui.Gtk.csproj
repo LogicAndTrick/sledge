@@ -63,26 +63,6 @@
     <Compile Include="Controls\GtkTextBox.cs" />
     <Compile Include="Controls\GtkTextControl.cs" />
     <Compile Include="Controls\GtkViewport.cs" />
-    <Compile Include="Controls\Implementations\Agl.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Controls\Implementations\AglContext.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Controls\Implementations\AglGraphicsMode.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Controls\Implementations\Carbon.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Controls\Implementations\Class.cs" />
-    <Compile Include="Controls\Implementations\Cocoa.cs" />
-    <Compile Include="Controls\Implementations\NS.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Controls\Implementations\NSBitmapFormat.cs" />
-    <Compile Include="Controls\Implementations\NSFloat.cs" />
-    <Compile Include="Controls\Implementations\Selector.cs" />
     <Compile Include="GtkUIManager.cs" />
     <Compile Include="Shell\GtkMenu.cs" />
     <Compile Include="Shell\GtkMenuItem.cs" />
