@@ -150,24 +150,6 @@
     <Compile Include="Events\ControlEvent.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="_temp\IViewport2D.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="_temp\IViewport3D.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="_temp\IViewportEventListener.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="_temp\ViewDirection.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="_temp\ViewportEvent.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="_temp\ViewType.cs">
-      <SubType>Code</SubType>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Sledge.Common\Sledge.Common.csproj">

@@ -9,8 +9,10 @@ namespace Sledge.Gui.Interfaces.Shell
         string TextKey { get; set; }
         string Text { get; set; }
         Image Icon { set; }
+        bool IsActive { get; set; }
         IList<IMenuItem> SubItems { get; }
         event EventHandler Clicked;
         IMenuItem AddSubMenuItem(string key, string text = null);
+        void AddSeparator();
     }
 }

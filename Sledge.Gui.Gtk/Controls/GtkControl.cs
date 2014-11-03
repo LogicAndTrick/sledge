@@ -444,5 +444,10 @@ namespace Sledge.Gui.Gtk.Controls
             }
         }
         #endregion
+
+        public void Dispose()
+        {
+            Control.Dispose();
+        }
     }
 }

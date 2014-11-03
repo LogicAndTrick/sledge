@@ -144,6 +144,13 @@ namespace Sledge.Gui.WinForms.Controls
             {
                 IsFocused = false;
             }
+
+            protected override bool IsInputKey(Keys keyData)
+            {
+                // http://www.opentk.com/node/1192
+                // Force all keys to be passed to the regular key events
+                return true;
+            }
             #endregion
 
             #region Update loop

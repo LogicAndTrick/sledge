@@ -1,9 +1,10 @@
 using System;
 using OpenTK.Input;
 using Sledge.DataStructures.Geometric;
+using Sledge.Gui.Events;
 using Sledge.Gui.Interfaces.Controls;
 
-namespace Sledge.Gui.Interfaces.Viewports
+namespace Sledge.EditorNew.UI.Viewports
 {
     public class ViewportEvent : EventArgs
     {
@@ -39,42 +40,14 @@ namespace Sledge.Gui.Interfaces.Viewports
             Sender = sender;
         }
 
-        public ViewportEvent(IViewport sender, double x, double y)
+        public ViewportEvent(IViewport sender, IMouseEvent e)
         {
             Sender = sender;
-            X = (int)x;
-            Y = (int)y;
+            X = e.X;
+            Y = e.Y;
             Location = new Coordinate(X, Y, 0);
-        }
-
-        public ViewportEvent(IViewport sender, double x, double y, int delta)
-            : this(sender, x, y)
-        {
-            Delta = delta;
-        }
-
-        public ViewportEvent(IViewport sender, double x, double y, uint mouseButton)
-            : this(sender, x, y)
-        {
-            switch (mouseButton)
-            {
-                case 1:
-                    Button = MouseButton.Left;
-                    break;
-                case 2:
-                    Button = MouseButton.Middle;
-                    break;
-                case 3:
-                    Button = MouseButton.Right;
-                    break;
-                case 4:
-                    Button = MouseButton.Button1;
-                    break;
-                case 5:
-                    Button = MouseButton.Button2;
-                    break;
-
-            }
+            Delta = e.Delta;
+            Button = e.Button;
         }
 
         public ViewportEvent(IViewport sender, Key key, bool control, bool shift, bool alt)

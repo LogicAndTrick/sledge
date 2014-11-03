@@ -1,12 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <language name="en" display-name="English" display-name-en="English">
-    <group name="CommandGroup">
+    <group name="MenuGroup">
         <string key="File" value="File" />
     </group>
     <group name="Command">
         <string key="File.New" value="New" />
         <string key="File.Open" value="Open" />
+        <string key="File.Close" value="Close" />
         <string key="File.Save" value="Save" />
+        <string key="File.SaveAs" value="Save As..." />
+        <string key="File.Export" value="Export" />
+        <string key="File.Run" value="Run..." />
+        <string key="File.Exit" value="Exit" />
     </group>
   <group name="Shell">
     <string key="Window.Title" value="Sledge Editor"/>

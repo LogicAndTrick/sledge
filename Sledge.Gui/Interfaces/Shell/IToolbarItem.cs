@@ -8,6 +8,7 @@ namespace Sledge.Gui.Interfaces.Shell
         string TextKey { get; set; }
         string Text { get; set; }
         Image Icon { set; }
+        bool IsActive { get; set; }
         event EventHandler Clicked;
     }
 }

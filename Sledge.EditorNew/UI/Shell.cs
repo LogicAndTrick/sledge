@@ -9,6 +9,7 @@ using Sledge.Common.Mediator;
 using Sledge.EditorNew.Bootstrap;
 using Sledge.EditorNew.Documents;
 using Sledge.EditorNew.Language;
+using Sledge.EditorNew.UI.Viewports;
 using Sledge.Gui;
 using Sledge.Gui.Containers;
 using Sledge.Gui.Controls;
@@ -31,6 +32,11 @@ namespace Sledge.EditorNew.UI
         private TabStrip _tabs;
         private ResizableTable _table;
 
+        public static void Bootstrap()
+        {
+            _instance = new Shell(UIManager.Manager.Shell);
+        }
+
         private Shell(IShell shell)
         {
             _shell = shell;
@@ -52,46 +58,23 @@ namespace Sledge.EditorNew.UI
         private void Build()
         {
             var vbox = new VerticalBox();
-
             
             _tabs = new TabStrip();
             _tabs.TabCloseRequested += TabCloseRequested;
             _tabs.TabSelected += TabSelected;
             vbox.Add(_tabs);
 
-            /*_table = new ResizableTable();
+            //_table = new ResizableTable();
 
-            vbox.Add(_table, true);
-            */
+            //vbox.Add(_table, true);
 
-            var viewport = new Viewport();
-            viewport.Render += Render;
-            vbox.Add(viewport, true);
+            //var viewport = new MapViewport(ViewDirection.Top);
+            //_table.Insert(0, 0, viewport);
 
             _shell.Container.Set(vbox);
             UpdateTitle();
 
-            viewport.Run();
-        }
-
-        private void Render(object sender, Frame frame)
-        {
-            GL.ClearColor(Color.Black);
-            GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-            GL.Ortho(0, 80, 0, 80, -1, 1);
-
-            GL.Begin(PrimitiveType.Triangles);
-
-            var cols = new [] { Color.Red, Color.Orange, Color.Yellow, Color.Green, Color.Blue, Color.Indigo, Color.Violet };
-            for (var i = 0; i < cols.Length; i++)
-            {
-                GL.Color3(cols[i]);
-                GL.Vertex2(10 * i, 10 * i);
-                GL.Vertex2(10 * (i + 1), 10 * i);
-                GL.Vertex2(10 * (i + 1), 10 * (i + 1));
-            }
-
-            GL.End();
+            //viewport.Run();
         }
 
         private void TabSelected(object sender, ITab tab)
@@ -153,11 +136,6 @@ namespace Sledge.EditorNew.UI
                 str += " - " + DocumentManager.CurrentDocument.Text;
             }
             _shell.Title = str;
-        }
-
-        public static void Bootstrap()
-        {
-            _instance = new Shell(UIManager.Manager.Shell);
         }
 
         public void Notify(string message, object data)

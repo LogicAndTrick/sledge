@@ -5,7 +5,7 @@ using Sledge.Gui.Structures;
 
 namespace Sledge.Gui.Interfaces
 {
-    public interface IControl : IBindingTarget
+    public interface IControl : IBindingTarget, IDisposable
     {
         IContainer Parent { get; }
         IControl Implementation { get; }

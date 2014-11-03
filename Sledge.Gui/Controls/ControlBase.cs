@@ -26,6 +26,11 @@ namespace Sledge.Gui.Controls
             Control = CreateControl();
         }
 
+        public virtual void Dispose()
+        {
+            Control.Dispose();
+        }
+
         protected virtual T CreateControl()
         {
             return UIManager.Manager.Construct<T>();

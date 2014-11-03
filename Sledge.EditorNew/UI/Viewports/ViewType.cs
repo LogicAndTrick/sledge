@@ -1,4 +1,4 @@
-﻿namespace Sledge.Gui.Interfaces.Viewports
+﻿namespace Sledge.EditorNew.UI.Viewports
 {
     public enum ViewType
     {

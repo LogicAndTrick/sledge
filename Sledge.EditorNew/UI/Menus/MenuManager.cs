@@ -1,18 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using Sledge.EditorNew.Commands;
-using Sledge.EditorNew.Language;
 using Sledge.Gui;
-using Sledge.Gui.Interfaces.Shell;
 
 namespace Sledge.EditorNew.UI.Menus
 {
     public static class MenuManager
     {
-        public static readonly List<IMenuItem> MenuItems = new List<IMenuItem>();
+        public static readonly List<IMenuGroup> MenuGroups = new List<IMenuGroup>();
 
         static MenuManager()
         {
@@ -20,28 +14,36 @@ namespace Sledge.EditorNew.UI.Menus
             UIManager.Manager.Shell.AddToolbar();
         }
 
-        public static void Add(IMenuItem menuItem)
+        public static void Add(IMenuGroup menuGroup)
         {
-            MenuItems.Add(menuItem);
+            MenuGroups.Add(menuGroup);
         }
 
         public static void Build()
         {
-            foreach (var menuItem in MenuItems)
+            foreach (var g in MenuGroups)
             {
-                var id = "Command/" + menuItem.Command.Identifier;
-                if (menuItem.ShowInMenu)
+                var group = GetGroup(g.Path);
+                if (group.SubItems.Count > 0)
                 {
-                    var group = GetGroup(menuItem.Command.Group);
-                    var mi = group.AddSubMenuItem(id);
-                    mi.Icon = menuItem.Image;
-                    mi.Clicked += TriggerMenuAction(menuItem);
+                    group.AddSeparator();
                 }
-                if (menuItem.ShowInToolstrip)
+                foreach (var menuItem in g.GetMenuItems())
                 {
-                    var ti = UIManager.Manager.Shell.Toolbar.AddToolbarItem(id);
-                    ti.Icon = menuItem.Image;
-                    ti.Clicked += TriggerMenuAction(menuItem);
+                    if (menuItem.ShowInMenu)
+                    {
+                        var mi = group.AddSubMenuItem(menuItem.TextKey, menuItem.Text);
+                        mi.Icon = menuItem.Image;
+                        mi.Clicked += TriggerMenuAction(menuItem);
+                        mi.IsActive = menuItem.IsActive;
+                    }
+                    if (menuItem.ShowInToolstrip)
+                    {
+                        var ti = UIManager.Manager.Shell.Toolbar.AddToolbarItem(menuItem.TextKey, menuItem.Text);
+                        ti.Icon = menuItem.Image;
+                        ti.Clicked += TriggerMenuAction(menuItem);
+                        ti.IsActive = menuItem.IsActive;
+                    }
                 }
             }
         }
@@ -59,7 +61,7 @@ namespace Sledge.EditorNew.UI.Menus
                 {
                     if (g != "") g += ".";
                     g += s;
-                    var id = "CommandGroup/" + g;
+                    var id = "MenuGroup/" + g;
                     if (!GroupItems.ContainsKey(g))
                     {
                         if (parent == null) GroupItems.Add(g, UIManager.Manager.Shell.Menu.AddMenuItem(id));
@@ -73,54 +75,7 @@ namespace Sledge.EditorNew.UI.Menus
 
         private static EventHandler TriggerMenuAction(IMenuItem menuItem)
         {
-            return (sender, eventArgs) => menuItem.Command.Fire();
-        }
-    }
-
-    public interface IMenuItem
-    {
-        ICommand Command { get; }
-        Image Image { get; }
-        bool IsActive { get; }
-        bool ShowInMenu { get; }
-        bool ShowInToolstrip { get; }
-    }
-
-    public class BasicMenuItem : IMenuItem
-    {
-        public ICommand Command { get; set; }
-        public Image Image { get; set; }
-        public bool IsActive { get; set; }
-        public bool ShowInMenu { get; set; }
-        public bool ShowInToolstrip { get; set; }
-
-        public BasicMenuItem(ICommand command, Image image, bool isActive, bool showInMenu, bool showInToolstrip)
-        {
-            Command = command;
-            Image = image;
-            IsActive = isActive;
-            ShowInMenu = showInMenu;
-            ShowInToolstrip = showInToolstrip;
-        }
-    }
-
-    public class DynamicMenuItem : IMenuItem
-    {
-        private readonly Func<bool> _isActive;
-
-        public ICommand Command { get; set; }
-        public Image Image { get; set; }
-        public bool IsActive { get { return _isActive(); } }
-        public bool ShowInMenu { get; set; }
-        public bool ShowInToolstrip { get; set; }
-
-        public DynamicMenuItem(ICommand command, Image image, Func<bool> isActive, bool showInMenu, bool showInToolstrip)
-        {
-            Command = command;
-            Image = image;
-            _isActive = isActive;
-            ShowInMenu = showInMenu;
-            ShowInToolstrip = showInToolstrip;
+            return (sender, eventArgs) => menuItem.Execute();
         }
     }
 }

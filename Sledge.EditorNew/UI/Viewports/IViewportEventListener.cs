@@ -1,7 +1,7 @@
 ﻿using Sledge.Gui.Interfaces.Controls;
 using Sledge.Gui.Structures;
 
-namespace Sledge.Gui.Interfaces.Viewports
+namespace Sledge.EditorNew.UI.Viewports
 {
     public interface IViewportEventListener
     {

@@ -7,6 +7,7 @@ namespace Sledge.EditorNew.Commands
     {
         public string Group { get; private set; }
         public string Identifier { get; private set; }
+        public string TextKey { get { return "Command/" + Identifier; } }
         public string Context { get; private set; }
         public string Message { get; private set; }
         public object Parameter { get; private set; }

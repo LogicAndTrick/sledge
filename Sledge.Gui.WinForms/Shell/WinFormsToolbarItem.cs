@@ -10,6 +10,12 @@ namespace Sledge.Gui.WinForms.Shell
         public string TextKey { get; set; }
         public Image Icon { set { Image = value; } }
 
+        public bool IsActive
+        {
+            get { return Enabled; }
+            set { Enabled = value; }
+        }
+
         public event EventHandler Clicked
         {
             add { Click += value; }

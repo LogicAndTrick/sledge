@@ -21,6 +21,12 @@ namespace Sledge.Gui.Gtk.Shell
             set { _textLabel.TextWithMnemonic = value; }
         }
 
+        public bool IsActive
+        {
+            get { return Sensitive; }
+            set { Sensitive = value; }
+        }
+
         public System.Drawing.Image Icon
         {
             set
@@ -116,6 +122,19 @@ namespace Sledge.Gui.Gtk.Shell
             SubItems.Add(item);
             item.Show();
             return item;
+        }
+
+        public void AddSeparator()
+        {
+            if (_subMenu == null)
+            {
+                _subMenu = new Menu();
+                Submenu = _subMenu;
+                _subMenu.Show();
+            }
+            var item = new SeparatorMenuItem();
+            _subMenu.Append(item);
+            item.Show();
         }
     }
 }

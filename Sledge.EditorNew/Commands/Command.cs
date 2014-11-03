@@ -9,6 +9,7 @@ namespace Sledge.EditorNew.Commands
     {
         string Group { get; }
         string Identifier { get; }
+        string TextKey { get; }
         string Context { get; }
         void Fire();
     }

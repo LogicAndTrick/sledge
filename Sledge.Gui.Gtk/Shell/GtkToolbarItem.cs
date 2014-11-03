@@ -17,6 +17,12 @@ namespace Sledge.Gui.Gtk.Shell
             set { Label = value; }
         }
 
+        public bool IsActive
+        {
+            get { return Sensitive; }
+            set { Sensitive = value; }
+        }
+
         public System.Drawing.Image Icon
         {
             set

@@ -13,6 +13,13 @@ namespace Sledge.Gui.WinForms.Shell
     {
         public string TextKey { get; set; }
         public Image Icon { set { Image = value; } }
+
+        public bool IsActive
+        {
+            get { return Enabled; }
+            set { Enabled = value; }
+        }
+
         public IList<IMenuItem> SubItems { get; private set; }
         public event EventHandler Clicked
         {
@@ -54,6 +61,12 @@ namespace Sledge.Gui.WinForms.Shell
             var item = new WinFormsMenuItem(key, text);
             SubItems.Add(item);
             return item;
+        }
+
+        public void AddSeparator()
+        {
+            var item = new ToolStripSeparator();
+            DropDownItems.Add(item);
         }
     }
 }

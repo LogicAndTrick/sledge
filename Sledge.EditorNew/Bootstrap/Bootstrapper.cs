@@ -1,10 +1,6 @@
-﻿using Sledge.EditorNew.Commands;
-using Sledge.EditorNew.Language;
-using Sledge.EditorNew.Properties;
+﻿using Sledge.EditorNew.Language;
 using Sledge.EditorNew.UI;
-using Sledge.EditorNew.UI.Menus;
 using Sledge.Gui;
-using Sledge.Settings;
 
 namespace Sledge.EditorNew.Bootstrap
 {
@@ -12,6 +8,8 @@ namespace Sledge.EditorNew.Bootstrap
     {
         public static void Bootstrap()
         {
+            Settings.SettingsManager.Read();
+
             // todo language setting
             Translate.SetLanguage("en");
             UIManager.Manager.StringProvider = Translate.StringProvider;
@@ -19,28 +17,6 @@ namespace Sledge.EditorNew.Bootstrap
             Shell.Bootstrap();
             CommandBootstrapper.Bootstrap();
             MenuBootstrapper.Bootstrap();
-        }
-    }
-
-    public static class CommandBootstrapper
-    {
-        public static void Bootstrap()
-        {
-            CommandManager.Register(new MediatorCommand(DefaultCommandGroups.GroupFile, DefaultCommands.FileNew, DefaultCommandContexts.None, HotkeysMediator.FileNew));
-            CommandManager.Register(new MediatorCommand(DefaultCommandGroups.GroupFile, DefaultCommands.FileOpen, DefaultCommandContexts.None, HotkeysMediator.FileOpen));
-            CommandManager.Register(new MediatorCommand(DefaultCommandGroups.GroupFile, DefaultCommands.FileSave, DefaultCommandContexts.None, HotkeysMediator.FileSave));
-        }
-    }
-
-    public static class MenuBootstrapper
-    {
-        public static void Bootstrap()
-        {
-            MenuManager.Add(new BasicMenuItem(CommandManager.GetCommand(DefaultCommands.FileNew), Resources.Menu_New, true, true, true));
-            MenuManager.Add(new BasicMenuItem(CommandManager.GetCommand(DefaultCommands.FileOpen), Resources.Menu_Open, true, true, true));
-            MenuManager.Add(new BasicMenuItem(CommandManager.GetCommand(DefaultCommands.FileSave), Resources.Menu_Save, true, true, true));
-
-            MenuManager.Build();
         }
     }
 }

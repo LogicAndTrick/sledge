@@ -33,6 +33,8 @@ namespace Sledge.Gui.WinForms
         {
             switch (mouseButton)
             {
+                case MouseButtons.None:
+                    return MouseButton.LastButton;
                 case MouseButtons.Left:
                     return MouseButton.Left;
                 case MouseButtons.Right:

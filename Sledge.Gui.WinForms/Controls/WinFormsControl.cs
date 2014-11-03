@@ -463,5 +463,10 @@ namespace Sledge.Gui.WinForms.Controls
             }
         }
         #endregion
+
+        public void Dispose()
+        {
+            Control.Dispose();
+        }
     }
 }

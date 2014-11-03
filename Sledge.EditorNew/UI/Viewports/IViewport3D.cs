@@ -1,10 +1,9 @@
-﻿using Sledge.DataStructures.Geometric;
+using Sledge.DataStructures.Geometric;
 using Sledge.Graphics;
-using Sledge.Gui.Interfaces.Controls;
 
-namespace Sledge.Gui.Interfaces.Viewports
+namespace Sledge.EditorNew.UI.Viewports
 {
-    public interface IViewport3D : IViewport
+    public interface IViewport3D : IMapViewport
     {
         ViewType Type { get; set; }
         Camera Camera { get; }

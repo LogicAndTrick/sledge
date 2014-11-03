@@ -23,12 +23,12 @@ namespace Sledge.Gui.Controls
             remove { Control.RenderException -= value; }
         }
 
-        public void Run()
+        public virtual void Run()
         {
             Control.Run();
         }
 
-        public void UpdateNextFrame()
+        public virtual void UpdateNextFrame()
         {
             Control.UpdateNextFrame();
         }
