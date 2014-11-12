@@ -1,0 +1,158 @@
+﻿
+Sledge Networking Plan
+----------------------
+
+##  Technology
+- TODO: Find more options
+    - http://www.networkcomms.net/ (older GPL version available http://www.networkcomms.net/download/gpl/)
+
+
+## Client/Server
+    - Map "owner" serves as the host
+    - Publishes an IP (discoverable? lobby system? passwords? url protocol?) that clients can connect to
+    - Clients can be "read only" or "read/write"
+    - "Spectator" mode? (follow host's camera?)
+
+
+## Ancillary systems
+    - Chat functionality?
+    - Login?
+
+## Architecture
+
+IAction (OR INetworkAction : IAction?)
+
+:: IsNetworkable() - If IAction is used instead of INetworkAction
+
+:: GetAffectedObjectIDs() - Conflict detection
+Performing: Can always perform an action
+Undo/Redo: Can only undo/redo if the objects have not been modified by anyone else between the perform/undo action and the undo/redo action
+
+:: NetworkSerialise();
+:: NetworkDeserialise();
+When sending across the network:
+CLIENT                      SERVER
+Perform action
+IsNetworkable = true
+Lock control
+o = NetworkSerialise(a) --> a = NetworkDeserialise(o)
+                            PerformAction(a)
+PerformAction(a)        <-- SendToClients(a)
+Control returns
+  
+
+## Map editing
+
+### Included in network updates
+
+- MapObjects
+    - Entities
+        - *
+    - Groups
+        - *
+    - Operations
+        - *
+- Visgroups
+    - CreateEditDelete
+    - EditObjectVisgroups
+
+### Excluded from network updates (except if spectating?)
+
+- MapObjects
+    - Selection
+        - *
+- Visgroups
+    - QuickHideObjects
+    - QuickShowObjects
+    - ShowAllVisgroups
+    - ToggleVisgroup
+
+## Communication
+
+MapObjects > Entities > EditEntityData
+Perform: Replace entity data for a number of entities
+Reverse: Replace entity data for a number of entities
+Data:
+[
+    long ID
+    Dictionary<string, string> EntityData
+]
+
+MapObjects > Groups > GroupAction
+Perform: Insert a group node between a number of items and their parents
+Reverse: Create a group node and assign its children to its parent
+Data: 
+[
+    MapObject GroupObject
+    long[] ChildIDs
+]
+
+MapObjects > Groups > UngroupAction
+Same as GroupAction, in reverse
+
+MapObjects > Operations > Carve
+MapObjects > Operations > Clip
+MapObjects > Operations > Create
+MapObjects > Operations > Delete
+MapObjects > Operations > Edit
+MapObjects > Operations > MakeHollow
+All inherit from:
+MapObjects > Operations > CreateEditDelete
+Perform: Create objects and assign them parents
+         Edit parents with some operation: transform (align, snap to grid, transform) or copy properties (pretty much just used in the VM tool)
+         Delete objects and possibly their parents if they are empty
+Reverse: Same, in reverse
+Data:
+Created [
+    long ParentID
+    MapObject CreatedObject
+]
+Edited [
+    long ID
+    Transformation Transform
+    MapObject CopyProperties
+]
+Deleted [
+    long ID
+]
+
+MapObjects > Operations > Reparent
+Perform: Change an object's parent
+Reverse: Same
+Data:
+[
+    long ID
+    long ParentID
+]
+
+MapObjects > Operations > EditFace
+Perform: Edit a face (not yet serialisable)
+Data:
+[
+    long SolidID
+    long FaceID
+    ???
+]
+
+Visgroups > CreateEditDeleteVisgroups
+Perform: Create, edit, and delete visgroups
+Data:
+Created [
+    Visgroup Visgroup
+    long[] ObjectIDs
+]
+Edited [
+    int VisgroupID
+    string Name
+    Color Colour
+]
+Deleted [
+    int VisgroupID
+]
+
+Visgroups > EditObjectVisgroups
+Perform: Change many objects' assigned visgroups
+Data:
+long ObjectIDs
+int[] VisgroupIDsToAdd
+int[] VisgroupIDsToRemove

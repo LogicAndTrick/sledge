@@ -110,6 +110,7 @@ namespace Sledge.Gui.WinForms.Controls
         {
             control.AutoSize = false;
             control.MinimumSize = control.Size = System.Drawing.Size.Empty;
+            control.Margin = control.Padding = new Padding(0);
             Control = control;
         }
 
@@ -434,6 +435,8 @@ namespace Sledge.Gui.WinForms.Controls
             }
         }
 
+        public object Tag { get; set; }
+
         private void ControlResized(object sender, EventArgs e)
         {
             OnActualSizeChanged();
@@ -441,7 +444,7 @@ namespace Sledge.Gui.WinForms.Controls
 
         public virtual Size ActualSize
         {
-            get { return new Size(Control.Width, Control.Height); }
+            get { return new Size(Math.Max(0, Control.Width - Control.Padding.Horizontal), Math.Max(0, Control.Height - Control.Padding.Vertical)); }
         }
 
         public event EventHandler ActualSizeChanged;

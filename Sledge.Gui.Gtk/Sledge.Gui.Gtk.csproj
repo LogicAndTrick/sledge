@@ -59,6 +59,7 @@
     <Compile Include="Controls\GtkButton.cs" />
     <Compile Include="Controls\GtkControl.cs" />
     <Compile Include="Controls\GtkLabel.cs" />
+    <Compile Include="Controls\GtkPictureBox.cs" />
     <Compile Include="Controls\GtkTabStrip.cs" />
     <Compile Include="Controls\GtkTextBox.cs" />
     <Compile Include="Controls\GtkTextControl.cs" />

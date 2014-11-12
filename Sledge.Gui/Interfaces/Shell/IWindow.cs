@@ -1,9 +1,11 @@
 ﻿using System;
+using Sledge.Gui.Attributes;
 using Sledge.Gui.Events;
 using Sledge.Gui.Interfaces.Containers;
 
 namespace Sledge.Gui.Interfaces.Shell
 {
+    [ControlInterface]
     public interface IWindow : IControl
     {
         string Title { get; set; }

@@ -70,6 +70,7 @@ namespace Sledge.Gui.WinForms.Shell
                     if (_leftPanel == null)
                     {
                         var lp = new WinFormsDockedPanel { Dock = DockStyle.Left };
+                        lp.DockDimension = panel.PreferredSize.Width;
                         var cont = new WinFormsVerticalScrollContainer();
                         cont.Set(_leftPanel = new WinFormsVerticalBox());
                         cont.Control.Dock = DockStyle.Fill;
@@ -82,6 +83,7 @@ namespace Sledge.Gui.WinForms.Shell
                     if (_rightPanel == null)
                     {
                         var rp = new WinFormsDockedPanel { Dock = DockStyle.Right };
+                        rp.DockDimension = panel.PreferredSize.Width;
                         var cont = new WinFormsVerticalScrollContainer();
                         cont.Set(_rightPanel = new WinFormsVerticalBox());
                         cont.Control.Dock = DockStyle.Fill;

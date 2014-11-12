@@ -67,6 +67,12 @@ namespace Sledge.Gui.WinForms.Containers
             OnPreferredSizeChanged();
         }
 
+        protected override void OnPreferredSizeChanged()
+        {
+            CalculateLayout();
+            base.OnPreferredSizeChanged();
+        }
+
         public void Insert(int index, IControl child)
         {
             Insert(index, child, GetDefaultMetadata(child));
@@ -82,10 +88,19 @@ namespace Sledge.Gui.WinForms.Containers
             var c = (WinFormsControl) child.Implementation;
             c.Parent = this;
             BindChildEvents(child);
-            AppendChild(index, c);
             Children.Insert(index, c);
             Metadata.Add(c, metadata);
-            CalculateLayout();
+            AppendChild(index, c);
+        }
+
+        public void Remove(IControl child)
+        {
+            var c = (WinFormsControl) child.Implementation;
+            UnbindChildEvents(child);
+            c.Parent = null;
+            Metadata.Remove(c);
+            Children.Remove(c);
+            RemoveChild(c);
         }
 
         protected virtual void AppendChild(int index, WinFormsControl child)
@@ -93,10 +108,21 @@ namespace Sledge.Gui.WinForms.Containers
             Control.Controls.Add(child.Control);
         }
 
+        protected virtual void RemoveChild(WinFormsControl child)
+        {
+            Control.Controls.Remove(child.Control);
+        }
+
         protected virtual void BindChildEvents(IControl child)
         {
             child.PreferredSizeChanged += ChildPreferredSizeChanged;
             child.ActualSizeChanged += ChildActualSizeChanged;
+        }
+
+        protected virtual void UnbindChildEvents(IControl child)
+        {
+            child.PreferredSizeChanged -= ChildPreferredSizeChanged;
+            child.ActualSizeChanged -= ChildActualSizeChanged;
         }
 
         protected virtual void ChildPreferredSizeChanged(object sender, EventArgs e)

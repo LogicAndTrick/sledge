@@ -13,9 +13,9 @@ namespace Sledge.Gui
 
         void Start();
 
-        IWindow CreateWindow();
         T Construct<T>() where T : IControl;
         T ConstructDialog<T>() where T : IDialog;
+        T ConstructComponent<T>();
 
         // other stuff...
 

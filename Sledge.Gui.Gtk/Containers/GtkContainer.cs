@@ -14,6 +14,7 @@ namespace Sledge.Gui.Gtk.Containers
     public abstract class GtkContainer : GtkControl, IContainer
     {
         protected Container Container;
+        private Alignment _alignment;
         protected List<GtkControl> Children { get; private set; }
         protected Dictionary<GtkControl, ContainerMetadata> Metadata { get; private set; }
 
@@ -31,12 +32,15 @@ namespace Sledge.Gui.Gtk.Containers
         {
             get
             {
+                return new Padding((int) _alignment.TopPadding, (int) _alignment.LeftPadding, (int) _alignment.BottomPadding, (int) _alignment.RightPadding);
+                //Container.
                 return new Padding();
                 // return Control.Padding.ToPadding();
             }
             set
             {
                 // Control.Padding = new System.Windows.Forms.Padding(value.Left, value.Top, value.Right, value.Bottom);
+                _alignment.SetPadding((uint) value.Top, (uint) value.Bottom, (uint) value.Left, (uint) value.Right);
             }
         }
 
@@ -44,8 +48,11 @@ namespace Sledge.Gui.Gtk.Containers
         {
         }
 
-        protected GtkContainer(Container container) : base(container)
+        protected GtkContainer(Container container) : base(new Alignment(0, 0, 1, 1))
         {
+            _alignment = (Alignment) Control;
+            _alignment.Add(container);
+            container.Show();
             Container = container;
             Children = new List<GtkControl>();
             Metadata = new Dictionary<GtkControl, ContainerMetadata>();
@@ -79,16 +86,38 @@ namespace Sledge.Gui.Gtk.Containers
             CalculateLayout();
         }
 
+        public void Remove(IControl child)
+        {
+            var c = (GtkControl) child.Implementation;
+            Metadata.Remove(c);
+            Children.Remove(c);
+            RemoveChild(c);
+            UnbindChildEvents(child);
+            c.Parent = null;
+            CalculateLayout();
+        }
+
         protected virtual void AppendChild(int index, GtkControl child)
         {
-            Container.Add(child.Control); // todo, GTK probably wont like this
+            Container.Add(child.Control);
             child.Control.ShowAll();
+        }
+
+        protected virtual void RemoveChild(GtkControl child)
+        {
+            Container.Remove(child.Control);
         }
 
         protected virtual void BindChildEvents(IControl child)
         {
             child.PreferredSizeChanged += ChildPreferredSizeChanged;
             child.ActualSizeChanged += ChildActualSizeChanged;
+        }
+
+        protected virtual void UnbindChildEvents(IControl child)
+        {
+            child.PreferredSizeChanged -= ChildPreferredSizeChanged;
+            child.ActualSizeChanged -= ChildActualSizeChanged;
         }
 
         protected virtual void ChildPreferredSizeChanged(object sender, EventArgs e)

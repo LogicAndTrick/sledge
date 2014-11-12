@@ -17,6 +17,17 @@ namespace Sledge.Gui.Containers
             get { return Control.Children; }
         }
 
+        public void Remove(IControl child)
+        {
+            Control.Remove(child);
+        }
+
+        public Padding Margin
+        {
+            get { return Control.Margin; }
+            set { Control.Margin = value; }
+        }
+
         public void Insert(int index, IControl child)
         {
             Control.Insert(index, child);
@@ -26,7 +37,5 @@ namespace Sledge.Gui.Containers
         {
             Control.Insert(index, child, metadata);
         }
-
-        public Padding Margin { get; set; }
     }
 }

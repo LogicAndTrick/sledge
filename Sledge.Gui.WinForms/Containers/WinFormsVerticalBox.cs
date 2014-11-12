@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Drawing;
 using System.Windows.Forms;
 using Sledge.Gui.Attributes;
 using Sledge.Gui.Interfaces;
 using Sledge.Gui.Interfaces.Containers;
 using Sledge.Gui.Structures;
 using Padding = System.Windows.Forms.Padding;
+using Size = Sledge.Gui.Structures.Size;
 
 namespace Sledge.Gui.WinForms.Containers
 {
@@ -20,12 +22,12 @@ namespace Sledge.Gui.WinForms.Containers
             get
             {
                 var width = 10;
-                var height = 10;
+                var height = 0;
                 foreach (var child in Children)
                 {
                     var ps = child.PreferredSize;
                     width = Math.Max(width, ps.Width);
-                    height += ps.Height + ControlPadding;
+                    height += ps.Height;
                 }
                 width += Margin.Left + Margin.Right;
                 height += Margin.Top + Margin.Bottom;
@@ -37,8 +39,6 @@ namespace Sledge.Gui.WinForms.Containers
             : base(new TableLayoutPanel { RowCount = 1, ColumnCount = 1 })
         {
             _table = (TableLayoutPanel)Control;
-            _table.Padding = new Padding(0);
-            _table.Margin = new Padding(0);
             Uniform = false;
             ControlPadding = 3;
         }
@@ -46,12 +46,6 @@ namespace Sledge.Gui.WinForms.Containers
         public void Insert(int index, IControl child, bool fill)
         {
             Insert(index, child, new ContainerMetadata { { "Fill", fill } });
-        }
-
-        protected override void OnPreferredSizeChanged()
-        {
-            CalculateLayout();
-            base.OnPreferredSizeChanged();
         }
 
         protected override void CalculateLayout()
@@ -83,7 +77,7 @@ namespace Sledge.Gui.WinForms.Containers
                 _table.RowStyles[i].SizeType = fill ? SizeType.Percent : SizeType.Absolute;
                 _table.RowStyles[i].Height = fill ? fillVal : standardVal * child.PreferredSize.Height + ControlPadding;
                 child.Control.Dock = DockStyle.Fill;
-                child.Control.Margin = new Padding(ControlPadding, ControlPadding / 2, ControlPadding, (int)Math.Ceiling(ControlPadding / 2.0));
+                child.Control.Margin = new Padding(0, i == 0 ? 0 : ControlPadding / 2, 0, i == Children.Count - 1 ? 0 : (int)Math.Ceiling(ControlPadding / 2.0));
                 _table.SetCellPosition(child.Control, new TableLayoutPanelCellPosition(0, i));
             }
             if (numFill == 0)

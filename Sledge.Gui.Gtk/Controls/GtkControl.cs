@@ -415,6 +415,8 @@ namespace Sledge.Gui.Gtk.Controls
             }
         }
 
+        public object Tag { get; set; }
+
         private void ControlResized(object sender, EventArgs e)
         {
             OnActualSizeChanged();

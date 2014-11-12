@@ -11,7 +11,7 @@ using Window = Gtk.Window;
 
 namespace Sledge.Gui.Gtk.Shell
 {
-    public class GtkWindow : GtkContainer, IWindow
+    public class GtkWindow : GtkControl, IWindow
     {
         protected GtkCell ContainerWrapper;
 
@@ -43,7 +43,6 @@ namespace Sledge.Gui.Gtk.Shell
         {
             Window = (Window) Control;
             CreateWrapper();
-            Children.Add(ContainerWrapper);
             Window.SizeAllocated += OnResize;
             Window.DeleteEvent += (o, args) => args.RetVal = OnDeleteEvent(args.Event);
         }
@@ -111,11 +110,6 @@ namespace Sledge.Gui.Gtk.Shell
                 WindowClosed(this, EventArgs.Empty);
             }
             return false;
-        }
-
-        protected override void CalculateLayout()
-        {
-            
         }
     }
 }

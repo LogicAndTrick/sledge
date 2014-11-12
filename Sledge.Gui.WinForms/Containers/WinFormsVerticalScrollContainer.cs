@@ -21,7 +21,7 @@ namespace Sledge.Gui.WinForms.Containers
                 Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right,
                 Location = new Point(0, 0),
                 Size = new Size(Control.Width, Control.Height),
-                Padding = new Padding(0, 0, 0, 10),
+                Margin = new Padding(0, 0, 0, 10),
             };
             _scrollBar = new VScrollBar
             {
@@ -79,6 +79,11 @@ namespace Sledge.Gui.WinForms.Containers
         protected override void AppendChild(int index, WinFormsControl child)
         {
             _contentPanel.Controls.Add(child.Control);
+        }
+
+        protected override void RemoveChild(WinFormsControl child)
+        {
+            _contentPanel.Controls.Remove(child.Control);
         }
 
         public void Set(IControl child)

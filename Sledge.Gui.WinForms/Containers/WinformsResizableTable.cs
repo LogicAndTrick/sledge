@@ -49,7 +49,7 @@ namespace Sledge.Gui.WinForms.Containers
         public WinformsResizableTable() : base(new TableLayoutPanel())
         {
             _table = (TableLayoutPanel) Control;
-            _table.Margin = new Padding(3);
+            _table.Padding = new Padding(3);
 
             _table.ControlAdded += OnControlAdded;
             _table.MouseMove += OnMouseMove;
@@ -89,7 +89,20 @@ namespace Sledge.Gui.WinForms.Containers
             return _table.GetRowHeights();
         }
 
-        public int ControlPadding { get; set; } // todo
+        private int _controlPadding;
+
+        public int ControlPadding
+        {
+            get { return _controlPadding; }
+            set
+            {
+                _controlPadding = value;
+                foreach (Control control in _table.Controls)
+                {
+                    control.Margin = new Padding(value);
+                }
+            }
+        }
 
         public void Insert(int row, int column, IControl child, int rowSpan = 1, int columnSpan = 1, bool rowFill = false, bool columnFill = false)
         {
@@ -113,6 +126,7 @@ namespace Sledge.Gui.WinForms.Containers
 
         private void OnControlAdded(object sender, ControlEventArgs e)
         {
+            e.Control.Margin = new Padding(_controlPadding / 2);
             var r = _table.GetPositionFromControl(e.Control);
             var rec = _configuration.Rectangles.FirstOrDefault(t => t.X <= r.Column && t.X + t.Width > r.Column && t.Y <= r.Row && t.Y + t.Height > r.Row);
             if (!rec.IsEmpty)
@@ -225,15 +239,16 @@ namespace Sledge.Gui.WinForms.Containers
                 var rh = _table.GetRowHeights();
                 _inH = _inV = -1;
                 int hval = 0, vval = 0;
+                var margin = Math.Ceiling(_controlPadding / 2f) + 3;
 
                 //todo: rowspan checks
 
                 for (var i = 0; i < rh.Length - 1; i++)
                 {
                     hval += rh[i];
-                    var top = hval - _table.Margin.Bottom;
-                    var bottom = hval + _table.Margin.Top;
-                    if (e.X <= _table.Margin.Left || e.X >= _table.Width - _table.Margin.Right || e.Y <= top || e.Y >= bottom) continue;
+                    var top = hval - margin;
+                    var bottom = hval + margin;
+                    if (e.X <= margin || e.X >= _table.Width - margin || e.Y <= top || e.Y >= bottom) continue;
                     _inH = i;
                     break;
                 }
@@ -241,9 +256,9 @@ namespace Sledge.Gui.WinForms.Containers
                 for (var i = 0; i < cw.Length - 1; i++)
                 {
                     vval += cw[i];
-                    var left = vval - _table.Margin.Right;
-                    var right = vval + _table.Margin.Left;
-                    if (e.Y <= _table.Margin.Top || e.Y >= _table.Height - _table.Margin.Bottom || e.X <= left || e.X >= right) continue;
+                    var left = vval - margin;
+                    var right = vval + margin;
+                    if (e.Y <= margin || e.Y >= _table.Height - margin || e.X <= left || e.X >= right) continue;
                     _inV = i;
                     break;
                 }

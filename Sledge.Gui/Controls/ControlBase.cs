@@ -79,6 +79,12 @@ namespace Sledge.Gui.Controls
             set { Control.PreferredSize = value; }
         }
 
+        public object Tag
+        {
+            get { return Control.Tag; }
+            set { Control.Tag = value; }
+        }
+
         public event EventHandler ActualSizeChanged
         {
             add { Control.ActualSizeChanged += value; }

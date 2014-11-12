@@ -21,6 +21,11 @@ namespace Sledge.Gui.WinForms.Controls
             _viewport = (Viewport) Control;
         }
 
+        public IGraphicsContext Context
+        {
+            get { return _viewport.Context; }
+        }
+
         public event FrameEventHandler Update
         {
             add { _viewport.Update += value; }
@@ -37,6 +42,11 @@ namespace Sledge.Gui.WinForms.Controls
         {
             add { _viewport.RenderException += value; }
             remove { _viewport.RenderException -= value; }
+        }
+
+        public void MakeCurrent()
+        {
+            _viewport.MakeCurrent();
         }
 
         public void Run()

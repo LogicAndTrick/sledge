@@ -49,7 +49,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Components\WinFormsClipboard.cs" />
+    <Compile Include="Controls\WinFormsNumericSpinner.cs" />
     <Compile Include="Dialogs\WinFormsFileOpenDialog.cs" />
+    <Compile Include="Shell\WinFormsDialogWindow.cs" />
     <Compile Include="WinFormsOpenTkKeyMap.cs" />
     <Compile Include="Controls\WinFormsViewport.cs" />
     <Compile Include="Controls\WinFormsTabStrip.cs" />

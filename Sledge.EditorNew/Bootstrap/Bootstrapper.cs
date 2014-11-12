@@ -17,6 +17,7 @@ namespace Sledge.EditorNew.Bootstrap
             Shell.Bootstrap();
             CommandBootstrapper.Bootstrap();
             MenuBootstrapper.Bootstrap();
+            ToolBootstrapper.Bootstrap();
         }
     }
 }

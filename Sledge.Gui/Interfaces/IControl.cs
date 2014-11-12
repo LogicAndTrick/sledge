@@ -13,6 +13,7 @@ namespace Sledge.Gui.Interfaces
         bool Focused { get; }
         Size ActualSize { get; }
         Size PreferredSize { get; set; }
+        object Tag { get; set; }
         event EventHandler ActualSizeChanged;
         event EventHandler PreferredSizeChanged;
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Windows.Forms;
+using Sledge.Gui.Attributes;
 using Sledge.Gui.Interfaces;
 using Sledge.Gui.Interfaces.Containers;
 using Sledge.Gui.Interfaces.Shell;
@@ -11,6 +12,7 @@ using Size = System.Drawing.Size;
 
 namespace Sledge.Gui.WinForms.Shell
 {
+    [ControlImplementation("WinForms")]
     public class WinFormsWindow : WinFormsControl, IWindow
     {
         internal Form Form { get; private set; }
@@ -87,8 +89,9 @@ namespace Sledge.Gui.WinForms.Shell
             base.OnPreferredSizeChanged();
         }
 
-        public void Open()
+        public virtual void Open()
         {
+            OnPreferredSizeChanged();
             Form.Show();
         }
 

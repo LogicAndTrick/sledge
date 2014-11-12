@@ -16,7 +16,7 @@ namespace Sledge.Gui.QuickForms
     /// QuickForms is input dialogs for the lazy.
     /// It allows quick composition of disposable forms.
     /// </summary>
-    public sealed class QuickForm : Window
+    public sealed class QuickForm : DialogWindow
     {
         private VerticalBox _vbox;
 

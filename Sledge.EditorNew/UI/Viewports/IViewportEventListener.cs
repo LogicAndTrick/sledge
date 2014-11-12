@@ -5,7 +5,7 @@ namespace Sledge.EditorNew.UI.Viewports
 {
     public interface IViewportEventListener
     {
-        IViewport Viewport { get; set; }
+        IMapViewport Viewport { get; set; }
 
         void KeyUp(ViewportEvent e);
         void KeyDown(ViewportEvent e);
@@ -16,6 +16,10 @@ namespace Sledge.EditorNew.UI.Viewports
         void MouseDown(ViewportEvent e);
         void MouseClick(ViewportEvent e);
         void MouseDoubleClick(ViewportEvent e);
+
+        void DragStart(ViewportEvent e);
+        void DragMove(ViewportEvent e);
+        void DragEnd(ViewportEvent e);
 
         void MouseEnter(ViewportEvent e);
         void MouseLeave(ViewportEvent e);

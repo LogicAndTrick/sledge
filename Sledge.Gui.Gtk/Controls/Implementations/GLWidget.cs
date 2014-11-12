@@ -39,6 +39,8 @@ namespace Sledge.Gui.Gtk.Controls.Implementations
 		IGraphicsContext graphicsContext;
 		static int graphicsContextCount;
 
+	    public IGraphicsContext Context { get { return graphicsContext; } }
+
 		/// <summary>Use a single buffer versus a double buffer.</summary>
 		[Browsable(true)]
 		public bool SingleBuffer { get; set; }
@@ -276,7 +278,7 @@ namespace Sledge.Gui.Gtk.Controls.Implementations
 			return result;
 		}
 
-	    protected void MakeCurrent()
+	    public void MakeCurrent()
 	    {
             if (!graphicsContext.IsCurrent) graphicsContext.MakeCurrent(windowInfo);
 	    }

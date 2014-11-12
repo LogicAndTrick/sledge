@@ -50,6 +50,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sledge.Gui.Gtk", "Sledge.Gu
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sledge.EditorNew", "Sledge.EditorNew\Sledge.EditorNew.csproj", "{B2DD59ED-C43D-4343-9247-68F828AFF8FC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sledge.Gui.Tests", "Sledge.Gui.Tests\Sledge.Gui.Tests.csproj", "{595D3CDD-3AB3-4935-8D4E-858003E27CC9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -270,6 +272,16 @@ Global
 		{B2DD59ED-C43D-4343-9247-68F828AFF8FC}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{B2DD59ED-C43D-4343-9247-68F828AFF8FC}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{B2DD59ED-C43D-4343-9247-68F828AFF8FC}.Release|x86.ActiveCfg = Release|Any CPU
+		{595D3CDD-3AB3-4935-8D4E-858003E27CC9}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{595D3CDD-3AB3-4935-8D4E-858003E27CC9}.Debug|Any CPU.Build.0 = Debug|x86
+		{595D3CDD-3AB3-4935-8D4E-858003E27CC9}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{595D3CDD-3AB3-4935-8D4E-858003E27CC9}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{595D3CDD-3AB3-4935-8D4E-858003E27CC9}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{595D3CDD-3AB3-4935-8D4E-858003E27CC9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{595D3CDD-3AB3-4935-8D4E-858003E27CC9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{595D3CDD-3AB3-4935-8D4E-858003E27CC9}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{595D3CDD-3AB3-4935-8D4E-858003E27CC9}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{595D3CDD-3AB3-4935-8D4E-858003E27CC9}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

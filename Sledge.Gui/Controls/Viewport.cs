@@ -1,10 +1,16 @@
-﻿using Sledge.Gui.Events;
+﻿using OpenTK.Graphics;
+using Sledge.Gui.Events;
 using Sledge.Gui.Interfaces.Controls;
 
 namespace Sledge.Gui.Controls
 {
     public class Viewport : ControlBase<IViewport>, IViewport
     {
+        public IGraphicsContext Context
+        {
+            get { return Control.Context; }
+        }
+
         public event FrameEventHandler Update
         {
             add { Control.Update += value; }
@@ -21,6 +27,11 @@ namespace Sledge.Gui.Controls
         {
             add { Control.RenderException += value; }
             remove { Control.RenderException -= value; }
+        }
+
+        public void MakeCurrent()
+        {
+            Control.MakeCurrent();
         }
 
         public virtual void Run()

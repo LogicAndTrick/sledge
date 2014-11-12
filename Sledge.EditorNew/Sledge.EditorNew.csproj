@@ -54,6 +54,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\OpenTK.dll</HintPath>
     </Reference>
+    <Reference Include="OpenTK.Compatibility, Version=1.1.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL" />
+    <Reference Include="Poly2Tri">
+      <HintPath>..\Poly2Tri.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -65,22 +69,142 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Actions\ActionCollection.cs" />
+    <Compile Include="Actions\IAction.cs" />
+    <Compile Include="Actions\MapObjects\Entities\EditEntityData.cs" />
+    <Compile Include="Actions\MapObjects\Groups\GroupAction.cs" />
+    <Compile Include="Actions\MapObjects\Groups\UngroupAction.cs" />
+    <Compile Include="Actions\MapObjects\Operations\Carve.cs" />
+    <Compile Include="Actions\MapObjects\Operations\Clip.cs" />
+    <Compile Include="Actions\MapObjects\Operations\Create.cs" />
+    <Compile Include="Actions\MapObjects\Operations\CreateEditDelete.cs" />
+    <Compile Include="Actions\MapObjects\Operations\Delete.cs" />
+    <Compile Include="Actions\MapObjects\Operations\Edit.cs" />
+    <Compile Include="Actions\MapObjects\Operations\EditFace.cs" />
+    <Compile Include="Actions\MapObjects\Operations\EditOperations\AlignObjectsEditOperation.cs" />
+    <Compile Include="Actions\MapObjects\Operations\EditOperations\CopyPropertiesEditOperation.cs" />
+    <Compile Include="Actions\MapObjects\Operations\EditOperations\IEditOperation.cs" />
+    <Compile Include="Actions\MapObjects\Operations\EditOperations\SnapToGridEditOperation.cs" />
+    <Compile Include="Actions\MapObjects\Operations\EditOperations\TransformEditOperation.cs" />
+    <Compile Include="Actions\MapObjects\Operations\MakeHollow.cs" />
+    <Compile Include="Actions\MapObjects\Operations\PasteSpecial.cs" />
+    <Compile Include="Actions\MapObjects\Operations\Reparent.cs" />
+    <Compile Include="Actions\MapObjects\Operations\ReplaceObjects.cs" />
+    <Compile Include="Actions\MapObjects\Selection\ChangeFaceSelection.cs" />
+    <Compile Include="Actions\MapObjects\Selection\ChangeSelection.cs" />
+    <Compile Include="Actions\MapObjects\Selection\ChangeToFaceSelectionMode.cs" />
+    <Compile Include="Actions\MapObjects\Selection\ChangeToObjectSelectionMode.cs" />
+    <Compile Include="Actions\MapObjects\Selection\Deselect.cs" />
+    <Compile Include="Actions\MapObjects\Selection\DeselectFace.cs" />
+    <Compile Include="Actions\MapObjects\Selection\Select.cs" />
+    <Compile Include="Actions\MapObjects\Selection\SelectFace.cs" />
+    <Compile Include="Actions\Visgroups\CreateEditDeleteVisgroups.cs" />
+    <Compile Include="Actions\Visgroups\EditObjectVisgroups.cs" />
+    <Compile Include="Actions\Visgroups\QuickHideObjects.cs" />
+    <Compile Include="Actions\Visgroups\QuickShowObjects.cs" />
+    <Compile Include="Actions\Visgroups\ShowAllVisgroups.cs" />
+    <Compile Include="Actions\Visgroups\ToggleVisgroup.cs" />
     <Compile Include="Bootstrap\Bootstrapper.cs" />
     <Compile Include="Bootstrap\CommandBootstrapper.cs" />
     <Compile Include="Bootstrap\DefaultCommandGroups.cs" />
     <Compile Include="Bootstrap\DefaultCommands.cs" />
     <Compile Include="Bootstrap\MenuBootstrapper.cs" />
+    <Compile Include="Bootstrap\ToolBootstrapper.cs" />
+    <Compile Include="Brushes\ArchBrush.cs" />
+    <Compile Include="Brushes\BlockBrush.cs" />
+    <Compile Include="Brushes\ConeBrush.cs" />
+    <Compile Include="Brushes\Controls\BooleanControl.cs" />
+    <Compile Include="Brushes\Controls\BrushControl.cs" />
+    <Compile Include="Brushes\Controls\FontChooserControl.cs" />
+    <Compile Include="Brushes\Controls\NumericControl.cs" />
+    <Compile Include="Brushes\Controls\TextControl.cs" />
+    <Compile Include="Brushes\CylinderBrush.cs" />
+    <Compile Include="Brushes\IBrush.cs" />
+    <Compile Include="Brushes\PipeBrush.cs" />
+    <Compile Include="Brushes\PyramidBrush.cs" />
+    <Compile Include="Brushes\SphereBrush.cs" />
+    <Compile Include="Brushes\TetrahedronBrush.cs" />
+    <Compile Include="Brushes\TextBrush.cs" />
+    <Compile Include="Brushes\TorusBrush.cs" />
+    <Compile Include="Brushes\WedgeBrush.cs" />
+    <Compile Include="Clipboard\ClipboardManager.cs" />
     <Compile Include="Commands\Command.cs" />
     <Compile Include="Commands\CommandManager.cs" />
     <Compile Include="Commands\DefaultCommandContexts.cs" />
     <Compile Include="Commands\MediatorCommand.cs" />
     <Compile Include="Documents\DocumentManager.cs" />
+    <Compile Include="Documents\DocumentMemory.cs" />
+    <Compile Include="Documents\DummyDocument.cs" />
     <Compile Include="Documents\IDocument.cs" />
+    <Compile Include="Documents\Document.cs" />
+    <Compile Include="Editing\SelectionManager.cs" />
     <Compile Include="EditorMediator.cs" />
+    <Compile Include="Enums\PasteSpecialGrouping.cs" />
+    <Compile Include="Enums\PasteSpecialStartPoint.cs" />
+    <Compile Include="Enums\TransformType.cs" />
+    <Compile Include="Environment\GameEnvironment.cs" />
+    <Compile Include="Extensions\DecalExtensions.cs" />
+    <Compile Include="Extensions\EnumExtensions.cs" />
+    <Compile Include="Extensions\GeometricExtensions.cs" />
+    <Compile Include="Extensions\ModelExtensions.cs" />
+    <Compile Include="Extensions\SpriteExtensions.cs" />
+    <Compile Include="History\HistoryAction.cs" />
+    <Compile Include="History\HistoryManager.cs" />
+    <Compile Include="History\HistoryStack.cs" />
+    <Compile Include="History\IHistoryItem.cs" />
     <Compile Include="Language\Translate.cs" />
     <Compile Include="Language\TranslationStringCollection.cs" />
+    <Compile Include="Logging\Logger.cs" />
+    <Compile Include="Problems\DuplicateFaceIDs.cs" />
+    <Compile Include="Problems\DuplicateKeyValues.cs" />
+    <Compile Include="Problems\DuplicateObjectIDs.cs" />
+    <Compile Include="Problems\GameDataNotFound.cs" />
+    <Compile Include="Problems\GroupWithoutChildren.cs" />
+    <Compile Include="Problems\InvalidKeyValues.cs" />
+    <Compile Include="Problems\InvalidSolids.cs" />
+    <Compile Include="Problems\IProblemCheck.cs" />
+    <Compile Include="Problems\NoPlayerStart.cs" />
+    <Compile Include="Problems\PointEntityWithChildren.cs" />
+    <Compile Include="Problems\Problem.cs" />
+    <Compile Include="Problems\ProblemChecker.cs" />
+    <Compile Include="Problems\SolidEntityWithEntityChildren.cs" />
+    <Compile Include="Problems\SolidEntityWithoutChildren.cs" />
+    <Compile Include="Problems\SolidWithChildren.cs" />
+    <Compile Include="Problems\TargetWithoutMatchingName.cs" />
+    <Compile Include="Problems\TextureAxisPerpendicularToFace.cs" />
+    <Compile Include="Problems\TextureNotFound.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Rendering\Arrays\DecalArray.cs" />
+    <Compile Include="Rendering\Arrays\GridArray.cs" />
+    <Compile Include="Rendering\Arrays\MapObjectArray.cs" />
+    <Compile Include="Rendering\Arrays\MapObjectVertex.cs" />
+    <Compile Include="Rendering\Arrays\ModelArray.cs" />
+    <Compile Include="Rendering\Helpers\CenterHandlesHelper.cs" />
+    <Compile Include="Rendering\Helpers\CordonHelper.cs" />
+    <Compile Include="Rendering\Helpers\EntityAngleHelper.cs" />
+    <Compile Include="Rendering\Helpers\EntitySpriteHelper.cs" />
+    <Compile Include="Rendering\Helpers\EntityTextHelper.cs" />
+    <Compile Include="Rendering\Helpers\HelperManager.cs" />
+    <Compile Include="Rendering\Helpers\HelperRenderable.cs" />
+    <Compile Include="Rendering\Helpers\HelperType.cs" />
+    <Compile Include="Rendering\Helpers\IHelper.cs" />
+    <Compile Include="Rendering\Helpers\PointfileHelper.cs" />
+    <Compile Include="Rendering\Immediate\MapObjectRenderer.cs" />
+    <Compile Include="Rendering\Immediate\ModelRenderer.cs" />
+    <Compile Include="Rendering\Renderers\DisplayListRenderer.cs" />
+    <Compile Include="Rendering\Renderers\IRenderer.cs" />
+    <Compile Include="Rendering\Renderers\ModernRenderer.cs" />
+    <Compile Include="Rendering\RenderManager.cs" />
+    <Compile Include="Rendering\RenderManagerRenderable.cs" />
+    <Compile Include="Rendering\Shaders\MapObject2DShader.cs" />
+    <Compile Include="Rendering\Shaders\MapObject3DShader.cs" />
+    <Compile Include="Rendering\ToolRenderable.cs" />
+    <Compile Include="Rendering\Viewport3DRenderOptions.cs" />
+    <Compile Include="Rendering\WidgetLinesRenderable.cs" />
+    <Compile Include="Tools\BaseTool.cs" />
+    <Compile Include="Tools\DummyTool.cs" />
+    <Compile Include="Tools\ToolManager.cs" />
     <Compile Include="UI\Menus\BasicMenuGroup.cs" />
     <Compile Include="UI\Menus\CommandMenuItem.cs" />
     <Compile Include="UI\Menus\IMenuGroup.cs" />
@@ -96,6 +220,8 @@
     <Compile Include="UI\Viewports\MapViewport.cs" />
     <Compile Include="UI\Viewports\ViewDirection.cs" />
     <Compile Include="UI\Viewports\ViewportEvent.cs" />
+    <Compile Include="UI\Viewports\ViewportManager.cs" />
+    <Compile Include="UI\Viewports\ViewportWindow.cs" />
     <Compile Include="UI\Viewports\ViewType.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -116,7 +242,20 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <EmbeddedResource Include="Rendering\Shaders\MapObject2D.frag" />
+    <EmbeddedResource Include="Rendering\Shaders\MapObject2D.vert" />
+    <EmbeddedResource Include="Rendering\Shaders\MapObject3D.frag" />
+    <EmbeddedResource Include="Rendering\Shaders\MapObject3D.vert" />
     <None Include="Resources\MAPFiles.pdf" />
+    <None Include="Specifications\Goldsource.vdf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Sprites\lightbulb.spr">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Sprites\speaker.spr">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Sledge.Common\Sledge.Common.csproj">
@@ -165,6 +304,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Networking\NetworkingPlan.txt" />
     <Content Include="Resources\Arrow_Down.png" />
     <Content Include="Resources\Arrow_Up.png" />
     <Content Include="Resources\embedded_icons.txt" />

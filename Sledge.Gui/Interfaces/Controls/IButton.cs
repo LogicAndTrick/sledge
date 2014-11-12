@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using Sledge.Gui.Attributes;
 
 namespace Sledge.Gui.Interfaces.Controls
@@ -9,6 +10,7 @@ namespace Sledge.Gui.Interfaces.Controls
     [ControlInterface]
     public interface IButton : ITextControl
     {
+        Image Image { get; set; }
         event EventHandler Clicked;
     }
 }

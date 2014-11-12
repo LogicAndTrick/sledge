@@ -17,10 +17,10 @@ namespace Sledge.Gui.WinForms.Shell
                 {
                     case DockStyle.Top:
                     case DockStyle.Bottom:
-                        return Height;
+                        return Height - Padding.Vertical;
                     case DockStyle.Left:
                     case DockStyle.Right:
-                        return Width;
+                        return Width - Padding.Horizontal;
                     default:
                         return 0;
                 }
@@ -31,31 +31,30 @@ namespace Sledge.Gui.WinForms.Shell
                 {
                     case DockStyle.Top:
                     case DockStyle.Bottom:
-                        Height = value;
+                        Height = value + Padding.Vertical;
                         break;
                     case DockStyle.Left:
                     case DockStyle.Right:
-                        Width = value;
+                        Width = value + Padding.Horizontal;
                         break;
                 }
+                if (value > MinSize) _savedDimension = DockDimension;
             }
         }
 
-        private bool _hidden;
         public bool Hidden
         {
-            get { return _hidden; }
+            get { return DockDimension < MinSize; }
             set
             {
-                _hidden = value;
                 if (value)
                 {
                     _savedDimension = DockDimension;
-                    DockDimension = HandleWidth;
+                    DockDimension = 0;
                 }
                 else
                 {
-                    DockDimension = Math.Max(_savedDimension, 10);
+                    DockDimension = Math.Max(Math.Min(MaxSize, _savedDimension), MinSize);
                 }
                 Refresh();
             }
@@ -155,8 +154,11 @@ namespace Sledge.Gui.WinForms.Shell
                     height -= e.Y;
                     break;
             }
-            Width = Math.Min(Math.Max(width, Math.Max(MinSize, ResizeHandleSize + 1)), MaxSize);
-            Height = Math.Min(Math.Max(height, Math.Max(MinSize, ResizeHandleSize + 1)), MaxSize);
+            if (width < MinSize) width = Padding.Horizontal;
+            if (height < MinSize) height = Padding.Vertical;
+            Width = Math.Min(width, MaxSize);
+            Height = Math.Min(height, MaxSize);
+            Invalidate();
         }
 
         protected override void OnMouseMove(MouseEventArgs e)
@@ -169,11 +171,11 @@ namespace Sledge.Gui.WinForms.Shell
             {
                 var ba = IsInButtonArea(e);
                 var ra = IsInResizeArea(e);
-                if (ba || (_hidden && ra))
+                if (ba || (Hidden && ra))
                 {
                     Cursor = Cursors.Hand;
                 }
-                else if (ra && !_hidden)
+                else if (ra && !Hidden)
                 {
                     Cursor = (Dock == DockStyle.Left || Dock == DockStyle.Right) ? Cursors.SizeWE : Cursors.SizeNS;
                 }
@@ -195,8 +197,8 @@ namespace Sledge.Gui.WinForms.Shell
         {
             var ba = IsInButtonArea(e);
             var ra = IsInResizeArea(e);
-            if (ba || (ra && _hidden)) Hidden = !Hidden;
-            else if (!_hidden && IsInResizeArea(e)) _resizing = true;
+            if (ba || (ra && Hidden)) Hidden = !Hidden;
+            else if (!Hidden && IsInResizeArea(e)) _resizing = true;
             base.OnMouseDown(e);
         }
 
@@ -243,30 +245,30 @@ namespace Sledge.Gui.WinForms.Shell
             {
                 case DockStyle.Top:
                     rect = new Rectangle(padding + ButtonHeight, Height - RenderHandleWidth - 1, Width - padding - padding - ButtonHeight, RenderHandleWidth);
-                    rotflip = _hidden ? RotateFlipType.RotateNoneFlipNone : RotateFlipType.RotateNoneFlipY;
+                    rotflip = Hidden ? RotateFlipType.RotateNoneFlipNone : RotateFlipType.RotateNoneFlipY;
                     buttonX = padding;
                     buttonY = Height - HandleWidth;
                     break;
                 case DockStyle.Bottom:
                     rect = new Rectangle(padding + ButtonHeight, 1, Width - padding - padding - ButtonHeight, RenderHandleWidth);
-                    rotflip = !_hidden ? RotateFlipType.RotateNoneFlipNone : RotateFlipType.RotateNoneFlipY;
+                    rotflip = !Hidden ? RotateFlipType.RotateNoneFlipNone : RotateFlipType.RotateNoneFlipY;
                     buttonX = padding;
                     break;
                 case DockStyle.Left:
                     rect = new Rectangle(Width - RenderHandleWidth - 1, padding + ButtonHeight, RenderHandleWidth, Height - padding - padding - ButtonHeight);
-                    rotflip = _hidden ? RotateFlipType.Rotate90FlipX : RotateFlipType.Rotate90FlipNone;
+                    rotflip = Hidden ? RotateFlipType.Rotate90FlipX : RotateFlipType.Rotate90FlipNone;
                     buttonY = padding;
                     buttonX = Width - HandleWidth;
                     break;
                 case DockStyle.Right:
                     rect = new Rectangle(1, padding + ButtonHeight, RenderHandleWidth, Height - padding - padding - ButtonHeight);
-                    rotflip = !_hidden ? RotateFlipType.Rotate90FlipX : RotateFlipType.Rotate90FlipNone;
+                    rotflip = !Hidden ? RotateFlipType.Rotate90FlipX : RotateFlipType.Rotate90FlipNone;
                     buttonY = padding;
                     break;
             }
             if (!rect.IsEmpty)
             {
-                using (var b = new SolidBrush(BackColor.Darken(_hidden ? 10 : 40)))
+                using (var b = new SolidBrush(BackColor.Darken(Hidden ? 10 : 40)))
                 {
                     e.Graphics.FillRectangle(b, rect);
                 }

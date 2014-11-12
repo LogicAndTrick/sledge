@@ -75,5 +75,10 @@ namespace Sledge.Gui.Gtk
         {
             return (T)Activator.CreateInstance(_implementations[typeof(T)]);
         }
+
+        public T ConstructComponent<T>()
+        {
+            return (T)Activator.CreateInstance(_implementations[typeof(T)]);
+        }
     }
 }

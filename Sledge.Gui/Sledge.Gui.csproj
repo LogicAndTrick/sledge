@@ -52,6 +52,7 @@
     <Compile Include="Bindings\Binding.cs" />
     <Compile Include="Bindings\BindingDirection.cs" />
     <Compile Include="Bindings\IBindingTarget.cs" />
+    <Compile Include="Components\Clipboard.cs" />
     <Compile Include="Containers\BoxBase.cs" />
     <Compile Include="Containers\ResizableTable.cs" />
     <Compile Include="Controls\Button.cs" />
@@ -64,6 +65,7 @@
     <Compile Include="Containers\HorizontalBox.cs" />
     <Compile Include="Containers\HorizontalScrollContainer.cs" />
     <Compile Include="Controls\Label.cs" />
+    <Compile Include="Controls\NumericSpinner.cs" />
     <Compile Include="Controls\PictureBox.cs" />
     <Compile Include="Containers\Table.cs" />
     <Compile Include="Controls\TabStrip.cs" />
@@ -78,6 +80,8 @@
     <Compile Include="Events\IMouseEvent.cs" />
     <Compile Include="Events\KeyboardEventHandler.cs" />
     <Compile Include="Events\MouseEventHandler.cs" />
+    <Compile Include="Interfaces\Components\IClipboard.cs" />
+    <Compile Include="Interfaces\Controls\INumericSpinner.cs" />
     <Compile Include="Interfaces\Dialogs\IDialog.cs" />
     <Compile Include="QuickForms\Items\IQuickFormItem.cs" />
     <Compile Include="QuickForms\Items\QuickFormLabel.cs" />
@@ -86,7 +90,9 @@
     <Compile Include="QuickForms\QuickForm.cs" />
     <Compile Include="Resources\IStringProvider.cs" />
     <Compile Include="Resources\PassthroughStringProvider.cs" />
+    <Compile Include="Shell\DialogWindow.cs" />
     <Compile Include="Shell\Window.cs" />
+    <Compile Include="Shell\WindowBase.cs" />
     <Compile Include="Structures\ResizableTableConfiguration.cs" />
     <Compile Include="Models\CheckboxListItem.cs" />
     <Compile Include="Models\ComboBoxItem.cs" />

@@ -9,6 +9,7 @@ namespace Sledge.Gui.Interfaces
         IEnumerable<IControl> Children { get; }
         void Insert(int index, IControl child);
         void Insert(int index, IControl child, ContainerMetadata metadata);
+        void Remove(IControl child);
         Padding Margin { get; set; }
     }
 }

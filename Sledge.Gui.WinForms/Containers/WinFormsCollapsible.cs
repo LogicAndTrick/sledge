@@ -106,6 +106,11 @@ namespace Sledge.Gui.WinForms.Containers
             _contentPanel.Controls.Add(child.Control);
         }
 
+        protected override void RemoveChild(WinFormsControl child)
+        {
+            _contentPanel.Controls.Remove(child.Control);
+        }
+
         public void Set(IControl child)
         {
             Insert(0, child);

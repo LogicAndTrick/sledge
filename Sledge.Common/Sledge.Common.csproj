@@ -51,6 +51,7 @@
     <Compile Include="Mediator\MediatorExceptionEventArgs.cs" />
     <Compile Include="Mediator\MultiDictionary.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Scheduler.cs" />
     <Compile Include="TextureFlags.cs" />
   </ItemGroup>
   <ItemGroup />

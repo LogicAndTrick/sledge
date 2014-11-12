@@ -26,6 +26,13 @@ namespace Sledge.EditorNew.UI.Viewports
         public int Delta { get; set; }
         public Coordinate Location { get; set; }
 
+        // Click and drag
+        public bool Dragging { get; set; }
+        public int StartX { get; set; }
+        public int StartY { get; set; }
+        public int LastX { get; set; }
+        public int LastY { get; set; }
+
         // 2D Camera
         public Coordinate CameraPosition { get; set; }
         public decimal CameraZoom { get; set; }

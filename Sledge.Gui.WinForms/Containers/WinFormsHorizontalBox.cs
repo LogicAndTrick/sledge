@@ -19,7 +19,7 @@ namespace Sledge.Gui.WinForms.Containers
         {
             get
             {
-                var width = 10;
+                var width = 0;
                 var height = 10;
                 foreach (var child in Children)
                 {
@@ -36,8 +36,6 @@ namespace Sledge.Gui.WinForms.Containers
         public WinFormsHorizontalBox() : base(new TableLayoutPanel { RowCount = 1, ColumnCount = 1 })
         {
             _table = (TableLayoutPanel)Control;
-            _table.Padding = new Padding(0);
-            _table.Margin = new Padding(0);
             Uniform = false;
             ControlPadding = 3;
 
@@ -48,12 +46,6 @@ namespace Sledge.Gui.WinForms.Containers
         public void Insert(int index, IControl child, bool fill)
         {
             Insert(index, child, new ContainerMetadata { { "Fill", fill } });
-        }
-
-        protected override void OnPreferredSizeChanged()
-        {
-            CalculateLayout();
-            base.OnPreferredSizeChanged();
         }
 
         protected override void CalculateLayout()
@@ -85,7 +77,7 @@ namespace Sledge.Gui.WinForms.Containers
                 _table.ColumnStyles[i].SizeType = fill ? SizeType.Percent : SizeType.Absolute;
                 _table.ColumnStyles[i].Width = fill ? fillVal : standardVal * child.PreferredSize.Width + ControlPadding;
                 child.Control.Dock = DockStyle.Fill;
-                child.Control.Margin = new Padding(ControlPadding, ControlPadding / 2, ControlPadding, (int)Math.Ceiling(ControlPadding / 2.0));
+                child.Control.Margin = new Padding(i == 0 ? 0 : ControlPadding / 2, 0, i == Children.Count - 1 ? 0 : (int)Math.Ceiling(ControlPadding / 2.0), 0);
                 _table.SetCellPosition(child.Control, new TableLayoutPanelCellPosition(i, 0));
             }
             if (numFill == 0)

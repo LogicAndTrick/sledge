@@ -65,17 +65,17 @@ namespace Sledge.Gui.WinForms
             Application.Run(_shell.Form);
         }
 
-        public IWindow CreateWindow()
-        {
-            return new WinFormsWindow();
-        }
-
         public T Construct<T>() where T : IControl
         {
-            return (T) Activator.CreateInstance(_implementations[typeof (T)]);
+            return ConstructComponent<T>();
         }
 
         public T ConstructDialog<T>() where T : IDialog
+        {
+            return ConstructComponent<T>();
+        }
+
+        public T ConstructComponent<T>()
         {
             return (T) Activator.CreateInstance(_implementations[typeof(T)]);
         }

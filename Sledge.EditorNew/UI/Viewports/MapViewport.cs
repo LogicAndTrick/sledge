@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using OpenTK;
-using OpenTK.Graphics.OpenGL;
+using OpenTK.Graphics;
 using Sledge.DataStructures.Geometric;
 using Sledge.Graphics;
 using Sledge.Gui.Controls;
 using Sledge.Gui.Events;
 using Sledge.Gui.Structures;
 using Matrix = Sledge.Graphics.Helpers.Matrix;
+using MatrixMode = OpenTK.Graphics.OpenGL.MatrixMode;
 
 namespace Sledge.EditorNew.UI.Viewports
 {
@@ -44,6 +45,8 @@ namespace Sledge.EditorNew.UI.Viewports
         {
             Is3D = false;
             Direction = direction;
+            Zoom = 1;
+            Position = new Coordinate(0, 0, 0);
         }
 
         public MapViewport(ViewType type, RenderContext context = null) : this(context)
@@ -123,7 +126,6 @@ namespace Sledge.EditorNew.UI.Viewports
 
         #region Listeners
 
-        public delegate void ListenerExceptionEventHandler(object sender, Exception exception);
         public event ListenerExceptionEventHandler ListenerException;
 
         private void OnListenerException(Exception ex)
@@ -192,36 +194,65 @@ namespace Sledge.EditorNew.UI.Viewports
             ListenerDoEvent(new ViewportEvent(this, e), (l, v) => l.MouseLeave(v));
         }
 
+        private bool _dragging = false;
+        private Point _mouseDragLocation = new Point(-1, -1);
         private Point _mouseDownLocation = new Point(-1, -1);
 
         private void OnMouseMove(object sender, IMouseEvent e)
         {
-            ListenerDoEvent(new ViewportEvent(this, e), (l, v) => l.MouseMove(v));
-            if (_mouseDownLocation.X >= 0 && _mouseDownLocation.Y >= 0
-                && Math.Abs(_mouseDownLocation.X - e.Location.X) <= 1
-                && Math.Abs(_mouseDownLocation.Y - e.Location.Y) <= 1)
+            var ve = new ViewportEvent(this, e)
             {
-                // Moved outside of the click hot spot
-                _mouseDownLocation = new Point(-1, -1);
+                Dragging = _dragging,
+                StartX = _mouseDownLocation.X,
+                StartY = _mouseDownLocation.Y,
+                LastX = _mouseDragLocation.X,
+                LastY = _mouseDragLocation.Y,
+            };
+            if (!_dragging
+                && (Math.Abs(_mouseDownLocation.X - e.Location.X) > 1
+                    || Math.Abs(_mouseDownLocation.Y - e.Location.Y) > 1))
+            {
+                _dragging = ve.Dragging = true;
+                ListenerDoEvent(ve, (l, v) => l.DragStart(v));
+            }
+            ListenerDoEvent(ve, (l, v) => l.MouseMove(v));
+            if (_dragging)
+            {
+                ListenerDoEvent(ve, (l, v) => l.DragMove(v));
             }
         }
 
         private void OnMouseUp(object sender, IMouseEvent e)
         {
-            ListenerDoEvent(new ViewportEvent(this, e), (l, v) => l.MouseUp(v));
-            if (_mouseDownLocation.X >= 0 && _mouseDownLocation.Y >= 0
+            var ve = new ViewportEvent(this, e)
+            {
+                Dragging = _dragging,
+                StartX = _mouseDownLocation.X,
+                StartY = _mouseDownLocation.Y,
+                LastX = _mouseDragLocation.X,
+                LastY = _mouseDragLocation.Y,
+            };
+            if (_dragging)
+            {
+                ListenerDoEvent(ve, (l, v) => l.DragEnd(v));
+            }
+            ListenerDoEvent(ve, (l, v) => l.MouseUp(v));
+            if (!_dragging
                 && Math.Abs(_mouseDownLocation.X - e.Location.X) <= 1
                 && Math.Abs(_mouseDownLocation.Y - e.Location.Y) <= 1)
             {
                 // Mouse hasn't moved very much, trigger the click event
-                ListenerDoEvent(new ViewportEvent(this, e), (l, v) => l.MouseClick(v));
+                ListenerDoEvent(ve, (l, v) => l.MouseClick(v));
             }
             _mouseDownLocation = new Point(-1, -1);
+            _mouseDragLocation = new Point(-1, -1);
         }
 
         private void OnMouseDown(object sender, IMouseEvent e)
         {
             _mouseDownLocation = new Point(e.X, e.Y);
+            _mouseDragLocation = new Point(e.X, e.Y);
+            _dragging = false;
             ListenerDoEvent(new ViewportEvent(this), (l, v) => l.MouseDown(v));
         }
 
@@ -235,6 +266,15 @@ namespace Sledge.EditorNew.UI.Viewports
         #region Shared Methods
 
         public bool Is3D { get; set; }
+
+        public bool Is2D
+        {
+            get { return !Is3D; }
+            set { Is3D = !value; }
+        }
+
+        public int Width { get { return ActualSize.Width; } }
+        public int Height { get { return ActualSize.Height; } }
 
         public void FocusOn(Box box)
         {

@@ -9,6 +9,7 @@ using Sledge.Common.Mediator;
 using Sledge.EditorNew.Bootstrap;
 using Sledge.EditorNew.Documents;
 using Sledge.EditorNew.Language;
+using Sledge.EditorNew.Tools;
 using Sledge.EditorNew.UI.Viewports;
 using Sledge.Gui;
 using Sledge.Gui.Containers;
@@ -20,8 +21,10 @@ using Sledge.Gui.Interfaces.Shell;
 using Sledge.Gui.Models;
 using Sledge.Gui.QuickForms;
 using Sledge.Gui.Structures;
+using Sledge.Providers.Map;
 using Sledge.Settings;
 using Sledge.Settings.Models;
+using Size = Sledge.Gui.Structures.Size;
 
 namespace Sledge.EditorNew.UI
 {
@@ -42,6 +45,8 @@ namespace Sledge.EditorNew.UI
             _shell = shell;
             Build();
 
+            ViewportManager.Init(_table);
+
             Mediator.Subscribe(EditorMediator.DocumentOpened, this);
             Mediator.Subscribe(EditorMediator.DocumentClosed, this);
             Mediator.Subscribe(EditorMediator.DocumentActivated, this);
@@ -50,9 +55,9 @@ namespace Sledge.EditorNew.UI
             // Mediator.Subscribe(HotkeysMediator.FileOpen, this);
             Mediator.Subscribe(HotkeysMediator.FileNew, this);
 
-            DocumentManager.Add(new DummyDocument("Test 1!"));
-            DocumentManager.Add(new DummyDocument("Test 2!"));
-            DocumentManager.AddAndSwitch(new DummyDocument("Test 3!"));
+            MapProvider.Register(new RmfProvider());
+            var file = @"D:\Github\sledge\_Resources\RMF\aaa.rmf";
+            DocumentManager.AddAndSwitch(new Document(file, MapProvider.GetMapFromFile(file), new Game()));
         }
 
         private void Build()
@@ -64,17 +69,14 @@ namespace Sledge.EditorNew.UI
             _tabs.TabSelected += TabSelected;
             vbox.Add(_tabs);
 
-            //_table = new ResizableTable();
+            var toolContainer = new HorizontalBox();
 
-            //vbox.Add(_table, true);
 
-            //var viewport = new MapViewport(ViewDirection.Top);
-            //_table.Insert(0, 0, viewport);
+            _table = new ResizableTable{ControlPadding = 5};
+            vbox.Add(_table, true);
 
             _shell.Container.Set(vbox);
             UpdateTitle();
-
-            //viewport.Run();
         }
 
         private void TabSelected(object sender, ITab tab)

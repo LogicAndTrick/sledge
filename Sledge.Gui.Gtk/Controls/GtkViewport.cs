@@ -21,7 +21,11 @@ namespace Sledge.Gui.Gtk.Controls
         public GtkViewport() : base(new Viewport())
         {
             _viewport = (Viewport) Control;
-            
+        }
+
+        public IGraphicsContext Context
+        {
+            get { return _viewport.Context; }
         }
 
         public event FrameEventHandler Update
@@ -40,6 +44,11 @@ namespace Sledge.Gui.Gtk.Controls
         {
             add { _viewport.RenderException += value; }
             remove { _viewport.RenderException -= value; }
+        }
+
+        public void MakeCurrent()
+        {
+            _viewport.MakeCurrent();
         }
 
         public void Run()
