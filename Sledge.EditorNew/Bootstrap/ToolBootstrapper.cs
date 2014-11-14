@@ -27,6 +27,7 @@ namespace Sledge.EditorNew.Bootstrap
 
             ToolManager.AddTool(new DummyTool());
             ToolManager.AddTool(new DummyBoxTool());
+            ToolManager.AddTool(new DummyDraggableTool());
 
             /*
              

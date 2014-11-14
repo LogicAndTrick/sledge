@@ -205,6 +205,7 @@
     <Compile Include="Rendering\Viewport3DRenderOptions.cs" />
     <Compile Include="Rendering\WidgetLinesRenderable.cs" />
     <Compile Include="Tools\BaseBoxTool.cs" />
+    <Compile Include="Tools\BaseDraggableTool.cs" />
     <Compile Include="Tools\BaseTool.cs" />
     <Compile Include="Tools\DummyTool.cs" />
     <Compile Include="Tools\ToolManager.cs" />
