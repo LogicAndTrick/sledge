@@ -308,7 +308,7 @@ namespace Sledge.EditorNew.UI.Viewports
             GL.ClearColor(View.ViewportBackground);
             //viewport.Listeners.Add(new ViewportLabelListener(viewport));
             //viewport.Listeners.Add(new Camera3DViewportListener(viewport));
-            //viewport.Listeners.Add(new ToolViewportListener(viewport));
+            viewport.Listeners.Add(new ToolViewportListener(viewport));
             return viewport;
         }
 
@@ -321,7 +321,7 @@ namespace Sledge.EditorNew.UI.Viewports
             //viewport.Listeners.Add(new ViewportLabelListener(viewport));
             //viewport.Listeners.Add(new Camera2DViewportListener(viewport));
             //viewport.Listeners.Add(new Grid2DEventListener(viewport));
-            //viewport.Listeners.Add(new ToolViewportListener(viewport));
+            viewport.Listeners.Add(new ToolViewportListener(viewport));
             return viewport;
         }
 

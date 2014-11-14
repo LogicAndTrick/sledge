@@ -54,7 +54,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\OpenTK.dll</HintPath>
     </Reference>
-    <Reference Include="OpenTK.Compatibility, Version=1.1.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL" />
+    <Reference Include="OpenTK.Compatibility">
+      <HintPath>..\OpenTK.Compatibility.dll</HintPath>
+    </Reference>
     <Reference Include="Poly2Tri">
       <HintPath>..\Poly2Tri.dll</HintPath>
     </Reference>
@@ -202,6 +204,7 @@
     <Compile Include="Rendering\ToolRenderable.cs" />
     <Compile Include="Rendering\Viewport3DRenderOptions.cs" />
     <Compile Include="Rendering\WidgetLinesRenderable.cs" />
+    <Compile Include="Tools\BaseBoxTool.cs" />
     <Compile Include="Tools\BaseTool.cs" />
     <Compile Include="Tools\DummyTool.cs" />
     <Compile Include="Tools\ToolManager.cs" />
@@ -273,10 +276,6 @@
     <ProjectReference Include="..\Sledge.Graphics\Sledge.Graphics.csproj">
       <Project>{614d4144-8920-4975-ac67-dbba5cb1eb43}</Project>
       <Name>Sledge.Graphics</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Sledge.Gui.Gtk\Sledge.Gui.Gtk.csproj">
-      <Project>{86bde9c5-9dbb-4fc5-907d-4695e72dbdcf}</Project>
-      <Name>Sledge.Gui.Gtk</Name>
     </ProjectReference>
     <ProjectReference Include="..\Sledge.Gui.WinForms\Sledge.Gui.WinForms.csproj">
       <Project>{6996a6ee-f6b8-4883-bc9e-14db6914b9f8}</Project>

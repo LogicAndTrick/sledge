@@ -37,6 +37,7 @@ namespace Sledge.EditorNew.Tools
         public static void AddTool(BaseTool tool)
         {
             Tools.Add(tool);
+            tool.SetDocument((Document) DocumentManager.CurrentDocument);
             OnToolAdded(tool);
         }
 

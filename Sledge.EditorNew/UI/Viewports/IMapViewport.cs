@@ -25,4 +25,17 @@ namespace Sledge.EditorNew.UI.Viewports
         Coordinate ScreenToWorld(Coordinate screen);
         Coordinate WorldToScreen(Coordinate world);
     }
+
+    public static class ViewportExtensions
+    {
+        public static Coordinate ScreenToWorld(this IMapViewport vp, decimal x, decimal y)
+        {
+            return vp.ScreenToWorld(new Coordinate(x, y, 0));
+        }
+
+        public static Coordinate WorldToScreen(this IMapViewport vp, decimal x, decimal y, decimal z)
+        {
+            return vp.WorldToScreen(new Coordinate(x, y, z));
+        }
+    }
 }

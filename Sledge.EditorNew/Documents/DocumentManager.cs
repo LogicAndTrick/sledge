@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Sledge.Common.Mediator;
+using Sledge.EditorNew.Tools;
 
 namespace Sledge.EditorNew.Documents
 {
@@ -59,7 +60,7 @@ namespace Sledge.EditorNew.Documents
             }
 
             CurrentDocument = doc;
-            // todo ToolManager.SetDocument(doc);
+            ToolManager.SetDocument((Document) doc);
 
             if (CurrentDocument != null)
             {

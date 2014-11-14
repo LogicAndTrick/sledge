@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using OpenTK;
 using OpenTK.Graphics;
+using OpenTK.Input;
 using Sledge.DataStructures.Geometric;
 using Sledge.Graphics;
 using Sledge.Gui.Controls;
@@ -195,6 +196,7 @@ namespace Sledge.EditorNew.UI.Viewports
         }
 
         private bool _dragging = false;
+        private MouseButton _dragButton;
         private Point _mouseDragLocation = new Point(-1, -1);
         private Point _mouseDownLocation = new Point(-1, -1);
 
@@ -210,14 +212,17 @@ namespace Sledge.EditorNew.UI.Viewports
             };
             if (!_dragging
                 && (Math.Abs(_mouseDownLocation.X - e.Location.X) > 1
-                    || Math.Abs(_mouseDownLocation.Y - e.Location.Y) > 1))
+                    || Math.Abs(_mouseDownLocation.Y - e.Location.Y) > 1)
+                && _mouseDownLocation.X >= 0 && _mouseDownLocation.Y >= 0)
             {
                 _dragging = ve.Dragging = true;
+                ve.Button = _dragButton;
                 ListenerDoEvent(ve, (l, v) => l.DragStart(v));
             }
             ListenerDoEvent(ve, (l, v) => l.MouseMove(v));
             if (_dragging)
             {
+                ve.Button = _dragButton;
                 ListenerDoEvent(ve, (l, v) => l.DragMove(v));
             }
         }
@@ -232,7 +237,7 @@ namespace Sledge.EditorNew.UI.Viewports
                 LastX = _mouseDragLocation.X,
                 LastY = _mouseDragLocation.Y,
             };
-            if (_dragging)
+            if (_dragging && ve.Button == _dragButton)
             {
                 ListenerDoEvent(ve, (l, v) => l.DragEnd(v));
             }
@@ -244,15 +249,26 @@ namespace Sledge.EditorNew.UI.Viewports
                 // Mouse hasn't moved very much, trigger the click event
                 ListenerDoEvent(ve, (l, v) => l.MouseClick(v));
             }
-            _mouseDownLocation = new Point(-1, -1);
-            _mouseDragLocation = new Point(-1, -1);
+            if (_dragging && ve.Button == _dragButton)
+            {
+                _dragging = false;
+            }
+            if (!_dragging)
+            {
+                _mouseDownLocation = new Point(-1, -1);
+                _mouseDragLocation = new Point(-1, -1);
+            }
         }
 
         private void OnMouseDown(object sender, IMouseEvent e)
         {
-            _mouseDownLocation = new Point(e.X, e.Y);
-            _mouseDragLocation = new Point(e.X, e.Y);
-            _dragging = false;
+            if (!_dragging)
+            {
+                _mouseDownLocation = new Point(e.X, e.Y);
+                _mouseDragLocation = new Point(e.X, e.Y);
+                _dragging = false;
+                _dragButton = e.Button;
+            }
             ListenerDoEvent(new ViewportEvent(this), (l, v) => l.MouseDown(v));
         }
 

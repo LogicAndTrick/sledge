@@ -56,7 +56,7 @@ namespace Sledge.EditorNew.UI
             Mediator.Subscribe(HotkeysMediator.FileNew, this);
 
             MapProvider.Register(new RmfProvider());
-            var file = @"D:\Github\sledge\_Resources\RMF\aaa.rmf";
+            var file = @"C:\Github\sledge\_Resources\verc_18.rmf";
             DocumentManager.AddAndSwitch(new Document(file, MapProvider.GetMapFromFile(file), new Game()));
         }
 

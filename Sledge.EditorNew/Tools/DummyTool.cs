@@ -64,6 +64,21 @@ namespace Sledge.EditorNew.Tools
         {
         }
 
+        public override void DragStart(IMapViewport viewport, ViewportEvent e)
+        {
+            
+        }
+
+        public override void DragMove(IMapViewport viewport, ViewportEvent e)
+        {
+
+        }
+
+        public override void DragEnd(IMapViewport viewport, ViewportEvent e)
+        {
+
+        }
+
         public override void KeyPress(IMapViewport viewport, ViewportEvent e)
         {
         }

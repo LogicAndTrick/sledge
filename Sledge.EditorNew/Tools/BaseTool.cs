@@ -26,8 +26,7 @@ namespace Sledge.EditorNew.Tools
 
         protected Coordinate SnapIfNeeded(Coordinate c)
         {
-            //return Document.Snap(c);
-            throw new NotImplementedException();
+            return Document.Snap(c);
         }
         /*
         protected Coordinate SnapToSelection(Coordinate c, IViewport2D vp)
@@ -173,6 +172,9 @@ namespace Sledge.EditorNew.Tools
         public abstract void MouseUp(IMapViewport viewport, ViewportEvent e);
         public abstract void MouseWheel(IMapViewport viewport, ViewportEvent e);
         public abstract void MouseMove(IMapViewport viewport, ViewportEvent e);
+        public abstract void DragStart(IMapViewport viewport, ViewportEvent e);
+        public abstract void DragMove(IMapViewport viewport, ViewportEvent e);
+        public abstract void DragEnd(IMapViewport viewport, ViewportEvent e);
         public abstract void KeyPress(IMapViewport viewport, ViewportEvent e);
         public abstract void KeyDown(IMapViewport viewport, ViewportEvent e);
         public abstract void KeyUp(IMapViewport viewport, ViewportEvent e);
