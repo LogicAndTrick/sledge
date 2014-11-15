@@ -6,6 +6,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using Gdk;
 using Gtk;
 using Sledge.Gui.Gtk.Containers;
 using Sledge.Gui.Interfaces;

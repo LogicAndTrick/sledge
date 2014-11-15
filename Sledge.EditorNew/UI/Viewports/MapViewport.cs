@@ -224,6 +224,7 @@ namespace Sledge.EditorNew.UI.Viewports
             {
                 ve.Button = _dragButton;
                 ListenerDoEvent(ve, (l, v) => l.DragMove(v));
+                _mouseDragLocation = new Point(e.X, e.Y);
             }
         }
 

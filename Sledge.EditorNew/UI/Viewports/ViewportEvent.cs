@@ -32,6 +32,8 @@ namespace Sledge.EditorNew.UI.Viewports
         public int StartY { get; set; }
         public int LastX { get; set; }
         public int LastY { get; set; }
+        public int DeltaX { get { return X - LastX; } }
+        public int DeltaY { get { return Y - LastY; } }
 
         // 2D Camera
         public Coordinate CameraPosition { get; set; }

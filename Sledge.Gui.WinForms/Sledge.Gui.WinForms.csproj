@@ -50,6 +50,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Components\WinFormsClipboard.cs" />
+    <Compile Include="Components\WinFormsCursor.cs" />
     <Compile Include="Controls\WinFormsNumericSpinner.cs" />
     <Compile Include="Dialogs\WinFormsFileOpenDialog.cs" />
     <Compile Include="Shell\WinFormsDialogWindow.cs" />

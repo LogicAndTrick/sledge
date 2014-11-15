@@ -53,6 +53,8 @@
     <Compile Include="Bindings\BindingDirection.cs" />
     <Compile Include="Bindings\IBindingTarget.cs" />
     <Compile Include="Components\Clipboard.cs" />
+    <Compile Include="Components\Cursor.cs" />
+    <Compile Include="Components\CursorType.cs" />
     <Compile Include="Containers\BoxBase.cs" />
     <Compile Include="Containers\ResizableTable.cs" />
     <Compile Include="Controls\Button.cs" />
@@ -81,6 +83,7 @@
     <Compile Include="Events\KeyboardEventHandler.cs" />
     <Compile Include="Events\MouseEventHandler.cs" />
     <Compile Include="Interfaces\Components\IClipboard.cs" />
+    <Compile Include="Interfaces\Components\ICursor.cs" />
     <Compile Include="Interfaces\Controls\INumericSpinner.cs" />
     <Compile Include="Interfaces\Dialogs\IDialog.cs" />
     <Compile Include="QuickForms\Items\IQuickFormItem.cs" />
