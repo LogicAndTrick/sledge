@@ -7,6 +7,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Windows.Forms;
+using Sledge.Gui.Events;
 using Sledge.Gui.Interfaces;
 using Sledge.Gui.Interfaces.Controls;
 using Sledge.Gui.WinForms.Containers;
@@ -393,6 +394,18 @@ namespace Sledge.Gui.WinForms.Controls
             remove { _control.MouseLeave -= value; }
         }
 
+        public event KeyboardEventHandler KeyDown
+        {
+            add { _control.KeyDown += ConvertDelegate(value, true); }
+            remove { _control.KeyDown -= ConvertDelegate(value, false); }
+        }
+
+        public event KeyboardEventHandler KeyUp
+        {
+            add { _control.KeyUp += ConvertDelegate(value, true); }
+            remove { _control.KeyUp -= ConvertDelegate(value, false); }
+        }
+
         public virtual event EventHandler Click
         {
             add { _control.Click += value; }
@@ -410,7 +423,15 @@ namespace Sledge.Gui.WinForms.Controls
         protected virtual System.Windows.Forms.MouseEventHandler ConvertDelegate(MouseEventHandler value, bool adding)
         {
             if (!_delegateCache.ContainsKey(value)) _delegateCache.Add(value, value.ToMouseEventHandler(this));
-            var val = (System.Windows.Forms.MouseEventHandler) _delegateCache[value];
+            var val = (System.Windows.Forms.MouseEventHandler)_delegateCache[value];
+            if (!adding) _delegateCache.Remove(value);
+            return val;
+        }
+
+        protected virtual System.Windows.Forms.KeyEventHandler ConvertDelegate(KeyboardEventHandler value, bool adding)
+        {
+            if (!_delegateCache.ContainsKey(value)) _delegateCache.Add(value, value.ToKeyEventHandler(this));
+            var val = (System.Windows.Forms.KeyEventHandler)_delegateCache[value];
             if (!adding) _delegateCache.Remove(value);
             return val;
         }

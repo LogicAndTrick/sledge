@@ -26,28 +26,22 @@ namespace Sledge.Gui.WinForms
 
         public static SWF.MouseEventHandler ToMouseEventHandler(this MouseEventHandler handler, IControl control)
         {
-            return (o, e) => handler(o, new ControlEvent(control, e.X, e.Y, Convert(e.Button)) {Delta = e.Delta, Clicks = e.Clicks});
+            return (o, e) => handler(o, new ControlEvent(control, e.X, e.Y, Convert(e.Button)) { Delta = e.Delta, Clicks = e.Clicks });
+        }
+
+        public static SWF.KeyEventHandler ToKeyEventHandler(this KeyboardEventHandler handler, IControl control)
+        {
+            return (o, e) => handler(o, new ControlEvent(control, WinFormsOpenTkKeyMap.Map(e.KeyData), e.Control, e.Shift, e.Alt));
         }
 
         private static MouseButton Convert(MouseButtons mouseButton)
         {
-            switch (mouseButton)
-            {
-                case MouseButtons.None:
-                    return MouseButton.LastButton;
-                case MouseButtons.Left:
-                    return MouseButton.Left;
-                case MouseButtons.Right:
-                    return MouseButton.Right;
-                case MouseButtons.Middle:
-                    return MouseButton.Middle;
-                case MouseButtons.XButton1:
-                    return MouseButton.Button1;
-                case MouseButtons.XButton2:
-                    return MouseButton.Button2;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
+            if (mouseButton.HasFlag(MouseButtons.Left)) return MouseButton.Left;
+            if (mouseButton.HasFlag(MouseButtons.Right)) return MouseButton.Right;
+            if (mouseButton.HasFlag(MouseButtons.Middle)) return MouseButton.Middle;
+            if (mouseButton.HasFlag(MouseButtons.XButton1)) return MouseButton.Button1;
+            if (mouseButton.HasFlag(MouseButtons.XButton2)) return MouseButton.Button2;
+            return MouseButton.LastButton;
         }
     }
 }

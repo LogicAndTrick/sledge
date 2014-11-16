@@ -144,5 +144,17 @@ namespace Sledge.Gui.Controls
             add { Control.MouseLeave += value; }
             remove { Control.MouseLeave -= value; }
         }
+
+        public event KeyboardEventHandler KeyDown
+        {
+            add { Control.KeyDown += value; }
+            remove { Control.KeyDown -= value; }
+        }
+
+        public event KeyboardEventHandler KeyUp
+        {
+            add { Control.KeyUp += value; }
+            remove { Control.KeyUp -= value; }
+        }
     }
 }

@@ -13,6 +13,11 @@ namespace Sledge.EditorNew.UI.Viewports
     {
         event ListenerExceptionEventHandler ListenerException;
         RenderContext RenderContext { get; set; }
+        
+        bool IsUnlocked(object context);
+        bool AquireInputLock(object context);
+        bool ReleaseInputLock(object context);
+
         bool Is3D { get; set; }
         bool Is2D { get; set; }
         int Width { get; }
@@ -36,6 +41,16 @@ namespace Sledge.EditorNew.UI.Viewports
         public static Coordinate WorldToScreen(this IMapViewport vp, decimal x, decimal y, decimal z)
         {
             return vp.WorldToScreen(new Coordinate(x, y, z));
+        }
+
+        public static Coordinate Expand(this IViewport2D vp, decimal x, decimal y)
+        {
+            return vp.Expand(new Coordinate(x, y, 0));
+        }
+
+        public static Coordinate Flatten(this IViewport2D vp, decimal x, decimal y, decimal z)
+        {
+            return vp.Flatten(new Coordinate(x, y, z));
         }
     }
 }

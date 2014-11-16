@@ -16,46 +16,55 @@ namespace Sledge.EditorNew.Tools.DraggableTool
         public void FixBounds()
         {
             var box = new Box(Start, End);
-            Start = box.Start;
-            End = box.End;
+            OrigStart = Start = box.Start;
+            OrigEnd = End = box.End;
         }
 
-        public void Resize(ResizeHandle handle, IViewport2D viewport, int dx, int dy)
+        public void Move(IViewport2D viewport, Coordinate delta)
         {
-            var x = dx * viewport.Zoom;
-            var y = dy * viewport.Zoom;
+            delta = viewport.Expand(delta);
+            Start += delta;
+            End += delta;
+        }
+
+        public void Resize(ResizeHandle handle, IViewport2D viewport, Coordinate position)
+        {
+            var fs = viewport.Flatten(Start);
+            var fe = viewport.Flatten(End);
+            var us = viewport.GetUnusedCoordinate(Start);
+            var ue = viewport.GetUnusedCoordinate(End);
             switch (handle)
             {
                 case ResizeHandle.TopLeft:
-                    End += viewport.Expand(new Coordinate(0, y, 0));
-                    Start += viewport.Expand(new Coordinate(x, 0, 0));
+                    End = viewport.Expand(fe.X, position.Y) + ue;
+                    Start = viewport.Expand(position.X, fs.Y) + us;
                     break;
                 case ResizeHandle.Top:
-                    End += viewport.Expand(new Coordinate(0, y, 0));
+                    End = viewport.Expand(fe.X, position.Y) + ue;
                     break;
                 case ResizeHandle.TopRight:
-                    End += viewport.Expand(new Coordinate(x, y, 0));
+                    End = viewport.Expand(fe.X, position.Y) + ue;
+                    End = viewport.Expand(position.X, fe.Y) + ue;
                     break;
                 case ResizeHandle.Left:
-                    Start += viewport.Expand(new Coordinate(x, 0, 0));
+                    Start = viewport.Expand(position.X, fs.Y) + us;
                     break;
                 case ResizeHandle.Center:
-                    var offset = viewport.Expand(new Coordinate(x, y, 0));
-                    Start += offset;
-                    End += offset;
+                    // 
                     break;
                 case ResizeHandle.Right:
-                    End += viewport.Expand(new Coordinate(x, 0, 0));
+                    End = viewport.Expand(position.X, fe.Y) + ue;
                     break;
                 case ResizeHandle.BottomLeft:
-                    Start += viewport.Expand(new Coordinate(x, y, 0));
+                    Start = viewport.Expand(fs.X, position.Y) + us;
+                    Start = viewport.Expand(position.X, fs.Y) + us;
                     break;
                 case ResizeHandle.Bottom:
-                    Start += viewport.Expand(new Coordinate(0, y, 0));
+                    Start = viewport.Expand(fs.X, position.Y) + us;
                     break;
                 case ResizeHandle.BottomRight:
-                    Start += viewport.Expand(new Coordinate(0, y, 0));
-                    End += viewport.Expand(new Coordinate(x, 0, 0));
+                    Start = viewport.Expand(fs.X, position.Y) + us;
+                    End = viewport.Expand(position.X, fe.Y) + ue;
                     break;
                 default:
                     throw new ArgumentOutOfRangeException("handle");

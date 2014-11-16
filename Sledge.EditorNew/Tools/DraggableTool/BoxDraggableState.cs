@@ -54,7 +54,7 @@ namespace Sledge.EditorNew.Tools.DraggableTool
             // 
         }
 
-        public bool CanDrag(IViewport2D viewport, ViewportEvent e)
+        public bool CanDrag(IViewport2D viewport, ViewportEvent e, Coordinate position)
         {
             return true;
         }
@@ -69,24 +69,24 @@ namespace Sledge.EditorNew.Tools.DraggableTool
             //
         }
 
-        public void StartDrag(IViewport2D viewport, ViewportEvent e)
+        public void StartDrag(IViewport2D viewport, ViewportEvent e, Coordinate position)
         {
             State.Viewport = viewport;
             State.Action = BoxAction.Drawing;
-            State.Start = viewport.Expand(viewport.ScreenToWorld(e.X, viewport.Height - e.Y));
+            State.Start = viewport.Expand(position);
             State.End = State.Start;
         }
 
-        public void Drag(IViewport2D viewport, ViewportEvent e)
+        public void Drag(IViewport2D viewport, ViewportEvent e, Coordinate lastPosition, Coordinate position)
         {
-            State.End = viewport.Expand(viewport.ScreenToWorld(e.X, viewport.Height - e.Y));
+            State.End = viewport.Expand(position);
         }
 
-        public void EndDrag(IViewport2D viewport, ViewportEvent e)
+        public void EndDrag(IViewport2D viewport, ViewportEvent e, Coordinate position)
         {
             State.Viewport = null;
             State.Action = BoxAction.Drawn;
-            State.End = viewport.Expand(viewport.ScreenToWorld(e.X, viewport.Height - e.Y)) + viewport.GetUnusedCoordinate(Coordinate.One * 100);
+            State.End = viewport.Expand(position) + viewport.GetUnusedCoordinate(Coordinate.One * 100);
             State.FixBounds();
         }
 

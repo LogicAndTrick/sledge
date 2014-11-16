@@ -24,16 +24,30 @@ namespace Sledge.EditorNew.UI.Viewports
         public int X { get; set; }
         public int Y { get; set; }
         public int Delta { get; set; }
-        public Coordinate Location { get; set; }
+
+        public Coordinate Location
+        {
+            get { return new Coordinate(X, Y, 0); }
+        }
+
+        // Mouse movement
+        public int LastX { get; set; }
+        public int LastY { get; set; }
+
+        public int DeltaX
+        {
+            get { return X - LastX; }
+        }
+
+        public int DeltaY
+        {
+            get { return Y - LastY; }
+        }
 
         // Click and drag
         public bool Dragging { get; set; }
         public int StartX { get; set; }
         public int StartY { get; set; }
-        public int LastX { get; set; }
-        public int LastY { get; set; }
-        public int DeltaX { get { return X - LastX; } }
-        public int DeltaY { get { return Y - LastY; } }
 
         // 2D Camera
         public Coordinate CameraPosition { get; set; }
@@ -54,18 +68,17 @@ namespace Sledge.EditorNew.UI.Viewports
             Sender = sender;
             X = e.X;
             Y = e.Y;
-            Location = new Coordinate(X, Y, 0);
             Delta = e.Delta;
             Button = e.Button;
         }
 
-        public ViewportEvent(IViewport sender, Key key, bool control, bool shift, bool alt)
+        public ViewportEvent(IViewport sender, IKeyboardEvent e)
         {
             Sender = sender;
-            KeyValue = key;
-            Shift = shift;
-            Control = control;
-            Alt = alt;
+            KeyValue = e.KeyValue;
+            Shift = e.Shift;
+            Control = e.Control;
+            Alt = e.Alt;
         }
     }
 }

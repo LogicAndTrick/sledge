@@ -181,6 +181,11 @@ namespace Sledge.EditorNew.Tools
         public abstract void UpdateFrame(IMapViewport viewport, Frame frame);
         public abstract void Render(IMapViewport viewport);
 
+        public virtual void PositionChanged(IMapViewport viewport, ViewportEvent e)
+        {
+            return;
+        }
+
         public virtual void PreRender(IMapViewport viewport)
         {
             return;

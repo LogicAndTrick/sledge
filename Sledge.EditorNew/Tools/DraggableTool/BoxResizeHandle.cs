@@ -1,7 +1,9 @@
 using System;
 using System.Drawing;
+using System.Linq;
 using OpenTK.Graphics.OpenGL;
 using Sledge.DataStructures.Geometric;
+using Sledge.EditorNew.Documents;
 using Sledge.EditorNew.UI.Viewports;
 using Sledge.Gui.Components;
 
@@ -78,27 +80,54 @@ namespace Sledge.EditorNew.Tools.DraggableTool
             Cursor.SetCursor(viewport, CursorType.Default);
         }
 
-        public bool CanDrag(IViewport2D viewport, ViewportEvent e)
+        protected virtual Coordinate GetResizeOrigin(IViewport2D viewport, Coordinate position)
+        {
+            var st = viewport.Flatten(BoxState.Start);
+            var ed = viewport.Flatten(BoxState.End);
+            return (st + ed) / 2;
+        }
+
+        protected Coordinate MoveOrigin;
+        protected Coordinate SnappedMoveOrigin;
+
+        public bool CanDrag(IViewport2D viewport, ViewportEvent e, Coordinate position)
         {
             var box = GetRectangle(viewport);
-            var point = viewport.ScreenToWorld(e.X, viewport.Height - e.Y);
-            return box.CoordinateIsInside(point);
+            return box.CoordinateIsInside(position);
         }
 
-        public void StartDrag(IViewport2D viewport, ViewportEvent e)
+        public void StartDrag(IViewport2D viewport, ViewportEvent e, Coordinate position)
         {
             BoxState.Action = BoxAction.Resizing;
+            MoveOrigin = GetResizeOrigin(viewport, position);
+            SnappedMoveOrigin = MoveOrigin;
         }
 
-        public void Drag(IViewport2D viewport, ViewportEvent e)
+        public void Drag(IViewport2D viewport, ViewportEvent e, Coordinate lastPosition, Coordinate position)
         {
-            BoxState.Resize(Handle, viewport, e.DeltaX, -e.DeltaY);
+            // todo access to base tool / document
+            var doc = DocumentManager.CurrentDocument as Document;
+            if (Handle == ResizeHandle.Center)
+            {
+                var delta = position - lastPosition;
+                var newOrigin = MoveOrigin + delta;
+                var snapped = doc == null ? newOrigin : doc.Snap(newOrigin);
+                BoxState.Move(viewport, snapped - SnappedMoveOrigin);
+                SnappedMoveOrigin = snapped;
+                MoveOrigin = newOrigin;
+            }
+            else
+            {
+                var snapped = doc == null ? position : doc.Snap(position);
+                BoxState.Resize(Handle, viewport, snapped);
+            }
         }
 
-        public void EndDrag(IViewport2D viewport, ViewportEvent e)
+        public void EndDrag(IViewport2D viewport, ViewportEvent e, Coordinate position)
         {
             BoxState.FixBounds();
             BoxState.Action = BoxAction.Drawn;
+            MoveOrigin = SnappedMoveOrigin = null;
         }
 
         protected static void Coord(decimal x, decimal y, decimal z)

@@ -8,6 +8,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using Gdk;
 using Gtk;
+using Sledge.Gui.Events;
 using Sledge.Gui.Gtk.Containers;
 using Sledge.Gui.Interfaces;
 using Action = System.Action;
@@ -366,6 +367,8 @@ namespace Sledge.Gui.Gtk.Controls
         public event MouseEventHandler MouseMove;
         public event MouseEventHandler MouseClick;
         public event EventHandler MouseDoubleClick;
+        public event KeyboardEventHandler KeyDown;
+        public event KeyboardEventHandler KeyUp;
 
         public virtual event EventHandler MouseEnter
         {

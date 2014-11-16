@@ -63,6 +63,7 @@ namespace Sledge.EditorNew.UI.Viewports
             Listeners = new List<IViewportEventListener>();
 
             ActualSizeChanged += OnResize;
+            Update += OnUpdate;
             Render += OnRender;
 
             MouseWheel += OnMouseWheel;
@@ -72,8 +73,8 @@ namespace Sledge.EditorNew.UI.Viewports
             MouseUp += OnMouseUp;
             MouseDown += OnMouseDown;
             MouseDoubleClick += OnMouseDoubleClick;
-
-            // todo key events
+            KeyDown += OnKeyDown;
+            KeyUp += OnKeyUp;
         }
 
         public override void Dispose()
@@ -90,6 +91,11 @@ namespace Sledge.EditorNew.UI.Viewports
             {
                 CenterScreen = new Coordinate(ActualSize.Width / 2m, ActualSize.Height / 2m, 0);
             }
+        }
+
+        private void OnUpdate(object sender, Frame frame)
+        {
+            Listeners.ForEach(x => x.UpdateFrame(frame));
         }
 
         private void OnRender(object sender, Frame frame)
@@ -120,6 +126,8 @@ namespace Sledge.EditorNew.UI.Viewports
             else
             {
                 Graphics.Helpers.Viewport.Orthographic(0, 0, ActualSize.Width, ActualSize.Height, -50000, 50000);
+                OpenTK.Graphics.OpenGL.GL.Scale(new Vector3((float)Zoom, (float)Zoom, 0));
+                OpenTK.Graphics.OpenGL.GL.Translate((float)-Position.X, (float)-Position.Y, 0);
             }
         }
 
@@ -193,22 +201,29 @@ namespace Sledge.EditorNew.UI.Viewports
         private void OnMouseLeave(object sender, EventArgs e)
         {
             ListenerDoEvent(new ViewportEvent(this, e), (l, v) => l.MouseLeave(v));
+            _lastMouseLocationKnown = false;
+            _lastMouseLocation = new Point(-1, -1);
         }
 
         private bool _dragging = false;
         private MouseButton _dragButton;
-        private Point _mouseDragLocation = new Point(-1, -1);
+        private bool _lastMouseLocationKnown = false;
+        private Point _lastMouseLocation = new Point(-1, -1);
         private Point _mouseDownLocation = new Point(-1, -1);
 
         private void OnMouseMove(object sender, IMouseEvent e)
         {
+            if (!_lastMouseLocationKnown)
+            {
+                _lastMouseLocation = new Point(e.X, e.Y);
+            }
             var ve = new ViewportEvent(this, e)
             {
                 Dragging = _dragging,
                 StartX = _mouseDownLocation.X,
                 StartY = _mouseDownLocation.Y,
-                LastX = _mouseDragLocation.X,
-                LastY = _mouseDragLocation.Y,
+                LastX = _lastMouseLocation.X,
+                LastY = _lastMouseLocation.Y,
             };
             if (!_dragging
                 && (Math.Abs(_mouseDownLocation.X - e.Location.X) > 1
@@ -224,19 +239,24 @@ namespace Sledge.EditorNew.UI.Viewports
             {
                 ve.Button = _dragButton;
                 ListenerDoEvent(ve, (l, v) => l.DragMove(v));
-                _mouseDragLocation = new Point(e.X, e.Y);
             }
+            _lastMouseLocationKnown = true;
+            _lastMouseLocation = new Point(e.X, e.Y);
         }
 
         private void OnMouseUp(object sender, IMouseEvent e)
         {
+            if (!_lastMouseLocationKnown)
+            {
+                _lastMouseLocation = new Point(e.X, e.Y);
+            }
             var ve = new ViewportEvent(this, e)
             {
                 Dragging = _dragging,
                 StartX = _mouseDownLocation.X,
                 StartY = _mouseDownLocation.Y,
-                LastX = _mouseDragLocation.X,
-                LastY = _mouseDragLocation.Y,
+                LastX = _lastMouseLocation.X,
+                LastY = _lastMouseLocation.Y,
             };
             if (_dragging && ve.Button == _dragButton)
             {
@@ -257,25 +277,41 @@ namespace Sledge.EditorNew.UI.Viewports
             if (!_dragging)
             {
                 _mouseDownLocation = new Point(-1, -1);
-                _mouseDragLocation = new Point(-1, -1);
             }
+            _lastMouseLocationKnown = true;
+            _lastMouseLocation = new Point(e.X, e.Y);
         }
 
         private void OnMouseDown(object sender, IMouseEvent e)
         {
+            if (!_lastMouseLocationKnown)
+            {
+                _lastMouseLocation = new Point(e.X, e.Y);
+            }
             if (!_dragging)
             {
                 _mouseDownLocation = new Point(e.X, e.Y);
-                _mouseDragLocation = new Point(e.X, e.Y);
                 _dragging = false;
                 _dragButton = e.Button;
             }
             ListenerDoEvent(new ViewportEvent(this), (l, v) => l.MouseDown(v));
+            _lastMouseLocationKnown = true;
+            _lastMouseLocation = new Point(e.X, e.Y);
         }
 
         private void OnMouseDoubleClick(object sender, EventArgs e)
         {
             ListenerDoEvent(new ViewportEvent(this, e), (l, v) => l.MouseDoubleClick(v));
+        }
+
+        private void OnKeyDown(object sender, IKeyboardEvent e)
+        {
+            ListenerDoEvent(new ViewportEvent(this, e), (l, v) => l.KeyDown(v));
+        }
+
+        private void OnKeyUp(object sender, IKeyboardEvent e)
+        {
+            ListenerDoEvent(new ViewportEvent(this, e), (l, v) => l.KeyUp(v));
         }
         
         #endregion

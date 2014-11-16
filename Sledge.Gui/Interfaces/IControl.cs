@@ -25,5 +25,7 @@ namespace Sledge.Gui.Interfaces
         event EventHandler MouseDoubleClick;
         event EventHandler MouseEnter;
         event EventHandler MouseLeave;
+        event KeyboardEventHandler KeyDown;
+        event KeyboardEventHandler KeyUp;
     }
 }

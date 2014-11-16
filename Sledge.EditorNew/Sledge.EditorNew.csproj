@@ -227,11 +227,14 @@
     <Compile Include="UI\Menus\RecentFileMenuItem.cs" />
     <Compile Include="UI\Menus\RecentFilesMenuGroup.cs" />
     <Compile Include="UI\Shell.cs" />
+    <Compile Include="UI\Viewports\Camera2DViewportEventListener.cs" />
+    <Compile Include="UI\Viewports\CameraViewportListener.cs" />
     <Compile Include="UI\Viewports\IMapViewport.cs" />
     <Compile Include="UI\Viewports\IViewport2D.cs" />
     <Compile Include="UI\Viewports\IViewport3D.cs" />
     <Compile Include="UI\Viewports\IViewportEventListener.cs" />
     <Compile Include="UI\Viewports\MapViewport.cs" />
+    <Compile Include="UI\Viewports\ToolViewportListener.cs" />
     <Compile Include="UI\Viewports\ViewDirection.cs" />
     <Compile Include="UI\Viewports\ViewportEvent.cs" />
     <Compile Include="UI\Viewports\ViewportManager.cs" />

@@ -148,11 +148,13 @@ namespace Sledge.Gui.WinForms.Controls
             {
                 Focus();
                 IsFocused = true;
+                base.OnMouseEnter(e);
             }
 
             protected override void OnMouseLeave(EventArgs e)
             {
                 IsFocused = false;
+                base.OnMouseLeave(e);
             }
 
             protected override bool IsInputKey(Keys keyData)

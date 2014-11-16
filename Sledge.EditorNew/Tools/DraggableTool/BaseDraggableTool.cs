@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using OpenTK.Input;
+using Sledge.DataStructures.Geometric;
 using Sledge.EditorNew.UI.Viewports;
 using Sledge.Gui.Structures;
 
@@ -11,11 +12,14 @@ namespace Sledge.EditorNew.Tools.DraggableTool
         public Stack<IDraggableState> States { get; set; }
 
         private IDraggable _currentDraggable;
+        private ViewportEvent _lastDragMoveEvent = null;
+        private Coordinate _lastDragPoint = null;
 
         public override void MouseMove(IMapViewport viewport, ViewportEvent e)
         {
-            if (!viewport.Is2D || e.Dragging) return;
+            if (!viewport.Is2D || e.Dragging || e.Button == MouseButton.Left) return;
             var vp = (IViewport2D)viewport;
+            var point = viewport.ScreenToWorld(e.X, viewport.Height - e.Y);
             IDraggable drag = null;
             foreach (var state in States)
             {
@@ -23,7 +27,7 @@ namespace Sledge.EditorNew.Tools.DraggableTool
                 drags.Add(state);
                 foreach (var draggable in drags)
                 {
-                    if (draggable.CanDrag(vp, e))
+                    if (draggable.CanDrag(vp, e, point))
                     {
                         drag = draggable;
                         break;
@@ -38,13 +42,15 @@ namespace Sledge.EditorNew.Tools.DraggableTool
                 if (_currentDraggable != null) _currentDraggable.Highlight(vp);
             }
         }
-
+        
         public override void DragStart(IMapViewport viewport, ViewportEvent e)
         {
             if (!viewport.Is2D || e.Button != MouseButton.Left) return;
             var vp = (IViewport2D)viewport;
             if (_currentDraggable == null) return;
-            _currentDraggable.StartDrag(vp, e);
+            _lastDragPoint = viewport.ScreenToWorld(e.X, viewport.Height - e.Y);
+            _currentDraggable.StartDrag(vp, e, _lastDragPoint);
+            _lastDragMoveEvent = e;
         }
 
         public override void DragMove(IMapViewport viewport, ViewportEvent e)
@@ -52,7 +58,10 @@ namespace Sledge.EditorNew.Tools.DraggableTool
             if (!viewport.Is2D || e.Button != MouseButton.Left) return;
             var vp = (IViewport2D)viewport;
             if (_currentDraggable == null) return;
-            _currentDraggable.Drag(vp, e);
+            var point = viewport.ScreenToWorld(e.X, viewport.Height - e.Y);
+            _currentDraggable.Drag(vp, e, _lastDragPoint, point);
+            _lastDragPoint = point;
+            _lastDragMoveEvent = e;
         }
 
         public override void DragEnd(IMapViewport viewport, ViewportEvent e)
@@ -60,7 +69,31 @@ namespace Sledge.EditorNew.Tools.DraggableTool
             if (!viewport.Is2D || e.Button != MouseButton.Left) return;
             var vp = (IViewport2D)viewport;
             if (_currentDraggable == null) return;
-            _currentDraggable.EndDrag(vp, e);
+            var point = viewport.ScreenToWorld(e.X, viewport.Height - e.Y);
+            _currentDraggable.EndDrag(vp, e, point);
+            _lastDragMoveEvent = null;
+            _lastDragPoint = null;
+        }
+
+        public override void PositionChanged(IMapViewport viewport, ViewportEvent e)
+        {
+            if (viewport.Is2D && _lastDragMoveEvent != null && _currentDraggable != null && _lastDragMoveEvent.Sender == viewport)
+            {
+                var vp = (IViewport2D) viewport;
+                var point = viewport.ScreenToWorld(_lastDragMoveEvent.X, viewport.Height - _lastDragMoveEvent.Y);
+                var ev = new ViewportEvent(viewport)
+                {
+                    Dragging = true,
+                    Button = _lastDragMoveEvent.Button,
+                    StartX = _lastDragMoveEvent.StartX,
+                    StartY = _lastDragMoveEvent.StartY
+                };
+                ev.X = ev.LastX = _lastDragMoveEvent.X;
+                ev.Y = ev.LastY = _lastDragMoveEvent.Y;
+                _currentDraggable.Drag(vp, ev, _lastDragPoint, point);
+                _lastDragPoint = point;
+            }
+            base.PositionChanged(viewport, e);
         }
 
         public override void Render(IMapViewport viewport)

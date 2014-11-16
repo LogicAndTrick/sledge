@@ -1,5 +1,6 @@
 using System;
 using System.Drawing;
+using System.Linq;
 using OpenTK.Graphics.OpenGL;
 using Sledge.DataStructures.Geometric;
 using Sledge.EditorNew.UI.Viewports;
@@ -42,7 +43,14 @@ namespace Sledge.EditorNew.Tools.DraggableTool
                 default:
                     throw new ArgumentOutOfRangeException();
             }
-            throw new NotImplementedException();
+        }
+
+        protected override Coordinate GetResizeOrigin(IViewport2D viewport, Coordinate position)
+        {
+            var st = viewport.Flatten(BoxState.Start);
+            var ed = viewport.Flatten(BoxState.End);
+            var points = new[] { st, ed, new Coordinate(st.X, ed.Y, 0), new Coordinate(ed.X, st.Y, 0) };
+            return points.OrderBy(x => (position - x).LengthSquared()).First();
         }
 
         public override void Render(IViewport2D viewport)
@@ -58,6 +66,21 @@ namespace Sledge.EditorNew.Tools.DraggableTool
             Coord(box.End.X, box.End.Y, 0);
             Coord(box.Start.X, box.End.Y, 0);
             GL.End();
+
+            if (Handle == ResizeHandle.Center && SnappedMoveOrigin != null)
+            {
+                const int size = 6;
+                var dist = size / viewport.Zoom;
+
+                var origin = SnappedMoveOrigin;
+                GL.Begin(PrimitiveType.Lines);
+                GL.Color4(Color.Yellow);
+                Coord(origin.X - dist, origin.Y + dist, 0);
+                Coord(origin.X + dist, origin.Y - dist, 0);
+                Coord(origin.X + dist, origin.Y + dist, 0);
+                Coord(origin.X - dist, origin.Y - dist, 0);
+                GL.End();
+            }
         }
     }
 }

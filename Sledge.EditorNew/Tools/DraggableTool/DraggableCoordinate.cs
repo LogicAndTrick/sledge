@@ -16,11 +16,10 @@ namespace Sledge.EditorNew.Tools.DraggableTool
             _position = Coordinate.Zero;
         }
 
-        public bool CanDrag(IViewport2D viewport, ViewportEvent e)
+        public bool CanDrag(IViewport2D viewport, ViewportEvent e, Coordinate position)
         {
             var pos = viewport.Flatten(_position);
-            var point = viewport.ScreenToWorld(e.X, viewport.Height - e.Y);
-            var diff = (pos - point).Absolute();
+            var diff = (pos - position).Absolute();
             return diff.X < 5 && diff.Y < 5;
         }
 
@@ -36,17 +35,17 @@ namespace Sledge.EditorNew.Tools.DraggableTool
             Cursor.SetCursor(viewport, CursorType.Default);
         }
 
-        public void StartDrag(IViewport2D viewport, ViewportEvent e)
+        public void StartDrag(IViewport2D viewport, ViewportEvent e, Coordinate position)
         {
 
         }
 
-        public void Drag(IViewport2D viewport, ViewportEvent e)
+        public void Drag(IViewport2D viewport, ViewportEvent e, Coordinate lastPosition, Coordinate position)
         {
-            _position = viewport.Expand(viewport.ScreenToWorld(e.X, viewport.Height - e.Y)) + viewport.GetUnusedCoordinate(_position);
+            _position = viewport.Expand(position) + viewport.GetUnusedCoordinate(_position);
         }
 
-        public void EndDrag(IViewport2D viewport, ViewportEvent e)
+        public void EndDrag(IViewport2D viewport, ViewportEvent e, Coordinate position)
         {
 
         }

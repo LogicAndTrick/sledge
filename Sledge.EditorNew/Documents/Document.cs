@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using OpenTK;
+using OpenTK.Input;
 using Sledge.Common;
 using Sledge.Common.Mediator;
 using Sledge.DataStructures.GameData;
@@ -311,11 +312,13 @@ namespace Sledge.EditorNew.Documents
         public Coordinate Snap(Coordinate c, decimal spacing = 0)
         {
             if (!Map.SnapToGrid) return c;
-            return c;
-            //var snap = (Select.SnapStyle == SnapStyle.SnapOnAlt && KeyboardState.Alt) ||
-            //           (Select.SnapStyle == SnapStyle.SnapOffAlt && !KeyboardState.Alt);
-            //
-            //return snap ? c.Snap(spacing == 0 ? Map.GridSpacing : spacing) : c;
+
+            var state = Keyboard.GetState();
+            var alt = (state.IsKeyDown(Key.AltLeft) || state.IsKeyDown(Key.AltRight));
+            var snap = (Select.SnapStyle == SnapStyle.SnapOnAlt && alt) ||
+                       (Select.SnapStyle == SnapStyle.SnapOffAlt && !alt);
+            
+            return snap ? c.Snap(spacing == 0 ? Map.GridSpacing : spacing) : c;
         }
 
         /// <summary>
