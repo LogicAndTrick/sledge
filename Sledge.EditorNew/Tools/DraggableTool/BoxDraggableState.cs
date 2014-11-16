@@ -12,22 +12,26 @@ namespace Sledge.EditorNew.Tools.DraggableTool
 {
     public class BoxDraggableState : IDraggableState
     {
+        public BaseTool Tool { get; set; }
 
         public Color BoxColour { get; set; }
         public Color FillColour { get; set; }
         internal BoxState State { get; set; }
 
+        protected IDraggable[] BoxHandles { get; set; }
+
         protected TextPrinter _printer;
         protected Font _printerFont;
 
-        public BoxDraggableState()
+        public BoxDraggableState(BaseTool tool)
         {
+            Tool = tool;
             State = new BoxState();
 
             _printer = new TextPrinter(TextQuality.Low);
             _printerFont = new Font(FontFamily.GenericSansSerif, 16, GraphicsUnit.Pixel);
 
-            _d = new[]
+            BoxHandles = new[]
             {
                 new InternalBoxResizeHandle(this, ResizeHandle.TopLeft),
                 new InternalBoxResizeHandle(this, ResizeHandle.TopRight),
@@ -43,11 +47,10 @@ namespace Sledge.EditorNew.Tools.DraggableTool
             };
         }
 
-        private IDraggable[] _d;
         public IEnumerable<IDraggable> GetDraggables(IViewport2D viewport)
         {
-            if (State.Action != BoxAction.Drawn) yield break;
-            foreach (var draggable in _d)
+            if (State.Action == BoxAction.Idle || State.Action == BoxAction.Drawing) yield break;
+            foreach (var draggable in BoxHandles)
             {
                 yield return draggable;
             }
@@ -73,20 +76,20 @@ namespace Sledge.EditorNew.Tools.DraggableTool
         {
             State.Viewport = viewport;
             State.Action = BoxAction.Drawing;
-            State.Start = viewport.Expand(position);
+            State.Start = Tool.SnapIfNeeded(viewport.Expand(position));
             State.End = State.Start;
         }
 
         public void Drag(IViewport2D viewport, ViewportEvent e, Coordinate lastPosition, Coordinate position)
         {
-            State.End = viewport.Expand(position);
+            State.End = Tool.SnapIfNeeded(viewport.Expand(position));
         }
 
         public void EndDrag(IViewport2D viewport, ViewportEvent e, Coordinate position)
         {
             State.Viewport = null;
             State.Action = BoxAction.Drawn;
-            State.End = viewport.Expand(position) + viewport.GetUnusedCoordinate(Coordinate.One * 100);
+            State.End = Tool.SnapIfNeeded(viewport.Expand(position)) + viewport.GetUnusedCoordinate(Coordinate.One * 100);
             State.FixBounds();
         }
 

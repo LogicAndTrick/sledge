@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.IO;
 using System.Linq;
 using System.Text;
 using OpenTK.Graphics.OpenGL;
 using Sledge.Common.Mediator;
+using Sledge.DataStructures.MapObjects;
 using Sledge.EditorNew.Bootstrap;
 using Sledge.EditorNew.Documents;
 using Sledge.EditorNew.Language;
@@ -24,6 +24,7 @@ using Sledge.Gui.Structures;
 using Sledge.Providers.Map;
 using Sledge.Settings;
 using Sledge.Settings.Models;
+using Path = System.IO.Path;
 using Size = Sledge.Gui.Structures.Size;
 
 namespace Sledge.EditorNew.UI
@@ -56,8 +57,8 @@ namespace Sledge.EditorNew.UI
             Mediator.Subscribe(HotkeysMediator.FileNew, this);
 
             MapProvider.Register(new RmfProvider());
-            var file = @"D:\Github\sledge\_Resources\RMF\aaa.rmf";
-            DocumentManager.AddAndSwitch(new Document(file, MapProvider.GetMapFromFile(file), new Game()));
+            var file = @"C:\Github\sledge\_Resources\verc_18.rmf";
+            DocumentManager.AddAndSwitch(new Document(null, new Map(), new Game()));
         }
 
         private void Build()

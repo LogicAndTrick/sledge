@@ -60,12 +60,14 @@ namespace Sledge.EditorNew.Tools.DraggableTool
             var box = GetRectangle(viewport);
 
             GL.Begin(PrimitiveType.Quads);
-            GL.Color4(Color.FromArgb(64, Color.Purple));
+            GL.Color4(State.FillColour);
             Coord(box.Start.X, box.Start.Y, 0);
             Coord(box.End.X, box.Start.Y, 0);
             Coord(box.End.X, box.End.Y, 0);
             Coord(box.Start.X, box.End.Y, 0);
             GL.End();
+
+            System.Diagnostics.Debug.WriteLine("boo! " + BoxState.Start);
 
             if (Handle == ResizeHandle.Center && SnappedMoveOrigin != null)
             {

@@ -105,20 +105,18 @@ namespace Sledge.EditorNew.Tools.DraggableTool
 
         public void Drag(IViewport2D viewport, ViewportEvent e, Coordinate lastPosition, Coordinate position)
         {
-            // todo access to base tool / document
-            var doc = DocumentManager.CurrentDocument as Document;
             if (Handle == ResizeHandle.Center)
             {
                 var delta = position - lastPosition;
                 var newOrigin = MoveOrigin + delta;
-                var snapped = doc == null ? newOrigin : doc.Snap(newOrigin);
+                var snapped = State.Tool.SnapIfNeeded(newOrigin);
                 BoxState.Move(viewport, snapped - SnappedMoveOrigin);
                 SnappedMoveOrigin = snapped;
                 MoveOrigin = newOrigin;
             }
             else
             {
-                var snapped = doc == null ? position : doc.Snap(position);
+                var snapped = State.Tool.SnapIfNeeded(position);
                 BoxState.Resize(Handle, viewport, snapped);
             }
         }

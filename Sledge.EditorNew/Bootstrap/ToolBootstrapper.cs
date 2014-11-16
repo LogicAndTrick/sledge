@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Linq;
 using Sledge.EditorNew.Tools;
+using Sledge.EditorNew.Tools.BrushTool;
+using Sledge.EditorNew.Tools.SelectTool;
 using Sledge.Gui;
 using Sledge.Gui.Containers;
 using Sledge.Gui.Controls;
@@ -25,8 +27,8 @@ namespace Sledge.EditorNew.Bootstrap
             ToolManager.ToolAdded += ToolAdded;
             ToolManager.ToolRemoved += ToolRemoved;
 
-            ToolManager.AddTool(new DummyTool());
-            ToolManager.AddTool(new DummyBoxTool());
+            ToolManager.AddTool(new SelectTool());
+            ToolManager.AddTool(new BrushTool());
             ToolManager.AddTool(new DummyDraggableTool());
 
             /*

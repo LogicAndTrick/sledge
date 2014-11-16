@@ -24,7 +24,7 @@ namespace Sledge.EditorNew.Tools
             Both
         }
 
-        protected Coordinate SnapIfNeeded(Coordinate c)
+        public Coordinate SnapIfNeeded(Coordinate c)
         {
             return Document.Snap(c);
         }

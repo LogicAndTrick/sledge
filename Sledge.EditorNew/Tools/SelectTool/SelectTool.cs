@@ -4,38 +4,38 @@ using Sledge.EditorNew.Properties;
 using Sledge.EditorNew.Tools.DraggableTool;
 using Sledge.Settings;
 
-namespace Sledge.EditorNew.Tools
+namespace Sledge.EditorNew.Tools.SelectTool
 {
-    public class DummyDraggableTool : BaseDraggableTool
+    public class SelectTool : BaseDraggableTool
     {
-        public DummyDraggableTool()
+        public SelectTool()
         {
             States = new Stack<IDraggableState>();
 
             var box = new BoxDraggableState(this);
-            box.BoxColour = Color.Red;
-            box.FillColour = Color.FromArgb(64, Color.Purple);
+            box.BoxColour = Color.Yellow;
+            box.FillColour = Color.FromArgb(64, Color.White);
             States.Push(box);
         }
 
         public override IEnumerable<string> GetContexts()
         {
-            yield return "Dummy Draggable Tool";
+            yield return "Select Tool";
         }
 
         public override Image GetIcon()
         {
-            return Resources.Tool_Clip;
+            return Resources.Tool_Select;
         }
 
         public override string GetName()
         {
-            return "Dummy Draggable Tool";
+            return "Select Tool";
         }
 
         public override HotkeyTool? GetHotkeyToolType()
         {
-            return null;
+            return HotkeyTool.Selection;
         }
 
         public override HotkeyInterceptResult InterceptHotkey(HotkeysMediator hotkeyMessage, object parameters)

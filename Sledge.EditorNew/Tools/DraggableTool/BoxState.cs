@@ -43,8 +43,7 @@ namespace Sledge.EditorNew.Tools.DraggableTool
                     End = viewport.Expand(fe.X, position.Y) + ue;
                     break;
                 case ResizeHandle.TopRight:
-                    End = viewport.Expand(fe.X, position.Y) + ue;
-                    End = viewport.Expand(position.X, fe.Y) + ue;
+                    End = viewport.Expand(position.X, position.Y) + ue;
                     break;
                 case ResizeHandle.Left:
                     Start = viewport.Expand(position.X, fs.Y) + us;
@@ -56,8 +55,7 @@ namespace Sledge.EditorNew.Tools.DraggableTool
                     End = viewport.Expand(position.X, fe.Y) + ue;
                     break;
                 case ResizeHandle.BottomLeft:
-                    Start = viewport.Expand(fs.X, position.Y) + us;
-                    Start = viewport.Expand(position.X, fs.Y) + us;
+                    Start = viewport.Expand(position.X, position.Y) + us;
                     break;
                 case ResizeHandle.Bottom:
                     Start = viewport.Expand(fs.X, position.Y) + us;

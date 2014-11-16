@@ -18,6 +18,15 @@ namespace Sledge.EditorNew.Bootstrap
             CommandBootstrapper.Bootstrap();
             MenuBootstrapper.Bootstrap();
             ToolBootstrapper.Bootstrap();
+            BrushBootstrapper.Bootstrap();
+        }
+    }
+
+    public static class BrushBootstrapper
+    {
+        public static void Bootstrap()
+        {
+
         }
     }
 }
