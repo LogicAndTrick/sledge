@@ -84,6 +84,7 @@
     <Compile Include="Events\MouseEventHandler.cs" />
     <Compile Include="Interfaces\Components\IClipboard.cs" />
     <Compile Include="Interfaces\Components\ICursor.cs" />
+    <Compile Include="Interfaces\Containers\IDockPanel.cs" />
     <Compile Include="Interfaces\Controls\INumericSpinner.cs" />
     <Compile Include="Interfaces\Dialogs\IDialog.cs" />
     <Compile Include="QuickForms\Items\IQuickFormItem.cs" />

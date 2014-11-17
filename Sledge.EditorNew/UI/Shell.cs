@@ -1,15 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using OpenTK.Graphics.OpenGL;
+﻿using System.Linq;
 using Sledge.Common.Mediator;
 using Sledge.DataStructures.MapObjects;
-using Sledge.EditorNew.Bootstrap;
 using Sledge.EditorNew.Documents;
 using Sledge.EditorNew.Language;
-using Sledge.EditorNew.Tools;
 using Sledge.EditorNew.UI.Viewports;
 using Sledge.Gui;
 using Sledge.Gui.Containers;
@@ -20,12 +13,10 @@ using Sledge.Gui.Interfaces.Models;
 using Sledge.Gui.Interfaces.Shell;
 using Sledge.Gui.Models;
 using Sledge.Gui.QuickForms;
-using Sledge.Gui.Structures;
 using Sledge.Providers.Map;
 using Sledge.Settings;
 using Sledge.Settings.Models;
 using Path = System.IO.Path;
-using Size = Sledge.Gui.Structures.Size;
 
 namespace Sledge.EditorNew.UI
 {
@@ -64,14 +55,12 @@ namespace Sledge.EditorNew.UI
         private void Build()
         {
             var vbox = new VerticalBox();
+
             
             _tabs = new TabStrip();
             _tabs.TabCloseRequested += TabCloseRequested;
             _tabs.TabSelected += TabSelected;
             vbox.Add(_tabs);
-
-            var toolContainer = new HorizontalBox();
-
 
             _table = new ResizableTable{ControlPadding = 5};
             vbox.Add(_table, true);

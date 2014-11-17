@@ -47,10 +47,14 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="WeifenLuo.WinFormsUI.Docking">
+      <HintPath>..\WeifenLuo.WinFormsUI.Docking.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Components\WinFormsClipboard.cs" />
     <Compile Include="Components\WinFormsCursor.cs" />
+    <Compile Include="Containers\WinFormsDockPanel.cs" />
     <Compile Include="Controls\WinFormsNumericSpinner.cs" />
     <Compile Include="Dialogs\WinFormsFileOpenDialog.cs" />
     <Compile Include="Shell\WinFormsDialogWindow.cs" />

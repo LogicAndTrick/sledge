@@ -67,8 +67,6 @@ namespace Sledge.EditorNew.Tools.DraggableTool
             Coord(box.Start.X, box.End.Y, 0);
             GL.End();
 
-            System.Diagnostics.Debug.WriteLine("boo! " + BoxState.Start);
-
             if (Handle == ResizeHandle.Center && SnappedMoveOrigin != null)
             {
                 const int size = 6;

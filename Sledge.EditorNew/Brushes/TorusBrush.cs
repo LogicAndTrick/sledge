@@ -26,16 +26,16 @@ namespace Sledge.EditorNew.Brushes
 
         public TorusBrush()
         {
-            _crossSides = new NumericControl(this) { LabelText = "Cross sec. sides" };
-            _crossRadius = new NumericControl(this) { LabelText = "Ring width", Minimum = 16, Maximum = 1024, Value = 32, Precision = 1 };
-            _crossStartAngle = new NumericControl(this) { LabelText = "Cross sec. start", Minimum = 0, Maximum = 359, Value = 0 };
-            _crossMakeHollow = new BooleanControl(this) { LabelText = "Make hollow", Checked = false };
-            _crossArc = new NumericControl(this) { LabelText = "Cross sec. arc", Minimum = 1, Maximum = 360, Value = 360, Enabled = false };
-            _crossWallWidth = new NumericControl(this) { LabelText = "Hollow wall width", Minimum = 1, Maximum = 1024, Value = 16, Precision = 1, Enabled = false};
-            _ringSides = new NumericControl(this) { LabelText = "Ring sides" };
-            _ringArc = new NumericControl(this) { LabelText = "Ring arc", Minimum = 1, Maximum = 1080, Value = 360 };
-            _ringStartAngle = new NumericControl(this) { LabelText = "Ring start", Minimum = 0, Maximum = 359, Value = 0 };
-            _rotationHeight = new NumericControl(this) { LabelText = "Rotation height", Minimum = -1024, Maximum = 1024, Value = 0, Precision = 1};
+            _crossSides = new NumericControl(this) { LabelTextKey = "Tools/BrushTool/Controls/CrossSectionSides" };
+            _crossRadius = new NumericControl(this) { LabelTextKey = "Tools/BrushTool/Controls/RingWidth", Minimum = 16, Maximum = 1024, Value = 32, Precision = 1 };
+            _crossStartAngle = new NumericControl(this) { LabelTextKey = "Tools/BrushTool/Controls/CrossSectionStart", Minimum = 0, Maximum = 359, Value = 0 };
+            _crossMakeHollow = new BooleanControl(this) { LabelTextKey = "Tools/BrushTool/Controls/MakeHollow", Checked = false };
+            _crossArc = new NumericControl(this) { LabelTextKey = "Tools/BrushTool/Controls/CrossSectionArc", Minimum = 1, Maximum = 360, Value = 360, Enabled = false };
+            _crossWallWidth = new NumericControl(this) { LabelTextKey = "Tools/BrushTool/Controls/HollowWallWidth", Minimum = 1, Maximum = 1024, Value = 16, Precision = 1, Enabled = false };
+            _ringSides = new NumericControl(this) { LabelTextKey = "Tools/BrushTool/Controls/RingSides" };
+            _ringArc = new NumericControl(this) { LabelTextKey = "Tools/BrushTool/Controls/RingArc", Minimum = 1, Maximum = 1080, Value = 360 };
+            _ringStartAngle = new NumericControl(this) { LabelTextKey = "Tools/BrushTool/Controls/RingStart", Minimum = 0, Maximum = 359, Value = 0 };
+            _rotationHeight = new NumericControl(this) { LabelTextKey = "Tools/BrushTool/Controls/RotationHeight", Minimum = -1024, Maximum = 1024, Value = 0, Precision = 1 };
             _crossMakeHollow.ValuesChanged += (s, b) => _crossWallWidth.Enabled = _crossArc.Enabled = _crossMakeHollow.GetValue();
         }
 

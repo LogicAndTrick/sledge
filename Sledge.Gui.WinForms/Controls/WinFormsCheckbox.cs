@@ -10,16 +10,28 @@ namespace Sledge.Gui.WinForms.Controls
     [ControlImplementation("WinForms")]
     public class WinFormsCheckbox : WinFormsControl, ICheckbox
     {
+        private Size _preferredSize = new Size(100, 20);
         private readonly CheckBox _checkBox;
 
         public WinFormsCheckbox() : base(new CheckBox())
         {
-            _checkBox = (CheckBox) Control;
+            _checkBox = (CheckBox)Control;
+            Control.TextChanged += UpdatePreferredSize;
+            Control.FontChanged += UpdatePreferredSize;
+        }
+
+        private void UpdatePreferredSize(object sender, EventArgs e)
+        {
+            var measure = TextRenderer.MeasureText(String.IsNullOrEmpty(Control.Text) ? " " : Control.Text, Control.Font);
+            var ps = new Size(measure.Width + 20, measure.Height + 5);
+            if (ps.Width == _preferredSize.Width && ps.Height == _preferredSize.Height) return;
+            _preferredSize = ps;
+            OnPreferredSizeChanged();
         }
 
         protected override Size DefaultPreferredSize
         {
-            get { return new Size(100, FontSize * 2); }
+            get { return _preferredSize; }
         }
 
         public event EventHandler Toggled

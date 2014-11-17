@@ -52,7 +52,7 @@ namespace Sledge.EditorNew.Documents
         public HelperManager HelperManager { get; set; }
         public TextureCollection TextureCollection { get; set; }
 
-        // private readonly DocumentSubscriptions _subscriptions;
+        private readonly DocumentSubscriptions _subscriptions;
         private readonly DocumentMemory _memory;
 
         private Document()
@@ -75,7 +75,7 @@ namespace Sledge.EditorNew.Documents
             Environment = new GameEnvironment(game);
             SelectListTransform = Matrix4.Identity;
 
-            // _subscriptions = new DocumentSubscriptions(this);
+            _subscriptions = new DocumentSubscriptions(this);
 
             _memory = new DocumentMemory();
 
@@ -151,7 +151,7 @@ namespace Sledge.EditorNew.Documents
             ViewportManager.AddContextAll(new ToolRenderable());
             ViewportManager.AddContextAll(new HelperRenderable(this));
 
-            //_subscriptions.Subscribe();
+            _subscriptions.Subscribe();
 
             RenderAll();
         }
@@ -164,7 +164,7 @@ namespace Sledge.EditorNew.Documents
             ViewportManager.ClearContexts();
             HelperManager.ClearCache();
 
-           // _subscriptions.Unsubscribe();
+            _subscriptions.Unsubscribe();
         }
 
         public void Close()

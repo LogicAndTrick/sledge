@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Sledge.Gui.Interfaces.Containers;
 
 namespace Sledge.Gui.Interfaces.Shell
 {
@@ -11,10 +12,10 @@ namespace Sledge.Gui.Interfaces.Shell
 
         void AddMenu();
         void AddToolbar();
-        void AddSidebarPanel(IControl panel, SidebarPanelLocation defaultLocation);
+        IDockPanel AddDockPanel(IControl panel, DockPanelLocation defaultLocation);
     }
 
-    public enum SidebarPanelLocation
+    public enum DockPanelLocation
     {
         Left,
         Right,

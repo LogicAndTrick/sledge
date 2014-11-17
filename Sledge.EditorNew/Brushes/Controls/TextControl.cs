@@ -6,10 +6,16 @@ namespace Sledge.EditorNew.Brushes.Controls
 {
     public class TextControl : BrushControl
     {
-        public string EnteredText
+        public string EnteredTextKey
         {
-            get { return TextBox.Text; }
-            set { TextBox.Text = value; }
+            get { return TextBox.TextKey; }
+            set { TextBox.TextKey = value; }
+        }
+
+        public string LabelTextKey
+        {
+            get { return Label.TextKey; }
+            set { Label.TextKey = value; }
         }
 
         public Label Label { get; set; }
@@ -17,10 +23,11 @@ namespace Sledge.EditorNew.Brushes.Controls
 
         public TextControl(IBrush brush) : base(brush)
         {
+            Label = new Label();
+            this.Add(Label);
+
             TextBox = new TextBox();
             TextBox.TextChanged += ValueChanged;
-            // TextBox.Tag = Hotkeys.SuppressHotkeysTag;
-            // todo label
             this.Add(TextBox, true);
         }
 

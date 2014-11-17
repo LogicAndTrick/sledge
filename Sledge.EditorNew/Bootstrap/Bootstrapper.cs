@@ -1,6 +1,8 @@
 ﻿using Sledge.EditorNew.Language;
 using Sledge.EditorNew.UI;
 using Sledge.Gui;
+using Sledge.Gui.Containers;
+using Sledge.Gui.Controls;
 
 namespace Sledge.EditorNew.Bootstrap
 {
@@ -18,15 +20,8 @@ namespace Sledge.EditorNew.Bootstrap
             CommandBootstrapper.Bootstrap();
             MenuBootstrapper.Bootstrap();
             ToolBootstrapper.Bootstrap();
+            SidebarBootstrapper.Bootstrap();
             BrushBootstrapper.Bootstrap();
-        }
-    }
-
-    public static class BrushBootstrapper
-    {
-        public static void Bootstrap()
-        {
-
         }
     }
 }

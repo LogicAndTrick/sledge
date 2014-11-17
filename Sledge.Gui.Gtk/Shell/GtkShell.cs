@@ -2,6 +2,7 @@
 using Gtk;
 using Sledge.Gui.Gtk.Containers;
 using Sledge.Gui.Interfaces;
+using Sledge.Gui.Interfaces.Containers;
 using Sledge.Gui.Interfaces.Shell;
 
 namespace Sledge.Gui.Gtk.Shell
@@ -64,7 +65,7 @@ namespace Sledge.Gui.Gtk.Shell
             _container.PackEnd(ContainerWrapper.Control, true, true, 0);
         }
 
-        public void AddSidebarPanel(IControl panel, SidebarPanelLocation defaultLocation)
+        public IDockPanel AddDockPanel(IControl panel, DockPanelLocation defaultLocation)
         {
             throw new NotImplementedException();
         }

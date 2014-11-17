@@ -24,14 +24,14 @@ namespace Sledge.EditorNew.Brushes
 
         public ArchBrush()
         {
-            _numSides = new NumericControl(this) { LabelText = "Number of sides" };
-            _wallWidth = new NumericControl(this) { LabelText = "Wall width", Minimum = 1, Maximum = 1024, Value = 32, Precision = 1 };
-            _arc = new NumericControl(this) { LabelText = "Arc", Minimum = 1, Maximum = 360 * 4, Value = 360 };
-            _startAngle = new NumericControl(this) { LabelText = "Start angle", Minimum = 0, Maximum = 359, Value = 0 };
-            _addHeight = new NumericControl(this) { LabelText = "Add height", Minimum = -1024, Maximum = 1024, Value = 0, Precision = 1 };
-            _curvedRamp = new BooleanControl(this) { LabelText = "Curved ramp", Checked = false };
-            _tiltAngle = new NumericControl(this) { LabelText = "Tilt angle", Minimum = -Atan2, Maximum = Atan2, Value = 0, Enabled = false, Precision = 1 };
-            _tiltInterp = new BooleanControl(this) { LabelText = "Tilt interpolation", Checked = false, Enabled = false };
+            _numSides = new NumericControl(this) { LabelTextKey = "Tools/BrushTool/Controls/NumberOfSides" };
+            _wallWidth = new NumericControl(this) { LabelTextKey = "Tools/BrushTool/Controls/WallWidth", Minimum = 1, Maximum = 1024, Value = 32, Precision = 1 };
+            _arc = new NumericControl(this) { LabelTextKey = "Tools/BrushTool/Controls/Arc", Minimum = 1, Maximum = 360 * 4, Value = 360 };
+            _startAngle = new NumericControl(this) { LabelTextKey = "Tools/BrushTool/Controls/StartAngle", Minimum = 0, Maximum = 359, Value = 0 };
+            _addHeight = new NumericControl(this) { LabelTextKey = "Tools/BrushTool/Controls/AddHeight", Minimum = -1024, Maximum = 1024, Value = 0, Precision = 1 };
+            _curvedRamp = new BooleanControl(this) { LabelTextKey = "Tools/BrushTool/Controls/CurvedRamp", Checked = false };
+            _tiltAngle = new NumericControl(this) { LabelTextKey = "Tools/BrushTool/Controls/TiltAngle", Minimum = -Atan2, Maximum = Atan2, Value = 0, Enabled = false, Precision = 1 };
+            _tiltInterp = new BooleanControl(this) { LabelTextKey = "Tools/BrushTool/Controls/TiltInterpolation", Checked = false, Enabled = false };
 
             _curvedRamp.ValuesChanged += (s, b) => _tiltAngle.Enabled = _tiltInterp.Enabled = _curvedRamp.GetValue();
         }

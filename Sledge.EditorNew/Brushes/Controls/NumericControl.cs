@@ -24,10 +24,10 @@ namespace Sledge.EditorNew.Brushes.Controls
             set { Numeric.Value = value; }
         }
 
-        public string LabelText
+        public string LabelTextKey
         {
-            get { return Label.Text; }
-            set { Label.Text = value; }
+            get { return Label.TextKey; }
+            set { Label.TextKey = value; }
         }
 
         public bool ControlEnabled
@@ -56,7 +56,7 @@ namespace Sledge.EditorNew.Brushes.Controls
             Label = new Label();
             this.Add(Label);
 
-            Numeric = new NumericSpinner();
+            Numeric = new NumericSpinner{Minimum = 3, Maximum = 128, Value = 8, Precision = 0, Increment = 1};
             Numeric.ValueChanged += ValueChanged;
             this.Add(Numeric, true);
         }

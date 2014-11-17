@@ -12,13 +12,6 @@ namespace Sledge.EditorNew.Brushes.Controls
             set { Checkbox.Checked = value; }
         }
 
-        // todo translate
-        public string LabelText
-        {
-            get { return Checkbox.Text; }
-            set { Checkbox.Text = value; }
-        }
-
         public string LabelTextKey
         {
             get { return Checkbox.TextKey; }

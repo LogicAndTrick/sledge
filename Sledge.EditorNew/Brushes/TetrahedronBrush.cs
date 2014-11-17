@@ -13,7 +13,7 @@ namespace Sledge.EditorNew.Brushes
 
         public TetrahedronBrush()
         {
-            _useCentroid = new BooleanControl(this) { LabelText = "Top vertex at centroid", Checked = false };
+            _useCentroid = new BooleanControl(this) { LabelTextKey = "Tools/BrushTool/Controls/TopVertexAtCentroid", Checked = false };
         }
 
         public string Name

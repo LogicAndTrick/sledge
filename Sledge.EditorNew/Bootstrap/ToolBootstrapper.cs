@@ -7,6 +7,7 @@ using Sledge.Gui;
 using Sledge.Gui.Containers;
 using Sledge.Gui.Controls;
 using Sledge.Gui.Interfaces;
+using Sledge.Gui.Interfaces.Containers;
 using Sledge.Gui.Interfaces.Shell;
 using Sledge.Gui.Structures;
 
@@ -15,13 +16,15 @@ namespace Sledge.EditorNew.Bootstrap
     public static class ToolBootstrapper
     {
         private static VerticalBox _toolPanel;
+        private static IDockPanel _toolDockPanel;
 
         public static void Bootstrap()
         {
             _toolPanel = new VerticalBox {Margin = new Padding(3, 3, 3, 3)};
             var btn = new Button {PreferredSize = new Size(40, 40)};
             _toolPanel.Add(btn);
-            UIManager.Manager.Shell.AddSidebarPanel(_toolPanel, SidebarPanelLocation.Left);
+            _toolDockPanel = UIManager.Manager.Shell.AddDockPanel(_toolPanel, DockPanelLocation.Left);
+            _toolDockPanel.TextKey = "Shell/DockPanels/ToolsPanel";
             _toolPanel.Remove(btn);
 
             ToolManager.ToolAdded += ToolAdded;

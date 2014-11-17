@@ -81,6 +81,7 @@ namespace Sledge.EditorNew.Language
                 var name = gr.Attribute("name");
                 if (name == null || String.IsNullOrWhiteSpace(name.Value)) continue;
                 ReadStrings(gr, prefix + name.Value + "/");
+                ReadGroups(gr, prefix + name.Value + "/");
             }
         }
     }

@@ -13,6 +13,7 @@ namespace Sledge.EditorNew.Tools
 
         public static event ToolEventHandler ToolAdded;
         public static event ToolEventHandler ToolRemoved;
+        public static event ToolEventHandler ToolSelected;
 
         private static void OnToolAdded(BaseTool tool)
         {
@@ -23,6 +24,12 @@ namespace Sledge.EditorNew.Tools
         private static void OnToolRemoved(BaseTool tool)
         {
             var handler = ToolRemoved;
+            if (handler != null) handler(null, tool);
+        }
+
+        private static void OnToolSelected(BaseTool tool)
+        {
+            var handler = ToolSelected;
             if (handler != null) handler(null, tool);
         }
 
@@ -67,6 +74,7 @@ namespace Sledge.EditorNew.Tools
             ActiveTool = tool;
             if (ActiveTool != null) ActiveTool.ToolSelected(preventHistory);
             Mediator.Publish(EditorMediator.ToolSelected);
+            OnToolSelected(ActiveTool);
         }
 
         public static void Activate(Type toolType, bool preventHistory = false)

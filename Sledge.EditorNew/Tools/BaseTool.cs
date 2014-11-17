@@ -127,7 +127,7 @@ namespace Sledge.EditorNew.Tools
             return "Tools/" + GetName() + "/ContextualHelp";
         }
 
-        public virtual IEnumerable<KeyValuePair<string, IControl>> GetSidebarControls()
+        public virtual IEnumerable<ToolSidebarControl> GetSidebarControls()
         {
             yield break;
         }
@@ -217,5 +217,11 @@ namespace Sledge.EditorNew.Tools
         Continue,
         Abort,
         SwitchToSelectTool
+    }
+
+    public class ToolSidebarControl
+    {
+        public IControl Control { get; set; }
+        public string TextKey { get; set; }
     }
 }

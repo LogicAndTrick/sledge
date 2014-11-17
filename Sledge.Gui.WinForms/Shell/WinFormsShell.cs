@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Drawing;
 using System.Windows.Forms;
 using Sledge.Gui.Interfaces;
 using Sledge.Gui.Interfaces.Containers;
 using Sledge.Gui.Interfaces.Shell;
 using Sledge.Gui.WinForms.Containers;
-using Sledge.Gui.WinForms.Controls;
-using IContainer = Sledge.Gui.Interfaces.IContainer;
+using WeifenLuo.WinFormsUI.Docking;
 
 namespace Sledge.Gui.WinForms.Shell
 {
@@ -15,6 +13,7 @@ namespace Sledge.Gui.WinForms.Shell
         private ToolStripContainer _container;
         private WinFormsMenu _menu;
         private WinFormsToolbar _toolbar;
+        private DockPanel _dockPanel;
 
         public new IMenu Menu
         {
@@ -35,9 +34,21 @@ namespace Sledge.Gui.WinForms.Shell
         {
             _container = new ToolStripContainer { Dock = DockStyle.Fill };
             Form.Controls.Add(_container);
-            var dockFill = new WinFormsDockedPanel { Dock = DockStyle.Fill };
-            _container.ContentPanel.Controls.Add(dockFill);
-            ContainerWrapper = new WinFormsCell(dockFill);
+
+            _dockPanel = new DockPanel
+            {
+                Dock = DockStyle.Fill,
+                DocumentStyle = DocumentStyle.DockingSdi,
+                DockLeftPortion = 10,
+                DockRightPortion = 10,
+                DockBottomPortion = 10
+            };
+            _container.ContentPanel.Controls.Add(_dockPanel);
+
+            var documentContainer = new DockContent{AllowEndUserDocking = false, TabText = "Viewports", DockAreas = DockAreas.Document};
+            documentContainer.Show(_dockPanel, DockState.Document);
+
+            ContainerWrapper = new WinFormsCell(documentContainer);
             ContainerWrapper.PreferredSizeChanged += ContainerPreferredSizeChanged;
         }
 
@@ -59,44 +70,36 @@ namespace Sledge.Gui.WinForms.Shell
             _container.TopToolStripPanel.Controls.Add(_toolbar);
         }
 
-        public IVerticalBox _leftPanel;
-        public IVerticalBox _rightPanel;
-
-        public void AddSidebarPanel(IControl panel, SidebarPanelLocation defaultLocation)
+        public IDockPanel AddDockPanel(IControl panel, DockPanelLocation defaultLocation)
         {
+            var dock = DockState.DockLeft;
+            var ps = panel.PreferredSize;
+
             switch (defaultLocation)
             {
-                case SidebarPanelLocation.Left:
-                    if (_leftPanel == null)
-                    {
-                        var lp = new WinFormsDockedPanel { Dock = DockStyle.Left };
-                        lp.DockDimension = panel.PreferredSize.Width;
-                        var cont = new WinFormsVerticalScrollContainer();
-                        cont.Set(_leftPanel = new WinFormsVerticalBox());
-                        cont.Control.Dock = DockStyle.Fill;
-                        lp.Controls.Add(cont.Control);
-                        _container.ContentPanel.Controls.Add(lp);
-                    }
-                    _leftPanel.Add(panel);
+                case DockPanelLocation.Left:
+                    dock = DockState.DockLeft;
+                    if (_dockPanel.DockLeftPortion < ps.Width + 10) _dockPanel.DockLeftPortion = ps.Width + 10;
                     break;
-                case SidebarPanelLocation.Right:
-                    if (_rightPanel == null)
-                    {
-                        var rp = new WinFormsDockedPanel { Dock = DockStyle.Right };
-                        rp.DockDimension = panel.PreferredSize.Width;
-                        var cont = new WinFormsVerticalScrollContainer();
-                        cont.Set(_rightPanel = new WinFormsVerticalBox());
-                        cont.Control.Dock = DockStyle.Fill;
-                        rp.Controls.Add(cont.Control);
-                        _container.ContentPanel.Controls.Add(rp);
-                    }
-                    _rightPanel.Add(panel);
+                case DockPanelLocation.Right:
+                    dock = DockState.DockRight;
+                    if (_dockPanel.DockRightPortion < ps.Width + 10) _dockPanel.DockRightPortion = ps.Width + 10;
                     break;
-                case SidebarPanelLocation.Bottom:
+                case DockPanelLocation.Bottom:
+                    dock = DockState.DockBottom;
+                    if (_dockPanel.DockBottomPortion < ps.Height + 10) _dockPanel.DockBottomPortion = ps.Height + 10;
                     break;
-                default:
-                    throw new ArgumentOutOfRangeException();
             }
+
+            var dc = new DockContent
+            {
+                DockAreas = DockAreas.DockBottom | DockAreas.DockRight | DockAreas.DockLeft | DockAreas.Float
+            };
+            var dp = new WinFormsDockPanel(dc);
+            dp.Set(panel);
+            dc.Show(_dockPanel, dock);
+
+            return dp;
         }
     }
 }

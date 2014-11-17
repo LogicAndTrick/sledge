@@ -13,17 +13,18 @@ namespace Sledge.Gui.WinForms.Containers
 {
     public abstract class WinFormsContainer : WinFormsControl, IContainer
     {
+        private readonly List<IControl> _containerChildren;
         protected List<WinFormsControl> Children { get; private set; }
         protected Dictionary<WinFormsControl, ContainerMetadata> Metadata { get; private set; }
 
         public int NumChildren
         {
-            get { return Children.Count; }
+            get { return _containerChildren.Count; }
         }
 
         IEnumerable<IControl> IContainer.Children
         {
-            get { return Children; }
+            get { return _containerChildren; }
         }
 
         protected override Size DefaultPreferredSize
@@ -57,6 +58,7 @@ namespace Sledge.Gui.WinForms.Containers
         protected WinFormsContainer(Control container) : base(container)
         {
             Children = new List<WinFormsControl>();
+            _containerChildren = new List<IControl>();
             Metadata = new Dictionary<WinFormsControl, ContainerMetadata>();
             container.ControlAdded += ChildrenChanged;
             container.ControlRemoved += ChildrenChanged;
@@ -89,6 +91,7 @@ namespace Sledge.Gui.WinForms.Containers
             c.Parent = this;
             BindChildEvents(child);
             Children.Insert(index, c);
+            _containerChildren.Insert(index, child);
             Metadata.Add(c, metadata);
             AppendChild(index, c);
         }
@@ -100,6 +103,7 @@ namespace Sledge.Gui.WinForms.Containers
             c.Parent = null;
             Metadata.Remove(c);
             Children.Remove(c);
+            _containerChildren.Remove(child);
             RemoveChild(c);
         }
 

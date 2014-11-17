@@ -19,6 +19,7 @@ namespace Sledge.Gui.WinForms.Controls
     [ControlImplementation("WinForms")]
     public class WinFormsComboBox : WinFormsControl, IComboBox
     {
+        private Size _preferredSize = new Size(150, 20);
         private readonly ComboBox _combo;
         private readonly ItemList<IComboBoxItem> _items;
         private int _numImages;
@@ -34,6 +35,18 @@ namespace Sledge.Gui.WinForms.Controls
 
             _combo.DrawItem += OwnerDrawItem;
             _combo.MeasureItem += OwnerMeasureItem;
+
+            Control.TextChanged += UpdatePreferredSize;
+            Control.FontChanged += UpdatePreferredSize;
+        }
+
+        private void UpdatePreferredSize(object sender, EventArgs e)
+        {
+            var measure = TextRenderer.MeasureText(String.IsNullOrEmpty(Control.Text) ? " " : Control.Text, Control.Font);
+            var ps = new Size(measure.Width + 40, measure.Height + 10);
+            if (ps.Width == _preferredSize.Width && ps.Height == _preferredSize.Height) return;
+            _preferredSize = ps;
+            OnPreferredSizeChanged();
         }
 
         private void CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -106,7 +119,7 @@ namespace Sledge.Gui.WinForms.Controls
 
         protected override Size DefaultPreferredSize
         {
-            get { return new Size(150, FontSize * 2); }
+            get { return _preferredSize; }
         }
 
         public IComboBoxItem SelectedItem

@@ -56,7 +56,7 @@ namespace Sledge.Gui.WinForms.Controls
             get { return this; }
         }
 
-        public string TextKey
+        public virtual string TextKey
         {
             get { return _textKey; }
             set
@@ -488,7 +488,7 @@ namespace Sledge.Gui.WinForms.Controls
         }
         #endregion
 
-        public void Dispose()
+        public virtual void Dispose()
         {
             Control.Dispose();
         }

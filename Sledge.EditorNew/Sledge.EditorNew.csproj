@@ -107,13 +107,17 @@
     <Compile Include="Actions\Visgroups\ShowAllVisgroups.cs" />
     <Compile Include="Actions\Visgroups\ToggleVisgroup.cs" />
     <Compile Include="Bootstrap\Bootstrapper.cs" />
+    <Compile Include="Bootstrap\BrushBootstrapper.cs" />
     <Compile Include="Bootstrap\CommandBootstrapper.cs" />
     <Compile Include="Bootstrap\DefaultCommandGroups.cs" />
     <Compile Include="Bootstrap\DefaultCommands.cs" />
     <Compile Include="Bootstrap\MenuBootstrapper.cs" />
+    <Compile Include="Bootstrap\SidebarBootstrapper.cs" />
     <Compile Include="Bootstrap\ToolBootstrapper.cs" />
     <Compile Include="Brushes\ArchBrush.cs" />
     <Compile Include="Brushes\BlockBrush.cs" />
+    <Compile Include="Brushes\BrushManager.cs" />
+    <Compile Include="Brushes\BrushPropertiesControl.cs" />
     <Compile Include="Brushes\ConeBrush.cs" />
     <Compile Include="Brushes\Controls\BooleanControl.cs" />
     <Compile Include="Brushes\Controls\BrushControl.cs" />
@@ -136,6 +140,7 @@
     <Compile Include="Commands\MediatorCommand.cs" />
     <Compile Include="Documents\DocumentManager.cs" />
     <Compile Include="Documents\DocumentMemory.cs" />
+    <Compile Include="Documents\DocumentSubscriptions.cs" />
     <Compile Include="Documents\DummyDocument.cs" />
     <Compile Include="Documents\IDocument.cs" />
     <Compile Include="Documents\Document.cs" />
