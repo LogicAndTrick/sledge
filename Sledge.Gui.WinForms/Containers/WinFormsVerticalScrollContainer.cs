@@ -42,7 +42,7 @@ namespace Sledge.Gui.WinForms.Containers
 
         protected override void OnPreferredSizeChanged()
         {
-            CalculateLayout();
+            if (!Paused) CalculateLayout();
             // Intentionally stop propagation
             // base.OnPreferredSizeChanged();
         }

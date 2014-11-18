@@ -6,6 +6,14 @@ namespace Sledge.EditorNew.Tools.DraggableTool
 {
     public class BoxState
     {
+        public event EventHandler Changed;
+
+        protected virtual void OnChanged()
+        {
+            var handler = Changed;
+            if (handler != null) handler(this, EventArgs.Empty);
+        }
+
         public IMapViewport Viewport { get; set; }
         public BoxAction Action { get; set; }
         public Coordinate OrigStart { get; set; }
@@ -18,6 +26,7 @@ namespace Sledge.EditorNew.Tools.DraggableTool
             var box = new Box(Start, End);
             OrigStart = Start = box.Start;
             OrigEnd = End = box.End;
+            OnChanged();
         }
 
         public void Move(IViewport2D viewport, Coordinate delta)
@@ -25,6 +34,7 @@ namespace Sledge.EditorNew.Tools.DraggableTool
             delta = viewport.Expand(delta);
             Start += delta;
             End += delta;
+            OnChanged();
         }
 
         public void Resize(ResizeHandle handle, IViewport2D viewport, Coordinate position)
@@ -67,6 +77,7 @@ namespace Sledge.EditorNew.Tools.DraggableTool
                 default:
                     throw new ArgumentOutOfRangeException("handle");
             }
+            OnChanged();
         }
     }
 }

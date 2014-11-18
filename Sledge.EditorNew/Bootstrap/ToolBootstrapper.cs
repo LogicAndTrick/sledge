@@ -24,7 +24,7 @@ namespace Sledge.EditorNew.Bootstrap
             var btn = new Button {PreferredSize = new Size(40, 40)};
             _toolPanel.Add(btn);
             _toolDockPanel = UIManager.Manager.Shell.AddDockPanel(_toolPanel, DockPanelLocation.Left);
-            _toolDockPanel.TextKey = "Shell/DockPanels/ToolsPanel";
+            _toolDockPanel.TextKey = "Shell/DockPanels/Tools/Title";
             _toolPanel.Remove(btn);
 
             ToolManager.ToolAdded += ToolAdded;

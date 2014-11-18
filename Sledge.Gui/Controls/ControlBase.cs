@@ -97,6 +97,16 @@ namespace Sledge.Gui.Controls
             remove { Control.PreferredSizeChanged -= value; }
         }
 
+        public void StartUpdate()
+        {
+            Control.StartUpdate();
+        }
+
+        public void EndUpdate()
+        {
+            Control.EndUpdate();
+        }
+
         public event MouseEventHandler MouseDown
         {
             add { Control.MouseDown += value; }

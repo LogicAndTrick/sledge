@@ -62,7 +62,7 @@ namespace Sledge.Gui.WinForms.Controls
             set
             {
                 _textKey = value;
-                _control.Text = UIManager.Manager.StringProvider.Fetch(_textKey);
+                _control.Text = _textKey == null ? null : UIManager.Manager.StringProvider.Fetch(_textKey);
             }
         }
 
@@ -346,6 +346,17 @@ namespace Sledge.Gui.WinForms.Controls
         #endregion
 
         #region Events
+
+        public virtual void StartUpdate()
+        {
+
+        }
+
+        public virtual void EndUpdate()
+        {
+            
+        }
+
         public virtual event MouseEventHandler MouseDown
         {
             add { _control.MouseDown += ConvertDelegate(value, true); }

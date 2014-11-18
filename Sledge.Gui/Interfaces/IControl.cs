@@ -17,6 +17,9 @@ namespace Sledge.Gui.Interfaces
         event EventHandler ActualSizeChanged;
         event EventHandler PreferredSizeChanged;
 
+        void StartUpdate();
+        void EndUpdate();
+
         event MouseEventHandler MouseDown;
         event MouseEventHandler MouseUp;
         event MouseEventHandler MouseWheel;

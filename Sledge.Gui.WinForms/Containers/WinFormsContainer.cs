@@ -13,6 +13,7 @@ namespace Sledge.Gui.WinForms.Containers
 {
     public abstract class WinFormsContainer : WinFormsControl, IContainer
     {
+        protected bool Paused { get; private set; }
         private readonly List<IControl> _containerChildren;
         protected List<WinFormsControl> Children { get; private set; }
         protected Dictionary<WinFormsControl, ContainerMetadata> Metadata { get; private set; }
@@ -69,9 +70,22 @@ namespace Sledge.Gui.WinForms.Containers
             OnPreferredSizeChanged();
         }
 
+        public override void StartUpdate()
+        {
+            Paused = true;
+            base.StartUpdate();
+        }
+
+        public override void EndUpdate()
+        {
+            Paused = false;
+            CalculateLayout();
+            base.EndUpdate();
+        }
+
         protected override void OnPreferredSizeChanged()
         {
-            CalculateLayout();
+            if (!Paused) CalculateLayout();
             base.OnPreferredSizeChanged();
         }
 
@@ -136,7 +150,7 @@ namespace Sledge.Gui.WinForms.Containers
 
         protected override void OnActualSizeChanged()
         {
-            CalculateLayout();
+            if (!Paused) CalculateLayout();
             base.OnActualSizeChanged();
         }
 

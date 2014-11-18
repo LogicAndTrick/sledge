@@ -16,6 +16,11 @@
     <group name="Tools">
         <group name="BrushTool">
             <string key="Name" value="Brush Tool"/>
+            <string key="ContextualHelp">
+                Draw a box in the 2D view to define the size of the brush.
+                Select the type of the brush to create in the sidebar.
+                Press *enter* in the 2D view to create the brush.
+            </string>
             <group name="Controls">
                 <string key="BrushType" value="Brush Type:"/>
                 <string key="RoundVertices" value="Round created vertices"/>
@@ -52,7 +57,14 @@
         <string key="Window.Title" value="Sledge Editor"/>
         
         <group name="DockPanels">
-            <string key="ToolsPanel" value="Tools" />
+            <group name="Tools">
+                <string key="Title" value="Tools" />
+            </group>
+            
+            <group name="ContextualHelp">
+                <string key="Title" value="Contextual Help" />
+                <string key="NoHelpMessage" value="No contextual help is currently available." />
+            </group>
         </group>
     </group>
 </language>

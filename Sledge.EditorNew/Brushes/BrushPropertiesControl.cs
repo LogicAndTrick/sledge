@@ -96,6 +96,8 @@ namespace Sledge.EditorNew.Brushes
 
         private void UpdateSelectedBrush(object sender, EventArgs eventArgs)
         {
+            _container.StartUpdate();
+            
             foreach (var child in _container.Children.OfType<BrushControl>().ToList())
             {
                 child.ValuesChanged -= ControlValuesChanged;
@@ -103,15 +105,18 @@ namespace Sledge.EditorNew.Brushes
             }
 
             var cur = CurrentBrush;
-            if (cur == null) return;
-
-            _roundVerticesCheckbox.Enabled = cur.CanRound;
-            foreach (var control in cur.GetControls())
+            if (cur != null)
             {
-                _container.Add(control);
-                control.ValuesChanged += ControlValuesChanged;
+                _roundVerticesCheckbox.Enabled = cur.CanRound;
+                foreach (var control in cur.GetControls())
+                {
+                    _container.Add(control);
+                    control.ValuesChanged += ControlValuesChanged;
+                }
             }
+
             OnValuesChanged();
+            _container.EndUpdate();
         }
 
         private void ControlValuesChanged(object sender, IBrush brush)

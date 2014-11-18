@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Xml.Linq;
 
 namespace Sledge.EditorNew.Language
@@ -28,6 +29,7 @@ namespace Sledge.EditorNew.Language
 
         public string Fetch(string key)
         {
+            if (key == null) return null;
             if (ContainsKey(key)) return this[key];
             if (_parent != null) return _parent.Fetch(key);
             return null;
@@ -67,11 +69,23 @@ namespace Sledge.EditorNew.Language
             {
                 var key = str.Attribute("key");
                 var val = str.Attribute("value");
-                if (key != null && val != null && !String.IsNullOrWhiteSpace(key.Value) && !String.IsNullOrWhiteSpace(val.Value))
+                if (key != null && !String.IsNullOrWhiteSpace(key.Value))
                 {
-                    Add(prefix + key.Value, val.Value);
+                    if (val != null && !String.IsNullOrWhiteSpace(val.Value))
+                    {
+                        Add(prefix + key.Value, val.Value);
+                    }
+                    else if (!String.IsNullOrWhiteSpace(str.Value))
+                    {
+                        Add(prefix + key.Value, TrimLines(str.Value));
+                    }
                 }
             }
+        }
+
+        private string TrimLines(string value)
+        {
+            return String.Join("\n", value.Split('\n').Select(x => x.Trim()));
         }
 
         private void ReadGroups(XContainer node, string prefix)

@@ -16,6 +16,7 @@ namespace Sledge.EditorNew.Tools.DraggableTool
 
         public Color BoxColour { get; set; }
         public Color FillColour { get; set; }
+        public Box RememberedDimensions { get; set; }
         internal BoxState State { get; set; }
 
         protected IDraggable[] BoxHandles { get; set; }
@@ -30,6 +31,7 @@ namespace Sledge.EditorNew.Tools.DraggableTool
 
             _printer = new TextPrinter(TextQuality.Low);
             _printerFont = new Font(FontFamily.GenericSansSerif, 16, GraphicsUnit.Pixel);
+            RememberedDimensions = null;
 
             BoxHandles = new[]
             {
@@ -76,20 +78,22 @@ namespace Sledge.EditorNew.Tools.DraggableTool
         {
             State.Viewport = viewport;
             State.Action = BoxAction.Drawing;
-            State.Start = Tool.SnapIfNeeded(viewport.Expand(position));
-            State.End = State.Start;
+            var st = RememberedDimensions == null ? Coordinate.Zero : viewport.GetUnusedCoordinate(RememberedDimensions.Start);
+            var wid = RememberedDimensions == null ? Coordinate.Zero : viewport.GetUnusedCoordinate(RememberedDimensions.End - RememberedDimensions.Start);
+            State.Start = Tool.SnapIfNeeded(viewport.Expand(position) + st);
+            State.End = State.Start + wid;
         }
 
         public void Drag(IViewport2D viewport, ViewportEvent e, Coordinate lastPosition, Coordinate position)
         {
-            State.End = Tool.SnapIfNeeded(viewport.Expand(position));
+            State.End = Tool.SnapIfNeeded(viewport.Expand(position)) + viewport.GetUnusedCoordinate(State.End);
         }
 
         public void EndDrag(IViewport2D viewport, ViewportEvent e, Coordinate position)
         {
             State.Viewport = null;
             State.Action = BoxAction.Drawn;
-            State.End = Tool.SnapIfNeeded(viewport.Expand(position)) + viewport.GetUnusedCoordinate(Coordinate.One * 100);
+            State.End = Tool.SnapIfNeeded(viewport.Expand(position)) + viewport.GetUnusedCoordinate(State.End);
             State.FixBounds();
         }
 

@@ -361,6 +361,16 @@ namespace Sledge.Gui.Gtk.Controls
             remove { _control.DoubleClick -= value; }
         }*/
 
+        public virtual void StartUpdate()
+        {
+            
+        }
+
+        public virtual void EndUpdate()
+        {
+            
+        }
+
         public event MouseEventHandler MouseDown;
         public event MouseEventHandler MouseUp;
         public event MouseEventHandler MouseWheel;
