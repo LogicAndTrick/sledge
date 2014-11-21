@@ -33,6 +33,11 @@ namespace Sledge.EditorNew.Tools.DraggableTool
             _printerFont = new Font(FontFamily.GenericSansSerif, 16, GraphicsUnit.Pixel);
             RememberedDimensions = null;
 
+            CreateBoxHandles();
+        }
+
+        protected virtual void CreateBoxHandles()
+        {
             BoxHandles = new[]
             {
                 new InternalBoxResizeHandle(this, ResizeHandle.TopLeft),
@@ -49,7 +54,7 @@ namespace Sledge.EditorNew.Tools.DraggableTool
             };
         }
 
-        public IEnumerable<IDraggable> GetDraggables(IViewport2D viewport)
+        public virtual IEnumerable<IDraggable> GetDraggables(IViewport2D viewport)
         {
             if (State.Action == BoxAction.Idle || State.Action == BoxAction.Drawing) yield break;
             foreach (var draggable in BoxHandles)
@@ -59,22 +64,27 @@ namespace Sledge.EditorNew.Tools.DraggableTool
             // 
         }
 
-        public bool CanDrag(IViewport2D viewport, ViewportEvent e, Coordinate position)
+        public virtual void Click(IViewport2D viewport, ViewportEvent e, Coordinate position)
+        {
+            State.Action = BoxAction.Idle;
+        }
+
+        public virtual bool CanDrag(IViewport2D viewport, ViewportEvent e, Coordinate position)
         {
             return true;
         }
 
-        public void Highlight(IViewport2D viewport)
+        public virtual void Highlight(IViewport2D viewport)
         {
             //
         }
 
-        public void Unhighlight(IViewport2D viewport)
+        public virtual void Unhighlight(IViewport2D viewport)
         {
             //
         }
 
-        public void StartDrag(IViewport2D viewport, ViewportEvent e, Coordinate position)
+        public virtual void StartDrag(IViewport2D viewport, ViewportEvent e, Coordinate position)
         {
             State.Viewport = viewport;
             State.Action = BoxAction.Drawing;
@@ -84,12 +94,12 @@ namespace Sledge.EditorNew.Tools.DraggableTool
             State.End = State.Start + wid;
         }
 
-        public void Drag(IViewport2D viewport, ViewportEvent e, Coordinate lastPosition, Coordinate position)
+        public virtual void Drag(IViewport2D viewport, ViewportEvent e, Coordinate lastPosition, Coordinate position)
         {
             State.End = Tool.SnapIfNeeded(viewport.Expand(position)) + viewport.GetUnusedCoordinate(State.End);
         }
 
-        public void EndDrag(IViewport2D viewport, ViewportEvent e, Coordinate position)
+        public virtual void EndDrag(IViewport2D viewport, ViewportEvent e, Coordinate position)
         {
             State.Viewport = null;
             State.Action = BoxAction.Drawn;
@@ -97,7 +107,7 @@ namespace Sledge.EditorNew.Tools.DraggableTool
             State.FixBounds();
         }
 
-        public void Render(IViewport2D viewport)
+        public virtual void Render(IViewport2D viewport)
         {
             Render2D(viewport);
         }

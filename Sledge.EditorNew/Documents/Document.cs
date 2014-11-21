@@ -60,7 +60,7 @@ namespace Sledge.EditorNew.Documents
             Map = new Map();
             Selection = new SelectionManager(this);
             History = new HistoryManager(this);
-            // HelperManager = new HelperManager(this);
+            HelperManager = new HelperManager(this);
             TextureCollection = new TextureCollection(new List<TexturePackage>());
         }
 

@@ -10,12 +10,10 @@ namespace Sledge.EditorNew.Tools
     {
         public DummyDraggableTool()
         {
-            States = new Stack<IDraggableState>();
-
             var box = new BoxDraggableState(this);
             box.BoxColour = Color.Red;
             box.FillColour = Color.FromArgb(64, Color.Purple);
-            States.Push(box);
+            States.Add(box);
         }
 
         public override IEnumerable<string> GetContexts()

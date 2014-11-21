@@ -5,6 +5,7 @@ namespace Sledge.EditorNew.Tools.DraggableTool
 {
     public interface IDraggable
     {
+        void Click(IViewport2D viewport, ViewportEvent e, Coordinate position);
         bool CanDrag(IViewport2D viewport, ViewportEvent e, Coordinate position);
         void Highlight(IViewport2D viewport);
         void Unhighlight(IViewport2D viewport);

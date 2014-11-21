@@ -90,6 +90,11 @@ namespace Sledge.EditorNew.Tools.DraggableTool
         protected Coordinate MoveOrigin;
         protected Coordinate SnappedMoveOrigin;
 
+        public virtual void Click(IViewport2D viewport, ViewportEvent e, Coordinate position)
+        {
+
+        }
+
         public bool CanDrag(IViewport2D viewport, ViewportEvent e, Coordinate position)
         {
             var box = GetRectangle(viewport);

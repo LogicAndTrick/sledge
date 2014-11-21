@@ -17,7 +17,17 @@ namespace Sledge.EditorNew.Tools.DraggableTool
         }
 
         public IMapViewport Viewport { get; set; }
-        public BoxAction Action { get; set; }
+        private BoxAction _action;
+        public BoxAction Action
+        {
+            get { return _action; }
+            set
+            {
+                _action = value;
+                OnChanged();
+            }
+        }
+
         public Coordinate OrigStart { get; set; }
         public Coordinate OrigEnd { get; set; }
 

@@ -16,6 +16,11 @@ namespace Sledge.EditorNew.Tools.DraggableTool
             _position = Coordinate.Zero;
         }
 
+        public void Click(IViewport2D viewport, ViewportEvent e, Coordinate position)
+        {
+            
+        }
+
         public bool CanDrag(IViewport2D viewport, ViewportEvent e, Coordinate position)
         {
             var pos = viewport.Flatten(_position);

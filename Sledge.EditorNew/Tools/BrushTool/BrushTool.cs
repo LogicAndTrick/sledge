@@ -35,13 +35,12 @@ namespace Sledge.EditorNew.Tools.BrushTool
 
         public BrushTool()
         {
-            _propertiesControl = new BrushPropertiesControl {};
-            States = new Stack<IDraggableState>();
+            _propertiesControl = new BrushPropertiesControl();
 
             box = new BoxDraggableState(this);
             box.BoxColour = Color.Turquoise;
             box.FillColour = Color.FromArgb(View.SelectionBoxBackgroundOpacity, Color.Green);
-            States.Push(box);
+            States.Add(box);
         }
 
         public override void ToolSelected(bool preventHistory)

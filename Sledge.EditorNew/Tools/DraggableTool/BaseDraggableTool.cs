@@ -9,11 +9,25 @@ namespace Sledge.EditorNew.Tools.DraggableTool
 {
     public abstract class BaseDraggableTool : BaseTool
     {
-        public Stack<IDraggableState> States { get; set; }
+        public List<IDraggableState> States { get; set; }
 
         private IDraggable _currentDraggable;
         private ViewportEvent _lastDragMoveEvent = null;
         private Coordinate _lastDragPoint = null;
+
+        protected BaseDraggableTool()
+        {
+            States = new List<IDraggableState>();
+        }
+
+        public override void MouseClick(IMapViewport viewport, ViewportEvent e)
+        {
+            if (!viewport.Is2D || e.Dragging || e.Button != MouseButton.Left) return;
+            var vp = (IViewport2D)viewport;
+            if (_currentDraggable == null) return;
+            var point = viewport.ScreenToWorld(e.X, viewport.Height - e.Y);
+            _currentDraggable.Click(vp, e, point);
+        }
 
         public override void MouseMove(IMapViewport viewport, ViewportEvent e)
         {
@@ -131,11 +145,6 @@ namespace Sledge.EditorNew.Tools.DraggableTool
         }
 
         public override void MouseLeave(IMapViewport viewport, ViewportEvent e)
-        {
-
-        }
-
-        public override void MouseClick(IMapViewport viewport, ViewportEvent e)
         {
 
         }

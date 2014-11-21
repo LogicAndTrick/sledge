@@ -224,6 +224,7 @@
     <Compile Include="Tools\DraggableTool\IDraggableState.cs" />
     <Compile Include="Tools\DraggableTool\InternalBoxResizeHandle.cs" />
     <Compile Include="Tools\DraggableTool\ResizeHandle.cs" />
+    <Compile Include="Tools\SelectTool\SelectionBoxDraggableState.cs" />
     <Compile Include="Tools\SelectTool\SelectTool.cs" />
     <Compile Include="Tools\ToolManager.cs" />
     <Compile Include="UI\Menus\BasicMenuGroup.cs" />
