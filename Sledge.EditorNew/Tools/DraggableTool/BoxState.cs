@@ -6,6 +6,8 @@ namespace Sledge.EditorNew.Tools.DraggableTool
 {
     public class BoxState
     {
+        private Coordinate _start;
+        private Coordinate _end;
         public event EventHandler Changed;
 
         protected virtual void OnChanged()
@@ -18,8 +20,26 @@ namespace Sledge.EditorNew.Tools.DraggableTool
         public BoxAction Action { get; set; }
         public Coordinate OrigStart { get; set; }
         public Coordinate OrigEnd { get; set; }
-        public Coordinate Start { get; set; }
-        public Coordinate End { get; set; }
+
+        public Coordinate Start
+        {
+            get { return _start; }
+            set
+            {
+                _start = value;
+                OnChanged();
+            }
+        }
+
+        public Coordinate End
+        {
+            get { return _end; }
+            set
+            {
+                _end = value;
+                OnChanged();
+            }
+        }
 
         public void FixBounds()
         {
