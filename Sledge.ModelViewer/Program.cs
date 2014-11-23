@@ -1,16 +1,19 @@
 ﻿using System;
-using Gtk;
+using Sledge.Gui;
+using Sledge.ModelViewer.Bootstrap;
 
 namespace Sledge.ModelViewer
 {
-	class MainClass
-	{
-		public static void Main (string[] args)
-		{
-			Application.Init ();
-			MainWindow win = new MainWindow ();
-			win.Show ();
-			Application.Run ();
+    static class Program
+    {
+        [STAThread]
+		public static void Main ()
+        {
+            string preferredUiImplementation = null; // "WinForms"
+            // preferredUiImplementation = Sledge.Settings.Something.PreferredUiImplementation
+            UIManager.Initialise(preferredUiImplementation);
+            UIManager.Manager.Shell.WindowLoaded += (sender, args) => Bootstrapper.Bootstrap();
+            UIManager.Manager.Start();
 		}
 	}
 }

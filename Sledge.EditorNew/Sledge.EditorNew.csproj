@@ -227,6 +227,7 @@
     <Compile Include="Tools\SelectTool\SelectionBoxDraggableState.cs" />
     <Compile Include="Tools\SelectTool\SelectTool.cs" />
     <Compile Include="Tools\ToolManager.cs" />
+    <Compile Include="UI\Input.cs" />
     <Compile Include="UI\Menus\BasicMenuGroup.cs" />
     <Compile Include="UI\Menus\CommandMenuItem.cs" />
     <Compile Include="UI\Menus\IMenuGroup.cs" />

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using OpenTK.Input;
@@ -11,7 +12,7 @@ namespace Sledge.EditorNew.Tools.DraggableTool
     {
         public List<IDraggableState> States { get; set; }
 
-        private IDraggable _currentDraggable;
+        protected IDraggable CurrentDraggable { get; private set; }
         private ViewportEvent _lastDragMoveEvent = null;
         private Coordinate _lastDragPoint = null;
 
@@ -20,13 +21,36 @@ namespace Sledge.EditorNew.Tools.DraggableTool
             States = new List<IDraggableState>();
         }
 
+        #region Virtual events
+        protected virtual void OnDraggableClicked(IViewport2D viewport, ViewportEvent e, Coordinate position, IDraggable draggable)
+        {
+
+        }
+
+        protected virtual void OnDraggableDragStarted(IViewport2D viewport, ViewportEvent e, Coordinate position, IDraggable draggable)
+        {
+
+        }
+
+        protected virtual void OnDraggableDragMoved(IViewport2D viewport, ViewportEvent e, Coordinate previousPosition, Coordinate position, IDraggable draggable)
+        {
+
+        }
+
+        protected virtual void OnDraggableDragEnded(IViewport2D viewport, ViewportEvent e, Coordinate position, IDraggable draggable)
+        {
+
+        }
+        #endregion
+
         public override void MouseClick(IMapViewport viewport, ViewportEvent e)
         {
             if (!viewport.Is2D || e.Dragging || e.Button != MouseButton.Left) return;
             var vp = (IViewport2D)viewport;
-            if (_currentDraggable == null) return;
+            if (CurrentDraggable == null) return;
             var point = viewport.ScreenToWorld(e.X, viewport.Height - e.Y);
-            _currentDraggable.Click(vp, e, point);
+            OnDraggableClicked(vp, e, point, CurrentDraggable);
+            if (!e.Handled) CurrentDraggable.Click(vp, e, point);
         }
 
         public override void MouseMove(IMapViewport viewport, ViewportEvent e)
@@ -49,11 +73,11 @@ namespace Sledge.EditorNew.Tools.DraggableTool
                 }
                 if (drag != null) break;
             }
-            if (drag != _currentDraggable)
+            if (drag != CurrentDraggable)
             {
-                if (_currentDraggable != null) _currentDraggable.Unhighlight(vp);
-                _currentDraggable = drag;
-                if (_currentDraggable != null) _currentDraggable.Highlight(vp);
+                if (CurrentDraggable != null) CurrentDraggable.Unhighlight(vp);
+                CurrentDraggable = drag;
+                if (CurrentDraggable != null) CurrentDraggable.Highlight(vp);
             }
         }
         
@@ -61,9 +85,10 @@ namespace Sledge.EditorNew.Tools.DraggableTool
         {
             if (!viewport.Is2D || e.Button != MouseButton.Left) return;
             var vp = (IViewport2D)viewport;
-            if (_currentDraggable == null) return;
+            if (CurrentDraggable == null) return;
             _lastDragPoint = viewport.ScreenToWorld(e.X, viewport.Height - e.Y);
-            _currentDraggable.StartDrag(vp, e, _lastDragPoint);
+            OnDraggableDragStarted(vp, e, _lastDragPoint, CurrentDraggable);
+            if (!e.Handled) CurrentDraggable.StartDrag(vp, e, _lastDragPoint);
             _lastDragMoveEvent = e;
         }
 
@@ -71,9 +96,10 @@ namespace Sledge.EditorNew.Tools.DraggableTool
         {
             if (!viewport.Is2D || e.Button != MouseButton.Left) return;
             var vp = (IViewport2D)viewport;
-            if (_currentDraggable == null) return;
+            if (CurrentDraggable == null) return;
             var point = viewport.ScreenToWorld(e.X, viewport.Height - e.Y);
-            _currentDraggable.Drag(vp, e, _lastDragPoint, point);
+            OnDraggableDragMoved(vp, e, _lastDragPoint, point, CurrentDraggable);
+            if (!e.Handled) CurrentDraggable.Drag(vp, e, _lastDragPoint, point);
             _lastDragPoint = point;
             _lastDragMoveEvent = e;
         }
@@ -82,16 +108,17 @@ namespace Sledge.EditorNew.Tools.DraggableTool
         {
             if (!viewport.Is2D || e.Button != MouseButton.Left) return;
             var vp = (IViewport2D)viewport;
-            if (_currentDraggable == null) return;
+            if (CurrentDraggable == null) return;
             var point = viewport.ScreenToWorld(e.X, viewport.Height - e.Y);
-            _currentDraggable.EndDrag(vp, e, point);
+            OnDraggableDragEnded(vp, e, point, CurrentDraggable);
+            if (!e.Handled) CurrentDraggable.EndDrag(vp, e, point);
             _lastDragMoveEvent = null;
             _lastDragPoint = null;
         }
 
         public override void PositionChanged(IMapViewport viewport, ViewportEvent e)
         {
-            if (viewport.Is2D && _lastDragMoveEvent != null && _currentDraggable != null && _lastDragMoveEvent.Sender == viewport)
+            if (viewport.Is2D && _lastDragMoveEvent != null && CurrentDraggable != null && _lastDragMoveEvent.Sender == viewport)
             {
                 var vp = (IViewport2D) viewport;
                 var point = viewport.ScreenToWorld(_lastDragMoveEvent.X, viewport.Height - _lastDragMoveEvent.Y);
@@ -104,7 +131,8 @@ namespace Sledge.EditorNew.Tools.DraggableTool
                 };
                 ev.X = ev.LastX = _lastDragMoveEvent.X;
                 ev.Y = ev.LastY = _lastDragMoveEvent.Y;
-                _currentDraggable.Drag(vp, ev, _lastDragPoint, point);
+                OnDraggableDragMoved(vp, ev, _lastDragPoint, point, CurrentDraggable);
+                if (!ev.Handled) CurrentDraggable.Drag(vp, ev, _lastDragPoint, point);
                 _lastDragPoint = point;
             }
             base.PositionChanged(viewport, e);
@@ -119,13 +147,49 @@ namespace Sledge.EditorNew.Tools.DraggableTool
             {
                 foreach (var draggable in state.GetDraggables(vp))
                 {
-                    if (draggable == _currentDraggable) foundActive = true;
+                    if (draggable == CurrentDraggable) foundActive = true;
                     else draggable.Render(vp);
                 }
-                if (state == _currentDraggable) foundActive = true;
+                if (state == CurrentDraggable) foundActive = true;
                 else state.Render(vp);
             }
-            if (_currentDraggable != null && foundActive) _currentDraggable.Render(vp);
+            if (CurrentDraggable != null && foundActive) CurrentDraggable.Render(vp);
+        }
+
+        protected bool GetSelectionBox(BoxState state, out Box boundingbox)
+        {
+            // If one of the dimensions has a depth value of 0, extend it out into infinite space
+            // If two or more dimensions have depth 0, do nothing.
+
+            var sameX = state.Start.X == state.End.X;
+            var sameY = state.Start.Y == state.End.Y;
+            var sameZ = state.Start.Z == state.End.Z;
+            var start = state.Start.Clone();
+            var end = state.End.Clone();
+            var invalid = false;
+
+            if (sameX)
+            {
+                if (sameY || sameZ) invalid = true;
+                start.X = Decimal.MinValue;
+                end.X = Decimal.MaxValue;
+            }
+
+            if (sameY)
+            {
+                if (sameZ) invalid = true;
+                start.Y = Decimal.MinValue;
+                end.Y = Decimal.MaxValue;
+            }
+
+            if (sameZ)
+            {
+                start.Z = Decimal.MinValue;
+                end.Z = Decimal.MaxValue;
+            }
+
+            boundingbox = new Box(start, end);
+            return !invalid;
         }
 
         #region Unused (for now)

@@ -64,6 +64,7 @@
     <Compile Include="Controls\GtkTextBox.cs" />
     <Compile Include="Controls\GtkTextControl.cs" />
     <Compile Include="Controls\GtkViewport.cs" />
+    <Compile Include="GtkOpenTkKeyMap.cs" />
     <Compile Include="GtkUIManager.cs" />
     <Compile Include="Shell\GtkMenu.cs" />
     <Compile Include="Shell\GtkMenuItem.cs" />

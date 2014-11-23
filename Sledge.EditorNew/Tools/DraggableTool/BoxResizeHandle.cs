@@ -29,8 +29,8 @@ namespace Sledge.EditorNew.Tools.DraggableTool
             var start = viewport.Flatten(BoxState.Start);
             var end = viewport.Flatten(BoxState.End);
             var mid = (start + end) / 2;
-            const int radius = 4;
-            const int distance = radius + 4;
+            var radius = 4 / viewport.Zoom;
+            var distance = 6 / viewport.Zoom;
             Coordinate center = null;
             switch (Handle)
             {
@@ -97,8 +97,11 @@ namespace Sledge.EditorNew.Tools.DraggableTool
 
         public bool CanDrag(IViewport2D viewport, ViewportEvent e, Coordinate position)
         {
+            const int padding = 2;
             var box = GetRectangle(viewport);
-            return box.CoordinateIsInside(position);
+            var c = position;
+            return c.X >= box.Start.X - padding && c.Y >= box.Start.Y - padding && c.Z >= box.Start.Z - padding
+                   && c.X <= box.End.X + padding && c.Y <= box.End.Y + padding && c.Z <= box.End.Z + padding;
         }
 
         public void StartDrag(IViewport2D viewport, ViewportEvent e, Coordinate position)

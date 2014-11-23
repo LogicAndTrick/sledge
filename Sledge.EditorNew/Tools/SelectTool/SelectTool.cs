@@ -1,11 +1,22 @@
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using OpenTK;
+using OpenTK.Input;
 using Sledge.Common.Mediator;
+using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.MapObjects;
+using Sledge.DataStructures.Transformations;
+using Sledge.EditorNew.Actions;
+using Sledge.EditorNew.Actions.MapObjects.Operations;
+using Sledge.EditorNew.Actions.MapObjects.Operations.EditOperations;
 using Sledge.EditorNew.Actions.MapObjects.Selection;
+using Sledge.EditorNew.Clipboard;
 using Sledge.EditorNew.Properties;
 using Sledge.EditorNew.Tools.DraggableTool;
+using Sledge.EditorNew.UI;
+using Sledge.EditorNew.UI.Viewports;
 using Sledge.Settings;
 
 namespace Sledge.EditorNew.Tools.SelectTool
@@ -20,11 +31,13 @@ namespace Sledge.EditorNew.Tools.SelectTool
             selectionBox = new SelectionBoxDraggableState(this);
             selectionBox.BoxColour = Color.Yellow;
             selectionBox.FillColour = Color.FromArgb(View.SelectionBoxBackgroundOpacity, Color.White);
+            selectionBox.State.Changed += SelectionBoxChanged;
             States.Add(selectionBox);
 
             emptyBox = new BoxDraggableState(this);
             emptyBox.BoxColour = Color.Yellow;
             emptyBox.FillColour = Color.FromArgb(View.SelectionBoxBackgroundOpacity, Color.White);
+            emptyBox.State.Changed += EmptyBoxChanged;
             States.Add(emptyBox);
         }
 
@@ -54,6 +67,19 @@ namespace Sledge.EditorNew.Tools.SelectTool
             Mediator.Subscribe(EditorMediator.IgnoreGroupingChanged, this);
 
             SelectionChanged();
+        }
+
+        public override void KeyDown(IMapViewport viewport, ViewportEvent e)
+        {
+            if (e.KeyValue == Key.Enter || e.KeyValue == Key.KeypadEnter)
+            {
+                Confirm(viewport);
+            }
+            else if (e.KeyValue == Key.Escape)
+            {
+                Cancel(viewport);
+            }
+            base.KeyDown(viewport, e);
         }
 
         #region Selection/document changed
@@ -88,7 +114,7 @@ namespace Sledge.EditorNew.Tools.SelectTool
             if (Document.Selection.IsEmpty())
             {
                 emptyBox.State.Start = emptyBox.State.End = null;
-                emptyBox.State.Action = BoxAction.Idle;
+                if (emptyBox.State.Action == BoxAction.Drawn) emptyBox.State.Action = BoxAction.Idle;
                 selectionBox.State.Start = selectionBox.State.End = null;
                 selectionBox.State.Action = BoxAction.Idle;
             }
@@ -184,6 +210,156 @@ namespace Sledge.EditorNew.Tools.SelectTool
             var selected = objectsToSelect.ToList();
 
             Document.PerformAction("Selection changed", new ChangeSelection(selected, deselected));
+        }
+
+        #endregion
+
+        #region 2D interaction
+
+        protected override void OnDraggableClicked(IViewport2D viewport, ViewportEvent e, Coordinate position, IDraggable draggable)
+        {
+            var ctrl = Input.Ctrl;
+            if (draggable == emptyBox || ctrl)
+            {
+                var desel = new List<MapObject>();
+                var sel = new List<MapObject>();
+                var seltest = SelectionTest(viewport as IViewport2D, e);
+                if (seltest != null)
+                {
+                    if (!ctrl || !seltest.IsSelected) sel.Add(seltest);
+                    else desel.Add(seltest);
+                }
+                SetSelected(desel, sel, !ctrl, IgnoreGrouping());
+            }
+            e.Handled = !ctrl || draggable == emptyBox;
+        }
+
+        protected override void OnDraggableDragStarted(IViewport2D viewport, ViewportEvent e, Coordinate position, IDraggable draggable)
+        {
+            var ctrl = Input.Ctrl;
+            if (draggable == emptyBox && !ctrl && !Document.Selection.IsEmpty())
+            {
+                SetSelected(null, null, true, IgnoreGrouping());
+            }
+        }
+
+        private void EmptyBoxChanged(object sender, EventArgs e)
+        {
+            if (emptyBox.State.Action != BoxAction.Idle && selectionBox.State.Action != BoxAction.Idle)
+            {
+                selectionBox.State.Action = BoxAction.Idle;
+                // We're drawing a selection box, so clear the current tool
+                // SetCurrentTool(null);
+            }
+            if (emptyBox.State.Action == BoxAction.Drawn && Settings.Select.AutoSelectBox)
+            {
+                // BoxDrawnConfirm(emptyBox.State.Viewport);
+            }
+        }
+
+        private void SelectionBoxChanged(object sender, EventArgs e)
+        {
+            
+        }
+
+        private MapObject SelectionTest(IViewport2D viewport, ViewportEvent e)
+        {
+            // Create a box to represent the click, with a tolerance level
+            var unused = viewport.GetUnusedCoordinate(new Coordinate(100000, 100000, 100000));
+            var tolerance = 4 / viewport.Zoom; // Selection tolerance of four pixels
+            var used = viewport.Expand(new Coordinate(tolerance, tolerance, 0));
+            var add = used + unused;
+            var click = viewport.Expand(viewport.ScreenToWorld(e.X, viewport.Height - e.Y));
+            var box = new Box(click - add, click + add);
+
+            var centerHandles = Sledge.Settings.Select.DrawCenterHandles;
+            var centerOnly = Sledge.Settings.Select.ClickSelectByCenterHandlesOnly;
+            // Get the first element that intersects with the box, selecting or deselecting as needed
+            return Document.Map.WorldSpawn.GetAllNodesIntersecting2DLineTest(box, centerHandles, centerOnly).FirstOrDefault();
+        }
+
+        /// <summary>
+        /// Once a box is confirmed, we select all element intersecting with the box (contained within if shift is down).
+        /// </summary>
+        /// <param name="viewport">The viewport that the box was confirmed in</param>
+        private void Confirm(IMapViewport viewport)
+        {
+            // Only confirm the box if the empty box is drawn
+            if (selectionBox.State.Action != BoxAction.Idle || emptyBox.State.Action != BoxAction.Drawn) return;
+
+            Box boundingbox;
+            if (GetSelectionBox(emptyBox.State, out boundingbox))
+            {
+                // If the shift key is down, select all brushes that are fully contained by the box
+                // If select by handles only is on, select all brushes with centers inside the box
+                // Otherwise, select all brushes that intersect with the box
+                Func<Box, IEnumerable<MapObject>> selector = x => Document.Map.WorldSpawn.GetAllNodesIntersectingWith(x);
+                if (Settings.Select.BoxSelectByCenterHandlesOnly) selector = x => Document.Map.WorldSpawn.GetAllNodesWithCentersContainedWithin(x);
+                if (Input.Shift) selector = x => Document.Map.WorldSpawn.GetAllNodesContainedWithin(x);
+
+                var nodes = selector(boundingbox).ToList();
+                SetSelected(null, nodes, false, IgnoreGrouping());
+            }
+
+            SelectionChanged();
+        }
+
+        private void Cancel(IMapViewport viewport)
+        {
+            if (selectionBox.State.Action != BoxAction.Idle && !Document.Selection.IsEmpty())
+            {
+                SetSelected(null, null, true, IgnoreGrouping());
+            }
+            selectionBox.State.Action = emptyBox.State.Action = BoxAction.Idle;
+            SelectionChanged();
+        }
+
+        #endregion
+
+        #region Transform stuff
+
+        /// <summary>
+        /// Runs the transform on all the currently selected objects
+        /// </summary>
+        /// <param name="transformationName">The name of the transformation</param>
+        /// <param name="transform">The transformation to apply</param>
+        /// <param name="clone">True to create a clone before transforming the original.</param>
+        private void ExecuteTransform(string transformationName, IUnitTransformation transform, bool clone)
+        {
+            if (clone) transformationName += "-clone";
+            var objects = Document.Selection.GetSelectedParents().ToList();
+            var name = String.Format("{0} {1} object{2}", transformationName, objects.Count, (objects.Count == 1 ? "" : "s"));
+
+            var cad = new CreateEditDelete();
+            var action = new ActionCollection(cad);
+
+            if (clone)
+            {
+                // Copy the selection, transform it, and reselect
+                var copies = ClipboardManager.CloneFlatHeirarchy(Document, Document.Selection.GetSelectedObjects()).ToList();
+                foreach (var mo in copies)
+                {
+                    mo.Transform(transform, Document.Map.GetTransformFlags());
+                    if (Sledge.Settings.Select.KeepVisgroupsWhenCloning) continue;
+                    foreach (var o in mo.FindAll()) o.Visgroups.Clear();
+                }
+                cad.Create(Document.Map.WorldSpawn.ID, copies);
+                var sel = new ChangeSelection(copies.SelectMany(x => x.FindAll()), Document.Selection.GetSelectedObjects());
+                action.Add(sel);
+            }
+            else
+            {
+                // Transform the selection
+                cad.Edit(objects, new TransformEditOperation(transform, Document.Map.GetTransformFlags()));
+            }
+
+            // Execute the action
+            Document.PerformAction(name, action);
+        }
+
+        private IUnitTransformation CreateMatrixMultTransformation(Matrix4 mat)
+        {
+            return new UnitMatrixMult(mat);
         }
 
         #endregion

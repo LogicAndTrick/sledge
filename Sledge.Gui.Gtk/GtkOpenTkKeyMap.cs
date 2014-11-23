@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Gdk;
 
-namespace Sledge.UI
+namespace Sledge.Gui.Gtk
 {
     internal static class GtkOpenTkKeyMap
     {
