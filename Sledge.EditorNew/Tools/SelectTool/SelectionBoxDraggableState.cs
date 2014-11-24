@@ -3,7 +3,7 @@ using OpenTK;
 using Sledge.DataStructures.Geometric;
 using Sledge.EditorNew.Documents;
 using Sledge.EditorNew.Tools.DraggableTool;
-using Sledge.EditorNew.Tools.SelectTool.TransformationStates;
+using Sledge.EditorNew.Tools.SelectTool.TransformationHandles;
 using Sledge.EditorNew.UI.Viewports;
 using ResizeHandle = Sledge.EditorNew.Tools.DraggableTool.ResizeHandle;
 

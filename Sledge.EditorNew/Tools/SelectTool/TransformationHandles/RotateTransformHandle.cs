@@ -11,7 +11,7 @@ using Sledge.Extensions;
 using Sledge.Graphics;
 using Sledge.Settings;
 
-namespace Sledge.EditorNew.Tools.SelectTool.TransformationStates
+namespace Sledge.EditorNew.Tools.SelectTool.TransformationHandles
 {
     public class RotateTransformHandle : BoxResizeHandle, ITransformationHandle
     {

@@ -7,7 +7,7 @@ using Sledge.EditorNew.UI.Viewports;
 using Sledge.Graphics;
 using Sledge.Gui.Components;
 
-namespace Sledge.EditorNew.Tools.SelectTool.TransformationStates
+namespace Sledge.EditorNew.Tools.SelectTool.TransformationHandles
 {
     public class RotationOrigin : DraggableCoordinate
     {

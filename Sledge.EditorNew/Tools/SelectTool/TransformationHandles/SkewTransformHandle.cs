@@ -6,7 +6,7 @@ using Sledge.EditorNew.UI;
 using Sledge.EditorNew.UI.Viewports;
 using Sledge.Gui.Components;
 
-namespace Sledge.EditorNew.Tools.SelectTool.TransformationStates
+namespace Sledge.EditorNew.Tools.SelectTool.TransformationHandles
 {
     public class SkewTransformHandle : BoxResizeHandle, ITransformationHandle
     {

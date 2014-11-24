@@ -15,7 +15,7 @@ using Sledge.EditorNew.Actions.MapObjects.Selection;
 using Sledge.EditorNew.Clipboard;
 using Sledge.EditorNew.Properties;
 using Sledge.EditorNew.Tools.DraggableTool;
-using Sledge.EditorNew.Tools.SelectTool.TransformationStates;
+using Sledge.EditorNew.Tools.SelectTool.TransformationHandles;
 using Sledge.EditorNew.UI;
 using Sledge.EditorNew.UI.Viewports;
 using Sledge.Settings;
