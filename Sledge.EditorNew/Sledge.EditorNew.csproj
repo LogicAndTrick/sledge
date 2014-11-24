@@ -226,6 +226,11 @@
     <Compile Include="Tools\DraggableTool\ResizeHandle.cs" />
     <Compile Include="Tools\SelectTool\SelectionBoxDraggableState.cs" />
     <Compile Include="Tools\SelectTool\SelectTool.cs" />
+    <Compile Include="Tools\SelectTool\TransformationStates\RotateTransformHandle.cs" />
+    <Compile Include="Tools\SelectTool\TransformationStates\RotationOrigin.cs" />
+    <Compile Include="Tools\SelectTool\TransformationStates\ITransformationHandle.cs" />
+    <Compile Include="Tools\SelectTool\TransformationStates\ResizeTransformHandle.cs" />
+    <Compile Include="Tools\SelectTool\TransformationStates\SkewTransformHandle.cs" />
     <Compile Include="Tools\ToolManager.cs" />
     <Compile Include="UI\Input.cs" />
     <Compile Include="UI\Menus\BasicMenuGroup.cs" />

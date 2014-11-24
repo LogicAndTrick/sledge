@@ -12,7 +12,7 @@ namespace Sledge.EditorNew.Tools.DraggableTool
     {
         public List<IDraggableState> States { get; set; }
 
-        protected IDraggable CurrentDraggable { get; private set; }
+        public IDraggable CurrentDraggable { get; private set; }
         private ViewportEvent _lastDragMoveEvent = null;
         private Coordinate _lastDragPoint = null;
 

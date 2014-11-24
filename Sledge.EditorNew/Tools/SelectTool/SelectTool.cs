@@ -15,6 +15,7 @@ using Sledge.EditorNew.Actions.MapObjects.Selection;
 using Sledge.EditorNew.Clipboard;
 using Sledge.EditorNew.Properties;
 using Sledge.EditorNew.Tools.DraggableTool;
+using Sledge.EditorNew.Tools.SelectTool.TransformationStates;
 using Sledge.EditorNew.UI;
 using Sledge.EditorNew.UI.Viewports;
 using Sledge.Settings;
@@ -223,13 +224,17 @@ namespace Sledge.EditorNew.Tools.SelectTool
             {
                 var desel = new List<MapObject>();
                 var sel = new List<MapObject>();
-                var seltest = SelectionTest(viewport as IViewport2D, e);
+                var seltest = SelectionTest(viewport, e);
                 if (seltest != null)
                 {
                     if (!ctrl || !seltest.IsSelected) sel.Add(seltest);
                     else desel.Add(seltest);
                 }
                 SetSelected(desel, sel, !ctrl, IgnoreGrouping());
+            }
+            else if (selectionBox.State.Action == BoxAction.Drawn && draggable is ResizeTransformHandle && ((ResizeTransformHandle) draggable).Handle == ResizeHandle.Center)
+            {
+                selectionBox.Cycle();
             }
             e.Handled = !ctrl || draggable == emptyBox;
         }
@@ -241,6 +246,39 @@ namespace Sledge.EditorNew.Tools.SelectTool
             {
                 SetSelected(null, null, true, IgnoreGrouping());
             }
+        }
+
+        protected override void OnDraggableDragMoved(IViewport2D viewport, ViewportEvent e, Coordinate previousPosition, Coordinate position, IDraggable draggable)
+        {
+            base.OnDraggableDragMoved(viewport, e, previousPosition, position, draggable);
+            if (selectionBox.State.Action == BoxAction.Resizing && draggable is ITransformationHandle)
+            {
+                var tform = selectionBox.GetTransformationMatrix(viewport, Document);
+                if (tform.HasValue)
+                {
+                    Document.SetSelectListTransform(tform.Value);
+                    var box = new Box(selectionBox.State.OrigStart, selectionBox.State.OrigEnd);
+                    var trans = CreateMatrixMultTransformation(tform.Value);
+                    Mediator.Publish(EditorMediator.SelectionBoxChanged, box.Transform(trans));
+                }
+            }
+        }
+
+        protected override void OnDraggableDragEnded(IViewport2D viewport, ViewportEvent e, Coordinate position, IDraggable draggable)
+        {
+            var tt = draggable as ITransformationHandle;
+            if (selectionBox.State.Action == BoxAction.Resizing && tt != null)
+            {
+                // Execute the transform on the selection
+                var tform = selectionBox.GetTransformationMatrix(viewport, Document);
+                if (tform.HasValue)
+                {
+                    var createClone = Input.Shift && draggable is ResizeTransformHandle && ((ResizeTransformHandle) draggable).Handle == ResizeHandle.Center;
+                    ExecuteTransform(tt.Name, CreateMatrixMultTransformation(tform.Value), createClone);
+                }
+            }
+            Document.EndSelectionTransform();
+            base.OnDraggableDragEnded(viewport, e, position, draggable);
         }
 
         private void EmptyBoxChanged(object sender, EventArgs e)

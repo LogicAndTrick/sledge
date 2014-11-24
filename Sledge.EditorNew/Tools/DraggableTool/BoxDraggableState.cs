@@ -12,7 +12,7 @@ namespace Sledge.EditorNew.Tools.DraggableTool
 {
     public class BoxDraggableState : IDraggableState
     {
-        public BaseTool Tool { get; set; }
+        public BaseDraggableTool Tool { get; set; }
 
         public Color BoxColour { get; set; }
         public Color FillColour { get; set; }
@@ -24,7 +24,7 @@ namespace Sledge.EditorNew.Tools.DraggableTool
         protected TextPrinter _printer;
         protected Font _printerFont;
 
-        public BoxDraggableState(BaseTool tool)
+        public BoxDraggableState(BaseDraggableTool tool)
         {
             Tool = tool;
             State = new BoxState();
@@ -88,6 +88,8 @@ namespace Sledge.EditorNew.Tools.DraggableTool
         {
             State.Viewport = viewport;
             State.Action = BoxAction.Drawing;
+            State.OrigStart = State.Start;
+            State.OrigEnd = State.End;
             var st = RememberedDimensions == null ? Coordinate.Zero : viewport.GetUnusedCoordinate(RememberedDimensions.Start);
             var wid = RememberedDimensions == null ? Coordinate.Zero : viewport.GetUnusedCoordinate(RememberedDimensions.End - RememberedDimensions.Start);
             State.Start = Tool.SnapIfNeeded(viewport.Expand(position) + st);

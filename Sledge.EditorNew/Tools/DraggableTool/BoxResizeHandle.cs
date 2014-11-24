@@ -6,13 +6,14 @@ using Sledge.DataStructures.Geometric;
 using Sledge.EditorNew.Documents;
 using Sledge.EditorNew.UI.Viewports;
 using Sledge.Gui.Components;
+using Sledge.Settings;
 
 namespace Sledge.EditorNew.Tools.DraggableTool
 {
     public class BoxResizeHandle : IDraggable
     {
         protected BoxDraggableState State { get; set; }
-        protected ResizeHandle Handle { get; set; }
+        public ResizeHandle Handle { get; protected set; }
         protected IViewport2D HighlightedViewport { get; set; }
 
         protected BoxState BoxState { get { return State.State; } }
@@ -68,10 +69,15 @@ namespace Sledge.EditorNew.Tools.DraggableTool
             return new Box(center - offset, center + offset);
         }
 
+        protected virtual void SetCursorForHandle(IViewport2D viewport, ResizeHandle handle)
+        {
+            Cursor.SetCursor(viewport, handle.GetCursorType());
+        }
+
         public void Highlight(IViewport2D viewport)
         {
             HighlightedViewport = viewport;
-            Cursor.SetCursor(viewport, Handle.GetCursorType());
+            SetCursorForHandle(viewport, Handle);
         }
 
         public void Unhighlight(IViewport2D viewport)
@@ -95,7 +101,7 @@ namespace Sledge.EditorNew.Tools.DraggableTool
 
         }
 
-        public bool CanDrag(IViewport2D viewport, ViewportEvent e, Coordinate position)
+        public virtual bool CanDrag(IViewport2D viewport, ViewportEvent e, Coordinate position)
         {
             const int padding = 2;
             var box = GetRectangle(viewport);
@@ -104,14 +110,16 @@ namespace Sledge.EditorNew.Tools.DraggableTool
                    && c.X <= box.End.X + padding && c.Y <= box.End.Y + padding && c.Z <= box.End.Z + padding;
         }
 
-        public void StartDrag(IViewport2D viewport, ViewportEvent e, Coordinate position)
+        public virtual void StartDrag(IViewport2D viewport, ViewportEvent e, Coordinate position)
         {
             BoxState.Action = BoxAction.Resizing;
+            BoxState.OrigStart = BoxState.Start;
+            BoxState.OrigEnd = BoxState.End;
             MoveOrigin = GetResizeOrigin(viewport, position);
             SnappedMoveOrigin = MoveOrigin;
         }
 
-        public void Drag(IViewport2D viewport, ViewportEvent e, Coordinate lastPosition, Coordinate position)
+        public virtual void Drag(IViewport2D viewport, ViewportEvent e, Coordinate lastPosition, Coordinate position)
         {
             if (Handle == ResizeHandle.Center)
             {
@@ -129,7 +137,7 @@ namespace Sledge.EditorNew.Tools.DraggableTool
             }
         }
 
-        public void EndDrag(IViewport2D viewport, ViewportEvent e, Coordinate position)
+        public virtual void EndDrag(IViewport2D viewport, ViewportEvent e, Coordinate position)
         {
             BoxState.FixBounds();
             BoxState.Action = BoxAction.Drawn;

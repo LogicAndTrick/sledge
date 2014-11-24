@@ -8,58 +8,63 @@ namespace Sledge.EditorNew.Tools.DraggableTool
 {
     public class DraggableCoordinate : IDraggable
     {
-        private bool _highlighted;
-        private Coordinate _position;
+        public bool Highlighted { get; protected set; }
+        public Coordinate Position { get; set; }
 
         public DraggableCoordinate()
         {
-            _position = Coordinate.Zero;
+            Position = Coordinate.Zero;
         }
 
-        public void Click(IViewport2D viewport, ViewportEvent e, Coordinate position)
+        public virtual void Click(IViewport2D viewport, ViewportEvent e, Coordinate position)
         {
             
         }
 
-        public bool CanDrag(IViewport2D viewport, ViewportEvent e, Coordinate position)
+        public virtual bool CanDrag(IViewport2D viewport, ViewportEvent e, Coordinate position)
         {
-            var pos = viewport.Flatten(_position);
+            var pos = viewport.Flatten(Position);
             var diff = (pos - position).Absolute();
             return diff.X < 5 && diff.Y < 5;
         }
 
-        public void Highlight(IViewport2D viewport)
+        protected virtual void SetMoveCursor(IViewport2D viewport)
         {
-            _highlighted = true;
             Cursor.SetCursor(viewport, CursorType.SizeAll);
         }
 
-        public void Unhighlight(IViewport2D viewport)
+        public virtual void Highlight(IViewport2D viewport)
         {
-            _highlighted = false;
+            Highlighted = true;
+            SetMoveCursor(viewport);
+        }
+
+        public virtual void Unhighlight(IViewport2D viewport)
+        {
+            Highlighted = false;
             Cursor.SetCursor(viewport, CursorType.Default);
         }
 
-        public void StartDrag(IViewport2D viewport, ViewportEvent e, Coordinate position)
+        public virtual void StartDrag(IViewport2D viewport, ViewportEvent e, Coordinate position)
         {
 
         }
 
-        public void Drag(IViewport2D viewport, ViewportEvent e, Coordinate lastPosition, Coordinate position)
+        public virtual void Drag(IViewport2D viewport, ViewportEvent e, Coordinate lastPosition, Coordinate position)
         {
-            _position = viewport.Expand(position) + viewport.GetUnusedCoordinate(_position);
+            Position = viewport.Expand(position) + viewport.GetUnusedCoordinate(Position);
         }
 
-        public void EndDrag(IViewport2D viewport, ViewportEvent e, Coordinate position)
+        public virtual void EndDrag(IViewport2D viewport, ViewportEvent e, Coordinate position)
         {
 
         }
 
-        public void Render(IViewport2D viewport)
+        public virtual void Render(IViewport2D viewport)
         {
-            var pos = viewport.Flatten(_position);
+            var pos = viewport.Flatten(Position);
             GL.Begin(PrimitiveType.Quads);
-            GL.Color4(_highlighted ? Color.Red : Color.Green);
+            GL.Color4(Highlighted ? Color.Red : Color.Green);
             GL.Vertex2((double)(pos.X - 2), (double)(pos.Y - 2));
             GL.Vertex2((double)(pos.X + 2), (double)(pos.Y - 2));
             GL.Vertex2((double)(pos.X + 2), (double)(pos.Y + 2));
