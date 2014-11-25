@@ -16,7 +16,7 @@ namespace Sledge.EditorNew.UI.Viewports
 
         private bool ShouldRelayEvent(BaseTool tool)
         {
-            if (tool == null || !Viewport.IsUnlocked(this)) return false;
+            if (tool == null || !Viewport.IsUnlocked(tool)) return false;
             var usage = tool.Usage;
             return usage == BaseTool.ToolUsage.Both
                    || (usage == BaseTool.ToolUsage.View2D && Viewport.Is2D)

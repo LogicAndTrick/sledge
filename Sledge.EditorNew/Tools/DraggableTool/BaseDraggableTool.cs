@@ -18,7 +18,6 @@ namespace Sledge.EditorNew.Tools.DraggableTool
         protected BaseDraggableTool()
         {
             States = new List<IDraggableState>();
-            Usage = ToolUsage.Both;
         }
 
         #region Virtual events

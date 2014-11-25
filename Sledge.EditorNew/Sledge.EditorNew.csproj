@@ -209,7 +209,6 @@
     <Compile Include="Rendering\ToolRenderable.cs" />
     <Compile Include="Rendering\Viewport3DRenderOptions.cs" />
     <Compile Include="Rendering\WidgetLinesRenderable.cs" />
-    <Compile Include="Tools\BaseBoxTool.cs" />
     <Compile Include="Tools\BrushTool\BrushTool.cs" />
     <Compile Include="Tools\DraggableTool\BaseDraggableTool.cs" />
     <Compile Include="Tools\BaseTool.cs" />
@@ -218,7 +217,6 @@
     <Compile Include="Tools\DraggableTool\BoxResizeHandle.cs" />
     <Compile Include="Tools\DraggableTool\BoxState.cs" />
     <Compile Include="Tools\DraggableTool\DraggableCoordinate.cs" />
-    <Compile Include="Tools\DummyBoxTool.cs" />
     <Compile Include="Tools\DummyDraggableTool.cs" />
     <Compile Include="Tools\DummyTool.cs" />
     <Compile Include="Tools\DraggableTool\IDraggable.cs" />

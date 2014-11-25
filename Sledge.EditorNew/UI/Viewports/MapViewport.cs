@@ -294,7 +294,7 @@ namespace Sledge.EditorNew.UI.Viewports
                 _dragging = false;
                 _dragButton = e.Button;
             }
-            ListenerDoEvent(new ViewportEvent(this), (l, v) => l.MouseDown(v));
+            ListenerDoEvent(new ViewportEvent(this, e), (l, v) => l.MouseDown(v));
             _lastMouseLocationKnown = true;
             _lastMouseLocation = new Point(e.X, e.Y);
         }

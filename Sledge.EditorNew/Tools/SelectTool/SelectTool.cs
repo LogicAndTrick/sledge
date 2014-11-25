@@ -19,13 +19,19 @@ using Sledge.EditorNew.Tools.SelectTool.TransformationHandles;
 using Sledge.EditorNew.UI;
 using Sledge.EditorNew.UI.Viewports;
 using Sledge.Settings;
+using Select = Sledge.Settings.Select;
 
 namespace Sledge.EditorNew.Tools.SelectTool
 {
     public class SelectTool : BaseDraggableTool
     {
+        // todo - select tool - widgets
+
         private BoxDraggableState emptyBox;
         private SelectionBoxDraggableState selectionBox;
+
+        private MapObject ChosenItemFor3DSelection { get; set; }
+        private List<MapObject> IntersectingObjectsFor3DSelection { get; set; }
 
         public SelectTool()
         {
@@ -59,7 +65,6 @@ namespace Sledge.EditorNew.Tools.SelectTool
 
         public override void ToolSelected(bool preventHistory)
         {
-            //SetCurrentTool(_currentTool);
             IgnoreGroupingChanged();
 
             Mediator.Subscribe(EditorMediator.SelectionChanged, this);
@@ -68,19 +73,6 @@ namespace Sledge.EditorNew.Tools.SelectTool
             Mediator.Subscribe(EditorMediator.IgnoreGroupingChanged, this);
 
             SelectionChanged();
-        }
-
-        public override void KeyDown(IMapViewport viewport, ViewportEvent e)
-        {
-            if (e.KeyValue == Key.Enter || e.KeyValue == Key.KeypadEnter)
-            {
-                Confirm(viewport);
-            }
-            else if (e.KeyValue == Key.Escape)
-            {
-                Cancel(viewport);
-            }
-            base.KeyDown(viewport, e);
         }
 
         #region Selection/document changed
@@ -101,8 +93,6 @@ namespace Sledge.EditorNew.Tools.SelectTool
         {
             if (Document == null) return;
             UpdateBoxBasedOnSelection();
-            //if (State.Action != BoxAction.ReadyToResize && _currentTool != null) SetCurrentTool(null);
-            //else if (State.Action == BoxAction.ReadyToResize && _currentTool == null) SetCurrentTool(_lastTool ?? _tools[0]);
 
             //foreach (var widget in _widgets) widget.SelectionChanged();
         }
@@ -215,6 +205,119 @@ namespace Sledge.EditorNew.Tools.SelectTool
 
         #endregion
 
+        #region 3D interaction
+
+        protected override void MouseDoubleClick(IViewport3D viewport, ViewportEvent e)
+        {
+            // Don't show Object Properties while navigating the view, because mouse cursor will be hidden
+            if (Input.IsKeyDown(Key.Space)) return;
+
+            if (Select.DoubleClick3DAction == DoubleClick3DAction.Nothing) return;
+            if (!Document.Selection.IsEmpty())
+            {
+                if (Select.DoubleClick3DAction == DoubleClick3DAction.ObjectProperties)
+                {
+                    Mediator.Publish(HotkeysMediator.ObjectProperties);
+                }
+                else if (Select.DoubleClick3DAction == DoubleClick3DAction.TextureTool)
+                {
+                    Mediator.Publish(HotkeysMediator.SwitchTool, HotkeyTool.Texture);
+                }
+            }
+        }
+
+        private Coordinate GetIntersectionPoint(MapObject obj, Line line)
+        {
+            if (obj == null) return null;
+
+            var solid = obj as Solid;
+            if (solid == null) return obj.GetIntersectionPoint(line);
+
+            return solid.Faces.Where(x => x.Opacity > 0 && !x.IsHidden)
+                .Select(x => x.GetIntersectionPoint(line))
+                .Where(x => x != null)
+                .OrderBy(x => (x - line.Start).VectorMagnitude())
+                .FirstOrDefault();
+        }
+
+        /// <summary>
+        /// When the mouse is pressed in the 3D view, we want to select the clicked object.
+        /// </summary>
+        /// <param name="viewport">The viewport that was clicked</param>
+        /// <param name="e">The click event</param>
+        protected override void MouseDown(IViewport3D viewport, ViewportEvent e)
+        {
+            // Do not perform selection if space is down
+            if (View.Camera3DPanRequiresMouseClick && Input.IsKeyDown(Key.Space)) return;
+            if (!viewport.AquireInputLock(this)) return;
+
+            // First, get the ray that is cast from the clicked point along the viewport frustrum
+            var ray = viewport.CastRayFromScreen(e.X, e.Y);
+
+            // Grab all the elements that intersect with the ray
+            var hits = Document.Map.WorldSpawn.GetAllNodesIntersectingWith(ray);
+
+            // Sort the list of intersecting elements by distance from ray origin
+            IntersectingObjectsFor3DSelection = hits
+                .Select(x => new { Item = x, Intersection = GetIntersectionPoint(x, ray) })
+                .Where(x => x.Intersection != null)
+                .OrderBy(x => (x.Intersection - ray.Start).VectorMagnitude())
+                .Select(x => x.Item)
+                .ToList();
+
+            // By default, select the closest object
+            ChosenItemFor3DSelection = IntersectingObjectsFor3DSelection.FirstOrDefault();
+
+            // If Ctrl is down and the object is already selected, we should deselect it instead.
+            var list = new[] { ChosenItemFor3DSelection };
+            var desel = ChosenItemFor3DSelection != null && Input.Ctrl && ChosenItemFor3DSelection.IsSelected;
+            SetSelected(desel ? list : null, desel ? null : list, !Input.Ctrl, IgnoreGrouping());
+        }
+
+        protected override void MouseUp(IViewport3D viewport, ViewportEvent e)
+        {
+            IntersectingObjectsFor3DSelection = null;
+            ChosenItemFor3DSelection = null;
+            viewport.ReleaseInputLock(this);
+        }
+
+        protected override void MouseWheel(IViewport3D viewport, ViewportEvent e)
+        {
+            // If we're not in 3D cycle mode, carry on
+            if (IntersectingObjectsFor3DSelection == null || ChosenItemFor3DSelection == null)
+            {
+                return;
+            }
+
+            var desel = new List<MapObject>();
+            var sel = new List<MapObject>();
+
+            // Select (or deselect) the current element
+            if (ChosenItemFor3DSelection.IsSelected) desel.Add(ChosenItemFor3DSelection);
+            else sel.Add(ChosenItemFor3DSelection);
+
+            // Get the index of the current element
+            var index = IntersectingObjectsFor3DSelection.IndexOf(ChosenItemFor3DSelection);
+            if (index < 0) return;
+
+            // Move the index in the mouse wheel direction, cycling if needed
+            var dir = e.Delta / Math.Abs(e.Delta);
+            index = (index + dir) % IntersectingObjectsFor3DSelection.Count;
+            if (index < 0) index += IntersectingObjectsFor3DSelection.Count;
+
+            ChosenItemFor3DSelection = IntersectingObjectsFor3DSelection[index];
+
+            // Select (or deselect) the new current element
+            if (ChosenItemFor3DSelection.IsSelected) desel.Add(ChosenItemFor3DSelection);
+            else sel.Add(ChosenItemFor3DSelection);
+
+            SetSelected(desel, sel, false, IgnoreGrouping());
+        }
+
+        // todo - select tool - capturing mouse wheel (input lock)
+
+        #endregion
+
         #region 2D interaction
 
         protected override void OnDraggableClicked(IViewport2D viewport, ViewportEvent e, Coordinate position, IDraggable draggable)
@@ -289,7 +392,7 @@ namespace Sledge.EditorNew.Tools.SelectTool
                 // We're drawing a selection box, so clear the current tool
                 // SetCurrentTool(null);
             }
-            if (emptyBox.State.Action == BoxAction.Drawn && Settings.Select.AutoSelectBox)
+            if (emptyBox.State.Action == BoxAction.Drawn && Select.AutoSelectBox)
             {
                 // BoxDrawnConfirm(emptyBox.State.Viewport);
             }
@@ -310,10 +413,40 @@ namespace Sledge.EditorNew.Tools.SelectTool
             var click = viewport.Expand(viewport.ScreenToWorld(e.X, viewport.Height - e.Y));
             var box = new Box(click - add, click + add);
 
-            var centerHandles = Sledge.Settings.Select.DrawCenterHandles;
-            var centerOnly = Sledge.Settings.Select.ClickSelectByCenterHandlesOnly;
+            var centerHandles = Select.DrawCenterHandles;
+            var centerOnly = Select.ClickSelectByCenterHandlesOnly;
             // Get the first element that intersects with the box, selecting or deselecting as needed
             return Document.Map.WorldSpawn.GetAllNodesIntersecting2DLineTest(box, centerHandles, centerOnly).FirstOrDefault();
+        }
+
+        protected override void KeyDown(IViewport2D viewport, ViewportEvent e)
+        {
+            var nudge = GetNudgeValue(e.KeyValue, Input.Ctrl);
+            if (nudge != null && (selectionBox.State.Action == BoxAction.Drawn) && !Document.Selection.IsEmpty())
+            {
+                var translate = viewport.Expand(nudge);
+                var transformation = Matrix4.CreateTranslation((float)translate.X, (float)translate.Y, (float)translate.Z);
+                ExecuteTransform("Nudge", CreateMatrixMultTransformation(transformation), Input.Shift);
+                SelectionChanged();
+            }
+            base.KeyDown(viewport, e);
+        }
+
+        #endregion
+
+        #region Box confirm/cancel
+
+        public override void KeyDown(IMapViewport viewport, ViewportEvent e)
+        {
+            if (e.KeyValue == Key.Enter || e.KeyValue == Key.KeypadEnter)
+            {
+                Confirm(viewport);
+            }
+            else if (e.KeyValue == Key.Escape)
+            {
+                Cancel(viewport);
+            }
+            base.KeyDown(viewport, e);
         }
 
         /// <summary>
@@ -332,7 +465,7 @@ namespace Sledge.EditorNew.Tools.SelectTool
                 // If select by handles only is on, select all brushes with centers inside the box
                 // Otherwise, select all brushes that intersect with the box
                 Func<Box, IEnumerable<MapObject>> selector = x => Document.Map.WorldSpawn.GetAllNodesIntersectingWith(x);
-                if (Settings.Select.BoxSelectByCenterHandlesOnly) selector = x => Document.Map.WorldSpawn.GetAllNodesWithCentersContainedWithin(x);
+                if (Select.BoxSelectByCenterHandlesOnly) selector = x => Document.Map.WorldSpawn.GetAllNodesWithCentersContainedWithin(x);
                 if (Input.Shift) selector = x => Document.Map.WorldSpawn.GetAllNodesContainedWithin(x);
 
                 var nodes = selector(boundingbox).ToList();
@@ -378,7 +511,7 @@ namespace Sledge.EditorNew.Tools.SelectTool
                 foreach (var mo in copies)
                 {
                     mo.Transform(transform, Document.Map.GetTransformFlags());
-                    if (Sledge.Settings.Select.KeepVisgroupsWhenCloning) continue;
+                    if (Select.KeepVisgroupsWhenCloning) continue;
                     foreach (var o in mo.FindAll()) o.Visgroups.Clear();
                 }
                 cad.Create(Document.Map.WorldSpawn.ID, copies);
@@ -405,7 +538,6 @@ namespace Sledge.EditorNew.Tools.SelectTool
         public override void ToolDeselected(bool preventHistory)
         {
             Mediator.UnsubscribeAll(this);
-            // SetCurrentTool(null);
         }
 
         public override HotkeyTool? GetHotkeyToolType()

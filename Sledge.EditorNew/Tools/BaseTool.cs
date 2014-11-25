@@ -135,7 +135,7 @@ namespace Sledge.EditorNew.Tools
         protected BaseTool()
         {
             Viewport = null;
-            Usage = ToolUsage.View2D;
+            Usage = ToolUsage.Both;
         }
 
         public void SetDocument(Document document)

@@ -20,25 +20,35 @@ namespace Sledge.EditorNew.UI
             get { return IsAnyKeyDown(Key.AltLeft, Key.AltRight); }
         }
 
-        private static bool IsAnyKeyDown(params Key[] keys)
+        public static bool IsKeyDown(Key key)
+        {
+            return IsAnyKeyDown(key);
+        }
+
+        public static bool IsKeyUp(Key key)
+        {
+            return IsAnyKeyUp(key);
+        }
+
+        public static bool IsAnyKeyDown(params Key[] keys)
         {
             var ks = Keyboard.GetState();
             return keys.Any(ks.IsKeyDown);
         }
 
-        private static bool AreAllKeysDown(params Key[] keys)
+        public static bool AreAllKeysDown(params Key[] keys)
         {
             var ks = Keyboard.GetState();
             return keys.All(ks.IsKeyDown);
         }
 
-        private static bool IsAnyKeyUp(params Key[] keys)
+        public static bool IsAnyKeyUp(params Key[] keys)
         {
             var ks = Keyboard.GetState();
             return keys.Any(ks.IsKeyUp);
         }
 
-        private static bool AreAllKeysUp(params Key[] keys)
+        public static bool AreAllKeysUp(params Key[] keys)
         {
             var ks = Keyboard.GetState();
             return keys.All(ks.IsKeyUp);
