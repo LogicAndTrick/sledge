@@ -164,32 +164,146 @@ namespace Sledge.EditorNew.Tools
             Mediator.ExecuteDefault(this, message, data);
         }
 
-        public abstract void MouseEnter(IMapViewport viewport, ViewportEvent e);
-        public abstract void MouseLeave(IMapViewport viewport, ViewportEvent e);
-        public abstract void MouseDown(IMapViewport viewport, ViewportEvent e);
-        public abstract void MouseClick(IMapViewport viewport, ViewportEvent e);
-        public abstract void MouseDoubleClick(IMapViewport viewport, ViewportEvent e);
-        public abstract void MouseUp(IMapViewport viewport, ViewportEvent e);
-        public abstract void MouseWheel(IMapViewport viewport, ViewportEvent e);
-        public abstract void MouseMove(IMapViewport viewport, ViewportEvent e);
-        public abstract void DragStart(IMapViewport viewport, ViewportEvent e);
-        public abstract void DragMove(IMapViewport viewport, ViewportEvent e);
-        public abstract void DragEnd(IMapViewport viewport, ViewportEvent e);
-        public abstract void KeyPress(IMapViewport viewport, ViewportEvent e);
-        public abstract void KeyDown(IMapViewport viewport, ViewportEvent e);
-        public abstract void KeyUp(IMapViewport viewport, ViewportEvent e);
-        public abstract void UpdateFrame(IMapViewport viewport, Frame frame);
-        public abstract void Render(IMapViewport viewport);
-
-        public virtual void PositionChanged(IMapViewport viewport, ViewportEvent e)
+        public virtual void MouseEnter(IMapViewport viewport, ViewportEvent e)
         {
-            return;
+            if (viewport.Is2D && viewport is IViewport2D) MouseEnter((IViewport2D)viewport, e);
+            if (viewport.Is3D && viewport is IViewport3D) MouseEnter((IViewport3D)viewport, e);
+        }
+
+        public virtual void MouseLeave(IMapViewport viewport, ViewportEvent e)
+        {
+            if (viewport.Is2D && viewport is IViewport2D) MouseLeave((IViewport2D)viewport, e);
+            if (viewport.Is3D && viewport is IViewport3D) MouseLeave((IViewport3D)viewport, e);
+        }
+
+        public virtual void MouseDown(IMapViewport viewport, ViewportEvent e)
+        {
+            if (viewport.Is2D && viewport is IViewport2D) MouseDown((IViewport2D)viewport, e);
+            if (viewport.Is3D && viewport is IViewport3D) MouseDown((IViewport3D)viewport, e);
+        }
+
+        public virtual void MouseClick(IMapViewport viewport, ViewportEvent e)
+        {
+            if (viewport.Is2D && viewport is IViewport2D) MouseClick((IViewport2D)viewport, e);
+            if (viewport.Is3D && viewport is IViewport3D) MouseClick((IViewport3D)viewport, e);
+        }
+
+        public virtual void MouseDoubleClick(IMapViewport viewport, ViewportEvent e)
+        {
+            if (viewport.Is2D && viewport is IViewport2D) MouseDoubleClick((IViewport2D)viewport, e);
+            if (viewport.Is3D && viewport is IViewport3D) MouseDoubleClick((IViewport3D)viewport, e);
+        }
+
+        public virtual void MouseUp(IMapViewport viewport, ViewportEvent e)
+        {
+            if (viewport.Is2D && viewport is IViewport2D) MouseUp((IViewport2D)viewport, e);
+            if (viewport.Is3D && viewport is IViewport3D) MouseUp((IViewport3D)viewport, e);
+        }
+
+        public virtual void MouseWheel(IMapViewport viewport, ViewportEvent e)
+        {
+            if (viewport.Is2D && viewport is IViewport2D) MouseWheel((IViewport2D)viewport, e);
+            if (viewport.Is3D && viewport is IViewport3D) MouseWheel((IViewport3D)viewport, e);
+        }
+
+        public virtual void MouseMove(IMapViewport viewport, ViewportEvent e)
+        {
+            if (viewport.Is2D && viewport is IViewport2D) MouseMove((IViewport2D)viewport, e);
+            if (viewport.Is3D && viewport is IViewport3D) MouseMove((IViewport3D)viewport, e);
+        }
+
+        public virtual void DragStart(IMapViewport viewport, ViewportEvent e)
+        {
+            if (viewport.Is2D && viewport is IViewport2D) DragStart((IViewport2D)viewport, e);
+            if (viewport.Is3D && viewport is IViewport3D) DragStart((IViewport3D)viewport, e);
+        }
+
+        public virtual void DragMove(IMapViewport viewport, ViewportEvent e)
+        {
+            if (viewport.Is2D && viewport is IViewport2D) DragMove((IViewport2D)viewport, e);
+            if (viewport.Is3D && viewport is IViewport3D) DragMove((IViewport3D)viewport, e);
+        }
+
+        public virtual void DragEnd(IMapViewport viewport, ViewportEvent e)
+        {
+            if (viewport.Is2D && viewport is IViewport2D) DragEnd((IViewport2D)viewport, e);
+            if (viewport.Is3D && viewport is IViewport3D) DragEnd((IViewport3D)viewport, e);
+        }
+
+        public virtual void KeyPress(IMapViewport viewport, ViewportEvent e)
+        {
+            if (viewport.Is2D && viewport is IViewport2D) KeyPress((IViewport2D)viewport, e);
+            if (viewport.Is3D && viewport is IViewport3D) KeyPress((IViewport3D)viewport, e);
+        }
+
+        public virtual void KeyDown(IMapViewport viewport, ViewportEvent e)
+        {
+            if (viewport.Is2D && viewport is IViewport2D) KeyDown((IViewport2D)viewport, e);
+            if (viewport.Is3D && viewport is IViewport3D) KeyDown((IViewport3D)viewport, e);
+        }
+
+        public virtual void KeyUp(IMapViewport viewport, ViewportEvent e)
+        {
+            if (viewport.Is2D && viewport is IViewport2D) KeyUp((IViewport2D)viewport, e);
+            if (viewport.Is3D && viewport is IViewport3D) KeyUp((IViewport3D)viewport, e);
+        }
+
+        public virtual void UpdateFrame(IMapViewport viewport, Frame frame)
+        {
+            if (viewport.Is2D && viewport is IViewport2D) UpdateFrame((IViewport2D)viewport, frame);
+            if (viewport.Is3D && viewport is IViewport3D) UpdateFrame((IViewport3D)viewport, frame);
         }
 
         public virtual void PreRender(IMapViewport viewport)
         {
-            return;
+            if (viewport.Is2D && viewport is IViewport2D) PreRender((IViewport2D)viewport);
+            if (viewport.Is3D && viewport is IViewport3D) PreRender((IViewport3D)viewport);
         }
+
+        public virtual void Render(IMapViewport viewport)
+        {
+            if (viewport.Is2D && viewport is IViewport2D) Render((IViewport2D)viewport);
+            if (viewport.Is3D && viewport is IViewport3D) Render((IViewport3D)viewport);
+        }
+
+        protected virtual void MouseEnter(IViewport2D viewport, ViewportEvent e) { }
+        protected virtual void MouseEnter(IViewport3D viewport, ViewportEvent e) { }
+        protected virtual void MouseLeave(IViewport2D viewport, ViewportEvent e) { }
+        protected virtual void MouseLeave(IViewport3D viewport, ViewportEvent e) { }
+        protected virtual void MouseDown(IViewport2D viewport, ViewportEvent e) { }
+        protected virtual void MouseDown(IViewport3D viewport, ViewportEvent e) { }
+        protected virtual void MouseClick(IViewport2D viewport, ViewportEvent e) { }
+        protected virtual void MouseClick(IViewport3D viewport, ViewportEvent e) { }
+        protected virtual void MouseDoubleClick(IViewport2D viewport, ViewportEvent e) { }
+        protected virtual void MouseDoubleClick(IViewport3D viewport, ViewportEvent e) { }
+        protected virtual void MouseUp(IViewport2D viewport, ViewportEvent e) { }
+        protected virtual void MouseUp(IViewport3D viewport, ViewportEvent e) { }
+        protected virtual void MouseWheel(IViewport2D viewport, ViewportEvent e) { }
+        protected virtual void MouseWheel(IViewport3D viewport, ViewportEvent e) { }
+        protected virtual void MouseMove(IViewport2D viewport, ViewportEvent e) { }
+        protected virtual void MouseMove(IViewport3D viewport, ViewportEvent e) { }
+        protected virtual void DragStart(IViewport2D viewport, ViewportEvent e) { }
+        protected virtual void DragStart(IViewport3D viewport, ViewportEvent e) { }
+        protected virtual void DragMove(IViewport2D viewport, ViewportEvent e) { }
+        protected virtual void DragMove(IViewport3D viewport, ViewportEvent e) { }
+        protected virtual void DragEnd(IViewport2D viewport, ViewportEvent e) { }
+        protected virtual void DragEnd(IViewport3D viewport, ViewportEvent e) { }
+        protected virtual void KeyPress(IViewport2D viewport, ViewportEvent e) { }
+        protected virtual void KeyPress(IViewport3D viewport, ViewportEvent e) { }
+        protected virtual void KeyDown(IViewport2D viewport, ViewportEvent e) { }
+        protected virtual void KeyDown(IViewport3D viewport, ViewportEvent e) { }
+        protected virtual void KeyUp(IViewport2D viewport, ViewportEvent e) { }
+        protected virtual void KeyUp(IViewport3D viewport, ViewportEvent e) { }
+        protected virtual void UpdateFrame(IViewport2D viewport, Frame frame) { }
+        protected virtual void UpdateFrame(IViewport3D viewport, Frame frame) { }
+        protected virtual void PreRender(IViewport2D viewport) { }
+        protected virtual void PreRender(IViewport3D viewport) { }
+        protected virtual void Render(IViewport2D viewport) { }
+        protected virtual void Render(IViewport3D viewport) { }
+
+        public virtual void PositionChanged(IViewport2D viewport, ViewportEvent e) { }
+        public virtual void ZoomChanged(IViewport2D viewport, ViewportEvent e) { }
+
 
         public virtual bool IsCapturingMouseWheel()
         {

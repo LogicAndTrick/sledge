@@ -184,30 +184,31 @@ namespace Sledge.EditorNew.Tools.BrushTool
             _updatePreview = false;
         }
 
-        public override void Render(IMapViewport viewport)
+        protected override void Render(IViewport2D viewport)
         {
             base.Render(viewport);
             if (box.State.Action == BoxAction.Idle || _preview == null) return;
-            if (viewport.Is2D)
-            {
-                GL.Color3(Color.FromArgb(128, box.BoxColour));
-                Graphics.Helpers.Matrix.Push();
-                var matrix = viewport.GetModelViewMatrix();
-                GL.MultMatrix(ref matrix);
-                MapObjectRenderer.DrawWireframe(_preview, true, false);
-                Graphics.Helpers.Matrix.Pop();
-            }
-            else if (viewport.Is3D)
-            {
-                var vp3 = (IViewport3D) viewport;
-                GL.Disable(EnableCap.CullFace);
-                TextureHelper.Unbind();
-                if (vp3.Type != ViewType.Flat) MapObjectRenderer.EnableLighting();
-                MapObjectRenderer.DrawFilled(_preview, Color.FromArgb(128, box.BoxColour), false);
-                MapObjectRenderer.DisableLighting();
-                GL.Color4(Color.GreenYellow);
-                MapObjectRenderer.DrawWireframe(_preview, true, false);
-            }
+
+            GL.Color3(Color.FromArgb(128, box.BoxColour));
+            Graphics.Helpers.Matrix.Push();
+            var matrix = viewport.GetModelViewMatrix();
+            GL.MultMatrix(ref matrix);
+            MapObjectRenderer.DrawWireframe(_preview, true, false);
+            Graphics.Helpers.Matrix.Pop();
+        }
+
+        protected override void Render(IViewport3D viewport)
+        {
+            base.Render(viewport);
+            if (box.State.Action == BoxAction.Idle || _preview == null) return;
+
+            GL.Disable(EnableCap.CullFace);
+            TextureHelper.Unbind();
+            if (viewport.Type != ViewType.Flat) MapObjectRenderer.EnableLighting();
+            MapObjectRenderer.DrawFilled(_preview, Color.FromArgb(128, box.BoxColour), false);
+            MapObjectRenderer.DisableLighting();
+            GL.Color4(Color.GreenYellow);
+            MapObjectRenderer.DrawWireframe(_preview, true, false);
         }
 
         private static void CollectFaces(List<Face> faces, IEnumerable<MapObject> list)

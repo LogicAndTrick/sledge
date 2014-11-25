@@ -110,13 +110,16 @@ namespace Sledge.EditorNew.UI.Viewports
 
         public void ZoomChanged(ViewportEvent e)
         {
-            // 
+            if (!ShouldRelayEvent(ToolManager.ActiveTool)) return;
+            if (!Viewport.Is2D || !(Viewport is IViewport2D)) return;
+            ToolManager.ActiveTool.ZoomChanged((IViewport2D)Viewport, e);
         }
 
         public void PositionChanged(ViewportEvent e)
         {
             if (!ShouldRelayEvent(ToolManager.ActiveTool)) return;
-            ToolManager.ActiveTool.PositionChanged(Viewport, e);
+            if (!Viewport.Is2D || !(Viewport is IViewport2D)) return;
+            ToolManager.ActiveTool.PositionChanged((IViewport2D) Viewport, e);
         }
 
         public void UpdateFrame(Frame frame)

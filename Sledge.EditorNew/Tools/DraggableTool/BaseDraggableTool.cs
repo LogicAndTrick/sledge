@@ -4,7 +4,6 @@ using System.Linq;
 using OpenTK.Input;
 using Sledge.DataStructures.Geometric;
 using Sledge.EditorNew.UI.Viewports;
-using Sledge.Gui.Structures;
 
 namespace Sledge.EditorNew.Tools.DraggableTool
 {
@@ -19,6 +18,7 @@ namespace Sledge.EditorNew.Tools.DraggableTool
         protected BaseDraggableTool()
         {
             States = new List<IDraggableState>();
+            Usage = ToolUsage.Both;
         }
 
         #region Virtual events
@@ -43,29 +43,27 @@ namespace Sledge.EditorNew.Tools.DraggableTool
         }
         #endregion
 
-        public override void MouseClick(IMapViewport viewport, ViewportEvent e)
+        protected override void MouseClick(IViewport2D viewport, ViewportEvent e)
         {
-            if (!viewport.Is2D || e.Dragging || e.Button != MouseButton.Left) return;
-            var vp = (IViewport2D)viewport;
+            if (e.Dragging || e.Button != MouseButton.Left) return;
             if (CurrentDraggable == null) return;
             var point = viewport.ScreenToWorld(e.X, viewport.Height - e.Y);
-            OnDraggableClicked(vp, e, point, CurrentDraggable);
-            if (!e.Handled) CurrentDraggable.Click(vp, e, point);
+            OnDraggableClicked(viewport, e, point, CurrentDraggable);
+            if (!e.Handled) CurrentDraggable.Click(viewport, e, point);
         }
 
-        public override void MouseMove(IMapViewport viewport, ViewportEvent e)
+        protected override void MouseMove(IViewport2D viewport, ViewportEvent e)
         {
-            if (!viewport.Is2D || e.Dragging || e.Button == MouseButton.Left) return;
-            var vp = (IViewport2D)viewport;
+            if (e.Dragging || e.Button == MouseButton.Left) return;
             var point = viewport.ScreenToWorld(e.X, viewport.Height - e.Y);
             IDraggable drag = null;
             foreach (var state in States)
             {
-                var drags = state.GetDraggables(vp).ToList();
+                var drags = state.GetDraggables(viewport).ToList();
                 drags.Add(state);
                 foreach (var draggable in drags)
                 {
-                    if (draggable.CanDrag(vp, e, point))
+                    if (draggable.CanDrag(viewport, e, point))
                     {
                         drag = draggable;
                         break;
@@ -75,52 +73,48 @@ namespace Sledge.EditorNew.Tools.DraggableTool
             }
             if (drag != CurrentDraggable)
             {
-                if (CurrentDraggable != null) CurrentDraggable.Unhighlight(vp);
+                if (CurrentDraggable != null) CurrentDraggable.Unhighlight(viewport);
                 CurrentDraggable = drag;
-                if (CurrentDraggable != null) CurrentDraggable.Highlight(vp);
+                if (CurrentDraggable != null) CurrentDraggable.Highlight(viewport);
             }
         }
-        
-        public override void DragStart(IMapViewport viewport, ViewportEvent e)
+
+        protected override void DragStart(IViewport2D viewport, ViewportEvent e)
         {
-            if (!viewport.Is2D || e.Button != MouseButton.Left) return;
-            var vp = (IViewport2D)viewport;
+            if (e.Button != MouseButton.Left) return;
             if (CurrentDraggable == null) return;
             _lastDragPoint = viewport.ScreenToWorld(e.X, viewport.Height - e.Y);
-            OnDraggableDragStarted(vp, e, _lastDragPoint, CurrentDraggable);
-            if (!e.Handled) CurrentDraggable.StartDrag(vp, e, _lastDragPoint);
+            OnDraggableDragStarted(viewport, e, _lastDragPoint, CurrentDraggable);
+            if (!e.Handled) CurrentDraggable.StartDrag(viewport, e, _lastDragPoint);
             _lastDragMoveEvent = e;
         }
 
-        public override void DragMove(IMapViewport viewport, ViewportEvent e)
+        protected override void DragMove(IViewport2D viewport, ViewportEvent e)
         {
-            if (!viewport.Is2D || e.Button != MouseButton.Left) return;
-            var vp = (IViewport2D)viewport;
+            if (e.Button != MouseButton.Left) return;
             if (CurrentDraggable == null) return;
             var point = viewport.ScreenToWorld(e.X, viewport.Height - e.Y);
-            OnDraggableDragMoved(vp, e, _lastDragPoint, point, CurrentDraggable);
-            if (!e.Handled) CurrentDraggable.Drag(vp, e, _lastDragPoint, point);
+            OnDraggableDragMoved(viewport, e, _lastDragPoint, point, CurrentDraggable);
+            if (!e.Handled) CurrentDraggable.Drag(viewport, e, _lastDragPoint, point);
             _lastDragPoint = point;
             _lastDragMoveEvent = e;
         }
 
-        public override void DragEnd(IMapViewport viewport, ViewportEvent e)
+        protected override void DragEnd(IViewport2D viewport, ViewportEvent e)
         {
-            if (!viewport.Is2D || e.Button != MouseButton.Left) return;
-            var vp = (IViewport2D)viewport;
+            if (e.Button != MouseButton.Left) return;
             if (CurrentDraggable == null) return;
             var point = viewport.ScreenToWorld(e.X, viewport.Height - e.Y);
-            OnDraggableDragEnded(vp, e, point, CurrentDraggable);
-            if (!e.Handled) CurrentDraggable.EndDrag(vp, e, point);
+            OnDraggableDragEnded(viewport, e, point, CurrentDraggable);
+            if (!e.Handled) CurrentDraggable.EndDrag(viewport, e, point);
             _lastDragMoveEvent = null;
             _lastDragPoint = null;
         }
 
-        public override void PositionChanged(IMapViewport viewport, ViewportEvent e)
+        public override void PositionChanged(IViewport2D viewport, ViewportEvent e)
         {
             if (viewport.Is2D && _lastDragMoveEvent != null && CurrentDraggable != null && _lastDragMoveEvent.Sender == viewport)
             {
-                var vp = (IViewport2D) viewport;
                 var point = viewport.ScreenToWorld(_lastDragMoveEvent.X, viewport.Height - _lastDragMoveEvent.Y);
                 var ev = new ViewportEvent(viewport)
                 {
@@ -131,29 +125,27 @@ namespace Sledge.EditorNew.Tools.DraggableTool
                 };
                 ev.X = ev.LastX = _lastDragMoveEvent.X;
                 ev.Y = ev.LastY = _lastDragMoveEvent.Y;
-                OnDraggableDragMoved(vp, ev, _lastDragPoint, point, CurrentDraggable);
-                if (!ev.Handled) CurrentDraggable.Drag(vp, ev, _lastDragPoint, point);
+                OnDraggableDragMoved(viewport, ev, _lastDragPoint, point, CurrentDraggable);
+                if (!ev.Handled) CurrentDraggable.Drag(viewport, ev, _lastDragPoint, point);
                 _lastDragPoint = point;
             }
             base.PositionChanged(viewport, e);
         }
 
-        public override void Render(IMapViewport viewport)
+        protected override void Render(IViewport2D viewport)
         {
-            if (!viewport.Is2D) return;
-            var vp = (IViewport2D) viewport;
             var foundActive = false;
             foreach (var state in States)
             {
-                foreach (var draggable in state.GetDraggables(vp))
+                foreach (var draggable in state.GetDraggables(viewport))
                 {
                     if (draggable == CurrentDraggable) foundActive = true;
-                    else draggable.Render(vp);
+                    else draggable.Render(viewport);
                 }
                 if (state == CurrentDraggable) foundActive = true;
-                else state.Render(vp);
+                else state.Render(viewport);
             }
-            if (CurrentDraggable != null && foundActive) CurrentDraggable.Render(vp);
+            if (CurrentDraggable != null && foundActive) CurrentDraggable.Render(viewport);
         }
 
         protected bool GetSelectionBox(BoxState state, out Box boundingbox)
@@ -191,62 +183,5 @@ namespace Sledge.EditorNew.Tools.DraggableTool
             boundingbox = new Box(start, end);
             return !invalid;
         }
-
-        #region Unused (for now)
-        public override void MouseDown(IMapViewport viewport, ViewportEvent e)
-        {
-
-        }
-
-        public override void MouseUp(IMapViewport viewport, ViewportEvent e)
-        {
-
-        }
-
-        public override void MouseEnter(IMapViewport viewport, ViewportEvent e)
-        {
-
-        }
-
-        public override void MouseLeave(IMapViewport viewport, ViewportEvent e)
-        {
-
-        }
-
-        public override void MouseDoubleClick(IMapViewport viewport, ViewportEvent e)
-        {
-
-        }
-
-        public override void MouseWheel(IMapViewport viewport, ViewportEvent e)
-        {
-
-        }
-
-        public override void KeyPress(IMapViewport viewport, ViewportEvent e)
-        {
-
-        }
-
-        public override void KeyDown(IMapViewport viewport, ViewportEvent e)
-        {
-
-        }
-
-        public override void KeyUp(IMapViewport viewport, ViewportEvent e)
-        {
-
-        }
-
-        public override void UpdateFrame(IMapViewport viewport, Frame frame)
-        {
-
-        }
-
-        public override void PreRender(IMapViewport viewport)
-        {
-
-        }
-        #endregion
     }
 }

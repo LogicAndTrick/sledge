@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -7,11 +6,9 @@ using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Input;
 using Sledge.DataStructures.Geometric;
-using Sledge.EditorNew.Properties;
 using Sledge.EditorNew.UI.Viewports;
 using Sledge.Graphics.Helpers;
 using Sledge.Gui.Structures;
-using Sledge.Settings;
 using EnableCap = OpenTK.Graphics.OpenGL.EnableCap;
 using GL = OpenTK.Graphics.OpenGL.GL;
 using Point = System.Drawing.Point;
@@ -65,21 +62,20 @@ namespace Sledge.EditorNew.Tools
             _printerFont = new Font(FontFamily.GenericSansSerif, 16, GraphicsUnit.Pixel);
         }
 
-        public override void MouseDown(IMapViewport viewport, ViewportEvent e)
+        protected override void MouseDown(IViewport2D viewport, ViewportEvent e)
         {
             // todo 3d down event
-            if (!viewport.Is2D || e.Button != MouseButton.Left) return;
-            var vp = (IViewport2D) viewport;
+            if (e.Button != MouseButton.Left) return;
+
             //
         }
 
-        public override void DragStart(IMapViewport viewport, ViewportEvent e)
+        protected override void DragStart(IViewport2D viewport, ViewportEvent e)
         {
-            if (!viewport.Is2D || e.Button != MouseButton.Left) return;
-            var vp = (IViewport2D)viewport;
-            var resize = CanResize(vp, e);
-            if (resize) StartResize(vp, e);
-            else StartDraw(vp, e);
+            if (e.Button != MouseButton.Left) return;
+            var resize = CanResize(viewport, e);
+            if (resize) StartResize(viewport, e);
+            else StartDraw(viewport, e);
         }
 
         private bool CanResize(IViewport2D viewport, ViewportEvent e)
@@ -87,37 +83,30 @@ namespace Sledge.EditorNew.Tools
             return false;
         }
 
-        public override void MouseMove(IMapViewport viewport, ViewportEvent e)
+        protected override void DragMove(IViewport2D viewport, ViewportEvent e)
         {
-
-        }
-
-        public override void DragMove(IMapViewport viewport, ViewportEvent e)
-        {
-            if (!viewport.Is2D || e.Button != MouseButton.Left) return;
-            var vp = (IViewport2D)viewport;
+            if (e.Button != MouseButton.Left) return;
             switch (State.Action)
             {
                 case BoxAction.Drawing:
-                    Drawing(vp, e);
+                    Drawing(viewport, e);
                     break;
                 case BoxAction.Resizing:
-                    Resizing(vp, e);
+                    Resizing(viewport, e);
                     break;
             }
         }
 
-        public override void DragEnd(IMapViewport viewport, ViewportEvent e)
+        protected override void DragEnd(IViewport2D viewport, ViewportEvent e)
         {
-            if (!viewport.Is2D || e.Button != MouseButton.Left) return;
-            var vp = (IViewport2D)viewport;
+            if (e.Button != MouseButton.Left) return;
             switch (State.Action)
             {
                 case BoxAction.Drawing:
-                    EndDraw(vp, e);
+                    EndDraw(viewport, e);
                     break;
                 case BoxAction.Resizing:
-                    EndResize(vp, e);
+                    EndResize(viewport, e);
                     break;
             }
         }
@@ -158,64 +147,8 @@ namespace Sledge.EditorNew.Tools
 
         private void EndResize(IViewport2D viewport, ViewportEvent e)
         {
-            throw new NotImplementedException();
-        }
-
-        public override void MouseUp(IMapViewport viewport, ViewportEvent e)
-        {
 
         }
-
-        public override void MouseEnter(IMapViewport viewport, ViewportEvent e)
-        {
-            
-        }
-
-        public override void MouseLeave(IMapViewport viewport, ViewportEvent e)
-        {
-
-        }
-
-        public override void MouseClick(IMapViewport viewport, ViewportEvent e)
-        {
-
-        }
-
-        public override void MouseDoubleClick(IMapViewport viewport, ViewportEvent e)
-        {
-
-        }
-
-        public override void MouseWheel(IMapViewport viewport, ViewportEvent e)
-        {
-
-        }
-
-        public override void KeyPress(IMapViewport viewport, ViewportEvent e)
-        {
-
-        }
-
-        public override void KeyDown(IMapViewport viewport, ViewportEvent e)
-        {
-
-        }
-
-        public override void KeyUp(IMapViewport viewport, ViewportEvent e)
-        {
-
-        }
-
-        public override void UpdateFrame(IMapViewport viewport, Frame frame)
-        {
-
-        }
-
-        public override void PreRender(IMapViewport viewport)
-        {
-
-        }
-
 
         #region Rendering
         protected static void Coord(double x, double y, double z)
@@ -225,12 +158,6 @@ namespace Sledge.EditorNew.Tools
         protected static void Coord(Coordinate c)
         {
             GL.Vertex3(c.DX, c.DY, c.DZ);
-        }
-
-        public override void Render(IMapViewport viewport)
-        {
-            if (viewport.Is2D) Render2D((IViewport2D)viewport);
-            if (viewport.Is3D) Render3D((IViewport3D)viewport);
         }
 
         protected virtual bool ShouldDrawBox(IMapViewport viewport)
@@ -253,21 +180,6 @@ namespace Sledge.EditorNew.Tools
         protected virtual Color GetRenderBoxColour()
         {
             return BoxColour;
-        }
-
-        protected virtual Color GetRenderSnapHandleColour()
-        {
-            return BoxColour;
-        }
-
-        protected virtual Color GetRenderTextColour()
-        {
-            return BoxColour;
-        }
-
-        protected virtual Color GetRenderResizeHoverColour()
-        {
-            return FillColour;
         }
 
         protected virtual void RenderBox(IMapViewport viewport, Coordinate start, Coordinate end)
@@ -294,119 +206,6 @@ namespace Sledge.EditorNew.Tools
             Coord(start.DX, end.DY, start.DZ);
             GL.End();
             GL.Disable(EnableCap.LineStipple);
-        }
-
-        protected virtual bool ShouldRenderSnapHandle(IViewport2D viewport)
-        {
-            return State.Action == BoxAction.Resizing && State.Handle == ResizeHandle.Center;
-        }
-
-        protected virtual void RenderSnapHandle(IViewport2D viewport)
-        {
-            //var start = GetResizeOrigin(viewport);
-            Coordinate start = null;
-            if (start == null) return;
-            const int size = 6;
-            var dist = (double)(size / viewport.Zoom);
-
-            var origin = start + viewport.Flatten(State.Start - State.OrigStart);
-            GL.Begin(PrimitiveType.Lines);
-            GL.Color4(GetRenderSnapHandleColour());
-            Coord(origin.DX - dist, origin.DY + dist, 0);
-            Coord(origin.DX + dist, origin.DY - dist, 0);
-            Coord(origin.DX + dist, origin.DY + dist, 0);
-            Coord(origin.DX - dist, origin.DY - dist, 0);
-            GL.End();
-        }
-
-        protected virtual bool ShouldRenderResizeBox(IViewport2D viewport)
-        {
-            return false;
-            //return State.Viewport == viewport &&
-            //       (State.Action == BoxAction.ReadyToResize
-            //        || State.Action == BoxAction.DownToResize);
-        }
-
-        protected virtual double[] GetRenderResizeBox(Coordinate start, Coordinate end)
-        {
-            var width = Math.Abs(start.DX - end.DX);
-            var height = Math.Abs(start.DY - end.DY);
-            double x1, y1, x2, y2;
-            var handleWidth = width / 10d;
-            var handleHeight = height / 10d;
-            switch (State.Handle)
-            {
-                case ResizeHandle.TopLeft:
-                    x1 = start.DX;
-                    x2 = x1 + handleWidth;
-                    y1 = end.DY - handleHeight;
-                    y2 = end.DY;
-                    break;
-                case ResizeHandle.Top:
-                    x1 = start.DX;
-                    x2 = end.DX;
-                    y1 = end.DY - handleHeight;
-                    y2 = end.DY;
-                    break;
-                case ResizeHandle.TopRight:
-                    x1 = end.DX - handleWidth;
-                    x2 = end.DX;
-                    y1 = end.DY - handleHeight;
-                    y2 = end.DY;
-                    break;
-                case ResizeHandle.Left:
-                    x1 = start.DX;
-                    x2 = x1 + handleWidth;
-                    y1 = start.DY;
-                    y2 = end.DY;
-                    break;
-                case ResizeHandle.Center:
-                    x1 = start.DX;
-                    x2 = end.DX;
-                    y1 = start.DY;
-                    y2 = end.DY;
-                    break;
-                case ResizeHandle.Right:
-                    x1 = end.DX - handleWidth;
-                    x2 = end.DX;
-                    y1 = start.DY;
-                    y2 = end.DY;
-                    break;
-                case ResizeHandle.BottomLeft:
-                    x1 = start.DX;
-                    x2 = x1 + handleWidth;
-                    y1 = start.DY;
-                    y2 = y1 + handleHeight;
-                    break;
-                case ResizeHandle.Bottom:
-                    x1 = start.DX;
-                    x2 = end.DX;
-                    y1 = start.DY;
-                    y2 = y1 + handleHeight;
-                    break;
-                case ResizeHandle.BottomRight:
-                    x1 = end.DX - handleWidth;
-                    x2 = end.DX;
-                    y1 = start.DY;
-                    y2 = y1 + handleHeight;
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-            return new[] { x1, y1, x2, y2 };
-        }
-
-        protected virtual void RenderResizeBox(IViewport2D viewport, Coordinate start, Coordinate end)
-        {
-            var box = GetRenderResizeBox(start, end);
-            GL.Begin(PrimitiveType.Quads);
-            GL.Color4(FillColour);
-            double x1 = box[0], y1 = box[1], x2 = box[2], y2 = box[3];
-            Coord(x1, y1, 0);
-            Coord(x2, y1, 0);
-            Coord(x2, y2, 0);
-            Coord(x1, y2, 0);
-            GL.End();
         }
 
         protected void RenderBoxText(IViewport2D viewport, Coordinate boxStart, Coordinate boxEnd)
@@ -448,7 +247,7 @@ namespace Sledge.EditorNew.Tools
             GL.Enable(EnableCap.CullFace);
         }
 
-        protected virtual void Render2D(IViewport2D viewport)
+        protected override void Render(IViewport2D viewport)
         {
             if (State.Action == BoxAction.Idle) return;
             var start = viewport.Flatten(State.Start);
@@ -456,14 +255,6 @@ namespace Sledge.EditorNew.Tools
             if (ShouldDrawBox(viewport))
             {
                 RenderBox(viewport, start, end);
-            }
-            if (ShouldRenderSnapHandle(viewport))
-            {
-                RenderSnapHandle(viewport);
-            }
-            if (ShouldRenderResizeBox(viewport))
-            {
-                RenderResizeBox(viewport, start, end);
             }
             if (ShouldDrawBoxText(viewport))
             {
@@ -490,7 +281,7 @@ namespace Sledge.EditorNew.Tools
             GL.End();
         }
 
-        protected virtual void Render3D(IViewport3D viewport)
+        protected override void Render(IViewport3D viewport)
         {
             if (State.Action == BoxAction.Idle) return;
             if (ShouldDraw3DBox())
@@ -500,44 +291,5 @@ namespace Sledge.EditorNew.Tools
         }
         #endregion
 
-
-    }
-
-    public class DummyBoxTool : BaseBoxTool
-    {
-        public override IEnumerable<string> GetContexts()
-        {
-            yield return "Dummy Box Tool";
-        }
-
-        public override Image GetIcon()
-        {
-            return Resources.Tool_Camera;
-        }
-
-        public override string GetName()
-        {
-            return "Dummy Box Tool";
-        }
-
-        public override HotkeyTool? GetHotkeyToolType()
-        {
-            return null;
-        }
-
-        public override HotkeyInterceptResult InterceptHotkey(HotkeysMediator hotkeyMessage, object parameters)
-        {
-            return HotkeyInterceptResult.Continue;
-        }
-
-        protected override Color BoxColour
-        {
-            get { return Color.Red; }
-        }
-
-        protected override Color FillColour
-        {
-            get { return Color.Purple; }
-        }
     }
 }
