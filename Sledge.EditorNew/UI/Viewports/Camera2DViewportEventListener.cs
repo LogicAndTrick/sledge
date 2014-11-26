@@ -49,7 +49,7 @@ namespace Sledge.EditorNew.UI.Viewports
 
         public void KeyUp(ViewportEvent e)
         {
-            if (e.Button == MouseButton.Left && !View.Camera2DPanRequiresMouseClick)
+            if (e.KeyValue == Key.Space && !View.Camera2DPanRequiresMouseClick)
             {
                 SetDragState(false, _dragMiddle);
             }
@@ -62,34 +62,32 @@ namespace Sledge.EditorNew.UI.Viewports
                 SetDragState(true, _dragMiddle);
                 e.Handled = true;
             }
-            /*
-             
-            var moveAllowed = DocumentManager.CurrentDocument != null &&
-                              (DocumentManager.CurrentDocument.Selection.IsEmpty()
-                               || !Sledge.Settings.Select.ArrowKeysNudgeSelection);
+
+            var cdoc = DocumentManager.CurrentDocument as Document;
+            var moveAllowed = cdoc != null &&
+                              (cdoc.Selection.IsEmpty() || !Select.ArrowKeysNudgeSelection);
             if (moveAllowed)
             {
                 var shift = new Coordinate(0, 0, 0);
 
-                switch (e.KeyCode)
+                switch (e.KeyValue)
                 {
-                    case Keys.Left:
+                    case Key.Left:
                         shift.X = -Viewport.Width / Viewport2D.Zoom / 4;
                         break;
-                    case Keys.Right:
+                    case Key.Right:
                         shift.X = Viewport.Width / Viewport2D.Zoom / 4;
                         break;
-                    case Keys.Up:
+                    case Key.Up:
                         shift.Y = Viewport.Height / Viewport2D.Zoom / 4;
                         break;
-                    case Keys.Down:
+                    case Key.Down:
                         shift.Y = -Viewport.Height / Viewport2D.Zoom / 4;
                         break;
                 }
 
                 Viewport2D.Position += shift;
             }
-             */
 
             var str = e.KeyValue.ToString();
             if (str.StartsWith("Keypad") || str.StartsWith("Number"))
@@ -119,10 +117,10 @@ namespace Sledge.EditorNew.UI.Viewports
             Viewport2D.Position -= (after - before);
 
             Mediator.Publish(EditorMediator.ViewZoomChanged, Viewport2D.Zoom);
-            // if (KeyboardState.IsKeyDown(Keys.ControlKey))
-            // {
-            //     Mediator.Publish(EditorMediator.SetZoomValue, Viewport2D.Zoom);
-            // }
+            if (Input.Ctrl)
+            {
+                Mediator.Publish(EditorMediator.SetZoomValue, Viewport2D.Zoom);
+            }
         }
 
         public void MouseUp(ViewportEvent e)

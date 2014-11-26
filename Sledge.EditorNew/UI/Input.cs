@@ -53,5 +53,23 @@ namespace Sledge.EditorNew.UI
             var ks = Keyboard.GetState();
             return keys.All(ks.IsKeyUp);
         }
+
+        public static bool IsButtonDown(MouseButton button)
+        {
+            var ms = Mouse.GetState();
+            return ms.IsButtonDown(button);
+        }
+
+        public static bool IsAnyButtonDown(params MouseButton[] buttons)
+        {
+            var ms = Mouse.GetState();
+            return buttons.Any(ms.IsButtonDown);
+        }
+
+        public static bool AreAllButtonsDown(params MouseButton[] buttons)
+        {
+            var ms = Mouse.GetState();
+            return buttons.All(ms.IsButtonDown);
+        }
     }
 }

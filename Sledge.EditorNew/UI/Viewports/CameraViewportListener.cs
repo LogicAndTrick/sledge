@@ -13,13 +13,13 @@ namespace Sledge.EditorNew.UI.Viewports
         {
             Viewport = viewport;
             if (viewport is IViewport2D) _2dListener = new Camera2DViewportEventListener(viewport as IViewport2D);
-            _3dListener = null;
+            if (viewport is IViewport3D) _3dListener = new Camera3DViewportListener(viewport as IViewport3D);
         }
 
         private void Relay(Action<IViewportEventListener> action)
         {
             if (Viewport.Is2D && _2dListener != null) action(_2dListener);
-            else if (Viewport.Is3D && _3dListener != null) action(_2dListener);
+            else if (Viewport.Is3D && _3dListener != null) action(_3dListener);
         }
 
         public void KeyUp(ViewportEvent e)

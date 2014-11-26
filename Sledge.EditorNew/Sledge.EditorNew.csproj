@@ -217,8 +217,6 @@
     <Compile Include="Tools\DraggableTool\BoxResizeHandle.cs" />
     <Compile Include="Tools\DraggableTool\BoxState.cs" />
     <Compile Include="Tools\DraggableTool\DraggableCoordinate.cs" />
-    <Compile Include="Tools\DummyDraggableTool.cs" />
-    <Compile Include="Tools\DummyTool.cs" />
     <Compile Include="Tools\DraggableTool\IDraggable.cs" />
     <Compile Include="Tools\DraggableTool\IDraggableState.cs" />
     <Compile Include="Tools\DraggableTool\InternalBoxResizeHandle.cs" />
@@ -241,6 +239,7 @@
     <Compile Include="UI\Menus\RecentFilesMenuGroup.cs" />
     <Compile Include="UI\Shell.cs" />
     <Compile Include="UI\Viewports\Camera2DViewportEventListener.cs" />
+    <Compile Include="UI\Viewports\Camera3DViewportListener.cs" />
     <Compile Include="UI\Viewports\CameraViewportListener.cs" />
     <Compile Include="UI\Viewports\IMapViewport.cs" />
     <Compile Include="UI\Viewports\IViewport2D.cs" />
