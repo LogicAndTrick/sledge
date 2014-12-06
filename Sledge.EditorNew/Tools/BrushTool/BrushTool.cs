@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Runtime.InteropServices;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Input;
 using Sledge.Common.Mediator;
@@ -17,12 +16,9 @@ using Sledge.EditorNew.Rendering.Immediate;
 using Sledge.EditorNew.Tools.DraggableTool;
 using Sledge.EditorNew.UI.Viewports;
 using Sledge.Graphics.Helpers;
-using Sledge.Gui.Controls;
-using Sledge.Gui.Interfaces.Controls;
 using Sledge.Gui.Structures;
 using Sledge.Settings;
 using Select = Sledge.Settings.Select;
-using Size = Sledge.Gui.Structures.Size;
 
 namespace Sledge.EditorNew.Tools.BrushTool
 {

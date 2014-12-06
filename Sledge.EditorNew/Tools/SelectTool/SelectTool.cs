@@ -249,7 +249,6 @@ namespace Sledge.EditorNew.Tools.SelectTool
         {
             // Do not perform selection if space is down
             if (View.Camera3DPanRequiresMouseClick && Input.IsKeyDown(Key.Space)) return;
-            if (!viewport.AquireInputLock(this)) return;
 
             // First, get the ray that is cast from the clicked point along the viewport frustrum
             var ray = viewport.CastRayFromScreen(e.X, e.Y);

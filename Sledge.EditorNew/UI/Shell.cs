@@ -13,6 +13,7 @@ using Sledge.Gui.Interfaces.Models;
 using Sledge.Gui.Interfaces.Shell;
 using Sledge.Gui.Models;
 using Sledge.Gui.QuickForms;
+using Sledge.Providers.GameData;
 using Sledge.Providers.Map;
 using Sledge.Settings;
 using Sledge.Settings.Models;
@@ -48,8 +49,9 @@ namespace Sledge.EditorNew.UI
             Mediator.Subscribe(HotkeysMediator.FileNew, this);
 
             MapProvider.Register(new RmfProvider());
+            GameDataProvider.Register(new FgdProvider());
             var file = @"C:\Github\sledge\_Resources\verc_18.rmf";
-            DocumentManager.AddAndSwitch(new Document(null, new Map(), new Game()));
+            DocumentManager.AddAndSwitch(new Document(null, new Map(), SettingsManager.Games[0]));
         }
 
         private void Build()

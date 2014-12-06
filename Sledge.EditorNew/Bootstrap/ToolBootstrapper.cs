@@ -2,6 +2,8 @@
 using System.Linq;
 using Sledge.EditorNew.Tools;
 using Sledge.EditorNew.Tools.BrushTool;
+using Sledge.EditorNew.Tools.CameraTool;
+using Sledge.EditorNew.Tools.EntityTool;
 using Sledge.EditorNew.Tools.SelectTool;
 using Sledge.Gui;
 using Sledge.Gui.Containers;
@@ -31,6 +33,8 @@ namespace Sledge.EditorNew.Bootstrap
             ToolManager.ToolRemoved += ToolRemoved;
 
             ToolManager.AddTool(new SelectTool());
+            ToolManager.AddTool(new CameraTool());
+            ToolManager.AddTool(new EntityTool());
             ToolManager.AddTool(new BrushTool());
 
             /*

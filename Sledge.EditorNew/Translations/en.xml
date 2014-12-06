@@ -52,6 +52,17 @@
                 <string key="RotationHeight" value="Rotation height" />
             </group>
         </group>
+        <group name="EntityTool">
+            <string key="Name" value="Brush Tool"/>
+            <string key="ContextualHelp">
+                In the 3D view, *click* a face to place an entity there.
+                In the 2D view, *click* to place a point and press *enter* to create.
+                *Right click* in the 2D view to quickly choose and create any entity type.
+            </string>
+            <group name="Controls">
+                <string key="EntityType" value="Entity Type:"/>
+            </group>
+        </group>
     </group>
     <group name="Shell">
         <string key="Window.Title" value="Sledge Editor"/>

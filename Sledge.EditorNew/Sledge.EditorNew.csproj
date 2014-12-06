@@ -210,6 +210,9 @@
     <Compile Include="Rendering\Viewport3DRenderOptions.cs" />
     <Compile Include="Rendering\WidgetLinesRenderable.cs" />
     <Compile Include="Tools\BrushTool\BrushTool.cs" />
+    <Compile Include="Tools\CameraTool\CameraTool.cs" />
+    <Compile Include="Tools\CameraTool\DraggableCameraEye.cs" />
+    <Compile Include="Tools\CameraTool\DraggableCameraState.cs" />
     <Compile Include="Tools\DraggableTool\BaseDraggableTool.cs" />
     <Compile Include="Tools\BaseTool.cs" />
     <Compile Include="Tools\DraggableTool\BoxAction.cs" />
@@ -221,6 +224,7 @@
     <Compile Include="Tools\DraggableTool\IDraggableState.cs" />
     <Compile Include="Tools\DraggableTool\InternalBoxResizeHandle.cs" />
     <Compile Include="Tools\DraggableTool\ResizeHandle.cs" />
+    <Compile Include="Tools\EntityTool\EntityTool.cs" />
     <Compile Include="Tools\SelectTool\SelectionBoxDraggableState.cs" />
     <Compile Include="Tools\SelectTool\SelectTool.cs" />
     <Compile Include="Tools\SelectTool\TransformationHandles\RotateTransformHandle.cs" />

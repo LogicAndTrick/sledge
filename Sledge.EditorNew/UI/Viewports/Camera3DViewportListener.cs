@@ -7,6 +7,7 @@ using Sledge.Common.Easings;
 using Sledge.Common.Mediator;
 using Sledge.DataStructures.Geometric;
 using Sledge.EditorNew.Tools;
+using Sledge.EditorNew.Tools.CameraTool;
 using Sledge.Graphics;
 using Sledge.Graphics.Helpers;
 using Sledge.Gui.Components;
@@ -52,6 +53,7 @@ namespace Sledge.EditorNew.UI.Viewports
         {
             var fLooking = (spaceDown && !View.Camera3DPanRequiresMouseClick) ||
                             (spaceDown && leftMouseDown) ||
+                            (leftMouseDown && ToolManager.ActiveTool is CameraTool) ||
                             _freeLookToggled;
             if (fLooking && !_freeLooking)
             {
@@ -85,10 +87,16 @@ namespace Sledge.EditorNew.UI.Viewports
                 return;
             }
 
+            var state = Keyboard.GetState();
+            var mstate = Mouse.GetCursorState();
+
             var seconds = (frame.Milliseconds - currMillis) / 1000m;
             var units = View.ForwardSpeed * seconds;
 
-            var down = Input.IsAnyKeyDown(Key.W, Key.A, Key.S, Key.D);
+            var down = state.IsKeyDown(Key.W) ||
+                       state.IsKeyDown(Key.A) ||
+                       state.IsKeyDown(Key.S) ||
+                       state.IsKeyDown(Key.D);
             if (!down) _downMillis = 0;
             else if (_downMillis == 0) _downMillis = currMillis;
 
@@ -101,11 +109,8 @@ namespace Sledge.EditorNew.UI.Viewports
             var move = units;
             var tilt = 2m;
 
-            var state = Keyboard.GetState();
-            var mstate = Mouse.GetCursorState();
-
             var cpoint = _centerPoint;
-            SetState(state.IsKeyDown(Key.Space), mstate.IsButtonDown(MouseButton.Left), _freeLookToggled);
+            SetState(state.IsKeyDown(Key.Space), mstate.IsButtonDown(MouseButton.Left) || mstate.IsButtonDown(MouseButton.Right), _freeLookToggled);
             _centerPoint = cpoint;
 
             if (_freeLooking && _centerPoint != null)
@@ -114,7 +119,7 @@ namespace Sledge.EditorNew.UI.Viewports
 
                 if (diff.X != 0 || diff.Y != 0)
                 {
-                    MouseMoved((int) diff.X, (int) -diff.Y);
+                    MouseMoved(mstate, (int) diff.X, (int) -diff.Y);
                 }
             }
 
@@ -156,11 +161,11 @@ namespace Sledge.EditorNew.UI.Viewports
             }
         }
 
-        private void MouseMoved(int dx, int dy)
+        private void MouseMoved(MouseState state, int dx, int dy)
         {
 
-            var left = Input.IsButtonDown(MouseButton.Left);
-            var right = Input.IsButtonDown(MouseButton.Right);
+            var left = state.IsButtonDown(MouseButton.Left);
+            var right = state.IsButtonDown(MouseButton.Right);
             var updown = !left && right;
             var forwardback = left && right;
 
@@ -237,7 +242,9 @@ namespace Sledge.EditorNew.UI.Viewports
                 var pos = new Coordinate(state.X, state.Y, 0);
                 var relPos = new Coordinate(e.X, e.Y, 0);
                 var zeroPoint = pos - relPos;
-                _centerPoint = zeroPoint + new Coordinate(Viewport.Width / 2m, Viewport.Height / 2m, 0);
+                var cpoint = zeroPoint + new Coordinate(Viewport.Width / 2m, Viewport.Height / 2m, 0);
+                if (_freeLooking) Mouse.SetPosition((int) cpoint.X, (int) cpoint.Y);
+                _centerPoint = cpoint;
             }
         }
 
