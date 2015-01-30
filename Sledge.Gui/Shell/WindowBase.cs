@@ -20,6 +20,12 @@ namespace Sledge.Gui.Shell
             set { Control.AutoSize = value; }
         }
 
+        public IWindow Owner
+        {
+            get { return Control.Owner; }
+            set { Control.Owner = value; }
+        }
+
         public ICell Container
         {
             get { return Control.Container; }

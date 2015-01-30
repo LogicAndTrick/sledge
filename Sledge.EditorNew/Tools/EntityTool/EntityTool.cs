@@ -226,12 +226,12 @@ namespace Sledge.EditorNew.Tools.EntityTool
             _location = viewport.GetUnusedCoordinate(_location) + viewport.Expand(loc);
         }
 
-        protected override void MouseDown(IViewport3D vp, ViewportEvent e)
+        protected override void MouseDown(IViewport3D viewport, ViewportEvent e)
         {
             if (e.Button != MouseButton.Left) return;
 
             // Get the ray that is cast from the clicked point along the viewport frustrum
-            var ray = vp.CastRayFromScreen(e.X, e.Y);
+            var ray = viewport.CastRayFromScreen(e.X, e.Y);
 
             // Grab all the elements that intersect with the ray
             var hits = Document.Map.WorldSpawn.GetAllNodesIntersectingWith(ray);

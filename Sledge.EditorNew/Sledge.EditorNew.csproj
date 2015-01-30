@@ -232,6 +232,8 @@
     <Compile Include="Tools\SelectTool\TransformationHandles\ITransformationHandle.cs" />
     <Compile Include="Tools\SelectTool\TransformationHandles\ResizeTransformHandle.cs" />
     <Compile Include="Tools\SelectTool\TransformationHandles\SkewTransformHandle.cs" />
+    <Compile Include="Tools\TextureTool\TextureApplicationForm.cs" />
+    <Compile Include="Tools\TextureTool\TextureTool.cs" />
     <Compile Include="Tools\ToolManager.cs" />
     <Compile Include="UI\Input.cs" />
     <Compile Include="UI\Menus\BasicMenuGroup.cs" />
@@ -306,6 +308,10 @@
     <ProjectReference Include="..\Sledge.Graphics\Sledge.Graphics.csproj">
       <Project>{614d4144-8920-4975-ac67-dbba5cb1eb43}</Project>
       <Name>Sledge.Graphics</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Sledge.Gui.Gtk\Sledge.Gui.Gtk.csproj">
+      <Project>{86bde9c5-9dbb-4fc5-907d-4695e72dbdcf}</Project>
+      <Name>Sledge.Gui.Gtk</Name>
     </ProjectReference>
     <ProjectReference Include="..\Sledge.Gui.WinForms\Sledge.Gui.WinForms.csproj">
       <Project>{6996a6ee-f6b8-4883-bc9e-14db6914b9f8}</Project>
@@ -419,6 +425,7 @@
     </Content>
     <Content Include="Translations\en.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
     </Content>
     <None Include="Resources\Tool_Zoom.png" />
     <None Include="Resources\Tool_Texture.png" />

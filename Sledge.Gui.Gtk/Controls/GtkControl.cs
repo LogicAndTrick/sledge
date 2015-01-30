@@ -392,11 +392,11 @@ namespace Sledge.Gui.Gtk.Controls
             remove { _control.LeaveNotifyEvent -= ConvertDelegate<LeaveNotifyEventHandler>(value, x => (o, args) => x(o, EventArgs.Empty), false); }
         }
 
-        private readonly Dictionary<Delegate, Delegate> _delegateCache = new Dictionary<Delegate, Delegate>();
+        private readonly Dictionary<Delegate, object> _delegateCache = new Dictionary<Delegate, object>();
 
         protected virtual T ConvertDelegate<T>(EventHandler value, Func<EventHandler, T> converter, bool adding)
         {
-            if (!_delegateCache.ContainsKey(value)) _delegateCache.Add(value, (Delegate) Convert.ChangeType(converter(value), typeof(Delegate)));
+            if (!_delegateCache.ContainsKey(value)) _delegateCache.Add(value, converter(value));
             var val = (T) Convert.ChangeType(_delegateCache[value], typeof(T));
             if (!adding) _delegateCache.Remove(value);
             return val;

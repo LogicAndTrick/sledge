@@ -53,6 +53,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Components\WinFormsClipboard.cs" />
+    <Compile Include="Components\WinFormsContextMenu.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Components\WinFormsCursor.cs" />
     <Compile Include="Containers\WinFormsDockPanel.cs" />
     <Compile Include="Controls\WinFormsNumericSpinner.cs" />

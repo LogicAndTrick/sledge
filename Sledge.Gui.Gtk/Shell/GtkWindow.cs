@@ -28,6 +28,8 @@ namespace Sledge.Gui.Gtk.Shell
             }
         }
 
+        public IWindow Owner { get; set; }
+
         public string Title
         {
             get { return Window.Title; }

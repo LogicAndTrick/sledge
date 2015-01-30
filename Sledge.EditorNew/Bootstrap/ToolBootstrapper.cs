@@ -5,6 +5,7 @@ using Sledge.EditorNew.Tools.BrushTool;
 using Sledge.EditorNew.Tools.CameraTool;
 using Sledge.EditorNew.Tools.EntityTool;
 using Sledge.EditorNew.Tools.SelectTool;
+using Sledge.EditorNew.Tools.TextureTool;
 using Sledge.Gui;
 using Sledge.Gui.Containers;
 using Sledge.Gui.Controls;
@@ -36,6 +37,7 @@ namespace Sledge.EditorNew.Bootstrap
             ToolManager.AddTool(new CameraTool());
             ToolManager.AddTool(new EntityTool());
             ToolManager.AddTool(new BrushTool());
+            ToolManager.AddTool(new TextureTool());
 
             /*
              

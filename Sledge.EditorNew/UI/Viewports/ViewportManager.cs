@@ -303,10 +303,12 @@ namespace Sledge.EditorNew.UI.Viewports
                     ClipDistance = View.BackClippingPane
                 }
             };
-            viewport.MakeCurrent();
-            GraphicsHelper.InitGL3D();
-            GL.ClearColor(View.ViewportBackground);
-            //viewport.Listeners.Add(new ViewportLabelListener(viewport));
+            viewport.Initialised += (sender, args) =>
+            {
+                viewport.MakeCurrent();
+                GraphicsHelper.InitGL3D();
+                GL.ClearColor(View.ViewportBackground);
+            };
             viewport.Listeners.Add(new CameraViewportListener(viewport));
             viewport.Listeners.Add(new ToolViewportListener(viewport));
             return viewport;
@@ -315,9 +317,12 @@ namespace Sledge.EditorNew.UI.Viewports
         private static IViewport2D Create2D(ViewDirection direction)
         {
             var viewport = new MapViewport(direction);
-            viewport.MakeCurrent();
-            GraphicsHelper.InitGL2D();
-            GL.ClearColor(Grid.Background);
+            viewport.Initialised += (sender, args) =>
+            {
+                viewport.MakeCurrent();
+                GraphicsHelper.InitGL2D();
+                GL.ClearColor(Grid.Background);
+            };
             //viewport.Listeners.Add(new ViewportLabelListener(viewport));
             viewport.Listeners.Add(new CameraViewportListener(viewport));
             //viewport.Listeners.Add(new Grid2DEventListener(viewport));

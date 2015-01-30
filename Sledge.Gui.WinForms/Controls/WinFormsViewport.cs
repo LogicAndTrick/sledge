@@ -26,6 +26,12 @@ namespace Sledge.Gui.WinForms.Controls
             get { return _viewport.Context; }
         }
 
+        public event EventHandler Initialised
+        {
+            add { value(this, EventArgs.Empty); }
+            remove { }
+        }
+
         public event FrameEventHandler Update
         {
             add { _viewport.Update += value; }

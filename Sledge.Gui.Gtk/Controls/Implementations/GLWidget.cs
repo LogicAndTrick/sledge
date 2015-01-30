@@ -100,6 +100,8 @@ namespace Sledge.Gui.Gtk.Controls.Implementations
 			GlVersionMajor = glVersionMajor;
 			GlVersionMinor = glVersionMinor;
 			GraphicsContextFlags = graphicsContextFlags;
+
+            this.ShowNow();
 		}
 
 		~GLWidget() { Dispose(false); }
@@ -155,122 +157,121 @@ namespace Sledge.Gui.Gtk.Controls.Implementations
 		// Called when the widget needs to be (fully or partially) redrawn.
 		protected override bool OnExposeEvent(Gdk.EventExpose eventExpose)
 		{
-			if (!initialized)
-			{
-				initialized = true;
-
-				// If this looks uninitialized...  initialize.
-				if( ColorBPP == 0 )
-				{
-					ColorBPP = 32;
-					
-					if( DepthBPP == 0 ) DepthBPP = 16;
-				}
-				
-				ColorFormat colorBufferColorFormat = new ColorFormat(ColorBPP);
-				
-				ColorFormat accumulationColorFormat = new ColorFormat(AccumulatorBPP);
-				
-				int buffers = 2;
-				if( SingleBuffer ) buffers--;
-				
-				GraphicsMode graphicsMode = new GraphicsMode(colorBufferColorFormat, DepthBPP, StencilBPP, Samples, accumulationColorFormat, buffers, Stereo);
-
-				Toolkit.Init ();
-
-				// IWindowInfo
-				if (Configuration.RunningOnWindows)
-				{
-					IntPtr windowHandle = gdk_win32_drawable_get_handle(GdkWindow.Handle);
-					windowInfo = OpenTK.Platform.Utilities.CreateWindowsWindowInfo(windowHandle);
-				}
-				else if (Configuration.RunningOnMacOS)
-				{
-                    throw new PlatformNotSupportedException("OpenGL on GTK/OSX is too hard :(");
-                    // this.GdkWindow.Handle
-                    // IntPtr windowHandle = gdk_x11_drawable_get_xid(GdkWindow.Handle);
-                    // IntPtr windowHandle = gdk_quartz_window_get_nswindow(GdkWindow.Handle);
-
-                    //var nsBox = Class.Get("NSBox");
-				    //var box = Cocoa.SendIntPtr(Cocoa.SendIntPtr(nsBox, Selector.Alloc), Selector.Get("initWithFrame:"), new RectangleF(Allocation.X, Allocation.Y, Allocation.Width, Allocation.Height));
-				    // var frame = Cocoa.SendIntPtr(box, Selector.Get("frame"));
-				    //var wrap = gtk_ns_view_new(box);
-				    //var widget = new Widget(wrap);
-                    //this.Add(widget);
-                    // uhh? dunno.
-
-
-                    //IntPtr num2 = Cocoa.SendIntPtr(Cocoa.SendIntPtr(CocoaContext.NSOpenGLContext, Selector.Alloc), Selector.Get("initWithFormat:shareContext:"), num1, shareContextRef);
-
-                    //IntPtr viewHandle = gdk_quartz_window_get_nsview(GdkWindow.Handle);
-					//windowInfo = OpenTK.Platform.Utilities.CreateMacOSWindowInfo(windowHandle, box);
-                    // windowInfo = OpenTK.Platform.Utilities.CreateMacOSCarbonWindowInfo(windowHandle, false, true);
-                    // graphicsContext = new AglContext(graphicsMode, windowInfo, GraphicsContext.CurrentContext, () => Allocation.X, () => Allocation.Y); 
-				}
-				else if (Configuration.RunningOnX11)
-				{
-					IntPtr display = gdk_x11_display_get_xdisplay(Display.Handle);
-					int screen = Screen.Number;
-					IntPtr windowHandle = gdk_x11_drawable_get_xid(GdkWindow.Handle);
-					IntPtr rootWindow = gdk_x11_drawable_get_xid(RootWindow.Handle);
-
-					IntPtr visualInfo;
-					if (graphicsMode.Index.HasValue)
-					{
-						XVisualInfo info = new XVisualInfo();
-						info.VisualID = graphicsMode.Index.Value;
-						int dummy;
-						visualInfo = XGetVisualInfo(display, XVisualInfoMask.ID, ref info, out dummy);
-					}
-					else
-					{
-						visualInfo = GetVisualInfo(display);
-					}
-
-					windowInfo = OpenTK.Platform.Utilities.CreateX11WindowInfo(display, screen, windowHandle, rootWindow, visualInfo);
-					XFree(visualInfo);
-				}
-                else throw new PlatformNotSupportedException();
-
-				// GraphicsContext
-				if (graphicsContext == null) graphicsContext = new GraphicsContext(graphicsMode, windowInfo, GlVersionMajor, GlVersionMinor, graphicsContextFlags);
-
-				graphicsContext.MakeCurrent(windowInfo);
-
-				if (GraphicsContext.ShareContexts)
-				{
-					Interlocked.Increment(ref graphicsContextCount);
-
-					if (!sharedContextInitialized)
-					{
-						sharedContextInitialized = true;
-						((IGraphicsContextInternal)graphicsContext).LoadAll();
-						OnGraphicsContextInitialized();
-					}
-				}
-				else
-				{
-					((IGraphicsContextInternal)graphicsContext).LoadAll();
-					OnGraphicsContextInitialized();
-				}
-
-				OnInitialized();
-                graphicsContext.MakeCurrent(null);
-			}
-			else
-			{
-				//graphicsContext.MakeCurrent(windowInfo);
-			}
-
-			bool result = base.OnExposeEvent(eventExpose);
-			//OnRenderFrame();
-			//eventExpose.Window.Display.Sync(); // Add Sync call to fix resize rendering problem (Jay L. T. Cornwall) - How does this affect VSync?
-			//graphicsContext.SwapBuffers();
-            //graphicsContext.MakeCurrent(null);
-			return result;
+            InitializeContext();
+			return base.OnExposeEvent(eventExpose);
 		}
 
-		// Called on Resize
+	    private void InitializeContext()
+	    {
+	        if (!initialized)
+	        {
+	            initialized = true;
+
+	            // If this looks uninitialized...  initialize.
+	            if (ColorBPP == 0)
+	            {
+	                ColorBPP = 32;
+
+	                if (DepthBPP == 0) DepthBPP = 16;
+	            }
+
+	            ColorFormat colorBufferColorFormat = new ColorFormat(ColorBPP);
+
+	            ColorFormat accumulationColorFormat = new ColorFormat(AccumulatorBPP);
+
+	            int buffers = 2;
+	            if (SingleBuffer) buffers--;
+
+	            GraphicsMode graphicsMode = new GraphicsMode(colorBufferColorFormat, DepthBPP, StencilBPP, Samples, accumulationColorFormat, buffers, Stereo);
+
+	            Toolkit.Init();
+
+	            // IWindowInfo
+	            if (Configuration.RunningOnWindows)
+	            {
+	                IntPtr windowHandle = gdk_win32_drawable_get_handle(GdkWindow.Handle);
+	                windowInfo = OpenTK.Platform.Utilities.CreateWindowsWindowInfo(windowHandle);
+	            }
+	            else if (Configuration.RunningOnMacOS)
+	            {
+	                throw new PlatformNotSupportedException("OpenGL on GTK/OSX is too hard :(");
+	                // this.GdkWindow.Handle
+	                // IntPtr windowHandle = gdk_x11_drawable_get_xid(GdkWindow.Handle);
+	                // IntPtr windowHandle = gdk_quartz_window_get_nswindow(GdkWindow.Handle);
+
+	                //var nsBox = Class.Get("NSBox");
+	                //var box = Cocoa.SendIntPtr(Cocoa.SendIntPtr(nsBox, Selector.Alloc), Selector.Get("initWithFrame:"), new RectangleF(Allocation.X, Allocation.Y, Allocation.Width, Allocation.Height));
+	                // var frame = Cocoa.SendIntPtr(box, Selector.Get("frame"));
+	                //var wrap = gtk_ns_view_new(box);
+	                //var widget = new Widget(wrap);
+	                //this.Add(widget);
+	                // uhh? dunno.
+
+
+	                //IntPtr num2 = Cocoa.SendIntPtr(Cocoa.SendIntPtr(CocoaContext.NSOpenGLContext, Selector.Alloc), Selector.Get("initWithFormat:shareContext:"), num1, shareContextRef);
+
+	                //IntPtr viewHandle = gdk_quartz_window_get_nsview(GdkWindow.Handle);
+	                //windowInfo = OpenTK.Platform.Utilities.CreateMacOSWindowInfo(windowHandle, box);
+	                // windowInfo = OpenTK.Platform.Utilities.CreateMacOSCarbonWindowInfo(windowHandle, false, true);
+	                // graphicsContext = new AglContext(graphicsMode, windowInfo, GraphicsContext.CurrentContext, () => Allocation.X, () => Allocation.Y); 
+	            }
+	            else if (Configuration.RunningOnX11)
+	            {
+	                IntPtr display = gdk_x11_display_get_xdisplay(Display.Handle);
+	                int screen = Screen.Number;
+	                IntPtr windowHandle = gdk_x11_drawable_get_xid(GdkWindow.Handle);
+	                IntPtr rootWindow = gdk_x11_drawable_get_xid(RootWindow.Handle);
+
+	                IntPtr visualInfo;
+	                if (graphicsMode.Index.HasValue)
+	                {
+	                    XVisualInfo info = new XVisualInfo();
+	                    info.VisualID = graphicsMode.Index.Value;
+	                    int dummy;
+	                    visualInfo = XGetVisualInfo(display, XVisualInfoMask.ID, ref info, out dummy);
+	                }
+	                else
+	                {
+	                    visualInfo = GetVisualInfo(display);
+	                }
+
+	                windowInfo = OpenTK.Platform.Utilities.CreateX11WindowInfo(display, screen, windowHandle, rootWindow, visualInfo);
+	                XFree(visualInfo);
+	            }
+	            else throw new PlatformNotSupportedException();
+
+	            // GraphicsContext
+	            if (graphicsContext == null) graphicsContext = new GraphicsContext(graphicsMode, windowInfo, GlVersionMajor, GlVersionMinor, graphicsContextFlags);
+
+	            graphicsContext.MakeCurrent(windowInfo);
+
+	            if (GraphicsContext.ShareContexts)
+	            {
+	                Interlocked.Increment(ref graphicsContextCount);
+
+	                if (!sharedContextInitialized)
+	                {
+	                    sharedContextInitialized = true;
+	                    ((IGraphicsContextInternal) graphicsContext).LoadAll();
+	                    OnGraphicsContextInitialized();
+	                }
+	            }
+	            else
+	            {
+	                ((IGraphicsContextInternal) graphicsContext).LoadAll();
+	                OnGraphicsContextInitialized();
+	            }
+
+	            OnInitialized();
+	            graphicsContext.MakeCurrent(null);
+	        }
+	        else
+	        {
+	            //graphicsContext.MakeCurrent(windowInfo);
+	        }
+	    }
+
+	    // Called on Resize
 		protected override bool OnConfigureEvent(Gdk.EventConfigure evnt)
 		{
 			bool result = base.OnConfigureEvent(evnt);
@@ -280,17 +281,17 @@ namespace Sledge.Gui.Gtk.Controls.Implementations
 
 	    public void MakeCurrent()
 	    {
-            if (!graphicsContext.IsCurrent) graphicsContext.MakeCurrent(windowInfo);
+            if (graphicsContext != null && !graphicsContext.IsCurrent) graphicsContext.MakeCurrent(windowInfo);
 	    }
 
 	    protected void UnmakeCurrent()
 	    {
-	        if (graphicsContext.IsCurrent) graphicsContext.MakeCurrent(null);
+            if (graphicsContext != null && graphicsContext.IsCurrent) graphicsContext.MakeCurrent(null);
 	    }
 
 	    protected void SwapBuffers()
 	    {
-	        graphicsContext.SwapBuffers();
+            if (graphicsContext != null) graphicsContext.SwapBuffers();
 	    }
 
         protected bool IsInitialised { get { return graphicsContext != null; } }

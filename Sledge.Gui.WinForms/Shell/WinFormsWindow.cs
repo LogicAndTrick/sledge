@@ -27,6 +27,8 @@ namespace Sledge.Gui.WinForms.Shell
             }
         }
 
+        public IWindow Owner { get; set; }
+
         protected WinFormsCell ContainerWrapper;
         private bool _autoSize;
 
@@ -92,7 +94,8 @@ namespace Sledge.Gui.WinForms.Shell
         public virtual void Open()
         {
             OnPreferredSizeChanged();
-            Form.Show();
+            if (Owner == null) Form.Show();
+            else Form.Show(((WinFormsWindow) Owner.Implementation).Form);
         }
 
         public void Close()

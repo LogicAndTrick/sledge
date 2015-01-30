@@ -63,6 +63,32 @@
                 <string key="EntityType" value="Entity Type:"/>
             </group>
         </group>
+        <group name="TextureTool">
+            <string key="Name" value="Texture Application Tool"/>
+            <string key="PowerTools" value="Texture Power Tools" />
+            <string key="ContextualHelp">
+                *Click* a face to select it
+                *Ctrl+Click* to select multiple
+                *Shift+Click* to select all faces of a solid
+            </string>
+            <group name="Controls">
+                <string key="Scale" value="Scale" />
+                <string key="Shift" value="Shift" />
+                <string key="X" value="X" />
+                <string key="Y" value="Y" />
+
+                <string key="Browse" value="Browse" />
+                <string key="Replace" value="Replace" />
+                <string key="Apply" value="Apply" />
+
+                <string key="Rotation" value="Rotation" />
+                <string key="Lightmap" value="Lightmap" />
+                <string key="SmoothingGroups" value="Smoothing Groups" />
+                
+                <string key="TreatAsOne" value="Treat as one" />
+                <string key="HideMask" value="Hide mask" />
+            </group>
+        </group>
     </group>
     <group name="Shell">
         <string key="Window.Title" value="Sledge Editor"/>

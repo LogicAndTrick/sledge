@@ -53,6 +53,8 @@
   <ItemGroup>
     <Compile Include="Containers\GtkCollapsible.cs" />
     <Compile Include="Containers\GtkHorizontalBox.cs" />
+    <Compile Include="Containers\GtkResizableTable.cs" />
+    <Compile Include="Containers\GtkTable.cs" />
     <Compile Include="Containers\GtkVerticalBox.cs" />
     <Compile Include="Containers\GtkContainer.cs" />
     <Compile Include="Containers\GtkCell.cs" />

@@ -1,4 +1,5 @@
-﻿using OpenTK.Graphics;
+﻿using System;
+using OpenTK.Graphics;
 using Sledge.Gui.Events;
 using Sledge.Gui.Interfaces.Controls;
 
@@ -9,6 +10,12 @@ namespace Sledge.Gui.Controls
         public IGraphicsContext Context
         {
             get { return Control.Context; }
+        }
+
+        public event EventHandler Initialised
+        {
+            add { Control.Initialised += value; }
+            remove { Control.Initialised -= value; }
         }
 
         public event FrameEventHandler Update

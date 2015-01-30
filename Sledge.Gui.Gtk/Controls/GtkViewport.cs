@@ -28,6 +28,12 @@ namespace Sledge.Gui.Gtk.Controls
             get { return _viewport.Context; }
         }
 
+        public event EventHandler Initialised
+        {
+            add { _viewport.Initialized += value; }
+            remove { _viewport.Initialized -= value; }
+        }
+
         public event FrameEventHandler Update
         {
             add { _viewport.Update += value; }

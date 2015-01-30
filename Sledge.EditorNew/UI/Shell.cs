@@ -1,4 +1,6 @@
 ﻿using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Sledge.Common.Mediator;
 using Sledge.DataStructures.MapObjects;
 using Sledge.EditorNew.Documents;
@@ -50,7 +52,7 @@ namespace Sledge.EditorNew.UI
 
             MapProvider.Register(new RmfProvider());
             GameDataProvider.Register(new FgdProvider());
-            var file = @"C:\Github\sledge\_Resources\verc_18.rmf";
+            var file = @"D:\Github\sledge\_Resources\RMF\verc_18.rmf";
             DocumentManager.AddAndSwitch(new Document(null, new Map(), SettingsManager.Games[0]));
         }
 

@@ -8,7 +8,8 @@ namespace Sledge.Gui.WinForms.Shell
     {
         public override void Open()
         {
-            Form.ShowDialog(((WinFormsShell) UIManager.Manager.Shell).Form);
+            if (Owner == null) Form.ShowDialog(((WinFormsShell)UIManager.Manager.Shell).Form);
+            else Form.ShowDialog(((WinFormsWindow)Owner.Implementation).Form);
         }
     }
 }

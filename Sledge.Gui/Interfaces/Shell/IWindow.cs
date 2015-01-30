@@ -10,6 +10,7 @@ namespace Sledge.Gui.Interfaces.Shell
     {
         string Title { get; set; }
         bool AutoSize { get; set; }
+        IWindow Owner { get; set; }
 
         ICell Container { get; }
 

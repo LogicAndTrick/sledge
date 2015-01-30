@@ -48,7 +48,7 @@ namespace Sledge.EditorNew.Documents
         public RenderManager Renderer { get; private set; }
 
         public SelectionManager Selection { get; private set; }
-        private HistoryManager History { get; set; }
+        public HistoryManager History { get; set; }
         public HelperManager HelperManager { get; set; }
         public TextureCollection TextureCollection { get; set; }
 
