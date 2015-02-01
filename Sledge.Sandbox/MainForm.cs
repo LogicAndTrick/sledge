@@ -4,27 +4,143 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
+using OpenTK;
+using OpenTK.Graphics;
+using OpenTK.Graphics.OpenGL;
+using Sledge.Common;
+using Sledge.Common.Easings;
+using Sledge.DataStructures.Geometric;
+using Sledge.DataStructures.MapObjects;
+using Sledge.Editor.Brushes;
+using Sledge.Editor.Rendering;
+using Sledge.Editor.Rendering.Arrays;
 using Sledge.Editor.UI;
+using Sledge.Graphics;
+using Sledge.Graphics.Arrays;
+using Sledge.Graphics.Helpers;
+using Sledge.Graphics.Renderables;
+using Sledge.Rendering;
+using Sledge.UI;
 
 namespace Sledge.Sandbox
 {
     public partial class MainForm : Form
     {
+        private Viewport3D _viewport;
+
         public MainForm()
         {
             InitializeComponent();
-            var qsc = new QuadSplitControl { Dock = DockStyle.Fill };
-            var qp1 = new Panel { BackColor = Color.Green, Dock = DockStyle.Fill};
-            var qp2 = new Panel { BackColor = Color.Gray, Dock = DockStyle.Fill };
-            var qp3 = new Panel { BackColor = Color.Blue, Dock = DockStyle.Fill };
-            var qp4 = new Panel { BackColor = Color.Yellow, Dock = DockStyle.Fill };
-            qsc.Controls.Add(qp1, 0, 0);
-            qsc.Controls.Add(qp2, 1, 0);
-            qsc.Controls.Add(qp3, 0, 1);
-            qsc.Controls.Add(qp4, 1, 1);
-            Controls.Add(qsc);
+            _viewport = new Viewport3D(Viewport3D.ViewType.Flat, new RenderContext())
+            {
+                Dock = DockStyle.Fill,
+                Camera =
+                {
+                    Location = new Vector3(-1, -10, -10),
+                    LookAt = new Vector3(0, 0, 0),
+                    FOV = 90,
+                    ClipDistance = 1000
+                }
+            };
+            _viewport.MakeCurrent();
+            GraphicsHelper.InitGL3D();
+            GL.ClearColor(Color.Black);
+            Controls.Add(_viewport);
+
+            _viewport.RenderContext.Add(new BlahRenderable());
+            _viewport.RenderContext.Add(new WidgetLinesRenderable());
+            _viewport.Run();
+        }
+    }
+
+    public class MainForm2 : Form
+    {
+        public MainForm2()
+        {
+            ClientSize = new Size(600, 600);
+
+            // Create renderer
+
+            // Get render control/context
+
+            // Create scene
+            var scene = new Scene();
+
+            var light = new AmbientLight(Color.White, new Coordinate(1, 2, 3), 0.8f);
+            scene.Add(light);
+
+            var material = Material.Flat(Color.LightGreen);
+
+            var b = new BlockBrush();
+            var brushes = b.Create(new IDGenerator(), new Box(-Coordinate.One * 3, Coordinate.One * 2), null, 2).ToList();
+            foreach (var s in brushes.OfType<Solid>().SelectMany(x => x.Faces))
+            {
+                var face = new Rendering.Face(material, s.Vertices.Select(x => x.Location).ToList());
+                scene.Add(face);
+            }
+
+            // Add scene to renderer / add renderer to scene
+
+
+        }
+    }
+
+    public struct ObjectVertex
+    {
+        public Vector3 Position;
+        public Vector3 Normal;
+        public Vector2 Texture;
+        public Color4 Colour;
+        public int IsSelected;
+    }
+
+    public class BlahRenderable : IRenderable
+    {
+        private MapObject3DShader _shader;
+        private MapObjectArray _array;
+        private decimal _progress;
+        private decimal _direction;
+        private Easing _easing;
+
+        public BlahRenderable()
+        {
+            _shader = new MapObject3DShader();
+            _easing = Easing.FromType(EasingType.Sinusoidal, EasingDirection.InOut);
+            _progress = 0;
+            _direction = 0.02m;
+
+            var b = new BlockBrush();
+            var brushes = b.Create(new IDGenerator(), new Box(-Coordinate.One * 3, Coordinate.One * 2), null, 2).ToList();
+            var back = b.Create(new IDGenerator(), new Box(new Coordinate(-20, 10, -20), new Coordinate(20, 21, 20)), null, 2);
+            _array = new MapObjectArray(brushes.Union(back));
+        }
+
+        public void Render(object sender)
+        {
+            var vp = (Viewport3D) sender;
+            _shader.Bind(new Viewport3DRenderOptions
+            {
+                Camera = vp.GetCameraMatrix(),
+                GridSpacing = 64,
+                ModelView = vp.GetModelViewMatrix(),
+                Shaded = true,
+                ShowGrid = false,
+                Textured = false,
+                Viewport = vp.GetViewportMatrix(),
+                Wireframe = false
+            });
+            _shader.IsTextured = false;
+            
+            _progress += _direction;
+            if (_progress >= 1 || _progress <= -1) _direction = -_direction;
+            var xpos = (float) _easing.Evaluate(_progress);
+            _shader.SetLight(0, new Vector3(xpos * 10 - 5, -4, 0), new Vector3(0.8f,0.8f,0), new Vector3(1,1,1));
+
+            _array.RenderUntextured(vp.Context, Coordinate.Zero);
+            _shader.Unbind();
         }
     }
 }

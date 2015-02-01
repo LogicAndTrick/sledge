@@ -92,5 +92,10 @@ namespace Sledge.Graphics.Shaders
         {
             GetVariable(name).Set(vec);
         }
+
+        public void Set(string name, Vector3 vec)
+        {
+            GetVariable(name).Set(vec);
+        }
     }
 }
