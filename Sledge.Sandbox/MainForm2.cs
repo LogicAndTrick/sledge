@@ -20,7 +20,7 @@ namespace Sledge.Sandbox
 
             // Get render control/context
             var camera = new PerspectiveCamera { Position = new Coordinate(-10, -10, -10), LookAt = Coordinate.Zero };
-            // var camera = new OrthographicCamera();
+            //var camera = new OrthographicCamera();
             var viewport = engine.CreateViewport(camera);
 
             viewport.Control.Dock = DockStyle.Fill;

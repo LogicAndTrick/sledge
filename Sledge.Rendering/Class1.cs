@@ -1,41 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
 using OpenTK;
 using Sledge.DataStructures.Geometric;
 
 namespace Sledge.Rendering
 {
-    public class Engine
-    {
-        public Scene Scene { get; private set; }
-        public List<IViewport> Viewports { get; private set; }
-        public IRenderer Renderer { get; private set; }
-
-        public Engine(IRenderer renderer)
-        {
-            Renderer = renderer;
-            Scene = new Scene(this);
-            Viewports = new List<IViewport>();
-        }
-
-        public IViewport CreateViewport(Camera camera)
-        {
-            var vp = Renderer.CreateViewport();
-            vp.Camera = camera;
-            Viewports.Add(vp);
-            return vp;
-        }
-    }
-
-    public interface IRenderer
-    {
-        IViewport CreateViewport();
-
-    }
-
     public enum MaterialType
     {
         Flat,
@@ -203,11 +172,13 @@ namespace Sledge.Rendering
     {
         public Material Material { get; set; }
         public List<Coordinate> Vertices { get; set; }
+        public Plane Plane { get; private set; }
 
         public Face(Material material, List<Coordinate> vertices)
         {
             Material = material;
             Vertices = vertices;
+            Plane = new Plane(vertices[0], vertices[1], vertices[2]);
         }
     }
 
