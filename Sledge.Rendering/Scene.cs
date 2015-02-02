@@ -6,15 +6,16 @@ namespace Sledge.Rendering
 {
     public class Scene
     {
-        public Renderer Renderer { get; set; }
+        public Engine Engine { get; private set; }
 
         private readonly List<Light> _lights;
         private readonly List<RenderableObject> _renderables;
 
         public bool Dirty { get; private set; }
 
-        public Scene()
+        public Scene(Engine engine)
         {
+            Engine = engine;
             _lights = new List<Light>();
             _renderables = new List<RenderableObject>();
         }

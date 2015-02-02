@@ -22,7 +22,6 @@ using Sledge.Graphics;
 using Sledge.Graphics.Arrays;
 using Sledge.Graphics.Helpers;
 using Sledge.Graphics.Renderables;
-using Sledge.Rendering;
 using Sledge.UI;
 
 namespace Sledge.Sandbox
@@ -53,38 +52,6 @@ namespace Sledge.Sandbox
             _viewport.RenderContext.Add(new BlahRenderable());
             _viewport.RenderContext.Add(new WidgetLinesRenderable());
             _viewport.Run();
-        }
-    }
-
-    public class MainForm2 : Form
-    {
-        public MainForm2()
-        {
-            ClientSize = new Size(600, 600);
-
-            // Create renderer
-
-            // Get render control/context
-
-            // Create scene
-            var scene = new Scene();
-
-            var light = new AmbientLight(Color.White, new Coordinate(1, 2, 3), 0.8f);
-            scene.Add(light);
-
-            var material = Material.Flat(Color.LightGreen);
-
-            var b = new BlockBrush();
-            var brushes = b.Create(new IDGenerator(), new Box(-Coordinate.One * 3, Coordinate.One * 2), null, 2).ToList();
-            foreach (var s in brushes.OfType<Solid>().SelectMany(x => x.Faces))
-            {
-                var face = new Rendering.Face(material, s.Vertices.Select(x => x.Location).ToList());
-                scene.Add(face);
-            }
-
-            // Add scene to renderer / add renderer to scene
-
-
         }
     }
 

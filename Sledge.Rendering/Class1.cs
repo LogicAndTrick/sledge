@@ -8,11 +8,32 @@ using Sledge.DataStructures.Geometric;
 
 namespace Sledge.Rendering
 {
-    public enum Renderer
+    public class Engine
     {
-        OpenGL1,
-        OpenGL3,
-        DirectX
+        public Scene Scene { get; private set; }
+        public List<IViewport> Viewports { get; private set; }
+        public IRenderer Renderer { get; private set; }
+
+        public Engine(IRenderer renderer)
+        {
+            Renderer = renderer;
+            Scene = new Scene(this);
+            Viewports = new List<IViewport>();
+        }
+
+        public IViewport CreateViewport(Camera camera)
+        {
+            var vp = Renderer.CreateViewport();
+            vp.Camera = camera;
+            Viewports.Add(vp);
+            return vp;
+        }
+    }
+
+    public interface IRenderer
+    {
+        IViewport CreateViewport();
+
     }
 
     public enum MaterialType
@@ -30,6 +51,19 @@ namespace Sledge.Rendering
         Ambient,
         Lit,
         Fullbright
+    }
+
+    public static class GeometricExtensions
+    {
+        public static Vector3 ToVector3(this Coordinate coordinate)
+        {
+            return new Vector3((float)coordinate.DX, (float)coordinate.DY, (float)coordinate.DZ);
+        }
+
+        public static Coordinate ToCoordinate(this Vector3 vector3)
+        {
+            return new Coordinate((decimal)vector3.X, (decimal)vector3.Y, (decimal)vector3.Z);
+        }
     }
 
     public class Material
@@ -54,19 +88,84 @@ namespace Sledge.Rendering
 
     public abstract class Camera
     {
-        public abstract Matrix4 GetMatrix();
+        public abstract Matrix4 GetCameraMatrix();
+        public abstract Matrix4 GetViewportMatrix(int width, int height);
     }
 
     public class PerspectiveCamera : Camera
     {
+        private Coordinate _direction;
+        private Coordinate _lookAt;
+
         public int FOV { get; set; }
         public int ClipDistance { get; set; }
         public Coordinate Position { get; set; }
-        public Coordinate Direction { get; set; }
 
-        public override Matrix4 GetMatrix()
+        public Coordinate Direction
         {
-            throw new NotImplementedException();
+            get { return _direction; }
+            set
+            {
+                _direction = value;
+                _lookAt = Position + _direction;
+            }
+        }
+
+        public Coordinate LookAt
+        {
+            get { return _lookAt; }
+            set
+            {
+                _lookAt = value;
+                _direction = _lookAt - Position;
+            }
+        }
+
+        public PerspectiveCamera()
+        {
+            Position = Coordinate.Zero;
+            Direction = Coordinate.One;
+            FOV = 90;
+            ClipDistance = 1000;
+        }
+
+        public override Matrix4 GetCameraMatrix()
+        {
+            return Matrix4.LookAt(Position.ToVector3(), _lookAt.ToVector3(), Vector3.UnitZ);
+        }
+
+        public override Matrix4 GetViewportMatrix(int width, int height)
+        {
+            const float near = 0.1f;
+            var ratio = width / (float)height;
+            if (ratio <= 0) ratio = 1;
+            return Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(FOV), ratio, near, ClipDistance);
+        }
+    }
+
+    public class OrthographicCamera : Camera
+    {
+        public Coordinate Position { get; set; }
+        public decimal Zoom { get; set; }
+
+        public OrthographicCamera()
+        {
+            Position = Coordinate.Zero;
+            Zoom = 1;
+        }
+
+        public override Matrix4 GetCameraMatrix()
+        {
+            var translate = Matrix4.CreateTranslation((float) -Position.X, (float) -Position.Y, 0);
+            var scale = Matrix4.Scale(new Vector3((float) Zoom, (float) Zoom, 0));
+            return translate * scale;
+        }
+
+        public override Matrix4 GetViewportMatrix(int width, int height)
+        {
+            const float near = -1000000;
+            const float far = 1000000;
+            return Matrix4.CreateOrthographic(width, height, near, far);
         }
     }
 
