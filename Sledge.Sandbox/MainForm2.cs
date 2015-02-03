@@ -5,6 +5,7 @@ using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.MapObjects;
 using Sledge.Editor.Brushes;
 using Sledge.Rendering;
+using Sledge.Rendering.OpenGL;
 
 namespace Sledge.Sandbox
 {
@@ -15,8 +16,8 @@ namespace Sledge.Sandbox
             ClientSize = new Size(600, 600);
 
             // Create engine
-            var renderer = new Sledge.Rendering.OpenGLRenderer();
-            var engine = new Sledge.Rendering.Engine(renderer);
+            var renderer = new OpenGLRenderer();
+            var engine = new Engine(renderer);
 
             // Get render control/context
             var camera = new PerspectiveCamera { Position = new Coordinate(-10, -10, -10), LookAt = Coordinate.Zero };
