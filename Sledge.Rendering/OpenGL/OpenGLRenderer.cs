@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 
@@ -29,13 +28,6 @@ namespace Sledge.Rendering.OpenGL
 
         private void RenderViewport(IViewport viewport, Frame frame)
         {
-            var vBuffer = new OpenGLVertexBuffer<Thing>();
-            vBuffer.Update(Enumerable.Range(0, 5000).Select(x => new Thing { Position = new Vector3(x, x, 0) }), new Thing[0]);
-
-            var elementBuffer = new OpenGLElementArray<Thing>(vBuffer);
-            elementBuffer.AddGroup(1, PrimitiveType.Points, t => t.GroupBy(x => (object)(x.Position.X)));
-            elementBuffer.Update();
-            
             var data = GetViewportData(viewport);
 
             // Set up FBO
@@ -77,9 +69,6 @@ namespace Sledge.Rendering.OpenGL
             // Blit FBO
             data.Framebuffer.Unbind();
             data.Framebuffer.Render();
-
-            elementBuffer.Dispose();
-            vBuffer.Dispose();
         }
 
         private ViewportData GetViewportData(IViewport viewport)

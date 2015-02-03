@@ -61,9 +61,8 @@
     <Compile Include="IRenderer.cs" />
     <Compile Include="IViewport.cs" />
     <Compile Include="OpenGL\IIndexable.cs" />
-    <Compile Include="OpenGL\OpenGLElementArray.cs" />
     <Compile Include="OpenGL\OpenGLRenderer.cs" />
-    <Compile Include="OpenGL\OpenGLVertexBuffer.cs" />
+    <Compile Include="OpenGL\OpenGLVertexArray.cs" />
     <Compile Include="OpenGL\Shader.cs" />
     <Compile Include="OpenGL\ShaderProgram.cs" />
     <Compile Include="OpenGL\ShaderVariable.cs" />
