@@ -1,3 +1,4 @@
+using System;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -5,6 +6,8 @@ using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.MapObjects;
 using Sledge.Editor.Brushes;
 using Sledge.Rendering;
+using Sledge.Rendering.Cameras;
+using Sledge.Rendering.DataStructures;
 using Sledge.Rendering.OpenGL;
 
 namespace Sledge.Sandbox
@@ -15,13 +18,17 @@ namespace Sledge.Sandbox
         {
             ClientSize = new Size(600, 600);
 
+            // Test out the octree
+            var oct = new Octree(1100);
+            oct.Add(Enumerable.Range(-1000, 2000).Select(x => new Sledge.Rendering.Line() { Origin = new Coordinate(x, x, x) }));
+
             // Create engine
             var renderer = new OpenGLRenderer();
             var engine = new Engine(renderer);
 
             // Get render control/context
             var camera = new PerspectiveCamera { Position = new Coordinate(-10, -10, -10), LookAt = Coordinate.Zero };
-            //var camera = new OrthographicCamera();
+            //var camera = new OrthographicCamera() { Zoom = 16 };
             var viewport = engine.CreateViewport(camera);
 
             viewport.Control.Dock = DockStyle.Fill;

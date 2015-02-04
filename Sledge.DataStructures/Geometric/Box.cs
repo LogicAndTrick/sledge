@@ -45,10 +45,8 @@ namespace Sledge.DataStructures.Geometric
         }
 
         public Box(Coordinate start, Coordinate end)
+            : this(new[] { start, end})
         {
-            Start = start;
-            End = end;
-            Center = (Start + End) / 2;
         }
 
         public Box(IEnumerable<Coordinate> coordinates)

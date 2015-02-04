@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using OpenTK.Graphics.OpenGL;
-using Sledge.Graphics.Arrays;
 
-namespace Sledge.Rendering.OpenGL
+namespace Sledge.Rendering.OpenGL.Arrays
 {
-    public abstract class OpenGLVertexArray<TIn, TOut> : IDisposable where TOut : struct
+    public abstract class VertexArray<TIn, TOut> : IDisposable where TOut : struct
     {
         public class Subset
         {
@@ -39,7 +38,7 @@ namespace Sledge.Rendering.OpenGL
         private int _array = -1;
         private int _elementArray = -1;
 
-        protected OpenGLVertexArray(IEnumerable<TIn> data)
+        protected VertexArray(IEnumerable<TIn> data)
         {
             Specification = new ArraySpecification(typeof(TOut));
             _size = Marshal.SizeOf(typeof(TOut));
@@ -68,7 +67,7 @@ namespace Sledge.Rendering.OpenGL
             {
                 var ai = Specification.Indices[j];
                 GL.EnableVertexAttribArray(j);
-                GL.VertexAttribPointer(j, ai.Length, ai.Type, false, stride, ai.Offset);
+                GL.VertexAttribPointer(j, ai.Length, ai.Type, ai.Normalised, stride, ai.Offset);
             }
             GL.BindBuffer(BufferTarget.ElementArrayBuffer, _elementArray);
 

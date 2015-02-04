@@ -53,19 +53,29 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Cameras\Camera.cs" />
     <Compile Include="Class1.cs" />
+    <Compile Include="DataStructures\Octree.cs" />
+    <Compile Include="DataStructures\OctreeNode.cs" />
     <Compile Include="Engine.cs" />
     <Compile Include="Frame.cs" />
     <Compile Include="Framebuffer.cs" />
     <Compile Include="FrameEventHandler.cs" />
     <Compile Include="IRenderer.cs" />
     <Compile Include="IViewport.cs" />
-    <Compile Include="OpenGL\IIndexable.cs" />
+    <Compile Include="OpenGL\Arrays\ArrayIndex.cs" />
+    <Compile Include="OpenGL\Arrays\ArrayIndexAttribute.cs" />
+    <Compile Include="OpenGL\Arrays\ArraySpecification.cs" />
     <Compile Include="OpenGL\OpenGLRenderer.cs" />
-    <Compile Include="OpenGL\OpenGLVertexArray.cs" />
+    <Compile Include="OpenGL\Arrays\VertexArray.cs" />
     <Compile Include="OpenGL\Shader.cs" />
     <Compile Include="OpenGL\ShaderProgram.cs" />
+    <Compile Include="OpenGL\Shaders\Passthrough.cs" />
+    <Compile Include="OpenGL\Shaders\ShaderBase.cs" />
     <Compile Include="OpenGL\ShaderVariable.cs" />
+    <Compile Include="Cameras\OrthographicCamera.cs" />
+    <Compile Include="Cameras\PerspectiveCamera.cs" />
+    <Compile Include="OpenGL\Vertices\SimpleVertex.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Scene.cs" />
     <Compile Include="OpenGLViewport.cs">
@@ -80,6 +90,8 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="OpenGL\Shaders\Passthrough.vert" />
+    <EmbeddedResource Include="OpenGL\Shaders\Passthrough.frag" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
