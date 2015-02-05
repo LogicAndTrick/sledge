@@ -19,8 +19,11 @@ namespace Sledge.Sandbox
             ClientSize = new Size(600, 600);
 
             // Test out the octree
-            var oct = new Octree(1100);
-            oct.Add(Enumerable.Range(-1000, 2000).Select(x => new Sledge.Rendering.Line() { Origin = new Coordinate(x, x, x) }));
+            var random = new Random();
+            var oct = new Octree<IOrigin>();
+            oct.Add(Enumerable.Range(0, 50000).Select(x => new Sledge.Rendering.Line() { Origin = new Coordinate(random.Next(-9999, 9999), random.Next(-9999, 9999), random.Next(-9999, 9999)) }));
+            oct.Add(Enumerable.Range(0, 50000).Select(x => new Sledge.Rendering.Line() { Origin = new Coordinate(x % 100, x % 100, x % 100) }));
+            var groups = oct.GetNodeGroups();
 
             // Create engine
             var renderer = new OpenGLRenderer();

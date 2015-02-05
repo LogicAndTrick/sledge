@@ -79,12 +79,12 @@ namespace Sledge.Rendering
         public float Distance { get; set; }
     }
 
-    public interface IPosition
+    public interface IOrigin
     {
         Coordinate Origin { get; }
     }
 
-    public abstract class RenderableObject : SceneObject, IPosition
+    public abstract class RenderableObject : SceneObject, IOrigin
     {
         public Coordinate Origin { get; set; }
         public LightingType Lighting { get; set; }

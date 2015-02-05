@@ -6,32 +6,78 @@ using Sledge.DataStructures.Geometric;
 
 namespace Sledge.Rendering.DataStructures
 {
-    public class OctreeNode : IEnumerable<IPosition>
+    public class OctreeNode<T> : ICollection<T> where T : IOrigin
     {
-        public Octree Root { get; protected set; }
-        public OctreeNode Parent { get; private set; }
+        public Octree<T> Root { get; protected set; }
+        public OctreeNode<T> Parent { get; private set; }
         
         public Box Box { get; private set; }
         public int Count { get; private set; }
 
         private int _limit;
-        private List<IPosition> _elements;
-        private OctreeNode[] _children;
+        private List<T> _elements;
+        private OctreeNode<T>[] _children;
 
-        public OctreeNode(Octree root, OctreeNode parent, Box box, int limit)
+        public OctreeNode(Octree<T> root, OctreeNode<T> parent, Box box, int limit)
         {
             Root = root;
             Parent = parent;
             _limit = limit;
             Box = box;
             Count = 0;
-            _elements = new List<IPosition>();
+            _elements = new List<T>();
             _children = null;
         }
 
-        public void Add(IEnumerable<IPosition> elements)
+        public List<OctreeNode<T>> GetChildNodes()
+        {
+            return _children == null ? new List<OctreeNode<T>>() : _children.ToList();
+        }
+
+        public void Clear()
+        {
+            _elements = new List<T>();
+            _children = null;
+            Count = 0;
+        }
+
+        public bool Contains(T item)
+        {
+            if (_children == null) return _elements.Contains(item);
+            else return _children.Any(x => x.Contains(item));
+        }
+
+        public void CopyTo(T[] array, int arrayIndex)
+        {
+            if (_children == null)
+            {
+                _elements.CopyTo(array, arrayIndex);
+            }
+            else
+            {
+                foreach (var child in _children)
+                {
+                    child.CopyTo(array, arrayIndex);
+                    arrayIndex += child.Count;
+                }
+            }
+        }
+
+        public bool IsReadOnly
+        {
+            get { return false; }
+        }
+
+        public void Add(T element)
+        {
+            Add(new[] {element});
+        }
+
+        public void Add(IEnumerable<T> elements)
         {
             var list = elements.ToList();
+            var switched = false;
+
             if (_children == null)
             {
                 _elements = _elements.Union(list).ToList();
@@ -44,17 +90,27 @@ namespace Sledge.Rendering.DataStructures
                 }
 
                 // We're over the limit, create the child nodes
-                _children = new OctreeNode[8];
-                var center = Box.Center;
-                _children = Box.GetBoxPoints().Select(x => new OctreeNode(Root, this, new Box(x, center), _limit)).ToArray();
+                _children = new OctreeNode<T>[8];
+                var center = _elements.Aggregate(Coordinate.Zero, (a, b) => a + b.Origin) / _elements.Count;
+                _children = Box.GetBoxPoints().Select(x => new OctreeNode<T>(Root, this, new Box(x, center), _limit)).ToArray();
 
                 // We need to init the child nodes with all elements, so sub in the elements list
                 list = _elements;
                 _elements = null;
+                switched = true;
             }
 
             // Add the elements into their particular nodes
-            var grouped = list.GroupBy(x => _children.First(y => y.Box.CoordinateIsInside(x.Origin)));
+            var grouped = list.GroupBy(x => _children.First(y => y.Box.CoordinateIsInside(x.Origin))).ToList();
+            if (switched && grouped.Count == 1)
+            {
+                // Everything is in the same group! Since we split based on the average origin, that means all the origins are identical.
+                // In this case we cannot split anymore.
+                _elements = list;
+                Count = _elements.Count;
+                _children = null;
+                return;
+            }
             if (list.Count < _limit / 2)
             {
                 foreach (var g in grouped)
@@ -70,14 +126,20 @@ namespace Sledge.Rendering.DataStructures
             Count = _children.Sum(x => x.Count);
         }
 
-        public void Remove(IEnumerable<IPosition> elements)
+        public bool Remove(T element)
         {
+            return Remove(new[] { element });
+        }
+
+        public bool Remove(IEnumerable<T> elements)
+        {
+            var startCount = Count;
             var list = elements.ToList();
             if (_children == null)
             {
                 // We're under the limit, no need to do anything when removing stuff
                 _elements = _elements.Except(list).ToList();
-                return;
+                return Count != startCount;
             }
 
             // Remove the elements from their nodes
@@ -86,12 +148,12 @@ namespace Sledge.Rendering.DataStructures
             {
                 foreach (var g in grouped)
                 {
-                    g.Key.Add(g);
+                    g.Key.Remove(g);
                 }
             }
             else
             {
-                Parallel.ForEach(grouped, g => g.Key.Add(g));
+                Parallel.ForEach(grouped, g => g.Key.Remove(g));
             }
 
             Count = _children.Sum(x => x.Count);
@@ -102,9 +164,11 @@ namespace Sledge.Rendering.DataStructures
                 _elements = _children.SelectMany(x => x).ToList();
                 _children = null;
             }
+
+            return Count != startCount;
         }
 
-        public IEnumerator<IPosition> GetEnumerator()
+        public IEnumerator<T> GetEnumerator()
         {
             if (_children == null) return _elements.GetEnumerator();
             else return new OctreeNodeEnumerator(this);
@@ -116,20 +180,20 @@ namespace Sledge.Rendering.DataStructures
             else return new OctreeNodeEnumerator(this);
         }
 
-        private class OctreeNodeEnumerator : IEnumerator<IPosition>
+        private class OctreeNodeEnumerator : IEnumerator<T>
         {
             private int _index;
-            private List<IEnumerator<IPosition>> _enumerators;
-            private IPosition _current;
+            private List<IEnumerator<T>> _enumerators;
+            private T _current;
 
-            public OctreeNodeEnumerator(OctreeNode node)
+            public OctreeNodeEnumerator(OctreeNode<T> node)
             {
                 _index = 0;
-                _current = null;
+                _current = default(T);
                 _enumerators = node._children.Select(x => x.GetEnumerator()).ToList();
             }
 
-            public IPosition Current { get { return _current; } }
+            public T Current { get { return _current; } }
             object System.Collections.IEnumerator.Current { get { return _current; } }
 
             public bool MoveNext()
@@ -150,14 +214,14 @@ namespace Sledge.Rendering.DataStructures
             {
                 _enumerators.ForEach(x => x.Reset());
                 _index = 0;
-                _current = null;
+                _current = default(T);
             }
 
             public void Dispose()
             {
                 _enumerators.ForEach(x => x.Dispose());
                 _enumerators = null;
-                _current = null;
+                _current = default(T);
             }
         }
     }
