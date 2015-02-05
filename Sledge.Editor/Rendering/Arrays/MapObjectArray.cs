@@ -7,11 +7,9 @@ using OpenTK.Graphics.OpenGL;
 using Sledge.Common;
 using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.MapObjects;
-using Sledge.DataStructures.Models;
 using Sledge.Editor.Extensions;
 using Sledge.Graphics.Arrays;
 using Sledge.Graphics.Helpers;
-using BeginMode = OpenTK.Graphics.OpenGL.BeginMode;
 using GL = OpenTK.Graphics.OpenGL.GL;
 
 namespace Sledge.Editor.Rendering.Arrays

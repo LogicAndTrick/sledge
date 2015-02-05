@@ -41,6 +41,13 @@ namespace Sledge.Rendering.DataStructures
             Count = 0;
         }
 
+        public void Defragment()
+        {
+            var items = this.ToList();
+            Clear();
+            Add(items);
+        }
+
         public bool Contains(T item)
         {
             if (_children == null) return _elements.Contains(item);

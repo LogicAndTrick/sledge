@@ -56,6 +56,12 @@ namespace Sledge.Rendering.OpenGL.Arrays
                     case "Int32":
                         Indices.Add(ArrayIndex.Integer(field.Name));
                         break;
+                    case "Int16":
+                        Indices.Add(new ArrayIndex(field.Name, VertexAttribPointerType.Short, 1));
+                        break;
+                    case "Byte":
+                        Indices.Add(new ArrayIndex(field.Name, VertexAttribPointerType.UnsignedByte, 1));
+                        break;
                 }
             }
             Stride = Indices.Sum(x => x.Size);

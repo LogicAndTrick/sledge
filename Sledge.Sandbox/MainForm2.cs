@@ -23,7 +23,7 @@ namespace Sledge.Sandbox
             var oct = new Octree<IOrigin>();
             oct.Add(Enumerable.Range(0, 50000).Select(x => new Sledge.Rendering.Line() { Origin = new Coordinate(random.Next(-9999, 9999), random.Next(-9999, 9999), random.Next(-9999, 9999)) }));
             oct.Add(Enumerable.Range(0, 50000).Select(x => new Sledge.Rendering.Line() { Origin = new Coordinate(x % 100, x % 100, x % 100) }));
-            var groups = oct.GetNodeGroups();
+            var groups = oct.Partition();
 
             // Create engine
             var renderer = new OpenGLRenderer();

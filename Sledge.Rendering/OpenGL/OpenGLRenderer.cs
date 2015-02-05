@@ -4,6 +4,7 @@ using System.Linq;
 using OpenTK;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
+using Sledge.Common;
 using Sledge.DataStructures.Geometric;
 using Sledge.Rendering.Cameras;
 using Sledge.Rendering.OpenGL.Arrays;
@@ -15,10 +16,12 @@ namespace Sledge.Rendering.OpenGL
     public class OpenGLRenderer : IRenderer
     {
         private readonly Dictionary<IViewport, ViewportData> _viewportData;
+        private readonly MaterialTextureStorage _textureStorage;
 
         public OpenGLRenderer()
         {
             _viewportData = new Dictionary<IViewport, ViewportData>();
+            _textureStorage = new MaterialTextureStorage();
         }
 
         public IViewport CreateViewport()
@@ -28,19 +31,28 @@ namespace Sledge.Rendering.OpenGL
             return view;
         }
 
-        private struct Thing
-        {
-            public Vector3 Position;
-        }
+        private bool flag = false;
 
         private void RenderViewport(IViewport viewport, Frame frame)
         {
+            if (!_textureStorage.Exists("WhitePixel"))
+            {
+                _textureStorage.Create("WhitePixel", MaterialTextureStorage.WhitePixel, 1, 1, TextureFlags.None);
+                _textureStorage.Create("DebugTexture", MaterialTextureStorage.DebugTexture, 100, 100, TextureFlags.None);
+            }
+
+
             GL.Enable(EnableCap.DepthTest);
             GL.DepthFunc(DepthFunction.Lequal);
 
             GL.Enable(EnableCap.CullFace);
             GL.CullFace(CullFaceMode.Front);
 
+            GL.Enable(EnableCap.Texture2D);
+            GL.Enable(EnableCap.Blend);
+            GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
+            GL.PixelStore(PixelStoreParameter.UnpackAlignment, 1);
+            
             var data = GetViewportData(viewport);
 
             var array = new TestArray(new[]
@@ -66,6 +78,7 @@ namespace Sledge.Rendering.OpenGL
             var vpMatrix = viewport.Camera.GetViewportMatrix(viewport.Control.Width, viewport.Control.Height);
             var camMatrix = viewport.Camera.GetCameraMatrix();
 
+            _textureStorage.Bind(frame.Milliseconds > 2000 ? "DebugTexture" : "WhitePixel");
             prog.Bind();
             prog.CameraMatrix = camMatrix;
             prog.ViewportMatrix = vpMatrix;
@@ -157,9 +170,11 @@ namespace Sledge.Rendering.OpenGL
 
         private IEnumerable<SimpleVertex> Convert(Face face)
         {
-            return face.Vertices.Select(x => new SimpleVertex
+            return face.Vertices.Select((x,i) => new SimpleVertex
                                              {
                                                  Position = x.ToVector3(),
+                                                 Normal = new Plane(face.Vertices[0], face.Vertices[1], face.Vertices[2]).Normal.ToVector3(),
+                                                 Texture = (i == 1 || i == 2 ? ushort.MaxValue : 0) << 16 | (i == 2 || i == 3 ? ushort.MaxValue : 0),
                                                  Color = face.Material.Color.ToArgb()
                                              });
         }

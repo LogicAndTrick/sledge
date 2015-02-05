@@ -12,9 +12,9 @@ namespace Sledge.Rendering.OpenGL.Shaders
 
         private const string ShaderName = "Passthrough";
 
-        public Passthrough() : base()
+        public Passthrough()
         {
-
+            Shader.Set("currentTexture", 0);
         }
 
         public override string Name

@@ -17,16 +17,16 @@ namespace Sledge.Rendering.DataStructures
         private class NodeGroup
         {
             public int Count { get; set; }
-            public List<T> Items { get; set; }
+            public List<OctreeNode<T>> Nodes { get; set; }
 
             public NodeGroup()
             {
                 Count = 0;
-                Items = new List<T>();
+                Nodes = new List<OctreeNode<T>>();
             }
         }
 
-        public IEnumerable<List<T>> GetNodeGroups(int maxGroupSize = 1000)
+        public IEnumerable<List<OctreeNode<T>>> Partition(int maxPartitionSize = 1000)
         {
             var groups = new List<NodeGroup>();
             var queue = new Queue<OctreeNode<T>>();
@@ -34,21 +34,21 @@ namespace Sledge.Rendering.DataStructures
             while (queue.Count > 0)
             {
                 var node = queue.Dequeue();
-                if (node.Count <= maxGroupSize)
+                if (node.Count <= maxPartitionSize)
                 {
-                    var group = groups.FirstOrDefault(x => x.Count + node.Count <= maxGroupSize);
+                    var group = groups.FirstOrDefault(x => x.Count + node.Count <= maxPartitionSize);
                     if (group == null) groups.Add(group = new NodeGroup());
                     group.Count += node.Count;
-                    group.Items.AddRange(node);
+                    group.Nodes.Add(node);
                 }
                 else
                 {
                     var children = node.GetChildNodes();
-                    if (children.Count == 0) groups.Add(new NodeGroup {Count = node.Count, Items = node.ToList()});
-                    else children.ForEach(x => queue.Enqueue(x));
+                    if (children.Count == 0) groups.Add(new NodeGroup {Count = node.Count, Nodes = new List<OctreeNode<T>> {node}});
+                    else children.ForEach(queue.Enqueue);
                 }
             }
-            return groups.Select(x => x.Items);
+            return groups.Select(x => x.Nodes);
         }
     }
 }
