@@ -58,11 +58,15 @@
     <Compile Include="DataStructures\Octree.cs" />
     <Compile Include="DataStructures\OctreeNode.cs" />
     <Compile Include="Engine.cs" />
+    <Compile Include="Face.cs" />
     <Compile Include="Frame.cs" />
     <Compile Include="Framebuffer.cs" />
     <Compile Include="FrameEventHandler.cs" />
     <Compile Include="IRenderer.cs" />
     <Compile Include="IViewport.cs" />
+    <Compile Include="Materials\IUpdatable.cs" />
+    <Compile Include="Materials\Material.cs" />
+    <Compile Include="Materials\MaterialType.cs" />
     <Compile Include="OpenGL\Arrays\ArrayIndex.cs" />
     <Compile Include="OpenGL\Arrays\ArrayIndexAttribute.cs" />
     <Compile Include="OpenGL\Arrays\ArraySpecification.cs" />
@@ -83,6 +87,7 @@
     <Compile Include="OpenGLViewport.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="Vertex.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>

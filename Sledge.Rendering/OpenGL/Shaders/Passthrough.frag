@@ -13,5 +13,5 @@ void main()
 {
     fragmentColor = vertexColor;
     fragmentColor = texture2D(currentTexture, vertexTexture);
-    //if (fragmentColor.rgb == vec3(0,0,0)) fragmentColor = vec4(1,1,1,1);
+	fragmentColor *= vertexColor;
 }

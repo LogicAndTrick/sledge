@@ -7,6 +7,7 @@ using OpenTK.Graphics.OpenGL;
 using Sledge.Common;
 using Sledge.DataStructures.Geometric;
 using Sledge.Rendering.Cameras;
+using Sledge.Rendering.Materials;
 using Sledge.Rendering.OpenGL.Arrays;
 using Sledge.Rendering.OpenGL.Shaders;
 using Sledge.Rendering.OpenGL.Vertices;
@@ -57,12 +58,12 @@ namespace Sledge.Rendering.OpenGL
 
             var array = new TestArray(new[]
                                       {
-                                          new Face(Material.Flat(Color.Green), new List<Coordinate>
+                                          new Face(Material.Flat(Color.White), new List<Vertex>
                                                                              {
-                                                                                 new Coordinate(0, 0, 0) * 10,
-                                                                                 new Coordinate(1, 0, 0) * 10,
-                                                                                 new Coordinate(1, 1, 0) * 10,
-                                                                                 new Coordinate(0, 1, 0) * 10,
+                                                                                 new Vertex(new Coordinate(0, 0, 0) * 10, 0, 0),
+                                                                                 new Vertex(new Coordinate(1, 0, 0) * 10, 1, 0),
+                                                                                 new Vertex(new Coordinate(1, 1, 0) * 10, 1, 1),
+                                                                                 new Vertex(new Coordinate(0, 1, 0) * 10, 0, 1),
                                                                              }),
                                       });
             var prog = new Passthrough();
@@ -170,13 +171,13 @@ namespace Sledge.Rendering.OpenGL
 
         private IEnumerable<SimpleVertex> Convert(Face face)
         {
-            return face.Vertices.Select((x,i) => new SimpleVertex
-                                             {
-                                                 Position = x.ToVector3(),
-                                                 Normal = new Plane(face.Vertices[0], face.Vertices[1], face.Vertices[2]).Normal.ToVector3(),
-                                                 Texture = (i == 1 || i == 2 ? ushort.MaxValue : 0) << 16 | (i == 2 || i == 3 ? ushort.MaxValue : 0),
-                                                 Color = face.Material.Color.ToArgb()
-                                             });
+            return face.Vertices.Select((x, i) => new SimpleVertex
+                                                  {
+                                                      Position = x.Position.ToVector3(),
+                                                      Normal = face.Plane.Normal.ToVector3(),
+                                                      Texture = new Vector2((float) x.TextureU, (float) x.TextureV),
+                                                      Color = face.Material.Color.ToAbgr(face.Opacity)
+                                                  });
         }
     }
 }

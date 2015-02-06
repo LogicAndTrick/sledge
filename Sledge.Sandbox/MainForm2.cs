@@ -8,6 +8,7 @@ using Sledge.Editor.Brushes;
 using Sledge.Rendering;
 using Sledge.Rendering.Cameras;
 using Sledge.Rendering.DataStructures;
+using Sledge.Rendering.Materials;
 using Sledge.Rendering.OpenGL;
 
 namespace Sledge.Sandbox
@@ -49,7 +50,7 @@ namespace Sledge.Sandbox
             var brushes = b.Create(new IDGenerator(), new Box(-Coordinate.One * 3, Coordinate.One * 2), null, 2).ToList();
             foreach (var s in brushes.OfType<Solid>().SelectMany(x => x.Faces))
             {
-                var face = new Rendering.Face(material, s.Vertices.Select(x => x.Location).ToList());
+                var face = new Rendering.Face(material, s.Vertices.Select(x => new Sledge.Rendering.Vertex(x.Location, x.TextureU, x.TextureV)).ToList());
                 scene.Add(face);
             }
 

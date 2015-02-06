@@ -1,19 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
 using OpenTK;
+using OpenTK.Graphics;
 using Sledge.DataStructures.Geometric;
 
 namespace Sledge.Rendering
 {
-    public enum MaterialType
-    {
-        Flat,
-        Textured,
-        Animated,
-        Blended,
-        // ? Randomised
-    }
-
     public enum LightingType
     {
         None,
@@ -33,18 +25,10 @@ namespace Sledge.Rendering
         {
             return new Coordinate((decimal)vector3.X, (decimal)vector3.Y, (decimal)vector3.Z);
         }
-    }
 
-    public class Material
-    {
-        public MaterialType Type { get; set; }
-        public Color Color { get; set; }
-        public int NumFrames { get; set; }
-        public List<string> Frames { get; set; } // ???
-
-        public static Material Flat(Color color)
+        public static int ToAbgr(this Color color, byte alpha)
         {
-            return new Material {Type = MaterialType.Flat, Color = color};
+            return (alpha << 24) | (color.B << 16) | (color.G << 8) | color.R;
         }
     }
 
@@ -89,20 +73,7 @@ namespace Sledge.Rendering
         public Coordinate Origin { get; set; }
         public LightingType Lighting { get; set; }
         public bool IsWireframe { get; set; }
-    }
-
-    public class Face : RenderableObject
-    {
-        public Material Material { get; set; }
-        public List<Coordinate> Vertices { get; set; }
-        public Plane Plane { get; private set; }
-
-        public Face(Material material, List<Coordinate> vertices)
-        {
-            Material = material;
-            Vertices = vertices;
-            Plane = new Plane(vertices[0], vertices[1], vertices[2]);
-        }
+        public byte Opacity { get; set; }
     }
 
     public class Line : RenderableObject
