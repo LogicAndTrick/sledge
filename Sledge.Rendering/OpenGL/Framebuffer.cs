@@ -2,7 +2,7 @@ using System;
 using System.Drawing;
 using OpenTK.Graphics.OpenGL;
 
-namespace Sledge.Rendering
+namespace Sledge.Rendering.OpenGL
 {
     public class Framebuffer : IDisposable
     {

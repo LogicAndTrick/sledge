@@ -1,13 +1,12 @@
 using System;
 using System.Diagnostics;
-using System.Drawing;
 using System.Windows.Forms;
 using OpenTK;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 using Sledge.Rendering.Cameras;
 
-namespace Sledge.Rendering
+namespace Sledge.Rendering.OpenGL
 {
     public class OpenGLViewport : GLControl, IViewport
     {

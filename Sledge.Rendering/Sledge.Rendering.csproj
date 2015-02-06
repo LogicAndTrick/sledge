@@ -58,18 +58,21 @@
     <Compile Include="DataStructures\Octree.cs" />
     <Compile Include="DataStructures\OctreeNode.cs" />
     <Compile Include="Engine.cs" />
-    <Compile Include="Face.cs" />
+    <Compile Include="Extensions.cs" />
     <Compile Include="Frame.cs" />
-    <Compile Include="Framebuffer.cs" />
     <Compile Include="FrameEventHandler.cs" />
+    <Compile Include="IBounded.cs" />
+    <Compile Include="IOrigin.cs" />
     <Compile Include="IRenderer.cs" />
     <Compile Include="IViewport.cs" />
+    <Compile Include="LightingType.cs" />
     <Compile Include="Materials\IUpdatable.cs" />
     <Compile Include="Materials\Material.cs" />
     <Compile Include="Materials\MaterialType.cs" />
     <Compile Include="OpenGL\Arrays\ArrayIndex.cs" />
     <Compile Include="OpenGL\Arrays\ArrayIndexAttribute.cs" />
     <Compile Include="OpenGL\Arrays\ArraySpecification.cs" />
+    <Compile Include="OpenGL\Framebuffer.cs" />
     <Compile Include="OpenGL\MaterialTextureStorage.cs" />
     <Compile Include="OpenGL\OpenGLRenderer.cs" />
     <Compile Include="OpenGL\Arrays\VertexArray.cs" />
@@ -83,10 +86,18 @@
     <Compile Include="OpenGL\Texture.cs" />
     <Compile Include="OpenGL\Vertices\SimpleVertex.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Scene.cs" />
-    <Compile Include="OpenGLViewport.cs">
+    <Compile Include="OpenGL\OpenGLViewport.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="Scenes\Lights\AmbientLight.cs" />
+    <Compile Include="Scenes\Lights\Light.cs" />
+    <Compile Include="Scenes\Lights\PointLight.cs" />
+    <Compile Include="Scenes\Renderables\Face.cs" />
+    <Compile Include="Scenes\Renderables\Line.cs" />
+    <Compile Include="Scenes\Renderables\RenderableObject.cs" />
+    <Compile Include="Scenes\Scene.cs" />
+    <Compile Include="Scenes\SceneChangeSet.cs" />
+    <Compile Include="Scenes\SceneObject.cs" />
     <Compile Include="Vertex.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

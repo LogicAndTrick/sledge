@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -7,22 +8,143 @@ using OpenTK.Graphics.OpenGL;
 using Sledge.Common;
 using Sledge.DataStructures.Geometric;
 using Sledge.Rendering.Cameras;
+using Sledge.Rendering.DataStructures;
 using Sledge.Rendering.Materials;
 using Sledge.Rendering.OpenGL.Arrays;
 using Sledge.Rendering.OpenGL.Shaders;
 using Sledge.Rendering.OpenGL.Vertices;
+using Sledge.Rendering.Scenes;
+using Sledge.Rendering.Scenes.Renderables;
 
 namespace Sledge.Rendering.OpenGL
 {
+    public class RenderableVertexArray : VertexArray<RenderableObject, SimpleVertex>
+    {
+        public HashSet<RenderableObject> Items { get; private set; }
+
+        public RenderableVertexArray(ICollection<RenderableObject> data) : base(data)
+        {
+            Items = new HashSet<RenderableObject>(data);
+        }
+
+        public void Render()
+        {
+            foreach (var subset in GetSubsets(1))
+            {
+                Render(PrimitiveType.Triangles, subset);
+            }
+        }
+
+        protected override void CreateArray(IEnumerable<RenderableObject> data)
+        {
+            StartSubset(1);
+            foreach (var face in data.OfType<Face>())
+            {
+                var index = PushData(Convert(face));
+                PushIndex(1, index, Triangulate(face.Vertices.Count));
+            }
+            PushSubset(1, (object)null);
+        }
+
+        private IEnumerable<SimpleVertex> Convert(Face face)
+        {
+            return face.Vertices.Select((x, i) => new SimpleVertex
+            {
+                Position = x.Position.ToVector3(),
+                Normal = face.Plane.Normal.ToVector3(),
+                Texture = new Vector2((float)x.TextureU, (float)x.TextureV),
+                Color = face.Material.Color.ToAbgr(face.Opacity)
+            });
+        }
+    }
+
+    public class PartitionedVertexArray : RenderableVertexArray
+    {
+        public Box BoundingBox { get; private set; }
+
+        public PartitionedVertexArray(Box boundingBox, ICollection<RenderableObject> data) : base(data)
+        {
+            BoundingBox = boundingBox;
+        }
+    }
+
+    public class OctreeVertexArray : IDisposable
+    {
+        public Octree<RenderableObject> Octree { get; private set; }
+        public List<PartitionedVertexArray> Partitions { get; private set; }
+        public RenderableVertexArray Spare { get; private set; }
+
+        public OctreeVertexArray(Octree<RenderableObject> octree)
+        {
+            Octree = octree;
+            Partitions = new List<PartitionedVertexArray>();
+            Spare = null;
+            Rebuild();
+        }
+
+        public void Rebuild()
+        {
+            Clear();
+
+            var partitions = Octree.Partition2(1000);
+            foreach (var partition in partitions)
+            {
+                var box = new Box(partition.Select(x => x.BoundingBox));
+                var items = partition.SelectMany(x => x).ToList();
+                var array = new PartitionedVertexArray(box, items);
+                Partitions.Add(array);
+            }
+        }
+
+        // todo clipping
+        public void Render()
+        {
+            var total = Partitions.Sum(x => x.Items.Count);
+            foreach (var array in Partitions)
+            {
+                array.Render();
+            }
+            if (Spare != null)
+            {
+                Spare.Render();
+            }
+        }
+
+        public void Clear()
+        {
+            foreach (var va in Partitions)
+            {
+                va.Dispose();
+            }
+            Partitions.Clear();
+
+            if (Spare != null)
+            {
+                Spare.Dispose();
+            }
+            Spare = null;
+        }
+
+        public void Dispose()
+        {
+            Clear();
+        }
+    }
+
     public class OpenGLRenderer : IRenderer
     {
         private readonly Dictionary<IViewport, ViewportData> _viewportData;
         private readonly MaterialTextureStorage _textureStorage;
+        private readonly Octree<RenderableObject> _octree;
+
+        public Scene Scene { get; private set; }
 
         public OpenGLRenderer()
         {
             _viewportData = new Dictionary<IViewport, ViewportData>();
             _textureStorage = new MaterialTextureStorage();
+            _octree = new Octree<RenderableObject>();
+            Scene = new Scene{TrackChanges = true};
         }
 
         public IViewport CreateViewport()
@@ -32,7 +154,7 @@ namespace Sledge.Rendering.OpenGL
             return view;
         }
 
-        private bool flag = false;
+        OctreeVertexArray arr;
 
         private void RenderViewport(IViewport viewport, Frame frame)
         {
@@ -42,6 +164,14 @@ namespace Sledge.Rendering.OpenGL
                 _textureStorage.Create("DebugTexture", MaterialTextureStorage.DebugTexture, 100, 100, TextureFlags.None);
             }
 
+
+            if (arr == null) arr = new OctreeVertexArray(_octree);
+            if (Scene.HasChanges)
+            {
+                _octree.Add(Scene.Objects.OfType<RenderableObject>());
+                arr.Rebuild();
+                Scene.ClearChanges();
+            }
 
             GL.Enable(EnableCap.DepthTest);
             GL.DepthFunc(DepthFunction.Lequal);
@@ -67,7 +197,7 @@ namespace Sledge.Rendering.OpenGL
                                                                              }),
                                       });
             var prog = new Passthrough();
-
+            
             // Set up FBO
             data.Framebuffer.Size = new Size(viewport.Control.Width, viewport.Control.Height);
             data.Framebuffer.Bind();
@@ -75,7 +205,7 @@ namespace Sledge.Rendering.OpenGL
             GL.ClearColor(Color.Black);
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
-            ((PerspectiveCamera)viewport.Camera).Position += new Coordinate(-0.1m, -0.1m, -0.1m);
+            ((PerspectiveCamera)viewport.Camera).Position += new Coordinate(-0.02m, -0.02m, -0.02m);
             var vpMatrix = viewport.Camera.GetViewportMatrix(viewport.Control.Width, viewport.Control.Height);
             var camMatrix = viewport.Camera.GetCameraMatrix();
 
@@ -83,7 +213,8 @@ namespace Sledge.Rendering.OpenGL
             prog.Bind();
             prog.CameraMatrix = camMatrix;
             prog.ViewportMatrix = vpMatrix;
-            array.Render();
+            // array.Render();
+            arr.Render();
             prog.Unbind();
 
             // Set up camera
@@ -99,20 +230,20 @@ namespace Sledge.Rendering.OpenGL
             // Do actual render
             var colours = new[] { Color.Red, Color.Orange, Color.Yellow, Color.Green, Color.Blue, Color.Indigo, Color.Violet };
 
-            GL.Begin(PrimitiveType.Lines);
-            for (int i = 0; i < colours.Length; i++)
-            {
-                var a = i * 10;
-                var b = (i + 1) * 10;
-                GL.Color3(colours[i]);
-                GL.Vertex3(a, 0, 0);
-                GL.Vertex3(b, 0, 0);
-                GL.Vertex3(0, a, 0);
-                GL.Vertex3(0, b, 0);
-                GL.Vertex3(0, 0, a);
-                GL.Vertex3(0, 0, b);
-            }
-            GL.End();
+            // GL.Begin(PrimitiveType.Lines);
+            // for (int i = 0; i < colours.Length; i++)
+            // {
+            //     var a = i * 10;
+            //     var b = (i + 1) * 10;
+            //     GL.Color3(colours[i]);
+            //     GL.Vertex3(a, 0, 0);
+            //     GL.Vertex3(b, 0, 0);
+            //     GL.Vertex3(0, a, 0);
+            //     GL.Vertex3(0, b, 0);
+            //     GL.Vertex3(0, 0, a);
+            //     GL.Vertex3(0, 0, b);
+            // }
+            // GL.End();
 
             // Blit FBO
             data.Framebuffer.Unbind();

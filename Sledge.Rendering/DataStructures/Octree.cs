@@ -6,7 +6,7 @@ using Sledge.DataStructures.Geometric;
 
 namespace Sledge.Rendering.DataStructures
 {
-    public class Octree<T> : OctreeNode<T> where T : IOrigin
+    public class Octree<T> : OctreeNode<T> where T : IBounded
     {
         public Octree(decimal worldSize = 32768, int limit = 100)
             : base(null, null, new Box(-Coordinate.One * worldSize, Coordinate.One * worldSize), limit)

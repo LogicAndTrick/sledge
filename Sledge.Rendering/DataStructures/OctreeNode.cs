@@ -6,24 +6,25 @@ using Sledge.DataStructures.Geometric;
 
 namespace Sledge.Rendering.DataStructures
 {
-    public class OctreeNode<T> : ICollection<T> where T : IOrigin
+    public class OctreeNode<T> : ICollection<T> where T : IBounded
     {
         public Octree<T> Root { get; protected set; }
         public OctreeNode<T> Parent { get; private set; }
         
-        public Box Box { get; private set; }
+        public Box ClippingBox { get; private set; }
+        public Box BoundingBox { get; private set; }
         public int Count { get; private set; }
 
         private int _limit;
         private List<T> _elements;
         private OctreeNode<T>[] _children;
 
-        public OctreeNode(Octree<T> root, OctreeNode<T> parent, Box box, int limit)
+        public OctreeNode(Octree<T> root, OctreeNode<T> parent, Box clippingBox, int limit)
         {
             Root = root;
             Parent = parent;
             _limit = limit;
-            Box = box;
+            BoundingBox = ClippingBox = clippingBox;
             Count = 0;
             _elements = new List<T>();
             _children = null;
@@ -93,13 +94,13 @@ namespace Sledge.Rendering.DataStructures
                 // If we're still under the limit, break out
                 if (Count <= _limit)
                 {
+                    BoundingBox = new Box(_elements.Select(x => x.BoundingBox));
                     return;
                 }
 
                 // We're over the limit, create the child nodes
-                _children = new OctreeNode<T>[8];
                 var center = _elements.Aggregate(Coordinate.Zero, (a, b) => a + b.Origin) / _elements.Count;
-                _children = Box.GetBoxPoints().Select(x => new OctreeNode<T>(Root, this, new Box(x, center), _limit)).ToArray();
+                _children = ClippingBox.GetBoxPoints().Select(x => new OctreeNode<T>(Root, this, new Box(x, center), _limit)).ToArray();
 
                 // We need to init the child nodes with all elements, so sub in the elements list
                 list = _elements;
@@ -108,7 +109,7 @@ namespace Sledge.Rendering.DataStructures
             }
 
             // Add the elements into their particular nodes
-            var grouped = list.GroupBy(x => _children.First(y => y.Box.CoordinateIsInside(x.Origin))).ToList();
+            var grouped = list.GroupBy(x => _children.First(y => y.ClippingBox.CoordinateIsInside(x.Origin))).ToList();
             if (switched && grouped.Count == 1)
             {
                 // Everything is in the same group! Since we split based on the average origin, that means all the origins are identical.
@@ -131,6 +132,7 @@ namespace Sledge.Rendering.DataStructures
             }
 
             Count = _children.Sum(x => x.Count);
+            BoundingBox = new Box(_children.Select(x => x.BoundingBox));
         }
 
         public bool Remove(T element)
@@ -146,11 +148,12 @@ namespace Sledge.Rendering.DataStructures
             {
                 // We're under the limit, no need to do anything when removing stuff
                 _elements = _elements.Except(list).ToList();
+                BoundingBox = new Box(_elements.Select(x => x.BoundingBox));
                 return Count != startCount;
             }
 
             // Remove the elements from their nodes
-            var grouped = list.GroupBy(x => _children.First(y => y.Box.CoordinateIsInside(x.Origin)));
+            var grouped = list.GroupBy(x => _children.First(y => y.ClippingBox.CoordinateIsInside(x.Origin)));
             if (list.Count < _limit / 2)
             {
                 foreach (var g in grouped)
@@ -169,10 +172,51 @@ namespace Sledge.Rendering.DataStructures
             if (Count <= _limit)
             {
                 _elements = _children.SelectMany(x => x).ToList();
+                BoundingBox = new Box(_elements.Select(x => x.BoundingBox));
                 _children = null;
+            }
+            else
+            {
+                BoundingBox = new Box(_children.Select(x => x.BoundingBox));
             }
 
             return Count != startCount;
+        }
+
+        public IEnumerable<List<OctreeNode<T>>> Partition2(int maxPartitionSize = 1000)
+        {
+            var nodes = GetChildNodes();
+            if (Count <= maxPartitionSize || !nodes.Any())
+            {
+                yield return new List<OctreeNode<T>> { this };
+            }
+            else
+            {
+                var count = 0;
+                var part = new List<OctreeNode<T>>();
+                foreach (var node in nodes)
+                {
+                    if (node.Count > maxPartitionSize)
+                    {
+                        foreach (var p in node.Partition2(maxPartitionSize)) yield return p;
+                    }
+                    else if (node.Count + count > maxPartitionSize)
+                    {
+                        yield return part;
+                        part = new List<OctreeNode<T>> {node};
+                        count = node.Count;
+                    }
+                    else
+                    {
+                        part.Add(node);
+                        count += node.Count;
+                    }
+                }
+                if (count > 0)
+                {
+                    yield return part;
+                }
+            }
         }
 
         public IEnumerator<T> GetEnumerator()
