@@ -62,6 +62,8 @@
     <Compile Include="Frame.cs" />
     <Compile Include="FrameEventHandler.cs" />
     <Compile Include="IBounded.cs" />
+    <Compile Include="IMaterialStorage.cs" />
+    <Compile Include="ITextureStorage.cs" />
     <Compile Include="IOrigin.cs" />
     <Compile Include="IRenderer.cs" />
     <Compile Include="IViewport.cs" />
@@ -73,7 +75,11 @@
     <Compile Include="OpenGL\Arrays\ArrayIndexAttribute.cs" />
     <Compile Include="OpenGL\Arrays\ArraySpecification.cs" />
     <Compile Include="OpenGL\Framebuffer.cs" />
-    <Compile Include="OpenGL\MaterialTextureStorage.cs" />
+    <Compile Include="OpenGL\MaterialStorage.cs" />
+    <Compile Include="OpenGL\OctreeVertexArray.cs" />
+    <Compile Include="OpenGL\PartitionedVertexArray.cs" />
+    <Compile Include="OpenGL\RenderableVertexArray.cs" />
+    <Compile Include="OpenGL\TextureStorage.cs" />
     <Compile Include="OpenGL\OpenGLRenderer.cs" />
     <Compile Include="OpenGL\Arrays\VertexArray.cs" />
     <Compile Include="OpenGL\Shader.cs" />
@@ -83,7 +89,6 @@
     <Compile Include="OpenGL\ShaderVariable.cs" />
     <Compile Include="Cameras\OrthographicCamera.cs" />
     <Compile Include="Cameras\PerspectiveCamera.cs" />
-    <Compile Include="OpenGL\Texture.cs" />
     <Compile Include="OpenGL\Vertices\SimpleVertex.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="OpenGL\OpenGLViewport.cs">
@@ -98,6 +103,7 @@
     <Compile Include="Scenes\Scene.cs" />
     <Compile Include="Scenes\SceneChangeSet.cs" />
     <Compile Include="Scenes\SceneObject.cs" />
+    <Compile Include="Texture.cs" />
     <Compile Include="Vertex.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

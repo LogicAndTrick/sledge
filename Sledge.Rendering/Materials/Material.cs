@@ -9,7 +9,8 @@ namespace Sledge.Rendering.Materials
     {
         public MaterialType Type { get; set; }
         public Color Color { get; set; }
-        public int CurrentFrame { get; set; }
+        public string CurrentFrame { get { return TextureFrames[CurrentFrameIndex]; } }
+        public int CurrentFrameIndex { get; set; }
         public List<string> TextureFrames { get; set; } // ??? 
         private int _millisecondsPerFrame;
 
@@ -49,20 +50,25 @@ namespace Sledge.Rendering.Materials
             Type = type;
             Color = color;
             TextureFrames = textureFrames.ToList();
-            CurrentFrame = 0;
+            CurrentFrameIndex = 0;
+        }
+
+        public bool IsUpdatable()
+        {
+            return Type == MaterialType.Animated && _millisecondsPerFrame > 0 && TextureFrames.Count > 1;
         }
 
         private long _lastFrame = -1;
         public void Update(Frame frame)
         {
-            if (Type == MaterialType.Animated && _millisecondsPerFrame > 0 && TextureFrames.Count > 1)
+            if (!IsUpdatable()) return;
+
+            if (_lastFrame >= 0 && frame.Milliseconds - _lastFrame >= _millisecondsPerFrame)
             {
-                if (_lastFrame >= 0 && frame.Milliseconds - _lastFrame >= _millisecondsPerFrame)
-                {
-                    CurrentFrame = (CurrentFrame + 1) % TextureFrames.Count;
-                }
+                CurrentFrameIndex = (CurrentFrameIndex + 1) % TextureFrames.Count;
                 _lastFrame = frame.Milliseconds;
             }
+            if (_lastFrame < 0) _lastFrame = frame.Milliseconds;
         }
     }
 }

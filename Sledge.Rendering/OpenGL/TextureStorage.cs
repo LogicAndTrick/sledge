@@ -8,7 +8,7 @@ using PixelFormat = OpenTK.Graphics.OpenGL.PixelFormat;
 
 namespace Sledge.Rendering.OpenGL
 {
-    public class MaterialTextureStorage : IDisposable
+    public class TextureStorage : IDisposable, ITextureStorage
     {
         private static bool? _supportsNpot;
 
@@ -25,7 +25,7 @@ namespace Sledge.Rendering.OpenGL
         public static Bitmap WhitePixel { get; private set; }
         public static Bitmap DebugTexture { get; private set; }
 
-        static MaterialTextureStorage()
+        static TextureStorage()
         {
             WhitePixel = new Bitmap(1, 1);
             using (var g = System.Drawing.Graphics.FromImage(WhitePixel))
@@ -58,7 +58,7 @@ namespace Sledge.Rendering.OpenGL
 
         public bool DisableTextureFiltering { get; set; }
 
-        public MaterialTextureStorage()
+        public TextureStorage()
         {
             Textures = new Dictionary<string, Texture>();
             PixelInternalFormat = PixelInternalFormat.Rgba;

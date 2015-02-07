@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
-using Sledge.Graphics.Shaders;
 
 namespace Sledge.Rendering.OpenGL.Shaders
 {

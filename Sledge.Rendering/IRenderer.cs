@@ -1,4 +1,5 @@
-﻿using Sledge.Rendering.Scenes;
+﻿using Sledge.Rendering.OpenGL;
+using Sledge.Rendering.Scenes;
 
 namespace Sledge.Rendering
 {
@@ -6,5 +7,7 @@ namespace Sledge.Rendering
     {
         IViewport CreateViewport();
         Scene Scene { get; }
+        ITextureStorage Textures { get; }
+        IMaterialStorage Materials { get; }
     }
 }

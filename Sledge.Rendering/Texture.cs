@@ -1,9 +1,9 @@
 using System;
 using Sledge.Common;
 
-namespace Sledge.Rendering.OpenGL
+namespace Sledge.Rendering
 {
-    public class Texture : IDisposable
+    public class Texture
     {
         public int ID { get; private set; }
         public string Name { get; private set; }
@@ -16,21 +16,6 @@ namespace Sledge.Rendering.OpenGL
             ID = id;
             Name = name;
             Flags = flags;
-        }
-
-        public void Bind()
-        {
-
-        }
-
-        public void Unbind()
-        {
-
-        }
-
-        public void Dispose()
-        {
-            // 
         }
     }
 }
