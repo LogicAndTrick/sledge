@@ -1,7 +1,6 @@
-using System;
 using Sledge.Common;
 
-namespace Sledge.Rendering
+namespace Sledge.Rendering.Materials
 {
     public class Texture
     {

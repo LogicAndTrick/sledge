@@ -2,11 +2,11 @@ using System.Collections.Generic;
 using System.Linq;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
-using Sledge.Rendering.OpenGL.Arrays;
+using Sledge.Rendering.Interfaces;
 using Sledge.Rendering.OpenGL.Vertices;
 using Sledge.Rendering.Scenes.Renderables;
 
-namespace Sledge.Rendering.OpenGL
+namespace Sledge.Rendering.OpenGL.Arrays
 {
     public class RenderableVertexArray : VertexArray<RenderableObject, SimpleVertex>
     {

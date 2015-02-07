@@ -1,6 +1,6 @@
 using Sledge.Rendering.Materials;
 
-namespace Sledge.Rendering
+namespace Sledge.Rendering.Interfaces
 {
     public interface IMaterialStorage : IUpdatable
     {

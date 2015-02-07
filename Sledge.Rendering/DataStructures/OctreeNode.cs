@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Sledge.DataStructures.Geometric;
+using Sledge.Rendering.Interfaces;
 
 namespace Sledge.Rendering.DataStructures
 {

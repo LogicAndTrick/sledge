@@ -1,6 +1,6 @@
 using Sledge.DataStructures.Geometric;
 
-namespace Sledge.Rendering
+namespace Sledge.Rendering.Scenes.Renderables
 {
     public class Vertex
     {

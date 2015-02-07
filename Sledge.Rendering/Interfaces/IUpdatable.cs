@@ -1,4 +1,4 @@
-namespace Sledge.Rendering.Materials
+namespace Sledge.Rendering.Interfaces
 {
     public interface IUpdatable
     {

@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using Sledge.DataStructures.Geometric;
 using Sledge.Rendering.DataStructures;
+using Sledge.Rendering.Interfaces;
 using Sledge.Rendering.Scenes.Renderables;
 
-namespace Sledge.Rendering.OpenGL
+namespace Sledge.Rendering.OpenGL.Arrays
 {
     public class OctreeVertexArray : IDisposable
     {

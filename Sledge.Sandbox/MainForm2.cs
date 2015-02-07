@@ -97,7 +97,7 @@ namespace Sledge.Sandbox
                     foreach (var s in brushes.OfType<Solid>().SelectMany(x => x.Faces))
                     {
                         s.FitTextureToPointCloud(new Cloud(s.Vertices.Select(v => v.Location)), 1, 1);
-                        var face = new Rendering.Scenes.Renderables.Face(material, s.Vertices.Select(x => new Sledge.Rendering.Vertex(x.Location, x.TextureU, x.TextureV)).ToList());
+                        var face = new Rendering.Scenes.Renderables.Face(material, s.Vertices.Select(x => new Sledge.Rendering.Scenes.Renderables.Vertex(x.Location, x.TextureU, x.TextureV)).ToList());
                         scene.Add(face);
                     }
                 }
@@ -113,19 +113,16 @@ namespace Sledge.Sandbox
             {
                 using (var ss = wp.GetStreamSource(512, 512, packages))
                 {
-                    foreach (var tp in packages)
+                    foreach (var ti in textures)
                     {
-                        foreach (var ti in tp.Items.Values)
+                        Thread.Sleep(100);
+                        var ti1 = ti;
+                        c.Invoke((Action) (() =>
                         {
-                            //Thread.Sleep(1000);
-                            var ti1 = ti;
-                            c.Invoke((Action) (() =>
-                            {
-                                var bmp = ss.GetImage(ti1);
-                                renderer.Textures.Create(ti1.Name, bmp, ti1.Width, ti1.Height, ti1.Flags);
-                                bmp.Dispose();
-                            }));
-                        }
+                            var bmp = ss.GetImage(ti1);
+                            renderer.Textures.Create(ti1.Name, bmp, ti1.Width, ti1.Height, ti1.Flags);
+                            bmp.Dispose();
+                        }));
                     }
                 }
             });

@@ -7,7 +7,6 @@ namespace Sledge.Rendering.Scenes.Renderables
 {
     public class Face : RenderableObject
     {
-        public Material Material { get; set; }
         public List<Vertex> Vertices { get; set; }
         public Plane Plane { get; private set; }
 

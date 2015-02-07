@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Sledge.Rendering.Interfaces;
 
 namespace Sledge.Rendering
 {

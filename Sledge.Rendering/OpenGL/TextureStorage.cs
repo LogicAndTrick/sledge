@@ -4,6 +4,8 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using OpenTK.Graphics.OpenGL;
 using Sledge.Common;
+using Sledge.Rendering.Interfaces;
+using Sledge.Rendering.Materials;
 using PixelFormat = OpenTK.Graphics.OpenGL.PixelFormat;
 
 namespace Sledge.Rendering.OpenGL

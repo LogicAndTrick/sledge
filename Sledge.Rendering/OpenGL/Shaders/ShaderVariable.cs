@@ -1,7 +1,7 @@
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 
-namespace Sledge.Rendering.OpenGL
+namespace Sledge.Rendering.OpenGL.Shaders
 {
     public class ShaderVariable
     {

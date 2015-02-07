@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using Sledge.DataStructures.Geometric;
 using Sledge.Rendering.Scenes.Renderables;
 
-namespace Sledge.Rendering.OpenGL
+namespace Sledge.Rendering.OpenGL.Arrays
 {
     public class PartitionedVertexArray : RenderableVertexArray
     {

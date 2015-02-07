@@ -1,4 +1,4 @@
-﻿namespace Sledge.Rendering
+﻿namespace Sledge.Rendering.Scenes.Renderables
 {
     public enum LightingType
     {

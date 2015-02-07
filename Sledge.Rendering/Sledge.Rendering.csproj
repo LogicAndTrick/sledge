@@ -61,14 +61,14 @@
     <Compile Include="Extensions.cs" />
     <Compile Include="Frame.cs" />
     <Compile Include="FrameEventHandler.cs" />
-    <Compile Include="IBounded.cs" />
-    <Compile Include="IMaterialStorage.cs" />
-    <Compile Include="ITextureStorage.cs" />
-    <Compile Include="IOrigin.cs" />
-    <Compile Include="IRenderer.cs" />
-    <Compile Include="IViewport.cs" />
-    <Compile Include="LightingType.cs" />
-    <Compile Include="Materials\IUpdatable.cs" />
+    <Compile Include="Interfaces\IBounded.cs" />
+    <Compile Include="Interfaces\IMaterialStorage.cs" />
+    <Compile Include="Interfaces\ITextureStorage.cs" />
+    <Compile Include="Interfaces\IOrigin.cs" />
+    <Compile Include="Interfaces\IRenderer.cs" />
+    <Compile Include="Interfaces\IViewport.cs" />
+    <Compile Include="Scenes\Renderables\LightingType.cs" />
+    <Compile Include="Interfaces\IUpdatable.cs" />
     <Compile Include="Materials\Material.cs" />
     <Compile Include="Materials\MaterialType.cs" />
     <Compile Include="OpenGL\Arrays\ArrayIndex.cs" />
@@ -76,17 +76,17 @@
     <Compile Include="OpenGL\Arrays\ArraySpecification.cs" />
     <Compile Include="OpenGL\Framebuffer.cs" />
     <Compile Include="OpenGL\MaterialStorage.cs" />
-    <Compile Include="OpenGL\OctreeVertexArray.cs" />
-    <Compile Include="OpenGL\PartitionedVertexArray.cs" />
-    <Compile Include="OpenGL\RenderableVertexArray.cs" />
+    <Compile Include="OpenGL\Arrays\OctreeVertexArray.cs" />
+    <Compile Include="OpenGL\Arrays\PartitionedVertexArray.cs" />
+    <Compile Include="OpenGL\Arrays\RenderableVertexArray.cs" />
     <Compile Include="OpenGL\TextureStorage.cs" />
     <Compile Include="OpenGL\OpenGLRenderer.cs" />
     <Compile Include="OpenGL\Arrays\VertexArray.cs" />
-    <Compile Include="OpenGL\Shader.cs" />
-    <Compile Include="OpenGL\ShaderProgram.cs" />
+    <Compile Include="OpenGL\Shaders\Shader.cs" />
+    <Compile Include="OpenGL\Shaders\ShaderProgram.cs" />
     <Compile Include="OpenGL\Shaders\Passthrough.cs" />
     <Compile Include="OpenGL\Shaders\ShaderBase.cs" />
-    <Compile Include="OpenGL\ShaderVariable.cs" />
+    <Compile Include="OpenGL\Shaders\ShaderVariable.cs" />
     <Compile Include="Cameras\OrthographicCamera.cs" />
     <Compile Include="Cameras\PerspectiveCamera.cs" />
     <Compile Include="OpenGL\Vertices\SimpleVertex.cs" />
@@ -103,8 +103,8 @@
     <Compile Include="Scenes\Scene.cs" />
     <Compile Include="Scenes\SceneChangeSet.cs" />
     <Compile Include="Scenes\SceneObject.cs" />
-    <Compile Include="Texture.cs" />
-    <Compile Include="Vertex.cs" />
+    <Compile Include="Materials\Texture.cs" />
+    <Compile Include="Scenes\Renderables\Vertex.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -134,10 +134,6 @@
     <ProjectReference Include="..\Sledge.DataStructures\Sledge.DataStructures.csproj">
       <Project>{26A974C9-E495-4FA3-8E87-1E00019D04F5}</Project>
       <Name>Sledge.DataStructures</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Sledge.Graphics\Sledge.Graphics.csproj">
-      <Project>{614D4144-8920-4975-AC67-DBBA5CB1EB43}</Project>
-      <Name>Sledge.Graphics</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

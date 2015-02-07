@@ -1,7 +1,6 @@
-﻿using Sledge.Rendering.OpenGL;
-using Sledge.Rendering.Scenes;
+﻿using Sledge.Rendering.Scenes;
 
-namespace Sledge.Rendering
+namespace Sledge.Rendering.Interfaces
 {
     public interface IRenderer
     {

@@ -5,6 +5,7 @@ using OpenTK;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 using Sledge.Rendering.Cameras;
+using Sledge.Rendering.Interfaces;
 
 namespace Sledge.Rendering.OpenGL
 {

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Sledge.Rendering.Interfaces;
 using Sledge.Rendering.Materials;
 
 namespace Sledge.Rendering.OpenGL

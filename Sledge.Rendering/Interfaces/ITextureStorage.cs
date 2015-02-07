@@ -1,7 +1,8 @@
 using System.Drawing;
 using Sledge.Common;
+using Sledge.Rendering.Materials;
 
-namespace Sledge.Rendering
+namespace Sledge.Rendering.Interfaces
 {
     public interface ITextureStorage
     {
