@@ -7,16 +7,31 @@ namespace Sledge.Rendering.Scenes.Renderables
 {
     public class Face : RenderableObject
     {
-        public List<Vertex> Vertices { get; set; }
-        public Plane Plane { get; private set; }
+        private List<Vertex> _vertices;
+        private Plane _plane;
+
+        public List<Vertex> Vertices
+        {
+            get { return _vertices; }
+            set
+            {
+                _vertices = value;
+                _plane = new Plane(value[0].Position, value[1].Position, value[2].Position);
+                BoundingBox = new Box(value.Select(x => x.Position));
+                OnPropertyChanged("Vertices");
+                OnPropertyChanged("Plant");
+            }
+        }
+
+        public Plane Plane
+        {
+            get { return _plane; }
+        }
 
         public Face(Material material, List<Vertex> vertices)
         {
             Material = material;
             Vertices = vertices;
-            Plane = new Plane(vertices[0].Position, vertices[1].Position, vertices[2].Position);
-            BoundingBox = new Box(vertices.Select(x => x.Position));
-            Opacity = byte.MaxValue;
         }
     }
 }

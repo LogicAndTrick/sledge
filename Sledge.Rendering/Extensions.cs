@@ -16,9 +16,9 @@ namespace Sledge.Rendering
             return new Coordinate((decimal)vector3.X, (decimal)vector3.Y, (decimal)vector3.Z);
         }
 
-        public static int ToAbgr(this Color color, byte alpha)
+        public static int ToAbgr(this Color color)
         {
-            return (alpha << 24) | (color.B << 16) | (color.G << 8) | color.R;
+            return (color.A << 24) | (color.B << 16) | (color.G << 8) | color.R;
         }
     }
 }

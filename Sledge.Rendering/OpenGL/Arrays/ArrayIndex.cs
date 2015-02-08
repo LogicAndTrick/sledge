@@ -20,7 +20,9 @@ namespace Sledge.Rendering.OpenGL.Arrays
         }
 
         public string Name { get; private set; }
+        public bool IsIntegerType { get; private set; }
         public VertexAttribPointerType Type { get; private set; }
+        public VertexAttribIntegerType IntegerType { get; private set; }
         public int Length { get; private set; }
         public int Size { get; private set; }
         public bool Normalised { get; set; }
@@ -28,11 +30,42 @@ namespace Sledge.Rendering.OpenGL.Arrays
 
         public ArrayIndex(string name, VertexAttribPointerType type, int length)
         {
+            IsIntegerType = false;
             Name = name;
             Type = type;
             Length = length;
             Size = GetSize(type) * length;
             Normalised = false;
+        }
+
+        public ArrayIndex(string name, VertexAttribIntegerType type, int length)
+        {
+            IsIntegerType = true;
+            Name = name;
+            IntegerType = type;
+            Length = length;
+            Size = GetSize(type) * length;
+            Normalised = false;
+        }
+
+        private static int GetSize(VertexAttribIntegerType type)
+        {
+            switch (type)
+            {
+                case VertexAttribIntegerType.Byte:
+                case VertexAttribIntegerType.UnsignedByte:
+                    return sizeof (byte);
+                case VertexAttribIntegerType.Short:
+                    return sizeof(short);
+                case VertexAttribIntegerType.UnsignedShort:
+                    return sizeof(ushort);
+                case VertexAttribIntegerType.Int:
+                    return sizeof(int);
+                case VertexAttribIntegerType.UnsignedInt:
+                    return sizeof(uint);
+                default:
+                    throw new ArgumentOutOfRangeException("type");
+            }
         }
 
         private static int GetSize(VertexAttribPointerType type)

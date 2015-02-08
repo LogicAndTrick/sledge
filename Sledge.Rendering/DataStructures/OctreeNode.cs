@@ -95,7 +95,7 @@ namespace Sledge.Rendering.DataStructures
                 // If we're still under the limit, break out
                 if (Count <= _limit)
                 {
-                    BoundingBox = new Box(_elements.Select(x => x.BoundingBox));
+                    BoundingBox = _elements.Count == 0 ? ClippingBox : new Box(_elements.Select(x => x.BoundingBox));
                     return;
                 }
 
@@ -149,22 +149,25 @@ namespace Sledge.Rendering.DataStructures
             {
                 // We're under the limit, no need to do anything when removing stuff
                 _elements = _elements.Except(list).ToList();
-                BoundingBox = new Box(_elements.Select(x => x.BoundingBox));
+                BoundingBox = _elements.Count == 0 ? ClippingBox : new Box(_elements.Select(x => x.BoundingBox));
                 return Count != startCount;
             }
 
             // Remove the elements from their nodes
-            var grouped = list.GroupBy(x => _children.First(y => y.ClippingBox.CoordinateIsInside(x.Origin)));
+            var grouped = list.GroupBy(x => _children.FirstOrDefault(y => y.Contains(x)));
             if (list.Count < _limit / 2)
             {
                 foreach (var g in grouped)
                 {
-                    g.Key.Remove(g);
+                    if (g.Key != null) g.Key.Remove(g);
                 }
             }
             else
             {
-                Parallel.ForEach(grouped, g => g.Key.Remove(g));
+                Parallel.ForEach(grouped, g =>
+                {
+                    if (g.Key != null) g.Key.Remove(g);
+                });
             }
 
             Count = _children.Sum(x => x.Count);
@@ -173,7 +176,7 @@ namespace Sledge.Rendering.DataStructures
             if (Count <= _limit)
             {
                 _elements = _children.SelectMany(x => x).ToList();
-                BoundingBox = new Box(_elements.Select(x => x.BoundingBox));
+                BoundingBox = _elements.Count == 0 ? ClippingBox : new Box(_elements.Select(x => x.BoundingBox));
                 _children = null;
             }
             else

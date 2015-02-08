@@ -67,7 +67,8 @@ namespace Sledge.Rendering.OpenGL.Arrays
             {
                 var ai = Specification.Indices[j];
                 GL.EnableVertexAttribArray(j);
-                GL.VertexAttribPointer(j, ai.Length, ai.Type, ai.Normalised, stride, ai.Offset);
+                if (ai.IsIntegerType) GL.VertexAttribIPointer(j, ai.Length, ai.IntegerType, stride, new IntPtr(ai.Offset));
+                else GL.VertexAttribPointer(j, ai.Length, ai.Type, ai.Normalised, stride, new IntPtr(ai.Offset));
             }
             GL.BindBuffer(BufferTarget.ElementArrayBuffer, _elementArray);
 

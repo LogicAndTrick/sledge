@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel;
+using Sledge.Rendering.Scenes.Renderables;
 
 namespace Sledge.Rendering.Scenes
 {
@@ -57,11 +59,28 @@ namespace Sledge.Rendering.Scenes
             _updateInProgress = false;
         }
 
+        private void ObjectUpdated(object sender, PropertyChangedEventArgs e)
+        {
+            if (!_trackChanges) return;
+            if (_changeSet == null) _changeSet = new SceneChangeSet();
+
+            var obj = (SceneObject) sender;
+            if (obj is RenderableObject && (e.PropertyName == "Origin" || e.PropertyName == "Material"))
+            {
+                _changeSet.Replace(obj);
+            }
+            else
+            {
+                _changeSet.Update(obj);
+            }
+        }
+
         public void Add(SceneObject obj)
         {
             if (_trackChanges && _changeSet == null) _changeSet = new SceneChangeSet();
             if (_trackChanges) _changeSet.Add(obj);
             _objects.Add(obj);
+            obj.PropertyChanged += ObjectUpdated;
         }
 
         public void Remove(SceneObject obj)
@@ -69,6 +88,7 @@ namespace Sledge.Rendering.Scenes
             if (_trackChanges && _changeSet == null) _changeSet = new SceneChangeSet();
             if (_trackChanges) _changeSet.Remove(obj);
             _objects.Remove(obj);
+            obj.PropertyChanged -= ObjectUpdated;
         }
     }
 }

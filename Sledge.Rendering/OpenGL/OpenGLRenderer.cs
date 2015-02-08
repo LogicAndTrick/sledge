@@ -19,7 +19,6 @@ namespace Sledge.Rendering.OpenGL
         private readonly Dictionary<IViewport, ViewportData> _viewportData;
         private readonly TextureStorage _textureStorage;
         private readonly MaterialStorage _materialStorage;
-        private readonly Octree<RenderableObject> _octree;
         private OctreeVertexArray _vertexArray;
         private bool _initialised;
 
@@ -32,7 +31,6 @@ namespace Sledge.Rendering.OpenGL
             _viewportData = new Dictionary<IViewport, ViewportData>();
             _textureStorage = new TextureStorage();
             _materialStorage = new MaterialStorage(this);
-            _octree = new Octree<RenderableObject>();
             Scene = new Scene{TrackChanges = true};
             _initialised = false;
         }
@@ -41,7 +39,7 @@ namespace Sledge.Rendering.OpenGL
         {
             if (_initialised) return;
 
-            _vertexArray = new OctreeVertexArray(_octree);
+            _vertexArray = new OctreeVertexArray(Scene);
 
             if (!_textureStorage.Exists("WhitePixel"))
             {
@@ -83,16 +81,6 @@ namespace Sledge.Rendering.OpenGL
             }
         }
 
-        private void ApplySceneChanges()
-        {
-            if (Scene.HasChanges)
-            {
-                _octree.Add(Scene.Objects.OfType<RenderableObject>());
-                _vertexArray.Rebuild();
-                Scene.ClearChanges();
-            }
-        }
-
         private void UpdateViewport(IViewport viewport, Frame frame)
         {
             Materials.Update(frame);
@@ -104,7 +92,7 @@ namespace Sledge.Rendering.OpenGL
 
             InitialiseRenderer();
             InitialiseViewport(viewport, data);
-            ApplySceneChanges();
+            _vertexArray.ApplyChanges();
 
             var prog = new Passthrough();
             
@@ -114,7 +102,7 @@ namespace Sledge.Rendering.OpenGL
             GL.ClearColor(Color.Black);
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
-            //((PerspectiveCamera)viewport.Camera).Position += new Coordinate(-0.002m, -0.002m, -0.002m);
+            ((PerspectiveCamera)viewport.Camera).Position += new Coordinate(-0.002m, -0.002m, -0.002m);
 
             var vpMatrix = viewport.Camera.GetViewportMatrix(viewport.Control.Width, viewport.Control.Height);
             var camMatrix = viewport.Camera.GetCameraMatrix();
@@ -124,6 +112,7 @@ namespace Sledge.Rendering.OpenGL
             prog.CameraMatrix = camMatrix;
             prog.ViewportMatrix = vpMatrix;
             _vertexArray.RenderTextured(this);
+            // _vertexArray.RenderWireframe(this);
             prog.Unbind();
 
             // Blit FBO

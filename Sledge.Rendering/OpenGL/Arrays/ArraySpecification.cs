@@ -34,7 +34,8 @@ namespace Sledge.Rendering.OpenGL.Arrays
                 var attr = field.GetCustomAttributes(typeof(ArrayIndexAttribute), false).OfType<ArrayIndexAttribute>().FirstOrDefault();
                 if (attr != null)
                 {
-                    Indices.Add(new ArrayIndex(field.Name, attr.Type, attr.Length) { Normalised = attr.Normalised });
+                    if (attr.IsIntegerType) Indices.Add(new ArrayIndex(field.Name, attr.IntegerType, attr.Length) { Normalised = attr.Normalised });
+                    else Indices.Add(new ArrayIndex(field.Name, attr.Type, attr.Length) { Normalised = attr.Normalised });
                     continue;
                 }
                 switch (field.FieldType.Name)

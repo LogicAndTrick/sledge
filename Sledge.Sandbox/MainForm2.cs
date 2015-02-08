@@ -14,6 +14,8 @@ using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Materials;
 using Sledge.Rendering.OpenGL;
 using Sledge.Rendering.Scenes.Lights;
+using Face = Sledge.Rendering.Scenes.Renderables.Face;
+using Vertex = Sledge.Rendering.Scenes.Renderables.Vertex;
 
 namespace Sledge.Sandbox
 {
@@ -69,7 +71,7 @@ namespace Sledge.Sandbox
 
             // Create scene
             var scene = renderer.Scene;
-            scene.StartUpdate();
+            //scene.StartUpdate();
 
             var light = new AmbientLight(Color.White, new Coordinate(1, 2, 3), 0.8f);
             scene.Add(light);
@@ -81,29 +83,66 @@ namespace Sledge.Sandbox
 
             var animat = Material.Animated(7, Enumerable.Range(1, 7).Select(x => "+" + x + "~c2a4_cmp2").ToArray());
             //renderer.Materials.Add(animat);
-            
-            var r = new Random();
-            var b = new BlockBrush();
-            Parallel.For(0, 10000, i =>
-            {
-                var coord = new Coordinate(r.Next(-50, 50), r.Next(-50, 50), r.Next(-50, 50));
-                var brushes = b.Create(new IDGenerator(), new Box(coord, coord + Coordinate.One), new TestTexture(textures[i % textures.Count]), 2).ToList();
 
-                var r2 = new Random();
-                lock (scene)
+            Task.Factory.StartNew(() =>
+            {
+                const int area = 20;
+                var r = new Random();
+                var b = new BlockBrush();
+                for (var i = 0; i < area * 100; i++)
                 {
-                    var material = i % 2 == 0 ? Material.Texture(textures[i % textures.Count].Name) : Material.Flat(Color.FromArgb(r2.Next(128, 255), r2.Next(128, 255), r2.Next(128, 255)));
-                    renderer.Materials.Add(material);
-                    foreach (var s in brushes.OfType<Solid>().SelectMany(x => x.Faces))
+                    Thread.Sleep(2);
+                    lock (scene)
                     {
-                        s.FitTextureToPointCloud(new Cloud(s.Vertices.Select(v => v.Location)), 1, 1);
-                        var face = new Rendering.Scenes.Renderables.Face(material, s.Vertices.Select(x => new Sledge.Rendering.Scenes.Renderables.Vertex(x.Location, x.TextureU, x.TextureV)).ToList());
-                        scene.Add(face);
+                        var coord = new Coordinate(r.Next(-area, area), r.Next(-area, area), r.Next(-area, area));
+                        var brushes = b.Create(new IDGenerator(), new Box(coord, coord + Coordinate.One), new TestTexture(textures[i % textures.Count]), 2).ToList();
+
+                        var r2 = new Random();
+                        var material = i % 2 == 0
+                            ? Material.Texture(textures[i % textures.Count].Name)
+                            : Material.Flat(Color.FromArgb(r2.Next(128, 255), r2.Next(128, 255), r2.Next(128, 255)));
+                        renderer.Materials.Add(material);
+                        foreach (var s in brushes.OfType<Solid>().SelectMany(x => x.Faces))
+                        {
+                            s.FitTextureToPointCloud(new Cloud(s.Vertices.Select(v => v.Location)), 1, 1);
+                            var face = new Face(material, s.Vertices.Select(x => new Vertex(x.Location, x.TextureU, x.TextureV)).ToList());
+                            scene.Add(face);
+                        }
                     }
                 }
             });
 
-            scene.EndUpdate();
+            Task.Factory.StartNew(() =>
+            {
+                for (var i = 0; ; i = (i + 1) % 4)
+                {
+                    Thread.Sleep(5);
+                    var random = new Random();
+                    lock (scene)
+                    {
+                        var objects = scene.Objects.ToList();
+                        var index = random.Next(0, objects.Count);
+                        var face = objects[index] as Face;
+                        if (face != null)
+                        {
+                            if (false && i < 2)
+                            {
+                                var material = i % 2 == 0
+                                    ? Material.Texture(textures[i % textures.Count].Name)
+                                    : Material.Flat(Color.FromArgb(random.Next(128, 255), random.Next(128, 255), random.Next(128, 255)));
+                                face.Material = material;
+                            }
+                            else
+                            {
+                                scene.Remove(face);
+                                // face.Vertices = face.Vertices.Select(x => new Vertex(x.Position + Coordinate.One, x.TextureU, x.TextureV)).ToList();
+                            }
+                        }
+                    }
+                }
+            });
+
+            //scene.EndUpdate();
 
             // Add scene to renderer / add renderer to scene
 

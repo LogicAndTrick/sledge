@@ -16,5 +16,8 @@ namespace Sledge.Rendering.OpenGL.Vertices
 
         [ArrayIndex(VertexAttribPointerType.UnsignedByte, 4, true)]
         public int Color;
+
+        [ArrayIndex(VertexAttribIntegerType.UnsignedInt)]
+        public VertexFlags Flags;
     }
 }
