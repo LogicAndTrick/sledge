@@ -13,6 +13,7 @@ namespace Sledge.Rendering.OpenGL.Arrays
     {
         private const int Textured = 0;
         private const int Wireframe = 1;
+        private const int Point = 2;
 
         public HashSet<RenderableObject> Items { get; private set; }
 
@@ -45,23 +46,33 @@ namespace Sledge.Rendering.OpenGL.Arrays
             }
         }
 
+        public void RenderPoints(IRenderer renderer)
+        {
+            foreach (var subset in GetSubsets(Point))
+            {
+                Render(PrimitiveType.Points, subset);
+            }
+        }
+
         public void UpdatePartial(IEnumerable<RenderableObject> objects)
         {
-            foreach (var face in objects.OfType<Face>())
+            foreach (var obj in objects)
             {
-                var offset = GetOffset(face);
+                var offset = GetOffset(obj);
                 if (offset < 0) continue;
-                Update(offset, Convert(face));
+                if (obj is Face) Update(offset, Convert((Face)obj));
+                if (obj is Line) Update(offset, Convert((Line)obj));
             }
         }
 
         public void DeletePartial(IEnumerable<RenderableObject> objects)
         {
-            foreach (var face in objects.OfType<Face>())
+            foreach (var obj in objects)
             {
-                var offset = GetOffset(face);
+                var offset = GetOffset(obj);
                 if (offset < 0) continue;
-                Update(offset, Convert(face, VertexFlags.Invisible));
+                if (obj is Face) Update(offset, Convert((Face)obj, VertexFlags.Invisible));
+                if (obj is Line) Update(offset, Convert((Line)obj, VertexFlags.Invisible));
             }
         }
 
@@ -70,21 +81,31 @@ namespace Sledge.Rendering.OpenGL.Arrays
             Items = new HashSet<RenderableObject>(data);
 
             StartSubset(Wireframe);
-            
-            foreach (var g in Items.OfType<Face>().GroupBy(x => x.Material.UniqueIdentifier))
+            StartSubset(Point);
+
+            foreach (var g in Items.Where(x => x.RenderFlags != RenderFlags.None).GroupBy(x => x.Material.UniqueIdentifier))
             {
                 StartSubset(Textured);
-                foreach (var face in g)
+                foreach (var face in g.OfType<Face>())
                 {
                     PushOffset(face);
                     var index = PushData(Convert(face));
-                    PushIndex(Textured, index, Triangulate(face.Vertices.Count));
-                    PushIndex(Wireframe, index, Linearise(face.Vertices.Count));
+                    if (face.RenderFlags.HasFlag(RenderFlags.Polygon)) PushIndex(Textured, index, Triangulate(face.Vertices.Count));
+                    if (face.RenderFlags.HasFlag(RenderFlags.Wireframe)) PushIndex(Wireframe, index, Linearise(face.Vertices.Count));
+                    if (face.RenderFlags.HasFlag(RenderFlags.Point)) PushIndex(Point, index, new[] { 0u });
+                }
+                foreach (var line in g.OfType<Line>())
+                {
+                    PushOffset(line);
+                    var index = PushData(Convert(line));
+                    if (line.RenderFlags.HasFlag(RenderFlags.Wireframe)) PushIndex(Wireframe, index, Linearise(line.Vertices.Count));
+                    if (line.RenderFlags.HasFlag(RenderFlags.Point)) PushIndex(Point, index, new[] { 0u });
                 }
                 PushSubset(Textured, g.Key);
             }
 
             PushSubset(Wireframe, (object) null);
+            PushSubset(Point, (object) null);
         }
 
         private IEnumerable<SimpleVertex> Convert(Face face, VertexFlags flags = VertexFlags.None)
@@ -93,8 +114,24 @@ namespace Sledge.Rendering.OpenGL.Arrays
             {
                 Position = x.Position.ToVector3(),
                 Normal = face.Plane.Normal.ToVector3(),
-                Texture = new Vector2((float) x.TextureU, (float) x.TextureV),
-                Color = face.Material.Color.ToAbgr(),
+                Texture = new Vector2((float)x.TextureU, (float)x.TextureV),
+                MaterialColor = face.Material.Color.ToAbgr(),
+                AccentColor = face.AccentColor.ToAbgr(),
+                TintColor = face.AccentColor.ToAbgr(),
+                Flags = flags
+            });
+        }
+
+        private IEnumerable<SimpleVertex> Convert(Line line, VertexFlags flags = VertexFlags.None)
+        {
+            return line.Vertices.Select((x, i) => new SimpleVertex
+            {
+                Position = x.ToVector3(),
+                Normal = Vector3.UnitZ,
+                Texture = Vector2.Zero,
+                MaterialColor = line.Material.Color.ToAbgr(),
+                AccentColor = line.AccentColor.ToAbgr(),
+                TintColor = line.AccentColor.ToAbgr(),
                 Flags = flags
             });
         }

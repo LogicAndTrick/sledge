@@ -3,13 +3,17 @@
 layout(location = 0) in vec3 position;
 layout(location = 1) in vec3 normal;
 layout(location = 2) in vec2 texture;
-layout(location = 3) in vec4 color;
-layout(location = 4) in uint flags;
+layout(location = 3) in vec4 materialColor;
+layout(location = 4) in vec4 accentColor;
+layout(location = 5) in vec4 tintColor;
+layout(location = 6) in uint flags;
 
 smooth out vec4 vertexPosition;
 smooth out vec4 vertexNormal;
 smooth out vec2 vertexTexture;
-smooth out vec4 vertexColor;
+smooth out vec4 vertexMaterialColor;
+smooth out vec4 vertexAccentColor;
+smooth out vec4 vertexTintColor;
 flat out uint vertexFlags;
 
 uniform mat4 viewportMatrix;
@@ -25,7 +29,9 @@ void main()
 	vertexPosition = worldPos;
     vertexNormal = worldNorm;
     vertexTexture = texture;
-	vertexColor = color;
+	vertexMaterialColor = materialColor;
+	vertexAccentColor = accentColor;
+	vertexTintColor = tintColor;
     vertexFlags = flags;
 
 	gl_Position = vertexPosition;

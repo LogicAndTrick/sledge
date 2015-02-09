@@ -15,7 +15,13 @@ namespace Sledge.Rendering.OpenGL.Vertices
         public Vector2 Texture;
 
         [ArrayIndex(VertexAttribPointerType.UnsignedByte, 4, true)]
-        public int Color;
+        public int MaterialColor;
+
+        [ArrayIndex(VertexAttribPointerType.UnsignedByte, 4, true)]
+        public int AccentColor;
+
+        [ArrayIndex(VertexAttribPointerType.UnsignedByte, 4, true)]
+        public int TintColor;
 
         [ArrayIndex(VertexAttribIntegerType.UnsignedInt)]
         public VertexFlags Flags;

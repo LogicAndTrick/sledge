@@ -14,6 +14,7 @@ using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Materials;
 using Sledge.Rendering.OpenGL;
 using Sledge.Rendering.Scenes.Lights;
+using Sledge.Rendering.Scenes.Renderables;
 using Face = Sledge.Rendering.Scenes.Renderables.Face;
 using Vertex = Sledge.Rendering.Scenes.Renderables.Vertex;
 
@@ -52,7 +53,7 @@ namespace Sledge.Sandbox
         public MainForm2()
         {
             var wp = new WadProvider();
-            var packages = wp.CreatePackages(new[] { @"F:\Steam\SteamApps\common\Half-Life\valve" }, new string[0], new string[0], new [] { "halflife" }).ToList();
+            var packages = wp.CreatePackages(new[] { @"C:\Working\Wads" }, new string[0], new string[0], new[] { "halflife" }).ToList();
             var textures = packages.SelectMany(x => x.Items.Values).Skip(500).Take(100).ToList();
 
             ClientSize = new Size(600, 600);
@@ -63,7 +64,7 @@ namespace Sledge.Sandbox
 
             // Get render control/context
             var camera = new PerspectiveCamera { Position = new Coordinate(-10, -10, -10), LookAt = Coordinate.Zero };
-            //var camera = new OrthographicCamera() { Zoom = 16 };
+            //var camera = new OrthographicCamera() { Zoom = 32 };
             var viewport = engine.CreateViewport(camera);
 
             viewport.Control.Dock = DockStyle.Fill;
@@ -75,6 +76,10 @@ namespace Sledge.Sandbox
 
             var light = new AmbientLight(Color.White, new Coordinate(1, 2, 3), 0.8f);
             scene.Add(light);
+
+            scene.Add(new Sledge.Rendering.Scenes.Renderables.Line(Color.FromArgb(255, Color.Red), Coordinate.Zero, Coordinate.UnitX * 10) { RenderFlags = RenderFlags.Wireframe });
+            scene.Add(new Sledge.Rendering.Scenes.Renderables.Line(Color.FromArgb(255, Color.Lime), Coordinate.Zero, Coordinate.UnitY * 10) { RenderFlags = RenderFlags.Wireframe });
+            scene.Add(new Sledge.Rendering.Scenes.Renderables.Line(Color.FromArgb(255, Color.Blue), Coordinate.Zero, Coordinate.UnitZ * 10) { RenderFlags = RenderFlags.Wireframe });
 
             foreach (var ti in textures)
             {
@@ -105,7 +110,12 @@ namespace Sledge.Sandbox
                         foreach (var s in brushes.OfType<Solid>().SelectMany(x => x.Faces))
                         {
                             s.FitTextureToPointCloud(new Cloud(s.Vertices.Select(v => v.Location)), 1, 1);
-                            var face = new Face(material, s.Vertices.Select(x => new Vertex(x.Location, x.TextureU, x.TextureV)).ToList());
+                            var face = new Face(material, s.Vertices.Select(x => new Vertex(x.Location, x.TextureU, x.TextureV)).ToList())
+                                       {
+                                           AccentColor = Color.FromArgb(r2.Next(128, 255), r2.Next(128, 255), r2.Next(128, 255)),
+                                           TintColor = Color.FromArgb(r.Next(0, 128), Color.Red),
+                                           RenderFlags = RenderFlags.Polygon | RenderFlags.Wireframe | RenderFlags.Point
+                                       };
                             scene.Add(face);
                         }
                     }

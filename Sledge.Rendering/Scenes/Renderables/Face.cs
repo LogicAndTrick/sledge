@@ -19,7 +19,7 @@ namespace Sledge.Rendering.Scenes.Renderables
                 _plane = new Plane(value[0].Position, value[1].Position, value[2].Position);
                 BoundingBox = new Box(value.Select(x => x.Position));
                 OnPropertyChanged("Vertices");
-                OnPropertyChanged("Plant");
+                OnPropertyChanged("Plane");
             }
         }
 

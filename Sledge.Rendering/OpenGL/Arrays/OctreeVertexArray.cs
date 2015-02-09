@@ -96,6 +96,7 @@ namespace Sledge.Rendering.OpenGL.Arrays
                 Spare.RenderTextured(renderer);
             }
         }
+
         public void RenderWireframe(IRenderer renderer)
         {
             foreach (var array in Partitions)
@@ -105,6 +106,18 @@ namespace Sledge.Rendering.OpenGL.Arrays
             if (Spare != null)
             {
                 Spare.RenderWireframe(renderer);
+            }
+        }
+
+        public void RenderPoints(IRenderer renderer)
+        {
+            foreach (var array in Partitions)
+            {
+                array.RenderPoints(renderer);
+            }
+            if (Spare != null)
+            {
+                Spare.RenderPoints(renderer);
             }
         }
 

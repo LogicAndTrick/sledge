@@ -73,6 +73,8 @@ namespace Sledge.Rendering.OpenGL
                 GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
                 GL.PixelStore(PixelStoreParameter.UnpackAlignment, 1);
 
+                GL.PointSize(4);
+
                 data.Initialised = true;
             }
             if (data.Width != viewport.Control.Width || data.Height != viewport.Control.Height)
@@ -102,7 +104,10 @@ namespace Sledge.Rendering.OpenGL
             GL.ClearColor(Color.Black);
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
-            ((PerspectiveCamera)viewport.Camera).Position += new Coordinate(-0.002m, -0.002m, -0.002m);
+            if (viewport.Camera is PerspectiveCamera)
+                ((PerspectiveCamera)viewport.Camera).Position += new Coordinate(-0.002m, -0.002m, -0.002m);
+            if (viewport.Camera is OrthographicCamera)
+                ((OrthographicCamera)viewport.Camera).Zoom *= 0.998m;
 
             var vpMatrix = viewport.Camera.GetViewportMatrix(viewport.Control.Width, viewport.Control.Height);
             var camMatrix = viewport.Camera.GetCameraMatrix();
@@ -111,8 +116,14 @@ namespace Sledge.Rendering.OpenGL
             prog.Bind();
             prog.CameraMatrix = camMatrix;
             prog.ViewportMatrix = vpMatrix;
+
+            prog.Wireframe = false;
             _vertexArray.RenderTextured(this);
-            // _vertexArray.RenderWireframe(this);
+
+            prog.Wireframe = true;
+            _vertexArray.RenderWireframe(this);
+            //_vertexArray.RenderPoints(this);
+
             prog.Unbind();
 
             // Blit FBO

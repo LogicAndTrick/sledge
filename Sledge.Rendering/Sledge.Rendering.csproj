@@ -101,6 +101,7 @@
     <Compile Include="Scenes\Renderables\Face.cs" />
     <Compile Include="Scenes\Renderables\Line.cs" />
     <Compile Include="Scenes\Renderables\RenderableObject.cs" />
+    <Compile Include="Scenes\Renderables\RenderFlags.cs" />
     <Compile Include="Scenes\Scene.cs" />
     <Compile Include="Scenes\SceneChangeSet.cs" />
     <Compile Include="Scenes\SceneObject.cs" />

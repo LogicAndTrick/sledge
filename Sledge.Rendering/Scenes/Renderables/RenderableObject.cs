@@ -1,4 +1,5 @@
-﻿using Sledge.DataStructures.Geometric;
+﻿using System.Drawing;
+using Sledge.DataStructures.Geometric;
 using Sledge.Rendering.Interfaces;
 using Sledge.Rendering.Materials;
 
@@ -9,7 +10,9 @@ namespace Sledge.Rendering.Scenes.Renderables
         private Material _material;
         private Box _boundingBox;
         private LightingType _lighting;
-        private bool _isWireframe;
+        private RenderFlags _renderFlags;
+        private Color _accentColor;
+        private Color _tintColor;
 
         public Material Material
         {
@@ -20,7 +23,27 @@ namespace Sledge.Rendering.Scenes.Renderables
                 _material = value;
                 var nuid = _material == null ? null : _material.UniqueIdentifier;
                 if (uid != nuid) OnPropertyChanged("Material");
-                else OnPropertyChanged("Color");
+                else OnPropertyChanged("MaterialColor");
+            }
+        }
+
+        public Color AccentColor
+        {
+            get { return _accentColor; }
+            set
+            {
+                _accentColor = value;
+                OnPropertyChanged("AccentColor");
+            }
+        }
+
+        public Color TintColor
+        {
+            get { return _tintColor; }
+            set
+            {
+                _tintColor = value;
+                OnPropertyChanged("TintColor");
             }
         }
 
@@ -47,13 +70,13 @@ namespace Sledge.Rendering.Scenes.Renderables
             }
         }
 
-        public bool IsWireframe
+        public RenderFlags RenderFlags
         {
-            get { return _isWireframe; }
+            get { return _renderFlags; }
             set
             {
-                _isWireframe = value;
-                OnPropertyChanged("IsWireframe");
+                _renderFlags = value;
+                OnPropertyChanged("RenderFlags");
             }
         }
     }
