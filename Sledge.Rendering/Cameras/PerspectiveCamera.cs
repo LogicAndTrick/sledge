@@ -1,5 +1,6 @@
 ﻿using OpenTK;
 using Sledge.DataStructures.Geometric;
+using Sledge.Rendering.Scenes.Renderables;
 
 namespace Sledge.Rendering.Cameras
 {
@@ -38,6 +39,7 @@ namespace Sledge.Rendering.Cameras
             Direction = Coordinate.One;
             FOV = 90;
             ClipDistance = 1000;
+            Flags = CameraFlags.Perspective;
         }
 
         public override Matrix4 GetCameraMatrix()
@@ -47,7 +49,7 @@ namespace Sledge.Rendering.Cameras
 
         public override Matrix4 GetViewportMatrix(int width, int height)
         {
-            const float near = 0.1f;
+            const float near = 1.0f;
             var ratio = width / (float)height;
             if (ratio <= 0) ratio = 1;
             return Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(FOV), ratio, near, ClipDistance);

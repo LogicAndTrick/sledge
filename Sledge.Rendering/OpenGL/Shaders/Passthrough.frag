@@ -8,17 +8,20 @@ smooth in vec4 vertexAccentColor;
 smooth in vec4 vertexTintColor;
 flat in uint vertexFlags;
 
+uniform bool orthographic;
 uniform bool wireframe;
 uniform sampler2D currentTexture;
 
 out vec4 fragmentColor;
 
-uint FLAGS_INVISIBLE = 0x01u;
+uint FLAGS_INVISIBLE_PERSPECTIVE = 1u << 0;
+uint FLAGS_INVISIBLE_ORTHOGRAPHIC = 1u << 1;
 
 void main()
 {
-    if ((vertexFlags & FLAGS_INVISIBLE) == FLAGS_INVISIBLE) discard;
+    if (orthographic && (vertexFlags & FLAGS_INVISIBLE_PERSPECTIVE) == FLAGS_INVISIBLE_PERSPECTIVE) discard;
+    if (!orthographic && (vertexFlags & FLAGS_INVISIBLE_ORTHOGRAPHIC) == FLAGS_INVISIBLE_ORTHOGRAPHIC) discard;
 
-    fragmentColor = wireframe ? vertexAccentColor : texture2D(currentTexture, vertexTexture) * vertexMaterialColor;
+    fragmentColor = orthographic || wireframe ? vertexAccentColor : texture2D(currentTexture, vertexTexture) * vertexMaterialColor;
 	fragmentColor *= vertexTintColor;
 }

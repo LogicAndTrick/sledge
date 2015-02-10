@@ -28,6 +28,7 @@ namespace Sledge.Rendering.Scenes.Renderables
             TintColor = Color.White;
             Vertices = vertices.ToList();
             Width = 1; // todo change line widths?
+            CameraFlags = CameraFlags.All;
         }
     }
 }

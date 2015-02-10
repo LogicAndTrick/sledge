@@ -7,7 +7,7 @@ namespace Sledge.Rendering.Scenes.Renderables
     {
         None = 0,
         Polygon = 1 << 0,
-        Wireframe = 1 << 0,
-        Point = 1 << 0
+        Wireframe = 1 << 1,
+        Point = 1 << 2
     }
 }

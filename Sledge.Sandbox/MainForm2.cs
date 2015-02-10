@@ -77,9 +77,9 @@ namespace Sledge.Sandbox
             var light = new AmbientLight(Color.White, new Coordinate(1, 2, 3), 0.8f);
             scene.Add(light);
 
-            scene.Add(new Sledge.Rendering.Scenes.Renderables.Line(Color.FromArgb(255, Color.Red), Coordinate.Zero, Coordinate.UnitX * 10) { RenderFlags = RenderFlags.Wireframe });
-            scene.Add(new Sledge.Rendering.Scenes.Renderables.Line(Color.FromArgb(255, Color.Lime), Coordinate.Zero, Coordinate.UnitY * 10) { RenderFlags = RenderFlags.Wireframe });
-            scene.Add(new Sledge.Rendering.Scenes.Renderables.Line(Color.FromArgb(255, Color.Blue), Coordinate.Zero, Coordinate.UnitZ * 10) { RenderFlags = RenderFlags.Wireframe });
+            scene.Add(new Sledge.Rendering.Scenes.Renderables.Line(Color.FromArgb(255, Color.Red), Coordinate.Zero, Coordinate.UnitX * 10) { RenderFlags = RenderFlags.Wireframe, CameraFlags = CameraFlags.Perspective });
+            scene.Add(new Sledge.Rendering.Scenes.Renderables.Line(Color.FromArgb(255, Color.Lime), Coordinate.Zero, Coordinate.UnitY * 10) { RenderFlags = RenderFlags.Wireframe, CameraFlags = CameraFlags.Perspective });
+            scene.Add(new Sledge.Rendering.Scenes.Renderables.Line(Color.FromArgb(255, Color.Blue), Coordinate.Zero, Coordinate.UnitZ * 10) { RenderFlags = RenderFlags.Wireframe, CameraFlags = CameraFlags.Perspective });
 
             foreach (var ti in textures)
             {
@@ -94,7 +94,7 @@ namespace Sledge.Sandbox
                 const int area = 20;
                 var r = new Random();
                 var b = new BlockBrush();
-                for (var i = 0; i < area * 100; i++)
+                for (var i = 0; i < area * 1; i++)
                 {
                     Thread.Sleep(2);
                     lock (scene)
@@ -166,12 +166,18 @@ namespace Sledge.Sandbox
                     {
                         Thread.Sleep(100);
                         var ti1 = ti;
-                        c.Invoke((Action) (() =>
+                        try
                         {
-                            var bmp = ss.GetImage(ti1);
-                            renderer.Textures.Create(ti1.Name, bmp, ti1.Width, ti1.Height, ti1.Flags);
-                            bmp.Dispose();
-                        }));
+                            c.Invoke((Action) (() =>
+                                               {
+                                                   var bmp = ss.GetImage(ti1);
+                                                   renderer.Textures.Create(ti1.Name, bmp, ti1.Width, ti1.Height, ti1.Flags);
+                                                   bmp.Dispose();
+                                               }));
+                        }
+                        catch
+                        {
+                        }
                     }
                 }
             });

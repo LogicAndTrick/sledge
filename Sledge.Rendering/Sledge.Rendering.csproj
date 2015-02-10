@@ -68,6 +68,7 @@
     <Compile Include="Interfaces\IRenderer.cs" />
     <Compile Include="Interfaces\IViewport.cs" />
     <Compile Include="OpenGL\Vertices\VertexFlags.cs" />
+    <Compile Include="Scenes\Renderables\CameraFlags.cs" />
     <Compile Include="Scenes\Renderables\LightingType.cs" />
     <Compile Include="Interfaces\IUpdatable.cs" />
     <Compile Include="Materials\Material.cs" />

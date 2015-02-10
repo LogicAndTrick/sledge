@@ -1,5 +1,6 @@
 ﻿using OpenTK;
 using Sledge.DataStructures.Geometric;
+using Sledge.Rendering.Scenes.Renderables;
 
 namespace Sledge.Rendering.Cameras
 {
@@ -12,6 +13,7 @@ namespace Sledge.Rendering.Cameras
         {
             Position = Coordinate.Zero;
             Zoom = 1;
+            Flags = CameraFlags.Orthographic;
         }
 
         public override Matrix4 GetCameraMatrix()

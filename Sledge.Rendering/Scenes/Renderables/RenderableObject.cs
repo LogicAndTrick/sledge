@@ -11,6 +11,7 @@ namespace Sledge.Rendering.Scenes.Renderables
         private Box _boundingBox;
         private LightingType _lighting;
         private RenderFlags _renderFlags;
+        private CameraFlags _cameraFlags;
         private Color _accentColor;
         private Color _tintColor;
 
@@ -22,8 +23,8 @@ namespace Sledge.Rendering.Scenes.Renderables
                 var uid = _material == null ? null : _material.UniqueIdentifier;
                 _material = value;
                 var nuid = _material == null ? null : _material.UniqueIdentifier;
-                if (uid != nuid) OnPropertyChanged("Material");
-                else OnPropertyChanged("MaterialColor");
+                if (uid != nuid) OnPropertyChanged("RenderCritical");
+                OnPropertyChanged("Material");
             }
         }
 
@@ -57,6 +58,7 @@ namespace Sledge.Rendering.Scenes.Renderables
                 _boundingBox = value;
                 OnPropertyChanged("BoundingBox");
                 OnPropertyChanged("Origin");
+                OnPropertyChanged("RenderCritical");
             }
         }
 
@@ -77,6 +79,18 @@ namespace Sledge.Rendering.Scenes.Renderables
             {
                 _renderFlags = value;
                 OnPropertyChanged("RenderFlags");
+                OnPropertyChanged("RenderCritical");
+            }
+        }
+
+        public CameraFlags CameraFlags
+        {
+            get { return _cameraFlags; }
+            set
+            {
+                _cameraFlags = value;
+                OnPropertyChanged("CameraFlags");
+                OnPropertyChanged("RenderCritical");
             }
         }
     }

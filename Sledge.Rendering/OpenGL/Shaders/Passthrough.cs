@@ -9,6 +9,7 @@ namespace Sledge.Rendering.OpenGL.Shaders
         public Matrix4 ViewportMatrix { set { Shader.Set("viewportMatrix", value); } }
         public Matrix4 CameraMatrix { set { Shader.Set("cameraMatrix", value); } }
         public bool Wireframe { set { Shader.Set("wireframe", value); } }
+        public bool Orthographic { set { Shader.Set("orthographic", value); } }
 
         private const string ShaderName = "Passthrough";
 

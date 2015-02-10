@@ -116,6 +116,7 @@ namespace Sledge.Rendering.OpenGL
             prog.Bind();
             prog.CameraMatrix = camMatrix;
             prog.ViewportMatrix = vpMatrix;
+            prog.Orthographic = viewport.Camera.Flags.HasFlag(CameraFlags.Orthographic);
 
             prog.Wireframe = false;
             _vertexArray.RenderTextured(this);

@@ -71,8 +71,8 @@ namespace Sledge.Rendering.OpenGL.Arrays
             {
                 var offset = GetOffset(obj);
                 if (offset < 0) continue;
-                if (obj is Face) Update(offset, Convert((Face)obj, VertexFlags.Invisible));
-                if (obj is Line) Update(offset, Convert((Line)obj, VertexFlags.Invisible));
+                if (obj is Face) Update(offset, Convert((Face)obj, VertexFlags.InvisibleOrthographic | VertexFlags.InvisiblePerspective));
+                if (obj is Line) Update(offset, Convert((Line)obj, VertexFlags.InvisibleOrthographic | VertexFlags.InvisiblePerspective));
             }
         }
 
@@ -108,6 +108,14 @@ namespace Sledge.Rendering.OpenGL.Arrays
             PushSubset(Point, (object) null);
         }
 
+        private VertexFlags ConvertVertexFlags(RenderableObject obj)
+        {
+            var flags = VertexFlags.None;
+            if (!obj.CameraFlags.HasFlag(CameraFlags.Orthographic)) flags |= VertexFlags.InvisibleOrthographic;
+            if (!obj.CameraFlags.HasFlag(CameraFlags.Perspective)) flags |= VertexFlags.InvisiblePerspective;
+            return flags;
+        }
+
         private IEnumerable<SimpleVertex> Convert(Face face, VertexFlags flags = VertexFlags.None)
         {
             return face.Vertices.Select((x, i) => new SimpleVertex
@@ -118,7 +126,7 @@ namespace Sledge.Rendering.OpenGL.Arrays
                 MaterialColor = face.Material.Color.ToAbgr(),
                 AccentColor = face.AccentColor.ToAbgr(),
                 TintColor = face.AccentColor.ToAbgr(),
-                Flags = flags
+                Flags = ConvertVertexFlags(face) | flags
             });
         }
 
@@ -132,7 +140,7 @@ namespace Sledge.Rendering.OpenGL.Arrays
                 MaterialColor = line.Material.Color.ToAbgr(),
                 AccentColor = line.AccentColor.ToAbgr(),
                 TintColor = line.AccentColor.ToAbgr(),
-                Flags = flags
+                Flags = ConvertVertexFlags(line) | flags
             });
         }
     }
