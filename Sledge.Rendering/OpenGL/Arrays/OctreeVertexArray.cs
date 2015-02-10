@@ -85,39 +85,61 @@ namespace Sledge.Rendering.OpenGL.Arrays
         }
 
         // todo clipping
-        public void RenderTextured(IRenderer renderer)
+        public void RenderFacePolygons(IRenderer renderer)
         {
             foreach (var array in Partitions)
             {
-                array.RenderTextured(renderer);
+                array.RenderFacePolygons(renderer);
             }
             if (Spare != null)
             {
-                Spare.RenderTextured(renderer);
+                Spare.RenderFacePolygons(renderer);
+            }
+        }
+        public void RenderFaceWireframe(IRenderer renderer)
+        {
+            foreach (var array in Partitions)
+            {
+                array.RenderFaceWireframe(renderer);
+            }
+            if (Spare != null)
+            {
+                Spare.RenderFaceWireframe(renderer);
+            }
+        }
+        public void RenderFacePoints(IRenderer renderer)
+        {
+            foreach (var array in Partitions)
+            {
+                array.RenderFacePoints(renderer);
+            }
+            if (Spare != null)
+            {
+                Spare.RenderFacePoints(renderer);
             }
         }
 
-        public void RenderWireframe(IRenderer renderer)
+        public void RenderLineWireframe(IRenderer renderer)
         {
             foreach (var array in Partitions)
             {
-                array.RenderWireframe(renderer);
+                array.RenderLineWireframe(renderer);
             }
             if (Spare != null)
             {
-                Spare.RenderWireframe(renderer);
+                Spare.RenderLineWireframe(renderer);
             }
         }
 
-        public void RenderPoints(IRenderer renderer)
+        public void RenderLinePoints(IRenderer renderer)
         {
             foreach (var array in Partitions)
             {
-                array.RenderPoints(renderer);
+                array.RenderLinePoints(renderer);
             }
             if (Spare != null)
             {
-                Spare.RenderPoints(renderer);
+                Spare.RenderLinePoints(renderer);
             }
         }
 

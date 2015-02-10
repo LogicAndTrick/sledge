@@ -112,6 +112,8 @@ namespace Sledge.Rendering.OpenGL
             var vpMatrix = viewport.Camera.GetViewportMatrix(viewport.Control.Width, viewport.Control.Height);
             var camMatrix = viewport.Camera.GetCameraMatrix();
 
+            var ro = viewport.Camera.RenderOptions;
+
             // Render
             prog.Bind();
             prog.CameraMatrix = camMatrix;
@@ -119,11 +121,19 @@ namespace Sledge.Rendering.OpenGL
             prog.Orthographic = viewport.Camera.Flags.HasFlag(CameraFlags.Orthographic);
 
             prog.Wireframe = false;
-            _vertexArray.RenderTextured(this);
+            if (ro.RenderFacePolygons)
+            {
+                // todo
+                // ro.RenderFacePolygonLighting
+                // ro.RenderFacePolygonTextures
+                _vertexArray.RenderFacePolygons(this);
+            }
 
             prog.Wireframe = true;
-            _vertexArray.RenderWireframe(this);
-            //_vertexArray.RenderPoints(this);
+            if (ro.RenderFaceWireframe) _vertexArray.RenderFaceWireframe(this);
+            if (ro.RenderFacePoints) _vertexArray.RenderFacePoints(this);
+            if (ro.RenderLineWireframe) _vertexArray.RenderLineWireframe(this);
+            if (ro.RenderLinePoints) _vertexArray.RenderLinePoints(this);
 
             prog.Unbind();
 

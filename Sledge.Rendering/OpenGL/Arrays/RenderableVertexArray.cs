@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
+using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Interfaces;
 using Sledge.Rendering.OpenGL.Vertices;
 using Sledge.Rendering.Scenes.Renderables;
@@ -11,9 +12,12 @@ namespace Sledge.Rendering.OpenGL.Arrays
 {
     public class RenderableVertexArray : VertexArray<RenderableObject, SimpleVertex>
     {
-        private const int Textured = 0;
-        private const int Wireframe = 1;
-        private const int Point = 2;
+        private const int FacePolygons = 0;
+        private const int FaceWireframe = 1;
+        private const int FacePoints = 2;
+
+        private const int LineWireframe = 3;
+        private const int LinePoints = 4;
 
         public HashSet<RenderableObject> Items { get; private set; }
 
@@ -24,13 +28,13 @@ namespace Sledge.Rendering.OpenGL.Arrays
 
         public IEnumerable<string> GetMaterials()
         {
-            return GetSubsets<string>(Textured).Where(x => x.Instance != null).Select(x => x.Instance).OfType<string>();
+            return GetSubsets<string>(FacePolygons).Where(x => x.Instance != null).Select(x => x.Instance).OfType<string>();
         }
 
-        public void RenderTextured(IRenderer renderer)
+        public void RenderFacePolygons(IRenderer renderer)
         {
             // todo render transparent stuff last
-            foreach (var subset in GetSubsets<string>(Textured).Where(x => x.Instance != null))
+            foreach (var subset in GetSubsets<string>(FacePolygons).Where(x => x.Instance != null))
             {
                 var mat = (string)subset.Instance;
                 renderer.Materials.Bind(mat);
@@ -38,17 +42,33 @@ namespace Sledge.Rendering.OpenGL.Arrays
             }
         }
 
-        public void RenderWireframe(IRenderer renderer)
+        public void RenderFaceWireframe(IRenderer renderer)
         {
-            foreach (var subset in GetSubsets(Wireframe))
+            foreach (var subset in GetSubsets(FaceWireframe))
             {
                 Render(PrimitiveType.Lines, subset);
             }
         }
 
-        public void RenderPoints(IRenderer renderer)
+        public void RenderFacePoints(IRenderer renderer)
         {
-            foreach (var subset in GetSubsets(Point))
+            foreach (var subset in GetSubsets(FacePoints))
+            {
+                Render(PrimitiveType.Points, subset);
+            }
+        }
+
+        public void RenderLineWireframe(IRenderer renderer)
+        {
+            foreach (var subset in GetSubsets(LineWireframe))
+            {
+                Render(PrimitiveType.Lines, subset);
+            }
+        }
+
+        public void RenderLinePoints(IRenderer renderer)
+        {
+            foreach (var subset in GetSubsets(LinePoints))
             {
                 Render(PrimitiveType.Points, subset);
             }
@@ -80,32 +100,36 @@ namespace Sledge.Rendering.OpenGL.Arrays
         {
             Items = new HashSet<RenderableObject>(data);
 
-            StartSubset(Wireframe);
-            StartSubset(Point);
+            StartSubset(LineWireframe);
+            StartSubset(LinePoints);
+            StartSubset(FaceWireframe);
+            StartSubset(FacePoints);
 
             foreach (var g in Items.Where(x => x.RenderFlags != RenderFlags.None).GroupBy(x => x.Material.UniqueIdentifier))
             {
-                StartSubset(Textured);
+                StartSubset(FacePolygons);
                 foreach (var face in g.OfType<Face>())
                 {
                     PushOffset(face);
                     var index = PushData(Convert(face));
-                    if (face.RenderFlags.HasFlag(RenderFlags.Polygon)) PushIndex(Textured, index, Triangulate(face.Vertices.Count));
-                    if (face.RenderFlags.HasFlag(RenderFlags.Wireframe)) PushIndex(Wireframe, index, Linearise(face.Vertices.Count));
-                    if (face.RenderFlags.HasFlag(RenderFlags.Point)) PushIndex(Point, index, new[] { 0u });
+                    if (face.RenderFlags.HasFlag(RenderFlags.Polygon)) PushIndex(FacePolygons, index, Triangulate(face.Vertices.Count));
+                    if (face.RenderFlags.HasFlag(RenderFlags.Wireframe)) PushIndex(FaceWireframe, index, Linearise(face.Vertices.Count));
+                    if (face.RenderFlags.HasFlag(RenderFlags.Point)) PushIndex(FacePoints, index, new[] { 0u });
                 }
                 foreach (var line in g.OfType<Line>())
                 {
                     PushOffset(line);
                     var index = PushData(Convert(line));
-                    if (line.RenderFlags.HasFlag(RenderFlags.Wireframe)) PushIndex(Wireframe, index, Linearise(line.Vertices.Count));
-                    if (line.RenderFlags.HasFlag(RenderFlags.Point)) PushIndex(Point, index, new[] { 0u });
+                    if (line.RenderFlags.HasFlag(RenderFlags.Wireframe)) PushIndex(LineWireframe, index, Linearise(line.Vertices.Count));
+                    if (line.RenderFlags.HasFlag(RenderFlags.Point)) PushIndex(LinePoints, index, new[] { 0u });
                 }
-                PushSubset(Textured, g.Key);
+                PushSubset(FacePolygons, g.Key);
             }
 
-            PushSubset(Wireframe, (object) null);
-            PushSubset(Point, (object) null);
+            PushSubset(LineWireframe, (object)null);
+            PushSubset(LinePoints, (object)null);
+            PushSubset(FaceWireframe, (object)null);
+            PushSubset(FacePoints, (object)null);
         }
 
         private VertexFlags ConvertVertexFlags(RenderableObject obj)

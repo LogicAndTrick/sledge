@@ -40,6 +40,16 @@ namespace Sledge.Rendering.Cameras
             FOV = 90;
             ClipDistance = 1000;
             Flags = CameraFlags.Perspective;
+            RenderOptions = new CameraRenderOptions
+                            {
+                                RenderFacePolygons = true,
+                                RenderFacePolygonTextures = true,
+                                RenderFacePolygonLighting = LightingFlags.Ambient | LightingFlags.Dynamic,
+                                RenderLineWireframe = true,
+                                RenderFaceWireframe = false,
+                                RenderFacePoints = false,
+                                RenderLinePoints = false
+                            };
         }
 
         public override Matrix4 GetCameraMatrix()

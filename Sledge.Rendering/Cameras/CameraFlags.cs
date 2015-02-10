@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Sledge.Rendering.Scenes.Renderables
+namespace Sledge.Rendering.Cameras
 {
     [Flags]
     public enum CameraFlags : uint

@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Linq;
 using Sledge.DataStructures.Geometric;
+using Sledge.Rendering.Cameras;
 
 namespace Sledge.Rendering.Scenes.Renderables
 {

@@ -94,7 +94,7 @@ namespace Sledge.Sandbox
                 const int area = 20;
                 var r = new Random();
                 var b = new BlockBrush();
-                for (var i = 0; i < area * 1; i++)
+                for (var i = 0; i < area * 100; i++)
                 {
                     Thread.Sleep(2);
                     lock (scene)
@@ -109,12 +109,17 @@ namespace Sledge.Sandbox
                         renderer.Materials.Add(material);
                         foreach (var s in brushes.OfType<Solid>().SelectMany(x => x.Faces))
                         {
+                            var randomflags = RenderFlags.None;
+                            if (r2.Next(0, 100) > 50) randomflags |= RenderFlags.Polygon;
+                            if (r2.Next(0, 100) > 50) randomflags |= RenderFlags.Wireframe;
+                            if (r2.Next(0, 100) > 50) randomflags |= RenderFlags.Point;
                             s.FitTextureToPointCloud(new Cloud(s.Vertices.Select(v => v.Location)), 1, 1);
                             var face = new Face(material, s.Vertices.Select(x => new Vertex(x.Location, x.TextureU, x.TextureV)).ToList())
                                        {
                                            AccentColor = Color.FromArgb(r2.Next(128, 255), r2.Next(128, 255), r2.Next(128, 255)),
                                            TintColor = Color.FromArgb(r.Next(0, 128), Color.Red),
-                                           RenderFlags = RenderFlags.Polygon | RenderFlags.Wireframe | RenderFlags.Point
+                                           //RenderFlags = RenderFlags.Polygon | RenderFlags.Wireframe | RenderFlags.Point
+                                           RenderFlags = randomflags
                                        };
                             scene.Add(face);
                         }

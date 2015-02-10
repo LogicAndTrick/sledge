@@ -14,6 +14,14 @@ namespace Sledge.Rendering.Cameras
             Position = Coordinate.Zero;
             Zoom = 1;
             Flags = CameraFlags.Orthographic;
+            RenderOptions = new CameraRenderOptions
+                            {
+                                RenderFaceWireframe = true,
+                                RenderFacePoints = true,
+                                RenderLineWireframe = true,
+                                RenderLinePoints = true,
+                                RenderFacePolygons = false
+                            };
         }
 
         public override Matrix4 GetCameraMatrix()

@@ -1,5 +1,6 @@
 ﻿using System.Drawing;
 using Sledge.DataStructures.Geometric;
+using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Interfaces;
 using Sledge.Rendering.Materials;
 
@@ -9,7 +10,7 @@ namespace Sledge.Rendering.Scenes.Renderables
     {
         private Material _material;
         private Box _boundingBox;
-        private LightingType _lighting;
+        private LightingFlags _lighting;
         private RenderFlags _renderFlags;
         private CameraFlags _cameraFlags;
         private Color _accentColor;
@@ -62,7 +63,7 @@ namespace Sledge.Rendering.Scenes.Renderables
             }
         }
 
-        public LightingType Lighting
+        public LightingFlags Lighting
         {
             get { return _lighting; }
             set

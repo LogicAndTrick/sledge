@@ -54,6 +54,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Cameras\Camera.cs" />
+    <Compile Include="Cameras\CameraRenderOptions.cs" />
     <Compile Include="Class1.cs" />
     <Compile Include="DataStructures\Octree.cs" />
     <Compile Include="DataStructures\OctreeNode.cs" />
@@ -68,8 +69,8 @@
     <Compile Include="Interfaces\IRenderer.cs" />
     <Compile Include="Interfaces\IViewport.cs" />
     <Compile Include="OpenGL\Vertices\VertexFlags.cs" />
-    <Compile Include="Scenes\Renderables\CameraFlags.cs" />
-    <Compile Include="Scenes\Renderables\LightingType.cs" />
+    <Compile Include="Cameras\CameraFlags.cs" />
+    <Compile Include="Scenes\Renderables\LightingFlags.cs" />
     <Compile Include="Interfaces\IUpdatable.cs" />
     <Compile Include="Materials\Material.cs" />
     <Compile Include="Materials\MaterialType.cs" />
