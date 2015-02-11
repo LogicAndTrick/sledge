@@ -6,7 +6,7 @@ using Sledge.Rendering.Cameras;
 
 namespace Sledge.Rendering.Scenes.Renderables
 {
-    public class Line : Primitive
+    public class Line : RenderableObject
     {
         private List<Coordinate> _vertices;
         public int Width { get; set; }

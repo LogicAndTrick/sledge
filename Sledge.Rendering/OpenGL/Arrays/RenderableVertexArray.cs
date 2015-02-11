@@ -52,6 +52,7 @@ namespace Sledge.Rendering.OpenGL.Arrays
             var options = camera.RenderOptions;
 
             shader.Bind();
+            shader.ModelMatrix = Matrix4.Identity;
             shader.CameraMatrix = camMatrix;
             shader.ViewportMatrix = vpMatrix;
             shader.Orthographic = camera.Flags.HasFlag(CameraFlags.Orthographic);
@@ -205,9 +206,29 @@ namespace Sledge.Rendering.OpenGL.Arrays
                 else if (line.RenderFlags.HasFlag(RenderFlags.Point)) PushIndex(LinePoints, index, new[] { 0u });
             }
 
+            // Push sprites (grouped by material)
+            foreach (var sprite in items.OfType<Sprite>())
+            {
+                // todo sprites are not rendered yet
+                StartSubset(FaceTransparentPolygons);
+
+                PushOffset(sprite);
+                var index = PushData(Convert(sprite));
+
+                if (sprite.ForcedRenderFlags.HasFlag(RenderFlags.Polygon)) PushIndex(ForcedPolygons, index, Triangulate(4));
+                else if (sprite.RenderFlags.HasFlag(RenderFlags.Polygon)) PushIndex(FacePolygons, index, Triangulate(4));
+
+                if (sprite.ForcedRenderFlags.HasFlag(RenderFlags.Wireframe)) PushIndex(ForcedWireframe, index, Linearise(4));
+                else if (sprite.RenderFlags.HasFlag(RenderFlags.Wireframe)) PushIndex(FaceWireframe, index, Linearise(4));
+
+                if (sprite.ForcedRenderFlags.HasFlag(RenderFlags.Point)) PushIndex(ForcedPoints, index, new[] { 0u });
+                else if (sprite.RenderFlags.HasFlag(RenderFlags.Point)) PushIndex(FacePoints, index, new[] { 0u });
+
+                PushSubset(FaceTransparentPolygons, sprite);
+            }
+
             // Push displacements (grouped by material, then by displacement)
             // Push models (grouped by model, then by material)
-            // Push sprites (grouped by material)
 
             PushSubset(LineWireframe, (object)null);
             PushSubset(LinePoints, (object)null);
@@ -250,6 +271,28 @@ namespace Sledge.Rendering.OpenGL.Arrays
                 AccentColor = line.AccentColor.ToAbgr(),
                 TintColor = line.AccentColor.ToAbgr(),
                 Flags = ConvertVertexFlags(line) | flags
+            });
+        }
+
+        private IEnumerable<SimpleVertex> Convert(Sprite sprite, VertexFlags flags = VertexFlags.None)
+        {
+            var verts = new[]
+                        {
+                            new Vertex(new Coordinate(sprite.Position.X - sprite.Width, sprite.Position.Y - sprite.Height, sprite.Position.Z), 0, 0),
+                            new Vertex(new Coordinate(sprite.Position.X + sprite.Width, sprite.Position.Y - sprite.Height, sprite.Position.Z), 1, 0),
+                            new Vertex(new Coordinate(sprite.Position.X + sprite.Width, sprite.Position.Y + sprite.Height, sprite.Position.Z), 1, 1),
+                            new Vertex(new Coordinate(sprite.Position.X - sprite.Width, sprite.Position.Y + sprite.Height, sprite.Position.Z), 0, 1),
+                        };
+
+            return verts.Select((x, i) => new SimpleVertex
+            {
+                Position = x.Position.ToVector3(),
+                Normal = Vector3.UnitZ,
+                Texture = new Vector2((float) x.TextureU, (float) x.TextureV),
+                MaterialColor = sprite.Material.Color.ToAbgr(),
+                AccentColor = sprite.AccentColor.ToAbgr(),
+                TintColor = sprite.AccentColor.ToAbgr(),
+                Flags = ConvertVertexFlags(sprite) | flags
             });
         }
     }

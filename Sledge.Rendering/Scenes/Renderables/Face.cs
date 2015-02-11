@@ -6,7 +6,7 @@ using Sledge.Rendering.Cameras;
 
 namespace Sledge.Rendering.Scenes.Renderables
 {
-    public class Face : Primitive
+    public class Face : RenderableObject
     {
         private List<Vertex> _vertices;
         private Plane _plane;

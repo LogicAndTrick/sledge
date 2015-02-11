@@ -87,10 +87,14 @@ namespace Sledge.Sandbox
             }
 
             var animat = Material.Animated(7, Enumerable.Range(1, 7).Select(x => "+" + x + "~c2a4_cmp2").ToArray());
-            //renderer.Materials.Add(animat);
+            renderer.Materials.Add(animat);
+
+            var s1 = new Sledge.Rendering.Scenes.Renderables.Sprite(Coordinate.Zero, animat, 3, 3);
+            scene.Add(s1);
 
             Task.Factory.StartNew(() =>
             {
+                return;
                 const int area = 20;
                 var r = new Random();
                 var b = new BlockBrush();

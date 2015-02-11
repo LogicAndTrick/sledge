@@ -16,12 +16,14 @@ smooth out vec4 vertexAccentColor;
 smooth out vec4 vertexTintColor;
 flat out uint vertexFlags;
 
+uniform mat4 modelMatrix;
 uniform mat4 viewportMatrix;
 uniform mat4 cameraMatrix;
 
 void main()
 {
-	vec4 cameraPos = cameraMatrix * vec4(position, 1);
+	vec4 modelPos = modelMatrix * vec4(position, 1);
+	vec4 cameraPos = cameraMatrix * modelPos;
     vec4 worldPos = viewportMatrix * cameraPos;
 
     vec4 worldNorm = vec4(normal, 1);
