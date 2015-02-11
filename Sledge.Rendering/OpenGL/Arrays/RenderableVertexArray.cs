@@ -106,13 +106,13 @@ namespace Sledge.Rendering.OpenGL.Arrays
             var sorted =
                 from subset in sets
                 where subset.Instance != null
-                let obj = subset.Instance as Face
+                let obj = subset.Instance as RenderableObject
                 where obj != null
                 orderby (eye - obj.Origin).LengthSquared() descending
                 select subset;
             foreach (var subset in sorted)
             {
-                var mat = ((Face)subset.Instance).Material.UniqueIdentifier;
+                var mat = ((RenderableObject)subset.Instance).Material.UniqueIdentifier;
                 if (mat != last) renderer.Materials.Bind(mat);
                 last = mat;
 
@@ -215,8 +215,8 @@ namespace Sledge.Rendering.OpenGL.Arrays
                 PushOffset(sprite);
                 var index = PushData(Convert(sprite));
 
-                if (sprite.ForcedRenderFlags.HasFlag(RenderFlags.Polygon)) PushIndex(ForcedPolygons, index, Triangulate(4));
-                else if (sprite.RenderFlags.HasFlag(RenderFlags.Polygon)) PushIndex(FacePolygons, index, Triangulate(4));
+                if (sprite.ForcedRenderFlags.HasFlag(RenderFlags.Polygon)) PushIndex(FaceTransparentPolygons, index, Triangulate(4));
+                else if (sprite.RenderFlags.HasFlag(RenderFlags.Polygon)) PushIndex(FaceTransparentPolygons, index, Triangulate(4));
 
                 if (sprite.ForcedRenderFlags.HasFlag(RenderFlags.Wireframe)) PushIndex(ForcedWireframe, index, Linearise(4));
                 else if (sprite.RenderFlags.HasFlag(RenderFlags.Wireframe)) PushIndex(FaceWireframe, index, Linearise(4));

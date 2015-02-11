@@ -54,7 +54,7 @@ namespace Sledge.Sandbox
         {
             var wp = new WadProvider();
             var packages = wp.CreatePackages(new[] { @"C:\Working\Wads" }, new string[0], new string[0], new[] { "halflife" }).ToList();
-            var textures = packages.SelectMany(x => x.Items.Values).Skip(500).Take(100).ToList();
+            var textures = packages.SelectMany(x => x.Items.Values).ToList();
 
             ClientSize = new Size(600, 600);
             
@@ -88,6 +88,10 @@ namespace Sledge.Sandbox
 
             var animat = Material.Animated(7, Enumerable.Range(1, 7).Select(x => "+" + x + "~c2a4_cmp2").ToArray());
             renderer.Materials.Add(animat);
+            foreach (var textureFrame in animat.TextureFrames)
+            {
+                renderer.Textures.Create(textureFrame);
+            }
 
             var s1 = new Sledge.Rendering.Scenes.Renderables.Sprite(Coordinate.Zero, animat, 3, 3);
             scene.Add(s1);
@@ -110,7 +114,7 @@ namespace Sledge.Sandbox
                         var material = i % 2 == 0
                             ? Material.Texture(textures[i % textures.Count].Name)
                             : Material.Flat(Color.FromArgb(r2.Next(128, 255), r2.Next(128, 255), r2.Next(128, 255)));
-                        if (r2.Next(0, 100) > 50) material.Color = Color.FromArgb(128, material.Color);
+                        //if (r2.Next(0, 100) > 90) material.Color = Color.FromArgb(128, material.Color);
                         renderer.Materials.Add(material);
                         foreach (var s in brushes.OfType<Solid>().SelectMany(x => x.Faces))
                         {
@@ -135,6 +139,7 @@ namespace Sledge.Sandbox
 
             Task.Factory.StartNew(() =>
             {
+                return;
                 for (var i = 0; ; i = (i + 1) % 4)
                 {
                     Thread.Sleep(5);
@@ -175,7 +180,7 @@ namespace Sledge.Sandbox
                 {
                     foreach (var ti in textures)
                     {
-                        Thread.Sleep(100);
+                        //Thread.Sleep(100);
                         var ti1 = ti;
                         try
                         {
