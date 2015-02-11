@@ -24,6 +24,8 @@ namespace Sledge.Rendering.Cameras
                             };
         }
 
+        public override Coordinate EyeLocation { get { return Coordinate.UnitZ * decimal.MaxValue; } }
+
         public override Matrix4 GetCameraMatrix()
         {
             var translate = Matrix4.CreateTranslation((float) -Position.X, (float) -Position.Y, 0);

@@ -52,6 +52,8 @@ namespace Sledge.Rendering.Cameras
                             };
         }
 
+        public override Coordinate EyeLocation { get { return Position; } }
+
         public override Matrix4 GetCameraMatrix()
         {
             return Matrix4.LookAt(Position.ToVector3(), _lookAt.ToVector3(), Vector3.UnitZ);

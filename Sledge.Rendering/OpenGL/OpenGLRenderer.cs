@@ -21,6 +21,7 @@ namespace Sledge.Rendering.OpenGL
         private readonly MaterialStorage _materialStorage;
         private OctreeVertexArray _vertexArray;
         private bool _initialised;
+        private Passthrough _shaderProgram;
 
         public Scene Scene { get; private set; }
         public ITextureStorage Textures { get { return _textureStorage; } }
@@ -40,6 +41,8 @@ namespace Sledge.Rendering.OpenGL
             if (_initialised) return;
 
             _vertexArray = new OctreeVertexArray(Scene);
+
+            _shaderProgram = new Passthrough();
 
             if (!_textureStorage.Exists("WhitePixel"))
             {
@@ -95,8 +98,6 @@ namespace Sledge.Rendering.OpenGL
             InitialiseRenderer();
             InitialiseViewport(viewport, data);
             _vertexArray.ApplyChanges();
-
-            var prog = new Passthrough();
             
             // Set up FBO
             data.Framebuffer.Bind();
@@ -109,39 +110,13 @@ namespace Sledge.Rendering.OpenGL
             if (viewport.Camera is OrthographicCamera)
                 ((OrthographicCamera)viewport.Camera).Zoom *= 0.998m;
 
-            var vpMatrix = viewport.Camera.GetViewportMatrix(viewport.Control.Width, viewport.Control.Height);
-            var camMatrix = viewport.Camera.GetCameraMatrix();
-
-            var ro = viewport.Camera.RenderOptions;
-
-            // Render
-            prog.Bind();
-            prog.CameraMatrix = camMatrix;
-            prog.ViewportMatrix = vpMatrix;
-            prog.Orthographic = viewport.Camera.Flags.HasFlag(CameraFlags.Orthographic);
-
-            prog.Wireframe = false;
-            if (ro.RenderFacePolygons)
-            {
-                // todo
-                // ro.RenderFacePolygonLighting
-                // ro.RenderFacePolygonTextures
-                _vertexArray.RenderFacePolygons(this);
-            }
-
-            prog.Wireframe = true;
-            if (ro.RenderFaceWireframe) _vertexArray.RenderFaceWireframe(this);
-            if (ro.RenderFacePoints) _vertexArray.RenderFacePoints(this);
-            if (ro.RenderLineWireframe) _vertexArray.RenderLineWireframe(this);
-            if (ro.RenderLinePoints) _vertexArray.RenderLinePoints(this);
-
-            prog.Unbind();
+            _vertexArray.Render(this, _shaderProgram, viewport);
 
             // Blit FBO
             data.Framebuffer.Unbind();
             data.Framebuffer.Render();
 
-            prog.Dispose();
+            _shaderProgram.Dispose();
 
         }
 

@@ -4,6 +4,7 @@ using System.Linq;
 using Sledge.DataStructures.Geometric;
 using Sledge.Rendering.DataStructures;
 using Sledge.Rendering.Interfaces;
+using Sledge.Rendering.OpenGL.Shaders;
 using Sledge.Rendering.Scenes;
 using Sledge.Rendering.Scenes.Renderables;
 
@@ -85,61 +86,15 @@ namespace Sledge.Rendering.OpenGL.Arrays
         }
 
         // todo clipping
-        public void RenderFacePolygons(IRenderer renderer)
+        public void Render(IRenderer renderer, Passthrough shader, IViewport viewport)
         {
             foreach (var array in Partitions)
             {
-                array.RenderFacePolygons(renderer);
+                array.Render(renderer, shader, viewport);
             }
             if (Spare != null)
             {
-                Spare.RenderFacePolygons(renderer);
-            }
-        }
-        public void RenderFaceWireframe(IRenderer renderer)
-        {
-            foreach (var array in Partitions)
-            {
-                array.RenderFaceWireframe(renderer);
-            }
-            if (Spare != null)
-            {
-                Spare.RenderFaceWireframe(renderer);
-            }
-        }
-        public void RenderFacePoints(IRenderer renderer)
-        {
-            foreach (var array in Partitions)
-            {
-                array.RenderFacePoints(renderer);
-            }
-            if (Spare != null)
-            {
-                Spare.RenderFacePoints(renderer);
-            }
-        }
-
-        public void RenderLineWireframe(IRenderer renderer)
-        {
-            foreach (var array in Partitions)
-            {
-                array.RenderLineWireframe(renderer);
-            }
-            if (Spare != null)
-            {
-                Spare.RenderLineWireframe(renderer);
-            }
-        }
-
-        public void RenderLinePoints(IRenderer renderer)
-        {
-            foreach (var array in Partitions)
-            {
-                array.RenderLinePoints(renderer);
-            }
-            if (Spare != null)
-            {
-                Spare.RenderLinePoints(renderer);
+                Spare.Render(renderer, shader, viewport);
             }
         }
 

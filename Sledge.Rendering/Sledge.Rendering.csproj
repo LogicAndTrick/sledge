@@ -102,6 +102,7 @@
     <Compile Include="Scenes\Lights\PointLight.cs" />
     <Compile Include="Scenes\Renderables\Face.cs" />
     <Compile Include="Scenes\Renderables\Line.cs" />
+    <Compile Include="Scenes\Renderables\Primitive.cs" />
     <Compile Include="Scenes\Renderables\RenderableObject.cs" />
     <Compile Include="Scenes\Renderables\RenderFlags.cs" />
     <Compile Include="Scenes\Scene.cs" />

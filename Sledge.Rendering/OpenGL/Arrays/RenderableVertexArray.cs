@@ -3,10 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
+using Sledge.DataStructures.Geometric;
 using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Interfaces;
+using Sledge.Rendering.OpenGL.Shaders;
 using Sledge.Rendering.OpenGL.Vertices;
 using Sledge.Rendering.Scenes.Renderables;
+using Line = Sledge.Rendering.Scenes.Renderables.Line;
 
 namespace Sledge.Rendering.OpenGL.Arrays
 {
@@ -15,9 +18,15 @@ namespace Sledge.Rendering.OpenGL.Arrays
         private const int FacePolygons = 0;
         private const int FaceWireframe = 1;
         private const int FacePoints = 2;
+        private const int FaceTransparentPolygons = 3;
 
-        private const int LineWireframe = 3;
-        private const int LinePoints = 4;
+        private const int LineWireframe = 11;
+        private const int LinePoints = 12;
+
+        private const int ForcedPolygons = 20;
+        private const int ForcedWireframe = 21;
+        private const int ForcedPoints = 22;
+        private const int ForcedTransparentPolygons = 23;
 
         public HashSet<RenderableObject> Items { get; private set; }
 
@@ -31,46 +40,82 @@ namespace Sledge.Rendering.OpenGL.Arrays
             return GetSubsets<string>(FacePolygons).Where(x => x.Instance != null).Select(x => x.Instance).OfType<string>();
         }
 
-        public void RenderFacePolygons(IRenderer renderer)
+        // todo abstract away shader program into interface
+        public void Render(IRenderer renderer, Passthrough shader, IViewport viewport)
         {
-            // todo render transparent stuff last
-            foreach (var subset in GetSubsets<string>(FacePolygons).Where(x => x.Instance != null))
+            var camera = viewport.Camera;
+
+            var vpMatrix = camera.GetViewportMatrix(viewport.Control.Width, viewport.Control.Height);
+            var camMatrix = camera.GetCameraMatrix();
+
+            var eye = camera.EyeLocation;
+            var options = camera.RenderOptions;
+
+            shader.Bind();
+            shader.CameraMatrix = camMatrix;
+            shader.ViewportMatrix = vpMatrix;
+            shader.Orthographic = camera.Flags.HasFlag(CameraFlags.Orthographic);
+            
+            shader.Wireframe = false;
+
+            // todo
+            // options.RenderFacePolygonLighting
+            // options.RenderFacePolygonTextures
+
+            // Render non-transparent polygons
+            string last = null;
+            var sets = GetSubsets<string>(ForcedPolygons).ToList();
+            if (options.RenderFacePolygons) sets.AddRange(GetSubsets<string>(FacePolygons));
+            foreach (var subset in sets.Where(x => x.Instance != null).OrderBy(x => (string)x.Instance))
             {
                 var mat = (string)subset.Instance;
-                renderer.Materials.Bind(mat);
+                if (mat != last) renderer.Materials.Bind(mat);
+                last = mat;
+
                 Render(PrimitiveType.Triangles, subset);
             }
-        }
+            
+            shader.Wireframe = true;
 
-        public void RenderFaceWireframe(IRenderer renderer)
-        {
-            foreach (var subset in GetSubsets(FaceWireframe))
+            // Render wireframe
+            sets = GetSubsets(ForcedWireframe).ToList();
+            if (options.RenderFaceWireframe) sets.AddRange(GetSubsets(FaceWireframe));
+            if (options.RenderLineWireframe) sets.AddRange(GetSubsets(LineWireframe));
+            foreach (var subset in sets)
             {
                 Render(PrimitiveType.Lines, subset);
             }
-        }
 
-        public void RenderFacePoints(IRenderer renderer)
-        {
-            foreach (var subset in GetSubsets(FacePoints))
+            // Render points
+            sets = GetSubsets(ForcedPoints).ToList();
+            if (options.RenderFacePoints) sets.AddRange(GetSubsets(FacePoints));
+            if (options.RenderLinePoints) sets.AddRange(GetSubsets(LinePoints));
+            foreach (var subset in sets)
             {
                 Render(PrimitiveType.Points, subset);
             }
-        }
 
-        public void RenderLineWireframe(IRenderer renderer)
-        {
-            foreach (var subset in GetSubsets(LineWireframe))
-            {
-                Render(PrimitiveType.Lines, subset);
-            }
-        }
+            shader.Wireframe = false;
 
-        public void RenderLinePoints(IRenderer renderer)
-        {
-            foreach (var subset in GetSubsets(LinePoints))
+            // Render transparent polygons, sorted back-to-front
+            // todo: it may be worth doing per-face culling for transparent objects
+            last = null;
+            sets = GetSubsets(ForcedTransparentPolygons).ToList();
+            if (options.RenderFacePolygons) sets.AddRange(GetSubsets(FaceTransparentPolygons));
+            var sorted =
+                from subset in sets
+                where subset.Instance != null
+                let obj = subset.Instance as Face
+                where obj != null
+                orderby (eye - obj.Origin).LengthSquared() descending
+                select subset;
+            foreach (var subset in sorted)
             {
-                Render(PrimitiveType.Points, subset);
+                var mat = ((Face)subset.Instance).Material.UniqueIdentifier;
+                if (mat != last) renderer.Materials.Bind(mat);
+                last = mat;
+
+                Render(PrimitiveType.Triangles, subset);
             }
         }
 
@@ -104,32 +149,72 @@ namespace Sledge.Rendering.OpenGL.Arrays
             StartSubset(LinePoints);
             StartSubset(FaceWireframe);
             StartSubset(FacePoints);
+            StartSubset(ForcedWireframe);
+            StartSubset(ForcedPoints);
 
-            foreach (var g in Items.Where(x => x.RenderFlags != RenderFlags.None).GroupBy(x => x.Material.UniqueIdentifier))
+            var items = Items.Where(x => x.RenderFlags != RenderFlags.None).ToList();
+
+            // Push faces (grouped by material)
+            foreach (var g in items.OfType<Face>().GroupBy(x => x.Material.UniqueIdentifier))
             {
                 StartSubset(FacePolygons);
-                foreach (var face in g.OfType<Face>())
+                StartSubset(ForcedPolygons);
+
+                foreach (var face in g)
                 {
                     PushOffset(face);
                     var index = PushData(Convert(face));
-                    if (face.RenderFlags.HasFlag(RenderFlags.Polygon)) PushIndex(FacePolygons, index, Triangulate(face.Vertices.Count));
-                    if (face.RenderFlags.HasFlag(RenderFlags.Wireframe)) PushIndex(FaceWireframe, index, Linearise(face.Vertices.Count));
-                    if (face.RenderFlags.HasFlag(RenderFlags.Point)) PushIndex(FacePoints, index, new[] { 0u });
+
+                    var transparent = face.Material.HasTransparency;
+                    if (transparent)
+                    {
+                        StartSubset(FaceTransparentPolygons);
+                        StartSubset(ForcedTransparentPolygons);
+                    }
+
+                    if (face.ForcedRenderFlags.HasFlag(RenderFlags.Polygon)) PushIndex(transparent ? ForcedTransparentPolygons : ForcedPolygons, index, Triangulate(face.Vertices.Count));
+                    else if (face.RenderFlags.HasFlag(RenderFlags.Polygon)) PushIndex(transparent ? FaceTransparentPolygons : FacePolygons, index, Triangulate(face.Vertices.Count));
+
+                    if (face.ForcedRenderFlags.HasFlag(RenderFlags.Wireframe)) PushIndex(ForcedWireframe, index, Linearise(face.Vertices.Count));
+                    else if (face.RenderFlags.HasFlag(RenderFlags.Wireframe)) PushIndex(FaceWireframe, index, Linearise(face.Vertices.Count));
+
+                    if (face.ForcedRenderFlags.HasFlag(RenderFlags.Point)) PushIndex(ForcedPoints, index, new[] { 0u });
+                    else if (face.RenderFlags.HasFlag(RenderFlags.Point)) PushIndex(FacePoints, index, new[] { 0u });
+
+                    if (transparent)
+                    {
+                        PushSubset(FaceTransparentPolygons, face);
+                        PushSubset(ForcedTransparentPolygons, face);
+                    }
                 }
-                foreach (var line in g.OfType<Line>())
-                {
-                    PushOffset(line);
-                    var index = PushData(Convert(line));
-                    if (line.RenderFlags.HasFlag(RenderFlags.Wireframe)) PushIndex(LineWireframe, index, Linearise(line.Vertices.Count));
-                    if (line.RenderFlags.HasFlag(RenderFlags.Point)) PushIndex(LinePoints, index, new[] { 0u });
-                }
+
                 PushSubset(FacePolygons, g.Key);
+                PushSubset(ForcedPolygons, g.Key);
             }
+
+            // Push lines (no grouping)
+            foreach (var line in items.OfType<Line>())
+            {
+                PushOffset(line);
+                var index = PushData(Convert(line));
+
+                if (line.ForcedRenderFlags.HasFlag(RenderFlags.Wireframe)) PushIndex(ForcedWireframe, index, Linearise(line.Vertices.Count));
+                else if (line.RenderFlags.HasFlag(RenderFlags.Wireframe)) PushIndex(LineWireframe, index, Linearise(line.Vertices.Count));
+
+                if (line.ForcedRenderFlags.HasFlag(RenderFlags.Point)) PushIndex(ForcedPoints, index, new[] { 0u });
+                else if (line.RenderFlags.HasFlag(RenderFlags.Point)) PushIndex(LinePoints, index, new[] { 0u });
+            }
+
+            // Push displacements (grouped by material, then by displacement)
+            // Push models (grouped by model, then by material)
+            // Push sprites (grouped by material)
 
             PushSubset(LineWireframe, (object)null);
             PushSubset(LinePoints, (object)null);
             PushSubset(FaceWireframe, (object)null);
             PushSubset(FacePoints, (object)null);
+            PushSubset(ForcedWireframe, (object)null);
+            PushSubset(ForcedPoints, (object)null);
         }
 
         private VertexFlags ConvertVertexFlags(RenderableObject obj)

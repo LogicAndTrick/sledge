@@ -16,12 +16,14 @@ out vec4 fragmentColor;
 
 uint FLAGS_INVISIBLE_PERSPECTIVE = 1u << 0;
 uint FLAGS_INVISIBLE_ORTHOGRAPHIC = 1u << 1;
+uint FLAGS_SELECTED = 1u << 2;
 
 void main()
 {
     if (orthographic && (vertexFlags & FLAGS_INVISIBLE_PERSPECTIVE) == FLAGS_INVISIBLE_PERSPECTIVE) discard;
     if (!orthographic && (vertexFlags & FLAGS_INVISIBLE_ORTHOGRAPHIC) == FLAGS_INVISIBLE_ORTHOGRAPHIC) discard;
 
-    fragmentColor = orthographic || wireframe ? vertexAccentColor : texture2D(currentTexture, vertexTexture) * vertexMaterialColor;
-	fragmentColor *= vertexTintColor;
+    fragmentColor = orthographic || wireframe ? vertexAccentColor : texture(currentTexture, vertexTexture) * vertexMaterialColor;
+	fragmentColor.rgb *= vertexTintColor.rgb * vertexTintColor.a;
+	fragmentColor.a = vertexMaterialColor.a;
 }

@@ -13,6 +13,16 @@ namespace Sledge.Rendering.Materials
         public string CurrentFrame { get { return TextureFrames[CurrentFrameIndex]; } }
         public int CurrentFrameIndex { get; set; }
         public List<string> TextureFrames { get; set; } // ??? 
+
+        public bool HasTransparency
+        {
+            get
+            {
+                // todo: check for texture transparency
+                return Color.A < 255;
+            }
+        }
+
         private int _millisecondsPerFrame;
 
         public int FramesPerSecond

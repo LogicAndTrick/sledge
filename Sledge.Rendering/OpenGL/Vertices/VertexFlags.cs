@@ -10,5 +10,6 @@ namespace Sledge.Rendering.OpenGL.Vertices
         InvisibleOrthographic = 1 << 0,
         InvisiblePerspective = 1 << 1,
 
+        Selected = 1 << 2,
     }
 }

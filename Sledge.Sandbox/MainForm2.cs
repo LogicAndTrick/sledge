@@ -106,6 +106,7 @@ namespace Sledge.Sandbox
                         var material = i % 2 == 0
                             ? Material.Texture(textures[i % textures.Count].Name)
                             : Material.Flat(Color.FromArgb(r2.Next(128, 255), r2.Next(128, 255), r2.Next(128, 255)));
+                        if (r2.Next(0, 100) > 50) material.Color = Color.FromArgb(128, material.Color);
                         renderer.Materials.Add(material);
                         foreach (var s in brushes.OfType<Solid>().SelectMany(x => x.Faces))
                         {
@@ -119,7 +120,8 @@ namespace Sledge.Sandbox
                                            AccentColor = Color.FromArgb(r2.Next(128, 255), r2.Next(128, 255), r2.Next(128, 255)),
                                            TintColor = Color.FromArgb(r.Next(0, 128), Color.Red),
                                            //RenderFlags = RenderFlags.Polygon | RenderFlags.Wireframe | RenderFlags.Point
-                                           RenderFlags = randomflags
+                                           RenderFlags = randomflags,
+                                           // ForcedRenderFlags = RenderFlags.Wireframe
                                        };
                             scene.Add(face);
                         }
