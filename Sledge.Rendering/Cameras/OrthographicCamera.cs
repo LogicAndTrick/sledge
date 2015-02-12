@@ -1,17 +1,15 @@
 ﻿using OpenTK;
-using Sledge.DataStructures.Geometric;
-using Sledge.Rendering.Scenes.Renderables;
 
 namespace Sledge.Rendering.Cameras
 {
     public class OrthographicCamera : Camera
     {
-        public Coordinate Position { get; set; }
+        public Vector3 Position { get; set; }
         public decimal Zoom { get; set; }
 
         public OrthographicCamera()
         {
-            Position = Coordinate.Zero;
+            Position = Vector3.Zero;
             Zoom = 1;
             Flags = CameraFlags.Orthographic;
             RenderOptions = new CameraRenderOptions
@@ -24,12 +22,12 @@ namespace Sledge.Rendering.Cameras
                             };
         }
 
-        public override Coordinate EyeLocation { get { return Coordinate.UnitZ * decimal.MaxValue; } }
+        public override Vector3 EyeLocation { get { return Vector3.UnitZ * float.MaxValue; } }
 
         public override Matrix4 GetCameraMatrix()
         {
             var translate = Matrix4.CreateTranslation((float) -Position.X, (float) -Position.Y, 0);
-            var scale = Matrix4.Scale(new Vector3((float) Zoom, (float) Zoom, 0));
+            var scale = Matrix4.CreateScale(new Vector3((float) Zoom, (float) Zoom, 0));
             return translate * scale;
         }
 

@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using Sledge.DataStructures.Geometric;
+using Sledge.Rendering.DataStructures;
 using Sledge.Rendering.Scenes.Renderables;
 
 namespace Sledge.Rendering.OpenGL.Arrays

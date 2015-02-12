@@ -1,17 +1,18 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using Sledge.DataStructures.Geometric;
+using OpenTK;
 using Sledge.Rendering.Cameras;
+using Sledge.Rendering.DataStructures;
 
 namespace Sledge.Rendering.Scenes.Renderables
 {
     public class Line : RenderableObject
     {
-        private List<Coordinate> _vertices;
+        private List<Vector3> _vertices;
         public int Width { get; set; }
 
-        public List<Coordinate> Vertices
+        public List<Vector3> Vertices
         {
             get { return _vertices; }
             set
@@ -22,7 +23,7 @@ namespace Sledge.Rendering.Scenes.Renderables
             }
         }
 
-        public Line(Color color, params Coordinate[] vertices)
+        public Line(Color color, params Vector3[] vertices)
         {
             Material = Materials.Material.Flat(color);
             AccentColor = color;

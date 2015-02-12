@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Sledge.DataStructures.Geometric;
+using OpenTK;
 using Sledge.Rendering.Interfaces;
 
 namespace Sledge.Rendering.DataStructures
@@ -100,7 +100,7 @@ namespace Sledge.Rendering.DataStructures
                 }
 
                 // We're over the limit, create the child nodes
-                var center = _elements.Aggregate(Coordinate.Zero, (a, b) => a + b.Origin) / _elements.Count;
+                var center = _elements.Aggregate(Vector3.Zero, (a, b) => a + b.Origin) / _elements.Count;
                 _children = ClippingBox.GetBoxPoints().Select(x => new OctreeNode<T>(Root, this, new Box(x, center), _limit)).ToArray();
 
                 // We need to init the child nodes with all elements, so sub in the elements list
@@ -110,7 +110,7 @@ namespace Sledge.Rendering.DataStructures
             }
 
             // Add the elements into their particular nodes
-            var grouped = list.GroupBy(x => _children.First(y => y.ClippingBox.CoordinateIsInside(x.Origin))).ToList();
+            var grouped = list.GroupBy(x => _children.First(y => y.ClippingBox.VectorIsInside(x.Origin))).ToList();
             if (switched && grouped.Count == 1)
             {
                 // Everything is in the same group! Since we split based on the average origin, that means all the origins are identical.

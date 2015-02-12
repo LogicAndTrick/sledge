@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Interfaces;
-using Sledge.Rendering.Scenes;
 
 namespace Sledge.Rendering
 {

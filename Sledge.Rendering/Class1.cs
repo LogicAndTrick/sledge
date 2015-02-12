@@ -1,6 +1,4 @@
-﻿using OpenTK.Graphics;
-
-namespace Sledge.Rendering
+﻿namespace Sledge.Rendering
 {
     public class Class1
     {

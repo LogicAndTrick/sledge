@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Sledge.DataStructures.Geometric;
+using Sledge.Rendering.DataStructures;
 using Sledge.Rendering.Materials;
 using Sledge.Rendering.Cameras;
 

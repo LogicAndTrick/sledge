@@ -1,9 +1,9 @@
-﻿using Sledge.DataStructures.Geometric;
+﻿using OpenTK;
 
 namespace Sledge.Rendering.Interfaces
 {
     public interface IOrigin
     {
-        Coordinate Origin { get; }
+        Vector3 Origin { get; }
     }
 }

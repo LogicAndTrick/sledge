@@ -1,16 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using Sledge.DataStructures.Geometric;
+using OpenTK;
 using Sledge.Rendering.Interfaces;
 
 namespace Sledge.Rendering.DataStructures
 {
     public class Octree<T> : OctreeNode<T> where T : IBounded
     {
-        public Octree(decimal worldSize = 32768, int limit = 100)
-            : base(null, null, new Box(-Coordinate.One * worldSize, Coordinate.One * worldSize), limit)
+        public Octree(float worldSize = 32768, int limit = 100)
+            : base(null, null, new Box(-Vector3.One * worldSize, Vector3.One * worldSize), limit)
         {
             Root = this;
         }

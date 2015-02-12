@@ -1,9 +1,7 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
-using Sledge.DataStructures.Geometric;
 using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Interfaces;
 using Sledge.Rendering.OpenGL.Shaders;
@@ -109,7 +107,7 @@ namespace Sledge.Rendering.OpenGL.Arrays
                 where subset.Instance != null
                 let obj = subset.Instance as RenderableObject
                 where obj != null
-                orderby (eye - obj.Origin).LengthSquared() descending
+                orderby (eye - obj.Origin).LengthSquared descending
                 select subset;
             foreach (var subset in sorted)
             {
@@ -255,8 +253,8 @@ namespace Sledge.Rendering.OpenGL.Arrays
         {
             return face.Vertices.Select((x, i) => new SimpleVertex
             {
-                Position = x.Position.ToVector3(),
-                Normal = face.Plane.Normal.ToVector3(),
+                Position = x.Position,
+                Normal = face.Plane.Normal,
                 Texture = new Vector2((float)x.TextureU, (float)x.TextureV),
                 MaterialColor = face.Material.Color.ToAbgr(),
                 AccentColor = face.AccentColor.ToAbgr(),
@@ -269,7 +267,7 @@ namespace Sledge.Rendering.OpenGL.Arrays
         {
             return line.Vertices.Select((x, i) => new SimpleVertex
             {
-                Position = x.ToVector3(),
+                Position = x,
                 Normal = Vector3.UnitZ,
                 Texture = Vector2.Zero,
                 MaterialColor = line.Material.Color.ToAbgr(),
@@ -286,15 +284,15 @@ namespace Sledge.Rendering.OpenGL.Arrays
             var h = sprite.Height / 2;
             var verts = new[]
                         {
-                            new Vertex(new Coordinate(-w, -h, 0), 0, 0),
-                            new Vertex(new Coordinate(+w, -h, 0), 1, 0),
-                            new Vertex(new Coordinate(+w, +h, 0), 1, 1),
-                            new Vertex(new Coordinate(-w, +h, 0), 0, 1),
+                            new Vertex(new Vector3(-w, -h, 0), 0, 0),
+                            new Vertex(new Vector3(+w, -h, 0), 1, 0),
+                            new Vertex(new Vector3(+w, +h, 0), 1, 1),
+                            new Vertex(new Vector3(-w, +h, 0), 0, 1),
                         };
 
             return verts.Select((x, i) => new SimpleVertex
             {
-                Position = x.Position.ToVector3(),
+                Position = x.Position,
                 Normal = Vector3.UnitZ,
                 Texture = new Vector2((float) x.TextureU, (float) x.TextureV),
                 MaterialColor = sprite.Material.Color.ToAbgr(),

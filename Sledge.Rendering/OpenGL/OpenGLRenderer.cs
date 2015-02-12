@@ -1,16 +1,13 @@
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
+using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using Sledge.Common;
-using Sledge.DataStructures.Geometric;
 using Sledge.Rendering.Cameras;
-using Sledge.Rendering.DataStructures;
 using Sledge.Rendering.Interfaces;
 using Sledge.Rendering.OpenGL.Arrays;
 using Sledge.Rendering.OpenGL.Shaders;
 using Sledge.Rendering.Scenes;
-using Sledge.Rendering.Scenes.Renderables;
 
 namespace Sledge.Rendering.OpenGL
 {
@@ -106,7 +103,7 @@ namespace Sledge.Rendering.OpenGL
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
             if (viewport.Camera is PerspectiveCamera)
-                ((PerspectiveCamera)viewport.Camera).Position += new Coordinate(-0.002m, -0.002m, -0.002m);
+                ((PerspectiveCamera)viewport.Camera).Position += new Vector3(-0.002f, -0.002f, -0.002f);
             if (viewport.Camera is OrthographicCamera)
                 ((OrthographicCamera)viewport.Camera).Zoom *= 0.998m;
 

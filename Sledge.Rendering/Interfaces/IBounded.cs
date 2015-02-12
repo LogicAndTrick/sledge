@@ -1,4 +1,6 @@
-﻿using Sledge.DataStructures.Geometric;
+﻿
+
+using Sledge.Rendering.DataStructures;
 
 namespace Sledge.Rendering.Interfaces
 {

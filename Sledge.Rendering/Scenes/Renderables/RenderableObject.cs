@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Drawing;
-using Sledge.DataStructures.Geometric;
+﻿using System.Drawing;
+using OpenTK;
 using Sledge.Rendering.Cameras;
+using Sledge.Rendering.DataStructures;
 using Sledge.Rendering.Interfaces;
 using Sledge.Rendering.Materials;
 
@@ -51,7 +51,7 @@ namespace Sledge.Rendering.Scenes.Renderables
             }
         }
 
-        public Coordinate Origin { get { return BoundingBox.Center; } }
+        public Vector3 Origin { get { return BoundingBox.Center; } }
 
         public Box BoundingBox
         {

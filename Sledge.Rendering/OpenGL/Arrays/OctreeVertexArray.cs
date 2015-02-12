@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Sledge.DataStructures.Geometric;
 using Sledge.Rendering.DataStructures;
 using Sledge.Rendering.Interfaces;
 using Sledge.Rendering.OpenGL.Shaders;
@@ -20,7 +19,7 @@ namespace Sledge.Rendering.OpenGL.Arrays
         public List<PartitionedVertexArray> Partitions { get; private set; }
         public RenderableVertexArray Spare { get; private set; }
 
-        public OctreeVertexArray(Scene scene, decimal worldSize = 32768, int limit = 100)
+        public OctreeVertexArray(Scene scene, float worldSize = 32768, int limit = 100)
         {
             _scene = scene;
             _changeNum = 0;

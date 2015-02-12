@@ -1,14 +1,14 @@
-using Sledge.DataStructures.Geometric;
+using OpenTK;
 
 namespace Sledge.Rendering.Scenes.Renderables
 {
     public class Vertex
     {
-        public Coordinate Position { get; set; }
+        public Vector3 Position { get; set; }
         public decimal TextureU { get; set; }
         public decimal TextureV { get; set; }
 
-        public Vertex(Coordinate position, decimal textureU, decimal textureV)
+        public Vertex(Vector3 position, decimal textureU, decimal textureV)
         {
             Position = position;
             TextureU = textureU;

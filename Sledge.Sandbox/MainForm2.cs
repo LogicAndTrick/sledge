@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using OpenTK;
 using Sledge.Common;
 using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.MapObjects;
@@ -20,40 +21,12 @@ using Vertex = Sledge.Rendering.Scenes.Renderables.Vertex;
 
 namespace Sledge.Sandbox
 {
-    public class TestTexture : ITexture
-    {
-        private TextureItem _item;
-
-        public TestTexture(TextureItem item)
-        {
-            _item = item;
-        }
-
-        public void Dispose()
-        {
-            
-        }
-
-        public TextureFlags Flags { get { return _item.Flags; } }
-        public string Name { get { return _item.Name; } }
-        public int Width { get { return _item.Width; } }
-        public int Height { get { return _item.Height; } }
-        public void Bind()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Unbind()
-        {
-            throw new NotImplementedException();
-        }
-    }
     public class MainForm2 : Form
     {
         public MainForm2()
         {
             var wp = new WadProvider();
-            var packages = wp.CreatePackages(new[] { @"C:\Working\Wads" }, new string[0], new string[0], new[] { "halflife" }).ToList();
+            var packages = wp.CreatePackages(new[] { @"C:\Working\Wads", @"D:\Github\sledge\_Resources\WAD" }, new string[0], new string[0], new[] { "halflife" }).ToList();
             var textures = packages.SelectMany(x => x.Items.Values).ToList();
 
             ClientSize = new Size(600, 600);
@@ -63,7 +36,7 @@ namespace Sledge.Sandbox
             var engine = new Engine(renderer);
 
             // Get render control/context
-            var camera = new PerspectiveCamera { Position = new Coordinate(-10, -10, -10), LookAt = Coordinate.Zero };
+            var camera = new PerspectiveCamera { Position = new Vector3(10, 10, 10), LookAt = Vector3.Zero };
             //var camera = new OrthographicCamera() { Zoom = 32 };
             var viewport = engine.CreateViewport(camera);
 
@@ -74,12 +47,12 @@ namespace Sledge.Sandbox
             var scene = renderer.Scene;
             //scene.StartUpdate();
 
-            var light = new AmbientLight(Color.White, new Coordinate(1, 2, 3), 0.8f);
+            var light = new AmbientLight(Color.White, new Vector3(1, 2, 3), 0.8f);
             scene.Add(light);
 
-            scene.Add(new Sledge.Rendering.Scenes.Renderables.Line(Color.FromArgb(255, Color.Red), Coordinate.Zero, Coordinate.UnitX * 10) { RenderFlags = RenderFlags.Wireframe, CameraFlags = CameraFlags.Perspective });
-            scene.Add(new Sledge.Rendering.Scenes.Renderables.Line(Color.FromArgb(255, Color.Lime), Coordinate.Zero, Coordinate.UnitY * 10) { RenderFlags = RenderFlags.Wireframe, CameraFlags = CameraFlags.Perspective });
-            scene.Add(new Sledge.Rendering.Scenes.Renderables.Line(Color.FromArgb(255, Color.Blue), Coordinate.Zero, Coordinate.UnitZ * 10) { RenderFlags = RenderFlags.Wireframe, CameraFlags = CameraFlags.Perspective });
+            scene.Add(new Sledge.Rendering.Scenes.Renderables.Line(Color.FromArgb(255, Color.Red), Vector3.Zero, Vector3.UnitX * 10) { RenderFlags = RenderFlags.Wireframe, CameraFlags = CameraFlags.Perspective });
+            scene.Add(new Sledge.Rendering.Scenes.Renderables.Line(Color.FromArgb(255, Color.Lime), Vector3.Zero, Vector3.UnitY * 10) { RenderFlags = RenderFlags.Wireframe, CameraFlags = CameraFlags.Perspective });
+            scene.Add(new Sledge.Rendering.Scenes.Renderables.Line(Color.FromArgb(255, Color.Blue), Vector3.Zero, Vector3.UnitZ * 10) { RenderFlags = RenderFlags.Wireframe, CameraFlags = CameraFlags.Perspective });
 
             foreach (var ti in textures)
             {
@@ -93,13 +66,13 @@ namespace Sledge.Sandbox
                 renderer.Textures.Create(textureFrame);
             }
 
-            var s1 = new Sledge.Rendering.Scenes.Renderables.Sprite(new Coordinate(-1, -1, -1), animat, 3, 3);
+            var s1 = new Sledge.Rendering.Scenes.Renderables.Sprite(new Vector3(3, 3, 3), animat, 3, 3);
             scene.Add(s1);
 
 
             Task.Factory.StartNew(() =>
             {
-                return;
+                //return;
                 const int area = 20;
                 var r = new Random();
                 var b = new BlockBrush();
@@ -124,7 +97,7 @@ namespace Sledge.Sandbox
                             if (r2.Next(0, 100) > 50) randomflags |= RenderFlags.Wireframe;
                             if (r2.Next(0, 100) > 50) randomflags |= RenderFlags.Point;
                             s.FitTextureToPointCloud(new Cloud(s.Vertices.Select(v => v.Location)), 1, 1);
-                            var face = new Face(material, s.Vertices.Select(x => new Vertex(x.Location, x.TextureU, x.TextureV)).ToList())
+                            var face = new Face(material, s.Vertices.Select(x => new Vertex(x.Location.ToVector3(), x.TextureU, x.TextureV)).ToList())
                                        {
                                            AccentColor = Color.FromArgb(r2.Next(128, 255), r2.Next(128, 255), r2.Next(128, 255)),
                                            TintColor = Color.FromArgb(r.Next(0, 128), Color.Red),
@@ -198,6 +171,48 @@ namespace Sledge.Sandbox
                     }
                 }
             });
+        }
+    }
+
+    public class TestTexture : ITexture
+    {
+        private TextureItem _item;
+
+        public TestTexture(TextureItem item)
+        {
+            _item = item;
+        }
+
+        public void Dispose()
+        {
+            
+        }
+
+        public TextureFlags Flags { get { return _item.Flags; } }
+        public string Name { get { return _item.Name; } }
+        public int Width { get { return _item.Width; } }
+        public int Height { get { return _item.Height; } }
+        public void Bind()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Unbind()
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public static class Extensions
+    {
+        public static Vector3 ToVector3(this Coordinate coordinate)
+        {
+            return new Vector3((float)coordinate.DX, (float)coordinate.DY, (float)coordinate.DZ);
+        }
+
+        public static Coordinate ToCoordinate(this Vector3 vector3)
+        {
+            return new Coordinate((decimal)vector3.X, (decimal)vector3.Y, (decimal)vector3.Z);
         }
     }
 }

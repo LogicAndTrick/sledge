@@ -1,19 +1,18 @@
 ﻿using OpenTK;
-using Sledge.DataStructures.Geometric;
 using Sledge.Rendering.Scenes.Renderables;
 
 namespace Sledge.Rendering.Cameras
 {
     public class PerspectiveCamera : Camera
     {
-        private Coordinate _direction;
-        private Coordinate _lookAt;
+        private Vector3 _direction;
+        private Vector3 _lookAt;
 
         public int FOV { get; set; }
         public int ClipDistance { get; set; }
-        public Coordinate Position { get; set; }
+        public Vector3 Position { get; set; }
 
-        public Coordinate Direction
+        public Vector3 Direction
         {
             get { return _direction; }
             set
@@ -23,7 +22,7 @@ namespace Sledge.Rendering.Cameras
             }
         }
 
-        public Coordinate LookAt
+        public Vector3 LookAt
         {
             get { return _lookAt; }
             set
@@ -35,8 +34,8 @@ namespace Sledge.Rendering.Cameras
 
         public PerspectiveCamera()
         {
-            Position = Coordinate.Zero;
-            Direction = Coordinate.One;
+            Position = Vector3.Zero;
+            Direction = Vector3.One;
             FOV = 90;
             ClipDistance = 1000;
             Flags = CameraFlags.Perspective;
@@ -52,11 +51,11 @@ namespace Sledge.Rendering.Cameras
                             };
         }
 
-        public override Coordinate EyeLocation { get { return Position; } }
+        public override Vector3 EyeLocation { get { return Position; } }
 
         public override Matrix4 GetCameraMatrix()
         {
-            return Matrix4.LookAt(Position.ToVector3(), _lookAt.ToVector3(), Vector3.UnitZ);
+            return Matrix4.LookAt(Position, _lookAt, Vector3.UnitZ);
         }
 
         public override Matrix4 GetViewportMatrix(int width, int height)
