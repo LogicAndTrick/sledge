@@ -101,6 +101,7 @@ namespace Sledge.Rendering.OpenGL.Arrays
             // Render transparent polygons, sorted back-to-front
             // todo: it may be worth doing per-face culling for transparent objects
             last = null;
+            var lastMat = Matrix4.Identity;
             sets = GetSubsets(ForcedTransparentPolygons).ToList();
             if (options.RenderFacePolygons) sets.AddRange(GetSubsets(FaceTransparentPolygons));
             var sorted =
@@ -115,6 +116,10 @@ namespace Sledge.Rendering.OpenGL.Arrays
                 var mat = ((RenderableObject)subset.Instance).Material.UniqueIdentifier;
                 if (mat != last) renderer.Materials.Bind(mat);
                 last = mat;
+
+                var mult = subset.Instance is Sprite ? ((Sprite) subset.Instance).GetBillboardMatrix(eye) : Matrix4.Identity;
+                if (mult != lastMat) shader.ModelMatrix = mult;
+                lastMat = mult;
 
                 Render(PrimitiveType.Triangles, subset);
             }
@@ -276,12 +281,15 @@ namespace Sledge.Rendering.OpenGL.Arrays
 
         private IEnumerable<SimpleVertex> Convert(Sprite sprite, VertexFlags flags = VertexFlags.None)
         {
+            var p = sprite.Position;
+            var w = sprite.Width / 2;
+            var h = sprite.Height / 2;
             var verts = new[]
                         {
-                            new Vertex(new Coordinate(sprite.Position.X - sprite.Width, sprite.Position.Y - sprite.Height, sprite.Position.Z), 0, 0),
-                            new Vertex(new Coordinate(sprite.Position.X + sprite.Width, sprite.Position.Y - sprite.Height, sprite.Position.Z), 1, 0),
-                            new Vertex(new Coordinate(sprite.Position.X + sprite.Width, sprite.Position.Y + sprite.Height, sprite.Position.Z), 1, 1),
-                            new Vertex(new Coordinate(sprite.Position.X - sprite.Width, sprite.Position.Y + sprite.Height, sprite.Position.Z), 0, 1),
+                            new Vertex(new Coordinate(-w, -h, 0), 0, 0),
+                            new Vertex(new Coordinate(+w, -h, 0), 1, 0),
+                            new Vertex(new Coordinate(+w, +h, 0), 1, 1),
+                            new Vertex(new Coordinate(-w, +h, 0), 0, 1),
                         };
 
             return verts.Select((x, i) => new SimpleVertex

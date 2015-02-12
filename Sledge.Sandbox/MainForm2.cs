@@ -93,8 +93,9 @@ namespace Sledge.Sandbox
                 renderer.Textures.Create(textureFrame);
             }
 
-            var s1 = new Sledge.Rendering.Scenes.Renderables.Sprite(Coordinate.Zero, animat, 3, 3);
+            var s1 = new Sledge.Rendering.Scenes.Renderables.Sprite(new Coordinate(-1, -1, -1), animat, 3, 3);
             scene.Add(s1);
+
 
             Task.Factory.StartNew(() =>
             {
