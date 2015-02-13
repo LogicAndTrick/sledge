@@ -9,7 +9,9 @@ smooth in vec4 vertexTintColor;
 flat in uint vertexFlags;
 
 uniform bool orthographic;
-uniform bool wireframe;
+uniform bool useAccentColor;
+uniform bool showGrid;
+uniform float gridSpacing;
 uniform sampler2D currentTexture;
 
 out vec4 fragmentColor;
@@ -23,7 +25,13 @@ void main()
     if (orthographic && (vertexFlags & FLAGS_INVISIBLE_PERSPECTIVE) == FLAGS_INVISIBLE_PERSPECTIVE) discard;
     if (!orthographic && (vertexFlags & FLAGS_INVISIBLE_ORTHOGRAPHIC) == FLAGS_INVISIBLE_ORTHOGRAPHIC) discard;
 
-    fragmentColor = orthographic || wireframe ? vertexAccentColor : texture(currentTexture, vertexTexture) * vertexMaterialColor;
+    fragmentColor = orthographic || useAccentColor ? vertexAccentColor : texture(currentTexture, vertexTexture) * vertexMaterialColor;
 	fragmentColor.rgb *= vertexTintColor.rgb * vertexTintColor.a;
 	fragmentColor.a = vertexMaterialColor.a;
+	
+    if (showGrid) {
+        if (abs(vertexNormal).x < 0.9999) fragmentColor = mix(fragmentColor, vec4(1, 0, 0, 1), step(mod(vertexPosition.x, gridSpacing), 0.1f));
+        if (abs(vertexNormal).y < 0.9999) fragmentColor = mix(fragmentColor, vec4(0, 1, 0, 1), step(mod(vertexPosition.y, gridSpacing), 0.1f));
+        if (abs(vertexNormal).z < 0.9999) fragmentColor = mix(fragmentColor, vec4(0, 0, 1, 1), step(mod(vertexPosition.z, gridSpacing), 0.1f));
+    }
 }

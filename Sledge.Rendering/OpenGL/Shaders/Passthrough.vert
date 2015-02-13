@@ -16,18 +16,31 @@ smooth out vec4 vertexAccentColor;
 smooth out vec4 vertexTintColor;
 flat out uint vertexFlags;
 
+uniform mat4 selectionTransform;
 uniform mat4 modelMatrix;
 uniform mat4 viewportMatrix;
 uniform mat4 cameraMatrix;
 
+uint FLAGS_INVISIBLE_PERSPECTIVE = 1u << 0;
+uint FLAGS_INVISIBLE_ORTHOGRAPHIC = 1u << 1;
+uint FLAGS_SELECTED = 1u << 2;
+
 void main()
 {
-	vec4 modelPos = modelMatrix * vec4(position, 1);
-	vec4 cameraPos = cameraMatrix * modelPos;
-    vec4 worldPos = viewportMatrix * cameraPos;
-
+	vec4 worldPos = vec4(position, 1);
     vec4 worldNorm = vec4(normal, 1);
 
+	if ((flags & FLAGS_SELECTED) == FLAGS_SELECTED) {
+		worldPos = selectionTransform * worldPos;
+		worldNorm = transpose(inverse(selectionTransform)) * worldNorm;
+	}
+
+	worldNorm = vec4(normalize(worldNorm.xyz), 1);
+
+	vec4 modelPos = modelMatrix * worldPos;
+	vec4 cameraPos = cameraMatrix * modelPos;
+    vec4 viewportPos = viewportMatrix * cameraPos;
+	
 	vertexPosition = worldPos;
     vertexNormal = worldNorm;
     vertexTexture = texture;
@@ -36,5 +49,5 @@ void main()
 	vertexTintColor = tintColor;
     vertexFlags = flags;
 
-	gl_Position = vertexPosition;
+	gl_Position = viewportPos;
 }

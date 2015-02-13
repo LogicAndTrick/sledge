@@ -50,12 +50,13 @@ namespace Sledge.Rendering.OpenGL.Arrays
             var options = camera.RenderOptions;
 
             shader.Bind();
+            shader.SelectionTransform = Matrix4.Identity;
             shader.ModelMatrix = Matrix4.Identity;
             shader.CameraMatrix = camMatrix;
             shader.ViewportMatrix = vpMatrix;
             shader.Orthographic = camera.Flags.HasFlag(CameraFlags.Orthographic);
             
-            shader.Wireframe = false;
+            shader.UseAccentColor = !options.RenderFacePolygonTextures;
 
             // todo
             // options.RenderFacePolygonLighting
@@ -74,7 +75,7 @@ namespace Sledge.Rendering.OpenGL.Arrays
                 Render(PrimitiveType.Triangles, subset);
             }
             
-            shader.Wireframe = true;
+            shader.UseAccentColor = true;
 
             // Render wireframe
             sets = GetSubsets(ForcedWireframe).ToList();
@@ -93,13 +94,12 @@ namespace Sledge.Rendering.OpenGL.Arrays
             {
                 Render(PrimitiveType.Points, subset);
             }
-
-            shader.Wireframe = false;
-
+            
             // Render transparent polygons, sorted back-to-front
             // todo: it may be worth doing per-face culling for transparent objects
             last = null;
             var lastMat = Matrix4.Identity;
+            var lastAcc = true;
             sets = GetSubsets(ForcedTransparentPolygons).ToList();
             if (options.RenderFacePolygons) sets.AddRange(GetSubsets(FaceTransparentPolygons));
             var sorted =
@@ -118,6 +118,10 @@ namespace Sledge.Rendering.OpenGL.Arrays
                 var mult = subset.Instance is Sprite ? ((Sprite) subset.Instance).GetBillboardMatrix(eye) : Matrix4.Identity;
                 if (mult != lastMat) shader.ModelMatrix = mult;
                 lastMat = mult;
+
+                var acc = !options.RenderFacePolygonTextures && !(subset.Instance is Sprite);
+                if (acc != lastAcc) shader.UseAccentColor = acc;
+                lastAcc = acc;
 
                 Render(PrimitiveType.Triangles, subset);
             }

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using OpenTK;
@@ -14,30 +15,28 @@ namespace Sledge.Rendering.OpenGL
     public class OpenGLRenderer : IRenderer
     {
         private readonly Dictionary<IViewport, ViewportData> _viewportData;
+        private readonly Dictionary<Scene, SceneData> _sceneData;
         private readonly TextureStorage _textureStorage;
         private readonly MaterialStorage _materialStorage;
-        private OctreeVertexArray _vertexArray;
+        private Scene _activeScene;
         private bool _initialised;
         private Passthrough _shaderProgram;
 
-        public Scene Scene { get; private set; }
         public ITextureStorage Textures { get { return _textureStorage; } }
         public IMaterialStorage Materials { get { return _materialStorage; } }
 
         public OpenGLRenderer()
         {
             _viewportData = new Dictionary<IViewport, ViewportData>();
+            _sceneData = new Dictionary<Scene, SceneData>();
             _textureStorage = new TextureStorage();
             _materialStorage = new MaterialStorage(this);
-            Scene = new Scene{TrackChanges = true};
             _initialised = false;
         }
 
         private void InitialiseRenderer()
         {
             if (_initialised) return;
-
-            _vertexArray = new OctreeVertexArray(Scene);
 
             _shaderProgram = new Passthrough();
 
@@ -56,6 +55,29 @@ namespace Sledge.Rendering.OpenGL
             view.Render += RenderViewport;
             view.Update += UpdateViewport;
             return view;
+        }
+
+        public Scene CreateScene()
+        {
+            var scene = new Scene { TrackChanges = true };
+            _sceneData.Add(scene, null);
+            return scene;
+        }
+
+        public void SetActiveScene(Scene scene)
+        {
+            if (_sceneData.ContainsKey(scene)) _activeScene = scene;
+        }
+
+        public void RemoveScene(Scene scene)
+        {
+            if (_activeScene == scene) _activeScene = null;
+            if (_sceneData.ContainsKey(scene))
+            {
+                var data = _sceneData[scene];
+                if (data != null) data.Dispose();
+            }
+            _sceneData.Remove(scene);
         }
 
         private void InitialiseViewport(IViewport viewport, ViewportData data)
@@ -90,14 +112,17 @@ namespace Sledge.Rendering.OpenGL
 
         private void RenderViewport(IViewport viewport, Frame frame)
         {
-            var data = GetViewportData(viewport);
+            if (_activeScene == null) return;
+
+            var vpData = GetViewportData(viewport);
+            var scData = GetSceneData(_activeScene);
 
             InitialiseRenderer();
-            InitialiseViewport(viewport, data);
-            _vertexArray.ApplyChanges();
+            InitialiseViewport(viewport, vpData);
+            scData.Array.ApplyChanges();
             
             // Set up FBO
-            data.Framebuffer.Bind();
+            vpData.Framebuffer.Bind();
             
             GL.ClearColor(Color.Black);
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
@@ -107,11 +132,11 @@ namespace Sledge.Rendering.OpenGL
             if (viewport.Camera is OrthographicCamera)
                 ((OrthographicCamera)viewport.Camera).Zoom *= 0.998m;
 
-            _vertexArray.Render(this, _shaderProgram, viewport);
+            scData.Array.Render(this, _shaderProgram, viewport);
 
             // Blit FBO
-            data.Framebuffer.Unbind();
-            data.Framebuffer.Render();
+            vpData.Framebuffer.Unbind();
+            vpData.Framebuffer.Render();
 
             _shaderProgram.Dispose();
 
@@ -127,6 +152,16 @@ namespace Sledge.Rendering.OpenGL
             return _viewportData[viewport];
         }
 
+        private SceneData GetSceneData(Scene scene)
+        {
+            if (!_sceneData.ContainsKey(scene) || _sceneData[scene] == null)
+            {
+                var data = new SceneData(scene);
+                _sceneData[scene] = data;
+            }
+            return _sceneData[scene];
+        }
+
         private class ViewportData
         {
             public Framebuffer Framebuffer { get; set; }
@@ -139,6 +174,23 @@ namespace Sledge.Rendering.OpenGL
                 Framebuffer = framebuffer;
                 Width = Height = 0;
                 Initialised = false;
+            }
+        }
+
+        private class SceneData : IDisposable
+        {
+            public Scene Scene { get; set; }
+            public OctreeVertexArray Array { get; private set; }
+
+            public SceneData(Scene scene)
+            {
+                Scene = scene;
+                Array = new OctreeVertexArray(scene);
+            }
+
+            public void Dispose()
+            {
+                Array.Dispose();
             }
         }
     }

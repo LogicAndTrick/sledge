@@ -44,8 +44,25 @@ namespace Sledge.Sandbox
             Controls.Add(viewport.Control);
 
             // Create scene
-            var scene = renderer.Scene;
+            var scene = renderer.CreateScene();
+            renderer.SetActiveScene(scene);
             //scene.StartUpdate();
+
+            /**/
+            var scene2 = renderer.CreateScene();
+
+            scene2.Add(new Sledge.Rendering.Scenes.Renderables.Line(Color.FromArgb(255, Color.Red), Vector3.Zero, Vector3.UnitX * 10) { RenderFlags = RenderFlags.Wireframe, CameraFlags = CameraFlags.Perspective });
+            scene2.Add(new Sledge.Rendering.Scenes.Renderables.Line(Color.FromArgb(255, Color.Lime), Vector3.Zero, Vector3.UnitY * 10) { RenderFlags = RenderFlags.Wireframe, CameraFlags = CameraFlags.Perspective });
+            scene2.Add(new Sledge.Rendering.Scenes.Renderables.Line(Color.FromArgb(255, Color.Blue), Vector3.Zero, Vector3.UnitZ * 10) { RenderFlags = RenderFlags.Wireframe, CameraFlags = CameraFlags.Perspective });
+
+            Task.Factory.StartNew(() =>
+                                  {
+                                      Thread.Sleep(2000);
+                                      renderer.SetActiveScene(scene2);
+                                      Thread.Sleep(2000);
+                                      renderer.SetActiveScene(scene);
+                                  });
+            //*/
 
             var light = new AmbientLight(Color.White, new Vector3(1, 2, 3), 0.8f);
             scene.Add(light);
@@ -88,7 +105,7 @@ namespace Sledge.Sandbox
                         var material = i % 2 == 0
                             ? Material.Texture(textures[i % textures.Count].Name)
                             : Material.Flat(Color.FromArgb(r2.Next(128, 255), r2.Next(128, 255), r2.Next(128, 255)));
-                        //if (r2.Next(0, 100) > 90) material.Color = Color.FromArgb(128, material.Color);
+                        if (r2.Next(0, 100) > 90) material.Color = Color.FromArgb(128, material.Color);
                         renderer.Materials.Add(material);
                         foreach (var s in brushes.OfType<Solid>().SelectMany(x => x.Faces))
                         {
@@ -113,7 +130,7 @@ namespace Sledge.Sandbox
 
             Task.Factory.StartNew(() =>
             {
-                return;
+                //return;
                 for (var i = 0; ; i = (i + 1) % 4)
                 {
                     Thread.Sleep(5);

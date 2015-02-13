@@ -5,7 +5,11 @@ namespace Sledge.Rendering.Interfaces
     public interface IRenderer
     {
         IViewport CreateViewport();
-        Scene Scene { get; }
+
+        Scene CreateScene();
+        void SetActiveScene(Scene scene);
+        void RemoveScene(Scene scene);
+
         ITextureStorage Textures { get; }
         IMaterialStorage Materials { get; }
     }
