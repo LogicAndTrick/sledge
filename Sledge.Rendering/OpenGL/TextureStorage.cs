@@ -30,13 +30,13 @@ namespace Sledge.Rendering.OpenGL
         static TextureStorage()
         {
             WhitePixel = new Bitmap(1, 1);
-            using (var g = System.Drawing.Graphics.FromImage(WhitePixel))
+            using (var g = Graphics.FromImage(WhitePixel))
             {
                 g.Clear(Color.White);
             }
 
             DebugTexture = new Bitmap(100, 100);
-            using (var g = System.Drawing.Graphics.FromImage(DebugTexture))
+            using (var g = Graphics.FromImage(DebugTexture))
             {
                 g.Clear(Color.White);
                 g.FillRectangle(Brushes.Blue, 10, 10, 80, 80);
@@ -64,6 +64,12 @@ namespace Sledge.Rendering.OpenGL
         {
             Textures = new Dictionary<string, Texture>();
             PixelInternalFormat = PixelInternalFormat.Rgba;
+        }
+
+        public void Initialise()
+        {
+            Create("Internal::White", WhitePixel, 1, 1, TextureFlags.None);
+            Create("Internal::Debug", DebugTexture, 100, 100, TextureFlags.None);
         }
 
         #region Create

@@ -65,5 +65,10 @@ namespace Sledge.Rendering.Cameras
             if (ratio <= 0) ratio = 1;
             return Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(FOV), ratio, near, ClipDistance);
         }
+
+        public override Matrix4 GetModelMatrix()
+        {
+            return Matrix4.Identity;
+        }
     }
 }

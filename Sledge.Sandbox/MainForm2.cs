@@ -46,9 +46,11 @@ namespace Sledge.Sandbox
             var engine = new Engine(renderer);
 
             // Get render control/context
-            var camera = new PerspectiveCamera { Position = new Vector3(70, 70, 70), LookAt = Vector3.Zero };
-            //var camera = new OrthographicCamera() { Zoom = 32 };
+            //var camera = new PerspectiveCamera { Position = new Vector3(70, 70, 70), LookAt = Vector3.Zero };
+            var camera = new OrthographicCamera(OrthographicCamera.OrthographicType.Side) { Zoom = 32 };
             var viewport = engine.CreateViewport(camera);
+
+            camera.RenderOptions.RenderFaceWireframe = true;
 
             viewport.Control.Dock = DockStyle.Fill;
             Controls.Add(viewport.Control);
@@ -124,16 +126,6 @@ namespace Sledge.Sandbox
                 }
 
                 var anim = new Animation(15, new List<AnimationFrame> {new AnimationFrame(transforms.ToList())});
-                var ai = 0;
-                anim = new Animation(15, model.Animations[ai].Frames.Select((z, i) => new AnimationFrame(model.GetTransforms(ai, i).Select(x =>
-                {
-                    return new Matrix4(
-                        x[0], x[1], x[2], x[3],
-                        x[4], x[5], x[6], x[7],
-                        x[8], x[9], x[10], x[11],
-                        x[12], x[13], x[14], x[15]
-                        );
-                }).ToList())).ToList());
                 var modelObj = new Model(meshes.ToList());
                 modelObj.Animation = anim;
                 renderer.Models.Add("Test", modelObj);

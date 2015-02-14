@@ -55,7 +55,7 @@ namespace Sledge.Rendering.OpenGL
             _stopwatch = new Stopwatch();
             UpdateTimer = new Timer { Interval = 1 };
             UpdateTimer.Tick += (sender, e) => UpdateFrame();
-            Camera = new OrthographicCamera();
+            Camera = new OrthographicCamera(OrthographicCamera.OrthographicType.Top);
         }
 
         public void Run()

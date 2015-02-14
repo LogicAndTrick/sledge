@@ -1,14 +1,43 @@
-﻿using OpenTK;
+﻿using System;
+using OpenTK;
 
 namespace Sledge.Rendering.Cameras
 {
     public class OrthographicCamera : Camera
     {
-        public Vector3 Position { get; set; }
-        public decimal Zoom { get; set; }
-
-        public OrthographicCamera()
+        public enum OrthographicType
         {
+            Top,
+            Front,
+            Side
+        }
+
+        private static readonly Matrix4 TopMatrix = Matrix4.Identity;
+        private static readonly Matrix4 FrontMatrix = new Matrix4(Vector4.UnitZ, Vector4.UnitX, Vector4.UnitY, Vector4.UnitW);
+        private static readonly Matrix4 SideMatrix = new Matrix4(Vector4.UnitX, Vector4.UnitZ, Vector4.UnitY, Vector4.UnitW);
+
+        private static Matrix4 GetMatrixFor(OrthographicType dir)
+        {
+            switch (dir)
+            {
+                case OrthographicType.Top:
+                    return TopMatrix;
+                case OrthographicType.Front:
+                    return FrontMatrix;
+                case OrthographicType.Side:
+                    return SideMatrix;
+                default:
+                    throw new ArgumentOutOfRangeException("dir");
+            }
+        }
+
+        public Vector3 Position { get; set; }
+        public float Zoom { get; set; }
+        public OrthographicType Type { get; set; }
+
+        public OrthographicCamera(OrthographicType type)
+        {
+            Type = type;
             Position = Vector3.Zero;
             Zoom = 1;
             Flags = CameraFlags.Orthographic;
@@ -26,8 +55,8 @@ namespace Sledge.Rendering.Cameras
 
         public override Matrix4 GetCameraMatrix()
         {
-            var translate = Matrix4.CreateTranslation((float) -Position.X, (float) -Position.Y, 0);
-            var scale = Matrix4.CreateScale(new Vector3((float) Zoom, (float) Zoom, 0));
+            var translate = Matrix4.CreateTranslation(-Position.X, -Position.Y, 0);
+            var scale = Matrix4.CreateScale(new Vector3(Zoom, Zoom, 0));
             return translate * scale;
         }
 
@@ -36,6 +65,11 @@ namespace Sledge.Rendering.Cameras
             const float near = -1000000;
             const float far = 1000000;
             return Matrix4.CreateOrthographic(width, height, near, far);
+        }
+
+        public override Matrix4 GetModelMatrix()
+        {
+            return GetMatrixFor(Type);
         }
     }
 }

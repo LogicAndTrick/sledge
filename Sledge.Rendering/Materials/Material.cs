@@ -38,7 +38,7 @@ namespace Sledge.Rendering.Materials
 
         public static Material Flat(Color color)
         {
-            return new Material(MaterialType.Flat, color, "WhitePixel");
+            return new Material(MaterialType.Flat, color, "Internal::White");
         }
 
         public static Material Texture(string name)

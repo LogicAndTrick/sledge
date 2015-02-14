@@ -45,13 +45,14 @@ namespace Sledge.Rendering.OpenGL.Arrays
 
             var vpMatrix = camera.GetViewportMatrix(viewport.Control.Width, viewport.Control.Height);
             var camMatrix = camera.GetCameraMatrix();
+            var mvMatrix = camera.GetModelMatrix();
 
             var eye = camera.EyeLocation;
             var options = camera.RenderOptions;
 
             shader.Bind();
             shader.SelectionTransform = Matrix4.Identity;
-            shader.ModelMatrix = Matrix4.Identity;
+            shader.ModelMatrix = mvMatrix;
             shader.CameraMatrix = camMatrix;
             shader.ViewportMatrix = vpMatrix;
             shader.Orthographic = camera.Flags.HasFlag(CameraFlags.Orthographic);

@@ -47,11 +47,7 @@ namespace Sledge.Rendering.OpenGL
             _shaderProgram = new Passthrough();
             _modelShaderProgram = new ModelShader();
 
-            if (!_textureStorage.Exists("WhitePixel"))
-            {
-                _textureStorage.Create("WhitePixel", TextureStorage.WhitePixel, 1, 1, TextureFlags.None);
-                _textureStorage.Create("DebugTexture", TextureStorage.DebugTexture, 100, 100, TextureFlags.None);
-            }
+            _textureStorage.Initialise();
 
             _initialised = true;
         }
@@ -139,7 +135,7 @@ namespace Sledge.Rendering.OpenGL
             if (viewport.Camera is PerspectiveCamera)
                 ((PerspectiveCamera)viewport.Camera).Position -= new Vector3(-0.002f, -0.002f, -0.002f);
             if (viewport.Camera is OrthographicCamera)
-                ((OrthographicCamera)viewport.Camera).Zoom *= 0.998m;
+                ((OrthographicCamera)viewport.Camera).Zoom *= 0.998f;
 
             scData.Array.Render(this, _shaderProgram, _modelShaderProgram, viewport);
 
