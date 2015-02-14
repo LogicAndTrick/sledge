@@ -45,7 +45,7 @@ namespace Sledge.Rendering.OpenGL.Arrays
             shader.Orthographic = camera.Flags.HasFlag(CameraFlags.Orthographic);
             shader.UseAccentColor = !options.RenderFacePolygonTextures;
 
-            shader.AnimationTransforms = _model.Animation.Frames[0].Transforms.ToArray();
+            shader.AnimationTransforms = _model.GetCurrentTransforms();
             //shader.AnimationTransforms = frame;
 
             shader.ModelMatrix = Matrix4.CreateRotationZ(frame++ / 100f);

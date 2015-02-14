@@ -116,6 +116,7 @@ namespace Sledge.Rendering.OpenGL
         private void UpdateViewport(IViewport viewport, Frame frame)
         {
             Materials.Update(frame);
+            Models.Update(frame);
         }
 
         private void RenderViewport(IViewport viewport, Frame frame)
