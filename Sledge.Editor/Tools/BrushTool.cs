@@ -10,7 +10,6 @@ using Sledge.Editor.Actions.MapObjects.Operations;
 using Sledge.Editor.Actions.MapObjects.Selection;
 using Sledge.Editor.Properties;
 using Sledge.DataStructures.MapObjects;
-using Sledge.Editor.Rendering.Immediate;
 using Sledge.Editor.UI;
 using Sledge.Graphics.Helpers;
 using Sledge.Settings;
@@ -214,7 +213,7 @@ namespace Sledge.Editor.Tools
                 Graphics.Helpers.Matrix.Push();
                 var matrix = viewport.GetModelViewMatrix();
                 GL.MultMatrix(ref matrix);
-                MapObjectRenderer.DrawWireframe(_preview, true, false);
+                // todo MapObjectRenderer.DrawWireframe(_preview, true, false);
                 Graphics.Helpers.Matrix.Pop();
             }
         }
@@ -224,13 +223,14 @@ namespace Sledge.Editor.Tools
             base.Render3D(viewport);
             if (ShouldDraw3DBox() && _preview != null)
             {
-                GL.Disable(EnableCap.CullFace);
-                TextureHelper.Unbind();
-                if (viewport.Type != Viewport3D.ViewType.Flat) MapObjectRenderer.EnableLighting();
-                MapObjectRenderer.DrawFilled(_preview, GetRenderColour(), false);
-                MapObjectRenderer.DisableLighting();
-                GL.Color4(Color.GreenYellow);
-                MapObjectRenderer.DrawWireframe(_preview, true, false);
+                // todo rendering
+                //GL.Disable(EnableCap.CullFace);
+                //TextureHelper.Unbind();
+                //if (viewport.Type != Viewport3D.ViewType.Flat) MapObjectRenderer.EnableLighting();
+                //MapObjectRenderer.DrawFilled(_preview, GetRenderColour(), false);
+                //MapObjectRenderer.DisableLighting();
+                //GL.Color4(Color.GreenYellow);
+                //MapObjectRenderer.DrawWireframe(_preview, true, false);
             }
         }
 

@@ -11,7 +11,6 @@ using Sledge.DataStructures.MapObjects;
 using Sledge.Editor.Actions.MapObjects.Operations;
 using Sledge.Editor.Actions.MapObjects.Selection;
 using Sledge.Editor.Properties;
-using Sledge.Editor.Rendering.Immediate;
 using Sledge.Graphics;
 using Sledge.Graphics.Helpers;
 using Sledge.Settings;
@@ -834,7 +833,7 @@ namespace Sledge.Editor.Tools.VMTool
             Matrix.Push();
             var matrix = vp.GetModelViewMatrix();
             GL.MultMatrix(ref matrix);
-            MapObjectRenderer.DrawWireframe(_copies.Keys.SelectMany(x => x.Faces), true, false);
+            //MapObjectRenderer.DrawWireframe(_copies.Keys.SelectMany(x => x.Faces), true, false);
             Matrix.Pop();
 
             // Draw in order by the unused coordinate (the up axis for this viewport)
@@ -918,25 +917,26 @@ namespace Sledge.Editor.Tools.VMTool
             GL.Color3(Color.White);
             var faces = _copies.Keys.SelectMany(x => x.Faces).ToList();
 
-            if (!wireframe)
-            {
-                if (shaded) MapObjectRenderer.EnableLighting();
-                GL.Enable(EnableCap.Texture2D);
-                MapObjectRenderer.DrawFilled(faces.Where(x => !x.IsSelected), Color.FromArgb(255, 64, 192, 64), textured);
-                MapObjectRenderer.DrawFilled(faces.Where(x => x.IsSelected), Color.FromArgb(255, 255, 128, 128), textured);
-                GL.Disable(EnableCap.Texture2D);
-                MapObjectRenderer.DisableLighting();
+            // todo rendering: vm
+            //if (!wireframe)
+            //{
+            //    if (shaded) MapObjectRenderer.EnableLighting();
+            //    GL.Enable(EnableCap.Texture2D);
+            //    MapObjectRenderer.DrawFilled(faces.Where(x => !x.IsSelected), Color.FromArgb(255, 64, 192, 64), textured);
+            //    MapObjectRenderer.DrawFilled(faces.Where(x => x.IsSelected), Color.FromArgb(255, 255, 128, 128), textured);
+            //    GL.Disable(EnableCap.Texture2D);
+            //    MapObjectRenderer.DisableLighting();
 
-                GL.Color3(Color.Pink);
-                MapObjectRenderer.DrawWireframe(faces, true, false);
-            }
-            else
-            {
-                GL.Color4(Color.FromArgb(255, 64, 192, 64));
-                MapObjectRenderer.DrawWireframe(faces.Where(x => !x.IsSelected), true, false);
-                GL.Color4(Color.FromArgb(255, 255, 128, 128));
-                MapObjectRenderer.DrawWireframe(faces.Where(x => x.IsSelected), true, false);
-            }
+            //    GL.Color3(Color.Pink);
+            //    MapObjectRenderer.DrawWireframe(faces, true, false);
+            //}
+            //else
+            //{
+            //    GL.Color4(Color.FromArgb(255, 64, 192, 64));
+            //    MapObjectRenderer.DrawWireframe(faces.Where(x => !x.IsSelected), true, false);
+            //    GL.Color4(Color.FromArgb(255, 255, 128, 128));
+            //    MapObjectRenderer.DrawWireframe(faces.Where(x => x.IsSelected), true, false);
+            //}
         }
 
         public override void KeyDown(ViewportBase viewport, ViewportEvent e)

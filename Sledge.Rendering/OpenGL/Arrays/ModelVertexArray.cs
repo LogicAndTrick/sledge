@@ -65,6 +65,7 @@ namespace Sledge.Rendering.OpenGL.Arrays
             {
                 shader.UseAccentColor = true;
 
+                // todo this appears to be missing a few lines
                 // Render wireframe
                 foreach (var subset in GetSubsets(FaceWireframe))
                 {

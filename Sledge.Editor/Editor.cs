@@ -808,57 +808,58 @@ namespace Sledge.Editor
             }
         }
 
+        // todo viewport: redo this
         public void ScreenshotViewport(object parameter)
         {
-            var focused = (parameter as ViewportBase) ?? ViewportManager.Viewports.FirstOrDefault(x => x.IsFocused);
-            if (focused == null) return;
+            //var focused = (parameter as ViewportBase) ?? ViewportManager.Viewports.FirstOrDefault(x => x.IsFocused);
+            //if (focused == null) return;
 
-            var screen = Screen.FromControl(this);
-            var area = screen.Bounds;
+            //var screen = Screen.FromControl(this);
+            //var area = screen.Bounds;
 
-            using (var qf = new QuickForm("Select screenshot size") {UseShortcutKeys = true}
-                .NumericUpDown("Width", 640, 5000, 0, area.Width)
-                .NumericUpDown("Height", 480, 5000, 0, area.Height)
-                .OkCancel())
-            {
-                if (qf.ShowDialog() != DialogResult.OK) return;
+            //using (var qf = new QuickForm("Select screenshot size") {UseShortcutKeys = true}
+            //    .NumericUpDown("Width", 640, 5000, 0, area.Width)
+            //    .NumericUpDown("Height", 480, 5000, 0, area.Height)
+            //    .OkCancel())
+            //{
+            //    if (qf.ShowDialog() != DialogResult.OK) return;
 
-                var shot = ViewportManager.CreateScreenshot(focused, (int) qf.Decimal("Width"), (int) qf.Decimal("Height"));
-                if (shot == null) return;
+            //    var shot = ViewportManager.CreateScreenshot(focused, (int) qf.Decimal("Width"), (int) qf.Decimal("Height"));
+            //    if (shot == null) return;
 
-                var ext = focused is Viewport2D || (focused is Viewport3D && ((Viewport3D)focused).Type != Viewport3D.ViewType.Textured) ? ".png" : ".jpg";
+            //    var ext = focused is Viewport2D || (focused is Viewport3D && ((Viewport3D)focused).Type != Viewport3D.ViewType.Textured) ? ".png" : ".jpg";
 
-                using (var sfd = new SaveFileDialog())
-                {
-                    sfd.FileName = "Sledge - "
-                                   + (DocumentManager.CurrentDocument != null ? DocumentManager.CurrentDocument.MapFileName : "untitled")
-                                   + " - " + DateTime.Now.ToString("yyyy-MM-ddThh-mm-ss") + ext;
-                    sfd.Filter = "Image Files (*.png, *.jpg, *.bmp)|*.png;*.jpg;*.bmp";
-                    if (sfd.ShowDialog() == DialogResult.OK)
-                    {
-                        if (sfd.FileName.EndsWith("jpg"))
-                        {
-                            var encoder = GetJpegEncoder();
-                            if (encoder != null)
-                            {
-                                var p = new EncoderParameter(Encoder.Quality, 90L);
-                                var ep = new EncoderParameters(1);
-                                ep.Param[0] = p;
-                                shot.Save(sfd.FileName, encoder, ep);
-                            }
-                            else
-                            {
-                                shot.Save(sfd.FileName);
-                            }
-                        }
-                        else
-                        {
-                            shot.Save(sfd.FileName);
-                        }
-                    }
-                }
-                shot.Dispose();
-            }
+            //    using (var sfd = new SaveFileDialog())
+            //    {
+            //        sfd.FileName = "Sledge - "
+            //                       + (DocumentManager.CurrentDocument != null ? DocumentManager.CurrentDocument.MapFileName : "untitled")
+            //                       + " - " + DateTime.Now.ToString("yyyy-MM-ddThh-mm-ss") + ext;
+            //        sfd.Filter = "Image Files (*.png, *.jpg, *.bmp)|*.png;*.jpg;*.bmp";
+            //        if (sfd.ShowDialog() == DialogResult.OK)
+            //        {
+            //            if (sfd.FileName.EndsWith("jpg"))
+            //            {
+            //                var encoder = GetJpegEncoder();
+            //                if (encoder != null)
+            //                {
+            //                    var p = new EncoderParameter(Encoder.Quality, 90L);
+            //                    var ep = new EncoderParameters(1);
+            //                    ep.Param[0] = p;
+            //                    shot.Save(sfd.FileName, encoder, ep);
+            //                }
+            //                else
+            //                {
+            //                    shot.Save(sfd.FileName);
+            //                }
+            //            }
+            //            else
+            //            {
+            //                shot.Save(sfd.FileName);
+            //            }
+            //        }
+            //    }
+            //    shot.Dispose();
+            //}
         }
 
         private ImageCodecInfo GetJpegEncoder()

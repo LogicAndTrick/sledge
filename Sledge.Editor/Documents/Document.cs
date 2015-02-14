@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
-using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
@@ -18,16 +17,15 @@ using Sledge.Editor.Environment;
 using Sledge.Editor.Extensions;
 using Sledge.Editor.History;
 using Sledge.Editor.Rendering;
-using Sledge.Editor.Rendering.Helpers;
 using Sledge.Editor.Settings;
 using Sledge.Editor.Tools;
 using Sledge.Editor.UI;
-using Sledge.FileSystem;
 using Sledge.Graphics.Helpers;
 using Sledge.Providers;
 using Sledge.Providers.GameData;
 using Sledge.Providers.Map;
 using Sledge.Providers.Texture;
+using Sledge.Rendering.Scenes;
 using Sledge.Settings;
 using Sledge.Settings.Models;
 using Sledge.UI;
@@ -47,22 +45,24 @@ namespace Sledge.Editor.Documents
 
         public Pointfile Pointfile { get; set; }
 
-        public RenderManager Renderer { get; private set; }
+        //public RenderManager Renderer { get; private set; }
 
         public SelectionManager Selection { get; private set; }
         public HistoryManager History { get; private set; }
-        public HelperManager HelperManager { get; set; }
+        //public HelperManager HelperManager { get; set; }
         public TextureCollection TextureCollection { get; set; }
 
         private readonly DocumentSubscriptions _subscriptions;
         private readonly DocumentMemory _memory;
+
+        private readonly Scene _scene;
 
         private Document()
         {
             Map = new Map();
             Selection = new SelectionManager(this);
             History = new HistoryManager(this);
-            HelperManager = new HelperManager(this);
+            //HelperManager = new HelperManager(this);
             TextureCollection = new TextureCollection(new List<TexturePackage>());
         }
 
@@ -119,8 +119,10 @@ namespace Sledge.Editor.Documents
             Map.UpdateModels(this);
             Map.UpdateSprites(this);
 
-            HelperManager = new HelperManager(this);
-            Renderer = new RenderManager(this);
+            //HelperManager = new HelperManager(this);
+            //Renderer = new RenderManager(this);
+
+            _scene = SceneManager.Renderer.CreateScene();
 
             if (MapFile != null) Mediator.Publish(EditorMediator.FileOpened, MapFile);
 
@@ -147,10 +149,10 @@ namespace Sledge.Editor.Documents
             if (!Sledge.Settings.View.KeepSelectedTool) ToolManager.Activate(_memory.SelectedTool);
             if (!Sledge.Settings.View.KeepCameraPositions) _memory.RestoreViewports(ViewportManager.Viewports);
 
-            ViewportManager.AddContext3D(new WidgetLinesRenderable());
-            Renderer.Register(ViewportManager.Viewports);
-            ViewportManager.AddContextAll(new ToolRenderable());
-            ViewportManager.AddContextAll(new HelperRenderable(this));
+            // ViewportManager.AddContext3D(new WidgetLinesRenderable());
+            // Renderer.Register(ViewportManager.Viewports);
+            // ViewportManager.AddContextAll(new ToolRenderable());
+            // ViewportManager.AddContextAll(new HelperRenderable(this));
 
             _subscriptions.Subscribe();
 
@@ -163,7 +165,7 @@ namespace Sledge.Editor.Documents
             if (!Sledge.Settings.View.KeepCameraPositions) _memory.RememberViewports(ViewportManager.Viewports);
 
             ViewportManager.ClearContexts();
-            HelperManager.ClearCache();
+            //HelperManager.ClearCache();
 
             _subscriptions.Unsubscribe();
         }
@@ -172,7 +174,7 @@ namespace Sledge.Editor.Documents
         {
             Scheduler.Clear(this);
             TextureProvider.DeleteCollection(TextureCollection);
-            Renderer.Dispose();
+            SceneManager.Renderer.RemoveScene(_scene);
         }
 
         public bool SaveFile(string path = null, bool forceOverride = false, bool switchPath = true)
@@ -353,13 +355,13 @@ namespace Sledge.Editor.Documents
         public void SetSelectListTransform(Matrix4 matrix)
         {
             SelectListTransform = matrix;
-            Renderer.SetSelectionTransform(matrix);
+            //Renderer.SetSelectionTransform(matrix);
         }
 
         public void EndSelectionTransform()
         {
             SelectListTransform = Matrix4.Identity;
-            Renderer.SetSelectionTransform(Matrix4.Identity);
+            //Renderer.SetSelectionTransform(Matrix4.Identity);
         }
 
         public ITexture GetTexture(string name)
@@ -384,14 +386,14 @@ namespace Sledge.Editor.Documents
             var spritesUpdated = Map.UpdateSprites(this);
             if (decalsUpdated || modelsUpdated || spritesUpdated) Mediator.Publish(EditorMediator.SelectionChanged);
 
-            HelperManager.UpdateCache();
-            Renderer.Update();
+            //HelperManager.UpdateCache();
+            //Renderer.Update();
             ViewportManager.Viewports.ForEach(vp => vp.UpdateNextFrame());
         }
 
         public void RenderSelection(IEnumerable<MapObject> objects)
         {
-            Renderer.UpdateSelection(objects);
+            //Renderer.UpdateSelection(objects);
             ViewportManager.Viewports.ForEach(vp => vp.UpdateNextFrame());
         }
 
@@ -405,11 +407,11 @@ namespace Sledge.Editor.Documents
             var spritesUpdated = Map.UpdateSprites(this, objs);
             if (decalsUpdated || modelsUpdated || spritesUpdated) Mediator.Publish(EditorMediator.SelectionChanged);
 
-            HelperManager.UpdateCache();
+            //HelperManager.UpdateCache();
 
             // If the models/decals changed, we need to do a full update
-            if (modelsUpdated || decalsUpdated || spritesUpdated) Renderer.Update();
-            else Renderer.UpdatePartial(objs);
+            //if (modelsUpdated || decalsUpdated || spritesUpdated) Renderer.Update();
+            //else Renderer.UpdatePartial(objs);
 
             ViewportManager.Viewports.ForEach(vp => vp.UpdateNextFrame());
         }
@@ -418,29 +420,29 @@ namespace Sledge.Editor.Documents
         {
             Map.PartialPostLoadProcess(GameData, GetTexture, SettingsManager.GetSpecialTextureOpacity);
             // No need to update decals or models here: they can only be changed via entity properties
-            HelperManager.UpdateCache();
-            Renderer.UpdatePartial(faces);
+            //HelperManager.UpdateCache();
+            //Renderer.UpdatePartial(faces);
             ViewportManager.Viewports.ForEach(vp => vp.UpdateNextFrame());
         }
 
-        public void Make3D(ViewportBase viewport, Viewport3D.ViewType type)
-        {
-            var vp = ViewportManager.Make3D(viewport, type);
-            vp.RenderContext.Add(new WidgetLinesRenderable());
-            Renderer.Register(new[] { vp });
-            vp.RenderContext.Add(new ToolRenderable());
-            vp.RenderContext.Add(new HelperRenderable(this));
-            Renderer.UpdateGrid(Map.GridSpacing, Map.Show2DGrid, Map.Show3DGrid, false);
-        }
+        //public void Make3D(ViewportBase viewport, Viewport3D.ViewType type)
+        //{
+        //    var vp = ViewportManager.Make3D(viewport, type);
+        //    vp.RenderContext.Add(new WidgetLinesRenderable());
+        //    Renderer.Register(new[] { vp });
+        //    vp.RenderContext.Add(new ToolRenderable());
+        //    vp.RenderContext.Add(new HelperRenderable(this));
+        //    Renderer.UpdateGrid(Map.GridSpacing, Map.Show2DGrid, Map.Show3DGrid, false);
+        //}
 
-        public void Make2D(ViewportBase viewport, Viewport2D.ViewDirection direction)
-        {
-            var vp = ViewportManager.Make2D(viewport, direction);
-            Renderer.Register(new[] { vp });
-            vp.RenderContext.Add(new ToolRenderable());
-            vp.RenderContext.Add(new HelperRenderable(this));
-            Renderer.UpdateGrid(Map.GridSpacing, Map.Show2DGrid, Map.Show3DGrid, false);
-        }
+        //public void Make2D(ViewportBase viewport, Viewport2D.ViewDirection direction)
+        //{
+        //    var vp = ViewportManager.Make2D(viewport, direction);
+        //    Renderer.Register(new[] { vp });
+        //    vp.RenderContext.Add(new ToolRenderable());
+        //    vp.RenderContext.Add(new HelperRenderable(this));
+        //    Renderer.UpdateGrid(Map.GridSpacing, Map.Show2DGrid, Map.Show3DGrid, false);
+        //}
 
         public IEnumerable<string> GetUsedTextures()
         {

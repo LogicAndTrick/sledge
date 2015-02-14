@@ -21,8 +21,6 @@ using Sledge.Editor.Actions.Visgroups;
 using Sledge.Editor.Clipboard;
 using Sledge.Editor.Compiling;
 using Sledge.Editor.Enums;
-using Sledge.Editor.Rendering;
-using Sledge.Editor.Rendering.Helpers;
 using Sledge.Editor.Tools;
 using Sledge.Editor.Tools.SelectTool;
 using Sledge.Editor.UI;
@@ -207,7 +205,7 @@ namespace Sledge.Editor.Documents
 
         public void SettingsChanged()
         {
-            _document.HelperManager.UpdateCache();
+            // todo _document.HelperManager.UpdateCache();
             RebuildGrid();
             _document.RenderAll();
         }
@@ -767,7 +765,7 @@ namespace Sledge.Editor.Documents
 
         public void RebuildGrid()
         {
-            _document.Renderer.UpdateGrid(_document.Map.GridSpacing, _document.Map.Show2DGrid, _document.Map.Show3DGrid, true);
+            // todo _document.Renderer.UpdateGrid(_document.Map.GridSpacing, _document.Map.Show2DGrid, _document.Map.Show3DGrid, true);
             Mediator.Publish(EditorMediator.DocumentGridSpacingChanged, _document.Map.GridSpacing);
         }
 
@@ -938,7 +936,7 @@ namespace Sledge.Editor.Documents
                 MessageBox.Show("The 3D grid is only available when the OpenGL 3.0 renderer is used.");
                 _document.Map.Show3DGrid = false;
             }
-            _document.Renderer.UpdateGrid(_document.Map.GridSpacing, _document.Map.Show2DGrid, _document.Map.Show3DGrid, false);
+            //todo _document.Renderer.UpdateGrid(_document.Map.GridSpacing, _document.Map.Show2DGrid, _document.Map.Show3DGrid, false);
             Mediator.Publish(EditorMediator.UpdateToolstrip);
         }
 
@@ -970,7 +968,7 @@ namespace Sledge.Editor.Documents
         public void ToggleHideFaceMask()
         {
             _document.Map.HideFaceMask = !_document.Map.HideFaceMask;
-            _document.Renderer.UpdateDocumentToggles();
+            //todo _document.Renderer.UpdateDocumentToggles();
         }
 
         public void ToggleHideDisplacementSolids()
@@ -1125,11 +1123,12 @@ namespace Sledge.Editor.Documents
 
         public void ViewportCreated(ViewportBase viewport)
         {
-            if (viewport is Viewport3D) viewport.RenderContext.Add(new WidgetLinesRenderable());
-            _document.Renderer.Register(new[] { viewport });
-            viewport.RenderContext.Add(new ToolRenderable());
-            viewport.RenderContext.Add(new HelperRenderable(_document));
-            _document.Renderer.UpdateGrid(_document.Map.GridSpacing, _document.Map.Show2DGrid, _document.Map.Show3DGrid, false);
+            // todo 
+            //if (viewport is Viewport3D) viewport.RenderContext.Add(new WidgetLinesRenderable());
+            //_document.Renderer.Register(new[] { viewport });
+            //viewport.RenderContext.Add(new ToolRenderable());
+            //viewport.RenderContext.Add(new HelperRenderable(_document));
+            //_document.Renderer.UpdateGrid(_document.Map.GridSpacing, _document.Map.Show2DGrid, _document.Map.Show3DGrid, false);
         }
 
         public void SelectMatchingTextures(IEnumerable<string> textureList)

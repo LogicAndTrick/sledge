@@ -13,7 +13,6 @@ using Sledge.Editor.Actions.MapObjects.Selection;
 using Sledge.Editor.Brushes;
 using Sledge.Editor.Extensions;
 using Sledge.Editor.Properties;
-using Sledge.Editor.Rendering.Immediate;
 using Sledge.Settings;
 using Sledge.UI;
 using Select = Sledge.Settings.Select;
@@ -354,6 +353,7 @@ namespace Sledge.Editor.Tools
 
         public override void Render(ViewportBase viewport)
         {
+            // todo rendering
             // Render
             if (_base != null)
             {/*
@@ -369,12 +369,12 @@ namespace Sledge.Editor.Tools
 
                 GL.Disable(EnableCap.CullFace);
                 var faces = GetSides().OrderByDescending(x => (vp3.Camera.LookAt.ToCoordinate() - x.BoundingBox.Center).LengthSquared()).ToList();
-                MapObjectRenderer.DrawFilled(faces, Color.FromArgb(64, Color.DodgerBlue), false, false);
+                //MapObjectRenderer.DrawFilled(faces, Color.FromArgb(64, Color.DodgerBlue), false, false);
                 GL.Enable(EnableCap.CullFace);
             }
             else if (_cloneFace != null)
             {
-                MapObjectRenderer.DrawFilled(new[] { _cloneFace }, Color.FromArgb(64, Color.Orange), false, false);
+                //MapObjectRenderer.DrawFilled(new[] { _cloneFace }, Color.FromArgb(64, Color.Orange), false, false);
             }
         }
 

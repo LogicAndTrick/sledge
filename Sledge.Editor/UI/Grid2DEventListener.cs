@@ -1,8 +1,5 @@
-﻿using System;
-using System.Windows.Forms;
-using Sledge.DataStructures.Geometric;
+﻿using Sledge.DataStructures.Geometric;
 using Sledge.UI;
-using Sledge.Editor.Rendering;
 
 namespace Sledge.Editor.UI
 {
@@ -22,12 +19,13 @@ namespace Sledge.Editor.UI
             Viewport2D = viewport;
         }
 
+        // todo update grid
         public void ZoomChanged(decimal oldZoom, decimal newZoom)
         {
             var doc = Documents.DocumentManager.CurrentDocument;
             if (doc != null)
             {
-                doc.Renderer.UpdateGrid(doc.Map.GridSpacing, doc.Map.Show2DGrid, doc.Map.Show3DGrid, false);
+                //doc.Renderer.UpdateGrid(doc.Map.GridSpacing, doc.Map.Show2DGrid, doc.Map.Show3DGrid, false);
             }
         }
 
