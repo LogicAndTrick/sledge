@@ -39,7 +39,7 @@ namespace Sledge.Rendering.OpenGL.Arrays
         }
 
         // todo abstract away shader program into interface
-        public void Render(IRenderer renderer, Passthrough shader, IViewport viewport)
+        public void Render(IRenderer renderer, Passthrough shader, ModelShader modelShader, IViewport viewport)
         {
             var camera = viewport.Camera;
 
@@ -55,12 +55,10 @@ namespace Sledge.Rendering.OpenGL.Arrays
             shader.CameraMatrix = camMatrix;
             shader.ViewportMatrix = vpMatrix;
             shader.Orthographic = camera.Flags.HasFlag(CameraFlags.Orthographic);
-            
             shader.UseAccentColor = !options.RenderFacePolygonTextures;
 
             // todo
             // options.RenderFacePolygonLighting
-            // options.RenderFacePolygonTextures
 
             // Render non-transparent polygons
             string last = null;
@@ -94,6 +92,22 @@ namespace Sledge.Rendering.OpenGL.Arrays
             {
                 Render(PrimitiveType.Points, subset);
             }
+
+            shader.Unbind();
+
+            foreach (var model in Items.OfType<Model>())
+            {
+                var array = renderer.Models.GetArray(model.Name);
+                array.Render(renderer, modelShader, viewport, Matrix4.CreateTranslation(model.Position));
+            }
+
+            shader.Bind();
+            shader.SelectionTransform = Matrix4.Identity;
+            shader.ModelMatrix = Matrix4.Identity;
+            shader.CameraMatrix = camMatrix;
+            shader.ViewportMatrix = vpMatrix;
+            shader.Orthographic = camera.Flags.HasFlag(CameraFlags.Orthographic);
+            shader.UseAccentColor = !options.RenderFacePolygonTextures;
             
             // Render transparent polygons, sorted back-to-front
             // todo: it may be worth doing per-face culling for transparent objects

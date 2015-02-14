@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Threading;
@@ -9,14 +10,19 @@ using Sledge.Common;
 using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.MapObjects;
 using Sledge.Editor.Brushes;
+using Sledge.FileSystem;
+using Sledge.Providers.Model;
 using Sledge.Providers.Texture;
 using Sledge.Rendering;
 using Sledge.Rendering.Cameras;
+using Sledge.Rendering.DataStructures.Models;
 using Sledge.Rendering.Materials;
 using Sledge.Rendering.OpenGL;
 using Sledge.Rendering.Scenes.Lights;
 using Sledge.Rendering.Scenes.Renderables;
 using Face = Sledge.Rendering.Scenes.Renderables.Face;
+using Line = Sledge.Rendering.Scenes.Renderables.Line;
+using Model = Sledge.Rendering.DataStructures.Models.Model;
 using Vertex = Sledge.Rendering.Scenes.Renderables.Vertex;
 
 namespace Sledge.Sandbox
@@ -29,6 +35,10 @@ namespace Sledge.Sandbox
             var packages = wp.CreatePackages(new[] { @"C:\Working\Wads", @"D:\Github\sledge\_Resources\WAD" }, new string[0], new string[0], new[] { "halflife" }).ToList();
             var textures = packages.SelectMany(x => x.Items.Values).ToList();
 
+            var mdl = new MdlProvider();
+            var model = mdl.LoadMDL(new NativeFile(@"D:\Github\sledge\_Resources\MDL\HL1_10\barney.mdl"), ModelLoadItems.AllStatic | ModelLoadItems.Animations);
+            model.PreprocessModel();
+
             ClientSize = new Size(600, 600);
             
             // Create engine
@@ -36,7 +46,7 @@ namespace Sledge.Sandbox
             var engine = new Engine(renderer);
 
             // Get render control/context
-            var camera = new PerspectiveCamera { Position = new Vector3(10, 10, 10), LookAt = Vector3.Zero };
+            var camera = new PerspectiveCamera { Position = new Vector3(70, 70, 70), LookAt = Vector3.Zero };
             //var camera = new OrthographicCamera() { Zoom = 32 };
             var viewport = engine.CreateViewport(camera);
 
@@ -48,7 +58,7 @@ namespace Sledge.Sandbox
             renderer.SetActiveScene(scene);
             //scene.StartUpdate();
 
-            /**/
+            /**
             var scene2 = renderer.CreateScene();
 
             scene2.Add(new Sledge.Rendering.Scenes.Renderables.Line(Color.FromArgb(255, Color.Red), Vector3.Zero, Vector3.UnitX * 10) { RenderFlags = RenderFlags.Wireframe, CameraFlags = CameraFlags.Perspective });
@@ -67,9 +77,9 @@ namespace Sledge.Sandbox
             var light = new AmbientLight(Color.White, new Vector3(1, 2, 3), 0.8f);
             scene.Add(light);
 
-            scene.Add(new Sledge.Rendering.Scenes.Renderables.Line(Color.FromArgb(255, Color.Red), Vector3.Zero, Vector3.UnitX * 10) { RenderFlags = RenderFlags.Wireframe, CameraFlags = CameraFlags.Perspective });
-            scene.Add(new Sledge.Rendering.Scenes.Renderables.Line(Color.FromArgb(255, Color.Lime), Vector3.Zero, Vector3.UnitY * 10) { RenderFlags = RenderFlags.Wireframe, CameraFlags = CameraFlags.Perspective });
-            scene.Add(new Sledge.Rendering.Scenes.Renderables.Line(Color.FromArgb(255, Color.Blue), Vector3.Zero, Vector3.UnitZ * 10) { RenderFlags = RenderFlags.Wireframe, CameraFlags = CameraFlags.Perspective });
+            scene.Add(new Line(Color.FromArgb(255, Color.Red), Vector3.Zero, Vector3.UnitX * 10) { RenderFlags = RenderFlags.Wireframe, CameraFlags = CameraFlags.Perspective });
+            scene.Add(new Line(Color.FromArgb(255, Color.Lime), Vector3.Zero, Vector3.UnitY * 10) { RenderFlags = RenderFlags.Wireframe, CameraFlags = CameraFlags.Perspective });
+            scene.Add(new Line(Color.FromArgb(255, Color.Blue), Vector3.Zero, Vector3.UnitZ * 10) { RenderFlags = RenderFlags.Wireframe, CameraFlags = CameraFlags.Perspective });
 
             foreach (var ti in textures)
             {
@@ -83,13 +93,48 @@ namespace Sledge.Sandbox
                 renderer.Textures.Create(textureFrame);
             }
 
-            var s1 = new Sledge.Rendering.Scenes.Renderables.Sprite(new Vector3(3, 3, 3), animat, 3, 3);
-            scene.Add(s1);
+            var s1 = new Sprite(new Vector3(3, 3, 3), animat, 3, 3);
+            //scene.Add(s1);
+
+            {
+                var meshes = model.GetActiveMeshes().Select(x =>
+                {
+                    var verts = x.Vertices.Select(v =>
+                    {
+                        var weight = v.BoneWeightings.ToDictionary(w => w.Bone.BoneIndex, w => w.Weight);
+                        return new MeshVertex(v.Location.ToVector3(), v.Normal.ToVector3(), v.TextureU, v.TextureV, weight);
+                    });
+                    var mat = Material.Texture("Model::Test::" + x.SkinRef);
+                    renderer.Materials.Add(mat);
+                    return new Mesh(mat, verts.ToList());
+                });
+                var transforms = model.GetTransforms().Select(x =>
+                {
+                    return new Matrix4(
+                        x[0], x[1], x[2], x[3],
+                        x[4], x[5], x[6], x[7],
+                        x[8], x[9], x[10], x[11],
+                        x[12], x[13], x[14], x[15]
+                        );
+                });
+
+                foreach (var t in model.Textures)
+                {
+                    renderer.Textures.Create("Model::Test::" + t.Index, t.Image, t.Width, t.Height, TextureFlags.None);
+                }
+
+                var anim = new Animation(new List<AnimationFrame> {new AnimationFrame(transforms.ToList())});
+                var modelObj = new Model(meshes.ToList());
+                modelObj.Animation = anim;
+                renderer.Models.Add("Test", modelObj);
+                var scModel = new Rendering.Scenes.Renderables.Model("Test", Vector3.Zero);
+                scene.Add(scModel);
+            }
 
 
             Task.Factory.StartNew(() =>
             {
-                //return;
+                return;
                 const int area = 20;
                 var r = new Random();
                 var b = new BlockBrush();
@@ -130,7 +175,7 @@ namespace Sledge.Sandbox
 
             Task.Factory.StartNew(() =>
             {
-                //return;
+                return;
                 for (var i = 0; ; i = (i + 1) % 4)
                 {
                     Thread.Sleep(5);
@@ -227,9 +272,9 @@ namespace Sledge.Sandbox
             return new Vector3((float)coordinate.DX, (float)coordinate.DY, (float)coordinate.DZ);
         }
 
-        public static Coordinate ToCoordinate(this Vector3 vector3)
+        public static Vector3 ToVector3(this CoordinateF coordinate)
         {
-            return new Coordinate((decimal)vector3.X, (decimal)vector3.Y, (decimal)vector3.Z);
+            return new Vector3(coordinate.X, coordinate.Y, coordinate.Z);
         }
     }
 }

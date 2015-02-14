@@ -12,5 +12,6 @@ namespace Sledge.Rendering.Interfaces
 
         ITextureStorage Textures { get; }
         IMaterialStorage Materials { get; }
+        IModelStorage Models { get; }
     }
 }

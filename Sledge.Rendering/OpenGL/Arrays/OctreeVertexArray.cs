@@ -85,15 +85,15 @@ namespace Sledge.Rendering.OpenGL.Arrays
         }
 
         // todo clipping
-        public void Render(IRenderer renderer, Passthrough shader, IViewport viewport)
+        public void Render(IRenderer renderer, Passthrough shader, ModelShader modelShader, IViewport viewport)
         {
             foreach (var array in Partitions)
             {
-                array.Render(renderer, shader, viewport);
+                array.Render(renderer, shader, modelShader, viewport);
             }
             if (Spare != null)
             {
-                Spare.Render(renderer, shader, viewport);
+                Spare.Render(renderer, shader, modelShader, viewport);
             }
         }
 

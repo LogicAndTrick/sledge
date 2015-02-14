@@ -5,6 +5,7 @@ using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using Sledge.Common;
 using Sledge.Rendering.Cameras;
+using Sledge.Rendering.DataStructures.Models;
 using Sledge.Rendering.Interfaces;
 using Sledge.Rendering.OpenGL.Arrays;
 using Sledge.Rendering.OpenGL.Shaders;
@@ -18,12 +19,16 @@ namespace Sledge.Rendering.OpenGL
         private readonly Dictionary<Scene, SceneData> _sceneData;
         private readonly TextureStorage _textureStorage;
         private readonly MaterialStorage _materialStorage;
+        private readonly ModelStorage _modelStorage;
         private Scene _activeScene;
         private bool _initialised;
+
         private Passthrough _shaderProgram;
+        private ModelShader _modelShaderProgram;
 
         public ITextureStorage Textures { get { return _textureStorage; } }
         public IMaterialStorage Materials { get { return _materialStorage; } }
+        public IModelStorage Models { get { return _modelStorage; } }
 
         public OpenGLRenderer()
         {
@@ -31,6 +36,7 @@ namespace Sledge.Rendering.OpenGL
             _sceneData = new Dictionary<Scene, SceneData>();
             _textureStorage = new TextureStorage();
             _materialStorage = new MaterialStorage(this);
+            _modelStorage = new ModelStorage();
             _initialised = false;
         }
 
@@ -39,6 +45,7 @@ namespace Sledge.Rendering.OpenGL
             if (_initialised) return;
 
             _shaderProgram = new Passthrough();
+            _modelShaderProgram = new ModelShader();
 
             if (!_textureStorage.Exists("WhitePixel"))
             {
@@ -88,6 +95,7 @@ namespace Sledge.Rendering.OpenGL
                 GL.DepthFunc(DepthFunction.Lequal);
 
                 GL.Enable(EnableCap.CullFace);
+                GL.Disable(EnableCap.CullFace);
                 GL.CullFace(CullFaceMode.Front);
 
                 GL.Enable(EnableCap.Texture2D);
@@ -128,17 +136,15 @@ namespace Sledge.Rendering.OpenGL
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
             if (viewport.Camera is PerspectiveCamera)
-                ((PerspectiveCamera)viewport.Camera).Position += new Vector3(-0.002f, -0.002f, -0.002f);
+                ((PerspectiveCamera)viewport.Camera).Position -= new Vector3(-0.002f, -0.002f, -0.002f);
             if (viewport.Camera is OrthographicCamera)
                 ((OrthographicCamera)viewport.Camera).Zoom *= 0.998m;
 
-            scData.Array.Render(this, _shaderProgram, viewport);
+            scData.Array.Render(this, _shaderProgram, _modelShaderProgram, viewport);
 
             // Blit FBO
             vpData.Framebuffer.Unbind();
             vpData.Framebuffer.Render();
-
-            _shaderProgram.Dispose();
 
         }
 

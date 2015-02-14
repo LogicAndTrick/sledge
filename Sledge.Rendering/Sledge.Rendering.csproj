@@ -53,6 +53,11 @@
     <Compile Include="Cameras\CameraRenderOptions.cs" />
     <Compile Include="Class1.cs" />
     <Compile Include="DataStructures\Box.cs" />
+    <Compile Include="DataStructures\Models\Animation.cs" />
+    <Compile Include="DataStructures\Models\AnimationFrame.cs" />
+    <Compile Include="DataStructures\Models\Mesh.cs" />
+    <Compile Include="DataStructures\Models\MeshVertex.cs" />
+    <Compile Include="DataStructures\Models\Model.cs" />
     <Compile Include="DataStructures\Octree.cs" />
     <Compile Include="DataStructures\OctreeNode.cs" />
     <Compile Include="DataStructures\Plane.cs" />
@@ -62,10 +67,15 @@
     <Compile Include="FrameEventHandler.cs" />
     <Compile Include="Interfaces\IBounded.cs" />
     <Compile Include="Interfaces\IMaterialStorage.cs" />
+    <Compile Include="Interfaces\IModelStorage.cs" />
     <Compile Include="Interfaces\ITextureStorage.cs" />
     <Compile Include="Interfaces\IOrigin.cs" />
     <Compile Include="Interfaces\IRenderer.cs" />
     <Compile Include="Interfaces\IViewport.cs" />
+    <Compile Include="OpenGL\Arrays\ModelVertexArray.cs" />
+    <Compile Include="OpenGL\ModelStorage.cs" />
+    <Compile Include="OpenGL\Shaders\ModelShader.cs" />
+    <Compile Include="OpenGL\Vertices\ModelVertex.cs" />
     <Compile Include="OpenGL\Vertices\VertexFlags.cs" />
     <Compile Include="Cameras\CameraFlags.cs" />
     <Compile Include="Scenes\Renderables\LightingFlags.cs" />
@@ -100,6 +110,7 @@
     <Compile Include="Scenes\Lights\PointLight.cs" />
     <Compile Include="Scenes\Renderables\Face.cs" />
     <Compile Include="Scenes\Renderables\Line.cs" />
+    <Compile Include="Scenes\Renderables\Model.cs" />
     <Compile Include="Scenes\Renderables\RenderableObject.cs" />
     <Compile Include="Scenes\Renderables\RenderFlags.cs" />
     <Compile Include="Scenes\Renderables\Sprite.cs" />
@@ -119,6 +130,8 @@
     </Compile>
     <EmbeddedResource Include="OpenGL\Shaders\Passthrough.vert" />
     <EmbeddedResource Include="OpenGL\Shaders\Passthrough.frag" />
+    <EmbeddedResource Include="OpenGL\Shaders\ModelShader.frag" />
+    <EmbeddedResource Include="OpenGL\Shaders\ModelShader.vert" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
