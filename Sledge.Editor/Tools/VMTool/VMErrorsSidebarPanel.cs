@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
-using Sledge.DataStructures.GameData;
-using Sledge.Editor.Documents;
 
 namespace Sledge.Editor.Tools.VMTool
 {

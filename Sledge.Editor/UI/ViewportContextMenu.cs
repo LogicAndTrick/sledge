@@ -1,11 +1,10 @@
 using System;
-using System.Collections.Generic;
 using System.Windows.Forms;
 using Sledge.Common.Mediator;
 using Sledge.DataStructures.Geometric;
 using Sledge.Editor.Documents;
+using Sledge.Editor.Rendering;
 using Sledge.Settings;
-using Sledge.UI;
 
 namespace Sledge.Editor.UI
 {
@@ -18,7 +17,7 @@ namespace Sledge.Editor.UI
             Instance = new ViewportContextMenu();
         }
 
-        public void AddNonSelectionItems(Document doc, ViewportBase viewport)
+        public void AddNonSelectionItems(Document doc, MapViewport viewport)
         {
             Items.Clear();
             Add("Paste", HotkeysMediator.OperationsPaste, Clipboard.ClipboardManager.CanPaste());
@@ -28,7 +27,7 @@ namespace Sledge.Editor.UI
             Add(doc.History.GetRedoString(), HotkeysMediator.HistoryRedo, doc.History.CanRedo());
         }
 
-        public void AddSelectionItems(Document doc, ViewportBase viewport)
+        public void AddSelectionItems(Document doc, MapViewport viewport)
         {
             Items.Clear();
             Add("Cut", HotkeysMediator.OperationsCut);
@@ -50,10 +49,10 @@ namespace Sledge.Editor.UI
             Add("Tie To Entity", HotkeysMediator.TieToEntity);
             Add("Move To World", HotkeysMediator.TieToWorld);
             Items.Add(new ToolStripSeparator());
-            var vp = viewport as Viewport2D;
-            if (vp != null)
+
+            if (viewport.Is2D)
             {
-                var flat = vp.Flatten(new Coordinate(1, 2, 3));
+                var flat = viewport.Flatten(new Coordinate(1, 2, 3));
                 var left = flat.X == 1 ? HotkeysMediator.AlignXMin : (flat.X == 2 ? HotkeysMediator.AlignYMin : HotkeysMediator.AlignZMin);
                 var right = flat.X == 1 ? HotkeysMediator.AlignXMax : (flat.X == 2 ? HotkeysMediator.AlignYMax : HotkeysMediator.AlignZMax);
                 var bottom = flat.Y == 1 ? HotkeysMediator.AlignXMin : (flat.Y == 2 ? HotkeysMediator.AlignYMin : HotkeysMediator.AlignZMin);

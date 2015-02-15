@@ -3,8 +3,10 @@ using System.Windows.Forms;
 using OpenTK;
 using Sledge.DataStructures.Geometric;
 using Sledge.Editor.Documents;
+using Sledge.Editor.Rendering;
 using Sledge.Editor.Tools.Widgets;
-using Sledge.UI;
+using Sledge.Editor.UI;
+using Sledge.Rendering.Cameras;
 
 namespace Sledge.Editor.Tools.SelectTool.TransformationTools
 {
@@ -39,7 +41,7 @@ namespace Sledge.Editor.Tools.SelectTool.TransformationTools
         }
 
         #region 2D Transformation Matrix
-        public override Matrix4? GetTransformationMatrix(Viewport2D viewport, ViewportEvent e, BaseBoxTool.BoxState state, Document doc, IEnumerable<Widget> activeWidgets)
+        public override Matrix4? GetTransformationMatrix(MapViewport viewport, ViewportEvent e, BaseBoxTool.BoxState state, Document doc, IEnumerable<Widget> activeWidgets)
         {
             var shearUpDown = state.Handle == BaseBoxTool.ResizeHandle.Left || state.Handle == BaseBoxTool.ResizeHandle.Right;
             var shearTopRight = state.Handle == BaseBoxTool.ResizeHandle.Top || state.Handle == BaseBoxTool.ResizeHandle.Right;
@@ -63,15 +65,15 @@ namespace Sledge.Editor.Tools.SelectTool.TransformationTools
 
             switch (viewport.Direction)
             {
-                case Viewport2D.ViewDirection.Top:
+                case OrthographicCamera.OrthographicType.Top:
                     if (shearUpDown) shearMatrix.M12 = say;
                     else shearMatrix.M21 = sax;
                     break;
-                case Viewport2D.ViewDirection.Front:
+                case OrthographicCamera.OrthographicType.Front:
                     if (shearUpDown) shearMatrix.M23 = say;
                     else shearMatrix.M32 = sax;
                     break;
-                case Viewport2D.ViewDirection.Side:
+                case OrthographicCamera.OrthographicType.Side:
                     if (shearUpDown) shearMatrix.M13 = say;
                     else shearMatrix.M31 = sax;
                     break;

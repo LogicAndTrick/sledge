@@ -256,7 +256,13 @@
     <Compile Include="History\HistoryAction.cs" />
     <Compile Include="History\HistoryManager.cs" />
     <Compile Include="History\IHistoryItem.cs" />
+    <Compile Include="Rendering\IViewportEventListener.cs" />
+    <Compile Include="UI\KeyboardState.cs" />
+    <Compile Include="Rendering\MapViewport.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Rendering\SceneManager.cs" />
+    <Compile Include="Rendering\ViewportEvent.cs" />
     <Compile Include="Scheduler.cs" />
     <Compile Include="Settings\Elevate.cs" />
     <Compile Include="Settings\FileType.cs" />
@@ -815,10 +821,6 @@
     <ProjectReference Include="..\Sledge.Settings\Sledge.Settings.csproj">
       <Project>{A79FF02F-3EAA-4FF1-A060-2E2FFE983EF3}</Project>
       <Name>Sledge.Settings</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Sledge.UI\Sledge.UI.csproj">
-      <Project>{ABBEE97F-B5A6-4ED6-8D8F-6D4091FB9D44}</Project>
-      <Name>Sledge.UI</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

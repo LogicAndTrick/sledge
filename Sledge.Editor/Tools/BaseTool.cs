@@ -4,10 +4,11 @@ using System.Windows.Forms;
 using Sledge.Common.Mediator;
 using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.MapObjects;
+using Sledge.Editor.Rendering;
 using Sledge.Editor.UI;
 using Sledge.Extensions;
+using Sledge.Rendering;
 using Sledge.Settings;
-using Sledge.UI;
 using System.Drawing;
 
 namespace Sledge.Editor.Tools
@@ -26,7 +27,7 @@ namespace Sledge.Editor.Tools
             return Document.Snap(c);
         }
 
-        protected Coordinate SnapToSelection(Coordinate c, Viewport2D vp)
+        protected Coordinate SnapToSelection(Coordinate c, MapViewport vp)
         {
             if (!Document.Map.SnapToGrid) return c;
 
@@ -107,7 +108,7 @@ namespace Sledge.Editor.Tools
         }
 
         protected Documents.Document Document { get; set; }
-        public ViewportBase Viewport { get; set; }
+        public MapViewport Viewport { get; set; }
         public ToolUsage Usage { get; set; }
 
         public abstract Image GetIcon();
@@ -152,21 +153,28 @@ namespace Sledge.Editor.Tools
             Mediator.ExecuteDefault(this, message, data);
         }
 
-        public abstract void MouseEnter(ViewportBase viewport, ViewportEvent e);
-        public abstract void MouseLeave(ViewportBase viewport, ViewportEvent e);
-        public abstract void MouseDown(ViewportBase viewport, ViewportEvent e);
-        public abstract void MouseClick(ViewportBase viewport, ViewportEvent e);
-        public abstract void MouseDoubleClick(ViewportBase viewport, ViewportEvent e);
-        public abstract void MouseUp(ViewportBase viewport, ViewportEvent e);
-        public abstract void MouseWheel(ViewportBase viewport, ViewportEvent e);
-        public abstract void MouseMove(ViewportBase viewport, ViewportEvent e);
-        public abstract void KeyPress(ViewportBase viewport, ViewportEvent e);
-        public abstract void KeyDown(ViewportBase viewport, ViewportEvent e);
-        public abstract void KeyUp(ViewportBase viewport, ViewportEvent e);
-        public abstract void UpdateFrame(ViewportBase viewport, FrameInfo frame);
-        public abstract void Render(ViewportBase viewport);
+        public abstract void MouseEnter(MapViewport viewport, ViewportEvent e);
+        public abstract void MouseLeave(MapViewport viewport, ViewportEvent e);
+        public abstract void MouseDown(MapViewport viewport, ViewportEvent e);
+        public abstract void MouseClick(MapViewport viewport, ViewportEvent e);
+        public abstract void MouseDoubleClick(MapViewport viewport, ViewportEvent e);
+        public abstract void MouseUp(MapViewport viewport, ViewportEvent e);
+        public abstract void MouseWheel(MapViewport viewport, ViewportEvent e);
+        public abstract void MouseMove(MapViewport viewport, ViewportEvent e);
+        public abstract void KeyPress(MapViewport viewport, ViewportEvent e);
+        public abstract void KeyDown(MapViewport viewport, ViewportEvent e);
+        public abstract void KeyUp(MapViewport viewport, ViewportEvent e);
+        public abstract void UpdateFrame(MapViewport viewport, Frame frame);
+        public abstract void Render(MapViewport viewport);
 
-        public virtual void PreRender(ViewportBase viewport)
+        public virtual void DragStart(MapViewport viewport, ViewportEvent viewportEvent) { }
+        public virtual void DragMove(MapViewport viewport, ViewportEvent viewportEvent) { }
+        public virtual void DragEnd(MapViewport viewport, ViewportEvent viewportEvent) { }
+
+        public virtual void ZoomChanged(MapViewport viewport, ViewportEvent viewportEvent) { }
+        public virtual void PositionChanged(MapViewport viewport, ViewportEvent viewportEvent) { }
+
+        public virtual void PreRender(MapViewport viewport)
         {
             return;
         }
@@ -184,7 +192,7 @@ namespace Sledge.Editor.Tools
         /// <returns>False to prevent execution of the document hotkey</returns>
         public abstract HotkeyInterceptResult InterceptHotkey(HotkeysMediator hotkeyMessage, object parameters);
 
-        public virtual void OverrideViewportContextMenu(ViewportContextMenu menu, Viewport2D vp, ViewportEvent e)
+        public virtual void OverrideViewportContextMenu(ViewportContextMenu menu, MapViewport vp, ViewportEvent e)
         {
             // Default: nothing...
         }

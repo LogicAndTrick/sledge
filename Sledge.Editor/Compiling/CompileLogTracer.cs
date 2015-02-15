@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text.RegularExpressions;
 using Sledge.Common.Mediator;
 using Sledge.Editor.UI.DockPanels;
 

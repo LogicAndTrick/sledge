@@ -1,16 +1,16 @@
-﻿using System;
-using System.Windows.Forms;
+﻿using System.Windows.Forms;
 using Sledge.Common.Mediator;
-using Sledge.UI;
+using Sledge.Editor.Rendering;
 using Sledge.Editor.Tools;
+using Sledge.Rendering;
 
 namespace Sledge.Editor.UI
 {
     public class ToolViewportListener : IViewportEventListener
     {
-        public ViewportBase Viewport { get; set; }
+        public MapViewport Viewport { get; set; }
 
-        public ToolViewportListener(ViewportBase viewport)
+        public ToolViewportListener(MapViewport viewport)
         {
             Viewport = viewport;
         }
@@ -20,8 +20,8 @@ namespace Sledge.Editor.UI
             if (tool == null) return false;
             var usage = tool.Usage;
             return usage == BaseTool.ToolUsage.Both
-                   || (usage == BaseTool.ToolUsage.View2D && Viewport is Viewport2D)
-                   || (usage == BaseTool.ToolUsage.View3D && Viewport is Viewport3D);
+                   || (usage == BaseTool.ToolUsage.View2D && Viewport.Is2D)
+                   || (usage == BaseTool.ToolUsage.View3D && Viewport.Is3D);
         }
 
         public void KeyUp(ViewportEvent e)
@@ -56,7 +56,7 @@ namespace Sledge.Editor.UI
 
         public void MouseUp(ViewportEvent e)
         {
-            if (e.Button == MouseButtons.Right && Viewport is Viewport2D) Mediator.Publish(EditorMediator.ViewportRightClick, new object[] {Viewport, e});
+            if (e.Button == MouseButtons.Right && Viewport is MapViewport) Mediator.Publish(EditorMediator.ViewportRightClick, new object[] {Viewport, e});
             if (!ShouldRelayEvent(ToolManager.ActiveTool)) return;
             ToolManager.ActiveTool.MouseUp(Viewport, e);
         }
@@ -79,6 +79,24 @@ namespace Sledge.Editor.UI
             ToolManager.ActiveTool.MouseDoubleClick(Viewport, e);
         }
 
+        public void DragStart(ViewportEvent e)
+        {
+            if (!ShouldRelayEvent(ToolManager.ActiveTool)) return;
+            ToolManager.ActiveTool.DragStart(Viewport, e);
+        }
+
+        public void DragMove(ViewportEvent e)
+        {
+            if (!ShouldRelayEvent(ToolManager.ActiveTool)) return;
+            ToolManager.ActiveTool.DragMove(Viewport, e);
+        }
+
+        public void DragEnd(ViewportEvent e)
+        {
+            if (!ShouldRelayEvent(ToolManager.ActiveTool)) return;
+            ToolManager.ActiveTool.DragEnd(Viewport, e);
+        }
+
         public void MouseEnter(ViewportEvent e)
         {
             if (!ShouldRelayEvent(ToolManager.ActiveTool)) return;
@@ -91,7 +109,19 @@ namespace Sledge.Editor.UI
             ToolManager.ActiveTool.MouseLeave(Viewport, e);
         }
 
-        public void UpdateFrame(FrameInfo frame)
+        public void ZoomChanged(ViewportEvent e)
+        {
+            if (!ShouldRelayEvent(ToolManager.ActiveTool)) return;
+            ToolManager.ActiveTool.ZoomChanged(Viewport, e);
+        }
+
+        public void PositionChanged(ViewportEvent e)
+        {
+            if (!ShouldRelayEvent(ToolManager.ActiveTool)) return;
+            ToolManager.ActiveTool.PositionChanged(Viewport, e);
+        }
+
+        public void UpdateFrame(Frame frame)
         {
             if (!ShouldRelayEvent(ToolManager.ActiveTool)) return;
             ToolManager.ActiveTool.UpdateFrame(Viewport, frame);

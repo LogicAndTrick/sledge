@@ -13,10 +13,11 @@ using Sledge.Editor.Actions;
 using Sledge.Editor.Actions.MapObjects.Operations;
 using Sledge.Editor.Actions.MapObjects.Selection;
 using Sledge.Editor.Properties;
+using Sledge.Editor.Rendering;
 using Sledge.Editor.UI;
 using Sledge.Editor.UI.Sidebar;
+using Sledge.Rendering;
 using Sledge.Settings;
-using Sledge.UI;
 using Select = Sledge.Settings.Select;
 
 namespace Sledge.Editor.Tools
@@ -116,32 +117,32 @@ namespace Sledge.Editor.Tools
             return HotkeyTool.Entity;
         }
 
-        public override void MouseEnter(ViewportBase viewport, ViewportEvent e)
+        public override void MouseEnter(MapViewport viewport, ViewportEvent e)
         {
-            viewport.Cursor = Cursors.Default;
+            viewport.Control.Cursor = Cursors.Default;
         }
 
-        public override void MouseLeave(ViewportBase viewport, ViewportEvent e)
+        public override void MouseLeave(MapViewport viewport, ViewportEvent e)
         {
-            viewport.Cursor = Cursors.Default;
+            viewport.Control.Cursor = Cursors.Default;
         }
 
-        public override void MouseDown(ViewportBase viewport, ViewportEvent e)
+        public override void MouseDown(MapViewport viewport, ViewportEvent e)
         {
-            if (viewport is Viewport3D)
+            if (viewport.Is3D)
             {
-                MouseDown((Viewport3D) viewport, e);
+                MouseDown3D((MapViewport) viewport, e);
                 return;
             }
             if (e.Button != MouseButtons.Left && e.Button != MouseButtons.Right) return;
 
             _state = EntityState.Moving;
-            var vp = (Viewport2D) viewport;
+            var vp = (MapViewport) viewport;
             var loc = SnapIfNeeded(vp.ScreenToWorld(e.X, vp.Height - e.Y));
             _location = vp.GetUnusedCoordinate(_location) + vp.Expand(loc);
         }
 
-        private void MouseDown(Viewport3D vp, ViewportEvent e)
+        private void MouseDown3D(MapViewport vp, ViewportEvent e)
         {
             if (vp == null || e.Button != MouseButtons.Left) return;
 
@@ -163,45 +164,45 @@ namespace Sledge.Editor.Tools
             CreateEntity(hit.Intersection);
         }
 
-        public override void MouseClick(ViewportBase viewport, ViewportEvent e)
+        public override void MouseClick(MapViewport viewport, ViewportEvent e)
         {
             // Not used
         }
 
-        public override void MouseDoubleClick(ViewportBase viewport, ViewportEvent e)
+        public override void MouseDoubleClick(MapViewport viewport, ViewportEvent e)
         {
             // Not used
         }
 
-        public override void MouseUp(ViewportBase viewport, ViewportEvent e)
+        public override void MouseUp(MapViewport viewport, ViewportEvent e)
         {
-            if (!(viewport is Viewport2D) || e.Button != MouseButtons.Left) return;
+            if (!(viewport is MapViewport) || e.Button != MouseButtons.Left) return;
             _state = EntityState.Drawn;
-            var vp = viewport as Viewport2D;
+            var vp = viewport as MapViewport;
             var loc = SnapIfNeeded(vp.ScreenToWorld(e.X, vp.Height - e.Y));
             _location = vp.GetUnusedCoordinate(_location) + vp.Expand(loc);
         }
 
-        public override void MouseWheel(ViewportBase viewport, ViewportEvent e)
+        public override void MouseWheel(MapViewport viewport, ViewportEvent e)
         {
             // Nothing
         }
 
-        public override void MouseMove(ViewportBase viewport, ViewportEvent e)
+        public override void MouseMove(MapViewport viewport, ViewportEvent e)
         {
-            if (!(viewport is Viewport2D) || !Control.MouseButtons.HasFlag(MouseButtons.Left)) return;
+            if (!(viewport is MapViewport) || !Control.MouseButtons.HasFlag(MouseButtons.Left)) return;
             if (_state != EntityState.Moving) return;
-            var vp = viewport as Viewport2D;
+            var vp = viewport as MapViewport;
             var loc = SnapIfNeeded(vp.ScreenToWorld(e.X, vp.Height - e.Y));
             _location = vp.GetUnusedCoordinate(_location) + vp.Expand(loc);
         }
 
-        public override void KeyPress(ViewportBase viewport, ViewportEvent e)
+        public override void KeyPress(MapViewport viewport, ViewportEvent e)
         {
             // Nothing
         }
 
-        public override void KeyDown(ViewportBase viewport, ViewportEvent e)
+        public override void KeyDown(MapViewport viewport, ViewportEvent e)
         {
             switch (e.KeyCode)
             {
@@ -247,12 +248,12 @@ namespace Sledge.Editor.Tools
             }
         }
 
-        public override void KeyUp(ViewportBase viewport, ViewportEvent e)
+        public override void KeyUp(MapViewport viewport, ViewportEvent e)
         {
             //
         }
 
-        public override void UpdateFrame(ViewportBase viewport, FrameInfo frame)
+        public override void UpdateFrame(MapViewport viewport, Frame frame)
         {
             //
         }
@@ -266,14 +267,14 @@ namespace Sledge.Editor.Tools
             GL.Vertex3(x, y, z);
         }
 
-        public override void Render(ViewportBase viewport)
+        public override void Render(MapViewport viewport)
         {
             if (_state == EntityState.None) return;
 
             var high = Document.GameData.MapSizeHigh;
             var low = Document.GameData.MapSizeLow;
 
-            if (viewport is Viewport3D)
+            if (viewport is MapViewport)
             {
                 var offset = new Coordinate(20, 20, 20);
                 var start = _location - offset;
@@ -294,9 +295,9 @@ namespace Sledge.Editor.Tools
                 Coord(_location.DX, _location.DY, high);
                 GL.End();
             }
-            else if (viewport is Viewport2D)
+            else if (viewport is MapViewport)
             {
-                var vp = viewport as Viewport2D;
+                var vp = viewport as MapViewport;
                 var units = vp.PixelsToUnits(5);
                 var offset = new Coordinate(units, units, units);
                 var start = vp.Flatten(_location - offset);
@@ -329,7 +330,7 @@ namespace Sledge.Editor.Tools
             return HotkeyInterceptResult.Continue;
         }
 
-        public override void OverrideViewportContextMenu(ViewportContextMenu menu, Viewport2D vp, ViewportEvent e)
+        public override void OverrideViewportContextMenu(ViewportContextMenu menu, MapViewport vp, ViewportEvent e)
         {
             menu.Items.Clear();
             if (_location == null) return;

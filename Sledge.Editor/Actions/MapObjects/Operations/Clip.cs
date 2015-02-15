@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Linq;
-using Sledge.Common.Mediator;
 using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.MapObjects;
 using Sledge.Editor.Documents;

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using Sledge.DataStructures.GameData;
-using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.MapObjects;
 using Sledge.Editor.Documents;
 using Sledge.FileSystem;

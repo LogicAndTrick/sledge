@@ -2,14 +2,15 @@
 using System.Linq;
 using System.Windows.Forms;
 using Sledge.Common.Mediator;
+using Sledge.Editor.Rendering;
+using Sledge.Editor.UI;
 using Sledge.Graphics.Helpers;
-using Sledge.UI;
 using System.Drawing;
 using Sledge.DataStructures.Geometric;
 using OpenTK.Graphics.OpenGL;
+using Sledge.Rendering;
 using TextPrinter = OpenTK.Graphics.TextPrinter;
 using TextQuality = OpenTK.Graphics.TextQuality;
-using Sledge.Editor.Documents;
 
 namespace Sledge.Editor.Tools
 {
@@ -49,7 +50,7 @@ namespace Sledge.Editor.Tools
                 ClickStart = new Point(0, 0);
             }
 
-            public bool IsValidAndApplicable(ViewportBase vp)
+            public bool IsValidAndApplicable(MapViewport vp)
             {
                 return (Action != BoxAction.DownToDraw
                         && Action != BoxAction.Drawing
@@ -61,8 +62,8 @@ namespace Sledge.Editor.Tools
             public void FixBoxBounds()
             {
                 if (Action != BoxAction.Drawing && Action != BoxAction.Resizing) return;
-                if (!(ActiveViewport is Viewport2D)) return;
-                var vp = (Viewport2D) ActiveViewport;
+                if (!(ActiveViewport is MapViewport)) return;
+                var vp = (MapViewport) ActiveViewport;
 
                 if (BoxStart.X > BoxEnd.X)
                 {
@@ -106,7 +107,7 @@ namespace Sledge.Editor.Tools
                 }
             }
 
-            public ViewportBase ActiveViewport { get; set; }
+            public MapViewport ActiveViewport { get; set; }
             public BoxAction Action { get; set; }
             public ResizeHandle Handle { get; set; }
             public Coordinate BoxStart { get; set; }
@@ -188,13 +189,13 @@ namespace Sledge.Editor.Tools
         }
 
         // Mouse Down
-        public override void MouseDown(ViewportBase viewport, ViewportEvent e)
+        public override void MouseDown(MapViewport viewport, ViewportEvent e)
         {
-            if (viewport is Viewport3D) MouseDown3D((Viewport3D)viewport, e);
+            if (viewport is MapViewport) MouseDown3D((MapViewport)viewport, e);
             if (e.Button != MouseButtons.Left) return;
-            if (!(viewport is Viewport2D)) return;
+            if (!(viewport is MapViewport)) return;
             State.ClickStart = new Point(e.X, e.Y);
-            var vp = (Viewport2D) viewport;
+            var vp = (MapViewport) viewport;
             switch (State.Action)
             {
                 case BoxAction.ReadyToDraw:
@@ -207,12 +208,12 @@ namespace Sledge.Editor.Tools
             }
         }
 
-        protected virtual void MouseDown3D(Viewport3D viewport, ViewportEvent e)
+        protected virtual void MouseDown3D(MapViewport viewport, ViewportEvent e)
         {
             // Virtual
         }
 
-        protected virtual void LeftMouseDownToDraw(Viewport2D viewport, ViewportEvent e)
+        protected virtual void LeftMouseDownToDraw(MapViewport viewport, ViewportEvent e)
         {
             State.ActiveViewport = viewport;
             State.Action = BoxAction.DownToDraw;
@@ -222,7 +223,7 @@ namespace Sledge.Editor.Tools
             OnBoxChanged();
         }
 
-        protected virtual void LeftMouseDownToResize(Viewport2D viewport, ViewportEvent e)
+        protected virtual void LeftMouseDownToResize(MapViewport viewport, ViewportEvent e)
         {
             State.ActiveViewport = viewport;
             State.Action = BoxAction.DownToResize;
@@ -231,24 +232,24 @@ namespace Sledge.Editor.Tools
             State.PreTransformBoxEnd = State.BoxEnd;
         }
 
-        public override void MouseClick(ViewportBase viewport, ViewportEvent e)
+        public override void MouseClick(MapViewport viewport, ViewportEvent e)
         {
             // Not used
         }
 
-        public override void MouseDoubleClick(ViewportBase viewport, ViewportEvent e)
+        public override void MouseDoubleClick(MapViewport viewport, ViewportEvent e)
         {
             // Not used
         }
 
         // Mouse Up
-        public override void MouseUp(ViewportBase viewport, ViewportEvent e)
+        public override void MouseUp(MapViewport viewport, ViewportEvent e)
         {
-            if (viewport is Viewport3D) MouseUp3D((Viewport3D) viewport, e);
+            if (viewport is MapViewport) MouseUp3D((MapViewport) viewport, e);
             Editor.Instance.CaptureAltPresses = false;
             if (e.Button != MouseButtons.Left) return;
-            if (!(viewport is Viewport2D)) return;
-            var vp = (Viewport2D)viewport;
+            if (!(viewport is MapViewport)) return;
+            var vp = (MapViewport)viewport;
             switch (State.Action)
             {
                 case BoxAction.Drawing:
@@ -266,12 +267,12 @@ namespace Sledge.Editor.Tools
             }
         }
 
-        protected virtual void MouseUp3D(Viewport3D viewport, ViewportEvent e)
+        protected virtual void MouseUp3D(MapViewport viewport, ViewportEvent e)
         {
             // Virtual
         }
 
-        protected virtual void LeftMouseUpDrawing(Viewport2D viewport, ViewportEvent e)
+        protected virtual void LeftMouseUpDrawing(MapViewport viewport, ViewportEvent e)
         {
             var coords = GetResizedBoxCoordinates(viewport, e);
             var corrected = GetProperBoxCoordinates(coords.Item1, coords.Item2);
@@ -282,7 +283,7 @@ namespace Sledge.Editor.Tools
             OnBoxChanged();
         }
 
-        protected virtual void LeftMouseUpResizing(Viewport2D viewport, ViewportEvent e)
+        protected virtual void LeftMouseUpResizing(MapViewport viewport, ViewportEvent e)
         {
             var coords = GetResizedBoxCoordinates(viewport, e);
             var corrected = GetProperBoxCoordinates(coords.Item1, coords.Item2);
@@ -293,7 +294,7 @@ namespace Sledge.Editor.Tools
             OnBoxChanged();
         }
 
-        protected virtual void LeftMouseClick(Viewport2D viewport, ViewportEvent e)
+        protected virtual void LeftMouseClick(MapViewport viewport, ViewportEvent e)
         {
             State.ActiveViewport = null;
             State.Action = BoxAction.ReadyToDraw;
@@ -302,19 +303,19 @@ namespace Sledge.Editor.Tools
             OnBoxChanged();
         }
 
-        protected virtual void LeftMouseClickOnResizeHandle(Viewport2D vp, ViewportEvent e)
+        protected virtual void LeftMouseClickOnResizeHandle(MapViewport vp, ViewportEvent e)
         {
             State.Action = BoxAction.ReadyToResize;
         }
 
         // Mouse Move
-        public override void MouseMove(ViewportBase viewport, ViewportEvent e)
+        public override void MouseMove(MapViewport viewport, ViewportEvent e)
         {
-            if (viewport is Viewport3D) MouseMove3D((Viewport3D) viewport, e);
-            if (!(viewport is Viewport2D)) return;
+            if (viewport is MapViewport) MouseMove3D((MapViewport) viewport, e);
+            if (!(viewport is MapViewport)) return;
             if (!State.IsValidAndApplicable(viewport)) return;
             if (Math.Abs(e.X - State.ClickStart.X) <= 2 && Math.Abs(e.Y - State.ClickStart.Y) <= 2) return;
-            var vp = (Viewport2D) viewport;
+            var vp = (MapViewport) viewport;
             switch (State.Action)
             {
                 case BoxAction.Drawing:
@@ -334,12 +335,12 @@ namespace Sledge.Editor.Tools
             }
         }
 
-        protected virtual void MouseMove3D(Viewport3D viewport, ViewportEvent e)
+        protected virtual void MouseMove3D(MapViewport viewport, ViewportEvent e)
         {
             // Virtual
         }
 
-        protected virtual void MouseDraggingToDraw(Viewport2D viewport, ViewportEvent e)
+        protected virtual void MouseDraggingToDraw(MapViewport viewport, ViewportEvent e)
         {
             State.Action = BoxAction.Drawing;
             var coords = GetResizedBoxCoordinates(viewport, e);
@@ -348,7 +349,7 @@ namespace Sledge.Editor.Tools
             OnBoxChanged();
         }
 
-        protected virtual void MouseDraggingToResize(Viewport2D viewport, ViewportEvent e)
+        protected virtual void MouseDraggingToResize(MapViewport viewport, ViewportEvent e)
         {
             State.Action = BoxAction.Resizing;
             var coords = GetResizedBoxCoordinates(viewport, e);
@@ -380,33 +381,33 @@ namespace Sledge.Editor.Tools
             }
         }
 
-        protected virtual void MouseHoverWhenDrawn(Viewport2D viewport, ViewportEvent e)
+        protected virtual void MouseHoverWhenDrawn(MapViewport viewport, ViewportEvent e)
         {
             var now = viewport.ScreenToWorld(e.X, viewport.Height - e.Y);
             var start = viewport.Flatten(State.BoxStart);
             var end = viewport.Flatten(State.BoxEnd);
-            var handle = GetHandle(now, start, end, HandleWidth / viewport.Zoom);
+            var handle = GetHandle(now, start, end, HandleWidth / (decimal) viewport.Zoom);
             if (handle.HasValue)
             {
-                viewport.Cursor = CursorForHandle(handle.Value);
+                viewport.Control.Cursor = CursorForHandle(handle.Value);
                 State.Handle = handle.Value;
                 State.Action = BoxAction.ReadyToResize;
                 State.ActiveViewport = viewport;
             }
             else
             {
-                viewport.Cursor = Cursors.Default;
+                viewport.Control.Cursor = Cursors.Default;
                 State.Action = BoxAction.Drawn;
                 State.ActiveViewport = null;
             }
         }
 
-        public override void MouseWheel(ViewportBase viewport, ViewportEvent e)
+        public override void MouseWheel(MapViewport viewport, ViewportEvent e)
         {
             // Nope.
         }
 
-        protected virtual Coordinate GetResizeOrigin(Viewport2D viewport)
+        protected virtual Coordinate GetResizeOrigin(MapViewport viewport)
         {
             if (State.Action != BoxAction.Resizing || State.Handle != ResizeHandle.Center) return null;
             var st = viewport.Flatten(State.PreTransformBoxStart);
@@ -415,7 +416,7 @@ namespace Sledge.Editor.Tools
             return points.OrderBy(x => (State.MoveStart - x).LengthSquared()).First();
         }
 
-        protected virtual Coordinate GetResizeDistance(Viewport2D viewport, ViewportEvent e)
+        protected virtual Coordinate GetResizeDistance(MapViewport viewport, ViewportEvent e)
         {
             var origin = GetResizeOrigin(viewport);
             if (origin == null) return null;
@@ -424,7 +425,7 @@ namespace Sledge.Editor.Tools
             return SnapIfNeeded(origin + after - before) - origin;
         }
 
-        protected Tuple<Coordinate, Coordinate> GetResizedBoxCoordinates(Viewport2D viewport, ViewportEvent e)
+        protected Tuple<Coordinate, Coordinate> GetResizedBoxCoordinates(MapViewport viewport, ViewportEvent e)
         {
             if (State.Action != BoxAction.Resizing && State.Action != BoxAction.Drawing) return Tuple.Create(State.BoxStart, State.BoxEnd);
             var now = SnapIfNeeded(viewport.ScreenToWorld(e.X, viewport.Height - e.Y));
@@ -512,12 +513,12 @@ namespace Sledge.Editor.Tools
             return Tuple.Create(cstart, cend);
         }
 
-        public override void KeyPress(ViewportBase viewport, ViewportEvent e)
+        public override void KeyPress(MapViewport viewport, ViewportEvent e)
         {
 
         }
 
-        public override void KeyDown(ViewportBase viewport, ViewportEvent e)
+        public override void KeyDown(MapViewport viewport, ViewportEvent e)
         {
             if (State.Action == BoxAction.ReadyToDraw || State.Action == BoxAction.DownToDraw) return;
             switch (e.KeyCode)
@@ -531,21 +532,21 @@ namespace Sledge.Editor.Tools
             }
         }
 
-        public virtual void BoxDrawnConfirm(ViewportBase viewport)
+        public virtual void BoxDrawnConfirm(MapViewport viewport)
         {
-            if (State.ActiveViewport != null) State.ActiveViewport.Cursor = Cursors.Default;
+            if (State.ActiveViewport != null) State.ActiveViewport.Control.Cursor = Cursors.Default;
             State.Action = BoxAction.ReadyToDraw;
             State.ActiveViewport = null;
         }
 
-        public virtual void BoxDrawnCancel(ViewportBase viewport)
+        public virtual void BoxDrawnCancel(MapViewport viewport)
         {
-            if (State.ActiveViewport != null) State.ActiveViewport.Cursor = Cursors.Default;
+            if (State.ActiveViewport != null) State.ActiveViewport.Control.Cursor = Cursors.Default;
             State.Action = BoxAction.ReadyToDraw;
             State.ActiveViewport = null;
         }
 
-        public override void KeyUp(ViewportBase viewport, ViewportEvent e)
+        public override void KeyUp(MapViewport viewport, ViewportEvent e)
         {
             // Probably not needed
         }
@@ -560,13 +561,13 @@ namespace Sledge.Editor.Tools
             GL.Vertex3(c.DX, c.DY, c.DZ);
         }
 
-        public override void Render(ViewportBase viewport)
+        public override void Render(MapViewport viewport)
         {
-            if (viewport is Viewport2D) Render2D((Viewport2D)viewport);
-            if (viewport is Viewport3D) Render3D((Viewport3D)viewport);
+            if (viewport is MapViewport) Render2D((MapViewport)viewport);
+            if (viewport is MapViewport) Render3D((MapViewport)viewport);
         }
 
-        protected virtual bool ShouldDrawBox(ViewportBase viewport)
+        protected virtual bool ShouldDrawBox(MapViewport viewport)
         {
             return State.Action == BoxAction.Drawing
                    || State.Action == BoxAction.Drawn
@@ -575,7 +576,7 @@ namespace Sledge.Editor.Tools
                    || State.Action == BoxAction.Resizing;
         }
 
-        protected virtual bool ShouldDrawBoxText(ViewportBase viewport)
+        protected virtual bool ShouldDrawBoxText(MapViewport viewport)
         {
             return ShouldDrawBox(viewport);
         }
@@ -605,7 +606,7 @@ namespace Sledge.Editor.Tools
             return FillColour;
         }
 
-        protected virtual void RenderBox(Viewport2D viewport, Coordinate start, Coordinate end)
+        protected virtual void RenderBox(MapViewport viewport, Coordinate start, Coordinate end)
         {
             GL.Begin(PrimitiveType.Quads);
             GL.Color4(GetRenderFillColour());
@@ -631,12 +632,12 @@ namespace Sledge.Editor.Tools
             GL.Disable(EnableCap.LineStipple);
         }
 
-        protected virtual bool ShouldRenderSnapHandle(Viewport2D viewport)
+        protected virtual bool ShouldRenderSnapHandle(MapViewport viewport)
         {
             return State.Action == BoxAction.Resizing && State.Handle == ResizeHandle.Center;
         }
 
-        protected virtual void RenderSnapHandle(Viewport2D viewport)
+        protected virtual void RenderSnapHandle(MapViewport viewport)
         {
             var start = GetResizeOrigin(viewport);
             if (start == null) return;
@@ -653,7 +654,7 @@ namespace Sledge.Editor.Tools
             GL.End();
         }
 
-        protected virtual bool ShouldRenderResizeBox(Viewport2D viewport)
+        protected virtual bool ShouldRenderResizeBox(MapViewport viewport)
         {
             return State.ActiveViewport == viewport &&
                    (State.Action == BoxAction.ReadyToResize
@@ -729,7 +730,7 @@ namespace Sledge.Editor.Tools
             return new[] { x1, y1, x2, y2 };
         }
 
-        protected virtual void RenderResizeBox(Viewport2D viewport, Coordinate start, Coordinate end)
+        protected virtual void RenderResizeBox(MapViewport viewport, Coordinate start, Coordinate end)
         {
             var box = GetRenderResizeBox(start, end);
             GL.Begin(PrimitiveType.Quads);
@@ -742,7 +743,7 @@ namespace Sledge.Editor.Tools
             GL.End();
         }
 
-        protected void RenderBoxText(Viewport2D viewport, Coordinate boxStart, Coordinate boxEnd)
+        protected void RenderBoxText(MapViewport viewport, Coordinate boxStart, Coordinate boxEnd)
         {
             if (!Sledge.Settings.View.DrawBoxText) return;
 
@@ -781,7 +782,7 @@ namespace Sledge.Editor.Tools
             GL.Enable(EnableCap.CullFace);
         }
 
-        protected virtual void Render2D(Viewport2D viewport)
+        protected virtual void Render2D(MapViewport viewport)
         {
             if (State.Action == BoxAction.ReadyToDraw || State.Action == BoxAction.DownToDraw) return;
             var start = viewport.Flatten(State.BoxStart);
@@ -809,7 +810,7 @@ namespace Sledge.Editor.Tools
             return State.Action != BoxAction.ReadyToDraw;
         }
 
-        protected virtual void Render3DBox(Viewport3D viewport, Coordinate start, Coordinate end)
+        protected virtual void Render3DBox(MapViewport viewport, Coordinate start, Coordinate end)
         {
             var box = new Box(start, end);
             TextureHelper.Unbind();
@@ -823,7 +824,7 @@ namespace Sledge.Editor.Tools
             GL.End();
         }
 
-        protected virtual void Render3D(Viewport3D viewport)
+        protected virtual void Render3D(MapViewport viewport)
         {
             if (State.Action == BoxAction.ReadyToDraw || State.Action == BoxAction.DownToDraw) return;
             if (ShouldDraw3DBox())
@@ -833,19 +834,19 @@ namespace Sledge.Editor.Tools
         }
         #endregion
 
-        public override void UpdateFrame(ViewportBase viewport, FrameInfo frame)
+        public override void UpdateFrame(MapViewport viewport, Frame frame)
         {
 
         }
 
-        public override void MouseEnter(ViewportBase viewport, ViewportEvent e)
+        public override void MouseEnter(MapViewport viewport, ViewportEvent e)
         {
-            if (State.ActiveViewport != null) State.ActiveViewport.Cursor = Cursors.Default;
+            if (State.ActiveViewport != null) State.ActiveViewport.Control.Cursor = Cursors.Default;
         }
 
-        public override void MouseLeave(ViewportBase viewport, ViewportEvent e)
+        public override void MouseLeave(MapViewport viewport, ViewportEvent e)
         {
-            if (State.ActiveViewport != null) State.ActiveViewport.Cursor = Cursors.Default;
+            if (State.ActiveViewport != null) State.ActiveViewport.Control.Cursor = Cursors.Default;
         }
 
         protected bool GetSelectionBox(out Box boundingbox)

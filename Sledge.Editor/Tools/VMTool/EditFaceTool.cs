@@ -4,7 +4,9 @@ using System.Windows.Forms;
 using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.MapObjects;
 using Sledge.DataStructures.Transformations;
-using Sledge.UI;
+using Sledge.Editor.Rendering;
+using Sledge.Editor.UI;
+using Sledge.Rendering;
 
 namespace Sledge.Editor.Tools.VMTool
 {
@@ -123,12 +125,7 @@ namespace Sledge.Editor.Tools.VMTool
             UpdateSelection();
         }
 
-        public override List<VMPoint> GetVerticesAtPoint(int x, int y, Viewport2D viewport)
-        {
-            return new List<VMPoint>();
-        }
-
-        public override List<VMPoint> GetVerticesAtPoint(int x, int y, Viewport3D viewport)
+        public override List<VMPoint> GetVerticesAtPoint(int x, int y, MapViewport viewport)
         {
             return new List<VMPoint>();
         }
@@ -148,19 +145,19 @@ namespace Sledge.Editor.Tools.VMTool
 
         }
 
-        public override void MouseEnter(ViewportBase viewport, ViewportEvent e)
+        public override void MouseEnter(MapViewport viewport, ViewportEvent e)
         {
             
         }
 
-        public override void MouseLeave(ViewportBase viewport, ViewportEvent e)
+        public override void MouseLeave(MapViewport viewport, ViewportEvent e)
         {
 
         }
 
-        public override void MouseDown(ViewportBase viewport, ViewportEvent e)
+        public override void MouseDown(MapViewport viewport, ViewportEvent e)
         {
-            var vp = viewport as Viewport3D;
+            var vp = viewport as MapViewport;
             if (vp == null || e.Button != MouseButtons.Left) return;
 
             // Do selection
@@ -196,62 +193,62 @@ namespace Sledge.Editor.Tools.VMTool
             }
         }
 
-        public override void MouseClick(ViewportBase viewport, ViewportEvent e)
+        public override void MouseClick(MapViewport viewport, ViewportEvent e)
         {
             // Not used
         }
 
-        public override void MouseDoubleClick(ViewportBase viewport, ViewportEvent e)
+        public override void MouseDoubleClick(MapViewport viewport, ViewportEvent e)
         {
             // Not used
         }
 
-        public override void MouseUp(ViewportBase viewport, ViewportEvent e)
+        public override void MouseUp(MapViewport viewport, ViewportEvent e)
         {
 
         }
 
-        public override void MouseWheel(ViewportBase viewport, ViewportEvent e)
+        public override void MouseWheel(MapViewport viewport, ViewportEvent e)
         {
 
         }
 
-        public override void MouseMove(ViewportBase viewport, ViewportEvent e)
+        public override void MouseMove(MapViewport viewport, ViewportEvent e)
         {
 
         }
 
-        public override void KeyPress(ViewportBase viewport, ViewportEvent e)
+        public override void KeyPress(MapViewport viewport, ViewportEvent e)
         {
 
         }
 
-        public override void KeyDown(ViewportBase viewport, ViewportEvent e)
+        public override void KeyDown(MapViewport viewport, ViewportEvent e)
         {
 
         }
 
-        public override void KeyUp(ViewportBase viewport, ViewportEvent e)
+        public override void KeyUp(MapViewport viewport, ViewportEvent e)
         {
 
         }
 
-        public override void UpdateFrame(ViewportBase viewport, FrameInfo frame)
+        public override void UpdateFrame(MapViewport viewport, Frame frame)
         {
 
         }
 
-        public override void Render(ViewportBase viewport)
+        public override void Render(MapViewport viewport)
         {
 
         }
 
-        public override void Render2D(Viewport2D viewport)
+        public override void Render2D(MapViewport viewport)
         {
 
         }
 
-        public override void Render3D(Viewport3D viewport)
+        public override void Render3D(MapViewport viewport)
         {
 
         }

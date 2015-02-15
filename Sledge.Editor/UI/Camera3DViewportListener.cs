@@ -4,19 +4,19 @@ using System.Drawing;
 using System.Windows.Forms;
 using Sledge.Common.Easings;
 using Sledge.Common.Mediator;
+using Sledge.Editor.Rendering;
 using Sledge.Graphics;
+using Sledge.Rendering;
 using Sledge.Settings;
-using Sledge.UI;
 using OpenTK.Graphics.OpenGL;
 using Sledge.Editor.Tools;
 using Sledge.Graphics.Helpers;
-using KeyboardState = Sledge.UI.KeyboardState;
 
 namespace Sledge.Editor.UI
 {
     public class Camera3DViewportListener : IViewportEventListener, IMediatorListener
     {
-        public ViewportBase Viewport { get; set; }
+        public MapViewport Viewport { get; set; }
 
         private int LastKnownX { get; set; }
         private int LastKnownY { get; set; }
@@ -31,7 +31,7 @@ namespace Sledge.Editor.UI
         private long _lastMillis;
         private Easing _easing;
 
-        public Camera3DViewportListener(Viewport3D vp)
+        public Camera3DViewportListener(MapViewport vp)
         {
             LastKnownX = 0;
             LastKnownY = 0;
@@ -41,7 +41,7 @@ namespace Sledge.Editor.UI
             CursorVisible = true;
             Focus = false;
             Viewport = vp;
-            Camera = vp.Camera;
+            // todo Camera = vp.Camera;
             _downKeys = new List<Keys>();
             _downMillis = _lastMillis = 0;
             _easing = Easing.FromType(EasingType.Sinusoidal, EasingDirection.Out);
@@ -59,13 +59,18 @@ namespace Sledge.Editor.UI
 
         private readonly List<Keys> _downKeys;
 
-        public void UpdateFrame(FrameInfo frame)
+        public void PositionChanged(ViewportEvent e)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void UpdateFrame(Frame frame)
         {
             var currMillis = _lastMillis;
             _lastMillis = frame.Milliseconds;
 
             if (currMillis == 0) return;
-            if (!Focus || !Viewport.IsUnlocked(this) || !Viewport.IsFocused)
+            if (!Focus || !Viewport.IsUnlocked(this) || !Viewport.Viewport.IsFocused)
             {
                 if (FreeLook || FreeLookToggle)
                 {
@@ -213,8 +218,8 @@ namespace Sledge.Editor.UI
             if (FreeLook && CursorVisible)
             {
                 CursorClip = Cursor.Clip;
-                Cursor.Clip = Viewport.RectangleToScreen(new Rectangle(0, 0, Viewport.Width, Viewport.Height));
-                Viewport.Capture = true;
+                Cursor.Clip = Viewport.Control.RectangleToScreen(new Rectangle(0, 0, Viewport.Width, Viewport.Height));
+                Viewport.Control.Capture = true;
                 CursorVisible = false;
                 Cursor.Hide();
                 Viewport.AquireInputLock(this);
@@ -223,7 +228,7 @@ namespace Sledge.Editor.UI
             {
                 Cursor.Clip = CursorClip;
                 CursorClip = Rectangle.Empty;
-                Viewport.Capture = false;
+                Viewport.Control.Capture = false;
                 CursorVisible = true;
                 Cursor.Show();
                 Viewport.ReleaseInputLock(this);
@@ -288,7 +293,7 @@ namespace Sledge.Editor.UI
 
             LastKnownX = Viewport.Width/2;
             LastKnownY = Viewport.Height/2;
-            Cursor.Position = Viewport.PointToScreen(new Point(LastKnownX, LastKnownY));
+            Cursor.Position = Viewport.Control.PointToScreen(new Point(LastKnownX, LastKnownY));
         }
 
         public void MouseWheel(ViewportEvent e)
@@ -318,6 +323,21 @@ namespace Sledge.Editor.UI
             
         }
 
+        public void DragStart(ViewportEvent e)
+        {
+            
+        }
+
+        public void DragMove(ViewportEvent e)
+        {
+
+        }
+
+        public void DragEnd(ViewportEvent e)
+        {
+
+        }
+
         public void MouseEnter(ViewportEvent e)
         {
             Focus = true;
@@ -329,7 +349,7 @@ namespace Sledge.Editor.UI
             {
                 LastKnownX = Viewport.Width/2;
                 LastKnownY = Viewport.Height/2;
-                Cursor.Position = Viewport.PointToScreen(new Point(LastKnownX, LastKnownY));
+                Cursor.Position = Viewport.Control.PointToScreen(new Point(LastKnownX, LastKnownY));
 
             }
             else
@@ -338,7 +358,7 @@ namespace Sledge.Editor.UI
                 {
                     Cursor.Clip = CursorClip;
                     CursorClip = Rectangle.Empty;
-                    Viewport.Capture = false;
+                    Viewport.Control.Capture = false;
                     CursorVisible = true;
                     Cursor.Show();
                     Viewport.ReleaseInputLock(this);
@@ -346,6 +366,11 @@ namespace Sledge.Editor.UI
                 PositionKnown = false;
                 Focus = false;
             }
+        }
+
+        public void ZoomChanged(ViewportEvent e)
+        {
+
         }
 
         public void Notify(string message, object data)

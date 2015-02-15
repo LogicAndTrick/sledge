@@ -1,13 +1,12 @@
-using System;
-using System.Drawing;
+﻿using System;
 using System.Windows.Forms;
+using Sledge.DataStructures.Geometric;
 
-namespace Sledge.UI
+namespace Sledge.Editor.Rendering
 {
     public class ViewportEvent : EventArgs
     {
-        public ViewportBase Sender { get; set; }
-
+        public MapViewport Sender { get; set; }
         public bool Handled { get; set; }
 
         // Key
@@ -25,9 +24,41 @@ namespace Sledge.UI
         public int X { get; set; }
         public int Y { get; set; }
         public int Delta { get; set; }
-        public Point Location { get; set; }
 
-        public ViewportEvent(ViewportBase sender, KeyEventArgs e)
+        public Coordinate Location
+        {
+            get { return new Coordinate(X, Y, 0); }
+        }
+
+        // Mouse movement
+        public int LastX { get; set; }
+        public int LastY { get; set; }
+
+        public int DeltaX
+        {
+            get { return X - LastX; }
+        }
+
+        public int DeltaY
+        {
+            get { return Y - LastY; }
+        }
+
+        // Click and drag
+        public bool Dragging { get; set; }
+        public int StartX { get; set; }
+        public int StartY { get; set; }
+
+        // 2D Camera
+        public Coordinate CameraPosition { get; set; }
+        public decimal CameraZoom { get; set; }
+
+        public ViewportEvent(MapViewport sender, EventArgs e)
+        {
+            Sender = sender;
+        }
+
+        public ViewportEvent(MapViewport sender, KeyEventArgs e)
         {
             Sender = sender;
             Modifiers = e.Modifiers;
@@ -38,13 +69,13 @@ namespace Sledge.UI
             KeyValue = e.KeyValue;
         }
 
-        public ViewportEvent(ViewportBase sender, KeyPressEventArgs e)
+        public ViewportEvent(MapViewport sender, KeyPressEventArgs e)
         {
             Sender = sender;
             KeyChar = e.KeyChar;
         }
-        
-        public ViewportEvent(ViewportBase sender, MouseEventArgs e)
+
+        public ViewportEvent(MapViewport sender, MouseEventArgs e)
         {
             Sender = sender;
             Button = e.Button;
@@ -52,12 +83,6 @@ namespace Sledge.UI
             X = e.X;
             Y = e.Y;
             Delta = e.Delta;
-            Location = e.Location;
-        }
-
-        public ViewportEvent(ViewportBase sender, EventArgs e)
-        {
-            Sender = sender;
         }
     }
 }

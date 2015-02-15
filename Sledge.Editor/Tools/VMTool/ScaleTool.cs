@@ -5,8 +5,9 @@ using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using Sledge.Common.Mediator;
 using Sledge.DataStructures.Geometric;
+using Sledge.Editor.Rendering;
 using Sledge.Graphics;
-using Sledge.UI;
+using Sledge.Rendering;
 using Vertex = Sledge.DataStructures.MapObjects.Vertex;
 
 namespace Sledge.Editor.Tools.VMTool
@@ -123,24 +124,26 @@ Move the origin point around by *clicking and dragging* it.";
             Mediator.UnsubscribeAll(this);
         }
 
-        public override List<VMPoint> GetVerticesAtPoint(int x, int y, Viewport2D viewport)
+        public override List<VMPoint> GetVerticesAtPoint(int x, int y, MapViewport viewport)
         {
-            var verts = MainTool.GetVerticesAtPoint(x, y, viewport);
-
-            var p = viewport.ScreenToWorld(x, y);
-            var d = 8 / viewport.Zoom; // Tolerance value = 8 pixels
-            var c = viewport.Flatten(_origin.Coordinate);
-            if (p.X >= c.X - d && p.X <= c.X + d && p.Y >= c.Y - d && p.Y <= c.Y + d)
+            if (viewport.Is2D)
             {
-                verts.Insert(0, _origin);
+                var verts = MainTool.GetVerticesAtPoint(x, y, viewport);
+
+                var p = viewport.ScreenToWorld(x, y);
+                var d = 8 / (decimal) viewport.Zoom; // Tolerance value = 8 pixels
+                var c = viewport.Flatten(_origin.Coordinate);
+                if (p.X >= c.X - d && p.X <= c.X + d && p.Y >= c.Y - d && p.Y <= c.Y + d)
+                {
+                    verts.Insert(0, _origin);
+                }
+
+                return verts;
             }
-
-            return verts;
-        }
-
-        public override List<VMPoint> GetVerticesAtPoint(int x, int y, Viewport3D viewport)
-        {
-            return MainTool.GetVerticesAtPoint(x, y, viewport);
+            else
+            {
+                return MainTool.GetVerticesAtPoint(x, y, viewport);
+            }
         }
 
         public override void DragStart(List<VMPoint> clickedPoints)
@@ -164,55 +167,55 @@ Move the origin point around by *clicking and dragging* it.";
             Editor.Instance.CaptureAltPresses = false;
         }
 
-        public override void MouseClick(ViewportBase viewport, ViewportEvent e)
+        public override void MouseClick(MapViewport viewport, ViewportEvent e)
         {
 
         }
 
-        public override void MouseEnter(ViewportBase viewport, ViewportEvent e)
+        public override void MouseEnter(MapViewport viewport, ViewportEvent e)
         {
             
         }
 
-        public override void MouseLeave(ViewportBase viewport, ViewportEvent e)
+        public override void MouseLeave(MapViewport viewport, ViewportEvent e)
         {
 
         }
 
-        public override void MouseDown(ViewportBase viewport, ViewportEvent e)
+        public override void MouseDown(MapViewport viewport, ViewportEvent e)
         {
 
         }
 
-        public override void MouseDoubleClick(ViewportBase viewport, ViewportEvent e)
+        public override void MouseDoubleClick(MapViewport viewport, ViewportEvent e)
         {
             // Not used
         }
 
-        public override void MouseUp(ViewportBase viewport, ViewportEvent e)
+        public override void MouseUp(MapViewport viewport, ViewportEvent e)
         {
 
         }
 
-        public override void MouseWheel(ViewportBase viewport, ViewportEvent e)
+        public override void MouseWheel(MapViewport viewport, ViewportEvent e)
         {
 
         }
 
-        public override void MouseMove(ViewportBase viewport, ViewportEvent e)
+        public override void MouseMove(MapViewport viewport, ViewportEvent e)
         {
 
         }
 
-        public override void KeyPress(ViewportBase viewport, ViewportEvent e)
+        public override void KeyPress(MapViewport viewport, ViewportEvent e)
         {
 
         }
 
-        public override void KeyDown(ViewportBase viewport, ViewportEvent e)
+        public override void KeyDown(MapViewport viewport, ViewportEvent e)
         {
             var nudge = GetNudgeValue(e.KeyCode);
-            var vp = viewport as Viewport2D;
+            var vp = viewport as MapViewport;
             if (nudge != null && vp != null && _state == VMState.None)
             {
                 var translate = vp.Expand(nudge);
@@ -220,22 +223,22 @@ Move the origin point around by *clicking and dragging* it.";
             }
         }
 
-        public override void KeyUp(ViewportBase viewport, ViewportEvent e)
+        public override void KeyUp(MapViewport viewport, ViewportEvent e)
         {
 
         }
 
-        public override void UpdateFrame(ViewportBase viewport, FrameInfo frame)
+        public override void UpdateFrame(MapViewport viewport, Frame frame)
         {
 
         }
 
-        public override void Render(ViewportBase viewport)
+        public override void Render(MapViewport viewport)
         {
 
         }
 
-        public override void Render2D(Viewport2D viewport)
+        public override void Render2D(MapViewport viewport)
         {
             var pos = viewport.Flatten(_origin.Coordinate);
 
@@ -248,7 +251,7 @@ Move the origin point around by *clicking and dragging* it.";
             GL.End();
         }
 
-        public override void Render3D(Viewport3D viewport)
+        public override void Render3D(MapViewport viewport)
         {
 
         }

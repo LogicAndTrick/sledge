@@ -60,6 +60,16 @@ namespace Sledge.Rendering.OpenGL
             return view;
         }
 
+        public void DestroyViewport(IViewport viewport)
+        {
+            var view = viewport as OpenGLViewport;
+            if (view == null) return;
+
+            view.Render -= RenderViewport;
+            view.Update -= UpdateViewport;
+            view.Dispose();
+        }
+
         public Scene CreateScene()
         {
             var scene = new Scene { TrackChanges = true };

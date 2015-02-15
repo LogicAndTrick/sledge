@@ -25,10 +25,11 @@ using Sledge.Providers;
 using Sledge.Providers.GameData;
 using Sledge.Providers.Map;
 using Sledge.Providers.Texture;
+using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Scenes;
 using Sledge.Settings;
 using Sledge.Settings.Models;
-using Sledge.UI;
+using Camera = Sledge.DataStructures.MapObjects.Camera;
 using Path = System.IO.Path;
 
 namespace Sledge.Editor.Documents
@@ -164,7 +165,7 @@ namespace Sledge.Editor.Documents
             if (!Sledge.Settings.View.KeepSelectedTool && ToolManager.ActiveTool != null) _memory.SelectedTool = ToolManager.ActiveTool.GetType();
             if (!Sledge.Settings.View.KeepCameraPositions) _memory.RememberViewports(ViewportManager.Viewports);
 
-            ViewportManager.ClearContexts();
+            // ViewportManager.ClearContexts();
             //HelperManager.ClearCache();
 
             _subscriptions.Unsubscribe();
@@ -197,7 +198,7 @@ namespace Sledge.Editor.Documents
             if (path == null) return false;
 
             // Save the 3D camera position
-            var cam = ViewportManager.Viewports.OfType<Viewport3D>().Select(x => x.Camera).FirstOrDefault();
+            var cam = ViewportManager.Viewports.Select(x => x.Viewport.Camera).OfType<PerspectiveCamera>().FirstOrDefault();
             if (cam != null)
             {
                 if (Map.ActiveCamera == null)
@@ -206,8 +207,8 @@ namespace Sledge.Editor.Documents
                     if (!Map.Cameras.Contains(Map.ActiveCamera)) Map.Cameras.Add(Map.ActiveCamera);
                 }
                 var dist = (Map.ActiveCamera.LookPosition - Map.ActiveCamera.EyePosition).VectorMagnitude();
-                var loc = cam.Location;
-                var look = cam.LookAt - cam.Location;
+                var loc = cam.Position;
+                var look = cam.LookAt - cam.Position;
                 look.Normalize();
                 look = loc + look * (float) dist;
                 Map.ActiveCamera.EyePosition = new Coordinate((decimal)loc.X, (decimal)loc.Y, (decimal)loc.Z);
@@ -388,13 +389,13 @@ namespace Sledge.Editor.Documents
 
             //HelperManager.UpdateCache();
             //Renderer.Update();
-            ViewportManager.Viewports.ForEach(vp => vp.UpdateNextFrame());
+            // ViewportManager.Viewports.ForEach(vp => vp.UpdateNextFrame());
         }
 
         public void RenderSelection(IEnumerable<MapObject> objects)
         {
             //Renderer.UpdateSelection(objects);
-            ViewportManager.Viewports.ForEach(vp => vp.UpdateNextFrame());
+            //ViewportManager.Viewports.ForEach(vp => vp.UpdateNextFrame());
         }
 
         public void RenderObjects(IEnumerable<MapObject> objects)
@@ -413,7 +414,7 @@ namespace Sledge.Editor.Documents
             //if (modelsUpdated || decalsUpdated || spritesUpdated) Renderer.Update();
             //else Renderer.UpdatePartial(objs);
 
-            ViewportManager.Viewports.ForEach(vp => vp.UpdateNextFrame());
+            //ViewportManager.Viewports.ForEach(vp => vp.UpdateNextFrame());
         }
 
         public void RenderFaces(IEnumerable<Face> faces)
@@ -422,10 +423,10 @@ namespace Sledge.Editor.Documents
             // No need to update decals or models here: they can only be changed via entity properties
             //HelperManager.UpdateCache();
             //Renderer.UpdatePartial(faces);
-            ViewportManager.Viewports.ForEach(vp => vp.UpdateNextFrame());
+            //ViewportManager.Viewports.ForEach(vp => vp.UpdateNextFrame());
         }
 
-        //public void Make3D(ViewportBase viewport, Viewport3D.ViewType type)
+        //public void Make3D(MapViewport viewport, MapViewport.ViewType type)
         //{
         //    var vp = ViewportManager.Make3D(viewport, type);
         //    vp.RenderContext.Add(new WidgetLinesRenderable());
@@ -435,7 +436,7 @@ namespace Sledge.Editor.Documents
         //    Renderer.UpdateGrid(Map.GridSpacing, Map.Show2DGrid, Map.Show3DGrid, false);
         //}
 
-        //public void Make2D(ViewportBase viewport, Viewport2D.ViewDirection direction)
+        //public void Make2D(MapViewport viewport, MapViewport.ViewDirection direction)
         //{
         //    var vp = ViewportManager.Make2D(viewport, direction);
         //    Renderer.Register(new[] { vp });

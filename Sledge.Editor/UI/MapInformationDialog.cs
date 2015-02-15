@@ -1,16 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Globalization;
+﻿using System.Globalization;
 using System.Linq;
-using System.Text;
 using System.Windows.Forms;
-using Sledge.DataStructures.GameData;
 using Sledge.DataStructures.MapObjects;
 using Sledge.Editor.Documents;
-using Sledge.Providers.Texture;
 
 namespace Sledge.Editor.UI
 {

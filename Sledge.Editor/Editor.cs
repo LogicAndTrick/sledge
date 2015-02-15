@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Drawing;
 using System.Drawing.Imaging;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Reflection;
 using System.Windows.Forms;
 using Microsoft.WindowsAPICodePack.Taskbar;
 using Sledge.Common.Mediator;
@@ -20,7 +18,6 @@ using Sledge.Editor.Menu;
 using Sledge.Editor.Settings;
 using Sledge.Editor.UI;
 using Sledge.Editor.UI.Sidebar;
-using Sledge.FileSystem;
 using Sledge.Graphics.Helpers;
 using Sledge.Providers;
 using Sledge.Providers.GameData;
@@ -28,11 +25,9 @@ using Sledge.Providers.Map;
 using Sledge.Editor.Tools;
 using Sledge.Providers.Model;
 using Sledge.Providers.Texture;
-using Sledge.QuickForms;
+using Sledge.Rendering.Cameras;
 using Sledge.Settings;
 using Sledge.Settings.Models;
-using Sledge.UI;
-using Hotkeys = Sledge.Editor.UI.Hotkeys;
 using LayoutSettings = Sledge.Editor.UI.Layout.LayoutSettings;
 using Path = System.IO.Path;
 
@@ -493,10 +488,10 @@ namespace Sledge.Editor
 
         private static void SettingsChanged()
         {
-            foreach (var vp in ViewportManager.Viewports.OfType<Sledge.UI.Viewport3D>())
+            foreach (var cam in ViewportManager.Viewports.Select(x => x.Viewport.Camera).OfType<PerspectiveCamera>())
             {
-                vp.Camera.FOV = Sledge.Settings.View.CameraFOV;
-                vp.Camera.ClipDistance = Sledge.Settings.View.BackClippingPane;
+                cam.FOV = Sledge.Settings.View.CameraFOV;
+                cam.ClipDistance = Sledge.Settings.View.BackClippingPane;
             }
             ViewportManager.RefreshClearColour();
             WadProvider.ReplaceTransparentPixels = !Sledge.Settings.View.DisableWadTransparency && !Sledge.Settings.View.GloballyDisableTransparency;
@@ -800,10 +795,10 @@ namespace Sledge.Editor
             }
             else
             {
-                var focused = ViewportManager.Viewports.FirstOrDefault(x => x.IsFocused);
+                var focused = ViewportManager.Viewports.FirstOrDefault(x => x.Viewport.IsFocused);
                 if (focused != null)
                 {
-                    TableSplitView.FocusOn(focused);
+                    TableSplitView.FocusOn(focused.Control);
                 }
             }
         }
@@ -811,7 +806,7 @@ namespace Sledge.Editor
         // todo viewport: redo this
         public void ScreenshotViewport(object parameter)
         {
-            //var focused = (parameter as ViewportBase) ?? ViewportManager.Viewports.FirstOrDefault(x => x.IsFocused);
+            //var focused = (parameter as MapViewport) ?? ViewportManager.Viewports.FirstOrDefault(x => x.IsFocused);
             //if (focused == null) return;
 
             //var screen = Screen.FromControl(this);
@@ -827,7 +822,7 @@ namespace Sledge.Editor
             //    var shot = ViewportManager.CreateScreenshot(focused, (int) qf.Decimal("Width"), (int) qf.Decimal("Height"));
             //    if (shot == null) return;
 
-            //    var ext = focused is Viewport2D || (focused is Viewport3D && ((Viewport3D)focused).Type != Viewport3D.ViewType.Textured) ? ".png" : ".jpg";
+            //    var ext = focused is MapViewport || (focused is MapViewport && ((MapViewport)focused).Type != MapViewport.ViewType.Textured) ? ".png" : ".jpg";
 
             //    using (var sfd = new SaveFileDialog())
             //    {

@@ -7,8 +7,9 @@ using OpenTK.Graphics.OpenGL;
 using Sledge.Common.Easings;
 using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.MapObjects;
+using Sledge.Editor.Rendering;
 using Sledge.Graphics.Helpers;
-using Sledge.UI;
+using Sledge.Rendering;
 
 namespace Sledge.Editor.Tools.DisplacementTools
 {
@@ -49,7 +50,7 @@ namespace Sledge.Editor.Tools.DisplacementTools
             _currentPoint = null;
         }
 
-        private Coordinate GetNormal(Viewport3D vp, DisplacementPoint point, GeometryControl.Axis axis)
+        private Coordinate GetNormal(MapViewport vp, DisplacementPoint point, GeometryControl.Axis axis)
         {
             switch (axis)
             {
@@ -64,8 +65,9 @@ namespace Sledge.Editor.Tools.DisplacementTools
                 case GeometryControl.Axis.PointNormal:
                     return point.Displacement.Normal;
                 case GeometryControl.Axis.TowardsViewport:
-                    var v = vp.Camera.LookAt;
-                    return new Coordinate((decimal) v.X, (decimal) v.Y, (decimal) v.Z).Normalise();
+                    // todo var v = vp.Camera.LookAt;
+                    //return new Coordinate((decimal) v.X, (decimal) v.Y, (decimal) v.Z).Normalise();
+                    return Coordinate.One;
                 default:
                     throw new ArgumentOutOfRangeException("axis");
             }
@@ -156,7 +158,7 @@ namespace Sledge.Editor.Tools.DisplacementTools
             }
         }
 
-        private void PaintCurrentPoint(Viewport3D vp, int applyCount)
+        private void PaintCurrentPoint(MapViewport vp, int applyCount)
         {
             if (_currentPoint == null) return;
             var c = (GeometryControl) Control;
@@ -167,50 +169,50 @@ namespace Sledge.Editor.Tools.DisplacementTools
             _needsRedraw = true;
         }
 
-        public override void MouseEnter(ViewportBase viewport, ViewportEvent e)
+        public override void MouseEnter(MapViewport viewport, ViewportEvent e)
         {
             //
         }
 
-        public override void MouseLeave(ViewportBase viewport, ViewportEvent e)
+        public override void MouseLeave(MapViewport viewport, ViewportEvent e)
         {
             _mouseDown = false;
         }
 
-        public override void MouseDown(ViewportBase viewport, ViewportEvent e)
+        public override void MouseDown(MapViewport viewport, ViewportEvent e)
         {
-            if (!(viewport is Viewport3D) || (e.Button != MouseButtons.Left && e.Button != MouseButtons.Right)) return;
+            if (!(viewport is MapViewport) || (e.Button != MouseButtons.Left && e.Button != MouseButtons.Right)) return;
             _multiplier = e.Button == MouseButtons.Left ? 1 : -1;
-            //PaintCurrentPoint((Viewport3D) viewport);
+            //PaintCurrentPoint((MapViewport) viewport);
             _mouseDown = true;
             _moveCount = 0;
         }
 
-        public override void MouseClick(ViewportBase viewport, ViewportEvent e)
+        public override void MouseClick(MapViewport viewport, ViewportEvent e)
         {
             // Not used
         }
 
-        public override void MouseDoubleClick(ViewportBase viewport, ViewportEvent e)
+        public override void MouseDoubleClick(MapViewport viewport, ViewportEvent e)
         {
             // Not used
         }
 
-        public override void MouseUp(ViewportBase viewport, ViewportEvent e)
+        public override void MouseUp(MapViewport viewport, ViewportEvent e)
         {
             _moveCount = 0;
             _mouseDown = false;
             Document.Selection.GetSelectedFaces().OfType<Displacement>().ToList().ForEach(x => x.CalculateNormals());
         }
 
-        public override void MouseWheel(ViewportBase viewport, ViewportEvent e)
+        public override void MouseWheel(MapViewport viewport, ViewportEvent e)
         {
             //
         }
 
-        public override void MouseMove(ViewportBase viewport, ViewportEvent e)
+        public override void MouseMove(MapViewport viewport, ViewportEvent e)
         {
-            var vp = viewport as Viewport3D;
+            var vp = viewport as MapViewport;
             if (vp == null) return;
 
             _mousePos.X = e.X;
@@ -225,24 +227,24 @@ namespace Sledge.Editor.Tools.DisplacementTools
             }
         }
 
-        public override void KeyPress(ViewportBase viewport, ViewportEvent e)
+        public override void KeyPress(MapViewport viewport, ViewportEvent e)
         {
             //
         }
 
-        public override void KeyDown(ViewportBase viewport, ViewportEvent e)
+        public override void KeyDown(MapViewport viewport, ViewportEvent e)
         {
             //
         }
 
-        public override void KeyUp(ViewportBase viewport, ViewportEvent e)
+        public override void KeyUp(MapViewport viewport, ViewportEvent e)
         {
             //
         }
 
-        public override void UpdateFrame(ViewportBase viewport, FrameInfo frame)
+        public override void UpdateFrame(MapViewport viewport, Frame frame)
         {
-            var vp = viewport as Viewport3D;
+            var vp = viewport as MapViewport;
             if (vp == null) return;
 
             if (_moveCount > 0)
@@ -266,7 +268,7 @@ namespace Sledge.Editor.Tools.DisplacementTools
             }
         }
 
-        public override void Render(ViewportBase viewport)
+        public override void Render(MapViewport viewport)
         {
             if (_currentPoint != null)
             {

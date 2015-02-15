@@ -11,10 +11,10 @@ using Sledge.Editor.Actions;
 using Sledge.Editor.Actions.MapObjects.Operations;
 using Sledge.Editor.Actions.MapObjects.Selection;
 using Sledge.Editor.Brushes;
-using Sledge.Editor.Extensions;
 using Sledge.Editor.Properties;
+using Sledge.Editor.Rendering;
+using Sledge.Rendering;
 using Sledge.Settings;
-using Sledge.UI;
 using Select = Sledge.Settings.Select;
 
 namespace Sledge.Editor.Tools
@@ -90,17 +90,17 @@ namespace Sledge.Editor.Tools
             yield return new KeyValuePair<string, Control>(GetName(), BrushManager.SidebarControl);
         }
 
-        public override void MouseEnter(ViewportBase viewport, ViewportEvent e)
+        public override void MouseEnter(MapViewport viewport, ViewportEvent e)
         {
             // 
         }
 
-        public override void MouseLeave(ViewportBase viewport, ViewportEvent e)
+        public override void MouseLeave(MapViewport viewport, ViewportEvent e)
         {
             //
         }
 
-        public override void MouseDown(ViewportBase viewport, ViewportEvent e)
+        public override void MouseDown(MapViewport viewport, ViewportEvent e)
         {
             //
             switch (_state)
@@ -171,17 +171,17 @@ namespace Sledge.Editor.Tools
             return null;
         }
 
-        public override void MouseClick(ViewportBase viewport, ViewportEvent e)
+        public override void MouseClick(MapViewport viewport, ViewportEvent e)
         {
             //
         }
 
-        public override void MouseDoubleClick(ViewportBase viewport, ViewportEvent e)
+        public override void MouseDoubleClick(MapViewport viewport, ViewportEvent e)
         {
             //
         }
 
-        public override void MouseUp(ViewportBase viewport, ViewportEvent e)
+        public override void MouseUp(MapViewport viewport, ViewportEvent e)
         {
             switch (_state)
             {
@@ -200,7 +200,7 @@ namespace Sledge.Editor.Tools
                     throw new ArgumentOutOfRangeException();
             }
         }
-        public override void MouseWheel(ViewportBase viewport, ViewportEvent e)
+        public override void MouseWheel(MapViewport viewport, ViewportEvent e)
         {
             //
         }
@@ -234,9 +234,9 @@ namespace Sledge.Editor.Tools
             _base.Vertices[3] = _base.Plane.GetIntersectionPoint(liney, true, true);
         }
 
-        public override void MouseMove(ViewportBase viewport, ViewportEvent e)
+        public override void MouseMove(MapViewport viewport, ViewportEvent e)
         {
-            var vp = viewport as Viewport3D;
+            var vp = viewport as MapViewport;
             if (vp == null) return;
 
             UpdateCurrentFace(vp, e);
@@ -261,7 +261,7 @@ namespace Sledge.Editor.Tools
             }
         }
 
-        private void UpdateCurrentFace(Viewport3D viewport, ViewportEvent e)
+        private void UpdateCurrentFace(MapViewport viewport, ViewportEvent e)
         {
             var ray = viewport.CastRayFromScreen(e.X, e.Y);
 
@@ -302,7 +302,7 @@ namespace Sledge.Editor.Tools
         }
 
 
-        public override void KeyPress(ViewportBase viewport, ViewportEvent e)
+        public override void KeyPress(MapViewport viewport, ViewportEvent e)
         {
             switch (_state)
             {
@@ -319,17 +319,17 @@ namespace Sledge.Editor.Tools
             }
         }
 
-        public override void KeyDown(ViewportBase viewport, ViewportEvent e)
+        public override void KeyDown(MapViewport viewport, ViewportEvent e)
         {
             //
         }
 
-        public override void KeyUp(ViewportBase viewport, ViewportEvent e)
+        public override void KeyUp(MapViewport viewport, ViewportEvent e)
         {
             //
         }
 
-        public override void UpdateFrame(ViewportBase viewport, FrameInfo frame)
+        public override void UpdateFrame(MapViewport viewport, Frame frame)
         {
             //
         }
@@ -351,31 +351,31 @@ namespace Sledge.Editor.Tools
             yield return t;
         }
 
-        public override void Render(ViewportBase viewport)
+        public override void Render(MapViewport viewport)
         {
             // todo rendering
             // Render
-            if (_base != null)
-            {/*
-                var faces = _drawing.GetBoxFaces().Select(x =>
-                {
-                    var f = new Face(0) { Plane = new Plane(x[0], x[1], x[2])};
-                    f.Vertices.AddRange(x.Select(v => new Vertex(v + f.Plane.Normal * 0.1m, f)));
-                    return f;
-                });*
-              */
-                var vp3 = viewport as Viewport3D;
-                if (vp3 == null) return;
+            //if (_base != null)
+            //{/*
+            //    var faces = _drawing.GetBoxFaces().Select(x =>
+            //    {
+            //        var f = new Face(0) { Plane = new Plane(x[0], x[1], x[2])};
+            //        f.Vertices.AddRange(x.Select(v => new Vertex(v + f.Plane.Normal * 0.1m, f)));
+            //        return f;
+            //    });*
+            //  */
+            //    var vp3 = viewport as MapViewport;
+            //    if (vp3 == null) return;
 
-                GL.Disable(EnableCap.CullFace);
-                var faces = GetSides().OrderByDescending(x => (vp3.Camera.LookAt.ToCoordinate() - x.BoundingBox.Center).LengthSquared()).ToList();
-                //MapObjectRenderer.DrawFilled(faces, Color.FromArgb(64, Color.DodgerBlue), false, false);
-                GL.Enable(EnableCap.CullFace);
-            }
-            else if (_cloneFace != null)
-            {
-                //MapObjectRenderer.DrawFilled(new[] { _cloneFace }, Color.FromArgb(64, Color.Orange), false, false);
-            }
+            //    GL.Disable(EnableCap.CullFace);
+            //    var faces = GetSides().OrderByDescending(x => (vp3.Camera.LookAt.ToCoordinate() - x.BoundingBox.Center).LengthSquared()).ToList();
+            //    //MapObjectRenderer.DrawFilled(faces, Color.FromArgb(64, Color.DodgerBlue), false, false);
+            //    GL.Enable(EnableCap.CullFace);
+            //}
+            //else if (_cloneFace != null)
+            //{
+            //    //MapObjectRenderer.DrawFilled(new[] { _cloneFace }, Color.FromArgb(64, Color.Orange), false, false);
+            //}
         }
 
         public override HotkeyInterceptResult InterceptHotkey(HotkeysMediator hotkeyMessage, object parameters)

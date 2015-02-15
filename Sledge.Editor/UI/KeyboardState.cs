@@ -3,7 +3,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
-namespace Sledge.UI
+namespace Sledge.Editor.UI
 {
     /// <summary>
     /// Performs polling on the current keyboard state.

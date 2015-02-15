@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
 using Sledge.Common.Mediator;
 using Sledge.Editor.Tools;
-using Sledge.Settings;
 
 namespace Sledge.Editor.UI.Sidebar
 {

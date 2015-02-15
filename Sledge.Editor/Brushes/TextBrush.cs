@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Text;
-using OpenTK.Graphics;
 using Poly2Tri;
 using Sledge.Common;
 using Sledge.DataStructures.Geometric;

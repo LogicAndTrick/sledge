@@ -4,7 +4,6 @@ using System.Linq;
 using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.MapObjects;
 using Sledge.Common;
-using Sledge.DataStructures.Transformations;
 using Sledge.Editor.Brushes.Controls;
 using Sledge.Extensions;
 

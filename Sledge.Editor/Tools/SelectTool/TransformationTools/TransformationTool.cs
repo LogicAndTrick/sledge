@@ -4,14 +4,14 @@ using System.Windows.Forms;
 using OpenTK;
 using Sledge.DataStructures.Geometric;
 using Sledge.Editor.Documents;
+using Sledge.Editor.Rendering;
 using Sledge.Editor.Tools.Widgets;
-using Sledge.UI;
 
 namespace Sledge.Editor.Tools.SelectTool.TransformationTools
 {
     public abstract class TransformationTool
     {
-        public abstract Matrix4? GetTransformationMatrix(Viewport2D viewport, ViewportEvent mouseEventArgs, BaseBoxTool.BoxState state, Document doc, IEnumerable<Widget> activeWidgets);
+        public abstract Matrix4? GetTransformationMatrix(MapViewport viewport, ViewportEvent mouseEventArgs, BaseBoxTool.BoxState state, Document doc, IEnumerable<Widget> activeWidgets);
         public abstract bool RenderCircleHandles { get; }
         public abstract bool FilterHandle(BaseBoxTool.ResizeHandle handle);
         public abstract string GetTransformName();

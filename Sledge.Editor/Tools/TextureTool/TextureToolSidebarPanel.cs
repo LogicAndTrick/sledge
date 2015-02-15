@@ -1,15 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
-using Sledge.Common.Mediator;
-using Sledge.Editor.Brushes;
-using Sledge.Editor.Tools.SelectTool.TransformationTools;
-using Sledge.Settings;
 
 namespace Sledge.Editor.Tools.TextureTool
 {

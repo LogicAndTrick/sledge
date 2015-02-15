@@ -5,8 +5,6 @@ using Sledge.DataStructures.GameData;
 using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.MapObjects;
 using Sledge.Editor.Documents;
-using Sledge.FileSystem;
-using Sledge.Providers.Model;
 using Sledge.Providers.Texture;
 
 namespace Sledge.Editor.Extensions

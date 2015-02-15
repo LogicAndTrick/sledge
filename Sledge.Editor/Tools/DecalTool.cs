@@ -6,9 +6,10 @@ using Sledge.DataStructures.MapObjects;
 using Sledge.Editor.Actions.MapObjects.Operations;
 using Sledge.Editor.Extensions;
 using Sledge.Editor.Properties;
+using Sledge.Editor.Rendering;
 using Sledge.Graphics.Helpers;
+using Sledge.Rendering;
 using Sledge.Settings;
-using Sledge.UI;
 
 namespace Sledge.Editor.Tools
 {
@@ -58,9 +59,9 @@ namespace Sledge.Editor.Tools
                 .FirstOrDefault();
         }
 
-        public override void MouseDown(ViewportBase viewport, ViewportEvent e)
+        public override void MouseDown(MapViewport viewport, ViewportEvent e)
         {
-            var vp = viewport as Viewport3D;
+            var vp = viewport as MapViewport;
             if (vp == null) return;
 
             // Get the ray that is cast from the clicked point along the viewport frustrum
@@ -111,62 +112,62 @@ namespace Sledge.Editor.Tools
             Document.PerformAction("Apply decal", new Create(Document.Map.WorldSpawn.ID, decal));
         }
 
-        public override void MouseEnter(ViewportBase viewport, ViewportEvent e)
+        public override void MouseEnter(MapViewport viewport, ViewportEvent e)
         {
             // 
         }
 
-        public override void MouseLeave(ViewportBase viewport, ViewportEvent e)
+        public override void MouseLeave(MapViewport viewport, ViewportEvent e)
         {
             // 
         }
 
-        public override void MouseClick(ViewportBase viewport, ViewportEvent e)
+        public override void MouseClick(MapViewport viewport, ViewportEvent e)
         {
             // Not used
         }
 
-        public override void MouseDoubleClick(ViewportBase viewport, ViewportEvent e)
+        public override void MouseDoubleClick(MapViewport viewport, ViewportEvent e)
         {
             // Not used
         }
 
-        public override void MouseUp(ViewportBase viewport, ViewportEvent e)
+        public override void MouseUp(MapViewport viewport, ViewportEvent e)
         {
             // 
         }
 
-        public override void MouseWheel(ViewportBase viewport, ViewportEvent e)
+        public override void MouseWheel(MapViewport viewport, ViewportEvent e)
         {
             // 
         }
 
-        public override void MouseMove(ViewportBase viewport, ViewportEvent e)
+        public override void MouseMove(MapViewport viewport, ViewportEvent e)
         {
             // 
         }
 
-        public override void KeyPress(ViewportBase viewport, ViewportEvent e)
+        public override void KeyPress(MapViewport viewport, ViewportEvent e)
         {
             // 
         }
 
-        public override void KeyDown(ViewportBase viewport, ViewportEvent e)
+        public override void KeyDown(MapViewport viewport, ViewportEvent e)
         {
             // 
         }
 
-        public override void KeyUp(ViewportBase viewport, ViewportEvent e)
+        public override void KeyUp(MapViewport viewport, ViewportEvent e)
         {
             // 
         }
 
-        public override void UpdateFrame(ViewportBase viewport, FrameInfo frame)
+        public override void UpdateFrame(MapViewport viewport, Frame frame)
         {
             // 
         }
 
-        public override void Render(ViewportBase viewport)
+        public override void Render(MapViewport viewport)
         {
             // 
         }

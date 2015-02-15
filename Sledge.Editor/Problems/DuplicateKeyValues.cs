@@ -3,7 +3,6 @@ using System.Linq;
 using Sledge.DataStructures.MapObjects;
 using Sledge.Editor.Actions;
 using Sledge.Editor.Actions.MapObjects.Entities;
-using Sledge.Editor.Actions.MapObjects.Operations;
 
 namespace Sledge.Editor.Problems
 {

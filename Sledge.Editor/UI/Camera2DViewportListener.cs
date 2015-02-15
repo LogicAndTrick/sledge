@@ -3,36 +3,35 @@ using System.Linq;
 using System.Windows.Forms;
 using Sledge.Common.Mediator;
 using Sledge.DataStructures.Geometric;
+using Sledge.Editor.Rendering;
 using Sledge.Extensions;
-using Sledge.Settings;
-using Sledge.UI;
-using System.Drawing;
 using Sledge.Editor.Documents;
+using Sledge.Rendering;
 
 namespace Sledge.Editor.UI
 {
     public class Camera2DViewportListener : IViewportEventListener, IMediatorListener
     {
-        public ViewportBase Viewport
+        public MapViewport Viewport
         {
-            get { return Viewport2D; }
-            set { Viewport2D = (Viewport2D) value; }
+            get { return MapViewport; }
+            set { MapViewport = (MapViewport) value; }
         }
 
-        public Viewport2D Viewport2D { get; set; }
+        public MapViewport MapViewport { get; set; }
 
-        public Camera2DViewportListener(Viewport2D viewport)
+        public Camera2DViewportListener(MapViewport viewport)
         {
             Viewport = viewport;
-            Viewport2D = viewport;
+            MapViewport = viewport;
         }
 
         public void KeyUp(ViewportEvent e)
         {
             if (e.KeyCode == Keys.Space)
             {
-                Viewport.Cursor = Cursors.Default;
-                Viewport.Capture = false;
+                Viewport.Control.Cursor = Cursors.Default;
+                Viewport.Control.Capture = false;
                 e.Handled = true;
             }
         }
@@ -41,12 +40,12 @@ namespace Sledge.Editor.UI
         {
             if (e.KeyCode == Keys.Space)
             {
-                Viewport.Cursor = Cursors.SizeAll;
+                Viewport.Control.Cursor = Cursors.SizeAll;
                 if (!Sledge.Settings.View.Camera2DPanRequiresMouseClick)
                 {
-                    Viewport.Capture = true;
-                    var p = e.Sender.PointToClient(Cursor.Position);
-                    _mouseDown = new Coordinate(p.X, Viewport2D.Height - p.Y, 0);
+                    Viewport.Control.Capture = true;
+                    var p = e.Sender.Control.PointToClient(Cursor.Position);
+                    _mouseDown = new Coordinate(p.X, MapViewport.Height - p.Y, 0);
                 }
                 e.Handled = true;
             }
@@ -61,20 +60,20 @@ namespace Sledge.Editor.UI
                 switch (e.KeyCode)
                 {
                     case Keys.Left:
-                        shift.X = -Viewport.Width / Viewport2D.Zoom / 4;
+                        shift.X = (decimal) (-Viewport.Width / MapViewport.Zoom / 4);
                         break;
                     case Keys.Right:
-                        shift.X = Viewport.Width / Viewport2D.Zoom / 4;
+                        shift.X = (decimal) (Viewport.Width / MapViewport.Zoom / 4);
                         break;
                     case Keys.Up:
-                        shift.Y = Viewport.Height / Viewport2D.Zoom / 4;
+                        shift.Y = (decimal) (Viewport.Height / MapViewport.Zoom / 4);
                         break;
                     case Keys.Down:
-                        shift.Y = -Viewport.Height / Viewport2D.Zoom / 4;
+                        shift.Y = (decimal) (-Viewport.Height / MapViewport.Zoom / 4);
                         break;
                 }
 
-                Viewport2D.Position += shift;
+                //MapViewport.Position += shift; todo
             }
 
             var str = e.KeyCode.ToString();
@@ -90,8 +89,8 @@ namespace Sledge.Editor.UI
                         var num = Math.Max(press - 6, 6 - press);
                         var pow = (decimal) Math.Pow(2, num);
                         var zoom = press < 6 ? 1 / pow : pow;
-                        Viewport2D.Zoom = zoom;
-                        Mediator.Publish(EditorMediator.ViewZoomChanged, Viewport2D.Zoom);
+                        // todo MapViewport.Zoom = zoom;
+                        Mediator.Publish(EditorMediator.ViewZoomChanged, MapViewport.Zoom);
                     }
                 }
             }
@@ -109,35 +108,35 @@ namespace Sledge.Editor.UI
             var space = KeyboardState.IsKeyDown(Keys.Space);
             if (space || mmouse)
             {
-                Viewport.Cursor = Cursors.SizeAll;
+                Viewport.Control.Cursor = Cursors.SizeAll;
                 if (lmouse || mmouse || !Sledge.Settings.View.Camera2DPanRequiresMouseClick)
                 {
-                    var point = new Coordinate(e.X, Viewport2D.Height - e.Y, 0);
+                    var point = new Coordinate(e.X, MapViewport.Height - e.Y, 0);
                     if (_mouseDown != null)
                     {
                         var difference = _mouseDown - point;
-                        Viewport2D.Position += difference / Viewport2D.Zoom;
+                        // todo MapViewport.Position += difference / MapViewport.Zoom;
                     }
                     _mouseDown = point;
                     e.Handled = true;
                 }
             }
 
-            var pt = Viewport2D.Expand(Viewport2D.ScreenToWorld(new Coordinate(e.X, Viewport2D.Height - e.Y, 0)));
+            var pt = MapViewport.Expand(MapViewport.ScreenToWorld(new Coordinate(e.X, MapViewport.Height - e.Y, 0)));
             Mediator.Publish(EditorMediator.MouseCoordinatesChanged, pt);
         }
 
         public void MouseWheel(ViewportEvent e)
         {
-            var before = Viewport2D.ScreenToWorld(e.X, Viewport2D.Height - e.Y);
-            Viewport2D.Zoom *= DMath.Pow(Sledge.Settings.View.ScrollWheelZoomMultiplier, (e.Delta < 0 ? -1 : 1));
-            var after = Viewport2D.ScreenToWorld(e.X, Viewport2D.Height - e.Y);
-            Viewport2D.Position -= (after - before);
+            var before = MapViewport.ScreenToWorld(e.X, MapViewport.Height - e.Y);
+            // todo MapViewport.Zoom *= DMath.Pow(Sledge.Settings.View.ScrollWheelZoomMultiplier, (e.Delta < 0 ? -1 : 1));
+            var after = MapViewport.ScreenToWorld(e.X, MapViewport.Height - e.Y);
+            // todo MapViewport.Position -= (after - before);
 
-            Mediator.Publish(EditorMediator.ViewZoomChanged, Viewport2D.Zoom);
+            Mediator.Publish(EditorMediator.ViewZoomChanged, MapViewport.Zoom);
             if (KeyboardState.IsKeyDown(Keys.ControlKey))
             {
-                Mediator.Publish(EditorMediator.SetZoomValue, Viewport2D.Zoom);
+                Mediator.Publish(EditorMediator.SetZoomValue, MapViewport.Zoom);
             }
         }
 
@@ -152,7 +151,7 @@ namespace Sledge.Editor.UI
             else if (e.Button == MouseButtons.Middle)
             {
                 e.Handled = true;
-                Viewport.Cursor = Cursors.Default;
+                Viewport.Control.Cursor = Cursors.Default;
             }
         }
 
@@ -169,9 +168,9 @@ namespace Sledge.Editor.UI
             else if (e.Button == MouseButtons.Middle)
             {
                 e.Handled = true;
-                Viewport.Cursor = Cursors.SizeAll;
+                Viewport.Control.Cursor = Cursors.SizeAll;
             }
-            _mouseDown = new Coordinate(e.X, Viewport2D.Height - e.Y, 0);
+            _mouseDown = new Coordinate(e.X, MapViewport.Height - e.Y, 0);
         }
 
         public void MouseClick(ViewportEvent e)
@@ -184,20 +183,45 @@ namespace Sledge.Editor.UI
             
         }
 
+        public void DragStart(ViewportEvent e)
+        {
+            
+        }
+
+        public void DragMove(ViewportEvent e)
+        {
+
+        }
+
+        public void DragEnd(ViewportEvent e)
+        {
+
+        }
+
         public void MouseEnter(ViewportEvent e)
         {
             if (KeyboardState.IsKeyDown(Keys.Space))
             {
-                Viewport.Cursor = Cursors.SizeAll;
+                Viewport.Control.Cursor = Cursors.SizeAll;
             }
             Mediator.Publish(EditorMediator.ViewFocused);
-            Mediator.Publish(EditorMediator.ViewZoomChanged, Viewport2D.Zoom);
+            Mediator.Publish(EditorMediator.ViewZoomChanged, MapViewport.Zoom);
         }
 
         public void MouseLeave(ViewportEvent e)
         {
-            Viewport.Cursor = Cursors.Default;
+            Viewport.Control.Cursor = Cursors.Default;
             Mediator.Publish(EditorMediator.ViewUnfocused);
+        }
+
+        public void ZoomChanged(ViewportEvent e)
+        {
+
+        }
+
+        public void PositionChanged(ViewportEvent e)
+        {
+
         }
 
         private const decimal ScrollStart = 1;
@@ -205,34 +229,34 @@ namespace Sledge.Editor.UI
         private const int ScrollMaximum = 200;
         private const int ScrollPadding = 40;
 
-        public void UpdateFrame(FrameInfo frame)
+        public void UpdateFrame(Frame frame)
         {
-            if (Viewport2D.IsFocused && _mouseDown != null && Control.MouseButtons.HasFlag(MouseButtons.Left) && !KeyboardState.IsKeyDown(Keys.Space))
+            if (MapViewport.Viewport.IsFocused && _mouseDown != null && Control.MouseButtons.HasFlag(MouseButtons.Left) && !KeyboardState.IsKeyDown(Keys.Space))
             {
-                var pt = Viewport2D.PointToClient(Control.MousePosition);
+                var pt = MapViewport.Control.PointToClient(Control.MousePosition);
                 if (pt.X < ScrollPadding)
                 {
                     var mx = ScrollStart + ScrollIncrement * Math.Min(ScrollMaximum, ScrollPadding - pt.X);
                     mx = mx * mx + ScrollStart;
-                    Viewport2D.Position.X -= mx / Viewport2D.Zoom;
+                    // todo MapViewport.Position.X -= mx / MapViewport.Zoom;
                 }
-                else if (pt.X > Viewport2D.Width - ScrollPadding)
+                else if (pt.X > MapViewport.Width - ScrollPadding)
                 {
-                    var mx = ScrollStart + ScrollIncrement * Math.Min(ScrollMaximum, pt.X - (Viewport2D.Width - ScrollPadding));
+                    var mx = ScrollStart + ScrollIncrement * Math.Min(ScrollMaximum, pt.X - (MapViewport.Width - ScrollPadding));
                     mx = mx * mx + ScrollStart;
-                    Viewport2D.Position.X += mx / Viewport2D.Zoom;
+                    // todo MapViewport.Position.X += mx / MapViewport.Zoom;
                 }
                 if (pt.Y < ScrollPadding)
                 {
                     var my = ScrollStart + ScrollIncrement * Math.Min(ScrollMaximum, ScrollPadding - pt.Y);
                     my = my * my + ScrollStart;
-                    Viewport2D.Position.Y += my / Viewport2D.Zoom;
+                    // todo MapViewport.Position.Y += my / MapViewport.Zoom;
                 }
-                else if (pt.Y > Viewport2D.Height - ScrollPadding)
+                else if (pt.Y > MapViewport.Height - ScrollPadding)
                 {
-                    var my = ScrollStart + ScrollIncrement * Math.Min(ScrollMaximum, pt.Y - (Viewport2D.Height - ScrollPadding));
+                    var my = ScrollStart + ScrollIncrement * Math.Min(ScrollMaximum, pt.Y - (MapViewport.Height - ScrollPadding));
                     my = my * my + ScrollStart;
-                    Viewport2D.Position.Y -= my / Viewport2D.Zoom;
+                    // todo MapViewport.Position.Y -= my / MapViewport.Zoom;
                 }
             }
         }

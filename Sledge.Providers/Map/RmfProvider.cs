@@ -218,7 +218,7 @@ namespace Sledge.Providers.Map
             for (var i = 0; i < numChildren; i++)
             {
                 var child = ReadMapObject(br, visgroups, generator);
-                child.SetParent(obj);
+                if (child != null) child.SetParent(obj);
             }
         }
 
@@ -330,6 +330,7 @@ namespace Sledge.Providers.Map
         {
             var grp = new Group(generator.GetNextObjectID());
             ReadMapBase(br, grp, visgroups, generator);
+            if (!grp.HasChildren) return null;
             grp.UpdateBoundingBox(false);
             return grp;
         }

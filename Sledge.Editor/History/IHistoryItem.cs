@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Text;
-using Sledge.DataStructures.MapObjects;
 using Sledge.Editor.Documents;
 
 namespace Sledge.Editor.History

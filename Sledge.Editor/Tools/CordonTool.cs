@@ -2,8 +2,8 @@
 using OpenTK.Graphics.OpenGL;
 using Sledge.DataStructures.Geometric;
 using Sledge.Editor.Properties;
+using Sledge.Editor.Rendering;
 using Sledge.Settings;
-using Sledge.UI;
 
 namespace Sledge.Editor.Tools
 {
@@ -57,92 +57,94 @@ namespace Sledge.Editor.Tools
             State.Action = BoxAction.Drawn;
         }
 
-        protected override void LeftMouseUpResizing(Viewport2D viewport, ViewportEvent e)
+        protected override void LeftMouseUpResizing(MapViewport viewport, ViewportEvent e)
         {
             Document.Map.CordonBounds = new Box(State.BoxStart, State.BoxEnd);
             base.LeftMouseUpResizing(viewport, e);
         }
 
-        protected override void Render2D(Sledge.UI.Viewport2D viewport)
+        protected override void Render2D(MapViewport viewport)
         {
-            if (State.Action == BoxAction.ReadyToDraw || State.Action == BoxAction.DownToDraw) return;
-            var start = viewport.Flatten(State.BoxStart);
-            var end = viewport.Flatten(State.BoxEnd);
+            // todo rendering
 
-            if (ShouldDrawBox(viewport))
-            {
-                var min = viewport.ScreenToWorld(0, 0);
-                var max = viewport.ScreenToWorld(viewport.Width, viewport.Height);
+            //if (State.Action == BoxAction.ReadyToDraw || State.Action == BoxAction.DownToDraw) return;
+            //var start = viewport.Flatten(State.BoxStart);
+            //var end = viewport.Flatten(State.BoxEnd);
 
-                GL.Color4(Color.FromArgb(128, Color.Orange));
-                GL.Begin(BeginMode.Quads);
+            //if (ShouldDrawBox(viewport))
+            //{
+            //    var min = viewport.ScreenToWorld(0, 0);
+            //    var max = viewport.ScreenToWorld(viewport.Width, viewport.Height);
 
-                Coord(min.DX, min.DY, 0);
-                Coord(max.DX, min.DY, 0);
-                Coord(max.DX, start.DY, 0);
-                Coord(min.DX, start.DY, 0);
+            //    GL.Color4(Color.FromArgb(128, Color.Orange));
+            //    GL.Begin(BeginMode.Quads);
 
-                Coord(min.DX, end.DY, 0);
-                Coord(max.DX, end.DY, 0);
-                Coord(max.DX, max.DY, 0);
-                Coord(min.DX, max.DY, 0);
+            //    Coord(min.DX, min.DY, 0);
+            //    Coord(max.DX, min.DY, 0);
+            //    Coord(max.DX, start.DY, 0);
+            //    Coord(min.DX, start.DY, 0);
 
-                Coord(min.DX, start.DY, 0);
-                Coord(start.DX, start.DY, 0);
-                Coord(start.DX, end.DY, 0);
-                Coord(min.DX, end.DY, 0);
+            //    Coord(min.DX, end.DY, 0);
+            //    Coord(max.DX, end.DY, 0);
+            //    Coord(max.DX, max.DY, 0);
+            //    Coord(min.DX, max.DY, 0);
 
-                Coord(end.DX, start.DY, 0);
-                Coord(max.DX, start.DY, 0);
-                Coord(max.DX, end.DY, 0);
-                Coord(end.DX, end.DY, 0);
+            //    Coord(min.DX, start.DY, 0);
+            //    Coord(start.DX, start.DY, 0);
+            //    Coord(start.DX, end.DY, 0);
+            //    Coord(min.DX, end.DY, 0);
 
-                GL.End();
+            //    Coord(end.DX, start.DY, 0);
+            //    Coord(max.DX, start.DY, 0);
+            //    Coord(max.DX, end.DY, 0);
+            //    Coord(end.DX, end.DY, 0);
+
+            //    GL.End();
 
 
-                GL.LineWidth(2);
-                GL.Begin(BeginMode.LineLoop);
-                GL.Color3(GetRenderBoxColour());
-                Coord(start.DX, start.DY, start.DZ);
-                Coord(end.DX, start.DY, start.DZ);
-                Coord(end.DX, end.DY, start.DZ);
-                Coord(start.DX, end.DY, start.DZ);
-                GL.End();
-                GL.LineWidth(1);
-            }
+            //    GL.LineWidth(2);
+            //    GL.Begin(BeginMode.LineLoop);
+            //    GL.Color3(GetRenderBoxColour());
+            //    Coord(start.DX, start.DY, start.DZ);
+            //    Coord(end.DX, start.DY, start.DZ);
+            //    Coord(end.DX, end.DY, start.DZ);
+            //    Coord(start.DX, end.DY, start.DZ);
+            //    GL.End();
+            //    GL.LineWidth(1);
+            //}
 
-            if (ShouldRenderResizeBox(viewport))
-            {
-                RenderResizeBox(viewport, start, end);
-            }
+            //if (ShouldRenderResizeBox(viewport))
+            //{
+            //    RenderResizeBox(viewport, start, end);
+            //}
         }
 
-        protected override void LeftMouseDownToDraw(Viewport2D viewport, ViewportEvent e)
-        {
-            //
-        }
-
-        protected override void MouseDraggingToDraw(Viewport2D viewport, ViewportEvent e)
+        protected override void LeftMouseDownToDraw(MapViewport viewport, ViewportEvent e)
         {
             //
         }
 
-        protected override void LeftMouseUpDrawing(Viewport2D viewport, ViewportEvent e)
+        protected override void MouseDraggingToDraw(MapViewport viewport, ViewportEvent e)
         {
             //
         }
 
-        protected override void LeftMouseClick(Viewport2D viewport, ViewportEvent e)
+        protected override void LeftMouseUpDrawing(MapViewport viewport, ViewportEvent e)
         {
             //
         }
 
-        public override void BoxDrawnConfirm(Sledge.UI.ViewportBase viewport)
+        protected override void LeftMouseClick(MapViewport viewport, ViewportEvent e)
         {
             //
         }
 
-        public override void BoxDrawnCancel(Sledge.UI.ViewportBase viewport)
+        public override void BoxDrawnConfirm(MapViewport viewport)
+        {
+            //
+        }
+
+        public override void BoxDrawnCancel(MapViewport viewport)
         {
             //
         }

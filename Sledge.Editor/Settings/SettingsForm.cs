@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
@@ -11,12 +10,13 @@ using Sledge.Common.Mediator;
 using Sledge.DataStructures.GameData;
 using Sledge.Editor.Compiling;
 using Sledge.Editor.Extensions;
+using Sledge.Editor.UI;
 using Sledge.Providers.GameData;
 using Sledge.QuickForms;
 using Sledge.Settings;
 using System.Linq;
 using Sledge.Settings.Models;
-using Sledge.UI;
+using Hotkeys = Sledge.Settings.Hotkeys;
 
 namespace Sledge.Editor.Settings
 {

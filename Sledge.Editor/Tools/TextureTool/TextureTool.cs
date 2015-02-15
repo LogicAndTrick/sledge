@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using Sledge.Common;
 using Sledge.Common.Mediator;
@@ -14,10 +15,12 @@ using Sledge.Editor.Actions.MapObjects.Selection;
 using Sledge.Editor.Documents;
 using Sledge.Editor.History;
 using Sledge.Editor.Properties;
+using Sledge.Editor.Rendering;
+using Sledge.Editor.UI;
 using Sledge.Graphics.Helpers;
 using Sledge.Providers.Texture;
+using Sledge.Rendering;
 using Sledge.Settings;
-using Sledge.UI;
 
 namespace Sledge.Editor.Tools.TextureTool
 {
@@ -286,9 +289,9 @@ namespace Sledge.Editor.Tools.TextureTool
             _form.SelectionChanged();
         }
 
-        public override void MouseDown(ViewportBase viewport, ViewportEvent e)
+        public override void MouseDown(MapViewport viewport, ViewportEvent e)
         {
-            var vp = viewport as Viewport3D;
+            var vp = viewport as MapViewport;
             if (vp == null || (e.Button != MouseButtons.Left && e.Button != MouseButtons.Right)) return;
 
             var behaviour = e.Button == MouseButtons.Left
@@ -370,9 +373,13 @@ namespace Sledge.Editor.Tools.TextureTool
                     }
                     break;
                 case SelectBehaviour.AlignToView:
-                    var right = vp.Camera.GetRight();
-                    var up = vp.Camera.GetUp();
-                    var loc = vp.Camera.Location;
+                    // todo 
+                    // var right = vp.Viewport.Camera.GetRight();
+                    // var up = vp.Viewport.Camera.GetUp();
+                    // var loc = vp.Viewport.Camera.Location;
+                    var right = Vector3.One;
+                    var up = Vector3.One;
+                    var loc = Vector3.One;
                     var point = new Coordinate((decimal)loc.X, (decimal)loc.Y, (decimal)loc.Z);
                     var uaxis = new Coordinate((decimal) right.X, (decimal) right.Y, (decimal) right.Z);
                     var vaxis = new Coordinate((decimal) up.X, (decimal) up.Y, (decimal) up.Z);
@@ -397,12 +404,12 @@ namespace Sledge.Editor.Tools.TextureTool
             }
         }
 
-        public override void KeyDown(ViewportBase viewport, ViewportEvent e)
+        public override void KeyDown(MapViewport viewport, ViewportEvent e)
         {
             //throw new NotImplementedException();
         }
 
-        public override void Render(ViewportBase viewport)
+        public override void Render(MapViewport viewport)
         {
             if (Document.Map.HideFaceMask) return;
 
@@ -439,52 +446,52 @@ namespace Sledge.Editor.Tools.TextureTool
             return HotkeyInterceptResult.Continue;
         }
 
-        public override void MouseEnter(ViewportBase viewport, ViewportEvent e)
+        public override void MouseEnter(MapViewport viewport, ViewportEvent e)
         {
             //
         }
 
-        public override void MouseLeave(ViewportBase viewport, ViewportEvent e)
+        public override void MouseLeave(MapViewport viewport, ViewportEvent e)
         {
             //
         }
 
-        public override void MouseClick(ViewportBase viewport, ViewportEvent e)
+        public override void MouseClick(MapViewport viewport, ViewportEvent e)
         {
             // Not used
         }
 
-        public override void MouseDoubleClick(ViewportBase viewport, ViewportEvent e)
+        public override void MouseDoubleClick(MapViewport viewport, ViewportEvent e)
         {
             // Not used
         }
 
-        public override void MouseUp(ViewportBase viewport, ViewportEvent e)
+        public override void MouseUp(MapViewport viewport, ViewportEvent e)
         {
             //
         }
 
-        public override void MouseWheel(ViewportBase viewport, ViewportEvent e)
+        public override void MouseWheel(MapViewport viewport, ViewportEvent e)
         {
             //
         }
 
-        public override void MouseMove(ViewportBase viewport, ViewportEvent e)
+        public override void MouseMove(MapViewport viewport, ViewportEvent e)
         {
             //
         }
 
-        public override void KeyPress(ViewportBase viewport, ViewportEvent e)
+        public override void KeyPress(MapViewport viewport, ViewportEvent e)
         {
             //
         }
 
-        public override void KeyUp(ViewportBase viewport, ViewportEvent e)
+        public override void KeyUp(MapViewport viewport, ViewportEvent e)
         {
             //
         }
 
-        public override void UpdateFrame(ViewportBase viewport, FrameInfo frame)
+        public override void UpdateFrame(MapViewport viewport, Frame frame)
         {
             //
         }

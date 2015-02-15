@@ -5,6 +5,7 @@ namespace Sledge.Rendering.Interfaces
     public interface IRenderer
     {
         IViewport CreateViewport();
+        void DestroyViewport(IViewport viewport);
 
         Scene CreateScene();
         void SetActiveScene(Scene scene);

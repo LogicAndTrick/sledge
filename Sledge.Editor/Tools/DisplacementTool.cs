@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
+using Sledge.Editor.Rendering;
 using Sledge.Editor.Tools.DisplacementTools;
+using Sledge.Rendering;
 using Sledge.Settings;
-using Sledge.UI;
 using Sledge.Editor.Properties;
 
 namespace Sledge.Editor.Tools
@@ -83,72 +84,72 @@ namespace Sledge.Editor.Tools
             if (_currentTool != null) _currentTool.ToolDeselected(preventHistory);
         }
 
-        public override void MouseDown(ViewportBase viewport, ViewportEvent e)
+        public override void MouseDown(MapViewport viewport, ViewportEvent e)
         {
             if (_currentTool != null) _currentTool.MouseDown(viewport, e);
         }
 
-        public override void KeyDown(ViewportBase viewport, ViewportEvent e)
+        public override void KeyDown(MapViewport viewport, ViewportEvent e)
         {
             if (_currentTool != null) _currentTool.KeyDown(viewport, e);
         }
 
-        public override void Render(ViewportBase viewport)
+        public override void Render(MapViewport viewport)
         {
             if (_currentTool != null) _currentTool.Render(viewport);
         }
 
-        public override void MouseEnter(ViewportBase viewport, ViewportEvent e)
+        public override void MouseEnter(MapViewport viewport, ViewportEvent e)
         {
             if (_currentTool != null) _currentTool.MouseEnter(viewport, e);
         }
 
-        public override void MouseLeave(ViewportBase viewport, ViewportEvent e)
+        public override void MouseLeave(MapViewport viewport, ViewportEvent e)
         {
             if (_currentTool != null) _currentTool.MouseLeave(viewport, e);
         }
 
-        public override void MouseClick(ViewportBase viewport, ViewportEvent e)
+        public override void MouseClick(MapViewport viewport, ViewportEvent e)
         {
             if (_currentTool != null) _currentTool.MouseClick(viewport, e);
         }
 
-        public override void MouseDoubleClick(ViewportBase viewport, ViewportEvent e)
+        public override void MouseDoubleClick(MapViewport viewport, ViewportEvent e)
         {
             if (_currentTool != null) _currentTool.MouseDoubleClick(viewport, e);
         }
 
-        public override void MouseUp(ViewportBase viewport, ViewportEvent e)
+        public override void MouseUp(MapViewport viewport, ViewportEvent e)
         {
             if (_currentTool != null) _currentTool.MouseUp(viewport, e);
         }
 
-        public override void MouseWheel(ViewportBase viewport, ViewportEvent e)
+        public override void MouseWheel(MapViewport viewport, ViewportEvent e)
         {
             if (_currentTool != null) _currentTool.MouseWheel(viewport, e);
         }
 
-        public override void MouseMove(ViewportBase viewport, ViewportEvent e)
+        public override void MouseMove(MapViewport viewport, ViewportEvent e)
         {
             if (_currentTool != null) _currentTool.MouseMove(viewport, e);
         }
 
-        public override void KeyPress(ViewportBase viewport, ViewportEvent e)
+        public override void KeyPress(MapViewport viewport, ViewportEvent e)
         {
             if (_currentTool != null) _currentTool.KeyPress(viewport, e);
         }
 
-        public override void KeyUp(ViewportBase viewport, ViewportEvent e)
+        public override void KeyUp(MapViewport viewport, ViewportEvent e)
         {
             if (_currentTool != null) _currentTool.KeyUp(viewport, e);
         }
 
-        public override void UpdateFrame(ViewportBase viewport, FrameInfo frame)
+        public override void UpdateFrame(MapViewport viewport, Frame frame)
         {
             if (_currentTool != null) _currentTool.UpdateFrame(viewport, frame);
         }
 
-        public override void PreRender(ViewportBase viewport)
+        public override void PreRender(MapViewport viewport)
         {
             if (_currentTool != null) _currentTool.PreRender(viewport);
         }

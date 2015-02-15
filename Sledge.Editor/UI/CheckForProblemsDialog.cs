@@ -1,13 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using Sledge.Common.Mediator;
-using Sledge.DataStructures.MapObjects;
 using Sledge.Editor.Actions;
 using Sledge.Editor.Actions.MapObjects.Selection;
 using Sledge.Editor.Documents;

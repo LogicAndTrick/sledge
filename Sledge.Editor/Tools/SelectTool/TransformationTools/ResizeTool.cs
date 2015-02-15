@@ -6,8 +6,9 @@ using OpenTK;
 using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.MapObjects;
 using Sledge.Editor.Documents;
+using Sledge.Editor.Rendering;
 using Sledge.Editor.Tools.Widgets;
-using Sledge.UI;
+using Sledge.Editor.UI;
 
 namespace Sledge.Editor.Tools.SelectTool.TransformationTools
 {
@@ -38,7 +39,7 @@ namespace Sledge.Editor.Tools.SelectTool.TransformationTools
         }
 
         #region 2D Transformation Matrix
-        public override Matrix4? GetTransformationMatrix(Viewport2D viewport, ViewportEvent e, BaseBoxTool.BoxState state, Document doc, IEnumerable<Widget> activeWidgets)
+        public override Matrix4? GetTransformationMatrix(MapViewport viewport, ViewportEvent e, BaseBoxTool.BoxState state, Document doc, IEnumerable<Widget> activeWidgets)
         {
             var coords = GetBoxCoordinatesForSelectionResize(viewport, e, state, doc);
             state.BoxStart = coords.Item1;
@@ -63,7 +64,7 @@ namespace Sledge.Editor.Tools.SelectTool.TransformationTools
             return resizeMatrix;
         }
 
-        private Coordinate GetResizeOrigin(Viewport2D viewport, BaseBoxTool.BoxState state, Document document)
+        private Coordinate GetResizeOrigin(MapViewport viewport, BaseBoxTool.BoxState state, Document document)
         {
             if (state.Action != BaseBoxTool.BoxAction.Resizing || state.Handle != BaseBoxTool.ResizeHandle.Center) return null;
             var sel = document.Selection.GetSelectedParents().ToList();
@@ -77,7 +78,7 @@ namespace Sledge.Editor.Tools.SelectTool.TransformationTools
             return points.OrderBy(x => (state.MoveStart - x).LengthSquared()).First();
         }
 
-        private Coordinate GetResizeDistance(Viewport2D viewport, ViewportEvent e, BaseBoxTool.BoxState state, Document document)
+        private Coordinate GetResizeDistance(MapViewport viewport, ViewportEvent e, BaseBoxTool.BoxState state, Document document)
         {
             var origin = GetResizeOrigin(viewport, state, document);
             if (origin == null) return null;
@@ -86,7 +87,7 @@ namespace Sledge.Editor.Tools.SelectTool.TransformationTools
             return SnapIfNeeded(origin + after - before, document) - origin;
         }
 
-        private Tuple<Coordinate, Coordinate> GetBoxCoordinatesForSelectionResize(Viewport2D viewport, ViewportEvent e, BaseBoxTool.BoxState state, Document document)
+        private Tuple<Coordinate, Coordinate> GetBoxCoordinatesForSelectionResize(MapViewport viewport, ViewportEvent e, BaseBoxTool.BoxState state, Document document)
         {
             if (state.Action != BaseBoxTool.BoxAction.Resizing) return Tuple.Create(state.BoxStart, state.BoxEnd);
             var now = SnapIfNeeded(viewport.ScreenToWorld(e.X, viewport.Height - e.Y), document);
@@ -176,7 +177,7 @@ namespace Sledge.Editor.Tools.SelectTool.TransformationTools
             return Tuple.Create(cstart, cend);
         }
 
-        private static Coordinate GetOriginForTransform(Viewport2D viewport, BaseBoxTool.BoxState state)
+        private static Coordinate GetOriginForTransform(MapViewport viewport, BaseBoxTool.BoxState state)
         {
             decimal x = 0;
             decimal y = 0;

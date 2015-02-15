@@ -21,6 +21,8 @@ using Sledge.Editor.Actions.Visgroups;
 using Sledge.Editor.Clipboard;
 using Sledge.Editor.Compiling;
 using Sledge.Editor.Enums;
+using Sledge.Editor.Extensions;
+using Sledge.Editor.Rendering;
 using Sledge.Editor.Tools;
 using Sledge.Editor.Tools.SelectTool;
 using Sledge.Editor.UI;
@@ -30,8 +32,8 @@ using Sledge.Extensions;
 using Sledge.Providers.Texture;
 using Sledge.QuickForms;
 using Sledge.QuickForms.Items;
+using Sledge.Rendering.Cameras;
 using Sledge.Settings;
-using Sledge.UI;
 using Path = System.IO.Path;
 using Quaternion = Sledge.DataStructures.Geometric.Quaternion;
 
@@ -627,8 +629,9 @@ namespace Sledge.Editor.Documents
         public void RotateClockwise()
         {
             if (_document.Selection.IsEmpty() || _document.Selection.InFaceSelection) return;
-            var focused = ViewportManager.Viewports.FirstOrDefault(x => x.IsFocused && x is Viewport2D) as Viewport2D;
+            var focused = ViewportManager.GetActiveViewport();
             if (focused == null) return;
+
             var center = new Box(_document.Selection.GetSelectedObjects().Select(x => x.BoundingBox).Where(x => x != null)).Center;
             var axis = focused.GetUnusedCoordinate(Coordinate.One);
             var transform = new UnitRotate(DMath.DegreesToRadians(90), new Line(center, center + axis));
@@ -639,8 +642,9 @@ namespace Sledge.Editor.Documents
         public void RotateCounterClockwise()
         {
             if (_document.Selection.IsEmpty() || _document.Selection.InFaceSelection) return;
-            var focused = ViewportManager.Viewports.FirstOrDefault(x => x.IsFocused && x is Viewport2D) as Viewport2D;
+            var focused = ViewportManager.GetActiveViewport();
             if (focused == null) return;
+
             var center = new Box(_document.Selection.GetSelectedObjects().Select(x => x.BoundingBox).Where(x => x != null)).Center;
             var axis = focused.GetUnusedCoordinate(Coordinate.One);
             var transform = new UnitRotate(DMath.DegreesToRadians(-90), new Line(center, center + axis));
@@ -783,7 +787,7 @@ namespace Sledge.Editor.Documents
         {
             var box = _document.Selection.GetSelectionBoundingBox()
                       ?? new Box(Coordinate.Zero, Coordinate.Zero);
-            foreach (var vp in ViewportManager.Viewports.OfType<Viewport2D>())
+            foreach (var vp in ViewportManager.Viewports.Where(x => x.Is2D))
             {
                 vp.FocusOn(box);
             }
@@ -793,7 +797,7 @@ namespace Sledge.Editor.Documents
         {
             var box = _document.Selection.GetSelectionBoundingBox()
                       ?? new Box(Coordinate.Zero, Coordinate.Zero);
-            foreach (var vp in ViewportManager.Viewports.OfType<Viewport3D>())
+            foreach (var vp in ViewportManager.Viewports.Where(x => x.Is3D))
             {
                 vp.FocusOn(box);
             }
@@ -859,11 +863,11 @@ namespace Sledge.Editor.Documents
                 var end = _document.Pointfile.Lines.LastOrDefault();
                 if (end == null) return;
 
-                var vp = ViewportManager.Viewports.OfType<Viewport3D>().FirstOrDefault();
-                if (vp == null) return;
+                var pc = ViewportManager.Viewports.Select(x => x.Viewport.Camera).OfType<PerspectiveCamera>().FirstOrDefault();
+                if (pc == null) return;
 
-                vp.Camera.Location = new Vector3((float)end.End.DX, (float)end.End.DY, (float)end.End.DZ);
-                vp.Camera.LookAt = new Vector3((float)end.Start.DX, (float)end.Start.DY, (float)end.Start.DZ);
+                pc.Position = end.End.ToVector3();
+                pc.LookAt = end.Start.ToVector3();
             }
             catch
             {
@@ -1023,7 +1027,7 @@ namespace Sledge.Editor.Documents
             }
         }
 
-        public void ViewportRightClick(Viewport2D vp, ViewportEvent e)
+        public void ViewportRightClick(MapViewport vp, ViewportEvent e)
         {
             ViewportContextMenu.Instance.AddNonSelectionItems(_document, vp);
             if (!_document.Selection.IsEmpty() && !_document.Selection.InFaceSelection && ToolManager.ActiveTool is SelectTool)
@@ -1039,7 +1043,7 @@ namespace Sledge.Editor.Documents
                 }
             }
             if (ToolManager.ActiveTool != null) ToolManager.ActiveTool.OverrideViewportContextMenu(ViewportContextMenu.Instance, vp, e);
-            if (ViewportContextMenu.Instance.Items.Count > 0) ViewportContextMenu.Instance.Show(vp, e.X, e.Y);
+            if (ViewportContextMenu.Instance.Items.Count > 0) ViewportContextMenu.Instance.Show(vp.Control, e.X, e.Y);
         }
 
         public void VisgroupSelect(int visgroupId)
@@ -1109,9 +1113,9 @@ namespace Sledge.Editor.Documents
 
         public void SetZoomValue(decimal value)
         {
-            foreach (var vp in ViewportManager.Viewports.OfType<Viewport2D>())
+            foreach (var vp in ViewportManager.Viewports.Select(x => x.Viewport.Camera).OfType<OrthographicCamera>())
             {
-                vp.Zoom = value;
+                vp.Zoom = (float) value;
             }
             Mediator.Publish(EditorMediator.ViewZoomChanged, value);
         }
@@ -1121,10 +1125,10 @@ namespace Sledge.Editor.Documents
             _document.TextureCollection.SelectedTexture = selection;
         }
 
-        public void ViewportCreated(ViewportBase viewport)
+        public void ViewportCreated(MapViewport viewport)
         {
             // todo 
-            //if (viewport is Viewport3D) viewport.RenderContext.Add(new WidgetLinesRenderable());
+            //if (viewport is MapViewport) viewport.RenderContext.Add(new WidgetLinesRenderable());
             //_document.Renderer.Register(new[] { viewport });
             //viewport.RenderContext.Add(new ToolRenderable());
             //viewport.RenderContext.Add(new HelperRenderable(_document));

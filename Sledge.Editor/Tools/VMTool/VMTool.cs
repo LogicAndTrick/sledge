@@ -11,10 +11,12 @@ using Sledge.DataStructures.MapObjects;
 using Sledge.Editor.Actions.MapObjects.Operations;
 using Sledge.Editor.Actions.MapObjects.Selection;
 using Sledge.Editor.Properties;
+using Sledge.Editor.Rendering;
+using Sledge.Editor.UI;
 using Sledge.Graphics;
 using Sledge.Graphics.Helpers;
+using Sledge.Rendering;
 using Sledge.Settings;
-using Sledge.UI;
 using Matrix = Sledge.Graphics.Helpers.Matrix;
 using Select = Sledge.Settings.Select;
 using View = Sledge.Settings.View;
@@ -242,32 +244,35 @@ namespace Sledge.Editor.Tools.VMTool
         /// <param name="y">The Y coordinate</param>
         /// <param name="viewport">The viewport</param>
         /// <returns>The points ordered from top to bottom, or an empty set if no points were found</returns>
-        public List<VMPoint> GetVerticesAtPoint(int x, int y, Viewport2D viewport)
+        public List<VMPoint> GetVerticesAtPoint(int x, int y, MapViewport viewport)
         {
-            var p = viewport.ScreenToWorld(x, y);
-            var d = 5 / viewport.Zoom; // Tolerance value = 5 pixels
+            if (viewport.Is2D)
+            {
+                var p = viewport.ScreenToWorld(x, y);
+                var d = 5 / (decimal) viewport.Zoom; // Tolerance value = 5 pixels
 
-            // Order by the unused coordinate in the view (which is the up axis) descending to get the "closest" point
-            return (from point in Points
+                // Order by the unused coordinate in the view (which is the up axis) descending to get the "closest" point
+                return (from point in Points
                     let c = viewport.Flatten(point.Coordinate)
                     where p.X >= c.X - d && p.X <= c.X + d && p.Y >= c.Y - d && p.Y <= c.Y + d
                     let unused = viewport.GetUnusedCoordinate(point.Coordinate)
                     orderby unused.X + unused.Y + unused.Z descending
                     select point).ToList();
-        }
-
-        public List<VMPoint> GetVerticesAtPoint(int x, int y, Viewport3D viewport)
-        {
-            var l = viewport.Camera.Location;
-            var pos = new Coordinate((decimal) l.X, (decimal) l.Y, (decimal) l.Z);
-            var p = new Coordinate(x, y, 0);
-            const int d = 5;
-            return (from point in Points
+            }
+            else
+            {
+                // todo var l = viewport.Camera.Location;
+                var l = Coordinate.Zero;
+                var pos = new Coordinate((decimal) l.X, (decimal) l.Y, (decimal) l.Z);
+                var p = new Coordinate(x, y, 0);
+                const int d = 5;
+                return (from point in Points
                     let c = viewport.WorldToScreen(point.Coordinate)
                     where c != null && c.Z <= 1
                     where p.X >= c.X - d && p.X <= c.X + d && p.Y >= c.Y - d && p.Y <= c.Y + d
                     orderby (pos - point.Coordinate).LengthSquared()
                     select point).ToList();
+            }
         }
 
         public IEnumerable<Solid> GetCopies()
@@ -482,7 +487,7 @@ namespace Sledge.Editor.Tools.VMTool
                 .FirstOrDefault();
         }
 
-        private void MouseDown(Viewport3D vp, ViewportEvent e)
+        private void MouseDown3D(MapViewport vp, ViewportEvent e)
         {
             if (!_currentTool.NoSelection())
             {
@@ -561,7 +566,7 @@ namespace Sledge.Editor.Tools.VMTool
         }
 
         private bool _clickSelectionDone = false;
-        public override void MouseDown(ViewportBase vp, ViewportEvent e)
+        public override void MouseDown(MapViewport vp, ViewportEvent e)
         {
             _clickSelectionDone = false;
             if (_currentTool != null)
@@ -570,9 +575,9 @@ namespace Sledge.Editor.Tools.VMTool
                 _currentTool.MouseDown(vp, e);
                 if (e.Handled) return;
             }
-            if (!(vp is Viewport2D))
+            if (vp.Is3D)
             {
-                MouseDown((Viewport3D)vp, e);
+                MouseDown3D((MapViewport)vp, e);
                 return;
             }
 
@@ -580,7 +585,7 @@ namespace Sledge.Editor.Tools.VMTool
 
             if (_currentTool.NoSelection()) return;
 
-            var viewport = (Viewport2D)vp;
+            var viewport = (MapViewport)vp;
 
             // Otherwise we try a selection
             // Find the clicked vertices
@@ -599,7 +604,7 @@ namespace Sledge.Editor.Tools.VMTool
 
                 // Create a box to represent the click, with a tolerance level
                 var unused = viewport.GetUnusedCoordinate(new Coordinate(100000, 100000, 100000));
-                var tolerance = 4 / viewport.Zoom; // Selection tolerance of four pixels
+                var tolerance = 4 / (decimal) viewport.Zoom; // Selection tolerance of four pixels
                 var used = viewport.Expand(new Coordinate(tolerance, tolerance, 0));
                 var add = used + unused;
                 var click = viewport.Expand(viewport.ScreenToWorld(e.X, viewport.Height - e.Y));
@@ -648,16 +653,16 @@ namespace Sledge.Editor.Tools.VMTool
             _movingPoint = vtx;
         }
 
-        public override void MouseClick(ViewportBase viewport, ViewportEvent e)
+        public override void MouseClick(MapViewport viewport, ViewportEvent e)
         {
-            var vp = viewport as Viewport2D;
+            var vp = viewport as MapViewport;
             if (vp == null || _clickSelectionDone) return;
 
             var vtxs = _currentTool.GetVerticesAtPoint(e.X, viewport.Height - e.Y, vp);
             DoSelection(vtxs, vp);
         }
 
-        private void DoSelection(List<VMPoint> vertices, Viewport2D vp)
+        private void DoSelection(List<VMPoint> vertices, MapViewport vp)
         {
             if (!vertices.Any()) return;
 
@@ -691,19 +696,19 @@ namespace Sledge.Editor.Tools.VMTool
             VertexSelectionChanged();
         }
 
-        public override void MouseDoubleClick(ViewportBase viewport, ViewportEvent e)
+        public override void MouseDoubleClick(MapViewport viewport, ViewportEvent e)
         {
             // Not used
         }
 
-        public override void MouseUp(ViewportBase viewport, ViewportEvent e)
+        public override void MouseUp(MapViewport viewport, ViewportEvent e)
         {
             base.MouseUp(viewport, e);
 
             if (_currentTool == null) return;
             _currentTool.MouseUp(viewport, e);
 
-            if (!(viewport is Viewport2D)) return;
+            if (!(viewport is MapViewport)) return;
             if (_currentTool.NoSelection()) return;
 
             if (!e.Handled)
@@ -730,7 +735,7 @@ namespace Sledge.Editor.Tools.VMTool
             MoveSelection = null;
         }
 
-        protected override void LeftMouseUpDrawing(Viewport2D viewport, ViewportEvent e)
+        protected override void LeftMouseUpDrawing(MapViewport viewport, ViewportEvent e)
         {
             base.LeftMouseUpDrawing(viewport, e);
             if (Select.AutoSelectBox)
@@ -739,7 +744,7 @@ namespace Sledge.Editor.Tools.VMTool
             }
         }
 
-        public override void MouseMove(ViewportBase vp, ViewportEvent e)
+        public override void MouseMove(MapViewport vp, ViewportEvent e)
         {
             base.MouseMove(vp, e);
 
@@ -748,17 +753,17 @@ namespace Sledge.Editor.Tools.VMTool
             _currentTool.MouseMove(vp, e);
             if (e.Handled) return;
 
-            if (!(vp is Viewport2D)) return;
+            if (!(vp is MapViewport)) return;
             if (_currentTool.NoSelection()) return;
 
-            var viewport = (Viewport2D)vp;
+            var viewport = (MapViewport)vp;
 
             if (_movingPoint == null)
             {
                 // Not moving a point, just test for the cursor.
                 var vtxs = _currentTool.GetVerticesAtPoint(e.X, viewport.Height - e.Y, viewport);
-                if (vtxs.Any()) viewport.Cursor = Cursors.Cross;
-                else if (viewport.Cursor == Cursors.Cross) viewport.Cursor = Cursors.Default;
+                if (vtxs.Any()) viewport.Control.Cursor = Cursors.Cross;
+                else if (viewport.Control.Cursor == Cursors.Cross) viewport.Control.Cursor = Cursors.Default;
             }
             else
             {
@@ -806,7 +811,7 @@ namespace Sledge.Editor.Tools.VMTool
             _showPoints = (ShowPoints)side;
         }
 
-        public override void BoxDrawnConfirm(ViewportBase viewport)
+        public override void BoxDrawnConfirm(MapViewport viewport)
         {
             Box box;
             if (GetSelectionBox(out box))
@@ -822,7 +827,7 @@ namespace Sledge.Editor.Tools.VMTool
             base.BoxDrawnConfirm(viewport);
         }
 
-        protected override void Render2D(Viewport2D vp)
+        protected override void Render2D(MapViewport vp)
         {
             base.Render2D(vp);
 
@@ -831,7 +836,7 @@ namespace Sledge.Editor.Tools.VMTool
             // Render out the solid previews
             GL.Color3(Color.Pink);
             Matrix.Push();
-            var matrix = vp.GetModelViewMatrix();
+            var matrix = vp.Viewport.Camera.GetModelMatrix();
             GL.MultMatrix(ref matrix);
             //MapObjectRenderer.DrawWireframe(_copies.Keys.SelectMany(x => x.Faces), true, false);
             Matrix.Pop();
@@ -856,66 +861,66 @@ namespace Sledge.Editor.Tools.VMTool
             GL.End();
         }
 
-        protected override void Render3D(Viewport3D vp)
+        protected override void Render3D(MapViewport vp)
         {
-            base.Render3D(vp);
+            //base.Render3D(vp);
 
-            if (_currentTool != null) _currentTool.Render3D(vp);
+            //if (_currentTool != null) _currentTool.Render3D(vp);
 
-            TextureHelper.Unbind();
+            //TextureHelper.Unbind();
 
-            if (_currentTool == null || _currentTool.DrawVertices())
-            {
-                // Get us into 2D rendering
-                Matrix.Set(MatrixMode.Projection);
-                Matrix.Identity();
-                Graphics.Helpers.Viewport.Orthographic(0, 0, vp.Width, vp.Height);
-                Matrix.Set(MatrixMode.Modelview);
-                Matrix.Identity();
+            //if (_currentTool == null || _currentTool.DrawVertices())
+            //{
+            //    // Get us into 2D rendering
+            //    Matrix.Set(MatrixMode.Projection);
+            //    Matrix.Identity();
+            //    Graphics.Helpers.Viewport.Orthographic(0, 0, vp.Width, vp.Height);
+            //    Matrix.Set(MatrixMode.Modelview);
+            //    Matrix.Identity();
 
-                var half = new Coordinate(vp.Width, vp.Height, 0) / 2;
-                // Render out the point handles
-                GL.Begin(PrimitiveType.Quads);
-                foreach (var point in Points)
-                {
-                    if (point.IsMidPoint && _showPoints == ShowPoints.Vertices) continue;
-                    if (!point.IsMidPoint && _showPoints == ShowPoints.Midpoints) continue;
+            //    var half = new Coordinate(vp.Width, vp.Height, 0) / 2;
+            //    // Render out the point handles
+            //    GL.Begin(PrimitiveType.Quads);
+            //    foreach (var point in Points)
+            //    {
+            //        if (point.IsMidPoint && _showPoints == ShowPoints.Vertices) continue;
+            //        if (!point.IsMidPoint && _showPoints == ShowPoints.Midpoints) continue;
 
-                    var c = vp.WorldToScreen(point.Coordinate);
-                    if (c == null || c.Z > 1) continue;
-                    c -= half;
+            //        var c = vp.WorldToScreen(point.Coordinate);
+            //        if (c == null || c.Z > 1) continue;
+            //        c -= half;
 
-                    GL.Color3(Color.Black);
-                    GL.Vertex2(c.DX - 4, c.DY - 4);
-                    GL.Vertex2(c.DX - 4, c.DY + 4);
-                    GL.Vertex2(c.DX + 4, c.DY + 4);
-                    GL.Vertex2(c.DX + 4, c.DY - 4);
+            //        GL.Color3(Color.Black);
+            //        GL.Vertex2(c.DX - 4, c.DY - 4);
+            //        GL.Vertex2(c.DX - 4, c.DY + 4);
+            //        GL.Vertex2(c.DX + 4, c.DY + 4);
+            //        GL.Vertex2(c.DX + 4, c.DY - 4);
 
-                    GL.Color3(point.GetColour());
-                    GL.Vertex2(c.DX - 3, c.DY - 3);
-                    GL.Vertex2(c.DX - 3, c.DY + 3);
-                    GL.Vertex2(c.DX + 3, c.DY + 3);
-                    GL.Vertex2(c.DX + 3, c.DY - 3);
-                }
-                GL.End();
+            //        GL.Color3(point.GetColour());
+            //        GL.Vertex2(c.DX - 3, c.DY - 3);
+            //        GL.Vertex2(c.DX - 3, c.DY + 3);
+            //        GL.Vertex2(c.DX + 3, c.DY + 3);
+            //        GL.Vertex2(c.DX + 3, c.DY - 3);
+            //    }
+            //    GL.End();
 
-                // Get back into 3D rendering
-                Matrix.Set(MatrixMode.Projection);
-                Matrix.Identity();
-                Graphics.Helpers.Viewport.Perspective(0, 0, vp.Width, vp.Height, View.CameraFOV);
-                Matrix.Set(MatrixMode.Modelview);
-                Matrix.Identity();
-                vp.Camera.Position();
-            }
+            //    // Get back into 3D rendering
+            //    Matrix.Set(MatrixMode.Projection);
+            //    Matrix.Identity();
+            //    Graphics.Helpers.Viewport.Perspective(0, 0, vp.Width, vp.Height, View.CameraFOV);
+            //    Matrix.Set(MatrixMode.Modelview);
+            //    Matrix.Identity();
+            //    // vp.Camera.Position();
+            //}
 
-            var type = vp.Type;
-            bool shaded = type == Viewport3D.ViewType.Shaded || type == Viewport3D.ViewType.Textured,
-                 textured = type == Viewport3D.ViewType.Textured,
-                 wireframe = type == Viewport3D.ViewType.Wireframe;
+            //var type = vp.Type;
+            //bool shaded = type == MapViewport.ViewType.Shaded || type == MapViewport.ViewType.Textured,
+            //     textured = type == MapViewport.ViewType.Textured,
+            //     wireframe = type == MapViewport.ViewType.Wireframe;
 
-            // Render out the solid previews
-            GL.Color3(Color.White);
-            var faces = _copies.Keys.SelectMany(x => x.Faces).ToList();
+            //// Render out the solid previews
+            //GL.Color3(Color.White);
+            //var faces = _copies.Keys.SelectMany(x => x.Faces).ToList();
 
             // todo rendering: vm
             //if (!wireframe)
@@ -939,61 +944,61 @@ namespace Sledge.Editor.Tools.VMTool
             //}
         }
 
-        public override void KeyDown(ViewportBase viewport, ViewportEvent e)
+        public override void KeyDown(MapViewport viewport, ViewportEvent e)
         {
             if (_currentTool != null) _currentTool.KeyDown(viewport, e);
             if (e.Handled) return;
             base.KeyDown(viewport, e);
         }
 
-        public override void Render(ViewportBase viewport)
+        public override void Render(MapViewport viewport)
         {
             if (_currentTool != null) _currentTool.Render(viewport);
             base.Render(viewport);
         }
 
-        public override void MouseEnter(ViewportBase viewport, ViewportEvent e)
+        public override void MouseEnter(MapViewport viewport, ViewportEvent e)
         {
             if (_currentTool != null) _currentTool.MouseEnter(viewport, e);
             if (e.Handled) return;
             base.MouseEnter(viewport, e);
         }
 
-        public override void MouseLeave(ViewportBase viewport, ViewportEvent e)
+        public override void MouseLeave(MapViewport viewport, ViewportEvent e)
         {
             if (_currentTool != null) _currentTool.MouseLeave(viewport, e);
             if (e.Handled) return;
             base.MouseLeave(viewport, e);
         }
 
-        public override void MouseWheel(ViewportBase viewport, ViewportEvent e)
+        public override void MouseWheel(MapViewport viewport, ViewportEvent e)
         {
             if (_currentTool != null) _currentTool.MouseWheel(viewport, e);
             if (e.Handled) return;
             base.MouseWheel(viewport, e);
         }
 
-        public override void KeyPress(ViewportBase viewport, ViewportEvent e)
+        public override void KeyPress(MapViewport viewport, ViewportEvent e)
         {
             if (_currentTool != null) _currentTool.KeyPress(viewport, e);
             if (e.Handled) return;
             base.KeyPress(viewport, e);
         }
 
-        public override void KeyUp(ViewportBase viewport, ViewportEvent e)
+        public override void KeyUp(MapViewport viewport, ViewportEvent e)
         {
             if (_currentTool != null) _currentTool.KeyUp(viewport, e);
             if (e.Handled) return;
             base.KeyUp(viewport, e);
         }
 
-        public override void UpdateFrame(ViewportBase viewport, FrameInfo frame)
+        public override void UpdateFrame(MapViewport viewport, Frame frame)
         {
             if (_currentTool != null) _currentTool.UpdateFrame(viewport, frame);
             base.UpdateFrame(viewport, frame);
         }
 
-        public override void PreRender(ViewportBase viewport)
+        public override void PreRender(MapViewport viewport)
         {
             if (_currentTool != null) _currentTool.PreRender(viewport);
             base.PreRender(viewport);

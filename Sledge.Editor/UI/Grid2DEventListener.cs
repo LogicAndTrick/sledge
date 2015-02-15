@@ -1,22 +1,23 @@
 ﻿using Sledge.DataStructures.Geometric;
-using Sledge.UI;
+using Sledge.Editor.Rendering;
+using Sledge.Rendering;
 
 namespace Sledge.Editor.UI
 {
-    public class Grid2DEventListener : IViewport2DEventListener
+    public class Grid2DEventListener : IViewportEventListener
     {
-        public ViewportBase Viewport
+        public MapViewport Viewport
         {
-            get { return Viewport2D; }
-            set { Viewport2D = (Viewport2D) value; }
+            get { return MapViewport; }
+            set { MapViewport = (MapViewport) value; }
         }
 
-        private Viewport2D Viewport2D { get; set; }
+        private MapViewport MapViewport { get; set; }
 
-        public Grid2DEventListener(Viewport2D viewport)
+        public Grid2DEventListener(MapViewport viewport)
         {
             Viewport = viewport;
-            Viewport2D = viewport;
+            MapViewport = viewport;
         }
 
         // todo update grid
@@ -74,6 +75,21 @@ namespace Sledge.Editor.UI
             // Not used
         }
 
+        public void DragStart(ViewportEvent e)
+        {
+            
+        }
+
+        public void DragMove(ViewportEvent e)
+        {
+
+        }
+
+        public void DragEnd(ViewportEvent e)
+        {
+
+        }
+
         public void MouseEnter(ViewportEvent e)
         {
             // Not used
@@ -84,7 +100,17 @@ namespace Sledge.Editor.UI
             // Not used
         }
 
-        public void UpdateFrame(FrameInfo frame)
+        public void ZoomChanged(ViewportEvent e)
+        {
+
+        }
+
+        public void PositionChanged(ViewportEvent e)
+        {
+
+        }
+
+        public void UpdateFrame(Frame frame)
         {
             // Not used
         }

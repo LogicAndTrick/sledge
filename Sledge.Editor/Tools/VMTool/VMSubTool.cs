@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using Sledge.DataStructures.Geometric;
+using Sledge.Editor.Rendering;
 using Sledge.Settings;
-using Sledge.UI;
 
 namespace Sledge.Editor.Tools.VMTool
 {
@@ -42,14 +42,13 @@ namespace Sledge.Editor.Tools.VMTool
             return HotkeyInterceptResult.Continue;
         }
 
-        public abstract List<VMPoint> GetVerticesAtPoint(int x, int y, Viewport2D viewport);
-        public abstract List<VMPoint> GetVerticesAtPoint(int x, int y, Viewport3D viewport);
+        public abstract List<VMPoint> GetVerticesAtPoint(int x, int y, MapViewport viewport);
         public abstract void DragStart(List<VMPoint> clickedPoints);
         public abstract void DragMove(Coordinate distance);
         public abstract void DragEnd();
 
-        public abstract void Render2D(Viewport2D viewport);
-        public abstract void Render3D(Viewport3D viewport);
+        public abstract void Render2D(MapViewport viewport);
+        public abstract void Render3D(MapViewport viewport);
         public abstract void SelectionChanged();
         public abstract bool ShouldDeselect(List<VMPoint> vtxs);
         public abstract bool NoSelection();

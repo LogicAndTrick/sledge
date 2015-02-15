@@ -6,9 +6,11 @@ using System.Windows.Forms;
 using OpenTK;
 using Sledge.Editor.Actions.MapObjects.Operations;
 using Sledge.Editor.Properties;
+using Sledge.Editor.Rendering;
+using Sledge.Editor.UI;
 using Sledge.Graphics;
+using Sledge.Rendering;
 using Sledge.Settings;
-using Sledge.UI;
 using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.MapObjects;
 using OpenTK.Graphics.OpenGL;
@@ -74,7 +76,7 @@ namespace Sledge.Editor.Tools
                    "Press *enter* to cut the selected solids along the clipping plane.";
         }
 
-        private ClipState GetStateAtPoint(int x, int y, Viewport2D viewport)
+        private ClipState GetStateAtPoint(int x, int y, MapViewport viewport)
         {
             if (_clipPlanePoint1 == null || _clipPlanePoint2 == null || _clipPlanePoint3 == null) return ClipState.None;
 
@@ -83,7 +85,7 @@ namespace Sledge.Editor.Tools
             var p2 = viewport.Flatten(_clipPlanePoint2);
             var p3 = viewport.Flatten(_clipPlanePoint3);
 
-            var d = 5 / viewport.Zoom;
+            var d = 5 / (decimal) viewport.Zoom;
 
             if (p.X >= p1.X - d && p.X <= p1.X + d && p.Y >= p1.Y - d && p.Y <= p1.Y + d) return ClipState.MovingPoint1;
             if (p.X >= p2.X - d && p.X <= p2.X + d && p.Y >= p2.Y - d && p.Y <= p2.Y + d) return ClipState.MovingPoint2;
@@ -92,10 +94,10 @@ namespace Sledge.Editor.Tools
             return ClipState.None;
         }
 
-        public override void MouseDown(ViewportBase vp, ViewportEvent e)
+        public override void MouseDown(MapViewport vp, ViewportEvent e)
         {
-            if (!(vp is Viewport2D)) return;
-            var viewport = (Viewport2D) vp;
+            if (!(vp is MapViewport)) return;
+            var viewport = (MapViewport) vp;
             _prevState = _state;
 
             var point = SnapIfNeeded(viewport.Expand(viewport.ScreenToWorld(e.X, viewport.Height - e.Y)));
@@ -111,20 +113,20 @@ namespace Sledge.Editor.Tools
             }
         }
 
-        public override void MouseClick(ViewportBase viewport, ViewportEvent e)
+        public override void MouseClick(MapViewport viewport, ViewportEvent e)
         {
             // Not used
         }
 
-        public override void MouseDoubleClick(ViewportBase viewport, ViewportEvent e)
+        public override void MouseDoubleClick(MapViewport viewport, ViewportEvent e)
         {
             // Not used
         }
 
-        public override void MouseUp(ViewportBase vp, ViewportEvent e)
+        public override void MouseUp(MapViewport vp, ViewportEvent e)
         {
-            if (!(vp is Viewport2D)) return;
-            var viewport = (Viewport2D)vp;
+            if (!(vp is MapViewport)) return;
+            var viewport = (MapViewport)vp;
 
             var point = SnapIfNeeded(viewport.Expand(viewport.ScreenToWorld(e.X, viewport.Height - e.Y)));
             if (_state == ClipState.Drawing)
@@ -140,10 +142,10 @@ namespace Sledge.Editor.Tools
             Editor.Instance.CaptureAltPresses = false;
         }
 
-        public override void MouseMove(ViewportBase vp, ViewportEvent e)
+        public override void MouseMove(MapViewport vp, ViewportEvent e)
         {
-            if (!(vp is Viewport2D)) return;
-            var viewport = (Viewport2D)vp;
+            if (!(vp is MapViewport)) return;
+            var viewport = (MapViewport)vp;
 
             var point = SnapIfNeeded(viewport.Expand(viewport.ScreenToWorld(e.X, viewport.Height - e.Y)));
             var st = GetStateAtPoint(e.X, viewport.Height - e.Y, viewport);
@@ -195,15 +197,15 @@ namespace Sledge.Editor.Tools
 
             if (st != ClipState.None || (_state != ClipState.None && _state != ClipState.Drawn))
             {
-                viewport.Cursor = Cursors.Cross;
+                viewport.Control.Cursor = Cursors.Cross;
             }
             else
             {
-                viewport.Cursor = Cursors.Default;
+                viewport.Control.Cursor = Cursors.Default;
             }
         }
 
-        public override void KeyPress(ViewportBase viewport, ViewportEvent e)
+        public override void KeyPress(MapViewport viewport, ViewportEvent e)
         {
             if (e.KeyChar == 13) // Enter
             {
@@ -228,10 +230,10 @@ namespace Sledge.Editor.Tools
             Document.PerformAction("Perform Clip", new Clip(objects, plane, _side != ClipSide.Back, _side != ClipSide.Front));
         }
 
-        public override void Render(ViewportBase viewport)
+        public override void Render(MapViewport viewport)
         {
-            if (viewport is Viewport2D) Render2D((Viewport2D) viewport);
-            if (viewport is Viewport3D) Render3D((Viewport3D) viewport);
+            if (viewport is MapViewport) Render2D((MapViewport) viewport);
+            if (viewport is MapViewport) Render3D((MapViewport) viewport);
         }
 
         public override HotkeyInterceptResult InterceptHotkey(HotkeysMediator hotkeyMessage, object parameters)
@@ -259,7 +261,7 @@ namespace Sledge.Editor.Tools
             _side = (ClipSide) side;
         }
 
-        private void Render2D(Viewport2D vp)
+        private void Render2D(MapViewport vp)
         {
             if (_state == ClipState.None
                 || _clipPlanePoint1 == null
@@ -316,7 +318,7 @@ namespace Sledge.Editor.Tools
                 GL.LineWidth(2);
                 GL.Color3(Color.White);
                 Matrix.Push();
-                var mat = vp.GetModelViewMatrix();
+                var mat = vp.Viewport.Camera.GetModelMatrix();
                 GL.MultMatrix(ref mat);
                 // todo Rendering.Immediate.MapObjectRenderer.DrawWireframe(faces, true, false);
                 Matrix.Pop();
@@ -328,7 +330,7 @@ namespace Sledge.Editor.Tools
 
         }
 
-        private void Render3D(Viewport3D vp)
+        private void Render3D(MapViewport vp)
         {
             if (_state == ClipState.None
                 || _clipPlanePoint1 == null
@@ -389,32 +391,32 @@ namespace Sledge.Editor.Tools
             }
         }
 
-        public override void MouseEnter(ViewportBase viewport, ViewportEvent e)
+        public override void MouseEnter(MapViewport viewport, ViewportEvent e)
         {
             //
         }
 
-        public override void MouseLeave(ViewportBase viewport, ViewportEvent e)
+        public override void MouseLeave(MapViewport viewport, ViewportEvent e)
         {
             //
         }
 
-        public override void MouseWheel(ViewportBase viewport, ViewportEvent e)
+        public override void MouseWheel(MapViewport viewport, ViewportEvent e)
         {
             //
         }
 
-        public override void KeyDown(ViewportBase viewport, ViewportEvent e)
+        public override void KeyDown(MapViewport viewport, ViewportEvent e)
         {
             //
         }
 
-        public override void KeyUp(ViewportBase viewport, ViewportEvent e)
+        public override void KeyUp(MapViewport viewport, ViewportEvent e)
         {
             //
         }
 
-        public override void UpdateFrame(ViewportBase viewport, FrameInfo frame)
+        public override void UpdateFrame(MapViewport viewport, Frame frame)
         {
             //
         }
