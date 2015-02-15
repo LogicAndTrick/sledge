@@ -62,6 +62,13 @@ namespace Sledge.Rendering.OpenGL
 
         public void DestroyViewport(IViewport viewport)
         {
+            var data = _viewportData.ContainsKey(viewport) ? _viewportData[viewport] : null;
+            if (data != null)
+            {
+                data.Framebuffer.Dispose();
+                _viewportData.Remove(viewport);
+            }
+
             var view = viewport as OpenGLViewport;
             if (view == null) return;
 

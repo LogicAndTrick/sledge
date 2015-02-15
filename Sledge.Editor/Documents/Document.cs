@@ -123,7 +123,7 @@ namespace Sledge.Editor.Documents
             //HelperManager = new HelperManager(this);
             //Renderer = new RenderManager(this);
 
-            _scene = SceneManager.Renderer.CreateScene();
+            _scene = SceneManager.Engine.Renderer.CreateScene();
 
             if (MapFile != null) Mediator.Publish(EditorMediator.FileOpened, MapFile);
 
@@ -175,7 +175,7 @@ namespace Sledge.Editor.Documents
         {
             Scheduler.Clear(this);
             TextureProvider.DeleteCollection(TextureCollection);
-            SceneManager.Renderer.RemoveScene(_scene);
+            SceneManager.Engine.Renderer.RemoveScene(_scene);
         }
 
         public bool SaveFile(string path = null, bool forceOverride = false, bool switchPath = true)

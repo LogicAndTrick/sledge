@@ -10,6 +10,7 @@ using Sledge.Editor.Rendering;
 using Sledge.Editor.UI.Layout;
 using Sledge.Graphics.Helpers;
 using Sledge.Graphics.Renderables;
+using Sledge.Rendering.Cameras;
 using Sledge.Settings;
 
 namespace Sledge.Editor.UI
@@ -80,17 +81,31 @@ namespace Sledge.Editor.UI
 
         private static void LoadViewports(TableSplitControl tableSplitControl, ViewportWindowConfiguration config)
         {
+            var defaultViewports = new[]
+            {
+                "PerspectiveCamera",
+                "OrthographicCamera/Top",
+                "OrthographicCamera/Front",
+                "OrthographicCamera/Side"
+            };
+
             var viewports = config.Viewports ?? new List<string>();
 
-            for (int i = 0; i < config.Configuration.Rectangles.Count; i++)
+            for (var i = 0; i < config.Configuration.Rectangles.Count; i++)
             {
-                //var viewport = viewports.Count > i ? viewports[i] : "";
-                //var def = defaultViewports[(i % defaultViewports.Length)];
-                //var vp = CreateViewport(viewport, def.Item1, def.Item2, def.Item3);
-                var vp = new MapViewport(SceneManager.Renderer.CreateViewport());
+                var viewport = viewports.Count > i ? viewports[i] : "";
+                var def = defaultViewports[(i % defaultViewports.Length)];
+
+                var camera = Camera.Deserialise(viewport) ?? Camera.Deserialise(def) ?? new PerspectiveCamera();
+                var view = SceneManager.Engine.CreateViewport(camera);
+                
+                var vp = new MapViewport(view);
                 Viewports.Add(vp);
                 SubscribeExceptions(vp);
+
+                vp.Control.Dock = DockStyle.Fill;
                 tableSplitControl.Controls.Add(vp.Control);
+
                 Mediator.Publish(EditorMediator.ViewportCreated, vp);
             }
         }
@@ -108,11 +123,7 @@ namespace Sledge.Editor.UI
 
         private static string SerialiseViewport(MapViewport vp)
         {
-            //var vp2 = vp as MapViewport;
-            //var vp3 = vp as MapViewport;
-            //if (vp2 != null) return "MapViewport." + vp2.Direction;
-            //if (vp3 != null) return "MapViewport." + vp3.Type;
-            return "";
+            return Camera.Serialise(vp.Viewport.Camera);
         }
 
         public static void SaveLayout()
@@ -155,7 +166,7 @@ namespace Sledge.Editor.UI
             control.Controls.Clear();
             foreach (var vp in viewports)
             {
-                SceneManager.Renderer.DestroyViewport(vp.Viewport);
+                SceneManager.Engine.DestroyViewport(vp.Viewport);
                 Viewports.Remove(vp);
             }
 

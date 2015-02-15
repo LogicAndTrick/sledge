@@ -23,5 +23,11 @@ namespace Sledge.Rendering
             vp.Run();
             return vp;
         }
+
+        public void DestroyViewport(IViewport viewport)
+        {
+            Renderer.DestroyViewport(viewport);
+            Viewports.Remove(viewport);
+        }
     }
 }

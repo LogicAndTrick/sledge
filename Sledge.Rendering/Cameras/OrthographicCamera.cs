@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using OpenTK;
 
 namespace Sledge.Rendering.Cameras
@@ -51,6 +52,27 @@ namespace Sledge.Rendering.Cameras
                             };
         }
 
+        protected OrthographicCamera(string serialised) : this(OrthographicType.Top)
+        {
+            var tags = (serialised ?? "").Split(',', '/');
+            if (tags.Length < 1) return;
+
+            OrthographicType t;
+            if (Enum.TryParse(tags[0], true, out t)) Type = t;
+
+            if (tags.Length < 4) return;
+
+            float p, x = 0, y = 0, z = 0;
+
+            if (float.TryParse(tags[1], NumberStyles.Float, CultureInfo.InvariantCulture, out p)) x = p;
+            if (float.TryParse(tags[2], NumberStyles.Float, CultureInfo.InvariantCulture, out p)) y = p;
+            if (float.TryParse(tags[3], NumberStyles.Float, CultureInfo.InvariantCulture, out p)) z = p;
+            Position = new Vector3(x, y, z);
+
+            if (tags.Length < 5) return;
+            if (float.TryParse(tags[4], NumberStyles.Float, CultureInfo.InvariantCulture, out p)) Zoom = p;
+        }
+
         public override Vector3 EyeLocation { get { return Vector3.UnitZ * float.MaxValue; } }
 
         public override Matrix4 GetCameraMatrix()
@@ -70,6 +92,12 @@ namespace Sledge.Rendering.Cameras
         public override Matrix4 GetModelMatrix()
         {
             return GetMatrixFor(Type);
+        }
+
+        protected override string Serialise()
+        {
+            return String.Format(CultureInfo.InvariantCulture, "{0}/{1},{2},{3}/{4}",
+                Type, Position.X, Position.Y, Position.Z, Zoom);
         }
     }
 }
