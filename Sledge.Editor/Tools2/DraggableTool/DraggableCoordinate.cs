@@ -1,7 +1,9 @@
 using System.Drawing;
+using System.Windows.Forms;
 using OpenTK.Graphics.OpenGL;
 using Sledge.DataStructures.Geometric;
 using Sledge.Editor.Rendering;
+using Sledge.Rendering.Cameras;
 
 namespace Sledge.Editor.Tools2.DraggableTool
 {
@@ -15,51 +17,51 @@ namespace Sledge.Editor.Tools2.DraggableTool
             Position = Coordinate.Zero;
         }
 
-        public virtual void Click(IViewport2D viewport, ViewportEvent e, Coordinate position)
+        public virtual void Click(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Coordinate position)
         {
             
         }
 
-        public virtual bool CanDrag(IViewport2D viewport, ViewportEvent e, Coordinate position)
+        public virtual bool CanDrag(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Coordinate position)
         {
             var pos = viewport.Flatten(Position);
             var diff = (pos - position).Absolute();
             return diff.X < 5 && diff.Y < 5;
         }
 
-        protected virtual void SetMoveCursor(IViewport2D viewport)
+        protected virtual void SetMoveCursor(MapViewport viewport, OrthographicCamera camera)
         {
-            Cursor.SetCursor(viewport, CursorType.SizeAll);
+            viewport.Control.Cursor = Cursors.SizeAll;
         }
 
-        public virtual void Highlight(IViewport2D viewport)
+        public virtual void Highlight(MapViewport viewport, OrthographicCamera camera)
         {
             Highlighted = true;
-            SetMoveCursor(viewport);
+            SetMoveCursor(viewport, camera);
         }
 
-        public virtual void Unhighlight(IViewport2D viewport)
+        public virtual void Unhighlight(MapViewport viewport, OrthographicCamera camera)
         {
             Highlighted = false;
-            Cursor.SetCursor(viewport, CursorType.Default);
+            viewport.Control.Cursor = Cursors.Default;
         }
 
-        public virtual void StartDrag(IViewport2D viewport, ViewportEvent e, Coordinate position)
+        public virtual void StartDrag(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Coordinate position)
         {
 
         }
 
-        public virtual void Drag(IViewport2D viewport, ViewportEvent e, Coordinate lastPosition, Coordinate position)
+        public virtual void Drag(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Coordinate lastPosition, Coordinate position)
         {
             Position = viewport.Expand(position) + viewport.GetUnusedCoordinate(Position);
         }
 
-        public virtual void EndDrag(IViewport2D viewport, ViewportEvent e, Coordinate position)
+        public virtual void EndDrag(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Coordinate position)
         {
 
         }
 
-        public virtual void Render(IViewport2D viewport)
+        public virtual void Render(MapViewport viewport, OrthographicCamera camera)
         {
             var pos = viewport.Flatten(Position);
             GL.Begin(PrimitiveType.Quads);

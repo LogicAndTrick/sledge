@@ -2,26 +2,29 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Windows.Forms;
 using OpenTK;
 using OpenTK.Input;
 using Sledge.Common.Mediator;
 using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.MapObjects;
 using Sledge.DataStructures.Transformations;
-using Sledge.EditorNew.Actions;
-using Sledge.EditorNew.Actions.MapObjects.Operations;
-using Sledge.EditorNew.Actions.MapObjects.Operations.EditOperations;
-using Sledge.EditorNew.Actions.MapObjects.Selection;
-using Sledge.EditorNew.Clipboard;
-using Sledge.EditorNew.Properties;
-using Sledge.EditorNew.Tools.DraggableTool;
-using Sledge.EditorNew.Tools.SelectTool.TransformationHandles;
-using Sledge.EditorNew.UI;
-using Sledge.EditorNew.UI.Viewports;
+using Sledge.Editor.Actions;
+using Sledge.Editor.Actions.MapObjects.Operations;
+using Sledge.Editor.Actions.MapObjects.Operations.EditOperations;
+using Sledge.Editor.Actions.MapObjects.Selection;
+using Sledge.Editor.Clipboard;
+using Sledge.Editor.Properties;
+using Sledge.Editor.Rendering;
+using Sledge.Editor.Tools;
+using Sledge.Editor.Tools2.DraggableTool;
+using Sledge.Editor.Tools2.SelectTool.TransformationHandles;
+using Sledge.Rendering.Cameras;
 using Sledge.Settings;
-using Select = Sledge.Settings.Select;
+using KeyboardState = Sledge.Editor.UI.KeyboardState;
+using View = Sledge.Settings.View;
 
-namespace Sledge.EditorNew.Tools.SelectTool
+namespace Sledge.Editor.Tools2.SelectTool
 {
     public class SelectTool : BaseDraggableTool
     {
@@ -48,9 +51,14 @@ namespace Sledge.EditorNew.Tools.SelectTool
             States.Add(emptyBox);
         }
 
-        public override IEnumerable<string> GetContexts()
+        //public override IEnumerable<string> GetContexts()
+        //{
+        //    yield return "Select Tool";
+        //}
+
+        public override string GetContextualHelp()
         {
-            yield return "Select Tool";
+            return "";
         }
 
         public override Image GetIcon()
@@ -207,19 +215,19 @@ namespace Sledge.EditorNew.Tools.SelectTool
 
         #region 3D interaction
 
-        protected override void MouseDoubleClick(IViewport3D viewport, ViewportEvent e)
+        protected override void MouseDoubleClick(MapViewport viewport, PerspectiveCamera camera, ViewportEvent e)
         {
             // Don't show Object Properties while navigating the view, because mouse cursor will be hidden
-            if (Input.IsKeyDown(Key.Space)) return;
+            if (KeyboardState.IsKeyDown(Keys.Space)) return;
 
-            if (Select.DoubleClick3DAction == DoubleClick3DAction.Nothing) return;
+            if (Sledge.Settings.Select.DoubleClick3DAction == DoubleClick3DAction.Nothing) return;
             if (!Document.Selection.IsEmpty())
             {
-                if (Select.DoubleClick3DAction == DoubleClick3DAction.ObjectProperties)
+                if (Sledge.Settings.Select.DoubleClick3DAction == DoubleClick3DAction.ObjectProperties)
                 {
                     Mediator.Publish(HotkeysMediator.ObjectProperties);
                 }
-                else if (Select.DoubleClick3DAction == DoubleClick3DAction.TextureTool)
+                else if (Sledge.Settings.Select.DoubleClick3DAction == DoubleClick3DAction.TextureTool)
                 {
                     Mediator.Publish(HotkeysMediator.SwitchTool, HotkeyTool.Texture);
                 }
@@ -245,10 +253,10 @@ namespace Sledge.EditorNew.Tools.SelectTool
         /// </summary>
         /// <param name="viewport">The viewport that was clicked</param>
         /// <param name="e">The click event</param>
-        protected override void MouseDown(IViewport3D viewport, ViewportEvent e)
+        protected override void MouseDown(MapViewport viewport, PerspectiveCamera camera, ViewportEvent e)
         {
             // Do not perform selection if space is down
-            if (View.Camera3DPanRequiresMouseClick && Input.IsKeyDown(Key.Space)) return;
+            if (View.Camera3DPanRequiresMouseClick && KeyboardState.IsKeyDown(Keys.Space)) return;
 
             // First, get the ray that is cast from the clicked point along the viewport frustrum
             var ray = viewport.CastRayFromScreen(e.X, e.Y);
@@ -269,18 +277,18 @@ namespace Sledge.EditorNew.Tools.SelectTool
 
             // If Ctrl is down and the object is already selected, we should deselect it instead.
             var list = new[] { ChosenItemFor3DSelection };
-            var desel = ChosenItemFor3DSelection != null && Input.Ctrl && ChosenItemFor3DSelection.IsSelected;
-            SetSelected(desel ? list : null, desel ? null : list, !Input.Ctrl, IgnoreGrouping());
+            var desel = ChosenItemFor3DSelection != null && KeyboardState.Ctrl && ChosenItemFor3DSelection.IsSelected;
+            SetSelected(desel ? list : null, desel ? null : list, !KeyboardState.Ctrl, IgnoreGrouping());
         }
 
-        protected override void MouseUp(IViewport3D viewport, ViewportEvent e)
+        protected override void MouseUp(MapViewport viewport, PerspectiveCamera camera, ViewportEvent e)
         {
             IntersectingObjectsFor3DSelection = null;
             ChosenItemFor3DSelection = null;
             viewport.ReleaseInputLock(this);
         }
 
-        protected override void MouseWheel(IViewport3D viewport, ViewportEvent e)
+        protected override void MouseWheel(MapViewport viewport, PerspectiveCamera camera, ViewportEvent e)
         {
             // If we're not in 3D cycle mode, carry on
             if (IntersectingObjectsFor3DSelection == null || ChosenItemFor3DSelection == null)
@@ -319,14 +327,14 @@ namespace Sledge.EditorNew.Tools.SelectTool
 
         #region 2D interaction
 
-        protected override void OnDraggableClicked(IViewport2D viewport, ViewportEvent e, Coordinate position, IDraggable draggable)
+        protected override void OnDraggableClicked(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Coordinate position, IDraggable draggable)
         {
-            var ctrl = Input.Ctrl;
+            var ctrl = KeyboardState.Ctrl;
             if (draggable == emptyBox || ctrl)
             {
                 var desel = new List<MapObject>();
                 var sel = new List<MapObject>();
-                var seltest = SelectionTest(viewport, e);
+                var seltest = SelectionTest(viewport, camera, e);
                 if (seltest != null)
                 {
                     if (!ctrl || !seltest.IsSelected) sel.Add(seltest);
@@ -341,21 +349,21 @@ namespace Sledge.EditorNew.Tools.SelectTool
             e.Handled = !ctrl || draggable == emptyBox;
         }
 
-        protected override void OnDraggableDragStarted(IViewport2D viewport, ViewportEvent e, Coordinate position, IDraggable draggable)
+        protected override void OnDraggableDragStarted(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Coordinate position, IDraggable draggable)
         {
-            var ctrl = Input.Ctrl;
+            var ctrl = KeyboardState.Ctrl;
             if (draggable == emptyBox && !ctrl && !Document.Selection.IsEmpty())
             {
                 SetSelected(null, null, true, IgnoreGrouping());
             }
         }
 
-        protected override void OnDraggableDragMoved(IViewport2D viewport, ViewportEvent e, Coordinate previousPosition, Coordinate position, IDraggable draggable)
+        protected override void OnDraggableDragMoved(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Coordinate previousPosition, Coordinate position, IDraggable draggable)
         {
-            base.OnDraggableDragMoved(viewport, e, previousPosition, position, draggable);
+            base.OnDraggableDragMoved(viewport, camera, e, previousPosition, position, draggable);
             if (selectionBox.State.Action == BoxAction.Resizing && draggable is ITransformationHandle)
             {
-                var tform = selectionBox.GetTransformationMatrix(viewport, Document);
+                var tform = selectionBox.GetTransformationMatrix(viewport, camera, Document);
                 if (tform.HasValue)
                 {
                     Document.SetSelectListTransform(tform.Value);
@@ -366,21 +374,21 @@ namespace Sledge.EditorNew.Tools.SelectTool
             }
         }
 
-        protected override void OnDraggableDragEnded(IViewport2D viewport, ViewportEvent e, Coordinate position, IDraggable draggable)
+        protected override void OnDraggableDragEnded(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Coordinate position, IDraggable draggable)
         {
             var tt = draggable as ITransformationHandle;
             if (selectionBox.State.Action == BoxAction.Resizing && tt != null)
             {
                 // Execute the transform on the selection
-                var tform = selectionBox.GetTransformationMatrix(viewport, Document);
+                var tform = selectionBox.GetTransformationMatrix(viewport, camera, Document);
                 if (tform.HasValue)
                 {
-                    var createClone = Input.Shift && draggable is ResizeTransformHandle && ((ResizeTransformHandle) draggable).Handle == ResizeHandle.Center;
+                    var createClone = KeyboardState.Shift && draggable is ResizeTransformHandle && ((ResizeTransformHandle)draggable).Handle == ResizeHandle.Center;
                     ExecuteTransform(tt.Name, CreateMatrixMultTransformation(tform.Value), createClone);
                 }
             }
             Document.EndSelectionTransform();
-            base.OnDraggableDragEnded(viewport, e, position, draggable);
+            base.OnDraggableDragEnded(viewport, camera, e, position, draggable);
         }
 
         private void EmptyBoxChanged(object sender, EventArgs e)
@@ -391,7 +399,7 @@ namespace Sledge.EditorNew.Tools.SelectTool
                 // We're drawing a selection box, so clear the current tool
                 // SetCurrentTool(null);
             }
-            if (emptyBox.State.Action == BoxAction.Drawn && Select.AutoSelectBox)
+            if (emptyBox.State.Action == BoxAction.Drawn && Sledge.Settings.Select.AutoSelectBox)
             {
                 // BoxDrawnConfirm(emptyBox.State.Viewport);
             }
@@ -402,46 +410,45 @@ namespace Sledge.EditorNew.Tools.SelectTool
             
         }
 
-        private MapObject SelectionTest(IViewport2D viewport, ViewportEvent e)
+        private MapObject SelectionTest(MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
         {
             // Create a box to represent the click, with a tolerance level
             var unused = viewport.GetUnusedCoordinate(new Coordinate(100000, 100000, 100000));
-            var tolerance = 4 / viewport.Zoom; // Selection tolerance of four pixels
+            var tolerance = 4 / (decimal) viewport.Zoom; // Selection tolerance of four pixels
             var used = viewport.Expand(new Coordinate(tolerance, tolerance, 0));
             var add = used + unused;
             var click = viewport.Expand(viewport.ScreenToWorld(e.X, viewport.Height - e.Y));
             var box = new Box(click - add, click + add);
 
-            var centerHandles = Select.DrawCenterHandles;
-            var centerOnly = Select.ClickSelectByCenterHandlesOnly;
+            var centerHandles = Sledge.Settings.Select.DrawCenterHandles;
+            var centerOnly = Sledge.Settings.Select.ClickSelectByCenterHandlesOnly;
             // Get the first element that intersects with the box, selecting or deselecting as needed
             return Document.Map.WorldSpawn.GetAllNodesIntersecting2DLineTest(box, centerHandles, centerOnly).FirstOrDefault();
         }
 
-        protected override void KeyDown(IViewport2D viewport, ViewportEvent e)
+        protected override void KeyDown(MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
         {
-            var nudge = GetNudgeValue(e.KeyValue, Input.Ctrl);
+            var nudge = GetNudgeValue(e.KeyCode);
             if (nudge != null && (selectionBox.State.Action == BoxAction.Drawn) && !Document.Selection.IsEmpty())
             {
                 var translate = viewport.Expand(nudge);
                 var transformation = Matrix4.CreateTranslation((float)translate.X, (float)translate.Y, (float)translate.Z);
-                ExecuteTransform("Nudge", CreateMatrixMultTransformation(transformation), Input.Shift);
+                ExecuteTransform("Nudge", CreateMatrixMultTransformation(transformation), KeyboardState.Shift);
                 SelectionChanged();
             }
-            base.KeyDown(viewport, e);
         }
 
         #endregion
 
         #region Box confirm/cancel
 
-        public override void KeyDown(IMapViewport viewport, ViewportEvent e)
+        public override void KeyDown(MapViewport viewport, ViewportEvent e)
         {
-            if (e.KeyValue == Key.Enter || e.KeyValue == Key.KeypadEnter)
+            if (e.KeyCode == Keys.Enter)
             {
                 Confirm(viewport);
             }
-            else if (e.KeyValue == Key.Escape)
+            else if (e.KeyCode == Keys.Escape)
             {
                 Cancel(viewport);
             }
@@ -452,7 +459,7 @@ namespace Sledge.EditorNew.Tools.SelectTool
         /// Once a box is confirmed, we select all element intersecting with the box (contained within if shift is down).
         /// </summary>
         /// <param name="viewport">The viewport that the box was confirmed in</param>
-        private void Confirm(IMapViewport viewport)
+        private void Confirm(MapViewport viewport)
         {
             // Only confirm the box if the empty box is drawn
             if (selectionBox.State.Action != BoxAction.Idle || emptyBox.State.Action != BoxAction.Drawn) return;
@@ -464,8 +471,8 @@ namespace Sledge.EditorNew.Tools.SelectTool
                 // If select by handles only is on, select all brushes with centers inside the box
                 // Otherwise, select all brushes that intersect with the box
                 Func<Box, IEnumerable<MapObject>> selector = x => Document.Map.WorldSpawn.GetAllNodesIntersectingWith(x);
-                if (Select.BoxSelectByCenterHandlesOnly) selector = x => Document.Map.WorldSpawn.GetAllNodesWithCentersContainedWithin(x);
-                if (Input.Shift) selector = x => Document.Map.WorldSpawn.GetAllNodesContainedWithin(x);
+                if (Sledge.Settings.Select.BoxSelectByCenterHandlesOnly) selector = x => Document.Map.WorldSpawn.GetAllNodesWithCentersContainedWithin(x);
+                if (KeyboardState.Shift) selector = x => Document.Map.WorldSpawn.GetAllNodesContainedWithin(x);
 
                 var nodes = selector(boundingbox).ToList();
                 SetSelected(null, nodes, false, IgnoreGrouping());
@@ -474,7 +481,7 @@ namespace Sledge.EditorNew.Tools.SelectTool
             SelectionChanged();
         }
 
-        private void Cancel(IMapViewport viewport)
+        private void Cancel(MapViewport viewport)
         {
             if (selectionBox.State.Action != BoxAction.Idle && !Document.Selection.IsEmpty())
             {
@@ -510,7 +517,7 @@ namespace Sledge.EditorNew.Tools.SelectTool
                 foreach (var mo in copies)
                 {
                     mo.Transform(transform, Document.Map.GetTransformFlags());
-                    if (Select.KeepVisgroupsWhenCloning) continue;
+                    if (Sledge.Settings.Select.KeepVisgroupsWhenCloning) continue;
                     foreach (var o in mo.FindAll()) o.Visgroups.Clear();
                 }
                 cad.Create(Document.Map.WorldSpawn.ID, copies);

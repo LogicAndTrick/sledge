@@ -3,11 +3,12 @@ using System.Linq;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using Sledge.DataStructures.Geometric;
-using Sledge.EditorNew.Documents;
-using Sledge.EditorNew.Tools.DraggableTool;
-using Sledge.EditorNew.UI.Viewports;
+using Sledge.Editor.Documents;
+using Sledge.Editor.Rendering;
+using Sledge.Editor.Tools2.DraggableTool;
+using Sledge.Rendering.Cameras;
 
-namespace Sledge.EditorNew.Tools.SelectTool.TransformationHandles
+namespace Sledge.Editor.Tools2.SelectTool.TransformationHandles
 {
     public class ResizeTransformHandle : BoxResizeHandle, ITransformationHandle
     {
@@ -18,7 +19,7 @@ namespace Sledge.EditorNew.Tools.SelectTool.TransformationHandles
         {
         }
 
-        protected override Box GetRectangle(IViewport2D viewport)
+        protected override Box GetRectangle(MapViewport viewport, OrthographicCamera camera)
         {
             if (Handle == ResizeHandle.Center)
             {
@@ -26,10 +27,10 @@ namespace Sledge.EditorNew.Tools.SelectTool.TransformationHandles
                 var end = viewport.Flatten(BoxState.End);
                 return new Box(start, end);
             }
-            return base.GetRectangle(viewport);
+            return base.GetRectangle(viewport, camera);
         }
 
-        protected override Coordinate GetResizeOrigin(IViewport2D viewport, Coordinate position)
+        protected override Coordinate GetResizeOrigin(MapViewport viewport, Coordinate position)
         {
             if (Handle == ResizeHandle.Center)
             {
@@ -41,14 +42,14 @@ namespace Sledge.EditorNew.Tools.SelectTool.TransformationHandles
             return base.GetResizeOrigin(viewport, position);
         }
 
-        public override void Render(IViewport2D viewport)
+        public override void Render(MapViewport viewport, OrthographicCamera camera)
         {
             if (Handle == ResizeHandle.Center)
             {
 
                 if (HighlightedViewport != viewport) return;
 
-                var box = GetRectangle(viewport);
+                var box = GetRectangle(viewport, camera);
 
                 GL.Begin(PrimitiveType.Quads);
                 GL.Color4(State.FillColour);
@@ -61,7 +62,7 @@ namespace Sledge.EditorNew.Tools.SelectTool.TransformationHandles
                 if (Handle == ResizeHandle.Center && SnappedMoveOrigin != null)
                 {
                     const int size = 6;
-                    var dist = size / viewport.Zoom;
+                    var dist = size / (decimal)viewport.Zoom;
 
                     var origin = SnappedMoveOrigin;
                     GL.Begin(PrimitiveType.Lines);
@@ -75,11 +76,11 @@ namespace Sledge.EditorNew.Tools.SelectTool.TransformationHandles
             }
             else
             {
-                base.Render(viewport);
+                base.Render(viewport, camera);
             }
         }
 
-        public Matrix4? GetTransformationMatrix(IViewport2D viewport, BoxState state, Document doc)
+        public Matrix4? GetTransformationMatrix(MapViewport viewport, OrthographicCamera camera, BoxState state, Document doc)
         {
             Matrix4 resizeMatrix;
             if (Handle == ResizeHandle.Center)
@@ -93,7 +94,7 @@ namespace Sledge.EditorNew.Tools.SelectTool.TransformationHandles
                              (state.End - state.OrigEnd);
                 resize = resize.ComponentDivide(state.OrigEnd - state.OrigStart);
                 resize += new Coordinate(1, 1, 1);
-                var offset = -GetOriginForTransform(viewport, state);
+                var offset = -GetOriginForTransform(viewport, camera, state);
                 var trans = Matrix4.CreateTranslation((float)offset.X, (float)offset.Y, (float)offset.Z);
                 var scale = Matrix4.Mult(trans, Matrix4.CreateScale((float)resize.X, (float)resize.Y, (float)resize.Z));
                 resizeMatrix = Matrix4.Mult(scale, Matrix4.Invert(trans));
@@ -101,7 +102,7 @@ namespace Sledge.EditorNew.Tools.SelectTool.TransformationHandles
             return resizeMatrix;
         }
 
-        private Coordinate GetOriginForTransform(IViewport2D viewport, BoxState state)
+        private Coordinate GetOriginForTransform(MapViewport viewport, OrthographicCamera camera, BoxState state)
         {
             decimal x = 0;
             decimal y = 0;

@@ -1,13 +1,13 @@
 using System.Collections.Generic;
 using OpenTK;
 using Sledge.DataStructures.Geometric;
-using Sledge.EditorNew.Documents;
-using Sledge.EditorNew.Tools.DraggableTool;
-using Sledge.EditorNew.Tools.SelectTool.TransformationHandles;
-using Sledge.EditorNew.UI.Viewports;
-using ResizeHandle = Sledge.EditorNew.Tools.DraggableTool.ResizeHandle;
+using Sledge.Editor.Documents;
+using Sledge.Editor.Rendering;
+using Sledge.Editor.Tools2.DraggableTool;
+using Sledge.Editor.Tools2.SelectTool.TransformationHandles;
+using Sledge.Rendering.Cameras;
 
-namespace Sledge.EditorNew.Tools.SelectTool
+namespace Sledge.Editor.Tools2.SelectTool
 {
     public class SelectionBoxDraggableState : BoxDraggableState
     {
@@ -61,21 +61,21 @@ namespace Sledge.EditorNew.Tools.SelectTool
             _handles = new [] { resize, rotate, skew };
         }
 
-        public override IEnumerable<IDraggable> GetDraggables(IViewport2D viewport)
+        public override IEnumerable<IDraggable> GetDraggables(MapViewport viewport, OrthographicCamera camera)
         {
             if (State.Action == BoxAction.Idle || State.Action == BoxAction.Drawing) return new IDraggable[0];
             return _handles[_currentIndex];
         }
 
-        public override bool CanDrag(IViewport2D viewport, ViewportEvent e, Coordinate position)
+        public override bool CanDrag(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Coordinate position)
         {
             return false;
         }
 
-        public Matrix4? GetTransformationMatrix(IViewport2D viewport, Document document)
+        public Matrix4? GetTransformationMatrix(MapViewport viewport, OrthographicCamera camera, Document document)
         {
             var tt = Tool.CurrentDraggable as ITransformationHandle;
-            return tt != null ? tt.GetTransformationMatrix(viewport, State, document) : null;
+            return tt != null ? tt.GetTransformationMatrix(viewport, camera, State, document) : null;
         }
 
         public void Cycle()

@@ -3,15 +3,16 @@ using System.Drawing;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using Sledge.DataStructures.Geometric;
-using Sledge.EditorNew.Documents;
-using Sledge.EditorNew.Tools.DraggableTool;
-using Sledge.EditorNew.UI;
-using Sledge.EditorNew.UI.Viewports;
+using Sledge.Editor.Documents;
+using Sledge.Editor.Rendering;
+using Sledge.Editor.Tools2.DraggableTool;
+using Sledge.Editor.UI;
 using Sledge.Extensions;
 using Sledge.Graphics;
+using Sledge.Rendering.Cameras;
 using Sledge.Settings;
 
-namespace Sledge.EditorNew.Tools.SelectTool.TransformationHandles
+namespace Sledge.Editor.Tools2.SelectTool.TransformationHandles
 {
     public class RotateTransformHandle : BoxResizeHandle, ITransformationHandle
     {
@@ -26,26 +27,26 @@ namespace Sledge.EditorNew.Tools.SelectTool.TransformationHandles
             _origin = origin;
         }
 
-        public override void StartDrag(IViewport2D viewport, ViewportEvent e, Coordinate position)
+        public override void StartDrag(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Coordinate position)
         {
             _rotateStart = _rotateEnd = position;
-            base.StartDrag(viewport, e, position);
+            base.StartDrag(viewport, camera, e, position);
         }
 
-        public override void Drag(IViewport2D viewport, ViewportEvent e, Coordinate lastPosition, Coordinate position)
+        public override void Drag(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Coordinate lastPosition, Coordinate position)
         {
             _rotateEnd = position;
         }
 
-        public override void EndDrag(IViewport2D viewport, ViewportEvent e, Coordinate position)
+        public override void EndDrag(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Coordinate position)
         {
             _rotateStart = _rotateEnd = null;
-            base.EndDrag(viewport, e, position);
+            base.EndDrag(viewport, camera, e, position);
         }
 
-        public override void Render(IViewport2D viewport)
+        public override void Render(MapViewport viewport, OrthographicCamera camera)
         {
-            var box = GetRectangle(viewport);
+            var box = GetRectangle(viewport, camera);
             var handle = new Vector2d(box.Center.DX, box.Center.DY);
 
             GL.Begin(PrimitiveType.Polygon);
@@ -59,7 +60,7 @@ namespace Sledge.EditorNew.Tools.SelectTool.TransformationHandles
             GL.End();
         }
 
-        public Matrix4? GetTransformationMatrix(IViewport2D viewport, BoxState state, Document doc)
+        public Matrix4? GetTransformationMatrix(MapViewport viewport, OrthographicCamera camera, BoxState state, Document doc)
         {
             var origin = viewport.ZeroUnusedCoordinate((state.OrigStart + state.OrigEnd) / 2);
             if (_origin != null) origin = _origin.Position;
@@ -72,7 +73,7 @@ namespace Sledge.EditorNew.Tools.SelectTool.TransformationHandles
             var angle = DMath.Acos(Math.Max(-1, Math.Min(1, origv.Dot(newv))));
             if ((origv.Cross(newv).Z < 0)) angle = 2 * DMath.PI - angle;
 
-            var shf = Input.Shift;
+            var shf = KeyboardState.Shift;
             var def = Select.RotationStyle;
             var snap = (def == RotationStyle.SnapOnShift && shf) || (def == RotationStyle.SnapOffShift && !shf);
             if (snap)
@@ -83,8 +84,8 @@ namespace Sledge.EditorNew.Tools.SelectTool.TransformationHandles
             }
 
             Matrix4 rotm;
-            if (viewport.Direction == ViewDirection.Top) rotm = Matrix4.CreateRotationZ((float)angle);
-            else if (viewport.Direction == ViewDirection.Front) rotm = Matrix4.CreateRotationX((float)angle);
+            if (viewport.Direction == OrthographicCamera.OrthographicType.Top) rotm = Matrix4.CreateRotationZ((float)angle);
+            else if (viewport.Direction == OrthographicCamera.OrthographicType.Front) rotm = Matrix4.CreateRotationX((float)angle);
             else rotm = Matrix4.CreateRotationY((float)-angle); // The Y axis rotation goes in the reverse direction for whatever reason
 
             var mov = Matrix4.CreateTranslation((float)-origin.X, (float)-origin.Y, (float)-origin.Z);

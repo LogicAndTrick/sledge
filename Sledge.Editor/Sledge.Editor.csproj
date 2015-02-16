@@ -272,6 +272,9 @@
     <Compile Include="Tools2\DraggableTool\BoxState.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Tools2\DraggableTool\DraggableCoordinate.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Tools2\DraggableTool\IDraggable.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -282,6 +285,27 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Tools2\DraggableTool\ResizeHandle.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Tools2\SelectTool\SelectionBoxDraggableState.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Tools2\SelectTool\SelectTool.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Tools2\SelectTool\TransformationHandles\ITransformationHandle.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Tools2\SelectTool\TransformationHandles\ResizeTransformHandle.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Tools2\SelectTool\TransformationHandles\RotateTransformHandle.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Tools2\SelectTool\TransformationHandles\RotationOrigin.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Tools2\SelectTool\TransformationHandles\SkewTransformHandle.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="UI\KeyboardState.cs" />

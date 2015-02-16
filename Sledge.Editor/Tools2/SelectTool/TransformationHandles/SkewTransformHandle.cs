@@ -1,12 +1,13 @@
-﻿using OpenTK;
+﻿using System.Windows.Forms;
+using OpenTK;
 using Sledge.DataStructures.Geometric;
-using Sledge.EditorNew.Documents;
-using Sledge.EditorNew.Tools.DraggableTool;
-using Sledge.EditorNew.UI;
-using Sledge.EditorNew.UI.Viewports;
-using Sledge.Gui.Components;
+using Sledge.Editor.Documents;
+using Sledge.Editor.Rendering;
+using Sledge.Editor.Tools2.DraggableTool;
+using Sledge.Editor.UI;
+using Sledge.Rendering.Cameras;
 
-namespace Sledge.EditorNew.Tools.SelectTool.TransformationHandles
+namespace Sledge.Editor.Tools2.SelectTool.TransformationHandles
 {
     public class SkewTransformHandle : BoxResizeHandle, ITransformationHandle
     {
@@ -20,48 +21,48 @@ namespace Sledge.EditorNew.Tools.SelectTool.TransformationHandles
         {
         }
 
-        protected override void SetCursorForHandle(IViewport2D viewport, ResizeHandle handle)
+        protected override void SetCursorForHandle(MapViewport viewport, ResizeHandle handle)
         {
             var ct = handle.GetCursorType();
             switch (handle)
             {
                 case ResizeHandle.Top:
                 case ResizeHandle.Bottom:
-                    ct = CursorType.SizeLeft;
+                    ct = Cursors.SizeWE;
                     break;
                 case ResizeHandle.Left:
                 case ResizeHandle.Right:
-                    ct = CursorType.SizeTop;
+                    ct = Cursors.SizeNS;
                     break;
             }
-            Cursor.SetCursor(viewport, ct);
+            viewport.Control.Cursor = ct;
         }
 
-        public override void StartDrag(IViewport2D viewport, ViewportEvent e, Coordinate position)
+        public override void StartDrag(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Coordinate position)
         {
             _skewStart = _skewEnd = position;
-            base.StartDrag(viewport, e, position);
+            base.StartDrag(viewport, camera, e, position);
         }
 
-        public override void Drag(IViewport2D viewport, ViewportEvent e, Coordinate lastPosition, Coordinate position)
+        public override void Drag(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Coordinate lastPosition, Coordinate position)
         {
             _skewEnd = position;
         }
 
-        public override void EndDrag(IViewport2D viewport, ViewportEvent e, Coordinate position)
+        public override void EndDrag(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Coordinate position)
         {
             _skewStart = _skewEnd = null;
-            base.EndDrag(viewport, e, position);
+            base.EndDrag(viewport, camera, e, position);
         }
 
-        public Matrix4? GetTransformationMatrix(IViewport2D viewport, BoxState state, Document doc)
+        public Matrix4? GetTransformationMatrix(MapViewport viewport, OrthographicCamera camera, BoxState state, Document doc)
         {
             var shearUpDown = Handle == ResizeHandle.Left || Handle == ResizeHandle.Right;
             var shearTopRight = Handle == ResizeHandle.Top || Handle == ResizeHandle.Right;
 
             var nsmd = _skewEnd - _skewStart;
             var mouseDiff = doc.Snap(nsmd, doc.Map.GridSpacing);
-            if (Input.Shift)
+            if (KeyboardState.Shift)
             {
                 mouseDiff = doc.Snap(nsmd, doc.Map.GridSpacing / 2);
             }
@@ -78,15 +79,15 @@ namespace Sledge.EditorNew.Tools.SelectTool.TransformationHandles
 
             switch (viewport.Direction)
             {
-                case ViewDirection.Top:
+                case OrthographicCamera.OrthographicType.Top:
                     if (shearUpDown) shearMatrix.M12 = say;
                     else shearMatrix.M21 = sax;
                     break;
-                case ViewDirection.Front:
+                case OrthographicCamera.OrthographicType.Front:
                     if (shearUpDown) shearMatrix.M23 = say;
                     else shearMatrix.M32 = sax;
                     break;
-                case ViewDirection.Side:
+                case OrthographicCamera.OrthographicType.Side:
                     if (shearUpDown) shearMatrix.M13 = say;
                     else shearMatrix.M31 = sax;
                     break;

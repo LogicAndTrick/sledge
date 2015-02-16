@@ -1,29 +1,30 @@
 using System.Drawing;
+using System.Windows.Forms;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using Sledge.DataStructures.Geometric;
-using Sledge.EditorNew.Tools.DraggableTool;
-using Sledge.EditorNew.UI.Viewports;
+using Sledge.Editor.Rendering;
+using Sledge.Editor.Tools2.DraggableTool;
 using Sledge.Graphics;
-using Sledge.Gui.Components;
+using Sledge.Rendering.Cameras;
 
-namespace Sledge.EditorNew.Tools.SelectTool.TransformationHandles
+namespace Sledge.Editor.Tools2.SelectTool.TransformationHandles
 {
     public class RotationOrigin : DraggableCoordinate
     {
-        protected override void SetMoveCursor(IViewport2D viewport)
+        protected override void SetMoveCursor(MapViewport viewport, OrthographicCamera camera)
         {
-            Cursor.SetCursor(viewport, CursorType.Crosshair);
+            viewport.Control.Cursor = Cursors.Cross;
         }
 
-        public override bool CanDrag(IViewport2D viewport, ViewportEvent e, Coordinate position)
+        public override bool CanDrag(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Coordinate position)
         {
             var pos = viewport.Flatten(Position);
             var diff = (pos - position).Absolute();
             return diff.X < 8 && diff.Y < 8;
         }
 
-        public override void Render(IViewport2D viewport)
+        public override void Render(MapViewport viewport, OrthographicCamera camera)
         {
             var pp = viewport.Flatten(Position);
             GL.Begin(PrimitiveType.Lines);
