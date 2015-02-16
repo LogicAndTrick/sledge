@@ -7,6 +7,7 @@ using Sledge.Common.Mediator;
 using Sledge.Editor.Rendering;
 using Sledge.Graphics;
 using Sledge.Rendering;
+using Sledge.Rendering.Cameras;
 using Sledge.Settings;
 using OpenTK.Graphics.OpenGL;
 using Sledge.Editor.Tools;
@@ -26,7 +27,7 @@ namespace Sledge.Editor.UI
         private bool CursorVisible { get; set; }
         private Rectangle CursorClip { get; set; }
         private bool Focus { get; set; }
-        private Camera Camera { get; set; }
+        private PerspectiveCamera Camera { get { return Viewport.Viewport.Camera as PerspectiveCamera; }}
         private long _downMillis;
         private long _lastMillis;
         private Easing _easing;
@@ -41,7 +42,6 @@ namespace Sledge.Editor.UI
             CursorVisible = true;
             Focus = false;
             Viewport = vp;
-            // todo Camera = vp.Camera;
             _downKeys = new List<Keys>();
             _downMillis = _lastMillis = 0;
             _easing = Easing.FromType(EasingType.Sinusoidal, EasingDirection.Out);
@@ -59,11 +59,6 @@ namespace Sledge.Editor.UI
 
         private readonly List<Keys> _downKeys;
 
-        public void PositionChanged(ViewportEvent e)
-        {
-            throw new NotImplementedException();
-        }
-
         public void UpdateFrame(Frame frame)
         {
             var currMillis = _lastMillis;
@@ -80,7 +75,7 @@ namespace Sledge.Editor.UI
                 return;
             }
 
-            var seconds = (frame.Milliseconds - currMillis) / 1000m;
+            var seconds = (frame.Milliseconds - currMillis) / 1000f;
             var units = Sledge.Settings.View.ForwardSpeed * seconds;
 
             var down = KeyboardState.IsAnyKeyDown(Keys.W, Keys.A, Keys.S, Keys.D);
@@ -90,11 +85,11 @@ namespace Sledge.Editor.UI
             if (Sledge.Settings.View.TimeToTopSpeed > 0)
             {
                 var downFor = (frame.Milliseconds - _downMillis) / Sledge.Settings.View.TimeToTopSpeed;
-                if (downFor >= 0 && downFor < 1) units *= _easing.Evaluate(downFor);
+                if (downFor >= 0 && downFor < 1) units *= (float) _easing.Evaluate(downFor);
             }
 
             var move = units;
-            var tilt = 2m;
+            var tilt = 2f;
 
             // These keys are used for hotkeys, don't want the 3D view to move about when trying to use hotkeys.
             var ignore = KeyboardState.IsAnyKeyDown(Keys.ShiftKey, Keys.ControlKey, Keys.Alt);
@@ -163,6 +158,11 @@ namespace Sledge.Editor.UI
         public void PostRender()
         {
             // Not used
+        }
+
+        public bool IsActive()
+        {
+            return Viewport != null && Viewport.Is3D;
         }
 
         public void KeyUp(ViewportEvent e)
@@ -286,7 +286,7 @@ namespace Sledge.Editor.UI
             else // left mouse or z-toggle
             {
                 // Camera
-                var fovdiv = (Viewport.Width / 60m) / 2.5m;
+                var fovdiv = (Viewport.Width / 60f) / 2.5f;
                 Camera.Pan(dx / fovdiv);
                 Camera.Tilt(dy / fovdiv);
             }
@@ -300,7 +300,7 @@ namespace Sledge.Editor.UI
         {
             if (!Viewport.IsUnlocked(this) || e.Delta == 0) return;
             if (!Focus || (ToolManager.ActiveTool != null && ToolManager.ActiveTool.IsCapturingMouseWheel())) return;
-            Camera.Advance((e.Delta / Math.Abs(e.Delta)) * Sledge.Settings.View.MouseWheelMoveDistance);
+            Camera.Advance((e.Delta / Math.Abs(e.Delta)) * (float) Sledge.Settings.View.MouseWheelMoveDistance);
         }
 
         public void MouseUp(ViewportEvent e)
@@ -369,6 +369,11 @@ namespace Sledge.Editor.UI
         }
 
         public void ZoomChanged(ViewportEvent e)
+        {
+
+        }
+
+        public void PositionChanged(ViewportEvent e)
         {
 
         }

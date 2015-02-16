@@ -11,6 +11,7 @@ using Sledge.Editor.UI.Layout;
 using Sledge.Graphics.Helpers;
 using Sledge.Graphics.Renderables;
 using Sledge.Rendering.Cameras;
+using Sledge.Rendering.Interfaces;
 using Sledge.Settings;
 
 namespace Sledge.Editor.UI
@@ -99,7 +100,7 @@ namespace Sledge.Editor.UI
                 var camera = Camera.Deserialise(viewport) ?? Camera.Deserialise(def) ?? new PerspectiveCamera();
                 var view = SceneManager.Engine.CreateViewport(camera);
                 
-                var vp = new MapViewport(view);
+                var vp = CreateMapViewport(view);
                 Viewports.Add(vp);
                 SubscribeExceptions(vp);
 
@@ -108,6 +109,15 @@ namespace Sledge.Editor.UI
 
                 Mediator.Publish(EditorMediator.ViewportCreated, vp);
             }
+        }
+
+        private static MapViewport CreateMapViewport(IViewport view)
+        {
+            var vp = new MapViewport(view);
+            vp.Listeners.Add(new ToolViewportListener(vp));
+            vp.Listeners.Add(new Camera3DViewportListener(vp));
+            vp.Listeners.Add(new Camera2DViewportListener(vp));
+            return vp;
         }
 
         private static ViewportWindowConfiguration GetDefaultWindowConfiguration()

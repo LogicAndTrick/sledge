@@ -30,6 +30,11 @@ namespace Sledge.Editor.UI
             }
         }
 
+        public bool IsActive()
+        {
+            return Viewport != null && Viewport.Is2D;
+        }
+
         public void KeyUp(ViewportEvent e)
         {
             // Not used

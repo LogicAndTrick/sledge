@@ -10,6 +10,7 @@ using Sledge.Extensions;
 using Sledge.Rendering;
 using Sledge.Settings;
 using System.Drawing;
+using Sledge.Rendering.Cameras;
 
 namespace Sledge.Editor.Tools
 {
@@ -22,7 +23,7 @@ namespace Sledge.Editor.Tools
             Both
         }
 
-        protected Coordinate SnapIfNeeded(Coordinate c)
+        public Coordinate SnapIfNeeded(Coordinate c)
         {
             return Document.Snap(c);
         }
@@ -153,31 +154,155 @@ namespace Sledge.Editor.Tools
             Mediator.ExecuteDefault(this, message, data);
         }
 
-        public abstract void MouseEnter(MapViewport viewport, ViewportEvent e);
-        public abstract void MouseLeave(MapViewport viewport, ViewportEvent e);
-        public abstract void MouseDown(MapViewport viewport, ViewportEvent e);
-        public abstract void MouseClick(MapViewport viewport, ViewportEvent e);
-        public abstract void MouseDoubleClick(MapViewport viewport, ViewportEvent e);
-        public abstract void MouseUp(MapViewport viewport, ViewportEvent e);
-        public abstract void MouseWheel(MapViewport viewport, ViewportEvent e);
-        public abstract void MouseMove(MapViewport viewport, ViewportEvent e);
-        public abstract void KeyPress(MapViewport viewport, ViewportEvent e);
-        public abstract void KeyDown(MapViewport viewport, ViewportEvent e);
-        public abstract void KeyUp(MapViewport viewport, ViewportEvent e);
-        public abstract void UpdateFrame(MapViewport viewport, Frame frame);
-        public abstract void Render(MapViewport viewport);
+        public virtual void MouseEnter(MapViewport viewport, ViewportEvent e)
+        {
+            if (viewport.Is2D) MouseEnter(viewport, viewport.Viewport.Camera as OrthographicCamera, e);
+            if (viewport.Is3D) MouseEnter(viewport, viewport.Viewport.Camera as PerspectiveCamera, e);
+        }
 
-        public virtual void DragStart(MapViewport viewport, ViewportEvent viewportEvent) { }
-        public virtual void DragMove(MapViewport viewport, ViewportEvent viewportEvent) { }
-        public virtual void DragEnd(MapViewport viewport, ViewportEvent viewportEvent) { }
+        public virtual void MouseLeave(MapViewport viewport, ViewportEvent e)
+        {
+            if (viewport.Is2D) MouseLeave(viewport, viewport.Viewport.Camera as OrthographicCamera, e);
+            if (viewport.Is3D) MouseLeave(viewport, viewport.Viewport.Camera as PerspectiveCamera, e);
+        }
 
-        public virtual void ZoomChanged(MapViewport viewport, ViewportEvent viewportEvent) { }
-        public virtual void PositionChanged(MapViewport viewport, ViewportEvent viewportEvent) { }
+        public virtual void MouseDown(MapViewport viewport, ViewportEvent e)
+        {
+            if (viewport.Is2D) MouseDown(viewport, viewport.Viewport.Camera as OrthographicCamera, e);
+            if (viewport.Is3D) MouseDown(viewport, viewport.Viewport.Camera as PerspectiveCamera, e);
+        }
+
+        public virtual void MouseClick(MapViewport viewport, ViewportEvent e)
+        {
+            if (viewport.Is2D) MouseClick(viewport, viewport.Viewport.Camera as OrthographicCamera, e);
+            if (viewport.Is3D) MouseClick(viewport, viewport.Viewport.Camera as PerspectiveCamera, e);
+        }
+
+        public virtual void MouseDoubleClick(MapViewport viewport, ViewportEvent e)
+        {
+            if (viewport.Is2D) MouseDoubleClick(viewport, viewport.Viewport.Camera as OrthographicCamera, e);
+            if (viewport.Is3D) MouseDoubleClick(viewport, viewport.Viewport.Camera as PerspectiveCamera, e);
+        }
+
+        public virtual void MouseUp(MapViewport viewport, ViewportEvent e)
+        {
+            if (viewport.Is2D) MouseUp(viewport, viewport.Viewport.Camera as OrthographicCamera, e);
+            if (viewport.Is3D) MouseUp(viewport, viewport.Viewport.Camera as PerspectiveCamera, e);
+        }
+
+        public virtual void MouseWheel(MapViewport viewport, ViewportEvent e)
+        {
+            if (viewport.Is2D) MouseWheel(viewport, viewport.Viewport.Camera as OrthographicCamera, e);
+            if (viewport.Is3D) MouseWheel(viewport, viewport.Viewport.Camera as PerspectiveCamera, e);
+        }
+
+        public virtual void MouseMove(MapViewport viewport, ViewportEvent e)
+        {
+            if (viewport.Is2D) MouseMove(viewport, viewport.Viewport.Camera as OrthographicCamera, e);
+            if (viewport.Is3D) MouseMove(viewport, viewport.Viewport.Camera as PerspectiveCamera, e);
+        }
+
+        public virtual void DragStart(MapViewport viewport, ViewportEvent e)
+        {
+            if (viewport.Is2D) DragStart(viewport, viewport.Viewport.Camera as OrthographicCamera, e);
+            if (viewport.Is3D) DragStart(viewport, viewport.Viewport.Camera as PerspectiveCamera, e);
+        }
+
+        public virtual void DragMove(MapViewport viewport, ViewportEvent e)
+        {
+            if (viewport.Is2D) DragMove(viewport, viewport.Viewport.Camera as OrthographicCamera, e);
+            if (viewport.Is3D) DragMove(viewport, viewport.Viewport.Camera as PerspectiveCamera, e);
+        }
+
+        public virtual void DragEnd(MapViewport viewport, ViewportEvent e)
+        {
+            if (viewport.Is2D) DragEnd(viewport, viewport.Viewport.Camera as OrthographicCamera, e);
+            if (viewport.Is3D) DragEnd(viewport, viewport.Viewport.Camera as PerspectiveCamera, e);
+        }
+
+        public virtual void KeyPress(MapViewport viewport, ViewportEvent e)
+        {
+            if (viewport.Is2D) KeyPress(viewport, viewport.Viewport.Camera as OrthographicCamera, e);
+            if (viewport.Is3D) KeyPress(viewport, viewport.Viewport.Camera as PerspectiveCamera, e);
+        }
+
+        public virtual void KeyDown(MapViewport viewport, ViewportEvent e)
+        {
+            if (viewport.Is2D) KeyDown(viewport, viewport.Viewport.Camera as OrthographicCamera, e);
+            if (viewport.Is3D) KeyDown(viewport, viewport.Viewport.Camera as PerspectiveCamera, e);
+        }
+
+        public virtual void KeyUp(MapViewport viewport, ViewportEvent e)
+        {
+            if (viewport.Is2D) KeyUp(viewport, viewport.Viewport.Camera as OrthographicCamera, e);
+            if (viewport.Is3D) KeyUp(viewport, viewport.Viewport.Camera as PerspectiveCamera, e);
+        }
+
+        public virtual void UpdateFrame(MapViewport viewport, Frame frame)
+        {
+            if (viewport.Is2D) UpdateFrame(viewport, viewport.Viewport.Camera as OrthographicCamera, frame);
+            if (viewport.Is3D) UpdateFrame(viewport, viewport.Viewport.Camera as PerspectiveCamera, frame);
+        }
 
         public virtual void PreRender(MapViewport viewport)
         {
-            return;
+            if (viewport.Is2D) PreRender(viewport, viewport.Viewport.Camera as OrthographicCamera);
+            if (viewport.Is3D) PreRender(viewport, viewport.Viewport.Camera as PerspectiveCamera);
         }
+
+        public virtual void Render(MapViewport viewport)
+        {
+            if (viewport.Is2D) Render(viewport, viewport.Viewport.Camera as OrthographicCamera);
+            if (viewport.Is3D) Render(viewport, viewport.Viewport.Camera as PerspectiveCamera);
+        }
+
+        public virtual void PositionChanged(MapViewport viewport, ViewportEvent e)
+        {
+            if (viewport.Is2D) PositionChanged(viewport, viewport.Viewport.Camera as OrthographicCamera, e);
+        }
+
+        public virtual void ZoomChanged(MapViewport viewport, ViewportEvent e)
+        {
+            if (viewport.Is2D) ZoomChanged(viewport, viewport.Viewport.Camera as OrthographicCamera, e);
+        }
+
+        protected virtual void MouseEnter(MapViewport viewport, OrthographicCamera camera, ViewportEvent e) { }
+        protected virtual void MouseEnter(MapViewport viewport, PerspectiveCamera camera, ViewportEvent e) { }
+        protected virtual void MouseLeave(MapViewport viewport, OrthographicCamera camera, ViewportEvent e) { }
+        protected virtual void MouseLeave(MapViewport viewport, PerspectiveCamera camera, ViewportEvent e) { }
+        protected virtual void MouseDown(MapViewport viewport, OrthographicCamera camera, ViewportEvent e) { }
+        protected virtual void MouseDown(MapViewport viewport, PerspectiveCamera camera, ViewportEvent e) { }
+        protected virtual void MouseClick(MapViewport viewport, OrthographicCamera camera, ViewportEvent e) { }
+        protected virtual void MouseClick(MapViewport viewport, PerspectiveCamera camera, ViewportEvent e) { }
+        protected virtual void MouseDoubleClick(MapViewport viewport, OrthographicCamera camera, ViewportEvent e) { }
+        protected virtual void MouseDoubleClick(MapViewport viewport, PerspectiveCamera camera, ViewportEvent e) { }
+        protected virtual void MouseUp(MapViewport viewport, OrthographicCamera camera, ViewportEvent e) { }
+        protected virtual void MouseUp(MapViewport viewport, PerspectiveCamera camera, ViewportEvent e) { }
+        protected virtual void MouseWheel(MapViewport viewport, OrthographicCamera camera, ViewportEvent e) { }
+        protected virtual void MouseWheel(MapViewport viewport, PerspectiveCamera camera, ViewportEvent e) { }
+        protected virtual void MouseMove(MapViewport viewport, OrthographicCamera camera, ViewportEvent e) { }
+        protected virtual void MouseMove(MapViewport viewport, PerspectiveCamera camera, ViewportEvent e) { }
+        protected virtual void DragStart(MapViewport viewport, OrthographicCamera camera, ViewportEvent e) { }
+        protected virtual void DragStart(MapViewport viewport, PerspectiveCamera camera, ViewportEvent e) { }
+        protected virtual void DragMove(MapViewport viewport, OrthographicCamera camera, ViewportEvent e) { }
+        protected virtual void DragMove(MapViewport viewport, PerspectiveCamera camera, ViewportEvent e) { }
+        protected virtual void DragEnd(MapViewport viewport, OrthographicCamera camera, ViewportEvent e) { }
+        protected virtual void DragEnd(MapViewport viewport, PerspectiveCamera camera, ViewportEvent e) { }
+        protected virtual void KeyPress(MapViewport viewport, OrthographicCamera camera, ViewportEvent e) { }
+        protected virtual void KeyPress(MapViewport viewport, PerspectiveCamera camera, ViewportEvent e) { }
+        protected virtual void KeyDown(MapViewport viewport, OrthographicCamera camera, ViewportEvent e) { }
+        protected virtual void KeyDown(MapViewport viewport, PerspectiveCamera camera, ViewportEvent e) { }
+        protected virtual void KeyUp(MapViewport viewport, OrthographicCamera camera, ViewportEvent e) { }
+        protected virtual void KeyUp(MapViewport viewport, PerspectiveCamera camera, ViewportEvent e) { }
+        protected virtual void UpdateFrame(MapViewport viewport, OrthographicCamera camera, Frame frame) { }
+        protected virtual void UpdateFrame(MapViewport viewport, PerspectiveCamera camera, Frame frame) { }
+        protected virtual void PreRender(MapViewport viewport, OrthographicCamera camera) { }
+        protected virtual void PreRender(MapViewport viewport, PerspectiveCamera camera) { }
+        protected virtual void Render(MapViewport viewport, OrthographicCamera camera) { }
+        protected virtual void Render(MapViewport viewport, PerspectiveCamera camera) { }
+
+        public virtual void PositionChanged(MapViewport viewport, OrthographicCamera camera, ViewportEvent e) { }
+        public virtual void ZoomChanged(MapViewport viewport, OrthographicCamera camera, ViewportEvent e) { }
 
         public virtual bool IsCapturingMouseWheel()
         {

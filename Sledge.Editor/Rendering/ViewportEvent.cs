@@ -53,7 +53,7 @@ namespace Sledge.Editor.Rendering
         public Coordinate CameraPosition { get; set; }
         public decimal CameraZoom { get; set; }
 
-        public ViewportEvent(MapViewport sender, EventArgs e)
+        public ViewportEvent(MapViewport sender, EventArgs e = null)
         {
             Sender = sender;
         }

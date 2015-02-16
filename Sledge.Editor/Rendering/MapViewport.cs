@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 using OpenTK;
 using Sledge.DataStructures.Geometric;
@@ -83,7 +84,7 @@ namespace Sledge.Editor.Rendering
 
         private void ListenerDo(Action<IViewportEventListener> action)
         {
-            foreach (var listener in Listeners)
+            foreach (var listener in Listeners.Where(x => x.IsActive()))
             {
                 try
                 {
@@ -98,7 +99,7 @@ namespace Sledge.Editor.Rendering
 
         private void ListenerDoEvent(ViewportEvent e, Action<IViewportEventListener, ViewportEvent> action)
         {
-            foreach (var listener in Listeners)
+            foreach (var listener in Listeners.Where(x => x.IsActive()))
             {
                 try
                 {
@@ -293,6 +294,11 @@ namespace Sledge.Editor.Rendering
                 default:
                     throw new ArgumentOutOfRangeException("Type");
             }
+        }
+
+        public Coordinate Expand(decimal x, decimal y)
+        {
+            return Expand(new Coordinate(x, y, 0));
         }
 
         public Coordinate Expand(Coordinate c)

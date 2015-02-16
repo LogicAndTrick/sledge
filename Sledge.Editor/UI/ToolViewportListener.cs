@@ -24,6 +24,11 @@ namespace Sledge.Editor.UI
                    || (usage == BaseTool.ToolUsage.View3D && Viewport.Is3D);
         }
 
+        public bool IsActive()
+        {
+            return ShouldRelayEvent(ToolManager.ActiveTool);
+        }
+
         public void KeyUp(ViewportEvent e)
         {
             if (!ShouldRelayEvent(ToolManager.ActiveTool)) return;

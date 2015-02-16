@@ -6,6 +6,8 @@ namespace Sledge.Editor.Rendering
     {
         MapViewport Viewport { get; set; }
 
+        bool IsActive();
+
         void KeyUp(ViewportEvent e);
         void KeyDown(ViewportEvent e);
 

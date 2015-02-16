@@ -257,6 +257,33 @@
     <Compile Include="History\HistoryManager.cs" />
     <Compile Include="History\IHistoryItem.cs" />
     <Compile Include="Rendering\IViewportEventListener.cs" />
+    <Compile Include="Tools2\DraggableTool\BaseDraggableTool.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Tools2\DraggableTool\BoxAction.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Tools2\DraggableTool\BoxDraggableState.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Tools2\DraggableTool\BoxResizeHandle.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Tools2\DraggableTool\BoxState.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Tools2\DraggableTool\IDraggable.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Tools2\DraggableTool\IDraggableState.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Tools2\DraggableTool\InternalBoxResizeHandle.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Tools2\DraggableTool\ResizeHandle.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="UI\KeyboardState.cs" />
     <Compile Include="Rendering\MapViewport.cs">
       <SubType>Code</SubType>

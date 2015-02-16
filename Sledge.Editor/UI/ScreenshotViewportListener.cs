@@ -17,6 +17,11 @@ namespace Sledge.Editor.UI
             Viewport = viewport;
         }
 
+        public bool IsActive()
+        {
+            return true;
+        }
+
         public void KeyUp(ViewportEvent e)
         {
             
