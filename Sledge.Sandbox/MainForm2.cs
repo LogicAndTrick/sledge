@@ -161,7 +161,7 @@ namespace Sledge.Sandbox
                             if (r2.Next(0, 100) > 50) randomflags |= RenderFlags.Wireframe;
                             if (r2.Next(0, 100) > 50) randomflags |= RenderFlags.Point;
                             s.FitTextureToPointCloud(new Cloud(s.Vertices.Select(v => v.Location)), 1, 1);
-                            var face = new Face(material, s.Vertices.Select(x => new Vertex(x.Location.ToVector3(), x.TextureU, x.TextureV)).ToList())
+                            var face = new Face(material, s.Vertices.Select(x => new Vertex(x.Location.ToVector3(), (float) x.TextureU, (float) x.TextureV)).ToList())
                                        {
                                            AccentColor = Color.FromArgb(r2.Next(128, 255), r2.Next(128, 255), r2.Next(128, 255)),
                                            TintColor = Color.FromArgb(r.Next(0, 128), Color.Red),

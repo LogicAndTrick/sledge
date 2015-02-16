@@ -274,10 +274,10 @@ namespace Sledge.Rendering.OpenGL.Arrays
             {
                 Position = x.Position,
                 Normal = face.Plane.Normal,
-                Texture = new Vector2((float)x.TextureU, (float)x.TextureV),
+                Texture = new Vector2(x.TextureU, x.TextureV),
                 MaterialColor = face.Material.Color.ToAbgr(),
                 AccentColor = face.AccentColor.ToAbgr(),
-                TintColor = face.AccentColor.ToAbgr(),
+                TintColor = face.TintColor.ToAbgr(),
                 Flags = ConvertVertexFlags(face) | flags
             });
         }
@@ -291,7 +291,7 @@ namespace Sledge.Rendering.OpenGL.Arrays
                 Texture = Vector2.Zero,
                 MaterialColor = line.Material.Color.ToAbgr(),
                 AccentColor = line.AccentColor.ToAbgr(),
-                TintColor = line.AccentColor.ToAbgr(),
+                TintColor = line.TintColor.ToAbgr(),
                 Flags = ConvertVertexFlags(line) | flags
             });
         }
@@ -313,10 +313,10 @@ namespace Sledge.Rendering.OpenGL.Arrays
             {
                 Position = x.Position,
                 Normal = Vector3.UnitZ,
-                Texture = new Vector2((float) x.TextureU, (float) x.TextureV),
+                Texture = new Vector2(x.TextureU, x.TextureV),
                 MaterialColor = sprite.Material.Color.ToAbgr(),
                 AccentColor = sprite.AccentColor.ToAbgr(),
-                TintColor = sprite.AccentColor.ToAbgr(),
+                TintColor = sprite.TintColor.ToAbgr(),
                 Flags = ConvertVertexFlags(sprite) | flags
             });
         }

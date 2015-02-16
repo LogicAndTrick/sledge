@@ -31,6 +31,7 @@ namespace Sledge.Rendering.Scenes.Renderables
             Vertices = vertices.ToList();
             Width = 1; // todo change line widths?
             CameraFlags = CameraFlags.All;
+            RenderFlags = RenderFlags.Wireframe;
         }
     }
 }

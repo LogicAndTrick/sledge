@@ -149,11 +149,6 @@ namespace Sledge.Rendering.OpenGL
             GL.ClearColor(Color.Black);
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
-            if (viewport.Camera is PerspectiveCamera)
-                ((PerspectiveCamera)viewport.Camera).Position -= new Vector3(-0.002f, -0.002f, -0.002f);
-            if (viewport.Camera is OrthographicCamera)
-                ((OrthographicCamera)viewport.Camera).Zoom *= 0.998f;
-
             scData.Array.Render(this, _shaderProgram, _modelShaderProgram, viewport);
 
             // Blit FBO

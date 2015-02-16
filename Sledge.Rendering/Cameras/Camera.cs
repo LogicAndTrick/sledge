@@ -1,4 +1,6 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Linq;
+using System.Reflection;
 using OpenTK;
 
 namespace Sledge.Rendering.Cameras
@@ -24,7 +26,7 @@ namespace Sledge.Rendering.Cameras
             var split = serialised.Split(new[] {'/'}, 2);
             if (split.Length != 2) return null;
 
-            var ty = typeof (Camera).Assembly.GetType(split[0]);
+            var ty = typeof (Camera).Assembly.GetTypes().FirstOrDefault(x => String.Equals(x.Name, split[0], StringComparison.InvariantCultureIgnoreCase));
             if (ty == null || !typeof (Camera).IsAssignableFrom(ty)) return null;
 
             var ctor = ty.GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, new[] {typeof (string)}, null);

@@ -56,7 +56,8 @@ namespace Sledge.Editor.Documents
         private readonly DocumentSubscriptions _subscriptions;
         private readonly DocumentMemory _memory;
 
-        private readonly Scene _scene;
+        public Scene Scene { get; private set; }
+        private SceneManager _sceneManager;
 
         private Document()
         {
@@ -123,7 +124,8 @@ namespace Sledge.Editor.Documents
             //HelperManager = new HelperManager(this);
             //Renderer = new RenderManager(this);
 
-            _scene = SceneManager.Engine.Renderer.CreateScene();
+            Scene = SceneManager.Engine.Renderer.CreateScene();
+            _sceneManager = new SceneManager(this);
 
             if (MapFile != null) Mediator.Publish(EditorMediator.FileOpened, MapFile);
 
@@ -150,6 +152,8 @@ namespace Sledge.Editor.Documents
             if (!Sledge.Settings.View.KeepSelectedTool) ToolManager.Activate(_memory.SelectedTool);
             if (!Sledge.Settings.View.KeepCameraPositions) _memory.RestoreViewports(ViewportManager.Viewports);
 
+            _sceneManager.SetActive();
+
             // ViewportManager.AddContext3D(new WidgetLinesRenderable());
             // Renderer.Register(ViewportManager.Viewports);
             // ViewportManager.AddContextAll(new ToolRenderable());
@@ -175,7 +179,7 @@ namespace Sledge.Editor.Documents
         {
             Scheduler.Clear(this);
             TextureProvider.DeleteCollection(TextureCollection);
-            SceneManager.Engine.Renderer.RemoveScene(_scene);
+            SceneManager.Engine.Renderer.RemoveScene(Scene);
         }
 
         public bool SaveFile(string path = null, bool forceOverride = false, bool switchPath = true)

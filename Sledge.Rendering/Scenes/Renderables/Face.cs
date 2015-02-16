@@ -34,6 +34,7 @@ namespace Sledge.Rendering.Scenes.Renderables
             Material = material;
             Vertices = vertices;
             CameraFlags = CameraFlags.All;
+            RenderFlags = RenderFlags.Polygon | RenderFlags.Wireframe | RenderFlags.Point;
         }
     }
 }
