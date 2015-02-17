@@ -49,16 +49,15 @@ namespace Sledge.Editor.Tools2.SelectTool
             emptyBox.FillColour = Color.FromArgb(View.SelectionBoxBackgroundOpacity, Color.White);
             emptyBox.State.Changed += EmptyBoxChanged;
             States.Add(emptyBox);
-        }
 
-        //public override IEnumerable<string> GetContexts()
-        //{
-        //    yield return "Select Tool";
-        //}
+            Usage = ToolUsage.Both;
+        }
 
         public override string GetContextualHelp()
         {
-            return "";
+            return "*Click* to select an object.\n" +
+                   "In the 3D view, *click and hold* and use the *mouse wheel* to cycle through objects behind the cursor.\n" +
+                   "In the 2D view, *click the selection box* to cycle between manipulation modes.";
         }
 
         public override Image GetIcon()
@@ -320,8 +319,17 @@ namespace Sledge.Editor.Tools2.SelectTool
 
             SetSelected(desel, sel, false, IgnoreGrouping());
         }
-
-        // todo - select tool - capturing mouse wheel (input lock)
+        
+        /// <summary>
+        /// The select tool captures the mouse wheel when the mouse is down in the 3D viewport
+        /// </summary>
+        /// <returns>True if the select tool is capturing wheel events</returns>
+        public override bool IsCapturingMouseWheel()
+        {
+            return IntersectingObjectsFor3DSelection != null
+                   && IntersectingObjectsFor3DSelection.Any()
+                   && ChosenItemFor3DSelection != null;
+        }
 
         #endregion
 
