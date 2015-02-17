@@ -53,6 +53,7 @@
     <Compile Include="Cameras\CameraRenderOptions.cs" />
     <Compile Include="Class1.cs" />
     <Compile Include="DataStructures\Box.cs" />
+    <Compile Include="DataStructures\Line.cs" />
     <Compile Include="DataStructures\Models\Animation.cs" />
     <Compile Include="DataStructures\Models\AnimationFrame.cs" />
     <Compile Include="DataStructures\Models\Mesh.cs" />
@@ -72,12 +73,19 @@
     <Compile Include="Interfaces\IOrigin.cs" />
     <Compile Include="Interfaces\IRenderer.cs" />
     <Compile Include="Interfaces\IViewport.cs" />
+    <Compile Include="MathFunctions.cs" />
+    <Compile Include="OpenGL\Arrays\ElementVertexArray.cs" />
     <Compile Include="OpenGL\Arrays\ModelVertexArray.cs" />
     <Compile Include="OpenGL\ModelStorage.cs" />
     <Compile Include="OpenGL\Shaders\ModelShader.cs" />
     <Compile Include="OpenGL\Vertices\ModelVertex.cs" />
     <Compile Include="OpenGL\Vertices\VertexFlags.cs" />
     <Compile Include="Cameras\CameraFlags.cs" />
+    <Compile Include="Scenes\Elements\Element.cs" />
+    <Compile Include="Scenes\Elements\Position.cs" />
+    <Compile Include="Scenes\Elements\PositionType.cs" />
+    <Compile Include="Scenes\Elements\Unit.cs" />
+    <Compile Include="Scenes\Elements\ValueType.cs" />
     <Compile Include="Scenes\Renderables\LightingFlags.cs" />
     <Compile Include="Interfaces\IUpdatable.cs" />
     <Compile Include="Materials\Material.cs" />

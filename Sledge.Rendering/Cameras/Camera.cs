@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Reflection;
 using OpenTK;
+using Sledge.Rendering.DataStructures;
 
 namespace Sledge.Rendering.Cameras
 {
@@ -10,9 +11,17 @@ namespace Sledge.Rendering.Cameras
         public CameraFlags Flags { get; set; }
         public CameraRenderOptions RenderOptions { get; set; }
         public abstract Vector3 EyeLocation { get; }
+
         public abstract Matrix4 GetCameraMatrix();
         public abstract Matrix4 GetViewportMatrix(int width, int height);
         public abstract Matrix4 GetModelMatrix();
+
+        public abstract Vector3 ScreenToWorld(Vector3 screen, int width, int height);
+        public abstract Vector3 WorldToScreen(Vector3 world, int width, int height);
+        public abstract Line CastRayFromScreen(Vector3 screen, int width, int height);
+
+        public abstract float UnitsToPixels(float units);
+        public abstract float PixelsToUnits(float pixels);
 
         protected abstract string Serialise();
 

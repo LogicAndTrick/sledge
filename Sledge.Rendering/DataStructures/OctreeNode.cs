@@ -187,7 +187,7 @@ namespace Sledge.Rendering.DataStructures
             return Count != startCount;
         }
 
-        public IEnumerable<List<OctreeNode<T>>> Partition2(int maxPartitionSize = 1000)
+        public IEnumerable<List<OctreeNode<T>>> Partition(int maxPartitionSize = 1000)
         {
             var nodes = GetChildNodes();
             if (Count <= maxPartitionSize || !nodes.Any())
@@ -202,7 +202,7 @@ namespace Sledge.Rendering.DataStructures
                 {
                     if (node.Count > maxPartitionSize)
                     {
-                        foreach (var p in node.Partition2(maxPartitionSize)) yield return p;
+                        foreach (var p in node.Partition(maxPartitionSize)) yield return p;
                     }
                     else if (node.Count + count > maxPartitionSize)
                     {

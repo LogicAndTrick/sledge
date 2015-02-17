@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Globalization;
 using OpenTK;
+using Sledge.Rendering.DataStructures;
 
 namespace Sledge.Rendering.Cameras
 {
@@ -92,6 +93,36 @@ namespace Sledge.Rendering.Cameras
         public override Matrix4 GetModelMatrix()
         {
             return GetMatrixFor(Type);
+        }
+
+        public override Vector3 ScreenToWorld(Vector3 screen, int width, int height)
+        {
+            var cs = new Vector3(width / 2f, height / 2f, 0);
+            return Position + ((screen - cs) / Zoom);
+        }
+
+        public override Vector3 WorldToScreen(Vector3 world, int width, int height)
+        {
+            var cs = new Vector3(width / 2f, height / 2f, 0);
+            return cs + ((world - Position) * Zoom);
+        }
+
+        public override Line CastRayFromScreen(Vector3 screen, int width, int height)
+        {
+            screen = new Vector3(screen.X, screen.Y, 0);
+            var cs = new Vector3(width / 2f, height / 2f, 0);
+            var world = Position + ((screen - cs) / Zoom);
+            return null; // todo
+        }
+
+        public override float UnitsToPixels(float units)
+        {
+            return units * Zoom;
+        }
+
+        public override float PixelsToUnits(float pixels)
+        {
+            return pixels / Zoom;
         }
 
         protected override string Serialise()

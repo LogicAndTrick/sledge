@@ -74,7 +74,7 @@ namespace Sledge.Rendering.OpenGL.Arrays
         {
             Clear();
 
-            var partitions = Octree.Partition2(MaxChanges);
+            var partitions = Octree.Partition(MaxChanges);
             foreach (var partition in partitions)
             {
                 var box = new Box(partition.Select(x => x.BoundingBox));

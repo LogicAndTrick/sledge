@@ -2,6 +2,7 @@
 using System.Globalization;
 using OpenTK;
 using Sledge.Rendering.Scenes.Renderables;
+using Line = Sledge.Rendering.DataStructures.Line;
 
 namespace Sledge.Rendering.Cameras
 {
@@ -98,6 +99,45 @@ namespace Sledge.Rendering.Cameras
         public override Matrix4 GetModelMatrix()
         {
             return Matrix4.Identity;
+        }
+
+        public override Vector3 ScreenToWorld(Vector3 screen, int width, int height)
+        {
+            screen = new Vector3(screen.X, screen.Y, 1);
+            var viewport = new[] { 0, 0, width, height };
+            var pm = Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(FOV), width / (float)height, 1.0f, 50000);
+            var vm = Matrix4.LookAt(Position, LookAt, Vector3.UnitZ);
+            return MathFunctions.Unproject(screen, viewport, pm, vm);
+        }
+
+        public override Vector3 WorldToScreen(Vector3 world, int width, int height)
+        {
+            var viewport = new[] { 0, 0, width, height };
+            var pm = Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(FOV), width / (float)height, 1.0f, 50000);
+            var vm = Matrix4.LookAt(Position, LookAt, Vector3.UnitZ);
+            return MathFunctions.Project(world, viewport, pm, vm);
+        }
+
+        public override Line CastRayFromScreen(Vector3 screen, int width, int height)
+        {
+            var near = new Vector3(screen.X, height - screen.Y, 0);
+            var far = new Vector3(screen.X, height - screen.Y, 1);
+            var pm = Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(FOV), width / (float)height, 1.0f, 50000);
+            var vm = Matrix4.LookAt(Position, LookAt, Vector3.UnitZ);
+            var viewport = new[] { 0, 0, width, height };
+            var un = MathFunctions.Unproject(near, viewport, pm, vm);
+            var uf = MathFunctions.Unproject(far, viewport, pm, vm);
+            return new Line(un, uf);
+        }
+
+        public override float UnitsToPixels(float units)
+        {
+            return 0;
+        }
+
+        public override float PixelsToUnits(float pixels)
+        {
+            return 0;
         }
 
         public float GetRotation()

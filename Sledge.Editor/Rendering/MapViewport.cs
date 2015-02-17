@@ -364,63 +364,12 @@ namespace Sledge.Editor.Rendering
 
         public Coordinate ScreenToWorld(Coordinate location)
         {
-            if (Is2D)
-            {
-                var cam = (OrthographicCamera) Viewport.Camera;
-                return cam.Position.ToCoordinate() + ((location - CenterScreen) / (decimal) cam.Zoom);
-            }
-            else
-            {
-                var cam = (PerspectiveCamera) Viewport.Camera;
-                var screen = new Coordinate(location.X, location.Y, 1);
-                var viewport = new[] { 0, 0, Control.Width, Control.Height };
-                var pm = Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(cam.FOV), Control.Width / (float) Control.Height, 0.1f, 50000);
-                var vm = Matrix4.LookAt(cam.Position, cam.LookAt, Vector3.UnitZ);
-                return MathFunctions.Unproject(screen, viewport, pm, vm);
-            }
+            return Viewport.Camera.ScreenToWorld(location.ToVector3(), Width, Height).ToCoordinate();
         }
 
         public Coordinate WorldToScreen(Coordinate location)
         {
-            if (Is2D)
-            {
-                var cam = (OrthographicCamera) Viewport.Camera;
-                return CenterScreen + ((location - cam.Position.ToCoordinate()) * (decimal) cam.Zoom);
-            }
-            else
-            {
-                var cam = (PerspectiveCamera)Viewport.Camera;
-                var viewport = new[] { 0, 0, Control.Width, Control.Height };
-                var pm = Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(cam.FOV), Control.Width / (float)Control.Height, 0.1f, 50000);
-                var vm = Matrix4.LookAt(cam.Position, cam.LookAt, Vector3.UnitZ);
-                return MathFunctions.Project(location, viewport, pm, vm);
-            }
-        }
-
-        public decimal UnitsToPixels(decimal units)
-        {
-            if (Is2D)
-            {
-                var cam = (OrthographicCamera)Viewport.Camera;
-                return units * (decimal) cam.Zoom;
-            }
-            else
-            {
-                return 0;
-            }
-        }
-
-        public decimal PixelsToUnits(decimal pixels)
-        {
-            if (Is2D)
-            {
-                var cam = (OrthographicCamera)Viewport.Camera;
-                return pixels / (decimal) cam.Zoom;
-            }
-            else
-            {
-                return 0;
-            }
+            return Viewport.Camera.WorldToScreen(location.ToVector3(), Width, Height).ToCoordinate();
         }
 
         /// <summary>
@@ -435,24 +384,18 @@ namespace Sledge.Editor.Rendering
         /// along the 3D projection for at least 1,000,000 units.</returns>
         public Line CastRayFromScreen(int x, int y)
         {
-            if (Is2D)
-            {
-                var cam = (OrthographicCamera)Viewport.Camera;
-                var world = cam.Position.ToCoordinate() + ((new Coordinate(x, y, 0) - CenterScreen) / (decimal)cam.Zoom);
-                return null; // todo
-            }
-            else
-            {
-                var cam = (PerspectiveCamera)Viewport.Camera;
-                var near = new Coordinate(x, Control.Height - y, 0);
-                var far = new Coordinate(x, Control.Height - y, 1);
-                var pm = Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(cam.FOV), Control.Width / (float)Control.Height, 0.1f, 50000);
-                var vm = Matrix4.LookAt(cam.Position, cam.LookAt, Vector3.UnitZ);
-                var viewport = new[] { 0, 0, Control.Width, Control.Height };
-                var un = MathFunctions.Unproject(near, viewport, pm, vm);
-                var uf = MathFunctions.Unproject(far, viewport, pm, vm);
-                return (un == null || uf == null) ? null : new Line(un, uf);
-            }
+            var l = Viewport.Camera.CastRayFromScreen(new Vector3(x, y, 0), Width, Height);
+            return new Line(l.Start.ToCoordinate(), l.End.ToCoordinate());
+        }
+
+        public decimal UnitsToPixels(decimal units)
+        {
+            return (decimal) Viewport.Camera.UnitsToPixels((float) units);
+        }
+
+        public decimal PixelsToUnits(decimal pixels)
+        {
+            return (decimal)Viewport.Camera.PixelsToUnits((float)pixels);
         }
 
         #endregion

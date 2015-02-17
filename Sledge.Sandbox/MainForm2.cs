@@ -18,6 +18,7 @@ using Sledge.Rendering.Cameras;
 using Sledge.Rendering.DataStructures.Models;
 using Sledge.Rendering.Materials;
 using Sledge.Rendering.OpenGL;
+using Sledge.Rendering.Scenes.Elements;
 using Sledge.Rendering.Scenes.Lights;
 using Sledge.Rendering.Scenes.Renderables;
 using Face = Sledge.Rendering.Scenes.Renderables.Face;
@@ -133,6 +134,15 @@ namespace Sledge.Sandbox
                 scene.Add(scModel);
             }
 
+            // elements
+            var le = new LineElement(Color.Lime, new[]
+            {
+                new Position(PositionType.Screen, new Vector3(0, 0, 0)),
+                new Position(PositionType.Screen, new Vector3(1, 1, 0)) {Normalised = true},
+                new Position(PositionType.World, new Vector3(10, 10, 10)),
+            }.ToList());
+
+            scene.Add(le);
 
             Task.Factory.StartNew(() =>
             {

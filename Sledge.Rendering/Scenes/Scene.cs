@@ -65,7 +65,7 @@ namespace Sledge.Rendering.Scenes
             if (_changeSet == null) _changeSet = new SceneChangeSet();
 
             var obj = (SceneObject) sender;
-            if (obj is RenderableObject && e.PropertyName == "RenderCritical")
+            if (e.PropertyName == "RenderCritical")
             {
                 _changeSet.Replace(obj);
             }
