@@ -280,16 +280,16 @@ namespace Sledge.Editor.Tools.SelectTool
             base.MouseLeave(viewport, e);
         }
 
-        public override void PreRender(MapViewport viewport)
+        public void PreRender(MapViewport viewport)
         {
-            WidgetAction((w, vp, ev) => w.PreRender(vp), viewport, null);
-            base.PreRender(viewport);
+            //WidgetAction((w, vp, ev) => w.PreRender(vp), viewport, null);
+            //base.PreRender(viewport);
         }
 
-        public override void Render(MapViewport viewport)
+        public  void Render(MapViewport viewport)
         {
-            WidgetAction((w, vp, ev) => w.Render(vp), viewport, null);
-            base.Render(viewport);
+            //WidgetAction((w, vp, ev) => w.Render(vp), viewport, null);
+            //base.Render(viewport);
         }
 
         public override void UpdateFrame(MapViewport viewport, Frame frame)

@@ -561,7 +561,7 @@ namespace Sledge.Editor.Tools
             GL.Vertex3(c.DX, c.DY, c.DZ);
         }
 
-        public override void Render(MapViewport viewport)
+        public void Render(MapViewport viewport)
         {
             if (viewport is MapViewport) Render2D((MapViewport)viewport);
             if (viewport is MapViewport) Render3D((MapViewport)viewport);

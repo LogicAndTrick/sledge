@@ -1,12 +1,16 @@
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using OpenTK;
 using OpenTK.Input;
 using Sledge.DataStructures.Geometric;
 using Sledge.Editor.Rendering;
 using Sledge.Editor.Tools;
 using Sledge.Rendering.Cameras;
+using Sledge.Rendering.Scenes;
+using Sledge.Rendering.Scenes.Elements;
 
 namespace Sledge.Editor.Tools2.DraggableTool
 {
@@ -61,7 +65,7 @@ namespace Sledge.Editor.Tools2.DraggableTool
             IDraggable drag = null;
             foreach (var state in States)
             {
-                var drags = state.GetDraggables(viewport, camera).ToList();
+                var drags = state.GetDraggables().ToList();
                 drags.Add(state);
                 foreach (var draggable in drags)
                 {
@@ -134,21 +138,46 @@ namespace Sledge.Editor.Tools2.DraggableTool
             base.PositionChanged(viewport, e);
         }
 
-        protected override void Render(MapViewport viewport, OrthographicCamera camera)
+        protected override IEnumerable<SceneObject> GetSceneObjects()
         {
+            var list = new List<SceneObject>();
             var foundActive = false;
             foreach (var state in States)
             {
-                foreach (var draggable in state.GetDraggables(viewport, camera))
+                foreach (var draggable in state.GetDraggables())
                 {
                     if (draggable == CurrentDraggable) foundActive = true;
-                    else draggable.Render(viewport, camera);
+                    else list.AddRange(draggable.GetSceneObjects());
                 }
                 if (state == CurrentDraggable) foundActive = true;
-                else state.Render(viewport, camera);
+                else list.AddRange(state.GetSceneObjects());
             }
-            if (CurrentDraggable != null && foundActive) CurrentDraggable.Render(viewport, camera);
+            if (CurrentDraggable != null && foundActive) list.AddRange(CurrentDraggable.GetSceneObjects());
+
+            list.Add(new LineElement(Color.Red, new List<Position>
+            {
+                new Position(PositionType.Screen, new Vector3(0, 0, 0)),
+                new Position(PositionType.Screen, new Vector3(50, 50, 0))
+            }) { CameraFlags = CameraFlags.All});
+
+            return list;
         }
+
+        // protected  void Render(MapViewport viewport, OrthographicCamera camera)
+        // {
+        //     var foundActive = false;
+        //     foreach (var state in States)
+        //     {
+        //         foreach (var draggable in state.GetDraggables())
+        //         {
+        //             if (draggable == CurrentDraggable) foundActive = true;
+        //             else draggable.Render(viewport, camera);
+        //         }
+        //         if (state == CurrentDraggable) foundActive = true;
+        //         else state.Render(viewport, camera);
+        //     }
+        //     if (CurrentDraggable != null && foundActive) CurrentDraggable.Render(viewport, camera);
+        // }
 
         protected bool GetSelectionBox(BoxState state, out Box boundingbox)
         {

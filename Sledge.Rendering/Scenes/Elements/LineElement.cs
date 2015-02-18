@@ -17,5 +17,15 @@ namespace Sledge.Rendering.Scenes.Elements
             Width = 1; // todo change line widths?
             CameraFlags = CameraFlags.All;
         }
+
+        public override IEnumerable<LineElement> GetLines()
+        {
+            yield return this;
+        }
+
+        public override IEnumerable<FaceElement> GetFaces()
+        {
+            yield break;
+        }
     }
 }

@@ -951,10 +951,10 @@ namespace Sledge.Editor.Tools.VMTool
             base.KeyDown(viewport, e);
         }
 
-        public override void Render(MapViewport viewport)
+        public  void Render(MapViewport viewport)
         {
-            if (_currentTool != null) _currentTool.Render(viewport);
-            base.Render(viewport);
+            //if (_currentTool != null) _currentTool.Render(viewport);
+            //base.Render(viewport);
         }
 
         public override void MouseEnter(MapViewport viewport, ViewportEvent e)
@@ -998,10 +998,10 @@ namespace Sledge.Editor.Tools.VMTool
             base.UpdateFrame(viewport, frame);
         }
 
-        public override void PreRender(MapViewport viewport)
+        public  void PreRender(MapViewport viewport)
         {
-            if (_currentTool != null) _currentTool.PreRender(viewport);
-            base.PreRender(viewport);
+            //if (_currentTool != null) _currentTool.PreRender(viewport);
+            //base.PreRender(viewport);
         }
     }
 }

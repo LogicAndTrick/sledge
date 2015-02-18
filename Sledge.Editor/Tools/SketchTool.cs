@@ -351,7 +351,7 @@ namespace Sledge.Editor.Tools
             yield return t;
         }
 
-        public override void Render(MapViewport viewport)
+        public  void Render(MapViewport viewport)
         {
             // todo rendering
             // Render

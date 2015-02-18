@@ -233,7 +233,7 @@ Move the origin point around by *clicking and dragging* it.";
 
         }
 
-        public override void Render(MapViewport viewport)
+        public  void Render(MapViewport viewport)
         {
 
         }

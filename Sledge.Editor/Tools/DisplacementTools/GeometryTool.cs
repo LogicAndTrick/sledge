@@ -268,7 +268,7 @@ namespace Sledge.Editor.Tools.DisplacementTools
             }
         }
 
-        public override void Render(MapViewport viewport)
+        public void Render(MapViewport viewport)
         {
             if (_currentPoint != null)
             {

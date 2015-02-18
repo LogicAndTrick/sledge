@@ -267,7 +267,7 @@ namespace Sledge.Editor.Tools
             GL.Vertex3(x, y, z);
         }
 
-        public override void Render(MapViewport viewport)
+        public void Render(MapViewport viewport)
         {
             if (_state == EntityState.None) return;
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using OpenTK;
@@ -20,5 +21,8 @@ namespace Sledge.Rendering.Scenes.Elements
                 OnPropertyChanged("RenderCritical");
             }
         }
+
+        public abstract IEnumerable<LineElement> GetLines();
+        public abstract IEnumerable<FaceElement> GetFaces();
     }
 }

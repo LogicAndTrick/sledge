@@ -8,6 +8,8 @@ using Sledge.Editor.Rendering;
 using Sledge.Editor.UI;
 using Sledge.Extensions;
 using Sledge.Rendering;
+using Sledge.Rendering.Scenes;
+using Sledge.Rendering.Scenes.Elements;
 using Sledge.Settings;
 using System.Drawing;
 using Sledge.Rendering.Cameras;
@@ -112,6 +114,10 @@ namespace Sledge.Editor.Tools
         public MapViewport Viewport { get; set; }
         public ToolUsage Usage { get; set; }
 
+        protected bool UseValidation { get; set; }
+        private bool _invalidated;
+        private List<SceneObject> _currentObjects;
+
         public abstract Image GetIcon();
         public abstract string GetName();
         public abstract HotkeyTool? GetHotkeyToolType();
@@ -126,6 +132,9 @@ namespace Sledge.Editor.Tools
         {
             Viewport = null;
             Usage = ToolUsage.View2D;
+            _invalidated = false;
+            UseValidation = false;
+            _currentObjects = new List<SceneObject>();
         }
 
         public void SetDocument(Documents.Document document)
@@ -240,20 +249,9 @@ namespace Sledge.Editor.Tools
 
         public virtual void UpdateFrame(MapViewport viewport, Frame frame)
         {
+            Validate();
             if (viewport.Is2D) UpdateFrame(viewport, viewport.Viewport.Camera as OrthographicCamera, frame);
             if (viewport.Is3D) UpdateFrame(viewport, viewport.Viewport.Camera as PerspectiveCamera, frame);
-        }
-
-        public virtual void PreRender(MapViewport viewport)
-        {
-            if (viewport.Is2D) PreRender(viewport, viewport.Viewport.Camera as OrthographicCamera);
-            if (viewport.Is3D) PreRender(viewport, viewport.Viewport.Camera as PerspectiveCamera);
-        }
-
-        public virtual void Render(MapViewport viewport)
-        {
-            if (viewport.Is2D) Render(viewport, viewport.Viewport.Camera as OrthographicCamera);
-            if (viewport.Is3D) Render(viewport, viewport.Viewport.Camera as PerspectiveCamera);
         }
 
         public virtual void PositionChanged(MapViewport viewport, ViewportEvent e)
@@ -296,10 +294,6 @@ namespace Sledge.Editor.Tools
         protected virtual void KeyUp(MapViewport viewport, PerspectiveCamera camera, ViewportEvent e) { }
         protected virtual void UpdateFrame(MapViewport viewport, OrthographicCamera camera, Frame frame) { }
         protected virtual void UpdateFrame(MapViewport viewport, PerspectiveCamera camera, Frame frame) { }
-        protected virtual void PreRender(MapViewport viewport, OrthographicCamera camera) { }
-        protected virtual void PreRender(MapViewport viewport, PerspectiveCamera camera) { }
-        protected virtual void Render(MapViewport viewport, OrthographicCamera camera) { }
-        protected virtual void Render(MapViewport viewport, PerspectiveCamera camera) { }
 
         public virtual void PositionChanged(MapViewport viewport, OrthographicCamera camera, ViewportEvent e) { }
         public virtual void ZoomChanged(MapViewport viewport, OrthographicCamera camera, ViewportEvent e) { }
@@ -307,6 +301,28 @@ namespace Sledge.Editor.Tools
         public virtual bool IsCapturingMouseWheel()
         {
             return false;
+        }
+
+        protected void Invalidate()
+        {
+            _invalidated = true;
+        }
+
+        private void Validate()
+        {
+            if ((UseValidation && !_invalidated) || Document == null) return;
+            _invalidated = false;
+
+            foreach (var o in _currentObjects) Document.Scene.Remove(o);
+
+            _currentObjects = GetSceneObjects().ToList();
+
+            foreach (var o in _currentObjects) Document.Scene.Add(o);
+        }
+
+        protected virtual IEnumerable<SceneObject> GetSceneObjects()
+        {
+            yield break;
         }
 
         /// <summary>

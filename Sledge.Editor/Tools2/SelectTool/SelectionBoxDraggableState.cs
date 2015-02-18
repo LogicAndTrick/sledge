@@ -61,7 +61,7 @@ namespace Sledge.Editor.Tools2.SelectTool
             _handles = new [] { resize, rotate, skew };
         }
 
-        public override IEnumerable<IDraggable> GetDraggables(MapViewport viewport, OrthographicCamera camera)
+        public override IEnumerable<IDraggable> GetDraggables()
         {
             if (State.Action == BoxAction.Idle || State.Action == BoxAction.Drawing) return new IDraggable[0];
             return _handles[_currentIndex];

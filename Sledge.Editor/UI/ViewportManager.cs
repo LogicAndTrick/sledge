@@ -91,6 +91,7 @@ namespace Sledge.Editor.UI
             };
 
             var viewports = config.Viewports ?? new List<string>();
+            viewports.Clear();
 
             for (var i = 0; i < config.Configuration.Rectangles.Count; i++)
             {

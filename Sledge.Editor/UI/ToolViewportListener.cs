@@ -131,26 +131,5 @@ namespace Sledge.Editor.UI
             if (!ShouldRelayEvent(ToolManager.ActiveTool)) return;
             ToolManager.ActiveTool.UpdateFrame(Viewport, frame);
         }
-
-        public void PreRender()
-        {
-            if (!ShouldRelayEvent(ToolManager.ActiveTool)) return;
-            ToolManager.ActiveTool.PreRender(Viewport);
-        }
-
-        public void Render3D()
-        {
-            
-        }
-
-        public void Render2D()
-        {
-            
-        }
-
-        public void PostRender()
-        {
-            
-        }
     }
 }

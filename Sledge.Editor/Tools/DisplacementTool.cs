@@ -94,9 +94,9 @@ namespace Sledge.Editor.Tools
             if (_currentTool != null) _currentTool.KeyDown(viewport, e);
         }
 
-        public override void Render(MapViewport viewport)
+        public void Render(MapViewport viewport)
         {
-            if (_currentTool != null) _currentTool.Render(viewport);
+            //if (_currentTool != null) _currentTool.Render(viewport);
         }
 
         public override void MouseEnter(MapViewport viewport, ViewportEvent e)
@@ -149,9 +149,9 @@ namespace Sledge.Editor.Tools
             if (_currentTool != null) _currentTool.UpdateFrame(viewport, frame);
         }
 
-        public override void PreRender(MapViewport viewport)
+        public void PreRender(MapViewport viewport)
         {
-            if (_currentTool != null) _currentTool.PreRender(viewport);
+            //if (_currentTool != null) _currentTool.PreRender(viewport);
         }
 
         public override HotkeyInterceptResult InterceptHotkey(HotkeysMediator hotkeyMessage, object parameters)

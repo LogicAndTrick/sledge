@@ -357,7 +357,7 @@ namespace Sledge.Editor.Tools.Widgets
             if (_mouseDown != CircleType.None) ve.Handled = true;
         }
 
-        public override void Render(MapViewport viewport)
+        public  void Render(MapViewport viewport)
         {
             if (Document.Selection.IsEmpty()) return;
 

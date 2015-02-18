@@ -37,9 +37,9 @@ namespace Sledge.Rendering.OpenGL.Arrays
 
             shader.Bind();
             shader.SelectionTransform = Matrix4.Identity;
-            shader.ModelMatrix = Matrix4.Identity;
-            shader.CameraMatrix = Matrix4.Identity;
-            shader.ViewportMatrix = vpMatrix;
+            shader.ModelMatrix = camera.GetModelMatrix();
+            shader.CameraMatrix = Matrix4.Identity; // camera.GetCameraMatrix();
+            shader.ViewportMatrix = vpMatrix; // camera.GetViewportMatrix(viewport.Control.Width, viewport.Control.Height);
             shader.Orthographic = false;
             shader.UseAccentColor = false;
 
@@ -69,7 +69,9 @@ namespace Sledge.Rendering.OpenGL.Arrays
         {
             StartSubset(FaceWireframe);
 
-            foreach (var g in data.OfType<FaceElement>().GroupBy(x => x.Material.UniqueIdentifier))
+            var list = data.ToList();
+
+            foreach (var g in list.SelectMany(x => x.GetFaces()).GroupBy(x => x.Material.UniqueIdentifier))
             {
                 StartSubset(FacePolygons);
 
@@ -84,7 +86,7 @@ namespace Sledge.Rendering.OpenGL.Arrays
                 PushSubset(FacePolygons, g.Key);
             }
 
-            foreach (var line in data.OfType<LineElement>())
+            foreach (var line in list.SelectMany(x => x.GetLines()))
             {
                 var index = PushData(Convert(line));
                 PushIndex(FaceWireframe, index, Line(line.Vertices.Count));

@@ -349,7 +349,7 @@ Select two (non-adjacent) points on a face to enable splitting.";
 
         }
 
-        public override void Render(MapViewport viewport)
+        public  void Render(MapViewport viewport)
         {
 
         }

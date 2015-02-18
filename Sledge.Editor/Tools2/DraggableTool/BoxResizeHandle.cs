@@ -1,10 +1,12 @@
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using OpenTK.Graphics.OpenGL;
 using Sledge.DataStructures.Geometric;
 using Sledge.Editor.Rendering;
 using Sledge.Rendering.Cameras;
+using Sledge.Rendering.Scenes;
 
 namespace Sledge.Editor.Tools2.DraggableTool
 {
@@ -145,6 +147,12 @@ namespace Sledge.Editor.Tools2.DraggableTool
         protected static void Coord(decimal x, decimal y, decimal z)
         {
             GL.Vertex3((double) x, (double) y, (double) z);
+        }
+
+        public IEnumerable<SceneObject> GetSceneObjects()
+        {
+            // todo 
+            yield break;
         }
 
         public virtual void Render(MapViewport viewport, OrthographicCamera camera)

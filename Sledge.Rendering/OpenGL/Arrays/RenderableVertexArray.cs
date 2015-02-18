@@ -231,7 +231,6 @@ namespace Sledge.Rendering.OpenGL.Arrays
             // Push sprites (grouped by material)
             foreach (var sprite in items.OfType<Sprite>())
             {
-                // todo sprites are not rendered yet
                 StartSubset(FaceTransparentPolygons);
 
                 PushOffset(sprite);

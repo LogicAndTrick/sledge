@@ -1,11 +1,16 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 using Sledge.DataStructures.Geometric;
+using Sledge.Editor.Extensions;
 using Sledge.Editor.Rendering;
 using Sledge.Rendering.Cameras;
+using Sledge.Rendering.Materials;
+using Sledge.Rendering.Scenes;
+using Sledge.Rendering.Scenes.Elements;
 using EnableCap = OpenTK.Graphics.OpenGL.EnableCap;
 using GL = OpenTK.Graphics.OpenGL.GL;
 
@@ -55,7 +60,7 @@ namespace Sledge.Editor.Tools2.DraggableTool
             };
         }
 
-        public virtual IEnumerable<IDraggable> GetDraggables(MapViewport viewport, OrthographicCamera camera)
+        public virtual IEnumerable<IDraggable> GetDraggables()
         {
             if (State.Action == BoxAction.Idle || State.Action == BoxAction.Drawing) yield break;
             foreach (var draggable in BoxHandles)
@@ -110,27 +115,37 @@ namespace Sledge.Editor.Tools2.DraggableTool
             State.FixBounds();
         }
 
-        public virtual void Render(MapViewport viewport, OrthographicCamera camera)
+        public virtual IEnumerable<SceneObject> GetSceneObjects()
         {
-            Render2D(viewport);
+            if (State.Action == BoxAction.Idle) yield break;
+            var box = new Box(State.Start, State.End);
+            if (ShouldDrawBox())
+            {
+                foreach (var face in box.GetBoxFaces())
+                {
+                    yield return new FaceElement(
+                        Material.Flat(GetRenderFillColour()),
+                        face.Select(x => new PositionVertex(new Position(PositionType.World, x.ToVector3()), 0, 0)).ToList());
+                }
+            }
+            //if (ShouldDrawBoxText(viewport))
+            //{
+            //    RenderBoxText(viewport, start, end);
+            //}
         }
 
         #region Rendering
-        protected static void Coord(double x, double y, double z)
-        {
-            GL.Vertex3(x, y, z);
-        }
 
-        protected virtual bool ShouldDrawBox(MapViewport viewport)
+        protected virtual bool ShouldDrawBox()
         {
             return State.Action == BoxAction.Drawing
                    || State.Action == BoxAction.Drawn
                    || State.Action == BoxAction.Resizing;
         }
 
-        protected virtual bool ShouldDrawBoxText(MapViewport viewport)
+        protected virtual bool ShouldDrawBoxText()
         {
-            return ShouldDrawBox(viewport);
+            return ShouldDrawBox();
         }
 
         protected virtual Color GetRenderFillColour()
@@ -143,31 +158,31 @@ namespace Sledge.Editor.Tools2.DraggableTool
             return BoxColour;
         }
 
-        protected virtual void RenderBox(MapViewport viewport, Coordinate start, Coordinate end)
-        {
-            GL.Begin(PrimitiveType.Quads);
-            GL.Color4(GetRenderFillColour());
-            Coord(start.DX, start.DY, start.DZ);
-            Coord(end.DX, start.DY, start.DZ);
-            Coord(end.DX, end.DY, start.DZ);
-            Coord(start.DX, end.DY, start.DZ);
-            GL.End();
-
-            if (Sledge.Settings.View.DrawBoxDashedLines)
-            {
-                GL.LineStipple(4, 0xAAAA);
-                GL.Enable(EnableCap.LineStipple);
-            }
-
-            GL.Begin(PrimitiveType.LineLoop);
-            GL.Color3(GetRenderBoxColour());
-            Coord(start.DX, start.DY, start.DZ);
-            Coord(end.DX, start.DY, start.DZ);
-            Coord(end.DX, end.DY, start.DZ);
-            Coord(start.DX, end.DY, start.DZ);
-            GL.End();
-            GL.Disable(EnableCap.LineStipple);
-        }
+         //protected virtual void RenderBox(MapViewport viewport, Coordinate start, Coordinate end)
+         //{
+         //    GL.Begin(PrimitiveType.Quads);
+         //    GL.Color4(GetRenderFillColour());
+         //    Coord(start.DX, start.DY, start.DZ);
+         //    Coord(end.DX, start.DY, start.DZ);
+         //    Coord(end.DX, end.DY, start.DZ);
+         //    Coord(start.DX, end.DY, start.DZ);
+         //    GL.End();
+         //
+         //    if (Sledge.Settings.View.DrawBoxDashedLines)
+         //    {
+         //        GL.LineStipple(4, 0xAAAA);
+         //        GL.Enable(EnableCap.LineStipple);
+         //    }
+         //
+         //    GL.Begin(PrimitiveType.LineLoop);
+         //    GL.Color3(GetRenderBoxColour());
+         //    Coord(start.DX, start.DY, start.DZ);
+         //    Coord(end.DX, start.DY, start.DZ);
+         //    Coord(end.DX, end.DY, start.DZ);
+         //    Coord(start.DX, end.DY, start.DZ);
+         //    GL.End();
+         //    GL.Disable(EnableCap.LineStipple);
+         //}
 
         protected void RenderBoxText(MapViewport viewport, Coordinate boxStart, Coordinate boxEnd)
         {
@@ -206,22 +221,6 @@ namespace Sledge.Editor.Tools2.DraggableTool
             _printer.End();
 
             GL.Enable(EnableCap.CullFace);
-        }
-
-        protected virtual void Render2D(MapViewport viewport)
-        {
-            if (State.Action == BoxAction.Idle) return;
-            var box = new Box(State.Start, State.End);
-            var start = viewport.Flatten(box.Start);
-            var end = viewport.Flatten(box.End);
-            if (ShouldDrawBox(viewport))
-            {
-                RenderBox(viewport, start, end);
-            }
-            if (ShouldDrawBoxText(viewport))
-            {
-                RenderBoxText(viewport, start, end);
-            }
         }
 
         #endregion

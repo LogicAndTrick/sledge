@@ -21,5 +21,15 @@ namespace Sledge.Rendering.Scenes.Elements
             CameraFlags = CameraFlags.All;
             RenderFlags = RenderFlags.Polygon;
         }
+
+        public override IEnumerable<LineElement> GetLines()
+        {
+            yield break;
+        }
+
+        public override IEnumerable<FaceElement> GetFaces()
+        {
+            yield return this;
+        }
     }
 }

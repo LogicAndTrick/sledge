@@ -230,7 +230,7 @@ namespace Sledge.Editor.Tools
             Document.PerformAction("Perform Clip", new Clip(objects, plane, _side != ClipSide.Back, _side != ClipSide.Front));
         }
 
-        public override void Render(MapViewport viewport)
+        public void Render(MapViewport viewport)
         {
             if (viewport is MapViewport) Render2D((MapViewport) viewport);
             if (viewport is MapViewport) Render3D((MapViewport) viewport);

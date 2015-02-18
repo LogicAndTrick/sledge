@@ -409,7 +409,7 @@ namespace Sledge.Editor.Tools.TextureTool
             //throw new NotImplementedException();
         }
 
-        public override void Render(MapViewport viewport)
+        public  void Render(MapViewport viewport)
         {
             if (Document.Map.HideFaceMask) return;
 
