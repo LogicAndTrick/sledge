@@ -82,8 +82,11 @@
     <Compile Include="OpenGL\Vertices\VertexFlags.cs" />
     <Compile Include="Cameras\CameraFlags.cs" />
     <Compile Include="Scenes\Elements\Element.cs" />
+    <Compile Include="Scenes\Elements\FaceElement.cs" />
+    <Compile Include="Scenes\Elements\LineElement.cs" />
     <Compile Include="Scenes\Elements\Position.cs" />
     <Compile Include="Scenes\Elements\PositionType.cs" />
+    <Compile Include="Scenes\Elements\PositionVertex.cs" />
     <Compile Include="Scenes\Elements\Unit.cs" />
     <Compile Include="Scenes\Elements\ValueType.cs" />
     <Compile Include="Scenes\Renderables\LightingFlags.cs" />

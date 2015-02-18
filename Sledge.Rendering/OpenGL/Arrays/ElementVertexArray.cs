@@ -3,11 +3,14 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using OpenTK;
+using OpenTK.Graphics.OpenGL;
 using Sledge.Rendering.Cameras;
 using Sledge.Rendering.DataStructures.Models;
 using Sledge.Rendering.Interfaces;
+using Sledge.Rendering.OpenGL.Shaders;
 using Sledge.Rendering.OpenGL.Vertices;
 using Sledge.Rendering.Scenes.Elements;
+using Sledge.Rendering.Scenes.Renderables;
 
 namespace Sledge.Rendering.OpenGL.Arrays
 {
@@ -23,9 +26,63 @@ namespace Sledge.Rendering.OpenGL.Arrays
             _viewport = viewport;
         }
 
+        public void Render(IRenderer renderer, Passthrough shader, IViewport viewport)
+        {
+            var camera = viewport.Camera;
+            const float near = -1000000;
+            const float far = 1000000;
+            var vpMatrix = Matrix4.CreateOrthographicOffCenter(0, 1, 0, 1, near, far);
+
+            var options = camera.RenderOptions;
+
+            shader.Bind();
+            shader.SelectionTransform = Matrix4.Identity;
+            shader.ModelMatrix = Matrix4.Identity;
+            shader.CameraMatrix = Matrix4.Identity;
+            shader.ViewportMatrix = vpMatrix;
+            shader.Orthographic = false;
+            shader.UseAccentColor = false;
+
+            // Render polygons
+            string last = null;
+            foreach (var subset in GetSubsets<string>(FacePolygons).Where(x => x.Instance != null).OrderBy(x => (string)x.Instance))
+            {
+                var mat = (string)subset.Instance;
+                if (mat != last) renderer.Materials.Bind(mat);
+                last = mat;
+
+                Render(PrimitiveType.Triangles, subset);
+            }
+            
+            shader.UseAccentColor = true;
+
+            // Render wireframe
+            foreach (var subset in GetSubsets(FaceWireframe))
+            {
+                Render(PrimitiveType.Lines, subset);
+            }
+
+            shader.Unbind();
+        }
+
         protected override void CreateArray(IEnumerable<Element> data)
         {
             StartSubset(FaceWireframe);
+
+            foreach (var g in data.OfType<FaceElement>().GroupBy(x => x.Material.UniqueIdentifier))
+            {
+                StartSubset(FacePolygons);
+
+                foreach (var face in g)
+                {
+                    PushOffset(face);
+                    var index = PushData(Convert(face));
+                    if (face.RenderFlags.HasFlag(RenderFlags.Polygon)) PushIndex(FacePolygons, index, Triangulate(face.Vertices.Count));
+                    if (face.RenderFlags.HasFlag(RenderFlags.Wireframe)) PushIndex(FaceWireframe, index, Linearise(face.Vertices.Count));
+                }
+
+                PushSubset(FacePolygons, g.Key);
+            }
 
             foreach (var line in data.OfType<LineElement>())
             {
@@ -52,7 +109,20 @@ namespace Sledge.Rendering.OpenGL.Arrays
             if (!cameraFlags.HasFlag(CameraFlags.Perspective)) flags |= VertexFlags.InvisiblePerspective;
             return flags;
         }
-        
+
+        private IEnumerable<SimpleVertex> Convert(FaceElement face)
+        {
+            return face.Vertices.Select(vert => new SimpleVertex
+            {
+                Position = Convert(vert.Position),
+                Texture = new Vector2(vert.TextureU, vert.TextureV),
+                MaterialColor = face.Material.Color.ToAbgr(),
+                AccentColor = face.AccentColor.ToAbgr(),
+                TintColor = Color.White.ToAbgr(),
+                Flags = ConvertVertexFlags(face.CameraFlags)
+            });
+        }
+
         private IEnumerable<SimpleVertex> Convert(LineElement line)
         {
             return line.Vertices.Select(vert => new SimpleVertex
@@ -67,9 +137,18 @@ namespace Sledge.Rendering.OpenGL.Arrays
 
         private Vector3 Convert(Position position)
         {
-            if (position.Type == PositionType.World) return position.Location;
-            if (position.Type == PositionType.Screen) return _viewport.Camera.WorldToScreen(position.Location, _viewport.Control.Width, _viewport.Control.Height);
-            return Vector3.Zero;
+            var loc = position.Location;
+            var norm = position.Normalised;
+
+            if (position.Type == PositionType.World)
+            {
+                // return position.Location;
+                loc = _viewport.Camera.WorldToScreen(position.Location, _viewport.Control.Width, _viewport.Control.Height);
+                norm = false;
+            }
+            if (!norm) loc = new Vector3(loc.X / _viewport.Control.Width, loc.Y / _viewport.Control.Height, loc.Z);
+            //return _viewport.Camera.ScreenToWorld(loc, _viewport.Control.Width, _viewport.Control.Height);
+            return loc;
         }
     }
 }

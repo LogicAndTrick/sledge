@@ -36,9 +36,9 @@ namespace Sledge.Sandbox
             var packages = wp.CreatePackages(new[] { @"C:\Working\Wads", @"D:\Github\sledge\_Resources\WAD" }, new string[0], new string[0], new[] { "halflife" }).ToList();
             var textures = packages.SelectMany(x => x.Items.Values).ToList();
 
-            var mdl = new MdlProvider();
-            var model = mdl.LoadMDL(new NativeFile(@"D:\Github\sledge\_Resources\MDL\HL1_10\barney.mdl"), ModelLoadItems.AllStatic | ModelLoadItems.Animations);
-            model.PreprocessModel();
+            // var mdl = new MdlProvider();
+            // var model = mdl.LoadMDL(new NativeFile(@"D:\Github\sledge\_Resources\MDL\HL1_10\barney.mdl"), ModelLoadItems.AllStatic | ModelLoadItems.Animations);
+            // model.PreprocessModel();
 
             ClientSize = new Size(600, 600);
             
@@ -47,8 +47,8 @@ namespace Sledge.Sandbox
             var engine = new Engine(renderer);
 
             // Get render control/context
-            //var camera = new PerspectiveCamera { Position = new Vector3(70, 70, 70), LookAt = Vector3.Zero };
-            var camera = new OrthographicCamera(OrthographicCamera.OrthographicType.Side) { Zoom = 32 };
+            var camera = new PerspectiveCamera { Position = new Vector3(70, 70, 70), LookAt = Vector3.Zero };
+            //var camera = new OrthographicCamera(OrthographicCamera.OrthographicType.Side) { Zoom = 32 };
             var viewport = engine.CreateViewport(camera);
 
             camera.RenderOptions.RenderFaceWireframe = true;
@@ -99,50 +99,74 @@ namespace Sledge.Sandbox
             var s1 = new Sprite(new Vector3(3, 3, 3), animat, 3, 3);
             //scene.Add(s1);
 
-            {
-                var meshes = model.GetActiveMeshes().Select(x =>
-                {
-                    var verts = x.Vertices.Select(v =>
-                    {
-                        var weight = v.BoneWeightings.ToDictionary(w => w.Bone.BoneIndex, w => w.Weight);
-                        return new MeshVertex(v.Location.ToVector3(), v.Normal.ToVector3(), v.TextureU, v.TextureV, weight);
-                    });
-                    var mat = Material.Texture("Model::Test::" + x.SkinRef);
-                    renderer.Materials.Add(mat);
-                    return new Mesh(mat, verts.ToList());
-                });
-                var transforms = model.GetTransforms().Select(x =>
-                {
-                    return new Matrix4(
-                        x[0], x[1], x[2], x[3],
-                        x[4], x[5], x[6], x[7],
-                        x[8], x[9], x[10], x[11],
-                        x[12], x[13], x[14], x[15]
-                        );
-                });
+            //{
+            //    var meshes = model.GetActiveMeshes().Select(x =>
+            //    {
+            //        var verts = x.Vertices.Select(v =>
+            //        {
+            //            var weight = v.BoneWeightings.ToDictionary(w => w.Bone.BoneIndex, w => w.Weight);
+            //            return new MeshVertex(v.Location.ToVector3(), v.Normal.ToVector3(), v.TextureU, v.TextureV, weight);
+            //        });
+            //        var mat = Material.Texture("Model::Test::" + x.SkinRef);
+            //        renderer.Materials.Add(mat);
+            //        return new Mesh(mat, verts.ToList());
+            //    });
+            //    var transforms = model.GetTransforms().Select(x =>
+            //    {
+            //        return new Matrix4(
+            //            x[0], x[1], x[2], x[3],
+            //            x[4], x[5], x[6], x[7],
+            //            x[8], x[9], x[10], x[11],
+            //            x[12], x[13], x[14], x[15]
+            //            );
+            //    });
 
-                foreach (var t in model.Textures)
-                {
-                    renderer.Textures.Create("Model::Test::" + t.Index, t.Image, t.Width, t.Height, TextureFlags.None);
-                }
+            //    foreach (var t in model.Textures)
+            //    {
+            //        renderer.Textures.Create("Model::Test::" + t.Index, t.Image, t.Width, t.Height, TextureFlags.None);
+            //    }
 
-                var anim = new Animation(15, new List<AnimationFrame> {new AnimationFrame(transforms.ToList())});
-                var modelObj = new Model(meshes.ToList());
-                modelObj.Animation = anim;
-                renderer.Models.Add("Test", modelObj);
-                var scModel = new Rendering.Scenes.Renderables.Model("Test", Vector3.Zero);
-                scene.Add(scModel);
-            }
+            //    var anim = new Animation(15, new List<AnimationFrame> {new AnimationFrame(transforms.ToList())});
+            //    var modelObj = new Model(meshes.ToList());
+            //    modelObj.Animation = anim;
+            //    renderer.Models.Add("Test", modelObj);
+            //    var scModel = new Rendering.Scenes.Renderables.Model("Test", Vector3.Zero);
+            //    scene.Add(scModel);
+            //}
 
             // elements
             var le = new LineElement(Color.Lime, new[]
             {
-                new Position(PositionType.Screen, new Vector3(0, 0, 0)),
-                new Position(PositionType.Screen, new Vector3(1, 1, 0)) {Normalised = true},
-                new Position(PositionType.World, new Vector3(10, 10, 10)),
+                new Position(PositionType.Screen, new Vector3(0, 0, 0)) { Normalised = true },
+                new Position(PositionType.Screen, new Vector3(0.1f, 0.1f, 0)) {Normalised = true},
+                new Position(PositionType.World, new Vector3(50, 0, 0))
             }.ToList());
-
             scene.Add(le);
+
+            var uimat = Material.Flat(Color.FromArgb(128, Color.DeepSkyBlue));
+            renderer.Materials.Add(uimat);
+
+            scene.Add(new FaceElement(uimat, new List<PositionVertex>
+            {
+                new PositionVertex(new Position(PositionType.Screen, new Vector3(25, 25, 0)), 0, 0),
+                new PositionVertex(new Position(PositionType.Screen, new Vector3(150, 25, 0)), 1, 0),
+                new PositionVertex(new Position(PositionType.Screen, new Vector3(150, 150, 0)), 1, 1),
+                new PositionVertex(new Position(PositionType.Screen, new Vector3(25, 150, 0)), 0, 1),
+            }));
+            scene.Add(new FaceElement(uimat, new List<PositionVertex>
+            {
+                new PositionVertex(new Position(PositionType.Screen, new Vector3(50, 50, 0)), 0, 0),
+                new PositionVertex(new Position(PositionType.Screen, new Vector3(100, 50, 0)), 1, 0),
+                new PositionVertex(new Position(PositionType.Screen, new Vector3(100, 100, 0)), 1, 1),
+                new PositionVertex(new Position(PositionType.Screen, new Vector3(50, 100, 0)), 0, 1),
+            }));
+            scene.Add(new FaceElement(uimat, new List<PositionVertex>
+            {
+                new PositionVertex(new Position(PositionType.Screen, new Vector3(75, 75, 0)), 0, 0),
+                new PositionVertex(new Position(PositionType.Screen, new Vector3(200, 75, 0)), 1, 0),
+                new PositionVertex(new Position(PositionType.Screen, new Vector3(200, 200, 0)), 1, 1),
+                new PositionVertex(new Position(PositionType.Screen, new Vector3(75, 200, 0)), 0, 1),
+            }));
 
             Task.Factory.StartNew(() =>
             {

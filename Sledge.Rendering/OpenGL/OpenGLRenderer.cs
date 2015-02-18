@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using Sledge.Common;
@@ -10,6 +11,7 @@ using Sledge.Rendering.Interfaces;
 using Sledge.Rendering.OpenGL.Arrays;
 using Sledge.Rendering.OpenGL.Shaders;
 using Sledge.Rendering.Scenes;
+using Sledge.Rendering.Scenes.Elements;
 
 namespace Sledge.Rendering.OpenGL
 {
@@ -122,6 +124,8 @@ namespace Sledge.Rendering.OpenGL
             }
             if (data.Width != viewport.Control.Width || data.Height != viewport.Control.Height)
             {
+                data.Width = viewport.Control.Width;
+                data.Height = viewport.Control.Height;
                 data.Framebuffer.Size = new Size(viewport.Control.Width, viewport.Control.Height);
             }
         }
@@ -142,6 +146,7 @@ namespace Sledge.Rendering.OpenGL
             InitialiseRenderer();
             InitialiseViewport(viewport, vpData);
             scData.Array.ApplyChanges();
+            vpData.ElementArray.Update(scData.Array.Elements);
             
             // Set up FBO
             vpData.Framebuffer.Bind();
@@ -150,6 +155,7 @@ namespace Sledge.Rendering.OpenGL
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
             scData.Array.Render(this, _shaderProgram, _modelShaderProgram, viewport);
+            vpData.ElementArray.Render(this, _shaderProgram, viewport);
 
             // Blit FBO
             vpData.Framebuffer.Unbind();
@@ -161,7 +167,7 @@ namespace Sledge.Rendering.OpenGL
         {
             if (!_viewportData.ContainsKey(viewport))
             {
-                var data = new ViewportData(new Framebuffer(viewport.Control.Width, viewport.Control.Height));
+                var data = new ViewportData(viewport);
                 _viewportData.Add(viewport, data);
             }
             return _viewportData[viewport];
@@ -177,18 +183,27 @@ namespace Sledge.Rendering.OpenGL
             return _sceneData[scene];
         }
 
-        private class ViewportData
+        private class ViewportData : IDisposable
         {
-            public Framebuffer Framebuffer { get; set; }
+            public Framebuffer Framebuffer { get; private set; }
+            public ElementVertexArray ElementArray { get; private set; }
             public bool Initialised { get; set; }
             public int Width { get; set; }
             public int Height { get; set; }
 
-            public ViewportData(Framebuffer framebuffer)
+            public ViewportData(IViewport viewport)
             {
-                Framebuffer = framebuffer;
-                Width = Height = 0;
+                Width = viewport.Control.Width;
+                Height = viewport.Control.Height;
+                Framebuffer = new Framebuffer(Width, Height);
+                ElementArray = new ElementVertexArray(viewport, new Element[0]);
                 Initialised = false;
+            }
+
+            public void Dispose()
+            {
+                Framebuffer.Dispose();
+                ElementArray.Dispose();
             }
         }
 

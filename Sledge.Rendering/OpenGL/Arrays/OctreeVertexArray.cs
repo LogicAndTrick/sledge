@@ -5,6 +5,7 @@ using Sledge.Rendering.DataStructures;
 using Sledge.Rendering.Interfaces;
 using Sledge.Rendering.OpenGL.Shaders;
 using Sledge.Rendering.Scenes;
+using Sledge.Rendering.Scenes.Elements;
 using Sledge.Rendering.Scenes.Renderables;
 
 namespace Sledge.Rendering.OpenGL.Arrays
@@ -18,6 +19,7 @@ namespace Sledge.Rendering.OpenGL.Arrays
         public Octree<RenderableObject> Octree { get; private set; }
         public List<PartitionedVertexArray> Partitions { get; private set; }
         public RenderableVertexArray Spare { get; private set; }
+        public List<Element> Elements { get; private set; }
 
         public OctreeVertexArray(Scene scene, float worldSize = 32768, int limit = 100)
         {
@@ -27,12 +29,12 @@ namespace Sledge.Rendering.OpenGL.Arrays
             Octree = new Octree<RenderableObject>(worldSize, limit);
             Partitions = new List<PartitionedVertexArray>();
             Spare = null;
+            Elements = new List<Element>();
             Rebuild();
         }
 
         public void ApplyChanges()
         {
-
             if (!_scene.HasChanges) return;
 
             SceneChangeSet changes;
@@ -68,6 +70,11 @@ namespace Sledge.Rendering.OpenGL.Arrays
                     part.DeletePartial(removeRenderable);
                 }
             }
+
+            // Update element list
+            var addElement = changes.Added.OfType<Element>();
+            var removeElement = changes.Removed.OfType<Element>();
+            Elements = Elements.Except(removeElement).Union(addElement).ToList();
         }
 
         public void Rebuild()
