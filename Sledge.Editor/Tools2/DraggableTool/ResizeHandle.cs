@@ -17,11 +17,11 @@ namespace Sledge.Editor.Tools2.DraggableTool
             switch (handle)
             {
                 case ResizeHandle.TopLeft:
-                    return Cursors.SizeNESW;
+                    return Cursors.SizeNWSE;
                 case ResizeHandle.Top:
                     return Cursors.SizeNS;
                 case ResizeHandle.TopRight:
-                    return Cursors.SizeNWSE;
+                    return Cursors.SizeNESW;
                 case ResizeHandle.Left:
                     return Cursors.SizeWE;
                 case ResizeHandle.Center:
@@ -29,11 +29,11 @@ namespace Sledge.Editor.Tools2.DraggableTool
                 case ResizeHandle.Right:
                     return Cursors.SizeWE;
                 case ResizeHandle.BottomLeft:
-                    return Cursors.SizeNWSE;
+                    return Cursors.SizeNESW;
                 case ResizeHandle.Bottom:
                     return Cursors.SizeNS;
                 case ResizeHandle.BottomRight:
-                    return Cursors.SizeNESW;
+                    return Cursors.SizeNWSE;
                 default:
                     throw new ArgumentOutOfRangeException("handle");
             }

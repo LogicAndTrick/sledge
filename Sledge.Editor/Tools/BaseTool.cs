@@ -8,6 +8,7 @@ using Sledge.Editor.Rendering;
 using Sledge.Editor.UI;
 using Sledge.Extensions;
 using Sledge.Rendering;
+using Sledge.Rendering.Interfaces;
 using Sledge.Rendering.Scenes;
 using Sledge.Rendering.Scenes.Elements;
 using Sledge.Settings;
@@ -249,7 +250,7 @@ namespace Sledge.Editor.Tools
 
         public virtual void UpdateFrame(MapViewport viewport, Frame frame)
         {
-            Validate();
+            Validate(viewport);
             if (viewport.Is2D) UpdateFrame(viewport, viewport.Viewport.Camera as OrthographicCamera, frame);
             if (viewport.Is3D) UpdateFrame(viewport, viewport.Viewport.Camera as PerspectiveCamera, frame);
         }
@@ -308,7 +309,7 @@ namespace Sledge.Editor.Tools
             _invalidated = true;
         }
 
-        private void Validate()
+        private void Validate(MapViewport viewport)
         {
             if ((UseValidation && !_invalidated) || Document == null) return;
             _invalidated = false;
@@ -316,11 +317,33 @@ namespace Sledge.Editor.Tools
             foreach (var o in _currentObjects) Document.Scene.Remove(o);
 
             _currentObjects = GetSceneObjects().ToList();
+            if (viewport.Is3D)
+            {
+                var vpObjects = GetViewportElements(viewport, viewport.Viewport.Camera as PerspectiveCamera).ToList();
+                foreach (var o in vpObjects) o.Viewport = viewport.Viewport;
+                _currentObjects.AddRange(vpObjects);
+            }
+            else if (viewport.Is2D)
+            {
+                var vpObjects = GetViewportElements(viewport, viewport.Viewport.Camera as OrthographicCamera).ToList();
+                foreach (var o in vpObjects) o.Viewport = viewport.Viewport;
+                _currentObjects.AddRange(vpObjects);
+            }
 
             foreach (var o in _currentObjects) Document.Scene.Add(o);
         }
 
         protected virtual IEnumerable<SceneObject> GetSceneObjects()
+        {
+            yield break;
+        }
+
+        protected virtual IEnumerable<Element> GetViewportElements(MapViewport viewport, PerspectiveCamera camera)
+        {
+            yield break;
+        }
+
+        protected virtual IEnumerable<Element> GetViewportElements(MapViewport viewport, OrthographicCamera camera)
         {
             yield break;
         }

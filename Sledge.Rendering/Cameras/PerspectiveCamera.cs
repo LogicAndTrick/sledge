@@ -140,6 +140,16 @@ namespace Sledge.Rendering.Cameras
             return 0;
         }
 
+        public override Vector3 Flatten(Vector3 notFlat)
+        {
+            return notFlat;
+        }
+
+        public override Vector3 Expand(Vector3 flat)
+        {
+            return flat;
+        }
+
         public float GetRotation()
         {
             var temp = (LookAt - Position);

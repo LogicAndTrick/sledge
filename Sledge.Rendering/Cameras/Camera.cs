@@ -23,6 +23,9 @@ namespace Sledge.Rendering.Cameras
         public abstract float UnitsToPixels(float units);
         public abstract float PixelsToUnits(float pixels);
 
+        public abstract Vector3 Flatten(Vector3 notFlat);
+        public abstract Vector3 Expand(Vector3 flat);
+
         protected abstract string Serialise();
 
         public static string Serialise(Camera camera)

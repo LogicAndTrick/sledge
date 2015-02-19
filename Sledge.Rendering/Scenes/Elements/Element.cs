@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using OpenTK;
 using Sledge.Rendering.Cameras;
+using Sledge.Rendering.Interfaces;
 
 namespace Sledge.Rendering.Scenes.Elements
 {
@@ -21,6 +22,8 @@ namespace Sledge.Rendering.Scenes.Elements
                 OnPropertyChanged("RenderCritical");
             }
         }
+
+        public IViewport Viewport { get; set; }
 
         public abstract IEnumerable<LineElement> GetLines();
         public abstract IEnumerable<FaceElement> GetFaces();

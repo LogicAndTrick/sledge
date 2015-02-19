@@ -98,20 +98,21 @@ namespace Sledge.Rendering.Cameras
         public override Vector3 ScreenToWorld(Vector3 screen, int width, int height)
         {
             var cs = new Vector3(width / 2f, height / 2f, 0);
-            return Position + ((screen - cs) / Zoom);
+            var flat = Position + ((screen - cs) / Zoom);
+            return Expand(flat);
         }
 
         public override Vector3 WorldToScreen(Vector3 world, int width, int height)
         {
+            var flat = Flatten(world);
             var cs = new Vector3(width / 2f, height / 2f, 0);
-            return cs + ((world - Position) * Zoom);
+            return cs + ((flat - Position) * Zoom);
         }
 
         public override Line CastRayFromScreen(Vector3 screen, int width, int height)
         {
             screen = new Vector3(screen.X, screen.Y, 0);
-            var cs = new Vector3(width / 2f, height / 2f, 0);
-            var world = Position + ((screen - cs) / Zoom);
+            var world = ScreenToWorld(screen, width, height);
             return null; // todo
         }
 
@@ -123,6 +124,36 @@ namespace Sledge.Rendering.Cameras
         public override float PixelsToUnits(float pixels)
         {
             return pixels / Zoom;
+        }
+
+        public override Vector3 Flatten(Vector3 notFlat)
+        {
+            switch (Type)
+            {
+                case OrthographicType.Top:
+                    return new Vector3(notFlat.X, notFlat.Y, 0);
+                case OrthographicType.Front:
+                    return new Vector3(notFlat.Y, notFlat.Z, 0);
+                case OrthographicType.Side:
+                    return new Vector3(notFlat.X, notFlat.Z, 0);
+                default:
+                    throw new ArgumentOutOfRangeException("Type");
+            }
+        }
+
+        public override Vector3 Expand(Vector3 flat)
+        {
+            switch (Type)
+            {
+                case OrthographicType.Top:
+                    return new Vector3(flat.X, flat.Y, 0);
+                case OrthographicType.Front:
+                    return new Vector3(0, flat.X, flat.Y);
+                case OrthographicType.Side:
+                    return new Vector3(flat.X, 0, flat.Y);
+                default:
+                    throw new ArgumentOutOfRangeException("Type");
+            }
         }
 
         protected override string Serialise()

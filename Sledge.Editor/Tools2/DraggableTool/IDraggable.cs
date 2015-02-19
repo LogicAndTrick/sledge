@@ -3,6 +3,7 @@ using Sledge.DataStructures.Geometric;
 using Sledge.Editor.Rendering;
 using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Scenes;
+using Sledge.Rendering.Scenes.Elements;
 
 namespace Sledge.Editor.Tools2.DraggableTool
 {
@@ -16,5 +17,7 @@ namespace Sledge.Editor.Tools2.DraggableTool
         void Drag(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Coordinate lastPosition, Coordinate position);
         void EndDrag(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Coordinate position);
         IEnumerable<SceneObject> GetSceneObjects();
+        IEnumerable<Element> GetViewportElements(MapViewport viewport, PerspectiveCamera camera);
+        IEnumerable<Element> GetViewportElements(MapViewport viewport, OrthographicCamera camera);
     }
 }

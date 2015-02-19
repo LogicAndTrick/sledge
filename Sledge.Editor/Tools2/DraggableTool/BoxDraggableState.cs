@@ -134,6 +134,16 @@ namespace Sledge.Editor.Tools2.DraggableTool
             //}
         }
 
+        public IEnumerable<Element> GetViewportElements(MapViewport viewport, PerspectiveCamera camera)
+        {
+            yield break;
+        }
+
+        public IEnumerable<Element> GetViewportElements(MapViewport viewport, OrthographicCamera camera)
+        {
+            yield break;
+        }
+
         #region Rendering
 
         protected virtual bool ShouldDrawBox()

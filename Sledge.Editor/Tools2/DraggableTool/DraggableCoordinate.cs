@@ -6,6 +6,7 @@ using Sledge.DataStructures.Geometric;
 using Sledge.Editor.Rendering;
 using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Scenes;
+using Sledge.Rendering.Scenes.Elements;
 
 namespace Sledge.Editor.Tools2.DraggableTool
 {
@@ -66,6 +67,16 @@ namespace Sledge.Editor.Tools2.DraggableTool
         public IEnumerable<SceneObject> GetSceneObjects()
         {
             // todo 
+            yield break;
+        }
+
+        public IEnumerable<Element> GetViewportElements(MapViewport viewport, PerspectiveCamera camera)
+        {
+            yield break;
+        }
+
+        public IEnumerable<Element> GetViewportElements(MapViewport viewport, OrthographicCamera camera)
+        {
             yield break;
         }
 

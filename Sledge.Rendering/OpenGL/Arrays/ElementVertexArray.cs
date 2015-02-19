@@ -31,15 +31,15 @@ namespace Sledge.Rendering.OpenGL.Arrays
             var camera = viewport.Camera;
             const float near = -1000000;
             const float far = 1000000;
-            var vpMatrix = Matrix4.CreateOrthographicOffCenter(0, 1, 0, 1, near, far);
+            var vpMatrix = Matrix4.CreateOrthographicOffCenter(0, viewport.Control.Width, 0, viewport.Control.Height, near, far);
 
             var options = camera.RenderOptions;
 
             shader.Bind();
             shader.SelectionTransform = Matrix4.Identity;
-            shader.ModelMatrix = camera.GetModelMatrix();
-            shader.CameraMatrix = Matrix4.Identity; // camera.GetCameraMatrix();
-            shader.ViewportMatrix = vpMatrix; // camera.GetViewportMatrix(viewport.Control.Width, viewport.Control.Height);
+            shader.ModelMatrix = Matrix4.Identity;
+            shader.CameraMatrix = Matrix4.Identity;
+            shader.ViewportMatrix = vpMatrix;
             shader.Orthographic = false;
             shader.UseAccentColor = false;
 
@@ -69,7 +69,7 @@ namespace Sledge.Rendering.OpenGL.Arrays
         {
             StartSubset(FaceWireframe);
 
-            var list = data.ToList();
+            var list = data.Where(x => x.Viewport == null || x.Viewport == _viewport).ToList();
 
             foreach (var g in list.SelectMany(x => x.GetFaces()).GroupBy(x => x.Material.UniqueIdentifier))
             {
@@ -139,18 +139,16 @@ namespace Sledge.Rendering.OpenGL.Arrays
 
         private Vector3 Convert(Position position)
         {
-            var loc = position.Location;
-            var norm = position.Normalised;
-
             if (position.Type == PositionType.World)
             {
-                // return position.Location;
-                loc = _viewport.Camera.WorldToScreen(position.Location, _viewport.Control.Width, _viewport.Control.Height);
-                norm = false;
+                return _viewport.Camera.WorldToScreen(position.Location, _viewport.Control.Width, _viewport.Control.Height) + position.Offset;
             }
-            if (!norm) loc = new Vector3(loc.X / _viewport.Control.Width, loc.Y / _viewport.Control.Height, loc.Z);
-            //return _viewport.Camera.ScreenToWorld(loc, _viewport.Control.Width, _viewport.Control.Height);
-            return loc;
+            else if (position.Type == PositionType.Screen)
+            {
+                if (position.Normalised) return new Vector3(position.Location.X * _viewport.Control.Width, position.Location.Y * _viewport.Control.Height, 0) + position.Offset;
+                else return position.Location + position.Offset;
+            }
+            return Vector3.Zero;
         }
     }
 }

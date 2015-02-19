@@ -364,12 +364,16 @@ namespace Sledge.Editor.Rendering
 
         public Coordinate ScreenToWorld(Coordinate location)
         {
-            return Viewport.Camera.ScreenToWorld(location.ToVector3(), Width, Height).ToCoordinate();
+            // todo this is done like this for compatibility, update the references if possible...
+            var s2w = Viewport.Camera.ScreenToWorld(location.ToVector3(), Width, Height);
+            return Viewport.Camera.Flatten(s2w).ToCoordinate();
         }
 
         public Coordinate WorldToScreen(Coordinate location)
         {
-            return Viewport.Camera.WorldToScreen(location.ToVector3(), Width, Height).ToCoordinate();
+            // todo same as S2W
+            var exp = Viewport.Camera.Expand(location.ToVector3());
+            return Viewport.Camera.WorldToScreen(exp, Width, Height).ToCoordinate();
         }
 
         /// <summary>

@@ -2,11 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
+using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using Sledge.DataStructures.Geometric;
+using Sledge.Editor.Extensions;
 using Sledge.Editor.Rendering;
 using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Scenes;
+using Sledge.Rendering.Scenes.Elements;
 
 namespace Sledge.Editor.Tools2.DraggableTool
 {
@@ -67,6 +70,58 @@ namespace Sledge.Editor.Tools2.DraggableTool
             }
             var offset = Coordinate.One * radius;
             return new Box(center - offset, center + offset);
+        }
+
+        protected Position GetPosition(MapViewport viewport, OrthographicCamera camera)
+        {
+            const int distance = 6;
+            var start = camera.Flatten(BoxState.Start.ToVector3());
+            var end = camera.Flatten(BoxState.End.ToVector3());
+            var mid = (start + end) / 2;
+            Vector3 center;
+            Vector3 offset;
+            switch (Handle)
+            {
+                case ResizeHandle.TopLeft:
+                    center = new Vector3(start.X, end.Y, 0);
+                    offset = new Vector3(-distance, distance, 0);
+                    break;
+                case ResizeHandle.Top:
+                    center = new Vector3(mid.X, end.Y, 0);
+                    offset = new Vector3(0, distance, 0);
+                    break;
+                case ResizeHandle.TopRight:
+                    center = new Vector3(end.X, end.Y, 0);
+                    offset = new Vector3(distance, distance, 0);
+                    break;
+                case ResizeHandle.Left:
+                    center = new Vector3(start.X, mid.Y, 0);
+                    offset = new Vector3(-distance, 0, 0);
+                    break;
+                case ResizeHandle.Center:
+                    center = mid;
+                    offset = Vector3.Zero;
+                    break;
+                case ResizeHandle.Right:
+                    center = new Vector3(end.X, mid.Y, 0);
+                    offset = new Vector3(distance, 0, 0);
+                    break;
+                case ResizeHandle.BottomLeft:
+                    center = new Vector3(start.X, start.Y, 0);
+                    offset = new Vector3(-distance, -distance, 0);
+                    break;
+                case ResizeHandle.Bottom:
+                    center = new Vector3(mid.X, start.Y, 0);
+                    offset = new Vector3(0, -distance, 0);
+                    break;
+                case ResizeHandle.BottomRight:
+                    center = new Vector3(end.X, start.Y, 0);
+                    offset = new Vector3(distance, -distance, 0);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+            return new Position(PositionType.World, camera.Expand(center)) { Offset = offset };
         }
 
         protected virtual void SetCursorForHandle(MapViewport viewport, ResizeHandle handle)
@@ -149,10 +204,20 @@ namespace Sledge.Editor.Tools2.DraggableTool
             GL.Vertex3((double) x, (double) y, (double) z);
         }
 
-        public IEnumerable<SceneObject> GetSceneObjects()
+        public virtual IEnumerable<SceneObject> GetSceneObjects()
         {
-            // todo 
             yield break;
+        }
+
+        public virtual IEnumerable<Element> GetViewportElements(MapViewport viewport, PerspectiveCamera camera)
+        {
+            yield break;
+        }
+
+        public virtual IEnumerable<Element> GetViewportElements(MapViewport viewport, OrthographicCamera camera)
+        {
+            var pos = GetPosition(viewport, camera);
+            yield return new HandleElement(HandleElement.HandleType.Square, pos, 4);
         }
 
         public virtual void Render(MapViewport viewport, OrthographicCamera camera)

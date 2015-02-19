@@ -154,11 +154,43 @@ namespace Sledge.Editor.Tools2.DraggableTool
             }
             if (CurrentDraggable != null && foundActive) list.AddRange(CurrentDraggable.GetSceneObjects());
 
-            list.Add(new LineElement(Color.Red, new List<Position>
+            return list;
+        }
+
+        protected override IEnumerable<Element> GetViewportElements(MapViewport viewport, PerspectiveCamera camera)
+        {
+            var list = new List<Element>();
+            var foundActive = false;
+            foreach (var state in States)
             {
-                new Position(PositionType.Screen, new Vector3(0, 0, 0)),
-                new Position(PositionType.Screen, new Vector3(50, 50, 0))
-            }) { CameraFlags = CameraFlags.All});
+                foreach (var draggable in state.GetDraggables())
+                {
+                    if (draggable == CurrentDraggable) foundActive = true;
+                    else list.AddRange(draggable.GetViewportElements(viewport, camera));
+                }
+                if (state == CurrentDraggable) foundActive = true;
+                else list.AddRange(state.GetViewportElements(viewport, camera));
+            }
+            if (CurrentDraggable != null && foundActive) list.AddRange(CurrentDraggable.GetViewportElements(viewport, camera));
+
+            return list;
+        }
+
+        protected override IEnumerable<Element> GetViewportElements(MapViewport viewport, OrthographicCamera camera)
+        {
+            var list = new List<Element>();
+            var foundActive = false;
+            foreach (var state in States)
+            {
+                foreach (var draggable in state.GetDraggables())
+                {
+                    if (draggable == CurrentDraggable) foundActive = true;
+                    else list.AddRange(draggable.GetViewportElements(viewport, camera));
+                }
+                if (state == CurrentDraggable) foundActive = true;
+                else list.AddRange(state.GetViewportElements(viewport, camera));
+            }
+            if (CurrentDraggable != null && foundActive) list.AddRange(CurrentDraggable.GetViewportElements(viewport, camera));
 
             return list;
         }
