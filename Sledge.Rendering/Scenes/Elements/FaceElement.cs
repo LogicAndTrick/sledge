@@ -16,10 +16,11 @@ namespace Sledge.Rendering.Scenes.Elements
         public Color AccentColor { get; set; }
         public List<PositionVertex> Vertices { get; set; }
 
-        public FaceElement(Material material, List<PositionVertex> vertices)
+        public FaceElement(PositionType type, Material material, IEnumerable<PositionVertex> vertices)
+            : base(type)
         {
             Material = material;
-            Vertices = vertices;
+            Vertices = vertices.ToList();
             AccentColor = material.Color;
             CameraFlags = CameraFlags.All;
             RenderFlags = RenderFlags.Polygon;
@@ -53,9 +54,9 @@ namespace Sledge.Rendering.Scenes.Elements
         public int Radius { get; set; }
         public HandleType Type { get; set; }
 
-        public HandleElement(HandleType type, Position position, int radius)
+        public HandleElement(PositionType pType, HandleType hType, Position position, int radius) : base(pType)
         {
-            Type = type;
+            Type = hType;
             Position = position;
             Radius = radius;
             LineColor = Color.Black;
@@ -69,12 +70,12 @@ namespace Sledge.Rendering.Scenes.Elements
 
             var verts = GetVertices().ToList();
             verts.Add(verts[0]); // loop back
-            yield return new LineElement(LineColor, verts);
+            yield return new LineElement(PositionType, LineColor, verts);
         }
 
         public override IEnumerable<FaceElement> GetFaces()
         {
-            yield return new FaceElement(Material.Flat(Color), GetVertices().Select(x => new PositionVertex(x, 0, 0)).ToList());
+            yield return new FaceElement(PositionType, Material.Flat(Color), GetVertices().Select(x => new PositionVertex(x, 0, 0)));
         }
 
         private IEnumerable<Position> GetVertices()
@@ -113,7 +114,7 @@ namespace Sledge.Rendering.Scenes.Elements
 
         private Position Offset(float x, float y)
         {
-            return new Position(Position.Type, Position.Location) {Offset = Position.Offset + new Vector3(x, y, 0)};
+            return new Position(Position.Location) {Offset = Position.Offset + new Vector3(x, y, 0)};
         }
     }
 }

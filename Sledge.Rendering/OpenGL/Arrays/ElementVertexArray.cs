@@ -16,8 +16,11 @@ namespace Sledge.Rendering.OpenGL.Arrays
 {
     public class ElementVertexArray : VertexArray<Element, SimpleVertex>
     {
-        private const int FacePolygons = 0;
-        private const int FaceWireframe = 1;
+        private const int WorldFacePolygons = 0;
+        private const int WorldFaceWireframe = 1;
+
+        private const int ScreenFacePolygons = 10;
+        private const int ScreenFaceWireframe = 11;
 
         private readonly IViewport _viewport;
 
@@ -36,16 +39,36 @@ namespace Sledge.Rendering.OpenGL.Arrays
             var options = camera.RenderOptions;
 
             shader.Bind();
+            
+            shader.SelectionTransform = Matrix4.Identity;
+            shader.ModelMatrix = camera.GetModelMatrix();
+            shader.CameraMatrix = camera.GetCameraMatrix();
+            shader.ViewportMatrix = camera.GetViewportMatrix(viewport.Control.Width, viewport.Control.Height);
+            shader.Orthographic = camera.Flags.HasFlag(CameraFlags.Orthographic);
+            shader.UseAccentColor = false;
+
+            RenderPositionType(renderer, shader, PositionType.World);
+
             shader.SelectionTransform = Matrix4.Identity;
             shader.ModelMatrix = Matrix4.Identity;
             shader.CameraMatrix = Matrix4.Identity;
             shader.ViewportMatrix = vpMatrix;
-            shader.Orthographic = false;
+            shader.Orthographic = camera.Flags.HasFlag(CameraFlags.Orthographic);
             shader.UseAccentColor = false;
+
+            RenderPositionType(renderer, shader, PositionType.Screen);
+
+            shader.Unbind();
+        }
+
+        private void RenderPositionType(IRenderer renderer, Passthrough shader, PositionType type)
+        {
+            var wireframeId = type == PositionType.Screen ? ScreenFaceWireframe : WorldFaceWireframe;
+            var polygonId = type == PositionType.Screen ? ScreenFacePolygons : WorldFacePolygons;
 
             // Render polygons
             string last = null;
-            foreach (var subset in GetSubsets<string>(FacePolygons).Where(x => x.Instance != null).OrderBy(x => (string)x.Instance))
+            foreach (var subset in GetSubsets<string>(polygonId).Where(x => x.Instance != null).OrderBy(x => (string)x.Instance))
             {
                 var mat = (string)subset.Instance;
                 if (mat != last) renderer.Materials.Bind(mat);
@@ -53,46 +76,54 @@ namespace Sledge.Rendering.OpenGL.Arrays
 
                 Render(PrimitiveType.Triangles, subset);
             }
-            
+
             shader.UseAccentColor = true;
 
             // Render wireframe
-            foreach (var subset in GetSubsets(FaceWireframe))
+            foreach (var subset in GetSubsets(wireframeId))
             {
                 Render(PrimitiveType.Lines, subset);
             }
-
-            shader.Unbind();
         }
 
         protected override void CreateArray(IEnumerable<Element> data)
         {
-            StartSubset(FaceWireframe);
+            var d = data.ToList();
+            CreatePositionTypeArray(d, PositionType.Screen);
+            CreatePositionTypeArray(d, PositionType.World);
+        }
 
-            var list = data.Where(x => x.Viewport == null || x.Viewport == _viewport).ToList();
+        private void CreatePositionTypeArray(IEnumerable<Element> data, PositionType type)
+        {
+            var wireframeId = type == PositionType.Screen ? ScreenFaceWireframe : WorldFaceWireframe;
+            var polygonId = type == PositionType.Screen ? ScreenFacePolygons : WorldFacePolygons;
+
+            StartSubset(wireframeId);
+
+            var list = data.Where(x => x.PositionType == type).Where(x => x.Viewport == null || x.Viewport == _viewport).ToList();
 
             foreach (var g in list.SelectMany(x => x.GetFaces()).GroupBy(x => x.Material.UniqueIdentifier))
             {
-                StartSubset(FacePolygons);
+                StartSubset(polygonId);
 
                 foreach (var face in g)
                 {
                     PushOffset(face);
                     var index = PushData(Convert(face));
-                    if (face.RenderFlags.HasFlag(RenderFlags.Polygon)) PushIndex(FacePolygons, index, Triangulate(face.Vertices.Count));
-                    if (face.RenderFlags.HasFlag(RenderFlags.Wireframe)) PushIndex(FaceWireframe, index, Linearise(face.Vertices.Count));
+                    if (face.RenderFlags.HasFlag(RenderFlags.Polygon)) PushIndex(polygonId, index, Triangulate(face.Vertices.Count));
+                    if (face.RenderFlags.HasFlag(RenderFlags.Wireframe)) PushIndex(wireframeId, index, Linearise(face.Vertices.Count));
                 }
 
-                PushSubset(FacePolygons, g.Key);
+                PushSubset(polygonId, g.Key);
             }
 
             foreach (var line in list.SelectMany(x => x.GetLines()))
             {
                 var index = PushData(Convert(line));
-                PushIndex(FaceWireframe, index, Line(line.Vertices.Count));
+                PushIndex(wireframeId, index, Line(line.Vertices.Count));
             }
 
-            PushSubset(FaceWireframe, (object) null);
+            PushSubset(wireframeId, (object) null);
         }
 
         private IEnumerable<uint> Line(int num)
@@ -116,7 +147,7 @@ namespace Sledge.Rendering.OpenGL.Arrays
         {
             return face.Vertices.Select(vert => new SimpleVertex
             {
-                Position = Convert(vert.Position),
+                Position = Convert(vert.Position, face.PositionType),
                 Texture = new Vector2(vert.TextureU, vert.TextureV),
                 MaterialColor = face.Material.Color.ToAbgr(),
                 AccentColor = face.AccentColor.ToAbgr(),
@@ -129,7 +160,7 @@ namespace Sledge.Rendering.OpenGL.Arrays
         {
             return line.Vertices.Select(vert => new SimpleVertex
             {
-                Position = Convert(vert),
+                Position = Convert(vert, line.PositionType),
                 MaterialColor = line.Color.ToAbgr(),
                 AccentColor = line.Color.ToAbgr(),
                 TintColor = Color.White.ToAbgr(),
@@ -137,13 +168,14 @@ namespace Sledge.Rendering.OpenGL.Arrays
             });
         }
 
-        private Vector3 Convert(Position position)
+        private Vector3 Convert(Position position, PositionType type)
         {
-            if (position.Type == PositionType.World)
+            if (type == PositionType.World)
             {
-                return _viewport.Camera.WorldToScreen(position.Location, _viewport.Control.Width, _viewport.Control.Height) + position.Offset;
+                var e = _viewport.Camera.Expand(position.Offset);
+                return position.Location + new Vector3(_viewport.Camera.PixelsToUnits(e.X), _viewport.Camera.PixelsToUnits(e.Y), _viewport.Camera.PixelsToUnits(e.Z));
             }
-            else if (position.Type == PositionType.Screen)
+            else if (type == PositionType.Screen)
             {
                 if (position.Normalised) return new Vector3(position.Location.X * _viewport.Control.Width, position.Location.Y * _viewport.Control.Height, 0) + position.Offset;
                 else return position.Location + position.Offset;

@@ -10,7 +10,7 @@ namespace Sledge.Rendering.Scenes.Elements
         public Color Color { get; private set; }
         public List<Position> Vertices { get; set; }
 
-        public LineElement(Color color, List<Position> vertices)
+        public LineElement(PositionType type, Color color, List<Position> vertices) : base(type)
         {
             Color = color;
             Vertices = vertices;

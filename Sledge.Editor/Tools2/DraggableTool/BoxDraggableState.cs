@@ -11,6 +11,7 @@ using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Materials;
 using Sledge.Rendering.Scenes;
 using Sledge.Rendering.Scenes.Elements;
+using Sledge.Rendering.Scenes.Renderables;
 using EnableCap = OpenTK.Graphics.OpenGL.EnableCap;
 using GL = OpenTK.Graphics.OpenGL.GL;
 
@@ -123,9 +124,17 @@ namespace Sledge.Editor.Tools2.DraggableTool
             {
                 foreach (var face in box.GetBoxFaces())
                 {
-                    yield return new FaceElement(
-                        Material.Flat(GetRenderFillColour()),
-                        face.Select(x => new PositionVertex(new Position(PositionType.World, x.ToVector3()), 0, 0)).ToList());
+                    var verts = face.Select(x => new PositionVertex(new Position(x.ToVector3()), 0, 0)).ToList();
+                    yield return new FaceElement(PositionType.World, Material.Flat(GetRenderFillColour()), verts)
+                    {
+                        RenderFlags = RenderFlags.Polygon,
+                        CameraFlags = CameraFlags.Orthographic
+                    };
+                    yield return new FaceElement(PositionType.World, Material.Flat(GetRenderBoxColour()), verts)
+                    {
+                        RenderFlags = RenderFlags.Wireframe,
+                        AccentColor = GetRenderBoxColour(),
+                    };
                 }
             }
             //if (ShouldDrawBoxText(viewport))

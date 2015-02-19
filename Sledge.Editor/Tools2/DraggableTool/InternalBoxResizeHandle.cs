@@ -52,38 +52,6 @@ namespace Sledge.Editor.Tools2.DraggableTool
             }
         }
 
-        protected Box GetWorldRectangle(MapViewport viewport, OrthographicCamera camera)
-        {
-            var start = viewport.Flatten(BoxState.Start);
-            var end = viewport.Flatten(BoxState.End);
-            var box = new Box(start, end);
-            var wid = Math.Min(box.Width / 10, 20);
-            var len = Math.Min(box.Length / 10, 20);
-            switch (Handle)
-            {
-                case ResizeHandle.TopLeft:
-                    return new Box(new Coordinate(start.X, end.Y - len, 0), new Coordinate(start.X + wid, end.Y, 0));
-                case ResizeHandle.Top:
-                    return new Box(new Coordinate(start.X, end.Y - len, 0), end);
-                case ResizeHandle.TopRight:
-                    return new Box(new Coordinate(end.X - wid, end.Y - len, 0), new Coordinate(end.X, end.Y, 0));
-                case ResizeHandle.Left:
-                    return new Box(start, new Coordinate(start.X + wid, end.Y, 0));
-                case ResizeHandle.Center:
-                    return box;
-                case ResizeHandle.Right:
-                    return new Box(new Coordinate(end.X - wid, start.Y, 0), end);
-                case ResizeHandle.BottomLeft:
-                    return new Box(new Coordinate(start.X, start.Y, 0), new Coordinate(start.X + wid, start.Y + len, 0));
-                case ResizeHandle.Bottom:
-                    return new Box(start, new Coordinate(end.X, start.Y + len, 0));
-                case ResizeHandle.BottomRight:
-                    return new Box(new Coordinate(end.X - wid, start.Y, 0), new Coordinate(end.X, start.Y + len, 0));
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-        }
-
         protected override Coordinate GetResizeOrigin(MapViewport viewport, Coordinate position)
         {
             var st = viewport.Flatten(BoxState.Start);
@@ -94,13 +62,14 @@ namespace Sledge.Editor.Tools2.DraggableTool
 
         public override IEnumerable<Element> GetViewportElements(MapViewport viewport, OrthographicCamera camera)
         {
-            if (HighlightedViewport != viewport) return;
+            if (HighlightedViewport != viewport) yield break;
 
-            var box = GetWorldRectangle(viewport, camera);
+            var box = GetRectangle(viewport, camera);
             box = new Box(viewport.Expand(box.Start), viewport.Expand(box.End));
             foreach (var face in box.GetBoxFaces())
             {
-                yield return new FaceElement(Material.Flat(State.FillColour), face.Select(x => new PositionVertex(new Position(PositionType.World, x.ToVector3()), 0, 0)).ToList())
+                yield return new FaceElement(PositionType.World, Material.Flat(State.FillColour),
+                    face.Select(x => new PositionVertex(new Position(x.ToVector3()), 0, 0)))
                 {
                     CameraFlags = CameraFlags.Orthographic
                 };

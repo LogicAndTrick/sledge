@@ -104,7 +104,7 @@ namespace Sledge.Rendering.OpenGL.Arrays
 
             shader.Bind();
             shader.SelectionTransform = Matrix4.Identity;
-            shader.ModelMatrix = Matrix4.Identity;
+            shader.ModelMatrix = mvMatrix;
             shader.CameraMatrix = camMatrix;
             shader.ViewportMatrix = vpMatrix;
             shader.Orthographic = camera.Flags.HasFlag(CameraFlags.Orthographic);
@@ -175,7 +175,7 @@ namespace Sledge.Rendering.OpenGL.Arrays
             StartSubset(ForcedWireframe);
             StartSubset(ForcedPoints);
 
-            var items = Items.Where(x => x.RenderFlags != RenderFlags.None).ToList();
+            var items = Items.Where(x => x.RenderFlags != RenderFlags.None || x.ForcedRenderFlags != RenderFlags.None).ToList();
 
             // Push faces (grouped by material)
             foreach (var g in items.OfType<Face>().GroupBy(x => x.Material.UniqueIdentifier))

@@ -121,7 +121,7 @@ namespace Sledge.Editor.Tools2.DraggableTool
                 default:
                     throw new ArgumentOutOfRangeException();
             }
-            return new Position(PositionType.World, camera.Expand(center)) { Offset = offset };
+            return new Position(camera.Expand(center)) { Offset = offset };
         }
 
         protected virtual void SetCursorForHandle(MapViewport viewport, ResizeHandle handle)
@@ -217,7 +217,7 @@ namespace Sledge.Editor.Tools2.DraggableTool
         public virtual IEnumerable<Element> GetViewportElements(MapViewport viewport, OrthographicCamera camera)
         {
             var pos = GetPosition(viewport, camera);
-            yield return new HandleElement(HandleElement.HandleType.Square, pos, 4);
+            yield return new HandleElement(PositionType.World, HandleElement.HandleType.Square, pos, 4);
         }
 
         public virtual void Render(MapViewport viewport, OrthographicCamera camera)

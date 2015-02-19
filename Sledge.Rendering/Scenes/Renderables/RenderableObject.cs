@@ -107,5 +107,13 @@ namespace Sledge.Rendering.Scenes.Renderables
                 OnPropertyChanged("RenderCritical");
             }
         }
+
+        protected RenderableObject()
+        {
+            _lighting = LightingFlags.Dynamic;
+            _forcedRenderFlags = RenderFlags.None;
+            _accentColor = Color.White;
+            _tintColor = Color.White;
+        }
     }
 }

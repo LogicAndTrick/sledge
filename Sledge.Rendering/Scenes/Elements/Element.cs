@@ -24,6 +24,12 @@ namespace Sledge.Rendering.Scenes.Elements
         }
 
         public IViewport Viewport { get; set; }
+        public PositionType PositionType { get; set; }
+
+        protected Element(PositionType positionType)
+        {
+            PositionType = positionType;
+        }
 
         public abstract IEnumerable<LineElement> GetLines();
         public abstract IEnumerable<FaceElement> GetFaces();

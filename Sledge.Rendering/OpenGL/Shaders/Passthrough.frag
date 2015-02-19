@@ -25,7 +25,7 @@ void main()
     if (orthographic && (vertexFlags & FLAGS_INVISIBLE_PERSPECTIVE) == FLAGS_INVISIBLE_PERSPECTIVE) discard;
     if (!orthographic && (vertexFlags & FLAGS_INVISIBLE_ORTHOGRAPHIC) == FLAGS_INVISIBLE_ORTHOGRAPHIC) discard;
 
-    fragmentColor = orthographic || useAccentColor ? vertexAccentColor : texture(currentTexture, vertexTexture) * vertexMaterialColor;
+    fragmentColor = useAccentColor ? vertexAccentColor : texture(currentTexture, vertexTexture) * vertexMaterialColor;
 	fragmentColor.rgb *= vertexTintColor.rgb * vertexTintColor.a;
 	fragmentColor.a = vertexMaterialColor.a;
 	

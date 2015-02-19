@@ -135,37 +135,37 @@ namespace Sledge.Sandbox
             //}
 
             // elements
-            var le = new LineElement(Color.Lime, new[]
+            var le = new LineElement(PositionType.Screen, Color.Lime, new[]
             {
-                new Position(PositionType.Screen, new Vector3(0, 0, 0)) { Normalised = true },
-                new Position(PositionType.Screen, new Vector3(0.1f, 0.1f, 0)) {Normalised = true},
-                new Position(PositionType.World, new Vector3(50, 0, 0))
+                new Position(new Vector3(0, 0, 0)) { Normalised = true },
+                new Position(new Vector3(0.1f, 0.1f, 0)) {Normalised = true},
+                new Position(new Vector3(50, 0, 0))
             }.ToList());
             scene.Add(le);
 
             var uimat = Material.Flat(Color.FromArgb(128, Color.DeepSkyBlue));
             renderer.Materials.Add(uimat);
 
-            scene.Add(new FaceElement(uimat, new List<PositionVertex>
+            scene.Add(new FaceElement(PositionType.Screen, uimat, new List<PositionVertex>
             {
-                new PositionVertex(new Position(PositionType.Screen, new Vector3(25, 25, 0)), 0, 0),
-                new PositionVertex(new Position(PositionType.Screen, new Vector3(150, 25, 0)), 1, 0),
-                new PositionVertex(new Position(PositionType.Screen, new Vector3(150, 150, 0)), 1, 1),
-                new PositionVertex(new Position(PositionType.Screen, new Vector3(25, 150, 0)), 0, 1),
+                new PositionVertex(new Position(new Vector3(25, 25, 0)), 0, 0),
+                new PositionVertex(new Position(new Vector3(150, 25, 0)), 1, 0),
+                new PositionVertex(new Position(new Vector3(150, 150, 0)), 1, 1),
+                new PositionVertex(new Position(new Vector3(25, 150, 0)), 0, 1),
             }));
-            scene.Add(new FaceElement(uimat, new List<PositionVertex>
+            scene.Add(new FaceElement(PositionType.Screen, uimat, new List<PositionVertex>
             {
-                new PositionVertex(new Position(PositionType.Screen, new Vector3(50, 50, 0)), 0, 0),
-                new PositionVertex(new Position(PositionType.Screen, new Vector3(100, 50, 0)), 1, 0),
-                new PositionVertex(new Position(PositionType.Screen, new Vector3(100, 100, 0)), 1, 1),
-                new PositionVertex(new Position(PositionType.Screen, new Vector3(50, 100, 0)), 0, 1),
+                new PositionVertex(new Position(new Vector3(50, 50, 0)), 0, 0),
+                new PositionVertex(new Position(new Vector3(100, 50, 0)), 1, 0),
+                new PositionVertex(new Position(new Vector3(100, 100, 0)), 1, 1),
+                new PositionVertex(new Position(new Vector3(50, 100, 0)), 0, 1),
             }));
-            scene.Add(new FaceElement(uimat, new List<PositionVertex>
+            scene.Add(new FaceElement(PositionType.Screen, uimat, new List<PositionVertex>
             {
-                new PositionVertex(new Position(PositionType.Screen, new Vector3(75, 75, 0)), 0, 0),
-                new PositionVertex(new Position(PositionType.Screen, new Vector3(200, 75, 0)), 1, 0),
-                new PositionVertex(new Position(PositionType.Screen, new Vector3(200, 200, 0)), 1, 1),
-                new PositionVertex(new Position(PositionType.Screen, new Vector3(75, 200, 0)), 0, 1),
+                new PositionVertex(new Position(new Vector3(75, 75, 0)), 0, 0),
+                new PositionVertex(new Position(new Vector3(200, 75, 0)), 1, 0),
+                new PositionVertex(new Position(new Vector3(200, 200, 0)), 1, 1),
+                new PositionVertex(new Position(new Vector3(75, 200, 0)), 0, 1),
             }));
 
             Task.Factory.StartNew(() =>
