@@ -1,12 +1,15 @@
-﻿using System.Drawing;
+﻿using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using OpenTK;
-using OpenTK.Graphics.OpenGL;
 using Sledge.DataStructures.Geometric;
 using Sledge.Editor.Documents;
+using Sledge.Editor.Extensions;
 using Sledge.Editor.Rendering;
 using Sledge.Editor.Tools2.DraggableTool;
 using Sledge.Rendering.Cameras;
+using Sledge.Rendering.Materials;
+using Sledge.Rendering.Scenes.Elements;
 
 namespace Sledge.Editor.Tools2.SelectTool.TransformationHandles
 {
@@ -19,15 +22,17 @@ namespace Sledge.Editor.Tools2.SelectTool.TransformationHandles
         {
         }
 
-        protected override Box GetRectangle(MapViewport viewport, OrthographicCamera camera)
+        public override bool CanDrag(MapViewport viewport, ViewportEvent e, Coordinate position)
         {
             if (Handle == ResizeHandle.Center)
             {
-                var start = viewport.Flatten(BoxState.Start);
-                var end = viewport.Flatten(BoxState.End);
-                return new Box(start, end);
+                const int padding = 2;
+                var box = new Box(viewport.Flatten(BoxState.Start), viewport.Flatten(BoxState.End));
+                var c = position;
+                return c.X >= box.Start.X - padding && c.Y >= box.Start.Y - padding && c.Z >= box.Start.Z - padding
+                       && c.X <= box.End.X + padding && c.Y <= box.End.Y + padding && c.Z <= box.End.Z + padding;
             }
-            return base.GetRectangle(viewport, camera);
+            return base.CanDrag(viewport, e, position);
         }
 
         protected override Coordinate GetResizeOrigin(MapViewport viewport, Coordinate position)
@@ -42,41 +47,45 @@ namespace Sledge.Editor.Tools2.SelectTool.TransformationHandles
             return base.GetResizeOrigin(viewport, position);
         }
 
-        public override void Render(MapViewport viewport, OrthographicCamera camera)
+        public override IEnumerable<Element> GetViewportElements(MapViewport viewport, OrthographicCamera camera)
         {
             if (Handle == ResizeHandle.Center)
             {
+                if (HighlightedViewport != viewport) yield break;
 
-                if (HighlightedViewport != viewport) return;
-
-                var box = GetRectangle(viewport, camera);
-
-                GL.Begin(PrimitiveType.Quads);
-                GL.Color4(State.FillColour);
-                Coord(box.Start.X, box.Start.Y, 0);
-                Coord(box.End.X, box.Start.Y, 0);
-                Coord(box.End.X, box.End.Y, 0);
-                Coord(box.Start.X, box.End.Y, 0);
-                GL.End();
-
+                var b = new Box(viewport.Flatten(BoxState.Start), viewport.Flatten(BoxState.End));
+                var st = b.Start.ToVector3();
+                var en = b.End.ToVector3();
+                var cam = viewport.Viewport.Camera;
+                yield return new FaceElement(PositionType.World, Material.Flat(State.FillColour), new[]
+                {
+                    new PositionVertex(new Position(cam.Expand(new Vector3(st.X, st.Y, 0))), 0, 0),
+                    new PositionVertex(new Position(cam.Expand(new Vector3(st.X, en.Y, 0))), 0, 0),
+                    new PositionVertex(new Position(cam.Expand(new Vector3(en.X, en.Y, 0))), 0, 0),
+                    new PositionVertex(new Position(cam.Expand(new Vector3(en.X, st.Y, 0))), 0, 0)
+                });
                 if (Handle == ResizeHandle.Center && SnappedMoveOrigin != null)
                 {
                     const int size = 6;
-                    var dist = size / (decimal)viewport.Zoom;
 
-                    var origin = SnappedMoveOrigin;
-                    GL.Begin(PrimitiveType.Lines);
-                    GL.Color4(Color.Yellow);
-                    Coord(origin.X - dist, origin.Y + dist, 0);
-                    Coord(origin.X + dist, origin.Y - dist, 0);
-                    Coord(origin.X + dist, origin.Y + dist, 0);
-                    Coord(origin.X - dist, origin.Y - dist, 0);
-                    GL.End();
+                    yield return new LineElement(PositionType.World, Color.Yellow, new List<Position>
+                    {
+                        new Position(SnappedMoveOrigin.ToVector3()) {Offset = new Vector3(-size, size, 0)},
+                        new Position(SnappedMoveOrigin.ToVector3()) {Offset = new Vector3(size, -size, 0)},
+                    });
+                    yield return new LineElement(PositionType.World, Color.Yellow, new List<Position>
+                    {
+                        new Position(SnappedMoveOrigin.ToVector3()) {Offset = new Vector3(size, size, 0)},
+                        new Position(SnappedMoveOrigin.ToVector3()) {Offset = new Vector3(-size, -size, 0)},
+                    });
                 }
             }
             else
             {
-                base.Render(viewport, camera);
+                foreach (var e in base.GetViewportElements(viewport, camera))
+                {
+                    yield return e;
+                }
             }
         }
 

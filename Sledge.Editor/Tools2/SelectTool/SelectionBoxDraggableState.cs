@@ -67,7 +67,7 @@ namespace Sledge.Editor.Tools2.SelectTool
             return _handles[_currentIndex];
         }
 
-        public override bool CanDrag(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Coordinate position)
+        public override bool CanDrag(MapViewport viewport, ViewportEvent e, Coordinate position)
         {
             return false;
         }

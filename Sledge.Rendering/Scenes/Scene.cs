@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using Sledge.Rendering.Scenes.Renderables;
 
@@ -89,6 +90,17 @@ namespace Sledge.Rendering.Scenes
             if (_trackChanges) _changeSet.Remove(obj);
             _objects.Remove(obj);
             obj.PropertyChanged -= ObjectUpdated;
+        }
+
+        public void Clear()
+        {
+            if (_trackChanges && _changeSet == null) _changeSet = new SceneChangeSet();
+            foreach (var o in _objects)
+            {
+                if (_trackChanges) _changeSet.Remove(o);
+                o.PropertyChanged -= ObjectUpdated;
+            }
+            _objects.Clear();
         }
     }
 }

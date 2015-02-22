@@ -97,6 +97,7 @@ namespace Sledge.Rendering.Cameras
 
         public override Vector3 ScreenToWorld(Vector3 screen, int width, int height)
         {
+            screen = new Vector3(screen.X, height - screen.Y, screen.Z);
             var cs = new Vector3(width / 2f, height / 2f, 0);
             var flat = Position + ((screen - cs) / Zoom);
             return Expand(flat);
@@ -106,7 +107,8 @@ namespace Sledge.Rendering.Cameras
         {
             var flat = Flatten(world);
             var cs = new Vector3(width / 2f, height / 2f, 0);
-            return cs + ((flat - Position) * Zoom);
+            var screen = cs + ((flat - Position) * Zoom);
+            return new Vector3(screen.X, height - screen.Y, screen.Z);
         }
 
         public override Line CastRayFromScreen(Vector3 screen, int width, int height)

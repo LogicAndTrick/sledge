@@ -16,6 +16,8 @@ namespace Sledge.Rendering.Scenes.Renderables
             get { return _vertices; }
             set
             {
+                if (_vertices != null && value != null && _vertices.Count == value.Count && _vertices.Select((x, i) => x.Position == value[i].Position && x.TextureU == value[i].TextureU && x.TextureV == value[i].TextureV).All(x => x)) return;
+
                 _vertices = value;
                 _plane = new Plane(value[0].Position, value[1].Position, value[2].Position);
                 BoundingBox = new Box(value.Select(x => x.Position));

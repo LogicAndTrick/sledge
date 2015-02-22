@@ -1,4 +1,5 @@
-﻿using Sledge.Rendering.Scenes;
+﻿using OpenTK;
+using Sledge.Rendering.Scenes;
 
 namespace Sledge.Rendering.Interfaces
 {
@@ -6,6 +7,8 @@ namespace Sledge.Rendering.Interfaces
     {
         IViewport CreateViewport();
         void DestroyViewport(IViewport viewport);
+
+        Matrix4 SelectionTransform { get; set; }
 
         Scene CreateScene();
         void SetActiveScene(Scene scene);

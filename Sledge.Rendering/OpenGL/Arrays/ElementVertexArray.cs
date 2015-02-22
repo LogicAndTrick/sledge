@@ -34,13 +34,13 @@ namespace Sledge.Rendering.OpenGL.Arrays
             var camera = viewport.Camera;
             const float near = -1000000;
             const float far = 1000000;
-            var vpMatrix = Matrix4.CreateOrthographicOffCenter(0, viewport.Control.Width, 0, viewport.Control.Height, near, far);
+            var vpMatrix = Matrix4.CreateOrthographicOffCenter(0, viewport.Control.Width, viewport.Control.Height, 0, near, far);
 
             var options = camera.RenderOptions;
 
             shader.Bind();
             
-            shader.SelectionTransform = Matrix4.Identity;
+            shader.SelectionTransform = renderer.SelectionTransform;
             shader.ModelMatrix = camera.GetModelMatrix();
             shader.CameraMatrix = camera.GetCameraMatrix();
             shader.ViewportMatrix = camera.GetViewportMatrix(viewport.Control.Width, viewport.Control.Height);
@@ -49,7 +49,7 @@ namespace Sledge.Rendering.OpenGL.Arrays
 
             RenderPositionType(renderer, shader, PositionType.World);
 
-            shader.SelectionTransform = Matrix4.Identity;
+            shader.SelectionTransform = renderer.SelectionTransform;
             shader.ModelMatrix = Matrix4.Identity;
             shader.CameraMatrix = Matrix4.Identity;
             shader.ViewportMatrix = vpMatrix;
@@ -172,8 +172,9 @@ namespace Sledge.Rendering.OpenGL.Arrays
         {
             if (type == PositionType.World)
             {
-                var e = _viewport.Camera.Expand(position.Offset);
-                return position.Location + new Vector3(_viewport.Camera.PixelsToUnits(e.X), _viewport.Camera.PixelsToUnits(e.Y), _viewport.Camera.PixelsToUnits(e.Z));
+                var e = position.Offset;
+                var off = new Vector3(_viewport.Camera.PixelsToUnits(e.X), -_viewport.Camera.PixelsToUnits(e.Y), _viewport.Camera.PixelsToUnits(e.Z));
+                return position.Location + _viewport.Camera.Expand(off);
             }
             else if (type == PositionType.Screen)
             {

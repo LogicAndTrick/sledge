@@ -26,29 +26,35 @@ using View = Sledge.Settings.View;
 
 namespace Sledge.Editor.Tools2.SelectTool
 {
+    /// <summary>
+    /// The select tool is used to select objects in several different ways:
+    /// 1. Single click in the 2D view will perform edge-detection selection
+    /// 2. Single click in the 3D view allows ray-casting selection (with mouse wheel cycling)
+    /// 3. Drawing a box in the 2D view and confirming it will select everything in the box
+    /// </summary>
     public class SelectTool : BaseDraggableTool
     {
         // todo - select tool - widgets
 
-        private BoxDraggableState emptyBox;
-        private SelectionBoxDraggableState selectionBox;
+        private readonly BoxDraggableState _emptyBox;
+        private readonly SelectionBoxDraggableState _selectionBox;
 
         private MapObject ChosenItemFor3DSelection { get; set; }
         private List<MapObject> IntersectingObjectsFor3DSelection { get; set; }
 
         public SelectTool()
         {
-            selectionBox = new SelectionBoxDraggableState(this);
-            selectionBox.BoxColour = Color.Yellow;
-            selectionBox.FillColour = Color.FromArgb(View.SelectionBoxBackgroundOpacity, Color.White);
-            selectionBox.State.Changed += SelectionBoxChanged;
-            States.Add(selectionBox);
+            _selectionBox = new SelectionBoxDraggableState(this);
+            _selectionBox.BoxColour = Color.Yellow;
+            _selectionBox.FillColour = Color.FromArgb(View.SelectionBoxBackgroundOpacity, Color.White);
+            _selectionBox.State.Changed += SelectionBoxChanged;
+            States.Add(_selectionBox);
 
-            emptyBox = new BoxDraggableState(this);
-            emptyBox.BoxColour = Color.Yellow;
-            emptyBox.FillColour = Color.FromArgb(View.SelectionBoxBackgroundOpacity, Color.White);
-            emptyBox.State.Changed += EmptyBoxChanged;
-            States.Add(emptyBox);
+            _emptyBox = new BoxDraggableState(this);
+            _emptyBox.BoxColour = Color.Yellow;
+            _emptyBox.FillColour = Color.FromArgb(View.SelectionBoxBackgroundOpacity, Color.White);
+            _emptyBox.State.Changed += EmptyBoxChanged;
+            States.Add(_emptyBox);
 
             Usage = ToolUsage.Both;
         }
@@ -111,20 +117,20 @@ namespace Sledge.Editor.Tools2.SelectTool
         {
             if (Document.Selection.IsEmpty())
             {
-                emptyBox.State.Start = emptyBox.State.End = null;
-                if (emptyBox.State.Action == BoxAction.Drawn) emptyBox.State.Action = BoxAction.Idle;
-                selectionBox.State.Start = selectionBox.State.End = null;
-                selectionBox.State.Action = BoxAction.Idle;
+                _emptyBox.State.Start = _emptyBox.State.End = null;
+                if (_emptyBox.State.Action == BoxAction.Drawn) _emptyBox.State.Action = BoxAction.Idle;
+                _selectionBox.State.Start = _selectionBox.State.End = null;
+                _selectionBox.State.Action = BoxAction.Idle;
             }
             else
             {
-                emptyBox.State.Start = emptyBox.State.End = null;
-                emptyBox.State.Action = BoxAction.Idle;
+                _emptyBox.State.Start = _emptyBox.State.End = null;
+                _emptyBox.State.Action = BoxAction.Idle;
 
                 var box = Document.Selection.GetSelectionBoundingBox();
-                selectionBox.State.Start = box.Start;
-                selectionBox.State.End = box.End;
-                selectionBox.State.Action = BoxAction.Drawn;
+                _selectionBox.State.Start = box.Start;
+                _selectionBox.State.End = box.End;
+                _selectionBox.State.Action = BoxAction.Drawn;
             }
         }
         #endregion
@@ -338,7 +344,7 @@ namespace Sledge.Editor.Tools2.SelectTool
         protected override void OnDraggableClicked(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Coordinate position, IDraggable draggable)
         {
             var ctrl = KeyboardState.Ctrl;
-            if (draggable == emptyBox || ctrl)
+            if (draggable == _emptyBox || ctrl)
             {
                 var desel = new List<MapObject>();
                 var sel = new List<MapObject>();
@@ -350,17 +356,17 @@ namespace Sledge.Editor.Tools2.SelectTool
                 }
                 SetSelected(desel, sel, !ctrl, IgnoreGrouping());
             }
-            else if (selectionBox.State.Action == BoxAction.Drawn && draggable is ResizeTransformHandle && ((ResizeTransformHandle) draggable).Handle == ResizeHandle.Center)
+            else if (_selectionBox.State.Action == BoxAction.Drawn && draggable is ResizeTransformHandle && ((ResizeTransformHandle) draggable).Handle == ResizeHandle.Center)
             {
-                selectionBox.Cycle();
+                _selectionBox.Cycle();
             }
-            e.Handled = !ctrl || draggable == emptyBox;
+            e.Handled = !ctrl || draggable == _emptyBox;
         }
 
         protected override void OnDraggableDragStarted(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Coordinate position, IDraggable draggable)
         {
             var ctrl = KeyboardState.Ctrl;
-            if (draggable == emptyBox && !ctrl && !Document.Selection.IsEmpty())
+            if (draggable == _emptyBox && !ctrl && !Document.Selection.IsEmpty())
             {
                 SetSelected(null, null, true, IgnoreGrouping());
             }
@@ -369,13 +375,13 @@ namespace Sledge.Editor.Tools2.SelectTool
         protected override void OnDraggableDragMoved(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Coordinate previousPosition, Coordinate position, IDraggable draggable)
         {
             base.OnDraggableDragMoved(viewport, camera, e, previousPosition, position, draggable);
-            if (selectionBox.State.Action == BoxAction.Resizing && draggable is ITransformationHandle)
+            if (_selectionBox.State.Action == BoxAction.Resizing && draggable is ITransformationHandle)
             {
-                var tform = selectionBox.GetTransformationMatrix(viewport, camera, Document);
+                var tform = _selectionBox.GetTransformationMatrix(viewport, camera, Document);
                 if (tform.HasValue)
                 {
                     Document.SetSelectListTransform(tform.Value);
-                    var box = new Box(selectionBox.State.OrigStart, selectionBox.State.OrigEnd);
+                    var box = new Box(_selectionBox.State.OrigStart, _selectionBox.State.OrigEnd);
                     var trans = CreateMatrixMultTransformation(tform.Value);
                     Mediator.Publish(EditorMediator.SelectionBoxChanged, box.Transform(trans));
                 }
@@ -385,10 +391,10 @@ namespace Sledge.Editor.Tools2.SelectTool
         protected override void OnDraggableDragEnded(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Coordinate position, IDraggable draggable)
         {
             var tt = draggable as ITransformationHandle;
-            if (selectionBox.State.Action == BoxAction.Resizing && tt != null)
+            if (_selectionBox.State.Action == BoxAction.Resizing && tt != null)
             {
                 // Execute the transform on the selection
-                var tform = selectionBox.GetTransformationMatrix(viewport, camera, Document);
+                var tform = _selectionBox.GetTransformationMatrix(viewport, camera, Document);
                 if (tform.HasValue)
                 {
                     var createClone = KeyboardState.Shift && draggable is ResizeTransformHandle && ((ResizeTransformHandle)draggable).Handle == ResizeHandle.Center;
@@ -401,13 +407,13 @@ namespace Sledge.Editor.Tools2.SelectTool
 
         private void EmptyBoxChanged(object sender, EventArgs e)
         {
-            if (emptyBox.State.Action != BoxAction.Idle && selectionBox.State.Action != BoxAction.Idle)
+            if (_emptyBox.State.Action != BoxAction.Idle && _selectionBox.State.Action != BoxAction.Idle)
             {
-                selectionBox.State.Action = BoxAction.Idle;
+                _selectionBox.State.Action = BoxAction.Idle;
                 // We're drawing a selection box, so clear the current tool
                 // SetCurrentTool(null);
             }
-            if (emptyBox.State.Action == BoxAction.Drawn && Sledge.Settings.Select.AutoSelectBox)
+            if (_emptyBox.State.Action == BoxAction.Drawn && Sledge.Settings.Select.AutoSelectBox)
             {
                 // BoxDrawnConfirm(emptyBox.State.Viewport);
             }
@@ -437,7 +443,7 @@ namespace Sledge.Editor.Tools2.SelectTool
         protected override void KeyDown(MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
         {
             var nudge = GetNudgeValue(e.KeyCode);
-            if (nudge != null && (selectionBox.State.Action == BoxAction.Drawn) && !Document.Selection.IsEmpty())
+            if (nudge != null && (_selectionBox.State.Action == BoxAction.Drawn) && !Document.Selection.IsEmpty())
             {
                 var translate = viewport.Expand(nudge);
                 var transformation = Matrix4.CreateTranslation((float)translate.X, (float)translate.Y, (float)translate.Z);
@@ -470,10 +476,10 @@ namespace Sledge.Editor.Tools2.SelectTool
         private void Confirm(MapViewport viewport)
         {
             // Only confirm the box if the empty box is drawn
-            if (selectionBox.State.Action != BoxAction.Idle || emptyBox.State.Action != BoxAction.Drawn) return;
+            if (_selectionBox.State.Action != BoxAction.Idle || _emptyBox.State.Action != BoxAction.Drawn) return;
 
             Box boundingbox;
-            if (GetSelectionBox(emptyBox.State, out boundingbox))
+            if (GetSelectionBox(_emptyBox.State, out boundingbox))
             {
                 // If the shift key is down, select all brushes that are fully contained by the box
                 // If select by handles only is on, select all brushes with centers inside the box
@@ -491,11 +497,11 @@ namespace Sledge.Editor.Tools2.SelectTool
 
         private void Cancel(MapViewport viewport)
         {
-            if (selectionBox.State.Action != BoxAction.Idle && !Document.Selection.IsEmpty())
+            if (_selectionBox.State.Action != BoxAction.Idle && !Document.Selection.IsEmpty())
             {
                 SetSelected(null, null, true, IgnoreGrouping());
             }
-            selectionBox.State.Action = emptyBox.State.Action = BoxAction.Idle;
+            _selectionBox.State.Action = _emptyBox.State.Action = BoxAction.Idle;
             SelectionChanged();
         }
 

@@ -360,12 +360,14 @@ namespace Sledge.Editor.Documents
         public void SetSelectListTransform(Matrix4 matrix)
         {
             SelectListTransform = matrix;
+            SceneManager.Engine.Renderer.SelectionTransform = SelectListTransform;
             //Renderer.SetSelectionTransform(matrix);
         }
 
         public void EndSelectionTransform()
         {
             SelectListTransform = Matrix4.Identity;
+            SceneManager.Engine.Renderer.SelectionTransform = SelectListTransform;
             //Renderer.SetSelectionTransform(Matrix4.Identity);
         }
 
@@ -391,6 +393,8 @@ namespace Sledge.Editor.Documents
             var spritesUpdated = Map.UpdateSprites(this);
             if (decalsUpdated || modelsUpdated || spritesUpdated) Mediator.Publish(EditorMediator.SelectionChanged);
 
+            _sceneManager.Update();
+
             //HelperManager.UpdateCache();
             //Renderer.Update();
             // ViewportManager.Viewports.ForEach(vp => vp.UpdateNextFrame());
@@ -398,6 +402,7 @@ namespace Sledge.Editor.Documents
 
         public void RenderSelection(IEnumerable<MapObject> objects)
         {
+            _sceneManager.Update(objects);
             //Renderer.UpdateSelection(objects);
             //ViewportManager.Viewports.ForEach(vp => vp.UpdateNextFrame());
         }
@@ -411,6 +416,9 @@ namespace Sledge.Editor.Documents
             var modelsUpdated = Map.UpdateModels(this, objs);
             var spritesUpdated = Map.UpdateSprites(this, objs);
             if (decalsUpdated || modelsUpdated || spritesUpdated) Mediator.Publish(EditorMediator.SelectionChanged);
+
+
+            _sceneManager.Update(objects);
 
             //HelperManager.UpdateCache();
 

@@ -55,7 +55,7 @@ namespace Sledge.Editor.Tools2.DraggableTool
             if (CurrentDraggable == null) return;
             var point = viewport.ScreenToWorld(e.X, viewport.Height - e.Y);
             OnDraggableClicked(viewport, camera, e, point, CurrentDraggable);
-            if (!e.Handled) CurrentDraggable.Click(viewport, camera, e, point);
+            if (!e.Handled) CurrentDraggable.Click(viewport, e, point);
         }
 
         protected override void MouseMove(MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
@@ -69,7 +69,7 @@ namespace Sledge.Editor.Tools2.DraggableTool
                 drags.Add(state);
                 foreach (var draggable in drags)
                 {
-                    if (draggable.CanDrag(viewport, camera, e, point))
+                    if (draggable.CanDrag(viewport, e, point))
                     {
                         drag = draggable;
                         break;
@@ -79,9 +79,9 @@ namespace Sledge.Editor.Tools2.DraggableTool
             }
             if (drag != CurrentDraggable)
             {
-                if (CurrentDraggable != null) CurrentDraggable.Unhighlight(viewport, camera);
+                if (CurrentDraggable != null) CurrentDraggable.Unhighlight(viewport);
                 CurrentDraggable = drag;
-                if (CurrentDraggable != null) CurrentDraggable.Highlight(viewport, camera);
+                if (CurrentDraggable != null) CurrentDraggable.Highlight(viewport);
             }
         }
 
@@ -91,7 +91,7 @@ namespace Sledge.Editor.Tools2.DraggableTool
             if (CurrentDraggable == null) return;
             _lastDragPoint = viewport.ScreenToWorld(e.X, viewport.Height - e.Y);
             OnDraggableDragStarted(viewport, camera, e, _lastDragPoint, CurrentDraggable);
-            if (!e.Handled) CurrentDraggable.StartDrag(viewport, camera, e, _lastDragPoint);
+            if (!e.Handled) CurrentDraggable.StartDrag(viewport, e, _lastDragPoint);
             _lastDragMoveEvent = e;
         }
 
@@ -101,7 +101,7 @@ namespace Sledge.Editor.Tools2.DraggableTool
             if (CurrentDraggable == null) return;
             var point = viewport.ScreenToWorld(e.X, viewport.Height - e.Y);
             OnDraggableDragMoved(viewport, camera, e, _lastDragPoint, point, CurrentDraggable);
-            if (!e.Handled) CurrentDraggable.Drag(viewport, camera, e, _lastDragPoint, point);
+            if (!e.Handled) CurrentDraggable.Drag(viewport, e, _lastDragPoint, point);
             _lastDragPoint = point;
             _lastDragMoveEvent = e;
         }
@@ -112,7 +112,7 @@ namespace Sledge.Editor.Tools2.DraggableTool
             if (CurrentDraggable == null) return;
             var point = viewport.ScreenToWorld(e.X, viewport.Height - e.Y);
             OnDraggableDragEnded(viewport, camera, e, point, CurrentDraggable);
-            if (!e.Handled) CurrentDraggable.EndDrag(viewport, camera, e, point);
+            if (!e.Handled) CurrentDraggable.EndDrag(viewport, e, point);
             _lastDragMoveEvent = null;
             _lastDragPoint = null;
         }
@@ -132,84 +132,46 @@ namespace Sledge.Editor.Tools2.DraggableTool
                 ev.X = ev.LastX = _lastDragMoveEvent.X;
                 ev.Y = ev.LastY = _lastDragMoveEvent.Y;
                 OnDraggableDragMoved(viewport, camera, ev, _lastDragPoint, point, CurrentDraggable);
-                if (!ev.Handled) CurrentDraggable.Drag(viewport, camera, ev, _lastDragPoint, point);
+                if (!ev.Handled) CurrentDraggable.Drag(viewport, ev, _lastDragPoint, point);
                 _lastDragPoint = point;
             }
             base.PositionChanged(viewport, e);
         }
 
-        protected override IEnumerable<SceneObject> GetSceneObjects()
+        private IEnumerable<T> CollectObjects<T>(Func<IDraggable, IEnumerable<T>> collector)
         {
-            var list = new List<SceneObject>();
+            var list = new List<T>();
+
             var foundActive = false;
             foreach (var state in States)
             {
                 foreach (var draggable in state.GetDraggables())
                 {
                     if (draggable == CurrentDraggable) foundActive = true;
-                    else list.AddRange(draggable.GetSceneObjects());
+                    else list.AddRange(collector(draggable));
                 }
                 if (state == CurrentDraggable) foundActive = true;
-                else list.AddRange(state.GetSceneObjects());
+                else list.AddRange(collector(state));
             }
-            if (CurrentDraggable != null && foundActive) list.AddRange(CurrentDraggable.GetSceneObjects());
+            if (CurrentDraggable != null && foundActive) list.AddRange(collector(CurrentDraggable));
 
             return list;
+        }
+
+        protected override IEnumerable<SceneObject> GetSceneObjects()
+        {
+            return CollectObjects(x => x.GetSceneObjects());
         }
 
         protected override IEnumerable<Element> GetViewportElements(MapViewport viewport, PerspectiveCamera camera)
         {
-            var list = new List<Element>();
-            var foundActive = false;
-            foreach (var state in States)
-            {
-                foreach (var draggable in state.GetDraggables())
-                {
-                    if (draggable == CurrentDraggable) foundActive = true;
-                    else list.AddRange(draggable.GetViewportElements(viewport, camera));
-                }
-                if (state == CurrentDraggable) foundActive = true;
-                else list.AddRange(state.GetViewportElements(viewport, camera));
-            }
-            if (CurrentDraggable != null && foundActive) list.AddRange(CurrentDraggable.GetViewportElements(viewport, camera));
-
-            return list;
+            return CollectObjects(x => x.GetViewportElements(viewport, camera));
         }
 
         protected override IEnumerable<Element> GetViewportElements(MapViewport viewport, OrthographicCamera camera)
         {
-            var list = new List<Element>();
-            var foundActive = false;
-            foreach (var state in States)
-            {
-                foreach (var draggable in state.GetDraggables())
-                {
-                    if (draggable == CurrentDraggable) foundActive = true;
-                    else list.AddRange(draggable.GetViewportElements(viewport, camera));
-                }
-                if (state == CurrentDraggable) foundActive = true;
-                else list.AddRange(state.GetViewportElements(viewport, camera));
-            }
-            if (CurrentDraggable != null && foundActive) list.AddRange(CurrentDraggable.GetViewportElements(viewport, camera));
-
-            return list;
+            return CollectObjects(x => x.GetViewportElements(viewport, camera));
         }
-
-        // protected  void Render(MapViewport viewport, OrthographicCamera camera)
-        // {
-        //     var foundActive = false;
-        //     foreach (var state in States)
-        //     {
-        //         foreach (var draggable in state.GetDraggables())
-        //         {
-        //             if (draggable == CurrentDraggable) foundActive = true;
-        //             else draggable.Render(viewport, camera);
-        //         }
-        //         if (state == CurrentDraggable) foundActive = true;
-        //         else state.Render(viewport, camera);
-        //     }
-        //     if (CurrentDraggable != null && foundActive) CurrentDraggable.Render(viewport, camera);
-        // }
 
         protected bool GetSelectionBox(BoxState state, out Box boundingbox)
         {

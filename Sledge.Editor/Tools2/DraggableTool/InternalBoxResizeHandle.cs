@@ -2,15 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using OpenTK.Graphics.OpenGL;
+using OpenTK;
 using Sledge.DataStructures.Geometric;
 using Sledge.Editor.Extensions;
 using Sledge.Editor.Rendering;
 using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Materials;
-using Sledge.Rendering.Scenes;
 using Sledge.Rendering.Scenes.Elements;
-using Sledge.Rendering.Scenes.Renderables;
 
 namespace Sledge.Editor.Tools2.DraggableTool
 {
@@ -20,13 +18,13 @@ namespace Sledge.Editor.Tools2.DraggableTool
         {
         }
 
-        protected override Box GetRectangle(MapViewport viewport, OrthographicCamera camera)
+        private Box GetRectangle(MapViewport viewport)
         {
             var start = viewport.Flatten(BoxState.Start);
             var end = viewport.Flatten(BoxState.End);
             var box = new Box(start, end);
-            var wid = Math.Min(box.Width / 10, 20 / (decimal)viewport.Zoom);
-            var len = Math.Min(box.Length / 10, 20 / (decimal)viewport.Zoom);
+            var wid = Math.Min(box.Width / 10, viewport.PixelsToUnits(20));
+            var len = Math.Min(box.Length / 10, viewport.PixelsToUnits(20));
             switch (Handle)
             {
                 case ResizeHandle.TopLeft:
@@ -52,6 +50,16 @@ namespace Sledge.Editor.Tools2.DraggableTool
             }
         }
 
+        public override bool CanDrag(MapViewport viewport, ViewportEvent e, Coordinate position)
+        {
+            const int padding = 2;
+            var box = GetRectangle(viewport);
+            var c = position;
+            return c.X >= box.Start.X - padding && c.Y >= box.Start.Y - padding && c.Z >= box.Start.Z - padding
+                   && c.X <= box.End.X + padding && c.Y <= box.End.Y + padding && c.Z <= box.End.Z + padding;
+        
+        }
+
         protected override Coordinate GetResizeOrigin(MapViewport viewport, Coordinate position)
         {
             var st = viewport.Flatten(BoxState.Start);
@@ -64,45 +72,31 @@ namespace Sledge.Editor.Tools2.DraggableTool
         {
             if (HighlightedViewport != viewport) yield break;
 
-            var box = GetRectangle(viewport, camera);
-            box = new Box(viewport.Expand(box.Start), viewport.Expand(box.End));
-            foreach (var face in box.GetBoxFaces())
+            var b = GetRectangle(viewport);
+            var st = b.Start.ToVector3();
+            var en = b.End.ToVector3();
+            var cam = viewport.Viewport.Camera;
+            yield return new FaceElement(PositionType.World, Material.Flat(State.FillColour), new[]
             {
-                yield return new FaceElement(PositionType.World, Material.Flat(State.FillColour),
-                    face.Select(x => new PositionVertex(new Position(x.ToVector3()), 0, 0)))
-                {
-                    CameraFlags = CameraFlags.Orthographic
-                };
-            }
-        }
-
-        public override void Render(MapViewport viewport, OrthographicCamera camera)
-        {
-            if (HighlightedViewport != viewport) return;
-
-            var box = GetRectangle(viewport, camera);
-
-            GL.Begin(PrimitiveType.Quads);
-            GL.Color4(State.FillColour);
-            Coord(box.Start.X, box.Start.Y, 0);
-            Coord(box.End.X, box.Start.Y, 0);
-            Coord(box.End.X, box.End.Y, 0);
-            Coord(box.Start.X, box.End.Y, 0);
-            GL.End();
-
+                new PositionVertex(new Position(cam.Expand(new Vector3(st.X, st.Y, 0))), 0, 0),
+                new PositionVertex(new Position(cam.Expand(new Vector3(st.X, en.Y, 0))), 0, 0),
+                new PositionVertex(new Position(cam.Expand(new Vector3(en.X, en.Y, 0))), 0, 0),
+                new PositionVertex(new Position(cam.Expand(new Vector3(en.X, st.Y, 0))), 0, 0)
+            });
             if (Handle == ResizeHandle.Center && SnappedMoveOrigin != null)
             {
                 const int size = 6;
-                var dist = size / (decimal)viewport.Zoom;
 
-                var origin = SnappedMoveOrigin;
-                GL.Begin(PrimitiveType.Lines);
-                GL.Color4(Color.Yellow);
-                Coord(origin.X - dist, origin.Y + dist, 0);
-                Coord(origin.X + dist, origin.Y - dist, 0);
-                Coord(origin.X + dist, origin.Y + dist, 0);
-                Coord(origin.X - dist, origin.Y - dist, 0);
-                GL.End();
+                yield return new LineElement(PositionType.World, Color.Yellow, new List<Position>
+                {
+                    new Position(SnappedMoveOrigin.ToVector3()) {Offset = new Vector3(-size, size, 0)},
+                    new Position(SnappedMoveOrigin.ToVector3()) {Offset = new Vector3(size, -size, 0)},
+                });
+                yield return new LineElement(PositionType.World, Color.Yellow, new List<Position>
+                {
+                    new Position(SnappedMoveOrigin.ToVector3()) {Offset = new Vector3(size, size, 0)},
+                    new Position(SnappedMoveOrigin.ToVector3()) {Offset = new Vector3(-size, -size, 0)},
+                });
             }
         }
     }

@@ -365,15 +365,29 @@ namespace Sledge.Editor.Rendering
         public Coordinate ScreenToWorld(Coordinate location)
         {
             // todo this is done like this for compatibility, update the references if possible...
+            location = new Coordinate(location.X, Height - location.Y, location.Z);
             var s2w = Viewport.Camera.ScreenToWorld(location.ToVector3(), Width, Height);
             return Viewport.Camera.Flatten(s2w).ToCoordinate();
+        }
+
+        // todo once the bad S2W impl is gone, rename this to ScreenToWorld
+        public Coordinate ProperScreenToWorld(Coordinate location)
+        {
+            return Viewport.Camera.ScreenToWorld(location.ToVector3(), Width, Height).ToCoordinate();
         }
 
         public Coordinate WorldToScreen(Coordinate location)
         {
             // todo same as S2W
             var exp = Viewport.Camera.Expand(location.ToVector3());
-            return Viewport.Camera.WorldToScreen(exp, Width, Height).ToCoordinate();
+            location = Viewport.Camera.WorldToScreen(exp, Width, Height).ToCoordinate();
+            return new Coordinate(location.X, Height - location.Y, location.Z);
+        }
+
+        // todo once the bad W2S impl is gone, rename this to WorldToScreen
+        public Coordinate ProperWorldToScreen(Coordinate location)
+        {
+            return Viewport.Camera.WorldToScreen(location.ToVector3(), Width, Height).ToCoordinate();
         }
 
         /// <summary>

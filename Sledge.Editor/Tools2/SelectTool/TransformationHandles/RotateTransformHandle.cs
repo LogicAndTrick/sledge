@@ -1,15 +1,14 @@
 using System;
-using System.Drawing;
+using System.Collections.Generic;
 using OpenTK;
-using OpenTK.Graphics.OpenGL;
 using Sledge.DataStructures.Geometric;
 using Sledge.Editor.Documents;
 using Sledge.Editor.Rendering;
 using Sledge.Editor.Tools2.DraggableTool;
 using Sledge.Editor.UI;
 using Sledge.Extensions;
-using Sledge.Graphics;
 using Sledge.Rendering.Cameras;
+using Sledge.Rendering.Scenes.Elements;
 using Sledge.Settings;
 
 namespace Sledge.Editor.Tools2.SelectTool.TransformationHandles
@@ -27,37 +26,31 @@ namespace Sledge.Editor.Tools2.SelectTool.TransformationHandles
             _origin = origin;
         }
 
-        public override void StartDrag(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Coordinate position)
+        public override void StartDrag(MapViewport viewport, ViewportEvent e, Coordinate position)
         {
             _rotateStart = _rotateEnd = position;
-            base.StartDrag(viewport, camera, e, position);
+            base.StartDrag(viewport, e, position);
         }
 
-        public override void Drag(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Coordinate lastPosition, Coordinate position)
+        public override void Drag(MapViewport viewport, ViewportEvent e, Coordinate lastPosition, Coordinate position)
         {
             _rotateEnd = position;
         }
 
-        public override void EndDrag(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Coordinate position)
+        public override void EndDrag(MapViewport viewport, ViewportEvent e, Coordinate position)
         {
             _rotateStart = _rotateEnd = null;
-            base.EndDrag(viewport, camera, e, position);
+            base.EndDrag(viewport, e, position);
         }
 
-        public override void Render(MapViewport viewport, OrthographicCamera camera)
+        public override IEnumerable<Element> GetViewportElements(MapViewport viewport, OrthographicCamera camera)
         {
-            var box = GetRectangle(viewport, camera);
-            var handle = new Vector2d(box.Center.DX, box.Center.DY);
-
-            GL.Begin(PrimitiveType.Polygon);
-            GL.Color4(HighlightedViewport == viewport ? Color.Aqua : Color.White);
-            GLX.Circle(handle, 4, (double) viewport.Zoom, loop: true);
-            GL.End();
-
-            GL.Begin(PrimitiveType.LineLoop);
-            GL.Color4(Color.Black);
-            GLX.Circle(handle, 4, (double)viewport.Zoom, loop: true);
-            GL.End();
+            foreach (var e in base.GetViewportElements(viewport, camera))
+            {
+                var handle = e as HandleElement;
+                if (handle != null) handle.Type = HandleElement.HandleType.Circle;
+                yield return e;
+            }
         }
 
         public Matrix4? GetTransformationMatrix(MapViewport viewport, OrthographicCamera camera, BoxState state, Document doc)

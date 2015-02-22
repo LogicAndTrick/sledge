@@ -15,14 +15,16 @@ namespace Sledge.Rendering.OpenGL.Arrays
         private int _changeNum;
         private const int MaxChanges = 2000;
 
+        private readonly OpenGLRenderer _renderer;
         private readonly Scene _scene;
         public Octree<RenderableObject> Octree { get; private set; }
         public List<PartitionedVertexArray> Partitions { get; private set; }
         public RenderableVertexArray Spare { get; private set; }
         public List<Element> Elements { get; private set; }
 
-        public OctreeVertexArray(Scene scene, float worldSize = 32768, int limit = 100)
+        public OctreeVertexArray(OpenGLRenderer renderer, Scene scene, float worldSize = 32768, int limit = 100)
         {
+            _renderer = renderer;
             _scene = scene;
             _changeNum = 0;
 
@@ -53,21 +55,29 @@ namespace Sledge.Rendering.OpenGL.Arrays
             Octree.Add(addRenderable.Union(replaceRenderable));
             _changeNum += addRenderable.Count + removeRenderable.Count + (replaceRenderable.Count * 2);
 
-            if (_changeNum > MaxChanges)
+            if (addRenderable.Count + removeRenderable.Count + replaceRenderable.Count + updateRenderable.Count > 0)
             {
-                _changeNum = 0;
-                Rebuild();
-            }
-            else
-            {
-                var added = addRenderable.Union(replaceRenderable).Except(removeRenderable).ToList();
-                if (Spare == null) Spare = new RenderableVertexArray(added); 
-                else Spare.Update(added.Union(Spare.Items.Except(removeRenderable)).ToList());
-
-                foreach (var part in Partitions)
+                foreach (var mat in addRenderable.Union(updateRenderable).Union(replaceRenderable).Select(x => x.Material).Where(x => x != null))
                 {
-                    part.UpdatePartial(updateRenderable);
-                    part.DeletePartial(removeRenderable);
+                    if (!_renderer.Materials.Exists(mat.UniqueIdentifier)) _renderer.Materials.Add(mat);
+                    if (!_renderer.Textures.Exists(mat.CurrentFrame)) _renderer.Textures.Create(mat.CurrentFrame);
+                }
+                if (_changeNum > MaxChanges)
+                {
+                    _changeNum = 0;
+                    Rebuild();
+                }
+                else
+                {
+                    var added = addRenderable.Union(replaceRenderable).Except(removeRenderable).ToList();
+                    if (Spare == null) Spare = new RenderableVertexArray(added);
+                    else Spare.Update(added.Union(Spare.Items.Except(removeRenderable)).ToList());
+
+                    foreach (var part in Partitions)
+                    {
+                        part.UpdatePartial(updateRenderable);
+                        part.DeletePartial(removeRenderable);
+                    }
                 }
             }
 

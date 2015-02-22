@@ -32,6 +32,8 @@ namespace Sledge.Rendering.OpenGL
         public IMaterialStorage Materials { get { return _materialStorage; } }
         public IModelStorage Models { get { return _modelStorage; } }
 
+        public Matrix4 SelectionTransform { get; set; }
+
         public OpenGLRenderer()
         {
             _viewportData = new Dictionary<IViewport, ViewportData>();
@@ -40,6 +42,8 @@ namespace Sledge.Rendering.OpenGL
             _materialStorage = new MaterialStorage(this);
             _modelStorage = new ModelStorage();
             _initialised = false;
+
+            SelectionTransform = Matrix4.Identity;
         }
 
         private void InitialiseRenderer()
@@ -110,7 +114,6 @@ namespace Sledge.Rendering.OpenGL
                 GL.DepthFunc(DepthFunction.Lequal);
 
                 GL.Enable(EnableCap.CullFace);
-                GL.Disable(EnableCap.CullFace);
                 GL.CullFace(CullFaceMode.Front);
 
                 GL.Enable(EnableCap.Texture2D);
@@ -177,7 +180,7 @@ namespace Sledge.Rendering.OpenGL
         {
             if (!_sceneData.ContainsKey(scene) || _sceneData[scene] == null)
             {
-                var data = new SceneData(scene);
+                var data = new SceneData(this, scene);
                 _sceneData[scene] = data;
             }
             return _sceneData[scene];
@@ -212,10 +215,10 @@ namespace Sledge.Rendering.OpenGL
             public Scene Scene { get; set; }
             public OctreeVertexArray Array { get; private set; }
 
-            public SceneData(Scene scene)
+            public SceneData(OpenGLRenderer renderer, Scene scene)
             {
                 Scene = scene;
-                Array = new OctreeVertexArray(scene);
+                Array = new OctreeVertexArray(renderer, scene);
             }
 
             public void Dispose()

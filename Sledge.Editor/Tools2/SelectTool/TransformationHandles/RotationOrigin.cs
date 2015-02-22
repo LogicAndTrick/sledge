@@ -1,38 +1,42 @@
+using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
-using OpenTK;
-using OpenTK.Graphics.OpenGL;
 using Sledge.DataStructures.Geometric;
+using Sledge.Editor.Extensions;
 using Sledge.Editor.Rendering;
 using Sledge.Editor.Tools2.DraggableTool;
-using Sledge.Graphics;
 using Sledge.Rendering.Cameras;
+using Sledge.Rendering.Scenes.Elements;
 
 namespace Sledge.Editor.Tools2.SelectTool.TransformationHandles
 {
     public class RotationOrigin : DraggableCoordinate
     {
-        protected override void SetMoveCursor(MapViewport viewport, OrthographicCamera camera)
+        protected override void SetMoveCursor(MapViewport viewport)
         {
             viewport.Control.Cursor = Cursors.Cross;
         }
 
-        public override bool CanDrag(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Coordinate position)
+        public override bool CanDrag(MapViewport viewport, ViewportEvent e, Coordinate position)
         {
-            var pos = viewport.Flatten(Position);
-            var diff = (pos - position).Absolute();
-            return diff.X < 8 && diff.Y < 8;
+            const int width = 8;
+            var screenPosition = viewport.ProperWorldToScreen(Position);
+            var diff = (e.Location - screenPosition).Absolute();
+            return diff.X < width && diff.Y < width;
         }
 
-        public override void Render(MapViewport viewport, OrthographicCamera camera)
+        public override IEnumerable<Element> GetViewportElements(MapViewport viewport, OrthographicCamera camera)
         {
-            var pp = viewport.Flatten(Position);
-            GL.Begin(PrimitiveType.Lines);
-            GL.Color3(Color.Cyan);
-            GLX.Circle(new Vector2d(pp.DX, pp.DY), 4, (double)viewport.Zoom);
-            GL.Color3(Highlighted ? Color.Red : Color.White);
-            GLX.Circle(new Vector2d(pp.DX, pp.DY), 8, (double)viewport.Zoom);
-            GL.End();
+            yield return new HandleElement(PositionType.World, HandleElement.HandleType.Circle, new Position(Position.ToVector3()), 4)
+            {
+                Color = Color.Transparent,
+                LineColor = Color.Cyan
+            };
+            yield return new HandleElement(PositionType.World, HandleElement.HandleType.Circle, new Position(Position.ToVector3()), 8)
+            {
+                Color = Color.Transparent,
+                LineColor = Highlighted ? Color.Red : Color.White
+            };
         }
     }
 }

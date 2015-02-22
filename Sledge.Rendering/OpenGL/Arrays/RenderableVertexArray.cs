@@ -51,7 +51,7 @@ namespace Sledge.Rendering.OpenGL.Arrays
             var options = camera.RenderOptions;
 
             shader.Bind();
-            shader.SelectionTransform = Matrix4.Identity;
+            shader.SelectionTransform = renderer.SelectionTransform;
             shader.ModelMatrix = mvMatrix;
             shader.CameraMatrix = camMatrix;
             shader.ViewportMatrix = vpMatrix;
@@ -103,7 +103,7 @@ namespace Sledge.Rendering.OpenGL.Arrays
             }
 
             shader.Bind();
-            shader.SelectionTransform = Matrix4.Identity;
+            shader.SelectionTransform = renderer.SelectionTransform;
             shader.ModelMatrix = mvMatrix;
             shader.CameraMatrix = camMatrix;
             shader.ViewportMatrix = vpMatrix;
@@ -264,6 +264,7 @@ namespace Sledge.Rendering.OpenGL.Arrays
             var flags = VertexFlags.None;
             if (!obj.CameraFlags.HasFlag(CameraFlags.Orthographic)) flags |= VertexFlags.InvisibleOrthographic;
             if (!obj.CameraFlags.HasFlag(CameraFlags.Perspective)) flags |= VertexFlags.InvisiblePerspective;
+            if (obj.IsSelected) flags |= VertexFlags.Selected;
             return flags;
         }
 

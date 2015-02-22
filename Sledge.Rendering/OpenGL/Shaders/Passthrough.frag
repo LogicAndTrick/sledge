@@ -25,8 +25,10 @@ void main()
     if (orthographic && (vertexFlags & FLAGS_INVISIBLE_PERSPECTIVE) == FLAGS_INVISIBLE_PERSPECTIVE) discard;
     if (!orthographic && (vertexFlags & FLAGS_INVISIBLE_ORTHOGRAPHIC) == FLAGS_INVISIBLE_ORTHOGRAPHIC) discard;
 
+    vec3 tint = vec3(1, 1, 1) - ((vec3(1, 1, 1) - vertexTintColor.rgb) * vertexTintColor.a);
+
     fragmentColor = useAccentColor ? vertexAccentColor : texture(currentTexture, vertexTexture) * vertexMaterialColor;
-	fragmentColor.rgb *= vertexTintColor.rgb * vertexTintColor.a;
+	fragmentColor.rgb *= tint; // vertexTintColor.rgb * vertexTintColor.a;
 	fragmentColor.a = vertexMaterialColor.a;
 	
     if (showGrid) {

@@ -71,27 +71,27 @@ namespace Sledge.Editor.Tools2.DraggableTool
             // 
         }
 
-        public virtual void Click(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Coordinate position)
+        public virtual void Click(MapViewport viewport, ViewportEvent e, Coordinate position)
         {
             State.Action = BoxAction.Idle;
         }
 
-        public virtual bool CanDrag(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Coordinate position)
+        public virtual bool CanDrag(MapViewport viewport, ViewportEvent e, Coordinate position)
         {
             return true;
         }
 
-        public virtual void Highlight(MapViewport viewport, OrthographicCamera camera)
+        public virtual void Highlight(MapViewport viewport)
         {
             //
         }
 
-        public virtual void Unhighlight(MapViewport viewport, OrthographicCamera camera)
+        public virtual void Unhighlight(MapViewport viewport)
         {
             //
         }
 
-        public virtual void StartDrag(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Coordinate position)
+        public virtual void StartDrag(MapViewport viewport, ViewportEvent e, Coordinate position)
         {
             State.Viewport = viewport;
             State.Action = BoxAction.Drawing;
@@ -103,12 +103,12 @@ namespace Sledge.Editor.Tools2.DraggableTool
             State.End = State.Start + wid;
         }
 
-        public virtual void Drag(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Coordinate lastPosition, Coordinate position)
+        public virtual void Drag(MapViewport viewport, ViewportEvent e, Coordinate lastPosition, Coordinate position)
         {
             State.End = Tool.SnapIfNeeded(viewport.Expand(position)) + viewport.GetUnusedCoordinate(State.End);
         }
 
-        public virtual void EndDrag(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Coordinate position)
+        public virtual void EndDrag(MapViewport viewport, ViewportEvent e, Coordinate position)
         {
             State.Viewport = null;
             State.Action = BoxAction.Drawn;
