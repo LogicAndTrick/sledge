@@ -135,11 +135,12 @@ namespace Sledge.Rendering.OpenGL.Arrays
             }
         }
 
-        private VertexFlags ConvertVertexFlags(CameraFlags cameraFlags)
+        private VertexFlags ConvertVertexFlags(Element element)
         {
             var flags = VertexFlags.None;
-            if (!cameraFlags.HasFlag(CameraFlags.Orthographic)) flags |= VertexFlags.InvisibleOrthographic;
-            if (!cameraFlags.HasFlag(CameraFlags.Perspective)) flags |= VertexFlags.InvisiblePerspective;
+            if (!element.CameraFlags.HasFlag(CameraFlags.Orthographic)) flags |= VertexFlags.InvisibleOrthographic;
+            if (!element.CameraFlags.HasFlag(CameraFlags.Perspective)) flags |= VertexFlags.InvisiblePerspective;
+            if (element.IsSelected) flags |= VertexFlags.Selected;
             return flags;
         }
 
@@ -152,7 +153,7 @@ namespace Sledge.Rendering.OpenGL.Arrays
                 MaterialColor = face.Material.Color.ToAbgr(),
                 AccentColor = face.AccentColor.ToAbgr(),
                 TintColor = Color.White.ToAbgr(),
-                Flags = ConvertVertexFlags(face.CameraFlags)
+                Flags = ConvertVertexFlags(face)
             });
         }
 
@@ -164,7 +165,7 @@ namespace Sledge.Rendering.OpenGL.Arrays
                 MaterialColor = line.Color.ToAbgr(),
                 AccentColor = line.Color.ToAbgr(),
                 TintColor = Color.White.ToAbgr(),
-                Flags = ConvertVertexFlags(line.CameraFlags)
+                Flags = ConvertVertexFlags(line)
             });
         }
 

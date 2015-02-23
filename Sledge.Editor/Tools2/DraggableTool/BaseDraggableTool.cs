@@ -38,6 +38,11 @@ namespace Sledge.Editor.Tools2.DraggableTool
 
         }
 
+        protected virtual void OnDraggableDragMoving(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Coordinate previousPosition, Coordinate position, IDraggable draggable)
+        {
+
+        }
+
         protected virtual void OnDraggableDragMoved(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Coordinate previousPosition, Coordinate position, IDraggable draggable)
         {
 
@@ -100,8 +105,9 @@ namespace Sledge.Editor.Tools2.DraggableTool
             if (e.Button != MouseButtons.Left) return;
             if (CurrentDraggable == null) return;
             var point = viewport.ScreenToWorld(e.X, viewport.Height - e.Y);
-            OnDraggableDragMoved(viewport, camera, e, _lastDragPoint, point, CurrentDraggable);
+            OnDraggableDragMoving(viewport, camera, e, _lastDragPoint, point, CurrentDraggable);
             if (!e.Handled) CurrentDraggable.Drag(viewport, e, _lastDragPoint, point);
+            if (!e.Handled) OnDraggableDragMoved(viewport, camera, e, _lastDragPoint, point, CurrentDraggable);
             _lastDragPoint = point;
             _lastDragMoveEvent = e;
         }
@@ -131,8 +137,10 @@ namespace Sledge.Editor.Tools2.DraggableTool
                 };
                 ev.X = ev.LastX = _lastDragMoveEvent.X;
                 ev.Y = ev.LastY = _lastDragMoveEvent.Y;
-                OnDraggableDragMoved(viewport, camera, ev, _lastDragPoint, point, CurrentDraggable);
+                
+                OnDraggableDragMoving(viewport, camera, ev, _lastDragPoint, point, CurrentDraggable);
                 if (!ev.Handled) CurrentDraggable.Drag(viewport, ev, _lastDragPoint, point);
+                if (!ev.Handled) OnDraggableDragMoved(viewport, camera, ev, _lastDragPoint, point, CurrentDraggable);
                 _lastDragPoint = point;
             }
             base.PositionChanged(viewport, e);

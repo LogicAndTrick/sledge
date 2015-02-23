@@ -17,7 +17,6 @@ namespace Sledge.Rendering.Scenes.Renderables
         private CameraFlags _cameraFlags;
         private Color _accentColor;
         private Color _tintColor;
-        private bool _isSelected;
 
         public Material Material
         {
@@ -106,16 +105,6 @@ namespace Sledge.Rendering.Scenes.Renderables
                 _cameraFlags = value;
                 OnPropertyChanged("CameraFlags");
                 OnPropertyChanged("RenderCritical");
-            }
-        }
-
-        public bool IsSelected
-        {
-            get { return _isSelected; }
-            set
-            {
-                _isSelected = value;
-                OnPropertyChanged("IsSelected");
             }
         }
 

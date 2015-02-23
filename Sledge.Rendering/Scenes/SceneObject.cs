@@ -8,6 +8,18 @@ namespace Sledge.Rendering.Scenes
         public Scene Scene { get; set; }
         public bool IsVisible { get; set; }
 
+        private bool _isSelected;
+
+        public bool IsSelected
+        {
+            get { return _isSelected; }
+            set
+            {
+                _isSelected = value;
+                OnPropertyChanged("IsSelected");
+            }
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         protected void OnPropertyChanged(string propertyName)

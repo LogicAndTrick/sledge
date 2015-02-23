@@ -13,7 +13,7 @@ namespace Sledge.Editor.Tools2.DraggableTool
 {
     public class BoxResizeHandle : IDraggable
     {
-        protected BoxDraggableState State { get; set; }
+        public BoxDraggableState State { get; protected set; }
         public ResizeHandle Handle { get; protected set; }
         protected MapViewport HighlightedViewport { get; set; }
 

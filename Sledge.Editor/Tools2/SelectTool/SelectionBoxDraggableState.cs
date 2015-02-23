@@ -1,11 +1,19 @@
 using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
 using OpenTK;
 using Sledge.DataStructures.Geometric;
+using Sledge.DataStructures.Transformations;
 using Sledge.Editor.Documents;
+using Sledge.Editor.Extensions;
 using Sledge.Editor.Rendering;
 using Sledge.Editor.Tools2.DraggableTool;
 using Sledge.Editor.Tools2.SelectTool.TransformationHandles;
 using Sledge.Rendering.Cameras;
+using Sledge.Rendering.Materials;
+using Sledge.Rendering.Scenes;
+using Sledge.Rendering.Scenes.Elements;
+using Sledge.Rendering.Scenes.Renderables;
 
 namespace Sledge.Editor.Tools2.SelectTool
 {
@@ -70,6 +78,29 @@ namespace Sledge.Editor.Tools2.SelectTool
         public override bool CanDrag(MapViewport viewport, ViewportEvent e, Coordinate position)
         {
             return false;
+        }
+
+        public override IEnumerable<SceneObject> GetSceneObjects()
+        {
+            var list = base.GetSceneObjects().ToList();
+            if (State.Action == BoxAction.Resizing && ShouldDrawBox())
+            {
+                var box = new Box(State.OrigStart, State.OrigEnd);
+                foreach (var face in box.GetBoxFaces())
+                {
+                    var verts = face.Select(x => new PositionVertex(new Position(x.ToVector3()), 0, 0)).ToList();
+                    var rc = GetRenderBoxColour();
+                    var fe = new FaceElement(PositionType.World, Material.Flat(Color.FromArgb(rc.A / 8, rc)), verts)
+                    {
+                        RenderFlags = RenderFlags.Wireframe,
+                        CameraFlags = CameraFlags.Orthographic,
+                        AccentColor = GetRenderBoxColour(),
+                        IsSelected = true
+                    };
+                    list.Add(fe);
+                }
+            }
+            return list;
         }
 
         public Matrix4? GetTransformationMatrix(MapViewport viewport, OrthographicCamera camera, Document document)

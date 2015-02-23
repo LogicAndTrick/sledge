@@ -111,7 +111,7 @@ namespace Sledge.Editor.Tools
             return null;
         }
 
-        protected Documents.Document Document { get; set; }
+        public Documents.Document Document { get; protected set; }
         public MapViewport Viewport { get; set; }
         public ToolUsage Usage { get; set; }
 

@@ -143,12 +143,12 @@ namespace Sledge.Editor.Tools2.DraggableTool
             //}
         }
 
-        public IEnumerable<Element> GetViewportElements(MapViewport viewport, PerspectiveCamera camera)
+        public virtual IEnumerable<Element> GetViewportElements(MapViewport viewport, PerspectiveCamera camera)
         {
             yield break;
         }
 
-        public IEnumerable<Element> GetViewportElements(MapViewport viewport, OrthographicCamera camera)
+        public virtual IEnumerable<Element> GetViewportElements(MapViewport viewport, OrthographicCamera camera)
         {
             yield break;
         }
