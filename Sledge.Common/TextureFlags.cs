@@ -7,6 +7,7 @@ namespace Sledge.Common
     {
         None = 1u << 0,
         Transparent = 1u << 1,
+        PixelPerfect = 1u << 2,
 
         Missing = 1u << 31
     }

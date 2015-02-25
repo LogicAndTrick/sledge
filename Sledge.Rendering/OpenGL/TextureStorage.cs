@@ -97,7 +97,7 @@ namespace Sledge.Rendering.OpenGL
 
             var tex = GL.GenTexture();
             GL.BindTexture(TextureTarget.Texture2D, tex);
-            SetTextureParameters();
+            SetTextureParameters(TextureFlags.None);
 
             // The white pixel
             GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat, 1, 1, 0, PixelFormat.Bgra, PixelType.UnsignedByte, new[] { 0xFFFFFFFF });
@@ -133,7 +133,7 @@ namespace Sledge.Rendering.OpenGL
             {
                 var tex = GL.GenTexture();
                 GL.BindTexture(TextureTarget.Texture2D, tex);
-                SetTextureParameters();
+                SetTextureParameters(flags);
 
                 texobj = new Texture(tex, name, flags) {Width = width, Height = height};
                 Textures.Add(name, texobj);
@@ -160,13 +160,18 @@ namespace Sledge.Rendering.OpenGL
             return texobj;
         }
 
-        private void SetTextureParameters()
+        private void SetTextureParameters(TextureFlags flags)
         {
-            GL.TexEnv(TextureEnvTarget.TextureEnv, TextureEnvParameter.TextureEnvMode, (int)TextureEnvMode.Modulate);
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)(DisableTextureFiltering ? TextureMinFilter.Linear : TextureMinFilter.LinearMipmapLinear));
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Repeat);
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Repeat);
+            var minFilter = flags.HasFlag(TextureFlags.PixelPerfect) ? TextureMinFilter.Nearest
+                                           : DisableTextureFiltering ? TextureMinFilter.Linear
+                                                                     : TextureMinFilter.LinearMipmapLinear;
+            var magFilter = flags.HasFlag(TextureFlags.PixelPerfect) ? TextureMagFilter.Nearest : TextureMagFilter.Linear;
+
+            GL.TexEnv(TextureEnvTarget.TextureEnv, TextureEnvParameter.TextureEnvMode, (int) TextureEnvMode.Modulate);
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int) minFilter);
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int) magFilter);
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int) TextureWrapMode.Repeat);
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int) TextureWrapMode.Repeat);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.GenerateMipmap, 1);
         }
 

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
 using Sledge.Rendering.Cameras;
+using Sledge.Rendering.Interfaces;
 
 namespace Sledge.Rendering.Scenes.Elements
 {
@@ -18,12 +19,12 @@ namespace Sledge.Rendering.Scenes.Elements
             CameraFlags = CameraFlags.All;
         }
 
-        public override IEnumerable<LineElement> GetLines()
+        public override IEnumerable<LineElement> GetLines(IRenderer renderer)
         {
             yield return this;
         }
 
-        public override IEnumerable<FaceElement> GetFaces()
+        public override IEnumerable<FaceElement> GetFaces(IRenderer renderer)
         {
             yield break;
         }

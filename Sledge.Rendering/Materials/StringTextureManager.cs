@@ -1,17 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Drawing.Text;
 using System.Linq;
 using System.Text;
+using OpenTK;
+using Sledge.Common;
 using Sledge.Rendering.Interfaces;
+using Sledge.Rendering.Scenes.Elements;
+using Sledge.Rendering.Scenes.Renderables;
 
 namespace Sledge.Rendering.Materials
 {
-    public class StringTextureManager
+    public class StringTextureManager : IUpdatable
     {
-        private class FontKey : IDisposable
+        internal class FontKey
         {
-            private Font _font;
             public string Name { get; private set; }
             public float Size { get; private set; }
             public FontStyle Style { get; private set; }
@@ -21,36 +26,291 @@ namespace Sledge.Rendering.Materials
                 Name = name;
                 Size = size;
                 Style = style;
-                _font = new Font(name, size, Style, GraphicsUnit.Pixel);
             }
 
-            public void Dispose()
+            public Font CreateFont()
             {
-                _font.Dispose();
+                return new Font(Name, Size, Style, GraphicsUnit.Pixel);
+            }
+
+            public override string ToString()
+            {
+                return string.Format("{0}//{1}//{2}", Name, Size, (int) Style);
+            }
+
+            protected bool Equals(FontKey other)
+            {
+                return string.Equals(Name, other.Name) && Size.Equals(other.Size) && Style == other.Style;
+            }
+
+            public override bool Equals(object obj)
+            {
+                if (ReferenceEquals(null, obj)) return false;
+                if (ReferenceEquals(this, obj)) return true;
+                if (obj.GetType() != this.GetType()) return false;
+                return Equals((FontKey) obj);
+            }
+
+            public override int GetHashCode()
+            {
+                unchecked
+                {
+                    var hashCode = (Name != null ? Name.GetHashCode() : 0);
+                    hashCode = (hashCode * 397) ^ Size.GetHashCode();
+                    hashCode = (hashCode * 397) ^ (int) Style;
+                    return hashCode;
+                }
+            }
+        }
+
+        public class StringTextureValue
+        {
+            public string Value { get; private set; }
+            public string TextureName { get; private set; }
+            public Rectangle Rectangle { get; private set; }
+            public long Timestamp { get; set; }
+
+            public StringTextureValue(string text, string textureName, Rectangle rectangle)
+            {
+                Value = text;
+                TextureName = textureName;
+                Rectangle = rectangle;
+                Timestamp = -1;
             }
         }
         
-        public class StringCollection : IDisposable
+        private class StringTexture : IDisposable
         {
-            private Dictionary<string, string> _strings;
-
-            public StringCollection()
+            private const int MinSize = 512;
+            private const int MaxSize = 2048;
+            private static uint TextureId = 0u;
+            private static string GenerateTextureName()
             {
-                _strings = new Dictionary<string, string>();
+                return "Internal::StringTextureManager::Texture_" + (TextureId++);
+            }
+
+            public string TextureName { get; private set; }
+            public int Size { get; private set; }
+
+            private readonly Font _font;
+            private Dictionary<string, StringTextureValue> _values;
+            private Bitmap _image;
+            private IRenderer _renderer;
+
+            public StringTexture(IRenderer renderer, FontKey font)
+            {
+                _renderer = renderer;
+                _font = font.CreateFont();
+                TextureName = GenerateTextureName();
+                Size = MinSize;
+                _image = new Bitmap(Size, Size);
+                using (var g = Graphics.FromImage(_image))
+                {
+                    g.Clear(Color.Transparent);
+                }
+                _values = new Dictionary<string, StringTextureValue>();
+
+                _renderer.Textures.Create(TextureName, _image, Size, Size, TextureFlags.PixelPerfect | TextureFlags.Transparent);
+                _renderer.Materials.Add(Material.Texture(TextureName));
+            }
+
+            private int GetFreeX(int startY, int endY)
+            {
+                var x = 0;
+                foreach (var rec in _values.Values.Select(v => v.Rectangle))
+                {
+                    if (rec.Bottom < startY || rec.Top > endY) continue;
+                    x = Math.Max(x, rec.Right);
+                }
+                return x;
+            }
+
+            public bool Contains(string text)
+            {
+                return _values.ContainsKey(text);
+            }
+
+            public RectangleF GetUVRectangle(string text)
+            {
+                if (!Contains(text)) return RectangleF.Empty;
+                var val = _values[text];
+                var s = (float) Size;
+                return new RectangleF(val.Rectangle.X / s, val.Rectangle.Y / s, val.Rectangle.Width / s, val.Rectangle.Height / s);
+            }
+
+            public Size GetSize(string text)
+            {
+                if (!Contains(text)) return System.Drawing.Size.Empty;
+                var val = _values[text];
+                return new Size(val.Rectangle.Width, val.Rectangle.Height);
+            }
+
+            private int GetNextY(int y)
+            {
+                var ret = int.MaxValue;
+                foreach (var rec in _values.Values.Select(x => x.Rectangle))
+                {
+                    if (rec.Top > y) ret = Math.Min(ret, rec.Top);
+                }
+                return ret;
+            }
+
+            private Rectangle FindSpaceFor(int width, int height)
+            {
+                int x = 0, y = 0;
+                while (y < Size)
+                {
+                    x = GetFreeX(y, y + height);
+                    if (x + width < Size) return new Rectangle(x, y, width, height);
+                    y = GetNextY(y + height);
+                }
+                return Rectangle.Empty;
+            }
+
+            private bool HasRoomFor(int width, int height)
+            {
+                return !FindSpaceFor(width, height).IsEmpty;
+            }
+
+            private bool CanMakeRoomFor(int width, int height)
+            {
+                var spare = MaxSize - Size;
+                return width <= spare && height <= spare;
+            }
+
+            private bool ExpandFor(int width, int height)
+            {
+                var req = Size + Math.Max(width, height);
+                var newSize = Size;
+                while (newSize < req) newSize *= 2;
+
+                if (newSize > MaxSize) return false;
+                if (newSize == Size) return true;
+
+                Size = newSize;
+                var img = new Bitmap(Size, Size);
+                using (var g = Graphics.FromImage(img))
+                {
+                    g.Clear(Color.Transparent);
+                    g.DrawImage(_image, 0, 0);
+                }
+                _image.Dispose();
+                _image = img;
+
+                _renderer.Textures.Create(TextureName, _image, Size, Size, TextureFlags.PixelPerfect | TextureFlags.Transparent);
+                return true;
+            }
+
+            public StringTextureValue Add(string value)
+            {
+                if (Contains(value)) return _values[value];
+
+                var size = System.Windows.Forms.TextRenderer.MeasureText(value, _font);
+                var rec = FindSpaceFor(size.Width, size.Height);
+
+                if (rec.IsEmpty && CanMakeRoomFor(size.Width, size.Height) && ExpandFor(size.Width, size.Height))
+                {
+                    rec = FindSpaceFor(size.Width, size.Height);
+                }
+
+                if (rec.IsEmpty) return null;
+
+                var stv = new StringTextureValue(value, TextureName, rec);
+                using (var g = Graphics.FromImage(_image))
+                {
+                    g.SmoothingMode = SmoothingMode.None;
+                    g.TextRenderingHint = TextRenderingHint.SingleBitPerPixelGridFit;
+                    g.InterpolationMode = InterpolationMode.NearestNeighbor;
+                    g.PixelOffsetMode = PixelOffsetMode.None;
+                    g.DrawString(stv.Value, _font, Brushes.White, stv.Rectangle);
+                }
+                _values.Add(value, stv);
+
+                _renderer.Textures.Create(TextureName, _image, Size, Size, TextureFlags.PixelPerfect | TextureFlags.Transparent);
+                return stv;
             }
 
             public void Dispose()
             {
-                throw new NotImplementedException();
+                _image.Dispose();
+                _font.Dispose();
             }
         }
 
+        internal static readonly FontKey DefaultFontKey = new FontKey(SystemFonts.DefaultFont.Name, 12, FontStyle.Regular);
+
         private readonly IRenderer _renderer;
-        private Dictionary<FontKey, StringCollection> _strings;
+        private Dictionary<FontKey, List<StringTexture>> _textures;
 
         public StringTextureManager(IRenderer renderer)
         {
             _renderer = renderer;
+            _textures = new Dictionary<FontKey, List<StringTexture>>();
+        }
+
+        private StringTexture GetTexture(string text, FontKey key, bool addIfMissing = true)
+        {
+            var list = _textures.ContainsKey(key) ? _textures[key] : new List<StringTexture>();
+            var tex = list.FirstOrDefault(x => x.Contains(text));
+            if (tex == null && addIfMissing)
+            {
+                foreach (var t in list)
+                {
+                    var stv = t.Add(text);
+                    if (stv != null)
+                    {
+                        tex = t;
+                        break;
+                    }
+                }
+                if (tex == null)
+                {
+                    var sc = new StringTexture(_renderer, key);
+                    if (!_textures.ContainsKey(key)) _textures.Add(key, new List<StringTexture>());
+                    _textures[key].Add(sc);
+                    var stv = sc.Add(text);
+                    if (stv != null) tex = sc;
+                }
+            }
+            return tex;
+        }
+
+        private FontKey GetFontKey(string fontName, float fontSize, FontStyle style)
+        {
+            return new FontKey(fontName ?? DefaultFontKey.Name, fontSize <= 0 ? DefaultFontKey.Size : fontSize, style);
+        }
+
+        public Material GetMaterial(string text, string fontName = null, float fontSize = 0, FontStyle style = FontStyle.Regular)
+        {
+            var tex = GetTexture(text, GetFontKey(fontName, fontSize, style));
+            return tex == null ? null : Material.Texture(tex.TextureName);
+        }
+
+        public FaceElement GetElement(string text, Color color, PositionType type, Vector3 position, float anchorX, float anchorY, string fontName = null, float fontSize = 0, FontStyle style = FontStyle.Regular)
+        {
+            var tex = GetTexture(text, GetFontKey(fontName, fontSize, style));
+            if (tex == null) return null;
+
+            var mat = new Material(MaterialType.Textured, color, tex.TextureName);
+            var uv = tex.GetUVRectangle(text);
+            var size = tex.GetSize(text);
+
+            return new FaceElement(type, mat, new[]
+            {
+                new PositionVertex(new Position(position) { Offset = new Vector3((float) Math.Floor(-size.Width * anchorX),      (float) Math.Floor(-size.Height * anchorY),      0) }, uv.X, uv.Y),
+                new PositionVertex(new Position(position) { Offset = new Vector3((float) Math.Floor(size.Width * (1 - anchorX)), (float) Math.Floor(-size.Height * anchorY),      0) }, uv.X + uv.Width, uv.Y),
+                new PositionVertex(new Position(position) { Offset = new Vector3((float) Math.Floor(size.Width * (1 - anchorX)), (float) Math.Floor(size.Height * (1 - anchorY)), 0) }, uv.X + uv.Width, uv.Y + uv.Height),
+                new PositionVertex(new Position(position) { Offset = new Vector3((float) Math.Floor(-size.Width * anchorX),      (float) Math.Floor(size.Height * (1 - anchorY)), 0) }, uv.X, uv.Y + uv.Height),
+            })
+            {
+                AccentColor = color,
+                RenderFlags = RenderFlags.Polygon
+            };
+        }
+
+        public void Update(Frame frame)
+        {
+            //
         }
     }
 }

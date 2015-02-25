@@ -31,7 +31,7 @@ namespace Sledge.Rendering.Scenes.Elements
             PositionType = positionType;
         }
 
-        public abstract IEnumerable<LineElement> GetLines();
-        public abstract IEnumerable<FaceElement> GetFaces();
+        public abstract IEnumerable<LineElement> GetLines(IRenderer renderer);
+        public abstract IEnumerable<FaceElement> GetFaces(IRenderer renderer);
     }
 }

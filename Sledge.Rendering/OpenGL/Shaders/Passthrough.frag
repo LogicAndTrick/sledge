@@ -29,7 +29,7 @@ void main()
 
     fragmentColor = useAccentColor ? vertexAccentColor : texture(currentTexture, vertexTexture) * vertexMaterialColor;
 	fragmentColor.rgb *= tint; // vertexTintColor.rgb * vertexTintColor.a;
-	fragmentColor.a = vertexMaterialColor.a;
+	fragmentColor.a *= vertexMaterialColor.a;
 	
     if (showGrid) {
         if (abs(vertexNormal).x < 0.9999) fragmentColor = mix(fragmentColor, vec4(1, 0, 0, 1), step(mod(vertexPosition.x, gridSpacing), 0.1f));

@@ -1,4 +1,5 @@
 ﻿using OpenTK;
+using Sledge.Rendering.Materials;
 using Sledge.Rendering.Scenes;
 
 namespace Sledge.Rendering.Interfaces
@@ -17,5 +18,6 @@ namespace Sledge.Rendering.Interfaces
         ITextureStorage Textures { get; }
         IMaterialStorage Materials { get; }
         IModelStorage Models { get; }
+        StringTextureManager StringTextureManager { get; }
     }
 }

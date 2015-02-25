@@ -15,6 +15,7 @@ using Sledge.Rendering.Interfaces;
 using Sledge.Rendering.Materials;
 using Sledge.Rendering.OpenGL;
 using Sledge.Rendering.Scenes;
+using Sledge.Rendering.Scenes.Elements;
 using Sledge.Rendering.Scenes.Renderables;
 using Face = Sledge.Rendering.Scenes.Renderables.Face;
 using Vertex = Sledge.Rendering.Scenes.Renderables.Vertex;
@@ -73,6 +74,8 @@ namespace Sledge.Editor.Rendering
             Scene.Add(new Line(Color.FromArgb(255, Color.Red), Vector3.Zero, Vector3.UnitX * 10) { RenderFlags = RenderFlags.Wireframe, CameraFlags = CameraFlags.Perspective });
             Scene.Add(new Line(Color.FromArgb(255, Color.Lime), Vector3.Zero, Vector3.UnitY * 10) { RenderFlags = RenderFlags.Wireframe, CameraFlags = CameraFlags.Perspective });
             Scene.Add(new Line(Color.FromArgb(255, Color.Blue), Vector3.Zero, Vector3.UnitZ * 10) { RenderFlags = RenderFlags.Wireframe, CameraFlags = CameraFlags.Perspective });
+
+            Scene.Add(new TextElement(PositionType.World, new Vector3(0, 0, 0), "Viewport", Color.White) { AnchorX = 0, AnchorY = 0 });
         }
 
         public void SetActive()

@@ -8,6 +8,7 @@ using Sledge.Common;
 using Sledge.Rendering.Cameras;
 using Sledge.Rendering.DataStructures.Models;
 using Sledge.Rendering.Interfaces;
+using Sledge.Rendering.Materials;
 using Sledge.Rendering.OpenGL.Arrays;
 using Sledge.Rendering.OpenGL.Shaders;
 using Sledge.Rendering.Scenes;
@@ -31,6 +32,7 @@ namespace Sledge.Rendering.OpenGL
         public ITextureStorage Textures { get { return _textureStorage; } }
         public IMaterialStorage Materials { get { return _materialStorage; } }
         public IModelStorage Models { get { return _modelStorage; } }
+        public StringTextureManager StringTextureManager { get; private set; }
 
         public Matrix4 SelectionTransform { get; set; }
 
@@ -44,6 +46,7 @@ namespace Sledge.Rendering.OpenGL
             _initialised = false;
 
             SelectionTransform = Matrix4.Identity;
+            StringTextureManager = new StringTextureManager(this);
         }
 
         private void InitialiseRenderer()
@@ -170,7 +173,7 @@ namespace Sledge.Rendering.OpenGL
         {
             if (!_viewportData.ContainsKey(viewport))
             {
-                var data = new ViewportData(viewport);
+                var data = new ViewportData(this, viewport);
                 _viewportData.Add(viewport, data);
             }
             return _viewportData[viewport];
@@ -194,12 +197,12 @@ namespace Sledge.Rendering.OpenGL
             public int Width { get; set; }
             public int Height { get; set; }
 
-            public ViewportData(IViewport viewport)
+            public ViewportData(IRenderer renderer, IViewport viewport)
             {
                 Width = viewport.Control.Width;
                 Height = viewport.Control.Height;
                 Framebuffer = new Framebuffer(Width, Height);
-                ElementArray = new ElementVertexArray(viewport, new Element[0]);
+                ElementArray = new ElementVertexArray(renderer, viewport, new Element[0]);
                 Initialised = false;
             }
 

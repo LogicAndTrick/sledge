@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -22,10 +23,12 @@ namespace Sledge.Rendering.OpenGL.Arrays
         private const int ScreenFacePolygons = 10;
         private const int ScreenFaceWireframe = 11;
 
+        private readonly IRenderer _renderer;
         private readonly IViewport _viewport;
 
-        public ElementVertexArray(IViewport viewport, IEnumerable<Element> data) : base(data)
+        public ElementVertexArray(IRenderer renderer, IViewport viewport, IEnumerable<Element> data) : base(data)
         {
+            _renderer = renderer;
             _viewport = viewport;
         }
 
@@ -102,7 +105,7 @@ namespace Sledge.Rendering.OpenGL.Arrays
 
             var list = data.Where(x => x.PositionType == type).Where(x => x.Viewport == null || x.Viewport == _viewport).ToList();
 
-            foreach (var g in list.SelectMany(x => x.GetFaces()).GroupBy(x => x.Material.UniqueIdentifier))
+            foreach (var g in list.SelectMany(x => x.GetFaces(_renderer)).GroupBy(x => x.Material.UniqueIdentifier))
             {
                 StartSubset(polygonId);
 
@@ -117,7 +120,7 @@ namespace Sledge.Rendering.OpenGL.Arrays
                 PushSubset(polygonId, g.Key);
             }
 
-            foreach (var line in list.SelectMany(x => x.GetLines()))
+            foreach (var line in list.SelectMany(x => x.GetLines(_renderer)))
             {
                 var index = PushData(Convert(line));
                 PushIndex(wireframeId, index, Line(line.Vertices.Count));
@@ -170,6 +173,12 @@ namespace Sledge.Rendering.OpenGL.Arrays
         }
 
         private Vector3 Convert(Position position, PositionType type)
+        {
+            var con = ConvertPos(position, type);
+            return new Vector3((float) Math.Round(con.X), (float) Math.Round(con.Y), (float) Math.Round(con.Z));
+        }
+
+        private Vector3 ConvertPos(Position position, PositionType type)
         {
             if (type == PositionType.World)
             {
