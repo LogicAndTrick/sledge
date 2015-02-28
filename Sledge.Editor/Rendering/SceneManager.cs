@@ -75,7 +75,7 @@ namespace Sledge.Editor.Rendering
             Scene.Add(new Line(Color.FromArgb(255, Color.Lime), Vector3.Zero, Vector3.UnitY * 10) { RenderFlags = RenderFlags.Wireframe, CameraFlags = CameraFlags.Perspective });
             Scene.Add(new Line(Color.FromArgb(255, Color.Blue), Vector3.Zero, Vector3.UnitZ * 10) { RenderFlags = RenderFlags.Wireframe, CameraFlags = CameraFlags.Perspective });
 
-            Scene.Add(new TextElement(PositionType.World, new Vector3(0, 0, 0), "Viewport", Color.White) { AnchorX = 0, AnchorY = 0 });
+            Scene.Add(new TextElement(PositionType.Screen, new Vector3(0, 0, 0), "Viewport", Color.White) { AnchorX = 0, AnchorY = 0, BackgroundColor = Color.FromArgb(128, Color.Red) });
         }
 
         public void SetActive()

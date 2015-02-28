@@ -103,8 +103,24 @@ namespace Sledge.Editor.Tools2.SelectTool
             return list;
         }
 
+        public override IEnumerable<Element> GetViewportElements(MapViewport viewport, OrthographicCamera camera)
+        {
+            var tf = GetTransformationMatrix(viewport, camera, Tool.Document);
+            if (State.Action == BoxAction.Resizing && tf.HasValue)
+            {
+                var box = new Box(State.OrigStart, State.OrigEnd);
+                box = box.Transform(new UnitMatrixMult(tf.Value));
+                return GetBoxTextElements(viewport, box.Start.ToVector3(), box.End.ToVector3());
+            }
+            else
+            {
+                return base.GetViewportElements(viewport, camera);
+            }
+        }
+
         public Matrix4? GetTransformationMatrix(MapViewport viewport, OrthographicCamera camera, Document document)
         {
+            if (State.Action != BoxAction.Resizing) return null;
             var tt = Tool.CurrentDraggable as ITransformationHandle;
             return tt != null ? tt.GetTransformationMatrix(viewport, camera, State, document) : null;
         }

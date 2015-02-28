@@ -4,7 +4,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Text;
 using System.Linq;
-using System.Text;
+using System.Windows.Forms;
 using OpenTK;
 using Sledge.Common;
 using Sledge.Rendering.Interfaces;
@@ -13,7 +13,7 @@ using Sledge.Rendering.Scenes.Renderables;
 
 namespace Sledge.Rendering.Materials
 {
-    public class StringTextureManager : IUpdatable
+    public class StringTextureManager : IUpdatable, IDisposable
     {
         internal class FontKey
         {
@@ -47,7 +47,7 @@ namespace Sledge.Rendering.Materials
             {
                 if (ReferenceEquals(null, obj)) return false;
                 if (ReferenceEquals(this, obj)) return true;
-                if (obj.GetType() != this.GetType()) return false;
+                if (obj.GetType() != GetType()) return false;
                 return Equals((FontKey) obj);
             }
 
@@ -79,14 +79,14 @@ namespace Sledge.Rendering.Materials
             }
         }
         
-        private class StringTexture : IDisposable
+        private class StringTexture : IDisposable, IUpdatable
         {
             private const int MinSize = 512;
             private const int MaxSize = 2048;
-            private static uint TextureId = 0u;
+            private static uint _textureId;
             private static string GenerateTextureName()
             {
-                return "Internal::StringTextureManager::Texture_" + (TextureId++);
+                return "Internal::StringTextureManager::Texture_" + (_textureId++);
             }
 
             public string TextureName { get; private set; }
@@ -96,10 +96,12 @@ namespace Sledge.Rendering.Materials
             private Dictionary<string, StringTextureValue> _values;
             private Bitmap _image;
             private IRenderer _renderer;
+            private readonly long _cacheMilliseconds;
 
-            public StringTexture(IRenderer renderer, FontKey font)
+            public StringTexture(IRenderer renderer, FontKey font, long cacheMilliseconds)
             {
                 _renderer = renderer;
+                _cacheMilliseconds = cacheMilliseconds;
                 _font = font.CreateFont();
                 TextureName = GenerateTextureName();
                 Size = MinSize;
@@ -110,19 +112,13 @@ namespace Sledge.Rendering.Materials
                 }
                 _values = new Dictionary<string, StringTextureValue>();
 
-                _renderer.Textures.Create(TextureName, _image, Size, Size, TextureFlags.PixelPerfect | TextureFlags.Transparent);
+                UpdateTexture();
                 _renderer.Materials.Add(Material.Texture(TextureName));
             }
 
-            private int GetFreeX(int startY, int endY)
+            public bool IsEmpty()
             {
-                var x = 0;
-                foreach (var rec in _values.Values.Select(v => v.Rectangle))
-                {
-                    if (rec.Bottom < startY || rec.Top > endY) continue;
-                    x = Math.Max(x, rec.Right);
-                }
-                return x;
+                return _values.Count == 0;
             }
 
             public bool Contains(string text)
@@ -145,24 +141,25 @@ namespace Sledge.Rendering.Materials
                 return new Size(val.Rectangle.Width, val.Rectangle.Height);
             }
 
-            private int GetNextY(int y)
+            private int GetFreeX(int startY, int endY)
             {
-                var ret = int.MaxValue;
-                foreach (var rec in _values.Values.Select(x => x.Rectangle))
+                var x = 0;
+                foreach (var rec in _values.Values.Select(v => v.Rectangle))
                 {
-                    if (rec.Top > y) ret = Math.Min(ret, rec.Top);
+                    if (rec.Bottom < startY || rec.Top > endY) continue;
+                    x = Math.Max(x, rec.Right);
                 }
-                return ret;
+                return x;
             }
 
             private Rectangle FindSpaceFor(int width, int height)
             {
                 int x = 0, y = 0;
-                while (y < Size)
+                while (y + height < Size)
                 {
                     x = GetFreeX(y, y + height);
                     if (x + width < Size) return new Rectangle(x, y, width, height);
-                    y = GetNextY(y + height);
+                    y += height + 1;
                 }
                 return Rectangle.Empty;
             }
@@ -197,15 +194,28 @@ namespace Sledge.Rendering.Materials
                 _image.Dispose();
                 _image = img;
 
-                _renderer.Textures.Create(TextureName, _image, Size, Size, TextureFlags.PixelPerfect | TextureFlags.Transparent);
+                UpdateTexture();
                 return true;
             }
 
             public StringTextureValue Add(string value)
             {
+                var v = AddInternal(value);
+                UpdateTexture();
+                return v;
+            }
+
+            private void UpdateTexture()
+            {
+                _renderer.Textures.Create(TextureName, _image, Size, Size, TextureFlags.PixelPerfect | TextureFlags.Transparent);
+            }
+
+            private StringTextureValue AddInternal(string value)
+            {
                 if (Contains(value)) return _values[value];
 
-                var size = System.Windows.Forms.TextRenderer.MeasureText(value, _font);
+                var size = TextRenderer.MeasureText(value, _font);
+                size = new Size(size.Width, size.Height + 2);
                 var rec = FindSpaceFor(size.Width, size.Height);
 
                 if (rec.IsEmpty && CanMakeRoomFor(size.Width, size.Height) && ExpandFor(size.Width, size.Height))
@@ -222,12 +232,53 @@ namespace Sledge.Rendering.Materials
                     g.TextRenderingHint = TextRenderingHint.SingleBitPerPixelGridFit;
                     g.InterpolationMode = InterpolationMode.NearestNeighbor;
                     g.PixelOffsetMode = PixelOffsetMode.None;
+                    g.CompositingMode = CompositingMode.SourceCopy;
+                    g.FillRectangle(Brushes.Transparent, stv.Rectangle);
                     g.DrawString(stv.Value, _font, Brushes.White, stv.Rectangle);
                 }
                 _values.Add(value, stv);
 
-                _renderer.Textures.Create(TextureName, _image, Size, Size, TextureFlags.PixelPerfect | TextureFlags.Transparent);
                 return stv;
+            }
+
+            private int _fragmentation;
+
+            public bool Remove(string value)
+            {
+                if (!Contains(value)) return false;
+                var ret = _values.Remove(value);
+                _fragmentation++;
+                if (_fragmentation > 200)
+                {
+                    _fragmentation = 0;
+                    var v = _values.Keys.FirstOrDefault();
+                    _values.Clear();
+                    if (v != null) Add(v);
+                }
+                return ret;
+            }
+
+            private void Rebuild()
+            {
+                _fragmentation = 0;
+                var values = _values.Keys.ToList();
+                _values.Clear();
+                foreach (var v in values) AddInternal(v);
+                UpdateTexture();
+            }
+
+            public void ResetTimestamp(string text)
+            {
+                if (_values.ContainsKey(text)) _values[text].Timestamp = -1;
+            }
+
+            public void Update(Frame frame)
+            {
+                foreach (var val in _values.Values.ToArray())
+                {
+                    if (val.Timestamp < 0) val.Timestamp = frame.Milliseconds;
+                    else if (frame.Milliseconds - val.Timestamp > _cacheMilliseconds) Remove(val.Value);
+                }
             }
 
             public void Dispose()
@@ -240,7 +291,8 @@ namespace Sledge.Rendering.Materials
         internal static readonly FontKey DefaultFontKey = new FontKey(SystemFonts.DefaultFont.Name, 12, FontStyle.Regular);
 
         private readonly IRenderer _renderer;
-        private Dictionary<FontKey, List<StringTexture>> _textures;
+        private readonly Dictionary<FontKey, List<StringTexture>> _textures;
+        private const long TimeoutMilliseconds = 1000; // 1 second
 
         public StringTextureManager(IRenderer renderer)
         {
@@ -265,13 +317,14 @@ namespace Sledge.Rendering.Materials
                 }
                 if (tex == null)
                 {
-                    var sc = new StringTexture(_renderer, key);
+                    var sc = new StringTexture(_renderer, key, TimeoutMilliseconds);
                     if (!_textures.ContainsKey(key)) _textures.Add(key, new List<StringTexture>());
                     _textures[key].Add(sc);
                     var stv = sc.Add(text);
                     if (stv != null) tex = sc;
                 }
             }
+            if (tex != null) tex.ResetTimestamp(text);
             return tex;
         }
 
@@ -300,7 +353,7 @@ namespace Sledge.Rendering.Materials
                 new PositionVertex(new Position(position) { Offset = new Vector3((float) Math.Floor(-size.Width * anchorX),      (float) Math.Floor(-size.Height * anchorY),      0) }, uv.X, uv.Y),
                 new PositionVertex(new Position(position) { Offset = new Vector3((float) Math.Floor(size.Width * (1 - anchorX)), (float) Math.Floor(-size.Height * anchorY),      0) }, uv.X + uv.Width, uv.Y),
                 new PositionVertex(new Position(position) { Offset = new Vector3((float) Math.Floor(size.Width * (1 - anchorX)), (float) Math.Floor(size.Height * (1 - anchorY)), 0) }, uv.X + uv.Width, uv.Y + uv.Height),
-                new PositionVertex(new Position(position) { Offset = new Vector3((float) Math.Floor(-size.Width * anchorX),      (float) Math.Floor(size.Height * (1 - anchorY)), 0) }, uv.X, uv.Y + uv.Height),
+                new PositionVertex(new Position(position) { Offset = new Vector3((float) Math.Floor(-size.Width * anchorX),      (float) Math.Floor(size.Height * (1 - anchorY)), 0) }, uv.X, uv.Y + uv.Height)
             })
             {
                 AccentColor = color,
@@ -308,9 +361,38 @@ namespace Sledge.Rendering.Materials
             };
         }
 
+        public Size GetSize(string text, string fontName = null, float fontSize = 0, FontStyle style = FontStyle.Regular)
+        {
+            var tex = GetTexture(text, GetFontKey(fontName, fontSize, style));
+            if (tex == null) return Size.Empty;
+            return tex.GetSize(text);
+        }
+
         public void Update(Frame frame)
         {
-            //
+            foreach (var kv in _textures.ToList())
+            {
+                foreach (var t in kv.Value.ToArray())
+                {
+                    t.Update(frame);
+
+                    if (t.IsEmpty())
+                    {
+                        t.Dispose();
+                        kv.Value.Remove(t);
+                    }
+                }
+                if (kv.Value.Count == 0) _textures.Remove(kv.Key);
+            }
+        }
+
+        public void Dispose()
+        {
+            foreach (var texture in _textures.SelectMany(x => x.Value))
+            {
+                texture.Dispose();
+            }
+            _textures.Clear();
         }
     }
 }

@@ -12,5 +12,10 @@
             TextureU = textureU;
             TextureV = textureV;
         }
+
+        public PositionVertex Clone()
+        {
+            return new PositionVertex(Position.Clone(), TextureU, TextureV);
+        }
     }
 }

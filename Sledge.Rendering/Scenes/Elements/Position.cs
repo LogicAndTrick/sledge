@@ -14,5 +14,10 @@ namespace Sledge.Rendering.Scenes.Elements
             Normalised = false;
             Offset = Vector3.Zero;
         }
+
+        public Position Clone()
+        {
+            return new Position(Location) {Offset = Offset, Normalised = Normalised};
+        }
     }
 }

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using OpenTK;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 using Sledge.DataStructures.Geometric;
@@ -137,10 +138,6 @@ namespace Sledge.Editor.Tools2.DraggableTool
                     };
                 }
             }
-            //if (ShouldDrawBoxText(viewport))
-            //{
-            //    RenderBoxText(viewport, start, end);
-            //}
         }
 
         public virtual IEnumerable<Element> GetViewportElements(MapViewport viewport, PerspectiveCamera camera)
@@ -150,7 +147,43 @@ namespace Sledge.Editor.Tools2.DraggableTool
 
         public virtual IEnumerable<Element> GetViewportElements(MapViewport viewport, OrthographicCamera camera)
         {
-            yield break;
+            if (!ShouldDrawBoxText()) yield break;
+
+            foreach (var element in GetBoxTextElements(viewport, State.Start.ToVector3(), State.End.ToVector3()))
+            {
+                yield return element;
+            }
+        }
+
+        protected IEnumerable<Element> GetBoxTextElements(MapViewport viewport, Vector3 worldStart, Vector3 worldEnd)
+        {
+            var st = viewport.Viewport.Camera.Flatten(worldStart);
+            var en = viewport.Viewport.Camera.Flatten(worldEnd);
+
+            var widthText = (Math.Abs(Math.Round(en.X - st.X, 1))).ToString("0.##");
+            var heightText = (Math.Abs(Math.Round(en.Y - st.Y, 1))).ToString("0.##");
+
+            var xval = viewport.Viewport.Camera.Expand(new Vector3((st.X + en.X) / 2, Math.Max(st.Y, en.Y), 0));
+            yield return
+                new TextElement(PositionType.World, xval, widthText, GetRenderBoxColour())
+                {
+                    AnchorX = 0.5f,
+                    AnchorY = 1,
+                    FontSize = 16,
+                    ClampToViewport = true,
+                    ScreenOffset = new Vector3(0, -10, 0)
+                };
+
+            var yval = viewport.Viewport.Camera.Expand(new Vector3(Math.Max(st.X, en.X), (st.Y + en.Y) / 2, 0));
+            yield return
+                new TextElement(PositionType.World, yval, heightText, GetRenderBoxColour())
+                {
+                    AnchorX = 0,
+                    AnchorY = 0.5f,
+                    FontSize = 16,
+                    ClampToViewport = true,
+                    ScreenOffset = new Vector3(10, 0, 0)
+                };
         }
 
         #region Rendering
@@ -164,7 +197,7 @@ namespace Sledge.Editor.Tools2.DraggableTool
 
         protected virtual bool ShouldDrawBoxText()
         {
-            return ShouldDrawBox();
+            return ShouldDrawBox() && Sledge.Settings.View.DrawBoxText;
         }
 
         protected virtual Color GetRenderFillColour()
@@ -175,71 +208,6 @@ namespace Sledge.Editor.Tools2.DraggableTool
         protected virtual Color GetRenderBoxColour()
         {
             return BoxColour;
-        }
-
-         //protected virtual void RenderBox(MapViewport viewport, Coordinate start, Coordinate end)
-         //{
-         //    GL.Begin(PrimitiveType.Quads);
-         //    GL.Color4(GetRenderFillColour());
-         //    Coord(start.DX, start.DY, start.DZ);
-         //    Coord(end.DX, start.DY, start.DZ);
-         //    Coord(end.DX, end.DY, start.DZ);
-         //    Coord(start.DX, end.DY, start.DZ);
-         //    GL.End();
-         //
-         //    if (Sledge.Settings.View.DrawBoxDashedLines)
-         //    {
-         //        GL.LineStipple(4, 0xAAAA);
-         //        GL.Enable(EnableCap.LineStipple);
-         //    }
-         //
-         //    GL.Begin(PrimitiveType.LineLoop);
-         //    GL.Color3(GetRenderBoxColour());
-         //    Coord(start.DX, start.DY, start.DZ);
-         //    Coord(end.DX, start.DY, start.DZ);
-         //    Coord(end.DX, end.DY, start.DZ);
-         //    Coord(start.DX, end.DY, start.DZ);
-         //    GL.End();
-         //    GL.Disable(EnableCap.LineStipple);
-         //}
-
-        protected void RenderBoxText(MapViewport viewport, Coordinate boxStart, Coordinate boxEnd)
-        {
-            if (!Sledge.Settings.View.DrawBoxText) return;
-
-            var widthText = (Math.Round(boxEnd.X - boxStart.X, 1)).ToString("#.##");
-            var heightText = (Math.Round(boxEnd.Y - boxStart.Y, 1)).ToString("#.##");
-
-            var wid = _printer.Measure(widthText, _printerFont, new RectangleF(0, 0, viewport.Width, viewport.Height));
-            var hei = _printer.Measure(heightText, _printerFont, new RectangleF(0, 0, viewport.Width, viewport.Height));
-
-            boxStart = viewport.WorldToScreen(boxStart);
-            boxEnd = viewport.WorldToScreen(boxEnd);
-
-            var cx = (float)(boxStart.X + (boxEnd.X - boxStart.X) / 2);
-            var cy = (float)(boxStart.Y + (boxEnd.Y - boxStart.Y) / 2);
-
-            var wrect = new RectangleF(cx - wid.BoundingBox.Width / 2, viewport.Height - (float)boxEnd.Y - _printerFont.Height - 18, wid.BoundingBox.Width * 1.2f, wid.BoundingBox.Height);
-            var hrect = new RectangleF((float)boxEnd.X + 18, viewport.Height - cy - hei.BoundingBox.Height * 0.75f, hei.BoundingBox.Width * 1.2f, hei.BoundingBox.Height);
-
-            if (wrect.X < 10) wrect.X = 10;
-            if (wrect.X + wrect.Width + 10 > viewport.Width) wrect.X = viewport.Width - 10 - wrect.Width;
-            if (wrect.Y < 10) wrect.Y = 10;
-            if (wrect.Y + wrect.Height + 10 > viewport.Height) wrect.Y = viewport.Height - 10 - wrect.Height;
-
-            if (hrect.X < 10) hrect.X = 10;
-            if (hrect.X + hrect.Width + 10 > viewport.Width) hrect.X = viewport.Width - 10 - hrect.Width;
-            if (hrect.Y < 10) hrect.Y = 10;
-            if (hrect.Y + hrect.Height + 10 > viewport.Height) hrect.Y = viewport.Height - 10 - hrect.Height;
-
-            GL.Disable(EnableCap.CullFace);
-
-            _printer.Begin();
-            _printer.Print(widthText, _printerFont, BoxColour, wrect);
-            _printer.Print(heightText, _printerFont, BoxColour, hrect);
-            _printer.End();
-
-            GL.Enable(EnableCap.CullFace);
         }
 
         #endregion

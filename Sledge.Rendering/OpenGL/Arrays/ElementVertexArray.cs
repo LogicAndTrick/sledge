@@ -174,12 +174,6 @@ namespace Sledge.Rendering.OpenGL.Arrays
 
         private Vector3 Convert(Position position, PositionType type)
         {
-            var con = ConvertPos(position, type);
-            return new Vector3((float) Math.Round(con.X), (float) Math.Round(con.Y), (float) Math.Round(con.Z));
-        }
-
-        private Vector3 ConvertPos(Position position, PositionType type)
-        {
             if (type == PositionType.World)
             {
                 var e = position.Offset;

@@ -140,6 +140,7 @@ namespace Sledge.Rendering.OpenGL
         {
             Materials.Update(frame);
             Models.Update(frame);
+            StringTextureManager.Update(frame);
         }
 
         private void RenderViewport(IViewport viewport, Frame frame)
