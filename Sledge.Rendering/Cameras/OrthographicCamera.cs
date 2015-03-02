@@ -17,6 +17,9 @@ namespace Sledge.Rendering.Cameras
         private static readonly Matrix4 TopMatrix = Matrix4.Identity;
         private static readonly Matrix4 FrontMatrix = new Matrix4(Vector4.UnitZ, Vector4.UnitX, Vector4.UnitY, Vector4.UnitW);
         private static readonly Matrix4 SideMatrix = new Matrix4(Vector4.UnitX, Vector4.UnitZ, Vector4.UnitY, Vector4.UnitW);
+        private Vector3 _position;
+        private float _zoom;
+        private OrthographicType _type;
 
         private static Matrix4 GetMatrixFor(OrthographicType dir)
         {
@@ -33,9 +36,35 @@ namespace Sledge.Rendering.Cameras
             }
         }
 
-        public Vector3 Position { get; set; }
-        public float Zoom { get; set; }
-        public OrthographicType Type { get; set; }
+        public Vector3 Position
+        {
+            get { return _position; }
+            set
+            {
+                _position = value;
+                OnPropertyChanged("Position");
+            }
+        }
+
+        public float Zoom
+        {
+            get { return _zoom; }
+            set
+            {
+                _zoom = value;
+                OnPropertyChanged("Zoom");
+            }
+        }
+
+        public OrthographicType Type
+        {
+            get { return _type; }
+            set
+            {
+                _type = value;
+                OnPropertyChanged("Type");
+            }
+        }
 
         public OrthographicCamera(OrthographicType type)
         {

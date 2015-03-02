@@ -143,7 +143,6 @@ namespace Sledge.Editor.Tools2.DraggableTool
                 if (!ev.Handled) OnDraggableDragMoved(viewport, camera, ev, _lastDragPoint, point, CurrentDraggable);
                 _lastDragPoint = point;
             }
-            base.PositionChanged(viewport, e);
         }
 
         private IEnumerable<T> CollectObjects<T>(Func<IDraggable, IEnumerable<T>> collector)

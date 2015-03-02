@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using OpenTK;
@@ -6,10 +7,37 @@ using Sledge.Rendering.DataStructures;
 
 namespace Sledge.Rendering.Cameras
 {
-    public abstract class Camera
+    public abstract class Camera : INotifyPropertyChanged
     {
-        public CameraFlags Flags { get; set; }
-        public CameraRenderOptions RenderOptions { get; set; }
+        private CameraFlags _flags;
+        private CameraRenderOptions _renderOptions;
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        public CameraFlags Flags
+        {
+            get { return _flags; }
+            set
+            {
+                _flags = value;
+                OnPropertyChanged("Flags");
+            }
+        }
+
+        public CameraRenderOptions RenderOptions
+        {
+            get { return _renderOptions; }
+            set
+            {
+                _renderOptions = value;
+                OnPropertyChanged("RenderOptions");
+            }
+        }
+
         public abstract Vector3 EyeLocation { get; }
 
         public abstract Matrix4 GetCameraMatrix();

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
@@ -60,6 +61,8 @@ namespace Sledge.Editor.Rendering
             viewport.Control.KeyDown += OnKeyDown;
             viewport.Control.KeyUp += OnKeyUp;
             viewport.Update += OnUpdate;
+
+            viewport.Camera.PropertyChanged += CameraPropertyChanged;
         }
 
         #region Listeners
@@ -248,6 +251,12 @@ namespace Sledge.Editor.Rendering
             ListenerDo(x => x.UpdateFrame(frame));
         }
 
+        private void CameraPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "Position") ListenerDo(x => x.PositionChanged(new ViewportEvent(this, e)));
+            if (e.PropertyName == "Zoom") ListenerDo(x => x.ZoomChanged(new ViewportEvent(this, e)));
+        }
+
         #endregion
 
         #region 2D/3D methods
@@ -430,7 +439,7 @@ namespace Sledge.Editor.Rendering
             else
             {
                 var cam = (PerspectiveCamera)Viewport.Camera;
-                var dist = System.Math.Max(System.Math.Max(box.Width, box.Length), box.Height);
+                var dist = Math.Max(Math.Max(box.Width, box.Length), box.Height);
                 var normal = cam.Position - cam.LookAt;
                 var v = new Vector(normal.ToCoordinate(), dist);
                 FocusOn(box.Center, new Coordinate(v.X, v.Y, v.Z));

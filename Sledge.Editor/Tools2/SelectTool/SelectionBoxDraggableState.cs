@@ -11,7 +11,6 @@ using Sledge.Editor.Tools2.DraggableTool;
 using Sledge.Editor.Tools2.SelectTool.TransformationHandles;
 using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Materials;
-using Sledge.Rendering.Scenes;
 using Sledge.Rendering.Scenes.Elements;
 using Sledge.Rendering.Scenes.Renderables;
 
@@ -80,42 +79,40 @@ namespace Sledge.Editor.Tools2.SelectTool
             return false;
         }
 
-        public override IEnumerable<SceneObject> GetSceneObjects()
-        {
-            var list = base.GetSceneObjects().ToList();
-            if (State.Action == BoxAction.Resizing && ShouldDrawBox())
-            {
-                var box = new Box(State.OrigStart, State.OrigEnd);
-                foreach (var face in box.GetBoxFaces())
-                {
-                    var verts = face.Select(x => new PositionVertex(new Position(x.ToVector3()), 0, 0)).ToList();
-                    var rc = GetRenderBoxColour();
-                    var fe = new FaceElement(PositionType.World, Material.Flat(Color.FromArgb(rc.A / 8, rc)), verts)
-                    {
-                        RenderFlags = RenderFlags.Wireframe,
-                        CameraFlags = CameraFlags.Orthographic,
-                        AccentColor = GetRenderBoxColour(),
-                        IsSelected = true
-                    };
-                    list.Add(fe);
-                }
-            }
-            return list;
-        }
-
         public override IEnumerable<Element> GetViewportElements(MapViewport viewport, OrthographicCamera camera)
         {
+            var list = new List<Element>();
             var tf = GetTransformationMatrix(viewport, camera, Tool.Document);
             if (State.Action == BoxAction.Resizing && tf.HasValue)
             {
+                // todo this looks pretty silly when the box doesn't perfectly match the transformed selection
                 var box = new Box(State.OrigStart, State.OrigEnd);
                 box = box.Transform(new UnitMatrixMult(tf.Value));
-                return GetBoxTextElements(viewport, box.Start.ToVector3(), box.End.ToVector3());
+                if (ShouldDrawBox())
+                {
+                    foreach (var face in box.GetBoxFaces())
+                    {
+                        var verts = face.Select(x => new PositionVertex(new Position(x.ToVector3()), 0, 0)).ToList();
+                        var rc = GetRenderBoxColour();
+                        var fe = new FaceElement(PositionType.World, Material.Flat(Color.FromArgb(rc.A / 8, rc)), verts)
+                        {
+                            RenderFlags = RenderFlags.Wireframe,
+                            CameraFlags = CameraFlags.Orthographic,
+                            AccentColor = GetRenderBoxColour()
+                        };
+                        list.Add(fe);
+                    }
+                }
+                if (ShouldDrawBoxText())
+                {
+                    list.AddRange(GetBoxTextElements(viewport, box.Start.ToVector3(), box.End.ToVector3()));
+                }
             }
             else
             {
-                return base.GetViewportElements(viewport, camera);
+                list.AddRange(base.GetViewportElements(viewport, camera));
             }
+            return list;
         }
 
         public Matrix4? GetTransformationMatrix(MapViewport viewport, OrthographicCamera camera, Document document)

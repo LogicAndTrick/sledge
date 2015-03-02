@@ -10,10 +10,39 @@ namespace Sledge.Rendering.Cameras
     {
         private Vector3 _direction;
         private Vector3 _lookAt;
+        private int _fov;
+        private int _clipDistance;
+        private Vector3 _position;
 
-        public int FOV { get; set; }
-        public int ClipDistance { get; set; }
-        public Vector3 Position { get; set; }
+        public int FOV
+        {
+            get { return _fov; }
+            set
+            {
+                _fov = value;
+                OnPropertyChanged("FOV");
+            }
+        }
+
+        public int ClipDistance
+        {
+            get { return _clipDistance; }
+            set
+            {
+                _clipDistance = value;
+                OnPropertyChanged("ClipDistance");
+            }
+        }
+
+        public Vector3 Position
+        {
+            get { return _position; }
+            set
+            {
+                _position = value;
+                OnPropertyChanged("Position");
+            }
+        }
 
         public Vector3 Direction
         {
@@ -22,6 +51,7 @@ namespace Sledge.Rendering.Cameras
             {
                 _direction = value;
                 _lookAt = Position + _direction;
+                OnPropertyChanged("Direction");
             }
         }
 
@@ -32,6 +62,7 @@ namespace Sledge.Rendering.Cameras
             {
                 _lookAt = value;
                 _direction = _lookAt - Position;
+                OnPropertyChanged("LookAt");
             }
         }
 
