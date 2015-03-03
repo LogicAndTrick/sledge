@@ -11,31 +11,18 @@ namespace Sledge.Editor.Tools.Widgets
     {
         protected MapViewport _activeViewport;
 
-        private Action<Matrix4?> _transformedCallback = null;
-        private Action<Matrix4?> _transformingCallback = null;
+        public delegate void TransformEventHandler(object sender, Matrix4? transformation);
+        public event TransformEventHandler Transforming;
+        public event TransformEventHandler Transformed;
 
-        public Action<Matrix4?> OnTransformed
+        protected void OnTransforming(Matrix4? transformation)
         {
-            get
-            {
-                return _transformedCallback ?? (x => { });
-            }
-            set
-            {
-                _transformedCallback = value;
-            }
+            if (Transforming != null) Transforming(this, transformation);
         }
 
-        public Action<Matrix4?> OnTransforming
+        protected void OnTransformed(Matrix4? transformation)
         {
-            get
-            {
-                return _transformingCallback ?? (x => { });
-            }
-            set
-            {
-                _transformingCallback = value;
-            }
+            if (Transformed != null) Transformed(this, transformation);
         }
 
         public override Image GetIcon() { return null; }
@@ -44,21 +31,17 @@ namespace Sledge.Editor.Tools.Widgets
         public override string GetContextualHelp() { return ""; }
 
         public override HotkeyInterceptResult InterceptHotkey(HotkeysMediator hotkeyMessage, object parameters) { return HotkeyInterceptResult.Continue; }
-        public override void KeyUp(MapViewport viewport, ViewportEvent e) { }
-        public override void KeyDown(MapViewport viewport, ViewportEvent e) { }
-        public override void KeyPress(MapViewport viewport, ViewportEvent e) { }
-        public override void MouseClick(MapViewport viewport, ViewportEvent e) { }
-        public override void MouseDoubleClick(MapViewport viewport, ViewportEvent e) { }
-        public override void UpdateFrame(MapViewport viewport, Frame frame) { }
 
         public override void MouseEnter(MapViewport viewport, ViewportEvent e)
         {
             _activeViewport = viewport;
+            base.MouseEnter(viewport, e);
         }
 
         public override void MouseLeave(MapViewport viewport, ViewportEvent e)
         {
             _activeViewport = null;
+            base.MouseLeave(viewport, e);
         }
 
         public abstract void SelectionChanged();

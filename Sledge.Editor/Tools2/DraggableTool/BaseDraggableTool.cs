@@ -167,17 +167,17 @@ namespace Sledge.Editor.Tools2.DraggableTool
 
         protected override IEnumerable<SceneObject> GetSceneObjects()
         {
-            return CollectObjects(x => x.GetSceneObjects());
+            return CollectObjects(x => x.GetSceneObjects()).Union(base.GetSceneObjects());
         }
 
         protected override IEnumerable<Element> GetViewportElements(MapViewport viewport, PerspectiveCamera camera)
         {
-            return CollectObjects(x => x.GetViewportElements(viewport, camera));
+            return CollectObjects(x => x.GetViewportElements(viewport, camera)).Union(base.GetViewportElements(viewport, camera));
         }
 
         protected override IEnumerable<Element> GetViewportElements(MapViewport viewport, OrthographicCamera camera)
         {
-            return CollectObjects(x => x.GetViewportElements(viewport, camera));
+            return CollectObjects(x => x.GetViewportElements(viewport, camera)).Union(base.GetViewportElements(viewport, camera));
         }
 
         protected bool GetSelectionBox(BoxState state, out Box boundingbox)

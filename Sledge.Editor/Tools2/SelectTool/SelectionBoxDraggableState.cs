@@ -7,6 +7,7 @@ using Sledge.DataStructures.Transformations;
 using Sledge.Editor.Documents;
 using Sledge.Editor.Extensions;
 using Sledge.Editor.Rendering;
+using Sledge.Editor.Tools.Widgets;
 using Sledge.Editor.Tools2.DraggableTool;
 using Sledge.Editor.Tools2.SelectTool.TransformationHandles;
 using Sledge.Rendering.Cameras;
@@ -22,9 +23,21 @@ namespace Sledge.Editor.Tools2.SelectTool
         private int _currentIndex;
         private RotationOrigin _rotationOrigin;
 
+        public List<Widget> Widgets { get; private set; }
+        private RotationWidget _rotationWidget;
+
         public SelectionBoxDraggableState(BaseDraggableTool tool) : base(tool)
         {
+            Widgets = new List<Widget>
+            {
+                (_rotationWidget = new RotationWidget(tool.Document) { Active = false })
+            };
+        }
 
+        public void Update()
+        {
+            _rotationWidget.Active = State.Action != BoxAction.Idle && _currentIndex == 1;
+            _rotationWidget.SetPivotPoint(_rotationWidget.GetPivotPoint());
         }
 
         protected override void CreateBoxHandles()
@@ -127,6 +140,10 @@ namespace Sledge.Editor.Tools2.SelectTool
             _currentIndex = (_currentIndex + 1) % _handles.Length;
             if (State.Start != null) _rotationOrigin.Position = new Box(State.Start, State.End).Center;
             else _rotationOrigin.Position = Coordinate.Zero;
+
+            //_scaleWidget.Active = _currentIndex == 0;
+            _rotationWidget.Active = _currentIndex == 1;
+            //_skewWidget.Active = _currentIndex == 2;
         }
     }
 }

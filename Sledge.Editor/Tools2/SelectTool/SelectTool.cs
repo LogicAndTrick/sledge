@@ -49,6 +49,7 @@ namespace Sledge.Editor.Tools2.SelectTool
             _selectionBox.FillColour = Color.FromArgb(View.SelectionBoxBackgroundOpacity, Color.White);
             _selectionBox.State.Changed += SelectionBoxChanged;
             States.Add(_selectionBox);
+            Children.AddRange(_selectionBox.Widgets);
 
             _emptyBox = new BoxDraggableState(this);
             _emptyBox.BoxColour = Color.Yellow;
@@ -132,6 +133,7 @@ namespace Sledge.Editor.Tools2.SelectTool
                 _selectionBox.State.End = box.End;
                 _selectionBox.State.Action = BoxAction.Drawn;
             }
+            _selectionBox.Update();
         }
         #endregion
 

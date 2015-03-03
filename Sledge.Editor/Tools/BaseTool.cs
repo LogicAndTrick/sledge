@@ -1,10 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Remoting.Messaging;
 using System.Windows.Forms;
 using Sledge.Common.Mediator;
 using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.MapObjects;
 using Sledge.Editor.Rendering;
+using Sledge.Editor.Tools.Widgets;
 using Sledge.Editor.UI;
 using Sledge.Extensions;
 using Sledge.Rendering;
@@ -111,13 +114,16 @@ namespace Sledge.Editor.Tools
             return null;
         }
 
-        public Documents.Document Document { get; protected set; }
+        public Documents.Document Document { get; private set; }
         public MapViewport Viewport { get; set; }
         public ToolUsage Usage { get; set; }
+        public bool Active { get; set; }
 
         protected bool UseValidation { get; set; }
         private bool _invalidated;
         private List<SceneObject> _currentObjects;
+
+        protected List<BaseTool> Children { get; private set; }
 
         public abstract Image GetIcon();
         public abstract string GetName();
@@ -131,16 +137,19 @@ namespace Sledge.Editor.Tools
 
         protected BaseTool()
         {
+            Active = true;
             Viewport = null;
             Usage = ToolUsage.View2D;
             _invalidated = false;
             UseValidation = false;
             _currentObjects = new List<SceneObject>();
+            Children = new List<BaseTool>();
         }
 
         public void SetDocument(Documents.Document document)
         {
             Document = document;
+            foreach (var t in Children) t.SetDocument(document);
             DocumentChanged();
         }
 
@@ -164,92 +173,132 @@ namespace Sledge.Editor.Tools
             Mediator.ExecuteDefault(this, message, data);
         }
 
+        private bool ChildAction(Action<BaseTool, MapViewport, ViewportEvent> action, MapViewport viewport, ViewportEvent ev)
+        {
+            foreach (var child in Children)
+            {
+                action(child, viewport, ev);
+                if (ev != null && ev.Handled) return true;
+            }
+            return false;
+        }
+
         public virtual void MouseEnter(MapViewport viewport, ViewportEvent e)
         {
+            if (!Active) return;
+            if (ChildAction((w, vp, ev) => w.MouseEnter(vp, ev), viewport, e)) return;
             if (viewport.Is2D) MouseEnter(viewport, viewport.Viewport.Camera as OrthographicCamera, e);
             if (viewport.Is3D) MouseEnter(viewport, viewport.Viewport.Camera as PerspectiveCamera, e);
         }
 
         public virtual void MouseLeave(MapViewport viewport, ViewportEvent e)
         {
+            if (!Active) return;
+            if (ChildAction((w, vp, ev) => w.MouseLeave(vp, ev), viewport, e)) return;
             if (viewport.Is2D) MouseLeave(viewport, viewport.Viewport.Camera as OrthographicCamera, e);
             if (viewport.Is3D) MouseLeave(viewport, viewport.Viewport.Camera as PerspectiveCamera, e);
         }
 
         public virtual void MouseDown(MapViewport viewport, ViewportEvent e)
         {
+            if (!Active) return;
+            if (ChildAction((w, vp, ev) => w.MouseDown(vp, ev), viewport, e)) return;
             if (viewport.Is2D) MouseDown(viewport, viewport.Viewport.Camera as OrthographicCamera, e);
             if (viewport.Is3D) MouseDown(viewport, viewport.Viewport.Camera as PerspectiveCamera, e);
         }
 
         public virtual void MouseClick(MapViewport viewport, ViewportEvent e)
         {
+            if (!Active) return;
+            if (ChildAction((w, vp, ev) => w.MouseClick(vp, ev), viewport, e)) return;
             if (viewport.Is2D) MouseClick(viewport, viewport.Viewport.Camera as OrthographicCamera, e);
             if (viewport.Is3D) MouseClick(viewport, viewport.Viewport.Camera as PerspectiveCamera, e);
         }
 
         public virtual void MouseDoubleClick(MapViewport viewport, ViewportEvent e)
         {
+            if (!Active) return;
+            if (ChildAction((w, vp, ev) => w.MouseDoubleClick(vp, ev), viewport, e)) return;
             if (viewport.Is2D) MouseDoubleClick(viewport, viewport.Viewport.Camera as OrthographicCamera, e);
             if (viewport.Is3D) MouseDoubleClick(viewport, viewport.Viewport.Camera as PerspectiveCamera, e);
         }
 
         public virtual void MouseUp(MapViewport viewport, ViewportEvent e)
         {
+            if (!Active) return;
+            if (ChildAction((w, vp, ev) => w.MouseUp(vp, ev), viewport, e)) return;
             if (viewport.Is2D) MouseUp(viewport, viewport.Viewport.Camera as OrthographicCamera, e);
             if (viewport.Is3D) MouseUp(viewport, viewport.Viewport.Camera as PerspectiveCamera, e);
         }
 
         public virtual void MouseWheel(MapViewport viewport, ViewportEvent e)
         {
+            if (!Active) return;
+            if (ChildAction((w, vp, ev) => w.MouseWheel(vp, ev), viewport, e)) return;
             if (viewport.Is2D) MouseWheel(viewport, viewport.Viewport.Camera as OrthographicCamera, e);
             if (viewport.Is3D) MouseWheel(viewport, viewport.Viewport.Camera as PerspectiveCamera, e);
         }
 
         public virtual void MouseMove(MapViewport viewport, ViewportEvent e)
         {
+            if (!Active) return;
+            if (ChildAction((w, vp, ev) => w.MouseMove(vp, ev), viewport, e)) return;
             if (viewport.Is2D) MouseMove(viewport, viewport.Viewport.Camera as OrthographicCamera, e);
             if (viewport.Is3D) MouseMove(viewport, viewport.Viewport.Camera as PerspectiveCamera, e);
         }
 
         public virtual void DragStart(MapViewport viewport, ViewportEvent e)
         {
+            if (!Active) return;
+            if (ChildAction((w, vp, ev) => w.DragStart(vp, ev), viewport, e)) return;
             if (viewport.Is2D) DragStart(viewport, viewport.Viewport.Camera as OrthographicCamera, e);
             if (viewport.Is3D) DragStart(viewport, viewport.Viewport.Camera as PerspectiveCamera, e);
         }
 
         public virtual void DragMove(MapViewport viewport, ViewportEvent e)
         {
+            if (!Active) return;
+            if (ChildAction((w, vp, ev) => w.DragMove(vp, ev), viewport, e)) return;
             if (viewport.Is2D) DragMove(viewport, viewport.Viewport.Camera as OrthographicCamera, e);
             if (viewport.Is3D) DragMove(viewport, viewport.Viewport.Camera as PerspectiveCamera, e);
         }
 
         public virtual void DragEnd(MapViewport viewport, ViewportEvent e)
         {
+            if (!Active) return;
+            if (ChildAction((w, vp, ev) => w.DragEnd(vp, ev), viewport, e)) return;
             if (viewport.Is2D) DragEnd(viewport, viewport.Viewport.Camera as OrthographicCamera, e);
             if (viewport.Is3D) DragEnd(viewport, viewport.Viewport.Camera as PerspectiveCamera, e);
         }
 
         public virtual void KeyPress(MapViewport viewport, ViewportEvent e)
         {
+            if (!Active) return;
+            if (ChildAction((w, vp, ev) => w.KeyPress(vp, ev), viewport, e)) return;
             if (viewport.Is2D) KeyPress(viewport, viewport.Viewport.Camera as OrthographicCamera, e);
             if (viewport.Is3D) KeyPress(viewport, viewport.Viewport.Camera as PerspectiveCamera, e);
         }
 
         public virtual void KeyDown(MapViewport viewport, ViewportEvent e)
         {
+            if (!Active) return;
+            if (ChildAction((w, vp, ev) => w.KeyDown(vp, ev), viewport, e)) return;
             if (viewport.Is2D) KeyDown(viewport, viewport.Viewport.Camera as OrthographicCamera, e);
             if (viewport.Is3D) KeyDown(viewport, viewport.Viewport.Camera as PerspectiveCamera, e);
         }
 
         public virtual void KeyUp(MapViewport viewport, ViewportEvent e)
         {
+            if (!Active) return;
+            if (ChildAction((w, vp, ev) => w.KeyUp(vp, ev), viewport, e)) return;
             if (viewport.Is2D) KeyUp(viewport, viewport.Viewport.Camera as OrthographicCamera, e);
             if (viewport.Is3D) KeyUp(viewport, viewport.Viewport.Camera as PerspectiveCamera, e);
         }
 
         public virtual void UpdateFrame(MapViewport viewport, Frame frame)
         {
+            if (!Active) return;
+            if (ChildAction((w, vp, ev) => w.UpdateFrame(vp, frame), viewport, null)) return;
             Validate(viewport);
             if (viewport.Is2D) UpdateFrame(viewport, viewport.Viewport.Camera as OrthographicCamera, frame);
             if (viewport.Is3D) UpdateFrame(viewport, viewport.Viewport.Camera as PerspectiveCamera, frame);
@@ -257,11 +306,15 @@ namespace Sledge.Editor.Tools
 
         public virtual void PositionChanged(MapViewport viewport, ViewportEvent e)
         {
+            if (!Active) return;
+            if (ChildAction((w, vp, ev) => w.PositionChanged(vp, ev), viewport, e)) return;
             if (viewport.Is2D) PositionChanged(viewport, viewport.Viewport.Camera as OrthographicCamera, e);
         }
 
         public virtual void ZoomChanged(MapViewport viewport, ViewportEvent e)
         {
+            if (!Active) return;
+            if (ChildAction((w, vp, ev) => w.ZoomChanged(vp, ev), viewport, e)) return;
             if (viewport.Is2D) ZoomChanged(viewport, viewport.Viewport.Camera as OrthographicCamera, e);
         }
 
@@ -307,6 +360,7 @@ namespace Sledge.Editor.Tools
         protected void Invalidate()
         {
             _invalidated = true;
+            foreach (var t in Children) t.Invalidate();
         }
 
         private void Validate(MapViewport viewport)
@@ -331,21 +385,26 @@ namespace Sledge.Editor.Tools
             }
 
             foreach (var o in _currentObjects) Document.Scene.Add(o);
+
+            foreach (var t in Children) t.Validate(viewport);
         }
 
         protected virtual IEnumerable<SceneObject> GetSceneObjects()
         {
-            yield break;
+            if (!Active) return new SceneObject[0];
+            return Children.SelectMany(x => x.GetSceneObjects());
         }
 
         protected virtual IEnumerable<Element> GetViewportElements(MapViewport viewport, PerspectiveCamera camera)
         {
-            yield break;
+            if (!Active) return new Element[0];
+            return Children.SelectMany(x => x.GetViewportElements(viewport, camera));
         }
 
         protected virtual IEnumerable<Element> GetViewportElements(MapViewport viewport, OrthographicCamera camera)
         {
-            yield break;
+            if (!Active) return new Element[0];
+            return Children.SelectMany(x => x.GetViewportElements(viewport, camera));
         }
 
         /// <summary>

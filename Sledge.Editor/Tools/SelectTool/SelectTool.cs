@@ -166,13 +166,13 @@ namespace Sledge.Editor.Tools.SelectTool
             _widgets = (_currentTool == null || !Sledge.Settings.Select.Show3DSelectionWidgets) ? new List<Widget>() : _currentTool.GetWidgets(Document).ToList();
             foreach (var widget in _widgets)
             {
-                widget.OnTransforming = OnWidgetTransforming;
-                widget.OnTransformed = OnWidgetTransformed;
+                widget.Transforming += OnWidgetTransforming;
+                widget.Transformed += OnWidgetTransformed;
                 widget.SelectionChanged();
             }
         }
 
-        private void OnWidgetTransformed(Matrix4? transformation)
+        private void OnWidgetTransformed(object sender, Matrix4? transformation)
         {
             if (transformation.HasValue)
             {
@@ -182,7 +182,7 @@ namespace Sledge.Editor.Tools.SelectTool
             Document.EndSelectionTransform();
         }
 
-        private void OnWidgetTransforming(Matrix4? transformation)
+        private void OnWidgetTransforming(object sender, Matrix4? transformation)
         {
             if (transformation.HasValue) Document.SetSelectListTransform(transformation.Value);
         }
