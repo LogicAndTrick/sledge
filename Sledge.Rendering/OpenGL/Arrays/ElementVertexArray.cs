@@ -39,7 +39,7 @@ namespace Sledge.Rendering.OpenGL.Arrays
             const float far = 1000000;
             var vpMatrix = Matrix4.CreateOrthographicOffCenter(0, viewport.Control.Width, viewport.Control.Height, 0, near, far);
 
-            var options = camera.RenderOptions;
+            GL.Disable(EnableCap.DepthTest);
 
             shader.Bind();
             
@@ -62,6 +62,8 @@ namespace Sledge.Rendering.OpenGL.Arrays
             RenderPositionType(renderer, shader, PositionType.Screen);
 
             shader.Unbind();
+
+            GL.Enable(EnableCap.DepthTest);
         }
 
         private void RenderPositionType(IRenderer renderer, Passthrough shader, PositionType type)

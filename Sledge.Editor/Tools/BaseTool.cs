@@ -122,6 +122,7 @@ namespace Sledge.Editor.Tools
         protected bool UseValidation { get; set; }
         private bool _invalidated;
         private List<SceneObject> _currentObjects;
+        private Dictionary<MapViewport, List<Element>> _currentViewportObjects;
 
         protected List<BaseTool> Children { get; private set; }
 
@@ -143,6 +144,7 @@ namespace Sledge.Editor.Tools
             _invalidated = false;
             UseValidation = false;
             _currentObjects = new List<SceneObject>();
+            _currentViewportObjects = new Dictionary<MapViewport, List<Element>>();
             Children = new List<BaseTool>();
         }
 
@@ -175,7 +177,7 @@ namespace Sledge.Editor.Tools
 
         private bool ChildAction(Action<BaseTool, MapViewport, ViewportEvent> action, MapViewport viewport, ViewportEvent ev)
         {
-            foreach (var child in Children)
+            foreach (var child in Children.Where(x => x.Active))
             {
                 action(child, viewport, ev);
                 if (ev != null && ev.Handled) return true;
@@ -297,9 +299,10 @@ namespace Sledge.Editor.Tools
 
         public virtual void UpdateFrame(MapViewport viewport, Frame frame)
         {
-            if (!Active) return;
-            if (ChildAction((w, vp, ev) => w.UpdateFrame(vp, frame), viewport, null)) return;
             Validate(viewport);
+            if (!Active) return;
+            foreach (var child in Children) child.UpdateFrame(viewport, frame);
+
             if (viewport.Is2D) UpdateFrame(viewport, viewport.Viewport.Camera as OrthographicCamera, frame);
             if (viewport.Is3D) UpdateFrame(viewport, viewport.Viewport.Camera as PerspectiveCamera, frame);
         }
@@ -360,7 +363,7 @@ namespace Sledge.Editor.Tools
         protected void Invalidate()
         {
             _invalidated = true;
-            foreach (var t in Children) t.Invalidate();
+            foreach (var t in Children.Where(x => x.Active)) t.Invalidate();
         }
 
         private void Validate(MapViewport viewport)
@@ -369,42 +372,47 @@ namespace Sledge.Editor.Tools
             _invalidated = false;
 
             foreach (var o in _currentObjects) Document.Scene.Remove(o);
+            if (_currentViewportObjects.ContainsKey(viewport)) foreach (var o in _currentViewportObjects[viewport]) Document.Scene.Remove(o);
 
+            _currentObjects.Clear();
+            _currentViewportObjects[viewport] = new List<Element>();
+
+            if (!Active) return;
+            
             _currentObjects = GetSceneObjects().ToList();
             if (viewport.Is3D)
             {
                 var vpObjects = GetViewportElements(viewport, viewport.Viewport.Camera as PerspectiveCamera).ToList();
                 foreach (var o in vpObjects) o.Viewport = viewport.Viewport;
-                _currentObjects.AddRange(vpObjects);
+                _currentViewportObjects[viewport].AddRange(vpObjects);
             }
             else if (viewport.Is2D)
             {
                 var vpObjects = GetViewportElements(viewport, viewport.Viewport.Camera as OrthographicCamera).ToList();
                 foreach (var o in vpObjects) o.Viewport = viewport.Viewport;
-                _currentObjects.AddRange(vpObjects);
+                _currentViewportObjects[viewport].AddRange(vpObjects);
             }
 
             foreach (var o in _currentObjects) Document.Scene.Add(o);
-
-            foreach (var t in Children) t.Validate(viewport);
+            foreach (var o in _currentViewportObjects[viewport]) Document.Scene.Add(o);
         }
 
         protected virtual IEnumerable<SceneObject> GetSceneObjects()
         {
             if (!Active) return new SceneObject[0];
-            return Children.SelectMany(x => x.GetSceneObjects());
+            return Children.Where(x => x.Active).SelectMany(x => x.GetSceneObjects());
         }
 
         protected virtual IEnumerable<Element> GetViewportElements(MapViewport viewport, PerspectiveCamera camera)
         {
             if (!Active) return new Element[0];
-            return Children.SelectMany(x => x.GetViewportElements(viewport, camera));
+            return Children.Where(x => x.Active).SelectMany(x => x.GetViewportElements(viewport, camera));
         }
 
         protected virtual IEnumerable<Element> GetViewportElements(MapViewport viewport, OrthographicCamera camera)
         {
             if (!Active) return new Element[0];
-            return Children.SelectMany(x => x.GetViewportElements(viewport, camera));
+            return Children.Where(x => x.Active).SelectMany(x => x.GetViewportElements(viewport, camera));
         }
 
         /// <summary>
