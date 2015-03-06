@@ -85,10 +85,12 @@ namespace Sledge.Rendering.OpenGL.Arrays
             shader.UseAccentColor = true;
 
             // Render wireframe
-            foreach (var subset in GetSubsets(wireframeId))
+            foreach (var subset in GetSubsets<WireframeProperties>(wireframeId))
             {
+                ((WireframeProperties)subset.Instance).Bind();
                 Render(PrimitiveType.Lines, subset);
             }
+            WireframeProperties.RestoreDefaults();
         }
 
         protected override void CreateArray(IEnumerable<Element> data)
@@ -122,13 +124,18 @@ namespace Sledge.Rendering.OpenGL.Arrays
                 PushSubset(polygonId, g.Key);
             }
 
-            foreach (var line in list.SelectMany(x => x.GetLines(_renderer)))
-            {
-                var index = PushData(Convert(line));
-                PushIndex(wireframeId, index, Line(line.Vertices.Count));
-            }
+            PushSubset(wireframeId, WireframeProperties.Default);
 
-            PushSubset(wireframeId, (object) null);
+            foreach (var g in list.SelectMany(x => x.GetLines(_renderer)).GroupBy(x => new { x.Width, x.DepthTested, x.Smooth, x.Stippled }))
+            {
+                StartSubset(wireframeId);
+                foreach (var line in g)
+                {
+                    var index = PushData(Convert(line));
+                    PushIndex(wireframeId, index, Line(line.Vertices.Count));
+                }
+                PushSubset(wireframeId, new WireframeProperties {Width = g.Key.Width, DepthTested = g.Key.DepthTested, Smooth = g.Key.Smooth, IsStippled = g.Key.Stippled });
+            }
         }
 
         private IEnumerable<uint> Line(int num)

@@ -25,10 +25,13 @@ namespace Sledge.Rendering.Scenes.Elements
 
         public IViewport Viewport { get; set; }
         public PositionType PositionType { get; set; }
+        public bool DepthTested { get; set; }
+        public bool Smooth { get; set; }
 
         protected Element(PositionType positionType)
         {
             PositionType = positionType;
+            DepthTested = true;
         }
 
         public abstract IEnumerable<LineElement> GetLines(IRenderer renderer);

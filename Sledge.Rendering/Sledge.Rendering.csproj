@@ -77,6 +77,8 @@
     <Compile Include="MathFunctions.cs" />
     <Compile Include="OpenGL\Arrays\ElementVertexArray.cs" />
     <Compile Include="OpenGL\Arrays\ModelVertexArray.cs" />
+    <Compile Include="OpenGL\Arrays\PolygonProperties.cs" />
+    <Compile Include="OpenGL\Arrays\WireframeProperties.cs" />
     <Compile Include="OpenGL\ModelStorage.cs" />
     <Compile Include="OpenGL\Shaders\ModelShader.cs" />
     <Compile Include="OpenGL\Vertices\ModelVertex.cs" />

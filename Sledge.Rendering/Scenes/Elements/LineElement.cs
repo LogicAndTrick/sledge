@@ -7,6 +7,7 @@ namespace Sledge.Rendering.Scenes.Elements
 {
     public class LineElement : Element
     {
+        public bool Stippled { get; set; }
         public float Width { get; set; }
         public Color Color { get; private set; }
         public List<Position> Vertices { get; set; }
@@ -15,7 +16,10 @@ namespace Sledge.Rendering.Scenes.Elements
         {
             Color = color;
             Vertices = vertices;
-            Width = 1; // todo change line widths?
+            Width = 1;
+            Smooth = true;
+            DepthTested = false;
+            Stippled = false;
             CameraFlags = CameraFlags.All;
         }
 

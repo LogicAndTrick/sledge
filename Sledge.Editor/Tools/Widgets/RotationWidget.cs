@@ -104,13 +104,10 @@ namespace Sledge.Editor.Tools.Widgets
             cache.Cache[type].Add(new Line(cache.MapViewport.WorldToScreen(line.Start), cache.MapViewport.WorldToScreen(line.End)));
         }
 
-        private void UpdateCache(MapViewport viewport, Document document)
+        private void UpdateCache(MapViewport viewport, PerspectiveCamera camera, Document document)
         {
-            //var ccl = new Coordinate((decimal)viewport.Camera.Location.X, (decimal)viewport.Camera.Location.Y, (decimal)viewport.Camera.Location.Z);
-            //var ccla = new Coordinate((decimal)viewport.Camera.LookAt.X, (decimal)viewport.Camera.LookAt.Y, (decimal)viewport.Camera.LookAt.Z);
-            // todo
-            var ccl = Coordinate.Zero;
-            var ccla = Coordinate.One;
+            var ccl = camera.EyeLocation.ToCoordinate();
+            var ccla = camera.LookAt.ToCoordinate();
 
             var cache = _cachedLines.FirstOrDefault(x => x.MapViewport == viewport);
             if (cache == null)
@@ -241,7 +238,7 @@ namespace Sledge.Editor.Tools.Widgets
             var cache = _cachedLines.FirstOrDefault(x => x.MapViewport == viewport);
             if (cache == null) return false;
             var lines = cache.Cache[type];
-            var point = new Coordinate(ev.X, viewport.Height - ev.Y, 0);
+            var point = new Coordinate(ev.X, ev.Y, 0);
             return lines.Any(x => (x.ClosestPoint(point) - point).VectorMagnitude() <= 8);
         }
 
@@ -299,7 +296,7 @@ namespace Sledge.Editor.Tools.Widgets
             }
             else
             {
-                UpdateCache(viewport, Document);
+                UpdateCache(viewport, camera, Document);
 
                 if (MouseOver(CircleType.Z, e, viewport)) _mouseOver = CircleType.Z;
                 else if (MouseOver(CircleType.Y, e, viewport)) _mouseOver = CircleType.Y;
@@ -448,15 +445,6 @@ namespace Sledge.Editor.Tools.Widgets
                     new Position(zero - axis * 100000),
                     new Position(zero + axis * 100000)
                 });
-
-                // GL.Begin(PrimitiveType.Lines);
-                // 
-                // 
-                // GL.Color4(c);
-                // GL.Vertex3(zero - axis * 100000);
-                // GL.Vertex3(zero + axis * 100000);
-                // 
-                // GL.End();
             }
 
             if (_activeViewport == viewport)
@@ -466,12 +454,19 @@ namespace Sledge.Editor.Tools.Widgets
                 {
                     new Position(_pivotPoint.ToVector3()),
                     new Position(viewport.ScreenToWorld(_mouseDownPoint).ToVector3())
-                });
+                })
+                {
+                    Stippled = true
+                };
+
                 yield return new LineElement(PositionType.World, Color.LightGray, new List<Position>
                 {
                     new Position(_pivotPoint.ToVector3()),
                     new Position(viewport.ScreenToWorld(_mouseMovePoint).ToVector3())
-                });
+                })
+                {
+                    Stippled = true
+                };
 
                 // GL.Disable(EnableCap.DepthTest);
                 // GL.Enable(EnableCap.LineStipple);
@@ -506,13 +501,9 @@ namespace Sledge.Editor.Tools.Widgets
             var right = Vector3.Cross(normal, Vector3.UnitZ).Normalized();
             var up = Vector3.Cross(normal, right).Normalized();
 
-            //GL.Disable(EnableCap.DepthTest);
-            //GL.Disable(EnableCap.Texture2D);
-
             const int sides = 32;
             const float diff = (float)(2 * Math.PI) / sides;
 
-            //GL.Begin(PrimitiveType.Lines);
             for (var i = 0; i < sides; i++)
             {
                 var cos1 = (float)Math.Cos(diff * i);
@@ -531,23 +522,10 @@ namespace Sledge.Editor.Tools.Widgets
                     new Position(origin + right * cos1 * radius * 1.2f + up * sin1 * radius * 1.2f),
                     new Position(origin + right * cos2 * radius * 1.2f + up * sin2 * radius * 1.2f)
                 });
-
-                // GL.Color4(Color.DarkGray);
-                // GL.Vertex3(origin + right * cos1 * radius + up * sin1 * radius);
-                // GL.Vertex3(origin + right * cos2 * radius + up * sin2 * radius);
-                // GL.Color4(_mouseOver == CircleType.Outer ? Color.White : Color.LightGray);
-                // GL.Vertex3(origin + right * cos1 * radius * 1.2f + up * sin1 * radius * 1.2f);
-                // GL.Vertex3(origin + right * cos2 * radius * 1.2f + up * sin2 * radius * 1.2f);
             }
-            //GL.End();
 
-            // todo... clipping?
-            //GL.Enable(EnableCap.ClipPlane0);
-            //GL.ClipPlane(ClipPlaneName.ClipPlane0, new double[] { normal.X, normal.Y, normal.Z, -Vector3.Dot(origin, normal) });
+            var plane = new Plane(normal.ToCoordinate(), (decimal) -Vector3.Dot(origin, normal));
 
-            // todo line width
-            //GL.LineWidth(2);
-            //GL.Begin(PrimitiveType.Lines);
             for (var i = 0; i < sides; i++)
             {
                 var cos1 = (float)Math.Cos(diff * i) * radius;
@@ -555,42 +533,50 @@ namespace Sledge.Editor.Tools.Widgets
                 var cos2 = (float)Math.Cos(diff * (i + 1)) * radius;
                 var sin2 = (float)Math.Sin(diff * (i + 1)) * radius;
 
-                yield return new LineElement(PositionType.World, _mouseOver == CircleType.Z ? Color.Blue : Color.DarkBlue, new List<Position>
-                {
-                    new Position(origin + Vector3.UnitX * cos1 + Vector3.UnitY * sin1),
-                    new Position(origin + Vector3.UnitX * cos2 + Vector3.UnitY * sin2)
-                });
+                var zline = GetLineElement(
+                    (origin + Vector3.UnitX * cos1 + Vector3.UnitY * sin1).ToCoordinate(),
+                    (origin + Vector3.UnitX * cos2 + Vector3.UnitY * sin2).ToCoordinate(),
+                    plane,
+                    _mouseOver == CircleType.Z ? Color.Blue : Color.DarkBlue);
 
-                yield return new LineElement(PositionType.World, _mouseOver == CircleType.X ? Color.Red : Color.DarkRed, new List<Position>
-                {
-                    new Position(origin + Vector3.UnitY * cos1 + Vector3.UnitZ * sin1),
-                    new Position(origin + Vector3.UnitY * cos2 + Vector3.UnitZ * sin2)
-                });
+                var xline = GetLineElement(
+                    (origin + Vector3.UnitY * cos1 + Vector3.UnitZ * sin1).ToCoordinate(),
+                    (origin + Vector3.UnitY * cos2 + Vector3.UnitZ * sin2).ToCoordinate(),
+                    plane,
+                    _mouseOver == CircleType.X ? Color.Red : Color.DarkRed);
 
-                yield return new LineElement(PositionType.World, _mouseOver == CircleType.Y ? Color.Lime : Color.LimeGreen, new List<Position>
-                {
-                    new Position(origin + Vector3.UnitZ * cos1 + Vector3.UnitX * sin1),
-                    new Position(origin + Vector3.UnitZ * cos2 + Vector3.UnitX * sin2)
-                });
+                var yline = GetLineElement(
+                    (origin + Vector3.UnitZ * cos1 + Vector3.UnitX * sin1).ToCoordinate(),
+                    (origin + Vector3.UnitZ * cos2 + Vector3.UnitX * sin2).ToCoordinate(),
+                    plane,
+                    _mouseOver == CircleType.Y ? Color.Lime : Color.LimeGreen);
 
-                //GL.Color4(_mouseOver == CircleType.Z ? Color.Blue : Color.DarkBlue);
-                //GL.Vertex3(origin + Vector3.UnitX * cos1 + Vector3.UnitY * sin1);
-                //GL.Vertex3(origin + Vector3.UnitX * cos2 + Vector3.UnitY * sin2);
-                //
-                //GL.Color4(_mouseOver == CircleType.X ? Color.Red : Color.DarkRed);
-                //GL.Vertex3(origin + Vector3.UnitY * cos1 + Vector3.UnitZ * sin1);
-                //GL.Vertex3(origin + Vector3.UnitY * cos2 + Vector3.UnitZ * sin2);
-                //
-                //GL.Color4(_mouseOver == CircleType.Y ? Color.Lime : Color.LimeGreen);
-                //GL.Vertex3(origin + Vector3.UnitZ * cos1 + Vector3.UnitX * sin1);
-                //GL.Vertex3(origin + Vector3.UnitZ * cos2 + Vector3.UnitX * sin2);
+                if (xline != null) yield return xline;
+                if (yline != null) yield return yline;
+                if (zline != null) yield return zline;
             }
-            // GL.End();
-            // GL.LineWidth(1);
-            // 
-            // GL.Disable(EnableCap.ClipPlane0);
-            // 
-            // GL.Enable(EnableCap.DepthTest);
+        }
+
+        private LineElement GetLineElement(Coordinate start, Coordinate end, Plane plane, Color color)
+        {
+            var line = new Line(start, end);
+            var cls = line.ClassifyAgainstPlane(plane);
+            if (cls == PlaneClassification.Back) return null;
+            if (cls == PlaneClassification.Spanning)
+            {
+                var isect = plane.GetIntersectionPoint(line, true);
+                var first = plane.OnPlane(line.Start) > 0 ? line.Start : line.End;
+                line = new Line(first, isect);
+            }
+
+            return new LineElement(PositionType.World, color, new List<Position>
+            {
+                new Position(line.Start.ToVector3()),
+                new Position(line.End.ToVector3())
+            })
+            {
+                Width = 2
+            };
         }
     }
 }
