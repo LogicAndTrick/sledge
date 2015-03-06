@@ -60,7 +60,11 @@ namespace Sledge.Rendering.OpenGL.Arrays
                 foreach (var mat in addRenderable.Union(updateRenderable).Union(replaceRenderable).Select(x => x.Material).Where(x => x != null))
                 {
                     if (!_renderer.Materials.Exists(mat.UniqueIdentifier)) _renderer.Materials.Add(mat);
-                    if (!_renderer.Textures.Exists(mat.CurrentFrame)) _renderer.Textures.Create(mat.CurrentFrame);
+                    if (!_renderer.Textures.Exists(mat.CurrentFrame))
+                    {
+                        _renderer.Textures.Create(mat.CurrentFrame);
+                        _renderer.RequestTexture(mat.CurrentFrame);
+                    }
                 }
                 if (_changeNum > MaxChanges)
                 {

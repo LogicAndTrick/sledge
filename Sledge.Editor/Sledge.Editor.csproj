@@ -257,6 +257,8 @@
     <Compile Include="History\HistoryManager.cs" />
     <Compile Include="History\IHistoryItem.cs" />
     <Compile Include="Rendering\IViewportEventListener.cs" />
+    <Compile Include="Rendering\MapObjectConverter.cs" />
+    <Compile Include="Rendering\SceneMapObject.cs" />
     <Compile Include="Tools2\DraggableTool\BaseDraggable.cs" />
     <Compile Include="Tools2\DraggableTool\BaseDraggableTool.cs">
       <SubType>Code</SubType>

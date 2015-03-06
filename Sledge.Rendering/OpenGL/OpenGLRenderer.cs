@@ -1,7 +1,9 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Threading.Tasks;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using Sledge.Common;
@@ -33,6 +35,9 @@ namespace Sledge.Rendering.OpenGL
         public IMaterialStorage Materials { get { return _materialStorage; } }
         public IModelStorage Models { get { return _modelStorage; } }
         public StringTextureManager StringTextureManager { get; private set; }
+        public List<ITextureProvider> TextureProviders { get; private set; }
+
+        private readonly ConcurrentQueue<string> _requestedTextureQueue;
 
         public Matrix4 SelectionTransform { get; set; }
 
@@ -47,6 +52,13 @@ namespace Sledge.Rendering.OpenGL
 
             SelectionTransform = Matrix4.Identity;
             StringTextureManager = new StringTextureManager(this);
+            TextureProviders = new List<ITextureProvider>();
+            _requestedTextureQueue = new ConcurrentQueue<string>();
+        }
+
+        public void RequestTexture(string name)
+        {
+            _requestedTextureQueue.Enqueue(name);
         }
 
         private void InitialiseRenderer()
@@ -143,6 +155,30 @@ namespace Sledge.Rendering.OpenGL
             StringTextureManager.Update(frame);
         }
 
+        private void ProcessTextureQueue()
+        {
+            var names = new List<string>();
+            for (var i = 0; i < 5; i++)
+            {
+                if (_requestedTextureQueue.IsEmpty) break;
+
+                string name;
+                if (_requestedTextureQueue.TryDequeue(out name))
+                {
+                    names.Add(name);
+                }
+            }
+            foreach (var tp in TextureProviders)
+            {
+                var list = names.Where(x => tp.Exists(x)).ToList();
+                names.RemoveAll(list.Contains);
+                foreach (var td in tp.Fetch(list))
+                {
+                    Textures.Create(td.Name, td.Bitmap, td.Width, td.Height, td.Flags);
+                }
+            }
+        }
+
         private void RenderViewport(IViewport viewport, Frame frame)
         {
             if (_activeScene == null) return;
@@ -154,6 +190,7 @@ namespace Sledge.Rendering.OpenGL
             InitialiseViewport(viewport, vpData);
             scData.Array.ApplyChanges();
             vpData.ElementArray.Update(scData.Array.Elements);
+            ProcessTextureQueue();
             
             // Set up FBO
             vpData.Framebuffer.Bind();

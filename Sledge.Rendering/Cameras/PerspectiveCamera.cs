@@ -71,7 +71,7 @@ namespace Sledge.Rendering.Cameras
             Position = Vector3.Zero;
             Direction = Vector3.One;
             FOV = 90;
-            ClipDistance = 1000;
+            ClipDistance = 10000;
             Flags = CameraFlags.Perspective;
             RenderOptions = new CameraRenderOptions
                             {

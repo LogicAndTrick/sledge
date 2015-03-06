@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -8,42 +7,16 @@ using Poly2Tri;
 using Sledge.Common;
 using Sledge.DataStructures.MapObjects;
 using Sledge.Editor.Documents;
-using Sledge.Editor.Extensions;
 using Sledge.Rendering;
 using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Interfaces;
-using Sledge.Rendering.Materials;
 using Sledge.Rendering.OpenGL;
 using Sledge.Rendering.Scenes;
 using Sledge.Rendering.Scenes.Elements;
 using Sledge.Rendering.Scenes.Renderables;
-using Face = Sledge.Rendering.Scenes.Renderables.Face;
-using Vertex = Sledge.Rendering.Scenes.Renderables.Vertex;
 
 namespace Sledge.Editor.Rendering
 {
-    public class SceneMapObject : IEnumerable<SceneObject>
-    {
-        public MapObject MapObject { get; set; }
-        public Dictionary<object, SceneObject> SceneObjects { get; private set; }
-
-        public SceneMapObject(MapObject mapObject)
-        {
-            MapObject = mapObject;
-            SceneObjects = new Dictionary<object, SceneObject>();
-        }
-
-        public IEnumerator<SceneObject> GetEnumerator()
-        {
-            return SceneObjects.Values.GetEnumerator();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
-        }
-    }
-
     public class SceneManager
     {
         public static Engine Engine { get; private set; }
@@ -63,6 +36,8 @@ namespace Sledge.Editor.Rendering
         {
             Document = document;
             _sceneObjects = new Dictionary<MapObject, SceneMapObject>();
+
+            Engine.Renderer.TextureProviders.Add(new DefaultTextureProvider(document));
 
             AddAxisLines();
 
@@ -112,73 +87,34 @@ namespace Sledge.Editor.Rendering
         }
     }
 
-    public static class MapObjectConverter
+    public class DefaultTextureProvider : ITextureProvider
     {
-        public static SceneMapObject Convert(this MapObject obj, Document document)
+        public Document Document { get; private set; }
+
+        public DefaultTextureProvider(Document document)
         {
-            if (obj is Solid) return Convert((Solid)obj, document);
-            return null;
+            Document = document;
         }
 
-        public static bool Update(this MapObject obj, SceneMapObject smo, Document document)
+        public bool Exists(string name)
         {
-            if (obj is Solid) return Update((Solid)obj, smo, document);
-            return false;
+            return Document.TextureCollection.GetItem(name) != null;
         }
 
-        public static SceneMapObject Convert(this Solid solid, Document document)
+        public TextureDetails Fetch(string name)
         {
-            var smo = new SceneMapObject(solid);
-            foreach (var face in solid.Faces)
+            return Fetch(new[] {name}).FirstOrDefault();
+        }
+
+        public IEnumerable<TextureDetails> Fetch(IEnumerable<string> names)
+        {
+            using (var ss = Document.TextureCollection.GetStreamSource(1024, 1024))
             {
-                var f = Convert(face, document);
-                smo.SceneObjects.Add(face, f);
+                foreach (var item in names.Select(name => Document.TextureCollection.GetItem(name)).Where(item => item != null))
+                {
+                    yield return new TextureDetails(item.Name, ss.GetImage(item), item.Width, item.Height, item.Flags);
+                }
             }
-            return smo;
-        }
-
-        public static bool Update(this Solid solid, SceneMapObject smo, Document document)
-        {
-            if (smo.SceneObjects.Count != solid.Faces.Count) return false;
-            var values = smo.SceneObjects.Values.ToList();
-            var objs = new Dictionary<object, SceneObject>();
-            for (int i = 0; i < solid.Faces.Count; i++)
-            {
-                var face = solid.Faces[i];
-                if (!Update(face, (Face) values[i], document)) return false;
-                objs.Add(face, values[i]);
-            }
-            smo.SceneObjects.Clear();
-            foreach (var kv in objs) smo.SceneObjects.Add(kv.Key, kv.Value);
-            return true;
-        }
-
-        public static Face Convert(this DataStructures.MapObjects.Face face, Document document)
-        {
-            var tex = document.TextureCollection.GetItem(face.Texture.Name);
-            var mat = tex == null ? Material.Flat(face.Colour) : Material.Texture(tex.Name);
-            var sel = face.IsSelected || (face.Parent != null && face.Parent.IsSelected);
-            return new Face(mat, face.Vertices.Select(x => new Vertex(x.Location.ToVector3(), (float)x.TextureU, (float)x.TextureV)).ToList())
-            {
-                AccentColor = sel ? Color.Red : face.Colour,
-                TintColor = sel ? Color.FromArgb(128, Color.Red) : Color.White,
-                IsSelected = sel
-            };
-        }
-
-        public static bool Update(this DataStructures.MapObjects.Face face, Face sceneFace, Document document)
-        {
-            var tex = document.TextureCollection.GetItem(face.Texture.Name);
-            var mat = tex == null ? Material.Flat(face.Colour) : Material.Texture(tex.Name);
-            var sel = face.IsSelected || (face.Parent != null && face.Parent.IsSelected);
-
-            sceneFace.Material = mat;
-            sceneFace.Vertices = face.Vertices.Select(x => new Vertex(x.Location.ToVector3(), (float) x.TextureU, (float) x.TextureV)).ToList();
-            sceneFace.AccentColor = sel ? Color.Red : face.Colour;
-            sceneFace.TintColor = sel ? Color.FromArgb(128, Color.Red) : Color.White;
-            sceneFace.IsSelected = sel;
-
-            return true;
         }
     }
 }
