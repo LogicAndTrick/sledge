@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Sledge.DataStructures.Geometric;
 using Sledge.Editor.Rendering;
@@ -9,6 +10,9 @@ namespace Sledge.Editor.Tools2.DraggableTool
 {
     public interface IDraggable
     {
+        event EventHandler DragStarted;
+        event EventHandler DragMoved;
+        event EventHandler DragEnded;
         void Click(MapViewport viewport, ViewportEvent e, Coordinate position);
         bool CanDrag(MapViewport viewport, ViewportEvent e, Coordinate position);
         void Highlight(MapViewport viewport);

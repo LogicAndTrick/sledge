@@ -2,14 +2,18 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using OpenTK;
+using Sledge.Common.Mediator;
 using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.Transformations;
+using Sledge.Editor.Actions.MapObjects.Operations;
+using Sledge.Editor.Actions.MapObjects.Operations.EditOperations;
 using Sledge.Editor.Documents;
 using Sledge.Editor.Extensions;
 using Sledge.Editor.Rendering;
 using Sledge.Editor.Tools.Widgets;
 using Sledge.Editor.Tools2.DraggableTool;
 using Sledge.Editor.Tools2.SelectTool.TransformationHandles;
+using Sledge.Editor.UI;
 using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Materials;
 using Sledge.Rendering.Scenes.Elements;
@@ -24,7 +28,7 @@ namespace Sledge.Editor.Tools2.SelectTool
         private RotationOrigin _rotationOrigin;
 
         public List<Widget> Widgets { get; private set; }
-        private RotationWidget _rotationWidget;
+        private readonly RotationWidget _rotationWidget;
 
         public SelectionBoxDraggableState(BaseDraggableTool tool) : base(tool)
         {
@@ -32,12 +36,41 @@ namespace Sledge.Editor.Tools2.SelectTool
             {
                 (_rotationWidget = new RotationWidget(tool.Document) { Active = false })
             };
+            BindWidgets();
+        }
+
+        private void BindWidgets()
+        {
+            foreach (var w in Widgets)
+            {
+                w.Transforming += WidgetTransforming;
+                w.Transformed += WidgetTransformed;
+            }
+        }
+
+        private void WidgetTransforming(object sender, Matrix4? transformation)
+        {
+            if (transformation.HasValue)
+            {
+                Tool.Document.SetSelectListTransform(transformation.Value);
+            }
+        }
+
+        private void WidgetTransformed(object sender, Matrix4? transformation)
+        {
+            if (transformation.HasValue)
+            {
+                var cad = new CreateEditDelete();
+                cad.Edit(Tool.Document.Selection.GetSelectedParents().ToList(), new TransformEditOperation(new UnitMatrixMult(transformation.Value), Tool.Document.Map.GetTransformFlags()));
+                Tool.Document.PerformAction("Transform selection", cad);
+            }
+            Tool.Document.EndSelectionTransform();
         }
 
         public void Update()
         {
             _rotationWidget.Active = State.Action != BoxAction.Idle && _currentIndex == 1;
-            _rotationWidget.SetPivotPoint(_rotationWidget.GetPivotPoint());
+            _rotationWidget.SetPivotPoint(_rotationOrigin.Position);
         }
 
         protected override void CreateBoxHandles()
@@ -57,6 +90,7 @@ namespace Sledge.Editor.Tools2.SelectTool
                 new ResizeTransformHandle(this, ResizeHandle.Center), 
             };
             _rotationOrigin = new RotationOrigin();
+            _rotationOrigin.DragMoved += (sender, args) => Update();
             var rotate = new List<IDraggable>
             {
                 _rotationOrigin,

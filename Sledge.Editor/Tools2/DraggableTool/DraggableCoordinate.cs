@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
-using OpenTK.Graphics.OpenGL;
 using Sledge.DataStructures.Geometric;
 using Sledge.Editor.Extensions;
 using Sledge.Editor.Rendering;
@@ -11,7 +10,7 @@ using Sledge.Rendering.Scenes.Elements;
 
 namespace Sledge.Editor.Tools2.DraggableTool
 {
-    public class DraggableCoordinate : IDraggable
+    public class DraggableCoordinate : BaseDraggable
     {
         public bool Highlighted { get; protected set; }
         public Coordinate Position { get; set; }
@@ -21,12 +20,12 @@ namespace Sledge.Editor.Tools2.DraggableTool
             Position = Coordinate.Zero;
         }
 
-        public virtual void Click(MapViewport viewport, ViewportEvent e, Coordinate position)
+        public override void Click(MapViewport viewport, ViewportEvent e, Coordinate position)
         {
             
         }
 
-        public virtual bool CanDrag(MapViewport viewport, ViewportEvent e, Coordinate position)
+        public override bool CanDrag(MapViewport viewport, ViewportEvent e, Coordinate position)
         {
             const int width = 5;
             var screenPosition = viewport.ProperWorldToScreen(Position);
@@ -39,44 +38,35 @@ namespace Sledge.Editor.Tools2.DraggableTool
             viewport.Control.Cursor = Cursors.SizeAll;
         }
 
-        public virtual void Highlight(MapViewport viewport)
+        public override void Highlight(MapViewport viewport)
         {
             Highlighted = true;
             SetMoveCursor(viewport);
         }
 
-        public virtual void Unhighlight(MapViewport viewport)
+        public override void Unhighlight(MapViewport viewport)
         {
             Highlighted = false;
             viewport.Control.Cursor = Cursors.Default;
         }
 
-        public virtual void StartDrag(MapViewport viewport, ViewportEvent e, Coordinate position)
-        {
-
-        }
-
-        public virtual void Drag(MapViewport viewport, ViewportEvent e, Coordinate lastPosition, Coordinate position)
+        public override void Drag(MapViewport viewport, ViewportEvent e, Coordinate lastPosition, Coordinate position)
         {
             Position = viewport.Expand(position) + viewport.GetUnusedCoordinate(Position);
+            base.Drag(viewport, e, lastPosition, position);
         }
 
-        public virtual void EndDrag(MapViewport viewport, ViewportEvent e, Coordinate position)
-        {
-
-        }
-
-        public virtual IEnumerable<SceneObject> GetSceneObjects()
+        public override IEnumerable<SceneObject> GetSceneObjects()
         {
             yield break;
         }
 
-        public virtual IEnumerable<Element> GetViewportElements(MapViewport viewport, PerspectiveCamera camera)
+        public override IEnumerable<Element> GetViewportElements(MapViewport viewport, PerspectiveCamera camera)
         {
             yield break;
         }
 
-        public virtual IEnumerable<Element> GetViewportElements(MapViewport viewport, OrthographicCamera camera)
+        public override IEnumerable<Element> GetViewportElements(MapViewport viewport, OrthographicCamera camera)
         {
             yield return new HandleElement(PositionType.World, HandleElement.HandleType.Square, new Position(Position.ToVector3()), 2)
             {

@@ -1,10 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using OpenTK;
-using OpenTK.Input;
 using Sledge.DataStructures.Geometric;
 using Sledge.Editor.Rendering;
 using Sledge.Editor.Tools;

@@ -11,7 +11,7 @@ using Sledge.Rendering.Scenes.Elements;
 
 namespace Sledge.Editor.Tools2.DraggableTool
 {
-    public class BoxResizeHandle : IDraggable
+    public class BoxResizeHandle : BaseDraggable
     {
         public BoxDraggableState State { get; protected set; }
         public ResizeHandle Handle { get; protected set; }
@@ -84,13 +84,13 @@ namespace Sledge.Editor.Tools2.DraggableTool
             viewport.Control.Cursor = handle.GetCursorType();
         }
 
-        public void Highlight(MapViewport viewport)
+        public override void Highlight(MapViewport viewport)
         {
             HighlightedViewport = viewport;
             SetCursorForHandle(viewport, Handle);
         }
 
-        public void Unhighlight(MapViewport viewport)
+        public override void Unhighlight(MapViewport viewport)
         {
             HighlightedViewport = null;
             viewport.Control.Cursor = Cursors.Default;
@@ -106,12 +106,12 @@ namespace Sledge.Editor.Tools2.DraggableTool
         protected Coordinate MoveOrigin;
         protected Coordinate SnappedMoveOrigin;
 
-        public virtual void Click(MapViewport viewport, ViewportEvent e, Coordinate position)
+        public override void Click(MapViewport viewport, ViewportEvent e, Coordinate position)
         {
 
         }
 
-        public virtual bool CanDrag(MapViewport viewport, ViewportEvent e, Coordinate position)
+        public override bool CanDrag(MapViewport viewport, ViewportEvent e, Coordinate position)
         {
             const int width = 8;
             var pos = GetPosition(viewport);
@@ -120,16 +120,17 @@ namespace Sledge.Editor.Tools2.DraggableTool
             return diff.X < width && diff.Y < width;
         }
 
-        public virtual void StartDrag(MapViewport viewport, ViewportEvent e, Coordinate position)
+        public override void StartDrag(MapViewport viewport, ViewportEvent e, Coordinate position)
         {
             BoxState.Action = BoxAction.Resizing;
             BoxState.OrigStart = BoxState.Start;
             BoxState.OrigEnd = BoxState.End;
             MoveOrigin = GetResizeOrigin(viewport, position);
             SnappedMoveOrigin = MoveOrigin;
+            base.StartDrag(viewport, e, position);
         }
 
-        public virtual void Drag(MapViewport viewport, ViewportEvent e, Coordinate lastPosition, Coordinate position)
+        public override void Drag(MapViewport viewport, ViewportEvent e, Coordinate lastPosition, Coordinate position)
         {
             if (Handle == ResizeHandle.Center)
             {
@@ -145,26 +146,28 @@ namespace Sledge.Editor.Tools2.DraggableTool
                 var snapped = State.Tool.SnapIfNeeded(position);
                 BoxState.Resize(Handle, viewport, snapped);
             }
+            base.Drag(viewport, e, lastPosition, position);
         }
 
-        public virtual void EndDrag(MapViewport viewport, ViewportEvent e, Coordinate position)
+        public override void EndDrag(MapViewport viewport, ViewportEvent e, Coordinate position)
         {
             BoxState.FixBounds();
             BoxState.Action = BoxAction.Drawn;
             MoveOrigin = SnappedMoveOrigin = null;
+            base.EndDrag(viewport, e, position);
         }
 
-        public virtual IEnumerable<SceneObject> GetSceneObjects()
+        public override IEnumerable<SceneObject> GetSceneObjects()
         {
             yield break;
         }
 
-        public virtual IEnumerable<Element> GetViewportElements(MapViewport viewport, PerspectiveCamera camera)
+        public override IEnumerable<Element> GetViewportElements(MapViewport viewport, PerspectiveCamera camera)
         {
             yield break;
         }
 
-        public virtual IEnumerable<Element> GetViewportElements(MapViewport viewport, OrthographicCamera camera)
+        public override IEnumerable<Element> GetViewportElements(MapViewport viewport, OrthographicCamera camera)
         {
             if (State.State.Action != BoxAction.Drawn) yield break;
 

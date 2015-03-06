@@ -4,7 +4,6 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using OpenTK;
-using OpenTK.Graphics.OpenGL;
 using Sledge.DataStructures;
 using Sledge.DataStructures.Geometric;
 using Sledge.Editor.Documents;
@@ -12,7 +11,6 @@ using Sledge.Editor.Extensions;
 using Sledge.Editor.Rendering;
 using Sledge.Editor.UI;
 using Sledge.Extensions;
-using Sledge.Graphics;
 using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Scenes.Elements;
 using Sledge.Settings;
@@ -61,7 +59,6 @@ namespace Sledge.Editor.Tools.Widgets
         private readonly List<CachedLines> _cachedLines = new List<CachedLines>();
 
         private bool _autoPivot = true;
-        private bool _movingPivot = false;
 
         private Coordinate _pivotPoint = Coordinate.Zero;
         private CircleType _mouseOver;
@@ -205,8 +202,7 @@ namespace Sledge.Editor.Tools.Widgets
             }
 
             Vector3 axis;
-            // var dir = (viewport.Camera.Location - _pivotPoint.ToVector3()).Normalized();
-            var dir = Vector3.One;
+            var dir = (viewport.Viewport.Camera.EyeLocation - _pivotPoint.ToVector3()).Normalized();
             switch (_mouseDown)
             {
                 case CircleType.Outer:
@@ -242,17 +238,6 @@ namespace Sledge.Editor.Tools.Widgets
             return lines.Any(x => (x.ClosestPoint(point) - point).VectorMagnitude() <= 8);
         }
 
-        private bool MouseOverPivot(MapViewport vp, ViewportEvent e)
-        {
-            if (Document.Selection.IsEmpty()) return false;
-
-            var pivot = vp.WorldToScreen(vp.Flatten(_pivotPoint));
-            var x = e.X;
-            var y = vp.Height - e.Y;
-            return pivot.X > x - 8 && pivot.X < x + 8 &&
-                   pivot.Y > y - 8 && pivot.Y < y + 8;
-        }
-
         protected override void MouseLeave(MapViewport viewport, PerspectiveCamera camera, ViewportEvent e)
         {
             viewport.Control.Cursor = Cursors.Default;
@@ -260,29 +245,6 @@ namespace Sledge.Editor.Tools.Widgets
 
         protected override void MouseMove(MapViewport viewport, PerspectiveCamera camera, ViewportEvent e)
         {
-            // todo: 2d pivot
-            //if (viewport is MapViewport)
-            //{
-            //    var vp2 = (MapViewport) viewport;
-            //    if (_movingPivot)
-            //    {
-            //        var pp = SnapToSelection(vp2.ScreenToWorld(e.X, vp2.Height - e.Y), vp2);
-            //        _pivotPoint = vp2.GetUnusedCoordinate(_pivotPoint) + vp2.Expand(pp);
-            //        _autoPivot = false;
-            //        e.Handled = true;
-            //    }
-            //    else if (MouseOverPivot(vp2, e))
-            //    {
-            //        vp2.Control.Cursor = Cursors.Cross;
-            //        e.Handled = true;
-            //    }
-            //    else
-            //    {
-            //        vp2.Control.Cursor = Cursors.Default;
-            //    }
-            //    return;
-            //}
-
             if (viewport != _activeViewport) return;
 
             if (Document.Selection.IsEmpty() || !viewport.IsUnlocked(this)) return;
@@ -308,17 +270,6 @@ namespace Sledge.Editor.Tools.Widgets
 
         protected override void MouseDown(MapViewport viewport, PerspectiveCamera camera, ViewportEvent e)
         {
-            //if (viewport is MapViewport)
-            //{
-            //    var vp2 = (MapViewport)viewport;
-            //    if (ve.Button == MouseButtons.Left && MouseOverPivot(vp2, ve))
-            //    {
-            //        _movingPivot = true;
-            //        ve.Handled = true;
-            //    }
-            //    return;
-            //}
-
             if (viewport != _activeViewport) return;
 
             if (e.Button != MouseButtons.Left || _mouseOver == CircleType.None) return;
@@ -331,17 +282,6 @@ namespace Sledge.Editor.Tools.Widgets
 
         protected override void MouseUp(MapViewport viewport, PerspectiveCamera camera, ViewportEvent e)
         {
-            //if (viewport is MapViewport)
-            //{
-            //    // var vp2 = (MapViewport) viewport;
-            //    if (_movingPivot && ve.Button == MouseButtons.Left)
-            //    {
-            //        _movingPivot = false;
-            //        ve.Handled = true;
-            //    }
-            //    return;
-            //}
-
             if (viewport != _activeViewport) return;
 
             if (_mouseDown != CircleType.None && _mouseMovePoint != null) e.Handled = true;
@@ -376,41 +316,6 @@ namespace Sledge.Editor.Tools.Widgets
             }
             return new Element[0];
         }
-
-        //public  void Render(MapViewport viewport)
-        //{
-        //    if (Document.Selection.IsEmpty()) return;
-
-        //    //if (viewport is MapViewport)
-        //    //{
-        //    //    Render2D((MapViewport) viewport);
-        //    //    return;
-        //    //}
-
-        //    switch (_mouseMovePoint == null ? CircleType.None : _mouseDown)
-        //    {
-        //        case CircleType.None:
-        //            RenderCircleTypeNone(viewport, Document);
-        //            break;
-        //        case CircleType.Outer:
-        //        case CircleType.X:
-        //        case CircleType.Y:
-        //        case CircleType.Z:
-        //            RenderAxisRotating(viewport, Document);
-        //            break;
-        //    }
-        //}
-
-        //private void Render2D(MapViewport viewport)
-        //{
-        //    var pp = viewport.Flatten(_pivotPoint);
-        //    GL.Begin(PrimitiveType.Lines);
-        //    GL.Color3(Color.Cyan);
-        //    GLX.Circle(new Vector2d(pp.DX, pp.DY), 4, (double)viewport.Zoom);
-        //    GL.Color3(Color.White);
-        //    GLX.Circle(new Vector2d(pp.DX, pp.DY), 8, (double)viewport.Zoom);
-        //    GL.End();
-        //}
 
         private IEnumerable<Element> GetElementsAxisRotating(MapViewport viewport, PerspectiveCamera camera, Document document)
         {
@@ -449,11 +354,10 @@ namespace Sledge.Editor.Tools.Widgets
 
             if (_activeViewport == viewport)
             {
-                // todo stippling 
                 yield return new LineElement(PositionType.World, Color.FromArgb(64, Color.Gray), new List<Position>
                 {
                     new Position(_pivotPoint.ToVector3()),
-                    new Position(viewport.ScreenToWorld(_mouseDownPoint).ToVector3())
+                    new Position(viewport.ProperScreenToWorld(_mouseDownPoint).ToVector3())
                 })
                 {
                     Stippled = true
@@ -462,28 +366,11 @@ namespace Sledge.Editor.Tools.Widgets
                 yield return new LineElement(PositionType.World, Color.LightGray, new List<Position>
                 {
                     new Position(_pivotPoint.ToVector3()),
-                    new Position(viewport.ScreenToWorld(_mouseMovePoint).ToVector3())
+                    new Position(viewport.ProperScreenToWorld(_mouseMovePoint).ToVector3())
                 })
                 {
                     Stippled = true
                 };
-
-                // GL.Disable(EnableCap.DepthTest);
-                // GL.Enable(EnableCap.LineStipple);
-                // GL.LineStipple(5, 0xAAAA);
-                // GL.Begin(PrimitiveType.Lines);
-                // 
-                // GL.Color4(Color.FromArgb(64, Color.Gray));
-                // GL.Vertex3(_pivotPoint.ToVector3());
-                // GL.Vertex3(viewport.ScreenToWorld(_mouseDownPoint).ToVector3());
-                // 
-                // GL.Color4(Color.LightGray);
-                // GL.Vertex3(_pivotPoint.ToVector3());
-                // GL.Vertex3(viewport.ScreenToWorld(_mouseMovePoint).ToVector3());
-                // 
-                // GL.End();
-                // GL.Disable(EnableCap.LineStipple);
-                // GL.Enable(EnableCap.DepthTest);
             }
         }
 
@@ -524,7 +411,7 @@ namespace Sledge.Editor.Tools.Widgets
                 });
             }
 
-            var plane = new Plane(normal.ToCoordinate(), (decimal) -Vector3.Dot(origin, normal));
+            var plane = new Plane(normal.ToCoordinate(), (decimal) Vector3.Dot(origin, normal));
 
             for (var i = 0; i < sides; i++)
             {

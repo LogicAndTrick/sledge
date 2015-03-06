@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using OpenTK;
-using OpenTK.Graphics;
-using OpenTK.Graphics.OpenGL;
 using Sledge.DataStructures.Geometric;
 using Sledge.Editor.Extensions;
 using Sledge.Editor.Rendering;
@@ -13,12 +11,10 @@ using Sledge.Rendering.Materials;
 using Sledge.Rendering.Scenes;
 using Sledge.Rendering.Scenes.Elements;
 using Sledge.Rendering.Scenes.Renderables;
-using EnableCap = OpenTK.Graphics.OpenGL.EnableCap;
-using GL = OpenTK.Graphics.OpenGL.GL;
 
 namespace Sledge.Editor.Tools2.DraggableTool
 {
-    public class BoxDraggableState : IDraggableState
+    public class BoxDraggableState : BaseDraggable, IDraggableState
     {
         public BaseDraggableTool Tool { get; set; }
 
@@ -29,16 +25,11 @@ namespace Sledge.Editor.Tools2.DraggableTool
 
         protected IDraggable[] BoxHandles { get; set; }
 
-        protected TextPrinter _printer;
-        protected Font _printerFont;
-
         public BoxDraggableState(BaseDraggableTool tool)
         {
             Tool = tool;
             State = new BoxState();
 
-            _printer = new TextPrinter(TextQuality.Low);
-            _printerFont = new Font(FontFamily.GenericSansSerif, 16, GraphicsUnit.Pixel);
             RememberedDimensions = null;
 
             CreateBoxHandles();
@@ -72,27 +63,27 @@ namespace Sledge.Editor.Tools2.DraggableTool
             // 
         }
 
-        public virtual void Click(MapViewport viewport, ViewportEvent e, Coordinate position)
+        public override void Click(MapViewport viewport, ViewportEvent e, Coordinate position)
         {
             State.Action = BoxAction.Idle;
         }
 
-        public virtual bool CanDrag(MapViewport viewport, ViewportEvent e, Coordinate position)
+        public override bool CanDrag(MapViewport viewport, ViewportEvent e, Coordinate position)
         {
             return true;
         }
 
-        public virtual void Highlight(MapViewport viewport)
+        public override void Highlight(MapViewport viewport)
         {
             //
         }
 
-        public virtual void Unhighlight(MapViewport viewport)
+        public override void Unhighlight(MapViewport viewport)
         {
             //
         }
 
-        public virtual void StartDrag(MapViewport viewport, ViewportEvent e, Coordinate position)
+        public override void StartDrag(MapViewport viewport, ViewportEvent e, Coordinate position)
         {
             State.Viewport = viewport;
             State.Action = BoxAction.Drawing;
@@ -102,22 +93,25 @@ namespace Sledge.Editor.Tools2.DraggableTool
             var wid = RememberedDimensions == null ? Coordinate.Zero : viewport.GetUnusedCoordinate(RememberedDimensions.End - RememberedDimensions.Start);
             State.Start = Tool.SnapIfNeeded(viewport.Expand(position) + st);
             State.End = State.Start + wid;
+            base.StartDrag(viewport, e, position);
         }
 
-        public virtual void Drag(MapViewport viewport, ViewportEvent e, Coordinate lastPosition, Coordinate position)
+        public override void Drag(MapViewport viewport, ViewportEvent e, Coordinate lastPosition, Coordinate position)
         {
             State.End = Tool.SnapIfNeeded(viewport.Expand(position)) + viewport.GetUnusedCoordinate(State.End);
+            base.Drag(viewport, e, lastPosition, position);
         }
 
-        public virtual void EndDrag(MapViewport viewport, ViewportEvent e, Coordinate position)
+        public override void EndDrag(MapViewport viewport, ViewportEvent e, Coordinate position)
         {
             State.Viewport = null;
             State.Action = BoxAction.Drawn;
             State.End = Tool.SnapIfNeeded(viewport.Expand(position)) + viewport.GetUnusedCoordinate(State.End);
             State.FixBounds();
+            base.EndDrag(viewport, e, position);
         }
 
-        public virtual IEnumerable<SceneObject> GetSceneObjects()
+        public override IEnumerable<SceneObject> GetSceneObjects()
         {
             if (State.Action == BoxAction.Idle) yield break;
             var box = new Box(State.Start, State.End);
@@ -140,12 +134,12 @@ namespace Sledge.Editor.Tools2.DraggableTool
             }
         }
 
-        public virtual IEnumerable<Element> GetViewportElements(MapViewport viewport, PerspectiveCamera camera)
+        public override IEnumerable<Element> GetViewportElements(MapViewport viewport, PerspectiveCamera camera)
         {
             yield break;
         }
 
-        public virtual IEnumerable<Element> GetViewportElements(MapViewport viewport, OrthographicCamera camera)
+        public override IEnumerable<Element> GetViewportElements(MapViewport viewport, OrthographicCamera camera)
         {
             if (!ShouldDrawBoxText()) yield break;
 
