@@ -16,12 +16,14 @@ namespace Sledge.Editor.Rendering
         public static SceneMapObject Convert(this MapObject obj, Document document)
         {
             if (obj is Solid) return Convert((Solid)obj, document);
+            if (obj is Entity) return Convert((Entity) obj, document);
             return null;
         }
 
         public static bool Update(this MapObject obj, SceneMapObject smo, Document document)
         {
             if (obj is Solid) return Update((Solid)obj, smo, document);
+            if (obj is Entity) return Update((Entity)obj, smo, document);
             return false;
         }
 
@@ -29,6 +31,33 @@ namespace Sledge.Editor.Rendering
         {
             var smo = new SceneMapObject(solid);
             foreach (var face in solid.Faces)
+            {
+                var f = Convert(face, document);
+                smo.SceneObjects.Add(face, f);
+            }
+            return smo;
+        }
+
+        public static SceneMapObject Convert(this Entity entity, Document document)
+        {
+            var smo = new SceneMapObject(entity);
+            if (entity.EntityData.Name == "infodecal")
+            {
+                // 
+            }
+            else if (false) // should have model
+            {
+                
+            }
+            else if (false) // should have sprite
+            {
+
+            }
+            else
+            {
+                
+            }
+            foreach (var face in entity.GetBoxFaces())
             {
                 var f = Convert(face, document);
                 smo.SceneObjects.Add(face, f);
@@ -44,12 +73,29 @@ namespace Sledge.Editor.Rendering
             for (int i = 0; i < solid.Faces.Count; i++)
             {
                 var face = solid.Faces[i];
-                if (!Update(face, (Face) values[i], document)) return false;
+                if (!Update(face, (Face)values[i], document)) return false;
                 objs.Add(face, values[i]);
             }
             smo.SceneObjects.Clear();
             foreach (var kv in objs) smo.SceneObjects.Add(kv.Key, kv.Value);
             return true;
+        }
+
+        public static bool Update(this Entity entity, SceneMapObject smo, Document document)
+        {
+            return false;
+            // if (smo.SceneObjects.Count != entity.Faces.Count) return false;
+            // var values = smo.SceneObjects.Values.ToList();
+            // var objs = new Dictionary<object, SceneObject>();
+            // for (int i = 0; i < entity.Faces.Count; i++)
+            // {
+            //     var face = entity.Faces[i];
+            //     if (!Update(face, (Face)values[i], document)) return false;
+            //     objs.Add(face, values[i]);
+            // }
+            // smo.SceneObjects.Clear();
+            // foreach (var kv in objs) smo.SceneObjects.Add(kv.Key, kv.Value);
+            // return true;
         }
 
         public static Face Convert(this DataStructures.MapObjects.Face face, Document document)
