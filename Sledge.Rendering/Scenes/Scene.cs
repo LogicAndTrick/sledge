@@ -7,7 +7,7 @@ namespace Sledge.Rendering.Scenes
 {
     public class Scene
     {
-        private readonly List<SceneObject> _objects;
+        private readonly HashSet<SceneObject> _objects;
         private bool _updateInProgress;
         private bool _trackChanges;
         private SceneChangeSet _changeSet;
@@ -41,7 +41,7 @@ namespace Sledge.Rendering.Scenes
 
         public Scene()
         {
-            _objects = new List<SceneObject>();
+            _objects = new HashSet<SceneObject>();
         }
 
         public void ClearChanges()

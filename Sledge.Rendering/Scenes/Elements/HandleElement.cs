@@ -35,7 +35,7 @@ namespace Sledge.Rendering.Scenes.Elements
             LineWidth = 1;
         }
 
-        public override IEnumerable<LineElement> GetLines(IRenderer renderer)
+        public override IEnumerable<LineElement> GetLines(IViewport viewport, IRenderer renderer)
         {
             if (LineWidth <= 0) yield break;
 
@@ -44,7 +44,7 @@ namespace Sledge.Rendering.Scenes.Elements
             yield return new LineElement(PositionType, LineColor, verts);
         }
 
-        public override IEnumerable<FaceElement> GetFaces(IRenderer renderer)
+        public override IEnumerable<FaceElement> GetFaces(IViewport viewport, IRenderer renderer)
         {
             yield return new FaceElement(PositionType, Material.Flat(Color), GetVertices().Select(x => new PositionVertex(x, 0, 0)));
         }

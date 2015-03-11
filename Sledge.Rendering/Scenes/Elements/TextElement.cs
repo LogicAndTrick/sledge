@@ -43,12 +43,12 @@ namespace Sledge.Rendering.Scenes.Elements
             return renderer.StringTextureManager.GetSize(Text, FontName, FontSize, FontStyle);
         }
 
-        public override IEnumerable<LineElement> GetLines(IRenderer renderer)
+        public override IEnumerable<LineElement> GetLines(IViewport viewport, IRenderer renderer)
         {
             yield break;
         }
 
-        public override IEnumerable<FaceElement> GetFaces(IRenderer renderer)
+        public override IEnumerable<FaceElement> GetFaces(IViewport viewport, IRenderer renderer)
         {
             var el = renderer.StringTextureManager.GetElement(Text, Color, PositionType, Location, AnchorX, AnchorY, FontName, FontSize, FontStyle);
             foreach (var v in el.Vertices) v.Position.Offset += ScreenOffset;

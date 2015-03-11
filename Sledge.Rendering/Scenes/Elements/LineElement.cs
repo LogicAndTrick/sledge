@@ -23,12 +23,12 @@ namespace Sledge.Rendering.Scenes.Elements
             CameraFlags = CameraFlags.All;
         }
 
-        public override IEnumerable<LineElement> GetLines(IRenderer renderer)
+        public override IEnumerable<LineElement> GetLines(IViewport viewport, IRenderer renderer)
         {
             yield return this;
         }
 
-        public override IEnumerable<FaceElement> GetFaces(IRenderer renderer)
+        public override IEnumerable<FaceElement> GetFaces(IViewport viewport, IRenderer renderer)
         {
             yield break;
         }

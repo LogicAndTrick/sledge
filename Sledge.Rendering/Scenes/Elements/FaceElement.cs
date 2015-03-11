@@ -25,12 +25,12 @@ namespace Sledge.Rendering.Scenes.Elements
             RenderFlags = RenderFlags.Polygon;
         }
 
-        public override IEnumerable<LineElement> GetLines(IRenderer renderer)
+        public override IEnumerable<LineElement> GetLines(IViewport viewport, IRenderer renderer)
         {
             yield break;
         }
 
-        public override IEnumerable<FaceElement> GetFaces(IRenderer renderer)
+        public override IEnumerable<FaceElement> GetFaces(IViewport viewport, IRenderer renderer)
         {
             yield return this;
         }

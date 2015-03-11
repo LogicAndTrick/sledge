@@ -78,8 +78,9 @@ namespace Sledge.Rendering.OpenGL.Arrays
             GL.BindBuffer(BufferTarget.ElementArrayBuffer, 0);
         }
 
-        public void Dispose()
+        public virtual void Dispose()
         {
+            Clear();
             if (_array >= 0) GL.DeleteBuffers(1, ref _array);
             if (_elementArray >= 0) GL.DeleteBuffers(1, ref _elementArray);
         }
@@ -185,9 +186,10 @@ namespace Sledge.Rendering.OpenGL.Arrays
             list.AddRange(indices.Select(x => x + start));
         }
 
-        protected void PushOffset<T>(T obj)
+        protected int PushOffset<T>(T obj)
         {
             _offsets.Add(obj, _data.Count);
+            return _data.Count;
         }
 
         protected int GetOffset<T>(T obj)

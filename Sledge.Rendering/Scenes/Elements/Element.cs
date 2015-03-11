@@ -34,7 +34,7 @@ namespace Sledge.Rendering.Scenes.Elements
             DepthTested = true;
         }
 
-        public abstract IEnumerable<LineElement> GetLines(IRenderer renderer);
-        public abstract IEnumerable<FaceElement> GetFaces(IRenderer renderer);
+        public abstract IEnumerable<LineElement> GetLines(IViewport viewport, IRenderer renderer);
+        public abstract IEnumerable<FaceElement> GetFaces(IViewport viewport, IRenderer renderer);
     }
 }

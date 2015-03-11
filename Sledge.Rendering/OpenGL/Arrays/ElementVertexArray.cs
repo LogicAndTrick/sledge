@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Windows.Forms;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using Sledge.Rendering.Cameras;
-using Sledge.Rendering.DataStructures.Models;
 using Sledge.Rendering.Interfaces;
 using Sledge.Rendering.OpenGL.Shaders;
 using Sledge.Rendering.OpenGL.Vertices;
@@ -109,7 +106,7 @@ namespace Sledge.Rendering.OpenGL.Arrays
 
             var list = data.Where(x => x.PositionType == type).Where(x => x.Viewport == null || x.Viewport == _viewport).ToList();
 
-            foreach (var g in list.SelectMany(x => x.GetFaces(_renderer)).GroupBy(x => x.Material.UniqueIdentifier))
+            foreach (var g in list.SelectMany(x => x.GetFaces(_viewport, _renderer)).GroupBy(x => x.Material.UniqueIdentifier))
             {
                 StartSubset(polygonId);
 
@@ -126,7 +123,7 @@ namespace Sledge.Rendering.OpenGL.Arrays
 
             PushSubset(wireframeId, WireframeProperties.Default);
 
-            foreach (var g in list.SelectMany(x => x.GetLines(_renderer)).GroupBy(x => new { x.Width, x.DepthTested, x.Smooth, x.Stippled }))
+            foreach (var g in list.SelectMany(x => x.GetLines(_viewport, _renderer)).GroupBy(x => new { x.Width, x.DepthTested, x.Smooth, x.Stippled }))
             {
                 StartSubset(wireframeId);
                 foreach (var line in g)

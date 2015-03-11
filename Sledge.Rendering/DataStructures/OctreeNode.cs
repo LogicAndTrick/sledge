@@ -17,7 +17,7 @@ namespace Sledge.Rendering.DataStructures
         public int Count { get; private set; }
 
         private int _limit;
-        private List<T> _elements;
+        private HashSet<T> _elements;
         private OctreeNode<T>[] _children;
 
         public OctreeNode(Octree<T> root, OctreeNode<T> parent, Box clippingBox, int limit)
@@ -27,7 +27,7 @@ namespace Sledge.Rendering.DataStructures
             _limit = limit;
             BoundingBox = ClippingBox = clippingBox;
             Count = 0;
-            _elements = new List<T>();
+            _elements = new HashSet<T>();
             _children = null;
         }
 
@@ -38,7 +38,7 @@ namespace Sledge.Rendering.DataStructures
 
         public void Clear()
         {
-            _elements = new List<T>();
+            _elements = new HashSet<T>();
             _children = null;
             Count = 0;
         }
@@ -84,12 +84,12 @@ namespace Sledge.Rendering.DataStructures
 
         public void Add(IEnumerable<T> elements)
         {
-            var list = elements.ToList();
+            var list = new HashSet<T>(elements);
             var switched = false;
 
             if (_children == null)
             {
-                _elements = _elements.Union(list).ToList();
+                _elements = new HashSet<T>(_elements.Union(list));
                 Count = _elements.Count;
 
                 // If we're still under the limit, break out
@@ -148,7 +148,7 @@ namespace Sledge.Rendering.DataStructures
             if (_children == null)
             {
                 // We're under the limit, no need to do anything when removing stuff
-                _elements = _elements.Except(list).ToList();
+                _elements = new HashSet<T>(_elements.Except(list));
                 BoundingBox = _elements.Count == 0 ? ClippingBox : new Box(_elements.Select(x => x.BoundingBox));
                 return Count != startCount;
             }
@@ -175,7 +175,7 @@ namespace Sledge.Rendering.DataStructures
             // If we've dropped under the limit, collapse the child nodes
             if (Count <= _limit)
             {
-                _elements = _children.SelectMany(x => x).ToList();
+                _elements = new HashSet<T>(_children.SelectMany(x => x));
                 BoundingBox = _elements.Count == 0 ? ClippingBox : new Box(_elements.Select(x => x.BoundingBox));
                 _children = null;
             }

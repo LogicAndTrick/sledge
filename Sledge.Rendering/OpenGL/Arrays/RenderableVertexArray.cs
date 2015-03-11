@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using OpenTK;
@@ -27,10 +28,45 @@ namespace Sledge.Rendering.OpenGL.Arrays
         private const int ForcedTransparentPolygons = 23;
 
         public HashSet<RenderableObject> Items { get; private set; }
+        private Dictionary<Type, HashSet<RenderableObject>> _typedItems;
+        private Dictionary<int, SetCache> _setCaches;
 
-        public RenderableVertexArray(ICollection<RenderableObject> data) : base(data)
+        private class SetCache
         {
-            Items = new HashSet<RenderableObject>(data);
+            public object[] State { get; private set; }
+            public List<Subset> Sets { get; private set; }
+
+            public SetCache(object[] state, List<Subset> sets)
+            {
+                State = state;
+                Sets = sets;
+            }
+
+            public bool Matches(object[] state)
+            {
+                if (state == null && State == null) return true;
+                if (state == null || State == null) return false;
+                if (state.Length != State.Length) return false;
+                return !state.Where((t, i) => !Equals(t, State[i])).Any();
+            }
+        }
+
+        private IEnumerable<Subset> HitCache(int key, Func<IEnumerable<Subset>> generator, params object[] state)
+        {
+            if (_setCaches.ContainsKey(key))
+            {
+                if (!_setCaches[key].Matches(state)) _setCaches.Remove(key);
+            }
+            if (!_setCaches.ContainsKey(key))
+            {
+                _setCaches[key] = new SetCache(state, generator().ToList());
+            }
+            return _setCaches[key].Sets;
+        }
+
+        public RenderableVertexArray(IEnumerable<RenderableObject> data) : base(data)
+        {
+
         }
 
         public IEnumerable<string> GetMaterials()
@@ -63,9 +99,15 @@ namespace Sledge.Rendering.OpenGL.Arrays
 
             // Render non-transparent polygons
             string last = null;
-            var sets = GetSubsets<string>(ForcedPolygons).ToList();
-            if (options.RenderFacePolygons) sets.AddRange(GetSubsets<string>(FacePolygons));
-            foreach (var subset in sets.Where(x => x.Instance != null).OrderBy(x => (string)x.Instance))
+
+            var sets = HitCache(FacePolygons, () =>
+            {
+                var ss = GetSubsets<string>(ForcedPolygons).ToList();
+                if (options.RenderFacePolygons) ss.AddRange(GetSubsets<string>(FacePolygons));
+                return ss.Where(x => x.Instance != null).OrderBy(x => (string) x.Instance);
+            }, options.RenderFacePolygons);
+
+            foreach (var subset in sets)
             {
                 var mat = (string)subset.Instance;
                 if (mat != last) renderer.Materials.Bind(mat);
@@ -77,18 +119,28 @@ namespace Sledge.Rendering.OpenGL.Arrays
             shader.UseAccentColor = true;
 
             // Render wireframe
-            sets = GetSubsets(ForcedWireframe).ToList();
-            if (options.RenderFaceWireframe) sets.AddRange(GetSubsets(FaceWireframe));
-            if (options.RenderLineWireframe) sets.AddRange(GetSubsets(LineWireframe));
+            sets = HitCache(FaceWireframe, () =>
+            {
+                var ss = GetSubsets(ForcedWireframe).ToList();
+                if (options.RenderFaceWireframe) ss.AddRange(GetSubsets(FaceWireframe));
+                if (options.RenderLineWireframe) ss.AddRange(GetSubsets(LineWireframe));
+                return ss;
+            }, options.RenderFaceWireframe, options.RenderLineWireframe);
+
             foreach (var subset in sets)
             {
                 Render(PrimitiveType.Lines, subset);
             }
 
             // Render points
-            sets = GetSubsets(ForcedPoints).ToList();
-            if (options.RenderFacePoints) sets.AddRange(GetSubsets(FacePoints));
-            if (options.RenderLinePoints) sets.AddRange(GetSubsets(LinePoints));
+            sets = HitCache(FacePoints, () =>
+            {
+                var ss = GetSubsets(ForcedPoints).ToList();
+                if (options.RenderFacePoints) ss.AddRange(GetSubsets(FacePoints));
+                if (options.RenderLinePoints) ss.AddRange(GetSubsets(LinePoints));
+                return ss;
+            }, options.RenderFaceWireframe, options.RenderLineWireframe);
+
             foreach (var subset in sets)
             {
                 Render(PrimitiveType.Points, subset);
@@ -96,10 +148,14 @@ namespace Sledge.Rendering.OpenGL.Arrays
 
             shader.Unbind();
 
-            foreach (var model in Items.OfType<Model>())
+            if (_typedItems.ContainsKey(typeof (Model)))
             {
-                var array = renderer.Models.GetArray(model.Name);
-                array.Render(renderer, modelShader, viewport, Matrix4.CreateTranslation(model.Position));
+                foreach (var o in _typedItems[typeof (Model)])
+                {
+                    var model = (Model) o;
+                    var array = renderer.Models.GetArray(model.Name);
+                    array.Render(renderer, modelShader, viewport, Matrix4.CreateTranslation(model.Position));
+                }
             }
 
             shader.Bind();
@@ -112,13 +168,14 @@ namespace Sledge.Rendering.OpenGL.Arrays
             
             // Render transparent polygons, sorted back-to-front
             // todo: it may be worth doing per-face culling for transparent objects
+            // todo: can I just turn off depth writing instead of sorting?
             last = null;
             var lastMat = Matrix4.Identity;
             var lastAcc = true;
-            sets = GetSubsets(ForcedTransparentPolygons).ToList();
-            if (options.RenderFacePolygons) sets.AddRange(GetSubsets(FaceTransparentPolygons));
+            var tsets = GetSubsets(ForcedTransparentPolygons).ToList();
+            if (options.RenderFacePolygons) tsets.AddRange(GetSubsets(FaceTransparentPolygons));
             var sorted =
-                from subset in sets
+                from subset in tsets
                 where subset.Instance != null
                 let obj = subset.Instance as RenderableObject
                 where obj != null
@@ -150,6 +207,7 @@ namespace Sledge.Rendering.OpenGL.Arrays
                 if (offset < 0) continue;
                 if (obj is Face) Update(offset, Convert((Face)obj));
                 if (obj is Line) Update(offset, Convert((Line)obj));
+                if (obj is Sprite) Update(offset, Convert((Sprite)obj));
             }
         }
 
@@ -161,12 +219,15 @@ namespace Sledge.Rendering.OpenGL.Arrays
                 if (offset < 0) continue;
                 if (obj is Face) Update(offset, Convert((Face)obj, VertexFlags.InvisibleOrthographic | VertexFlags.InvisiblePerspective));
                 if (obj is Line) Update(offset, Convert((Line)obj, VertexFlags.InvisibleOrthographic | VertexFlags.InvisiblePerspective));
+                if (obj is Sprite) Update(offset, Convert((Sprite)obj, VertexFlags.InvisibleOrthographic | VertexFlags.InvisiblePerspective));
             }
         }
 
         protected override void CreateArray(IEnumerable<RenderableObject> data)
         {
             Items = new HashSet<RenderableObject>(data);
+            _typedItems = Items.GroupBy(x => x.GetType()).ToDictionary(x => x.Key, x => new HashSet<RenderableObject>(x));
+            _setCaches = new Dictionary<int, SetCache>();
 
             StartSubset(LineWireframe);
             StartSubset(LinePoints);
