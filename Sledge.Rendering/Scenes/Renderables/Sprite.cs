@@ -64,7 +64,8 @@ namespace Sledge.Rendering.Scenes.Renderables
 
         public Matrix4 GetBillboardMatrix(Vector3 eye)
         {
-            return Matrix4.LookAt(Vector3.Zero, eye, Vector3.UnitZ).Inverted() * Matrix4.CreateTranslation(Position);
+            //return Matrix4.LookAt(Vector3.Zero, eye, Vector3.UnitZ).Inverted() * Matrix4.CreateTranslation(Position);
+            return Matrix4.LookAt(Position, eye, Vector3.UnitZ).Inverted();
         }
     }
 }

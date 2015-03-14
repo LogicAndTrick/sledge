@@ -25,7 +25,7 @@ namespace Sledge.Rendering.OpenGL.Arrays
         public WireframeProperties()
         {
             DepthTested = true;
-            Smooth = true;
+            Smooth = false;
             Width = 1;
             StippleFactor = 1;
             StipplePattern = 0xFFFF;

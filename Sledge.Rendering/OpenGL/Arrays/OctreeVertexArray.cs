@@ -116,6 +116,14 @@ namespace Sledge.Rendering.OpenGL.Arrays
             {
                 Spare.Render(renderer, shader, modelShader, viewport);
             }
+            foreach (var array in Partitions)
+            {
+                array.RenderTransparent(renderer, shader, viewport);
+            }
+            if (Spare != null)
+            {
+                Spare.RenderTransparent(renderer, shader, viewport);
+            }
         }
 
         public void Clear()

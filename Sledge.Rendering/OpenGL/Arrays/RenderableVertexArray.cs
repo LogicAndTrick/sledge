@@ -83,7 +83,6 @@ namespace Sledge.Rendering.OpenGL.Arrays
             var camMatrix = camera.GetCameraMatrix();
             var mvMatrix = camera.GetModelMatrix();
 
-            var eye = camera.EyeLocation;
             var options = camera.RenderOptions;
 
             shader.Bind();
@@ -109,13 +108,13 @@ namespace Sledge.Rendering.OpenGL.Arrays
 
             foreach (var subset in sets)
             {
-                var mat = (string)subset.Instance;
+                var mat = (string) subset.Instance;
                 if (mat != last) renderer.Materials.Bind(mat);
                 last = mat;
 
                 Render(PrimitiveType.Triangles, subset);
             }
-            
+
             shader.UseAccentColor = true;
 
             // Render wireframe
@@ -157,6 +156,18 @@ namespace Sledge.Rendering.OpenGL.Arrays
                     array.Render(renderer, modelShader, viewport, Matrix4.CreateTranslation(model.Position));
                 }
             }
+        }
+
+        public void RenderTransparent(IRenderer renderer, Passthrough shader, IViewport viewport)
+        {
+            var camera = viewport.Camera;
+
+            var vpMatrix = camera.GetViewportMatrix(viewport.Control.Width, viewport.Control.Height);
+            var camMatrix = camera.GetCameraMatrix();
+            var mvMatrix = camera.GetModelMatrix();
+
+            var eye = camera.EyeLocation;
+            var options = camera.RenderOptions;
 
             shader.Bind();
             shader.SelectionTransform = renderer.SelectionTransform;
@@ -166,10 +177,12 @@ namespace Sledge.Rendering.OpenGL.Arrays
             shader.Orthographic = camera.Flags.HasFlag(CameraFlags.Orthographic);
             shader.UseAccentColor = !options.RenderFacePolygonTextures;
             
+            GL.DepthMask(false);
+
             // Render transparent polygons, sorted back-to-front
             // todo: it may be worth doing per-face culling for transparent objects
             // todo: can I just turn off depth writing instead of sorting?
-            last = null;
+            string last = null;
             var lastMat = Matrix4.Identity;
             var lastAcc = true;
             var tsets = GetSubsets(ForcedTransparentPolygons).ToList();
@@ -197,6 +210,8 @@ namespace Sledge.Rendering.OpenGL.Arrays
 
                 Render(PrimitiveType.Triangles, subset);
             }
+
+            GL.DepthMask(true);
         }
 
         public void UpdatePartial(IEnumerable<RenderableObject> objects)
@@ -364,10 +379,10 @@ namespace Sledge.Rendering.OpenGL.Arrays
             var h = sprite.Height / 2;
             var verts = new[]
                         {
-                            new Vertex(new Vector3(-w, -h, 0), 0, 0),
-                            new Vertex(new Vector3(+w, -h, 0), 1, 0),
-                            new Vertex(new Vector3(+w, +h, 0), 1, 1),
-                            new Vertex(new Vector3(-w, +h, 0), 0, 1),
+                            new Vertex(new Vector3(-w, -h, 0), 0, 1),
+                            new Vertex(new Vector3(+w, -h, 0), 1, 1),
+                            new Vertex(new Vector3(+w, +h, 0), 1, 0),
+                            new Vertex(new Vector3(-w, +h, 0), 0, 0),
                         };
 
             return verts.Select((x, i) => new SimpleVertex
