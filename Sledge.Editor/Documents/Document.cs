@@ -57,7 +57,7 @@ namespace Sledge.Editor.Documents
         private readonly DocumentMemory _memory;
 
         public Scene Scene { get; private set; }
-        private SceneManager _sceneManager;
+        public SceneManager SceneManager { get; private set; }
 
         private Document()
         {
@@ -117,15 +117,15 @@ namespace Sledge.Editor.Documents
             TextureProvider.LoadTextureItems(items);
 
             Map.PostLoadProcess(GameData, GetTexture, SettingsManager.GetSpecialTextureOpacity);
-            Map.UpdateDecals(this);
-            Map.UpdateModels(this);
-            Map.UpdateSprites(this);
+            // Map.UpdateDecals(this);
+            // Map.UpdateModels(this);
+            // Map.UpdateSprites(this);
 
             //HelperManager = new HelperManager(this);
             //Renderer = new RenderManager(this);
 
             Scene = SceneManager.Engine.Renderer.CreateScene();
-            _sceneManager = new SceneManager(this);
+            SceneManager = new SceneManager(this);
 
             if (MapFile != null) Mediator.Publish(EditorMediator.FileOpened, MapFile);
 
@@ -152,7 +152,7 @@ namespace Sledge.Editor.Documents
             if (!Sledge.Settings.View.KeepSelectedTool) ToolManager.Activate(_memory.SelectedTool);
             if (!Sledge.Settings.View.KeepCameraPositions) _memory.RestoreViewports(ViewportManager.Viewports);
 
-            _sceneManager.SetActive();
+            SceneManager.SetActive();
 
             // ViewportManager.AddContext3D(new WidgetLinesRenderable());
             // Renderer.Register(ViewportManager.Viewports);
@@ -389,11 +389,11 @@ namespace Sledge.Editor.Documents
             Map.PartialPostLoadProcess(GameData, GetTexture, SettingsManager.GetSpecialTextureOpacity);
 
             var decalsUpdated = Map.UpdateDecals(this);
-            var modelsUpdated = Map.UpdateModels(this);
-            var spritesUpdated = Map.UpdateSprites(this);
-            if (decalsUpdated || modelsUpdated || spritesUpdated) Mediator.Publish(EditorMediator.SelectionChanged);
+            // var modelsUpdated = Map.UpdateModels(this);
+            // var spritesUpdated = Map.UpdateSprites(this);
+            // if (decalsUpdated || modelsUpdated || spritesUpdated) Mediator.Publish(EditorMediator.SelectionChanged);
 
-            _sceneManager.Update();
+            SceneManager.Update();
 
             //HelperManager.UpdateCache();
             //Renderer.Update();
@@ -402,7 +402,7 @@ namespace Sledge.Editor.Documents
 
         public void RenderSelection(IEnumerable<MapObject> objects)
         {
-            _sceneManager.Update(objects);
+            SceneManager.Update(objects.ToList());
             //Renderer.UpdateSelection(objects);
             //ViewportManager.Viewports.ForEach(vp => vp.UpdateNextFrame());
         }
@@ -418,7 +418,7 @@ namespace Sledge.Editor.Documents
             if (decalsUpdated || modelsUpdated || spritesUpdated) Mediator.Publish(EditorMediator.SelectionChanged);
 
 
-            _sceneManager.Update(objects);
+            SceneManager.Update(objs);
 
             //HelperManager.UpdateCache();
 

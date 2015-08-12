@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using OpenTK.Graphics.OpenGL;
+using OpenTK;
 using Sledge.Common;
 using Sledge.Common.Mediator;
 using Sledge.DataStructures.GameData;
@@ -12,12 +12,16 @@ using Sledge.DataStructures.MapObjects;
 using Sledge.Editor.Actions;
 using Sledge.Editor.Actions.MapObjects.Operations;
 using Sledge.Editor.Actions.MapObjects.Selection;
+using Sledge.Editor.Extensions;
 using Sledge.Editor.Properties;
 using Sledge.Editor.Rendering;
 using Sledge.Editor.UI;
 using Sledge.Editor.UI.Sidebar;
-using Sledge.Rendering;
+using Sledge.Rendering.Cameras;
+using Sledge.Rendering.Scenes;
+using Sledge.Rendering.Scenes.Elements;
 using Sledge.Settings;
+using Line = Sledge.Rendering.Scenes.Renderables.Line;
 using Select = Sledge.Settings.Select;
 
 namespace Sledge.Editor.Tools
@@ -117,37 +121,14 @@ namespace Sledge.Editor.Tools
             return HotkeyTool.Entity;
         }
 
-        public override void MouseEnter(MapViewport viewport, ViewportEvent e)
-        {
-            viewport.Control.Cursor = Cursors.Default;
-        }
+        // 3D interaction
 
-        public override void MouseLeave(MapViewport viewport, ViewportEvent e)
+        protected override void MouseDown(MapViewport viewport, PerspectiveCamera camera, ViewportEvent e)
         {
-            viewport.Control.Cursor = Cursors.Default;
-        }
-
-        public override void MouseDown(MapViewport viewport, ViewportEvent e)
-        {
-            if (viewport.Is3D)
-            {
-                MouseDown3D((MapViewport) viewport, e);
-                return;
-            }
-            if (e.Button != MouseButtons.Left && e.Button != MouseButtons.Right) return;
-
-            _state = EntityState.Moving;
-            var vp = (MapViewport) viewport;
-            var loc = SnapIfNeeded(vp.ScreenToWorld(e.X, vp.Height - e.Y));
-            _location = vp.GetUnusedCoordinate(_location) + vp.Expand(loc);
-        }
-
-        private void MouseDown3D(MapViewport vp, ViewportEvent e)
-        {
-            if (vp == null || e.Button != MouseButtons.Left) return;
+            if (e.Button != MouseButtons.Left) return;
 
             // Get the ray that is cast from the clicked point along the viewport frustrum
-            var ray = vp.CastRayFromScreen(e.X, e.Y);
+            var ray = viewport.CastRayFromScreen(e.X, e.Y);
 
             // Grab all the elements that intersect with the ray
             var hits = Document.Map.WorldSpawn.GetAllNodesIntersectingWith(ray);
@@ -164,54 +145,58 @@ namespace Sledge.Editor.Tools
             CreateEntity(hit.Intersection);
         }
 
-        public override void MouseClick(MapViewport viewport, ViewportEvent e)
+        // 2D interaction
+
+        protected override void MouseEnter(MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
         {
-            // Not used
+            viewport.Control.Cursor = Cursors.Cross;
         }
 
-        public override void MouseDoubleClick(MapViewport viewport, ViewportEvent e)
+        protected override void MouseLeave(MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
         {
-            // Not used
+            viewport.Control.Cursor = Cursors.Cross;
         }
 
-        public override void MouseUp(MapViewport viewport, ViewportEvent e)
+        protected override void MouseDown(MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
         {
-            if (!(viewport is MapViewport) || e.Button != MouseButtons.Left) return;
+            if (e.Button != MouseButtons.Left && e.Button != MouseButtons.Right) return;
+
+            _state = EntityState.Moving;
+            var loc = SnapIfNeeded(viewport.ScreenToWorld(e.X, viewport.Height - e.Y));
+            _location = viewport.GetUnusedCoordinate(_location) + viewport.Expand(loc);
+            Invalidate();
+        }
+
+        protected override void MouseUp(MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
+        {
+            if (e.Button != MouseButtons.Left) return;
             _state = EntityState.Drawn;
-            var vp = viewport as MapViewport;
-            var loc = SnapIfNeeded(vp.ScreenToWorld(e.X, vp.Height - e.Y));
-            _location = vp.GetUnusedCoordinate(_location) + vp.Expand(loc);
+            var loc = SnapIfNeeded(viewport.ScreenToWorld(e.X, viewport.Height - e.Y));
+            _location = viewport.GetUnusedCoordinate(_location) + viewport.Expand(loc);
+            Invalidate();
         }
 
-        public override void MouseWheel(MapViewport viewport, ViewportEvent e)
+        protected override void MouseMove(MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
         {
-            // Nothing
-        }
-
-        public override void MouseMove(MapViewport viewport, ViewportEvent e)
-        {
-            if (!(viewport is MapViewport) || !Control.MouseButtons.HasFlag(MouseButtons.Left)) return;
+            if (!Control.MouseButtons.HasFlag(MouseButtons.Left)) return;
             if (_state != EntityState.Moving) return;
-            var vp = viewport as MapViewport;
-            var loc = SnapIfNeeded(vp.ScreenToWorld(e.X, vp.Height - e.Y));
-            _location = vp.GetUnusedCoordinate(_location) + vp.Expand(loc);
+            var loc = SnapIfNeeded(viewport.ScreenToWorld(e.X, viewport.Height - e.Y));
+            _location = viewport.GetUnusedCoordinate(_location) + viewport.Expand(loc);
+            Invalidate();
         }
 
-        public override void KeyPress(MapViewport viewport, ViewportEvent e)
-        {
-            // Nothing
-        }
-
-        public override void KeyDown(MapViewport viewport, ViewportEvent e)
+        protected override void KeyDown(MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
         {
             switch (e.KeyCode)
             {
                 case Keys.Enter:
                     CreateEntity(_location);
                     _state = EntityState.None;
+                    Invalidate();
                     break;
                 case Keys.Escape:
                     _state = EntityState.None;
+                    Invalidate();
                     break;
             }
         }
@@ -248,75 +233,39 @@ namespace Sledge.Editor.Tools
             }
         }
 
-        public override void KeyUp(MapViewport viewport, ViewportEvent e)
-        {
-            //
-        }
+        // Rendering
 
-        public override void UpdateFrame(MapViewport viewport, Frame frame)
+        protected override IEnumerable<SceneObject> GetSceneObjects()
         {
-            //
-        }
+            var list = base.GetSceneObjects().ToList();
 
-        private static void Coord(Coordinate c)
-        {
-            GL.Vertex3(c.DX, c.DY, c.DZ);
-        }
-        private static void Coord(double x, double y, double z)
-        {
-            GL.Vertex3(x, y, z);
-        }
-
-        public void Render(MapViewport viewport)
-        {
-            if (_state == EntityState.None) return;
-
-            var high = Document.GameData.MapSizeHigh;
-            var low = Document.GameData.MapSizeLow;
-
-            if (viewport is MapViewport)
+            if (_state != EntityState.None)
             {
-                var offset = new Coordinate(20, 20, 20);
-                var start = _location - offset;
-                var end = _location + offset;
-                var box = new Box(start, end);
-                GL.Begin(PrimitiveType.Lines);
-                GL.Color3(Color.LimeGreen);
-                foreach (var line in box.GetBoxLines())
+                var vec = _location.ToVector3();
+                var high = (float) Document.GameData.MapSizeHigh;
+                var low = (float) Document.GameData.MapSizeLow;
+                list.Add(new Line(Color.LimeGreen, new Vector3(low, vec.Y, vec.Z), new Vector3(high, vec.Y, vec.Z)));
+                list.Add(new Line(Color.LimeGreen, new Vector3(vec.X, low, vec.Z), new Vector3(vec.X, high, vec.Z)));
+                list.Add(new Line(Color.LimeGreen, new Vector3(vec.X, vec.Y, low), new Vector3(vec.X, vec.Y, high)));
+            }
+
+            return list;
+        }
+
+        protected override IEnumerable<Element> GetViewportElements(MapViewport viewport, OrthographicCamera camera)
+        {
+            var list = base.GetViewportElements(viewport, camera).ToList();
+
+            if (_state != EntityState.None)
+            {
+                list.Add(new HandleElement(PositionType.World, HandleElement.HandleType.Square, new Position(_location.ToVector3()), 5)
                 {
-                    Coord(line.Start);
-                    Coord(line.End);
-                }
-                Coord(low, _location.DY, _location.DZ);
-                Coord(high, _location.DY, _location.DZ);
-                Coord(_location.DX, low, _location.DZ);
-                Coord(_location.DX, high, _location.DZ);
-                Coord(_location.DX, _location.DY, low);
-                Coord(_location.DX, _location.DY, high);
-                GL.End();
+                    Color = Color.Transparent,
+                    LineColor = Color.LimeGreen
+                });
             }
-            else if (viewport is MapViewport)
-            {
-                var vp = viewport as MapViewport;
-                var units = vp.PixelsToUnits(5);
-                var offset = new Coordinate(units, units, units);
-                var start = vp.Flatten(_location - offset);
-                var end = vp.Flatten(_location + offset);
-                GL.Begin(PrimitiveType.LineLoop);
-                GL.Color3(Color.LimeGreen);
-                Coord(start.DX, start.DY, start.DZ);
-                Coord(end.DX, start.DY, start.DZ);
-                Coord(end.DX, end.DY, start.DZ);
-                Coord(start.DX, end.DY, start.DZ);
-                GL.End();
-                GL.Begin(PrimitiveType.Lines);
-                var loc = vp.Flatten(_location);
-                Coord(low, loc.DY, 0);
-                Coord(high, loc.DY, 0);
-                Coord(loc.DX, low, 0);
-                Coord(loc.DX, high, 0);
-                GL.End();
-            }
+
+            return list;
         }
 
         public override HotkeyInterceptResult InterceptHotkey(HotkeysMediator hotkeyMessage, object parameters)

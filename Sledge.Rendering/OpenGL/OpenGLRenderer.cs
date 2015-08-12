@@ -259,7 +259,7 @@ namespace Sledge.Rendering.OpenGL
             public SceneData(OpenGLRenderer renderer, Scene scene)
             {
                 Scene = scene;
-                Array = new OctreeVertexArray(renderer, scene);
+                Array = new OctreeVertexArray(renderer, scene, Math.Min(-float.MinValue, float.MaxValue));
             }
 
             public void Dispose()

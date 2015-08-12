@@ -59,6 +59,10 @@ namespace Sledge.Editor.Documents
             Mediator.Subscribe(EditorMediator.DocumentTreeFacesChanged, this);
             Mediator.Subscribe(EditorMediator.DocumentTreeSelectedFacesChanged, this);
 
+            Mediator.Subscribe(EditorMediator.SceneObjectsCreated, this);
+            Mediator.Subscribe(EditorMediator.SceneObjectsDeleted, this);
+            Mediator.Subscribe(EditorMediator.SceneObjectsUpdated, this);
+
             Mediator.Subscribe(EditorMediator.SettingsChanged, this);
 
             Mediator.Subscribe(HotkeysMediator.FileClose, this);
@@ -179,6 +183,22 @@ namespace Sledge.Editor.Documents
 
         // ReSharper disable UnusedMember.Global
         // ReSharper disable MemberCanBePrivate.Global
+
+
+        private void SceneObjectsCreated(IEnumerable<MapObject> objects)
+        {
+            _document.SceneManager.Create(objects.SelectMany(x => x.FindAll()).ToList());
+        }
+
+        private void SceneObjectsDeleted(IEnumerable<MapObject> objects)
+        {
+            _document.SceneManager.Delete(objects.SelectMany(x => x.FindAll()).ToList());
+        }
+
+        private void SceneObjectsUpdated(IEnumerable<MapObject> objects)
+        {
+            _document.SceneManager.Update(objects.SelectMany(x => x.FindAll()).ToList());
+        }
 
         private void DocumentTreeStructureChanged()
         {

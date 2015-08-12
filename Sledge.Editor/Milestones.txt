@@ -1,5 +1,36 @@
 ﻿Key: Item - percentage complete, uncompleted tasks
 
+Before next release!
+  Complete rendering stuff
+  Go through all actions and make sure they're using the correct mediator messages
+    Operations
+      ReplaceObjects
+      Reparent
+    EditFace
+    EditEntityData
+    Grouping
+    Selection
+    Visgroups
+  Fix the 'combine entities' function
+  Fix VMF visgroups
+  Get rid of document tree/objects/faces messages
+  Make sure decals, sprites, and models load and update correctly
+  Get rid of the old decal/sprite stuff because it's the renderer's job now
+  Hide/unhide not working as they should
+  Investigate and fix decal_bug
+  Pasting should apply materials/decal/sprite stuff instantly
+  Render models! (MapObjectConverter)
+  Review the PartialPostLoadProcess
+  Grids
+  When dragging, show a copy of the original selection in wireframe
+  Show the correct rotate cursor in the selection tool
+  Show the selection tool UI
+  (maybe?) Fix the transformation bbox so it's not silly? (e.g. rotate a cube to 45 degrees, then start rotating it again and see the outline bbox)
+
+Post-release?
+  Animate models?
+  Threaded VTF loading
+
 Priorities
   Bugs
     Clip tool is laggy

@@ -170,7 +170,7 @@ namespace Sledge.Editor.Actions.MapObjects.Operations
             _objectsToCreate = document.Map.WorldSpawn.Find(x => _createdIds.Contains(x.ID)).Select(x => new CreateReference(x.Parent.ID, x)).ToList();
             if (_objectsToCreate.Any(x => x.MapObject.IsSelected))
             {
-                document.Selection.Deselect(_objectsToCreate.Where(x => x.MapObject.IsSelected).Select(x => x.MapObject));
+                document.Selection.Deselect(_objectsToCreate.Where(x => x.MapObject.IsSelected).SelectMany(x => x.MapObject.FindAll()));
             }
             _objectsToCreate.ForEach(x => x.MapObject.SetParent(null));
             _createdIds = null;
@@ -185,14 +185,9 @@ namespace Sledge.Editor.Actions.MapObjects.Operations
             document.Selection.Select(_deletedObjects.Where(x => x.IsSelected).Select(x => x.Object));
             _deletedObjects = null;
 
-            if (_objectsToCreate.Any() || _idsToDelete.Any())
-            {
-                Mediator.Publish(EditorMediator.DocumentTreeStructureChanged);
-            }
-            else if (_editObjects.Any())
-            {
-                Mediator.Publish(EditorMediator.DocumentTreeStructureChanged, _editObjects.Select(x => document.Map.WorldSpawn.FindByID(x.ID)));
-            }
+            if (_objectsToCreate.Any()) Mediator.Publish(EditorMediator.SceneObjectsDeleted, _objectsToCreate.Select(x => x.MapObject));
+            if (_idsToDelete.Any()) Mediator.Publish(EditorMediator.SceneObjectsCreated, _idsToDelete.Select(x => document.Map.WorldSpawn.FindByID(x)));
+            if (_editObjects.Any()) Mediator.Publish(EditorMediator.SceneObjectsUpdated, _editObjects.Select(x => document.Map.WorldSpawn.FindByID(x.ID)));
 
             Mediator.Publish(EditorMediator.SelectionChanged);
             Mediator.Publish(EditorMediator.VisgroupsChanged);
@@ -229,7 +224,7 @@ namespace Sledge.Editor.Actions.MapObjects.Operations
             } while (emptyParents.Any()); // If we changed the collection, we need to re-check
 
             _deletedObjects = objects.Select(x => new DeleteReference(x, x.Parent.ID, x.IsSelected, !objects.Contains(x.Parent))).ToList();
-            document.Selection.Deselect(objects);
+            document.Selection.Deselect(objects.SelectMany(x => x.FindAll()));
             foreach (var dr in _deletedObjects.Where(x => x.TopMost))
             {
                 dr.Object.SetParent(null);
@@ -239,14 +234,9 @@ namespace Sledge.Editor.Actions.MapObjects.Operations
             // Edit
             _editObjects.ForEach(x => x.Perform(document));
 
-            if (_createdIds.Any() || _deletedObjects.Any())
-            {
-                Mediator.Publish(EditorMediator.DocumentTreeStructureChanged);
-            }
-            else if (_editObjects.Any())
-            {
-                Mediator.Publish(EditorMediator.DocumentTreeStructureChanged, _editObjects.Select(x => document.Map.WorldSpawn.FindByID(x.ID)));
-            }
+            if (_createdIds.Any()) Mediator.Publish(EditorMediator.SceneObjectsCreated, _createdIds.Select(x => document.Map.WorldSpawn.FindByID(x)));
+            if (_deletedObjects.Any()) Mediator.Publish(EditorMediator.SceneObjectsDeleted, _deletedObjects.Select(x => x.Object));
+            if (_editObjects.Any()) Mediator.Publish(EditorMediator.SceneObjectsUpdated, _editObjects.Select(x => document.Map.WorldSpawn.FindByID(x.ID)));
 
             Mediator.Publish(EditorMediator.SelectionChanged);
             Mediator.Publish(EditorMediator.VisgroupsChanged);

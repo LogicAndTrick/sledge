@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Linq;
 using Sledge.Rendering.Interfaces;
@@ -8,18 +9,27 @@ namespace Sledge.Rendering.Materials
 {
     public class Material : IUpdatable
     {
-        public MaterialType Type { get; set; }
+        public MaterialType Type
+        {
+            get { return _type; }
+        }
+
+        public IList<string> TextureFrames
+        {
+            get { return _textureFrames; }
+        }
+
         public Color Color { get; set; }
         public string CurrentFrame { get { return TextureFrames[CurrentFrameIndex]; } }
         public int CurrentFrameIndex { get; set; }
-        public List<string> TextureFrames { get; set; } // ??? 
+
+        public bool TransparentTexture { get; set; }
 
         public bool HasTransparency
         {
             get
             {
-                // todo: check for texture transparency
-                return Color.A < 255;
+                return Color.A < 255 || TransparentTexture;
             }
         }
 
@@ -33,7 +43,7 @@ namespace Sledge.Rendering.Materials
 
         public string UniqueIdentifier
         {
-            get { return Type + ":" + String.Join("|", TextureFrames); }
+            get { return _uniqIdentifier; }
         }
 
         public static Material Flat(Color color)
@@ -41,9 +51,9 @@ namespace Sledge.Rendering.Materials
             return new Material(MaterialType.Flat, color, "Internal::White");
         }
 
-        public static Material Texture(string name)
+        public static Material Texture(string name, bool transparent)
         {
-            return new Material(MaterialType.Textured, Color.White, name);
+            return new Material(MaterialType.Textured, Color.White, name) { TransparentTexture = transparent };
         }
 
         public static Material Animated(int fps, params string[] names)
@@ -58,10 +68,12 @@ namespace Sledge.Rendering.Materials
 
         public Material(MaterialType type, Color color, params string[] textureFrames)
         {
-            Type = type;
+            _type = type;
             Color = color;
-            TextureFrames = textureFrames.ToList();
+            _textureFrames = new ReadOnlyCollection<string>(textureFrames);
             CurrentFrameIndex = 0;
+            TransparentTexture = false;
+            _uniqIdentifier = Type + ":" + String.Join("|", TextureFrames);
         }
 
         public bool IsUpdatable()
@@ -70,6 +82,10 @@ namespace Sledge.Rendering.Materials
         }
 
         private long _lastFrame = -1;
+        private readonly MaterialType _type;
+        private readonly ReadOnlyCollection<string> _textureFrames;
+        private readonly string _uniqIdentifier;
+
         public void Update(Frame frame)
         {
             if (!IsUpdatable()) return;

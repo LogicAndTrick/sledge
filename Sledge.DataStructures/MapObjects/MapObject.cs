@@ -52,6 +52,24 @@ namespace Sledge.DataStructures.MapObjects
             }
         }
 
+        protected bool Equals(MapObject other)
+        {
+            return ID == other.ID;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((MapObject) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return ID.GetHashCode();
+        }
+
         public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             info.AddValue("ID", ID);

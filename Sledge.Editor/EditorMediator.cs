@@ -47,6 +47,10 @@
         DocumentTreeSelectedFacesChanged,
         DocumentTreeFacesChanged,
 
+        SceneObjectsDeleted,
+        SceneObjectsUpdated,
+        SceneObjectsCreated,
+
         EntityDataChanged,
 
         SelectionTypeChanged,

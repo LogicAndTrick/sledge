@@ -184,7 +184,7 @@ namespace Sledge.Sandbox
 
                         var r2 = new Random();
                         var material = i % 2 == 0
-                            ? Material.Texture(textures[i % textures.Count].Name)
+                            ? Material.Texture(textures[i % textures.Count].Name, false)
                             : Material.Flat(Color.FromArgb(r2.Next(128, 255), r2.Next(128, 255), r2.Next(128, 255)));
                         if (r2.Next(0, 100) > 90) material.Color = Color.FromArgb(128, material.Color);
                         renderer.Materials.Add(material);
@@ -226,7 +226,7 @@ namespace Sledge.Sandbox
                             if (false && i < 2)
                             {
                                 var material = i % 2 == 0
-                                    ? Material.Texture(textures[i % textures.Count].Name)
+                                    ? Material.Texture(textures[i % textures.Count].Name, false)
                                     : Material.Flat(Color.FromArgb(random.Next(128, 255), random.Next(128, 255), random.Next(128, 255)));
                                 face.Material = material;
                             }

@@ -157,12 +157,12 @@ namespace Sledge.Editor.Tools
 
         public virtual void ToolSelected(bool preventHistory)
         {
-            // Virtual
+            Invalidate();
         }
 
         public virtual void ToolDeselected(bool preventHistory)
         {
-            // Virtual
+            ClearScene();
         }
 
         public virtual void DocumentChanged()
@@ -358,6 +358,17 @@ namespace Sledge.Editor.Tools
         public virtual bool IsCapturingMouseWheel()
         {
             return false;
+        }
+
+        private void ClearScene()
+        {
+            _currentObjects.ForEach(x => Document.Scene.Remove(x));
+            foreach (var vo in _currentViewportObjects)
+            {
+                vo.Value.ForEach(x => Document.Scene.Remove(x));
+            }
+            _currentObjects.Clear();
+            _currentViewportObjects.Clear();
         }
 
         protected void Invalidate()

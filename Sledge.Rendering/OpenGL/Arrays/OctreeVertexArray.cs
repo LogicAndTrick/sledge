@@ -22,7 +22,7 @@ namespace Sledge.Rendering.OpenGL.Arrays
         public RenderableVertexArray Spare { get; private set; }
         public List<Element> Elements { get; private set; }
 
-        public OctreeVertexArray(OpenGLRenderer renderer, Scene scene, float worldSize = 32768, int limit = 100)
+        public OctreeVertexArray(OpenGLRenderer renderer, Scene scene, float worldSize = 32768, int limit = 1000)
         {
             _renderer = renderer;
             _scene = scene;
@@ -51,13 +51,15 @@ namespace Sledge.Rendering.OpenGL.Arrays
             var updateRenderable = changes.Updated.OfType<RenderableObject>().ToList();
             var replaceRenderable = changes.Replaced.OfType<RenderableObject>().ToList();
 
+            var added = addRenderable.Union(replaceRenderable).Except(removeRenderable).ToList();
+
             Octree.Remove(removeRenderable.Union(replaceRenderable));
-            Octree.Add(addRenderable.Union(replaceRenderable));
+            Octree.Add(added);
             _changeNum += addRenderable.Count + removeRenderable.Count + (replaceRenderable.Count * 2);
 
             if (addRenderable.Count + removeRenderable.Count + replaceRenderable.Count + updateRenderable.Count > 0)
             {
-                foreach (var mat in addRenderable.Union(updateRenderable).Union(replaceRenderable).Select(x => x.Material).Where(x => x != null))
+                foreach (var mat in added.Select(x => x.Material).Where(x => x != null))
                 {
                     if (!_renderer.Materials.Exists(mat.UniqueIdentifier)) _renderer.Materials.Add(mat);
                     if (!_renderer.Textures.Exists(mat.CurrentFrame))
@@ -73,7 +75,6 @@ namespace Sledge.Rendering.OpenGL.Arrays
                 }
                 else
                 {
-                    var added = addRenderable.Union(replaceRenderable).Except(removeRenderable).ToList();
                     if (Spare == null) Spare = new RenderableVertexArray(added);
                     else Spare.Update(added.Union(Spare.Items.Except(removeRenderable)).ToList());
 

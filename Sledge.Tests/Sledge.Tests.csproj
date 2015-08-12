@@ -46,6 +46,7 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
@@ -68,6 +69,7 @@
     <Compile Include="ParseTest.cs" />
     <Compile Include="InvalidSolidTest.cs" />
     <Compile Include="GameDetectionTest.cs" />
+    <Compile Include="Rendering\RenderingTests.cs" />
     <Compile Include="SerialisationTest.cs" />
     <Compile Include="Vtf\VtfTest.cs" />
   </ItemGroup>
@@ -99,6 +101,10 @@
     <ProjectReference Include="..\Sledge.Providers\Sledge.Providers.csproj">
       <Project>{C7BD4AC8-1F8D-4520-AF2D-D279C0601AB4}</Project>
       <Name>Sledge.Providers</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Sledge.Rendering\Sledge.Rendering.csproj">
+      <Project>{4DA7F88D-64FF-4036-8A11-6175169DA851}</Project>
+      <Name>Sledge.Rendering</Name>
     </ProjectReference>
     <ProjectReference Include="..\Sledge.Settings\Sledge.Settings.csproj">
       <Project>{A79FF02F-3EAA-4FF1-A060-2E2FFE983EF3}</Project>

@@ -87,6 +87,8 @@ namespace Sledge.Editor.Tools2.SelectTool
             Mediator.Subscribe(EditorMediator.IgnoreGroupingChanged, this);
 
             SelectionChanged();
+
+            base.ToolSelected(preventHistory);
         }
 
         #region Selection/document changed
@@ -560,6 +562,7 @@ namespace Sledge.Editor.Tools2.SelectTool
         public override void ToolDeselected(bool preventHistory)
         {
             Mediator.UnsubscribeAll(this);
+            base.ToolDeselected(preventHistory);
         }
 
         public override HotkeyTool? GetHotkeyToolType()

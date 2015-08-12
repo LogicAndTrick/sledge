@@ -75,14 +75,16 @@ namespace Sledge.Editor.Rendering
                 var tex = document.TextureCollection.GetItem(decalName);
                 if (tex != null)
                 {
-                    var geo = CalculateDecalGeometry(entity, tex);
+                    var geo = CalculateDecalGeometry(entity, tex, document);
                     foreach (var face in geo)
                     {
-                        smo.SceneObjects.Add(face, Convert(face, document));
+                        var f = Convert(face, document);
+                        f.RenderFlags = RenderFlags.Polygon | RenderFlags.Wireframe;
+                        smo.SceneObjects.Add(face, f);
                     }
                 }
             }
-            else if (false) // should have model
+            else if (false) // todo: should have model
             {
                 
             }
@@ -109,6 +111,7 @@ namespace Sledge.Editor.Rendering
             foreach (var face in entity.GetBoxFaces())
             {
                 var f = Convert(face, document);
+                f.RenderFlags = RenderFlags.Polygon | RenderFlags.Wireframe;
                 f.CameraFlags = flags;
                 smo.SceneObjects.Add(face, f);
             }
@@ -190,7 +193,7 @@ namespace Sledge.Editor.Rendering
                 entity.UpdateBoundingBox();
             }
 
-            var spr = new Sprite(entity.Origin.ToVector3(), Material.Texture(spriteName), (float) bb.X, (float) bb.Z);
+            var spr = new Sprite(entity.Origin.ToVector3(), Material.Texture(spriteName, true), (float) bb.X, (float) bb.Z);
             return spr;
         }
         #endregion
@@ -212,7 +215,7 @@ namespace Sledge.Editor.Rendering
             return decal.Value;
         }
 
-        private static IEnumerable<DataStructures.MapObjects.Face> CalculateDecalGeometry(Entity entity, TextureItem decal)
+        private static IEnumerable<DataStructures.MapObjects.Face> CalculateDecalGeometry(Entity entity, TextureItem decal, Document document)
         {
             var decalGeometry = new List<DataStructures.MapObjects.Face>();
             if (decal == null || entity.Parent == null) return decalGeometry; // Texture not found
@@ -232,6 +235,7 @@ namespace Sledge.Editor.Rendering
                 var center = face.Plane.Project(entity.Origin);
                 var texture = face.Texture.Clone();
                 texture.Name = decal.Name;
+                texture.Texture = document.GetTexture(decal.Name);
                 texture.XShift = -decal.Width / 2m;
                 texture.YShift = -decal.Height / 2m;
                 var decalFace = new DataStructures.MapObjects.Face(idg.GetNextFaceID())
@@ -339,7 +343,7 @@ namespace Sledge.Editor.Rendering
         public static Face Convert(this DataStructures.MapObjects.Face face, Document document)
         {
             var tex = document.TextureCollection.GetItem(face.Texture.Name);
-            var mat = tex == null ? Material.Flat(face.Colour) : Material.Texture(tex.Name);
+            var mat = tex == null ? Material.Flat(face.Colour) : Material.Texture(tex.Name, tex.Flags.HasFlag(TextureFlags.Transparent));
             var sel = face.IsSelected || (face.Parent != null && face.Parent.IsSelected);
             return new Face(mat, face.Vertices.Select(x => new Vertex(x.Location.ToVector3(), (float)x.TextureU, (float)x.TextureV)).ToList())
             {
@@ -352,7 +356,7 @@ namespace Sledge.Editor.Rendering
         public static bool Update(this DataStructures.MapObjects.Face face, Face sceneFace, Document document)
         {
             var tex = document.TextureCollection.GetItem(face.Texture.Name);
-            var mat = tex == null ? Material.Flat(face.Colour) : Material.Texture(tex.Name);
+            var mat = tex == null ? Material.Flat(face.Colour) : Material.Texture(tex.Name, tex.Flags.HasFlag(TextureFlags.Transparent));
             var sel = face.IsSelected || (face.Parent != null && face.Parent.IsSelected);
 
             sceneFace.Material = mat;

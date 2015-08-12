@@ -9,6 +9,7 @@ using Sledge.Rendering.OpenGL;
 using Sledge.Rendering.Scenes;
 using Sledge.Rendering.Scenes.Elements;
 using Sledge.Rendering.Scenes.Renderables;
+using Sledge.Settings;
 
 namespace Sledge.Editor.Rendering
 {
@@ -52,14 +53,32 @@ namespace Sledge.Editor.Rendering
             Engine.Renderer.SetActiveScene(Scene);
         }
 
-        // todo delete...
+        private void Process(IList<MapObject> objects)
+        {
+            // todo: how much can be moved out of the post load process now that some of it should be offloaded to the renderer?
+            Document.Map.PartialPostLoadProcess(Document.GameData, Document.GetTexture, SettingsManager.GetSpecialTextureOpacity);
+        }
+
         public void Update()
         {
+            Process(new MapObject[] { Document.Map.WorldSpawn });
             _convertedScene.UpdateAll();
         }
 
-        public void Update(IEnumerable<MapObject> objects)
+        public void Create(IList<MapObject> objects)
         {
+            Process(objects);
+            _convertedScene.Create(objects);
+        }
+
+        public void Delete(IEnumerable<MapObject> objects)
+        {
+            _convertedScene.Delete(objects);
+        }
+
+        public void Update(IList<MapObject> objects)
+        {
+            Process(objects);
             _convertedScene.Update(objects);
         }
     }

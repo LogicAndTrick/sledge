@@ -149,6 +149,7 @@ namespace Sledge.Rendering.DataStructures
             {
                 // We're under the limit, no need to do anything when removing stuff
                 _elements = new HashSet<T>(_elements.Except(list));
+                Count = _elements.Count;
                 BoundingBox = _elements.Count == 0 ? ClippingBox : new Box(_elements.Select(x => x.BoundingBox));
                 return Count != startCount;
             }

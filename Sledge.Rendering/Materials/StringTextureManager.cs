@@ -113,7 +113,7 @@ namespace Sledge.Rendering.Materials
                 _values = new Dictionary<string, StringTextureValue>();
 
                 UpdateTexture();
-                _renderer.Materials.Add(Material.Texture(TextureName));
+                _renderer.Materials.Add(Material.Texture(TextureName, true));
             }
 
             public bool IsEmpty()
@@ -336,7 +336,7 @@ namespace Sledge.Rendering.Materials
         public Material GetMaterial(string text, string fontName = null, float fontSize = 0, FontStyle style = FontStyle.Regular)
         {
             var tex = GetTexture(text, GetFontKey(fontName, fontSize, style));
-            return tex == null ? null : Material.Texture(tex.TextureName);
+            return tex == null ? null : Material.Texture(tex.TextureName, true);
         }
 
         public FaceElement GetElement(string text, Color color, PositionType type, Vector3 position, float anchorX, float anchorY, string fontName = null, float fontSize = 0, FontStyle style = FontStyle.Regular)
