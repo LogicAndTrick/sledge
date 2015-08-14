@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using Sledge.Common.Mediator;
 using Sledge.DataStructures.Geometric;
@@ -11,9 +10,8 @@ using Sledge.Editor.Extensions;
 using Sledge.Editor.Properties;
 using Sledge.Editor.Rendering;
 using Sledge.Editor.UI;
-using Sledge.Graphics;
-using Sledge.Rendering;
 using Sledge.Rendering.Cameras;
+using Sledge.Rendering.Scenes.Elements;
 using Sledge.Settings;
 using Camera = Sledge.DataStructures.MapObjects.Camera;
 
@@ -148,20 +146,11 @@ namespace Sledge.Editor.Tools
             }
         }
 
-        public override void MouseEnter(MapViewport viewport, ViewportEvent e)
+        protected override void MouseDown(MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
         {
-            //
-        }
-
-        public override void MouseLeave(MapViewport viewport, ViewportEvent e)
-        {
-            //
-        }
-
-        public override void MouseDown(MapViewport viewport, ViewportEvent e)
-        {
-            var vp = viewport as MapViewport;
+            var vp = viewport;
             if (vp == null) return;
+
             _state = GetStateAtPoint(e.X, vp.Height - e.Y, vp, out _stateCamera);
             if (_state == State.None && KeyboardState.Shift)
             {
@@ -175,32 +164,16 @@ namespace Sledge.Editor.Tools
                 SetViewportCamera(_stateCamera.EyePosition, _stateCamera.LookPosition);
                 Document.Map.ActiveCamera = _stateCamera;
             }
-
         }
 
-        public override void MouseClick(MapViewport viewport, ViewportEvent e)
-        {
-            // Not used
-        }
-
-        public override void MouseDoubleClick(MapViewport viewport, ViewportEvent e)
-        {
-            // Not used
-        }
-
-        public override void MouseUp(MapViewport viewport, ViewportEvent e)
+        protected override void MouseUp(MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
         {
             _state = State.None;
         }
 
-        public override void MouseWheel(MapViewport viewport, ViewportEvent e)
+        protected override void MouseMove(MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
         {
-            //
-        }
-
-        public override void MouseMove(MapViewport viewport, ViewportEvent e)
-        {
-            var vp = viewport as MapViewport;
+            var vp = viewport;
             if (vp == null) return;
 
             var p = SnapIfNeeded(vp.Expand(vp.ScreenToWorld(e.X, vp.Height - e.Y)));
@@ -230,115 +203,24 @@ namespace Sledge.Editor.Tools
             vp.Control.Cursor = cursor;
         }
 
-        public override void KeyPress(MapViewport viewport, ViewportEvent e)
+        protected override IEnumerable<Element> GetViewportElements(MapViewport viewport, OrthographicCamera camera)
         {
-            //
-        }
+            var list = base.GetViewportElements(viewport, camera).ToList();
 
-        public override void KeyDown(MapViewport viewport, ViewportEvent e)
-        {
-            //
-        }
+            foreach (var cam in GetCameras())
+            {
+                var p1 = cam.EyePosition.ToVector3();
+                var p2 = cam.LookPosition.ToVector3();
 
-        public override void KeyUp(MapViewport viewport, ViewportEvent e)
-        {
-            //
-        }
+                var lineColor = cam == Document.Map.ActiveCamera ? Color.Red : Color.Cyan;
+                var handleColor = cam == Document.Map.ActiveCamera ? Color.DarkOrange : Color.LawnGreen;
 
-        public override void UpdateFrame(MapViewport viewport, Frame frame)
-        {
-            //
-        }
+                list.Add(new LineElement(PositionType.World, lineColor, new List<Position> { new Position(p1), new Position(p2) }));
+                list.Add(new HandleElement(PositionType.World, HandleElement.HandleType.Circle, new Position(p1), 4) { Color = handleColor, LineColor = Color.Black });
+                // todo: triangle arrow?
+            }
 
-        public void Render(MapViewport viewport)
-        {
-            // todo rendering
-
-            //var vp = viewport as MapViewport;
-            //if (vp == null) return;
-
-            //var cams = GetCameras().ToList();
-            //if (!cams.Any()) return;
-
-            //var z = (double)vp.Zoom;
-
-            //GL.Enable(EnableCap.LineSmooth);
-            //GL.Hint(HintTarget.LineSmoothHint, HintMode.Nicest);
-
-            //// Draw lines between points and point outlines
-            //GL.Begin(BeginMode.Lines);
-
-            //foreach (var camera in cams)
-            //{
-            //    var p1 = vp.Flatten(camera.EyePosition);
-            //    var p2 = vp.Flatten(camera.LookPosition);
-
-            //    GL.Color3(camera == Document.Map.ActiveCamera ? Color.Red : Color.Cyan);
-            //    GL.Vertex2(p1.DX, p1.DY);
-            //    GL.Vertex2(p2.DX, p2.DY);
-            //    GL.Vertex2(p2.DX, p2.DY);
-            //    GL.Vertex2(p1.DX, p1.DY);
-            //}
-
-            //GL.End();
-
-            //GL.Enable(EnableCap.PolygonSmooth);
-            //GL.Hint(HintTarget.PolygonSmoothHint, HintMode.Nicest);
-
-            //foreach (var camera in cams)
-            //{
-            //    var p1 = vp.Flatten(camera.EyePosition);
-
-            //    // Position circle
-            //    GL.Begin(BeginMode.Polygon);
-            //    GL.Color3(camera == Document.Map.ActiveCamera ? Color.DarkOrange : Color.LawnGreen);
-            //    GLX.Circle(new Vector2d(p1.DX, p1.DY), 4, z, loop: true);
-            //    GL.End();
-            //}
-            //foreach (var camera in cams)
-            //{
-            //    var p1 = vp.Flatten(camera.EyePosition);
-            //    var p2 = vp.Flatten(camera.LookPosition);
-
-            //    var multiplier = 4 / vp.Zoom;
-            //    var dir = (p2 - p1).Normalise();
-            //    var cp = new Coordinate(-dir.Y, dir.X, 0).Normalise();
-
-            //    // Direction Triangle
-            //    GL.Begin(BeginMode.Triangles);
-            //    GL.Color3(camera == Document.Map.ActiveCamera ? Color.Red : Color.Cyan);
-            //    Coord(p2 - (dir - cp) * multiplier);
-            //    Coord(p2 - (dir + cp) * multiplier);
-            //    Coord(p2 + dir * 1.5m * multiplier);
-            //    GL.End();
-            //}
-
-            //GL.Disable(EnableCap.PolygonSmooth);
-
-            //GL.Begin(BeginMode.Lines);
-
-            //foreach (var camera in cams)
-            //{
-            //    var p1 = vp.Flatten(camera.EyePosition);
-            //    var p2 = vp.Flatten(camera.LookPosition);
-
-            //    var multiplier = 4 / vp.Zoom;
-            //    var dir = (p2 - p1).Normalise();
-            //    var cp = new Coordinate(-dir.Y, dir.X, 0).Normalise();
-
-            //    GL.Color3(Color.Black);
-            //    GLX.Circle(new Vector2d(p1.DX, p1.DY), 4, z);
-            //    Coord(p2 + dir * 1.5m * multiplier);
-            //    Coord(p2 - (dir + cp) * multiplier);
-            //    Coord(p2 - (dir + cp) * multiplier);
-            //    Coord(p2 - (dir - cp) * multiplier);
-            //    Coord(p2 - (dir - cp) * multiplier);
-            //    Coord(p2 + dir * 1.5m * multiplier);
-            //}
-
-            //GL.End();
-
-            //GL.Disable(EnableCap.LineSmooth);
+            return list;
         }
 
         protected static void Coord(Coordinate c)

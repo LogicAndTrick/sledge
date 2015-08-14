@@ -1,17 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Remoting.Messaging;
 using System.Windows.Forms;
 using Sledge.Common.Mediator;
 using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.MapObjects;
 using Sledge.Editor.Rendering;
-using Sledge.Editor.Tools.Widgets;
 using Sledge.Editor.UI;
 using Sledge.Extensions;
 using Sledge.Rendering;
-using Sledge.Rendering.Interfaces;
 using Sledge.Rendering.Scenes;
 using Sledge.Rendering.Scenes.Elements;
 using Sledge.Settings;

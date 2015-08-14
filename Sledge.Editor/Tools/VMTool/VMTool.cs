@@ -14,7 +14,6 @@ using Sledge.Editor.Properties;
 using Sledge.Editor.Rendering;
 using Sledge.Editor.UI;
 using Sledge.Graphics;
-using Sledge.Graphics.Helpers;
 using Sledge.Rendering;
 using Sledge.Settings;
 using Matrix = Sledge.Graphics.Helpers.Matrix;

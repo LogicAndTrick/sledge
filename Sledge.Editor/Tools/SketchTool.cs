@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using OpenTK.Graphics;
 using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.MapObjects;
 using Sledge.DataStructures.Transformations;
@@ -19,6 +18,9 @@ using Select = Sledge.Settings.Select;
 
 namespace Sledge.Editor.Tools
 {
+    /// <summary>
+    /// EXPERIMENTAL AND NOT UPDATED FOR RENDERING YET
+    /// </summary>
     public class SketchTool : BaseTool
     {
         public enum SketchState

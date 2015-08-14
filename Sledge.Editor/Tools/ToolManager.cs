@@ -29,7 +29,7 @@ namespace Sledge.Editor.Tools
             //Tools.Add(new DisplacementTool());
             Tools.Add(new ClipTool());
             Tools.Add(new VMTool.VMTool());
-            Tools.Add(new CordonTool());
+            Tools.Add(new Tools2.CordonTool.CordonTool());
             //Tools.Add(new SketchTool());
         }
 

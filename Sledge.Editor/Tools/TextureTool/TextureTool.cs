@@ -4,7 +4,6 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using OpenTK;
-using OpenTK.Graphics.OpenGL;
 using Sledge.Common;
 using Sledge.Common.Mediator;
 using Sledge.DataStructures.Geometric;
@@ -13,14 +12,17 @@ using Sledge.Editor.Actions;
 using Sledge.Editor.Actions.MapObjects.Operations;
 using Sledge.Editor.Actions.MapObjects.Selection;
 using Sledge.Editor.Documents;
+using Sledge.Editor.Extensions;
 using Sledge.Editor.History;
 using Sledge.Editor.Properties;
 using Sledge.Editor.Rendering;
 using Sledge.Editor.UI;
-using Sledge.Graphics.Helpers;
 using Sledge.Providers.Texture;
-using Sledge.Rendering;
+using Sledge.Rendering.Cameras;
+using Sledge.Rendering.Scenes;
 using Sledge.Settings;
+using Face = Sledge.DataStructures.MapObjects.Face;
+using Line = Sledge.Rendering.Scenes.Renderables.Line;
 
 namespace Sledge.Editor.Tools.TextureTool
 {
@@ -254,6 +256,8 @@ namespace Sledge.Editor.Tools.TextureTool
             Mediator.Subscribe(EditorMediator.TextureSelected, this);
             Mediator.Subscribe(EditorMediator.DocumentTreeFacesChanged, this);
             Mediator.Subscribe(EditorMediator.SelectionChanged, this);
+
+            base.ToolSelected(preventHistory);
         }
 
         public override void ToolDeselected(bool preventHistory)
@@ -272,6 +276,7 @@ namespace Sledge.Editor.Tools.TextureTool
             _form.Clear();
             _form.Hide();
             Mediator.UnsubscribeAll(this);
+            base.ToolDeselected(preventHistory);
         }
 
         private void TextureSelected(TextureItem texture)
@@ -282,16 +287,18 @@ namespace Sledge.Editor.Tools.TextureTool
         private void SelectionChanged()
         {
             _form.SelectionChanged();
+            Invalidate();
         }
 
         private void DocumentTreeFacesChanged()
         {
             _form.SelectionChanged();
+            Invalidate();
         }
 
-        public override void MouseDown(MapViewport viewport, ViewportEvent e)
+        protected override void MouseDown(MapViewport viewport, PerspectiveCamera camera, ViewportEvent e)
         {
-            var vp = viewport as MapViewport;
+            var vp = viewport;
             if (vp == null || (e.Button != MouseButtons.Left && e.Button != MouseButtons.Right)) return;
 
             var behaviour = e.Button == MouseButtons.Left
@@ -404,32 +411,28 @@ namespace Sledge.Editor.Tools.TextureTool
             }
         }
 
-        public override void KeyDown(MapViewport viewport, ViewportEvent e)
+        protected override IEnumerable<SceneObject> GetSceneObjects()
         {
-            //throw new NotImplementedException();
-        }
+            var list = base.GetSceneObjects().ToList();
 
-        public  void Render(MapViewport viewport)
-        {
-            if (Document.Map.HideFaceMask) return;
-
-            TextureHelper.Unbind();
-            GL.Begin(PrimitiveType.Lines);
-            foreach (var face in Document.Selection.GetSelectedFaces())
+            if (!Document.Map.HideFaceMask)
             {
-                var lineStart = face.BoundingBox.Center + face.Plane.Normal * 0.5m;
-                var uEnd = lineStart + face.Texture.UAxis * 20;
-                var vEnd = lineStart + face.Texture.VAxis * 20;
+                foreach (var face in Document.Selection.GetSelectedFaces())
+                {
+                    var lineStart = face.BoundingBox.Center + face.Plane.Normal * 0.5m;
+                    var uEnd = lineStart + face.Texture.UAxis * 20;
+                    var vEnd = lineStart + face.Texture.VAxis * 20;
 
-                GL.Color3(Color.Yellow);
-                GL.Vertex3(lineStart.DX, lineStart.DY, lineStart.DZ);
-                GL.Vertex3(uEnd.DX, uEnd.DY, uEnd.DZ);
+                    // If we don't want the axis markers to be depth tested, we can use an element instead:
+                    //list.Add(new LineElement(PositionType.World, Color.Yellow, new List<Position> { new Position(lineStart.ToVector3()), new Position(uEnd.ToVector3()) }));
+                    //list.Add(new LineElement(PositionType.World, Color.FromArgb(0, 255, 0), new List<Position> { new Position(lineStart.ToVector3()), new Position(vEnd.ToVector3()) }));
 
-                GL.Color3(Color.FromArgb(0, 255, 0));
-                GL.Vertex3(lineStart.DX, lineStart.DY, lineStart.DZ);
-                GL.Vertex3(vEnd.DX, vEnd.DY, vEnd.DZ);
+                    list.Add(new Line(Color.Yellow, lineStart.ToVector3(), uEnd.ToVector3()));
+                    list.Add(new Line(Color.FromArgb(0, 255, 0), lineStart.ToVector3(), vEnd.ToVector3()));
+                }
             }
-            GL.End();
+
+            return list;
         }
 
         public override HotkeyInterceptResult InterceptHotkey(HotkeysMediator hotkeyMessage, object parameters)
@@ -444,56 +447,6 @@ namespace Sledge.Editor.Tools.TextureTool
                     return HotkeyInterceptResult.Abort;
             }
             return HotkeyInterceptResult.Continue;
-        }
-
-        public override void MouseEnter(MapViewport viewport, ViewportEvent e)
-        {
-            //
-        }
-
-        public override void MouseLeave(MapViewport viewport, ViewportEvent e)
-        {
-            //
-        }
-
-        public override void MouseClick(MapViewport viewport, ViewportEvent e)
-        {
-            // Not used
-        }
-
-        public override void MouseDoubleClick(MapViewport viewport, ViewportEvent e)
-        {
-            // Not used
-        }
-
-        public override void MouseUp(MapViewport viewport, ViewportEvent e)
-        {
-            //
-        }
-
-        public override void MouseWheel(MapViewport viewport, ViewportEvent e)
-        {
-            //
-        }
-
-        public override void MouseMove(MapViewport viewport, ViewportEvent e)
-        {
-            //
-        }
-
-        public override void KeyPress(MapViewport viewport, ViewportEvent e)
-        {
-            //
-        }
-
-        public override void KeyUp(MapViewport viewport, ViewportEvent e)
-        {
-            //
-        }
-
-        public override void UpdateFrame(MapViewport viewport, Frame frame)
-        {
-            //
         }
     }
 }

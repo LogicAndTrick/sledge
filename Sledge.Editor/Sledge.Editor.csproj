@@ -262,6 +262,8 @@
     <Compile Include="Rendering\MapObjectConverter.cs" />
     <Compile Include="Rendering\ReferenceCounter.cs" />
     <Compile Include="Rendering\SceneMapObject.cs" />
+    <Compile Include="Tools2\CordonTool\CordonBoxDraggableState.cs" />
+    <Compile Include="Tools2\CordonTool\CordonTool.cs" />
     <Compile Include="Tools2\DraggableTool\BaseDraggable.cs" />
     <Compile Include="Tools2\DraggableTool\BaseDraggableTool.cs">
       <SubType>Code</SubType>
@@ -356,7 +358,6 @@
       <DependentUpon>VMSidebarPanel.cs</DependentUpon>
     </Compile>
     <Compile Include="Tools\VMTool\VMError.cs" />
-    <Compile Include="Tools\CordonTool.cs" />
     <Compile Include="Tools\DecalTool.cs" />
     <Compile Include="Tools\DisplacementForm.cs">
       <SubType>Form</SubType>

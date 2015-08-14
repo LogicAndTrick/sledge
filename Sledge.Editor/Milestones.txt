@@ -26,6 +26,8 @@ Before next release!
   Show the correct rotate cursor in the selection tool
   Show the selection tool UI
   (maybe?) Fix the transformation bbox so it's not silly? (e.g. rotate a cube to 45 degrees, then start rotating it again and see the outline bbox)
+  "Hide mask" in the texture window isn't working
+  Cameras and cordon don't seem to be saving to RMF anymore...
 
 Post-release?
   Animate models?

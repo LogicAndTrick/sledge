@@ -1,8 +1,6 @@
-using System;
 using System.Drawing;
 using OpenTK;
 using Sledge.Editor.Rendering;
-using Sledge.Rendering;
 using Sledge.Settings;
 
 namespace Sledge.Editor.Tools.Widgets
