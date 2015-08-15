@@ -8,7 +8,7 @@ using Sledge.Editor.Extensions;
 using Sledge.Editor.Properties;
 using Sledge.Editor.Rendering;
 using Sledge.Graphics.Helpers;
-using Sledge.Rendering;
+using Sledge.Rendering.Cameras;
 using Sledge.Settings;
 
 namespace Sledge.Editor.Tools
@@ -59,9 +59,9 @@ namespace Sledge.Editor.Tools
                 .FirstOrDefault();
         }
 
-        public override void MouseDown(MapViewport viewport, ViewportEvent e)
+        protected override void MouseDown(MapViewport viewport, PerspectiveCamera camera, ViewportEvent e)
         {
-            var vp = viewport as MapViewport;
+            var vp = viewport;
             if (vp == null) return;
 
             // Get the ray that is cast from the clicked point along the viewport frustrum
@@ -110,66 +110,6 @@ namespace Sledge.Editor.Tools
             decal.EntityData.SetPropertyValue("texture", textureName);
 
             Document.PerformAction("Apply decal", new Create(Document.Map.WorldSpawn.ID, decal));
-        }
-
-        public override void MouseEnter(MapViewport viewport, ViewportEvent e)
-        {
-            // 
-        }
-
-        public override void MouseLeave(MapViewport viewport, ViewportEvent e)
-        {
-            // 
-        }
-
-        public override void MouseClick(MapViewport viewport, ViewportEvent e)
-        {
-            // Not used
-        }
-
-        public override void MouseDoubleClick(MapViewport viewport, ViewportEvent e)
-        {
-            // Not used
-        }
-
-        public override void MouseUp(MapViewport viewport, ViewportEvent e)
-        {
-            // 
-        }
-
-        public override void MouseWheel(MapViewport viewport, ViewportEvent e)
-        {
-            // 
-        }
-
-        public override void MouseMove(MapViewport viewport, ViewportEvent e)
-        {
-            // 
-        }
-
-        public override void KeyPress(MapViewport viewport, ViewportEvent e)
-        {
-            // 
-        }
-
-        public override void KeyDown(MapViewport viewport, ViewportEvent e)
-        {
-            // 
-        }
-
-        public override void KeyUp(MapViewport viewport, ViewportEvent e)
-        {
-            // 
-        }
-
-        public override void UpdateFrame(MapViewport viewport, Frame frame)
-        {
-            // 
-        }
-
-        public void Render(MapViewport viewport)
-        {
-            // 
         }
 
         public override HotkeyInterceptResult InterceptHotkey(HotkeysMediator hotkeyMessage, object parameters)

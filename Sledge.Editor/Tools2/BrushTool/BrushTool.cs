@@ -2,47 +2,49 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using OpenTK.Graphics.OpenGL;
-using OpenTK.Input;
+using System.Windows.Forms;
 using Sledge.Common.Mediator;
 using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.MapObjects;
-using Sledge.EditorNew.Actions;
-using Sledge.EditorNew.Actions.MapObjects.Operations;
-using Sledge.EditorNew.Actions.MapObjects.Selection;
-using Sledge.EditorNew.Brushes;
-using Sledge.EditorNew.Properties;
-using Sledge.EditorNew.Rendering.Immediate;
-using Sledge.EditorNew.Tools.DraggableTool;
-using Sledge.EditorNew.UI.Viewports;
-using Sledge.Graphics.Helpers;
-using Sledge.Gui.Structures;
+using Sledge.Editor.Actions;
+using Sledge.Editor.Actions.MapObjects.Operations;
+using Sledge.Editor.Actions.MapObjects.Selection;
+using Sledge.Editor.Brushes;
+using Sledge.Editor.Properties;
+using Sledge.Editor.Rendering;
+using Sledge.Editor.Tools;
+using Sledge.Editor.Tools2.DraggableTool;
+using Sledge.Rendering.Scenes;
 using Sledge.Settings;
 using Select = Sledge.Settings.Select;
+using View = Sledge.Settings.View;
 
-namespace Sledge.EditorNew.Tools.BrushTool
+namespace Sledge.Editor.Tools2.BrushTool
 {
     public class BrushTool : BaseDraggableTool
     {
         private bool _updatePreview;
         private List<Face> _preview;
         private BoxDraggableState box;
-        private BrushPropertiesControl _propertiesControl;
+        //private BrushPropertiesControl _propertiesControl;
 
         public BrushTool()
         {
-            _propertiesControl = new BrushPropertiesControl();
+            //_propertiesControl = new BrushPropertiesControl();
+            //_propertiesControl.ValuesChanged += ValuesChanged;
 
             box = new BoxDraggableState(this);
             box.BoxColour = Color.Turquoise;
             box.FillColour = Color.FromArgb(View.SelectionBoxBackgroundOpacity, Color.Green);
+            box.State.Changed += BoxChanged;
             States.Add(box);
+
+            UseValidation = true;
         }
 
         public override void ToolSelected(bool preventHistory)
         {
-            _propertiesControl.ValuesChanged += ValuesChanged;
-            box.State.Changed += BoxChanged;
+            BrushManager.ValuesChanged += ValuesChanged;
             var sel = Document.Selection.GetSelectedObjects().OfType<Solid>().ToList();
             if (sel.Any())
             {
@@ -54,33 +56,38 @@ namespace Sledge.EditorNew.Tools.BrushTool
                 box.RememberedDimensions = new Box(Coordinate.Zero, new Coordinate(gs, gs, gs));
             }
             _updatePreview = true;
+            base.ToolSelected(preventHistory);
         }
 
         public override void ToolDeselected(bool preventHistory)
         {
-            box.State.Changed -= BoxChanged;
-            _propertiesControl.ValuesChanged -= ValuesChanged;
+            BrushManager.ValuesChanged -= ValuesChanged;
             _updatePreview = false;
+            base.ToolDeselected(preventHistory);
         }
 
         private void ValuesChanged(IBrush brush)
         {
-            if (_propertiesControl.CurrentBrush == brush) _updatePreview = true;
+            if (BrushManager.CurrentBrush == brush) _updatePreview = true;
+            Invalidate();
         }
 
         private void BoxChanged(object sender, EventArgs e)
         {
             _updatePreview = true;
+            Invalidate();
         }
 
-        public override IEnumerable<ToolSidebarControl> GetSidebarControls()
+        public override IEnumerable<KeyValuePair<string, Control>> GetSidebarControls()
         {
-            yield return new ToolSidebarControl{Control = _propertiesControl, TextKey = GetNameTextKey()};
+            yield return new KeyValuePair<string, Control>(GetName(), BrushManager.SidebarControl);
         }
 
-        public override IEnumerable<string> GetContexts()
+        public override string GetContextualHelp()
         {
-            yield return "Brush Tool";
+            return "Draw a box in the 2D view to define the size of the brush.\n" +
+                   "Select the type of the brush to create in the sidebar.\n" +
+                   "Press *enter* in the 2D view to create the brush.";
         }
 
         public override Image GetIcon()
@@ -93,15 +100,15 @@ namespace Sledge.EditorNew.Tools.BrushTool
             return "BrushTool";
         }
 
-        public override void KeyDown(IMapViewport viewport, ViewportEvent e)
+        public override void KeyDown(MapViewport viewport, ViewportEvent e)
         {
-            if (e.KeyValue == Key.Enter || e.KeyValue == Key.KeypadEnter)
+            if (e.KeyCode == Keys.Enter)
             {
-                Confirm();
+                Confirm(viewport);
             }
-            else if (e.KeyValue == Key.Escape)
+            else if (e.KeyCode == Keys.Escape)
             {
-                Cancel();
+                Cancel(viewport);
             }
             base.KeyDown(viewport, e);
         }
@@ -123,11 +130,11 @@ namespace Sledge.EditorNew.Tools.BrushTool
 
         private MapObject GetBrush(Box bounds, IDGenerator idg)
         {
-            var brush = _propertiesControl.CurrentBrush;
+            var brush = BrushManager.CurrentBrush;
             if (brush == null) return null;
             var ti = Document.TextureCollection.SelectedTexture;
             var texture = ti != null ? ti.GetTexture() : null;
-            var created = brush.Create(idg, bounds, texture, _propertiesControl.RoundVertices ? 0 : 2).ToList();
+            var created = brush.Create(idg, bounds, texture, BrushManager.RoundCreatedVertices ? 0 : 2).ToList();
             if (created.Count > 1)
             {
                 var g = new Group(idg.GetNextObjectID());
@@ -138,7 +145,7 @@ namespace Sledge.EditorNew.Tools.BrushTool
             return created.FirstOrDefault();
         }
 
-        private void Confirm()
+        private void Confirm(MapViewport viewport)
         {
             if (box.State.Action != BoxAction.Drawn) return;
             var bbox = new Box(box.State.Start, box.State.End);
@@ -159,67 +166,32 @@ namespace Sledge.EditorNew.Tools.BrushTool
             }
         }
 
-        private void Cancel()
+        private void Cancel(MapViewport viewport)
         {
             box.RememberedDimensions = new Box(box.State.Start, box.State.End);
             _preview = null;
             box.State.Action = BoxAction.Idle;
         }
 
-        public override void UpdateFrame(IMapViewport viewport, Frame frame)
+        protected override IEnumerable<SceneObject> GetSceneObjects()
         {
-            if (_updatePreview && box.State.Action != BoxAction.Idle)
+            var list = base.GetSceneObjects().ToList();
+
+            if (box.State.Action != BoxAction.Idle)
             {
                 var bbox = new Box(box.State.Start, box.State.End);
-                var brush = GetBrush(bbox, new IDGenerator());
-                _preview = new List<Face>();
-                CollectFaces(_preview, new[] { brush });
-                var color = box.BoxColour;
-                _preview.ForEach(x => { x.Colour = color; });
-            }
-            _updatePreview = false;
-        }
-
-        protected override void Render(IViewport2D viewport)
-        {
-            base.Render(viewport);
-            if (box.State.Action == BoxAction.Idle || _preview == null) return;
-
-            GL.Color3(Color.FromArgb(128, box.BoxColour));
-            Graphics.Helpers.Matrix.Push();
-            var matrix = viewport.GetModelViewMatrix();
-            GL.MultMatrix(ref matrix);
-            MapObjectRenderer.DrawWireframe(_preview, true, false);
-            Graphics.Helpers.Matrix.Pop();
-        }
-
-        protected override void Render(IViewport3D viewport)
-        {
-            base.Render(viewport);
-            if (box.State.Action == BoxAction.Idle || _preview == null) return;
-
-            GL.Disable(EnableCap.CullFace);
-            TextureHelper.Unbind();
-            if (viewport.Type != ViewType.Flat) MapObjectRenderer.EnableLighting();
-            MapObjectRenderer.DrawFilled(_preview, Color.FromArgb(128, box.BoxColour), false);
-            MapObjectRenderer.DisableLighting();
-            GL.Color4(Color.GreenYellow);
-            MapObjectRenderer.DrawWireframe(_preview, true, false);
-        }
-
-        private static void CollectFaces(List<Face> faces, IEnumerable<MapObject> list)
-        {
-            foreach (var mo in list)
-            {
-                if (mo is Solid)
+                var brush = GetBrush(bbox, new IDGenerator()).FindAll();
+                var converted = brush.Select(x => x.Convert(Document)).Where(x => x != null);
+                var objects = converted.SelectMany(x => x.SceneObjects.Values).ToList();
+                foreach (var o in objects.OfType<Sledge.Rendering.Scenes.Renderables.Face>())
                 {
-                    faces.AddRange(((Solid)mo).Faces);
+                    o.AccentColor = Color.Turquoise;
+                    o.TintColor = Color.FromArgb(64, Color.Turquoise);
                 }
-                else if (mo is Entity || mo is Group)
-                {
-                    CollectFaces(faces, mo.GetChildren());
-                }
+                list.AddRange(objects);
             }
+
+            return list;
         }
 
         public override HotkeyTool? GetHotkeyToolType()

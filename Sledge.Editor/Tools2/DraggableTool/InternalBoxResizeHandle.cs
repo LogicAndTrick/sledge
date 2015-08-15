@@ -86,16 +86,17 @@ namespace Sledge.Editor.Tools2.DraggableTool
             if (Handle == ResizeHandle.Center && SnappedMoveOrigin != null)
             {
                 const int size = 6;
+                var orig = viewport.Expand(SnappedMoveOrigin).ToVector3();
 
                 yield return new LineElement(PositionType.World, Color.Yellow, new List<Position>
                 {
-                    new Position(SnappedMoveOrigin.ToVector3()) {Offset = new Vector3(-size, size, 0)},
-                    new Position(SnappedMoveOrigin.ToVector3()) {Offset = new Vector3(size, -size, 0)},
+                    new Position(orig) {Offset = new Vector3(-size, size, 0)},
+                    new Position(orig) {Offset = new Vector3(size, -size, 0)},
                 });
                 yield return new LineElement(PositionType.World, Color.Yellow, new List<Position>
                 {
-                    new Position(SnappedMoveOrigin.ToVector3()) {Offset = new Vector3(size, size, 0)},
-                    new Position(SnappedMoveOrigin.ToVector3()) {Offset = new Vector3(-size, -size, 0)},
+                    new Position(orig) {Offset = new Vector3(size, size, 0)},
+                    new Position(orig) {Offset = new Vector3(-size, -size, 0)},
                 });
             }
         }

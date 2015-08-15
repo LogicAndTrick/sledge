@@ -18,6 +18,7 @@ Before next release!
   Get rid of the old decal/sprite stuff because it's the renderer's job now
   Hide/unhide not working as they should
   Investigate and fix decal_bug
+  Decals are being clipped oddly and they're not selectable
   Pasting should apply materials/decal/sprite stuff instantly
   Render models! (MapObjectConverter)
   Review the PartialPostLoadProcess
@@ -28,6 +29,11 @@ Before next release!
   (maybe?) Fix the transformation bbox so it's not silly? (e.g. rotate a cube to 45 degrees, then start rotating it again and see the outline bbox)
   "Hide mask" in the texture window isn't working
   Cameras and cordon don't seem to be saving to RMF anymore...
+  Using validation in the base box tool doesn't work too well. Need to cascade the invalidation?
+  Internal resize handles are difficult to grab when zoomed out
+  Box tool doesn't invalidate when the selected texture is changed
+  No crosshair when free-looking in the 3d view
+  Clip tool (and probably others) - escape is clearing the selection as well as cancelling the clip, which is probably not the desired outcome
 
 Post-release?
   Animate models?

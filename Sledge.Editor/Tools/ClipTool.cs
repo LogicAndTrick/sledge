@@ -3,19 +3,21 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using OpenTK;
 using Sledge.Editor.Actions.MapObjects.Operations;
+using Sledge.Editor.Extensions;
 using Sledge.Editor.Properties;
 using Sledge.Editor.Rendering;
 using Sledge.Editor.UI;
-using Sledge.Graphics;
-using Sledge.Rendering;
+using Sledge.Rendering.Cameras;
+using Sledge.Rendering.Materials;
+using Sledge.Rendering.Scenes;
+using Sledge.Rendering.Scenes.Elements;
 using Sledge.Settings;
 using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.MapObjects;
-using OpenTK.Graphics.OpenGL;
-using Sledge.Graphics.Helpers;
-using Matrix = Sledge.Graphics.Helpers.Matrix;
+using Face = Sledge.DataStructures.MapObjects.Face;
+using Line = Sledge.Rendering.Scenes.Renderables.Line;
+using Vertex = Sledge.Rendering.Scenes.Renderables.Vertex;
 
 namespace Sledge.Editor.Tools
 {
@@ -52,6 +54,8 @@ namespace Sledge.Editor.Tools
             _clipPlanePoint1 = _clipPlanePoint2 = _clipPlanePoint3 = _drawingPoint = null;
             _state = _prevState = ClipState.None;
             _side = ClipSide.Both;
+
+            UseValidation = true;
         }
 
         public override Image GetIcon()
@@ -94,10 +98,9 @@ namespace Sledge.Editor.Tools
             return ClipState.None;
         }
 
-        public override void MouseDown(MapViewport vp, ViewportEvent e)
+        protected override void MouseDown(MapViewport vp, OrthographicCamera camera, ViewportEvent e)
         {
-            if (!(vp is MapViewport)) return;
-            var viewport = (MapViewport) vp;
+            var viewport = vp;
             _prevState = _state;
 
             var point = SnapIfNeeded(viewport.Expand(viewport.ScreenToWorld(e.X, viewport.Height - e.Y)));
@@ -111,22 +114,12 @@ namespace Sledge.Editor.Tools
             {
                 _state = st;
             }
+            Invalidate();
         }
 
-        public override void MouseClick(MapViewport viewport, ViewportEvent e)
+        protected override void MouseUp(MapViewport vp, OrthographicCamera camera, ViewportEvent e)
         {
-            // Not used
-        }
-
-        public override void MouseDoubleClick(MapViewport viewport, ViewportEvent e)
-        {
-            // Not used
-        }
-
-        public override void MouseUp(MapViewport vp, ViewportEvent e)
-        {
-            if (!(vp is MapViewport)) return;
-            var viewport = (MapViewport)vp;
+            var viewport = vp;
 
             var point = SnapIfNeeded(viewport.Expand(viewport.ScreenToWorld(e.X, viewport.Height - e.Y)));
             if (_state == ClipState.Drawing)
@@ -140,12 +133,13 @@ namespace Sledge.Editor.Tools
             }
 
             Editor.Instance.CaptureAltPresses = false;
+
+            Invalidate();
         }
 
-        public override void MouseMove(MapViewport vp, ViewportEvent e)
+        protected override void MouseMove(MapViewport vp, OrthographicCamera camera, ViewportEvent e)
         {
-            if (!(vp is MapViewport)) return;
-            var viewport = (MapViewport)vp;
+            var viewport = vp;
 
             var point = SnapIfNeeded(viewport.Expand(viewport.ScreenToWorld(e.X, viewport.Height - e.Y)));
             var st = GetStateAtPoint(e.X, viewport.Height - e.Y, viewport);
@@ -203,11 +197,13 @@ namespace Sledge.Editor.Tools
             {
                 viewport.Control.Cursor = Cursors.Default;
             }
+
+            Invalidate();
         }
 
-        public override void KeyPress(MapViewport viewport, ViewportEvent e)
+        public override void KeyDown(MapViewport viewport, ViewportEvent e)
         {
-            if (e.KeyChar == 13) // Enter
+            if (e.KeyCode == Keys.Enter && _state != ClipState.None)
             {
                 if (!_clipPlanePoint1.EquivalentTo(_clipPlanePoint2)
                     && !_clipPlanePoint2.EquivalentTo(_clipPlanePoint3)
@@ -216,11 +212,15 @@ namespace Sledge.Editor.Tools
                     PerformClip();
                 }
             }
-            if (e.KeyChar == 27 || e.KeyChar == 13) // Escape cancels, Enter commits and resets
+            if (e.KeyCode == Keys.Escape || e.KeyCode == Keys.Enter) // Escape cancels, Enter commits and resets
             {
                 _clipPlanePoint1 = _clipPlanePoint2 = _clipPlanePoint3 = _drawingPoint = null;
                 _state = _prevState = ClipState.None;
             }
+
+            Invalidate();
+
+            base.KeyDown(viewport, e);
         }
 
         private void PerformClip()
@@ -230,10 +230,80 @@ namespace Sledge.Editor.Tools
             Document.PerformAction("Perform Clip", new Clip(objects, plane, _side != ClipSide.Back, _side != ClipSide.Front));
         }
 
-        public void Render(MapViewport viewport)
+        protected override IEnumerable<SceneObject> GetSceneObjects()
         {
-            if (viewport is MapViewport) Render2D((MapViewport) viewport);
-            if (viewport is MapViewport) Render3D((MapViewport) viewport);
+            var list = base.GetSceneObjects().ToList();
+
+            if (_state != ClipState.None && _clipPlanePoint1 != null && _clipPlanePoint2 != null && _clipPlanePoint3 != null)
+            {
+                // Draw the lines
+                var p1 = _clipPlanePoint1.ToVector3();
+                var p2 = _clipPlanePoint2.ToVector3();
+                var p3 = _clipPlanePoint3.ToVector3();
+
+                list.Add(new Line(Color.White, p1, p2, p3, p1));
+
+                if (!_clipPlanePoint1.EquivalentTo(_clipPlanePoint2)
+                    && !_clipPlanePoint2.EquivalentTo(_clipPlanePoint3)
+                    && !_clipPlanePoint1.EquivalentTo(_clipPlanePoint3)
+                    && !Document.Selection.IsEmpty())
+                {
+                    var plane = new Plane(_clipPlanePoint1, _clipPlanePoint2, _clipPlanePoint3);
+
+                    // Draw the clipped solids
+                    var faces = new List<Face>();
+                    var idg = new IDGenerator();
+                    foreach (var solid in Document.Selection.GetSelectedObjects().OfType<Solid>().ToList())
+                    {
+                        Solid back, front;
+                        if (solid.Split(plane, out back, out front, idg))
+                        {
+                            if (_side != ClipSide.Front) faces.AddRange(back.Faces);
+                            if (_side != ClipSide.Back) faces.AddRange(front.Faces);
+                        }
+                    }
+                    var lines = faces.Select(x => new Line(Color.White, x.Vertices.Select(v => v.Location.ToVector3()).ToArray()) {Width = 2});
+                    list.AddRange(lines);
+
+                    // Draw the clipping plane
+                    var poly = new Polygon(plane);
+                    var bbox = Document.Selection.GetSelectionBoundingBox();
+                    var point = bbox.Center;
+                    foreach (var boxPlane in bbox.GetBoxPlanes())
+                    {
+                        var proj = boxPlane.Project(point);
+                        var dist = (point - proj).VectorMagnitude() * 0.1m;
+                        poly.Split(new Plane(boxPlane.Normal, proj + boxPlane.Normal * Math.Max(dist, 100)));
+                    }
+
+                    // Add the face in both directions so it renders on both sides
+                    list.Add(new Sledge.Rendering.Scenes.Renderables.Face(Material.Flat(Color.FromArgb(100, Color.Turquoise)),
+                        poly.Vertices.Select(x => new Vertex(x.ToVector3(), 0, 0)).ToList()) {CameraFlags = CameraFlags.Perspective});
+                    list.Add(new Sledge.Rendering.Scenes.Renderables.Face(Material.Flat(Color.FromArgb(100, Color.Turquoise)),
+                        poly.Vertices.Select(x => new Vertex(x.ToVector3(), 0, 0)).Reverse().ToList()) {CameraFlags = CameraFlags.Perspective});
+                }
+            }
+
+            return list;
+        }
+
+        protected override IEnumerable<Element> GetViewportElements(MapViewport viewport, OrthographicCamera camera)
+        {
+            var list = base.GetViewportElements(viewport, camera).ToList();
+
+            if (_state != ClipState.None && _clipPlanePoint1 != null && _clipPlanePoint2 != null && _clipPlanePoint3 != null)
+            {
+                var p1 = _clipPlanePoint1.ToVector3();
+                var p2 = _clipPlanePoint2.ToVector3();
+                var p3 = _clipPlanePoint3.ToVector3();
+
+                // Draw the drag handles in 2D only
+                list.Add(new HandleElement(PositionType.World, HandleElement.HandleType.Square, new Position(p1), 4));
+                list.Add(new HandleElement(PositionType.World, HandleElement.HandleType.Square, new Position(p2), 4));
+                list.Add(new HandleElement(PositionType.World, HandleElement.HandleType.Square, new Position(p3), 4));
+            }
+
+            return list;
         }
 
         public override HotkeyInterceptResult InterceptHotkey(HotkeysMediator hotkeyMessage, object parameters)
@@ -259,166 +329,7 @@ namespace Sledge.Editor.Tools
             var side = (int) _side;
             side = (side + 1) % (Enum.GetValues(typeof (ClipSide)).Length);
             _side = (ClipSide) side;
-        }
-
-        private void Render2D(MapViewport vp)
-        {
-            if (_state == ClipState.None
-                || _clipPlanePoint1 == null
-                || _clipPlanePoint2 == null
-                || _clipPlanePoint3 == null) return; // Nothing to draw at this point
-
-            var z = (double) vp.Zoom;
-            var p1 = vp.Flatten(_clipPlanePoint1);
-            var p2 = vp.Flatten(_clipPlanePoint2);
-            var p3 = vp.Flatten(_clipPlanePoint3);
-            // Draw points
-            GL.Begin(BeginMode.Quads);
-            GL.Color3(Color.White);
-            GLX.Square(new Vector2d(p1.DX, p1.DY), 4, z, true);
-            GLX.Square(new Vector2d(p2.DX, p2.DY), 4, z, true);
-            GLX.Square(new Vector2d(p3.DX, p3.DY), 4, z, true);
-            GL.End();
-
-            GL.Enable(EnableCap.LineSmooth);
-            GL.Hint(HintTarget.LineSmoothHint, HintMode.Nicest);
-
-            // Draw lines between points and point outlines
-            GL.Begin(BeginMode.Lines);
-            GL.Color3(Color.White);
-            GL.Vertex2(p1.DX, p1.DY);
-            GL.Vertex2(p2.DX, p2.DY);
-            GL.Vertex2(p2.DX, p2.DY);
-            GL.Vertex2(p3.DX, p3.DY);
-            GL.Vertex2(p3.DX, p3.DY);
-            GL.Vertex2(p1.DX, p1.DY);
-            GL.Color3(Color.Black);
-            GLX.Square(new Vector2d(p1.DX, p1.DY), 4, z);
-            GLX.Square(new Vector2d(p2.DX, p2.DY), 4, z);
-            GLX.Square(new Vector2d(p3.DX, p3.DY), 4, z);
-            GL.End();
-
-            // Draw the clipped brushes
-            if (!_clipPlanePoint1.EquivalentTo(_clipPlanePoint2)
-                    && !_clipPlanePoint2.EquivalentTo(_clipPlanePoint3)
-                    && !_clipPlanePoint1.EquivalentTo(_clipPlanePoint3))
-            {
-                var plane = new Plane(_clipPlanePoint1, _clipPlanePoint2, _clipPlanePoint3);
-                var faces = new List<Face>();
-                var idg = new IDGenerator();
-                foreach (var solid in Document.Selection.GetSelectedObjects().OfType<Solid>().ToList())
-                {
-                    Solid back, front;
-                    if (solid.Split(plane, out back, out front, idg))
-                    {
-                        if (_side != ClipSide.Front) faces.AddRange(back.Faces);
-                        if (_side != ClipSide.Back) faces.AddRange(front.Faces);
-                    }
-                }
-                GL.LineWidth(2);
-                GL.Color3(Color.White);
-                Matrix.Push();
-                var mat = vp.Viewport.Camera.GetModelMatrix();
-                GL.MultMatrix(ref mat);
-                // todo Rendering.Immediate.MapObjectRenderer.DrawWireframe(faces, true, false);
-                Matrix.Pop();
-                GL.LineWidth(1);
-            }
-
-            GL.Hint(HintTarget.LineSmoothHint, HintMode.Fastest);
-            GL.Disable(EnableCap.LineSmooth);
-
-        }
-
-        private void Render3D(MapViewport vp)
-        {
-            if (_state == ClipState.None
-                || _clipPlanePoint1 == null
-                || _clipPlanePoint2 == null
-                || _clipPlanePoint3 == null
-                || Document.Selection.IsEmpty()) return; // Nothing to draw at this point
-
-            TextureHelper.Unbind();
-
-            // Draw points
-
-            if (!_clipPlanePoint1.EquivalentTo(_clipPlanePoint2)
-                    && !_clipPlanePoint2.EquivalentTo(_clipPlanePoint3)
-                    && !_clipPlanePoint1.EquivalentTo(_clipPlanePoint3))
-            {
-                var plane = new Plane(_clipPlanePoint1, _clipPlanePoint2, _clipPlanePoint3);
-
-                // Draw clipped solids
-                GL.Enable(EnableCap.LineSmooth);
-                GL.Hint(HintTarget.LineSmoothHint, HintMode.Nicest);
-
-                var faces = new List<Face>();
-                var idg = new IDGenerator();
-                foreach (var solid in Document.Selection.GetSelectedObjects().OfType<Solid>().ToList())
-                {
-                    Solid back, front;
-                    if (solid.Split(plane, out back, out front, idg))
-                    {
-                        if (_side != ClipSide.Front) faces.AddRange(back.Faces);
-                        if (_side != ClipSide.Back) faces.AddRange(front.Faces);
-                    }
-                }
-                GL.LineWidth(2);
-                GL.Color3(Color.White);
-                // todo Rendering.Immediate.MapObjectRenderer.DrawWireframe(faces, true, false);
-                GL.LineWidth(1);
-
-                GL.Hint(HintTarget.LineSmoothHint, HintMode.Fastest);
-                GL.Disable(EnableCap.LineSmooth);
-
-                // Draw the clipping plane
-                var poly = new Polygon(plane);
-                var bbox = Document.Selection.GetSelectionBoundingBox();
-                var point = bbox.Center;
-                foreach (var boxPlane in bbox.GetBoxPlanes())
-                {
-                    var proj = boxPlane.Project(point);
-                    var dist = (point - proj).VectorMagnitude() * 0.1m;
-                    poly.Split(new Plane(boxPlane.Normal, proj + boxPlane.Normal * Math.Max(dist, 100)));
-                }
-
-                GL.Disable(EnableCap.CullFace);
-                GL.Begin(PrimitiveType.Polygon);
-                GL.Color4(Color.FromArgb(100, Color.Turquoise));
-                foreach (var c in poly.Vertices) GL.Vertex3(c.DX, c.DY, c.DZ);
-                GL.End();
-                GL.Enable(EnableCap.CullFace);
-            }
-        }
-
-        public override void MouseEnter(MapViewport viewport, ViewportEvent e)
-        {
-            //
-        }
-
-        public override void MouseLeave(MapViewport viewport, ViewportEvent e)
-        {
-            //
-        }
-
-        public override void MouseWheel(MapViewport viewport, ViewportEvent e)
-        {
-            //
-        }
-
-        public override void KeyDown(MapViewport viewport, ViewportEvent e)
-        {
-            //
-        }
-
-        public override void KeyUp(MapViewport viewport, ViewportEvent e)
-        {
-            //
-        }
-
-        public override void UpdateFrame(MapViewport viewport, Frame frame)
-        {
-            //
+            Invalidate();
         }
     }
 }
