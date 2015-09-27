@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Reflection;
 using System.Text;
 
 namespace Sledge.Packages.Wad
@@ -33,13 +34,25 @@ namespace Sledge.Packages.Wad
         private uint _length;
         private byte[] _data;
 
+        private BinaryReader OpenQuakePalette()
+        {
+            if (_entry.Type != WadEntryType.QuakeTexture)
+                return null;
+
+            string palettePath = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location) + "/Palettes/quake.lmp";
+            return new BinaryReader(new FileInfo(palettePath).OpenRead());
+        }
+
         public WadImageStream(WadEntry entry, WadPackage package)
         {
             _entry = entry;
             using (var br = new BinaryReader(package.OpenFile(package.PackageFile)))
             {
-                br.BaseStream.Position = entry.Offset;
-                PrepareData(br);
+                using (var paletteBr = OpenQuakePalette())
+                {
+                    br.BaseStream.Position = entry.Offset;
+                    PrepareData(br, paletteBr);
+                }
             }
         }
 
@@ -48,11 +61,14 @@ namespace Sledge.Packages.Wad
             _entry = entry;
             using (var br = new BinaryReader(stream))
             {
-                PrepareData(br);
+                using (var paletteBr = OpenQuakePalette())
+                {
+                    PrepareData(br, paletteBr);
+                }
             }
         }
 
-        private void PrepareData(BinaryReader br)
+        private void PrepareData(BinaryReader br, BinaryReader paletteBr)
         {
             var startIndex = br.BaseStream.Position;
             const uint headerSize = 14;
@@ -81,8 +97,17 @@ namespace Sledge.Packages.Wad
                 bw.Write(_entry.PaletteSize); // Colours used
                 bw.Write(_entry.PaletteSize); // "Important" colours used
 
-                br.BaseStream.Position = startIndex + (_entry.PaletteDataOffset - _entry.Offset);
-                var paletteData = br.ReadBytes((int)(_entry.PaletteSize * 3));
+                byte[] paletteData;
+                if (_entry.Type == WadEntryType.QuakeTexture)
+                {
+                    paletteData = paletteBr.ReadBytes((int)(_entry.PaletteSize * 3));
+                }
+                else
+                {
+                    br.BaseStream.Position = startIndex + (_entry.PaletteDataOffset - _entry.Offset);
+                    paletteData = br.ReadBytes((int)(_entry.PaletteSize * 3));
+                }
+
                 for (var i = 0; i < _entry.PaletteSize; i++)
                 {
                     // Wad palettes are RGB, bitmap is BGRX
