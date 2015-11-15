@@ -37,9 +37,9 @@ namespace Sledge.Providers.Model
             RegisteredProviders.Clear();
         }
 
-        public static ModelReference CreateModelReference(IFile file)
+        public static ModelReference CreateModelReference(IFile file, DataStructures.GameData.Palette pal)
         {
-            var model = LoadModel(file);
+            var model = LoadModel(file, pal);
             var reference = new ModelReference(file.FullPathName, model);
             References.Add(reference);
             return reference;
@@ -59,7 +59,7 @@ namespace Sledge.Providers.Model
             return RegisteredProviders.Any(p => p.IsValidForFile(file));
         }
 
-        private static DataStructures.Models.Model LoadModel(IFile file)
+        private static DataStructures.Models.Model LoadModel(IFile file, DataStructures.GameData.Palette pal)
         {
             var path = file.FullPathName;
             if (Models.ContainsKey(path)) return Models[path];
@@ -68,7 +68,7 @@ namespace Sledge.Providers.Model
             var provider = RegisteredProviders.FirstOrDefault(p => p.IsValidForFile(file));
             if (provider != null)
             {
-                var model = provider.LoadFromFile(file);
+                var model = provider.LoadFromFile(file, pal);
                 model.PreprocessModel();
                 for (var i = 0; i < model.Textures.Count; i++)
                 {
@@ -88,6 +88,6 @@ namespace Sledge.Providers.Model
         }
 
         protected abstract bool IsValidForFile(IFile file);
-        protected abstract DataStructures.Models.Model LoadFromFile(IFile file);
+        protected abstract DataStructures.Models.Model LoadFromFile(IFile file, DataStructures.GameData.Palette pal);
     }
 }

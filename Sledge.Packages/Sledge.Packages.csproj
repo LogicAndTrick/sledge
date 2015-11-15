@@ -58,7 +58,12 @@
     <Compile Include="Wad\WadPackage.cs" />
     <Compile Include="Wad\WadPackageStreamSource.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\Sledge.DataStructures\Sledge.DataStructures.csproj">
+      <Project>{26a974c9-e495-4fa3-8e87-1e00019d04f5}</Project>
+      <Name>Sledge.DataStructures</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

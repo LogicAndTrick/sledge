@@ -8,6 +8,7 @@ using Sledge.Common;
 using Sledge.Graphics.Helpers;
 using Sledge.Packages;
 using Sledge.Packages.Vpk;
+using Sledge.DataStructures.GameData;
 
 namespace Sledge.Providers.Texture
 {
@@ -15,7 +16,7 @@ namespace Sledge.Providers.Texture
     {
         private readonly Dictionary<TexturePackage, QuickRoot> _roots = new Dictionary<TexturePackage, QuickRoot>();
 
-        public override IEnumerable<TexturePackage> CreatePackages(IEnumerable<string> sourceRoots, IEnumerable<string> additionalPackages, IEnumerable<string> blacklist, IEnumerable<string> whitelist)
+        public override IEnumerable<TexturePackage> CreatePackages(IEnumerable<string> sourceRoots, IEnumerable<string> additionalPackages, IEnumerable<string> blacklist, IEnumerable<string> whitelist, Palette pal)
         {
             var blist = blacklist.Select(x => x.TrimEnd('/', '\\')).Where(x => !String.IsNullOrWhiteSpace(x)).ToList();
             var wlist = whitelist.Select(x => x.TrimEnd('/', '\\')).Where(x => !String.IsNullOrWhiteSpace(x)).ToList();
@@ -59,7 +60,7 @@ namespace Sledge.Providers.Texture
                     continue;
                 }
 
-                if (!packages.ContainsKey(dir)) packages.Add(dir, new TexturePackage(packageRoot, dir, this));
+                if (!packages.ContainsKey(dir)) packages.Add(dir, new TexturePackage(packageRoot, dir, this, pal));
                 if (packages[dir].HasTexture(vmt)) continue;
 
                 var gs = GenericStructure.Parse(new StreamReader(vmtRoot.OpenFile(vmt))).FirstOrDefault();

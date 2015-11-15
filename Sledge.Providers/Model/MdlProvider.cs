@@ -39,19 +39,19 @@ namespace Sledge.Providers.Model
             return file.Extension.ToLowerInvariant() == "mdl";
         }
 
-        protected override DataStructures.Models.Model LoadFromFile(IFile file)
+        protected override DataStructures.Models.Model LoadFromFile(IFile file, DataStructures.GameData.Palette pal)
         {
-            return LoadMDL(file, ModelLoadItems.AllStatic | ModelLoadItems.Animations);
+            return LoadMDL(file, ModelLoadItems.AllStatic | ModelLoadItems.Animations, pal);
         }
 
         // Model loader for MDL files. Reference Valve's studiohdr_t struct definition for the most part.
-        public DataStructures.Models.Model LoadMDL(IFile file, ModelLoadItems loadItems)
+        public DataStructures.Models.Model LoadMDL(IFile file, ModelLoadItems loadItems, DataStructures.GameData.Palette pal)
         {
             using (var fs = new MemoryStream(file.ReadAll()))
             {
                 using(var br = new BinaryReader(fs))
                 {
-                    return ReadModel(br, file, loadItems);
+                    return ReadModel(br, file, loadItems, pal);
                 }
             }
         }
@@ -73,7 +73,7 @@ namespace Sledge.Providers.Model
         private const byte VTXStripGroupTriListFlag = 0x01;
         private const byte VTXStripGroupTriStripFlag = 0x02;
 
-        private static DataStructures.Models.Model ReadModel(BinaryReader br, IFile file, ModelLoadItems loadItems)
+        private static DataStructures.Models.Model ReadModel(BinaryReader br, IFile file, ModelLoadItems loadItems, DataStructures.GameData.Palette pal)
         {
             // int id - Not really an int. This is a magic string, either "IDST" or "IDSQ".
             var magicString = br.ReadFixedLengthString(Encoding.UTF8, 4);

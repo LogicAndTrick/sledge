@@ -44,6 +44,7 @@ namespace Sledge.Editor.Documents
         public Game Game { get; set; }
         public GameEnvironment Environment { get; private set; }
         public GameData GameData { get; set; }
+        public Palette Palette { get; set; }
 
         public Pointfile Pointfile { get; set; }
 
@@ -107,7 +108,25 @@ namespace Sledge.Editor.Documents
                 GameData.MapSizeHigh = game.OverrideMapSizeHigh;
             }
 
-            TextureCollection = TextureProvider.CreateCollection(Environment.GetGameDirectories(), Game.AdditionalPackages, Game.GetTextureBlacklist(), Game.GetTextureWhitelist());
+            // Set up Quake 1/Hexen 2 palette
+            var palpath = Environment.Root.TraversePath("gfx/palette.lmp");
+            var paldata = new byte[768];
+            if (palpath != null)
+            {
+                try
+                {
+                    using (var br = new BinaryReader(palpath.Open()))
+                    {
+                        paldata = br.ReadBytes(768);
+                    }
+                }
+                catch (Exception)
+                {
+                }
+            }
+            Palette = new Palette(paldata);
+            
+            TextureCollection = TextureProvider.CreateCollection(Environment.GetGameDirectories(), Game.AdditionalPackages, Game.GetTextureBlacklist(), Game.GetTextureWhitelist(), Palette);
             /* .Union(GameData.MaterialExclusions) */ // todo material exclusions
 
             var texList = Map.GetAllTextures();

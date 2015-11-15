@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Sledge.DataStructures.GameData;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -11,23 +12,26 @@ namespace Sledge.Packages.Wad
     // https://developer.valvesoftware.com/wiki/WAD
     public class WadPackage : IPackage
     {
-        private const string Signature = "WAD3";
+        private const string WAD2Signature = "WAD2";
+        private const string WAD3Signature = "WAD3";
 
         public FileInfo PackageFile { get; private set; }
         internal uint NumTextures { get; private set; }
         internal uint LumpOffset { get; private set; }
         internal List<WadEntry> Entries { get; private set; }
+        public Palette Palette { get; private set; }
 
-        public WadPackage(FileInfo packageFile)
+        public WadPackage(FileInfo packageFile, Palette pal)
         {
             PackageFile = packageFile;
             Entries = new List<WadEntry>();
+            Palette = pal;
 
             // Read the data from the wad
             using (var br = new BinaryReader(OpenFile(packageFile)))
             {
                 var sig = br.ReadFixedLengthString(Encoding.ASCII, 4);
-                if (sig != Signature) throw new PackageException("Unknown package signature: Expected '" + Signature + "', got '" + sig + "'.");
+                if (sig != WAD2Signature && sig != WAD3Signature) throw new PackageException("Unknown package signature: Expected [WAD2,WAD3], got '" + sig + "'.");
 
                 NumTextures = br.ReadUInt32();
                 LumpOffset = br.ReadUInt32();
@@ -129,6 +133,7 @@ namespace Sledge.Packages.Wad
                     paletteDataOffset = br.BaseStream.Position;
                     break;
                 case WadEntryType.Texture:
+                case WadEntryType.QuakeTexture:
                     br.BaseStream.Position += 16; // Skip name
                     width = br.ReadUInt32();
                     height = br.ReadUInt32();
@@ -136,8 +141,16 @@ namespace Sledge.Packages.Wad
                     var num = (int)(width * height);
                     var skipMapData = (num / 4) + (num / 16) + (num / 64);
                     br.BaseStream.Position += 16 + num + skipMapData; // Skip mipmap offsets, texture data, mipmap texture data
-                    paletteSize = br.ReadUInt16();
-                    paletteDataOffset = br.BaseStream.Position;
+                    if (e.Type == WadEntryType.QuakeTexture)
+                    {
+                        paletteSize = 256;
+                        paletteDataOffset = 0;
+                    }
+                    else
+                    {
+                        paletteSize = br.ReadUInt16();
+                        paletteDataOffset = br.BaseStream.Position;
+                    }
                     break;
                     /*
                 case WadEntryType.Font:

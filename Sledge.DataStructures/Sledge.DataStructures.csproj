@@ -47,6 +47,7 @@
   <ItemGroup>
     <Compile Include="GameData\AutoVisgroup.cs" />
     <Compile Include="GameData\AutoVisgroupSection.cs" />
+    <Compile Include="GameData\Palette.cs" />
     <Compile Include="Geometric\Box.cs" />
     <Compile Include="Geometric\Cloud.cs" />
     <Compile Include="Geometric\CoordinateF.cs" />

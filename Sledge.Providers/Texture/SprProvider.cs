@@ -9,6 +9,7 @@ using System.Text;
 using Sledge.Common;
 using Sledge.FileSystem;
 using Sledge.Graphics.Helpers;
+using Sledge.DataStructures.GameData;
 
 namespace Sledge.Providers.Texture
 {
@@ -137,11 +138,11 @@ namespace Sledge.Providers.Texture
             }
         }
 
-        public override IEnumerable<TexturePackage> CreatePackages(IEnumerable<string> sourceRoots, IEnumerable<string> additionalPackages, IEnumerable<string> blacklist, IEnumerable<string> whitelist)
+        public override IEnumerable<TexturePackage> CreatePackages(IEnumerable<string> sourceRoots, IEnumerable<string> additionalPackages, IEnumerable<string> blacklist, IEnumerable<string> whitelist, Palette pal)
         {
             // Sprite provider ignores the black/whitelists
             var dirs = sourceRoots.Union(additionalPackages).Where(Directory.Exists).Select(Path.GetFullPath).Select(x => x.ToLowerInvariant()).Distinct().ToList();
-            var tp = new TexturePackage(String.Join(";", dirs), "sprites", this) {IsBrowsable = false};
+            var tp = new TexturePackage(String.Join(";", dirs), "sprites", this, pal) {IsBrowsable = false};
             foreach (var dir in dirs)
             {
                 var sprs = Directory.GetFiles(dir, "*.spr", SearchOption.AllDirectories);
