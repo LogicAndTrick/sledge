@@ -320,6 +320,15 @@ namespace Sledge.Providers.GameData
                                 Expect(iterator, LexType.Value);
                                 opt.On = iterator.Current.Value == "1";
                                 iterator.MoveNext();
+
+                                // Long Description?
+                                if (iterator.Current.Type != LexType.Colon)
+                                {
+                                    continue;
+                                }
+                                Expect(iterator, LexType.String);
+                                opt.LongDescription = iterator.Current.GetValue();
+                                iterator.MoveNext();
                             }
                             Assert(iterator.Current, iterator.Current.Type == LexType.CloseBracket, "Unexpected " + iterator.Current.Type);
                             iterator.MoveNext();
