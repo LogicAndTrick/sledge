@@ -927,6 +927,7 @@ namespace Sledge.Editor.Tools.SelectTool
                 foreach (var face in copies.SelectMany(x => x.FindAll().OfType<Solid>().SelectMany(y => y.Faces)))
                 {
                     face.Texture.Texture = Document.GetTexture(face.Texture.Name);
+                    face.CalculateTextureCoordinates(true);
                 }
                 foreach (var mo in copies)
                 {
