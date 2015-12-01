@@ -923,6 +923,12 @@ namespace Sledge.Editor.Tools.SelectTool
             {
                 // Copy the selection, transform it, and reselect
                 var copies = ClipboardManager.CloneFlatHeirarchy(Document, Document.Selection.GetSelectedObjects()).ToList();
+                // HACK: Load textures now so Face.Transform() texture lock code works
+                foreach (var face in copies.SelectMany(x => x.FindAll().OfType<Solid>().SelectMany(y => y.Faces)))
+                {
+                    face.Texture.Texture = Document.GetTexture(face.Texture.Name);
+                    face.CalculateTextureCoordinates(true);
+                }
                 foreach (var mo in copies)
                 {
                     mo.Transform(transform, Document.Map.GetTransformFlags());
