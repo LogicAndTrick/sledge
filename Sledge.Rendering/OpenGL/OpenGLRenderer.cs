@@ -68,6 +68,7 @@ namespace Sledge.Rendering.OpenGL
             _shaderProgram = new Passthrough();
             _modelShaderProgram = new ModelShader();
 
+            _materialStorage.Initialise();
             _textureStorage.Initialise();
 
             _initialised = true;

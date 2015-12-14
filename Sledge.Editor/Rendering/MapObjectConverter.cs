@@ -23,6 +23,7 @@ namespace Sledge.Editor.Rendering
     {
         public static SceneMapObject Convert(this MapObject obj, Document document)
         {
+            if (obj.IsCodeHidden || obj.IsVisgroupHidden) return null;
             if (obj is Solid) return Convert((Solid)obj, document);
             if (obj is Entity) return Convert((Entity) obj, document);
             return null;
@@ -30,6 +31,7 @@ namespace Sledge.Editor.Rendering
 
         public static bool Update(this MapObject obj, SceneMapObject smo, Document document)
         {
+            if (obj.IsCodeHidden || obj.IsVisgroupHidden) return false;
             if (obj is Solid) return Update((Solid)obj, smo, document);
             if (obj is Entity) return Update((Entity)obj, smo, document);
             return false;
@@ -39,7 +41,7 @@ namespace Sledge.Editor.Rendering
         public static SceneMapObject Convert(this Solid solid, Document document)
         {
             var smo = new SceneMapObject(solid);
-            foreach (var face in solid.Faces)
+            foreach (var face in solid.Faces.Where(x => !x.IsHidden))
             {
                 var f = Convert(face, document);
                 smo.SceneObjects.Add(face, f);
@@ -49,7 +51,7 @@ namespace Sledge.Editor.Rendering
 
         public static bool Update(this Solid solid, SceneMapObject smo, Document document)
         {
-            if (smo.SceneObjects.Count != solid.Faces.Count) return false;
+            if (smo.SceneObjects.Count != solid.Faces.Count(x => !x.IsHidden)) return false;
             var values = smo.SceneObjects.Values.ToList();
             var objs = new Dictionary<object, SceneObject>();
             for (int i = 0; i < solid.Faces.Count; i++)

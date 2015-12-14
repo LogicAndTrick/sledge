@@ -260,8 +260,7 @@ namespace Sledge.Editor.Tools.VMTool
             }
             else
             {
-                // todo var l = viewport.Camera.Location;
-                var l = Coordinate.Zero;
+                var l = viewport.Viewport.Camera.EyeLocation;
                 var pos = new Coordinate((decimal) l.X, (decimal) l.Y, (decimal) l.Z);
                 var p = new Coordinate(x, y, 0);
                 const int d = 5;
@@ -367,6 +366,8 @@ namespace Sledge.Editor.Tools.VMTool
             Mediator.Subscribe(HotkeysMediator.VMStandardMode, this);
             Mediator.Subscribe(HotkeysMediator.VMScalingMode, this);
             Mediator.Subscribe(HotkeysMediator.VMFaceEditMode, this);
+
+            base.ToolSelected(preventHistory);
         }
 
         public override void ToolDeselected(bool preventHistory)
@@ -383,6 +384,8 @@ namespace Sledge.Editor.Tools.VMTool
             _snapPointOffset = null;
             _movingPoint = null;
             MoveSelection = null;
+
+            base.ToolDeselected(preventHistory);
         }
 
         private void VertexSelectionChanged()

@@ -41,7 +41,9 @@ namespace Sledge.Rendering.Cameras
             get { return _position; }
             set
             {
-                _position = value;
+                const float u = 131072;
+                const float l = -131072;
+                _position = new Vector3(Math.Min(u, Math.Max(l, value.X)), Math.Min(u, Math.Max(l, value.Y)), Math.Min(u, Math.Max(l, value.Z)));
                 OnPropertyChanged("Position");
             }
         }
@@ -51,7 +53,7 @@ namespace Sledge.Rendering.Cameras
             get { return _zoom; }
             set
             {
-                _zoom = value;
+                _zoom = Math.Min(256, Math.Max(0.001f, value));
                 OnPropertyChanged("Zoom");
             }
         }

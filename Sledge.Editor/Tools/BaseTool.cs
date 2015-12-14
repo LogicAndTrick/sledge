@@ -117,9 +117,9 @@ namespace Sledge.Editor.Tools
         public bool Active { get; set; }
 
         protected bool UseValidation { get; set; }
-        private bool _invalidated;
+        private readonly HashSet<MapViewport> _validatedViewports;
         private List<SceneObject> _currentObjects;
-        private Dictionary<MapViewport, List<Element>> _currentViewportObjects;
+        private readonly Dictionary<MapViewport, List<Element>> _currentViewportObjects;
 
         protected List<BaseTool> Children { get; private set; }
 
@@ -138,7 +138,7 @@ namespace Sledge.Editor.Tools
             Active = true;
             Viewport = null;
             Usage = ToolUsage.View2D;
-            _invalidated = false;
+            _validatedViewports = new HashSet<MapViewport>();
             UseValidation = false;
             _currentObjects = new List<SceneObject>();
             _currentViewportObjects = new Dictionary<MapViewport, List<Element>>();
@@ -370,14 +370,14 @@ namespace Sledge.Editor.Tools
 
         protected void Invalidate()
         {
-            _invalidated = true;
+            _validatedViewports.Clear();
             foreach (var t in Children.Where(x => x.Active)) t.Invalidate();
         }
 
         private void Validate(MapViewport viewport)
         {
-            if ((UseValidation && !_invalidated) || Document == null) return;
-            _invalidated = false;
+            if ((UseValidation && _validatedViewports.Contains(viewport)) || Document == null) return;
+            _validatedViewports.Add(viewport);
 
             foreach (var o in _currentObjects) Document.Scene.Remove(o);
             if (_currentViewportObjects.ContainsKey(viewport)) foreach (var o in _currentViewportObjects[viewport]) Document.Scene.Remove(o);

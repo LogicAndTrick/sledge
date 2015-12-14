@@ -18,6 +18,14 @@ namespace Sledge.Rendering.OpenGL
             _updatableMaterials = new Dictionary<string, Material>();
         }
 
+        public void Initialise()
+        {
+            foreach (var it in Internal.InternalTextures.GetInternalTextures())
+            {
+                Add(Material.Texture(it.Key, false));
+            }
+        }
+
         public void Update(Frame frame)
         {
             foreach (var mat in _updatableMaterials.Values)

@@ -16,7 +16,6 @@ Before next release!
   Get rid of document tree/objects/faces messages
   Make sure decals, sprites, and models load and update correctly
   Get rid of the old decal/sprite stuff because it's the renderer's job now
-  Hide/unhide not working as they should
   Investigate and fix decal_bug
   Decals are being clipped oddly and they're not selectable
   Pasting should apply materials/decal/sprite stuff instantly
@@ -34,6 +33,7 @@ Before next release!
   Box tool doesn't invalidate when the selected texture is changed
   No crosshair when free-looking in the 3d view
   Clip tool (and probably others) - escape is clearing the selection as well as cancelling the clip, which is probably not the desired outcome
+  Rewrite the VM tool
 
 Post-release?
   Animate models?

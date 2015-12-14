@@ -13,6 +13,8 @@ namespace Sledge.Editor.Tools2.DraggableTool
         event EventHandler DragStarted;
         event EventHandler DragMoved;
         event EventHandler DragEnded;
+        void MouseDown(MapViewport viewport, ViewportEvent e, Coordinate position);
+        void MouseUp(MapViewport viewport, ViewportEvent e, Coordinate position);
         void Click(MapViewport viewport, ViewportEvent e, Coordinate position);
         bool CanDrag(MapViewport viewport, ViewportEvent e, Coordinate position);
         void Highlight(MapViewport viewport);

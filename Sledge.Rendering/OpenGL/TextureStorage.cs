@@ -66,10 +66,13 @@ namespace Sledge.Rendering.OpenGL
             PixelInternalFormat = PixelInternalFormat.Rgba;
         }
 
+        // Todo: init these in a better place?
         public void Initialise()
         {
-            Create("Internal::White", WhitePixel, 1, 1, TextureFlags.None);
-            Create("Internal::Debug", DebugTexture, 100, 100, TextureFlags.None);
+            foreach (var it in Internal.InternalTextures.GetInternalTextures())
+            {
+                Create(it.Key, it.Value, it.Value.Width, it.Value.Height, TextureFlags.None);
+            }
         }
 
         #region Create

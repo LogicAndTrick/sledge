@@ -13,10 +13,13 @@ namespace Sledge.Rendering.Scenes.Elements
         public enum HandleType
         {
             Square,
+            SquareTexture,
             Circle,
             UpTriangle,
             DownTriangle
         }
+
+        internal const string SquareHandleTextureName = "Internal::Elements::HandleElement::SquareTexture";
 
         public Position Position { get; set; }
         public int LineWidth { get; set; }
@@ -37,16 +40,33 @@ namespace Sledge.Rendering.Scenes.Elements
 
         public override IEnumerable<LineElement> GetLines(IViewport viewport, IRenderer renderer)
         {
-            if (LineWidth <= 0) yield break;
+            if (LineWidth <= 0 || Type == HandleType.SquareTexture) yield break;
 
             var verts = GetVertices().ToList();
             verts.Add(verts[0]); // loop back
             yield return new LineElement(PositionType, LineColor, verts);
         }
 
+        private Material _texture;
+
         public override IEnumerable<FaceElement> GetFaces(IViewport viewport, IRenderer renderer)
         {
-            yield return new FaceElement(PositionType, Material.Flat(Color), GetVertices().Select(x => new PositionVertex(x, 0, 0)));
+            if (Type == HandleType.SquareTexture)
+            {
+                if (_texture == null) _texture = new Material(MaterialType.Textured, Color, SquareHandleTextureName);
+                var points = new List<PositionVertex>
+                {
+                    new PositionVertex(Offset(-Radius, -Radius), 0, 0),
+                    new PositionVertex(Offset(+Radius, -Radius), 1, 0),
+                    new PositionVertex(Offset(+Radius, +Radius), 1, 1),
+                    new PositionVertex(Offset(-Radius, +Radius), 0, 1),
+                };
+                yield return new FaceElement(PositionType, _texture, points);
+            }
+            else
+            {
+                yield return new FaceElement(PositionType, Material.Flat(Color), GetVertices().Select(x => new PositionVertex(x, 0, 0)));
+            }
         }
 
         private IEnumerable<Position> GetVertices()

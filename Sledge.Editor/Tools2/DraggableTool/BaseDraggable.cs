@@ -44,6 +44,17 @@ namespace Sledge.Editor.Tools2.DraggableTool
             OnDragEnded();
         }
 
+
+        public virtual void MouseDown(MapViewport viewport, ViewportEvent e, Coordinate position)
+        {
+
+        }
+
+        public virtual void MouseUp(MapViewport viewport, ViewportEvent e, Coordinate position)
+        {
+            
+        }
+
         public abstract void Click(MapViewport viewport, ViewportEvent e, Coordinate position);
         public abstract bool CanDrag(MapViewport viewport, ViewportEvent e, Coordinate position);
         public abstract void Highlight(MapViewport viewport);

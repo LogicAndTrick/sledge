@@ -70,8 +70,13 @@ namespace Sledge.Editor.Tools2.DraggableTool
         {
             yield return new HandleElement(PositionType.World, HandleElement.HandleType.Square, new Position(Position.ToVector3()), 2)
             {
-                Color = Highlighted ? Color.Red : Color.Green
+                Color = GetColor()
             };
+        }
+
+        protected virtual Color GetColor()
+        {
+            return Highlighted ? Color.Red : Color.Green;
         }
     }
 }

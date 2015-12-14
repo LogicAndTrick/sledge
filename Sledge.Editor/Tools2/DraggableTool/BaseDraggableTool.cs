@@ -25,6 +25,14 @@ namespace Sledge.Editor.Tools2.DraggableTool
         }
 
         #region Virtual events
+        protected virtual void OnDraggableMouseDown(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Coordinate position, IDraggable draggable)
+        {
+
+        }
+        protected virtual void OnDraggableMouseUp(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Coordinate position, IDraggable draggable)
+        {
+
+        }
         protected virtual void OnDraggableClicked(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Coordinate position, IDraggable draggable)
         {
 
@@ -58,6 +66,25 @@ namespace Sledge.Editor.Tools2.DraggableTool
             var point = viewport.ScreenToWorld(e.X, viewport.Height - e.Y);
             OnDraggableClicked(viewport, camera, e, point, CurrentDraggable);
             if (!e.Handled) CurrentDraggable.Click(viewport, e, point);
+            Invalidate();
+        }
+
+        protected override void MouseDown(MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
+        {
+            if (CurrentDraggable == null) return;
+            var point = viewport.ScreenToWorld(e.X, viewport.Height - e.Y);
+            OnDraggableMouseDown(viewport, camera, e, point, CurrentDraggable);
+            if (!e.Handled) CurrentDraggable.MouseDown(viewport, e, point);
+            Invalidate();
+        }
+
+        protected override void MouseUp(MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
+        {
+            if (CurrentDraggable == null) return;
+            var point = viewport.ScreenToWorld(e.X, viewport.Height - e.Y);
+            OnDraggableMouseUp(viewport, camera, e, point, CurrentDraggable);
+            if (!e.Handled) CurrentDraggable.MouseUp(viewport, e, point);
+            Invalidate();
         }
 
         protected override void MouseMove(MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
@@ -84,6 +111,7 @@ namespace Sledge.Editor.Tools2.DraggableTool
                 if (CurrentDraggable != null) CurrentDraggable.Unhighlight(viewport);
                 CurrentDraggable = drag;
                 if (CurrentDraggable != null) CurrentDraggable.Highlight(viewport);
+                Invalidate();
             }
         }
 
@@ -95,6 +123,7 @@ namespace Sledge.Editor.Tools2.DraggableTool
             OnDraggableDragStarted(viewport, camera, e, _lastDragPoint, CurrentDraggable);
             if (!e.Handled) CurrentDraggable.StartDrag(viewport, e, _lastDragPoint);
             _lastDragMoveEvent = e;
+            Invalidate();
         }
 
         protected override void DragMove(MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
@@ -107,6 +136,7 @@ namespace Sledge.Editor.Tools2.DraggableTool
             if (!e.Handled) OnDraggableDragMoved(viewport, camera, e, _lastDragPoint, point, CurrentDraggable);
             _lastDragPoint = point;
             _lastDragMoveEvent = e;
+            Invalidate();
         }
 
         protected override void DragEnd(MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
@@ -118,6 +148,7 @@ namespace Sledge.Editor.Tools2.DraggableTool
             if (!e.Handled) CurrentDraggable.EndDrag(viewport, e, point);
             _lastDragMoveEvent = null;
             _lastDragPoint = null;
+            Invalidate();
         }
 
         public override void PositionChanged(MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
@@ -139,6 +170,7 @@ namespace Sledge.Editor.Tools2.DraggableTool
                 if (!ev.Handled) CurrentDraggable.Drag(viewport, ev, _lastDragPoint, point);
                 if (!ev.Handled) OnDraggableDragMoved(viewport, camera, ev, _lastDragPoint, point, CurrentDraggable);
                 _lastDragPoint = point;
+                Invalidate();
             }
         }
 
