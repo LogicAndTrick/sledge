@@ -208,41 +208,5 @@ namespace Sledge.Editor.Tools2.DraggableTool
         {
             return CollectObjects(x => x.GetViewportElements(viewport, camera)).Union(base.GetViewportElements(viewport, camera));
         }
-
-        protected bool GetSelectionBox(BoxState state, out Box boundingbox)
-        {
-            // If one of the dimensions has a depth value of 0, extend it out into infinite space
-            // If two or more dimensions have depth 0, do nothing.
-
-            var sameX = state.Start.X == state.End.X;
-            var sameY = state.Start.Y == state.End.Y;
-            var sameZ = state.Start.Z == state.End.Z;
-            var start = state.Start.Clone();
-            var end = state.End.Clone();
-            var invalid = false;
-
-            if (sameX)
-            {
-                if (sameY || sameZ) invalid = true;
-                start.X = Decimal.MinValue;
-                end.X = Decimal.MaxValue;
-            }
-
-            if (sameY)
-            {
-                if (sameZ) invalid = true;
-                start.Y = Decimal.MinValue;
-                end.Y = Decimal.MaxValue;
-            }
-
-            if (sameZ)
-            {
-                start.Z = Decimal.MinValue;
-                end.Z = Decimal.MaxValue;
-            }
-
-            boundingbox = new Box(start, end);
-            return !invalid;
-        }
     }
 }

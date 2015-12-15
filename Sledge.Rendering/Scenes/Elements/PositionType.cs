@@ -3,6 +3,7 @@
     public enum PositionType
     {
         Screen,
-        World
+        World,
+        Anchored
     }
 }

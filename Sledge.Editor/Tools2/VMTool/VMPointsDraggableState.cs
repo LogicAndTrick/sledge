@@ -149,7 +149,7 @@ namespace Sledge.Editor.Tools2.VMTool
                 let c = viewport.Flatten(pp.Position)
                 where p.X >= c.X - d && p.X <= c.X + d && p.Y >= c.Y - d && p.Y <= c.Y + d
                 let unused = viewport.GetUnusedCoordinate(pp.Position)
-                orderby unused.X + unused.Y + unused.Z
+                orderby unused.X + unused.Y + unused.Z descending 
                 select pp).ToList();
 
             if (!allowMixed && points.Any(x => !x.IsMidpoint)) points.RemoveAll(x => x.IsMidpoint);
@@ -206,6 +206,30 @@ namespace Sledge.Editor.Tools2.VMTool
             _tool.Invalidate();
         }
 
+        public bool SelectPointsInBox(Box box, bool toggle)
+        {
+            var inBox = _points.Where(x => box.CoordinateIsInside(x.Position)).ToList();
+            Select(inBox, toggle);
+            return inBox.Any();
+        }
+
+        public bool SelectPointsIn3D(MapViewport viewport, PerspectiveCamera camera, ViewportEvent e, bool toggle)
+        {
+            var l = camera.EyeLocation;
+            var pos = new Coordinate((decimal)l.X, (decimal)l.Y, (decimal)l.Z);
+            var p = new Coordinate(e.X, e.Y, 0);
+            const int d = 5;
+            var clicked = (
+                from point in _points
+                let c = viewport.WorldToScreen(point.Position)
+                where c != null && c.Z <= 1
+                where p.X >= c.X - d && p.X <= c.X + d && p.Y >= c.Y - d && p.Y <= c.Y + d
+                orderby (pos - point.Position).LengthSquared()
+                select point).ToList();
+            Select(clicked, toggle);
+            return clicked.Any();
+        }
+
         public override void Click(MapViewport viewport, ViewportEvent e, Coordinate position)
         {
             DeselectAll();
@@ -230,6 +254,11 @@ namespace Sledge.Editor.Tools2.VMTool
 
             var selected = _points.Where(x => x.IsSelected).Distinct().SelectMany(x => x.GetStandardPointList()).ToList();
             selected.ForEach(x => x.DragMove(delta));
+            
+            foreach (var face in selected.SelectMany(x => x.Vertices.Select(v => v.Parent)).Distinct())
+            {
+                face.CalculateTextureCoordinates(true);
+            }
 
             foreach (var midpoint in selected.Select(x => x.Solid).Distinct().SelectMany(x => x.Points.Where(p => p.IsMidpoint)))
             {

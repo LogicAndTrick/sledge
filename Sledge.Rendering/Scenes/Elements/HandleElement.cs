@@ -61,11 +61,11 @@ namespace Sledge.Rendering.Scenes.Elements
                     new PositionVertex(Offset(+Radius, +Radius), 1, 1),
                     new PositionVertex(Offset(-Radius, +Radius), 0, 1),
                 };
-                yield return new FaceElement(PositionType, _texture, points);
+                yield return new FaceElement(PositionType, _texture, points) { DepthTested = DepthTested };
             }
             else
             {
-                yield return new FaceElement(PositionType, Material.Flat(Color), GetVertices().Select(x => new PositionVertex(x, 0, 0)));
+                yield return new FaceElement(PositionType, Material.Flat(Color), GetVertices().Select(x => new PositionVertex(x, 0, 0))) { DepthTested = DepthTested };
             }
         }
 

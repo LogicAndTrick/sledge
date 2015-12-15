@@ -20,9 +20,9 @@ namespace Sledge.Rendering.OpenGL
 
         public void Initialise()
         {
-            foreach (var it in Internal.InternalTextures.GetInternalTextures())
+            foreach (var im in Internal.InternalMaterials.GetInternalMaterials())
             {
-                Add(Material.Texture(it.Key, false));
+                Add(im);
             }
         }
 

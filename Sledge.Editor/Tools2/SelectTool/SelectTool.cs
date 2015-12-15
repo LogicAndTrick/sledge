@@ -482,8 +482,8 @@ namespace Sledge.Editor.Tools2.SelectTool
             // Only confirm the box if the empty box is drawn
             if (_selectionBox.State.Action != BoxAction.Idle || _emptyBox.State.Action != BoxAction.Drawn) return;
 
-            Box boundingbox;
-            if (GetSelectionBox(_emptyBox.State, out boundingbox))
+            var boundingbox = _emptyBox.State.GetSelectionBox();
+            if (boundingbox != null)
             {
                 // If the shift key is down, select all brushes that are fully contained by the box
                 // If select by handles only is on, select all brushes with centers inside the box

@@ -109,5 +109,41 @@ namespace Sledge.Editor.Tools2.DraggableTool
             }
             OnChanged();
         }
+
+        public Box GetSelectionBox()
+        {
+            var state = this;
+
+            // If one of the dimensions has a depth value of 0, extend it out into infinite space
+            // If two or more dimensions have depth 0, do nothing.
+            
+            var sameX = state.Start.X == state.End.X;
+            var sameY = state.Start.Y == state.End.Y;
+            var sameZ = state.Start.Z == state.End.Z;
+            var start = state.Start.Clone();
+            var end = state.End.Clone();
+
+            if (sameX)
+            {
+                if (sameY || sameZ) return null;
+                start.X = Decimal.MinValue;
+                end.X = Decimal.MaxValue;
+            }
+
+            if (sameY)
+            {
+                if (sameZ) return null;
+                start.Y = Decimal.MinValue;
+                end.Y = Decimal.MaxValue;
+            }
+
+            if (sameZ)
+            {
+                start.Z = Decimal.MinValue;
+                end.Z = Decimal.MaxValue;
+            }
+
+            return new Box(start, end);
+        }
     }
 }

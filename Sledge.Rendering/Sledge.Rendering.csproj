@@ -74,6 +74,7 @@
     <Compile Include="Interfaces\IRenderer.cs" />
     <Compile Include="Interfaces\IViewport.cs" />
     <Compile Include="Interfaces\TextureDetails.cs" />
+    <Compile Include="Internal\InternalMaterials.cs" />
     <Compile Include="Internal\InternalTextures.cs" />
     <Compile Include="Materials\StringTextureManager.cs" />
     <Compile Include="MathFunctions.cs" />

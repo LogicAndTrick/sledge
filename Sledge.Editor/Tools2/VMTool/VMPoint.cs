@@ -3,7 +3,6 @@ using System.Drawing;
 using System.Windows.Forms;
 using Sledge.Common;
 using Sledge.DataStructures.Geometric;
-using Sledge.DataStructures.MapObjects;
 using Sledge.Editor.Extensions;
 using Sledge.Editor.Rendering;
 using Sledge.Editor.Tools2.DraggableTool;
@@ -11,6 +10,8 @@ using Sledge.Editor.UI;
 using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Scenes;
 using Sledge.Rendering.Scenes.Elements;
+using Sledge.Rendering.Scenes.Renderables;
+using Vertex = Sledge.DataStructures.MapObjects.Vertex;
 
 namespace Sledge.Editor.Tools2.VMTool
 {
@@ -154,7 +155,11 @@ namespace Sledge.Editor.Tools2.VMTool
 
         public override IEnumerable<Element> GetViewportElements(MapViewport viewport, PerspectiveCamera camera)
         {
-            yield break;
+            var pos = IsDragging ? DraggingPosition : Position;
+            yield return new HandleElement(PositionType.Anchored, HandleElement.HandleType.SquareTexture, new Position(pos.ToVector3()), 4)
+            {
+                Color = Color.FromArgb(255, GetColor())
+            };
         }
 
         public override IEnumerable<Element> GetViewportElements(MapViewport viewport, OrthographicCamera camera)

@@ -20,6 +20,9 @@ namespace Sledge.Rendering.OpenGL.Arrays
         private const int ScreenFacePolygons = 10;
         private const int ScreenFaceWireframe = 11;
 
+        private const int AnchoredFacePolygons = 20;
+        private const int AnchoredFaceWireframe = 21;
+
         private readonly IRenderer _renderer;
         private readonly IViewport _viewport;
 
@@ -58,6 +61,10 @@ namespace Sledge.Rendering.OpenGL.Arrays
 
             RenderPositionType(renderer, shader, PositionType.Screen);
 
+            shader.UseAccentColor = false;
+
+            RenderPositionType(renderer, shader, PositionType.Anchored);
+
             shader.Unbind();
 
             GL.Enable(EnableCap.DepthTest);
@@ -65,8 +72,8 @@ namespace Sledge.Rendering.OpenGL.Arrays
 
         private void RenderPositionType(IRenderer renderer, Passthrough shader, PositionType type)
         {
-            var wireframeId = type == PositionType.Screen ? ScreenFaceWireframe : WorldFaceWireframe;
-            var polygonId = type == PositionType.Screen ? ScreenFacePolygons : WorldFacePolygons;
+            var wireframeId = type == PositionType.Screen ? ScreenFaceWireframe : (type == PositionType.Anchored ? AnchoredFaceWireframe : WorldFaceWireframe);
+            var polygonId = type == PositionType.Screen ? ScreenFacePolygons : (type == PositionType.Anchored ? AnchoredFacePolygons : WorldFacePolygons);
 
             // Render polygons
             string last = null;
@@ -94,13 +101,14 @@ namespace Sledge.Rendering.OpenGL.Arrays
         {
             var d = data.ToList();
             CreatePositionTypeArray(d, PositionType.Screen);
+            CreatePositionTypeArray(d, PositionType.Anchored);
             CreatePositionTypeArray(d, PositionType.World);
         }
 
         private void CreatePositionTypeArray(IEnumerable<Element> data, PositionType type)
         {
-            var wireframeId = type == PositionType.Screen ? ScreenFaceWireframe : WorldFaceWireframe;
-            var polygonId = type == PositionType.Screen ? ScreenFacePolygons : WorldFacePolygons;
+            var wireframeId = type == PositionType.Screen ? ScreenFaceWireframe : (type == PositionType.Anchored ? AnchoredFaceWireframe : WorldFaceWireframe);
+            var polygonId = type == PositionType.Screen ? ScreenFacePolygons : (type == PositionType.Anchored ? AnchoredFacePolygons : WorldFacePolygons);
 
             StartSubset(wireframeId);
 
@@ -190,6 +198,11 @@ namespace Sledge.Rendering.OpenGL.Arrays
             {
                 if (position.Normalised) return new Vector3(position.Location.X * _viewport.Control.Width, position.Location.Y * _viewport.Control.Height, 0) + position.Offset;
                 else return position.Location + position.Offset;
+            }
+            else if (type == PositionType.Anchored)
+            {
+                var transformed = _viewport.Camera.WorldToScreen(position.Location, _viewport.Control.Width, _viewport.Control.Height);
+                return new Vector3(transformed.X, _viewport.Control.Height - transformed.Y, transformed.Z) + position.Offset;
             }
             return Vector3.Zero;
         }

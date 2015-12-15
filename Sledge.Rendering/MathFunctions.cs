@@ -24,7 +24,7 @@ namespace Sledge.Rendering
             var source = new Vector4((float) coordinate.X, (float) coordinate.Y, (float) coordinate.Z, 1);
             var imed = Vector4.Transform(source, modelview);
             var vector = Vector4.Transform(imed, projection);
-            if (Math.Abs(vector.W - 0) < 0.00001) return Vector3.Zero;
+            if (vector.W < 0.00001) return Vector3.Zero;
             var result = Vector3.Divide(vector.Xyz, vector.W);
             result.X = viewport[0] + viewport[2] * (result.X + 1) / 2;
             result.Y = viewport[1] + viewport[3] * (result.Y + 1) / 2;
@@ -49,7 +49,7 @@ namespace Sledge.Rendering
                 (float) (2 * coordinate.Z - 1),
                 1);
             var vector = Vector4.Transform(source, matrix);
-            if (Math.Abs(vector.W - 0) < 0.00001) return Vector3.Zero;
+            if (vector.W < 0.00001) return Vector3.Zero;
             var result = Vector3.Divide(vector.Xyz, vector.W);
             return result;
         }

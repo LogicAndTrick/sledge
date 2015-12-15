@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using System.Linq;
-using System.Text;
-using Sledge.Rendering.Materials;
 using Sledge.Rendering.Scenes.Elements;
 
 namespace Sledge.Rendering.Internal
@@ -44,8 +40,6 @@ namespace Sledge.Rendering.Internal
 
         public static Dictionary<string, Bitmap> GetInternalTextures()
         {
-            //Create("Internal::White", WhitePixel, 1, 1, TextureFlags.None);
-            //Create("Internal::Debug", DebugTexture, 100, 100, TextureFlags.None);
             return new Dictionary<string, Bitmap>
             {
                 { "Internal::White", WhitePixel  },
