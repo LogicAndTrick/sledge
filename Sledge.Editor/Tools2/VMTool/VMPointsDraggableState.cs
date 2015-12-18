@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using Sledge.Common.Mediator;
 using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.MapObjects;
 using Sledge.Editor.Actions.MapObjects.Operations;
+using Sledge.Editor.Actions.MapObjects.Selection;
 using Sledge.Editor.Rendering;
 using Sledge.Editor.Tools2.DraggableTool;
 using Sledge.Editor.Tools2.VMTool.Actions;
@@ -13,6 +15,8 @@ using Sledge.Editor.UI;
 using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Scenes;
 using Sledge.Rendering.Scenes.Elements;
+using Sledge.Rendering.Scenes.Renderables;
+using Face = Sledge.Rendering.Scenes.Renderables.Face;
 
 namespace Sledge.Editor.Tools2.VMTool
 {
@@ -233,6 +237,46 @@ namespace Sledge.Editor.Tools2.VMTool
         public override void Click(MapViewport viewport, ViewportEvent e, Coordinate position)
         {
             DeselectAll();
+
+            Try2DObjectSelection(viewport, e);
+        }
+
+        protected bool Try2DObjectSelection(MapViewport viewport, ViewportEvent e)
+        {
+            // Create a box to represent the click, with a tolerance level
+            var unused = viewport.GetUnusedCoordinate(new Coordinate(100000, 100000, 100000));
+            var tolerance = 4 / (decimal)viewport.Zoom; // Selection tolerance of four pixels
+            var used = viewport.Expand(new Coordinate(tolerance, tolerance, 0));
+            var add = used + unused;
+            var click = viewport.Expand(viewport.ScreenToWorld(e.X, viewport.Height - e.Y));
+            var box = new Box(click - add, click + add);
+
+            var centerHandles = Sledge.Settings.Select.DrawCenterHandles;
+            var centerOnly = Sledge.Settings.Select.ClickSelectByCenterHandlesOnly;
+            // Get the first element that intersects with the box, selecting or deselecting as needed
+            var solid = _tool.Document.Map.WorldSpawn.GetAllNodesIntersecting2DLineTest(box, centerHandles, centerOnly).OfType<Solid>().FirstOrDefault();
+
+            if (solid != null)
+            {
+                if (solid.IsSelected && KeyboardState.Ctrl)
+                {
+                    // deselect solid
+                    var select = new MapObject[0];
+                    var deselect = new[] { solid };
+                    _tool.Document.PerformAction("Deselect VM solid", new ChangeSelection(select, deselect));
+                }
+                else if (!solid.IsSelected)
+                {
+                    // select solid
+                    var select = new[] { solid };
+                    var deselect = !KeyboardState.Ctrl ? _tool.Document.Selection.GetSelectedObjects() : new MapObject[0];
+                    _tool.Document.PerformAction("Select VM solid", new ChangeSelection(select, deselect));
+                }
+
+                return true;
+            }
+
+            return false;
         }
 
         private Coordinate _pointDragStart;
@@ -283,7 +327,7 @@ namespace Sledge.Editor.Tools2.VMTool
 
         public override bool CanDrag(MapViewport viewport, ViewportEvent e, Coordinate position)
         {
-            return false;
+            return viewport.Is2D;
         }
 
         public override void Highlight(MapViewport viewport)
@@ -298,7 +342,15 @@ namespace Sledge.Editor.Tools2.VMTool
 
         public override IEnumerable<SceneObject> GetSceneObjects()
         {
-            return _solids.SelectMany(x => x.Copy.Convert(_tool.Document));
+            var objs = _solids.SelectMany(x => x.Copy.Convert(_tool.Document)).ToList();
+            foreach (var so in objs.OfType<RenderableObject>())
+            {
+                so.ForcedRenderFlags |= RenderFlags.Wireframe;
+                so.IsSelected = true;
+                so.TintColor = Color.FromArgb(128, Color.Green);
+                so.AccentColor = Color.White;
+            }
+            return objs;
         }
 
         public override IEnumerable<Element> GetViewportElements(MapViewport viewport, PerspectiveCamera camera)

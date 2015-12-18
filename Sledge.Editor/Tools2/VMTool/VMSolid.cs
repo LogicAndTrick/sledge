@@ -20,10 +20,7 @@ namespace Sledge.Editor.Tools2.VMTool
             Copy = (Solid) original.Clone();
             Copy.IsSelected = false;
             Copy.IsCodeHidden = false;
-            foreach (var f in Copy.Faces)
-            {
-                f.IsSelected = true;
-            }
+            foreach (var f in Copy.Faces) f.IsSelected = false;
 
             Points = new List<VMPoint>();
             RefreshPoints();

@@ -28,7 +28,7 @@ void main()
     vec3 tint = vec3(1, 1, 1) - ((vec3(1, 1, 1) - vertexTintColor.rgb) * vertexTintColor.a);
 
     fragmentColor = useAccentColor ? vertexAccentColor : texture(currentTexture, vertexTexture) * vertexMaterialColor;
-	fragmentColor.rgb *= tint; // vertexTintColor.rgb * vertexTintColor.a;
+	if (!useAccentColor) fragmentColor.rgb *= tint; // vertexTintColor.rgb * vertexTintColor.a;
 	fragmentColor.a *= vertexMaterialColor.a;
 
     if (fragmentColor.a < 0.05) discard;
