@@ -133,24 +133,14 @@ namespace Sledge.Packages.Wad
                     paletteDataOffset = br.BaseStream.Position;
                     break;
                 case WadEntryType.Texture:
+                    textureDataOffset = MoveToTextureData(br, out width, out height);
+                    paletteSize = br.ReadUInt16();
+                    paletteDataOffset = br.BaseStream.Position;
+                    break;
                 case WadEntryType.QuakeTexture:
-                    br.BaseStream.Position += 16; // Skip name
-                    width = br.ReadUInt32();
-                    height = br.ReadUInt32();
-                    textureDataOffset = br.BaseStream.Position + 16;
-                    var num = (int)(width * height);
-                    var skipMapData = (num / 4) + (num / 16) + (num / 64);
-                    br.BaseStream.Position += 16 + num + skipMapData; // Skip mipmap offsets, texture data, mipmap texture data
-                    if (e.Type == WadEntryType.QuakeTexture)
-                    {
-                        paletteSize = 256;
-                        paletteDataOffset = 0;
-                    }
-                    else
-                    {
-                        paletteSize = br.ReadUInt16();
-                        paletteDataOffset = br.BaseStream.Position;
-                    }
+                    textureDataOffset = MoveToTextureData(br, out width, out height);
+                    paletteSize = 256;
+                    paletteDataOffset = 0; // Ignored for Quake textures, since the palette is in a separate file
                     break;
                     /*
                 case WadEntryType.Font:
@@ -169,6 +159,18 @@ namespace Sledge.Packages.Wad
             e.PaletteSize = paletteSize;
             e.TextureDataOffset = textureDataOffset;
             e.PaletteDataOffset = paletteDataOffset;
+        }
+
+        private long MoveToTextureData(BinaryReader br, out uint width, out uint height)
+        {
+            br.BaseStream.Position += 16; // Skip name
+            width = br.ReadUInt32();
+            height = br.ReadUInt32();
+            var textureDataOffset = br.BaseStream.Position + 16;
+            var num = (int)(width * height);
+            var skipMapData = (num / 4) + (num / 16) + (num / 64);
+            br.BaseStream.Position += 16 + num + skipMapData; // Skip mipmap offsets, texture data, mipmap texture data
+            return textureDataOffset;
         }
 
         private Dictionary<string, WadEntry> _files;
