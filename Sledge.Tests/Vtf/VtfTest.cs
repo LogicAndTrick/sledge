@@ -91,7 +91,7 @@ namespace Sledge.Tests.Vtf
             var collection = TextureProvider.CreateCollection(new[]
             {
                 @"F:\Steam\SteamApps\common\Team Fortress 2\tf"
-            }, null, null, null);
+            }, null, null, null, null);
         }
 
         [TestMethod]

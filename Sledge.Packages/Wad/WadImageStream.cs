@@ -81,8 +81,17 @@ namespace Sledge.Packages.Wad
                 bw.Write(_entry.PaletteSize); // Colours used
                 bw.Write(_entry.PaletteSize); // "Important" colours used
 
-                br.BaseStream.Position = startIndex + (_entry.PaletteDataOffset - _entry.Offset);
-                var paletteData = br.ReadBytes((int)(_entry.PaletteSize * 3));
+                byte[] paletteData;
+                if (_entry.Type == WadEntryType.QuakeTexture)
+                {
+                    paletteData = _entry.Package.Palette.ByteArray;
+                }
+                else
+                {
+                    br.BaseStream.Position = startIndex + (_entry.PaletteDataOffset - _entry.Offset);
+                    paletteData = br.ReadBytes((int)(_entry.PaletteSize * 3));
+                }
+
                 for (var i = 0; i < _entry.PaletteSize; i++)
                 {
                     // Wad palettes are RGB, bitmap is BGRX

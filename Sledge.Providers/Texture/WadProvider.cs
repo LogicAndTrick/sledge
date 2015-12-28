@@ -9,6 +9,7 @@ using Sledge.Graphics.Helpers;
 using System.Drawing;
 using Sledge.Packages;
 using Sledge.Packages.Wad;
+using Sledge.DataStructures.GameData;
 
 namespace Sledge.Providers.Texture
 {
@@ -132,20 +133,20 @@ namespace Sledge.Providers.Texture
 
         private readonly Dictionary<TexturePackage, WadStream> _roots = new Dictionary<TexturePackage, WadStream>();
 
-        private TexturePackage CreatePackage(string package)
+        private TexturePackage CreatePackage(string package, Palette pal)
         {
             try
             {
                 var fi = new FileInfo(package);
                 if (!fi.Exists) return null;
 
-                var tp = new TexturePackage(package, Path.GetFileNameWithoutExtension(package), this);
+                var tp = new TexturePackage(package, Path.GetFileNameWithoutExtension(package), this, pal);
                 if (LoadFromCache(tp)) return tp;
 
                 var list = new List<TextureItem>();
 
                 var pack = _roots.Values.FirstOrDefault(x => x.Package.PackageFile.FullName == fi.FullName);
-                if (pack == null) _roots.Add(tp, pack = new WadStream(new WadPackage(fi)));
+                if (pack == null) _roots.Add(tp, pack = new WadStream(new WadPackage(fi, pal)));
 
                 list.AddRange(pack.Package.GetEntries().OfType<WadEntry>().Select(x => new TextureItem(tp, x.Name, GetFlags(x.Name), (int) x.Width, (int) x.Height)));
                 foreach (var ti in list)
@@ -161,7 +162,7 @@ namespace Sledge.Providers.Texture
             }
         }
 
-        public override IEnumerable<TexturePackage> CreatePackages(IEnumerable<string> sourceRoots, IEnumerable<string> additionalPackages, IEnumerable<string> blacklist, IEnumerable<string> whitelist)
+        public override IEnumerable<TexturePackage> CreatePackages(IEnumerable<string> sourceRoots, IEnumerable<string> additionalPackages, IEnumerable<string> blacklist, IEnumerable<string> whitelist, Palette pal)
         {
             var blist = blacklist.Select(x => x.EndsWith(".wad") ? x.Substring(0, x.Length - 4) : x).Where(x => !String.IsNullOrWhiteSpace(x)).ToList();
             var wlist = whitelist.Select(x => x.EndsWith(".wad") ? x.Substring(0, x.Length - 4) : x).Where(x => !String.IsNullOrWhiteSpace(x)).ToList();
@@ -176,7 +177,7 @@ namespace Sledge.Providers.Texture
             {
                 wads = wads.Where(x => wlist.Contains(Path.GetFileNameWithoutExtension(x) ?? x, StringComparer.InvariantCultureIgnoreCase));
             }
-            return wads.AsParallel().Select(CreatePackage).Where(x => x != null);
+            return wads.AsParallel().Select(x => CreatePackage(x, pal)).Where(x => x != null);
         }
 
         public override void DeletePackages(IEnumerable<TexturePackage> packages)
@@ -201,7 +202,7 @@ namespace Sledge.Providers.Texture
             {
                 if (!_roots.ContainsKey(x))
                 {
-                    var wp = new WadStream(new WadPackage(new FileInfo(x.PackageRoot)));
+                    var wp = new WadStream(new WadPackage(new FileInfo(x.PackageRoot), x.Palette));
                     _roots.Add(x, wp);
                 }
                 return _roots[x];
@@ -247,7 +248,7 @@ namespace Sledge.Providers.Texture
             {
                 if (!_roots.ContainsKey(x))
                 {
-                    var wp = new WadStream(new WadPackage(new FileInfo(x.PackageRoot)));
+                    var wp = new WadStream(new WadPackage(new FileInfo(x.PackageRoot), x.Palette));
                     _roots.Add(x, wp);
                 }
                 return _roots[x];

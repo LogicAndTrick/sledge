@@ -83,7 +83,7 @@ namespace Sledge.Editor.Extensions
 
                 try
                 {
-                    var mr = ModelProvider.CreateModelReference(file);
+                    var mr = ModelProvider.CreateModelReference(file, document.Palette);
                     SetModel(e, mr);
                     cache.Add(model, mr);
                     return true;

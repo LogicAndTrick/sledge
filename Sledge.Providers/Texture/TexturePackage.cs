@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Sledge.Graphics.Helpers;
+using Sledge.DataStructures.GameData;
 
 namespace Sledge.Providers.Texture
 {
@@ -12,8 +13,9 @@ namespace Sledge.Providers.Texture
         public Dictionary<string, TextureItem> Items { get; private set; }
         private readonly Dictionary<string, TextureItem> _loadedItems;
         public bool IsBrowsable { get; set; }
+        public Palette Palette { get; private set; }
 
-        public TexturePackage(string packageRoot, string packageRelativePath, TextureProvider provider)
+        public TexturePackage(string packageRoot, string packageRelativePath, TextureProvider provider, Palette pal)
         {
             Provider = provider;
             PackageRoot = packageRoot;
@@ -21,6 +23,7 @@ namespace Sledge.Providers.Texture
             Items = new Dictionary<string, TextureItem>();
             _loadedItems = new Dictionary<string, TextureItem>();
             IsBrowsable = true;
+            Palette = pal;
         }
 
         public void AddTexture(TextureItem item)
