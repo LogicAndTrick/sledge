@@ -206,6 +206,12 @@ namespace Sledge.Editor.Tools
             if (gd == null) gd = _sidebarPanel.GetSelectedEntity();
             if (gd == null) return;
 
+            var sizeBehaviour = gd.Behaviours.Find(x => x.Name == "size");
+            if(sizeBehaviour != null)
+            {
+                origin.DZ -= Convert.ToDouble(sizeBehaviour.Values[2]);
+            }
+
             var col = gd.Behaviours.Where(x => x.Name == "color").ToArray();
             var colour = col.Any() ? col[0].GetColour(0) : Colour.GetDefaultEntityColour();
 
