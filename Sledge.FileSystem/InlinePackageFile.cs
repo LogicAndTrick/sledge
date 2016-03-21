@@ -6,6 +6,7 @@ using System.Text.RegularExpressions;
 using Sledge.Packages;
 using Sledge.Packages.Pak;
 using Sledge.Packages.Vpk;
+using Sledge.Packages.Zip;
 
 namespace Sledge.FileSystem
 {
@@ -28,6 +29,9 @@ namespace Sledge.FileSystem
             {
                 case ".pak":
                     _package = new PakPackage(new FileInfo(fileName));
+                    break;
+                case ".pk3":
+                    _package = new ZipPackage(new FileInfo(fileName));
                     break;
                 case ".vpk":
                     _package = new VpkDirectory(new FileInfo(fileName));
