@@ -260,6 +260,7 @@
     <Compile Include="Rendering\Converters\DefaultEntityConverter.cs" />
     <Compile Include="Rendering\Converters\DefaultSolidConverter.cs" />
     <Compile Include="Rendering\Converters\EntityDecalConverter.cs" />
+    <Compile Include="Rendering\Converters\EntityNameConverter.cs" />
     <Compile Include="Rendering\Converters\EntitySpriteConverter.cs" />
     <Compile Include="Rendering\Converters\HiddenConverter.cs" />
     <Compile Include="Rendering\DefaultTextureProvider.cs" />
