@@ -296,6 +296,7 @@
     <Compile Include="Tools2\DraggableTool\ResizeHandle.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Tools2\ExampleStateTool\ExampleStateTool.cs" />
     <Compile Include="Tools2\SelectTool\SelectionBoxDraggableState.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -317,6 +318,7 @@
     <Compile Include="Tools2\SelectTool\TransformationHandles\SkewTransformHandle.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Tools2\StateTool\StateTool.cs" />
     <Compile Include="Tools2\VMTool\Actions\MovePoints.cs" />
     <Compile Include="Tools2\VMTool\ShowPoints.cs" />
     <Compile Include="Tools2\VMTool\VMPoint.cs" />
@@ -546,9 +548,7 @@
     <Compile Include="UI\Sidebar\HelpSidebarPanel.Designer.cs">
       <DependentUpon>HelpSidebarPanel.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\TableSplitControl.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="UI\TableSplitControl.cs" />
     <Compile Include="UI\Sidebar\BrushSidebarPanel.cs">
       <SubType>UserControl</SubType>
     </Compile>

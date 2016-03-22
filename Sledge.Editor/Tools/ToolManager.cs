@@ -19,6 +19,7 @@ namespace Sledge.Editor.Tools
 
         public static void Init()
         {
+            //Tools.Add(new Tools2.ExampleStateTool.ExampleStateTool());
             //Tools.Add(new SelectTool.SelectTool());
             Tools.Add(new Tools2.SelectTool.SelectTool());
             Tools.Add(new CameraTool());
