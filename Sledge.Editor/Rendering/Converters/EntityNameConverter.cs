@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Drawing;
 using OpenTK;
 using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.MapObjects;
@@ -27,7 +26,7 @@ namespace Sledge.Editor.Rendering.Converters
 
         public bool Convert(SceneMapObject smo, Document document, MapObject obj)
         {
-            var entity = (Entity) obj;
+            var entity = (Entity)obj;
             var el = new EntityTextElement(entity);
             smo.SceneObjects.Add(entity.EntityData, el);
             return true;
@@ -47,7 +46,7 @@ namespace Sledge.Editor.Rendering.Converters
             }
             return false;
         }
-        
+
         /// <summary>
         /// A custom text element for entity text. The entity text position varies per viewport based on the bounding box of the entity.
         /// </summary>

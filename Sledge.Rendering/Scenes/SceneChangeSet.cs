@@ -17,23 +17,35 @@ namespace Sledge.Rendering.Scenes
             Replaced = new HashSet<SceneObject>();
         }
 
+        private void Clear(SceneObject obj)
+        {
+            Added.Remove(obj);
+            Removed.Remove(obj);
+            Replaced.Remove(obj);
+            Updated.Remove(obj);
+        }
+
         public void Add(SceneObject obj)
         {
+            Clear(obj);
             Added.Add(obj);
         }
 
         public void Update(SceneObject obj)
         {
+            Clear(obj);
             Updated.Add(obj);
         }
 
         public void Replace(SceneObject obj)
         {
+            Clear(obj);
             Replaced.Add(obj);
         }
 
         public void Remove(SceneObject obj)
         {
+            Clear(obj);
             Removed.Add(obj);
         }
     }

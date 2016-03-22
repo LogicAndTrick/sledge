@@ -20,8 +20,8 @@ namespace Sledge.Editor.Rendering
             Converters.Add(new EntityDecalConverter());
             Converters.Add(new EntitySpriteConverter());
             Converters.Add(new EntityNameConverter());
+            Converters.Add(new EntityAngleConverter());
             // : entity model
-            // : entity name
         }
 
         public static SceneMapObject Convert(Document document, MapObject obj)

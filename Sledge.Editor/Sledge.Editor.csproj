@@ -259,6 +259,7 @@
     <Compile Include="Rendering\ConvertedScene.cs" />
     <Compile Include="Rendering\Converters\DefaultEntityConverter.cs" />
     <Compile Include="Rendering\Converters\DefaultSolidConverter.cs" />
+    <Compile Include="Rendering\Converters\EntityAngleConverter.cs" />
     <Compile Include="Rendering\Converters\EntityDecalConverter.cs" />
     <Compile Include="Rendering\Converters\EntityNameConverter.cs" />
     <Compile Include="Rendering\Converters\EntitySpriteConverter.cs" />
