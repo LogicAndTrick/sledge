@@ -7,6 +7,7 @@ using Sledge.DataStructures.MapObjects;
 using Sledge.Editor.Brushes.Controls;
 using Sledge.Editor.Documents;
 using Sledge.Editor.Rendering;
+using Sledge.Editor.Rendering.Converters;
 using Sledge.Rendering.DataStructures;
 using Sledge.Rendering.Scenes.Renderables;
 
@@ -26,8 +27,8 @@ namespace Sledge.Tests.Rendering
 
             generator.GetControls().OfType<TextControl>().First().EnteredText = String.Join("", Enumerable.Range(0, 50).Select(x => random.Next(0, 100)));
             var someText = generator.Create(new IDGenerator(), new Sledge.DataStructures.Geometric.Box(Coordinate.Zero, Coordinate.One * 100), null, 2);
-
-            var converted = someText.SelectMany(x => x.Convert(document)).OfType<RenderableObject>().ToList();
+            
+            var converted = someText.SelectMany(x => MapObjectConverter.Convert(document, x)).OfType<RenderableObject>().ToList();
             var count = converted.Count;
 
             Assert.AreEqual(0, octree.Count);

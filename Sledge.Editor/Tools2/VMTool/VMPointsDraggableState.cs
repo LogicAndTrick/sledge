@@ -342,7 +342,7 @@ namespace Sledge.Editor.Tools2.VMTool
 
         public override IEnumerable<SceneObject> GetSceneObjects()
         {
-            var objs = _solids.SelectMany(x => x.Copy.Convert(_tool.Document)).ToList();
+            var objs = _solids.SelectMany(x => MapObjectConverter.Convert(_tool.Document, x.Copy)).ToList();
             foreach (var so in objs.OfType<RenderableObject>())
             {
                 so.ForcedRenderFlags |= RenderFlags.Wireframe;

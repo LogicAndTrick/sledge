@@ -257,9 +257,16 @@
     <Compile Include="History\HistoryManager.cs" />
     <Compile Include="History\IHistoryItem.cs" />
     <Compile Include="Rendering\ConvertedScene.cs" />
+    <Compile Include="Rendering\Converters\DefaultEntityConverter.cs" />
+    <Compile Include="Rendering\Converters\DefaultSolidConverter.cs" />
+    <Compile Include="Rendering\Converters\EntityDecalConverter.cs" />
+    <Compile Include="Rendering\Converters\EntitySpriteConverter.cs" />
+    <Compile Include="Rendering\Converters\HiddenConverter.cs" />
     <Compile Include="Rendering\DefaultTextureProvider.cs" />
+    <Compile Include="Rendering\Converters\IMapObjectSceneConverter.cs" />
     <Compile Include="Rendering\IViewportEventListener.cs" />
     <Compile Include="Rendering\MapObjectConverter.cs" />
+    <Compile Include="Rendering\Converters\MapObjectSceneConverterPriority.cs" />
     <Compile Include="Rendering\ReferenceCounter.cs" />
     <Compile Include="Rendering\SceneMapObject.cs" />
     <Compile Include="Tools2\BrushTool\BrushTool.cs" />

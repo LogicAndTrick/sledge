@@ -50,7 +50,7 @@ namespace Sledge.Editor.Rendering
             {
                 var smo = _sceneObjects.ContainsKey(obj) ? _sceneObjects[obj] : null;
 
-                if (smo != null && obj.Update(smo, _document)) continue;
+                if (smo != null && MapObjectConverter.Update(smo, _document, obj)) continue;
 
                 if (smo != null)
                 {
@@ -60,7 +60,7 @@ namespace Sledge.Editor.Rendering
                     _usedTextures.Decrement(rem.UsedTextures);
                 }
 
-                smo = obj.Convert(_document);
+                smo = MapObjectConverter.Convert(_document, obj);
                 if (smo == null) continue;
 
                 foreach (var ro in smo) _document.Scene.Add(ro);

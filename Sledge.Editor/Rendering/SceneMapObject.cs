@@ -11,11 +11,14 @@ namespace Sledge.Editor.Rendering
         public Dictionary<object, SceneObject> SceneObjects { get; private set; }
         public HashSet<string> UsedTextures { get; set; }
 
+        public Dictionary<string, object> MetaData { get; set; }
+
         public SceneMapObject(MapObject mapObject)
         {
             MapObject = mapObject;
             SceneObjects = new Dictionary<object, SceneObject>();
             UsedTextures = new HashSet<string>();
+            MetaData = new Dictionary<string, object>();
         }
 
         public IEnumerator<SceneObject> GetEnumerator()

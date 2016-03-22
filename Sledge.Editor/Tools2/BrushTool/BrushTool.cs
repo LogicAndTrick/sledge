@@ -181,7 +181,7 @@ namespace Sledge.Editor.Tools2.BrushTool
             {
                 var bbox = new Box(box.State.Start, box.State.End);
                 var brush = GetBrush(bbox, new IDGenerator()).FindAll();
-                var converted = brush.Select(x => x.Convert(Document)).Where(x => x != null);
+                var converted = brush.Select(x => MapObjectConverter.Convert(Document, x)).Where(x => x != null);
                 var objects = converted.SelectMany(x => x.SceneObjects.Values).ToList();
                 foreach (var o in objects.OfType<Sledge.Rendering.Scenes.Renderables.Face>())
                 {
