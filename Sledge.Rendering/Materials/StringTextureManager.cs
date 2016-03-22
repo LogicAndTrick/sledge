@@ -232,8 +232,11 @@ namespace Sledge.Rendering.Materials
                     g.TextRenderingHint = TextRenderingHint.SingleBitPerPixelGridFit;
                     g.InterpolationMode = InterpolationMode.NearestNeighbor;
                     g.PixelOffsetMode = PixelOffsetMode.None;
+
                     g.CompositingMode = CompositingMode.SourceCopy;
                     g.FillRectangle(Brushes.Transparent, stv.Rectangle);
+
+                    g.CompositingMode = CompositingMode.SourceOver;
                     g.DrawString(stv.Value, _font, Brushes.White, stv.Rectangle);
                 }
                 _values.Add(value, stv);
