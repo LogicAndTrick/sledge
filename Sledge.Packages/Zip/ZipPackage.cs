@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.IO.Compression;
 using System.Linq;
 using System.Text.RegularExpressions;
 
@@ -18,38 +17,14 @@ namespace Sledge.Packages.Zip
             Entries = new List<ZipEntry>();
 
 			// Read the data from the .zip
-			using (ZipArchive br = new ZipArchive(OpenFile(packageFile)))
-            {
-                // Read all the entries from the .zip
-	            IEnumerable<string> entries = br.GetFiles();
-                foreach (string filePath in entries)
-                {
-	                string entryFixed = filePath.ToLowerInvariant();
-	                ZipEntry pe;
-                    switch (Path.GetExtension(entryFixed))
-					{
-						case ".png":
-						case ".jpg":
-						//case ".tga":
-						case ".md3":
-							MemoryStream fileStream = br.GetFileStream(filePath);
-                            pe = new ZipEntry(this, filePath, fileStream);
-							break;
-							//break;
-						default:
-							continue;
-					}
-
-					Entries.Add(pe);
-				}
-
-                BuildDirectories();
-            }
+            var zip = new ZipArchive(OpenFile(packageFile));
+            Entries.AddRange(zip.GetFiles().Select(x => new ZipEntry(this, x)));
+            BuildDirectories();
         }
 
-        internal MemoryStream OpenFile(FileInfo file)
+        internal Stream OpenFile(FileInfo file)
         {
-			return new MemoryStream(File.ReadAllBytes(file.FullName));
+            return Stream.Synchronized(new FileStream(file.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, 4096, FileOptions.RandomAccess));
         }
 
         public IEnumerable<IPackageEntry> GetEntries()
@@ -65,14 +40,17 @@ namespace Sledge.Packages.Zip
 
         public byte[] ExtractEntry(IPackageEntry entry)
         {
-            throw new Exception("Don't do this.");
+            using (var sr = new BinaryReader(OpenStream(entry)))
+            {
+                return sr.ReadBytes((int)sr.BaseStream.Length);
+            }
         }
 
         public Stream OpenStream(IPackageEntry entry)
         {
             var pe = entry as ZipEntry;
             if (pe == null) throw new ArgumentException("This package is only compatible with ZipEntry objects.");
-            return pe.GetStream();
+            return pe.Entry.GetStream(OpenFile(PackageFile));
         }
 
         public IPackageStreamSource GetStreamSource()
@@ -84,50 +62,69 @@ namespace Sledge.Packages.Zip
         {
             Entries.Clear();
         }
-        
-        private HashSet<string> _files;
+
+        private Dictionary<string, HashSet<string>> _folders;
+        private Dictionary<string, HashSet<string>> _files;
 
         private void BuildDirectories()
         {
-            _files = new HashSet<string>();
+            _folders = new Dictionary<string, HashSet<string>>();
+            _files = new Dictionary<string, HashSet<string>>();
             foreach (var entry in GetEntries())
             {
-                _files.Add(entry.Name);
+                var split = entry.FullName.Split('/');
+                var joined = "";
+                for (var i = 0; i < split.Length; i++)
+                {
+                    var sub = split[i];
+                    var name = joined.Length == 0 ? sub : joined + '/' + sub;
+                    if (i == split.Length - 1)
+                    {
+                        // File name
+                        if (!_files.ContainsKey(joined)) _files.Add(joined, new HashSet<string>());
+                        _files[joined].Add(name);
+                    }
+                    else
+                    {
+                        // Folder name
+                        if (!_folders.ContainsKey(joined)) _folders.Add(joined, new HashSet<string>());
+                        if (!_folders[joined].Contains(sub)) _folders[joined].Add(name);
+                    }
+                    joined = joined.Length == 0 ? sub : joined + '/' + sub;
+                }
             }
         }
 
         public bool HasDirectory(string path)
         {
-            return false;
+            return _folders.ContainsKey(path);
         }
 
         public bool HasFile(string path)
         {
-            return _files.Contains(path.ToLowerInvariant());
+            return _files.ContainsKey(path.ToLowerInvariant());
         }
 
         public IEnumerable<string> GetDirectories()
         {
-            return new List<string>();
+            return _files.Keys;
         }
 
         public IEnumerable<string> GetFiles()
         {
-            return _files;
+            return _files.Values.SelectMany(x => x);
         }
 
         public IEnumerable<string> GetDirectories(string path)
         {
-            return new string[0];
+            if (!_folders.ContainsKey(path)) return new string[0];
+            return _folders[path].Where(x => x.Length > 0);
         }
 
         public IEnumerable<string> GetFiles(string path)
         {
-            if (path != "")
-            {
-                return new List<string>();
-            }
-            return _files;
+            if (!_files.ContainsKey(path)) return new string[0];
+            return _files[path];
         }
 
         public IEnumerable<string> SearchDirectories(string path, string regex, bool recursive)
@@ -144,22 +141,34 @@ namespace Sledge.Packages.Zip
 
         private IEnumerable<string> CollectDirectories(string path)
         {
-            return new List<string>();
+            var files = new List<string>();
+            if (_folders.ContainsKey(path))
+            {
+                files.AddRange(_folders[path].Where(x => x.Length > 0));
+                files.AddRange(_folders[path].SelectMany(CollectDirectories));
+            }
+            return files;
         }
 
         private IEnumerable<string> CollectFiles(string path)
         {
             var files = new List<string>();
-            if (_files.Contains(path))
+            if (_folders.ContainsKey(path))
             {
-                files.AddRange(_files);
+                files.AddRange(_folders[path].SelectMany(CollectFiles));
+            }
+            if (_files.ContainsKey(path))
+            {
+                files.AddRange(_files[path]);
             }
             return files;
         }
 
         private string GetName(string path)
         {
-            return path;
+            var idx = path.LastIndexOf('/');
+            if (idx < 0) return path;
+            return path.Substring(idx + 1);
         }
 
         public Stream OpenFile(string path)

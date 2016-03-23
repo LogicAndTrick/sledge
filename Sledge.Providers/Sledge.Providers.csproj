@@ -62,7 +62,7 @@
     <Compile Include="ProviderNotFoundException.cs" />
     <Compile Include="Map\RmfProvider.cs" />
     <Compile Include="Texture\NullTextureStreamSource.cs" />
-    <Compile Include="Texture\ZipProvider.cs" />
+    <Compile Include="Texture\Pk3Provider.cs" />
     <Compile Include="Texture\TextureSubItemType.cs" />
     <Compile Include="Texture\VmtProvider.cs" />
     <Compile Include="Texture\SpriteOrientation.cs" />

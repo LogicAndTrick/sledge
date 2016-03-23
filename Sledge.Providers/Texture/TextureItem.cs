@@ -9,6 +9,7 @@ namespace Sledge.Providers.Texture
         public TexturePackage Package { get; private set; }
         public string Name { get; private set; }
         public TextureFlags Flags { get; set; }
+        public string Reference { get; set; }
 
         public TextureSubItem PrimarySubItem
         {

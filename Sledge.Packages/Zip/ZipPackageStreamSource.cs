@@ -19,7 +19,7 @@ namespace Sledge.Packages.Zip
             foreach (var entry in package.GetEntries())
             {
                 // File name
-                _files.Add(entry.Name);
+                _files.Add(entry.FullName);
             }
         }
 
@@ -83,19 +83,15 @@ namespace Sledge.Packages.Zip
         private ZipEntry GetEntry(string path)
         {
             path = path.ToLowerInvariant();
-            ZipEntry pe = _package.GetEntries().FirstOrDefault(x => x.Name == path) as ZipEntry;
+            var pe = _package.GetEntries().FirstOrDefault(x => x.FullName == path) as ZipEntry;
             return pe;
         }
 
         public Stream OpenFile(string path)
         {
             var entry = GetEntry(path);
-            if (entry == null)
-            {
-                throw new FileNotFoundException();
-            }
-
-            return entry.GetStream();
+            if (entry == null) throw new FileNotFoundException();
+            return new BufferedStream(entry.Entry.GetStream(_stream));
         }
 
         public void Dispose()
