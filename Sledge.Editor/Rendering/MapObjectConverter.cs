@@ -21,6 +21,7 @@ namespace Sledge.Editor.Rendering
             Converters.Add(new EntitySpriteConverter());
             Converters.Add(new EntityNameConverter());
             Converters.Add(new EntityAngleConverter());
+            Converters.Add(new CenterHandlesConverter());
             // : entity model
         }
 

@@ -257,6 +257,7 @@
     <Compile Include="History\HistoryManager.cs" />
     <Compile Include="History\IHistoryItem.cs" />
     <Compile Include="Rendering\ConvertedScene.cs" />
+    <Compile Include="Rendering\Converters\CenterHandlesConverter.cs" />
     <Compile Include="Rendering\Converters\DefaultEntityConverter.cs" />
     <Compile Include="Rendering\Converters\DefaultSolidConverter.cs" />
     <Compile Include="Rendering\Converters\EntityAngleConverter.cs" />
