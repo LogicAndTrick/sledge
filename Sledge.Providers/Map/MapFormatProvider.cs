@@ -109,7 +109,8 @@ namespace Sledge.Providers.Map
             };
 
             // Cater for older-style map formats
-            if (parts.Count == 21)
+            // TODO Quake 3: when the MAP face has 24 parts, the last three parts are: content_flags, surface_flags, value
+            if (parts.Count == 21 || parts.Count == 24)
             {
                 QuakeEdAlignTextureToWorld(face);
 
@@ -173,6 +174,8 @@ namespace Sledge.Providers.Map
                 if (String.IsNullOrWhiteSpace(line)) continue;
                 if (line == "}")
                 {
+                    if (!faces.Any()) return null;
+
                     var ret = Solid.CreateFromIntersectingPlanes(faces.Select(x => x.Plane), generator);
                     ret.Colour = Colour.GetRandomBrushColour();
                     foreach (var face in ret.Faces)
@@ -191,7 +194,23 @@ namespace Sledge.Providers.Map
                     ret.UpdateBoundingBox(false);
                     return ret;
                 }
-                faces.Add(ReadFace(line, generator));
+                else if (line == "patchDef2")
+                {
+                    // Quake 3 has bezier faces
+                    // TODO: support bezier faces...
+                    while (CleanLine(rdr.ReadLine()) != "}")
+                    {
+                        // Skip...
+                    }
+                }
+                else if (line == "brushDef")
+                {
+                    throw new ProviderException("Maps containing the 'brushDef' structure are not currently supported");
+                }
+                else
+                {
+                    faces.Add(ReadFace(line, generator));
+                }
             }
             return null;
         }
