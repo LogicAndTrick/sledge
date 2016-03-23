@@ -143,6 +143,7 @@ namespace Sledge.Editor
             TextureProvider.Register(new WadProvider());
             TextureProvider.Register(new SprProvider());
             TextureProvider.Register(new VmtProvider());
+            TextureProvider.Register(new ZipProvider());
             ModelProvider.Register(new MdlProvider());
 
             WadProvider.ReplaceTransparentPixels = !Sledge.Settings.View.DisableWadTransparency && !Sledge.Settings.View.GloballyDisableTransparency;
