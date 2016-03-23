@@ -207,7 +207,8 @@ namespace Sledge.Providers.Map
 
         private static void ReadProperty(Entity ent, string line)
         {
-            var split = line.Split(' ');
+            // Quake id1 map sources use tabs between keys and values
+            var split = line.Split(new char[] { ' ', '\t' });
             var key = split[0].Trim('"');
 
             var val = String.Join(" ", split.Skip(1)).Trim('"');
