@@ -6,9 +6,9 @@ namespace Sledge.Editor.Rendering
 {
     public class ConvertedScene
     {
-        private Document _document;
-        private Dictionary<MapObject, SceneMapObject> _sceneObjects;
-        private ReferenceCounter<string> _usedTextures;
+        private readonly Document _document;
+        private readonly Dictionary<MapObject, SceneMapObject> _sceneObjects;
+        private readonly ReferenceCounter<string> _usedTextures;
 
         public ConvertedScene(Document document)
         {

@@ -257,6 +257,7 @@
     <Compile Include="History\HistoryManager.cs" />
     <Compile Include="History\IHistoryItem.cs" />
     <Compile Include="Rendering\ConvertedScene.cs" />
+    <Compile Include="Rendering\Converters\AxisLinesConverter.cs" />
     <Compile Include="Rendering\Converters\CenterHandlesConverter.cs" />
     <Compile Include="Rendering\Converters\DefaultEntityConverter.cs" />
     <Compile Include="Rendering\Converters\DefaultSolidConverter.cs" />
@@ -265,6 +266,7 @@
     <Compile Include="Rendering\Converters\EntityNameConverter.cs" />
     <Compile Include="Rendering\Converters\EntitySpriteConverter.cs" />
     <Compile Include="Rendering\Converters\HiddenConverter.cs" />
+    <Compile Include="Rendering\Converters\ViewportTextConverter.cs" />
     <Compile Include="Rendering\DefaultTextureProvider.cs" />
     <Compile Include="Rendering\Converters\IMapObjectSceneConverter.cs" />
     <Compile Include="Rendering\IViewportEventListener.cs" />
