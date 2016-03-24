@@ -438,11 +438,17 @@ namespace Sledge.Providers.Texture
                     else if (bitsPerPixel == 16 || bitsPerPixel == 15)
                     {
                         // 0x ARRRRRGG GGGBBBBB
-                        var bit1 = imageData[imagePos + 1];
-                        var bit2 = imageData[imagePos + 0];
-                        buffer[bufferPos + 0] = (byte)((bit2 & 0x1F) << 3);
-                        buffer[bufferPos + 1] = (byte)(((bit1 & 0x03) << 6) | ((bit2 & 0xE0) >> 2));
-                        buffer[bufferPos + 2] = (byte)((bit1 & 0x7C) << 1);
+                        // It seems the best way to convert 5 bytes to 8 is to copy the upper bits to the lower like this:
+                        // 0x000ABCDE -> 0xABCDEABC
+                        var bit1 = (uint)imageData[imagePos + 1];
+                        var bit2 = (uint)imageData[imagePos + 0];
+                        var pixel = bit1 << 8 | bit2;
+                        var redValue = (pixel & 0x7C00) >> 10;
+                        var greenValue = (pixel & 0x03E0) >> 5;
+                        var blueValue = (pixel & 0x001F);
+                        buffer[bufferPos + 0] = (byte)(blueValue << 3 | blueValue >> 2);
+                        buffer[bufferPos + 1] = (byte)(greenValue << 3 | greenValue >> 2);
+                        buffer[bufferPos + 2] = (byte)(redValue << 3 | redValue >> 2);
                         buffer[bufferPos + 3] = imageDescriptorAlpha != 3 || bitsPerPixel == 15 ? (byte)255 : (byte)((bit1 & 0x80) == 1 ? 255 : 0);
                     }
                     else if (bitsPerPixel == 8)
