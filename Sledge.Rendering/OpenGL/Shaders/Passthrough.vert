@@ -7,6 +7,7 @@ layout(location = 3) in vec4 materialColor;
 layout(location = 4) in vec4 accentColor;
 layout(location = 5) in vec4 tintColor;
 layout(location = 6) in uint flags;
+layout(location = 7) in float zIndex;
 
 smooth out vec4 vertexPosition;
 smooth out vec4 vertexNormal;
@@ -16,6 +17,7 @@ smooth out vec4 vertexAccentColor;
 smooth out vec4 vertexTintColor;
 flat out uint vertexFlags;
 
+uniform bool orthographic;
 uniform mat4 selectionTransform;
 uniform mat4 modelMatrix;
 uniform mat4 viewportMatrix;
@@ -50,4 +52,5 @@ void main()
     vertexFlags = flags;
 
 	gl_Position = viewportPos;
+	if (orthographic) gl_Position.z = zIndex / -100f;
 }

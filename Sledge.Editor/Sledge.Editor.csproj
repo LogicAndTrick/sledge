@@ -265,6 +265,7 @@
     <Compile Include="Rendering\Converters\EntityDecalConverter.cs" />
     <Compile Include="Rendering\Converters\EntityNameConverter.cs" />
     <Compile Include="Rendering\Converters\EntitySpriteConverter.cs" />
+    <Compile Include="Rendering\Converters\GridConverter.cs" />
     <Compile Include="Rendering\Converters\HiddenConverter.cs" />
     <Compile Include="Rendering\Converters\ViewportTextConverter.cs" />
     <Compile Include="Rendering\DefaultTextureProvider.cs" />

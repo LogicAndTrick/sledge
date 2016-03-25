@@ -39,8 +39,6 @@ namespace Sledge.Rendering.OpenGL.Arrays
             const float far = 1000000;
             var vpMatrix = Matrix4.CreateOrthographicOffCenter(0, viewport.Control.Width, viewport.Control.Height, 0, near, far);
 
-            GL.Disable(EnableCap.DepthTest);
-
             shader.Bind();
             
             shader.SelectionTransform = renderer.SelectionTransform;
@@ -66,8 +64,6 @@ namespace Sledge.Rendering.OpenGL.Arrays
             RenderPositionType(renderer, shader, PositionType.Anchored);
 
             shader.Unbind();
-
-            GL.Enable(EnableCap.DepthTest);
         }
 
         private void RenderPositionType(IRenderer renderer, Passthrough shader, PositionType type)
@@ -170,7 +166,8 @@ namespace Sledge.Rendering.OpenGL.Arrays
                 MaterialColor = face.Material.Color.ToAbgr(),
                 AccentColor = face.AccentColor.ToAbgr(),
                 TintColor = Color.White.ToAbgr(),
-                Flags = ConvertVertexFlags(face)
+                Flags = ConvertVertexFlags(face),
+                ZIndex = face.ZIndex
             });
         }
 
@@ -182,7 +179,8 @@ namespace Sledge.Rendering.OpenGL.Arrays
                 MaterialColor = line.Color.ToAbgr(),
                 AccentColor = line.Color.ToAbgr(),
                 TintColor = Color.White.ToAbgr(),
-                Flags = ConvertVertexFlags(line)
+                Flags = ConvertVertexFlags(line),
+                ZIndex = line.ZIndex
             });
         }
 

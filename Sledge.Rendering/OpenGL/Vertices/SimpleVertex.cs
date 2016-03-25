@@ -25,5 +25,7 @@ namespace Sledge.Rendering.OpenGL.Vertices
 
         [ArrayIndex(VertexAttribIntegerType.UnsignedInt)]
         public VertexFlags Flags;
+        
+        public float ZIndex;
     }
 }

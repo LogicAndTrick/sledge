@@ -26,6 +26,7 @@ namespace Sledge.Rendering.Scenes.Elements
         public IViewport Viewport { get; set; }
         public PositionType PositionType { get; set; }
         public bool DepthTested { get; set; }
+        public int ZIndex { get; set; }
         public bool Smooth { get; set; }
 
         protected Element(PositionType positionType)

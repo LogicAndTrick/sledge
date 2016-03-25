@@ -24,6 +24,7 @@ namespace Sledge.Editor.Rendering
             Converters.Add(new CenterHandlesConverter());
             Converters.Add(new ViewportTextConverter());
             Converters.Add(new AxisLinesConverter());
+            Converters.Add(new GridConverter());
             // : entity model
         }
 

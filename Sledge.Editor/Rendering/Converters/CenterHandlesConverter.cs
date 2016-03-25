@@ -20,6 +20,7 @@ namespace Sledge.Editor.Rendering.Converters
 
         public bool Supports(MapObject obj)
         {
+            return false;
             if (!Sledge.Settings.Select.DrawCenterHandles) return false;
             return obj is Entity || obj is Solid;
         }
