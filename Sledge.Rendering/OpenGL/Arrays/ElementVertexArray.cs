@@ -47,6 +47,8 @@ namespace Sledge.Rendering.OpenGL.Arrays
             shader.ViewportMatrix = camera.GetViewportMatrix(viewport.Control.Width, viewport.Control.Height);
             shader.Orthographic = camera.Flags.HasFlag(CameraFlags.Orthographic);
             shader.UseAccentColor = false;
+            shader.Viewport = new Vector2(viewport.Control.Width, viewport.Control.Height);
+            shader.Zoom = camera.Zoom;
 
             RenderPositionType(renderer, shader, PositionType.World);
 
@@ -56,6 +58,8 @@ namespace Sledge.Rendering.OpenGL.Arrays
             shader.ViewportMatrix = vpMatrix;
             shader.Orthographic = camera.Flags.HasFlag(CameraFlags.Orthographic);
             shader.UseAccentColor = false;
+            shader.Viewport = new Vector2(viewport.Control.Width, viewport.Control.Height);
+            shader.Zoom = 1;
 
             RenderPositionType(renderer, shader, PositionType.Screen);
 
@@ -148,12 +152,13 @@ namespace Sledge.Rendering.OpenGL.Arrays
             }
         }
 
-        private VertexFlags ConvertVertexFlags(Element element)
+        private VertexFlags ConvertVertexFlags(Element element, Position vert)
         {
             var flags = VertexFlags.None;
             if (!element.CameraFlags.HasFlag(CameraFlags.Orthographic)) flags |= VertexFlags.InvisibleOrthographic;
             if (!element.CameraFlags.HasFlag(CameraFlags.Perspective)) flags |= VertexFlags.InvisiblePerspective;
             if (element.IsSelected) flags |= VertexFlags.Selected;
+            if (vert.Normalised) flags |= VertexFlags.Normalised;
             return flags;
         }
 
@@ -166,8 +171,9 @@ namespace Sledge.Rendering.OpenGL.Arrays
                 MaterialColor = face.Material.Color.ToAbgr(),
                 AccentColor = face.AccentColor.ToAbgr(),
                 TintColor = Color.White.ToAbgr(),
-                Flags = ConvertVertexFlags(face),
-                ZIndex = face.ZIndex
+                Flags = ConvertVertexFlags(face, vert.Position),
+                ZIndex = face.ZIndex,
+                Offset = ConvertOffert(vert.Position.Offset, face.PositionType)
             });
         }
 
@@ -179,30 +185,33 @@ namespace Sledge.Rendering.OpenGL.Arrays
                 MaterialColor = line.Color.ToAbgr(),
                 AccentColor = line.Color.ToAbgr(),
                 TintColor = Color.White.ToAbgr(),
-                Flags = ConvertVertexFlags(line),
-                ZIndex = line.ZIndex
+                Flags = ConvertVertexFlags(line, vert),
+                ZIndex = line.ZIndex,
+                Offset = ConvertOffert(vert.Offset, line.PositionType)
             });
+        }
+
+        private Vector3 ConvertOffert(Vector3 offset, PositionType type)
+        {
+            if (type == PositionType.World)
+            {
+                return _viewport.Camera.Expand(new Vector3(offset.X, -offset.Y, offset.Z));
+            }
+            else if (type == PositionType.Screen)
+            {
+                return offset;
+            }
+            return Vector3.Zero;
         }
 
         private Vector3 Convert(Position position, PositionType type)
         {
-            if (type == PositionType.World)
-            {
-                var e = position.Offset;
-                var off = new Vector3(_viewport.Camera.PixelsToUnits(e.X), -_viewport.Camera.PixelsToUnits(e.Y), _viewport.Camera.PixelsToUnits(e.Z));
-                return position.Location + _viewport.Camera.Expand(off);
-            }
-            else if (type == PositionType.Screen)
-            {
-                if (position.Normalised) return new Vector3(position.Location.X * _viewport.Control.Width, position.Location.Y * _viewport.Control.Height, 0) + position.Offset;
-                else return position.Location + position.Offset;
-            }
-            else if (type == PositionType.Anchored)
+            if (type == PositionType.Anchored)
             {
                 var transformed = _viewport.Camera.WorldToScreen(position.Location, _viewport.Control.Width, _viewport.Control.Height);
                 return new Vector3(transformed.X, _viewport.Control.Height - transformed.Y, transformed.Z) + position.Offset;
             }
-            return Vector3.Zero;
+            return position.Location;
         }
     }
 }

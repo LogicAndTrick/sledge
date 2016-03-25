@@ -27,6 +27,7 @@ namespace Sledge.Rendering.Scenes.Elements
         public Color Color { get; set; }
         public int Radius { get; set; }
         public HandleType Type { get; set; }
+        public override string ElementGroup { get { return "General"; } }
 
         public HandleElement(PositionType pType, HandleType hType, Position position, int radius) : base(pType)
         {
@@ -36,6 +37,16 @@ namespace Sledge.Rendering.Scenes.Elements
             LineColor = Color.Black;
             Color = Color.White;
             LineWidth = 1;
+        }
+
+        public override bool RequiresValidation(IViewport viewport, IRenderer renderer)
+        {
+            return true;
+        }
+
+        public override void Validate(IViewport viewport, IRenderer renderer)
+        {
+            //
         }
 
         public override IEnumerable<LineElement> GetLines(IViewport viewport, IRenderer renderer)

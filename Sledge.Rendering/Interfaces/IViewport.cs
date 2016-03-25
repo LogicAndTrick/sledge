@@ -10,6 +10,7 @@ namespace Sledge.Rendering.Interfaces
         Control Control { get; }
         Camera Camera { get; set; }
         bool IsFocused { get; }
+        string ViewportHandle { get; }
 
         event FrameEventHandler Update;
         event FrameEventHandler Render;

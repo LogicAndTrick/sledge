@@ -4,6 +4,7 @@ using System.Linq;
 using Sledge.DataStructures.MapObjects;
 using Sledge.Editor.Documents;
 using Sledge.Editor.Extensions;
+using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Interfaces;
 using Sledge.Rendering.Scenes.Elements;
 
@@ -20,7 +21,6 @@ namespace Sledge.Editor.Rendering.Converters
 
         public bool Supports(MapObject obj)
         {
-            return false;
             if (!Sledge.Settings.Select.DrawCenterHandles) return false;
             return obj is Entity || obj is Solid;
         }
@@ -50,6 +50,8 @@ namespace Sledge.Editor.Rendering.Converters
 
         private class CenterHandleTextElement : TextElement
         {
+            public override string ElementGroup { get { return "CenterHandles"; } }
+
             public CenterHandleTextElement(MapObject obj) : base(PositionType.World, obj.BoundingBox.Center.ToVector3(), "Å~", Color.FromArgb(192, obj.Colour))
             {
 
@@ -59,12 +61,32 @@ namespace Sledge.Editor.Rendering.Converters
             {
                 Location = obj.BoundingBox.Center.ToVector3();
                 Color = Color.FromArgb(192, obj.Colour);
+                ClearValue("Validated");
+            }
+
+            public override bool RequiresValidation(IViewport viewport, IRenderer renderer)
+            {
+                if (Sledge.Settings.Select.CenterHandlesActiveViewportOnly && viewport.IsFocused != GetValue<bool>(viewport, "Focused"))
+                {
+                    return true;
+                }
+                return !GetValue<bool>(viewport, "Validated");
+            }
+
+            public override void Validate(IViewport viewport, IRenderer renderer)
+            {
+                SetValue(viewport, "Focused", viewport.IsFocused);
+                SetValue(viewport, "Validated", true);
             }
 
             public override IEnumerable<FaceElement> GetFaces(IViewport viewport, IRenderer renderer)
             {
                 if (Sledge.Settings.Select.CenterHandlesActiveViewportOnly && !viewport.IsFocused) return new FaceElement[0];
-                return base.GetFaces(viewport, renderer);
+                return base.GetFaces(viewport, renderer).Select(x =>
+                {
+                    x.CameraFlags = CameraFlags.Orthographic;
+                    return x;
+                });
             }
         }
     }

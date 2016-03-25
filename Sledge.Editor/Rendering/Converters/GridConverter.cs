@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using OpenTK;
@@ -52,7 +53,7 @@ namespace Sledge.Editor.Rendering.Converters
             public int Low { get; private set; }
             public int High { get; private set; }
             public float Step { get; private set; }
-
+            public override string ElementGroup { get { return "Grid"; } }
 
             public GridElement(Document doc) : base(PositionType.World)
             {
@@ -65,6 +66,33 @@ namespace Sledge.Editor.Rendering.Converters
                 Low = doc.GameData.MapSizeLow;
                 High = doc.GameData.MapSizeHigh;
                 Step = (float) doc.Map.GridSpacing;
+                ClearValue("Validated");
+            }
+
+            private float GetActualStep(IViewport viewport)
+            {
+                var step = Step;
+                var actualDist = step * viewport.Camera.Zoom;
+                if (Grid.HideSmallerOn)
+                {
+                    while (actualDist < Grid.HideSmallerThan)
+                    {
+                        step *= Grid.HideFactor;
+                        actualDist *= Grid.HideFactor;
+                    }
+                }
+                return step;
+            }
+
+            public override bool RequiresValidation(IViewport viewport, IRenderer renderer)
+            {
+                return !GetValue<bool>(viewport, "Validated") || Math.Abs(GetValue(viewport, "ActualStep", 0f) - GetActualStep(viewport)) > 0.001;
+            }
+
+            public override void Validate(IViewport viewport, IRenderer renderer)
+            {
+                SetValue(viewport, "Validated", true);
+                SetValue(viewport, "ActualStep", GetActualStep(viewport));
             }
 
             public override IEnumerable<LineElement> GetLines(IViewport viewport, IRenderer renderer)
@@ -74,16 +102,7 @@ namespace Sledge.Editor.Rendering.Converters
 
                 var lower = Low;
                 var upper = High;
-                var step = Step;
-                var actualDist = step * oc.Zoom;
-                if (Grid.HideSmallerOn)
-                {
-                    while (actualDist < Grid.HideSmallerThan)
-                    {
-                        step *= Grid.HideFactor;
-                        actualDist *= Grid.HideFactor;
-                    }
-                }
+                var step = GetActualStep(viewport);
 
                 var vmin = viewport.Camera.Flatten(viewport.Camera.ScreenToWorld(new Vector3(0, viewport.Control.Height, 0), viewport.Control.Width, viewport.Control.Height));
                 var vmax = viewport.Camera.Flatten(viewport.Camera.ScreenToWorld(new Vector3(viewport.Control.Width, 0, 0), viewport.Control.Width, viewport.Control.Height));
@@ -93,7 +112,7 @@ namespace Sledge.Editor.Rendering.Converters
 
                 for (float f = lower; f <= upper; f += step)
                 {
-                    if ((f < vmin.X || f > vmax.X) && (f < vmin.Y || f > vmax.Y)) continue;
+                    //if ((f < vmin.X || f > vmax.X) && (f < vmin.Y || f > vmax.Y)) continue;
                     var i = (int) f;
                     var c = Grid.GridLines;
                     if (i == 0) c = Grid.ZeroLines;

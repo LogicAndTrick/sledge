@@ -48,7 +48,7 @@ namespace Sledge.Rendering.Cameras
             }
         }
 
-        public float Zoom
+        public override float Zoom
         {
             get { return _zoom; }
             set

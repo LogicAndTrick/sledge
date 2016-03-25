@@ -39,6 +39,7 @@ namespace Sledge.Rendering.Cameras
         }
 
         public abstract Vector3 EyeLocation { get; }
+        public abstract float Zoom { get; set; }
 
         public abstract Matrix4 GetCameraMatrix();
         public abstract Matrix4 GetViewportMatrix(int width, int height);

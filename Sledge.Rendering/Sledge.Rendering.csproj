@@ -78,6 +78,7 @@
     <Compile Include="Internal\InternalTextures.cs" />
     <Compile Include="Materials\StringTextureManager.cs" />
     <Compile Include="MathFunctions.cs" />
+    <Compile Include="OpenGL\Arrays\ElementArrayCollection.cs" />
     <Compile Include="OpenGL\Arrays\ElementVertexArray.cs" />
     <Compile Include="OpenGL\Arrays\ModelVertexArray.cs" />
     <Compile Include="OpenGL\Arrays\PolygonProperties.cs" />

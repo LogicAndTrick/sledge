@@ -11,6 +11,7 @@ namespace Sledge.Rendering.Scenes.Elements
         public float Width { get; set; }
         public Color Color { get; private set; }
         public List<Position> Vertices { get; set; }
+        public override string ElementGroup { get { return "General"; } }
 
         public LineElement(PositionType type, Color color, List<Position> vertices) : base(type)
         {
@@ -21,6 +22,16 @@ namespace Sledge.Rendering.Scenes.Elements
             DepthTested = false;
             Stippled = false;
             CameraFlags = CameraFlags.All;
+        }
+
+        public override bool RequiresValidation(IViewport viewport, IRenderer renderer)
+        {
+            return true;
+        }
+
+        public override void Validate(IViewport viewport, IRenderer renderer)
+        {
+            //
         }
 
         public override IEnumerable<LineElement> GetLines(IViewport viewport, IRenderer renderer)

@@ -92,6 +92,8 @@ namespace Sledge.Rendering.OpenGL.Arrays
             shader.ViewportMatrix = vpMatrix;
             shader.Orthographic = camera.Flags.HasFlag(CameraFlags.Orthographic);
             shader.UseAccentColor = !options.RenderFacePolygonTextures;
+            shader.Viewport = new Vector2(viewport.Control.Width, viewport.Control.Height);
+            shader.Zoom = camera.Zoom;
 
             // todo
             // options.RenderFacePolygonLighting
@@ -176,7 +178,9 @@ namespace Sledge.Rendering.OpenGL.Arrays
             shader.ViewportMatrix = vpMatrix;
             shader.Orthographic = camera.Flags.HasFlag(CameraFlags.Orthographic);
             shader.UseAccentColor = !options.RenderFacePolygonTextures;
-            
+            shader.Viewport = new Vector2(viewport.Control.Width, viewport.Control.Height);
+            shader.Zoom = camera.Zoom;
+
             GL.DepthMask(false);
 
             // Render transparent polygons, sorted back-to-front

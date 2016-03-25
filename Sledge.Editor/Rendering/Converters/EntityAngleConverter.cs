@@ -40,30 +40,9 @@ namespace Sledge.Editor.Rendering.Converters
 
         public bool Convert(SceneMapObject smo, Document document, MapObject obj)
         {
-            var cen = obj.BoundingBox.Center.ToVector3();
-
-            var transformed = GetEndPoint(obj);
-
-            var el = new EntityAnglesLineElement(PositionType.World, obj.Colour, new List<Position>
-            {
-                new Position(cen),
-                new Position(transformed.ToVector3())
-            });
+            var el = new EntityAnglesLineElement(obj);
             smo.SceneObjects.Add(new Holder(), el);
             return true;
-        }
-
-        private static Coordinate GetEndPoint(MapObject obj)
-        {
-            var angles = obj.GetEntityData().GetPropertyCoordinate("angles");
-            angles = new Coordinate(DMath.DegreesToRadians(angles.Z), DMath.DegreesToRadians(angles.X),
-                DMath.DegreesToRadians(angles.Y));
-            var m =
-                new UnitMatrixMult(Matrix4.CreateRotationX((float) angles.X) * Matrix4.CreateRotationY((float) angles.Y) *
-                                   Matrix4.CreateRotationZ((float) angles.Z));
-            var min = Math.Min(obj.BoundingBox.Width, Math.Min(obj.BoundingBox.Height, obj.BoundingBox.Length));
-            var transformed = obj.BoundingBox.Center + m.Transform(Coordinate.UnitX) * min * 0.4m;
-            return transformed;
         }
 
         public bool Update(SceneMapObject smo, Document document, MapObject obj)
@@ -73,8 +52,7 @@ namespace Sledge.Editor.Rendering.Converters
                 var ela = smo.SceneObjects.First(x => x.Key is Holder).Value as EntityAnglesLineElement;
                 if (ela != null)
                 {
-                    ela.Vertices[0].Location = obj.BoundingBox.Center.ToVector3();
-                    ela.Vertices[1].Location = GetEndPoint(obj).ToVector3();
+                    ela.Update(obj);
                     return true;
                 }
             }
@@ -85,9 +63,33 @@ namespace Sledge.Editor.Rendering.Converters
         
         private class EntityAnglesLineElement : LineElement
         {
-            public EntityAnglesLineElement(PositionType type, Color color, List<Position> vertices) : base(type, color, vertices)
+            public override string ElementGroup { get { return "Entity"; } }
+
+            public EntityAnglesLineElement(MapObject obj) : base(PositionType.World, obj.Colour, new List<Position>
+                                                            {
+                                                                new Position(obj.BoundingBox.Center.ToVector3()),
+                                                                new Position(GetEndPoint(obj))
+                                                            })
             {
                 CameraFlags = CameraFlags.Orthographic;
+            }
+
+            public void Update(MapObject obj)
+            {
+                Vertices[0].Location = obj.BoundingBox.Center.ToVector3();
+                Vertices[1].Location = GetEndPoint(obj);
+                ClearValue("Validated");
+            }
+
+            public override bool RequiresValidation(IViewport viewport, IRenderer renderer)
+            {
+                return !GetValue<bool>(viewport, "Validated") || GetValue(viewport, "Zoomed", viewport.Camera.Zoom >= 0.5) != viewport.Camera.Zoom >= 0.5;
+            }
+
+            public override void Validate(IViewport viewport, IRenderer renderer)
+            {
+                SetValue(viewport, "Zoomed", viewport.Camera.Zoom >= 0.5);
+                SetValue(viewport, "Validated", true);
             }
 
             public override IEnumerable<LineElement> GetLines(IViewport viewport, IRenderer renderer)
@@ -97,6 +99,19 @@ namespace Sledge.Editor.Rendering.Converters
                 if (ortho != null && ortho.Zoom < 0.5) return new LineElement[0];
 
                 return base.GetLines(viewport, renderer);
+            }
+
+            private static Vector3 GetEndPoint(MapObject obj)
+            {
+                var angles = obj.GetEntityData().GetPropertyCoordinate("angles");
+                angles = new Coordinate(DMath.DegreesToRadians(angles.Z), DMath.DegreesToRadians(angles.X),
+                    DMath.DegreesToRadians(angles.Y));
+                var m =
+                    new UnitMatrixMult(Matrix4.CreateRotationX((float)angles.X) * Matrix4.CreateRotationY((float)angles.Y) *
+                                       Matrix4.CreateRotationZ((float)angles.Z));
+                var min = Math.Min(obj.BoundingBox.Width, Math.Min(obj.BoundingBox.Height, obj.BoundingBox.Length));
+                var transformed = obj.BoundingBox.Center + m.Transform(Coordinate.UnitX) * min * 0.4m;
+                return transformed.ToVector3();
             }
         }
     }

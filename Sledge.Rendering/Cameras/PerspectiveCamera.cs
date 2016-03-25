@@ -113,6 +113,7 @@ namespace Sledge.Rendering.Cameras
         }
 
         public override Vector3 EyeLocation { get { return Position; } }
+        public override float Zoom { get { return 1; } set {} }
 
         public override Matrix4 GetCameraMatrix()
         {

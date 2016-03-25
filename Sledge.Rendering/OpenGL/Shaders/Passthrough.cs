@@ -14,6 +14,15 @@ namespace Sledge.Rendering.OpenGL.Shaders
         public bool Orthographic { set { Shader.Set("orthographic", value); } }
         public bool ShowGrid { set { Shader.Set("showGrid", value); } }
         public float GridSpacing { set { Shader.Set("gridSpacing", value); } }
+        public Vector2 Viewport { set { Shader.Set("viewportSize", value); } }
+
+        public float Zoom
+        {
+            set
+            {
+                Shader.Set("viewportZoom", value);
+            }
+        }
 
         private const string ShaderName = "Passthrough";
 
@@ -21,6 +30,7 @@ namespace Sledge.Rendering.OpenGL.Shaders
         {
             Shader.Set("currentTexture", 0);
             Shader.Set("useAccentColor", false);
+            Shader.Set("viewportZoom", 1);
         }
 
         public override string Name

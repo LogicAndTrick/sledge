@@ -14,6 +14,7 @@ namespace Sledge.Rendering.Scenes.Elements
         public Material Material { get; set; }
         public Color AccentColor { get; set; }
         public List<PositionVertex> Vertices { get; set; }
+        public override string ElementGroup { get { return "General"; } }
 
         public FaceElement(PositionType type, Material material, IEnumerable<PositionVertex> vertices)
             : base(type)
@@ -23,6 +24,16 @@ namespace Sledge.Rendering.Scenes.Elements
             AccentColor = material.Color;
             CameraFlags = CameraFlags.All;
             RenderFlags = RenderFlags.Polygon;
+        }
+
+        public override bool RequiresValidation(IViewport viewport, IRenderer renderer)
+        {
+            return true;
+        }
+
+        public override void Validate(IViewport viewport, IRenderer renderer)
+        {
+            //
         }
 
         public override IEnumerable<LineElement> GetLines(IViewport viewport, IRenderer renderer)

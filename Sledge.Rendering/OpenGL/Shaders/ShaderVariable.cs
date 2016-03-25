@@ -62,5 +62,12 @@ namespace Sledge.Rendering.OpenGL.Shaders
             Value = vec;
             GL.Uniform3(Location, ref vec);
         }
+
+        public void Set(Vector2 vec)
+        {
+            if (Value != null && Value.Equals(vec)) return;
+            Value = vec;
+            GL.Uniform2(Location, ref vec);
+        }
     }
 }

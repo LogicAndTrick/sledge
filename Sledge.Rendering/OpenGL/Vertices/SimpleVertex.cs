@@ -27,5 +27,7 @@ namespace Sledge.Rendering.OpenGL.Vertices
         public VertexFlags Flags;
         
         public float ZIndex;
+
+        public Vector3 Offset;
     }
 }

@@ -231,7 +231,7 @@ namespace Sledge.Rendering.OpenGL
         private class ViewportData : IDisposable
         {
             public Framebuffer Framebuffer { get; private set; }
-            public ElementVertexArray ElementArray { get; private set; }
+            public ElementArrayCollection ElementArray { get; private set; }
             public bool Initialised { get; set; }
             public int Width { get; set; }
             public int Height { get; set; }
@@ -241,7 +241,7 @@ namespace Sledge.Rendering.OpenGL
                 Width = viewport.Control.Width;
                 Height = viewport.Control.Height;
                 Framebuffer = new Framebuffer(Width, Height);
-                ElementArray = new ElementVertexArray(renderer, viewport, new Element[0]);
+                ElementArray = new ElementArrayCollection(renderer, viewport);
                 Initialised = false;
             }
 

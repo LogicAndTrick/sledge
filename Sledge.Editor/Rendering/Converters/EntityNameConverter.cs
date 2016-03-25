@@ -52,6 +52,7 @@ namespace Sledge.Editor.Rendering.Converters
         /// </summary>
         private class EntityTextElement : TextElement
         {
+            public override string ElementGroup { get { return "Entity"; } }
             public Box Box { get; set; }
 
             public EntityTextElement(Entity entity) : base(PositionType.World, entity.BoundingBox.Center.ToVector3(), entity.EntityData.Name, entity.Colour)
@@ -67,6 +68,18 @@ namespace Sledge.Editor.Rendering.Converters
                 Text = entity.EntityData.Name;
                 Color = entity.Colour;
                 Box = entity.BoundingBox;
+                ClearValue("Validated");
+            }
+
+            public override bool RequiresValidation(IViewport viewport, IRenderer renderer)
+            {
+                return !GetValue<bool>(viewport, "Validated") || GetValue(viewport, "Zoomed", viewport.Camera.Zoom >= 1) != viewport.Camera.Zoom >= 1;
+            }
+
+            public override void Validate(IViewport viewport, IRenderer renderer)
+            {
+                SetValue(viewport, "Zoomed", viewport.Camera.Zoom >= 1);
+                SetValue(viewport, "Validated", true);
             }
 
             public override IEnumerable<FaceElement> GetFaces(IViewport viewport, IRenderer renderer)
@@ -84,6 +97,7 @@ namespace Sledge.Editor.Rendering.Converters
                 // Same code as in the base class, without the screen clipping or background colour stuff
                 var el = renderer.StringTextureManager.GetElement(Text, Color, PositionType, loc, AnchorX, AnchorY, FontName, FontSize, FontStyle);
                 foreach (var v in el.Vertices) v.Position.Offset += ScreenOffset;
+                el.CameraFlags = CameraFlags.Orthographic;
                 yield return el;
             }
         }

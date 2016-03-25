@@ -11,5 +11,6 @@ namespace Sledge.Rendering.OpenGL.Vertices
         InvisiblePerspective = 1 << 1,
 
         Selected = 1 << 2,
+        Normalised = 1 << 3,
     }
 }

@@ -97,6 +97,11 @@ namespace Sledge.Rendering.OpenGL.Shaders
             GetVariable(name).Set(vec);
         }
 
+        public void Set(string name, Vector2 vec)
+        {
+            GetVariable(name).Set(vec);
+        }
+
         public void Set(string name, Matrix4[] matrix)
         {
             GetVariable(name).Set(matrix);

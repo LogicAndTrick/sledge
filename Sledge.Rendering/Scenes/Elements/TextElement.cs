@@ -23,6 +23,7 @@ namespace Sledge.Rendering.Scenes.Elements
         public Color BackgroundColor { get; set; }
         public bool ClampToViewport { get; set; }
         public Vector3 ScreenOffset { get; set; }
+        public override string ElementGroup { get { return "General"; } }
 
         public TextElement(PositionType positionType, Vector3 location, string text, Color color) : base(positionType)
         {
@@ -36,6 +37,16 @@ namespace Sledge.Rendering.Scenes.Elements
             AnchorX = AnchorY = 0.5f;
             ClampToViewport = false;
             ScreenOffset = Vector3.Zero;
+        }
+
+        public override bool RequiresValidation(IViewport viewport, IRenderer renderer)
+        {
+            return true;
+        }
+
+        public override void Validate(IViewport viewport, IRenderer renderer)
+        {
+            //
         }
 
         public Size GetSize(IRenderer renderer)

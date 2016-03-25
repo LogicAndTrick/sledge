@@ -46,6 +46,16 @@ namespace Sledge.Editor.Rendering.Converters
                 AnchorX = AnchorY = 0;
             }
 
+            public override bool RequiresValidation(IViewport viewport, IRenderer renderer)
+            {
+                return !GetValue<bool>(viewport, "Validated");
+            }
+
+            public override void Validate(IViewport viewport, IRenderer renderer)
+            {
+                SetValue(viewport, "Validated", true);
+            }
+
             public override IEnumerable<FaceElement> GetFaces(IViewport viewport, IRenderer renderer)
             {
                 var text = "";

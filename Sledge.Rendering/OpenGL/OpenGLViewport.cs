@@ -17,6 +17,14 @@ namespace Sledge.Rendering.OpenGL
         private int UnfocusedUpdateCounter { get; set; }
         public Camera Camera { get; set; }
 
+        private static int _viewportCounter;
+        private string _vpHandle;
+
+        public string ViewportHandle
+        {
+            get { return _vpHandle ?? (_vpHandle = "OpenGLViewport_" + _viewportCounter++); }
+        }
+
         #region Events
 
         public Control Control { get { return this; } }
