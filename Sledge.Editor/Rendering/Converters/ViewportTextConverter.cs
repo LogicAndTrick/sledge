@@ -72,9 +72,13 @@ namespace Sledge.Editor.Rendering.Converters
                     text = "2D " + oc.Type;
                 }
                 var el = renderer.StringTextureManager.GetElement(text, Color, PositionType, Location, AnchorX, AnchorY, FontName, FontSize, FontStyle);
+                el.ZIndex = 11;
                 if (BackgroundColor.A > 0)
                 {
-                    yield return new FaceElement(el.PositionType, Material.Flat(BackgroundColor), el.Vertices.Select(x => x.Clone()));
+                    yield return new FaceElement(el.PositionType, Material.Flat(BackgroundColor), el.Vertices.Select(x => x.Clone()))
+                    {
+                        ZIndex = 10
+                    };
                 }
                 yield return el;
             }

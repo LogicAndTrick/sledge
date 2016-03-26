@@ -82,7 +82,7 @@ namespace Sledge.Editor.Tools2.DraggableTool
                 new PositionVertex(new Position(cam.Expand(new Vector3(st.X, en.Y, 0))), 0, 0),
                 new PositionVertex(new Position(cam.Expand(new Vector3(en.X, en.Y, 0))), 0, 0),
                 new PositionVertex(new Position(cam.Expand(new Vector3(en.X, st.Y, 0))), 0, 0)
-            });
+            }) { ZIndex = -20 };
             if (Handle == ResizeHandle.Center && SnappedMoveOrigin != null)
             {
                 const int size = 6;

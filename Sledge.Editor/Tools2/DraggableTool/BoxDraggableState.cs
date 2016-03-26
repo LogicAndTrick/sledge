@@ -123,7 +123,8 @@ namespace Sledge.Editor.Tools2.DraggableTool
                     yield return new FaceElement(PositionType.World, Material.Flat(GetRenderFillColour()), verts)
                     {
                         RenderFlags = RenderFlags.Polygon,
-                        CameraFlags = CameraFlags.Orthographic
+                        CameraFlags = CameraFlags.Orthographic,
+                        ZIndex = -20 // Put this face underneath the grid because it's semi-transparent
                     };
                     yield return new FaceElement(PositionType.World, Material.Flat(GetRenderBoxColour()), verts)
                     {
