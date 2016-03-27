@@ -1,0 +1,197 @@
+﻿JACKHAMMER JMF FILE FORMAT
+Version 119
+
+Type sizes:
+1 byte: char, byte, bool, string (per character)
+4 bytes: int, float
+
+String types:
+string(n): Fixed-length storage, null terminated value
+string: Variable-length storage, unterminated value, first byte indicates the length of the string
+
+Ints and floats are stored in little-endian form, meaning that the byte order has to be reversed if converting them manually.
+Most automatic binary readers should do this by default.
+
+Version 119 is a guess based on the first DWORD after the header equalling 119. It might not be a correct assumption.
+Apparently the format changes a lot and it may not be practical to support this format in a third party application.
+The unknown fields could very well be counts for arrays of objects I wasn't able to find, so this may be horribly broken.
+
+OBJECT FLAGS
+These are the flags that I could determine:
+
+1  - ?
+2  - Object is selected
+4  - ?
+8  - Object is hidden
+16 - ?
+Others?
+
+STRUCTURES
+
+Colour
+{
+	byte red
+	byte green
+	byte blue
+	byte alpha
+}
+
+Visgroup
+{
+	string name
+	int id
+	Colour colour
+	bool visible
+}
+
+Group
+{
+	int id
+	int parentGroupId
+	int flags
+	int numberOfObjectsInGroup
+	Colour colour
+}
+
+Vector
+{
+	float x
+	float y
+	float z
+}
+
+Vertex
+{
+	Vector Position
+	Vector TextureCoordinates
+}
+
+SurfaceProperties
+{
+    Vector xAxis
+    float xShift
+    Vector yAxis
+    float yShift
+    float xScale
+    float yScale
+    float rotation
+    int unknown1 // These could be floats or any other sort of 4 byte value
+    int unknown2
+    int unknown3
+    int unknown4
+    int surfaceFlags
+    string(64) textureName
+}
+
+Face
+{
+    int id // May not be an id
+    int numberOfPoints
+    SurfaceProperties texture
+    Vector normal
+    float distance
+    float unknown
+    Vertex[numberOfPoints] points
+}
+
+PatchPoint
+{
+    Vector position;
+    Vector normal;
+    Vector textureCoordinates;
+}
+
+Patch
+{
+    int width
+    int height
+    SurfaceProperties texture;
+    int arraySize
+	PatchPoint[arraySize][arraySize] patchPoints
+}
+
+Solid
+{
+    int numberOfPatches
+    int flags
+    int groupId
+    int groupId // group id seems to be repeated
+    Colour colour
+    int numberOfVisgroups
+    int[numberOfVisgroups] visgroups
+    int numberOfFaces
+    Face[numberOfFaces] faces
+    Patch[numberOfPatches] patches
+}
+
+Property
+{
+	string key
+	string value
+}
+
+Entity
+{
+	string className
+	Vector origin
+    int flags
+    int groupId
+    int groupId // group id seems to be repeated
+    Colour colour
+    string[12] properties // this seems to be a hard-coded list of strings, doesn't appear to be useful
+    int spawnflags;
+    byte[76] unknownEnd // 76 bytes of unknown... yeah, I know...
+    int keyValueCount;
+    KeyValue[keyValueCount] keyValues
+    int numberOfVisgroups
+    int[numberOfVisgroups] visgroups
+    int numberOfChildren;
+    Solid[numberOfChildren] children
+}
+
+PathNode
+{
+    string nameOverride
+    string fireOnPass
+    Vector position
+    Vector angles
+    int flags
+    Colour colour
+    int keyValueCount;
+    KeyValue[keyValueCount] keyValues
+}
+
+Path
+{
+	string className
+	string name
+	int direction
+	int flags
+	Colour colour
+	int numberOfNodes
+	PathNode[numberOfNodes] nodes
+}
+
+Header
+{
+    byte[4] header ('JHMF')
+    int version (119)
+    int unknown
+    int numberOfGroups
+    Group[numberOfGroups] groups
+    int numberOfVisgroups;
+    Visgroup[numberOfVisgroups] visgroups
+    Point cordonLow
+    Point cordonHigh
+    int unknown
+    int numberOfPaths
+    Path[numberOfPaths] paths
+}
+
+FILE FORMAT
+
+JMF
+{
+	Header header
+	Entity[] entities // keep reading entities until EOF
+}
