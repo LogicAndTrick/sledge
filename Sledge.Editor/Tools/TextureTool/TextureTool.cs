@@ -19,6 +19,7 @@ using Sledge.Editor.Rendering;
 using Sledge.Editor.UI;
 using Sledge.Providers.Texture;
 using Sledge.Rendering.Cameras;
+using Sledge.Rendering.Materials;
 using Sledge.Rendering.Scenes;
 using Sledge.Settings;
 using Face = Sledge.DataStructures.MapObjects.Face;

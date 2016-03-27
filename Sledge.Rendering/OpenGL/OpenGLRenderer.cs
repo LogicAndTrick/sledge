@@ -6,7 +6,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
-using Sledge.Common;
 using Sledge.Rendering.Cameras;
 using Sledge.Rendering.DataStructures.Models;
 using Sledge.Rendering.Interfaces;

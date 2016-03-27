@@ -8,6 +8,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using Sledge.Common;
 using Sledge.FileSystem;
+using Sledge.Rendering.Materials;
 
 namespace Sledge.Providers.Texture
 {

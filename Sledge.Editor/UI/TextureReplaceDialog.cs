@@ -10,6 +10,7 @@ using Sledge.Editor.Actions.MapObjects.Operations;
 using Sledge.Editor.Actions.MapObjects.Selection;
 using Sledge.Editor.Documents;
 using Sledge.Providers.Texture;
+using Sledge.Rendering.Materials;
 
 namespace Sledge.Editor.UI
 {

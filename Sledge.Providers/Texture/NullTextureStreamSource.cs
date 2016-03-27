@@ -5,6 +5,7 @@ using System.Drawing.Imaging;
 using System.Linq;
 using System.Text;
 using Sledge.Common;
+using Sledge.Rendering.Materials;
 
 namespace Sledge.Providers.Texture
 {

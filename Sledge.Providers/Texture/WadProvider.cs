@@ -8,6 +8,7 @@ using Sledge.Common;
 using System.Drawing;
 using Sledge.Packages;
 using Sledge.Packages.Wad;
+using Sledge.Rendering.Materials;
 
 namespace Sledge.Providers.Texture
 {

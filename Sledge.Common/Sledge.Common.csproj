@@ -47,13 +47,11 @@
     <Compile Include="Easings\EasingDirection.cs" />
     <Compile Include="Easings\EasingType.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
-    <Compile Include="ITexture.cs" />
     <Compile Include="Mediator\Mediator.cs" />
     <Compile Include="Mediator\IMediatorListener.cs" />
     <Compile Include="Mediator\MediatorExceptionEventArgs.cs" />
     <Compile Include="Mediator\MultiDictionary.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TextureFlags.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

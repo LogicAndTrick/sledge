@@ -7,6 +7,7 @@ using System.Linq;
 using Sledge.Common;
 using Sledge.Packages;
 using Sledge.Packages.Vpk;
+using Sledge.Rendering.Materials;
 
 namespace Sledge.Providers.Texture
 {

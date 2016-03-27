@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Sledge.Common
+namespace Sledge.Rendering.Materials
 {
     [Flags]
     public enum TextureFlags : uint

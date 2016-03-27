@@ -6,7 +6,6 @@ using System.Drawing.Text;
 using System.Linq;
 using System.Windows.Forms;
 using OpenTK;
-using Sledge.Common;
 using Sledge.Rendering.Interfaces;
 using Sledge.Rendering.Scenes.Elements;
 using Sledge.Rendering.Scenes.Renderables;

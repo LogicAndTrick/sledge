@@ -43,8 +43,6 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
@@ -77,6 +75,7 @@
     <Compile Include="Internal\InternalMaterials.cs" />
     <Compile Include="Internal\InternalTextures.cs" />
     <Compile Include="Materials\StringTextureManager.cs" />
+    <Compile Include="Materials\TextureFlags.cs" />
     <Compile Include="MathFunctions.cs" />
     <Compile Include="OpenGL\Arrays\ElementArrayCollection.cs" />
     <Compile Include="OpenGL\Arrays\ElementVertexArray.cs" />
@@ -164,12 +163,6 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Sledge.Common\Sledge.Common.csproj">
-      <Project>{5D414AC8-8B93-489F-9960-877923400FED}</Project>
-      <Name>Sledge.Common</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

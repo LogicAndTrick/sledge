@@ -16,6 +16,7 @@ using Sledge.Editor.Rendering;
 using Sledge.Editor.Tools;
 using Sledge.Editor.Tools2.DraggableTool;
 using Sledge.Providers.Texture;
+using Sledge.Rendering.Materials;
 using Sledge.Rendering.Scenes;
 using Sledge.Settings;
 using Select = Sledge.Settings.Select;

@@ -90,6 +90,10 @@
       <Project>{BB1AF818-8CCA-4BC8-A4A8-B7A0627B68DD}</Project>
       <Name>Sledge.Packages</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Sledge.Rendering\Sledge.Rendering.csproj">
+      <Project>{4da7f88d-64ff-4036-8a11-6175169da851}</Project>
+      <Name>Sledge.Rendering</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Map\RMF22.txt" />

@@ -8,6 +8,7 @@ using Sledge.DataStructures.MapObjects;
 using Sledge.Editor.Documents;
 using Sledge.Editor.UI;
 using Sledge.Providers.Texture;
+using Sledge.Rendering.Materials;
 using Sledge.Settings;
 using Sledge.Settings.Models;
 

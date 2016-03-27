@@ -10,6 +10,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using Sledge.Packages;
 using Sledge.Packages.Zip;
+using Sledge.Rendering.Materials;
 
 namespace Sledge.Providers.Texture
 {
