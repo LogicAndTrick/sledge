@@ -24,7 +24,6 @@ using Sledge.Editor.Enums;
 using Sledge.Editor.Extensions;
 using Sledge.Editor.Rendering;
 using Sledge.Editor.Tools;
-using Sledge.Editor.Tools.SelectTool;
 using Sledge.Editor.UI;
 using Sledge.Editor.UI.ObjectProperties;
 using Sledge.Editor.Visgroups;
@@ -172,7 +171,7 @@ namespace Sledge.Editor.Documents
                 if (result == HotkeyInterceptResult.Abort) return;
                 if (result == HotkeyInterceptResult.SwitchToSelectTool)
                 {
-                    ToolManager.Activate(typeof(SelectTool));
+                    ToolManager.Activate(HotkeyTool.Selection);
                 }
             }
             if (!Mediator.ExecuteDefault(this, message, data))
@@ -1048,7 +1047,7 @@ namespace Sledge.Editor.Documents
         public void ViewportRightClick(MapViewport vp, ViewportEvent e)
         {
             ViewportContextMenu.Instance.AddNonSelectionItems(_document, vp);
-            if (!_document.Selection.IsEmpty() && !_document.Selection.InFaceSelection && ToolManager.ActiveTool is SelectTool)
+            if (!_document.Selection.IsEmpty() && !_document.Selection.InFaceSelection && ToolManager.ActiveTool is Tools2.SelectTool.SelectTool)
             {
                 var selectionBoundingBox = _document.Selection.GetSelectionBoundingBox();
                 var point = vp.ScreenToWorld(e.X, vp.Height - e.Y);

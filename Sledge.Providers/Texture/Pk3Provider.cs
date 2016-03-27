@@ -4,7 +4,6 @@ using System.Globalization;
 using System.Linq;
 using System.IO;
 using Sledge.Common;
-using Sledge.Graphics.Helpers;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
@@ -193,53 +192,7 @@ namespace Sledge.Providers.Texture
             }
         }
 
-        public override void LoadTextures(IEnumerable<TextureItem> items)
-        {
-            var list = items.ToList();
-            var packages = list.Select(x => x.Package).Distinct().ToList();
-            var packs = packages.Select(x =>
-            {
-                if (!_roots.ContainsKey(x))
-                {
-                    var wp = new Pk3Stream(new ZipPackage(new FileInfo(x.PackageRoot)));
-                    _roots.Add(x, wp);
-                }
-                return _roots[x];
-
-            }).ToList();
-            var streams = packs.Select(x => x.StreamSource).ToList();
-
-            // Process the bitmaps in parallel
-            var bitmaps = list.AsParallel().Select(ti =>
-            {
-                var stream = streams.FirstOrDefault(x => PackageHasTexture(x, ti.Reference));
-                if (stream == null) return null;
-                
-                var bmp = OpenImage(stream, ti.Reference);
-                if (bmp == null) return null;
-
-                bool hasTransparency;
-                bmp = PostProcessBitmap(ti.Package.PackageRelativePath, ti.Name.ToLowerInvariant(), bmp, out hasTransparency);
-
-                return new
-                {
-                    Bitmap = bmp,
-                    Name = ti.Name.ToLowerInvariant(),
-                    ti.Width,
-                    ti.Height,
-                    ti.Flags
-                };
-            }).Where(x => x != null);
-
-            // TextureHelper.Create must run on the UI thread
-            foreach (var bmp in bitmaps)
-            {
-                TextureHelper.Create(bmp.Name, bmp.Bitmap, bmp.Width, bmp.Height, bmp.Flags);
-                bmp.Bitmap.Dispose();
-            }
-        }
-
-	    private static bool PackageHasTexture(IPackageStreamSource package, string name)
+        private static bool PackageHasTexture(IPackageStreamSource package, string name)
 	    {
 	        return package.HasFile((name ?? "").ToLowerInvariant());
 	    }

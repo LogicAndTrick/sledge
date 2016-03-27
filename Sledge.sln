@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sledge.Graphics", "Sledge.Graphics\Sledge.Graphics.csproj", "{614D4144-8920-4975-AC67-DBBA5CB1EB43}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sledge.Editor", "Sledge.Editor\Sledge.Editor.csproj", "{DFF00869-B064-483D-95C0-A88039C471C7}"
 	ProjectSection(ProjectDependencies) = postProject
 		{262FC468-01B6-451A-ABE9-9B6E00B29F81} = {262FC468-01B6-451A-ABE9-9B6E00B29F81}
@@ -56,18 +54,6 @@ Global
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{614D4144-8920-4975-AC67-DBBA5CB1EB43}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{614D4144-8920-4975-AC67-DBBA5CB1EB43}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{614D4144-8920-4975-AC67-DBBA5CB1EB43}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{614D4144-8920-4975-AC67-DBBA5CB1EB43}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{614D4144-8920-4975-AC67-DBBA5CB1EB43}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{614D4144-8920-4975-AC67-DBBA5CB1EB43}.Debug|x86.Build.0 = Debug|Any CPU
-		{614D4144-8920-4975-AC67-DBBA5CB1EB43}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{614D4144-8920-4975-AC67-DBBA5CB1EB43}.Release|Any CPU.Build.0 = Release|Any CPU
-		{614D4144-8920-4975-AC67-DBBA5CB1EB43}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{614D4144-8920-4975-AC67-DBBA5CB1EB43}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{614D4144-8920-4975-AC67-DBBA5CB1EB43}.Release|x86.ActiveCfg = Release|Any CPU
-		{614D4144-8920-4975-AC67-DBBA5CB1EB43}.Release|x86.Build.0 = Release|Any CPU
 		{DFF00869-B064-483D-95C0-A88039C471C7}.Debug|Any CPU.ActiveCfg = Debug|x86
 		{DFF00869-B064-483D-95C0-A88039C471C7}.Debug|Any CPU.Build.0 = Debug|x86
 		{DFF00869-B064-483D-95C0-A88039C471C7}.Debug|Mixed Platforms.ActiveCfg = Debug|x86

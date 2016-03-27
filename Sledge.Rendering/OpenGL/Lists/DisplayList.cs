@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using OpenTK.Graphics.OpenGL;
 
-namespace Sledge.Graphics.Helpers
+namespace Sledge.Rendering.OpenGL.Lists
 {
+    // moved from the Sledge.Graphics project: might be useful for the GL1 renderer?
     public class DisplayList : IDisposable
     {
         private static Dictionary<string, int> Lists;

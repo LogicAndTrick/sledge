@@ -15,10 +15,10 @@ using Sledge.Editor.Brushes;
 using Sledge.Editor.Compiling;
 using Sledge.Editor.Documents;
 using Sledge.Editor.Menu;
+using Sledge.Editor.Rendering;
 using Sledge.Editor.Settings;
 using Sledge.Editor.UI;
 using Sledge.Editor.UI.Sidebar;
-using Sledge.Graphics.Helpers;
 using Sledge.Providers;
 using Sledge.Providers.GameData;
 using Sledge.Providers.Map;
@@ -147,9 +147,6 @@ namespace Sledge.Editor
             ModelProvider.Register(new MdlProvider());
 
             WadProvider.ReplaceTransparentPixels = !Sledge.Settings.View.DisableWadTransparency && !Sledge.Settings.View.GloballyDisableTransparency;
-            TextureHelper.EnableTransparency = !Sledge.Settings.View.GloballyDisableTransparency;
-            TextureHelper.DisableTextureFiltering = Sledge.Settings.View.DisableTextureFiltering;
-            TextureHelper.ForceNonPowerOfTwoResize = Sledge.Settings.View.ForcePowerOfTwoTextureResizing;
 
             Subscribe();
 
@@ -496,9 +493,10 @@ namespace Sledge.Editor
             }
             ViewportManager.RefreshClearColour();
             WadProvider.ReplaceTransparentPixels = !Sledge.Settings.View.DisableWadTransparency && !Sledge.Settings.View.GloballyDisableTransparency;
-            TextureHelper.EnableTransparency = !Sledge.Settings.View.GloballyDisableTransparency;
-            TextureHelper.DisableTextureFiltering = Sledge.Settings.View.DisableTextureFiltering;
-            TextureHelper.ForceNonPowerOfTwoResize = Sledge.Settings.View.ForcePowerOfTwoTextureResizing;
+            if (DocumentManager.CurrentDocument != null)
+            {
+                SceneManager.UpdateRendererSettings();
+            }
         }
 
         private void Exit()

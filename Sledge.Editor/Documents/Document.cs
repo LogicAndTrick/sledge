@@ -21,7 +21,6 @@ using Sledge.Editor.Rendering;
 using Sledge.Editor.Settings;
 using Sledge.Editor.Tools;
 using Sledge.Editor.UI;
-using Sledge.Graphics.Helpers;
 using Sledge.Providers;
 using Sledge.Providers.GameData;
 using Sledge.Providers.Map;
@@ -172,6 +171,11 @@ namespace Sledge.Editor.Documents
 
             // ViewportManager.ClearContexts();
             //HelperManager.ClearCache();
+            
+            // todo this is far too heavy-handed
+            // Should only delete textures when they're no longer referenced by any document
+            // probably should be handled by the engine/renderer as well
+            SceneManager.Engine.Renderer.Textures.DeleteAll();
 
             _subscriptions.Unsubscribe();
         }

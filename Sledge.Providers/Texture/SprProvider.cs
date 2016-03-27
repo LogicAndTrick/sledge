@@ -8,7 +8,6 @@ using System.Runtime.InteropServices;
 using System.Text;
 using Sledge.Common;
 using Sledge.FileSystem;
-using Sledge.Graphics.Helpers;
 
 namespace Sledge.Providers.Texture
 {
@@ -115,25 +114,6 @@ namespace Sledge.Providers.Texture
                 bitmap.UnlockBits(data);
 
                 return bitmap;
-            }
-        }
-
-        public override void LoadTextures(IEnumerable<TextureItem> items)
-        {
-            foreach (var item in items)
-            {
-                foreach (var root in item.Package.PackageRoot.Split(';'))
-                {
-                    var file = Path.Combine(root, item.Name);
-                    if (File.Exists(file))
-                    {
-                        using (var bmp = Parse(file))
-                        {
-                            TextureHelper.Create(item.Name, bmp, item.Width, item.Height, item.Flags);
-                        }
-                        break;
-                    }
-                }
             }
         }
 

@@ -5,7 +5,6 @@ using System.Globalization;
 using System.Linq;
 using System.IO;
 using Sledge.Common;
-using Sledge.Graphics.Helpers;
 using System.Drawing;
 using Sledge.Packages;
 using Sledge.Packages.Wad;
@@ -190,54 +189,6 @@ namespace Sledge.Providers.Texture
             foreach (var root in roots.Where(x => !_roots.ContainsValue(x)))
             {
                 root.Dispose();
-            }
-        }
-
-        public override void LoadTextures(IEnumerable<TextureItem> items)
-        {
-            var list = items.ToList();
-            var packages = list.Select(x => x.Package).Distinct().ToList();
-            var packs = packages.Select(x =>
-            {
-                if (!_roots.ContainsKey(x))
-                {
-                    var wp = new WadStream(new WadPackage(new FileInfo(x.PackageRoot)));
-                    _roots.Add(x, wp);
-                }
-                return _roots[x];
-
-            }).ToList();
-            var streams = packs.Select(x => x.StreamSource).ToList();
-
-            // Process the bitmaps in parallel
-            var bitmaps = list.AsParallel().Select(ti =>
-            {
-                var stream = streams.FirstOrDefault(x => x.HasFile(ti.Name.ToLowerInvariant()));
-                if (stream == null) return null;
-
-                var open = stream.OpenFile(ti.Name.ToLowerInvariant());
-                if (open == null) return null;
-
-                var bmp = new Bitmap(open);
-                bool hasTransparency;
-                bmp = PostProcessBitmap(ti.Package.PackageRelativePath, ti.Name.ToLowerInvariant(), bmp, out hasTransparency);
-                open.Dispose();
-
-                return new
-                {
-                    Bitmap = bmp,
-                    Name = ti.Name.ToLowerInvariant(),
-                    ti.Width,
-                    ti.Height,
-                    ti.Flags
-                };
-            }).Where(x => x != null);
-
-            // TextureHelper.Create must run on the UI thread
-            foreach (var bmp in bitmaps)
-            {
-                TextureHelper.Create(bmp.Name, bmp.Bitmap, bmp.Width, bmp.Height, bmp.Flags);
-                bmp.Bitmap.Dispose();
             }
         }
 

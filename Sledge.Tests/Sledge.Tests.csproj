@@ -89,10 +89,6 @@
       <Project>{1C2C012D-DBA5-4C7F-994F-E3034AC60DCC}</Project>
       <Name>Sledge.FileSystem</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Sledge.Graphics\Sledge.Graphics.csproj">
-      <Project>{614D4144-8920-4975-AC67-DBBA5CB1EB43}</Project>
-      <Name>Sledge.Graphics</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Sledge.Packages\Sledge.Packages.csproj">
       <Project>{BB1AF818-8CCA-4BC8-A4A8-B7A0627B68DD}</Project>
       <Name>Sledge.Packages</Name>

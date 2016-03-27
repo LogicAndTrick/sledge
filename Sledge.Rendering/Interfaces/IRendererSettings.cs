@@ -1,0 +1,9 @@
+namespace Sledge.Rendering.Interfaces
+{
+    public interface IRendererSettings
+    {
+        bool DisableTextureTransparency { get; set; }
+        bool DisableTextureFiltering { get; set; }
+        bool ForcePowerOfTwoTextureSizes { get; set; }
+    }
+}

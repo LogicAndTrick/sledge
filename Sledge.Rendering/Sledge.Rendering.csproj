@@ -83,11 +83,14 @@
     <Compile Include="OpenGL\Arrays\ModelVertexArray.cs" />
     <Compile Include="OpenGL\Arrays\PolygonProperties.cs" />
     <Compile Include="OpenGL\Arrays\WireframeProperties.cs" />
+    <Compile Include="OpenGL\Lists\DisplayList.cs" />
     <Compile Include="OpenGL\ModelStorage.cs" />
+    <Compile Include="OpenGL\RendererSettings.cs" />
     <Compile Include="OpenGL\Shaders\ModelShader.cs" />
     <Compile Include="OpenGL\Vertices\ModelVertex.cs" />
     <Compile Include="OpenGL\Vertices\VertexFlags.cs" />
     <Compile Include="Cameras\CameraFlags.cs" />
+    <Compile Include="Interfaces\IRendererSettings.cs" />
     <Compile Include="Scenes\Elements\Element.cs" />
     <Compile Include="Scenes\Elements\FaceElement.cs" />
     <Compile Include="Scenes\Elements\HandleElement.cs" />

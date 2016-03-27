@@ -7,7 +7,6 @@ using Sledge.Editor.Actions.MapObjects.Operations;
 using Sledge.Editor.Extensions;
 using Sledge.Editor.Properties;
 using Sledge.Editor.Rendering;
-using Sledge.Graphics.Helpers;
 using Sledge.Rendering.Cameras;
 using Sledge.Settings;
 

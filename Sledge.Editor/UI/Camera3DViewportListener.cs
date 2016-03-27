@@ -5,13 +5,10 @@ using System.Windows.Forms;
 using Sledge.Common.Easings;
 using Sledge.Common.Mediator;
 using Sledge.Editor.Rendering;
-using Sledge.Graphics;
 using Sledge.Rendering;
 using Sledge.Rendering.Cameras;
 using Sledge.Settings;
-using OpenTK.Graphics.OpenGL;
 using Sledge.Editor.Tools;
-using Sledge.Graphics.Helpers;
 
 namespace Sledge.Editor.UI
 {
@@ -141,6 +138,8 @@ namespace Sledge.Editor.UI
         {
             if (!Focus || !FreeLook) return;
 
+            // todo 3D camera freelook rendering
+            /*
             TextureHelper.Unbind();
             GL.Begin(PrimitiveType.Lines);
             GL.Color3(Color.White);
@@ -153,6 +152,7 @@ namespace Sledge.Editor.UI
             GL.Vertex2(-5, 1);
             GL.Vertex2(5, 1);
             GL.End();
+            */
         }
 
         public void PostRender()

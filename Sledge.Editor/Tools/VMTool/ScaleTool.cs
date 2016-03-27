@@ -1,12 +1,8 @@
 ﻿using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
-using OpenTK;
-using OpenTK.Graphics.OpenGL;
 using Sledge.Common.Mediator;
 using Sledge.DataStructures.Geometric;
 using Sledge.Editor.Rendering;
-using Sledge.Graphics;
 using Sledge.Rendering;
 using Vertex = Sledge.DataStructures.MapObjects.Vertex;
 
@@ -242,13 +238,13 @@ Move the origin point around by *clicking and dragging* it.";
         {
             var pos = viewport.Flatten(_origin.Coordinate);
 
-            GL.Color3(Color.Cyan);
-            GL.Begin(BeginMode.Lines);
-            GLX.Circle(new Vector2d(pos.DX, pos.DY), 8, (double) viewport.Zoom);
-            GL.End();
-            GL.Begin(BeginMode.Points);
-            GL.Vertex2(pos.DX, pos.DY);
-            GL.End();
+            //GL.Color3(Color.Cyan);
+            //GL.Begin(BeginMode.Lines);
+            //GLX.Circle(new Vector2d(pos.DX, pos.DY), 8, (double) viewport.Zoom);
+            //GL.End();
+            //GL.Begin(BeginMode.Points);
+            //GL.Vertex2(pos.DX, pos.DY);
+            //GL.End();
         }
 
         public override void Render3D(MapViewport viewport)

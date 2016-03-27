@@ -36,6 +36,7 @@ namespace Sledge.Rendering.OpenGL
         public IModelStorage Models { get { return _modelStorage; } }
         public StringTextureManager StringTextureManager { get; private set; }
         public List<ITextureProvider> TextureProviders { get; private set; }
+        public IRendererSettings Settings { get; private set; }
 
         private readonly ConcurrentQueue<string> _requestedTextureQueue;
 
@@ -54,6 +55,7 @@ namespace Sledge.Rendering.OpenGL
             StringTextureManager = new StringTextureManager(this);
             TextureProviders = new List<ITextureProvider>();
             _requestedTextureQueue = new ConcurrentQueue<string>();
+            Settings = new RendererSettings(this);
         }
 
         public void RequestTexture(string name)

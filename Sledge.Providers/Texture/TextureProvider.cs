@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Sledge.Graphics.Helpers;
 
 namespace Sledge.Providers.Texture
 {
@@ -43,7 +42,6 @@ namespace Sledge.Providers.Texture
         protected string CachePath { get; private set; }
         public abstract IEnumerable<TexturePackage> CreatePackages(IEnumerable<string> sourceRoots, IEnumerable<string> additionalPackages, IEnumerable<string> blacklist, IEnumerable<string> whitelist);
         public abstract void DeletePackages(IEnumerable<TexturePackage> packages);
-        public abstract void LoadTextures(IEnumerable<TextureItem> items);
         public abstract ITextureStreamSource GetStreamSource(int maxWidth, int maxHeight, IEnumerable<TexturePackage> packages);
 
         public static TextureCollection CreateCollection(IEnumerable<string> sourceRoots, IEnumerable<string> additionalPackages, IEnumerable<string> blacklist, IEnumerable<string> whitelist)
@@ -73,29 +71,6 @@ namespace Sledge.Providers.Texture
                 package.Provider.DeletePackages(new[] {package});
                 package.Dispose();
             }
-        }
-
-        public static void LoadTextureItem(TextureItem item)
-        {
-            if (item == null || item.Package == null) return;
-            item.Package.Provider.LoadTextures(new[] { item });
-        }
-
-        public static void LoadTextureItems(IEnumerable<TextureItem> items)
-        {
-            var list = items.ToList();
-
-            foreach (var g in list.GroupBy(x => x.Package.Provider))
-            {
-                LoadTextures(g.Key, g);
-            }
-        }
-
-        private static void LoadTextures(TextureProvider provider, IEnumerable<TextureItem> items)
-        {
-            var all = items.Where(x => !TextureHelper.Exists(x.Name.ToLowerInvariant())).ToList();
-            if (!all.Any()) return;
-            provider.LoadTextures(all);
         }
     }
 }

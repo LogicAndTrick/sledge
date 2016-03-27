@@ -8,7 +8,6 @@ using Sledge.Common.Easings;
 using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.MapObjects;
 using Sledge.Editor.Rendering;
-using Sledge.Graphics.Helpers;
 using Sledge.Rendering;
 
 namespace Sledge.Editor.Tools.DisplacementTools
@@ -275,6 +274,7 @@ namespace Sledge.Editor.Tools.DisplacementTools
                 var sub = new Coordinate(40, 40, 40);
                 var pointBox = new Box(_currentPoint.CurrentPosition.Location - sub, _currentPoint.CurrentPosition.Location + sub);
 
+                /*
                 TextureHelper.Unbind();
                 GL.LineWidth(3);
                 GL.Begin(PrimitiveType.Lines);
@@ -286,6 +286,7 @@ namespace Sledge.Editor.Tools.DisplacementTools
                 }
                 GL.End();
                 GL.LineWidth(1);
+                */
             }
         }
     }

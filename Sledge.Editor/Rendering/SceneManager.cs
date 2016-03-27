@@ -1,14 +1,9 @@
 ﻿using System.Collections.Generic;
-using System.Drawing;
-using OpenTK;
 using Sledge.DataStructures.MapObjects;
 using Sledge.Editor.Documents;
 using Sledge.Rendering;
-using Sledge.Rendering.Cameras;
 using Sledge.Rendering.OpenGL;
 using Sledge.Rendering.Scenes;
-using Sledge.Rendering.Scenes.Elements;
-using Sledge.Rendering.Scenes.Renderables;
 using Sledge.Settings;
 
 namespace Sledge.Editor.Rendering
@@ -21,6 +16,15 @@ namespace Sledge.Editor.Rendering
         {
             var renderer = new OpenGLRenderer();
             Engine = new Engine(renderer);
+            UpdateRendererSettings();
+        }
+
+        public static void UpdateRendererSettings()
+        {
+            var settings = Engine.Renderer.Settings;
+            settings.DisableTextureTransparency = Sledge.Settings.View.GloballyDisableTransparency;
+            settings.DisableTextureFiltering = Sledge.Settings.View.DisableTextureFiltering;
+            settings.ForcePowerOfTwoTextureSizes = Sledge.Settings.View.ForcePowerOfTwoTextureResizing;
         }
 
         public Document Document { get; private set; }

@@ -4,7 +4,6 @@ using System.Windows.Forms;
 using Sledge.Common.Mediator;
 using Sledge.Editor.Rendering;
 using Sledge.Editor.UI;
-using Sledge.Graphics.Helpers;
 using System.Drawing;
 using Sledge.DataStructures.Geometric;
 using OpenTK.Graphics.OpenGL;
@@ -812,6 +811,7 @@ namespace Sledge.Editor.Tools
 
         protected virtual void Render3DBox(MapViewport viewport, Coordinate start, Coordinate end)
         {
+            /*
             var box = new Box(start, end);
             TextureHelper.Unbind();
             GL.Begin(PrimitiveType.Lines);
@@ -822,6 +822,7 @@ namespace Sledge.Editor.Tools
                 Coord(line.End);
             }
             GL.End();
+            */
         }
 
         protected virtual void Render3D(MapViewport viewport)

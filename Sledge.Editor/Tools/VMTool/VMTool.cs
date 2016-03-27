@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using Sledge.Common.Mediator;
 using Sledge.DataStructures.Geometric;
@@ -13,10 +12,8 @@ using Sledge.Editor.Actions.MapObjects.Selection;
 using Sledge.Editor.Properties;
 using Sledge.Editor.Rendering;
 using Sledge.Editor.UI;
-using Sledge.Graphics;
 using Sledge.Rendering;
 using Sledge.Settings;
-using Matrix = Sledge.Graphics.Helpers.Matrix;
 using Select = Sledge.Settings.Select;
 using View = Sledge.Settings.View;
 
@@ -837,11 +834,11 @@ namespace Sledge.Editor.Tools.VMTool
 
             // Render out the solid previews
             GL.Color3(Color.Pink);
-            Matrix.Push();
+            //Matrix.Push();
             var matrix = vp.Viewport.Camera.GetModelMatrix();
             GL.MultMatrix(ref matrix);
             //MapObjectRenderer.DrawWireframe(_copies.Keys.SelectMany(x => x.Faces), true, false);
-            Matrix.Pop();
+            //Matrix.Pop();
 
             // Draw in order by the unused coordinate (the up axis for this viewport)
             var ordered = (from point in Points
@@ -851,16 +848,16 @@ namespace Sledge.Editor.Tools.VMTool
                            select point).ToList();
             // Render out the point handles
             var z = (double) vp.Zoom;
-            GL.Begin(BeginMode.Quads);
-            foreach (var point in ordered)
-            {
-                var c = vp.Flatten(point.Coordinate);
-                GL.Color3(Color.Black);
-                GLX.Square(new Vector2d(c.DX, c.DY), 4, z, true);
-                GL.Color3(point.GetColour());
-                GLX.Square(new Vector2d(c.DX, c.DY), 3, z, true);
-            }
-            GL.End();
+            //GL.Begin(BeginMode.Quads);
+            //foreach (var point in ordered)
+            //{
+            //    var c = vp.Flatten(point.Coordinate);
+            //    GL.Color3(Color.Black);
+            //    GLX.Square(new Vector2d(c.DX, c.DY), 4, z, true);
+            //    GL.Color3(point.GetColour());
+            //    GLX.Square(new Vector2d(c.DX, c.DY), 3, z, true);
+            //}
+            //GL.End();
         }
 
         protected override void Render3D(MapViewport vp)

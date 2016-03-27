@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using Sledge.Common;
 using Sledge.FileSystem;
-using Sledge.Graphics.Helpers;
 
 namespace Sledge.Providers.Model
 {
