@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Threading.Tasks;
@@ -141,7 +142,7 @@ namespace Sledge.DataStructures.MapObjects
         /// <summary>
         /// Should be called when a map is loaded. Sets up visgroups, object ids, gamedata, and textures.
         /// </summary>
-        public void PostLoadProcess(GameData.GameData gameData, Func<string, ITexture> textureAccessor, Func<string, float> textureOpacity)
+        public void PostLoadProcess(GameData.GameData gameData, Func<string, Size> textureAccessor, Func<string, float> textureOpacity)
         {
             PartialPostLoadProcess(gameData, textureAccessor, textureOpacity);
 
@@ -211,7 +212,7 @@ namespace Sledge.DataStructures.MapObjects
             return g.SelectMany(x => GetAllVisgroups(x.Children)).Union(g);
         }
 
-        public void PartialPostLoadProcess(GameData.GameData gameData, Func<string, ITexture> textureAccessor, Func<string, float> textureOpacity)
+        public void PartialPostLoadProcess(GameData.GameData gameData, Func<string, Size> textureAccessor, Func<string, float> textureOpacity)
         {
             var objects = WorldSpawn.FindAll();
             Parallel.ForEach(objects, obj =>
@@ -234,16 +235,16 @@ namespace Sledge.DataStructures.MapObjects
                     var disp = HideDisplacementSolids && s.Faces.Any(x => x is Displacement);
                     s.Faces.ForEach(f =>
                     {
-                        if (f.Texture.Texture == null)
+                        if (f.Texture.Size.IsEmpty)
                         {
-                            f.Texture.Texture = textureAccessor(f.Texture.Name.ToLowerInvariant());
+                            f.Texture.Size = textureAccessor(f.Texture.Name.ToLowerInvariant());
                             f.CalculateTextureCoordinates(true);
                         }
                         if (disp && !(f is Displacement))
                         {
                             f.Opacity = 0;
                         }
-                        else if (f.Texture.Texture != null)
+                        else
                         {
                             f.Opacity = textureOpacity(f.Texture.Name.ToLowerInvariant());
                             if (!HideNullTextures && f.Opacity < 0.1) f.Opacity = 1;

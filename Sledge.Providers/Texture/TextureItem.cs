@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.Drawing;
 using Sledge.Common;
-using Sledge.Graphics.Helpers;
 
 namespace Sledge.Providers.Texture
 {
@@ -25,6 +25,8 @@ namespace Sledge.Providers.Texture
 
         public int Width { get { return PrimarySubItem.Width; } }
         public int Height { get { return PrimarySubItem.Height; } }
+
+        public Size Size { get { return new Size(Width, Height); } }
 
         public TextureItem(TexturePackage package, string name, TextureFlags flags, int width, int height)
         {
@@ -57,15 +59,6 @@ namespace Sledge.Providers.Texture
             var si = new TextureSubItem(type, this, name, width, height);
             _subItems.Add(type, si);
             return si;
-        }
-
-        public ITexture GetTexture()
-        {
-            if (!TextureHelper.Exists(Name.ToLowerInvariant()))
-            {
-                TextureProvider.LoadTextureItem(this);
-            }
-            return TextureHelper.Get(Name.ToLowerInvariant());
         }
     }
 }

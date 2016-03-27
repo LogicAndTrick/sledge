@@ -26,9 +26,9 @@ namespace Sledge.Editor.UI
             var numSolidEnts = entities.Count(x => x.HasChildren);
             var uniqueTextures = faces.Select(x => x.Texture.Name).Distinct().ToList();
             var numUniqueTextures = uniqueTextures.Count;
-            var textureMemory = faces.Select(x => x.Texture.Texture)
-                .Where(x => x != null)
+            var textureMemory = faces.Select(x => x.Texture.Name)
                 .Distinct()
+                .Select(document.GetTextureSize)
                 .Sum(x => x.Width * x.Height * 3); // 3 bytes per pixel
             var textureMemoryMb = textureMemory / (1024m * 1024m);
             // todo texture memory, texture packages

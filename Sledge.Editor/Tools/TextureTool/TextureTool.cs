@@ -154,11 +154,10 @@ namespace Sledge.Editor.Tools.TextureTool
 
         private void TextureApplied(object sender, TextureItem texture)
         {
-            var ti = texture.GetTexture();
             Action<Document, Face> action = (document, face) =>
                                       {
                                           face.Texture.Name = texture.Name;
-                                          face.Texture.Texture = ti;
+                                          face.Texture.Size = new Size(texture.Width, texture.Height);
                                           face.CalculateTextureCoordinates(false);
                                       };
             // When the texture changes, the entire list needs to be regenerated, can't do a partial update.
@@ -244,7 +243,7 @@ namespace Sledge.Editor.Tools.TextureTool
 
             _form.SelectionChanged();
 
-            var selection = Document.Selection.GetSelectedFaces().OrderBy(x => x.Texture.Texture == null ? 1 : 0).FirstOrDefault();
+            var selection = Document.Selection.GetSelectedFaces().OrderBy(x => x.Texture.Size.IsEmpty ? 1 : 0).FirstOrDefault();
             if (selection != null)
             {
                 var itemToSelect = Document.TextureCollection.GetItem(selection.Texture.Name)
@@ -354,11 +353,10 @@ namespace Sledge.Editor.Tools.TextureTool
                     var item = _form.GetFirstSelectedTexture();
                     if (item != null)
                     {
-                        var texture = item.GetTexture();
                         ac.Add(new EditFace(faces, (document, face) =>
                                                         {
                                                             face.Texture.Name = item.Name;
-                                                            face.Texture.Texture = texture;
+                                                            face.Texture.Size = new Size(item.Width, item.Height);
                                                             if (behaviour == SelectBehaviour.ApplyWithValues && firstSelected != null)
                                                             {
                                                                 // Calculates the texture coordinates

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using Sledge.Common;
 using Sledge.Common.Mediator;
 using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.MapObjects;
@@ -14,6 +15,7 @@ using Sledge.Editor.Properties;
 using Sledge.Editor.Rendering;
 using Sledge.Editor.Tools;
 using Sledge.Editor.Tools2.DraggableTool;
+using Sledge.Providers.Texture;
 using Sledge.Rendering.Scenes;
 using Sledge.Settings;
 using Select = Sledge.Settings.Select;
@@ -133,8 +135,8 @@ namespace Sledge.Editor.Tools2.BrushTool
             var brush = BrushManager.CurrentBrush;
             if (brush == null) return null;
             var ti = Document.TextureCollection.SelectedTexture;
-            var texture = ti != null ? ti.GetTexture() : null;
-            var created = brush.Create(idg, bounds, texture, BrushManager.RoundCreatedVertices ? 0 : 2).ToList();
+            if (ti == null) ti = new TextureItem(null, "", TextureFlags.Missing);
+            var created = brush.Create(idg, bounds, ti, BrushManager.RoundCreatedVertices ? 0 : 2).ToList();
             if (created.Count > 1)
             {
                 var g = new Group(idg.GetNextObjectID());

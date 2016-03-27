@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using Sledge.Common;
@@ -58,9 +59,9 @@ namespace Sledge.Editor.UI
             return String.Equals(name, match, StringComparison.InvariantCultureIgnoreCase);
         }
 
-        private IEnumerable<Tuple<string, TextureItem, ITexture>> GetReplacements(IEnumerable<string> names)
+        private IEnumerable<Tuple<string, TextureItem>> GetReplacements(IEnumerable<string> names)
         {
-            var list = new List<Tuple<string, TextureItem, ITexture>>();
+            var list = new List<Tuple<string, TextureItem>>();
             var substitute = ActionSubstitute.Checked;
             var find = Find.Text.ToLowerInvariant();
             var replace = Replace.Text.ToLowerInvariant();
@@ -72,7 +73,7 @@ namespace Sledge.Editor.UI
                 var item = _document.TextureCollection.GetItem(n);
                 if (item == null) continue;
 
-                list.Add(Tuple.Create(name, item, item.GetTexture()));
+                list.Add(Tuple.Create(name, item));
             }
             return list;
         }
@@ -100,7 +101,7 @@ namespace Sledge.Editor.UI
                                                         }
                                                     }
                                                     face.Texture.Name = repl.Item2.Name;
-                                                    face.Texture.Texture = repl.Item3;
+                                                    face.Texture.Size = new Size(repl.Item2.Width, repl.Item2.Height);
                                                     face.CalculateTextureCoordinates(true);
                                                 };
             return new EditFace(faces, action, true);

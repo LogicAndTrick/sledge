@@ -184,14 +184,14 @@ namespace Sledge.DataStructures.MapObjects
             if (minimizeShiftValues) MinimiseTextureShiftValues();
             Vertices.ForEach(c => c.TextureU = c.TextureV = 0);
 
-            if (Texture.Texture == null) return;
-            if (Texture.Texture.Width == 0 || Texture.Texture.Height == 0) return;
+            if (Texture.Size.IsEmpty) return;
+            if (Texture.Size.Width == 0 || Texture.Size.Height == 0) return;
             if (Texture.XScale == 0 || Texture.YScale == 0) return;
 
-            var udiv = Texture.Texture.Width * Texture.XScale;
-            var uadd = Texture.XShift / Texture.Texture.Width;
-            var vdiv = Texture.Texture.Height * Texture.YScale;
-            var vadd = Texture.YShift / Texture.Texture.Height;
+            var udiv = Texture.Size.Width * Texture.XScale;
+            var uadd = Texture.XShift / Texture.Size.Width;
+            var vdiv = Texture.Size.Height * Texture.YScale;
+            var vadd = Texture.YShift / Texture.Size.Height;
 
             foreach (var v in Vertices)
             {
@@ -311,17 +311,17 @@ namespace Sledge.DataStructures.MapObjects
 
         private void MinimiseTextureShiftValues()
         {
-            if (Texture.Texture == null) return;
+            if (Texture.Size.IsEmpty) return;
             // Keep the shift values to a minimum
-            Texture.XShift = Texture.XShift % Texture.Texture.Width;
-            Texture.YShift = Texture.YShift % Texture.Texture.Height;
-            if (Texture.XShift < -Texture.Texture.Width / 2m) Texture.XShift += Texture.Texture.Width;
-            if (Texture.YShift < -Texture.Texture.Height / 2m) Texture.YShift += Texture.Texture.Height;
+            Texture.XShift = Texture.XShift % Texture.Size.Width;
+            Texture.YShift = Texture.YShift % Texture.Size.Height;
+            if (Texture.XShift < -Texture.Size.Width / 2m) Texture.XShift += Texture.Size.Width;
+            if (Texture.YShift < -Texture.Size.Height / 2m) Texture.YShift += Texture.Size.Height;
         }
 
         public void FitTextureToPointCloud(Cloud cloud, int tileX, int tileY)
         {
-            if (Texture.Texture == null) return;
+            if (Texture.Size.IsEmpty) return;
             if (tileX <= 0) tileX = 1;
             if (tileY <= 0) tileY = 1;
 
@@ -334,8 +334,8 @@ namespace Sledge.DataStructures.MapObjects
             var maxU = xvals.Max();
             var maxV = yvals.Max();
 
-            Texture.XScale = (maxU - minU) / (Texture.Texture.Width * tileX);
-            Texture.YScale = (maxV - minV) / (Texture.Texture.Height * tileY);
+            Texture.XScale = (maxU - minU) / (Texture.Size.Width * tileX);
+            Texture.YScale = (maxV - minV) / (Texture.Size.Height * tileY);
             Texture.XShift = -minU / Texture.XScale;
             Texture.YShift = -minV / Texture.YScale;
 
@@ -344,7 +344,7 @@ namespace Sledge.DataStructures.MapObjects
 
         public void AlignTextureWithPointCloud(Cloud cloud, BoxAlignMode mode)
         {
-            if (Texture.Texture == null) return;
+            if (Texture.Size.IsEmpty) return;
 
             var xvals = cloud.GetExtents().Select(x => x.Dot(Texture.UAxis) / Texture.XScale).ToList();
             var yvals = cloud.GetExtents().Select(x => x.Dot(Texture.VAxis) / Texture.YScale).ToList();
@@ -360,19 +360,19 @@ namespace Sledge.DataStructures.MapObjects
                     Texture.XShift = -minU;
                     break;
                 case BoxAlignMode.Right:
-                    Texture.XShift = -maxU + Texture.Texture.Width;
+                    Texture.XShift = -maxU + Texture.Size.Width;
                     break;
                 case BoxAlignMode.Center:
                     var avgU = (minU + maxU) / 2;
                     var avgV = (minV + maxV) / 2;
-                    Texture.XShift = -avgU + Texture.Texture.Width / 2m;
-                    Texture.YShift = -avgV + Texture.Texture.Height / 2m;
+                    Texture.XShift = -avgU + Texture.Size.Width / 2m;
+                    Texture.YShift = -avgV + Texture.Size.Height / 2m;
                     break;
                 case BoxAlignMode.Top:
                     Texture.YShift = -minV;
                     break;
                 case BoxAlignMode.Bottom:
-                    Texture.YShift = -maxV + Texture.Texture.Height;
+                    Texture.YShift = -maxV + Texture.Size.Height;
                     break;
             }
             CalculateTextureCoordinates(true);
@@ -410,7 +410,7 @@ namespace Sledge.DataStructures.MapObjects
             }
             Plane = new Plane(Vertices[0].Location, Vertices[1].Location, Vertices[2].Location);
             Colour = Colour;
-            if (flags.HasFlag(TransformFlags.TextureScalingLock) && Texture.Texture != null)
+            if (flags.HasFlag(TransformFlags.TextureScalingLock) && !Texture.Size.IsEmpty)
             {
                 // Make a best-effort guess of retaining scaling. All bets are off during skew operations.
                 // Transform the current texture axes
@@ -439,7 +439,7 @@ namespace Sledge.DataStructures.MapObjects
                     AlignTextureToFace();
                 }
 
-                if (flags.HasFlag(TransformFlags.TextureLock) && Texture.Texture != null)
+                if (flags.HasFlag(TransformFlags.TextureLock) && !Texture.Size.IsEmpty)
                 {
                     // Check some original reference points to see how the transform mutates them
                     var scaled = (transform.Transform(Coordinate.One) - transform.Transform(Coordinate.Zero)).VectorMagnitude();
@@ -450,8 +450,8 @@ namespace Sledge.DataStructures.MapObjects
                     {
                         // Calculate the new shift values based on the UV values of the vertices
                         var vtx = Vertices[0];
-                        Texture.XShift = Texture.Texture.Width * vtx.TextureU - (vtx.Location.Dot(Texture.UAxis)) / Texture.XScale;
-                        Texture.YShift = Texture.Texture.Height * vtx.TextureV - (vtx.Location.Dot(Texture.VAxis)) / Texture.YScale;
+                        Texture.XShift = Texture.Size.Width * vtx.TextureU - (vtx.Location.Dot(Texture.UAxis)) / Texture.XScale;
+                        Texture.YShift = Texture.Size.Height * vtx.TextureV - (vtx.Location.Dot(Texture.VAxis)) / Texture.YScale;
                     }
                 }
             }

@@ -45,7 +45,7 @@ namespace Sledge.Editor.Rendering
         private void Process(IList<MapObject> objects)
         {
             // todo: how much can be moved out of the post load process now that some of it should be offloaded to the renderer?
-            Document.Map.PartialPostLoadProcess(Document.GameData, Document.GetTexture, SettingsManager.GetSpecialTextureOpacity);
+            Document.Map.PartialPostLoadProcess(Document.GameData, Document.GetTextureSize, SettingsManager.GetSpecialTextureOpacity);
         }
 
         public void Update()

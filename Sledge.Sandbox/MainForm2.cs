@@ -171,47 +171,6 @@ namespace Sledge.Sandbox
             Task.Factory.StartNew(() =>
             {
                 return;
-                const int area = 20;
-                var r = new Random();
-                var b = new BlockBrush();
-                for (var i = 0; i < area * 100; i++)
-                {
-                    Thread.Sleep(2);
-                    lock (scene)
-                    {
-                        var coord = new Coordinate(r.Next(-area, area), r.Next(-area, area), r.Next(-area, area));
-                        var brushes = b.Create(new IDGenerator(), new Box(coord, coord + Coordinate.One), new TestTexture(textures[i % textures.Count]), 2).ToList();
-
-                        var r2 = new Random();
-                        var material = i % 2 == 0
-                            ? Material.Texture(textures[i % textures.Count].Name, false)
-                            : Material.Flat(Color.FromArgb(r2.Next(128, 255), r2.Next(128, 255), r2.Next(128, 255)));
-                        if (r2.Next(0, 100) > 90) material.Color = Color.FromArgb(128, material.Color);
-                        renderer.Materials.Add(material);
-                        foreach (var s in brushes.OfType<Solid>().SelectMany(x => x.Faces))
-                        {
-                            var randomflags = RenderFlags.None;
-                            if (r2.Next(0, 100) > 50) randomflags |= RenderFlags.Polygon;
-                            if (r2.Next(0, 100) > 50) randomflags |= RenderFlags.Wireframe;
-                            if (r2.Next(0, 100) > 50) randomflags |= RenderFlags.Point;
-                            s.FitTextureToPointCloud(new Cloud(s.Vertices.Select(v => v.Location)), 1, 1);
-                            var face = new Face(material, s.Vertices.Select(x => new Vertex(x.Location.ToVector3(), (float) x.TextureU, (float) x.TextureV)).ToList())
-                                       {
-                                           AccentColor = Color.FromArgb(r2.Next(128, 255), r2.Next(128, 255), r2.Next(128, 255)),
-                                           TintColor = Color.FromArgb(r.Next(0, 128), Color.Red),
-                                           //RenderFlags = RenderFlags.Polygon | RenderFlags.Wireframe | RenderFlags.Point
-                                           RenderFlags = randomflags,
-                                           // ForcedRenderFlags = RenderFlags.Wireframe
-                                       };
-                            scene.Add(face);
-                        }
-                    }
-                }
-            });
-
-            Task.Factory.StartNew(() =>
-            {
-                return;
                 for (var i = 0; ; i = (i + 1) % 4)
                 {
                     Thread.Sleep(5);
@@ -269,48 +228,6 @@ namespace Sledge.Sandbox
                     }
                 }
             });
-        }
-    }
-
-    public class TestTexture : ITexture
-    {
-        private TextureItem _item;
-
-        public TestTexture(TextureItem item)
-        {
-            _item = item;
-        }
-
-        public void Dispose()
-        {
-            
-        }
-
-        public TextureFlags Flags { get { return _item.Flags; } }
-        public string Name { get { return _item.Name; } }
-        public int Width { get { return _item.Width; } }
-        public int Height { get { return _item.Height; } }
-        public void Bind()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Unbind()
-        {
-            throw new NotImplementedException();
-        }
-    }
-
-    public static class Extensions
-    {
-        public static Vector3 ToVector3(this Coordinate coordinate)
-        {
-            return new Vector3((float)coordinate.DX, (float)coordinate.DY, (float)coordinate.DZ);
-        }
-
-        public static Vector3 ToVector3(this CoordinateF coordinate)
-        {
-            return new Vector3(coordinate.X, coordinate.Y, coordinate.Z);
         }
     }
 }

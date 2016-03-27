@@ -106,7 +106,6 @@ namespace Sledge.Editor.Tools
                 Colour = Colour.GetRandomBrushColour(),
                 Origin = origin
             };
-            decal.SetDecal(TextureHelper.Get(textureName.ToLowerInvariant()));
             decal.EntityData.SetPropertyValue("texture", textureName);
 
             Document.PerformAction("Apply decal", new Create(Document.Map.WorldSpawn.ID, decal));

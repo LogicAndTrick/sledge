@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using Sledge.DataStructures.MapObjects;
 using Sledge.Editor.Actions;
@@ -14,7 +15,7 @@ namespace Sledge.Editor.Problems
                 .Find(x => x is Solid && (!visibleOnly || (!x.IsVisgroupHidden && !x.IsCodeHidden)))
                 .OfType<Solid>()
                 .SelectMany(x => x.Faces)
-                .Where(x => x.Texture.Texture == null)
+                .Where(x => x.Texture.Size.IsEmpty)
                 .ToList();
             foreach (var name in faces.Select(x => x.Texture.Name).Distinct())
             {
@@ -33,7 +34,7 @@ namespace Sledge.Editor.Problems
                                                        if (def != null)
                                                        {
                                                            x.Texture.Name = def.Name;
-                                                           x.Texture.Texture = def.GetTexture();
+                                                           x.Texture.Size = new Size(def.Width, def.Height);
                                                            x.CalculateTextureCoordinates(true);
                                                        }
                                                    }, true);

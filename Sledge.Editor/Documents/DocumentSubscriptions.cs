@@ -339,7 +339,7 @@ namespace Sledge.Editor.Documents
 
             foreach (var face in list.SelectMany(x => x.FindAll().OfType<Solid>().SelectMany(y => y.Faces)))
             {
-                face.Texture.Texture = _document.GetTexture(face.Texture.Name);
+                face.Texture.Size = _document.GetTextureSize(face.Texture.Name);
             }
 
             var box = new Box(list.Select(x => x.BoundingBox));
@@ -396,12 +396,10 @@ namespace Sledge.Editor.Documents
             if (_document.Selection.IsEmpty() || _document.Selection.InFaceSelection || Editor.Instance == null) return;
             var texture = _document.TextureCollection.SelectedTexture;
             if (texture == null) return;
-            var ti = texture.GetTexture();
-            if (ti == null) return;
             Action<Document, Face> action = (document, face) =>
             {
                 face.Texture.Name = texture.Name;
-                face.Texture.Texture = ti;
+                face.Texture.Size = new Size(texture.Width, texture.Height);
                 face.CalculateTextureCoordinates(true);
             };
             var faces = _document.Selection.GetSelectedObjects().OfType<Solid>().SelectMany(x => x.Faces);

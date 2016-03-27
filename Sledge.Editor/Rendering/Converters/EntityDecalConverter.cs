@@ -77,7 +77,7 @@ namespace Sledge.Editor.Rendering.Converters
                 var center = face.Plane.Project(entity.Origin);
                 var texture = face.Texture.Clone();
                 texture.Name = decal.Name;
-                texture.Texture = document.GetTexture(decal.Name);
+                texture.Size = document.GetTextureSize(decal.Name);
                 texture.XShift = -decal.Width / 2m;
                 texture.YShift = -decal.Height / 2m;
                 var decalFace = new DataStructures.MapObjects.Face(idg.GetNextFaceID())

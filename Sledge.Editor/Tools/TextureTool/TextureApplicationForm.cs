@@ -358,7 +358,7 @@ namespace Sledge.Editor.Tools.TextureTool
             {
                 var tex = face.Texture;
 
-                var name = tex.Texture == null ? tex.Name : tex.Texture.Name;
+                var name = tex.Name;
                 if (textures.Any(x => String.Equals(x.Name, name, StringComparison.InvariantCultureIgnoreCase))) continue;
 
                 var item = Document.TextureCollection.GetItem(name) ?? new TextureItem(null, name, TextureFlags.Missing, 64, 64);

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using System.Runtime.Serialization;
 using Sledge.Common;
 using Sledge.DataStructures.Geometric;
@@ -9,16 +10,7 @@ namespace Sledge.DataStructures.MapObjects
     public class TextureReference : ISerializable
     {
         public string Name { get; set; }
-        private ITexture _texture;
-        public ITexture Texture
-        {
-            get { return _texture; }
-            set
-            {
-                _texture = value;
-                Name = _texture == null ? Name : _texture.Name;
-            }
-        }
+        public Size Size { get; set; }
 
         public decimal Rotation { get; set; }
 
@@ -45,7 +37,7 @@ namespace Sledge.DataStructures.MapObjects
         public TextureReference()
         {
             Name = "";
-            Texture = null;
+            Size = Size.Empty;
             Rotation = 0;
             _uAxis = -Coordinate.UnitZ;
             _vAxis = Coordinate.UnitX;
@@ -87,7 +79,7 @@ namespace Sledge.DataStructures.MapObjects
             return new TextureReference
                        {
                            Name = Name,
-                           Texture = Texture,
+                           Size = Size,
                            Rotation = Rotation,
                            UAxis = UAxis.Clone(),
                            VAxis = VAxis.Clone(),

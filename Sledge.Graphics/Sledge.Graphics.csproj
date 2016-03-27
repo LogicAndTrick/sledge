@@ -50,12 +50,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GLTexture.cs" />
     <Compile Include="GLX.cs" />
     <Compile Include="Helpers\DisplayList.cs" />
     <Compile Include="Helpers\Matrix.cs" />
     <Compile Include="Helpers\TextureHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="GLTexture.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Sledge.Common\Sledge.Common.csproj">

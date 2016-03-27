@@ -222,7 +222,6 @@ namespace Sledge.DataStructures.Models
             foreach (var t in Textures)
             {
                 if (t.Image != null) t.Image.Dispose();
-                if (t.TextureObject != null) t.TextureObject.Dispose();
             }
         }
     }

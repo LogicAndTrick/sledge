@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
 using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -114,9 +115,9 @@ namespace Sledge.Editor.Documents
 
             var texList = Map.GetAllTextures();
             var items = TextureCollection.GetItems(texList);
-            TextureProvider.LoadTextureItems(items);
+            //TextureProvider.LoadTextureItems(items);
 
-            Map.PostLoadProcess(GameData, GetTexture, SettingsManager.GetSpecialTextureOpacity);
+            Map.PostLoadProcess(GameData, GetTextureSize, SettingsManager.GetSpecialTextureOpacity);
             // Map.UpdateDecals(this);
             // Map.UpdateModels(this);
             // Map.UpdateSprites(this);
@@ -371,22 +372,15 @@ namespace Sledge.Editor.Documents
             //Renderer.SetSelectionTransform(Matrix4.Identity);
         }
 
-        public ITexture GetTexture(string name)
+        public Size GetTextureSize(string name)
         {
-            if (!TextureHelper.Exists(name))
-            {
-                var ti = TextureCollection.GetItem(name);
-                if (ti != null)
-                {
-                    TextureProvider.LoadTextureItem(ti);
-                }
-            }
-            return TextureHelper.Get(name);
+            var item = TextureCollection.GetItem(name);
+            return item == null ? Size.Empty : new Size(item.Width, item.Height);
         }
 
         public void RenderAll()
         {
-            Map.PartialPostLoadProcess(GameData, GetTexture, SettingsManager.GetSpecialTextureOpacity);
+            Map.PartialPostLoadProcess(GameData, GetTextureSize, SettingsManager.GetSpecialTextureOpacity);
 
             //var decalsUpdated = Map.UpdateDecals(this);
             // var modelsUpdated = Map.UpdateModels(this);
@@ -410,7 +404,7 @@ namespace Sledge.Editor.Documents
         public void RenderObjects(IEnumerable<MapObject> objects)
         {
             var objs = objects.ToList();
-            Map.PartialPostLoadProcess(GameData, GetTexture, SettingsManager.GetSpecialTextureOpacity);
+            Map.PartialPostLoadProcess(GameData, GetTextureSize, SettingsManager.GetSpecialTextureOpacity);
 
             //var decalsUpdated = Map.UpdateDecals(this, objs);
             //var modelsUpdated = Map.UpdateModels(this, objs);
@@ -431,7 +425,7 @@ namespace Sledge.Editor.Documents
 
         public void RenderFaces(IEnumerable<Face> faces)
         {
-            Map.PartialPostLoadProcess(GameData, GetTexture, SettingsManager.GetSpecialTextureOpacity);
+            Map.PartialPostLoadProcess(GameData, GetTextureSize, SettingsManager.GetSpecialTextureOpacity);
             // No need to update decals or models here: they can only be changed via entity properties
             //HelperManager.UpdateCache();
             //Renderer.UpdatePartial(faces);

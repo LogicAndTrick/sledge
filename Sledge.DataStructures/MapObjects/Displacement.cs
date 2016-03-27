@@ -283,12 +283,12 @@ namespace Sledge.DataStructures.MapObjects
             list.ForEach(c => c.TextureU = c.TextureV = 0);
             Vertices.ForEach(c => c.TextureU = c.TextureV = 0);
 
-            if (Texture.Texture == null) return;
+            if (Texture.Size.IsEmpty) return;
 
-            var udiv = Texture.Texture.Width * Texture.XScale;
-            var uadd = Texture.XShift / Texture.Texture.Width;
-            var vdiv = Texture.Texture.Height * Texture.YScale;
-            var vadd = Texture.YShift / Texture.Texture.Height;
+            var udiv = Texture.Size.Width * Texture.XScale;
+            var uadd = Texture.XShift / Texture.Size.Width;
+            var vdiv = Texture.Size.Height * Texture.YScale;
+            var vadd = Texture.YShift / Texture.Size.Height;
 
             foreach (var v in Vertices)
             {
