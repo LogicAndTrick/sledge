@@ -59,7 +59,9 @@ namespace Sledge.Providers.Model
         private const string MagicStringIDST = "IDST";
         private const string MagicStringIDSQ = "IDSQ";
         private const string MagicStringIDSV = "IDSV";
+        private const string MagicStringIDPO = "IDPO";
 
+        private const int MDLVersionQuake = 6; // Q1
         private const int MDLVersionGoldsource = 10; // All GS games
         private const int MDLVersionSource2006 = 44; // HL2, CSS, EP1, LC
         private const int MDLVersionSourceEpisode2 = 45; // EP2
@@ -77,14 +79,15 @@ namespace Sledge.Providers.Model
         {
             // int id - Not really an int. This is a magic string, either "IDST" or "IDSQ".
             var magicString = br.ReadFixedLengthString(Encoding.UTF8, 4);
-            if (magicString != MagicStringIDST && magicString != MagicStringIDSQ)
+            if (magicString != MagicStringIDST && magicString != MagicStringIDSQ && magicString != MagicStringIDPO)
             {
-                throw new ProviderException("Bad magic number for model. Expected [IDST,IDSQ], got: " + magicString);
+                throw new ProviderException("Bad magic number for model. Expected [IDST,IDSQ,IDPO], got: " + magicString);
             }
 
             // int version - Half-life 1 models are version 10.
             var version = br.ReadInt32();
-            if (version != MDLVersionGoldsource
+            if (version !=  MDLVersionQuake
+                && version != MDLVersionGoldsource
                 && version != MDLVersionSource2006
                 && version != MDLVersionSourceEpisode2
                 && version != MDLVersionSourcePortal
@@ -95,6 +98,11 @@ namespace Sledge.Providers.Model
             }
 
             var modelData = new ModelData {Version = version};
+
+            if (version == MDLVersionQuake)
+            {
+                return ReadQuakeModel(br, file, loadItems, pal);
+            }
 
             if (version >= MDLVersionSource2006)
             {
@@ -1438,6 +1446,233 @@ namespace Sledge.Providers.Model
             public string FileName { get; set; }
             public int CachePointer { get; set; }
             public int GroupZeroDataIndex { get; set; }
+        }
+        #endregion
+
+        #region Quake MDL support
+        private struct QuakeVert
+        {
+            public byte x, y, z, normalindex;
+        };
+
+        private struct QuakeTexCoord
+        {
+            public bool onseam;
+            public int s;
+            public int t;
+        };
+
+        private struct QuakeTri
+        {
+            public bool facesfront;
+            public int[] vertindices; // array of 3 indices
+        };
+
+        private static DataStructures.Models.Texture LoadQuakeSkin(int skinindex, int width, int height, byte[] indices, DataStructures.GameData.Palette sledgepal)
+        {
+            var palette = sledgepal.ByteArray;
+            var bmp = new Bitmap(width, height, PixelFormat.Format8bppIndexed);
+            var pal = bmp.Palette;
+            for (var j = 0; j <= byte.MaxValue; j++)
+            {
+                var k = j * 3;
+                pal.Entries[j] = Color.FromArgb(255, palette[k], palette[k + 1], palette[k + 2]);
+            }
+            bmp.Palette = pal;
+            var bmpData = bmp.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.WriteOnly, bmp.PixelFormat);
+            Marshal.Copy(indices, 0, bmpData.Scan0, indices.Length);
+            bmp.UnlockBits(bmpData);
+
+            var tex = new DataStructures.Models.Texture
+            {
+                Name = "???",
+                Index = skinindex,
+                Width = width,
+                Height = height,
+                Flags = 0,
+                Image = bmp
+            };
+            return tex;
+        }
+
+        private static DataStructures.Models.Mesh LoadQuakeMesh(BinaryReader br, DataStructures.Models.Model model, CoordinateF scale, CoordinateF translate, int numverts, int numtris, List<QuakeTexCoord> texcoords, List<QuakeTri> tris, int skinwidth)
+        {
+            var bboxmin = br.ReadBytes(4);
+            var bboxmax = br.ReadBytes(4);
+            var name = br.ReadBytes(16);
+
+            // Read and transform verts
+            var verts = new List<QuakeVert>();
+            for (int i = 0; i < numverts; i++)
+            {
+                var byte_coord = br.ReadByteArray(3);
+                var normal_index = br.ReadByte();
+                verts.Add(new QuakeVert
+                {
+                    x = byte_coord[0],
+                    y = byte_coord[1],
+                    z = byte_coord[2],
+                    normalindex = normal_index,
+                });
+            }
+
+            // Create sledge mesh object
+            var mesh = new Mesh(0); // Quake meshes don't have LODs
+            mesh.SkinRef = 0;
+
+            for (int i = 0; i < numtris; i++)
+            {
+                for (int j = 0; j < 3; j++)
+                {
+                    var vert = verts[tris[i].vertindices[j]];
+                    var texcoord = texcoords[tris[i].vertindices[j]];
+                    float s = texcoord.s;
+                    float t = texcoord.t;
+                    if (!tris[i].facesfront && texcoord.onseam)
+                    {
+                        s += skinwidth * 0.5f;
+                    }
+
+                    // Convert to float and transform
+                    var float_coord = new CoordinateF(vert.x, vert.y, vert.z);
+                    var transformed_coord = float_coord.ComponentMultiply(scale) + translate;
+
+                    // Insert the triangles.    
+                    mesh.Vertices.Add(new MeshVertex(
+                                        transformed_coord,
+                                        new CoordinateF(0, 0, 1), // FIXME: Use proper normal
+                                        model.Bones[0],
+                                        s,
+                                        t));
+                }
+            }
+
+            return mesh;
+        }
+
+        private static DataStructures.Models.Model ReadQuakeModel(BinaryReader br, IFile file, ModelLoadItems loadItems, DataStructures.GameData.Palette pal)
+        {
+            // Quake MDL format, using reference: http://tfc.duke.free.fr/coding/mdl-specs-en.html
+
+            // Read header
+            var scale = br.ReadCoordinateF();
+            var translate = br.ReadCoordinateF(); // vertices should be scaled by 'scale', then translated by 'translate'
+            var boundingradius = br.ReadSingle();
+            var eyepos = br.ReadCoordinateF();
+            var numskins = br.ReadInt32();
+            var skinwidth = br.ReadInt32();
+            var skinheight = br.ReadInt32();
+            var numverts = br.ReadInt32();
+            var numtris = br.ReadInt32();
+            var numframes = br.ReadInt32();
+            var synctype = br.ReadInt32();
+            var mdlflags = br.ReadInt32();
+            var mdlsize = br.ReadSingle();
+
+            // Create output object
+            var qmodel = new DataStructures.Models.Model();
+            qmodel.Name = file.NameWithoutExtension;
+            qmodel.BonesTransformMesh = true;
+
+            var bone = new Bone(0, -1, null, "", CoordinateF.Zero, CoordinateF.Zero, CoordinateF.One, CoordinateF.One);
+            qmodel.Bones.Add(bone);
+
+            // Read Skins
+            for (int i = 0; i < numskins; i++)
+            {
+                var skintype = br.ReadInt32();
+                if (skintype == 0)
+                {
+                    // Single skin
+                    var pixels = br.ReadByteArray(skinwidth * skinheight);
+
+                    // Save
+                    var tex = LoadQuakeSkin(i, skinwidth, skinheight, pixels, pal);
+                    qmodel.Textures.Add(tex);
+                }
+                else if (skintype == 1)
+                {
+                    // Skingroup
+                    var numskingroupframes = br.ReadInt32();
+                    var times = br.ReadSingleArray(numskingroupframes);
+                    for (int j = 0; j < numskingroupframes; j++)
+                    {
+                        var pixels = br.ReadByteArray(skinwidth * skinheight);
+
+                        // HACK: Save first frame only
+                        if (j == 0)
+                        {
+                            var tex = LoadQuakeSkin(i, skinwidth, skinheight, pixels, pal);
+                            qmodel.Textures.Add(tex);
+                        }
+                    }
+                }
+                else
+                {
+                    throw new ProviderException("Invalid skin type " + skintype);
+                }
+            }
+
+            // Read texture coords
+            var texcoords = new List<QuakeTexCoord>();
+            for (int i = 0; i < numverts; i++)
+            {
+                QuakeTexCoord tc;
+                tc.onseam = br.ReadInt32() == 0 ? false : true;
+                tc.s = br.ReadInt32();
+                tc.t = br.ReadInt32();
+                texcoords.Add(tc);
+            }
+
+            // Read tris
+            var tris = new List<QuakeTri>();
+            for (int i = 0; i < numtris; i++)
+            {
+                QuakeTri tri;
+                tri.facesfront = br.ReadInt32() == 0 ? false : true;
+                tri.vertindices = br.ReadIntArray(3);
+                tris.Add(tri);
+            }
+
+            // HACK: Only save the first frame we find and discard the rest.
+            bool hasframe = false;
+
+            // Read frames
+            for (int i = 0; i < numframes; i++)
+            {
+                var frametype = br.ReadInt32();
+                if (frametype == 0)
+                {
+                    // Single frame
+                    var frame = LoadQuakeMesh(br, qmodel, scale, translate, numverts, numtris, texcoords, tris, skinwidth);
+
+                    if (!hasframe)
+                    {
+                        qmodel.AddMesh("", 0, frame);
+                        hasframe = true;
+                    }
+                }
+                else if (frametype == 1)
+                {
+                    // Framegroup
+                    var groupframes = br.ReadInt32();
+                    var groupbboxmin = br.ReadBytes(4);
+                    var groupbboxmax = br.ReadBytes(4);
+                    var times = br.ReadSingleArray(groupframes);
+                    for (int j = 0; j < groupframes; j++)
+                    {
+                        var frame = LoadQuakeMesh(br, qmodel, scale, translate, numverts, numtris, texcoords, tris, skinwidth);
+
+                        if (!hasframe)
+                        {
+                            qmodel.AddMesh("", 0, frame);
+                            hasframe = true;
+                        }
+                    }
+                }
+            }
+
+            return qmodel;
         }
         #endregion
     }
