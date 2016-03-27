@@ -2,6 +2,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
+using OpenTK;
 using Sledge.DataStructures.Geometric;
 
 namespace Sledge.Providers
@@ -87,6 +88,13 @@ namespace Sledge.Providers
             return arr;
         }
 
+        public static Vector3[] ReadVector3Array(this BinaryReader br, int num)
+        {
+            var arr = new Vector3[num];
+            for (var i = 0; i < num; i++) arr[i] = br.ReadVector3();
+            return arr;
+        }
+
         public static string ReadCString(this BinaryReader br)
         {
             // GH#87: RMF strings aren't prefixed in the same way .NET's BinaryReader expects
@@ -133,6 +141,15 @@ namespace Sledge.Providers
         public static CoordinateF ReadCoordinateF(this BinaryReader br)
         {
             return new CoordinateF(
+                br.ReadSingle(),
+                br.ReadSingle(),
+                br.ReadSingle()
+                );
+        }
+
+        public static Vector3 ReadVector3(this BinaryReader br)
+        {
+            return new Vector3(
                 br.ReadSingle(),
                 br.ReadSingle(),
                 br.ReadSingle()

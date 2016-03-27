@@ -1,17 +1,17 @@
 using System.Collections.Generic;
-using Sledge.DataStructures.Geometric;
+using OpenTK;
 
 namespace Sledge.DataStructures.Models
 {
     public class MeshVertex
     {
-        public CoordinateF Location { get; set; }
-        public CoordinateF Normal { get; set; }
+        public Vector3 Location { get; set; }
+        public Vector3 Normal { get; set; }
         public IEnumerable<BoneWeighting> BoneWeightings { get; private set; }
         public float TextureU { get; set; }
         public float TextureV { get; set; }
 
-        public MeshVertex(CoordinateF location, CoordinateF normal, IEnumerable<BoneWeighting> boneWeightings, float textureU, float textureV)
+        public MeshVertex(Vector3 location, Vector3 normal, IEnumerable<BoneWeighting> boneWeightings, float textureU, float textureV)
         {
             Location = location;
             Normal = normal;
@@ -20,7 +20,7 @@ namespace Sledge.DataStructures.Models
             TextureV = textureV;
         }
 
-        public MeshVertex(CoordinateF location, CoordinateF normal, Bone bone, float textureU, float textureV)
+        public MeshVertex(Vector3 location, Vector3 normal, Bone bone, float textureU, float textureV)
         {
             Location = location;
             Normal = normal;

@@ -53,8 +53,6 @@
     <Compile Include="Geometric\CsgNode.cs" />
     <Compile Include="Geometric\CsgSolid.cs" />
     <Compile Include="Geometric\Polygon.cs" />
-    <Compile Include="Geometric\QuaternionF.cs" />
-    <Compile Include="Geometric\MatrixF.cs" />
     <Compile Include="Geometric\Matrix.cs" />
     <Compile Include="Geometric\Plane.cs" />
     <Compile Include="Geometric\Quaternion.cs" />
@@ -83,6 +81,7 @@
     <Compile Include="Meta\MetaData.cs" />
     <Compile Include="Models\BodyPart.cs" />
     <Compile Include="Models\Texture.cs" />
+    <Compile Include="OpenTKExtensions.cs" />
     <Compile Include="PlaneClassification.cs" />
     <Compile Include="MapObjects\Group.cs" />
     <Compile Include="MapObjects\IDGenerator.cs" />

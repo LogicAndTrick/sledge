@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using OpenTK;
-using OpenTK.Graphics.OpenGL;
 using Sledge.Common.Mediator;
 using Sledge.Editor.Rendering;
 using Sledge.Editor.UI.Layout;
-using Sledge.Graphics.Helpers;
-using Sledge.Graphics.Renderables;
 using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Interfaces;
 using Sledge.Settings;

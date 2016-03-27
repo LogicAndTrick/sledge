@@ -388,7 +388,7 @@ namespace Sledge.Editor.Documents
         {
             Map.PartialPostLoadProcess(GameData, GetTexture, SettingsManager.GetSpecialTextureOpacity);
 
-            var decalsUpdated = Map.UpdateDecals(this);
+            //var decalsUpdated = Map.UpdateDecals(this);
             // var modelsUpdated = Map.UpdateModels(this);
             // var spritesUpdated = Map.UpdateSprites(this);
             // if (decalsUpdated || modelsUpdated || spritesUpdated) Mediator.Publish(EditorMediator.SelectionChanged);
@@ -412,10 +412,10 @@ namespace Sledge.Editor.Documents
             var objs = objects.ToList();
             Map.PartialPostLoadProcess(GameData, GetTexture, SettingsManager.GetSpecialTextureOpacity);
 
-            var decalsUpdated = Map.UpdateDecals(this, objs);
-            var modelsUpdated = Map.UpdateModels(this, objs);
-            var spritesUpdated = Map.UpdateSprites(this, objs);
-            if (decalsUpdated || modelsUpdated || spritesUpdated) Mediator.Publish(EditorMediator.SelectionChanged);
+            //var decalsUpdated = Map.UpdateDecals(this, objs);
+            //var modelsUpdated = Map.UpdateModels(this, objs);
+            //var spritesUpdated = Map.UpdateSprites(this, objs);
+            //if (decalsUpdated || modelsUpdated || spritesUpdated) Mediator.Publish(EditorMediator.SelectionChanged);
 
 
             SceneManager.Update(objs);

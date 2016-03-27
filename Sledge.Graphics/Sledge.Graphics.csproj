@@ -50,27 +50,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Arrays\ArrayIndex.cs" />
-    <Compile Include="Arrays\ArraySpecification.cs" />
-    <Compile Include="Arrays\VBO.cs" />
-    <Compile Include="Camera.cs" />
     <Compile Include="GLX.cs" />
-    <Compile Include="Helpers\Clear.cs" />
     <Compile Include="Helpers\DisplayList.cs" />
-    <Compile Include="Helpers\GraphicsHelper.cs" />
     <Compile Include="Helpers\Matrix.cs" />
-    <Compile Include="Helpers\Text.cs" />
     <Compile Include="Helpers\TextureHelper.cs" />
-    <Compile Include="Helpers\Viewport.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Renderables\DisplayListRenderable.cs" />
-    <Compile Include="Renderables\IRenderable.cs" />
-    <Compile Include="RenderContext.cs" />
     <Compile Include="GLTexture.cs" />
-    <Compile Include="Shaders\Shader.cs" />
-    <Compile Include="Shaders\ShaderProgram.cs" />
-    <Compile Include="Shaders\Variable.cs" />
-    <Compile Include="Vertex.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Sledge.Common\Sledge.Common.csproj">
