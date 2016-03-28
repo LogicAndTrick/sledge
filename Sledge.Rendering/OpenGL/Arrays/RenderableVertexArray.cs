@@ -155,7 +155,7 @@ namespace Sledge.Rendering.OpenGL.Arrays
                 {
                     var model = (Model) o;
                     var array = renderer.Models.GetArray(model.Name);
-                    array.Render(renderer, modelShader, viewport, Matrix4.CreateTranslation(model.Position));
+                    array.Render(renderer, modelShader, viewport, model.GetTransform());
                 }
             }
         }

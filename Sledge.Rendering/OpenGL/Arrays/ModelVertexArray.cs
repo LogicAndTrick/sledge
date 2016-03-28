@@ -36,7 +36,7 @@ namespace Sledge.Rendering.OpenGL.Arrays
 
             shader.Bind();
             shader.SelectionTransform = Matrix4.Identity;
-            shader.ModelMatrix = mvMatrix * modelView;
+            shader.ModelMatrix = modelView * mvMatrix;
             shader.CameraMatrix = camMatrix;
             shader.ViewportMatrix = vpMatrix;
             shader.Orthographic = camera.Flags.HasFlag(CameraFlags.Orthographic);

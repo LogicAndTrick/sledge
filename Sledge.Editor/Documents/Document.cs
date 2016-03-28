@@ -52,6 +52,7 @@ namespace Sledge.Editor.Documents
         public HistoryManager History { get; private set; }
         //public HelperManager HelperManager { get; set; }
         public TextureCollection TextureCollection { get; set; }
+        public ModelCollection ModelCollection { get; private set; }    
 
         private readonly DocumentSubscriptions _subscriptions;
         private readonly DocumentMemory _memory;
@@ -66,6 +67,7 @@ namespace Sledge.Editor.Documents
             History = new HistoryManager(this);
             //HelperManager = new HelperManager(this);
             TextureCollection = new TextureCollection(new List<TexturePackage>());
+            ModelCollection = new ModelCollection();
         }
 
         public Document(string mapFile, Map map, Game game)
@@ -115,6 +117,8 @@ namespace Sledge.Editor.Documents
             var texList = Map.GetAllTextures();
             var items = TextureCollection.GetItems(texList);
             //TextureProvider.LoadTextureItems(items);
+
+            ModelCollection = new ModelCollection();
 
             Map.PostLoadProcess(GameData, GetTextureSize, SettingsManager.GetSpecialTextureOpacity);
             // Map.UpdateDecals(this);
@@ -184,6 +188,7 @@ namespace Sledge.Editor.Documents
         {
             Scheduler.Clear(this);
             TextureProvider.DeleteCollection(TextureCollection);
+            ModelCollection.Dispose();
             SceneManager.Engine.Renderer.RemoveScene(Scene);
         }
 

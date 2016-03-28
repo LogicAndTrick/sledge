@@ -20,10 +20,21 @@ namespace Sledge.Rendering.Scenes.Renderables
             set { BoundingBox = new Box(value, value); }
         }
 
-        public Model(string name, Vector3 position)
+        private Vector3 _rotation;
+        public Vector3 Rotation
+        {
+            get { return _rotation; }
+            set { _rotation = value; BoundingBox = new Box(Origin, Origin); }
+        }
+
+        public Model(string name)
         {
             Name = name;
-            Position = position;
+        }
+
+        public Matrix4 GetTransform()
+        {
+            return Matrix4.CreateRotationX(Rotation.X) * Matrix4.CreateRotationY(Rotation.Y) * Matrix4.CreateRotationZ(Rotation.Z) * Matrix4.CreateTranslation(Origin);
         }
     }
 }

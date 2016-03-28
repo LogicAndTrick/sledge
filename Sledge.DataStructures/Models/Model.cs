@@ -4,8 +4,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Linq;
 using OpenTK;
-using Box = Sledge.DataStructures.Geometric.Box;
-using Coordinate = Sledge.DataStructures.Geometric.Coordinate;
+using Sledge.DataStructures.Geometric;
 
 namespace Sledge.DataStructures.Models
 {

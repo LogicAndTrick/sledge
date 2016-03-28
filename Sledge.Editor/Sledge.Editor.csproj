@@ -187,6 +187,7 @@
     <Compile Include="Documents\DocumentManager.cs" />
     <Compile Include="Documents\DocumentMemory.cs" />
     <Compile Include="Documents\DocumentSubscriptions.cs" />
+    <Compile Include="Documents\ModelCollection.cs" />
     <Compile Include="Enums\PasteSpecialGrouping.cs" />
     <Compile Include="Enums\PasteSpecialStartPoint.cs" />
     <Compile Include="Enums\TransformType.cs" />
@@ -252,6 +253,7 @@
     <Compile Include="Rendering\Converters\EntityAngleConverter.cs" />
     <Compile Include="Rendering\Converters\EntityDecalConverter.cs" />
     <Compile Include="Rendering\Converters\EntityNameConverter.cs" />
+    <Compile Include="Rendering\Converters\EntityModelConverter.cs" />
     <Compile Include="Rendering\Converters\EntitySpriteConverter.cs" />
     <Compile Include="Rendering\Converters\GridConverter.cs" />
     <Compile Include="Rendering\Converters\HiddenConverter.cs" />
