@@ -37,7 +37,7 @@ namespace Sledge.Rendering.OpenGL
         public List<ITextureProvider> TextureProviders { get; private set; }
         public IRendererSettings Settings { get; private set; }
 
-        private readonly ConcurrentQueue<string> _requestedTextureQueue;
+        private readonly List<string> _requestedTextureQueue;
 
         public Matrix4 SelectionTransform { get; set; }
 
@@ -53,13 +53,13 @@ namespace Sledge.Rendering.OpenGL
             SelectionTransform = Matrix4.Identity;
             StringTextureManager = new StringTextureManager(this);
             TextureProviders = new List<ITextureProvider>();
-            _requestedTextureQueue = new ConcurrentQueue<string>();
+            _requestedTextureQueue = new List<string>();
             Settings = new RendererSettings(this);
         }
 
         public void RequestTexture(string name)
         {
-            _requestedTextureQueue.Enqueue(name);
+            _requestedTextureQueue.Add(name);
         }
 
         private void InitialiseRenderer()
@@ -159,22 +159,19 @@ namespace Sledge.Rendering.OpenGL
 
         private void ProcessTextureQueue()
         {
-            var names = new List<string>();
-            for (var i = 0; i < 5; i++)
+            if (_requestedTextureQueue.Any())
             {
-                if (_requestedTextureQueue.IsEmpty) break;
-
-                string name;
-                if (_requestedTextureQueue.TryDequeue(out name))
+                foreach (var tp in TextureProviders)
                 {
-                    names.Add(name);
+                    var list = _requestedTextureQueue.Where(x => tp.Exists(x)).ToList();
+                    _requestedTextureQueue.RemoveAll(list.Contains);
+                    tp.Request(list);
                 }
             }
+
             foreach (var tp in TextureProviders)
             {
-                var list = names.Where(x => tp.Exists(x)).ToList();
-                names.RemoveAll(list.Contains);
-                foreach (var td in tp.Fetch(list))
+                foreach (var td in tp.PopRequestedTextures(5))
                 {
                     Textures.Create(td.Name, td.Bitmap, td.Width, td.Height, td.Flags);
                 }

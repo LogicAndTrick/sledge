@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Sledge.FileSystem;
 using Sledge.Providers.Model;
 
@@ -17,6 +18,16 @@ namespace Sledge.Editor.Documents
         public bool CanLoad(IFile model)
         {
             return ModelProvider.CanLoad(model);
+        }
+
+        public bool IsModelLoaded(string name)
+        {
+            return _loadedModels.ContainsKey(name);
+        }
+
+        public ModelReference GetLoadedModel(string name)
+        {
+            return _loadedModels.ContainsKey(name) ? _loadedModels[name] : null;
         }
 
         public ModelReference GetModel(IFile model)

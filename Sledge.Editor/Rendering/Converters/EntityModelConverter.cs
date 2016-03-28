@@ -41,7 +41,7 @@ namespace Sledge.Editor.Rendering.Converters
                 var modelReference = document.ModelCollection.GetModel(file);
                 if (modelReference != null) 
                 {
-                    var mdl = CreateModelData(entity, modelReference, model);
+                    var mdl = CreateModelData(entity, modelReference, file.FullPathName);
                     smo.SceneObjects.Add(entity, mdl);
                     smo.MetaData.Add("ContentsReplaced", "True");
                     return true;
@@ -99,15 +99,15 @@ namespace Sledge.Editor.Rendering.Converters
                         return new MeshVertex(v.Location, v.Normal, v.TextureU, v.TextureV, weight);
                     });
                     var mat = Material.Texture("Model::" + modelName + "::" + x.SkinRef, false);
-                    SceneManager.Engine.Renderer.Materials.Add(mat);
+                    //SceneManager.Engine.Renderer.Materials.Add(mat);
                     return new Mesh(mat, verts.ToList());
                 });
                 var transforms = model.Model.GetTransforms();
 
-                foreach (var t in model.Model.Textures)
-                {
-                    SceneManager.Engine.Renderer.Textures.Create("Model::" + modelName + "::" + t.Index, t.Image, t.Width, t.Height, TextureFlags.None);
-                }
+                //foreach (var t in model.Model.Textures)
+                //{
+                //    SceneManager.Engine.Renderer.Textures.Create("Model::" + modelName + "::" + t.Index, t.Image, t.Width, t.Height, TextureFlags.None);
+                //}
 
                 var anim = new Animation(15, new List<AnimationFrame> { new AnimationFrame(transforms.ToList()) });
 
