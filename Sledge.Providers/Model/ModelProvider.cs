@@ -65,12 +65,6 @@ namespace Sledge.Providers.Model
             {
                 var model = provider.LoadFromFile(file);
                 model.PreprocessModel();
-                for (var i = 0; i < model.Textures.Count; i++)
-                {
-                    var t = model.Textures[i];
-                    // todo
-                    //t.TextureObject = TextureHelper.Create(String.Format("ModelProvider: {0}/{1}/{2}", path, t.Name, i), t.Image, t.Image.Width, t.Image.Height, TextureFlags.None);
-                }
                 Models[path] = model;
                 return model;
             }

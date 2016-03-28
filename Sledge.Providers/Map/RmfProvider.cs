@@ -62,6 +62,9 @@ namespace Sledge.Providers.Map
             var worldspawn = ReadWorldSpawn(br, map.Visgroups, map.IDGenerator);
             map.WorldSpawn = worldspawn;
 
+            // Some RMF files might not have the DOCINFO block so we check if we're at the end of the stream
+            if (br.BaseStream.Position == br.BaseStream.Length) return map;
+
             // DOCINFO string check
             var docinfo = br.ReadFixedLengthString(Encoding.UTF8, 8);
             if (docinfo != "DOCINFO")

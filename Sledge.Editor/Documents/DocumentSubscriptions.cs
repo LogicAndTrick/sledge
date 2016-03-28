@@ -226,8 +226,6 @@ namespace Sledge.Editor.Documents
 
         public void SettingsChanged()
         {
-            // todo _document.HelperManager.UpdateCache();
-            RebuildGrid();
             _document.RenderAll();
         }
 
@@ -786,7 +784,8 @@ namespace Sledge.Editor.Documents
 
         public void RebuildGrid()
         {
-            // todo _document.Renderer.UpdateGrid(_document.Map.GridSpacing, _document.Map.Show2DGrid, _document.Map.Show3DGrid, true);
+            // todo !perf only worldspawn (no children) need to be re-converted to update the grid
+            _document.RenderAll();
             Mediator.Publish(EditorMediator.DocumentGridSpacingChanged, _document.Map.GridSpacing);
         }
 
