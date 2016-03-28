@@ -176,10 +176,9 @@ namespace Sledge.Editor.Documents
             // ViewportManager.ClearContexts();
             //HelperManager.ClearCache();
             
-            // todo this is far too heavy-handed
-            // Should only delete textures when they're no longer referenced by any document
+            // todo memory leak: model/texture resources are not being freed
+            // Should delete textures when they're no longer referenced by any document
             // probably should be handled by the engine/renderer as well
-            SceneManager.Engine.Renderer.Textures.DeleteAll();
 
             _subscriptions.Unsubscribe();
         }

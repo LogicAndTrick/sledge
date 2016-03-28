@@ -65,12 +65,14 @@
     <Compile Include="FrameEventHandler.cs" />
     <Compile Include="Interfaces\IBounded.cs" />
     <Compile Include="Interfaces\IMaterialStorage.cs" />
+    <Compile Include="Interfaces\IModelProvider.cs" />
     <Compile Include="Interfaces\IModelStorage.cs" />
     <Compile Include="Interfaces\ITextureProvider.cs" />
     <Compile Include="Interfaces\ITextureStorage.cs" />
     <Compile Include="Interfaces\IOrigin.cs" />
     <Compile Include="Interfaces\IRenderer.cs" />
     <Compile Include="Interfaces\IViewport.cs" />
+    <Compile Include="Interfaces\ModelDetails.cs" />
     <Compile Include="Interfaces\TextureDetails.cs" />
     <Compile Include="Internal\InternalMaterials.cs" />
     <Compile Include="Internal\InternalTextures.cs" />

@@ -59,16 +59,21 @@ namespace Sledge.Rendering.OpenGL.Arrays
 
             if (addRenderable.Count + removeRenderable.Count + replaceRenderable.Count + updateRenderable.Count > 0)
             {
-                var materials = added.Select(x => x.Material)
-                    .Union(added.OfType<Model>().Select(x => _renderer.Models.Get(x.Name)).Where(x => x != null).SelectMany(x => x.Meshes.Select(y => y.Material)))
-                    .Where(x => x != null);
-                foreach (var mat in materials)
+                foreach (var mat in added.Select(x => x.Material).Where(x => x != null))
                 {
                     if (!_renderer.Materials.Exists(mat.UniqueIdentifier)) _renderer.Materials.Add(mat);
                     if (!_renderer.Textures.Exists(mat.CurrentFrame))
                     {
                         _renderer.Textures.Create(mat.CurrentFrame);
                         _renderer.RequestTexture(mat.CurrentFrame);
+                    }
+                }
+                foreach (var model in added.OfType<Model>())
+                {
+                    if (!_renderer.Models.Exists(model.Name))
+                    {
+                        _renderer.Models.Add(model.Name);
+                        _renderer.RequestModel(model.Name);
                     }
                 }
                 if (_changeNum > MaxChanges)

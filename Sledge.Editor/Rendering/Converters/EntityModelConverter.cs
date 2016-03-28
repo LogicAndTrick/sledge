@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using OpenTK;
 using Sledge.DataStructures.GameData;
@@ -9,9 +8,6 @@ using Sledge.Editor.Documents;
 using Sledge.Editor.Extensions;
 using Sledge.FileSystem;
 using Sledge.Providers.Model;
-using Sledge.Providers.Texture;
-using Sledge.Rendering.DataStructures.Models;
-using Sledge.Rendering.Materials;
 using Model = Sledge.Rendering.Scenes.Renderables.Model;
 
 namespace Sledge.Editor.Rendering.Converters
@@ -87,40 +83,6 @@ namespace Sledge.Editor.Rendering.Converters
             entity.MetaData.Set("ModelName", modelName);
             entity.MetaData.Set("BoundingBox", model.Model.GetBoundingBox());
             entity.UpdateBoundingBox();
-
-            if (SceneManager.Engine.Renderer.Models.Get(modelName) == null)
-            {
-                // todo this model workflow isn't the best 
-                var meshes = model.Model.GetActiveMeshes().Select(x =>
-                {
-                    var verts = x.Vertices.Select(v =>
-                    {
-                        var weight = v.BoneWeightings.ToDictionary(w => w.Bone.BoneIndex, w => w.Weight);
-                        return new MeshVertex(v.Location, v.Normal, v.TextureU, v.TextureV, weight);
-                    });
-                    var mat = Material.Texture("Model::" + modelName + "::" + x.SkinRef, false);
-                    //SceneManager.Engine.Renderer.Materials.Add(mat);
-                    return new Mesh(mat, verts.ToList());
-                });
-                var transforms = model.Model.GetTransforms();
-
-                //foreach (var t in model.Model.Textures)
-                //{
-                //    SceneManager.Engine.Renderer.Textures.Create("Model::" + modelName + "::" + t.Index, t.Image, t.Width, t.Height, TextureFlags.None);
-                //}
-
-                var anim = new Animation(15, new List<AnimationFrame> { new AnimationFrame(transforms.ToList()) });
-
-                var ai = 0;
-                anim = new Animation(15, model.Model.Animations[ai].Frames.Select((z, i) => new AnimationFrame(model.Model.GetTransforms(ai, i))).ToList());
-                
-               // anim = new Animation(15, model.Model.Animations[ai].Frames.Select((z, i) => new AnimationFrame(model.Model.GetTransforms(ai -10, i))).ToList());
-
-
-                var modelObj = new Sledge.Rendering.DataStructures.Models.Model(meshes.ToList());
-                modelObj.Animation = anim;
-                SceneManager.Engine.Renderer.Models.Add(modelName, modelObj);
-            }
 
             var angles = entity.EntityData.GetPropertyCoordinate("angles", Coordinate.Zero).ToVector3();
             angles = new Vector3(MathHelper.DegreesToRadians(angles.Z), -MathHelper.DegreesToRadians(angles.X), MathHelper.DegreesToRadians(angles.Y));

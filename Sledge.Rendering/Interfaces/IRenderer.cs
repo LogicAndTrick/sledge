@@ -21,6 +21,7 @@ namespace Sledge.Rendering.Interfaces
         IModelStorage Models { get; }
         StringTextureManager StringTextureManager { get; }
         List<ITextureProvider> TextureProviders { get; } 
+        List<IModelProvider> ModelProviders { get; }
         IRendererSettings Settings { get; }
     }
 }

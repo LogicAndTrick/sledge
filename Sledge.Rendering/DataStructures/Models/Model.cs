@@ -37,7 +37,7 @@ namespace Sledge.Rendering.DataStructures.Models
 
         public Matrix4[] GetCurrentTransforms()
         {
-            if (Animation == null) return new Matrix4[0];
+            if (Animation == null) return new Matrix4[] { Matrix4.Identity };
             return Animation.Frames[_currentFrame].Transforms.ToArray();
         } 
     }

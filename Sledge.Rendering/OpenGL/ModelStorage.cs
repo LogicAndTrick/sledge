@@ -1,12 +1,30 @@
 using System.Collections.Generic;
+using System.Drawing;
+using OpenTK;
 using Sledge.Rendering.DataStructures.Models;
 using Sledge.Rendering.Interfaces;
+using Sledge.Rendering.Materials;
 using Sledge.Rendering.OpenGL.Arrays;
 
 namespace Sledge.Rendering.OpenGL
 {
     public class ModelStorage : IModelStorage
     {
+        private static readonly Model Blank;
+
+        static ModelStorage()
+        {
+            Blank = new Model(new List<Mesh>
+            {
+                new Mesh(Material.Flat(Color.White), new List<MeshVertex>
+                {
+                    new MeshVertex(Vector3.Zero, Vector3.UnitZ, 0, 0, new Dictionary<int, float>()),
+                    new MeshVertex(Vector3.Zero, Vector3.UnitZ, 0, 0, new Dictionary<int, float>()),
+                    new MeshVertex(Vector3.Zero, Vector3.UnitZ, 0, 0, new Dictionary<int, float>()),
+                })
+            });
+        }
+
         private readonly Dictionary<string, Model> _models;
         private readonly Dictionary<string, ModelVertexArray> _arrays;
 
@@ -24,9 +42,20 @@ namespace Sledge.Rendering.OpenGL
             }
         }
 
+        public void Add(string name)
+        {
+            _models.Add(name, Blank);
+        }
+
         public void Add(string name, Model model)
         {
-            _models.Add(name, model);
+            if (_arrays.ContainsKey(name)) _arrays.Remove(name);
+            _models[name] = model;
+        }
+
+        public bool Exists(string name)
+        {
+            return _models.ContainsKey(name);
         }
 
         public Model Get(string name)

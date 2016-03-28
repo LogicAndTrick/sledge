@@ -35,9 +35,11 @@ namespace Sledge.Rendering.OpenGL
         public IModelStorage Models { get { return _modelStorage; } }
         public StringTextureManager StringTextureManager { get; private set; }
         public List<ITextureProvider> TextureProviders { get; private set; }
+        public List<IModelProvider> ModelProviders { get; private set; }
         public IRendererSettings Settings { get; private set; }
 
         private readonly List<string> _requestedTextureQueue;
+        private readonly List<string> _requestedModelQueue; 
 
         public Matrix4 SelectionTransform { get; set; }
 
@@ -53,13 +55,21 @@ namespace Sledge.Rendering.OpenGL
             SelectionTransform = Matrix4.Identity;
             StringTextureManager = new StringTextureManager(this);
             TextureProviders = new List<ITextureProvider>();
-            _requestedTextureQueue = new List<string>();
+            ModelProviders = new List<IModelProvider>();
             Settings = new RendererSettings(this);
+
+            _requestedTextureQueue = new List<string>();
+            _requestedModelQueue = new List<string>();
         }
 
         public void RequestTexture(string name)
         {
             _requestedTextureQueue.Add(name);
+        }
+
+        public void RequestModel(string name)
+        {
+            _requestedModelQueue.Add(name);
         }
 
         private void InitialiseRenderer()
@@ -178,6 +188,35 @@ namespace Sledge.Rendering.OpenGL
             }
         }
 
+        private void ProcessModelQueue()
+        {
+            if (_requestedModelQueue.Any())
+            {
+                foreach (var mp in ModelProviders)
+                {
+                    var list = _requestedModelQueue.Where(x => mp.Exists(x)).ToList();
+                    _requestedModelQueue.RemoveAll(list.Contains);
+                    mp.Request(list);
+                }
+            }
+
+            foreach (var mp in ModelProviders)
+            {
+                foreach (var md in mp.PopRequestedModels(1))
+                {
+                    Models.Add(md.Name, md.Model);
+                    foreach (var material in md.Model.Meshes.Select(x => x.Material).Where(x => x != null))
+                    {
+                        Materials.Add(material);
+                    }
+                    foreach (var td in md.Textures)
+                    {
+                        Textures.Create(td.Name, td.Bitmap, td.Width, td.Height, td.Flags);
+                    }
+                }
+            }
+        }
+
         private void RenderViewport(IViewport viewport, Frame frame)
         {
             if (_activeScene == null) return;
@@ -187,9 +226,14 @@ namespace Sledge.Rendering.OpenGL
 
             InitialiseRenderer();
             InitialiseViewport(viewport, vpData);
+
             scData.Array.ApplyChanges();
             vpData.ElementArray.Update(scData.Array.Elements);
+
             ProcessTextureQueue();
+            ProcessModelQueue();
+
+            // todo: some sort of garbage collection?
             
             // Set up FBO
             vpData.Framebuffer.Bind();
@@ -203,7 +247,6 @@ namespace Sledge.Rendering.OpenGL
             // Blit FBO
             vpData.Framebuffer.Unbind();
             vpData.Framebuffer.Render();
-
         }
 
         private ViewportData GetViewportData(IViewport viewport)

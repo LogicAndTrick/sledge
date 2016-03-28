@@ -37,7 +37,7 @@ namespace Sledge.Editor.Rendering
             _convertedScene = new ConvertedScene(document);
 
             Engine.Renderer.TextureProviders.Add(new DefaultTextureProvider(document));
-            Engine.Renderer.TextureProviders.Add(new ModelTextureProvider(document));
+            Engine.Renderer.ModelProviders.Add(new DefaultModelProvider(document));
 
             Update();
         }
