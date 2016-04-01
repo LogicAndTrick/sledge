@@ -26,7 +26,7 @@ bool has_flag(int value, int flag)
 
 void main()
 {
-    int flags = int(floor(vertexFlags));
+    int flags = int(floor(vertexFlags + 0.5f));
     
     if (orthographic && has_flag(flags, FLAGS_INVISIBLE_PERSPECTIVE)) discard;
     if (!orthographic && has_flag(flags, FLAGS_INVISIBLE_ORTHOGRAPHIC)) discard;

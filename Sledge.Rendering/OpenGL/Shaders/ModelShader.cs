@@ -11,7 +11,9 @@ namespace Sledge.Rendering.OpenGL.Shaders
             set
             {
                 Shader.Set("selectionTransform", value);
-                Shader.Set("selectionTransformInverseTranspose", Matrix4.Transpose(value.Inverted()));
+                // This shader is not currently used in the shader program outputs, so let's comment it out
+                // todo : better system for this later?
+                // Shader.Set("selectionTransformInverseTranspose", Matrix4.Transpose(value.Inverted()));
             }
         }
 

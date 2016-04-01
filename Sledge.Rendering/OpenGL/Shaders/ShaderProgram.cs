@@ -57,7 +57,7 @@ namespace Sledge.Rendering.OpenGL.Shaders
 
             return program;
         }
-
+        
         private ShaderVariable GetVariable(string name)
         {
             return Variables.FirstOrDefault(x => x.Name == name);

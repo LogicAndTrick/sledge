@@ -82,7 +82,7 @@ void main()
 	vertexMaterialColor = materialColor;
 	vertexAccentColor = accentColor;
 	vertexTintColor = tintColor;
-    vertexFlags = fflags;
+    vertexFlags = flags;
 
 	gl_Position = viewportPos;
 	if (orthographic) gl_Position.z = zIndex / -100;

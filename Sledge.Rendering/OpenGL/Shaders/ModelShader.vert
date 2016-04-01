@@ -24,11 +24,11 @@ attribute vec4 accentColor;
 attribute vec4 tintColor;
 attribute float fflags;
 
-attribute int weight1;
+attribute float weight1;
 attribute float weightValue1;
-attribute int weight2;
+attribute float weight2;
 attribute float weightValue2;
-attribute int weight3;
+attribute float weight3;
 attribute float weightValue3;
 
 varying vec4 vertexPosition;
@@ -62,9 +62,9 @@ void main()
 	vec4 worldPos = vec4(position, 1);
     vec4 worldNorm = vec4(normal, 1);
 
-    if (weightValue1 > 0) worldPos = animationTransforms[weight1] * worldPos;
-    if (weightValue2 > 0) worldPos = animationTransforms[weight2] * worldPos;
-    if (weightValue3 > 0) worldPos = animationTransforms[weight3] * worldPos;
+    if (weightValue1 > 0) worldPos = animationTransforms[int(floor(weight1))] * worldPos;
+    if (weightValue2 > 0) worldPos = animationTransforms[int(floor(weight2))] * worldPos;
+    if (weightValue3 > 0) worldPos = animationTransforms[int(floor(weight3))] * worldPos;
 
     if (has_flag(flags, FLAGS_SELECTED)) {
 		worldPos = selectionTransform * worldPos;
