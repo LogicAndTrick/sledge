@@ -93,7 +93,6 @@ namespace Sledge.Rendering.OpenGL
             var data = _viewportData.ContainsKey(viewport) ? _viewportData[viewport] : null;
             if (data != null)
             {
-                data.Framebuffer.Dispose();
                 _viewportData.Remove(viewport);
             }
 
@@ -151,7 +150,6 @@ namespace Sledge.Rendering.OpenGL
             {
                 data.Width = viewport.Control.Width;
                 data.Height = viewport.Control.Height;
-                data.Framebuffer.Size = new Size(viewport.Control.Width, viewport.Control.Height);
             }
         }
 
@@ -230,18 +228,11 @@ namespace Sledge.Rendering.OpenGL
 
             // todo: some sort of garbage collection?
             
-            // Set up FBO
-            vpData.Framebuffer.Bind();
-            
             GL.ClearColor(Color.Black);
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
             scData.Array.Render(this, _shaderProgram, _modelShaderProgram, viewport);
             vpData.ElementArray.Render(this, _shaderProgram, viewport);
-
-            // Blit FBO
-            vpData.Framebuffer.Unbind();
-            vpData.Framebuffer.Render();
         }
 
         private ViewportData GetViewportData(IViewport viewport)
@@ -266,7 +257,6 @@ namespace Sledge.Rendering.OpenGL
 
         private class ViewportData : IDisposable
         {
-            public Framebuffer Framebuffer { get; private set; }
             public ElementArrayCollection ElementArray { get; private set; }
             public bool Initialised { get; set; }
             public int Width { get; set; }
@@ -276,14 +266,12 @@ namespace Sledge.Rendering.OpenGL
             {
                 Width = viewport.Control.Width;
                 Height = viewport.Control.Height;
-                Framebuffer = new Framebuffer(Width, Height);
                 ElementArray = new ElementArrayCollection(renderer, viewport);
                 Initialised = false;
             }
 
             public void Dispose()
             {
-                Framebuffer.Dispose();
                 ElementArray.Dispose();
             }
         }
