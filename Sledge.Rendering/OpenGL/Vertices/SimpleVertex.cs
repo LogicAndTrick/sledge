@@ -23,7 +23,7 @@ namespace Sledge.Rendering.OpenGL.Vertices
         [ArrayIndex(VertexAttribPointerType.UnsignedByte, 4, true)]
         public int TintColor;
 
-        [ArrayIndex(VertexAttribIntegerType.UnsignedInt)]
+        [ArrayIndex(VertexAttribPointerType.UnsignedInt)]
         public VertexFlags Flags;
         
         public float ZIndex;

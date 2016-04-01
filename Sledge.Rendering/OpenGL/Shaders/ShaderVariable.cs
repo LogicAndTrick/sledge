@@ -10,8 +10,6 @@ namespace Sledge.Rendering.OpenGL.Shaders
         public ActiveUniformType Type { get; set; }
         public object Value { get; set; }
 
-        private int _samplerId;
-
         public ShaderVariable(int location, string name, ActiveUniformType type)
         {
             Location = location;
@@ -37,7 +35,6 @@ namespace Sledge.Rendering.OpenGL.Shaders
         {
             if (Value != null && Value.Equals(matrix)) return;
             Value = matrix;
-            //GL.UniformMatrix4(Location, false, ref matrix);
             GL.UniformMatrix4(Location, matrix.Length, false, ref matrix[0].Row0.X);
         }
 

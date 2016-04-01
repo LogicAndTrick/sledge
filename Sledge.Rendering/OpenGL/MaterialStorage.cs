@@ -45,7 +45,7 @@ namespace Sledge.Rendering.OpenGL
         {
             if (!Exists(uniqueIdentifier)) throw new Exception("Material " + uniqueIdentifier + " doesn't exist");
             var mat = Get(uniqueIdentifier);
-            _renderer.Textures.Bind(mat.CurrentFrame);
+            _renderer.Textures.Bind(0, mat.CurrentFrame);
         }
 
         public bool Exists(string uniqueIdentifier)

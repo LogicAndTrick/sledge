@@ -20,18 +20,18 @@ namespace Sledge.Rendering.OpenGL.Vertices
         [ArrayIndex(VertexAttribPointerType.UnsignedByte, 4, true)]
         public int TintColor;
 
-        [ArrayIndex(VertexAttribIntegerType.UnsignedInt)]
+        [ArrayIndex(VertexAttribPointerType.UnsignedInt)]
         public VertexFlags Flags;
 
-        [ArrayIndex(VertexAttribIntegerType.Int)]
+        [ArrayIndex(VertexAttribPointerType.UnsignedByte)]
         public byte WeightingIndex1;
         public float WeightingValue1;
 
-        [ArrayIndex(VertexAttribIntegerType.Int)]
+        [ArrayIndex(VertexAttribPointerType.UnsignedByte)]
         public byte WeightingIndex2;
         public float WeightingValue2;
 
-        [ArrayIndex(VertexAttribIntegerType.Int)]
+        [ArrayIndex(VertexAttribPointerType.UnsignedByte)]
         public byte WeightingIndex3;
         public float WeightingValue3;
     }

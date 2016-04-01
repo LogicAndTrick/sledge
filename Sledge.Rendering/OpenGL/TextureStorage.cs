@@ -181,22 +181,24 @@ namespace Sledge.Rendering.OpenGL
 
         #region Bind
 
-        public void Bind(string name)
+        public void Bind(int textureIndex, string name)
         {
             if (!Exists(name))
             {
                 throw new Exception("Texture " + name + " doesn't exist");
             }
-            Bind(Get(name).ID);
+            Bind(textureIndex, Get(name).ID);
         }
 
-        public static void Bind(int reference)
+        public static void Bind(int textureIndex, int reference)
         {
+            GL.ActiveTexture(TextureUnit.Texture0 + textureIndex);
             GL.BindTexture(TextureTarget.Texture2D, reference);
         }
 
-        public static void Unbind()
+        public static void Unbind(int textureIndex)
         {
+            GL.ActiveTexture(TextureUnit.Texture0 + textureIndex);
             GL.BindTexture(TextureTarget.Texture2D, 0);
         }
 

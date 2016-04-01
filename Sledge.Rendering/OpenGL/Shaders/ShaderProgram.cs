@@ -43,6 +43,7 @@ namespace Sledge.Rendering.OpenGL.Shaders
         {
             var program = GL.CreateProgram();
             shaders.ForEach(x => GL.AttachShader(program, x.ID));
+            shaders.ForEach(x => x.BindAttribLocations(program));
             GL.LinkProgram(program);
 
             // Program error logging

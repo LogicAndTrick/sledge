@@ -1,12 +1,12 @@
-﻿#version 330
+#version 120
 
-smooth in vec4 vertexPosition;
-smooth in vec4 vertexNormal;
-smooth in vec2 vertexTexture;
-smooth in vec4 vertexMaterialColor;
-smooth in vec4 vertexAccentColor;
-smooth in vec4 vertexTintColor;
-flat in uint vertexFlags;
+varying vec4 vertexPosition;
+varying vec4 vertexNormal;
+varying vec2 vertexTexture;
+varying vec4 vertexMaterialColor;
+varying vec4 vertexAccentColor;
+varying vec4 vertexTintColor;
+varying float vertexFlags;
 
 uniform bool orthographic;
 uniform bool useAccentColor;
@@ -14,20 +14,26 @@ uniform bool showGrid;
 uniform float gridSpacing;
 uniform sampler2D currentTexture;
 
-out vec4 fragmentColor;
+int FLAGS_INVISIBLE_PERSPECTIVE = 1;
+int FLAGS_INVISIBLE_ORTHOGRAPHIC = 2;
+int FLAGS_SELECTED = 4;
+int FLAGS_NORMALISED = 8;
 
-uint FLAGS_INVISIBLE_PERSPECTIVE = 1u << 0;
-uint FLAGS_INVISIBLE_ORTHOGRAPHIC = 1u << 1;
-uint FLAGS_SELECTED = 1u << 2;
+bool has_flag(int value, int flag)
+{
+    return mod(value, flag * 2) >= flag;
+}
 
 void main()
 {
-    if (orthographic && (vertexFlags & FLAGS_INVISIBLE_PERSPECTIVE) == FLAGS_INVISIBLE_PERSPECTIVE) discard;
-    if (!orthographic && (vertexFlags & FLAGS_INVISIBLE_ORTHOGRAPHIC) == FLAGS_INVISIBLE_ORTHOGRAPHIC) discard;
+    int flags = int(floor(vertexFlags));
+    
+    if (orthographic && has_flag(flags, FLAGS_INVISIBLE_PERSPECTIVE)) discard;
+    if (!orthographic && has_flag(flags, FLAGS_INVISIBLE_ORTHOGRAPHIC)) discard;
 
     vec3 tint = vec3(1, 1, 1) - ((vec3(1, 1, 1) - vertexTintColor.rgb) * vertexTintColor.a);
 
-    fragmentColor = useAccentColor ? vertexAccentColor : texture(currentTexture, vertexTexture) * vertexMaterialColor;
+    vec4 fragmentColor = useAccentColor ? vertexAccentColor : texture2D(currentTexture, vertexTexture) * vertexMaterialColor;
 	if (!useAccentColor) fragmentColor.rgb *= tint; // vertexTintColor.rgb * vertexTintColor.a;
 	fragmentColor.a *= vertexMaterialColor.a;
 
@@ -38,4 +44,6 @@ void main()
         if (abs(vertexNormal).y < 0.9999) fragmentColor = mix(fragmentColor, vec4(0, 1, 0, 1), step(mod(vertexPosition.y, gridSpacing), 0.1f));
         if (abs(vertexNormal).z < 0.9999) fragmentColor = mix(fragmentColor, vec4(0, 0, 1, 1), step(mod(vertexPosition.z, gridSpacing), 0.1f));
     }
+    
+    gl_FragColor = fragmentColor;
 }

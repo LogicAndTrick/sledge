@@ -1,5 +1,7 @@
-﻿#version 330
+#version 120
 
+// Be sure to keep these GLSL 330 parameters as a comment as they are needed for the preprocessor
+/*
 layout(location = 0) in vec3 position;
 layout(location = 1) in vec3 normal;
 layout(location = 2) in vec2 texture;
@@ -13,27 +15,50 @@ layout(location = 8) in int weight2;
 layout(location = 9) in float weightValue2;
 layout(location = 10) in int weight3;
 layout(location = 11) in float weightValue3;
+*/
 
-smooth out vec4 vertexPosition;
-smooth out vec4 vertexNormal;
-smooth out vec2 vertexTexture;
-smooth out vec4 vertexAccentColor;
-smooth out vec4 vertexTintColor;
-flat out uint vertexFlags;
+attribute vec3 position;
+attribute vec3 normal;
+attribute vec2 texture;
+attribute vec4 accentColor;
+attribute vec4 tintColor;
+attribute float fflags;
+
+attribute int weight1;
+attribute float weightValue1;
+attribute int weight2;
+attribute float weightValue2;
+attribute int weight3;
+attribute float weightValue3;
+
+varying vec4 vertexPosition;
+varying vec4 vertexNormal;
+varying vec2 vertexTexture;
+varying vec4 vertexAccentColor;
+varying vec4 vertexTintColor;
+varying float vertexFlags;
 
 uniform mat4 selectionTransform;
+uniform mat4 selectionTransformInverseTranspose;
 uniform mat4 modelMatrix;
 uniform mat4 viewportMatrix;
 uniform mat4 cameraMatrix;
 
 uniform mat4[128] animationTransforms;
 
-uint FLAGS_INVISIBLE_PERSPECTIVE = 1u << 0;
-uint FLAGS_INVISIBLE_ORTHOGRAPHIC = 1u << 1;
-uint FLAGS_SELECTED = 1u << 2;
+int FLAGS_INVISIBLE_PERSPECTIVE = 1;
+int FLAGS_INVISIBLE_ORTHOGRAPHIC = 2;
+int FLAGS_SELECTED = 4;
+int FLAGS_NORMALISED = 8;
+
+bool has_flag(int value, int flag)
+{
+    return mod(value, flag * 2) >= flag;
+}
 
 void main()
 {
+    int flags = int(floor(fflags));
 	vec4 worldPos = vec4(position, 1);
     vec4 worldNorm = vec4(normal, 1);
 
@@ -41,9 +66,9 @@ void main()
     if (weightValue2 > 0) worldPos = animationTransforms[weight2] * worldPos;
     if (weightValue3 > 0) worldPos = animationTransforms[weight3] * worldPos;
 
-	if ((flags & FLAGS_SELECTED) == FLAGS_SELECTED) {
+    if (has_flag(flags, FLAGS_SELECTED)) {
 		worldPos = selectionTransform * worldPos;
-		worldNorm = transpose(inverse(selectionTransform)) * worldNorm;
+		worldNorm = selectionTransformInverseTranspose * worldNorm;
 	}
 
 	worldNorm = vec4(normalize(worldNorm.xyz), 1);

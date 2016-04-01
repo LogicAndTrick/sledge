@@ -6,7 +6,15 @@ namespace Sledge.Rendering.OpenGL.Shaders
 {
     public class Passthrough : ShaderBase
     {
-        public Matrix4 SelectionTransform { set { Shader.Set("selectionTransform", value); } }
+        public Matrix4 SelectionTransform
+        {
+            set
+            {
+                Shader.Set("selectionTransform", value);
+                Shader.Set("selectionTransformInverseTranspose", Matrix4.Transpose(value.Inverted()));
+            }
+        }
+
         public Matrix4 ModelMatrix { set { Shader.Set("modelMatrix", value); } }
         public Matrix4 ViewportMatrix { set { Shader.Set("viewportMatrix", value); } }
         public Matrix4 CameraMatrix { set { Shader.Set("cameraMatrix", value); } }

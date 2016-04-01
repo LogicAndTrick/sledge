@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using OpenTK.Graphics.OpenGL;
 
 namespace Sledge.Rendering.OpenGL.Shaders
@@ -37,6 +39,16 @@ namespace Sledge.Rendering.OpenGL.Shaders
             }
 
             return shader;
+        }
+
+
+        public void BindAttribLocations(int program)
+        {
+            var regex = new Regex(@"layout\(location = (\d+)\) in (\w+) (\w+);");
+            foreach (Match match in regex.Matches(ShaderCode))
+            {
+                GL.BindAttribLocation(program, int.Parse(match.Groups[1].Value), match.Groups[3].Value);
+            }
         }
     }
 }
