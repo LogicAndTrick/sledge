@@ -17,7 +17,7 @@ namespace Sledge.Editor.Tools2.VMTool
 {
     public class VMPoint : BaseDraggable
     {
-        private readonly VMPointsDraggableState _state;
+        private readonly VMTool _tool;
         private bool _isDragging;
 
         public int ID { get; set; }
@@ -47,9 +47,9 @@ namespace Sledge.Editor.Tools2.VMTool
         public VMPoint MidpointStart { get; set; }
         public VMPoint MidpointEnd { get; set; }
 
-        public VMPoint(VMPointsDraggableState state, VMSolid solid)
+        public VMPoint(VMTool tool, VMSolid solid)
         {
-            _state = state;
+            _tool = tool;
             DraggingPosition = Position = Coordinate.Zero;
             Solid = solid;
             Vertices = new List<Vertex>();
@@ -97,16 +97,18 @@ namespace Sledge.Editor.Tools2.VMTool
 
         public override void MouseDown(MapViewport viewport, ViewportEvent e, Coordinate position)
         {
-            _state.PointMouseDown(viewport, this);
+            _tool.PointMouseDown(viewport, this);
         }
 
         public override void Click(MapViewport viewport, ViewportEvent e, Coordinate position)
         {
-            _state.PointClick(viewport, this);
+            _tool.PointClick(viewport, this);
         }
 
         public override bool CanDrag(MapViewport viewport, ViewportEvent e, Coordinate position)
         {
+            if (!_tool.CanDragPoint(this)) return false;
+
             const int width = 5;
             var screenPosition = viewport.ProperWorldToScreen(Position);
             var diff = (e.Location - screenPosition).Absolute();
@@ -132,19 +134,21 @@ namespace Sledge.Editor.Tools2.VMTool
 
         public override void StartDrag(MapViewport viewport, ViewportEvent e, Coordinate position)
         {
-            _state.StartPointDrag(viewport, e, Position);
+            _tool.StartPointDrag(viewport, e, Position);
             base.StartDrag(viewport, e, position);
         }
 
         public override void Drag(MapViewport viewport, ViewportEvent e, Coordinate lastPosition, Coordinate position)
         {
-            _state.PointDrag(viewport, e, lastPosition, position);
+            position = _tool.SnapIfNeeded(viewport.Expand(position));
+            _tool.PointDrag(viewport, e, lastPosition, position);
             base.Drag(viewport, e, lastPosition, position);
         }
 
         public override void EndDrag(MapViewport viewport, ViewportEvent e, Coordinate position)
         {
-            _state.EndPointDrag(viewport, e, position);
+            position = _tool.SnapIfNeeded(viewport.Expand(position));
+            _tool.EndPointDrag(viewport, e, position);
             base.EndDrag(viewport, e, position);
         }
 

@@ -9,6 +9,7 @@ using Sledge.Common.Mediator;
 using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.MapObjects;
 using Sledge.Editor.Actions;
+using Sledge.Editor.Actions.MapObjects.Operations;
 using Sledge.Editor.Actions.MapObjects.Selection;
 using Sledge.Editor.History;
 using Sledge.Editor.Properties;
@@ -19,8 +20,36 @@ using Sledge.Editor.Tools2.VMTool.Actions;
 using Sledge.Editor.UI;
 using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Scenes;
+using Sledge.Rendering.Scenes.Renderables;
 using Sledge.Settings;
+using Line = Sledge.DataStructures.Geometric.Line;
 using View = Sledge.Settings.View;
+
+/*
+TODO VM tool:
+- Errors
+  - Error selecting
+  - Control panel/error panel
+
+- Sub-tools
+  - tool switching
+
+- Standard mode
+  - Point merging / auto-merging
+  - Face splitting
+
+- Undo/redo stack
+  - when changes have been made and a different object is selected - popping full stack means we can't undo any more
+
+DONE
+Grid snapping
+Box selection
+Points visibility cycling
+
+- Selection
+  - Deselecting points
+  - Point selection is wonky
+*/
 
 namespace Sledge.Editor.Tools2.VMTool
 {
@@ -29,26 +58,43 @@ namespace Sledge.Editor.Tools2.VMTool
     //    private readonly VMSidebarPanel _controlPanel;
     //    private readonly VMErrorsSidebarPanel _errorPanel;
 
-        private readonly VMPointsDraggableState _pointState;
+        //private readonly StandardTool _pointState;
         private readonly BoxDraggableState _boxState;
 
-        private ShowPoints _showPoints;
+        public ShowPoints ShowPoints { get; set; }
+
+        internal List<VMPoint> Points { get; private set; }
+        internal List<VMSolid> Solids { get; private set; }
+
 
         public VMTool()
         {
             //_controlPanel = new VMSidebarPanel();
             //_errorPanel = new VMErrorsSidebarPanel();
 
+            Points = new List<VMPoint>();
+            Solids = new List<VMSolid>();
+
             Usage = ToolUsage.Both;
 
-            _pointState = new VMPointsDraggableState(this);
+            //_pointState = new StandardTool(this);
 
             _boxState = new BoxDraggableState(this);
             _boxState.BoxColour = Color.Orange;
             _boxState.FillColour = Color.FromArgb(View.SelectionBoxBackgroundOpacity, Color.DodgerBlue);
+            _boxState.DragStarted += (sender, args) =>
+            {
+                if (!KeyboardState.Ctrl)
+                {
+                    DeselectAll();
+                }
+            };
 
-            States.Add(_pointState);
+            //States.Add(_pointState);
+            States.Add(new VMPointsState(this));
             States.Add(_boxState);
+
+            Children.Add(new VMStandardTool(this));
 
             UseValidation = true;
         }
@@ -101,6 +147,9 @@ namespace Sledge.Editor.Tools2.VMTool
                         return HotkeyInterceptResult.Abort;
                     }
                     return HotkeyInterceptResult.Continue;
+                case HotkeysMediator.SelectionClear:
+                    Cancel();
+                    return HotkeyInterceptResult.Abort;
                 case HotkeysMediator.VMFaceEditMode:
                 case HotkeysMediator.VMScalingMode:
                 case HotkeysMediator.VMSplitFace:
@@ -109,30 +158,31 @@ namespace Sledge.Editor.Tools2.VMTool
             }
             return HotkeyInterceptResult.Abort; // Don't allow stuff to happen when inside the VM tool. todo: fix/make this more generic?
         }
-
+        
         public override void KeyDown(MapViewport viewport, ViewportEvent e)
         {
             if (e.KeyCode == Keys.Enter)
             {
-                Confirm(viewport);
+                Confirm();
                 e.Handled = true;
             }
             else if (e.KeyCode == Keys.Escape)
             {
                 // todo: escape (or any other existing hotkey) doesn't get sent to tools because they are consumed by the form
-                Cancel(viewport);
+                Cancel();
                 e.Handled = true;
             }
             base.KeyDown(viewport, e);
         }
 
-        private void Confirm(MapViewport viewport)
+        #region Box confirm / cancel
+        private void Confirm()
         {
             if (_boxState.State.Action != BoxAction.Drawn) return;
             var bbox = _boxState.State.GetSelectionBox();
             if (bbox != null && !bbox.IsEmpty())
             {
-                _pointState.SelectPointsInBox(bbox, KeyboardState.Ctrl);
+                SelectPointsInBox(bbox, KeyboardState.Ctrl);
                 _boxState.RememberedDimensions = bbox;
             }
             _boxState.State.Action = BoxAction.Idle;
@@ -140,18 +190,200 @@ namespace Sledge.Editor.Tools2.VMTool
             Invalidate();
         }
 
-        private void Cancel(MapViewport viewport)
+        private void Cancel()
         {
-            _boxState.RememberedDimensions = new Box(_boxState.State.Start, _boxState.State.End);
-            _boxState.State.Action = BoxAction.Idle;
+            if (_boxState.State.Action != BoxAction.Idle)
+            {
+                _boxState.RememberedDimensions = new Box(_boxState.State.Start, _boxState.State.End);
+                _boxState.State.Action = BoxAction.Idle;
+            }
+            else
+            {
+                DeselectAll();
+            }
 
             Invalidate();
         }
+        #endregion
+
+        #region Commit VM changes
+        protected void CommitChanges()
+        {
+            CommitChanges(Solids);
+        }
+
+        protected void CommitChanges(IEnumerable<VMSolid> solids)
+        {
+            var list = solids.ToList();
+            if (!list.Any()) return;
+
+            // Reset all changes
+            foreach (var s in list)
+            {
+                Solids.Remove(s);
+                Points.RemoveAll(x => x.Solid == s);
+                s.Original.IsCodeHidden = s.Copy.IsCodeHidden = false;
+                s.Original.Faces.ForEach(x => x.IsSelected = false);
+                s.Copy.Faces.ForEach(x => x.IsSelected = false);
+            }
+
+            // Commit the changes
+            if (list.Any(x => x.IsDirty))
+            {
+                var dirty = list.Where(x => x.IsDirty).ToList();
+                var edit = new ReplaceObjects(dirty.Select(x => x.Original), dirty.Select(x => x.Copy));
+                PerformAndCommitAction("Vertex manipulation on " + dirty.Count + " solid" + (dirty.Count == 1 ? "" : "s"), edit);
+            }
+
+            // Notify that we've unhidden some stuff
+            if (list.Any(x => !x.IsDirty))
+            {
+                Mediator.Publish(EditorMediator.SceneObjectsUpdated, list.Where(x => !x.IsDirty).Select(x => x.Original));
+            }
+
+            Invalidate();
+        }
+
+        public void PerformAction(VMAction action)
+        {
+            try
+            {
+                action.Redo(Document);
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace();
+                var frames = st.GetFrames() ?? new StackFrame[0];
+                var msg = "Action exception: " + action.Name + " (" + action + ")";
+                foreach (var frame in frames)
+                {
+                    var method = frame.GetMethod();
+                    msg += "\r\n    " + method.ReflectedType.FullName + "." + method.Name;
+                }
+                Logging.Logger.ShowException(new Exception(msg, ex), "Error performing action");
+            }
+
+            Document.History.AddHistoryItem(action);
+        }
+
+        public void PerformAndCommitAction(string name, IAction action)
+        {
+            Document.History.PopStack();
+            Document.PerformAction(name, action);
+            Document.History.PushStack("VM Tool");
+        }
+        #endregion
+
+        #region Selection changed
+        private void SelectionChanged()
+        {
+            // Find the solids that were selected and now aren't
+            var sel = Document.Selection.GetSelectedObjects().SelectMany(x => x.FindAll()).OfType<Solid>().Distinct().ToList();
+            var diff = Solids.Where(x => !sel.Contains(x.Original));
+
+            // Commit the difference
+            CommitChanges(diff);
+            Clear();
+
+            // Find the solids that are now selected and weren't before
+            var newSolids = sel.Where(x => Solids.All(y => y.Original.ID != x.ID)).ToList();
+            foreach (var so in newSolids)
+            {
+                var vmsolid = new VMSolid(this, so);
+                so.IsCodeHidden = true;
+                Solids.Add(vmsolid);
+                Points.AddRange(vmsolid.Points);
+            }
+
+            Points.Sort((a, b) => b.IsMidpoint.CompareTo(a.IsMidpoint));
+
+            // Notify if we've changed anything
+            if (newSolids.Any())
+            {
+                Mediator.Publish(EditorMediator.SceneObjectsUpdated, newSolids);
+            }
+
+            Invalidate();
+        }
+        #endregion
+
+        #region Points
+
+        public void Clear()
+        {
+            Solids.Clear();
+            Points.Clear();
+            Invalidate();
+        }
+
+        public VMPoint GetPointByID(long objectId, int pointId)
+        {
+            return Points.FirstOrDefault(x => x.ID == pointId && x.Solid.Original.ID == objectId);
+        }
+
+        internal IEnumerable<VMPoint> GetVisiblePoints()
+        {
+            switch (ShowPoints)
+            {
+                case ShowPoints.All:
+                    return Points;
+                case ShowPoints.Vertices:
+                    return Points.Where(x => !x.IsMidpoint);
+                case ShowPoints.Midpoints:
+                    return Points.Where(x => x.IsMidpoint);
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+
+        public void RefreshPoints(IList<VMSolid> solids)
+        {
+            var newPoints = Points.Except(solids.SelectMany(x => x.Points)).ToList();
+            foreach (var solid in solids) solid.RefreshPoints();
+            Points.Clear();
+            Points.AddRange(newPoints.Union(solids.SelectMany(x => x.Points)));
+            Points.Sort((a, b) => b.IsMidpoint.CompareTo(a.IsMidpoint));
+        }
+
+        private void Select(List<VMPoint> points, bool toggle)
+        {
+            if (!points.Any()) return;
+            if (!toggle) Points.ForEach(x => x.IsSelected = false);
+            var first = points[0];
+            var val = !toggle || !first.IsSelected;
+            points.ForEach(x => x.IsSelected = val);
+
+            Invalidate();
+        }
+
+        public bool SelectPointsInBox(Box box, bool toggle)
+        {
+            var inBox = GetVisiblePoints().Where(x => box.CoordinateIsInside(x.Position)).ToList();
+            Select(inBox, toggle);
+            return inBox.Any();
+        }
+
+        public void DeselectAll()
+        {
+            Points.ForEach(x => x.IsSelected = false);
+
+            Invalidate();
+        }
+
+        public bool CanDragPoint(VMPoint point)
+        {
+            return Children.Where(x => x.Active).OfType<VMSubTool>().All(x => x.CanDragPoint(point));
+        }
+
+        #endregion
+
+        #region Selection - 3D
 
         /// <summary>
         /// When the mouse is pressed in the 3D view, we want to select the clicked object.
         /// </summary>
         /// <param name="viewport">The viewport that was clicked</param>
+        /// <param name="camera"></param>
         /// <param name="e">The click event</param>
         protected override void MouseDown(MapViewport viewport, PerspectiveCamera camera, ViewportEvent e)
         {
@@ -166,7 +398,20 @@ namespace Sledge.Editor.Tools2.VMTool
 
         protected bool Try3DPointSelection(MapViewport viewport, PerspectiveCamera camera, ViewportEvent e)
         {
-            return _pointState.SelectPointsIn3D(viewport, camera, e, KeyboardState.Ctrl);
+            var toggle = KeyboardState.Ctrl;
+
+            var l = camera.EyeLocation;
+            var pos = new Coordinate((decimal)l.X, (decimal)l.Y, (decimal)l.Z);
+            var p = new Coordinate(e.X, e.Y, 0);
+            const int d = 5;
+            var clicked = (from point in GetVisiblePoints()
+                           let c = viewport.WorldToScreen(point.Position)
+                           where c != null && c.Z <= 1
+                           where p.X >= c.X - d && p.X <= c.X + d && p.Y >= c.Y - d && p.Y <= c.Y + d
+                           orderby (pos - point.Position).LengthSquared()
+                           select point).ToList();
+            Select(clicked, toggle);
+            return clicked.Any();
         }
 
         private Coordinate GetIntersectionPoint(MapObject obj, Line line)
@@ -223,33 +468,193 @@ namespace Sledge.Editor.Tools2.VMTool
             return false;
         }
 
-        public void PerformAction(VMAction action)
+        #endregion
+
+        #region Selection - 2D
+
+        protected override void MouseDown(MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
         {
-            try
+            if (CurrentDraggable == null || CurrentDraggable == _boxState)
             {
-                action.Redo(Document);
-            }
-            catch (Exception ex)
-            {
-                var st = new StackTrace();
-                var frames = st.GetFrames() ?? new StackFrame[0];
-                var msg = "Action exception: " + action.Name + " (" + action + ")";
-                foreach (var frame in frames)
-                {
-                    var method = frame.GetMethod();
-                    msg += "\r\n    " + method.ReflectedType.FullName + "." + method.Name;
-                }
-                Logging.Logger.ShowException(new Exception(msg, ex), "Error performing action");
+                if (!KeyboardState.Ctrl) DeselectAll();
+                if (Try2DObjectSelection(viewport, e)) return;
             }
 
-            Document.History.AddHistoryItem(action);
+            base.MouseDown(viewport, camera, e);
         }
 
-        public void PerformAndCommitAction(string name, IAction action)
+        /*
+         * Selection in 2D:
+         * MouseDown:
+         *   If ctrl is not down, deselect all
+         *   Points <- all vertices under cursor
+         *   If any Points is standard Points <- Points where standard
+         *   Topmost <- closest Points to viewport
+         *   If shift is down, Points <- { Topmost }
+         *   Points <- Points where Solid = Topmost.Solid
+         *   Val <- true
+         *   If ctrl is down, Val <- !TopMost.IsSelected
+         *   Topmost:
+         *     If null, try 2D object selection instead
+         *     Otherwise, Points each IsSelected <- Val
+         * 
+         */
+
+        public List<VMPoint> GetPoints(MapViewport viewport, Coordinate position, bool allowMixed, bool topmostOnly, bool oneSolidOnly)
         {
-            Document.History.PopStack();
-            Document.PerformAction(name, action);
-            Document.History.PushStack("VM Tool");
+            var p = viewport.Flatten(position);
+            var d = 5 / (decimal)viewport.Zoom; // Tolerance value = 5 pixels
+
+            // Order by the unused coordinate in the view (which is the up axis) descending to get the "closest" point
+            var points = (from pp in GetVisiblePoints()
+                          let c = viewport.Flatten(pp.Position)
+                          where p.X >= c.X - d && p.X <= c.X + d && p.Y >= c.Y - d && p.Y <= c.Y + d
+                          let unused = viewport.GetUnusedCoordinate(pp.Position)
+                          orderby unused.X + unused.Y + unused.Z descending
+                          select pp).ToList();
+
+            if (!allowMixed && points.Any(x => !x.IsMidpoint)) points.RemoveAll(x => x.IsMidpoint);
+            if (points.Count <= 0) return points;
+
+            var first = points[0];
+            if (topmostOnly) points = new List<VMPoint> { first };
+            if (oneSolidOnly) points.RemoveAll(x => x.Solid != first.Solid);
+
+            return points;
+        }
+
+        protected bool Try2DObjectSelection(MapViewport viewport, ViewportEvent e)
+        {
+            // Create a box to represent the click, with a tolerance level
+            var unused = viewport.GetUnusedCoordinate(new Coordinate(100000, 100000, 100000));
+            var tolerance = 4 / (decimal)viewport.Zoom; // Selection tolerance of four pixels
+            var used = viewport.Expand(new Coordinate(tolerance, tolerance, 0));
+            var add = used + unused;
+            var click = viewport.Expand(viewport.ScreenToWorld(e.X, viewport.Height - e.Y));
+            var box = new Box(click - add, click + add);
+
+            var centerHandles = Sledge.Settings.Select.DrawCenterHandles;
+            var centerOnly = Sledge.Settings.Select.ClickSelectByCenterHandlesOnly;
+            // Get the first element that intersects with the box, selecting or deselecting as needed
+            var solid = Document.Map.WorldSpawn.GetAllNodesIntersecting2DLineTest(box, centerHandles, centerOnly).OfType<Solid>().FirstOrDefault();
+
+            if (solid != null)
+            {
+                if (solid.IsSelected && KeyboardState.Ctrl)
+                {
+                    // deselect solid
+                    var select = new MapObject[0];
+                    var deselect = new[] { solid };
+                    Document.PerformAction("Deselect VM solid", new ChangeSelection(select, deselect));
+                }
+                else if (!solid.IsSelected)
+                {
+                    // select solid
+                    var select = new[] { solid };
+                    var deselect = !KeyboardState.Ctrl ? Document.Selection.GetSelectedObjects() : new MapObject[0];
+                    Document.PerformAction("Select VM solid", new ChangeSelection(select, deselect));
+                }
+
+                return true;
+            }
+
+            return false;
+        }
+
+        private bool _selectOnClick;
+
+        public void PointMouseDown(MapViewport viewport, VMPoint point)
+        {
+            // todo box cancel?
+            var vtxs = GetPoints(viewport, point.Position, false, KeyboardState.Shift, true);
+            if (!vtxs.Any()) return;
+
+            _selectOnClick = true;
+            if (!vtxs.Any(x => x.IsSelected))
+            {
+                Select(vtxs, KeyboardState.Ctrl);
+                _selectOnClick = false;
+            }
+        }
+
+        public void PointClick(MapViewport viewport, VMPoint point)
+        {
+            if (!_selectOnClick) return;
+            _selectOnClick = false;
+
+            var vtxs = GetPoints(viewport, point.Position, false, KeyboardState.Shift, true);
+            if (!vtxs.Any()) return;
+            Select(vtxs, KeyboardState.Ctrl);
+        }
+
+        #endregion
+
+        #region Point dragging - 2D
+        
+        private Coordinate _pointDragStart;
+        private Coordinate _pointDragGridOffset;
+
+        public void StartPointDrag(MapViewport viewport, ViewportEvent e, Coordinate startLocation)
+        {
+            foreach (var p in GetVisiblePoints().Where(x => x.IsSelected))
+            {
+                p.IsDragging = true;
+            }
+            _pointDragStart = viewport.ZeroUnusedCoordinate(startLocation);
+            _pointDragGridOffset = SnapIfNeeded(viewport.ZeroUnusedCoordinate(startLocation)) - viewport.ZeroUnusedCoordinate(startLocation);
+
+            Invalidate();
+        }
+
+        public void PointDrag(MapViewport viewport, ViewportEvent viewportEvent, Coordinate lastPosition, Coordinate position)
+        {
+            var delta = viewport.ZeroUnusedCoordinate(position) - _pointDragStart;
+            if (KeyboardState.Shift && !KeyboardState.Alt) delta -= _pointDragGridOffset;
+
+            var selected = GetVisiblePoints().Where(x => x.IsSelected).Distinct().SelectMany(x => x.GetStandardPointList()).ToList();
+            selected.ForEach(x => x.DragMove(delta));
+
+            foreach (var face in selected.SelectMany(x => x.Vertices.Select(v => v.Parent)).Distinct())
+            {
+                face.CalculateTextureCoordinates(true);
+            }
+
+            foreach (var midpoint in selected.Select(x => x.Solid).Distinct().SelectMany(x => x.Points.Where(p => p.IsMidpoint)))
+            {
+                var p1 = midpoint.MidpointStart.IsDragging ? midpoint.MidpointStart.DraggingPosition : midpoint.MidpointStart.Position;
+                var p2 = midpoint.MidpointEnd.IsDragging ? midpoint.MidpointEnd.DraggingPosition : midpoint.MidpointEnd.Position;
+                midpoint.DraggingPosition = midpoint.Position = (p1 + p2) / 2;
+            }
+
+            Invalidate();
+        }
+
+        public void EndPointDrag(MapViewport viewport, ViewportEvent e, Coordinate endLocation)
+        {
+            var delta = viewport.ZeroUnusedCoordinate(endLocation) - _pointDragStart;
+            if (KeyboardState.Shift && !KeyboardState.Alt) delta -= _pointDragGridOffset;
+
+            var selected = GetVisiblePoints().Where(x => x.IsSelected).ToList();
+            selected.ForEach(x => x.IsDragging = false);
+
+            var act = new MovePoints(this, selected, delta);
+            PerformAction(act);
+        }
+
+        #endregion
+
+        protected override IEnumerable<SceneObject> GetSceneObjects()
+        {
+            var objs = Solids.SelectMany(x => MapObjectConverter.Convert(Document, x.Copy)).ToList();
+            foreach (var so in objs.OfType<RenderableObject>())
+            {
+                so.ForcedRenderFlags |= RenderFlags.Wireframe;
+                so.IsSelected = true;
+                so.TintColor = Color.FromArgb(128, Color.Green);
+                so.AccentColor = Color.White;
+            }
+            objs.AddRange(base.GetSceneObjects());
+            return objs;
         }
 
         public new void Invalidate()
@@ -259,14 +664,10 @@ namespace Sledge.Editor.Tools2.VMTool
 
         private void CycleShowPoints()
         {
-            var side = (int)_showPoints;
+            var side = (int)ShowPoints;
             side = (side + 1) % (Enum.GetValues(typeof(ShowPoints)).Length);
-            _showPoints = (ShowPoints)side;
-        }
-
-        private void SelectionChanged()
-        {
-            _pointState.SelectionChanged();
+            ShowPoints = (ShowPoints)side;
+            Invalidate();
         }
 
         public override void ToolSelected(bool preventHistory)
@@ -287,8 +688,8 @@ namespace Sledge.Editor.Tools2.VMTool
         {
             Mediator.UnsubscribeAll(this);
 
-            _pointState.Commit();
-            _pointState.Clear();
+            CommitChanges();
+            Clear();
 
             Document.History.PopStack(); // todo push history collection
 

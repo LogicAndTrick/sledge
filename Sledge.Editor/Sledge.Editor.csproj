@@ -326,8 +326,10 @@
     <Compile Include="Tools2\VMTool\Actions\MovePoints.cs" />
     <Compile Include="Tools2\VMTool\ShowPoints.cs" />
     <Compile Include="Tools2\VMTool\VMPoint.cs" />
-    <Compile Include="Tools2\VMTool\VMPointsDraggableState.cs" />
+    <Compile Include="Tools2\VMTool\VMStandardTool.cs" />
+    <Compile Include="Tools2\VMTool\VMPointsState.cs" />
     <Compile Include="Tools2\VMTool\VMSolid.cs" />
+    <Compile Include="Tools2\VMTool\VMSubTool.cs" />
     <Compile Include="Tools2\VMTool\VMTool.cs" />
     <Compile Include="UI\KeyboardState.cs" />
     <Compile Include="Rendering\MapViewport.cs">

@@ -59,27 +59,25 @@ namespace Sledge.Editor.Tools2.VMTool.Actions
         public override bool ModifiesState { get { return true; } }
 
         private readonly List<PointState> _points;
-        private readonly VMPointsDraggableState _state;
         private readonly Coordinate _delta;
         private readonly List<long> _cleanSolids;
 
-        public MovePoints(VMTool tool, VMPointsDraggableState state, IEnumerable<VMPoint> points, Coordinate delta) : base(tool)
+        public MovePoints(VMTool tool, IEnumerable<VMPoint> points, Coordinate delta) : base(tool)
         {
             var list = points.SelectMany(x => x.GetStandardPointList()).Distinct().ToList();
             _points = list.Select(x => new PointState(x)).ToList();
-            _state = state;
             _delta = delta;
             _cleanSolids = list.Select(x => x.Solid).Where(x => !x.IsDirty).Select(x => x.Original.ID).Distinct().ToList();
         }
 
-        private IEnumerable<VMPoint> GetPoints(VMPointsDraggableState state, IEnumerable<PointState> list)
+        private IEnumerable<VMPoint> GetPoints(VMTool tool, IEnumerable<PointState> list)
         {
-            return list.Select(x => state.GetPointByID(x.ObjectID, x.PointID));
+            return list.Select(x => tool.GetPointByID(x.ObjectID, x.PointID));
         }
 
         protected override void Reverse(VMTool tool)
         {
-            var pts = GetPoints(_state, _points).ToList();
+            var pts = GetPoints(tool, _points).ToList();
             foreach (var p in pts)
             {
                 p.Move(-_delta);
@@ -92,13 +90,13 @@ namespace Sledge.Editor.Tools2.VMTool.Actions
             }
 
             var solids = pts.Select(x => x.Solid).Distinct().ToList();
-            _state.RefreshPoints(solids);
+            tool.RefreshPoints(solids);
             tool.Invalidate();
         }
 
         protected override void Perform(VMTool tool)
         {
-            var pts = GetPoints(_state, _points).ToList();
+            var pts = GetPoints(tool, _points).ToList();
             foreach (var p in pts)
             {
                 p.Move(_delta);
@@ -111,7 +109,7 @@ namespace Sledge.Editor.Tools2.VMTool.Actions
             }
 
             var solids = pts.Select(x => x.Solid).Distinct().ToList();
-            _state.RefreshPoints(solids);
+            tool.RefreshPoints(solids);
             tool.Invalidate();
         }
 

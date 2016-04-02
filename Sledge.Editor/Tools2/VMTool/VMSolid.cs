@@ -6,15 +6,15 @@ namespace Sledge.Editor.Tools2.VMTool
 {
     public class VMSolid
     {
-        private readonly VMPointsDraggableState _state;
+        private readonly VMTool _tool;
         public Solid Copy { get; set; }
         public Solid Original { get; set; }
         public bool IsDirty { get; set; }
         public List<VMPoint> Points { get; set; }
 
-        public VMSolid(VMPointsDraggableState state, Solid original)
+        public VMSolid(VMTool tool, Solid original)
         {
-            _state = state;
+            _tool = tool;
             Original = original;
 
             Copy = (Solid) original.Clone();
@@ -36,7 +36,7 @@ namespace Sledge.Editor.Tools2.VMTool
             // Add vertex points
             foreach (var group in verts.GroupBy(x => x.Location.Round(2)))
             {
-                Points.Add(new VMPoint(_state, this)
+                Points.Add(new VMPoint(_tool, this)
                 {
                     ID = verts.IndexOf(group.First()) + 1,
                     Position = group.First().Location,
@@ -53,7 +53,7 @@ namespace Sledge.Editor.Tools2.VMTool
                 var coord = (s + e) / 2;
                 var mpStart = Points.First(x => !x.IsMidpoint && x.Position == s);
                 var mpEnd = Points.First(x => !x.IsMidpoint && x.Position == e);
-                Points.Add(new VMPoint(_state, this)
+                Points.Add(new VMPoint(_tool, this)
                 {
                     Position = coord,
                     IsMidpoint = true,

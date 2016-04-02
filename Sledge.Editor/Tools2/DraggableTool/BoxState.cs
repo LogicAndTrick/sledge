@@ -112,6 +112,10 @@ namespace Sledge.Editor.Tools2.DraggableTool
 
         public Box GetSelectionBox()
         {
+            // Don't actually use Decimal.Min/MaxValue because it just causes headaches
+            const decimal minValue = -10000000000m;
+            const decimal maxValue = +10000000000m;
+
             var state = this;
 
             // If one of the dimensions has a depth value of 0, extend it out into infinite space
@@ -126,21 +130,21 @@ namespace Sledge.Editor.Tools2.DraggableTool
             if (sameX)
             {
                 if (sameY || sameZ) return null;
-                start.X = Decimal.MinValue;
-                end.X = Decimal.MaxValue;
+                start.X = minValue;
+                end.X = maxValue;
             }
 
             if (sameY)
             {
                 if (sameZ) return null;
-                start.Y = Decimal.MinValue;
-                end.Y = Decimal.MaxValue;
+                start.Y = minValue;
+                end.Y = maxValue;
             }
 
             if (sameZ)
             {
-                start.Z = Decimal.MinValue;
-                end.Z = Decimal.MaxValue;
+                start.Z = minValue;
+                end.Z = maxValue;
             }
 
             return new Box(start, end);
