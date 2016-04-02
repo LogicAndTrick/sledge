@@ -4,40 +4,9 @@ using System.Linq;
 using System.Text;
 using Sledge.DataStructures.Geometric;
 using Sledge.Editor.Actions;
-using Sledge.Editor.Documents;
-using Sledge.Editor.History;
 
 namespace Sledge.Editor.Tools2.VMTool.Actions
 {
-
-    public abstract class VMAction : IHistoryItem
-    {
-        private readonly VMTool _tool;
-
-        public abstract string Name { get; }
-        public abstract bool SkipInStack { get; }
-        public abstract bool ModifiesState { get; }
-
-        protected VMAction(VMTool tool)
-        {
-            _tool = tool;
-        }
-
-        public void Undo(Document document)
-        {
-            Reverse(_tool);
-        }
-
-        public void Redo(Document document)
-        {
-            Perform(_tool);
-        }
-
-        protected abstract void Reverse(VMTool tool);
-        protected abstract void Perform(VMTool tool);
-        public abstract void Dispose();
-    }
-
     public class MovePoints : VMAction
     {
         private class PointState
@@ -54,7 +23,7 @@ namespace Sledge.Editor.Tools2.VMTool.Actions
             }
         }
 
-        public override string Name { get { return "VM: Move Points"; } }
+        public override string Name { get { return "Move Points"; } }
         public override bool SkipInStack { get { return false; } }
         public override bool ModifiesState { get { return true; } }
 

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Sledge.Common.Mediator;
 using Sledge.Editor.Documents;
 
@@ -38,13 +39,22 @@ namespace Sledge.Editor.History
             Mediator.Publish(EditorMediator.HistoryChanged);
         }
 
-        public void PopStack(IHistoryItem action = null)
+        public void PopStack()
         {
-            _stacks.Pop();
-            if (action != null)
+            var popped = _stacks.Pop();
+            var stack = _stacks.Peek();
+
+            foreach (var item in popped.GetHistoryItems().Where(x => !x.DiscardInStack))
             {
-                AddHistoryItem(action);
+                stack.Add(item);
+
+                if (_stacks.Count == 1 && item.ModifiesState)
+                {
+                    TotalActionsSinceLastSave++;
+                    TotalActionsSinceLastAutoSave++;
+                }
             }
+            
             Mediator.Publish(EditorMediator.HistoryChanged);
         }
 

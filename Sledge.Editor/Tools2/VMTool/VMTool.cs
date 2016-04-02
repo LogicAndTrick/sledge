@@ -516,14 +516,14 @@ namespace Sledge.Editor.Tools2.VMTool
                     // deselect solid
                     var select = new MapObject[0];
                     var deselect = new[] { solid };
-                    Document.PerformAction("Deselect VM solid", new ChangeSelection(select, deselect));
+                    Document.PerformAction("Deselect solid", new ChangeSelection(select, deselect));
                 }
                 else if (!solid.IsSelected)
                 {
                     // select solid
                     var select = new[] { solid };
                     var deselect = !KeyboardState.Ctrl ? Document.Selection.GetSelectedObjects() : new MapObject[0];
-                    Document.PerformAction("Select VM solid", new ChangeSelection(select, deselect));
+                    Document.PerformAction("Select solid", new ChangeSelection(select, deselect));
                 }
 
                 return true;
@@ -609,14 +609,14 @@ namespace Sledge.Editor.Tools2.VMTool
                     // deselect solid
                     var select = new MapObject[0];
                     var deselect = new[] { solid };
-                    Document.PerformAction("Deselect VM solid", new ChangeSelection(select, deselect));
+                    Document.PerformAction("Deselect solid", new ChangeSelection(select, deselect));
                 }
                 else if (!solid.IsSelected)
                 {
                     // select solid
                     var select = new[] { solid };
                     var deselect = !KeyboardState.Ctrl ? Document.Selection.GetSelectedObjects() : new MapObject[0];
-                    Document.PerformAction("Select VM solid", new ChangeSelection(select, deselect));
+                    Document.PerformAction("Select solid", new ChangeSelection(select, deselect));
                 }
 
                 return true;

@@ -12,6 +12,7 @@ namespace Sledge.Editor.History
         public string Name { get; private set; }
         public bool SkipInStack { get; private set; }
         public bool ModifiesState { get; private set; }
+        public bool DiscardInStack { get; private set; }
 
         public HistoryAction(string name, params IAction[] actions)
         {
@@ -19,6 +20,7 @@ namespace Sledge.Editor.History
             _actions = actions.ToList();
             SkipInStack = actions.All(x => x.SkipInStack);
             ModifiesState = actions.Any(x => x.ModifiesState);
+            DiscardInStack = false;
         }
 
         public void Undo(Document document)

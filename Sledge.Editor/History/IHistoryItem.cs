@@ -8,6 +8,7 @@ namespace Sledge.Editor.History
         string Name { get; }
         bool SkipInStack { get; }
         bool ModifiesState { get; }
+        bool DiscardInStack { get; }
         void Undo(Document document);
         void Redo(Document document);
     }

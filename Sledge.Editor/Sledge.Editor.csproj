@@ -326,6 +326,7 @@
     </Compile>
     <Compile Include="Tools2\StateTool\StateTool.cs" />
     <Compile Include="Tools2\VMTool\Actions\MovePoints.cs" />
+    <Compile Include="Tools2\VMTool\Actions\VMAction.cs" />
     <Compile Include="Tools2\VMTool\Controls\EditFaceControl.cs">
       <SubType>UserControl</SubType>
     </Compile>

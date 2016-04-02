@@ -337,7 +337,7 @@ namespace Sledge.Editor.Documents
         }
 
         /// <summary>
-        /// Performs the action, adds it to the history stack, and optionally updates the display lists
+        /// Performs the action and adds it to the history stack
         /// </summary>
         /// <param name="name">The name of the action, for history purposes</param>
         /// <param name="action">The action to perform</param>
