@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 
-namespace Sledge.Editor.Tools2.VMTool
+namespace Sledge.Editor.Tools2.VMTool.Controls
 {
     public partial class VMErrorsSidebarPanel : UserControl
     {

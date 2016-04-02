@@ -1,4 +1,4 @@
-﻿namespace Sledge.Editor.Tools2.VMTool
+﻿namespace Sledge.Editor.Tools2.VMTool.Controls
 {
     partial class VMSidebarPanel
     {

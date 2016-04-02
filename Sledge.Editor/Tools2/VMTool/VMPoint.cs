@@ -1,17 +1,16 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 using Sledge.Common;
 using Sledge.DataStructures.Geometric;
+using Sledge.DataStructures.MapObjects;
 using Sledge.Editor.Extensions;
 using Sledge.Editor.Rendering;
 using Sledge.Editor.Tools2.DraggableTool;
-using Sledge.Editor.UI;
 using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Scenes;
 using Sledge.Rendering.Scenes.Elements;
-using Sledge.Rendering.Scenes.Renderables;
-using Vertex = Sledge.DataStructures.MapObjects.Vertex;
 
 namespace Sledge.Editor.Tools2.VMTool
 {
@@ -63,6 +62,13 @@ namespace Sledge.Editor.Tools2.VMTool
                 ? (IsSelected ? Color.DeepPink : Color.Yellow)
                 : (IsSelected ? Color.Red : Color.White);
             return IsHighlighted ? c.Lighten() : c;
+        }
+
+        public IEnumerable<Face> GetAdjacentFaces()
+        {
+            return IsMidpoint
+                ? MidpointStart.GetAdjacentFaces().Intersect(MidpointEnd.GetAdjacentFaces())
+                : Vertices.Select(x => x.Parent).Distinct();
         }
 
         public void Move(Coordinate delta)

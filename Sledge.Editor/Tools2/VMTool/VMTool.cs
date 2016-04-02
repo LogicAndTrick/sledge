@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using Sledge.Common.Mediator;
 using Sledge.DataStructures.Geometric;
@@ -11,12 +10,13 @@ using Sledge.DataStructures.MapObjects;
 using Sledge.Editor.Actions;
 using Sledge.Editor.Actions.MapObjects.Operations;
 using Sledge.Editor.Actions.MapObjects.Selection;
-using Sledge.Editor.History;
 using Sledge.Editor.Properties;
 using Sledge.Editor.Rendering;
 using Sledge.Editor.Tools;
 using Sledge.Editor.Tools2.DraggableTool;
 using Sledge.Editor.Tools2.VMTool.Actions;
+using Sledge.Editor.Tools2.VMTool.Controls;
+using Sledge.Editor.Tools2.VMTool.SubTools;
 using Sledge.Editor.UI;
 using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Scenes;
@@ -55,29 +55,24 @@ namespace Sledge.Editor.Tools2.VMTool
 {
     public class VMTool : BaseDraggableTool
     {
-    //    private readonly VMSidebarPanel _controlPanel;
-    //    private readonly VMErrorsSidebarPanel _errorPanel;
-
-        //private readonly StandardTool _pointState;
+        private readonly VMSidebarPanel _controlPanel;
+        private readonly VMErrorsSidebarPanel _errorPanel;
+        
         private readonly BoxDraggableState _boxState;
 
-        public ShowPoints ShowPoints { get; set; }
-
-        internal List<VMPoint> Points { get; private set; }
-        internal List<VMSolid> Solids { get; private set; }
-
-
+        private ShowPoints ShowPoints { get; set; }
+        private List<VMPoint> Points { get; set; }
+        private List<VMSolid> Solids { get; set; }
+        
         public VMTool()
         {
-            //_controlPanel = new VMSidebarPanel();
-            //_errorPanel = new VMErrorsSidebarPanel();
+            _controlPanel = new VMSidebarPanel();
+            _errorPanel = new VMErrorsSidebarPanel();
 
             Points = new List<VMPoint>();
             Solids = new List<VMSolid>();
 
             Usage = ToolUsage.Both;
-
-            //_pointState = new StandardTool(this);
 
             _boxState = new BoxDraggableState(this);
             _boxState.BoxColour = Color.Orange;
@@ -89,8 +84,7 @@ namespace Sledge.Editor.Tools2.VMTool
                     DeselectAll();
                 }
             };
-
-            //States.Add(_pointState);
+            
             States.Add(new VMPointsState(this));
             States.Add(_boxState);
 
@@ -106,7 +100,7 @@ namespace Sledge.Editor.Tools2.VMTool
 
         public override string GetName()
         {
-            return "VMTool";
+            return "Vertex Manipulation Tool";
         }
 
         public override HotkeyTool? GetHotkeyToolType()
@@ -121,8 +115,8 @@ namespace Sledge.Editor.Tools2.VMTool
 
         public override IEnumerable<KeyValuePair<string, Control>> GetSidebarControls()
         {
-            //yield return new KeyValuePair<string, Control>(GetName(), _controlPanel);
-            //yield return new KeyValuePair<string, Control>("VM Errors", _errorPanel);
+            yield return new KeyValuePair<string, Control>(GetName(), _controlPanel);
+            yield return new KeyValuePair<string, Control>("VM Errors", _errorPanel);
             yield break;
         }
 
@@ -565,7 +559,12 @@ namespace Sledge.Editor.Tools2.VMTool
 
         public void PointMouseDown(MapViewport viewport, VMPoint point)
         {
-            // todo box cancel?
+            if (_boxState.State.Action != BoxAction.Idle)
+            {
+                _boxState.RememberedDimensions = new Box(_boxState.State.Start, _boxState.State.End);
+                _boxState.State.Action = BoxAction.Idle;
+            }
+
             var vtxs = GetPoints(viewport, point.Position, false, KeyboardState.Shift, true);
             if (!vtxs.Any()) return;
 
@@ -589,56 +588,39 @@ namespace Sledge.Editor.Tools2.VMTool
 
         #endregion
 
-        #region Point dragging - 2D
-        
-        private Coordinate _pointDragStart;
-        private Coordinate _pointDragGridOffset;
+        #region Point dragging
 
         public void StartPointDrag(MapViewport viewport, ViewportEvent e, Coordinate startLocation)
         {
-            foreach (var p in GetVisiblePoints().Where(x => x.IsSelected))
+            foreach (var child in Children.OfType<VMSubTool>().Where(x => x.Active))
             {
-                p.IsDragging = true;
+                child.StartPointDrag(viewport, e, startLocation);
             }
-            _pointDragStart = viewport.ZeroUnusedCoordinate(startLocation);
-            _pointDragGridOffset = SnapIfNeeded(viewport.ZeroUnusedCoordinate(startLocation)) - viewport.ZeroUnusedCoordinate(startLocation);
-
-            Invalidate();
         }
 
         public void PointDrag(MapViewport viewport, ViewportEvent viewportEvent, Coordinate lastPosition, Coordinate position)
         {
-            var delta = viewport.ZeroUnusedCoordinate(position) - _pointDragStart;
-            if (KeyboardState.Shift && !KeyboardState.Alt) delta -= _pointDragGridOffset;
-
-            var selected = GetVisiblePoints().Where(x => x.IsSelected).Distinct().SelectMany(x => x.GetStandardPointList()).ToList();
-            selected.ForEach(x => x.DragMove(delta));
-
-            foreach (var face in selected.SelectMany(x => x.Vertices.Select(v => v.Parent)).Distinct())
+            foreach (var child in Children.OfType<VMSubTool>().Where(x => x.Active))
             {
-                face.CalculateTextureCoordinates(true);
+                child.PointDrag(viewport, viewportEvent, lastPosition, position);
             }
-
-            foreach (var midpoint in selected.Select(x => x.Solid).Distinct().SelectMany(x => x.Points.Where(p => p.IsMidpoint)))
-            {
-                var p1 = midpoint.MidpointStart.IsDragging ? midpoint.MidpointStart.DraggingPosition : midpoint.MidpointStart.Position;
-                var p2 = midpoint.MidpointEnd.IsDragging ? midpoint.MidpointEnd.DraggingPosition : midpoint.MidpointEnd.Position;
-                midpoint.DraggingPosition = midpoint.Position = (p1 + p2) / 2;
-            }
-
-            Invalidate();
         }
 
         public void EndPointDrag(MapViewport viewport, ViewportEvent e, Coordinate endLocation)
         {
-            var delta = viewport.ZeroUnusedCoordinate(endLocation) - _pointDragStart;
-            if (KeyboardState.Shift && !KeyboardState.Alt) delta -= _pointDragGridOffset;
+            foreach (var child in Children.OfType<VMSubTool>().Where(x => x.Active))
+            {
+                child.EndPointDrag(viewport, e, endLocation);
+            }
+        }
 
-            var selected = GetVisiblePoints().Where(x => x.IsSelected).ToList();
-            selected.ForEach(x => x.IsDragging = false);
+        #endregion
 
-            var act = new MovePoints(this, selected, delta);
-            PerformAction(act);
+        #region Errors
+
+        public IEnumerable<VMError> GetErrors()
+        {
+            return Solids.SelectMany(x => x.GetErrors());
         }
 
         #endregion

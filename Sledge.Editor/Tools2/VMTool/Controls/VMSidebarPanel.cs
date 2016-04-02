@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using Sledge.Common.Mediator;
+using Sledge.Editor.Tools2.VMTool.SubTools;
 
-namespace Sledge.Editor.Tools2.VMTool
+namespace Sledge.Editor.Tools2.VMTool.Controls
 {
     public partial class VMSidebarPanel : UserControl, IMediatorListener
     {

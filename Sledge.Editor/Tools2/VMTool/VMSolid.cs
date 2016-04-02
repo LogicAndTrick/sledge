@@ -63,5 +63,36 @@ namespace Sledge.Editor.Tools2.VMTool
                 });
             }
         }
+
+        public IEnumerable<VMError> GetErrors()
+        {
+            foreach (var g in Copy.GetCoplanarFaces().GroupBy(x => x.Plane))
+            {
+                yield return new VMError("Coplanar faces", Copy, g);
+            }
+            foreach (var f in Copy.GetBackwardsFaces(0.5m))
+            {
+                yield return new VMError("Backwards face", Copy, new[] { f });
+            }
+            foreach (var f in Copy.Faces)
+            {
+                var np = f.GetNonPlanarVertices(0.5m).ToList();
+                var found = false;
+                if (np.Any())
+                {
+                    yield return new VMError("Nonplanar vertex", Copy, new[] { f }, np);
+                    found = true;
+                }
+                foreach (var g in f.Vertices.GroupBy(x => x.Location).Where(x => x.Count() > 1))
+                {
+                    yield return new VMError("Overlapping vertices", Copy, new[] { f }, g);
+                    found = true;
+                }
+                if (!f.IsConvex() && !found)
+                {
+                    yield return new VMError("Concave face", Copy, new[] { f });
+                }
+            }
+        }
     }
 }
