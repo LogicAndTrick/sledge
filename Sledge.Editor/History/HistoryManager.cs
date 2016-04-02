@@ -35,6 +35,7 @@ namespace Sledge.Editor.History
         public void PushStack(string name)
         {
             _stacks.Push(new HistoryStack(name, 100));
+            Mediator.Publish(EditorMediator.HistoryChanged);
         }
 
         public void PopStack(IHistoryItem action = null)
@@ -44,6 +45,7 @@ namespace Sledge.Editor.History
             {
                 AddHistoryItem(action);
             }
+            Mediator.Publish(EditorMediator.HistoryChanged);
         }
 
         public void Undo()
@@ -109,6 +111,11 @@ namespace Sledge.Editor.History
         public bool CanRedo()
         {
             return _stacks.Peek().CanRedo();
+        }
+
+        public IEnumerable<HistoryStack> GetHistoryStacks()
+        {
+            return new List<HistoryStack>(_stacks);
         }
     }
 }

@@ -128,7 +128,7 @@ namespace Sledge.Editor.Tools2.BrushTool
                 action = new ActionCollection(new ChangeSelection(new MapObject[0], Document.Selection.GetSelectedObjects()), action);
             }
 
-            Document.PerformAction("Create " + brush, action);
+            Document.PerformAction("Create " + BrushManager.CurrentBrush.Name, action);
         }
 
         private MapObject GetBrush(Box bounds, IDGenerator idg)

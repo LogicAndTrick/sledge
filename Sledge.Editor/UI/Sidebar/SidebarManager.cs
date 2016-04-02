@@ -36,6 +36,7 @@ namespace Sledge.Editor.UI.Sidebar
             CreatePanel("Contextual Help", new HelpSidebarPanel());
             //CreatePanel("Entities", new EntitySidebarPanel());
             //CreatePanel("Brushes", new BrushSidebarPanel());
+            CreatePanel("History", new HistorySiderbarPanel());
         }
 
         private static SidebarPanel CreatePanel(string text, Control contents, bool insert = false)

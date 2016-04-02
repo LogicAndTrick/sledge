@@ -89,5 +89,10 @@ namespace Sledge.Editor.History
         {
             return _items[_currentIndex + 1];
         }
+
+        public IEnumerable<IHistoryItem> GetHistoryItems()
+        {
+            return new List<IHistoryItem>(_items.GetRange(0, _currentIndex + 1));
+        }
     }
 }

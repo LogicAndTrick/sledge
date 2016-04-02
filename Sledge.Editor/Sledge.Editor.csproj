@@ -80,8 +80,10 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Actions\ActionCollection.cs" />
@@ -575,6 +577,12 @@
     <Compile Include="UI\Sidebar\HelpSidebarPanel.Designer.cs">
       <DependentUpon>HelpSidebarPanel.cs</DependentUpon>
     </Compile>
+    <Compile Include="UI\Sidebar\HistorySiderbarPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\Sidebar\HistorySiderbarPanel.Designer.cs">
+      <DependentUpon>HistorySiderbarPanel.cs</DependentUpon>
+    </Compile>
     <Compile Include="UI\TableSplitControl.cs" />
     <Compile Include="UI\Sidebar\BrushSidebarPanel.cs">
       <SubType>UserControl</SubType>
@@ -834,6 +842,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UI\Sidebar\EntitySidebarPanel.resx">
       <DependentUpon>EntitySidebarPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Sidebar\HistorySiderbarPanel.resx">
+      <DependentUpon>HistorySiderbarPanel.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\Sidebar\SidebarContainer.resx">
       <DependentUpon>SidebarContainer.cs</DependentUpon>

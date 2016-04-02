@@ -67,6 +67,10 @@ namespace Sledge.Editor.Tools2.VMTool
         public VMTool()
         {
             _controlPanel = new VMSidebarPanel();
+            _controlPanel.ToolSelected += VMToolSelected;
+            _controlPanel.DeselectAll += x => DeselectAll();
+            _controlPanel.Reset += Reset;
+
             _errorPanel = new VMErrorsSidebarPanel();
 
             Points = new List<VMPoint>();
@@ -88,10 +92,68 @@ namespace Sledge.Editor.Tools2.VMTool
             States.Add(new VMPointsState(this));
             States.Add(_boxState);
 
-            Children.Add(new VMStandardTool(this));
+            AddTool(new VMStandardTool(this));
 
             UseValidation = true;
         }
+
+        #region Tool switching
+
+        protected VMSubTool CurrentSubTool
+        {
+            get { return Children.OfType<VMSubTool>().FirstOrDefault(x => x.Active); }
+            set
+            {
+                foreach (var tool in Children.Where(x => x != value && x.Active))
+                {
+                    tool.ToolDeselected(false);
+                    tool.Active = false;
+                }
+                if (value != null)
+                {
+                    value.Active = true;
+                    value.ToolSelected(false);
+                }
+            }
+        }
+
+        private void AddTool(VMSubTool tool)
+        {
+            _controlPanel.AddTool(tool);
+            Children.Add(tool);
+        }
+
+        private void VMToolSelected(object sender, VMSubTool tool)
+        {
+            if (CurrentSubTool == tool) return;
+
+            _controlPanel.SetSelectedTool(tool);
+            CurrentSubTool = tool;
+
+            Mediator.Publish(EditorMediator.ContextualHelpChanged);
+        }
+
+        private void VMStandardMode()
+        {
+            VMToolSelected(this, Children.OfType<VMStandardTool>().FirstOrDefault());
+        }
+
+        private void VMScalingMode()
+        {
+            //VMToolSelected(this, Children.First(x => x is ScaleTool));
+        }
+
+        private void VMFaceEditMode()
+        {
+            //VMToolSelected(this, Children.First(x => x is EditFaceTool));
+        }
+
+        public override void DocumentChanged()
+        {
+            _controlPanel.Document = Document;
+        }
+
+        #endregion
 
         public override Image GetIcon()
         {
@@ -117,7 +179,6 @@ namespace Sledge.Editor.Tools2.VMTool
         {
             yield return new KeyValuePair<string, Control>(GetName(), _controlPanel);
             yield return new KeyValuePair<string, Control>("VM Errors", _errorPanel);
-            yield break;
         }
 
         public override HotkeyInterceptResult InterceptHotkey(HotkeysMediator hotkeyMessage, object parameters)
@@ -201,6 +262,15 @@ namespace Sledge.Editor.Tools2.VMTool
         #endregion
 
         #region Commit VM changes
+
+        private void Reset(object sender)
+        {
+            // todo reset
+            //Commit(_copies.Values.ToList());
+            //_copies.Clear();
+            SelectionChanged();
+        }
+
         protected void CommitChanges()
         {
             CommitChanges(Solids);
