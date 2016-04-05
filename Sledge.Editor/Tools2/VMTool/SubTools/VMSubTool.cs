@@ -50,6 +50,8 @@ namespace Sledge.Editor.Tools2.VMTool.SubTools
         public virtual void PointDrag(MapViewport viewport, ViewportEvent viewportEvent, Coordinate lastPosition, Coordinate position) { }
         public virtual void EndPointDrag(MapViewport viewport, ViewportEvent e, Coordinate endLocation) { }
 
+        public virtual void SelectionChanged() { }
+
         public abstract IEnumerable<IDraggable> GetDraggables();
         public abstract bool CanDragPoint(VMPoint point);
     }

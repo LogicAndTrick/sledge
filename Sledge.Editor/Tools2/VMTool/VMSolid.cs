@@ -39,14 +39,14 @@ namespace Sledge.Editor.Tools2.VMTool
                 Points.Add(new VMPoint(_tool, this)
                 {
                     ID = verts.IndexOf(group.First()) + 1,
-                    Position = group.First().Location,
+                    Position = group.First().Location.Round(2),
                     Vertices = group.ToList(),
-                    IsSelected = selected.Any(x => !x.IsMidpoint && x.Position == group.First().Location)
+                    IsSelected = selected.Any(x => !x.IsMidpoint && x.Position == group.First().Location.Round(2))
                 });
             }
 
             // Add midpoints
-            foreach (var group in Copy.Faces.SelectMany(x => x.GetLines()).GroupBy(x => new { x.Start, x.End }))
+            foreach (var group in Copy.Faces.SelectMany(x => x.GetLines()).GroupBy(x => new { Start = x.Start.Round(2), End = x.End.Round(2) }))
             {
                 var s = group.Key.Start;
                 var e = group.Key.End;
@@ -83,7 +83,7 @@ namespace Sledge.Editor.Tools2.VMTool
                     yield return new VMError("Nonplanar vertex", Copy, new[] { f }, np);
                     found = true;
                 }
-                foreach (var g in f.Vertices.GroupBy(x => x.Location).Where(x => x.Count() > 1))
+                foreach (var g in f.Vertices.GroupBy(x => x.Location.Round(2)).Where(x => x.Count() > 1))
                 {
                     yield return new VMError("Overlapping vertices", Copy, new[] { f }, g);
                     found = true;

@@ -93,6 +93,7 @@ namespace Sledge.Editor.Tools2.VMTool
             States.Add(_boxState);
 
             AddTool(new VMStandardTool(this));
+            AddTool(new VMScaleTool(this));
 
             UseValidation = true;
         }
@@ -127,10 +128,15 @@ namespace Sledge.Editor.Tools2.VMTool
         {
             if (CurrentSubTool == tool) return;
 
+            if (CurrentSubTool != null) CurrentSubTool.ToolDeselected(false);
+
             _controlPanel.SetSelectedTool(tool);
             CurrentSubTool = tool;
 
+            if (CurrentSubTool != null) CurrentSubTool.ToolSelected(false);
+
             Mediator.Publish(EditorMediator.ContextualHelpChanged);
+            Invalidate();
         }
 
         private void VMStandardMode()
@@ -186,11 +192,12 @@ namespace Sledge.Editor.Tools2.VMTool
             switch (hotkeyMessage)
             {
                 case HotkeysMediator.HistoryUndo:
-                    if (Document.History.CanUndo()) Document.History.Undo();
-                    else MessageBox.Show("Nothing to undo in the VM tool"); // todo pop the stack and so on?
+                    MessageBox.Show("Exit the VM tool to undo changes.");
+                    //if (Document.History.CanUndo()) Document.History.Undo();
+                    //else MessageBox.Show("Nothing to undo in the VM tool"); // todo pop the stack and so on?
                     return HotkeyInterceptResult.Abort;
                 case HotkeysMediator.HistoryRedo:
-                    if (Document.History.CanRedo()) Document.History.Redo();
+                    // if (Document.History.CanRedo()) Document.History.Redo();
                     return HotkeyInterceptResult.Abort;
                 case HotkeysMediator.OperationsPaste:
                 case HotkeysMediator.OperationsPasteSpecial:
@@ -332,9 +339,9 @@ namespace Sledge.Editor.Tools2.VMTool
 
         public void PerformAndCommitAction(string name, IAction action)
         {
-            Document.History.PopStack();
+            //Document.History.PopStack();
             Document.PerformAction(name, action);
-            Document.History.PushStack("VM Tool");
+            //Document.History.PushStack("VM Tool");
         }
         #endregion
 
@@ -367,11 +374,25 @@ namespace Sledge.Editor.Tools2.VMTool
                 Mediator.Publish(EditorMediator.SceneObjectsUpdated, newSolids);
             }
 
+            foreach (var sub in Children.OfType<VMSubTool>().Where(x => x.Active))
+            {
+                sub.SelectionChanged();
+            }
             Invalidate();
         }
         #endregion
 
-        #region Points
+        #region Points / Solids
+
+        public IEnumerable<VMSolid> GetSolids()
+        {
+            return Solids;
+        }
+
+        public VMSolid GetVmSolid(Solid s)
+        {
+            return Solids.FirstOrDefault(x => ReferenceEquals(x.Original, s));
+        }
 
         public void Clear()
         {
@@ -402,11 +423,30 @@ namespace Sledge.Editor.Tools2.VMTool
 
         public void RefreshPoints(IList<VMSolid> solids)
         {
-            var newPoints = Points.Except(solids.SelectMany(x => x.Points)).ToList();
+            var newPoints = Points.Where(x => !solids.Contains(x.Solid)).ToList();
             foreach (var solid in solids) solid.RefreshPoints();
             Points.Clear();
             Points.AddRange(newPoints.Union(solids.SelectMany(x => x.Points)));
             Points.Sort((a, b) => b.IsMidpoint.CompareTo(a.IsMidpoint));
+        }
+
+        public void UpdateSolids(IList<VMSolid> solids, bool refreshPoints)
+        {
+            if (!solids.Any()) return;
+
+            foreach (var solid in solids)
+            {
+                solid.IsDirty = true;
+                foreach (var face in solid.Copy.Faces)
+                {
+                    if (face.Vertices.Count >= 3) face.Plane = new Plane(face.Vertices[0].Location, face.Vertices[1].Location, face.Vertices[2].Location);
+                    face.CalculateTextureCoordinates(true);
+                    face.UpdateBoundingBox();
+                }
+            }
+
+            if (refreshPoints) RefreshPoints(solids);
+            Invalidate();
         }
 
         private void Select(List<VMPoint> points, bool toggle)
@@ -711,6 +751,7 @@ namespace Sledge.Editor.Tools2.VMTool
 
         public new void Invalidate()
         {
+            _errorPanel.SetErrorList(GetErrors());
             base.Invalidate();
         }
 
@@ -724,7 +765,7 @@ namespace Sledge.Editor.Tools2.VMTool
 
         public override void ToolSelected(bool preventHistory)
         {
-            Document.History.PushStack("VM Tool");
+            //Document.History.PushStack("VM Tool");
 
             SelectionChanged();
 
@@ -743,7 +784,7 @@ namespace Sledge.Editor.Tools2.VMTool
             CommitChanges();
             Clear();
 
-            Document.History.PopStack(); // todo push history collection
+            //Document.History.PopStack();
 
             base.ToolDeselected(preventHistory);
         }
