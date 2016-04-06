@@ -8,7 +8,6 @@ using Sledge.Editor.Rendering;
 using Sledge.Editor.Tools2.DraggableTool;
 using Sledge.Editor.Tools2.VMTool.Controls;
 using Sledge.Rendering.Cameras;
-using Sledge.Rendering.Scenes;
 using Sledge.Rendering.Scenes.Elements;
 
 namespace Sledge.Editor.Tools2.VMTool.SubTools

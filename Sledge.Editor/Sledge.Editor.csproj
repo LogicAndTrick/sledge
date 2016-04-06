@@ -358,6 +358,7 @@
       <DependentUpon>VMSidebarPanel.cs</DependentUpon>
     </Compile>
     <Compile Include="Tools2\VMTool\ShowPoints.cs" />
+    <Compile Include="Tools2\VMTool\SubTools\VMFaceEditTool.cs" />
     <Compile Include="Tools2\VMTool\SubTools\VMScaleTool.cs" />
     <Compile Include="Tools2\VMTool\VMError.cs" />
     <Compile Include="Tools2\VMTool\VMPoint.cs" />

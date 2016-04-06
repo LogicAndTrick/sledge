@@ -94,6 +94,7 @@ namespace Sledge.Editor.Tools2.VMTool
 
             AddTool(new VMStandardTool(this));
             AddTool(new VMScaleTool(this));
+            AddTool(new VMFaceEditTool(this));
 
             UseValidation = true;
         }
@@ -747,8 +748,8 @@ namespace Sledge.Editor.Tools2.VMTool
             foreach (var so in objs.OfType<RenderableObject>())
             {
                 so.ForcedRenderFlags |= RenderFlags.Wireframe;
-                so.IsSelected = true;
-                so.TintColor = Color.FromArgb(128, Color.Green);
+                //so.IsSelected = true;
+                so.TintColor = Sledge.Common.Colour.Blend(Color.FromArgb(128, Color.Green), so.TintColor);
                 so.AccentColor = Color.White;
             }
             objs.AddRange(base.GetSceneObjects());

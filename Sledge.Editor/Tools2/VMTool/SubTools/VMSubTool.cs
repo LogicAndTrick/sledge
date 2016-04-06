@@ -20,6 +20,7 @@ namespace Sledge.Editor.Tools2.VMTool.SubTools
         {
             _tool = tool;
             UseValidation = true;
+            Active = false;
         }
 
         public override Image GetIcon()
