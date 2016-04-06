@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using OpenTK;
 using Sledge.DataStructures.Geometric;
+using Sledge.Editor.Extensions;
 using Sledge.Editor.Rendering;
 using Sledge.Editor.Tools.SelectTool;
 using Sledge.Rendering.Cameras;
@@ -11,7 +12,7 @@ namespace Sledge.Editor.Documents
 {
     internal class DocumentMemory
     {
-        private readonly Dictionary<OrthographicCamera.OrthographicType, Tuple<Coordinate, decimal>> _positions;
+        private readonly Dictionary<string, string> _positions;
         private Vector3 _cameraLookat;
         private Vector3 _cameraLocation;
         public Type SelectedTool { get; set; }
@@ -21,7 +22,7 @@ namespace Sledge.Editor.Documents
 
         public DocumentMemory()
         {
-            _positions = new Dictionary<OrthographicCamera.OrthographicType, Tuple<Coordinate, decimal>>();
+            _positions = new Dictionary<string, string>();
             _cameraLocation = new Vector3(0, 0, 0);
             _cameraLookat = new Vector3(1, 0, 0);
             SelectedTool = typeof (SelectTool);
@@ -30,55 +31,51 @@ namespace Sledge.Editor.Documents
 
         public void SetCamera(Coordinate position, Coordinate look)
         {
-            _cameraLocation = new Vector3((float)position.X, (float)position.Y, (float)position.Z);
-            _cameraLookat = new Vector3((float)look.X, (float)look.Y, (float)look.Z);
+            _cameraLocation = position.ToVector3();
+            _cameraLookat = look.ToVector3();
         }
 
         public void RememberViewports(IEnumerable<MapViewport> viewports)
         {
-            // Todo viewport: remember types and positions
-            //_positions.Clear();
-            //foreach (var vp in viewports)
-            //{
-            //    var vp3 = vp as MapViewport;
-            //    var vp2 = vp as MapViewport;
-            //    if (vp2 != null)
-            //    {
-            //        if (!_positions.ContainsKey(vp2.Direction))
-            //        {
-            //            _positions.Add(vp2.Direction, Tuple.Create(vp2.Position, vp2.Zoom));
-            //        }
-            //    }
-            //    if (vp3 != null)
-            //    {
-            //        var cam = vp3.Camera;
-            //        _cameraLookat = cam.LookAt;
-            //        _cameraLocation = cam.Location;
-            //    }
-            //}
+            _positions.Clear();
+            var foundPerspective = false;
+            foreach (var vp in viewports)
+            {
+                _positions.Add(vp.Viewport.ViewportHandle, Camera.Serialise(vp.Viewport.Camera));
+                if (vp.Viewport.Camera is PerspectiveCamera && !foundPerspective)
+                {
+                    var cam = vp.Viewport.Camera as PerspectiveCamera;
+                    _cameraLookat = cam.LookAt;
+                    _cameraLocation = cam.Position;
+                    foundPerspective = true;
+                }
+            }
         }
 
         public void RestoreViewports(IEnumerable<MapViewport> viewports)
         {
-            // todo 
-            //foreach (var vp in viewports)
-            //{
-            //    var vp3 = vp as MapViewport;
-            //    var vp2 = vp as MapViewport;
-            //    if (vp2 != null)
-            //    {
-            //        if (_positions.ContainsKey(vp2.Direction))
-            //        {
-            //            vp2.Position = _positions[vp2.Direction].Item1;
-            //            vp2.Zoom = _positions[vp2.Direction].Item2;
-            //        }
-            //    }
-            //    if (vp3 != null)
-            //    {
-            //        vp3.Camera.Location = _cameraLocation;
-            //        vp3.Camera.LookAt = _cameraLookat;
-            //    }
-            //}
+            foreach (var vp in viewports)
+            {
+                if (_positions.ContainsKey(vp.Viewport.ViewportHandle))
+                {
+                    try
+                    {
+                        var cam = Camera.Deserialise(_positions[vp.Viewport.ViewportHandle]);
+                        vp.Viewport.Camera = cam;
+                        continue;
+                    }
+                    catch
+                    {
+                        // 
+                    }
+                }
+                if (vp.Viewport.Camera is PerspectiveCamera)
+                {
+                    var cam = vp.Viewport.Camera as PerspectiveCamera;
+                    cam.LookAt = _cameraLookat;
+                    cam.Position = _cameraLocation;
+                }
+            }
         }
 
         public void Set<T>(string name, T state)
