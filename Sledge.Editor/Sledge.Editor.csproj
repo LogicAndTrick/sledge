@@ -268,141 +268,70 @@
     <Compile Include="Rendering\Converters\MapObjectSceneConverterPriority.cs" />
     <Compile Include="Rendering\ReferenceCounter.cs" />
     <Compile Include="Rendering\SceneMapObject.cs" />
-    <Compile Include="Tools2\BrushTool\BrushTool.cs" />
-    <Compile Include="Tools2\CordonTool\CordonBoxDraggableState.cs" />
-    <Compile Include="Tools2\CordonTool\CordonTool.cs" />
-    <Compile Include="Tools2\DraggableTool\BaseDraggable.cs" />
-    <Compile Include="Tools2\DraggableTool\BaseDraggableTool.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Tools2\DraggableTool\BoxAction.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Tools2\DraggableTool\BoxDraggableState.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Tools2\DraggableTool\BoxResizeHandle.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Tools2\DraggableTool\BoxState.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Tools2\DraggableTool\DraggableCoordinate.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Tools2\DraggableTool\IDraggable.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Tools2\DraggableTool\IDraggableState.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Tools2\DraggableTool\InternalBoxResizeHandle.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Tools2\DraggableTool\ResizeHandle.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Tools2\ExampleStateTool\ExampleStateTool.cs" />
-    <Compile Include="Tools2\SelectTool\SelectionBoxDraggableState.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Tools2\SelectTool\SelectTool.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Tools2\SelectTool\TransformationHandles\ITransformationHandle.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Tools2\SelectTool\TransformationHandles\ResizeTransformHandle.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Tools2\SelectTool\TransformationHandles\RotateTransformHandle.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Tools2\SelectTool\TransformationHandles\RotationOrigin.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Tools2\SelectTool\TransformationHandles\SkewTransformHandle.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Tools2\StateTool\StateTool.cs" />
-    <Compile Include="Tools2\VMTool\Actions\MovePoints.cs" />
-    <Compile Include="Tools2\VMTool\Actions\VMAction.cs" />
-    <Compile Include="Tools2\VMTool\Controls\EditFaceControl.cs">
+    <Compile Include="Tools\BrushTool\BrushTool.cs" />
+    <Compile Include="Tools\CordonTool\CordonBoxDraggableState.cs" />
+    <Compile Include="Tools\CordonTool\CordonTool.cs" />
+    <Compile Include="Tools\DraggableTool\BaseDraggable.cs" />
+    <Compile Include="Tools\DraggableTool\BaseDraggableTool.cs" />
+    <Compile Include="Tools\DraggableTool\BoxAction.cs" />
+    <Compile Include="Tools\DraggableTool\BoxDraggableState.cs" />
+    <Compile Include="Tools\DraggableTool\BoxResizeHandle.cs" />
+    <Compile Include="Tools\DraggableTool\BoxState.cs" />
+    <Compile Include="Tools\DraggableTool\DraggableCoordinate.cs" />
+    <Compile Include="Tools\DraggableTool\IDraggable.cs" />
+    <Compile Include="Tools\DraggableTool\IDraggableState.cs" />
+    <Compile Include="Tools\DraggableTool\InternalBoxResizeHandle.cs" />
+    <Compile Include="Tools\DraggableTool\ResizeHandle.cs" />
+    <Compile Include="Tools\ExampleStateTool\ExampleStateTool.cs" />
+    <Compile Include="Tools\SelectTool\SelectionBoxDraggableState.cs" />
+    <Compile Include="Tools\SelectTool\SelectTool.cs" />
+    <Compile Include="Tools\SelectTool\TransformationHandles\ITransformationHandle.cs" />
+    <Compile Include="Tools\SelectTool\TransformationHandles\ResizeTransformHandle.cs" />
+    <Compile Include="Tools\SelectTool\TransformationHandles\RotateTransformHandle.cs" />
+    <Compile Include="Tools\SelectTool\TransformationHandles\RotationOrigin.cs" />
+    <Compile Include="Tools\SelectTool\TransformationHandles\SkewTransformHandle.cs" />
+    <Compile Include="Tools\StateTool\StateTool.cs" />
+    <Compile Include="Tools\VMTool\Actions\MovePoints.cs" />
+    <Compile Include="Tools\VMTool\Actions\VMAction.cs" />
+    <Compile Include="Tools\VMTool\Controls\EditFaceControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Tools2\VMTool\Controls\EditFaceControl.Designer.cs">
+    <Compile Include="Tools\VMTool\Controls\EditFaceControl.Designer.cs">
       <DependentUpon>EditFaceControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="Tools2\VMTool\Controls\ScaleControl.cs">
+    <Compile Include="Tools\VMTool\Controls\ScaleControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Tools2\VMTool\Controls\ScaleControl.Designer.cs">
+    <Compile Include="Tools\VMTool\Controls\ScaleControl.Designer.cs">
       <DependentUpon>ScaleControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="Tools2\VMTool\Controls\StandardControl.cs">
+    <Compile Include="Tools\VMTool\Controls\StandardControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Tools2\VMTool\Controls\StandardControl.Designer.cs">
+    <Compile Include="Tools\VMTool\Controls\StandardControl.Designer.cs">
       <DependentUpon>StandardControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="Tools2\VMTool\Controls\VMErrorsSidebarPanel.cs">
+    <Compile Include="Tools\VMTool\Controls\VMErrorsSidebarPanel.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Tools2\VMTool\Controls\VMErrorsSidebarPanel.Designer.cs">
+    <Compile Include="Tools\VMTool\Controls\VMErrorsSidebarPanel.Designer.cs">
       <DependentUpon>VMErrorsSidebarPanel.cs</DependentUpon>
     </Compile>
-    <Compile Include="Tools2\VMTool\Controls\VMSidebarPanel.cs">
+    <Compile Include="Tools\VMTool\Controls\VMSidebarPanel.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Tools2\VMTool\Controls\VMSidebarPanel.Designer.cs">
+    <Compile Include="Tools\VMTool\Controls\VMSidebarPanel.Designer.cs">
       <DependentUpon>VMSidebarPanel.cs</DependentUpon>
     </Compile>
-    <Compile Include="Tools2\VMTool\ShowPoints.cs" />
-    <Compile Include="Tools2\VMTool\SubTools\VMFaceEditTool.cs" />
-    <Compile Include="Tools2\VMTool\SubTools\VMScaleTool.cs" />
-    <Compile Include="Tools2\VMTool\VMError.cs" />
-    <Compile Include="Tools2\VMTool\VMPoint.cs" />
-    <Compile Include="Tools2\VMTool\SubTools\VMStandardTool.cs" />
-    <Compile Include="Tools2\VMTool\VMPointsState.cs" />
-    <Compile Include="Tools2\VMTool\VMSolid.cs" />
-    <Compile Include="Tools2\VMTool\SubTools\VMSubTool.cs" />
-    <Compile Include="Tools2\VMTool\VMTool.cs" />
-    <Compile Include="Tools\VMTool\EditFaceControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Tools\VMTool\EditFaceControl.Designer.cs">
-      <DependentUpon>EditFaceControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Tools\VMTool\EditFaceTool.cs" />
-    <Compile Include="Tools\VMTool\ScaleControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Tools\VMTool\ScaleControl.Designer.cs">
-      <DependentUpon>ScaleControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Tools\VMTool\ScaleTool.cs" />
-    <Compile Include="Tools\VMTool\StandardControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Tools\VMTool\StandardControl.Designer.cs">
-      <DependentUpon>StandardControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Tools\VMTool\StandardTool.cs" />
+    <Compile Include="Tools\VMTool\ShowPoints.cs" />
+    <Compile Include="Tools\VMTool\SubTools\VMFaceEditTool.cs" />
+    <Compile Include="Tools\VMTool\SubTools\VMScaleTool.cs" />
+    <Compile Include="Tools\VMTool\SubTools\VMStandardTool.cs" />
+    <Compile Include="Tools\VMTool\SubTools\VMSubTool.cs" />
     <Compile Include="Tools\VMTool\VMError.cs" />
-    <Compile Include="Tools\VMTool\VMErrorsSidebarPanel.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Tools\VMTool\VMErrorsSidebarPanel.Designer.cs">
-      <DependentUpon>VMErrorsSidebarPanel.cs</DependentUpon>
-    </Compile>
     <Compile Include="Tools\VMTool\VMPoint.cs" />
-    <Compile Include="Tools\VMTool\VMSidebarPanel.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Tools\VMTool\VMSidebarPanel.Designer.cs">
-      <DependentUpon>VMSidebarPanel.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Tools\VMTool\VMSubTool.cs" />
+    <Compile Include="Tools\VMTool\VMPointsState.cs" />
+    <Compile Include="Tools\VMTool\VMSolid.cs" />
     <Compile Include="Tools\VMTool\VMTool.cs" />
     <Compile Include="UI\KeyboardState.cs" />
     <Compile Include="Rendering\MapViewport.cs">
@@ -416,7 +345,6 @@
     <Compile Include="Settings\FileTypeRegistration.cs" />
     <Compile Include="SingleInstance.cs" />
     <Compile Include="SledgeCursors.cs" />
-    <Compile Include="Tools\BaseBoxTool.cs" />
     <Compile Include="Tools\BaseTool.cs" />
     <Compile Include="Tools\ClipTool.cs" />
     <Compile Include="Tools\SketchTool.cs" />
@@ -751,21 +679,6 @@
     <EmbeddedResource Include="Settings\SettingsForm.resx">
       <DependentUpon>SettingsForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Tools2\VMTool\Controls\EditFaceControl.resx">
-      <DependentUpon>EditFaceControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Tools2\VMTool\Controls\ScaleControl.resx">
-      <DependentUpon>ScaleControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Tools2\VMTool\Controls\StandardControl.resx">
-      <DependentUpon>StandardControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Tools2\VMTool\Controls\VMErrorsSidebarPanel.resx">
-      <DependentUpon>VMErrorsSidebarPanel.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Tools2\VMTool\Controls\VMSidebarPanel.resx">
-      <DependentUpon>VMSidebarPanel.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Tools\TextureTool\TextureToolSidebarPanel.resx">
       <DependentUpon>TextureToolSidebarPanel.cs</DependentUpon>
     </EmbeddedResource>
@@ -783,19 +696,19 @@
       <DependentUpon>TextureApplicationForm.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Tools\VMTool\EditFaceControl.resx">
+    <EmbeddedResource Include="Tools\VMTool\Controls\EditFaceControl.resx">
       <DependentUpon>EditFaceControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Tools\VMTool\ScaleControl.resx">
+    <EmbeddedResource Include="Tools\VMTool\Controls\ScaleControl.resx">
       <DependentUpon>ScaleControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Tools\VMTool\StandardControl.resx">
+    <EmbeddedResource Include="Tools\VMTool\Controls\StandardControl.resx">
       <DependentUpon>StandardControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Tools\VMTool\VMErrorsSidebarPanel.resx">
+    <EmbeddedResource Include="Tools\VMTool\Controls\VMErrorsSidebarPanel.resx">
       <DependentUpon>VMErrorsSidebarPanel.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Tools\VMTool\VMSidebarPanel.resx">
+    <EmbeddedResource Include="Tools\VMTool\Controls\VMSidebarPanel.resx">
       <DependentUpon>VMSidebarPanel.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\AboutDialog.resx">
