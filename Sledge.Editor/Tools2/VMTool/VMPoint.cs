@@ -113,8 +113,6 @@ namespace Sledge.Editor.Tools2.VMTool
 
         public override bool CanDrag(MapViewport viewport, ViewportEvent e, Coordinate position)
         {
-            if (!_tool.CanDragPoint(this)) return false;
-
             const int width = 5;
             var screenPosition = viewport.ProperWorldToScreen(Position);
             var diff = (e.Location - screenPosition).Absolute();
@@ -140,12 +138,14 @@ namespace Sledge.Editor.Tools2.VMTool
 
         public override void StartDrag(MapViewport viewport, ViewportEvent e, Coordinate position)
         {
+            if (!_tool.CanDragPoint(this)) return;
             _tool.StartPointDrag(viewport, e, Position);
             base.StartDrag(viewport, e, position);
         }
 
         public override void Drag(MapViewport viewport, ViewportEvent e, Coordinate lastPosition, Coordinate position)
         {
+            if (!_tool.CanDragPoint(this)) return;
             position = _tool.SnapIfNeeded(viewport.Expand(position));
             _tool.PointDrag(viewport, e, lastPosition, position);
             base.Drag(viewport, e, lastPosition, position);
@@ -153,6 +153,7 @@ namespace Sledge.Editor.Tools2.VMTool
 
         public override void EndDrag(MapViewport viewport, ViewportEvent e, Coordinate position)
         {
+            if (!_tool.CanDragPoint(this)) return;
             position = _tool.SnapIfNeeded(viewport.Expand(position));
             _tool.EndPointDrag(viewport, e, position);
             base.EndDrag(viewport, e, position);

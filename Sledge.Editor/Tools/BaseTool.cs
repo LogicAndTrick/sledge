@@ -385,7 +385,7 @@ namespace Sledge.Editor.Tools
             _currentObjects.Clear();
             _currentViewportObjects[viewport] = new List<Element>();
 
-            if (!Active) return;
+            //if (!Active) return;
             
             _currentObjects = GetSceneObjects().ToList();
             if (viewport.Is3D)

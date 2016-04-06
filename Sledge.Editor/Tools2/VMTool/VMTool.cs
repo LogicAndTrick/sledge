@@ -100,7 +100,7 @@ namespace Sledge.Editor.Tools2.VMTool
 
         #region Tool switching
 
-        protected VMSubTool CurrentSubTool
+        internal VMSubTool CurrentSubTool
         {
             get { return Children.OfType<VMSubTool>().FirstOrDefault(x => x.Active); }
             set
@@ -128,12 +128,8 @@ namespace Sledge.Editor.Tools2.VMTool
         {
             if (CurrentSubTool == tool) return;
 
-            if (CurrentSubTool != null) CurrentSubTool.ToolDeselected(false);
-
             _controlPanel.SetSelectedTool(tool);
             CurrentSubTool = tool;
-
-            if (CurrentSubTool != null) CurrentSubTool.ToolSelected(false);
 
             Mediator.Publish(EditorMediator.ContextualHelpChanged);
             Invalidate();
@@ -160,6 +156,8 @@ namespace Sledge.Editor.Tools2.VMTool
         }
 
         #endregion
+
+        #region Default tool overrides
 
         public override Image GetIcon()
         {
@@ -220,7 +218,9 @@ namespace Sledge.Editor.Tools2.VMTool
             }
             return HotkeyInterceptResult.Abort; // Don't allow stuff to happen when inside the VM tool. todo: fix/make this more generic?
         }
-        
+
+        #endregion
+
         public override void KeyDown(MapViewport viewport, ViewportEvent e)
         {
             if (e.KeyCode == Keys.Enter)
@@ -430,6 +430,11 @@ namespace Sledge.Editor.Tools2.VMTool
             Points.Sort((a, b) => b.IsMidpoint.CompareTo(a.IsMidpoint));
         }
 
+        public void UpdatePoints(IList<VMSolid> solids)
+        {
+            foreach (var solid in solids) solid.UpdatePoints();
+        }
+
         public void UpdateSolids(IList<VMSolid> solids, bool refreshPoints)
         {
             if (!solids.Any()) return;
@@ -446,6 +451,7 @@ namespace Sledge.Editor.Tools2.VMTool
             }
 
             if (refreshPoints) RefreshPoints(solids);
+            else UpdatePoints(solids);
             Invalidate();
         }
 

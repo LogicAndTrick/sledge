@@ -57,7 +57,11 @@ namespace Sledge.Editor.Tools2.VMTool
 
         public IEnumerable<IDraggable> GetDraggables()
         {
-            return _tool.GetVisiblePoints().OrderBy(x => x.IsSelected ? 1 : 0);
+            var sub = _tool.CurrentSubTool;
+
+            return sub == null
+                ? _tool.GetVisiblePoints().OrderBy(x => x.IsSelected ? 1 : 0)
+                : sub.GetDraggables();
         }
     }
 }

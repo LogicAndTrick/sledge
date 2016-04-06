@@ -64,6 +64,17 @@ namespace Sledge.Editor.Tools2.VMTool
             }
         }
 
+        public void UpdatePoints()
+        {
+            foreach (var point in Points)
+            {
+                if (point.IsMidpoint)
+                {
+                    point.Position = (point.MidpointStart.Position + point.MidpointEnd.Position) / 2;
+                }
+            }
+        }
+
         public IEnumerable<VMError> GetErrors()
         {
             foreach (var g in Copy.GetCoplanarFaces().GroupBy(x => x.Plane))

@@ -17,11 +17,24 @@ namespace Sledge.Editor.Tools2.VMTool.SubTools
     {
         private class ScaleOrigin : DraggableCoordinate
         {
+            public ScaleOrigin()
+            {
+                Width = 10;
+            }
+
             public override IEnumerable<Element> GetViewportElements(MapViewport viewport, OrthographicCamera camera)
             {
-                yield return new HandleElement(PositionType.World, HandleElement.HandleType.Square, new Position(Position.ToVector3()), 2)
+                yield return new HandleElement(PositionType.World, HandleElement.HandleType.Circle, new Position(Position.ToVector3()), 10)
                 {
-                    Color = Color.AliceBlue
+                    Color = Color.Transparent,
+                    LineColor = Color.AliceBlue,
+                    ZIndex = 10
+                };
+                yield return new HandleElement(PositionType.World, HandleElement.HandleType.Circle, new Position(Position.ToVector3()), 5)
+                {
+                    Color = Color.Transparent,
+                    LineColor = Color.AliceBlue,
+                    ZIndex = 10
                 };
             }
         }
@@ -60,6 +73,7 @@ namespace Sledge.Editor.Tools2.VMTool.SubTools
             if (!points.Any()) points = _tool.GetVisiblePoints().Where(x => !x.IsMidpoint).Select(x => x.Position).ToList();
             if (!points.Any()) _origin.Position = Coordinate.Zero;
             else _origin.Position = points.Aggregate(Coordinate.Zero, (a, b) => a + b) / points.Count;
+            _tool.Invalidate();
         }
 
         public override void SelectionChanged()
@@ -73,7 +87,7 @@ namespace Sledge.Editor.Tools2.VMTool.SubTools
             var o = _origin.Position;
             var solids = new List<VMSolid>();
             // Move each selected point by the computed offset from the origin
-            foreach (var p in _tool.GetVisiblePoints().Where(x => x.IsSelected))
+            foreach (var p in _tool.GetVisiblePoints().Where(x => x.IsSelected).SelectMany(x => x.GetStandardPointList()).Distinct())
             {
                 if (!solids.Contains(p.Solid)) solids.Add(p.Solid);
                 var orig = _originals[p];

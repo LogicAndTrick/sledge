@@ -14,9 +14,11 @@ namespace Sledge.Editor.Tools2.DraggableTool
     {
         public bool Highlighted { get; protected set; }
         public Coordinate Position { get; set; }
+        public int Width { get; protected set; }
 
         public DraggableCoordinate()
         {
+            Width = 5;
             Position = Coordinate.Zero;
         }
 
@@ -27,7 +29,7 @@ namespace Sledge.Editor.Tools2.DraggableTool
 
         public override bool CanDrag(MapViewport viewport, ViewportEvent e, Coordinate position)
         {
-            const int width = 5;
+            var width = Width;
             var screenPosition = viewport.ProperWorldToScreen(Position);
             var diff = (e.Location - screenPosition).Absolute();
             return diff.X < width && diff.Y < width;
@@ -68,7 +70,7 @@ namespace Sledge.Editor.Tools2.DraggableTool
 
         public override IEnumerable<Element> GetViewportElements(MapViewport viewport, OrthographicCamera camera)
         {
-            yield return new HandleElement(PositionType.World, HandleElement.HandleType.Square, new Position(Position.ToVector3()), 2)
+            yield return new HandleElement(PositionType.World, HandleElement.HandleType.Square, new Position(Position.ToVector3()), Width)
             {
                 Color = GetColor()
             };

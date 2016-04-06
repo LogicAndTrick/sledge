@@ -55,7 +55,7 @@ namespace Sledge.Rendering.Scenes.Elements
 
             var verts = GetVertices().ToList();
             verts.Add(verts[0]); // loop back
-            yield return new LineElement(PositionType, LineColor, verts);
+            yield return new LineElement(PositionType, LineColor, verts) { DepthTested = DepthTested, ZIndex = ZIndex };
         }
 
         private Material _texture;
@@ -72,11 +72,11 @@ namespace Sledge.Rendering.Scenes.Elements
                     new PositionVertex(Offset(+Radius, +Radius), 1, 1),
                     new PositionVertex(Offset(-Radius, +Radius), 0, 1),
                 };
-                yield return new FaceElement(PositionType, _texture, points) { DepthTested = DepthTested };
+                yield return new FaceElement(PositionType, _texture, points) { DepthTested = DepthTested, ZIndex = ZIndex };
             }
             else
             {
-                yield return new FaceElement(PositionType, Material.Flat(Color), GetVertices().Select(x => new PositionVertex(x, 0, 0))) { DepthTested = DepthTested };
+                yield return new FaceElement(PositionType, Material.Flat(Color), GetVertices().Select(x => new PositionVertex(x, 0, 0))) { DepthTested = DepthTested, ZIndex = ZIndex };
             }
         }
 
