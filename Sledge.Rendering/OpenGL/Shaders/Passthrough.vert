@@ -7,10 +7,11 @@ layout(location = 1) in vec3 normal;
 layout(location = 2) in vec2 texture;
 layout(location = 3) in vec4 materialColor;
 layout(location = 4) in vec4 accentColor;
-layout(location = 5) in vec4 tintColor;
-layout(location = 6) in uint flags;
-layout(location = 7) in float zIndex;
-layout(location = 8) in vec3 offset;
+layout(location = 5) in vec4 pointColor;
+layout(location = 6) in vec4 tintColor;
+layout(location = 7) in uint flags;
+layout(location = 8) in float zIndex;
+layout(location = 9) in vec3 offset;
 */
 
 attribute vec3 position;
@@ -18,6 +19,7 @@ attribute vec3 normal;
 attribute vec2 texture;
 attribute vec4 materialColor;
 attribute vec4 accentColor;
+attribute vec4 pointColor;
 attribute vec4 tintColor;
 attribute float fflags;
 attribute float zIndex;
@@ -28,6 +30,7 @@ varying vec4 vertexNormal;
 varying vec2 vertexTexture;
 varying vec4 vertexMaterialColor;
 varying vec4 vertexAccentColor;
+varying vec4 vertexPointColor;
 varying vec4 vertexTintColor;
 varying float vertexFlags;
 
@@ -81,6 +84,7 @@ void main()
     vertexTexture = texture;
 	vertexMaterialColor = materialColor;
 	vertexAccentColor = accentColor;
+	vertexPointColor = pointColor;
 	vertexTintColor = tintColor;
     vertexFlags = flags;
 

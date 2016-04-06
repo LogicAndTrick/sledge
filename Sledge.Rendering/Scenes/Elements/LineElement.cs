@@ -10,12 +10,14 @@ namespace Sledge.Rendering.Scenes.Elements
         public bool Stippled { get; set; }
         public float Width { get; set; }
         public Color Color { get; private set; }
+        public Color PointColor { get; set; }
         public List<Position> Vertices { get; set; }
         public override string ElementGroup { get { return "General"; } }
 
         public LineElement(PositionType type, Color color, List<Position> vertices) : base(type)
         {
             Color = color;
+            PointColor = Color.Transparent;
             Vertices = vertices;
             Width = 1;
             Smooth = true;

@@ -11,5 +11,6 @@ namespace Sledge.Rendering.Interfaces
         Color OrthographicBackgroundColour { get; set; }
         float PerspectiveGridSpacing { get; set; }
         bool ShowPerspectiveGrid { get; set; }
+        float PointSize { get; set; }
     }
 }

@@ -46,6 +46,7 @@ namespace Sledge.Editor.Tools.SelectTool
             _selectionBox = new SelectionBoxDraggableState(this);
             _selectionBox.BoxColour = Color.Yellow;
             _selectionBox.FillColour = Color.FromArgb(View.SelectionBoxBackgroundOpacity, Color.White);
+            _selectionBox.Stippled = Sledge.Settings.View.DrawBoxDashedLines;
             _selectionBox.State.Changed += SelectionBoxChanged;
             States.Add(_selectionBox);
             Children.AddRange(_selectionBox.Widgets);
@@ -53,7 +54,12 @@ namespace Sledge.Editor.Tools.SelectTool
             _emptyBox = new BoxDraggableState(this);
             _emptyBox.BoxColour = Color.Yellow;
             _emptyBox.FillColour = Color.FromArgb(View.SelectionBoxBackgroundOpacity, Color.White);
+            _emptyBox.Stippled = Sledge.Settings.View.DrawBoxDashedLines;
             _emptyBox.State.Changed += EmptyBoxChanged;
+            _emptyBox.DragEnded += (sender, args) =>
+            {
+                if (Sledge.Settings.Select.AutoSelectBox) Confirm();
+            };
             States.Add(_emptyBox);
 
             Usage = ToolUsage.Both;
@@ -486,11 +492,11 @@ namespace Sledge.Editor.Tools.SelectTool
         {
             if (e.KeyCode == Keys.Enter)
             {
-                Confirm(viewport);
+                Confirm();
             }
             else if (e.KeyCode == Keys.Escape)
             {
-                Cancel(viewport);
+                Cancel();
             }
             base.KeyDown(viewport, e);
         }
@@ -498,8 +504,7 @@ namespace Sledge.Editor.Tools.SelectTool
         /// <summary>
         /// Once a box is confirmed, we select all element intersecting with the box (contained within if shift is down).
         /// </summary>
-        /// <param name="viewport">The viewport that the box was confirmed in</param>
-        private void Confirm(MapViewport viewport)
+        private void Confirm()
         {
             // Only confirm the box if the empty box is drawn
             if (_selectionBox.State.Action != BoxAction.Idle || _emptyBox.State.Action != BoxAction.Drawn) return;
@@ -521,7 +526,7 @@ namespace Sledge.Editor.Tools.SelectTool
             SelectionChanged();
         }
 
-        private void Cancel(MapViewport viewport)
+        private void Cancel()
         {
             if (_selectionBox.State.Action != BoxAction.Idle && !Document.Selection.IsEmpty())
             {

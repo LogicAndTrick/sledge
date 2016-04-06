@@ -22,6 +22,7 @@ namespace Sledge.Editor.Tools.DraggableTool
         public Color FillColour { get; set; }
         public Box RememberedDimensions { get; set; }
         internal BoxState State { get; set; }
+        public bool Stippled { get; set; }
 
         protected IDraggable[] BoxHandles { get; set; }
 
@@ -129,7 +130,7 @@ namespace Sledge.Editor.Tools.DraggableTool
                     yield return new FaceElement(PositionType.World, Material.Flat(GetRenderBoxColour()), verts)
                     {
                         RenderFlags = RenderFlags.Wireframe,
-                        AccentColor = GetRenderBoxColour(),
+                        CameraFlags = CameraFlags.Perspective
                     };
                 }
             }
@@ -142,11 +143,25 @@ namespace Sledge.Editor.Tools.DraggableTool
 
         public override IEnumerable<Element> GetViewportElements(MapViewport viewport, OrthographicCamera camera)
         {
-            if (!ShouldDrawBoxText()) yield break;
-
-            foreach (var element in GetBoxTextElements(viewport, State.Start.ToVector3(), State.End.ToVector3()))
+            if (ShouldDrawBox())
             {
-                yield return element;
+                var box = new Box(State.Start, State.End);
+                foreach (var face in box.GetBoxFaces())
+                {
+                    var verts = face.Select(x => new Position(x.ToVector3())).ToList();
+                    yield return new LineElement(PositionType.World, GetRenderBoxColour(), verts)
+                    {
+                        Stippled = Stippled
+                    };
+                }
+            }
+
+            if (ShouldDrawBoxText())
+            {
+                foreach (var element in GetBoxTextElements(viewport, State.Start.ToVector3(), State.End.ToVector3()))
+                {
+                    yield return element;
+                }
             }
         }
 

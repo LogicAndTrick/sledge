@@ -92,6 +92,7 @@ namespace Sledge.Rendering.OpenGL.Arrays
             shader.ViewportMatrix = vpMatrix;
             shader.Orthographic = camera.Flags.HasFlag(CameraFlags.Orthographic);
             shader.UseAccentColor = !options.RenderFacePolygonTextures;
+            shader.UsePointColor = false;
             shader.Viewport = new Vector2(viewport.Control.Width, viewport.Control.Height);
             shader.Zoom = camera.Zoom;
 
@@ -133,6 +134,8 @@ namespace Sledge.Rendering.OpenGL.Arrays
                 Render(PrimitiveType.Lines, subset);
             }
 
+            shader.UsePointColor = true;
+
             // Render points
             sets = HitCache(FacePoints, () =>
             {
@@ -140,12 +143,14 @@ namespace Sledge.Rendering.OpenGL.Arrays
                 if (options.RenderFacePoints) ss.AddRange(GetSubsets(FacePoints));
                 if (options.RenderLinePoints) ss.AddRange(GetSubsets(LinePoints));
                 return ss;
-            }, options.RenderFaceWireframe, options.RenderLineWireframe);
+            }, options.RenderFacePoints, options.RenderLinePoints);
 
             foreach (var subset in sets)
             {
                 Render(PrimitiveType.Points, subset);
             }
+
+            shader.UsePointColor = false;
 
             shader.Unbind();
 
@@ -357,6 +362,7 @@ namespace Sledge.Rendering.OpenGL.Arrays
                 Texture = new Vector2(x.TextureU, x.TextureV),
                 MaterialColor = face.Material.Color.ToAbgr(),
                 AccentColor = face.AccentColor.ToAbgr(),
+                PointColor = face.PointColor.ToAbgr(),
                 TintColor = face.TintColor.ToAbgr(),
                 Flags = ConvertVertexFlags(face) | flags
             });
@@ -371,6 +377,7 @@ namespace Sledge.Rendering.OpenGL.Arrays
                 Texture = Vector2.Zero,
                 MaterialColor = line.Material.Color.ToAbgr(),
                 AccentColor = line.AccentColor.ToAbgr(),
+                PointColor = line.PointColor.ToAbgr(),
                 TintColor = line.TintColor.ToAbgr(),
                 Flags = ConvertVertexFlags(line) | flags
             });
@@ -396,6 +403,7 @@ namespace Sledge.Rendering.OpenGL.Arrays
                 Texture = new Vector2(x.TextureU, x.TextureV),
                 MaterialColor = sprite.Material.Color.ToAbgr(),
                 AccentColor = sprite.AccentColor.ToAbgr(),
+                PointColor = sprite.PointColor.ToAbgr(),
                 TintColor = sprite.TintColor.ToAbgr(),
                 Flags = ConvertVertexFlags(sprite) | flags
             });

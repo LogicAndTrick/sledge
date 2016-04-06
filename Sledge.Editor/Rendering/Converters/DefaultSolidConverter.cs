@@ -94,6 +94,7 @@ namespace Sledge.Editor.Rendering.Converters
             var sceneFace =  new Face(mat, face.Vertices.Select(x => new Vertex(x.Location.ToVector3(), (float)x.TextureU, (float)x.TextureV)).ToList())
             {
                 AccentColor = sel ? Color.Red : face.Colour,
+                PointColor = sel ? Color.Red : (View.OverrideVertexColour ? View.VertexOverrideColour : face.Colour),
                 TintColor = sel ? Color.FromArgb(128, Color.Red) : Color.White,
                 IsSelected = sel,
                 ForcedRenderFlags = sel ? RenderFlags.Wireframe : RenderFlags.None
@@ -122,6 +123,7 @@ namespace Sledge.Editor.Rendering.Converters
             sceneFace.Material = mat;
             sceneFace.Vertices = face.Vertices.Select(x => new Vertex(x.Location.ToVector3(), (float)x.TextureU, (float)x.TextureV)).ToList();
             sceneFace.AccentColor = sel ? Color.Red : face.Colour;
+            sceneFace.PointColor = sel ? Color.Red : (View.OverrideVertexColour ? View.VertexOverrideColour : face.Colour);
             sceneFace.TintColor = sel ? Color.FromArgb(128, Color.Red) : Color.White;
             sceneFace.IsSelected = sel;
             sceneFace.ForcedRenderFlags = sel ? RenderFlags.Wireframe : RenderFlags.None;

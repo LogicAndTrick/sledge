@@ -16,6 +16,7 @@ namespace Sledge.Rendering.Scenes.Renderables
         private RenderFlags _forcedRenderFlags;
         private CameraFlags _cameraFlags;
         private Color _accentColor;
+        private Color _pointColor;
         private Color _tintColor;
 
         public Material Material
@@ -38,6 +39,16 @@ namespace Sledge.Rendering.Scenes.Renderables
             {
                 _accentColor = value;
                 OnPropertyChanged("AccentColor");
+            }
+        }
+
+        public Color PointColor
+        {
+            get { return _pointColor; }
+            set
+            {
+                _pointColor = value;
+                OnPropertyChanged("PointColor");
             }
         }
 
@@ -114,6 +125,7 @@ namespace Sledge.Rendering.Scenes.Renderables
             _forcedRenderFlags = RenderFlags.None;
             _accentColor = Color.White;
             _tintColor = Color.White;
+            _pointColor = Color.Transparent;
         }
     }
 }

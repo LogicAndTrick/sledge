@@ -47,6 +47,7 @@ namespace Sledge.Rendering.OpenGL.Arrays
             shader.ViewportMatrix = camera.GetViewportMatrix(viewport.Control.Width, viewport.Control.Height);
             shader.Orthographic = camera.Flags.HasFlag(CameraFlags.Orthographic);
             shader.UseAccentColor = false;
+            shader.UsePointColor = false;
             shader.Viewport = new Vector2(viewport.Control.Width, viewport.Control.Height);
             shader.Zoom = camera.Zoom;
 
@@ -58,12 +59,14 @@ namespace Sledge.Rendering.OpenGL.Arrays
             shader.ViewportMatrix = vpMatrix;
             shader.Orthographic = camera.Flags.HasFlag(CameraFlags.Orthographic);
             shader.UseAccentColor = false;
+            shader.UsePointColor = false;
             shader.Viewport = new Vector2(viewport.Control.Width, viewport.Control.Height);
             shader.Zoom = 1;
 
             RenderPositionType(renderer, shader, PositionType.Screen);
 
             shader.UseAccentColor = false;
+            shader.UsePointColor = false;
 
             RenderPositionType(renderer, shader, PositionType.Anchored);
 
@@ -170,6 +173,7 @@ namespace Sledge.Rendering.OpenGL.Arrays
                 Texture = new Vector2(vert.TextureU, vert.TextureV),
                 MaterialColor = face.Material.Color.ToAbgr(),
                 AccentColor = face.AccentColor.ToAbgr(),
+                PointColor = face.PointColor.ToAbgr(),
                 TintColor = Color.White.ToAbgr(),
                 Flags = ConvertVertexFlags(face, vert.Position),
                 ZIndex = face.ZIndex,
@@ -184,6 +188,7 @@ namespace Sledge.Rendering.OpenGL.Arrays
                 Position = Convert(vert, line.PositionType),
                 MaterialColor = line.Color.ToAbgr(),
                 AccentColor = line.Color.ToAbgr(),
+                PointColor = line.PointColor.ToAbgr(),
                 TintColor = Color.White.ToAbgr(),
                 Flags = ConvertVertexFlags(line, vert),
                 ZIndex = line.ZIndex,

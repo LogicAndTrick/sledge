@@ -5,11 +5,13 @@ varying vec4 vertexNormal;
 varying vec2 vertexTexture;
 varying vec4 vertexMaterialColor;
 varying vec4 vertexAccentColor;
+varying vec4 vertexPointColor;
 varying vec4 vertexTintColor;
 varying float vertexFlags;
 
 uniform bool orthographic;
 uniform bool useAccentColor;
+uniform bool usePointColor;
 uniform bool showGrid;
 uniform float gridSpacing;
 uniform sampler2D currentTexture;
@@ -35,6 +37,7 @@ void main()
 
     vec4 fragmentColor = useAccentColor ? vertexAccentColor : texture2D(currentTexture, vertexTexture) * vertexMaterialColor;
 	if (!useAccentColor) fragmentColor.rgb *= tint; // vertexTintColor.rgb * vertexTintColor.a;
+	if (usePointColor) fragmentColor = vertexPointColor;
 	fragmentColor.a *= vertexMaterialColor.a;
 
     if (fragmentColor.a < 0.05) discard;

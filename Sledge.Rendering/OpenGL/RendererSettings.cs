@@ -34,5 +34,6 @@ namespace Sledge.Rendering.OpenGL
         public Color OrthographicBackgroundColour { get; set; }
         public float PerspectiveGridSpacing { get; set; }
         public bool ShowPerspectiveGrid { get; set; }
+        public float PointSize { get; set; }
     }
 }

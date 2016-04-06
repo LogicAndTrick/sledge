@@ -13,6 +13,7 @@ namespace Sledge.Rendering.Scenes.Elements
         public RenderFlags RenderFlags { get; set; }
         public Material Material { get; set; }
         public Color AccentColor { get; set; }
+        public Color PointColor { get; set; }
         public List<PositionVertex> Vertices { get; set; }
         public override string ElementGroup { get { return "General"; } }
 
@@ -22,6 +23,7 @@ namespace Sledge.Rendering.Scenes.Elements
             Material = material;
             Vertices = vertices.ToList();
             AccentColor = material.Color;
+            PointColor = Color.Transparent;
             CameraFlags = CameraFlags.All;
             RenderFlags = RenderFlags.Polygon;
         }

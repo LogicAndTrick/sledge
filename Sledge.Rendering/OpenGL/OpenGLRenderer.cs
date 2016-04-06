@@ -143,8 +143,6 @@ namespace Sledge.Rendering.OpenGL
                 GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
                 GL.PixelStore(PixelStoreParameter.UnpackAlignment, 1);
 
-                GL.PointSize(4);
-
                 data.Initialised = true;
             }
             if (data.Width != viewport.Control.Width || data.Height != viewport.Control.Height)
@@ -228,7 +226,9 @@ namespace Sledge.Rendering.OpenGL
             ProcessModelQueue();
 
             // todo: some sort of garbage collection?
-            
+
+            GL.PointSize(Settings.PointSize);
+
             GL.ClearColor(viewport.Camera is PerspectiveCamera ? Settings.PerspectiveBackgroundColour : Settings.OrthographicBackgroundColour);
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 

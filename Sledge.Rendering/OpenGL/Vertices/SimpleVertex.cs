@@ -21,6 +21,9 @@ namespace Sledge.Rendering.OpenGL.Vertices
         public int AccentColor;
 
         [ArrayIndex(VertexAttribPointerType.UnsignedByte, 4, true)]
+        public int PointColor;
+
+        [ArrayIndex(VertexAttribPointerType.UnsignedByte, 4, true)]
         public int TintColor;
 
         [ArrayIndex(VertexAttribPointerType.UnsignedInt)]

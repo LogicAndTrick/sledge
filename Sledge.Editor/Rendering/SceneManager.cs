@@ -27,6 +27,7 @@ namespace Sledge.Editor.Rendering
             settings.ForcePowerOfTwoTextureSizes = Sledge.Settings.View.ForcePowerOfTwoTextureResizing;
             settings.PerspectiveBackgroundColour = Sledge.Settings.View.ViewportBackground;
             settings.OrthographicBackgroundColour = Sledge.Settings.Grid.Background;
+            settings.PointSize = Sledge.Settings.View.VertexPointSize;
         }
 
         public Document Document { get; private set; }
