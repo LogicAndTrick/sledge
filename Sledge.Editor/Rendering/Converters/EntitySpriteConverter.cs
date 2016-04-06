@@ -22,7 +22,7 @@ namespace Sledge.Editor.Rendering.Converters
 
         public bool Supports(MapObject obj)
         {
-            return obj is Entity && GetSpriteName((Entity)obj) != null;
+            return !Sledge.Settings.View.DisableSpriteRendering && obj is Entity && GetSpriteName((Entity)obj) != null;
         }
 
         public bool Convert(SceneMapObject smo, Document document, MapObject obj)

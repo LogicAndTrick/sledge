@@ -182,19 +182,14 @@ namespace Sledge.Editor.Compiling
 
         private void FinishCompile(Task obj)
         {
+            var gameDir = Game.GetMapDirectory();
+            var mapDir = Path.GetDirectoryName(Document.MapFile);
+
             if (CompileSucceeded())
             {
                 // Compile succeeded (for all we know)
-                var gameDir = Game.GetMapDirectory();
-                var mapDir = Path.GetDirectoryName(Document.MapFile);
-                if (Build.AfterCopyBsp) CopyInto("bsp", gameDir);
-                if (Build.CopyBsp) CopyInto("bsp", mapDir);
+                if (Build.AfterCopyBsp || Build.CopyBsp) CopyInto("bsp", gameDir);
                 if (Build.CopyRes) CopyInto("res", mapDir);
-                if (Build.CopyLin) CopyInto("lin", mapDir);
-                if (Build.CopyMap) CopyInto("map", mapDir);
-                if (Build.CopyPts) CopyInto("pts", mapDir);
-                if (Build.CopyLog) CopyInto("log", mapDir);
-                if (Build.CopyErr) CopyInto("err", mapDir);
 
                 Mediator.Publish(EditorMediator.CompileFinished, this);
             }
@@ -202,6 +197,13 @@ namespace Sledge.Editor.Compiling
             {
                 Mediator.Publish(EditorMediator.CompileFailed, this);
             }
+
+            if (Build.CopyLin) CopyInto("lin", mapDir);
+            if (Build.CopyMap) CopyInto("map", mapDir);
+            if (Build.CopyPts) CopyInto("pts", mapDir);
+            if (Build.CopyLog) CopyInto("log", mapDir);
+            if (Build.CopyErr) CopyInto("err", mapDir);
+
             // Editor subscribes to these messages and calls Complete() on the correct thread.
         }
 

@@ -160,7 +160,8 @@ namespace Sledge.Editor.Tools.SelectTool
                         {
                             RenderFlags = RenderFlags.Wireframe,
                             CameraFlags = CameraFlags.Orthographic,
-                            AccentColor = GetRenderBoxColour()
+                            AccentColor = GetRenderBoxColour(),
+                            ZIndex = -20 // Put this face underneath the grid because it's semi-transparent
                         };
                         list.Add(fe);
                     }

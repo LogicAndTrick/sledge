@@ -885,6 +885,8 @@ namespace Sledge.Editor.Documents
 
                 pc.Position = end.End.ToVector3();
                 pc.LookAt = end.Start.ToVector3();
+
+                _document.RenderObjects(new[] { _document.Map.WorldSpawn });
             }
             catch
             {
@@ -934,6 +936,7 @@ namespace Sledge.Editor.Documents
         public void UnloadPointfile()
         {
             _document.Pointfile = null;
+            _document.RenderObjects(new[] { _document.Map.WorldSpawn });
         }
 
         public void ToggleSnapToGrid()

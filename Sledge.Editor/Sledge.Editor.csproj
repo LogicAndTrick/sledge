@@ -250,6 +250,7 @@
     <Compile Include="Rendering\ConvertedScene.cs" />
     <Compile Include="Rendering\Converters\AxisLinesConverter.cs" />
     <Compile Include="Rendering\Converters\CenterHandlesConverter.cs" />
+    <Compile Include="Rendering\Converters\PointfileConverter.cs" />
     <Compile Include="Rendering\Converters\DefaultEntityConverter.cs" />
     <Compile Include="Rendering\Converters\DefaultSolidConverter.cs" />
     <Compile Include="Rendering\Converters\EntityAngleConverter.cs" />

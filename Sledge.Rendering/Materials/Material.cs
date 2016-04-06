@@ -56,6 +56,11 @@ namespace Sledge.Rendering.Materials
             return new Material(MaterialType.Textured, Color.White, name) { TransparentTexture = transparent };
         }
 
+        public static Material Texture(string name, float opacity)
+        {
+            return new Material(MaterialType.Textured, Color.FromArgb((int)(opacity * 255), Color.White), name);
+        }
+
         public static Material Animated(int fps, params string[] names)
         {
             return new Material(MaterialType.Animated, Color.White, names) { FramesPerSecond = fps };
