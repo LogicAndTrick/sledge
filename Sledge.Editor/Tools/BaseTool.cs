@@ -31,7 +31,7 @@ namespace Sledge.Editor.Tools
             return Document.Snap(c);
         }
 
-        protected Coordinate SnapToSelection(Coordinate c, MapViewport vp)
+        public Coordinate SnapToSelection(Coordinate c, MapViewport vp)
         {
             if (!Document.Map.SnapToGrid) return c;
 
@@ -385,7 +385,7 @@ namespace Sledge.Editor.Tools
             _currentObjects.Clear();
             _currentViewportObjects[viewport] = new List<Element>();
 
-            //if (!Active) return;
+            if (!Active) return;
             
             _currentObjects = GetSceneObjects().ToList();
             if (viewport.Is3D)

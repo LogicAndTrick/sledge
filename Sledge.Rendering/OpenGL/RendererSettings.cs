@@ -1,3 +1,4 @@
+using System.Drawing;
 using Sledge.Rendering.Interfaces;
 
 namespace Sledge.Rendering.OpenGL
@@ -28,5 +29,8 @@ namespace Sledge.Rendering.OpenGL
             get { return ((TextureStorage)_renderer.Textures).ForceNonPowerOfTwoResize; }
             set { ((TextureStorage)_renderer.Textures).ForceNonPowerOfTwoResize = value; }
         }
+
+        public Color PerspectiveBackgroundColour { get; set; }
+        public Color OrthographicBackgroundColour { get; set; }
     }
 }

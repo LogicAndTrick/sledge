@@ -1,3 +1,5 @@
+using System.Drawing;
+
 namespace Sledge.Rendering.Interfaces
 {
     public interface IRendererSettings
@@ -5,5 +7,7 @@ namespace Sledge.Rendering.Interfaces
         bool DisableTextureTransparency { get; set; }
         bool DisableTextureFiltering { get; set; }
         bool ForcePowerOfTwoTextureSizes { get; set; }
+        Color PerspectiveBackgroundColour { get; set; }
+        Color OrthographicBackgroundColour { get; set; }
     }
 }

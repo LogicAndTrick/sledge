@@ -12,17 +12,23 @@ namespace Sledge.Editor.Tools.SelectTool.TransformationHandles
 {
     public class RotationOrigin : DraggableCoordinate
     {
+        private readonly BaseTool _tool;
+
+        public RotationOrigin(BaseTool tool)
+        {
+            _tool = tool;
+            Width = 8;
+        }
+
         protected override void SetMoveCursor(MapViewport viewport)
         {
             viewport.Control.Cursor = Cursors.Cross;
         }
 
-        public override bool CanDrag(MapViewport viewport, ViewportEvent e, Coordinate position)
+        public override void Drag(MapViewport viewport, ViewportEvent e, Coordinate lastPosition, Coordinate position)
         {
-            const int width = 8;
-            var screenPosition = viewport.ProperWorldToScreen(Position);
-            var diff = (e.Location - screenPosition).Absolute();
-            return diff.X < width && diff.Y < width;
+            Position = _tool.SnapToSelection(viewport.Expand(position) + viewport.GetUnusedCoordinate(Position), viewport);
+            OnDragMoved();
         }
 
         public override IEnumerable<Element> GetViewportElements(MapViewport viewport, OrthographicCamera camera)

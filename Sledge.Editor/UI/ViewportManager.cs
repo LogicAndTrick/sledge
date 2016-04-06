@@ -213,16 +213,7 @@ namespace Sledge.Editor.UI
         private static void SubscribeExceptions(MapViewport vp)
         {
             vp.ListenerException += (sender, ex) => Logging.Logger.ShowException(ex, "Viewport Listener Exception");
-            // vp.RenderException += (sender, ex) => Logging.Logger.ShowException(ex, "Viewport Render Exception");
-        }
-
-        public static void RefreshClearColour()
-        {
-            // foreach (var vp in Viewports)
-            // {
-            //     vp.MakeCurrent();
-            //     GL.ClearColor(vp is MapViewport ? Sledge.Settings.View.ViewportBackground : Sledge.Settings.Grid.Background);
-            // }
+            vp.Viewport.RenderException += (sender, ex) => Logging.Logger.ShowException(ex, "Viewport Render Exception");
         }
 
         private static TableSplitControl GetParentSplitControl(MapViewport viewport)

@@ -25,6 +25,8 @@ namespace Sledge.Editor.Rendering
             settings.DisableTextureTransparency = Sledge.Settings.View.GloballyDisableTransparency;
             settings.DisableTextureFiltering = Sledge.Settings.View.DisableTextureFiltering;
             settings.ForcePowerOfTwoTextureSizes = Sledge.Settings.View.ForcePowerOfTwoTextureResizing;
+            settings.PerspectiveBackgroundColour = Sledge.Settings.View.ViewportBackground;
+            settings.OrthographicBackgroundColour = Sledge.Settings.Grid.Background;
         }
 
         public Document Document { get; private set; }
@@ -50,12 +52,12 @@ namespace Sledge.Editor.Rendering
         private void Process(IList<MapObject> objects)
         {
             // todo: how much can be moved out of the post load process now that some of it should be offloaded to the renderer?
-            Document.Map.PartialPostLoadProcess(Document.GameData, Document.GetTextureSize, SettingsManager.GetSpecialTextureOpacity);
+            Document.Map.PartialPostLoadProcess(objects, Document.GameData, Document.GetTextureSize, SettingsManager.GetSpecialTextureOpacity);
         }
 
         public void Update()
         {
-            Process(new MapObject[] { Document.Map.WorldSpawn });
+            Process(Document.Map.WorldSpawn.FindAll());
             _convertedScene.UpdateAll();
         }
 

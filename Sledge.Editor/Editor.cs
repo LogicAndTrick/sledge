@@ -491,8 +491,9 @@ namespace Sledge.Editor
                 cam.FOV = Sledge.Settings.View.CameraFOV;
                 cam.ClipDistance = Sledge.Settings.View.BackClippingPane;
             }
-            ViewportManager.RefreshClearColour();
+
             WadProvider.ReplaceTransparentPixels = !Sledge.Settings.View.DisableWadTransparency && !Sledge.Settings.View.GloballyDisableTransparency;
+
             if (DocumentManager.CurrentDocument != null)
             {
                 SceneManager.UpdateRendererSettings();

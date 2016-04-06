@@ -144,9 +144,8 @@ namespace Sledge.DataStructures.MapObjects
         /// </summary>
         public void PostLoadProcess(GameData.GameData gameData, Func<string, Size> textureAccessor, Func<string, float> textureOpacity)
         {
-            PartialPostLoadProcess(gameData, textureAccessor, textureOpacity);
-
             var all = WorldSpawn.FindAll();
+            PartialPostLoadProcess(all, gameData, textureAccessor, textureOpacity);
 
             // Set maximum ids
             var maxObjectId = all.Max(x => x.ID);
@@ -212,9 +211,8 @@ namespace Sledge.DataStructures.MapObjects
             return g.SelectMany(x => GetAllVisgroups(x.Children)).Union(g);
         }
 
-        public void PartialPostLoadProcess(GameData.GameData gameData, Func<string, Size> textureAccessor, Func<string, float> textureOpacity)
+        public void PartialPostLoadProcess(IList<MapObject> objects, GameData.GameData gameData, Func<string, Size> textureAccessor, Func<string, float> textureOpacity)
         {
-            var objects = WorldSpawn.FindAll();
             Parallel.ForEach(objects, obj =>
             {
                 if (obj is Entity)

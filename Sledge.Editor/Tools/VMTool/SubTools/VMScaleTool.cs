@@ -16,20 +16,29 @@ namespace Sledge.Editor.Tools.VMTool.SubTools
     {
         private class ScaleOrigin : DraggableCoordinate
         {
-            public ScaleOrigin()
+            private readonly VMScaleTool _vmScaleTool;
+
+            public ScaleOrigin(VMScaleTool vmScaleTool)
             {
+                _vmScaleTool = vmScaleTool;
                 Width = 10;
+            }
+
+            public override void Drag(MapViewport viewport, ViewportEvent e, Coordinate lastPosition, Coordinate position)
+            {
+                Position = _vmScaleTool.SnapIfNeeded(viewport.Expand(position) + viewport.GetUnusedCoordinate(Position));
+                OnDragMoved();
             }
 
             public override IEnumerable<Element> GetViewportElements(MapViewport viewport, OrthographicCamera camera)
             {
-                yield return new HandleElement(PositionType.World, HandleElement.HandleType.Circle, new Position(Position.ToVector3()), 10)
+                yield return new HandleElement(PositionType.World, HandleElement.HandleType.Circle, new Position(Position.ToVector3()), 8)
                 {
                     Color = Color.Transparent,
                     LineColor = Color.AliceBlue,
                     ZIndex = 10
                 };
-                yield return new HandleElement(PositionType.World, HandleElement.HandleType.Circle, new Position(Position.ToVector3()), 5)
+                yield return new HandleElement(PositionType.World, HandleElement.HandleType.Circle, new Position(Position.ToVector3()), 4)
                 {
                     Color = Color.Transparent,
                     LineColor = Color.AliceBlue,
@@ -51,7 +60,7 @@ namespace Sledge.Editor.Tools.VMTool.SubTools
             _control.ValueChanged += ValueChanged;
             _control.ValueReset += ValueReset;
             _control.ResetOrigin += ResetOrigin;
-            _origin = new ScaleOrigin();
+            _origin = new ScaleOrigin(this);
         }
 
         private void ValueChanged(object sender, decimal value)

@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
+using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Interfaces;
 using Sledge.Rendering.Materials;
 using Sledge.Rendering.OpenGL.Arrays;
@@ -228,7 +229,7 @@ namespace Sledge.Rendering.OpenGL
 
             // todo: some sort of garbage collection?
             
-            GL.ClearColor(Color.Black);
+            GL.ClearColor(viewport.Camera is PerspectiveCamera ? Settings.PerspectiveBackgroundColour : Settings.OrthographicBackgroundColour);
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
             scData.Array.Render(this, _shaderProgram, _modelShaderProgram, viewport);

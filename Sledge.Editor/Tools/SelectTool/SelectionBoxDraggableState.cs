@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -21,15 +22,25 @@ namespace Sledge.Editor.Tools.SelectTool
 {
     public class SelectionBoxDraggableState : BoxDraggableState
     {
+        private readonly SelectTool _tool;
+
+        public enum TransformationMode
+        {
+            Resize,
+            Rotate,
+            Skew
+        }
+
         private List<IDraggable>[] _handles;
-        private int _currentIndex;
+        private TransformationMode _currentTransformationMode;
         private RotationOrigin _rotationOrigin;
 
         public List<Widget> Widgets { get; private set; }
         private readonly RotationWidget _rotationWidget;
 
-        public SelectionBoxDraggableState(BaseDraggableTool tool) : base(tool)
+        public SelectionBoxDraggableState(SelectTool tool) : base(tool)
         {
+            _tool = tool;
             Widgets = new List<Widget>
             {
                 (_rotationWidget = new RotationWidget(tool.Document) { Active = false })
@@ -67,7 +78,7 @@ namespace Sledge.Editor.Tools.SelectTool
 
         public void Update()
         {
-            _rotationWidget.Active = State.Action != BoxAction.Idle && _currentIndex == 1;
+            _rotationWidget.Active = State.Action != BoxAction.Idle && _currentTransformationMode == TransformationMode.Rotate && Sledge.Settings.Select.Show3DSelectionWidgets;
             _rotationWidget.SetPivotPoint(_rotationOrigin.Position);
         }
 
@@ -87,8 +98,13 @@ namespace Sledge.Editor.Tools.SelectTool
 
                 new ResizeTransformHandle(this, ResizeHandle.Center), 
             };
-            _rotationOrigin = new RotationOrigin();
-            _rotationOrigin.DragMoved += (sender, args) => Update();
+
+            if (_rotationOrigin == null)
+            {
+                _rotationOrigin = new RotationOrigin(Tool);
+                _rotationOrigin.DragMoved += (sender, args) => Update();
+            }
+
             var rotate = new List<IDraggable>
             {
                 _rotationOrigin,
@@ -100,6 +116,7 @@ namespace Sledge.Editor.Tools.SelectTool
 
                 new ResizeTransformHandle(this, ResizeHandle.Center), 
             };
+
             var skew = new List<IDraggable>
             {
                 new SkewTransformHandle(this, ResizeHandle.Top),
@@ -116,7 +133,7 @@ namespace Sledge.Editor.Tools.SelectTool
         public override IEnumerable<IDraggable> GetDraggables()
         {
             if (State.Action == BoxAction.Idle || State.Action == BoxAction.Drawing) return new IDraggable[0];
-            return _handles[_currentIndex];
+            return _handles[(int)_currentTransformationMode];
         }
 
         public override bool CanDrag(MapViewport viewport, ViewportEvent e, Coordinate position)
@@ -169,13 +186,25 @@ namespace Sledge.Editor.Tools.SelectTool
 
         public void Cycle()
         {
-            _currentIndex = (_currentIndex + 1) % _handles.Length;
+            var intMode = (int) _currentTransformationMode;
+            var numModes = Enum.GetValues(typeof (TransformationMode)).Length;
+            var nextMode = (intMode + 1) % numModes;
+            SetTransformationMode((TransformationMode) nextMode);
+        }
+
+        public void SetTransformationMode(TransformationMode mode)
+        {
+            _currentTransformationMode = mode;
+
             if (State.Start != null) _rotationOrigin.Position = new Box(State.Start, State.End).Center;
             else _rotationOrigin.Position = Coordinate.Zero;
 
-            //_scaleWidget.Active = _currentIndex == 0;
-            _rotationWidget.Active = _currentIndex == 1;
-            //_skewWidget.Active = _currentIndex == 2;
+            //_scaleWidget.Active = _currentTransformationMode == TransformationMode.Resize;
+            _rotationWidget.Active = _currentTransformationMode == TransformationMode.Rotate;
+            //_skewWidget.Active = _currentTransformationMode == TransformationMode.Skew;
+
+            _tool.TransformationModeChanged(_currentTransformationMode);
+            Update();
         }
     }
 }

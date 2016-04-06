@@ -17,6 +17,7 @@ using Sledge.Editor.Properties;
 using Sledge.Editor.Rendering;
 using Sledge.Editor.Tools.DraggableTool;
 using Sledge.Editor.Tools.SelectTool.TransformationHandles;
+using Sledge.Editor.Tools.Widgets;
 using Sledge.Rendering.Cameras;
 using Sledge.Settings;
 using KeyboardState = Sledge.Editor.UI.KeyboardState;
@@ -32,13 +33,13 @@ namespace Sledge.Editor.Tools.SelectTool
     /// </summary>
     public class SelectTool : BaseDraggableTool
     {
-        // todo - select tool - widgets
-
         private readonly BoxDraggableState _emptyBox;
         private readonly SelectionBoxDraggableState _selectionBox;
 
         private MapObject ChosenItemFor3DSelection { get; set; }
         private List<MapObject> IntersectingObjectsFor3DSelection { get; set; }
+
+        private readonly SelectToolSidebarPanel _sidebarPanel;
 
         public SelectTool()
         {
@@ -56,6 +57,22 @@ namespace Sledge.Editor.Tools.SelectTool
             States.Add(_emptyBox);
 
             Usage = ToolUsage.Both;
+
+            _sidebarPanel = new SelectToolSidebarPanel();
+            _sidebarPanel.ChangeTransformationMode += (sender, mode) =>
+            {
+                _selectionBox.SetTransformationMode(mode);
+            };
+            _sidebarPanel.ToggleShow3DWidgets += (sender, show) =>
+            {
+                Sledge.Settings.Select.Show3DSelectionWidgets = show;
+                _selectionBox.Update();
+            };
+        }
+
+        public void TransformationModeChanged(SelectionBoxDraggableState.TransformationMode mode)
+        {
+            _sidebarPanel.TransformationToolChanged(mode);
         }
 
         public override string GetContextualHelp()
@@ -73,6 +90,11 @@ namespace Sledge.Editor.Tools.SelectTool
         public override string GetName()
         {
             return "SelectTool";
+        }
+
+        public override IEnumerable<KeyValuePair<string, Control>> GetSidebarControls()
+        {
+            yield return new KeyValuePair<string, Control>(GetName(), _sidebarPanel);
         }
 
         public override void ToolSelected(bool preventHistory)
@@ -107,8 +129,10 @@ namespace Sledge.Editor.Tools.SelectTool
         {
             if (Document == null) return;
             UpdateBoxBasedOnSelection();
-
-            //foreach (var widget in _widgets) widget.SelectionChanged();
+            foreach (var widget in Children.OfType<Widget>())
+            {
+                widget.SelectionChanged();
+            }
         }
 
         /// <summary>

@@ -370,14 +370,12 @@ namespace Sledge.Editor.Documents
         {
             SelectListTransform = matrix;
             SceneManager.Engine.Renderer.SelectionTransform = SelectListTransform;
-            //Renderer.SetSelectionTransform(matrix);
         }
 
         public void EndSelectionTransform()
         {
             SelectListTransform = Matrix4.Identity;
             SceneManager.Engine.Renderer.SelectionTransform = SelectListTransform;
-            //Renderer.SetSelectionTransform(Matrix4.Identity);
         }
 
         public Size GetTextureSize(string name)
@@ -388,76 +386,26 @@ namespace Sledge.Editor.Documents
 
         public void RenderAll()
         {
-            Map.PartialPostLoadProcess(GameData, GetTextureSize, SettingsManager.GetSpecialTextureOpacity);
-
-            //var decalsUpdated = Map.UpdateDecals(this);
-            // var modelsUpdated = Map.UpdateModels(this);
-            // var spritesUpdated = Map.UpdateSprites(this);
-            // if (decalsUpdated || modelsUpdated || spritesUpdated) Mediator.Publish(EditorMediator.SelectionChanged);
-
-            SceneManager.Update();
-
-            //HelperManager.UpdateCache();
-            //Renderer.Update();
-            // ViewportManager.Viewports.ForEach(vp => vp.UpdateNextFrame());
+            var all = Map.WorldSpawn.FindAll();
+            SceneManager.Update(all);
         }
 
         public void RenderSelection(IEnumerable<MapObject> objects)
         {
             SceneManager.Update(objects.ToList());
-            //Renderer.UpdateSelection(objects);
-            //ViewportManager.Viewports.ForEach(vp => vp.UpdateNextFrame());
         }
 
         public void RenderObjects(IEnumerable<MapObject> objects)
         {
             var objs = objects.ToList();
-            Map.PartialPostLoadProcess(GameData, GetTextureSize, SettingsManager.GetSpecialTextureOpacity);
-
-            //var decalsUpdated = Map.UpdateDecals(this, objs);
-            //var modelsUpdated = Map.UpdateModels(this, objs);
-            //var spritesUpdated = Map.UpdateSprites(this, objs);
-            //if (decalsUpdated || modelsUpdated || spritesUpdated) Mediator.Publish(EditorMediator.SelectionChanged);
-
-
             SceneManager.Update(objs);
-
-            //HelperManager.UpdateCache();
-
-            // If the models/decals changed, we need to do a full update
-            //if (modelsUpdated || decalsUpdated || spritesUpdated) Renderer.Update();
-            //else Renderer.UpdatePartial(objs);
-
-            //ViewportManager.Viewports.ForEach(vp => vp.UpdateNextFrame());
         }
 
         public void RenderFaces(IEnumerable<Face> faces)
         {
-            Map.PartialPostLoadProcess(GameData, GetTextureSize, SettingsManager.GetSpecialTextureOpacity);
-            // No need to update decals or models here: they can only be changed via entity properties
-            //HelperManager.UpdateCache();
-            //Renderer.UpdatePartial(faces);
-            //ViewportManager.Viewports.ForEach(vp => vp.UpdateNextFrame());
+            var objs = faces.Select(x => x.Parent).Distinct().OfType<MapObject>().ToList();
+            SceneManager.Update(objs);
         }
-
-        //public void Make3D(MapViewport viewport, MapViewport.ViewType type)
-        //{
-        //    var vp = ViewportManager.Make3D(viewport, type);
-        //    vp.RenderContext.Add(new WidgetLinesRenderable());
-        //    Renderer.Register(new[] { vp });
-        //    vp.RenderContext.Add(new ToolRenderable());
-        //    vp.RenderContext.Add(new HelperRenderable(this));
-        //    Renderer.UpdateGrid(Map.GridSpacing, Map.Show2DGrid, Map.Show3DGrid, false);
-        //}
-
-        //public void Make2D(MapViewport viewport, MapViewport.ViewDirection direction)
-        //{
-        //    var vp = ViewportManager.Make2D(viewport, direction);
-        //    Renderer.Register(new[] { vp });
-        //    vp.RenderContext.Add(new ToolRenderable());
-        //    vp.RenderContext.Add(new HelperRenderable(this));
-        //    Renderer.UpdateGrid(Map.GridSpacing, Map.Show2DGrid, Map.Show3DGrid, false);
-        //}
 
         public IEnumerable<string> GetUsedTextures()
         {

@@ -285,6 +285,12 @@
     <Compile Include="Tools\ExampleStateTool\ExampleStateTool.cs" />
     <Compile Include="Tools\SelectTool\SelectionBoxDraggableState.cs" />
     <Compile Include="Tools\SelectTool\SelectTool.cs" />
+    <Compile Include="Tools\SelectTool\SelectToolSidebarPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Tools\SelectTool\SelectToolSidebarPanel.Designer.cs">
+      <DependentUpon>SelectToolSidebarPanel.cs</DependentUpon>
+    </Compile>
     <Compile Include="Tools\SelectTool\TransformationHandles\ITransformationHandle.cs" />
     <Compile Include="Tools\SelectTool\TransformationHandles\ResizeTransformHandle.cs" />
     <Compile Include="Tools\SelectTool\TransformationHandles\RotateTransformHandle.cs" />
@@ -678,6 +684,9 @@
     </Compile>
     <EmbeddedResource Include="Settings\SettingsForm.resx">
       <DependentUpon>SettingsForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Tools\SelectTool\SelectToolSidebarPanel.resx">
+      <DependentUpon>SelectToolSidebarPanel.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Tools\TextureTool\TextureToolSidebarPanel.resx">
       <DependentUpon>TextureToolSidebarPanel.cs</DependentUpon>
