@@ -7,6 +7,7 @@ using Sledge.Editor.Documents;
 using Sledge.Editor.Extensions;
 using Sledge.Rendering.Materials;
 using Sledge.Rendering.Scenes;
+using Sledge.Rendering.Scenes.Renderables;
 using Face = Sledge.Rendering.Scenes.Renderables.Face;
 using Vertex = Sledge.Rendering.Scenes.Renderables.Vertex;
 
@@ -58,26 +59,43 @@ namespace Sledge.Editor.Rendering.Converters
         {
             var tex = document.TextureCollection.GetItem(face.Texture.Name);
             var mat = tex == null ? Material.Flat(face.Colour) : Material.Texture(tex.Name, tex.Flags.HasFlag(TextureFlags.Transparent));
+            
             var sel = face.IsSelected || (face.Parent != null && face.Parent.IsSelected);
-            return new Face(mat, face.Vertices.Select(x => new Vertex(x.Location.ToVector3(), (float)x.TextureU, (float)x.TextureV)).ToList())
+
+            var sceneFace =  new Face(mat, face.Vertices.Select(x => new Vertex(x.Location.ToVector3(), (float)x.TextureU, (float)x.TextureV)).ToList())
             {
-                AccentColor = sel ? Color.Red : face.Colour,
+                AccentColor = sel ? Color.Yellow : face.Colour,
                 TintColor = sel ? Color.FromArgb(128, Color.Red) : Color.White,
-                IsSelected = sel
+                IsSelected = sel,
+                ForcedRenderFlags = sel ? RenderFlags.Wireframe : RenderFlags.None
             };
+
+            if (document.Map.HideFaceMask && face.IsSelected)
+            {
+                sceneFace.TintColor = Color.White;
+            }
+
+            return sceneFace;
         }
 
         public static bool UpdateFace(DataStructures.MapObjects.Face face, Face sceneFace, Document document)
         {
             var tex = document.TextureCollection.GetItem(face.Texture.Name);
             var mat = tex == null ? Material.Flat(face.Colour) : Material.Texture(tex.Name, tex.Flags.HasFlag(TextureFlags.Transparent));
+            
             var sel = face.IsSelected || (face.Parent != null && face.Parent.IsSelected);
 
             sceneFace.Material = mat;
             sceneFace.Vertices = face.Vertices.Select(x => new Vertex(x.Location.ToVector3(), (float)x.TextureU, (float)x.TextureV)).ToList();
-            sceneFace.AccentColor = sel ? Color.Red : face.Colour;
+            sceneFace.AccentColor = sel ? Color.Yellow : face.Colour;
             sceneFace.TintColor = sel ? Color.FromArgb(128, Color.Red) : Color.White;
             sceneFace.IsSelected = sel;
+            sceneFace.ForcedRenderFlags = sel ? RenderFlags.Wireframe : RenderFlags.None;
+            
+            if (document.Map.HideFaceMask && face.IsSelected)
+            {
+                sceneFace.TintColor = Color.White;
+            }
 
             return true;
         }

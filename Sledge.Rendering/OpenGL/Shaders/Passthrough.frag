@@ -39,10 +39,10 @@ void main()
 
     if (fragmentColor.a < 0.05) discard;
 	
-    if (showGrid) {
-        if (abs(vertexNormal).x < 0.9999) fragmentColor = mix(fragmentColor, vec4(1, 0, 0, 1), step(mod(vertexPosition.x, gridSpacing), 0.1f));
-        if (abs(vertexNormal).y < 0.9999) fragmentColor = mix(fragmentColor, vec4(0, 1, 0, 1), step(mod(vertexPosition.y, gridSpacing), 0.1f));
-        if (abs(vertexNormal).z < 0.9999) fragmentColor = mix(fragmentColor, vec4(0, 0, 1, 1), step(mod(vertexPosition.z, gridSpacing), 0.1f));
+    if (showGrid && !orthographic) {
+        if (abs(vertexNormal).x < 0.98) fragmentColor = mix(fragmentColor, vec4(1, 0, 0, 1), step(mod(vertexPosition.x, gridSpacing), 0.5f));
+        if (abs(vertexNormal).y < 0.98) fragmentColor = mix(fragmentColor, vec4(0, 1, 0, 1), step(mod(vertexPosition.y, gridSpacing), 0.5f));
+        if (abs(vertexNormal).z < 0.98) fragmentColor = mix(fragmentColor, vec4(0, 0, 1, 1), step(mod(vertexPosition.z, gridSpacing), 0.5f));
     }
     
     gl_FragColor = fragmentColor;

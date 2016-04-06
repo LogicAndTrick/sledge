@@ -26,6 +26,7 @@ namespace Sledge.Editor.Rendering
             Converters.Add(new ViewportTextConverter());
             Converters.Add(new AxisLinesConverter());
             Converters.Add(new GridConverter());
+            Converters.Add(new CordonConverter());
         }
 
         public static SceneMapObject Convert(Document document, MapObject obj)

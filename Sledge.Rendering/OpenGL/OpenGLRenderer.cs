@@ -232,6 +232,11 @@ namespace Sledge.Rendering.OpenGL
             GL.ClearColor(viewport.Camera is PerspectiveCamera ? Settings.PerspectiveBackgroundColour : Settings.OrthographicBackgroundColour);
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
+            _shaderProgram.Bind();
+            _shaderProgram.GridSpacing = Settings.PerspectiveGridSpacing;
+            _shaderProgram.ShowGrid = Settings.ShowPerspectiveGrid;
+            _shaderProgram.Unbind();
+
             scData.Array.Render(this, _shaderProgram, _modelShaderProgram, viewport);
             vpData.ElementArray.Render(this, _shaderProgram, viewport);
         }

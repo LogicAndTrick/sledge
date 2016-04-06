@@ -493,11 +493,6 @@ namespace Sledge.Editor
             }
 
             WadProvider.ReplaceTransparentPixels = !Sledge.Settings.View.DisableWadTransparency && !Sledge.Settings.View.GloballyDisableTransparency;
-
-            if (DocumentManager.CurrentDocument != null)
-            {
-                SceneManager.UpdateRendererSettings();
-            }
         }
 
         private void Exit()

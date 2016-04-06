@@ -257,6 +257,7 @@
     <Compile Include="Rendering\Converters\EntityNameConverter.cs" />
     <Compile Include="Rendering\Converters\EntityModelConverter.cs" />
     <Compile Include="Rendering\Converters\EntitySpriteConverter.cs" />
+    <Compile Include="Rendering\Converters\CordonConverter.cs" />
     <Compile Include="Rendering\Converters\GridConverter.cs" />
     <Compile Include="Rendering\Converters\HiddenConverter.cs" />
     <Compile Include="Rendering\Converters\ViewportTextConverter.cs" />
@@ -615,7 +616,6 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="UI\ToolViewportListener.cs" />
-    <Compile Include="UI\Grid2DEventListener.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Settings\SettingsForm.cs">

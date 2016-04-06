@@ -105,7 +105,7 @@ namespace Sledge.Rendering.Cameras
             if (float.TryParse(tags[4], NumberStyles.Float, CultureInfo.InvariantCulture, out p)) Zoom = p;
         }
 
-        public override Vector3 EyeLocation { get { return Vector3.UnitZ * float.MaxValue; } }
+        public override Vector3 EyeLocation { get { return (Vector3.UnitZ * float.MaxValue) + _position; } }
 
         public override Matrix4 GetCameraMatrix()
         {

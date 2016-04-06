@@ -9,5 +9,7 @@ namespace Sledge.Rendering.Interfaces
         bool ForcePowerOfTwoTextureSizes { get; set; }
         Color PerspectiveBackgroundColour { get; set; }
         Color OrthographicBackgroundColour { get; set; }
+        float PerspectiveGridSpacing { get; set; }
+        bool ShowPerspectiveGrid { get; set; }
     }
 }

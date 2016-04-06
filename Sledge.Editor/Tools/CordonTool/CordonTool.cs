@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using Sledge.Common.Mediator;
 using Sledge.DataStructures.Geometric;
 using Sledge.Editor.Properties;
 using Sledge.Editor.Tools.DraggableTool;
@@ -10,6 +11,7 @@ namespace Sledge.Editor.Tools.CordonTool
     public class CordonTool : BaseDraggableTool
     {
         private readonly CordonBoxDraggableState _cordonBox;
+        private bool _showing;
 
         public CordonTool()
         {
@@ -44,8 +46,21 @@ namespace Sledge.Editor.Tools.CordonTool
 
         public override void ToolSelected(bool preventHistory)
         {
+            _showing = Document.Map.Cordon;
+            Document.Map.Cordon = false;
+            Document.RenderObjects(new[] { Document.Map.WorldSpawn });
+
             _cordonBox.Update();
             base.ToolSelected(preventHistory);
+        }
+
+        public override void ToolDeselected(bool preventHistory)
+        {
+            Document.Map.Cordon = _showing;
+            Document.RenderObjects(new[] { Document.Map.WorldSpawn });
+            Mediator.Publish(EditorMediator.UpdateToolstrip);
+
+            base.ToolDeselected(preventHistory);
         }
 
         private void CordonBoxChanged(object sender, EventArgs e)
@@ -53,6 +68,7 @@ namespace Sledge.Editor.Tools.CordonTool
             if (_cordonBox.State.Action == BoxAction.Drawn)
             {
                 Document.Map.CordonBounds = new Box(_cordonBox.State.Start, _cordonBox.State.End);
+                Document.RenderObjects(new [] { Document.Map.WorldSpawn });
             }
         }
 
@@ -63,6 +79,8 @@ namespace Sledge.Editor.Tools.CordonTool
                 case HotkeysMediator.OperationsPasteSpecial:
                 case HotkeysMediator.OperationsPaste:
                     return HotkeyInterceptResult.SwitchToSelectTool;
+                case HotkeysMediator.ToggleCordon:
+                    return HotkeyInterceptResult.Abort;
             }
             return HotkeyInterceptResult.Continue;
         }

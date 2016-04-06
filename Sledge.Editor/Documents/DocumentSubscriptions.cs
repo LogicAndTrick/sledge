@@ -154,8 +154,6 @@ namespace Sledge.Editor.Documents
             Mediator.Subscribe(EditorMediator.SetZoomValue, this);
             Mediator.Subscribe(EditorMediator.TextureSelected, this);
             Mediator.Subscribe(EditorMediator.SelectMatchingTextures, this);
-
-            Mediator.Subscribe(EditorMediator.ViewportCreated, this);
         }
 
         public void Unsubscribe()
@@ -212,7 +210,7 @@ namespace Sledge.Editor.Documents
 
         private void DocumentTreeSelectedObjectsChanged(IEnumerable<MapObject> objects)
         {
-            _document.RenderSelection(objects);
+            _document.RenderObjects(objects);
         }
 
         private void DocumentTreeFacesChanged(IEnumerable<Face> faces)
@@ -222,12 +220,14 @@ namespace Sledge.Editor.Documents
 
         private void DocumentTreeSelectedFacesChanged(IEnumerable<Face> faces)
         {
-            _document.RenderSelection(faces.Select(x => x.Parent).Distinct());
+            _document.RenderFaces(faces);
         }
 
         public void SettingsChanged()
         {
+            _document.UpdateRendererSettings();
             _document.RenderAll();
+            SceneManager.UpdateRendererSettings();
         }
 
         public void HistoryUndo()
@@ -785,8 +785,8 @@ namespace Sledge.Editor.Documents
 
         public void RebuildGrid()
         {
-            // todo !perf only worldspawn (no children) need to be re-converted to update the grid
-            _document.RenderAll();
+            _document.RenderObjects(new [] { _document.Map.WorldSpawn });
+            _document.UpdateRendererSettings();
             Mediator.Publish(EditorMediator.DocumentGridSpacingChanged, _document.Map.GridSpacing);
         }
 
@@ -957,7 +957,7 @@ namespace Sledge.Editor.Documents
                 MessageBox.Show("The 3D grid is only available when the OpenGL 3.0 renderer is used.");
                 _document.Map.Show3DGrid = false;
             }
-            //todo _document.Renderer.UpdateGrid(_document.Map.GridSpacing, _document.Map.Show2DGrid, _document.Map.Show3DGrid, false);
+            RebuildGrid();
             Mediator.Publish(EditorMediator.UpdateToolstrip);
         }
 
@@ -983,13 +983,14 @@ namespace Sledge.Editor.Documents
         public void ToggleCordon()
         {
             _document.Map.Cordon = !_document.Map.Cordon;
+            _document.RenderObjects(new [] { _document.Map.WorldSpawn });
             Mediator.Publish(EditorMediator.UpdateToolstrip);
         }
 
         public void ToggleHideFaceMask()
         {
             _document.Map.HideFaceMask = !_document.Map.HideFaceMask;
-            //todo _document.Renderer.UpdateDocumentToggles();
+            _document.RenderSelection();
         }
 
         public void ToggleHideDisplacementSolids()
@@ -1140,16 +1141,6 @@ namespace Sledge.Editor.Documents
         public void TextureSelected(TextureItem selection)
         {
             _document.TextureCollection.SelectedTexture = selection;
-        }
-
-        public void ViewportCreated(MapViewport viewport)
-        {
-            // todo 
-            //if (viewport is MapViewport) viewport.RenderContext.Add(new WidgetLinesRenderable());
-            //_document.Renderer.Register(new[] { viewport });
-            //viewport.RenderContext.Add(new ToolRenderable());
-            //viewport.RenderContext.Add(new HelperRenderable(_document));
-            //_document.Renderer.UpdateGrid(_document.Map.GridSpacing, _document.Map.Show2DGrid, _document.Map.Show3DGrid, false);
         }
 
         public void SelectMatchingTextures(IEnumerable<string> textureList)

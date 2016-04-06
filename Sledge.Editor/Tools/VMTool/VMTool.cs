@@ -204,7 +204,6 @@ namespace Sledge.Editor.Tools.VMTool
             }
             else if (e.KeyCode == Keys.Escape)
             {
-                // todo: escape (or any other existing hotkey) doesn't get sent to tools because they are consumed by the form
                 Cancel();
                 e.Handled = true;
             }
@@ -246,9 +245,7 @@ namespace Sledge.Editor.Tools.VMTool
 
         private void Reset(object sender)
         {
-            // todo reset
-            //Commit(_copies.Values.ToList());
-            //_copies.Clear();
+            Clear();
             SelectionChanged();
         }
 

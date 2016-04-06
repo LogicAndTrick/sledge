@@ -155,6 +155,7 @@ namespace Sledge.Editor.Documents
         {
             if (!Sledge.Settings.View.KeepSelectedTool) ToolManager.Activate(_memory.SelectedTool);
             if (!Sledge.Settings.View.KeepCameraPositions) _memory.RestoreViewports(ViewportManager.Viewports);
+            UpdateRendererSettings();
 
             SceneManager.SetActive();
 
@@ -390,15 +391,15 @@ namespace Sledge.Editor.Documents
             SceneManager.Update(all);
         }
 
-        public void RenderSelection(IEnumerable<MapObject> objects)
+        public void RenderSelection()
         {
-            SceneManager.Update(objects.ToList());
+            if (Selection.InFaceSelection) RenderFaces(Selection.GetSelectedFaces());
+            else RenderObjects(Selection.GetSelectedObjects());
         }
 
         public void RenderObjects(IEnumerable<MapObject> objects)
         {
-            var objs = objects.ToList();
-            SceneManager.Update(objs);
+            SceneManager.Update(objects.ToList());
         }
 
         public void RenderFaces(IEnumerable<Face> faces)
@@ -416,6 +417,12 @@ namespace Sledge.Editor.Documents
         {
             var used = GetUsedTextures().ToList();
             return TextureCollection.Packages.Where(x => used.Any(x.HasTexture));
+        }
+
+        public void UpdateRendererSettings()
+        {
+            SceneManager.Engine.Renderer.Settings.PerspectiveGridSpacing = (float) Map.GridSpacing;
+            SceneManager.Engine.Renderer.Settings.ShowPerspectiveGrid = Map.Show3DGrid;
         }
     }
 }

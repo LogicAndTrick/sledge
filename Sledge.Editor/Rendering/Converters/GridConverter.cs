@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using OpenTK;
 using Sledge.DataStructures.MapObjects;
@@ -53,6 +54,7 @@ namespace Sledge.Editor.Rendering.Converters
             public int Low { get; private set; }
             public int High { get; private set; }
             public float Step { get; private set; }
+            public bool ShowGrid { get; set; }
             public override string ElementGroup { get { return "Grid"; } }
 
             public GridElement(Document doc) : base(PositionType.World)
@@ -66,6 +68,7 @@ namespace Sledge.Editor.Rendering.Converters
                 Low = doc.GameData.MapSizeLow;
                 High = doc.GameData.MapSizeHigh;
                 Step = (float) doc.Map.GridSpacing;
+                ShowGrid = doc.Map.Show2DGrid;
                 ClearValue("Validated");
             }
 
@@ -86,17 +89,38 @@ namespace Sledge.Editor.Rendering.Converters
 
             public override bool RequiresValidation(IViewport viewport, IRenderer renderer)
             {
-                return !GetValue<bool>(viewport, "Validated") || Math.Abs(GetValue(viewport, "ActualStep", 0f) - GetActualStep(viewport)) > 0.001;
+                if (!GetValue<bool>(viewport, "Validated")) return true;
+                if (Math.Abs(GetValue(viewport, "ActualStep", 0f) - GetActualStep(viewport)) > 0.001) return true;
+                if (GetValue<bool>(viewport, "ShowGrid") != ShowGrid) return true;
+
+                var bounds = GetValue<RectangleF>(viewport, "Bounds");
+                var newBounds = GetValidatedBounds(viewport, 0);
+                if (!bounds.Contains(newBounds)) return true;
+
+                return false;
             }
 
             public override void Validate(IViewport viewport, IRenderer renderer)
             {
                 SetValue(viewport, "Validated", true);
                 SetValue(viewport, "ActualStep", GetActualStep(viewport));
+                SetValue(viewport, "ShowGrid", ShowGrid);
+                SetValue(viewport, "Bounds", GetValidatedBounds(viewport, Padding));
+            }
+
+            private const int Padding = 50;
+
+            private RectangleF GetValidatedBounds(IViewport viewport, int padding)
+            {
+                var vmin = viewport.Camera.Flatten(viewport.Camera.ScreenToWorld(new Vector3(-padding, viewport.Control.Height + padding, 0), viewport.Control.Width, viewport.Control.Height));
+                var vmax = viewport.Camera.Flatten(viewport.Camera.ScreenToWorld(new Vector3(viewport.Control.Width + padding, -padding, 0), viewport.Control.Width, viewport.Control.Height));
+                return new RectangleF(vmin.X, vmin.Y, vmax.X - vmin.X, vmax.Y - vmin.Y);
             }
 
             public override IEnumerable<LineElement> GetLines(IViewport viewport, IRenderer renderer)
             {
+                if (!ShowGrid) yield break;
+
                 var oc = viewport.Camera as OrthographicCamera;
                 if (oc == null) yield break;
 
@@ -104,15 +128,14 @@ namespace Sledge.Editor.Rendering.Converters
                 var upper = High;
                 var step = GetActualStep(viewport);
 
-                var vmin = viewport.Camera.Flatten(viewport.Camera.ScreenToWorld(new Vector3(0, viewport.Control.Height, 0), viewport.Control.Width, viewport.Control.Height));
-                var vmax = viewport.Camera.Flatten(viewport.Camera.ScreenToWorld(new Vector3(viewport.Control.Width, 0, 0), viewport.Control.Width, viewport.Control.Height));
+                var bounds = GetValidatedBounds(viewport, Padding);
 
                 var unused = Vector3.One - viewport.Camera.Expand(new Vector3(1, 1, 0));
                 var bottom = unused * Low;
 
                 for (float f = lower; f <= upper; f += step)
                 {
-                    //if ((f < vmin.X || f > vmax.X) && (f < vmin.Y || f > vmax.Y)) continue;
+                    if ((f < bounds.Left || f > bounds.Right) && (f < bounds.Top || f > bounds.Bottom)) continue;
                     var i = (int) f;
                     var c = Grid.GridLines;
                     if (i == 0) c = Grid.ZeroLines;

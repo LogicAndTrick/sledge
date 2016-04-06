@@ -366,6 +366,7 @@ namespace Sledge.Editor.Tools
             }
             _currentObjects.Clear();
             _currentViewportObjects.Clear();
+            foreach (var t in Children) t.ClearScene();
         }
 
         protected void Invalidate()

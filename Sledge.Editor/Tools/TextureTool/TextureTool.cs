@@ -239,7 +239,7 @@ namespace Sledge.Editor.Tools.TextureTool
                 var currentSelection = Document.Selection.GetSelectedObjects();
                 Document.Selection.SwitchToFaceSelection();
                 var newSelection = Document.Selection.GetSelectedFaces().Select(x => x.Parent);
-                Document.RenderSelection(currentSelection.Union(newSelection));
+                Document.RenderObjects(currentSelection.Union(newSelection));
             }
 
             _form.SelectionChanged();
@@ -270,7 +270,7 @@ namespace Sledge.Editor.Tools.TextureTool
                 var currentSelection = Document.Selection.GetSelectedFaces().Select(x => x.Parent);
                 Document.Selection.SwitchToObjectSelection();
                 var newSelection = Document.Selection.GetSelectedObjects();
-                Document.RenderSelection(currentSelection.Union(newSelection));
+                Document.RenderObjects(currentSelection.Union(newSelection));
             }
 
             _form.Clear();
@@ -379,13 +379,9 @@ namespace Sledge.Editor.Tools.TextureTool
                     }
                     break;
                 case SelectBehaviour.AlignToView:
-                    // todo 
-                    // var right = vp.Viewport.Camera.GetRight();
-                    // var up = vp.Viewport.Camera.GetUp();
-                    // var loc = vp.Viewport.Camera.Location;
-                    var right = Vector3.One;
-                    var up = Vector3.One;
-                    var loc = Vector3.One;
+                    var right = camera.GetRight();
+                    var up = camera.GetUp();
+                    var loc = camera.EyeLocation;
                     var point = new Coordinate((decimal)loc.X, (decimal)loc.Y, (decimal)loc.Z);
                     var uaxis = new Coordinate((decimal) right.X, (decimal) right.Y, (decimal) right.Z);
                     var vaxis = new Coordinate((decimal) up.X, (decimal) up.Y, (decimal) up.Z);
@@ -413,22 +409,19 @@ namespace Sledge.Editor.Tools.TextureTool
         protected override IEnumerable<SceneObject> GetSceneObjects()
         {
             var list = base.GetSceneObjects().ToList();
-
-            if (!Document.Map.HideFaceMask)
+            
+            foreach (var face in Document.Selection.GetSelectedFaces())
             {
-                foreach (var face in Document.Selection.GetSelectedFaces())
-                {
-                    var lineStart = face.BoundingBox.Center + face.Plane.Normal * 0.5m;
-                    var uEnd = lineStart + face.Texture.UAxis * 20;
-                    var vEnd = lineStart + face.Texture.VAxis * 20;
+                var lineStart = face.BoundingBox.Center + face.Plane.Normal * 0.5m;
+                var uEnd = lineStart + face.Texture.UAxis * 20;
+                var vEnd = lineStart + face.Texture.VAxis * 20;
 
-                    // If we don't want the axis markers to be depth tested, we can use an element instead:
-                    //list.Add(new LineElement(PositionType.World, Color.Yellow, new List<Position> { new Position(lineStart.ToVector3()), new Position(uEnd.ToVector3()) }));
-                    //list.Add(new LineElement(PositionType.World, Color.FromArgb(0, 255, 0), new List<Position> { new Position(lineStart.ToVector3()), new Position(vEnd.ToVector3()) }));
+                // If we don't want the axis markers to be depth tested, we can use an element instead:
+                //list.Add(new LineElement(PositionType.World, Color.Yellow, new List<Position> { new Position(lineStart.ToVector3()), new Position(uEnd.ToVector3()) }));
+                //list.Add(new LineElement(PositionType.World, Color.FromArgb(0, 255, 0), new List<Position> { new Position(lineStart.ToVector3()), new Position(vEnd.ToVector3()) }));
 
-                    list.Add(new Line(Color.Yellow, lineStart.ToVector3(), uEnd.ToVector3()));
-                    list.Add(new Line(Color.FromArgb(0, 255, 0), lineStart.ToVector3(), vEnd.ToVector3()));
-                }
+                list.Add(new Line(Color.Yellow, lineStart.ToVector3(), uEnd.ToVector3()));
+                list.Add(new Line(Color.FromArgb(0, 255, 0), lineStart.ToVector3(), vEnd.ToVector3()));
             }
 
             return list;
