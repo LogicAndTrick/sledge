@@ -114,11 +114,22 @@ namespace Sledge.Rendering.OpenGL.Arrays
             }
         }
 
-        // todo clipping
+        private bool CanBeClipped(Box box, List<Plane> clippingPlanes)
+        {
+            var center = box.Center;
+            if (!clippingPlanes.Any(x => x.OnPlane(center) < 0)) return false;
+
+            var points = box.GetBoxPoints().ToList();
+            return clippingPlanes.Any(x => points.All(p => x.OnPlane(p) < 0));
+        }
+        
         public void Render(IRenderer renderer, Passthrough shader, ModelShader modelShader, IViewport viewport)
         {
+            var clip = viewport.Camera.GetClippingPlanes(viewport.Control.Width, viewport.Control.Height).ToList();
+
             foreach (var array in Partitions)
             {
+                if (CanBeClipped(array.BoundingBox, clip)) continue;
                 array.Render(renderer, shader, modelShader, viewport);
             }
             if (Spare != null)
@@ -127,6 +138,7 @@ namespace Sledge.Rendering.OpenGL.Arrays
             }
             foreach (var array in Partitions)
             {
+                if (CanBeClipped(array.BoundingBox, clip)) continue;
                 array.RenderTransparent(renderer, shader, viewport);
             }
             if (Spare != null)

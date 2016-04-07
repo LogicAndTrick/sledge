@@ -2,13 +2,16 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
+using OpenTK;
 using Sledge.Common.Easings;
 using Sledge.Common.Mediator;
+using Sledge.Editor.Documents;
 using Sledge.Editor.Rendering;
 using Sledge.Rendering;
 using Sledge.Rendering.Cameras;
 using Sledge.Settings;
 using Sledge.Editor.Tools;
+using Sledge.Rendering.Scenes.Elements;
 
 namespace Sledge.Editor.UI
 {
@@ -124,42 +127,6 @@ namespace Sledge.Editor.UI
             }
         }
 
-        public void PreRender()
-        {
-            //
-        }
-
-        public void Render3D()
-        {
-            //
-        }
-
-        public void Render2D()
-        {
-            if (!Focus || !FreeLook) return;
-
-            // todo 3D camera freelook rendering
-            /*
-            TextureHelper.Unbind();
-            GL.Begin(PrimitiveType.Lines);
-            GL.Color3(Color.White);
-            GL.Vertex2(0, -5);
-            GL.Vertex2(0, 5);
-            GL.Vertex2(1, -5);
-            GL.Vertex2(1, 5);
-            GL.Vertex2(-5, 0);
-            GL.Vertex2(5, 0);
-            GL.Vertex2(-5, 1);
-            GL.Vertex2(5, 1);
-            GL.End();
-            */
-        }
-
-        public void PostRender()
-        {
-            // Not used
-        }
-
         public bool IsActive()
         {
             return Viewport != null && Viewport.Is3D;
@@ -223,6 +190,7 @@ namespace Sledge.Editor.UI
                 CursorVisible = false;
                 Cursor.Hide();
                 Viewport.AquireInputLock(this);
+                AddSceneObjects();
             }
             else if (!FreeLook && !CursorVisible)
             {
@@ -232,6 +200,7 @@ namespace Sledge.Editor.UI
                 CursorVisible = true;
                 Cursor.Show();
                 Viewport.ReleaseInputLock(this);
+                ClearSceneObjects();
             }
         }
 
@@ -362,6 +331,7 @@ namespace Sledge.Editor.UI
                     CursorVisible = true;
                     Cursor.Show();
                     Viewport.ReleaseInputLock(this);
+                    ClearSceneObjects();
                 }
                 PositionKnown = false;
                 Focus = false;
@@ -381,6 +351,32 @@ namespace Sledge.Editor.UI
         public void Notify(string message, object data)
         {
             Mediator.ExecuteDefault(this, message, data);
+        }
+
+        private void ClearSceneObjects()
+        {
+            if (DocumentManager.CurrentDocument == null) return;
+            DocumentManager.CurrentDocument.SceneManager.ClearTemporaryObjects(this);
+        }
+
+        private void AddSceneObjects()
+        {
+            if (DocumentManager.CurrentDocument == null) return;
+
+            var line1 = new LineElement(PositionType.Screen, Color.White, new List<Position>
+            {
+                new Position(new Vector3(0.5f, 0.5f, 0)) { Normalised = true, Offset = new Vector3(-5, 0, 0) },
+                new Position(new Vector3(0.5f, 0.5f, 0)) { Normalised = true, Offset = new Vector3(+5, 0, 0) },
+            });
+
+            var line2 = new LineElement(PositionType.Screen, Color.White, new List<Position>
+            {
+                new Position(new Vector3(0.5f, 0.5f, 0)) { Normalised = true, Offset = new Vector3(0, -5, 0) },
+                new Position(new Vector3(0.5f, 0.5f, 0)) { Normalised = true, Offset = new Vector3(0, +5, 0) },
+            });
+
+            DocumentManager.CurrentDocument.SceneManager.AddTemporaryObject(this, line1);
+            DocumentManager.CurrentDocument.SceneManager.AddTemporaryObject(this, line2);
         }
     }
 }

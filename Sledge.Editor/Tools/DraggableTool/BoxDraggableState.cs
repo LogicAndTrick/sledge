@@ -120,7 +120,7 @@ namespace Sledge.Editor.Tools.DraggableTool
             {
                 foreach (var face in box.GetBoxFaces())
                 {
-                    var verts = face.Select(x => new PositionVertex(new Position(GeometricExtensions.ToVector3(x)), 0, 0)).ToList();
+                    var verts = face.Select(x => new PositionVertex(new Position(x.ToVector3()), 0, 0)).ToList();
                     yield return new FaceElement(PositionType.World, Material.Flat(GetRenderFillColour()), verts)
                     {
                         RenderFlags = RenderFlags.Polygon,

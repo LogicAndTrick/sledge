@@ -26,6 +26,7 @@ namespace Sledge.Editor.Rendering.Converters
 
         public bool Supports(MapObject obj)
         {
+            if (!Sledge.Settings.View.DrawEntityAngles) return false;
             if (obj is Entity && !obj.HasChildren)
             {
                 var ed = obj.GetEntityData();

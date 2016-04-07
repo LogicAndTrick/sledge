@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using OpenTK;
+using Sledge.Rendering.DataStructures;
 using Sledge.Rendering.Scenes.Renderables;
 using Line = Sledge.Rendering.DataStructures.Line;
 
@@ -160,6 +162,32 @@ namespace Sledge.Rendering.Cameras
             var un = MathFunctions.Unproject(near, viewport, pm, vm);
             var uf = MathFunctions.Unproject(far, viewport, pm, vm);
             return new Line(un, uf);
+        }
+
+        public override IEnumerable<Plane> GetClippingPlanes(int width, int height)
+        {
+            var pm = Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(FOV), width / (float)height, 1.0f, ClipDistance);
+            var vm = Matrix4.LookAt(Position, LookAt, Vector3.UnitZ);
+            var viewport = new[] { 0, 0, width, height };
+
+            var tlNear = MathFunctions.Unproject(new Vector3(0, height, 0), viewport, pm, vm);
+            var tlFar = MathFunctions.Unproject(new Vector3(0, height, 1), viewport, pm, vm);
+
+            var trNear = MathFunctions.Unproject(new Vector3(width, height, 0), viewport, pm, vm);
+            var trFar = MathFunctions.Unproject(new Vector3(width, height, 1), viewport, pm, vm);
+
+            var blNear = MathFunctions.Unproject(new Vector3(0, 0, 0), viewport, pm, vm);
+            var blFar = MathFunctions.Unproject(new Vector3(0, 0, 1), viewport, pm, vm);
+
+            var brNear = MathFunctions.Unproject(new Vector3(width, 0, 0), viewport, pm, vm);
+            var brFar = MathFunctions.Unproject(new Vector3(width, 0, 1), viewport, pm, vm);
+
+            yield return new Plane((LookAt - EyeLocation), EyeLocation);
+
+            yield return new Plane(tlNear, tlFar, blFar);
+            yield return new Plane(trNear, trFar, tlFar);
+            yield return new Plane(brNear, brFar, trFar);
+            yield return new Plane(blNear, blFar, brFar);
         }
 
         public override float UnitsToPixels(float units)

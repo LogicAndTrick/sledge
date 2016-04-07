@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
@@ -48,6 +49,7 @@ namespace Sledge.Rendering.Cameras
         public abstract Vector3 ScreenToWorld(Vector3 screen, int width, int height);
         public abstract Vector3 WorldToScreen(Vector3 world, int width, int height);
         public abstract Line CastRayFromScreen(Vector3 screen, int width, int height);
+        public abstract IEnumerable<Plane> GetClippingPlanes(int width, int height);
 
         public abstract float UnitsToPixels(float units);
         public abstract float PixelsToUnits(float pixels);

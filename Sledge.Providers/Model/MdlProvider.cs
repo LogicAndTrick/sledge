@@ -40,7 +40,7 @@ namespace Sledge.Providers.Model
     {
         protected override bool IsValidForFile(IFile file)
         {
-            return file.Extension.ToLowerInvariant() == "mdl";
+            return file != null && file.Extension != null && file.Extension.ToLowerInvariant() == "mdl";
         }
 
         protected override DataStructures.Models.Model LoadFromFile(IFile file)

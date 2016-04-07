@@ -21,7 +21,7 @@ namespace Sledge.Editor.Rendering.Converters
 
         public bool Supports(MapObject obj)
         {
-            return obj is Entity && obj.GetEntityData() != null;
+            return Sledge.Settings.View.DrawEntityNames && obj is Entity && obj.GetEntityData() != null;
         }
 
         public bool Convert(SceneMapObject smo, Document document, MapObject obj)

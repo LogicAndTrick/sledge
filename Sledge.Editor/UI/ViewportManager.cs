@@ -95,6 +95,20 @@ namespace Sledge.Editor.UI
 
                 var camera = Camera.Deserialise(viewport) ?? Camera.Deserialise(def) ?? new PerspectiveCamera();
                 var view = SceneManager.Engine.CreateViewport(camera);
+
+                // Crosshair cursor
+                // Todo, this is pretty lazy
+                if (Sledge.Settings.View.CrosshairCursorIn2DViews && view.Camera is OrthographicCamera)
+                {
+                    view.Control.Cursor = Cursors.Cross;
+                }
+                view.Control.CursorChanged += (sender, args) =>
+                {
+                    if (Sledge.Settings.View.CrosshairCursorIn2DViews && view.Control.Cursor == Cursors.Default  && view.Camera is OrthographicCamera)
+                    {
+                        view.Control.Cursor = Cursors.Cross;
+                    }
+                };
                 
                 var vp = CreateMapViewport(view);
                 Viewports.Add(vp);

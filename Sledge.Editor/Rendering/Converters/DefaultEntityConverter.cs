@@ -36,7 +36,6 @@ namespace Sledge.Editor.Rendering.Converters
 
         public bool Update(SceneMapObject smo, Document document, MapObject obj)
         {
-            //todo?
             return false;
         }
     }

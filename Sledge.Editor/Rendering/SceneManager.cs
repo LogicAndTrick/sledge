@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Sledge.DataStructures.MapObjects;
 using Sledge.Editor.Documents;
 using Sledge.Rendering;
@@ -48,6 +49,12 @@ namespace Sledge.Editor.Rendering
         public void SetActive()
         {
             Engine.Renderer.SetActiveScene(Scene);
+
+            // Clear out any temporary objects
+            foreach (var key in _temporaryObjects.Keys.ToList())
+            {
+                ClearTemporaryObjects(key);
+            }
         }
 
         private void Process(IList<MapObject> objects)
@@ -77,6 +84,28 @@ namespace Sledge.Editor.Rendering
         {
             Process(objects);
             _convertedScene.Update(objects);
+        }
+
+        private readonly Dictionary<object, List<SceneObject>> _temporaryObjects = new Dictionary<object, List<SceneObject>>();
+
+        public void AddTemporaryObject(object owner, SceneObject sceneObject)
+        {
+            if (!_temporaryObjects.ContainsKey(owner)) _temporaryObjects[owner] = new List<SceneObject>();
+            _temporaryObjects[owner].Add(sceneObject);
+            Document.Scene.Add(sceneObject);
+        }
+
+        public void ClearTemporaryObjects(object owner)
+        {
+            if (_temporaryObjects.ContainsKey(owner))
+            {
+                foreach (var sceneObject in _temporaryObjects[owner])
+                {
+                    Document.Scene.Remove(sceneObject);
+                }
+                _temporaryObjects[owner].Clear();
+            }
+            _temporaryObjects.Remove(owner);
         }
     }
 }

@@ -97,11 +97,6 @@ namespace Sledge.Editor.UI
             }
         }
 
-        public void KeyPress(ViewportEvent e)
-        {
-            
-        }
-
         public void MouseMove(ViewportEvent e)
         {
             var lmouse = Control.MouseButtons.HasFlag(MouseButtons.Left);
@@ -262,26 +257,6 @@ namespace Sledge.Editor.UI
                 }
                 Camera.Position = pos.ToVector3();
             }
-        }
-
-        public void PreRender()
-        {
-            
-        }
-
-        public void Render3D()
-        {
-            
-        }
-
-        public void Render2D()
-        {
-            
-        }
-
-        public void PostRender()
-        {
-            //
         }
 
         public void Notify(string message, object data)

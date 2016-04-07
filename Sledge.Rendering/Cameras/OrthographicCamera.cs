@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using OpenTK;
 using Sledge.Rendering.DataStructures;
@@ -147,6 +148,16 @@ namespace Sledge.Rendering.Cameras
             screen = new Vector3(screen.X, screen.Y, 0);
             var world = ScreenToWorld(screen, width, height);
             return null; // todo
+        }
+
+        public override IEnumerable<Plane> GetClippingPlanes(int width, int height)
+        {
+            var min = ScreenToWorld(Vector3.Zero, width, height);
+            var max = ScreenToWorld(new Vector3(width, height, 0), width, height);
+            yield return new Plane(Expand(Vector3.UnitX), min);
+            yield return new Plane(-Expand(Vector3.UnitY), min);
+            yield return new Plane(-Expand(Vector3.UnitX), max);
+            yield return new Plane(Expand(Vector3.UnitY), max);
         }
 
         public override float UnitsToPixels(float units)

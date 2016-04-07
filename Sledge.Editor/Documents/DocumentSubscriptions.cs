@@ -999,7 +999,7 @@ namespace Sledge.Editor.Documents
         public void ToggleHideDisplacementSolids()
         {
             _document.Map.HideDisplacementSolids = !_document.Map.HideDisplacementSolids;
-            // todo hide displacement solids
+            _document.RenderAll();
             Mediator.Publish(EditorMediator.UpdateToolstrip);
         }
 
