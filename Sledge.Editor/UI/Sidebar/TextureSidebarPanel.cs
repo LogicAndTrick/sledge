@@ -14,15 +14,11 @@ namespace Sledge.Editor.UI.Sidebar
         {
             InitializeComponent();
             SizeLabel.Text = "";
+            NameLabel.Text = "";
 
             Mediator.Subscribe(EditorMediator.DocumentActivated, this);
             Mediator.Subscribe(EditorMediator.DocumentAllClosed, this);
             Mediator.Subscribe(EditorMediator.TextureSelected, this);
-        }
-
-        public TextureItem GetSelectedTexture()
-        {
-            return TextureComboBox.GetSelectedTexture();
         }
 
         private void ApplyButtonClicked(object sender, EventArgs e)
@@ -49,17 +45,6 @@ namespace Sledge.Editor.UI.Sidebar
             Mediator.Publish(HotkeysMediator.ReplaceTextures);
         }
 
-        private void GroupChanged(object sender, EventArgs e)
-        {
-            var tp = GroupComboBox.SelectedItem as TexturePackage;
-            TextureComboBox.Update(tp == null ? null : tp.ToString());
-        }
-
-        private void TextureSelectionChanged(object sender, EventArgs e)
-        {
-            Mediator.Publish(EditorMediator.TextureSelected, TextureComboBox.GetSelectedTexture());
-        }
-
         public void Notify(string message, object data)
         {
             Mediator.ExecuteDefault(this, message, data);
@@ -67,23 +52,11 @@ namespace Sledge.Editor.UI.Sidebar
 
         private void DocumentActivated(Document doc)
         {
-            // Textures
-            var index = GroupComboBox.SelectedIndex;
-            GroupComboBox.Items.Clear();
-            GroupComboBox.Items.Add("All Textures");
-            foreach (var package in doc.TextureCollection.Packages)
-            {
-                GroupComboBox.Items.Add(package);
-            }
-            if (index < 0 || index >= GroupComboBox.Items.Count) index = 0;
-            GroupComboBox.SelectedIndex = index;
             TextureSelected(doc.TextureCollection.GetRecentTextures().FirstOrDefault());
         }
 
         private void DocumentAllClosed()
         {
-            GroupComboBox.Items.Clear();
-            TextureComboBox.Items.Clear();
             TextureSelected(null);
         }
 
@@ -92,26 +65,28 @@ namespace Sledge.Editor.UI.Sidebar
             var dis = SelectionPictureBox.Image;
             SelectionPictureBox.Image = null;
             if (dis != null) dis.Dispose();
+
             SizeLabel.Text = "";
+            NameLabel.Text = "";
+
             if (selection == null || DocumentManager.CurrentDocument == null) return;
-            TextureComboBox.SetSelectedTexture(selection);
-            using (var tp = DocumentManager.CurrentDocument.TextureCollection.GetStreamSource(128, 128))
+
+            var bmp = DocumentManager.CurrentDocument.TextureCollection.GetImage(selection.Name, 128, 128);
+            if (bmp != null)
             {
-                var bmp = tp.GetImage(selection);
-                if (bmp != null)
+                if (bmp.Width > SelectionPictureBox.Width || bmp.Height > SelectionPictureBox.Height)
                 {
-                    if (bmp.Width > SelectionPictureBox.Width || bmp.Height > SelectionPictureBox.Height)
-                    {
-                        SelectionPictureBox.SizeMode = PictureBoxSizeMode.Zoom;
-                    }
-                    else
-                    {
-                        SelectionPictureBox.SizeMode = PictureBoxSizeMode.CenterImage;
-                    }
+                    SelectionPictureBox.SizeMode = PictureBoxSizeMode.Zoom;
                 }
-                SelectionPictureBox.Image = bmp;
+                else
+                {
+                    SelectionPictureBox.SizeMode = PictureBoxSizeMode.CenterImage;
+                }
             }
-            SizeLabel.Text = string.Format("{0} x {1}", selection.Width, selection.Height);
+
+            SelectionPictureBox.Image = bmp;
+            SizeLabel.Text = String.Format("{0} x {1}", selection.Width, selection.Height);
+            NameLabel.Text = selection.Name;
         }
     }
 }

@@ -557,9 +557,6 @@
     <Compile Include="UI\Sidebar\VisgroupSidebarPanel.Designer.cs">
       <DependentUpon>VisgroupSidebarPanel.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\TextureComboBox.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="UI\TextureReplaceDialog.cs">
       <SubType>Form</SubType>
     </Compile>

@@ -31,6 +31,11 @@ namespace Sledge.Providers.Texture
             return Items.ContainsKey(name.ToLowerInvariant());
         }
 
+        public TextureItem GetTexture(string name)
+        {
+            return Items[name.ToLowerInvariant()];
+        }
+
         public override string ToString()
         {
             return PackageRelativePath;

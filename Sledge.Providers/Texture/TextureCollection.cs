@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 
 namespace Sledge.Providers.Texture
@@ -46,10 +47,11 @@ namespace Sledge.Providers.Texture
 
         private TextureItem GetDefaultSelection()
         {
-            var ignored = "{#!~+-0123456789".ToCharArray();
-            return GetAllBrowsableItems()
-                .OrderBy(x => new string(x.Name.Where(c => !ignored.Contains(c)).ToArray()) + "Z")
-                .FirstOrDefault();
+            return (from item in GetAllBrowsableItems().OrderBy(x => x.Name, StringComparer.CurrentCultureIgnoreCase)
+                    where item.Name.Length > 0
+                    let c = Char.ToLower(item.Name[0])
+                    where c >= 'a' && c <= 'z'
+                    select item).FirstOrDefault();
         }
 
         public IEnumerable<TextureItem> GetRecentTextures()
@@ -70,6 +72,17 @@ namespace Sledge.Providers.Texture
                 .ToList();
             streams.Add(new NullTextureStreamSource(maxWidth, maxHeight));
             return new MultiTextureStreamSource(streams);
+        }
+
+        public Bitmap GetImage(string name, int maxWidth, int maxHeight)
+        {
+            var package = _packages.FirstOrDefault(x => x.HasTexture(name));
+            if (package == null) return null;
+            using (var ss = GetStreamSource(maxWidth, maxHeight, new[] {package}))
+            {
+                var item = package.GetTexture(name);
+                return ss.GetImage(item);
+            }
         }
 
         public IEnumerable<TextureItem> GetAllItems()

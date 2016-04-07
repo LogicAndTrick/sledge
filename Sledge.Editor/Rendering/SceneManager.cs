@@ -42,8 +42,6 @@ namespace Sledge.Editor.Rendering
 
             Engine.Renderer.TextureProviders.Add(new DefaultTextureProvider(document));
             Engine.Renderer.ModelProviders.Add(new DefaultModelProvider(document));
-
-            Update();
         }
 
         public void SetActive()

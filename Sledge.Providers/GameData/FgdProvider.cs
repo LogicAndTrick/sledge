@@ -34,7 +34,7 @@ namespace Sledge.Providers.GameData
         protected override DataStructures.GameData.GameData GetFromStream(Stream stream)
         {
             var lex = Lex(new StreamReader(stream));
-            return Parse(lex.Where(l => l.Type != LexType.Comment));
+            return Parse(lex.Where(l => l.Type != LexType.Comment).ToList());
         }
 
         private DataStructures.GameData.GameData Parse(IEnumerable<LexObject> lex)
