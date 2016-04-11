@@ -44,7 +44,7 @@
   <ItemGroup>
     <Compile Include="DoubleClick3DAction.cs" />
     <Compile Include="FavouriteTextureFolder.cs" />
-    <Compile Include="GameDetection\GameFiles\SteamGame.cs" />
+    <Compile Include="GameDetection\GameFiles\SteamApp.cs" />
     <Compile Include="GameDetection\GameFiles\SteamGames.cs" />
     <Compile Include="GameDetection\IGameDetector.cs" />
     <Compile Include="GameDetection\WonDetector.cs" />

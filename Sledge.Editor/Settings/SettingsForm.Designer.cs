@@ -128,16 +128,13 @@ namespace Sledge.Editor.Settings
             this.SelectedGameRunArguments = new System.Windows.Forms.TextBox();
             this.lblBaseGame = new System.Windows.Forms.Label();
             this.SelectedGameUseHDModels = new System.Windows.Forms.CheckBox();
-            this.SelectedGameSteamInstall = new System.Windows.Forms.CheckBox();
             this.SelectedGameBase = new System.Windows.Forms.ComboBox();
             this.SelectedGameWonDir = new System.Windows.Forms.TextBox();
             this.lblGameName = new System.Windows.Forms.Label();
             this.lblGameWONDir = new System.Windows.Forms.Label();
             this.SelectedGameBuild = new System.Windows.Forms.ComboBox();
             this.SelectedGameDirBrowse = new System.Windows.Forms.Button();
-            this.lblGameSteamDir = new System.Windows.Forms.Label();
             this.lblGameBuild = new System.Windows.Forms.Label();
-            this.SelectedGameSteamDir = new System.Windows.Forms.ComboBox();
             this.SelectedGameName = new System.Windows.Forms.TextBox();
             this.label42 = new System.Windows.Forms.Label();
             this.label41 = new System.Windows.Forms.Label();
@@ -153,6 +150,7 @@ namespace Sledge.Editor.Settings
             this.SelectedGameAutosaveTime = new System.Windows.Forms.NumericUpDown();
             this.SelectedGameUseDiffAutosaveDir = new System.Windows.Forms.CheckBox();
             this.label15 = new System.Windows.Forms.Label();
+            this.SelectedGameAutosaveTriggerFileSave = new System.Windows.Forms.CheckBox();
             this.SelectedGameAutosaveOnlyOnChange = new System.Windows.Forms.CheckBox();
             this.label14 = new System.Windows.Forms.Label();
             this.SelectedGameDiffAutosaveDirBrowse = new System.Windows.Forms.Button();
@@ -258,15 +256,10 @@ namespace Sledge.Editor.Settings
             this.SelectedBuildRunBspCheckbox = new System.Windows.Forms.CheckBox();
             this.SelectedBuildRunCsgCheckbox = new System.Windows.Forms.CheckBox();
             this.tabBuildAdvancedCSG = new System.Windows.Forms.TabPage();
-            this.SelectedBuildCsgParameters = new Sledge.Editor.Compiling.CompileParameterPanel();
             this.tabBuildAdvancedBSP = new System.Windows.Forms.TabPage();
-            this.SelectedBuildBspParameters = new Sledge.Editor.Compiling.CompileParameterPanel();
             this.tabBuildAdvancedVIS = new System.Windows.Forms.TabPage();
-            this.SelectedBuildVisParameters = new Sledge.Editor.Compiling.CompileParameterPanel();
             this.tabBuildAdvancedRAD = new System.Windows.Forms.TabPage();
-            this.SelectedBuildRadParameters = new Sledge.Editor.Compiling.CompileParameterPanel();
             this.tabBuildAdvancedShared = new System.Windows.Forms.TabPage();
-            this.SelectedBuildSharedParameters = new Sledge.Editor.Compiling.CompileParameterPanel();
             this.tabBuildAdvancedPreview = new System.Windows.Forms.TabPage();
             this.SelectedBuildProfilePreview = new System.Windows.Forms.TextBox();
             this.RemoveBuild = new System.Windows.Forms.Button();
@@ -275,10 +268,7 @@ namespace Sledge.Editor.Settings
             this.tabSteam = new System.Windows.Forms.TabPage();
             this.SteamInstallDir = new System.Windows.Forms.TextBox();
             this.label17 = new System.Windows.Forms.Label();
-            this.ListAvailableGamesButton = new System.Windows.Forms.Button();
-            this.label18 = new System.Windows.Forms.Label();
             this.SteamInstallDirBrowseButton = new System.Windows.Forms.Button();
-            this.SteamUsername = new System.Windows.Forms.ComboBox();
             this.tabHotkeys = new System.Windows.Forms.TabPage();
             this.HotkeyResetButton = new System.Windows.Forms.Button();
             this.groupBox22 = new System.Windows.Forms.GroupBox();
@@ -317,7 +307,17 @@ namespace Sledge.Editor.Settings
             this.btnApplyAndCloseSettings = new System.Windows.Forms.Button();
             this.btnApplySettings = new System.Windows.Forms.Button();
             this.HelpTooltip = new System.Windows.Forms.ToolTip(this.components);
-            this.SelectedGameAutosaveTriggerFileSave = new System.Windows.Forms.CheckBox();
+            this.SteamInstallDirAutoDetect = new System.Windows.Forms.Button();
+            this.label18 = new System.Windows.Forms.Label();
+            this.SteamGamesList = new System.Windows.Forms.ListView();
+            this.AppIDColumn = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.NameColumn = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.PathColumn = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.SelectedBuildCsgParameters = new Sledge.Editor.Compiling.CompileParameterPanel();
+            this.SelectedBuildBspParameters = new Sledge.Editor.Compiling.CompileParameterPanel();
+            this.SelectedBuildVisParameters = new Sledge.Editor.Compiling.CompileParameterPanel();
+            this.SelectedBuildRadParameters = new Sledge.Editor.Compiling.CompileParameterPanel();
+            this.SelectedBuildSharedParameters = new Sledge.Editor.Compiling.CompileParameterPanel();
             this.tbcSettings.SuspendLayout();
             this.tabGeneral.SuspendLayout();
             this.tabIntegration.SuspendLayout();
@@ -1494,16 +1494,13 @@ namespace Sledge.Editor.Settings
             this.tabConfigDirectories.Controls.Add(this.SelectedGameRunArguments);
             this.tabConfigDirectories.Controls.Add(this.lblBaseGame);
             this.tabConfigDirectories.Controls.Add(this.SelectedGameUseHDModels);
-            this.tabConfigDirectories.Controls.Add(this.SelectedGameSteamInstall);
             this.tabConfigDirectories.Controls.Add(this.SelectedGameBase);
             this.tabConfigDirectories.Controls.Add(this.SelectedGameWonDir);
             this.tabConfigDirectories.Controls.Add(this.lblGameName);
             this.tabConfigDirectories.Controls.Add(this.lblGameWONDir);
             this.tabConfigDirectories.Controls.Add(this.SelectedGameBuild);
             this.tabConfigDirectories.Controls.Add(this.SelectedGameDirBrowse);
-            this.tabConfigDirectories.Controls.Add(this.lblGameSteamDir);
             this.tabConfigDirectories.Controls.Add(this.lblGameBuild);
-            this.tabConfigDirectories.Controls.Add(this.SelectedGameSteamDir);
             this.tabConfigDirectories.Controls.Add(this.SelectedGameName);
             this.tabConfigDirectories.Controls.Add(this.label42);
             this.tabConfigDirectories.Controls.Add(this.label41);
@@ -1549,18 +1546,6 @@ namespace Sledge.Editor.Settings
             this.SelectedGameUseHDModels.UseVisualStyleBackColor = true;
             this.SelectedGameUseHDModels.CheckedChanged += new System.EventHandler(this.SelectedGameEngineChanged);
             // 
-            // SelectedGameSteamInstall
-            // 
-            this.SelectedGameSteamInstall.Checked = true;
-            this.SelectedGameSteamInstall.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.SelectedGameSteamInstall.Location = new System.Drawing.Point(217, 35);
-            this.SelectedGameSteamInstall.Name = "SelectedGameSteamInstall";
-            this.SelectedGameSteamInstall.Size = new System.Drawing.Size(109, 24);
-            this.SelectedGameSteamInstall.TabIndex = 21;
-            this.SelectedGameSteamInstall.Text = "Steam Install";
-            this.SelectedGameSteamInstall.UseVisualStyleBackColor = true;
-            this.SelectedGameSteamInstall.CheckedChanged += new System.EventHandler(this.SelectedGameEngineChanged);
-            // 
             // SelectedGameBase
             // 
             this.SelectedGameBase.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
@@ -1579,7 +1564,7 @@ namespace Sledge.Editor.Settings
             this.SelectedGameWonDir.Name = "SelectedGameWonDir";
             this.SelectedGameWonDir.Size = new System.Drawing.Size(288, 20);
             this.SelectedGameWonDir.TabIndex = 5;
-            this.SelectedGameWonDir.Text = "(WON only) example: C:\\Sierra\\Half-Life";
+            this.SelectedGameWonDir.Text = "example: C:\\Sierra\\Half-Life";
             this.SelectedGameWonDir.TextChanged += new System.EventHandler(this.SelectedGameWonDirChanged);
             // 
             // lblGameName
@@ -1619,15 +1604,6 @@ namespace Sledge.Editor.Settings
             this.SelectedGameDirBrowse.UseVisualStyleBackColor = true;
             this.SelectedGameDirBrowse.Click += new System.EventHandler(this.SelectedGameDirBrowseClicked);
             // 
-            // lblGameSteamDir
-            // 
-            this.lblGameSteamDir.Location = new System.Drawing.Point(22, 100);
-            this.lblGameSteamDir.Name = "lblGameSteamDir";
-            this.lblGameSteamDir.Size = new System.Drawing.Size(45, 20);
-            this.lblGameSteamDir.TabIndex = 9;
-            this.lblGameSteamDir.Text = "Game";
-            this.lblGameSteamDir.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
             // lblGameBuild
             // 
             this.lblGameBuild.Location = new System.Drawing.Point(13, 61);
@@ -1636,19 +1612,6 @@ namespace Sledge.Editor.Settings
             this.lblGameBuild.TabIndex = 9;
             this.lblGameBuild.Text = "Build Profile";
             this.lblGameBuild.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // SelectedGameSteamDir
-            // 
-            this.SelectedGameSteamDir.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.SelectedGameSteamDir.FormattingEnabled = true;
-            this.SelectedGameSteamDir.Items.AddRange(new object[] {
-            "(Steam only) Half-Life",
-            "Counter-Strike"});
-            this.SelectedGameSteamDir.Location = new System.Drawing.Point(81, 99);
-            this.SelectedGameSteamDir.Name = "SelectedGameSteamDir";
-            this.SelectedGameSteamDir.Size = new System.Drawing.Size(259, 21);
-            this.SelectedGameSteamDir.TabIndex = 10;
-            this.SelectedGameSteamDir.SelectedIndexChanged += new System.EventHandler(this.SelectedGameSteamDirChanged);
             // 
             // SelectedGameName
             // 
@@ -1829,6 +1792,17 @@ namespace Sledge.Editor.Settings
             this.label15.Size = new System.Drawing.Size(69, 13);
             this.label15.TabIndex = 19;
             this.label15.Text = "Keep the last";
+            // 
+            // SelectedGameAutosaveTriggerFileSave
+            // 
+            this.SelectedGameAutosaveTriggerFileSave.Checked = true;
+            this.SelectedGameAutosaveTriggerFileSave.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.SelectedGameAutosaveTriggerFileSave.Location = new System.Drawing.Point(99, 199);
+            this.SelectedGameAutosaveTriggerFileSave.Name = "SelectedGameAutosaveTriggerFileSave";
+            this.SelectedGameAutosaveTriggerFileSave.Size = new System.Drawing.Size(330, 20);
+            this.SelectedGameAutosaveTriggerFileSave.TabIndex = 14;
+            this.SelectedGameAutosaveTriggerFileSave.Text = "Also save the actual file when autosaving (i.e. automatic Ctrl+S)";
+            this.SelectedGameAutosaveTriggerFileSave.UseVisualStyleBackColor = true;
             // 
             // SelectedGameAutosaveOnlyOnChange
             // 
@@ -2972,15 +2946,6 @@ namespace Sledge.Editor.Settings
             this.tabBuildAdvancedCSG.Text = "CSG";
             this.tabBuildAdvancedCSG.UseVisualStyleBackColor = true;
             // 
-            // SelectedBuildCsgParameters
-            // 
-            this.SelectedBuildCsgParameters.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.SelectedBuildCsgParameters.Location = new System.Drawing.Point(0, 0);
-            this.SelectedBuildCsgParameters.MinimumSize = new System.Drawing.Size(300, 250);
-            this.SelectedBuildCsgParameters.Name = "SelectedBuildCsgParameters";
-            this.SelectedBuildCsgParameters.Size = new System.Drawing.Size(449, 408);
-            this.SelectedBuildCsgParameters.TabIndex = 0;
-            // 
             // tabBuildAdvancedBSP
             // 
             this.tabBuildAdvancedBSP.Controls.Add(this.SelectedBuildBspParameters);
@@ -2990,15 +2955,6 @@ namespace Sledge.Editor.Settings
             this.tabBuildAdvancedBSP.TabIndex = 1;
             this.tabBuildAdvancedBSP.Text = "BSP";
             this.tabBuildAdvancedBSP.UseVisualStyleBackColor = true;
-            // 
-            // SelectedBuildBspParameters
-            // 
-            this.SelectedBuildBspParameters.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.SelectedBuildBspParameters.Location = new System.Drawing.Point(0, 0);
-            this.SelectedBuildBspParameters.MinimumSize = new System.Drawing.Size(300, 250);
-            this.SelectedBuildBspParameters.Name = "SelectedBuildBspParameters";
-            this.SelectedBuildBspParameters.Size = new System.Drawing.Size(449, 408);
-            this.SelectedBuildBspParameters.TabIndex = 1;
             // 
             // tabBuildAdvancedVIS
             // 
@@ -3010,15 +2966,6 @@ namespace Sledge.Editor.Settings
             this.tabBuildAdvancedVIS.Text = "VIS";
             this.tabBuildAdvancedVIS.UseVisualStyleBackColor = true;
             // 
-            // SelectedBuildVisParameters
-            // 
-            this.SelectedBuildVisParameters.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.SelectedBuildVisParameters.Location = new System.Drawing.Point(0, 0);
-            this.SelectedBuildVisParameters.MinimumSize = new System.Drawing.Size(300, 250);
-            this.SelectedBuildVisParameters.Name = "SelectedBuildVisParameters";
-            this.SelectedBuildVisParameters.Size = new System.Drawing.Size(449, 408);
-            this.SelectedBuildVisParameters.TabIndex = 1;
-            // 
             // tabBuildAdvancedRAD
             // 
             this.tabBuildAdvancedRAD.Controls.Add(this.SelectedBuildRadParameters);
@@ -3029,15 +2976,6 @@ namespace Sledge.Editor.Settings
             this.tabBuildAdvancedRAD.Text = "RAD";
             this.tabBuildAdvancedRAD.UseVisualStyleBackColor = true;
             // 
-            // SelectedBuildRadParameters
-            // 
-            this.SelectedBuildRadParameters.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.SelectedBuildRadParameters.Location = new System.Drawing.Point(0, 0);
-            this.SelectedBuildRadParameters.MinimumSize = new System.Drawing.Size(300, 250);
-            this.SelectedBuildRadParameters.Name = "SelectedBuildRadParameters";
-            this.SelectedBuildRadParameters.Size = new System.Drawing.Size(449, 408);
-            this.SelectedBuildRadParameters.TabIndex = 1;
-            // 
             // tabBuildAdvancedShared
             // 
             this.tabBuildAdvancedShared.Controls.Add(this.SelectedBuildSharedParameters);
@@ -3047,15 +2985,6 @@ namespace Sledge.Editor.Settings
             this.tabBuildAdvancedShared.TabIndex = 4;
             this.tabBuildAdvancedShared.Text = "Shared";
             this.tabBuildAdvancedShared.UseVisualStyleBackColor = true;
-            // 
-            // SelectedBuildSharedParameters
-            // 
-            this.SelectedBuildSharedParameters.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.SelectedBuildSharedParameters.Location = new System.Drawing.Point(0, 0);
-            this.SelectedBuildSharedParameters.MinimumSize = new System.Drawing.Size(300, 250);
-            this.SelectedBuildSharedParameters.Name = "SelectedBuildSharedParameters";
-            this.SelectedBuildSharedParameters.Size = new System.Drawing.Size(449, 408);
-            this.SelectedBuildSharedParameters.TabIndex = 1;
             // 
             // tabBuildAdvancedPreview
             // 
@@ -3109,12 +3038,12 @@ namespace Sledge.Editor.Settings
             // 
             // tabSteam
             // 
+            this.tabSteam.Controls.Add(this.SteamGamesList);
+            this.tabSteam.Controls.Add(this.label18);
             this.tabSteam.Controls.Add(this.SteamInstallDir);
             this.tabSteam.Controls.Add(this.label17);
-            this.tabSteam.Controls.Add(this.ListAvailableGamesButton);
-            this.tabSteam.Controls.Add(this.label18);
+            this.tabSteam.Controls.Add(this.SteamInstallDirAutoDetect);
             this.tabSteam.Controls.Add(this.SteamInstallDirBrowseButton);
-            this.tabSteam.Controls.Add(this.SteamUsername);
             this.tabSteam.Location = new System.Drawing.Point(4, 22);
             this.tabSteam.Name = "tabSteam";
             this.tabSteam.Padding = new System.Windows.Forms.Padding(3);
@@ -3140,24 +3069,6 @@ namespace Sledge.Editor.Settings
             this.label17.Text = "Steam Directory";
             this.label17.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // ListAvailableGamesButton
-            // 
-            this.ListAvailableGamesButton.Location = new System.Drawing.Point(237, 44);
-            this.ListAvailableGamesButton.Name = "ListAvailableGamesButton";
-            this.ListAvailableGamesButton.Size = new System.Drawing.Size(115, 25);
-            this.ListAvailableGamesButton.TabIndex = 8;
-            this.ListAvailableGamesButton.Text = "List Available Games";
-            this.ListAvailableGamesButton.UseVisualStyleBackColor = true;
-            // 
-            // label18
-            // 
-            this.label18.Location = new System.Drawing.Point(6, 47);
-            this.label18.Name = "label18";
-            this.label18.Size = new System.Drawing.Size(97, 20);
-            this.label18.TabIndex = 6;
-            this.label18.Text = "Steam Username";
-            this.label18.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
             // SteamInstallDirBrowseButton
             // 
             this.SteamInstallDirBrowseButton.Location = new System.Drawing.Point(340, 18);
@@ -3167,16 +3078,6 @@ namespace Sledge.Editor.Settings
             this.SteamInstallDirBrowseButton.Text = "Browse...";
             this.SteamInstallDirBrowseButton.UseVisualStyleBackColor = true;
             this.SteamInstallDirBrowseButton.Click += new System.EventHandler(this.SteamInstallDirBrowseClicked);
-            // 
-            // SteamUsername
-            // 
-            this.SteamUsername.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.SteamUsername.FormattingEnabled = true;
-            this.SteamUsername.Location = new System.Drawing.Point(109, 46);
-            this.SteamUsername.Name = "SteamUsername";
-            this.SteamUsername.Size = new System.Drawing.Size(121, 21);
-            this.SteamUsername.TabIndex = 7;
-            this.SteamUsername.SelectedIndexChanged += new System.EventHandler(this.SteamUsernameChanged);
             // 
             // tabHotkeys
             // 
@@ -3561,16 +3462,96 @@ namespace Sledge.Editor.Settings
             this.HelpTooltip.UseAnimation = false;
             this.HelpTooltip.UseFading = false;
             // 
-            // SelectedGameAutosaveTriggerFileSave
+            // SteamInstallDirAutoDetect
             // 
-            this.SelectedGameAutosaveTriggerFileSave.Checked = true;
-            this.SelectedGameAutosaveTriggerFileSave.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.SelectedGameAutosaveTriggerFileSave.Location = new System.Drawing.Point(99, 199);
-            this.SelectedGameAutosaveTriggerFileSave.Name = "SelectedGameAutosaveTriggerFileSave";
-            this.SelectedGameAutosaveTriggerFileSave.Size = new System.Drawing.Size(330, 20);
-            this.SelectedGameAutosaveTriggerFileSave.TabIndex = 14;
-            this.SelectedGameAutosaveTriggerFileSave.Text = "Also save the actual file when autosaving (i.e. automatic Ctrl+S)";
-            this.SelectedGameAutosaveTriggerFileSave.UseVisualStyleBackColor = true;
+            this.SteamInstallDirAutoDetect.Location = new System.Drawing.Point(413, 19);
+            this.SteamInstallDirAutoDetect.Name = "SteamInstallDirAutoDetect";
+            this.SteamInstallDirAutoDetect.Size = new System.Drawing.Size(87, 23);
+            this.SteamInstallDirAutoDetect.TabIndex = 8;
+            this.SteamInstallDirAutoDetect.Text = "Auto-Detect";
+            this.SteamInstallDirAutoDetect.UseVisualStyleBackColor = true;
+            this.SteamInstallDirAutoDetect.Click += new System.EventHandler(this.SteamInstallDirAutoDectectClicked);
+            // 
+            // label18
+            // 
+            this.label18.AutoSize = true;
+            this.label18.Location = new System.Drawing.Point(10, 51);
+            this.label18.Name = "label18";
+            this.label18.Size = new System.Drawing.Size(93, 13);
+            this.label18.TabIndex = 9;
+            this.label18.Text = "Supported games:";
+            // 
+            // SteamGamesList
+            // 
+            this.SteamGamesList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.AppIDColumn,
+            this.NameColumn,
+            this.PathColumn});
+            this.SteamGamesList.Location = new System.Drawing.Point(13, 69);
+            this.SteamGamesList.Name = "SteamGamesList";
+            this.SteamGamesList.Size = new System.Drawing.Size(709, 183);
+            this.SteamGamesList.TabIndex = 10;
+            this.SteamGamesList.UseCompatibleStateImageBehavior = false;
+            this.SteamGamesList.View = System.Windows.Forms.View.Details;
+            // 
+            // AppIDColumn
+            // 
+            this.AppIDColumn.Text = "App ID";
+            // 
+            // NameColumn
+            // 
+            this.NameColumn.Text = "Name";
+            this.NameColumn.Width = 100;
+            // 
+            // PathColumn
+            // 
+            this.PathColumn.Text = "Path";
+            this.PathColumn.Width = 250;
+            // 
+            // SelectedBuildCsgParameters
+            // 
+            this.SelectedBuildCsgParameters.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.SelectedBuildCsgParameters.Location = new System.Drawing.Point(0, 0);
+            this.SelectedBuildCsgParameters.MinimumSize = new System.Drawing.Size(300, 250);
+            this.SelectedBuildCsgParameters.Name = "SelectedBuildCsgParameters";
+            this.SelectedBuildCsgParameters.Size = new System.Drawing.Size(449, 408);
+            this.SelectedBuildCsgParameters.TabIndex = 0;
+            // 
+            // SelectedBuildBspParameters
+            // 
+            this.SelectedBuildBspParameters.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.SelectedBuildBspParameters.Location = new System.Drawing.Point(0, 0);
+            this.SelectedBuildBspParameters.MinimumSize = new System.Drawing.Size(300, 250);
+            this.SelectedBuildBspParameters.Name = "SelectedBuildBspParameters";
+            this.SelectedBuildBspParameters.Size = new System.Drawing.Size(449, 408);
+            this.SelectedBuildBspParameters.TabIndex = 1;
+            // 
+            // SelectedBuildVisParameters
+            // 
+            this.SelectedBuildVisParameters.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.SelectedBuildVisParameters.Location = new System.Drawing.Point(0, 0);
+            this.SelectedBuildVisParameters.MinimumSize = new System.Drawing.Size(300, 250);
+            this.SelectedBuildVisParameters.Name = "SelectedBuildVisParameters";
+            this.SelectedBuildVisParameters.Size = new System.Drawing.Size(449, 408);
+            this.SelectedBuildVisParameters.TabIndex = 1;
+            // 
+            // SelectedBuildRadParameters
+            // 
+            this.SelectedBuildRadParameters.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.SelectedBuildRadParameters.Location = new System.Drawing.Point(0, 0);
+            this.SelectedBuildRadParameters.MinimumSize = new System.Drawing.Size(300, 250);
+            this.SelectedBuildRadParameters.Name = "SelectedBuildRadParameters";
+            this.SelectedBuildRadParameters.Size = new System.Drawing.Size(449, 408);
+            this.SelectedBuildRadParameters.TabIndex = 1;
+            // 
+            // SelectedBuildSharedParameters
+            // 
+            this.SelectedBuildSharedParameters.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.SelectedBuildSharedParameters.Location = new System.Drawing.Point(0, 0);
+            this.SelectedBuildSharedParameters.MinimumSize = new System.Drawing.Size(300, 250);
+            this.SelectedBuildSharedParameters.Name = "SelectedBuildSharedParameters";
+            this.SelectedBuildSharedParameters.Size = new System.Drawing.Size(449, 408);
+            this.SelectedBuildSharedParameters.TabIndex = 1;
             // 
             // SettingsForm
             // 
@@ -3705,8 +3686,6 @@ namespace Sledge.Editor.Settings
 		private System.Windows.Forms.TextBox SelectedGameWonDir;
 		private System.Windows.Forms.Label lblGameWONDir;
 		private System.Windows.Forms.Button SelectedGameDirBrowse;
-		private System.Windows.Forms.Label lblGameSteamDir;
-		private System.Windows.Forms.ComboBox SelectedGameSteamDir;
 		private System.Windows.Forms.TextBox SelectedGameName;
 		private System.Windows.Forms.Label lblGameName;
 		private System.Windows.Forms.Label lblGameEngine;
@@ -3729,7 +3708,6 @@ namespace Sledge.Editor.Settings
 		private System.Windows.Forms.TrackBar ForwardSpeed;
 		private System.Windows.Forms.TrackBar BackClippingPane;
 		private System.Windows.Forms.TextBox SteamInstallDir;
-		private System.Windows.Forms.ComboBox SteamUsername;
 		private System.Windows.Forms.Button btnApplySettings;
 		private System.Windows.Forms.CheckBox CrosshairCursorIn2DViews;
 		private System.Windows.Forms.RadioButton RotationStyle_SnapNever;
@@ -3758,8 +3736,6 @@ namespace Sledge.Editor.Settings
 		private System.Windows.Forms.TabPage tabConfigEntities;
 		private System.Windows.Forms.TabPage tabConfigDirectories;
 		private System.Windows.Forms.TabPage tab2DViews;
-		private System.Windows.Forms.Label label18;
-		private System.Windows.Forms.Button ListAvailableGamesButton;
 		private System.Windows.Forms.Label label17;
         private System.Windows.Forms.TabPage tabSteam;
         private System.Windows.Forms.GroupBox groupBox14;
@@ -3822,7 +3798,6 @@ namespace Sledge.Editor.Settings
         private System.Windows.Forms.Label label21;
         private System.Windows.Forms.CheckBox HideGridOn;
         private System.Windows.Forms.DomainUpDown GridHighlight2UnitNum;
-        private System.Windows.Forms.CheckBox SelectedGameSteamInstall;
         private System.Windows.Forms.CheckBox SelectedBuildIncludePathInEnvironment;
         private System.Windows.Forms.GroupBox groupBox16;
         private System.Windows.Forms.RadioButton NudgeStyle_GridOnCtrl;
@@ -3954,5 +3929,11 @@ namespace Sledge.Editor.Settings
         private System.Windows.Forms.TextBox SelectedGameBlacklistTextbox;
         private System.Windows.Forms.GroupBox groupBox19;
         private System.Windows.Forms.CheckBox SelectedGameAutosaveTriggerFileSave;
-	}
+        private System.Windows.Forms.Button SteamInstallDirAutoDetect;
+        private System.Windows.Forms.ListView SteamGamesList;
+        private System.Windows.Forms.ColumnHeader AppIDColumn;
+        private System.Windows.Forms.ColumnHeader NameColumn;
+        private System.Windows.Forms.ColumnHeader PathColumn;
+        private System.Windows.Forms.Label label18;
+    }
 }

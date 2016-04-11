@@ -2,321 +2,145 @@
 // To regenerate it, run: ExtractBlobData "C:\Path\To\Steam"
 
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using Sledge.Providers;
+using Sledge.Settings.Models;
 
 namespace Sledge.Settings.GameDetection.GameFiles
 {
     public static class SteamGames
     {
-        public static List<SteamGame> Games { get; set; }
+        public static List<SteamApp> SteamApps { get; set; }
 
         static SteamGames()
         {
-            Games = new List<SteamGame>
+            SteamApps = new List<SteamApp>
+            {
+                new SteamApp(10, Engine.Goldsource) { GameDirectory = "valve", ModDirectory = "cstrike", ExecutableName = "hl.exe" }, // Counter-Strike
+                new SteamApp(20, Engine.Goldsource) { GameDirectory = "valve", ModDirectory = "tfc", ExecutableName = "hl.exe" }, // Team Fortress Classic
+                new SteamApp(30, Engine.Goldsource) { GameDirectory = "valve", ModDirectory = "dod", ExecutableName = "hl.exe" }, // Day of Defeat
+                new SteamApp(40, Engine.Goldsource) { GameDirectory = "valve", ModDirectory = "dmc", ExecutableName = "hl.exe" }, // Deathmatch Classic
+                new SteamApp(50, Engine.Goldsource) { GameDirectory = "valve", ModDirectory = "gearbox", ExecutableName = "hl.exe" }, // Half-Life: Opposing Force
+                new SteamApp(60, Engine.Goldsource) { GameDirectory = "valve", ModDirectory = "ricochet", ExecutableName = "hl.exe" }, // Ricochet
+                new SteamApp(70, Engine.Goldsource) { GameDirectory = "valve", ModDirectory = "valve", ExecutableName = "hl.exe" }, // Half-Life
+                new SteamApp(80, Engine.Goldsource) { GameDirectory = "valve", ModDirectory = "czero", ExecutableName = "hl.exe" }, // Condition Zero
+                new SteamApp(100, Engine.Goldsource) { GameDirectory = "valve", ModDirectory = "czeror", ExecutableName = "hl.exe" }, // Condition Zero Deleted Scenes
+                new SteamApp(130, Engine.Goldsource) { GameDirectory = "valve", ModDirectory = "bshift", ExecutableName = "hl.exe" }, // Half-Life: Blue Shift
+                new SteamApp(225840, Engine.Goldsource) { GameDirectory = "svencoop", ModDirectory = "svencoop", ExecutableName = "svencoop.exe" }, // Sven Co-op
+                // new SteamApp(220, Engine.Source), // Half-Life 2
+                // new SteamApp(240, Engine.Source), // Counter-Strike: Source
+                // new SteamApp(280, Engine.Source), // Half-Life: Source
+                // new SteamApp(300, Engine.Source), // Day of Defeat: Source
+                // new SteamApp(320, Engine.Source), // Half-Life 2: Deathmatch
+                // new SteamApp(340, Engine.Source), // Half-Life 2: Lost Coast
+                // new SteamApp(360, Engine.Source), // Half-Life Deathmatch: Source
+                // new SteamApp(380, Engine.Source), // Half-Life 2: Episode One
+                // new SteamApp(400, Engine.Source), // Portal
+                // new SteamApp(420, Engine.Source), // Half-Life 2: Episode Two
+                // new SteamApp(440, Engine.Source), // Team Fortress 2
+                // new SteamApp(500, Engine.Source), // Left 4 Dead
+                // new SteamApp(550, Engine.Source), // Left 4 Dead 2
+                // new SteamApp(570, Engine.Source), // Dota 2
+                // new SteamApp(620, Engine.Source), // Portal 2
+                // new SteamApp(630, Engine.Source), // Alien Swarm
+                // new SteamApp(1800, Engine.Source), // Counter-Strike: Global Offensive
+                // new SteamApp(4000, Engine.Source), // Garry's Mod
+                // new SteamApp(211, Engine.Source), // Source SDK
+                // new SteamApp(215, Engine.Source), // Source SDK Base 2006
+                // new SteamApp(218, Engine.Source), // Source SDK Base - Orange Box
+                // new SteamApp(513, Engine.Source), // Left 4 Dead Authoring Tools
+                // new SteamApp(629, Engine.Source), // Portal 2 Authoring Tools - Beta
+            };
+        }
+
+        public static List<SteamGame> GetDetectedSteamGames(string steamInstallLocation)
+        {
+            var games = new List<SteamGame>();
+
+            var folders = new List<string>();
+            folders.Add(Path.Combine(steamInstallLocation, "SteamApps"));
+
+            var libraryFoldersFile = Path.Combine(steamInstallLocation, "SteamApps", "libraryfolders.vdf");
+            if (File.Exists(libraryFoldersFile))
+            {
+                try
+                {
+                    var gs = GenericStructure.Parse(libraryFoldersFile).FirstOrDefault(x => x.Name == "LibraryFolders");
+                    if (gs != null)
+                    {
+                        foreach (var pk in gs.GetPropertyKeys())
                         {
-                            new SteamGame(10, "Counter-Strike", new List<string>
-                                                         {
-                                                             "Counter-Strike",
-                                                             "Half-Life Engine",
-                                                             "Platform",
-                                                             "Half-Life",
-                                                         }),
-                            new SteamGame(20, "Team Fortress Classic", new List<string>
-                                                         {
-                                                             "Team Fortress Classic",
-                                                             "Half-Life Engine",
-                                                             "Platform",
-                                                             "Half-Life",
-                                                         }),
-                            new SteamGame(30, "Day of Defeat", new List<string>
-                                                         {
-                                                             "Day of Defeat",
-                                                             "Half-Life Engine",
-                                                             "Platform",
-                                                             "Half-Life",
-                                                         }),
-                            new SteamGame(40, "Deathmatch Classic", new List<string>
-                                                         {
-                                                             "Deathmatch Classic",
-                                                             "Half-Life Engine",
-                                                             "Platform",
-                                                             "Half-Life",
-                                                         }),
-                            new SteamGame(50, "Half-Life: Opposing Force", new List<string>
-                                                         {
-                                                             "Opposing Force",
-                                                             "Half-Life Engine",
-                                                             "Platform",
-                                                             "Half-Life",
-                                                         }),
-                            new SteamGame(60, "Ricochet", new List<string>
-                                                         {
-                                                             "Ricochet",
-                                                             "Half-Life Engine",
-                                                             "Platform",
-                                                             "Half-Life",
-                                                         }),
-                            new SteamGame(70, "Half-Life", new List<string>
-                                                         {
-                                                             "Half-Life",
-                                                             "Half-Life Engine",
-                                                             "Platform",
-                                                             "Half-Life Base Content",
-                                                         }),
-                            new SteamGame(80, "Condition Zero", new List<string>
-                                                         {
-                                                             "Condition Zero",
-                                                             "Half-Life Engine",
-                                                             "Platform",
-                                                             "Half-Life",
-                                                             "Counter-Strike",
-                                                         }),
-                            new SteamGame(100, "Condition Zero Deleted Scenes", new List<string>
-                                                         {
-                                                             "Condition Zero Deleted Scenes",
-                                                             "Half-Life Engine",
-                                                             "Platform",
-                                                             "Half-Life",
-                                                             "Counter-Strike",
-                                                             "Condition Zero Deleted Scenes Base Content",
-                                                             "Condition Zero Deleted Scenes Models",
-                                                             "Condition Zero Deleted Scenes Sounds",
-                                                         }),
-                            new SteamGame(130, "Half-Life: Blue Shift", new List<string>
-                                                         {
-                                                             "Half-Life Blue Shift",
-                                                             "Platform",
-                                                             "Half-Life Engine",
-                                                             "Half-Life",
-                                                         }),
-                            new SteamGame(220, "Half-Life 2", new List<string>
-                                                         {
-                                                             "Half-Life 2",
-                                                             "Source 2007 Binaries 2",
-                                                             "Half-Life 2 Game Dialog",
-                                                             "Half-Life 2 2007 Base Content",
-                                                             "Source 2007 Shared Materials",
-                                                             "Source 2007 Shared Models",
-                                                             "Source 2007 Shared Sounds",
-                                                             "Source Engine",
-                                                             "Source Materials",
-                                                             "Source Models",
-                                                             "Source Sounds",
-                                                             "Half-Life 2 Content",
-                                                         }),
-                            new SteamGame(240, "Counter-Strike: Source", new List<string>
-                                                         {
-                                                             "Counter-Strike Source",
-                                                             "Counter-Strike Source Binaries",
-                                                             "Source 2007 Shared Materials",
-                                                             "Source 2007 Shared Models",
-                                                             "Source 2007 Shared Sounds",
-                                                             "Counter-Strike Source Client",
-                                                             "Counter-Strike Source Shared",
-                                                             "Source Materials",
-                                                             "Source Models",
-                                                             "Source Sounds",
-                                                             "OrangeBox Media",
-                                                         }),
-                            new SteamGame(280, "Half-Life: Source", new List<string>
-                                                         {
-                                                             "Half-Life Source",
-                                                             "Source Engine",
-                                                             "Source Materials",
-                                                             "Source Models",
-                                                             "Source Sounds",
-                                                         }),
-                            new SteamGame(300, "Day of Defeat: Source", new List<string>
-                                                         {
-                                                             "Day of Defeat Source",
-                                                             "Multiplayer OB Binaries",
-                                                             "Source 2007 Shared Materials",
-                                                             "Source 2007 Shared Models",
-                                                             "Source 2007 Shared Sounds",
-                                                             "Source Materials",
-                                                             "Source Models",
-                                                             "Source Sounds",
-                                                         }),
-                            new SteamGame(320, "Half-Life 2: Deathmatch", new List<string>
-                                                         {
-                                                             "Half-Life 2 Deathmatch",
-                                                             "Multiplayer OB Binaries",
-                                                             "Source 2007 Shared Materials",
-                                                             "Source 2007 Shared Models",
-                                                             "Source 2007 Shared Sounds",
-                                                             "Source Materials",
-                                                             "Source Models",
-                                                             "Source Sounds",
-                                                         }),
-                            new SteamGame(340, "Half-Life 2: Lost Coast", new List<string>
-                                                         {
-                                                             "Half-Life 2 LostCoast",
-                                                             "Half-Life 2 Game Dialog",
-                                                             "Source Engine",
-                                                             "Source Materials",
-                                                             "Source Models",
-                                                             "Source Sounds",
-                                                             "LostCoast Content",
-                                                         }),
-                            new SteamGame(360, "Half-Life Deathmatch: Source", new List<string>
-                                                         {
-                                                             "Half-Life Deathmatch Source",
-                                                             "Base Source Engine 2",
-                                                             "Source Materials",
-                                                             "Source Models",
-                                                             "Source Sounds",
-                                                             "Half-Life Source",
-                                                             "Half-Life Source Deathmatch client",
-                                                         }),
-                            new SteamGame(380, "Half-Life 2: Episode One", new List<string>
-                                                         {
-                                                             "Half-Life 2 Episode One",
-                                                             "Source 2007 Binaries 2",
-                                                             "Episode One 2007 Content",
-                                                             "Source 2007 Shared Materials",
-                                                             "Source 2007 Shared Models",
-                                                             "Source 2007 Shared Sounds",
-                                                             "Episodic 2007 Shared",
-                                                             "Episode 1 Shared",
-                                                             "Source Materials",
-                                                             "Source Models",
-                                                             "Source Sounds",
-                                                         }),
-                            new SteamGame(400, "Portal", new List<string>
-                                                         {
-                                                             "Portal",
-                                                             "Source 2007 Binaries 2",
-                                                             "Source 2007 Shared Materials",
-                                                             "Source 2007 Shared Models",
-                                                             "Source 2007 Shared Sounds",
-                                                             "Portal Content",
-                                                             "Source Materials",
-                                                             "Source Models",
-                                                             "Source Sounds",
-                                                             "OrangeBox Media",
-                                                         }),
-                            new SteamGame(420, "Half-Life 2: Episode Two", new List<string>
-                                                         {
-                                                             "Half-Life 2 Episode Two",
-                                                             "Source 2007 Binaries 2",
-                                                             "Episode Two Content",
-                                                             "Episode Two Maps",
-                                                             "Episode Two Materials",
-                                                             "Episodic 2007 Shared",
-                                                             "Source 2007 Shared Materials",
-                                                             "Source 2007 Shared Models",
-                                                             "Source 2007 Shared Sounds",
-                                                             "Source Materials",
-                                                             "Source Models",
-                                                             "Source Sounds",
-                                                             "Episode 1 Shared",
-                                                             "OrangeBox Media",
-                                                         }),
-                            new SteamGame(440, "Team Fortress 2", new List<string>
-                                                         {
-                                                             "Team Fortress 2",
-                                                             "Multiplayer OB Binaries",
-                                                             "Source 2007 Shared Materials",
-                                                             "Source 2007 Shared Models",
-                                                             "Source 2007 Shared Sounds",
-                                                             "Team Fortress 2 Content",
-                                                             "Team Fortress 2 Materials",
-                                                             "Team Fortress 2 Client Content",
-                                                             "Source Materials",
-                                                             "Source Models",
-                                                             "Source Sounds",
-                                                             "OrangeBox Media",
-                                                         }),
-                            new SteamGame(500, "Left 4 Dead", new List<string>
-                                                         {
-                                                             "left 4 dead",
-                                                             "Left 4 Dead binaries",
-                                                             "Left 4 Dead base",
-                                                             "Left 4 Dead client binary",
-                                                             "Left 4 Dead sound",
-                                                         }),
-                            new SteamGame(550, "Left 4 Dead 2", new List<string>
-                                                         {
-                                                             "Left 4 Dead 2",
-                                                             "left 4 dead 2 common",
-                                                             "left 4 dead 2 client",
-                                                         }),
-                            new SteamGame(570, "Dota 2", new List<string>
-                                                         {
-                                                             "dota 2 beta",
-                                                             "dota 2 beta content",
-                                                             "dota 2 beta client",
-                                                             "dota 2 beta win32 content",
-                                                         }),
-                            new SteamGame(620, "Portal 2", new List<string>
-                                                         {
-                                                             "Portal 2",
-                                                             "portal 2 common",
-                                                             "portal 2 win content",
-                                                             "portal 2 client binaries",
-                                                         }),
-                            new SteamGame(630, "Alien Swarm", new List<string>
-                                                         {
-                                                             "Alien Swarm",
-                                                             "alien swarm content",
-                                                         }),
-                            new SteamGame(1800, "Counter-Strike: Global Offensive", new List<string>
-                                                         {
-                                                             "Counter-Strike_ Global Offensive",
-                                                             "winui",
-                                                             "SourceInit",
-                                                         }),
-                            new SteamGame(4000, "Garry's Mod", new List<string>
-                                                         {
-                                                             "GarrysMod",
-                                                             "GarrysMod Content",
-                                                             "Multiplayer OB Binaries",
-                                                             "Source 2007 Shared Materials",
-                                                             "Source 2007 Shared Models",
-                                                             "Source 2007 Shared Sounds",
-                                                             "Source Materials",
-                                                             "Source Models",
-                                                             "Source Sounds",
-                                                             "OrangeBox Media",
-                                                         }),
-                            new SteamGame(211, "Source SDK", new List<string>
-                                                         {
-                                                             "SourceSDK",
-                                                         }),
-                            new SteamGame(215, "Source SDK Base 2006", new List<string>
-                                                         {
-                                                             "Source SDK Base",
-                                                             "Base Source Engine 2",
-                                                             "Source Materials",
-                                                             "Source Models",
-                                                             "Source Sounds",
-                                                         }),
-                            new SteamGame(218, "Source SDK Base - Orange Box", new List<string>
-                                                         {
-                                                             "Source SDK Base 2007",
-                                                             "Source 2007 Binaries",
-                                                             "Source 2007 Shared Materials",
-                                                             "Source 2007 Shared Models",
-                                                             "Source 2007 Shared Sounds",
-                                                             "Source Materials",
-                                                             "Source Models",
-                                                             "Source Sounds",
-                                                             "Source SDK Base",
-                                                             "Base Source Engine 2",
-                                                         }),
-                            new SteamGame(513, "Left 4 Dead Authoring Tools", new List<string>
-                                                         {
-                                                             "Left 4 Dead",
-                                                             "Left 4 Dead binaries",
-                                                             "Left 4 Dead base",
-                                                             "Left 4 Dead client binary",
-                                                             "Left 4 Dead sound",
-                                                         }),
-                            new SteamGame(629, "Portal 2 Authoring Tools - Beta", new List<string>
-                                                         {
-                                                             "Portal 2",
-                                                             "portal 2 common",
-                                                         }),
-                        };
+                            int i;
+                            if (!int.TryParse(pk, out i)) continue;
+
+                            var value = gs.GetPropertyValue(pk, false);
+                            folders.Add(Path.Combine(value, "SteamApps"));
+                        }
+                    }
+                }
+                catch
+                {
+                    // Unable to parse libraryfolders.vdf
+                }
+            }
+
+            folders.RemoveAll(x => !Directory.Exists(x));
+
+            foreach (var steamApp in SteamApps)
+            {
+                var manifestName = "appmanifest_" + steamApp.AppID + ".acf";
+                var folder = folders.FirstOrDefault(x => File.Exists(Path.Combine(x, manifestName)));
+                if (folder != null)
+                {
+                    try
+                    {
+                        var gs = GenericStructure.Parse(Path.Combine(folder, manifestName)).FirstOrDefault(x => x.Name == "AppState");
+                        if (gs != null)
+                        {
+                            var name = gs.GetPropertyValue("name", true);
+                            var installDir = gs.GetPropertyValue("installdir", true);
+                            if (!Directory.Exists(installDir)) installDir = Path.Combine(folder, "common", installDir);
+                            if (Directory.Exists(installDir))
+                            {
+                                games.Add(new SteamGame
+                                {
+                                    AppId = steamApp.AppID,
+                                    Engine = steamApp.Engine,
+                                    Name = name,
+                                    InstallPath = installDir,
+                                    GameDirectory = steamApp.GameDirectory,
+                                    ModDirectory = steamApp.ModDirectory,
+                                    ExecutableName = steamApp.ExecutableName
+                                });
+                            }
+                        }
+                    }
+                    catch
+                    {
+                        // Unable to parse manifest
+                    }
+                }
+            }
+
+            return games;
+        }
+    }
+
+    public class SteamGame
+    {
+        public int AppId { get; set; }
+        public string Name { get; set; }
+        public string InstallPath { get; set; }
+        public Engine Engine { get; set; }
+
+        public string GameDirectory { get; set; }
+        public string ModDirectory { get; set; }
+        public string ExecutableName { get; set; }
+
+        public override string ToString()
+        {
+            return Name;
         }
     }
 }

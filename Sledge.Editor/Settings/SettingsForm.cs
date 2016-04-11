@@ -15,6 +15,8 @@ using Sledge.Providers.GameData;
 using Sledge.QuickForms;
 using Sledge.Settings;
 using System.Linq;
+using Microsoft.Win32;
+using Sledge.Settings.GameDetection.GameFiles;
 using Sledge.Settings.Models;
 using Hotkeys = Sledge.Settings.Hotkeys;
 
@@ -220,9 +222,7 @@ namespace Sledge.Editor.Settings
             SelectedGameName.TextChanged += (s, e) => CheckNull(_selectedGame, x => x.Name = SelectedGameName.Text);
             SelectedGameEngine.SelectedIndexChanged += (s, e) => CheckNull(_selectedGame, x => x.Engine = (Engine) SelectedGameEngine.SelectedItem);
             SelectedGameBuild.SelectedIndexChanged += (s, e) => CheckNull(_selectedGame, x => x.BuildID = _builds[SelectedGameBuild.SelectedIndex].ID);
-            SelectedGameSteamInstall.CheckedChanged += (s, e) => CheckNull(_selectedGame, x => x.SteamInstall = SelectedGameSteamInstall.Checked);
-            SelectedGameWonDir.TextChanged += (s, e) => CheckNull(_selectedGame, x => x.WonGameDir = SelectedGameWonDir.Text);
-            SelectedGameSteamDir.SelectedIndexChanged += (s, e) => CheckNull(_selectedGame, x => x.SteamGameDir = SelectedGameSteamDir.Text);
+            SelectedGameWonDir.TextChanged += (s, e) => CheckNull(_selectedGame, x => x.GameInstallDir = SelectedGameWonDir.Text);
             SelectedGameMod.SelectedIndexChanged += (s, e) => CheckNull(_selectedGame, x => x.ModDir = SelectedGameMod.Text);
             SelectedGameBase.SelectedIndexChanged += (s, e) => CheckNull(_selectedGame, x => x.BaseDir = SelectedGameBase.Text);
             SelectedGameUseHDModels.CheckedChanged += (s, e) => CheckNull(_selectedGame, x => x.UseHDModels = SelectedGameUseHDModels.Checked);
@@ -383,7 +383,6 @@ namespace Sledge.Editor.Settings
 
             UpdateGameTree();
             UpdateBuildTree();
-            UpdateSteamUsernames();
             SelectedGameUpdateSteamGames();
 
             _hotkeys = Hotkeys.GetHotkeys().Select(x => new Hotkey { ID = x.ID, HotkeyString = x.HotkeyString }).ToList();
@@ -745,8 +744,6 @@ namespace Sledge.Editor.Settings
             // Build Programs
             // Steam
             SteamInstallDir.Text = Steam.SteamDirectory;
-            SteamUsername.Text = Steam.SteamUsername;
-            UpdateSteamUsernames();
 
             // Hotkeys
             UpdateHotkeyList();
@@ -808,7 +805,6 @@ namespace Sledge.Editor.Settings
             // Build Programs
             // Steam
             Steam.SteamDirectory = SteamInstallDir.Text;
-            Steam.SteamUsername = SteamUsername.Text;
 
             // Hotkeys
             SettingsManager.Hotkeys.Clear();
@@ -941,6 +937,22 @@ namespace Sledge.Editor.Settings
             }
         }
 
+        private void SteamInstallDirAutoDectectClicked(object sender, EventArgs e)
+        {
+            // HKEY_CURRENT_USER\SOFTWARE\Valve\Steam
+            using (var key = Registry.CurrentUser.OpenSubKey(@"Software\Valve\Steam", false))
+            {
+                if (key != null)
+                {
+                    var value = key.GetValue("SteamPath") as string;
+                    if (!String.IsNullOrWhiteSpace(value) && Directory.Exists(value))
+                    {
+                        SteamInstallDir.Text = value;
+                    }
+                }
+            }
+        }
+
         private void SteamUsernameChanged(object sender, EventArgs e)
         {
             SelectedGameUpdateSteamGames();
@@ -948,23 +960,7 @@ namespace Sledge.Editor.Settings
 
         private void SteamDirectoryChanged(object sender, EventArgs e)
         {
-            UpdateSteamUsernames();
             SelectedGameUpdateSteamGames();
-        }
-
-        private void UpdateSteamUsernames()
-        {
-            SteamUsername.Items.Clear();
-            if (Path.GetInvalidPathChars().Any(x => SteamInstallDir.Text.Contains(x))) return;
-
-            var steamdir = Path.Combine(SteamInstallDir.Text, "steamapps");
-            if (!Directory.Exists(steamdir)) return;
-
-            var usernames = Directory.GetDirectories(steamdir).Select(Path.GetFileName);
-            var ignored = new[] {"common", "downloading", "media", "sourcemods", "temp"};
-            SteamUsername.Items.AddRange(usernames.Where(x => !ignored.Contains(x.ToLower())).OfType<object>().ToArray());
-            var idx = SteamUsername.Items.IndexOf(SteamUsername.Text);
-            if (SteamUsername.Items.Count > 0) SteamUsername.SelectedIndex = Math.Max(0, idx);
         }
 
         private void RemoveGameClicked(object sender, EventArgs e)
@@ -1078,16 +1074,14 @@ namespace Sledge.Editor.Settings
             var sizes = new[] { 4096, 8192, 16384, 32768, 65536 };
             SelectedGameOverrideSizeLow.SelectedIndex = Array.IndexOf(sizes, -_selectedGame.OverrideMapSizeLow);
             SelectedGameOverrideSizeHigh.SelectedIndex = Array.IndexOf(sizes, _selectedGame.OverrideMapSizeHigh);
-
-            SelectedGameSteamInstall.Checked = _selectedGame.SteamInstall;
-
+            
             SelectedGameMod.SelectedText = _selectedGame.ModDir;
             SelectedGameBase.SelectedText = _selectedGame.BaseDir;
             SelectedGameUseHDModels.Checked = _selectedGame.UseHDModels;
             SelectedGameExecutable.SelectedText = _selectedGame.Executable;
             SelectedGameRunArguments.Text = _selectedGame.ExecutableParameters;
-            SelectedGameWonDir.Text = _selectedGame.WonGameDir;
-            SelectedGameSteamDir.SelectedText = _selectedGame.SteamGameDir;
+            SelectedGameWonDir.Text = _selectedGame.GameInstallDir;
+            //SelectedGameSteamDir.SelectedText = _selectedGame.SteamGameDir;
 
             SelectedGameAutosaveLimit.Value = _selectedGame.AutosaveLimit;
             if (_selectedGame.AutosaveLimit >= SelectedGameAutosaveLimit.Minimum && _selectedGame.AutosaveLimit <= SelectedGameAutosaveLimit.Maximum)
@@ -1193,25 +1187,9 @@ namespace Sledge.Editor.Settings
             var eng = (Engine) SelectedGameEngine.SelectedItem;
             var change = eng != _selectedGame.Engine;
             _selectedGame.Engine = eng;
-            SelectedGameSteamInstall.Enabled = eng == Engine.Goldsource;
-            if (eng == Engine.Goldsource && !SelectedGameSteamInstall.Checked)
-            {
-                lblGameWONDir.Visible = SelectedGameWonDir.Visible = SelectedGameDirBrowse.Visible = true;
-                lblGameSteamDir.Visible = SelectedGameSteamDir.Visible = false;
-                SelectedGameWonDir.Enabled = true;
-                SelectedGameDirBrowse.Enabled = true;
-                SelectedGameSteamDir.Enabled = false;
-                SelectedGameWonDirChanged(null, null);
-            }
-            else
-            {
-                lblGameWONDir.Visible = SelectedGameWonDir.Visible = SelectedGameDirBrowse.Visible = false;
-                lblGameSteamDir.Visible = SelectedGameSteamDir.Visible = true;
-                SelectedGameWonDir.Enabled = false;
-                SelectedGameDirBrowse.Enabled = false;
-                SelectedGameSteamDir.Enabled = true;
-                SelectedGameUpdateSteamGames();
-            }
+
+            SelectedGameWonDirChanged(null, null);
+
             if (change)
             {
 
@@ -1224,37 +1202,23 @@ namespace Sledge.Editor.Settings
 
         private void SelectedGameUpdateSteamGames()
         {
-            if (_selectedGame == null) return;
-            var steamdir = Path.Combine(SteamInstallDir.Text, "steamapps");
-            var commondir = Path.Combine(steamdir, "common");
-            var games = new List<string>();
-            if (Directory.Exists(commondir)) games.AddRange(Directory.GetDirectories(commondir).Select(Path.GetFileName));
-            var includeGoldsource = new[]
-                              {
-                                  "half-life"
-                              };
-            var includeSource = new[]
-                              {
-                                  "alien swarm", "counter-strike global offensive",
-                                  "counter-strike source", "day ofdefeat source",
-                                  "dota 2 beta", "half-life 2", "half-life 2 deathmatch",
-                                  "half-life 2episode one", "half-life 2 episode two",
-                                  "half-life deathmatch source", "left 4 dead 2", "left 4dead", "lostcoast",
-                                  "portal", "portal 2", "team fortress 2"
-                              };
-            SelectedGameSteamDir.Items.Clear();
-            var eng = (Engine) SelectedGameEngine.SelectedItem;
-            var include = eng == Engine.Goldsource ? includeGoldsource : includeSource;
-            SelectedGameSteamDir.Items.AddRange(games.Where(x => include.Contains(x.ToLower())).Distinct().OrderBy(x => x.ToLower()).ToArray<object>());
-            var idx = SelectedGameSteamDir.Items.IndexOf(_selectedGame.SteamGameDir ?? "");
-            if (SelectedGameSteamDir.Items.Count > 0) SelectedGameSteamDir.SelectedIndex = Math.Max(0, idx);
+            var detectedGames = Sledge.Settings.GameDetection.GameFiles.SteamGames.GetDetectedSteamGames(SteamInstallDir.Text);
+
+            SteamGamesList.Items.Clear();
+            foreach (var game in detectedGames)
+            {
+                SteamGamesList.Items.Add(new ListViewItem(game.AppId.ToString())
+                {
+                    SubItems = {game.Name, game.InstallPath}
+                });
+            }
+            SteamGamesList.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
         }
 
         private void SelectedGameWonDirChanged(object sender, EventArgs e)
         {
-            if (SelectedGameEngine.SelectedIndex < 0 || SelectedGameSteamInstall.Checked) return;
+            if (SelectedGameEngine.SelectedIndex < 0) return;
             var eng = (Engine) SelectedGameEngine.SelectedItem;
-            if (eng != Engine.Goldsource || SelectedGameSteamInstall.Checked) return;
 
             SelectedGameMod.Items.Clear();
             SelectedGameBase.Items.Clear();
@@ -1270,41 +1234,6 @@ namespace Sledge.Editor.Settings
             SelectedGameBase.Items.AddRange(range);
 
             var exes = Directory.GetFiles(SelectedGameWonDir.Text, "*.exe").Select(Path.GetFileName);
-            ignored = new[] { "sxuninst.exe", "utdel32.exe", "upd.exe", "hlds.exe", "hltv.exe" };
-            range = exes.Where(x => !ignored.Contains(x.ToLowerInvariant())).OfType<object>().ToArray();
-            SelectedGameExecutable.Items.AddRange(range);
-
-            var idx = SelectedGameMod.Items.IndexOf(_selectedGame.ModDir ?? "");
-            if (SelectedGameMod.Items.Count > 0) SelectedGameMod.SelectedIndex = Math.Max(0, idx);
-
-            idx = SelectedGameBase.Items.IndexOf(_selectedGame.BaseDir ?? "");
-            if (SelectedGameBase.Items.Count > 0) SelectedGameBase.SelectedIndex = Math.Max(0, idx);
-
-            idx = SelectedGameExecutable.Items.IndexOf(_selectedGame.Executable ?? "");
-            if (SelectedGameExecutable.Items.Count > 0) SelectedGameExecutable.SelectedIndex = Math.Max(0, idx);
-        }
-
-        private void SelectedGameSteamDirChanged(object sender, EventArgs e)
-        {
-            if (SelectedGameEngine.SelectedIndex < 0 || !SelectedGameSteamInstall.Checked) return;
-            var eng = (Engine) SelectedGameEngine.SelectedItem;
-            if (eng == Engine.Goldsource && !SelectedGameSteamInstall.Checked) return;
-
-            SelectedGameMod.Items.Clear();
-            SelectedGameBase.Items.Clear();
-            SelectedGameExecutable.Items.Clear();
-
-            var dir = Path.Combine(SteamInstallDir.Text, "steamapps", "common", SelectedGameSteamDir.Text);
-            if (!Directory.Exists(dir)) return;
-
-            var mods = Directory.GetDirectories(dir).Select(Path.GetFileName);
-            var ignored = new[] {"gldrv", "logos", "logs", "errorlogs", "platform", "config", "bin"};
-
-            var range = mods.Where(x => !ignored.Contains(x.ToLower())).OfType<object>().ToArray();
-            SelectedGameMod.Items.AddRange(range);
-            SelectedGameBase.Items.AddRange(range);
-
-            var exes = Directory.GetFiles(dir, "*.exe").Select(Path.GetFileName);
             ignored = new[] { "sxuninst.exe", "utdel32.exe", "upd.exe", "hlds.exe", "hltv.exe" };
             range = exes.Where(x => !ignored.Contains(x.ToLowerInvariant())).OfType<object>().ToArray();
             SelectedGameExecutable.Items.AddRange(range);
