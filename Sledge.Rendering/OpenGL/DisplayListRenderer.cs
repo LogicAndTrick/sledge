@@ -1,19 +1,17 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Interfaces;
 using Sledge.Rendering.Materials;
-using Sledge.Rendering.OpenGL.Arrays;
-using Sledge.Rendering.OpenGL.Shaders;
+using Sledge.Rendering.OpenGL.Lists;
 using Sledge.Rendering.Scenes;
 
 namespace Sledge.Rendering.OpenGL
 {
-    public class OpenGLRenderer : IRenderer
+    public class DisplayListRenderer : IRenderer
     {
         private readonly Dictionary<IViewport, ViewportData> _viewportData;
         private readonly Dictionary<Scene, SceneData> _sceneData;
@@ -22,9 +20,6 @@ namespace Sledge.Rendering.OpenGL
         private readonly ModelStorage _modelStorage;
         private Scene _activeScene;
         private bool _initialised;
-
-        public Passthrough StandardShader { get; private set; }
-        public ModelShader ModelShader { get; private set; }
 
         public ITextureStorage Textures { get { return _textureStorage; } }
         public IMaterialStorage Materials { get { return _materialStorage; } }
@@ -35,11 +30,11 @@ namespace Sledge.Rendering.OpenGL
         public IRendererSettings Settings { get; private set; }
 
         private readonly List<string> _requestedTextureQueue;
-        private readonly List<string> _requestedModelQueue; 
+        private readonly List<string> _requestedModelQueue;
 
         public Matrix4 SelectionTransform { get; set; }
 
-        public OpenGLRenderer()
+        public DisplayListRenderer()
         {
             _viewportData = new Dictionary<IViewport, ViewportData>();
             _sceneData = new Dictionary<Scene, SceneData>();
@@ -71,9 +66,6 @@ namespace Sledge.Rendering.OpenGL
         private void InitialiseRenderer()
         {
             if (_initialised) return;
-
-            StandardShader = new Passthrough();
-            ModelShader = new ModelShader();
 
             _materialStorage.Initialise();
             _textureStorage.Initialise();
@@ -139,6 +131,7 @@ namespace Sledge.Rendering.OpenGL
                 GL.CullFace(CullFaceMode.Front);
 
                 GL.Enable(EnableCap.Texture2D);
+
                 GL.Enable(EnableCap.Blend);
                 GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
                 GL.PixelStore(PixelStoreParameter.UnpackAlignment, 1);
@@ -219,8 +212,8 @@ namespace Sledge.Rendering.OpenGL
             InitialiseRenderer();
             InitialiseViewport(viewport, vpData);
 
-            scData.Array.ApplyChanges();
-            vpData.ElementArray.Update(scData.Array.Elements);
+            scData.DisplayList.ApplyChanges();
+            vpData.ElementList.Update(scData.DisplayList.Elements);
 
             ProcessTextureQueue();
             ProcessModelQueue();
@@ -232,13 +225,8 @@ namespace Sledge.Rendering.OpenGL
             GL.ClearColor(viewport.Camera is PerspectiveCamera ? Settings.PerspectiveBackgroundColour : Settings.OrthographicBackgroundColour);
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
-            StandardShader.Bind();
-            StandardShader.GridSpacing = Settings.PerspectiveGridSpacing;
-            StandardShader.ShowGrid = Settings.ShowPerspectiveGrid;
-            StandardShader.Unbind();
-
-            scData.Array.Render(this, viewport);
-            vpData.ElementArray.Render(this, viewport);
+            scData.DisplayList.Render(this, viewport);
+            vpData.ElementList.Render(this, viewport);
         }
 
         private ViewportData GetViewportData(IViewport viewport)
@@ -263,39 +251,39 @@ namespace Sledge.Rendering.OpenGL
 
         private class ViewportData : IDisposable
         {
-            public ElementArrayCollection ElementArray { get; private set; }
+            public ElementListCollection ElementList { get; private set; }
             public bool Initialised { get; set; }
             public int Width { get; set; }
             public int Height { get; set; }
 
-            public ViewportData(IRenderer renderer, IViewport viewport)
+            public ViewportData(DisplayListRenderer renderer, IViewport viewport)
             {
                 Width = viewport.Control.Width;
                 Height = viewport.Control.Height;
-                ElementArray = new ElementArrayCollection(renderer, viewport);
+                ElementList = new ElementListCollection(renderer, viewport);
                 Initialised = false;
             }
 
             public void Dispose()
             {
-                ElementArray.Dispose();
+                ElementList.Dispose();
             }
         }
 
         private class SceneData : IDisposable
         {
             public Scene Scene { get; set; }
-            public OctreeVertexArray Array { get; private set; }
+            public OctreeDisplayList DisplayList { get; private set; }
 
-            public SceneData(OpenGLRenderer renderer, Scene scene)
+            public SceneData(DisplayListRenderer renderer, Scene scene)
             {
                 Scene = scene;
-                Array = new OctreeVertexArray(renderer, scene, Math.Min(-float.MinValue, float.MaxValue));
+                DisplayList = new OctreeDisplayList(renderer, scene, Math.Min(-float.MinValue, float.MaxValue));
             }
 
             public void Dispose()
             {
-                Array.Dispose();
+                DisplayList.Dispose();
             }
         }
     }

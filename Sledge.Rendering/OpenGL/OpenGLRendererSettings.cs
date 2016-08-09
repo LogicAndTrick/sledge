@@ -3,11 +3,11 @@ using Sledge.Rendering.Interfaces;
 
 namespace Sledge.Rendering.OpenGL
 {
-    public class RendererSettings : IRendererSettings
+    public class OpenGLRendererSettings : IRendererSettings
     {
-        private readonly OpenGLRenderer _renderer;
+        private readonly IRenderer _renderer;
 
-        public RendererSettings(OpenGLRenderer renderer)
+        public OpenGLRendererSettings(IRenderer renderer)
         {
             _renderer = renderer;
         }

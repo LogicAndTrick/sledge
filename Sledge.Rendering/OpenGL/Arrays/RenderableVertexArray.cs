@@ -74,8 +74,7 @@ namespace Sledge.Rendering.OpenGL.Arrays
             return GetSubsets<string>(FacePolygons).Where(x => x.Instance != null).Select(x => x.Instance).OfType<string>();
         }
 
-        // todo abstract away shader program into interface
-        public void Render(IRenderer renderer, Passthrough shader, ModelShader modelShader, IViewport viewport)
+        public void Render(OpenGLRenderer renderer, IViewport viewport)
         {
             var camera = viewport.Camera;
 
@@ -84,6 +83,9 @@ namespace Sledge.Rendering.OpenGL.Arrays
             var mvMatrix = camera.GetModelMatrix();
 
             var options = camera.RenderOptions;
+
+            var shader = renderer.StandardShader;
+            var modelShader = renderer.ModelShader;
 
             shader.Bind();
             shader.SelectionTransform = renderer.SelectionTransform;
@@ -165,7 +167,7 @@ namespace Sledge.Rendering.OpenGL.Arrays
             }
         }
 
-        public void RenderTransparent(IRenderer renderer, Passthrough shader, IViewport viewport)
+        public void RenderTransparent(OpenGLRenderer renderer, IViewport viewport)
         {
             var camera = viewport.Camera;
 
@@ -175,6 +177,8 @@ namespace Sledge.Rendering.OpenGL.Arrays
 
             var eye = camera.EyeLocation;
             var options = camera.RenderOptions;
+
+            var shader = renderer.StandardShader;
 
             shader.Bind();
             shader.SelectionTransform = renderer.SelectionTransform;

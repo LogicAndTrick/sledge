@@ -32,12 +32,14 @@ namespace Sledge.Rendering.OpenGL.Arrays
             _viewport = viewport;
         }
 
-        public void Render(IRenderer renderer, Passthrough shader, IViewport viewport)
+        public void Render(OpenGLRenderer renderer, IViewport viewport)
         {
             var camera = viewport.Camera;
             const float near = -1000000;
             const float far = 1000000;
             var vpMatrix = Matrix4.CreateOrthographicOffCenter(0, viewport.Control.Width, viewport.Control.Height, 0, near, far);
+
+            var shader = renderer.StandardShader;
 
             shader.Bind();
             

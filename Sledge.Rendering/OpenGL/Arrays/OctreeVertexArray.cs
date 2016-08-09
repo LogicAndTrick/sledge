@@ -3,168 +3,59 @@ using System.Collections.Generic;
 using System.Linq;
 using Sledge.Rendering.DataStructures;
 using Sledge.Rendering.Interfaces;
-using Sledge.Rendering.OpenGL.Shaders;
 using Sledge.Rendering.Scenes;
-using Sledge.Rendering.Scenes.Elements;
 using Sledge.Rendering.Scenes.Renderables;
 
 namespace Sledge.Rendering.OpenGL.Arrays
 {
-    public class OctreeVertexArray : IDisposable
+    public class OctreeVertexArray : OctreeRenderableBase<PartitionedVertexArray>
     {
-        private int _changeNum;
-        private const int MaxChanges = 2000;
-
         private readonly OpenGLRenderer _renderer;
-        private readonly Scene _scene;
-        public Octree<RenderableObject> Octree { get; private set; }
-        public List<PartitionedVertexArray> Partitions { get; private set; }
-        public RenderableVertexArray Spare { get; private set; }
-        public List<Element> Elements { get; private set; }
 
-        public OctreeVertexArray(OpenGLRenderer renderer, Scene scene, float worldSize = 32768, int limit = 1000)
+        public OctreeVertexArray(OpenGLRenderer renderer, Scene scene, float worldSize = 32768, int limit = 1000) : base(renderer, scene, worldSize, limit)
         {
             _renderer = renderer;
-            _scene = scene;
-            _changeNum = 0;
-
-            Octree = new Octree<RenderableObject>(worldSize, limit);
-            Partitions = new List<PartitionedVertexArray>();
-            Spare = null;
-            Elements = new List<Element>();
-            Rebuild();
         }
 
-        public void ApplyChanges()
+        protected override void RequestModel(string name)
         {
-            if (!_scene.HasChanges) return;
-
-            SceneChangeSet changes;
-            lock (_scene)
-            {
-                changes = _scene.CurrentChangeSet;
-                _scene.ClearChanges();
-            }
-
-            var addRenderable = changes.Added.OfType<RenderableObject>().ToList();
-            var removeRenderable = changes.Removed.OfType<RenderableObject>().ToList();
-            var updateRenderable = changes.Updated.OfType<RenderableObject>().ToList();
-            var replaceRenderable = changes.Replaced.OfType<RenderableObject>().ToList();
-
-            var added = addRenderable.Union(replaceRenderable).Except(removeRenderable).ToList();
-
-            Octree.Remove(removeRenderable.Union(replaceRenderable));
-            Octree.Add(added);
-            _changeNum += addRenderable.Count + removeRenderable.Count + (replaceRenderable.Count * 2);
-
-            if (addRenderable.Count + removeRenderable.Count + replaceRenderable.Count + updateRenderable.Count > 0)
-            {
-                foreach (var mat in added.Select(x => x.Material).Where(x => x != null))
-                {
-                    if (!_renderer.Materials.Exists(mat.UniqueIdentifier)) _renderer.Materials.Add(mat);
-                    if (!_renderer.Textures.Exists(mat.CurrentFrame))
-                    {
-                        _renderer.Textures.Create(mat.CurrentFrame);
-                        _renderer.RequestTexture(mat.CurrentFrame);
-                    }
-                }
-                foreach (var model in added.OfType<Model>())
-                {
-                    if (!_renderer.Models.Exists(model.Name))
-                    {
-                        _renderer.Models.Add(model.Name);
-                        _renderer.RequestModel(model.Name);
-                    }
-                }
-                if (_changeNum > MaxChanges)
-                {
-                    _changeNum = 0;
-                    Rebuild();
-                }
-                else
-                {
-                    if (Spare == null) Spare = new RenderableVertexArray(added);
-                    else Spare.Update(added.Union(Spare.Items.Except(removeRenderable)).ToList());
-
-                    foreach (var part in Partitions)
-                    {
-                        part.UpdatePartial(updateRenderable);
-                        part.DeletePartial(removeRenderable);
-                    }
-                }
-            }
-
-            // Update element list
-            var addElement = changes.Added.OfType<Element>();
-            var removeElement = changes.Removed.OfType<Element>();
-            Elements = Elements.Except(removeElement).Union(addElement).ToList();
+            _renderer.RequestModel(name);
         }
 
-        public void Rebuild()
+        protected override void RequestTexture(string name)
         {
-            Clear();
-
-            var partitions = Octree.Partition(MaxChanges);
-            foreach (var partition in partitions)
-            {
-                var box = new Box(partition.Select(x => x.BoundingBox));
-                var items = partition.SelectMany(x => x).ToList();
-                var array = new PartitionedVertexArray(box, items);
-                Partitions.Add(array);
-            }
+            _renderer.RequestTexture(name);
         }
 
-        private bool CanBeClipped(Box box, List<Plane> clippingPlanes)
+        protected override PartitionedVertexArray CreatePartition(Box box, List<RenderableObject> items)
         {
-            var center = box.Center;
-            if (!clippingPlanes.Any(x => x.OnPlane(center) < 0)) return false;
-
-            var points = box.GetBoxPoints().ToList();
-            return clippingPlanes.Any(x => points.All(p => x.OnPlane(p) < 0));
-        }
-        
-        public void Render(IRenderer renderer, Passthrough shader, ModelShader modelShader, IViewport viewport)
-        {
-            var clip = viewport.Camera.GetClippingPlanes(viewport.Control.Width, viewport.Control.Height).ToList();
-
-            foreach (var array in Partitions)
-            {
-                if (CanBeClipped(array.BoundingBox, clip)) continue;
-                array.Render(renderer, shader, modelShader, viewport);
-            }
-            if (Spare != null)
-            {
-                Spare.Render(renderer, shader, modelShader, viewport);
-            }
-            foreach (var array in Partitions)
-            {
-                if (CanBeClipped(array.BoundingBox, clip)) continue;
-                array.RenderTransparent(renderer, shader, viewport);
-            }
-            if (Spare != null)
-            {
-                Spare.RenderTransparent(renderer, shader, viewport);
-            }
+            return new PartitionedVertexArray(box, items);
         }
 
-        public void Clear()
+        protected override void RebuildItemsInPartition(PartitionedVertexArray partition, List<RenderableObject> addedOrUpdatedItems, List<RenderableObject> deletedItems)
         {
-            foreach (var va in Partitions)
-            {
-                va.Dispose();
-            }
-            Partitions.Clear();
-
-            if (Spare != null)
-            {
-                Spare.Dispose();
-            }
-            Spare = null;
+            partition.Update(addedOrUpdatedItems.Union(partition.Items.Except(deletedItems)).ToList());
         }
 
-        public void Dispose()
+        protected override void UpdateItemsInPartition(PartitionedVertexArray partition, List<RenderableObject> addedOrUpdatedItems, List<RenderableObject> deletedItems)
         {
-            Clear();
+            partition.UpdatePartial(addedOrUpdatedItems);
+            partition.DeletePartial(deletedItems);
+        }
+
+        public override void Render(IRenderer renderer, IViewport viewport)
+        {
+            if (renderer != _renderer) throw new Exception("The passed renderer is not the owner of this array.");
+
+            var list = GetVisiblePartitions(viewport).ToList();
+            foreach (var array in list)
+            {
+                array.Render(_renderer, viewport);
+            }
+            foreach (var array in list)
+            {
+                array.RenderTransparent(_renderer, viewport);
+            }
         }
     }
 }

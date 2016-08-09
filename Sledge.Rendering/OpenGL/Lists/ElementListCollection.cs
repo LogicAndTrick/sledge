@@ -4,26 +4,26 @@ using System.Linq;
 using Sledge.Rendering.Interfaces;
 using Sledge.Rendering.Scenes.Elements;
 
-namespace Sledge.Rendering.OpenGL.Arrays
+namespace Sledge.Rendering.OpenGL.Lists
 {
-    public class ElementArrayCollection : IDisposable
+    public class ElementListCollection : IDisposable
     {
-        private readonly IRenderer _renderer;
+        private readonly DisplayListRenderer _renderer;
         private readonly IViewport _viewport;
-        private readonly Dictionary<string, ElementVertexArray> _arrays;
+        private readonly Dictionary<string, ElementList> _lists;
         private readonly Dictionary<string, int> _counts;
 
-        public ElementArrayCollection(IRenderer renderer, IViewport viewport)
+        public ElementListCollection(DisplayListRenderer renderer, IViewport viewport)
         {
             _renderer = renderer;
             _viewport = viewport;
-            _arrays = new Dictionary<string, ElementVertexArray>();
+            _lists = new Dictionary<string, ElementList>();
             _counts = new Dictionary<string, int>();
         }
 
-        public void Render(OpenGLRenderer renderer, IViewport viewport)
+        public void Render(DisplayListRenderer renderer, IViewport viewport)
         {
-            foreach (var array in _arrays.Values)
+            foreach (var array in _lists.Values)
             {
                 array.Render(renderer, viewport);
             }
@@ -31,7 +31,7 @@ namespace Sledge.Rendering.OpenGL.Arrays
 
         public void Update(IEnumerable<Element> elements)
         {
-            var keys = _arrays.Keys.ToList();
+            var keys = _lists.Keys.ToList();
 
             foreach (var group in elements.GroupBy(x => x.ElementGroup))
             {
@@ -42,8 +42,8 @@ namespace Sledge.Rendering.OpenGL.Arrays
             // Remove any groups that aren't around anymore
             foreach (var key in keys)
             {
-                _arrays[key].Dispose();
-                _arrays.Remove(key);
+                _lists[key].Dispose();
+                _lists.Remove(key);
                 _counts.Remove(key);
             }
         }
@@ -52,16 +52,16 @@ namespace Sledge.Rendering.OpenGL.Arrays
         {
             var els = elements.ToList();
 
-            if (!_arrays.ContainsKey(group))
+            if (!_lists.ContainsKey(group))
             {
-                _arrays.Add(group, new ElementVertexArray(_renderer, _viewport, new Element[0]));
-                _arrays[group].Update(els);
+                _lists.Add(group, new ElementList(_renderer, _viewport, new Element[0]));
+                _lists[group].Update(els);
                 _counts[group] = els.Count;
                 els.ForEach(x => x.Validate(_viewport, _renderer));
             }
             else if (_counts[group] != els.Count || els.Any(x => x.RequiresValidation(_viewport, _renderer)))
             {
-                _arrays[group].Update(els);
+                _lists[group].Update(els);
                 _counts[group] = els.Count;
                 els.ForEach(x => x.Validate(_viewport, _renderer));
             }
@@ -69,11 +69,11 @@ namespace Sledge.Rendering.OpenGL.Arrays
 
         public void Dispose()
         {
-            foreach (var array in _arrays.Values)
+            foreach (var array in _lists.Values)
             {
                 array.Dispose();
             }
-            _arrays.Clear();
+            _lists.Clear();
         }
     }
 }
