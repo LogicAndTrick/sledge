@@ -367,13 +367,21 @@ namespace Sledge.Editor.UI
             {
                 new Position(new Vector3(0.5f, 0.5f, 0)) { Normalised = true, Offset = new Vector3(-5, 0, 0) },
                 new Position(new Vector3(0.5f, 0.5f, 0)) { Normalised = true, Offset = new Vector3(+5, 0, 0) },
-            });
+            })
+            {
+                Viewport = Viewport.Viewport,
+                Smooth = false
+            };
 
             var line2 = new LineElement(PositionType.Screen, Color.White, new List<Position>
             {
                 new Position(new Vector3(0.5f, 0.5f, 0)) { Normalised = true, Offset = new Vector3(0, -5, 0) },
                 new Position(new Vector3(0.5f, 0.5f, 0)) { Normalised = true, Offset = new Vector3(0, +5, 0) },
-            });
+            })
+            {
+                Viewport = Viewport.Viewport,
+                Smooth = false
+            };
 
             DocumentManager.CurrentDocument.SceneManager.AddTemporaryObject(this, line1);
             DocumentManager.CurrentDocument.SceneManager.AddTemporaryObject(this, line2);

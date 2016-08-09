@@ -25,7 +25,7 @@ namespace Sledge.Editor.Tools.BrushTool
     public class BrushTool : BaseDraggableTool
     {
         private bool _updatePreview;
-        private List<Face> _preview;
+        private List<Sledge.Rendering.Scenes.Renderables.Face> _preview;
         private BoxDraggableState box;
         //private BrushPropertiesControl _propertiesControl;
 
@@ -56,6 +56,9 @@ namespace Sledge.Editor.Tools.BrushTool
                 var gs = Document.Map.GridSpacing;
                 box.RememberedDimensions = new Box(Coordinate.Zero, new Coordinate(gs, gs, gs));
             }
+
+            Mediator.Subscribe(EditorMediator.TextureSelected, this);
+
             _updatePreview = true;
             base.ToolSelected(preventHistory);
         }
@@ -63,8 +66,15 @@ namespace Sledge.Editor.Tools.BrushTool
         public override void ToolDeselected(bool preventHistory)
         {
             BrushManager.ValuesChanged -= ValuesChanged;
+            Mediator.UnsubscribeAll(this);
             _updatePreview = false;
             base.ToolDeselected(preventHistory);
+        }
+
+        private void TextureSelected(TextureItem texture)
+        {
+            _updatePreview = true;
+            Invalidate();
         }
 
         private void ValuesChanged(IBrush brush)
@@ -174,22 +184,32 @@ namespace Sledge.Editor.Tools.BrushTool
             box.State.Action = BoxAction.Idle;
         }
 
+        private List<Sledge.Rendering.Scenes.Renderables.Face> GetPreview()
+        {
+            if (_updatePreview)
+            {
+                var bbox = new Box(box.State.Start, box.State.End);
+                var brush = GetBrush(bbox, new IDGenerator()).FindAll();
+                var converted = brush.Select(x => MapObjectConverter.Convert(Document, x)).Where(x => x != null);
+                var objects = converted.SelectMany(x => x.SceneObjects.Values).ToList();
+                _preview = objects.OfType<Sledge.Rendering.Scenes.Renderables.Face>().ToList();
+                foreach (var o in _preview)
+                {
+                    o.AccentColor = Color.Turquoise;
+                    o.TintColor = Color.FromArgb(64, Color.Turquoise);
+                }
+            }
+            _updatePreview = false;
+            return _preview ?? new List<Sledge.Rendering.Scenes.Renderables.Face>();
+        }
+
         protected override IEnumerable<SceneObject> GetSceneObjects()
         {
             var list = base.GetSceneObjects().ToList();
 
             if (box.State.Action != BoxAction.Idle)
             {
-                var bbox = new Box(box.State.Start, box.State.End);
-                var brush = GetBrush(bbox, new IDGenerator()).FindAll();
-                var converted = brush.Select(x => MapObjectConverter.Convert(Document, x)).Where(x => x != null);
-                var objects = converted.SelectMany(x => x.SceneObjects.Values).ToList();
-                foreach (var o in objects.OfType<Sledge.Rendering.Scenes.Renderables.Face>())
-                {
-                    o.AccentColor = Color.Turquoise;
-                    o.TintColor = Color.FromArgb(64, Color.Turquoise);
-                }
-                list.AddRange(objects);
+                list.AddRange(GetPreview());
             }
 
             return list;

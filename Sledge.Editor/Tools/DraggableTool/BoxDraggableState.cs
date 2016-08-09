@@ -151,7 +151,8 @@ namespace Sledge.Editor.Tools.DraggableTool
                     var verts = face.Select(x => new Position(x.ToVector3())).ToList();
                     yield return new LineElement(PositionType.World, GetRenderBoxColour(), verts)
                     {
-                        Stippled = Stippled
+                        Stippled = Stippled,
+                        DepthTested = true
                     };
                 }
             }
