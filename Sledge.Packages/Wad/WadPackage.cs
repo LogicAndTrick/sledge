@@ -28,7 +28,7 @@ namespace Sledge.Packages.Wad
             {
                 var sig = br.ReadFixedLengthString(Encoding.ASCII, 4);
                 if (sig != Signature) throw new PackageException("Unknown package signature: Expected '" + Signature + "', got '" + sig + "'.");
-
+                
                 NumTextures = br.ReadUInt32();
                 LumpOffset = br.ReadUInt32();
 
@@ -52,6 +52,8 @@ namespace Sledge.Packages.Wad
 
         private void ReadTextureEntries(BinaryReader br)
         {
+            var names = new HashSet<string>();
+
             var validTypes = Enum.GetValues(typeof (WadEntryType)).OfType<WadEntryType>().Select(x => (byte) x).ToArray();
             br.BaseStream.Position = LumpOffset;
             for (int i = 0; i < NumTextures; i++)
@@ -65,14 +67,16 @@ namespace Sledge.Packages.Wad
                 var name = br.ReadFixedLengthString(Encoding.ASCII, 16).ToLowerInvariant();
 
                 if (!validTypes.Contains(type)) continue; // Skip unsupported types
-                if (Entries.Any(x => x.Name == name)) continue; // Don't add duplicates
+                if (names.Contains(name)) continue; // Don't add duplicates
+
+                names.Add(name);
                 Entries.Add(new WadEntry(this, name, (WadEntryType) type, offset, compressionType, compressedLength, fullLength));
             }
         }
 
         private void SetAdditionalEntryData(BinaryReader br)
         {
-            foreach (var wadEntry in Entries)
+            foreach (var wadEntry in Entries.OrderBy(x => x.Offset))
             {
                 br.BaseStream.Position = wadEntry.Offset;
                 SetEntryData(wadEntry, br);

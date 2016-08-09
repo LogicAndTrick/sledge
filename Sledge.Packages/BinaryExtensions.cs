@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -21,13 +22,13 @@ namespace Sledge.Packages
 
         public static string ReadNullTerminatedString(this BinaryReader br)
         {
-            var str = "";
+            var str = new StringBuilder();
             char c;
             while ((c = br.ReadChar()) != 0)
             {
-                str += c;
+                str.Append(c);
             }
-            return str;
+            return str.ToString();
         }
 
         public static void WriteNullTerminatedString(this BinaryWriter bw, string str)

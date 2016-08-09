@@ -61,10 +61,10 @@ namespace Sledge.Packages.Vpk
                         break;
                     case 2:
                         HeaderLength = 28;
-                        br.ReadInt32(); // Unknown1
-                        var footerLength = br.ReadUInt32();
-                        br.ReadInt32(); // Unknown3
-                        br.ReadInt32(); // Unknown4
+                        var dataLength = br.ReadInt32();
+                        var archiveMd5Length = br.ReadUInt32();
+                        var fileMd5Length = br.ReadInt32();
+                        var signatureLength = br.ReadInt32();
                         break;
                     default:
                         throw new PackageException("Unknown version number: Expected 1 or 2, got " + Version + ".");
