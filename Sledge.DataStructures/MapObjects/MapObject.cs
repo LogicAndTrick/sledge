@@ -130,7 +130,7 @@ namespace Sledge.DataStructures.MapObjects
             o.ClassName = ClassName;
             o.Visgroups.AddRange(Visgroups);
             o.AutoVisgroups.AddRange(AutoVisgroups);
-            o.Hierarchy.SetParent(Parent);
+            o.Hierarchy.Parent = Parent;
             o.Colour = Colour;
             o.IsSelected = IsSelected;
             o.IsCodeHidden = IsCodeHidden;
@@ -163,7 +163,7 @@ namespace Sledge.DataStructures.MapObjects
             ClassName = o.ClassName;
             Visgroups.AddRange(o.Visgroups);
             AutoVisgroups.AddRange(o.AutoVisgroups);
-            Hierarchy.SetParent(o.Parent);
+            Hierarchy.Parent = o.Parent;
             Colour = o.Colour;
             IsSelected = o.IsSelected;
             IsCodeHidden = o.IsCodeHidden;
@@ -510,7 +510,7 @@ namespace Sledge.DataStructures.MapObjects
         protected class HierarchyInfo
         {
             private readonly MapObject _self;
-            public MapObject Parent { get; private set; }
+            public MapObject Parent { get; set; }
             private HashSet<long> DescendantIDs { get; set; }
             private Dictionary<long, MapObject> Children { get; set; }
 

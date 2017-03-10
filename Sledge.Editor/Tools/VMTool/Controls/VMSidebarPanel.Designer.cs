@@ -40,19 +40,19 @@
             // 
             this.ButtonLayoutPanel.AutoSize = true;
             this.ButtonLayoutPanel.Dock = System.Windows.Forms.DockStyle.Top;
-            this.ButtonLayoutPanel.Location = new System.Drawing.Point(5, 5);
+            this.ButtonLayoutPanel.Location = new System.Drawing.Point(2, 2);
             this.ButtonLayoutPanel.Name = "ButtonLayoutPanel";
             this.ButtonLayoutPanel.Padding = new System.Windows.Forms.Padding(0, 0, 0, 5);
-            this.ButtonLayoutPanel.Size = new System.Drawing.Size(210, 5);
+            this.ButtonLayoutPanel.Size = new System.Drawing.Size(197, 5);
             this.ButtonLayoutPanel.TabIndex = 7;
             // 
             // ControlPanel
             // 
             this.ControlPanel.AutoSize = true;
             this.ControlPanel.Dock = System.Windows.Forms.DockStyle.Top;
-            this.ControlPanel.Location = new System.Drawing.Point(5, 10);
+            this.ControlPanel.Location = new System.Drawing.Point(2, 7);
             this.ControlPanel.Name = "ControlPanel";
-            this.ControlPanel.Size = new System.Drawing.Size(210, 19);
+            this.ControlPanel.Size = new System.Drawing.Size(197, 5);
             this.ControlPanel.TabIndex = 10;
             this.ControlPanel.TabStop = false;
             // 
@@ -61,16 +61,16 @@
             this.panel1.Controls.Add(this.ResetButton);
             this.panel1.Controls.Add(this.DeselectAllButton);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panel1.Location = new System.Drawing.Point(5, 29);
+            this.panel1.Location = new System.Drawing.Point(2, 12);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(210, 34);
+            this.panel1.Size = new System.Drawing.Size(197, 34);
             this.panel1.TabIndex = 11;
             // 
             // ResetButton
             // 
-            this.ResetButton.Location = new System.Drawing.Point(107, 6);
+            this.ResetButton.Location = new System.Drawing.Point(92, 6);
             this.ResetButton.Name = "ResetButton";
-            this.ResetButton.Size = new System.Drawing.Size(100, 23);
+            this.ResetButton.Size = new System.Drawing.Size(95, 23);
             this.ResetButton.TabIndex = 6;
             this.ResetButton.Text = "Reset to Original";
             this.ResetButton.UseVisualStyleBackColor = true;
@@ -80,7 +80,7 @@
             // 
             this.DeselectAllButton.Location = new System.Drawing.Point(3, 6);
             this.DeselectAllButton.Name = "DeselectAllButton";
-            this.DeselectAllButton.Size = new System.Drawing.Size(100, 23);
+            this.DeselectAllButton.Size = new System.Drawing.Size(83, 23);
             this.DeselectAllButton.TabIndex = 5;
             this.DeselectAllButton.Text = "Deselect All";
             this.DeselectAllButton.UseVisualStyleBackColor = true;
@@ -95,8 +95,8 @@
             this.Controls.Add(this.ControlPanel);
             this.Controls.Add(this.ButtonLayoutPanel);
             this.Name = "VMSidebarPanel";
-            this.Padding = new System.Windows.Forms.Padding(5);
-            this.Size = new System.Drawing.Size(220, 68);
+            this.Padding = new System.Windows.Forms.Padding(2);
+            this.Size = new System.Drawing.Size(201, 68);
             this.panel1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();

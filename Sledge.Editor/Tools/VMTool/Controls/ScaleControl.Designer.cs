@@ -39,7 +39,7 @@
             // button6
             // 
             this.button6.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.button6.Location = new System.Drawing.Point(150, -166);
+            this.button6.Location = new System.Drawing.Point(148, -168);
             this.button6.Name = "button6";
             this.button6.Size = new System.Drawing.Size(48, 23);
             this.button6.TabIndex = 12;
@@ -53,7 +53,7 @@
             0,
             0,
             0});
-            this.DistanceValue.Location = new System.Drawing.Point(103, 5);
+            this.DistanceValue.Location = new System.Drawing.Point(94, 2);
             this.DistanceValue.Maximum = new decimal(new int[] {
             10000,
             0,
@@ -77,7 +77,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(3, 7);
+            this.label4.Location = new System.Drawing.Point(-1, 4);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(94, 13);
             this.label4.TabIndex = 9;
@@ -85,7 +85,7 @@
             // 
             // ResetDistanceButton
             // 
-            this.ResetDistanceButton.Location = new System.Drawing.Point(154, 3);
+            this.ResetDistanceButton.Location = new System.Drawing.Point(145, 0);
             this.ResetDistanceButton.Name = "ResetDistanceButton";
             this.ResetDistanceButton.Size = new System.Drawing.Size(50, 23);
             this.ResetDistanceButton.TabIndex = 14;
@@ -95,7 +95,7 @@
             // 
             // ResetOriginButton
             // 
-            this.ResetOriginButton.Location = new System.Drawing.Point(59, 31);
+            this.ResetOriginButton.Location = new System.Drawing.Point(55, 28);
             this.ResetOriginButton.Name = "ResetOriginButton";
             this.ResetOriginButton.Size = new System.Drawing.Size(75, 23);
             this.ResetOriginButton.TabIndex = 15;
@@ -113,7 +113,7 @@
             this.Controls.Add(this.DistanceValue);
             this.Controls.Add(this.label4);
             this.Name = "ScaleControl";
-            this.Size = new System.Drawing.Size(207, 61);
+            this.Size = new System.Drawing.Size(198, 61);
             ((System.ComponentModel.ISupportInitialize)(this.DistanceValue)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();

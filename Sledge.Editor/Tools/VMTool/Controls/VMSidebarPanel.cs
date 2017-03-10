@@ -63,6 +63,7 @@ namespace Sledge.Editor.Tools.VMTool.Controls
                 //Appearance = Appearance.Button,
                 AutoSize = true,
                 //Size = new Size(110, 17)
+                Margin = new Padding(1)
             };
             rdo.Click += (sender, e) => SelectTool(tool);
             ButtonLayoutPanel.Controls.Add(rdo);
