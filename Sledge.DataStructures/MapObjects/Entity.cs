@@ -77,7 +77,7 @@ namespace Sledge.DataStructures.MapObjects
 
         public override void UpdateBoundingBox(bool cascadeToParent = true)
         {
-            if (GameData == null && !Children.Any())
+            if (GameData == null && !HasChildren)
             {
                 var sub = new Coordinate(-16, -16, -16);
                 var add = new Coordinate(16, 16, 16);
@@ -108,7 +108,7 @@ namespace Sledge.DataStructures.MapObjects
                 }
                 BoundingBox = new Box(Origin + sub, Origin + add);
             }
-            else if (Children.Any())
+            else if (HasChildren)
             {
                 BoundingBox = new Box(GetChildren().SelectMany(x => new[] {x.BoundingBox.Start, x.BoundingBox.End}));
             }
@@ -139,7 +139,7 @@ namespace Sledge.DataStructures.MapObjects
         public IEnumerable<Face> GetBoxFaces()
         {
             var faces = new List<Face>();
-            if (Children.Any()) return faces;
+            if (HasChildren) return faces;
 
             var box = BoundingBox.GetBoxFaces();
             var dummySolid = new Solid(-1)
