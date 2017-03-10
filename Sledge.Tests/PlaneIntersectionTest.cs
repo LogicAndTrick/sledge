@@ -95,7 +95,7 @@ namespace Sledge.Tests
                 var solid = new Solid(idg.GetNextObjectID());
                 foreach (var polygon in polys)
                 {
-                    var face = new Face(idg.GetNextFaceID()) {Plane = polygon.Plane};
+                    var face = new Face(idg.GetNextFaceID()) {Plane = polygon.GetPlane() };
                     face.Vertices.AddRange(polygon.Vertices.Select(x => new Vertex(x, face)));
                     face.UpdateBoundingBox();
                     face.AlignTextureToWorld();

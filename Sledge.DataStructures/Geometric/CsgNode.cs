@@ -77,7 +77,7 @@ namespace Sledge.DataStructures.Geometric
         public void Build(List<Polygon> polygons)
         {
             if (polygons.Count == 0) return;
-            if (Plane == null) Plane = polygons[0].Plane.Clone();
+            if (Plane == null) Plane = polygons[0].GetPlane().Clone();
             var front = new List<Polygon>();
             var back = new List<Polygon>();
             foreach (var polygon in polygons)

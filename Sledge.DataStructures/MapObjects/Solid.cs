@@ -207,7 +207,7 @@ namespace Sledge.DataStructures.MapObjects
                 }
 
                 // The final polygon is the face
-                var face = new Face(generator.GetNextFaceID()) { Plane = poly.Plane , Parent = solid };
+                var face = new Face(generator.GetNextFaceID()) { Plane = poly.GetPlane() , Parent = solid };
                 face.Vertices.AddRange(poly.Vertices.Select(x => new Vertex(x.Round(2), face))); // Round vertices a bit for sanity
                 face.UpdateBoundingBox();
                 face.AlignTextureToWorld();

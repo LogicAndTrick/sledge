@@ -126,7 +126,7 @@ namespace Sledge.Editor.Tools
                     else if (e.Button == MouseButtons.Left)
                     {
                         ExpandBase(_intersection);
-                        _volumePlane = new Plane(_base.Vertices[1], _base.Vertices[2], _base.Vertices[2] + _base.Plane.Normal);
+                        _volumePlane = new Plane(_base.Vertices[1], _base.Vertices[2], _base.Vertices[2] + _base.GetPlane().Normal);
                         _state = SketchState.DrawingVolume;
                     }
                     break;
@@ -139,7 +139,7 @@ namespace Sledge.Editor.Tools
                     else if (e.Button == MouseButtons.Left)
                     {
                         var diff = _intersection - _base.Vertices[2];
-                        var sign = _base.Plane.OnPlane(_intersection) < 0 ? -1 : 1;
+                        var sign = _base.GetPlane().OnPlane(_intersection) < 0 ? -1 : 1;
                         _depth = diff.VectorMagnitude() * sign;
                         CreateBrush(_base, _depth);
                         _base = null;
@@ -209,7 +209,7 @@ namespace Sledge.Editor.Tools
 
         private void ExpandBase(Coordinate endPoint)
         {
-            var axis = _base.Plane.GetClosestAxisToNormal();
+            var axis = _base.GetPlane().GetClosestAxisToNormal();
             var start = _base.Vertices[0] - _base.Vertices[0].ComponentMultiply(axis);
             var end = endPoint - endPoint.ComponentMultiply(axis);
             var diff = end - start;
@@ -231,9 +231,9 @@ namespace Sledge.Editor.Tools
             }
             var linex = new Line(start + addx, start + addx + axis);
             var liney = new Line(start + addy, start + addy + axis);
-            _base.Vertices[1] = _base.Plane.GetIntersectionPoint(linex, true, true);
+            _base.Vertices[1] = _base.GetPlane().GetIntersectionPoint(linex, true, true);
             _base.Vertices[2] = endPoint;
-            _base.Vertices[3] = _base.Plane.GetIntersectionPoint(liney, true, true);
+            _base.Vertices[3] = _base.GetPlane().GetIntersectionPoint(liney, true, true);
         }
 
         public override void MouseMove(MapViewport viewport, ViewportEvent e)
@@ -254,8 +254,8 @@ namespace Sledge.Editor.Tools
                     break;
                 case SketchState.DrawingVolume:
                     var diff = _intersection - _base.Vertices[2];
-                    diff = diff.ComponentMultiply(_base.Plane.GetClosestAxisToNormal());
-                    var sign = _base.Plane.OnPlane(_intersection) < 0 ? -1 : 1;
+                    diff = diff.ComponentMultiply(_base.GetPlane().GetClosestAxisToNormal());
+                    var sign = _base.GetPlane().OnPlane(_intersection) < 0 ? -1 : 1;
                     _depth = diff.VectorMagnitude() * sign;
                     break;
                 default:
@@ -340,15 +340,15 @@ namespace Sledge.Editor.Tools
         {
             if (_state == SketchState.None || _state == SketchState.Ready || _base == null) yield break;
 
-            var b = new Face(0) {Plane = _base.Plane};
+            var b = new Face(0) {Plane = _base.GetPlane()};
             b.Vertices.AddRange(_base.Vertices.Select(x => new Vertex(x, b)));
             b.UpdateBoundingBox();
             yield return b;
 
             if (_state != SketchState.DrawingVolume) yield break;
 
-            var t = new Face(0) { Plane = new Plane(_base.Plane.Normal, _base.Plane.PointOnPlane + _base.Plane.Normal * _depth) };
-            t.Vertices.AddRange(_base.Vertices.Select(x => new Vertex(x + _base.Plane.Normal * _depth, t)));
+            var t = new Face(0) { Plane = new Plane(_base.GetPlane().Normal, _base.GetPlane().PointOnPlane + _base.GetPlane().Normal * _depth) };
+            t.Vertices.AddRange(_base.Vertices.Select(x => new Vertex(x + _base.GetPlane().Normal * _depth, t)));
             t.UpdateBoundingBox();
             yield return t;
         }

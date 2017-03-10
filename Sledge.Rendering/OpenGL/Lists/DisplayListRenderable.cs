@@ -6,6 +6,7 @@ using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Interfaces;
+using Sledge.Rendering.Internal;
 using Sledge.Rendering.Materials;
 using Sledge.Rendering.Scenes.Renderables;
 
@@ -88,10 +89,10 @@ namespace Sledge.Rendering.OpenGL.Lists
             GL.MultMatrix(ref selTransform);
 
             // Polygons
-            GL.CallList(options.RenderFacePolygonTextures ? TransformedForcedPolygonsFlat : TransformedForcedPolygonsTextured);
+            GL.CallList(options.RenderFacePolygonTextures ? TransformedForcedPolygonsTextured : TransformedForcedPolygonsFlat);
             if (options.RenderFacePolygons)
             {
-                GL.CallList(options.RenderFacePolygonTextures ? TransformedPolygonsFlat : TransformedPolygonsTextured);
+                GL.CallList(options.RenderFacePolygonTextures ? TransformedPolygonsTextured : TransformedPolygonsFlat);
             }
 
             // Wireframe
@@ -107,7 +108,130 @@ namespace Sledge.Rendering.OpenGL.Lists
 
         public void RenderTransparent(DisplayListRenderer renderer, IViewport viewport)
         {
+            var camera = viewport.Camera;
 
+            var vpMatrix = camera.GetViewportMatrix(viewport.Control.Width, viewport.Control.Height);
+            var camMatrix = camera.GetCameraMatrix();
+            var mvMatrix = camera.GetModelMatrix();
+
+            GL.MatrixMode(MatrixMode.Projection);
+            GL.LoadMatrix(ref vpMatrix);
+
+            GL.MatrixMode(MatrixMode.Modelview);
+            GL.LoadMatrix(ref camMatrix);
+            GL.MultMatrix(ref mvMatrix);
+
+            Matrix4 modelView;
+            GL.GetFloat(GetPName.ModelviewMatrix, out modelView);
+
+            var eye = camera.EyeLocation;
+            var options = camera.RenderOptions;
+
+            GL.DepthMask(false);
+
+            string last = null;
+            var lastAcc = true;
+
+            var sorted =
+                from obj in SecondPassItems
+                orderby (eye - obj.Origin).LengthSquared descending
+                select obj;
+
+            foreach (var obj in sorted)
+            {
+                if (obj.Material != null)
+                {
+                    var mat = obj.Material.UniqueIdentifier;
+                    if (mat != last) renderer.Materials.Bind(mat);
+                    last = mat;
+                }
+                else
+                {
+                    renderer.Materials.Bind("Flat:Internal::White");
+                }
+
+                // 
+                // var acc = !options.RenderFacePolygonTextures && !(subset.Instance is Sprite);
+                // if (acc != lastAcc) shader.UseAccentColor = acc;
+                // lastAcc = acc;
+
+                if (obj is Face)
+                {
+                    var f = obj as Face;
+                    if ((options.RenderFacePolygons && obj.RenderFlags.HasFlag(RenderFlags.Polygon))
+                        || obj.ForcedRenderFlags.HasFlag(RenderFlags.Polygon))
+                    {
+                        if (options.RenderFacePolygonTextures) RenderFacesTextured(renderer, new[] {f});
+                        else if (options.RenderFacePolygons) RenderFacesFlat(renderer, new[] {f});
+                    }
+                    if ((options.RenderFaceWireframe && obj.RenderFlags.HasFlag(RenderFlags.Wireframe))
+                        || obj.ForcedRenderFlags.HasFlag(RenderFlags.Wireframe))
+                    {
+                        RenderWireframe(renderer, new[] { obj });
+                    }
+                    if ((options.RenderFacePoints && obj.RenderFlags.HasFlag(RenderFlags.Point))
+                        || obj.ForcedRenderFlags.HasFlag(RenderFlags.Point))
+                    {
+                        RenderPoints(renderer, new[] { obj });
+                    }
+                }
+                else if (obj is Line)
+                {
+                    if ((options.RenderLineWireframe && obj.RenderFlags.HasFlag(RenderFlags.Wireframe))
+                        || obj.ForcedRenderFlags.HasFlag(RenderFlags.Wireframe))
+                    {
+                        RenderWireframe(renderer, new[] {obj});
+                    }
+                    if ((options.RenderLinePoints && obj.RenderFlags.HasFlag(RenderFlags.Point))
+                        || obj.ForcedRenderFlags.HasFlag(RenderFlags.Point))
+                    {
+                        RenderPoints(renderer, new[] {obj});
+                    }
+                }
+                else if (obj is Sprite)
+                {
+                    if ((options.RenderFacePolygons && obj.RenderFlags.HasFlag(RenderFlags.Polygon))
+                        || obj.ForcedRenderFlags.HasFlag(RenderFlags.Polygon))
+                    {
+                        var sprite = obj as Sprite;
+
+                        var w = sprite.Width / 2;
+                        var h = sprite.Height / 2;
+                        var verts = new[]
+                        {
+                            new Vertex(new Vector3(-w, -h, 0), 0, 1),
+                            new Vertex(new Vector3(+w, -h, 0), 1, 1),
+                            new Vertex(new Vector3(+w, +h, 0), 1, 0),
+                            new Vertex(new Vector3(-w, +h, 0), 0, 0),
+                        };
+                        var face = new Face(sprite.Material, new List<Vertex>(verts))
+                        {
+                            ForcedRenderFlags = sprite.ForcedRenderFlags,
+                            RenderFlags = sprite.RenderFlags,
+                            CameraFlags = sprite.CameraFlags,
+                            AccentColor = sprite.AccentColor,
+                            IsSelected = sprite.IsSelected,
+                            IsVisible = sprite.IsVisible,
+                            PointColor = sprite.PointColor,
+                            TintColor = sprite.TintColor
+                        };
+
+                        var billboardMatrix = sprite.GetBillboardMatrix(eye);
+                        GL.MultMatrix(ref billboardMatrix);
+
+                        if (options.RenderFacePolygonTextures) RenderFacesTextured(renderer, new[] {face});
+                        else if (options.RenderFacePolygons) RenderFacesFlat(renderer, new[] {face});
+                    }
+                }
+                else if (obj is Model)
+                {
+                    
+                }
+
+                GL.LoadMatrix(ref modelView);
+            }
+
+            GL.DepthMask(true);
         }
 
         public void Update(DisplayListRenderer renderer, IEnumerable<RenderableObject> data)

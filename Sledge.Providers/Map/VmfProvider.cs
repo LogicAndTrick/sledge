@@ -165,7 +165,7 @@ namespace Sledge.Providers.Map
             var id = side.PropertyLong("id");
             if (id == 0) id = generator.GetNextFaceID();
             var dispinfo = side.GetChildren("dispinfo").FirstOrDefault();
-            var ret = dispinfo != null ? ReadDisplacement(id, dispinfo) : new Face(id);
+            var ret = dispinfo != null && false ? ReadDisplacement(id, dispinfo) : new Face(id);
             // id, plane, material, uaxis, vaxis, rotation, lightmapscale, smoothing_groups
             var uaxis = side.PropertyTextureAxis("uaxis");
             var vaxis = side.PropertyTextureAxis("vaxis");
