@@ -39,7 +39,7 @@ namespace Sledge.DataStructures.Models
                     from mesh in GetActiveMeshes()
                     from vertex in mesh.Vertices
                     let transform = transforms[vertex.BoneWeightings.First().Bone.BoneIndex]
-                    let cf = Vector3.Transform(vertex.Location, transform)
+                    let cf = Vector3.Transform(vertex.Location, new Matrix3(transform))
                     select new Coordinate((decimal) cf.X, (decimal) cf.Y, (decimal) cf.Z);
                 _boundingBox = new Box(list);
             }
@@ -189,8 +189,8 @@ namespace Sledge.DataStructures.Models
                     // so we set the shift values to zero after inverting
                     var inv = transform.Inverted();
                     inv.Row3 = Vector4.UnitW;
-                    up = Vector3.Transform(up, inv);
-                    right = Vector3.Transform(right, inv);
+                    up = Vector3.Transform(up, new Matrix3(inv));
+                    right = Vector3.Transform(right, new Matrix3(inv));
 
                     v.TextureU = (Vector3.Dot(v.Normal, right) + 1) * 32;
                     v.TextureV = (Vector3.Dot(v.Normal, up) + 1) * 32;

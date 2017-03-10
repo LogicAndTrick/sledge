@@ -68,6 +68,7 @@ namespace Sledge.Rendering.OpenGL
 
         public void Run()
         {
+            Toolkit.Init();
             MakeCurrent();
             _stopwatch.Start();
             UpdateTimer.Start();
