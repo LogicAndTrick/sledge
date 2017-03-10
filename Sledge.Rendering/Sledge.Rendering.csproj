@@ -88,13 +88,6 @@
     <Compile Include="OpenGL\Arrays\OctreeRenderableBase.cs" />
     <Compile Include="OpenGL\Arrays\PolygonProperties.cs" />
     <Compile Include="OpenGL\Arrays\WireframeProperties.cs" />
-    <Compile Include="OpenGL\DisplayListRenderer.cs" />
-    <Compile Include="OpenGL\Lists\DisplayList.cs" />
-    <Compile Include="OpenGL\Lists\DisplayListRenderable.cs" />
-    <Compile Include="OpenGL\Lists\ElementListCollection.cs" />
-    <Compile Include="OpenGL\Lists\ElementList.cs" />
-    <Compile Include="OpenGL\Lists\OctreeDisplayList.cs" />
-    <Compile Include="OpenGL\Lists\PartitionedDisplayList.cs" />
     <Compile Include="OpenGL\ModelStorage.cs" />
     <Compile Include="OpenGL\OpenGLRendererSettings.cs" />
     <Compile Include="OpenGL\Shaders\ModelShader.cs" />

@@ -16,7 +16,6 @@ namespace Sledge.Editor.Rendering
         static SceneManager()
         {
             var renderer = new OpenGLRenderer();
-            //var renderer = new DisplayListRenderer();
             Engine = new Engine(renderer);
             UpdateRendererSettings();
         }
