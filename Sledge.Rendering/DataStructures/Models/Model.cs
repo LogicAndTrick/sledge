@@ -24,6 +24,7 @@ namespace Sledge.Rendering.DataStructures.Models
         private long _lastFrame = -1;
         public void Update(Frame frame)
         {
+            return;
             if (Animation == null || Animation.Frames.Count <= 1) return;
             var millisecondsPerFrame = 1000f / Animation.FramesPerSecond;
 
