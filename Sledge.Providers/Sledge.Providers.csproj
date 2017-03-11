@@ -35,6 +35,10 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="LogicAndTrick.Gimme, Version=1.1.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\LogicAndTrick.Gimme.1.1.1\lib\net40\LogicAndTrick.Gimme.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="OpenTK, Version=2.0.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
       <HintPath>..\packages\OpenTK.2.0.0\lib\net20\OpenTK.dll</HintPath>
       <Private>True</Private>
@@ -59,6 +63,7 @@
     <Compile Include="ProviderException.cs" />
     <Compile Include="ProviderNotFoundException.cs" />
     <Compile Include="Map\RmfProvider.cs" />
+    <Compile Include="Texture2\Texture.cs" />
     <Compile Include="Texture\NullTextureStreamSource.cs" />
     <Compile Include="Texture\Pk3Provider.cs" />
     <Compile Include="Texture\TextureSubItemType.cs" />
@@ -106,6 +111,7 @@
     <None Include="OpenTK.dll.config" />
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

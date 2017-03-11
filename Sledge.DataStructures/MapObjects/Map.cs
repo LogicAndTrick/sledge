@@ -220,9 +220,7 @@ namespace Sledge.DataStructures.MapObjects
                     var ent = (Entity) obj;
                     if (ent.GameData == null || !String.Equals(ent.GameData.Name, ent.EntityData.Name, StringComparison.InvariantCultureIgnoreCase))
                     {
-                        var gd =
-                            gameData.Classes.FirstOrDefault(
-                                x => String.Equals(x.Name, ent.EntityData.Name, StringComparison.CurrentCultureIgnoreCase) && x.ClassType != ClassType.Base);
+                        var gd = gameData.Classes.FirstOrDefault(x => String.Equals(x.Name, ent.EntityData.Name, StringComparison.CurrentCultureIgnoreCase) && x.ClassType != ClassType.Base);
                         ent.GameData = gd;
                         ent.UpdateBoundingBox();
                     }
@@ -233,11 +231,6 @@ namespace Sledge.DataStructures.MapObjects
                     var disp = HideDisplacementSolids && s.Faces.Any(x => x is Displacement);
                     s.Faces.ForEach(f =>
                     {
-                        if (f.Texture.Size.IsEmpty)
-                        {
-                            f.Texture.Size = textureAccessor(f.Texture.Name.ToLowerInvariant());
-                            f.CalculateTextureCoordinates(true);
-                        }
                         if (disp && !(f is Displacement))
                         {
                             f.Opacity = 0;

@@ -77,7 +77,7 @@ namespace Sledge.Editor.Brushes
                     Parent = solid,
                     Plane = new Plane(arr[0], arr[1], arr[2]),
                     Colour = solid.Colour,
-                    Texture = { Name = texture.Name, Size = texture.Size }
+                    Texture = { Name = texture.Name }
                 };
                 face.Vertices.AddRange(arr.Select(x => new Vertex(x, face)));
                 face.UpdateBoundingBox();

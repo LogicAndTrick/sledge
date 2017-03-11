@@ -8,13 +8,13 @@ namespace Sledge.DataStructures.Geometric
     [Serializable]
     public class Coordinate : ISerializable
     {
-        public readonly static Coordinate MaxValue = new Coordinate(Decimal.MaxValue, Decimal.MaxValue, Decimal.MaxValue);
-        public readonly static Coordinate MinValue = new Coordinate(Decimal.MinValue, Decimal.MinValue, Decimal.MinValue);
-        public readonly static Coordinate Zero = new Coordinate(0, 0, 0);
-        public readonly static Coordinate One = new Coordinate(1, 1, 1);
-        public readonly static Coordinate UnitX = new Coordinate(1, 0, 0);
-        public readonly static Coordinate UnitY = new Coordinate(0, 1, 0);
-        public readonly static Coordinate UnitZ = new Coordinate(0, 0, 1);
+        public static readonly Coordinate MaxValue = new Coordinate(Decimal.MaxValue, Decimal.MaxValue, Decimal.MaxValue);
+        public static readonly Coordinate MinValue = new Coordinate(Decimal.MinValue, Decimal.MinValue, Decimal.MinValue);
+        public static readonly Coordinate Zero = new Coordinate(0, 0, 0);
+        public static readonly Coordinate One = new Coordinate(1, 1, 1);
+        public static readonly Coordinate UnitX = new Coordinate(1, 0, 0);
+        public static readonly Coordinate UnitY = new Coordinate(0, 1, 0);
+        public static readonly Coordinate UnitZ = new Coordinate(0, 0, 1);
 
         #region X, Y, Z
         private decimal _z;

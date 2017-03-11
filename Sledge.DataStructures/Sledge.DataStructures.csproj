@@ -93,7 +93,7 @@
     <Compile Include="MapObjects\Pointfile.cs" />
     <Compile Include="MapObjects\Property.cs" />
     <Compile Include="MapObjects\Solid.cs" />
-    <Compile Include="MapObjects\TextureReference.cs" />
+    <Compile Include="MapObjects\TextureInfo.cs" />
     <Compile Include="MapObjects\Vertex.cs" />
     <Compile Include="MapObjects\Visgroup.cs" />
     <Compile Include="MapObjects\World.cs" />

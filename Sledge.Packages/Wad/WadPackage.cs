@@ -40,6 +40,38 @@ namespace Sledge.Packages.Wad
             }
         }
 
+        public static IEnumerable<string> GetEntryNames(FileInfo packageFile)
+        {
+            using (var br = new BinaryReader(packageFile.Open(FileMode.Open, FileAccess.Read, FileShare.ReadWrite)))
+            {
+                var sig = br.ReadFixedLengthString(Encoding.ASCII, 4);
+                if (sig != Signature) throw new PackageException("Unknown package signature: Expected '" + Signature + "', got '" + sig + "'.");
+
+                var numTextures = br.ReadUInt32();
+                var lumpOffset = br.ReadUInt32();
+
+                var validTypes = Enum.GetValues(typeof(WadEntryType)).OfType<WadEntryType>().Select(x => (byte)x).ToArray();
+                br.BaseStream.Position = lumpOffset;
+
+                for (var i = 0; i < numTextures; i++)
+                {
+                    br.BaseStream.Seek(12, SeekOrigin.Current);
+                    var type = br.ReadByte();
+
+                    if (!validTypes.Contains(type))
+                    {
+                        // Skip unsupported types
+                        br.BaseStream.Seek(19, SeekOrigin.Current);
+                    }
+                    else
+                    {
+                        br.BaseStream.Seek(3, SeekOrigin.Current);
+                        yield return br.ReadFixedLengthString(Encoding.ASCII, 16).ToLowerInvariant();
+                    }
+                }
+            }
+        }
+
         private void RemoveInvalidEntries()
         {
             Entries.RemoveAll(e => (e.PaletteDataOffset + e.PaletteSize * 3) - e.Offset > e.Length);

@@ -416,7 +416,6 @@ namespace Sledge.Editor.Tools.VMTool
                 foreach (var face in solid.Copy.Faces)
                 {
                     if (face.Vertices.Count >= 3) face.Plane = new Plane(face.Vertices[0].Location, face.Vertices[1].Location, face.Vertices[2].Location);
-                    face.CalculateTextureCoordinates(true);
                     face.UpdateBoundingBox();
                 }
             }

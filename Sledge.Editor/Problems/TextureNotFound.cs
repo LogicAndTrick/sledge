@@ -7,6 +7,7 @@ using Sledge.Editor.Actions.MapObjects.Operations;
 
 namespace Sledge.Editor.Problems
 {
+    /* todo fix this texture check
     public class TextureNotFound : IProblemCheck
     {
         public IEnumerable<Problem> Check(Map map, bool visibleOnly)
@@ -40,4 +41,5 @@ namespace Sledge.Editor.Problems
                                                    }, true);
         }
     }
+    */
 }

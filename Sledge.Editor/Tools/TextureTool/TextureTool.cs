@@ -99,7 +99,6 @@ namespace Sledge.Editor.Tools.TextureTool
             Action<Document, Face> action = (d, f) =>
             {
                 f.Texture.XShift = rand.Next(min, max + 1); // Upper bound is exclusive
-                f.CalculateTextureCoordinates(true);
             };
             Document.PerformAction("Randomise X shift values", new EditFace(Document.Selection.GetSelectedFaces(), action, false));
         }
@@ -112,7 +111,6 @@ namespace Sledge.Editor.Tools.TextureTool
             Action<Document, Face> action = (d, f) =>
             {
                 f.Texture.YShift = rand.Next(min, max + 1); // Upper bound is exclusive
-                f.CalculateTextureCoordinates(true);
             };
             Document.PerformAction("Randomise Y shift values", new EditFace(Document.Selection.GetSelectedFaces(), action, false));
         }
@@ -143,11 +141,25 @@ namespace Sledge.Editor.Tools.TextureTool
 
             if (justifymode == JustifyMode.Fit)
             {
-                action = (d, x) => x.FitTextureToPointCloud(cloud ?? new Cloud(x.Vertices.Select(y => y.Location)), tileX, tileY);
+                action = (d, x) =>
+                {
+                    var tex = d.GetTextureSize(x.Texture.Name);
+                    if (!tex.IsEmpty)
+                    {
+                        x.FitTextureToPointCloud(tex.Width, tex.Height, cloud ?? new Cloud(x.Vertices.Select(y => y.Location)), tileX, tileY);
+                    }
+                };
             }
             else
             {
-                action = (d, x) => x.AlignTextureWithPointCloud(cloud ?? new Cloud(x.Vertices.Select(y => y.Location)), boxAlignMode);
+                action = (d, x) =>
+                {
+                    var tex = d.GetTextureSize(x.Texture.Name);
+                    if (!tex.IsEmpty)
+                    {
+                        x.AlignTextureWithPointCloud(tex.Width, tex.Height, cloud ?? new Cloud(x.Vertices.Select(y => y.Location)), boxAlignMode);
+                    }
+                };
             }
 
             Document.PerformAction("Align texture", new EditFace(Document.Selection.GetSelectedFaces(), action, false));
@@ -158,8 +170,6 @@ namespace Sledge.Editor.Tools.TextureTool
             Action<Document, Face> action = (document, face) =>
                                       {
                                           face.Texture.Name = texture.Name;
-                                          face.Texture.Size = new Size(texture.Width, texture.Height);
-                                          face.CalculateTextureCoordinates(false);
                                       };
             // When the texture changes, the entire list needs to be regenerated, can't do a partial update.
             Document.PerformAction("Apply texture", new EditFace(Document.Selection.GetSelectedFaces(), action, true));
@@ -173,7 +183,6 @@ namespace Sledge.Editor.Tools.TextureTool
             {
                 if (align == AlignMode.Face) face.AlignTextureToFace();
                 else if (align == AlignMode.World) face.AlignTextureToWorld();
-                face.CalculateTextureCoordinates(false);
             };
 
             Document.PerformAction("Align texture", new EditFace(Document.Selection.GetSelectedFaces(), action, false));
@@ -190,7 +199,6 @@ namespace Sledge.Editor.Tools.TextureTool
                 if (!properties.DifferentXShiftValues) face.Texture.XShift = properties.XShift;
                 if (!properties.DifferentYShiftValues) face.Texture.YShift = properties.YShift;
                 if (!properties.DifferentRotationValues) face.SetTextureRotation(properties.Rotation);
-                face.CalculateTextureCoordinates(false);
             };
 
             Document.PerformAction("Modify texture properties", new EditFace(Document.Selection.GetSelectedFaces(), action, false));
@@ -244,7 +252,7 @@ namespace Sledge.Editor.Tools.TextureTool
 
             _form.SelectionChanged();
 
-            var selection = Document.Selection.GetSelectedFaces().OrderBy(x => x.Texture.Size.IsEmpty ? 1 : 0).FirstOrDefault();
+            var selection = Document.Selection.GetSelectedFaces().OrderBy(x => String.IsNullOrWhiteSpace(x.Texture.Name) ? 1 : 0).FirstOrDefault();
             if (selection != null)
             {
                 var itemToSelect = Document.TextureCollection.GetItem(selection.Texture.Name)
@@ -357,7 +365,6 @@ namespace Sledge.Editor.Tools.TextureTool
                         ac.Add(new EditFace(faces, (document, face) =>
                                                         {
                                                             face.Texture.Name = item.Name;
-                                                            face.Texture.Size = new Size(item.Width, item.Height);
                                                             if (behaviour == SelectBehaviour.ApplyWithValues && firstSelected != null)
                                                             {
                                                                 // Calculates the texture coordinates
@@ -370,10 +377,6 @@ namespace Sledge.Editor.Tools.TextureTool
                                                                 face.Texture.XShift = _form.CurrentProperties.XShift;
                                                                 face.Texture.YShift = _form.CurrentProperties.YShift;
                                                                 face.SetTextureRotation(_form.CurrentProperties.Rotation);
-                                                            }
-                                                            else
-                                                            {
-                                                                face.CalculateTextureCoordinates(true);
                                                             }
                                                         }, true));
                     }
@@ -394,7 +397,6 @@ namespace Sledge.Editor.Tools.TextureTool
                                                         face.Texture.XShift = face.Texture.UAxis.Dot(point);
                                                         face.Texture.YShift = face.Texture.VAxis.Dot(point);
                                                         face.Texture.Rotation = 0;
-                                                        face.CalculateTextureCoordinates(true);
                                                     }, false));
                     break;
                 default:

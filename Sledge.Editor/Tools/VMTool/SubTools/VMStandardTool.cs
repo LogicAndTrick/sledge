@@ -192,7 +192,6 @@ namespace Sledge.Editor.Tools.VMTool.SubTools
             };
             f.Vertices.AddRange(verts.Select(x => new Vertex(x, f)));
             f.UpdateBoundingBox();
-            f.CalculateTextureCoordinates(true);
             parent.Faces.Add(f);
         }
 
@@ -253,11 +252,7 @@ namespace Sledge.Editor.Tools.VMTool.SubTools
 
             var selected = GetVisiblePoints().Where(x => x.IsSelected).Distinct().SelectMany(x => x.GetStandardPointList()).ToList();
             selected.ForEach(x => x.DragMove(delta));
-
-            foreach (var face in selected.SelectMany(x => x.Vertices.Select(v => v.Parent)).Distinct())
-            {
-                face.CalculateTextureCoordinates(true);
-            }
+            
 
             foreach (var midpoint in selected.Select(x => x.Solid).Distinct().SelectMany(x => x.Points.Where(p => p.IsMidpoint)))
             {

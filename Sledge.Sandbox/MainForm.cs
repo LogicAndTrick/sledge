@@ -1,4 +1,9 @@
-﻿using System.Windows.Forms;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Windows.Forms;
+using LogicAndTrick.Gimme;
+using Sledge.Providers.Texture2;
 
 namespace Sledge.Sandbox
 {
@@ -7,6 +12,39 @@ namespace Sledge.Sandbox
         public MainForm()
         {
             InitializeComponent();
+
+            Gimme.Register(new WadTexturePackageProvider());
+            Gimme.Register(new VmtTexturePackageProvider());
+
+            Load += (sender, args) =>
+            {
+                Gimme.Fetch<TexturePackage>(
+                    @"D:\Github\sledge\_Resources\WAD",
+                    null,
+                    package =>
+                    {
+                        foreach (var item in package.Items.Take(1))
+                        {
+                            Console.WriteLine(item);
+                        }
+                    });
+                //var items = new List<TexturePackage>();
+                //Gimme.Fetch<TexturePackage>(
+                //    @"F:\Steam\SteamApps\common\Team Fortress 2\tf",
+                //    null,
+                //    package =>
+                //    {
+                //        items.Add(package);
+                //        //Console.WriteLine(package.Root + "/" + package.RelativePath + ": " + package.Items.Count + " items");
+                //    }).ContinueWith(x =>
+                //{
+                //    Console.WriteLine(items.Count + " packages loaded.");
+                //    foreach (var item in items.Take(10))
+                //    {
+                //        Console.WriteLine(item.Items.First());
+                //    }
+                //});
+            };
         }
     }
 }

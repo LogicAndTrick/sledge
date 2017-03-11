@@ -46,7 +46,6 @@ namespace Sledge.DataStructures.MapObjects
                 f.Parent = e;
                 e.Faces.Add(f);
                 f.UpdateBoundingBox();
-                f.CalculateTextureCoordinates(true);
             }
             CopyBase(e, generator);
             return e;
@@ -188,7 +187,6 @@ namespace Sledge.DataStructures.MapObjects
                     break;
                 }
             }
-            front.Faces.Union(back.Faces).ToList().ForEach(x => x.CalculateTextureCoordinates(true));
 
             return true;
         }

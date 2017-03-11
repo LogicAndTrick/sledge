@@ -276,33 +276,6 @@ namespace Sledge.DataStructures.MapObjects
             }
         }
 
-        public override void CalculateTextureCoordinates(bool minimizeTextureValues)
-        {
-            var list = new List<Vertex>();
-            foreach (var p in Points) list.Add(p.CurrentPosition);
-            list.ForEach(c => c.TextureU = c.TextureV = 0);
-            Vertices.ForEach(c => c.TextureU = c.TextureV = 0);
-
-            if (Texture.Size.IsEmpty) return;
-
-            var udiv = Texture.Size.Width * Texture.XScale;
-            var uadd = Texture.XShift / Texture.Size.Width;
-            var vdiv = Texture.Size.Height * Texture.YScale;
-            var vadd = Texture.YShift / Texture.Size.Height;
-
-            foreach (var v in Vertices)
-            {
-                v.TextureU = (v.Location.Dot(Texture.UAxis) / udiv) + uadd;
-                v.TextureV = (v.Location.Dot(Texture.VAxis) / vdiv) + vadd;
-            }
-
-            foreach (var v in list)
-            {
-                v.TextureU = (v.Location.Dot(Texture.UAxis) / udiv) + uadd;
-                v.TextureV = (v.Location.Dot(Texture.VAxis) / vdiv) + vadd;
-            }
-        }
-
         public override void UpdateBoundingBox()
         {
             var list = new List<Coordinate>();

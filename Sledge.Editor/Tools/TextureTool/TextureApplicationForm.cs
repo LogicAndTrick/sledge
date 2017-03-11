@@ -16,7 +16,7 @@ namespace Sledge.Editor.Tools.TextureTool
 {
     public partial class TextureApplicationForm : HotkeyForm
     {
-        public class CurrentTextureProperties : TextureReference
+        public class CurrentTextureProperties : TextureInfo
         {
             public bool DifferentXScaleValues { get; set; }
             public bool DifferentYScaleValues { get; set; }
@@ -174,7 +174,7 @@ namespace Sledge.Editor.Tools.TextureTool
 
         private readonly CurrentTextureProperties _currentTextureProperties;
         private Document _document;
-        public TextureReference CurrentProperties { get { return _currentTextureProperties; } }
+        public TextureInfo CurrentProperties { get { return _currentTextureProperties; } }
 
         public Documents.Document Document
         {

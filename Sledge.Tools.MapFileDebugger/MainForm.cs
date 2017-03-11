@@ -114,8 +114,6 @@ namespace Sledge.Tools.MapFileDebugger
                 {
                     var cnode = vnode.Nodes.Add("Vertex " + d + ": " + vertex.Location);
                     d++;
-                    cnode.Nodes.Add("Texture U: " + vertex.TextureU);
-                    cnode.Nodes.Add("Texture V: " + vertex.TextureV);
                 }
             }
             return node;

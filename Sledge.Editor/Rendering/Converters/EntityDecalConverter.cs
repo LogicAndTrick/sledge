@@ -77,7 +77,6 @@ namespace Sledge.Editor.Rendering.Converters
                 var center = face.Plane.Project(entity.Origin);
                 var texture = face.Texture.Clone();
                 texture.Name = decal.Name;
-                texture.Size = document.GetTextureSize(decal.Name);
                 texture.XShift = -decal.Width / 2m;
                 texture.YShift = -decal.Height / 2m;
                 var decalFace = new DataStructures.MapObjects.Face(idg.GetNextFaceID())
@@ -115,7 +114,6 @@ namespace Sledge.Editor.Rendering.Converters
                 var vtx = decalFace.Vertices[0];
                 decalFace.Texture.XShift = -(vtx.Location.Dot(decalFace.Texture.UAxis)) / decalFace.Texture.XScale;
                 decalFace.Texture.YShift = -(vtx.Location.Dot(decalFace.Texture.VAxis)) / decalFace.Texture.YScale;
-                decalFace.CalculateTextureCoordinates(true);
 
                 // Next, the decal geometry needs to be clipped to the face so it doesn't spill into the void
                 // Create a fake solid out of the decal geometry and clip it against all the brush planes

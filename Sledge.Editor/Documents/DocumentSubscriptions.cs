@@ -335,11 +335,6 @@ namespace Sledge.Editor.Documents
             var list = content.ToList();
             if (!list.Any()) return;
 
-            foreach (var face in list.SelectMany(x => x.FindAll().OfType<Solid>().SelectMany(y => y.Faces)))
-            {
-                face.Texture.Size = _document.GetTextureSize(face.Texture.Name);
-            }
-
             var box = new Box(list.Select(x => x.BoundingBox));
 
             using (var psd = new PasteSpecialDialog(box))
@@ -397,8 +392,6 @@ namespace Sledge.Editor.Documents
             Action<Document, Face> action = (document, face) =>
             {
                 face.Texture.Name = texture.Name;
-                face.Texture.Size = new Size(texture.Width, texture.Height);
-                face.CalculateTextureCoordinates(true);
             };
             var faces = _document.Selection.GetSelectedObjects().OfType<Solid>().SelectMany(x => x.Faces);
             _document.PerformAction("Apply current texture", new EditFace(faces, action, true));

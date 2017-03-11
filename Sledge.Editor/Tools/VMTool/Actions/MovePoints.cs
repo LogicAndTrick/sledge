@@ -81,11 +81,6 @@ namespace Sledge.Editor.Tools.VMTool.Actions
                 if (_cleanSolids.Contains(p.Solid.Original.ID)) p.Solid.IsDirty = false;
             }
 
-            foreach (var face in pts.SelectMany(x => x.Vertices.Select(v => v.Parent)).Distinct())
-            {
-                face.CalculateTextureCoordinates(true);
-            }
-
             var solids = pts.Select(x => x.Solid).Distinct().ToList();
             tool.RefreshPoints(solids);
             tool.Invalidate();
@@ -98,11 +93,6 @@ namespace Sledge.Editor.Tools.VMTool.Actions
             {
                 p.Move(_delta);
                 p.Solid.IsDirty = true;
-            }
-
-            foreach (var face in pts.SelectMany(x => x.Vertices.Select(v => v.Parent)).Distinct())
-            {
-                face.CalculateTextureCoordinates(true);
             }
 
             var solids = pts.Select(x => x.Solid).Distinct().ToList();
@@ -163,7 +153,6 @@ namespace Sledge.Editor.Tools.VMTool.Actions
                 solids.Add(solid);
                 solid.Copy.Unclone(replacedSolid.Old);
                 solid.IsDirty = replacedSolid.WasDirty;
-                solid.Copy.Faces.ForEach(x => x.CalculateTextureCoordinates(true));
             }
             tool.RefreshPoints(solids);
             tool.Invalidate();
@@ -178,7 +167,6 @@ namespace Sledge.Editor.Tools.VMTool.Actions
                 solids.Add(solid);
                 replacedSolid.Action(solid);
                 solid.IsDirty = true;
-                solid.Copy.Faces.ForEach(x => x.CalculateTextureCoordinates(true));
             }
             tool.RefreshPoints(solids);
             tool.Invalidate();

@@ -91,7 +91,9 @@ namespace Sledge.Editor.Rendering.Converters
 
             var sel = face.IsSelected || (face.Parent != null && face.Parent.IsSelected);
 
-            var sceneFace =  new Face(mat, face.Vertices.Select(x => new Vertex(x.Location.ToVector3(), (float)x.TextureU, (float)x.TextureV)).ToList())
+            var size = document.GetTextureSize(face.Texture.Name);
+            var coords = face.GetTextureCoordinates(size.Width, size.Height);
+            var sceneFace =  new Face(mat, coords.Select(x => new Vertex(x.Item1.Location.ToVector3(), (float)x.Item2, (float)x.Item3)).ToList())
             {
                 AccentColor = sel ? Color.Red : face.Colour,
                 PointColor = sel ? Color.Red : (View.OverrideVertexColour ? View.VertexOverrideColour : face.Colour),
@@ -120,8 +122,11 @@ namespace Sledge.Editor.Rendering.Converters
 
             var sel = face.IsSelected || (face.Parent != null && face.Parent.IsSelected);
 
+            var size = document.GetTextureSize(face.Texture.Name);
+            var coords = face.GetTextureCoordinates(size.Width, size.Height);
+
             sceneFace.Material = mat;
-            sceneFace.Vertices = face.Vertices.Select(x => new Vertex(x.Location.ToVector3(), (float)x.TextureU, (float)x.TextureV)).ToList();
+            sceneFace.Vertices = coords.Select(x => new Vertex(x.Item1.Location.ToVector3(), (float)x.Item2, (float)x.Item3)).ToList();
             sceneFace.AccentColor = sel ? Color.Red : face.Colour;
             sceneFace.PointColor = sel ? Color.Red : (View.OverrideVertexColour ? View.VertexOverrideColour : face.Colour);
             sceneFace.TintColor = sel ? Color.FromArgb(128, Color.Red) : Color.White;

@@ -7,10 +7,9 @@ using Sledge.DataStructures.Geometric;
 namespace Sledge.DataStructures.MapObjects
 {
     [Serializable]
-    public class TextureReference : ISerializable
+    public class TextureInfo : ISerializable
     {
         public string Name { get; set; }
-        public Size Size { get; set; }
 
         public decimal Rotation { get; set; }
 
@@ -34,10 +33,9 @@ namespace Sledge.DataStructures.MapObjects
         public decimal YShift { get; set; }
         public decimal YScale { get; set; }
 
-        public TextureReference()
+        public TextureInfo()
         {
             Name = "";
-            Size = Size.Empty;
             Rotation = 0;
             _uAxis = -Coordinate.UnitZ;
             _vAxis = Coordinate.UnitX;
@@ -45,7 +43,7 @@ namespace Sledge.DataStructures.MapObjects
             XScale = YScale = 1;
         }
 
-        protected TextureReference(SerializationInfo info, StreamingContext context)
+        protected TextureInfo(SerializationInfo info, StreamingContext context)
         {
             Name = info.GetString("Name");
             Rotation = info.GetInt32("Rotation");
@@ -74,12 +72,11 @@ namespace Sledge.DataStructures.MapObjects
             return UAxis.Cross(VAxis).Normalise();
         }
 
-        public TextureReference Clone()
+        public TextureInfo Clone()
         {
-            return new TextureReference
+            return new TextureInfo
                        {
                            Name = Name,
-                           Size = Size,
                            Rotation = Rotation,
                            UAxis = UAxis.Clone(),
                            VAxis = VAxis.Clone(),
