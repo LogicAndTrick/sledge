@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Sledge.Editor.Documents;
 using Sledge.Providers.Texture;
+using Sledge.Rendering.Materials;
 
 namespace Sledge.Editor.UI
 {
@@ -21,32 +22,26 @@ namespace Sledge.Editor.UI
             Package
         }
 
-        public delegate void TextureSelectedEventHandler(object sender, TextureItem item);
-        public delegate void SelectionChangedEventHandler(object sender, IEnumerable<TextureItem> selection);
+        public delegate void TextureSelectedEventHandler(object sender, string item);
+        public delegate void SelectionChangedEventHandler(object sender, IEnumerable<string> selection);
 
         public event TextureSelectedEventHandler TextureSelected;
-
-        private void OnTextureSelected(TextureItem item)
-        {
-            if (TextureSelected != null)
-            {
-                TextureSelected(this, item);
-            }
-        }
-
         public event SelectionChangedEventHandler SelectionChanged;
 
-        private void OnSelectionChanged(IEnumerable<TextureItem> selection)
+        private void OnTextureSelected(string item)
         {
-            if (SelectionChanged != null)
-            {
-                SelectionChanged(this, selection);
-            }
+            TextureSelected?.Invoke(this, item);
+        }
+        
+        private void OnSelectionChanged(IEnumerable<string> selection)
+        {
+            SelectionChanged?.Invoke(this, selection);
         }
 
         private readonly VScrollBar _scrollBar;
 
-        private readonly List<TextureItem> _textures;
+        private TextureCollection _collection;
+        private readonly List<string> _textures;
         private int _imageSize;
 
         private readonly List<Rectangle> _rectangles;
@@ -55,10 +50,20 @@ namespace Sledge.Editor.UI
         private bool _sortDescending;
         private bool _allowSelection;
         private bool _allowMultipleSelection;
-        private TextureItem _lastSelectedItem;
-        private readonly List<TextureItem> _selection;
+        private string _lastSelectedItem;
+        private readonly List<string> _selection;
 
         #region Properties
+
+        public TextureCollection Collection
+        {
+            get { return _collection; }
+            set
+            {
+                _collection = value;
+                Refresh();
+            }
+        }
 
         public bool AllowSelection
         {
@@ -96,14 +101,6 @@ namespace Sledge.Editor.UI
             set
             {
                 _imageSize = value;
-
-                if (DocumentManager.CurrentDocument != null)
-                {
-                    var packs = _textures.Select(t => t.Package).Distinct();
-                    if (_streamSource != null) _streamSource.Dispose();
-                    _streamSource = DocumentManager.CurrentDocument.TextureCollection.GetStreamSource(_imageSize, _imageSize, packs);
-                }
-
                 UpdateRectangles();
             }
         }
@@ -131,9 +128,11 @@ namespace Sledge.Editor.UI
         public bool EnableDrag { get; set; }
 
         #endregion
-
+        
         public TextureListPanel()
         {
+            _collection = new TextureCollection(new List<TexturePackage>());
+
             BackColor = Color.Black;
             VScroll = true;
             AutoScroll = true;
@@ -144,8 +143,8 @@ namespace Sledge.Editor.UI
 
             _scrollBar = new VScrollBar {Dock = DockStyle.Right};
             _scrollBar.ValueChanged += (sender, e) => Refresh();
-            _textures = new List<TextureItem>();
-            _selection = new List<TextureItem>();
+            _textures = new List<string>();
+            _selection = new List<string>();
             _imageSize = 128;
 
             _rectangles = new List<Rectangle>();
@@ -157,7 +156,7 @@ namespace Sledge.Editor.UI
 
         #region Selection
 
-        public void SetSelectedTextures(IEnumerable<TextureItem> items)
+        public void SetSelectedTextures(IEnumerable<string> items)
         {
             _selection.Clear();
             _selection.AddRange(items);
@@ -165,7 +164,7 @@ namespace Sledge.Editor.UI
             Refresh();
         }
 
-        public void ScrollToItem(TextureItem item)
+        public void ScrollToItem(string item)
         {
             var index = GetTextures().ToList().IndexOf(item);
             if (index < 0) return;
@@ -173,6 +172,7 @@ namespace Sledge.Editor.UI
             var rec = _rectangles[index];
             var yscroll = Math.Max(0, Math.Min(rec.Top - 3, _scrollBar.Maximum - ClientRectangle.Height));
             _scrollBar.Value = yscroll;
+
             Refresh();
         }
 
@@ -258,10 +258,9 @@ namespace Sledge.Editor.UI
             base.OnMouseUp(e);
         }
 
-        public int GetIndexAt(int x, int y)
+        private int GetIndexAt(int x, int y)
         {
-            int pad = 3,
-                font = 4 + SystemFonts.MessageBoxFont.Height;
+            int pad = 3, font = 4 + SystemFonts.MessageBoxFont.Height;
             for (var i = 0; i < _rectangles.Count; i++)
             {
                 var rec = _rectangles[i];
@@ -280,28 +279,29 @@ namespace Sledge.Editor.UI
 
         #region Add/Remove/Get Textures
 
-        public IEnumerable<TextureItem> GetTextures()
+        public IEnumerable<string> GetTextures()
         {
-            IEnumerable<TextureItem> sorted;
+            // todo ?
+            IEnumerable<string> sorted = new List<string>();
             switch (SortOrder)
             {
                 case TextureSortOrder.None:
                     sorted = _textures;
                     break;
                 case TextureSortOrder.Name:
-                    sorted = _textures.OrderBy(x => x.Name);
+                    sorted = _textures.OrderBy(x => x);
                     break;
                 case TextureSortOrder.Width:
-                    sorted = _textures.OrderBy(x => x.Width).ThenBy(x => x.Name);
+                    //sorted = _textures.OrderBy(x => x.Width).ThenBy(x => x.Name);
                     break;
                 case TextureSortOrder.Height:
-                    sorted = _textures.OrderBy(x => x.Height).ThenBy(x => x.Name);
+                    //sorted = _textures.OrderBy(x => x.Height).ThenBy(x => x.Name);
                     break;
                 case TextureSortOrder.Size:
-                    sorted = _textures.OrderBy(x => x.Width * x.Height).ThenBy(x => x.Name);
+                    //sorted = _textures.OrderBy(x => x.Width * x.Height).ThenBy(x => x.Name);
                     break;
                 case TextureSortOrder.Package:
-                    sorted = _textures.OrderBy(x => x.ToString()).ThenBy(x => x.Name);
+                    //sorted = _textures.OrderBy(x => x.ToString()).ThenBy(x => x.Name);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -310,37 +310,23 @@ namespace Sledge.Editor.UI
             return sorted;
         }
 
-        public IEnumerable<TextureItem> GetSelectedTextures()
+        public IEnumerable<string> GetSelectedTextures()
         {
             return _selection;
         }
 
         private ITextureStreamSource _streamSource;
 
-        public void RemoveAllTextures()
-        {
-            _textures.Clear();
-            _lastSelectedItem = null;
-            _selection.Clear();
-
-            if (_streamSource != null) _streamSource.Dispose();
-            _streamSource = null;
-
-            OnSelectionChanged(_selection);
-            UpdateRectangles();
-        }
-
-        public void SetTextureList(IEnumerable<TextureItem> textures)
+        public async Task SetTextureList(IEnumerable<string> textures)
         {
             _textures.Clear();
             _lastSelectedItem = null;
             _selection.Clear();
             _textures.AddRange(textures);
 
-            var packs = _textures.Select(t => t.Package).Distinct();
-            if (_streamSource != null) _streamSource.Dispose();
-            if (DocumentManager.CurrentDocument == null) _streamSource = null;
-            else _streamSource = DocumentManager.CurrentDocument.TextureCollection.GetStreamSource(_imageSize, _imageSize, packs);
+            _streamSource?.Dispose();
+            _streamSource = null;
+            _streamSource = await _collection.GetStreamSource();
 
             OnSelectionChanged(_selection);
             UpdateRectangles();
@@ -352,7 +338,7 @@ namespace Sledge.Editor.UI
             _lastSelectedItem = null;
             _selection.Clear();
 
-            if (_streamSource != null) _streamSource.Dispose();
+            _streamSource?.Dispose();
             _streamSource = null;
 
             OnSelectionChanged(_selection);
@@ -428,8 +414,14 @@ namespace Sledge.Editor.UI
                 cy = 0,
                 my = 0;
             _rectangles.Clear();
-            foreach (var ti in GetTextures())
+            var textures = GetTextures().ToList();
+            // _collection.Precache(textures).Wait();
+            foreach (var texture in textures)
             {
+                var t = _collection.TryGetTextureItem(texture);
+                //t.Wait();
+                var ti = t ?? new TextureItem("missing", TextureFlags.None, 128, 128);
+                //todo image size
                 var rw = w - cx;
                 var wid = (_imageSize > 0 ? _imageSize : ti.Width) + pad + pad;
                 var hei = (_imageSize > 0 ? _imageSize : ti.Height) + pad + pad + font;
@@ -453,22 +445,20 @@ namespace Sledge.Editor.UI
             {
                 _scrollBar.Value = Math.Max(0, _scrollBar.Maximum - ClientRectangle.Height);
             }
-            
-            Refresh();
         }
 
         #endregion
 
         #region Rendering
 
-        private Dictionary<TextureItem, Bitmap> _renderCache = new Dictionary<TextureItem, Bitmap>();
+        private readonly Dictionary<string, Bitmap> _renderCache = new Dictionary<string, Bitmap>();
 
         private void UpdateCacheableItems(int y, int height)
         {
             if (_streamSource == null) return;
 
             var texs = GetTextures().ToList();
-            var cacheable = new List<TextureItem>();
+            var cacheable = new HashSet<string>();
             for (var i = 0; i < texs.Count; i++)
             {
                 var rec = _rectangles[i];
@@ -480,26 +470,22 @@ namespace Sledge.Editor.UI
             {
                 if (!cacheable.Contains(ti))
                 {
-                    if (_renderCache[ti] != null) _renderCache[ti].Dispose();
+                    _renderCache[ti].Dispose();
                     _renderCache.Remove(ti);
                 }
             }
-            foreach (var ti in cacheable)
+
+            if (_streamSource == null) return;
+
+            foreach (var item in cacheable)
             {
-                if (!_renderCache.ContainsKey(ti))
+                if (!_renderCache.ContainsKey(item))
                 {
-                    _renderCache.Add(ti, null);
+                    _renderCache[item] = new Bitmap(1, 1);
+                    _streamSource.GetImage(item, ImageSize, ImageSize)
+                        .ContinueWith(x => _renderCache[item] = x.Result);
                 }
             }
-
-            Parallel.ForEach(cacheable, item =>
-            {
-                if (_streamSource == null) return;
-                var img = _streamSource.GetImage(item);
-                if (img == null) return;
-                if (_renderCache.ContainsKey(item)) _renderCache[item] = img;
-                else img.Dispose();
-            });
         }
 
         protected override void OnPaint(PaintEventArgs e)
@@ -508,9 +494,9 @@ namespace Sledge.Editor.UI
             RenderTextures(e.Graphics);
         }
 
-        public void RenderTextures(System.Drawing.Graphics g)
+        private void RenderTextures(Graphics g)
         {
-            if (_textures.Count == 0 || DocumentManager.CurrentDocument == null) return;
+            if (_textures.Count == 0 || _streamSource == null) return;
 
             var y = _scrollBar.Value;
             var height = ClientRectangle.Height;
@@ -532,7 +518,7 @@ namespace Sledge.Editor.UI
             }
         }
 
-        private void DrawImage(System.Drawing.Graphics g, Image bmp, TextureItem ti, int x, int y, int w, int h)
+        private void DrawImage(Graphics g, Image bmp, string ti, int x, int y, int w, int h)
         {
             if (bmp == null) return;
 
@@ -560,7 +546,7 @@ namespace Sledge.Editor.UI
             {
                 g.DrawRectangle(Pens.Gray, x - 2, y - 2, w + 4, h + 4);
             }
-            g.DrawString(ti.Name, SystemFonts.MessageBoxFont, System.Drawing.Brushes.White, x - 2, y + h + 3);
+            g.DrawString(ti, SystemFonts.MessageBoxFont, System.Drawing.Brushes.White, x - 2, y + h + 3);
         }
 
         #endregion

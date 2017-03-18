@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Threading.Tasks;
@@ -142,10 +141,10 @@ namespace Sledge.DataStructures.MapObjects
         /// <summary>
         /// Should be called when a map is loaded. Sets up visgroups, object ids, gamedata, and textures.
         /// </summary>
-        public void PostLoadProcess(GameData.GameData gameData, Func<string, Size> textureAccessor, Func<string, float> textureOpacity)
+        public void PostLoadProcess(GameData.GameData gameData, Func<string, float> textureOpacity)
         {
             var all = WorldSpawn.FindAll();
-            PartialPostLoadProcess(all, gameData, textureAccessor, textureOpacity);
+            PartialPostLoadProcess(all, gameData, textureOpacity);
 
             // Set maximum ids
             var maxObjectId = all.Max(x => x.ID);
@@ -211,7 +210,7 @@ namespace Sledge.DataStructures.MapObjects
             return g.SelectMany(x => GetAllVisgroups(x.Children)).Union(g);
         }
 
-        public void PartialPostLoadProcess(IList<MapObject> objects, GameData.GameData gameData, Func<string, Size> textureAccessor, Func<string, float> textureOpacity)
+        public void PartialPostLoadProcess(IList<MapObject> objects, GameData.GameData gameData, Func<string, float> textureOpacity)
         {
             Parallel.ForEach(objects, obj =>
             {

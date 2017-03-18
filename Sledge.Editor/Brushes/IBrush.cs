@@ -12,6 +12,6 @@ namespace Sledge.Editor.Brushes
         string Name { get; }
         bool CanRound { get; }
         IEnumerable<BrushControl> GetControls();
-        IEnumerable<MapObject> Create(IDGenerator generator, Box box, TextureItem texture, int roundDecimals);
+        IEnumerable<MapObject> Create(IDGenerator generator, Box box, string texture, int roundDecimals);
     }
 }

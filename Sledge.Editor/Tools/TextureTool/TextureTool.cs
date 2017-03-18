@@ -165,12 +165,12 @@ namespace Sledge.Editor.Tools.TextureTool
             Document.PerformAction("Align texture", new EditFace(Document.Selection.GetSelectedFaces(), action, false));
         }
 
-        private void TextureApplied(object sender, TextureItem texture)
+        private void TextureApplied(object sender, string texture)
         {
             Action<Document, Face> action = (document, face) =>
-                                      {
-                                          face.Texture.Name = texture.Name;
-                                      };
+            {
+                face.Texture.Name = texture;
+            };
             // When the texture changes, the entire list needs to be regenerated, can't do a partial update.
             Document.PerformAction("Apply texture", new EditFace(Document.Selection.GetSelectedFaces(), action, true));
 
@@ -204,7 +204,7 @@ namespace Sledge.Editor.Tools.TextureTool
             Document.PerformAction("Modify texture properties", new EditFace(Document.Selection.GetSelectedFaces(), action, false));
         }
 
-        private void TextureChanged(object sender, TextureItem texture)
+        private void TextureChanged(object sender, string texture)
         {
             Mediator.Publish(EditorMediator.TextureSelected, texture);
         }
@@ -255,8 +255,7 @@ namespace Sledge.Editor.Tools.TextureTool
             var selection = Document.Selection.GetSelectedFaces().OrderBy(x => String.IsNullOrWhiteSpace(x.Texture.Name) ? 1 : 0).FirstOrDefault();
             if (selection != null)
             {
-                var itemToSelect = Document.TextureCollection.GetItem(selection.Texture.Name)
-                                   ?? new TextureItem(null, selection.Texture.Name, TextureFlags.Missing, 64, 64);
+                var itemToSelect = selection.Texture.Name;
                 Mediator.Publish(EditorMediator.TextureSelected, itemToSelect);
             }
             _form.SelectTexture(Document.TextureCollection.SelectedTexture);
@@ -287,7 +286,7 @@ namespace Sledge.Editor.Tools.TextureTool
             base.ToolDeselected(preventHistory);
         }
 
-        private void TextureSelected(TextureItem texture)
+        private void TextureSelected(string texture)
         {
             _form.SelectTexture(texture);
         }
@@ -340,8 +339,7 @@ namespace Sledge.Editor.Tools.TextureTool
             Action lift = () =>
             {
                 if (firstClicked == null) return;
-                var itemToSelect = Document.TextureCollection.GetItem(firstClicked.Texture.Name)
-                                   ?? new TextureItem(null, firstClicked.Texture.Name, TextureFlags.Missing, 64, 64);
+                var itemToSelect = firstClicked.Texture.Name;
                 Mediator.Publish(EditorMediator.TextureSelected, itemToSelect);
             };
 
@@ -364,7 +362,7 @@ namespace Sledge.Editor.Tools.TextureTool
                     {
                         ac.Add(new EditFace(faces, (document, face) =>
                                                         {
-                                                            face.Texture.Name = item.Name;
+                                                            face.Texture.Name = item;
                                                             if (behaviour == SelectBehaviour.ApplyWithValues && firstSelected != null)
                                                             {
                                                                 // Calculates the texture coordinates

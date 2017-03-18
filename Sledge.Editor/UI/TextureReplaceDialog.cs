@@ -37,7 +37,7 @@ namespace Sledge.Editor.UI
             if (_document.TextureCollection.SelectedTexture != null)
             {
                 var tex = _document.TextureCollection.SelectedTexture;
-                Find.Text = tex.Name;
+                Find.Text = tex;
             }
         }
 
@@ -60,9 +60,9 @@ namespace Sledge.Editor.UI
             return String.Equals(name, match, StringComparison.InvariantCultureIgnoreCase);
         }
 
-        private IEnumerable<Tuple<string, TextureItem>> GetReplacements(IEnumerable<string> names)
+        private IEnumerable<Tuple<string, string>> GetReplacements(IEnumerable<string> names)
         {
-            var list = new List<Tuple<string, TextureItem>>();
+            var list = new List<Tuple<string, string>>();
             var substitute = ActionSubstitute.Checked;
             var find = Find.Text.ToLowerInvariant();
             var replace = Replace.Text.ToLowerInvariant();
@@ -70,11 +70,7 @@ namespace Sledge.Editor.UI
             foreach (var name in names.Select(x => x.ToLowerInvariant()).Distinct())
             {
                 var n = substitute ? name.Replace(find, replace) : replace;
-
-                var item = _document.TextureCollection.GetItem(n);
-                if (item == null) continue;
-
-                list.Add(Tuple.Create(name, item));
+                list.Add(Tuple.Create(name, n));
             }
             return list;
         }
@@ -94,14 +90,16 @@ namespace Sledge.Editor.UI
                                                     if (repl == null) return;
                                                     if (rescale)
                                                     {
-                                                        var item = _document.TextureCollection.GetItem(face.Texture.Name);
-                                                        if (item != null)
-                                                        {
-                                                            face.Texture.XScale *= item.Width / (decimal)repl.Item2.Width;
-                                                            face.Texture.YScale *= item.Height / (decimal)repl.Item2.Height;
-                                                        }
+                                                        // todo
+                                                        throw new NotImplementedException();
+                                                        //var item = _document.TextureCollection.GetItem(face.Texture.Name);
+                                                        //if (item != null)
+                                                        //{
+                                                        //    face.Texture.XScale *= item.Width / (decimal)repl.Item2.Width;
+                                                        //    face.Texture.YScale *= item.Height / (decimal)repl.Item2.Height;
+                                                        //}
                                                     }
-                                                    face.Texture.Name = repl.Item2.Name;
+                                                    face.Texture.Name = repl.Item2;
                                                 };
             return new EditFace(faces, action, true);
         }
@@ -115,13 +113,14 @@ namespace Sledge.Editor.UI
 
         private void BrowseTexture(TextBox box)
         {
-            using (var tb = new TextureBrowser())
+            using (var tb = new TextureBrowser(_document))
             {
-                tb.SetTextureList(_document.TextureCollection.GetAllBrowsableItems());
+                throw new NotImplementedException();
+                // todo tb.SetTextureList(_document.TextureCollection.GetAllBrowsableItems());
                 tb.ShowDialog();
                 if (tb.SelectedTexture != null)
                 {
-                    box.Text = tb.SelectedTexture.Name;
+                    box.Text = tb.SelectedTexture;
                 }
             }
         }
@@ -135,20 +134,21 @@ namespace Sledge.Editor.UI
                 return;
             }
 
-            var item = _document.TextureCollection.GetItem(text)
-                       ?? new TextureItem(null, text, TextureFlags.Missing, 64, 64);
+            var item = text;
 
-            using (var tp = _document.TextureCollection.GetStreamSource(128, 128))
-            {
-                var bmp = tp.GetImage(item);
-                image.SizeMode = bmp.Width > image.Width || bmp.Height > image.Height
-                                     ? PictureBoxSizeMode.Zoom
-                                     : PictureBoxSizeMode.CenterImage;
-                image.Image = bmp;
-            }
+            // todo texture
+            throw new NotImplementedException();
+            //using (var tp = _document.TextureCollection.GetStreamSource(128, 128))
+            //{
+            //    var bmp = tp.GetImage(item);
+            //    image.SizeMode = bmp.Width > image.Width || bmp.Height > image.Height
+            //                         ? PictureBoxSizeMode.Zoom
+            //                         : PictureBoxSizeMode.CenterImage;
+            //    image.Image = bmp;
+            //}
 
-            var format = item.Flags.HasFlag(TextureFlags.Missing) ? "Invalid texture" : "{0} x {1}";
-            info.Text = string.Format(format, item.Width, item.Height);
+            //var format = item.Flags.HasFlag(TextureFlags.Missing) ? "Invalid texture" : "{0} x {1}";
+            //info.Text = string.Format(format, item.Width, item.Height);
         }
     }
 }

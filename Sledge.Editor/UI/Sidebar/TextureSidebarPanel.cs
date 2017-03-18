@@ -29,9 +29,9 @@ namespace Sledge.Editor.UI.Sidebar
         private void BrowseButtonClicked(object sender, EventArgs e)
         {
             if (DocumentManager.CurrentDocument == null) return;
-            using (var tb = new TextureBrowser())
+            using (var tb = new TextureBrowser(DocumentManager.CurrentDocument))
             {
-                tb.SetTextureList(DocumentManager.CurrentDocument.TextureCollection.GetAllBrowsableItems());
+                tb.SetTextureList(DocumentManager.CurrentDocument.TextureCollection.GetAllTextures());
                 tb.ShowDialog();
                 if (tb.SelectedTexture != null)
                 {
@@ -60,7 +60,7 @@ namespace Sledge.Editor.UI.Sidebar
             TextureSelected(null);
         }
 
-        private void TextureSelected(TextureItem selection)
+        private void TextureSelected(string selection)
         {
             var dis = SelectionPictureBox.Image;
             SelectionPictureBox.Image = null;
@@ -71,22 +71,23 @@ namespace Sledge.Editor.UI.Sidebar
 
             if (selection == null || DocumentManager.CurrentDocument == null) return;
 
-            var bmp = DocumentManager.CurrentDocument.TextureCollection.GetImage(selection.Name, 128, 128);
-            if (bmp != null)
-            {
-                if (bmp.Width > SelectionPictureBox.Width || bmp.Height > SelectionPictureBox.Height)
-                {
-                    SelectionPictureBox.SizeMode = PictureBoxSizeMode.Zoom;
-                }
-                else
-                {
-                    SelectionPictureBox.SizeMode = PictureBoxSizeMode.CenterImage;
-                }
-            }
+            // todo texture
+            //var bmp = DocumentManager.CurrentDocument.TextureCollection.GetImage(selection.Name, 128, 128);
+            //if (bmp != null)
+            //{
+            //    if (bmp.Width > SelectionPictureBox.Width || bmp.Height > SelectionPictureBox.Height)
+            //    {
+            //        SelectionPictureBox.SizeMode = PictureBoxSizeMode.Zoom;
+            //    }
+            //    else
+            //    {
+            //        SelectionPictureBox.SizeMode = PictureBoxSizeMode.CenterImage;
+            //    }
+            //}
 
-            SelectionPictureBox.Image = bmp;
-            SizeLabel.Text = String.Format("{0} x {1}", selection.Width, selection.Height);
-            NameLabel.Text = selection.Name;
+            //SelectionPictureBox.Image = bmp;
+            //SizeLabel.Text = String.Format("{0} x {1}", selection.Width, selection.Height);
+            //NameLabel.Text = selection.Name;
         }
     }
 }

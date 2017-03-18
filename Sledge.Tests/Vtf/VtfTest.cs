@@ -85,16 +85,6 @@ namespace Sledge.Tests.Vtf
         }
 
         [TestMethod]
-        public void VpkVtfCollectionTest()
-        {
-            TextureProvider.Register(new VmtProvider());
-            var collection = TextureProvider.CreateCollection(new[]
-            {
-                @"F:\Steam\SteamApps\common\Team Fortress 2\tf"
-            }, null, null, null);
-        }
-
-        [TestMethod]
         public void VmtStatsCollectorTest()
         {
             var exclude = new[]

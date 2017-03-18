@@ -246,7 +246,7 @@ namespace Sledge.Editor.Compiling
                     filename = Path.GetFileNameWithoutExtension(filename) + "_cordon.map";
                 }
             }
-            map.WorldSpawn.EntityData.SetPropertyValue("wad", string.Join(";", document.GetUsedTexturePackages().Select(x => x.PackageRoot).Where(x => x.EndsWith(".wad", StringComparison.InvariantCultureIgnoreCase))));
+            map.WorldSpawn.EntityData.SetPropertyValue("wad", string.Join(";", document.GetUsedTexturePackages().Select(x => x.Location).Where(x => x.EndsWith(".wad", StringComparison.InvariantCultureIgnoreCase))));
             filename = Path.Combine(folder, filename);
             MapProvider.SaveMapToFile(filename, map);
             return filename;

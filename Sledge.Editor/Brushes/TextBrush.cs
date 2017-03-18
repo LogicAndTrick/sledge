@@ -38,7 +38,7 @@ namespace Sledge.Editor.Brushes
             yield return _text;
         }
 
-        public IEnumerable<MapObject> Create(IDGenerator generator, Box box, TextureItem texture, int roundDecimals)
+        public IEnumerable<MapObject> Create(IDGenerator generator, Box box, string texture, int roundDecimals)
         {
             var width = box.Width;
             var length = Math.Max(1, Math.Abs((int) box.Length));
@@ -169,7 +169,7 @@ namespace Sledge.Editor.Brushes
                             Parent = solid,
                             Plane = new Plane(arr[0], arr[1], arr[2]),
                             Colour = solid.Colour,
-                            Texture = { Name = texture.Name }
+                            Texture = { Name = texture }
                         };
                         face.Vertices.AddRange(arr.Select(x => new Vertex(x, face)));
                         face.UpdateBoundingBox();

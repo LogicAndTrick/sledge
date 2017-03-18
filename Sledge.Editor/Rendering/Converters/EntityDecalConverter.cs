@@ -29,7 +29,7 @@ namespace Sledge.Editor.Rendering.Converters
             var entity = (Entity) obj;
 
             var decalName = GetDecalName(entity);
-            var tex = document.TextureCollection.GetItem(decalName);
+            TextureItem tex = document.TextureCollection.TryGetTextureItem(decalName);
             if (tex != null)
             {
                 var geo = CalculateDecalGeometry(entity, tex, document);

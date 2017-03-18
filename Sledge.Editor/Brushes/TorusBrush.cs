@@ -61,7 +61,7 @@ namespace Sledge.Editor.Brushes
             yield return _rotationHeight;
         }
 
-        private Solid MakeSolid(IDGenerator generator, IEnumerable<Coordinate[]> faces, TextureItem texture, Color col)
+        private Solid MakeSolid(IDGenerator generator, IEnumerable<Coordinate[]> faces, string texture, Color col)
         {
             var solid = new Solid(generator.GetNextObjectID()) { Colour = col };
             foreach (var arr in faces)
@@ -71,7 +71,7 @@ namespace Sledge.Editor.Brushes
                     Parent = solid,
                     Plane = new Plane(arr[0], arr[1], arr[2]),
                     Colour = solid.Colour,
-                    Texture = { Name = texture.Name}
+                    Texture = { Name = texture}
                 };
                 face.Vertices.AddRange(arr.Select(x => new Vertex(x, face)));
                 face.UpdateBoundingBox();
@@ -82,7 +82,7 @@ namespace Sledge.Editor.Brushes
             return solid;
         }
 
-        public IEnumerable<MapObject> Create(IDGenerator generator, Box box, TextureItem texture, int roundDecimals)
+        public IEnumerable<MapObject> Create(IDGenerator generator, Box box, string texture, int roundDecimals)
         {
             var crossSides = (int)_crossSides.GetValue();
             if (crossSides < 3) yield break;

@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Windows.Forms;
+using LogicAndTrick.Gimme;
 using Microsoft.WindowsAPICodePack.Taskbar;
 using Sledge.Common.Mediator;
 using Sledge.DataStructures.Geometric;
@@ -25,6 +26,7 @@ using Sledge.Providers.Map;
 using Sledge.Editor.Tools;
 using Sledge.Providers.Model;
 using Sledge.Providers.Texture;
+using Sledge.Providers.Texture.Wad;
 using Sledge.Rendering.Cameras;
 using Sledge.Settings;
 using Sledge.Settings.Models;
@@ -134,19 +136,17 @@ namespace Sledge.Editor
                     );
             }
 
-            TextureProvider.SetCachePath(SettingsManager.GetTextureCachePath());
             MapProvider.Register(new RmfProvider());
             MapProvider.Register(new MapFormatProvider());
             MapProvider.Register(new VmfProvider());
             MapProvider.Register(new ObjProvider());
             GameDataProvider.Register(new FgdProvider());
-            TextureProvider.Register(new WadProvider());
-            TextureProvider.Register(new SprProvider());
-            TextureProvider.Register(new VmtProvider());
-            TextureProvider.Register(new Pk3Provider());
-            ModelProvider.Register(new MdlProvider());
 
-            WadProvider.ReplaceTransparentPixels = !Sledge.Settings.View.DisableWadTransparency && !Sledge.Settings.View.GloballyDisableTransparency;
+            Gimme.Register(new WadTexturePackageProvider());
+            Gimme.Register(new WadTextureItemProvider());
+            Gimme.Register(new WadTextureStreamSourceProvider());
+
+            ModelProvider.Register(new MdlProvider());
 
             Subscribe();
 
@@ -491,8 +491,6 @@ namespace Sledge.Editor
                 cam.FOV = Sledge.Settings.View.CameraFOV;
                 cam.ClipDistance = Sledge.Settings.View.BackClippingPane;
             }
-
-            WadProvider.ReplaceTransparentPixels = !Sledge.Settings.View.DisableWadTransparency && !Sledge.Settings.View.GloballyDisableTransparency;
         }
 
         private void Exit()

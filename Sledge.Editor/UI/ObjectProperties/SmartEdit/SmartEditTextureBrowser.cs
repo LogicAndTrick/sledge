@@ -27,7 +27,7 @@ namespace Sledge.Editor.UI.ObjectProperties.SmartEdit
 
         private void OpenModelBrowser(object sender, EventArgs e)
         {
-            using (var tb = new TextureBrowser())
+            using (var tb = new TextureBrowser(Document))
             {
                 tb.SetTextureList(GetTextureList());
                 tb.SetSelectedTextures(GetSelectedTextures());
@@ -35,32 +35,33 @@ namespace Sledge.Editor.UI.ObjectProperties.SmartEdit
                 tb.ShowDialog();
                 if (tb.SelectedTexture != null)
                 {
-                    _textBox.Text = tb.SelectedTexture.Name;
+                    _textBox.Text = tb.SelectedTexture;
                 }
             }
         }
 
-        private IEnumerable<TextureItem> GetSelectedTextures()
+        private IEnumerable<string> GetSelectedTextures()
         {
-            var tex = Document.TextureCollection.GetItem(_textBox.Text);
-            if (tex != null) yield return tex;
+            yield return _textBox.Text;
         }
 
-        private IEnumerable<TextureItem> GetTextureList()
+        private IEnumerable<string> GetTextureList()
         {
-            switch (Property.VariableType)
-            {
-                case VariableType.Decal:
-                    // TODO goldsource/source
-                    if (Document.Game.Engine == Engine.Goldsource) return Document.TextureCollection.Packages.Where(x => x.PackageRelativePath.Contains("decal")).SelectMany(x => x.Items.Values);
-                    else return Document.TextureCollection.GetAllBrowsableItems();
-                case VariableType.Sprite:
-                    // TODO goldsource/source
-                    if (Document.Game.Engine == Engine.Goldsource) return Document.TextureCollection.Packages.Where(x => !x.IsBrowsable).SelectMany(x => x.Items.Values);
-                    else return Document.TextureCollection.GetAllItems();
-                default:
-                    return Document.TextureCollection.GetAllBrowsableItems();
-            }
+            // todo texture list
+            throw new NotImplementedException();
+            //switch (Property.VariableType)
+            //{
+            //    case VariableType.Decal:
+            //        // TODO goldsource/source
+            //        if (Document.Game.Engine == Engine.Goldsource) return Document.TextureCollection.Packages.Where(x => x.PackageRelativePath.Contains("decal")).SelectMany(x => x.Items.Values);
+            //        else return Document.TextureCollection.GetAllBrowsableItems();
+            //    case VariableType.Sprite:
+            //        // TODO goldsource/source
+            //        if (Document.Game.Engine == Engine.Goldsource) return Document.TextureCollection.Packages.Where(x => !x.IsBrowsable).SelectMany(x => x.Items.Values);
+            //        else return Document.TextureCollection.GetAllItems();
+            //    default:
+            //        return Document.TextureCollection.GetAllBrowsableItems();
+            //}
         }
 
         private string GetFilterText()

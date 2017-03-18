@@ -74,11 +74,11 @@ namespace Sledge.Editor.Rendering.Converters
 
         private static Material GetMaterial(DataStructures.MapObjects.Face face, Document document)
         {
-            var tex = document.TextureCollection.GetItem(face.Texture.Name);
+            var tex = document.TextureCollection.TryGetTextureItem(face.Texture.Name);
             var op = SettingsManager.GetSpecialTextureOpacity(face.Texture.Name);
             if (op < 0.1 && !document.Map.HideNullTextures) op = 1;
 
-            if (tex == null) return Material.Flat(Color.FromArgb((int) (op * 255), face.Colour));
+            if (tex == null) return Material.Flat(Color.FromArgb((int)(op * 255), face.Colour));
 
             return op < 1
                 ? Material.Texture(tex.Name, op)

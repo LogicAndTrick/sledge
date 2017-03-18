@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Sledge.Common.Mediator;
 using Sledge.Editor.Documents;
@@ -13,17 +14,20 @@ namespace Sledge.Editor.UI
 {
     public partial class TextureBrowser : Form
     {
-        public TextureBrowser()
+        private readonly Document _document;
+
+        public TextureBrowser(Document document)
         {
+            _document = document;
             var sz = GetMemory("SizeMode", 2);
             var so = GetMemory("SortBy", 0);
 
             InitializeComponent();
             TextureList.TextureSelected += TextureSelected;
             TextureList.SelectionChanged += SelectionChanged;
+            TextureList.Collection = document.TextureCollection;
             SizeCombo.SelectedIndex = 2;
-            _textures = new List<TextureItem>();
-            _packages = new List<TexturePackage>();
+            _textures = new List<string>();
             SelectedTexture = null;
 
             SortOrderCombo.Items.Clear();
@@ -48,7 +52,7 @@ namespace Sledge.Editor.UI
             base.OnLoad(e);
         }
 
-        private void SelectionChanged(object sender, IEnumerable<TextureItem> selection)
+        private void SelectionChanged(object sender, IEnumerable<string> selection)
         {
             var list = selection.ToList();
             if (!list.Any())
@@ -59,8 +63,8 @@ namespace Sledge.Editor.UI
             else if (list.Count == 1)
             {
                 var t = list[0];
-                TextureNameLabel.Text = t.Name;
-                TextureSizeLabel.Text = t.Width + " x " + t.Height;
+                //todo TextureNameLabel.Text = t.Name;
+                // todo TextureSizeLabel.Text = t.Width + " x " + t.Height;
             }
             else
             {
@@ -69,40 +73,38 @@ namespace Sledge.Editor.UI
             }
         }
 
-        public TextureItem SelectedTexture { get; set; }
-        private readonly List<TextureItem> _textures;
-        private readonly List<TexturePackage> _packages;
+        public string SelectedTexture { get; set; }
+        private readonly List<string> _textures;
 
         private void SetMemory<T>(string name, T value)
         {
             name = GetType().Name + '.' + name;
-            if (DocumentManager.CurrentDocument != null) DocumentManager.CurrentDocument.SetMemory(name, value);
+            _document?.SetMemory(name, value);
         }
 
         private T GetMemory<T>(string name, T def = default(T))
         {
             name = GetType().Name + '.' + name;
-            return DocumentManager.CurrentDocument != null ? DocumentManager.CurrentDocument.GetMemory(name, def) : def;
+            return _document != null ? _document.GetMemory(name, def) : def;
         }
 
-        private void TextureSelected(object sender, TextureItem item)
+        private void TextureSelected(object sender, string item)
         {
             SelectedTexture = item;
             Close();
         }
 
-        public void SetTextureList(IEnumerable<TextureItem> items)
+        public void SetTextureList(IEnumerable<string> items)
         {
             _textures.Clear();
             _textures.AddRange(items);
-            _packages.Clear();
-            _packages.AddRange(_textures.Select(x => x.Package).Distinct());
+
             UpdatePackageList();
             UpdateFavouritesList();
             UpdateTextureList();
         }
 
-        public void SetSelectedTextures(IEnumerable<TextureItem> items)
+        public void SetSelectedTextures(IEnumerable<string> items)
         {
             TextureList.SetSelectedTextures(items);
         }
@@ -122,7 +124,7 @@ namespace Sledge.Editor.UI
         {
             FavouritesTree.SelectedNode = null;
             var package = PackageTree.SelectedNode;
-            var key = package == null ? null : package.Name;
+            var key = package?.Name;
             if (String.IsNullOrWhiteSpace(key)) key = null;
             SetMemory("SelectedPackage", key);
             SetMemory("SelectedFavourite", (string) null);
@@ -152,13 +154,13 @@ namespace Sledge.Editor.UI
         {
             var selected = PackageTree.SelectedNode;
             var selectedKey = selected == null ? GetMemory<string>("SelectedPackage") : selected.Name;
-            var packages = _textures.Select(x => x.Package).Distinct();
+            var packages = _document.TextureCollection.Packages;
             PackageTree.Nodes.Clear();
             var parent = PackageTree.Nodes.Add("", "All Packages");
             TreeNode reselect = null;
             foreach (var tp in packages.OrderBy(x => x.ToString()))
             {
-                var node = parent.Nodes.Add(tp.ToString(), tp + " (" + tp.Items.Count + ")");
+                var node = parent.Nodes.Add(tp.ToString(), tp + " (" + tp.Textures.Count + ")");
                 if (selectedKey == node.Name) reselect = node;
             }
             PackageTree.SelectedNode = reselect;
@@ -191,22 +193,23 @@ namespace Sledge.Editor.UI
             }
         }
 
-        private List<TextureItem> GetTexturesInFavourite(FavouriteTextureFolder fav)
+        private List<string> GetTexturesInFavourite(FavouriteTextureFolder fav)
         {
             return _textures.Where(x => InFavouriteList(fav.Items, x)).ToList();
         }
 
-        private IEnumerable<TextureItem> GetPackageTextures()
+        private IEnumerable<string> GetPackageTextures()
         {
             var package = PackageTree.SelectedNode;
             var key = package == null ? null : package.Name;
             if (String.IsNullOrWhiteSpace(key)) key = null;
-            var p = _packages.FirstOrDefault(x => x.ToString() == key);
-            if (p != null) return p.Items.Values;
-            return _textures.Where(x => key == null || key == x.Package.ToString());
+            var p = _document.TextureCollection.Packages.FirstOrDefault(x => x.ToString() == key);
+            var set = new HashSet<string>(_textures);
+            if (p != null) set.IntersectWith(p.Textures);
+            return set;
         }
 
-        private IEnumerable<TextureItem> GetFavouriteFolderTextures()
+        private IEnumerable<string> GetFavouriteFolderTextures()
         {
             var folder = FavouritesTree.SelectedNode;
             var node = folder == null ? null : folder.Tag as FavouriteTextureFolder;
@@ -217,9 +220,9 @@ namespace Sledge.Editor.UI
             return _textures.Where(x => InFavouriteList(favs, x));
         }
 
-        private bool InFavouriteList(IEnumerable<string> favs, TextureItem ti)
+        private bool InFavouriteList(IEnumerable<string> favs, string ti)
         {
-            return favs.Contains(ti.Name, StringComparer.InvariantCultureIgnoreCase);
+            return favs.Contains(ti, StringComparer.InvariantCultureIgnoreCase);
         }
 
         private void CollectNodes(List<FavouriteTextureFolder> favs, IEnumerable<FavouriteTextureFolder> folders)
@@ -231,22 +234,22 @@ namespace Sledge.Editor.UI
             }
         } 
 
-        private void UpdateTextureList()
+        private async Task UpdateTextureList()
         {
             var list = FavouritesTree.SelectedNode != null ? GetFavouriteFolderTextures() : GetPackageTextures();
             if (!String.IsNullOrEmpty(FilterTextbox.Text))
             {
-                list = list.Where(x => x.Name.ToLower().Contains(FilterTextbox.Text.ToLower()));
+                list = list.Where(x => x.ToLower().Contains(FilterTextbox.Text.ToLower()));
             }
-            if (UsedTexturesOnlyBox.Checked && DocumentManager.CurrentDocument != null)
+            if (UsedTexturesOnlyBox.Checked && _document != null)
             {
-                var used = DocumentManager.CurrentDocument.GetUsedTextures().ToList();
-                list = list.Where(x => used.Any(y => String.Equals(x.Name, y, StringComparison.InvariantCultureIgnoreCase)));
+                var used = _document.GetUsedTextures().ToList();
+                list = list.Where(x => used.Any(y => String.Equals(x, y, StringComparison.InvariantCultureIgnoreCase)));
             }
             var l = list.ToList();
-            TextureList.SetTextureList(l);
+            await TextureList.SetTextureList(l);
 
-            var sel = DocumentManager.CurrentDocument == null ? null : DocumentManager.CurrentDocument.TextureCollection.SelectedTexture;
+            var sel = _document?.TextureCollection.SelectedTexture;
             if (sel != null)
             {
                 TextureList.SetSelectedTextures(new [] { sel });
@@ -426,7 +429,7 @@ namespace Sledge.Editor.UI
 
         private void RemoveFavouriteItemButtonClicked(object sender, EventArgs e)
         {
-            var selection = TextureList.GetSelectedTextures().Select(x => x.Name);
+            var selection = TextureList.GetSelectedTextures().Select(x => x);
 
             var folder = FavouritesTree.SelectedNode;
             var node = folder == null ? null : folder.Tag as FavouriteTextureFolder;
@@ -443,7 +446,7 @@ namespace Sledge.Editor.UI
         {
             var sel = TextureList.GetSelectedTextures().ToList();
             if (!sel.Any()) return;
-            Mediator.Publish(EditorMediator.SelectMatchingTextures, sel.Select(x => x.Name).ToList());
+            Mediator.Publish(EditorMediator.SelectMatchingTextures, sel.Select(x => x).ToList());
             Close();
         }
     }

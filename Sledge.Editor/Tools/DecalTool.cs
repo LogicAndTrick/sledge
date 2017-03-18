@@ -91,9 +91,9 @@ namespace Sledge.Editor.Tools
                 return;
             }
             var selected = Document.TextureCollection.SelectedTexture;
-            var textureName = selected == null ? "{TARGET" : selected.Name;
+            var textureName = selected == null ? "{TARGET" : selected;
 
-            if (Document.TextureCollection.GetItem(textureName) == null)
+            if (!Document.TextureCollection.HasTexture(textureName))
             {
                 return;
             }

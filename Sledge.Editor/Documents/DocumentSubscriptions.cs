@@ -391,7 +391,7 @@ namespace Sledge.Editor.Documents
             if (texture == null) return;
             Action<Document, Face> action = (document, face) =>
             {
-                face.Texture.Name = texture.Name;
+                face.Texture.Name = texture;
             };
             var faces = _document.Selection.GetSelectedObjects().OfType<Solid>().SelectMany(x => x.Faces);
             _document.PerformAction("Apply current texture", new EditFace(faces, action, true));
@@ -1134,7 +1134,7 @@ namespace Sledge.Editor.Documents
             Mediator.Publish(EditorMediator.ViewZoomChanged, value);
         }
 
-        public void TextureSelected(TextureItem selection)
+        public void TextureSelected(string selection)
         {
             _document.TextureCollection.SelectedTexture = selection;
         }

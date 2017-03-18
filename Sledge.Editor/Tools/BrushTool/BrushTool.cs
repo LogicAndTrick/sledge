@@ -71,7 +71,7 @@ namespace Sledge.Editor.Tools.BrushTool
             base.ToolDeselected(preventHistory);
         }
 
-        private void TextureSelected(TextureItem texture)
+        private void TextureSelected(string texture)
         {
             _updatePreview = true;
             Invalidate();
@@ -143,8 +143,7 @@ namespace Sledge.Editor.Tools.BrushTool
         {
             var brush = BrushManager.CurrentBrush;
             if (brush == null) return null;
-            var ti = Document.TextureCollection.SelectedTexture;
-            if (ti == null) ti = new TextureItem(null, "", TextureFlags.Missing);
+            var ti = Document.TextureCollection.SelectedTexture ?? "";
             var created = brush.Create(idg, bounds, ti, BrushManager.RoundCreatedVertices ? 0 : 2).ToList();
             if (created.Count > 1)
             {

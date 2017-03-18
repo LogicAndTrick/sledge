@@ -60,7 +60,6 @@
     <Compile Include="Actions\MapObjectActionTests.cs" />
     <Compile Include="ActualTests\GenericStructureTest.cs" />
     <Compile Include="Benchmarking\ModelLoadTest.cs" />
-    <Compile Include="Benchmarking\TextureBenchmarkTest.cs" />
     <Compile Include="Benchmarking\MapLoadTest.cs" />
     <Compile Include="GeometricTest.cs" />
     <Compile Include="FileSystemTest.cs" />
@@ -73,7 +72,6 @@
     <Compile Include="GameDetectionTest.cs" />
     <Compile Include="Rendering\RenderingTests.cs" />
     <Compile Include="SerialisationTest.cs" />
-    <Compile Include="Vtf\VtfTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Sledge.Common\Sledge.Common.csproj">

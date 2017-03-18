@@ -1,49 +1,33 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Sledge.Providers.Texture
 {
     public class TexturePackage : IDisposable
     {
-        internal TextureProvider Provider { get; private set; }
-        public string PackageRoot { get; private set; }
-        public string PackageRelativePath { get; private set; }
-        public Dictionary<string, TextureItem> Items { get; private set; }
-        public bool IsBrowsable { get; set; }
+        public string Location { get; }
+        public HashSet<string> Textures { get; }
 
-        public TexturePackage(string packageRoot, string packageRelativePath, TextureProvider provider)
+        public TexturePackage(string location, IEnumerable<string> textures)
         {
-            Provider = provider;
-            PackageRoot = packageRoot;
-            PackageRelativePath = packageRelativePath;
-            Items = new Dictionary<string, TextureItem>();
-            IsBrowsable = true;
-        }
-
-        public void AddTexture(TextureItem item)
-        {
-            if (Items.ContainsKey(item.Name.ToLowerInvariant())) return;
-            Items.Add(item.Name.ToLowerInvariant(), item);
+            Textures = new HashSet<string>(textures.Select(x => x.ToLowerInvariant()));
+            Location = location;
         }
 
         public bool HasTexture(string name)
         {
-            return Items.ContainsKey(name.ToLowerInvariant());
+            return Textures.Contains(name.ToLowerInvariant());
         }
-
-        public TextureItem GetTexture(string name)
-        {
-            return Items[name.ToLowerInvariant()];
-        }
-
+        
         public override string ToString()
         {
-            return PackageRelativePath;
+            return Location;
         }
 
         public void Dispose()
         {
-            // 
+            Textures.Clear();
         }
     }
 }

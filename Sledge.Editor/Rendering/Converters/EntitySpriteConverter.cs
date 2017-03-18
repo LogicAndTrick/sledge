@@ -30,7 +30,7 @@ namespace Sledge.Editor.Rendering.Converters
             var entity = (Entity) obj;
 
             var spriteName = GetSpriteName(entity);
-            var tex = document.TextureCollection.GetItem(spriteName);
+            TextureItem tex = document.TextureCollection.TryGetTextureItem(spriteName);
             if (tex != null)
             {
                 var spr = CreateSpriteData(entity, tex, spriteName);

@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using LogicAndTrick.Gimme;
-using Sledge.Providers.Texture2;
+using Sledge.Providers.Texture;
+using Sledge.Providers.Texture.Wad;
 
 namespace Sledge.Sandbox
 {
@@ -14,7 +15,7 @@ namespace Sledge.Sandbox
             InitializeComponent();
 
             Gimme.Register(new WadTexturePackageProvider());
-            Gimme.Register(new VmtTexturePackageProvider());
+            //Gimme.Register(new VmtTexturePackageProvider());
 
             Load += (sender, args) =>
             {
@@ -23,10 +24,7 @@ namespace Sledge.Sandbox
                     null,
                     package =>
                     {
-                        foreach (var item in package.Items.Take(1))
-                        {
-                            Console.WriteLine(item);
-                        }
+                        // 
                     });
                 //var items = new List<TexturePackage>();
                 //Gimme.Fetch<TexturePackage>(

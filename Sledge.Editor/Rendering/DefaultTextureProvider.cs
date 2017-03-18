@@ -15,43 +15,26 @@ namespace Sledge.Editor.Rendering
         {
             Document = document;
         }
-
         public bool Exists(string name)
         {
-            return Document.TextureCollection.GetItem(name) != null;
-        }
-
-        public TextureDetails Fetch(string name)
-        {
-            return Fetch(new[] {name}).FirstOrDefault();
-        }
-
-        public IEnumerable<TextureDetails> Fetch(IEnumerable<string> names)
-        {
-            using (var ss = Document.TextureCollection.GetStreamSource(1024, 1024))
-            {
-                foreach (var item in names.Select(name => Document.TextureCollection.GetItem(name)).Where(item => item != null))
-                {
-                    yield return new TextureDetails(item.Name, ss.GetImage(item), item.Width, item.Height, item.Flags);
-                }
-            }
+            return Document.TextureCollection.HasTexture(name);
         }
 
         private readonly ConcurrentQueue<TextureDetails> _textureQueue = new ConcurrentQueue<TextureDetails>();
 
-        public void Request(IEnumerable<string> names)
+        public async void Request(IEnumerable<string> names)
         {
-            Task.Factory.StartNew(() =>
+            var n = names.ToList();
+            await Document.TextureCollection.Precache(n);
+            var items = await Document.TextureCollection.GetTextureItems(n);
+            using (var ss = await Document.TextureCollection.GetStreamSource())
             {
-                using (var ss = Document.TextureCollection.GetStreamSource(1024, 1024))
+                foreach (var item in items)
                 {
-                    foreach (var item in names.Select(name => Document.TextureCollection.GetItem(name)).Where(item => item != null))
-                    {
-                        var td = new TextureDetails(item.Name, ss.GetImage(item), item.Width, item.Height, item.Flags);
-                        _textureQueue.Enqueue(td);
-                    }
+                    var td = new TextureDetails(item.Name, await ss.GetImage(item.Name, 1024, 1024), item.Width, item.Height, item.Flags);
+                    _textureQueue.Enqueue(td);
                 }
-            });
+            }
         }
 
         public IEnumerable<TextureDetails> PopRequestedTextures(int count)

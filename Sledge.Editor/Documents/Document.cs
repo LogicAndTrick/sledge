@@ -5,9 +5,10 @@ using System.Drawing;
 using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Windows.Forms;
+using LogicAndTrick.Gimme;
 using OpenTK;
-using Sledge.Common;
 using Sledge.Common.Mediator;
 using Sledge.DataStructures.GameData;
 using Sledge.DataStructures.Geometric;
@@ -15,7 +16,6 @@ using Sledge.DataStructures.MapObjects;
 using Sledge.Editor.Actions;
 using Sledge.Editor.Editing;
 using Sledge.Editor.Environment;
-using Sledge.Editor.Extensions;
 using Sledge.Editor.History;
 using Sledge.Editor.Rendering;
 using Sledge.Editor.Settings;
@@ -46,11 +46,8 @@ namespace Sledge.Editor.Documents
 
         public Pointfile Pointfile { get; set; }
 
-        //public RenderManager Renderer { get; private set; }
-
         public SelectionManager Selection { get; private set; }
         public HistoryManager History { get; private set; }
-        //public HelperManager HelperManager { get; set; }
         public TextureCollection TextureCollection { get; set; }
         public ModelCollection ModelCollection { get; private set; }    
 
@@ -65,7 +62,6 @@ namespace Sledge.Editor.Documents
             Map = new Map();
             Selection = new SelectionManager(this);
             History = new HistoryManager(this);
-            //HelperManager = new HelperManager(this);
             TextureCollection = new TextureCollection(new List<TexturePackage>());
             ModelCollection = new ModelCollection();
         }
@@ -110,23 +106,13 @@ namespace Sledge.Editor.Documents
                 GameData.MapSizeLow = game.OverrideMapSizeLow;
                 GameData.MapSizeHigh = game.OverrideMapSizeHigh;
             }
-
-            TextureCollection = TextureProvider.CreateCollection(Environment.GetGameDirectories(), Game.AdditionalPackages, Game.GetTextureBlacklist(), Game.GetTextureWhitelist());
-            /* .Union(GameData.MaterialExclusions) */ // todo material exclusions
-
-            var texList = Map.GetAllTextures();
-            var items = TextureCollection.GetItems(texList);
-            //TextureProvider.LoadTextureItems(items);
-
+            
+            TextureCollection = new TextureCollection(new List<TexturePackage>());
+            TextureCache.CreateCollection(Environment.GetGameDirectories()).ContinueWith(x => TextureCollection = x.Result);
+            
             ModelCollection = new ModelCollection();
 
-            Map.PostLoadProcess(GameData, GetTextureSize, SettingsManager.GetSpecialTextureOpacity);
-            // Map.UpdateDecals(this);
-            // Map.UpdateModels(this);
-            // Map.UpdateSprites(this);
-
-            //HelperManager = new HelperManager(this);
-            //Renderer = new RenderManager(this);
+            Map.PostLoadProcess(GameData, SettingsManager.GetSpecialTextureOpacity);
 
             Scene = SceneManager.Engine.Renderer.CreateScene();
             SceneManager = new SceneManager(this);
@@ -187,7 +173,7 @@ namespace Sledge.Editor.Documents
         public void Close()
         {
             Scheduler.Clear(this);
-            TextureProvider.DeleteCollection(TextureCollection);
+            TextureCache.DestroyCollection(TextureCollection);
             ModelCollection.Dispose();
             SceneManager.Engine.Renderer.RemoveScene(Scene);
         }
@@ -228,7 +214,7 @@ namespace Sledge.Editor.Documents
                 Map.ActiveCamera.EyePosition = new Coordinate((decimal)loc.X, (decimal)loc.Y, (decimal)loc.Z);
                 Map.ActiveCamera.LookPosition = new Coordinate((decimal)look.X, (decimal)look.Y, (decimal)look.Z);
             }
-            Map.WorldSpawn.EntityData.SetPropertyValue("wad", string.Join(";", GetUsedTexturePackages().Select(x => x.PackageRoot).Where(x => x.EndsWith(".wad"))));
+            Map.WorldSpawn.EntityData.SetPropertyValue("wad", string.Join(";", GetUsedTexturePackages().Select(x => x.Location).Where(x => x.EndsWith(".wad"))));
             MapProvider.SaveMapToFile(path, Map);
             if (switchPath)
             {
@@ -381,8 +367,8 @@ namespace Sledge.Editor.Documents
 
         public Size GetTextureSize(string name)
         {
-            var item = TextureCollection.GetItem(name);
-            return item == null ? Size.Empty : new Size(item.Width, item.Height);
+            var tex = TextureCollection.TryGetTextureItem(name);
+            return tex == null ? Size.Empty : new Size(tex.Width, tex.Height);
         }
 
         public void RenderAll()
