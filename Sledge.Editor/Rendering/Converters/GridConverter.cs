@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Threading.Tasks;
 using OpenTK;
 using Sledge.DataStructures.MapObjects;
 using Sledge.Editor.Documents;
@@ -27,13 +28,13 @@ namespace Sledge.Editor.Rendering.Converters
             return obj is World;
         }
 
-        public bool Convert(SceneMapObject smo, Document document, MapObject obj)
+        public async Task<bool> Convert(SceneMapObject smo, Document document, MapObject obj)
         {
             smo.SceneObjects.Add(new Holder(), new GridElement(document));
             return true;
         }
 
-        public bool Update(SceneMapObject smo, Document document, MapObject obj)
+        public async Task<bool> Update(SceneMapObject smo, Document document, MapObject obj)
         {
             if (smo.SceneObjects.Keys.Any(x => x is Holder))
             {

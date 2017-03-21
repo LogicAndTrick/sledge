@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Sledge.DataStructures.MapObjects;
 using Sledge.Editor.Documents;
 using Sledge.Editor.Rendering.Converters;
@@ -12,7 +13,7 @@ namespace Sledge.Editor.Rendering
          
         static MapObjectConverter()
         {
-            // todo inject these
+            // todo !plugin inject scene converters
             Converters = new List<IMapObjectSceneConverter>();
             Converters.Add(new HiddenConverter());
             Converters.Add(new DefaultSolidConverter());
@@ -30,24 +31,24 @@ namespace Sledge.Editor.Rendering
             Converters.Add(new PointfileConverter());
         }
 
-        public static SceneMapObject Convert(Document document, MapObject obj)
+        public static async Task<SceneMapObject> Convert(Document document, MapObject obj)
         {
             var smo = new SceneMapObject(obj);
             foreach (var converter in Converters.OrderBy(x => (int) x.Priority))
             {
                 if (!converter.Supports(obj)) continue;
-                if (!converter.Convert(smo, document, obj)) return null;
+                if (!await converter.Convert(smo, document, obj)) return null;
                 if (converter.ShouldStopProcessing(smo, obj)) break;
             }
             return smo;
         }
 
-        public static bool Update(SceneMapObject smo, Document document, MapObject obj)
+        public static async Task<bool> Update(SceneMapObject smo, Document document, MapObject obj)
         {
             foreach (var converter in Converters.OrderBy(x => (int)x.Priority))
             {
                 if (!converter.Supports(obj)) continue;
-                if (!converter.Update(smo, document, obj)) return false;
+                if (!await converter.Update(smo, document, obj)) return false;
                 if (converter.ShouldStopProcessing(smo, obj)) break;
             }
             return true;

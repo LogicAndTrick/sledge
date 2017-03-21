@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using Sledge.DataStructures.MapObjects;
 using Sledge.Editor.Documents;
 using Sledge.Rendering.Cameras;
@@ -18,7 +19,7 @@ namespace Sledge.Editor.Rendering.Converters
             return obj is Entity;
         }
 
-        public bool Convert(SceneMapObject smo, Document document, MapObject obj)
+        public async Task<bool> Convert(SceneMapObject smo, Document document, MapObject obj)
         {
             var flags = CameraFlags.All;
             if (smo.MetaData.ContainsKey("ContentsReplaced")) flags = CameraFlags.Orthographic;
@@ -26,7 +27,7 @@ namespace Sledge.Editor.Rendering.Converters
             var entity = (Entity) obj;
             foreach (var face in entity.GetBoxFaces())
             {
-                var f = DefaultSolidConverter.ConvertFace(face, document);
+                var f = await DefaultSolidConverter.ConvertFace(face, document);
                 f.RenderFlags = RenderFlags.Polygon | RenderFlags.Wireframe;
                 f.CameraFlags = flags;
                 smo.SceneObjects.Add(face, f);
@@ -34,7 +35,7 @@ namespace Sledge.Editor.Rendering.Converters
             return true;
         }
 
-        public bool Update(SceneMapObject smo, Document document, MapObject obj)
+        public async Task<bool> Update(SceneMapObject smo, Document document, MapObject obj)
         {
             return false;
         }

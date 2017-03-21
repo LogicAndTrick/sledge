@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Threading.Tasks;
 using OpenTK;
 using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.MapObjects;
@@ -39,14 +40,14 @@ namespace Sledge.Editor.Rendering.Converters
             return false;
         }
 
-        public bool Convert(SceneMapObject smo, Document document, MapObject obj)
+        public async Task<bool> Convert(SceneMapObject smo, Document document, MapObject obj)
         {
             var el = new EntityAnglesLineElement(obj);
             smo.SceneObjects.Add(new Holder(), el);
             return true;
         }
 
-        public bool Update(SceneMapObject smo, Document document, MapObject obj)
+        public async Task<bool> Update(SceneMapObject smo, Document document, MapObject obj)
         {
             if (smo.SceneObjects.Keys.Any(x => x is Holder))
             {

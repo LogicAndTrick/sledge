@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Sledge.Common.Mediator;
 using Sledge.DataStructures.Geometric;
@@ -190,13 +191,16 @@ namespace Sledge.Editor.Tools.BrushTool
                 var bbox = new Box(box.State.Start, box.State.End);
                 var brush = GetBrush(bbox, new IDGenerator()).FindAll();
                 var converted = brush.Select(x => MapObjectConverter.Convert(Document, x)).Where(x => x != null);
-                var objects = converted.SelectMany(x => x.SceneObjects.Values).ToList();
-                _preview = objects.OfType<Sledge.Rendering.Scenes.Renderables.Face>().ToList();
-                foreach (var o in _preview)
+                Task.WhenAll(converted).ContinueWith(result =>
                 {
-                    o.AccentColor = Color.Turquoise;
-                    o.TintColor = Color.FromArgb(64, Color.Turquoise);
-                }
+                    var objects = result.Result.SelectMany(x => x.SceneObjects.Values).ToList();
+                    foreach (var o in _preview)
+                    {
+                        o.AccentColor = Color.Turquoise;
+                        o.TintColor = Color.FromArgb(64, Color.Turquoise);
+                    }
+                    _preview = objects.OfType<Sledge.Rendering.Scenes.Renderables.Face>().ToList();
+                });
             }
             _updatePreview = false;
             return _preview ?? new List<Sledge.Rendering.Scenes.Renderables.Face>();

@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using MapObject = Sledge.DataStructures.MapObjects.MapObject;
 using Sledge.Editor.Documents;
 
@@ -33,7 +34,7 @@ namespace Sledge.Editor.Rendering.Converters
         /// <param name="document">The current document</param>
         /// <param name="obj">The object to convert</param>
         /// <returns>False if the object is invalid</returns>
-        bool Convert(SceneMapObject smo, Document document, MapObject obj);
+        Task<bool> Convert(SceneMapObject smo, Document document, MapObject obj);
 
         /// <summary>
         /// Update an existing SceneMapObject with the new properties of this MapObject.
@@ -43,6 +44,6 @@ namespace Sledge.Editor.Rendering.Converters
         /// <param name="document">The current document</param>
         /// <param name="obj">The object to update</param>
         /// <returns>False if the object could not be updated</returns>
-        bool Update(SceneMapObject smo, Document document, MapObject obj);
+        Task<bool> Update(SceneMapObject smo, Document document, MapObject obj);
     }
 }

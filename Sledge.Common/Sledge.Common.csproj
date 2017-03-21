@@ -50,6 +50,7 @@
     <Compile Include="Mediator\MediatorExceptionEventArgs.cs" />
     <Compile Include="Mediator\MultiDictionary.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Tasks\TaskQueue.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

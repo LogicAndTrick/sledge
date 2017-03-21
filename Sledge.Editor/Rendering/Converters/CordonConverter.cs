@@ -1,4 +1,5 @@
 using System.Drawing;
+using System.Threading.Tasks;
 using Sledge.DataStructures.MapObjects;
 using Sledge.Editor.Documents;
 using Sledge.Editor.Extensions;
@@ -20,7 +21,7 @@ namespace Sledge.Editor.Rendering.Converters
             return obj is World;
         }
 
-        public bool Convert(SceneMapObject smo, Document document, MapObject obj)
+        public async Task<bool> Convert(SceneMapObject smo, Document document, MapObject obj)
         {
             if (!document.Map.Cordon) return true;
             foreach (var line in document.Map.CordonBounds.GetBoxLines())
@@ -30,7 +31,7 @@ namespace Sledge.Editor.Rendering.Converters
             return true;
         }
 
-        public bool Update(SceneMapObject smo, Document document, MapObject obj)
+        public async Task<bool> Update(SceneMapObject smo, Document document, MapObject obj)
         {
             return false;
         }

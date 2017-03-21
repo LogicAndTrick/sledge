@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using OpenTK;
 using Sledge.DataStructures.GameData;
 using Sledge.DataStructures.Geometric;
@@ -26,7 +27,7 @@ namespace Sledge.Editor.Rendering.Converters
             return !Sledge.Settings.View.DisableModelRendering && obj is Entity && GetModelName((Entity)obj) != null;
         }
 
-        public bool Convert(SceneMapObject smo, Document document, MapObject obj)
+        public async Task<bool> Convert(SceneMapObject smo, Document document, MapObject obj)
         {
             var entity = (Entity) obj;
 
@@ -48,7 +49,7 @@ namespace Sledge.Editor.Rendering.Converters
             return true;
         }
 
-        public bool Update(SceneMapObject smo, Document document, MapObject obj)
+        public async Task<bool> Update(SceneMapObject smo, Document document, MapObject obj)
         {
             return false;
         }

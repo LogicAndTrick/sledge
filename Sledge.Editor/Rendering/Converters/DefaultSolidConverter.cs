@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Threading.Tasks;
 using Sledge.Common;
 using Sledge.DataStructures.MapObjects;
 using Sledge.Editor.Documents;
@@ -42,18 +43,18 @@ namespace Sledge.Editor.Rendering.Converters
             return !face.IsHidden;
         }
 
-        public bool Convert(SceneMapObject smo, Document document, MapObject obj)
+        public async Task<bool> Convert(SceneMapObject smo, Document document, MapObject obj)
         {
             var solid = (Solid)obj;
             foreach (var face in solid.Faces.Where(x => ShouldBeVisible(x, document)))
             {
-                var f = ConvertFace(face, document);
+                var f = await ConvertFace(face, document);
                 smo.SceneObjects.Add(face, f);
             }
             return true;
         }
 
-        public bool Update(SceneMapObject smo, Document document, MapObject obj)
+        public async Task<bool> Update(SceneMapObject smo, Document document, MapObject obj)
         {
             var solid = (Solid)obj;
             var faces = solid.Faces.Where(x => ShouldBeVisible(x, document)).ToList();
@@ -64,7 +65,7 @@ namespace Sledge.Editor.Rendering.Converters
             for (var i = 0; i < faces.Count; i++)
             {
                 var face = faces[i];
-                if (!UpdateFace(face, (Face)values[i], document)) return false;
+                if (!await UpdateFace(face, (Face)values[i], document)) return false;
                 objs.Add(face, values[i]);
             }
             smo.SceneObjects.Clear();
@@ -72,9 +73,9 @@ namespace Sledge.Editor.Rendering.Converters
             return true;
         }
 
-        private static Material GetMaterial(DataStructures.MapObjects.Face face, Document document)
+        private static async Task<Material> GetMaterial(DataStructures.MapObjects.Face face, Document document)
         {
-            var tex = document.TextureCollection.TryGetTextureItem(face.Texture.Name);
+            var tex = await document.TextureCollection.GetTextureItem(face.Texture.Name);
             var op = SettingsManager.GetSpecialTextureOpacity(face.Texture.Name);
             if (op < 0.1 && !document.Map.HideNullTextures) op = 1;
 
@@ -85,9 +86,9 @@ namespace Sledge.Editor.Rendering.Converters
                 : Material.Texture(tex.Name, tex.Flags.HasFlag(TextureFlags.Transparent));
         }
 
-        public static Face ConvertFace(DataStructures.MapObjects.Face face, Document document)
+        public static async Task<Face> ConvertFace(DataStructures.MapObjects.Face face, Document document)
         {
-            var mat = GetMaterial(face, document);
+            var mat = await GetMaterial(face, document);
 
             var sel = face.IsSelected || (face.Parent != null && face.Parent.IsSelected);
 
@@ -116,9 +117,9 @@ namespace Sledge.Editor.Rendering.Converters
             return sceneFace;
         }
 
-        public static bool UpdateFace(DataStructures.MapObjects.Face face, Face sceneFace, Document document)
+        public static async Task<bool> UpdateFace(DataStructures.MapObjects.Face face, Face sceneFace, Document document)
         {
-            var mat = GetMaterial(face, document);
+            var mat = await GetMaterial(face, document);
 
             var sel = face.IsSelected || (face.Parent != null && face.Parent.IsSelected);
 

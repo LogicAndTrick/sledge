@@ -1,4 +1,5 @@
 using System.Drawing;
+using System.Threading.Tasks;
 using OpenTK;
 using Sledge.DataStructures.MapObjects;
 using Sledge.Editor.Documents;
@@ -22,7 +23,7 @@ namespace Sledge.Editor.Rendering.Converters
             return obj is World;
         }
 
-        public bool Convert(SceneMapObject smo, Document document, MapObject obj)
+        public async Task<bool> Convert(SceneMapObject smo, Document document, MapObject obj)
         {
             smo.SceneObjects.Add(new Holder(), new Line(Color.FromArgb(255, Color.Red), Vector3.Zero, Vector3.UnitX * 10) { RenderFlags = RenderFlags.Wireframe, CameraFlags = CameraFlags.Perspective });
             smo.SceneObjects.Add(new Holder(), new Line(Color.FromArgb(255, Color.Lime), Vector3.Zero, Vector3.UnitY * 10) { RenderFlags = RenderFlags.Wireframe, CameraFlags = CameraFlags.Perspective });
@@ -30,7 +31,7 @@ namespace Sledge.Editor.Rendering.Converters
             return true;
         }
 
-        public bool Update(SceneMapObject smo, Document document, MapObject obj)
+        public async Task<bool> Update(SceneMapObject smo, Document document, MapObject obj)
         {
             return true;
         }

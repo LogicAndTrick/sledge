@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using Sledge.DataStructures.GameData;
 using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.MapObjects;
@@ -25,7 +26,7 @@ namespace Sledge.Editor.Rendering.Converters
             return !Sledge.Settings.View.DisableSpriteRendering && obj is Entity && GetSpriteName((Entity)obj) != null;
         }
 
-        public bool Convert(SceneMapObject smo, Document document, MapObject obj)
+        public async Task<bool> Convert(SceneMapObject smo, Document document, MapObject obj)
         {
             var entity = (Entity) obj;
 
@@ -44,7 +45,7 @@ namespace Sledge.Editor.Rendering.Converters
             return true;
         }
 
-        public bool Update(SceneMapObject smo, Document document, MapObject obj)
+        public async Task<bool> Update(SceneMapObject smo, Document document, MapObject obj)
         {
             return false;
         }

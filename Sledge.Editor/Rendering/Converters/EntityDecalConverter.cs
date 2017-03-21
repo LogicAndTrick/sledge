@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.MapObjects;
 using Sledge.DataStructures.Transformations;
@@ -24,18 +25,18 @@ namespace Sledge.Editor.Rendering.Converters
             return obj is Entity && GetDecalName((Entity)obj) != null;
         }
 
-        public bool Convert(SceneMapObject smo, Document document, MapObject obj)
+        public async Task<bool> Convert(SceneMapObject smo, Document document, MapObject obj)
         {
             var entity = (Entity) obj;
 
             var decalName = GetDecalName(entity);
-            TextureItem tex = document.TextureCollection.TryGetTextureItem(decalName);
+            var tex = await document.TextureCollection.GetTextureItem(decalName);
             if (tex != null)
             {
                 var geo = CalculateDecalGeometry(entity, tex, document);
                 foreach (var face in geo)
                 {
-                    var f = DefaultSolidConverter.ConvertFace(face, document);
+                    var f = await DefaultSolidConverter.ConvertFace(face, document);
                     f.RenderFlags = RenderFlags.Polygon | RenderFlags.Wireframe;
                     smo.SceneObjects.Add(face, f);
                 }
@@ -43,7 +44,7 @@ namespace Sledge.Editor.Rendering.Converters
             return true;
         }
 
-        public bool Update(SceneMapObject smo, Document document, MapObject obj)
+        public async Task<bool> Update(SceneMapObject smo, Document document, MapObject obj)
         {
             return false;
         }

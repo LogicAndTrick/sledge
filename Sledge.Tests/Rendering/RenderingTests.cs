@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.MapObjects;
@@ -17,7 +19,7 @@ namespace Sledge.Tests.Rendering
     public class RenderingTests
     {
         [TestMethod]
-        public void TestOctree()
+        public async Task TestOctree()
         {
             var generator = new Sledge.Editor.Brushes.TextBrush();
             var octree = new Octree<RenderableObject>();
@@ -27,8 +29,13 @@ namespace Sledge.Tests.Rendering
 
             generator.GetControls().OfType<TextControl>().First().EnteredText = String.Join("", Enumerable.Range(0, 50).Select(x => random.Next(0, 100)));
             var someText = generator.Create(new IDGenerator(), new Sledge.DataStructures.Geometric.Box(Coordinate.Zero, Coordinate.One * 100), null, 2);
-            
-            var converted = someText.SelectMany(x => MapObjectConverter.Convert(document, x)).OfType<RenderableObject>().ToList();
+
+            Func<MapObject, Task<IEnumerable<RenderableObject>>> map = async x => (await MapObjectConverter.Convert(document, x)).OfType<RenderableObject>();
+            var converted = new List<RenderableObject>();
+            foreach (var o in someText)
+            {
+                converted.AddRange((await MapObjectConverter.Convert(document, o)).OfType<RenderableObject>());
+            }
             var count = converted.Count;
 
             Assert.AreEqual(0, octree.Count);
