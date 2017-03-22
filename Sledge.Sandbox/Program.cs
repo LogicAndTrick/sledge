@@ -22,7 +22,7 @@ namespace Sledge.Sandbox
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new MainForm());
+            Application.Run(new Sledge.Shell.UI.Shell());
         }
     }
 }

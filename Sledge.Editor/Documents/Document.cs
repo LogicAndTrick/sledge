@@ -34,7 +34,7 @@ using Path = System.IO.Path;
 
 namespace Sledge.Editor.Documents
 {
-    public class Document
+    public class Document : IDocument
     {
         public string MapFile { get; set; }
         public string MapFileName { get; set; }
@@ -108,7 +108,11 @@ namespace Sledge.Editor.Documents
             }
             
             TextureCollection = new TextureCollection(new List<TexturePackage>());
-            TextureCache.CreateCollection(Environment.GetGameDirectories()).ContinueWith(x => TextureCollection = x.Result);
+            TextureCache.CreateCollection(Environment.GetGameDirectories()).ContinueWith(x =>
+            {
+                TextureCollection = x.Result;
+                SceneManager.Update();
+            });
             
             ModelCollection = new ModelCollection();
 

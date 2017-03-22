@@ -215,6 +215,7 @@
     <Compile Include="Documents\DocumentManager.cs" />
     <Compile Include="Documents\DocumentMemory.cs" />
     <Compile Include="Documents\DocumentSubscriptions.cs" />
+    <Compile Include="Documents\IDocumentProvider.cs" />
     <Compile Include="Documents\ModelCollection.cs" />
     <Compile Include="Documents\TextureCache.cs" />
     <Compile Include="Documents\TextureCollection.cs" />
