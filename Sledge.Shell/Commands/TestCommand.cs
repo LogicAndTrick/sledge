@@ -10,10 +10,16 @@ using Sledge.Common.Commands;
 namespace Sledge.Shell.Commands
 {
     [Export(typeof(ICommand))]
+    [CommandID("TestCommand")]
     public class TestCommand : ICommand
     {
         public string Name => "This is a test command";
         public string Details => "Run a test command";
+
+        public bool IsInContext()
+        {
+            return true;
+        }
 
         public async Task Invoke(CommandParameters parameters)
         {

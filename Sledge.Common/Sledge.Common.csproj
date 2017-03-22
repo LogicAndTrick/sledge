@@ -35,21 +35,26 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Colour.cs" />
     <Compile Include="Commands\CommandExtensions.cs" />
+    <Compile Include="Commands\CommandIDAttribute.cs" />
     <Compile Include="Commands\CommandMessage.cs" />
     <Compile Include="Commands\CommandParameters.cs" />
-    <Compile Include="Commands\CommandRegister.cs" />
     <Compile Include="Commands\ICommand.cs" />
     <Compile Include="DMath.cs" />
     <Compile Include="Easings\Easing.cs" />
     <Compile Include="Easings\EasingDirection.cs" />
     <Compile Include="Easings\EasingType.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
+    <Compile Include="Hooks\IStartupHook.cs" />
+    <Compile Include="Hooks\IInitialiseHook.cs" />
+    <Compile Include="Hooks\IShutdownHook.cs" />
+    <Compile Include="Hooks\IShuttingDownHook.cs" />
     <Compile Include="Mediator\Mediator.cs" />
     <Compile Include="Mediator\IMediatorListener.cs" />
     <Compile Include="Mediator\MediatorExceptionEventArgs.cs" />

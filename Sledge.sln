@@ -43,6 +43,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sledge.Rendering", "Sledge.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sledge.Shell", "Sledge.Shell\Sledge.Shell.csproj", "{1E0BEB41-CF2E-4F48-838E-452C1DCF575F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sledge.MinimalEditor", "Sledge.MinimalEditor\Sledge.MinimalEditor.csproj", "{0F7EBC7C-8FF3-484C-ACD2-6682450A91DB}"
+EndProject
 Global
 	GlobalSection(Performance) = preSolution
 		HasPerformanceSessions = true
@@ -219,6 +221,18 @@ Global
 		{1E0BEB41-CF2E-4F48-838E-452C1DCF575F}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{1E0BEB41-CF2E-4F48-838E-452C1DCF575F}.Release|x86.ActiveCfg = Release|Any CPU
 		{1E0BEB41-CF2E-4F48-838E-452C1DCF575F}.Release|x86.Build.0 = Release|Any CPU
+		{0F7EBC7C-8FF3-484C-ACD2-6682450A91DB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0F7EBC7C-8FF3-484C-ACD2-6682450A91DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0F7EBC7C-8FF3-484C-ACD2-6682450A91DB}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{0F7EBC7C-8FF3-484C-ACD2-6682450A91DB}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{0F7EBC7C-8FF3-484C-ACD2-6682450A91DB}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{0F7EBC7C-8FF3-484C-ACD2-6682450A91DB}.Debug|x86.Build.0 = Debug|Any CPU
+		{0F7EBC7C-8FF3-484C-ACD2-6682450A91DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0F7EBC7C-8FF3-484C-ACD2-6682450A91DB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0F7EBC7C-8FF3-484C-ACD2-6682450A91DB}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{0F7EBC7C-8FF3-484C-ACD2-6682450A91DB}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{0F7EBC7C-8FF3-484C-ACD2-6682450A91DB}.Release|x86.ActiveCfg = Release|Any CPU
+		{0F7EBC7C-8FF3-484C-ACD2-6682450A91DB}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

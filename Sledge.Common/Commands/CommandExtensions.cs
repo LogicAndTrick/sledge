@@ -1,10 +1,14 @@
-﻿namespace Sledge.Common.Commands
+﻿using System.Linq;
+
+namespace Sledge.Common.Commands
 {
     public static class CommandExtensions
     {
         public static string GetID(this ICommand command)
         {
-            return command.GetType().FullName;
+            var ty = command.GetType();
+            var mt = ty.GetCustomAttributes(typeof(CommandIDAttribute), false).OfType<CommandIDAttribute>().FirstOrDefault();
+            return mt?.ID ?? ty.FullName;
         }
     }
 }
