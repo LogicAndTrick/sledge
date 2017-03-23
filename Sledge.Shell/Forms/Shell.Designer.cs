@@ -36,12 +36,10 @@
             this.LeftSidebar = new Sledge.Shell.Controls.DockedPanel();
             this.RightSidebar = new Sledge.Shell.Controls.DockedPanel();
             this.DocumentContainer = new System.Windows.Forms.Panel();
-            this.closableTabControl1 = new Sledge.Shell.Controls.ClosableTabControl();
-            this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.DocumentTabs = new Sledge.Shell.Controls.ClosableTabControl();
             this.ToolStripContainer.ContentPanel.SuspendLayout();
             this.ToolStripContainer.SuspendLayout();
-            this.closableTabControl1.SuspendLayout();
+            this.DocumentTabs.SuspendLayout();
             this.SuspendLayout();
             // 
             // MenuStrip
@@ -66,7 +64,7 @@
             // ToolStripContainer.ContentPanel
             // 
             this.ToolStripContainer.ContentPanel.Controls.Add(this.DocumentContainer);
-            this.ToolStripContainer.ContentPanel.Controls.Add(this.closableTabControl1);
+            this.ToolStripContainer.ContentPanel.Controls.Add(this.DocumentTabs);
             this.ToolStripContainer.ContentPanel.Controls.Add(this.RightSidebar);
             this.ToolStripContainer.ContentPanel.Controls.Add(this.LeftSidebar);
             this.ToolStripContainer.ContentPanel.Controls.Add(this.BottomSidebar);
@@ -119,38 +117,16 @@
             this.DocumentContainer.Size = new System.Drawing.Size(530, 300);
             this.DocumentContainer.TabIndex = 3;
             // 
-            // closableTabControl1
+            // DocumentTabs
             // 
-            this.closableTabControl1.Controls.Add(this.tabPage1);
-            this.closableTabControl1.Controls.Add(this.tabPage2);
-            this.closableTabControl1.Dock = System.Windows.Forms.DockStyle.Top;
-            this.closableTabControl1.Location = new System.Drawing.Point(8, 0);
-            this.closableTabControl1.Name = "closableTabControl1";
-            this.closableTabControl1.SelectedIndex = 0;
-            this.closableTabControl1.Size = new System.Drawing.Size(530, 24);
-            this.closableTabControl1.TabIndex = 4;
-            // 
-            // tabPage1
-            // 
-            this.tabPage1.ImageIndex = 0;
-            this.tabPage1.Location = new System.Drawing.Point(4, 28);
-            this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(192, 68);
-            this.tabPage1.TabIndex = 3;
-            this.tabPage1.Text = "tabPage1";
-            this.tabPage1.UseVisualStyleBackColor = true;
-            // 
-            // tabPage2
-            // 
-            this.tabPage2.ImageIndex = 0;
-            this.tabPage2.Location = new System.Drawing.Point(4, 28);
-            this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(192, 68);
-            this.tabPage2.TabIndex = 4;
-            this.tabPage2.Text = "tabPage2";
-            this.tabPage2.UseVisualStyleBackColor = true;
+            this.DocumentTabs.Dock = System.Windows.Forms.DockStyle.Top;
+            this.DocumentTabs.Location = new System.Drawing.Point(8, 0);
+            this.DocumentTabs.Name = "DocumentTabs";
+            this.DocumentTabs.SelectedIndex = 0;
+            this.DocumentTabs.Size = new System.Drawing.Size(530, 24);
+            this.DocumentTabs.TabIndex = 4;
+            this.DocumentTabs.SelectedIndexChanged += TabChanged;
+            this.DocumentTabs.RequestClose += RequestClose;
             // 
             // Shell
             // 
@@ -166,7 +142,7 @@
             this.ToolStripContainer.ContentPanel.ResumeLayout(false);
             this.ToolStripContainer.ResumeLayout(false);
             this.ToolStripContainer.PerformLayout();
-            this.closableTabControl1.ResumeLayout(false);
+            this.DocumentTabs.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -181,8 +157,6 @@
         private Controls.DockedPanel RightSidebar;
         private Controls.DockedPanel LeftSidebar;
         private System.Windows.Forms.Panel DocumentContainer;
-        private Controls.ClosableTabControl closableTabControl1;
-        private System.Windows.Forms.TabPage tabPage1;
-        private System.Windows.Forms.TabPage tabPage2;
+        private Controls.ClosableTabControl DocumentTabs;
     }
 }

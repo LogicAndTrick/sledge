@@ -5,8 +5,7 @@ using System.ComponentModel.Composition.Primitives;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using LogicAndTrick.Gimme;
-using LogicAndTrick.Gimme.Providers;
+using Sledge.Common.Commands;
 using Sledge.Common.Hooks;
 
 namespace Sledge.Shell.Hooks

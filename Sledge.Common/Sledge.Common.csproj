@@ -47,6 +47,8 @@
     <Compile Include="Commands\CommandParameters.cs" />
     <Compile Include="Commands\ICommand.cs" />
     <Compile Include="DMath.cs" />
+    <Compile Include="Documents\IDocument.cs" />
+    <Compile Include="Documents\IDocumentLoader.cs" />
     <Compile Include="Easings\Easing.cs" />
     <Compile Include="Easings\EasingDirection.cs" />
     <Compile Include="Easings\EasingType.cs" />

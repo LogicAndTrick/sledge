@@ -9,14 +9,15 @@ using LogicAndTrick.Gimme.Providers;
 using LogicAndTrick.Oy;
 using Sledge.Common.Commands;
 using Sledge.Common.Hooks;
+using Sledge.Shell.Commands;
 
 namespace Sledge.Shell.Hooks
 {
-    [Export(typeof(IInitialiseHook))]
+    [Export(typeof(IStartupHook))]
     [Export(typeof(IResourceProvider<>))]
-    public class CommandRegister : SyncResourceProvider<ICommand>, IInitialiseHook
+    public class CommandRegister : SyncResourceProvider<ICommand>, IStartupHook
     {
-        public Task OnInitialise(CompositionContainer container)
+        public Task OnStartup(CompositionContainer container)
         {
             // Register exported commands
             foreach (var export in container.GetExports<ICommand>())
@@ -33,6 +34,7 @@ namespace Sledge.Shell.Hooks
 
             // Register the resource provider
             Gimme.Register(this);
+            Gimme.Register(new ActivatorProvider(this));
 
             return Task.FromResult(0);
         }
@@ -80,6 +82,26 @@ namespace Sledge.Shell.Hooks
         {
             ICommand o;
             _commands.TryRemove(id, out o);
+        }
+
+        private class ActivatorProvider : SyncResourceProvider<IActivator>
+        {
+            private CommandRegister _self;
+
+            public ActivatorProvider(CommandRegister self)
+            {
+                _self = self;
+            }
+
+            public override bool CanProvide(string location)
+            {
+                return true;
+            }
+
+            public override IEnumerable<IActivator> Fetch(string location, List<string> resources)
+            {
+                return _self._commands.Values.Select(x => new CommandActivator(x));
+            }
         }
     }
 }

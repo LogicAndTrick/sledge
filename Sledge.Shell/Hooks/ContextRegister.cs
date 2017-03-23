@@ -11,11 +11,11 @@ using Sledge.Common.Hooks;
 
 namespace Sledge.Shell.Hooks
 {
-    [Export(typeof(IInitialiseHook))]
+    [Export(typeof(IStartupHook))]
     [Export(typeof(IResourceProvider<>))]
-    public class ContextRegister : SyncResourceProvider<string>, IInitialiseHook
+    public class ContextRegister : SyncResourceProvider<string>, IStartupHook
     {
-        public Task OnInitialise(CompositionContainer container)
+        public Task OnStartup(CompositionContainer container)
         {
             // Listen for dynamically added/removed commands
             Oy.Subscribe<string>("Context:Add", c => Add(c));
