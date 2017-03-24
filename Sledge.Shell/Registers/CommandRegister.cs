@@ -11,7 +11,7 @@ using Sledge.Common.Commands;
 using Sledge.Common.Hooks;
 using Sledge.Shell.Commands;
 
-namespace Sledge.Shell.Hooks
+namespace Sledge.Shell.Registers
 {
     [Export(typeof(IStartupHook))]
     [Export(typeof(IResourceProvider<>))]

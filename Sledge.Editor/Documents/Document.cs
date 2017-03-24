@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using LogicAndTrick.Gimme;
 using OpenTK;
+using Sledge.Common.Documents;
 using Sledge.Common.Mediator;
 using Sledge.DataStructures.GameData;
 using Sledge.DataStructures.Geometric;
@@ -34,7 +35,7 @@ using Path = System.IO.Path;
 
 namespace Sledge.Editor.Documents
 {
-    public class Document : IDocument
+    public class Document
     {
         public string MapFile { get; set; }
         public string MapFileName { get; set; }

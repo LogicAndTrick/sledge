@@ -34,6 +34,10 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="LogicAndTrick.Oy, Version=1.0.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\LogicAndTrick.Oy.1.0.1\lib\net45\LogicAndTrick.Oy.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
@@ -57,14 +61,24 @@
     <Compile Include="Hooks\IInitialiseHook.cs" />
     <Compile Include="Hooks\IShutdownHook.cs" />
     <Compile Include="Hooks\IShuttingDownHook.cs" />
+    <Compile Include="Hotkeys\CommandHotkey.cs" />
+    <Compile Include="Hotkeys\DefaultHotkeyAttribute.cs" />
+    <Compile Include="Hotkeys\IHotkey.cs" />
+    <Compile Include="Logging\LogMessage.cs" />
     <Compile Include="Mediator\Mediator.cs" />
     <Compile Include="Mediator\IMediatorListener.cs" />
     <Compile Include="Mediator\MediatorExceptionEventArgs.cs" />
     <Compile Include="Mediator\MultiDictionary.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Settings\ISettingsContainer.cs" />
+    <Compile Include="Settings\SettingKey.cs" />
+    <Compile Include="Settings\SettingValue.cs" />
+    <Compile Include="Settings\StaticSettingsContainer.cs" />
     <Compile Include="Tasks\TaskQueue.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -6,10 +6,9 @@ using System.Threading.Tasks;
 using LogicAndTrick.Gimme;
 using LogicAndTrick.Gimme.Providers;
 using LogicAndTrick.Oy;
-using Sledge.Common.Commands;
 using Sledge.Common.Hooks;
 
-namespace Sledge.Shell.Hooks
+namespace Sledge.Shell.Registers
 {
     [Export(typeof(IStartupHook))]
     [Export(typeof(IResourceProvider<>))]

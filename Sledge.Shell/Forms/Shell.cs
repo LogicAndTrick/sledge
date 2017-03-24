@@ -11,7 +11,7 @@ using Sledge.Common.Documents;
 
 namespace Sledge.Shell.Forms
 {
-    public partial class Shell : Form
+    public partial class Shell : BaseForm
     {
         private readonly List<IDocument> _documents;
         private readonly object _lock = new object();
@@ -27,10 +27,22 @@ namespace Sledge.Shell.Forms
         private void InitializeShell()
         {
             DocumentTabs.TabPages.Clear();
+            
             Oy.Subscribe<string>("Context:Added", ContextAdded);
             Oy.Subscribe<string>("Context:Removed", ContextRemoved);
+
             Oy.Subscribe<IDocument>("Document:Opened", OpenDocument);
             Oy.Subscribe<IDocument>("Document:Closed", CloseDocument);
+
+            Oy.Subscribe<string>("Shell:OpenCommandBox", OpenCommandBox);
+        }
+
+        private async Task OpenCommandBox(string obj)
+        {
+            var cb = new CommandBox();
+            cb.Location = new Point(Location.X + (Size.Width - cb.Width) / 2, Location.Y + (Size.Height - cb.Height) / 2);
+            cb.StartPosition = FormStartPosition.Manual;
+            cb.Show(this);
         }
 
         protected override void OnLoad(EventArgs e)
@@ -50,13 +62,14 @@ namespace Sledge.Shell.Forms
             btn.Text = "Click Me 2";
             btn.Click += (sender, args) =>
             {
-                var cb = new CommandBox();
-                cb.Location = new Point(Location.X + (Size.Width - cb.Width) / 2, Location.Y + (Size.Height - cb.Height) / 2);
-                cb.StartPosition = FormStartPosition.Manual;
-                cb.Show(this);
+                OpenCommandBox(null);
             };
             btn.Location = new Point(0, 30);
             DocumentContainer.Controls.Add(btn);
+
+            var txt = new TextBox();
+            txt.Location = new Point(0, 60);
+            DocumentContainer.Controls.Add(txt);
         }
 
         private async void DoClosing(object sender, CancelEventArgs e)

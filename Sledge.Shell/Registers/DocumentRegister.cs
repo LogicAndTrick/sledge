@@ -9,7 +9,7 @@ using LogicAndTrick.Oy;
 using Sledge.Common.Documents;
 using Sledge.Common.Hooks;
 
-namespace Sledge.Shell.Hooks
+namespace Sledge.Shell.Registers
 {
     [Export(typeof(IStartupHook))]
     public class DocumentRegister : SyncResourceProvider<IDocumentLoader>, IStartupHook

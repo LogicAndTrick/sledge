@@ -7,6 +7,7 @@ using System.Linq;
 using System.Reactive.Linq;
 using System.Reactive.Threading.Tasks;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using LogicAndTrick.Gimme;
@@ -19,11 +20,12 @@ namespace Sledge.Shell.Forms
         public CommandBox()
         {
             InitializeComponent();
+            DoubleBuffered = true;
         }
 
         protected override void OnLoad(EventArgs e)
         {
-            base.OnLoad(e);
+            UpdateFilter();
         }
 
         protected override void OnShown(EventArgs e)
@@ -49,29 +51,57 @@ namespace Sledge.Shell.Forms
             UpdateFilter();
         }
 
+        private static readonly Color ButtonBackColour = Color.FromArgb(255, 188, 188, 255);
+        private static readonly Color ButtonOverColour = Color.FromArgb(255, 154, 154, 255);
+
         private async void UpdateFilter()
         {
-            SearchResults.Controls.Clear();
-
-            if (String.IsNullOrWhiteSpace(SearchBox.Text))
+            try
             {
-                SearchResults.Controls.Add(new Label
+                SearchResults.SuspendLayout();
+
+                SearchResults.Controls.Clear();
+
+                if (String.IsNullOrWhiteSpace(SearchBox.Text))
                 {
-                    BackColor = Color.Transparent,
-                    ForeColor = Color.LightGray,
-                    Font = new Font(Font, FontStyle.Italic),
-                    Text = "Search results will appear here"
-                });
-                return;
+                    SearchResults.Controls.Add(new Label
+                    {
+                        Text = "Search results will appear here",
+                        Anchor = AnchorStyles.Left | AnchorStyles.Right
+                    });
+                    return;
+                }
+                var result = await Gimme.Fetch<IActivator>("shell://commandbox", SearchBox.Text.Split(' ').ToList())
+                    .ToList()
+                    .ToTask();
+
+                foreach (var x in result)
+                {
+                    var btn = new Button
+                    {
+                        BackColor = ButtonBackColour,
+                        Text = x.Name,
+                        Anchor = AnchorStyles.Left | AnchorStyles.Right,
+                        FlatStyle = FlatStyle.Flat,
+                        FlatAppearance =
+                        {
+                            BorderColor = ButtonOverColour,
+                            BorderSize = 1,
+                            MouseOverBackColor = ButtonOverColour
+                        }
+                    };
+                    btn.Click += async (s, e) =>
+                    {
+                        Hide();
+                        await x.Activate();
+                        Close();
+                    };
+                    SearchResults.Controls.Add(btn);
+                }
             }
-            var result = await Gimme.Fetch<IActivator>("shell://commandbox", SearchBox.Text.Split(' ').ToList()).ToList().ToTask();
-
-            foreach (var x in result)
+            finally
             {
-                SearchResults.Controls.Add(new Button
-                {
-                    Text = x.Name
-                });
+                SearchResults.ResumeLayout();
             }
         }
     }

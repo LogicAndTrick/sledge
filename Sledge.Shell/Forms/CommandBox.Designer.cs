@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.SearchBox = new System.Windows.Forms.TextBox();
-            this.SearchResults = new System.Windows.Forms.FlowLayoutPanel();
+            this.SearchResults = new System.Windows.Forms.TableLayoutPanel();
             this.panel1 = new System.Windows.Forms.Panel();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
@@ -50,10 +50,10 @@
             this.SearchResults.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.SearchResults.AutoSize = true;
-            this.SearchResults.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
+            this.SearchResults.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.SearchResults.Location = new System.Drawing.Point(3, 29);
             this.SearchResults.Name = "SearchResults";
-            this.SearchResults.Size = new System.Drawing.Size(282, 24);
+            this.SearchResults.Size = new System.Drawing.Size(282, 10);
             this.SearchResults.TabIndex = 1;
             // 
             // panel1
@@ -63,13 +63,13 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.panel1.AutoSize = true;
             this.panel1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.panel1.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.panel1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(188)))), ((int)(((byte)(188)))), ((int)(((byte)(255)))));
             this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.panel1.Controls.Add(this.SearchBox);
             this.panel1.Controls.Add(this.SearchResults);
             this.panel1.Location = new System.Drawing.Point(5, 5);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(290, 58);
+            this.panel1.Size = new System.Drawing.Size(290, 44);
             this.panel1.TabIndex = 2;
             // 
             // CommandBox
@@ -98,7 +98,7 @@
         #endregion
 
         private System.Windows.Forms.TextBox SearchBox;
-        private System.Windows.Forms.FlowLayoutPanel SearchResults;
+        private System.Windows.Forms.TableLayoutPanel SearchResults;
         private System.Windows.Forms.Panel panel1;
     }
 }
