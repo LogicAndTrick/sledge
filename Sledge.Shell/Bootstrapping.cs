@@ -1,4 +1,3 @@
-using System;
 using System.ComponentModel.Composition.Hosting;
 using System.Threading.Tasks;
 using Sledge.Common.Hooks;
@@ -16,8 +15,13 @@ namespace Sledge.Shell
             Container = new CompositionContainer(catalog);
         }
 
-        public static async Task Startup()
+        public static async Task Startup(Forms.Shell shell)
         {
+            foreach (var export in Container.GetExports<IShellStartupHook>())
+            {
+                await export.Value.OnStartup(shell, Container);
+            }
+
             foreach (var export in Container.GetExports<IStartupHook>())
             {
                 await export.Value.OnStartup(Container);

@@ -6,8 +6,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using LogicAndTrick.Oy;
-using Sledge.Common.Commands;
 using Sledge.Common.Documents;
+using Sledge.Common.Settings;
+using Sledge.Shell.Controls;
 
 namespace Sledge.Shell.Forms
 {
@@ -37,39 +38,10 @@ namespace Sledge.Shell.Forms
             Oy.Subscribe<string>("Shell:OpenCommandBox", OpenCommandBox);
         }
 
-        private async Task OpenCommandBox(string obj)
-        {
-            var cb = new CommandBox();
-            cb.Location = new Point(Location.X + (Size.Width - cb.Width) / 2, Location.Y + (Size.Height - cb.Height) / 2);
-            cb.StartPosition = FormStartPosition.Manual;
-            cb.Show(this);
-        }
-
         protected override void OnLoad(EventArgs e)
         {
-            Bootstrapping.Startup().ContinueWith(Bootstrapping.Initialise);
+            Bootstrapping.Startup(this).ContinueWith(Bootstrapping.Initialise);
             Closing += DoClosing;
-
-            var btn = new Button();
-            btn.Text = "Click Me";
-            btn.Click += (sender, args) =>
-            {
-                Oy.Publish("Command:Run", new CommandMessage("TestCommand"));
-            };
-            DocumentContainer.Controls.Add(btn);
-
-            btn = new Button();
-            btn.Text = "Click Me 2";
-            btn.Click += (sender, args) =>
-            {
-                OpenCommandBox(null);
-            };
-            btn.Location = new Point(0, 30);
-            DocumentContainer.Controls.Add(btn);
-
-            var txt = new TextBox();
-            txt.Location = new Point(0, 60);
-            DocumentContainer.Controls.Add(txt);
         }
 
         private async void DoClosing(object sender, CancelEventArgs e)
@@ -98,7 +70,16 @@ namespace Sledge.Shell.Forms
             await Bootstrapping.Shutdown();
             Close();
         }
+
+        internal IEnumerable<DockedPanel> GetDockPanels()
+        {
+            yield return LeftSidebar;
+            yield return RightSidebar;
+            yield return BottomSidebar;
+        }
         
+        // Subscriptions
+
         private async Task OpenDocument(IDocument document)
         {
             lock (_lock)
@@ -139,6 +120,14 @@ namespace Sledge.Shell.Forms
         private async Task ContextRemoved(string context)
         {
 
+        }
+
+        private async Task OpenCommandBox(string obj)
+        {
+            var cb = new CommandBox();
+            cb.Location = new Point(Location.X + (Size.Width - cb.Width) / 2, Location.Y + (Size.Height - cb.Height) / 4);
+            cb.StartPosition = FormStartPosition.Manual;
+            cb.Show(this);
         }
 
         private void TabChanged(object sender, EventArgs e)

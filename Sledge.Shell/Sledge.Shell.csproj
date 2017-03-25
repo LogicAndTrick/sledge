@@ -43,9 +43,6 @@
       <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Sledge.Shell">
-      <HintPath>obj\Debug\Sledge.Shell.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
@@ -81,6 +78,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IShellStartupHook.cs" />
     <Compile Include="Commands\OpenCommandBoxCommand.cs" />
     <Compile Include="Commands\CommandActivator.cs" />
     <Compile Include="Commands\IActivator.cs" />
@@ -89,6 +87,12 @@
     </Compile>
     <Compile Include="Controls\DockedPanel.cs">
       <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\SidebarContainer.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\SidebarContainer.Designer.cs">
+      <DependentUpon>SidebarContainer.cs</DependentUpon>
     </Compile>
     <Compile Include="Controls\TableSplitControl.cs">
       <SubType>Component</SubType>
@@ -122,6 +126,8 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Registers\SidebarRegister.cs" />
+    <Compile Include="Settings\LayoutSettingsContainer.cs" />
     <Compile Include="Settings\SettingsProvider.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -131,6 +137,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Controls\SidebarContainer.resx">
+      <DependentUpon>SidebarContainer.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\CommandBox.resx">
       <DependentUpon>CommandBox.cs</DependentUpon>
     </EmbeddedResource>

@@ -1,16 +1,13 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using LogicAndTrick.Gimme.Providers;
 using LogicAndTrick.Oy;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using Sledge.Common.Hooks;
 using Sledge.Common.Settings;
 

@@ -1,6 +1,4 @@
-﻿using System;
-using System.Windows.Forms;
-using LogicAndTrick.Oy;
+﻿using System.Windows.Forms;
 using Sledge.Shell.Registers;
 using Message = System.Windows.Forms.Message;
 
@@ -27,7 +25,7 @@ namespace Sledge.Shell.Forms
             return (HotkeyRegister != null && HotkeyRegister.Fire(keyData)) | base.ProcessCmdKey(ref msg, keyData);
         }
 
-        private bool CheckIgnoreHotkey(Control source, Keys keyData)
+        protected virtual bool CheckIgnoreHotkey(Control source, Keys keyData)
         {
             if (source is TextBox)
             {
