@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Sledge.Common.Context;
 
 namespace Sledge.Common.Hotkeys
 {
@@ -11,6 +12,8 @@ namespace Sledge.Common.Hotkeys
         string Name { get; }
         string Description { get; }
         string DefaultHotkey { get; }
+
+        bool IsInContext(IContext context);
         Task Invoke(); 
     }
 }

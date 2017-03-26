@@ -4,6 +4,9 @@ using Message = System.Windows.Forms.Message;
 
 namespace Sledge.Shell.Forms
 {
+    /// <summary>
+    /// A base form that any hotkey-aware form should inherit from.
+    /// </summary>
     public class BaseForm : Form
     {
         public BaseForm()
@@ -11,11 +14,19 @@ namespace Sledge.Shell.Forms
             KeyPreview = true;
         }
 
+        /// <summary>
+        /// The hotkey register
+        /// </summary>
         internal static HotkeyRegister HotkeyRegister { get; set; }
 
+        /// <summary>
+        /// Checks if the key shortcut is a hotkey, and consume it if required.
+        /// </summary>
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
             var source = FromHandle(msg.HWnd);
+
+            // Check if we shouldn't treat this as a hotkey
             if (source != null && CheckIgnoreHotkey(source, keyData))
             {
                 return base.ProcessCmdKey(ref msg, keyData);
@@ -27,6 +38,7 @@ namespace Sledge.Shell.Forms
 
         protected virtual bool CheckIgnoreHotkey(Control source, Keys keyData)
         {
+            // todo !hotkeys other controls need to be checked too
             if (source is TextBox)
             {
                 return IsTextBoxKey(keyData);
@@ -34,6 +46,11 @@ namespace Sledge.Shell.Forms
             return false;
         }
 
+        /// <summary>
+        /// Checks if the given shortcut is a shortcut that is commonly used inside textbox controls.
+        /// </summary>
+        /// <param name="keyData">The shortcut</param>
+        /// <returns>True if this is a common textbox shortcut</returns>
         private bool IsTextBoxKey(Keys keyData)
         {
             var ctrl = keyData.HasFlag(Keys.Control);

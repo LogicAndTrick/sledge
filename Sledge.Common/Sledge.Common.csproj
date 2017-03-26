@@ -51,6 +51,8 @@
     <Compile Include="Commands\CommandParameters.cs" />
     <Compile Include="Commands\ICommand.cs" />
     <Compile Include="Components\ISidebarComponent.cs" />
+    <Compile Include="Context\ContextInfo.cs" />
+    <Compile Include="Context\IContext.cs" />
     <Compile Include="DMath.cs" />
     <Compile Include="Documents\IDocument.cs" />
     <Compile Include="Documents\IDocumentLoader.cs" />

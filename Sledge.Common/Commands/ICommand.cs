@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Sledge.Common.Context;
 
 namespace Sledge.Common.Commands
 {
@@ -10,7 +11,7 @@ namespace Sledge.Common.Commands
         string Name { get; }
         string Details { get; }
 
-        bool IsInContext();
+        bool IsInContext(IContext context);
         Task Invoke(CommandParameters parameters);
     }
 }

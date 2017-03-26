@@ -11,6 +11,9 @@ using Sledge.Common.Hooks;
 
 namespace Sledge.Shell.Registers
 {
+    /// <summary>
+    /// The document register handles document loaders
+    /// </summary>
     [Export(typeof(IStartupHook))]
     public class DocumentRegister : SyncResourceProvider<IDocumentLoader>, IStartupHook
     {
@@ -39,15 +42,25 @@ namespace Sledge.Shell.Registers
             _loaders = new List<IDocumentLoader>();
         }
 
+        /// <summary>
+        /// Register a document loader
+        /// </summary>
+        /// <param name="documentLoader">The loader</param>
         private void Add(IDocumentLoader documentLoader)
         {
             _loaders.Add(documentLoader);
         }
 
+        /// <summary>
+        /// Unregister a document loader
+        /// </summary>
+        /// <param name="documentLoader">The loader</param>
         private void Remove(IDocumentLoader documentLoader)
         {
             _loaders.Remove(documentLoader);
         }
+
+        // Document loader resource provider
 
         public override bool CanProvide(string location)
         {

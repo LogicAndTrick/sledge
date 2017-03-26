@@ -10,6 +10,10 @@ using System.Threading.Tasks;
 
 namespace Sledge.Shell.Settings
 {
+    /// <summary>
+    /// Manages layout settings for the shell in general.
+    /// Remembers the window state and dockpanel sizes.
+    /// </summary>
     [Export(typeof(IShellStartupHook))]
     [Export(typeof(ISettingsContainer))]
     public class LayoutSettingsContainer : ISettingsContainer, IShellStartupHook
@@ -18,8 +22,11 @@ namespace Sledge.Shell.Settings
 
         public async Task OnStartup(Forms.Shell shell, CompositionContainer container)
         {
+            // We need direct access to the shell
             _shell = shell;
         }
+        
+        // Settings provider
 
         public string Name => "Sledge.Shell.Layout";
 

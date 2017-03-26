@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Sledge.Common.Context;
 
 namespace Sledge.Common.Components
 {
@@ -10,6 +11,6 @@ namespace Sledge.Common.Components
     {
         string Title { get; }
         object Control { get; }
-        bool IsInContext();
+        bool IsInContext(IContext context);
     }
 }

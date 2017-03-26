@@ -8,15 +8,22 @@ using LogicAndTrick.Gimme;
 using LogicAndTrick.Gimme.Providers;
 using LogicAndTrick.Oy;
 using Sledge.Common.Commands;
+using Sledge.Common.Context;
 using Sledge.Common.Hooks;
 using Sledge.Shell.Commands;
 
 namespace Sledge.Shell.Registers
 {
+    /// <summary>
+    /// Collects all exported commands and runs then when requested.
+    /// This class should be the only thing to ever run commands in the application.
+    /// </summary>
     [Export(typeof(IStartupHook))]
     [Export(typeof(IResourceProvider<>))]
     public class CommandRegister : SyncResourceProvider<ICommand>, IStartupHook
     {
+        private IContext _context;
+        
         public Task OnStartup(CompositionContainer container)
         {
             // Register exported commands
@@ -24,6 +31,9 @@ namespace Sledge.Shell.Registers
             {
                 Add(export.Value);
             }
+
+            // Store the context (the command register is one of the few things that should need static access to the context)
+            _context = container.GetExport<IContext>().Value;
 
             // Listen for dynamically added/removed commands
             Oy.Subscribe<ICommand>("Command:Register", c => Add(c));
@@ -50,10 +60,15 @@ namespace Sledge.Shell.Registers
             return resources.Select(Get).Where(g => g != null);
         }
 
+        /// <summary>
+        /// Run a command message
+        /// </summary>
+        /// <param name="message">The message to run</param>
+        /// <returns>Task that will complete after the command runs</returns>
         private async Task Run(CommandMessage message)
         {
             var cmd = Get(message.CommandID);
-            if (cmd != null && cmd.IsInContext()) await cmd.Invoke(message.Parameters);
+            if (cmd != null && cmd.IsInContext(_context)) await cmd.Invoke(message.Parameters);
         }
 
         private readonly ConcurrentDictionary<string, ICommand> _commands;
@@ -63,30 +78,50 @@ namespace Sledge.Shell.Registers
             _commands = new ConcurrentDictionary<string, ICommand>();
         }
 
+        /// <summary>
+        /// Register a command
+        /// </summary>
+        /// <param name="command">The command to add</param>
         private void Add(ICommand command)
         {
             _commands[command.GetID()] = command;
         }
 
+        /// <summary>
+        /// Get a command by id
+        /// </summary>
+        /// <param name="id">The command id</param>
+        /// <returns>The command or null if it's not found</returns>
         private ICommand Get(string id)
         {
             return _commands.ContainsKey(id) ? _commands[id] : null;
         }
 
+        /// <summary>
+        /// Unregister a command
+        /// </summary>
+        /// <param name="command">The command to remove</param>
         private void Remove(ICommand command)
         {
             Remove(command.GetID());
         }
 
+        /// <summary>
+        /// Unregister a command by id
+        /// </summary>
+        /// <param name="id">The command id to remove</param>
         private void Remove(string id)
         {
             ICommand o;
             _commands.TryRemove(id, out o);
         }
 
+        /// <summary>
+        /// The command register is the primary source of activators.
+        /// </summary>
         private class ActivatorProvider : SyncResourceProvider<IActivator>
         {
-            private CommandRegister _self;
+            private readonly CommandRegister _self;
 
             public ActivatorProvider(CommandRegister self)
             {

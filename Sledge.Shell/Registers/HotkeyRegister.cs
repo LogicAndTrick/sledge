@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Sledge.Common.Commands;
+using Sledge.Common.Context;
 using Sledge.Common.Hooks;
 using Sledge.Common.Hotkeys;
 using Sledge.Common.Settings;
@@ -12,11 +13,16 @@ using Sledge.Shell.Forms;
 
 namespace Sledge.Shell.Registers
 {
+    /// <summary>
+    /// The hotkey register registers and handles hotkeys
+    /// </summary>
     [Export(typeof(IStartupHook))]
     [Export(typeof(ISettingsContainer))]
     [PartCreationPolicy(CreationPolicy.Shared)]
     public class HotkeyRegister : IStartupHook, ISettingsContainer
     {
+        private IContext _context;
+
         public async Task OnStartup(CompositionContainer container)
         {
             // Register all commands as hotkeys
@@ -27,10 +33,21 @@ namespace Sledge.Shell.Registers
                 Add(new CommandHotkey(export.Value, defaultHotkey: dha?.Hotkey));
             }
 
+            // Store the context (the hotkey register is one of the few things that should need static access to the context)
+            _context = container.GetExport<IContext>().Value;
+
+            // Register this as the hotkey register for all base forms
             BaseForm.HotkeyRegister = this;
         }
 
+        /// <summary>
+        /// The list of all hotkeys by ID
+        /// </summary>
         private readonly Dictionary<string, IHotkey> _hotkeys;
+
+        /// <summary>
+        /// The list of registered hotkeys by shortcut
+        /// </summary>
         private readonly Dictionary<string, IHotkey> _registeredHotkeys;
 
         public HotkeyRegister()
@@ -39,24 +56,39 @@ namespace Sledge.Shell.Registers
             _registeredHotkeys = new Dictionary<string, IHotkey>();
         }
 
+        /// <summary>
+        /// Add a hotkey to the list but do not register it
+        /// </summary>
+        /// <param name="hotkey">The hotkey to add</param>
         private void Add(IHotkey hotkey)
         {
             _hotkeys[hotkey.ID] = hotkey;
         }
 
+        /// <summary>
+        /// Fire the hotkey (if any) that is registered on a shortcut
+        /// </summary>
+        /// <param name="keyData">The key event data</param>
+        /// <returns>True if the key was registered and was in context</returns>
         internal bool Fire(Keys keyData)
         {
             var cmd = KeysToString(keyData);
             if (_registeredHotkeys.ContainsKey(cmd))
             {
-                // todo !hotkeys check context?
-                _registeredHotkeys[cmd].Invoke();
-                return true;
+                var hk = _registeredHotkeys[cmd];
+                if (hk.IsInContext(_context))
+                {
+                    _registeredHotkeys[cmd].Invoke();
+                    return true;
+                }
             }
             return false;
         }
-        
+
         // Settings provider
+        // The settings provider is the one that registers hotkey shortcuts.
+        // Even if no settings exist, it will register the default hotkeys.
+
         public string Name => "Sledge.Shell.Hotkeys";
 
         public IEnumerable<SettingKey> GetKeys()

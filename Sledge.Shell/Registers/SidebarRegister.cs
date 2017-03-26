@@ -2,19 +2,21 @@
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
-using System.Drawing;
 using System.Globalization;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using LogicAndTrick.Oy;
 using Sledge.Common.Components;
-using Sledge.Common.Hooks;
+using Sledge.Common.Context;
 using Sledge.Common.Settings;
 using Sledge.Shell.Controls;
 
 namespace Sledge.Shell.Registers
 {
+    /// <summary>
+    /// The sidebar register controls sidebar components, positioning, and visibility
+    /// </summary>
     [Export(typeof(IShellStartupHook))]
     [Export(typeof(ISettingsContainer))]
     public class SidebarRegister : IShellStartupHook, ISettingsContainer
@@ -23,12 +25,17 @@ namespace Sledge.Shell.Registers
 
         public async Task OnStartup(Forms.Shell shell, CompositionContainer container)
         {
+            // The sidebar register needs direct access to the shell
             _shell = shell;
 
+            // Register the exported sidebar components
             foreach (var export in container.GetExports<ISidebarComponent>())
             {
                 Add(export.Value);
             }
+
+            // Subscribe to context changes
+            Oy.Subscribe<IContext>("Context:Changed", ContextChanged);
         }
 
         private readonly List<SidebarComponent> _left;
@@ -40,12 +47,28 @@ namespace Sledge.Shell.Registers
             _right = new List<SidebarComponent>();
         }
 
+        /// <summary>
+        /// Add a sidebar component to the right sidebar
+        /// </summary>
+        /// <param name="component">The component to add</param>
         private void Add(ISidebarComponent component)
         {
             var sc = new SidebarComponent(component);
             _right.Add(sc);
             _shell.RightSidebarContainer.Add(sc.Panel);
         }
+
+        private async Task ContextChanged(IContext context)
+        {
+            foreach (var sc in _left.Union(_right))
+            {
+                sc.ContextChanged(context);
+            }
+        }
+
+        // Settings provider
+        // The settings provider is what moves the sidebar components between left and right.
+        // If no settings exist, they'll sit in the right sidebar by default.
 
         public string Name => "Sledge.Shell.Sidebar";
 
@@ -115,11 +138,24 @@ namespace Sledge.Shell.Registers
             }
         }
 
+        /// <summary>
+        /// A container for a sidebar component.
+        /// </summary>
         private class SidebarComponent
         {
+            /// <summary>
+            /// The source component
+            /// </summary>
             public ISidebarComponent Component { get; private set; }
+
+            /// <summary>
+            /// The container panel
+            /// </summary>
             public SidebarPanel Panel { get; private set; }
 
+            /// <summary>
+            /// The component ID
+            /// </summary>
             public string ID => Component.GetType().FullName;
 
             public SidebarComponent(ISidebarComponent component)
@@ -133,6 +169,15 @@ namespace Sledge.Shell.Registers
                     Hidden = false
                 };
                 Panel.AddControl((Control) component.Control);
+            }
+
+            /// <summary>
+            /// Update the component visibility based on the current context
+            /// </summary>
+            /// <param name="context">The current context</param>
+            public void ContextChanged(IContext context)
+            {
+                Panel.Visible = Component.IsInContext(context);
             }
         }
     }

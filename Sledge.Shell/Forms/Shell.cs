@@ -6,12 +6,15 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using LogicAndTrick.Oy;
+using Sledge.Common.Context;
 using Sledge.Common.Documents;
-using Sledge.Common.Settings;
 using Sledge.Shell.Controls;
 
 namespace Sledge.Shell.Forms
 {
+    /// <summary>
+    /// The application's base window
+    /// </summary>
     public partial class Shell : BaseForm
     {
         private readonly List<IDocument> _documents;
@@ -25,12 +28,14 @@ namespace Sledge.Shell.Forms
             InitializeShell();
         }
 
+        /// <summary>
+        /// Setup the shell pre-startup
+        /// </summary>
         private void InitializeShell()
         {
             DocumentTabs.TabPages.Clear();
             
-            Oy.Subscribe<string>("Context:Added", ContextAdded);
-            Oy.Subscribe<string>("Context:Removed", ContextRemoved);
+            Oy.Subscribe<IContext>("Context:Changed", ContextChanged);
 
             Oy.Subscribe<IDocument>("Document:Opened", OpenDocument);
             Oy.Subscribe<IDocument>("Document:Closed", CloseDocument);
@@ -40,13 +45,16 @@ namespace Sledge.Shell.Forms
 
         protected override void OnLoad(EventArgs e)
         {
+            // Bootstrap the shell
             Bootstrapping.Startup(this).ContinueWith(Bootstrapping.Initialise);
+
+            // Set up bootstrapping for shutdown
             Closing += DoClosing;
         }
 
         private async void DoClosing(object sender, CancelEventArgs e)
         {
-            // Close all the open documents
+            // Try to close all the open documents
             foreach (var doc in _documents.ToArray())
             {
                 await Oy.Publish("Document:RequestClose", doc);
@@ -64,6 +72,7 @@ namespace Sledge.Shell.Forms
                 return;
             }
 
+            // Unsubscribe the event (no infinite loops!) and close for good
             Closing -= DoClosing;
             Enabled = false;
             e.Cancel = true;
@@ -71,6 +80,10 @@ namespace Sledge.Shell.Forms
             Close();
         }
 
+        /// <summary>
+        /// Get the list of docking panels in the shell
+        /// </summary>
+        /// <returns>The list of docking panels</returns>
         internal IEnumerable<DockedPanel> GetDockPanels()
         {
             yield return LeftSidebar;
@@ -112,12 +125,7 @@ namespace Sledge.Shell.Forms
             if (page != null && doc != null) page.Text = doc.Name;
         }
 
-        private async Task ContextAdded(string context)
-        {
-
-        }
-
-        private async Task ContextRemoved(string context)
+        private async Task ContextChanged(IContext context)
         {
 
         }
@@ -129,6 +137,8 @@ namespace Sledge.Shell.Forms
             cb.StartPosition = FormStartPosition.Manual;
             cb.Show(this);
         }
+
+        // Form events
 
         private void TabChanged(object sender, EventArgs e)
         {
@@ -145,11 +155,17 @@ namespace Sledge.Shell.Forms
                         DocumentContainer.Controls[0].Dock = DockStyle.Fill;
                     }
                     Oy.Publish("Document:Activated", doc);
+                    Oy.Publish("Context:Add", new ContextInfo("ActiveDocument", doc));
+                }
+                else
+                {
+                    Oy.Publish("Context:Remove", new ContextInfo("ActiveDocument"));
                 }
             }
             else
             {
                 DocumentContainer.Controls.Clear();
+                Oy.Publish("Context:Remove", new ContextInfo("ActiveDocument"));
             }
         }
 

@@ -4,6 +4,9 @@ using Sledge.Common.Commands;
 
 namespace Sledge.Shell.Commands
 {
+    /// <summary>
+    /// An activator that wraps a command
+    /// </summary>
     internal class CommandActivator : IActivator
     {
         private readonly ICommand _command;

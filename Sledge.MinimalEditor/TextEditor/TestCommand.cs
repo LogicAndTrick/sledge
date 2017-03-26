@@ -8,7 +8,7 @@ using System.Windows.Forms;
 using LogicAndTrick.Gimme;
 using LogicAndTrick.Oy;
 using Sledge.Common.Commands;
-using Sledge.Common.Components;
+using Sledge.Common.Context;
 using Sledge.Common.Documents;
 
 namespace Sledge.MinimalEditor.TextEditor
@@ -20,7 +20,7 @@ namespace Sledge.MinimalEditor.TextEditor
         public string Name => "This is a test command";
         public string Details => "Run a test command";
 
-        public bool IsInContext()
+        public bool IsInContext(IContext context)
         {
             return true;
         }
@@ -42,25 +42,6 @@ namespace Sledge.MinimalEditor.TextEditor
                     }
                 }
             }
-        }
-    }
-
-    [Export(typeof(ISidebarComponent))]
-    public class SampleSidebarComponent : ISidebarComponent
-    {
-        private Control _control;
-        public string Title => "Example";
-        public object Control => _control;
-
-        public SampleSidebarComponent()
-        {
-            _control = new Panel();
-            _control.Controls.Add(new TextBox());
-        }
-
-        public bool IsInContext()
-        {
-            return true;
         }
     }
 }

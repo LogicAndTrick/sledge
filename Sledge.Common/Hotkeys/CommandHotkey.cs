@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using LogicAndTrick.Oy;
 using Sledge.Common.Commands;
+using Sledge.Common.Context;
 
 namespace Sledge.Common.Hotkeys
 {
@@ -19,6 +20,11 @@ namespace Sledge.Common.Hotkeys
             _command = command ?? this as ICommand;
             _parameters = parameters;
             DefaultHotkey = defaultHotkey;
+        }
+
+        public bool IsInContext(IContext context)
+        {
+            return _command.IsInContext(context);
         }
 
         public async Task Invoke()

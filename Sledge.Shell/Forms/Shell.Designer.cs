@@ -98,6 +98,8 @@ namespace Sledge.Shell.Forms
             this.DocumentTabs.SelectedIndex = 0;
             this.DocumentTabs.Size = new System.Drawing.Size(500, 24);
             this.DocumentTabs.TabIndex = 4;
+            this.DocumentTabs.RequestClose += new Sledge.Shell.Controls.ClosableTabControl.RequestCloseEventHandler(this.RequestClose);
+            this.DocumentTabs.SelectedIndexChanged += new System.EventHandler(this.TabChanged);
             // 
             // RightSidebar
             // 
