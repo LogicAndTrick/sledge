@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.ComponentModel.Composition;
 using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
@@ -15,10 +16,13 @@ namespace Sledge.Shell.Forms
     /// <summary>
     /// The application's base window
     /// </summary>
-    public partial class Shell : BaseForm
+    [Export]
+    internal partial class Shell : BaseForm
     {
         private readonly List<IDocument> _documents;
         private readonly object _lock = new object();
+
+        [Import] private Bootstrapper _bootstrapper;
 
         public Shell()
         {
@@ -46,7 +50,7 @@ namespace Sledge.Shell.Forms
         protected override void OnLoad(EventArgs e)
         {
             // Bootstrap the shell
-            Bootstrapping.Startup(this).ContinueWith(Bootstrapping.Initialise);
+            _bootstrapper.Startup().ContinueWith(t => _bootstrapper.Initialise());
 
             // Set up bootstrapping for shutdown
             Closing += DoClosing;
@@ -66,7 +70,7 @@ namespace Sledge.Shell.Forms
             }
 
             // Close anything else
-            if (!await Bootstrapping.ShuttingDown())
+            if (!await _bootstrapper.ShuttingDown())
             {
                 e.Cancel = true;
                 return;
@@ -76,7 +80,7 @@ namespace Sledge.Shell.Forms
             Closing -= DoClosing;
             Enabled = false;
             e.Cancel = true;
-            await Bootstrapping.Shutdown();
+            await _bootstrapper.Shutdown();
             Close();
         }
 

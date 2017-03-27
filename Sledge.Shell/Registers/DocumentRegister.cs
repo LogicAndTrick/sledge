@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using System.ComponentModel.Composition.Hosting;
 using System.Linq;
 using System.Threading.Tasks;
 using LogicAndTrick.Gimme;
@@ -17,10 +17,12 @@ namespace Sledge.Shell.Registers
     [Export(typeof(IStartupHook))]
     public class DocumentRegister : SyncResourceProvider<IDocumentLoader>, IStartupHook
     {
-        public Task OnStartup(CompositionContainer container)
+        [ImportMany] private IEnumerable<Lazy<IDocumentLoader>> _documentLoaders;
+
+        public Task OnStartup()
         {
             // Register exported commands
-            foreach (var export in container.GetExports<IDocumentLoader>())
+            foreach (var export in _documentLoaders)
             {
                 Add(export.Value);
             }

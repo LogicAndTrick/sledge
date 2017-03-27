@@ -79,7 +79,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Components\ContextExplorerComponent.cs" />
-    <Compile Include="IShellStartupHook.cs" />
     <Compile Include="Commands\OpenCommandBoxCommand.cs" />
     <Compile Include="Commands\CommandActivator.cs" />
     <Compile Include="Commands\IActivator.cs" />
@@ -101,7 +100,7 @@
     <Compile Include="Forms\BaseForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Bootstrapping.cs" />
+    <Compile Include="Bootstrapper.cs" />
     <Compile Include="Forms\CommandBox.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -130,6 +129,7 @@
     <Compile Include="Registers\SidebarRegister.cs" />
     <Compile Include="Settings\LayoutSettingsContainer.cs" />
     <Compile Include="Settings\SettingsProvider.cs" />
+    <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Sledge.Common\Sledge.Common.csproj">

@@ -1,7 +1,6 @@
 ﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using System.ComponentModel.Composition.Hosting;
 using System.Linq;
 using System.Threading.Tasks;
 using LogicAndTrick.Gimme;
@@ -21,7 +20,7 @@ namespace Sledge.Shell.Registers
     [Export(typeof(IContext))]
     public class ContextRegister : SyncResourceProvider<ContextInfo>, IStartupHook, IInitialiseHook, IContext
     {
-        public Task OnStartup(CompositionContainer container)
+        public Task OnStartup()
         {
             // Listen for dynamically added/removed commands
             Oy.Subscribe<ContextInfo>("Context:Add", c => Add(c));
@@ -34,7 +33,7 @@ namespace Sledge.Shell.Registers
             return Task.FromResult(0);
         }
 
-        public async Task OnInitialise(CompositionContainer container)
+        public async Task OnInitialise()
         {
             // We run this on initialise so anything that listens for context changes
             // to set visibilities/active states will be notified at startup

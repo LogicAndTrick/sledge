@@ -1,7 +1,7 @@
-﻿using System.Collections.Concurrent;
+﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using System.ComponentModel.Composition.Hosting;
 using System.Linq;
 using System.Threading.Tasks;
 using LogicAndTrick.Gimme;
@@ -22,18 +22,17 @@ namespace Sledge.Shell.Registers
     [Export(typeof(IResourceProvider<>))]
     public class CommandRegister : SyncResourceProvider<ICommand>, IStartupHook
     {
-        private IContext _context;
+        // Store the context (the command register is one of the few things that should need static access to the context)
+        [Import] private IContext _context;
+        [ImportMany] private IEnumerable<Lazy<ICommand>> _importedCommands;
         
-        public Task OnStartup(CompositionContainer container)
+        public Task OnStartup()
         {
             // Register exported commands
-            foreach (var export in container.GetExports<ICommand>())
+            foreach (var export in _importedCommands)
             {
                 Add(export.Value);
             }
-
-            // Store the context (the command register is one of the few things that should need static access to the context)
-            _context = container.GetExport<IContext>().Value;
 
             // Listen for dynamically added/removed commands
             Oy.Subscribe<ICommand>("Command:Register", c => Add(c));

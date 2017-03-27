@@ -11,8 +11,7 @@ namespace Sledge.Common.Hooks
         /// <summary>
         /// Runs when initialised, after startup
         /// </summary>
-        /// <param name="container">The MEF container</param>
         /// <returns></returns>
-        Task OnInitialise(CompositionContainer container);
+        Task OnInitialise();
     }
 }

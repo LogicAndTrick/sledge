@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using System.ComponentModel.Composition.Hosting;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -18,23 +18,21 @@ namespace Sledge.Shell.Registers
     /// </summary>
     [Export(typeof(IStartupHook))]
     [Export(typeof(ISettingsContainer))]
-    [PartCreationPolicy(CreationPolicy.Shared)]
-    public class HotkeyRegister : IStartupHook, ISettingsContainer
+    internal class HotkeyRegister : IStartupHook, ISettingsContainer
     {
-        private IContext _context;
+        // Store the context (the hotkey register is one of the few things that should need static access to the context)
+        [Import] private IContext _context;
+        [ImportMany] private IEnumerable<Lazy<ICommand>> _commands;
 
-        public async Task OnStartup(CompositionContainer container)
+        public async Task OnStartup()
         {
             // Register all commands as hotkeys
-            foreach (var export in container.GetExports<ICommand>())
+            foreach (var export in _commands)
             {
                 var ty = export.Value.GetType();
                 var dha = ty.GetCustomAttributes(typeof(DefaultHotkeyAttribute), false).OfType<DefaultHotkeyAttribute>().FirstOrDefault();
                 Add(new CommandHotkey(export.Value, defaultHotkey: dha?.Hotkey));
             }
-
-            // Store the context (the hotkey register is one of the few things that should need static access to the context)
-            _context = container.GetExport<IContext>().Value;
 
             // Register this as the hotkey register for all base forms
             BaseForm.HotkeyRegister = this;

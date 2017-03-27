@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using OpenTK;
 using Sledge.Settings;
 using Sledge.Settings.GameDetection;
+using Sledge.Shell;
 
 namespace Sledge.Sandbox
 {
@@ -20,9 +21,7 @@ namespace Sledge.Sandbox
         [STAThread]
         static void Main()
         {
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Shell.Forms.Shell());
+            Startup.Run();
         }
     }
 }

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using System.ComponentModel.Composition.Hosting;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -20,10 +19,12 @@ namespace Sledge.Shell.Settings
     [Export(typeof(IShutdownHook))]
     public class SettingsProvider : SyncResourceProvider<SettingValue>, IInitialiseHook, IShutdownHook
     {
-        public async Task OnInitialise(CompositionContainer container)
+        [ImportMany] private IEnumerable<Lazy<ISettingsContainer>> _settingsContainers;
+
+        public async Task OnInitialise()
         {
             // Register all settings containers
-            foreach (var export in container.GetExports<ISettingsContainer>())
+            foreach (var export in _settingsContainers)
             {
                 Add(export.Value);
             }

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using System.ComponentModel.Composition.Hosting;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
@@ -9,6 +8,7 @@ using System.Windows.Forms;
 using LogicAndTrick.Oy;
 using Sledge.Common.Components;
 using Sledge.Common.Context;
+using Sledge.Common.Hooks;
 using Sledge.Common.Settings;
 using Sledge.Shell.Controls;
 
@@ -17,19 +17,18 @@ namespace Sledge.Shell.Registers
     /// <summary>
     /// The sidebar register controls sidebar components, positioning, and visibility
     /// </summary>
-    [Export(typeof(IShellStartupHook))]
+    [Export(typeof(IStartupHook))]
     [Export(typeof(ISettingsContainer))]
-    public class SidebarRegister : IShellStartupHook, ISettingsContainer
+    public class SidebarRegister : IStartupHook, ISettingsContainer
     {
-        private Forms.Shell _shell;
+        // The sidebar register needs direct access to the shell
+        [Import] private Forms.Shell _shell;
+        [ImportMany] private IEnumerable<Lazy<ISidebarComponent>> _sidebarComponents;
 
-        public async Task OnStartup(Forms.Shell shell, CompositionContainer container)
+        public async Task OnStartup()
         {
-            // The sidebar register needs direct access to the shell
-            _shell = shell;
-
             // Register the exported sidebar components
-            foreach (var export in container.GetExports<ISidebarComponent>())
+            foreach (var export in _sidebarComponents)
             {
                 Add(export.Value);
             }
@@ -177,7 +176,9 @@ namespace Sledge.Shell.Registers
             /// <param name="context">The current context</param>
             public void ContextChanged(IContext context)
             {
-                Panel.Visible = Component.IsInContext(context);
+                Panel.Invoke((MethodInvoker) delegate {
+                    Panel.Visible = Component.IsInContext(context);
+                });
             }
         }
     }

@@ -3,10 +3,8 @@ using System.ComponentModel.Composition;
 using System.Windows.Forms;
 using Sledge.Common.Settings;
 using System;
-using System.ComponentModel.Composition.Hosting;
 using System.Globalization;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace Sledge.Shell.Settings
 {
@@ -14,17 +12,10 @@ namespace Sledge.Shell.Settings
     /// Manages layout settings for the shell in general.
     /// Remembers the window state and dockpanel sizes.
     /// </summary>
-    [Export(typeof(IShellStartupHook))]
     [Export(typeof(ISettingsContainer))]
-    public class LayoutSettingsContainer : ISettingsContainer, IShellStartupHook
+    public class LayoutSettingsContainer : ISettingsContainer
     {
-        private Forms.Shell _shell;
-
-        public async Task OnStartup(Forms.Shell shell, CompositionContainer container)
-        {
-            // We need direct access to the shell
-            _shell = shell;
-        }
+        [Import] private Forms.Shell _shell;
         
         // Settings provider
 
