@@ -72,17 +72,18 @@ namespace Sledge.Shell.Settings
             else if (_values.ContainsKey(name)) _values.Remove(name);
 
             var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Sledge", "Shell");
-            if (!Directory.Exists(path)) return;
-
-            foreach (var file in Directory.GetFiles(path, "*.json"))
+            if (Directory.Exists(path))
             {
-                var containerName = Path.GetFileNameWithoutExtension(file);
+                foreach (var file in Directory.GetFiles(path, "*.json"))
+                {
+                    var containerName = Path.GetFileNameWithoutExtension(file);
 
-                if (containerName == null) continue;
-                if (name != null && containerName != name) continue;
+                    if (containerName == null) continue;
+                    if (name != null && containerName != name) continue;
 
-                var data = JsonConvert.DeserializeObject<Dictionary<string, string>>(File.ReadAllText(file));
-                _values[containerName] = data.Select(x => new SettingValue(x.Key, x.Value)).ToList();
+                    var data = JsonConvert.DeserializeObject<Dictionary<string, string>>(File.ReadAllText(file));
+                    _values[containerName] = data.Select(x => new SettingValue(x.Key, x.Value)).ToList();
+                }
             }
 
             foreach (var container in _containers)
