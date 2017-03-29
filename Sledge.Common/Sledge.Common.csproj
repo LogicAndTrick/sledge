@@ -59,6 +59,7 @@
     <Compile Include="Easings\Easing.cs" />
     <Compile Include="Easings\EasingDirection.cs" />
     <Compile Include="Easings\EasingType.cs" />
+    <Compile Include="Extensions\BinaryExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Hooks\IStartupHook.cs" />
     <Compile Include="Hooks\IInitialiseHook.cs" />

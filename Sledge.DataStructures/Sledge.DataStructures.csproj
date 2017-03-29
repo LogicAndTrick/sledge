@@ -44,6 +44,7 @@
     <Reference Include="System.Drawing" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BinaryExtensions.cs" />
     <Compile Include="GameData\AutoVisgroup.cs" />
     <Compile Include="GameData\AutoVisgroupSection.cs" />
     <Compile Include="Geometric\Box.cs" />

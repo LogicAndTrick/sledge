@@ -45,6 +45,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sledge.Shell", "Sledge.Shel
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sledge.MinimalEditor", "Sledge.MinimalEditor\Sledge.MinimalEditor.csproj", "{0F7EBC7C-8FF3-484C-ACD2-6682450A91DB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sledge.BspEditor", "Sledge.BspEditor\Sledge.BspEditor.csproj", "{37C3FE6B-16F4-431F-AB67-FBA7C681CCEE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -230,6 +232,18 @@ Global
 		{0F7EBC7C-8FF3-484C-ACD2-6682450A91DB}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{0F7EBC7C-8FF3-484C-ACD2-6682450A91DB}.Release|x86.ActiveCfg = Release|Any CPU
 		{0F7EBC7C-8FF3-484C-ACD2-6682450A91DB}.Release|x86.Build.0 = Release|Any CPU
+		{37C3FE6B-16F4-431F-AB67-FBA7C681CCEE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{37C3FE6B-16F4-431F-AB67-FBA7C681CCEE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{37C3FE6B-16F4-431F-AB67-FBA7C681CCEE}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{37C3FE6B-16F4-431F-AB67-FBA7C681CCEE}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{37C3FE6B-16F4-431F-AB67-FBA7C681CCEE}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{37C3FE6B-16F4-431F-AB67-FBA7C681CCEE}.Debug|x86.Build.0 = Debug|Any CPU
+		{37C3FE6B-16F4-431F-AB67-FBA7C681CCEE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{37C3FE6B-16F4-431F-AB67-FBA7C681CCEE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{37C3FE6B-16F4-431F-AB67-FBA7C681CCEE}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{37C3FE6B-16F4-431F-AB67-FBA7C681CCEE}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{37C3FE6B-16F4-431F-AB67-FBA7C681CCEE}.Release|x86.ActiveCfg = Release|Any CPU
+		{37C3FE6B-16F4-431F-AB67-FBA7C681CCEE}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

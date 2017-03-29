@@ -107,6 +107,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Sledge.BspEditor\Sledge.BspEditor.csproj">
+      <Project>{37c3fe6b-16f4-431f-ab67-fba7c681ccee}</Project>
+      <Name>Sledge.BspEditor</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Sledge.Common\Sledge.Common.csproj">
       <Project>{5d414ac8-8b93-489f-9960-877923400fed}</Project>
       <Name>Sledge.Common</Name>
