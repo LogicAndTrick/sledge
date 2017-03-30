@@ -53,6 +53,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BspSourceDocumentLoader.cs" />
+    <Compile Include="Components\IMapDocumentControl.cs" />
+    <Compile Include="Components\MapDocumentControlHost.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Components\TreeViewMapDocumentControl.cs" />
+    <Compile Include="Components\ViewportMapDocumentControl.cs" />
     <Compile Include="Controls\TableSplitConfiguration.cs" />
     <Compile Include="Controls\TableSplitControl.cs">
       <SubType>Component</SubType>
@@ -82,6 +88,7 @@
     <Compile Include="Documents\MapDocument.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Providers\RmfBspSourceProvider.cs" />
+    <Compile Include="Components\Renderer.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Sledge.Common\Sledge.Common.csproj">
@@ -92,10 +99,16 @@
       <Project>{26A974C9-E495-4FA3-8E87-1E00019D04F5}</Project>
       <Name>Sledge.DataStructures</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Sledge.Rendering\Sledge.Rendering.csproj">
+      <Project>{4da7f88d-64ff-4036-8a11-6175169da851}</Project>
+      <Name>Sledge.Rendering</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Sledge.Shell\Sledge.Shell.csproj">
+      <Project>{1E0BEB41-CF2E-4F48-838E-452C1DCF575F}</Project>
+      <Name>Sledge.Shell</Name>
+    </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Components\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>

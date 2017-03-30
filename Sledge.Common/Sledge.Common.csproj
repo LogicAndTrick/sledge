@@ -69,6 +69,7 @@
     <Compile Include="Hotkeys\CommandHotkey.cs" />
     <Compile Include="Hotkeys\DefaultHotkeyAttribute.cs" />
     <Compile Include="Hotkeys\IHotkey.cs" />
+    <Compile Include="Logging\Log.cs" />
     <Compile Include="Logging\LogMessage.cs" />
     <Compile Include="Mediator\Mediator.cs" />
     <Compile Include="Mediator\IMediatorListener.cs" />

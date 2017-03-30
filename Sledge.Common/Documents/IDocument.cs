@@ -2,7 +2,7 @@
 
 namespace Sledge.Common.Documents
 {
-    public interface IDocument : INotifyPropertyChanged
+    public interface IDocument
     {
         /// <summary>
         /// Name of this document, will be shown in the UI tab

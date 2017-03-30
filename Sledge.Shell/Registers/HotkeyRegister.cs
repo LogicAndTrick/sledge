@@ -100,8 +100,8 @@ namespace Sledge.Shell.Registers
             var svs = values.ToDictionary(x => x.Name, x => x.Value);
             foreach (var val in _hotkeys.Keys)
             {
-                var hk = svs.ContainsKey(val) ? svs[val] : _hotkeys[val].DefaultHotkey;
-                if (hk != null) _registeredHotkeys.Add(hk, _hotkeys[val]);
+                var hk = svs.ContainsKey(val) && svs[val] != null ? svs[val] : _hotkeys[val].DefaultHotkey;
+                if (hk != null && !_registeredHotkeys.ContainsKey(hk)) _registeredHotkeys.Add(hk, _hotkeys[val]);
             }
         }
 

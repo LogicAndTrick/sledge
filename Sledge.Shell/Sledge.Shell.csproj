@@ -94,9 +94,6 @@
     <Compile Include="Controls\SidebarContainer.Designer.cs">
       <DependentUpon>SidebarContainer.cs</DependentUpon>
     </Compile>
-    <Compile Include="Controls\TableSplitControl.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="Forms\BaseForm.cs">
       <SubType>Form</SubType>
     </Compile>

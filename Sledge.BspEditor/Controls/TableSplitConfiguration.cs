@@ -13,7 +13,7 @@ namespace Sledge.BspEditor.Controls
         {
             Rectangles = new List<Rectangle>();
         }
-
+        
         public bool IsValid()
         {
             var cells = new bool[Rows, Columns];

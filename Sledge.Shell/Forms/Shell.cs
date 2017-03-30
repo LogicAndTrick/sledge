@@ -43,6 +43,7 @@ namespace Sledge.Shell.Forms
 
             Oy.Subscribe<IDocument>("Document:Opened", OpenDocument);
             Oy.Subscribe<IDocument>("Document:Closed", CloseDocument);
+            Oy.Subscribe<IDocument>("Document:NameChanged", DocumentNameChanged);
 
             Oy.Subscribe<string>("Shell:OpenCommandBox", OpenCommandBox);
         }
@@ -103,7 +104,6 @@ namespace Sledge.Shell.Forms
             {
                 if (_documents.Contains(document)) return;
                 _documents.Add(document);
-                document.PropertyChanged += DocumentNameChanged;
                 DocumentTabs.TabPages.Add(new TabPage { Text = document.Name, Tag = document });
                 TabChanged(DocumentTabs, EventArgs.Empty);
             }
@@ -115,18 +115,16 @@ namespace Sledge.Shell.Forms
             {
                 if (!_documents.Contains(document)) return;
                 _documents.Remove(document);
-                document.PropertyChanged -= DocumentNameChanged;
                 var page = DocumentTabs.TabPages.OfType<TabPage>().FirstOrDefault(x => x.Tag == document);
                 if (page != null) DocumentTabs.TabPages.Remove(page);
                 TabChanged(DocumentTabs, EventArgs.Empty);
             }
         }
 
-        private void DocumentNameChanged(object sender, PropertyChangedEventArgs e)
+        private async Task DocumentNameChanged(IDocument document)
         {
-            var doc = sender as IDocument;
-            var page = DocumentTabs.TabPages.OfType<TabPage>().FirstOrDefault(x => x.Tag == doc);
-            if (page != null && doc != null) page.Text = doc.Name;
+            var page = DocumentTabs.TabPages.OfType<TabPage>().FirstOrDefault(x => x.Tag == document);
+            if (page != null && document != null) page.Text = document.Name;
         }
 
         private async Task ContextChanged(IContext context)
@@ -163,12 +161,14 @@ namespace Sledge.Shell.Forms
                 }
                 else
                 {
+                    Oy.Publish<IDocument>("Document:Activated", null);
                     Oy.Publish("Context:Remove", new ContextInfo("ActiveDocument"));
                 }
             }
             else
             {
                 DocumentContainer.Controls.Clear();
+                Oy.Publish<IDocument>("Document:Activated", null);
                 Oy.Publish("Context:Remove", new ContextInfo("ActiveDocument"));
             }
         }

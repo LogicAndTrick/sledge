@@ -14,18 +14,12 @@ namespace Sledge.MinimalEditor.TextEditor
         private string _name;
         private TextBox _control;
 
-        public event PropertyChangedEventHandler PropertyChanged;
-
         public string FileName { get; private set; }
 
         public string Name
         {
             get { return _name; }
-            set
-            {
-                _name = value;
-                OnPropertyChanged();
-            }
+            set { _name = value; }
         }
 
         public object Control => _control;
@@ -68,11 +62,6 @@ namespace Sledge.MinimalEditor.TextEditor
                 // now do anything else?
                 _control.Dispose();
             }
-        }
-
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

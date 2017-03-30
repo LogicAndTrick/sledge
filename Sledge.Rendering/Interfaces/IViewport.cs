@@ -1,9 +1,10 @@
-﻿using System.Windows.Forms;
+﻿using System;
+using System.Windows.Forms;
 using Sledge.Rendering.Cameras;
 
 namespace Sledge.Rendering.Interfaces
 {
-    public interface IViewport
+    public interface IViewport : IDisposable
     {
         // IGraphicsContext Context { get; }
         //event EventHandler Initialised;
