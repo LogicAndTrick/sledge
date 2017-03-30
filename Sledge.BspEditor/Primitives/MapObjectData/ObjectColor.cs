@@ -10,5 +10,10 @@ namespace Sledge.BspEditor.Primitives.MapObjectData
         {
             Color = color;
         }
+
+        public IMapObjectData Clone()
+        {
+            return new ObjectColor(Color);
+        }
     }
 }

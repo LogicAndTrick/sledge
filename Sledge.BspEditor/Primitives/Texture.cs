@@ -70,9 +70,9 @@ namespace Sledge.BspEditor.Primitives
             return UAxis.Cross(VAxis).Normalise();
         }
 
-        public DataStructures.MapObjects.TextureInfo Clone()
+        public Texture Clone()
         {
-            return new DataStructures.MapObjects.TextureInfo
+            return new Texture
             {
                 Name = Name,
                 Rotation = Rotation,

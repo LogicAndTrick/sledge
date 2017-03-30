@@ -27,7 +27,7 @@ namespace Sledge.MinimalEditor.TextEditor
 
         public async Task Invoke(CommandParameters parameters)
         {
-            using (var ofd = new OpenFileDialog() { Filter = "Text files|*.txt"})
+            using (var ofd = new OpenFileDialog() { Filter = "All files|*.*"})
             {
                 if (ofd.ShowDialog() == DialogResult.OK)
                 {

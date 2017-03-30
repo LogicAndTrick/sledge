@@ -9,14 +9,16 @@ using System.Threading.Tasks;
 using Sledge.BspEditor.Primitives;
 using Sledge.BspEditor.Primitives.MapData;
 using Sledge.BspEditor.Primitives.MapObjectData;
+using Sledge.BspEditor.Primitives.MapObjects;
+using Sledge.Common.Documents;
 using Sledge.Common.Extensions;
 using Sledge.DataStructures;
-using Entity = Sledge.BspEditor.Primitives.Entity;
+using Entity = Sledge.BspEditor.Primitives.MapObjects.Entity;
 using EntityData = Sledge.BspEditor.Primitives.MapObjectData.EntityData;
-using Face = Sledge.BspEditor.Primitives.Face;
-using Group = Sledge.BspEditor.Primitives.Group;
+using Face = Sledge.BspEditor.Primitives.MapObjectData.Face;
+using Group = Sledge.BspEditor.Primitives.MapObjects.Group;
 using Map = Sledge.BspEditor.Primitives.Map;
-using Solid = Sledge.BspEditor.Primitives.Solid;
+using Solid = Sledge.BspEditor.Primitives.MapObjects.Solid;
 using Visgroup = Sledge.BspEditor.Primitives.MapData.Visgroup;
 
 namespace Sledge.BspEditor.Providers
@@ -42,7 +44,10 @@ namespace Sledge.BspEditor.Providers
             typeof(ObjectColor),
         };
         public IEnumerable<Type> SupportedDataTypes => SupportedTypes;
-        public IEnumerable<string> SupportedFileExtensions => new[] {".rmf", ".rmx"};
+        public IEnumerable<FileExtensionInfo> SupportedFileExtensions { get; } = new[]
+        {
+            new FileExtensionInfo("Worldcraft map formats", ".rmf", ".rmx"), 
+        };
 
         public async Task<Map> Load(Stream stream)
         {
@@ -259,6 +264,9 @@ namespace Sledge.BspEditor.Providers
 
         private void ReadCameras(Map map, BinaryReader br)
         {
+            br.ReadSingle(); // Appears to be a version number for camera data. Unused.
+            var activeCamera = br.ReadInt32();
+
             var num = br.ReadInt32();
             for (var i = 0; i < num; i++)
             {

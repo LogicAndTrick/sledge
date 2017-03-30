@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Sledge.BspEditor.Primitives.MapObjectData;
 
-namespace Sledge.BspEditor.Primitives
+namespace Sledge.BspEditor.Primitives.MapObjects
 {
     /// <summary>
     /// Nice and simple base class for all map objects. Strongly recommended but
@@ -10,8 +10,8 @@ namespace Sledge.BspEditor.Primitives
     public abstract class BaseMapObject : IMapObject
     {
         public long ID { get; }
-        public MapObjectDataCollection Data { get; }
-        public MapObjectHierarchy Hierarchy { get; }
+        public MapObjectDataCollection Data { get; private set; }
+        public MapObjectHierarchy Hierarchy { get; private set; }
 
         protected BaseMapObject(long id)
         {
@@ -21,6 +21,27 @@ namespace Sledge.BspEditor.Primitives
         }
 
         public abstract void DescendantsChanged();
+
+        protected void CloneBase(BaseMapObject copy)
+        {
+            copy.Data = Data.Clone();
+            foreach (var child in Hierarchy)
+            {
+                var c = child.Clone();
+                c.Hierarchy.Parent = copy;
+            }
+        }
+
+        protected void UncloneBase(BaseMapObject source)
+        {
+            Data = source.Data.Clone();
+            Hierarchy.Clear();
+            foreach (var obj in source.Hierarchy)
+            {
+                var copy = obj.Clone();
+                copy.Hierarchy.Parent = this;
+            }
+        }
 
         public abstract IMapObject Clone();
         public abstract void Unclone(IMapObject obj);

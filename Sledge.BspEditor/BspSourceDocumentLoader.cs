@@ -21,6 +21,11 @@ namespace Sledge.BspEditor
     {
         [ImportMany] private IEnumerable<Lazy<IBspSourceProvider>> _providers;
 
+        public IEnumerable<FileExtensionInfo> SupportedFileExtensions
+        {
+            get { return _providers.SelectMany(x => x.Value.SupportedFileExtensions); }
+        }
+
         public bool CanLoad(string location)
         {
             return _providers.Any(x => CanLoad(x.Value, location));
@@ -28,7 +33,7 @@ namespace Sledge.BspEditor
 
         private bool CanLoad(IBspSourceProvider provider, string location)
         {
-            return provider.SupportedFileExtensions.Any(x => location.EndsWith(x, true, CultureInfo.InvariantCulture));
+            return provider.SupportedFileExtensions.Any(x => x.Matches(location));
         }
 
         public async Task<IDocument> CreateBlank()

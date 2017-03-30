@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Sledge.BspEditor.Primitives
+namespace Sledge.BspEditor.Primitives.MapObjects
 {
     /// <summary>
     /// A collection of objects
@@ -17,14 +17,17 @@ namespace Sledge.BspEditor.Primitives
             Hierarchy.Parent?.DescendantsChanged();
         }
 
-        public override void Unclone(IMapObject obj)
-        {
-            throw new NotImplementedException();
-        }
-
         public override IMapObject Clone()
         {
-            throw new NotImplementedException();
+            var grp = new Group(ID);
+            CloneBase(grp);
+            return grp;
+        }
+
+        public override void Unclone(IMapObject obj)
+        {
+            if (!(obj is Group)) throw new ArgumentException("Cannot unclone into a different type.", nameof(obj));
+            UncloneBase((BaseMapObject)obj);
         }
 
         public override IEnumerable<IPrimitive> ToPrimitives()

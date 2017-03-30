@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Sledge.BspEditor.Primitives.MapObjectData;
 using Sledge.DataStructures.Geometric;
 
-namespace Sledge.BspEditor.Primitives
+namespace Sledge.BspEditor.Primitives.MapObjects
 {
     public class Entity : BaseMapObject, IPrimitive
     {
@@ -19,14 +19,18 @@ namespace Sledge.BspEditor.Primitives
             Hierarchy.Parent?.DescendantsChanged();
         }
 
-        public override void Unclone(IMapObject obj)
-        {
-            throw new NotImplementedException();
-        }
-
         public override IMapObject Clone()
         {
-            throw new NotImplementedException();
+            var ent = new Entity(ID);
+            CloneBase(ent);
+            ent.Origin = Origin.Clone();
+            return ent;
+        }
+
+        public override void Unclone(IMapObject obj)
+        {
+            if (!(obj is Entity)) throw new ArgumentException("Cannot unclone into a different type.", nameof(obj));
+            UncloneBase((BaseMapObject)obj);
         }
 
         public override IEnumerable<IPrimitive> ToPrimitives()

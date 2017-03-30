@@ -8,13 +8,11 @@ namespace Sledge.BspEditor.Primitives.MapObjectData
     /// </summary>
     public class MapObjectDataCollection
     {
-        public HashSet<int> Visgroups { get; }
         public List<IMapObjectData> Data { get; }
 
         public MapObjectDataCollection()
         {
             Data = new List<IMapObjectData>();
-            Visgroups = new HashSet<int>();
         }
 
         public void Add(IMapObjectData data)
@@ -40,6 +38,16 @@ namespace Sledge.BspEditor.Primitives.MapObjectData
         public T GetOne<T>() where T : IMapObjectData
         {
             return Data.OfType<T>().FirstOrDefault();
+        }
+
+        public MapObjectDataCollection Clone()
+        {
+            var copy = new MapObjectDataCollection();
+            foreach (var d in Data)
+            {
+                copy.Add(d.Clone());
+            }
+            return copy;
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace Sledge.BspEditor.Primitives
+﻿namespace Sledge.BspEditor.Primitives.MapObjects
 {
     /// <summary>
     /// Primitive type that is only allowed to be a solid or group

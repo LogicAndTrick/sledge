@@ -8,5 +8,10 @@
         {
             ID = id;
         }
+
+        public IMapObjectData Clone()
+        {
+            return new VisgroupID(ID);
+        }
     }
 }

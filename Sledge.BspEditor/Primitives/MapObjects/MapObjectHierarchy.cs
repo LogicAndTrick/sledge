@@ -2,21 +2,19 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Sledge.BspEditor.Primitives
+namespace Sledge.BspEditor.Primitives.MapObjects
 {
     /// <summary>
     /// Represents the hierarchy of a map object in the tree.
     /// </summary>
-    public class MapObjectHierarchy : ICollection<IMapObject>
+    public class MapObjectHierarchy : IEnumerable<IMapObject>
     {
         private readonly IMapObject _self;
         private readonly HashSet<long> _descendantIds;
         private readonly Dictionary<long, IMapObject> _children;
         private IMapObject _parent;
 
-        public bool IsReadOnly => false;
-
-        public int Count => _children.Count;
+        public int NumChildren => _children.Count;
         public int NumDescendants => _descendantIds.Count;
 
         /// <summary>
@@ -76,18 +74,7 @@ namespace Sledge.BspEditor.Primitives
             return child.Value?.Hierarchy.GetDescendant(id);
         }
 
-        public bool Contains(IMapObject item)
-        {
-            return item != null && HasChild(item.ID);
-        }
-
-        public void CopyTo(IMapObject[] array, int arrayIndex)
-        {
-            var list = _children.Values.ToList();
-            list.CopyTo(array, arrayIndex);
-        }
-
-        public void Add(IMapObject item)
+        private void Add(IMapObject item)
         {
             _children[item.ID] = item;
             var set = new HashSet<long>(item.Hierarchy._descendantIds) { item.ID };
@@ -100,7 +87,7 @@ namespace Sledge.BspEditor.Primitives
             }
         }
 
-        public bool Remove(IMapObject item)
+        private bool Remove(IMapObject item)
         {
             if (item == null || !_children.ContainsKey(item.ID)) return false;
             _children.Remove(item.ID);

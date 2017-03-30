@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Sledge.BspEditor.Primitives
+namespace Sledge.BspEditor.Primitives.MapObjects
 {
     /// <summary>
     /// The root node of a map object tree
@@ -19,12 +19,15 @@ namespace Sledge.BspEditor.Primitives
 
         public override IMapObject Clone()
         {
-            throw new NotImplementedException();
+            var root = new Root(ID);
+            CloneBase(root);
+            return root;
         }
 
         public override void Unclone(IMapObject obj)
         {
-            throw new NotImplementedException();
+            if (!(obj is Root)) throw new ArgumentException("Cannot unclone into a different type.", nameof(obj));
+            UncloneBase((BaseMapObject) obj);
         }
 
         public override IEnumerable<IPrimitive> ToPrimitives()

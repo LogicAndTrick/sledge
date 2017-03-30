@@ -9,13 +9,13 @@ namespace Sledge.DataStructures.Geometric
     [Serializable]
     public class Plane : ISerializable
     {
-        public Coordinate Normal { get; private set; }
-        public decimal DistanceFromOrigin { get; private set; }
-        public decimal A { get; private set; }
-        public decimal B { get; private set; }
-        public decimal C { get; private set; }
-        public decimal D { get; private set; }
-        public Coordinate PointOnPlane { get; private set; }
+        public Coordinate Normal { get; }
+        public decimal DistanceFromOrigin { get; }
+        public decimal A { get; }
+        public decimal B { get; }
+        public decimal C { get; }
+        public decimal D { get; }
+        public Coordinate PointOnPlane { get; }
         
         public Plane(Coordinate p1, Coordinate p2, Coordinate p3)
         {
