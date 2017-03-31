@@ -17,7 +17,6 @@ namespace Sledge.Shell.Forms
         public CommandBox()
         {
             InitializeComponent();
-            DoubleBuffered = true;
         }
 
         protected override void OnLoad(EventArgs e)

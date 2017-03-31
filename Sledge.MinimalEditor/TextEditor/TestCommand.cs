@@ -11,12 +11,14 @@ using Sledge.Common.Commands;
 using Sledge.Common.Context;
 using Sledge.Common.Documents;
 using Sledge.Common.Hotkeys;
+using Sledge.Common.Menu;
 
 namespace Sledge.MinimalEditor.TextEditor
 {
     [Export(typeof(ICommand))]
     [CommandID("TestCommand")]
     [DefaultHotkey("Ctrl+O")]
+    [MenuItem("File", "", "")]
     public class TestCommand : ICommand
     {
         public string Name => "This is a test command";

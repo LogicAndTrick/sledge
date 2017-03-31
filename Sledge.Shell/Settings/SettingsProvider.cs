@@ -8,6 +8,7 @@ using LogicAndTrick.Gimme.Providers;
 using LogicAndTrick.Oy;
 using Newtonsoft.Json;
 using Sledge.Common.Hooks;
+using Sledge.Common.Logging;
 using Sledge.Common.Settings;
 
 namespace Sledge.Shell.Settings
@@ -26,6 +27,7 @@ namespace Sledge.Shell.Settings
             // Register all settings containers
             foreach (var export in _settingsContainers)
             {
+                Log.Debug("Settings", "Settings container: " + export.Value.GetType().FullName);
                 Add(export.Value);
             }
 
@@ -91,6 +93,7 @@ namespace Sledge.Shell.Settings
                 if (name != null && container.Name != name) continue;
                 container.SetValues(_values.ContainsKey(container.Name) ? _values[container.Name] : new List<SettingValue>());
             }
+            Log.Debug("Settings", "Settings loaded.");
         }
 
         /// <summary>
@@ -109,6 +112,7 @@ namespace Sledge.Shell.Settings
                 var values = container.GetValues();
                 File.WriteAllText(Path.Combine(path, container.Name + ".json"), JsonConvert.SerializeObject(values.ToDictionary(x => x.Name, x => x.Value), Formatting.Indented));
             }
+            Log.Debug("Settings", "Settings saved.");
         }
 
         // Resource provider

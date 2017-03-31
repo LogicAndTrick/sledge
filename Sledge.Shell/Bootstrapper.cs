@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Threading.Tasks;
 using Sledge.Common.Hooks;
+using Sledge.Common.Logging;
 
 namespace Sledge.Shell
 {
@@ -25,6 +26,7 @@ namespace Sledge.Shell
         {
             foreach (var export in _startupHooks)
             {
+                Log.Debug("Bootstrapper", "Startup hook: " + export.Value.GetType().FullName);
                 await export.Value.OnStartup();
             }
         }
@@ -37,6 +39,7 @@ namespace Sledge.Shell
         {
             foreach (var export in _initialiseHooks)
             {
+                Log.Debug("Bootstrapper", "Initialise hook: " + export.Value.GetType().FullName);
                 await export.Value.OnInitialise();
             }
         }
@@ -49,6 +52,7 @@ namespace Sledge.Shell
         {
             foreach (var export in _shuttingDownHooks)
             {
+                Log.Debug("Bootstrapper", "Shutting down hook: " + export.Value.GetType().FullName);
                 if (!await export.Value.OnShuttingDown()) return false;
             }
             return true;
@@ -62,6 +66,7 @@ namespace Sledge.Shell
         {
             foreach (var export in _shutdownHooks)
             {
+                Log.Debug("Bootstrapper", "Shutdown hook: " + export.Value.GetType().FullName);
                 await export.Value.OnShutdown();
             }
         }

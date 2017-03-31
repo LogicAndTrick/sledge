@@ -42,10 +42,15 @@ namespace Sledge.Shell.Forms
             this.LeftSidebar = new Sledge.Shell.Controls.DockedPanel();
             this.LeftSidebarContainer = new Sledge.Shell.Controls.SidebarContainer();
             this.BottomSidebar = new Sledge.Shell.Controls.DockedPanel();
+            this.BottomTabs = new System.Windows.Forms.TabControl();
+            this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.tabPage2 = new System.Windows.Forms.TabPage();
             this.ToolStripContainer.ContentPanel.SuspendLayout();
             this.ToolStripContainer.SuspendLayout();
             this.RightSidebar.SuspendLayout();
             this.LeftSidebar.SuspendLayout();
+            this.BottomSidebar.SuspendLayout();
+            this.BottomTabs.SuspendLayout();
             this.SuspendLayout();
             // 
             // MenuStrip
@@ -87,7 +92,7 @@ namespace Sledge.Shell.Forms
             this.DocumentContainer.Dock = System.Windows.Forms.DockStyle.Fill;
             this.DocumentContainer.Location = new System.Drawing.Point(8, 24);
             this.DocumentContainer.Name = "DocumentContainer";
-            this.DocumentContainer.Size = new System.Drawing.Size(500, 350);
+            this.DocumentContainer.Size = new System.Drawing.Size(500, 258);
             this.DocumentContainer.TabIndex = 3;
             // 
             // DocumentTabs
@@ -110,7 +115,7 @@ namespace Sledge.Shell.Forms
             this.RightSidebar.Location = new System.Drawing.Point(508, 0);
             this.RightSidebar.Name = "RightSidebar";
             this.RightSidebar.Padding = new System.Windows.Forms.Padding(8, 0, 0, 0);
-            this.RightSidebar.Size = new System.Drawing.Size(200, 374);
+            this.RightSidebar.Size = new System.Drawing.Size(200, 282);
             this.RightSidebar.TabIndex = 2;
             // 
             // RightSidebarContainer
@@ -118,7 +123,7 @@ namespace Sledge.Shell.Forms
             this.RightSidebarContainer.Dock = System.Windows.Forms.DockStyle.Fill;
             this.RightSidebarContainer.Location = new System.Drawing.Point(8, 0);
             this.RightSidebarContainer.Name = "RightSidebarContainer";
-            this.RightSidebarContainer.Size = new System.Drawing.Size(192, 374);
+            this.RightSidebarContainer.Size = new System.Drawing.Size(192, 282);
             this.RightSidebarContainer.TabIndex = 0;
             // 
             // LeftSidebar
@@ -130,7 +135,7 @@ namespace Sledge.Shell.Forms
             this.LeftSidebar.Location = new System.Drawing.Point(0, 0);
             this.LeftSidebar.Name = "LeftSidebar";
             this.LeftSidebar.Padding = new System.Windows.Forms.Padding(0, 0, 8, 0);
-            this.LeftSidebar.Size = new System.Drawing.Size(8, 374);
+            this.LeftSidebar.Size = new System.Drawing.Size(8, 282);
             this.LeftSidebar.TabIndex = 1;
             // 
             // LeftSidebarContainer
@@ -138,19 +143,52 @@ namespace Sledge.Shell.Forms
             this.LeftSidebarContainer.Dock = System.Windows.Forms.DockStyle.Fill;
             this.LeftSidebarContainer.Location = new System.Drawing.Point(0, 0);
             this.LeftSidebarContainer.Name = "LeftSidebarContainer";
-            this.LeftSidebarContainer.Size = new System.Drawing.Size(0, 374);
+            this.LeftSidebarContainer.Size = new System.Drawing.Size(0, 282);
             this.LeftSidebarContainer.TabIndex = 0;
             // 
             // BottomSidebar
             // 
+            this.BottomSidebar.Controls.Add(this.BottomTabs);
             this.BottomSidebar.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.BottomSidebar.DockDimension = 8;
-            this.BottomSidebar.Hidden = true;
-            this.BottomSidebar.Location = new System.Drawing.Point(0, 374);
+            this.BottomSidebar.DockDimension = 100;
+            this.BottomSidebar.Hidden = false;
+            this.BottomSidebar.Location = new System.Drawing.Point(0, 282);
             this.BottomSidebar.Name = "BottomSidebar";
             this.BottomSidebar.Padding = new System.Windows.Forms.Padding(0, 8, 0, 0);
-            this.BottomSidebar.Size = new System.Drawing.Size(708, 8);
+            this.BottomSidebar.Size = new System.Drawing.Size(708, 100);
             this.BottomSidebar.TabIndex = 0;
+            // 
+            // BottomTabs
+            // 
+            this.BottomTabs.Alignment = System.Windows.Forms.TabAlignment.Bottom;
+            this.BottomTabs.Controls.Add(this.tabPage1);
+            this.BottomTabs.Controls.Add(this.tabPage2);
+            this.BottomTabs.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.BottomTabs.Location = new System.Drawing.Point(0, 8);
+            this.BottomTabs.Name = "BottomTabs";
+            this.BottomTabs.SelectedIndex = 0;
+            this.BottomTabs.Size = new System.Drawing.Size(708, 92);
+            this.BottomTabs.TabIndex = 0;
+            // 
+            // tabPage1
+            // 
+            this.tabPage1.Location = new System.Drawing.Point(4, 4);
+            this.tabPage1.Name = "tabPage1";
+            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage1.Size = new System.Drawing.Size(700, 66);
+            this.tabPage1.TabIndex = 0;
+            this.tabPage1.Text = "tabPage1";
+            this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // tabPage2
+            // 
+            this.tabPage2.Location = new System.Drawing.Point(4, 4);
+            this.tabPage2.Name = "tabPage2";
+            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage2.Size = new System.Drawing.Size(700, 66);
+            this.tabPage2.TabIndex = 1;
+            this.tabPage2.Text = "tabPage2";
+            this.tabPage2.UseVisualStyleBackColor = true;
             // 
             // Shell
             // 
@@ -169,14 +207,14 @@ namespace Sledge.Shell.Forms
             this.ToolStripContainer.PerformLayout();
             this.RightSidebar.ResumeLayout(false);
             this.LeftSidebar.ResumeLayout(false);
+            this.BottomSidebar.ResumeLayout(false);
+            this.BottomTabs.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
         }
 
         #endregion
-
-        private System.Windows.Forms.MenuStrip MenuStrip;
         private System.Windows.Forms.StatusStrip StatusStrip;
         private System.Windows.Forms.ToolStripContainer ToolStripContainer;
         private Sledge.Shell.Controls.DockedPanel BottomSidebar;
@@ -186,5 +224,9 @@ namespace Sledge.Shell.Forms
         private Sledge.Shell.Controls.ClosableTabControl DocumentTabs;
         internal SidebarContainer RightSidebarContainer;
         internal SidebarContainer LeftSidebarContainer;
+        private TabPage tabPage2;
+        internal TabPage tabPage1;
+        internal TabControl BottomTabs;
+        internal MenuStrip MenuStrip;
     }
 }

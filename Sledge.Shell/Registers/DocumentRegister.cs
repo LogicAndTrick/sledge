@@ -8,6 +8,7 @@ using LogicAndTrick.Gimme.Providers;
 using LogicAndTrick.Oy;
 using Sledge.Common.Documents;
 using Sledge.Common.Hooks;
+using Sledge.Common.Logging;
 
 namespace Sledge.Shell.Registers
 {
@@ -24,6 +25,7 @@ namespace Sledge.Shell.Registers
             // Register exported commands
             foreach (var export in _documentLoaders)
             {
+                Log.Debug("Documents", "Loaded: " + export.Value.GetType().FullName);
                 Add(export.Value);
             }
 

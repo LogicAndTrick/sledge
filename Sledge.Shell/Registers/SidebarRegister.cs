@@ -9,6 +9,7 @@ using LogicAndTrick.Oy;
 using Sledge.Common.Components;
 using Sledge.Common.Context;
 using Sledge.Common.Hooks;
+using Sledge.Common.Logging;
 using Sledge.Common.Settings;
 using Sledge.Shell.Controls;
 
@@ -30,6 +31,7 @@ namespace Sledge.Shell.Registers
             // Register the exported sidebar components
             foreach (var export in _sidebarComponents)
             {
+                Log.Debug("Sidebar", "Loaded: " + export.Value.GetType().FullName);
                 Add(export.Value);
             }
 

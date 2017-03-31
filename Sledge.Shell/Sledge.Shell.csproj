@@ -82,6 +82,7 @@
     <Compile Include="Commands\OpenCommandBoxCommand.cs" />
     <Compile Include="Commands\CommandActivator.cs" />
     <Compile Include="Commands\IActivator.cs" />
+    <Compile Include="Components\LogComponent.cs" />
     <Compile Include="Controls\ClosableTabControl.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -104,9 +105,11 @@
     <Compile Include="Forms\CommandBox.Designer.cs">
       <DependentUpon>CommandBox.cs</DependentUpon>
     </Compile>
+    <Compile Include="Registers\BottomTabRegister.cs" />
     <Compile Include="Registers\CommandRegister.cs" />
     <Compile Include="Registers\ContextRegister.cs" />
     <Compile Include="Registers\DocumentRegister.cs" />
+    <Compile Include="Registers\MenuRegister.cs" />
     <Compile Include="Registers\HotkeyRegister.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Forms\Shell.cs">

@@ -4,6 +4,7 @@ using LogicAndTrick.Oy;
 using Sledge.Common.Commands;
 using Sledge.Common.Context;
 using Sledge.Common.Hotkeys;
+using Sledge.Common.Menu;
 
 namespace Sledge.Shell.Commands
 {
@@ -12,10 +13,11 @@ namespace Sledge.Shell.Commands
     /// </summary>
     [Export(typeof(ICommand))]
     [DefaultHotkey("Ctrl+T")]
+    [MenuItem("File", "", "")]
     public class OpenCommandBoxCommand : ICommand
     {
         public string Name => "Open the command box";
-        public string Details => "";
+        public string Details => "Open the command box";
 
         public bool IsInContext(IContext context)
         {
