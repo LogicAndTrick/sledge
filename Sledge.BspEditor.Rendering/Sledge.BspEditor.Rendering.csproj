@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{37C3FE6B-16F4-431F-AB67-FBA7C681CCEE}</ProjectGuid>
+    <ProjectGuid>{D27BB6A7-FE81-45B5-9B68-B23E4169F16D}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Sledge.BspEditor</RootNamespace>
-    <AssemblyName>Sledge.BspEditor</AssemblyName>
+    <RootNamespace>Sledge.BspEditor.Rendering</RootNamespace>
+    <AssemblyName>Sledge.BspEditor.Rendering</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -34,15 +34,14 @@
       <HintPath>..\packages\LogicAndTrick.Oy.1.0.1\lib\net45\LogicAndTrick.Oy.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="OpenTK, Version=2.0.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
+      <HintPath>..\packages\OpenTK.2.0.0\lib\net20\OpenTK.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
-    <Reference Include="System.Web" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -52,45 +51,30 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BspSourceDocumentLoader.cs" />
-    <Compile Include="Components\IMapDocumentControl.cs" />
-    <Compile Include="Components\IMapDocumentControlFactory.cs" />
-    <Compile Include="Components\MapDocumentControlHost.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Components\TreeViewMapDocumentControl.cs" />
-    <Compile Include="Controls\TableSplitConfiguration.cs" />
-    <Compile Include="Controls\TableSplitControl.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Primitives\MapObjects\BaseMapObject.cs" />
-    <Compile Include="Primitives\MapObjects\Entity.cs" />
-    <Compile Include="Primitives\MapObjectData\Face.cs" />
-    <Compile Include="Primitives\MapObjects\Group.cs" />
-    <Compile Include="Primitives\MapData\Camera.cs" />
-    <Compile Include="Primitives\MapData\IMapData.cs" />
-    <Compile Include="Primitives\MapObjectData\EntityData.cs" />
-    <Compile Include="Primitives\MapObjectData\IMapObjectData.cs" />
-    <Compile Include="Primitives\MapObjects\IMapObject.cs" />
-    <Compile Include="Primitives\MapObjects\IPrimitive.cs" />
-    <Compile Include="Primitives\Map.cs" />
-    <Compile Include="Primitives\MapData\MapDataCollection.cs" />
-    <Compile Include="Primitives\MapObjectData\MapObjectDataCollection.cs" />
-    <Compile Include="Primitives\MapObjectData\ObjectColor.cs" />
-    <Compile Include="Primitives\MapObjects\MapObjectExtensions.cs" />
-    <Compile Include="Primitives\MapObjects\MapObjectHierarchy.cs" />
-    <Compile Include="Primitives\MapObjects\Root.cs" />
-    <Compile Include="Primitives\MapObjects\Solid.cs" />
-    <Compile Include="Primitives\Texture.cs" />
-    <Compile Include="Primitives\UniqueNumberGenerator.cs" />
-    <Compile Include="Primitives\MapData\Visgroup.cs" />
-    <Compile Include="Primitives\MapObjectData\VisgroupID.cs" />
-    <Compile Include="Providers\IBspSourceProvider.cs" />
-    <Compile Include="Documents\MapDocument.cs" />
+    <Compile Include="Converters\DefaultSolidConverter.cs" />
+    <Compile Include="Scene\ConvertedScene.cs" />
+    <Compile Include="Converters\AxisLinesConverter.cs" />
+    <Compile Include="Converters\IMapObjectSceneConverter.cs" />
+    <Compile Include="Converters\MapObjectSceneConverterPriority.cs" />
+    <Compile Include="Converters\ViewportTextConverter.cs" />
+    <Compile Include="GeometricExtensions.cs" />
+    <Compile Include="Viewport\IViewportEventListener.cs" />
+    <Compile Include="Converters\MapObjectConverter.cs" />
+    <Compile Include="Viewport\MapViewport.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Providers\RmfBspSourceProvider.cs" />
+    <Compile Include="ReferenceCounter.cs" />
+    <Compile Include="Renderer.cs" />
+    <Compile Include="Scene\SceneManager.cs" />
+    <Compile Include="Scene\SceneMapObject.cs" />
+    <Compile Include="Viewport\MapViewportControlFactory.cs" />
+    <Compile Include="Viewport\ViewportEvent.cs" />
+    <Compile Include="Viewport\ViewportMapDocumentControl.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Sledge.BspEditor\Sledge.BspEditor.csproj">
+      <Project>{37c3fe6b-16f4-431f-ab67-fba7c681ccee}</Project>
+      <Name>Sledge.BspEditor</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Sledge.Common\Sledge.Common.csproj">
       <Project>{5d414ac8-8b93-489f-9960-877923400fed}</Project>
       <Name>Sledge.Common</Name>
@@ -99,14 +83,14 @@
       <Project>{26A974C9-E495-4FA3-8E87-1E00019D04F5}</Project>
       <Name>Sledge.DataStructures</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Sledge.Shell\Sledge.Shell.csproj">
-      <Project>{1E0BEB41-CF2E-4F48-838E-452C1DCF575F}</Project>
-      <Name>Sledge.Shell</Name>
+    <ProjectReference Include="..\Sledge.Rendering\Sledge.Rendering.csproj">
+      <Project>{4da7f88d-64ff-4036-8a11-6175169da851}</Project>
+      <Name>Sledge.Rendering</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
     <None Include="app.config" />
+    <None Include="OpenTK.dll.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

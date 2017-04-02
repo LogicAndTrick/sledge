@@ -47,6 +47,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sledge.MinimalEditor", "Sle
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sledge.BspEditor", "Sledge.BspEditor\Sledge.BspEditor.csproj", "{37C3FE6B-16F4-431F-AB67-FBA7C681CCEE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sledge.BspEditor.Rendering", "Sledge.BspEditor.Rendering\Sledge.BspEditor.Rendering.csproj", "{D27BB6A7-FE81-45B5-9B68-B23E4169F16D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -244,6 +246,18 @@ Global
 		{37C3FE6B-16F4-431F-AB67-FBA7C681CCEE}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{37C3FE6B-16F4-431F-AB67-FBA7C681CCEE}.Release|x86.ActiveCfg = Release|Any CPU
 		{37C3FE6B-16F4-431F-AB67-FBA7C681CCEE}.Release|x86.Build.0 = Release|Any CPU
+		{D27BB6A7-FE81-45B5-9B68-B23E4169F16D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D27BB6A7-FE81-45B5-9B68-B23E4169F16D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D27BB6A7-FE81-45B5-9B68-B23E4169F16D}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{D27BB6A7-FE81-45B5-9B68-B23E4169F16D}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{D27BB6A7-FE81-45B5-9B68-B23E4169F16D}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{D27BB6A7-FE81-45B5-9B68-B23E4169F16D}.Debug|x86.Build.0 = Debug|Any CPU
+		{D27BB6A7-FE81-45B5-9B68-B23E4169F16D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D27BB6A7-FE81-45B5-9B68-B23E4169F16D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D27BB6A7-FE81-45B5-9B68-B23E4169F16D}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{D27BB6A7-FE81-45B5-9B68-B23E4169F16D}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{D27BB6A7-FE81-45B5-9B68-B23E4169F16D}.Release|x86.ActiveCfg = Release|Any CPU
+		{D27BB6A7-FE81-45B5-9B68-B23E4169F16D}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

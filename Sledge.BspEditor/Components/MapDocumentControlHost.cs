@@ -24,6 +24,8 @@ namespace Sledge.BspEditor.Components
     [Export(typeof(ISettingsContainer))]
     public class MapDocumentControlHost : UserControl, ISettingsContainer, IInitialiseHook
     {
+        [ImportMany] private IEnumerable<Lazy<IMapDocumentControlFactory>> _controlFactories;
+
         public async Task OnInitialise()
         {
             // Just here to make sure this gets initialised
@@ -110,8 +112,28 @@ namespace Sledge.BspEditor.Components
                 Table.Configuration = newConfig;
             }
 
-            SetControl(new ViewportMapDocumentControl(), 0, 0);
-            SetControl(new TreeViewMapDocumentControl(), 1, 1);
+            List<HostedControl> controls = null;
+            if (d.ContainsKey("Controls"))
+            {
+                try
+                {
+                    controls = JsonConvert.DeserializeObject<List<HostedControl>>(d["Controls"]);
+                }
+                catch
+                {
+                    controls = null;
+                }
+            }
+            foreach (var hc in controls ?? HostedControl.Default)
+            {
+                var ctrl = MakeControl(hc.Type, hc.Serialised);
+                if (ctrl != null) SetControl(ctrl, hc.Column, hc.Row);
+            }
+        }
+
+        private IMapDocumentControl MakeControl(string type, string serialised)
+        {
+            return _controlFactories.FirstOrDefault(x => x.Value.Type == type)?.Value.Create(serialised);
         }
 
         public IEnumerable<SettingValue> GetValues()
@@ -120,6 +142,24 @@ namespace Sledge.BspEditor.Components
             yield return new SettingValue("Columns", Convert.ToString(config.Columns, CultureInfo.InvariantCulture));
             yield return new SettingValue("Rows", Convert.ToString(config.Rows, CultureInfo.InvariantCulture));
             yield return new SettingValue("Rectangles", JsonConvert.SerializeObject(config.Rectangles, Formatting.None));
+
+            // !todo MapViewport save settings
+        }
+
+        private class HostedControl
+        {
+            public int Row { get; set; }
+            public int Column { get; set; }
+            public string Type { get; set; }
+            public string Serialised { get; set; }
+
+            public static List<HostedControl> Default = new List<HostedControl>
+            {
+                new HostedControl { Row = 0, Column = 0, Type = "MapViewport", Serialised = "PerspectiveCamera", },
+                new HostedControl { Row = 0, Column = 1, Type = "MapViewport", Serialised = "OrthographicCamera/Top" },
+                new HostedControl { Row = 1, Column = 0, Type = "MapViewport", Serialised = "OrthographicCamera/Front" },
+                new HostedControl { Row = 1, Column = 1, Type = "MapViewport", Serialised = "OrthographicCamera/Side" },
+            };
         }
     }
 }

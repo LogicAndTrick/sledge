@@ -114,7 +114,7 @@ namespace Sledge.Rendering.OpenGL
 
         public void SetActiveScene(Scene scene)
         {
-            if (_sceneData.ContainsKey(scene)) _activeScene = scene;
+            if (scene == null || _sceneData.ContainsKey(scene)) _activeScene = scene;
         }
 
         public void RemoveScene(Scene scene)

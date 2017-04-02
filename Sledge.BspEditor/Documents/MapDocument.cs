@@ -27,6 +27,8 @@ namespace Sledge.BspEditor.Documents
             Map = map;
             
             Oy.Subscribe<IDocument>("Document:RequestClose", IfThis(RequestClose));
+
+            // Subscribe to map changes
         }
 
         private Action<IDocument> IfThis(Func<Task> callback)

@@ -16,13 +16,13 @@ using Sledge.Common.Menu;
 namespace Sledge.MinimalEditor.TextEditor
 {
     [Export(typeof(ICommand))]
-    [CommandID("TestCommand")]
+    [CommandID("File:Open")]
     [DefaultHotkey("Ctrl+O")]
-    [MenuItem("File", "", "")]
-    public class TestCommand : ICommand
+    [MenuItem("File", "", "File")]
+    public class OpenFile : ICommand
     {
-        public string Name => "This is a test command";
-        public string Details => "Run a test command";
+        public string Name => "Open";
+        public string Details => "Open...";
 
         public bool IsInContext(IContext context)
         {

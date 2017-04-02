@@ -2,12 +2,13 @@
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using LogicAndTrick.Oy;
+using Sledge.BspEditor.Components;
 using Sledge.BspEditor.Documents;
 using Sledge.Common.Documents;
 using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Interfaces;
 
-namespace Sledge.BspEditor.Components
+namespace Sledge.BspEditor.Rendering.Viewport
 {
     public class ViewportMapDocumentControl : IMapDocumentControl
     {

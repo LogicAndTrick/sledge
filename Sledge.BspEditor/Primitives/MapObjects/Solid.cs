@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
+using Sledge.BspEditor.Primitives.MapObjectData;
 
 namespace Sledge.BspEditor.Primitives.MapObjects
 {
@@ -11,6 +13,9 @@ namespace Sledge.BspEditor.Primitives.MapObjects
         public Solid(long id) : base(id)
         {
         }
+
+        public IEnumerable<Face> Faces => Data.Get<Face>();
+        public ObjectColor Color => Data.GetOne<ObjectColor>();
 
         public override void DescendantsChanged()
         {

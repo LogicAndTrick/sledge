@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Sledge.DataStructures.Geometric;
+using Sledge.DataStructures.MapObjects;
 
 namespace Sledge.BspEditor.Primitives.MapObjectData
 {
@@ -26,6 +28,21 @@ namespace Sledge.BspEditor.Primitives.MapObjectData
             face.Texture = Texture.Clone();
             face.Vertices = Vertices.Select(x => x.Clone()).ToList();
             return face;
+        }
+
+        public virtual IEnumerable<Tuple<Coordinate, decimal, decimal>> GetTextureCoordinates(int width, int height)
+        {
+            if (width <= 0 || height <= 0 || Texture.XScale == 0 || Texture.YScale == 0)
+            {
+                return Vertices.Select(x => Tuple.Create(x, 0m, 0m));
+            }
+
+            var udiv = width * Texture.XScale;
+            var uadd = Texture.XShift / width;
+            var vdiv = height * Texture.YScale;
+            var vadd = Texture.YShift / height;
+
+            return Vertices.Select(x => Tuple.Create(x, x.Dot(Texture.UAxis) / udiv + uadd, x.Dot(Texture.VAxis) / vdiv + vadd));
         }
     }
 }
