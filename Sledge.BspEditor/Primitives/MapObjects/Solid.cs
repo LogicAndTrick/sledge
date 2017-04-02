@@ -10,13 +10,13 @@ namespace Sledge.BspEditor.Primitives.MapObjects
     /// </summary>
     public class Solid : BaseMapObject, IPrimitive
     {
-        public Solid(long id) : base(id)
-        {
-        }
-
         public IEnumerable<Face> Faces => Data.Get<Face>();
         public ObjectColor Color => Data.GetOne<ObjectColor>();
 
+        public Solid(long id) : base(id)
+        {
+        }
+        
         public override void DescendantsChanged()
         {
             Hierarchy.Parent?.DescendantsChanged();

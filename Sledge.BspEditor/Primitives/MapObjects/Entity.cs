@@ -8,6 +8,7 @@ namespace Sledge.BspEditor.Primitives.MapObjects
     public class Entity : BaseMapObject, IPrimitive
     {
         public EntityData EntityData => Data.GetOne<EntityData>();
+        public ObjectColor Color => Data.GetOne<ObjectColor>();
         public Coordinate Origin { get; set; }
 
         public Entity(long id) : base(id)

@@ -3,6 +3,6 @@
     public interface IMapDocumentControlFactory
     {
         string Type { get; }
-        IMapDocumentControl Create(string serialised);
+        IMapDocumentControl Create();
     }
 }

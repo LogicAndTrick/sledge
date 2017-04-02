@@ -5,7 +5,6 @@ using OpenTK;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.BspEditor.Rendering.Scene;
-using Sledge.DataStructures.MapObjects;
 using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Scenes.Renderables;
 using Line = Sledge.Rendering.Scenes.Renderables.Line;
@@ -24,7 +23,7 @@ namespace Sledge.BspEditor.Rendering.Converters
 
         public bool Supports(IMapObject obj)
         {
-            return obj is World;
+            return obj is Root;
         }
 
         public async Task<bool> Convert(SceneMapObject smo, MapDocument document, IMapObject obj)

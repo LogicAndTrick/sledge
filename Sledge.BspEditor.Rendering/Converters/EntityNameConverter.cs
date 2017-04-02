@@ -1,29 +1,32 @@
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
+using System.Drawing;
 using System.Threading.Tasks;
 using OpenTK;
 using Sledge.BspEditor.Documents;
+using Sledge.BspEditor.Primitives.MapObjectData;
 using Sledge.BspEditor.Primitives.MapObjects;
+using Sledge.BspEditor.Rendering.Scene;
 using Sledge.DataStructures.Geometric;
-using Sledge.DataStructures.MapObjects;
 using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Interfaces;
 using Sledge.Rendering.Scenes.Elements;
-using Entity = Sledge.DataStructures.MapObjects.Entity;
 
 namespace Sledge.BspEditor.Rendering.Converters
 {
+    [Export(typeof(IMapObjectSceneConverter))]
     public class EntityNameConverter : IMapObjectSceneConverter
     {
-        public MapObjectSceneConverterPriority Priority { get { return MapObjectSceneConverterPriority.DefaultLow; } }
+        public MapObjectSceneConverterPriority Priority => MapObjectSceneConverterPriority.DefaultLow;
 
-        public bool ShouldStopProcessing(SceneMapObject smo, MapObject obj)
+        public bool ShouldStopProcessing(SceneMapObject smo, IMapObject obj)
         {
             return false;
         }
 
-        public bool Supports(MapObject obj)
+        public bool Supports(IMapObject obj)
         {
-            return Sledge.Settings.View.DrawEntityNames && obj is Entity && obj.GetEntityData() != null;
+            return obj is Entity && obj.Data.GetOne<EntityData>() != null;
         }
 
         public async Task<bool> Convert(SceneMapObject smo, MapDocument document, IMapObject obj)
@@ -54,22 +57,25 @@ namespace Sledge.BspEditor.Rendering.Converters
         /// </summary>
         private class EntityTextElement : TextElement
         {
-            public override string ElementGroup { get { return "Entity"; } }
+            public override string ElementGroup => "Entity";
             public Box Box { get; set; }
 
-            public EntityTextElement(Entity entity) : base(PositionType.World, entity.BoundingBox.Center.ToVector3(), entity.EntityData.Name, entity.Colour)
+            public EntityTextElement(Entity entity) : base(PositionType.World, entity.Origin.ToVector3(), entity.EntityData.Name, entity.Color?.Color ?? Color.Magenta)
             {
-                Box = entity.BoundingBox;
+                // todo !entity names
+                //Box = entity.BoundingBox;
+                Box = new Box(entity.Origin - Coordinate.One, entity.Origin + Coordinate.One);
                 ScreenOffset = new Vector3(0, -FontSize / 2 - 5, 0);
                 CameraFlags = CameraFlags.Orthographic;
             }
 
             public void Update(Entity entity)
             {
-                Location = entity.BoundingBox.Center.ToVector3();
+                Location = entity.Origin.ToVector3();
                 Text = entity.EntityData.Name;
-                Color = entity.Colour;
-                Box = entity.BoundingBox;
+                Color = entity.Color?.Color ?? Color.Magenta;
+                //Box = entity.BoundingBox;
+                Box = new Box(entity.Origin - Coordinate.One, entity.Origin + Coordinate.One);
                 ClearValue("Validated");
             }
 

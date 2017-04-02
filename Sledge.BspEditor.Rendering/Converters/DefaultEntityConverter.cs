@@ -1,5 +1,7 @@
 using System.Threading.Tasks;
-using Sledge.DataStructures.MapObjects;
+using Sledge.BspEditor.Documents;
+using Sledge.BspEditor.Primitives.MapObjects;
+using Sledge.BspEditor.Rendering.Scene;
 using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Scenes.Renderables;
 
@@ -8,12 +10,12 @@ namespace Sledge.BspEditor.Rendering.Converters
     public class DefaultEntityConverter : IMapObjectSceneConverter
     {
         public MapObjectSceneConverterPriority Priority { get { return MapObjectSceneConverterPriority.DefaultLowest; } }
-        public bool ShouldStopProcessing(SceneMapObject smo, MapObject obj)
+        public bool ShouldStopProcessing(SceneMapObject smo, IMapObject obj)
         {
             return false;
         }
 
-        public bool Supports(MapObject obj)
+        public bool Supports(IMapObject obj)
         {
             return obj is Entity;
         }

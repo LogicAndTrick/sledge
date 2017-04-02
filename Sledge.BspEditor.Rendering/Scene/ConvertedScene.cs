@@ -10,9 +10,10 @@ namespace Sledge.BspEditor.Rendering.Scene
 {
     public class ConvertedScene : IDisposable
     {
-        private MapObjectConverter _converter;
         public Sledge.Rendering.Scenes.Scene Scene { get; }
         public MapDocument Document { get; }
+
+        private readonly MapObjectConverter _converter;
         private readonly ConcurrentDictionary<IMapObject, SceneMapObject> _sceneObjects;
 
         public ConvertedScene(MapDocument document, MapObjectConverter converter)

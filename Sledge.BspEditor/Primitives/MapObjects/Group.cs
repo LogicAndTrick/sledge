@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Sledge.BspEditor.Primitives.MapObjectData;
 
 namespace Sledge.BspEditor.Primitives.MapObjects
 {

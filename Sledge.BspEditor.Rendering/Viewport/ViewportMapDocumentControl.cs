@@ -18,6 +18,7 @@ namespace Sledge.BspEditor.Rendering.Viewport
         private readonly List<Subscription> _subscriptions;
         private Camera _camera;
 
+        public string Type => "MapViewport";
         public Control Control => _panel;
 
         public Camera Camera
@@ -53,14 +54,21 @@ namespace Sledge.BspEditor.Rendering.Viewport
             }
         }
 
-        public async Task<string> GetSerialisedSettings()
+        public string GetSerialisedSettings()
         {
-            return "";
+            return Camera.Serialise(Camera);
         }
 
-        public async Task SetSerialisedSettings(string settings)
+        public void SetSerialisedSettings(string settings)
         {
-            //
+            try
+            {
+                Camera = Camera.Deserialise(settings);
+            }
+            catch
+            {
+                
+            }
         }
 
         public void Dispose()

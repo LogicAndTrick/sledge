@@ -6,8 +6,9 @@ namespace Sledge.BspEditor.Components
 {
     public interface IMapDocumentControl : IDisposable
     {
+        string Type { get; }
         Control Control { get; }
-        Task<string> GetSerialisedSettings();
-        Task SetSerialisedSettings(string settings);
+        string GetSerialisedSettings();
+        void SetSerialisedSettings(string settings);
     }
 }

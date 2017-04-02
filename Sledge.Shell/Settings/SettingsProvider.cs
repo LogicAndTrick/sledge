@@ -83,7 +83,17 @@ namespace Sledge.Shell.Settings
                     if (containerName == null) continue;
                     if (name != null && containerName != name) continue;
 
-                    var data = JsonConvert.DeserializeObject<Dictionary<string, string>>(File.ReadAllText(file));
+                    Dictionary<string, string> data;
+                    try
+                    {
+                        data = JsonConvert.DeserializeObject<Dictionary<string, string>>(File.ReadAllText(file));
+                    }
+                    catch
+                    {
+                        data = null;
+                    }
+                    if (data == null) data = new Dictionary<string, string>();
+
                     _values[containerName] = data.Select(x => new SettingValue(x.Key, x.Value)).ToList();
                 }
             }

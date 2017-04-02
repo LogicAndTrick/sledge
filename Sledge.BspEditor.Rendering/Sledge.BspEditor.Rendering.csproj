@@ -30,8 +30,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="LogicAndTrick.Oy, Version=1.0.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\LogicAndTrick.Oy.1.0.1\lib\net45\LogicAndTrick.Oy.dll</HintPath>
+    <Reference Include="LogicAndTrick.Oy, Version=1.0.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\LogicAndTrick.Oy.1.0.2\lib\net45\LogicAndTrick.Oy.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="OpenTK, Version=2.0.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
@@ -52,6 +52,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Converters\DefaultSolidConverter.cs" />
+    <Compile Include="Converters\EntityNameConverter.cs" />
     <Compile Include="Scene\ConvertedScene.cs" />
     <Compile Include="Converters\AxisLinesConverter.cs" />
     <Compile Include="Converters\IMapObjectSceneConverter.cs" />

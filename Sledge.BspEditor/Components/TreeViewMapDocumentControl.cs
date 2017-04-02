@@ -14,6 +14,8 @@ namespace Sledge.BspEditor.Components
     public class TreeViewMapDocumentControl : IMapDocumentControl
     {
         private readonly TreeView _view;
+
+        public string Type => "TreeView";
         public Control Control => _view;
 
         private List<Subscription> _subscriptions;
@@ -45,12 +47,12 @@ namespace Sledge.BspEditor.Components
             });
         }
 
-        public async Task<string> GetSerialisedSettings()
+        public string GetSerialisedSettings()
         {
             return "";
         }
 
-        public async Task SetSerialisedSettings(string settings)
+        public void SetSerialisedSettings(string settings)
         {
             //
         }

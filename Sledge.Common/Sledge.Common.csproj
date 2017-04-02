@@ -34,8 +34,8 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="LogicAndTrick.Oy, Version=1.0.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\LogicAndTrick.Oy.1.0.1\lib\net45\LogicAndTrick.Oy.dll</HintPath>
+    <Reference Include="LogicAndTrick.Oy, Version=1.0.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\LogicAndTrick.Oy.1.0.2\lib\net45\LogicAndTrick.Oy.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />

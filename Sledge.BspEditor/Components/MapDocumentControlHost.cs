@@ -80,6 +80,7 @@ namespace Sledge.BspEditor.Components
             yield return new SettingKey("Columns", "Number of columns", typeof(int));
             yield return new SettingKey("Rows", "Number of rows", typeof(int));
             yield return new SettingKey("Rectangles", "Rectangle configuration", typeof(Rectangle[]));
+            yield return new SettingKey("Controls", "Control configuration", typeof(HostedControl[]));
         }
 
         public void SetValues(IEnumerable<SettingValue> values)
@@ -124,16 +125,15 @@ namespace Sledge.BspEditor.Components
                     controls = null;
                 }
             }
-            foreach (var hc in controls ?? HostedControl.Default)
+            if (controls == null || !controls.Any())
+            {
+                controls = HostedControl.Default;
+            }
+            foreach (var hc in controls)
             {
                 var ctrl = MakeControl(hc.Type, hc.Serialised);
                 if (ctrl != null) SetControl(ctrl, hc.Column, hc.Row);
             }
-        }
-
-        private IMapDocumentControl MakeControl(string type, string serialised)
-        {
-            return _controlFactories.FirstOrDefault(x => x.Value.Type == type)?.Value.Create(serialised);
         }
 
         public IEnumerable<SettingValue> GetValues()
@@ -143,7 +143,19 @@ namespace Sledge.BspEditor.Components
             yield return new SettingValue("Rows", Convert.ToString(config.Rows, CultureInfo.InvariantCulture));
             yield return new SettingValue("Rectangles", JsonConvert.SerializeObject(config.Rectangles, Formatting.None));
 
-            // !todo MapViewport save settings
+            var controls = new List<HostedControl>();
+            foreach (var mdc in MapDocumentControls)
+            {
+                controls.Add(new HostedControl { Row = mdc.Row, Column = mdc.Column, Type = mdc.Control.Type, Serialised = mdc.Control.GetSerialisedSettings()});
+            }
+            yield return new SettingValue("Controls", JsonConvert.SerializeObject(controls));
+        }
+
+        private IMapDocumentControl MakeControl(string type, string serialised)
+        {
+            var ctrl = _controlFactories.FirstOrDefault(x => x.Value.Type == type)?.Value.Create();
+            ctrl?.SetSerialisedSettings(serialised);
+            return ctrl;
         }
 
         private class HostedControl
@@ -153,9 +165,9 @@ namespace Sledge.BspEditor.Components
             public string Type { get; set; }
             public string Serialised { get; set; }
 
-            public static List<HostedControl> Default = new List<HostedControl>
+            public static readonly List<HostedControl> Default = new List<HostedControl>
             {
-                new HostedControl { Row = 0, Column = 0, Type = "MapViewport", Serialised = "PerspectiveCamera", },
+                new HostedControl { Row = 0, Column = 0, Type = "MapViewport", Serialised = "PerspectiveCamera/", },
                 new HostedControl { Row = 0, Column = 1, Type = "MapViewport", Serialised = "OrthographicCamera/Top" },
                 new HostedControl { Row = 1, Column = 0, Type = "MapViewport", Serialised = "OrthographicCamera/Front" },
                 new HostedControl { Row = 1, Column = 1, Type = "MapViewport", Serialised = "OrthographicCamera/Side" },

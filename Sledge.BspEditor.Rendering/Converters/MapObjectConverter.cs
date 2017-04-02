@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.BspEditor.Rendering.Scene;
-using Sledge.Common.Hooks;
 
 namespace Sledge.BspEditor.Rendering.Converters
 {
