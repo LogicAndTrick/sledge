@@ -1,9 +1,11 @@
-﻿namespace Sledge.BspEditor.Primitives.MapObjectData
+﻿using System.Runtime.Serialization;
+
+namespace Sledge.BspEditor.Primitives.MapObjectData
 {
     /// <summary>
     /// Base interface for generic map object metadata
     /// </summary>
-    public interface IMapObjectData
+    public interface IMapObjectData : ISerializable
     {
         IMapObjectData Clone();
     }

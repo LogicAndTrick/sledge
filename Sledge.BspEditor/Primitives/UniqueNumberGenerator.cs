@@ -8,6 +8,8 @@ namespace Sledge.BspEditor.Primitives
     /// </summary>
     public class UniqueNumberGenerator
     {
+        public static readonly UniqueNumberGenerator Instance = new UniqueNumberGenerator();
+
         private readonly ConcurrentDictionary<string, long> _ids;
 
         public UniqueNumberGenerator()

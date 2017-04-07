@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Sledge.BspEditor.Documents;
+using Sledge.BspEditor.Environment;
 using Sledge.BspEditor.Primitives;
 using Sledge.BspEditor.Providers;
 using Sledge.Common.Components;
@@ -36,13 +37,29 @@ namespace Sledge.BspEditor
             return provider.SupportedFileExtensions.Any(x => x.Matches(location));
         }
 
+        public async Task<IEnvironment> GetEnvironment()
+        {
+            return new GoldsourceEnvironment
+            {
+                BaseDirectory = @"F:\Steam\SteamApps\common\Half-Life",
+                GameDirectory = "valve",
+                ModDirectory =  "valve",
+                Name = "Half-Life"
+            };
+        }
+
         public async Task<IDocument> CreateBlank()
         {
-            return new MapDocument(new Map());
+            var env = await GetEnvironment();
+            if (env == null) return null;
+            return new MapDocument(new Map(), env);
         }
 
         public async Task<IDocument> Load(string location)
         {
+            var env = await GetEnvironment();
+            if (env == null) return null;
+
             using (var stream = File.Open(location, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
             {
                 foreach (var provider in _providers.Where(x => CanLoad(x.Value, location)))
@@ -50,7 +67,7 @@ namespace Sledge.BspEditor
                     try
                     {
                         var map = await provider.Value.Load(stream);
-                        return new MapDocument(map);
+                        return new MapDocument(map, env);
                     }
                     catch (NotSupportedException)
                     {
@@ -59,38 +76,6 @@ namespace Sledge.BspEditor
                 }
             }
             throw new NotSupportedException("This file type is not supported.");
-        }
-    }
-
-    [Export(typeof(ISidebarComponent))]
-    [Export(typeof(IInitialiseHook))]
-    public class BspSourceSidebarComponent : ISidebarComponent, IInitialiseHook
-    {
-        private ListBox _control;
-        public string Title => "BSP Source Loaders";
-        public object Control => _control;
-
-        [ImportMany] private IEnumerable<Lazy<IBspSourceProvider>> _providers;
-
-        public BspSourceSidebarComponent()
-        {
-            _control = new ListBox();
-        }
-
-        public bool IsInContext(IContext context)
-        {
-            return true;
-        }
-
-        public async Task OnInitialise()
-        {
-            _control.Invoke((MethodInvoker) delegate
-            {
-                foreach (var provider in _providers)
-                {
-                    _control.Items.Add(provider.Value.GetType().Name);
-                }
-            });
         }
     }
 }

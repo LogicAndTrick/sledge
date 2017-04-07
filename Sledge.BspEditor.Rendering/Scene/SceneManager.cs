@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using LogicAndTrick.Oy;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Rendering.Converters;
+using Sledge.BspEditor.Rendering.Resources;
 using Sledge.Common.Documents;
 using Sledge.Common.Hooks;
 using Sledge.Common.Logging;
@@ -38,6 +39,15 @@ namespace Sledge.BspEditor.Rendering.Scene
             Log.Debug("Bsp Renderer", "Converting scene...");
             await cs.UpdateAll();
             Log.Debug("Bsp Renderer", "Scene converted");
+
+            var e = md.Environment.GetData<EnvironmentTextureProvider>().FirstOrDefault();
+            if (e == null)
+            {
+                e = new EnvironmentTextureProvider(md.Environment);
+                md.Environment.AddData(e);
+                await e.Init();
+                Renderer.Instance.Engine.Renderer.TextureProviders.Add(e);
+            }
         }
 
         private async Task DocumentClosed(IDocument doc)

@@ -76,12 +76,17 @@ namespace Sledge.BspEditor.Rendering.Converters
 
         private static async Task<Material> GetMaterial(Solid solid, Face face, MapDocument document)
         {
-            return Material.Flat(Color.FromArgb(255, solid.Color?.Color ?? Color.Red));
-            //    var tex = await document.TextureCollection.GetTextureItem(face.Texture.Name);
+            var c = await document.Environment.GetTextureCollection();
+            var tex = await c.GetTextureItem(face.Texture.Name);
+            
             //    var op = SettingsManager.GetSpecialTextureOpacity(face.Texture.Name);
             //    if (op < 0.1 && !document.Map.HideNullTextures) op = 1;
 
-            //    if (tex == null) return Material.Flat(Color.FromArgb((int)(op * 255), face.Colour));
+            // todo !solid converter texture opacity
+            // if (tex == null) return Material.Flat(Color.FromArgb((int)(op * 255), face.Colour));
+
+            if (tex == null) return Material.Flat(solid.Color?.Color ?? Color.Red);
+            return Material.Texture($"{document.Environment.ID}::{tex.Name}", tex.Flags.HasFlag(TextureFlags.Transparent));
 
             //    return op < 1
             //        ? Material.Texture(tex.Name, op)
@@ -92,14 +97,17 @@ namespace Sledge.BspEditor.Rendering.Converters
         {
             var mat = await GetMaterial(solid, face, document);
 
-            var sel = false; //face.IsSelected || (face.Parent != null && face.Parent.IsSelected);
+            var sel = face.IsSelected || solid.IsSelected;
 
             var color = solid.Color?.Color ?? Color.Green;
 
-            var size = new Size(64, 64); // document.GetTextureSize(face.Texture.Name);
+            var c = await document.Environment.GetTextureCollection();
+            var tex = await c.GetTextureItem(face.Texture.Name);
+
+            var size = tex?.Size ?? new Size(16, 16);
             var coords = face.GetTextureCoordinates(size.Width, size.Height);
-            var sceneFace = new SceneFace(mat,
-                coords.Select(x => new Vertex(x.Item1.ToVector3(), (float) x.Item2, (float) x.Item3)).ToList())
+
+            var sceneFace = new SceneFace(mat, coords.Select(x => new Vertex(x.Item1.ToVector3(), (float) x.Item2, (float) x.Item3)).ToList())
             {
                 AccentColor = sel ? Color.Red : color,
                 PointColor = sel ? Color.Red : color,
@@ -126,11 +134,14 @@ namespace Sledge.BspEditor.Rendering.Converters
         {
             var mat = await GetMaterial(solid, face, document);
 
-            var sel = false; //face.IsSelected || (face.Parent != null && face.Parent.IsSelected);
+            var sel = face.IsSelected || solid.IsSelected;
 
             var color = solid.Color?.Color ?? Color.Green;
 
-            var size = new Size(64, 64); // document.GetTextureSize(face.Texture.Name);
+            var c = await document.Environment.GetTextureCollection();
+            var tex = await c.GetTextureItem(face.Texture.Name);
+
+            var size = tex?.Size ?? new Size(16, 16);
             var coords = face.GetTextureCoordinates(size.Width, size.Height);
 
             sceneFace.Material = mat;

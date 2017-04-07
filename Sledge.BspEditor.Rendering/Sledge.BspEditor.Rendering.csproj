@@ -51,14 +51,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Viewport\PerspectiveCameraNavigationViewportListener.cs" />
     <Compile Include="Converters\DefaultSolidConverter.cs" />
     <Compile Include="Converters\EntityNameConverter.cs" />
+    <Compile Include="Resources\EnvironmentTextureProvider.cs" />
     <Compile Include="Scene\ConvertedScene.cs" />
     <Compile Include="Converters\AxisLinesConverter.cs" />
     <Compile Include="Converters\IMapObjectSceneConverter.cs" />
     <Compile Include="Converters\MapObjectSceneConverterPriority.cs" />
     <Compile Include="Converters\ViewportTextConverter.cs" />
     <Compile Include="GeometricExtensions.cs" />
+    <Compile Include="Viewport\CameraNavigataionViewportSettings.cs" />
     <Compile Include="Viewport\IViewportEventListener.cs" />
     <Compile Include="Converters\MapObjectConverter.cs" />
     <Compile Include="Viewport\MapViewport.cs" />
@@ -84,15 +87,26 @@
       <Project>{26A974C9-E495-4FA3-8E87-1E00019D04F5}</Project>
       <Name>Sledge.DataStructures</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Sledge.Providers\Sledge.Providers.csproj">
+      <Project>{C7BD4AC8-1F8D-4520-AF2D-D279C0601AB4}</Project>
+      <Name>Sledge.Providers</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Sledge.Rendering\Sledge.Rendering.csproj">
       <Project>{4da7f88d-64ff-4036-8a11-6175169da851}</Project>
       <Name>Sledge.Rendering</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Sledge.Shell\Sledge.Shell.csproj">
+      <Project>{1E0BEB41-CF2E-4F48-838E-452C1DCF575F}</Project>
+      <Name>Sledge.Shell</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
     <None Include="OpenTK.dll.config" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Commands\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

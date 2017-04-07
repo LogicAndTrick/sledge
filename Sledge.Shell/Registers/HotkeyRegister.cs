@@ -10,6 +10,7 @@ using Sledge.Common.Hooks;
 using Sledge.Common.Hotkeys;
 using Sledge.Common.Settings;
 using Sledge.Shell.Forms;
+using Sledge.Shell.Input;
 
 namespace Sledge.Shell.Registers
 {
@@ -70,7 +71,7 @@ namespace Sledge.Shell.Registers
         /// <returns>True if the key was registered and was in context</returns>
         internal bool Fire(Keys keyData)
         {
-            var cmd = KeysToString(keyData);
+            var cmd = KeyboardState.KeysToString(keyData);
             if (_registeredHotkeys.ContainsKey(cmd))
             {
                 var hk = _registeredHotkeys[cmd];
@@ -113,70 +114,6 @@ namespace Sledge.Shell.Registers
                 if (!reg.ContainsKey(hk.Key)) reg[hk.Key] = hk.Value.DefaultHotkey;
             }
             return reg.Select(x => new SettingValue(x.Key, x.Value));
-        }
-
-        // Hotkey utilities
-        private static readonly Dictionary<string, string> KeyStringReplacements;
-
-        static HotkeyRegister()
-        {
-            KeyStringReplacements = new Dictionary<string, string>
-                                        {
-                                            {"Add", "+"},
-                                            {"Oemplus", "+"},
-                                            {"Subtract", "-"},
-                                            {"OemMinus", "-"},
-                                            {"Separator", "-"},
-                                            {"Decimal", "."},
-                                            {"OemPeriod", "."},
-                                            {"Divide", "/"},
-                                            {"OemQuestion", "/"},
-                                            {"Multiply", "*"},
-                                            {"OemBackslash", "\\"},
-                                            {"Oem5", "\\"},
-                                            {"OemCloseBrackets", "]"},
-                                            {"Oem6", "]"},
-                                            {"OemOpenBrackets", "["},
-                                            {"OemPipe", "|"},
-                                            {"OemQuotes", "'"},
-                                            {"Oem7", "'"},
-                                            {"OemSemicolon", ";"},
-                                            {"Oem1", ";"},
-                                            {"Oemcomma", ","},
-                                            {"Oemtilde", "`"},
-                                            {"Back", "Backspace"},
-                                            {"Return", "Enter"},
-                                            {"Next", "PageDown"},
-                                            {"Prior", "PageUp"},
-                                            {"D1", "1"},
-                                            {"D2", "2"},
-                                            {"D3", "3"},
-                                            {"D4", "4"},
-                                            {"D5", "5"},
-                                            {"D6", "6"},
-                                            {"D7", "7"},
-                                            {"D8", "8"},
-                                            {"D9", "9"},
-                                            {"D0", "0"},
-                                            {"Delete", "Del"}
-                                        };
-        }
-
-        private static string KeysToString(Keys key)
-        {
-            // KeysConverter seems to ignore the invariant culture, manually replicate the results
-            var mods = key & Keys.Modifiers;
-            var keycode = key & Keys.KeyCode;
-            if (keycode == Keys.None) return "";
-
-            var str = keycode.ToString();
-            if (KeyStringReplacements.ContainsKey(str)) str = KeyStringReplacements[str];
-
-            // Modifier order: Ctrl+Alt+Shift+Key
-            return (mods.HasFlag(Keys.Control) ? "Ctrl+" : "")
-                   + (mods.HasFlag(Keys.Alt) ? "Alt+" : "")
-                   + (mods.HasFlag(Keys.Shift) ? "Shift+" : "")
-                   + str;
         }
     }
 }

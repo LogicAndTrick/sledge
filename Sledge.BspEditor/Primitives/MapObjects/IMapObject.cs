@@ -1,17 +1,39 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 using Sledge.BspEditor.Primitives.MapObjectData;
+using Sledge.DataStructures.Geometric;
 
 namespace Sledge.BspEditor.Primitives.MapObjects
 {
     /// <summary>
     /// The base interface of all map objects.
     /// </summary>
-    public interface IMapObject : IEquatable<IMapObject>
+    public interface IMapObject : IEquatable<IMapObject>, ISerializable
     {
+        /// <summary>
+        /// Unique (per map) object ID
+        /// </summary>
         long ID { get; }
+
+        /// <summary>
+        /// Whether the object is selected or not
+        /// </summary>
+        bool IsSelected { get; set; }
+
+        /// <summary>
+        /// The bounding box of the object
+        /// </summary>
+        Box BoundingBox { get; }
+
+        /// <summary>
+        /// Map object data
+        /// </summary>
         MapObjectDataCollection Data { get; }
 
+        /// <summary>
+        /// The object hierarchy
+        /// </summary>
         MapObjectHierarchy Hierarchy { get; }
 
         /// <summary>
@@ -30,6 +52,10 @@ namespace Sledge.BspEditor.Primitives.MapObjects
 
         void DescendantsChanged();
 
+        /// <summary>
+        /// Convert the object to known primitives
+        /// </summary>
+        /// <returns>A list of primitives</returns>
         IEnumerable<IPrimitive> ToPrimitives();
     }
 }

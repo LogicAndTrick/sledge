@@ -14,6 +14,7 @@ namespace Sledge.BspEditor.Rendering.Viewport
     {
         private readonly Control _panel;
         private IViewport _viewport;
+        private MapViewport _mapViewport;
 
         private readonly List<Subscription> _subscriptions;
         private Camera _camera;
@@ -23,7 +24,7 @@ namespace Sledge.BspEditor.Rendering.Viewport
 
         public Camera Camera
         {
-            get { return _camera; }
+            get => _camera;
             set
             {
                 _camera = value;
@@ -51,6 +52,8 @@ namespace Sledge.BspEditor.Rendering.Viewport
                 _viewport = Renderer.Instance.Engine.CreateViewport(_camera);
                 _viewport.Control.Dock = DockStyle.Fill;
                 _panel.Controls.Add(_viewport.Control);
+                _mapViewport = new MapViewport(_viewport);
+                _mapViewport.Listeners.Add(new PerspectiveCameraNavigationViewportListener(_mapViewport));
             }
         }
 

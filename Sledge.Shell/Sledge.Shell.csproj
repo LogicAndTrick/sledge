@@ -105,6 +105,7 @@
     <Compile Include="Forms\CommandBox.Designer.cs">
       <DependentUpon>CommandBox.cs</DependentUpon>
     </Compile>
+    <Compile Include="Input\KeyboardState.cs" />
     <Compile Include="Registers\BottomTabRegister.cs" />
     <Compile Include="Registers\CommandRegister.cs" />
     <Compile Include="Registers\ContextRegister.cs" />

@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using Sledge.BspEditor.Primitives.MapObjectData;
+using Sledge.DataStructures.Geometric;
 
 namespace Sledge.BspEditor.Primitives.MapObjects
 {
@@ -16,10 +18,11 @@ namespace Sledge.BspEditor.Primitives.MapObjects
         public Solid(long id) : base(id)
         {
         }
-        
-        public override void DescendantsChanged()
+
+        protected override Box GetBoundingBox()
         {
-            Hierarchy.Parent?.DescendantsChanged();
+            var faces = Faces.ToList();
+            return faces.Any(x => x.Vertices.Count > 0) ? new Box(faces.SelectMany(x => x.Vertices)) : Box.Empty;
         }
 
         public override IMapObject Clone()

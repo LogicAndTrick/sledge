@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.MapObjects;
 
@@ -12,6 +13,7 @@ namespace Sledge.BspEditor.Primitives.MapObjectData
         public Plane Plane { get; set; }
         public Texture Texture { get; set; }
         public List<Coordinate> Vertices { get; set; }
+        public bool IsSelected { get; set; }
 
         public Face(long id)
         {
@@ -19,6 +21,14 @@ namespace Sledge.BspEditor.Primitives.MapObjectData
             Plane = new Plane(Coordinate.UnitZ, Coordinate.Zero);
             Texture = new Texture();
             Vertices = new List<Coordinate>();
+        }
+
+        public void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            info.AddValue("ID", ID);
+            info.AddValue("Plane", Plane);
+            info.AddValue("Texture", Texture);
+            info.AddValue("Vertices", Vertices.ToArray());
         }
 
         public IMapObjectData Clone()

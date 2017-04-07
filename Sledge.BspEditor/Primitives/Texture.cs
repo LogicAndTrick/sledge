@@ -14,15 +14,15 @@ namespace Sledge.BspEditor.Primitives
         private Coordinate _uAxis;
         public Coordinate UAxis
         {
-            get { return _uAxis; }
-            set { _uAxis = value.Normalise(); }
+            get => _uAxis;
+            set => _uAxis = value.Normalise();
         }
 
         private Coordinate _vAxis;
         public Coordinate VAxis
         {
-            get { return _vAxis; }
-            set { _vAxis = value.Normalise(); }
+            get => _vAxis;
+            set => _vAxis = value.Normalise();
         }
 
         public decimal XShift { get; set; }

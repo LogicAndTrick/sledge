@@ -30,6 +30,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="LogicAndTrick.Gimme, Version=1.3.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\LogicAndTrick.Gimme.1.3.2\lib\net45\LogicAndTrick.Gimme.dll</HintPath>
+    </Reference>
     <Reference Include="LogicAndTrick.Oy, Version=1.0.2.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\LogicAndTrick.Oy.1.0.2\lib\net45\LogicAndTrick.Oy.dll</HintPath>
       <Private>True</Private>
@@ -42,6 +46,18 @@
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Reactive.Core, Version=3.0.1000.0, Culture=neutral, PublicKeyToken=94bc3704cddfc263, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Reactive.Core.3.1.1\lib\net45\System.Reactive.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Reactive.Interfaces, Version=3.0.1000.0, Culture=neutral, PublicKeyToken=94bc3704cddfc263, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Reactive.Interfaces.3.1.1\lib\net45\System.Reactive.Interfaces.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Reactive.Linq, Version=3.0.1000.0, Culture=neutral, PublicKeyToken=94bc3704cddfc263, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Reactive.Linq.3.1.1\lib\net45\System.Reactive.Linq.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Web" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
@@ -63,6 +79,10 @@
     <Compile Include="Controls\TableSplitControl.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Environment\GoldsourceEnvironment.cs" />
+    <Compile Include="Environment\IEnvironment.cs" />
+    <Compile Include="Environment\IEnvironmentData.cs" />
+    <Compile Include="Environment\TextureCollection.cs" />
     <Compile Include="Primitives\MapObjects\BaseMapObject.cs" />
     <Compile Include="Primitives\MapObjects\Entity.cs" />
     <Compile Include="Primitives\MapObjectData\Face.cs" />
@@ -99,9 +119,13 @@
       <Project>{26A974C9-E495-4FA3-8E87-1E00019D04F5}</Project>
       <Name>Sledge.DataStructures</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Sledge.Shell\Sledge.Shell.csproj">
-      <Project>{1E0BEB41-CF2E-4F48-838E-452C1DCF575F}</Project>
-      <Name>Sledge.Shell</Name>
+    <ProjectReference Include="..\Sledge.FileSystem\Sledge.FileSystem.csproj">
+      <Project>{1C2C012D-DBA5-4C7F-994F-E3034AC60DCC}</Project>
+      <Name>Sledge.FileSystem</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Sledge.Providers\Sledge.Providers.csproj">
+      <Project>{c7bd4ac8-1f8d-4520-af2d-d279c0601ab4}</Project>
+      <Name>Sledge.Providers</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />

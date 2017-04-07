@@ -1,15 +1,9 @@
 ﻿using System;
-using System.ComponentModel;
-using System.ComponentModel.Composition;
-using System.Linq;
 using System.Threading.Tasks;
-using System.Windows.Forms;
 using LogicAndTrick.Oy;
-using Newtonsoft.Json;
 using Sledge.BspEditor.Components;
-using Sledge.BspEditor.Controls;
+using Sledge.BspEditor.Environment;
 using Sledge.BspEditor.Primitives;
-using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.Common.Documents;
 
 namespace Sledge.BspEditor.Documents
@@ -20,12 +14,15 @@ namespace Sledge.BspEditor.Documents
         public object Control => MapDocumentControlHost.Instance;
 
         public Map Map { get; set; }
+        public IEnvironment Environment { get; }
 
-        public MapDocument(Map map)
+        public MapDocument(Map map, IEnvironment environment)
         {
             Name = "Untitled";
             Map = map;
-            
+
+            Environment = environment;
+
             Oy.Subscribe<IDocument>("Document:RequestClose", IfThis(RequestClose));
 
             // Subscribe to map changes

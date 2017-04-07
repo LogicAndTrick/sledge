@@ -1,4 +1,6 @@
-﻿namespace Sledge.BspEditor.Primitives.MapObjectData
+﻿using System.Runtime.Serialization;
+
+namespace Sledge.BspEditor.Primitives.MapObjectData
 {
     public class VisgroupID : IMapObjectData
     {
@@ -7,6 +9,11 @@
         public VisgroupID(long id)
         {
             ID = id;
+        }
+
+        public void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            info.AddValue("ID", ID);
         }
 
         public IMapObjectData Clone()

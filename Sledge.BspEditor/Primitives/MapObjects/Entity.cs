@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.Serialization;
 using Sledge.BspEditor.Primitives.MapObjectData;
 using Sledge.DataStructures.Geometric;
 
@@ -15,9 +17,17 @@ namespace Sledge.BspEditor.Primitives.MapObjects
         {
         }
 
-        public override void DescendantsChanged()
+        public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            Hierarchy.Parent?.DescendantsChanged();
+            base.GetObjectData(info, context);
+            info.AddValue("Origin", Origin);
+        }
+
+        protected override Box GetBoundingBox()
+        {
+            return Hierarchy.NumChildren > 0
+                ? new Box(Hierarchy.Select(x => x.BoundingBox))
+                : new Box(Origin - Coordinate.One * 16, Origin + Coordinate.One * 16);
         }
 
         public override IMapObject Clone()

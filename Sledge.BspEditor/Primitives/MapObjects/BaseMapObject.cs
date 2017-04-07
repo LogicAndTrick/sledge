@@ -1,5 +1,8 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.Serialization;
 using Sledge.BspEditor.Primitives.MapObjectData;
+using Sledge.DataStructures.Geometric;
 
 namespace Sledge.BspEditor.Primitives.MapObjects
 {
@@ -10,6 +13,8 @@ namespace Sledge.BspEditor.Primitives.MapObjects
     public abstract class BaseMapObject : IMapObject
     {
         public long ID { get; }
+        public bool IsSelected { get; set; }
+        public Box BoundingBox { get; private set; }
         public MapObjectDataCollection Data { get; private set; }
         public MapObjectHierarchy Hierarchy { get; private set; }
 
@@ -20,7 +25,26 @@ namespace Sledge.BspEditor.Primitives.MapObjects
             Hierarchy = new MapObjectHierarchy(this);
         }
 
-        public abstract void DescendantsChanged();
+        public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            info.AddValue("ID", ID);
+            info.AddValue("Data", Data);
+            info.AddValue("Children", Hierarchy.ToArray());
+        }
+
+        public void DescendantsChanged()
+        {
+            OnDescendantsChanged();
+            BoundingBox = GetBoundingBox();
+            Hierarchy.Parent?.DescendantsChanged();
+        }
+
+        protected virtual void OnDescendantsChanged()
+        {
+            //
+        }
+
+        protected abstract Box GetBoundingBox();
 
         protected void CloneBase(BaseMapObject copy)
         {

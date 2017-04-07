@@ -7,7 +7,7 @@ using System.Runtime.Serialization;
 namespace Sledge.BspEditor.Primitives.MapData
 {
     [Serializable]
-    public class Visgroup : IMapData, ISerializable
+    public class Visgroup : IMapData
     {
         public long ID { get; set; }
         public string Name { get; set; }

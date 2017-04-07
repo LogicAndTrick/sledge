@@ -1,18 +1,24 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 
 namespace Sledge.BspEditor.Primitives.MapObjectData
 {
     /// <summary>
     /// Collection of metadata for an object
     /// </summary>
-    public class MapObjectDataCollection
+    public class MapObjectDataCollection : ISerializable
     {
         public List<IMapObjectData> Data { get; }
 
         public MapObjectDataCollection()
         {
             Data = new List<IMapObjectData>();
+        }
+
+        public void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            info.AddValue("Data", Data.ToArray());
         }
 
         public void Add(IMapObjectData data)

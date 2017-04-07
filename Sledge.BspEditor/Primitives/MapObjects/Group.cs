@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Sledge.BspEditor.Primitives.MapObjectData;
+using Sledge.DataStructures.Geometric;
 
 namespace Sledge.BspEditor.Primitives.MapObjects
 {
@@ -13,9 +15,9 @@ namespace Sledge.BspEditor.Primitives.MapObjects
         {
         }
 
-        public override void DescendantsChanged()
+        protected override Box GetBoundingBox()
         {
-            Hierarchy.Parent?.DescendantsChanged();
+            return Hierarchy.NumChildren > 0 ? new Box(Hierarchy.Select(x => x.BoundingBox)) : Box.Empty;
         }
 
         public override IMapObject Clone()

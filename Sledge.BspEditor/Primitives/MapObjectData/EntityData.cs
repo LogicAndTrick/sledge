@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 
 namespace Sledge.BspEditor.Primitives.MapObjectData
 {
@@ -12,6 +13,11 @@ namespace Sledge.BspEditor.Primitives.MapObjectData
         public EntityData()
         {
             Properties = new Dictionary<string, string>();
+        }
+
+        public void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            info.AddValue("Properties", Properties);
         }
 
         public void Set(string key, string value)
