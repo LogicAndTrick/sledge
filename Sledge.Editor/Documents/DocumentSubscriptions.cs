@@ -28,7 +28,6 @@ using Sledge.Editor.Tools.SelectTool;
 using Sledge.Editor.UI;
 using Sledge.Editor.UI.ObjectProperties;
 using Sledge.Editor.Visgroups;
-using Sledge.Extensions;
 using Sledge.Providers.Texture;
 using Sledge.QuickForms;
 using Sledge.QuickForms.Items;

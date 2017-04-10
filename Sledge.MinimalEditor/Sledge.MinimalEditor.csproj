@@ -111,6 +111,10 @@
       <Project>{d27bb6a7-fe81-45b5-9b68-b23e4169f16d}</Project>
       <Name>Sledge.BspEditor.Rendering</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Sledge.BspEditor.Tools\Sledge.BspEditor.Tools.csproj">
+      <Project>{f5715cfa-8f04-4892-a1ef-c3e2c3017750}</Project>
+      <Name>Sledge.BspEditor.Tools</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Sledge.BspEditor\Sledge.BspEditor.csproj">
       <Project>{37c3fe6b-16f4-431f-ab67-fba7c681ccee}</Project>
       <Name>Sledge.BspEditor</Name>

@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Linq;
 using System.Windows.Forms;
+using Sledge.Common;
 using Sledge.Common.Mediator;
 using Sledge.DataStructures.Geometric;
 using Sledge.Editor.Extensions;
 using Sledge.Editor.Rendering;
-using Sledge.Extensions;
 using Sledge.Editor.Documents;
 using Sledge.Rendering;
 using Sledge.Rendering.Cameras;

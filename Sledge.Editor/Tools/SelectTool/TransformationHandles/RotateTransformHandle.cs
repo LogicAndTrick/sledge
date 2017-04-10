@@ -1,12 +1,12 @@
 using System;
 using System.Collections.Generic;
 using OpenTK;
+using Sledge.Common;
 using Sledge.DataStructures.Geometric;
 using Sledge.Editor.Documents;
 using Sledge.Editor.Rendering;
 using Sledge.Editor.Tools.DraggableTool;
 using Sledge.Editor.UI;
-using Sledge.Extensions;
 using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Scenes.Elements;
 using Sledge.Settings;

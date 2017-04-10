@@ -10,10 +10,7 @@ using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Environment;
 using Sledge.BspEditor.Primitives;
 using Sledge.BspEditor.Providers;
-using Sledge.Common.Components;
-using Sledge.Common.Context;
-using Sledge.Common.Documents;
-using Sledge.Common.Hooks;
+using Sledge.Common.Shell.Documents;
 
 namespace Sledge.BspEditor
 {

@@ -6,11 +6,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using LogicAndTrick.Oy;
-using Sledge.Common.Components;
-using Sledge.Common.Context;
-using Sledge.Common.Hooks;
 using Sledge.Common.Logging;
-using Sledge.Common.Settings;
+using Sledge.Common.Shell.Components;
+using Sledge.Common.Shell.Context;
+using Sledge.Common.Shell.Hooks;
+using Sledge.Common.Shell.Settings;
 using Sledge.Shell.Controls;
 
 namespace Sledge.Shell.Registers

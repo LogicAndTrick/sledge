@@ -4,11 +4,11 @@ using System.ComponentModel.Composition;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Sledge.Common.Commands;
-using Sledge.Common.Context;
-using Sledge.Common.Hooks;
-using Sledge.Common.Hotkeys;
-using Sledge.Common.Settings;
+using Sledge.Common.Shell.Commands;
+using Sledge.Common.Shell.Context;
+using Sledge.Common.Shell.Hooks;
+using Sledge.Common.Shell.Hotkeys;
+using Sledge.Common.Shell.Settings;
 using Sledge.Shell.Forms;
 using Sledge.Shell.Input;
 

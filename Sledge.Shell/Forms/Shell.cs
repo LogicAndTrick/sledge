@@ -7,8 +7,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using LogicAndTrick.Oy;
-using Sledge.Common.Context;
-using Sledge.Common.Documents;
+using Sledge.Common.Shell.Context;
+using Sledge.Common.Shell.Documents;
 using Sledge.Shell.Controls;
 
 namespace Sledge.Shell.Forms

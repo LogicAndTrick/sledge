@@ -1,10 +1,10 @@
 ﻿using System.ComponentModel.Composition;
 using System.Threading.Tasks;
 using LogicAndTrick.Oy;
-using Sledge.Common.Commands;
-using Sledge.Common.Context;
-using Sledge.Common.Hotkeys;
-using Sledge.Common.Menu;
+using Sledge.Common.Shell.Commands;
+using Sledge.Common.Shell.Context;
+using Sledge.Common.Shell.Hotkeys;
+using Sledge.Common.Shell.Menu;
 
 namespace Sledge.Shell.Commands
 {

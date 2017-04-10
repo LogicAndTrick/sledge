@@ -9,8 +9,8 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Newtonsoft.Json;
 using Sledge.BspEditor.Controls;
-using Sledge.Common.Hooks;
-using Sledge.Common.Settings;
+using Sledge.Common.Shell.Hooks;
+using Sledge.Common.Shell.Settings;
 
 namespace Sledge.BspEditor.Components
 {

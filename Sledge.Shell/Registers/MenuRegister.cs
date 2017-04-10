@@ -4,12 +4,10 @@ using System.ComponentModel.Composition;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Sledge.Common.Commands;
-using Sledge.Common.Context;
-using Sledge.Common.Hooks;
-using Sledge.Common.Hotkeys;
-using Sledge.Common.Menu;
-using Sledge.Common.Settings;
+using Sledge.Common.Shell.Commands;
+using Sledge.Common.Shell.Context;
+using Sledge.Common.Shell.Hooks;
+using Sledge.Common.Shell.Menu;
 using Sledge.Shell.Forms;
 
 namespace Sledge.Shell.Registers

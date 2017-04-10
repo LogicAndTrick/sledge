@@ -1,12 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Sledge.Common;
 using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.MapObjects;
 using Sledge.DataStructures.Transformations;
 using Sledge.Editor.Documents;
 using Sledge.Editor.Enums;
-using Sledge.Extensions;
 
 namespace Sledge.Editor.Actions.MapObjects.Operations
 {

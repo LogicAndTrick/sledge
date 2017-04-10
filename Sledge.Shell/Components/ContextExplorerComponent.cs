@@ -5,8 +5,8 @@ using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using LogicAndTrick.Oy;
-using Sledge.Common.Components;
-using Sledge.Common.Context;
+using Sledge.Common.Shell.Components;
+using Sledge.Common.Shell.Context;
 
 namespace Sledge.Shell.Components
 {

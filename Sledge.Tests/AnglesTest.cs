@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Sledge.Common;
 using Sledge.DataStructures.Geometric;
-using Sledge.Extensions;
 
 namespace Sledge.Tests
 {

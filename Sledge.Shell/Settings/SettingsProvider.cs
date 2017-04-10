@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 using LogicAndTrick.Gimme.Providers;
 using LogicAndTrick.Oy;
 using Newtonsoft.Json;
-using Sledge.Common.Hooks;
 using Sledge.Common.Logging;
-using Sledge.Common.Settings;
+using Sledge.Common.Shell.Hooks;
+using Sledge.Common.Shell.Settings;
 
 namespace Sledge.Shell.Settings
 {

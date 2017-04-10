@@ -6,9 +6,9 @@ using LogicAndTrick.Oy;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Rendering.Converters;
 using Sledge.BspEditor.Rendering.Resources;
-using Sledge.Common.Documents;
-using Sledge.Common.Hooks;
 using Sledge.Common.Logging;
+using Sledge.Common.Shell.Documents;
+using Sledge.Common.Shell.Hooks;
 
 namespace Sledge.BspEditor.Rendering.Scene
 {

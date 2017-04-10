@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Runtime.Serialization;
+using Sledge.Common;
 using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.Transformations;
-using Sledge.Extensions;
 
 namespace Sledge.DataStructures.MapObjects
 {

@@ -5,7 +5,6 @@ using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.MapObjects;
 using Sledge.Common;
 using Sledge.Editor.Brushes.Controls;
-using Sledge.Extensions;
 using Sledge.Providers.Texture;
 
 namespace Sledge.Editor.Brushes

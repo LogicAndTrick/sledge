@@ -7,12 +7,12 @@ using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.MapObjects;
 using Sledge.Editor.Rendering;
 using Sledge.Editor.UI;
-using Sledge.Extensions;
 using Sledge.Rendering;
 using Sledge.Rendering.Scenes;
 using Sledge.Rendering.Scenes.Elements;
 using Sledge.Settings;
 using System.Drawing;
+using Sledge.Common;
 using Sledge.Rendering.Cameras;
 
 namespace Sledge.Editor.Tools

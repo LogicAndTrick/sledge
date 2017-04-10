@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
+using Sledge.Common;
 using Sledge.DataStructures.Geometric;
-using Sledge.Extensions;
 
 namespace Sledge.DataStructures.Transformations
 {

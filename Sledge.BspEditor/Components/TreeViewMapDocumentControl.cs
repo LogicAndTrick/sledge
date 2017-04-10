@@ -7,7 +7,7 @@ using LogicAndTrick.Oy;
 using Newtonsoft.Json;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Primitives.MapObjects;
-using Sledge.Common.Documents;
+using Sledge.Common.Shell.Documents;
 
 namespace Sledge.BspEditor.Components
 {

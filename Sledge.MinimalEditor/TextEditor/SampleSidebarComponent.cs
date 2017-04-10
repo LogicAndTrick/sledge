@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.Composition;
 using System.Windows.Forms;
-using Sledge.Common.Components;
-using Sledge.Common.Context;
-using Sledge.Common.Documents;
+using Sledge.Common.Shell.Components;
+using Sledge.Common.Shell.Context;
+using Sledge.Common.Shell.Documents;
 
 namespace Sledge.MinimalEditor.TextEditor
 {

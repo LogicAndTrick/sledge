@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 using LogicAndTrick.Gimme;
 using LogicAndTrick.Gimme.Providers;
 using LogicAndTrick.Oy;
-using Sledge.Common.Context;
-using Sledge.Common.Hooks;
+using Sledge.Common.Shell.Context;
+using Sledge.Common.Shell.Hooks;
 
 namespace Sledge.Shell.Registers
 {

@@ -4,8 +4,7 @@ using System.ComponentModel.Composition.Hosting;
 using System.IO;
 using System.Threading.Tasks;
 using LogicAndTrick.Gimme;
-using Sledge.Common.Documents;
-using Sledge.Common.Hooks;
+using Sledge.Common.Shell.Documents;
 
 namespace Sledge.MinimalEditor.TextEditor
 {

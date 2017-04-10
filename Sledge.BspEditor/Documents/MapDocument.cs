@@ -4,7 +4,7 @@ using LogicAndTrick.Oy;
 using Sledge.BspEditor.Components;
 using Sledge.BspEditor.Environment;
 using Sledge.BspEditor.Primitives;
-using Sledge.Common.Documents;
+using Sledge.Common.Shell.Documents;
 
 namespace Sledge.BspEditor.Documents
 {

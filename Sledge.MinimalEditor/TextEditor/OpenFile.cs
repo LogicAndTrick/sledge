@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using LogicAndTrick.Gimme;
 using LogicAndTrick.Oy;
-using Sledge.Common.Commands;
-using Sledge.Common.Context;
-using Sledge.Common.Documents;
-using Sledge.Common.Hotkeys;
-using Sledge.Common.Menu;
+using Sledge.Common.Shell.Commands;
+using Sledge.Common.Shell.Context;
+using Sledge.Common.Shell.Documents;
+using Sledge.Common.Shell.Hotkeys;
+using Sledge.Common.Shell.Menu;
 
 namespace Sledge.MinimalEditor.TextEditor
 {

@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Windows.Forms;
-using Sledge.Common.Settings;
 using System;
 using System.Globalization;
 using System.Linq;
+using Sledge.Common.Shell.Settings;
 
 namespace Sledge.Shell.Settings
 {

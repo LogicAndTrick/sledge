@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.26403.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sledge.Editor", "Sledge.Editor\Sledge.Editor.csproj", "{DFF00869-B064-483D-95C0-A88039C471C7}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -48,6 +48,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sledge.BspEditor", "Sledge.BspEditor\Sledge.BspEditor.csproj", "{37C3FE6B-16F4-431F-AB67-FBA7C681CCEE}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sledge.BspEditor.Rendering", "Sledge.BspEditor.Rendering\Sledge.BspEditor.Rendering.csproj", "{D27BB6A7-FE81-45B5-9B68-B23E4169F16D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sledge.BspEditor.Tools", "Sledge.BspEditor.Tools\Sledge.BspEditor.Tools.csproj", "{F5715CFA-8F04-4892-A1EF-C3E2C3017750}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -258,6 +260,18 @@ Global
 		{D27BB6A7-FE81-45B5-9B68-B23E4169F16D}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{D27BB6A7-FE81-45B5-9B68-B23E4169F16D}.Release|x86.ActiveCfg = Release|Any CPU
 		{D27BB6A7-FE81-45B5-9B68-B23E4169F16D}.Release|x86.Build.0 = Release|Any CPU
+		{F5715CFA-8F04-4892-A1EF-C3E2C3017750}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F5715CFA-8F04-4892-A1EF-C3E2C3017750}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F5715CFA-8F04-4892-A1EF-C3E2C3017750}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{F5715CFA-8F04-4892-A1EF-C3E2C3017750}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{F5715CFA-8F04-4892-A1EF-C3E2C3017750}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{F5715CFA-8F04-4892-A1EF-C3E2C3017750}.Debug|x86.Build.0 = Debug|Any CPU
+		{F5715CFA-8F04-4892-A1EF-C3E2C3017750}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F5715CFA-8F04-4892-A1EF-C3E2C3017750}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F5715CFA-8F04-4892-A1EF-C3E2C3017750}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{F5715CFA-8F04-4892-A1EF-C3E2C3017750}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{F5715CFA-8F04-4892-A1EF-C3E2C3017750}.Release|x86.ActiveCfg = Release|Any CPU
+		{F5715CFA-8F04-4892-A1EF-C3E2C3017750}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

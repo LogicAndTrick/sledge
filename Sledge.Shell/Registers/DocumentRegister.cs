@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 using LogicAndTrick.Gimme;
 using LogicAndTrick.Gimme.Providers;
 using LogicAndTrick.Oy;
-using Sledge.Common.Documents;
-using Sledge.Common.Hooks;
 using Sledge.Common.Logging;
+using Sledge.Common.Shell.Documents;
+using Sledge.Common.Shell.Hooks;
 
 namespace Sledge.Shell.Registers
 {

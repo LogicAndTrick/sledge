@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using LogicAndTrick.Gimme;
-using Sledge.Common.Hooks;
+using Sledge.Common.Shell.Hooks;
 
 namespace Sledge.Providers
 {

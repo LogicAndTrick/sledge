@@ -4,10 +4,10 @@ using System.ComponentModel.Composition;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using LogicAndTrick.Oy;
-using Sledge.Common.Components;
-using Sledge.Common.Context;
-using Sledge.Common.Hooks;
 using Sledge.Common.Logging;
+using Sledge.Common.Shell.Components;
+using Sledge.Common.Shell.Context;
+using Sledge.Common.Shell.Hooks;
 
 namespace Sledge.Shell.Registers
 {

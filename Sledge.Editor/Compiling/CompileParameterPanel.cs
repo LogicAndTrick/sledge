@@ -4,8 +4,8 @@ using System.Drawing;
 using System.Globalization;
 using System.Linq;
 using System.Windows.Forms;
+using Sledge.Common;
 using Sledge.Common.Extensions;
-using Sledge.Extensions;
 
 namespace Sledge.Editor.Compiling
 {

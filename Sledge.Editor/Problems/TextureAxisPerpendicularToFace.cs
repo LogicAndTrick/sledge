@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using System.Linq;
+using Sledge.Common;
 using Sledge.DataStructures.MapObjects;
 using Sledge.Editor.Actions;
 using Sledge.Editor.Actions.MapObjects.Operations;
-using Sledge.Extensions;
 
 namespace Sledge.Editor.Problems
 {

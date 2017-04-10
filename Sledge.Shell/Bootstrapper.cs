@@ -2,8 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Threading.Tasks;
-using Sledge.Common.Hooks;
 using Sledge.Common.Logging;
+using Sledge.Common.Shell.Hooks;
 
 namespace Sledge.Shell
 {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using Sledge.BspEditor.Primitives;
-using Sledge.Common.Documents;
+using Sledge.Common.Shell.Documents;
 
 namespace Sledge.BspEditor.Providers
 {
