@@ -51,6 +51,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Scene\ISceneObjectProvider.cs" />
+    <Compile Include="Scene\ISceneObjectProviderFactory.cs" />
+    <Compile Include="Scene\MapDocumentSceneObjectProvider.cs" />
+    <Compile Include="Scene\MapDocumentSceneObjectProviderFactory.cs" />
+    <Compile Include="Scene\SceneObjectsChangedEventArgs.cs" />
     <Compile Include="Viewport\PerspectiveCameraNavigationViewportListener.cs" />
     <Compile Include="Converters\DefaultSolidConverter.cs" />
     <Compile Include="Converters\EntityNameConverter.cs" />

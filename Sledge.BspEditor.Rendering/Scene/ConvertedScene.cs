@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Sledge.BspEditor.Documents;
-using Sledge.BspEditor.Primitives.MapObjects;
-using Sledge.BspEditor.Rendering.Converters;
+using Sledge.Rendering.Scenes;
 
 namespace Sledge.BspEditor.Rendering.Scene
 {
@@ -13,70 +13,55 @@ namespace Sledge.BspEditor.Rendering.Scene
         public Sledge.Rendering.Scenes.Scene Scene { get; }
         public MapDocument Document { get; }
 
-        private readonly MapObjectConverter _converter;
-        private readonly ConcurrentDictionary<IMapObject, SceneMapObject> _sceneObjects;
+        private readonly List<ISceneObjectProvider> _providers;
+        private readonly ConcurrentDictionary<ISceneObjectProvider, List<SceneObject>> _sceneObjects;
 
-        public ConvertedScene(MapDocument document, MapObjectConverter converter)
+        public ConvertedScene(MapDocument document)
         {
             Scene = Renderer.Instance.Engine.Renderer.CreateScene();
             Document = document;
-            _converter = converter;
-            _sceneObjects = new ConcurrentDictionary<IMapObject, SceneMapObject>();
+            _providers = new List<ISceneObjectProvider>();
+            _sceneObjects = new ConcurrentDictionary<ISceneObjectProvider, List<SceneObject>>();
         }
 
-        public async Task UpdateAll()
+        public async Task AddProvider(ISceneObjectProviderFactory factory)
         {
-            Scene.Clear();
-            _sceneObjects.Clear();
-            await Update(Document.Map.Root.FindAll());
-        }
-
-        public Task Create(IEnumerable<IMapObject> objects)
-        {
-            return Update(objects);
-        }
-        
-        public async Task Delete(IEnumerable<IMapObject> objects)
-        {
-            foreach (var obj in objects)
+            var p = factory.MakeProvider(Document);
+            if (p != null)
             {
-                var smo = _sceneObjects.ContainsKey(obj) ? _sceneObjects[obj] : null;
-                if (smo != null)
-                {
-                    var rem = _sceneObjects[obj];
-                    SceneMapObject t;
-                    _sceneObjects.TryRemove(obj, out t);
-                    foreach (var r in rem) Scene.Remove(r);
-                }
+                _providers.Add(p);
+                p.SceneObjectsChanged += SceneObjectsChanged;
+                await p.Initialise();
             }
         }
 
-        public async Task Update(IEnumerable<IMapObject> objects)
+        private void SceneObjectsChanged(object sender, SceneObjectsChangedEventArgs e)
         {
-            foreach (var obj in objects)
+            var p = sender as ISceneObjectProvider;
+            if (p == null) return;
+
+            if (!_sceneObjects.TryGetValue(p, out List<SceneObject> list))
             {
-                var smo = _sceneObjects.ContainsKey(obj) ? _sceneObjects[obj] : null;
+                list = new List<SceneObject>();
+                _sceneObjects[p] = list;
+            }
 
-                if (smo != null && await _converter.Update(smo, Document, obj)) continue;
+            foreach (var d in e.Deleted.Union(e.Updated))
+            {
+                list.Remove(d);
+                Scene.Remove(d);
+            }
 
-                if (smo != null)
-                {
-                    var rem = _sceneObjects[obj];
-                    SceneMapObject t;
-                    _sceneObjects.TryRemove(obj, out t);
-                    foreach (var r in rem) Scene.Remove(r);
-                }
-
-                smo = await _converter.Convert(Document, obj);
-                if (smo == null) continue;
-
-                foreach (var ro in smo) Scene.Add(ro);
-                _sceneObjects[smo.MapObject] = smo;
+            foreach (var c in e.Created.Union(e.Updated))
+            {
+                list.Add(c);
+                Scene.Add(c);
             }
         }
 
         public void Dispose()
         {
+            _providers.ForEach(x => x.SceneObjectsChanged -= SceneObjectsChanged);
             Renderer.Instance.Engine.Renderer.RemoveScene(Scene);
         }
     }

@@ -1,10 +1,10 @@
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
 using System.Threading.Tasks;
 using LogicAndTrick.Oy;
 using Sledge.BspEditor.Documents;
-using Sledge.BspEditor.Rendering.Converters;
 using Sledge.BspEditor.Rendering.Resources;
 using Sledge.Common.Logging;
 using Sledge.Common.Shell.Documents;
@@ -15,7 +15,7 @@ namespace Sledge.BspEditor.Rendering.Scene
     [Export(typeof(IStartupHook))]
     public class SceneManager : IStartupHook
     {
-        [Import] private MapObjectConverter _converter;
+        [ImportMany] private IEnumerable<Lazy<ISceneObjectProviderFactory>> _providers;
 
         public async Task OnStartup()
         {
@@ -35,10 +35,7 @@ namespace Sledge.BspEditor.Rendering.Scene
         {
             var md = doc as MapDocument;
             if (md == null) return;
-            var cs = GetOrCreateScene(md);
-            Log.Debug("Bsp Renderer", "Converting scene...");
-            await cs.UpdateAll();
-            Log.Debug("Bsp Renderer", "Scene converted");
+            GetOrCreateScene(md); // Prepare the scene
 
             var e = md.Environment.GetData<EnvironmentTextureProvider>().FirstOrDefault();
             if (e == null)
@@ -79,7 +76,8 @@ namespace Sledge.BspEditor.Rendering.Scene
                 if (cs == null)
                 {
                     Log.Debug("Bsp Renderer", "Creating scene...");
-                    cs = new ConvertedScene(doc, _converter);
+                    cs = new ConvertedScene(doc);
+                    foreach (var p in _providers) cs.AddProvider(p.Value);
                     _convertedScenes.Add(cs);
                 }
                 return cs;

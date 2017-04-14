@@ -54,6 +54,7 @@ namespace Sledge.BspEditor.Rendering.Viewport
                 _panel.Controls.Add(_viewport.Control);
                 _mapViewport = new MapViewport(_viewport);
                 _mapViewport.Listeners.Add(new PerspectiveCameraNavigationViewportListener(_mapViewport));
+                await Oy.Publish("MapViewport:Created", _mapViewport);
             }
         }
 

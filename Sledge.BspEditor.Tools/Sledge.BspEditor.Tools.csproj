@@ -30,6 +30,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="LogicAndTrick.Oy, Version=1.0.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\LogicAndTrick.Oy.1.0.2\lib\net45\LogicAndTrick.Oy.dll</HintPath>
+    </Reference>
     <Reference Include="OpenTK, Version=2.0.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
       <HintPath>..\packages\OpenTK.2.0.0\lib\net20\OpenTK.dll</HintPath>
     </Reference>
@@ -72,6 +75,10 @@
     <Compile Include="State\StateAction.cs" />
     <Compile Include="State\StateEvent.cs" />
     <Compile Include="State\StateTool.cs" />
+    <Compile Include="ToolInitialiser.cs" />
+    <Compile Include="ToolSceneObjectProvider.cs" />
+    <Compile Include="ToolSceneObjectProviderFactory.cs" />
+    <Compile Include="ToolViewportListener.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Sledge.BspEditor.Rendering\Sledge.BspEditor.Rendering.csproj">

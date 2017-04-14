@@ -14,7 +14,7 @@ using Sledge.Common.Shell.Hooks;
 namespace Sledge.Shell.Registers
 {
     /// <summary>
-    /// The bottom register controls tools
+    /// The tool register controls tools
     /// </summary>
     [Export(typeof(IStartupHook))]
     public class ToolRegister : IStartupHook

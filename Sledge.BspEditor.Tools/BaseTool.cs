@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using LogicAndTrick.Oy;
 using Sledge.BspEditor.Documents;
-using Sledge.BspEditor.Primitives.MapObjects;
+using Sledge.BspEditor.Rendering.Scene;
 using Sledge.BspEditor.Rendering.Viewport;
 using Sledge.Common.Shell.Components;
 using Sledge.Common.Shell.Context;
+using Sledge.Common.Shell.Documents;
 using Sledge.DataStructures.Geometric;
 using Sledge.Rendering;
 using Sledge.Rendering.Cameras;
@@ -165,6 +167,13 @@ namespace Sledge.BspEditor.Tools
             _currentObjects = new List<SceneObject>();
             _currentViewportObjects = new Dictionary<MapViewport, List<Element>>();
             Children = new List<BaseTool>();
+
+            Oy.Subscribe<IDocument>("Document:Activated", id => SetDocument(id as MapDocument));
+            Oy.Subscribe<ITool>("Tool:Activated", it =>
+            {
+                if (it == this) ToolSelected(false);
+                else ToolDeselected(false);
+            });
         }
 
         public void SetDocument(MapDocument document)
@@ -380,16 +389,34 @@ namespace Sledge.BspEditor.Tools
 
         #region Scene / rendering
 
+        public event EventHandler<SceneObjectsChangedEventArgs> SceneObjectsChanged;
+
         private void ClearScene()
         {
-            //_currentObjects.ForEach(x => Document.Scene.Remove(x));
-            //foreach (var vo in _currentViewportObjects)
-            //{
-            //    vo.Value.ForEach(x => Document.Scene.Remove(x));
-            //}
-            //_currentObjects.Clear();
-            //_currentViewportObjects.Clear();
-            //foreach (var t in Children) t.ClearScene();
+            var created = new List<SceneObject>();
+            var updated = new List<SceneObject>();
+            var deleted = new List<SceneObject>();
+
+            ClearSceneImpl(created, updated, deleted);
+
+            if (created.Any() || updated.Any() || deleted.Any())
+            {
+                SceneObjectsChanged?.Invoke(this, new SceneObjectsChangedEventArgs(created, updated, deleted));
+            }
+        }
+
+        private void ClearSceneImpl(List<SceneObject> created, List<SceneObject> updated, List<SceneObject> deleted)
+        {
+            deleted.AddRange(_currentObjects);
+            deleted.AddRange(_currentViewportObjects.SelectMany(x => x.Value));
+
+            _currentObjects.Clear();
+            _currentViewportObjects.Clear();
+
+            foreach (var t in Children)
+            {
+                t.ClearSceneImpl(created, updated, deleted);
+            }
         }
 
         protected void Invalidate()
@@ -400,33 +427,47 @@ namespace Sledge.BspEditor.Tools
 
         private void Validate(MapViewport viewport)
         {
-            //if ((UseValidation && _validatedViewports.Contains(viewport)) || Document == null) return;
-            //_validatedViewports.Add(viewport);
+            var created = new List<SceneObject>();
+            var updated = new List<SceneObject>();
+            var deleted = new List<SceneObject>();
 
-            //foreach (var o in _currentObjects) Document.Scene.Remove(o);
-            //if (_currentViewportObjects.ContainsKey(viewport)) foreach (var o in _currentViewportObjects[viewport]) Document.Scene.Remove(o);
+            ValidateImpl(viewport, created, updated, deleted);
 
-            //_currentObjects.Clear();
-            //_currentViewportObjects[viewport] = new List<Element>();
+            if (created.Any() || updated.Any() || deleted.Any())
+            {
+                SceneObjectsChanged?.Invoke(this, new SceneObjectsChangedEventArgs(created, updated, deleted));
+            }
+        }
 
-            //if (!Active) return;
+        private void ValidateImpl(MapViewport viewport, List<SceneObject> created, List<SceneObject> updated, List<SceneObject> deleted)
+        {
+            if ((UseValidation && _validatedViewports.Contains(viewport)) || Document == null) return;
+            _validatedViewports.Add(viewport);
             
-            //_currentObjects = GetSceneObjects().ToList();
-            //if (viewport.Is3D)
-            //{
-            //    var vpObjects = GetViewportElements(viewport, viewport.Viewport.Camera as PerspectiveCamera).ToList();
-            //    foreach (var o in vpObjects) o.Viewport = viewport.Viewport;
-            //    _currentViewportObjects[viewport].AddRange(vpObjects);
-            //}
-            //else if (viewport.Is2D)
-            //{
-            //    var vpObjects = GetViewportElements(viewport, viewport.Viewport.Camera as OrthographicCamera).ToList();
-            //    foreach (var o in vpObjects) o.Viewport = viewport.Viewport;
-            //    _currentViewportObjects[viewport].AddRange(vpObjects);
-            //}
+            deleted.AddRange(_currentObjects);
+            if (_currentViewportObjects.ContainsKey(viewport)) deleted.AddRange(_currentViewportObjects[viewport]);
 
-            //foreach (var o in _currentObjects) Document.Scene.Add(o);
-            //foreach (var o in _currentViewportObjects[viewport]) Document.Scene.Add(o);
+            _currentObjects.Clear();
+            _currentViewportObjects[viewport] = new List<Element>();
+
+            if (!Active) return;
+            
+            _currentObjects = GetSceneObjects().ToList();
+            if (viewport.Is3D)
+            {
+                var vpObjects = GetViewportElements(viewport, viewport.Viewport.Camera as PerspectiveCamera).ToList();
+                foreach (var o in vpObjects) o.Viewport = viewport.Viewport;
+                _currentViewportObjects[viewport].AddRange(vpObjects);
+            }
+            else if (viewport.Is2D)
+            {
+                var vpObjects = GetViewportElements(viewport, viewport.Viewport.Camera as OrthographicCamera).ToList();
+                foreach (var o in vpObjects) o.Viewport = viewport.Viewport;
+                _currentViewportObjects[viewport].AddRange(vpObjects);
+            }
+
+            created.AddRange(_currentObjects);
+            created.AddRange(_currentViewportObjects[viewport]);
         }
 
         protected virtual IEnumerable<SceneObject> GetSceneObjects()
@@ -448,12 +489,5 @@ namespace Sledge.BspEditor.Tools
         }
 
         #endregion
-    }
-
-    public enum HotkeyInterceptResult
-    {
-        Continue,
-        Abort,
-        SwitchToSelectTool
     }
 }
