@@ -6,6 +6,33 @@ namespace Sledge.BspEditor.Primitives.MapObjects
 {
     public static class MapObjectExtensions
     {
+        public static MapObjectQuery Query(this Map map)
+        {
+            return new MapObjectQuery(map.Root);
+        }
+
+        public static MapObjectQuery Query(this IMapObject obj)
+        {
+            return new MapObjectQuery(obj);
+        }
+
+        public static MapObjectQuery Query(this IEnumerable<IMapObject> objs)
+        {
+            return new MapObjectQuery(objs);
+        }
+
+        /// <summary>
+        /// Get the root of this node.
+        /// </summary>
+        /// <param name="obj">This object</param>
+        /// <returns>The root node of this object's tree</returns>
+        public static IMapObject GetRoot(this IMapObject obj)
+        {
+            var p = obj;
+            while (p.Hierarchy.Parent != null) p = p.Hierarchy.Parent;
+            return p;
+        }
+
         /// <summary>
         /// Get all the parents of this node that match a predicate. The first item in the list will be the closest parent.
         /// </summary>

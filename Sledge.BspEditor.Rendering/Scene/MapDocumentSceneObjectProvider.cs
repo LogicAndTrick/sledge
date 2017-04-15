@@ -1,8 +1,11 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using LogicAndTrick.Oy;
 using Sledge.BspEditor.Documents;
+using Sledge.BspEditor.Modification;
 using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.BspEditor.Rendering.Converters;
 using Sledge.Rendering.Scenes;
@@ -28,16 +31,36 @@ namespace Sledge.BspEditor.Rendering.Scene
 
         public async Task Initialise()
         {
-            await Update(Document.Map.Root.FindAll());
+            await Update(Document.Map.Root.FindAll(), new IMapObject[0], new IMapObject[0]);
+            Oy.Subscribe<Change>("MapDocument:Changed", OnChange);
         }
 
-        private async Task Update(IEnumerable<IMapObject> objects)
+        private async Task OnChange(Change change)
+        {
+            if (change.Document == Document)
+            {
+                await Update(change.Added, change.Updated, change.Removed);
+            }
+        }
+
+        private async Task Update(IEnumerable<IMapObject> create, IEnumerable<IMapObject> update, IEnumerable<IMapObject> delete)
         {
             var created = new List<SceneObject>();
             var updated = new List<SceneObject>();
             var deleted = new List<SceneObject>();
 
-            foreach (var obj in objects)
+            foreach (var obj in delete)
+            {
+                var smo = _sceneObjects.ContainsKey(obj) ? _sceneObjects[obj] : null;
+                if (smo != null)
+                {
+                    var rem = _sceneObjects[obj];
+                    _sceneObjects.TryRemove(obj, out SceneMapObject _);
+                    deleted.AddRange(rem);
+                }
+            }
+
+            foreach (var obj in create.Union(update))
             {
                 var smo = _sceneObjects.ContainsKey(obj) ? _sceneObjects[obj] : null;
 

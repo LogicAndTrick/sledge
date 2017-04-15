@@ -33,6 +33,9 @@
     <Reference Include="LogicAndTrick.Oy, Version=1.0.2.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\LogicAndTrick.Oy.1.0.2\lib\net45\LogicAndTrick.Oy.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="OpenTK, Version=2.0.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
       <HintPath>..\packages\OpenTK.2.0.0\lib\net20\OpenTK.dll</HintPath>
     </Reference>
@@ -50,6 +53,43 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BaseTool.cs" />
+    <Compile Include="Brush\Brushes\BlockBrush.cs" />
+    <Compile Include="Brush\Brushes\Controls\BooleanControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Brush\Brushes\Controls\BooleanControl.Designer.cs">
+      <DependentUpon>BooleanControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Brush\Brushes\Controls\BrushControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Brush\Brushes\Controls\BrushSidebarPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Brush\Brushes\Controls\BrushSidebarPanel.Designer.cs">
+      <DependentUpon>BrushSidebarPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Brush\Brushes\Controls\FontChooserControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Brush\Brushes\Controls\FontChooserControl.Designer.cs">
+      <DependentUpon>FontChooserControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Brush\Brushes\Controls\NumericControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Brush\Brushes\Controls\NumericControl.Designer.cs">
+      <DependentUpon>NumericControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Brush\Brushes\Controls\TextControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Brush\Brushes\Controls\TextControl.Designer.cs">
+      <DependentUpon>TextControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Brush\Brushes\CylinderBrush.cs" />
+    <Compile Include="Brush\BrushTool.cs" />
+    <Compile Include="Brush\IBrush.cs" />
     <Compile Include="Draggable\BaseDraggable.cs" />
     <Compile Include="Draggable\BaseDraggableTool.cs" />
     <Compile Include="Draggable\BoxAction.cs" />
@@ -112,6 +152,21 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Brush\Brushes\Controls\BooleanControl.resx">
+      <DependentUpon>BooleanControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Brush\Brushes\Controls\BrushSidebarPanel.resx">
+      <DependentUpon>BrushSidebarPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Brush\Brushes\Controls\FontChooserControl.resx">
+      <DependentUpon>FontChooserControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Brush\Brushes\Controls\NumericControl.resx">
+      <DependentUpon>NumericControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Brush\Brushes\Controls\TextControl.resx">
+      <DependentUpon>TextControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -119,6 +174,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Tool_Test.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\tool_brush.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

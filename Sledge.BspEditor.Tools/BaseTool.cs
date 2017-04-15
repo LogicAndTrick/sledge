@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using LogicAndTrick.Oy;
 using Sledge.BspEditor.Documents;
@@ -174,6 +175,12 @@ namespace Sledge.BspEditor.Tools
                 if (it == this) ToolSelected(false);
                 else ToolDeselected(false);
             });
+            Oy.Subscribe<IContext>("Context:Changed", c => ContextChanged(c));
+        }
+
+        protected virtual void ContextChanged(IContext context)
+        {
+
         }
 
         public void SetDocument(MapDocument document)
