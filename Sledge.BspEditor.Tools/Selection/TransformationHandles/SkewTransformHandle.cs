@@ -61,11 +61,11 @@ namespace Sledge.BspEditor.Tools.Selection.TransformationHandles
             var shearTopRight = Handle == ResizeHandle.Top || Handle == ResizeHandle.Right;
 
             var nsmd = _skewEnd - _skewStart;
-            var mouseDiff = doc.Snap(nsmd, doc.Map.GridSpacing);
-            if (KeyboardState.Shift)
-            {
-                mouseDiff = doc.Snap(nsmd, doc.Map.GridSpacing / 2);
-            }
+            var mouseDiff = nsmd; // doc.Snap(nsmd, doc.Map.GridSpacing);
+            //if (KeyboardState.Shift)
+            //{
+            //    mouseDiff = doc.Snap(nsmd, doc.Map.GridSpacing / 2);
+            //}
 
             var relative = viewport.Flatten(state.OrigEnd - state.OrigStart);
             var shearOrigin = (shearTopRight) ? state.OrigStart : state.OrigEnd;

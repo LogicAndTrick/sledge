@@ -27,7 +27,12 @@ namespace Sledge.Common.Tasks
             }
         }
 
-        public void Enqueue(Task task)
+        public Task Enqueue(Task task)
+        {
+            return Enqueue(() => task);
+        }
+
+        public Task Enqueue(Func<Task> action)
         {
             lock (_locker)
             {
@@ -36,14 +41,15 @@ namespace Sledge.Common.Tasks
 
                 if (_lastTask != null && _lastTask.TryGetTarget(out lastTask))
                 {
-                    resultTask = lastTask.ContinueWith(async _ => await task);
+                    resultTask = lastTask.ContinueWith(async _ => await action());
                 }
                 else
                 {
-                    resultTask = task;
+                    resultTask = action();
                 }
 
                 _lastTask = new WeakReference<Task>(resultTask);
+                return resultTask;
             }
         }
     }

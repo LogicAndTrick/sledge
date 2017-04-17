@@ -1,9 +1,13 @@
 ﻿using System;
-using Sledge.Common.Mediator;
+using System.ComponentModel.Composition;
+using System.Windows.Forms;
+using Sledge.Common.Shell.Components;
+using Sledge.Common.Shell.Context;
 
 namespace Sledge.BspEditor.Tools.Selection
 {
-    public partial class SelectToolSidebarPanel : UserControl
+    [Export(typeof(ISidebarComponent))]
+    public partial class SelectToolSidebarPanel : UserControl, ISidebarComponent
     {
         public delegate void ChangeTransformationToolEventHandler(object sender, SelectionBoxDraggableState.TransformationMode transformationMode);
         public delegate void ToggleShow3DWidgetsEventHandler(object sender, bool show);
@@ -13,24 +17,26 @@ namespace Sledge.BspEditor.Tools.Selection
 
         protected virtual void OnChangeTransformationMode(SelectionBoxDraggableState.TransformationMode transformationMode)
         {
-            if (ChangeTransformationMode != null)
-            {
-                ChangeTransformationMode(this, transformationMode);
-            }
+            ChangeTransformationMode?.Invoke(this, transformationMode);
         }
 
         protected virtual void OnToggleShow3DWidgets(bool show)
         {
-            if (ToggleShow3DWidgets != null)
-            {
-                ToggleShow3DWidgets(this, show);
-            }
+            ToggleShow3DWidgets?.Invoke(this, show);
         }
+
+        public string Title => "Selection Tool";
+        public object Control => this;
 
         public SelectToolSidebarPanel()
         {
             InitializeComponent();
-            Show3DWidgetsCheckbox.Checked = Sledge.Settings.Select.Show3DSelectionWidgets;
+            //Show3DWidgetsCheckbox.Checked = Sledge.Settings.Select.Show3DSelectionWidgets;
+        }
+
+        public bool IsInContext(IContext context)
+        {
+            return context.TryGet("ActiveTool", out SelectTool _);
         }
 
         private SelectionBoxDraggableState.TransformationMode _selectedType;
@@ -85,12 +91,12 @@ namespace Sledge.BspEditor.Tools.Selection
 
         private void MoveToWorldButtonClicked(object sender, EventArgs e)
         {
-            Mediator.Publish(HotkeysMediator.TieToWorld);
+            //Mediator.Publish(HotkeysMediator.TieToWorld);
         }
 
         private void TieToEntityButtonClicked(object sender, EventArgs e)
         {
-            Mediator.Publish(HotkeysMediator.TieToEntity);
+            //Mediator.Publish(HotkeysMediator.TieToEntity);
         }
     }
 }

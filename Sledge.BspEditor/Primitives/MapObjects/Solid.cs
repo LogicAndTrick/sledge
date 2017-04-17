@@ -25,6 +25,16 @@ namespace Sledge.BspEditor.Primitives.MapObjects
             return faces.Any(x => x.Vertices.Count > 0) ? new Box(faces.SelectMany(x => x.Vertices)) : Box.Empty;
         }
 
+        public override Coordinate Intersect(Line line)
+        {
+            // Intersect based on the solid's faces
+            var faces = Faces.Select(x => new Polygon(x.Vertices));
+            return faces.Select(x => x.GetIntersectionPoint(line))
+                .Where(x => x != null)
+                .OrderBy(x => (x - line.Start).VectorMagnitude())
+                .FirstOrDefault();
+        }
+
         public override IMapObject Clone()
         {
             var solid = new Solid(ID);

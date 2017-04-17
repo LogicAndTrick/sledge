@@ -53,7 +53,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BaseTool.cs" />
+    <Compile Include="Brush\Brushes\ArchBrush.cs" />
     <Compile Include="Brush\Brushes\BlockBrush.cs" />
+    <Compile Include="Brush\Brushes\ConeBrush.cs" />
     <Compile Include="Brush\Brushes\Controls\BooleanControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -61,6 +63,9 @@
       <DependentUpon>BooleanControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Brush\Brushes\Controls\BrushControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Brush\Brushes\Controls\BrushHelpSidebarPanel.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Brush\Brushes\Controls\BrushSidebarPanel.cs">
@@ -111,6 +116,20 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="ExampleStateTool\ExampleStateTool.cs" />
+    <Compile Include="Selection\SelectionBoxDraggableState.cs" />
+    <Compile Include="Selection\SelectionSidebarPanel.cs" />
+    <Compile Include="Selection\SelectTool.cs" />
+    <Compile Include="Selection\SelectToolSidebarPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Selection\SelectToolSidebarPanel.Designer.cs">
+      <DependentUpon>SelectToolSidebarPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Selection\TransformationHandles\ITransformationHandle.cs" />
+    <Compile Include="Selection\TransformationHandles\ResizeTransformHandle.cs" />
+    <Compile Include="Selection\TransformationHandles\RotateTransformHandle.cs" />
+    <Compile Include="Selection\TransformationHandles\RotationOrigin.cs" />
+    <Compile Include="Selection\TransformationHandles\SkewTransformHandle.cs" />
     <Compile Include="State\IState.cs" />
     <Compile Include="State\StateAction.cs" />
     <Compile Include="State\StateEvent.cs" />
@@ -119,6 +138,8 @@
     <Compile Include="ToolSceneObjectProvider.cs" />
     <Compile Include="ToolSceneObjectProviderFactory.cs" />
     <Compile Include="ToolViewportListener.cs" />
+    <Compile Include="Widgets\RotationWidget.cs" />
+    <Compile Include="Widgets\Widget.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Sledge.BspEditor.Rendering\Sledge.BspEditor.Rendering.csproj">
@@ -171,12 +192,18 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Include="Selection\SelectToolSidebarPanel.resx">
+      <DependentUpon>SelectToolSidebarPanel.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Tool_Test.png" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\tool_brush.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Tool_Select.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

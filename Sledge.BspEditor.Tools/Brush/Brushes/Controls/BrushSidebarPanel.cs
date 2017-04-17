@@ -65,23 +65,28 @@ namespace Sledge.BspEditor.Tools.Brush.Brushes.Controls
                 Controls.Add(ctrl);
                 Controls.SetChildIndex(ctrl, i);
             }
-            
-            OnChange();
+
+            OnBrushChange();
         }
 
-        private void OnChange()
+        private void OnBrushChange()
         {
             Oy.Publish("Context:Add", new ContextInfo("BrushTool:ActiveBrush", _selectedBrush));
         }
 
+        private void OnValuesChange()
+        {
+            Oy.Publish("BrushTool:ValuesChanged", new object());
+        }
+
         private void ControlValuesChanged(object sender, IBrush brush)
         {
-            OnChange();
+            OnValuesChange();
         }
 
         private void RoundCreatedVerticesChanged(object sender, EventArgs e)
         {
-            OnChange();
+            OnValuesChange();
         }
 
         private void SelectedBrushTypeChanged(object sender, EventArgs e)

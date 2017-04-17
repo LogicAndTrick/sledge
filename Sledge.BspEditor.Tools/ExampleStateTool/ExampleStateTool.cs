@@ -23,10 +23,5 @@ namespace Sledge.BspEditor.Tools.ExampleStateTool
         {
             return "Example State Tool";
         }
-
-        public override string GetContextualHelp()
-        {
-            return "";
-        }
     }
 }

@@ -19,6 +19,12 @@ namespace Sledge.BspEditor.Primitives.MapObjects
             return Hierarchy.NumChildren > 0 ? new Box(Hierarchy.Select(x => x.BoundingBox)) : Box.Empty;
         }
 
+        public override Coordinate Intersect(Line line)
+        {
+            // Selecting the root would be awkward
+            return null;
+        }
+
         public override IMapObject Clone()
         {
             var root = new Root(ID);

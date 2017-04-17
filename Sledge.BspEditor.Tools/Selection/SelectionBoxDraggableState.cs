@@ -8,6 +8,7 @@ using Sledge.BspEditor.Rendering;
 using Sledge.BspEditor.Rendering.Viewport;
 using Sledge.BspEditor.Tools.Draggable;
 using Sledge.BspEditor.Tools.Selection.TransformationHandles;
+using Sledge.BspEditor.Tools.Widgets;
 using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.Transformations;
 using Sledge.Rendering.Cameras;
@@ -40,7 +41,7 @@ namespace Sledge.BspEditor.Tools.Selection
             _tool = tool;
             Widgets = new List<Widget>
             {
-                (_rotationWidget = new RotationWidget(tool.MapDocument) { Active = false })
+                (_rotationWidget = new RotationWidget(tool.Document) { Active = false })
             };
             BindWidgets();
         }
@@ -58,24 +59,25 @@ namespace Sledge.BspEditor.Tools.Selection
         {
             if (transformation.HasValue)
             {
-                Tool.MapDocument.SetSelectListTransform(transformation.Value);
+                //Tool.Document.SetSelectListTransform(transformation.Value);
             }
         }
 
         private void WidgetTransformed(object sender, Matrix4? transformation)
         {
-            if (transformation.HasValue)
-            {
-                var cad = new CreateEditDelete();
-                cad.Edit(Tool.MapDocument.Selection.GetSelectedParents().ToList(), new TransformEditOperation(new UnitMatrixMult(transformation.Value), Tool.MapDocument.Map.GetTransformFlags()));
-                Tool.MapDocument.PerformAction("Transform selection", cad);
-            }
-            Tool.MapDocument.EndSelectionTransform();
+            // todo !widgets
+            //if (transformation.HasValue)
+            //{
+            //    var cad = new CreateEditDelete();
+            //    cad.Edit(Tool.Document.Selection.GetSelectedParents().ToList(), new TransformEditOperation(new UnitMatrixMult(transformation.Value), Tool.Document.Map.GetTransformFlags()));
+            //    Tool.Document.PerformAction("Transform selection", cad);
+            //}
+            //Tool.Document.EndSelectionTransform();
         }
 
         public void Update()
         {
-            _rotationWidget.Active = State.Action != BoxAction.Idle && _currentTransformationMode == TransformationMode.Rotate && Sledge.Settings.Select.Show3DSelectionWidgets;
+            _rotationWidget.Active = State.Action != BoxAction.Idle && _currentTransformationMode == TransformationMode.Rotate ;//&& Sledge.Settings.Select.Show3DSelectionWidgets;
             _rotationWidget.SetPivotPoint(_rotationOrigin.Position);
         }
 
@@ -141,7 +143,7 @@ namespace Sledge.BspEditor.Tools.Selection
         public override IEnumerable<Element> GetViewportElements(MapViewport viewport, OrthographicCamera camera)
         {
             var list = new List<Element>();
-            var tf = GetTransformationMatrix(viewport, camera, Tool.MapDocument);
+            var tf = GetTransformationMatrix(viewport, camera, Tool.Document);
             if (State.Action == BoxAction.Resizing && tf.HasValue)
             {
                 // todo this looks pretty silly when the box doesn't perfectly match the transformed selection

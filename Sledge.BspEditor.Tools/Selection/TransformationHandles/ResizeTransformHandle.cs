@@ -1,14 +1,15 @@
 ﻿using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using OpenTK;
 using Sledge.BspEditor.Documents;
+using Sledge.BspEditor.Rendering;
 using Sledge.BspEditor.Rendering.Viewport;
 using Sledge.BspEditor.Tools.Draggable;
 using Sledge.DataStructures.Geometric;
 using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Materials;
 using Sledge.Rendering.Scenes.Elements;
-using Box = Sledge.Rendering.DataStructures.Box;
 
 namespace Sledge.BspEditor.Tools.Selection.TransformationHandles
 {

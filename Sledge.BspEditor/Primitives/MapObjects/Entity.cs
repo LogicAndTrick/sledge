@@ -30,6 +30,19 @@ namespace Sledge.BspEditor.Primitives.MapObjects
                 : new Box(Origin - Coordinate.One * 16, Origin + Coordinate.One * 16);
         }
 
+        public override Coordinate Intersect(Line line)
+        {
+            // Entities with children aren't directly selectable
+            if (Hierarchy.HasChildren) return null;
+
+            // Otherwise we select based on the bounding box faces
+            var faces = BoundingBox.GetBoxFaces().Select(x => new Polygon(x));
+            return faces.Select(x => x.GetIntersectionPoint(line))
+                .Where(x => x != null)
+                .OrderBy(x => (x - line.Start).VectorMagnitude())
+                .FirstOrDefault();
+        }
+
         public override IMapObject Clone()
         {
             var ent = new Entity(ID);

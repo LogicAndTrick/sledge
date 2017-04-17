@@ -1,18 +1,22 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using OpenTK;
-using Sledge.BspEditor.Documents;
+using Sledge.BspEditor.Modification;
+using Sledge.BspEditor.Modification.Operations;
+using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.BspEditor.Rendering.Viewport;
 using Sledge.BspEditor.Tools.Draggable;
 using Sledge.BspEditor.Tools.Selection.TransformationHandles;
-using Sledge.Common.Mediator;
+using Sledge.BspEditor.Tools.Widgets;
+using Sledge.Common.Shell.Components;
 using Sledge.DataStructures.Geometric;
-using Sledge.DataStructures.MapObjects;
 using Sledge.DataStructures.Transformations;
 using Sledge.Rendering.Cameras;
+using Sledge.Shell.Input;
 
 namespace Sledge.BspEditor.Tools.Selection
 {
@@ -22,61 +26,53 @@ namespace Sledge.BspEditor.Tools.Selection
     /// 2. Single click in the 3D view allows ray-casting selection (with mouse wheel cycling)
     /// 3. Drawing a box in the 2D view and confirming it will select everything in the box
     /// </summary>
+    [Export(typeof(ITool))]
     public class SelectTool : BaseDraggableTool
     {
         private readonly BoxDraggableState _emptyBox;
         private readonly SelectionBoxDraggableState _selectionBox;
 
-        private MapObject ChosenItemFor3DSelection { get; set; }
-        private List<MapObject> IntersectingObjectsFor3DSelection { get; set; }
-
-        private readonly SelectToolSidebarPanel _sidebarPanel;
+        private IMapObject ChosenItemFor3DSelection { get; set; }
+        private List<IMapObject> IntersectingObjectsFor3DSelection { get; set; }
 
         public SelectTool()
         {
             _selectionBox = new SelectionBoxDraggableState(this);
             _selectionBox.BoxColour = Color.Yellow;
-            _selectionBox.FillColour = Color.FromArgb(View.SelectionBoxBackgroundOpacity, Color.White);
-            _selectionBox.Stippled = Sledge.Settings.View.DrawBoxDashedLines;
+            _selectionBox.FillColour = Color.FromArgb(/*View.SelectionBoxBackgroundOpacity*/ 64, Color.White);
+            //_selectionBox.Stippled = Sledge.Settings.View.DrawBoxDashedLines;
             _selectionBox.State.Changed += SelectionBoxChanged;
             States.Add(_selectionBox);
             Children.AddRange(_selectionBox.Widgets);
 
             _emptyBox = new BoxDraggableState(this);
             _emptyBox.BoxColour = Color.Yellow;
-            _emptyBox.FillColour = Color.FromArgb(View.SelectionBoxBackgroundOpacity, Color.White);
-            _emptyBox.Stippled = Sledge.Settings.View.DrawBoxDashedLines;
+            _emptyBox.FillColour = Color.FromArgb(/*View.SelectionBoxBackgroundOpacity*/ 64, Color.White);
+            //_emptyBox.Stippled = Sledge.Settings.View.DrawBoxDashedLines;
             _emptyBox.State.Changed += EmptyBoxChanged;
             _emptyBox.DragEnded += (sender, args) =>
             {
-                if (Sledge.Settings.Select.AutoSelectBox) Confirm();
+                //if (Sledge.Settings.Select.AutoSelectBox) Confirm();
             };
             States.Add(_emptyBox);
 
             Usage = ToolUsage.Both;
 
-            _sidebarPanel = new SelectToolSidebarPanel();
-            _sidebarPanel.ChangeTransformationMode += (sender, mode) =>
-            {
-                _selectionBox.SetTransformationMode(mode);
-            };
-            _sidebarPanel.ToggleShow3DWidgets += (sender, show) =>
-            {
-                Sledge.Settings.Select.Show3DSelectionWidgets = show;
-                _selectionBox.Update();
-            };
+            //_sidebarPanel = new SelectToolSidebarPanel();
+            //_sidebarPanel.ChangeTransformationMode += (sender, mode) =>
+            //{
+            //    _selectionBox.SetTransformationMode(mode);
+            //};
+            //_sidebarPanel.ToggleShow3DWidgets += (sender, show) =>
+            //{
+            //    Sledge.Settings.Select.Show3DSelectionWidgets = show;
+            //    _selectionBox.Update();
+            //};
         }
 
         public void TransformationModeChanged(SelectionBoxDraggableState.TransformationMode mode)
         {
-            _sidebarPanel.TransformationToolChanged(mode);
-        }
-
-        public override string GetContextualHelp()
-        {
-            return "*Click* to select an object.\n" +
-                   "In the 3D view, *click and hold* and use the *mouse wheel* to cycle through objects behind the cursor.\n" +
-                   "In the 2D view, *click the selection box* to cycle between manipulation modes.";
+            //_sidebarPanel.TransformationToolChanged(mode);
         }
 
         public override Image GetIcon()
@@ -89,19 +85,14 @@ namespace Sledge.BspEditor.Tools.Selection
             return "SelectTool";
         }
 
-        public override IEnumerable<KeyValuePair<string, Control>> GetSidebarControls()
-        {
-            yield return new KeyValuePair<string, Control>(GetName(), _sidebarPanel);
-        }
-
         public override void ToolSelected(bool preventHistory)
         {
             IgnoreGroupingChanged();
 
-            Mediator.Subscribe(EditorMediator.SelectionChanged, this);
-            Mediator.Subscribe(EditorMediator.MapDocumentTreeStructureChanged, this);
-            Mediator.Subscribe(EditorMediator.MapDocumentTreeObjectsChanged, this);
-            Mediator.Subscribe(EditorMediator.IgnoreGroupingChanged, this);
+            //Mediator.Subscribe(EditorMediator.SelectionChanged, this);
+            //Mediator.Subscribe(EditorMediator.MapDocumentTreeStructureChanged, this);
+            //Mediator.Subscribe(EditorMediator.MapDocumentTreeObjectsChanged, this);
+            //Mediator.Subscribe(EditorMediator.IgnoreGroupingChanged, this);
 
             SelectionChanged();
 
@@ -114,7 +105,7 @@ namespace Sledge.BspEditor.Tools.Selection
             SelectionChanged();
         }
 
-        private void MapDocumentTreeObjectsChanged(IEnumerable<MapObject> objects)
+        private void MapDocumentTreeObjectsChanged(IEnumerable<IMapObject> objects)
         {
             if (objects.Any(x => x.IsSelected))
             {
@@ -124,7 +115,7 @@ namespace Sledge.BspEditor.Tools.Selection
 
         private void SelectionChanged()
         {
-            if (MapDocument == null) return;
+            if (Document == null) return;
             UpdateBoxBasedOnSelection();
             foreach (var widget in Children.OfType<Widget>())
             {
@@ -137,7 +128,7 @@ namespace Sledge.BspEditor.Tools.Selection
         /// </summary>
         private void UpdateBoxBasedOnSelection()
         {
-            if (MapDocument.Selection.IsEmpty())
+            if (Document.Selection.IsEmpty)
             {
                 _emptyBox.State.Start = _emptyBox.State.End = null;
                 if (_emptyBox.State.Action == BoxAction.Drawn) _emptyBox.State.Action = BoxAction.Idle;
@@ -149,7 +140,7 @@ namespace Sledge.BspEditor.Tools.Selection
                 _emptyBox.State.Start = _emptyBox.State.End = null;
                 _emptyBox.State.Action = BoxAction.Idle;
 
-                var box = MapDocument.Selection.GetSelectionBoundingBox();
+                var box = Document.Selection.GetSelectionBoundingBox();
                 _selectionBox.State.Start = box.Start;
                 _selectionBox.State.End = box.End;
                 _selectionBox.State.Action = BoxAction.Drawn;
@@ -161,33 +152,34 @@ namespace Sledge.BspEditor.Tools.Selection
         #region Ignore Grouping
         private bool IgnoreGrouping()
         {
-            return MapDocument.Map.IgnoreGrouping;
+            return false;
+            //return MapDocument.Map.IgnoreGrouping;
         }
 
         private void IgnoreGroupingChanged()
         {
-            var selected = MapDocument.Selection.GetSelectedObjects().ToList();
-            var select = new List<MapObject>();
-            var deselect = new List<MapObject>();
-            if (MapDocument.Map.IgnoreGrouping)
-            {
-                deselect.AddRange(selected.Where(x => x.HasChildren));
-            }
-            else
-            {
-                var parents = selected.Select(x => x.FindTopmostParent(y => y is Group || y is Entity) ?? x).Distinct();
-                foreach (var p in parents)
-                {
-                    var children = p.FindAll();
-                    var leaves = children.Where(x => !x.HasChildren);
-                    if (leaves.All(selected.Contains)) select.AddRange(children.Where(x => !selected.Contains(x)));
-                    else deselect.AddRange(children.Where(selected.Contains));
-                }
-            }
-            if (deselect.Any() || select.Any())
-            {
-                MapDocument.PerformAction("Apply group selection", new ChangeSelection(select, deselect));
-            }
+            //var selected = MapDocument.Selection.GetSelectedObjects().ToList();
+            //var select = new List<IMapObject>();
+            //var deselect = new List<IMapObject>();
+            //if (MapDocument.Map.IgnoreGrouping)
+            //{
+            //    deselect.AddRange(selected.Where(x => x.HasChildren));
+            //}
+            //else
+            //{
+            //    var parents = selected.Select(x => x.FindTopmostParent(y => y is Group || y is Entity) ?? x).Distinct();
+            //    foreach (var p in parents)
+            //    {
+            //        var children = p.FindAll();
+            //        var leaves = children.Where(x => !x.HasChildren);
+            //        if (leaves.All(selected.Contains)) select.AddRange(children.Where(x => !selected.Contains(x)));
+            //        else deselect.AddRange(children.Where(selected.Contains));
+            //    }
+            //}
+            //if (deselect.Any() || select.Any())
+            //{
+            //    MapDocument.PerformAction("Apply group selection", new ChangeSelection(select, deselect));
+            //}
         }
         #endregion
 
@@ -200,10 +192,10 @@ namespace Sledge.BspEditor.Tools.Selection
         /// <param name="objects">The object list to normalise</param>
         /// <param name="ignoreGrouping">True if grouping is being ignored</param>
         /// <returns>The normalised list of objects</returns>
-        private static IEnumerable<MapObject> NormaliseSelection(IEnumerable<MapObject> objects, bool ignoreGrouping)
+        private static IEnumerable<IMapObject> NormaliseSelection(IEnumerable<IMapObject> objects, bool ignoreGrouping)
         {
             return ignoreGrouping
-                       ? objects.Where(x => !x.HasChildren)
+                       ? objects.Where(x => !x.Hierarchy.HasChildren)
                        : objects.Select(x => x.FindTopmostParent(y => y is Group || y is Entity) ?? x).Distinct().SelectMany(x => x.FindAll());
         }
 
@@ -214,14 +206,14 @@ namespace Sledge.BspEditor.Tools.Selection
         /// <param name="objectsToSelect">The objects to select</param>
         /// <param name="deselectAll">If true, this will ignore the objectToDeselect parameter and just deselect everything</param>
         /// <param name="ignoreGrouping">If true, object groups will be ignored</param>
-        private void SetSelected(IEnumerable<MapObject> objectsToDeselect, IEnumerable<MapObject> objectsToSelect, bool deselectAll, bool ignoreGrouping)
+        private void SetSelected(IEnumerable<IMapObject> objectsToDeselect, IEnumerable<IMapObject> objectsToSelect, bool deselectAll, bool ignoreGrouping)
         {
-            if (objectsToDeselect == null) objectsToDeselect = new MapObject[0];
-            if (objectsToSelect == null) objectsToSelect = new MapObject[0];
+            if (objectsToDeselect == null) objectsToDeselect = new IMapObject[0];
+            if (objectsToSelect == null) objectsToSelect = new IMapObject[0];
 
             if (deselectAll)
             {
-                objectsToDeselect = MapDocument.Selection.GetSelectedObjects();
+                objectsToDeselect = Document.Selection.ToList();
                 // _lastTool = null;
             }
 
@@ -236,7 +228,8 @@ namespace Sledge.BspEditor.Tools.Selection
             var deselected = objectsToDeselect.ToList();
             var selected = objectsToSelect.ToList();
 
-            MapDocument.PerformAction("Selection changed", new ChangeSelection(selected, deselected));
+            var transaction = new Transaction(new Select(selected), new Deselect(deselected));
+            MapDocumentOperation.Perform(Document, transaction);
         }
 
         #endregion
@@ -246,34 +239,43 @@ namespace Sledge.BspEditor.Tools.Selection
         protected override void MouseDoubleClick(MapViewport viewport, PerspectiveCamera camera, ViewportEvent e)
         {
             // Don't show Object Properties while navigating the view, because mouse cursor will be hidden
-            if (KeyboardState.IsKeyDown(Keys.Space)) return;
+            //if (KeyboardState.IsKeyDown(Keys.Space)) return;
 
-            if (Sledge.Settings.Select.DoubleClick3DAction == DoubleClick3DAction.Nothing) return;
-            if (!MapDocument.Selection.IsEmpty())
-            {
-                if (Sledge.Settings.Select.DoubleClick3DAction == DoubleClick3DAction.ObjectProperties)
-                {
-                    Mediator.Publish(HotkeysMediator.ObjectProperties);
-                }
-                else if (Sledge.Settings.Select.DoubleClick3DAction == DoubleClick3DAction.TextureTool)
-                {
-                    Mediator.Publish(HotkeysMediator.SwitchTool, HotkeyTool.Texture);
-                }
-            }
+            //if (Sledge.Settings.Select.DoubleClick3DAction == DoubleClick3DAction.Nothing) return;
+            //if (!MapDocument.Selection.IsEmpty())
+            //{
+            //    if (Sledge.Settings.Select.DoubleClick3DAction == DoubleClick3DAction.ObjectProperties)
+            //    {
+            //        Mediator.Publish(HotkeysMediator.ObjectProperties);
+            //    }
+            //    else if (Sledge.Settings.Select.DoubleClick3DAction == DoubleClick3DAction.TextureTool)
+            //    {
+            //        Mediator.Publish(HotkeysMediator.SwitchTool, HotkeyTool.Texture);
+            //    }
+            //}
         }
 
-        private Coordinate GetIntersectionPoint(MapObject obj, Line line)
+        private Coordinate GetIntersectionPoint(IMapObject obj, Line line)
         {
             if (obj == null) return null;
 
             var solid = obj as Solid;
-            if (solid == null) return obj.GetIntersectionPoint(line);
+            if (solid == null) return obj.Intersect(line);
 
-            return solid.Faces.Where(x => x.Opacity > 0 && !x.IsHidden)
+            return solid.Faces //.Where(x => x.Opacity > 0 && !x.IsHidden)
+                .Select(x => new Polygon(x.Vertices))
                 .Select(x => x.GetIntersectionPoint(line))
                 .Where(x => x != null)
                 .OrderBy(x => (x - line.Start).VectorMagnitude())
                 .FirstOrDefault();
+        }
+
+        private IEnumerable<IMapObject> GetBoundingBoxIntersections(Line ray)
+        {
+            return Document.Map.Root.Collect(
+                x => x is Root || (x.BoundingBox != null && x.BoundingBox.IntersectsWith(ray)),
+                x => !x.Hierarchy.HasChildren
+            );
         }
 
         /// <summary>
@@ -284,13 +286,13 @@ namespace Sledge.BspEditor.Tools.Selection
         protected override void MouseDown(MapViewport viewport, PerspectiveCamera camera, ViewportEvent e)
         {
             // Do not perform selection if space is down
-            if (View.Camera3DPanRequiresMouseClick && KeyboardState.IsKeyDown(Keys.Space)) return;
+            //if (View.Camera3DPanRequiresMouseClick && KeyboardState.IsKeyDown(Keys.Space)) return;
 
             // First, get the ray that is cast from the clicked point along the viewport frustrum
             var ray = viewport.CastRayFromScreen(e.X, e.Y);
 
             // Grab all the elements that intersect with the ray
-            var hits = MapDocument.Map.WorldSpawn.GetAllNodesIntersectingWith(ray);
+            var hits = GetBoundingBoxIntersections(ray);
 
             // Sort the list of intersecting elements by distance from ray origin
             IntersectingObjectsFor3DSelection = hits
@@ -324,8 +326,8 @@ namespace Sledge.BspEditor.Tools.Selection
                 return;
             }
 
-            var desel = new List<MapObject>();
-            var sel = new List<MapObject>();
+            var desel = new List<IMapObject>();
+            var sel = new List<IMapObject>();
 
             // Select (or deselect) the current element
             if (ChosenItemFor3DSelection.IsSelected) desel.Add(ChosenItemFor3DSelection);
@@ -369,8 +371,8 @@ namespace Sledge.BspEditor.Tools.Selection
             var ctrl = KeyboardState.Ctrl;
             if (draggable == _emptyBox || ctrl)
             {
-                var desel = new List<MapObject>();
-                var sel = new List<MapObject>();
+                var desel = new List<IMapObject>();
+                var sel = new List<IMapObject>();
                 var seltest = SelectionTest(viewport, camera, e);
                 if (seltest != null)
                 {
@@ -389,7 +391,7 @@ namespace Sledge.BspEditor.Tools.Selection
         protected override void OnDraggableDragStarted(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Coordinate position, IDraggable draggable)
         {
             var ctrl = KeyboardState.Ctrl;
-            if (draggable == _emptyBox && !ctrl && !MapDocument.Selection.IsEmpty())
+            if (draggable == _emptyBox && !ctrl && !Document.Selection.IsEmpty)
             {
                 SetSelected(null, null, true, IgnoreGrouping());
             }
@@ -400,13 +402,13 @@ namespace Sledge.BspEditor.Tools.Selection
             base.OnDraggableDragMoved(viewport, camera, e, previousPosition, position, draggable);
             if (_selectionBox.State.Action == BoxAction.Resizing && draggable is ITransformationHandle)
             {
-                var tform = _selectionBox.GetTransformationMatrix(viewport, camera, MapDocument);
+                var tform = _selectionBox.GetTransformationMatrix(viewport, camera, Document);
                 if (tform.HasValue)
                 {
-                    MapDocument.SetSelectListTransform(tform.Value);
+                    // todo !select MapDocument.SetSelectListTransform(tform.Value);
                     var box = new Box(_selectionBox.State.OrigStart, _selectionBox.State.OrigEnd);
                     var trans = CreateMatrixMultTransformation(tform.Value);
-                    Mediator.Publish(EditorMediator.SelectionBoxChanged, box.Transform(trans));
+                    // Mediator.Publish(EditorMediator.SelectionBoxChanged, box.Transform(trans));
                 }
             }
         }
@@ -417,14 +419,14 @@ namespace Sledge.BspEditor.Tools.Selection
             if (_selectionBox.State.Action == BoxAction.Resizing && tt != null)
             {
                 // Execute the transform on the selection
-                var tform = _selectionBox.GetTransformationMatrix(viewport, camera, MapDocument);
+                var tform = _selectionBox.GetTransformationMatrix(viewport, camera, Document);
                 if (tform.HasValue)
                 {
                     var createClone = KeyboardState.Shift && draggable is ResizeTransformHandle && ((ResizeTransformHandle)draggable).Handle == ResizeHandle.Center;
                     ExecuteTransform(tt.Name, CreateMatrixMultTransformation(tform.Value), createClone);
                 }
             }
-            MapDocument.EndSelectionTransform();
+            // todo !select MapDocument.EndSelectionTransform();
             base.OnDraggableDragEnded(viewport, camera, e, position, draggable);
         }
 
@@ -436,7 +438,7 @@ namespace Sledge.BspEditor.Tools.Selection
                 // We're drawing a selection box, so clear the current tool
                 // SetCurrentTool(null);
             }
-            if (_emptyBox.State.Action == BoxAction.Drawn && Sledge.Settings.Select.AutoSelectBox)
+            //if (_emptyBox.State.Action == BoxAction.Drawn && Sledge.Settings.Select.AutoSelectBox)
             {
                 // BoxDrawnConfirm(emptyBox.State.Viewport);
             }
@@ -444,10 +446,18 @@ namespace Sledge.BspEditor.Tools.Selection
 
         private void SelectionBoxChanged(object sender, EventArgs e)
         {
-            
+
         }
 
-        private MapObject SelectionTest(MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
+        private IEnumerable<IMapObject> GetLineIntersections(Box box)
+        {
+            return Document.Map.Root.Collect(
+                x => x is Root || (x.BoundingBox != null && x.BoundingBox.IntersectsWith(box)),
+                x => false // todo !selection skipping because lazy
+            );
+        }
+
+        private IMapObject SelectionTest(MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
         {
             // Create a box to represent the click, with a tolerance level
             var unused = viewport.GetUnusedCoordinate(new Coordinate(100000, 100000, 100000));
@@ -457,16 +467,17 @@ namespace Sledge.BspEditor.Tools.Selection
             var click = viewport.Expand(viewport.ScreenToWorld(e.X, viewport.Height - e.Y));
             var box = new Box(click - add, click + add);
 
-            var centerHandles = Sledge.Settings.Select.DrawCenterHandles;
-            var centerOnly = Sledge.Settings.Select.ClickSelectByCenterHandlesOnly;
+            var centerHandles = true; //Sledge.Settings.Select.DrawCenterHandles;
+            var centerOnly = false; //Sledge.Settings.Select.ClickSelectByCenterHandlesOnly;
             // Get the first element that intersects with the box, selecting or deselecting as needed
-            return MapDocument.Map.WorldSpawn.GetAllNodesIntersecting2DLineTest(box, centerHandles, centerOnly).FirstOrDefault();
+            return GetLineIntersections(box).FirstOrDefault();
+            //return Document.Map.Root.GetAllNodesIntersecting2DLineTest(box, centerHandles, centerOnly).FirstOrDefault();
         }
 
         protected override void KeyDown(MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
         {
             var nudge = GetNudgeValue(e.KeyCode);
-            if (nudge != null && (_selectionBox.State.Action == BoxAction.Drawn) && !MapDocument.Selection.IsEmpty())
+            if (nudge != null && (_selectionBox.State.Action == BoxAction.Drawn) && !Document.Selection.IsEmpty)
             {
                 var translate = viewport.Expand(nudge);
                 var transformation = Matrix4.CreateTranslation((float)translate.X, (float)translate.Y, (float)translate.Z);
@@ -492,6 +503,14 @@ namespace Sledge.BspEditor.Tools.Selection
             base.KeyDown(viewport, e);
         }
 
+        private IEnumerable<IMapObject> GetBoxIntersections(Box box, Predicate<IMapObject> includeFilter)
+        {
+            return Document.Map.Root.Collect(
+                x => x is Root || (x.BoundingBox != null && x.BoundingBox.IntersectsWith(box)),
+                x => !x.Hierarchy.HasChildren && includeFilter(x)
+            );
+        }
+
         /// <summary>
         /// Once a box is confirmed, we select all element intersecting with the box (contained within if shift is down).
         /// </summary>
@@ -506,11 +525,16 @@ namespace Sledge.BspEditor.Tools.Selection
                 // If the shift key is down, select all brushes that are fully contained by the box
                 // If select by handles only is on, select all brushes with centers inside the box
                 // Otherwise, select all brushes that intersect with the box
-                Func<Box, IEnumerable<MapObject>> selector = x => MapDocument.Map.WorldSpawn.GetAllNodesIntersectingWith(x);
-                if (Sledge.Settings.Select.BoxSelectByCenterHandlesOnly) selector = x => MapDocument.Map.WorldSpawn.GetAllNodesWithCentersContainedWithin(x);
-                if (KeyboardState.Shift) selector = x => MapDocument.Map.WorldSpawn.GetAllNodesContainedWithin(x);
 
-                var nodes = selector(boundingbox).ToList();
+                //Func<Box, IEnumerable<IMapObject>> selector = x => Document.Map.Root.GetAllNodesIntersectingWith(x);
+                //if (Sledge.Settings.Select.BoxSelectByCenterHandlesOnly) selector = x => MapDocument.Map.WorldSpawn.GetAllNodesWithCentersContainedWithin(x);
+                //if (KeyboardState.Shift) selector = x => Document.Map.Root.GetAllNodesContainedWithin(x);
+                //var nodes = selector(boundingbox).ToList();
+
+                Predicate<IMapObject> filter = x => true;
+                if (KeyboardState.Shift) filter = x => x.BoundingBox.ContainedWithin(boundingbox);
+                var nodes = GetBoxIntersections(boundingbox, filter);
+
                 SetSelected(null, nodes, false, IgnoreGrouping());
             }
 
@@ -519,7 +543,7 @@ namespace Sledge.BspEditor.Tools.Selection
 
         private void Cancel()
         {
-            if (_selectionBox.State.Action != BoxAction.Idle && !MapDocument.Selection.IsEmpty())
+            if (_selectionBox.State.Action != BoxAction.Idle && !Document.Selection.IsEmpty)
             {
                 SetSelected(null, null, true, IgnoreGrouping());
             }
@@ -539,8 +563,9 @@ namespace Sledge.BspEditor.Tools.Selection
         /// <param name="clone">True to create a clone before transforming the original.</param>
         private void ExecuteTransform(string transformationName, IUnitTransformation transform, bool clone)
         {
+            /* todo !transform
             if (clone) transformationName += "-clone";
-            var objects = MapDocument.Selection.GetSelectedParents().ToList();
+            var objects = Document.Selection.GetSelectedParents().ToList();
             var name = String.Format("{0} {1} object{2}", transformationName, objects.Count, (objects.Count == 1 ? "" : "s"));
 
             var cad = new CreateEditDelete();
@@ -568,6 +593,7 @@ namespace Sledge.BspEditor.Tools.Selection
 
             // Execute the action
             MapDocument.PerformAction(name, action);
+            */
         }
 
         private IUnitTransformation CreateMatrixMultTransformation(Matrix4 mat)
@@ -579,18 +605,8 @@ namespace Sledge.BspEditor.Tools.Selection
 
         public override void ToolDeselected(bool preventHistory)
         {
-            Mediator.UnsubscribeAll(this);
+            //Mediator.UnsubscribeAll(this);
             base.ToolDeselected(preventHistory);
-        }
-
-        public override HotkeyTool? GetHotkeyToolType()
-        {
-            return HotkeyTool.Selection;
-        }
-
-        public override HotkeyInterceptResult InterceptHotkey(HotkeysMediator hotkeyMessage, object parameters)
-        {
-            return HotkeyInterceptResult.Continue;
         }
     }
 }

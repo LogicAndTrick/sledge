@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using OpenTK;
 using OpenTK.Input;
 using Sledge.BspEditor.Documents;
+using Sledge.BspEditor.Modification.Operations;
 using Sledge.BspEditor.Rendering.Viewport;
 using Sledge.BspEditor.Tools.Draggable;
+using Sledge.Common;
 using Sledge.DataStructures.Geometric;
-using Sledge.Extensions;
 using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Scenes.Elements;
+using KeyboardState = Sledge.Shell.Input.KeyboardState;
 
 namespace Sledge.BspEditor.Tools.Selection.TransformationHandles
 {
@@ -66,8 +68,8 @@ namespace Sledge.BspEditor.Tools.Selection.TransformationHandles
             if ((origv.Cross(newv).Z < 0)) angle = 2 * DMath.PI - angle;
 
             var shf = KeyboardState.Shift;
-            var def = Select.RotationStyle;
-            var snap = (def == RotationStyle.SnapOnShift && shf) || (def == RotationStyle.SnapOffShift && !shf);
+            //var def = Select.RotationStyle;
+            var snap = true; // (def == RotationStyle.SnapOnShift && shf) || (def == RotationStyle.SnapOffShift && !shf);
             if (snap)
             {
                 var deg = angle * (180 / DMath.PI);

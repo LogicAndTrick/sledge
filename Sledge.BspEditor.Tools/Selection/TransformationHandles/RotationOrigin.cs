@@ -1,4 +1,7 @@
 using System.Collections.Generic;
+using System.Drawing;
+using System.Windows.Forms;
+using Sledge.BspEditor.Rendering;
 using Sledge.BspEditor.Rendering.Viewport;
 using Sledge.BspEditor.Tools.Draggable;
 using Sledge.DataStructures.Geometric;

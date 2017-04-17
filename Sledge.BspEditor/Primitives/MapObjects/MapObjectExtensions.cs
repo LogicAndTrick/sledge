@@ -106,6 +106,26 @@ namespace Sledge.BspEditor.Primitives.MapObjects
             return list;
         }
 
+        public static List<IMapObject> Collect(this IMapObject obj, Predicate<IMapObject> traverseNode, Predicate<IMapObject> includeNode)
+        {
+            var list = new List<IMapObject>();
+
+            // Check if we're traversing this node at all
+            var t = traverseNode(obj);
+            if (!t) return list;
+
+            // Check if we should include this node
+            if (includeNode(obj)) list.Add(obj);
+
+            // Traverse and include child nodes
+            foreach (var ch in obj.Hierarchy)
+            {
+                list.AddRange(ch.Collect(traverseNode, includeNode));
+            }
+
+            return list;
+        }
+
         /// <summary>
         /// Recursively collect children matching a predicate.
         /// </summary>

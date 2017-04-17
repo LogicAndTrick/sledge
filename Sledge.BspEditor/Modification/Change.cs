@@ -40,6 +40,15 @@ namespace Sledge.BspEditor.Modification
             return this;
         }
 
+        public Change AddRange(IEnumerable<IMapObject> objects)
+        {
+            var all = objects.ToList();
+            _added.UnionWith(all);
+            _removed.ExceptWith(all);
+            _updated.ExceptWith(all);
+            return this;
+        }
+
         public Change Update(IMapObject o)
         {
             if (_added.Contains(o)) return this;
@@ -53,6 +62,15 @@ namespace Sledge.BspEditor.Modification
             _added.Remove(o);
             _updated.Remove(o);
             _removed.Add(o);
+            return this;
+        }
+
+        public Change RemoveRange(IEnumerable<IMapObject> objects)
+        {
+            var all = objects.ToList();
+            _added.ExceptWith(all);
+            _updated.ExceptWith(all);
+            _removed.UnionWith(all);
             return this;
         }
 

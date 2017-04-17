@@ -5,15 +5,14 @@ using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Newtonsoft.Json;
+using LogicAndTrick.Oy;
 using Sledge.BspEditor.Modification;
+using Sledge.BspEditor.Modification.Operations;
 using Sledge.BspEditor.Primitives;
 using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.BspEditor.Rendering.Converters;
 using Sledge.BspEditor.Rendering.Viewport;
-using Sledge.BspEditor.Tools.Brush.Brushes;
 using Sledge.BspEditor.Tools.Draggable;
-using Sledge.Common.Logging;
 using Sledge.Common.Shell.Components;
 using Sledge.Common.Shell.Context;
 using Sledge.DataStructures.Geometric;
@@ -34,9 +33,6 @@ namespace Sledge.BspEditor.Tools.Brush
 
         public BrushTool()
         {
-            //_propertiesControl = new BrushPropertiesControl();
-            //_propertiesControl.ValuesChanged += ValuesChanged;
-
             box = new BoxDraggableState(this);
             box.BoxColour = Color.Turquoise;
             box.FillColour = Color.FromArgb(/*View.SelectionBoxBackgroundOpacity*/ 64, Color.Green);
@@ -44,6 +40,12 @@ namespace Sledge.BspEditor.Tools.Brush
             States.Add(box);
 
             UseValidation = true;
+
+            Oy.Subscribe<object>("BrushTool:ValuesChanged", x =>
+            {
+                _updatePreview = true;
+                Invalidate();
+            });
         }
 
         protected override void ContextChanged(IContext context)
@@ -57,7 +59,6 @@ namespace Sledge.BspEditor.Tools.Brush
 
         public override void ToolSelected(bool preventHistory)
         {
-            //BrushManager.ValuesChanged += ValuesChanged;
             //var sel = Document.Selection.GetSelectedObjects().OfType<Solid>().ToList();
             //if (sel.Any())
             //{
@@ -77,7 +78,6 @@ namespace Sledge.BspEditor.Tools.Brush
 
         public override void ToolDeselected(bool preventHistory)
         {
-            //BrushManager.ValuesChanged -= ValuesChanged;
             //Mediator.UnsubscribeAll(this);
             _updatePreview = false;
             base.ToolDeselected(preventHistory);
@@ -89,29 +89,10 @@ namespace Sledge.BspEditor.Tools.Brush
             Invalidate();
         }
 
-        private void ValuesChanged(IBrush brush)
-        {
-            //if (BrushManager.CurrentBrush == brush) _updatePreview = true;
-            Invalidate();
-        }
-
         private void BoxChanged(object sender, EventArgs e)
         {
             _updatePreview = true;
             Invalidate();
-        }
-
-        public override IEnumerable<KeyValuePair<string, Control>> GetSidebarControls()
-        {
-            yield break;
-            //yield return new KeyValuePair<string, Control>(GetName(), BrushManager.SidebarControl);
-        }
-
-        public override string GetContextualHelp()
-        {
-            return "Draw a box in the 2D view to define the size of the brush.\n" +
-                   "Select the type of the brush to create in the sidebar.\n" +
-                   "Press *enter* in the 2D view to create the brush.";
         }
 
         public override Image GetIcon()
@@ -142,11 +123,10 @@ namespace Sledge.BspEditor.Tools.Brush
             var brush = GetBrush(bounds, Document.Map.NumberGenerator);
             if (brush == null) return;
 
-            MapDocumentOperation.Perform(Document, new Attach(Document.Map.Root.ID, brush));
+            brush.IsSelected = true;
+            brush.FindAll().ForEach(x => x.IsSelected = true);
 
-            Log.Info(nameof(BrushTool),
-                "Brush create requested: " + JsonConvert.SerializeObject(brush, Formatting.None,
-                    new JsonSerializerSettings {ReferenceLoopHandling = ReferenceLoopHandling.Ignore}));
+            MapDocumentOperation.Perform(Document, new Attach(Document.Map.Root.ID, brush));
 
             //brush.IsSelected = Select.SelectCreatedBrush;
             //IAction action = new Create(Document.Map.WorldSpawn.ID, brush);

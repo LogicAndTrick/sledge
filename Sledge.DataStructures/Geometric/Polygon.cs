@@ -357,5 +357,41 @@ namespace Sledge.DataStructures.Geometric
         {
             Vertices.Reverse();
         }
+
+        public Coordinate GetIntersectionPoint(Line line, bool ignoreDirection = false)
+        {
+            var plane = GetPlane();
+            var intersect = plane.GetIntersectionPoint(line, ignoreDirection);
+            if (intersect == null) return null;
+
+            var coordinates = Vertices;
+
+            // http://paulbourke.net/geometry/insidepoly/
+
+            // The angle sum will be 2 * PI if the point is inside the face
+            double sum = 0;
+            for (var i = 0; i < coordinates.Count; i++)
+            {
+                var i1 = i;
+                var i2 = (i + 1) % coordinates.Count;
+
+                // Translate the vertices so that the intersect point is on the origin
+                var v1 = coordinates[i1] - intersect;
+                var v2 = coordinates[i2] - intersect;
+
+                var m1 = v1.VectorMagnitude();
+                var m2 = v2.VectorMagnitude();
+                var nom = m1 * m2;
+                if (nom < 0.001m)
+                {
+                    // intersection is at a vertex
+                    return intersect;
+                }
+                sum += Math.Acos((double)(v1.Dot(v2) / nom));
+            }
+
+            var delta = Math.Abs(sum - Math.PI * 2);
+            return (delta < 0.001d) ? intersect : null;
+        }
     }
 }

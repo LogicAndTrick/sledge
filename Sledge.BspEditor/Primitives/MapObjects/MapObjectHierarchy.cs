@@ -16,6 +16,7 @@ namespace Sledge.BspEditor.Primitives.MapObjects
 
         public int NumChildren => _children.Count;
         public int NumDescendants => _descendantIds.Count;
+        public bool HasChildren => NumChildren > 0;
 
         /// <summary>
         /// This object
@@ -43,7 +44,7 @@ namespace Sledge.BspEditor.Primitives.MapObjects
                 }
             }
         }
-
+        
         public MapObjectHierarchy(IMapObject obj)
         {
             _self = obj;

@@ -57,5 +57,12 @@ namespace Sledge.BspEditor.Primitives.MapObjects
         /// </summary>
         /// <returns>A list of primitives</returns>
         IEnumerable<IPrimitive> ToPrimitives();
+
+        /// <summary>
+        /// Get the intersection point between this object and the given line.
+        /// </summary>
+        /// <param name="line">The line to test</param>
+        /// <returns>The intersection point, or null if the object doesn't intersect the line</returns>
+        Coordinate Intersect(Line line);
     }
 }

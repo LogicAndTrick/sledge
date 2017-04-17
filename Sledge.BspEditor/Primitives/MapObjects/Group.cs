@@ -20,6 +20,12 @@ namespace Sledge.BspEditor.Primitives.MapObjects
             return Hierarchy.NumChildren > 0 ? new Box(Hierarchy.Select(x => x.BoundingBox)) : Box.Empty;
         }
 
+        public override Coordinate Intersect(Line line)
+        {
+            // Groups are never directly selectable
+            return null;
+        }
+
         public override IMapObject Clone()
         {
             var grp = new Group(ID);

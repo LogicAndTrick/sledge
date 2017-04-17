@@ -83,11 +83,18 @@
     <Compile Include="Commands\CommandActivator.cs" />
     <Compile Include="Commands\IActivator.cs" />
     <Compile Include="Components\LogComponent.cs" />
+    <Compile Include="ControlExtensions.cs" />
     <Compile Include="Controls\ClosableTabControl.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Controls\DockedPanel.cs">
       <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\TextSidebarPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\TextSidebarPanel.Designer.cs">
+      <DependentUpon>TextSidebarPanel.cs</DependentUpon>
     </Compile>
     <Compile Include="Controls\SidebarContainer.cs">
       <SubType>UserControl</SubType>
@@ -140,6 +147,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Controls\TextSidebarPanel.resx">
+      <DependentUpon>TextSidebarPanel.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Controls\SidebarContainer.resx">
       <DependentUpon>SidebarContainer.cs</DependentUpon>
     </EmbeddedResource>

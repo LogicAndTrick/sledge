@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using LogicAndTrick.Oy;
 using Sledge.BspEditor.Components;
 using Sledge.BspEditor.Environment;
 using Sledge.BspEditor.Primitives;
+using Sledge.BspEditor.Primitives.MapData;
 using Sledge.Common.Shell.Documents;
 
 namespace Sledge.BspEditor.Documents
@@ -15,6 +17,19 @@ namespace Sledge.BspEditor.Documents
 
         public Map Map { get; set; }
         public IEnvironment Environment { get; }
+
+        public Selection Selection
+        {
+            get
+            {
+                var sel = Map.Data.Get<Selection>().FirstOrDefault();
+                if (sel != null) return sel;
+
+                sel = new Selection();
+                Map.Data.Add(sel);
+                return sel;
+            }
+        }
 
         public MapDocument(Map map, IEnvironment environment)
         {
