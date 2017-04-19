@@ -163,11 +163,6 @@ namespace Sledge.BspEditor.Tools
             Children = new List<BaseTool>();
 
             Oy.Subscribe<IDocument>("Document:Activated", id => SetDocument(id as MapDocument));
-            Oy.Subscribe<ITool>("Tool:Activated", it =>
-            {
-                if (it == this) ToolSelected(false);
-                else ToolDeselected(false);
-            });
             Oy.Subscribe<IContext>("Context:Changed", c => ContextChanged(c));
         }
 
@@ -182,20 +177,32 @@ namespace Sledge.BspEditor.Tools
             foreach (var t in Children) t.SetDocument(document);
             DocumentChanged();
         }
+        
+        private List<Subscription> _subscriptions;
 
-        public virtual void ToolSelected(bool preventHistory)
+        protected virtual IEnumerable<Subscription> Subscribe()
         {
+            yield break;
+        }
+
+        public virtual void ToolSelected()
+        {
+            _subscriptions = Subscribe().ToList();
             Invalidate();
         }
 
-        public virtual void ToolDeselected(bool preventHistory)
+        public virtual void ToolDeselected()
         {
+            _subscriptions?.ForEach(x => x.Dispose());
             ClearScene();
+            Invalidate();
         }
 
         public virtual void DocumentChanged()
         {
             // Virtual
+            ClearScene();
+            Invalidate();
         }
 
         #region Viewport event listeners

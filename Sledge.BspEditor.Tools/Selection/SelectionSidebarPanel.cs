@@ -38,7 +38,7 @@ namespace Sledge.BspEditor.Tools.Selection
             if (_activeDocument != null && _activeDocument.TryGetTarget(out MapDocument d) && d == doc)
             {
                 var sel = doc.Map.Data.Get<Primitives.MapData.Selection>().FirstOrDefault();
-                var count = sel?.Count ?? 0;
+                var count = sel?.GetSelectedParents().Count() ?? 0;
                 _label.Invoke(() =>
                 {
                     _label.Text = $"{count} objects selected";

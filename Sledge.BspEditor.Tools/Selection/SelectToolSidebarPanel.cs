@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.Composition;
 using System.Windows.Forms;
+using LogicAndTrick.Oy;
 using Sledge.Common.Shell.Components;
 using Sledge.Common.Shell.Context;
 
@@ -9,29 +10,20 @@ namespace Sledge.BspEditor.Tools.Selection
     [Export(typeof(ISidebarComponent))]
     public partial class SelectToolSidebarPanel : UserControl, ISidebarComponent
     {
-        public delegate void ChangeTransformationToolEventHandler(object sender, SelectionBoxDraggableState.TransformationMode transformationMode);
-        public delegate void ToggleShow3DWidgetsEventHandler(object sender, bool show);
-
-        public event ChangeTransformationToolEventHandler ChangeTransformationMode;
-        public event ToggleShow3DWidgetsEventHandler ToggleShow3DWidgets;
-
-        protected virtual void OnChangeTransformationMode(SelectionBoxDraggableState.TransformationMode transformationMode)
-        {
-            ChangeTransformationMode?.Invoke(this, transformationMode);
-        }
-
-        protected virtual void OnToggleShow3DWidgets(bool show)
-        {
-            ToggleShow3DWidgets?.Invoke(this, show);
-        }
-
         public string Title => "Selection Tool";
         public object Control => this;
 
         public SelectToolSidebarPanel()
         {
             InitializeComponent();
-            //Show3DWidgetsCheckbox.Checked = Sledge.Settings.Select.Show3DSelectionWidgets;
+
+            Oy.Subscribe<String>("SelectTool:TransformationModeChanged", x =>
+            {
+                if (Enum.TryParse(x, out SelectionBoxDraggableState.TransformationMode mode))
+                {
+                    TransformationToolChanged(mode);
+                }
+            });
         }
 
         public bool IsInContext(IContext context)
@@ -68,35 +60,42 @@ namespace Sledge.BspEditor.Tools.Selection
 
         private void TranslateModeChecked(object sender, EventArgs e)
         {
-            if (TranslateModeCheckbox.Checked && _selectedType != SelectionBoxDraggableState.TransformationMode.Resize) OnChangeTransformationMode(SelectionBoxDraggableState.TransformationMode.Resize);
-            else SetCheckState();
+            if (TranslateModeCheckbox.Checked && _selectedType != SelectionBoxDraggableState.TransformationMode.Resize)
+                Oy.Publish("SelectTool:TransformationModeChanged", "Resize");
+            else
+                SetCheckState();
         }
 
         private void RotateModeChecked(object sender, EventArgs e)
         {
-            if (RotateModeCheckbox.Checked && _selectedType != SelectionBoxDraggableState.TransformationMode.Rotate) OnChangeTransformationMode(SelectionBoxDraggableState.TransformationMode.Rotate);
-            else SetCheckState();
+            if (RotateModeCheckbox.Checked && _selectedType != SelectionBoxDraggableState.TransformationMode.Rotate)
+                Oy.Publish("SelectTool:TransformationModeChanged", "Rotate");
+            else
+                SetCheckState();
         }
 
         private void SkewModeChecked(object sender, EventArgs e)
         {
-            if (SkewModeCheckbox.Checked && _selectedType != SelectionBoxDraggableState.TransformationMode.Skew) OnChangeTransformationMode(SelectionBoxDraggableState.TransformationMode.Skew);
-            else SetCheckState();
+            if (SkewModeCheckbox.Checked && _selectedType != SelectionBoxDraggableState.TransformationMode.Skew)
+                Oy.Publish("SelectTool:TransformationModeChanged", "Skew");
+            else
+                SetCheckState();
         }
 
         private void Show3DWidgetsChecked(object sender, EventArgs e)
         {
-            OnToggleShow3DWidgets(Show3DWidgetsCheckbox.Checked);
+            Oy.Publish("SelectTool:Show3DWidgetsChanged", Show3DWidgetsCheckbox.Checked ? "1" : "0");
         }
 
         private void MoveToWorldButtonClicked(object sender, EventArgs e)
         {
-            //Mediator.Publish(HotkeysMediator.TieToWorld);
+            // Oy.Publish("TieToWorld", new object());
         }
 
         private void TieToEntityButtonClicked(object sender, EventArgs e)
         {
-            //Mediator.Publish(HotkeysMediator.TieToEntity);
+            // todo !commands
+            // Oy.Publish("TieToEntity", new object());
         }
     }
 }

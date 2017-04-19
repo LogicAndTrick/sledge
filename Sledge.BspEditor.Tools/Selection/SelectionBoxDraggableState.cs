@@ -30,7 +30,7 @@ namespace Sledge.BspEditor.Tools.Selection
         }
 
         private List<IDraggable>[] _handles;
-        private TransformationMode _currentTransformationMode;
+        public TransformationMode CurrentTransformationMode { get; private set; }
         private RotationOrigin _rotationOrigin;
 
         public List<Widget> Widgets { get; private set; }
@@ -59,13 +59,14 @@ namespace Sledge.BspEditor.Tools.Selection
         {
             if (transformation.HasValue)
             {
+                // todo !selection transform
                 //Tool.Document.SetSelectListTransform(transformation.Value);
             }
         }
 
         private void WidgetTransformed(object sender, Matrix4? transformation)
         {
-            // todo !widgets
+            // todo !selection (widgets) actually transform
             //if (transformation.HasValue)
             //{
             //    var cad = new CreateEditDelete();
@@ -77,7 +78,7 @@ namespace Sledge.BspEditor.Tools.Selection
 
         public void Update()
         {
-            _rotationWidget.Active = State.Action != BoxAction.Idle && _currentTransformationMode == TransformationMode.Rotate ;//&& Sledge.Settings.Select.Show3DSelectionWidgets;
+            _rotationWidget.Active = State.Action != BoxAction.Idle && CurrentTransformationMode == TransformationMode.Rotate ;//&& Sledge.Settings.Select.Show3DSelectionWidgets;
             _rotationWidget.SetPivotPoint(_rotationOrigin.Position);
         }
 
@@ -132,7 +133,7 @@ namespace Sledge.BspEditor.Tools.Selection
         public override IEnumerable<IDraggable> GetDraggables()
         {
             if (State.Action == BoxAction.Idle || State.Action == BoxAction.Drawing) return new IDraggable[0];
-            return _handles[(int)_currentTransformationMode];
+            return _handles[(int)CurrentTransformationMode];
         }
 
         public override bool CanDrag(MapViewport viewport, ViewportEvent e, Coordinate position)
@@ -186,7 +187,7 @@ namespace Sledge.BspEditor.Tools.Selection
 
         public void Cycle()
         {
-            var intMode = (int) _currentTransformationMode;
+            var intMode = (int) CurrentTransformationMode;
             var numModes = Enum.GetValues(typeof (TransformationMode)).Length;
             var nextMode = (intMode + 1) % numModes;
             SetTransformationMode((TransformationMode) nextMode);
@@ -194,16 +195,16 @@ namespace Sledge.BspEditor.Tools.Selection
 
         public void SetTransformationMode(TransformationMode mode)
         {
-            _currentTransformationMode = mode;
+            CurrentTransformationMode = mode;
 
             if (State.Start != null) _rotationOrigin.Position = new Box(State.Start, State.End).Center;
             else _rotationOrigin.Position = Coordinate.Zero;
 
             //_scaleWidget.Active = _currentTransformationMode == TransformationMode.Resize;
-            _rotationWidget.Active = _currentTransformationMode == TransformationMode.Rotate;
+            _rotationWidget.Active = CurrentTransformationMode == TransformationMode.Rotate;
             //_skewWidget.Active = _currentTransformationMode == TransformationMode.Skew;
 
-            _tool.TransformationModeChanged(_currentTransformationMode);
+            _tool.TransformationModeChanged(CurrentTransformationMode);
             Update();
         }
     }

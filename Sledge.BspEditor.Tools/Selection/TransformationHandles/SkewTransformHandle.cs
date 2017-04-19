@@ -6,6 +6,7 @@ using Sledge.BspEditor.Rendering.Viewport;
 using Sledge.BspEditor.Tools.Draggable;
 using Sledge.DataStructures.Geometric;
 using Sledge.Rendering.Cameras;
+using KeyboardState = Sledge.Shell.Input.KeyboardState;
 
 namespace Sledge.BspEditor.Tools.Selection.TransformationHandles
 {
@@ -62,10 +63,11 @@ namespace Sledge.BspEditor.Tools.Selection.TransformationHandles
 
             var nsmd = _skewEnd - _skewStart;
             var mouseDiff = nsmd; // doc.Snap(nsmd, doc.Map.GridSpacing);
-            //if (KeyboardState.Shift)
-            //{
-            //    mouseDiff = doc.Snap(nsmd, doc.Map.GridSpacing / 2);
-            //}
+            if (KeyboardState.Shift)
+            {
+                // !todo selection (snapping)
+                // mouseDiff = doc.Snap(nsmd, doc.Map.GridSpacing / 2);
+            }
 
             var relative = viewport.Flatten(state.OrigEnd - state.OrigStart);
             var shearOrigin = (shearTopRight) ? state.OrigStart : state.OrigEnd;

@@ -68,6 +68,7 @@ namespace Sledge.BspEditor.Tools.Selection.TransformationHandles
             if ((origv.Cross(newv).Z < 0)) angle = 2 * DMath.PI - angle;
 
             var shf = KeyboardState.Shift;
+            // todo !selection rotation style
             //var def = Select.RotationStyle;
             var snap = true; // (def == RotationStyle.SnapOnShift && shf) || (def == RotationStyle.SnapOffShift && !shf);
             if (snap)

@@ -22,12 +22,20 @@ namespace Sledge.BspEditor.Tools
         private async Task ToolActivated(ITool tool)
         {
             var at = ActiveTool;
-            if (at != null) at.SceneObjectsChanged -= ActiveToolSceneObjectsChanged;
+            if (at != null)
+            {
+                at.ToolDeselected();
+                at.SceneObjectsChanged -= ActiveToolSceneObjectsChanged;
+            }
 
             _activeTool = new WeakReference<BaseTool>(tool as BaseTool);
 
             at = ActiveTool;
-            if (at != null) at.SceneObjectsChanged += ActiveToolSceneObjectsChanged;
+            if (at != null)
+            {
+                at.SceneObjectsChanged += ActiveToolSceneObjectsChanged;
+                at.ToolSelected();
+            }
         }
 
         private void ActiveToolSceneObjectsChanged(object sender, SceneObjectsChangedEventArgs e)

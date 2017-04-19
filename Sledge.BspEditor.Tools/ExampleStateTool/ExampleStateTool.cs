@@ -8,10 +8,10 @@ namespace Sledge.BspEditor.Tools.ExampleStateTool
     [Export(typeof(ITool))]
     public class ExampleStateTool : StateTool
     {
-        public override void ToolSelected(bool preventHistory)
+        public override void ToolSelected()
         {
             CurrentState = new IdleState(this);
-            base.ToolSelected(preventHistory);
+            base.ToolSelected();
         }
 
         public override Image GetIcon()

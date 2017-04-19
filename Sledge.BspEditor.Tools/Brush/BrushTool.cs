@@ -57,7 +57,7 @@ namespace Sledge.BspEditor.Tools.Brush
             base.ContextChanged(context);
         }
 
-        public override void ToolSelected(bool preventHistory)
+        public override void ToolSelected()
         {
             //var sel = Document.Selection.GetSelectedObjects().OfType<Solid>().ToList();
             //if (sel.Any())
@@ -73,14 +73,14 @@ namespace Sledge.BspEditor.Tools.Brush
             //Mediator.Subscribe(EditorMediator.TextureSelected, this);
 
             _updatePreview = true;
-            base.ToolSelected(preventHistory);
+            base.ToolSelected();
         }
 
-        public override void ToolDeselected(bool preventHistory)
+        public override void ToolDeselected()
         {
             //Mediator.UnsubscribeAll(this);
             _updatePreview = false;
-            base.ToolDeselected(preventHistory);
+            base.ToolDeselected();
         }
 
         private void TextureSelected(string texture)
