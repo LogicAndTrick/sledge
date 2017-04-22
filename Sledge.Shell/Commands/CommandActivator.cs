@@ -21,7 +21,7 @@ namespace Sledge.Shell.Commands
 
         public async Task Activate()
         {
-            await Oy.Publish("Command:Run", _command.Invoke(new CommandParameters()));
+            await Oy.Publish("Command:Run", new CommandMessage(_command.GetID()));
         }
     }
 }

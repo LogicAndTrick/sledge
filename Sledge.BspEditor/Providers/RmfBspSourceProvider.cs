@@ -273,7 +273,8 @@ namespace Sledge.BspEditor.Providers
                 map.Data.Add(new Camera
                 {
                     EyePosition = br.ReadCoordinate(),
-                    LookPosition = br.ReadCoordinate()
+                    LookPosition = br.ReadCoordinate(),
+                    IsActive = activeCamera == i
                 });
             }
         }

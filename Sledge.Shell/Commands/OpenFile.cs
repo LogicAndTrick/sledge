@@ -13,12 +13,12 @@ using Sledge.Common.Shell.Documents;
 using Sledge.Common.Shell.Hotkeys;
 using Sledge.Common.Shell.Menu;
 
-namespace Sledge.MinimalEditor.TextEditor
+namespace Sledge.Shell.Commands
 {
     [Export(typeof(ICommand))]
     [CommandID("File:Open")]
     [DefaultHotkey("Ctrl+O")]
-    [MenuItem("File", "", "File")]
+    [MenuItem("File", "", "File", "D")]
     public class OpenFile : ICommand
     {
         public string Name => "Open";
@@ -29,7 +29,7 @@ namespace Sledge.MinimalEditor.TextEditor
             return true;
         }
 
-        public async Task Invoke(CommandParameters parameters)
+        public async Task Invoke(IContext context, CommandParameters parameters)
         {
             using (var ofd = new OpenFileDialog() { Filter = "All files|*.*"})
             {

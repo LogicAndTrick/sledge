@@ -78,10 +78,15 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Commands\CloseFile.cs" />
+    <Compile Include="Commands\Exit.cs" />
+    <Compile Include="Commands\OpenFile.cs" />
+    <Compile Include="Commands\SaveFile.cs" />
     <Compile Include="Components\ContextExplorerComponent.cs" />
     <Compile Include="Commands\OpenCommandBoxCommand.cs" />
     <Compile Include="Commands\CommandActivator.cs" />
     <Compile Include="Commands\IActivator.cs" />
+    <Compile Include="Components\DefaultMenuMetadataProvider.cs" />
     <Compile Include="Components\LogComponent.cs" />
     <Compile Include="ControlExtensions.cs" />
     <Compile Include="Controls\ClosableTabControl.cs">

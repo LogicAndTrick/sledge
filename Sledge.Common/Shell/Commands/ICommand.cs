@@ -8,6 +8,6 @@ namespace Sledge.Common.Shell.Commands
         string Name { get; }
         string Details { get; }
         
-        Task Invoke(CommandParameters parameters);
+        Task Invoke(IContext context, CommandParameters parameters);
     }
 }

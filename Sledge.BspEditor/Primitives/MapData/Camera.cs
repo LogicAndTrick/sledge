@@ -9,11 +9,13 @@ namespace Sledge.BspEditor.Primitives.MapData
     {
         public Coordinate EyePosition { get; set; }
         public Coordinate LookPosition { get; set; }
+        public bool IsActive { get; set; }
 
         public Camera()
         {
             EyePosition = new Coordinate(0, 0, 0);
             LookPosition = new Coordinate(0, 0, 0);
+            IsActive = false;
         }
 
         protected Camera(SerializationInfo info, StreamingContext context)

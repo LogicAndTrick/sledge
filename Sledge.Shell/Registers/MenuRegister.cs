@@ -26,6 +26,7 @@ namespace Sledge.Shell.Registers
         [Import] private IContext _context;
 
         [ImportMany] private IEnumerable<Lazy<ICommand>> _commands;
+        [ImportMany] private IEnumerable<Lazy<IMenuMetadataProvider>> _metaDataProviders;
 
         public async Task OnStartup()
         {
@@ -35,13 +36,20 @@ namespace Sledge.Shell.Registers
                 var ty = export.Value.GetType();
                 var mia = ty.GetCustomAttributes(typeof(MenuItemAttribute), false).OfType<MenuItemAttribute>().FirstOrDefault();
                 if (mia == null) continue;
-                Add(new CommandMenuItem(export.Value, mia.Section, mia.Path, mia.Group));
+                Add(new CommandMenuItem(export.Value, mia.Section, mia.Path, mia.Group, mia.OrderHint));
+            }
+
+            // Register metadata providers
+            foreach (var md in _metaDataProviders)
+            {
+                _declaredGroups.AddRange(md.Value.GetMenuGroups());
+                _declaredSections.AddRange(md.Value.GetMenuSections());
             }
         }
 
         public async Task OnInitialise()
         {
-            _tree = new VirtualMenuTree(_shell.MenuStrip);
+            _tree = new VirtualMenuTree(_shell.MenuStrip, _declaredSections, _declaredGroups);
 
             _shell.Invoke((MethodInvoker) delegate
             {
@@ -57,11 +65,16 @@ namespace Sledge.Shell.Registers
         /// </summary>
         private readonly Dictionary<string, IMenuItem> _menuItems;
 
+        private readonly List<MenuSection> _declaredSections;
+        private readonly List<MenuGroup> _declaredGroups;
+
         private VirtualMenuTree _tree;
 
         public MenuRegister()
         {
             _menuItems = new Dictionary<string, IMenuItem>();
+            _declaredSections = new List<MenuSection>();
+            _declaredGroups = new List<MenuGroup>();
         }
 
         /// <summary>
@@ -75,51 +88,99 @@ namespace Sledge.Shell.Registers
 
         private class VirtualMenuTree
         {
+            private readonly List<MenuSection> _declaredSections;
+            private readonly List<MenuGroup> _declaredGroups;
+
             public MenuStrip MenuStrip { get; set; }
             public Dictionary<string, MenuTreeNode> RootNodes { get; set; }
 
-            public VirtualMenuTree(MenuStrip menuStrip)
+            public VirtualMenuTree(MenuStrip menuStrip, List<MenuSection> declaredSections, List<MenuGroup> declaredGroups)
             {
+                _declaredSections = declaredSections;
+                _declaredGroups = declaredGroups;
                 MenuStrip = menuStrip;
                 RootNodes = new Dictionary<string, MenuTreeNode>();
+
+                // Add known sections straight away
+                foreach (var ds in _declaredSections.OrderBy(x => x.OrderHint)) AddSection(ds.Name);
+            }
+
+            private void AddSection(string name)
+            {
+                var rtn = new MenuTreeNode(name, null);
+                RootNodes.Add(name, rtn);
+                MenuStrip.Items.Add(rtn.ToolStripMenuItem);
             }
 
             public void Add(IMenuItem item)
             {
-                if (!RootNodes.ContainsKey(item.Section))
-                {
-                    var rtn = new MenuTreeNode(item.Section);
-                    RootNodes.Add(item.Section, rtn);
-                    MenuStrip.Items.Add(rtn.ToolStripMenuItem);
-                }
+                // If the section isn't known, add it to the end
+                if (!RootNodes.ContainsKey(item.Section)) AddSection(item.Section);
+
+                // todo !menu sorting/grouping
+
+                // Find the parent node for this item
+                // Start at the section root node
                 var node = RootNodes[item.Section];
+
+                // Traverse the path until we get to the target
                 var path = (item.Path ?? "").Split('/').Where(x => x.Length > 0).ToList();
+                var currentPath = new List<string>();
                 foreach (var p in path)
                 {
-                    if (!node.Children.ContainsKey(p)) node.Add(p, new MenuTreeNode(p));
+                    currentPath.Add(p);
+                    // If the current node isn't found, add it in
+                    if (!node.Children.ContainsKey(p))
+                    {
+                        var gr = _declaredGroups.FirstOrDefault(x => x.Name == p && x.Path == String.Join("/", currentPath) && x.Section == item.Section);
+                        node.Add(p, new MenuTreeNode(p, gr));
+                    }
                     node = node.Children[p];
                 }
-                node.Add(item.ID, new MenuTreeNode(item));
+
+                // Add the node to the parent node
+                var group = _declaredGroups.FirstOrDefault(x => x.Name == item.Name && x.Path == item.Path && x.Section == item.Section);
+                node.Add(item.ID, new MenuTreeNode(item, group));
+            }
+        }
+
+        private class MenuTreeGroup
+        {
+            public MenuGroup Group { get; set; }
+            public List<MenuTreeNode> Nodes { get; set; }
+
+            public bool HasSplitter { get; set; }
+
+            public MenuTreeGroup(MenuGroup group)
+            {
+                Group = group;
+                Nodes = new List<MenuTreeNode>();
             }
         }
 
         private class MenuTreeNode
         {
+            private readonly MenuGroup _group;
             public ToolStripMenuItem ToolStripMenuItem { get; set; }
             public IMenuItem MenuItem { get; set; }
-            public Dictionary<string, MenuTreeNode> Children { get; set; }
+            public List<MenuTreeGroup> Groups { get; set; }
+            public Dictionary<string, MenuTreeNode> Children { get; }
 
-            public MenuTreeNode(IMenuItem menuItem)
+            public MenuTreeNode(IMenuItem menuItem, MenuGroup group)
             {
-                ToolStripMenuItem = new ToolStripMenuItem(menuItem.Description);
+                _group = group ?? new MenuGroup("", "", "", "T");
+                ToolStripMenuItem = new ToolStripMenuItem(menuItem.Description) {Tag = this};
                 ToolStripMenuItem.Click += Fire;
                 MenuItem = menuItem;
+                Groups = new List<MenuTreeGroup>();
                 Children = new Dictionary<string, MenuTreeNode>();
             }
 
-            public MenuTreeNode(string text)
+            public MenuTreeNode(string text, MenuGroup group)
             {
-                ToolStripMenuItem = new ToolStripMenuItem(text);
+                _group = group ?? new MenuGroup("", "", "", "T");
+                ToolStripMenuItem = new ToolStripMenuItem(text) {Tag = this};
+                Groups = new List<MenuTreeGroup>();
                 Children = new Dictionary<string, MenuTreeNode>();
             }
 
@@ -131,7 +192,47 @@ namespace Sledge.Shell.Registers
             public void Add(string name, MenuTreeNode menuTreeNode)
             {
                 Children.Add(name, menuTreeNode);
-                ToolStripMenuItem.DropDownItems.Add(menuTreeNode.ToolStripMenuItem);
+                if (Groups.All(x => x.Group.Name != menuTreeNode._group.Name))
+                {
+                    Groups.Add(new MenuTreeGroup(menuTreeNode._group));
+                    Groups = Groups.OrderBy(x => x.Group.OrderHint).ToList();
+                }
+
+                // Insert the item into the correct index
+                var groupIndex = Groups.FindIndex(x => x.Group.Name == menuTreeNode._group.Name);
+
+                // Skip to the start of the group
+                var groupStart = 0;
+                for (var i = 0; i < groupIndex; i++)
+                {
+                    var g = Groups[i];
+                    groupStart += g.Nodes.Count + (g.HasSplitter ? 1 : 0);
+                }
+
+                // Add the node to the list and sort
+                var group = Groups[groupIndex];
+                group.Nodes = group.Nodes.Union(new[] {menuTreeNode}).OrderBy(x => x.MenuItem.OrderHint ?? "").ToList();
+
+                // Skip to the start of the node and insert
+                var idx = group.Nodes.IndexOf(menuTreeNode);
+                ToolStripMenuItem.DropDownItems.Insert(groupStart + idx, menuTreeNode.ToolStripMenuItem);
+
+                // Check groups for splitters
+                groupStart = 0;
+                for (var i = 0; i < Groups.Count - 1; i++)
+                {
+                    var g = Groups[i];
+                    groupStart += g.Nodes.Count;
+
+                    // Add a splitter to the group if needed
+                    if (!g.HasSplitter && g.Nodes.Count > 0)
+                    {
+                        ToolStripMenuItem.DropDownItems.Insert(groupStart, new ToolStripSeparator());
+                        g.HasSplitter = true;
+                    }
+
+                    groupStart++;
+                }
             }
         }
     }

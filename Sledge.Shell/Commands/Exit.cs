@@ -1,6 +1,5 @@
-﻿using System.ComponentModel.Composition;
+using System.ComponentModel.Composition;
 using System.Threading.Tasks;
-using LogicAndTrick.Oy;
 using Sledge.Common.Shell.Commands;
 using Sledge.Common.Shell.Context;
 using Sledge.Common.Shell.Hotkeys;
@@ -8,15 +7,16 @@ using Sledge.Common.Shell.Menu;
 
 namespace Sledge.Shell.Commands
 {
-    /// <summary>
-    /// Opens the command box
-    /// </summary>
     [Export(typeof(ICommand))]
-    [DefaultHotkey("Ctrl+T")]
-    public class OpenCommandBoxCommand : ICommand
+    [CommandID("File:Exit")]
+    [DefaultHotkey("Alt+F4")]
+    [MenuItem("File", "", "Exit", "M")]
+    public class Exit : ICommand
     {
-        public string Name => "Open the command box";
-        public string Details => "Open the command box";
+        [Import] private Forms.Shell _shell;
+
+        public string Name => "Exit";
+        public string Details => "Exit";
 
         public bool IsInContext(IContext context)
         {
@@ -25,7 +25,7 @@ namespace Sledge.Shell.Commands
 
         public async Task Invoke(IContext context, CommandParameters parameters)
         {
-            await Oy.Publish<string>("Shell:OpenCommandBox", "");
+            _shell.Close();
         }
     }
 }

@@ -80,8 +80,11 @@
     <Compile Include="Mediator\MultiDictionary.cs" />
     <Compile Include="Shell\Menu\CommandMenuItem.cs" />
     <Compile Include="Shell\Menu\IMenuItem.cs" />
+    <Compile Include="Shell\Menu\IMenuMetadataProvider.cs" />
+    <Compile Include="Shell\Menu\MenuGroup.cs" />
     <Compile Include="Shell\Menu\MenuItemAttribute.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Shell\Menu\MenuSection.cs" />
     <Compile Include="Shell\Settings\ISettingsContainer.cs" />
     <Compile Include="Shell\Settings\SettingKey.cs" />
     <Compile Include="Shell\Settings\SettingValue.cs" />

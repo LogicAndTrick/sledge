@@ -27,6 +27,11 @@ namespace Sledge.Common.Shell.Menu
         /// </summary>
         string Group { get; }
 
+        /// <summary>
+        /// A string to sort this item within the group
+        /// </summary>
+        string OrderHint { get; }
+
         Task Invoke();
     }
 }

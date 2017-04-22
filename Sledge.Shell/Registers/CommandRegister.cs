@@ -67,7 +67,7 @@ namespace Sledge.Shell.Registers
         private async Task Run(CommandMessage message)
         {
             var cmd = Get(message.CommandID);
-            if (cmd != null && cmd.IsInContext(_context)) await cmd.Invoke(message.Parameters);
+            if (cmd != null && cmd.IsInContext(_context)) await cmd.Invoke(_context, message.Parameters);
         }
 
         private readonly ConcurrentDictionary<string, ICommand> _commands;
