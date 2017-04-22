@@ -11,10 +11,11 @@ namespace Sledge.BspEditor.Modification
         private readonly HashSet<IMapObject> _added;
         private readonly HashSet<IMapObject> _updated;
         private readonly HashSet<IMapObject> _removed;
-        
+
         public IEnumerable<IMapObject> Added => _added;
         public IEnumerable<IMapObject> Updated => _updated;
         public IEnumerable<IMapObject> Removed => _removed;
+        public bool DocumentUpdated { get; private set; }
 
         public Change(MapDocument document)
         {
@@ -22,6 +23,7 @@ namespace Sledge.BspEditor.Modification
             _added = new HashSet<IMapObject>();
             _updated = new HashSet<IMapObject>();
             _removed = new HashSet<IMapObject>();
+            DocumentUpdated = false;
         }
 
         public Change(MapDocument document, IEnumerable<IMapObject> added, IEnumerable<IMapObject> updated, IEnumerable<IMapObject> removed)
@@ -30,6 +32,13 @@ namespace Sledge.BspEditor.Modification
             _added = new HashSet<IMapObject>(added);
             _updated = new HashSet<IMapObject>(updated);
             _removed = new HashSet<IMapObject>(removed);
+            DocumentUpdated = false;
+        }
+
+        public Change UpdateDocument()
+        {
+            DocumentUpdated = true;
+            return this;
         }
 
         public Change Add(IMapObject o)
@@ -85,6 +94,9 @@ namespace Sledge.BspEditor.Modification
             _removed.UnionWith(change._removed);
 
             _updated.UnionWith(change._updated.Except(_added).Except(_removed));
+
+            DocumentUpdated |= change.DocumentUpdated;
+
             return this;
         }
     }

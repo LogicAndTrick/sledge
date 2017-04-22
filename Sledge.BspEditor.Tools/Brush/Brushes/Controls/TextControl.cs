@@ -6,8 +6,8 @@ namespace Sledge.BspEditor.Tools.Brush.Brushes.Controls
     {
         public string EnteredText
         {
-            get { return TextBox.Text; }
-            set { TextBox.Text = value; }
+            get => TextBox.Text;
+            set => TextBox.Text = value;
         }
 
         public TextControl(IBrush brush) : base(brush)

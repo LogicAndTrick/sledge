@@ -69,9 +69,20 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BspSourceDocumentLoader.cs" />
+    <Compile Include="Commands\Clipboard\Copy.cs" />
+    <Compile Include="Commands\Clipboard\Cut.cs" />
+    <Compile Include="Commands\Clipboard\Paste.cs" />
+    <Compile Include="Commands\MenuDataProvider.cs" />
+    <Compile Include="Components\ClipboardManager.cs" />
     <Compile Include="Commands\BaseCommand.cs" />
     <Compile Include="Commands\Modification\SelectAll.cs" />
     <Compile Include="Commands\Modification\SelectNone.cs" />
+    <Compile Include="Components\ClipboardSidebarPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Components\ClipboardSidebarPanel.Designer.cs">
+      <DependentUpon>ClipboardSidebarPanel.cs</DependentUpon>
+    </Compile>
     <Compile Include="Components\IMapDocumentControl.cs" />
     <Compile Include="Components\IMapDocumentControlFactory.cs" />
     <Compile Include="Components\MapDocumentControlHost.cs">
@@ -88,11 +99,16 @@
     <Compile Include="Environment\TextureCollection.cs" />
     <Compile Include="Modification\MapDocumentOperation.cs" />
     <Compile Include="Modification\OperationHandler.cs" />
-    <Compile Include="Modification\Operations\Attach.cs" />
+    <Compile Include="Modification\Operations\Data\AddMapData.cs" />
+    <Compile Include="Modification\Operations\Data\AddMapObjectData.cs" />
+    <Compile Include="Modification\Operations\Data\RemoveMapData.cs" />
+    <Compile Include="Modification\Operations\Data\RemoveMapObjectData.cs" />
+    <Compile Include="Modification\Operations\Tree\Attach.cs" />
     <Compile Include="Modification\Change.cs" />
     <Compile Include="Modification\IOperation.cs" />
-    <Compile Include="Modification\Operations\Deselect.cs" />
-    <Compile Include="Modification\Operations\Select.cs" />
+    <Compile Include="Modification\Operations\Selection\Deselect.cs" />
+    <Compile Include="Modification\Operations\Selection\Select.cs" />
+    <Compile Include="Modification\Operations\Tree\Detatch.cs" />
     <Compile Include="Modification\SelectionHandler.cs" />
     <Compile Include="Modification\Transaction.cs" />
     <Compile Include="Modification\TransactionBuilderExtensions.cs" />
@@ -143,7 +159,11 @@
       <Name>Sledge.Providers</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <EmbeddedResource Include="Components\ClipboardSidebarPanel.resx">
+      <DependentUpon>ClipboardSidebarPanel.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
     <None Include="packages.config" />

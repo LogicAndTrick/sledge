@@ -1,29 +1,30 @@
 using System.Collections.Generic;
-using System.Linq;
+using System.ComponentModel.Composition;
+using Sledge.BspEditor.Primitives;
+using Sledge.BspEditor.Primitives.MapObjectData;
+using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.BspEditor.Tools.Brush.Brushes.Controls;
 using Sledge.Common;
 using Sledge.DataStructures.Geometric;
-using Sledge.DataStructures.MapObjects;
 
 namespace Sledge.BspEditor.Tools.Brush.Brushes
 {
+    [Export(typeof(IBrush))]
     public class PyramidBrush : IBrush
     {
-        public string Name
-        {
-            get { return "Pyramid"; }
-        }
-
-        public bool CanRound { get { return true; } }
+        public string Name => "Pyramid";
+        public bool CanRound => true;
 
         public IEnumerable<BrushControl> GetControls()
         {
             return new List<BrushControl>();
         }
 
-        public IEnumerable<MapObject> Create(IDGenerator generator, Box box, string texture, int roundDecimals)
+        public IEnumerable<IMapObject> Create(UniqueNumberGenerator generator, Box box, string texture, int roundDecimals)
         {
-            var solid = new Solid(generator.GetNextObjectID()) { Colour = Colour.GetRandomBrushColour() };
+            var solid = new Solid(generator.Next("MapObject"));
+            solid.Data.Add(new ObjectColor(Colour.GetRandomBrushColour()));
+
             // The lower Z plane will be base
             var c1 = new Coordinate(box.Start.X, box.Start.Y, box.Start.Z).Round(roundDecimals);
             var c2 = new Coordinate(box.End.X, box.Start.Y, box.Start.Z).Round(roundDecimals);
@@ -40,19 +41,15 @@ namespace Sledge.BspEditor.Tools.Brush.Brushes
                             };
             foreach (var arr in faces)
             {
-                var face = new Face(generator.GetNextFaceID())
+                var face = new Face(generator.Next("Face"))
                 {
-                    Parent = solid,
                     Plane = new Plane(arr[0], arr[1], arr[2]),
-                    Colour = solid.Colour,
                     Texture = {Name = texture }
                 };
-                face.Vertices.AddRange(arr.Select(x => new Vertex(x, face)));
-                face.UpdateBoundingBox();
-                face.AlignTextureToFace();
-                solid.Faces.Add(face);
+                face.Vertices.AddRange(arr);
+                solid.Data.Add(face);
             }
-            solid.UpdateBoundingBox();
+            solid.DescendantsChanged();
             yield return solid;
         }
     }

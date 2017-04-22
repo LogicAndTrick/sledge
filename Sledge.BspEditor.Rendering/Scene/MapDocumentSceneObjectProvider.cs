@@ -84,8 +84,11 @@ namespace Sledge.BspEditor.Rendering.Scene
                 _sceneObjects[smo.MapObject] = smo;
             }
 
-            var ea = new SceneObjectsChangedEventArgs(created, updated, deleted);
-            SceneObjectsChanged?.Invoke(this, ea);
+            if (created.Any() || updated.Any() || deleted.Any())
+            {
+                var ea = new SceneObjectsChangedEventArgs(created, updated, deleted);
+                SceneObjectsChanged?.Invoke(this, ea);
+            }
         }
     }
 }

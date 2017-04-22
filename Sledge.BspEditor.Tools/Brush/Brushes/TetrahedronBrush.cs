@@ -1,12 +1,16 @@
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.Linq;
+using Sledge.BspEditor.Primitives;
+using Sledge.BspEditor.Primitives.MapObjectData;
+using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.BspEditor.Tools.Brush.Brushes.Controls;
 using Sledge.Common;
 using Sledge.DataStructures.Geometric;
-using Sledge.DataStructures.MapObjects;
 
 namespace Sledge.BspEditor.Tools.Brush.Brushes
 {
+    [Export(typeof(IBrush))]
     public class TetrahedronBrush : IBrush
     {
         private readonly BooleanControl _useCentroid;
@@ -16,19 +20,16 @@ namespace Sledge.BspEditor.Tools.Brush.Brushes
             _useCentroid = new BooleanControl(this) { LabelText = "Top vertex at centroid", Checked = false };
         }
 
-        public string Name
-        {
-            get { return "Tetrahedron"; }
-        }
+        public string Name => "Tetrahedron";
 
-        public bool CanRound { get { return true; } }
+        public bool CanRound => true;
 
         public IEnumerable<BrushControl> GetControls()
         {
             yield return _useCentroid;
         }
 
-        public IEnumerable<MapObject> Create(IDGenerator generator, Box box, string texture, int roundDecimals)
+        public IEnumerable<IMapObject> Create(UniqueNumberGenerator generator, Box box, string texture, int roundDecimals)
         {
             var useCentroid = _useCentroid.GetValue();
 
@@ -46,22 +47,20 @@ namespace Sledge.BspEditor.Tools.Brush.Brushes
                 new[] { c4, c2, c1 }
             };
 
-            var solid = new Solid(generator.GetNextObjectID()) { Colour = Colour.GetRandomBrushColour() };
+            var solid = new Solid(generator.Next("MapObject"));
+            solid.Data.Add(new ObjectColor(Colour.GetRandomBrushColour()));
+
             foreach (var arr in faces)
             {
-                var face = new Face(generator.GetNextFaceID())
+                var face = new Face(generator.Next("Face"))
                 {
-                    Parent = solid,
                     Plane = new Plane(arr[0], arr[1], arr[2]),
-                    Colour = solid.Colour,
                     Texture = { Name = texture }
                 };
-                face.Vertices.AddRange(arr.Select(x => new Vertex(x, face)));
-                face.UpdateBoundingBox();
-                face.AlignTextureToFace();
-                solid.Faces.Add(face);
+                face.Vertices.AddRange(arr);
+                solid.Data.Add(face);
             }
-            solid.UpdateBoundingBox();
+            solid.DescendantsChanged();
             yield return solid;
         }
     }

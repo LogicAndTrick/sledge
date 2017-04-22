@@ -8,8 +8,8 @@ namespace Sledge.BspEditor.Tools.Brush.Brushes.Controls
     {
         public string FontName
         {
-            get { return FontPicker.SelectedItem as string; }
-            set { FontPicker.SelectedItem = value; }
+            get => FontPicker.SelectedItem as string;
+            set => FontPicker.SelectedItem = value;
         }
 
         public FontChooserControl(IBrush brush) : base(brush)

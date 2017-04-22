@@ -1,13 +1,16 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.Drawing;
-using System.Linq;
+using Sledge.BspEditor.Primitives;
+using Sledge.BspEditor.Primitives.MapObjectData;
+using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.BspEditor.Tools.Brush.Brushes.Controls;
 using Sledge.Common;
 using Sledge.DataStructures.Geometric;
-using Sledge.DataStructures.MapObjects;
 
 namespace Sledge.BspEditor.Tools.Brush.Brushes
 {
+    [Export(typeof(IBrush))]
     public class PipeBrush : IBrush
     {
         private readonly NumericControl _numSides;
@@ -19,12 +22,8 @@ namespace Sledge.BspEditor.Tools.Brush.Brushes
             _wallWidth = new NumericControl(this) { LabelText = "Wall width", Minimum = 1, Maximum = 1024, Value = 32, Precision = 1 };
         }
 
-        public string Name
-        {
-            get { return "Pipe"; }
-        }
-
-        public bool CanRound { get { return true; } }
+        public string Name => "Pipe";
+        public bool CanRound => true;
 
         public IEnumerable<BrushControl> GetControls()
         {
@@ -32,28 +31,25 @@ namespace Sledge.BspEditor.Tools.Brush.Brushes
             yield return _wallWidth;
         }
 
-        private Solid MakeSolid(IDGenerator generator, IEnumerable<Coordinate[]> faces, string texture, Color col)
+        private Solid MakeSolid(UniqueNumberGenerator generator, IEnumerable<Coordinate[]> faces, string texture, Color col)
         {
-            var solid = new Solid(generator.GetNextObjectID()) { Colour = col };
+            var solid = new Solid(generator.Next("MapObject"));
+            solid.Data.Add(new ObjectColor(col));
             foreach (var arr in faces)
             {
-                var face = new Face(generator.GetNextFaceID())
+                var face = new Face(generator.Next("Face"))
                 {
-                    Parent = solid,
                     Plane = new Plane(arr[0], arr[1], arr[2]),
-                    Colour = solid.Colour,
                     Texture = { Name = texture  }
                 };
-                face.Vertices.AddRange(arr.Select(x => new Vertex(x, face)));
-                face.UpdateBoundingBox();
-                face.AlignTextureToFace();
-                solid.Faces.Add(face);
+                face.Vertices.AddRange(arr);
+                solid.Data.Add(face);
             }
-            solid.UpdateBoundingBox();
+            solid.DescendantsChanged();
             return solid;
         }
 
-        public IEnumerable<MapObject> Create(IDGenerator generator, Box box, string texture, int roundDecimals)
+        public IEnumerable<IMapObject> Create(UniqueNumberGenerator generator, Box box, string texture, int roundDecimals)
         {
             var wallWidth = _wallWidth.GetValue();
             if (wallWidth < 1) yield break;

@@ -6,44 +6,44 @@ namespace Sledge.BspEditor.Tools.Brush.Brushes.Controls
     {
         public decimal Minimum
         {
-            get { return Numeric.Minimum; }
-            set { Numeric.Minimum = value; }
+            get => Numeric.Minimum;
+            set => Numeric.Minimum = value;
         }
 
         public decimal Maximum
         {
-            get { return Numeric.Maximum; }
-            set { Numeric.Maximum = value; }
+            get => Numeric.Maximum;
+            set => Numeric.Maximum = value;
         }
 
         public decimal Value
         {
-            get { return Numeric.Value; }
-            set { Numeric.Value = value; }
+            get => Numeric.Value;
+            set => Numeric.Value = value;
         }
 
         public string LabelText
         {
-            get { return Label.Text; }
-            set { Label.Text = value; }
+            get => Label.Text;
+            set => Label.Text = value;
         }
 
         public bool ControlEnabled
         {
-            get { return Numeric.Enabled; }
-            set { Numeric.Enabled = value; }
+            get => Numeric.Enabled;
+            set => Numeric.Enabled = value;
         }
 
         public int Precision
         {
-            get { return Numeric.DecimalPlaces; }
-            set { Numeric.DecimalPlaces = value; }
+            get => Numeric.DecimalPlaces;
+            set => Numeric.DecimalPlaces = value;
         }
 
         public decimal Increment
         {
-            get { return Numeric.Increment; }
-            set { Numeric.Increment = value; }
+            get => Numeric.Increment;
+            set => Numeric.Increment = value;
         }
 
         public NumericControl(IBrush brush) : base(brush)

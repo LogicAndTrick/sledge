@@ -139,7 +139,7 @@ namespace Sledge.Shell.Registers
                 }
 
                 // Add the node to the parent node
-                var group = _declaredGroups.FirstOrDefault(x => x.Name == item.Name && x.Path == item.Path && x.Section == item.Section);
+                var group = _declaredGroups.FirstOrDefault(x => x.Name == item.Group && x.Path == item.Path && x.Section == item.Section);
                 node.Add(item.ID, new MenuTreeNode(item, group));
             }
         }

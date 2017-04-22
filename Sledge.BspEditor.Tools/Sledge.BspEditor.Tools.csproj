@@ -93,6 +93,12 @@
       <DependentUpon>TextControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Brush\Brushes\CylinderBrush.cs" />
+    <Compile Include="Brush\Brushes\PipeBrush.cs" />
+    <Compile Include="Brush\Brushes\PyramidBrush.cs" />
+    <Compile Include="Brush\Brushes\SphereBrush.cs" />
+    <Compile Include="Brush\Brushes\TetrahedronBrush.cs" />
+    <Compile Include="Brush\Brushes\TorusBrush.cs" />
+    <Compile Include="Brush\Brushes\WedgeBrush.cs" />
     <Compile Include="Brush\BrushTool.cs" />
     <Compile Include="Brush\IBrush.cs" />
     <Compile Include="Draggable\BaseDraggable.cs" />

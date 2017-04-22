@@ -6,20 +6,20 @@ namespace Sledge.BspEditor.Tools.Brush.Brushes.Controls
     {
         public bool Checked
         {
-            get { return Checkbox.Checked; }
-            set { Checkbox.Checked = value; }
+            get => Checkbox.Checked;
+            set => Checkbox.Checked = value;
         }
 
         public string LabelText
         {
-            get { return Checkbox.Text; }
-            set { Checkbox.Text = value; }
+            get => Checkbox.Text;
+            set => Checkbox.Text = value;
         }
 
         public bool ControlEnabled
         {
-            get { return Checkbox.Enabled; }
-            set { Checkbox.Enabled = value; }
+            get => Checkbox.Enabled;
+            set => Checkbox.Enabled = value;
         }
 
         public BooleanControl(IBrush brush) : base(brush)

@@ -28,7 +28,9 @@ namespace Sledge.BspEditor.Modification.Operations
         {
             var ch = new Change(document);
 
+            var par = document.Map.Root.FindByID(_parentId);
             _attachedIds = _objectsToAttach.Select(x => x.ID).ToList();
+
             foreach (var o in _objectsToAttach)
             {
                 // Add parent
@@ -37,7 +39,7 @@ namespace Sledge.BspEditor.Modification.Operations
                 // Add all descendants
                 ch.AddRange(o.FindAll());
 
-                o.Hierarchy.Parent = document.Map.Root.FindByID(_parentId);
+                o.Hierarchy.Parent = par;
             }
             _objectsToAttach = null;
 
@@ -47,8 +49,10 @@ namespace Sledge.BspEditor.Modification.Operations
         public async Task<Change> Reverse(MapDocument document)
         {
             var ch = new Change(document);
-            
-            _objectsToAttach = _attachedIds.Select(x => document.Map.Root.FindByID(x)).Where(x => x != null).ToList();
+
+            var par = document.Map.Root.FindByID(_parentId);
+            _objectsToAttach = _attachedIds.Select(x => par.FindByID(x)).Where(x => x != null).ToList();
+
             foreach (var o in _objectsToAttach)
             {
                 // Remove parent
