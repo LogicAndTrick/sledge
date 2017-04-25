@@ -51,6 +51,13 @@ namespace Sledge.BspEditor.Primitives.MapData
             // Nothing.
         }
 
+        public IMapData Clone()
+        {
+            var c = new Selection();
+            c._selectedObjects.UnionWith(_selectedObjects);
+            return c;
+        }
+
         public IEnumerator<IMapObject> GetEnumerator()
         {
             return _selectedObjects.GetEnumerator();

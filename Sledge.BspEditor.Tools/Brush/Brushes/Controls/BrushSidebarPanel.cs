@@ -10,6 +10,7 @@ using Sledge.Common.Shell.Context;
 namespace Sledge.BspEditor.Tools.Brush.Brushes.Controls
 {
     [Export(typeof(ISidebarComponent))]
+    [SidebarComponent(OrderHint = "F")]
     public partial class BrushSidebarPanel : UserControl, ISidebarComponent
     {
         [ImportMany] private IEnumerable<Lazy<IBrush>> _brushes;

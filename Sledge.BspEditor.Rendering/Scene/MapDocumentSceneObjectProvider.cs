@@ -31,8 +31,8 @@ namespace Sledge.BspEditor.Rendering.Scene
 
         public async Task Initialise()
         {
-            await Update(Document.Map.Root.FindAll(), new IMapObject[0], new IMapObject[0]);
             Oy.Subscribe<Change>("MapDocument:Changed", OnChange);
+            await Update(Document.Map.Root.FindAll(), new IMapObject[0], new IMapObject[0]);
         }
 
         private async Task OnChange(Change change)
@@ -40,6 +40,12 @@ namespace Sledge.BspEditor.Rendering.Scene
             if (change.Document == Document)
             {
                 await Update(change.Added, change.Updated, change.Removed);
+
+                // Document objects are attached to the root
+                if (change.DocumentUpdated)
+                {
+                    await Update(new IMapObject[0], new[] {change.Document.Map.Root}, new IMapObject[0]);
+                }
             }
         }
 

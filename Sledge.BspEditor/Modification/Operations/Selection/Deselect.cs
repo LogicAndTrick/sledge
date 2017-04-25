@@ -9,7 +9,8 @@ namespace Sledge.BspEditor.Modification.Operations
     public class Deselect : IOperation
     {
         private readonly List<long> _idsToDeselect;
-        
+        public bool Trivial => false;
+
         public Deselect(params IMapObject[] objectsToDeselect)
         {
             _idsToDeselect = objectsToDeselect.Where(x => x.IsSelected).Select(x => x.ID).ToList();

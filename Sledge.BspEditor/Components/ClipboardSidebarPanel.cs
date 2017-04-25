@@ -11,11 +11,12 @@ using Sledge.Common.Shell.Context;
 namespace Sledge.BspEditor.Components
 {
     [Export(typeof(ISidebarComponent))]
+    [SidebarComponent(OrderHint = "K")]
     public partial class ClipboardSidebarPanel : UserControl, ISidebarComponent
     {
         [Import] private Lazy<ClipboardManager> _clipboard;
 
-        public string Title => "Cliboard";
+        public string Title => "Clipboard";
         public object Control => this;
 
         public ClipboardSidebarPanel()
@@ -37,6 +38,7 @@ namespace Sledge.BspEditor.Components
 
             foreach (var val in _clipboard.Value.GetClipboardRing().Reverse())
             {
+                // todo !clipboard panel nice interface
                 ClipboardList.Items.Add(val);
             }
             if (ClipboardList.Items.Count > 0) ClipboardList.SelectedIndex = 0;

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Windows.Forms;
 using LogicAndTrick.Oy;
 using Sledge.BspEditor.Documents;
+using Sledge.BspEditor.Primitives.MapData;
 using Sledge.BspEditor.Rendering.Scene;
 using Sledge.BspEditor.Rendering.Viewport;
 using Sledge.Common.Shell.Components;
@@ -36,16 +37,12 @@ namespace Sledge.BspEditor.Tools
             return context.Get<MapDocument>("ActiveDocument") != null;
         }
 
-        public Coordinate Snap(Coordinate c, decimal spacing = 0)
+        public Coordinate Snap(Coordinate c)
         {
-            // todo !snap
-            //if (!Map.SnapToGrid) return c;
-
-            //var snap = (Select.SnapStyle == SnapStyle.SnapOnAlt && KeyboardState.Alt) ||
-            //           (Select.SnapStyle == SnapStyle.SnapOffAlt && !KeyboardState.Alt);
-
-            //return snap ? c.Snap(spacing == 0 ? Map.GridSpacing : spacing) : c;
-            return c.Snap(16);
+            var gridData = Document.Map.Data.GetOne<GridData>();
+            var snap = !KeyboardState.Alt && gridData?.SnapToGrid == true;
+            var grid = gridData?.Grid;
+            return snap && grid != null ? grid.Snap(c) : c;
         }
 
         public Coordinate SnapIfNeeded(Coordinate c)
@@ -55,17 +52,17 @@ namespace Sledge.BspEditor.Tools
 
         public Coordinate SnapToSelection(Coordinate c, MapViewport vp)
         {
+            var gridData = Document.Map.Data.GetOne<GridData>();
+            var snap = !KeyboardState.Alt && gridData?.SnapToGrid == true;
+            if (!snap) return c;
+
+            var grid = gridData?.Grid;
+            var snapped = grid != null ? grid.Snap(c) : c;
+
+            if (Document.Selection.IsEmpty) return snapped;
+
             return c;
             // todo !snap
-            //if (!Document.Map.SnapToGrid) return c;
-
-            //var snap = (Select.SnapStyle == SnapStyle.SnapOnAlt && KeyboardState.Alt) ||
-            //           (Select.SnapStyle == SnapStyle.SnapOffAlt && !KeyboardState.Alt);
-
-            //if (!snap) return c;
-
-            //var snapped = c.Snap(Document.Map.GridSpacing);
-            //if (Document.Selection.InFaceSelection || Document.Selection.IsEmpty()) return snapped;
 
             //// Try and snap the the selection box center
             //var selBox = Document.Selection.GetSelectionBoundingBox();
@@ -116,22 +113,20 @@ namespace Sledge.BspEditor.Tools
 
         protected Coordinate GetNudgeValue(Keys k)
         {
-            // todo !nudge
-            //if (!Select.ArrowKeysNudgeSelection) return null;
-            var ctrl = KeyboardState.Ctrl;
-            var gridoff = false;// Select.NudgeStyle == NudgeStyle.GridOffCtrl;
-            var grid = (gridoff && !ctrl) || (!gridoff && ctrl);
-            var val = 16; //grid ? Document.Map.GridSpacing : Select.NudgeUnits;
+            var gridData = Document.Map.Data.GetOne<GridData>();
+            var useGrid = !KeyboardState.Ctrl && gridData?.SnapToGrid != false;
+            var grid = gridData?.Grid;
+            var val = grid != null && !useGrid ? grid.AddStep(Coordinate.Zero, Coordinate.One) : Coordinate.One;
             switch (k)
             {
                 case Keys.Left:
-                    return new Coordinate(-val, 0, 0);
+                    return new Coordinate(-val.X, 0, 0);
                 case Keys.Right:
-                    return new Coordinate(val, 0, 0);
+                    return new Coordinate(val.X, 0, 0);
                 case Keys.Up:
-                    return new Coordinate(0, val, 0);
+                    return new Coordinate(0, val.Y, 0);
                 case Keys.Down:
-                    return new Coordinate(0, -val, 0);
+                    return new Coordinate(0, -val.Y, 0);
             }
             return null;
         }

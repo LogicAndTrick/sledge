@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
 
@@ -7,7 +8,7 @@ namespace Sledge.BspEditor.Primitives.MapObjectData
     /// <summary>
     /// Collection of metadata for an object
     /// </summary>
-    public class MapObjectDataCollection : ISerializable
+    public class MapObjectDataCollection : IEnumerable<IMapObjectData>, ISerializable
     {
         public List<IMapObjectData> Data { get; }
 
@@ -54,6 +55,16 @@ namespace Sledge.BspEditor.Primitives.MapObjectData
                 copy.Add(d.Clone());
             }
             return copy;
+        }
+
+        public IEnumerator<IMapObjectData> GetEnumerator()
+        {
+            return Data.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
         }
     }
 }

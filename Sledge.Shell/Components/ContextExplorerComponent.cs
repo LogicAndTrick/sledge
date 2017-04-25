@@ -11,6 +11,7 @@ using Sledge.Common.Shell.Context;
 namespace Sledge.Shell.Components
 {
     [Export(typeof(ISidebarComponent))]
+    [SidebarComponent(OrderHint = "Y")]
     public class ContextExplorerComponent : ISidebarComponent
     {
         private readonly ListBox _control;

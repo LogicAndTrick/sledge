@@ -11,6 +11,7 @@ namespace Sledge.BspEditor.Modification.Operations.Data
     {
         private long _id;
         private List<IMapObjectData> _dataToRemove;
+        public bool Trivial => false;
 
         public RemoveMapObjectData(long id, params IMapObjectData[] dataToRemove)
         {

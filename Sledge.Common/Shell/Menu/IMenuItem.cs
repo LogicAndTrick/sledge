@@ -32,6 +32,6 @@ namespace Sledge.Common.Shell.Menu
         /// </summary>
         string OrderHint { get; }
 
-        Task Invoke();
+        Task Invoke(IContext context);
     }
 }

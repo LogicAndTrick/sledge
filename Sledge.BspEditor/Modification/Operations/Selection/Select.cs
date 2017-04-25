@@ -9,7 +9,8 @@ namespace Sledge.BspEditor.Modification.Operations
     public class Select : IOperation
     {
         private readonly List<long> _idsToSelect;
-        
+        public bool Trivial => false;
+
         public Select(params IMapObject[] objectsToSelect)
         {
             _idsToSelect = objectsToSelect.Where(x => !x.IsSelected).Select(x => x.ID).ToList();

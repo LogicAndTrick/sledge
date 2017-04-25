@@ -11,6 +11,7 @@ namespace Sledge.BspEditor.Modification.Operations.Data
     {
         private long _id;
         private List<IMapObjectData> _dataToAdd;
+        public bool Trivial => false;
 
         public AddMapObjectData(long id, params IMapObjectData[] dataToAdd)
         {

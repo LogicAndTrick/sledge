@@ -24,19 +24,19 @@ namespace Sledge.Shell.Registers
 
         // Store the context (the menu register is one of the few things that should need static access to the context)
         [Import] private IContext _context;
-
-        [ImportMany] private IEnumerable<Lazy<ICommand>> _commands;
+        
+        [ImportMany] private IEnumerable<Lazy<IMenuItemProvider>> _itemProviders;
         [ImportMany] private IEnumerable<Lazy<IMenuMetadataProvider>> _metaDataProviders;
 
         public async Task OnStartup()
         {
             // Register commands as menu items
-            foreach (var export in _commands)
+            foreach (var export in _itemProviders)
             {
-                var ty = export.Value.GetType();
-                var mia = ty.GetCustomAttributes(typeof(MenuItemAttribute), false).OfType<MenuItemAttribute>().FirstOrDefault();
-                if (mia == null) continue;
-                Add(new CommandMenuItem(export.Value, mia.Section, mia.Path, mia.Group, mia.OrderHint));
+                foreach (var menuItem in export.Value.GetMenuItems())
+                {
+                    Add(menuItem);
+                }
             }
 
             // Register metadata providers
@@ -49,7 +49,7 @@ namespace Sledge.Shell.Registers
 
         public async Task OnInitialise()
         {
-            _tree = new VirtualMenuTree(_shell.MenuStrip, _declaredSections, _declaredGroups);
+            _tree = new VirtualMenuTree(_context, _shell.MenuStrip, _declaredSections, _declaredGroups);
 
             _shell.Invoke((MethodInvoker) delegate
             {
@@ -88,14 +88,16 @@ namespace Sledge.Shell.Registers
 
         private class VirtualMenuTree
         {
+            private readonly IContext _context;
             private readonly List<MenuSection> _declaredSections;
             private readonly List<MenuGroup> _declaredGroups;
 
             public MenuStrip MenuStrip { get; set; }
             public Dictionary<string, MenuTreeNode> RootNodes { get; set; }
 
-            public VirtualMenuTree(MenuStrip menuStrip, List<MenuSection> declaredSections, List<MenuGroup> declaredGroups)
+            public VirtualMenuTree(IContext context, MenuStrip menuStrip, List<MenuSection> declaredSections, List<MenuGroup> declaredGroups)
             {
+                _context = context;
                 _declaredSections = declaredSections;
                 _declaredGroups = declaredGroups;
                 MenuStrip = menuStrip;
@@ -107,7 +109,7 @@ namespace Sledge.Shell.Registers
 
             private void AddSection(string name)
             {
-                var rtn = new MenuTreeNode(name, null);
+                var rtn = new MenuTreeNode(_context, name, null);
                 RootNodes.Add(name, rtn);
                 MenuStrip.Items.Add(rtn.ToolStripMenuItem);
             }
@@ -116,8 +118,6 @@ namespace Sledge.Shell.Registers
             {
                 // If the section isn't known, add it to the end
                 if (!RootNodes.ContainsKey(item.Section)) AddSection(item.Section);
-
-                // todo !menu sorting/grouping
 
                 // Find the parent node for this item
                 // Start at the section root node
@@ -133,14 +133,14 @@ namespace Sledge.Shell.Registers
                     if (!node.Children.ContainsKey(p))
                     {
                         var gr = _declaredGroups.FirstOrDefault(x => x.Name == p && x.Path == String.Join("/", currentPath) && x.Section == item.Section);
-                        node.Add(p, new MenuTreeNode(p, gr));
+                        node.Add(p, new MenuTreeNode(_context, p, gr));
                     }
                     node = node.Children[p];
                 }
 
                 // Add the node to the parent node
                 var group = _declaredGroups.FirstOrDefault(x => x.Name == item.Group && x.Path == item.Path && x.Section == item.Section);
-                node.Add(item.ID, new MenuTreeNode(item, group));
+                node.Add(item.ID, new MenuTreeNode(_context, item, group));
             }
         }
 
@@ -161,13 +161,16 @@ namespace Sledge.Shell.Registers
         private class MenuTreeNode
         {
             private readonly MenuGroup _group;
+            private IContext _context;
+
             public ToolStripMenuItem ToolStripMenuItem { get; set; }
             public IMenuItem MenuItem { get; set; }
             public List<MenuTreeGroup> Groups { get; set; }
             public Dictionary<string, MenuTreeNode> Children { get; }
 
-            public MenuTreeNode(IMenuItem menuItem, MenuGroup group)
+            public MenuTreeNode(IContext context, IMenuItem menuItem, MenuGroup group)
             {
+                _context = context;
                 _group = group ?? new MenuGroup("", "", "", "T");
                 ToolStripMenuItem = new ToolStripMenuItem(menuItem.Description) {Tag = this};
                 ToolStripMenuItem.Click += Fire;
@@ -176,8 +179,9 @@ namespace Sledge.Shell.Registers
                 Children = new Dictionary<string, MenuTreeNode>();
             }
 
-            public MenuTreeNode(string text, MenuGroup group)
+            public MenuTreeNode(IContext context, string text, MenuGroup group)
             {
+                _context = context;
                 _group = group ?? new MenuGroup("", "", "", "T");
                 ToolStripMenuItem = new ToolStripMenuItem(text) {Tag = this};
                 Groups = new List<MenuTreeGroup>();
@@ -186,7 +190,7 @@ namespace Sledge.Shell.Registers
 
             private void Fire(object sender, EventArgs e)
             {
-                MenuItem?.Invoke();
+                MenuItem?.Invoke(_context);
             }
 
             public void Add(string name, MenuTreeNode menuTreeNode)

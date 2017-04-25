@@ -9,14 +9,23 @@ namespace Sledge.BspEditor.Modification.Operations.Data
     public class AddMapData : IOperation
     {
         private List<IMapData> _dataToAdd;
+        public bool Trivial { get; private set; }
 
-        public AddMapData(params IMapData[] dataToAdd)
+        public AddMapData(params IMapData[] dataToAdd) : this(false, dataToAdd)
         {
-            _dataToAdd = dataToAdd.ToList();
         }
 
-        public AddMapData(IEnumerable<IMapData> dataToAdd)
+        public AddMapData(IEnumerable<IMapData> dataToAdd) : this(false, dataToAdd)
         {
+        }
+
+        public AddMapData(bool trivial, params IMapData[] dataToAdd) : this(trivial, dataToAdd.AsEnumerable())
+        {
+        }
+
+        public AddMapData(bool trivial, IEnumerable<IMapData> dataToAdd)
+        {
+            Trivial = trivial;
             _dataToAdd = dataToAdd.ToList();
         }
 

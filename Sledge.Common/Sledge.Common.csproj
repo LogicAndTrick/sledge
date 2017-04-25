@@ -53,6 +53,7 @@
     <Compile Include="Shell\Components\IBottomTabComponent.cs" />
     <Compile Include="Shell\Components\ISidebarComponent.cs" />
     <Compile Include="Shell\Components\ITool.cs" />
+    <Compile Include="Shell\Components\SidebarComponentAttribute.cs" />
     <Compile Include="Shell\Context\ContextInfo.cs" />
     <Compile Include="Shell\Context\IContext.cs" />
     <Compile Include="DMath.cs" />
@@ -80,6 +81,7 @@
     <Compile Include="Mediator\MultiDictionary.cs" />
     <Compile Include="Shell\Menu\CommandMenuItem.cs" />
     <Compile Include="Shell\Menu\IMenuItem.cs" />
+    <Compile Include="Shell\Menu\IMenuItemProvider.cs" />
     <Compile Include="Shell\Menu\IMenuMetadataProvider.cs" />
     <Compile Include="Shell\Menu\MenuGroup.cs" />
     <Compile Include="Shell\Menu\MenuItemAttribute.cs" />

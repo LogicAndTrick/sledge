@@ -20,6 +20,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <NoWarn>CS4014</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -97,6 +98,11 @@
     <Compile Include="Environment\IEnvironment.cs" />
     <Compile Include="Environment\IEnvironmentData.cs" />
     <Compile Include="Environment\TextureCollection.cs" />
+    <Compile Include="Grid\GridLine.cs" />
+    <Compile Include="Grid\GridLineType.cs" />
+    <Compile Include="Grid\IGrid.cs" />
+    <Compile Include="Grid\NoGrid.cs" />
+    <Compile Include="Grid\SquareGrid.cs" />
     <Compile Include="Modification\MapDocumentOperation.cs" />
     <Compile Include="Modification\OperationHandler.cs" />
     <Compile Include="Modification\Operations\Data\AddMapData.cs" />
@@ -109,9 +115,11 @@
     <Compile Include="Modification\Operations\Selection\Deselect.cs" />
     <Compile Include="Modification\Operations\Selection\Select.cs" />
     <Compile Include="Modification\Operations\Tree\Detatch.cs" />
+    <Compile Include="Modification\Operations\TrivialOperation.cs" />
     <Compile Include="Modification\SelectionHandler.cs" />
     <Compile Include="Modification\Transaction.cs" />
     <Compile Include="Modification\TransactionBuilderExtensions.cs" />
+    <Compile Include="Primitives\MapData\GridData.cs" />
     <Compile Include="Primitives\MapData\Selection.cs" />
     <Compile Include="Primitives\MapObjects\BaseMapObject.cs" />
     <Compile Include="Primitives\MapObjects\Entity.cs" />

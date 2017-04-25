@@ -9,14 +9,23 @@ namespace Sledge.BspEditor.Modification.Operations.Data
     public class RemoveMapData : IOperation
     {
         private List<IMapData> _dataToRemove;
+        public bool Trivial { get; private set; }
 
-        public RemoveMapData(params IMapData[] dataToRemove)
+        public RemoveMapData(params IMapData[] dataToRemove) : this(false, dataToRemove)
         {
-            _dataToRemove = dataToRemove.ToList();
         }
 
-        public RemoveMapData(IEnumerable<IMapData> dataToRemove)
+        public RemoveMapData(IEnumerable<IMapData> dataToRemove) : this(false, dataToRemove)
         {
+        }
+
+        public RemoveMapData(bool trivial, params IMapData[] dataToRemove) : this(trivial, dataToRemove.AsEnumerable())
+        {
+        }
+
+        public RemoveMapData(bool trivial, IEnumerable<IMapData> dataToRemove)
+        {
+            Trivial = trivial;
             _dataToRemove = dataToRemove.ToList();
         }
 

@@ -21,6 +21,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <NoWarn>CS4014</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -82,6 +83,7 @@
     <Compile Include="Commands\Exit.cs" />
     <Compile Include="Commands\OpenFile.cs" />
     <Compile Include="Commands\SaveFile.cs" />
+    <Compile Include="Components\CommandMenuItemProvider.cs" />
     <Compile Include="Components\ContextExplorerComponent.cs" />
     <Compile Include="Commands\OpenCommandBoxCommand.cs" />
     <Compile Include="Commands\CommandActivator.cs" />

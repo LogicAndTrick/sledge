@@ -62,7 +62,8 @@ namespace Sledge.BspEditor.Tools.Draggable
         {
             if (e.Dragging || e.Button != MouseButtons.Left) return;
             if (CurrentDraggable == null) return;
-            var point = viewport.ScreenToWorld(e.X, viewport.Height - e.Y);
+            var point = viewport.ProperScreenToWorld(e.X, e.Y);
+            point = viewport.Flatten(point);
             OnDraggableClicked(viewport, camera, e, point, CurrentDraggable);
             if (!e.Handled) CurrentDraggable.Click(viewport, e, point);
             Invalidate();
@@ -71,7 +72,8 @@ namespace Sledge.BspEditor.Tools.Draggable
         protected override void MouseDown(MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
         {
             if (CurrentDraggable == null) return;
-            var point = viewport.ScreenToWorld(e.X, viewport.Height - e.Y);
+            var point = viewport.ProperScreenToWorld(e.X, e.Y);
+            point = viewport.Flatten(point);
             OnDraggableMouseDown(viewport, camera, e, point, CurrentDraggable);
             if (!e.Handled) CurrentDraggable.MouseDown(viewport, e, point);
             Invalidate();
@@ -80,7 +82,8 @@ namespace Sledge.BspEditor.Tools.Draggable
         protected override void MouseUp(MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
         {
             if (CurrentDraggable == null) return;
-            var point = viewport.ScreenToWorld(e.X, viewport.Height - e.Y);
+            var point = viewport.ProperScreenToWorld(e.X, e.Y);
+            point = viewport.Flatten(point);
             OnDraggableMouseUp(viewport, camera, e, point, CurrentDraggable);
             if (!e.Handled) CurrentDraggable.MouseUp(viewport, e, point);
             Invalidate();
@@ -89,7 +92,8 @@ namespace Sledge.BspEditor.Tools.Draggable
         protected override void MouseMove(MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
         {
             if (e.Dragging || e.Button == MouseButtons.Left) return;
-            var point = viewport.ScreenToWorld(e.X, viewport.Height - e.Y);
+            var point = viewport.ProperScreenToWorld(e.X, e.Y);
+            point = viewport.Flatten(point);
             IDraggable drag = null;
             foreach (var state in States)
             {
@@ -118,7 +122,8 @@ namespace Sledge.BspEditor.Tools.Draggable
         {
             if (e.Button != MouseButtons.Left) return;
             if (CurrentDraggable == null) return;
-            _lastDragPoint = viewport.ScreenToWorld(e.X, viewport.Height - e.Y);
+            _lastDragPoint = viewport.ProperScreenToWorld(e.X, e.Y);
+            _lastDragPoint = viewport.Flatten(_lastDragPoint);
             OnDraggableDragStarted(viewport, camera, e, _lastDragPoint, CurrentDraggable);
             if (!e.Handled) CurrentDraggable.StartDrag(viewport, e, _lastDragPoint);
             _lastDragMoveEvent = e;
@@ -129,7 +134,8 @@ namespace Sledge.BspEditor.Tools.Draggable
         {
             if (e.Button != MouseButtons.Left) return;
             if (CurrentDraggable == null) return;
-            var point = viewport.ScreenToWorld(e.X, viewport.Height - e.Y);
+            var point = viewport.ProperScreenToWorld(e.X, e.Y);
+            point = viewport.Flatten(point);
             OnDraggableDragMoving(viewport, camera, e, _lastDragPoint, point, CurrentDraggable);
             if (!e.Handled) CurrentDraggable.Drag(viewport, e, _lastDragPoint, point);
             if (!e.Handled) OnDraggableDragMoved(viewport, camera, e, _lastDragPoint, point, CurrentDraggable);
@@ -142,7 +148,8 @@ namespace Sledge.BspEditor.Tools.Draggable
         {
             if (e.Button != MouseButtons.Left) return;
             if (CurrentDraggable == null) return;
-            var point = viewport.ScreenToWorld(e.X, viewport.Height - e.Y);
+            var point = viewport.ProperScreenToWorld(e.X, e.Y);
+            point = viewport.Flatten(point);
             OnDraggableDragEnded(viewport, camera, e, point, CurrentDraggable);
             if (!e.Handled) CurrentDraggable.EndDrag(viewport, e, point);
             _lastDragMoveEvent = null;
@@ -154,7 +161,8 @@ namespace Sledge.BspEditor.Tools.Draggable
         {
             if (viewport.Is2D && _lastDragMoveEvent != null && CurrentDraggable != null && _lastDragMoveEvent.Sender == viewport)
             {
-                var point = viewport.ScreenToWorld(_lastDragMoveEvent.X, viewport.Height - _lastDragMoveEvent.Y);
+                var point = viewport.ProperScreenToWorld(_lastDragMoveEvent.X, _lastDragMoveEvent.Y);
+                point = viewport.Flatten(point);
                 var ev = new ViewportEvent(viewport)
                 {
                     Dragging = true,

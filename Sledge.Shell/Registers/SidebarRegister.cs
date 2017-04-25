@@ -10,6 +10,7 @@ using Sledge.Common.Logging;
 using Sledge.Common.Shell.Components;
 using Sledge.Common.Shell.Context;
 using Sledge.Common.Shell.Hooks;
+using Sledge.Common.Shell.Menu;
 using Sledge.Common.Shell.Settings;
 using Sledge.Shell.Controls;
 
@@ -31,16 +32,18 @@ namespace Sledge.Shell.Registers
             // Register the exported sidebar components
             foreach (var export in _sidebarComponents)
             {
+                var ty = export.Value.GetType();
+                var mia = ty.GetCustomAttributes(typeof(SidebarComponentAttribute), false).OfType<SidebarComponentAttribute>().FirstOrDefault();
+                Add(export.Value, mia?.OrderHint);
                 Log.Debug("Sidebar", "Loaded: " + export.Value.GetType().FullName);
-                Add(export.Value);
             }
 
             // Subscribe to context changes
             Oy.Subscribe<IContext>("Context:Changed", ContextChanged);
         }
 
-        private readonly List<SidebarComponent> _left;
-        private readonly List<SidebarComponent> _right;   
+        private List<SidebarComponent> _left;
+        private List<SidebarComponent> _right;   
 
         public SidebarRegister()
         {
@@ -52,11 +55,13 @@ namespace Sledge.Shell.Registers
         /// Add a sidebar component to the right sidebar
         /// </summary>
         /// <param name="component">The component to add</param>
-        private void Add(ISidebarComponent component)
+        /// <param name="orderHint"></param>
+        private void Add(ISidebarComponent component, string orderHint)
         {
-            var sc = new SidebarComponent(component);
+            var sc = new SidebarComponent(component, orderHint);
             _right.Add(sc);
-            _shell.RightSidebarContainer.Add(sc.Panel);
+            _right = _right.OrderBy(x => x.OrderHint).ToList();
+            _shell.RightSidebarContainer.Insert(sc.Panel, _right.IndexOf(sc));
         }
 
         private async Task ContextChanged(IContext context)
@@ -144,6 +149,8 @@ namespace Sledge.Shell.Registers
         /// </summary>
         private class SidebarComponent
         {
+            public string OrderHint { get; }
+
             /// <summary>
             /// The source component
             /// </summary>
@@ -159,15 +166,17 @@ namespace Sledge.Shell.Registers
             /// </summary>
             public string ID => Component.GetType().FullName;
 
-            public SidebarComponent(ISidebarComponent component)
+            public SidebarComponent(ISidebarComponent component, string orderHint)
             {
+                OrderHint = orderHint ?? "T";
                 Component = component;
                 Panel = new SidebarPanel
                 {
                     Text = component.Title,
                     Name = component.Title,
                     Dock = DockStyle.Fill,
-                    Hidden = false
+                    Hidden = false,
+                    Tag = this
                 };
                 Panel.AddControl((Control) component.Control);
             }

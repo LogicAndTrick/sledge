@@ -98,7 +98,7 @@ namespace Sledge.BspEditor.Tools.Widgets
                 var first = test.OnPlane(line.Start) > 0 ? line.Start : line.End;
                 line = new Line(first, isect);
             }
-            cache.Cache[type].Add(new Line(cache.MapViewport.WorldToScreen(line.Start), cache.MapViewport.WorldToScreen(line.End)));
+            cache.Cache[type].Add(new Line(cache.MapViewport.ProperWorldToScreen(line.Start), cache.MapViewport.ProperWorldToScreen(line.End)));
         }
 
         private void UpdateCache(MapViewport viewport, PerspectiveCamera camera, MapDocument document)
@@ -185,7 +185,7 @@ namespace Sledge.BspEditor.Tools.Widgets
         {
             if (_mouseMovePoint == null || _mouseDownPoint == null || _pivotPoint == null) return null;
 
-            var originPoint = viewport.WorldToScreen(_pivotPoint);
+            var originPoint = viewport.ProperWorldToScreen(_pivotPoint);
             var origv = (_mouseDownPoint - originPoint).Normalise();
             var newv = (_mouseMovePoint - originPoint).Normalise();
             var angle = DMath.Acos(Math.Max(-1, Math.Min(1, origv.Dot(newv))));

@@ -123,9 +123,19 @@ namespace Sledge.BspEditor.Tools.Selection
             });
             yield return Oy.Subscribe<Change>("MapDocument:Changed", x =>
             {
-                if (x.Document == Document) SelectionChanged();
+                if (x.Document == Document)
+                {
+                    if (x.HasObjectChanges) SelectionChanged();
+                    if (x.DocumentUpdated) IgnoreGroupingPossiblyChanged();
+                }
             });
             // todo !selection ignore grouping
+        }
+
+        private bool _lastIgnoreGroupingValue;
+        private void IgnoreGroupingPossiblyChanged()
+        {
+            //
         }
 
         public override void ToolSelected()
@@ -265,22 +275,12 @@ namespace Sledge.BspEditor.Tools.Selection
 
         protected override void MouseDoubleClick(MapViewport viewport, PerspectiveCamera camera, ViewportEvent e)
         {
-            // todo !selection mouse double click
-            // Don't show Object Properties while navigating the view, because mouse cursor will be hidden
-            //if (KeyboardState.IsKeyDown(Keys.Space)) return;
+            if (Document.Selection.IsEmpty) return;
 
-            //if (Sledge.Settings.Select.DoubleClick3DAction == DoubleClick3DAction.Nothing) return;
-            //if (!MapDocument.Selection.IsEmpty())
-            //{
-            //    if (Sledge.Settings.Select.DoubleClick3DAction == DoubleClick3DAction.ObjectProperties)
-            //    {
-            //        Mediator.Publish(HotkeysMediator.ObjectProperties);
-            //    }
-            //    else if (Sledge.Settings.Select.DoubleClick3DAction == DoubleClick3DAction.TextureTool)
-            //    {
-            //        Mediator.Publish(HotkeysMediator.SwitchTool, HotkeyTool.Texture);
-            //    }
-            //}
+            // todo !object properties window
+            // Don't show Object Properties while navigating the view, because mouse cursor will be hidden
+            if (KeyboardState.IsKeyDown(Keys.Space)) return;
+            Oy.Publish("BspEditor:ObjectProperties", new object());
         }
 
         private Coordinate GetIntersectionPoint(IMapObject obj, Line line)
@@ -311,6 +311,7 @@ namespace Sledge.BspEditor.Tools.Selection
         /// When the mouse is pressed in the 3D view, we want to select the clicked object.
         /// </summary>
         /// <param name="viewport">The viewport that was clicked</param>
+        /// <param name="camera"></param>
         /// <param name="e">The click event</param>
         protected override void MouseDown(MapViewport viewport, PerspectiveCamera camera, ViewportEvent e)
         {
@@ -488,7 +489,7 @@ namespace Sledge.BspEditor.Tools.Selection
             var tolerance = 4 / (decimal) viewport.Zoom; // Selection tolerance of four pixels
             var used = viewport.Expand(new Coordinate(tolerance, tolerance, 0));
             var add = used + unused;
-            var click = viewport.Expand(viewport.ScreenToWorld(e.X, viewport.Height - e.Y));
+            var click = viewport.ProperScreenToWorld(e.X, e.Y);
             var box = new Box(click - add, click + add);
 
             // todo !selection center handles

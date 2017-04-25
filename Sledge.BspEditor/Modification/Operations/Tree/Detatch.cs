@@ -11,6 +11,7 @@ namespace Sledge.BspEditor.Modification.Operations
         private long _parentId;
         private List<long> _idsToDetatch;
         private List<IMapObject> _detatchedObjects;
+        public bool Trivial => false;
 
         public Detatch(long parentId, params IMapObject[] objectsToAttach)
         {

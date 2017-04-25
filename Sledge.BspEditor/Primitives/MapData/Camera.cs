@@ -30,16 +30,26 @@ namespace Sledge.BspEditor.Primitives.MapData
             info.AddValue("LookPosition", LookPosition);
         }
 
+        public IMapData Clone()
+        {
+            return new Camera
+            {
+                EyePosition = EyePosition,
+                LookPosition = LookPosition,
+                IsActive = IsActive
+            };
+        }
+
         public decimal Length
         {
-            get { return (LookPosition - EyePosition).VectorMagnitude(); }
-            set { LookPosition = EyePosition + Direction * value; }
+            get => (LookPosition - EyePosition).VectorMagnitude();
+            set => LookPosition = EyePosition + Direction * value;
         }
 
         public Coordinate Direction
         {
-            get { return (LookPosition - EyePosition).Normalise(); }
-            set { LookPosition = EyePosition + value.Normalise() * Length; }
+            get => (LookPosition - EyePosition).Normalise();
+            set => LookPosition = EyePosition + value.Normalise() * Length;
         }
     }
 }

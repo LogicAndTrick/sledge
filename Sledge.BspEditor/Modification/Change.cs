@@ -17,6 +17,8 @@ namespace Sledge.BspEditor.Modification
         public IEnumerable<IMapObject> Removed => _removed;
         public bool DocumentUpdated { get; private set; }
 
+        public bool HasObjectChanges => _added.Count + _updated.Count + _removed.Count > 0;
+
         public Change(MapDocument document)
         {
             Document = document;

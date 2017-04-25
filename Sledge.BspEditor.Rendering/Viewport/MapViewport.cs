@@ -360,39 +360,23 @@ namespace Sledge.BspEditor.Rendering.Viewport
             }
         }
 
-        public Coordinate ScreenToWorld(Point location)
+        public Coordinate ProperScreenToWorld(Point location)
         {
-            return ScreenToWorld(location.X, location.Y);
+            return ProperScreenToWorld(location.X, location.Y);
         }
 
-        public Coordinate ScreenToWorld(decimal x, decimal y)
+        public Coordinate ProperScreenToWorld(decimal x, decimal y)
         {
-            return ScreenToWorld(new Coordinate(x, y, 0));
+            return ProperScreenToWorld(new Coordinate(x, y, 0));
         }
 
-        public Coordinate ScreenToWorld(Coordinate location)
-        {
-            // todo this is done like this for compatibility, update the references if possible...
-            location = new Coordinate(location.X, Height - location.Y, location.Z);
-            var s2w = Viewport.Camera.ScreenToWorld(location.ToVector3(), Width, Height);
-            return Viewport.Camera.Flatten(s2w).ToCoordinate();
-        }
-
-        // todo once the bad S2W impl is gone, rename this to ScreenToWorld
+        // todo !after removing old editor project, rename this to ScreenToWorld
         public Coordinate ProperScreenToWorld(Coordinate location)
         {
             return Viewport.Camera.ScreenToWorld(location.ToVector3(), Width, Height).ToCoordinate();
         }
 
-        public Coordinate WorldToScreen(Coordinate location)
-        {
-            // todo same as S2W
-            var exp = Viewport.Camera.Expand(location.ToVector3());
-            location = Viewport.Camera.WorldToScreen(exp, Width, Height).ToCoordinate();
-            return new Coordinate(location.X, Height - location.Y, location.Z);
-        }
-
-        // todo once the bad W2S impl is gone, rename this to WorldToScreen
+        // todo !after removing old editor project, rename this to WorldToScreen
         public Coordinate ProperWorldToScreen(Coordinate location)
         {
             return Viewport.Camera.WorldToScreen(location.ToVector3(), Width, Height).ToCoordinate();

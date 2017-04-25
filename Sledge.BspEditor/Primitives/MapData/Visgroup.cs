@@ -37,7 +37,7 @@ namespace Sledge.BspEditor.Primitives.MapData
             info.AddValue("Parent", Parent);
         }
 
-        public virtual Visgroup Clone()
+        public virtual IMapData Clone()
         {
             return new Visgroup
             {

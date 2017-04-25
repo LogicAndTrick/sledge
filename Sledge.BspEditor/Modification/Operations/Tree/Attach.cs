@@ -11,6 +11,7 @@ namespace Sledge.BspEditor.Modification.Operations
         private long _parentId;
         private List<IMapObject> _objectsToAttach;
         private List<long> _attachedIds;
+        public bool Trivial => false;
 
         public Attach(long parentId, params IMapObject[] objectsToAttach)
         {

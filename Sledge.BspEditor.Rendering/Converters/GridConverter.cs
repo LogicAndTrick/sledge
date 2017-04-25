@@ -1,30 +1,35 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 using OpenTK;
 using Sledge.BspEditor.Documents;
+using Sledge.BspEditor.Grid;
+using Sledge.BspEditor.Primitives.MapData;
 using Sledge.BspEditor.Primitives.MapObjects;
-using Sledge.DataStructures.MapObjects;
+using Sledge.BspEditor.Rendering.Scene;
+using Sledge.DataStructures.Geometric;
 using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Interfaces;
 using Sledge.Rendering.Scenes.Elements;
 
 namespace Sledge.BspEditor.Rendering.Converters
 {
+    [Export(typeof(IMapObjectSceneConverter))]
     public class GridConverter : IMapObjectSceneConverter
     {
-        public MapObjectSceneConverterPriority Priority { get { return MapObjectSceneConverterPriority.OverrideLow; } }
+        public MapObjectSceneConverterPriority Priority => MapObjectSceneConverterPriority.OverrideLow;
 
-        public bool ShouldStopProcessing(SceneMapObject smo, MapObject obj)
+        public bool ShouldStopProcessing(SceneMapObject smo, IMapObject obj)
         {
             return false;
         }
 
-        public bool Supports(MapObject obj)
+        public bool Supports(IMapObject obj)
         {
-            return obj is World;
+            return obj is Root;
         }
 
         public async Task<bool> Convert(SceneMapObject smo, MapDocument document, IMapObject obj)
@@ -51,11 +56,8 @@ namespace Sledge.BspEditor.Rendering.Converters
 
         public class GridElement : Element
         {
-            public int Low { get; private set; }
-            public int High { get; private set; }
-            public float Step { get; private set; }
-            public bool ShowGrid { get; set; }
-            public override string ElementGroup { get { return "Grid"; } }
+            private IGrid _grid;
+            public override string ElementGroup => "Grid";
 
             public GridElement(MapDocument doc) : base(PositionType.World)
             {
@@ -65,33 +67,40 @@ namespace Sledge.BspEditor.Rendering.Converters
 
             public void Update(MapDocument doc)
             {
-                Low = doc.GameData.MapSizeLow;
-                High = doc.GameData.MapSizeHigh;
-                Step = (float) doc.Map.GridSpacing;
-                ShowGrid = doc.Map.Show2DGrid;
                 ClearValue("Validated");
+                _grid = doc.Map.Data.Get<GridData>().FirstOrDefault()?.Grid;
             }
 
-            private float GetActualStep(IViewport viewport)
+            // todo !settings move grid colours to settings
+            private static Color GridLines { get; set; } = Color.FromArgb(75, 75, 75);
+            private static Color ZeroLines { get; set; } = Color.FromArgb(0, 100, 100);
+            private static Color BoundaryLines { get; set; } = Color.Red;
+            private static Color Highlight1 { get; set; } = Color.FromArgb(115, 115, 115);
+            private static Color Highlight2 { get; set; } = Color.FromArgb(100, 46, 0);
+
+            private Color GetColorForGridLineType(GridLineType type)
             {
-                var step = Step;
-                var actualDist = step * viewport.Camera.Zoom;
-                if (Grid.HideSmallerOn)
+                switch (type)
                 {
-                    while (actualDist < Grid.HideSmallerThan)
-                    {
-                        step *= Grid.HideFactor;
-                        actualDist *= Grid.HideFactor;
-                    }
+                    case GridLineType.Standard:
+                        return GridLines;
+                    case GridLineType.Axis:
+                        return ZeroLines;
+                    case GridLineType.Primary:
+                        return Highlight1;
+                    case GridLineType.Secondary:
+                        return Highlight2;
+                    case GridLineType.Boundary:
+                        return BoundaryLines;
+                    default:
+                        throw new ArgumentOutOfRangeException(nameof(type), type, null);
                 }
-                return step;
             }
-
+            
             public override bool RequiresValidation(IViewport viewport, IRenderer renderer)
             {
                 if (!GetValue<bool>(viewport, "Validated")) return true;
-                if (Math.Abs(GetValue(viewport, "ActualStep", 0f) - GetActualStep(viewport)) > 0.001) return true;
-                if (GetValue<bool>(viewport, "ShowGrid") != ShowGrid) return true;
+                if (Math.Abs(GetValue(viewport, "Scale", 1f) - viewport.Camera.Zoom) > 0.001) return true;
 
                 var bounds = GetValue<RectangleF>(viewport, "Bounds");
                 var newBounds = GetValidatedBounds(viewport, 0);
@@ -103,8 +112,7 @@ namespace Sledge.BspEditor.Rendering.Converters
             public override void Validate(IViewport viewport, IRenderer renderer)
             {
                 SetValue(viewport, "Validated", true);
-                SetValue(viewport, "ActualStep", GetActualStep(viewport));
-                SetValue(viewport, "ShowGrid", ShowGrid);
+                SetValue(viewport, "Scale", viewport.Camera.Zoom);
                 SetValue(viewport, "Bounds", GetValidatedBounds(viewport, Padding));
             }
 
@@ -119,40 +127,24 @@ namespace Sledge.BspEditor.Rendering.Converters
 
             public override IEnumerable<LineElement> GetLines(IViewport viewport, IRenderer renderer)
             {
-                if (!ShowGrid) yield break;
-
                 var oc = viewport.Camera as OrthographicCamera;
                 if (oc == null) yield break;
 
-                var lower = Low;
-                var upper = High;
-                var step = GetActualStep(viewport);
+                if (_grid == null) yield break;
 
-                var bounds = GetValidatedBounds(viewport, Padding);
+                var padding = Padding;
+                var vmin = viewport.Camera.ScreenToWorld(new Vector3(-padding, viewport.Control.Height + padding, 0), viewport.Control.Width, viewport.Control.Height);
+                var vmax = viewport.Camera.ScreenToWorld(new Vector3(viewport.Control.Width + padding, -padding, 0), viewport.Control.Width, viewport.Control.Height);
+                var normal = Coordinate.One - viewport.Camera.Expand(new Vector3(1, 1, 0)).ToCoordinate();
 
-                var unused = Vector3.One - viewport.Camera.Expand(new Vector3(1, 1, 0));
-                var bottom = unused * Low;
-
-                for (float f = lower; f <= upper; f += step)
+                foreach (var line in _grid.GetLines(normal, (decimal) viewport.Camera.Zoom, vmin.ToCoordinate(), vmax.ToCoordinate()))
                 {
-                    if ((f < bounds.Left || f > bounds.Right) && (f < bounds.Top || f > bounds.Bottom)) continue;
-                    var i = (int) f;
-                    var c = Grid.GridLines;
-                    if (i == 0) c = Grid.ZeroLines;
-                    else if (i % Grid.Highlight2UnitNum == 0 && Grid.Highlight2On) c = Grid.Highlight2;
-                    else if (i % (int) (step * Grid.Highlight1LineNum) == 0 && Grid.Highlight1On) c = Grid.Highlight1;
-
-                    yield return new LineElement(PositionType.World, c, new List<Position>
-                    {
-                        new Position(viewport.Camera.Expand(new Vector3(lower, f, 0)) + bottom),
-                        new Position(viewport.Camera.Expand(new Vector3(upper, f, 0)) + bottom)
-                    }) { Smooth = false, ZIndex = -10, DepthTested = true };
-
-                    yield return new LineElement(PositionType.World, c, new List<Position>
-                    {
-                        new Position(viewport.Camera.Expand(new Vector3(f, lower, 0)) + bottom),
-                        new Position(viewport.Camera.Expand(new Vector3(f, upper, 0)) + bottom)
-                    }) { Smooth = false, ZIndex = -10, DepthTested = true };
+                    yield return new LineElement(PositionType.World, GetColorForGridLineType(line.Type), new List<Position>
+                        {
+                            new Position(line.Line.Start.ToVector3()),
+                            new Position(line.Line.End.ToVector3())
+                        })
+                        {Smooth = false, ZIndex = -10, DepthTested = true};
                 }
             }
 

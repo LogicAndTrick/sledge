@@ -31,7 +31,7 @@ namespace Sledge.Common.Shell.Menu
             return _command.IsInContext(context);
         }
 
-        public async Task Invoke()
+        public async Task Invoke(IContext context)
         {
             await Oy.Publish("Command:Run", new CommandMessage(_command.GetID()));
         }
