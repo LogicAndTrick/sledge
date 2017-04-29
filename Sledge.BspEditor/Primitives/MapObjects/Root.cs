@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.Linq;
+using Sledge.Common.Transport;
 using Sledge.DataStructures.Geometric;
 
 namespace Sledge.BspEditor.Primitives.MapObjects
@@ -14,6 +16,13 @@ namespace Sledge.BspEditor.Primitives.MapObjects
         {
         }
 
+        public Root(SerialisedObject obj) : base(obj)
+        {
+        }
+
+        [Export(typeof(IMapElementFormatter))]
+        public class RootFormatter : StandardMapElementFormatter<Root> { }
+
         protected override Box GetBoundingBox()
         {
             return Hierarchy.NumChildren > 0 ? new Box(Hierarchy.Select(x => x.BoundingBox)) : Box.Empty;
@@ -24,6 +33,8 @@ namespace Sledge.BspEditor.Primitives.MapObjects
             // Selecting the root would be awkward
             return null;
         }
+
+        protected override string SerialisedName => "Root";
 
         public override IMapObject Clone()
         {

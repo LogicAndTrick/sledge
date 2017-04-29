@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.Composition;
+using System.Linq;
 using System.Threading.Tasks;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Modification;
@@ -20,7 +21,7 @@ namespace Sledge.BspEditor.Commands.Modification
         public override string Details => "Select all objects";
         protected override Task Invoke(MapDocument document, CommandParameters parameters)
         {
-            var op = new Select(document.Map.Root.FindAll());
+            var op = new Select(document.Map.Root.FindAll().Where(x => x.Hierarchy.Parent != null));
             return MapDocumentOperation.Perform(document, op);
         }
     }

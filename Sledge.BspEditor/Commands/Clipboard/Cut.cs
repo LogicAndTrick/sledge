@@ -24,7 +24,7 @@ namespace Sledge.BspEditor.Commands.Clipboard
         public override string Details => "Copy the current selection and remove it";
         protected override async Task Invoke(MapDocument document, CommandParameters parameters)
         {
-            var sel = document.Selection.ToList();
+            var sel = document.Selection.GetSelectedParents().ToList();
             if (sel.Any())
             {
                 _clipboard.Value.Push(sel);

@@ -1,5 +1,7 @@
 ﻿using System;
+using System.ComponentModel.Composition;
 using System.Runtime.Serialization;
+using Sledge.Common.Transport;
 using Sledge.DataStructures.Geometric;
 
 namespace Sledge.BspEditor.Primitives.MapData
@@ -17,6 +19,16 @@ namespace Sledge.BspEditor.Primitives.MapData
             LookPosition = new Coordinate(0, 0, 0);
             IsActive = false;
         }
+
+        public Camera(SerialisedObject obj)
+        {
+            EyePosition = obj.Get<Coordinate>("EyePosition");
+            LookPosition = obj.Get<Coordinate>("LookPosition");
+            IsActive = obj.Get<bool>("IsActive");
+        }
+
+        [Export(typeof(IMapElementFormatter))]
+        public class EntityFormatter : StandardMapElementFormatter<Camera> { }
 
         protected Camera(SerializationInfo info, StreamingContext context)
         {
@@ -38,6 +50,15 @@ namespace Sledge.BspEditor.Primitives.MapData
                 LookPosition = LookPosition,
                 IsActive = IsActive
             };
+        }
+
+        public SerialisedObject ToSerialisedObject()
+        {
+            var so = new SerialisedObject("Camera");
+            so.Set("EyePosition", EyePosition);
+            so.Set("LookPosition", LookPosition);
+            so.Set("IsActive", IsActive);
+            return so;
         }
 
         public decimal Length

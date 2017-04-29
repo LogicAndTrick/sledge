@@ -1,17 +1,26 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.IO;
 using System.Linq;
+using System.Text;
 using LogicAndTrick.Oy;
 using Sledge.BspEditor.Documents;
+using Sledge.BspEditor.Primitives;
 using Sledge.BspEditor.Primitives.MapObjects;
+using Sledge.Common.Transport;
 
 namespace Sledge.BspEditor.Components
 {
     [Export]
     public class ClipboardManager
     {
+        [Import] private MapElementFactory _factory;
+        [Import] private SerialisedObjectFormatter _formatter;
+
         public int SizeOfClipboardRing { get; set; }
         private readonly List<string> Ring;
+
+        private static string SerialisedName => "Sledge.BspEditor.Clipboard";
 
         public ClipboardManager()
         {
@@ -45,9 +54,9 @@ namespace Sledge.BspEditor.Components
             if (!System.Windows.Forms.Clipboard.ContainsText()) return null;
 
             var str = System.Windows.Forms.Clipboard.GetText();
-            if (!str.StartsWith("clipboard")) return null;
+            if (!str.StartsWith(SerialisedName)) return null;
 
-            return ExtractCopyStream(document, str);
+            return ExtractCopyStream(str);
         }
 
         /// <summary>
@@ -58,38 +67,42 @@ namespace Sledge.BspEditor.Components
         {
             if (!System.Windows.Forms.Clipboard.ContainsText()) return false;
             var str = System.Windows.Forms.Clipboard.GetText();
-            return str.StartsWith("clipboard");
+            return str.StartsWith(SerialisedName);
         }
 
-        public IEnumerable<IMapObject> CloneFlatHeirarchy(MapDocument document, IEnumerable<IMapObject> objects)
+        private string CreateCopyStream(IEnumerable<IMapObject> copiedObjects)
         {
-            return ExtractCopyStream(document, CreateCopyStream(objects));
+            var clip = new SerialisedObject(SerialisedName);
+            foreach (var obj in copiedObjects)
+            {
+                var so = _factory.Serialise(obj);
+                clip.Children.Add(so);
+            }
+            using (var ms = new MemoryStream())
+            {
+                _formatter.Serialize(ms, clip);
+                ms.Position = 0;
+                using (var sr = new StreamReader(ms))
+                {
+                    return sr.ReadToEnd();
+                }
+            }
         }
 
-        private static string CreateCopyStream(IEnumerable<IMapObject> copiedObjects)
+        private IEnumerable<IMapObject> ExtractCopyStream(string str)
         {
-            // todo !serialisation copy/paste
-            return $"{copiedObjects.Count()} objects copied";
-            //var item = VmfProvider.CreateCopyStream(copiedObjects.ToList()).ToString();
-            //return item;
-        }
-
-        private static IEnumerable<IMapObject> ExtractCopyStream(MapDocument document, string str)
-        {
-            // todo !serialisation copy/paste
-            yield break;
-            //using (var tr = new StringReader(str))
-            //{
-            //    try
-            //    {
-            //        var gs = GenericStructure.Parse(tr);
-            //        return VmfProvider.ExtractCopyStream(gs.FirstOrDefault(), document.Map.NumberGenerator);
-            //    }
-            //    catch
-            //    {
-            //        return null;
-            //    }
-            //}
+            using (var ms = new MemoryStream(Encoding.UTF8.GetBytes(str)))
+            {
+                try
+                {
+                    var clip = _formatter.Deserialize(ms).First(x => x.Name == SerialisedName);
+                    return clip.Children.Select(x => _factory.Deserialise(x)).OfType<IMapObject>();
+                }
+                catch
+                {
+                    return new IMapObject[0];
+                }
+            }
         }
     }
 }

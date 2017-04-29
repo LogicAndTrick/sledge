@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
+using Sledge.Common.Transport;
 using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.MapObjects;
 
@@ -38,6 +39,13 @@ namespace Sledge.BspEditor.Primitives.MapObjectData
             face.Texture = Texture.Clone();
             face.Vertices = Vertices.Select(x => x.Clone()).ToList();
             return face;
+        }
+
+        public SerialisedObject ToSerialisedObject()
+        {
+            var so = new SerialisedObject("Face");
+            // todo !
+            return so;
         }
 
         public virtual IEnumerable<Tuple<Coordinate, decimal, decimal>> GetTextureCoordinates(int width, int height)

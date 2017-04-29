@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
+using Sledge.Common.Transport;
 
 namespace Sledge.BspEditor.Primitives.MapObjectData
 {
@@ -37,6 +38,18 @@ namespace Sledge.BspEditor.Primitives.MapObjectData
             ed.Flags = Flags;
             ed.Properties = new Dictionary<string, string>(Properties);
             return ed;
+        }
+
+        public SerialisedObject ToSerialisedObject()
+        {
+            var so = new SerialisedObject("EntityData");
+            foreach (var p in Properties)
+            {
+                so.Set(p.Key, p.Value);
+            }
+            so.Set("Name", Name);
+            so.Set("Flags", Flags);
+            return so;
         }
     }
 }

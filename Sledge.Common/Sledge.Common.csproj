@@ -92,6 +92,9 @@
     <Compile Include="Shell\Settings\SettingValue.cs" />
     <Compile Include="Shell\Settings\StaticSettingsContainer.cs" />
     <Compile Include="Tasks\TaskQueue.cs" />
+    <Compile Include="Transport\SerialisedObject.cs" />
+    <Compile Include="Transport\SerialisedObjectExtensions.cs" />
+    <Compile Include="Transport\SerialisedObjectFormatter.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

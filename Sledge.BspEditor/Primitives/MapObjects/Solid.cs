@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.Drawing;
 using System.Linq;
 using Sledge.BspEditor.Primitives.MapObjectData;
+using Sledge.Common.Transport;
 using Sledge.DataStructures.Geometric;
 
 namespace Sledge.BspEditor.Primitives.MapObjects
@@ -19,6 +21,13 @@ namespace Sledge.BspEditor.Primitives.MapObjects
         {
         }
 
+        public Solid(SerialisedObject obj) : base(obj)
+        {
+        }
+
+        [Export(typeof(IMapElementFormatter))]
+        public class SolidFormatter : StandardMapElementFormatter<Solid> { }
+
         protected override Box GetBoundingBox()
         {
             var faces = Faces.ToList();
@@ -34,6 +43,8 @@ namespace Sledge.BspEditor.Primitives.MapObjects
                 .OrderBy(x => (x - line.Start).VectorMagnitude())
                 .FirstOrDefault();
         }
+
+        protected override string SerialisedName => "Solid";
 
         public override IMapObject Clone()
         {

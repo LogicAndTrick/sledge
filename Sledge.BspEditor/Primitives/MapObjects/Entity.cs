@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.Linq;
 using System.Runtime.Serialization;
 using Sledge.BspEditor.Primitives.MapObjectData;
+using Sledge.Common.Transport;
 using Sledge.DataStructures.Geometric;
 
 namespace Sledge.BspEditor.Primitives.MapObjects
@@ -16,6 +18,14 @@ namespace Sledge.BspEditor.Primitives.MapObjects
         public Entity(long id) : base(id)
         {
         }
+
+        public Entity(SerialisedObject obj) : base(obj)
+        {
+            Origin = obj.Get<Coordinate>("Origin");
+        }
+
+        [Export(typeof(IMapElementFormatter))]
+        public class EntityFormatter : StandardMapElementFormatter<Entity> { }
 
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
@@ -41,6 +51,14 @@ namespace Sledge.BspEditor.Primitives.MapObjects
                 .Where(x => x != null)
                 .OrderBy(x => (x - line.Start).VectorMagnitude())
                 .FirstOrDefault();
+        }
+
+        protected override string SerialisedName => "Entity";
+
+        protected override void AddCustomSerialisedData(SerialisedObject obj)
+        {
+            obj.Set("Origin", Origin);
+            base.AddCustomSerialisedData(obj);
         }
 
         public override IMapObject Clone()

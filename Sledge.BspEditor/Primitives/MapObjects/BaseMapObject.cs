@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
 using Sledge.BspEditor.Primitives.MapObjectData;
+using Sledge.Common.Transport;
 using Sledge.DataStructures.Geometric;
 
 namespace Sledge.BspEditor.Primitives.MapObjects
@@ -23,6 +25,16 @@ namespace Sledge.BspEditor.Primitives.MapObjects
             ID = id;
             Data = new MapObjectDataCollection();
             Hierarchy = new MapObjectHierarchy(this);
+        }
+
+        protected BaseMapObject(SerialisedObject obj)
+        {
+            if (SerialisedName != obj.Name) throw new Exception($"Tried to deserialise a {obj.Name} into a {SerialisedName}.");
+            ID = obj.Get<long>("ID");
+            IsSelected = obj.Get<bool>("IsSelected");
+            Data = new MapObjectDataCollection();
+            Hierarchy = new MapObjectHierarchy(this);
+            SetCustomSerialisedData(obj);
         }
 
         public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
@@ -68,9 +80,40 @@ namespace Sledge.BspEditor.Primitives.MapObjects
         }
 
         public abstract Coordinate Intersect(Line line);
+
         public abstract IMapObject Clone();
         public abstract void Unclone(IMapObject obj);
         public abstract IEnumerable<IPrimitive> ToPrimitives();
+
+        protected abstract string SerialisedName { get; }
+
+        public virtual SerialisedObject ToSerialisedObject()
+        {
+            var obj = new SerialisedObject(SerialisedName);
+            obj.Set("ID", ID);
+            obj.Set("IsSelected", IsSelected);
+            obj.Set("ParentID", Hierarchy.Parent?.ID);
+            AddCustomSerialisedData(obj);
+            foreach (var data in Data)
+            {
+                obj.Children.Add(data.ToSerialisedObject());
+            }
+            foreach (var child in Hierarchy)
+            {
+                obj.Children.Add(child.ToSerialisedObject());
+            }
+            return obj;
+        }
+
+        protected virtual void AddCustomSerialisedData(SerialisedObject obj)
+        {
+
+        }
+
+        protected virtual void SetCustomSerialisedData(SerialisedObject obj)
+        {
+
+        }
 
         public override bool Equals(object obj)
         {

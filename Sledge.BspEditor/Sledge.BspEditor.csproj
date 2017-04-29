@@ -119,6 +119,8 @@
     <Compile Include="Modification\SelectionHandler.cs" />
     <Compile Include="Modification\Transaction.cs" />
     <Compile Include="Modification\TransactionBuilderExtensions.cs" />
+    <Compile Include="Primitives\IMapElementFactory.cs" />
+    <Compile Include="Primitives\IMapObjectProvider.cs" />
     <Compile Include="Primitives\MapData\GridData.cs" />
     <Compile Include="Primitives\MapData\Selection.cs" />
     <Compile Include="Primitives\MapObjects\BaseMapObject.cs" />
@@ -129,6 +131,7 @@
     <Compile Include="Primitives\MapData\IMapData.cs" />
     <Compile Include="Primitives\MapObjectData\EntityData.cs" />
     <Compile Include="Primitives\MapObjectData\IMapObjectData.cs" />
+    <Compile Include="Primitives\MapObjects\IMapElement.cs" />
     <Compile Include="Primitives\MapObjects\IMapObject.cs" />
     <Compile Include="Primitives\MapObjects\IPrimitive.cs" />
     <Compile Include="Primitives\Map.cs" />
@@ -140,6 +143,7 @@
     <Compile Include="Primitives\MapObjects\MapObjectQuery.cs" />
     <Compile Include="Primitives\MapObjects\Root.cs" />
     <Compile Include="Primitives\MapObjects\Solid.cs" />
+    <Compile Include="Primitives\StandardMapElementFormatter.cs" />
     <Compile Include="Primitives\Texture.cs" />
     <Compile Include="Primitives\UniqueNumberGenerator.cs" />
     <Compile Include="Primitives\MapData\Visgroup.cs" />

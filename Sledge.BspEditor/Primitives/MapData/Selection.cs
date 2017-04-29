@@ -1,9 +1,13 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
+using System.Globalization;
 using System.Linq;
 using System.Runtime.Serialization;
 using Sledge.BspEditor.Modification;
 using Sledge.BspEditor.Primitives.MapObjects;
+using Sledge.Common.Transport;
 using Sledge.DataStructures.Geometric;
 
 namespace Sledge.BspEditor.Primitives.MapData
@@ -16,6 +20,14 @@ namespace Sledge.BspEditor.Primitives.MapData
         {
             _selectedObjects = new HashSet<IMapObject>();
         }
+
+        public Selection(SerialisedObject obj)
+        {
+
+        }
+
+        [Export(typeof(IMapElementFormatter))]
+        public class SelectionFormatter : StandardMapElementFormatter<Selection> { }
 
         public bool IsEmpty => _selectedObjects.Count == 0;
         public int Count => _selectedObjects.Count;
@@ -56,6 +68,13 @@ namespace Sledge.BspEditor.Primitives.MapData
             var c = new Selection();
             c._selectedObjects.UnionWith(_selectedObjects);
             return c;
+        }
+
+        public SerialisedObject ToSerialisedObject()
+        {
+            var so = new SerialisedObject("Selection");
+            so.Set("SelectedObjects", String.Join(",", _selectedObjects.Select(x => Convert.ToString(x, CultureInfo.InvariantCulture))));
+            return so;
         }
 
         public IEnumerator<IMapObject> GetEnumerator()

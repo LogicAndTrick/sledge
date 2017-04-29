@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.Drawing;
 using System.Linq;
 using System.Runtime.Serialization;
+using Sledge.Common.Transport;
 
 namespace Sledge.BspEditor.Primitives.MapData
 {
@@ -17,7 +19,17 @@ namespace Sledge.BspEditor.Primitives.MapData
 
         public Visgroup()
         {
-            
+
+        }
+
+        public Visgroup(SerialisedObject obj)
+        {
+
+        }
+
+        [Export(typeof(IMapElementFormatter))]
+        public class VisgroupFormatter : StandardMapElementFormatter<Visgroup>
+        {
         }
 
         protected Visgroup(SerializationInfo info, StreamingContext context)
@@ -47,6 +59,17 @@ namespace Sledge.BspEditor.Primitives.MapData
                 Colour = Colour,
                 Parent = Parent
             };
+        }
+
+        public SerialisedObject ToSerialisedObject()
+        {
+            var v = new SerialisedObject("visgroup");
+            v.Set("ID", ID);
+            v.Set("Name", Name);
+            v.Set("Visible", Visible);
+            v.SetColor("Colour", Colour);
+            v.Set("ParentID", Parent);
+            return v;
         }
     }
 }
