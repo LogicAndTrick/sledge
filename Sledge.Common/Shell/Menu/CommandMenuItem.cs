@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Drawing;
+using System.Threading.Tasks;
 using LogicAndTrick.Oy;
 using Sledge.Common.Shell.Commands;
 using Sledge.Common.Shell.Context;
@@ -16,13 +17,15 @@ namespace Sledge.Common.Shell.Menu
         public string Path { get; }
         public string Group { get; }
         public string OrderHint { get; }
+        public Image Icon { get; }
 
-        public CommandMenuItem(ICommand command, string section, string path, string group, string orderHint)
+        public CommandMenuItem(ICommand command, string section, string path, string group, string orderHint, Image icon)
         {
             Section = section;
             Path = path;
             Group = group;
             OrderHint = orderHint;
+            Icon = icon;
             _command = command ?? this as ICommand;
         }
 

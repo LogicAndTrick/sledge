@@ -13,6 +13,7 @@ using Sledge.Common.Shell.Documents;
 using Sledge.Common.Shell.Hotkeys;
 using Sledge.Common.Shell.Menu;
 using Sledge.Common.Translations;
+using Sledge.Shell.Properties;
 
 namespace Sledge.Shell.Commands
 {
@@ -21,6 +22,7 @@ namespace Sledge.Shell.Commands
     [CommandID("File:Open")]
     [DefaultHotkey("Ctrl+O")]
     [MenuItem("File", "", "File", "D")]
+    [MenuImage(typeof(Resources), nameof(Resources.Menu_Open))]
     public class OpenFile : ICommand
     {
         public string Name { get; set; } = "Open";

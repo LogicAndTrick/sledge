@@ -4,13 +4,12 @@ using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Environment;
 using Sledge.BspEditor.Primitives;
 using Sledge.BspEditor.Providers;
 using Sledge.Common.Shell.Documents;
 
-namespace Sledge.BspEditor
+namespace Sledge.BspEditor.Documents
 {
     [Export(typeof(IDocumentLoader))]
     public class BspSourceDocumentLoader : IDocumentLoader
@@ -24,7 +23,7 @@ namespace Sledge.BspEditor
 
         public bool CanLoad(string location)
         {
-            return _providers.Any(x => CanLoad(x.Value, location));
+            return location == null || _providers.Any(x => CanLoad(x.Value, location));
         }
 
         private bool CanLoad(IBspSourceProvider provider, string location)
@@ -62,7 +61,7 @@ namespace Sledge.BspEditor
                     try
                     {
                         var map = await provider.Value.Load(stream);
-                        return new MapDocument(map, env);
+                        return new MapDocument(map, env) { FileName = location };
                     }
                     catch (NotSupportedException)
                     {

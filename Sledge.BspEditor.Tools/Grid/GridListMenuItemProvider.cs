@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -32,6 +33,7 @@ namespace Sledge.BspEditor.Tools.Grid
             public string ID => "Sledge.BspEditor.Tools.Grid.GridMenuItem." + Grid.GetType().Name;
             public string Name => Grid.Name;
             public string Description => Grid.Details;
+            public Image Icon => Grid.Icon;
             public string Section => "Map";
             public string Path => ""; // todo !menu proper grid path
             public string Group => "";

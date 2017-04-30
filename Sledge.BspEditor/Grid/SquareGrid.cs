@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Drawing;
+using Sledge.BspEditor.Properties;
 using Sledge.Common;
 using Sledge.Common.Translations;
 using Sledge.DataStructures.Geometric;
@@ -21,6 +23,8 @@ namespace Sledge.BspEditor.Grid
 
         public string Name { get; set; }
         public string Details { get; set; }
+
+        public virtual Image Icon => Resources.SquareGrid;
 
         public int Spacing
         {
@@ -56,7 +60,7 @@ namespace Sledge.BspEditor.Grid
             return step;
         }
 
-        public IEnumerable<GridLine> GetLines(Coordinate normal, decimal scale, Coordinate worldMinimum, Coordinate worldMaximum)
+        public virtual IEnumerable<GridLine> GetLines(Coordinate normal, decimal scale, Coordinate worldMinimum, Coordinate worldMaximum)
         {
             var lower = Low;
             var upper = High;

@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Sledge.Shell.Properties {
+namespace Sledge.BspEditor.Properties {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace Sledge.Shell.Properties {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Sledge.Shell.Properties.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Sledge.BspEditor.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -63,9 +63,9 @@ namespace Sledge.Shell.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Arrow_Down {
+        internal static System.Drawing.Bitmap DottedGrid {
             get {
-                object obj = ResourceManager.GetObject("Arrow_Down", resourceCulture);
+                object obj = ResourceManager.GetObject("DottedGrid", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -73,59 +73,9 @@ namespace Sledge.Shell.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Arrow_Up {
+        internal static System.Drawing.Bitmap SquareGrid {
             get {
-                object obj = ResourceManager.GetObject("Arrow_Up", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap Menu_Close {
-            get {
-                object obj = ResourceManager.GetObject("Menu_Close", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap Menu_New {
-            get {
-                object obj = ResourceManager.GetObject("Menu_New", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap Menu_Open {
-            get {
-                object obj = ResourceManager.GetObject("Menu_Open", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap Menu_Save {
-            get {
-                object obj = ResourceManager.GetObject("Menu_Save", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap Menu_SaveAs {
-            get {
-                object obj = ResourceManager.GetObject("Menu_SaveAs", resourceCulture);
+                object obj = ResourceManager.GetObject("SquareGrid", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

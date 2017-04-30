@@ -13,6 +13,7 @@ namespace Sledge.BspEditor.Documents
     public class MapDocument : IDocument
     {
         public string Name { get; }
+        public string FileName { get; set; }
         public object Control => MapDocumentControlHost.Instance;
 
         public Map Map { get; set; }
@@ -33,6 +34,7 @@ namespace Sledge.BspEditor.Documents
 
         public MapDocument(Map map, IEnvironment environment)
         {
+            FileName = null;
             Name = "Untitled";
             Map = map;
 

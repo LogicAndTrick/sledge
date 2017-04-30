@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Drawing;
 using Sledge.DataStructures.Geometric;
 
 namespace Sledge.BspEditor.Grid
@@ -14,6 +15,8 @@ namespace Sledge.BspEditor.Grid
         /// A short explanation of the grid
         /// </summary>
         string Details { get; set; }
+
+        Image Icon { get; }
 
         /// <summary>
         /// A relative value to represent the spacing of a grid.

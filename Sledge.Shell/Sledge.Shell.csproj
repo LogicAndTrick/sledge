@@ -81,6 +81,7 @@
   <ItemGroup>
     <Compile Include="Commands\CloseFile.cs" />
     <Compile Include="Commands\Exit.cs" />
+    <Compile Include="Commands\NewFile.cs" />
     <Compile Include="Commands\OpenFile.cs" />
     <Compile Include="Commands\SaveFile.cs" />
     <Compile Include="Components\CommandMenuItemProvider.cs" />
@@ -89,7 +90,9 @@
     <Compile Include="Commands\CommandActivator.cs" />
     <Compile Include="Commands\IActivator.cs" />
     <Compile Include="Components\DefaultMenuMetadataProvider.cs" />
+    <Compile Include="Components\InformationStatusItem.cs" />
     <Compile Include="Components\LogComponent.cs" />
+    <Compile Include="Components\RecentFilesMenuItemProvider.cs" />
     <Compile Include="ControlExtensions.cs" />
     <Compile Include="Controls\ClosableTabControl.cs">
       <SubType>Component</SubType>
@@ -142,6 +145,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Registers\SidebarRegister.cs" />
+    <Compile Include="Registers\StatusRegister.cs" />
     <Compile Include="Registers\ToolRegister.cs" />
     <Compile Include="Settings\LayoutSettingsContainer.cs" />
     <Compile Include="Settings\SettingsProvider.cs" />
@@ -174,6 +178,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="Resources\menu_close.png" />
+    <None Include="Resources\menu_new.png" />
+    <None Include="Resources\menu_open.png" />
+    <None Include="Resources\menu_save.png" />
+    <None Include="Resources\menu_saveas.png" />
     <Content Include="Translations\Sledge.Shell.en.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

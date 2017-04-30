@@ -4,6 +4,7 @@ using System.ComponentModel.Composition;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using LogicAndTrick.Oy;
 using Sledge.Common.Shell.Commands;
 using Sledge.Common.Shell.Context;
 using Sledge.Common.Shell.Hooks;
@@ -13,7 +14,7 @@ using Sledge.Shell.Forms;
 namespace Sledge.Shell.Registers
 {
     /// <summary>
-    /// The hotkey register registers and handles hotkeys
+    /// The menu register registers and handles menu items
     /// </summary>
     [Export(typeof(IStartupHook))]
     [Export(typeof(IInitialiseHook))]
@@ -110,6 +111,7 @@ namespace Sledge.Shell.Registers
             private void AddSection(string name)
             {
                 var rtn = new MenuTreeNode(_context, name, null);
+                rtn.ToolStripMenuItem.DropDownClosed += (s, a) => { Oy.Publish("Status:Information", ""); };
                 RootNodes.Add(name, rtn);
                 MenuStrip.Items.Add(rtn.ToolStripMenuItem);
             }
@@ -172,8 +174,10 @@ namespace Sledge.Shell.Registers
             {
                 _context = context;
                 _group = group ?? new MenuGroup("", "", "", "T");
-                ToolStripMenuItem = new ToolStripMenuItem(menuItem.Name) {Tag = this};
+                ToolStripMenuItem = new ToolStripMenuItem(menuItem.Name, menuItem.Icon) {Tag = this};
                 ToolStripMenuItem.Click += Fire;
+                ToolStripMenuItem.MouseEnter += (s, a) => { Oy.Publish("Status:Information", menuItem.Description); };
+                ToolStripMenuItem.MouseLeave += (s, a) => { Oy.Publish("Status:Information", ""); };
                 MenuItem = menuItem;
                 Groups = new List<MenuTreeGroup>();
                 Children = new Dictionary<string, MenuTreeNode>();

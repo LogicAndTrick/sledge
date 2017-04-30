@@ -137,14 +137,21 @@ namespace Sledge.BspEditor.Rendering.Converters
                 var vmax = viewport.Camera.ScreenToWorld(new Vector3(viewport.Control.Width + padding, -padding, 0), viewport.Control.Width, viewport.Control.Height);
                 var normal = Coordinate.One - viewport.Camera.Expand(new Vector3(1, 1, 0)).ToCoordinate();
 
-                foreach (var line in _grid.GetLines(normal, (decimal) viewport.Camera.Zoom, vmin.ToCoordinate(), vmax.ToCoordinate()))
+                foreach (var line in _grid.GetLines(normal, (decimal) viewport.Camera.Zoom, vmin.ToCoordinate(),
+                    vmax.ToCoordinate()))
                 {
-                    yield return new LineElement(PositionType.World, GetColorForGridLineType(line.Type), new List<Position>
+                    var c = GetColorForGridLineType(line.Type);
+                    yield return new LineElement(PositionType.World, c,
+                        new List<Position>
                         {
                             new Position(line.Line.Start.ToVector3()),
                             new Position(line.Line.End.ToVector3())
                         })
-                        {Smooth = false, ZIndex = -10, DepthTested = true};
+                    {
+                        Smooth = false,
+                        ZIndex = -10,
+                        DepthTested = true
+                    };
                 }
             }
 

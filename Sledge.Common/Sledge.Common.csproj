@@ -53,6 +53,7 @@
     <Compile Include="Shell\Commands\CommandMessage.cs" />
     <Compile Include="Shell\Commands\CommandParameters.cs" />
     <Compile Include="Shell\Commands\ICommand.cs" />
+    <Compile Include="Shell\Components\IStatusItem.cs" />
     <Compile Include="Shell\Components\IBottomTabComponent.cs" />
     <Compile Include="Shell\Components\ISidebarComponent.cs" />
     <Compile Include="Shell\Components\ITool.cs" />
@@ -87,6 +88,7 @@
     <Compile Include="Shell\Menu\IMenuItemProvider.cs" />
     <Compile Include="Shell\Menu\IMenuMetadataProvider.cs" />
     <Compile Include="Shell\Menu\MenuGroup.cs" />
+    <Compile Include="Shell\Menu\MenuImageAttribute.cs" />
     <Compile Include="Shell\Menu\MenuItemAttribute.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Shell\Menu\MenuSection.cs" />

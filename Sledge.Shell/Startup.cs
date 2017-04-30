@@ -29,10 +29,8 @@ namespace Sledge.Shell
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-
-            var shell = new Forms.Shell();
-            container.ComposeParts(shell);
-
+            
+            var shell = container.GetExport<Forms.Shell>().Value;
             Application.Run(shell);
         }
     }

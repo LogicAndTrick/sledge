@@ -69,7 +69,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BspSourceDocumentLoader.cs" />
+    <Compile Include="Documents\BspSourceDocumentLoader.cs" />
     <Compile Include="Commands\Clipboard\Copy.cs" />
     <Compile Include="Commands\Clipboard\Cut.cs" />
     <Compile Include="Commands\Clipboard\Paste.cs" />
@@ -148,6 +148,11 @@
     <Compile Include="Primitives\UniqueNumberGenerator.cs" />
     <Compile Include="Primitives\MapData\Visgroup.cs" />
     <Compile Include="Primitives\MapObjectData\VisgroupID.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="Providers\IBspSourceProvider.cs" />
     <Compile Include="Documents\MapDocument.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -175,10 +180,16 @@
     <EmbeddedResource Include="Components\ClipboardSidebarPanel.resx">
       <DependentUpon>ClipboardSidebarPanel.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
     <None Include="packages.config" />
+    <None Include="Resources\SquareGrid.png" />
+    <Content Include="Resources\DottedGrid.png" />
     <Content Include="Translations\Sledge.BspEditor.en.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

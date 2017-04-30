@@ -4,9 +4,7 @@ using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
-using Sledge.Common.Shell.Hooks;
 
 namespace Sledge.Common.Translations
 {

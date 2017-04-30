@@ -8,6 +8,10 @@
         
     },
     "Commands": {
+        "NewFile": {
+            "Name": "New",
+            "Details": "Create a new document." 
+        },
         "OpenFile": {
             "Name": "Open...",
             "Details": "Open a document."

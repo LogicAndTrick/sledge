@@ -79,9 +79,6 @@
   <ItemGroup>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TextEditor\SampleSidebarComponent.cs" />
-    <Compile Include="TextEditor\TextDocument.cs" />
-    <Compile Include="TextEditor\TextDocumentLoader.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>

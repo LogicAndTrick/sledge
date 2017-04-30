@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Drawing;
+using System.Threading.Tasks;
 using Sledge.Common.Shell.Context;
 
 namespace Sledge.Common.Shell.Menu
@@ -8,6 +9,8 @@ namespace Sledge.Common.Shell.Menu
         string ID { get; }
         string Name { get; }
         string Description { get; }
+
+        Image Icon { get; }
 
         /// <summary>
         /// The section of the menu item.

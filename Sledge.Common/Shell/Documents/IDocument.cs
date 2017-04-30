@@ -8,6 +8,11 @@
         string Name { get; }
 
         /// <summary>
+        /// The physical location on disk of this document
+        /// </summary>
+        string FileName { get; }
+
+        /// <summary>
         /// Mountable control for this document
         /// </summary>
         object Control { get; }

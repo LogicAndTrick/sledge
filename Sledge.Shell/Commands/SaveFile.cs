@@ -7,6 +7,7 @@ using Sledge.Common.Shell.Documents;
 using Sledge.Common.Shell.Hotkeys;
 using Sledge.Common.Shell.Menu;
 using Sledge.Common.Translations;
+using Sledge.Shell.Properties;
 
 namespace Sledge.Shell.Commands
 {
@@ -14,7 +15,8 @@ namespace Sledge.Shell.Commands
     [Export(typeof(ICommand))]
     [CommandID("File:Save")]
     [DefaultHotkey("Ctrl+S")]
-    [MenuItem("File", "", "File", "F")]
+    [MenuItem("File", "", "File", "H")]
+    [MenuImage(typeof(Resources), nameof(Resources.Menu_Save))]
     public class SaveFile : ICommand
     {
         public string Name { get; set; } = "Save";
