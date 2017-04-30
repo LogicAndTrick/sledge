@@ -31,7 +31,7 @@ namespace Sledge.BspEditor.Tools.Grid
         {
             public string ID => "Sledge.BspEditor.Tools.Grid.GridMenuItem." + Grid.GetType().Name;
             public string Name => Grid.Name;
-            public string Description => Grid.GetType().Name;
+            public string Description => Grid.Details;
             public string Section => "Map";
             public string Path => ""; // todo !menu proper grid path
             public string Group => "";

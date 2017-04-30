@@ -41,10 +41,12 @@
     },
     "Grid": {
         "NoGrid": {
-            "Name": "No grid"
+            "Name": "No grid",
+            "Details": "Do not show any grid."
         },
         "SquareGrid": {
-            "Name": "Standard grid"
+            "Name": "Standard grid",
+            "Details": "A normal square grid based on powers of two." 
         }
     } 
 }

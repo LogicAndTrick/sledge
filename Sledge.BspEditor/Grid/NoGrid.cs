@@ -13,6 +13,7 @@ namespace Sledge.BspEditor.Grid
     public class NoGrid : IGrid
     {
         public string Name { get; set; }
+        public string Details { get; set; }
 
         public int Spacing
         {

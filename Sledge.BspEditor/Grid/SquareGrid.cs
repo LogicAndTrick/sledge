@@ -20,6 +20,7 @@ namespace Sledge.BspEditor.Grid
         public decimal Step { get; set; } = 16;
 
         public string Name { get; set; }
+        public string Details { get; set; }
 
         public int Spacing
         {
