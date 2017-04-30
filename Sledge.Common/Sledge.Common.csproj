@@ -38,6 +38,9 @@
       <HintPath>..\packages\LogicAndTrick.Oy.1.0.2\lib\net45\LogicAndTrick.Oy.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
@@ -92,6 +95,10 @@
     <Compile Include="Shell\Settings\SettingValue.cs" />
     <Compile Include="Shell\Settings\StaticSettingsContainer.cs" />
     <Compile Include="Tasks\TaskQueue.cs" />
+    <Compile Include="Translations\AutoTranslateAttribute.cs" />
+    <Compile Include="Translations\IManualTranslate.cs" />
+    <Compile Include="Translations\TranslationStringsCatalog.cs" />
+    <Compile Include="Translations\TranslationStringsCollection.cs" />
     <Compile Include="Transport\SerialisedObject.cs" />
     <Compile Include="Transport\SerialisedObjectExtensions.cs" />
     <Compile Include="Transport\SerialisedObjectFormatter.cs" />

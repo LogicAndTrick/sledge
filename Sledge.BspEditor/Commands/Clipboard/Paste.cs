@@ -8,9 +8,11 @@ using Sledge.BspEditor.Modification.Operations;
 using Sledge.Common.Shell.Commands;
 using Sledge.Common.Shell.Hotkeys;
 using Sledge.Common.Shell.Menu;
+using Sledge.Common.Translations;
 
 namespace Sledge.BspEditor.Commands.Clipboard
 {
+    [AutoTranslate]
     [Export(typeof(ICommand))]
     [CommandID("BspEditor:Edit:Paste")]
     [DefaultHotkey("Ctrl+V")]
@@ -19,8 +21,8 @@ namespace Sledge.BspEditor.Commands.Clipboard
     {
         [Import] private Lazy<ClipboardManager> _clipboard;
 
-        public override string Name => "Paste";
-        public override string Details => "Paste the current clipboard contents";
+        public override string Name { get; set; } = "Paste";
+        public override string Details { get; set; } = "Paste the current clipboard contents";
 
         protected override async Task Invoke(MapDocument document, CommandParameters parameters)
         {

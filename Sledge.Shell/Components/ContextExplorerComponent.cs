@@ -7,16 +7,18 @@ using System.Windows.Forms;
 using LogicAndTrick.Oy;
 using Sledge.Common.Shell.Components;
 using Sledge.Common.Shell.Context;
+using Sledge.Common.Translations;
 
 namespace Sledge.Shell.Components
 {
+    [AutoTranslate]
     [Export(typeof(ISidebarComponent))]
     [SidebarComponent(OrderHint = "Y")]
     public class ContextExplorerComponent : ISidebarComponent
     {
         private readonly ListBox _control;
 
-        public string Title => "Context Explorer";
+        public string Title { get; set; } = "Context Explorer";
         public object Control => _control;
 
         public ContextExplorerComponent()
@@ -28,6 +30,8 @@ namespace Sledge.Shell.Components
         private async Task ContextChanged(IContext context)
         {
             if (!context.HasAny("Debug")) return;
+
+            if (!_control.IsHandleCreated) return;
 
             _control.BeginInvoke((MethodInvoker) delegate
             {

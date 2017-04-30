@@ -5,6 +5,7 @@ using Sledge.Common.Shell.Commands;
 using Sledge.Common.Shell.Context;
 using Sledge.Common.Shell.Hotkeys;
 using Sledge.Common.Shell.Menu;
+using Sledge.Common.Translations;
 
 namespace Sledge.Shell.Commands
 {
@@ -13,10 +14,11 @@ namespace Sledge.Shell.Commands
     /// </summary>
     [Export(typeof(ICommand))]
     [DefaultHotkey("Ctrl+T")]
-    public class OpenCommandBoxCommand : ICommand
+    [AutoTranslate]
+    public class OpenCommandBox : ICommand
     {
-        public string Name => "Open the command box";
-        public string Details => "Open the command box";
+        public string Name { get; set; } = "Open the command box";
+        public string Details { get; set; } = "Open the command box";
 
         public bool IsInContext(IContext context)
         {

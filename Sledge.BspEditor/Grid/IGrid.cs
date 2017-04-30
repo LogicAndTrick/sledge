@@ -6,6 +6,16 @@ namespace Sledge.BspEditor.Grid
     public interface IGrid
     {
         /// <summary>
+        /// The name of the grid
+        /// </summary>
+        string Name { get; set; }
+
+        /// <summary>
+        /// A short explanation of the grid
+        /// </summary>
+        string Details { get; set; }
+
+        /// <summary>
         /// A relative value to represent the spacing of a grid.
         /// Must support values 1-10 as logical minimums and maximums,
         /// but other values are allowed as well.

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using Sledge.Common;
+using Sledge.Common.Translations;
 using Sledge.DataStructures.Geometric;
 
 namespace Sledge.BspEditor.Grid
@@ -9,6 +10,7 @@ namespace Sledge.BspEditor.Grid
     /// <summary>
     /// The standard square grid
     /// </summary>
+    [AutoTranslate]
     [Export(typeof(IGrid))]
     public class SquareGrid : IGrid
     {
@@ -16,6 +18,8 @@ namespace Sledge.BspEditor.Grid
         public decimal High { get; set; } = 1024;
         public decimal Low { get; set; } = -1024;
         public decimal Step { get; set; } = 16;
+
+        public string Name { get; set; }
 
         public int Spacing
         {

@@ -4,9 +4,11 @@ using Sledge.Common.Shell.Commands;
 using Sledge.Common.Shell.Context;
 using Sledge.Common.Shell.Hotkeys;
 using Sledge.Common.Shell.Menu;
+using Sledge.Common.Translations;
 
 namespace Sledge.Shell.Commands
 {
+    [AutoTranslate]
     [Export(typeof(ICommand))]
     [CommandID("File:Exit")]
     [DefaultHotkey("Alt+F4")]
@@ -15,8 +17,8 @@ namespace Sledge.Shell.Commands
     {
         [Import] private Forms.Shell _shell;
 
-        public string Name => "Exit";
-        public string Details => "Exit";
+        public string Name { get; set; } = "Exit";
+        public string Details { get; set; } = "Exit";
 
         public bool IsInContext(IContext context)
         {

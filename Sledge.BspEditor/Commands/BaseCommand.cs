@@ -12,8 +12,8 @@ namespace Sledge.BspEditor.Commands
             return context.TryGet("ActiveDocument", out MapDocument _);
         }
 
-        public abstract string Name { get; }
-        public abstract string Details { get; }
+        public abstract string Name { get; set; }
+        public abstract string Details { get; set; }
 
         public async Task Invoke(IContext context, CommandParameters parameters)
         {

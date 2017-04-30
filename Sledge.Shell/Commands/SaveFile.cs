@@ -6,17 +6,19 @@ using Sledge.Common.Shell.Context;
 using Sledge.Common.Shell.Documents;
 using Sledge.Common.Shell.Hotkeys;
 using Sledge.Common.Shell.Menu;
+using Sledge.Common.Translations;
 
 namespace Sledge.Shell.Commands
 {
+    [AutoTranslate]
     [Export(typeof(ICommand))]
     [CommandID("File:Save")]
     [DefaultHotkey("Ctrl+S")]
     [MenuItem("File", "", "File", "F")]
     public class SaveFile : ICommand
     {
-        public string Name => "Save";
-        public string Details => "Save";
+        public string Name { get; set; } = "Save";
+        public string Details { get; set; } = "Save";
 
         public bool IsInContext(IContext context)
         {

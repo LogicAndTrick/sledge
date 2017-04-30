@@ -7,16 +7,18 @@ using LogicAndTrick.Oy;
 using Sledge.BspEditor.Documents;
 using Sledge.Common.Shell.Components;
 using Sledge.Common.Shell.Context;
+using Sledge.Common.Translations;
 
 namespace Sledge.BspEditor.Components
 {
+    [AutoTranslate]
     [Export(typeof(ISidebarComponent))]
     [SidebarComponent(OrderHint = "K")]
     public partial class ClipboardSidebarPanel : UserControl, ISidebarComponent
     {
         [Import] private Lazy<ClipboardManager> _clipboard;
 
-        public string Title => "Clipboard";
+        public string Title { get; set; } = "Clipboard";
         public object Control => this;
 
         public ClipboardSidebarPanel()

@@ -7,9 +7,11 @@ using Sledge.BspEditor.Documents;
 using Sledge.Common.Shell.Commands;
 using Sledge.Common.Shell.Hotkeys;
 using Sledge.Common.Shell.Menu;
+using Sledge.Common.Translations;
 
 namespace Sledge.BspEditor.Commands.Clipboard
 {
+    [AutoTranslate]
     [Export(typeof(ICommand))]
     [CommandID("BspEditor:Edit:Copy")]
     [DefaultHotkey("Ctrl+C")]
@@ -18,8 +20,8 @@ namespace Sledge.BspEditor.Commands.Clipboard
     {
         [Import] private Lazy<ClipboardManager> _clipboard;
 
-        public override string Name => "Copy";
-        public override string Details => "Copy the current selection";
+        public override string Name { get; set; } = "Copy";
+        public override string Details { get; set; } = "Copy the current selection";
         protected override async Task Invoke(MapDocument document, CommandParameters parameters)
         {
             var sel = document.Selection.GetSelectedParents().ToList();

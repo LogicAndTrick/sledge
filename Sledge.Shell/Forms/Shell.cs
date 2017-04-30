@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using LogicAndTrick.Oy;
 using Sledge.Common.Shell.Context;
 using Sledge.Common.Shell.Documents;
+using Sledge.Common.Translations;
 using Sledge.Shell.Controls;
 
 namespace Sledge.Shell.Forms
@@ -17,12 +18,15 @@ namespace Sledge.Shell.Forms
     /// The application's base window
     /// </summary>
     [Export]
+    [AutoTranslate]
     internal partial class Shell : BaseForm
     {
         private readonly List<IDocument> _documents;
         private readonly object _lock = new object();
 
         [Import] private Bootstrapper _bootstrapper;
+
+        public string Title { get; set; } = "Sledge Shell";
 
         public Shell()
         {
@@ -55,6 +59,8 @@ namespace Sledge.Shell.Forms
 
             // Set up bootstrapping for shutdown
             Closing += DoClosing;
+
+            Text = Title;
         }
 
         private async void DoClosing(object sender, CancelEventArgs e)

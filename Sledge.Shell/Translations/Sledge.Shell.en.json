@@ -1,0 +1,45 @@
+﻿{
+    "@Meta": {
+        "Base": "Sledge.Shell", 
+        "Language": "en",
+        "Inherit": ""
+    },
+    "@Settings": {
+        
+    },
+    "Commands": {
+        "OpenFile": {
+            "Name": "Open...",
+            "Details": "Open a document."
+        },
+        "SaveFile": {
+            "Name": "Save",
+            "Details": "Save the current document."
+        },
+        "CloseFile": {
+            "Name": "Close",
+            "Details": "Close the current document."
+        },
+        "Exit": {
+            "Name": "Exit",
+            "Details": "Exit the application."
+        },
+        "OpenCommandBox": {
+            "Name": "Command Box",
+            "Details": "Open the command box."
+        }
+    },
+    "Components": {
+        "ContextExplorerComponent": {
+            "Title": "Context Explorer"
+        },
+        "LogComponent": {
+            "Title": "Log"
+        }
+    },
+    "Forms": {
+        "Shell": {
+            "Title": "Sledge Shell"
+        }
+    }
+}

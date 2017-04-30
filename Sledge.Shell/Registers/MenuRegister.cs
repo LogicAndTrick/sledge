@@ -172,7 +172,7 @@ namespace Sledge.Shell.Registers
             {
                 _context = context;
                 _group = group ?? new MenuGroup("", "", "", "T");
-                ToolStripMenuItem = new ToolStripMenuItem(menuItem.Description) {Tag = this};
+                ToolStripMenuItem = new ToolStripMenuItem(menuItem.Name) {Tag = this};
                 ToolStripMenuItem.Click += Fire;
                 MenuItem = menuItem;
                 Groups = new List<MenuTreeGroup>();

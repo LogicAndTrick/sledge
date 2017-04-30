@@ -1,0 +1,50 @@
+﻿{
+    "@Meta": {
+        "Base": "Sledge.BspEditor", 
+        "Language": "en",
+        "Inherit": ""
+    },
+    "@Settings": {
+        
+    },
+    "Commands": {
+        "Modification": {
+            "SelectNone": {
+                "Name": "Select None",
+                "Details": "Clear the current selection."
+            },
+            "SelectAll": {
+                "Name": "Select All",
+                "Details": "Select all objects in the document."
+            }
+        },
+        "Clipboard": {
+            "Paste": {
+                "Name": "Paste",
+                "Details": "Paste the current clipboard contents."
+            },
+            "Cut": {
+                "Name": "Cut",
+                "Details": "Copy the current selection and remove it."
+            },
+            "Copy": {
+                "Name": "Copy",
+                "Details": "Copy the current selection."
+            }
+
+        }
+    },
+    "Components": {
+        "ClipboardSidebarPanel": {
+            "Title": "Clipboard"
+        }
+    },
+    "Grid": {
+        "NoGrid": {
+            "Name": "No grid"
+        },
+        "SquareGrid": {
+            "Name": "Standard grid"
+        }
+    } 
+}

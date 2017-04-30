@@ -4,7 +4,6 @@ using System.Linq;
 using System.Runtime.Serialization;
 using Sledge.Common.Transport;
 using Sledge.DataStructures.Geometric;
-using Sledge.DataStructures.MapObjects;
 
 namespace Sledge.BspEditor.Primitives.MapObjectData
 {
@@ -44,7 +43,33 @@ namespace Sledge.BspEditor.Primitives.MapObjectData
         public SerialisedObject ToSerialisedObject()
         {
             var so = new SerialisedObject("Face");
-            // todo !
+            so.Set("ID", ID);
+            so.Set("IsSelected", IsSelected);
+
+            var p = new SerialisedObject("Plane");
+            p.Set("Normal", Plane.Normal);
+            p.Set("DistanceFromOrigin", Plane.DistanceFromOrigin);
+            so.Children.Add(p);
+
+            if (Texture != null)
+            {
+                var t = new SerialisedObject("Texture");
+                t.Set("Name", Texture.Name);
+                t.Set("Rotation", Texture.Rotation);
+                t.Set("UAxis", Texture.UAxis);
+                t.Set("VAxis", Texture.VAxis);
+                t.Set("XScale", Texture.XScale);
+                t.Set("XShift", Texture.XShift);
+                t.Set("YScale", Texture.YScale);
+                t.Set("YShift", Texture.YShift);
+                so.Children.Add(t);
+            }
+            foreach (var c in Vertices)
+            {
+                var v = new SerialisedObject("Vertex");
+                v.Set("Position", c);
+                so.Children.Add(v);
+            }
             return so;
         }
 

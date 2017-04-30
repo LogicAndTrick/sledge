@@ -5,16 +5,18 @@ using Sledge.Common.Shell.Commands;
 using Sledge.Common.Shell.Context;
 using Sledge.Common.Shell.Documents;
 using Sledge.Common.Shell.Menu;
+using Sledge.Common.Translations;
 
 namespace Sledge.Shell.Commands
 {
+    [AutoTranslate]
     [Export(typeof(ICommand))]
     [CommandID("File:Close")]
     [MenuItem("File", "", "File", "H")]
     public class CloseFile : ICommand
     {
-        public string Name => "Close";
-        public string Details => "Close";
+        public string Name { get; set; } = "Close";
+        public string Details { get; set; } = "Close";
 
         public bool IsInContext(IContext context)
         {

@@ -12,17 +12,19 @@ using Sledge.Common.Shell.Context;
 using Sledge.Common.Shell.Documents;
 using Sledge.Common.Shell.Hotkeys;
 using Sledge.Common.Shell.Menu;
+using Sledge.Common.Translations;
 
 namespace Sledge.Shell.Commands
 {
+    [AutoTranslate]
     [Export(typeof(ICommand))]
     [CommandID("File:Open")]
     [DefaultHotkey("Ctrl+O")]
     [MenuItem("File", "", "File", "D")]
     public class OpenFile : ICommand
     {
-        public string Name => "Open";
-        public string Details => "Open...";
+        public string Name { get; set; } = "Open";
+        public string Details { get; set; } = "Open...";
 
         public bool IsInContext(IContext context)
         {

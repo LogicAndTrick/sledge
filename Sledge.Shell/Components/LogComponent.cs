@@ -10,16 +10,18 @@ using LogicAndTrick.Oy;
 using Sledge.Common.Logging;
 using Sledge.Common.Shell.Components;
 using Sledge.Common.Shell.Context;
+using Sledge.Common.Translations;
 
 namespace Sledge.Shell.Components
 {
+    [AutoTranslate]
     [Export(typeof(IBottomTabComponent))]
     public class LogComponent : IBottomTabComponent
     {
         private TextBox _control;
         private List<LogMessage> _logs;
 
-        public string Title => "Log";
+        public string Title { get; set; } = "Log";
         public object Control => _control;
 
         public LogComponent()
