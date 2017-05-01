@@ -51,7 +51,7 @@ namespace Sledge.Common.Shell.Settings
 
         public void Set<T>(string key, T value)
         {
-            var obj = JObject.FromObject(value);
+            var obj = value == null ? null : JToken.FromObject(value);
             _keys[key] = new JProperty(key, obj);
         }
 

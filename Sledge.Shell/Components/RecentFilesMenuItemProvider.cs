@@ -47,7 +47,7 @@ namespace Sledge.Shell.Components
             yield break;
         }
 
-        public void SetValues(ISettingsStore store)
+        public void LoadValues(ISettingsStore store)
         {
             var list = store.Get("Files", new List<RecentFile>());
             _recentFiles.Clear();
@@ -55,9 +55,9 @@ namespace Sledge.Shell.Components
             // todo !menu need a way to trigger a menu item update
         }
 
-        public IEnumerable<SettingValue> GetValues()
+        public void StoreValues(ISettingsStore store)
         {
-            yield return new SettingValue("Files", _recentFiles);
+            store.Set("Files", _recentFiles);
         }
 
         private class RecentFile

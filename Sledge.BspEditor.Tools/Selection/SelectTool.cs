@@ -30,6 +30,7 @@ namespace Sledge.BspEditor.Tools.Selection
     /// 3. Drawing a box in the 2D view and confirming it will select everything in the box
     /// </summary>
     [Export(typeof(ITool))]
+    [Export(typeof(ISettingsContainer))]
     public class SelectTool : BaseDraggableTool, ISettingsContainer
     {
         private readonly BoxDraggableState _emptyBox;
@@ -40,28 +41,33 @@ namespace Sledge.BspEditor.Tools.Selection
 
         // Settings
 
-        private int selectionBoxBackgroundOpacity = 64;
-        private bool selectionBoxStippled = false;
-        private bool autoSelectBox = false;
-        private bool show3DWidgets = false;
-        private bool selectByCenterHandles = true;
-        private bool onlySelectByCenterHandles = false;
+        [Setting("SelectionBoxBackgroundOpacity")] private int selectionBoxBackgroundOpacity = 64;
+        [Setting("SelectionBoxStippled")] private bool selectionBoxStippled = false;
+        [Setting("AutoSelectBox")] private bool autoSelectBox = false;
+        [Setting("Show3DWidgets")] private bool show3DWidgets = false;
+        [Setting("SelectByCenterHandles")] private bool selectByCenterHandles = true;
+        [Setting("OnlySelectByCenterHandles")] private bool onlySelectByCenterHandles = false;
 
         string ISettingsContainer.Name => "Sledge.BspEditor.Tools.SelectTool";
 
         IEnumerable<SettingKey> ISettingsContainer.GetKeys()
         {
-            throw new NotImplementedException();
+            yield return new SettingKey("SelectionBoxBackgroundOpacity", typeof(int));
+            yield return new SettingKey("SelectionBoxStippled", typeof(bool));
+            yield return new SettingKey("AutoSelectBox", typeof(bool));
+            yield return new SettingKey("Show3DWidgets", typeof(bool));
+            yield return new SettingKey("SelectByCenterHandles", typeof(bool));
+            yield return new SettingKey("OnlySelectByCenterHandles", typeof(bool));
         }
 
-        void ISettingsContainer.SetValues(ISettingsStore store)
+        void ISettingsContainer.LoadValues(ISettingsStore store)
         {
-            throw new NotImplementedException();
+            store.LoadInstance(this);
         }
 
-        IEnumerable<SettingValue> ISettingsContainer.GetValues()
+        void ISettingsContainer.StoreValues(ISettingsStore store)
         {
-            throw new NotImplementedException();
+            store.StoreInstance(this);
         }
 
         public SelectTool()

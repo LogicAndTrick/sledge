@@ -83,7 +83,7 @@ namespace Sledge.Shell.Registers
             yield break;
         }
 
-        public void SetValues(ISettingsStore store)
+        public void LoadValues(ISettingsStore store)
         {
             _shell.Invoke((MethodInvoker) delegate
             {
@@ -121,21 +121,21 @@ namespace Sledge.Shell.Registers
             });
         }
 
-        public IEnumerable<SettingValue> GetValues()
+        public void StoreValues(ISettingsStore store)
         {
             for (var i = 0; i < _left.Count; i++)
             {
                 var sc = _left[i];
-                yield return new SettingValue($"{sc.ID}:Side", "Left");
-                yield return new SettingValue($"{sc.ID}:Order", i);
-                yield return new SettingValue($"{sc.ID}:Expanded", !sc.Panel.Hidden);
+                store.Set($"{sc.ID}:Side", "Left");
+                store.Set($"{sc.ID}:Order", i);
+                store.Set($"{sc.ID}:Expanded", !sc.Panel.Hidden);
             }
             for (var i = 0; i < _right.Count; i++)
             {
                 var sc = _right[i];
-                yield return new SettingValue($"{sc.ID}:Side", "Right");
-                yield return new SettingValue($"{sc.ID}:Order", i);
-                yield return new SettingValue($"{sc.ID}:Expanded", !sc.Panel.Hidden);
+                store.Set($"{sc.ID}:Side", "Right");
+                store.Set($"{sc.ID}:Order", i);
+                store.Set($"{sc.ID}:Expanded", !sc.Panel.Hidden);
             }
         }
 

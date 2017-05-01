@@ -52,14 +52,14 @@ namespace Sledge.Shell.Translations
             yield return new SettingKey("Language", typeof(string));
         }
 
-        public void SetValues(ISettingsStore store)
+        public void LoadValues(ISettingsStore store)
         {
             Language = store.Get("Language", Language);
         }
 
-        public IEnumerable<SettingValue> GetValues()
+        public void StoreValues(ISettingsStore store)
         {
-            yield return new SettingValue("Language", Language);
+            store.Set("Language", Language);
         }
     }
 }

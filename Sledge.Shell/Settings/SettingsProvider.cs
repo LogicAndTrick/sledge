@@ -45,12 +45,12 @@ namespace Sledge.Shell.Settings
             await SaveSettings(null);
         }
 
-        private readonly Dictionary<string, ISettingsStore> _values;
+        private readonly Dictionary<string, JsonSettingsStore> _values;
         private readonly List<ISettingsContainer> _containers;
 
         public SettingsProvider()
         {
-            _values = new Dictionary<string, ISettingsStore>();
+            _values = new Dictionary<string, JsonSettingsStore>();
             _containers = new List<ISettingsContainer>();
         }
 
@@ -100,7 +100,7 @@ namespace Sledge.Shell.Settings
             foreach (var container in _containers)
             {
                 if (name != null && container.Name != name) continue;
-                container.SetValues(_values.ContainsKey(container.Name) ? _values[container.Name] : new JsonSettingsStore());
+                container.LoadValues(_values.ContainsKey(container.Name) ? _values[container.Name] : new JsonSettingsStore());
             }
             Log.Debug("Settings", "Settings loaded.");
         }
@@ -118,8 +118,9 @@ namespace Sledge.Shell.Settings
             foreach (var container in _containers)
             {
                 if (name != null && container.Name != name) continue;
-                var values = container.GetValues();
-                File.WriteAllText(Path.Combine(path, container.Name + ".json"), JsonConvert.SerializeObject(values.ToDictionary(x => x.Name, x => x.Value), Formatting.Indented));
+                var store = _values.ContainsKey(container.Name) ? _values[container.Name] : new JsonSettingsStore();
+                container.StoreValues(store);
+                File.WriteAllText(Path.Combine(path, container.Name + ".json"), store.ToJson());
             }
             Log.Debug("Settings", "Settings saved.");
         }

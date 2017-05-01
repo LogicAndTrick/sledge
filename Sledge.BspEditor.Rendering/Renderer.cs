@@ -33,50 +33,18 @@ namespace Sledge.BspEditor.Rendering
         public Engine Engine => _engine.Value;
 
         // Renderer settings
-        private bool DisableTextureTransparency { get; set; } = false;
-        private bool DisableTextureFiltering { get; set; } = false;
-        private bool ForcePowerOfTwoTextureSizes { get; set; } = false;
-        private Color PerspectiveBackgroundColour { get; set; } = Color.Black;
-        private Color OrthographicBackgroundColour { get; set; } = Color.Black;
-        private float PerspectiveGridSpacing { get; set; } = 64;
-        private bool ShowPerspectiveGrid { get; set; } = false;
-        private float PointSize { get; set; } = 4;
+        [Setting] private bool DisableTextureTransparency { get; set; } = false;
+        [Setting] private bool DisableTextureFiltering { get; set; } = false;
+        [Setting] private bool ForcePowerOfTwoTextureSizes { get; set; } = false;
+        [Setting] private Color PerspectiveBackgroundColour { get; set; } = Color.Black;
+        [Setting] private Color OrthographicBackgroundColour { get; set; } = Color.Black;
+        [Setting] private float PerspectiveGridSpacing { get; set; } = 64;
+        [Setting] private bool ShowPerspectiveGrid { get; set; } = false;
+        [Setting] private float PointSize { get; set; } = 4;
 
         public Renderer()
         {
             Instance = this;
-        }
-
-        // Settings container
-
-        public string Name => "Sledge.Rendering.Renderer";
-
-        public IEnumerable<SettingKey> GetKeys()
-        {
-            yield return new SettingKey("Renderer", typeof(string));
-        }
-
-        public void SetValues(ISettingsStore store)
-        {
-            switch (store.Get("Renderer", "OpenGLRenderer"))
-            {
-                // Uh... we only support one renderer for now
-                // So why am I bothering with this? oh well...
-                default:
-                case "OpenGLRenderer":
-                    _renderer = "OpenGLRenderer";
-                    _engine = new Lazy<Engine>(() => MakeEngine(new OpenGLRenderer()));
-                    break;
-            }
-
-            DisableTextureTransparency = store.Get("DisableTextureTransparency", DisableTextureTransparency);
-            DisableTextureFiltering = store.Get("DisableTextureFiltering", DisableTextureFiltering);
-            ForcePowerOfTwoTextureSizes = store.Get("ForcePowerOfTwoTextureSizes", ForcePowerOfTwoTextureSizes);
-            ShowPerspectiveGrid = store.Get("ShowPerspectiveGrid", ShowPerspectiveGrid);
-            PerspectiveGridSpacing = store.Get("PerspectiveGridSpacing", PerspectiveGridSpacing);
-            PerspectiveBackgroundColour = store.Get("PerspectiveBackgroundColour", PerspectiveBackgroundColour);
-            OrthographicBackgroundColour = store.Get("OrthographicBackgroundColour", OrthographicBackgroundColour);
-            PointSize = store.Get("PointSize", PointSize);
         }
 
         private Engine MakeEngine(IRenderer renderer)
@@ -96,18 +64,34 @@ namespace Sledge.BspEditor.Rendering
             return e;
         }
 
-        public IEnumerable<SettingValue> GetValues()
+        // Settings container
+
+        public string Name => "Sledge.Rendering.Renderer";
+
+        public IEnumerable<SettingKey> GetKeys()
         {
-            yield return new SettingValue("Renderer", _renderer);
-            var settings = _engine.IsValueCreated ? _engine.Value.Renderer.Settings : null;
-            yield return new SettingValue("DisableTextureTransparency", settings?.DisableTextureTransparency ?? DisableTextureTransparency);
-            yield return new SettingValue("DisableTextureFiltering", settings?.DisableTextureFiltering ?? DisableTextureFiltering);
-            yield return new SettingValue("ForcePowerOfTwoTextureSizes", settings?.ForcePowerOfTwoTextureSizes ?? ForcePowerOfTwoTextureSizes);
-            yield return new SettingValue("ShowPerspectiveGrid", settings?.ShowPerspectiveGrid ?? ShowPerspectiveGrid);
-            yield return new SettingValue("PerspectiveBackgroundColour", (settings?.PerspectiveBackgroundColour ?? PerspectiveBackgroundColour).ToArgb());
-            yield return new SettingValue("PerspectiveGridSpacing", settings?.PerspectiveGridSpacing ?? PerspectiveGridSpacing);
-            yield return new SettingValue("OrthographicBackgroundColour", (settings?.OrthographicBackgroundColour ?? OrthographicBackgroundColour).ToArgb());
-            yield return new SettingValue("PointSize", settings?.PointSize ?? PointSize);
+            yield return new SettingKey("Renderer", typeof(string));
+        }
+
+        public void LoadValues(ISettingsStore store)
+        {
+            switch (store.Get("Renderer", "OpenGLRenderer"))
+            {
+                // Uh... we only support one renderer for now
+                // So why am I bothering with this? oh well...
+                default:
+                case "OpenGLRenderer":
+                    _renderer = "OpenGLRenderer";
+                    _engine = new Lazy<Engine>(() => MakeEngine(new OpenGLRenderer()));
+                    break;
+            }
+            store.LoadInstance(this);
+        }
+
+        public void StoreValues(ISettingsStore store)
+        {
+            store.Set("Renderer", _renderer);
+            store.StoreInstance(this);
         }
     }
 }

@@ -24,7 +24,7 @@ namespace Sledge.Common.Shell.Settings
             }
         }
 
-        public void SetValues(ISettingsStore store)
+        public void LoadValues(ISettingsStore store)
         {
             var props = GetProps().ToDictionary(x => x.Name, x => x);
             foreach (var sv in store.GetKeys().Where(x => props.ContainsKey(x)))
@@ -41,11 +41,11 @@ namespace Sledge.Common.Shell.Settings
             }
         }
 
-        public IEnumerable<SettingValue> GetValues()
+        public void StoreValues(ISettingsStore store)
         {
             foreach (var pi in GetProps())
             {
-                yield return new SettingValue(pi.Name, Convert.ToString(pi.GetValue(null)));
+                store.Set(pi.Name, pi.GetValue(null));
             }
         }
     }

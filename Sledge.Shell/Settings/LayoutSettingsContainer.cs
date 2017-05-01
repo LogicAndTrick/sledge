@@ -26,7 +26,7 @@ namespace Sledge.Shell.Settings
             yield break;
         }
 
-        public void SetValues(ISettingsStore store)
+        public void LoadValues(ISettingsStore store)
         {
             _shell.Invoke((MethodInvoker) delegate
             {
@@ -42,13 +42,13 @@ namespace Sledge.Shell.Settings
             });
         }
 
-        public IEnumerable<SettingValue> GetValues()
+        public void StoreValues(ISettingsStore store)
         {
-            yield return new SettingValue("WindowState", Convert.ToString(_shell.WindowState, CultureInfo.InvariantCulture));
+            store.Set("WindowState", Convert.ToString(_shell.WindowState, CultureInfo.InvariantCulture));
             foreach (var dp in _shell.GetDockPanels())
             {
-                yield return new SettingValue($"DockPanel:{dp.Name}:Hidden", dp.Hidden);
-                yield return new SettingValue($"DockPanel:{dp.Name}:Size", dp.DockDimension);
+                store.Set($"DockPanel:{dp.Name}:Hidden", dp.Hidden);
+                store.Set($"DockPanel:{dp.Name}:Size", dp.DockDimension);
             }
         }
     }

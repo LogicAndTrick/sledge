@@ -95,7 +95,7 @@ namespace Sledge.Shell.Registers
             return _hotkeys.Select(x => new SettingKey(x.Value.ID, typeof(string)));
         }
 
-        public void SetValues(ISettingsStore store)
+        public void LoadValues(ISettingsStore store)
         {
             _registeredHotkeys.Clear();
             var svs = store.GetKeys().ToDictionary(x => x, x => store.Get<string>(x));
@@ -106,14 +106,17 @@ namespace Sledge.Shell.Registers
             }
         }
 
-        public IEnumerable<SettingValue> GetValues()
+        public void StoreValues(ISettingsStore store)
         {
             var reg = _registeredHotkeys.ToDictionary(x => x.Value.ID, x => x.Key);
             foreach (var hk in _hotkeys)
             {
                 if (!reg.ContainsKey(hk.Key)) reg[hk.Key] = hk.Value.DefaultHotkey;
             }
-            return reg.Select(x => new SettingValue(x.Key, x.Value));
+            foreach (var r in reg)
+            {
+                store.Set(r.Key, r.Value);
+            }
         }
     }
 }

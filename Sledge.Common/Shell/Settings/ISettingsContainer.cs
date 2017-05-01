@@ -6,7 +6,7 @@ namespace Sledge.Common.Shell.Settings
     {
         string Name { get; }
         IEnumerable<SettingKey> GetKeys();
-        void SetValues(ISettingsStore store);
-        IEnumerable<SettingValue> GetValues();
+        void LoadValues(ISettingsStore store);
+        void StoreValues(ISettingsStore store);
     }
 }

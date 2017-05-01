@@ -80,7 +80,7 @@ namespace Sledge.BspEditor.Components
             yield break;
         }
 
-        public void SetValues(ISettingsStore store)
+        public void LoadValues(ISettingsStore store)
         {
             var newConfig = store.Get("TableConfiguration", Table.Configuration);
             if (newConfig.IsValid()) Table.Configuration = newConfig;
@@ -97,10 +97,10 @@ namespace Sledge.BspEditor.Components
             }
         }
 
-        public IEnumerable<SettingValue> GetValues()
+        public void StoreValues(ISettingsStore store)
         {
             var config = Table.Configuration ?? TableSplitConfiguration.Default();
-            yield return new SettingValue("TableConfiguration", config);
+            store.Set("TableConfiguration", config);
 
             var controls = new List<HostedControl>();
 
@@ -108,7 +108,7 @@ namespace Sledge.BspEditor.Components
             {
                 controls.Add(new HostedControl { Row = mdc.Row, Column = mdc.Column, Type = mdc.Control.Type, Serialised = mdc.Control.GetSerialisedSettings()});
             }
-            yield return new SettingValue("Controls", controls);
+            store.Set("Controls", controls);
         }
 
         private IMapDocumentControl MakeControl(string type, string serialised)
