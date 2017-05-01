@@ -60,10 +60,9 @@ namespace Sledge.BspEditor.Primitives.MapObjects
         IEnumerable<IPrimitive> ToPrimitives();
 
         /// <summary>
-        /// Get the intersection point between this object and the given line.
+        /// Get a list of renderable polygons that belong directly to this object.
         /// </summary>
-        /// <param name="line">The line to test</param>
-        /// <returns>The intersection point, or null if the object doesn't intersect the line</returns>
-        Coordinate Intersect(Line line);
+        /// <returns>The list of polygons owned by this object (not including children)</returns>
+        IEnumerable<Polygon> GetPolygons();
     }
 }

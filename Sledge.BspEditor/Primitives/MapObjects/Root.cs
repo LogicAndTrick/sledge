@@ -27,11 +27,11 @@ namespace Sledge.BspEditor.Primitives.MapObjects
         {
             return Hierarchy.NumChildren > 0 ? new Box(Hierarchy.Select(x => x.BoundingBox)) : Box.Empty;
         }
-
-        public override Coordinate Intersect(Line line)
+        
+        public override IEnumerable<Polygon> GetPolygons()
         {
-            // Selecting the root would be awkward
-            return null;
+            // The root never contains geometry
+            yield break;
         }
 
         protected override string SerialisedName => "Root";

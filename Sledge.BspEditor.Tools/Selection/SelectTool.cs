@@ -44,6 +44,8 @@ namespace Sledge.BspEditor.Tools.Selection
         private bool selectionBoxStippled = false;
         private bool autoSelectBox = false;
         private bool show3DWidgets = false;
+        private bool selectByCenterHandles = true;
+        private bool onlySelectByCenterHandles = false;
 
         string ISettingsContainer.Name => "Sledge.BspEditor.Tools.SelectTool";
 
@@ -285,14 +287,9 @@ namespace Sledge.BspEditor.Tools.Selection
 
         private Coordinate GetIntersectionPoint(IMapObject obj, Line line)
         {
-            if (obj == null) return null;
-
-            var solid = obj as Solid;
-            if (solid == null) return obj.Intersect(line);
-
             // todo !selection opacity/hidden
-            return solid.Faces //.Where(x => x.Opacity > 0 && !x.IsHidden)
-                .Select(x => new Polygon(x.Vertices))
+            //.Where(x => x.Opacity > 0 && !x.IsHidden)
+            return obj?.GetPolygons()
                 .Select(x => x.GetIntersectionPoint(line))
                 .Where(x => x != null)
                 .OrderBy(x => (x - line.Start).VectorMagnitude())
@@ -303,7 +300,7 @@ namespace Sledge.BspEditor.Tools.Selection
         {
             return Document.Map.Root.Collect(
                 x => x is Root || (x.BoundingBox != null && x.BoundingBox.IntersectsWith(ray)),
-                x => !x.Hierarchy.HasChildren
+                x => x.Hierarchy.Parent != null && !x.Hierarchy.HasChildren
             );
         }
 
@@ -415,7 +412,6 @@ namespace Sledge.BspEditor.Tools.Selection
             {
                 _selectionBox.Cycle();
             }
-            e.Handled = !ctrl || draggable == _emptyBox;
         }
 
         protected override void OnDraggableDragStarted(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Coordinate position, IDraggable draggable)
@@ -474,11 +470,26 @@ namespace Sledge.BspEditor.Tools.Selection
 
         }
 
-        private IEnumerable<IMapObject> GetLineIntersections(Box box)
+        private bool LineAndCenterIntersectFilter(IMapObject obj, Box box)
+        {
+            return CenterHandleIntersectFilter(obj, box) || LineIntersectFilter(obj, box);
+        }
+
+        private bool CenterHandleIntersectFilter(IMapObject obj, Box box)
+        {
+            return obj.BoundingBox != null && box.CoordinateIsInside(obj.BoundingBox.Center);
+        }
+
+        private bool LineIntersectFilter(IMapObject obj, Box box)
+        {
+            return obj.GetPolygons().Any(p => p.GetLines().Any(box.IntersectsWith));
+        }
+
+        private IEnumerable<IMapObject> GetLineIntersections(Box box, Func<IMapObject, Box, bool> filter)
         {
             return Document.Map.Root.Collect(
                 x => x is Root || (x.BoundingBox != null && x.BoundingBox.IntersectsWith(box)),
-                x => false // todo !selection skipping because lazy
+                x => x.Hierarchy.Parent != null && !x.Hierarchy.HasChildren && filter(x, box)
             );
         }
 
@@ -491,13 +502,15 @@ namespace Sledge.BspEditor.Tools.Selection
             var add = used + unused;
             var click = viewport.ProperScreenToWorld(e.X, e.Y);
             var box = new Box(click - add, click + add);
-
-            // todo !selection center handles
-            var centerHandles = true; //Sledge.Settings.Select.DrawCenterHandles;
-            var centerOnly = false; //Sledge.Settings.Select.ClickSelectByCenterHandlesOnly;
+            
             // Get the first element that intersects with the box, selecting or deselecting as needed
-            return GetLineIntersections(box).FirstOrDefault();
-            //return Document.Map.Root.GetAllNodesIntersecting2DLineTest(box, centerHandles, centerOnly).FirstOrDefault();
+            Func<IMapObject, Box, bool> filter;
+
+            if (onlySelectByCenterHandles) filter = CenterHandleIntersectFilter;
+            else if (!selectByCenterHandles) filter = LineIntersectFilter;
+            else filter = LineAndCenterIntersectFilter;
+
+            return GetLineIntersections(box, filter).FirstOrDefault();
         }
 
         protected override void KeyDown(MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
@@ -533,7 +546,7 @@ namespace Sledge.BspEditor.Tools.Selection
         {
             return Document.Map.Root.Collect(
                 x => x is Root || (x.BoundingBox != null && x.BoundingBox.IntersectsWith(box)),
-                x => !x.Hierarchy.HasChildren && includeFilter(x)
+                x => x.Hierarchy.Parent != null && !x.Hierarchy.HasChildren && includeFilter(x)
             );
         }
 

@@ -89,7 +89,7 @@ namespace Sledge.BspEditor.Primitives.MapData
 
         public Box GetSelectionBoundingBox()
         {
-            return IsEmpty ? Box.Empty : new Box(_selectedObjects.Select(x => x.BoundingBox));
+            return IsEmpty ? Box.Empty : new Box(_selectedObjects.Select(x => x.BoundingBox).Where(x => x != null).DefaultIfEmpty(Box.Empty));
         }
 
         public IEnumerable<IMapObject> GetSelectedParents()

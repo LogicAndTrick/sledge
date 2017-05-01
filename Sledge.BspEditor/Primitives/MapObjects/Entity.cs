@@ -40,17 +40,13 @@ namespace Sledge.BspEditor.Primitives.MapObjects
                 : new Box(Origin - Coordinate.One * 16, Origin + Coordinate.One * 16);
         }
 
-        public override Coordinate Intersect(Line line)
+        public override IEnumerable<Polygon> GetPolygons()
         {
-            // Entities with children aren't directly selectable
-            if (Hierarchy.HasChildren) return null;
+            // Entities with children don't contain any geometry directly
+            if (Hierarchy.HasChildren) return new Polygon[0];
 
-            // Otherwise we select based on the bounding box faces
-            var faces = BoundingBox.GetBoxFaces().Select(x => new Polygon(x));
-            return faces.Select(x => x.GetIntersectionPoint(line))
-                .Where(x => x != null)
-                .OrderBy(x => (x - line.Start).VectorMagnitude())
-                .FirstOrDefault();
+            // Otherwise we use the bounding box faces
+            return BoundingBox.GetBoxFaces().Select(x => new Polygon(x));
         }
 
         protected override string SerialisedName => "Entity";

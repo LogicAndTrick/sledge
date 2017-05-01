@@ -28,11 +28,11 @@ namespace Sledge.BspEditor.Primitives.MapObjects
         {
             return Hierarchy.NumChildren > 0 ? new Box(Hierarchy.Select(x => x.BoundingBox)) : Box.Empty;
         }
-
-        public override Coordinate Intersect(Line line)
+        
+        public override IEnumerable<Polygon> GetPolygons()
         {
-            // Groups are never directly selectable
-            return null;
+            // Groups are virtual and never contain geometry
+            yield break;
         }
 
         protected override string SerialisedName => "Group";

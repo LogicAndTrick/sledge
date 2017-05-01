@@ -79,8 +79,7 @@ namespace Sledge.BspEditor.Primitives.MapObjects
             }
         }
 
-        public abstract Coordinate Intersect(Line line);
-
+        public abstract IEnumerable<Polygon> GetPolygons();
         public abstract IMapObject Clone();
         public abstract void Unclone(IMapObject obj);
         public abstract IEnumerable<IPrimitive> ToPrimitives();
