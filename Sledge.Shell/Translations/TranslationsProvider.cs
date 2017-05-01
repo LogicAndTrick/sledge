@@ -49,15 +49,12 @@ namespace Sledge.Shell.Translations
 
         public IEnumerable<SettingKey> GetKeys()
         {
-            yield return new SettingKey("Language", "", typeof(string));
+            yield return new SettingKey("Language", typeof(string));
         }
 
-        public void SetValues(IEnumerable<SettingValue> values)
+        public void SetValues(ISettingsStore store)
         {
-            foreach (var settingValue in values)
-            {
-                if (settingValue.Name == "Language") Language = settingValue.Value;
-            }
+            Language = store.Get("Language", Language);
         }
 
         public IEnumerable<SettingValue> GetValues()

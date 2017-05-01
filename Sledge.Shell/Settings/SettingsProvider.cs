@@ -18,7 +18,7 @@ namespace Sledge.Shell.Settings
     /// </summary>
     [Export(typeof(IInitialiseHook))]
     [Export(typeof(IShutdownHook))]
-    public class SettingsProvider : SyncResourceProvider<SettingValue>, IInitialiseHook, IShutdownHook
+    public class SettingsProvider : IInitialiseHook, IShutdownHook
     {
         [ImportMany] private IEnumerable<Lazy<ISettingsContainer>> _settingsContainers;
 
@@ -45,12 +45,12 @@ namespace Sledge.Shell.Settings
             await SaveSettings(null);
         }
 
-        private readonly Dictionary<string, List<SettingValue>> _values;
+        private readonly Dictionary<string, ISettingsStore> _values;
         private readonly List<ISettingsContainer> _containers;
 
         public SettingsProvider()
         {
-            _values = new Dictionary<string, List<SettingValue>>();
+            _values = new Dictionary<string, ISettingsStore>();
             _containers = new List<ISettingsContainer>();
         }
 
@@ -83,25 +83,24 @@ namespace Sledge.Shell.Settings
                     if (containerName == null) continue;
                     if (name != null && containerName != name) continue;
 
-                    Dictionary<string, string> data;
+                    JsonSettingsStore store;
                     try
                     {
-                        data = JsonConvert.DeserializeObject<Dictionary<string, string>>(File.ReadAllText(file));
+                        store = new JsonSettingsStore(File.ReadAllText(file));
                     }
                     catch
                     {
-                        data = null;
+                        store = new JsonSettingsStore();
                     }
-                    if (data == null) data = new Dictionary<string, string>();
 
-                    _values[containerName] = data.Select(x => new SettingValue(x.Key, x.Value)).ToList();
+                    _values[containerName] = store;
                 }
             }
 
             foreach (var container in _containers)
             {
                 if (name != null && container.Name != name) continue;
-                container.SetValues(_values.ContainsKey(container.Name) ? _values[container.Name] : new List<SettingValue>());
+                container.SetValues(_values.ContainsKey(container.Name) ? _values[container.Name] : new JsonSettingsStore());
             }
             Log.Debug("Settings", "Settings loaded.");
         }
@@ -123,29 +122,6 @@ namespace Sledge.Shell.Settings
                 File.WriteAllText(Path.Combine(path, container.Name + ".json"), JsonConvert.SerializeObject(values.ToDictionary(x => x.Name, x => x.Value), Formatting.Indented));
             }
             Log.Debug("Settings", "Settings saved.");
-        }
-
-        // Resource provider
-
-        public override bool CanProvide(string location)
-        {
-            return location.StartsWith("settings://");
-        }
-
-        public override IEnumerable<SettingValue> Fetch(string location, List<string> resources)
-        {
-            var loc = location.Substring(11);
-            if (!_values.ContainsKey(loc)) return new SettingValue[0];
-
-            if (resources == null)
-            {
-                return _values[loc];
-            }
-            else
-            {
-                var vals = _values[loc];
-                return resources.Select(x => vals.FirstOrDefault(y => y.Name == x)).Where(x => x != null);
-            }
         }
     }
 }

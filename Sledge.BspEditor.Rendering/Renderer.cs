@@ -53,15 +53,12 @@ namespace Sledge.BspEditor.Rendering
 
         public IEnumerable<SettingKey> GetKeys()
         {
-            yield return new SettingKey("Renderer", "The 3D renderer", typeof(string));
+            yield return new SettingKey("Renderer", typeof(string));
         }
 
-        public void SetValues(IEnumerable<SettingValue> values)
+        public void SetValues(ISettingsStore store)
         {
-            var d = values.ToDictionary(x => x.Name, x => x.Value);
-            if (!d.ContainsKey("Renderer")) d["Renderer"] = "OpenGLRenderer";
-
-            switch (d["Renderer"])
+            switch (store.Get("Renderer", "OpenGLRenderer"))
             {
                 // Uh... we only support one renderer for now
                 // So why am I bothering with this? oh well...
@@ -71,26 +68,15 @@ namespace Sledge.BspEditor.Rendering
                     _engine = new Lazy<Engine>(() => MakeEngine(new OpenGLRenderer()));
                     break;
             }
-            
-            bool b;
-            int i;
-            float f;
-            if (d.ContainsKey("DisableTextureTransparency") && bool.TryParse(d["DisableTextureTransparency"], out b))
-                DisableTextureTransparency = b;
-            if (d.ContainsKey("DisableTextureFiltering") && bool.TryParse(d["DisableTextureFiltering"], out b))
-                DisableTextureFiltering = b;
-            if (d.ContainsKey("ForcePowerOfTwoTextureSizes") && bool.TryParse(d["ForcePowerOfTwoTextureSizes"], out b))
-                ForcePowerOfTwoTextureSizes = b;
-            if (d.ContainsKey("ShowPerspectiveGrid") && bool.TryParse(d["ShowPerspectiveGrid"], out b))
-                ShowPerspectiveGrid = b;
-            if (d.ContainsKey("PerspectiveGridSpacing") && float.TryParse(d["PerspectiveGridSpacing"], out f))
-                PerspectiveGridSpacing = f;
-            if (d.ContainsKey("PerspectiveBackgroundColour") && int.TryParse(d["PerspectiveBackgroundColour"], out i))
-                PerspectiveBackgroundColour = Color.FromArgb(i);
-            if (d.ContainsKey("OrthographicBackgroundColour") && int.TryParse(d["PerspectiveBackgroundColour"], out i))
-                OrthographicBackgroundColour = Color.FromArgb(i);
-            if (d.ContainsKey("PointSize") && int.TryParse(d["PerspectiveBackgroundColour"], out i))
-                PointSize = i;
+
+            DisableTextureTransparency = store.Get("DisableTextureTransparency", DisableTextureTransparency);
+            DisableTextureFiltering = store.Get("DisableTextureFiltering", DisableTextureFiltering);
+            ForcePowerOfTwoTextureSizes = store.Get("ForcePowerOfTwoTextureSizes", ForcePowerOfTwoTextureSizes);
+            ShowPerspectiveGrid = store.Get("ShowPerspectiveGrid", ShowPerspectiveGrid);
+            PerspectiveGridSpacing = store.Get("PerspectiveGridSpacing", PerspectiveGridSpacing);
+            PerspectiveBackgroundColour = store.Get("PerspectiveBackgroundColour", PerspectiveBackgroundColour);
+            OrthographicBackgroundColour = store.Get("OrthographicBackgroundColour", OrthographicBackgroundColour);
+            PointSize = store.Get("PointSize", PointSize);
         }
 
         private Engine MakeEngine(IRenderer renderer)
@@ -114,14 +100,14 @@ namespace Sledge.BspEditor.Rendering
         {
             yield return new SettingValue("Renderer", _renderer);
             var settings = _engine.IsValueCreated ? _engine.Value.Renderer.Settings : null;
-            yield return new SettingValue("DisableTextureTransparency", Convert.ToString(settings?.DisableTextureTransparency ?? DisableTextureTransparency, CultureInfo.InvariantCulture));
-            yield return new SettingValue("DisableTextureFiltering", Convert.ToString(settings?.DisableTextureFiltering ?? DisableTextureFiltering, CultureInfo.InvariantCulture));
-            yield return new SettingValue("ForcePowerOfTwoTextureSizes", Convert.ToString(settings?.ForcePowerOfTwoTextureSizes ?? ForcePowerOfTwoTextureSizes, CultureInfo.InvariantCulture));
-            yield return new SettingValue("ShowPerspectiveGrid", Convert.ToString(settings?.ShowPerspectiveGrid ?? ShowPerspectiveGrid, CultureInfo.InvariantCulture));
-            yield return new SettingValue("PerspectiveBackgroundColour", Convert.ToString((settings?.PerspectiveBackgroundColour ?? PerspectiveBackgroundColour).ToArgb(), CultureInfo.InvariantCulture));
-            yield return new SettingValue("PerspectiveGridSpacing", Convert.ToString(settings?.PerspectiveGridSpacing ?? PerspectiveGridSpacing, CultureInfo.InvariantCulture));
-            yield return new SettingValue("OrthographicBackgroundColour", Convert.ToString((settings?.OrthographicBackgroundColour ?? OrthographicBackgroundColour).ToArgb(), CultureInfo.InvariantCulture));
-            yield return new SettingValue("PointSize", Convert.ToString(settings?.PointSize ?? PointSize, CultureInfo.InvariantCulture));
+            yield return new SettingValue("DisableTextureTransparency", settings?.DisableTextureTransparency ?? DisableTextureTransparency);
+            yield return new SettingValue("DisableTextureFiltering", settings?.DisableTextureFiltering ?? DisableTextureFiltering);
+            yield return new SettingValue("ForcePowerOfTwoTextureSizes", settings?.ForcePowerOfTwoTextureSizes ?? ForcePowerOfTwoTextureSizes);
+            yield return new SettingValue("ShowPerspectiveGrid", settings?.ShowPerspectiveGrid ?? ShowPerspectiveGrid);
+            yield return new SettingValue("PerspectiveBackgroundColour", (settings?.PerspectiveBackgroundColour ?? PerspectiveBackgroundColour).ToArgb());
+            yield return new SettingValue("PerspectiveGridSpacing", settings?.PerspectiveGridSpacing ?? PerspectiveGridSpacing);
+            yield return new SettingValue("OrthographicBackgroundColour", (settings?.OrthographicBackgroundColour ?? OrthographicBackgroundColour).ToArgb());
+            yield return new SettingValue("PointSize", settings?.PointSize ?? PointSize);
         }
     }
 }

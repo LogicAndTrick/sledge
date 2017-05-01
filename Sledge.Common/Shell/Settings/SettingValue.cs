@@ -3,9 +3,9 @@
     public class SettingValue
     {
         public string Name { get; private set; }
-        public string Value { get; private set; }
+        public object Value { get; private set; }
 
-        public SettingValue(string name, string value)
+        public SettingValue(string name, object value)
         {
             Name = name;
             Value = value;

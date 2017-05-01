@@ -80,24 +80,19 @@ namespace Sledge.Shell.Registers
 
         public IEnumerable<SettingKey> GetKeys()
         {
-            foreach (var sc in _left.Union(_right))
-            {
-                yield return new SettingKey($"{sc.ID}:Side", "", typeof(string));
-                yield return new SettingKey($"{sc.ID}:Order", "", typeof(string));
-                yield return new SettingKey($"{sc.ID}:Expanded", "", typeof(bool));
-            }
+            yield break;
         }
 
-        public void SetValues(IEnumerable<SettingValue> values)
+        public void SetValues(ISettingsStore store)
         {
             _shell.Invoke((MethodInvoker) delegate
             {
                 var controls = _left.Union(_right).ToDictionary(x => x.ID, x => x);
-                foreach (var sv in values)
+                foreach (var sv in store.GetKeys())
                 {
-                    if (sv.Name.EndsWith(":Side"))
+                    if (sv.EndsWith(":Side"))
                     {
-                        var key = sv.Name.Substring(0, sv.Name.Length - 5);
+                        var key = sv.Substring(0, sv.Length - 5);
                         if (controls.ContainsKey(key))
                         {
                             var con = controls[key];
@@ -105,20 +100,20 @@ namespace Sledge.Shell.Registers
                             _left.Remove(con);
                             _right.Remove(con);
 
-                            if (sv.Value == "Right") _right.Add(con);
+                            if (store.Get(sv, "Left") == "Right") _right.Add(con);
                             else _left.Add(con);
                         }
                     }
-                    if (sv.Name.EndsWith(":Expanded"))
+                    if (sv.EndsWith(":Expanded"))
                     {
-                        var key = sv.Name.Substring(0, sv.Name.Length - 9);
+                        var key = sv.Substring(0, sv.Length - 9);
                         if (controls.ContainsKey(key))
                         {
                             var con = controls[key];
-                            con.Panel.Hidden = sv.Value == "False";
+                            con.Panel.Hidden = !store.Get(sv, true);
                         }
                     }
-                    if (sv.Name.EndsWith(":Order"))
+                    if (sv.EndsWith(":Order"))
                     {
 
                     }
@@ -132,15 +127,15 @@ namespace Sledge.Shell.Registers
             {
                 var sc = _left[i];
                 yield return new SettingValue($"{sc.ID}:Side", "Left");
-                yield return new SettingValue($"{sc.ID}:Order", Convert.ToString(i, CultureInfo.InvariantCulture));
-                yield return new SettingValue($"{sc.ID}:Expanded", Convert.ToString(!sc.Panel.Hidden, CultureInfo.InvariantCulture));
+                yield return new SettingValue($"{sc.ID}:Order", i);
+                yield return new SettingValue($"{sc.ID}:Expanded", !sc.Panel.Hidden);
             }
             for (var i = 0; i < _right.Count; i++)
             {
                 var sc = _right[i];
                 yield return new SettingValue($"{sc.ID}:Side", "Right");
-                yield return new SettingValue($"{sc.ID}:Order", Convert.ToString(i, CultureInfo.InvariantCulture));
-                yield return new SettingValue($"{sc.ID}:Expanded", Convert.ToString(!sc.Panel.Hidden, CultureInfo.InvariantCulture));
+                yield return new SettingValue($"{sc.ID}:Order", i);
+                yield return new SettingValue($"{sc.ID}:Expanded", !sc.Panel.Hidden);
             }
         }
 

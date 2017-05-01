@@ -23,31 +23,21 @@ namespace Sledge.Shell.Settings
 
         public IEnumerable<SettingKey> GetKeys()
         {
-            yield return new SettingKey("WindowState", "", typeof(FormWindowState));
-
-            foreach (var dp in _shell.GetDockPanels())
-            {
-                yield return new SettingKey($"DockPanel:{dp.Name}:Hidden", "", typeof(bool));
-                yield return new SettingKey($"DockPanel:{dp.Name}:Size", "", typeof(int));
-            }
+            yield break;
         }
 
-        public void SetValues(IEnumerable<SettingValue> values)
+        public void SetValues(ISettingsStore store)
         {
-            var vals = values.ToDictionary(x => x.Name, x => x.Value);
             _shell.Invoke((MethodInvoker) delegate
             {
-                if (vals.ContainsKey("WindowState"))
-                {
-                    _shell.WindowState = (FormWindowState) Enum.Parse(typeof(FormWindowState), vals["WindowState"]);
-                }
+                _shell.WindowState = store.Get("WindowState", _shell.WindowState);
 
                 foreach (var dp in _shell.GetDockPanels())
                 {
                     var dph = $"DockPanel:{dp.Name}:Hidden";
                     var dps = $"DockPanel:{dp.Name}:Size";
-                    if (vals.ContainsKey(dph)) dp.Hidden = Convert.ToBoolean(vals[dph], CultureInfo.InvariantCulture);
-                    if (vals.ContainsKey(dps)) dp.DockDimension = Convert.ToInt32(vals[dps], CultureInfo.InvariantCulture);
+                    dp.Hidden = store.Get(dph, dp.Hidden);
+                    dp.DockDimension = store.Get(dps, dp.DockDimension);
                 }
             });
         }
@@ -57,8 +47,8 @@ namespace Sledge.Shell.Settings
             yield return new SettingValue("WindowState", Convert.ToString(_shell.WindowState, CultureInfo.InvariantCulture));
             foreach (var dp in _shell.GetDockPanels())
             {
-                yield return new SettingValue($"DockPanel:{dp.Name}:Hidden", Convert.ToString(dp.Hidden, CultureInfo.InvariantCulture));
-                yield return new SettingValue($"DockPanel:{dp.Name}:Size", Convert.ToString(dp.DockDimension, CultureInfo.InvariantCulture));
+                yield return new SettingValue($"DockPanel:{dp.Name}:Hidden", dp.Hidden);
+                yield return new SettingValue($"DockPanel:{dp.Name}:Size", dp.DockDimension);
             }
         }
     }

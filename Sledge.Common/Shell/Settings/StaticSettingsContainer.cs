@@ -20,22 +20,23 @@ namespace Sledge.Common.Shell.Settings
         {
             foreach (var pi in GetProps())
             {
-                yield return new SettingKey(pi.Name, "", pi.PropertyType);
+                yield return new SettingKey(pi.Name, pi.PropertyType);
             }
         }
 
-        public void SetValues(IEnumerable<SettingValue> values)
+        public void SetValues(ISettingsStore store)
         {
             var props = GetProps().ToDictionary(x => x.Name, x => x);
-            foreach (var sv in values.Where(x => props.ContainsKey(x.Name)))
+            foreach (var sv in store.GetKeys().Where(x => props.ContainsKey(x)))
             {
                 try
                 {
-                    props[sv.Name].SetValue(null, Convert.ChangeType(sv.Value, props[sv.Name].PropertyType));
+                    var v = store.Get(props[sv].PropertyType, sv);
+                    props[sv].SetValue(null, v);
                 }
                 catch (Exception ex)
                 {
-                    Log.Warning(GetType().Assembly.FullName, $"Setting could not be set: {sv.Name}", ex);
+                    Log.Warning(GetType().Assembly.FullName, $"Setting could not be set: {sv}", ex);
                 }
             }
         }

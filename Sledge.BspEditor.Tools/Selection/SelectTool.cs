@@ -54,7 +54,7 @@ namespace Sledge.BspEditor.Tools.Selection
             throw new NotImplementedException();
         }
 
-        void ISettingsContainer.SetValues(IEnumerable<SettingValue> values)
+        void ISettingsContainer.SetValues(ISettingsStore store)
         {
             throw new NotImplementedException();
         }

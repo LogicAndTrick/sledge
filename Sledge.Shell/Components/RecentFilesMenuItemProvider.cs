@@ -47,25 +47,17 @@ namespace Sledge.Shell.Components
             yield break;
         }
 
-        public void SetValues(IEnumerable<SettingValue> values)
+        public void SetValues(ISettingsStore store)
         {
-            var d = values.ToDictionary(x => x.Name, x => x.Value);
-            for (var i = 0; i < 100; i++)
-            {
-                var s = $"File[{i}].Location";
-                if (!d.ContainsKey(s)) return;
-                var loc = d[s];
-                if (File.Exists(loc)) _recentFiles.Add(new RecentFile {Location = loc});
-            }
+            var list = store.Get("Files", new List<RecentFile>());
+            _recentFiles.Clear();
+            _recentFiles.AddRange(list);
             // todo !menu need a way to trigger a menu item update
         }
 
         public IEnumerable<SettingValue> GetValues()
         {
-            for (var i = 0; i < _recentFiles.Count; i++)
-            {
-                yield return new SettingValue($"File[{i}].Location", _recentFiles[i].Location);
-            }
+            yield return new SettingValue("Files", _recentFiles);
         }
 
         private class RecentFile

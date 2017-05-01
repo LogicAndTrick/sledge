@@ -93,6 +93,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Shell\Menu\MenuSection.cs" />
     <Compile Include="Shell\Settings\ISettingsContainer.cs" />
+    <Compile Include="Shell\Settings\ISettingsStore.cs" />
+    <Compile Include="Shell\Settings\JsonSettingsStore.cs" />
     <Compile Include="Shell\Settings\SettingKey.cs" />
     <Compile Include="Shell\Settings\SettingValue.cs" />
     <Compile Include="Shell\Settings\StaticSettingsContainer.cs" />

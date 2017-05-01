@@ -77,54 +77,15 @@ namespace Sledge.BspEditor.Components
 
         public IEnumerable<SettingKey> GetKeys()
         {
-            yield return new SettingKey("Columns", "Number of columns", typeof(int));
-            yield return new SettingKey("Rows", "Number of rows", typeof(int));
-            yield return new SettingKey("Rectangles", "Rectangle configuration", typeof(Rectangle[]));
-            yield return new SettingKey("Controls", "Control configuration", typeof(HostedControl[]));
+            yield break;
         }
 
-        public void SetValues(IEnumerable<SettingValue> values)
+        public void SetValues(ISettingsStore store)
         {
-            var config = Table.Configuration;
-            var d = values.ToDictionary(x => x.Name, x => x.Value);
-            int i;
-            var cols = d.ContainsKey("Columns") && int.TryParse(d["Columns"], out i) ? i : config.Columns;
-            var rows = d.ContainsKey("Rows") && int.TryParse(d["Rows"], out i) ? i : config.Rows;
-            var rects = config.Rectangles;
-            if (d.ContainsKey("Rectangles"))
-            {
-                try
-                {
-                    rects = JsonConvert.DeserializeObject<List<Rectangle>>(d["Rectangles"]);
-                }
-                catch
-                {
-                    // nah
-                }
-            }
-            var newConfig = new TableSplitConfiguration
-            {
-                Columns = cols,
-                Rows = rows,
-                Rectangles = rects
-            };
-            if (newConfig.IsValid())
-            {
-                Table.Configuration = newConfig;
-            }
+            var newConfig = store.Get("TableConfiguration", Table.Configuration);
+            if (newConfig.IsValid()) Table.Configuration = newConfig;
 
-            List<HostedControl> controls = null;
-            if (d.ContainsKey("Controls"))
-            {
-                try
-                {
-                    controls = JsonConvert.DeserializeObject<List<HostedControl>>(d["Controls"]);
-                }
-                catch
-                {
-                    controls = null;
-                }
-            }
+            var controls = store.Get<List<HostedControl>>("Controls");
             if (controls == null || !controls.Any())
             {
                 controls = HostedControl.Default;
@@ -139,16 +100,15 @@ namespace Sledge.BspEditor.Components
         public IEnumerable<SettingValue> GetValues()
         {
             var config = Table.Configuration ?? TableSplitConfiguration.Default();
-            yield return new SettingValue("Columns", Convert.ToString(config.Columns, CultureInfo.InvariantCulture));
-            yield return new SettingValue("Rows", Convert.ToString(config.Rows, CultureInfo.InvariantCulture));
-            yield return new SettingValue("Rectangles", JsonConvert.SerializeObject(config.Rectangles, Formatting.None));
+            yield return new SettingValue("TableConfiguration", config);
 
             var controls = new List<HostedControl>();
+
             foreach (var mdc in MapDocumentControls)
             {
                 controls.Add(new HostedControl { Row = mdc.Row, Column = mdc.Column, Type = mdc.Control.Type, Serialised = mdc.Control.GetSerialisedSettings()});
             }
-            yield return new SettingValue("Controls", JsonConvert.SerializeObject(controls));
+            yield return new SettingValue("Controls", controls);
         }
 
         private IMapDocumentControl MakeControl(string type, string serialised)
