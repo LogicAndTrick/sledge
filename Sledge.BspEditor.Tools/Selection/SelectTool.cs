@@ -8,6 +8,9 @@ using LogicAndTrick.Oy;
 using OpenTK;
 using Sledge.BspEditor.Modification;
 using Sledge.BspEditor.Modification.Operations;
+using Sledge.BspEditor.Modification.Operations.Mutation;
+using Sledge.BspEditor.Modification.Operations.Selection;
+using Sledge.BspEditor.Modification.Operations.Tree;
 using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.BspEditor.Rendering.Viewport;
 using Sledge.BspEditor.Tools.Draggable;
@@ -606,44 +609,32 @@ namespace Sledge.BspEditor.Tools.Selection
         /// <param name="transformationName">The name of the transformation</param>
         /// <param name="transform">The transformation to apply</param>
         /// <param name="clone">True to create a clone before transforming the original.</param>
-        private void ExecuteTransform(string transformationName, IUnitTransformation transform, bool clone)
+        private void ExecuteTransform(string transformationName, Matrix transform, bool clone)
         {
-            /* todo !selection actually transform
-            if (clone) transformationName += "-clone";
-            var objects = Document.Selection.GetSelectedParents().ToList();
-            var name = String.Format("{0} {1} object{2}", transformationName, objects.Count, (objects.Count == 1 ? "" : "s"));
-
-            var cad = new CreateEditDelete();
-            var action = new ActionCollection(cad);
-
+            var transaction = new Transaction();
             if (clone)
             {
-                // Copy the selection, transform it, and reselect
-                var copies = ClipboardManager.CloneFlatHeirarchy(MapDocument, MapDocument.Selection.GetSelectedObjects()).ToList();
-                foreach (var mo in copies)
-                {
-                    mo.Transform(transform, MapDocument.Map.GetTransformFlags());
-                    if (Sledge.Settings.Select.KeepVisgroupsWhenCloning) continue;
-                    foreach (var o in mo.FindAll()) o.Visgroups.Clear();
-                }
-                cad.Create(MapDocument.Map.WorldSpawn.ID, copies);
-                var sel = new ChangeSelection(copies.SelectMany(x => x.FindAll()), MapDocument.Selection.GetSelectedObjects());
-                action.Add(sel);
+                var copies = Document.Selection.GetSelectedParents()
+                    .Select(x => x.Copy(Document.Map.NumberGenerator))
+                    .OfType<IMapObject>()
+                    .Select(x =>
+                    {
+                        x.Transform(transform);
+                        return x;
+                    });
+                transaction.Add(new Deselect(Document.Selection));
+                transaction.Add(new Attach(Document.Map.Root.ID, copies));
             }
             else
             {
-                // Transform the selection
-                cad.Edit(objects, new TransformEditOperation(transform, MapDocument.Map.GetTransformFlags()));
+                transaction.Add(new Transform(transform, Document.Selection));
             }
-
-            // Execute the action
-            MapDocument.PerformAction(name, action);
-            */
+            MapDocumentOperation.Perform(Document, transaction);
         }
 
-        private IUnitTransformation CreateMatrixMultTransformation(Matrix4 mat)
+        private Matrix CreateMatrixMultTransformation(Matrix4 mat)
         {
-            return new UnitMatrixMult(mat);
+            return Matrix.FromOpenTKMatrix4(mat);
         }
 
         #endregion

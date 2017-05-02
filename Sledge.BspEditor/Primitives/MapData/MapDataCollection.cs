@@ -52,7 +52,17 @@ namespace Sledge.BspEditor.Primitives.MapData
             var copy = new MapDataCollection();
             foreach (var d in Data)
             {
-                copy.Add(d.Clone());
+                copy.Add((IMapData) d.Clone());
+            }
+            return copy;
+        }
+
+        public MapDataCollection Copy(UniqueNumberGenerator numberGenerator)
+        {
+            var copy = new MapDataCollection();
+            foreach (var d in Data)
+            {
+                copy.Add((IMapData) d.Copy(numberGenerator));
             }
             return copy;
         }

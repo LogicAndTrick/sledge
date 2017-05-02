@@ -4,6 +4,7 @@ using System.ComponentModel.Composition;
 using System.Drawing;
 using System.Linq;
 using System.Runtime.Serialization;
+using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.Common.Transport;
 
 namespace Sledge.BspEditor.Primitives.MapData
@@ -49,11 +50,23 @@ namespace Sledge.BspEditor.Primitives.MapData
             info.AddValue("Parent", Parent);
         }
 
-        public virtual IMapData Clone()
+        public virtual IMapElement Clone()
         {
             return new Visgroup
             {
                 ID = ID,
+                Name = Name,
+                Visible = Visible,
+                Colour = Colour,
+                Parent = Parent
+            };
+        }
+
+        public IMapElement Copy(UniqueNumberGenerator numberGenerator)
+        {
+            return new Visgroup
+            {
+                ID = numberGenerator.Next("Visgroup"),
                 Name = Name,
                 Visible = Visible,
                 Colour = Colour,

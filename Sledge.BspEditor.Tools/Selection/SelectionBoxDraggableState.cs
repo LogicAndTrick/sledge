@@ -4,6 +4,8 @@ using System.Drawing;
 using System.Linq;
 using OpenTK;
 using Sledge.BspEditor.Documents;
+using Sledge.BspEditor.Modification;
+using Sledge.BspEditor.Modification.Operations.Mutation;
 using Sledge.BspEditor.Rendering;
 using Sledge.BspEditor.Rendering.Viewport;
 using Sledge.BspEditor.Tools.Draggable;
@@ -66,13 +68,12 @@ namespace Sledge.BspEditor.Tools.Selection
 
         private void WidgetTransformed(object sender, Matrix4? transformation)
         {
-            // todo !selection (widgets) actually transform
-            //if (transformation.HasValue)
-            //{
-            //    var cad = new CreateEditDelete();
-            //    cad.Edit(Tool.Document.Selection.GetSelectedParents().ToList(), new TransformEditOperation(new UnitMatrixMult(transformation.Value), Tool.Document.Map.GetTransformFlags()));
-            //    Tool.Document.PerformAction("Transform selection", cad);
-            //}
+            if (transformation.HasValue)
+            {
+                var op = new Transform(Matrix.FromOpenTKMatrix4(transformation.Value), Tool.Document.Selection);
+                MapDocumentOperation.Perform(Tool.Document, op);
+            }
+            // todo !selection transform
             //Tool.Document.EndSelectionTransform();
         }
 

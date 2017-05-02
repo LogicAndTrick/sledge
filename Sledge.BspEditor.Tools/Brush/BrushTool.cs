@@ -8,7 +8,9 @@ using System.Windows.Forms;
 using LogicAndTrick.Oy;
 using Sledge.BspEditor.Modification;
 using Sledge.BspEditor.Modification.Operations;
+using Sledge.BspEditor.Modification.Operations.Tree;
 using Sledge.BspEditor.Primitives;
+using Sledge.BspEditor.Primitives.MapData;
 using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.BspEditor.Rendering.Converters;
 using Sledge.BspEditor.Rendering.Viewport;
@@ -59,16 +61,16 @@ namespace Sledge.BspEditor.Tools.Brush
 
         public override void ToolSelected()
         {
-            //var sel = Document.Selection.GetSelectedObjects().OfType<Solid>().ToList();
-            //if (sel.Any())
-            //{
-            //    box.RememberedDimensions = new Box(sel.Select(x => x.BoundingBox));
-            //}
-            //else if (box.RememberedDimensions == null)
-            //{
-            //    var gs = Document.Map.GridSpacing;
-            //    box.RememberedDimensions = new Box(Coordinate.Zero, new Coordinate(gs, gs, gs));
-            //}
+            var sel = Document.Selection.OfType<Solid>().ToList();
+            if (sel.Any())
+            {
+                box.RememberedDimensions = new Box(sel.Select(x => x.BoundingBox));
+            }
+            else if (box.RememberedDimensions == null)
+            {
+                var gs = Document.Map.Data.GetOne<GridData>()?.Grid?.Spacing ?? 64;
+                box.RememberedDimensions = new Box(Coordinate.Zero, new Coordinate(gs, gs, gs));
+            }
 
             //Mediator.Subscribe(EditorMediator.TextureSelected, this);
 
@@ -127,15 +129,6 @@ namespace Sledge.BspEditor.Tools.Brush
             brush.FindAll().ForEach(x => x.IsSelected = true);
 
             MapDocumentOperation.Perform(Document, new Attach(Document.Map.Root.ID, brush));
-
-            //brush.IsSelected = Select.SelectCreatedBrush;
-            //IAction action = new Create(Document.Map.WorldSpawn.ID, brush);
-            //if (Select.SelectCreatedBrush && Select.DeselectOthersWhenSelectingCreation)
-            //{
-            //    action = new ActionCollection(new ChangeSelection(new MapObject[0], Document.Selection.GetSelectedObjects()), action);
-            //}
-
-            //Document.PerformAction("Create " + BrushManager.CurrentBrush.Name, action);
         }
 
         private IMapObject GetBrush(Box bounds, UniqueNumberGenerator idg)

@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Primitives.MapObjects;
 
-namespace Sledge.BspEditor.Modification.Operations
+namespace Sledge.BspEditor.Modification.Operations.Tree
 {
     public class Attach : IOperation
     {

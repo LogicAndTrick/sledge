@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.Composition;
 using System.Runtime.Serialization;
+using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.Common.Transport;
 using Sledge.DataStructures.Geometric;
 
@@ -42,7 +43,7 @@ namespace Sledge.BspEditor.Primitives.MapData
             info.AddValue("LookPosition", LookPosition);
         }
 
-        public IMapData Clone()
+        public IMapElement Clone()
         {
             return new Camera
             {
@@ -50,6 +51,11 @@ namespace Sledge.BspEditor.Primitives.MapData
                 LookPosition = LookPosition,
                 IsActive = IsActive
             };
+        }
+
+        public IMapElement Copy(UniqueNumberGenerator numberGenerator)
+        {
+            return Clone();
         }
 
         public SerialisedObject ToSerialisedObject()

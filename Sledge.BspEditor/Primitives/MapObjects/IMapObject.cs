@@ -10,7 +10,7 @@ namespace Sledge.BspEditor.Primitives.MapObjects
     /// <summary>
     /// The base interface of all map objects.
     /// </summary>
-    public interface IMapObject : IEquatable<IMapObject>, ISerializable, IMapElement
+    public interface IMapObject : IEquatable<IMapObject>, ISerializable, IMapElement, ITransformable
     {
         /// <summary>
         /// Unique (per map) object ID
@@ -36,13 +36,6 @@ namespace Sledge.BspEditor.Primitives.MapObjects
         /// The object hierarchy
         /// </summary>
         MapObjectHierarchy Hierarchy { get; }
-
-        /// <summary>
-        /// Create an exact copy of this object, detached from the tree.
-        /// Parent will be null. Children will be clones. The ID will be the same as the original.
-        /// </summary>
-        /// <returns>A detached clone</returns>
-        IMapObject Clone();
 
         /// <summary>
         /// Force an object to be updated from a source object.

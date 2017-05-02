@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
+using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.Common.Transport;
 
 namespace Sledge.BspEditor.Primitives.MapObjectData
@@ -31,13 +32,18 @@ namespace Sledge.BspEditor.Primitives.MapObjectData
             if (Properties.ContainsKey(key)) Properties.Remove(key);
         }
 
-        public IMapObjectData Clone()
+        public IMapElement Clone()
         {
             var ed = new EntityData();
             ed.Name = Name;
             ed.Flags = Flags;
             ed.Properties = new Dictionary<string, string>(Properties);
             return ed;
+        }
+
+        public IMapElement Copy(UniqueNumberGenerator numberGenerator)
+        {
+            return Clone();
         }
 
         public SerialisedObject ToSerialisedObject()

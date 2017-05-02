@@ -60,29 +60,73 @@ namespace Sledge.BspEditor.Primitives.MapObjects
 
         protected void CloneBase(BaseMapObject copy)
         {
+            copy.IsSelected = IsSelected;
             copy.Data = Data.Clone();
             foreach (var child in Hierarchy)
             {
-                var c = child.Clone();
+                var c = (IMapObject) child.Clone();
                 c.Hierarchy.Parent = copy;
             }
+            copy.DescendantsChanged();
+        }
+
+        protected void CopyBase(BaseMapObject copy, UniqueNumberGenerator numberGenerator)
+        {
+            copy.IsSelected = IsSelected;
+            copy.Data = Data.Copy(numberGenerator);
+            foreach (var child in Hierarchy)
+            {
+                var c = (IMapObject)child.Copy(numberGenerator);
+                c.Hierarchy.Parent = copy;
+            }
+            copy.DescendantsChanged();
         }
 
         protected void UncloneBase(BaseMapObject source)
         {
+            IsSelected = source.IsSelected;
             Data = source.Data.Clone();
             Hierarchy.Clear();
             foreach (var obj in source.Hierarchy)
             {
-                var copy = obj.Clone();
+                var copy = (IMapObject) obj.Clone();
                 copy.Hierarchy.Parent = this;
             }
+            DescendantsChanged();
         }
 
         public abstract IEnumerable<Polygon> GetPolygons();
-        public abstract IMapObject Clone();
-        public abstract void Unclone(IMapObject obj);
         public abstract IEnumerable<IPrimitive> ToPrimitives();
+
+        public virtual IMapElement Clone()
+        {
+            var inst = (BaseMapObject) GetType().GetConstructor(new[] {typeof(long)}).Invoke(new object[] {ID});
+            CloneBase(inst);
+            return inst;
+        }
+
+        public virtual void Unclone(IMapObject obj)
+        {
+            if (obj.GetType() != GetType()) throw new ArgumentException("Cannot unclone into a different type.", nameof(obj));
+            UncloneBase((BaseMapObject) obj);
+        }
+
+        public virtual IMapElement Copy(UniqueNumberGenerator numberGenerator)
+        {
+            var inst = (BaseMapObject)GetType().GetConstructor(new[] { typeof(long) }).Invoke(new object[] { numberGenerator.Next("MapObject") });
+            CopyBase(inst, numberGenerator);
+            return inst;
+        }
+
+
+        public virtual void Transform(Matrix matrix)
+        {
+            foreach (var t in Data.OfType<ITransformable>())
+            {
+                t.Transform(matrix);
+            }
+            DescendantsChanged();
+        }
 
         protected abstract string SerialisedName { get; }
 

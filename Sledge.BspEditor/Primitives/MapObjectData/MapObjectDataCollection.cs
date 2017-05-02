@@ -27,6 +27,12 @@ namespace Sledge.BspEditor.Primitives.MapObjectData
             Data.Add(data);
         }
 
+        public void Replace<T>(T data) where T : IMapObjectData
+        {
+            Data.RemoveAll(x => x is T);
+            Data.Add(data);
+        }
+
         public void AddRange(IEnumerable<IMapObjectData> data)
         {
             Data.AddRange(data);
@@ -52,7 +58,17 @@ namespace Sledge.BspEditor.Primitives.MapObjectData
             var copy = new MapObjectDataCollection();
             foreach (var d in Data)
             {
-                copy.Add(d.Clone());
+                copy.Add(d.Clone() as IMapObjectData);
+            }
+            return copy;
+        }
+
+        public MapObjectDataCollection Copy(UniqueNumberGenerator numberGenerator)
+        {
+            var copy = new MapObjectDataCollection();
+            foreach (var d in Data)
+            {
+                copy.Add(d.Copy(numberGenerator) as IMapObjectData);
             }
             return copy;
         }

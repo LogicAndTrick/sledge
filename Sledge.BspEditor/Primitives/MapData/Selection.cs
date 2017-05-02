@@ -63,11 +63,16 @@ namespace Sledge.BspEditor.Primitives.MapData
             // Nothing.
         }
 
-        public IMapData Clone()
+        public IMapElement Clone()
         {
             var c = new Selection();
             c._selectedObjects.UnionWith(_selectedObjects);
             return c;
+        }
+
+        public IMapElement Copy(UniqueNumberGenerator numberGenerator)
+        {
+            return Clone();
         }
 
         public SerialisedObject ToSerialisedObject()

@@ -13,7 +13,12 @@ namespace Sledge.BspEditor.Primitives.MapObjects
     {
         public EntityData EntityData => Data.GetOne<EntityData>();
         public ObjectColor Color => Data.GetOne<ObjectColor>();
-        public Coordinate Origin { get; set; }
+
+        public Coordinate Origin
+        {
+            get => Data.GetOne<Origin>()?.Location ?? Coordinate.Zero;
+            set => Data.Replace(new Origin(value));
+        }
 
         public Entity(long id) : base(id)
         {
@@ -21,17 +26,10 @@ namespace Sledge.BspEditor.Primitives.MapObjects
 
         public Entity(SerialisedObject obj) : base(obj)
         {
-            Origin = obj.Get<Coordinate>("Origin");
         }
 
         [Export(typeof(IMapElementFormatter))]
         public class EntityFormatter : StandardMapElementFormatter<Entity> { }
-
-        public override void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            base.GetObjectData(info, context);
-            info.AddValue("Origin", Origin);
-        }
 
         protected override Box GetBoundingBox()
         {
@@ -50,26 +48,6 @@ namespace Sledge.BspEditor.Primitives.MapObjects
         }
 
         protected override string SerialisedName => "Entity";
-
-        protected override void AddCustomSerialisedData(SerialisedObject obj)
-        {
-            obj.Set("Origin", Origin);
-            base.AddCustomSerialisedData(obj);
-        }
-
-        public override IMapObject Clone()
-        {
-            var ent = new Entity(ID);
-            CloneBase(ent);
-            ent.Origin = Origin.Clone();
-            return ent;
-        }
-
-        public override void Unclone(IMapObject obj)
-        {
-            if (!(obj is Entity)) throw new ArgumentException("Cannot unclone into a different type.", nameof(obj));
-            UncloneBase((BaseMapObject)obj);
-        }
 
         public override IEnumerable<IPrimitive> ToPrimitives()
         {

@@ -1,5 +1,6 @@
 ﻿using System.Drawing;
 using System.Runtime.Serialization;
+using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.Common.Transport;
 
 namespace Sledge.BspEditor.Primitives.MapObjectData
@@ -18,9 +19,14 @@ namespace Sledge.BspEditor.Primitives.MapObjectData
             info.AddValue("Color", Color);
         }
 
-        public IMapObjectData Clone()
+        public IMapElement Clone()
         {
             return new ObjectColor(Color);
+        }
+
+        public IMapElement Copy(UniqueNumberGenerator numberGenerator)
+        {
+            return Clone();
         }
 
         public SerialisedObject ToSerialisedObject()

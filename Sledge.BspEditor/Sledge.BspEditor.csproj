@@ -109,6 +109,7 @@
     <Compile Include="Modification\Operations\Data\AddMapObjectData.cs" />
     <Compile Include="Modification\Operations\Data\RemoveMapData.cs" />
     <Compile Include="Modification\Operations\Data\RemoveMapObjectData.cs" />
+    <Compile Include="Modification\Operations\Mutation\Transform.cs" />
     <Compile Include="Modification\Operations\Tree\Attach.cs" />
     <Compile Include="Modification\Change.cs" />
     <Compile Include="Modification\IOperation.cs" />
@@ -121,8 +122,11 @@
     <Compile Include="Modification\TransactionBuilderExtensions.cs" />
     <Compile Include="Primitives\IMapElementFactory.cs" />
     <Compile Include="Primitives\IMapObjectProvider.cs" />
+    <Compile Include="Primitives\ITextured.cs" />
+    <Compile Include="Primitives\ITransformable.cs" />
     <Compile Include="Primitives\MapData\GridData.cs" />
     <Compile Include="Primitives\MapData\Selection.cs" />
+    <Compile Include="Primitives\MapObjectData\Origin.cs" />
     <Compile Include="Primitives\MapObjects\BaseMapObject.cs" />
     <Compile Include="Primitives\MapObjects\Entity.cs" />
     <Compile Include="Primitives\MapObjectData\Face.cs" />
@@ -194,6 +198,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

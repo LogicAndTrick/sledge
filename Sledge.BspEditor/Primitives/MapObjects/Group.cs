@@ -37,19 +37,6 @@ namespace Sledge.BspEditor.Primitives.MapObjects
 
         protected override string SerialisedName => "Group";
 
-        public override IMapObject Clone()
-        {
-            var grp = new Group(ID);
-            CloneBase(grp);
-            return grp;
-        }
-
-        public override void Unclone(IMapObject obj)
-        {
-            if (!(obj is Group)) throw new ArgumentException("Cannot unclone into a different type.", nameof(obj));
-            UncloneBase((BaseMapObject)obj);
-        }
-
         public override IEnumerable<IPrimitive> ToPrimitives()
         {
             yield return this;

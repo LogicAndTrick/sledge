@@ -9,6 +9,5 @@ namespace Sledge.BspEditor.Primitives.MapData
     /// </summary>
     public interface IMapData : ISerializable, IMapElement
     {
-        IMapData Clone();
     }
 }

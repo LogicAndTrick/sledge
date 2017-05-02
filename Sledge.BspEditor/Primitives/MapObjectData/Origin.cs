@@ -1,26 +1,27 @@
 ﻿using System.Runtime.Serialization;
 using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.Common.Transport;
+using Sledge.DataStructures.Geometric;
 
 namespace Sledge.BspEditor.Primitives.MapObjectData
 {
-    public class VisgroupID : IMapObjectData
+    public class Origin : IMapObjectData, ITransformable
     {
-        public long ID { get; set; }
+        public Coordinate Location { get; set; }
 
-        public VisgroupID(long id)
+        public Origin(Coordinate location)
         {
-            ID = id;
+            Location = location;
         }
 
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            info.AddValue("ID", ID);
+            info.AddValue("Location", Location);
         }
 
         public IMapElement Clone()
         {
-            return new VisgroupID(ID);
+            return new Origin(Location);
         }
 
         public IMapElement Copy(UniqueNumberGenerator numberGenerator)
@@ -30,9 +31,14 @@ namespace Sledge.BspEditor.Primitives.MapObjectData
 
         public SerialisedObject ToSerialisedObject()
         {
-            var so = new SerialisedObject("VisgroupID");
-            so.Set("ID", ID);
+            var so = new SerialisedObject("Origin");
+            so.Set("Location", Location);
             return so;
+        }
+
+        public void Transform(Matrix matrix)
+        {
+            Location = Location * matrix;
         }
     }
 }

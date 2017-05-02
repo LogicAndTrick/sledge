@@ -6,6 +6,7 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using Sledge.BspEditor.Grid;
+using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.Common.Transport;
 
 namespace Sledge.BspEditor.Primitives.MapData
@@ -34,9 +35,14 @@ namespace Sledge.BspEditor.Primitives.MapData
             // Meh
         }
 
-        public IMapData Clone()
+        public IMapElement Clone()
         {
             return new GridData(Grid) {SnapToGrid = SnapToGrid};
+        }
+
+        public IMapElement Copy(UniqueNumberGenerator numberGenerator)
+        {
+            return Clone();
         }
 
         public SerialisedObject ToSerialisedObject()

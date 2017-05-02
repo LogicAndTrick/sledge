@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Sledge.BspEditor.Modification.Operations;
+using Sledge.BspEditor.Modification.Operations.Tree;
 using Sledge.BspEditor.Primitives.MapObjects;
 
 namespace Sledge.BspEditor.Modification

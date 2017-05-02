@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
+using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.Common.Transport;
 using Sledge.DataStructures.Geometric;
 
 namespace Sledge.BspEditor.Primitives.MapObjectData
 {
-    public class Face : IMapObjectData
+    public class Face : IMapObjectData, ITransformable, ITextured
     {
         public long ID { get; }
         public Plane Plane { get; set; }
@@ -31,12 +32,24 @@ namespace Sledge.BspEditor.Primitives.MapObjectData
             info.AddValue("Vertices", Vertices.ToArray());
         }
 
-        public IMapObjectData Clone()
+        private void CopyBase(Face face)
         {
-            var face = new Face(ID);
             face.Plane = Plane; // planes are immutable
             face.Texture = Texture.Clone();
             face.Vertices = Vertices.Select(x => x.Clone()).ToList();
+        }
+
+        public IMapElement Clone()
+        {
+            var face = new Face(ID);
+            CopyBase(face);
+            return face;
+        }
+
+        public IMapElement Copy(UniqueNumberGenerator numberGenerator)
+        {
+            var face = new Face(numberGenerator.Next("Face"));
+            CopyBase(face);
             return face;
         }
 
@@ -86,6 +99,11 @@ namespace Sledge.BspEditor.Primitives.MapObjectData
             var vadd = Texture.YShift / height;
 
             return Vertices.Select(x => Tuple.Create(x, x.Dot(Texture.UAxis) / udiv + uadd, x.Dot(Texture.VAxis) / vdiv + vadd));
+        }
+
+        public void Transform(Matrix matrix)
+        {
+            Vertices = Vertices.Select(x => x * matrix).ToList();
         }
     }
 }
