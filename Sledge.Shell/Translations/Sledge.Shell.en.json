@@ -5,7 +5,7 @@
         "Inherit": ""
     },
     "@Settings": {
-        
+
     },
     "Commands": {
         "NewFile": {
@@ -39,7 +39,13 @@
         },
         "LogComponent": {
             "Title": "Log"
-        }
+        },
+        "DefaultMenuMetadataProvider": {
+            "File": "File",
+            "Edit": "Edit",
+            "View": "View",
+            "Help":  "Help" 
+        } 
     },
     "Forms": {
         "Shell": {

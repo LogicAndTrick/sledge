@@ -113,9 +113,6 @@
     <Compile Include="Draggable\IDraggableState.cs" />
     <Compile Include="Draggable\InternalBoxResizeHandle.cs" />
     <Compile Include="Draggable\ResizeHandle.cs" />
-    <Compile Include="ExampleStateTool\FirstPointDrawnState.cs" />
-    <Compile Include="ExampleStateTool\IdleState.cs" />
-    <Compile Include="ExampleStateTool\LineDrawnState.cs" />
     <Compile Include="Grid\DecreaseGrid.cs" />
     <Compile Include="Grid\GridListMenuItemProvider.cs" />
     <Compile Include="Grid\IncreaseGrid.cs" />
@@ -126,7 +123,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="ExampleStateTool\ExampleStateTool.cs" />
     <Compile Include="Selection\SelectionBoxDraggableState.cs" />
     <Compile Include="Selection\SelectionSidebarPanel.cs" />
     <Compile Include="Selection\SelectTool.cs" />

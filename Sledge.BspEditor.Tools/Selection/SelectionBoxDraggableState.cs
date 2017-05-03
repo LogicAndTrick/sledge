@@ -5,7 +5,9 @@ using System.Linq;
 using OpenTK;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Modification;
+using Sledge.BspEditor.Modification.Operations;
 using Sledge.BspEditor.Modification.Operations.Mutation;
+using Sledge.BspEditor.Primitives.MapData;
 using Sledge.BspEditor.Rendering;
 using Sledge.BspEditor.Rendering.Viewport;
 using Sledge.BspEditor.Tools.Draggable;
@@ -61,8 +63,9 @@ namespace Sledge.BspEditor.Tools.Selection
         {
             if (transformation.HasValue)
             {
-                // todo !selection transform
-                //Tool.Document.SetSelectListTransform(transformation.Value);
+                MapDocumentOperation.Perform(Tool.Document, new TrivialOperation(
+                    x => x.Map.Data.Replace(new SelectionTransform(Matrix.FromOpenTKMatrix4(transformation.Value))),
+                    x => x.UpdateDocument()));
             }
         }
 
@@ -73,8 +76,9 @@ namespace Sledge.BspEditor.Tools.Selection
                 var op = new Transform(Matrix.FromOpenTKMatrix4(transformation.Value), Tool.Document.Selection);
                 MapDocumentOperation.Perform(Tool.Document, op);
             }
-            // todo !selection transform
-            //Tool.Document.EndSelectionTransform();
+            MapDocumentOperation.Perform(Tool.Document, new TrivialOperation(
+                x => x.Map.Data.Replace(new SelectionTransform(Matrix.Identity)),
+                x => x.UpdateDocument()));
         }
 
         public void Update()

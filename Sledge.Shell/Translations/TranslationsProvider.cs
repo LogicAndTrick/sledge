@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using System.ComponentModel.Composition.Primitives;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Sledge.Common.Shell.Hooks;
@@ -15,7 +12,8 @@ namespace Sledge.Shell.Translations
 {
     [Export(typeof(IStartupHook))]
     [Export(typeof(ISettingsContainer))]
-    public class TranslationsProvider : IStartupHook, ISettingsContainer
+    [Export(typeof(ITranslationStringProvider))]
+    public class TranslationsProvider : IStartupHook, ISettingsContainer, ITranslationStringProvider
     {
         [Import] private TranslationStringsCatalog _catalog;
 
@@ -43,6 +41,14 @@ namespace Sledge.Shell.Translations
             }
             _catalog.Initialise(Language);
             return Task.FromResult(0);
+        }
+
+        public string Get(string key)
+        {
+            if (!_catalog.Languages.ContainsKey(Language)) return null;
+            var lang = _catalog.Languages[Language];
+            if (!lang.Strings.ContainsKey(key)) return null;
+            return lang.Strings[key];
         }
 
         public string Name => "Sledge.Shell.Translations";

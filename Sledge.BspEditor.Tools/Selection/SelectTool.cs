@@ -11,6 +11,7 @@ using Sledge.BspEditor.Modification.Operations;
 using Sledge.BspEditor.Modification.Operations.Mutation;
 using Sledge.BspEditor.Modification.Operations.Selection;
 using Sledge.BspEditor.Modification.Operations.Tree;
+using Sledge.BspEditor.Primitives.MapData;
 using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.BspEditor.Rendering.Viewport;
 using Sledge.BspEditor.Tools.Draggable;
@@ -20,7 +21,6 @@ using Sledge.Common.Shell.Components;
 using Sledge.Common.Shell.Documents;
 using Sledge.Common.Shell.Settings;
 using Sledge.DataStructures.Geometric;
-using Sledge.DataStructures.Transformations;
 using Sledge.Rendering.Cameras;
 using Sledge.Shell.Input;
 
@@ -440,7 +440,9 @@ namespace Sledge.BspEditor.Tools.Selection
                 var tform = _selectionBox.GetTransformationMatrix(viewport, camera, Document);
                 if (tform.HasValue)
                 {
-                    // todo !select MapDocument.SetSelectListTransform(tform.Value);
+                    MapDocumentOperation.Perform(Document, new TrivialOperation(
+                        x => x.Map.Data.Replace(new SelectionTransform(Matrix.FromOpenTKMatrix4(tform.Value))),
+                        x => x.UpdateDocument()));
                     var box = new Box(_selectionBox.State.OrigStart, _selectionBox.State.OrigEnd);
                     var trans = CreateMatrixMultTransformation(tform.Value);
                     // todo !shell status bar
@@ -462,7 +464,9 @@ namespace Sledge.BspEditor.Tools.Selection
                     ExecuteTransform(tt.Name, CreateMatrixMultTransformation(tform.Value), createClone);
                 }
             }
-            // todo !select MapDocument.EndSelectionTransform();
+            MapDocumentOperation.Perform(Document, new TrivialOperation(
+                x => x.Map.Data.Replace(new SelectionTransform(Matrix.Identity)),
+                x => x.UpdateDocument()));
             base.OnDraggableDragEnded(viewport, camera, e, position, draggable);
         }
 

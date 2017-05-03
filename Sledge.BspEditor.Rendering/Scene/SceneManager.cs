@@ -5,10 +5,13 @@ using System.Linq;
 using System.Threading.Tasks;
 using LogicAndTrick.Oy;
 using Sledge.BspEditor.Documents;
+using Sledge.BspEditor.Modification;
+using Sledge.BspEditor.Primitives.MapData;
 using Sledge.BspEditor.Rendering.Resources;
 using Sledge.Common.Logging;
 using Sledge.Common.Shell.Documents;
 using Sledge.Common.Shell.Hooks;
+using Sledge.DataStructures.Geometric;
 
 namespace Sledge.BspEditor.Rendering.Scene
 {
@@ -22,9 +25,11 @@ namespace Sledge.BspEditor.Rendering.Scene
             Oy.Subscribe<IDocument>("Document:Activated", DocumentActivated);
             Oy.Subscribe<IDocument>("Document:Opened", DocumentOpened);
             Oy.Subscribe<IDocument>("Document:Closed", DocumentClosed);
+            Oy.Subscribe<Change>("MapDocument:Changed", DocumentChanged);
         }
 
         private readonly List<ConvertedScene> _convertedScenes;
+        private WeakReference<MapDocument> _activeDocument;
 
         public SceneManager()
         {
@@ -62,9 +67,23 @@ namespace Sledge.BspEditor.Rendering.Scene
 
         private async Task DocumentActivated(IDocument doc)
         {
-            var scene = GetOrCreateScene(doc as MapDocument)?.Scene;
+            var md = doc as MapDocument;
+            _activeDocument = new WeakReference<MapDocument>(md);
+
+            var scene = GetOrCreateScene(md)?.Scene;
             Renderer.Instance.Engine.Renderer.SetActiveScene(scene);
+
+            var mat = md?.Map.Data.GetOne<SelectionTransform>()?.Transform ?? Matrix.Identity;
+            Renderer.Instance.Engine.Renderer.SelectionTransform = mat.ToOpenTKMatrix4();
+
             Log.Debug("Bsp Renderer", "Scene activated");
+        }
+        private async Task DocumentChanged(Change change)
+        {
+            if (!change.DocumentUpdated) return;
+            if (!_activeDocument.TryGetTarget(out MapDocument act) || act != change.Document) return;
+            var mat = change.Document.Map.Data.GetOne<SelectionTransform>()?.Transform ?? Matrix.Identity;
+            Renderer.Instance.Engine.Renderer.SelectionTransform = mat.ToOpenTKMatrix4();
         }
 
         private ConvertedScene GetOrCreateScene(MapDocument doc)

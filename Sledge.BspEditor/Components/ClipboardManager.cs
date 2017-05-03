@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
@@ -14,18 +15,35 @@ namespace Sledge.BspEditor.Components
     [Export]
     public class ClipboardManager
     {
+        public class ClipboardEntry
+        {
+            public string Description { get; set; }
+            public string Contents { get; set; }
+
+            public ClipboardEntry(string description, string contents)
+            {
+                Description = description;
+                Contents = contents;
+            }
+
+            public override string ToString()
+            {
+                return Description;
+            }
+        }
+
         [Import] private MapElementFactory _factory;
         [Import] private SerialisedObjectFormatter _formatter;
 
         public int SizeOfClipboardRing { get; set; }
-        private readonly List<string> Ring;
+        private readonly List<ClipboardEntry> Ring;
 
         private static string SerialisedName => "Sledge.BspEditor.Clipboard";
 
         public ClipboardManager()
         {
             SizeOfClipboardRing = 10;
-            Ring = new List<string>();
+            Ring = new List<ClipboardEntry>();
         }
 
         public void Clear()
@@ -37,16 +55,31 @@ namespace Sledge.BspEditor.Components
         {
             // Remove extra entries if required
             while (Ring.Count > SizeOfClipboardRing - 1) Ring.RemoveAt(0);
-            var item = CreateCopyStream(copiedObjects);
-            if (Ring.Contains(item)) Ring.Remove(item);
-            Ring.Add(item);
-            System.Windows.Forms.Clipboard.SetText(item);
+
+            var list = copiedObjects.ToList();
+            var contents = CreateCopyStream(list);
+            Ring.Add(new ClipboardEntry(GetDescription(list), contents));
+
+            System.Windows.Forms.Clipboard.SetText(contents);
             Oy.Publish("BspEditor:ClipboardChanged", this);
         }
 
-        public IEnumerable<string> GetClipboardRing()
+        private string GetDescription(List<IMapObject> list)
         {
-            return new List<string>(Ring);
+            switch (list.Count)
+            {
+                case 0:
+                    return "Nothing";
+                case 1:
+                    return list[0].GetType().Name;
+                default:
+                    return $"{list.Count} object(s)";
+            }
+        }
+
+        public IEnumerable<ClipboardEntry> GetClipboardRing()
+        {
+            return new List<ClipboardEntry>(Ring);
         }
 
         public IEnumerable<IMapObject> GetPastedContent(MapDocument document)

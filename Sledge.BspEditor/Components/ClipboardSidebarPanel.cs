@@ -40,7 +40,6 @@ namespace Sledge.BspEditor.Components
 
             foreach (var val in _clipboard.Value.GetClipboardRing().Reverse())
             {
-                // todo !clipboard panel nice interface
                 ClipboardList.Items.Add(val);
             }
             if (ClipboardList.Items.Count > 0) ClipboardList.SelectedIndex = 0;

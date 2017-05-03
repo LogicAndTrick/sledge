@@ -103,6 +103,7 @@
     <Compile Include="Tasks\TaskQueue.cs" />
     <Compile Include="Translations\AutoTranslateAttribute.cs" />
     <Compile Include="Translations\IManualTranslate.cs" />
+    <Compile Include="Translations\ITranslationStringProvider.cs" />
     <Compile Include="Translations\TranslationStringsCatalog.cs" />
     <Compile Include="Translations\TranslationStringsCollection.cs" />
     <Compile Include="Transport\SerialisedObject.cs" />

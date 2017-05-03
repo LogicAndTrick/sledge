@@ -234,7 +234,7 @@ namespace Sledge.BspEditor.Tools.Widgets
             var cache = _cachedLines.FirstOrDefault(x => x.MapViewport == viewport);
             if (cache == null) return false;
             var lines = cache.Cache[type];
-            var point = new Coordinate(ev.X, ev.Y, 0);
+            var point = new Coordinate(ev.X, viewport.Height - ev.Y, 0);
             return lines.Any(x => (x.ClosestPoint(point) - point).VectorMagnitude() <= 8);
         }
 

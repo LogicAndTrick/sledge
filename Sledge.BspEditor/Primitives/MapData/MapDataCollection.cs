@@ -32,6 +32,12 @@ namespace Sledge.BspEditor.Primitives.MapData
             Data.AddRange(data);
         }
 
+        public void Replace<T>(T data) where T : IMapData
+        {
+            Data.RemoveAll(x => x is T);
+            Data.Add(data);
+        }
+
         public void Remove(IMapData data)
         {
             Data.Remove(data);

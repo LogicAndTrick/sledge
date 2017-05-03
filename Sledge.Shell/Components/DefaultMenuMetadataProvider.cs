@@ -1,22 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Sledge.Common.Shell.Menu;
+using Sledge.Common.Translations;
 
 namespace Sledge.Shell.Components
 {
+    [AutoTranslate]
     [Export(typeof(IMenuMetadataProvider))]
     public class DefaultMenuMetadataProvider : IMenuMetadataProvider
     {
+        public string File { get; set; } = "File";
+        public string Edit { get; set; } = "Edit";
+        public string View { get; set; } = "View";
+        public string Help { get; set; } = "Help";
+
         public IEnumerable<MenuSection> GetMenuSections()
         {
-            yield return new MenuSection("File", "B");
-            yield return new MenuSection("Edit", "D");
-            yield return new MenuSection("View", "F");
-            yield return new MenuSection("Help", "Y");
+            yield return new MenuSection("File", File, "B");
+            yield return new MenuSection("Edit", Edit, "D");
+            yield return new MenuSection("View", View, "F");
+            yield return new MenuSection("Help", Help, "Y");
         }
 
         public IEnumerable<MenuGroup> GetMenuGroups()
