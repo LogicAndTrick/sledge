@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using LogicAndTrick.Oy;
@@ -30,8 +31,23 @@ namespace Sledge.Shell.Registers
                 _components.Add(export.Value);
             }
 
+            Initialise();
             // Subscribe to context changes
             Oy.Subscribe<IContext>("Context:Changed", ContextChanged);
+        }
+
+        private void Initialise()
+        {
+            _shell.Invoke((MethodInvoker)delegate
+            {
+                _shell.BottomTabs.TabPages.Clear();
+                foreach (var btc in _components)
+                {
+                    var page = new TabPage(btc.Title) { Tag = btc, Visible = false };
+                    page.Controls.Add((Control) btc.Control);
+                    _shell.BottomTabs.TabPages.Add(page);
+                }
+            });
         }
 
         private readonly List<IBottomTabComponent> _components;
@@ -45,15 +61,18 @@ namespace Sledge.Shell.Registers
         {
             _shell.Invoke((MethodInvoker) delegate
             {
-                _shell.BottomTabs.TabPages.Clear();
-                foreach (var btc in _components)
+                _shell.BottomTabs.SuspendLayout();
+                foreach (var tab in _shell.BottomTabs.TabPages.OfType<TabPage>())
                 {
-                    var c = btc.IsInContext(context);
-                    if (!c) continue;
-                    var page = new TabPage(btc.Title);
-                    page.Controls.Add((Control) btc.Control);
-                    _shell.BottomTabs.TabPages.Add(page);
+                    var btc = tab.Tag as IBottomTabComponent;
+                    if (btc == null) continue;
+
+                    var iic = btc.IsInContext(context);
+                    var vis = tab.Visible;
+
+                    if (iic != vis) tab.Visible = iic;
                 }
+                _shell.BottomTabs.ResumeLayout();
             });
         }
     }

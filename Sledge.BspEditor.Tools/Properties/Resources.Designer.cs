@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Sledge.BspEditor.Tools {
+namespace Sledge.BspEditor.Tools.Properties {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace Sledge.BspEditor.Tools {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Sledge.BspEditor.Tools.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Sledge.BspEditor.Tools.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -66,6 +66,16 @@ namespace Sledge.BspEditor.Tools {
         internal static System.Drawing.Bitmap Tool_Brush {
             get {
                 object obj = ResourceManager.GetObject("Tool_Brush", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Tool_Camera {
+            get {
+                object obj = ResourceManager.GetObject("Tool_Camera", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

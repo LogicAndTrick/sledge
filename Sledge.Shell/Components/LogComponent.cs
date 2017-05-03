@@ -22,6 +22,7 @@ namespace Sledge.Shell.Components
         private List<LogMessage> _logs;
 
         public string Title { get; set; } = "Log";
+        public string OrderHint => "B";
         public object Control => _control;
 
         public LogComponent()

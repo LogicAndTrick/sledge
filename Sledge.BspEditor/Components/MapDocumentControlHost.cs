@@ -71,6 +71,11 @@ namespace Sledge.BspEditor.Components
             Table.Controls.Add(control.Control, column, row);
         }
 
+        public IEnumerable<IMapDocumentControl> GetControls()
+        {
+            return MapDocumentControls.Select(x => x.Control);
+        }
+
         // Settings container
 
         string ISettingsContainer.Name => "Sledge.BspEditor.Components.MapDocumentControlHost";

@@ -182,8 +182,9 @@ namespace Sledge.Shell.Registers
             /// <param name="context">The current context</param>
             public void ContextChanged(IContext context)
             {
-                Panel.Invoke((MethodInvoker) delegate {
-                    Panel.Visible = Component.IsInContext(context);
+                Panel.Invoke(() => {
+                    var iic = Component.IsInContext(context);
+                    if (iic != Panel.Visible) Panel.Visible = iic;
                 });
             }
         }

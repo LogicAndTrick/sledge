@@ -15,6 +15,7 @@ using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.BspEditor.Rendering.Converters;
 using Sledge.BspEditor.Rendering.Viewport;
 using Sledge.BspEditor.Tools.Draggable;
+using Sledge.BspEditor.Tools.Properties;
 using Sledge.Common.Shell.Components;
 using Sledge.Common.Shell.Context;
 using Sledge.DataStructures.Geometric;
