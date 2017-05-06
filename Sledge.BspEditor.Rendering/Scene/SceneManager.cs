@@ -34,6 +34,7 @@ namespace Sledge.BspEditor.Rendering.Scene
         public SceneManager()
         {
             _convertedScenes = new List<ConvertedScene>();
+            _activeDocument = new WeakReference<MapDocument>(null);
         }
 
         private async Task DocumentOpened(IDocument doc)

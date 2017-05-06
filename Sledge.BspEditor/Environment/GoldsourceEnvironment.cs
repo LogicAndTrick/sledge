@@ -8,6 +8,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using LogicAndTrick.Gimme;
 using Sledge.BspEditor.Primitives;
+using Sledge.DataStructures.GameData;
 using Sledge.FileSystem;
 using Sledge.Providers.Texture;
 
@@ -97,6 +98,12 @@ namespace Sledge.BspEditor.Environment
         public Task<TextureCollection> GetTextureCollection()
         {
             return _textureCollection.Value;
+        }
+
+        public async Task<GameData> GetGameData()
+        {
+            // todo ! gamedata
+            return new GameData();
         }
 
         public void AddData(IEnvironmentData data)

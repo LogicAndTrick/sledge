@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Sledge.Common.Shell.Hooks;
 using System.ComponentModel.Composition;
+using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using LogicAndTrick.Oy;
@@ -69,6 +70,8 @@ namespace Sledge.Shell.Registers
                     Text = item.Text ?? "",
                     BorderSides = item.HasBorder ? ToolStripStatusLabelBorderSides.All : ToolStripStatusLabelBorderSides.None,
                     AutoSize = item.Width <= 0,
+                    Spring = item.Width <= 0,
+                    TextAlign = item.Width <= 0 ? ContentAlignment.MiddleLeft : ContentAlignment.MiddleCenter,
                     Width = Math.Max(1, item.Width)
                 };
             }

@@ -47,7 +47,7 @@ namespace Sledge.BspEditor.Tools
 
         private async Task CameraNext(object param)
         {
-            var cams = GetCameras();
+            var cams = GetDocumentCameras();
             if (_state != State.None || cams.Count < 2) return;
             var idx = cams.FindIndex(x => x.IsActive);
             idx = (idx + 1) % cams.Count;
@@ -58,7 +58,7 @@ namespace Sledge.BspEditor.Tools
 
         private async Task CameraPrevious(object param)
         {
-            var cams = GetCameras();
+            var cams = GetDocumentCameras();
             if (_state != State.None || cams.Count < 2) return;
             var idx = cams.FindIndex(x => x.IsActive);
             idx = (idx + cams.Count - 1) % cams.Count;
@@ -69,11 +69,11 @@ namespace Sledge.BspEditor.Tools
 
         private void CameraDelete()
         {
-            var cams = GetCameras();
+            var cams = GetDocumentCameras();
             if (_state != State.None || cams.Count < 2) return;
             var del = cams.FirstOrDefault(x => x.IsActive);
             CameraPrevious(null);
-            if (del != GetCameras().FirstOrDefault(x => x.IsActive)) Document.Map.Data.Remove(del);
+            if (del != GetDocumentCameras().FirstOrDefault(x => x.IsActive)) Document.Map.Data.Remove(del);
         }
 
         public override Image GetIcon()
@@ -112,7 +112,7 @@ namespace Sledge.BspEditor.Tools
         {
             var d = 5 / (decimal) viewport.Zoom;
 
-            foreach (var cam in GetCameras())
+            foreach (var cam in GetCameraList())
             {
                 var p = viewport.Flatten(viewport.ProperScreenToWorld(x, y));
                 var pos = viewport.Flatten(cam.EyePosition);
@@ -126,7 +126,12 @@ namespace Sledge.BspEditor.Tools
             return State.None;
         }
 
-        private List<Camera> GetCameras()
+        private List<Camera> GetDocumentCameras()
+        {
+            return Document.Map.Data.Get<Camera>().ToList();
+        }
+
+        private List<Camera> GetCameraList()
         {
             var c = GetViewportCamera();
             if (!Document.Map.Data.Get<Camera>().Any())
@@ -172,7 +177,7 @@ namespace Sledge.BspEditor.Tools
             if (_stateCamera != null)
             {
                 SetViewportCamera(_stateCamera.EyePosition, _stateCamera.LookPosition);
-                GetCameras().ForEach(x => x.IsActive = false);
+                GetDocumentCameras().ForEach(x => x.IsActive = false);
                 _stateCamera.IsActive = true;
             }
         }
@@ -218,7 +223,7 @@ namespace Sledge.BspEditor.Tools
         {
             var list = base.GetViewportElements(viewport, camera).ToList();
 
-            foreach (var cam in GetCameras())
+            foreach (var cam in GetCameraList())
             {
                 var p1 = cam.EyePosition.ToVector3();
                 var p2 = cam.LookPosition.ToVector3();

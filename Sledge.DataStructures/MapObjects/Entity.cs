@@ -89,7 +89,7 @@ namespace Sledge.DataStructures.MapObjects
                 angles = new Coordinate(-DMath.DegreesToRadians(angles.Z), DMath.DegreesToRadians(angles.X), -DMath.DegreesToRadians(angles.Y));
                 var tform = Matrix.Rotation(Quaternion.EulerAngles(angles)).Translate(Origin);
                 if (MetaData.Has<bool>("RotateBoundingBox") && !MetaData.Get<bool>("RotateBoundingBox")) tform = Matrix.Translation(Origin);
-                BoundingBox = MetaData.Get<Box>("BoundingBox").Transform(new UnitMatrixMult(tform));
+                BoundingBox = MetaData.Get<Box>("BoundingBox").Transform(tform);
             }
             else if (GameData != null && GameData.ClassType == ClassType.Point)
             {

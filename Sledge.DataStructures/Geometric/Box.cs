@@ -264,9 +264,9 @@ namespace Sledge.DataStructures.Geometric
                    && c.X <= End.X && c.Y <= End.Y && c.Z <= End.Z;
         }
 
-        public Box Transform(IUnitTransformation transform)
+        public Box Transform(Matrix transform)
         {
-            return new Box(GetBoxPoints().Select(transform.Transform));
+            return new Box(GetBoxPoints().Select(x => x * transform));
         }
 
         public Box Clone()

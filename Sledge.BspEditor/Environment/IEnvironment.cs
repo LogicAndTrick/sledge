@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using Sledge.DataStructures.GameData;
 using Sledge.FileSystem;
 
 namespace Sledge.BspEditor.Environment
@@ -29,6 +30,12 @@ namespace Sledge.BspEditor.Environment
         /// </summary>
         /// <returns>Async task that will return when the collection has been created</returns>
         Task<TextureCollection> GetTextureCollection();
+
+        /// <summary>
+        /// Gets the game data for this environment
+        /// </summary>
+        /// <returns>Game data task</returns>
+        Task<GameData> GetGameData();
 
         /// <summary>
         /// Environment extension point for custom data

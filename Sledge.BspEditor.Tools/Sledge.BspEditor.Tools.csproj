@@ -44,6 +44,15 @@
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Reactive.Core, Version=3.0.1000.0, Culture=neutral, PublicKeyToken=94bc3704cddfc263, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Reactive.Core.3.1.1\lib\net45\System.Reactive.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Reactive.Interfaces, Version=3.0.1000.0, Culture=neutral, PublicKeyToken=94bc3704cddfc263, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Reactive.Interfaces.3.1.1\lib\net45\System.Reactive.Interfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Reactive.Linq, Version=3.0.1000.0, Culture=neutral, PublicKeyToken=94bc3704cddfc263, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Reactive.Linq.3.1.1\lib\net45\System.Reactive.Linq.dll</HintPath>
+    </Reference>
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -125,6 +134,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Selection\SelectionBoxDraggableState.cs" />
+    <Compile Include="Selection\SelectionOptions.cs" />
     <Compile Include="Selection\SelectionSidebarPanel.cs" />
     <Compile Include="Selection\SelectTool.cs" />
     <Compile Include="Selection\SelectToolSidebarPanel.cs">
@@ -133,6 +143,7 @@
     <Compile Include="Selection\SelectToolSidebarPanel.Designer.cs">
       <DependentUpon>SelectToolSidebarPanel.cs</DependentUpon>
     </Compile>
+    <Compile Include="Selection\ToggleIgnoreGroupingCommand.cs" />
     <Compile Include="Selection\TransformationHandles\ITransformationHandle.cs" />
     <Compile Include="Selection\TransformationHandles\ResizeTransformHandle.cs" />
     <Compile Include="Selection\TransformationHandles\RotateTransformHandle.cs" />
@@ -142,9 +153,22 @@
     <Compile Include="State\StateAction.cs" />
     <Compile Include="State\StateEvent.cs" />
     <Compile Include="State\StateTool.cs" />
+    <Compile Include="Texture\TextureBrowser.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Texture\TextureBrowser.Designer.cs">
+      <DependentUpon>TextureBrowser.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Texture\TextureListPanel.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Texture\TextureSidebarComponent.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="ToolInitialiser.cs" />
     <Compile Include="ToolSceneObjectProvider.cs" />
     <Compile Include="ToolSceneObjectProviderFactory.cs" />
+    <Compile Include="ToolStatusItem.cs" />
     <Compile Include="ToolViewportListener.cs" />
     <Compile Include="Widgets\RotationWidget.cs" />
     <Compile Include="Widgets\Widget.cs" />
@@ -165,6 +189,10 @@
     <ProjectReference Include="..\Sledge.DataStructures\Sledge.DataStructures.csproj">
       <Project>{26A974C9-E495-4FA3-8E87-1E00019D04F5}</Project>
       <Name>Sledge.DataStructures</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Sledge.Providers\Sledge.Providers.csproj">
+      <Project>{C7BD4AC8-1F8D-4520-AF2D-D279C0601AB4}</Project>
+      <Name>Sledge.Providers</Name>
     </ProjectReference>
     <ProjectReference Include="..\Sledge.Rendering\Sledge.Rendering.csproj">
       <Project>{4DA7F88D-64FF-4036-8A11-6175169DA851}</Project>
@@ -202,6 +230,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Selection\SelectToolSidebarPanel.resx">
       <DependentUpon>SelectToolSidebarPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Texture\TextureBrowser.resx">
+      <DependentUpon>TextureBrowser.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

@@ -154,7 +154,7 @@ namespace Sledge.BspEditor.Tools.Selection
             {
                 // todo this looks pretty silly when the box doesn't perfectly match the transformed selection
                 var box = new Box(State.OrigStart, State.OrigEnd);
-                box = box.Transform(new UnitMatrixMult(tf.Value));
+                box = box.Transform(Matrix.FromOpenTKMatrix4(tf.Value));
                 if (ShouldDrawBox())
                 {
                     foreach (var face in box.GetBoxFaces())

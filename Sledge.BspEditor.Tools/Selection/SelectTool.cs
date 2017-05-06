@@ -141,13 +141,14 @@ namespace Sledge.BspEditor.Tools.Selection
                     if (x.DocumentUpdated) IgnoreGroupingPossiblyChanged();
                 }
             });
-            // todo !selection ignore grouping
         }
 
         private bool _lastIgnoreGroupingValue;
         private void IgnoreGroupingPossiblyChanged()
         {
-            //
+            var igVal = IgnoreGrouping();
+            if (igVal == _lastIgnoreGroupingValue) return;
+            IgnoreGroupingChanged();
         }
 
         public override void ToolSelected()
@@ -155,8 +156,6 @@ namespace Sledge.BspEditor.Tools.Selection
             TransformationModeChanged(_selectionBox.CurrentTransformationMode);
             IgnoreGroupingChanged();
             
-            //Mediator.Subscribe(EditorMediator.IgnoreGroupingChanged, this);
-
             SelectionChanged();
 
             base.ToolSelected();
@@ -180,14 +179,11 @@ namespace Sledge.BspEditor.Tools.Selection
         {
             if (Document.Selection.IsEmpty)
             {
-                _emptyBox.State.Start = _emptyBox.State.End = null;
-                if (_emptyBox.State.Action == BoxAction.Drawn) _emptyBox.State.Action = BoxAction.Idle;
-                _selectionBox.State.Start = _selectionBox.State.End = null;
                 _selectionBox.State.Action = BoxAction.Idle;
+                if (_emptyBox.State.Action == BoxAction.Drawn) _emptyBox.State.Action = BoxAction.Idle;
             }
             else
             {
-                _emptyBox.State.Start = _emptyBox.State.End = null;
                 _emptyBox.State.Action = BoxAction.Idle;
 
                 var box = Document.Selection.GetSelectionBoundingBox();
@@ -202,34 +198,38 @@ namespace Sledge.BspEditor.Tools.Selection
         #region Ignore Grouping
         private bool IgnoreGrouping()
         {
-            return false;
-            //return MapDocument.Map.IgnoreGrouping;
+            return Document.Map.Data.GetOne<SelectionOptions>()?.IgnoreGrouping == true;
         }
 
         private void IgnoreGroupingChanged()
         {
-            //var selected = MapDocument.Selection.GetSelectedObjects().ToList();
-            //var select = new List<IMapObject>();
-            //var deselect = new List<IMapObject>();
-            //if (MapDocument.Map.IgnoreGrouping)
-            //{
-            //    deselect.AddRange(selected.Where(x => x.HasChildren));
-            //}
-            //else
-            //{
-            //    var parents = selected.Select(x => x.FindTopmostParent(y => y is Group || y is Entity) ?? x).Distinct();
-            //    foreach (var p in parents)
-            //    {
-            //        var children = p.FindAll();
-            //        var leaves = children.Where(x => !x.HasChildren);
-            //        if (leaves.All(selected.Contains)) select.AddRange(children.Where(x => !selected.Contains(x)));
-            //        else deselect.AddRange(children.Where(selected.Contains));
-            //    }
-            //}
-            //if (deselect.Any() || select.Any())
-            //{
-            //    MapDocument.PerformAction("Apply group selection", new ChangeSelection(select, deselect));
-            //}
+            var igVal = _lastIgnoreGroupingValue = IgnoreGrouping();
+
+            var selected = Document.Selection.ToList();
+            var select = new List<IMapObject>();
+            var deselect = new List<IMapObject>();
+
+            if (igVal)
+            {
+                deselect.AddRange(selected.Where(x => x.Hierarchy.HasChildren));
+            }
+            else
+            {
+                var parents = selected.Select(x => x.FindTopmostParent(y => y is Group || y is Entity) ?? x).Distinct();
+                foreach (var p in parents)
+                {
+                    var children = p.FindAll();
+                    var leaves = children.Where(x => !x.Hierarchy.HasChildren);
+                    if (leaves.All(selected.Contains)) select.AddRange(children.Where(x => !selected.Contains(x)));
+                    else deselect.AddRange(children.Where(selected.Contains));
+                }
+            }
+
+            if (select.Any() || deselect.Any())
+            {
+                var transaction = new Transaction(new Select(select), new Deselect(deselect));
+                MapDocumentOperation.Perform(Document, transaction);
+            }
         }
         #endregion
 
@@ -444,10 +444,14 @@ namespace Sledge.BspEditor.Tools.Selection
                     MapDocumentOperation.Perform(Document, new TrivialOperation(
                         x => x.Map.Data.Replace(new SelectionTransform(Matrix.FromOpenTKMatrix4(tform.Value))),
                         x => x.UpdateDocument()));
+
                     var box = new Box(_selectionBox.State.OrigStart, _selectionBox.State.OrigEnd);
                     var trans = CreateMatrixMultTransformation(tform.Value);
-                    // todo !shell status bar
-                    // Mediator.Publish(EditorMediator.SelectionBoxChanged, box.Transform(trans));
+                    box = box.Transform(trans);
+
+                    var label = "";
+                    if (box != null && !box.IsEmpty()) label = box.Width.ToString("0") + " x " + box.Length.ToString("0") + " x " + box.Height.ToString("0");
+                    Oy.Publish("MapDocument:Status:UpdateText", label);
                 }
             }
         }

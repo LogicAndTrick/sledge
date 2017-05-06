@@ -122,11 +122,11 @@ namespace Sledge.BspEditor.Tools.Draggable
 
         public override void StartDrag(MapViewport viewport, ViewportEvent e, Coordinate position)
         {
-            BoxState.Action = BoxAction.Resizing;
             BoxState.OrigStart = BoxState.Start;
             BoxState.OrigEnd = BoxState.End;
             MoveOrigin = GetResizeOrigin(viewport, position);
             SnappedMoveOrigin = MoveOrigin;
+            BoxState.Action = BoxAction.Resizing;
             base.StartDrag(viewport, e, position);
         }
 

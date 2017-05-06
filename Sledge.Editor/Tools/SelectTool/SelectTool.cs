@@ -415,7 +415,7 @@ namespace Sledge.Editor.Tools.SelectTool
                     Document.SetSelectListTransform(tform.Value);
                     var box = new Box(_selectionBox.State.OrigStart, _selectionBox.State.OrigEnd);
                     var trans = CreateMatrixMultTransformation(tform.Value);
-                    Mediator.Publish(EditorMediator.SelectionBoxChanged, box.Transform(trans));
+                    Mediator.Publish(EditorMediator.SelectionBoxChanged, box);//.Transform(trans));
                 }
             }
         }

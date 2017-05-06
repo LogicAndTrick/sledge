@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using LogicAndTrick.Oy;
 using OpenTK;
 using Sledge.BspEditor.Rendering;
 using Sledge.BspEditor.Rendering.Viewport;
@@ -30,10 +31,20 @@ namespace Sledge.BspEditor.Tools.Draggable
         {
             Tool = tool;
             State = new BoxState();
+            State.Changed += BoxStateChanged;
 
             RememberedDimensions = null;
 
             CreateBoxHandles();
+        }
+
+        private void BoxStateChanged(object sender, EventArgs e)
+        {
+            var box = State.Action == BoxAction.Idle || State.Start == null || State.End == null ? Box.Empty : new Box(State.Start, State.End);
+
+            var label = "";
+            if (box != null && !box.IsEmpty()) label = box.Width.ToString("0") + " x " + box.Length.ToString("0") + " x " + box.Height.ToString("0");
+            Oy.Publish("MapDocument:Status:UpdateText", label);
         }
 
         protected virtual void CreateBoxHandles()
