@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.Composition;
+﻿using System;
+using System.ComponentModel.Composition;
 using System.Linq;
 using System.Threading.Tasks;
 using LogicAndTrick.Oy;
@@ -32,13 +33,29 @@ namespace Sledge.BspEditor.Tools
         {
             var md = doc as MapDocument;
             if (md == null) return;
-            if (!md.Map.Data.Any(x => x is GridData))
-            {
-                MapDocumentOperation.Perform(md, new TrivialOperation(
-                    x => x.Map.Data.Add(new GridData(new SquareGrid())),
-                    x => x.UpdateDocument())
-                );
-            }
+
+            MapDocumentOperation.Perform(md, new TrivialOperation(
+                async d =>
+                {
+                    if (!d.Map.Data.Any(x => x is GridData))
+                    {
+                        d.Map.Data.Add(new GridData(new SquareGrid()));
+                    }
+                    if (!d.Map.Data.Any(x => x is ActiveTexture))
+                    {
+                        var tc = await d.Environment.GetTextureCollection();
+                        var first = tc.GetAllTextures()
+                            .OrderBy(t => t, StringComparer.CurrentCultureIgnoreCase)
+                            .Where(item => item.Length > 0)
+                            .Select(item => new {item, c = Char.ToLower(item[0])})
+                            .Where(t => t.c >= 'a' && t.c <= 'z')
+                            .Select(t => t.item)
+                            .FirstOrDefault();
+                        d.Map.Data.Add(new ActiveTexture {Name = first});
+                    }
+                },
+                x => x.UpdateDocument())
+            );
         }
     }
 }

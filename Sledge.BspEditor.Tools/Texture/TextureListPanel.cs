@@ -14,16 +14,6 @@ namespace Sledge.BspEditor.Tools.Texture
 {
     public sealed class TextureListPanel : Panel
     {
-        public enum TextureSortOrder
-        {
-            None,
-            Name,
-            Width,
-            Height,
-            Size,
-            Package
-        }
-
         public event EventHandler<string> TextureSelected;
         public event EventHandler<List<string>> SelectionChanged;
         private event EventHandler DebouncedInvalidate;
@@ -42,7 +32,7 @@ namespace Sledge.BspEditor.Tools.Texture
         private List<string> _textures;
 
         private string _lastSelectedItem;
-        private readonly List<string> _selection;
+        private readonly HashSet<string> _selection;
 
         private readonly IDisposable _observable;
 
@@ -89,7 +79,7 @@ namespace Sledge.BspEditor.Tools.Texture
                     var first = _selection.First();
                     _selection.Clear();
                     _selection.Add(first);
-                    Refresh();
+                    Invalidate();
                 }
             }
         }
@@ -101,32 +91,13 @@ namespace Sledge.BspEditor.Tools.Texture
             set
             {
                 _imageSize = value;
-                foreach (var kv in _controls)
+                lock (_lock)
                 {
-                    kv.Value.ImageSize = ImageSize;
+                    foreach (var kv in _controls)
+                    {
+                        kv.Value.ImageSize = ImageSize;
+                    }
                 }
-                ControlInvalidated();
-            }
-        }
-
-        private TextureSortOrder _sortOrder;
-        public TextureSortOrder SortOrder
-        {
-            get => _sortOrder;
-            set
-            {
-                _sortOrder = value;
-                ControlInvalidated();
-            }
-        }
-
-        private bool _sortDescending;
-        public bool SortDescending
-        {
-            get => _sortDescending;
-            set
-            {
-                _sortDescending = value;
                 ControlInvalidated();
             }
         }
@@ -148,9 +119,9 @@ namespace Sledge.BspEditor.Tools.Texture
             AllowMultipleSelection = true;
 
             _scrollBar = new VScrollBar { Dock = DockStyle.Right };
-            _scrollBar.ValueChanged += (sender, e) => Refresh();
+            _scrollBar.ValueChanged += (sender, e) => Invalidate();
             _textures = new List<string>();
-            _selection = new List<string>();
+            _selection = new HashSet<string>();
             _imageSize = 128;
 
             Controls.Add(_scrollBar);
@@ -171,7 +142,7 @@ namespace Sledge.BspEditor.Tools.Texture
         public void SetSelectedTextures(IEnumerable<string> items)
         {
             _selection.Clear();
-            _selection.AddRange(items);
+            _selection.UnionWith(items);
             OnSelectionChanged(_selection);
             ControlInvalidated();
         }
@@ -202,9 +173,9 @@ namespace Sledge.BspEditor.Tools.Texture
             var clickedIndex = GetIndexAt(x, y);
 
             var item = _textures.ElementAt(clickedIndex);
-            if (item == _selection[0])
+            if (_selection.Contains(item))
             {
-                OnTextureSelected(_selection[0]);
+                OnTextureSelected(item);
             }
         }
 
@@ -247,7 +218,7 @@ namespace Sledge.BspEditor.Tools.Texture
                 var bef = _textures.ToList().IndexOf(_lastSelectedItem);
                 var start = Math.Min(bef, clickedIndex);
                 var count = Math.Abs(clickedIndex - bef) + 1;
-                _selection.AddRange(_textures.GetRange(start, count).Where(i => !_selection.Contains(i)));
+                _selection.UnionWith(_textures.GetRange(start, count).Where(i => !_selection.Contains(i)));
             }
             else
             {
@@ -256,7 +227,7 @@ namespace Sledge.BspEditor.Tools.Texture
             }
             OnSelectionChanged(_selection);
 
-            Refresh();
+            Invalidate();
         }
 
         protected override void OnMouseMove(MouseEventArgs e)
@@ -278,15 +249,18 @@ namespace Sledge.BspEditor.Tools.Texture
 
         private int GetIndexAt(int x, int y)
         {
-            for (var i = 0; i < _textures.Count; i++)
+            lock (_lock)
             {
-                var tex = _textures[i];
+                for (var i = 0; i < _textures.Count; i++)
+                {
+                    var tex = _textures[i];
 
-                if (!_controls.ContainsKey(tex)) continue;
-                var con = _controls[tex];
+                    if (!_controls.ContainsKey(tex)) continue;
+                    var con = _controls[tex];
 
-                var rec = new Rectangle(con.Point, con.Size);
-                if (rec.Contains(x, y)) return i;
+                    var rec = new Rectangle(con.Point, con.Size);
+                    if (rec.Contains(x, y)) return i;
+                }
             }
             return -1;
         }
@@ -295,35 +269,12 @@ namespace Sledge.BspEditor.Tools.Texture
 
         #region Add/Remove/Get Textures
 
-        public IEnumerable<string> GetTextures()
+        public void SortTextureList<T>(Func<string, T> sortFunc, bool descending)
         {
-            // todo ?
-            IEnumerable<string> sorted = new List<string>();
-            switch (SortOrder)
-            {
-                case TextureSortOrder.None:
-                    sorted = _textures;
-                    break;
-                case TextureSortOrder.Name:
-                    sorted = _textures.OrderBy(x => x);
-                    break;
-                case TextureSortOrder.Width:
-                    //sorted = _textures.OrderBy(x => x.Width).ThenBy(x => x.Name);
-                    break;
-                case TextureSortOrder.Height:
-                    //sorted = _textures.OrderBy(x => x.Height).ThenBy(x => x.Name);
-                    break;
-                case TextureSortOrder.Size:
-                    //sorted = _textures.OrderBy(x => x.Width * x.Height).ThenBy(x => x.Name);
-                    break;
-                case TextureSortOrder.Package:
-                    //sorted = _textures.OrderBy(x => x.ToString()).ThenBy(x => x.Name);
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-            if (_sortDescending) return sorted.Reverse();
-            return sorted;
+            _textures = descending
+                ? _textures.OrderByDescending(sortFunc).ToList()
+                : _textures.OrderBy(sortFunc).ToList();
+            ControlInvalidated();
         }
 
         public IEnumerable<string> GetSelectedTextures()
@@ -355,6 +306,9 @@ namespace Sledge.BspEditor.Tools.Texture
 
             OnSelectionChanged(_selection);
             UpdateTextureList();
+
+            UpdateTexturePanels();
+            Invalidate();
         }
 
         public void Clear()
@@ -414,7 +368,7 @@ namespace Sledge.BspEditor.Tools.Texture
                     ScrollByAmount(-int.MaxValue);
                     break;
                 case Keys.Enter:
-                    if (_selection.Count > 0) OnTextureSelected(_selection[0]);
+                    if (_selection.Count > 0) OnTextureSelected(_selection.First());
                     break;
             }
             base.OnKeyDown(e);
@@ -472,8 +426,6 @@ namespace Sledge.BspEditor.Tools.Texture
 
             lock (_lock)
             {
-                _textures = GetTextures().ToList();
-
                 foreach (var tex in _textures)
                 {
                     if (!_controls.ContainsKey(tex)) continue;
@@ -496,16 +448,19 @@ namespace Sledge.BspEditor.Tools.Texture
                 }
             }
 
-            _scrollBar.Invoke(() =>
+            Task.Factory.StartNew(() =>
             {
-                _scrollBar.Maximum = currentY + maxHeight;
-                _scrollBar.SmallChange = _imageSize > 0 ? _imageSize : 128;
-                _scrollBar.LargeChange = ClientRectangle.Height;
-
-                if (_scrollBar.Value > _scrollBar.Maximum - ClientRectangle.Height)
+                _scrollBar.Invoke(() =>
                 {
-                    _scrollBar.Value = Math.Max(0, _scrollBar.Maximum - ClientRectangle.Height);
-                }
+                    _scrollBar.Maximum = currentY + maxHeight;
+                    _scrollBar.SmallChange = _imageSize > 0 ? _imageSize : 128;
+                    _scrollBar.LargeChange = ClientRectangle.Height;
+
+                    if (_scrollBar.Value > _scrollBar.Maximum - ClientRectangle.Height)
+                    {
+                        _scrollBar.Value = Math.Max(0, _scrollBar.Maximum - ClientRectangle.Height);
+                    }
+                });
             });
         }
 
@@ -544,7 +499,7 @@ namespace Sledge.BspEditor.Tools.Texture
                         con.Release();
                         continue;
                     }
-                    con.Paint(g, rec.X, rec.Y - y);
+                    con.Paint(g, rec.X, rec.Y - y, _selection.Contains(tex));
                 }
             }
         }
@@ -610,7 +565,7 @@ namespace Sledge.BspEditor.Tools.Texture
                 TextureName = textureName;
             }
 
-            public void Paint(Graphics g, int x, int y)
+            public void Paint(Graphics g, int x, int y, bool selected)
             {
                 if (_bitmapTask == null)
                 {
@@ -618,7 +573,15 @@ namespace Sledge.BspEditor.Tools.Texture
                     _bitmapTask.ContinueWith(b => _invalidated());
                 }
 
-                g.DrawRectangle(Pens.Gray, new Rectangle(x + 1, y + 1, Size.Width - 2, Size.Height - 2));
+                if (selected)
+                {
+                    g.DrawRectangle(Pens.Red, new Rectangle(x + 1, y + 1, Size.Width - 2, Size.Height - 2));
+                    g.DrawRectangle(Pens.Red, new Rectangle(x + 2, y + 2, Size.Width - 4, Size.Height - 4));
+                }
+                else
+                {
+                    g.DrawRectangle(Pens.Gray, new Rectangle(x + 1, y + 1, Size.Width - 2, Size.Height - 2));
+                }
                 g.DrawString(TextureName, Font, Brushes.White, x + 1, y + Size.Height - FontHeight - Padding);
 
                 if (_bitmapTask != null && _bitmapTask.IsCompleted)
@@ -626,12 +589,28 @@ namespace Sledge.BspEditor.Tools.Texture
                     var img = _bitmapTask.Result;
                     if (img != null)
                     {
-                        g.DrawImage(img,
-                            new Rectangle(x + Padding, y + Padding, Size.Width - Padding * 2, Size.Height - Padding * 2 - FontHeight),
-                            new Rectangle(0, 0, img.Width, img.Height),
-                            GraphicsUnit.Pixel);
+                        DrawImage(g, img, x + Padding, y + Padding, Size.Width - Padding * 2, Size.Height - Padding * 2 - FontHeight);
                     }
                 }
+            }
+
+            private void DrawImage(Graphics g, Image bmp, int x, int y, int w, int h)
+            {
+                if (bmp == null) return;
+
+                var iw = bmp.Width;
+                var ih = bmp.Height;
+                if (iw > w && iw >= ih)
+                {
+                    ih = (int)Math.Floor(h * (ih / (float)iw));
+                    iw = w;
+                }
+                else if (ih > h)
+                {
+                    iw = (int)Math.Floor(w * (iw / (float)ih));
+                    ih = h;
+                }
+                g.DrawImage(bmp, x, y, iw, ih);
             }
 
             public void Dispose()

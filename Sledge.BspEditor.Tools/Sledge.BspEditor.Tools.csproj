@@ -162,8 +162,12 @@
     <Compile Include="Texture\TextureListPanel.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Texture\TextureSidebarComponent.cs">
+    <Compile Include="Texture\BrowseActiveTexture.cs" />
+    <Compile Include="Texture\TextureSidebarPanel.cs">
       <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Texture\TextureSidebarPanel.Designer.cs">
+      <DependentUpon>TextureSidebarPanel.cs</DependentUpon>
     </Compile>
     <Compile Include="ToolInitialiser.cs" />
     <Compile Include="ToolSceneObjectProvider.cs" />
@@ -233,6 +237,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Texture\TextureBrowser.resx">
       <DependentUpon>TextureBrowser.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Texture\TextureSidebarPanel.resx">
+      <DependentUpon>TextureSidebarPanel.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

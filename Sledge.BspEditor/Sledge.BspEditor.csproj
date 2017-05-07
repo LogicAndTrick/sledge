@@ -124,6 +124,7 @@
     <Compile Include="Primitives\IMapObjectProvider.cs" />
     <Compile Include="Primitives\ITextured.cs" />
     <Compile Include="Primitives\ITransformable.cs" />
+    <Compile Include="Primitives\MapData\ActiveTexture.cs" />
     <Compile Include="Primitives\MapData\GridData.cs" />
     <Compile Include="Primitives\MapData\Selection.cs" />
     <Compile Include="Primitives\MapData\SelectionTransform.cs" />

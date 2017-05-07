@@ -14,10 +14,20 @@ namespace Sledge.BspEditor.Modification.Operations
     {
         public bool Trivial => true;
 
-        private Action<MapDocument> _action;
+        private Func<MapDocument, Task> _action;
         private Action<Change> _change;
 
         public TrivialOperation(Action<MapDocument> action, Action<Change> change)
+        {
+            _action = x =>
+            {
+                action(x);
+                return Task.FromResult(0);
+            };
+            _change = change;
+        }
+
+        public TrivialOperation(Func<MapDocument, Task> action, Action<Change> change)
         {
             _action = action;
             _change = change;
@@ -26,7 +36,7 @@ namespace Sledge.BspEditor.Modification.Operations
         public async Task<Change> Perform(MapDocument document)
         {
             var change = new Change(document);
-            _action(document);
+            await _action(document);
             _change(change);
             return change;
         }

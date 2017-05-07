@@ -121,7 +121,6 @@
             this.SizeCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.SizeCombo.FormattingEnabled = true;
             this.SizeCombo.Items.AddRange(new object[] {
-            "1:1",
             "64",
             "128",
             "256",
@@ -292,8 +291,6 @@
             this.TextureList.Location = new System.Drawing.Point(226, 0);
             this.TextureList.Name = "TextureList";
             this.TextureList.Size = new System.Drawing.Size(714, 495);
-            this.TextureList.SortDescending = false;
-            this.TextureList.SortOrder = TextureListPanel.TextureSortOrder.Name;
             this.TextureList.TabIndex = 0;
             // 
             // TextureBrowser
