@@ -101,8 +101,11 @@
     <Compile Include="Grid\GridLine.cs" />
     <Compile Include="Grid\GridLineType.cs" />
     <Compile Include="Grid\IGrid.cs" />
+    <Compile Include="Grid\IGridFactory.cs" />
     <Compile Include="Grid\NoGrid.cs" />
+    <Compile Include="Grid\NoGridFactory.cs" />
     <Compile Include="Grid\SquareGrid.cs" />
+    <Compile Include="Grid\SquareGridFactory.cs" />
     <Compile Include="Modification\MapDocumentOperation.cs" />
     <Compile Include="Modification\OperationHandler.cs" />
     <Compile Include="Modification\Operations\Data\AddMapData.cs" />
@@ -124,7 +127,9 @@
     <Compile Include="Primitives\IMapObjectProvider.cs" />
     <Compile Include="Primitives\ITextured.cs" />
     <Compile Include="Primitives\ITransformable.cs" />
+    <Compile Include="Primitives\MapObjectData\IBoundingBoxProvider.cs" />
     <Compile Include="Primitives\MapData\ActiveTexture.cs" />
+    <Compile Include="Primitives\MapObjectData\PointEntityGameDataBoundingBoxProvider.cs" />
     <Compile Include="Primitives\MapData\GridData.cs" />
     <Compile Include="Primitives\MapData\Selection.cs" />
     <Compile Include="Primitives\MapData\SelectionTransform.cs" />

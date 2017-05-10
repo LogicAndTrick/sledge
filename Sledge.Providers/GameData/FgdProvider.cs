@@ -22,6 +22,11 @@ namespace Sledge.Providers.GameData
             return true;
         }
 
+        public DataStructures.GameData.GameData OpenFile(string filename)
+        {
+            return GetFromFile(filename);
+        }
+
         protected override DataStructures.GameData.GameData GetFromFile(string filename)
         {
             if (!File.Exists(filename)) throw new ProviderException("File does not exist: " + filename);

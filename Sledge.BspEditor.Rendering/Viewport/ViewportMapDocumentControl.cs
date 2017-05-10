@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using LogicAndTrick.Oy;
@@ -12,6 +13,7 @@ namespace Sledge.BspEditor.Rendering.Viewport
 {
     public class ViewportMapDocumentControl : IMapDocumentControl
     {
+        private readonly IEnumerable<IViewportEventListenerFactory> _listeners;
         private readonly Control _panel;
         private IViewport _viewport;
         private MapViewport _mapViewport;
@@ -32,8 +34,9 @@ namespace Sledge.BspEditor.Rendering.Viewport
             }
         }
 
-        public ViewportMapDocumentControl()
+        public ViewportMapDocumentControl(IEnumerable<IViewportEventListenerFactory> listeners)
         {
+            _listeners = listeners;
             _camera = new PerspectiveCamera();
             _panel = new Panel {Dock = DockStyle.Fill};
             _subscriptions = new List<Subscription>
@@ -53,7 +56,7 @@ namespace Sledge.BspEditor.Rendering.Viewport
                 _viewport.Control.Dock = DockStyle.Fill;
                 _panel.Controls.Add(_viewport.Control);
                 _mapViewport = new MapViewport(_viewport);
-                _mapViewport.Listeners.Add(new PerspectiveCameraNavigationViewportListener(_mapViewport));
+                _mapViewport.Listeners.AddRange(_listeners.SelectMany(x => x.Create(_mapViewport)));
                 await Oy.Publish("MapViewport:Created", _mapViewport);
             }
         }

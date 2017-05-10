@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
 using System.Runtime.Serialization;
+using Sledge.BspEditor.Primitives.MapData;
 using Sledge.BspEditor.Primitives.MapObjectData;
 using Sledge.Common.Transport;
 using Sledge.DataStructures.Geometric;
@@ -35,7 +36,25 @@ namespace Sledge.BspEditor.Primitives.MapObjects
         {
             return Hierarchy.NumChildren > 0
                 ? new Box(Hierarchy.Select(x => x.BoundingBox))
-                : new Box(Origin - Coordinate.One * 16, Origin + Coordinate.One * 16);
+                : MakeBoundingBox();
+        }
+
+        private Box MakeBoundingBox()
+        {
+            var ed = EntityData;
+            if (!String.IsNullOrWhiteSpace(ed?.Name))
+            {
+                var root = this.GetRoot();
+                if (root != null)
+                {
+                    foreach (var bb in root.Data.Get<IBoundingBoxProvider>())
+                    {
+                        var box = bb.GetBoundingBox(this);
+                        if (box != null) return box;
+                    }
+                }
+            }
+            return new Box(Origin - Coordinate.One * 16, Origin + Coordinate.One * 16);
         }
 
         public override IEnumerable<Polygon> GetPolygons()

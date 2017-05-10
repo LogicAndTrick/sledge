@@ -215,7 +215,7 @@ namespace Sledge.BspEditor.Tools.Selection
             }
             else
             {
-                var parents = selected.Select(x => x.FindTopmostParent(y => y is Group || y is Entity) ?? x).Distinct();
+                var parents = selected.Select(x => x.FindTopmostParent(y => y is Group || y is Primitives.MapObjects.Entity) ?? x).Distinct();
                 foreach (var p in parents)
                 {
                     var children = p.FindAll();
@@ -246,7 +246,7 @@ namespace Sledge.BspEditor.Tools.Selection
         {
             return ignoreGrouping
                        ? objects.Where(x => !x.Hierarchy.HasChildren)
-                       : objects.Select(x => x.FindTopmostParent(y => y is Group || y is Entity) ?? x).Distinct().SelectMany(x => x.FindAll());
+                       : objects.Select(x => x.FindTopmostParent(y => y is Group || y is Primitives.MapObjects.Entity) ?? x).Distinct().SelectMany(x => x.FindAll());
         }
 
         /// <summary>

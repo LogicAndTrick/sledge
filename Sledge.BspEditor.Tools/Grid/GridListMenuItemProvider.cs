@@ -18,7 +18,7 @@ namespace Sledge.BspEditor.Tools.Grid
     [Export(typeof(IMenuItemProvider))]
     public class GridListMenuItemProvider : IMenuItemProvider
     {
-        [ImportMany] private IEnumerable<Lazy<IGrid>> _grids;
+        [ImportMany] private IEnumerable<Lazy<IGridFactory>> _grids;
 
         public IEnumerable<IMenuItem> GetMenuItems()
         {
@@ -30,20 +30,20 @@ namespace Sledge.BspEditor.Tools.Grid
 
         private class GridMenuItem : IMenuItem
         {
-            public string ID => "Sledge.BspEditor.Tools.Grid.GridMenuItem." + Grid.GetType().Name;
-            public string Name => Grid.Name;
-            public string Description => Grid.Details;
-            public Image Icon => Grid.Icon;
+            public string ID => "Sledge.BspEditor.Tools.Grid.GridMenuItem." + GridFactory.GetType().Name;
+            public string Name => GridFactory.Name;
+            public string Description => GridFactory.Details;
+            public Image Icon => GridFactory.Icon;
             public string Section => "Map";
             public string Path => ""; // todo !menu proper grid path
             public string Group => "";
             public string OrderHint => Group.GetType().Name;
 
-            public IGrid Grid { get; set; }
+            public IGridFactory GridFactory { get; set; }
 
-            public GridMenuItem(IGrid grid)
+            public GridMenuItem(IGridFactory gridFactory)
             {
-                Grid = grid;
+                GridFactory = gridFactory;
             }
 
             public bool IsInContext(IContext context)
@@ -55,12 +55,15 @@ namespace Sledge.BspEditor.Tools.Grid
             {
                 if (context.TryGet("ActiveDocument", out MapDocument doc))
                 {
+                    var grid = await GridFactory.Create(doc);
+
                     var operation = new TrivialOperation(x =>
                     {
                         var activeGrid = doc.Map.Data.GetOne<GridData>();
                         if (activeGrid != null) doc.Map.Data.Remove(activeGrid);
-                        doc.Map.Data.Add(new GridData(Grid));
+                        doc.Map.Data.Add(new GridData(grid));
                     }, x => x.UpdateDocument());
+
                     await MapDocumentOperation.Perform(doc, operation);
                     
                 }

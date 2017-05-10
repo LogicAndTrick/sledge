@@ -8,6 +8,8 @@ using Sledge.BspEditor.Grid;
 using Sledge.BspEditor.Modification;
 using Sledge.BspEditor.Modification.Operations;
 using Sledge.BspEditor.Primitives.MapData;
+using Sledge.BspEditor.Primitives.MapObjectData;
+using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.BspEditor.Rendering.Viewport;
 using Sledge.Common.Shell.Documents;
 using Sledge.Common.Shell.Hooks;
@@ -17,6 +19,8 @@ namespace Sledge.BspEditor.Tools
     [Export(typeof(IInitialiseHook))]
     public class ToolInitialiser : IInitialiseHook
     {
+        [Import] private SquareGridFactory _squareGridFactory;
+
         public async Task OnInitialise()
         {
             Oy.Subscribe<MapViewport>("MapViewport:Created", MapViewportCreated);
@@ -39,7 +43,8 @@ namespace Sledge.BspEditor.Tools
                 {
                     if (!d.Map.Data.Any(x => x is GridData))
                     {
-                        d.Map.Data.Add(new GridData(new SquareGrid()));
+                        var grid = await _squareGridFactory.Create(md);
+                        d.Map.Data.Add(new GridData(grid));
                     }
                     if (!d.Map.Data.Any(x => x is ActiveTexture))
                     {
@@ -53,6 +58,10 @@ namespace Sledge.BspEditor.Tools
                             .FirstOrDefault();
                         d.Map.Data.Add(new ActiveTexture {Name = first});
                     }
+
+                    var gd = await d.Environment.GetGameData();
+                    d.Map.Root.Data.Replace(new PointEntityGameDataBoundingBoxProvider(gd));
+                    d.Map.Root.Invalidate();
                 },
                 x => x.UpdateDocument())
             );

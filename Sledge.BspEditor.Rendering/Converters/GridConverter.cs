@@ -137,8 +137,7 @@ namespace Sledge.BspEditor.Rendering.Converters
                 var vmax = viewport.Camera.ScreenToWorld(new Vector3(viewport.Control.Width + padding, -padding, 0), viewport.Control.Width, viewport.Control.Height);
                 var normal = Coordinate.One - viewport.Camera.Expand(new Vector3(1, 1, 0)).ToCoordinate();
 
-                foreach (var line in _grid.GetLines(normal, (decimal) viewport.Camera.Zoom, vmin.ToCoordinate(),
-                    vmax.ToCoordinate()))
+                foreach (var line in _grid.GetLines(normal, (decimal) viewport.Camera.Zoom, vmin.ToCoordinate(), vmax.ToCoordinate()))
                 {
                     var c = GetColorForGridLineType(line.Type);
                     yield return new LineElement(PositionType.World, c,

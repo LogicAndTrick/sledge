@@ -17,6 +17,8 @@ namespace Sledge.Providers
             Gimme.Register(new Texture.Wad.WadTextureItemProvider());
             Gimme.Register(new Texture.Wad.WadTexturePackageProvider());
             Gimme.Register(new Texture.Wad.WadTextureStreamSourceProvider());
+
+            Gimme.Register(new GameData.FgdGameDataProvider());
         }
     }
 }

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using OpenTK;
@@ -13,7 +14,7 @@ namespace Sledge.Editor.Rendering.Converters
 {
     public class EntityNameConverter : IMapObjectSceneConverter
     {
-        public MapObjectSceneConverterPriority Priority { get { return MapObjectSceneConverterPriority.DefaultLow; } }
+        public MapObjectSceneConverterPriority Priority => MapObjectSceneConverterPriority.DefaultLow;
 
         public bool ShouldStopProcessing(SceneMapObject smo, MapObject obj)
         {
@@ -22,7 +23,8 @@ namespace Sledge.Editor.Rendering.Converters
 
         public bool Supports(MapObject obj)
         {
-            return Sledge.Settings.View.DrawEntityNames && obj is Entity && obj.GetEntityData() != null;
+            return Sledge.Settings.View.DrawEntityNames && obj is Entity &&
+                   !String.IsNullOrWhiteSpace(obj.GetEntityData()?.Name);
         }
 
         public async Task<bool> Convert(SceneMapObject smo, Document document, MapObject obj)
@@ -53,7 +55,7 @@ namespace Sledge.Editor.Rendering.Converters
         /// </summary>
         private class EntityTextElement : TextElement
         {
-            public override string ElementGroup { get { return "Entity"; } }
+            public override string ElementGroup => "Entity";
             public Box Box { get; set; }
 
             public EntityTextElement(Entity entity) : base(PositionType.World, entity.BoundingBox.Center.ToVector3(), entity.EntityData.Name, entity.Colour)

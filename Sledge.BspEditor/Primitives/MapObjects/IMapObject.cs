@@ -46,6 +46,8 @@ namespace Sledge.BspEditor.Primitives.MapObjects
 
         void DescendantsChanged();
 
+        void Invalidate();
+
         /// <summary>
         /// Convert the object to known primitives
         /// </summary>

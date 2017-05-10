@@ -51,7 +51,22 @@ namespace Sledge.BspEditor.Primitives.MapObjects
             Hierarchy.Parent?.DescendantsChanged();
         }
 
+        public void Invalidate()
+        {
+            foreach (var ch in Hierarchy)
+            {
+                ch.Invalidate();
+            }
+            BoundingBox = GetBoundingBox();
+            OnInvalidated();
+        }
+
         protected virtual void OnDescendantsChanged()
+        {
+            //
+        }
+
+        protected virtual void OnInvalidated()
         {
             //
         }

@@ -13,6 +13,7 @@ using Sledge.Common.Shell.Context;
 using Sledge.Common.Shell.Documents;
 using Sledge.Common.Shell.Hooks;
 using Sledge.Common.Translations;
+using Sledge.Providers.Texture;
 using Sledge.Shell;
 
 namespace Sledge.BspEditor.Tools.Texture
@@ -33,6 +34,7 @@ namespace Sledge.BspEditor.Tools.Texture
         public string Title => "Texture";
         public object Control => this;
 
+        private string _currentTexture;
         private WeakReference<MapDocument> _activeDocument;
 
         public TextureSidebarPanel()
@@ -61,7 +63,20 @@ namespace Sledge.BspEditor.Tools.Texture
         private async Task DocumentActivated(IDocument doc)
         {
             var md = doc as MapDocument;
+
             _activeDocument = new WeakReference<MapDocument>(md);
+            _currentTexture = null;
+
+            await Task.Factory.StartNew(() =>
+            {
+                this.Invoke(() =>
+                {
+                    var dis = SelectionPictureBox.Image;
+                    SelectionPictureBox.Image = null;
+                    dis?.Dispose();
+                });
+            });
+
             if (md != null)
             {
                 await TextureSelected(md.Map.Data.GetOne<ActiveTexture>()?.Name);
@@ -83,25 +98,26 @@ namespace Sledge.BspEditor.Tools.Texture
 
         private async Task TextureSelected(string selection)
         {
-            var dis = SelectionPictureBox.Image;
-            SelectionPictureBox.Image = null;
-            dis?.Dispose();
+            if (selection == _currentTexture) return;
+            _currentTexture = selection;
 
-            SizeLabel.Text = "";
-            NameLabel.Text = "";
-            
-            if (selection == null) return;
             if (!_activeDocument.TryGetTarget(out MapDocument doc)) return;
 
-            var tc = await doc.Environment.GetTextureCollection();
-            var texItem = await tc.GetTextureItem(selection);
+            Bitmap bmp = null;
+            TextureItem texItem = null;
 
-            if (texItem == null) return;
-
-            Bitmap bmp;
-            using (var ss = await tc.GetStreamSource())
+            if (selection != null)
             {
-                bmp = await ss.GetImage(selection, 256, 256);
+                var tc = await doc.Environment.GetTextureCollection();
+                texItem = await tc.GetTextureItem(selection);
+
+                if (texItem != null)
+                {
+                    using (var ss = await tc.GetStreamSource())
+                    {
+                        bmp = await ss.GetImage(selection, 256, 256);
+                    }
+                }
             }
 
             Task.Factory.StartNew(() =>
@@ -119,10 +135,14 @@ namespace Sledge.BspEditor.Tools.Texture
                             SelectionPictureBox.SizeMode = PictureBoxSizeMode.CenterImage;
                         }
                     }
+
+                    var dis = SelectionPictureBox.Image;
+                    SelectionPictureBox.Image = null;
+                    dis?.Dispose();
+
                     SelectionPictureBox.Image = bmp;
-                    NameLabel.Text = selection ?? "";
-                    SizeLabel.Text = $"{texItem.Width} x {texItem.Height}";
-                    NameLabel.Text = texItem.Name;
+                    NameLabel.Text = texItem?.Name ?? "";
+                    SizeLabel.Text = texItem == null ? "" : $"{texItem.Width} x {texItem.Height}";
                 });
             });
         }

@@ -1,23 +1,10 @@
 ﻿using System.Collections.Generic;
-using System.ComponentModel.Composition;
-using System.Drawing;
-using Sledge.Common.Translations;
 using Sledge.DataStructures.Geometric;
 
 namespace Sledge.BspEditor.Grid
 {
-    /// <summary>
-    /// A grid that does nothing
-    /// </summary>
-    [AutoTranslate]
-    [Export(typeof(IGrid))]
     public class NoGrid : IGrid
     {
-        public string Name { get; set; }
-        public string Details { get; set; }
-
-        public Image Icon => null;
-
         public int Spacing
         {
             get { return 1; }

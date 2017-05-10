@@ -123,6 +123,13 @@
     <Compile Include="Draggable\IDraggableState.cs" />
     <Compile Include="Draggable\InternalBoxResizeHandle.cs" />
     <Compile Include="Draggable\ResizeHandle.cs" />
+    <Compile Include="Entity\EntitySidebarPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Entity\EntitySidebarPanel.Designer.cs">
+      <DependentUpon>EntitySidebarPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Entity\EntityTool.cs" />
     <Compile Include="Grid\DecreaseGrid.cs" />
     <Compile Include="Grid\GridListMenuItemProvider.cs" />
     <Compile Include="Grid\IncreaseGrid.cs" />
@@ -228,6 +235,9 @@
     <EmbeddedResource Include="Brush\Brushes\Controls\TextControl.resx">
       <DependentUpon>TextControl.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Entity\EntitySidebarPanel.resx">
+      <DependentUpon>EntitySidebarPanel.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -253,6 +263,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Tool_Camera.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Resources\Tool_Entity.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

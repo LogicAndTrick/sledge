@@ -6,14 +6,10 @@ using Sledge.Common.Easings;
 using Sledge.Common.Mediator;
 using Sledge.Rendering;
 using Sledge.Rendering.Cameras;
-using Sledge.Rendering.Scenes.Elements;
 using Sledge.Shell.Input;
 
 namespace Sledge.BspEditor.Rendering.Viewport
 {
-    /// <summary>
-    /// TODO !LEGACY! 
-    /// </summary>
     public class PerspectiveCameraNavigationViewportListener : IViewportEventListener
     {
         public MapViewport Viewport { get; set; }

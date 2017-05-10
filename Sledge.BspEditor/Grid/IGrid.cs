@@ -1,23 +1,10 @@
 ﻿using System.Collections.Generic;
-using System.Drawing;
 using Sledge.DataStructures.Geometric;
 
 namespace Sledge.BspEditor.Grid
 {
     public interface IGrid
-    {
-        /// <summary>
-        /// The name of the grid
-        /// </summary>
-        string Name { get; set; }
-
-        /// <summary>
-        /// A short explanation of the grid
-        /// </summary>
-        string Details { get; set; }
-
-        Image Icon { get; }
-
+    { 
         /// <summary>
         /// A relative value to represent the spacing of a grid.
         /// Must support values 1-10 as logical minimums and maximums,

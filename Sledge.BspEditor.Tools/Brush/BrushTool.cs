@@ -51,6 +51,18 @@ namespace Sledge.BspEditor.Tools.Brush
             });
         }
 
+        protected override IEnumerable<Subscription> Subscribe()
+        {
+            yield return Oy.Subscribe<Change>("MapDocument:Changed", x =>
+            {
+                if (x.Document == Document)
+                {
+                    TextureSelected();
+                }
+                return Task.FromResult(0);
+            });
+        }
+
         protected override void ContextChanged(IContext context)
         {
             _activeBrush = context.Get<IBrush>("BrushTool:ActiveBrush");
@@ -86,7 +98,7 @@ namespace Sledge.BspEditor.Tools.Brush
             base.ToolDeselected();
         }
 
-        private void TextureSelected(string texture)
+        private void TextureSelected()
         {
             _updatePreview = true;
             Invalidate();
@@ -137,7 +149,7 @@ namespace Sledge.BspEditor.Tools.Brush
             var brush = _activeBrush;
             if (brush == null) return null;
 
-            var ti = "aaatrigger"; //Document.TextureCollection.SelectedTexture ?? "";
+            var ti = Document.Map.Data.GetOne<ActiveTexture>()?.Name ?? "aaatrigger";
             var created = brush.Create(idg, bounds, ti, /*BrushManager.RoundCreatedVertices*/ false ? 0 : 2).ToList();
             if (created.Count > 1)
             {

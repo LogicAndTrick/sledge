@@ -38,7 +38,11 @@ namespace Sledge.BspEditor.Documents
                 BaseDirectory = @"F:\Steam\SteamApps\common\Half-Life",
                 GameDirectory = "valve",
                 ModDirectory =  "valve",
-                Name = "Half-Life"
+                Name = "Half-Life",
+                FgdFiles =
+                {
+                    @"D:\Github\sledge\_Resources\FGD\Half-Life.fgd"
+                }
             };
         }
 

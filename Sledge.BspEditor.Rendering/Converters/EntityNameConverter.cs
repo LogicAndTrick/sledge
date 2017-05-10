@@ -62,9 +62,7 @@ namespace Sledge.BspEditor.Rendering.Converters
 
             public EntityTextElement(Entity entity) : base(PositionType.World, entity.Origin.ToVector3(), entity.EntityData.Name, entity.Color?.Color ?? Color.Magenta)
             {
-                // todo !entity names
-                //Box = entity.BoundingBox;
-                Box = new Box(entity.Origin - Coordinate.One, entity.Origin + Coordinate.One);
+                Box = entity.BoundingBox;
                 ScreenOffset = new Vector3(0, -FontSize / 2 - 5, 0);
                 CameraFlags = CameraFlags.Orthographic;
             }
@@ -74,7 +72,7 @@ namespace Sledge.BspEditor.Rendering.Converters
                 Location = entity.Origin.ToVector3();
                 Text = entity.EntityData.Name;
                 Color = entity.Color?.Color ?? Color.Magenta;
-                //Box = entity.BoundingBox;
+                Box = entity.BoundingBox;
                 Box = new Box(entity.Origin - Coordinate.One, entity.Origin + Coordinate.One);
                 ClearValue("Validated");
             }

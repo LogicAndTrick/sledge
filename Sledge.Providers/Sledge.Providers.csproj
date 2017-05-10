@@ -71,6 +71,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GameData\FgdGameDataProvider.cs" />
     <Compile Include="GameData\FgdProvider.cs" />
     <Compile Include="GameData\GameDataProvider.cs" />
     <Compile Include="GenericStructure.cs" />

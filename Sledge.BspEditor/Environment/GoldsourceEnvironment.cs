@@ -21,6 +21,7 @@ namespace Sledge.BspEditor.Environment
         public string BaseDirectory { get; set; }
         public string GameDirectory { get; set; }
         public string ModDirectory { get; set; }
+        public List<string> FgdFiles { get; set; }
 
         private IFile _root;
 
@@ -81,12 +82,15 @@ namespace Sledge.BspEditor.Environment
 
         private readonly Lazy<Task<TextureCollection>> _textureCollection;
         private readonly List<IEnvironmentData> _data;
+        private readonly Lazy<Task<GameData>> _gameData;
 
         public GoldsourceEnvironment()
         {
             ID = "GSE-" + Convert.ToString(UniqueNumberGenerator.Instance.Next("Environment"));
             _textureCollection = new Lazy<Task<TextureCollection>>(MakeTextureCollectionAsync);
+            _gameData = new Lazy<Task<GameData>>(MakeGameDataAsync);
             _data = new List<IEnvironmentData>();
+            FgdFiles = new List<string>();
         }
 
         private async Task<TextureCollection> MakeTextureCollectionAsync()
@@ -95,15 +99,32 @@ namespace Sledge.BspEditor.Environment
             return new TextureCollection(packages);
         }
 
+        private async Task<GameData> MakeGameDataAsync()
+        {
+            var gds = await FgdFiles.Select(x => Gimme.Fetch<GameData>(x, null)).Merge().ToList().ToTask();
+
+            var gd = new GameData();
+            foreach (var d in gds)
+            {
+                gd.MapSizeHigh = d.MapSizeHigh;
+                gd.MapSizeLow = d.MapSizeLow;
+                gd.Classes.AddRange(d.Classes);
+                gd.MaterialExclusions.AddRange(d.MaterialExclusions);
+            }
+            gd.CreateDependencies();
+            gd.RemoveDuplicates();
+
+            return gd;
+        }
+
         public Task<TextureCollection> GetTextureCollection()
         {
             return _textureCollection.Value;
         }
 
-        public async Task<GameData> GetGameData()
+        public Task<GameData> GetGameData()
         {
-            // todo ! gamedata
-            return new GameData();
+            return _gameData.Value;
         }
 
         public void AddData(IEnvironmentData data)

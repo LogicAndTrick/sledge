@@ -52,12 +52,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Converters\DefaultEntityConverter.cs" />
     <Compile Include="Converters\GridConverter.cs" />
     <Compile Include="Scene\ISceneObjectProvider.cs" />
     <Compile Include="Scene\ISceneObjectProviderFactory.cs" />
     <Compile Include="Scene\MapDocumentSceneObjectProvider.cs" />
     <Compile Include="Scene\MapDocumentSceneObjectProviderFactory.cs" />
     <Compile Include="Scene\SceneObjectsChangedEventArgs.cs" />
+    <Compile Include="Viewport\Camera2DViewportListener.cs" />
+    <Compile Include="Viewport\CameraViewportEventListenerFactory.cs" />
+    <Compile Include="Viewport\IViewportEventListenerFactory.cs" />
     <Compile Include="Viewport\PerspectiveCameraNavigationViewportListener.cs" />
     <Compile Include="Converters\DefaultSolidConverter.cs" />
     <Compile Include="Converters\EntityNameConverter.cs" />
