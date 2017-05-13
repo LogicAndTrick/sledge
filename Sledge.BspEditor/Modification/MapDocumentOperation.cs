@@ -15,6 +15,11 @@ namespace Sledge.BspEditor.Modification
             Operation = operation;
         }
 
+        public static async Task Bypass(MapDocument document, IOperation operation)
+        {
+            await Oy.Publish("MapDocument:Perform:Bypass", new MapDocumentOperation(document, operation));
+        }
+
         public static async Task Perform(MapDocument document, IOperation operation)
         {
             await Oy.Publish("MapDocument:Perform", new MapDocumentOperation(document, operation));

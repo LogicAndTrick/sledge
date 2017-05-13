@@ -160,6 +160,21 @@
     <Compile Include="State\StateAction.cs" />
     <Compile Include="State\StateEvent.cs" />
     <Compile Include="State\StateTool.cs" />
+    <Compile Include="Texture\AlignMode.cs" />
+    <Compile Include="Texture\JustifyMode.cs" />
+    <Compile Include="Texture\TextureApplicationForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Texture\TextureApplicationForm.Designer.cs">
+      <DependentUpon>TextureApplicationForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Texture\TextureTool.cs" />
+    <Compile Include="Texture\TextureToolSidebarPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Texture\TextureToolSidebarPanel.Designer.cs">
+      <DependentUpon>TextureToolSidebarPanel.cs</DependentUpon>
+    </Compile>
     <Compile Include="Texture\TextureBrowser.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -245,6 +260,13 @@
     <EmbeddedResource Include="Selection\SelectToolSidebarPanel.resx">
       <DependentUpon>SelectToolSidebarPanel.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Texture\TextureApplicationForm.resx">
+      <DependentUpon>TextureApplicationForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Texture\TextureToolSidebarPanel.resx">
+      <DependentUpon>TextureToolSidebarPanel.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Texture\TextureBrowser.resx">
       <DependentUpon>TextureBrowser.cs</DependentUpon>
     </EmbeddedResource>
@@ -266,6 +288,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Resources\Tool_Entity.png" />
+    <None Include="Resources\Tool_Texture.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

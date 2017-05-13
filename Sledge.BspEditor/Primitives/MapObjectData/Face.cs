@@ -13,8 +13,8 @@ namespace Sledge.BspEditor.Primitives.MapObjectData
         public long ID { get; }
         public Plane Plane { get; set; }
         public Texture Texture { get; set; }
+
         public List<Coordinate> Vertices { get; set; }
-        public bool IsSelected { get; set; }
 
         public Face(long id)
         {
@@ -57,7 +57,6 @@ namespace Sledge.BspEditor.Primitives.MapObjectData
         {
             var so = new SerialisedObject("Face");
             so.Set("ID", ID);
-            so.Set("IsSelected", IsSelected);
 
             var p = new SerialisedObject("Plane");
             p.Set("Normal", Plane.Normal);

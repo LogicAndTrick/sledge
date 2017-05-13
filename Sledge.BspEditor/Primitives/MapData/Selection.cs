@@ -78,7 +78,7 @@ namespace Sledge.BspEditor.Primitives.MapData
         public SerialisedObject ToSerialisedObject()
         {
             var so = new SerialisedObject("Selection");
-            so.Set("SelectedObjects", String.Join(",", _selectedObjects.Select(x => Convert.ToString(x, CultureInfo.InvariantCulture))));
+            so.Set("SelectedObjects", String.Join(",", _selectedObjects.Select(x => Convert.ToString(x.ID, CultureInfo.InvariantCulture))));
             return so;
         }
 

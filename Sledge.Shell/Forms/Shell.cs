@@ -18,6 +18,7 @@ namespace Sledge.Shell.Forms
     /// The application's base window
     /// </summary>
     [Export]
+    [Export("Shell", typeof(Form))]
     [AutoTranslate]
     internal partial class Shell : BaseForm
     {

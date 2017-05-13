@@ -13,6 +13,7 @@ namespace Sledge.BspEditor.Modification
 
         public async Task OnInitialise()
         {
+            Oy.Subscribe<MapDocumentOperation>("MapDocument:Perform:Bypass", Perform);
             Oy.Subscribe<MapDocumentOperation>("MapDocument:Perform", Perform);
             Oy.Subscribe<MapDocumentOperation>("MapDocument:Reverse", Reverse);
         }

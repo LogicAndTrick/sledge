@@ -11,7 +11,10 @@ namespace Sledge.Shell
     {
         public static void Invoke(this Control control, Action action)
         {
-            control.Invoke((MethodInvoker) delegate { action(); });
+            if (!control.IsHandleCreated) return;
+
+            if (control.InvokeRequired) control.Invoke((MethodInvoker) delegate { action(); });
+            else action();
         }
     }
 }

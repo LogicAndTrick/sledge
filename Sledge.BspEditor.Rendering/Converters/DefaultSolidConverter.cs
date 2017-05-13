@@ -97,7 +97,7 @@ namespace Sledge.BspEditor.Rendering.Converters
         {
             var mat = await GetMaterial(solid, face, document);
 
-            var sel = face.IsSelected || solid.IsSelected;
+            var sel = solid.IsSelected;
 
             var color = solid.Color?.Color ?? Color.Green;
 
@@ -134,7 +134,7 @@ namespace Sledge.BspEditor.Rendering.Converters
         {
             var mat = await GetMaterial(solid, face, document);
 
-            var sel = face.IsSelected || solid.IsSelected;
+            var sel = solid.IsSelected;
 
             var color = solid.Color?.Color ?? Color.Green;
 

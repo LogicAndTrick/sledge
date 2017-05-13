@@ -143,7 +143,6 @@ namespace Sledge.BspEditor.Tools.Texture
         {
             _selection.Clear();
             _selection.UnionWith(items);
-            OnSelectionChanged(_selection);
             ControlInvalidated();
         }
 
@@ -271,9 +270,12 @@ namespace Sledge.BspEditor.Tools.Texture
 
         public void SortTextureList<T>(Func<string, T> sortFunc, bool descending)
         {
-            _textures = descending
-                ? _textures.OrderByDescending(sortFunc).ToList()
-                : _textures.OrderBy(sortFunc).ToList();
+            lock (_lock)
+            {
+                _textures = descending
+                    ? _textures.OrderByDescending(sortFunc).ToList()
+                    : _textures.OrderBy(sortFunc).ToList();
+            }
             ControlInvalidated();
         }
 
@@ -294,33 +296,41 @@ namespace Sledge.BspEditor.Tools.Texture
 
         public async Task SetTextureList(IEnumerable<string> textures)
         {
-            _textures.Clear();
-            _lastSelectedItem = null;
-            _selection.Clear();
-            _textures.AddRange(textures);
+            lock (_lock)
+            {
+                _textures.Clear();
+                _lastSelectedItem = null;
+                _selection.Clear();
+                _textures.AddRange(textures);
+            }
 
             _streamSource?.Dispose();
             _streamSource = null;
             _streamSourceTask = _collection.GetStreamSource();
             _streamSource = await _streamSourceTask;
-
-            OnSelectionChanged(_selection);
+            
             UpdateTextureList();
 
             UpdateTexturePanels();
             Invalidate();
         }
 
+        public IEnumerable<string> GetTextureList()
+        {
+            return _textures.ToList();
+        }
+
         public void Clear()
         {
-            _textures.Clear();
-            _lastSelectedItem = null;
-            _selection.Clear();
+            lock (_lock)
+            {
+                _textures.Clear();
+                _lastSelectedItem = null;
+                _selection.Clear();
+            }
 
             _streamSource?.Dispose();
             _streamSource = null;
-
-            OnSelectionChanged(_selection);
         }
 
         protected override void Dispose(bool disposing)

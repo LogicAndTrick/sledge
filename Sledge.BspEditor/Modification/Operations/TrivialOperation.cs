@@ -33,6 +33,15 @@ namespace Sledge.BspEditor.Modification.Operations
             _change = change;
         }
 
+        public TrivialOperation(IOperation operation)
+        {
+            _action = async x =>
+            {
+                var ch = await operation.Perform(x);
+                _change = c => c.Merge(ch);
+            };
+        }
+
         public async Task<Change> Perform(MapDocument document)
         {
             var change = new Change(document);

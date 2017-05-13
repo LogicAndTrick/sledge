@@ -146,6 +146,7 @@
     </Compile>
     <Compile Include="Registers\SidebarRegister.cs" />
     <Compile Include="Registers\StatusRegister.cs" />
+    <Compile Include="Registers\DialogRegister.cs" />
     <Compile Include="Registers\ToolRegister.cs" />
     <Compile Include="Settings\LayoutSettingsContainer.cs" />
     <Compile Include="Settings\SettingsProvider.cs" />
