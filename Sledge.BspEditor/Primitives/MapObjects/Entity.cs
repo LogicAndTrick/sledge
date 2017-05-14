@@ -10,7 +10,7 @@ using Sledge.DataStructures.Geometric;
 
 namespace Sledge.BspEditor.Primitives.MapObjects
 {
-    public class Entity : BaseMapObject, IPrimitive
+    public class Entity : BaseMapObject
     {
         public EntityData EntityData => Data.GetOne<EntityData>();
         public ObjectColor Color => Data.GetOne<ObjectColor>();
@@ -68,7 +68,7 @@ namespace Sledge.BspEditor.Primitives.MapObjects
 
         protected override string SerialisedName => "Entity";
 
-        public override IEnumerable<IPrimitive> ToPrimitives()
+        public override IEnumerable<IMapObject> Decompose(IEnumerable<Type> allowedTypes)
         {
             yield return this;
         }

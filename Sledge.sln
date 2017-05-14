@@ -51,10 +51,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sledge.BspEditor.Rendering"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sledge.BspEditor.Tools", "Sledge.BspEditor.Tools\Sledge.BspEditor.Tools.csproj", "{F5715CFA-8F04-4892-A1EF-C3E2C3017750}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sledge.BspEditor.Editing", "Sledge.BspEditor.Editing\Sledge.BspEditor.Editing.csproj", "{D33E1027-1956-44C4-B920-85281F703704}"
+EndProject
 Global
-	GlobalSection(Performance) = preSolution
-		HasPerformanceSessions = true
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Debug|Mixed Platforms = Debug|Mixed Platforms
@@ -275,9 +274,24 @@ Global
 		{F5715CFA-8F04-4892-A1EF-C3E2C3017750}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{F5715CFA-8F04-4892-A1EF-C3E2C3017750}.Release|x86.ActiveCfg = Release|Any CPU
 		{F5715CFA-8F04-4892-A1EF-C3E2C3017750}.Release|x86.Build.0 = Release|Any CPU
+		{D33E1027-1956-44C4-B920-85281F703704}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D33E1027-1956-44C4-B920-85281F703704}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D33E1027-1956-44C4-B920-85281F703704}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{D33E1027-1956-44C4-B920-85281F703704}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{D33E1027-1956-44C4-B920-85281F703704}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{D33E1027-1956-44C4-B920-85281F703704}.Debug|x86.Build.0 = Debug|Any CPU
+		{D33E1027-1956-44C4-B920-85281F703704}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D33E1027-1956-44C4-B920-85281F703704}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D33E1027-1956-44C4-B920-85281F703704}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{D33E1027-1956-44C4-B920-85281F703704}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{D33E1027-1956-44C4-B920-85281F703704}.Release|x86.ActiveCfg = Release|Any CPU
+		{D33E1027-1956-44C4-B920-85281F703704}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(Performance) = preSolution
+		HasPerformanceSessions = true
 	EndGlobalSection
 	GlobalSection(Performance) = preSolution
 		HasPerformanceSessions = true

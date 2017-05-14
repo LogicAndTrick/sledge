@@ -123,6 +123,7 @@
     <Compile Include="Modification\SelectionHandler.cs" />
     <Compile Include="Modification\Transaction.cs" />
     <Compile Include="Modification\TransactionBuilderExtensions.cs" />
+    <Compile Include="Modification\VisgroupHandler.cs" />
     <Compile Include="Primitives\IMapElementFactory.cs" />
     <Compile Include="Primitives\IMapObjectProvider.cs" />
     <Compile Include="Primitives\ITextured.cs" />
@@ -130,6 +131,7 @@
     <Compile Include="Primitives\MapData\FaceSelection.cs" />
     <Compile Include="Primitives\MapObjectData\IBoundingBoxProvider.cs" />
     <Compile Include="Primitives\MapData\ActiveTexture.cs" />
+    <Compile Include="Primitives\MapObjectData\IObjectVisibility.cs" />
     <Compile Include="Primitives\MapObjectData\PointEntityGameDataBoundingBoxProvider.cs" />
     <Compile Include="Primitives\MapData\GridData.cs" />
     <Compile Include="Primitives\MapData\Selection.cs" />
@@ -145,7 +147,6 @@
     <Compile Include="Primitives\MapObjectData\IMapObjectData.cs" />
     <Compile Include="Primitives\MapObjects\IMapElement.cs" />
     <Compile Include="Primitives\MapObjects\IMapObject.cs" />
-    <Compile Include="Primitives\MapObjects\IPrimitive.cs" />
     <Compile Include="Primitives\Map.cs" />
     <Compile Include="Primitives\MapData\MapDataCollection.cs" />
     <Compile Include="Primitives\MapObjectData\MapObjectDataCollection.cs" />

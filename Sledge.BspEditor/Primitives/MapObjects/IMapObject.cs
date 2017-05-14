@@ -51,8 +51,9 @@ namespace Sledge.BspEditor.Primitives.MapObjects
         /// <summary>
         /// Convert the object to known primitives
         /// </summary>
+        /// <param name="allowedTypes"></param>
         /// <returns>A list of primitives</returns>
-        IEnumerable<IPrimitive> ToPrimitives();
+        IEnumerable<IMapObject> Decompose(IEnumerable<Type> allowedTypes);
 
         /// <summary>
         /// Get a list of renderable polygons that belong directly to this object.

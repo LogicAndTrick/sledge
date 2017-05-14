@@ -4,9 +4,10 @@ using Sledge.Common.Transport;
 
 namespace Sledge.BspEditor.Primitives.MapObjectData
 {
-    public class VisgroupID : IMapObjectData
+    public class VisgroupID : IMapObjectData, IObjectVisibility
     {
         public long ID { get; set; }
+        public bool IsHidden { get; set; }
 
         public VisgroupID(long id)
         {

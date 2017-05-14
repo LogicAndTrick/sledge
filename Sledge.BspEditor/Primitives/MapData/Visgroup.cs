@@ -14,18 +14,19 @@ namespace Sledge.BspEditor.Primitives.MapData
     {
         public long ID { get; set; }
         public string Name { get; set; }
-        public bool Visible { get; set; }
+        public bool Visible { get; set; } = true;
         public Color Colour { get; set; }
         public long Parent { get; set; }
+        public HashSet<IMapObject> Objects { get; set; }
 
         public Visgroup()
         {
-
+            Objects = new HashSet<IMapObject>();
         }
 
         public Visgroup(SerialisedObject obj)
         {
-
+            Objects = new HashSet<IMapObject>();
         }
 
         [Export(typeof(IMapElementFormatter))]

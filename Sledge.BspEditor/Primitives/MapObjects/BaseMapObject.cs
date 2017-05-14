@@ -111,7 +111,7 @@ namespace Sledge.BspEditor.Primitives.MapObjects
         }
 
         public abstract IEnumerable<Polygon> GetPolygons();
-        public abstract IEnumerable<IPrimitive> ToPrimitives();
+        public abstract IEnumerable<IMapObject> Decompose(IEnumerable<Type> allowedTypes);
 
         public virtual IMapElement Clone()
         {

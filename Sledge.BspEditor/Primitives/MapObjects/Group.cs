@@ -11,7 +11,7 @@ namespace Sledge.BspEditor.Primitives.MapObjects
     /// <summary>
     /// A collection of objects
     /// </summary>
-    public class Group : BaseMapObject, IPrimitive
+    public class Group : BaseMapObject
     {
         public Group(long id) : base(id)
         {
@@ -37,7 +37,7 @@ namespace Sledge.BspEditor.Primitives.MapObjects
 
         protected override string SerialisedName => "Group";
 
-        public override IEnumerable<IPrimitive> ToPrimitives()
+        public override IEnumerable<IMapObject> Decompose(IEnumerable<Type> allowedTypes)
         {
             yield return this;
         }

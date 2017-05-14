@@ -12,7 +12,7 @@ namespace Sledge.BspEditor.Primitives.MapObjects
     /// <summary>
     /// A collection of faces
     /// </summary>
-    public class Solid : BaseMapObject, IPrimitive
+    public class Solid : BaseMapObject
     {
         public IEnumerable<Face> Faces => Data.Get<Face>();
         public ObjectColor Color => Data.GetOne<ObjectColor>();
@@ -41,7 +41,7 @@ namespace Sledge.BspEditor.Primitives.MapObjects
 
         protected override string SerialisedName => "Solid";
 
-        public override IEnumerable<IPrimitive> ToPrimitives()
+        public override IEnumerable<IMapObject> Decompose(IEnumerable<Type> allowedTypes)
         {
             yield return this;
         }

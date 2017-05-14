@@ -10,7 +10,7 @@ namespace Sledge.BspEditor.Primitives.MapObjects
     /// <summary>
     /// The root node of a map object tree
     /// </summary>
-    public class Root : BaseMapObject, IPrimitive
+    public class Root : BaseMapObject
     {
         public Root(long id) : base(id)
         {
@@ -36,7 +36,7 @@ namespace Sledge.BspEditor.Primitives.MapObjects
 
         protected override string SerialisedName => "Root";
 
-        public override IEnumerable<IPrimitive> ToPrimitives()
+        public override IEnumerable<IMapObject> Decompose(IEnumerable<Type> allowedTypes)
         {
             yield return this;
         }
