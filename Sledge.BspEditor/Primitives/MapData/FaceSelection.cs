@@ -5,6 +5,7 @@ using System.ComponentModel.Composition;
 using System.Globalization;
 using System.Linq;
 using System.Runtime.Serialization;
+using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Primitives.MapObjectData;
 using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.Common.Transport;
@@ -13,11 +14,11 @@ namespace Sledge.BspEditor.Primitives.MapData
 {
     public class FaceSelection : IMapData, IEnumerable<Face>
     {
-        private readonly Dictionary<IMapObject, HashSet<Face>> _selectedObjects;
+        private readonly Dictionary<IMapObject, HashSet<long>> _selectedFaces;
 
         public FaceSelection()
         {
-            _selectedObjects = new Dictionary<IMapObject, HashSet<Face>>();
+            _selectedFaces = new Dictionary<IMapObject, HashSet<long>>();
         }
 
         public FaceSelection(SerialisedObject obj)
@@ -28,31 +29,31 @@ namespace Sledge.BspEditor.Primitives.MapData
         [Export(typeof(IMapElementFormatter))]
         public class FaceSelectionFormatter : StandardMapElementFormatter<FaceSelection> { }
 
-        public bool IsEmpty => _selectedObjects.Any(x => x.Value.Count > 0);
-        public int Count => _selectedObjects.Aggregate(0, (a, b) => a + b.Value.Count);
+        public bool IsEmpty => !_selectedFaces.Any(x => x.Value.Count > 0);
+        public int Count => _selectedFaces.Aggregate(0, (a, b) => a + b.Value.Count);
         
         public void Add(IMapObject parent, params Face[] faces)
         {
             if (faces.Length == 0) return;
-            if (!_selectedObjects.ContainsKey(parent))
+            if (!_selectedFaces.ContainsKey(parent))
             {
-                _selectedObjects.Add(parent, new HashSet<Face>());
+                _selectedFaces.Add(parent, new HashSet<long>());
             }
-            _selectedObjects[parent].UnionWith(faces);
+            _selectedFaces[parent].UnionWith(faces.Select(x => x.ID));
         }
 
         public void Remove(IMapObject parent, params Face[] faces)
         {
-            if (!_selectedObjects.ContainsKey(parent)) return;
-            _selectedObjects[parent].ExceptWith(faces);
-            if (_selectedObjects[parent].Count == 0)
+            if (!_selectedFaces.ContainsKey(parent)) return;
+            _selectedFaces[parent].ExceptWith(faces.Select(x => x.ID));
+            if (_selectedFaces[parent].Count == 0)
             {
-                _selectedObjects.Remove(parent);
+                _selectedFaces.Remove(parent);
             }
         }
         public void Clear()
         {
-            _selectedObjects.Clear();
+            _selectedFaces.Clear();
         }
 
         public void GetObjectData(SerializationInfo info, StreamingContext context)
@@ -63,9 +64,9 @@ namespace Sledge.BspEditor.Primitives.MapData
         public IMapElement Clone()
         {
             var c = new FaceSelection();
-            foreach (var kv in _selectedObjects)
+            foreach (var kv in _selectedFaces)
             {
-                c._selectedObjects.Add(kv.Key, new HashSet<Face>(kv.Value));
+                c._selectedFaces.Add(kv.Key, new HashSet<long>(kv.Value));
             }
             return c;
         }
@@ -79,20 +80,35 @@ namespace Sledge.BspEditor.Primitives.MapData
         {
             var so = new SerialisedObject("FaceSelection");
             var strs = new List<string>();
-            foreach (var kv in _selectedObjects)
+            foreach (var kv in _selectedFaces)
             {
                 foreach (var x in kv.Value)
                 {
-                    strs.Add(Convert.ToString(kv.Key.ID, CultureInfo.InvariantCulture) + ":" + Convert.ToString(x.ID, CultureInfo.InvariantCulture));
+                    strs.Add(Convert.ToString(kv.Key.ID, CultureInfo.InvariantCulture) + ":" + Convert.ToString(x, CultureInfo.InvariantCulture));
                 }
             }
             so.Set("SelectedFaces", String.Join(",", strs));
             return so;
         }
 
-        public IEnumerator<Face> GetEnumerator()
+        public IEnumerable<KeyValuePair<IMapObject, Face>> GetSelectedFaces()
         {
-            return _selectedObjects.SelectMany(x => x.Value).GetEnumerator();
+            return _selectedFaces.SelectMany(x => x.Value.Select(v => new KeyValuePair<IMapObject, Face>(x.Key, x.Key.Data.OfType<Face>().First(f => x.Value.Contains(f.ID)))));
+        }
+
+        public IEnumerable<IMapObject> GetSelectedParents()
+        {
+            return _selectedFaces.Keys;
+        }
+
+        public bool IsSelected(IMapObject parent, Face face)
+        {
+            return _selectedFaces.ContainsKey(parent) && _selectedFaces[parent].Contains(face.ID);
+        }
+
+        public bool IsSelected(Face face)
+        {
+            return _selectedFaces.Any(x => x.Value.Contains(face.ID));
         }
 
         IEnumerator IEnumerable.GetEnumerator()
@@ -100,24 +116,9 @@ namespace Sledge.BspEditor.Primitives.MapData
             return GetEnumerator();
         }
 
-        public IEnumerable<KeyValuePair<IMapObject, Face>> GetSelectedFaces()
+        public IEnumerator<Face> GetEnumerator()
         {
-            return _selectedObjects.SelectMany(x => x.Value.Select(v => new KeyValuePair<IMapObject, Face>(x.Key, v)));
-        }
-
-        public IEnumerable<IMapObject> GetSelectedParents()
-        {
-            return _selectedObjects.Keys;
-        }
-
-        public bool IsSelected(IMapObject parent, Face face)
-        {
-            return _selectedObjects.ContainsKey(parent) && _selectedObjects[parent].Contains(face);
-        }
-
-        public bool IsSelected(Face face)
-        {
-            return _selectedObjects.Any(x => x.Value.Contains(face));
+            return GetSelectedFaces().Select(x => x.Value).GetEnumerator();
         }
     }
 }

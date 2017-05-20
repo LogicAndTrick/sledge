@@ -13,24 +13,33 @@ using Sledge.BspEditor.Modification.Operations.Data;
 using Sledge.BspEditor.Primitives;
 using Sledge.BspEditor.Primitives.MapData;
 using Sledge.BspEditor.Primitives.MapObjectData;
+using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.Common.Shell.Commands;
 using Sledge.Common.Shell.Components;
 using Sledge.Common.Shell.Context;
 using Sledge.Common.Shell.Documents;
+using Sledge.DataStructures.Geometric;
 using Sledge.Shell;
 
 namespace Sledge.BspEditor.Tools.Texture
 {
+    /// <summary>
+    /// This dialog is linked directly to the texture tool's context and provides useful operations for editing textures.
+    /// </summary>
     [Export(typeof(IDialog))]
     public partial class TextureApplicationForm : Shell.Forms.BaseForm, IDialog
     {
         // We want to use the shell for the parent
         [Import("Shell", typeof(Form))] private Form _shell;
-        [Import] private TextureTool _textureTool;
 
         private readonly List<string> _recentTextures = new List<string>();
+
+        // Event stopper to make sure we don't fire change events recursively 
         private bool _freeze;
+
+        // The current values of the texture property controls
         private readonly CurrentTextureProperties _currentTextureProperties;
+
         private WeakReference<MapDocument> _document;
 
         private event EventHandler DebouncedPropertiesChanged;
@@ -68,6 +77,7 @@ namespace Sledge.BspEditor.Tools.Texture
             Oy.Subscribe<Change>("MapDocument:Changed", DocumentChanged);
             Oy.Subscribe<object>("TextureTool:SelectionChanged", async x => await FaceSelectionChanged());
             
+            // Throttle property changes so they only apply after 500 ms, this should keep the undo stack clear
             _saveChanges = Observable.FromEventPattern(x => DebouncedPropertiesChanged += x, x => DebouncedPropertiesChanged -= x)
                 .Throttle(TimeSpan.FromMilliseconds(500))
                 .Subscribe(x =>
@@ -95,10 +105,17 @@ namespace Sledge.BspEditor.Tools.Texture
 
         private async Task DocumentChanged(Change change)
         {
-            if (_document.TryGetTarget(out MapDocument t) && change.Document == t && change.HasDataChanges && change.AffectedData.Any(x => x is ActiveTexture))
+            if (_document.TryGetTarget(out MapDocument t) && change.Document == t)
             {
-                var at = t.Map.Data.GetOne<ActiveTexture>()?.Name;
-                ActiveTextureChanged(at);
+                if (change.HasDataChanges && change.AffectedData.Any(x => x is ActiveTexture))
+                {
+                    var at = t.Map.Data.GetOne<ActiveTexture>()?.Name;
+                    ActiveTextureChanged(at);
+                }
+                else if (change.HasObjectChanges && change.Updated.Intersect(GetFaceSelection().GetSelectedParents()).Any())
+                {
+                    await FaceSelectionChanged();
+                }
             }
         }
 
@@ -137,7 +154,18 @@ namespace Sledge.BspEditor.Tools.Texture
                 .GetSelectedTextures()
                 .Union(SelectedTexturesList.GetSelectedTextures());
         }
-        
+
+        public FaceSelection GetFaceSelection()
+        {
+            var fs = Document.Map.Data.GetOne<FaceSelection>();
+            if (fs == null)
+            {
+                fs = new FaceSelection();
+                Document.Map.Data.Add(fs);
+            }
+            return fs;
+        }
+
         private async void TextureListSelectionChanged(object sender, IEnumerable<string> sel)
         {
             if (_freeze) return;
@@ -229,30 +257,9 @@ namespace Sledge.BspEditor.Tools.Texture
             // The list of selected faces has changed - update the texture properties to match the selection
             _freeze = true;
 
-            var faces = _textureTool.GetSelection();
+            var faces = GetFaceSelection();
             _currentTextureProperties.Reset(faces);
 
-            ScaleXValue.Value = _currentTextureProperties.XScale;
-            ScaleYValue.Value = _currentTextureProperties.YScale;
-            ShiftXValue.Value = _currentTextureProperties.XShift;
-            ShiftYValue.Value = _currentTextureProperties.YShift;
-            RotationValue.Value = _currentTextureProperties.Rotation;
-
-            if (_currentTextureProperties.DifferentXScaleValues) ScaleXValue.Text = "";
-            if (_currentTextureProperties.DifferentYScaleValues) ScaleYValue.Text = "";
-            if (_currentTextureProperties.DifferentXShiftValues) ShiftXValue.Text = "";
-            if (_currentTextureProperties.DifferentYShiftValues) ShiftYValue.Text = "";
-            if (_currentTextureProperties.DifferentRotationValues) RotationValue.Text = "";
-
-            if (_currentTextureProperties.AllAlignedToFace) AlignToFaceCheckbox.CheckState = CheckState.Checked;
-            else if (_currentTextureProperties.NoneAlignedToFace) AlignToFaceCheckbox.CheckState = CheckState.Unchecked;
-            else AlignToFaceCheckbox.CheckState = CheckState.Indeterminate;
-
-            if (_currentTextureProperties.AllAlignedToWorld) AlignToWorldCheckbox.CheckState = CheckState.Checked;
-            else if (_currentTextureProperties.NoneAlignedToWorld) AlignToWorldCheckbox.CheckState = CheckState.Unchecked;
-            else AlignToWorldCheckbox.CheckState = CheckState.Indeterminate;
-
-            TextureDetailsLabel.Text = "";
             var textures = new List<string>();
 
             foreach (var face in faces)
@@ -265,19 +272,45 @@ namespace Sledge.BspEditor.Tools.Texture
                 textures.Add(name);
             }
 
+            var labelText = "";
             var d = Document;
             if (textures.Any() && d != null)
             {
                 var t = textures[0];
                 var tc = await d.Environment.GetTextureCollection();
                 var ti = await tc.GetTextureItem(t);
-                TextureDetailsLabel.Text = $"{ti.Name} ({ti.Width} x {ti.Height})";
+                labelText = $"{ti.Name} ({ti.Width} x {ti.Height})";
             }
+            
+            this.Invoke(() => {
 
-            SelectedTexturesList.SetTextureList(textures);
-            SelectedTexturesList.SetSelectedTextures(textures);
-            RecentTexturesList.SetSelectedTextures(new string[0]);
-            // todo HideMaskCheckbox.Checked = Document.Map.HideFaceMask;
+                ScaleXValue.Value = _currentTextureProperties.XScale;
+                ScaleYValue.Value = _currentTextureProperties.YScale;
+                ShiftXValue.Value = _currentTextureProperties.XShift;
+                ShiftYValue.Value = _currentTextureProperties.YShift;
+                RotationValue.Value = _currentTextureProperties.Rotation;
+
+                if (_currentTextureProperties.DifferentXScaleValues) ScaleXValue.Text = "";
+                if (_currentTextureProperties.DifferentYScaleValues) ScaleYValue.Text = "";
+                if (_currentTextureProperties.DifferentXShiftValues) ShiftXValue.Text = "";
+                if (_currentTextureProperties.DifferentYShiftValues) ShiftYValue.Text = "";
+                if (_currentTextureProperties.DifferentRotationValues) RotationValue.Text = "";
+
+                if (_currentTextureProperties.AllAlignedToFace) AlignToFaceCheckbox.CheckState = CheckState.Checked;
+                else if (_currentTextureProperties.NoneAlignedToFace) AlignToFaceCheckbox.CheckState = CheckState.Unchecked;
+                else AlignToFaceCheckbox.CheckState = CheckState.Indeterminate;
+
+                if (_currentTextureProperties.AllAlignedToWorld) AlignToWorldCheckbox.CheckState = CheckState.Checked;
+                else if (_currentTextureProperties.NoneAlignedToWorld) AlignToWorldCheckbox.CheckState = CheckState.Unchecked;
+                else AlignToWorldCheckbox.CheckState = CheckState.Indeterminate;
+
+                TextureDetailsLabel.Text = labelText;
+                SelectedTexturesList.SetTextureList(textures);
+                SelectedTexturesList.SetSelectedTextures(textures);
+                RecentTexturesList.SetSelectedTextures(new string[0]);
+                // todo HideMaskCheckbox.Checked = Document.Map.HideFaceMask;
+
+            });
 
             _freeze = false;
         }
@@ -306,13 +339,18 @@ namespace Sledge.BspEditor.Tools.Texture
             if (!_currentTextureProperties.DifferentRotationValues) target.Texture.Rotation = _currentTextureProperties.Rotation;
         }
 
+        private Dictionary<Face, Primitives.Texture> _memoTextures;
+
         private void ApplyPropertyChanges(bool trivial)
         {
             var edit = new Transaction();
 
-            var sel = _textureTool.GetSelection();
+            var sel = GetFaceSelection();
             if (trivial)
             {
+                // Remember the state before the last change
+                if (_memoTextures == null) _memoTextures = sel.ToDictionary(x => x, x => x.Texture.Clone());
+
                 // Once a trivial change is started we know that there will definitely be a matching nontrivial task
                 // We aggregate changes so they don't spam the undo stack
                 edit.Add(new TrivialOperation(
@@ -336,20 +374,22 @@ namespace Sledge.BspEditor.Tools.Texture
             {
                 foreach (var it in sel.GetSelectedFaces())
                 {
+                    // Restore the last committed values
+                    if (_memoTextures != null && _memoTextures.ContainsKey(it.Value))
+                    {
+                        var k = _memoTextures[it.Value];
+                        it.Value.Texture.Unclone(k);
+                    }
+
                     var clone = (Face) it.Value.Clone();
                     ApplyFaceValues(clone);
 
                     edit.Add(new RemoveMapObjectData(it.Key.ID, it.Value));
                     edit.Add(new AddMapObjectData(it.Key.ID, clone));
-                    edit.Add(new TrivialOperation(
-                        x =>
-                        {
-                            sel.Remove(it.Key, it.Value);
-                            sel.Add(it.Key, clone);
-                        },
-                        x => { }
-                    ));
                 }
+
+                // Reset the memory
+                _memoTextures = null;
             }
 
             MapDocumentOperation.Perform(Document, edit);
@@ -361,33 +401,42 @@ namespace Sledge.BspEditor.Tools.Texture
             ApplyTexture(item);
         }
 
-        private async Task ApplyTexture(string item)
+        private async Task ApplyChanges(Func<IMapObject, Face, Task<bool>> apply)
         {
-            if (String.IsNullOrWhiteSpace(item)) return;
-
-            var sel = _textureTool.GetSelection();
+            var sel = GetFaceSelection();
 
             var edit = new Transaction();
+            var found = false;
 
             foreach (var it in sel.GetSelectedFaces())
             {
                 var clone = (Face)it.Value.Clone();
-                clone.Texture.Name = item;
-                ApplyFaceValues(clone);
+                var result = await apply(it.Key, clone);
+                if (!result) continue;
+
+                found = true;
 
                 edit.Add(new RemoveMapObjectData(it.Key.ID, it.Value));
                 edit.Add(new AddMapObjectData(it.Key.ID, clone));
-                edit.Add(new TrivialOperation(
-                    x =>
-                    {
-                        sel.Remove(it.Key, it.Value);
-                        sel.Add(it.Key, clone);
-                    },
-                    x => { }
-                ));
             }
 
-            await MapDocumentOperation.Perform(Document, edit);
+            if (found)
+            {
+                await MapDocumentOperation.Perform(Document, edit);
+                await FaceSelectionChanged();
+            }
+        }
+
+        private async Task ApplyTexture(string item)
+        {
+            if (String.IsNullOrWhiteSpace(item)) return;
+
+            await ApplyChanges((mo, f) =>
+            {
+                f.Texture.Name = item;
+                ApplyFaceValues(f);
+                return Task.FromResult(true);
+            });
         }
 
         private void ScaleXValueChanged(object sender, EventArgs e)
@@ -433,32 +482,55 @@ namespace Sledge.BspEditor.Tools.Texture
 
         private void JustifyTopClicked(object sender, EventArgs e)
         {
-            // todo
+            Justify(BoxAlignMode.Top, false);
+        }
+
+        private async Task Justify(BoxAlignMode mode, bool fit)
+        {
+            var sel = GetFaceSelection();
+            if (sel.IsEmpty) return;
+            
+            Cloud cloud = null;
+            if (ShouldTreatAsOne()) cloud = new Cloud(sel.GetSelectedFaces().SelectMany(x => x.Value.Vertices));
+
+            var tc = await Document.Environment.GetTextureCollection();
+            if (tc == null) return;
+            
+            await ApplyChanges(async (mo, f) =>
+            {
+                var tex = await tc.GetTextureItem(f.Texture.Name);
+                if (tex == null) return false;
+
+                if (fit) f.Texture.FitToPointCloud(tex.Width, tex.Height, cloud ?? new Cloud(f.Vertices), 1, 1);
+                else f.Texture.AlignWithPointCloud(tex.Width, tex.Height, cloud ?? new Cloud(f.Vertices), mode);
+
+                return true;
+            });
         }
 
         private void JustifyLeftClicked(object sender, EventArgs e)
         {
-            // todo
+            Justify(BoxAlignMode.Left, false);
         }
 
         private void JustifyCenterClicked(object sender, EventArgs e)
         {
-            // todo
+            Justify(BoxAlignMode.Center, false);
         }
 
         private void JustifyRightClicked(object sender, EventArgs e)
         {
-            // todo
+            Justify(BoxAlignMode.Right, false);
         }
 
         private void JustifyBottomClicked(object sender, EventArgs e)
         {
-            // todo
+            Justify(BoxAlignMode.Bottom, false);
         }
 
         private void JustifyFitClicked(object sender, EventArgs e)
         {
-            // todo
+            Justify(BoxAlignMode.Center, true);
         }
 
         private void HideMaskCheckboxToggled(object sender, EventArgs e)
@@ -475,12 +547,20 @@ namespace Sledge.BspEditor.Tools.Texture
 
         private void AlignToWorldClicked(object sender, EventArgs e)
         {
-            // todo
+            ApplyChanges((mo, f) =>
+            {
+                f.Texture.AlignToNormal(f.Plane.GetClosestAxisToNormal());
+                return Task.FromResult(true);
+            });
         }
 
         private void AlignToFaceClicked(object sender, EventArgs e)
         {
-            // todo
+            ApplyChanges((mo, f) =>
+            {
+                f.Texture.AlignToNormal(f.Plane.Normal);
+                return Task.FromResult(true);
+            });
         }
 
         private void BrowseButtonClicked(object sender, EventArgs e)
@@ -559,18 +639,18 @@ namespace Sledge.BspEditor.Tools.Texture
                 NoneAlignedToFace = NoneAlignedToWorld = true;
             }
 
-            public void Reset(IEnumerable<ITextured> faces)
+            public void Reset(IEnumerable<Face> faces)
             {
                 Reset();
                 var num = 0;
                 AllAlignedToWorld = NoneAlignedToWorld = AllAlignedToFace = NoneAlignedToFace = true;
                 foreach (var face in faces)
                 {
-                    // todo
-                    // if (face.IsTextureAlignedToFace()) NoneAlignedToFace = false;
-                    // else AllAlignedToFace = false;
-                    // if (face.IsTextureAlignedToWorld()) NoneAlignedToWorld = false;
-                    // else AllAlignedToWorld = false;
+                    if (face.Texture.IsAlignedToNormal(face.Plane.Normal)) NoneAlignedToFace = false;
+                    else AllAlignedToFace = false;
+
+                    if (face.Texture.IsAlignedToNormal(face.Plane.GetClosestAxisToNormal())) NoneAlignedToWorld = false;
+                    else AllAlignedToWorld = false;
 
                     if (num == 0)
                     {

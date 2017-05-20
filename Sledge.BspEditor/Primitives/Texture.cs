@@ -70,6 +70,18 @@ namespace Sledge.BspEditor.Primitives
             return UAxis.Cross(VAxis).Normalise();
         }
 
+        public void Unclone(Texture source)
+        {
+            Name = source.Name;
+            Rotation = source.Rotation;
+            UAxis = source.UAxis.Clone();
+            VAxis = source.VAxis.Clone();
+            XShift = source.XShift;
+            XScale = source.XScale;
+            YShift = source.YShift;
+            YScale = source.YScale;
+        }
+
         public Texture Clone()
         {
             return new Texture

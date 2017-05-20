@@ -217,15 +217,7 @@ namespace Sledge.BspEditor.Tools.Texture
 
             var edit = new Transaction(
                 new RemoveMapObjectData(parent.ID, face),
-                new AddMapObjectData(parent.ID, clone),
-                new TrivialOperation(
-                    x =>
-                    {
-                        sel.Remove(parent, face);
-                        sel.Add(parent, clone);
-                    },
-                    x => { }
-                )
+                new AddMapObjectData(parent.ID, clone)
             );
 
             MapDocumentOperation.Perform(Document, edit);

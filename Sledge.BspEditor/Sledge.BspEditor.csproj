@@ -124,6 +124,7 @@
     <Compile Include="Modification\Transaction.cs" />
     <Compile Include="Modification\TransactionBuilderExtensions.cs" />
     <Compile Include="Modification\VisgroupHandler.cs" />
+    <Compile Include="Primitives\BoxAlignMode.cs" />
     <Compile Include="Primitives\IMapElementFactory.cs" />
     <Compile Include="Primitives\IMapObjectProvider.cs" />
     <Compile Include="Primitives\ITextured.cs" />
@@ -159,6 +160,7 @@
     <Compile Include="Primitives\MapObjects\Solid.cs" />
     <Compile Include="Primitives\StandardMapElementFormatter.cs" />
     <Compile Include="Primitives\Texture.cs" />
+    <Compile Include="Primitives\TextureExtensions.cs" />
     <Compile Include="Primitives\UniqueNumberGenerator.cs" />
     <Compile Include="Primitives\MapData\Visgroup.cs" />
     <Compile Include="Primitives\MapObjectData\VisgroupID.cs" />

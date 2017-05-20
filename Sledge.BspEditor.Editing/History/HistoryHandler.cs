@@ -33,12 +33,16 @@ namespace Sledge.BspEditor.Editing.History
 
             var stack = operation.Document.Map.Data.GetOne<HistoryStack>();
             stack?.Add(operation.Operation);
+
+            await Oy.Publish("MapDocument:HistoryChanged", operation.Document);
         }
 
         private async Task Reversed(MapDocumentOperation operation)
         {
             var stack = operation.Document.Map.Data.GetOne<HistoryStack>();
             stack?.Remove(operation.Operation);
+
+            await Oy.Publish("MapDocument:HistoryChanged", operation.Document);
         }
     }
 }
