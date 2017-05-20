@@ -25,8 +25,8 @@ namespace Sledge.BspEditor.Rendering.Viewport
         {
             yield return new SettingKey("Navigation", "Camera2DPanRequiresMouseClick", typeof(bool));
             yield return new SettingKey("Navigation", "Camera3DPanRequiresMouseClick", typeof(bool));
-            yield return new SettingKey("Navigation", "ForwardSpeed", typeof(int));
-            yield return new SettingKey("Navigation", "TimeToTopSpeed", typeof(decimal));
+            yield return new SettingKey("Navigation", "ForwardSpeed", typeof(int)) { EditorType = "Slider", EditorHint = "100,500" };
+            yield return new SettingKey("Navigation", "TimeToTopSpeed", typeof(decimal)) { EditorType = "Slider", EditorHint = "0,50,1,5,10" };
             yield return new SettingKey("Navigation", "MouseWheelMoveDistance", typeof(decimal));
             yield return new SettingKey("Navigation", "InvertX", typeof(bool));
             yield return new SettingKey("Navigation", "InvertY", typeof(bool));

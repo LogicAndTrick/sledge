@@ -2,11 +2,8 @@
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
-using LogicAndTrick.Gimme.Providers;
 using LogicAndTrick.Oy;
-using Newtonsoft.Json;
 using Sledge.Common.Logging;
 using Sledge.Common.Shell.Hooks;
 using Sledge.Common.Shell.Settings;

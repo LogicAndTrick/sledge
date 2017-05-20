@@ -7,7 +7,7 @@ namespace Sledge.Shell.Settings.Editors
 {
     public class DefaultSettingEditor : UserControl, ISettingEditor
     {
-        public event EventHandler OnValueChanged;
+        public event EventHandler<SettingKey> OnValueChanged;
         public string Label { get; set; }
 
         public object Value
@@ -17,6 +17,7 @@ namespace Sledge.Shell.Settings.Editors
         }
 
         public object Control => this;
+        public SettingKey Key { get; set; }
 
         private readonly TextBox _box;
 
@@ -25,6 +26,10 @@ namespace Sledge.Shell.Settings.Editors
             Size = new Size(400, 30);
             _box = new TextBox();
             Controls.Add(_box);
+        }
+        public void SetHint(string hint)
+        {
+            //
         }
     }
 }

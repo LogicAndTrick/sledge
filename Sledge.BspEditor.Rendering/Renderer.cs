@@ -72,11 +72,20 @@ namespace Sledge.BspEditor.Rendering
         public IEnumerable<SettingKey> GetKeys()
         {
             yield return new SettingKey("Rendering", "Renderer", typeof(RenderEngine));
+            yield return new SettingKey("Rendering", "DisableTextureTransparency", typeof(bool));
+            yield return new SettingKey("Rendering", "DisableTextureFiltering", typeof(bool));
+            yield return new SettingKey("Rendering", "ForcePowerOfTwoTextureSizes", typeof(bool));
+            yield return new SettingKey("Rendering", "ShowPerspectiveGrid", typeof(bool));
+            yield return new SettingKey("Rendering", "PerspectiveGridSpacing", typeof(decimal));
+            yield return new SettingKey("Rendering", "PerspectiveBackgroundColour", typeof(Color));
+            yield return new SettingKey("Rendering", "OrthographicBackgroundColour", typeof(Color));
+            yield return new SettingKey("Rendering", "PointSize", typeof(decimal));
         }
 
         public void LoadValues(ISettingsStore store)
         {
-            switch (store.Get("Renderer", RenderEngine.OpenGLRenderer))
+            var render = Enum.TryParse(store.Get("Renderer", "OpenGLRenderer"), out RenderEngine r) ? r : RenderEngine.OpenGLRenderer;
+            switch (render)
             {
                 // Uh... we only support one renderer for now
                 // So why am I bothering with this? oh well...
@@ -91,7 +100,7 @@ namespace Sledge.BspEditor.Rendering
 
         public void StoreValues(ISettingsStore store)
         {
-            store.Set("Renderer", _renderer);
+            store.Set("Renderer", Convert.ToString(_renderer));
             store.StoreInstance(this);
         }
 

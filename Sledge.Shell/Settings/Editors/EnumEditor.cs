@@ -9,7 +9,7 @@ namespace Sledge.Shell.Settings.Editors
     public partial class EnumEditor : UserControl, ISettingEditor
     {
         private readonly Type _enumType;
-        public event EventHandler OnValueChanged;
+        public event EventHandler<SettingKey> OnValueChanged;
 
         string ISettingEditor.Label
         {
@@ -24,6 +24,7 @@ namespace Sledge.Shell.Settings.Editors
         }
 
         public object Control => this;
+        public SettingKey Key { get; set; }
 
         public EnumEditor(Type enumType)
         {
@@ -36,7 +37,11 @@ namespace Sledge.Shell.Settings.Editors
             var values = enumType.GetFields(BindingFlags.Static | BindingFlags.Public);
             Combobox.Items.AddRange(values.Select(x => new EnumValue(x)).OfType<object>().ToArray());
 
-            Combobox.SelectedIndexChanged += (o, e) => OnValueChanged?.Invoke(this, e);
+            Combobox.SelectedIndexChanged += (o, e) => OnValueChanged?.Invoke(this, Key);
+        }
+        public void SetHint(string hint)
+        {
+            //
         }
 
         private class EnumValue

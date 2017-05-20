@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.Composition;
+using System.Drawing;
 using Sledge.Common.Shell.Settings;
 
 namespace Sledge.Shell.Settings.Editors
@@ -20,6 +21,14 @@ namespace Sledge.Shell.Settings.Editors
             {
                 return true;
             }
+            else if (key.Type == typeof(int) || key.Type == typeof(decimal))
+            {
+                return true;
+            }
+            else if (key.Type == typeof(Color))
+            {
+                return true;
+            }
             return false;
         }
 
@@ -36,6 +45,15 @@ namespace Sledge.Shell.Settings.Editors
             else if (key.Type == typeof(bool))
             {
                 return new BooleanEditor();
+            }
+            else if (key.Type == typeof(int) || key.Type == typeof(decimal))
+            {
+                if (key.EditorType == "Slider") return new SliderEditor();
+                else return new NumericEditor();
+            }
+            else if (key.Type == typeof(Color))
+            {
+                return new ColorEditor();
             }
             return null;
         }

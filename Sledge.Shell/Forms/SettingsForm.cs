@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Data;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -25,7 +26,7 @@ namespace Sledge.Shell.Forms
         [Import("Shell", typeof(Form))] private Lazy<Form> _parent;
 
         private Dictionary<ISettingsContainer, List<SettingKey>> _keys;
-        private Dictionary<ISettingsContainer, FakeSettingsStore> _values;
+        private Dictionary<ISettingsContainer, JsonSettingsStore> _values;
 
         public string Title
         {
@@ -58,7 +59,7 @@ namespace Sledge.Shell.Forms
                 _keys = _settingsContainers.ToDictionary(x => x.Value, x => x.Value.GetKeys().ToList());
                 _values = _settingsContainers.ToDictionary(x => x.Value, x =>
                 {
-                    var fss = new FakeSettingsStore();
+                    var fss = new JsonSettingsStore();
                     x.Value.StoreValues(fss);
                     return fss;
                 });
@@ -85,9 +86,14 @@ namespace Sledge.Shell.Forms
 
             GroupList.EndUpdate();
         }
+        
+        private List<ISettingEditor> _editors = new List<ISettingEditor>();
 
         private void LoadEditorList()
         {
+            _editors.ForEach(x => x.OnValueChanged -= OnValueChanged);
+            _editors.Clear();
+
             SettingsPanel.SuspendLayout();
             SettingsPanel.Controls.Clear();
             var group = GroupList.SelectedItem as string;
@@ -101,16 +107,45 @@ namespace Sledge.Shell.Forms
                     foreach (var key in keys)
                     {
                         var editor = GetEditor(key);
+                        editor.Key = key;
+                        editor.SetHint(key.EditorHint);
                         editor.Label = key.Key;
-                        editor.Value = values.Get<object>(key.Key);
+                        editor.Value = values.Get(key.Type, key.Key);
+
+                        if (SettingsPanel.Controls.Count > 0)
+                        {
+                            // Add a separator
+                            var line = new Label
+                            {
+                                Height = 1,
+                                BackColor = Color.FromArgb(128, Color.Black),
+                                Anchor = AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Top
+                            };
+                            SettingsPanel.Controls.Add(line);
+                        }
+
                         var ctrl = (Control) editor.Control;
                         ctrl.Anchor = AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Top;
                         SettingsPanel.Controls.Add(ctrl);
+
+                        _editors.Add(editor);
                     }
                 }
             }
 
             SettingsPanel.ResumeLayout();
+
+            _editors.ForEach(x => x.OnValueChanged += OnValueChanged);
+        }
+
+        private void OnValueChanged(object sender, SettingKey key)
+        {
+            var se = sender as ISettingEditor;
+            var store = _values.Where(x => x.Value.Contains(key.Key)).Select(x => x.Value).FirstOrDefault();
+            if (store != null && se != null)
+            {
+                store.Set(key.Key, se.Value);
+            }
         }
 
         private ISettingEditor GetEditor(SettingKey key)
@@ -147,44 +182,19 @@ namespace Sledge.Shell.Forms
             LoadEditorList();
         }
 
-        private class FakeSettingsStore : ISettingsStore
+        private void OkClicked(object sender, EventArgs e)
         {
-            public Dictionary<string, object> Values { get; set; }
-
-            public FakeSettingsStore()
+            foreach (var kv in _values)
             {
-                Values = new Dictionary<string, object>();
+                kv.Key.LoadValues(kv.Value);
             }
+            Oy.Publish("SettingsChanged", new object());
+            Close();
+        }
 
-            public IEnumerable<string> GetKeys()
-            {
-                return Values.Keys;
-            }
-
-            public bool Contains(string key)
-            {
-                return Values.ContainsKey(key);
-            }
-
-            public object Get(Type type, string key, object defaultValue = null)
-            {
-                return Values.ContainsKey(key) ? Convert.ChangeType(Values[key], type) : defaultValue;
-            }
-
-            public T Get<T>(string key, T defaultValue = default(T))
-            {
-                return (T) Get(typeof(T), key, defaultValue);
-            }
-
-            public void Set<T>(string key, T value)
-            {
-                Values[key] = value;
-            }
-
-            public void Delete(string key)
-            {
-                if (Values.ContainsKey(key)) Values.Remove(key);
-            }
+        private void CancelClicked(object sender, EventArgs e)
+        {
+            Close();
         }
     }
 }

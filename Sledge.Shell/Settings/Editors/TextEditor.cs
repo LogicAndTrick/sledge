@@ -6,7 +6,7 @@ namespace Sledge.Shell.Settings.Editors
 {
     public partial class TextEditor : UserControl, ISettingEditor
     {
-        public event EventHandler OnValueChanged;
+        public event EventHandler<SettingKey> OnValueChanged;
 
         string ISettingEditor.Label
         {
@@ -21,11 +21,16 @@ namespace Sledge.Shell.Settings.Editors
         }
 
         public object Control => this;
+        public SettingKey Key { get; set; }
 
         public TextEditor()
         {
             InitializeComponent();
-            Textbox.TextChanged += (o, e) => OnValueChanged?.Invoke(this, e);
+            Textbox.TextChanged += (o, e) => OnValueChanged?.Invoke(this, Key);
+        }
+        public void SetHint(string hint)
+        {
+            //
         }
     }
 }

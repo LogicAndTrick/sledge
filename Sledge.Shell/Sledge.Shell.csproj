@@ -164,12 +164,24 @@
     <Compile Include="Settings\Editors\BooleanEditor.Designer.cs">
       <DependentUpon>BooleanEditor.cs</DependentUpon>
     </Compile>
+    <Compile Include="Settings\Editors\SliderEditor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Settings\Editors\SliderEditor.Designer.cs">
+      <DependentUpon>SliderEditor.cs</DependentUpon>
+    </Compile>
     <Compile Include="Settings\Editors\ShellEditorsFactory.cs" />
     <Compile Include="Settings\Editors\EnumEditor.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Settings\Editors\EnumEditor.Designer.cs">
       <DependentUpon>EnumEditor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Settings\Editors\ColorEditor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Settings\Editors\ColorEditor.Designer.cs">
+      <DependentUpon>ColorEditor.cs</DependentUpon>
     </Compile>
     <Compile Include="Settings\Editors\TextEditor.cs">
       <SubType>UserControl</SubType>
@@ -179,6 +191,12 @@
     </Compile>
     <Compile Include="Settings\LayoutSettingsContainer.cs" />
     <Compile Include="Settings\SettingsProvider.cs" />
+    <Compile Include="Settings\Editors\NumericEditor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Settings\Editors\NumericEditor.Designer.cs">
+      <DependentUpon>NumericEditor.cs</DependentUpon>
+    </Compile>
     <Compile Include="Startup.cs" />
     <Compile Include="Translations\TranslationsProvider.cs" />
   </ItemGroup>
@@ -217,8 +235,17 @@
     <EmbeddedResource Include="Settings\Editors\EnumEditor.resx">
       <DependentUpon>EnumEditor.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Settings\Editors\SliderEditor.resx">
+      <DependentUpon>SliderEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Settings\Editors\ColorEditor.resx">
+      <DependentUpon>ColorEditor.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Settings\Editors\TextEditor.resx">
       <DependentUpon>TextEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Settings\Editors\NumericEditor.resx">
+      <DependentUpon>NumericEditor.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

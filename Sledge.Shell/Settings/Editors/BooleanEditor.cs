@@ -6,7 +6,7 @@ namespace Sledge.Shell.Settings.Editors
 {
     public partial class BooleanEditor : UserControl, ISettingEditor
     {
-        public event EventHandler OnValueChanged;
+        public event EventHandler<SettingKey> OnValueChanged;
 
         string ISettingEditor.Label
         {
@@ -21,12 +21,17 @@ namespace Sledge.Shell.Settings.Editors
         }
 
         public object Control => this;
+        public SettingKey Key { get; set; }
 
         public BooleanEditor()
         {
             InitializeComponent();
 
-            Checkbox.CheckedChanged += (o, e) => OnValueChanged?.Invoke(this, e);
+            Checkbox.CheckedChanged += (o, e) => OnValueChanged?.Invoke(this, Key);
+        }
+        public void SetHint(string hint)
+        {
+            //
         }
     }
 }

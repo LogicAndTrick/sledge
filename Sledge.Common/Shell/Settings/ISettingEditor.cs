@@ -4,10 +4,13 @@ namespace Sledge.Common.Shell.Settings
 {
     public interface ISettingEditor : IDisposable
     {
-        event EventHandler OnValueChanged;
-
+        event EventHandler<SettingKey> OnValueChanged;
+        
         string Label { get; set; }
         object Value { get; set; }
         object Control { get; }
+        SettingKey Key { get; set; }
+
+        void SetHint(string hint);
     }
 }
