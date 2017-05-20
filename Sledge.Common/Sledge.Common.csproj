@@ -93,6 +93,8 @@
     <Compile Include="Shell\Menu\MenuItemAttribute.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Shell\Menu\MenuSection.cs" />
+    <Compile Include="Shell\Settings\ISettingEditor.cs" />
+    <Compile Include="Shell\Settings\ISettingEditorFactory.cs" />
     <Compile Include="Shell\Settings\ISettingsContainer.cs" />
     <Compile Include="Shell\Settings\ISettingsStore.cs" />
     <Compile Include="Shell\Settings\JsonSettingsStore.cs" />
@@ -100,7 +102,6 @@
     <Compile Include="Shell\Settings\SettingKey.cs" />
     <Compile Include="Shell\Settings\SettingStoreExtensions.cs" />
     <Compile Include="Shell\Settings\SettingValue.cs" />
-    <Compile Include="Shell\Settings\StaticSettingsContainer.cs" />
     <Compile Include="Tasks\TaskQueue.cs" />
     <Compile Include="Translations\AutoTranslateAttribute.cs" />
     <Compile Include="Translations\IManualTranslate.cs" />

@@ -32,7 +32,7 @@ namespace Sledge.BspEditor.Tools.Grid
                 var grid = activeGrid?.Grid;
                 if (grid != null)
                 {
-                    var operation = new TrivialOperation(x => grid.Spacing--, x => x.UpdateDocument());
+                    var operation = new TrivialOperation(x => grid.Spacing--, x => x.Update(activeGrid));
                     await MapDocumentOperation.Perform(doc, operation);
                 }
             }

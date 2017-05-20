@@ -12,6 +12,7 @@ namespace Sledge.Shell.Components
         public string File { get; set; } = "File";
         public string Edit { get; set; } = "Edit";
         public string View { get; set; } = "View";
+        public string Tools { get; set; } = "Tools";
         public string Help { get; set; } = "Help";
 
         public IEnumerable<MenuSection> GetMenuSections()
@@ -19,6 +20,7 @@ namespace Sledge.Shell.Components
             yield return new MenuSection("File", File, "B");
             yield return new MenuSection("Edit", Edit, "D");
             yield return new MenuSection("View", View, "F");
+            yield return new MenuSection("Tools", Tools, "R");
             yield return new MenuSection("Help", Help, "Y");
         }
 

@@ -25,11 +25,14 @@ namespace Sledge.Shell.Controls
 
         public void Insert(Control c, int index)
         {
+            SuspendLayout();
+
             c.Dock = DockStyle.Top;
             c.Resize += DoLayout;
             ContentPanel.Controls.Add(c);
             ContentPanel.Controls.SetChildIndex(c, ContentPanel.Controls.Count - index - 1);
-            DoLayout(null, null);
+
+            ResumeLayout(true);
         }
 
         public int Count()

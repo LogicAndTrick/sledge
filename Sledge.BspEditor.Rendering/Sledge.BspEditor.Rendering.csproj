@@ -54,6 +54,7 @@
   <ItemGroup>
     <Compile Include="Converters\DefaultEntityConverter.cs" />
     <Compile Include="Converters\GridConverter.cs" />
+    <Compile Include="Converters\HiddenConverter.cs" />
     <Compile Include="Scene\ISceneObjectProvider.cs" />
     <Compile Include="Scene\ISceneObjectProviderFactory.cs" />
     <Compile Include="Scene\MapDocumentSceneObjectProvider.cs" />

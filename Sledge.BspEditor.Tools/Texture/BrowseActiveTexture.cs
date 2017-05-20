@@ -35,10 +35,8 @@ namespace Sledge.BspEditor.Tools.Texture
                 if (tb.ShowDialog() == DialogResult.OK && !String.IsNullOrWhiteSpace(tb.SelectedTexture))
                 {
                     var tex = tb.SelectedTexture;
-                    MapDocumentOperation.Perform(md, new TrivialOperation(
-                        x => x.Map.Data.Replace(new ActiveTexture {Name = tex}),
-                        x => x.UpdateDocument()
-                    ));
+                    var at = new ActiveTexture {Name = tex};
+                    MapDocumentOperation.Perform(md, new TrivialOperation(x => x.Map.Data.Replace(at), x => x.Update(at)));
                 }
             }
         }

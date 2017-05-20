@@ -31,6 +31,10 @@
         "OpenCommandBox": {
             "Name": "Command Box",
             "Details": "Open the command box."
+        },
+        "OpenSettingsForm": {
+            "Name": "Settings",
+            "Details": "Open the settings window."
         }
     },
     "Components": {
@@ -44,12 +48,18 @@
             "File": "File",
             "Edit": "Edit",
             "View": "View",
-            "Help":  "Help" 
+            "Help": "Help",
+            "Tools": "Tools"
         } 
     },
     "Forms": {
         "Shell": {
             "Title": "Sledge Shell"
+        },
+        "SettingsForm": {
+            "Title": "Settings",
+            "OK": "OK",
+            "Cancel": "Cancel"
         }
     }
 }

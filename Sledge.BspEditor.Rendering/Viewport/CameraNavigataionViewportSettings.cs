@@ -23,13 +23,13 @@ namespace Sledge.BspEditor.Rendering.Viewport
 
         public IEnumerable<SettingKey> GetKeys()
         {
-            yield return new SettingKey("Camera2DPanRequiresMouseClick", typeof(bool));
-            yield return new SettingKey("Camera3DPanRequiresMouseClick", typeof(bool));
-            yield return new SettingKey("ForwardSpeed", typeof(int));
-            yield return new SettingKey("TimeToTopSpeed", typeof(decimal));
-            yield return new SettingKey("MouseWheelMoveDistance", typeof(decimal));
-            yield return new SettingKey("InvertX", typeof(bool));
-            yield return new SettingKey("InvertY", typeof(bool));
+            yield return new SettingKey("Navigation", "Camera2DPanRequiresMouseClick", typeof(bool));
+            yield return new SettingKey("Navigation", "Camera3DPanRequiresMouseClick", typeof(bool));
+            yield return new SettingKey("Navigation", "ForwardSpeed", typeof(int));
+            yield return new SettingKey("Navigation", "TimeToTopSpeed", typeof(decimal));
+            yield return new SettingKey("Navigation", "MouseWheelMoveDistance", typeof(decimal));
+            yield return new SettingKey("Navigation", "InvertX", typeof(bool));
+            yield return new SettingKey("Navigation", "InvertY", typeof(bool));
         }
 
         public void LoadValues(ISettingsStore store)

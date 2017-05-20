@@ -13,16 +13,16 @@ namespace Sledge.BspEditor.Modification.Operations.Tree
         private List<IMapObject> _detatchedObjects;
         public bool Trivial => false;
 
-        public Detatch(long parentId, params IMapObject[] objectsToAttach)
+        public Detatch(long parentId, params IMapObject[] objectsToDetatch)
         {
             _parentId = parentId;
-            _idsToDetatch = objectsToAttach.Select(x => x.ID).ToList();
+            _idsToDetatch = objectsToDetatch.Select(x => x.ID).ToList();
         }
 
-        public Detatch(long parentId, IEnumerable<IMapObject> objectsToAttach)
+        public Detatch(long parentId, IEnumerable<IMapObject> objectsToDetatch)
         {
             _parentId = parentId;
-            _idsToDetatch = objectsToAttach.Select(x => x.ID).ToList();
+            _idsToDetatch = objectsToDetatch.Select(x => x.ID).ToList();
         }
 
         public async Task<Change> Perform(MapDocument document)

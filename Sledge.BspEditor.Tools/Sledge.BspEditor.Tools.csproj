@@ -112,6 +112,7 @@
     <Compile Include="Brush\BrushTool.cs" />
     <Compile Include="Brush\IBrush.cs" />
     <Compile Include="CameraTool.cs" />
+    <Compile Include="Clip\ClipTool.cs" />
     <Compile Include="Draggable\BaseDraggable.cs" />
     <Compile Include="Draggable\BaseDraggableTool.cs" />
     <Compile Include="Draggable\BoxAction.cs" />
@@ -287,6 +288,9 @@
     <None Include="Resources\Tool_Camera.png" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Resources\Tool_Clip.png" />
+    <Content Include="Resources\Tool_Cordon.png" />
+    <Content Include="Resources\Tool_Decal.png" />
     <Content Include="Resources\Tool_Entity.png" />
     <None Include="Resources\Tool_Texture.png" />
   </ItemGroup>

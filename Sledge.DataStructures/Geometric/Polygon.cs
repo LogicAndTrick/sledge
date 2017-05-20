@@ -97,7 +97,7 @@ namespace Sledge.DataStructures.Geometric
         /// <summary>
         /// Checks that all the points in this polygon are valid.
         /// </summary>
-        /// <returns>True if the plane is valid</returns>
+        /// <returns>True if the polygon is valid</returns>
         public bool IsValid()
         {
             var plane = GetPlane();

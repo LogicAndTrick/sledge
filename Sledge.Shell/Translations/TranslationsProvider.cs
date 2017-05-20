@@ -10,6 +10,7 @@ using Sledge.Common.Translations;
 
 namespace Sledge.Shell.Translations
 {
+    [AutoTranslate]
     [Export(typeof(IStartupHook))]
     [Export(typeof(ISettingsContainer))]
     [Export(typeof(ITranslationStringProvider))]
@@ -55,7 +56,7 @@ namespace Sledge.Shell.Translations
 
         public IEnumerable<SettingKey> GetKeys()
         {
-            yield return new SettingKey("Language", typeof(string));
+            yield return new SettingKey("Interface", "Language", typeof(string));
         }
 
         public void LoadValues(ISettingsStore store)

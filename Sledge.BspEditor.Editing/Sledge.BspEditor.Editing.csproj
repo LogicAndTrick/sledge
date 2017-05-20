@@ -60,6 +60,7 @@
     <Compile Include="Components\CheckForProblemsDialog.Designer.cs">
       <DependentUpon>CheckForProblemsDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="Components\Visgroup\Operations\SetVisgroupVisibility.cs" />
     <Compile Include="Components\Visgroup\VisgroupEditForm.cs">
       <SubType>Form</SubType>
     </Compile>

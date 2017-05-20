@@ -107,7 +107,7 @@ namespace Sledge.Shell.Registers
         public T Get<T>(string context, T defaultValue = default(T))
         {
             ContextInfo info;
-            return _context.TryGetValue(context, out info) && info.Value.IsAlive && info.Value.Target is T
+            return _context.TryGetValue(context, out info) && info.Value != null && info.Value.IsAlive && info.Value.Target is T
                 ? (T) info.Value.Target
                 : defaultValue;
         }

@@ -57,12 +57,8 @@ namespace Sledge.BspEditor.Tools.Grid
                 {
                     var grid = await GridFactory.Create(doc);
 
-                    var operation = new TrivialOperation(x =>
-                    {
-                        var activeGrid = doc.Map.Data.GetOne<GridData>();
-                        if (activeGrid != null) doc.Map.Data.Remove(activeGrid);
-                        doc.Map.Data.Add(new GridData(grid));
-                    }, x => x.UpdateDocument());
+                    var gd = new GridData(grid);
+                    var operation = new TrivialOperation(x => doc.Map.Data.Replace(gd), x => x.Update(gd));
 
                     await MapDocumentOperation.Perform(doc, operation);
                     

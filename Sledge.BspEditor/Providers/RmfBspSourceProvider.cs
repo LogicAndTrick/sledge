@@ -13,13 +13,6 @@ using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.Common.Extensions;
 using Sledge.Common.Shell.Documents;
 using Sledge.DataStructures;
-using Entity = Sledge.BspEditor.Primitives.MapObjects.Entity;
-using EntityData = Sledge.BspEditor.Primitives.MapObjectData.EntityData;
-using Face = Sledge.BspEditor.Primitives.MapObjectData.Face;
-using Group = Sledge.BspEditor.Primitives.MapObjects.Group;
-using Map = Sledge.BspEditor.Primitives.Map;
-using Solid = Sledge.BspEditor.Primitives.MapObjects.Solid;
-using Visgroup = Sledge.BspEditor.Primitives.MapData.Visgroup;
 
 namespace Sledge.BspEditor.Providers
 {

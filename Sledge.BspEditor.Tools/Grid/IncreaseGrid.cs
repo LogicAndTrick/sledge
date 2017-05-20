@@ -33,10 +33,11 @@ namespace Sledge.BspEditor.Tools.Grid
         {
             if (context.TryGet("ActiveDocument", out MapDocument doc))
             {
-                var grid = doc.Map.Data.Get<GridData>().FirstOrDefault()?.Grid;
+                var gd = doc.Map.Data.Get<GridData>().FirstOrDefault();
+                var grid = gd?.Grid;
                 if (grid != null)
                 {
-                    var operation = new TrivialOperation(x => grid.Spacing++, x => x.UpdateDocument());
+                    var operation = new TrivialOperation(x => grid.Spacing++, x => x.Update(gd));
                     await MapDocumentOperation.Perform(doc, operation);
                 }
             }

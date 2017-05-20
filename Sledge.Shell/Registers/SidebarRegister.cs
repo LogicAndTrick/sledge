@@ -171,6 +171,7 @@ namespace Sledge.Shell.Registers
                     Name = component.Title,
                     Dock = DockStyle.Fill,
                     Hidden = false,
+                    Visible = false,
                     Tag = this
                 };
                 Panel.AddControl((Control) component.Control);

@@ -36,8 +36,8 @@ namespace Sledge.BspEditor.Modification.Operations.Data
             foreach (var d in _dataToAdd)
             {
                 document.Map.Data.Add(d);
+                ch.Update(d);
             }
-            ch.UpdateDocument();
 
             return ch;
         }
@@ -49,8 +49,8 @@ namespace Sledge.BspEditor.Modification.Operations.Data
             foreach (var d in _dataToAdd)
             {
                 document.Map.Data.Remove(d);
+                ch.Update(d);
             }
-            ch.UpdateDocument();
 
             return ch;
         }

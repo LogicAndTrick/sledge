@@ -55,6 +55,7 @@
     <Compile Include="Geometric\Polygon.cs" />
     <Compile Include="Geometric\Matrix.cs" />
     <Compile Include="Geometric\Plane.cs" />
+    <Compile Include="Geometric\Polyhedron.cs" />
     <Compile Include="Geometric\Quaternion.cs" />
     <Compile Include="Geometric\Vector.cs" />
     <Compile Include="GameData\Behaviour.cs" />

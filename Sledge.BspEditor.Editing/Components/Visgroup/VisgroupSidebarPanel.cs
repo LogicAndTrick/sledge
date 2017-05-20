@@ -1,9 +1,11 @@
 ﻿using System;
 using System.ComponentModel.Composition;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using LogicAndTrick.Oy;
 using Sledge.BspEditor.Documents;
+using Sledge.BspEditor.Editing.Components.Visgroup.Operations;
 using Sledge.BspEditor.Modification;
 using Sledge.Common.Shell.Components;
 using Sledge.Common.Shell.Context;
@@ -58,9 +60,12 @@ namespace Sledge.BspEditor.Editing.Components.Visgroup
 
         private async Task DocumentChanged(Change change)
         {
-            if (_activeDocument.TryGetTarget(out MapDocument t) && change.Document == t && change.DocumentUpdated)
+            if (_activeDocument.TryGetTarget(out MapDocument t) && change.Document == t && change.HasDataChanges)
             {
-                VisgroupPanel.Update(change.Document);
+                if (change.AffectedData.Any(x => x is Primitives.MapData.Visgroup))
+                {
+                    VisgroupPanel.Update(change.Document);
+                }
             }
         }
         
@@ -122,6 +127,12 @@ namespace Sledge.BspEditor.Editing.Components.Visgroup
 
         private void VisgroupToggled(object sender, long visgroupId, CheckState state)
         {
+            if (state == CheckState.Indeterminate) return;
+            var visible = state == CheckState.Checked;
+            if (_activeDocument.TryGetTarget(out MapDocument md))
+            {
+                MapDocumentOperation.Perform(md, new SetVisgroupVisibility(visgroupId, !visible));
+            }
 
         }
 

@@ -63,7 +63,7 @@ namespace Sledge.BspEditor.Tools
                     d.Map.Root.Data.Replace(new PointEntityGameDataBoundingBoxProvider(gd));
                     d.Map.Root.Invalidate();
                 },
-                x => x.UpdateDocument())
+                x => x.Update(x.Document.Map.Data))
             );
         }
     }

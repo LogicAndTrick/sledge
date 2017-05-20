@@ -21,6 +21,7 @@ using Sledge.BspEditor.Tools.Widgets;
 using Sledge.Common.Shell.Components;
 using Sledge.Common.Shell.Documents;
 using Sledge.Common.Shell.Settings;
+using Sledge.Common.Translations;
 using Sledge.DataStructures.Geometric;
 using Sledge.Rendering.Cameras;
 using Sledge.Shell.Input;
@@ -56,12 +57,12 @@ namespace Sledge.BspEditor.Tools.Selection
 
         IEnumerable<SettingKey> ISettingsContainer.GetKeys()
         {
-            yield return new SettingKey("SelectionBoxBackgroundOpacity", typeof(int));
-            yield return new SettingKey("SelectionBoxStippled", typeof(bool));
-            yield return new SettingKey("AutoSelectBox", typeof(bool));
-            yield return new SettingKey("Show3DWidgets", typeof(bool));
-            yield return new SettingKey("SelectByCenterHandles", typeof(bool));
-            yield return new SettingKey("OnlySelectByCenterHandles", typeof(bool));
+            yield return new SettingKey("Selection", "SelectionBoxBackgroundOpacity", typeof(int));
+            yield return new SettingKey("Selection", "SelectionBoxStippled", typeof(bool));
+            yield return new SettingKey("Selection", "AutoSelectBox", typeof(bool));
+            yield return new SettingKey("Selection", "Show3DWidgets", typeof(bool));
+            yield return new SettingKey("Selection", "SelectByCenterHandles", typeof(bool));
+            yield return new SettingKey("Selection", "OnlySelectByCenterHandles", typeof(bool));
         }
 
         void ISettingsContainer.LoadValues(ISettingsStore store)
@@ -138,7 +139,7 @@ namespace Sledge.BspEditor.Tools.Selection
                 if (x.Document == Document)
                 {
                     if (x.HasObjectChanges) SelectionChanged();
-                    if (x.DocumentUpdated) IgnoreGroupingPossiblyChanged();
+                    if (x.HasDataChanges && x.AffectedData.Any(d => d is SelectionOptions)) IgnoreGroupingPossiblyChanged();
                 }
             });
         }
@@ -441,9 +442,8 @@ namespace Sledge.BspEditor.Tools.Selection
                 var tform = _selectionBox.GetTransformationMatrix(viewport, camera, Document);
                 if (tform.HasValue)
                 {
-                    MapDocumentOperation.Perform(Document, new TrivialOperation(
-                        x => x.Map.Data.Replace(new SelectionTransform(Matrix.FromOpenTKMatrix4(tform.Value))),
-                        x => x.UpdateDocument()));
+                    var st = new SelectionTransform(Matrix.FromOpenTKMatrix4(tform.Value));
+                    MapDocumentOperation.Perform(Document, new TrivialOperation(x => x.Map.Data.Replace(st), x => x.Update(st)));
 
                     var box = new Box(_selectionBox.State.OrigStart, _selectionBox.State.OrigEnd);
                     var trans = CreateMatrixMultTransformation(tform.Value);
@@ -469,9 +469,8 @@ namespace Sledge.BspEditor.Tools.Selection
                     ExecuteTransform(tt.Name, CreateMatrixMultTransformation(tform.Value), createClone);
                 }
             }
-            MapDocumentOperation.Perform(Document, new TrivialOperation(
-                x => x.Map.Data.Replace(new SelectionTransform(Matrix.Identity)),
-                x => x.UpdateDocument()));
+            var st = new SelectionTransform(Matrix.Identity);
+            MapDocumentOperation.Perform(Document, new TrivialOperation(x => x.Map.Data.Replace(st), x => x.Update(st)));
             base.OnDraggableDragEnded(viewport, camera, e, position, draggable);
         }
 

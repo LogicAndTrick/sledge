@@ -81,7 +81,7 @@ namespace Sledge.BspEditor.Rendering.Scene
         }
         private async Task DocumentChanged(Change change)
         {
-            if (!change.DocumentUpdated) return;
+            if (!change.HasDataChanges) return;
             if (!_activeDocument.TryGetTarget(out MapDocument act) || act != change.Document) return;
             var mat = change.Document.Map.Data.GetOne<SelectionTransform>()?.Transform ?? Matrix.Identity;
             Renderer.Instance.Engine.Renderer.SelectionTransform = mat.ToOpenTKMatrix4();

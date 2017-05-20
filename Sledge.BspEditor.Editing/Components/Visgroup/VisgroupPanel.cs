@@ -99,20 +99,19 @@ namespace Sledge.BspEditor.Editing.Components.Visgroup
         {
             Clear();
             if (document == null) return;
-            var states = document.Map.Root
-                .FindAll()
-                //.SelectMany(x => x.GetVisgroups(true).Select(y => new {ID = y, Hidden = x.IsVisgroupHidden}))
-                .SelectMany(x => x.Data.Get<VisgroupID>())
-                .Select(x => new { x.ID, Hidden = false }) // todo
-                .GroupBy(x => x.ID)
-                .ToDictionary(x => x.Key, x => GetCheckState(x.Select(y => y.Hidden)));
 
             var visgroups = document.Map.Data.Get<Primitives.MapData.Visgroup>().ToList();
             var topLevel = visgroups.Where(x => visgroups.All(v => x.Parent != v.ID));
             foreach (var v in Sort(topLevel))
             {
-                AddNode(null, visgroups, v, x => states.ContainsKey(x.ID) ? states[x.ID] : "Checked");
+                AddNode(null, visgroups, v, x => GetCheckState(x.Objects));
             }
+        }
+
+        private string GetCheckState(IEnumerable<IMapObject> objects)
+        {
+            var bools = objects.Select(x => x.Data.GetOne<VisgroupHidden>()?.IsHidden ?? false);
+            return GetCheckState(bools);
         }
 
         private string GetCheckState(IEnumerable<bool> bools)

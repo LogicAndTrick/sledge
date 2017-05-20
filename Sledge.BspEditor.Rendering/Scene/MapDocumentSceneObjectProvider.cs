@@ -42,7 +42,7 @@ namespace Sledge.BspEditor.Rendering.Scene
                 await Update(change.Added, change.Updated, change.Removed);
 
                 // Document objects are attached to the root
-                if (change.DocumentUpdated)
+                if (change.HasDataChanges)
                 {
                     await Update(new IMapObject[0], new[] {change.Document.Map.Root}, new IMapObject[0]);
                 }

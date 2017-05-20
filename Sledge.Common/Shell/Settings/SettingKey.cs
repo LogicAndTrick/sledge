@@ -4,12 +4,16 @@ namespace Sledge.Common.Shell.Settings
 {
     public class SettingKey
     {
-        public string Name { get; private set; }
+        public string Group { get; set; }
+        public string Key { get; private set; }
         public Type Type { get; private set; }
+        public string EditorHint { get; set; }
+        public string OrderHint { get; set; }
 
-        public SettingKey(string name, Type type)
+        public SettingKey(string group, string key, Type type)
         {
-            Name = name;
+            Group = group;
+            Key = key;
             Type = type;
         }
     }

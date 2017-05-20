@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Sledge.Common.Shell.Hooks;
 using Sledge.Common.Shell.Settings;
+using Sledge.Common.Translations;
 using Sledge.Rendering;
 using Sledge.Rendering.Interfaces;
 using Sledge.Rendering.OpenGL;
@@ -27,7 +28,7 @@ namespace Sledge.BspEditor.Rendering
         
         public static Renderer Instance { get; private set; }
 
-        private string _renderer = "OpenGLRenderer";
+        private RenderEngine _renderer = RenderEngine.OpenGLRenderer;
         private Lazy<Engine> _engine;
 
         public Engine Engine => _engine.Value;
@@ -70,18 +71,18 @@ namespace Sledge.BspEditor.Rendering
 
         public IEnumerable<SettingKey> GetKeys()
         {
-            yield return new SettingKey("Renderer", typeof(string));
+            yield return new SettingKey("Rendering", "Renderer", typeof(RenderEngine));
         }
 
         public void LoadValues(ISettingsStore store)
         {
-            switch (store.Get("Renderer", "OpenGLRenderer"))
+            switch (store.Get("Renderer", RenderEngine.OpenGLRenderer))
             {
                 // Uh... we only support one renderer for now
                 // So why am I bothering with this? oh well...
                 default:
-                case "OpenGLRenderer":
-                    _renderer = "OpenGLRenderer";
+                case RenderEngine.OpenGLRenderer:
+                    _renderer = RenderEngine.OpenGLRenderer;
                     _engine = new Lazy<Engine>(() => MakeEngine(new OpenGLRenderer()));
                     break;
             }
@@ -92,6 +93,11 @@ namespace Sledge.BspEditor.Rendering
         {
             store.Set("Renderer", _renderer);
             store.StoreInstance(this);
+        }
+
+        public enum RenderEngine
+        {
+            OpenGLRenderer
         }
     }
 }

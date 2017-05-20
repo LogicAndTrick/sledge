@@ -92,7 +92,7 @@ namespace Sledge.Shell.Registers
 
         public IEnumerable<SettingKey> GetKeys()
         {
-            return _hotkeys.Select(x => new SettingKey(x.Value.ID, typeof(string)));
+            return _hotkeys.Select(x => new SettingKey("Hotkeys", x.Value.ID, typeof(string)));
         }
 
         public void LoadValues(ISettingsStore store)

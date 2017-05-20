@@ -63,9 +63,8 @@ namespace Sledge.BspEditor.Tools.Selection
         {
             if (transformation.HasValue)
             {
-                MapDocumentOperation.Perform(Tool.Document, new TrivialOperation(
-                    x => x.Map.Data.Replace(new SelectionTransform(Matrix.FromOpenTKMatrix4(transformation.Value))),
-                    x => x.UpdateDocument()));
+                var st = new SelectionTransform(Matrix.FromOpenTKMatrix4(transformation.Value));
+                MapDocumentOperation.Perform(Tool.Document, new TrivialOperation(x => x.Map.Data.Replace(st), x => x.Update(st)));
             }
         }
 
@@ -76,9 +75,8 @@ namespace Sledge.BspEditor.Tools.Selection
                 var op = new Transform(Matrix.FromOpenTKMatrix4(transformation.Value), Tool.Document.Selection);
                 MapDocumentOperation.Perform(Tool.Document, op);
             }
-            MapDocumentOperation.Perform(Tool.Document, new TrivialOperation(
-                x => x.Map.Data.Replace(new SelectionTransform(Matrix.Identity)),
-                x => x.UpdateDocument()));
+            var st = new SelectionTransform(Matrix.Identity);
+            MapDocumentOperation.Perform(Tool.Document, new TrivialOperation(x => x.Map.Data.Replace(st), x => x.Update(st)));
         }
 
         public void Update()

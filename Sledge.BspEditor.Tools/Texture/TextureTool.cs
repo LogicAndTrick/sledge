@@ -64,10 +64,8 @@ namespace Sledge.BspEditor.Tools.Texture
         private void SetActiveTexture(ITextured tex)
         {
             _sampled = tex;
-            MapDocumentOperation.Perform(Document, new TrivialOperation(
-                x => x.Map.Data.Replace(new ActiveTexture { Name = _sampled?.Texture.Name }),
-                x => x.UpdateDocument()
-            ));
+            var at = new ActiveTexture {Name = _sampled?.Texture.Name};
+            MapDocumentOperation.Perform(Document, new TrivialOperation(x => x.Map.Data.Replace(at), x => x.Update(at)));
         }
 
         private void SetFaceSelectionFromObjectSelection()

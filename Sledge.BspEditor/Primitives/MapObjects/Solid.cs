@@ -39,6 +39,11 @@ namespace Sledge.BspEditor.Primitives.MapObjects
             return Faces.Select(x => new Polygon(x.Vertices));
         }
 
+        public Polyhedron ToPolyhedron()
+        {
+            return new Polyhedron(GetPolygons());
+        }
+
         protected override string SerialisedName => "Solid";
 
         public override IEnumerable<IMapObject> Decompose(IEnumerable<Type> allowedTypes)

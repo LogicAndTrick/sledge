@@ -31,7 +31,7 @@ namespace Sledge.BspEditor.Tools.Grid
                 var activeGrid = doc.Map.Data.GetOne<GridData>();
                 if (activeGrid != null)
                 {
-                    var operation = new TrivialOperation(x => activeGrid.SnapToGrid = !activeGrid.SnapToGrid, x => x.UpdateDocument());
+                    var operation = new TrivialOperation(x => activeGrid.SnapToGrid = !activeGrid.SnapToGrid, x => x.Update(activeGrid));
                     await MapDocumentOperation.Perform(doc, operation);
                 }
             }

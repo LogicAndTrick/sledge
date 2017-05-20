@@ -82,6 +82,7 @@
     <Compile Include="Commands\CloseFile.cs" />
     <Compile Include="Commands\Exit.cs" />
     <Compile Include="Commands\NewFile.cs" />
+    <Compile Include="Commands\OpenSettingsForm.cs" />
     <Compile Include="Commands\OpenFile.cs" />
     <Compile Include="Commands\SaveFile.cs" />
     <Compile Include="Components\CommandMenuItemProvider.cs" />
@@ -122,6 +123,15 @@
     <Compile Include="Forms\CommandBox.Designer.cs">
       <DependentUpon>CommandBox.cs</DependentUpon>
     </Compile>
+    <Compile Include="Settings\Editors\DefaultSettingEditor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Forms\SettingsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\SettingsForm.Designer.cs">
+      <DependentUpon>SettingsForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Input\KeyboardState.cs" />
     <Compile Include="Registers\BottomTabRegister.cs" />
     <Compile Include="Registers\CommandRegister.cs" />
@@ -148,6 +158,25 @@
     <Compile Include="Registers\StatusRegister.cs" />
     <Compile Include="Registers\DialogRegister.cs" />
     <Compile Include="Registers\ToolRegister.cs" />
+    <Compile Include="Settings\Editors\BooleanEditor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Settings\Editors\BooleanEditor.Designer.cs">
+      <DependentUpon>BooleanEditor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Settings\Editors\ShellEditorsFactory.cs" />
+    <Compile Include="Settings\Editors\EnumEditor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Settings\Editors\EnumEditor.Designer.cs">
+      <DependentUpon>EnumEditor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Settings\Editors\TextEditor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Settings\Editors\TextEditor.Designer.cs">
+      <DependentUpon>TextEditor.cs</DependentUpon>
+    </Compile>
     <Compile Include="Settings\LayoutSettingsContainer.cs" />
     <Compile Include="Settings\SettingsProvider.cs" />
     <Compile Include="Startup.cs" />
@@ -169,12 +198,27 @@
     <EmbeddedResource Include="Forms\CommandBox.resx">
       <DependentUpon>CommandBox.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\SettingsForm.resx">
+      <DependentUpon>SettingsForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\Shell.resx">
       <DependentUpon>Shell.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Settings\Editors\DefaultSettingEditor.resx">
+      <DependentUpon>DefaultSettingEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Settings\Editors\BooleanEditor.resx">
+      <DependentUpon>BooleanEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Settings\Editors\EnumEditor.resx">
+      <DependentUpon>EnumEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Settings\Editors\TextEditor.resx">
+      <DependentUpon>TextEditor.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

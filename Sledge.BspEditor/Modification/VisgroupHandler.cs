@@ -29,14 +29,17 @@ namespace Sledge.BspEditor.Modification
             foreach (var obj in doc.Map.Root.FindAll())
             {
                 var ids = obj.Data.Get<VisgroupID>().ToList();
+                var visible = true;
                 foreach (var id in ids)
                 {
                     if (!visgroups.ContainsKey(id.ID)) continue;
 
                     var vis = visgroups[id.ID];
                     vis.Objects.Add(obj);
-                    if (!vis.Visible) id.IsHidden = true;
+                    visible = vis.Visible;
                 }
+
+                obj.Data.Replace(new VisgroupHidden(!visible));
             }
         }
 

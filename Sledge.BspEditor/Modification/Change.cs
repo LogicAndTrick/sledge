@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Sledge.BspEditor.Documents;
+using Sledge.BspEditor.Primitives.MapData;
 using Sledge.BspEditor.Primitives.MapObjects;
 
 namespace Sledge.BspEditor.Modification
@@ -8,6 +9,8 @@ namespace Sledge.BspEditor.Modification
     public class Change
     {
         public MapDocument Document { get; }
+        private readonly HashSet<IMapData> _affectedData;
+
         private readonly HashSet<IMapObject> _added;
         private readonly HashSet<IMapObject> _updated;
         private readonly HashSet<IMapObject> _removed;
@@ -15,32 +18,21 @@ namespace Sledge.BspEditor.Modification
         public IEnumerable<IMapObject> Added => _added;
         public IEnumerable<IMapObject> Updated => _updated;
         public IEnumerable<IMapObject> Removed => _removed;
-        public bool DocumentUpdated { get; private set; }
+
+        public IEnumerable<IMapData> AffectedData => _affectedData;
 
         public bool HasObjectChanges => _added.Count + _updated.Count + _removed.Count > 0;
+        public bool HasDataChanges => _affectedData.Count > 0;
 
         public Change(MapDocument document)
         {
             Document = document;
+
             _added = new HashSet<IMapObject>();
             _updated = new HashSet<IMapObject>();
             _removed = new HashSet<IMapObject>();
-            DocumentUpdated = false;
-        }
 
-        public Change(MapDocument document, IEnumerable<IMapObject> added, IEnumerable<IMapObject> updated, IEnumerable<IMapObject> removed)
-        {
-            Document = document;
-            _added = new HashSet<IMapObject>(added);
-            _updated = new HashSet<IMapObject>(updated);
-            _removed = new HashSet<IMapObject>(removed);
-            DocumentUpdated = false;
-        }
-
-        public Change UpdateDocument()
-        {
-            DocumentUpdated = true;
-            return this;
+            _affectedData = new HashSet<IMapData>();
         }
 
         public Change Add(IMapObject o)
@@ -65,6 +57,18 @@ namespace Sledge.BspEditor.Modification
             if (_added.Contains(o)) return this;
             if (_removed.Contains(o)) return this;
             _updated.Add(o);
+            return this;
+        }
+
+        public Change Update(IMapData data)
+        {
+            _affectedData.Add(data);
+            return this;
+        }
+
+        public Change Update(IEnumerable<IMapData> datas)
+        {
+            _affectedData.UnionWith(datas);
             return this;
         }
 
@@ -97,7 +101,7 @@ namespace Sledge.BspEditor.Modification
 
             _updated.UnionWith(change._updated.Except(_added).Except(_removed));
 
-            DocumentUpdated |= change.DocumentUpdated;
+            _affectedData.UnionWith(change._affectedData);
 
             return this;
         }

@@ -48,6 +48,8 @@ namespace Sledge.Shell.Controls
             _panel = new Panel {Dock = DockStyle.Top, AutoSize = true};
             Controls.Add(_panel);
             Controls.Add(_header);
+
+            CreateHandle();
         }
 
         public void AddControl(Control c)

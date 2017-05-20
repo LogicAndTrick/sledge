@@ -95,7 +95,7 @@ namespace Sledge.BspEditor.Tools.Texture
 
         private async Task DocumentChanged(Change change)
         {
-            if (_document.TryGetTarget(out MapDocument t) && change.Document == t && change.DocumentUpdated)
+            if (_document.TryGetTarget(out MapDocument t) && change.Document == t && change.HasDataChanges && change.AffectedData.Any(x => x is ActiveTexture))
             {
                 var at = t.Map.Data.GetOne<ActiveTexture>()?.Name;
                 ActiveTextureChanged(at);
@@ -171,10 +171,8 @@ namespace Sledge.BspEditor.Tools.Texture
                     label = $"{ti.Name} ({ti.Width} x {ti.Height})";
                 }
 
-                await MapDocumentOperation.Perform(Document, new TrivialOperation(
-                    x => x.Map.Data.Replace(new ActiveTexture { Name = item }),
-                    x => x.UpdateDocument()
-                ));
+                var at = new ActiveTexture {Name = item};
+                await MapDocumentOperation.Perform(Document, new TrivialOperation(x => x.Map.Data.Replace(at), x => x.Update(at)));
             }
 
             TextureDetailsLabel.Invoke(() =>
