@@ -57,6 +57,7 @@
             // NumericBox
             // 
             this.NumericBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.NumericBox.DecimalPlaces = 2;
             this.NumericBox.Location = new System.Drawing.Point(291, 6);
             this.NumericBox.Name = "NumericBox";
             this.NumericBox.Size = new System.Drawing.Size(56, 20);

@@ -96,6 +96,10 @@ namespace Sledge.Shell.Forms
 
             SettingsPanel.SuspendLayout();
             SettingsPanel.Controls.Clear();
+
+            SettingsPanel.AutoSize = true;
+            SettingsPanel.RowStyles.Clear();
+
             var group = GroupList.SelectedItem as string;
             if (group != null)
             {
@@ -108,7 +112,6 @@ namespace Sledge.Shell.Forms
                     {
                         var editor = GetEditor(key);
                         editor.Key = key;
-                        editor.SetHint(key.EditorHint);
                         editor.Label = key.Key;
                         editor.Value = values.Get(key.Type, key.Key);
 
@@ -125,8 +128,14 @@ namespace Sledge.Shell.Forms
                         }
 
                         var ctrl = (Control) editor.Control;
-                        ctrl.Anchor = AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Top;
+                        ctrl.Anchor |= AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Top;
                         SettingsPanel.Controls.Add(ctrl);
+
+                        if (ctrl.Anchor.HasFlag(AnchorStyles.Bottom))
+                        {
+                            SettingsPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
+                            SettingsPanel.AutoSize = false;
+                        }
 
                         _editors.Add(editor);
                     }

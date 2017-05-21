@@ -28,9 +28,5 @@ namespace Sledge.Shell.Settings.Editors
             InitializeComponent();
             Textbox.TextChanged += (o, e) => OnValueChanged?.Invoke(this, Key);
         }
-        public void SetHint(string hint)
-        {
-            //
-        }
     }
 }

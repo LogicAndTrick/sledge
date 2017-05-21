@@ -10,7 +10,5 @@ namespace Sledge.Common.Shell.Settings
         object Value { get; set; }
         object Control { get; }
         SettingKey Key { get; set; }
-
-        void SetHint(string hint);
     }
 }

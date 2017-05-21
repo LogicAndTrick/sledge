@@ -27,9 +27,5 @@ namespace Sledge.Shell.Settings.Editors
             _box = new TextBox();
             Controls.Add(_box);
         }
-        public void SetHint(string hint)
-        {
-            //
-        }
     }
 }

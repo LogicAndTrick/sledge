@@ -7,6 +7,7 @@ namespace Sledge.Shell.Settings.Editors
     public partial class SliderEditor : UserControl, ISettingEditor
     {
         private decimal _multiplier = 1;
+        private SettingKey _key;
         public event EventHandler<SettingKey> OnValueChanged;
 
         string ISettingEditor.Label
@@ -27,18 +28,42 @@ namespace Sledge.Shell.Settings.Editors
         }
 
         public object Control => this;
-        public SettingKey Key { get; set; }
+
+        public SettingKey Key
+        {
+            get => _key;
+            set
+            {
+                _key = value;
+                SetHint(value?.EditorHint);
+                SetType(value?.Type);
+            }
+        }
 
         public SliderEditor()
         {
             InitializeComponent();
         }
 
-        public void SetHint(string hint)
+        private void SetType(Type type)
+        {
+            if (type == null) type = typeof(decimal);
+            NumericBox.DecimalPlaces = type == typeof(int) ? 0 : 2;
+        }
+
+        private void SetHint(string hint)
         {
             var spl = (hint ?? "").Split();
-            if (spl.Length > 0 && int.TryParse(spl[0], out int min)) Slider.Minimum = min;
-            if (spl.Length > 1 && int.TryParse(spl[1], out int max)) Slider.Maximum = max;
+            if (spl.Length > 0 && int.TryParse(spl[0], out int min))
+            {
+                Slider.Minimum = min;
+                NumericBox.Minimum = min / _multiplier;
+            }
+            if (spl.Length > 1 && int.TryParse(spl[1], out int max))
+            {
+                Slider.Maximum = max;
+                NumericBox.Minimum = max / _multiplier;
+            }
             if (spl.Length > 2 && int.TryParse(spl[2], out int step)) Slider.SmallChange = step;
             if (spl.Length > 3 && int.TryParse(spl[3], out int step2)) Slider.LargeChange = step2;
             if (spl.Length > 4 && int.TryParse(spl[3], out int mul)) _multiplier = mul;

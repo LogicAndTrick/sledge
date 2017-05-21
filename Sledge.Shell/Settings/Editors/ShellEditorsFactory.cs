@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.Composition;
 using System.Drawing;
 using Sledge.Common.Shell.Settings;
+using Sledge.Shell.Registers;
 
 namespace Sledge.Shell.Settings.Editors
 {
@@ -29,6 +30,10 @@ namespace Sledge.Shell.Settings.Editors
             {
                 return true;
             }
+            else if (key.Type == typeof(HotkeyRegister.HotkeyBindings))
+            {
+                return true;
+            }
             return false;
         }
 
@@ -54,6 +59,10 @@ namespace Sledge.Shell.Settings.Editors
             else if (key.Type == typeof(Color))
             {
                 return new ColorEditor();
+            }
+            else if (key.Type == typeof(HotkeyRegister.HotkeyBindings))
+            {
+                return new HotkeysEditor();
             }
             return null;
         }

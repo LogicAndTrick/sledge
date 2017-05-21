@@ -29,9 +29,5 @@ namespace Sledge.Shell.Settings.Editors
 
             Checkbox.CheckedChanged += (o, e) => OnValueChanged?.Invoke(this, Key);
         }
-        public void SetHint(string hint)
-        {
-            //
-        }
     }
 }

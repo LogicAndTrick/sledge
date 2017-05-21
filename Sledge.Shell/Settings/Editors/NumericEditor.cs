@@ -6,6 +6,7 @@ namespace Sledge.Shell.Settings.Editors
 {
     public partial class NumericEditor : UserControl, ISettingEditor
     {
+        private SettingKey _key;
         public event EventHandler<SettingKey> OnValueChanged;
 
         string ISettingEditor.Label
@@ -21,7 +22,23 @@ namespace Sledge.Shell.Settings.Editors
         }
 
         public object Control => this;
-        public SettingKey Key { get; set; }
+
+        public SettingKey Key
+        {
+            get => _key;
+            set
+            {
+                _key = value;
+                SetHint(value?.EditorHint);
+                SetType(value?.Type);
+            }
+        }
+
+        private void SetType(Type type)
+        {
+            if (type == null) type = typeof(decimal);
+            Numericbox.DecimalPlaces = type == typeof(int) ? 0 : 2;
+        }
 
         public NumericEditor()
         {
@@ -29,7 +46,7 @@ namespace Sledge.Shell.Settings.Editors
             Numericbox.ValueChanged += (o, e) => OnValueChanged?.Invoke(this, Key);
         }
 
-        public void SetHint(string hint)
+        private void SetHint(string hint)
         {
             var spl = (hint ?? "").Split();
             if (spl.Length > 0 && decimal.TryParse(spl[0], out decimal min)) Numericbox.Minimum = min;

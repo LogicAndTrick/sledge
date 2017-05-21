@@ -55,6 +55,11 @@ namespace Sledge.Shell.Registers
             _registeredHotkeys = new Dictionary<string, IHotkey>();
         }
 
+        public IEnumerable<IHotkey> GetHotkeys()
+        {
+            return _hotkeys.Values;
+        }
+
         /// <summary>
         /// Add a hotkey to the list but do not register it
         /// </summary>
@@ -92,30 +97,44 @@ namespace Sledge.Shell.Registers
 
         public IEnumerable<SettingKey> GetKeys()
         {
-            return _hotkeys.Select(x => new SettingKey("Hotkeys", x.Value.ID, typeof(string)));
+            yield return new SettingKey("Hotkeys", "Bindings", typeof(HotkeyBindings));
         }
 
         public void LoadValues(ISettingsStore store)
         {
             _registeredHotkeys.Clear();
-            var svs = store.GetKeys().ToDictionary(x => x, x => store.Get<string>(x));
-            foreach (var val in _hotkeys.Keys)
+            if (store.Contains("Bindings"))
             {
-                var hk = svs.ContainsKey(val) && svs[val] != null ? svs[val] : _hotkeys[val].DefaultHotkey;
-                if (hk != null && !_registeredHotkeys.ContainsKey(hk)) _registeredHotkeys.Add(hk, _hotkeys[val]);
+                var bindings = store.Get("Bindings", new HotkeyBindings());
+                foreach (var val in _hotkeys.Keys)
+                {
+                    var hk = bindings.ContainsKey(val) && bindings[val] != null ? bindings[val] : _hotkeys[val].DefaultHotkey;
+                    if (hk != null && !_registeredHotkeys.ContainsKey(hk)) _registeredHotkeys.Add(hk, _hotkeys[val]);
+                }
             }
         }
 
         public void StoreValues(ISettingsStore store)
         {
-            var reg = _registeredHotkeys.ToDictionary(x => x.Value.ID, x => x.Key);
+            var bindings = new HotkeyBindings();
+            foreach (var rh in _registeredHotkeys)
+            {
+                bindings.Add(rh.Value.ID, rh.Key);
+            }
             foreach (var hk in _hotkeys)
             {
-                if (!reg.ContainsKey(hk.Key)) reg[hk.Key] = hk.Value.DefaultHotkey;
+                if (!bindings.ContainsKey(hk.Key)) bindings[hk.Key] = hk.Value.DefaultHotkey;
             }
-            foreach (var r in reg)
+            store.Set("Bindings", bindings);
+        }
+
+        public class HotkeyBindings : Dictionary<string, string>
+        {
+            public HotkeyBindings Clone()
             {
-                store.Set(r.Key, r.Value);
+                var b = new HotkeyBindings();
+                foreach (var kv in this) b[kv.Key] = kv.Value;
+                return b;
             }
         }
     }

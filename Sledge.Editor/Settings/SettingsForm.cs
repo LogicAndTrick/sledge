@@ -1819,14 +1819,6 @@ namespace Sledge.Editor.Settings
             }
         }
 
-        private void HotkeyListDoubleClicked(object sender, MouseEventArgs e)
-        {
-            if (HotkeyList.SelectedItems.Count == 1)
-            {
-                EditHotkey((Hotkey)HotkeyList.SelectedItems[0].Tag);
-            }
-        }
-
         private void HotkeyReassignButtonClicked(object sender, EventArgs e)
         {
             if (HotkeyList.SelectedItems.Count == 1)
@@ -1890,5 +1882,10 @@ namespace Sledge.Editor.Settings
             UpdateHotkeyList();
         }
         #endregion
+
+        private void HotkeyListDoubleClicked(object sender, MouseEventArgs e)
+        {
+
+        }
     }
 }

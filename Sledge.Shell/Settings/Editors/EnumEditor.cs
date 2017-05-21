@@ -39,10 +39,6 @@ namespace Sledge.Shell.Settings.Editors
 
             Combobox.SelectedIndexChanged += (o, e) => OnValueChanged?.Invoke(this, Key);
         }
-        public void SetHint(string hint)
-        {
-            //
-        }
 
         private class EnumValue
         {

@@ -29,10 +29,6 @@ namespace Sledge.Shell.Settings.Editors
         {
             InitializeComponent();
         }
-        public void SetHint(string hint)
-        {
-            //
-        }
 
         private void PickColor(object sender, EventArgs e)
         {
