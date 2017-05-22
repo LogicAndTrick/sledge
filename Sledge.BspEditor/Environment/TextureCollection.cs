@@ -44,7 +44,7 @@ namespace Sledge.BspEditor.Environment
 
         public async Task Precache(IEnumerable<string> textures)
         {
-            var tex = new HashSet<string>(textures);
+            var tex = new HashSet<string>(textures.Select(x => x.ToLower()));
             tex.ExceptWith(_itemCache.Keys);
             if (!tex.Any()) return;
 
@@ -58,7 +58,7 @@ namespace Sledge.BspEditor.Environment
                 {
                     var t = Gimme.Fetch<TextureItem>(pack.Location, found.ToList(), x =>
                     {
-                        _itemCache[x.Name] = x;
+                        _itemCache[x.Name.ToLower()] = x;
                     });
                     tasks.Add(t);
                 }
@@ -75,6 +75,7 @@ namespace Sledge.BspEditor.Environment
 
         public async Task<TextureItem> GetTextureItem(string name)
         {
+            name = name.ToLower();
             if (_itemCache.ContainsKey(name)) return _itemCache[name];
             var packs = _packages.Where(x => x.HasTexture(name)).ToList();
             foreach (var tp in packs)
@@ -82,7 +83,7 @@ namespace Sledge.BspEditor.Environment
                 var r = await Gimme.FetchOne<TextureItem>(tp.Location, name);
                 if (r != null)
                 {
-                    _itemCache[r.Name] = r;
+                    _itemCache[r.Name.ToLower()] = r;
                     return r;
                 }
             }
@@ -91,7 +92,7 @@ namespace Sledge.BspEditor.Environment
 
         public async Task<IEnumerable<TextureItem>> GetTextureItems(IEnumerable<string> names)
         {
-            var n = names.ToList();
+            var n = names.Select(x => x.ToLower()).ToList();
             var missing = n.Where(x => !_itemCache.ContainsKey(x));
             await Precache(missing);
             return n.Where(x => _itemCache.ContainsKey(x)).Select(x => _itemCache[x]);

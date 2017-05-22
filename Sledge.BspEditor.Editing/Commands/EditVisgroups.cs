@@ -1,18 +1,15 @@
-using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Sledge.BspEditor.Commands;
-using Sledge.BspEditor.Components;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Editing.Components.Visgroup;
 using Sledge.BspEditor.Modification;
 using Sledge.BspEditor.Modification.Operations.Data;
 using Sledge.BspEditor.Primitives.MapData;
 using Sledge.Common.Shell.Commands;
-using Sledge.Common.Shell.Hotkeys;
 using Sledge.Common.Translations;
 
 namespace Sledge.BspEditor.Editing.Commands
