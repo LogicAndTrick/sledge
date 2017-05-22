@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
 using System.Threading.Tasks;
@@ -7,6 +8,9 @@ using Sledge.BspEditor.Commands;
 using Sledge.BspEditor.Components;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Editing.Components.Visgroup;
+using Sledge.BspEditor.Modification;
+using Sledge.BspEditor.Modification.Operations.Data;
+using Sledge.BspEditor.Primitives.MapData;
 using Sledge.Common.Shell.Commands;
 using Sledge.Common.Shell.Hotkeys;
 using Sledge.Common.Translations;
@@ -27,7 +31,36 @@ namespace Sledge.BspEditor.Editing.Commands
             {
                 if (vg.ShowDialog() == DialogResult.OK)
                 {
-                    // todo
+                    var nv = new List<Visgroup>();
+                    var cv = new List<Visgroup>();
+                    var dv = new List<Visgroup>();
+
+                    vg.PopulateChangeLists(document, nv, cv, dv);
+
+                    if (nv.Any() || cv.Any() || dv.Any())
+                    {
+                        var tns = new Transaction();
+
+                        if (dv.Any())
+                        {
+                            var ids = dv.Select(x => x.ID).ToList();
+                            tns.Add(new RemoveMapData(document.Map.Data.Get<Visgroup>().Where(x => ids.Contains(x.ID))));
+                        }
+
+                        if (cv.Any())
+                        {
+                            var ids = cv.Select(x => x.ID).ToList();
+                            tns.Add(new RemoveMapData(document.Map.Data.Get<Visgroup>().Where(x => ids.Contains(x.ID))));
+                            tns.Add(new AddMapData(cv));
+                        }
+
+                        if (nv.Any())
+                        {
+                            tns.Add(new AddMapData(nv));
+                        }
+
+                        await MapDocumentOperation.Perform(document, tns);
+                    }
                 }
             }
         }

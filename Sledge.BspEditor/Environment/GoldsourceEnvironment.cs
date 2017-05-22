@@ -18,10 +18,21 @@ namespace Sledge.BspEditor.Environment
     {
         public string ID { get; set; }
         public string Name { get; set; }
+
         public string BaseDirectory { get; set; }
         public string GameDirectory { get; set; }
         public string ModDirectory { get; set; }
+
         public List<string> FgdFiles { get; set; }
+        public bool IncludeFgdDirectoriesInEnvironment { get; set; }
+
+        public string ToolsDirectory { get; set; }
+        public bool IncludeToolsDirectoryInEnvironment { get; set; }
+
+        public string CsgExe { get; set; }
+        public string VisExe { get; set; }
+        public string BspExe { get; set; }
+        public string RadExe { get; set; }
 
         private IFile _root;
 
@@ -62,18 +73,19 @@ namespace Sledge.BspEditor.Environment
                     yield return Path.Combine(BaseDirectory, GameDirectory + "_hd");
                     yield return Path.Combine(BaseDirectory, GameDirectory);
                 }
+                
+                if (IncludeToolsDirectoryInEnvironment && !String.IsNullOrWhiteSpace(ToolsDirectory) && Directory.Exists(ToolsDirectory))
+                {
+                    yield return ToolsDirectory;
+                }
 
-                //todo !environment include build tools and fgd directories
-                //var b = Build;
-                //if (b != null && b.IncludePathInEnvironment)
-                //{
-                //    yield return b.Path;
-                //}
-
-                //if (Game.IncludeFgdDirectoriesInEnvironment)
-                //{
-                //    foreach (var d in Game.GetFgdDirectories()) yield return d;
-                //}
+                if (IncludeFgdDirectoriesInEnvironment)
+                {
+                    foreach (var file in FgdFiles)
+                    {
+                        if (File.Exists(file)) yield return Path.GetDirectoryName(file);
+                    }
+                }
 
                 // Editor location to the path, for sprites and the like
                 yield return Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
@@ -91,6 +103,7 @@ namespace Sledge.BspEditor.Environment
             _gameData = new Lazy<Task<GameData>>(MakeGameDataAsync);
             _data = new List<IEnvironmentData>();
             FgdFiles = new List<string>();
+            IncludeToolsDirectoryInEnvironment = IncludeToolsDirectoryInEnvironment = true;
         }
 
         private async Task<TextureCollection> MakeTextureCollectionAsync()

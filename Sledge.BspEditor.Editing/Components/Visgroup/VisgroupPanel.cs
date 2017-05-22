@@ -155,13 +155,13 @@ namespace Sledge.BspEditor.Editing.Components.Visgroup
 
         private TreeNode GetNodeForVisgroupID(long visgroupId)
         {
-            return GetAllNodes().FirstOrDefault(x => x.Tag is int && (int)x.Tag == visgroupId);
+            return GetAllNodes().FirstOrDefault(x => x.Tag is long && (long)x.Tag == visgroupId);
         }
 
-        public int? GetSelectedVisgroup()
+        public long? GetSelectedVisgroup()
         {
             var selected = VisgroupTree.SelectedNode;
-            var id = selected == null ? (int?)null : (int)selected.Tag;
+            var id = selected == null ? (long?)null : (long)selected.Tag;
             return id;
         }
 
@@ -195,11 +195,11 @@ namespace Sledge.BspEditor.Editing.Components.Visgroup
             return CheckState.Indeterminate;
         }
 
-        public Dictionary<int, CheckState> GetAllCheckStates()
+        public Dictionary<long, CheckState> GetAllCheckStates()
         {
             return GetAllNodes()
-                .Where(x => x.Tag is int)
-                .ToDictionary(x => (int) x.Tag, GetCheckState);
+                .Where(x => x.Tag is long)
+                .ToDictionary(x => (long) x.Tag, GetCheckState);
         }
 
         public void SetCheckState(long visgroupId, CheckState state)

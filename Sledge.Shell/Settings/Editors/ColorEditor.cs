@@ -36,8 +36,9 @@ namespace Sledge.Shell.Settings.Editors
             {
                 if (cp.ShowDialog() == DialogResult.OK)
                 {
-                    ColorPanel.BackColor = cp.Color;
-                    HexBox.Text = ColorTranslator.ToHtml(cp.Color).Substring(1);
+                    var c = cp.Color;
+                    ColorPanel.BackColor = c;
+                    HexBox.Text = $@"{c.R:X2}{c.G:X2}{c.B:X2}";
                     OnValueChanged?.Invoke(this, Key);
                 }
             }
@@ -58,7 +59,8 @@ namespace Sledge.Shell.Settings.Editors
         {
             if (!Regex.IsMatch(HexBox.Text, "^[0-9A-Fa-f]{6}$"))
             {
-                HexBox.Text = ColorTranslator.ToHtml(ColorPanel.BackColor).Substring(1);
+                var c = ColorPanel.BackColor;
+                HexBox.Text = $@"{c.R:X2}{c.G:X2}{c.B:X2}";
             }
         }
     }

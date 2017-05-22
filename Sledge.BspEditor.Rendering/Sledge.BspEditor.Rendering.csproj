@@ -60,7 +60,7 @@
     <Compile Include="Scene\MapDocumentSceneObjectProvider.cs" />
     <Compile Include="Scene\MapDocumentSceneObjectProviderFactory.cs" />
     <Compile Include="Scene\SceneObjectsChangedEventArgs.cs" />
-    <Compile Include="Viewport\Camera2DViewportListener.cs" />
+    <Compile Include="Viewport\OrthographicCameraViewportListener.cs" />
     <Compile Include="Viewport\CameraViewportEventListenerFactory.cs" />
     <Compile Include="Viewport\IViewportEventListenerFactory.cs" />
     <Compile Include="Viewport\PerspectiveCameraNavigationViewportListener.cs" />

@@ -5,31 +5,32 @@ using System.Linq;
 using System.Windows.Forms;
 using Sledge.BspEditor.Documents;
 using Sledge.Common;
+using Vg = Sledge.BspEditor.Primitives.MapData.Visgroup;
 
 namespace Sledge.BspEditor.Editing.Components.Visgroup
 {
     public partial class VisgroupEditForm : Form
     {
-        private readonly List<Primitives.MapData.Visgroup> _visgroups;
-        private readonly List<Primitives.MapData.Visgroup> _deleted; 
+        private readonly List<Vg> _visgroups;
+        private readonly List<Vg> _deleted; 
 
         public VisgroupEditForm(MapDocument doc)
         {
             InitializeComponent();
-            _visgroups = new List<Primitives.MapData.Visgroup>(doc.Map.Data.Get<Primitives.MapData.Visgroup>().Select(x => (Primitives.MapData.Visgroup) x.Clone()));
-            _deleted = new List<Primitives.MapData.Visgroup>();
+            _visgroups = new List<Vg>(doc.Map.Data.Get<Vg>().Select(x => (Vg) x.Clone()));
+            _deleted = new List<Vg>();
             UpdateVisgroups();
         }
 
-        public void PopulateChangeLists(MapDocument doc, List<Primitives.MapData.Visgroup> newVisgroups, List<Primitives.MapData.Visgroup> changedVisgroups, List<Primitives.MapData.Visgroup> deletedVisgroups)
+        public void PopulateChangeLists(MapDocument doc, List<Vg> newVisgroups, List<Vg> changedVisgroups, List<Vg> deletedVisgroups)
         {
             foreach (var g in _visgroups)
             {
-                var dg = doc.Map.Data.Get<Primitives.MapData.Visgroup>().FirstOrDefault(x => x.ID == g.ID);
+                var dg = doc.Map.Data.Get<Vg>().FirstOrDefault(x => x.ID == g.ID);
                 if (dg == null) newVisgroups.Add(g);
                 else if (dg.Name != g.Name || dg.Colour != g.Colour) changedVisgroups.Add(g);
             }
-            deletedVisgroups.AddRange(_deleted.Where(x => doc.Map.Data.Get<Primitives.MapData.Visgroup>().Any(y => y.ID == x.ID)));
+            deletedVisgroups.AddRange(_deleted.Where(x => doc.Map.Data.Get<Vg>().Any(y => y.ID == x.ID)));
         }
 
         private void UpdateVisgroups()
@@ -61,8 +62,8 @@ namespace Sledge.BspEditor.Editing.Components.Visgroup
 
         private void AddGroup(object sender, EventArgs e)
         {
-            var newGroup = new Primitives.MapData.Visgroup
-                               {
+            var newGroup = new Vg
+            {
                                    ID = GetNewID(),
                                    Colour = Colour.GetRandomLightColour(),
                                    Name = "New Group",

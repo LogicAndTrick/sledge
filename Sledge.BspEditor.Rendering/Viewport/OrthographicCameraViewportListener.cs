@@ -115,15 +115,15 @@ namespace Sledge.BspEditor.Rendering.Viewport
                 }
             }
 
-            var pt = Viewport.Expand(Viewport.ProperScreenToWorld(new Coordinate(e.X, e.Y, 0)));
+            var pt = Viewport.ProperScreenToWorld(new Coordinate(e.X, e.Y, 0));
             //Mediator.Publish(EditorMediator.MouseCoordinatesChanged, pt);
         }
 
         public void MouseWheel(ViewportEvent e)
         {
-            var before = Viewport.ProperScreenToWorld(e.X, e.Y);
+            var before = Viewport.Flatten(Viewport.ProperScreenToWorld(e.X, e.Y));
             Camera.Zoom *= (float) DMath.Pow(/*Sledge.Settings.View.ScrollWheelZoomMultiplier*/ 1.4m, (e.Delta < 0 ? -1 : 1));
-            var after = Viewport.ProperScreenToWorld(e.X, e.Y);
+            var after = Viewport.Flatten(Viewport.ProperScreenToWorld(e.X, e.Y));
             Camera.Position -= (after - before).ToVector3();
 
             //Mediator.Publish(EditorMediator.ViewZoomChanged, Camera.Zoom);
