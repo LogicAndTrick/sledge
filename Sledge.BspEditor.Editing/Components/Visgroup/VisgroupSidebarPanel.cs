@@ -34,7 +34,7 @@ namespace Sledge.BspEditor.Editing.Components.Visgroup
         public string Title { get; set; } = "Visgroups";
         public object Control => this;
 
-        private WeakReference<MapDocument> _activeDocument;
+        private WeakReference<MapDocument> _activeDocument = new WeakReference<MapDocument>(null);
 
         public VisgroupSidebarPanel()
         {

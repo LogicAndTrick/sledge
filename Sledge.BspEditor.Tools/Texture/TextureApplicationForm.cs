@@ -40,7 +40,7 @@ namespace Sledge.BspEditor.Tools.Texture
         // The current values of the texture property controls
         private readonly CurrentTextureProperties _currentTextureProperties;
 
-        private WeakReference<MapDocument> _document;
+        private WeakReference<MapDocument> _document = new WeakReference<MapDocument>(null);
 
         private event EventHandler DebouncedPropertiesChanged;
         private IDisposable _saveChanges;

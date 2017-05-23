@@ -47,7 +47,7 @@ namespace Sledge.BspEditor.Rendering.Converters
         public async Task<bool> Convert(SceneMapObject smo, MapDocument document, IMapObject obj)
         {
             var solid = (Solid) obj;
-            foreach (var face in solid.Faces.Where(x => ShouldBeVisible(x, document)))
+            foreach (var face in solid.Faces.Where(x => ShouldBeVisible(x, document)).ToList())
             {
                 var f = await ConvertFace(solid, face, document);
                 smo.SceneObjects.Add(face, f);
