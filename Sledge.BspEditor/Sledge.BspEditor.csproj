@@ -96,6 +96,12 @@
     <Compile Include="Controls\TableSplitControl.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Environment\Controls\GoldsourceEnvironmentEditor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Environment\Controls\GoldsourceEnvironmentEditor.Designer.cs">
+      <DependentUpon>GoldsourceEnvironmentEditor.cs</DependentUpon>
+    </Compile>
     <Compile Include="Environment\GoldsourceEnvironment.cs" />
     <Compile Include="Environment\IEnvironment.cs" />
     <Compile Include="Environment\IEnvironmentData.cs" />
@@ -197,6 +203,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Components\ClipboardSidebarPanel.resx">
       <DependentUpon>ClipboardSidebarPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Environment\Controls\GoldsourceEnvironmentEditor.resx">
+      <DependentUpon>GoldsourceEnvironmentEditor.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

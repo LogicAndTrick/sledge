@@ -22,9 +22,17 @@ namespace Sledge.BspEditor.Environment
         public string BaseDirectory { get; set; }
         public string GameDirectory { get; set; }
         public string ModDirectory { get; set; }
+        public bool LoadHdModels { get; set; }
 
         public List<string> FgdFiles { get; set; }
         public bool IncludeFgdDirectoriesInEnvironment { get; set; }
+        public string DefaultPointEntity { get; set; }
+        public string DefaultBrushEntity { get; set; }
+        public bool OverrideMapSize { get; set; }
+        public decimal MapSizeLow { get; set; }
+        public decimal MapSizeHigh { get; set; }
+
+        public decimal DefaultTextureScale { get; set; }
 
         public string ToolsDirectory { get; set; }
         public bool IncludeToolsDirectoryInEnvironment { get; set; }
