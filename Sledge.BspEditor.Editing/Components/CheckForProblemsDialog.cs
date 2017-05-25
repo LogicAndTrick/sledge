@@ -5,10 +5,12 @@ using System.Windows.Forms;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Editing.Problems;
 using Sledge.Common.Mediator;
+using Sledge.Common.Translations;
+using Sledge.Shell;
 
 namespace Sledge.BspEditor.Editing.Components
 {
-    public partial class CheckForProblemsDialog : Form
+    public partial class CheckForProblemsDialog : Form, IManualTranslate
     {
         private readonly MapDocument _document;
 
@@ -18,18 +20,35 @@ namespace Sledge.BspEditor.Editing.Components
             InitializeComponent();
         }
 
+        public void Translate(TranslationStringsCollection strings)
+        {
+            CreateHandle();
+            var prefix = GetType().FullName;
+            this.Invoke(() =>
+            {
+                Text = strings.GetString(prefix, "Title");
+                grpDetails.Text = strings.GetString(prefix, "Details");
+                btnGoToError.Text = strings.GetString(prefix, "GoToError");
+                btnFix.Text = strings.GetString(prefix, "FixError");
+                btnFixAllOfType.Text = strings.GetString(prefix, "FixAllOfType");
+                btnFixAll.Text = strings.GetString(prefix, "FixAll");
+                chkVisibleOnly.Text = strings.GetString(prefix, "VisibleObjectsOnly");
+                btnClose.Text = strings.GetString(prefix, "CloseButton");
+            });
+        }
+
         protected override void OnLoad(EventArgs e)
         {
             DoCheck();
             base.OnLoad(e);
-            CloseButton.Select();
+            btnClose.Select();
         }
 
         private List<Problem> _problems;
 
         private void DoCheck()
         {
-            _problems = ProblemChecker.Check(_document, VisibleOnlyCheckbox.Checked).ToList();
+            _problems = ProblemChecker.Check(_document, chkVisibleOnly.Checked).ToList();
             ProblemsList.BeginUpdate();
             ProblemsList.Items.Clear();
             ProblemsList.Items.AddRange(_problems.OfType<object>().ToArray());
@@ -40,10 +59,10 @@ namespace Sledge.BspEditor.Editing.Components
         {
             var sel = ProblemsList.SelectedItem as Problem;
             DescriptionTextBox.Text = sel == null ? "" : sel.Description;
-            GoToButton.Enabled = false;
-            FixButton.Enabled = sel != null && sel.Fix != null;
-            FixAllTypeButton.Enabled = sel != null && sel.Fix != null;
-            FixAllButton.Enabled = _problems.Any(x => x.Fix != null);
+            btnGoToError.Enabled = false;
+            btnFix.Enabled = sel != null && sel.Fix != null;
+            btnFixAllOfType.Enabled = sel != null && sel.Fix != null;
+            btnFixAll.Enabled = _problems.Any(x => x.Fix != null);
 
             // todo
             //if (sel != null)

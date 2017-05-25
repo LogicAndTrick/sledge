@@ -5,11 +5,13 @@ using System.Linq;
 using System.Windows.Forms;
 using Sledge.BspEditor.Documents;
 using Sledge.Common;
+using Sledge.Common.Translations;
+using Sledge.Shell;
 using Vg = Sledge.BspEditor.Primitives.MapData.Visgroup;
 
 namespace Sledge.BspEditor.Editing.Components.Visgroup
 {
-    public partial class VisgroupEditForm : Form
+    public partial class VisgroupEditForm : Form, IManualTranslate
     {
         private readonly List<Vg> _visgroups;
         private readonly List<Vg> _deleted; 
@@ -20,6 +22,22 @@ namespace Sledge.BspEditor.Editing.Components.Visgroup
             _visgroups = new List<Vg>(doc.Map.Data.Get<Vg>().Select(x => (Vg) x.Clone()));
             _deleted = new List<Vg>();
             UpdateVisgroups();
+        }
+
+        public void Translate(TranslationStringsCollection strings)
+        {
+            CreateHandle();
+            var prefix = GetType().FullName;
+            this.Invoke(() =>
+            {
+                Text = strings.GetString(prefix, "Title");
+                NameLabel.Text = strings.GetString(prefix, nameof(NameLabel));
+                ColorLabel.Text = strings.GetString(prefix, nameof(ColorLabel));
+                AddButton.Text = strings.GetString(prefix, nameof(AddButton));
+                RemoveButton.Text = strings.GetString(prefix, nameof(RemoveButton));
+                OkButton.Text = strings.GetString(prefix, nameof(OkButton));
+                CancelButton.Text = strings.GetString(prefix, nameof(CancelButton));
+            });
         }
 
         public void PopulateChangeLists(MapDocument doc, List<Vg> newVisgroups, List<Vg> changedVisgroups, List<Vg> deletedVisgroups)

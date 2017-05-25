@@ -40,6 +40,21 @@ namespace Sledge.Common.Translations
             }
         }
 
+        public void Translate(string language, object target)
+        {
+            var mt = target as IManualTranslate;
+            if (mt != null)
+            {
+                if (!Languages.ContainsKey(language)) return;
+                var strings = Languages[language];
+                mt.Translate(strings);
+            }
+            else
+            {
+                Inject(language, target);
+            }
+        }
+
         private void Inject(string language, object target)
         {
             if (target == null) return;

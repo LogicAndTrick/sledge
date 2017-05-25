@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
@@ -10,6 +11,7 @@ using Sledge.BspEditor.Modification;
 using Sledge.BspEditor.Modification.Operations.Data;
 using Sledge.BspEditor.Primitives.MapData;
 using Sledge.Common.Shell.Commands;
+using Sledge.Common.Shell.Hotkeys;
 using Sledge.Common.Translations;
 
 namespace Sledge.BspEditor.Editing.Commands
@@ -19,6 +21,8 @@ namespace Sledge.BspEditor.Editing.Commands
     [CommandID("BspEditor:Map:Visgroups")]
     public class EditVisgroups : BaseCommand
     {
+        [Import] private Lazy<ITranslationStringProvider> _translator;
+
         public override string Name { get; set; } = "Edit visgroups";
         public override string Details { get; set; } = "View and edit map visgroups";
 
@@ -26,6 +30,7 @@ namespace Sledge.BspEditor.Editing.Commands
         {
             using (var vg = new VisgroupEditForm(document))
             {
+                _translator.Value.Translate(vg);
                 if (vg.ShowDialog() == DialogResult.OK)
                 {
                     var nv = new List<Visgroup>();

@@ -16,6 +16,7 @@ namespace Sledge.BspEditor.Commands
         {
             yield return new MenuGroup("Edit", "", "History", "B");
             yield return new MenuGroup("Edit", "", "Clipboard", "D");
+            yield return new MenuGroup("Edit", "", "Group", "F");
             yield return new MenuGroup("Edit", "", "Selection", "T");
         }
     }
