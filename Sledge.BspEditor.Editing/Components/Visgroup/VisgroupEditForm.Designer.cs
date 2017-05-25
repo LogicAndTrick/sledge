@@ -28,10 +28,10 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.VisgroupPanel = new VisgroupPanel();
+            this.VisgroupPanel = new Sledge.BspEditor.Editing.Components.Visgroup.VisgroupPanel();
             this.GroupName = new System.Windows.Forms.TextBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
+            this.NameLabel = new System.Windows.Forms.Label();
+            this.ColorLabel = new System.Windows.Forms.Label();
             this.ColourPanel = new System.Windows.Forms.Panel();
             this.CancelButton = new System.Windows.Forms.Button();
             this.AddButton = new System.Windows.Forms.Button();
@@ -53,7 +53,7 @@
             this.VisgroupPanel.Size = new System.Drawing.Size(233, 323);
             this.VisgroupPanel.SortAutomaticFirst = false;
             this.VisgroupPanel.TabIndex = 0;
-            this.VisgroupPanel.VisgroupSelected += new VisgroupPanel.VisgroupSelectedEventHandler(this.SelectionChanged);
+            this.VisgroupPanel.VisgroupSelected += new Sledge.BspEditor.Editing.Components.Visgroup.VisgroupPanel.VisgroupSelectedEventHandler(this.SelectionChanged);
             // 
             // GroupName
             // 
@@ -65,25 +65,25 @@
             this.GroupName.TabIndex = 1;
             this.GroupName.TextChanged += new System.EventHandler(this.GroupNameChanged);
             // 
-            // label1
+            // NameLabel
             // 
-            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(252, 18);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(35, 13);
-            this.label1.TabIndex = 2;
-            this.label1.Text = "Name";
+            this.NameLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.NameLabel.AutoSize = true;
+            this.NameLabel.Location = new System.Drawing.Point(252, 18);
+            this.NameLabel.Name = "NameLabel";
+            this.NameLabel.Size = new System.Drawing.Size(35, 13);
+            this.NameLabel.TabIndex = 2;
+            this.NameLabel.Text = "Name";
             // 
-            // label2
+            // ColorLabel
             // 
-            this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(252, 47);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(119, 13);
-            this.label2.TabIndex = 3;
-            this.label2.Text = "Colour (click to change)";
+            this.ColorLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.ColorLabel.AutoSize = true;
+            this.ColorLabel.Location = new System.Drawing.Point(252, 47);
+            this.ColorLabel.Name = "ColorLabel";
+            this.ColorLabel.Size = new System.Drawing.Size(119, 13);
+            this.ColorLabel.TabIndex = 3;
+            this.ColorLabel.Text = "Colour (click to change)";
             // 
             // ColourPanel
             // 
@@ -152,8 +152,8 @@
             this.Controls.Add(this.OkButton);
             this.Controls.Add(this.CancelButton);
             this.Controls.Add(this.ColourPanel);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.ColorLabel);
+            this.Controls.Add(this.NameLabel);
             this.Controls.Add(this.GroupName);
             this.Controls.Add(this.VisgroupPanel);
             this.MaximizeBox = false;
@@ -171,8 +171,8 @@
 
         private VisgroupPanel VisgroupPanel;
         private System.Windows.Forms.TextBox GroupName;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label NameLabel;
+        private System.Windows.Forms.Label ColorLabel;
         private System.Windows.Forms.Panel ColourPanel;
         private System.Windows.Forms.Button CancelButton;
         private System.Windows.Forms.Button AddButton;

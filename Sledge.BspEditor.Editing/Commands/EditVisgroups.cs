@@ -16,8 +16,11 @@ namespace Sledge.BspEditor.Editing.Commands
     [AutoTranslate]
     [Export(typeof(ICommand))]
     [CommandID("BspEditor:Map:Visgroups")]
+    [DefaultHotkey("Shift+Y")]
     public class EditVisgroups : BaseCommand
     {
+        [Import] private Lazy<ITranslationStringProvider> _translator;
+
         public override string Name { get; set; } = "Edit visgroups";
         public override string Details { get; set; } = "View and edit map visgroups";
 
@@ -25,6 +28,7 @@ namespace Sledge.BspEditor.Editing.Commands
         {
             using (var vg = new VisgroupEditForm(document))
             {
+                _translator.Value.Translate(vg);
                 if (vg.ShowDialog() == DialogResult.OK)
                 {
                     // todo

@@ -31,7 +31,16 @@
                 "Name": "Copy",
                 "Details": "Copy the current selection."
             }
-
+        },
+        "Grouping": {
+            "Group": {
+                "Name": "Group",
+                "Details": "Group selected objects."
+            },
+            "Ungroup": {
+                "Name": "Ungroup",
+                "Details": "Ungroup selected groups"
+            }
         }
     },
     "Components": {

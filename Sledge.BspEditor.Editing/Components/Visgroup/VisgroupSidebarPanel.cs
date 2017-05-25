@@ -12,6 +12,7 @@ using Sledge.Common.Shell.Context;
 using Sledge.Common.Shell.Documents;
 using Sledge.Common.Shell.Hooks;
 using Sledge.Common.Translations;
+using Sledge.Shell;
 
 namespace Sledge.BspEditor.Editing.Components.Visgroup
 {
@@ -31,6 +32,11 @@ namespace Sledge.BspEditor.Editing.Components.Visgroup
         public string Title { get; set; } = "Visgroups";
         public object Control => this;
 
+        public string EditButton { set { this.Invoke(() => { btnEdit.Text = value; }); } }
+        public string SelectButton { set { this.Invoke(() => { btnSelect.Text = value; }); } }
+        public string ShowAllButton { set { this.Invoke(() => { btnShowAll.Text = value; }); } }
+        public string NewButton { set { this.Invoke(() => { btnNew.Text = value; }); } }
+
         private WeakReference<MapDocument> _activeDocument;
 
         public VisgroupSidebarPanel()
@@ -40,6 +46,7 @@ namespace Sledge.BspEditor.Editing.Components.Visgroup
             //Mediator.Subscribe(EditorMediator.DocumentAllClosed, this);
             //Mediator.Subscribe(EditorMediator.VisgroupsChanged, this);
             //Mediator.Subscribe(EditorMediator.VisgroupVisibilityChanged, this);
+            CreateHandle();
         }
 
         public bool IsInContext(IContext context)

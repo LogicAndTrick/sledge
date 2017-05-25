@@ -1,0 +1,52 @@
+﻿{
+    "@Meta": {
+        "Base": "Sledge.BspEditor.Editing", 
+        "Language": "en",
+        "Inherit": ""
+    },
+    "@Settings": {
+        
+    },
+    "Commands": {
+        "EditVisgroups": {
+            "Name": "Edit visgroups",
+            "Details": "View and edit map visgroups."
+        },
+        "OpenAboutWindow": {
+            "Name": "About Sledge",
+            "Details": "View information about this application." 
+        }
+    },
+    "Components": {
+        "Visgroup": {
+            "VisgroupEditForm": {
+                "Title": "Visgroup Editor",
+                "NameLabel": "Name",
+                "ColorLabel": "Colour (click to change)",
+                "AddButton": "Add group",
+                "RemoveButton": "Remove group",
+                "OkButton": "OK",
+                "CancelButton": "Cancel"
+            },
+            "VisgroupSidebarPanel": {
+                "EditButton": "Edit",
+                "SelectButton": "Select",
+                "ShowAllButton": "Show all",
+                "NewButton": "New"
+            }
+        },
+        "AboutDialog": {
+
+        },
+        "CheckForProblemsDialog": {
+            "Title": "Problems in Map",
+            "Details": "Details",
+            "GoToError": "Go to error",
+            "FixError": "Fix error",
+            "FixAllOfType": "Fix all of type",
+            "FixAll": "Fix all problems",
+            "VisibleObjectsOnly": "Visible objects only",
+            "CloseButton": "Close"
+        } 
+    } 
+}

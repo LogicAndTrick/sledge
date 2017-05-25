@@ -44,6 +44,12 @@ namespace Sledge.Shell.Translations
             return Task.FromResult(0);
         }
 
+        public void Translate(object target)
+        {
+            if (!_catalog.Languages.ContainsKey(Language)) return;
+            _catalog.Translate(Language, target);
+        }
+
         public string Get(string key)
         {
             if (!_catalog.Languages.ContainsKey(Language)) return null;
