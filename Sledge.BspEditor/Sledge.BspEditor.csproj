@@ -69,6 +69,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Commands\Grouping\Group.cs" />
+    <Compile Include="Commands\Grouping\Ungroup.cs" />
     <Compile Include="Documents\BspSourceDocumentLoader.cs" />
     <Compile Include="Commands\Clipboard\Copy.cs" />
     <Compile Include="Commands\Clipboard\Cut.cs" />
