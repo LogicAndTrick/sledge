@@ -29,11 +29,18 @@ namespace Sledge.BspEditor.Environment.Controls
 
         public SettingKey Key { get; set; }
 
+        private Label _nameLabel;
+        private TextBox _nameBox;
+
         public EnvironmentCollectionEditor(IEnumerable<IEnvironmentFactory> factories)
         {
             _factories = factories;
             InitializeComponent();
             Anchor = AnchorStyles.Top | AnchorStyles.Bottom;
+
+            _nameLabel = new Label {Text = "Name", Padding = new Padding(0, 6, 0, 0), AutoSize = true};
+            _nameBox = new TextBox{Width = 250};
+            _nameBox.TextChanged += UpdateEnvironment;
         }
 
         private void UpdateTreeNodes()
@@ -65,26 +72,33 @@ namespace Sledge.BspEditor.Environment.Controls
         }
 
         private IEnvironmentEditor _currentEditor = null;
-        private TreeNode _lastSelected = null;
 
         private void EnvironmentSelected(object sender, TreeViewEventArgs e)
         {
-            if (_lastSelected != null) _lastSelected.BackColor = Color.Transparent;
             if (_currentEditor != null) _currentEditor.EnvironmentChanged -= UpdateEnvironment;
 
-            _lastSelected = null;
             _currentEditor = null;
             pnlSettings.Controls.Clear();
 
             var node = e.Node?.Tag as SerialisedEnvironment;
             if (node != null)
             {
-                e.Node.BackColor = Color.CornflowerBlue;
-                _lastSelected = e.Node;
-
                 var factory = _factories.FirstOrDefault(x => x.TypeName == node.Type);
                 if (factory != null)
                 {
+                    var fp = new FlowLayoutPanel
+                    {
+                        Height = 30,
+                        Width = 400,
+                        FlowDirection = FlowDirection.LeftToRight,
+                        Anchor = AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Top
+                    };
+                    fp.Controls.Add(_nameLabel);
+                    fp.Controls.Add(_nameBox);
+                    pnlSettings.Controls.Add(fp);
+
+                    _nameBox.Text = node.Name;
+
                     var des = factory.Deserialise(node);
                     _currentEditor = factory.CreateEditor();
                     pnlSettings.Controls.Add(_currentEditor.Control);
@@ -99,10 +113,12 @@ namespace Sledge.BspEditor.Environment.Controls
             var node = treEnvironments.SelectedNode?.Tag as SerialisedEnvironment;
             if (node != null && _currentEditor != null)
             {
+                treEnvironments.SelectedNode.Text = _nameBox.Text;
                 var factory = _factories.FirstOrDefault(x => x.TypeName == node.Type);
                 if (factory != null)
                 {
                     var ser = factory.Serialise(_currentEditor.Environment);
+                    node.Name = _nameBox.Text;
                     node.Properties = ser.Properties;
                 }
                 OnValueChanged?.Invoke(this, Key);

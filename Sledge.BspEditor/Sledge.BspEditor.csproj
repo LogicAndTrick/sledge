@@ -102,6 +102,7 @@
     <Compile Include="Environment\Controls\EnvironmentCollectionEditor.Designer.cs">
       <DependentUpon>EnvironmentCollectionEditor.cs</DependentUpon>
     </Compile>
+    <Compile Include="Environment\Goldsource\EmptyEnvironment.cs" />
     <Compile Include="Environment\Goldsource\GoldsourceEnvironmentEditor.cs">
       <SubType>UserControl</SubType>
     </Compile>

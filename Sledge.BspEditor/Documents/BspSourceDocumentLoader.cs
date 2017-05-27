@@ -16,6 +16,7 @@ namespace Sledge.BspEditor.Documents
     public class BspSourceDocumentLoader : IDocumentLoader
     {
         [ImportMany] private IEnumerable<Lazy<IBspSourceProvider>> _providers;
+        [Import] private EnvironmentRegister _environments;
 
         public IEnumerable<FileExtensionInfo> SupportedFileExtensions
         {
@@ -34,17 +35,13 @@ namespace Sledge.BspEditor.Documents
 
         public async Task<IEnvironment> GetEnvironment()
         {
-            return new GoldsourceEnvironment
+            // todo etc
+            foreach (var se in _environments.GetSerialisedEnvironments())
             {
-                BaseDirectory = @"F:\Steam\SteamApps\common\Half-Life",
-                GameDirectory = "valve",
-                ModDirectory =  "valve",
-                Name = "Half-Life",
-                FgdFiles =
-                {
-                    @"D:\Github\sledge\_Resources\FGD\Half-Life.fgd"
-                }
-            };
+                return _environments.GetEnvironment(se.ID);
+            }
+
+            return new EmptyEnvironment();
         }
 
         public async Task<IDocument> CreateBlank()

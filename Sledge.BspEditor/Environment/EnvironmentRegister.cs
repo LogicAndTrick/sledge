@@ -7,12 +7,29 @@ using Sledge.Common.Shell.Settings;
 
 namespace Sledge.BspEditor.Environment
 {
+    [Export]
     [Export(typeof(ISettingsContainer))]
     [Export(typeof(ISettingEditorFactory))]
     public class EnvironmentRegister : ISettingsContainer, ISettingEditorFactory
     {
         [ImportMany] private IEnumerable<Lazy<IEnvironmentFactory>> _factories;
         private EnvironmentCollection _environments = new EnvironmentCollection();
+
+        public IEnumerable<SerialisedEnvironment> GetSerialisedEnvironments()
+        {
+            return _environments;
+        }
+
+        public IEnvironment GetEnvironment(string id)
+        {
+            var env = _environments.FirstOrDefault(x => x.ID == id);
+            if (env == null) return null;
+
+            var fac = _factories.FirstOrDefault(x => x.Value.TypeName == env.Type);
+            if (fac == null) return null;
+
+            return fac.Value.Deserialise(env);
+        }
 
         public bool Supports(SettingKey key)
         {
