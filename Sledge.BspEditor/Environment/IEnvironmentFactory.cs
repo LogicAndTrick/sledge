@@ -11,6 +11,7 @@ namespace Sledge.BspEditor.Environment
         IEnvironment Deserialise(SerialisedEnvironment environment);
         SerialisedEnvironment Serialise(IEnvironment environment);
 
+        IEnvironment CreateEnvironment();
         IEnvironmentEditor CreateEditor();
     }
 }

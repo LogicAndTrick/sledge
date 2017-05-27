@@ -28,10 +28,14 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.treEnvironments = new System.Windows.Forms.TreeView();
-            this.btnAdd = new System.Windows.Forms.Button();
             this.btnRemove = new System.Windows.Forms.Button();
             this.pnlSettings = new System.Windows.Forms.FlowLayoutPanel();
+            this.btnAdd = new Sledge.Shell.Controls.DropdownButton();
+            this.ctxEnvironmentMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.noEnvironmentsFoundToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.ctxEnvironmentMenu.SuspendLayout();
             this.SuspendLayout();
             // 
             // treEnvironments
@@ -44,17 +48,6 @@
             this.treEnvironments.Size = new System.Drawing.Size(157, 291);
             this.treEnvironments.TabIndex = 0;
             this.treEnvironments.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.EnvironmentSelected);
-            // 
-            // btnAdd
-            // 
-            this.btnAdd.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnAdd.Location = new System.Drawing.Point(4, 300);
-            this.btnAdd.Name = "btnAdd";
-            this.btnAdd.Size = new System.Drawing.Size(75, 23);
-            this.btnAdd.TabIndex = 1;
-            this.btnAdd.Text = "Add";
-            this.btnAdd.UseVisualStyleBackColor = true;
-            this.btnAdd.Click += new System.EventHandler(this.AddEnvironment);
             // 
             // btnRemove
             // 
@@ -79,16 +72,42 @@
             this.pnlSettings.Size = new System.Drawing.Size(506, 320);
             this.pnlSettings.TabIndex = 2;
             // 
+            // btnAdd
+            // 
+            this.btnAdd.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnAdd.Location = new System.Drawing.Point(4, 300);
+            this.btnAdd.Menu = this.ctxEnvironmentMenu;
+            this.btnAdd.Name = "btnAdd";
+            this.btnAdd.Size = new System.Drawing.Size(75, 23);
+            this.btnAdd.TabIndex = 3;
+            this.btnAdd.Text = "Add";
+            this.btnAdd.UseVisualStyleBackColor = true;
+            // 
+            // ctxEnvironmentMenu
+            // 
+            this.ctxEnvironmentMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.noEnvironmentsFoundToolStripMenuItem});
+            this.ctxEnvironmentMenu.Name = "ctxEnvironmentMenu";
+            this.ctxEnvironmentMenu.Size = new System.Drawing.Size(205, 26);
+            // 
+            // noEnvironmentsFoundToolStripMenuItem
+            // 
+            this.noEnvironmentsFoundToolStripMenuItem.Enabled = false;
+            this.noEnvironmentsFoundToolStripMenuItem.Name = "noEnvironmentsFoundToolStripMenuItem";
+            this.noEnvironmentsFoundToolStripMenuItem.Size = new System.Drawing.Size(204, 22);
+            this.noEnvironmentsFoundToolStripMenuItem.Text = "No environments found!";
+            // 
             // EnvironmentCollectionEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.btnAdd);
             this.Controls.Add(this.pnlSettings);
             this.Controls.Add(this.btnRemove);
-            this.Controls.Add(this.btnAdd);
             this.Controls.Add(this.treEnvironments);
             this.Name = "EnvironmentCollectionEditor";
             this.Size = new System.Drawing.Size(675, 326);
+            this.ctxEnvironmentMenu.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -96,8 +115,10 @@
         #endregion
 
         private System.Windows.Forms.TreeView treEnvironments;
-        private System.Windows.Forms.Button btnAdd;
         private System.Windows.Forms.Button btnRemove;
         private System.Windows.Forms.FlowLayoutPanel pnlSettings;
+        private Shell.Controls.DropdownButton btnAdd;
+        private System.Windows.Forms.ContextMenuStrip ctxEnvironmentMenu;
+        private System.Windows.Forms.ToolStripMenuItem noEnvironmentsFoundToolStripMenuItem;
     }
 }

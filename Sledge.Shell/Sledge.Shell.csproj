@@ -101,6 +101,9 @@
     <Compile Include="Controls\DockedPanel.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Controls\DropdownButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Controls\TextSidebarPanel.cs">
       <SubType>UserControl</SubType>
     </Compile>

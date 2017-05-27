@@ -4,11 +4,14 @@ using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using Sledge.BspEditor.Environment;
+using Sledge.BspEditor.Environment.Controls;
 using Sledge.BspEditor.Environment.Goldsource;
 using Sledge.BspEditor.Primitives;
 using Sledge.BspEditor.Providers;
 using Sledge.Common.Shell.Documents;
+using Sledge.Shell;
 
 namespace Sledge.BspEditor.Documents
 {
@@ -33,14 +36,25 @@ namespace Sledge.BspEditor.Documents
             return provider.SupportedFileExtensions.Any(x => x.Matches(location));
         }
 
-        public async Task<IEnvironment> GetEnvironment()
+        private async Task<IEnvironment> GetEnvironment()
         {
-            // todo etc
-            foreach (var se in _environments.GetSerialisedEnvironments())
+            var envs = _environments.GetSerialisedEnvironments().ToList();
+            SerialisedEnvironment chosenEnvironment = null;
+            if (envs.Count == 1)
             {
-                return _environments.GetEnvironment(se.ID);
+                chosenEnvironment = envs[0];
+            }
+            else if (envs.Count > 1)
+            {
+                using (var esf = new EnvironmentSelectionForm(envs))
+                {
+                    var result = await esf.ShowDialogAsync();
+                    if (result != DialogResult.OK) return null;
+                    chosenEnvironment = esf.SelectedEnvironment;
+                }
             }
 
+            if (chosenEnvironment != null) return _environments.GetEnvironment(chosenEnvironment.ID);
             return new EmptyEnvironment();
         }
 

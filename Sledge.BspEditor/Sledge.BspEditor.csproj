@@ -102,6 +102,12 @@
     <Compile Include="Environment\Controls\EnvironmentCollectionEditor.Designer.cs">
       <DependentUpon>EnvironmentCollectionEditor.cs</DependentUpon>
     </Compile>
+    <Compile Include="Environment\Controls\EnvironmentSelectionForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Environment\Controls\EnvironmentSelectionForm.Designer.cs">
+      <DependentUpon>EnvironmentSelectionForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Environment\Goldsource\EmptyEnvironment.cs" />
     <Compile Include="Environment\Goldsource\GoldsourceEnvironmentEditor.cs">
       <SubType>UserControl</SubType>
@@ -212,6 +218,10 @@
       <Project>{c7bd4ac8-1f8d-4520-af2d-d279c0601ab4}</Project>
       <Name>Sledge.Providers</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Sledge.Shell\Sledge.Shell.csproj">
+      <Project>{1E0BEB41-CF2E-4F48-838E-452C1DCF575F}</Project>
+      <Name>Sledge.Shell</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Components\ClipboardSidebarPanel.resx">
@@ -219,6 +229,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Environment\Controls\EnvironmentCollectionEditor.resx">
       <DependentUpon>EnvironmentCollectionEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Environment\Controls\EnvironmentSelectionForm.resx">
+      <DependentUpon>EnvironmentSelectionForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Environment\Goldsource\GoldsourceEnvironmentEditor.resx">
       <DependentUpon>GoldsourceEnvironmentEditor.cs</DependentUpon>

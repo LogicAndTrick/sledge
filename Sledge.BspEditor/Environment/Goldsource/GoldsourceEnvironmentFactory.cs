@@ -98,6 +98,11 @@ namespace Sledge.BspEditor.Environment.Goldsource
             return se;
         }
 
+        public IEnvironment CreateEnvironment()
+        {
+            return new GoldsourceEnvironment();
+        }
+
         public IEnvironmentEditor CreateEditor()
         {
             return new GoldsourceEnvironmentEditor();

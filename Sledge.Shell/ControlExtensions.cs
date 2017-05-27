@@ -16,5 +16,11 @@ namespace Sledge.Shell
             if (control.InvokeRequired) control.Invoke((MethodInvoker) delegate { action(); });
             else action();
         }
+
+        public static async Task<DialogResult> ShowDialogAsync(this Form form)
+        {
+            await Task.Yield();
+            return form.ShowDialog();
+        }
     }
 }

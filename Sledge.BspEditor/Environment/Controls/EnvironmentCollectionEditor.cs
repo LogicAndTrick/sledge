@@ -9,7 +9,7 @@ namespace Sledge.BspEditor.Environment.Controls
 {
     public partial class EnvironmentCollectionEditor : UserControl, ISettingEditor
     {
-        private readonly IEnumerable<IEnvironmentFactory> _factories;
+        private readonly List<IEnvironmentFactory> _factories;
         private EnvironmentCollection _value;
         public event EventHandler<SettingKey> OnValueChanged;
 
@@ -34,13 +34,24 @@ namespace Sledge.BspEditor.Environment.Controls
 
         public EnvironmentCollectionEditor(IEnumerable<IEnvironmentFactory> factories)
         {
-            _factories = factories;
+            _factories = factories.ToList();
             InitializeComponent();
             Anchor = AnchorStyles.Top | AnchorStyles.Bottom;
 
             _nameLabel = new Label {Text = "Name", Padding = new Padding(0, 6, 0, 0), AutoSize = true};
             _nameBox = new TextBox{Width = 250};
             _nameBox.TextChanged += UpdateEnvironment;
+
+            if (_factories.Any())
+            {
+                ctxEnvironmentMenu.Items.Clear();
+                foreach (var ef in _factories)
+                {
+                    var mi = new ToolStripMenuItem(ef.Description) { Tag = ef };
+                    mi.Click += AddEnvironment;
+                    ctxEnvironmentMenu.Items.Add(mi);
+                }
+            }
         }
 
         private void UpdateTreeNodes()
@@ -63,12 +74,30 @@ namespace Sledge.BspEditor.Environment.Controls
 
         private void AddEnvironment(object sender, EventArgs e)
         {
-
+            var factory = (sender as ToolStripItem)?.Tag as IEnvironmentFactory;
+            if (factory != null && _value != null)
+            {
+                var newEnv = new SerialisedEnvironment
+                {
+                    Name = "New Environment",
+                    Type = factory.TypeName
+                };
+                _value.Add(newEnv);
+                UpdateTreeNodes();
+                OnValueChanged?.Invoke(this, Key);
+            }
         }
 
         private void RemoveEnvironment(object sender, EventArgs e)
         {
-
+            var node = treEnvironments.SelectedNode?.Tag as SerialisedEnvironment;
+            if (node != null && _value != null)
+            {
+                _value.Remove(node);
+                UpdateTreeNodes();
+                OnValueChanged?.Invoke(this, Key);
+                EnvironmentSelected(null, null);
+            }
         }
 
         private IEnvironmentEditor _currentEditor = null;
@@ -80,7 +109,7 @@ namespace Sledge.BspEditor.Environment.Controls
             _currentEditor = null;
             pnlSettings.Controls.Clear();
 
-            var node = e.Node?.Tag as SerialisedEnvironment;
+            var node = e?.Node?.Tag as SerialisedEnvironment;
             if (node != null)
             {
                 var factory = _factories.FirstOrDefault(x => x.TypeName == node.Type);
