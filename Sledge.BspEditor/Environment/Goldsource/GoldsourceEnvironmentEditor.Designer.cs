@@ -1,4 +1,4 @@
-﻿namespace Sledge.BspEditor.Environment.Controls
+namespace Sledge.BspEditor.Environment.Goldsource
 {
     partial class GoldsourceEnvironmentEditor
     {
@@ -58,10 +58,10 @@
             this.grpDirectories = new System.Windows.Forms.GroupBox();
             this.grpFgds = new System.Windows.Forms.GroupBox();
             this.grpBuildTools = new System.Windows.Forms.GroupBox();
-            this.SelectedBuildIncludePathInEnvironment = new System.Windows.Forms.CheckBox();
+            this.chkIncludeToolsDirectory = new System.Windows.Forms.CheckBox();
             this.lblBuildExeFolder = new System.Windows.Forms.Label();
             this.lblBuildBSP = new System.Windows.Forms.Label();
-            this.SelectedBuildExeFolder = new System.Windows.Forms.TextBox();
+            this.txtBuildToolsDirectory = new System.Windows.Forms.TextBox();
             this.lblBuildCSG = new System.Windows.Forms.Label();
             this.cmbRadExe = new System.Windows.Forms.ComboBox();
             this.cmbBspExe = new System.Windows.Forms.ComboBox();
@@ -106,6 +106,7 @@
             this.txtGameDir.Size = new System.Drawing.Size(288, 20);
             this.txtGameDir.TabIndex = 13;
             this.txtGameDir.Text = "example: C:\\Sierra\\Half-Life";
+            this.txtGameDir.TextChanged += new System.EventHandler(this.GameDirectoryTextChanged);
             // 
             // lblGameDir
             // 
@@ -124,6 +125,7 @@
             this.btnGameDirBrowse.TabIndex = 15;
             this.btnGameDirBrowse.Text = "Browse...";
             this.btnGameDirBrowse.UseVisualStyleBackColor = true;
+            this.btnGameDirBrowse.Click += new System.EventHandler(this.BrowseGameDirectory);
             // 
             // lblGameExe
             // 
@@ -196,6 +198,7 @@
             this.btnAddFgd.TabIndex = 27;
             this.btnAddFgd.Text = "Add...";
             this.btnAddFgd.UseVisualStyleBackColor = true;
+            this.btnAddFgd.Click += new System.EventHandler(this.BrowseFgd);
             // 
             // lblDefaultBrushEntity
             // 
@@ -214,6 +217,7 @@
             this.btnRemoveFgd.TabIndex = 28;
             this.btnRemoveFgd.Text = "Remove";
             this.btnRemoveFgd.UseVisualStyleBackColor = true;
+            this.btnRemoveFgd.Click += new System.EventHandler(this.RemoveFgd);
             // 
             // lblDefaultPointEntity
             // 
@@ -401,10 +405,10 @@
             // 
             // grpBuildTools
             // 
-            this.grpBuildTools.Controls.Add(this.SelectedBuildIncludePathInEnvironment);
+            this.grpBuildTools.Controls.Add(this.chkIncludeToolsDirectory);
             this.grpBuildTools.Controls.Add(this.lblBuildExeFolder);
             this.grpBuildTools.Controls.Add(this.lblBuildBSP);
-            this.grpBuildTools.Controls.Add(this.SelectedBuildExeFolder);
+            this.grpBuildTools.Controls.Add(this.txtBuildToolsDirectory);
             this.grpBuildTools.Controls.Add(this.lblBuildCSG);
             this.grpBuildTools.Controls.Add(this.cmbRadExe);
             this.grpBuildTools.Controls.Add(this.cmbBspExe);
@@ -420,16 +424,16 @@
             this.grpBuildTools.TabStop = false;
             this.grpBuildTools.Text = "Build Tools";
             // 
-            // SelectedBuildIncludePathInEnvironment
+            // chkIncludeToolsDirectory
             // 
-            this.SelectedBuildIncludePathInEnvironment.Checked = true;
-            this.SelectedBuildIncludePathInEnvironment.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.SelectedBuildIncludePathInEnvironment.Location = new System.Drawing.Point(75, 64);
-            this.SelectedBuildIncludePathInEnvironment.Name = "SelectedBuildIncludePathInEnvironment";
-            this.SelectedBuildIncludePathInEnvironment.Size = new System.Drawing.Size(293, 24);
-            this.SelectedBuildIncludePathInEnvironment.TabIndex = 33;
-            this.SelectedBuildIncludePathInEnvironment.Text = "Automatically include textures found in this directory";
-            this.SelectedBuildIncludePathInEnvironment.UseVisualStyleBackColor = true;
+            this.chkIncludeToolsDirectory.Checked = true;
+            this.chkIncludeToolsDirectory.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkIncludeToolsDirectory.Location = new System.Drawing.Point(75, 64);
+            this.chkIncludeToolsDirectory.Name = "chkIncludeToolsDirectory";
+            this.chkIncludeToolsDirectory.Size = new System.Drawing.Size(293, 24);
+            this.chkIncludeToolsDirectory.TabIndex = 33;
+            this.chkIncludeToolsDirectory.Text = "Automatically include textures found in this directory";
+            this.chkIncludeToolsDirectory.UseVisualStyleBackColor = true;
             // 
             // lblBuildExeFolder
             // 
@@ -450,13 +454,14 @@
             this.lblBuildBSP.Text = "BSP";
             this.lblBuildBSP.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // SelectedBuildExeFolder
+            // txtBuildToolsDirectory
             // 
-            this.SelectedBuildExeFolder.Location = new System.Drawing.Point(75, 38);
-            this.SelectedBuildExeFolder.Name = "SelectedBuildExeFolder";
-            this.SelectedBuildExeFolder.Size = new System.Drawing.Size(288, 20);
-            this.SelectedBuildExeFolder.TabIndex = 22;
-            this.SelectedBuildExeFolder.Text = "example: C:\\hammer_alt";
+            this.txtBuildToolsDirectory.Location = new System.Drawing.Point(75, 38);
+            this.txtBuildToolsDirectory.Name = "txtBuildToolsDirectory";
+            this.txtBuildToolsDirectory.Size = new System.Drawing.Size(288, 20);
+            this.txtBuildToolsDirectory.TabIndex = 22;
+            this.txtBuildToolsDirectory.Text = "example: C:\\hammer_alt";
+            this.txtBuildToolsDirectory.TextChanged += new System.EventHandler(this.BuildToolsDirectoryTextChanged);
             // 
             // lblBuildCSG
             // 
@@ -529,6 +534,7 @@
             this.btnBuildToolsBrowse.TabIndex = 32;
             this.btnBuildToolsBrowse.Text = "Browse...";
             this.btnBuildToolsBrowse.UseVisualStyleBackColor = true;
+            this.btnBuildToolsBrowse.Click += new System.EventHandler(this.BrowseBuildToolsDirectory);
             // 
             // grpTextures
             // 
@@ -594,10 +600,10 @@
         private System.Windows.Forms.GroupBox grpDirectories;
         private System.Windows.Forms.GroupBox grpFgds;
         private System.Windows.Forms.GroupBox grpBuildTools;
-        private System.Windows.Forms.CheckBox SelectedBuildIncludePathInEnvironment;
+        private System.Windows.Forms.CheckBox chkIncludeToolsDirectory;
         private System.Windows.Forms.Label lblBuildExeFolder;
         private System.Windows.Forms.Label lblBuildBSP;
-        private System.Windows.Forms.TextBox SelectedBuildExeFolder;
+        private System.Windows.Forms.TextBox txtBuildToolsDirectory;
         private System.Windows.Forms.Label lblBuildCSG;
         private System.Windows.Forms.ComboBox cmbRadExe;
         private System.Windows.Forms.ComboBox cmbBspExe;

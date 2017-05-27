@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Sledge.BspEditor.Environment;
+using Sledge.BspEditor.Environment.Goldsource;
 using Sledge.BspEditor.Primitives;
 using Sledge.BspEditor.Providers;
 using Sledge.Common.Shell.Documents;

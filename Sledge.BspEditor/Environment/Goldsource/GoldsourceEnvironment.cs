@@ -7,12 +7,11 @@ using System.Reactive.Threading.Tasks;
 using System.Reflection;
 using System.Threading.Tasks;
 using LogicAndTrick.Gimme;
-using Sledge.BspEditor.Primitives;
 using Sledge.DataStructures.GameData;
 using Sledge.FileSystem;
 using Sledge.Providers.Texture;
 
-namespace Sledge.BspEditor.Environment
+namespace Sledge.BspEditor.Environment.Goldsource
 {
     public class GoldsourceEnvironment : IEnvironment
     {
@@ -22,6 +21,7 @@ namespace Sledge.BspEditor.Environment
         public string BaseDirectory { get; set; }
         public string GameDirectory { get; set; }
         public string ModDirectory { get; set; }
+        public string GameExe { get; set; }
         public bool LoadHdModels { get; set; }
 
         public List<string> FgdFiles { get; set; }
@@ -106,7 +106,6 @@ namespace Sledge.BspEditor.Environment
 
         public GoldsourceEnvironment()
         {
-            ID = "GSE-" + Convert.ToString(UniqueNumberGenerator.Instance.Next("Environment"));
             _textureCollection = new Lazy<Task<TextureCollection>>(MakeTextureCollectionAsync);
             _gameData = new Lazy<Task<GameData>>(MakeGameDataAsync);
             _data = new List<IEnvironmentData>();

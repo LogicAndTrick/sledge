@@ -96,15 +96,27 @@
     <Compile Include="Controls\TableSplitControl.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Environment\Controls\GoldsourceEnvironmentEditor.cs">
+    <Compile Include="Environment\Controls\EnvironmentCollectionEditor.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Environment\Controls\GoldsourceEnvironmentEditor.Designer.cs">
+    <Compile Include="Environment\Controls\EnvironmentCollectionEditor.Designer.cs">
+      <DependentUpon>EnvironmentCollectionEditor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Environment\Goldsource\GoldsourceEnvironmentEditor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Environment\Goldsource\GoldsourceEnvironmentEditor.Designer.cs">
       <DependentUpon>GoldsourceEnvironmentEditor.cs</DependentUpon>
     </Compile>
-    <Compile Include="Environment\GoldsourceEnvironment.cs" />
+    <Compile Include="Environment\EnvironmentCollection.cs" />
+    <Compile Include="Environment\EnvironmentRegister.cs" />
+    <Compile Include="Environment\Goldsource\GoldsourceEnvironment.cs" />
+    <Compile Include="Environment\Goldsource\GoldsourceEnvironmentFactory.cs" />
     <Compile Include="Environment\IEnvironment.cs" />
     <Compile Include="Environment\IEnvironmentData.cs" />
+    <Compile Include="Environment\IEnvironmentEditor.cs" />
+    <Compile Include="Environment\IEnvironmentFactory.cs" />
+    <Compile Include="Environment\SerialisedEnvironment.cs" />
     <Compile Include="Environment\TextureCollection.cs" />
     <Compile Include="Grid\GridLine.cs" />
     <Compile Include="Grid\GridLineType.cs" />
@@ -204,7 +216,10 @@
     <EmbeddedResource Include="Components\ClipboardSidebarPanel.resx">
       <DependentUpon>ClipboardSidebarPanel.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Environment\Controls\GoldsourceEnvironmentEditor.resx">
+    <EmbeddedResource Include="Environment\Controls\EnvironmentCollectionEditor.resx">
+      <DependentUpon>EnvironmentCollectionEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Environment\Goldsource\GoldsourceEnvironmentEditor.resx">
       <DependentUpon>GoldsourceEnvironmentEditor.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
