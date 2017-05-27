@@ -33,8 +33,8 @@ namespace Sledge.Shell.Registers
             foreach (var export in _sidebarComponents)
             {
                 var ty = export.Value.GetType();
-                var mia = ty.GetCustomAttributes(typeof(SidebarComponentAttribute), false).OfType<SidebarComponentAttribute>().FirstOrDefault();
-                Add(export.Value, mia?.OrderHint);
+                var hint = OrderHintAttribute.GetOrderHint(ty);
+                Add(export.Value, hint);
                 Log.Debug("Sidebar", "Loaded: " + export.Value.GetType().FullName);
             }
 

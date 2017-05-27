@@ -8,7 +8,7 @@ using Sledge.Common.Shell.Context;
 namespace Sledge.BspEditor.Tools.Selection
 {
     [Export(typeof(ISidebarComponent))]
-    [SidebarComponent(OrderHint = "F")]
+    [OrderHint("F")]
     public partial class SelectToolSidebarPanel : UserControl, ISidebarComponent
     {
         public string Title => "Selection Tool";

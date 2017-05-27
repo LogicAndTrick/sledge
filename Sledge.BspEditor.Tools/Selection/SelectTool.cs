@@ -36,6 +36,7 @@ namespace Sledge.BspEditor.Tools.Selection
     /// </summary>
     [Export(typeof(ITool))]
     [Export(typeof(ISettingsContainer))]
+    [OrderHint("A")]
     public class SelectTool : BaseDraggableTool, ISettingsContainer
     {
         private readonly BoxDraggableState _emptyBox;

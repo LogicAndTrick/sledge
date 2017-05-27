@@ -23,6 +23,7 @@ namespace Sledge.BspEditor.Tools.Decal
     /// The decal will be created with the current texture in the texture toolbar.
     /// </summary>
     [Export(typeof(ITool))]
+    [OrderHint("L")]
     class DecalTool : BaseTool
     {
         public DecalTool()

@@ -21,7 +21,7 @@ namespace Sledge.BspEditor.Tools.Texture
     [AutoTranslate]
     [Export(typeof(ISidebarComponent))]
     [Export(typeof(IInitialiseHook))]
-    [SidebarComponent(OrderHint = "B")]
+    [OrderHint("B")]
     public partial class TextureSidebarPanel : UserControl, ISidebarComponent, IInitialiseHook
     {
         public Task OnInitialise()

@@ -22,7 +22,7 @@ namespace Sledge.Shell.Registers
         
         public Task OnInitialise()
         {
-            foreach (var si in _statusItems.OrderBy(x => x.Value.OrderHint))
+            foreach (var si in _statusItems.OrderBy(x => OrderHintAttribute.GetOrderHint(x.Value.GetType())))
             {
                 Add(si.Value);
             }

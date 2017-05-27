@@ -6,7 +6,7 @@ using Sledge.Shell.Controls;
 namespace Sledge.BspEditor.Tools.Brush.Brushes.Controls
 {
     [Export(typeof(ISidebarComponent))]
-    [SidebarComponent(OrderHint = "H")]
+    [OrderHint("H")]
     public class BrushHelpSidebarPanel : TextSidebarPanel
     {
         public override string Title => "Brush Tool";

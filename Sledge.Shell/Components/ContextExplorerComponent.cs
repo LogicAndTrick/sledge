@@ -13,7 +13,7 @@ namespace Sledge.Shell.Components
 {
     [AutoTranslate]
     [Export(typeof(ISidebarComponent))]
-    [SidebarComponent(OrderHint = "Y")]
+    [OrderHint("Y")]
     public class ContextExplorerComponent : ISidebarComponent
     {
         private readonly ListBox _control;

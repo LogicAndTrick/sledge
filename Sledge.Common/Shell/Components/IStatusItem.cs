@@ -12,7 +12,6 @@ namespace Sledge.Common.Shell.Components
         string ID { get; }
         int Width { get; }
         bool HasBorder { get; }
-        string OrderHint { get; }
         string Text { get; }
 
         event EventHandler<string> TextChanged;

@@ -46,6 +46,7 @@ namespace Sledge.BspEditor.Environment.Controls
 
         private void SelectGame(SerialisedEnvironment environment)
         {
+            DialogResult = DialogResult.OK;
             SelectedEnvironment = environment;
             Close();
         }

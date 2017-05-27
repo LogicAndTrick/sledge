@@ -22,6 +22,7 @@ using Camera = Sledge.BspEditor.Primitives.MapData.Camera;
 namespace Sledge.BspEditor.Tools
 {
     [Export(typeof(ITool))]
+    [OrderHint("D")]
     public class CameraTool : BaseTool
     {
         private enum State

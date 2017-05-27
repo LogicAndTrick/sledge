@@ -25,6 +25,7 @@ using Line = Sledge.Rendering.Scenes.Renderables.Line;
 namespace Sledge.BspEditor.Tools.Entity
 {
     [Export(typeof(ITool))]
+    [OrderHint("F")]
     public class EntityTool : BaseTool
     {
         private enum EntityState

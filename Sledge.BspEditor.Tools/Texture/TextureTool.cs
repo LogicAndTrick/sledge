@@ -30,6 +30,7 @@ namespace Sledge.BspEditor.Tools.Texture
 {
     [Export(typeof(ITool))]
     [Export]
+    [OrderHint("J")]
     public class TextureTool : BaseTool
     {
         public TextureTool()

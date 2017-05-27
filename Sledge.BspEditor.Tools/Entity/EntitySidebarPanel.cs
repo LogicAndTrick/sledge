@@ -16,7 +16,7 @@ namespace Sledge.BspEditor.Tools.Entity
 {
     [AutoTranslate]
     [Export(typeof(ISidebarComponent))]
-    [SidebarComponent(OrderHint = "F")]
+    [OrderHint("F")]
     public partial class EntitySidebarPanel : UserControl, ISidebarComponent
     {
         public string Title { get; set; } = "Entities";

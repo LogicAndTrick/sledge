@@ -21,7 +21,7 @@ namespace Sledge.BspEditor.Editing.Components.Visgroup
     [AutoTranslate]
     [Export(typeof(ISidebarComponent))]
     [Export(typeof(IInitialiseHook))]
-    [SidebarComponent(OrderHint = "G")]
+    [OrderHint("G")]
     public partial class VisgroupSidebarPanel : UserControl, ISidebarComponent, IInitialiseHook
     {
         public Task OnInitialise()

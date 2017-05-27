@@ -27,6 +27,7 @@ using Vertex = Sledge.Rendering.Scenes.Renderables.Vertex;
 namespace Sledge.BspEditor.Tools.Clip
 {
     [Export(typeof(ITool))]
+    [OrderHint("N")]
     public class ClipTool : BaseTool
     {
         public enum ClipState

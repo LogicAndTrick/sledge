@@ -13,7 +13,7 @@ namespace Sledge.BspEditor.Components
 {
     [AutoTranslate]
     [Export(typeof(ISidebarComponent))]
-    [SidebarComponent(OrderHint = "K")]
+    [OrderHint("K")]
     public partial class ClipboardSidebarPanel : UserControl, ISidebarComponent
     {
         [Import] private Lazy<ClipboardManager> _clipboard;

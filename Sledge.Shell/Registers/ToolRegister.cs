@@ -63,7 +63,7 @@ namespace Sledge.Shell.Registers
             {
                 _shell.ToolsContainer.SuspendLayout();
                 _shell.ToolsContainer.Items.Clear();
-                foreach (var tl in toolsInContext)
+                foreach (var tl in toolsInContext.OrderBy(x => OrderHintAttribute.GetOrderHint(x.GetType())))
                 {
                     var toolButton = new ToolStripButton("", tl.Icon, async (s, ea) => await ActivateTool(tl), tl.Name)
                     {

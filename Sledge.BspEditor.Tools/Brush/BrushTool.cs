@@ -25,6 +25,7 @@ using Sledge.Rendering.Scenes.Renderables;
 namespace Sledge.BspEditor.Tools.Brush
 {
     [Export(typeof(ITool))]
+    [OrderHint("H")]
     public class BrushTool : BaseDraggableTool
     {
         private bool _updatePreview;

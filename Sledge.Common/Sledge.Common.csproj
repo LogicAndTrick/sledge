@@ -58,7 +58,7 @@
     <Compile Include="Shell\Components\IBottomTabComponent.cs" />
     <Compile Include="Shell\Components\ISidebarComponent.cs" />
     <Compile Include="Shell\Components\ITool.cs" />
-    <Compile Include="Shell\Components\SidebarComponentAttribute.cs" />
+    <Compile Include="Shell\Components\OrderHintAttribute.cs" />
     <Compile Include="Shell\Context\ContextInfo.cs" />
     <Compile Include="Shell\Context\IContext.cs" />
     <Compile Include="DMath.cs" />
