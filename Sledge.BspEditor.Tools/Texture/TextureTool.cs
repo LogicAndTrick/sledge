@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using LogicAndTrick.Oy;
+using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Modification;
 using Sledge.BspEditor.Modification.Operations;
 using Sledge.BspEditor.Modification.Operations.Data;
@@ -86,6 +87,22 @@ namespace Sledge.BspEditor.Tools.Texture
             base.DocumentChanged();
         }
 
+        protected override IEnumerable<Subscription> Subscribe()
+        {
+            yield return Oy.Subscribe<Change>("MapDocument:Changed", DocumentUpdated);
+        }
+
+        private async Task DocumentUpdated(Change change)
+        {
+            if (change.Document == Document)
+            {
+                if (change.HasObjectChanges && change.Updated.Intersect(GetSelection().GetSelectedParents()).Any())
+                {
+                    Invalidate();
+                }
+            }
+        }
+
         public override void ToolSelected()
         {
             SetFaceSelectionFromObjectSelection();
@@ -102,8 +119,7 @@ namespace Sledge.BspEditor.Tools.Texture
             MapDocumentOperation.Bypass(Document, new Deselect(Document.Selection));
             base.ToolSelected();
         }
-
-        // todo
+        
         public override void ToolDeselected()
         {
             GetSelection().Clear();
@@ -206,7 +222,7 @@ namespace Sledge.BspEditor.Tools.Texture
                 else if (!textureOnly)
                 {
                     // apply values
-                    clone.Texture.Rotation = _sampled.Texture.Rotation;
+                    clone.Texture.SetRotation(_sampled.Texture.Rotation);
                     clone.Texture.XScale = _sampled.Texture.XScale;
                     clone.Texture.XShift = _sampled.Texture.XShift;
                     clone.Texture.YScale = _sampled.Texture.YScale;

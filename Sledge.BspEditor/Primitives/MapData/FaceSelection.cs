@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Globalization;
 using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Runtime.Serialization;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Primitives.MapObjectData;
@@ -93,7 +94,11 @@ namespace Sledge.BspEditor.Primitives.MapData
 
         public IEnumerable<KeyValuePair<IMapObject, Face>> GetSelectedFaces()
         {
-            return _selectedFaces.SelectMany(x => x.Value.Select(v => new KeyValuePair<IMapObject, Face>(x.Key, x.Key.Data.OfType<Face>().First(f => x.Value.Contains(f.ID)))));
+            return from kv in _selectedFaces
+                from f in kv.Value
+                let face = kv.Key.Data.OfType<Face>().FirstOrDefault(x => x.ID == f)
+                where face != null
+                select new KeyValuePair<IMapObject, Face>(kv.Key, face);
         }
 
         public IEnumerable<IMapObject> GetSelectedParents()

@@ -44,13 +44,11 @@ namespace Sledge.Rendering.OpenGL.Arrays
 
         public void ApplyChanges()
         {
-            if (!_scene.HasChanges) return;
-
             SceneChangeSet changes;
             lock (_scene)
             {
-                changes = _scene.CurrentChangeSet;
-                _scene.ClearChanges();
+                if (!_scene.HasChanges) return;
+                changes = _scene.ClearChanges();
             }
 
             var addRenderable = changes.Added.OfType<RenderableObject>().ToList();

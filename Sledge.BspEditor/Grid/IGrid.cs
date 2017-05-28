@@ -4,7 +4,7 @@ using Sledge.DataStructures.Geometric;
 namespace Sledge.BspEditor.Grid
 {
     public interface IGrid
-    { 
+    {
         /// <summary>
         /// A relative value to represent the spacing of a grid.
         /// Must support values 1-10 as logical minimums and maximums,

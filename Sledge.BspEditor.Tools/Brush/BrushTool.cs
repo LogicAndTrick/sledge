@@ -108,8 +108,10 @@ namespace Sledge.BspEditor.Tools.Brush
             }
             else if (box.RememberedDimensions == null)
             {
-                var gs = Document.Map.Data.GetOne<GridData>()?.Grid?.Spacing ?? 64;
-                box.RememberedDimensions = new Box(Coordinate.Zero, new Coordinate(gs, gs, gs));
+                var gs = Document.Map.Data.GetOne<GridData>()?.Grid;
+                var start = Coordinate.Zero;
+                var next = gs?.AddStep(Coordinate.Zero, Coordinate.One) ?? Coordinate.One * 64;
+                box.RememberedDimensions = new Box(start, next);
             }
 
             _updatePreview = true;

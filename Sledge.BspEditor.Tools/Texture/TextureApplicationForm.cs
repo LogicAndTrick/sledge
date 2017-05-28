@@ -282,7 +282,7 @@ namespace Sledge.BspEditor.Tools.Texture
                 labelText = $"{ti.Name} ({ti.Width} x {ti.Height})";
             }
             
-            this.Invoke(() => {
+            await this.InvokeAsync(() => {
 
                 ScaleXValue.Value = _currentTextureProperties.XScale;
                 ScaleYValue.Value = _currentTextureProperties.YScale;
@@ -336,7 +336,7 @@ namespace Sledge.BspEditor.Tools.Texture
             if (!_currentTextureProperties.DifferentXShiftValues) target.Texture.XShift = _currentTextureProperties.XShift;
             if (!_currentTextureProperties.DifferentYScaleValues) target.Texture.YScale = _currentTextureProperties.YScale;
             if (!_currentTextureProperties.DifferentYShiftValues) target.Texture.YShift = _currentTextureProperties.YShift;
-            if (!_currentTextureProperties.DifferentRotationValues) target.Texture.Rotation = _currentTextureProperties.Rotation;
+            if (!_currentTextureProperties.DifferentRotationValues) target.Texture.SetRotation(_currentTextureProperties.Rotation);
         }
 
         private Dictionary<Face, Primitives.Texture> _memoTextures;
@@ -594,7 +594,7 @@ namespace Sledge.BspEditor.Tools.Texture
             if (e.CloseReason == CloseReason.UserClosing)
             {
                 e.Cancel = true;
-                // todo Mediator.Publish(HotkeysMediator.SwitchTool, HotkeyTool.Selection);
+                Oy.Publish("ActivateTool", "SelectTool");
             }
         }
 
