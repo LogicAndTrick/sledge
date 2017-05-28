@@ -75,13 +75,10 @@
     <Compile Include="Brush\Brushes\Controls\BrushControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Brush\Brushes\Controls\BrushHelpSidebarPanel.cs">
+    <Compile Include="Brush\BrushSidebarPanel.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Brush\Brushes\Controls\BrushSidebarPanel.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Brush\Brushes\Controls\BrushSidebarPanel.Designer.cs">
+    <Compile Include="Brush\BrushSidebarPanel.Designer.cs">
       <DependentUpon>BrushSidebarPanel.cs</DependentUpon>
     </Compile>
     <Compile Include="Brush\Brushes\Controls\FontChooserControl.cs">
@@ -240,7 +237,7 @@
     <EmbeddedResource Include="Brush\Brushes\Controls\BooleanControl.resx">
       <DependentUpon>BooleanControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Brush\Brushes\Controls\BrushSidebarPanel.resx">
+    <EmbeddedResource Include="Brush\BrushSidebarPanel.resx">
       <DependentUpon>BrushSidebarPanel.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Brush\Brushes\Controls\FontChooserControl.resx">

@@ -7,11 +7,13 @@ using Sledge.BspEditor.Primitives.MapObjectData;
 using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.BspEditor.Tools.Brush.Brushes.Controls;
 using Sledge.Common;
+using Sledge.Common.Shell.Components;
 using Sledge.DataStructures.Geometric;
 
 namespace Sledge.BspEditor.Tools.Brush.Brushes
 {
     [Export(typeof(IBrush))]
+    [OrderHint("J")]
     public class TorusBrush : IBrush
     {
         private readonly NumericControl _crossSides;

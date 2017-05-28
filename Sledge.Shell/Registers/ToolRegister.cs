@@ -34,6 +34,12 @@ namespace Sledge.Shell.Registers
 
             // Subscribe to context changes
             Oy.Subscribe<IContext>("Context:Changed", ContextChanged);
+
+            Oy.Subscribe<string>("ActivateTool", async x =>
+            {
+                await ActivateTool(_components.FirstOrDefault(t => t.Name == x));
+            });
+            Oy.Subscribe<ITool>("ActivateTool", ActivateTool);
         }
 
         private readonly List<ITool> _components;

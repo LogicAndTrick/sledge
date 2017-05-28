@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using LogicAndTrick.Oy;
+using Sledge.BspEditor.Tools.Brush.Brushes.Controls;
 using Sledge.Common.Shell.Components;
 using Sledge.Common.Shell.Context;
+using Sledge.Shell;
 
-namespace Sledge.BspEditor.Tools.Brush.Brushes.Controls
+namespace Sledge.BspEditor.Tools.Brush
 {
     [Export(typeof(ISidebarComponent))]
     [OrderHint("F")]
@@ -25,6 +28,20 @@ namespace Sledge.BspEditor.Tools.Brush.Brushes.Controls
         {
             InitializeComponent();
             _currentControls = new List<BrushControl>();
+
+            Oy.Subscribe<BrushTool>("BrushTool:ResetBrushType", ResetBrushType);
+        }
+
+        private async Task ResetBrushType(BrushTool bt)
+        {
+            this.Invoke(() =>
+            {
+                if (BrushTypeList.Items.Count > 0)
+                {
+                    BrushTypeList.SelectedIndex = 0;
+                    UpdateControls();
+                }
+            });
         }
 
         public bool IsInContext(IContext context)
@@ -34,16 +51,17 @@ namespace Sledge.BspEditor.Tools.Brush.Brushes.Controls
 
         protected override void OnLoad(EventArgs e)
         {
+            _selectedBrush = null;
             BrushTypeList.BeginUpdate();
             BrushTypeList.Items.Clear();
-            foreach (var brush in _brushes)
+            foreach (var brush in _brushes.OrderBy(x => OrderHintAttribute.GetOrderHint(x.Value.GetType())))
             {
+                if (_selectedBrush == null) _selectedBrush = brush.Value;
                 BrushTypeList.Items.Add(new BrushWrapper(brush.Value));
             }
             BrushTypeList.SelectedIndex = 0;
             BrushTypeList.EndUpdate();
 
-            _selectedBrush = _brushes.FirstOrDefault()?.Value;
             UpdateControls();
         }
 

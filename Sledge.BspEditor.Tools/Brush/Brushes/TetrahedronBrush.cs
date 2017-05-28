@@ -6,11 +6,13 @@ using Sledge.BspEditor.Primitives.MapObjectData;
 using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.BspEditor.Tools.Brush.Brushes.Controls;
 using Sledge.Common;
+using Sledge.Common.Shell.Components;
 using Sledge.DataStructures.Geometric;
 
 namespace Sledge.BspEditor.Tools.Brush.Brushes
 {
     [Export(typeof(IBrush))]
+    [OrderHint("B")]
     public class TetrahedronBrush : IBrush
     {
         private readonly BooleanControl _useCentroid;

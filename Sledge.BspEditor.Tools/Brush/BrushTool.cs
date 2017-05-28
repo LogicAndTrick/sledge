@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using LogicAndTrick.Oy;
 using Sledge.BspEditor.Modification;
-using Sledge.BspEditor.Modification.Operations;
 using Sledge.BspEditor.Modification.Operations.Tree;
 using Sledge.BspEditor.Primitives;
 using Sledge.BspEditor.Primitives.MapData;
@@ -18,6 +17,7 @@ using Sledge.BspEditor.Tools.Draggable;
 using Sledge.BspEditor.Tools.Properties;
 using Sledge.Common.Shell.Components;
 using Sledge.Common.Shell.Context;
+using Sledge.Common.Shell.Settings;
 using Sledge.DataStructures.Geometric;
 using Sledge.Rendering.Scenes;
 using Sledge.Rendering.Scenes.Renderables;
@@ -25,8 +25,9 @@ using Sledge.Rendering.Scenes.Renderables;
 namespace Sledge.BspEditor.Tools.Brush
 {
     [Export(typeof(ITool))]
+    [Export(typeof(ISettingsContainer))]
     [OrderHint("H")]
-    public class BrushTool : BaseDraggableTool
+    public class BrushTool : BaseDraggableTool, ISettingsContainer
     {
         private bool _updatePreview;
         private List<Face> _preview;
@@ -35,21 +36,41 @@ namespace Sledge.BspEditor.Tools.Brush
 
         [Import] private Lazy<MapObjectConverter> _converter;
 
+
+        // Settings
+
+        [Setting("SelectionBoxBackgroundOpacity")] private int _selectionBoxBackgroundOpacity = 64;
+        [Setting("SwitchToSelectAfterCreation")] private bool _switchToSelectAfterCreation = false;
+        [Setting("ResetBrushTypeOnCreation")] private bool _resetBrushTypeOnCreation = false;
+
+        string ISettingsContainer.Name => "Sledge.BspEditor.Tools.BrushTool";
+
+        IEnumerable<SettingKey> ISettingsContainer.GetKeys()
+        {
+            yield return new SettingKey("Brush", "SelectionBoxBackgroundOpacity", typeof(int));
+            yield return new SettingKey("Brush", "SwitchToSelectAfterCreation", typeof(bool));
+            yield return new SettingKey("Brush", "ResetBrushTypeOnCreation", typeof(bool));
+        }
+
+        void ISettingsContainer.LoadValues(ISettingsStore store)
+        {
+            store.LoadInstance(this);
+        }
+
+        void ISettingsContainer.StoreValues(ISettingsStore store)
+        {
+            store.StoreInstance(this);
+        }
+
         public BrushTool()
         {
             box = new BoxDraggableState(this);
             box.BoxColour = Color.Turquoise;
-            box.FillColour = Color.FromArgb(/*View.SelectionBoxBackgroundOpacity*/ 64, Color.Green);
+            box.FillColour = Color.FromArgb(_selectionBoxBackgroundOpacity, Color.Green);
             box.State.Changed += BoxChanged;
             States.Add(box);
 
             UseValidation = true;
-
-            Oy.Subscribe<object>("BrushTool:ValuesChanged", x =>
-            {
-                _updatePreview = true;
-                Invalidate();
-            });
         }
 
         protected override IEnumerable<Subscription> Subscribe()
@@ -61,6 +82,11 @@ namespace Sledge.BspEditor.Tools.Brush
                     TextureSelected();
                 }
                 return Task.FromResult(0);
+            });
+            yield return Oy.Subscribe<object>("BrushTool:ValuesChanged", x =>
+            {
+                _updatePreview = true;
+                Invalidate();
             });
         }
 
@@ -86,15 +112,12 @@ namespace Sledge.BspEditor.Tools.Brush
                 box.RememberedDimensions = new Box(Coordinate.Zero, new Coordinate(gs, gs, gs));
             }
 
-            //Mediator.Subscribe(EditorMediator.TextureSelected, this);
-
             _updatePreview = true;
             base.ToolSelected();
         }
 
         public override void ToolDeselected()
         {
-            //Mediator.UnsubscribeAll(this);
             _updatePreview = false;
             base.ToolDeselected();
         }
@@ -173,14 +196,14 @@ namespace Sledge.BspEditor.Tools.Brush
             }
             _preview = null;
             box.State.Action = BoxAction.Idle;
-            //if (Select.SwitchToSelectAfterCreation)
-            //{
-            //    Mediator.Publish(HotkeysMediator.SwitchTool, HotkeyTool.Selection);
-            //}
-            //if (Select.ResetBrushTypeOnCreation)
-            //{
-            //    Mediator.Publish(EditorMediator.ResetSelectedBrushType);
-            //}
+            if (_switchToSelectAfterCreation)
+            {
+                Oy.Publish("ActivateTool", "SelectTool");
+            }
+            if (_resetBrushTypeOnCreation)
+            {
+                Oy.Publish("BrushTool:ResetBrushType", this);
+            }
         }
 
         private void Cancel(MapViewport viewport)

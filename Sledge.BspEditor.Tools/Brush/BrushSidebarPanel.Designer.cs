@@ -1,4 +1,4 @@
-﻿namespace Sledge.BspEditor.Tools.Brush.Brushes.Controls
+﻿namespace Sledge.BspEditor.Tools.Brush
 {
     partial class BrushSidebarPanel
     {
