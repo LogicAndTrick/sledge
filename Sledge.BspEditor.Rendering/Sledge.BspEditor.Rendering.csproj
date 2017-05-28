@@ -52,7 +52,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Converters\CenterHandlesConverter.cs" />
     <Compile Include="Converters\DefaultEntityConverter.cs" />
+    <Compile Include="Converters\EntityAngleConverter.cs" />
     <Compile Include="Converters\EntityDecalConverter.cs" />
     <Compile Include="Converters\GridConverter.cs" />
     <Compile Include="Converters\HiddenConverter.cs" />

@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Runtime.Serialization;
 using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.Common.Transport;
+using Sledge.DataStructures.Geometric;
 
 namespace Sledge.BspEditor.Primitives.MapObjectData
 {
@@ -20,6 +22,20 @@ namespace Sledge.BspEditor.Primitives.MapObjectData
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             info.AddValue("Properties", Properties);
+        }
+
+        public Coordinate GetCoordinate(string key)
+        {
+            if (!Properties.ContainsKey(key)) return null;
+            var spl = (Properties[key] ?? "").Split(' ');
+            decimal x, y, z;
+            if (decimal.TryParse(spl[0], NumberStyles.Float, CultureInfo.InvariantCulture, out x)
+                && decimal.TryParse(spl[1], NumberStyles.Float, CultureInfo.InvariantCulture, out y)
+                && decimal.TryParse(spl[2], NumberStyles.Float, CultureInfo.InvariantCulture, out z))
+            {
+                return new Coordinate(x, y, z);
+            }
+            return null;
         }
 
         public void Set(string key, string value)

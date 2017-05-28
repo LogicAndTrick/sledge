@@ -1,40 +1,65 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
+using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 using OpenTK;
 using Sledge.BspEditor.Documents;
+using Sledge.BspEditor.Primitives.MapObjectData;
 using Sledge.BspEditor.Primitives.MapObjects;
+using Sledge.BspEditor.Rendering.Scene;
+using Sledge.Common;
+using Sledge.Common.Shell.Settings;
 using Sledge.DataStructures.Geometric;
-using Sledge.DataStructures.MapObjects;
 using Sledge.DataStructures.Transformations;
-using Sledge.Extensions;
 using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Interfaces;
 using Sledge.Rendering.Scenes.Elements;
-using Entity = Sledge.DataStructures.MapObjects.Entity;
 
 namespace Sledge.BspEditor.Rendering.Converters
 {
-    public class EntityAngleConverter : IMapObjectSceneConverter
+    [Export(typeof(IMapObjectSceneConverter))]
+    [Export(typeof(ISettingsContainer))]
+    public class EntityAngleConverter : IMapObjectSceneConverter, ISettingsContainer
     {
-        public MapObjectSceneConverterPriority Priority { get { return MapObjectSceneConverterPriority.DefaultLow; } }
+        // Settings
 
-        public bool ShouldStopProcessing(SceneMapObject smo, MapObject obj)
+        [Setting("DrawEntityAngles")] private bool _drawEntityAngles = true;
+
+        string ISettingsContainer.Name => "Sledge.BspEditor.Rendering.Converters.EntityAngleConverter";
+
+        IEnumerable<SettingKey> ISettingsContainer.GetKeys()
+        {
+            yield return new SettingKey("Rendering", "DrawEntityAngles", typeof(bool));
+        }
+
+        void ISettingsContainer.LoadValues(ISettingsStore store)
+        {
+            store.LoadInstance(this);
+        }
+
+        void ISettingsContainer.StoreValues(ISettingsStore store)
+        {
+            store.StoreInstance(this);
+        }
+
+        public MapObjectSceneConverterPriority Priority => MapObjectSceneConverterPriority.DefaultLow;
+
+        public bool ShouldStopProcessing(SceneMapObject smo, IMapObject obj)
         {
             return false;
         }
 
-        public bool Supports(MapObject obj)
+        public bool Supports(IMapObject obj)
         {
-            if (!Sledge.Settings.View.DrawEntityAngles) return false;
-            if (obj is Entity && !obj.HasChildren)
+            if (!_drawEntityAngles) return false;
+            if (obj is Entity && !obj.Hierarchy.HasChildren)
             {
-                var ed = obj.GetEntityData();
+                var ed = obj.Data.GetOne<EntityData>();
                 if (ed != null)
                 {
-                    var angles = ed.GetPropertyCoordinate("angles");
-                    return angles != null;
+                    return ed.GetCoordinate("angles") != null;
                 }
             }
             return false;
@@ -65,9 +90,9 @@ namespace Sledge.BspEditor.Rendering.Converters
         
         private class EntityAnglesLineElement : LineElement
         {
-            public override string ElementGroup { get { return "Entity"; } }
+            public override string ElementGroup => "Entity";
 
-            public EntityAnglesLineElement(MapObject obj) : base(PositionType.World, obj.Colour, new List<Position>
+            public EntityAnglesLineElement(IMapObject obj) : base(PositionType.World, obj.Data.GetOne<ObjectColor>()?.Color ?? Color.White, new List<Position>
                                                             {
                                                                 new Position(obj.BoundingBox.Center.ToVector3()),
                                                                 new Position(GetEndPoint(obj))
@@ -76,7 +101,7 @@ namespace Sledge.BspEditor.Rendering.Converters
                 CameraFlags = CameraFlags.Orthographic;
             }
 
-            public void Update(MapObject obj)
+            public void Update(IMapObject obj)
             {
                 Vertices[0].Location = obj.BoundingBox.Center.ToVector3();
                 Vertices[1].Location = GetEndPoint(obj);
@@ -103,9 +128,9 @@ namespace Sledge.BspEditor.Rendering.Converters
                 return base.GetLines(viewport, renderer);
             }
 
-            private static Vector3 GetEndPoint(MapObject obj)
+            private static Vector3 GetEndPoint(IMapObject obj)
             {
-                var angles = obj.GetEntityData().GetPropertyCoordinate("angles");
+                var angles = obj.Data.GetOne<EntityData>()?.GetCoordinate("angles") ?? obj.BoundingBox.Center;
                 angles = new Coordinate(DMath.DegreesToRadians(angles.Z), DMath.DegreesToRadians(angles.X),
                     DMath.DegreesToRadians(angles.Y));
                 var m =

@@ -1,20 +1,47 @@
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 using Sledge.BspEditor.Documents;
+using Sledge.BspEditor.Primitives.MapObjectData;
 using Sledge.BspEditor.Primitives.MapObjects;
+using Sledge.BspEditor.Rendering.Scene;
+using Sledge.Common.Shell.Settings;
 using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Interfaces;
 using Sledge.Rendering.Scenes.Elements;
-using Entity = Sledge.DataStructures.MapObjects.Entity;
-using Solid = Sledge.DataStructures.MapObjects.Solid;
 
 namespace Sledge.BspEditor.Rendering.Converters
 {
-    public class CenterHandlesConverter : IMapObjectSceneConverter
+    [Export(typeof(IMapObjectSceneConverter))]
+    [Export(typeof(ISettingsContainer))]
+    public class CenterHandlesConverter : IMapObjectSceneConverter, ISettingsContainer
     {
-        public MapObjectSceneConverterPriority Priority { get { return MapObjectSceneConverterPriority.OverrideLow; } }
+        // Settings
+
+        [Setting("DrawCenterHandles")] private bool _drawCenterHandles = true;
+        [Setting("CenterHandlesActiveViewportOnly")] private bool _centerHandlesActiveViewportOnly = false;
+
+        string ISettingsContainer.Name => "Sledge.BspEditor.Rendering.Converters.CenterHandlesConverter";
+
+        IEnumerable<SettingKey> ISettingsContainer.GetKeys()
+        {
+            yield return new SettingKey("Rendering", "DrawCenterHandles", typeof(bool));
+            yield return new SettingKey("Rendering", "CenterHandlesActiveViewportOnly", typeof(bool));
+        }
+
+        void ISettingsContainer.LoadValues(ISettingsStore store)
+        {
+            store.LoadInstance(this);
+        }
+
+        void ISettingsContainer.StoreValues(ISettingsStore store)
+        {
+            store.StoreInstance(this);
+        }
+
+        public MapObjectSceneConverterPriority Priority => MapObjectSceneConverterPriority.OverrideLow;
 
         public bool ShouldStopProcessing(SceneMapObject smo, IMapObject obj)
         {
@@ -23,13 +50,13 @@ namespace Sledge.BspEditor.Rendering.Converters
 
         public bool Supports(IMapObject obj)
         {
-            if (!Sledge.Settings.Select.DrawCenterHandles) return false;
+            if (!_drawCenterHandles) return false;
             return obj is Entity || obj is Solid;
         }
 
         public async Task<bool> Convert(SceneMapObject smo, MapDocument document, IMapObject obj)
         {
-            var el = new CenterHandleTextElement(obj);
+            var el = new CenterHandleTextElement(obj, _centerHandlesActiveViewportOnly);
             smo.SceneObjects.Add(new Holder(), el);
             return true;
         }
@@ -52,23 +79,24 @@ namespace Sledge.BspEditor.Rendering.Converters
 
         private class CenterHandleTextElement : TextElement
         {
-            public override string ElementGroup { get { return "CenterHandles"; } }
+            private readonly bool _activeViewportOnly;
+            public override string ElementGroup => "CenterHandles";
 
-            public CenterHandleTextElement(IMapObject obj) : base(PositionType.World, obj.BoundingBox.Center.ToVector3(), "Å~", Color.FromArgb(192, obj.Colour))
+            public CenterHandleTextElement(IMapObject obj, bool activeViewportOnly) : base(PositionType.World, obj.BoundingBox.Center.ToVector3(), "Å~", Color.FromArgb(192, obj.Data.GetOne<ObjectColor>()?.Color ?? Color.White))
             {
-
+                _activeViewportOnly = activeViewportOnly;
             }
 
             public void Update(IMapObject obj)
             {
                 Location = obj.BoundingBox.Center.ToVector3();
-                Color = Color.FromArgb(192, obj.Colour);
+                Color = Color.FromArgb(192, Color.FromArgb(192, obj.Data.GetOne<ObjectColor>()?.Color ?? Color.White));
                 ClearValue("Validated");
             }
 
             public override bool RequiresValidation(IViewport viewport, IRenderer renderer)
             {
-                if (Sledge.Settings.Select.CenterHandlesActiveViewportOnly && viewport.IsFocused != GetValue<bool>(viewport, "Focused"))
+                if (_activeViewportOnly && viewport.IsFocused != GetValue<bool>(viewport, "Focused"))
                 {
                     return true;
                 }
@@ -83,7 +111,7 @@ namespace Sledge.BspEditor.Rendering.Converters
 
             public override IEnumerable<FaceElement> GetFaces(IViewport viewport, IRenderer renderer)
             {
-                if (Sledge.Settings.Select.CenterHandlesActiveViewportOnly && !viewport.IsFocused) return new FaceElement[0];
+                if (_activeViewportOnly && !viewport.IsFocused) return new FaceElement[0];
                 return base.GetFaces(viewport, renderer).Select(x =>
                 {
                     x.CameraFlags = CameraFlags.Orthographic;
