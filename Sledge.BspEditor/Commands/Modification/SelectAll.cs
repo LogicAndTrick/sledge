@@ -6,6 +6,7 @@ using Sledge.BspEditor.Modification;
 using Sledge.BspEditor.Modification.Operations;
 using Sledge.BspEditor.Modification.Operations.Selection;
 using Sledge.BspEditor.Primitives.MapObjects;
+using Sledge.BspEditor.Properties;
 using Sledge.Common.Shell.Commands;
 using Sledge.Common.Shell.Hotkeys;
 using Sledge.Common.Shell.Menu;
@@ -18,6 +19,7 @@ namespace Sledge.BspEditor.Commands.Modification
     [CommandID("BspEditor:Edit:SelectAll")]
     [DefaultHotkey("Ctrl+A")]
     [MenuItem("Edit", "", "Selection", "B")]
+    [MenuImage(typeof(Resources), nameof(Resources.Menu_SelectAll))]
     public class SelectAll : BaseCommand
     {
         public override string Name { get; set; } = "Select All";

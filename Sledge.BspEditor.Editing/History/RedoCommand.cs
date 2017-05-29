@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Sledge.BspEditor.Commands;
 using Sledge.BspEditor.Documents;
+using Sledge.BspEditor.Editing.Properties;
 using Sledge.BspEditor.Modification;
 using Sledge.Common.Shell.Commands;
 using Sledge.Common.Shell.Hotkeys;
@@ -15,6 +16,7 @@ namespace Sledge.BspEditor.Editing.History
     [CommandID("BspEditor:Edit:Redo")]
     [DefaultHotkey("Ctrl+Y")]
     [MenuItem("Edit", "", "History", "D")]
+    [MenuImage(typeof(Resources), nameof(Resources.Menu_Redo))]
     public class RedoCommand : BaseCommand
     {
         public override string Name { get; set; } = "Redo";

@@ -121,6 +121,27 @@
   <data name="DottedGrid" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\resources\dottedgrid.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="Menu_Copy" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\menu_copy.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Menu_Cut" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\menu_cut.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Menu_Group" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\menu_group.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Menu_Paste" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\menu_paste.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Menu_SelectAll" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\menu_selectall.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Menu_SelectNone" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\menu_selectnone.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Menu_Ungroup" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\menu_ungroup.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="SquareGrid" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\resources\squaregrid.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>

@@ -239,6 +239,7 @@
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
@@ -246,6 +247,13 @@
     <None Include="packages.config" />
     <None Include="Resources\SquareGrid.png" />
     <Content Include="Resources\DottedGrid.png" />
+    <Content Include="Resources\Menu_Group.png" />
+    <Content Include="Resources\Menu_SelectNone.png" />
+    <Content Include="Resources\Menu_Copy.png" />
+    <Content Include="Resources\Menu_Cut.png" />
+    <Content Include="Resources\Menu_Paste.png" />
+    <Content Include="Resources\Menu_SelectAll.png" />
+    <Content Include="Resources\Menu_Ungroup.png" />
     <Content Include="Translations\Sledge.BspEditor.en.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

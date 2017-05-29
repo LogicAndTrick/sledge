@@ -4,6 +4,7 @@ using Sledge.BspEditor.Commands;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Modification;
 using Sledge.BspEditor.Modification.Operations;
+using Sledge.BspEditor.Tools.Properties;
 using Sledge.Common.Shell.Commands;
 using Sledge.Common.Shell.Hotkeys;
 using Sledge.Common.Shell.Menu;
@@ -14,6 +15,7 @@ namespace Sledge.BspEditor.Tools.Selection
     [CommandID("BspEditor:Map:ToggleIgnoreGrouping")]
     [DefaultHotkey("Ctrl+W")]
     [MenuItem("Map", "", "Grouping", "B")]
+    [MenuImage(typeof(Resources), nameof(Resources.Menu_IgnoreGrouping))]
     public class ToggleIgnoreGroupingCommand : BaseCommand
     {
         public override string Name { get; set; } = "Ignore grouping";

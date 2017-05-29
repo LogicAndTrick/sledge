@@ -13,6 +13,7 @@ using Sledge.Common.Shell.Components;
 using Sledge.Common.Shell.Context;
 using Sledge.Common.Shell.Settings;
 using Sledge.Common.Translations;
+using Sledge.Shell.Properties;
 using Sledge.Shell.Settings.Editors;
 
 namespace Sledge.Shell.Forms
@@ -49,6 +50,7 @@ namespace Sledge.Shell.Forms
         public SettingsForm()
         {
             InitializeComponent();
+            Icon = Icon.FromHandle(Resources.Menu_Options.GetHicon());
             CreateHandle();
         }
 

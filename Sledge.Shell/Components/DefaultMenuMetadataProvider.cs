@@ -29,6 +29,8 @@ namespace Sledge.Shell.Components
             yield return new MenuGroup("File", "", "File", "B");
             yield return new MenuGroup("File", "", "Exit", "Y");
 
+            yield return new MenuGroup("Tools", "", "Settings", "Y");
+
             yield return new MenuGroup("Help", "", "About", "Y");
         }
     }

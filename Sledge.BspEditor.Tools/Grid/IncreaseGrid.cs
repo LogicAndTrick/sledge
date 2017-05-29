@@ -9,6 +9,7 @@ using Sledge.BspEditor.Modification;
 using Sledge.BspEditor.Modification.Operations;
 using Sledge.BspEditor.Modification.Operations.Data;
 using Sledge.BspEditor.Primitives.MapData;
+using Sledge.BspEditor.Tools.Properties;
 using Sledge.Common.Shell.Commands;
 using Sledge.Common.Shell.Context;
 using Sledge.Common.Shell.Hotkeys;
@@ -19,7 +20,8 @@ namespace Sledge.BspEditor.Tools.Grid
     [Export(typeof(ICommand))]
     [CommandID("BspEditor:Grid:IncreaseSpacing")]
     [DefaultHotkey("]")]
-    [MenuItem("Edit", "", "Grid", "H")]
+    [MenuItem("Map", "", "Grid", "H")]
+    [MenuImage(typeof(Resources), nameof(Resources.Menu_LargerGrid))]
     public class IncreaseGrid : ICommand
     {
         public string Name => "Bigger Grid";

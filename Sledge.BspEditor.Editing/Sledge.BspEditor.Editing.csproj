@@ -149,6 +149,8 @@
   <ItemGroup>
     <None Include="app.config" />
     <None Include="packages.config" />
+    <Content Include="Resources\Menu_Redo.png" />
+    <Content Include="Resources\Menu_Undo.png" />
     <Content Include="Translations\Sledge.BspEditor.Editing.en.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Modification;
 using Sledge.BspEditor.Modification.Operations.Tree;
+using Sledge.BspEditor.Properties;
 using Sledge.Common.Shell.Commands;
 using Sledge.Common.Shell.Hotkeys;
 using Sledge.Common.Shell.Menu;
@@ -16,6 +17,7 @@ namespace Sledge.BspEditor.Commands.Grouping
     [CommandID("BspEditor:Edit:Ungroup")]
     [DefaultHotkey("Ctrl+U")]
     [MenuItem("Edit", "", "Group", "D")]
+    [MenuImage(typeof(Resources), nameof(Resources.Menu_Ungroup))]
     public class Ungroup : BaseCommand
     {
         public override string Name { get; set; } = "Ungroup";

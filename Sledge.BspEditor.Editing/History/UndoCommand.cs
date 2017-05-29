@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Sledge.BspEditor.Commands;
 using Sledge.BspEditor.Documents;
+using Sledge.BspEditor.Editing.Properties;
 using Sledge.BspEditor.Modification;
 using Sledge.Common.Shell.Commands;
 using Sledge.Common.Shell.Hotkeys;
@@ -15,6 +16,7 @@ namespace Sledge.BspEditor.Editing.History
     [CommandID("BspEditor:Edit:Undo")]
     [DefaultHotkey("Ctrl+Z")]
     [MenuItem("Edit", "", "History", "B")]
+    [MenuImage(typeof(Resources), nameof(Resources.Menu_Undo))]
     public class UndoCommand : BaseCommand
     {
         public override string Name { get; set; } = "Undo";

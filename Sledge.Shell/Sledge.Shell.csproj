@@ -234,6 +234,7 @@
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Settings\Editors\DefaultSettingEditor.resx">
       <DependentUpon>DefaultSettingEditor.cs</DependentUpon>
@@ -267,6 +268,7 @@
     <None Include="Resources\menu_open.png" />
     <None Include="Resources\menu_save.png" />
     <None Include="Resources\menu_saveas.png" />
+    <Content Include="Resources\Menu_Options.png" />
     <Content Include="Translations\Sledge.Shell.en.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

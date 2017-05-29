@@ -63,6 +63,46 @@ namespace Sledge.BspEditor.Tools.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap Menu_IgnoreGrouping {
+            get {
+                object obj = ResourceManager.GetObject("Menu_IgnoreGrouping", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Menu_LargerGrid {
+            get {
+                object obj = ResourceManager.GetObject("Menu_LargerGrid", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Menu_SmallerGrid {
+            get {
+                object obj = ResourceManager.GetObject("Menu_SmallerGrid", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Menu_SnapToGrid {
+            get {
+                object obj = ResourceManager.GetObject("Menu_SnapToGrid", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap Tool_Brush {
             get {
                 object obj = ResourceManager.GetObject("Tool_Brush", resourceCulture);

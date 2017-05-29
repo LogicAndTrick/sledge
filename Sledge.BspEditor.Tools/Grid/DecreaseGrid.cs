@@ -4,6 +4,7 @@ using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Modification;
 using Sledge.BspEditor.Modification.Operations;
 using Sledge.BspEditor.Primitives.MapData;
+using Sledge.BspEditor.Tools.Properties;
 using Sledge.Common.Shell.Commands;
 using Sledge.Common.Shell.Context;
 using Sledge.Common.Shell.Hotkeys;
@@ -14,7 +15,8 @@ namespace Sledge.BspEditor.Tools.Grid
     [Export(typeof(ICommand))]
     [CommandID("BspEditor:Grid:DecreaseSpacing")]
     [DefaultHotkey("[")]
-    [MenuItem("Edit", "", "Grid", "G")]
+    [MenuItem("Map", "", "Grid", "G")]
+    [MenuImage(typeof(Resources), nameof(Resources.Menu_SmallerGrid))]
     public class DecreaseGrid : ICommand
     {
         public string Name => "Smaller Grid";

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Sledge.BspEditor.Components;
 using Sledge.BspEditor.Documents;
+using Sledge.BspEditor.Properties;
 using Sledge.Common.Shell.Commands;
 using Sledge.Common.Shell.Hotkeys;
 using Sledge.Common.Shell.Menu;
@@ -16,6 +17,7 @@ namespace Sledge.BspEditor.Commands.Clipboard
     [CommandID("BspEditor:Edit:Copy")]
     [DefaultHotkey("Ctrl+C")]
     [MenuItem("Edit", "", "Clipboard", "D")]
+    [MenuImage(typeof(Resources), nameof(Resources.Menu_Copy))]
     public class Copy : BaseCommand
     {
         [Import] private Lazy<ClipboardManager> _clipboard;

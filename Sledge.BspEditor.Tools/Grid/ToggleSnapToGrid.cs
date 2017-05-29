@@ -4,6 +4,7 @@ using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Modification;
 using Sledge.BspEditor.Modification.Operations;
 using Sledge.BspEditor.Primitives.MapData;
+using Sledge.BspEditor.Tools.Properties;
 using Sledge.Common.Shell.Commands;
 using Sledge.Common.Shell.Context;
 using Sledge.Common.Shell.Hotkeys;
@@ -14,7 +15,8 @@ namespace Sledge.BspEditor.Tools.Grid
     [Export(typeof(ICommand))]
     [CommandID("BspEditor:Grid:ToggleSnapToGrid")]
     [DefaultHotkey("Shift+W")]
-    [MenuItem("Edit", "", "Grid", "B")]
+    [MenuItem("Map", "", "Grid", "B")]
+    [MenuImage(typeof(Resources), nameof(Resources.Menu_SnapToGrid))]
     public class ToggleSnapToGrid : ICommand
     {
         public string Name => "Snap to Grid";

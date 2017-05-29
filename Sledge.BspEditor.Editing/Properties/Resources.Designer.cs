@@ -63,6 +63,26 @@ namespace Sledge.BspEditor.Editing.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap Menu_Redo {
+            get {
+                object obj = ResourceManager.GetObject("Menu_Redo", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Menu_Undo {
+            get {
+                object obj = ResourceManager.GetObject("Menu_Undo", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap Sledge_Large {
             get {
                 object obj = ResourceManager.GetObject("Sledge_Large", resourceCulture);

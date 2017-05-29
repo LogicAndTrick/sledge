@@ -6,6 +6,7 @@ using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Modification;
 using Sledge.BspEditor.Modification.Operations;
 using Sledge.BspEditor.Modification.Operations.Tree;
+using Sledge.BspEditor.Properties;
 using Sledge.Common.Shell.Commands;
 using Sledge.Common.Shell.Hotkeys;
 using Sledge.Common.Shell.Menu;
@@ -18,6 +19,7 @@ namespace Sledge.BspEditor.Commands.Clipboard
     [CommandID("BspEditor:Edit:Paste")]
     [DefaultHotkey("Ctrl+V")]
     [MenuItem("Edit", "", "Clipboard", "F")]
+    [MenuImage(typeof(Resources), nameof(Resources.Menu_Paste))]
     public class Paste : BaseCommand
     {
         [Import] private Lazy<ClipboardManager> _clipboard;

@@ -5,6 +5,7 @@ using Sledge.Common.Shell.Commands;
 using Sledge.Common.Shell.Context;
 using Sledge.Common.Shell.Menu;
 using Sledge.Common.Translations;
+using Sledge.Shell.Properties;
 
 namespace Sledge.Shell.Commands
 {
@@ -15,6 +16,7 @@ namespace Sledge.Shell.Commands
     [Export(typeof(ICommand))]
     [CommandID("Tools:Settings")]
     [MenuItem("Tools", "", "Settings", "B")]
+    [MenuImage(typeof(Resources), nameof(Resources.Menu_Options))]
     public class OpenSettingsForm : ICommand
     {
         public string Name { get; set; } = "Settings";

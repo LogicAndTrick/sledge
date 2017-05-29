@@ -7,6 +7,7 @@ using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Modification;
 using Sledge.BspEditor.Modification.Operations;
 using Sledge.BspEditor.Modification.Operations.Tree;
+using Sledge.BspEditor.Properties;
 using Sledge.Common.Shell.Commands;
 using Sledge.Common.Shell.Hotkeys;
 using Sledge.Common.Shell.Menu;
@@ -19,6 +20,7 @@ namespace Sledge.BspEditor.Commands.Clipboard
     [CommandID("BspEditor:Edit:Cut")]
     [DefaultHotkey("Ctrl+X")]
     [MenuItem("Edit", "", "Clipboard", "B")]
+    [MenuImage(typeof(Resources), nameof(Resources.Menu_Cut))]
     public class Cut : BaseCommand
     {
         [Import] private Lazy<ClipboardManager> _clipboard;

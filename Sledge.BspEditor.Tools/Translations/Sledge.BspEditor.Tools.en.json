@@ -1,0 +1,13 @@
+﻿{
+    "@Meta": {
+        "Base": "Sledge.BspEditor.Tools",
+        "Language": "en",
+        "Inherit": ""
+    },
+    "@Settings": {
+
+    },
+    "MenuDataProvider": {
+        "Map": "Map"
+    }
+}

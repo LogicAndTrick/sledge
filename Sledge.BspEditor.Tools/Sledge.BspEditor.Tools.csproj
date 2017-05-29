@@ -133,6 +133,7 @@
     <Compile Include="Grid\GridListMenuItemProvider.cs" />
     <Compile Include="Grid\IncreaseGrid.cs" />
     <Compile Include="Grid\ToggleSnapToGrid.cs" />
+    <Compile Include="MenuDataProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -232,6 +233,10 @@
     <None Include="app.config" />
     <None Include="OpenTK.dll.config" />
     <None Include="packages.config" />
+    <Content Include="Resources\Menu_IgnoreGrouping.png" />
+    <Content Include="Translations\Sledge.BspEditor.Tools.en.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Brush\Brushes\Controls\BooleanControl.resx">
@@ -286,6 +291,9 @@
     <None Include="Resources\Tool_Camera.png" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Resources\Menu_LargerGrid.png" />
+    <Content Include="Resources\Menu_SmallerGrid.png" />
+    <Content Include="Resources\Menu_SnapToGrid.png" />
     <Content Include="Resources\Tool_Clip.png" />
     <Content Include="Resources\Tool_Cordon.png" />
     <Content Include="Resources\Tool_Decal.png" />

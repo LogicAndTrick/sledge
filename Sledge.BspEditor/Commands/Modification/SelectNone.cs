@@ -5,6 +5,7 @@ using Sledge.BspEditor.Modification;
 using Sledge.BspEditor.Modification.Operations;
 using Sledge.BspEditor.Modification.Operations.Selection;
 using Sledge.BspEditor.Primitives.MapObjects;
+using Sledge.BspEditor.Properties;
 using Sledge.Common.Shell.Commands;
 using Sledge.Common.Shell.Hotkeys;
 using Sledge.Common.Shell.Menu;
@@ -17,6 +18,7 @@ namespace Sledge.BspEditor.Commands.Modification
     [CommandID("BspEditor:Edit:SelectNone")]
     [DefaultHotkey("Shift+Q")]
     [MenuItem("Edit", "", "Selection", "D")]
+    [MenuImage(typeof(Resources), nameof(Resources.Menu_SelectNone))]
     public class SelectNone : BaseCommand
     {
         public override string Name { get; set; } = "Select None";

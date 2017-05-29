@@ -38,7 +38,7 @@ namespace Sledge.BspEditor.Tools.Grid
             public Image Icon => GridFactory.Icon;
             public string Section => "Map";
             public string Path => ""; // todo !menu proper grid path
-            public string Group => "";
+            public string Group => "GridTypes";
             public string OrderHint => Group.GetType().Name;
 
             public IGridFactory GridFactory { get; set; }

@@ -49,13 +49,13 @@
         }
     },
     "Grid": {
-        "NoGrid": {
+        "NoGridFactory": {
             "Name": "No grid",
             "Details": "Do not show any grid."
         },
-        "SquareGrid": {
+        "SquareGridFactory": {
             "Name": "Standard grid",
-            "Details": "A normal square grid based on powers of two." 
+            "Details": "A normal square grid based on powers of two."
         }
     } 
 }
