@@ -2,9 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Drawing.Text;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using LogicAndTrick.Gimme;
 using LogicAndTrick.Oy;
 using Sledge.Common.Shell.Context;
 using Sledge.Common.Shell.Documents;
@@ -27,11 +31,15 @@ namespace Sledge.Shell.Components
 
         private async Task OpenDocument(IDocument doc)
         {
-            if (doc != null && doc.FileName != null && File.Exists(doc.FileName))
+            if (doc?.FileName != null && File.Exists(doc.FileName))
             {
+                _recentFiles.RemoveAll(x => String.Equals(doc.FileName, x.Location, StringComparison.InvariantCultureIgnoreCase));
                 _recentFiles.Add(new RecentFile {Location = doc.FileName});
+                while (_recentFiles.Count > 10) _recentFiles.RemoveAt(0);
             }
         }
+
+        public event EventHandler MenuItemsChanged;
 
         public IEnumerable<IMenuItem> GetMenuItems()
         {
@@ -52,7 +60,7 @@ namespace Sledge.Shell.Components
             var list = store.Get("Files", new List<RecentFile>());
             _recentFiles.Clear();
             _recentFiles.AddRange(list);
-            // todo !menu need a way to trigger a menu item update
+            MenuItemsChanged?.Invoke(this, EventArgs.Empty);
         }
 
         public void StoreValues(ISettingsStore store)
@@ -67,13 +75,36 @@ namespace Sledge.Shell.Components
 
         private class RecentFilesMenuItem : IMenuItem
         {
+            private static readonly Dictionary<int, Image> Icons = new Dictionary<int, Image>();
+
+            private static Image GetIcon(int num)
+            {
+                if (!Icons.ContainsKey(num))
+                {
+                    var ico = new Bitmap(16, 16);
+                    using (var g = Graphics.FromImage(ico))
+                    {
+                        var str = Convert.ToString(num, CultureInfo.InvariantCulture);
+                        var sz = g.MeasureString(str, SystemFonts.DefaultFont);
+
+                        g.TextRenderingHint = TextRenderingHint.AntiAliasGridFit;
+                        g.SmoothingMode = SmoothingMode.HighQuality;
+                        g.FillRectangle(Brushes.Transparent, 0, 0, 16, 16);
+                        g.DrawString(str, SystemFonts.DefaultFont, SystemBrushes.MenuText, (16 - sz.Width) / 2, (16 - sz.Height) / 2);
+                    }
+                    Icons[num] = ico;
+                }
+                return Icons[num];
+            }
+
+
             private readonly int _index;
             private readonly RecentFile _file;
 
             public string ID => $"Sledge.Shell.RecentFile[{_index}]";
             public string Name => System.IO.Path.GetFileName(_file.Location);
-            public string Description => System.IO.Path.GetFileName(_file.Location);
-            public Image Icon => null;
+            public string Description => _file.Location;
+            public Image Icon => GetIcon(_index + 1);
             public string Section => "File";
             public string Path => "";
             public string Group => "Recent";
@@ -90,9 +121,18 @@ namespace Sledge.Shell.Components
                 return true;
             }
 
-            public Task Invoke(IContext context)
+            public async Task Invoke(IContext context)
             {
-                throw new NotImplementedException();
+                if (!File.Exists(_file.Location)) return;
+                var loader = await Gimme.FetchOne<IDocumentLoader>(_file.Location, "");
+                if (loader != null)
+                {
+                    var doc = await loader.Load(_file.Location);
+                    if (doc != null)
+                    {
+                        await Oy.Publish("Document:Opened", doc);
+                    }
+                }
             }
         }
     }

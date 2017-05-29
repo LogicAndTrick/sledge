@@ -20,6 +20,8 @@ namespace Sledge.BspEditor.Tools.Grid
     {
         [ImportMany] private IEnumerable<Lazy<IGridFactory>> _grids;
 
+        public event EventHandler MenuItemsChanged;
+
         public IEnumerable<IMenuItem> GetMenuItems()
         {
             foreach (var grid in _grids)

@@ -35,6 +35,7 @@ namespace Sledge.Shell.Registers
             // Register commands as menu items
             foreach (var export in _itemProviders)
             {
+                export.Value.MenuItemsChanged += UpdateMenus;
                 foreach (var menuItem in export.Value.GetMenuItems())
                 {
                     Add(menuItem);
@@ -54,6 +55,28 @@ namespace Sledge.Shell.Registers
             _tree = new VirtualMenuTree(_context, _shell.MenuStrip, _declaredSections, _declaredGroups);
 
             _shell.Invoke((MethodInvoker) delegate
+            {
+                foreach (var mi in _menuItems.Values)
+                {
+                    _tree.Add(mi);
+                }
+            });
+        }
+
+        private void UpdateMenus(object sender, EventArgs e)
+        {
+            _tree.Clear();
+            _menuItems.Clear();
+
+            foreach (var export in _itemProviders)
+            {
+                foreach (var menuItem in export.Value.GetMenuItems())
+                {
+                    Add(menuItem);
+                }
+            }
+
+            _shell.Invoke((MethodInvoker)delegate
             {
                 foreach (var mi in _menuItems.Values)
                 {
@@ -144,6 +167,15 @@ namespace Sledge.Shell.Registers
                 // Add the node to the parent node
                 var group = _declaredGroups.FirstOrDefault(x => x.Name == item.Group && x.Path == item.Path && x.Section == item.Section);
                 node.Add(item.ID, new MenuTreeNode(_context, item, group));
+            }
+
+            public void Clear()
+            {
+                MenuStrip.Items.Clear();
+                RootNodes.Clear();
+
+                // Add known sections straight away
+                foreach (var ds in _declaredSections.OrderBy(x => x.OrderHint)) AddSection(ds);
             }
         }
 

@@ -12,6 +12,8 @@ namespace Sledge.Shell.Components
     public class CommandMenuItemProvider : IMenuItemProvider
     {
         [ImportMany] private IEnumerable<Lazy<ICommand>> _commands;
+        public event EventHandler MenuItemsChanged;
+
         public IEnumerable<IMenuItem> GetMenuItems()
         {
             foreach (var export in _commands)
