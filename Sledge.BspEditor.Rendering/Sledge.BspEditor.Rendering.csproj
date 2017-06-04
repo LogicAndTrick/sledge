@@ -86,6 +86,9 @@
     <Compile Include="Scene\SceneManager.cs" />
     <Compile Include="Scene\SceneMapObject.cs" />
     <Compile Include="Viewport\MapViewportControlFactory.cs" />
+    <Compile Include="Viewport\RightClickMenuBuilder.cs" />
+    <Compile Include="Viewport\RightClickViewportEventListenerFactory.cs" />
+    <Compile Include="Viewport\RightClickViewportListener.cs" />
     <Compile Include="Viewport\ViewportEvent.cs" />
     <Compile Include="Viewport\ViewportMapDocumentControl.cs" />
   </ItemGroup>

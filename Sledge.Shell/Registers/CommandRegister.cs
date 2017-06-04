@@ -67,7 +67,12 @@ namespace Sledge.Shell.Registers
         private async Task Run(CommandMessage message)
         {
             var cmd = Get(message.CommandID);
-            if (cmd != null && cmd.IsInContext(_context)) await cmd.Invoke(_context, message.Parameters);
+            if (cmd != null && cmd.IsInContext(_context))
+            {
+                await Oy.Publish("Command:Intercept", message);
+                if (message.Intercepted) return;
+                await cmd.Invoke(_context, message.Parameters);
+            }
         }
 
         private readonly ConcurrentDictionary<string, ICommand> _commands;

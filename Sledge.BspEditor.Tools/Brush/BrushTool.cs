@@ -18,6 +18,7 @@ using Sledge.BspEditor.Tools.Properties;
 using Sledge.Common.Shell.Components;
 using Sledge.Common.Shell.Context;
 using Sledge.Common.Shell.Settings;
+using Sledge.Common.Translations;
 using Sledge.DataStructures.Geometric;
 using Sledge.Rendering.Scenes;
 using Sledge.Rendering.Scenes.Renderables;
@@ -27,6 +28,7 @@ namespace Sledge.BspEditor.Tools.Brush
     [Export(typeof(ITool))]
     [Export(typeof(ISettingsContainer))]
     [OrderHint("H")]
+    [AutoTranslate]
     public class BrushTool : BaseDraggableTool, ISettingsContainer
     {
         private bool _updatePreview;
@@ -35,8 +37,9 @@ namespace Sledge.BspEditor.Tools.Brush
         private IBrush _activeBrush;
 
         [Import] private Lazy<MapObjectConverter> _converter;
-
-
+        
+        public string CreateObject { get; set; } = "Create Object";
+        
         // Settings
 
         [Setting("SelectionBoxBackgroundOpacity")] private int _selectionBoxBackgroundOpacity = 64;
@@ -87,6 +90,11 @@ namespace Sledge.BspEditor.Tools.Brush
             {
                 _updatePreview = true;
                 Invalidate();
+            });
+            yield return Oy.Subscribe<RightClickMenuBuilder>("MapViewport:RightClick", x =>
+            {
+                x.Clear();
+                x.AddCallback(String.Format(CreateObject, _activeBrush?.Name), () => Confirm(x.Viewport));
             });
         }
 

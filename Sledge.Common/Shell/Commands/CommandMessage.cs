@@ -4,6 +4,7 @@
     {
         public string CommandID { get; }
         public CommandParameters Parameters { get; }
+        public bool Intercepted { get; set; }
 
         public CommandMessage(string commandID, object parameters = null)
         {

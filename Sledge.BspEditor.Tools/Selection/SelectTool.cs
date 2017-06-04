@@ -143,6 +143,64 @@ namespace Sledge.BspEditor.Tools.Selection
                     if (x.HasDataChanges && x.AffectedData.Any(d => d is SelectionOptions)) IgnoreGroupingPossiblyChanged();
                 }
             });
+            yield return Oy.Subscribe<RightClickMenuBuilder>("MapViewport:RightClick", b =>
+            {
+                var selectionBoundingBox = Document.Selection.GetSelectionBoundingBox();
+                var point = b.Viewport.Flatten(b.Viewport.ProperScreenToWorld(b.Event.X, b.Event.Y));
+                var start = b.Viewport.Flatten(selectionBoundingBox.Start);
+                var end = b.Viewport.Flatten(selectionBoundingBox.End);
+
+                if (point.X < start.X || point.X > end.X || point.Y < start.Y || point.Y > end.Y) return;
+
+                // Clicked inside the selection bounds
+                b.Clear();
+
+                b.AddCommand("BspEditor:Edit:Cut");
+                b.AddCommand("BspEditor:Edit:Copy");
+                b.AddCommand("BspEditor:Edit:Delete");
+                b.AddCommand("BspEditor:Edit:Paste");
+                b.AddCommand("BspEditor:Edit:PasteSpecial");
+                b.AddSeparator();
+
+                b.AddCommand("BspEditor:Edit:OpenTransformDialog");
+                b.AddSeparator();
+
+                b.AddCommand("BspEditor:Edit:Undo");
+                b.AddCommand("BspEditor:Edit:Redo");
+                b.AddSeparator();
+
+                b.AddCommand("BspEditor:Edit:Carve");
+                b.AddCommand("BspEditor:Edit:Hollow");
+                b.AddSeparator();
+
+                b.AddCommand("BspEditor:Edit:Group");
+                b.AddCommand("BspEditor:Edit:Ungroup");
+                b.AddSeparator();
+
+                b.AddCommand("BspEditor:Edit:MoveToEntity");
+                b.AddCommand("BspEditor:Edit:MoveToWorld");
+                b.AddSeparator();
+
+                if (b.Viewport.Is2D)
+                {
+                    // todo: align
+                    b.AddCallback("TODO: Align", () => { });
+                    /*
+                    var flat = b.Viewport.Flatten(new Coordinate(1, 2, 3));
+                    var left = flat.X == 1 ? HotkeysMediator.AlignXMin : (flat.X == 2 ? HotkeysMediator.AlignYMin : HotkeysMediator.AlignZMin);
+                    var right = flat.X == 1 ? HotkeysMediator.AlignXMax : (flat.X == 2 ? HotkeysMediator.AlignYMax : HotkeysMediator.AlignZMax);
+                    var bottom = flat.Y == 1 ? HotkeysMediator.AlignXMin : (flat.Y == 2 ? HotkeysMediator.AlignYMin : HotkeysMediator.AlignZMin);
+                    var top = flat.Y == 1 ? HotkeysMediator.AlignXMax : (flat.Y == 2 ? HotkeysMediator.AlignYMax : HotkeysMediator.AlignZMax);
+                    Items.Add(new ToolStripMenuItem("Align", null,
+                        CreateMenuItem("Top", top),
+                        CreateMenuItem("Left", left),
+                        CreateMenuItem("Right", right),
+                        CreateMenuItem("Bottom", bottom)));
+                     */
+                }
+
+                b.AddCommand("BspEditor:Edit:OpenPropertiesDialog");
+            });
         }
 
         private bool _lastIgnoreGroupingValue;

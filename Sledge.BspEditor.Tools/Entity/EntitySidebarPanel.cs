@@ -31,6 +31,7 @@ namespace Sledge.BspEditor.Tools.Entity
         public EntitySidebarPanel()
         {
             InitializeComponent();
+            CreateHandle();
 
             Oy.Subscribe<MapDocument>("Document:Activated", RefreshEntities);
         }
@@ -46,7 +47,7 @@ namespace Sledge.BspEditor.Tools.Entity
 
             var sel = GetSelectedEntity()?.Name;
             var gameData = await doc.Environment.GetGameData();
-
+            
             EntityTypeLabel.Invoke(() =>
             {
                 EntityTypeList.BeginUpdate();

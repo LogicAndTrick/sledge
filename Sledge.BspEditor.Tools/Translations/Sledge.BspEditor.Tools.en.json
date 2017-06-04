@@ -9,5 +9,16 @@
     },
     "MenuDataProvider": {
         "Map": "Map"
+    },
+    "Brush": {
+        // todo: translate brushes
+        "BrushTool": {
+            "CreateObject": "Create {0}"
+        }
+    },
+    "Entity": {
+        "EntityTool": {
+            "CreateObject": "Create {0}"
+        }
     }
 }

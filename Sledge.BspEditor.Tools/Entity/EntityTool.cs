@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using LogicAndTrick.Oy;
 using OpenTK;
 using Sledge.BspEditor.Modification;
 using Sledge.BspEditor.Modification.Operations.Tree;
@@ -16,6 +17,8 @@ using Sledge.BspEditor.Tools.Properties;
 using Sledge.Common;
 using Sledge.Common.Shell.Components;
 using Sledge.Common.Shell.Context;
+using Sledge.Common.Translations;
+using Sledge.DataStructures.GameData;
 using Sledge.DataStructures.Geometric;
 using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Scenes;
@@ -26,6 +29,7 @@ namespace Sledge.BspEditor.Tools.Entity
 {
     [Export(typeof(ITool))]
     [OrderHint("F")]
+    [AutoTranslate]
     public class EntityTool : BaseTool
     {
         private enum EntityState
@@ -38,6 +42,8 @@ namespace Sledge.BspEditor.Tools.Entity
         private Coordinate _location;
         private EntityState _state;
         private string _activeEntity;
+
+        public string CreateObject { get; set; } = "Create {0}";
 
         public EntityTool()
         {
@@ -54,6 +60,51 @@ namespace Sledge.BspEditor.Tools.Entity
             base.ContextChanged(context);
         }
 
+        public override void DocumentChanged()
+        {
+            Task.Factory.StartNew(BuildMenu);
+            base.DocumentChanged();
+        }
+
+        private ToolStripItem[] _menu;
+
+        private async void BuildMenu()
+        {
+            _menu = null;
+            if (Document == null) return;
+
+            var gd = await Document.Environment.GetGameData();
+            if (gd == null) return;
+
+            var items = new List<ToolStripItem>();
+            var classes = gd.Classes.Where(x => x.ClassType != ClassType.Base && x.ClassType != ClassType.Solid).ToList();
+            var groups = classes.GroupBy(x => x.Name.Split('_')[0]);
+            foreach (var g in groups)
+            {
+                var mi = new ToolStripMenuItem(g.Key);
+                var l = g.ToList();
+                if (l.Count == 1)
+                {
+                    var cls = l[0];
+                    mi.Text = cls.Name;
+                    mi.Tag = cls;
+                    mi.Click += (s, e) => CreateEntity(_location, cls.Name);
+                }
+                else
+                {
+                    var subs = l.Select(x =>
+                    {
+                        var item = new ToolStripMenuItem(x.Name) { Tag = x };
+                        item.Click += (s, e) => CreateEntity(_location, x.Name);
+                        return item;
+                    }).OfType<ToolStripItem>().ToArray();
+                    mi.DropDownItems.AddRange(subs);
+                }
+                items.Add(mi);
+            }
+            _menu = items.ToArray();
+        }
+
         public override Image GetIcon()
         {
             return Resources.Tool_Entity;
@@ -63,7 +114,21 @@ namespace Sledge.BspEditor.Tools.Entity
         {
             return "Entity Tool";
         }
-        
+
+        protected override IEnumerable<Subscription> Subscribe()
+        {
+            yield return Oy.Subscribe<RightClickMenuBuilder>("MapViewport:RightClick", b =>
+            {
+                b.Clear();
+                b.AddCallback(String.Format(CreateObject, _activeEntity), () => CreateEntity(_location));
+
+                if (_menu == null || _menu.Length <= 0) return;
+
+                b.AddSeparator();
+                b.Add(_menu);
+            });
+        }
+
         // 3D interaction
 
         private Coordinate GetIntersectionPoint(IMapObject obj, DataStructures.Geometric.Line line)
