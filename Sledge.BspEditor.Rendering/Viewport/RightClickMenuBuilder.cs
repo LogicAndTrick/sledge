@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
+using LogicAndTrick.Gimme;
+using LogicAndTrick.Oy;
+using Sledge.Common.Shell.Commands;
 
 namespace Sledge.BspEditor.Rendering.Viewport
 {
@@ -83,7 +86,15 @@ namespace Sledge.BspEditor.Rendering.Viewport
             {
                 _commandID = commandID;
                 _parameters = parameters;
-                Text = commandID;
+                Click += RunCommand;
+
+                var cmd = Gimme.FetchOne<ICommand>("meta://command", _commandID).Result;
+                Text = cmd == null ? _commandID : cmd.Name;
+            }
+
+            private void RunCommand(object sender, EventArgs e)
+            {
+                Oy.Publish("Command:Run", new CommandMessage(_commandID, _parameters));
             }
         }
     }
