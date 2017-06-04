@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.Globalization;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -18,6 +20,20 @@ namespace Sledge.BspEditor.Primitives.MapObjectData
         {
             Properties = new Dictionary<string, string>();
         }
+
+        public EntityData(SerialisedObject obj)
+        {
+            Properties = new Dictionary<string, string>();
+            foreach (var prop in obj.Properties)
+            {
+                if (prop.Key == "Name") Name = prop.Value;
+                else if (prop.Key == "Flags") Flags = Convert.ToInt32(prop.Value, CultureInfo.InvariantCulture);
+                else Properties[prop.Key] = prop.Value;
+            }
+        }
+
+        [Export(typeof(IMapElementFormatter))]
+        public class ActiveTextureFormatter : StandardMapElementFormatter<EntityData> { }
 
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {

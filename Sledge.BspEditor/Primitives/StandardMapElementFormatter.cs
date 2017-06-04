@@ -25,7 +25,7 @@ namespace Sledge.BspEditor.Primitives
 
         public IMapElement Deserialise(SerialisedObject obj)
         {
-            return (IMapObject) Activator.CreateInstance(typeof(T), obj);
+            return (IMapElement) Activator.CreateInstance(typeof(T), obj);
         }
     }
 }

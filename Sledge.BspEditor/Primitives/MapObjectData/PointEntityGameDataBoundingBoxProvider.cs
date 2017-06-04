@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.Composition;
 using System.Linq;
 using System.Runtime.Serialization;
 using Sledge.BspEditor.Primitives.MapObjects;

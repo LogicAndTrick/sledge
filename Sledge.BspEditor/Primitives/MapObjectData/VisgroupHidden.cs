@@ -1,4 +1,6 @@
-﻿using System.Runtime.Serialization;
+﻿using System.ComponentModel.Composition;
+using System.Runtime.Serialization;
+using Sledge.BspEditor.Primitives.MapData;
 using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.Common.Transport;
 
@@ -12,6 +14,14 @@ namespace Sledge.BspEditor.Primitives.MapObjectData
         {
             IsHidden = isHidden;
         }
+
+        public VisgroupHidden(SerialisedObject obj)
+        {
+            IsHidden = obj.Get("IsHidden", false);
+        }
+
+        [Export(typeof(IMapElementFormatter))]
+        public class ActiveTextureFormatter : StandardMapElementFormatter<VisgroupHidden> { }
 
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {

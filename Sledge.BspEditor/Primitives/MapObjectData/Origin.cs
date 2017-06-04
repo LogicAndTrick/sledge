@@ -1,4 +1,5 @@
-﻿using System.Runtime.Serialization;
+﻿using System.ComponentModel.Composition;
+using System.Runtime.Serialization;
 using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.Common.Transport;
 using Sledge.DataStructures.Geometric;
@@ -13,6 +14,14 @@ namespace Sledge.BspEditor.Primitives.MapObjectData
         {
             Location = location;
         }
+
+        public Origin(SerialisedObject obj)
+        {
+            Location = obj.Get<Coordinate>("Location");
+        }
+
+        [Export(typeof(IMapElementFormatter))]
+        public class ActiveTextureFormatter : StandardMapElementFormatter<Origin> { }
 
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {

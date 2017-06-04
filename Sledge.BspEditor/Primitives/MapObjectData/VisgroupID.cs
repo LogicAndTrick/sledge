@@ -1,4 +1,5 @@
-﻿using System.Runtime.Serialization;
+﻿using System.ComponentModel.Composition;
+using System.Runtime.Serialization;
 using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.Common.Transport;
 
@@ -12,6 +13,14 @@ namespace Sledge.BspEditor.Primitives.MapObjectData
         {
             ID = id;
         }
+
+        public VisgroupID(SerialisedObject obj)
+        {
+            ID = obj.Get<long>("ID");
+        }
+
+        [Export(typeof(IMapElementFormatter))]
+        public class ActiveTextureFormatter : StandardMapElementFormatter<VisgroupID> { }
 
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.Linq;
 using System.Runtime.Serialization;
 using Sledge.BspEditor.Primitives.MapObjects;
@@ -23,6 +24,38 @@ namespace Sledge.BspEditor.Primitives.MapObjectData
             Texture = new Texture();
             Vertices = new List<Coordinate>();
         }
+
+        public Face(SerialisedObject obj)
+        {
+            ID = obj.Get("ID", ID);
+
+            var pln = obj.Children.First(x => x.Name == "Plane");
+            Plane = new Plane(pln.Get<Coordinate>("Normal"), pln.Get<decimal>("DistanceFromOrigin"));
+
+            var t = obj.Children.FirstOrDefault(x => x.Name == "Texture");
+            Texture = new Texture();
+            
+            if (t != null)
+            {
+                Texture.Name = t.Get("Name", "");
+                Texture.Rotation = t.Get("Rotation", 0m);
+                Texture.UAxis = t.Get("UAxis", -Coordinate.UnitZ);
+                Texture.VAxis = t.Get("VAxis", Coordinate.UnitX);
+                Texture.XScale = t.Get("XScale", 1m);
+                Texture.XShift = t.Get("XShift", 0m);
+                Texture.YScale = t.Get("YScale", 1m);
+                Texture.YShift = t.Get("YShift", 0m);
+            }
+
+            Vertices = new List<Coordinate>();
+            foreach (var so in obj.Children.Where(x => x.Name == "Vertex"))
+            {
+                Vertices.Add(so.Get<Coordinate>("Position"));
+            }
+        }
+
+        [Export(typeof(IMapElementFormatter))]
+        public class ActiveTextureFormatter : StandardMapElementFormatter<Face> { }
 
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
