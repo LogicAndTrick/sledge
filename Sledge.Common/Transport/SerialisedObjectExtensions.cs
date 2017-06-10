@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 using System.Drawing;
 using System.Globalization;
 
@@ -8,7 +9,8 @@ namespace Sledge.Common.Transport
     {
         public static void Set<T>(this SerialisedObject so, string key, T value)
         {
-            var v = Convert.ToString(value, CultureInfo.InvariantCulture);
+            var conv = TypeDescriptor.GetConverter(typeof(T));
+            var v = conv.ConvertToString(null, CultureInfo.InvariantCulture, value);
             so.Properties[key] = v;
         }
 
@@ -18,7 +20,8 @@ namespace Sledge.Common.Transport
             try
             {
                 var val = so.Properties[key];
-                return (T) Convert.ChangeType(val, typeof(T), CultureInfo.InvariantCulture);
+                var conv = TypeDescriptor.GetConverter(typeof(T));
+                return (T) conv.ConvertFromString(null, CultureInfo.InvariantCulture, val);
             }
             catch
             {
