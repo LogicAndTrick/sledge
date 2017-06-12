@@ -69,6 +69,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Commands\Clipboard\Delete.cs" />
     <Compile Include="Commands\Grouping\Group.cs" />
     <Compile Include="Commands\Grouping\Ungroup.cs" />
     <Compile Include="Documents\BspSourceDocumentLoader.cs" />
@@ -247,6 +248,7 @@
     <None Include="packages.config" />
     <None Include="Resources\SquareGrid.png" />
     <Content Include="Resources\DottedGrid.png" />
+    <Content Include="Resources\Menu_Delete.png" />
     <Content Include="Resources\Menu_Group.png" />
     <Content Include="Resources\Menu_SelectNone.png" />
     <Content Include="Resources\Menu_Copy.png" />
