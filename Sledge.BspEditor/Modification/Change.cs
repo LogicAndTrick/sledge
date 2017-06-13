@@ -60,6 +60,15 @@ namespace Sledge.BspEditor.Modification
             return this;
         }
 
+        public Change UpdateRange(IEnumerable<IMapObject> objects)
+        {
+            var all = objects.ToList();
+            _updated.UnionWith(all);
+            _added.ExceptWith(all);
+            _removed.ExceptWith(all);
+            return this;
+        }
+
         public Change Update(IMapData data)
         {
             _affectedData.Add(data);

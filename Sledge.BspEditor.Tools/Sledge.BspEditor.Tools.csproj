@@ -110,6 +110,7 @@
     <Compile Include="Brush\IBrush.cs" />
     <Compile Include="CameraTool.cs" />
     <Compile Include="Clip\ClipTool.cs" />
+    <Compile Include="Cordon\ToggleCordon.cs" />
     <Compile Include="Decal\DecalTool.cs" />
     <Compile Include="Draggable\BaseDraggable.cs" />
     <Compile Include="Draggable\BaseDraggableTool.cs" />
@@ -233,6 +234,7 @@
     <None Include="app.config" />
     <None Include="OpenTK.dll.config" />
     <None Include="packages.config" />
+    <Content Include="Resources\Menu_Cordon.png" />
     <Content Include="Resources\Menu_IgnoreGrouping.png" />
     <Content Include="Translations\Sledge.BspEditor.Tools.en.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

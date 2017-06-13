@@ -16,9 +16,10 @@ namespace Sledge.BspEditor.Rendering.Converters
         /// Checks if further converters should be abandoned after this converter runs.
         /// </summary>
         /// <param name="smo">The current SceneMapObject</param>
+        /// <param name="document">The current document</param>
         /// <param name="obj">The MapObject that's being converted</param>
         /// <returns>True to stop processing all further converters</returns>
-        bool ShouldStopProcessing(SceneMapObject smo, IMapObject obj);
+        bool ShouldStopProcessing(SceneMapObject smo, MapDocument document, IMapObject obj);
 
         /// <summary>
         /// Check if the object is supported by this converter.

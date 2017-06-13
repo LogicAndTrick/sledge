@@ -19,7 +19,7 @@ namespace Sledge.BspEditor.Rendering.Converters
     {
         public MapObjectSceneConverterPriority Priority => MapObjectSceneConverterPriority.DefaultLow;
 
-        public bool ShouldStopProcessing(SceneMapObject smo, IMapObject obj)
+        public bool ShouldStopProcessing(SceneMapObject smo, MapDocument document, IMapObject obj)
         {
             return false;
         }

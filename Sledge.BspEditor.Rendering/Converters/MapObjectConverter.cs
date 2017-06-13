@@ -22,7 +22,7 @@ namespace Sledge.BspEditor.Rendering.Converters
             {
                 if (!converter.Supports(obj)) continue;
                 if (!await converter.Convert(smo, document, obj)) return null;
-                if (converter.ShouldStopProcessing(smo, obj)) break;
+                if (converter.ShouldStopProcessing(smo, document, obj)) break;
             }
             return smo;
         }
@@ -33,7 +33,7 @@ namespace Sledge.BspEditor.Rendering.Converters
             {
                 if (!converter.Supports(obj)) continue;
                 if (!await converter.Update(smo, document, obj)) return false;
-                if (converter.ShouldStopProcessing(smo, obj)) break;
+                if (converter.ShouldStopProcessing(smo, document, obj)) break;
             }
             return true;
         }

@@ -73,6 +73,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Converters\CenterHandlesConverter.cs" />
+    <Compile Include="Converters\CordonBoundsConverter.cs" />
+    <Compile Include="Converters\CordonClippingConverter.cs" />
     <Compile Include="Converters\DefaultEntityConverter.cs" />
     <Compile Include="Converters\EntityAngleConverter.cs" />
     <Compile Include="Converters\EntityDecalConverter.cs" />
