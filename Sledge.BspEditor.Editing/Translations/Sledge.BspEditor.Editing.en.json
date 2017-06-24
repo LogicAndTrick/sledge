@@ -18,6 +18,37 @@
         }
     },
     "Components": {
+        "Properties": {
+            "ObjectPropertiesDialog": {
+                "Apply": "Apply",
+                "OK": "OK",
+                "Cancel": "Cancel"
+            },
+            "Tabs": {
+                "VisgroupTab": {
+                    "Name": "Visgroups",
+                    "MemberOfGroup": "Member of group:",
+                    "EditVisgroups": "Edit Visgroups"
+                },
+                "ClassInfoTab": {
+                    "Name": "Class Info",
+                    "ClassLabel": "Class:",
+                    "KeyValuesLabel": "Keyvalues:",
+                    "PropertyNameLabel": "Property Name",
+                    "PropertyValueLabel": "Value",
+                    "HelpLabel": "Help:",
+                    "CommentsLabel": "Comments:",
+                    "SmartEditButton": "Smart Edit",
+                    "HelpButton": "Help",
+                    "CopyButton": "Copy",
+                    "PasteButton": "Paste",
+                    "AddButton": "Add",
+                    "DeleteButton": "Delete",
+                    "MultipleClassesText": "<multiple classes>",
+                    "MultipleValuesText": "<multiple values>"
+                }
+            }
+        }, 
         "Visgroup": {
             "VisgroupEditForm": {
                 "Title": "Visgroup Editor",
@@ -47,6 +78,6 @@
             "FixAll": "Fix all problems",
             "VisibleObjectsOnly": "Visible objects only",
             "CloseButton": "Close"
-        } 
+        }
     } 
 }

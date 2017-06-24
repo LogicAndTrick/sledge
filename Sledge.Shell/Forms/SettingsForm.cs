@@ -173,7 +173,7 @@ namespace Sledge.Shell.Forms
             return context.HasAny("SettingsForm");
         }
 
-        public void SetVisible(bool visible)
+        public void SetVisible(IContext context, bool visible)
         {
             this.Invoke(() =>
             {

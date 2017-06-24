@@ -47,6 +47,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Commands\EditVisgroups.cs" />
+    <Compile Include="Commands\OpenObjectProperties.cs" />
     <Compile Include="Commands\OpenAboutWindow.cs" />
     <Compile Include="Components\AboutDialog.cs">
       <SubType>Form</SubType>
@@ -59,6 +60,36 @@
     </Compile>
     <Compile Include="Components\CheckForProblemsDialog.Designer.cs">
       <DependentUpon>CheckForProblemsDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Components\Properties\IObjectPropertyEditorTab.cs" />
+    <Compile Include="Components\Properties\ObjectPropertiesDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Components\Properties\ObjectPropertiesDialog.designer.cs">
+      <DependentUpon>ObjectPropertiesDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Components\Properties\ObjectPropertyTable.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Components\Properties\IObjectPropertyEditor.cs" />
+    <Compile Include="Components\Properties\SmartEdit\DumbEditControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Components\Properties\SmartEdit\SmartEditControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Components\Properties\TableValue.cs" />
+    <Compile Include="Components\Properties\Tabs\ClassInfoTab.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Components\Properties\Tabs\ClassInfoTab.designer.cs">
+      <DependentUpon>ClassInfoTab.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Components\Properties\Tabs\VisgroupTab.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Components\Properties\Tabs\VisgroupTab.designer.cs">
+      <DependentUpon>VisgroupTab.cs</DependentUpon>
     </Compile>
     <Compile Include="Components\Visgroup\Operations\SetVisgroupVisibility.cs" />
     <Compile Include="Components\Visgroup\VisgroupEditForm.cs">
@@ -78,6 +109,12 @@
     </Compile>
     <Compile Include="Components\Visgroup\VisgroupSidebarPanel.Designer.cs">
       <DependentUpon>VisgroupSidebarPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\AngleControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\AngleControl.designer.cs">
+      <DependentUpon>AngleControl.cs</DependentUpon>
     </Compile>
     <Compile Include="History\HistoryHandler.cs" />
     <Compile Include="History\HistorySiderbarPanel.cs">
@@ -129,6 +166,15 @@
     <EmbeddedResource Include="Components\CheckForProblemsDialog.resx">
       <DependentUpon>CheckForProblemsDialog.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Components\Properties\ObjectPropertiesDialog.resx">
+      <DependentUpon>ObjectPropertiesDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Components\Properties\Tabs\ClassInfoTab.resx">
+      <DependentUpon>ClassInfoTab.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Components\Properties\Tabs\VisgroupTab.resx">
+      <DependentUpon>VisgroupTab.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Components\Visgroup\VisgroupEditForm.resx">
       <DependentUpon>VisgroupEditForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -137,6 +183,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Components\Visgroup\VisgroupSidebarPanel.resx">
       <DependentUpon>VisgroupSidebarPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\AngleControl.resx">
+      <DependentUpon>AngleControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="History\HistorySiderbarPanel.resx">
       <DependentUpon>HistorySiderbarPanel.cs</DependentUpon>

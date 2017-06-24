@@ -4,6 +4,6 @@ namespace Sledge.Common.Shell.Components
 {
     public interface IDialog : IContextAware
     {
-        void SetVisible(bool visible);
+        void SetVisible(IContext context, bool visible);
     }
 }

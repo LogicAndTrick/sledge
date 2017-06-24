@@ -45,7 +45,7 @@ namespace Sledge.Shell.Registers
             {
                 foreach (var c in _components)
                 {
-                    c.SetVisible(c.IsInContext(context));
+                    c.SetVisible(context, c.IsInContext(context));
                 }
             });
         }

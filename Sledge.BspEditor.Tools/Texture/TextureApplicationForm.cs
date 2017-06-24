@@ -124,7 +124,7 @@ namespace Sledge.BspEditor.Tools.Texture
             return context.TryGet("ActiveTool", out TextureTool _);
         }
 
-        public void SetVisible(bool visible)
+        public void SetVisible(IContext context, bool visible)
         {
             if (Visible != visible)
             {

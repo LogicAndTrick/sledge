@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Globalization;
 using System.Linq;
@@ -54,9 +55,26 @@ namespace Sledge.BspEditor.Primitives.MapObjectData
             return null;
         }
 
-        public void Set(string key, string value)
+        public T Get<T>(string key, T defaultValue = default(T))
         {
-            Properties[key] = value;
+            if (!Properties.ContainsKey(key)) return defaultValue;
+            try
+            {
+                var val = Properties[key];
+                var conv = TypeDescriptor.GetConverter(typeof(T));
+                return (T)conv.ConvertFromString(null, CultureInfo.InvariantCulture, val);
+            }
+            catch
+            {
+                return defaultValue;
+            }
+        }
+
+        public void Set<T>(string key, T value)
+        {
+            var conv = TypeDescriptor.GetConverter(typeof(T));
+            var v = conv.ConvertToString(null, CultureInfo.InvariantCulture, value);
+            Properties[key] = v;
         }
 
         public void Unset(string key)
