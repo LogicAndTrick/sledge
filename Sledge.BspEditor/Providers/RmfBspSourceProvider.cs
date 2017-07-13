@@ -36,7 +36,9 @@ namespace Sledge.BspEditor.Providers
             typeof(EntityData),
             typeof(ObjectColor),
         };
+
         public IEnumerable<Type> SupportedDataTypes => SupportedTypes;
+
         public IEnumerable<FileExtensionInfo> SupportedFileExtensions { get; } = new[]
         {
             new FileExtensionInfo("Worldcraft map formats", ".rmf", ".rmx"), 
@@ -48,7 +50,6 @@ namespace Sledge.BspEditor.Providers
             {
                 using (var br = new BinaryReader(stream, Encoding.ASCII, true))
                 {
-
                     // Only RMF version 2.2 is supported for the moment.
                     var version = Math.Round(br.ReadSingle(), 1);
                     if (Math.Abs(version - 2.2) > 0.01)
@@ -276,7 +277,171 @@ namespace Sledge.BspEditor.Providers
 
         public Task Save(Stream stream, Map map)
         {
-            throw new NotImplementedException();
+            return Task.Factory.StartNew(() =>
+            {
+                using (var bw = new BinaryWriter(stream, Encoding.ASCII, true))
+                {
+                    // RMF 2.2 header
+                    bw.Write(2.2f);
+                    bw.WriteFixedLengthString(Encoding.ASCII, 3, "RMF");
+
+                    // Body
+                    WriteVisgroups(map, bw);
+                    WriteWorldspawn(map, bw);
+
+                    // Docinfo footer
+                    bw.WriteFixedLengthString(Encoding.ASCII, 8, "DOCINFO");
+                    WriteCameras(map, bw);
+                }
+            });
+        }
+
+        private void WriteVisgroups(Map map, BinaryWriter bw)
+        {
+            var vis = map.Data.Get<Visgroup>().ToList();
+            bw.Write(vis.Count);
+            foreach (var visgroup in vis)
+            {
+                bw.WriteFixedLengthString(Encoding.UTF8, 128, visgroup.Name);
+                bw.WriteRGBAColour(visgroup.Colour);
+                bw.Write(visgroup.ID);
+                bw.Write(visgroup.Visible);
+                bw.Write(new byte[3]); // Unused
+            }
+        }
+
+        private void WriteWorldspawn(Map map, BinaryWriter bw)
+        {
+            WriteObject(map.Root, bw);
+        }
+
+        private void WriteObject(IMapObject obj, BinaryWriter bw)
+        {
+            foreach (var o in obj.Decompose(SupportedTypes))
+            {
+                if (o is Root r)
+                {
+                    WriteRoot(r, bw);
+                }
+                else if (o is Group g)
+                {
+                    WriteGroup(g, bw);
+                }
+                else if (o is Solid s)
+                {
+                    WriteSolid(s, bw);
+                }
+                else if (o is Entity e)
+                {
+                    WriteEntity(e, bw);
+                }
+                else
+                {
+                    throw new ArgumentOutOfRangeException("Unsupported RMF map object: " + o.GetType());
+                }
+            }
+        }
+
+        private void WriteMapBase(IMapObject obj, BinaryWriter bw)
+        {
+            bw.Write((int) (obj.Data.OfType<VisgroupID>().FirstOrDefault()?.ID ?? 0));
+            bw.WriteRGBColour(obj.Data.GetOne<ObjectColor>()?.Color ?? Color.White);
+            bw.Write(obj.Hierarchy.NumChildren);
+            foreach (var child in obj.Hierarchy)
+            {
+                WriteObject(child, bw);
+            }
+        }
+
+        private void WriteRoot(Root root, BinaryWriter bw)
+        {
+            WriteMapBase(root, bw);
+            WriteEntityData(root.Data.GetOne<EntityData>(), bw);
+            var paths = new object[0]; // Root.Data.Get<Path> etc/
+            bw.Write(paths.Length);
+            foreach (var path in paths)
+            {
+                throw new NotImplementedException("Paths are not supported yet");
+                // WritePath(path, bw);
+            }
+        }
+
+        private void WriteGroup(Group group, BinaryWriter bw)
+        {
+            WriteMapBase(group, bw);
+        }
+
+        private void WriteSolid(Solid solid, BinaryWriter bw)
+        {
+            WriteMapBase(solid, bw);
+            var faces = solid.Faces.ToList();
+            bw.Write(faces.Count);
+            foreach (var face in faces)
+            {
+                WriteFace(face, bw);
+            }
+        }
+
+        private void WriteEntity(Entity entity, BinaryWriter bw)
+        {
+            WriteMapBase(entity, bw);
+            WriteEntityData(entity.EntityData, bw);
+            bw.Write(new byte[2]); // Unused
+            bw.WriteCoordinate(entity.Origin);
+            bw.Write(new byte[4]); // Unused
+        }
+
+        private void WriteEntityData(EntityData data, BinaryWriter bw)
+        {
+            if (data == null) data = new EntityData();
+            bw.WriteCString(data.Name);
+            bw.Write(new byte[4]); // Unused
+            bw.Write(data.Flags);
+
+            var props = data.Properties.Where(x => !ExcludedKeys.Contains(x.Key.ToLower())).ToList();
+            bw.Write(props.Count);
+            foreach (var p in props)
+            {
+                bw.WriteCString(p.Key);
+                bw.WriteCString(p.Value);
+            }
+            bw.Write(new byte[12]); // Unused
+        }
+
+        private void WriteFace(Face face, BinaryWriter bw)
+        {
+            bw.WriteFixedLengthString(Encoding.UTF8, 256, face.Texture.Name);
+            bw.Write(new byte[4]);
+            bw.WriteCoordinate(face.Texture.UAxis);
+            bw.WriteDecimalAsSingle(face.Texture.XShift);
+            bw.WriteCoordinate(face.Texture.VAxis);
+            bw.WriteDecimalAsSingle(face.Texture.YShift);
+            bw.WriteDecimalAsSingle(face.Texture.Rotation);
+            bw.WriteDecimalAsSingle(face.Texture.XScale);
+            bw.WriteDecimalAsSingle(face.Texture.YScale);
+            bw.Write(new byte[16]);
+            bw.Write(face.Vertices.Count);
+            foreach (var vertex in face.Vertices)
+            {
+                bw.WriteCoordinate(vertex);
+            }
+            bw.WritePlane(face.Vertices.ToArray());
+        }
+
+        private void WriteCameras(Map map, BinaryWriter bw)
+        {
+            bw.Write(0.2f); // Unused
+
+            var cams = map.Data.Get<Camera>().ToList();
+            var active = Math.Max(0, cams.FindIndex(x => x.IsActive));
+
+            bw.Write(active);
+            bw.Write(cams.Count);
+            foreach (var cam in cams)
+            {
+                bw.WriteCoordinate(cam.EyePosition);
+                bw.WriteCoordinate(cam.LookPosition);
+            }
         }
     }
 }

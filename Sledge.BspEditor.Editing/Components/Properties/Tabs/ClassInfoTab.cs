@@ -185,52 +185,28 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
 
             lstKeyValues.Items.Clear();
 
-            var keyList = datas.SelectMany(x => x.EntityData.Properties.Keys);
-            if (gdo != null) keyList = keyList.Union(gdo.Properties.Select(x => x.Name));
-            var keys = keyList.Distinct().ToList();
+            var tableValues = TableValue.Create(gdo, gdo?.Name, datas.Select(x => x.EntityData).ToList(), MultipleValuesText);
 
             angAngles.Enabled = false;
             angAngles.SetAngle(0);
 
-            foreach (var key in keys)
+            foreach (var tv in tableValues)
             {
-                if (key == "spawnflags") continue;
+                var keyText = tv.NewKey;
+                var valText = tv.Value;
 
-                var val = "";
-                var values = datas.Select(x => x.EntityData.Get(key, "")).Distinct().ToList();
-                if (values.Count == 0)
+                if (btnSmartEdit.Checked)
                 {
-                    val = "";
-                }
-                else if (values.Count > 1)
-                {
-                    val = MultipleValuesText + @" " + String.Join("; ", values.Where(x => !String.IsNullOrWhiteSpace(x)));
-                }
-                else
-                {
-                    val = values[0];
+                    keyText = tv.DisplayText;
+                    valText = tv.DisplayValue;
                 }
 
-                var keyText = key;
-                var valText = val;
+                lstKeyValues.Items.Add(new ListViewItem(keyText) { Tag = tv }).SubItems.Add(valText);
 
-                if (btnSmartEdit.Checked && gdo != null)
-                {
-                    var prop = gdo.Properties.FirstOrDefault(x => String.Equals(x.Name, key, StringComparison.InvariantCultureIgnoreCase));
-                    if (prop != null)
-                    {
-                        keyText = prop.DisplayText();
-                        var opt = prop.Options.FirstOrDefault(x => String.Equals(x.Key, val, StringComparison.InvariantCultureIgnoreCase));
-                        if (opt != null) valText = opt.DisplayText();
-                    }
-                }
-
-                lstKeyValues.Items.Add(new ListViewItem(keyText) { Tag = key }).SubItems.Add(valText);
-
-                if (key == "angles")
+                if (tv.NewKey == "angles")
                 {
                     angAngles.Enabled = true;
-                    angAngles.SetAnglePropertyString(val);
+                    angAngles.SetAnglePropertyString(tv.Value);
                 }
             }
 
@@ -249,7 +225,7 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
                     .Select(x => x.Value)
                     .OrderBy(x => x.PriorityHint)
                     .FirstOrDefault(x => x.SupportsType(
-
+                        VariableType.Void
                     ));
             }
         }
