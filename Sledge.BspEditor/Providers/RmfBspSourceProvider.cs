@@ -296,6 +296,8 @@ namespace Sledge.BspEditor.Providers
             });
         }
 
+        #region Writing
+
         private void WriteVisgroups(Map map, BinaryWriter bw)
         {
             var vis = map.Data.Get<Visgroup>().ToList();
@@ -443,5 +445,7 @@ namespace Sledge.BspEditor.Providers
                 bw.WriteCoordinate(cam.LookPosition);
             }
         }
+        
+        #endregion
     }
 }
