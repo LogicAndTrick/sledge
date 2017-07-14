@@ -201,6 +201,7 @@
     <Compile Include="Providers\IBspSourceProvider.cs" />
     <Compile Include="Documents\MapDocument.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Providers\NativeBspSourceProvider.cs" />
     <Compile Include="Providers\MapBspSourceProvider.cs" />
     <Compile Include="Providers\RmfBspSourceProvider.cs" />
   </ItemGroup>
