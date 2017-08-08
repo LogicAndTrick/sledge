@@ -71,9 +71,11 @@ namespace Sledge.BspEditor.Editing.Components.Properties
 
         private void UpdateTabVisibility(IContext context)
         {
+            // todo: to avoid UI flashing, only add/remove tabs when they need to, rather than always
             tabPanel.SuspendLayout();
+            var sel = tabPanel.SelectedIndex < tabPanel.TabCount ? tabPanel.SelectedTab : null;
             tabPanel.TabPages.Clear();
-            foreach (var tp in _tabs)
+            foreach (var tp in _tabs.OrderBy(x => x.Value.OrderHint))
             {
                 var tab = tp.Value;
                 var inContext = tab.IsInContext(context);
@@ -83,7 +85,12 @@ namespace Sledge.BspEditor.Editing.Components.Properties
                     page.Text = tab.Name;
                     tabPanel.TabPages.Add(page);
                 }
+                else if (sel == page)
+                {
+                    sel = null;
+                }
             }
+            if (sel != null) tabPanel.SelectedTab = sel;
             tabPanel.ResumeLayout(true);
         }
 

@@ -49,6 +49,9 @@
                     "DeleteButton": "Delete",
                     "MultipleClassesText": "<multiple classes>",
                     "MultipleValuesText": "<multiple values>"
+                },
+                "FlagsTab": {
+                    "Name": "Flags"
                 }
             }
         }, 

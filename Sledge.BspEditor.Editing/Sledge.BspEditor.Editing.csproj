@@ -61,6 +61,12 @@
     <Compile Include="Components\CheckForProblemsDialog.Designer.cs">
       <DependentUpon>CheckForProblemsDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="Components\Properties\Tabs\FlagsTab.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Components\Properties\Tabs\FlagsTab.designer.cs">
+      <DependentUpon>FlagsTab.cs</DependentUpon>
+    </Compile>
     <Compile Include="Components\Properties\IObjectPropertyEditorTab.cs" />
     <Compile Include="Components\Properties\ObjectPropertiesDialog.cs">
       <SubType>Form</SubType>
@@ -171,6 +177,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Components\CheckForProblemsDialog.resx">
       <DependentUpon>CheckForProblemsDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Components\Properties\Tabs\FlagsTab.resx">
+      <DependentUpon>FlagsTab.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Components\Properties\ObjectPropertiesDialog.resx">
       <DependentUpon>ObjectPropertiesDialog.cs</DependentUpon>

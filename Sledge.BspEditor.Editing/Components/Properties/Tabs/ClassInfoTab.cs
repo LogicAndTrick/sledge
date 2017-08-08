@@ -22,7 +22,7 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
     {
         [ImportMany] private IEnumerable<Lazy<SmartEditControl>> _smartEditControls;
 
-        public string OrderHint => "Y";
+        public string OrderHint => "D";
         public Control Control => this;
 
         #region Translations
