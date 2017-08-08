@@ -85,6 +85,12 @@
     <Compile Include="Components\Properties\Tabs\ClassInfoTab.designer.cs">
       <DependentUpon>ClassInfoTab.cs</DependentUpon>
     </Compile>
+    <Compile Include="Components\Properties\Tabs\EmptyTab.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Components\Properties\Tabs\EmptyTab.designer.cs">
+      <DependentUpon>EmptyTab.cs</DependentUpon>
+    </Compile>
     <Compile Include="Components\Properties\Tabs\VisgroupTab.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -171,6 +177,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Components\Properties\Tabs\ClassInfoTab.resx">
       <DependentUpon>ClassInfoTab.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Components\Properties\Tabs\EmptyTab.resx">
+      <DependentUpon>EmptyTab.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Components\Properties\Tabs\VisgroupTab.resx">
       <DependentUpon>VisgroupTab.cs</DependentUpon>

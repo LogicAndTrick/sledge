@@ -14,29 +14,21 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
 {
     [AutoTranslate]
     [Export(typeof(IObjectPropertyEditorTab))]
-    public partial class VisgroupTab : UserControl, IObjectPropertyEditorTab
+    public partial class EmptyTab : UserControl, IObjectPropertyEditorTab
     {
-        public string OrderHint => "Y";
+        public string OrderHint => "_";
         public Control Control => this;
 
-        public string MemberOfGroup
+        public string NothingIsSelected
         {
-            get => lblMemberOfGroup.Text;
-            set => this.Invoke(() => lblMemberOfGroup.Text = value);
+            get => lblNothing.Text;
+            set => this.Invoke(() => lblNothing.Text = value);
         }
 
-        public string EditVisgroups
-        {
-            get => btnEditVisgroups.Text;
-            set => this.Invoke(() => btnEditVisgroups.Text = value);
-        }
+        public bool HasChanges => false;
+        string IObjectPropertyEditorTab.Name => "";
 
-        public bool HasChanges
-        {
-            get { return false; }
-        }
-
-        public VisgroupTab()
+        public EmptyTab()
         {
             InitializeComponent();
             CreateHandle();
@@ -44,16 +36,11 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
 
         public bool IsInContext(IContext context)
         {
-            return context.TryGet("ActiveDocument", out MapDocument doc)
-                && !doc.Selection.IsEmpty;
+            return !context.TryGet("ActiveDocument", out MapDocument doc) || doc.Selection.IsEmpty;
         }
 
         public Task SetObjects(MapDocument document, List<IMapObject> objects)
         {
-            visgroupPanel.Invoke(() =>
-            {
-                visgroupPanel.Update(document);
-            });
             return Task.FromResult(0);
         }
 

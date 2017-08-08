@@ -25,6 +25,9 @@
                 "Cancel": "Cancel"
             },
             "Tabs": {
+                "EmptyTab": {
+                    "NothingIsSelected": "Nothing is currently selected."
+                }, 
                 "VisgroupTab": {
                     "Name": "Visgroups",
                     "MemberOfGroup": "Member of group:",

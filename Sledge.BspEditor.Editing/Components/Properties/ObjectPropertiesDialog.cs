@@ -24,17 +24,24 @@ namespace Sledge.BspEditor.Editing.Components.Properties
     {
         [Import("Shell", typeof(Form))] private Lazy<Form> _parent;
         [ImportMany] private IEnumerable<Lazy<IObjectPropertyEditorTab>> _tabs;
+        [Import] private IContext _context;
+
         private List<Subscription> _subscriptions;
+        private Dictionary<IObjectPropertyEditorTab, TabPage> _pages;
 
         public Task OnInitialise()
         {
-            foreach (var tab in _tabs.Select(x => x.Value).OrderBy(x => x.OrderHint))
+            _pages = new Dictionary<IObjectPropertyEditorTab, TabPage>();
+            this.Invoke(() =>
             {
-                var page = new TabPage(tab.Name) {Tag = tab};
-                tab.Control.Dock = DockStyle.Fill;
-                page.Controls.Add(tab.Control);
-                tabPanel.TabPages.Add(page);
-            }
+                foreach (var tab in _tabs.Select(x => x.Value).OrderBy(x => x.OrderHint))
+                {
+                    var page = new TabPage(tab.Name) {Tag = tab};
+                    tab.Control.Dock = DockStyle.Fill;
+                    page.Controls.Add(tab.Control);
+                    _pages[tab] = page;
+                }
+            });
             return Task.FromResult(0);
         }
 
@@ -65,14 +72,19 @@ namespace Sledge.BspEditor.Editing.Components.Properties
         private void UpdateTabVisibility(IContext context)
         {
             tabPanel.SuspendLayout();
-            foreach (var tp in tabPanel.TabPages.OfType<TabPage>())
+            tabPanel.TabPages.Clear();
+            foreach (var tp in _tabs)
             {
-                var tab = (IObjectPropertyEditorTab) tp.Tag;
+                var tab = tp.Value;
                 var inContext = tab.IsInContext(context);
-                tp.Visible = inContext;
-                tp.Text = tab.Name;
+                var page = _pages[tab];
+                if (inContext)
+                {
+                    page.Text = tab.Name;
+                    tabPanel.TabPages.Add(page);
+                }
             }
-            tabPanel.ResumeLayout();
+            tabPanel.ResumeLayout(true);
         }
 
         protected override void OnClosing(CancelEventArgs e)
@@ -115,6 +127,12 @@ namespace Sledge.BspEditor.Editing.Components.Properties
             }
         }
 
+        private async Task SelectionChanged(MapDocument doc)
+        {
+            this.Invoke(() => UpdateTabVisibility(_context));
+            await DocumentActivated(doc);
+        }
+
         private Task DocumentChanged(Change change)
         {
             return DocumentActivated(change.Document);
@@ -127,7 +145,7 @@ namespace Sledge.BspEditor.Editing.Components.Properties
             {
                 Oy.Subscribe<Change>("MapDocument:Changed", DocumentChanged),
                 Oy.Subscribe<MapDocument>("Document:Activated", DocumentActivated),
-                Oy.Subscribe<MapDocument>("MapDocument:SelectionChanged", DocumentActivated)
+                Oy.Subscribe<MapDocument>("MapDocument:SelectionChanged", SelectionChanged)
             };
         }
 

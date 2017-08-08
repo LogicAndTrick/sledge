@@ -112,21 +112,24 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
         public ClassInfoTab()
         {
             InitializeComponent();
-            
+            CreateHandle();
+
         }
 
         public bool IsInContext(IContext context)
         {
             return context.TryGet("ActiveDocument", out MapDocument doc) &&
-                   doc.Selection.All(x => x.Data.GetOne<EntityData>() != null);
+                   doc.Selection.GetSelectedParents().Any(x => x.Data.GetOne<EntityData>() != null);
         }
 
         public async Task SetObjects(MapDocument document, List<IMapObject> objects)
         {
-            var gd = await document.Environment.GetGameData();
+
+            GameData gd = null;
+            if (document != null) gd = await document.Environment.GetGameData();
             this.Invoke(() =>
             {
-                UpdateObjects(gd, document, objects);
+                UpdateObjects(gd ?? new GameData(), document, objects);
             });
         }
 
