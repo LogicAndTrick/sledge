@@ -12,6 +12,9 @@ using Sledge.Shell;
 
 namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
 {
+    /// <summary>
+    /// The tab that appears when nothing is selected.
+    /// </summary>
     [AutoTranslate]
     [Export(typeof(IObjectPropertyEditorTab))]
     public partial class EmptyTab : UserControl, IObjectPropertyEditorTab

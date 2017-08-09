@@ -113,7 +113,11 @@ namespace Sledge.BspEditor.Editing.Components.Properties
                 {
                     UpdateTabVisibility(context);
                     var doc = context.Get<MapDocument>("ActiveDocument");
+
+                    #pragma warning disable 4014 // Intentionally unawaited
                     DocumentActivated(doc);
+                    #pragma warning restore 4014
+
                     Show(_parent.Value);
                     Subscribe();
                 }
@@ -127,7 +131,7 @@ namespace Sledge.BspEditor.Editing.Components.Properties
 
         private async Task DocumentActivated(MapDocument doc)
         {
-            var list = doc?.Selection.ToList() ?? new List<IMapObject>();
+            var list = doc?.Selection.GetSelectedParents().ToList() ?? new List<IMapObject>();
             foreach (var tab in _tabs)
             {
                 await tab.Value.SetObjects(doc, list);

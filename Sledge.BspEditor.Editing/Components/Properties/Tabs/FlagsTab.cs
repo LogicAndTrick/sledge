@@ -16,27 +16,38 @@ using Sledge.Shell;
 
 namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
 {
+    /// <summary>
+    /// An entity's flags are a series of boolean toggles that are 
+    /// encoded into a single integer as a bit field.
+    /// 
+    /// The interface is represented as a series of checkboxes
+    /// that the user can freely toggle.
+    /// 
+    /// This tab is only visible when the object context contains
+    /// selected parents all of the same entity class.
+    /// </summary>
     [AutoTranslate]
     [Export(typeof(IObjectPropertyEditorTab))]
     public partial class FlagsTab : UserControl, IObjectPropertyEditorTab
     {
         [ImportMany] private IEnumerable<Lazy<SmartEditControl>> _smartEditControls;
 
+        /// <inheritdoc />
         public string OrderHint => "H";
+
+        /// <inheritdoc />
         public Control Control => this;
 
-        public bool HasChanges
-        {
-            get { return false; }
-        }
+        /// <inheritdoc />
+        public bool HasChanges => GetChangedValues().Count > 0;
 
         public FlagsTab()
         {
             InitializeComponent();
             CreateHandle();
-
         }
 
+        /// <inheritdoc />
         public bool IsInContext(IContext context)
         {
             return context.TryGet("ActiveDocument", out MapDocument doc) &&
@@ -44,6 +55,7 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
                    doc.Selection.GetSelectedParents().GroupBy(x => x.Data.GetOne<EntityData>()?.Name).Count(x => x.Key != null) == 1;
         }
 
+        /// <inheritdoc />
         public async Task SetObjects(MapDocument document, List<IMapObject> objects)
         {
             GameData gd = null;
@@ -54,11 +66,35 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
             });
         }
 
+        /// <inheritdoc />
         public IEnumerable<MapDocumentOperation> GetChanges(MapDocument document)
         {
+            // todo
             yield break;
         }
 
+        /// <summary>
+        /// Get a list of options that have been changed since the objects were set.
+        /// Indeterminate checkboxes are never a change.
+        /// </summary>
+        private Dictionary<Option, bool> GetChangedValues()
+        {
+            var d = new Dictionary<Option, bool>();
+
+            for (var i = 0; i < FlagsTable.Items.Count; i++)
+            {
+                var fh = (FlagHolder) FlagsTable.Items[i];
+                var cs = FlagsTable.GetItemCheckState(i);
+                if (cs == CheckState.Indeterminate || cs == fh.OriginalValue) continue;
+                d.Add(fh.Option, cs == CheckState.Checked);
+            }
+
+            return d;
+        }
+        
+        /// <summary>
+        /// Update the checkbox list with the items in the given scope
+        /// </summary>
         private void UpdateObjects(GameData gameData, MapDocument document, List<IMapObject> objects)
         {
             SuspendLayout();
@@ -83,6 +119,11 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
             ResumeLayout();
         }
         
+        /// <summary>
+        /// Populate the flags list using the given the source flags data of the context.
+        /// </summary>
+        /// <param name="cls">The game data object. If null, the list will remain blank.</param>
+        /// <param name="flags">A list of flag values for the current context</param>
         private void PopulateFlags(GameDataObject cls, List<int> flags)
         {
             FlagsTable.Items.Clear();
@@ -94,7 +135,29 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
             {
                 var key = int.Parse(option.Key);
                 var numChecked = flags.Count(x => (x & key) > 0);
-                FlagsTable.Items.Add(option.Description, numChecked == flags.Count ? CheckState.Checked : (numChecked == 0 ? CheckState.Unchecked : CheckState.Indeterminate));
+                var cs = numChecked == flags.Count ? CheckState.Checked : (numChecked == 0 ? CheckState.Unchecked : CheckState.Indeterminate);
+                FlagsTable.Items.Add(new FlagHolder(option, cs), cs);
+            }
+        }
+
+        /// <summary>
+        /// Container for an option/flag to be used by the checkbox list.
+        /// Also maintains the original state of each item to detect changes later.
+        /// </summary>
+        private class FlagHolder
+        {
+            public CheckState OriginalValue { get; }
+            public Option Option { get; }
+
+            public FlagHolder(Option option, CheckState originalValue)
+            {
+                OriginalValue = originalValue;
+                Option = option;
+            }
+
+            public override string ToString()
+            {
+                return Option.Description;
             }
         }
     }
