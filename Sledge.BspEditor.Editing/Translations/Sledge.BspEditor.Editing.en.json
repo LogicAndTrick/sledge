@@ -22,7 +22,9 @@
             "ObjectPropertiesDialog": {
                 "Apply": "Apply",
                 "OK": "OK",
-                "Cancel": "Cancel"
+                "Cancel": "Cancel",
+                "UnsavedChanges": "Changes have not been saved",
+                "DoYouWantToSaveFirst": "There are unsaved changes. Do you want to save them?" 
             },
             "Tabs": {
                 "EmptyTab": {

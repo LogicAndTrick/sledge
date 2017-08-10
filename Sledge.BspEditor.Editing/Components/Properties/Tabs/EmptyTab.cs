@@ -47,7 +47,7 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
             return Task.FromResult(0);
         }
 
-        public IEnumerable<MapDocumentOperation> GetChanges(MapDocument document)
+        public IEnumerable<IOperation> GetChanges(MapDocument document, List<IMapObject> objects)
         {
             yield break;
         }

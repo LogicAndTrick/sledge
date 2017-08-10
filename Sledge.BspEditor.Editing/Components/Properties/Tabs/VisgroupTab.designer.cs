@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
 {
-    public partial class VisgroupTab
+    public sealed partial class VisgroupTab
     {
         private void InitializeComponent()
         {

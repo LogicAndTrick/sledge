@@ -133,7 +133,7 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
             });
         }
 
-        public IEnumerable<MapDocumentOperation> GetChanges(MapDocument document)
+        public IEnumerable<IOperation> GetChanges(MapDocument document, List<IMapObject> objects)
         {
             yield break;
         }

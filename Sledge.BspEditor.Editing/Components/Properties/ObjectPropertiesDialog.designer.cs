@@ -8,7 +8,7 @@
  */
 namespace Sledge.BspEditor.Editing.Components.Properties
 {
-	partial class ObjectPropertiesDialog
+    sealed partial class ObjectPropertiesDialog
 	{
 		/// <summary>
 		/// Designer variable used to keep track of non-visual components.
@@ -58,6 +58,7 @@ namespace Sledge.BspEditor.Editing.Components.Properties
             this.btnCancel.TabIndex = 2;
             this.btnCancel.Text = "Cancel";
             this.btnCancel.UseVisualStyleBackColor = true;
+            this.btnCancel.Click += new System.EventHandler(this.CancelClicked);
             // 
             // btnOk
             // 
@@ -67,6 +68,7 @@ namespace Sledge.BspEditor.Editing.Components.Properties
             this.btnOk.TabIndex = 2;
             this.btnOk.Text = "OK";
             this.btnOk.UseVisualStyleBackColor = true;
+            this.btnOk.Click += new System.EventHandler(this.OkClicked);
             // 
             // btnApply
             // 
@@ -76,6 +78,7 @@ namespace Sledge.BspEditor.Editing.Components.Properties
             this.btnApply.TabIndex = 2;
             this.btnApply.Text = "Apply";
             this.btnApply.UseVisualStyleBackColor = true;
+            this.btnApply.Click += new System.EventHandler(this.ApplyClicked);
             // 
             // ObjectPropertiesDialog
             // 

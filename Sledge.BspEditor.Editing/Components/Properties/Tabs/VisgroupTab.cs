@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Modification;
+using Sledge.BspEditor.Modification.Operations.Data;
 using Sledge.BspEditor.Primitives.MapObjectData;
 using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.Common.Shell.Context;
@@ -24,8 +24,10 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
     /// </summary>
     [AutoTranslate]
     [Export(typeof(IObjectPropertyEditorTab))]
-    public partial class VisgroupTab : UserControl, IObjectPropertyEditorTab
+    public sealed partial class VisgroupTab : UserControl, IObjectPropertyEditorTab
     {
+        private Dictionary<Primitives.MapData.Visgroup, CheckState> _state;
+
         /// <inheritdoc />
         public string OrderHint => "Y";
 
@@ -45,15 +47,14 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
         }
 
         /// <inheritdoc />
-        public bool HasChanges
-        {
-            get { return false; }
-        }
+        public bool HasChanges => GetMembershipChanges().Count > 0;
 
         public VisgroupTab()
         {
             InitializeComponent();
             CreateHandle();
+
+            _state = new Dictionary<Primitives.MapData.Visgroup, CheckState>();
         }
 
         /// <inheritdoc />
@@ -68,10 +69,27 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
         {
             visgroupPanel.Invoke(() =>
             {
-                var d = GetVisgroups(document, objects);
-                visgroupPanel.Update(d);
+                _state = GetVisgroups(document, objects);
+                visgroupPanel.Update(_state);
             });
             return Task.FromResult(0);
+        }
+
+        /// <summary>
+        /// Get the list of visgroup membership that has been changed since the objects were set.
+        /// Indeterminate checkboxes are never a change.
+        /// </summary>
+        private Dictionary<Primitives.MapData.Visgroup, bool> GetMembershipChanges()
+        {
+            var dic = new Dictionary<Primitives.MapData.Visgroup, bool>();
+            var cs = visgroupPanel.GetAllCheckStates();
+            foreach (var kv in _state)
+            {
+                if (kv.Value == CheckState.Indeterminate || !cs.ContainsKey(kv.Key.ID)) continue;
+                var newState = cs[kv.Key.ID];
+                if (newState != kv.Value) dic[kv.Key] = newState == CheckState.Checked;
+            }
+            return dic;
         }
 
         /// <summary>
@@ -103,9 +121,29 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
         }
 
         /// <inheritdoc />
-        public IEnumerable<MapDocumentOperation> GetChanges(MapDocument document)
+        public IEnumerable<IOperation> GetChanges(MapDocument document, List<IMapObject> objects)
         {
-            yield break;
+            var mc = GetMembershipChanges();
+            if (mc.Count == 0) yield break;
+
+            foreach (var mo in objects)
+            {
+                var visgroups = mo.Data.Get<VisgroupID>().ToDictionary(x => x.ID);
+                foreach (var kv in mc)
+                {
+                    var id = kv.Key.ID;
+                    if (kv.Value && !visgroups.ContainsKey(id))
+                    {
+                        // Object should be a member of this visgroup but it's not - add it
+                        yield return new AddMapObjectData(mo.ID, new VisgroupID(id));
+                    }
+                    else if (!kv.Value && visgroups.ContainsKey(id))
+                    {
+                        // Object should not be a member of this visgroup but it is - remove it
+                        yield return new RemoveMapObjectData(mo.ID, visgroups[id]);
+                    }
+                }
+            }
         }
     }
 }

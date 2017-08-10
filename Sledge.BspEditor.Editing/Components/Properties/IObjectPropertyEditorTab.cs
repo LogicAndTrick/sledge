@@ -46,7 +46,8 @@ namespace Sledge.BspEditor.Editing.Components.Properties
         /// Get the list of changes that have been applied by the user.
         /// </summary>
         /// <param name="document">The document</param>
+        /// <param name="objects">The list of objects</param>
         /// <returns>The list of changes</returns>
-        IEnumerable<MapDocumentOperation> GetChanges(MapDocument document);
+        IEnumerable<IOperation> GetChanges(MapDocument document, List<IMapObject> objects);
     }
 }

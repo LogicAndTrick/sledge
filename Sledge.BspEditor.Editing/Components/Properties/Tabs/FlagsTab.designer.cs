@@ -1,6 +1,6 @@
 ﻿namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
 {
-    public partial class FlagsTab
+    public sealed partial class FlagsTab
     {
         private void InitializeComponent()
         {

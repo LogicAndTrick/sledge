@@ -138,6 +138,9 @@
     <Compile Include="Modification\OperationHandler.cs" />
     <Compile Include="Modification\Operations\Data\AddMapData.cs" />
     <Compile Include="Modification\Operations\Data\AddMapObjectData.cs" />
+    <Compile Include="Modification\Operations\Data\EditEntityDataFlags.cs" />
+    <Compile Include="Modification\Operations\Data\EditEntityDataName.cs" />
+    <Compile Include="Modification\Operations\Data\EditEntityDataProperties.cs" />
     <Compile Include="Modification\Operations\Data\RemoveMapData.cs" />
     <Compile Include="Modification\Operations\Data\RemoveMapObjectData.cs" />
     <Compile Include="Modification\Operations\Mutation\Transform.cs" />

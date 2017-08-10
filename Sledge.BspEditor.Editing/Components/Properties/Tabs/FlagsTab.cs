@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Editing.Components.Properties.SmartEdit;
 using Sledge.BspEditor.Modification;
+using Sledge.BspEditor.Modification.Operations.Data;
 using Sledge.BspEditor.Primitives.MapObjectData;
 using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.Common.Shell.Context;
@@ -28,7 +29,7 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
     /// </summary>
     [AutoTranslate]
     [Export(typeof(IObjectPropertyEditorTab))]
-    public partial class FlagsTab : UserControl, IObjectPropertyEditorTab
+    public sealed partial class FlagsTab : UserControl, IObjectPropertyEditorTab
     {
         [ImportMany] private IEnumerable<Lazy<SmartEditControl>> _smartEditControls;
 
@@ -62,31 +63,55 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
             if (document != null) gd = await document.Environment.GetGameData();
             this.Invoke(() =>
             {
-                UpdateObjects(gd ?? new GameData(), document, objects);
+                UpdateObjects(gd ?? new GameData(), objects);
             });
         }
 
         /// <inheritdoc />
-        public IEnumerable<MapDocumentOperation> GetChanges(MapDocument document)
+        public IEnumerable<IOperation> GetChanges(MapDocument document, List<IMapObject> objects)
         {
-            // todo
-            yield break;
+            var cv = GetChangedValues();
+            if (cv.Count == 0) yield break;
+
+            foreach (var mo in objects)
+            {
+                var data = mo.Data.GetOne<EntityData>();
+                if (data != null)
+                {
+                    var cf = data.Flags;
+                    var nf = ApplyFlags(cf, cv);
+                    yield return new EditEntityDataFlags(mo.ID, nf);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Apply a flags changeset to an original flags value
+        /// </summary>
+        private int ApplyFlags(int originalFlags, Dictionary<int, bool> changes)
+        {
+            foreach (var kv in changes)
+            {
+                if (kv.Value) originalFlags |= kv.Key;
+                else originalFlags &= ~kv.Key;
+            }
+            return originalFlags;
         }
 
         /// <summary>
         /// Get a list of options that have been changed since the objects were set.
         /// Indeterminate checkboxes are never a change.
         /// </summary>
-        private Dictionary<Option, bool> GetChangedValues()
+        private Dictionary<int, bool> GetChangedValues()
         {
-            var d = new Dictionary<Option, bool>();
+            var d = new Dictionary<int, bool>();
 
             for (var i = 0; i < FlagsTable.Items.Count; i++)
             {
                 var fh = (FlagHolder) FlagsTable.Items[i];
                 var cs = FlagsTable.GetItemCheckState(i);
                 if (cs == CheckState.Indeterminate || cs == fh.OriginalValue) continue;
-                d.Add(fh.Option, cs == CheckState.Checked);
+                d.Add(fh.BitValue, cs == CheckState.Checked);
             }
 
             return d;
@@ -95,7 +120,7 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
         /// <summary>
         /// Update the checkbox list with the items in the given scope
         /// </summary>
-        private void UpdateObjects(GameData gameData, MapDocument document, List<IMapObject> objects)
+        private void UpdateObjects(GameData gameData, List<IMapObject> objects)
         {
             SuspendLayout();
 
@@ -131,7 +156,7 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
             var flagsProp = cls?.Properties.FirstOrDefault(x => x.Name == "spawnflags");
             if (flagsProp == null) return;
 
-            foreach (var option in flagsProp.Options.OrderBy(x => int.Parse(x.Key)))
+            foreach (var option in flagsProp.Options.OrderBy(x => int.TryParse(x.Key, out int v) ? v : 0))
             {
                 var key = int.Parse(option.Key);
                 var numChecked = flags.Count(x => (x & key) > 0);
@@ -147,7 +172,8 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
         private class FlagHolder
         {
             public CheckState OriginalValue { get; }
-            public Option Option { get; }
+            private Option Option { get; }
+            public int BitValue => int.TryParse(Option.Key, out int v) ? v : 0;
 
             public FlagHolder(Option option, CheckState originalValue)
             {

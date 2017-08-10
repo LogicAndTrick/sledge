@@ -1,28 +1,23 @@
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Primitives.MapObjectData;
 using Sledge.BspEditor.Primitives.MapObjects;
+using Sledge.Common.Transport;
 
 namespace Sledge.BspEditor.Modification.Operations.Data
 {
-    public class AddMapObjectData : IOperation
+    public class EditEntityDataProperties : IOperation
     {
-        private long _id;
-        private List<IMapObjectData> _dataToAdd;
+        private readonly long _id;
+        private readonly Dictionary<string, string> _valuesToSet;
+        private SerialisedObject _beforeState;
         public bool Trivial => false;
 
-        public AddMapObjectData(long id, params IMapObjectData[] dataToAdd)
+        public EditEntityDataProperties(long id, Dictionary<string, string> valuesToSet)
         {
             _id = id;
-            _dataToAdd = dataToAdd.ToList();
-        }
-
-        public AddMapObjectData(long id, IEnumerable<IMapObjectData> dataToAdd)
-        {
-            _id = id;
-            _dataToAdd = dataToAdd.ToList();
+            _valuesToSet = valuesToSet;
         }
 
         public async Task<Change> Perform(MapDocument document)
@@ -30,12 +25,11 @@ namespace Sledge.BspEditor.Modification.Operations.Data
             var ch = new Change(document);
 
             var obj = document.Map.Root.FindByID(_id);
-            if (obj != null)
+            var data = obj?.Data.GetOne<EntityData>();
+            if (data != null)
             {
-                foreach (var d in _dataToAdd)
-                {
-                    obj.Data.Add(d);
-                }
+                _beforeState = data.ToSerialisedObject();
+                foreach (var kv in _valuesToSet) data.Properties[kv.Key] = kv.Value;
                 ch.Update(obj);
             }
 
@@ -47,12 +41,10 @@ namespace Sledge.BspEditor.Modification.Operations.Data
             var ch = new Change(document);
 
             var obj = document.Map.Root.FindByID(_id);
-            if (obj != null)
+            if (obj != null && _beforeState != null)
             {
-                foreach (var d in _dataToAdd)
-                {
-                    obj.Data.Remove(d);
-                }
+                var ed = new EntityData(_beforeState);
+                obj.Data.Replace(ed);
                 ch.Update(obj);
             }
 

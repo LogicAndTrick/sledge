@@ -1,28 +1,21 @@
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Primitives.MapObjectData;
 using Sledge.BspEditor.Primitives.MapObjects;
 
 namespace Sledge.BspEditor.Modification.Operations.Data
 {
-    public class AddMapObjectData : IOperation
+    public class EditEntityDataFlags : IOperation
     {
-        private long _id;
-        private List<IMapObjectData> _dataToAdd;
+        private readonly long _id;
+        private readonly int _newFlags;
+        private int _oldFlags;
         public bool Trivial => false;
 
-        public AddMapObjectData(long id, params IMapObjectData[] dataToAdd)
+        public EditEntityDataFlags(long id, int newFlags)
         {
             _id = id;
-            _dataToAdd = dataToAdd.ToList();
-        }
-
-        public AddMapObjectData(long id, IEnumerable<IMapObjectData> dataToAdd)
-        {
-            _id = id;
-            _dataToAdd = dataToAdd.ToList();
+            _newFlags = newFlags;
         }
 
         public async Task<Change> Perform(MapDocument document)
@@ -30,12 +23,11 @@ namespace Sledge.BspEditor.Modification.Operations.Data
             var ch = new Change(document);
 
             var obj = document.Map.Root.FindByID(_id);
-            if (obj != null)
+            var data = obj?.Data.GetOne<EntityData>();
+            if (data != null)
             {
-                foreach (var d in _dataToAdd)
-                {
-                    obj.Data.Add(d);
-                }
+                _oldFlags = data.Flags;
+                data.Flags = _newFlags;
                 ch.Update(obj);
             }
 
@@ -47,12 +39,10 @@ namespace Sledge.BspEditor.Modification.Operations.Data
             var ch = new Change(document);
 
             var obj = document.Map.Root.FindByID(_id);
-            if (obj != null)
+            var data = obj?.Data.GetOne<EntityData>();
+            if (data != null)
             {
-                foreach (var d in _dataToAdd)
-                {
-                    obj.Data.Remove(d);
-                }
+                data.Flags = _oldFlags;
                 ch.Update(obj);
             }
 

@@ -1,28 +1,21 @@
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Primitives.MapObjectData;
 using Sledge.BspEditor.Primitives.MapObjects;
 
 namespace Sledge.BspEditor.Modification.Operations.Data
 {
-    public class AddMapObjectData : IOperation
+    public class EditEntityDataName : IOperation
     {
-        private long _id;
-        private List<IMapObjectData> _dataToAdd;
+        private readonly long _id;
+        private readonly string _newName;
+        private string _oldName;
         public bool Trivial => false;
 
-        public AddMapObjectData(long id, params IMapObjectData[] dataToAdd)
+        public EditEntityDataName(long id, string newName)
         {
             _id = id;
-            _dataToAdd = dataToAdd.ToList();
-        }
-
-        public AddMapObjectData(long id, IEnumerable<IMapObjectData> dataToAdd)
-        {
-            _id = id;
-            _dataToAdd = dataToAdd.ToList();
+            _newName = newName;
         }
 
         public async Task<Change> Perform(MapDocument document)
@@ -30,12 +23,11 @@ namespace Sledge.BspEditor.Modification.Operations.Data
             var ch = new Change(document);
 
             var obj = document.Map.Root.FindByID(_id);
-            if (obj != null)
+            var data = obj?.Data.GetOne<EntityData>();
+            if (data != null)
             {
-                foreach (var d in _dataToAdd)
-                {
-                    obj.Data.Add(d);
-                }
+                _oldName = data.Name;
+                data.Name = _newName;
                 ch.Update(obj);
             }
 
@@ -47,12 +39,10 @@ namespace Sledge.BspEditor.Modification.Operations.Data
             var ch = new Change(document);
 
             var obj = document.Map.Root.FindByID(_id);
-            if (obj != null)
+            var data = obj?.Data.GetOne<EntityData>();
+            if (data != null && _oldName != null)
             {
-                foreach (var d in _dataToAdd)
-                {
-                    obj.Data.Remove(d);
-                }
+                data.Name = _oldName;
                 ch.Update(obj);
             }
 
