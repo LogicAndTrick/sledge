@@ -1,12 +1,15 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.Linq;
 using System.Windows.Forms;
+using Sledge.BspEditor.Documents;
 using Sledge.DataStructures.GameData;
 
 namespace Sledge.BspEditor.Editing.Components.Properties.SmartEdit
 {
-    internal class SmartEditChoices : SmartEditControl
+    [Export(typeof(SmartEditControl))]
+    public class SmartEditChoices : SmartEditControl
     {
         private readonly ComboBox _comboBox;
         public SmartEditChoices()
@@ -15,6 +18,8 @@ namespace Sledge.BspEditor.Editing.Components.Properties.SmartEdit
             _comboBox.TextChanged += (sender, e) => OnValueChanged();
             Controls.Add(_comboBox);
         }
+
+        public override string PriorityHint => "H";
 
         public override bool SupportsType(VariableType type)
         {
@@ -48,7 +53,7 @@ namespace Sledge.BspEditor.Editing.Components.Properties.SmartEdit
             return Property.Options.OrderBy(x => x.Key.ToLowerInvariant());
         }
 
-        protected override void OnSetProperty()
+        protected override void OnSetProperty(MapDocument document)
         {
             _comboBox.Items.Clear();
             if (Property != null)

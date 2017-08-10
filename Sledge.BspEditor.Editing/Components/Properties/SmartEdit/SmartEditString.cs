@@ -1,9 +1,12 @@
+using System.ComponentModel.Composition;
 using System.Windows.Forms;
+using Sledge.BspEditor.Documents;
 using Sledge.DataStructures.GameData;
 
 namespace Sledge.BspEditor.Editing.Components.Properties.SmartEdit
 {
-    internal class SmartEditString : SmartEditControl
+    [Export(typeof(SmartEditControl))]
+    public class SmartEditString : SmartEditControl
     {
         private readonly TextBox _textBox;
         public SmartEditString()
@@ -12,6 +15,8 @@ namespace Sledge.BspEditor.Editing.Components.Properties.SmartEdit
             _textBox.TextChanged += (sender, e) => OnValueChanged();
             Controls.Add(_textBox);
         }
+
+        public override string PriorityHint => "H";
 
         public override bool SupportsType(VariableType type)
         {
@@ -28,7 +33,7 @@ namespace Sledge.BspEditor.Editing.Components.Properties.SmartEdit
             return _textBox.Text;
         }
 
-        protected override void OnSetProperty()
+        protected override void OnSetProperty(MapDocument document)
         {
             _textBox.Text = PropertyValue;
         }

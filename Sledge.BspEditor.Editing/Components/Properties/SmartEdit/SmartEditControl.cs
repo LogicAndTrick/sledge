@@ -43,20 +43,20 @@ namespace Sledge.BspEditor.Editing.Components.Properties.SmartEdit
 
         private bool _setting;
 
-        public void SetProperty(string originalName, string newName, string currentValue, Property property)
+        public void SetProperty(MapDocument document, string originalName, string newName, string currentValue, Property property)
         {
             _setting = true;
             OriginalName = originalName;
             PropertyName = newName;
             PropertyValue = currentValue;
             Property = property;
-            OnSetProperty();
+            OnSetProperty(document);
             _setting = false;
         }
 
         public abstract bool SupportsType(VariableType type);
         protected abstract string GetName();
         protected abstract string GetValue();
-        protected abstract void OnSetProperty();
+        protected abstract void OnSetProperty(MapDocument document);
     }
 }

@@ -72,6 +72,7 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
             this.btnSmartEdit.TabIndex = 22;
             this.btnSmartEdit.Text = "Smart Edit";
             this.btnSmartEdit.UseVisualStyleBackColor = true;
+            this.btnSmartEdit.CheckedChanged += new System.EventHandler(this.SmartEditToggled);
             // 
             // btnPaste
             // 
@@ -130,6 +131,8 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
             this.colPropertyValue});
             this.lstKeyValues.FullRowSelect = true;
             this.lstKeyValues.GridLines = true;
+            this.lstKeyValues.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
+            this.lstKeyValues.HideSelection = false;
             this.lstKeyValues.Location = new System.Drawing.Point(3, 59);
             this.lstKeyValues.MultiSelect = false;
             this.lstKeyValues.Name = "lstKeyValues";

@@ -1,10 +1,13 @@
 using System;
+using System.ComponentModel.Composition;
 using System.Windows.Forms;
+using Sledge.BspEditor.Documents;
 using Sledge.DataStructures.GameData;
 
 namespace Sledge.BspEditor.Editing.Components.Properties.SmartEdit
 {
-    internal class SmartEditBoolean : SmartEditControl
+    [Export(typeof(SmartEditControl))]
+    public class SmartEditBoolean : SmartEditControl
     {
         private readonly CheckBox _checkBox;
         public SmartEditBoolean()
@@ -13,6 +16,8 @@ namespace Sledge.BspEditor.Editing.Components.Properties.SmartEdit
             _checkBox.CheckedChanged += (sender, e) => OnValueChanged();
             Controls.Add(_checkBox);
         }
+
+        public override string PriorityHint => "H";
 
         public override bool SupportsType(VariableType type)
         {
@@ -29,7 +34,7 @@ namespace Sledge.BspEditor.Editing.Components.Properties.SmartEdit
             return _checkBox.Checked ? "Yes" : "No";
         }
 
-        protected override void OnSetProperty()
+        protected override void OnSetProperty(MapDocument document)
         {
             _checkBox.Text = Property.DisplayText();
             _checkBox.Checked = String.Equals(PropertyValue, "Yes", StringComparison.CurrentCultureIgnoreCase);

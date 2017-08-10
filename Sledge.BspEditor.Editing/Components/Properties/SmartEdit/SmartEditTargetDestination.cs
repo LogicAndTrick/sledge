@@ -1,14 +1,17 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.Linq;
 using System.Windows.Forms;
+using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Primitives.MapObjectData;
 using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.DataStructures.GameData;
 
 namespace Sledge.BspEditor.Editing.Components.Properties.SmartEdit
 {
-    internal class SmartEditTargetDestination : SmartEditControl
+    [Export(typeof(SmartEditControl))]
+    public class SmartEditTargetDestination : SmartEditControl
     {
         private readonly ComboBox _comboBox;
         public SmartEditTargetDestination()
@@ -17,6 +20,8 @@ namespace Sledge.BspEditor.Editing.Components.Properties.SmartEdit
             _comboBox.TextChanged += (sender, e) => OnValueChanged();
             Controls.Add(_comboBox);
         }
+
+        public override string PriorityHint => "H";
 
         public override bool SupportsType(VariableType type)
         {
@@ -33,21 +38,21 @@ namespace Sledge.BspEditor.Editing.Components.Properties.SmartEdit
             return _comboBox.Text;
         }
 
-        private IEnumerable<string> GetSortedTargetNames()
+        private IEnumerable<string> GetSortedTargetNames(MapDocument document)
         {
-            return Document.Map.Root.Find(x => x.Data.GetOne<EntityData>() != null)
+            return document.Map.Root.Find(x => x.Data.GetOne<EntityData>() != null)
                 .Select(x => x.Data.GetOne<EntityData>().Get<string>("targetname"))
                 .Where(x => !String.IsNullOrWhiteSpace(x))
                 .Distinct()
                 .OrderBy(x => x.ToLowerInvariant());
         }
 
-        protected override void OnSetProperty()
+        protected override void OnSetProperty(MapDocument document)
         {
             _comboBox.Items.Clear();
             if (Property != null)
             {
-                var options = GetSortedTargetNames().ToList();
+                var options = GetSortedTargetNames(document).ToList();
                 _comboBox.Items.AddRange(options.OfType<object>().ToArray());
                 var index = options.FindIndex(x => String.Equals(x, PropertyValue, StringComparison.InvariantCultureIgnoreCase));
                 if (index >= 0)

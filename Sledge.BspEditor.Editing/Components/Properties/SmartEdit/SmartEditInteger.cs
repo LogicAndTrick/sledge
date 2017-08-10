@@ -1,18 +1,30 @@
+using System.ComponentModel.Composition;
 using System.Globalization;
 using System.Windows.Forms;
+using Sledge.BspEditor.Documents;
 using Sledge.DataStructures.GameData;
 
 namespace Sledge.BspEditor.Editing.Components.Properties.SmartEdit
 {
-    internal class SmartEditInteger : SmartEditControl
+    [Export(typeof(SmartEditControl))]
+    public class SmartEditInteger : SmartEditControl
     {
         private readonly NumericUpDown _numericUpDown;
         public SmartEditInteger()
         {
-            _numericUpDown = new NumericUpDown { Width = 50, Minimum = short.MinValue, Maximum = short.MaxValue, Value = 0, DecimalPlaces = 0 };
+            _numericUpDown = new NumericUpDown
+            {
+                Width = 50,
+                Minimum = short.MinValue,
+                Maximum = short.MaxValue,
+                Value = 0,
+                DecimalPlaces = 0
+            };
             _numericUpDown.ValueChanged += (sender, e) => OnValueChanged();
             Controls.Add(_numericUpDown);
         }
+
+        public override string PriorityHint => "H";
 
         public override bool SupportsType(VariableType type)
         {
@@ -29,7 +41,7 @@ namespace Sledge.BspEditor.Editing.Components.Properties.SmartEdit
             return _numericUpDown.Value.ToString(CultureInfo.InvariantCulture);
         }
 
-        protected override void OnSetProperty()
+        protected override void OnSetProperty(MapDocument document)
         {
             _numericUpDown.Text = PropertyValue;
         }

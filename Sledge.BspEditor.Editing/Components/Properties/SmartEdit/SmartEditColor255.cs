@@ -1,13 +1,16 @@
 using System;
+using System.ComponentModel.Composition;
 using System.Drawing;
 using System.Globalization;
 using System.Windows.Forms;
+using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Editing.Properties;
 using Sledge.DataStructures.GameData;
 
 namespace Sledge.BspEditor.Editing.Components.Properties.SmartEdit
 {
-    internal class SmartEditColor255 : SmartEditControl
+    [Export(typeof(SmartEditControl))]
+    public class SmartEditColor255 : SmartEditControl
     {
         private readonly TextBox _textBox;
         public SmartEditColor255()
@@ -20,6 +23,8 @@ namespace Sledge.BspEditor.Editing.Components.Properties.SmartEdit
             btn.Click += OpenColorPicker;
             Controls.Add(btn);
         }
+
+        public override string PriorityHint => "H";
 
         public override bool SupportsType(VariableType type)
         {
@@ -62,7 +67,7 @@ namespace Sledge.BspEditor.Editing.Components.Properties.SmartEdit
             return _textBox.Text;
         }
 
-        protected override void OnSetProperty()
+        protected override void OnSetProperty(MapDocument document)
         {
             _textBox.Text = PropertyValue;
         }

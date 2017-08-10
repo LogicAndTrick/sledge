@@ -1,13 +1,13 @@
+using System.ComponentModel.Composition;
 using System.Drawing;
-using System.Linq;
 using System.Windows.Forms;
-using Sledge.BspEditor.Primitives.MapObjectData;
-using Sledge.BspEditor.Primitives.MapObjects;
+using Sledge.BspEditor.Documents;
 using Sledge.DataStructures.GameData;
 
 namespace Sledge.BspEditor.Editing.Components.Properties.SmartEdit
 {
-    internal class SmartEditTargetSource : SmartEditControl
+    [Export(typeof(SmartEditControl))]
+    public class SmartEditTargetSource : SmartEditControl
     {
         private readonly TextBox _textBox;
         private readonly Label _validationLabel;
@@ -30,6 +30,8 @@ namespace Sledge.BspEditor.Editing.Components.Properties.SmartEdit
             Controls.Add(_validationLabel);
         }
 
+        public override string PriorityHint => "H";
+
         public override bool SupportsType(VariableType type)
         {
             return type == VariableType.TargetSource;
@@ -51,7 +53,7 @@ namespace Sledge.BspEditor.Editing.Components.Properties.SmartEdit
             return _textBox.Text;
         }
 
-        protected override void OnSetProperty()
+        protected override void OnSetProperty(MapDocument document)
         {
             _textBox.Text = PropertyValue;
             DoValidation();
@@ -59,23 +61,24 @@ namespace Sledge.BspEditor.Editing.Components.Properties.SmartEdit
 
         private void DoValidation()
         {
-            _validationLabel.Text = "";
-            if (EditingEntityData.Count > 1)
-            {
-                _validationLabel.Text = "Multiple selected, creating duplicates";
-            }
-            else
-            {
-                var duplicate = Document.Map.Root
-                    .Find(x => x.Data.GetOne<EntityData>() != null
-                               && !EditingEntityData.Contains(x.Data.GetOne<EntityData>())
-                               && x.Data.GetOne<EntityData>().Get<string>("targetname") == _textBox.Text)
-                    .Any();
-                if (duplicate)
-                {
-                    _validationLabel.Text = "Another target with this name already exists.";
-                }
-            }
+            // todo
+            // _validationLabel.Text = "";
+            // if (EditingEntityData.Count > 1)
+            // {
+            //     _validationLabel.Text = "Multiple selected, creating duplicates";
+            // }
+            // else
+            // {
+            //     var duplicate = document.Map.Root
+            //         .Find(x => x.Data.GetOne<EntityData>() != null
+            //                    && !EditingEntityData.Contains(x.Data.GetOne<EntityData>())
+            //                    && x.Data.GetOne<EntityData>().Get<string>("targetname") == _textBox.Text)
+            //         .Any();
+            //     if (duplicate)
+            //     {
+            //         _validationLabel.Text = "Another target with this name already exists.";
+            //     }
+            // }
         }
     }
 }

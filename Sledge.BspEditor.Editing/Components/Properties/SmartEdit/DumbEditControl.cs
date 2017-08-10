@@ -1,11 +1,13 @@
 using System.ComponentModel.Composition;
 using System.Drawing;
 using System.Windows.Forms;
+using Sledge.BspEditor.Documents;
 using Sledge.DataStructures.GameData;
 
 namespace Sledge.BspEditor.Editing.Components.Properties.SmartEdit
 {
     [Export(typeof(SmartEditControl))]
+    [Export("Default", typeof(SmartEditControl))]
     public class DumbEditControl : SmartEditControl
     {
         private readonly TextBox _keyBox;
@@ -42,7 +44,7 @@ namespace Sledge.BspEditor.Editing.Components.Properties.SmartEdit
             return _textBox.Text;
         }
 
-        protected override void OnSetProperty()
+        protected override void OnSetProperty(MapDocument document)
         {
             _keyBox.Text = PropertyName;
             _textBox.Text = PropertyValue;

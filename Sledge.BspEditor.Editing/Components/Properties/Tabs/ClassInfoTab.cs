@@ -9,6 +9,7 @@ using Sledge.BspEditor.Editing.Components.Properties.SmartEdit;
 using Sledge.BspEditor.Modification;
 using Sledge.BspEditor.Primitives.MapObjectData;
 using Sledge.BspEditor.Primitives.MapObjects;
+using Sledge.Common.Logging;
 using Sledge.Common.Shell.Context;
 using Sledge.Common.Translations;
 using Sledge.DataStructures.GameData;
@@ -21,6 +22,9 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
     public partial class ClassInfoTab : UserControl, IObjectPropertyEditorTab
     {
         [ImportMany] private IEnumerable<Lazy<SmartEditControl>> _smartEditControls;
+        [Import("Default")] private SmartEditControl _defaultControl;
+        private List<TableValue> _tableValues;
+        private WeakReference<MapDocument> _document;
 
         public string OrderHint => "D";
         public Control Control => this;
@@ -114,6 +118,8 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
             InitializeComponent();
             CreateHandle();
 
+            _tableValues = new List<TableValue>();
+            _document = new WeakReference<MapDocument>(null);
         }
 
         public bool IsInContext(IContext context)
@@ -124,7 +130,7 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
 
         public async Task SetObjects(MapDocument document, List<IMapObject> objects)
         {
-
+            _document = new WeakReference<MapDocument>(document);
             GameData gd = null;
             if (document != null) gd = await document.Environment.GetGameData();
             this.Invoke(() =>
@@ -184,27 +190,42 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
             cmbClass.EndUpdate();
 
             // Update the keyvalues
+            _tableValues = TableValue.Create(gdo, gdo?.Name, datas.Select(x => x.EntityData).ToList(), MultipleValuesText);
+            UpdateTable();
+            
+            // Clear smartedit panel
+            pnlSmartEdit.Controls.Clear();
+
+            ResumeLayout();
+        }
+
+        private void UpdateTable()
+        {
+            var smartEdit = btnSmartEdit.Checked;
+
             lstKeyValues.BeginUpdate();
 
             lstKeyValues.Items.Clear();
 
-            var tableValues = TableValue.Create(gdo, gdo?.Name, datas.Select(x => x.EntityData).ToList(), MultipleValuesText);
-
             angAngles.Enabled = false;
             angAngles.SetAngle(0);
 
-            foreach (var tv in tableValues)
+            foreach (var tv in _tableValues)
             {
                 var keyText = tv.NewKey;
                 var valText = tv.Value;
 
-                if (btnSmartEdit.Checked)
+                if (smartEdit)
                 {
                     keyText = tv.DisplayText;
                     valText = tv.DisplayValue;
                 }
 
-                lstKeyValues.Items.Add(new ListViewItem(keyText) { Tag = tv }).SubItems.Add(valText);
+                lstKeyValues.Items.Add(new ListViewItem(keyText)
+                {
+                    Tag = tv,
+                    BackColor = tv.Colour
+                }).SubItems.Add(valText);
 
                 if (tv.NewKey == "angles")
                 {
@@ -214,23 +235,29 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
             }
 
             lstKeyValues.EndUpdate();
-
-            ResumeLayout();
         }
 
         private void SelectedPropertyChanged(object sender, EventArgs e)
         {
             var sel = lstKeyValues.SelectedItems.OfType<ListViewItem>().FirstOrDefault();
+            var tv = sel?.Tag as TableValue;
+
             pnlSmartEdit.Controls.Clear();
-            if (sel != null)
+            if (tv != null)
             {
+                var prop = btnSmartEdit.Checked ? tv.GameDataObject?.Properties.FirstOrDefault(x => x.Name == tv.NewKey) : null;
+                var type = prop?.VariableType ?? VariableType.Void;
                 var edit = _smartEditControls
-                    .Select(x => x.Value)
-                    .OrderBy(x => x.PriorityHint)
-                    .FirstOrDefault(x => x.SupportsType(
-                        VariableType.Void
-                    ));
+                               .Select(x => x.Value)
+                               .OrderBy(x => x.PriorityHint)
+                               .FirstOrDefault(x => x.SupportsType(type)) ?? _defaultControl;
+
+                _document.TryGetTarget(out MapDocument doc);
+                edit.SetProperty(doc, tv.OriginalKey, tv.NewKey, tv.Value, prop);
+                pnlSmartEdit.Controls.Add(edit.Control);
             }
         }
+
+        private void SmartEditToggled(object sender, EventArgs e) => UpdateTable();
     }
 }
