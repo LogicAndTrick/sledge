@@ -2,11 +2,8 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.Composition;
-using System.Data;
 using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using LogicAndTrick.Oy;
 using Sledge.Common.Shell.Components;
@@ -98,8 +95,7 @@ namespace Sledge.Shell.Forms
 
             SettingsPanel.SuspendLayout();
             SettingsPanel.Controls.Clear();
-
-            SettingsPanel.AutoSize = true;
+            
             SettingsPanel.RowStyles.Clear();
 
             var group = GroupList.SelectedItem as string;
@@ -136,7 +132,6 @@ namespace Sledge.Shell.Forms
                         if (ctrl.Anchor.HasFlag(AnchorStyles.Bottom))
                         {
                             SettingsPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
-                            SettingsPanel.AutoSize = false;
                         }
 
                         _editors.Add(editor);

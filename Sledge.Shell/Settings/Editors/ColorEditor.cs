@@ -19,7 +19,12 @@ namespace Sledge.Shell.Settings.Editors
         public object Value
         {
             get => ColorPanel.BackColor;
-            set => ColorPanel.BackColor = (Color) value;
+            set
+            {
+                ColorPanel.BackColor = (Color) value;
+                var c = ColorPanel.BackColor;
+                HexBox.Text = $@"{c.R:X2}{c.G:X2}{c.B:X2}";
+            }
         }
 
         public object Control => this;
