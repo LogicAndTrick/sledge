@@ -20,6 +20,10 @@
             "Name": "Save",
             "Details": "Save the current document."
         },
+        "SaveFileAs": {
+            "Name": "Save As...",
+            "Details": "Save a copy of the current document."
+        },
         "CloseFile": {
             "Name": "Close",
             "Details": "Close the current document."

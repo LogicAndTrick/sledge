@@ -2,10 +2,8 @@
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using LogicAndTrick.Gimme;
 using LogicAndTrick.Oy;
 using Sledge.Common.Shell.Commands;
 using Sledge.Common.Shell.Context;
@@ -25,6 +23,8 @@ namespace Sledge.Shell.Commands
     [MenuImage(typeof(Resources), nameof(Resources.Menu_Open))]
     public class OpenFile : ICommand
     {
+        [ImportMany] private IEnumerable<Lazy<IDocumentLoader>> _loaders;
+
         public string Name { get; set; } = "Open";
         public string Details { get; set; } = "Open...";
 
@@ -35,11 +35,13 @@ namespace Sledge.Shell.Commands
 
         public async Task Invoke(IContext context, CommandParameters parameters)
         {
-            using (var ofd = new OpenFileDialog() { Filter = "All files|*.*"})
+            var filter = _loaders.Select(x => x.Value).Select(x => x.FileTypeDescription + "|" + String.Join(";", x.SupportedFileExtensions.SelectMany(e => e.Extensions).Select(e => "*" + e))).ToList();
+            filter.Add("All files|*.*");
+            using (var ofd = new OpenFileDialog { Filter = String.Join("|", filter)})
             {
                 if (ofd.ShowDialog() == DialogResult.OK)
                 {
-                    var loader = await Gimme.FetchOne<IDocumentLoader>(ofd.FileName, "");
+                    var loader = _loaders.Select(x => x.Value).FirstOrDefault(x => x.CanLoad(ofd.FileName));
                     if (loader != null)
                     {
                         var doc = await loader.Load(ofd.FileName);

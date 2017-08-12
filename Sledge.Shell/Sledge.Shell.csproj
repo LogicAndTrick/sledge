@@ -85,6 +85,7 @@
     <Compile Include="Commands\OpenSettingsForm.cs" />
     <Compile Include="Commands\OpenFile.cs" />
     <Compile Include="Commands\SaveFile.cs" />
+    <Compile Include="Commands\SaveFileAs.cs" />
     <Compile Include="Components\CommandMenuItemProvider.cs" />
     <Compile Include="Components\ContextExplorerComponent.cs" />
     <Compile Include="Commands\OpenCommandBox.cs" />

@@ -321,26 +321,11 @@ namespace Sledge.BspEditor.Providers
         {
             foreach (var o in obj.Decompose(SupportedTypes))
             {
-                if (o is Root r)
-                {
-                    WriteRoot(r, bw);
-                }
-                else if (o is Group g)
-                {
-                    WriteGroup(g, bw);
-                }
-                else if (o is Solid s)
-                {
-                    WriteSolid(s, bw);
-                }
-                else if (o is Entity e)
-                {
-                    WriteEntity(e, bw);
-                }
-                else
-                {
-                    throw new ArgumentOutOfRangeException("Unsupported RMF map object: " + o.GetType());
-                }
+                if (o is Root r) WriteRoot(r, bw);
+                else if (o is Group g) WriteGroup(g, bw);
+                else if (o is Solid s) WriteSolid(s, bw);
+                else if (o is Entity e) WriteEntity(e, bw);
+                else throw new ArgumentOutOfRangeException("Unsupported RMF map object: " + o.GetType());
             }
         }
 
@@ -357,6 +342,7 @@ namespace Sledge.BspEditor.Providers
 
         private void WriteRoot(Root root, BinaryWriter bw)
         {
+            bw.WriteCString("CMapWorld");
             WriteMapBase(root, bw);
             WriteEntityData(root.Data.GetOne<EntityData>(), bw);
             var paths = new object[0]; // Root.Data.Get<Path> etc/
@@ -370,11 +356,13 @@ namespace Sledge.BspEditor.Providers
 
         private void WriteGroup(Group group, BinaryWriter bw)
         {
+            bw.WriteCString("CMapGroup");
             WriteMapBase(group, bw);
         }
 
         private void WriteSolid(Solid solid, BinaryWriter bw)
         {
+            bw.WriteCString("CMapSolid");
             WriteMapBase(solid, bw);
             var faces = solid.Faces.ToList();
             bw.Write(faces.Count);
@@ -386,6 +374,7 @@ namespace Sledge.BspEditor.Providers
 
         private void WriteEntity(Entity entity, BinaryWriter bw)
         {
+            bw.WriteCString("CMapEntity");
             WriteMapBase(entity, bw);
             WriteEntityData(entity.EntityData, bw);
             bw.Write(new byte[2]); // Unused

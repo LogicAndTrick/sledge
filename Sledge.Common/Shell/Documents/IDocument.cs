@@ -5,12 +5,12 @@
         /// <summary>
         /// Name of this document, will be shown in the UI tab
         /// </summary>
-        string Name { get; }
+        string Name { get; set; }
 
         /// <summary>
         /// The physical location on disk of this document
         /// </summary>
-        string FileName { get; }
+        string FileName { get; set; }
 
         /// <summary>
         /// Mountable control for this document

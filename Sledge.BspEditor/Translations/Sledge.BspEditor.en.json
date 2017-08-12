@@ -48,6 +48,11 @@
             "Title": "Clipboard"
         }
     },
+    "Documents": {
+        "BspSourceDocumentLoader": {
+            "FileTypeDescription": "BSP Source File" 
+        }
+    },
     "Grid": {
         "NoGridFactory": {
             "Name": "No grid",

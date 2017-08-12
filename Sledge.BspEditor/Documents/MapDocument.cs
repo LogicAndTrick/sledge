@@ -12,7 +12,7 @@ namespace Sledge.BspEditor.Documents
 {
     public class MapDocument : IDocument
     {
-        public string Name { get; }
+        public string Name { get; set; }
         public string FileName { get; set; }
         public object Control => MapDocumentControlHost.Instance;
 

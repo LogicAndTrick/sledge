@@ -24,6 +24,7 @@ namespace Sledge.BspEditor.Primitives.MapData
 
         public GridData(SerialisedObject obj)
         {
+            // todo deserialise grid
             SnapToGrid = obj.Get<bool>("SnapToGrid");
         }
 

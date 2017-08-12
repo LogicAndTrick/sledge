@@ -20,7 +20,7 @@ namespace Sledge.Common.Transport
         {
             using (var writer = new StreamWriter(serializationStream, Encoding.UTF8, 1024, true))
             {
-                foreach (var obj in objects)
+                foreach (var obj in objects.Where(x => x != null))
                 {
                     Print(obj, writer);
                 }

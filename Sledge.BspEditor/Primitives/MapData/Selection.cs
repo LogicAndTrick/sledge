@@ -23,7 +23,7 @@ namespace Sledge.BspEditor.Primitives.MapData
 
         public Selection(SerialisedObject obj)
         {
-
+            _selectedObjects = new HashSet<IMapObject>();
         }
 
         [Export(typeof(IMapElementFormatter))]

@@ -11,15 +11,19 @@ using Sledge.BspEditor.Environment.Goldsource;
 using Sledge.BspEditor.Primitives;
 using Sledge.BspEditor.Providers;
 using Sledge.Common.Shell.Documents;
+using Sledge.Common.Translations;
 using Sledge.Shell;
 
 namespace Sledge.BspEditor.Documents
 {
+    [AutoTranslate]
     [Export(typeof(IDocumentLoader))]
     public class BspSourceDocumentLoader : IDocumentLoader
     {
         [ImportMany] private IEnumerable<Lazy<IBspSourceProvider>> _providers;
         [Import] private EnvironmentRegister _environments;
+
+        public string FileTypeDescription { get; set; }
 
         public IEnumerable<FileExtensionInfo> SupportedFileExtensions
         {
@@ -78,6 +82,37 @@ namespace Sledge.BspEditor.Documents
                     {
                         var map = await provider.Value.Load(stream);
                         return new MapDocument(map, env) { FileName = location };
+                    }
+                    catch (NotSupportedException)
+                    {
+                        stream.Seek(0, SeekOrigin.Begin);
+                    }
+                }
+            }
+            throw new NotSupportedException("This file type is not supported.");
+        }
+
+        public bool CanSave(IDocument document)
+        {
+            return document is MapDocument;
+        }
+
+        public async Task Save(IDocument document, string location)
+        {
+            var map = (MapDocument) document;
+            using (var stream = new MemoryStream())
+            {
+                foreach (var provider in _providers.Where(x => CanLoad(x.Value, location)))
+                {
+                    try
+                    {
+                        await provider.Value.Save(stream, map.Map);
+                        using (var fs = File.Open(location, FileMode.Create, FileAccess.Write, FileShare.Read))
+                        {
+                            stream.Seek(0, SeekOrigin.Begin);
+                            await stream.CopyToAsync(fs);
+                            return;
+                        }
                     }
                     catch (NotSupportedException)
                     {

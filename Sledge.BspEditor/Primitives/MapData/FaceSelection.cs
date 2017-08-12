@@ -24,7 +24,7 @@ namespace Sledge.BspEditor.Primitives.MapData
 
         public FaceSelection(SerialisedObject obj)
         {
-
+            _selectedFaces = new Dictionary<IMapObject, HashSet<long>>();
         }
 
         [Export(typeof(IMapElementFormatter))]
