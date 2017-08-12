@@ -6,7 +6,7 @@ using Sledge.DataStructures.GameData;
 
 namespace Sledge.BspEditor.Editing.Components.Properties.SmartEdit
 {
-    [Export(typeof(SmartEditControl))]
+    [Export(typeof(IObjectPropertyEditor))]
     public class SmartEditInteger : SmartEditControl
     {
         private readonly NumericUpDown _numericUpDown;

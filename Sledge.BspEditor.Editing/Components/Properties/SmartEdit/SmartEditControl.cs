@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using Sledge.BspEditor.Documents;
@@ -19,21 +20,21 @@ namespace Sledge.BspEditor.Editing.Components.Properties.SmartEdit
         public delegate void ValueChangedEventHandler(object sender, string propertyName, string propertyValue);
         public delegate void NameChangedEventHandler(object sender, string oldName, string newName);
 
-        public event ValueChangedEventHandler ValueChanged;
-        public event ValueChangedEventHandler NameChanged;
+        public event EventHandler<string> ValueChanged;
+        public event EventHandler<string> NameChanged;
 
         protected virtual void OnValueChanged()
         {
             if (_setting) return;
             PropertyValue = GetValue();
-            ValueChanged?.Invoke(this, PropertyName, PropertyValue);
+            ValueChanged?.Invoke(this, PropertyValue);
         }
         
         protected virtual void OnNameChanged()
         {
             if (_setting) return;
             PropertyName = GetName();
-            NameChanged?.Invoke(this, OriginalName, PropertyName);
+            NameChanged?.Invoke(this, PropertyName);
         }
 
         protected SmartEditControl()

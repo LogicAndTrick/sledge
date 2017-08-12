@@ -19,6 +19,7 @@
             this.FlagsTable.Name = "FlagsTable";
             this.FlagsTable.Size = new System.Drawing.Size(673, 372);
             this.FlagsTable.TabIndex = 1;
+            this.FlagsTable.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.FlagsTableChanged);
             // 
             // FlagsTab
             // 

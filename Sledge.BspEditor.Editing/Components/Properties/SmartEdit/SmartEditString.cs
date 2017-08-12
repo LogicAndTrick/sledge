@@ -5,7 +5,7 @@ using Sledge.DataStructures.GameData;
 
 namespace Sledge.BspEditor.Editing.Components.Properties.SmartEdit
 {
-    [Export(typeof(SmartEditControl))]
+    [Export(typeof(IObjectPropertyEditor))]
     public class SmartEditString : SmartEditControl
     {
         private readonly TextBox _textBox;

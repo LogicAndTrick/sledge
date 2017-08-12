@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Linq;
 using System.Threading.Tasks;
@@ -41,6 +42,8 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
 
         /// <inheritdoc />
         public bool HasChanges => GetChangedValues().Count > 0;
+
+        public event PropertyChangedEventHandler PropertyChanged;
 
         public FlagsTab()
         {
@@ -185,6 +188,11 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
             {
                 return Option.Description;
             }
+        }
+
+        private void FlagsTableChanged(object sender, ItemCheckEventArgs e)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(HasChanges)));
         }
     }
 }

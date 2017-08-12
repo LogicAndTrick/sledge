@@ -9,7 +9,7 @@ using Sledge.DataStructures.GameData;
 
 namespace Sledge.BspEditor.Editing.Components.Properties.SmartEdit
 {
-    [Export(typeof(SmartEditControl))]
+    [Export(typeof(IObjectPropertyEditor))]
     public class SmartEditColor255 : SmartEditControl
     {
         private readonly TextBox _textBox;

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Sledge.BspEditor.Documents;
@@ -11,7 +12,7 @@ namespace Sledge.BspEditor.Editing.Components.Properties
     /// <summary>
     /// A tab in the object properties dialog
     /// </summary>
-    public interface IObjectPropertyEditorTab : IContextAware
+    public interface IObjectPropertyEditorTab : IContextAware, INotifyPropertyChanged
     {
         /// <summary>
         /// The suggested order of the tab

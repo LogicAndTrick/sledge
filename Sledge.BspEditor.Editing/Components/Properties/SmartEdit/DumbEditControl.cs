@@ -6,8 +6,8 @@ using Sledge.DataStructures.GameData;
 
 namespace Sledge.BspEditor.Editing.Components.Properties.SmartEdit
 {
-    [Export(typeof(SmartEditControl))]
-    [Export("Default", typeof(SmartEditControl))]
+    [Export(typeof(IObjectPropertyEditor))]
+    [Export("Default", typeof(IObjectPropertyEditor))]
     public class DumbEditControl : SmartEditControl
     {
         private readonly TextBox _keyBox;

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.Composition;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Sledge.BspEditor.Documents;
@@ -30,6 +32,8 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
 
         public bool HasChanges => false;
         string IObjectPropertyEditorTab.Name => "";
+
+        public event PropertyChangedEventHandler PropertyChanged;
 
         public EmptyTab()
         {

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Linq;
 using System.Threading.Tasks;
@@ -48,6 +49,8 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
 
         /// <inheritdoc />
         public bool HasChanges => GetMembershipChanges().Count > 0;
+
+        public event PropertyChangedEventHandler PropertyChanged;
 
         public VisgroupTab()
         {
@@ -144,6 +147,11 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
                     }
                 }
             }
+        }
+
+        private void VisgroupToggled(object sender, long visgroupId, CheckState state)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(HasChanges)));
         }
     }
 }

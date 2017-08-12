@@ -100,6 +100,7 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
             this.txtComments.Name = "txtComments";
             this.txtComments.Size = new System.Drawing.Size(277, 78);
             this.txtComments.TabIndex = 18;
+            this.txtComments.Visible = false;
             // 
             // txtHelp
             // 
@@ -161,6 +162,7 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
             this.cmbClass.Name = "cmbClass";
             this.cmbClass.Size = new System.Drawing.Size(322, 21);
             this.cmbClass.TabIndex = 15;
+            this.cmbClass.TextChanged += new System.EventHandler(this.ClassChanged);
             // 
             // lblComments
             // 
@@ -171,6 +173,7 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
             this.lblComments.TabIndex = 11;
             this.lblComments.Text = "Comments:";
             this.lblComments.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.lblComments.Visible = false;
             // 
             // lblHelp
             // 

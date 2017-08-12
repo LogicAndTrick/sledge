@@ -72,6 +72,12 @@ namespace Sledge.BspEditor.Editing.Components.Properties
             set => this.Invoke(() => btnCancel.Text = value);
         }
 
+        public string ResetUnsavedChanges
+        {
+            get => btnReset.Text;
+            set => this.Invoke(() => btnReset.Text = value);
+        }
+
         public string UnsavedChanges { get; set; }
         public string DoYouWantToSaveFirst { get; set; }
 
@@ -203,6 +209,14 @@ namespace Sledge.BspEditor.Editing.Components.Properties
             return true;
         }
 
+        /// <summary>
+        /// Undoes any pending changes in the form
+        /// </summary>
+        private Task Reset(Task t = null)
+        {
+            return DocumentActivated(_currentDocument);
+        }
+
         private async Task DocumentActivated(MapDocument doc)
         {
             _currentDocument = doc;
@@ -224,8 +238,9 @@ namespace Sledge.BspEditor.Editing.Components.Properties
             return DocumentActivated(change.Document);
         }
 
-        private void ApplyClicked(object sender, EventArgs e) => Save();
+        private void ApplyClicked(object sender, EventArgs e) => Save().ContinueWith(Reset);
         private void OkClicked(object sender, EventArgs e) => Save().ContinueWith(Close);
         private void CancelClicked(object sender, EventArgs e) => ConfirmIfChanged().ContinueWith(Close);
+        private void ResetClicked(object sender, EventArgs e) => Reset();
     }
 }

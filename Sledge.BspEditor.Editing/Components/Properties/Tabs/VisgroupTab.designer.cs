@@ -48,6 +48,7 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
             this.visgroupPanel.Size = new System.Drawing.Size(581, 413);
             this.visgroupPanel.SortAutomaticFirst = false;
             this.visgroupPanel.TabIndex = 6;
+            this.visgroupPanel.VisgroupToggled += new Sledge.BspEditor.Editing.Components.Visgroup.VisgroupPanel.VisgroupToggledEventHandler(this.VisgroupToggled);
             // 
             // VisgroupTab
             // 

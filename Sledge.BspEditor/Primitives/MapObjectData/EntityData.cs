@@ -24,7 +24,7 @@ namespace Sledge.BspEditor.Primitives.MapObjectData
 
         public EntityData(SerialisedObject obj)
         {
-            Properties = new Dictionary<string, string>();
+            Properties = new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase);
             foreach (var prop in obj.Properties)
             {
                 if (prop.Key == "Name") Name = prop.Value;

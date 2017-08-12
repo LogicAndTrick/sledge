@@ -6,7 +6,7 @@ using Sledge.DataStructures.GameData;
 
 namespace Sledge.BspEditor.Editing.Components.Properties.SmartEdit
 {
-    [Export(typeof(SmartEditControl))]
+    [Export(typeof(IObjectPropertyEditor))]
     public class SmartEditBoolean : SmartEditControl
     {
         private readonly CheckBox _checkBox;

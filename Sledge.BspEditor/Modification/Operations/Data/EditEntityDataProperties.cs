@@ -29,7 +29,11 @@ namespace Sledge.BspEditor.Modification.Operations.Data
             if (data != null)
             {
                 _beforeState = data.ToSerialisedObject();
-                foreach (var kv in _valuesToSet) data.Properties[kv.Key] = kv.Value;
+                foreach (var kv in _valuesToSet)
+                {
+                    if (kv.Value == null) data.Properties.Remove(kv.Key);
+                    else data.Properties[kv.Key] = kv.Value;
+                }
                 ch.Update(obj);
             }
 

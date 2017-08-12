@@ -109,7 +109,6 @@
     <Compile Include="Components\Properties\SmartEdit\SmartEditControl.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Components\Properties\TableValue.cs" />
     <Compile Include="Components\Properties\Tabs\ClassInfoTab.cs">
       <SubType>UserControl</SubType>
     </Compile>
