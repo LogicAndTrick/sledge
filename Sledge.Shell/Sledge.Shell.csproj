@@ -81,6 +81,7 @@
   <ItemGroup>
     <Compile Include="Commands\CloseFile.cs" />
     <Compile Include="Commands\Exit.cs" />
+    <Compile Include="Commands\Export.cs" />
     <Compile Include="Commands\NewFile.cs" />
     <Compile Include="Commands\OpenSettingsForm.cs" />
     <Compile Include="Commands\OpenFile.cs" />
@@ -269,6 +270,7 @@
     <None Include="Resources\menu_open.png" />
     <None Include="Resources\menu_save.png" />
     <None Include="Resources\menu_saveas.png" />
+    <Content Include="Resources\Menu_Export.png" />
     <Content Include="Resources\Menu_Options.png" />
     <Content Include="Translations\Sledge.Shell.en.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

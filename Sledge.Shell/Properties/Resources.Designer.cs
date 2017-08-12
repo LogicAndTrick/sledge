@@ -93,6 +93,16 @@ namespace Sledge.Shell.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap Menu_Export {
+            get {
+                object obj = ResourceManager.GetObject("Menu_Export", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap Menu_New {
             get {
                 object obj = ResourceManager.GetObject("Menu_New", resourceCulture);

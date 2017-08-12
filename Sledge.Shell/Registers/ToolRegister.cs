@@ -26,7 +26,7 @@ namespace Sledge.Shell.Registers
         public async Task OnStartup()
         {
             // Register the exported tools
-            foreach (var export in _tools)
+            foreach (var export in _tools.OrderBy(x => OrderHintAttribute.GetOrderHint(x.Value.GetType())))
             {
                 Log.Debug(nameof(ToolRegister), "Loaded: " + export.Value.GetType().FullName);
                 _components.Add(export.Value);
@@ -69,7 +69,7 @@ namespace Sledge.Shell.Registers
             {
                 _shell.ToolsContainer.SuspendLayout();
                 _shell.ToolsContainer.Items.Clear();
-                foreach (var tl in toolsInContext.OrderBy(x => OrderHintAttribute.GetOrderHint(x.GetType())))
+                foreach (var tl in toolsInContext)
                 {
                     var toolButton = new ToolStripButton("", tl.Icon, async (s, ea) => await ActivateTool(tl), tl.Name)
                     {

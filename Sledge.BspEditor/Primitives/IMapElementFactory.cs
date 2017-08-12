@@ -10,28 +10,14 @@ using Sledge.Common.Transport;
 
 namespace Sledge.BspEditor.Primitives
 {
-    [Export(typeof(IInitialiseHook))]
     [Export]
-    public class MapElementFactory : IInitialiseHook
+    public class MapElementFactory
     {
         [ImportMany] private IEnumerable<Lazy<IMapElementFormatter>> _imports;
-
-        public Task OnInitialise()
-        {
-            _formatters.AddRange(_imports.Select(x => x.Value));
-            return Task.FromResult(0);
-        }
-
-        private readonly List<IMapElementFormatter> _formatters;
-
-        public MapElementFactory()
-        {
-            _formatters = new List<IMapElementFormatter>();
-        }
-
+        
         public IMapElement Deserialise(SerialisedObject obj)
         {
-            var elem = _formatters.FirstOrDefault(x => x.IsSupported(obj))?.Deserialise(obj);
+            var elem = _imports.Select(x => x.Value).FirstOrDefault(x => x.IsSupported(obj))?.Deserialise(obj);
 
             var mo = elem as IMapObject;
             if (mo != null)
@@ -49,7 +35,7 @@ namespace Sledge.BspEditor.Primitives
 
         public SerialisedObject Serialise(IMapElement element)
         {
-            return _formatters.FirstOrDefault(x => x.IsSupported(element))?.Serialise(element);
+            return _imports.Select(x => x.Value).FirstOrDefault(x => x.IsSupported(element))?.Serialise(element);
         }
     }
 }

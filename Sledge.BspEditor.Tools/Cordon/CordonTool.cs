@@ -12,6 +12,7 @@ using Sledge.DataStructures.Geometric;
 namespace Sledge.BspEditor.Tools.Cordon
 {
     [Export(typeof(ITool))]
+    [OrderHint("R")]
     public class CordonTool : BaseDraggableTool
     {
         private readonly CordonBoxDraggableState _cordonBox;

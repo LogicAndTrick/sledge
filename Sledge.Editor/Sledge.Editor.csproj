@@ -54,10 +54,10 @@
   </PropertyGroup>
   <PropertyGroup />
   <PropertyGroup>
-    <ApplicationIcon>Resources\Sledge.ico</ApplicationIcon>
+    <ApplicationIcon Condition="'$(BuildingForLiveUnitTesting)' != 'true'">Resources\Sledge.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationManifest Condition="'$(BuildingForLiveUnitTesting)' != 'true'">app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="LogicAndTrick.Gimme, Version=1.3.2.0, Culture=neutral, processorArchitecture=MSIL">

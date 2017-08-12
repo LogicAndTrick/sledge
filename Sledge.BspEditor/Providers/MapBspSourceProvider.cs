@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Sledge.BspEditor.Primitives;
 using Sledge.BspEditor.Primitives.MapObjectData;
@@ -40,13 +41,13 @@ namespace Sledge.BspEditor.Providers
         {
             return await Task.Factory.StartNew(() =>
             {
-                using (var reader = new StreamReader(stream))
+                using (var reader = new StreamReader(stream, Encoding.ASCII, true, 1024, false))
                 {
                     var map = new Map();
                     var entities = ReadAllEntities(reader, map.NumberGenerator);
 
-                    var worldspawn = entities.FirstOrDefault(x => x.EntityData.Name == "worldspawn")
-                                     ?? new Entity(0) { EntityData = { Name = "worldspawn" } };
+                    var worldspawn = entities.FirstOrDefault(x => x.EntityData?.Name == "worldspawn")
+                                     ?? new Entity(0) { Data = { new EntityData { Name = "worldspawn" } } };
                     entities.Remove(worldspawn);
 
                     map.Root.Data.Replace(worldspawn.EntityData);
@@ -293,7 +294,7 @@ namespace Sledge.BspEditor.Providers
         {
             return Task.Factory.StartNew(() =>
             {
-                using (var writer = new StreamWriter(stream))
+                using (var writer = new StreamWriter(stream, Encoding.ASCII, 1024, true))
                 {
                     WriteWorld(writer, map.Root);
                 }

@@ -22,6 +22,10 @@
         },
         "SaveFileAs": {
             "Name": "Save As...",
+            "Details": "Save the current document to a different file."
+        },
+        "Export": {
+            "Name": "Export...",
             "Details": "Save a copy of the current document."
         },
         "CloseFile": {
