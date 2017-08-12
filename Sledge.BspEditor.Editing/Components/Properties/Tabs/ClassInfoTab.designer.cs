@@ -39,6 +39,7 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
             this.btnDelete.TabIndex = 24;
             this.btnDelete.Text = "Delete";
             this.btnDelete.UseVisualStyleBackColor = true;
+            this.btnDelete.Click += new System.EventHandler(this.DeleteKeyClicked);
             // 
             // btnAdd
             // 
@@ -49,6 +50,7 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
             this.btnAdd.TabIndex = 25;
             this.btnAdd.Text = "Add";
             this.btnAdd.UseVisualStyleBackColor = true;
+            this.btnAdd.Click += new System.EventHandler(this.AddKeyClicked);
             // 
             // pnlSmartEdit
             // 

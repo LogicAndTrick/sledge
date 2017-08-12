@@ -246,6 +246,10 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
                     valText = tv.DisplayValue;
                 }
 
+                if (tv.IsAdded) keyText += " [+]";
+                else if (tv.IsRemoved) keyText += " [-]";
+                else if (tv.IsModified) keyText += " [*]";
+
                 lstKeyValues.Items.Add(new ListViewItem(keyText)
                 {
                     Tag = tv,
@@ -282,7 +286,9 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
                     valText = tv.DisplayValue;
                 }
 
-                if (tv.IsModified) keyText += " *";
+                if (tv.IsAdded) keyText += " [+]";
+                else if (tv.IsRemoved) keyText += " [-]";
+                else if (tv.IsModified) keyText += " [*]";
 
                 lv.BackColor = tv.Colour;
                 lv.SubItems[0].Text = keyText;
@@ -346,6 +352,12 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
             if (tv == null) return;
 
             tv.NewKey = key;
+
+            // The key of this item has changed, we need to update the gamedata as well
+            tv.GameDataProperty = _tableValues.OriginalClasses.SelectMany(x => x.Properties)
+                                      .FirstOrDefault(x => String.Equals(x.Name, key, StringComparison.InvariantCultureIgnoreCase))
+                                  ?? new Property(key, VariableType.String);
+
             RefreshTable();
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(HasChanges)));
         }
@@ -364,14 +376,14 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(HasChanges)));
         }
 
-        private void SmartEditToggled(object sender, EventArgs e) => RefreshTable();
-
         /// <summary>
         /// User has modified the class name, recalculate the keyvalues table.
         /// </summary>
         private void ClassChanged(object sender, EventArgs e)
         {
             var txt = (cmbClass.Text ?? "").ToLower();
+            if (_tableValues.NewClass == null && string.Equals(txt, _tableValues.OriginalClass.ToLower(), StringComparison.InvariantCultureIgnoreCase)) return;
+
             var newClass = _gameData.Classes.FirstOrDefault(x => x.ClassType != ClassType.Base && (x.Name ?? "").ToLower() == txt) ?? new GameDataObject(txt, "", ClassType.Any);
             _tableValues.NewClass = newClass;
 
@@ -407,6 +419,55 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
         }
 
         /// <summary>
+        /// User has toggled smart edit, update the table and the current value editor
+        /// </summary>
+        private void SmartEditToggled(object sender, EventArgs e)
+        {
+            RefreshTable();
+            SelectedPropertyChanged(this, e);
+        }
+
+        /// <summary>
+        /// User clicks the button to add a new key
+        /// </summary>
+        private void AddKeyClicked(object sender, EventArgs e)
+        {
+            // Add a new key with an automatically created name
+            var key = "new";
+            var tv = new TableValue(new Property(key, VariableType.String), key, new string[0])
+            {
+                IsAdded = true,
+                NewValue = ""
+            };
+            _tableValues.Add(tv);
+
+            UpdateTable();
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(HasChanges)));
+
+            // Select the new key
+            lstKeyValues.SelectedIndices.Clear();
+            var sel = lstKeyValues.Items.OfType<ListViewItem>().FirstOrDefault(x => x.Tag == tv);
+            var idx = lstKeyValues.Items.IndexOf(sel);
+            if (idx >= 0) lstKeyValues.SelectedIndices.Add(idx);
+        }
+
+        /// <summary>
+        /// User clicks the button to remove the current key
+        /// </summary>
+        private void DeleteKeyClicked(object sender, EventArgs e)
+        {
+            var sel = lstKeyValues.SelectedItems.OfType<ListViewItem>().FirstOrDefault();
+            var tv = sel?.Tag as TableValue;
+            if (tv == null) return;
+
+            if (tv.IsAdded) _tableValues.Remove(tv);
+            else tv.IsRemoved = true;
+
+            UpdateTable();
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(HasChanges)));
+        }
+
+        /// <summary>
         /// Stores the state of the selection before and after modifications have been made
         /// </summary>
         private class ClassValues : List<TableValue>
@@ -414,8 +475,8 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
             public List<GameDataObject> OriginalClasses { get; }
             public GameDataObject NewClass { get; set; }
 
-            public bool ClassChanged => NewClass != null
-                                    && !string.Equals(NewClass.Name, String.Join(", ", OriginalClasses.Select(x => x.Name)), StringComparison.InvariantCultureIgnoreCase);
+            public string OriginalClass => String.Join(", ", OriginalClasses.Select(x => x.Name));
+            public bool ClassChanged => NewClass != null && !string.Equals(NewClass.Name, OriginalClass, StringComparison.InvariantCultureIgnoreCase);
 
             public ClassValues()
             {
@@ -444,7 +505,10 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
                     OriginalClasses.Add(cls);
                 }
 
-                var keys = OriginalClasses.SelectMany(x => x.Properties).Select(x => (x.Name ?? "").ToLower()).Distinct().ToList();
+                var keys = OriginalClasses.SelectMany(x => x.Properties)
+                    .Select(x => (x.Name ?? "").ToLower())
+                    .Union(datas.SelectMany(x => x.Properties.Keys).Select(x => x.ToLower()))
+                    .ToList();
                 foreach (var key in keys)
                 {
                     // Spawnflags are handled by the flags tab
@@ -464,7 +528,7 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
         /// </summary>
         private class TableValue
         {
-            public Property GameDataProperty { get; }
+            public Property GameDataProperty { get; set; }
 
             public string OriginalKey { get; }
             public string NewKey { get; set; }
@@ -473,7 +537,9 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
             public List<string> OriginalValues { get; }
             public string NewValue { get; set; }
 
-            public bool IsModified => NewValue != null && !String.Equals(OriginalValue, NewValue);
+            public bool IsModified => NewValue != null && !String.Equals(OriginalValue, NewValue)
+                                   || NewKey != null && !String.Equals(OriginalKey, NewKey);
+
             public bool IsAdded { get; set; }
             public bool IsRemoved { get; set; }
 
