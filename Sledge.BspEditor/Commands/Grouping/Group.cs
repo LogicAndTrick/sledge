@@ -16,7 +16,7 @@ namespace Sledge.BspEditor.Commands.Grouping
     [Export(typeof(ICommand))]
     [CommandID("BspEditor:Edit:Group")]
     [DefaultHotkey("Ctrl+G")]
-    [MenuItem("Edit", "", "Group", "B")]
+    [MenuItem("Tools", "", "Group", "D")]
     [MenuImage(typeof(Resources), nameof(Resources.Menu_Group))]
     public class Group : BaseCommand
     {

@@ -14,7 +14,15 @@
         },
         "OpenAboutWindow": {
             "Name": "About Sledge",
-            "Details": "View information about this application." 
+            "Details": "View information about this application."
+        },
+        "OpenObjectProperties": {
+            "Name": "Object properties",
+            "Details": "Open the object properties window."
+        },
+        "PasteSpecial": {
+            "Name": "Paste special...",
+            "Details": "Paste multiple copies with a transformation applied."
         }
     },
     "Components": {
@@ -87,6 +95,24 @@
             "FixAll": "Fix all problems",
             "VisibleObjectsOnly": "Visible objects only",
             "CloseButton": "Close"
+        },
+        "PasteSpecialDialog": {
+            "Title": "Paste Special",
+            "NumberOfCopies": "Number of copies to paste:",
+            "StartPoint": "Start point",
+            "StartAtOrigin": "Start at map origin",
+            "StartAtCenterOfOriginal": "Start at center of original",
+            "StartAtCenterOfSelection": "Start at center of current selection",
+            "Grouping": "Grouping",
+            "NoGrouping": "No grouping",
+            "GroupIndividual": "Group individual copies",
+            "GroupAll": "Group all copies",
+            "Offset": "Offset (accumulative)",
+            "Rotation": "Rotation (accumulative)",
+            "MakeEntityNamesUnique": "Make entity names unique",
+            "PrevixEntityNames": "Prefix named entities with:",
+            "OK": "OK",
+            "Cancel": "Cancel"
         }
     } 
 }

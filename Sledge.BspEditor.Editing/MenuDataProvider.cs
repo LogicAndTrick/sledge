@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using Sledge.Common.Shell.Menu;
 
-namespace Sledge.BspEditor.Commands
+namespace Sledge.BspEditor.Editing
 {
     [Export(typeof(IMenuMetadataProvider))]
     public class MenuDataProvider : IMenuMetadataProvider
@@ -14,11 +14,7 @@ namespace Sledge.BspEditor.Commands
 
         public IEnumerable<MenuGroup> GetMenuGroups()
         {
-            yield return new MenuGroup("Edit", "", "History", "B");
-            yield return new MenuGroup("Edit", "", "Clipboard", "D");
-            yield return new MenuGroup("Edit", "", "Selection", "T");
-
-            yield return new MenuGroup("Tools", "", "Group", "F");
+            yield return new MenuGroup("Edit", "", "Properties", "V");
         }
     }
 }

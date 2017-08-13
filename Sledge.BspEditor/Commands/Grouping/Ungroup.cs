@@ -16,7 +16,7 @@ namespace Sledge.BspEditor.Commands.Grouping
     [Export(typeof(ICommand))]
     [CommandID("BspEditor:Edit:Ungroup")]
     [DefaultHotkey("Ctrl+U")]
-    [MenuItem("Edit", "", "Group", "D")]
+    [MenuItem("Tools", "", "Group", "D")]
     [MenuImage(typeof(Resources), nameof(Resources.Menu_Ungroup))]
     public class Ungroup : BaseCommand
     {

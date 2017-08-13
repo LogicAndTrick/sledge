@@ -4,7 +4,6 @@ using System.Linq;
 using System.Windows.Forms;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Editing.Problems;
-using Sledge.Common.Mediator;
 using Sledge.Common.Translations;
 using Sledge.Shell;
 

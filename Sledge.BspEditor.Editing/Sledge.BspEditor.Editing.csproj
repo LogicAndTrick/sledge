@@ -50,6 +50,7 @@
     <Compile Include="Commands\EditVisgroups.cs" />
     <Compile Include="Commands\OpenObjectProperties.cs" />
     <Compile Include="Commands\OpenAboutWindow.cs" />
+    <Compile Include="Commands\PasteSpecial.cs" />
     <Compile Include="Components\AboutDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -61,6 +62,12 @@
     </Compile>
     <Compile Include="Components\CheckForProblemsDialog.Designer.cs">
       <DependentUpon>CheckForProblemsDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Components\PasteSpecialDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Components\PasteSpecialDialog.Designer.cs">
+      <DependentUpon>PasteSpecialDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="Components\Properties\SmartEdit\SmartEditBoolean.cs">
       <SubType>Component</SubType>
@@ -162,6 +169,7 @@
     <Compile Include="History\HistoryStack.cs" />
     <Compile Include="History\RedoCommand.cs" />
     <Compile Include="History\UndoCommand.cs" />
+    <Compile Include="MenuDataProvider.cs" />
     <Compile Include="Problems\IProblemCheck.cs" />
     <Compile Include="Problems\NoPlayerStart.cs" />
     <Compile Include="Problems\Problem.cs" />
@@ -202,6 +210,9 @@
     <EmbeddedResource Include="Components\CheckForProblemsDialog.resx">
       <DependentUpon>CheckForProblemsDialog.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Components\PasteSpecialDialog.resx">
+      <DependentUpon>PasteSpecialDialog.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Components\Properties\Tabs\FlagsTab.resx">
       <DependentUpon>FlagsTab.cs</DependentUpon>
     </EmbeddedResource>
@@ -241,6 +252,8 @@
     <None Include="app.config" />
     <None Include="packages.config" />
     <None Include="Resources\Button_ColourPicker.png" />
+    <Content Include="Resources\Menu_ObjectProperties.png" />
+    <Content Include="Resources\Menu_PasteSpecial.png" />
     <Content Include="Resources\Menu_Redo.png" />
     <Content Include="Resources\Menu_Undo.png" />
     <Content Include="Translations\Sledge.BspEditor.Editing.en.json">
