@@ -694,7 +694,7 @@ namespace Sledge.BspEditor.Tools.Selection
             }
             else
             {
-                transaction.Add(new Transform(transform, Document.Selection));
+                transaction.Add(new Transform(transform, Document.Selection.GetSelectedParents()));
             }
             MapDocumentOperation.Perform(Document, transaction);
         }

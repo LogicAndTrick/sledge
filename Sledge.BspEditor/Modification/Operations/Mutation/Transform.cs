@@ -35,7 +35,7 @@ namespace Sledge.BspEditor.Modification.Operations.Mutation
             foreach (var o in objects)
             {
                 o.Transform(_matrix);
-                ch.Update(o);
+                ch.UpdateRange(o.FindAll());
             }
 
             return Task.FromResult(ch);
@@ -51,7 +51,7 @@ namespace Sledge.BspEditor.Modification.Operations.Mutation
             foreach (var o in objects)
             {
                 o.Transform(inv);
-                ch.Update(o);
+                ch.UpdateRange(o.FindAll());
             }
 
             return Task.FromResult(ch);

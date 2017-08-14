@@ -45,7 +45,7 @@ namespace Sledge.Shell.Components
         {
             for (var i = 0; i < _recentFiles.Count; i++)
             {
-                yield return new RecentFilesMenuItem(i, _recentFiles[i]);
+                yield return new RecentFilesMenuItem(_recentFiles.Count - i - 1, _recentFiles[i]);
             }
         }
 

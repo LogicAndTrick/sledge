@@ -140,6 +140,10 @@ namespace Sledge.BspEditor.Primitives.MapObjects
             {
                 t.Transform(matrix);
             }
+            foreach (var t in Hierarchy)
+            {
+                t.Transform(matrix);
+            }
             DescendantsChanged();
         }
 

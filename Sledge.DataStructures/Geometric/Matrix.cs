@@ -87,10 +87,10 @@ namespace Sledge.DataStructures.Geometric
             // convert the matrix to an array for easy looping
             var inverse = new[,]
                               {
-                                  {Values[0], Values[1], Values[2], Values[3]},
-                                  {Values[4], Values[5], Values[6], Values[7]},
-                                  {Values[8], Values[9], Values[10], Values[11]},
-                                  {Values[12], Values[13], Values[14], Values[15]}
+                                  {Values[0], Values[1], Values[2], Values[12]},
+                                  {Values[4], Values[5], Values[6], Values[13]},
+                                  {Values[8], Values[9], Values[10], Values[14]},
+                                  {Values[3], Values[7], Values[11], Values[15]}
                               };
             var icol = 0;
             var irow = 0;
@@ -176,10 +176,10 @@ namespace Sledge.DataStructures.Geometric
             }
 
             return new Matrix(
-                inverse[0, 0], inverse[0, 1], inverse[0, 2], inverse[0, 3],
-                inverse[1, 0], inverse[1, 1], inverse[1, 2], inverse[1, 3],
-                inverse[2, 0], inverse[2, 1], inverse[2, 2], inverse[2, 3],
-                inverse[3, 0], inverse[3, 1], inverse[3, 2], inverse[3, 3]);
+                inverse[0, 0], inverse[0, 1], inverse[0, 2], inverse[3, 0],
+                inverse[1, 0], inverse[1, 1], inverse[1, 2], inverse[3, 1],
+                inverse[2, 0], inverse[2, 1], inverse[2, 2], inverse[3, 2],
+                inverse[0, 3], inverse[1, 3], inverse[2, 3], inverse[3, 3]);
         }
 
         public Matrix Transpose()

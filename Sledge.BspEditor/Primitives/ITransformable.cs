@@ -10,7 +10,7 @@ namespace Sledge.BspEditor.Primitives
     public interface ITransformable
     {
         /// <summary>
-        /// Transforms members of this object, but does not transform child elements.
+        /// Transforms members of this object, and all child elements.
         /// </summary>
         /// <param name="matrix">The transformation matrix</param>
         void Transform(Matrix matrix);

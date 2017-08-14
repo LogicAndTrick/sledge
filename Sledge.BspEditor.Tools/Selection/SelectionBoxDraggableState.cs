@@ -72,7 +72,7 @@ namespace Sledge.BspEditor.Tools.Selection
         {
             if (transformation.HasValue)
             {
-                var op = new Transform(Matrix.FromOpenTKMatrix4(transformation.Value), Tool.Document.Selection);
+                var op = new Transform(Matrix.FromOpenTKMatrix4(transformation.Value), Tool.Document.Selection.GetSelectedParents());
                 MapDocumentOperation.Perform(Tool.Document, op);
             }
             var st = new SelectionTransform(Matrix.Identity);
