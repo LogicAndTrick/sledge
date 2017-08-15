@@ -28,7 +28,7 @@ namespace Sledge.BspEditor.Primitives
                 // Use the first face if we can't find any with the same plane (it's the clipping plane)
                 var originalFace =
                     original.Faces.FirstOrDefault(x => p.ClassifyAgainstPlane(x.Plane) == PlaneClassification.OnPlane)
-                    ?? solid.Faces.FirstOrDefault();
+                    ?? original.Faces.FirstOrDefault();
 
                 var face = new Face(generator.Next("Face"));
                 face.Vertices.AddRange(p.Vertices);

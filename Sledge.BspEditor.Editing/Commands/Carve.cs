@@ -74,6 +74,7 @@ namespace Sledge.BspEditor.Editing.Commands
                     if (back == null || !back.IsValid()) break;
 
                     // Use the back solid as the new clipping target
+                    if (solid.IsSelected) back.IsSelected = true;
                     solid = back;
                 }
 
