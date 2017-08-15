@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Modification;
 using Sledge.BspEditor.Modification.Operations.Tree;
+using Sledge.BspEditor.Primitives;
 using Sledge.BspEditor.Primitives.MapObjectData;
 using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.BspEditor.Rendering;
@@ -230,25 +231,21 @@ namespace Sledge.BspEditor.Tools.Clip
             var found = false;
             foreach (var solid in objects)
             {
-                var poly = solid.ToPolyhedron();
-                if (!poly.Split(plane, out Polyhedron back, out Polyhedron front)) continue;
-
+                if (!solid.Split(Document.Map.NumberGenerator, plane, out Solid backSolid, out Solid frontSolid)) continue;
                 found = true;
-
+                
                 // Remove the clipped solid
                 clip.Add(new Detatch(solid.Hierarchy.Parent.ID, solid));
-
+                
                 if (_side != ClipSide.Back)
                 {
                     // Add front solid
-                    var frontSolid = MakeSolid(Document, solid, front);
                     clip.Add(new Attach(solid.Hierarchy.Parent.ID, frontSolid));
                 }
-
+                
                 if (_side != ClipSide.Front)
                 {
                     // Add back solid
-                    var backSolid = MakeSolid(Document, solid, back);
                     clip.Add(new Attach(solid.Hierarchy.Parent.ID, backSolid));
                 }
             }
@@ -256,37 +253,6 @@ namespace Sledge.BspEditor.Tools.Clip
             {
                 MapDocumentOperation.Perform(Document, clip);
             }
-        }
-
-        private Solid MakeSolid(MapDocument doc, Solid original, Polyhedron poly)
-        {
-            var solid = new Solid(doc.Map.NumberGenerator.Next("MapObject"));
-            foreach (var p in poly.Polygons)
-            {
-                // Use the first face if we can't find any with the same plane (it's the clipping plane)
-                var originalFace =
-                    original.Faces.FirstOrDefault(x => p.ClassifyAgainstPlane(x.Plane) == PlaneClassification.OnPlane)
-                    ?? solid.Faces.FirstOrDefault();
-
-                var face = new Primitives.MapObjectData.Face(doc.Map.NumberGenerator.Next("Face"));
-                face.Vertices.AddRange(p.Vertices);
-                face.Plane = p.GetPlane();
-
-                if (originalFace != null)
-                {
-                    face.Texture = originalFace.Texture.Clone();
-                }
-
-                solid.Data.Add(face);
-
-                // Add any extra data (visgroups, colour, etc)
-                foreach (var data in original.Data.Where(x => !(x is Primitives.MapObjectData.Face)))
-                {
-                    solid.Data.Add((IMapObjectData) data.Clone());
-                }
-
-            }
-            return solid;
         }
 
         protected override IEnumerable<SceneObject> GetSceneObjects()

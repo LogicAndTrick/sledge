@@ -9,7 +9,13 @@ namespace Sledge.BspEditor.Commands
     {
         public virtual bool IsInContext(IContext context)
         {
-            return context.TryGet("ActiveDocument", out MapDocument _);
+            return context.TryGet("ActiveDocument", out MapDocument doc)
+                && IsInContext(context, doc);
+        }
+
+        protected virtual bool IsInContext(IContext context, MapDocument document)
+        {
+            return true;
         }
 
         public abstract string Name { get; set; }

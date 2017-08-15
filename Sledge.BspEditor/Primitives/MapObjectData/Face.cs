@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
@@ -12,25 +13,25 @@ namespace Sledge.BspEditor.Primitives.MapObjectData
     public class Face : IMapObjectData, ITransformable, ITextured
     {
         public long ID { get; }
-        public Plane Plane { get; set; }
         public Texture Texture { get; set; }
+        public VertexCollection Vertices { get; }
 
-        public List<Coordinate> Vertices { get; set; }
+        public Plane Plane
+        {
+            get => Vertices.Plane;
+            set => Vertices.Plane = value;
+        }
 
         public Face(long id)
         {
             ID = id;
-            Plane = new Plane(Coordinate.UnitZ, Coordinate.Zero);
             Texture = new Texture();
-            Vertices = new List<Coordinate>();
+            Vertices = new VertexCollection();
         }
 
         public Face(SerialisedObject obj)
         {
             ID = obj.Get("ID", ID);
-
-            var pln = obj.Children.First(x => x.Name == "Plane");
-            Plane = new Plane(pln.Get<Coordinate>("Normal"), pln.Get<decimal>("DistanceFromOrigin"));
 
             var t = obj.Children.FirstOrDefault(x => x.Name == "Texture");
             Texture = new Texture();
@@ -47,11 +48,8 @@ namespace Sledge.BspEditor.Primitives.MapObjectData
                 Texture.YShift = t.Get("YShift", 0m);
             }
 
-            Vertices = new List<Coordinate>();
-            foreach (var so in obj.Children.Where(x => x.Name == "Vertex"))
-            {
-                Vertices.Add(so.Get<Coordinate>("Position"));
-            }
+            Vertices = new VertexCollection();
+            Vertices.AddRange(obj.Children.Where(x => x.Name == "Vertex").Select(x => x.Get<Coordinate>("Position")));
         }
 
         [Export(typeof(IMapElementFormatter))]
@@ -67,9 +65,8 @@ namespace Sledge.BspEditor.Primitives.MapObjectData
 
         private void CopyBase(Face face)
         {
-            face.Plane = Plane; // planes are immutable
             face.Texture = Texture.Clone();
-            face.Vertices = Vertices.Select(x => x.Clone()).ToList();
+            face.Vertices.Reset(Vertices.Select(x => x.Clone()));
         }
 
         public IMapElement Clone()
@@ -135,7 +132,100 @@ namespace Sledge.BspEditor.Primitives.MapObjectData
 
         public void Transform(Matrix matrix)
         {
-            Vertices = Vertices.Select(x => x * matrix).ToList();
+            Vertices.Transform(x => x * matrix);
+        }
+
+        public class VertexCollection : IList<Coordinate>
+        {
+            private readonly List<Coordinate> _list = new List<Coordinate>();
+            private Plane _plane = new Plane(Coordinate.UnitZ, Coordinate.Zero);
+
+            internal Plane Plane
+            {
+                get => _plane;
+                set
+                {
+                    if (_list.Count < 3) _plane = value;
+                }
+            }
+
+            public int Count => _list.Count;
+            public bool IsReadOnly => false;
+
+            public Coordinate this[int index]
+            {
+                get => _list[index];
+                set
+                {
+                    _list[index] = value;
+                    UpdatePlane();
+                }
+            }
+
+            public void Add(Coordinate item)
+            {
+                _list.Add(item);
+                UpdatePlane();
+            }
+
+            public void AddRange(IEnumerable<Coordinate> items)
+            {
+                _list.AddRange(items);
+                UpdatePlane();
+            }
+
+            public void Clear()
+            {
+                _list.Clear();
+                UpdatePlane();
+            }
+
+            public bool Remove(Coordinate item)
+            {
+                var r = _list.Remove(item);
+                UpdatePlane();
+                return r;
+            }
+
+            public void Insert(int index, Coordinate item)
+            {
+                _list.Insert(index, item);
+                UpdatePlane();
+            }
+
+            public void RemoveAt(int index)
+            {
+                _list.RemoveAt(index);
+                UpdatePlane();
+            }
+
+            public void Transform(Func<Coordinate, Coordinate> tranform)
+            {
+                for (var i = 0; i < _list.Count; i++)
+                {
+                    _list[i] = tranform(_list[i]);
+                }
+                UpdatePlane();
+            }
+
+            public void Reset(IEnumerable<Coordinate> values)
+            {
+                _list.Clear();
+                _list.AddRange(values);
+                UpdatePlane();
+            }
+
+            private void UpdatePlane()
+            {
+                _plane = _list.Count < 3 ? _plane : new Plane(_list[0], _list[1], _list[2]);
+            }
+
+            public IEnumerator<Coordinate> GetEnumerator() => _list.GetEnumerator();
+            IEnumerator IEnumerable.GetEnumerator() => _list.GetEnumerator();
+            public bool Contains(Coordinate item) => _list.Contains(item);
+            public void CopyTo(Coordinate[] array, int arrayIndex) => _list.CopyTo(array, arrayIndex);
+            public int IndexOf(Coordinate item) => _list.IndexOf(item);
+            public void ForEach(Action<Coordinate> action) => _list.ForEach(action);
         }
     }
 }

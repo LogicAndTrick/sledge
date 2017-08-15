@@ -23,6 +23,14 @@
         "PasteSpecial": {
             "Name": "Paste special...",
             "Details": "Paste multiple copies with a transformation applied."
+        },
+        "Carve": {
+            "Name": "Carve",
+            "Details": "Carve the selection into any brushes it overlaps. (Use with caution)"
+        },
+        "Hollow": {
+            "Name": "Make hollow...",
+            "Details": "Make the selected solids hollow. (Use with caution)"
         }
     },
     "Components": {
