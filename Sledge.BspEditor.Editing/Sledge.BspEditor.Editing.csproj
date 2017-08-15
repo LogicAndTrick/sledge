@@ -197,6 +197,10 @@
       <Project>{26a974c9-e495-4fa3-8e87-1e00019d04f5}</Project>
       <Name>Sledge.DataStructures</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Sledge.QuickForms\Sledge.QuickForms.csproj">
+      <Project>{7FED88F3-717C-408A-85D9-28DD125DB61A}</Project>
+      <Name>Sledge.QuickForms</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Sledge.Shell\Sledge.Shell.csproj">
       <Project>{1e0beb41-cf2e-4f48-838e-452c1dcf575f}</Project>
       <Name>Sledge.Shell</Name>

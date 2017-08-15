@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Sledge.QuickForms.Items;
 
@@ -62,12 +63,12 @@ namespace Sledge.QuickForms
                 if (e.KeyCode == Keys.Enter)
                 {
                     var ok = Controls.OfType<Button>().FirstOrDefault(x => x.DialogResult == DialogResult.OK || x.DialogResult == DialogResult.Yes);
-                    if (ok != null) ok.PerformClick();
+                    ok?.PerformClick();
                 }
                 else if (e.KeyCode == Keys.Escape)
                 {
                     var cancel = Controls.OfType<Button>().FirstOrDefault(x => x.DialogResult == DialogResult.Cancel || x.DialogResult == DialogResult.No);
-                    if (cancel != null) cancel.PerformClick();
+                    cancel?.PerformClick();
                 }
             }
             base.OnKeyDown(e);
@@ -77,9 +78,15 @@ namespace Sledge.QuickForms
 		{
 			ClientSize = new System.Drawing.Size(ClientSize.Width, CurrentOffset + ItemPadding);
 		    var nonlabel = Controls.OfType<Control>().FirstOrDefault(x => !(x is Label));
-            if (nonlabel != null) nonlabel.Focus();
-			base.OnLoad(e);
+		    nonlabel?.Focus();
+		    base.OnLoad(e);
 		}
+
+	    public async Task<DialogResult> ShowDialogAsync()
+	    {
+	        await Task.Yield();
+	        return ShowDialog();
+        }
 		
         /// <summary>
         /// Add an item to the form.
@@ -148,9 +155,26 @@ namespace Sledge.QuickForms
 	    /// <param name="decimals">The number of decimals for the control</param>
 	    /// <param name="value">The default value of the control</param>
 	    /// <returns>This object, for method chaining</returns>
+	    [Obsolete("Use the other one")]
 	    public QuickForm NumericUpDown(string name, int min, int max, int decimals, decimal value = 0)
         {
-            AddItem(new QuickFormNumericUpDown(name, min, max, decimals, value));
+            AddItem(new QuickFormNumericUpDown(name, name, min, max, decimals, value));
+            return this;
+        }
+
+	    /// <summary>
+	    /// Add a NumericUpDown to the form.
+	    /// </summary>
+	    /// <param name="key">The name of the control</param>
+	    /// <param name="label">The display text of the control</param>
+	    /// <param name="min">The minimum value of the control</param>
+	    /// <param name="max">The maximum value of the control</param>
+	    /// <param name="decimals">The number of decimals for the control</param>
+	    /// <param name="value">The default value of the control</param>
+	    /// <returns>This object, for method chaining</returns>
+	    public QuickForm NumericUpDown(string key, string label, int min, int max, int decimals, decimal value = 0)
+        {
+            AddItem(new QuickFormNumericUpDown(key, label, min, max, decimals, value));
             return this;
         }
 

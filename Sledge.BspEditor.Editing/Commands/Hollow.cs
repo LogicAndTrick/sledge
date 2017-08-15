@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using Sledge.BspEditor.Commands;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Editing.Properties;
@@ -14,6 +16,7 @@ using Sledge.Common.Shell.Context;
 using Sledge.Common.Shell.Menu;
 using Sledge.Common.Translations;
 using Sledge.DataStructures.Geometric;
+using Sledge.QuickForms;
 
 namespace Sledge.BspEditor.Editing.Commands
 {
@@ -26,6 +29,10 @@ namespace Sledge.BspEditor.Editing.Commands
     {
         public override string Name { get; set; } = "Make Hollow...";
         public override string Details { get; set; } = "Make hollow";
+        
+        public string PromptTitle { get; set; }
+        public string PromptWallWidth { get; set; }
+        public string WarningMessage { get; set; }
 
         protected override bool IsInContext(IContext context, MapDocument document)
         {
@@ -35,9 +42,16 @@ namespace Sledge.BspEditor.Editing.Commands
 
         protected override async Task Invoke(MapDocument document, CommandParameters parameters)
         {
-            int _width = 16; // todo prompt
+            var objects = document.Selection.OfType<Solid>().ToList();
+            
+            // Prompt the user for the wall width. If more than 1 solid is selected, show a little warning notice.
+            var qf = new QuickForm(PromptTitle) {UseShortcutKeys = true};
+            if (objects.Count > 1) qf.Label(String.Format(WarningMessage, objects.Count));
+            qf.NumericUpDown("Width", PromptWallWidth, -1024, 1024, 0, 32).OkCancel();
 
-            var objects = document.Map.Root.Find(x => x is Solid).OfType<Solid>();
+            if (await qf.ShowDialogAsync() != DialogResult.OK) return;
+
+            var width = qf.Decimal("Width");
 
             var ops = new List<IOperation>();
 
@@ -49,7 +63,7 @@ namespace Sledge.BspEditor.Editing.Commands
                 // Make a scaled version of the solid for the "inside" of the hollowed solid
                 var origin = solid.BoundingBox.Center;
                 var current = obj.BoundingBox.Dimensions;
-                var target = current - new Coordinate(_width, _width, _width) * 2; // Double the width to take from both sides
+                var target = current - new Coordinate(width, width, width) * 2; // Double the width to take from both sides
 
                 // Ensure we don't have any invalid target sizes
                 if (target.X < 1) target.X = 1;
@@ -62,7 +76,7 @@ namespace Sledge.BspEditor.Editing.Commands
                 carver.Transform(Matrix.Translation(origin) * Matrix.Scale(scale) * Matrix.Translation(-origin));
 
                 // For a negative width, we want the original solid to be the inside instead
-                if (_width < 0)
+                if (width < 0)
                 {
                     var temp = carver;
                     carver = solid;

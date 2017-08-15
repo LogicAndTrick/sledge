@@ -30,7 +30,10 @@
         },
         "Hollow": {
             "Name": "Make hollow...",
-            "Details": "Make the selected solids hollow. (Use with caution)"
+            "Details": "Make the selected solids hollow. (Use with caution)",
+            "PromptTitle": "Select wall width",
+            "PromptWallWidth": "Wall width (negative to hollow outwards)",
+            "WarningMessage": "This will hollow all {0} solids that are selected."
         }
     },
     "Components": {
