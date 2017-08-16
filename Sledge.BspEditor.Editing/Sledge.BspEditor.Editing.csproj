@@ -49,6 +49,7 @@
   <ItemGroup>
     <Compile Include="Commands\Carve.cs" />
     <Compile Include="Commands\EditVisgroups.cs" />
+    <Compile Include="Commands\MoveToWorld.cs" />
     <Compile Include="Commands\TieToEntity.cs" />
     <Compile Include="Commands\Hollow.cs" />
     <Compile Include="Commands\OpenObjectProperties.cs" />

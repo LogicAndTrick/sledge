@@ -13,6 +13,7 @@ using Sledge.BspEditor.Primitives;
 using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.Common.Shell.Commands;
 using Sledge.Common.Shell.Context;
+using Sledge.Common.Shell.Hotkeys;
 using Sledge.Common.Shell.Menu;
 using Sledge.Common.Translations;
 using Sledge.DataStructures.Geometric;
@@ -25,6 +26,7 @@ namespace Sledge.BspEditor.Editing.Commands
     [MenuItem("Tools", "", "Evil", "D")]
     [CommandID("BspEditor:Tools:Hollow")]
     [MenuImage(typeof(Resources), nameof(Resources.Menu_Hollow))]
+    [DefaultHotkey("Ctrl+Shift+H")]
     public class Hollow : BaseCommand
     {
         public override string Name { get; set; } = "Make Hollow...";

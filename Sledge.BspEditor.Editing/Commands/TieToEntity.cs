@@ -16,6 +16,7 @@ using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.Common;
 using Sledge.Common.Shell.Commands;
 using Sledge.Common.Shell.Context;
+using Sledge.Common.Shell.Hotkeys;
 using Sledge.Common.Shell.Menu;
 using Sledge.Common.Translations;
 using Sledge.DataStructures.GameData;
@@ -29,6 +30,7 @@ namespace Sledge.BspEditor.Editing.Commands
     [MenuItem("Tools", "", "Entity", "D")]
     [CommandID("BspEditor:Tools:TieToEntity")]
     [MenuImage(typeof(Resources), nameof(Resources.Menu_TieToEntity))]
+    [DefaultHotkey("Ctrl+T")]
     public class TieToEntity : BaseCommand
     {
         public override string Name { get; set; } = "Tie to entity";

@@ -11,6 +11,7 @@ using Sledge.BspEditor.Primitives;
 using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.Common.Shell.Commands;
 using Sledge.Common.Shell.Context;
+using Sledge.Common.Shell.Hotkeys;
 using Sledge.Common.Shell.Menu;
 using Sledge.Common.Translations;
 
@@ -21,6 +22,7 @@ namespace Sledge.BspEditor.Editing.Commands
     [MenuItem("Tools", "", "Evil", "B")]
     [CommandID("BspEditor:Tools:Carve")]
     [MenuImage(typeof(Resources), nameof(Resources.Menu_Carve))]
+    [DefaultHotkey("Ctrl+Shift+C")]
     public class Carve : BaseCommand
     {
         public override string Name { get; set; } = "Carve";
