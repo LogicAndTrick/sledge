@@ -19,6 +19,7 @@ namespace Sledge.Shell.Registers
     /// </summary>
     [Export(typeof(IStartupHook))]
     [Export(typeof(ISettingsContainer))]
+    [Export]
     internal class HotkeyRegister : IStartupHook, ISettingsContainer
     {
         // Store the context (the hotkey register is one of the few things that should need static access to the context)
@@ -67,6 +68,28 @@ namespace Sledge.Shell.Registers
         private void Add(IHotkey hotkey)
         {
             _hotkeys[hotkey.ID] = hotkey;
+        }
+
+        /// <summary>
+        /// Get a hotkey by its id
+        /// </summary>
+        public IHotkey GetHotkey(string id)
+        {
+            return _hotkeys.ContainsKey(id) ? _hotkeys[id] : null;
+        }
+
+        /// <summary>
+        /// Get the shortcut string for a hotkey, if it's defined
+        /// </summary>
+        /// <param name="hotkey"></param>
+        /// <returns></returns>
+        public string GetHotkeyString(IHotkey hotkey)
+        {
+            if (hotkey == null) return null;
+            var keys = _registeredHotkeys.Where(x => x.Value == hotkey).Select(x => x.Key).ToList();
+            if (keys.Count == 0) return null;
+
+            return keys.Contains(hotkey.DefaultHotkey) ? hotkey.DefaultHotkey : keys.FirstOrDefault();
         }
 
         /// <summary>

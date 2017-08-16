@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using Sledge.Common.Shell.Commands;
 using Sledge.Common.Shell.Menu;
+using Sledge.Shell.Registers;
 
 namespace Sledge.Shell.Components
 {
@@ -12,6 +13,10 @@ namespace Sledge.Shell.Components
     public class CommandMenuItemProvider : IMenuItemProvider
     {
         [ImportMany] private IEnumerable<Lazy<ICommand>> _commands;
+        
+        // Store the hotkey register so we know what the hotkey for each command is
+        [Import] private HotkeyRegister _hotkeys;
+
         public event EventHandler MenuItemsChanged;
 
         public IEnumerable<IMenuItem> GetMenuItems()
@@ -22,7 +27,11 @@ namespace Sledge.Shell.Components
                 var mia = ty.GetCustomAttributes(typeof(MenuItemAttribute), false).OfType<MenuItemAttribute>().FirstOrDefault();
                 if (mia == null) continue;
                 var icon = ty.GetCustomAttributes(typeof(MenuImageAttribute), false).OfType<MenuImageAttribute>().FirstOrDefault();
-                yield return new CommandMenuItem(export.Value, mia.Section, mia.Path, mia.Group, mia.OrderHint, icon?.Image);
+
+                var hotkey = _hotkeys.GetHotkey("Command:" + export.Value.GetID());
+                var shortcut = _hotkeys.GetHotkeyString(hotkey);
+
+                yield return new CommandMenuItem(export.Value, mia.Section, mia.Path, mia.Group, mia.OrderHint, icon?.Image, shortcut ?? "");
             }
         }
     }

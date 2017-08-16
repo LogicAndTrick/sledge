@@ -40,6 +40,7 @@ namespace Sledge.BspEditor.Tools.Grid
             public string Path => ""; // todo !menu proper grid path
             public string Group => "GridTypes";
             public string OrderHint => Group.GetType().Name;
+            public string ShortcutText => "";
 
             public IGridFactory GridFactory { get; set; }
 

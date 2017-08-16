@@ -18,14 +18,16 @@ namespace Sledge.Common.Shell.Menu
         public string Group { get; }
         public string OrderHint { get; }
         public Image Icon { get; }
+        public string ShortcutText { get; }
 
-        public CommandMenuItem(ICommand command, string section, string path, string group, string orderHint, Image icon)
+        public CommandMenuItem(ICommand command, string section, string path, string group, string orderHint, Image icon, string shortcutText)
         {
             Section = section;
             Path = path;
             Group = group;
             OrderHint = orderHint;
             Icon = icon;
+            ShortcutText = shortcutText;
             _command = command ?? this as ICommand;
         }
 

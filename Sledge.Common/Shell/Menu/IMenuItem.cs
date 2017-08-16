@@ -35,6 +35,11 @@ namespace Sledge.Common.Shell.Menu
         /// </summary>
         string OrderHint { get; }
 
+        /// <summary>
+        /// The shortcut text of the menu item
+        /// </summary>
+        string ShortcutText { get; }
+
         Task Invoke(IContext context);
     }
 }

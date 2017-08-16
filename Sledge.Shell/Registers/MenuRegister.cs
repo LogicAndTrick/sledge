@@ -208,7 +208,11 @@ namespace Sledge.Shell.Registers
             {
                 _context = context;
                 _group = group ?? new MenuGroup("", "", "", "T");
-                ToolStripMenuItem = new ToolStripMenuItem(menuItem.Name, menuItem.Icon) {Tag = this};
+                ToolStripMenuItem = new ToolStripMenuItem(menuItem.Name, menuItem.Icon)
+                {
+                    Tag = this,
+                    ShortcutKeyDisplayString = menuItem.ShortcutText
+                };
                 ToolStripMenuItem.Click += Fire;
                 ToolStripMenuItem.MouseEnter += (s, a) => { Oy.Publish("Status:Information", menuItem.Description); };
                 ToolStripMenuItem.MouseLeave += (s, a) => { Oy.Publish("Status:Information", ""); };

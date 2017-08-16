@@ -109,6 +109,7 @@ namespace Sledge.Shell.Components
             public string Path => "";
             public string Group => "Recent";
             public string OrderHint => Convert.ToString((char) (_index + 'a'));
+            public string ShortcutText => "";
 
             public RecentFilesMenuItem(int index, RecentFile file)
             {
