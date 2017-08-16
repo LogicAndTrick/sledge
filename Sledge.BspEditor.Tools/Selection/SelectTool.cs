@@ -327,8 +327,8 @@ namespace Sledge.BspEditor.Tools.Selection
             }
 
             // Normalise selections
-            objectsToDeselect = NormaliseSelection(objectsToDeselect.Where(x => x != null), ignoreGrouping);
-            objectsToSelect = NormaliseSelection(objectsToSelect.Where(x => x != null), ignoreGrouping);
+            objectsToDeselect = NormaliseSelection(objectsToDeselect.Where(x => x != null), ignoreGrouping).ToList();
+            objectsToSelect = NormaliseSelection(objectsToSelect.Where(x => x != null), ignoreGrouping).ToList();
 
             // Don't bother deselecting the objects we're about to select
             objectsToDeselect = objectsToDeselect.Where(x => !objectsToSelect.Contains(x));

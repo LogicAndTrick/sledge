@@ -10,12 +10,20 @@ namespace Sledge.QuickForms.Items
 	/// </summary>
 	public class QuickFormOkCancel : QuickFormItem
 	{
+	    private readonly string _okText;
+	    private readonly string _cancelText;
 	    private readonly Action<QuickForm> _okevent;
 	    private readonly Action<QuickForm> _cancelevent;
 
-        public QuickFormOkCancel(Action<QuickForm> ok, Action<QuickForm> cancel)
+        public QuickFormOkCancel(Action<QuickForm> ok, Action<QuickForm> cancel) : this("OK", "Cancel", ok, cancel)
 		{
-			_okevent = ok;
+		}
+
+        public QuickFormOkCancel(string okText, string cancelText, Action<QuickForm> ok, Action<QuickForm> cancel)
+		{
+		    _okText = okText;
+		    _cancelText = cancelText;
+		    _okevent = ok;
 			_cancelevent = cancel;
 		}
 		
@@ -29,7 +37,7 @@ namespace Sledge.QuickForms.Items
 			b1.Click += qf.Close;
 			b1.Anchor = AnchorStyles.Top | AnchorStyles.Right;
 			b1.Width = 80;
-			b1.Text = "OK";
+			b1.Text = _okText;
 			b1.DialogResult = DialogResult.OK;
 			Location (b1, qf, false);
 			b1.Location = new Point(qf.ClientSize.Width - (QuickForm.ItemPadding + b1.Width) * 2, b1.Location.Y);
@@ -41,7 +49,7 @@ namespace Sledge.QuickForms.Items
 			b2.Click += qf.Close;
 			b2.Anchor = AnchorStyles.Top | AnchorStyles.Right;
 			b2.Width = 80;
-			b2.Text = "Cancel";
+			b2.Text = _cancelText;
 			b2.DialogResult = DialogResult.Cancel;
 			Location (b2, qf, false);
             b2.Location = new Point(qf.ClientSize.Width - QuickForm.ItemPadding - b2.Width, b2.Location.Y);

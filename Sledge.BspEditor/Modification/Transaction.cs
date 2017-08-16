@@ -37,8 +37,9 @@ namespace Sledge.BspEditor.Modification
         public async Task<Change> Reverse(MapDocument document)
         {
             var ch = new Change(document);
-            foreach (var operation in _operations)
+            for (var i = _operations.Count - 1; i >= 0; i--)
             {
+                var operation = _operations[i];
                 ch.Merge(await operation.Reverse(document));
             }
             return ch;

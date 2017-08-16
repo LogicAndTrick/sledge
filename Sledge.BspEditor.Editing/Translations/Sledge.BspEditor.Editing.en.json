@@ -33,13 +33,26 @@
             "Details": "Make the selected solids hollow. (Use with caution)",
             "PromptTitle": "Select wall width",
             "PromptWallWidth": "Wall width (negative to hollow outwards)",
-            "WarningMessage": "This will hollow all {0} solids that are selected."
+            "WarningMessage": "This will hollow all {0} solids that are selected.",
+            "OK": "OK",
+            "Cancel": "Cancel"
         },
         "Transform": {
             "Name": "Transform...",
             "Details": "Transform the current selection.",
             "ErrorCannotScaleByZeroTitle": "Cannot scale by zero",
             "ErrorCannotScaleByZeroMessage": "Please enter a non-zero value for all axes when scaling."
+        },
+        "TieToEntity": {
+            "Name": "Tie to entity",
+            "Details": "Create an entity out of the currently selected objects.",
+            "EntitySelectedTitle": "Entity already selected",
+            "OneEntitySelectedMessage": "You have selected an existing entity (a '{0}'), how would you like to proceed?\n - Keep the existing entity and add the selected items to the entity\n - Create a new entity and add the selected items to the new entity",
+            "MultipleEntitiesSelectedMessage": "You have selected multiple entities, which one would you like to keep?",
+            "KeepExisting": "Keep existing",
+            "CreateNew": "Create new",
+            "OK": "OK",
+            "Cancel": "Cancel"
         }
     },
     "Components": {

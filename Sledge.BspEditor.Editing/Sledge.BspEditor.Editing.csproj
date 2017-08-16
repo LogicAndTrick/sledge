@@ -49,6 +49,7 @@
   <ItemGroup>
     <Compile Include="Commands\Carve.cs" />
     <Compile Include="Commands\EditVisgroups.cs" />
+    <Compile Include="Commands\TieToEntity.cs" />
     <Compile Include="Commands\Hollow.cs" />
     <Compile Include="Commands\OpenObjectProperties.cs" />
     <Compile Include="Commands\OpenAboutWindow.cs" />
@@ -273,6 +274,8 @@
     <Content Include="Resources\Menu_ObjectProperties.png" />
     <Content Include="Resources\Menu_PasteSpecial.png" />
     <Content Include="Resources\Menu_Redo.png" />
+    <Content Include="Resources\Menu_TieToEntity.png" />
+    <Content Include="Resources\Menu_TieToWorld.png" />
     <Content Include="Resources\Menu_Transform.png" />
     <Content Include="Resources\Menu_Undo.png" />
     <Content Include="Translations\Sledge.BspEditor.Editing.en.json">

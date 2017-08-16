@@ -184,9 +184,23 @@ namespace Sledge.QuickForms
         /// <param name="name">The name of the control</param>
         /// <param name="items">The items for the control</param>
         /// <returns>This object, for method chaining</returns>
+        [Obsolete]
         public QuickForm ComboBox(string name, IEnumerable<object> items)
         {
-            AddItem(new QuickFormComboBox(name, items));
+            AddItem(new QuickFormComboBox(name, name, items));
+            return this;
+        }
+
+        /// <summary>
+        /// Add a ComboBox to the form.
+        /// </summary>
+        /// <param name="key">The name of the control</param>
+        /// <param name="label">The display text of the control</param>
+        /// <param name="items">The items for the control</param>
+        /// <returns>This object, for method chaining</returns>
+        public QuickForm ComboBox(string key, string label, IEnumerable<object> items)
+        {
+            AddItem(new QuickFormComboBox(key, label, items));
             return this;
         }
 
@@ -208,9 +222,24 @@ namespace Sledge.QuickForms
         /// <param name="ok">The action to perform when OK is clicked</param>
         /// <param name="cancel">The action to perform when cancel is clicked</param>
         /// <returns>This object, for method chaining</returns>
+        [Obsolete]
         public QuickForm OkCancel(Action<QuickForm> ok = null, Action<QuickForm> cancel = null)
 		{
             AddItem(new QuickFormOkCancel(ok, cancel));
+            return this;
+		}
+
+        /// <summary>
+        /// Add OK and Cancel buttons to the control
+        /// </summary>
+        /// <param name="okText"></param>
+        /// <param name="cancelText"></param>
+        /// <param name="ok">The action to perform when OK is clicked</param>
+        /// <param name="cancel">The action to perform when cancel is clicked</param>
+        /// <returns>This object, for method chaining</returns>
+        public QuickForm OkCancel(string okText, string cancelText, Action<QuickForm> ok = null, Action<QuickForm> cancel = null)
+		{
+            AddItem(new QuickFormOkCancel(okText, cancelText, ok, cancel));
             return this;
 		}
 

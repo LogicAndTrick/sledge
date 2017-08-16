@@ -19,11 +19,13 @@ namespace Sledge.BspEditor.Primitives.MapObjectData
 
         public EntityData()
         {
+            Name = "";
             Properties = new Dictionary<string, string>();
         }
 
         public EntityData(SerialisedObject obj)
         {
+            Name = "";
             Properties = new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase);
             foreach (var prop in obj.Properties)
             {
