@@ -53,6 +53,7 @@
     <Compile Include="Commands\OpenObjectProperties.cs" />
     <Compile Include="Commands\OpenAboutWindow.cs" />
     <Compile Include="Commands\PasteSpecial.cs" />
+    <Compile Include="Commands\Transform.cs" />
     <Compile Include="Components\AboutDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -135,6 +136,12 @@
     </Compile>
     <Compile Include="Components\Properties\Tabs\VisgroupTab.designer.cs">
       <DependentUpon>VisgroupTab.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Components\TransformDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Components\TransformDialog.Designer.cs">
+      <DependentUpon>TransformDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="Components\Visgroup\Operations\SetVisgroupVisibility.cs" />
     <Compile Include="Components\Visgroup\VisgroupEditForm.cs">
@@ -234,6 +241,9 @@
     <EmbeddedResource Include="Components\Properties\Tabs\VisgroupTab.resx">
       <DependentUpon>VisgroupTab.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Components\TransformDialog.resx">
+      <DependentUpon>TransformDialog.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Components\Visgroup\VisgroupEditForm.resx">
       <DependentUpon>VisgroupEditForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -263,6 +273,7 @@
     <Content Include="Resources\Menu_ObjectProperties.png" />
     <Content Include="Resources\Menu_PasteSpecial.png" />
     <Content Include="Resources\Menu_Redo.png" />
+    <Content Include="Resources\Menu_Transform.png" />
     <Content Include="Resources\Menu_Undo.png" />
     <Content Include="Translations\Sledge.BspEditor.Editing.en.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

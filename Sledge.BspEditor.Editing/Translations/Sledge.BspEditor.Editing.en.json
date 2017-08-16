@@ -34,6 +34,12 @@
             "PromptTitle": "Select wall width",
             "PromptWallWidth": "Wall width (negative to hollow outwards)",
             "WarningMessage": "This will hollow all {0} solids that are selected."
+        },
+        "Transform": {
+            "Name": "Transform...",
+            "Details": "Transform the current selection.",
+            "ErrorCannotScaleByZeroTitle": "Cannot scale by zero",
+            "ErrorCannotScaleByZeroMessage": "Please enter a non-zero value for all axes when scaling."
         }
     },
     "Components": {
@@ -124,6 +130,15 @@
             "PrevixEntityNames": "Prefix named entities with:",
             "OK": "OK",
             "Cancel": "Cancel"
+        },
+        "TransformDialog": {
+            "Title": "Transform",
+            "Source": "Source",
+            "Rotate": "Rotate",
+            "Translate": "Translate",
+            "Scale": "Scale",
+            "OK": "OK",
+            "Cancel": "Cancel" 
         }
     } 
 }
