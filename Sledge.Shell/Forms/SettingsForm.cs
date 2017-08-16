@@ -21,6 +21,7 @@ namespace Sledge.Shell.Forms
     {
         [ImportMany] private IEnumerable<Lazy<ISettingEditorFactory>> _editorFactories;
         [ImportMany] private IEnumerable<Lazy<ISettingsContainer>> _settingsContainers;
+        [Import] private Lazy<ITranslationStringProvider> _translations;
         [Import("Shell", typeof(Form))] private Lazy<Form> _parent;
 
         private Dictionary<ISettingsContainer, List<SettingKey>> _keys;
@@ -80,7 +81,8 @@ namespace Sledge.Shell.Forms
             GroupList.Items.Clear();
             foreach (var k in _keys.SelectMany(x => x.Value).GroupBy(x => x.Group))
             {
-                GroupList.Items.Add(k.Key);
+                var gh = new GroupHolder(k.Key, _translations.Value.GetSetting("@Group." + k.Key) ?? k.Key);
+                GroupList.Items.Add(gh);
             }
 
             GroupList.EndUpdate();
@@ -98,9 +100,10 @@ namespace Sledge.Shell.Forms
             
             SettingsPanel.RowStyles.Clear();
 
-            var group = GroupList.SelectedItem as string;
-            if (group != null)
+            var gh = GroupList.SelectedItem as GroupHolder;
+            if (gh != null)
             {
+                var group = gh.Key;
                 foreach (var kv in _keys)
                 {
                     var container = kv.Key;
@@ -110,7 +113,7 @@ namespace Sledge.Shell.Forms
                     {
                         var editor = GetEditor(key);
                         editor.Key = key;
-                        editor.Label = key.Key;
+                        editor.Label = _translations.Value.GetSetting($"{kv.Key.Name}.{key.Key}") ?? key.Key;
                         editor.Value = values.Get(key.Type, key.Key);
 
                         if (SettingsPanel.Controls.Count > 0)
@@ -201,6 +204,23 @@ namespace Sledge.Shell.Forms
         private void CancelClicked(object sender, EventArgs e)
         {
             Close();
+        }
+
+        public class GroupHolder
+        {
+            public string Key { get; set; }
+            public string Label { get; set; }
+
+            public GroupHolder(string key, string label)
+            {
+                Key = key;
+                Label = label;
+            }
+
+            public override string ToString()
+            {
+                return Label;
+            }
         }
     }
 }

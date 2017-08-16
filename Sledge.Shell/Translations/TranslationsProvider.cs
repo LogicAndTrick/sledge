@@ -50,12 +50,20 @@ namespace Sledge.Shell.Translations
             _catalog.Translate(Language, target);
         }
 
-        public string Get(string key)
+        public string GetString(string key)
         {
             if (!_catalog.Languages.ContainsKey(Language)) return null;
             var lang = _catalog.Languages[Language];
             if (!lang.Strings.ContainsKey(key)) return null;
             return lang.Strings[key];
+        }
+
+        public string GetSetting(string key)
+        {
+            if (!_catalog.Languages.ContainsKey(Language)) return null;
+            var lang = _catalog.Languages[Language];
+            if (!lang.Settings.ContainsKey(key)) return null;
+            return lang.Settings[key];
         }
 
         public string Name => "Sledge.Shell.Translations";

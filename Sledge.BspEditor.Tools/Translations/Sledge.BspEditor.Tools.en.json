@@ -5,7 +5,12 @@
         "Inherit": ""
     },
     "@Settings": {
-
+        "@Group.Brush": "Brush tool",
+        "BrushTool": {
+            "SelectionBoxBackgroundOpacity": "Selection box background opacity",
+            "SwitchToSelectAfterCreation": "Switch to select tool after brush creation",
+            "ResetBrushTypeOnCreation": "Reset to default brush type after brush creation"
+        }
     },
     "MenuDataProvider": {
         "Map": "Map"

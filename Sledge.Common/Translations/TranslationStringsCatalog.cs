@@ -122,6 +122,36 @@ namespace Sledge.Common.Translations
             {
                 collection.Strings[basePath + st.Path] = st.Value?.ToString();
             }
+
+            var settingsNode = obj["@Settings"] as JObject;
+            if (settingsNode != null)
+            {
+                var settings = settingsNode.Descendants()
+                    .OfType<JProperty>()
+                    .Where(x => x.Value.Type == JTokenType.String);
+                foreach (var se in settings)
+                {
+                    if (se.Name.StartsWith("@")) collection.Settings[se.Name] = se.Value?.ToString();
+                    else collection.Settings[basePath + GetSettingPath(se)] = se.Value?.ToString();
+                }
+            }
+        }
+
+        private string GetSettingPath(JToken token)
+        {
+            var l = new List<string>();
+            while (token != null)
+            {
+                if (token is JProperty)
+                {
+                    var name = ((JProperty) token).Name;
+                    if (name.StartsWith("@")) break;
+                    l.Add(name);
+                }
+                token = token.Parent;
+            }
+            l.Reverse();
+            return String.Join(".", l);
         }
     }
 }
