@@ -9,8 +9,10 @@ namespace Sledge.Common.Shell.Menu
         string ID { get; }
         string Name { get; }
         string Description { get; }
-
+        
         Image Icon { get; }
+        
+        bool AllowedInToolbar { get; }
 
         /// <summary>
         /// The section of the menu item.

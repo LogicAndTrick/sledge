@@ -31,7 +31,9 @@ namespace Sledge.Shell.Components
                 var hotkey = _hotkeys.GetHotkey("Command:" + export.Value.GetID());
                 var shortcut = _hotkeys.GetHotkeyString(hotkey);
 
-                yield return new CommandMenuItem(export.Value, mia.Section, mia.Path, mia.Group, mia.OrderHint, icon?.Image, shortcut ?? "");
+                var allow = ty.GetCustomAttributes(typeof(AllowToolbarAttribute), false).OfType<AllowToolbarAttribute>().FirstOrDefault();
+
+                yield return new CommandMenuItem(export.Value, mia.Section, mia.Path, mia.Group, mia.OrderHint, icon?.Image, shortcut ?? "", allow?.Allowed != false);
             }
         }
     }

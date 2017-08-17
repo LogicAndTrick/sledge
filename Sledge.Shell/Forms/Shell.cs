@@ -29,6 +29,8 @@ namespace Sledge.Shell.Forms
 
         public string Title { get; set; } = "Sledge Shell";
 
+        internal ToolStripPanel ToolStrip => ToolStripContainer.TopToolStripPanel;
+
         public Shell()
         {
             _documents = new List<IDocument>();

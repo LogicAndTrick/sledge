@@ -13,6 +13,7 @@ namespace Sledge.Common.Shell.Menu
         public string ID => "Command:" + _command.GetID();
         public string Name => _command.Name;
         public string Description => _command.Details;
+        public bool AllowedInToolbar { get; }
         public string Section { get; }
         public string Path { get; }
         public string Group { get; }
@@ -20,7 +21,7 @@ namespace Sledge.Common.Shell.Menu
         public Image Icon { get; }
         public string ShortcutText { get; }
 
-        public CommandMenuItem(ICommand command, string section, string path, string group, string orderHint, Image icon, string shortcutText)
+        public CommandMenuItem(ICommand command, string section, string path, string group, string orderHint, Image icon, string shortcutText, bool allowedInToolbar)
         {
             Section = section;
             Path = path;
@@ -28,6 +29,7 @@ namespace Sledge.Common.Shell.Menu
             OrderHint = orderHint;
             Icon = icon;
             ShortcutText = shortcutText;
+            AllowedInToolbar = allowedInToolbar;
             _command = command ?? this as ICommand;
         }
 

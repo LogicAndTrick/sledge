@@ -105,6 +105,7 @@ namespace Sledge.Shell.Components
             public string Name => System.IO.Path.GetFileName(_file.Location);
             public string Description => _file.Location;
             public Image Icon => GetIcon(_index + 1);
+            public bool AllowedInToolbar => false;
             public string Section => "File";
             public string Path => "";
             public string Group => "Recent";
