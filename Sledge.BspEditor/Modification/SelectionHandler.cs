@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.Composition;
+﻿using System;
+using System.ComponentModel.Composition;
 using System.Linq;
 using System.Threading.Tasks;
 using LogicAndTrick.Oy;
@@ -26,6 +27,7 @@ namespace Sledge.BspEditor.Modification
             if (sel.Update(change))
             {
                 await Oy.Publish("MapDocument:SelectionChanged", change.Document);
+                await Oy.Publish("Menu:Update", String.Empty);
             }
         }
     }

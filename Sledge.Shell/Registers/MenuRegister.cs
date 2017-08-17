@@ -12,7 +12,7 @@ using Sledge.Common.Shell.Menu;
 namespace Sledge.Shell.Registers
 {
     /// <summary>
-    /// The menu register registers and handles menu items
+    /// The menu register registers and handles menu and toolbar items
     /// </summary>
     [Export(typeof(IStartupHook))]
     [Export(typeof(IInitialiseHook))]
@@ -45,7 +45,7 @@ namespace Sledge.Shell.Registers
                 _declaredGroups.AddRange(md.Value.GetMenuGroups());
                 _declaredSections.AddRange(md.Value.GetMenuSections());
             }
-
+            
             return Task.FromResult(0);
         }
 
@@ -59,7 +59,24 @@ namespace Sledge.Shell.Registers
                 {
                     _tree.Add(mi);
                 }
+
+                _tree.Reposition();
             });
+
+            Oy.Subscribe<IContext>("Context:Changed", ContextChanged);
+            Oy.Subscribe<object>("Menu:Update", UpdateMenu);
+
+            return Task.FromResult(0);
+        }
+
+        private Task ContextChanged(IContext context)
+        {
+            return UpdateMenu(context);
+        }
+
+        private Task UpdateMenu(object obj)
+        {
+            _shell.Invoke(_tree.Update);
             return Task.FromResult(0);
         }
 
@@ -83,6 +100,7 @@ namespace Sledge.Shell.Registers
                 {
                     _tree.Add(mi);
                 }
+                _tree.Reposition();
             });
         }
 
@@ -172,7 +190,7 @@ namespace Sledge.Shell.Registers
                 // Add the node, menu, and toolbar
                 RootNodes.Add(ds.Name, rtn);
                 MenuStrip.Items.Add(rtn.MenuMenuItem);
-                ToolStrip.Controls.Add(rtn.ToolStrip);
+                ToolStrip.Join(rtn.ToolStrip);
             }
 
             /// <summary>
@@ -197,19 +215,22 @@ namespace Sledge.Shell.Registers
                 // Add known sections straight away
                 foreach (var ds in _declaredSections.OrderBy(x => x.OrderHint)) AddSection(ds);
             }
-        }
 
-        private class MenuTreeGroup
-        {
-            public MenuGroup Group { get; set; }
-            public List<BaseMenuTreeNode> Nodes { get; set; }
-
-            public bool HasSplitter { get; set; }
-
-            public MenuTreeGroup(MenuGroup group)
+            public void Reposition()
             {
-                Group = group;
-                Nodes = new List<BaseMenuTreeNode>();
+                ToolStrip.Controls.Clear();
+                foreach (var ts in RootNodes.Values.OrderByDescending(x => x.OrderHint))
+                {
+                    if (ts.ToolStrip.Items.Count > 0) ToolStrip.Join(ts.ToolStrip);
+                }
+            }
+
+            public void Update()
+            {
+                foreach (var node in RootNodes.Values)
+                {
+                    node.Update();
+                }
             }
         }
 
@@ -221,14 +242,17 @@ namespace Sledge.Shell.Registers
             private MenuSection Section { get; }
             public ToolStrip ToolStrip { get; }
 
-            protected override string OrderHint => Section.OrderHint;
+            public override string OrderHint => Section.OrderHint;
+
+            private List<MenuTreeGroup> _toolbarGroups;
 
             public MenuTreeRoot(IContext context, string text, MenuSection section)
             {
                 Section = section;
                 MenuMenuItem = new ToolStripMenuItem(text) { Tag = this };
-                ToolStrip = new ToolStrip { Tag = this, Visible = false };
+                ToolStrip = new ToolStrip { Tag = this, LayoutStyle = ToolStripLayoutStyle.Flow };
                 Context = context;
+                _toolbarGroups = new List<MenuTreeGroup>();
             }
 
             /// <summary>
@@ -259,7 +283,60 @@ namespace Sledge.Shell.Registers
 
                 // Add the node to the parent node
                 var group = declaredGroups.FirstOrDefault(x => x.Name == item.Group && x.Path == item.Path && x.Section == item.Section);
-                node.AddChild(item.ID, new MenuTreeNode(Context, item, group));
+                var itemNode = new MenuTreeNode(Context, item, group);
+                node.AddChild(item.ID, itemNode);
+
+                // Add to the toolbar as well
+                // Items with no icon are never allowed
+                if (item.AllowedInToolbar && item.Icon != null)
+                {
+                    AddToolbarItem(itemNode);
+                }
+            }
+
+            private void AddToolbarItem(BaseMenuTreeNode menuTreeNode)
+            {
+                if (_toolbarGroups.All(x => x.Group.Name != menuTreeNode.Group.Name))
+                {
+                    _toolbarGroups.Add(new MenuTreeGroup(menuTreeNode.Group));
+                    _toolbarGroups = _toolbarGroups.OrderBy(x => x.Group.OrderHint).ToList();
+                }
+
+                // Insert the item into the correct index
+                var groupIndex = _toolbarGroups.FindIndex(x => x.Group.Name == menuTreeNode.Group.Name);
+
+                // Skip to the start of the group
+                var groupStart = 0;
+                for (var i = 0; i < groupIndex; i++)
+                {
+                    var g = _toolbarGroups[i];
+                    groupStart += g.Nodes.Count + (g.HasSplitter ? 1 : 0);
+                }
+
+                // Add the node to the list and sort
+                var group = _toolbarGroups[groupIndex];
+                group.Nodes = group.Nodes.Union(new[] { menuTreeNode }).OrderBy(x => x.OrderHint ?? "").ToList();
+
+                // Skip to the start of the node and insert
+                var idx = group.Nodes.IndexOf(menuTreeNode);
+                ToolStrip.Items.Insert(groupStart + idx, menuTreeNode.ToolbarButton);
+
+                // Check groups for splitters
+                groupStart = 0;
+                for (var i = 0; i < _toolbarGroups.Count - 1; i++)
+                {
+                    var g = _toolbarGroups[i];
+                    groupStart += g.Nodes.Count;
+
+                    // Add a splitter to the group if needed
+                    if (!g.HasSplitter && g.Nodes.Count > 0)
+                    {
+                        ToolStrip.Items.Insert(groupStart, new ToolStripSeparator());
+                        g.HasSplitter = true;
+                    }
+
+                    groupStart++;
+                }
             }
         }
 
@@ -268,7 +345,7 @@ namespace Sledge.Shell.Registers
         /// </summary>
         private class MenuTreeTextNode : BaseMenuTreeNode
         {
-            protected override string OrderHint => Group.OrderHint;
+            public override string OrderHint => Group.OrderHint;
 
             public MenuTreeTextNode(IContext context, string text, MenuGroup group)
             {
@@ -285,10 +362,12 @@ namespace Sledge.Shell.Registers
         {
             private IMenuItem MenuItem { get; set; }
 
-            protected override string OrderHint => MenuItem.OrderHint;
+            public override string OrderHint => MenuItem.OrderHint;
 
             public MenuTreeNode(IContext context, IMenuItem menuItem, MenuGroup group)
             {
+                var en = menuItem.IsInContext(context);
+
                 Group = group ?? new MenuGroup("", "", "", "T");
                 Context = context;
 
@@ -297,7 +376,8 @@ namespace Sledge.Shell.Registers
                 MenuMenuItem = new ToolStripMenuItem(menuItem.Name, menuItem.Icon)
                 {
                     Tag = this,
-                    ShortcutKeyDisplayString = menuItem.ShortcutText
+                    ShortcutKeyDisplayString = menuItem.ShortcutText,
+                    Enabled = en
                 };
                 MenuMenuItem.Click += Fire;
                 MenuMenuItem.MouseEnter += (s, a) => { Oy.Publish("Status:Information", menuItem.Description); };
@@ -307,7 +387,9 @@ namespace Sledge.Shell.Registers
                 {
                     ToolbarButton = new ToolStripButton(menuItem.Name, menuItem.Icon)
                     {
-                        Tag = this
+                        Tag = this,
+                        DisplayStyle = ToolStripItemDisplayStyle.Image,
+                        Enabled = en
                     };
                     ToolbarButton.Click += Fire;
                     ToolbarButton.MouseEnter += (s, a) => { Oy.Publish("Status:Information", menuItem.Description); };
@@ -322,23 +404,25 @@ namespace Sledge.Shell.Registers
 
             public override void Update()
             {
-                MenuMenuItem.Enabled = MenuItem.IsInContext(Context);
+                var en = MenuItem.IsInContext(Context);
+                MenuMenuItem.Enabled = en;
+                if (ToolbarButton != null) ToolbarButton.Enabled = en;
                 base.Update();
             }
         }
 
         private abstract class BaseMenuTreeNode
         {
-            protected MenuGroup Group { get; set; }
-            protected IContext Context { get; set; }
+            public MenuGroup Group { get; set; }
+            public IContext Context { get; set; }
 
             public ToolStripMenuItem MenuMenuItem { get; set; }
             public ToolStripButton ToolbarButton { get; set; }
 
-            public List<MenuTreeGroup> Groups { get; private set; }
+            public List<MenuTreeGroup> Groups { get; protected set; }
             public Dictionary<string, BaseMenuTreeNode> Children { get; private set; }
 
-            protected abstract string OrderHint { get; }
+            public abstract string OrderHint { get; }
 
             protected BaseMenuTreeNode()
             {
@@ -398,6 +482,20 @@ namespace Sledge.Shell.Registers
                 {
                     c.Value.Update();
                 }
+            }
+        }
+
+        private class MenuTreeGroup
+        {
+            public MenuGroup Group { get; set; }
+            public List<BaseMenuTreeNode> Nodes { get; set; }
+
+            public bool HasSplitter { get; set; }
+
+            public MenuTreeGroup(MenuGroup group)
+            {
+                Group = group;
+                Nodes = new List<BaseMenuTreeNode>();
             }
         }
     }
