@@ -79,13 +79,16 @@ namespace Sledge.BspEditor.Rendering.Converters
 
             public override bool RequiresValidation(IViewport viewport, IRenderer renderer)
             {
-                return !GetValue<bool>(viewport, "Validated") || GetValue(viewport, "Zoomed", viewport.Camera.Zoom >= 1) != viewport.Camera.Zoom >= 1;
+                return !GetValue<bool>(viewport, "Validated")
+                       || GetValue(viewport, "Zoomed", viewport.Camera.Zoom >= 1) != viewport.Camera.Zoom >= 1
+                       || base.RequiresValidation(viewport, renderer);
             }
 
             public override void Validate(IViewport viewport, IRenderer renderer)
             {
                 SetValue(viewport, "Zoomed", viewport.Camera.Zoom >= 1);
                 SetValue(viewport, "Validated", true);
+                base.Validate(viewport, renderer);
             }
 
             public override IEnumerable<FaceElement> GetFaces(IViewport viewport, IRenderer renderer)

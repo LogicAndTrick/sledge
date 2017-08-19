@@ -41,12 +41,13 @@ namespace Sledge.Rendering.Scenes.Elements
 
         public override bool RequiresValidation(IViewport viewport, IRenderer renderer)
         {
-            return true;
+            var v = GetValue<StringTextureManager.StringTextureValue>(viewport, "LastValue");
+            return v == null || v.IsRemoved;
         }
 
         public override void Validate(IViewport viewport, IRenderer renderer)
         {
-            //
+            SetValue(viewport, "LastValue", renderer.StringTextureManager.GetTextureValue(Text, FontName, FontSize, FontStyle));
         }
 
         public Size GetSize(IRenderer renderer)
@@ -67,20 +68,21 @@ namespace Sledge.Rendering.Scenes.Elements
             if (ClampToViewport && Viewport != null)
             {
                 var rec = new Rectangle(0, 0, Viewport.Control.Width, Viewport.Control.Height);
-                Func<Vector3, Vector3> conv = x => PositionType == PositionType.Screen ? x : Viewport.Camera.WorldToScreen(x, rec.Width, rec.Height);
-                Func<Vector3, Vector3> cback = x => PositionType == PositionType.Screen ? x : Viewport.Camera.Expand(new Vector3(Viewport.Camera.PixelsToUnits(x.X), -Viewport.Camera.PixelsToUnits(x.Y), Viewport.Camera.PixelsToUnits(x.Z)));
-                
-                var xvals = el.Vertices.Select(x => conv(x.Position.Location).X + x.Position.Offset.X).ToArray();
+
+                Vector3 ConvertToScreen(Vector3 x) => PositionType == PositionType.Screen ? x : Viewport.Camera.WorldToScreen(x, rec.Width, rec.Height);
+                Vector3 ConvertToWorld(Vector3 x) => PositionType == PositionType.Screen ? x : Viewport.Camera.Expand(new Vector3(Viewport.Camera.PixelsToUnits(x.X), -Viewport.Camera.PixelsToUnits(x.Y), Viewport.Camera.PixelsToUnits(x.Z)));
+
+                var xvals = el.Vertices.Select(x => ConvertToScreen(x.Position.Location).X + x.Position.Offset.X).ToArray();
                 var minX = xvals.Min();
                 var maxX = xvals.Max();
-                if (minX < rec.Left) el.Vertices.ForEach(x => x.Position.Location += cback(new Vector3(rec.Left - minX, 0, 0)));
-                else if (maxX > rec.Right) el.Vertices.ForEach(x => x.Position.Location += cback(new Vector3(rec.Right - maxX, 0, 0)));
+                if (minX < rec.Left) el.Vertices.ForEach(x => x.Position.Location += ConvertToWorld(new Vector3(rec.Left - minX, 0, 0)));
+                else if (maxX > rec.Right) el.Vertices.ForEach(x => x.Position.Location += ConvertToWorld(new Vector3(rec.Right - maxX, 0, 0)));
 
-                var yvals = el.Vertices.Select(x => conv(x.Position.Location).Y + x.Position.Offset.Y).ToArray();
+                var yvals = el.Vertices.Select(x => ConvertToScreen(x.Position.Location).Y + x.Position.Offset.Y).ToArray();
                 var minY = yvals.Min();
                 var maxY = yvals.Max();
-                if (minY < rec.Top) el.Vertices.ForEach(x => x.Position.Location += cback(new Vector3(0, rec.Top - minY, 0)));
-                else if (maxY > rec.Bottom) el.Vertices.ForEach(x => x.Position.Location += cback(new Vector3(0, rec.Bottom - maxY, 0)));
+                if (minY < rec.Top) el.Vertices.ForEach(x => x.Position.Location += ConvertToWorld(new Vector3(0, rec.Top - minY, 0)));
+                else if (maxY > rec.Bottom) el.Vertices.ForEach(x => x.Position.Location += ConvertToWorld(new Vector3(0, rec.Bottom - maxY, 0)));
             }
             if (BackgroundColor.A > 0)
             {

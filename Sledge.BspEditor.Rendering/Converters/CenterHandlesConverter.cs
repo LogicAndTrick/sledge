@@ -1,8 +1,10 @@
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Threading.Tasks;
+using OpenTK;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Primitives.MapObjectData;
 using Sledge.BspEditor.Primitives.MapObjects;
@@ -10,7 +12,9 @@ using Sledge.BspEditor.Rendering.Scene;
 using Sledge.Common.Shell.Settings;
 using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Interfaces;
+using Sledge.Rendering.Materials;
 using Sledge.Rendering.Scenes.Elements;
+using Sledge.Rendering.Scenes.Renderables;
 
 namespace Sledge.BspEditor.Rendering.Converters
 {
@@ -77,20 +81,46 @@ namespace Sledge.BspEditor.Rendering.Converters
 
         private class Holder { }
 
-        private class CenterHandleTextElement : TextElement
+        private class CenterHandleTextElement : Element
         {
+            private const string Name = "Sledge.BspEditor.Rendering.CenterHandlesConverter::x";
+            private static bool _initialised;
+
+            static void Init(IRenderer renderer)
+            {
+                if (_initialised) return;
+                _initialised = true;
+
+                using (var bmp = new Bitmap(5, 5))
+                {
+                    using (var g = Graphics.FromImage(bmp))
+                    {
+                        g.SmoothingMode = SmoothingMode.None;
+                        g.DrawLine(Pens.White, 0, 0, 4, 4);
+                        g.DrawLine(Pens.White, 4, 0, 0, 4);
+                    }
+                    renderer.Textures.Create(Name, bmp, bmp.Width, bmp.Height, TextureFlags.PixelPerfect);
+                }
+
+                renderer.Materials.Add(Material.Texture(Name, false));
+            }
+
+            private Vector3 _location;
+            private Color _color;
             private readonly bool _activeViewportOnly;
             public override string ElementGroup => "CenterHandles";
 
-            public CenterHandleTextElement(IMapObject obj, bool activeViewportOnly) : base(PositionType.World, obj.BoundingBox.Center.ToVector3(), "Å~", Color.FromArgb(192, obj.Data.GetOne<ObjectColor>()?.Color ?? Color.White))
+            public CenterHandleTextElement(IMapObject obj, bool activeViewportOnly) : base(PositionType.World)
             {
                 _activeViewportOnly = activeViewportOnly;
+                _color = Color.FromArgb(192, obj.Data.GetOne<ObjectColor>()?.Color ?? Color.White);
+                _location = obj.BoundingBox.Center.ToVector3();
             }
 
             public void Update(IMapObject obj)
             {
-                Location = obj.BoundingBox.Center.ToVector3();
-                Color = Color.FromArgb(192, Color.FromArgb(192, obj.Data.GetOne<ObjectColor>()?.Color ?? Color.White));
+                _location = obj.BoundingBox.Center.ToVector3();
+                _color = Color.FromArgb(192, Color.FromArgb(192, obj.Data.GetOne<ObjectColor>()?.Color ?? Color.White));
                 ClearValue("Validated");
             }
 
@@ -109,14 +139,29 @@ namespace Sledge.BspEditor.Rendering.Converters
                 SetValue(viewport, "Validated", true);
             }
 
+            public override IEnumerable<LineElement> GetLines(IViewport viewport, IRenderer renderer)
+            {
+                yield break;
+            }
+
             public override IEnumerable<FaceElement> GetFaces(IViewport viewport, IRenderer renderer)
             {
-                if (_activeViewportOnly && !viewport.IsFocused) return new FaceElement[0];
-                return base.GetFaces(viewport, renderer).Select(x =>
+                if (_activeViewportOnly && !viewport.IsFocused) yield break;
+                Init(renderer);
+
+                var mat = new Material(MaterialType.Textured, _color, Name);
+                yield return new FaceElement(PositionType, mat, new[]
                 {
-                    x.CameraFlags = CameraFlags.Orthographic;
-                    return x;
-                });
+                    new PositionVertex(new Position(_location) { Offset = new Vector3(-2.5f, -2.5f, 0) }, 0, 0),
+                    new PositionVertex(new Position(_location) { Offset = new Vector3(+2.5f, -2.5f, 0) }, 1, 0),
+                    new PositionVertex(new Position(_location) { Offset = new Vector3(+2.5f, +2.5f, 0) }, 1, 1),
+                    new PositionVertex(new Position(_location) { Offset = new Vector3(-2.5f, +2.5f, 0) }, 0, 1)
+                })
+                {
+                    AccentColor = _color,
+                    RenderFlags = RenderFlags.Polygon,
+                    CameraFlags = CameraFlags.Orthographic
+                };
             }
         }
     }

@@ -52,12 +52,13 @@ namespace Sledge.BspEditor.Rendering.Converters
 
             public override bool RequiresValidation(IViewport viewport, IRenderer renderer)
             {
-                return !GetValue<bool>(viewport, "Validated");
+                return !GetValue<bool>(viewport, "Validated") || base.RequiresValidation(viewport, renderer);
             }
 
             public override void Validate(IViewport viewport, IRenderer renderer)
             {
                 SetValue(viewport, "Validated", true);
+                base.Validate(viewport, renderer);
             }
 
             public override IEnumerable<FaceElement> GetFaces(IViewport viewport, IRenderer renderer)

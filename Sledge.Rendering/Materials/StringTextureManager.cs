@@ -62,12 +62,13 @@ namespace Sledge.Rendering.Materials
             }
         }
 
-        public class StringTextureValue
+        internal class StringTextureValue
         {
             public string Value { get; private set; }
             public string TextureName { get; private set; }
             public Rectangle Rectangle { get; private set; }
             public long Timestamp { get; set; }
+            public bool IsRemoved { get; set; }
 
             public StringTextureValue(string text, string textureName, Rectangle rectangle)
             {
@@ -77,11 +78,13 @@ namespace Sledge.Rendering.Materials
                 Timestamp = -1;
             }
         }
-        
-        private class StringTexture : IDisposable, IUpdatable
+
+        internal class StringTexture : IDisposable, IUpdatable
         {
             private const int MinSize = 512;
             private const int MaxSize = 2048;
+            private const int MaxFragmentation = 200;
+
             private static uint _textureId;
             private static string GenerateTextureName()
             {
@@ -92,10 +95,12 @@ namespace Sledge.Rendering.Materials
             public int Size { get; private set; }
 
             private readonly Font _font;
-            private Dictionary<string, StringTextureValue> _values;
-            private Bitmap _image;
-            private IRenderer _renderer;
+            private readonly Dictionary<string, StringTextureValue> _values;
+            private readonly IRenderer _renderer;
             private readonly long _cacheMilliseconds;
+
+            private Bitmap _image;
+            private int _fragmentation;
 
             public StringTexture(IRenderer renderer, FontKey font, long cacheMilliseconds)
             {
@@ -118,6 +123,11 @@ namespace Sledge.Rendering.Materials
             public bool IsEmpty()
             {
                 return _values.Count == 0;
+            }
+
+            public StringTextureValue Get(string text)
+            {
+                return Contains(text) ? _values[text] : null;
             }
 
             public bool Contains(string text)
@@ -243,28 +253,42 @@ namespace Sledge.Rendering.Materials
                 return stv;
             }
 
-            private int _fragmentation;
-
-            public bool Remove(string value)
+            private bool Remove(string value)
             {
                 if (!Contains(value)) return false;
+
+                // Remove the value
+                var removed = _values[value];
+                removed.IsRemoved = true;
                 var ret = _values.Remove(value);
-                _fragmentation++;
-                if (_fragmentation > 200)
+                return ret;
+            }
+
+            private void IncreaseFragmentation(int num)
+            {
+                _fragmentation += num;
+
+                // If we've hit the fragmentation limit, expire all textures
+                if (_fragmentation > MaxFragmentation)
                 {
                     _fragmentation = 0;
                     var v = _values.Keys.FirstOrDefault();
-                    _values.Clear();
+                    Clear();
                     if (v != null) Add(v);
                 }
-                return ret;
+            }
+
+            private void Clear()
+            {
+                foreach (var v in _values.Values) v.IsRemoved = true;
+                _values.Clear();
             }
 
             private void Rebuild()
             {
                 _fragmentation = 0;
                 var values = _values.Keys.ToList();
-                _values.Clear();
+                Clear();
                 foreach (var v in values) AddInternal(v);
                 UpdateTexture();
             }
@@ -276,11 +300,19 @@ namespace Sledge.Rendering.Materials
 
             public void Update(Frame frame)
             {
+                var rem = 0;
                 foreach (var val in _values.Values.ToArray())
                 {
-                    if (val.Timestamp < 0) val.Timestamp = frame.Milliseconds;
-                    else if (frame.Milliseconds - val.Timestamp > _cacheMilliseconds) Remove(val.Value);
+                    if (val.Timestamp < 0)
+                    {
+                        val.Timestamp = frame.Milliseconds;
+                    }
+                    else if (frame.Milliseconds - val.Timestamp > _cacheMilliseconds)
+                    {
+                        if (Remove(val.Value)) rem++;
+                    }
                 }
+                IncreaseFragmentation(rem);
             }
 
             public void Dispose()
@@ -294,7 +326,7 @@ namespace Sledge.Rendering.Materials
 
         private readonly IRenderer _renderer;
         private readonly Dictionary<FontKey, List<StringTexture>> _textures;
-        private const long TimeoutMilliseconds = 1000; // 1 second
+        private const long TimeoutMilliseconds = 5000; // 5 seconds
 
         public StringTextureManager(IRenderer renderer)
         {
@@ -333,6 +365,12 @@ namespace Sledge.Rendering.Materials
         private FontKey GetFontKey(string fontName, float fontSize, FontStyle style)
         {
             return new FontKey(fontName ?? DefaultFontKey.Name, fontSize <= 0 ? DefaultFontKey.Size : fontSize, style);
+        }
+
+        internal StringTextureValue GetTextureValue(string text, string fontName = null, float fontSize = 0, FontStyle style = FontStyle.Regular)
+        {
+            var tex = GetTexture(text, GetFontKey(fontName, fontSize, style));
+            return tex?.Get(text);
         }
 
         public Material GetMaterial(string text, string fontName = null, float fontSize = 0, FontStyle style = FontStyle.Regular)
