@@ -53,6 +53,7 @@
     <Compile Include="Shell\Commands\CommandMessage.cs" />
     <Compile Include="Shell\Commands\CommandParameters.cs" />
     <Compile Include="Shell\Commands\ICommand.cs" />
+    <Compile Include="Shell\InternalAttribute.cs" />
     <Compile Include="Shell\Components\IDialog.cs" />
     <Compile Include="Shell\Components\IStatusItem.cs" />
     <Compile Include="Shell\Components\IBottomTabComponent.cs" />

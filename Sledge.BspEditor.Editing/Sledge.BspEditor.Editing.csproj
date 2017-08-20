@@ -38,6 +38,15 @@
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Reactive.Core, Version=3.0.1000.0, Culture=neutral, PublicKeyToken=94bc3704cddfc263, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Reactive.Core.3.1.1\lib\net45\System.Reactive.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Reactive.Interfaces, Version=3.0.1000.0, Culture=neutral, PublicKeyToken=94bc3704cddfc263, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Reactive.Interfaces.3.1.1\lib\net45\System.Reactive.Interfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Reactive.Linq, Version=3.0.1000.0, Culture=neutral, PublicKeyToken=94bc3704cddfc263, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Reactive.Linq.3.1.1\lib\net45\System.Reactive.Linq.dll</HintPath>
+    </Reference>
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -50,6 +59,7 @@
     <Compile Include="Commands\Carve.cs" />
     <Compile Include="Commands\EditVisgroups.cs" />
     <Compile Include="Commands\MoveToWorld.cs" />
+    <Compile Include="Commands\OpenCompileWindow.cs" />
     <Compile Include="Commands\TieToEntity.cs" />
     <Compile Include="Commands\Hollow.cs" />
     <Compile Include="Commands\OpenObjectProperties.cs" />
@@ -68,6 +78,30 @@
     <Compile Include="Components\CheckForProblemsDialog.Designer.cs">
       <DependentUpon>CheckForProblemsDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="Components\Compile\CompileDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Components\Compile\CompileDialog.Designer.cs">
+      <DependentUpon>CompileDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Components\Compile\CompileParameterPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Components\Compile\CompileParameterPanel.Designer.cs">
+      <DependentUpon>CompileParameterPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Components\Compile\HeadingButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Components\Compile\CompileOutputComponent.cs" />
+    <Compile Include="Components\Compile\Specification\ApplicationEnvironmentSpecificationProvider.cs" />
+    <Compile Include="Components\Compile\Specification\CompileParameter.cs" />
+    <Compile Include="Components\Compile\Specification\CompileParameterType.cs" />
+    <Compile Include="Components\Compile\Specification\CompilePreset.cs" />
+    <Compile Include="Components\Compile\Specification\CompileSpecification.cs" />
+    <Compile Include="Components\Compile\Specification\CompileSpecificationRegister.cs" />
+    <Compile Include="Components\Compile\Specification\CompileTool.cs" />
+    <Compile Include="Components\Compile\Specification\ICompileSpecificationProvider.cs" />
     <Compile Include="Components\PasteSpecialDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -225,6 +259,12 @@
     <EmbeddedResource Include="Components\CheckForProblemsDialog.resx">
       <DependentUpon>CheckForProblemsDialog.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Components\Compile\CompileDialog.resx">
+      <DependentUpon>CompileDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Components\Compile\CompileParameterPanel.resx">
+      <DependentUpon>CompileParameterPanel.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Components\PasteSpecialDialog.resx">
       <DependentUpon>PasteSpecialDialog.cs</DependentUpon>
     </EmbeddedResource>
@@ -275,6 +315,7 @@
     <Content Include="Resources\Menu_ObjectProperties.png" />
     <Content Include="Resources\Menu_PasteSpecial.png" />
     <Content Include="Resources\Menu_Redo.png" />
+    <Content Include="Resources\Menu_Run.png" />
     <Content Include="Resources\Menu_TieToEntity.png" />
     <Content Include="Resources\Menu_TieToWorld.png" />
     <Content Include="Resources\Menu_Transform.png" />
@@ -282,6 +323,9 @@
     <Content Include="Translations\Sledge.BspEditor.Editing.en.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="Specifications\Goldsource.vdf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\sledge_large.png" />

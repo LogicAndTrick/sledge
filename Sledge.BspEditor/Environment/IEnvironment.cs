@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using Sledge.BspEditor.Compile;
 using Sledge.DataStructures.GameData;
 using Sledge.FileSystem;
 
@@ -10,6 +11,8 @@ namespace Sledge.BspEditor.Environment
     /// </summary>
     public interface IEnvironment
     {
+        string Engine { get; }
+
         string ID { get; }
 
         string Name { get; }
@@ -49,5 +52,12 @@ namespace Sledge.BspEditor.Environment
         /// <typeparam name="T">The data type</typeparam>
         /// <returns>The list of stored data</returns>
         IEnumerable<T> GetData<T>() where T : IEnvironmentData;
+
+        /// <summary>
+        /// Create a batch from the selected arguments
+        /// </summary>
+        /// <param name="arguments">The list of batch arguments the user has selected</param>
+        /// <returns>A batch to process this map</returns>
+        Task<Batch> CreateBatch(IEnumerable<BatchArgument> arguments);
     }
 }

@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using Sledge.BspEditor.Compile;
 using Sledge.DataStructures.GameData;
 using Sledge.FileSystem;
 using Sledge.Providers.Texture;
@@ -11,6 +9,7 @@ namespace Sledge.BspEditor.Environment.Goldsource
 {
     public class EmptyEnvironment : IEnvironment
     {
+        public string Engine => "None";
         public string ID => "Empty";
         public string Name => "Empty";
         public IFile Root => null;
@@ -34,6 +33,11 @@ namespace Sledge.BspEditor.Environment.Goldsource
         public IEnumerable<T> GetData<T>() where T : IEnvironmentData
         {
             return null;
+        }
+
+        public Task<Batch> CreateBatch(IEnumerable<BatchArgument> arguments)
+        {
+            return Task.FromResult<Batch>(null);
         }
     }
 }

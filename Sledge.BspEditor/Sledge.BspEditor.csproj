@@ -69,6 +69,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Compile\Batch.cs" />
     <Compile Include="Commands\Clipboard\Delete.cs" />
     <Compile Include="Commands\Grouping\Group.cs" />
     <Compile Include="Commands\Grouping\Ungroup.cs" />

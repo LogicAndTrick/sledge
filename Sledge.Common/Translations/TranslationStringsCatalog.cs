@@ -75,7 +75,7 @@ namespace Sledge.Common.Translations
             }
         }
 
-        public void Load(Type type)
+        private void Load(Type type)
         {
             var loc = type.Assembly.Location ?? "";
             if (_loaded.Contains(loc)) return;

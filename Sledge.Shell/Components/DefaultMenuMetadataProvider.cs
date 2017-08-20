@@ -27,6 +27,7 @@ namespace Sledge.Shell.Components
         public IEnumerable<MenuGroup> GetMenuGroups()
         {
             yield return new MenuGroup("File", "", "File", "B");
+            yield return new MenuGroup("File", "", "Recent", "W");
             yield return new MenuGroup("File", "", "Exit", "Y");
 
             yield return new MenuGroup("Tools", "", "Settings", "Y");

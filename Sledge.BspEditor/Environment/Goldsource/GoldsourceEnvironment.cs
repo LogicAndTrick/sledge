@@ -7,6 +7,10 @@ using System.Reactive.Threading.Tasks;
 using System.Reflection;
 using System.Threading.Tasks;
 using LogicAndTrick.Gimme;
+using LogicAndTrick.Oy;
+using Sledge.BspEditor.Compile;
+using Sledge.BspEditor.Providers;
+using Sledge.Common.Shell.Commands;
 using Sledge.DataStructures.GameData;
 using Sledge.FileSystem;
 using Sledge.Providers.Texture;
@@ -15,6 +19,7 @@ namespace Sledge.BspEditor.Environment.Goldsource
 {
     public class GoldsourceEnvironment : IEnvironment
     {
+        public string Engine => "Goldsource";
         public string ID { get; set; }
         public string Name { get; set; }
 
@@ -155,6 +160,63 @@ namespace Sledge.BspEditor.Environment.Goldsource
         public IEnumerable<T> GetData<T>() where T : IEnvironmentData
         {
             return _data.OfType<T>();
+        }
+
+        public async Task<Batch> CreateBatch(IEnumerable<BatchArgument> arguments)
+        {
+            var args = arguments.GroupBy(x => x.Name).ToDictionary(x => x.Key, x => x.First().Arguments);
+
+            var batch = new Batch();
+
+            // Create the working directory
+            batch.Steps.Add(new BatchCallback(async (b, d) =>
+            {
+                var workingDir = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+                if (!Directory.Exists(workingDir)) Directory.CreateDirectory(workingDir);
+                batch.Variables["WorkingDirectory"] = workingDir;
+
+                await Oy.Publish("Compile:Debug", $"Working directory is: {workingDir}\r\n");
+            }));
+
+            // Save the file to the working directory
+            batch.Steps.Add(new BatchCallback(async (b, d) =>
+            {
+                var fn = d.FileName;
+                if (String.IsNullOrWhiteSpace(fn) || fn.IndexOf('.') < 0) fn = Path.GetRandomFileName();
+                var mapFile = Path.GetFileNameWithoutExtension(fn) + ".map";
+                batch.Variables["MapFileName"] = mapFile;
+
+                var path = Path.Combine(b.Variables["WorkingDirectory"], mapFile);
+                b.Variables["MapFile"] = path;
+
+                await Oy.Publish("Command:Run", new CommandMessage("Internal:SaveDocument", new
+                {
+                    Document = d,
+                    Path = path,
+                    LoaderHint = nameof(MapBspSourceProvider)
+                }));
+
+                await Oy.Publish("Compile:Debug", $"Map file is: {path}\r\n");
+            }));
+
+            // Run the compile tools
+            if (args.ContainsKey("CSG")) batch.Steps.Add(new BatchProcess(Path.Combine(ToolsDirectory, CsgExe), args["CSG"] + " \"{MapFile}\""));
+            if (args.ContainsKey("BSP")) batch.Steps.Add(new BatchProcess(Path.Combine(ToolsDirectory, BspExe), args["BSP"] + " \"{MapFile}\""));
+            if (args.ContainsKey("VIS")) batch.Steps.Add(new BatchProcess(Path.Combine(ToolsDirectory, VisExe), args["VIS"] + " \"{MapFile}\""));
+            if (args.ContainsKey("RAD")) batch.Steps.Add(new BatchProcess(Path.Combine(ToolsDirectory, RadExe), args["RAD"] + " \"{MapFile}\""));
+
+            // check for errors
+            batch.Steps.Add(new BatchCallback(async (b, d) =>
+            {
+                var errFile = Path.ChangeExtension(b.Variables["MapFile"], "err");
+                if (errFile != null && File.Exists(errFile))
+                {
+                    var errors = File.ReadAllText(errFile);
+                    await Oy.Publish("Compile:Error", errors);
+                }
+            }));
+
+            return batch;
         }
     }
 }
