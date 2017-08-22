@@ -151,7 +151,17 @@
             "Translate": "Translate",
             "Scale": "Scale",
             "OK": "OK",
-            "Cancel": "Cancel" 
+            "Cancel": "Cancel"
+        },
+        "Compile": {
+            "CompileOutputComponent": {
+                "Title": "Compile",
+                "CompileCompletedSuccessfully": "Compile was successful.",
+                "CompileFailed": "Compile failed. Check the message log for more details."
+            },
+            "CompileDialog": {
+                
+            } 
         }
     } 
 }

@@ -32,6 +32,7 @@
             this.label40 = new System.Windows.Forms.Label();
             this.ToolTabs = new System.Windows.Forms.TabControl();
             this.tabSteps = new System.Windows.Forms.TabPage();
+            this.pnlSteps = new System.Windows.Forms.FlowLayoutPanel();
             this.btnGo = new System.Windows.Forms.Button();
             this.btnCancel = new System.Windows.Forms.Button();
             this.btnNewProfile = new System.Windows.Forms.Button();
@@ -44,7 +45,6 @@
             this.SimplePanel = new System.Windows.Forms.Panel();
             this.btnAdvancedMode = new System.Windows.Forms.Button();
             this.PresetTable = new System.Windows.Forms.TableLayoutPanel();
-            this.pnlSteps = new System.Windows.Forms.FlowLayoutPanel();
             this.ToolTabs.SuspendLayout();
             this.tabSteps.SuspendLayout();
             this.AdvancedPanel.SuspendLayout();
@@ -91,6 +91,15 @@
             this.tabSteps.TabIndex = 6;
             this.tabSteps.Text = "Steps to run";
             this.tabSteps.UseVisualStyleBackColor = true;
+            // 
+            // pnlSteps
+            // 
+            this.pnlSteps.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pnlSteps.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
+            this.pnlSteps.Location = new System.Drawing.Point(0, 0);
+            this.pnlSteps.Name = "pnlSteps";
+            this.pnlSteps.Size = new System.Drawing.Size(610, 257);
+            this.pnlSteps.TabIndex = 0;
             // 
             // btnGo
             // 
@@ -254,14 +263,6 @@
             this.PresetTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 312F));
             this.PresetTable.Size = new System.Drawing.Size(240, 312);
             this.PresetTable.TabIndex = 24;
-            // 
-            // pnlSteps
-            // 
-            this.pnlSteps.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pnlSteps.Location = new System.Drawing.Point(0, 0);
-            this.pnlSteps.Name = "pnlSteps";
-            this.pnlSteps.Size = new System.Drawing.Size(610, 257);
-            this.pnlSteps.TabIndex = 0;
             // 
             // CompileDialog
             // 

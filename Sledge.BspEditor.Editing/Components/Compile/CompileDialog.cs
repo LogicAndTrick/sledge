@@ -1,9 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 using Sledge.BspEditor.Compile;
+using Sledge.BspEditor.Editing.Components.Compile.Profiles;
 using Sledge.BspEditor.Editing.Components.Compile.Specification;
+using Sledge.Common.Shell.Components;
 using Sledge.Common.Translations;
 
 namespace Sledge.BspEditor.Editing.Components.Compile
@@ -11,16 +15,18 @@ namespace Sledge.BspEditor.Editing.Components.Compile
     public sealed partial class CompileDialog : Form
     {
         private CompileSpecification _specification;
+        private readonly BuildProfileRegister _buildProfileRegister;
         private CompilePreset _preset;
 
         private Size _simpleSize = new Size(320, 450);
         private Size _advancedSize = new Size(750, 550);
 
-        public CompileDialog(CompileSpecification specification)
+        public CompileDialog(CompileSpecification specification, BuildProfileRegister buildProfileRegister)
         {
             InitializeComponent();
 
             _specification = specification;
+            _buildProfileRegister = buildProfileRegister;
 
             // Hide the panels
             AdvancedPanel.Size = Size.Empty;
@@ -36,6 +42,8 @@ namespace Sledge.BspEditor.Editing.Components.Compile
             PresetTable.RowStyles.Clear();
 
             PopulatePresets();
+            PopulateProfiles();
+            PopulateTabs();
         }
 
         public IEnumerable<BatchArgument> SelectedBatchArguments
@@ -59,6 +67,7 @@ namespace Sledge.BspEditor.Editing.Components.Compile
 
         private void PopulatePresets()
         {
+            PresetTable.Controls.Clear();
             foreach (var preset in _specification.Presets)
             {
                 PresetTable.RowStyles.Add(new RowStyle(SizeType.AutoSize));
@@ -71,6 +80,42 @@ namespace Sledge.BspEditor.Editing.Components.Compile
                 var pre = preset;
                 btn.Click += (s, e) => UsePreset(pre);
                 PresetTable.Controls.Add(btn);
+            }
+        }
+
+        private void PopulateProfiles()
+        {
+            cmbProfile.Items.Clear();
+            cmbProfile.Items.AddRange(_buildProfileRegister.GetProfiles(_specification.Name).Select(x => new ProfileWrapper(x)).ToArray<object>());
+            if (cmbProfile.Items.Count > 0) cmbProfile.SelectedIndex = 0;
+        }
+
+        private void PopulateTabs()
+        {
+            pnlSteps.Controls.Clear();
+            foreach (var page in ToolTabs.TabPages.OfType<TabPage>().ToList())
+            {
+                if (page != tabSteps) ToolTabs.TabPages.Remove(page);
+            }
+
+            foreach (var tool in _specification.Tools.OrderBy(x => x.Order))
+            {
+                if (!string.Equals(tool.Name, "Shared", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    var cb = new CheckBox
+                    {
+                        Text = tool.Name,
+                        Tag = tool,
+                        Checked = tool.Enabled
+                    };
+                    pnlSteps.Controls.Add(cb);
+                }
+
+                var tab = new TabPage(tool.Name);
+
+                // todo set up tab
+
+                ToolTabs.TabPages.Add(tab);
             }
         }
 
@@ -129,6 +174,21 @@ namespace Sledge.BspEditor.Editing.Components.Compile
             SimplePanel.Dock = DockStyle.Fill;
             _advancedSize = Size;
             Size = _simpleSize;
+        }
+
+        private class ProfileWrapper
+        {
+            public BuildProfile Profile { get; set; }
+
+            public ProfileWrapper(BuildProfile profile)
+            {
+                Profile = profile;
+            }
+
+            public override string ToString()
+            {
+                return Profile.Name;
+            }
         }
     }
 }

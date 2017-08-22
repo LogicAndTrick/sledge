@@ -94,6 +94,8 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Components\Compile\CompileOutputComponent.cs" />
+    <Compile Include="Components\Compile\Profiles\BuildProfile.cs" />
+    <Compile Include="Components\Compile\Profiles\BuildProfileRegister.cs" />
     <Compile Include="Components\Compile\Specification\ApplicationEnvironmentSpecificationProvider.cs" />
     <Compile Include="Components\Compile\Specification\CompileParameter.cs" />
     <Compile Include="Components\Compile\Specification\CompileParameterType.cs" />

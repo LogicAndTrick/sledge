@@ -9,7 +9,7 @@ namespace Sledge.BspEditor.Tools
 {
     public class ToolViewportListener : IViewportEventListener
     {
-        private WeakReference<BaseTool> _activeTool;
+        private WeakReference<BaseTool> _activeTool = new WeakReference<BaseTool>(null);
 
         private BaseTool ActiveTool => _activeTool.TryGetTarget(out BaseTool t) ? t : null;
 

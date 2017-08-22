@@ -205,15 +205,53 @@ namespace Sledge.BspEditor.Environment.Goldsource
             if (args.ContainsKey("VIS")) batch.Steps.Add(new BatchProcess(Path.Combine(ToolsDirectory, VisExe), args["VIS"] + " \"{MapFile}\""));
             if (args.ContainsKey("RAD")) batch.Steps.Add(new BatchProcess(Path.Combine(ToolsDirectory, RadExe), args["RAD"] + " \"{MapFile}\""));
 
-            // check for errors
+            // Check for errors
             batch.Steps.Add(new BatchCallback(async (b, d) =>
             {
                 var errFile = Path.ChangeExtension(b.Variables["MapFile"], "err");
                 if (errFile != null && File.Exists(errFile))
                 {
                     var errors = File.ReadAllText(errFile);
+                    b.Successful = false;
                     await Oy.Publish("Compile:Error", errors);
                 }
+
+                var bspFile = Path.ChangeExtension(b.Variables["MapFile"], "bsp");
+                if (bspFile != null && !File.Exists(bspFile))
+                {
+                    b.Successful = false;
+                }
+            }));
+
+            // Copy resulting files around
+            batch.Steps.Add(new BatchCallback(async (b, d) =>
+            {
+                var origDir = Path.GetDirectoryName(d.FileName);
+                if (origDir != null && Directory.Exists(origDir))
+                {
+                    var linFile = Path.ChangeExtension(b.Variables["MapFile"], "lin");
+                    if (File.Exists(linFile)) File.Copy(linFile, Path.Combine(origDir, Path.GetFileName(linFile)), true);
+
+                    var ptsFile = Path.ChangeExtension(b.Variables["MapFile"], "pts");
+                    if (File.Exists(ptsFile)) File.Copy(ptsFile, Path.Combine(origDir, Path.GetFileName(ptsFile)), true);
+                }
+
+                var gameMapDir = Path.Combine(BaseDirectory, ModDirectory, "maps");
+                if (b.Successful && Directory.Exists(gameMapDir))
+                {
+                    var bspFile = Path.ChangeExtension(b.Variables["MapFile"], "bsp");
+                    if (File.Exists(bspFile)) File.Copy(bspFile, Path.Combine(gameMapDir, Path.GetFileName(bspFile)), true);
+
+                    var resFile = Path.ChangeExtension(b.Variables["MapFile"], "res");
+                    if (File.Exists(resFile)) File.Copy(resFile, Path.Combine(gameMapDir, Path.GetFileName(resFile)), true);
+                }
+            }));
+
+            // Delete temp directory
+            batch.Steps.Add(new BatchCallback(async (b, d) =>
+            {
+                var workingDir = batch.Variables["WorkingDirectory"];
+                if (Directory.Exists(workingDir)) Directory.Delete(workingDir, true);
             }));
 
             return batch;

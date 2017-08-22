@@ -4,9 +4,9 @@ using System.ComponentModel.Composition;
 using System.Drawing;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using LogicAndTrick.Oy;
+using Sledge.BspEditor.Compile;
 using Sledge.Common.Shell.Components;
 using Sledge.Common.Shell.Context;
 using Sledge.Common.Translations;
@@ -24,7 +24,10 @@ namespace Sledge.BspEditor.Editing.Components.Compile
         public string OrderHint => "D";
         public object Control => _control;
 
-        private readonly BufferQueue<Output> _buffer;
+        public string CompileCompletedSuccessfully { get; set; }
+        public string CompileFailed { get; set; }
+
+        private BufferQueue<Output> _buffer;
         private readonly Subject<int> _queue;
 
         public CompileOutputComponent()
@@ -42,11 +45,25 @@ namespace Sledge.BspEditor.Editing.Components.Compile
 
             _buffer = new BufferQueue<Output>();
 
-            Oy.Subscribe<string>("Compile:Output", StandardOutput);
-            Oy.Subscribe<string>("Compile:Error", StandardError);
+            Oy.Subscribe<Batch>("Compile:Started", async b =>
+            {
+                Clear();
+                await Oy.Publish("?", this);
+            });
+
+            Oy.Subscribe<string>("Compile:Output", async data => Append(Color.Black, data));
+            Oy.Subscribe<string>("Compile:Error", async data => Append(Color.Red, data));
             Oy.Subscribe<string>("Compile:Information", async data => Append(Color.DodgerBlue, data));
-            Oy.Subscribe<string>("Compile:Success", async data => Append(Color.LimeGreen, data));
+            Oy.Subscribe<string>("Compile:Success", async data => Append(Color.Green, data));
             Oy.Subscribe<string>("Compile:Debug", async data => Append(Color.Magenta, data));
+
+            Oy.Subscribe<Batch>("Compile:Finished", async b =>
+            {
+                var msg = b.Successful ? CompileCompletedSuccessfully : CompileFailed;
+                var col = b.Successful ? Color.Green : Color.Red;
+                var flowerbox = new string('*', msg.Length + 4);
+                Append(col, $"{flowerbox}\r\n* {msg} *\r\n{flowerbox}\r\n");
+            });
             
             _queue = new Subject<int>();
             _queue.Publish().RefCount()
@@ -71,21 +88,16 @@ namespace Sledge.BspEditor.Editing.Components.Compile
 
             _control.ResumeLayout();
         }
-        
-        private async Task StandardOutput(string output)
+
+        private void Clear()
         {
-            _buffer.Push(new Output(Color.Black, output));
-            _queue.OnNext(0);
-        }
-        
-        private async Task StandardError(string output)
-        {
-            _buffer.Push(new Output(Color.Red, output));
+            _buffer = new BufferQueue<Output>();
             _queue.OnNext(0);
         }
 
         private void Append(Color color, string data)
         {
+            if (string.IsNullOrWhiteSpace(data)) return;
             _buffer.Push(new Output(color, data));
             _queue.OnNext(0);
         }
