@@ -164,6 +164,7 @@
     <Compile Include="State\StateEvent.cs" />
     <Compile Include="State\StateTool.cs" />
     <Compile Include="Texture\AlignMode.cs" />
+    <Compile Include="Texture\HideFaceMask.cs" />
     <Compile Include="Texture\JustifyMode.cs" />
     <Compile Include="Texture\TextureApplicationForm.cs">
       <SubType>Form</SubType>

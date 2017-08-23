@@ -308,8 +308,7 @@ namespace Sledge.BspEditor.Tools.Texture
                 SelectedTexturesList.SetTextureList(textures);
                 SelectedTexturesList.SetSelectedTextures(textures);
                 RecentTexturesList.SetSelectedTextures(new string[0]);
-                // todo HideMaskCheckbox.Checked = Document.Map.HideFaceMask;
-
+                HideMaskCheckbox.Checked = Document.Map.Data.GetOne<HideFaceMask>()?.Hidden == true;
             });
 
             _freeze = false;
@@ -536,7 +535,9 @@ namespace Sledge.BspEditor.Tools.Texture
         private void HideMaskCheckboxToggled(object sender, EventArgs e)
         {
             if (_freeze) return;
-            // todo
+            var data = Document.Map.Data.GetOne<HideFaceMask>() ?? new HideFaceMask();
+            data = new HideFaceMask {Hidden = !data.Hidden};
+            MapDocumentOperation.Perform(Document, new TrivialOperation(x => x.Map.Data.Replace(data), x => x.Update(data)));
         }
 
         private void RecentFilterTextChanged(object sender, EventArgs e)

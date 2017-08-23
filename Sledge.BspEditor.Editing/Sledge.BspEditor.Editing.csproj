@@ -78,6 +78,12 @@
     <Compile Include="Components\CheckForProblemsDialog.Designer.cs">
       <DependentUpon>CheckForProblemsDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="Components\Compile\BuildParametersPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Components\Compile\BuildParametersPanel.Designer.cs">
+      <DependentUpon>BuildParametersPanel.cs</DependentUpon>
+    </Compile>
     <Compile Include="Components\Compile\CompileDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -260,6 +266,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Components\CheckForProblemsDialog.resx">
       <DependentUpon>CheckForProblemsDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Components\Compile\BuildParametersPanel.resx">
+      <DependentUpon>BuildParametersPanel.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Components\Compile\CompileDialog.resx">
       <DependentUpon>CompileDialog.cs</DependentUpon>

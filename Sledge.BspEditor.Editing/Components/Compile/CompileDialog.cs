@@ -44,6 +44,8 @@ namespace Sledge.BspEditor.Editing.Components.Compile
             PopulatePresets();
             PopulateProfiles();
             PopulateTabs();
+
+            btnAdvancedMode.Visible = false;
         }
 
         public IEnumerable<BatchArgument> SelectedBatchArguments
@@ -111,9 +113,14 @@ namespace Sledge.BspEditor.Editing.Components.Compile
                     pnlSteps.Controls.Add(cb);
                 }
 
-                var tab = new TabPage(tool.Name);
+                var tab = new TabPage(tool.Name)
+                {
+                    Tag = tool
+                };
 
-                // todo set up tab
+                var bpp = new BuildParametersPanel {Dock = DockStyle.Fill};
+                bpp.SetTool(tool);
+                tab.Controls.Add(bpp);
 
                 ToolTabs.TabPages.Add(tab);
             }

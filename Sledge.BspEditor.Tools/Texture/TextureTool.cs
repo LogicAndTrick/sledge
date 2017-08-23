@@ -63,6 +63,8 @@ namespace Sledge.BspEditor.Tools.Texture
             return fs;
         }
 
+        private bool ShouldHideFaceMask => Document?.Map.Data.GetOne<HideFaceMask>()?.Hidden == true;
+
         private void SetActiveTexture(ITextured tex)
         {
             _sampled = tex;
@@ -97,6 +99,10 @@ namespace Sledge.BspEditor.Tools.Texture
             if (change.Document == Document)
             {
                 if (change.HasObjectChanges && change.Updated.Intersect(GetSelection().GetSelectedParents()).Any())
+                {
+                    Invalidate();
+                }
+                else if (change.HasDataChanges && change.AffectedData.Any(x => x is HideFaceMask))
                 {
                     Invalidate();
                 }
@@ -254,19 +260,25 @@ namespace Sledge.BspEditor.Tools.Texture
         {
             var list = base.GetSceneObjects().ToList();
 
+            var hideFaceMask = ShouldHideFaceMask;
+
             foreach (var face in GetSelection())
             {
                 // face masks
 
-                list.Add(new Sledge.Rendering.Scenes.Renderables.Face(
-                    Material.Flat(Color.FromArgb(160, Color.Red)),
-                    face.GetTextureCoordinates(64, 64).Select(x => new Vertex(x.Item1.ToVector3(), (float) x.Item2, (float) x.Item3)).ToList()
-                )
+                if (!hideFaceMask)
                 {
-                    CameraFlags = CameraFlags.Perspective,
-                    ForcedRenderFlags = face == _sampled ? RenderFlags.Wireframe : RenderFlags.None,
-                    AccentColor = Color.Yellow
-                });
+                    list.Add(new Sledge.Rendering.Scenes.Renderables.Face(
+                        Material.Flat(Color.FromArgb(160, Color.Red)),
+                        face.GetTextureCoordinates(64, 64)
+                            .Select(x => new Vertex(x.Item1.ToVector3(), (float) x.Item2, (float) x.Item3)).ToList()
+                    )
+                    {
+                        CameraFlags = CameraFlags.Perspective,
+                        ForcedRenderFlags = face == _sampled ? RenderFlags.Wireframe : RenderFlags.None,
+                        AccentColor = Color.Yellow
+                    });
+                }
 
                 // texture axes
 
