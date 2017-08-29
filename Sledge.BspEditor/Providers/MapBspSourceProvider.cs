@@ -51,6 +51,10 @@ namespace Sledge.BspEditor.Providers
                     entities.Remove(worldspawn);
 
                     map.Root.Data.Replace(worldspawn.EntityData);
+                    foreach (var ch in worldspawn.Hierarchy.ToList())
+                    {
+                        ch.Hierarchy.Parent = map.Root;
+                    }
 
                     foreach (var entity in entities)
                     {
@@ -196,6 +200,7 @@ namespace Sledge.BspEditor.Providers
                         }
                         face.Vertices.AddRange(pg.Vertices);
                     }
+                    ret.Data.AddRange(faces);
                     ret.DescendantsChanged();
                     return ret;
                 }
