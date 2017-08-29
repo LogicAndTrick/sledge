@@ -4,6 +4,7 @@ using System.ComponentModel.Composition;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using LogicAndTrick.Oy;
 using Sledge.Common.Shell.Commands;
 using Sledge.Common.Shell.Context;
 using Sledge.Common.Shell.Documents;
@@ -46,6 +47,7 @@ namespace Sledge.Shell.Commands
                         var loader = loaders.FirstOrDefault(x => x.CanLoad(doc.FileName));
                         if (loader != null)
                         {
+                            await Oy.Publish("Document:BeforeSave", doc);
                             await loader.Save(doc, sfd.FileName);
                         }
                     }

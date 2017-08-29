@@ -9,6 +9,10 @@ using System.Threading.Tasks;
 using LogicAndTrick.Gimme;
 using LogicAndTrick.Oy;
 using Sledge.BspEditor.Compile;
+using Sledge.BspEditor.Documents;
+using Sledge.BspEditor.Primitives;
+using Sledge.BspEditor.Primitives.MapObjectData;
+using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.BspEditor.Providers;
 using Sledge.Common.Shell.Commands;
 using Sledge.DataStructures.GameData;
@@ -150,6 +154,23 @@ namespace Sledge.BspEditor.Environment.Goldsource
         public Task<GameData> GetGameData()
         {
             return _gameData.Value;
+        }
+
+        public async Task UpdateDocumentData(MapDocument document)
+        {
+            var tc = await GetTextureCollection();
+            document.Map.Root.Data.GetOne<EntityData>()?.Set("wad", string.Join(";", GetUsedTexturePackages(document, tc).Select(x => x.Location).Where(x => x.EndsWith(".wad"))));
+        }
+
+        private IEnumerable<string> GetUsedTextures(MapDocument document)
+        {
+            return document.Map.Root.FindAll().SelectMany(x => x.Data.OfType<ITextured>()).Select(x => x.Texture.Name).Distinct();
+        }
+
+        private IEnumerable<TexturePackage> GetUsedTexturePackages(MapDocument document, TextureCollection collection)
+        {
+            var used = GetUsedTextures(document).ToList();
+            return collection.Packages.Where(x => used.Any(x.HasTexture));
         }
 
         public void AddData(IEnvironmentData data)

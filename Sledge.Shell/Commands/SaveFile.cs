@@ -40,6 +40,7 @@ namespace Sledge.Shell.Commands
                 var loader = _loaders.Select(x => x.Value).FirstOrDefault(x => x.CanSave(doc) && x.CanLoad(doc.FileName));
                 if (loader != null)
                 {
+                    await Oy.Publish("Document:BeforeSave", doc);
                     await loader.Save(doc, doc.FileName);
                     await Oy.Publish("Document:Saved", doc);
                 }

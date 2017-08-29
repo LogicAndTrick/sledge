@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
 using System.Threading.Tasks;
+using LogicAndTrick.Oy;
 using Sledge.Common.Shell;
 using Sledge.Common.Shell.Commands;
 using Sledge.Common.Shell.Context;
@@ -40,6 +41,7 @@ namespace Sledge.Shell.Commands
                 if (loader == null) loader = _loaders.Select(x => x.Value).FirstOrDefault(x => x.CanSave(doc) && x.CanLoad(path));
                 if (loader != null)
                 {
+                    await Oy.Publish("Document:BeforeSave", doc);
                     await loader.Save(doc, path);
                 }
             }

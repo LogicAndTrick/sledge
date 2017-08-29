@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Sledge.BspEditor.Compile;
+using Sledge.BspEditor.Documents;
 using Sledge.DataStructures.GameData;
 using Sledge.FileSystem;
 using Sledge.Providers.Texture;
@@ -23,6 +24,11 @@ namespace Sledge.BspEditor.Environment.Goldsource
         public async Task<GameData> GetGameData()
         {
             return new GameData();
+        }
+
+        public Task UpdateDocumentData(MapDocument document)
+        {
+            return Task.FromResult(0);
         }
 
         public void AddData(IEnvironmentData data)

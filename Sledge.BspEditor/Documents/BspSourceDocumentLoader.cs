@@ -100,6 +100,9 @@ namespace Sledge.BspEditor.Documents
         public async Task Save(IDocument document, string location)
         {
             var map = (MapDocument) document;
+
+            await map.Environment.UpdateDocumentData(map);
+
             using (var stream = new MemoryStream())
             {
                 foreach (var provider in _providers.Where(x => CanLoad(x.Value, location)))

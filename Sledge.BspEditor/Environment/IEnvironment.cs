@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Sledge.BspEditor.Compile;
+using Sledge.BspEditor.Documents;
 using Sledge.DataStructures.GameData;
 using Sledge.FileSystem;
 
@@ -39,6 +40,13 @@ namespace Sledge.BspEditor.Environment
         /// </summary>
         /// <returns>Game data task</returns>
         Task<GameData> GetGameData();
+
+        /// <summary>
+        /// Set up any extra map data that this environment requires for a document.
+        /// </summary>
+        /// <param name="document">The document</param>
+        /// <returns>Initialise task</returns>
+        Task UpdateDocumentData(MapDocument document);
 
         /// <summary>
         /// Environment extension point for custom data
