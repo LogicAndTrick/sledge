@@ -22,6 +22,8 @@ namespace Sledge.BspEditor.Primitives.MapObjectData
             set => Vertices.Plane = value;
         }
 
+        public Coordinate Origin => Vertices.Origin;
+
         public Face(long id)
         {
             ID = id;
@@ -151,6 +153,10 @@ namespace Sledge.BspEditor.Primitives.MapObjectData
 
             public int Count => _list.Count;
             public bool IsReadOnly => false;
+
+            internal Coordinate Origin => !_list.Any()
+                ? Coordinate.Zero
+                : _list.Aggregate(Coordinate.Zero, (a, b) => a + b) / _list.Count;
 
             public Coordinate this[int index]
             {

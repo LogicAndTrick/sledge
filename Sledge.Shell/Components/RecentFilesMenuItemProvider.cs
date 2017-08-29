@@ -111,6 +111,7 @@ namespace Sledge.Shell.Components
             public string Group => "Recent";
             public string OrderHint => Convert.ToString((char) (_index + 'a'));
             public string ShortcutText => "";
+            public bool IsToggle => false;
 
             public RecentFilesMenuItem(int index, RecentFile file)
             {
@@ -135,6 +136,11 @@ namespace Sledge.Shell.Components
                         await Oy.Publish("Document:Opened", doc);
                     }
                 }
+            }
+
+            public bool GetToggleState(IContext context)
+            {
+                return false;
             }
         }
     }

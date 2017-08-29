@@ -91,7 +91,6 @@ namespace Sledge.Tests.BspEditor
 
         private void TransformWithLock(Face face, Matrix matrix, bool textureLock, bool textureScaleLock)
         {
-            face.Transform(matrix);
             if (textureLock)
             {
                 face.Texture.TransformUniform(matrix);
@@ -100,6 +99,7 @@ namespace Sledge.Tests.BspEditor
             {
                 face.Texture.TransformScale(matrix);
             }
+            face.Transform(matrix);
         }
 
         [TestMethod]
@@ -215,6 +215,34 @@ namespace Sledge.Tests.BspEditor
         }
 
         [TestMethod]
+        public void TestScale1_Shifted_On()
+        {
+            var transform = Matrix.Scale(new Coordinate((512 + 64) / 512m, 1, 1));
+            var face = MakeScale1Face();
+
+            var shift = Matrix.Translation(new Coordinate(64, 0, 0));
+            face.Transform(shift);
+
+            Assert.AreEqual(new Coordinate(1, 0, 0), face.Texture.UAxis);
+            Assert.AreEqual(0, face.Texture.XShift);
+            Assert.AreEqual(1, face.Texture.XScale);
+            Assert.AreEqual(new Coordinate(0, 0, -1), face.Texture.VAxis);
+            Assert.AreEqual(0, face.Texture.YShift);
+            Assert.AreEqual(1, face.Texture.YScale);
+
+            // 
+
+            TransformWithLock(face, transform, false, true);
+
+            Assert.AreEqual(new Coordinate(1, 0, 0), face.Texture.UAxis);
+            Assert.That.DecimalEquals(7.11111m, face.Texture.XShift);
+            Assert.AreEqual(1.125m, face.Texture.XScale);
+            Assert.AreEqual(new Coordinate(0, 0, -1), face.Texture.VAxis);
+            Assert.AreEqual(0, face.Texture.YShift);
+            Assert.AreEqual(1, face.Texture.YScale);
+        }
+
+        [TestMethod]
         public void TestScale4_On()
         {
             var transform = Matrix.Scale(new Coordinate((512 + 64) / 512m, 1, 1));
@@ -231,6 +259,34 @@ namespace Sledge.Tests.BspEditor
         }
 
         [TestMethod]
+        public void TestScale4_Shifted_On()
+        {
+            var transform = Matrix.Scale(new Coordinate((512 + 64) / 512m, 1, 1));
+            var face = MakeScale4Face();
+
+            var shift = Matrix.Translation(new Coordinate(64, 0, 0));
+            face.Transform(shift);
+
+            Assert.AreEqual(new Coordinate(1, 0, 0), face.Texture.UAxis);
+            Assert.AreEqual(0, face.Texture.XShift);
+            Assert.AreEqual(4, face.Texture.XScale);
+            Assert.AreEqual(new Coordinate(0, 0, -1), face.Texture.VAxis);
+            Assert.AreEqual(0, face.Texture.YShift);
+            Assert.AreEqual(1, face.Texture.YScale);
+
+            // 
+
+            TransformWithLock(face, transform, false, true);
+
+            Assert.AreEqual(new Coordinate(1, 0, 0), face.Texture.UAxis);
+            Assert.That.DecimalEquals(1.77778m, face.Texture.XShift);
+            Assert.AreEqual(14.5m, face.Texture.XScale);
+            Assert.AreEqual(new Coordinate(0, 0, -1), face.Texture.VAxis);
+            Assert.AreEqual(0, face.Texture.YShift);
+            Assert.AreEqual(1, face.Texture.YScale);
+        }
+
+        [TestMethod]
         public void TestScaleOdd_On()
         {
             var transform = Matrix.Scale(new Coordinate((512 + 64) / 512m, 1, 1));
@@ -243,6 +299,34 @@ namespace Sledge.Tests.BspEditor
             Assert.That.DecimalEquals(0.277434m, face.Texture.XScale);
             Assert.AreEqual(new Coordinate(0.358368m, 0m, -0.933581m), face.Texture.VAxis);
             Assert.That.DecimalEquals(22.9356m, face.Texture.YShift);
+            Assert.That.DecimalEquals(1.01691m, face.Texture.YScale);
+        }
+
+        [TestMethod]
+        public void TestScaleOdd_Shifted_On()
+        {
+            var transform = Matrix.Scale(new Coordinate((512 + 64) / 512m, 1, 1));
+            var face = MakeScaleOddFace();
+
+            var shift = Matrix.Translation(new Coordinate(64, 0, 0));
+            face.Transform(shift);
+
+            Assert.AreEqual(new Coordinate(0.933581m, 0, 0.358368m), face.Texture.UAxis);
+            Assert.That.DecimalEquals(251.997m, face.Texture.XShift);
+            Assert.That.DecimalEquals(0.25m, face.Texture.XScale);
+            Assert.AreEqual(new Coordinate(0.358368m, 0m, -0.933581m), face.Texture.VAxis);
+            Assert.That.DecimalEquals(22.9356m, face.Texture.YShift);
+            Assert.That.DecimalEquals(1, face.Texture.YScale);
+
+            // 
+
+            TransformWithLock(face, transform, false, true);
+
+            Assert.AreEqual(new Coordinate(0.933581m, 0, 0.358368m), face.Texture.UAxis);
+            Assert.That.DecimalEquals(278.917m, face.Texture.XShift);
+            Assert.That.DecimalEquals(0.277434m, face.Texture.XScale);
+            Assert.AreEqual(new Coordinate(0.358368m, 0m, -0.933581m), face.Texture.VAxis);
+            Assert.That.DecimalEquals(25.7549m, face.Texture.YShift);
             Assert.That.DecimalEquals(1.01691m, face.Texture.YScale);
         }
 

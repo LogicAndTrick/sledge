@@ -53,7 +53,17 @@
             "CreateNew": "Create new",
             "OK": "OK",
             "Cancel": "Cancel"
-        }
+        },
+        "Toggles": {
+            "ToggleTextureLock": {
+                "Name": "Texture Lock",
+                "Details": "Toggle texture locking for uniform operations (transform, rotate)."
+            },
+            "ToggleTextureScalingLock": {
+                "Name": "Texture Scaling Lock",
+                "Details": "Toggle texture locking for scale operations."
+            }
+        } 
     },
     "Components": {
         "Properties": {

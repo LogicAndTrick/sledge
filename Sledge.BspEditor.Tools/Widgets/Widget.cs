@@ -8,9 +8,12 @@ namespace Sledge.BspEditor.Tools.Widgets
     {
         protected MapViewport _activeViewport;
 
-        public delegate void TransformEventHandler(object sender, Matrix4? transformation);
+        public delegate void TransformEventHandler(Widget sender, Matrix4? transformation);
         public event TransformEventHandler Transforming;
         public event TransformEventHandler Transformed;
+
+        public abstract bool IsUniformTransformation { get; }
+        public abstract bool IsScaleTransformation { get; }
 
         protected void OnTransforming(Matrix4? transformation)
         {

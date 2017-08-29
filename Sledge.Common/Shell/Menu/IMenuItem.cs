@@ -4,7 +4,7 @@ using Sledge.Common.Shell.Context;
 
 namespace Sledge.Common.Shell.Menu
 {
-    public interface IMenuItem : IContextAware
+    public interface IMenuItem : IContextAware, IMenuItemExtendedProperties
     {
         string ID { get; }
         string Name { get; }

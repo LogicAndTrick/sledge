@@ -76,6 +76,9 @@ namespace Sledge.BspEditor.Tools.Widgets
             _pivotPoint = point;
         }
 
+        public override bool IsUniformTransformation => true;
+        public override bool IsScaleTransformation => false;
+
         public override void SelectionChanged()
         {
             if (Document.Selection.IsEmpty) _autoPivot = true;

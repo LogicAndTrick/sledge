@@ -15,7 +15,10 @@ namespace Sledge.BspEditor.Editing
         public IEnumerable<MenuGroup> GetMenuGroups()
         {
             yield return new MenuGroup("Menu", "", "Build", "F");
+
             yield return new MenuGroup("Edit", "", "Properties", "V");
+
+            yield return new MenuGroup("Map", "", "Texture", "F");
 
             yield return new MenuGroup("Tools", "", "Evil", "B");
             yield return new MenuGroup("Tools", "", "Entity", "D");

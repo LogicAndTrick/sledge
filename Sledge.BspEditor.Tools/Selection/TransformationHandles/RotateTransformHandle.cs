@@ -4,6 +4,7 @@ using OpenTK;
 using OpenTK.Input;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Modification.Operations;
+using Sledge.BspEditor.Primitives.MapData;
 using Sledge.BspEditor.Rendering.Viewport;
 using Sledge.BspEditor.Tools.Draggable;
 using Sledge.Common;
@@ -86,6 +87,12 @@ namespace Sledge.BspEditor.Tools.Selection.TransformationHandles
             var mov = Matrix4.CreateTranslation((float)-origin.X, (float)-origin.Y, (float)-origin.Z);
             var rot = Matrix4.Mult(mov, rotm);
             return Matrix4.Mult(rot, Matrix4.Invert(mov));
+        }
+
+        public TextureTransformationType GetTextureTransformationType(MapDocument doc)
+        {
+            var tl = doc.Map.Data.GetOne<TransformationFlags>() ?? new TransformationFlags();
+            return !tl.TextureLock ? TextureTransformationType.None : TextureTransformationType.Uniform;
         }
     }
 }

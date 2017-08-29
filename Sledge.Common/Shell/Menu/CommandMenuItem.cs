@@ -20,6 +20,7 @@ namespace Sledge.Common.Shell.Menu
         public string OrderHint { get; }
         public Image Icon { get; }
         public string ShortcutText { get; }
+        public bool IsToggle => (_command as IMenuItemExtendedProperties)?.IsToggle == true;
 
         public CommandMenuItem(ICommand command, string section, string path, string group, string orderHint, Image icon, string shortcutText, bool allowedInToolbar)
         {
@@ -41,6 +42,11 @@ namespace Sledge.Common.Shell.Menu
         public async Task Invoke(IContext context)
         {
             await Oy.Publish("Command:Run", new CommandMessage(_command.GetID()));
+        }
+
+        public bool GetToggleState(IContext context)
+        {
+            return (_command as IMenuItemExtendedProperties)?.GetToggleState(context) == true;
         }
     }
 }

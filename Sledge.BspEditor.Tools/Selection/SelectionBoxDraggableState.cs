@@ -8,6 +8,7 @@ using Sledge.BspEditor.Modification;
 using Sledge.BspEditor.Modification.Operations;
 using Sledge.BspEditor.Modification.Operations.Mutation;
 using Sledge.BspEditor.Primitives.MapData;
+using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.BspEditor.Rendering;
 using Sledge.BspEditor.Rendering.Viewport;
 using Sledge.BspEditor.Tools.Draggable;
@@ -59,7 +60,7 @@ namespace Sledge.BspEditor.Tools.Selection
             }
         }
 
-        private void WidgetTransforming(object sender, Matrix4? transformation)
+        private void WidgetTransforming(Widget sender, Matrix4? transformation)
         {
             if (transformation.HasValue)
             {
@@ -68,12 +69,31 @@ namespace Sledge.BspEditor.Tools.Selection
             }
         }
 
-        private void WidgetTransformed(object sender, Matrix4? transformation)
+        private void WidgetTransformed(Widget sender, Matrix4? transformation)
         {
             if (transformation.HasValue)
             {
-                var op = new Transform(Matrix.FromOpenTKMatrix4(transformation.Value), Tool.Document.Selection.GetSelectedParents());
-                MapDocumentOperation.Perform(Tool.Document, op);
+                var objects = Tool.Document.Selection.GetSelectedParents().ToList();
+
+                var transaction = new Transaction();
+
+                // Perform the operation
+                var matrix = Matrix.FromOpenTKMatrix4(transformation.Value);
+                var transformOperation = new Transform(matrix, objects);
+                transaction.Add(transformOperation);
+
+                // Texture for texture operations
+                var tl = Tool.Document.Map.Data.GetOne<TransformationFlags>() ?? new TransformationFlags();
+                if (tl.TextureLock && sender.IsUniformTransformation)
+                {
+                    transaction.Add(new TransformTexturesUniform(matrix, objects.SelectMany(x => x.FindAll())));
+                }
+                else if (tl.TextureScaleLock && sender.IsScaleTransformation)
+                {
+                    transaction.Add(new TransformTexturesScale(matrix, objects.SelectMany(x => x.FindAll())));
+                }
+
+                MapDocumentOperation.Perform(Tool.Document, transaction);
             }
             var st = new SelectionTransform(Matrix.Identity);
             MapDocumentOperation.Perform(Tool.Document, new TrivialOperation(x => x.Map.Data.Replace(st), x => x.Update(st)));
@@ -181,11 +201,18 @@ namespace Sledge.BspEditor.Tools.Selection
             return list;
         }
 
-        public Matrix4? GetTransformationMatrix(MapViewport viewport, OrthographicCamera camera, MapDocument MapDocument)
+        public Matrix4? GetTransformationMatrix(MapViewport viewport, OrthographicCamera camera, MapDocument doc)
         {
             if (State.Action != BoxAction.Resizing) return null;
             var tt = Tool.CurrentDraggable as ITransformationHandle;
-            return tt != null ? tt.GetTransformationMatrix(viewport, camera, State, MapDocument) : null;
+            return tt?.GetTransformationMatrix(viewport, camera, State, doc);
+        }
+
+        public TextureTransformationType GetTextureTransformationType(MapDocument doc)
+        {
+            if (State.Action != BoxAction.Resizing) return TextureTransformationType.None;
+            var tt = Tool.CurrentDraggable as ITransformationHandle;
+            return tt?.GetTextureTransformationType(doc) ?? TextureTransformationType.None;
         }
 
         public void Cycle()

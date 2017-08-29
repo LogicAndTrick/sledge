@@ -145,7 +145,13 @@ namespace Sledge.BspEditor.Editing.Commands
             {
                 // Copy, transform and fix entity names
                 var copy = (IMapObject) mo.Copy(gen);
+
+                // Transform the object
                 copy.Transform(transform);
+
+                // Paste special will always texture lock (always uniform too, only translation and rotation possible)
+                foreach (var t in copy.Data.OfType<ITextured>()) t.Texture.TransformUniform(transform);
+
                 FixEntityNames(copy, names, makeEntitesUnique, prefixEntityNames, entityNamePrefix);
                 yield return copy;
             }

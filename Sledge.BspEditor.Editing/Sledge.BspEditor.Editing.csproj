@@ -65,6 +65,8 @@
     <Compile Include="Commands\OpenObjectProperties.cs" />
     <Compile Include="Commands\OpenAboutWindow.cs" />
     <Compile Include="Commands\PasteSpecial.cs" />
+    <Compile Include="Commands\Toggles\ToggleTextureLock.cs" />
+    <Compile Include="Commands\Toggles\ToggleTextureScalingLock.cs" />
     <Compile Include="Commands\Transform.cs" />
     <Compile Include="Components\AboutDialog.cs">
       <SubType>Form</SubType>
@@ -327,6 +329,8 @@
     <Content Include="Resources\Menu_PasteSpecial.png" />
     <Content Include="Resources\Menu_Redo.png" />
     <Content Include="Resources\Menu_Run.png" />
+    <Content Include="Resources\Menu_TextureLock.png" />
+    <Content Include="Resources\Menu_TextureScalingLock.png" />
     <Content Include="Resources\Menu_TieToEntity.png" />
     <Content Include="Resources\Menu_TieToWorld.png" />
     <Content Include="Resources\Menu_Transform.png" />

@@ -42,6 +42,7 @@ namespace Sledge.BspEditor.Tools.Grid
             public string Group => "GridTypes";
             public string OrderHint => Group.GetType().Name;
             public string ShortcutText => "";
+            public bool IsToggle => false;
 
             public IGridFactory GridFactory { get; set; }
 
@@ -67,6 +68,11 @@ namespace Sledge.BspEditor.Tools.Grid
                     await MapDocumentOperation.Perform(doc, operation);
                     
                 }
+            }
+
+            public bool GetToggleState(IContext context)
+            {
+                return false;
             }
         }
     }

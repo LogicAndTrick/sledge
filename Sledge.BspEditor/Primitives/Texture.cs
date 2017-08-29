@@ -144,9 +144,9 @@ namespace Sledge.BspEditor.Primitives
             var startU = UAxis * matrix;
             var startV = VAxis * matrix;
 
-            var origin = Coordinate.Zero * matrix;
-            var deltaU = (startU - origin).VectorMagnitude();
-            var deltaV = (startV - origin).VectorMagnitude();
+            var zero = Coordinate.Zero * matrix;
+            var deltaU = (startU - zero).VectorMagnitude();
+            var deltaV = (startV - zero).VectorMagnitude();
 
             if (deltaU != 0) XScale *= deltaU;
             if (deltaV != 0) YScale *= deltaV;

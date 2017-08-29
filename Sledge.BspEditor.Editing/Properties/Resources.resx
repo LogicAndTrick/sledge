@@ -139,6 +139,12 @@
   <data name="Menu_Run" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\resources\menu_run.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="Menu_TextureLock" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\menu_texturelock.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Menu_TextureScalingLock" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\menu_texturescalinglock.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="Menu_TieToEntity" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\resources\menu_tietoentity.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>

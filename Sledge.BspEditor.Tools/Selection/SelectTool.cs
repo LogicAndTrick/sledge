@@ -11,6 +11,7 @@ using Sledge.BspEditor.Modification.Operations;
 using Sledge.BspEditor.Modification.Operations.Mutation;
 using Sledge.BspEditor.Modification.Operations.Selection;
 using Sledge.BspEditor.Modification.Operations.Tree;
+using Sledge.BspEditor.Primitives;
 using Sledge.BspEditor.Primitives.MapData;
 using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.BspEditor.Rendering.Viewport;
@@ -505,7 +506,7 @@ namespace Sledge.BspEditor.Tools.Selection
                     MapDocumentOperation.Perform(Document, new TrivialOperation(x => x.Map.Data.Replace(st), x => x.Update(st)));
 
                     var box = new Box(_selectionBox.State.OrigStart, _selectionBox.State.OrigEnd);
-                    var trans = CreateMatrixMultTransformation(tform.Value);
+                    var trans = Matrix.FromOpenTKMatrix4(tform.Value);
                     box = box.Transform(trans);
 
                     var label = "";
@@ -524,8 +525,9 @@ namespace Sledge.BspEditor.Tools.Selection
                 var tform = _selectionBox.GetTransformationMatrix(viewport, camera, Document);
                 if (tform.HasValue)
                 {
+                    var ttType = _selectionBox.GetTextureTransformationType(Document);
                     var createClone = KeyboardState.Shift && draggable is ResizeTransformHandle && ((ResizeTransformHandle)draggable).Handle == ResizeHandle.Center;
-                    ExecuteTransform(tt.Name, CreateMatrixMultTransformation(tform.Value), createClone);
+                    ExecuteTransform(tt.Name, Matrix.FromOpenTKMatrix4(tform.Value), createClone, ttType);
                 }
             }
             var st = new SelectionTransform(Matrix.Identity);
@@ -596,7 +598,8 @@ namespace Sledge.BspEditor.Tools.Selection
             {
                 var translate = viewport.Expand(nudge);
                 var transformation = Matrix4.CreateTranslation((float)translate.X, (float)translate.Y, (float)translate.Z);
-                ExecuteTransform("Nudge", CreateMatrixMultTransformation(transformation), KeyboardState.Shift);
+                var matrix = Matrix.FromOpenTKMatrix4(transformation);
+                ExecuteTransform("Nudge", matrix, KeyboardState.Shift, TextureTransformationType.Uniform);
                 SelectionChanged();
             }
         }
@@ -676,32 +679,59 @@ namespace Sledge.BspEditor.Tools.Selection
         /// <param name="transformationName">The name of the transformation</param>
         /// <param name="transform">The transformation to apply</param>
         /// <param name="clone">True to create a clone before transforming the original.</param>
-        private void ExecuteTransform(string transformationName, Matrix transform, bool clone)
+        /// <param name="textureTransformationType"></param>
+        private void ExecuteTransform(string transformationName, Matrix transform, bool clone, TextureTransformationType textureTransformationType)
         {
+            var parents = Document.Selection.GetSelectedParents().ToList();
             var transaction = new Transaction();
             if (clone)
             {
-                var copies = Document.Selection.GetSelectedParents()
+                // We're creating copies, so clone and transform the objects before attaching them.
+                var copies = parents
                     .Select(x => x.Copy(Document.Map.NumberGenerator))
                     .OfType<IMapObject>()
-                    .Select(x =>
+                    .Select(mo =>
                     {
-                        x.Transform(transform);
-                        return x;
+                        mo.Transform(transform);
+                        if (textureTransformationType == TextureTransformationType.Uniform)
+                        {
+                            foreach (var s in mo.FindAll().OfType<Solid>().SelectMany(x => x.Faces).Select(x => x.Texture))
+                            {
+                                s.TransformUniform(transform);
+                            }
+                        }
+                        else if (textureTransformationType == TextureTransformationType.Scale)
+                        {
+                            foreach (var t in mo.FindAll().SelectMany(x => x.Data.OfType<ITextured>()))
+                            {
+                                t.Texture.TransformScale(transform);
+                            }
+                        }
+                        return mo;
                     });
+
+                // Deselect the originals, we want to move the selection to the new nodes
                 transaction.Add(new Deselect(Document.Selection));
+
+                // Attach the objects
                 transaction.Add(new Attach(Document.Map.Root.ID, copies));
             }
             else
             {
-                transaction.Add(new Transform(transform, Document.Selection.GetSelectedParents()));
+                // Transform the objects
+                transaction.Add(new Transform(transform, parents));
+
+                // Perform texture transforms if required
+                if (textureTransformationType == TextureTransformationType.Uniform)
+                {
+                    transaction.Add(new TransformTexturesUniform(transform, parents.SelectMany(p => p.FindAll())));
+                }
+                else if (textureTransformationType == TextureTransformationType.Scale)
+                {
+                    transaction.Add(new TransformTexturesScale(transform, parents.SelectMany(p => p.FindAll())));
+                }
             }
             MapDocumentOperation.Perform(Document, transaction);
-        }
-
-        private Matrix CreateMatrixMultTransformation(Matrix4 mat)
-        {
-            return Matrix.FromOpenTKMatrix4(mat);
         }
 
         #endregion

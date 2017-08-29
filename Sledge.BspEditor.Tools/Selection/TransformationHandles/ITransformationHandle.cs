@@ -10,5 +10,6 @@ namespace Sledge.BspEditor.Tools.Selection.TransformationHandles
     {
         string Name { get; }
         Matrix4? GetTransformationMatrix(MapViewport viewport, OrthographicCamera camera, BoxState state, MapDocument doc);
+        TextureTransformationType GetTextureTransformationType(MapDocument doc);
     }
 }

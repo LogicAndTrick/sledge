@@ -99,5 +99,11 @@ namespace Sledge.BspEditor.Tools.Selection.TransformationHandles
             var shear = Matrix4.Mult(stran, shearMatrix);
             return Matrix4.Mult(shear, Matrix4.Invert(stran));
         }
+
+        public TextureTransformationType GetTextureTransformationType(MapDocument doc)
+        {
+            // Never transform textures on skew
+            return TextureTransformationType.None;
+        }
     }
 }

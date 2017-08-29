@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Linq;
 using OpenTK;
 using Sledge.BspEditor.Documents;
+using Sledge.BspEditor.Primitives.MapData;
 using Sledge.BspEditor.Rendering;
 using Sledge.BspEditor.Rendering.Viewport;
 using Sledge.BspEditor.Tools.Draggable;
@@ -109,6 +110,14 @@ namespace Sledge.BspEditor.Tools.Selection.TransformationHandles
                 resizeMatrix = Matrix4.Mult(scale, Matrix4.Invert(trans));
             }
             return resizeMatrix;
+        }
+
+        public TextureTransformationType GetTextureTransformationType(MapDocument doc)
+        {
+            var tl = doc.Map.Data.GetOne<TransformationFlags>() ?? new TransformationFlags();
+            if (Handle == ResizeHandle.Center && tl.TextureLock) return TextureTransformationType.Uniform;
+            if (Handle != ResizeHandle.Center && tl.TextureScaleLock) return TextureTransformationType.Scale;
+            return TextureTransformationType.None;
         }
 
         private Coordinate GetOriginForTransform(MapViewport viewport, OrthographicCamera camera, BoxState state)

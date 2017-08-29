@@ -8,6 +8,9 @@ using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Editing.Components;
 using Sledge.BspEditor.Editing.Properties;
 using Sledge.BspEditor.Modification;
+using Sledge.BspEditor.Modification.Operations.Mutation;
+using Sledge.BspEditor.Primitives.MapData;
+using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.Common.Shell.Commands;
 using Sledge.Common.Shell.Context;
 using Sledge.Common.Shell.Hotkeys;
@@ -49,9 +52,25 @@ namespace Sledge.BspEditor.Editing.Commands
                 {
                     try
                     {
+                        var transaction = new Transaction();
+
+                        // Add the operation
                         var transform = dialog.GetTransformation(box);
-                        var op = new Modification.Operations.Mutation.Transform(transform, objects);
-                        await MapDocumentOperation.Perform(document, op);
+                        var transformOperation = new Modification.Operations.Mutation.Transform(transform, objects);
+                        transaction.Add(transformOperation);
+
+                        // Check for texture transform
+                        var tl = document.Map.Data.GetOne<TransformationFlags>() ?? new TransformationFlags();
+                        if (dialog.Type == TransformDialog.TransformType.Rotate || dialog.Type == TransformDialog.TransformType.Translate)
+                        {
+                            if (tl.TextureLock) transaction.Add(new TransformTexturesUniform(transform, objects.SelectMany(x => x.FindAll())));
+                        }
+                        else if (dialog.Type == TransformDialog.TransformType.Rotate || dialog.Type == TransformDialog.TransformType.Translate)
+                        {
+                            if (tl.TextureScaleLock) transaction.Add(new TransformTexturesScale(transform, objects.SelectMany(x => x.FindAll())));
+                        }
+
+                        await MapDocumentOperation.Perform(document, transaction);
                     }
                     catch (TransformDialog.CannotScaleByZeroException)
                     {

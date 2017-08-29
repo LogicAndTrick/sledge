@@ -395,11 +395,17 @@ namespace Sledge.Shell.Registers
                     ToolbarButton.MouseEnter += (s, a) => { Oy.Publish("Status:Information", menuItem.Description); };
                     ToolbarButton.MouseLeave += (s, a) => { Oy.Publish("Status:Information", ""); };
                 }
+
+                if (menuItem.IsToggle)
+                {
+                    MenuMenuItem.CheckState = menuItem.GetToggleState(context) ? CheckState.Checked : CheckState.Unchecked;
+                    if (ToolbarButton != null) ToolbarButton.CheckState = MenuMenuItem.CheckState;
+                }
             }
 
             private void Fire(object sender, EventArgs e)
             {
-                MenuItem?.Invoke(Context);
+                MenuItem?.Invoke(Context).ContinueWith(t => MenuMenuItem.GetCurrentParent()?.Invoke(Update));
             }
 
             public override void Update()
@@ -407,6 +413,12 @@ namespace Sledge.Shell.Registers
                 var en = MenuItem.IsInContext(Context);
                 MenuMenuItem.Enabled = en;
                 if (ToolbarButton != null) ToolbarButton.Enabled = en;
+                if (MenuItem.IsToggle && en)
+                {
+                    var ts = MenuItem.GetToggleState(Context);
+                    MenuMenuItem.CheckState = ts ? CheckState.Checked : CheckState.Unchecked;
+                    if (ToolbarButton != null) ToolbarButton.CheckState = MenuMenuItem.CheckState;
+                }
                 base.Update();
             }
         }

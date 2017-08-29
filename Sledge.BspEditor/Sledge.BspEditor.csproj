@@ -148,7 +148,9 @@
     <Compile Include="Modification\Operations\Data\EditEntityDataProperties.cs" />
     <Compile Include="Modification\Operations\Data\RemoveMapData.cs" />
     <Compile Include="Modification\Operations\Data\RemoveMapObjectData.cs" />
+    <Compile Include="Modification\Operations\Mutation\TransformTexturesUniform.cs" />
     <Compile Include="Modification\Operations\Mutation\Transform.cs" />
+    <Compile Include="Modification\Operations\Mutation\TransformTexturesScale.cs" />
     <Compile Include="Modification\Operations\Tree\Attach.cs" />
     <Compile Include="Modification\Change.cs" />
     <Compile Include="Modification\IOperation.cs" />
