@@ -1,25 +1,29 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Globalization;
+using System.Linq;
 
 namespace Sledge.Common.Transport
 {
     public static class SerialisedObjectExtensions
     {
-        public static void Set<T>(this SerialisedObject so, string key, T value)
+        public static void Set<T>(this SerialisedObject so, string key, T value, bool replace = true)
         {
             var conv = TypeDescriptor.GetConverter(typeof(T));
             var v = conv.ConvertToString(null, CultureInfo.InvariantCulture, value);
-            so.Properties[key] = v;
+            if (replace) so.Properties.RemoveAll(s => s.Key == key);
+            so.Properties.Add(new KeyValuePair<string, string>(key, v));
         }
 
         public static T Get<T>(this SerialisedObject so, string key, T defaultValue = default(T))
         {
-            if (!so.Properties.ContainsKey(key)) return defaultValue;
+            var match = so.Properties.Where(x => x.Key == key).ToList();
+            if (!match.Any()) return defaultValue;
             try
             {
-                var val = so.Properties[key];
+                var val = match[0].Value;
                 var conv = TypeDescriptor.GetConverter(typeof(T));
                 return (T) conv.ConvertFromString(null, CultureInfo.InvariantCulture, val);
             }

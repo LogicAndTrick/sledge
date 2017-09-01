@@ -167,7 +167,7 @@ namespace Sledge.Common.Transport
         private static void ParseProperty(SerialisedObject gs, string prop)
         {
             var split = prop.SplitWithQuotes();
-            gs.Properties.Add(split[0], (split[1] ?? "").Replace('`', '"'));
+            gs.Properties.Add(new KeyValuePair<string, string>(split[0], (split[1] ?? "").Replace('`', '"')));
         }
         #endregion
     }

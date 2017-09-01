@@ -8,20 +8,20 @@ namespace Sledge.Common.Transport
     public class SerialisedObject : ISerializable
     {
         public string Name { get; set; }
-        public Dictionary<string, string> Properties { get; set; }
+        public List<KeyValuePair<string, string>> Properties { get; set; }
         public List<SerialisedObject> Children { get; set; }
 
         public SerialisedObject(string name)
         {
             Name = name;
-            Properties = new Dictionary<string, string>();
+            Properties = new List<KeyValuePair<string, string>>();
             Children = new List<SerialisedObject>();
         }
 
         protected SerialisedObject(SerializationInfo info, StreamingContext context)
         {
             Name = info.GetString("Name");
-            Properties = (Dictionary<string, string>) info.GetValue("Properties", typeof(Dictionary<string, string>));
+            Properties = (List<KeyValuePair<string, string>>) info.GetValue("Properties", typeof(List<KeyValuePair<string, string>>));
             Children = (List<SerialisedObject>) info.GetValue("Children", typeof(List<SerialisedObject>));
         }
 

@@ -32,7 +32,7 @@ namespace Sledge.BspEditor.Primitives.MapObjectData
         {
             // Try and get a bounding box for point entities
             var name = obj.Data.GetOne<EntityData>()?.Name;
-            var origin = obj.Data.GetOne<Origin>()?.Location;
+            var origin = obj.Data.GetOne<Origin>()?.Location ?? Coordinate.Zero;
             if (name == null) return null;
 
             // Get the class (must be point)
