@@ -64,7 +64,7 @@ namespace Sledge.BspEditor.Providers
                 {
                     _factory.Serialise(map.Root)
                 };
-                list.AddRange(map.Data.Select(_factory.Serialise));
+                list.AddRange(map.Data.Select(_factory.Serialise).Where(x => x != null));
                 _formatter.Serialize(stream, list);
             });
         }

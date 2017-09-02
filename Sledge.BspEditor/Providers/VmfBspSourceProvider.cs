@@ -79,6 +79,8 @@ namespace Sledge.BspEditor.Providers
             });
         }
 
+        #region Reading
+
         private void LoadVisgroups(Map map, SerialisedObject visgroups)
         {
             if (visgroups == null) return;
@@ -99,7 +101,7 @@ namespace Sledge.BspEditor.Providers
 
         private void LoadWorld(Map map, List<SerialisedObject> objects)
         {
-            var vos = objects.Select(VmfObject.Create).Where(vo => vo != null).ToList();
+            var vos = objects.Select(VmfObject.Deserialise).Where(vo => vo != null).ToList();
 
             var world = vos.OfType<VmfWorld>().FirstOrDefault();
             if (world == null) return;
@@ -180,18 +182,95 @@ namespace Sledge.BspEditor.Providers
 
         }
 
+        #endregion
+
         public Task Save(Stream stream, Map map)
         {
             return Task.Factory.StartNew(() =>
             {
-                var list = new List<SerialisedObject>
-                {
-                    _factory.Serialise(map.Root)
-                };
-                list.AddRange(map.Data.Select(_factory.Serialise));
+                var list = new List<SerialisedObject>();
+
+                SaveVisgroups(map, list);
+                SaveWorld(map, list);
+                SaveCameras(map, list);
+                SaveCordon(map, list);
+                SaveViewSettings(map, list);
+
+                var native = new SerialisedObject("sledge_native");
+                native.Children.Add(_factory.Serialise(map.Root));
+                native.Children.AddRange(map.Data.Select(_factory.Serialise).Where(x => x != null));
+                list.Add(native);
+
                 _formatter.Serialize(stream, list);
             });
         }
+
+        #region Saving
+
+        private void SaveVisgroups(Map map, List<SerialisedObject> list)
+        {
+            var so = new SerialisedObject("visgroups");
+            foreach (var visgroup in map.Data.OfType<Visgroup>())
+            {
+                var vgo = new SerialisedObject("visgroup");
+                vgo.Set("visgroupid", visgroup.ID);
+                vgo.SetColor("color", visgroup.Colour);
+                so.Children.Add(vgo);
+            }
+            list.Add(so);
+        }
+
+        private void SaveWorld(Map map, List<SerialisedObject> list)
+        {
+            // call the avengers
+
+            // World is a normal entity, except it should also include groups
+            var world = map.Root;
+            var sw = SerialiseEntity(world);
+            foreach (var group in world.FindAll().OfType<Group>())
+            {
+                var sg = VmfObject.Serialise(group);
+                if (sg != null) sw.Children.Add(sg.ToSerialisedObject());
+            }
+            if (sw != null) list.Add(sw);
+
+            // Entities are separate from the world
+            var entities = map.Root.FindAll().OfType<Entity>().Select(SerialiseEntity).ToList();
+            list.AddRange(entities);
+        }
+
+        private SerialisedObject SerialiseEntity(IMapObject obj)
+        {
+            var self = VmfObject.Serialise(obj);
+            if (self == null) return null;
+            
+            var so = self.ToSerialisedObject();
+
+            foreach (var solid in obj.FindAll().OfType<Solid>())
+            {
+                var s = VmfObject.Serialise(solid);
+                if (s != null) so.Children.Add(s.ToSerialisedObject());
+            }
+
+            return so;
+        }
+
+        private void SaveCameras(Map map, List<SerialisedObject> list)
+        {
+
+        }
+
+        private void SaveCordon(Map map, List<SerialisedObject> list)
+        {
+
+        }
+
+        private void SaveViewSettings(Map map, List<SerialisedObject> list)
+        {
+
+        }
+        
+        #endregion
 
         private static bool ParseDecimalArray(string input, char[] splitChars, int expected, out decimal[] array)
         {
@@ -221,10 +300,17 @@ namespace Sledge.BspEditor.Providers
                 Editor = new VmfEditor(obj.Children.FirstOrDefault(x => x.Name == "editor"));
             }
 
+            protected VmfObject(IMapObject obj)
+            {
+                ID = obj.ID;
+                Editor = new VmfEditor(obj);
+            }
+
             public abstract IEnumerable<VmfObject> Flatten();
             public abstract IMapObject ToMapObject(UniqueNumberGenerator generator);
+            public abstract SerialisedObject ToSerialisedObject();
 
-            public static VmfObject Create(SerialisedObject obj)
+            public static VmfObject Deserialise(SerialisedObject obj)
             {
                 switch (obj.Name)
                 {
@@ -239,6 +325,15 @@ namespace Sledge.BspEditor.Providers
                     case "hidden":
                         return new VmfHidden(obj);
                 }
+                return null;
+            }
+
+            public static VmfObject Serialise(IMapObject obj)
+            {
+                if (obj is Root r) return new VmfWorld(r);
+                if (obj is Entity e) return new VmfEntity(e);
+                if (obj is Group g) return new VmfGroup(g);
+                if (obj is Solid s) return new VmfSolid(s);
                 return null;
             }
         }
@@ -256,7 +351,7 @@ namespace Sledge.BspEditor.Providers
                 Objects = new List<VmfObject>();
                 foreach (var so in obj.Children)
                 {
-                    var o = VmfObject.Create(so);
+                    var o = VmfObject.Deserialise(so);
                     if (o != null) Objects.Add(o);
                 }
 
@@ -276,6 +371,17 @@ namespace Sledge.BspEditor.Providers
                 }
             }
 
+            public VmfEntity(Entity ent) : this((IMapObject) ent)
+            {
+                
+            }
+
+            protected VmfEntity(IMapObject obj) : base(obj)
+            {
+                EntityData = obj.Data.GetOne<EntityData>() ?? new EntityData();
+                Origin = obj.Data.GetOne<Origin>()?.Location;
+            }
+
             public override IEnumerable<VmfObject> Flatten()
             {
                 return Objects.SelectMany(x => x.Flatten()).Union(new[] {this});
@@ -292,6 +398,28 @@ namespace Sledge.BspEditor.Providers
 
                 return ent;
             }
+
+            protected virtual string SerialisedObjectName => "entity";
+
+            public override SerialisedObject ToSerialisedObject()
+            {
+                var so = new SerialisedObject(SerialisedObjectName);
+                so.Set("id", ID);
+                so.Set("classname", EntityData.Name);
+                so.Set("spawnflags", EntityData.Flags);
+                if (Origin != null)
+                {
+                    so.Set("origin", Origin);
+                }
+                foreach (var prop in EntityData.Properties)
+                {
+                    so.Properties.Add(new KeyValuePair<string, string>(prop.Key, prop.Value));
+                }
+
+                so.Children.Add(Editor.ToSerialisedObject());
+
+                return so;
+            }
         }
 
         private class VmfWorld : VmfEntity
@@ -300,15 +428,25 @@ namespace Sledge.BspEditor.Providers
             {
             }
 
+            public VmfWorld(Root root) : base(root)
+            {
+            }
+
             public override IMapObject ToMapObject(UniqueNumberGenerator generator)
             {
                 throw new NotSupportedException();
             }
+
+            protected override string SerialisedObjectName => "world";
         }
 
         private class VmfGroup : VmfObject
         {
             public VmfGroup(SerialisedObject obj) : base(obj)
+            {
+            }
+
+            public VmfGroup(Group grp) : base(grp)
             {
             }
 
@@ -322,6 +460,16 @@ namespace Sledge.BspEditor.Providers
                 var grp = new Group(generator.Next("MapObject"));
                 Editor.Apply(grp);
                 return grp;
+            }
+
+            public override SerialisedObject ToSerialisedObject()
+            {
+                var so = new SerialisedObject("group");
+                so.Set("id", ID);
+
+                so.Children.Add(Editor.ToSerialisedObject());
+
+                return so;
             }
         }
 
@@ -338,6 +486,11 @@ namespace Sledge.BspEditor.Providers
                 }
             }
 
+            public VmfSolid(Solid sol) : base(sol)
+            {
+                Sides = sol.Faces.Select(x => new VmfSide(x)).ToList();
+            }
+
             public override IEnumerable<VmfObject> Flatten()
             {
                 yield return this;
@@ -349,6 +502,15 @@ namespace Sledge.BspEditor.Providers
                 Editor.Apply(sol);
                 CreateFaces(sol, Sides, generator);
                 return sol;
+            }
+
+            public override SerialisedObject ToSerialisedObject()
+            {
+                var so = new SerialisedObject("solid");
+                so.Set("id", ID);
+                so.Children.AddRange(Sides.Select(x => x.ToSerialisedObject()));
+                so.Children.Add(Editor.ToSerialisedObject());
+                return so;
             }
 
             private void CreateFaces(Solid solid, List<VmfSide> sides, UniqueNumberGenerator generator)
@@ -395,7 +557,7 @@ namespace Sledge.BspEditor.Providers
                 Objects = new List<VmfObject>();
                 foreach (var so in obj.Children)
                 {
-                    var o = VmfObject.Create(so);
+                    var o = VmfObject.Deserialise(so);
                     if (o != null) Objects.Add(o);
                 }
             }
@@ -408,6 +570,11 @@ namespace Sledge.BspEditor.Providers
             public override IMapObject ToMapObject(UniqueNumberGenerator generator)
             {
                 throw new NotSupportedException();
+            }
+
+            public override SerialisedObject ToSerialisedObject()
+            {
+                throw new NotImplementedException();
             }
         }
 
@@ -473,6 +640,47 @@ namespace Sledge.BspEditor.Providers
                     Vertices.Add(pt);
                 }
             }
+
+            public VmfSide(Face face)
+            {
+                ID = face.ID;
+                Plane = face.Plane;
+                Texture = face.Texture;
+                Vertices = face.Vertices.ToList();
+            }
+
+            public SerialisedObject ToSerialisedObject()
+            {
+                var so = new SerialisedObject("side");
+                so.Set("id", ID);
+                so.Set("plane", $"({FormatCoordinate(Vertices[0])}) ({FormatCoordinate(Vertices[1])}) ({FormatCoordinate(Vertices[2])})");
+                so.Set("material", Texture.Name);
+                so.Set("uaxis", $"[{FormatCoordinate(Texture.UAxis)} {FormatDecimal(Texture.XShift)}] {FormatDecimal(Texture.XScale)}");
+                so.Set("vaxis", $"[{FormatCoordinate(Texture.VAxis)} {FormatDecimal(Texture.YShift)}] {FormatDecimal(Texture.YScale)}");
+                so.Set("rotation", Texture.Rotation);
+                so.Set("lightmapscale", LightmapScale);
+                so.Set("smoothing_groups", SmoothingGroups);
+
+                var verts = new SerialisedObject("vertex");
+                verts.Set("count", Vertices.Count);
+                for (var i = 0; i < Vertices.Count; i++)
+                {
+                    verts.Set("vertex" + i, FormatCoordinate(Vertices[i]));
+                }
+                so.Children.Add(verts);
+
+                return so;
+            }
+
+            private static string FormatCoordinate(Coordinate c)
+            {
+                return $"{FormatDecimal(c.X)} {FormatDecimal(c.Y)} {FormatDecimal(c.Z)}";
+            }
+
+            private static string FormatDecimal(decimal d)
+            {
+                return d.ToString("0.00####", CultureInfo.InvariantCulture);
+            }
         }
 
         private class VmfEditor
@@ -481,6 +689,7 @@ namespace Sledge.BspEditor.Providers
             public bool VisgroupShown { get; set; }
             public bool VisgroupAutoShown { get; set; }
             public List<long> VisgroupIDs { get; set; }
+            private long GroupID { get; set; }
             public long ParentID { get; set; }
 
             public VmfEditor(SerialisedObject obj)
@@ -488,8 +697,8 @@ namespace Sledge.BspEditor.Providers
                 if (obj == null) obj = new SerialisedObject("editor");
 
                 Color = obj.GetColor("color");
-                var groupId = obj.Get("groupid", 0);
-                ParentID = groupId > 0 ? groupId : obj.Get("parentid", 0);
+                GroupID = obj.Get("groupid", 0);
+                ParentID = GroupID > 0 ? GroupID : obj.Get("parentid", 0);
                 VisgroupShown = obj.Get("visgroupshown", "1") == "1";
                 VisgroupAutoShown = obj.Get("visgroupautoshown", "1") == "1";
                 // logicalpos?
@@ -501,6 +710,15 @@ namespace Sledge.BspEditor.Providers
                 }
             }
 
+            public VmfEditor(IMapObject obj)
+            {
+                Color = obj.Data.GetOne<ObjectColor>()?.Color ?? Color.Red;
+                VisgroupShown = VisgroupAutoShown = true;
+                VisgroupIDs = obj.Data.Get<VisgroupID>().Select(x => x.ID).ToList();
+                GroupID = obj.Hierarchy.Parent is Group ? obj.Hierarchy.Parent.ID : 0;
+                ParentID = obj.Hierarchy.Parent?.ID ?? 0;
+            }
+
             public void Apply(IMapObject obj)
             {
                 var c = Color.GetBrightness() > 0 ? Color : Colour.GetRandomBrushColour();
@@ -509,6 +727,21 @@ namespace Sledge.BspEditor.Providers
                 {
                     obj.Data.Add(new VisgroupID(id));
                 }
+            }
+
+            public SerialisedObject ToSerialisedObject()
+            {
+                var so = new SerialisedObject("editor");
+                so.SetColor("color", Color);
+                so.Set("parentid", ParentID);
+                so.Set("groupid", GroupID);
+                so.Set("visgroupshown", VisgroupShown ? "1" : "0");
+                so.Set("visgroupautoshown", VisgroupAutoShown ? "1" : "0");
+                foreach (var id in VisgroupIDs)
+                {
+                    so.Properties.Add(new KeyValuePair<string, string>("visgroupid", Convert.ToString(id, CultureInfo.InvariantCulture)));
+                }
+                return so;
             }
         }
     }
