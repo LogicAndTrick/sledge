@@ -66,6 +66,7 @@ namespace Sledge.BspEditor.Components
 
         private string GetDescription(List<IMapObject> list)
         {
+            // todo- translate clipboard text
             switch (list.Count)
             {
                 case 0:
@@ -89,7 +90,23 @@ namespace Sledge.BspEditor.Components
             var str = System.Windows.Forms.Clipboard.GetText();
             if (!str.StartsWith(SerialisedName)) return null;
 
-            return ExtractCopyStream(str);
+            var ecc = ExtractCopyStream(str);
+            return ReIndex(ecc, document);
+        }
+
+        private IEnumerable<IMapObject> ReIndex(IEnumerable<IMapObject> objects, MapDocument document)
+        {
+            foreach (var o in objects)
+            {
+                if (document.Map.Root.Hierarchy.HasDescendant(o.ID))
+                {
+                    yield return (IMapObject) o.Copy(document.Map.NumberGenerator);
+                }
+                else
+                {
+                    yield return o;
+                }
+            }
         }
 
         /// <summary>
