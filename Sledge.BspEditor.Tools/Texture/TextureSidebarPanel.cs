@@ -67,14 +67,11 @@ namespace Sledge.BspEditor.Tools.Texture
             _activeDocument = new WeakReference<MapDocument>(md);
             _currentTexture = null;
 
-            await Task.Factory.StartNew(() =>
+            await this.InvokeAsync(() =>
             {
-                this.Invoke(() =>
-                {
-                    var dis = SelectionPictureBox.Image;
-                    SelectionPictureBox.Image = null;
-                    dis?.Dispose();
-                });
+                var dis = SelectionPictureBox.Image;
+                SelectionPictureBox.Image = null;
+                dis?.Dispose();
             });
 
             if (md != null)
@@ -120,30 +117,27 @@ namespace Sledge.BspEditor.Tools.Texture
                 }
             }
 
-            Task.Factory.StartNew(() =>
+            await this.InvokeAsync(() =>
             {
-                this.Invoke(() =>
+                if (bmp != null)
                 {
-                    if (bmp != null)
+                    if (bmp.Width > SelectionPictureBox.Width || bmp.Height > SelectionPictureBox.Height)
                     {
-                        if (bmp.Width > SelectionPictureBox.Width || bmp.Height > SelectionPictureBox.Height)
-                        {
-                            SelectionPictureBox.SizeMode = PictureBoxSizeMode.Zoom;
-                        }
-                        else
-                        {
-                            SelectionPictureBox.SizeMode = PictureBoxSizeMode.CenterImage;
-                        }
+                        SelectionPictureBox.SizeMode = PictureBoxSizeMode.Zoom;
                     }
+                    else
+                    {
+                        SelectionPictureBox.SizeMode = PictureBoxSizeMode.CenterImage;
+                    }
+                }
 
-                    var dis = SelectionPictureBox.Image;
-                    SelectionPictureBox.Image = null;
-                    dis?.Dispose();
+                var dis = SelectionPictureBox.Image;
+                SelectionPictureBox.Image = null;
+                dis?.Dispose();
 
-                    SelectionPictureBox.Image = bmp;
-                    NameLabel.Text = texItem?.Name ?? "";
-                    SizeLabel.Text = texItem == null ? "" : $"{texItem.Width} x {texItem.Height}";
-                });
+                SelectionPictureBox.Image = bmp;
+                NameLabel.Text = texItem?.Name ?? "";
+                SizeLabel.Text = texItem == null ? "" : $"{texItem.Width} x {texItem.Height}";
             });
         }
     }

@@ -166,7 +166,7 @@ namespace Sledge.BspEditor.Editing.Components
         {
             CreateHandle();
             var prefix = GetType().FullName;
-            this.Invoke(() =>
+            this.InvokeSync(() =>
             {
                 Text = strings.GetString(prefix, "Title");
                 lblCopies.Text = strings.GetString(prefix, "NumberOfCopies");

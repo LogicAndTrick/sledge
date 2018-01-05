@@ -40,7 +40,7 @@ namespace Sledge.BspEditor.Tools.Selection
             {
                 var sel = doc.Map.Data.Get<Primitives.MapData.Selection>().FirstOrDefault();
                 var count = sel?.GetSelectedParents().Count() ?? 0;
-                _label.Invoke(() =>
+                await _label.InvokeAsync(() =>
                 {
                     _label.Text = $"{count} objects selected";
                 });

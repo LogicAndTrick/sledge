@@ -27,7 +27,7 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
         public string NothingIsSelected
         {
             get => lblNothing.Text;
-            set => this.Invoke(() => lblNothing.Text = value);
+            set => this.InvokeSync(() => lblNothing.Text = value);
         }
 
         public bool HasChanges => false;

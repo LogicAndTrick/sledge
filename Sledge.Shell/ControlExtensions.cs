@@ -9,31 +9,15 @@ namespace Sledge.Shell
 {
     public static class ControlExtensions
     {
-        public static void Invoke(this Control control, Action action)
+        public static void InvokeSync(this Control control, Action action)
         {
-            if (!control.IsHandleCreated) return;
-
-            if (control.InvokeRequired) control.Invoke((MethodInvoker) delegate { action(); });
+            if (control.InvokeRequired) control.Invoke(new MethodInvoker(() => InvokeSync(control, action)));
             else action();
         }
 
-        public static Task InvokeAsync(this Control control, Action action)
+        public static async Task InvokeAsync(this Control control, Action action)
         {
-            if (!control.IsHandleCreated) return Task.FromResult(false);
-            var tcs = new TaskCompletionSource<bool>();
-
-            if (control.InvokeRequired)
-            {
-                var res = control.BeginInvoke(action);
-                return Task.Factory.FromAsync(res, r => tcs.SetResult(true));
-            }
-            else
-            {
-                action();
-                tcs.SetResult(true);
-            }
-
-            return tcs.Task;
+            await Task.Factory.StartNew(() => InvokeSync(control, action)).ConfigureAwait(false);
         }
 
         public static async Task<DialogResult> ShowDialogAsync(this Form form)

@@ -50,73 +50,73 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
         public string ClassLabel
         {
             get => lblClass.Text;
-            set => this.Invoke(() => lblClass.Text = value);
+            set => this.InvokeSync(() => lblClass.Text = value);
         }
 
         public string KeyValuesLabel
         {
             get => lblKeyValues.Text;
-            set => this.Invoke(() => lblKeyValues.Text = value);
+            set => this.InvokeSync(() => lblKeyValues.Text = value);
         }
 
         public string PropertyNameLabel
         {
             get => colPropertyName.Text;
-            set => this.Invoke(() => colPropertyName.Text = value);
+            set => this.InvokeSync(() => colPropertyName.Text = value);
         }
 
         public string PropertyValueLabel
         {
             get => colPropertyValue.Text;
-            set => this.Invoke(() => colPropertyValue.Text = value);
+            set => this.InvokeSync(() => colPropertyValue.Text = value);
         }
 
         public string HelpLabel
         {
             get => lblHelp.Text;
-            set => this.Invoke(() => lblHelp.Text = value);
+            set => this.InvokeSync(() => lblHelp.Text = value);
         }
 
         public string CommentsLabel
         {
             get => lblComments.Text;
-            set => this.Invoke(() => lblComments.Text = value);
+            set => this.InvokeSync(() => lblComments.Text = value);
         }
 
         public string SmartEditButton
         {
             get => btnSmartEdit.Text;
-            set => this.Invoke(() => btnSmartEdit.Text = value);
+            set => this.InvokeSync(() => btnSmartEdit.Text = value);
         }
 
         public string HelpButton
         {
             get => btnHelp.Text;
-            set => this.Invoke(() => btnHelp.Text = value);
+            set => this.InvokeSync(() => btnHelp.Text = value);
         }
 
         public string CopyButton
         {
             get => btnCopy.Text;
-            set => this.Invoke(() => btnCopy.Text = value);
+            set => this.InvokeSync(() => btnCopy.Text = value);
         }
 
         public string PasteButton
         {
             get => btnPaste.Text;
-            set => this.Invoke(() => btnPaste.Text = value);
+            set => this.InvokeSync(() => btnPaste.Text = value);
         }
 
         public string AddButton
         {
             get => btnAdd.Text;
-            set => this.Invoke(() => btnAdd.Text = value);
+            set => this.InvokeSync(() => btnAdd.Text = value);
         }
 
         public string DeleteButton
         {
             get => btnDelete.Text;
-            set => this.Invoke(() => btnDelete.Text = value);
+            set => this.InvokeSync(() => btnDelete.Text = value);
         }
 
         public string MultipleClassesText { get; set; }
@@ -148,7 +148,7 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
             _gameData = null;
             if (document != null) _gameData = await document.Environment.GetGameData();
             if (_gameData == null) _gameData = new GameData();
-            this.Invoke(() =>
+            await this.InvokeAsync(() =>
             {
                 UpdateObjects(objects);
             });

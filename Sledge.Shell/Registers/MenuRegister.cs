@@ -49,9 +49,9 @@ namespace Sledge.Shell.Registers
             return Task.FromResult(0);
         }
 
-        public Task OnInitialise()
+        public async Task OnInitialise()
         {
-            _shell.Invoke(() =>
+            _shell.InvokeSync(() =>
             {
                 _tree = new VirtualMenuTree(_context, _shell.MenuStrip, _shell.ToolStrip, _declaredSections, _declaredGroups);
 
@@ -65,8 +65,6 @@ namespace Sledge.Shell.Registers
 
             Oy.Subscribe<IContext>("Context:Changed", ContextChanged);
             Oy.Subscribe<object>("Menu:Update", UpdateMenu);
-
-            return Task.FromResult(0);
         }
 
         private Task ContextChanged(IContext context)
@@ -74,16 +72,15 @@ namespace Sledge.Shell.Registers
             return UpdateMenu(context);
         }
 
-        private Task UpdateMenu(object obj)
+        private async Task UpdateMenu(object obj)
         {
-            _shell.Invoke(_tree.Update);
-            return Task.FromResult(0);
+            await _shell.InvokeAsync(_tree.Update);
         }
 
         // Clear all menus and repopulate them from the menu item providers
         private void UpdateMenus(object sender, EventArgs e)
         {
-            _shell.Invoke(() =>
+            _shell.InvokeSync(() =>
             {
                 _tree.Clear();
                 _menuItems.Clear();
@@ -405,7 +402,7 @@ namespace Sledge.Shell.Registers
 
             private void Fire(object sender, EventArgs e)
             {
-                MenuItem?.Invoke(Context).ContinueWith(t => MenuMenuItem.GetCurrentParent()?.Invoke(Update));
+                MenuItem?.Invoke(Context).ContinueWith(t => MenuMenuItem.GetCurrentParent()?.InvokeAsync(Update));
             }
 
             public override void Update()

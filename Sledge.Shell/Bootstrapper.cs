@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Linq;
 using System.Threading.Tasks;
 using Sledge.Common.Logging;
 using Sledge.Common.Shell.Hooks;
@@ -24,10 +25,10 @@ namespace Sledge.Shell
         /// <returns>The running task</returns>
         public async Task Startup()
         {
-            foreach (var export in _startupHooks)
+            foreach (var export in _startupHooks.Select(x => x.Value).OrderBy(x => x.GetType().FullName))
             {
-                Log.Debug("Bootstrapper", "Startup hook: " + export.Value.GetType().FullName);
-                await export.Value.OnStartup();
+                Log.Debug("Bootstrapper", "Startup hook: " + export.GetType().FullName);
+                await export.OnStartup();
             }
         }
 
@@ -37,10 +38,10 @@ namespace Sledge.Shell
         /// <returns>The running task</returns>
         public async Task Initialise()
         {
-            foreach (var export in _initialiseHooks)
+            foreach (var export in _initialiseHooks.Select(x => x.Value).OrderBy(x => x.GetType().FullName))
             {
-                Log.Debug("Bootstrapper", "Initialise hook: " + export.Value.GetType().FullName);
-                await export.Value.OnInitialise();
+                Log.Debug("Bootstrapper", "Initialise hook: " + export.GetType().FullName);
+                await export.OnInitialise();
             }
         }
 
@@ -50,10 +51,10 @@ namespace Sledge.Shell
         /// <returns>False if shutdown cannot continue</returns>
         public async Task<bool> ShuttingDown()
         {
-            foreach (var export in _shuttingDownHooks)
+            foreach (var export in _shuttingDownHooks.Select(x => x.Value).OrderBy(x => x.GetType().FullName))
             {
-                Log.Debug("Bootstrapper", "Shutting down hook: " + export.Value.GetType().FullName);
-                if (!await export.Value.OnShuttingDown()) return false;
+                Log.Debug("Bootstrapper", "Shutting down hook: " + export.GetType().FullName);
+                if (!await export.OnShuttingDown()) return false;
             }
             return true;
         }
@@ -64,10 +65,10 @@ namespace Sledge.Shell
         /// <returns>The running task</returns>
         public async Task Shutdown()
         {
-            foreach (var export in _shutdownHooks)
+            foreach (var export in _shutdownHooks.Select(x => x.Value).OrderBy(x => x.GetType().FullName))
             {
-                Log.Debug("Bootstrapper", "Shutdown hook: " + export.Value.GetType().FullName);
-                await export.Value.OnShutdown();
+                Log.Debug("Bootstrapper", "Shutdown hook: " + export.GetType().FullName);
+                await export.OnShutdown();
             }
         }
     }

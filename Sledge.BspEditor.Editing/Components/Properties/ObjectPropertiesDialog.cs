@@ -38,10 +38,10 @@ namespace Sledge.BspEditor.Editing.Components.Properties
         private Dictionary<IObjectPropertyEditorTab, TabPage> _pages;
         private MapDocument _currentDocument;
 
-        public Task OnInitialise()
+        public async Task OnInitialise()
         {
             _pages = new Dictionary<IObjectPropertyEditorTab, TabPage>();
-            this.Invoke(() =>
+            this.InvokeSync(() =>
             {
                 foreach (var tab in _tabs.Select(x => x.Value).OrderBy(x => x.OrderHint))
                 {
@@ -50,32 +50,33 @@ namespace Sledge.BspEditor.Editing.Components.Properties
                     page.Controls.Add(tab.Control);
                     _pages[tab] = page;
                 }
+
+                Console.WriteLine($"{System.Threading.Thread.CurrentThread}");
             });
-            return Task.FromResult(0);
         }
 
         public string Apply
         {
             get => btnApply.Text;
-            set => this.Invoke(() => btnApply.Text = value);
+            set => this.InvokeSync(() => btnApply.Text = value);
         }
 
         public string OK
         {
             get => btnOk.Text;
-            set => this.Invoke(() => btnOk.Text = value);
+            set => this.InvokeSync(() => btnOk.Text = value);
         }
 
         public string Cancel
         {
             get => btnCancel.Text;
-            set => this.Invoke(() => btnCancel.Text = value);
+            set => this.InvokeSync(() => btnCancel.Text = value);
         }
 
         public string ResetUnsavedChanges
         {
             get => btnReset.Text;
-            set => this.Invoke(() => btnReset.Text = value);
+            set => this.InvokeSync(() => btnReset.Text = value);
         }
 
         public string UnsavedChanges { get; set; }
@@ -139,7 +140,7 @@ namespace Sledge.BspEditor.Editing.Components.Properties
 
         public void SetVisible(IContext context, bool visible)
         {
-            this.Invoke(() =>
+            this.InvokeSync(() =>
             {
                 if (visible)
                 {
@@ -229,7 +230,7 @@ namespace Sledge.BspEditor.Editing.Components.Properties
 
         private async Task SelectionChanged(MapDocument doc)
         {
-            this.Invoke(() => UpdateTabVisibility(_context));
+            await this.InvokeAsync(() => UpdateTabVisibility(_context));
             await DocumentActivated(doc);
         }
 

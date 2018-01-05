@@ -458,19 +458,16 @@ namespace Sledge.BspEditor.Tools.Texture
                 }
             }
 
-            Task.Factory.StartNew(() =>
+            _scrollBar.InvokeAsync(() =>
             {
-                _scrollBar.Invoke(() =>
-                {
-                    _scrollBar.Maximum = currentY + maxHeight;
-                    _scrollBar.SmallChange = _imageSize > 0 ? _imageSize : 128;
-                    _scrollBar.LargeChange = ClientRectangle.Height;
+                _scrollBar.Maximum = currentY + maxHeight;
+                _scrollBar.SmallChange = _imageSize > 0 ? _imageSize : 128;
+                _scrollBar.LargeChange = ClientRectangle.Height;
 
-                    if (_scrollBar.Value > _scrollBar.Maximum - ClientRectangle.Height)
-                    {
-                        _scrollBar.Value = Math.Max(0, _scrollBar.Maximum - ClientRectangle.Height);
-                    }
-                });
+                if (_scrollBar.Value > _scrollBar.Maximum - ClientRectangle.Height)
+                {
+                    _scrollBar.Value = Math.Max(0, _scrollBar.Maximum - ClientRectangle.Height);
+                }
             });
         }
 

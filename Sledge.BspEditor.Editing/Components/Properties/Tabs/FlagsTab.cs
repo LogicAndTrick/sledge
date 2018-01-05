@@ -64,7 +64,7 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
         {
             GameData gd = null;
             if (document != null) gd = await document.Environment.GetGameData();
-            this.Invoke(() =>
+            await this.InvokeAsync(() =>
             {
                 UpdateObjects(gd ?? new GameData(), objects);
             });

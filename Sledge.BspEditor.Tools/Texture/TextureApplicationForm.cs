@@ -203,7 +203,7 @@ namespace Sledge.BspEditor.Tools.Texture
                 await MapDocumentOperation.Perform(Document, new TrivialOperation(x => x.Map.Data.Replace(at), x => x.Update(at)));
             }
 
-            TextureDetailsLabel.Invoke(() =>
+            await TextureDetailsLabel.InvokeAsync(() =>
             {
                 TextureDetailsLabel.Text = label;
             });

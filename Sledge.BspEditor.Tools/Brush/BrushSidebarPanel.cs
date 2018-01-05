@@ -34,7 +34,7 @@ namespace Sledge.BspEditor.Tools.Brush
 
         private async Task ResetBrushType(BrushTool bt)
         {
-            this.Invoke(() =>
+            await this.InvokeAsync(() =>
             {
                 if (BrushTypeList.Items.Count > 0)
                 {

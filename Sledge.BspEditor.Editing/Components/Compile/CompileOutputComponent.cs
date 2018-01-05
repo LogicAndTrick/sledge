@@ -68,7 +68,7 @@ namespace Sledge.BspEditor.Editing.Components.Compile
             _queue = new Subject<int>();
             _queue.Publish().RefCount()
                 .Sample(TimeSpan.FromMilliseconds(1000))
-                .Subscribe(_ => _control.Invoke(UpdateText));
+                .Subscribe(_ => _control.InvokeSync(UpdateText));
         }
 
         private void UpdateText()
