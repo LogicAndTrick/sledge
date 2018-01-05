@@ -40,6 +40,9 @@
     <Reference Include="OpenTK, Version=2.0.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
       <HintPath>..\packages\OpenTK.2.0.0\lib\net20\OpenTK.dll</HintPath>
     </Reference>
+    <Reference Include="Poly2Tri, Version=1.0.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Poly2Tri.1.0.1.0\lib\net35-Client\Poly2Tri.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
@@ -75,6 +78,7 @@
     <Compile Include="Brush\Brushes\Controls\BrushControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="Brush\Brushes\TextBrush.cs" />
     <Compile Include="Brush\BrushSidebarPanel.cs">
       <SubType>UserControl</SubType>
     </Compile>

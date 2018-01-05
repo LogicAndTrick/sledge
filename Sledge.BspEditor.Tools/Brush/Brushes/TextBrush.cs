@@ -1,17 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Globalization;
 using System.Linq;
+using Poly2Tri;
+using Poly2Tri.Triangulation.Polygon;
+using Sledge.BspEditor.Primitives;
+using Sledge.BspEditor.Primitives.MapObjectData;
+using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.BspEditor.Tools.Brush.Brushes.Controls;
 using Sledge.Common;
+using Sledge.Common.Shell.Components;
 using Sledge.DataStructures.Geometric;
-using Sledge.DataStructures.MapObjects;
-using Polygon = Poly2Tri.Polygon;
+using Polygon = Poly2Tri.Triangulation.Polygon.Polygon;
 
 namespace Sledge.BspEditor.Tools.Brush.Brushes
 {
+    [Export(typeof(IBrush))]
+    [OrderHint("T")]
     public class TextBrush : IBrush
     {
         private readonly FontChooserControl _fontChooser;
@@ -25,9 +33,8 @@ namespace Sledge.BspEditor.Tools.Brush.Brushes
             _text = new TextControl(this) { EnteredText = "Enter text here" };
         }
 
-        public string Name { get { return "Text"; } }
-
-        public bool CanRound { get { return true; } }
+        public string Name => "Text";
+        public bool CanRound => true;
 
         public IEnumerable<BrushControl> GetControls()
         {
@@ -36,7 +43,7 @@ namespace Sledge.BspEditor.Tools.Brush.Brushes
             yield return _text;
         }
 
-        public IEnumerable<MapObject> Create(IDGenerator generator, Box box, string texture, int roundDecimals)
+        public IEnumerable<IMapObject> Create(UniqueNumberGenerator generator, Box box, string texture, int roundDecimals)
         {
             var width = box.Width;
             var length = Math.Max(1, Math.Abs((int) box.Length));
@@ -48,12 +55,12 @@ namespace Sledge.BspEditor.Tools.Brush.Brushes
             var style = Enum.GetValues(typeof (FontStyle)).OfType<FontStyle>().FirstOrDefault(fs => family.IsStyleAvailable(fs));
             if (!family.IsStyleAvailable(style)) family = FontFamily.GenericSansSerif;
 
-            var set = new PolygonSet();
+            var set = new List<Polygon>();
 
             var sizes = new List<RectangleF>();
             using (var bmp = new Bitmap(1,1))
             {
-                using (var g = System.Drawing.Graphics.FromImage(bmp))
+                using (var g = Graphics.FromImage(bmp))
                 {
                     using (var font = new Font(family, length, style, GraphicsUnit.Pixel))
                     {
@@ -139,7 +146,7 @@ namespace Sledge.BspEditor.Tools.Brush.Brushes
 
             var zOffset = box.Start.Z;
 
-            foreach (var polygon in set.Polygons)
+            foreach (var polygon in set)
             {
                 foreach (var t in polygon.Triangles)
                 {
@@ -159,22 +166,20 @@ namespace Sledge.BspEditor.Tools.Brush.Brushes
                     faces.Add(points.Select(x => x + z).Reverse().ToArray());
 
                     // Nothing new here, move along
-                    var solid = new Solid(generator.GetNextObjectID()) {Colour = Colour.GetRandomBrushColour()};
+                    var solid = new Solid(generator.Next("MapObject"));
+                    solid.Data.Add(new ObjectColor(Colour.GetRandomBrushColour()));
+
                     foreach (var arr in faces)
                     {
-                        var face = new Face(generator.GetNextFaceID())
+                        var face = new Face(generator.Next("Face"))
                         {
-                            Parent = solid,
                             Plane = new Plane(arr[0], arr[1], arr[2]),
-                            Colour = solid.Colour,
                             Texture = { Name = texture }
                         };
-                        face.Vertices.AddRange(arr.Select(x => new Vertex(x, face)));
-                        face.UpdateBoundingBox();
-                        face.AlignTextureToFace();
-                        solid.Faces.Add(face);
+                        face.Vertices.AddRange(arr.Select(x => x.Round(roundDecimals)));
+                        solid.Data.Add(face);
                     }
-                    solid.UpdateBoundingBox();
+                    solid.DescendantsChanged();
                     yield return solid;
                 }
             }
