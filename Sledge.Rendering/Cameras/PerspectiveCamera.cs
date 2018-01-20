@@ -213,7 +213,10 @@ namespace Sledge.Rendering.Cameras
         public float GetRotation()
         {
             var temp = (LookAt - Position);
-            temp.Normalize();
+            if (temp.Length != 0)
+            {
+                temp.Normalize();
+            }
             var rot = Math.Atan2(temp.Y, temp.X);
             if (rot < 0) rot += 2 * Math.PI;
             if (rot > 2 * Math.PI) rot = rot % (2 * Math.PI);
@@ -223,7 +226,10 @@ namespace Sledge.Rendering.Cameras
         public void SetRotation(float rotation)
         {
             var temp = (LookAt - Position);
-            temp.Normalize();
+            if (temp.Length != 0)
+            {
+                temp.Normalize();
+            }
             var e = GetElevation();
             var x = Math.Cos(rotation) * Math.Sin(e);
             var y = Math.Sin(rotation) * Math.Sin(e);
@@ -233,7 +239,10 @@ namespace Sledge.Rendering.Cameras
         public float GetElevation()
         {
             var temp = (LookAt - Position);
-            temp.Normalize();
+            if (temp.Length != 0)
+            {
+                temp.Normalize();
+            }
             var elev = Math.Acos(temp.Z);
             return (float)elev;
         }
