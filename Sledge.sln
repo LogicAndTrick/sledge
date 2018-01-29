@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27130.2010
+VisualStudioVersion = 15.0.27130.2026
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sledge.Editor", "Sledge.Editor\Sledge.Editor.csproj", "{DFF00869-B064-483D-95C0-A88039C471C7}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -16,8 +16,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sledge.Settings", "Sledge.S
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sledge.Sandbox", "Sledge.Sandbox\Sledge.Sandbox.csproj", "{BDFF0077-DC3E-4CE3-9CAF-AF7F076DEED7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sledge.Tools.MapFileDebugger", "Sledge.Tools.MapFileDebugger\Sledge.Tools.MapFileDebugger.csproj", "{8FA24DBE-3A4A-4A99-9C40-FC577C39F933}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sledge.Common", "Sledge.Common\Sledge.Common.csproj", "{5D414AC8-8B93-489F-9960-877923400FED}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sledge.FileSystem", "Sledge.FileSystem\Sledge.FileSystem.csproj", "{1C2C012D-DBA5-4C7F-994F-E3034AC60DCC}"
@@ -26,6 +24,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sledge.QuickForms", "Sledge
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{7A0A29CF-B1A8-4451-AAD4-C05004214452}"
 	ProjectSection(SolutionItems) = preProject
+		Milestones.txt = Milestones.txt
 		NetworkingPlan.txt = NetworkingPlan.txt
 		TestSettings.testsettings = TestSettings.testsettings
 	EndProjectSection
@@ -117,18 +116,6 @@ Global
 		{BDFF0077-DC3E-4CE3-9CAF-AF7F076DEED7}.Release|Mixed Platforms.Build.0 = Release|x86
 		{BDFF0077-DC3E-4CE3-9CAF-AF7F076DEED7}.Release|x86.ActiveCfg = Release|x86
 		{BDFF0077-DC3E-4CE3-9CAF-AF7F076DEED7}.Release|x86.Build.0 = Release|x86
-		{8FA24DBE-3A4A-4A99-9C40-FC577C39F933}.Debug|Any CPU.ActiveCfg = Debug|x86
-		{8FA24DBE-3A4A-4A99-9C40-FC577C39F933}.Debug|Any CPU.Build.0 = Debug|x86
-		{8FA24DBE-3A4A-4A99-9C40-FC577C39F933}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
-		{8FA24DBE-3A4A-4A99-9C40-FC577C39F933}.Debug|Mixed Platforms.Build.0 = Debug|x86
-		{8FA24DBE-3A4A-4A99-9C40-FC577C39F933}.Debug|x86.ActiveCfg = Debug|x86
-		{8FA24DBE-3A4A-4A99-9C40-FC577C39F933}.Debug|x86.Build.0 = Debug|x86
-		{8FA24DBE-3A4A-4A99-9C40-FC577C39F933}.Release|Any CPU.ActiveCfg = Release|x86
-		{8FA24DBE-3A4A-4A99-9C40-FC577C39F933}.Release|Any CPU.Build.0 = Release|x86
-		{8FA24DBE-3A4A-4A99-9C40-FC577C39F933}.Release|Mixed Platforms.ActiveCfg = Release|x86
-		{8FA24DBE-3A4A-4A99-9C40-FC577C39F933}.Release|Mixed Platforms.Build.0 = Release|x86
-		{8FA24DBE-3A4A-4A99-9C40-FC577C39F933}.Release|x86.ActiveCfg = Release|x86
-		{8FA24DBE-3A4A-4A99-9C40-FC577C39F933}.Release|x86.Build.0 = Release|x86
 		{5D414AC8-8B93-489F-9960-877923400FED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{5D414AC8-8B93-489F-9960-877923400FED}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5D414AC8-8B93-489F-9960-877923400FED}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
