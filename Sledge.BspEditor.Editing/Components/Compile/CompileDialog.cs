@@ -45,7 +45,7 @@ namespace Sledge.BspEditor.Editing.Components.Compile
             PopulateProfiles();
             PopulateTabs();
 
-            btnAdvancedMode.Visible = false;
+            //btnAdvancedMode.Visible = false;
         }
 
         public IEnumerable<BatchArgument> SelectedBatchArguments

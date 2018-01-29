@@ -48,6 +48,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Colour.cs" />
+    <Compile Include="Scheduler.cs" />
     <Compile Include="Shell\Commands\CommandExtensions.cs" />
     <Compile Include="Shell\Commands\CommandIDAttribute.cs" />
     <Compile Include="Shell\Commands\CommandMessage.cs" />

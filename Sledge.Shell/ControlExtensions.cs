@@ -17,7 +17,8 @@ namespace Sledge.Shell
 
         public static async Task InvokeAsync(this Control control, Action action)
         {
-            await Task.Factory.StartNew(() => InvokeSync(control, action)).ConfigureAwait(false);
+            InvokeSync(control, action);
+            //await Task.Factory.StartNew(() => InvokeSync(control, action)).ConfigureAwait(false);
         }
 
         public static async Task<DialogResult> ShowDialogAsync(this Form form)

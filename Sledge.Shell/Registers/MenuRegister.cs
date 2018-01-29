@@ -62,7 +62,7 @@ namespace Sledge.Shell.Registers
 
                 _tree.Reposition();
             });
-
+            
             Oy.Subscribe<IContext>("Context:Changed", ContextChanged);
             Oy.Subscribe<object>("Menu:Update", UpdateMenu);
         }

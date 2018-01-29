@@ -1,4 +1,4 @@
-﻿namespace Sledge.Editor.Logging
+﻿namespace Sledge.Shell.Forms
 {
     partial class ExceptionWindow
     {
