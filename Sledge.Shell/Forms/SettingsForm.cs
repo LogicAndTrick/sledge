@@ -30,19 +30,19 @@ namespace Sledge.Shell.Forms
         public string Title
         {
             get => Text;
-            set => this.InvokeSync(() => Text = value);
+            set => this.InvokeLater(() => Text = value);
         }
 
         public string OK
         {
             get => OKButton.Text;
-            set => this.InvokeSync(() => OKButton.Text = value);
+            set => this.InvokeLater(() => OKButton.Text = value);
         }
 
         public string Cancel
         {
             get => CancelButton.Text;
-            set => this.InvokeSync(() => CancelButton.Text = value);
+            set => this.InvokeLater(() => CancelButton.Text = value);
         }
         
         public SettingsForm()
@@ -173,7 +173,7 @@ namespace Sledge.Shell.Forms
 
         public void SetVisible(IContext context, bool visible)
         {
-            this.InvokeSync(() =>
+            this.InvokeLater(() =>
             {
                 if (visible)
                 {

@@ -199,9 +199,6 @@
     <Compile Include="Tools\VMTool\VMPointsState.cs" />
     <Compile Include="Tools\VMTool\VMSolid.cs" />
     <Compile Include="Tools\VMTool\VMTool.cs" />
-    <Compile Include="Settings\Elevate.cs" />
-    <Compile Include="Settings\FileType.cs" />
-    <Compile Include="Settings\FileTypeRegistration.cs" />
     <Compile Include="SingleInstance.cs" />
     <Compile Include="SledgeCursors.cs" />
     <Compile Include="Tools\TextureTool\TextureToolSidebarPanel.cs">
@@ -277,12 +274,6 @@
     <Compile Include="Tools\TextureTool\TextureTool.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Settings\SettingsForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Settings\SettingsForm.Designer.cs">
-      <DependentUpon>SettingsForm.cs</DependentUpon>
-    </Compile>
     <Compile Include="UI\UpdateReleaseDetails.cs" />
     <Compile Include="UI\Layout\ViewportWindow.cs">
       <SubType>Form</SubType>
@@ -301,9 +292,6 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-    <EmbeddedResource Include="Settings\SettingsForm.resx">
-      <DependentUpon>SettingsForm.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Tools\TextureTool\TextureToolSidebarPanel.resx">
       <DependentUpon>TextureToolSidebarPanel.cs</DependentUpon>
     </EmbeddedResource>

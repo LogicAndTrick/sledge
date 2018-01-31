@@ -38,13 +38,13 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
         public string MemberOfGroup
         {
             get => lblMemberOfGroup.Text;
-            set => this.InvokeSync(() => lblMemberOfGroup.Text = value);
+            set => this.InvokeLater(() => lblMemberOfGroup.Text = value);
         }
 
         public string EditVisgroups
         {
             get => btnEditVisgroups.Text;
-            set => this.InvokeSync(() => btnEditVisgroups.Text = value);
+            set => this.InvokeLater(() => btnEditVisgroups.Text = value);
         }
 
         /// <inheritdoc />
@@ -70,7 +70,7 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
         /// <inheritdoc />
         public async Task SetObjects(MapDocument document, List<IMapObject> objects)
         {
-            await visgroupPanel.InvokeAsync(() =>
+            visgroupPanel.InvokeLater(() =>
             {
                 _state = GetVisgroups(document, objects);
                 visgroupPanel.Update(_state);

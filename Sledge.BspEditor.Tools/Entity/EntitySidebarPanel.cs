@@ -25,7 +25,7 @@ namespace Sledge.BspEditor.Tools.Entity
         public string EntityTypeLabelText
         {
             get => EntityTypeLabel.Text;
-            set { EntityTypeLabel.InvokeSync(() => { EntityTypeLabel.Text = value; }); }
+            set { EntityTypeLabel.InvokeLater(() => { EntityTypeLabel.Text = value; }); }
         }
 
         public EntitySidebarPanel()
@@ -48,7 +48,7 @@ namespace Sledge.BspEditor.Tools.Entity
             var sel = GetSelectedEntity()?.Name;
             var gameData = await doc.Environment.GetGameData();
             
-            await EntityTypeLabel.InvokeAsync(() =>
+            EntityTypeLabel.InvokeLater(() =>
             {
                 EntityTypeList.BeginUpdate();
                 EntityTypeList.Items.Clear();

@@ -41,7 +41,7 @@ namespace Sledge.Shell.Registers
 
         private async Task ContextChanged(IContext context)
         {
-            _shell.InvokeSync(() =>
+            _shell.InvokeLater(() =>
             {
                 foreach (var c in _components)
                 {

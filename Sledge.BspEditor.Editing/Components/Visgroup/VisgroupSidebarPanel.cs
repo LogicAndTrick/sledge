@@ -34,10 +34,10 @@ namespace Sledge.BspEditor.Editing.Components.Visgroup
         public string Title { get; set; } = "Visgroups";
         public object Control => this;
 
-        public string EditButton { set { this.InvokeSync(() => { btnEdit.Text = value; }); } }
-        public string SelectButton { set { this.InvokeSync(() => { btnSelect.Text = value; }); } }
-        public string ShowAllButton { set { this.InvokeSync(() => { btnShowAll.Text = value; }); } }
-        public string NewButton { set { this.InvokeSync(() => { btnNew.Text = value; }); } }
+        public string EditButton { set { this.InvokeLater(() => { btnEdit.Text = value; }); } }
+        public string SelectButton { set { this.InvokeLater(() => { btnSelect.Text = value; }); } }
+        public string ShowAllButton { set { this.InvokeLater(() => { btnShowAll.Text = value; }); } }
+        public string NewButton { set { this.InvokeLater(() => { btnNew.Text = value; }); } }
         
         private WeakReference<MapDocument> _activeDocument = new WeakReference<MapDocument>(null);
 
@@ -69,7 +69,7 @@ namespace Sledge.BspEditor.Editing.Components.Visgroup
             var md = doc as MapDocument;
 
             _activeDocument = new WeakReference<MapDocument>(md);
-            await this.InvokeAsync(() =>
+            this.InvokeLater(() =>
             {
                 VisgroupPanel.Update(md);
             });
@@ -81,7 +81,7 @@ namespace Sledge.BspEditor.Editing.Components.Visgroup
             {
                 if (change.AffectedData.Any(x => x is Primitives.MapData.Visgroup))
                 {
-                    await this.InvokeAsync(() =>
+                    this.InvokeLater(() =>
                     {
                         VisgroupPanel.Update(change.Document);
                     });

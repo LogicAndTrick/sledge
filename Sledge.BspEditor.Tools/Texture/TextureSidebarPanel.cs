@@ -117,7 +117,7 @@ namespace Sledge.BspEditor.Tools.Texture
                 }
             }
 
-            await this.InvokeAsync(() =>
+            this.InvokeLater(() =>
             {
                 if (bmp != null)
                 {

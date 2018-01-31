@@ -203,7 +203,7 @@ namespace Sledge.BspEditor.Tools.Texture
                 await MapDocumentOperation.Perform(Document, new TrivialOperation(x => x.Map.Data.Replace(at), x => x.Update(at)));
             }
 
-            await TextureDetailsLabel.InvokeAsync(() =>
+            TextureDetailsLabel.InvokeLater(() =>
             {
                 TextureDetailsLabel.Text = label;
             });
@@ -282,7 +282,7 @@ namespace Sledge.BspEditor.Tools.Texture
                 labelText = $"{ti.Name} ({ti.Width} x {ti.Height})";
             }
             
-            await this.InvokeAsync(() => {
+            this.InvokeLater(() => {
 
                 ScaleXValue.Value = _currentTextureProperties.XScale;
                 ScaleYValue.Value = _currentTextureProperties.YScale;
@@ -309,9 +309,10 @@ namespace Sledge.BspEditor.Tools.Texture
                 SelectedTexturesList.SetSelectedTextures(textures);
                 RecentTexturesList.SetSelectedTextures(new string[0]);
                 HideMaskCheckbox.Checked = Document.Map.Data.GetOne<HideFaceMask>()?.Hidden == true;
+
+                _freeze = false;
             });
 
-            _freeze = false;
         }
 
         private void PropertiesChanged()

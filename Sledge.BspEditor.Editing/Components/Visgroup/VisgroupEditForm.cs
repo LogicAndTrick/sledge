@@ -28,7 +28,7 @@ namespace Sledge.BspEditor.Editing.Components.Visgroup
         {
             CreateHandle();
             var prefix = GetType().FullName;
-            this.InvokeSync(() =>
+            this.InvokeLater(() =>
             {
                 Text = strings.GetString(prefix, "Title");
                 NameLabel.Text = strings.GetString(prefix, nameof(NameLabel));

@@ -78,7 +78,7 @@ namespace Sledge.Shell.Registers
 
             private void TextChanged(object sender, string text)
             {
-                Label.Owner.InvokeSync(() =>
+                Label.Owner.InvokeLater(() =>
                 {
                     Label.Text = text;
                 });
@@ -86,7 +86,7 @@ namespace Sledge.Shell.Registers
 
             public void ContextChanged(IContext context)
             {
-                Label.Owner.InvokeSync(() =>
+                Label.Owner.InvokeLater(() =>
                 {
                     Label.Visible = Item.IsInContext(context);
                 });

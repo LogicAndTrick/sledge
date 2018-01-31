@@ -458,7 +458,7 @@ namespace Sledge.BspEditor.Tools.Texture
                 }
             }
 
-            _scrollBar.InvokeAsync(() =>
+            _scrollBar.InvokeLater(() =>
             {
                 _scrollBar.Maximum = currentY + maxHeight;
                 _scrollBar.SmallChange = _imageSize > 0 ? _imageSize : 128;

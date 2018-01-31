@@ -41,7 +41,7 @@ namespace Sledge.BspEditor.Editing.Components.Properties
         public async Task OnInitialise()
         {
             _pages = new Dictionary<IObjectPropertyEditorTab, TabPage>();
-            this.InvokeSync(() =>
+            this.InvokeLater(() =>
             {
                 foreach (var tab in _tabs.Select(x => x.Value).OrderBy(x => x.OrderHint))
                 {
@@ -50,33 +50,31 @@ namespace Sledge.BspEditor.Editing.Components.Properties
                     page.Controls.Add(tab.Control);
                     _pages[tab] = page;
                 }
-
-                Console.WriteLine($"{System.Threading.Thread.CurrentThread}");
             });
         }
 
         public string Apply
         {
             get => btnApply.Text;
-            set => this.InvokeSync(() => btnApply.Text = value);
+            set => this.InvokeLater(() => btnApply.Text = value);
         }
 
         public string OK
         {
             get => btnOk.Text;
-            set => this.InvokeSync(() => btnOk.Text = value);
+            set => this.InvokeLater(() => btnOk.Text = value);
         }
 
         public string Cancel
         {
             get => btnCancel.Text;
-            set => this.InvokeSync(() => btnCancel.Text = value);
+            set => this.InvokeLater(() => btnCancel.Text = value);
         }
 
         public string ResetUnsavedChanges
         {
             get => btnReset.Text;
-            set => this.InvokeSync(() => btnReset.Text = value);
+            set => this.InvokeLater(() => btnReset.Text = value);
         }
 
         public string UnsavedChanges { get; set; }
@@ -140,7 +138,7 @@ namespace Sledge.BspEditor.Editing.Components.Properties
 
         public void SetVisible(IContext context, bool visible)
         {
-            this.InvokeSync(() =>
+            this.InvokeLater(() =>
             {
                 if (visible)
                 {
@@ -151,7 +149,7 @@ namespace Sledge.BspEditor.Editing.Components.Properties
                     DocumentActivated(doc);
                     #pragma warning restore 4014
 
-                    Show(_parent.Value);
+                    if (!Visible) Show(_parent.Value);
                     Subscribe();
                 }
                 else
@@ -230,7 +228,7 @@ namespace Sledge.BspEditor.Editing.Components.Properties
 
         private async Task SelectionChanged(MapDocument doc)
         {
-            await this.InvokeAsync(() => UpdateTabVisibility(_context));
+            this.InvokeLater(() => UpdateTabVisibility(_context));
             await DocumentActivated(doc);
         }
 
