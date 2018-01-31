@@ -34,6 +34,10 @@ namespace Sledge.Shell.Settings.Editors
             {
                 return true;
             }
+            else if (key.Type == typeof(DocumentRegister.FileAssociations))
+            {
+                return true;
+            }
             return false;
         }
 
@@ -63,6 +67,10 @@ namespace Sledge.Shell.Settings.Editors
             else if (key.Type == typeof(HotkeyRegister.HotkeyBindings))
             {
                 return new HotkeysEditor();
+            }
+            else if (key.Type == typeof(DocumentRegister.FileAssociations))
+            {
+                return new FileAssociationsEditor();
             }
             return null;
         }

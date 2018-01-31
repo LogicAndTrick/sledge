@@ -175,6 +175,12 @@
     <Compile Include="Settings\Editors\BooleanEditor.Designer.cs">
       <DependentUpon>BooleanEditor.cs</DependentUpon>
     </Compile>
+    <Compile Include="Settings\Editors\FileAssociationsEditor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Settings\Editors\FileAssociationsEditor.Designer.cs">
+      <DependentUpon>FileAssociationsEditor.cs</DependentUpon>
+    </Compile>
     <Compile Include="Settings\Editors\SliderEditor.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -255,6 +261,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Settings\Editors\EnumEditor.resx">
       <DependentUpon>EnumEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Settings\Editors\FileAssociationsEditor.resx">
+      <DependentUpon>FileAssociationsEditor.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Settings\Editors\SliderEditor.resx">
       <DependentUpon>SliderEditor.cs</DependentUpon>
