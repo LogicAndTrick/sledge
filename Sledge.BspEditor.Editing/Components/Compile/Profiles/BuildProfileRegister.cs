@@ -45,7 +45,7 @@ namespace Sledge.BspEditor.Editing.Components.Compile.Profiles
         /// </summary>
         public List<BuildProfile> GetProfiles(string specificationName)
         {
-            return _profiles.Where(x => x.Name == specificationName).ToList();
+            return _profiles.Where(x => x.SpecificationName == specificationName).ToList();
         }
 
         /// <summary>
@@ -55,6 +55,15 @@ namespace Sledge.BspEditor.Editing.Components.Compile.Profiles
         {
             _profiles.RemoveAll(x => string.Equals(x.Name, profile.Name, StringComparison.InvariantCultureIgnoreCase) && x.SpecificationName == profile.SpecificationName);
             _profiles.Add(profile);
+        }
+
+        /// <summary>
+        /// Remove a profile from the register.
+        /// </summary>
+        /// <param name="profile">The profile to remove</param>
+        public void Remove(BuildProfile profile)
+        {
+            _profiles.RemoveAll(x => string.Equals(x.Name, profile.Name, StringComparison.InvariantCultureIgnoreCase) && x.SpecificationName == profile.SpecificationName);
         }
     }
 }

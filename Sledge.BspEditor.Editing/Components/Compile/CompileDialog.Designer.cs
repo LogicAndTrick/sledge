@@ -35,7 +35,6 @@
             this.pnlSteps = new System.Windows.Forms.FlowLayoutPanel();
             this.btnGo = new System.Windows.Forms.Button();
             this.btnCancel = new System.Windows.Forms.Button();
-            this.btnNewProfile = new System.Windows.Forms.Button();
             this.btnRename = new System.Windows.Forms.Button();
             this.btnDelete = new System.Windows.Forms.Button();
             this.btnSaveProfile = new System.Windows.Forms.Button();
@@ -123,17 +122,6 @@
             this.btnCancel.Text = "Cancel";
             this.btnCancel.UseVisualStyleBackColor = true;
             // 
-            // btnNewProfile
-            // 
-            this.btnNewProfile.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnNewProfile.Location = new System.Drawing.Point(540, 3);
-            this.btnNewProfile.Name = "btnNewProfile";
-            this.btnNewProfile.Size = new System.Drawing.Size(81, 23);
-            this.btnNewProfile.TabIndex = 26;
-            this.btnNewProfile.Text = "New Profile...";
-            this.btnNewProfile.UseVisualStyleBackColor = true;
-            this.btnNewProfile.Click += new System.EventHandler(this.NewProfileButtonClicked);
-            // 
             // btnRename
             // 
             this.btnRename.Location = new System.Drawing.Point(173, 3);
@@ -180,7 +168,6 @@
             // 
             this.AdvancedPanel.Controls.Add(this.btnSimpleMode);
             this.AdvancedPanel.Controls.Add(this.label40);
-            this.AdvancedPanel.Controls.Add(this.btnNewProfile);
             this.AdvancedPanel.Controls.Add(this.ToolTabs);
             this.AdvancedPanel.Controls.Add(this.btnRename);
             this.AdvancedPanel.Controls.Add(this.cmbProfile);
@@ -294,7 +281,6 @@
         private System.Windows.Forms.TabControl ToolTabs;
         private System.Windows.Forms.Button btnGo;
         private System.Windows.Forms.Button btnCancel;
-        private System.Windows.Forms.Button btnNewProfile;
         private System.Windows.Forms.Button btnRename;
         private System.Windows.Forms.Button btnDelete;
         private System.Windows.Forms.Button btnSaveProfile;

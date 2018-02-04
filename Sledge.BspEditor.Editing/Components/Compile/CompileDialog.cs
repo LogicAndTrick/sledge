@@ -9,6 +9,7 @@ using Sledge.BspEditor.Editing.Components.Compile.Profiles;
 using Sledge.BspEditor.Editing.Components.Compile.Specification;
 using Sledge.Common.Shell.Components;
 using Sledge.Common.Translations;
+using Sledge.QuickForms;
 
 namespace Sledge.BspEditor.Editing.Components.Compile
 {
@@ -16,7 +17,9 @@ namespace Sledge.BspEditor.Editing.Components.Compile
     {
         private CompileSpecification _specification;
         private readonly BuildProfileRegister _buildProfileRegister;
+
         private CompilePreset _preset;
+        private BuildProfile _profile;
 
         private Size _simpleSize = new Size(320, 450);
         private Size _advancedSize = new Size(750, 550);
@@ -42,10 +45,8 @@ namespace Sledge.BspEditor.Editing.Components.Compile
             PresetTable.RowStyles.Clear();
 
             PopulatePresets();
-            PopulateProfiles();
             PopulateTabs();
-
-            //btnAdvancedMode.Visible = false;
+            PopulateProfiles();
         }
 
         public IEnumerable<BatchArgument> SelectedBatchArguments
@@ -60,6 +61,51 @@ namespace Sledge.BspEditor.Editing.Components.Compile
                         if (_preset.ShouldRunTool(t.Name))
                         {
                             batch.Add(new BatchArgument {Name = t.Name, Arguments = _preset.GetArguments(t.Name)});
+                        }
+                    }
+                }
+                else if (_profile != null)
+                {
+                    var args = _profile.Arguments;
+
+                    var shared = "";
+                    if (args.ContainsKey("Shared"))
+                    {
+                        var sa = args["Shared"];
+                        shared = " " + sa;
+                    }
+
+                    foreach (var kv in args)
+                    {
+                        batch.Add(new BatchArgument {Name = kv.Key, Arguments = kv.Value + shared});
+                    }
+                }
+                else
+                {
+                    var args = new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase);
+                    foreach (var panel in ToolTabs.TabPages.OfType<TabPage>().SelectMany(x => x.Controls.OfType<BuildParametersPanel>()))
+                    {
+                        args.Add(panel.Tool.Name, panel.Arguments);
+                    }
+
+                    var shared = "";
+                    if (args.ContainsKey("Shared"))
+                    {
+                        var sa = args["Shared"];
+                        shared = " " + sa;
+                    }
+
+                    var shouldRun = new List<string>();
+                    foreach (var step in pnlSteps.Controls.OfType<CheckBox>())
+                    {
+                        if (step.Checked && step.Tag is CompileTool t) shouldRun.Add(t.Name);
+                    }
+
+                    foreach (var kv in args)
+                    {
+                        if (shouldRun.Contains(kv.Key))
+                        {
+                            batch.Add(new BatchArgument {Name = kv.Key, Arguments = kv.Value + shared});
                         }
                     }
                 }
@@ -83,12 +129,25 @@ namespace Sledge.BspEditor.Editing.Components.Compile
                 btn.Click += (s, e) => UsePreset(pre);
                 PresetTable.Controls.Add(btn);
             }
+
+            foreach (var profile in _buildProfileRegister.GetProfiles(_specification.Name))
+            {
+                var btn = new Button
+                {
+                    Text = profile.Name,
+                    Dock = DockStyle.Top,
+                    TextAlign = ContentAlignment.MiddleCenter
+                };
+                btn.Click += (s, e) => UseProfile(profile);
+                PresetTable.Controls.Add(btn);
+            }
         }
 
         private void PopulateProfiles()
         {
             cmbProfile.Items.Clear();
             cmbProfile.Items.AddRange(_buildProfileRegister.GetProfiles(_specification.Name).Select(x => new ProfileWrapper(x)).ToArray<object>());
+            cmbProfile.Items.AddRange(_specification.Presets.Select(x => new ProfileWrapper(x)).ToArray<object>());
             if (cmbProfile.Items.Count > 0) cmbProfile.SelectedIndex = 0;
         }
 
@@ -118,8 +177,11 @@ namespace Sledge.BspEditor.Editing.Components.Compile
                     Tag = tool
                 };
 
-                var bpp = new BuildParametersPanel {Dock = DockStyle.Fill};
-                bpp.SetTool(tool);
+                var bpp = new BuildParametersPanel
+                {
+                    Dock = DockStyle.Fill,
+                    Tool = tool
+                };
                 tab.Controls.Add(bpp);
 
                 ToolTabs.TabPages.Add(tab);
@@ -133,36 +195,125 @@ namespace Sledge.BspEditor.Editing.Components.Compile
             Close();
         }
 
+        private void UseProfile(BuildProfile profile)
+        {
+            _profile = profile;
+            DialogResult = DialogResult.OK;
+            Close();
+        }
+
         private void ProfileSelected(object sender, EventArgs e)
         {
-            //_profile = ProfileSelect.SelectedItem as BuildProfile;
-            //if (_profile == null) return;
-            //UpdateParameters(_profile);
+            btnSaveProfile.Enabled = btnRename.Enabled = btnDelete.Enabled = false;
+            if (!(cmbProfile.SelectedItem is ProfileWrapper profile)) return;
+            UpdateParameters(profile);
+
+            // You can't edit a preset
+            btnSaveProfile.Enabled = btnRename.Enabled = btnDelete.Enabled = profile.Preset == null;
+        }
+
+        private void UpdateParameters(ProfileWrapper profile)
+        {
+            var panels = ToolTabs.TabPages.OfType<TabPage>().SelectMany(x => x.Controls.OfType<BuildParametersPanel>()).ToList();
+            foreach (var panel in panels)
+            {
+                if (string.Equals(panel.Tool.Name, "Shared", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    panel.Arguments = String.Join(" ", panels.Select(x => profile.GetArguments(x.Tool.Name)));
+                }
+                else
+                {
+                    panel.Arguments = profile.GetArguments(panel.Tool.Name);
+                }
+            }
+        }
+
+        private string PromptName(string name)
+        {
+            var qf = new QuickForm("Profile name") {UseShortcutKeys = true};
+            qf.TextBox("Name", name);
+            qf.OkCancel("OK", "Cancel");
+
+            if (qf.ShowDialog() != DialogResult.OK) return null;
+
+            var n = qf.String("Name");
+            return String.IsNullOrEmpty(n) ? null : n;
         }
 
         private void RenameProfileButtonClicked(object sender, EventArgs e)
         {
+            if (!(cmbProfile.SelectedItem is ProfileWrapper profile)) return;
+            if (profile.Profile == null) return;
 
+            var name = PromptName(profile.GetName());
+            if (String.IsNullOrEmpty(name)) return;
+
+            profile.Profile.Name = name;
+            
+            PopulateProfiles();
+            cmbProfile.SelectedIndex = cmbProfile.Items.OfType<ProfileWrapper>().ToList().FindIndex(x => x.Profile == profile.Profile);
         }
 
         private void DeleteProfileButtonClicked(object sender, EventArgs e)
         {
+            if (!(cmbProfile.SelectedItem is ProfileWrapper profile)) return;
+            if (profile.Profile == null) return;
 
-        }
-
-        private void NewProfileButtonClicked(object sender, EventArgs e)
-        {
-
+            if (MessageBox.Show($"Delete profile '{profile.GetName()}'?", "Delete profile?", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
+            {
+                _buildProfileRegister.Remove(profile.Profile);
+                PopulateProfiles();
+            }
         }
 
         private void SaveProfileButtonClicked(object sender, EventArgs e)
         {
+            if (!(cmbProfile.SelectedItem is ProfileWrapper profile)) return;
+            if (profile.Profile == null) return;
 
+            SetArgumentsFromInterface(profile.Profile);
         }
 
         private void SaveProfileAsButtonClicked(object sender, EventArgs e)
         {
+            var name = PromptName("");
+            if (String.IsNullOrEmpty(name)) return;
+            
+            var profile = new BuildProfile
+            {
+                Name = name,
+                SpecificationName = _specification.Name
+            };
+            SetArgumentsFromInterface(profile);
+            _buildProfileRegister.Add(profile);
 
+            PopulateProfiles();
+            cmbProfile.SelectedIndex = cmbProfile.Items.OfType<ProfileWrapper>().ToList().FindIndex(x => x.Profile == profile);
+        }
+
+        private void SetArgumentsFromInterface(BuildProfile profile)
+        {
+            var args = new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase);
+            foreach (var panel in ToolTabs.TabPages.OfType<TabPage>().SelectMany(x => x.Controls.OfType<BuildParametersPanel>()))
+            {
+                args.Add(panel.Tool.Name, panel.Arguments);
+            }
+
+            var shouldRun = new List<string>{ "Shared" };
+            foreach (var step in pnlSteps.Controls.OfType<CheckBox>())
+            {
+                if (step.Checked && step.Tag is CompileTool t) shouldRun.Add(t.Name);
+            }
+
+            profile.Arguments.Clear();
+
+            foreach (var kv in args)
+            {
+                if (shouldRun.Contains(kv.Key))
+                {
+                    profile.Arguments[kv.Key] = kv.Value;
+                }
+            }
         }
 
         private void SwitchToAdvanced(object sender, EventArgs e)
@@ -186,15 +337,35 @@ namespace Sledge.BspEditor.Editing.Components.Compile
         private class ProfileWrapper
         {
             public BuildProfile Profile { get; set; }
+            public CompilePreset Preset { get; set; }
 
             public ProfileWrapper(BuildProfile profile)
             {
                 Profile = profile;
             }
 
+            public ProfileWrapper(CompilePreset preset)
+            {
+                Preset = preset;
+            }
+
+            public string GetArguments(string name)
+            {
+                if (Profile != null && Profile.Arguments.ContainsKey(name)) return Profile.Arguments[name];
+                if (Preset != null) return Preset.GetArguments(name);
+                return "";
+            }
+
+            public string GetName()
+            {
+                return Profile?.Name ?? Preset?.Name ?? "";
+            }
+
             public override string ToString()
             {
-                return Profile.Name;
+                if (Profile != null) return Profile.Name;
+                if (Preset != null) return "Preset: " + Preset.Name;
+                return "--";
             }
         }
     }

@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.dataTable = new System.Windows.Forms.DataGridView();
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.txtPreviewText = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.dataTable)).BeginInit();
             this.SuspendLayout();
             // 
@@ -52,24 +52,25 @@
             this.dataTable.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.CellSelect;
             this.dataTable.Size = new System.Drawing.Size(535, 351);
             this.dataTable.TabIndex = 0;
+            this.dataTable.CurrentCellDirtyStateChanged += new System.EventHandler(this.StateChanged);
             // 
-            // textBox1
+            // txtPreviewText
             // 
-            this.textBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            this.txtPreviewText.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBox1.Location = new System.Drawing.Point(3, 357);
-            this.textBox1.Multiline = true;
-            this.textBox1.Name = "textBox1";
-            this.textBox1.ReadOnly = true;
-            this.textBox1.Size = new System.Drawing.Size(535, 47);
-            this.textBox1.TabIndex = 1;
-            this.textBox1.Text = "one line\r\ntwo line\r\nthree line";
+            this.txtPreviewText.Location = new System.Drawing.Point(3, 357);
+            this.txtPreviewText.Multiline = true;
+            this.txtPreviewText.Name = "txtPreviewText";
+            this.txtPreviewText.ReadOnly = true;
+            this.txtPreviewText.Size = new System.Drawing.Size(535, 47);
+            this.txtPreviewText.TabIndex = 1;
+            this.txtPreviewText.Text = "one line\r\ntwo line\r\nthree line";
             // 
             // BuildParametersPanel
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.txtPreviewText);
             this.Controls.Add(this.dataTable);
             this.Name = "BuildParametersPanel";
             this.Size = new System.Drawing.Size(541, 407);
@@ -82,6 +83,6 @@
         #endregion
 
         private System.Windows.Forms.DataGridView dataTable;
-        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.TextBox txtPreviewText;
     }
 }
