@@ -59,6 +59,7 @@
     <Compile Include="Commands\Carve.cs" />
     <Compile Include="Commands\EditVisgroups.cs" />
     <Compile Include="Commands\MoveToWorld.cs" />
+    <Compile Include="Commands\OpenSledgeWebsite.cs" />
     <Compile Include="Commands\OpenCompileWindow.cs" />
     <Compile Include="Commands\TieToEntity.cs" />
     <Compile Include="Commands\Hollow.cs" />

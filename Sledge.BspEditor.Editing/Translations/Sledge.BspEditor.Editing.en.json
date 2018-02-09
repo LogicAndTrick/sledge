@@ -16,6 +16,10 @@
             "Name": "About Sledge",
             "Details": "View information about this application."
         },
+        "OpenSledgeWebsite": {
+            "Name": "Sledge Website",
+            "Details": "Go to the Sledge website."
+        },
         "OpenObjectProperties": {
             "Name": "Object properties",
             "Details": "Open the object properties window."
