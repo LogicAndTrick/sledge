@@ -25,5 +25,25 @@
         "EntityTool": {
             "CreateObject": "Create {0}"
         }
-    }
+    },
+    "Texture": {
+        "TextureReplaceDialog": {
+            "Title": "Replace Textures",
+            "Find": "Find:",
+            "Replace": "Replace:",
+            "Browse": "Browse...",
+            "ReplaceIn": "Replace In:",
+            "ReplaceSelection": "Selection",
+            "ReplaceVisible": "All visible solids",
+            "ReplaceEverything": "Everything",
+            "RescaleTextures": "Rescale texture coordinates",
+            "Action": "Action:",
+            "ActionExact": "Replace exact matches",
+            "ActionPartial": "Replace partial matches",
+            "ActionSubstitute": "Substitute partial matches",
+            "ActionSelect": "Select matches (don't replace)",
+            "OK": "OK",
+            "Cancel": "Cancel"
+        } 
+    } 
 }

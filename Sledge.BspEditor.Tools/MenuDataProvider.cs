@@ -25,6 +25,9 @@ namespace Sledge.BspEditor.Tools
             yield return new MenuGroup("Map", "", "Texture", "H");
             yield return new MenuGroup("Map", "", "Info", "J");
             yield return new MenuGroup("Map", "", "Pointfile", "N");
+
+            yield return new MenuGroup("Tools", "", "Cordon", "F");
+            yield return new MenuGroup("Tools", "", "Texture", "I");
         }
     }
 }

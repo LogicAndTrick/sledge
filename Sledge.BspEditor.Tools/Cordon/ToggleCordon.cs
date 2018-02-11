@@ -14,7 +14,7 @@ namespace Sledge.BspEditor.Tools.Cordon
 {
     [Export(typeof(ICommand))]
     [CommandID("BspEditor:Cordon:ToggleCordon")]
-    [MenuItem("Map", "", "Cordon", "B")]
+    [MenuItem("Tools", "", "Cordon", "B")]
     [MenuImage(typeof(Resources), nameof(Resources.Menu_Cordon))]
     public class ToggleCordon : ICommand
     {

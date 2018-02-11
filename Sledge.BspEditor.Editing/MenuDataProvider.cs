@@ -21,8 +21,8 @@ namespace Sledge.BspEditor.Editing
             yield return new MenuGroup("Map", "", "Texture", "F");
 
             yield return new MenuGroup("Tools", "", "Evil", "B");
-            yield return new MenuGroup("Tools", "", "Entity", "D");
-            yield return new MenuGroup("Tools", "", "Transform", "H");
+            yield return new MenuGroup("Tools", "", "Entity", "H");
+            yield return new MenuGroup("Tools", "", "Transform", "L");
         }
     }
 }

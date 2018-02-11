@@ -169,6 +169,7 @@
     <Compile Include="State\StateEvent.cs" />
     <Compile Include="State\StateTool.cs" />
     <Compile Include="Texture\AlignMode.cs" />
+    <Compile Include="Texture\ReplaceTextures.cs" />
     <Compile Include="Texture\HideFaceMask.cs" />
     <Compile Include="Texture\JustifyMode.cs" />
     <Compile Include="Texture\TextureApplicationForm.cs">
@@ -176,6 +177,12 @@
     </Compile>
     <Compile Include="Texture\TextureApplicationForm.Designer.cs">
       <DependentUpon>TextureApplicationForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Texture\TextureReplaceDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Texture\TextureReplaceDialog.Designer.cs">
+      <DependentUpon>TextureReplaceDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="Texture\TextureTool.cs" />
     <Compile Include="Texture\TextureToolSidebarPanel.cs">
@@ -244,8 +251,9 @@
     <None Include="packages.config" />
     <Content Include="Resources\Menu_Cordon.png" />
     <Content Include="Resources\Menu_IgnoreGrouping.png" />
+    <Content Include="Resources\Menu_ReplaceTextures.png" />
     <Content Include="Translations\Sledge.BspEditor.Tools.en.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
   <ItemGroup>
@@ -277,6 +285,9 @@
     <EmbeddedResource Include="Texture\TextureApplicationForm.resx">
       <DependentUpon>TextureApplicationForm.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Texture\TextureReplaceDialog.resx">
+      <DependentUpon>TextureReplaceDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Texture\TextureToolSidebarPanel.resx">
       <DependentUpon>TextureToolSidebarPanel.cs</DependentUpon>
