@@ -67,7 +67,7 @@ namespace Sledge.BspEditor.Rendering
 
         // Settings container
 
-        public string Name => "Sledge.Rendering.Renderer";
+        public string Name => "Sledge.BspEditor.Rendering.Renderer";
 
         public IEnumerable<SettingKey> GetKeys()
         {

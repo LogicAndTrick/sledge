@@ -1,0 +1,43 @@
+﻿{
+    "@Meta": {
+        "Base": "Sledge.BspEditor.Rendering", 
+        "Language": "en",
+        "Inherit": ""
+    },
+    "@Settings": {
+        "@Group.Navigation": "Navigation",
+        "@Group.Rendering": "Rendering",
+        "CameraNavigationViewportSettings": {
+            "Camera2DPanRequiresMouseClick": "Moving the 2D camera requires a mouse click",
+            "Camera3DPanRequiresMouseClick": "Moving the 3D camera requires a mouse click",
+            "ForwardSpeed": "Forward speed in 3D view",
+            "TimeToTopSpeed": "Time to top speed in 3D view",
+            "MouseWheelMoveDistance": "Mouse wheel move distance",
+            "InvertX": "Invert X axis",
+            "InvertY": "Invert Y axis"
+        },
+        "Converters": {
+            "CenterHandlesConverter": {
+                "DrawCenterHandles": "Show object center handles",
+                "CenterHandlesActiveViewportOnly": "Show center handles in the active viewport only"
+            },
+            "EntityAngleConverter": {
+                "DrawEntityAngles": "Show entity angles"
+            }
+        },
+        "Renderer": {
+            "Renderer": "Renderer",
+            "DisableTextureTransparency": "Disable texture transparency (compatibility mode)",
+            "DisableTextureFiltering": "Disable texture filtering (compatibility mode)",
+            "ForcePowerOfTwoTextureSizes": "Disable non-power-of-two texture sizes (compatibility mode)",
+            "ShowPerspectiveGrid": "Enable 3D grid",
+            "PerspectiveGridSpacing": "3D grid spacing",
+            "PerspectiveBackgroundColour": "3D view background colour",
+            "OrthographicBackgroundColour": "2D view background colour",
+            "PointSize": "Point size in 2D views" 
+        }
+    },
+    "Commands": {
+
+    } 
+}

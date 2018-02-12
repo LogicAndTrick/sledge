@@ -98,7 +98,7 @@
     <Compile Include="Converters\MapObjectSceneConverterPriority.cs" />
     <Compile Include="Converters\ViewportTextConverter.cs" />
     <Compile Include="GeometricExtensions.cs" />
-    <Compile Include="Viewport\CameraNavigataionViewportSettings.cs" />
+    <Compile Include="Viewport\CameraNavigationViewportSettings.cs" />
     <Compile Include="Viewport\IViewportEventListener.cs" />
     <Compile Include="Converters\MapObjectConverter.cs" />
     <Compile Include="Viewport\MapViewport.cs" />
@@ -144,6 +144,9 @@
     <None Include="app.config" />
     <None Include="OpenTK.dll.config" />
     <None Include="packages.config" />
+    <Content Include="Translations\Sledge.BspEditor.Rendering.en.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Commands\" />

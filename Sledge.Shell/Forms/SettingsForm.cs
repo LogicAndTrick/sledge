@@ -88,7 +88,7 @@ namespace Sledge.Shell.Forms
             GroupList.EndUpdate();
         }
         
-        private List<ISettingEditor> _editors = new List<ISettingEditor>();
+        private readonly List<ISettingEditor> _editors = new List<ISettingEditor>();
 
         private void LoadEditorList()
         {
@@ -100,8 +100,7 @@ namespace Sledge.Shell.Forms
             
             SettingsPanel.RowStyles.Clear();
 
-            var gh = GroupList.SelectedItem as GroupHolder;
-            if (gh != null)
+            if (GroupList.SelectedItem is GroupHolder gh)
             {
                 var group = gh.Key;
                 foreach (var kv in _keys)
@@ -206,7 +205,7 @@ namespace Sledge.Shell.Forms
             Close();
         }
 
-        public class GroupHolder
+        private class GroupHolder
         {
             public string Key { get; set; }
             public string Label { get; set; }

@@ -8,7 +8,7 @@ using Sledge.Common.Shell.Settings;
 namespace Sledge.BspEditor.Rendering.Viewport
 {
     [Export(typeof(ISettingsContainer))]
-    public class CameraNavigataionViewportSettings : ISettingsContainer
+    public class CameraNavigationViewportSettings : ISettingsContainer
     {
         [Setting] public static bool Camera2DPanRequiresMouseClick { get; set; } = false;
         [Setting] public static bool Camera3DPanRequiresMouseClick { get; set; } = false;
@@ -19,7 +19,7 @@ namespace Sledge.BspEditor.Rendering.Viewport
         [Setting] public static bool InvertX { get; set; } = false;
         [Setting] public static bool InvertY { get; set; } = false;
 
-        public string Name => "Sledge.BspEditor.Rendering.ViewportCameraNavigataionSettings";
+        public string Name => "Sledge.BspEditor.Rendering.CameraNavigationViewportSettings";
 
         public IEnumerable<SettingKey> GetKeys()
         {

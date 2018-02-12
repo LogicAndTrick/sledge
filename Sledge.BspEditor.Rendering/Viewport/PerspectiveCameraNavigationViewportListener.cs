@@ -70,15 +70,15 @@ namespace Sledge.BspEditor.Rendering.Viewport
             }
 
             var seconds = (frame.Milliseconds - currMillis) / 1000f;
-            var units = CameraNavigataionViewportSettings.ForwardSpeed * seconds;
+            var units = CameraNavigationViewportSettings.ForwardSpeed * seconds;
 
             var down = KeyboardState.IsAnyKeyDown(Keys.W, Keys.A, Keys.S, Keys.D);
             if (!down) _downMillis = 0;
             else if (_downMillis == 0) _downMillis = currMillis;
 
-            if (CameraNavigataionViewportSettings.TimeToTopSpeed > 0)
+            if (CameraNavigationViewportSettings.TimeToTopSpeed > 0)
             {
-                var downFor = (frame.Milliseconds - _downMillis) / CameraNavigataionViewportSettings.TimeToTopSpeed;
+                var downFor = (frame.Milliseconds - _downMillis) / CameraNavigationViewportSettings.TimeToTopSpeed;
                 if (downFor >= 0 && downFor < 1) units *= (float) _easing.Evaluate(downFor);
             }
 
@@ -171,7 +171,7 @@ namespace Sledge.BspEditor.Rendering.Viewport
                 else
                 {
                     var space = KeyboardState.IsKeyDown(Keys.Space);
-                    var req = CameraNavigataionViewportSettings.Camera3DPanRequiresMouseClick;
+                    var req = CameraNavigationViewportSettings.Camera3DPanRequiresMouseClick;
                     FreeLook = space && (!req || left || right);
                 }
             }
@@ -233,8 +233,8 @@ namespace Sledge.BspEditor.Rendering.Viewport
             var updown = !left && right;
             var forwardback = left && right;
 
-            if (CameraNavigataionViewportSettings.InvertX) dx = -dx;
-            if (CameraNavigataionViewportSettings.InvertY) dy = -dy;
+            if (CameraNavigationViewportSettings.InvertX) dx = -dx;
+            if (CameraNavigationViewportSettings.InvertY) dy = -dy;
 
             if (updown)
             {
@@ -263,7 +263,7 @@ namespace Sledge.BspEditor.Rendering.Viewport
         {
             if (!Viewport.IsUnlocked(this) || e.Delta == 0) return;
             //if (!Focus || (ToolManager.ActiveTool != null && ToolManager.ActiveTool.IsCapturingMouseWheel())) return;
-            Camera.Advance((e.Delta / Math.Abs(e.Delta)) * (float) CameraNavigataionViewportSettings.MouseWheelMoveDistance);
+            Camera.Advance((e.Delta / Math.Abs(e.Delta)) * (float) CameraNavigationViewportSettings.MouseWheelMoveDistance);
         }
 
         public void MouseUp(ViewportEvent e)
