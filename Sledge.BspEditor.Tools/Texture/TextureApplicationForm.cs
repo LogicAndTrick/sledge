@@ -583,7 +583,7 @@ namespace Sledge.BspEditor.Tools.Texture
 
         private void ReplaceButtonClicked(object sender, EventArgs e)
         {
-            // todo Mediator.Publish(HotkeysMediator.ReplaceTextures);
+            Oy.Publish("Command:Run", new CommandMessage("BspEditor:ReplaceTextures"));
         }
 
         private void SmoothingGroupsButtonClicked(object sender, EventArgs e)

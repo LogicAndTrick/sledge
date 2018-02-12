@@ -45,5 +45,10 @@ namespace Sledge.BspEditor.Environment.Goldsource
         {
             return Task.FromResult<Batch>(null);
         }
+
+        public bool IsNullTexture(string name)
+        {
+            return false;
+        }
     }
 }

@@ -277,5 +277,17 @@ namespace Sledge.BspEditor.Environment.Goldsource
 
             return batch;
         }
+
+        public bool IsNullTexture(string name)
+        {
+            switch (name?.ToLower())
+            {
+                case "null":
+                case "bevel":
+                    return true;
+            }
+
+            return false;
+        }
     }
 }

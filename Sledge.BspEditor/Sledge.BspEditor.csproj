@@ -169,6 +169,7 @@
     <Compile Include="Primitives\ITransformable.cs" />
     <Compile Include="Primitives\MapData\CordonBounds.cs" />
     <Compile Include="Primitives\MapData\FaceSelection.cs" />
+    <Compile Include="Primitives\MapData\DisplayFlags.cs" />
     <Compile Include="Primitives\MapData\TransformationFlags.cs" />
     <Compile Include="Primitives\MapObjectData\IBoundingBoxProvider.cs" />
     <Compile Include="Primitives\MapData\ActiveTexture.cs" />

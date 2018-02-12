@@ -65,7 +65,7 @@ namespace Sledge.BspEditor.Editing.Commands
                         {
                             if (tl.TextureLock) transaction.Add(new TransformTexturesUniform(transform, objects.SelectMany(x => x.FindAll())));
                         }
-                        else if (dialog.Type == TransformDialog.TransformType.Rotate || dialog.Type == TransformDialog.TransformType.Translate)
+                        else if (dialog.Type == TransformDialog.TransformType.Scale)
                         {
                             if (tl.TextureScaleLock) transaction.Add(new TransformTexturesScale(transform, objects.SelectMany(x => x.FindAll())));
                         }

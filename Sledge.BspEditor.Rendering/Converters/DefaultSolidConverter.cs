@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 using Sledge.BspEditor.Documents;
+using Sledge.BspEditor.Primitives.MapData;
 using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.BspEditor.Rendering.Scene;
 using Sledge.Rendering.Materials;
@@ -29,13 +30,12 @@ namespace Sledge.BspEditor.Rendering.Converters
             return obj is Solid;
         }
 
-        private bool ShouldBeVisible(Face face, MapDocument document)
+        private bool ShouldBeVisible(Face face, MapDocument document, DisplayFlags displayFlags)
         {
-            //if (document.Map.HideNullTextures)
-            //{
-            //    var opac = SettingsManager.GetSpecialTextureOpacity(face.Texture.Name);
-            //    if (opac < 0.1f) return false;
-            //}
+            if (displayFlags.HideNullTextures && document.Environment.IsNullTexture(face.Texture.Name))
+            {
+                return false;
+            }
             //if (document.Map.HideDisplacementSolids && face.Parent.Faces.Any(x => x is Displacement) && !(face is Displacement))
             //{
             //    return false;
@@ -46,8 +46,9 @@ namespace Sledge.BspEditor.Rendering.Converters
 
         public async Task<bool> Convert(SceneMapObject smo, MapDocument document, IMapObject obj)
         {
+            var df = document.Map.Data.GetOne<DisplayFlags>() ?? new DisplayFlags();
             var solid = (Solid) obj;
-            foreach (var face in solid.Faces.Where(x => ShouldBeVisible(x, document)).ToList())
+            foreach (var face in solid.Faces.Where(x => ShouldBeVisible(x, document, df)).ToList())
             {
                 var f = await ConvertFace(solid, face, document);
                 smo.SceneObjects.Add(face, f);
@@ -57,8 +58,9 @@ namespace Sledge.BspEditor.Rendering.Converters
 
         public async Task<bool> Update(SceneMapObject smo, MapDocument document, IMapObject obj)
         {
+            var df = document.Map.Data.GetOne<DisplayFlags>() ?? new DisplayFlags();
             var solid = (Solid) obj;
-            var faces = solid.Faces.Where(x => ShouldBeVisible(x, document)).ToList();
+            var faces = solid.Faces.Where(x => ShouldBeVisible(x, document, df)).ToList();
             var values = smo.SceneObjects.Where(x => x.Key is Face).Select(x => x.Value).ToList();
             if (values.Count != faces.Count) return false;
 

@@ -66,6 +66,7 @@
     <Compile Include="Commands\OpenObjectProperties.cs" />
     <Compile Include="Commands\OpenAboutWindow.cs" />
     <Compile Include="Commands\PasteSpecial.cs" />
+    <Compile Include="Commands\Toggles\ToggleHideNullTextures.cs" />
     <Compile Include="Commands\Toggles\ToggleTextureLock.cs" />
     <Compile Include="Commands\Toggles\ToggleTextureScalingLock.cs" />
     <Compile Include="Commands\Transform.cs" />
@@ -325,6 +326,7 @@
     <None Include="packages.config" />
     <None Include="Resources\Button_ColourPicker.png" />
     <Content Include="Resources\Menu_Carve.png" />
+    <Content Include="Resources\Menu_HideNullTextures.png" />
     <Content Include="Resources\Menu_Hollow.png" />
     <Content Include="Resources\Menu_ObjectProperties.png" />
     <Content Include="Resources\Menu_PasteSpecial.png" />

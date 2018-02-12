@@ -92,6 +92,11 @@ namespace Sledge.BspEditor.Tools.Texture
         protected override IEnumerable<Subscription> Subscribe()
         {
             yield return Oy.Subscribe<Change>("MapDocument:Changed", DocumentUpdated);
+
+            yield return Oy.Subscribe<RightClickMenuBuilder>("MapViewport:RightClick", b =>
+            {
+                b.Intercepted = true;
+            });
         }
 
         private async Task DocumentUpdated(Change change)
