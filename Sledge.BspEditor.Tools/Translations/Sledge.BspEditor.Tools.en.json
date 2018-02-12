@@ -6,11 +6,20 @@
     },
     "@Settings": {
         "@Group.Brush": "Brush tool",
+        "@Group.Selection": "Selection",
         "BrushTool": {
             "SelectionBoxBackgroundOpacity": "Selection box background opacity",
             "SwitchToSelectAfterCreation": "Switch to select tool after brush creation",
             "ResetBrushTypeOnCreation": "Reset to default brush type after brush creation"
-        }
+        },
+        "SelectTool": {
+            "SelectionBoxBackgroundOpacity": "Selection box background opacity",
+            "SelectionBoxStippled": "Draw selection box with a dashed outline",
+            "AutoSelectBox": "Automatically select after drawing selection box",
+            "Show3DWidgets": "Show 3D transformation widgets",
+            "SelectByCenterHandles": "Allow selection by clicking center handles",
+            "OnlySelectByCenterHandles": "Only allow selection by clicking center handles"
+        } 
     },
     "MenuDataProvider": {
         "Map": "Map"

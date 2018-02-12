@@ -5,7 +5,9 @@
         "Inherit": ""
     },
     "@Settings": {
-
+        "@Group.FileAssociations": "File Associations",
+        "@Group.Hotkeys": "Hotkeys",
+        "@Group.Interface": "Interface"
     },
     "Commands": {
         "NewFile": {
