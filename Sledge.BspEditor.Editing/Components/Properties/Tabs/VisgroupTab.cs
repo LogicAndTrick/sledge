@@ -61,10 +61,10 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
         }
 
         /// <inheritdoc />
-        public bool IsInContext(IContext context)
+        public bool IsInContext(IContext context, List<IMapObject> objects)
         {
-            return context.TryGet("ActiveDocument", out MapDocument doc)
-                && !doc.Selection.IsEmpty;
+            return context.TryGet("ActiveDocument", out MapDocument _)
+                && objects.Any(x => !(x is Root));
         }
 
         /// <inheritdoc />

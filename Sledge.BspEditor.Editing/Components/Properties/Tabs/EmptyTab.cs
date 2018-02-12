@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.Composition;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -41,9 +42,9 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
             CreateHandle();
         }
 
-        public bool IsInContext(IContext context)
+        public bool IsInContext(IContext context, List<IMapObject> objects)
         {
-            return !context.TryGet("ActiveDocument", out MapDocument doc) || doc.Selection.IsEmpty;
+            return !context.TryGet("ActiveDocument", out MapDocument _) || !objects.Any();
         }
 
         public Task SetObjects(MapDocument document, List<IMapObject> objects)

@@ -136,10 +136,10 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
             _document = new WeakReference<MapDocument>(null);
         }
 
-        public bool IsInContext(IContext context)
+        public bool IsInContext(IContext context, List<IMapObject> objects)
         {
-            return context.TryGet("ActiveDocument", out MapDocument doc) &&
-                   doc.Selection.GetSelectedParents().Any(x => x.Data.GetOne<EntityData>() != null);
+            return context.TryGet("ActiveDocument", out MapDocument _) &&
+                   objects.Any(x => x.Data.GetOne<EntityData>() != null);
         }
 
         public async Task SetObjects(MapDocument document, List<IMapObject> objects)
@@ -214,6 +214,8 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
             else if (classes.Count == 1) cmbClass.Text = classes[0].Name;
 
             cmbClass.EndUpdate();
+
+            cmbClass.Enabled = !objects.Any(x => x is Root);
 
             UpdateTable();
 

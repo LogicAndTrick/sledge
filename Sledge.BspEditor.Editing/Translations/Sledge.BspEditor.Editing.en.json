@@ -24,6 +24,10 @@
             "Name": "Object properties",
             "Details": "Open the object properties window."
         },
+        "OpenRootProperties": {
+            "Name": "Map properties",
+            "Details": "Open the map properties window."
+        },
         "PasteSpecial": {
             "Name": "Paste special...",
             "Details": "Paste multiple copies with a transformation applied."

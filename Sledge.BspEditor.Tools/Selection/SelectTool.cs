@@ -20,6 +20,7 @@ using Sledge.BspEditor.Tools.Properties;
 using Sledge.BspEditor.Tools.Selection.TransformationHandles;
 using Sledge.BspEditor.Tools.Widgets;
 using Sledge.Common.Shell.Components;
+using Sledge.Common.Shell.Context;
 using Sledge.Common.Shell.Documents;
 using Sledge.Common.Shell.Settings;
 using Sledge.Common.Translations;
@@ -349,11 +350,10 @@ namespace Sledge.BspEditor.Tools.Selection
         protected override void MouseDoubleClick(MapViewport viewport, PerspectiveCamera camera, ViewportEvent e)
         {
             if (Document.Selection.IsEmpty) return;
-
-            // todo !object properties window
+            
             // Don't show Object Properties while navigating the view, because mouse cursor will be hidden
             if (KeyboardState.IsKeyDown(Keys.Space)) return;
-            Oy.Publish("BspEditor:ObjectProperties", new object());
+            Oy.Publish("Context:Add", new ContextInfo("BspEditor:ObjectProperties"));
         }
 
         private Coordinate GetIntersectionPoint(IMapObject obj, Line line)

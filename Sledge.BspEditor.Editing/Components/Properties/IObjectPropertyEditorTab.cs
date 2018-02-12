@@ -12,7 +12,7 @@ namespace Sledge.BspEditor.Editing.Components.Properties
     /// <summary>
     /// A tab in the object properties dialog
     /// </summary>
-    public interface IObjectPropertyEditorTab : IContextAware, INotifyPropertyChanged
+    public interface IObjectPropertyEditorTab : INotifyPropertyChanged
     {
         /// <summary>
         /// The suggested order of the tab
@@ -50,5 +50,13 @@ namespace Sledge.BspEditor.Editing.Components.Properties
         /// <param name="objects">The list of objects</param>
         /// <returns>The list of changes</returns>
         IEnumerable<IOperation> GetChanges(MapDocument document, List<IMapObject> objects);
+
+        /// <summary>
+        /// Test if this object is valid for the given context
+        /// </summary>
+        /// <param name="context">The context to test</param>
+        /// <param name="list">The list of objects to show the properties of</param>
+        /// <returns>True if this object is in context</returns>
+        bool IsInContext(IContext context, List<IMapObject> list);
     }
 }

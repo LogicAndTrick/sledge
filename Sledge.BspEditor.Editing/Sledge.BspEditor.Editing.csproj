@@ -59,6 +59,7 @@
     <Compile Include="Commands\Carve.cs" />
     <Compile Include="Commands\EditVisgroups.cs" />
     <Compile Include="Commands\MoveToWorld.cs" />
+    <Compile Include="Commands\OpenRootProperties.cs" />
     <Compile Include="Commands\OpenSledgeWebsite.cs" />
     <Compile Include="Commands\OpenCompileWindow.cs" />
     <Compile Include="Commands\TieToEntity.cs" />
@@ -328,6 +329,7 @@
     <Content Include="Resources\Menu_Carve.png" />
     <Content Include="Resources\Menu_HideNullTextures.png" />
     <Content Include="Resources\Menu_Hollow.png" />
+    <Content Include="Resources\Menu_MapProperties.png" />
     <Content Include="Resources\Menu_ObjectProperties.png" />
     <Content Include="Resources\Menu_PasteSpecial.png" />
     <Content Include="Resources\Menu_Redo.png" />

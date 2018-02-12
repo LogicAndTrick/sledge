@@ -52,11 +52,11 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
         }
 
         /// <inheritdoc />
-        public bool IsInContext(IContext context)
+        public bool IsInContext(IContext context, List<IMapObject> objects)
         {
-            return context.TryGet("ActiveDocument", out MapDocument doc) &&
+            return context.TryGet("ActiveDocument", out MapDocument _) &&
                    // All selected entities must be the same class
-                   doc.Selection.GetSelectedParents().GroupBy(x => x.Data.GetOne<EntityData>()?.Name).Count(x => x.Key != null) == 1;
+                   objects.GroupBy(x => x.Data.GetOne<EntityData>()?.Name).Count(x => x.Key != null) == 1;
         }
 
         /// <inheritdoc />

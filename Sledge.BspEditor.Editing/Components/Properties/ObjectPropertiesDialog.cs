@@ -89,7 +89,7 @@ namespace Sledge.BspEditor.Editing.Components.Properties
         /// <summary>
         /// Update the visibility of all the loaded tabs based on the current selection and context.
         /// </summary>
-        private void UpdateTabVisibility(IContext context)
+        private void UpdateTabVisibility(IContext context, List<IMapObject> objects)
         {
             // todo: to avoid UI flashing, only add/remove tabs when they need to, rather than always
             tabPanel.SuspendLayout();
@@ -98,7 +98,7 @@ namespace Sledge.BspEditor.Editing.Components.Properties
             foreach (var tp in _tabs.OrderBy(x => x.Value.OrderHint))
             {
                 var tab = tp.Value;
-                var inContext = tab.IsInContext(context);
+                var inContext = tab.IsInContext(context, objects);
                 var page = _pages[tab];
                 if (inContext)
                 {
@@ -142,7 +142,6 @@ namespace Sledge.BspEditor.Editing.Components.Properties
             {
                 if (visible)
                 {
-                    UpdateTabVisibility(context);
                     var doc = context.Get<MapDocument>("ActiveDocument");
 
                     #pragma warning disable 4014 // Intentionally unawaited
@@ -219,22 +218,24 @@ namespace Sledge.BspEditor.Editing.Components.Properties
         private async Task DocumentActivated(MapDocument doc)
         {
             _currentDocument = doc;
-            var list = doc?.Selection.GetSelectedParents().ToList() ?? new List<IMapObject>();
+            var list = _context.Get("BspEditor:ObjectProperties", doc?.Selection.GetSelectedParents().ToList()) ?? new List<IMapObject>();
             foreach (var tab in _tabs)
             {
                 await tab.Value.SetObjects(doc, list);
             }
+            this.InvokeLater(() => UpdateTabVisibility(_context, list));
         }
 
         private async Task SelectionChanged(MapDocument doc)
         {
-            this.InvokeLater(() => UpdateTabVisibility(_context));
+            await Oy.Publish("Context:Add", new ContextInfo("BspEditor:ObjectProperties"));
             await DocumentActivated(doc);
         }
 
-        private Task DocumentChanged(Change change)
+        private async Task DocumentChanged(Change change)
         {
-            return DocumentActivated(change.Document);
+            await Oy.Publish("Context:Add", new ContextInfo("BspEditor:ObjectProperties"));
+            await DocumentActivated(change.Document);
         }
 
         private void ApplyClicked(object sender, EventArgs e) => Save().ContinueWith(Reset);
