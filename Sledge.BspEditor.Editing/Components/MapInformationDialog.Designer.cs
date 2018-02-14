@@ -1,4 +1,4 @@
-﻿namespace Sledge.Editor.UI
+﻿namespace Sledge.BspEditor.Editing.Components
 {
     partial class MapInformationDialog
     {

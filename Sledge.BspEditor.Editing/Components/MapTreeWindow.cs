@@ -4,10 +4,8 @@ using System.Linq;
 using System.Windows.Forms;
 using Sledge.Common.Mediator;
 using Sledge.DataStructures.MapObjects;
-using Sledge.Editor.Actions.MapObjects.Selection;
-using Sledge.Editor.Documents;
 
-namespace Sledge.Editor.UI
+namespace Sledge.BspEditor.Editing.Components
 {
     public partial class MapTreeWindow : HotkeyForm, IMediatorListener
     {

@@ -213,12 +213,6 @@
     <Compile Include="Tools\TextureTool\TextureApplicationForm.Designer.cs">
       <DependentUpon>TextureApplicationForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\EntityReportDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\EntityReportDialog.Designer.cs">
-      <DependentUpon>EntityReportDialog.cs</DependentUpon>
-    </Compile>
     <Compile Include="UI\FileSystem\FileSystemBrowserControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -237,30 +231,6 @@
     </Compile>
     <Compile Include="UI\Layout\LayoutSettings.Designer.cs">
       <DependentUpon>LayoutSettings.cs</DependentUpon>
-    </Compile>
-    <Compile Include="UI\MapInformationDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\MapInformationDialog.Designer.cs">
-      <DependentUpon>MapInformationDialog.cs</DependentUpon>
-    </Compile>
-    <Compile Include="UI\MapTreeWindow.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\MapTreeWindow.Designer.cs">
-      <DependentUpon>MapTreeWindow.cs</DependentUpon>
-    </Compile>
-    <Compile Include="UI\PasteSpecialDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\PasteSpecialDialog.Designer.cs">
-      <DependentUpon>PasteSpecialDialog.cs</DependentUpon>
-    </Compile>
-    <Compile Include="UI\TextureReplaceDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\TextureReplaceDialog.Designer.cs">
-      <DependentUpon>TextureReplaceDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="UI\UpdaterForm.cs">
       <SubType>Form</SubType>
@@ -314,9 +284,6 @@
     <EmbeddedResource Include="Tools\VMTool\Controls\VMSidebarPanel.resx">
       <DependentUpon>VMSidebarPanel.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UI\EntityReportDialog.resx">
-      <DependentUpon>EntityReportDialog.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="UI\FileSystem\FileSystemBrowserControl.resx">
       <DependentUpon>FileSystemBrowserControl.cs</DependentUpon>
     </EmbeddedResource>
@@ -325,18 +292,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UI\Layout\LayoutSettings.resx">
       <DependentUpon>LayoutSettings.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\MapInformationDialog.resx">
-      <DependentUpon>MapInformationDialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\MapTreeWindow.resx">
-      <DependentUpon>MapTreeWindow.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\PasteSpecialDialog.resx">
-      <DependentUpon>PasteSpecialDialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\TextureReplaceDialog.resx">
-      <DependentUpon>TextureReplaceDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\UpdaterForm.resx">
       <DependentUpon>UpdaterForm.cs</DependentUpon>

@@ -1,10 +1,8 @@
 ﻿using System.Globalization;
-using System.Linq;
 using System.Windows.Forms;
 using Sledge.DataStructures.MapObjects;
-using Sledge.Editor.Documents;
 
-namespace Sledge.Editor.UI
+namespace Sledge.BspEditor.Editing.Components
 {
     public partial class MapInformationDialog : Form
     {

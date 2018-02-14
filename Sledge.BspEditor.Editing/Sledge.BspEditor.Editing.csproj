@@ -59,6 +59,7 @@
     <Compile Include="Commands\Carve.cs" />
     <Compile Include="Commands\EditVisgroups.cs" />
     <Compile Include="Commands\MoveToWorld.cs" />
+    <Compile Include="Commands\OpenEntityReport.cs" />
     <Compile Include="Commands\OpenRootProperties.cs" />
     <Compile Include="Commands\OpenSledgeWebsite.cs" />
     <Compile Include="Commands\OpenCompileWindow.cs" />
@@ -115,6 +116,12 @@
     <Compile Include="Components\Compile\Specification\CompileSpecificationRegister.cs" />
     <Compile Include="Components\Compile\Specification\CompileTool.cs" />
     <Compile Include="Components\Compile\Specification\ICompileSpecificationProvider.cs" />
+    <Compile Include="Components\EntityReportDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Components\EntityReportDialog.Designer.cs">
+      <DependentUpon>EntityReportDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="Components\PasteSpecialDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -262,9 +269,7 @@
       <Name>Sledge.Shell</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Forms\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <EmbeddedResource Include="Components\AboutDialog.resx">
       <DependentUpon>AboutDialog.cs</DependentUpon>
@@ -280,6 +285,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Components\Compile\CompileParameterPanel.resx">
       <DependentUpon>CompileParameterPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Components\EntityReportDialog.resx">
+      <DependentUpon>EntityReportDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Components\PasteSpecialDialog.resx">
       <DependentUpon>PasteSpecialDialog.cs</DependentUpon>
@@ -327,6 +335,7 @@
     <None Include="packages.config" />
     <None Include="Resources\Button_ColourPicker.png" />
     <Content Include="Resources\Menu_Carve.png" />
+    <Content Include="Resources\Menu_EntityReport.png" />
     <Content Include="Resources\Menu_HideNullTextures.png" />
     <Content Include="Resources\Menu_Hollow.png" />
     <Content Include="Resources\Menu_MapProperties.png" />

@@ -1,4 +1,4 @@
-﻿namespace Sledge.Editor.UI
+﻿namespace Sledge.BspEditor.Editing.Components
 {
     partial class EntityReportDialog
     {
@@ -39,9 +39,9 @@
             this.label2 = new System.Windows.Forms.Label();
             this.FilterValue = new System.Windows.Forms.TextBox();
             this.FilterClass = new System.Windows.Forms.TextBox();
-            this.label3 = new System.Windows.Forms.Label();
+            this.FilterByClassLabel = new System.Windows.Forms.Label();
             this.FilterKey = new System.Windows.Forms.TextBox();
-            this.label1 = new System.Windows.Forms.Label();
+            this.FilterByKeyValueLabel = new System.Windows.Forms.Label();
             this.TypeBrush = new System.Windows.Forms.RadioButton();
             this.TypePoint = new System.Windows.Forms.RadioButton();
             this.TypeAll = new System.Windows.Forms.RadioButton();
@@ -93,9 +93,9 @@
             this.groupBox1.Controls.Add(this.label2);
             this.groupBox1.Controls.Add(this.FilterValue);
             this.groupBox1.Controls.Add(this.FilterClass);
-            this.groupBox1.Controls.Add(this.label3);
+            this.groupBox1.Controls.Add(this.FilterByClassLabel);
             this.groupBox1.Controls.Add(this.FilterKey);
-            this.groupBox1.Controls.Add(this.label1);
+            this.groupBox1.Controls.Add(this.FilterByKeyValueLabel);
             this.groupBox1.Controls.Add(this.TypeBrush);
             this.groupBox1.Controls.Add(this.TypePoint);
             this.groupBox1.Controls.Add(this.TypeAll);
@@ -176,14 +176,14 @@
             this.FilterClass.TabIndex = 2;
             this.FilterClass.TextChanged += new System.EventHandler(this.FiltersChanged);
             // 
-            // label3
+            // FilterByClassLabel
             // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(8, 159);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(73, 13);
-            this.label3.TabIndex = 1;
-            this.label3.Text = "Filter by class:";
+            this.FilterByClassLabel.AutoSize = true;
+            this.FilterByClassLabel.Location = new System.Drawing.Point(8, 159);
+            this.FilterByClassLabel.Name = "FilterByClassLabel";
+            this.FilterByClassLabel.Size = new System.Drawing.Size(73, 13);
+            this.FilterByClassLabel.TabIndex = 1;
+            this.FilterByClassLabel.Text = "Filter by class:";
             // 
             // FilterKey
             // 
@@ -193,14 +193,14 @@
             this.FilterKey.TabIndex = 2;
             this.FilterKey.TextChanged += new System.EventHandler(this.FiltersChanged);
             // 
-            // label1
+            // FilterByKeyValueLabel
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(8, 113);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(97, 13);
-            this.label1.TabIndex = 1;
-            this.label1.Text = "Filter by key/value:";
+            this.FilterByKeyValueLabel.AutoSize = true;
+            this.FilterByKeyValueLabel.Location = new System.Drawing.Point(8, 113);
+            this.FilterByKeyValueLabel.Name = "FilterByKeyValueLabel";
+            this.FilterByKeyValueLabel.Size = new System.Drawing.Size(97, 13);
+            this.FilterByKeyValueLabel.TabIndex = 1;
+            this.FilterByKeyValueLabel.Text = "Filter by key/value:";
             // 
             // TypeBrush
             // 
@@ -333,9 +333,9 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox FilterValue;
         private System.Windows.Forms.TextBox FilterKey;
-        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label FilterByKeyValueLabel;
         private System.Windows.Forms.TextBox FilterClass;
-        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label FilterByClassLabel;
         private System.Windows.Forms.CheckBox FilterClassExact;
         private System.Windows.Forms.CheckBox FilterKeyValueExact;
         private System.Windows.Forms.CheckBox IncludeHidden;
