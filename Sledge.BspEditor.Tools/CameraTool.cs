@@ -41,7 +41,7 @@ namespace Sledge.BspEditor.Tools
             yield return Oy.Subscribe<object>("BspEditor:CameraPrevious", CameraPrevious);
         }
 
-        public override void ToolSelected()
+        public override async Task ToolSelected()
         {
             _state = State.None;
         }

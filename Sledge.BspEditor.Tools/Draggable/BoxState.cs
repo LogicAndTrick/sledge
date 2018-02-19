@@ -12,8 +12,7 @@ namespace Sledge.BspEditor.Tools.Draggable
 
         protected virtual void OnChanged()
         {
-            var handler = Changed;
-            if (handler != null) handler(this, EventArgs.Empty);
+            Changed?.Invoke(this, EventArgs.Empty);
         }
 
         public MapViewport Viewport { get; set; }

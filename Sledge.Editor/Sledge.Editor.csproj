@@ -201,18 +201,6 @@
     <Compile Include="Tools\VMTool\VMTool.cs" />
     <Compile Include="SingleInstance.cs" />
     <Compile Include="SledgeCursors.cs" />
-    <Compile Include="Tools\TextureTool\TextureToolSidebarPanel.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Tools\TextureTool\TextureToolSidebarPanel.Designer.cs">
-      <DependentUpon>TextureToolSidebarPanel.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Tools\TextureTool\TextureApplicationForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Tools\TextureTool\TextureApplicationForm.Designer.cs">
-      <DependentUpon>TextureApplicationForm.cs</DependentUpon>
-    </Compile>
     <Compile Include="UI\FileSystem\FileSystemBrowserControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -241,7 +229,6 @@
     <Compile Include="UI\ViewportContextMenu.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Tools\TextureTool\TextureTool.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UI\UpdateReleaseDetails.cs" />
@@ -262,13 +249,6 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-    <EmbeddedResource Include="Tools\TextureTool\TextureToolSidebarPanel.resx">
-      <DependentUpon>TextureToolSidebarPanel.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Tools\TextureTool\TextureApplicationForm.resx">
-      <DependentUpon>TextureApplicationForm.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="Tools\VMTool\Controls\EditFaceControl.resx">
       <DependentUpon>EditFaceControl.cs</DependentUpon>
     </EmbeddedResource>
@@ -483,7 +463,9 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Tools\VMTool\Errors\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>"$(SolutionDir)Build\InsertIcons.exe" "$(TargetPath)" "$(ProjectDir)Resources\embedded_icons.txt"</PostBuildEvent>

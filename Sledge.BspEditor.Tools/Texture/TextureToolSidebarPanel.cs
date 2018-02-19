@@ -15,26 +15,17 @@ namespace Sledge.BspEditor.Tools.Texture
 
         protected virtual void OnRandomiseXShiftValues(int min, int max)
         {
-            if (RandomiseXShiftValues != null)
-            {
-                RandomiseXShiftValues(this, min, max);
-            }
+            RandomiseXShiftValues?.Invoke(this, min, max);
         }
 
         protected virtual void OnRandomiseYShiftValues(int min, int max)
         {
-            if (RandomiseYShiftValues != null)
-            {
-                RandomiseYShiftValues(this, min, max);
-            }
+            RandomiseYShiftValues?.Invoke(this, min, max);
         }
 
         protected virtual void OnTileFit(int tileX, int tileY)
         {
-            if (TileFit != null)
-            {
-                TileFit(this, tileX, tileY);
-            }
+            TileFit?.Invoke(this, tileX, tileY);
         }
 
         public TextureToolSidebarPanel()

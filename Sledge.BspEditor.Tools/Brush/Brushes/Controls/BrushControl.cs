@@ -10,10 +10,7 @@ namespace Sledge.BspEditor.Tools.Brush.Brushes.Controls
 
         protected virtual void OnValuesChanged(IBrush brush)
         {
-            if (ValuesChanged != null)
-            {
-                ValuesChanged(this, brush);
-            }
+            ValuesChanged?.Invoke(this, brush);
         }
 
         protected readonly IBrush Brush;

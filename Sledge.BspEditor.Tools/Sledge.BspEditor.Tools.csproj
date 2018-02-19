@@ -212,6 +212,29 @@
     <Compile Include="ToolSceneObjectProviderFactory.cs" />
     <Compile Include="ToolStatusItem.cs" />
     <Compile Include="ToolViewportListener.cs" />
+    <Compile Include="Vertex\Controls\EditFaceControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Vertex\Controls\EditFaceControl.Designer.cs">
+      <DependentUpon>EditFaceControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Vertex\Controls\ScaleControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Vertex\Controls\ScaleControl.Designer.cs">
+      <DependentUpon>ScaleControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Vertex\Controls\StandardControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Vertex\Controls\StandardControl.Designer.cs">
+      <DependentUpon>StandardControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Vertex\Selection\VertexHidden.cs" />
+    <Compile Include="Vertex\Selection\VertexSelection.cs" />
+    <Compile Include="Vertex\Selection\VertexSolid.cs" />
+    <Compile Include="Vertex\Tools\VertexSubtool.cs" />
+    <Compile Include="Vertex\VertexTool.cs" />
     <Compile Include="Widgets\RotationWidget.cs" />
     <Compile Include="Widgets\Widget.cs" />
   </ItemGroup>
@@ -252,6 +275,7 @@
     <Content Include="Resources\Menu_Cordon.png" />
     <Content Include="Resources\Menu_IgnoreGrouping.png" />
     <Content Include="Resources\Menu_ReplaceTextures.png" />
+    <Content Include="Resources\Tool_VM.png" />
     <Content Include="Translations\Sledge.BspEditor.Tools.en.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -297,6 +321,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Texture\TextureSidebarPanel.resx">
       <DependentUpon>TextureSidebarPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Vertex\Controls\EditFaceControl.resx">
+      <DependentUpon>EditFaceControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Vertex\Controls\ScaleControl.resx">
+      <DependentUpon>ScaleControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Vertex\Controls\StandardControl.resx">
+      <DependentUpon>StandardControl.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -41,6 +42,11 @@ namespace Sledge.BspEditor.Primitives.MapObjectData
         public void Remove(IMapObjectData data)
         {
             Data.Remove(data);
+        }
+
+        public void Remove(Predicate<IMapObjectData> test)
+        {
+            Data.RemoveAll(test);
         }
 
         public IEnumerable<T> Get<T>() where T : IMapObjectData

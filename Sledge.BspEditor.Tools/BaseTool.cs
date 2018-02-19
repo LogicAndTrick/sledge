@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using LogicAndTrick.Oy;
 using Sledge.BspEditor.Documents;
@@ -180,13 +181,13 @@ namespace Sledge.BspEditor.Tools
             yield break;
         }
 
-        public virtual void ToolSelected()
+        public virtual async Task ToolSelected()
         {
             _subscriptions = Subscribe().ToList();
             Invalidate();
         }
 
-        public virtual void ToolDeselected()
+        public virtual async Task ToolDeselected()
         {
             _subscriptions?.ForEach(x => x.Dispose());
             ClearScene();

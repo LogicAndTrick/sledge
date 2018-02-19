@@ -114,7 +114,7 @@ namespace Sledge.BspEditor.Tools.Texture
             }
         }
 
-        public override void ToolSelected()
+        public override async Task ToolSelected()
         {
             SetFaceSelectionFromObjectSelection();
 
@@ -127,15 +127,15 @@ namespace Sledge.BspEditor.Tools.Texture
                This is just for rendering anyway so who cares.
             */
 
-            MapDocumentOperation.Bypass(Document, new Deselect(Document.Selection));
-            base.ToolSelected();
+            await MapDocumentOperation.Bypass(Document, new Deselect(Document.Selection));
+            await base.ToolSelected();
         }
         
-        public override void ToolDeselected()
+        public override async Task ToolDeselected()
         {
             GetSelection().Clear();
             _sampled = null;
-            base.ToolDeselected();
+            await base.ToolDeselected();
         }
 
         private IEnumerable<IMapObject> GetBoundingBoxIntersections(DataStructures.Geometric.Line ray)
@@ -276,7 +276,7 @@ namespace Sledge.BspEditor.Tools.Texture
                     list.Add(new Sledge.Rendering.Scenes.Renderables.Face(
                         Material.Flat(Color.FromArgb(160, Color.Red)),
                         face.GetTextureCoordinates(64, 64)
-                            .Select(x => new Vertex(x.Item1.ToVector3(), (float) x.Item2, (float) x.Item3)).ToList()
+                            .Select(x => new Sledge.Rendering.Scenes.Renderables.Vertex(x.Item1.ToVector3(), (float) x.Item2, (float) x.Item3)).ToList()
                     )
                     {
                         CameraFlags = CameraFlags.Perspective,

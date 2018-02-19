@@ -9,6 +9,7 @@ namespace Sledge.BspEditor.Modification
     {
         private readonly List<IOperation> _operations;
         public bool Trivial => _operations.All(x => x.Trivial);
+        public bool IsEmpty => !_operations.Any();
 
         public Transaction(params IOperation[] operations) : this(operations.ToList())
         {

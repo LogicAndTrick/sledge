@@ -24,7 +24,7 @@ namespace Sledge.BspEditor.Tools
             var at = ActiveTool;
             if (at != null)
             {
-                at.ToolDeselected();
+                await at.ToolDeselected();
                 at.SceneObjectsChanged -= ActiveToolSceneObjectsChanged;
             }
 
@@ -34,7 +34,7 @@ namespace Sledge.BspEditor.Tools
             if (at != null)
             {
                 at.SceneObjectsChanged += ActiveToolSceneObjectsChanged;
-                at.ToolSelected();
+                await at.ToolSelected();
             }
         }
 

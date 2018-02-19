@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Drawing;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using LogicAndTrick.Oy;
 using OpenTK;
@@ -213,14 +214,14 @@ namespace Sledge.BspEditor.Tools.Selection
             IgnoreGroupingChanged();
         }
 
-        public override void ToolSelected()
+        public override async Task ToolSelected()
         {
             TransformationModeChanged(_selectionBox.CurrentTransformationMode);
             IgnoreGroupingChanged();
             
             SelectionChanged();
 
-            base.ToolSelected();
+            await base.ToolSelected();
         }
 
         #region Selection changed

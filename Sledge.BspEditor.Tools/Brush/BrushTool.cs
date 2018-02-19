@@ -107,7 +107,7 @@ namespace Sledge.BspEditor.Tools.Brush
             base.ContextChanged(context);
         }
 
-        public override void ToolSelected()
+        public override async Task ToolSelected()
         {
             var sel = Document.Selection.OfType<Solid>().ToList();
             if (sel.Any())
@@ -123,13 +123,13 @@ namespace Sledge.BspEditor.Tools.Brush
             }
 
             _updatePreview = true;
-            base.ToolSelected();
+            await base.ToolSelected();
         }
 
-        public override void ToolDeselected()
+        public override async Task ToolDeselected()
         {
             _updatePreview = false;
-            base.ToolDeselected();
+            await base.ToolDeselected();
         }
 
         private void TextureSelected()
@@ -229,10 +229,10 @@ namespace Sledge.BspEditor.Tools.Brush
             {
                 var bbox = new Box(box.State.Start, box.State.End);
                 var brush = GetBrush(bbox, new UniqueNumberGenerator()).FindAll();
-                var converted = brush.Select(x => _converter.Value.Convert(Document, x)).Where(x => x != null);
+                var converted = brush.Select(x => _converter.Value.Convert(Document, x));
                 Task.WhenAll(converted).ContinueWith(result =>
                 {
-                    var objects = result.Result.SelectMany(x => x.SceneObjects.Values).ToList();
+                    var objects = result.Result.Where(x => x != null).SelectMany(x => x.SceneObjects.Values).ToList();
                     foreach (var o in objects.OfType<RenderableObject>())
                     {
                         o.AccentColor = Color.Turquoise;

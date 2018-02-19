@@ -304,13 +304,13 @@ namespace Sledge.BspEditor.Tools.Clip
                     // Add the face in both directions so it renders on both sides
                     list.Add(new Face(
                         Material.Flat(Color.FromArgb(100, Color.Turquoise)),
-                        poly.Vertices.Select(x => new Vertex(x.ToVector3(), 0, 0)).ToList())
+                        poly.Vertices.Select(x => new Sledge.Rendering.Scenes.Renderables.Vertex(x.ToVector3(), 0, 0)).ToList())
                     {
                         CameraFlags = CameraFlags.Perspective
                     });
                     list.Add(new Face(
                         Material.Flat(Color.FromArgb(100, Color.Turquoise)),
-                        poly.Vertices.Select(x => new Vertex(x.ToVector3(), 0, 0)).Reverse().ToList())
+                        poly.Vertices.Select(x => new Sledge.Rendering.Scenes.Renderables.Vertex(x.ToVector3(), 0, 0)).Reverse().ToList())
                     {
                         CameraFlags = CameraFlags.Perspective
                     });

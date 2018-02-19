@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.Composition;
 using System.Drawing;
+using System.Threading.Tasks;
 using Sledge.BspEditor.Modification;
 using Sledge.BspEditor.Modification.Operations;
 using Sledge.BspEditor.Primitives.MapData;
@@ -38,10 +39,10 @@ namespace Sledge.BspEditor.Tools.Cordon
             return "CordonTool";
         }
 
-        public override void ToolSelected()
+        public override async Task ToolSelected()
         {
             _cordonBox.Update();
-            base.ToolSelected();
+            await base.ToolSelected();
         }
 
         private void CordonBoxChanged(object sender, EventArgs e)
