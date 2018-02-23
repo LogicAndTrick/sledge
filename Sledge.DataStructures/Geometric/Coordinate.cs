@@ -146,6 +146,13 @@ namespace Sledge.DataStructures.Geometric
             }
         }
 
+        public void Set(Coordinate value)
+        {
+            X = value.X;
+            Y = value.Y;
+            Z = value.Z;
+        }
+
         public decimal Dot(Coordinate c)
         {
             return ((_x * c._x) + (_y * c._y) + (_z * c._z));

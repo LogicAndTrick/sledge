@@ -1,7 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Windows.Forms;
 using Sledge.BspEditor.Documents;
-using Sledge.Common.Mediator;
 
 namespace Sledge.BspEditor.Editing.Components
 {

@@ -422,10 +422,9 @@ namespace Sledge.BspEditor.Tools
             }
         }
 
-        protected void Invalidate()
+        protected virtual void Invalidate()
         {
             _validatedViewports.Clear();
-            foreach (var t in Children.Where(x => x.Active)) t.Invalidate();
         }
 
         private void Validate(MapViewport viewport)

@@ -170,9 +170,7 @@ namespace Sledge.DataStructures.Geometric
         /// <returns>A PlaneClassification value.</returns>
         public PlaneClassification ClassifyAgainstPlane(Plane p)
         {
-            int front, back, onplane;
-            int[] classifications;
-            return ClassifyAgainstPlane(p, out classifications, out front, out back, out onplane);
+            return ClassifyAgainstPlane(p, out _, out _, out _, out _);
         }
 
         /// <summary>
@@ -221,10 +219,9 @@ namespace Sledge.DataStructures.Geometric
             // Ideally we would just be able to use Split(..., out back) and Unclone(back) but that takes twice as long.
             // So we copy the whole algorithm and do it inline instead
 
-            int frontCount, backCount, onPlaneCount, count = Vertices.Count;
-            int[] classifications;
+            var count = Vertices.Count;
 
-            var classify = ClassifyAgainstPlane(clip, out classifications, out frontCount, out backCount, out onPlaneCount);
+            var classify = ClassifyAgainstPlane(clip, out var classifications, out _, out _, out _);
 
             // If the polygon doesn't span the plane don't do anything
             if (classify != PlaneClassification.Spanning)
@@ -278,8 +275,7 @@ namespace Sledge.DataStructures.Geometric
         /// <returns>True if the split was successful</returns>
         public bool Split(Plane clip, out Polygon back, out Polygon front)
         {
-            Polygon cFront, cBack;
-            return Split(clip, out back, out front, out cBack, out cFront);
+            return Split(clip, out back, out front, out _, out _);
         }
 
         /// <summary>
@@ -294,10 +290,9 @@ namespace Sledge.DataStructures.Geometric
         /// <returns>True if the split was successful</returns>
         public bool Split(Plane clip, out Polygon back, out Polygon front, out Polygon coplanarBack, out Polygon coplanarFront)
         {
-            int frontCount, backCount, onPlaneCount, count = Vertices.Count;
-            int[] classifications;
+            var count = Vertices.Count;
 
-            var classify = ClassifyAgainstPlane(clip, out classifications, out frontCount, out backCount, out onPlaneCount);
+            var classify = ClassifyAgainstPlane(clip, out var classifications, out _, out _, out _);
 
             // If the polygon doesn't span the plane, return false.
             if (classify != PlaneClassification.Spanning)

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
+using LogicAndTrick.Oy;
+using Sledge.BspEditor.Tools.Vertex.Tools;
 using Sledge.Common.Easings;
 
 namespace Sledge.BspEditor.Tools.Vertex.Controls
@@ -59,7 +61,45 @@ namespace Sledge.BspEditor.Tools.Vertex.Controls
             MergeResultsLabel.Trigger();
         }
 
+        private void ShowPointsChanged(object sender, EventArgs e)
+        {
+            VertexPointTool.VisiblePoints v;
+            var sp = ShowPointsCheckbox.Checked;
+            var smp = ShowMidpointsCheckbox.Checked;
+
+            if (sp && smp)
+            {
+                v = VertexPointTool.VisiblePoints.All;
+            }
+            else if (sp)
+            {
+                v = VertexPointTool.VisiblePoints.Vertices;
+            }
+            else if (smp)
+            {
+                v = VertexPointTool.VisiblePoints.Midpoints;
+            }
+            else if (sender == ShowMidpointsCheckbox)
+            {
+                v = VertexPointTool.VisiblePoints.Vertices;
+                ShowPointsCheckbox.Checked = true;
+            }
+            else
+            {
+                v = VertexPointTool.VisiblePoints.Midpoints;
+                ShowMidpointsCheckbox.Checked = true;
+            }
+
+            Oy.Publish("VertexPointTool:SetVisiblePoints", v.ToString());
+        }
+
+        public void SetVisiblePoints(VertexPointTool.VisiblePoints visiblePoints)
+        {
+            ShowPointsCheckbox.Checked = visiblePoints != VertexPointTool.VisiblePoints.Midpoints;
+            ShowMidpointsCheckbox.Checked = visiblePoints != VertexPointTool.VisiblePoints.Vertices;
+        }
     }
+
     public class FadeLabel : Label
     {
         private long _lastTick;

@@ -13,11 +13,9 @@ using Sledge.BspEditor.Modification.Operations.Selection;
 using Sledge.BspEditor.Modification.Operations.Tree;
 using Sledge.BspEditor.Primitives.MapObjectData;
 using Sledge.BspEditor.Primitives.MapObjects;
-using Sledge.Common.Mediator;
 using Sledge.Common.Shell.Commands;
 using Sledge.Common.Shell.Components;
 using Sledge.Common.Shell.Context;
-using Sledge.Common.Shell.Hooks;
 using Sledge.Common.Translations;
 using Sledge.Shell;
 

@@ -13,6 +13,7 @@ using Sledge.BspEditor.Rendering.Converters;
 using Sledge.BspEditor.Rendering.Viewport;
 using Sledge.BspEditor.Tools.Draggable;
 using Sledge.BspEditor.Tools.Properties;
+using Sledge.BspEditor.Tools.Vertex.Errors;
 using Sledge.BspEditor.Tools.Vertex.Selection;
 using Sledge.BspEditor.Tools.Vertex.Tools;
 using Sledge.Common;
@@ -31,13 +32,15 @@ namespace Sledge.BspEditor.Tools.Vertex
 {
     [Export(typeof(ITool))]
     [Export(typeof(IInitialiseHook))]
+    [Export]
     [OrderHint("P")]
     [AutoTranslate]
     public class VertexTool : BaseDraggableTool, IInitialiseHook
     {
-        //private readonly VMSidebarPanel _controlPanel;
+        //private readonly VertexSidebarPanel _controlPanel;
         //private readonly VMErrorsSidebarPanel _errorPanel;
         [ImportMany] private IEnumerable<Lazy<VertexSubtool>> _subTools;
+        [ImportMany] private IEnumerable<Lazy<IVertexErrorCheck>> _errorChecks;
         [Import] private Lazy<MapObjectConverter> _converter;
 
         public Task OnInitialise()
@@ -51,14 +54,12 @@ namespace Sledge.BspEditor.Tools.Vertex
 
             return Task.FromResult(false);
         }
-        
-        private readonly BoxDraggableState _boxState;
 
         private readonly VertexSelection _selection;
         
         public VertexTool()
         {
-            //_controlPanel = new VMSidebarPanel();
+            //_controlPanel = new VertexSidebarPanel();
             //_controlPanel.ToolSelected += SubToolSelected;
             //_controlPanel.DeselectAll += x => DeselectAll();
             //_controlPanel.Reset += Reset;
@@ -66,19 +67,6 @@ namespace Sledge.BspEditor.Tools.Vertex
             //_errorPanel = new VMErrorsSidebarPanel();
 
             Usage = ToolUsage.Both;
-
-            _boxState = new BoxDraggableState(this);
-            _boxState.BoxColour = Color.Orange;
-            _boxState.FillColour = Color.FromArgb(64, Color.DodgerBlue);
-            _boxState.DragStarted += (sender, args) =>
-            {
-                if (!KeyboardState.Ctrl)
-                {
-                    DeselectAll();
-                }
-            };
-            
-            States.Add(_boxState);
 
             UseValidation = true;
 
@@ -100,6 +88,15 @@ namespace Sledge.BspEditor.Tools.Vertex
             yield return Oy.Subscribe<IDocument>("MapDocument:SelectionChanged", x =>
             {
                 if (x == Document) SelectionChanged();
+            });
+            yield return Oy.Subscribe<Type>("VertexTool:SetSubTool", t =>
+            {
+                CurrentSubTool = _subTools.Select(x => x.Value).FirstOrDefault(x => x.GetType() == t);
+            });
+            yield return Oy.Subscribe<String>("VertexTool:Reset", async _ =>
+            {
+                await _selection.Reset(Document);
+                Invalidate();
             });
         }
 
@@ -130,7 +127,7 @@ namespace Sledge.BspEditor.Tools.Vertex
 
         #region Tool switching
         
-        private VertexSubtool CurrentSubTool
+        internal VertexSubtool CurrentSubTool
         {
             get { return Children.OfType<VertexSubtool>().FirstOrDefault(x => x.Active); }
             set
@@ -145,10 +142,40 @@ namespace Sledge.BspEditor.Tools.Vertex
                     value.Active = true;
                     value.ToolSelected();
                 }
+
+                Oy.Publish("VertexTool:SubToolChanged", value?.GetType());
             }
         }
 
         #endregion
+
+        private void SelectObject(Solid closestObject)
+        {
+            // Nothing was clicked, don't change the selection
+            if (closestObject == null) return;
+
+            var operation = new Transaction();
+
+            // Ctrl doesn't toggle selection, only adds to it.
+            // Ctrl+clicking a selected solid will do nothing.
+
+            if (!KeyboardState.Ctrl)
+            {
+                // Ctrl isn't down, so we want to clear the selection
+                operation.Add(new Deselect(Document.Selection.Where(x => !ReferenceEquals(x, closestObject)).ToList()));
+            }
+
+            if (!closestObject.IsSelected)
+            {
+                // The clicked object isn't selected yet, select it.
+                operation.Add(new Select(closestObject));
+            }
+
+            if (!operation.IsEmpty)
+            {
+                MapDocumentOperation.Perform(Document, operation);
+            }
+        }
         
         #region 3D interaction
         
@@ -193,68 +220,41 @@ namespace Sledge.BspEditor.Tools.Vertex
                 .Select(x => x.Item)
                 .FirstOrDefault();
 
-            // Nothing was clicked, don't change the selection
-            if (closestObject == null) return;
-            
-            var operation = new Transaction();
-
-            // Ctrl doesn't toggle selection, only adds to it.
-            // Ctrl+clicking a selected solid will do nothing.
-
-            if (!KeyboardState.Ctrl)
-            {
-                // Ctrl isn't down, so we want to clear the selection
-                operation.Add(new Deselect(Document.Selection.Where(x => !ReferenceEquals(x, closestObject)).ToList()));
-            }
-
-            if (!closestObject.IsSelected)
-            {
-                // The clicked object isn't selected yet, select it.
-                operation.Add(new Select(closestObject));
-            }
-
-            if (!operation.IsEmpty)
-            {
-                MapDocumentOperation.Perform(Document, operation);
-            }
+            SelectObject(closestObject);
         }
 
         #endregion
 
-        private void Reset(object sender)
+        #region 2D interaction
+
+        private IEnumerable<IMapObject> GetLineIntersections(Box box)
         {
-            
+            return Document.Map.Root.Collect(
+                x => x is Root || (x.BoundingBox != null && x.BoundingBox.IntersectsWith(box)),
+                x => x.Hierarchy.Parent != null && !x.Hierarchy.HasChildren && x is Solid && x.GetPolygons().Any(p => p.GetLines().Any(box.IntersectsWith))
+            );
         }
 
-        private void DeselectAll()
+        private IMapObject SelectionTest(MapViewport viewport, ViewportEvent e)
         {
-            
+            // Create a box to represent the click, with a tolerance level
+            var unused = viewport.GetUnusedCoordinate(new Coordinate(100000, 100000, 100000));
+            var tolerance = 4 / (decimal) viewport.Zoom; // Selection tolerance of four pixels
+            var used = viewport.Expand(new Coordinate(tolerance, tolerance, 0));
+            var add = used + unused;
+            var click = viewport.ProperScreenToWorld(e.X, e.Y);
+            var box = new Box(click - add, click + add);
+            return GetLineIntersections(box).FirstOrDefault();
         }
 
-        public override void KeyDown(MapViewport viewport, ViewportEvent e)
+        protected override void MouseDown(MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
         {
-            if (e.KeyCode == Keys.Enter)
-            {
-                Confirm();
-                e.Handled = true;
-            }
-            else if (e.KeyCode == Keys.Escape)
-            {
-                Cancel();
-                e.Handled = true;
-            }
-            base.KeyDown(viewport, e);
+            // Get the first element that intersects with the box, selecting or deselecting as needed
+            var closestObject = SelectionTest(viewport, e) as Solid;
+            SelectObject(closestObject);
         }
 
-        private void Cancel()
-        {
-            
-        }
-
-        private void Confirm()
-        {
-            
-        }
+        #endregion
 
         protected override IEnumerable<SceneObject> GetSceneObjects()
         {
@@ -267,14 +267,14 @@ namespace Sledge.BspEditor.Tools.Vertex
                 o.TintColor = Colour.Blend(Color.FromArgb(128, Color.Green), o.TintColor);
                 o.AccentColor = Color.White;
             }
-            objects.AddRange(Children.OfType<VertexSubtool>().SelectMany(x => GetSceneObjects()));
             objects.AddRange(base.GetSceneObjects());
             return objects;
         }
 
         public new void Invalidate()
         {
-            //_errorPanel.SetErrorList(GetErrors());
+            // var errors = _errorChecks.SelectMany(ec => _selection.SelectMany(s => ec.Value.GetErrors(s)));
+            // _errorPanel.SetErrorList(errors);
             base.Invalidate();
         }
     }

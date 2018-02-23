@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using Sledge.Common.Easings;
-using Sledge.Common.Mediator;
 using Sledge.Rendering;
 using Sledge.Rendering.Cameras;
 using Sledge.Shell.Input;
@@ -340,11 +339,6 @@ namespace Sledge.BspEditor.Rendering.Viewport
         public void PositionChanged(ViewportEvent e)
         {
 
-        }
-
-        public void Notify(string message, object data)
-        {
-            Mediator.ExecuteDefault(this, message, data);
         }
 
         private void ClearSceneObjects()

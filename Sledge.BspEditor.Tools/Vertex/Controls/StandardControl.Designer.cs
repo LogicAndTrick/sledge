@@ -31,7 +31,9 @@
             this.MergeButton = new System.Windows.Forms.Button();
             this.AutoMerge = new System.Windows.Forms.CheckBox();
             this.SplitButton = new System.Windows.Forms.Button();
-            this.MergeResultsLabel = new FadeLabel();
+            this.MergeResultsLabel = new Sledge.BspEditor.Tools.Vertex.Controls.FadeLabel();
+            this.ShowPointsCheckbox = new System.Windows.Forms.CheckBox();
+            this.ShowMidpointsCheckbox = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // MergeButton
@@ -77,16 +79,44 @@
             this.MergeResultsLabel.TabIndex = 9;
             this.MergeResultsLabel.Text = "Merge Results";
             // 
+            // ShowPointsCheckbox
+            // 
+            this.ShowPointsCheckbox.AutoSize = true;
+            this.ShowPointsCheckbox.Checked = true;
+            this.ShowPointsCheckbox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.ShowPointsCheckbox.Location = new System.Drawing.Point(7, 97);
+            this.ShowPointsCheckbox.Name = "ShowPointsCheckbox";
+            this.ShowPointsCheckbox.Size = new System.Drawing.Size(84, 17);
+            this.ShowPointsCheckbox.TabIndex = 10;
+            this.ShowPointsCheckbox.Text = "Show points";
+            this.ShowPointsCheckbox.UseVisualStyleBackColor = true;
+            this.ShowPointsCheckbox.CheckedChanged += new System.EventHandler(this.ShowPointsChanged);
+            // 
+            // ShowMidpointsCheckbox
+            // 
+            this.ShowMidpointsCheckbox.AutoSize = true;
+            this.ShowMidpointsCheckbox.Checked = true;
+            this.ShowMidpointsCheckbox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.ShowMidpointsCheckbox.Location = new System.Drawing.Point(97, 97);
+            this.ShowMidpointsCheckbox.Name = "ShowMidpointsCheckbox";
+            this.ShowMidpointsCheckbox.Size = new System.Drawing.Size(100, 17);
+            this.ShowMidpointsCheckbox.TabIndex = 11;
+            this.ShowMidpointsCheckbox.Text = "Show midpoints";
+            this.ShowMidpointsCheckbox.UseVisualStyleBackColor = true;
+            this.ShowMidpointsCheckbox.CheckedChanged += new System.EventHandler(this.ShowPointsChanged);
+            // 
             // StandardControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.ShowMidpointsCheckbox);
+            this.Controls.Add(this.ShowPointsCheckbox);
             this.Controls.Add(this.MergeResultsLabel);
             this.Controls.Add(this.SplitButton);
             this.Controls.Add(this.MergeButton);
             this.Controls.Add(this.AutoMerge);
             this.Name = "StandardControl";
-            this.Size = new System.Drawing.Size(200, 97);
+            this.Size = new System.Drawing.Size(200, 122);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -98,5 +128,7 @@
         private System.Windows.Forms.CheckBox AutoMerge;
         private System.Windows.Forms.Button SplitButton;
         private FadeLabel MergeResultsLabel;
+        private System.Windows.Forms.CheckBox ShowPointsCheckbox;
+        private System.Windows.Forms.CheckBox ShowMidpointsCheckbox;
     }
 }

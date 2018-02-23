@@ -230,10 +230,20 @@
     <Compile Include="Vertex\Controls\StandardControl.Designer.cs">
       <DependentUpon>StandardControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="Vertex\Controls\VertexSidebarPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Vertex\Controls\VertexSidebarPanel.Designer.cs">
+      <DependentUpon>VertexSidebarPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Vertex\Errors\IVertexErrorCheck.cs" />
     <Compile Include="Vertex\Selection\VertexHidden.cs" />
     <Compile Include="Vertex\Selection\VertexSelection.cs" />
     <Compile Include="Vertex\Selection\VertexSolid.cs" />
+    <Compile Include="Vertex\Tools\VertexScaleTool.cs" />
+    <Compile Include="Vertex\Tools\VertexPointTool.cs" />
     <Compile Include="Vertex\Tools\VertexSubtool.cs" />
+    <Compile Include="Vertex\Errors\VertexError.cs" />
     <Compile Include="Vertex\VertexTool.cs" />
     <Compile Include="Widgets\RotationWidget.cs" />
     <Compile Include="Widgets\Widget.cs" />
@@ -330,6 +340,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Vertex\Controls\StandardControl.resx">
       <DependentUpon>StandardControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Vertex\Controls\VertexSidebarPanel.resx">
+      <DependentUpon>VertexSidebarPanel.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Windows.Forms;
 using Sledge.Common;
-using Sledge.Common.Mediator;
 using Sledge.DataStructures.Geometric;
 using Sledge.Rendering;
 using Sledge.Rendering.Cameras;

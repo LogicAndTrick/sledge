@@ -36,7 +36,7 @@ namespace Sledge.BspEditor.Primitives.MapObjects
         
         public override IEnumerable<Polygon> GetPolygons()
         {
-            return Faces.Select(x => new Polygon(x.Vertices));
+            return Faces.Select(x => x.ToPolygon());
         }
 
         public Polyhedron ToPolyhedron()

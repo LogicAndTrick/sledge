@@ -137,6 +137,19 @@ namespace Sledge.BspEditor.Primitives.MapObjectData
             Vertices.Transform(x => x * matrix);
         }
 
+        public Polygon ToPolygon()
+        {
+            return new Polygon(Vertices);
+        }
+
+        public virtual IEnumerable<Line> GetEdges()
+        {
+            for (var i = 0; i < Vertices.Count; i++)
+            {
+                yield return new Line(Vertices[i], Vertices[(i + 1) % Vertices.Count]);
+            }
+        }
+
         public class VertexCollection : IList<Coordinate>
         {
             private readonly List<Coordinate> _list = new List<Coordinate>();

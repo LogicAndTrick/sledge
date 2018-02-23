@@ -1,6 +1,6 @@
 ﻿namespace Sledge.BspEditor.Tools.Vertex.Controls
 {
-    partial class VMSidebarPanel
+    partial class VertexSidebarPanel
     {
         /// <summary> 
         /// Required designer variable.
@@ -86,7 +86,7 @@
             this.DeselectAllButton.UseVisualStyleBackColor = true;
             this.DeselectAllButton.Click += new System.EventHandler(this.DeselectAllButtonClicked);
             // 
-            // VMSidebarPanel
+            // VertexSidebarPanel
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -94,7 +94,7 @@
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.ControlPanel);
             this.Controls.Add(this.ButtonLayoutPanel);
-            this.Name = "VMSidebarPanel";
+            this.Name = "VertexSidebarPanel";
             this.Padding = new System.Windows.Forms.Padding(2);
             this.Size = new System.Drawing.Size(201, 68);
             this.panel1.ResumeLayout(false);

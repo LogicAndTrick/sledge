@@ -44,9 +44,9 @@ namespace Sledge.BspEditor.Primitives.MapObjectData
             Data.Remove(data);
         }
 
-        public void Remove(Predicate<IMapObjectData> test)
+        public int Remove(Predicate<IMapObjectData> test)
         {
-            Data.RemoveAll(test);
+            return Data.RemoveAll(test);
         }
 
         public IEnumerable<T> Get<T>() where T : IMapObjectData

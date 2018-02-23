@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Modification;
 using Sledge.BspEditor.Modification.Operations;
+using Sledge.BspEditor.Modification.Operations.Data;
+using Sledge.BspEditor.Primitives.MapObjectData;
 using Sledge.BspEditor.Primitives.MapObjects;
 
 namespace Sledge.BspEditor.Tools.Vertex.Selection
@@ -79,7 +81,33 @@ namespace Sledge.BspEditor.Tools.Vertex.Selection
 
         public async Task Commit(MapDocument document)
         {
+            var tran = new Transaction();
 
+            lock (_lock)
+            {
+                foreach (var solid in _selectedSolids.Where(x => x.IsDirty))
+                {
+                    tran.Add(new RemoveMapObjectData(solid.Real.ID, solid.Real.Faces));
+                    tran.Add(new AddMapObjectData(solid.Real.ID, solid.Copy.Faces.Select(x => (Face) x.Clone())));
+                    solid.Reset();
+                }
+            }
+
+            if (!tran.IsEmpty)
+            {
+                await MapDocumentOperation.Perform(document, tran);
+            }
+        }
+
+        public async Task Reset(MapDocument document)
+        {
+            lock (_lock)
+            {
+                foreach (var ss in _selectedSolids)
+                {
+                    ss.Reset();
+                }
+            }
         }
 
         public IEnumerator<VertexSolid> GetEnumerator()

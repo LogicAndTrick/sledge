@@ -2,11 +2,9 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Net.Mime;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Sledge.BspEditor.Documents;
-using Sledge.Common.Mediator;
 
 namespace Sledge.BspEditor.Tools.Texture
 {

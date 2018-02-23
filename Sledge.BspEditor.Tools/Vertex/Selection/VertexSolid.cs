@@ -14,5 +14,12 @@ namespace Sledge.BspEditor.Tools.Vertex.Selection
             Copy = (Solid) solid.Clone();
             Copy.Data.Remove(x => x is VertexHidden);
         }
+
+        public void Reset()
+        {
+            Copy = (Solid) Real.Clone();
+            Copy.Data.Remove(x => x is VertexHidden);
+            IsDirty = false;
+        }
     }
 }

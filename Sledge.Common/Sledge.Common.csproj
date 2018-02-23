@@ -82,10 +82,6 @@
     <Compile Include="Shell\Hotkeys\IHotkey.cs" />
     <Compile Include="Logging\Log.cs" />
     <Compile Include="Logging\LogMessage.cs" />
-    <Compile Include="Mediator\Mediator.cs" />
-    <Compile Include="Mediator\IMediatorListener.cs" />
-    <Compile Include="Mediator\MediatorExceptionEventArgs.cs" />
-    <Compile Include="Mediator\MultiDictionary.cs" />
     <Compile Include="Shell\Menu\AllowToolbarAttribute.cs" />
     <Compile Include="Shell\Menu\CommandMenuItem.cs" />
     <Compile Include="Shell\Menu\IMenuItem.cs" />
