@@ -251,6 +251,7 @@
     <Compile Include="Vertex\Selection\VertexHidden.cs" />
     <Compile Include="Vertex\Selection\VertexSelection.cs" />
     <Compile Include="Vertex\Selection\VertexSolid.cs" />
+    <Compile Include="Vertex\Tools\VertexFaceEditTool.cs" />
     <Compile Include="Vertex\Tools\VertexScaleTool.cs" />
     <Compile Include="Vertex\Tools\VertexPointTool.cs" />
     <Compile Include="Vertex\Tools\VertexSubtool.cs" />
