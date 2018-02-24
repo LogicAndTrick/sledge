@@ -707,6 +707,8 @@ namespace Sledge.Editor.Settings
             HideGridLimit.Value = Grid.HideSmallerThan;
             HideGridOn.Checked = Grid.HideSmallerOn;
             HideGridFactor.SelectedItem = Grid.HideFactor;
+            DottedGridOn.Checked = Grid.DottedGrid;
+            
 
             GridBackgroundColour.BackColor = Grid.Background;
             GridColour.BackColor = Grid.GridLines;
@@ -778,6 +780,7 @@ namespace Sledge.Editor.Settings
             Grid.HideSmallerThan = int.Parse(Convert.ToString(HideGridLimit.Value));
             Grid.HideSmallerOn = HideGridOn.Checked;
             Grid.HideFactor = int.Parse(Convert.ToString(HideGridFactor.Text));
+            Grid.DottedGrid = DottedGridOn.Checked;
 
             Grid.Background = GridBackgroundColour.BackColor;
             Grid.GridLines = GridColour.BackColor;
