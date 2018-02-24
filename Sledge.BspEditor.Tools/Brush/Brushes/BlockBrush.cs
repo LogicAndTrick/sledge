@@ -7,15 +7,17 @@ using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.BspEditor.Tools.Brush.Brushes.Controls;
 using Sledge.Common;
 using Sledge.Common.Shell.Components;
+using Sledge.Common.Translations;
 using Sledge.DataStructures.Geometric;
 
 namespace Sledge.BspEditor.Tools.Brush.Brushes
 {
     [Export(typeof(IBrush))]
     [OrderHint("A")]
+    [AutoTranslate]
     public class BlockBrush : IBrush
     {
-        public string Name => "Block";
+        public string Name { get; set; } = "Block";
         public bool CanRound => true;
 
         public IEnumerable<BrushControl> GetControls()

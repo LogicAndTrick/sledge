@@ -12,6 +12,12 @@ namespace Sledge.BspEditor.Tools.Brush.Brushes.Controls
             set => FontPicker.SelectedItem = value;
         }
 
+        public string LabelText
+        {
+            get => Label.Text;
+            set => Label.Text = value;
+        }
+
         public FontChooserControl(IBrush brush) : base(brush)
         {
             InitializeComponent();

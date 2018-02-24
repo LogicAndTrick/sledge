@@ -28,6 +28,73 @@
         // todo: translate brushes
         "BrushTool": {
             "CreateObject": "Create {0}"
+        },
+        "BrushSidebarPanel": {
+            "BrushType": "Brush type:",
+            "RoundVertices": "Round created vertices"
+        },
+        "Brushes": {
+            "ArchBrush": {
+                "Name": "Arch",
+                "NumberOfSides": "Number of sides",
+                "WallWidth": "Wall width",
+                "Arc": "Arc",
+                "StartAngle": "Start angle",
+                "AddHeight": "Add height",
+                "CurvedRamp": "Curved ramp",
+                "TiltAngle": "Tilt angle",
+                "TiltInterpolation": "Tilt interpolation"
+            },
+            "BlockBrush": {
+                "Name": "Block"
+            },
+            "ConeBrush": {
+                "Name": "Cone",
+                "NumberOfSides": "Number of sides"
+            },
+            "CylinderBrush": {
+                "Name": "Cylinder",
+                "NumberOfSides": "Number of sides"
+            },
+            "PipeBrush": {
+                "Name": "Pipe",
+                "NumberOfSides": "Number of sides",
+                "WallWidth": "Wall width"
+            },
+            "PyramidBrush": {
+                "Name": "Pyramid"
+            },
+            "SphereBrush": {
+                "Name": "Sphere",
+                "NumberOfSides": "Number of sides"
+            },
+            "TetrahedronBrush": {
+                "Name": "Tetrahedron",
+                "TopVertexAtCentroid": "Top vertex at centroid"
+            },
+            "TextBrush": {
+                "Name": "Text",
+                "Font": "Font",
+                "AliasingFactor": "Aliasing factor" ,
+                "EnteredText": "Enter text here",
+                "Text": "Text"
+            },
+            "TorusBrush": {
+                "Name": "Torus",
+                "CrossSectionSides": "Cross sec. sides",
+                "RingWidth": "Ring width",
+                "CrossSectionStart": "Cross sec. start",
+                "MakeHollow": "Make hollow",
+                "CrossSectionArc": "Cross sec. arc",
+                "HollowWallWidth": "Hollow wall width",
+                "RingSides": "Ring sides",
+                "RingArc": "Ring arc",
+                "RingStart": "Ring start",
+                "RotationHeight": "Rotation height"
+            },
+            "WedgeBrush": {
+                "Name": "Wedge"
+            }
         }
     },
     "Entity": {

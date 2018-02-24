@@ -2,28 +2,35 @@
 using System.ComponentModel.Composition;
 using System.Drawing;
 using System.Linq;
+using System.Threading.Tasks;
 using Sledge.BspEditor.Primitives;
 using Sledge.BspEditor.Primitives.MapObjectData;
 using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.BspEditor.Tools.Brush.Brushes.Controls;
 using Sledge.Common;
 using Sledge.Common.Shell.Components;
+using Sledge.Common.Shell.Hooks;
+using Sledge.Common.Translations;
 using Sledge.DataStructures.Geometric;
 
 namespace Sledge.BspEditor.Tools.Brush.Brushes
 {
     [Export(typeof(IBrush))]
+    [Export(typeof(IInitialiseHook))]
     [OrderHint("I")]
-    public class SphereBrush : IBrush
+    [AutoTranslate]
+    public class SphereBrush : IBrush, IInitialiseHook
     {
-        private readonly NumericControl _numSides;
+        private NumericControl _numSides;
+        
+        public string NumberOfSides { get; set; }
 
-        public SphereBrush()
+        public async Task OnInitialise()
         {
-            _numSides = new NumericControl(this) { LabelText = "Number of sides" };
+            _numSides = new NumericControl(this) { LabelText = NumberOfSides };
         }
 
-        public string Name => "Sphere";
+        public string Name { get; set; } = "Sphere";
 
         public bool CanRound => false;
 

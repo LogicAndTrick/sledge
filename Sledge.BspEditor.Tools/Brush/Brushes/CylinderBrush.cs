@@ -1,28 +1,35 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
+using System.Threading.Tasks;
 using Sledge.BspEditor.Primitives;
 using Sledge.BspEditor.Primitives.MapObjectData;
 using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.BspEditor.Tools.Brush.Brushes.Controls;
 using Sledge.Common;
 using Sledge.Common.Shell.Components;
+using Sledge.Common.Shell.Hooks;
+using Sledge.Common.Translations;
 using Sledge.DataStructures.Geometric;
 
 namespace Sledge.BspEditor.Tools.Brush.Brushes
 {
     [Export(typeof(IBrush))]
+    [Export(typeof(IInitialiseHook))]
     [OrderHint("E")]
-    public class CylinderBrush : IBrush
+    [AutoTranslate]
+    public class CylinderBrush : IBrush, IInitialiseHook
     {
-        private readonly NumericControl _numSides;
+        private NumericControl _numSides;
+        
+        public string NumberOfSides { get; set; }
 
-        public CylinderBrush()
+        public async Task OnInitialise()
         {
-            _numSides = new NumericControl(this) { LabelText = "Number of sides" };
+            _numSides = new NumericControl(this) { LabelText = NumberOfSides };
         }
 
-        public string Name => "Cylinder";
+        public string Name { get; set; } = "Cylinder";
         public bool CanRound => true;
 
         public IEnumerable<BrushControl> GetControls()

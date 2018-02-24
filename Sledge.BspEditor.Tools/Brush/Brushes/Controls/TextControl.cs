@@ -10,6 +10,12 @@ namespace Sledge.BspEditor.Tools.Brush.Brushes.Controls
             set => TextBox.Text = value;
         }
 
+        public string LabelText
+        {
+            get => Label.Text;
+            set => Label.Text = value;
+        }
+
         public TextControl(IBrush brush) : base(brush)
         {
             InitializeComponent();

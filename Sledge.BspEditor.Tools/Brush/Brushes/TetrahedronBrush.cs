@@ -1,28 +1,35 @@
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
+using System.Threading.Tasks;
 using Sledge.BspEditor.Primitives;
 using Sledge.BspEditor.Primitives.MapObjectData;
 using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.BspEditor.Tools.Brush.Brushes.Controls;
 using Sledge.Common;
 using Sledge.Common.Shell.Components;
+using Sledge.Common.Shell.Hooks;
+using Sledge.Common.Translations;
 using Sledge.DataStructures.Geometric;
 
 namespace Sledge.BspEditor.Tools.Brush.Brushes
 {
     [Export(typeof(IBrush))]
+    [Export(typeof(IInitialiseHook))]
     [OrderHint("B")]
-    public class TetrahedronBrush : IBrush
+    [AutoTranslate]
+    public class TetrahedronBrush : IBrush, IInitialiseHook
     {
-        private readonly BooleanControl _useCentroid;
+        private BooleanControl _useCentroid;
+        
+        public string TopVertexAtCentroid { get; set; }
 
-        public TetrahedronBrush()
+        public async Task OnInitialise()
         {
-            _useCentroid = new BooleanControl(this) { LabelText = "Top vertex at centroid", Checked = false };
+            _useCentroid = new BooleanControl(this) { LabelText = TopVertexAtCentroid, Checked = false };
         }
 
-        public string Name => "Tetrahedron";
+        public string Name { get; set; } = "Tetrahedron";
 
         public bool CanRound => true;
 

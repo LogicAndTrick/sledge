@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Globalization;
 using System.Linq;
+using System.Threading.Tasks;
 using Poly2Tri;
 using Poly2Tri.Triangulation.Polygon;
 using Sledge.BspEditor.Primitives;
@@ -13,27 +14,36 @@ using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.BspEditor.Tools.Brush.Brushes.Controls;
 using Sledge.Common;
 using Sledge.Common.Shell.Components;
+using Sledge.Common.Shell.Hooks;
+using Sledge.Common.Translations;
 using Sledge.DataStructures.Geometric;
 using Polygon = Poly2Tri.Triangulation.Polygon.Polygon;
 
 namespace Sledge.BspEditor.Tools.Brush.Brushes
 {
     [Export(typeof(IBrush))]
+    [Export(typeof(IInitialiseHook))]
     [OrderHint("T")]
-    public class TextBrush : IBrush
+    [AutoTranslate]
+    public class TextBrush : IBrush, IInitialiseHook
     {
-        private readonly FontChooserControl _fontChooser;
-        private readonly NumericControl _flattenFactor;
-        private readonly TextControl _text;
+        private FontChooserControl _fontChooser;
+        private NumericControl _flattenFactor;
+        private TextControl _text;
+        
+        public string Font { get; set; }
+        public string AliasingFactor { get; set; }
+        public string Text { get; set; }
+        public string EnteredText { get; set; }
 
-        public TextBrush()
+        public async Task OnInitialise()
         {
-            _fontChooser = new FontChooserControl(this);
-            _flattenFactor = new NumericControl(this) { LabelText = "Aliasing Factor", Minimum = 0.1m, Maximum = 10m, Value = 1, Precision = 1, Increment = 0.1m };
-            _text = new TextControl(this) { EnteredText = "Enter text here" };
+            _fontChooser = new FontChooserControl(this) { LabelText = Font };
+            _flattenFactor = new NumericControl(this) { LabelText = AliasingFactor, Minimum = 0.1m, Maximum = 10m, Value = 1, Precision = 1, Increment = 0.1m };
+            _text = new TextControl(this) { EnteredText = EnteredText, LabelText = Text };
         }
 
-        public string Name => "Text";
+        public string Name { get; set; } = "Text";
         public bool CanRound => true;
 
         public IEnumerable<BrushControl> GetControls()

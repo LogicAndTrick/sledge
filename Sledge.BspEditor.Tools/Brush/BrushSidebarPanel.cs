@@ -8,13 +8,17 @@ using LogicAndTrick.Oy;
 using Sledge.BspEditor.Tools.Brush.Brushes.Controls;
 using Sledge.Common.Shell.Components;
 using Sledge.Common.Shell.Context;
+using Sledge.Common.Shell.Hooks;
+using Sledge.Common.Translations;
 using Sledge.Shell;
 
 namespace Sledge.BspEditor.Tools.Brush
 {
     [Export(typeof(ISidebarComponent))]
+    [Export(typeof(IInitialiseHook))]
     [OrderHint("F")]
-    public partial class BrushSidebarPanel : UserControl, ISidebarComponent
+    [AutoTranslate]
+    public partial class BrushSidebarPanel : UserControl, ISidebarComponent, IInitialiseHook
     {
         [ImportMany] private IEnumerable<Lazy<IBrush>> _brushes;
 
@@ -23,10 +27,39 @@ namespace Sledge.BspEditor.Tools.Brush
 
         public string Title => "Brush";
         public object Control => this;
+        
+        #region Translations
+
+        public string BrushType { set => this.InvokeLater(() => BrushTypeLabel.Text = value); }
+        public string RoundVertices { set => this.InvokeLater(() => RoundCreatedVerticesCheckbox.Text = value); }
+
+        #endregion
+
+        public async Task OnInitialise()
+        {
+            _selectedBrush = null;
+            this.InvokeLater(() =>
+            {
+                BrushTypeList.BeginUpdate();
+                BrushTypeList.Items.Clear();
+                foreach (var brush in _brushes.OrderBy(x => OrderHintAttribute.GetOrderHint(x.Value.GetType())))
+                {
+                    if (_selectedBrush == null) _selectedBrush = brush.Value;
+                    BrushTypeList.Items.Add(new BrushWrapper(brush.Value));
+                }
+
+                BrushTypeList.SelectedIndex = 0;
+                BrushTypeList.EndUpdate();
+
+                UpdateControls();
+            });
+        }
 
         public BrushSidebarPanel()
         {
             InitializeComponent();
+            CreateHandle();
+
             _currentControls = new List<BrushControl>();
 
             Oy.Subscribe<BrushTool>("BrushTool:ResetBrushType", ResetBrushType);
@@ -47,22 +80,6 @@ namespace Sledge.BspEditor.Tools.Brush
         public bool IsInContext(IContext context)
         {
             return context.TryGet("ActiveTool", out BrushTool _);
-        }
-
-        protected override void OnLoad(EventArgs e)
-        {
-            _selectedBrush = null;
-            BrushTypeList.BeginUpdate();
-            BrushTypeList.Items.Clear();
-            foreach (var brush in _brushes.OrderBy(x => OrderHintAttribute.GetOrderHint(x.Value.GetType())))
-            {
-                if (_selectedBrush == null) _selectedBrush = brush.Value;
-                BrushTypeList.Items.Add(new BrushWrapper(brush.Value));
-            }
-            BrushTypeList.SelectedIndex = 0;
-            BrushTypeList.EndUpdate();
-
-            UpdateControls();
         }
 
         private void UpdateControls()

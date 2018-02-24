@@ -28,22 +28,22 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label3 = new System.Windows.Forms.Label();
+            this.BrushTypeLabel = new System.Windows.Forms.Label();
             this.BrushTypeList = new System.Windows.Forms.ComboBox();
             this.panel1 = new System.Windows.Forms.Panel();
             this.RoundCreatedVerticesCheckbox = new System.Windows.Forms.CheckBox();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
-            // label3
+            // BrushTypeLabel
             // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(3, 8);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(64, 13);
-            this.label3.TabIndex = 5;
-            this.label3.Text = "Brush Type:";
-            this.label3.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            this.BrushTypeLabel.AutoSize = true;
+            this.BrushTypeLabel.Location = new System.Drawing.Point(3, 8);
+            this.BrushTypeLabel.Name = "BrushTypeLabel";
+            this.BrushTypeLabel.Size = new System.Drawing.Size(64, 13);
+            this.BrushTypeLabel.TabIndex = 5;
+            this.BrushTypeLabel.Text = "Brush Type:";
+            this.BrushTypeLabel.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
             // BrushTypeList
             // 
@@ -60,7 +60,7 @@
             // panel1
             // 
             this.panel1.Controls.Add(this.RoundCreatedVerticesCheckbox);
-            this.panel1.Controls.Add(this.label3);
+            this.panel1.Controls.Add(this.BrushTypeLabel);
             this.panel1.Controls.Add(this.BrushTypeList);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel1.Location = new System.Drawing.Point(5, 5);
@@ -96,7 +96,7 @@
 
         #endregion
 
-        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label BrushTypeLabel;
         private System.Windows.Forms.ComboBox BrushTypeList;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.CheckBox RoundCreatedVerticesCheckbox;

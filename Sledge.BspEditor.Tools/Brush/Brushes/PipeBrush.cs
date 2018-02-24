@@ -1,30 +1,38 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Drawing;
+using System.Threading.Tasks;
 using Sledge.BspEditor.Primitives;
 using Sledge.BspEditor.Primitives.MapObjectData;
 using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.BspEditor.Tools.Brush.Brushes.Controls;
 using Sledge.Common;
 using Sledge.Common.Shell.Components;
+using Sledge.Common.Shell.Hooks;
+using Sledge.Common.Translations;
 using Sledge.DataStructures.Geometric;
 
 namespace Sledge.BspEditor.Tools.Brush.Brushes
 {
     [Export(typeof(IBrush))]
+    [Export(typeof(IInitialiseHook))]
     [OrderHint("G")]
-    public class PipeBrush : IBrush
+    [AutoTranslate]
+    public class PipeBrush : IBrush, IInitialiseHook
     {
-        private readonly NumericControl _numSides;
-        private readonly NumericControl _wallWidth;
+        private NumericControl _numSides;
+        private NumericControl _wallWidth;
+        
+        public string NumberOfSides { get; set; }
+        public string WallWidth { get; set; }
 
-        public PipeBrush()
+        public async Task OnInitialise()
         {
-            _numSides = new NumericControl(this) { LabelText = "Number of sides" };
-            _wallWidth = new NumericControl(this) { LabelText = "Wall width", Minimum = 1, Maximum = 1024, Value = 32, Precision = 1 };
+            _numSides = new NumericControl(this) { LabelText = NumberOfSides };
+            _wallWidth = new NumericControl(this) { LabelText = WallWidth, Minimum = 1, Maximum = 1024, Value = 32, Precision = 1 };
         }
 
-        public string Name => "Pipe";
+        public string Name { get; set; } = "Pipe";
         public bool CanRound => true;
 
         public IEnumerable<BrushControl> GetControls()

@@ -2,46 +2,60 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Drawing;
 using System.Linq;
+using System.Threading.Tasks;
 using Sledge.BspEditor.Primitives;
 using Sledge.BspEditor.Primitives.MapObjectData;
 using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.BspEditor.Tools.Brush.Brushes.Controls;
 using Sledge.Common;
 using Sledge.Common.Shell.Components;
+using Sledge.Common.Shell.Hooks;
+using Sledge.Common.Translations;
 using Sledge.DataStructures.Geometric;
 
 namespace Sledge.BspEditor.Tools.Brush.Brushes
 {
     [Export(typeof(IBrush))]
+    [Export(typeof(IInitialiseHook))]
     [OrderHint("H")]
-    public class ArchBrush : IBrush
+    [AutoTranslate]
+    public class ArchBrush : IBrush, IInitialiseHook
     {
-        private readonly NumericControl _numSides;
-        private readonly NumericControl _wallWidth;
-        private readonly NumericControl _arc;
-        private readonly NumericControl _startAngle;
-        private readonly NumericControl _addHeight;
-        private readonly BooleanControl _curvedRamp;
-        private readonly NumericControl _tiltAngle;
-        private readonly BooleanControl _tiltInterp;
+        private NumericControl _numSides;
+        private NumericControl _wallWidth;
+        private NumericControl _arc;
+        private NumericControl _startAngle;
+        private NumericControl _addHeight;
+        private BooleanControl _curvedRamp;
+        private NumericControl _tiltAngle;
+        private BooleanControl _tiltInterp;
 
         private const decimal Atan2 = 63.4m;
 
-        public ArchBrush()
+        public string NumberOfSides { get; set; }
+        public string WallWidth { get; set; }
+        public string Arc { get; set; }
+        public string StartAngle { get; set; }
+        public string AddHeight { get; set; }
+        public string CurvedRamp { get; set; }
+        public string TiltAngle { get; set; }
+        public string TiltInterpolation { get; set; }
+
+        public async Task OnInitialise()
         {
-            _numSides = new NumericControl(this) { LabelText = "Number of sides" };
-            _wallWidth = new NumericControl(this) { LabelText = "Wall width", Minimum = 1, Maximum = 1024, Value = 32, Precision = 1 };
-            _arc = new NumericControl(this) { LabelText = "Arc", Minimum = 1, Maximum = 360 * 4, Value = 360 };
-            _startAngle = new NumericControl(this) { LabelText = "Start angle", Minimum = 0, Maximum = 359, Value = 0 };
-            _addHeight = new NumericControl(this) { LabelText = "Add height", Minimum = -1024, Maximum = 1024, Value = 0, Precision = 1 };
-            _curvedRamp = new BooleanControl(this) { LabelText = "Curved ramp", Checked = false };
-            _tiltAngle = new NumericControl(this) { LabelText = "Tilt angle", Minimum = -Atan2, Maximum = Atan2, Value = 0, Enabled = false, Precision = 1 };
-            _tiltInterp = new BooleanControl(this) { LabelText = "Tilt interpolation", Checked = false, Enabled = false };
+            _numSides = new NumericControl(this) { LabelText = NumberOfSides };
+            _wallWidth = new NumericControl(this) { LabelText = WallWidth, Minimum = 1, Maximum = 1024, Value = 32, Precision = 1 };
+            _arc = new NumericControl(this) { LabelText = Arc, Minimum = 1, Maximum = 360 * 4, Value = 360 };
+            _startAngle = new NumericControl(this) { LabelText = StartAngle, Minimum = 0, Maximum = 359, Value = 0 };
+            _addHeight = new NumericControl(this) { LabelText = AddHeight, Minimum = -1024, Maximum = 1024, Value = 0, Precision = 1 };
+            _curvedRamp = new BooleanControl(this) { LabelText = CurvedRamp, Checked = false };
+            _tiltAngle = new NumericControl(this) { LabelText = TiltAngle, Minimum = -Atan2, Maximum = Atan2, Value = 0, Enabled = false, Precision = 1 };
+            _tiltInterp = new BooleanControl(this) { LabelText = TiltInterpolation, Checked = false, Enabled = false };
 
             _curvedRamp.ValuesChanged += (s, b) => _tiltAngle.Enabled = _tiltInterp.Enabled = _curvedRamp.GetValue();
         }
 
-        public string Name => "Arch";
+        public string Name { get; set; } = "Arch";
         public bool CanRound => true;
 
         public IEnumerable<BrushControl> GetControls()

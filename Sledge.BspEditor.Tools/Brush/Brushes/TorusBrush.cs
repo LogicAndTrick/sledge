@@ -2,49 +2,65 @@
 using System.ComponentModel.Composition;
 using System.Drawing;
 using System.Linq;
+using System.Threading.Tasks;
 using Sledge.BspEditor.Primitives;
 using Sledge.BspEditor.Primitives.MapObjectData;
 using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.BspEditor.Tools.Brush.Brushes.Controls;
 using Sledge.Common;
 using Sledge.Common.Shell.Components;
+using Sledge.Common.Shell.Hooks;
+using Sledge.Common.Translations;
 using Sledge.DataStructures.Geometric;
 
 namespace Sledge.BspEditor.Tools.Brush.Brushes
 {
     [Export(typeof(IBrush))]
+    [Export(typeof(IInitialiseHook))]
     [OrderHint("J")]
-    public class TorusBrush : IBrush
+    [AutoTranslate]
+    public class TorusBrush : IBrush, IInitialiseHook
     {
-        private readonly NumericControl _crossSides;
-        private readonly NumericControl _crossRadius;
-        private readonly BooleanControl _crossMakeHollow;
-        private readonly NumericControl _crossArc;
-        private readonly NumericControl _crossStartAngle;
-        private readonly NumericControl _crossWallWidth;
+        private NumericControl _crossSides;
+        private NumericControl _crossRadius;
+        private BooleanControl _crossMakeHollow;
+        private NumericControl _crossArc;
+        private NumericControl _crossStartAngle;
+        private NumericControl _crossWallWidth;
 
-        private readonly NumericControl _ringSides;
-        private readonly NumericControl _ringArc;
-        private readonly NumericControl _ringStartAngle;
+        private NumericControl _ringSides;
+        private NumericControl _ringArc;
+        private NumericControl _ringStartAngle;
 
-        private readonly NumericControl _rotationHeight;
+        private NumericControl _rotationHeight;
 
-        public TorusBrush()
+        public string CrossSectionSides { get; set; }
+        public string RingWidth { get; set; }
+        public string CrossSectionStart { get; set; }
+        public string MakeHollow { get; set; }
+        public string CrossSectionArc { get; set; }
+        public string HollowWallWidth { get; set; }
+        public string RingSides { get; set; }
+        public string RingArc { get; set; }
+        public string RingStart { get; set; }
+        public string RotationHeight { get; set; }
+
+        public async Task OnInitialise()
         {
-            _crossSides = new NumericControl(this) { LabelText = "Cross sec. sides" };
-            _crossRadius = new NumericControl(this) { LabelText = "Ring width", Minimum = 16, Maximum = 1024, Value = 32, Precision = 1 };
-            _crossStartAngle = new NumericControl(this) { LabelText = "Cross sec. start", Minimum = 0, Maximum = 359, Value = 0 };
-            _crossMakeHollow = new BooleanControl(this) { LabelText = "Make hollow", Checked = false };
-            _crossArc = new NumericControl(this) { LabelText = "Cross sec. arc", Minimum = 1, Maximum = 360, Value = 360, Enabled = false };
-            _crossWallWidth = new NumericControl(this) { LabelText = "Hollow wall width", Minimum = 1, Maximum = 1024, Value = 16, Precision = 1, Enabled = false};
-            _ringSides = new NumericControl(this) { LabelText = "Ring sides" };
-            _ringArc = new NumericControl(this) { LabelText = "Ring arc", Minimum = 1, Maximum = 1080, Value = 360 };
-            _ringStartAngle = new NumericControl(this) { LabelText = "Ring start", Minimum = 0, Maximum = 359, Value = 0 };
-            _rotationHeight = new NumericControl(this) { LabelText = "Rotation height", Minimum = -1024, Maximum = 1024, Value = 0, Precision = 1};
+            _crossSides = new NumericControl(this) { LabelText = CrossSectionSides };
+            _crossRadius = new NumericControl(this) { LabelText = RingWidth, Minimum = 16, Maximum = 1024, Value = 32, Precision = 1 };
+            _crossStartAngle = new NumericControl(this) { LabelText = CrossSectionStart, Minimum = 0, Maximum = 359, Value = 0 };
+            _crossMakeHollow = new BooleanControl(this) { LabelText = MakeHollow, Checked = false };
+            _crossArc = new NumericControl(this) { LabelText = CrossSectionArc, Minimum = 1, Maximum = 360, Value = 360, Enabled = false };
+            _crossWallWidth = new NumericControl(this) { LabelText = HollowWallWidth, Minimum = 1, Maximum = 1024, Value = 16, Precision = 1, Enabled = false};
+            _ringSides = new NumericControl(this) { LabelText = RingSides };
+            _ringArc = new NumericControl(this) { LabelText = RingArc, Minimum = 1, Maximum = 1080, Value = 360 };
+            _ringStartAngle = new NumericControl(this) { LabelText = RingStart, Minimum = 0, Maximum = 359, Value = 0 };
+            _rotationHeight = new NumericControl(this) { LabelText = RotationHeight, Minimum = -1024, Maximum = 1024, Value = 0, Precision = 1};
             _crossMakeHollow.ValuesChanged += (s, b) => _crossWallWidth.Enabled = _crossArc.Enabled = _crossMakeHollow.GetValue();
         }
 
-        public string Name => "Torus";
+        public string Name { get; set; } = "Torus";
 
         public bool CanRound => true;
 
