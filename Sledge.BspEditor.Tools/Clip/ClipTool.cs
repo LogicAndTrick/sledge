@@ -4,6 +4,7 @@ using System.ComponentModel.Composition;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using LogicAndTrick.Oy;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Modification;
 using Sledge.BspEditor.Modification.Operations.Tree;
@@ -14,6 +15,7 @@ using Sledge.BspEditor.Rendering;
 using Sledge.BspEditor.Rendering.Viewport;
 using Sledge.BspEditor.Tools.Properties;
 using Sledge.Common.Shell.Components;
+using Sledge.Common.Shell.Documents;
 using Sledge.DataStructures;
 using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Materials;
@@ -74,6 +76,29 @@ namespace Sledge.BspEditor.Tools.Clip
         public override string GetName()
         {
             return "Clip Tool";
+        }
+
+        protected override IEnumerable<Subscription> Subscribe()
+        {
+            yield return Oy.Subscribe<ClipTool>("Tool:Activated", t => CycleClipSide());
+            yield return Oy.Subscribe<string>("ClipTool:SetClipSide", v => SetClipSide(v));
+        }
+
+        private void SetClipSide(string visiblePoints)
+        {
+            if (Enum.TryParse(visiblePoints, true, out ClipSide s) && s != _side)
+            {
+                _side = s;
+                Invalidate();
+            }
+        }
+        
+        private void CycleClipSide()
+        {
+            var side = (int) _side;
+            side = (side + 1) % (Enum.GetValues(typeof (ClipSide)).Length);
+            _side = (ClipSide) side;
+            Invalidate();
         }
 
         private ClipState GetStateAtPoint(int x, int y, MapViewport viewport)
@@ -337,15 +362,6 @@ namespace Sledge.BspEditor.Tools.Clip
             }
 
             return list;
-        }
-
-        // todo
-        private void CycleClipSide()
-        {
-            var side = (int) _side;
-            side = (side + 1) % (Enum.GetValues(typeof (ClipSide)).Length);
-            _side = (ClipSide) side;
-            Invalidate();
         }
     }
 }
