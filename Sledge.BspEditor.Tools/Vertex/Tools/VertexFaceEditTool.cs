@@ -9,6 +9,7 @@ using Sledge.BspEditor.Rendering;
 using Sledge.BspEditor.Rendering.Viewport;
 using Sledge.BspEditor.Tools.Vertex.Controls;
 using Sledge.BspEditor.Tools.Vertex.Selection;
+using Sledge.Common.Translations;
 using Sledge.DataStructures.Geometric;
 using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Materials;
@@ -21,32 +22,31 @@ using Line = Sledge.DataStructures.Geometric.Line;
 
 namespace Sledge.BspEditor.Tools.Vertex.Tools
 {
+    [AutoTranslate]
     [Export(typeof(VertexSubtool))]
     public class VertexFaceEditTool : VertexSubtool
     {
+        [Import] private VertexEditFaceControl _control;
+
         public override string OrderHint => "F";
         public override string GetName() => "Face editing";
         public override Control Control => _control;
         
-        private readonly EditFaceControl _control;
         private readonly List<SolidFace> _selectedFaces;
         
         public VertexFaceEditTool()
         {
-            var sc = new EditFaceControl();
-            sc.Poke += Poke;
-            sc.Bevel += Bevel;
-            _control = sc;
-
             _selectedFaces = new List<SolidFace>();
         }
 
         protected override IEnumerable<Subscription> Subscribe()
         {
             yield return Oy.Subscribe<string>("VertexTool:DeselectAll", _ => ClearSelection());
+            yield return Oy.Subscribe<int>("VertexEditFaceTool:Poke", v => Poke(v));
+            yield return Oy.Subscribe<int>("VertexEditFaceTool:Bevel", v => Bevel(v));
         }
         
-        private void Poke(object sender, int num)
+        private void Poke(int num)
         {
             foreach (var solidFace in _selectedFaces)
             {
@@ -55,7 +55,7 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
             UpdateSolids(_selectedFaces.Select(x => x.Solid).ToList());
         }
 
-        private void Bevel(object sender, int num)
+        private void Bevel(int num)
         {
             foreach (var solidFace in _selectedFaces)
             {

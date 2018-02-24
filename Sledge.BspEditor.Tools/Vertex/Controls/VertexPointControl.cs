@@ -1,63 +1,62 @@
 ﻿using System;
+using System.ComponentModel.Composition;
 using System.Drawing;
 using System.Windows.Forms;
 using LogicAndTrick.Oy;
 using Sledge.BspEditor.Tools.Vertex.Tools;
 using Sledge.Common.Easings;
+using Sledge.Common.Translations;
+using Sledge.Shell;
 
 namespace Sledge.BspEditor.Tools.Vertex.Controls
 {
-    public partial class StandardControl : UserControl
+    [Export]
+    [AutoTranslate]
+    public partial class VertexPointControl : UserControl
     {
-        public delegate void SplitEventHandler(object sender);
-        public delegate void MergeEventHandler(object sender);
-
-        public event SplitEventHandler Split;
-        public event MergeEventHandler Merge;
-
-        protected virtual void OnSplit()
-        {
-            Split?.Invoke(this);
-        }
-
-        protected virtual void OnMerge()
-        {
-            Merge?.Invoke(this);
-        }
-
         public bool AutomaticallyMerge
         {
-            get { return AutoMerge.Checked; }
-            set { AutoMerge.Checked = value; }
+            get => AutoMerge.Checked;
+            set => AutoMerge.Checked = value;
         }
 
         public bool SplitEnabled
         {
-            get { return SplitButton.Enabled; }
-            set { SplitButton.Enabled = value; }
+            get => SplitButton.Enabled;
+            set => SplitButton.Enabled = value;
         }
 
-        public StandardControl()
+        #region Translations
+
+        public string MergeOverlappingVertices { set => this.InvokeLater(() => MergeButton.Text = value); }
+        public string MergeAutomatically { set => this.InvokeLater(() => AutoMerge.Text = value); }
+        public string SplitFace { set => this.InvokeLater(() => SplitButton.Text = value); }
+        public string ShowPoints { set => this.InvokeLater(() => ShowPointsCheckbox.Text = value); }
+        public string ShowMidpoints { set => this.InvokeLater(() => ShowMidpointsCheckbox.Text = value); }
+        public string MergeResults { get; set; }
+
+        #endregion
+
+        public VertexPointControl()
         {
             InitializeComponent();
+            CreateHandle();
         }
 
         private void SplitButtonClicked(object sender, EventArgs e)
         {
-            OnSplit();
+            Oy.Publish("VertexPointTool:Split", string.Empty);
         }
 
         private void MergeButtonClicked(object sender, EventArgs e)
         {
-            OnMerge();
+            Oy.Publish("VertexPointTool:Merge", string.Empty);
         }
 
         public void ShowMergeResult(int mergedVertices, int removedFaces)
         {
             if (mergedVertices + removedFaces <= 0) return;
-            MergeResultsLabel.Text = String.Format("{0} vert{1} merged, {2} face{3} removed",
-                mergedVertices, mergedVertices == 1 ? "ex" : "ices",
-                removedFaces, removedFaces == 1 ? "" : "s");
+            MergeResultsLabel.Text = String.Format(MergeResults, mergedVertices, removedFaces);
             MergeResultsLabel.Trigger();
         }
 
@@ -104,18 +103,11 @@ namespace Sledge.BspEditor.Tools.Vertex.Controls
     {
         private long _lastTick;
         private long _remaining;
-        private Timer _timer;
-        private int _fadeTime = 1000;
-        private Easing _easing;
 
-        public int FadeTime
-        {
-            get { return _fadeTime; }
-            set
-            {
-                _fadeTime = value;
-            }
-        }
+        private readonly Timer _timer;
+        private readonly Easing _easing;
+
+        public int FadeTime { get; set; } = 1000;
 
         public FadeLabel()
         {
@@ -141,7 +133,7 @@ namespace Sledge.BspEditor.Tools.Vertex.Controls
 
         public void Trigger()
         {
-            _remaining = _fadeTime;
+            _remaining = FadeTime;
             _lastTick = DateTime.Now.Ticks / 10000;
             _timer.Start();
         }
@@ -154,7 +146,7 @@ namespace Sledge.BspEditor.Tools.Vertex.Controls
 
         protected override void OnPaint(PaintEventArgs e)
         {
-            var val = _easing.Evaluate((_remaining * 1m) / _fadeTime);
+            var val = _easing.Evaluate((_remaining * 1m) / FadeTime);
             val = Math.Min(1, Math.Max(0, val));
             var a = (int) (val * 255);
             var c = Color.FromArgb(a, ForeColor);

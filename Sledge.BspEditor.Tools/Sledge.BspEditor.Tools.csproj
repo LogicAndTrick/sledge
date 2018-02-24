@@ -31,8 +31,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="LogicAndTrick.Oy, Version=1.0.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\LogicAndTrick.Oy.1.0.2\lib\net45\LogicAndTrick.Oy.dll</HintPath>
+    <Reference Include="LogicAndTrick.Oy, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\LogicAndTrick.Oy.1.1.0\lib\net45\LogicAndTrick.Oy.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
@@ -212,23 +212,23 @@
     <Compile Include="ToolSceneObjectProviderFactory.cs" />
     <Compile Include="ToolStatusItem.cs" />
     <Compile Include="ToolViewportListener.cs" />
-    <Compile Include="Vertex\Controls\EditFaceControl.cs">
+    <Compile Include="Vertex\Controls\VertexEditFaceControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Vertex\Controls\EditFaceControl.Designer.cs">
-      <DependentUpon>EditFaceControl.cs</DependentUpon>
+    <Compile Include="Vertex\Controls\VertexEditFaceControl.Designer.cs">
+      <DependentUpon>VertexEditFaceControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="Vertex\Controls\ScaleControl.cs">
+    <Compile Include="Vertex\Controls\VertexScaleControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Vertex\Controls\ScaleControl.Designer.cs">
-      <DependentUpon>ScaleControl.cs</DependentUpon>
+    <Compile Include="Vertex\Controls\VertexScaleControl.Designer.cs">
+      <DependentUpon>VertexScaleControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="Vertex\Controls\StandardControl.cs">
+    <Compile Include="Vertex\Controls\VertexPointControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Vertex\Controls\StandardControl.Designer.cs">
-      <DependentUpon>StandardControl.cs</DependentUpon>
+    <Compile Include="Vertex\Controls\VertexPointControl.Designer.cs">
+      <DependentUpon>VertexPointControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Vertex\Controls\VertexSidebarPanel.cs">
       <SubType>UserControl</SubType>
@@ -344,14 +344,14 @@
     <EmbeddedResource Include="Texture\TextureSidebarPanel.resx">
       <DependentUpon>TextureSidebarPanel.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Vertex\Controls\EditFaceControl.resx">
-      <DependentUpon>EditFaceControl.cs</DependentUpon>
+    <EmbeddedResource Include="Vertex\Controls\VertexEditFaceControl.resx">
+      <DependentUpon>VertexEditFaceControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Vertex\Controls\ScaleControl.resx">
-      <DependentUpon>ScaleControl.cs</DependentUpon>
+    <EmbeddedResource Include="Vertex\Controls\VertexScaleControl.resx">
+      <DependentUpon>VertexScaleControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Vertex\Controls\StandardControl.resx">
-      <DependentUpon>StandardControl.cs</DependentUpon>
+    <EmbeddedResource Include="Vertex\Controls\VertexPointControl.resx">
+      <DependentUpon>VertexPointControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Vertex\Controls\VertexSidebarPanel.resx">
       <DependentUpon>VertexSidebarPanel.cs</DependentUpon>

@@ -1,6 +1,6 @@
 ﻿namespace Sledge.BspEditor.Tools.Vertex.Controls
 {
-    partial class StandardControl
+    partial class VertexPointControl
     {
         /// <summary> 
         /// Required designer variable.
@@ -105,7 +105,7 @@
             this.ShowMidpointsCheckbox.UseVisualStyleBackColor = true;
             this.ShowMidpointsCheckbox.CheckedChanged += new System.EventHandler(this.ShowPointsChanged);
             // 
-            // StandardControl
+            // VertexPointControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -115,7 +115,7 @@
             this.Controls.Add(this.SplitButton);
             this.Controls.Add(this.MergeButton);
             this.Controls.Add(this.AutoMerge);
-            this.Name = "StandardControl";
+            this.Name = "VertexPointControl";
             this.Size = new System.Drawing.Size(200, 122);
             this.ResumeLayout(false);
             this.PerformLayout();

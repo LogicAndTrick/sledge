@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.Composition;
+﻿using System.ComponentModel.Composition;
 using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Sledge.BspEditor.Tools.Draggable;
@@ -17,6 +13,7 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
         {
             UseValidation = true;
             Active = false;
+            Title = GetName() ?? GetType().Name;
         }
 
         public abstract string OrderHint { get; }
@@ -26,6 +23,7 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
         public override Image GetIcon() => null;
         public abstract Task SelectionChanged();
         public abstract Control Control { get; }
+        public string Title { get; set; }
 
         protected override void Invalidate()
         {

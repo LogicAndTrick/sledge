@@ -14,6 +14,7 @@ using Sledge.BspEditor.Tools.Draggable;
 using Sledge.BspEditor.Tools.Vertex.Controls;
 using Sledge.BspEditor.Tools.Vertex.Selection;
 using Sledge.Common;
+using Sledge.Common.Translations;
 using Sledge.DataStructures.Geometric;
 using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Scenes;
@@ -22,10 +23,12 @@ using Sledge.Shell.Input;
 
 namespace Sledge.BspEditor.Tools.Vertex.Tools
 {
+    [AutoTranslate]
     [Export(typeof(VertexSubtool))]
     public class VertexPointTool : VertexSubtool, IDraggableState
     {
-        
+        [Import] private VertexPointControl _control;
+
         public enum VisiblePoints
         {
             All,
@@ -39,7 +42,6 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
         
         private readonly BoxDraggableState _boxState;
         private readonly Dictionary<VertexSolid, VertexList> _vertices;
-        private readonly StandardControl _control;
 
         private VisiblePoints _showPoints;
         
@@ -61,12 +63,6 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
             
             States.Add(_boxState);
 
-            
-            var sc = new StandardControl();
-            sc.Merge += Merge;
-            sc.Split += Split;
-            _control = sc;
-
             _showPoints = VisiblePoints.All;
         }
 
@@ -74,6 +70,8 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
         {
             yield return Oy.Subscribe<VertexTool>("Tool:Activated", t => CycleShowPoints());
             yield return Oy.Subscribe<string>("VertexPointTool:SetVisiblePoints", v => SetVisiblePoints(v));
+            yield return Oy.Subscribe<object>("VertexPointTool:Split", _ => Split());
+            yield return Oy.Subscribe<object>("VertexPointTool:Merge", _ => Merge());
             yield return Oy.Subscribe<object>("VertexTool:DeselectAll", _ => DeselectAll());
         }
 
@@ -217,7 +215,7 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
             return _control.AutomaticallyMerge;
         }
 
-        private void Merge(object sender)
+        private void Merge()
         {
             var res = CheckMergedVertices().ToList();
             if (res.Any())
@@ -335,7 +333,7 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
                        : face;
         }
 
-        private void Split(object sender)
+        private void Split()
         {
             var face = GetSplitFace(out var vertexSolid);
             if (face == null) return;
@@ -367,7 +365,7 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
         {
             if (CanSplit())
             {
-                Split(null);
+                Split();
             }
         }
 

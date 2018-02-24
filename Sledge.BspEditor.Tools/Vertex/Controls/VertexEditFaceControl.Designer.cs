@@ -1,6 +1,6 @@
 ﻿namespace Sledge.BspEditor.Tools.Vertex.Controls
 {
-    partial class EditFaceControl
+    partial class VertexEditFaceControl
     {
         /// <summary> 
         /// Required designer variable.
@@ -29,13 +29,13 @@
         private void InitializeComponent()
         {
             this.BevelButton = new System.Windows.Forms.Button();
-            this.label5 = new System.Windows.Forms.Label();
+            this.WithSelectedFacesLabel = new System.Windows.Forms.Label();
             this.BevelValue = new System.Windows.Forms.NumericUpDown();
-            this.label7 = new System.Windows.Forms.Label();
-            this.label6 = new System.Windows.Forms.Label();
+            this.UnitsLabel2 = new System.Windows.Forms.Label();
+            this.BevelByLabel = new System.Windows.Forms.Label();
             this.PokeFaceButton = new System.Windows.Forms.Button();
-            this.label1 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
+            this.PokeByLabel = new System.Windows.Forms.Label();
+            this.UnitsLabel1 = new System.Windows.Forms.Label();
             this.PokeFaceCount = new System.Windows.Forms.NumericUpDown();
             ((System.ComponentModel.ISupportInitialize)(this.BevelValue)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.PokeFaceCount)).BeginInit();
@@ -51,14 +51,14 @@
             this.BevelButton.UseVisualStyleBackColor = true;
             this.BevelButton.Click += new System.EventHandler(this.BevelButtonClicked);
             // 
-            // label5
+            // WithSelectedFacesLabel
             // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(2, 4);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(104, 13);
-            this.label5.TabIndex = 3;
-            this.label5.Text = "With selected faces:";
+            this.WithSelectedFacesLabel.AutoSize = true;
+            this.WithSelectedFacesLabel.Location = new System.Drawing.Point(2, 4);
+            this.WithSelectedFacesLabel.Name = "WithSelectedFacesLabel";
+            this.WithSelectedFacesLabel.Size = new System.Drawing.Size(104, 13);
+            this.WithSelectedFacesLabel.TabIndex = 3;
+            this.WithSelectedFacesLabel.Text = "With selected faces:";
             // 
             // BevelValue
             // 
@@ -82,23 +82,23 @@
             0,
             0});
             // 
-            // label7
+            // UnitsLabel2
             // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(112, 52);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(29, 13);
-            this.label7.TabIndex = 6;
-            this.label7.Text = "units";
+            this.UnitsLabel2.AutoSize = true;
+            this.UnitsLabel2.Location = new System.Drawing.Point(112, 52);
+            this.UnitsLabel2.Name = "UnitsLabel2";
+            this.UnitsLabel2.Size = new System.Drawing.Size(29, 13);
+            this.UnitsLabel2.TabIndex = 6;
+            this.UnitsLabel2.Text = "units";
             // 
-            // label6
+            // BevelByLabel
             // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(3, 52);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(48, 13);
-            this.label6.TabIndex = 7;
-            this.label6.Text = "Bevel by";
+            this.BevelByLabel.AutoSize = true;
+            this.BevelByLabel.Location = new System.Drawing.Point(3, 52);
+            this.BevelByLabel.Name = "BevelByLabel";
+            this.BevelByLabel.Size = new System.Drawing.Size(48, 13);
+            this.BevelByLabel.TabIndex = 7;
+            this.BevelByLabel.Text = "Bevel by";
             // 
             // PokeFaceButton
             // 
@@ -110,23 +110,23 @@
             this.PokeFaceButton.UseVisualStyleBackColor = true;
             this.PokeFaceButton.Click += new System.EventHandler(this.PokeFaceButtonClicked);
             // 
-            // label1
+            // PokeByLabel
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(3, 26);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(46, 13);
-            this.label1.TabIndex = 7;
-            this.label1.Text = "Poke by";
+            this.PokeByLabel.AutoSize = true;
+            this.PokeByLabel.Location = new System.Drawing.Point(3, 26);
+            this.PokeByLabel.Name = "PokeByLabel";
+            this.PokeByLabel.Size = new System.Drawing.Size(46, 13);
+            this.PokeByLabel.TabIndex = 7;
+            this.PokeByLabel.Text = "Poke by";
             // 
-            // label2
+            // UnitsLabel1
             // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(112, 26);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(29, 13);
-            this.label2.TabIndex = 6;
-            this.label2.Text = "units";
+            this.UnitsLabel1.AutoSize = true;
+            this.UnitsLabel1.Location = new System.Drawing.Point(112, 26);
+            this.UnitsLabel1.Name = "UnitsLabel1";
+            this.UnitsLabel1.Size = new System.Drawing.Size(29, 13);
+            this.UnitsLabel1.TabIndex = 6;
+            this.UnitsLabel1.Text = "units";
             // 
             // PokeFaceCount
             // 
@@ -150,20 +150,20 @@
             0,
             0});
             // 
-            // EditFaceControl
+            // VertexEditFaceControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.PokeFaceButton);
             this.Controls.Add(this.BevelButton);
-            this.Controls.Add(this.label5);
+            this.Controls.Add(this.WithSelectedFacesLabel);
             this.Controls.Add(this.PokeFaceCount);
             this.Controls.Add(this.BevelValue);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.label1);
-            this.Controls.Add(this.label7);
-            this.Controls.Add(this.label6);
-            this.Name = "EditFaceControl";
+            this.Controls.Add(this.UnitsLabel1);
+            this.Controls.Add(this.PokeByLabel);
+            this.Controls.Add(this.UnitsLabel2);
+            this.Controls.Add(this.BevelByLabel);
+            this.Name = "VertexEditFaceControl";
             this.Size = new System.Drawing.Size(199, 78);
             ((System.ComponentModel.ISupportInitialize)(this.BevelValue)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.PokeFaceCount)).EndInit();
@@ -175,13 +175,13 @@
         #endregion
 
         private System.Windows.Forms.Button BevelButton;
-        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Label WithSelectedFacesLabel;
         private System.Windows.Forms.NumericUpDown BevelValue;
-        private System.Windows.Forms.Label label7;
-        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.Label UnitsLabel2;
+        private System.Windows.Forms.Label BevelByLabel;
         private System.Windows.Forms.Button PokeFaceButton;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label PokeByLabel;
+        private System.Windows.Forms.Label UnitsLabel1;
         private System.Windows.Forms.NumericUpDown PokeFaceCount;
     }
 }

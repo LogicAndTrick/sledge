@@ -1,6 +1,6 @@
 ﻿namespace Sledge.BspEditor.Tools.Vertex.Controls
 {
-    partial class ScaleControl
+    partial class VertexScaleControl
     {
         /// <summary> 
         /// Required designer variable.
@@ -30,7 +30,7 @@
         {
             this.button6 = new System.Windows.Forms.Button();
             this.DistanceValue = new System.Windows.Forms.NumericUpDown();
-            this.label4 = new System.Windows.Forms.Label();
+            this.ScaleDistanceLabel = new System.Windows.Forms.Label();
             this.ResetDistanceButton = new System.Windows.Forms.Button();
             this.ResetOriginButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.DistanceValue)).BeginInit();
@@ -74,14 +74,14 @@
             0});
             this.DistanceValue.ValueChanged += new System.EventHandler(this.DistanceValueChanged);
             // 
-            // label4
+            // ScaleDistanceLabel
             // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(-1, 4);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(94, 13);
-            this.label4.TabIndex = 9;
-            this.label4.Text = "Scale distance (%)";
+            this.ScaleDistanceLabel.AutoSize = true;
+            this.ScaleDistanceLabel.Location = new System.Drawing.Point(-1, 4);
+            this.ScaleDistanceLabel.Name = "ScaleDistanceLabel";
+            this.ScaleDistanceLabel.Size = new System.Drawing.Size(94, 13);
+            this.ScaleDistanceLabel.TabIndex = 9;
+            this.ScaleDistanceLabel.Text = "Scale distance (%)";
             // 
             // ResetDistanceButton
             // 
@@ -103,7 +103,7 @@
             this.ResetOriginButton.UseVisualStyleBackColor = true;
             this.ResetOriginButton.Click += new System.EventHandler(this.ResetOriginClicked);
             // 
-            // ScaleControl
+            // VertexScaleControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -111,8 +111,8 @@
             this.Controls.Add(this.ResetDistanceButton);
             this.Controls.Add(this.button6);
             this.Controls.Add(this.DistanceValue);
-            this.Controls.Add(this.label4);
-            this.Name = "ScaleControl";
+            this.Controls.Add(this.ScaleDistanceLabel);
+            this.Name = "VertexScaleControl";
             this.Size = new System.Drawing.Size(198, 61);
             ((System.ComponentModel.ISupportInitialize)(this.DistanceValue)).EndInit();
             this.ResumeLayout(false);
@@ -124,7 +124,7 @@
 
         private System.Windows.Forms.Button button6;
         private System.Windows.Forms.NumericUpDown DistanceValue;
-        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Label ScaleDistanceLabel;
         private System.Windows.Forms.Button ResetDistanceButton;
         private System.Windows.Forms.Button ResetOriginButton;
     }

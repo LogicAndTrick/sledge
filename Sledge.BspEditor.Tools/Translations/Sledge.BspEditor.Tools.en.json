@@ -56,6 +56,44 @@
         } 
     },
     "Vertex": {
+        "Tools": {
+            "VertexPointTool": {
+                "Title": "Standard"
+            },
+            "VertexScaleTool": {
+                "Title": "Scale"
+            },
+            "VertexFaceEditTool": {
+                "Title": "Edit face"
+            }
+        },
+        "Controls": {
+            "VertexSidebarPanel": {
+                "DeselectAll": "Deselect all",
+                "ResetToOriginal": "Reset to original"
+            },
+            "VertexPointControl": {
+                "MergeOverlappingVertices": "Merge overlapping vertices",
+                "MergeAutomatically": "Merge automatically",
+                "SplitFace": "Split face",
+                "ShowPoints": "Show points",
+                "ShowMidpoints": "Show midpoints",
+                "MergeResults": "Removed: {0} point(s), {1} face(s)"
+            },
+            "VertexScaleControl": {
+                "ScaleDistance": "Scale distance (%)",
+                "Reset": "Reset",
+                "ResetOrigin": "Reset origin"
+            },
+            "VertexFaceEditControl": {
+                "WithSelectedFaces": "With selected faces:",
+                "Units": "units",
+                "PokeBy": "Poke by",
+                "BevelBy": "Bevel by",
+                "Poke": "Poke",
+                "Bevel": "Bevel"
+            } 
+        },
         "Errors": {
             "BackwardsFace": "Backwards face",
             "ConcaveFace": "Concave face",

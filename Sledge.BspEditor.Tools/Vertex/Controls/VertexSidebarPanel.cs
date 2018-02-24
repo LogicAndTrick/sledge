@@ -7,6 +7,7 @@ using LogicAndTrick.Oy;
 using Sledge.BspEditor.Tools.Vertex.Tools;
 using Sledge.Common.Shell.Components;
 using Sledge.Common.Shell.Context;
+using Sledge.Shell;
 
 namespace Sledge.BspEditor.Tools.Vertex.Controls
 {
@@ -19,6 +20,12 @@ namespace Sledge.BspEditor.Tools.Vertex.Controls
 
         public string Title => "Vertex Tool";
         public object Control => this;
+        #region Translations
+        
+        public string DeselectAll { set => this.InvokeLater(() => DeselectAllButton.Text = value); }
+        public string ResetToOriginal { set => this.InvokeLater(() => ResetButton.Text = value); }
+
+        #endregion
 
         public VertexSidebarPanel()
         {
@@ -32,6 +39,8 @@ namespace Sledge.BspEditor.Tools.Vertex.Controls
             {
                 SetSelectedTool(t);
             });
+
+            CreateHandle();
         }
 
         public bool IsInContext(IContext context)
@@ -63,7 +72,7 @@ namespace Sledge.BspEditor.Tools.Vertex.Controls
                 return;
             }
 
-            ControlPanel.Text = t.GetName();
+            ControlPanel.Text = t.Title;
             if (t.Control != null)
             {
                 ControlPanel.Controls.Add(t.Control);
@@ -86,8 +95,8 @@ namespace Sledge.BspEditor.Tools.Vertex.Controls
         {
             var rdo = new RadioButton
             {
-                Name = tool.GetName(),
-                Text = tool.GetName(),
+                Name = tool.Title,
+                Text = tool.Title,
                 AutoSize = true,
                 Margin = new Padding(1),
                 Tag = tool.GetType()

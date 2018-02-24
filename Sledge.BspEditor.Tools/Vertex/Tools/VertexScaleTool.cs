@@ -13,6 +13,7 @@ using Sledge.BspEditor.Tools.Draggable;
 using Sledge.BspEditor.Tools.Vertex.Controls;
 using Sledge.BspEditor.Tools.Vertex.Selection;
 using Sledge.Common;
+using Sledge.Common.Translations;
 using Sledge.DataStructures.Geometric;
 using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Scenes;
@@ -21,16 +22,18 @@ using Sledge.Shell.Input;
 
 namespace Sledge.BspEditor.Tools.Vertex.Tools
 {
+    [AutoTranslate]
     [Export(typeof(VertexSubtool))]
     public class VertexScaleTool : VertexSubtool, IDraggableState
     {
+        [Import] private VertexScaleControl _control;
+
         public override string OrderHint => "D";
         public override string GetName() => "Point scaling";
         public override Control Control => _control;
         
         private readonly BoxDraggableState _boxState;
         private readonly Dictionary<VertexSolid, VertexList> _vertices;
-        private readonly ScaleControl _control;
         private readonly ScaleOrigin _origin;
         private Dictionary<VertexPoint, Coordinate> _originals;
         
@@ -52,33 +55,25 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
             
             States.Add(_boxState);
             
-            var sc = new ScaleControl();
-            sc.ValueChanged += ValueChanged;
-            sc.ValueReset += ValueReset;
-            sc.ResetOrigin += ResetOrigin;
-            _control = sc;
-            
             _origin = new ScaleOrigin(this);
         }
 
         protected override IEnumerable<Subscription> Subscribe()
         {
             yield return Oy.Subscribe<object>("VertexTool:DeselectAll", _ => DeselectAll());
+            yield return Oy.Subscribe<decimal>("VertexScaleTool:ValueChanged", v => ValueChanged(v));
+            yield return Oy.Subscribe<decimal>("VertexScaleTool:ValueReset", v => ValueReset(v));
+            yield return Oy.Subscribe("VertexScaleTool:ResetOrigin", () => ResetOrigin());
         }
 
-        private void ValueChanged(object sender, decimal value)
+        private void ValueChanged(decimal value)
         {
             MovePoints(value);
         }
 
-        private void ValueReset(object sender, decimal value)
+        private void ValueReset(decimal value)
         {
             _originals = GetVisiblePoints().ToDictionary(x => x, x => x.Position);
-        }
-
-        private void ResetOrigin(object sender)
-        {
-            ResetOrigin();
         }
 
         private void ResetOrigin()
@@ -188,6 +183,7 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
             {
                 v.Update();
             }
+            _originals = GetVisiblePoints().ToDictionary(x => x, x => x.Position);
         }
 
         private void UpdateSolids(List<VertexSolid> solids)
@@ -219,6 +215,7 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
                     _vertices.Add(solid, new VertexList(this, solid));
                 }
             }
+            _originals = GetVisiblePoints().ToDictionary(x => x, x => x.Position);
         }
 
         private IEnumerable<VertexPoint> GetVisiblePoints()
