@@ -37,8 +37,6 @@ namespace Sledge.BspEditor.Tools.Vertex
     [AutoTranslate]
     public class VertexTool : BaseDraggableTool, IInitialiseHook
     {
-        //private readonly VertexSidebarPanel _controlPanel;
-        //private readonly VMErrorsSidebarPanel _errorPanel;
         [ImportMany] private IEnumerable<Lazy<VertexSubtool>> _subTools;
         [ImportMany] private IEnumerable<Lazy<IVertexErrorCheck>> _errorChecks;
         [Import] private Lazy<MapObjectConverter> _converter;
@@ -59,13 +57,6 @@ namespace Sledge.BspEditor.Tools.Vertex
         
         public VertexTool()
         {
-            //_controlPanel = new VertexSidebarPanel();
-            //_controlPanel.ToolSelected += SubToolSelected;
-            //_controlPanel.DeselectAll += x => DeselectAll();
-            //_controlPanel.Reset += Reset;
-
-            //_errorPanel = new VMErrorsSidebarPanel();
-
             Usage = ToolUsage.Both;
 
             UseValidation = true;
@@ -96,6 +87,7 @@ namespace Sledge.BspEditor.Tools.Vertex
             yield return Oy.Subscribe<String>("VertexTool:Reset", async _ =>
             {
                 await _selection.Reset(Document);
+                CurrentSubTool?.Update();
                 Invalidate();
             });
         }
@@ -110,6 +102,7 @@ namespace Sledge.BspEditor.Tools.Vertex
 
         public override async Task ToolDeselected()
         {
+            await _selection.Commit(Document);
             await _selection.Clear(Document);
             var ct = CurrentSubTool;
             if (ct != null) await ct.ToolDeselected();
@@ -273,8 +266,7 @@ namespace Sledge.BspEditor.Tools.Vertex
 
         public new void Invalidate()
         {
-            // var errors = _errorChecks.SelectMany(ec => _selection.SelectMany(s => ec.Value.GetErrors(s)));
-            // _errorPanel.SetErrorList(errors);
+            Oy.Publish("VertexTool:Updated", _selection);
             base.Invalidate();
         }
     }

@@ -1,6 +1,6 @@
 ﻿namespace Sledge.BspEditor.Tools.Vertex.Controls
 {
-    partial class VMErrorsSidebarPanel
+    partial class VertexErrorsSidebarPanel
     {
         /// <summary> 
         /// Required designer variable.
@@ -43,13 +43,13 @@
             this.ErrorList.TabIndex = 7;
             this.ErrorList.SelectedIndexChanged += new System.EventHandler(this.ErrorListSelectionChanged);
             // 
-            // VMErrorsSidebarPanel
+            // VertexErrorsSidebarPanel
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.ErrorList);
             this.MinimumSize = new System.Drawing.Size(200, 50);
-            this.Name = "VMErrorsSidebarPanel";
+            this.Name = "VertexErrorsSidebarPanel";
             this.Size = new System.Drawing.Size(220, 128);
             this.ResumeLayout(false);
 

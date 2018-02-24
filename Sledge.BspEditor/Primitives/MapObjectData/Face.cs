@@ -234,7 +234,7 @@ namespace Sledge.BspEditor.Primitives.MapObjectData
                 UpdatePlane();
             }
 
-            private void UpdatePlane()
+            public void UpdatePlane()
             {
                 _plane = _list.Count < 3 ? _plane : new Plane(_list[0], _list[1], _list[2]);
             }

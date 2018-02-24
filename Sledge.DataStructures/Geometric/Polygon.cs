@@ -100,6 +100,7 @@ namespace Sledge.DataStructures.Geometric
         /// <returns>True if the polygon is valid</returns>
         public bool IsValid()
         {
+            if (Vertices.Count < 3) return false;
             var plane = GetPlane();
             return Vertices.All(x => plane.OnPlane(x) == 0);
         }
@@ -135,6 +136,8 @@ namespace Sledge.DataStructures.Geometric
 
         public bool IsConvex(decimal epsilon = 0.001m)
         {
+            if (Vertices.Count < 3) return false;
+
             var plane = GetPlane();
             for (var i = 0; i < Vertices.Count; i++)
             {
@@ -355,6 +358,8 @@ namespace Sledge.DataStructures.Geometric
 
         public Coordinate GetIntersectionPoint(Line line, bool ignoreDirection = false)
         {
+            if (Vertices.Count < 3) return null;
+
             var plane = GetPlane();
             var intersect = plane.GetIntersectionPoint(line, ignoreDirection);
             if (intersect == null) return null;

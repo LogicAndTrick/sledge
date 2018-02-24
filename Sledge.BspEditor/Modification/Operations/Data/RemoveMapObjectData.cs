@@ -36,6 +36,7 @@ namespace Sledge.BspEditor.Modification.Operations.Data
                 {
                     obj.Data.Remove(d);
                 }
+                obj.Invalidate();
                 ch.Update(obj);
             }
 
@@ -53,6 +54,7 @@ namespace Sledge.BspEditor.Modification.Operations.Data
                 {
                     obj.Data.Add(d);
                 }
+                obj.Invalidate();
                 ch.Update(obj);
             }
 

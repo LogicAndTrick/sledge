@@ -19,5 +19,29 @@ namespace Sledge.BspEditor.Tools.Vertex.Errors
             Faces = new List<Face>();
             Points = new List<Coordinate>();
         }
+
+        public VertexError Add(params Face[] faces)
+        {
+            Faces.AddRange(faces);
+            return this;
+        }
+
+        public VertexError Add(IEnumerable<Face> faces)
+        {
+            Faces.AddRange(faces);
+            return this;
+        }
+
+        public VertexError Add(params Coordinate[] points)
+        {
+            Points.AddRange(points);
+            return this;
+        }
+
+        public VertexError Add(IEnumerable<Coordinate> points)
+        {
+            Points.AddRange(points);
+            return this;
+        }
     }
 }

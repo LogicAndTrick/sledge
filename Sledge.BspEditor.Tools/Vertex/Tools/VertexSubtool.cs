@@ -32,5 +32,7 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
             base.Invalidate();
             Parent.Invalidate();
         }
+        
+        public abstract void Update();
     }
 }

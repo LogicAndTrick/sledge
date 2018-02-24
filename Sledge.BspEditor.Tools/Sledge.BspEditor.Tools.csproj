@@ -236,7 +236,18 @@
     <Compile Include="Vertex\Controls\VertexSidebarPanel.Designer.cs">
       <DependentUpon>VertexSidebarPanel.cs</DependentUpon>
     </Compile>
+    <Compile Include="Vertex\Controls\VertexErrorsSidebarPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Vertex\Controls\VertexErrorsSidebarPanel.Designer.cs">
+      <DependentUpon>VertexErrorsSidebarPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Vertex\Errors\BackwardsFace.cs" />
+    <Compile Include="Vertex\Errors\ConcaveFace.cs" />
+    <Compile Include="Vertex\Errors\CoplanarFaces.cs" />
     <Compile Include="Vertex\Errors\IVertexErrorCheck.cs" />
+    <Compile Include="Vertex\Errors\NonPlanarVertices.cs" />
+    <Compile Include="Vertex\Errors\OverlappingVertices.cs" />
     <Compile Include="Vertex\Selection\VertexHidden.cs" />
     <Compile Include="Vertex\Selection\VertexSelection.cs" />
     <Compile Include="Vertex\Selection\VertexSolid.cs" />
@@ -343,6 +354,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Vertex\Controls\VertexSidebarPanel.resx">
       <DependentUpon>VertexSidebarPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Vertex\Controls\VertexErrorsSidebarPanel.resx">
+      <DependentUpon>VertexErrorsSidebarPanel.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

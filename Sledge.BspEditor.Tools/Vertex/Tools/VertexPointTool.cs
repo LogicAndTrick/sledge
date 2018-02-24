@@ -74,6 +74,7 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
         {
             yield return Oy.Subscribe<VertexTool>("Tool:Activated", t => CycleShowPoints());
             yield return Oy.Subscribe<string>("VertexPointTool:SetVisiblePoints", v => SetVisiblePoints(v));
+            yield return Oy.Subscribe<object>("VertexTool:DeselectAll", _ => DeselectAll());
         }
 
         private void SetVisiblePoints(string visiblePoints)
@@ -167,6 +168,14 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
         {
             _vertices.Clear();
             await base.ToolDeselected();
+        }
+
+        public override void Update()
+        {
+            foreach (var v in _vertices.Values)
+            {
+                v.Update();
+            }
         }
 
         private void UpdateSolids(List<VertexSolid> solids)
@@ -710,6 +719,7 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
 
                 DraggingPosition = Position;
                 Vertices.ForEach(x => x.Set(Position));
+                Faces.ForEach(x => x.Vertices.UpdatePlane());
                 Solid.IsDirty = true;
             }
 
@@ -723,6 +733,7 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
                 }
 
                 Vertices.ForEach(x => x.Set(DraggingPosition));
+                Faces.ForEach(x => x.Vertices.UpdatePlane());
             }
 
             private VertexPoint[] _selfArray;

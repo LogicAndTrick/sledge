@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using LogicAndTrick.Oy;
 using Sledge.BspEditor.Primitives.MapObjectData;
 using Sledge.BspEditor.Rendering;
 using Sledge.BspEditor.Rendering.Viewport;
@@ -58,6 +59,11 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
             _control = sc;
             
             _origin = new ScaleOrigin(this);
+        }
+
+        protected override IEnumerable<Subscription> Subscribe()
+        {
+            yield return Oy.Subscribe<object>("VertexTool:DeselectAll", _ => DeselectAll());
         }
 
         private void ValueChanged(object sender, decimal value)
@@ -174,6 +180,14 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
             _vertices.Clear();
             await base.ToolDeselected();
             _originals = null;
+        }
+
+        public override void Update()
+        {
+            foreach (var v in _vertices.Values)
+            {
+                v.Update();
+            }
         }
 
         private void UpdateSolids(List<VertexSolid> solids)
@@ -340,6 +354,7 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
                 Position += delta;
                 DraggingPosition = Position;
                 Vertices.ForEach(x => x.Set(Position));
+                Faces.ForEach(x => x.Vertices.UpdatePlane());
                 Solid.IsDirty = true;
             }
 
@@ -383,8 +398,7 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
             public override IEnumerable<Element> GetViewportElements(MapViewport viewport, PerspectiveCamera camera)
             {
                 var pos = Position;
-                yield return new HandleElement(PositionType.Anchored, HandleElement.HandleType.SquareTexture,
-                    new Position(pos.ToVector3()), 4)
+                yield return new HandleElement(PositionType.Anchored, HandleElement.HandleType.SquareTexture, new Position(pos.ToVector3()), 4)
                 {
                     Color = Color.FromArgb(255, GetColor())
                 };

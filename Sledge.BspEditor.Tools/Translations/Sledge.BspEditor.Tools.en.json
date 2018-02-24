@@ -54,5 +54,14 @@
             "OK": "OK",
             "Cancel": "Cancel"
         } 
+    },
+    "Vertex": {
+        "Errors": {
+            "BackwardsFace": "Backwards face",
+            "ConcaveFace": "Concave face",
+            "CoplanarFaces": "Co-planar vertices",
+            "NonPlanarVertices": "Non-planar vertices",
+            "OverlappingVertices": "Overlapping vertices"
+        }
     } 
 }
