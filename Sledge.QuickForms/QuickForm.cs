@@ -36,6 +36,7 @@ namespace Sledge.QuickForms
 	    public int LabelWidth { get; set; }
 
 	    public bool UseShortcutKeys { get; set; }
+        public bool ForwardTabKey { get; set; }
 
         /// <summary>
         /// Create a form with the specified title.
@@ -52,6 +53,7 @@ namespace Sledge.QuickForms
 			MinimizeBox = false;
 			MaximizeBox = false;
             UseShortcutKeys = false;
+            ForwardTabKey = true;
             KeyPreview = true;
 	    }
 
@@ -80,7 +82,15 @@ namespace Sledge.QuickForms
             if (nonlabel != null) nonlabel.Focus();
 			base.OnLoad(e);
 		}
-		
+
+        protected override bool ProcessTabKey(bool forward)
+        {
+            if (!ForwardTabKey)
+                return false;
+            else
+                return base.ProcessTabKey(forward);
+        }
+
         /// <summary>
         /// Add an item to the form.
         /// </summary>
