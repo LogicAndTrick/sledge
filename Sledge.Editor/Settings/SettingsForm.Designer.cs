@@ -8,34 +8,36 @@
  */
 namespace Sledge.Editor.Settings
 {
-	partial class SettingsForm
-	{
-		/// <summary>
-		/// Designer variable used to keep track of non-visual components.
-		/// </summary>
-		private System.ComponentModel.IContainer components = null;
-		
-		/// <summary>
-		/// Disposes resources used by the form.
-		/// </summary>
-		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-		protected override void Dispose(bool disposing)
-		{
-			if (disposing) {
-				if (components != null) {
-					components.Dispose();
-				}
-			}
-			base.Dispose(disposing);
-		}
-		
-		/// <summary>
-		/// This method is required for Windows Forms designer support.
-		/// Do not change the method contents inside the source code editor. The Forms designer might
-		/// not be able to load this method if it was changed manually.
-		/// </summary>
-		private void InitializeComponent()
-		{
+    partial class SettingsForm
+    {
+        /// <summary>
+        /// Designer variable used to keep track of non-visual components.
+        /// </summary>
+        private System.ComponentModel.IContainer components = null;
+
+        /// <summary>
+        /// Disposes resources used by the form.
+        /// </summary>
+        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                if (components != null)
+                {
+                    components.Dispose();
+                }
+            }
+            base.Dispose(disposing);
+        }
+
+        /// <summary>
+        /// This method is required for Windows Forms designer support.
+        /// Do not change the method contents inside the source code editor. The Forms designer might
+        /// not be able to load this method if it was changed manually.
+        /// </summary>
+        private void InitializeComponent()
+        {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SettingsForm));
             this.tbcSettings = new System.Windows.Forms.TabControl();
@@ -93,6 +95,7 @@ namespace Sledge.Editor.Settings
             this.label13 = new System.Windows.Forms.Label();
             this.HideGridFactor = new System.Windows.Forms.DomainUpDown();
             this.DefaultGridSize = new System.Windows.Forms.DomainUpDown();
+            this.DottedGridOn = new System.Windows.Forms.CheckBox();
             this.tab3DViews = new System.Windows.Forms.TabPage();
             this.groupBox12 = new System.Windows.Forms.GroupBox();
             this.label39 = new System.Windows.Forms.Label();
@@ -153,6 +156,7 @@ namespace Sledge.Editor.Settings
             this.SelectedGameAutosaveTime = new System.Windows.Forms.NumericUpDown();
             this.SelectedGameUseDiffAutosaveDir = new System.Windows.Forms.CheckBox();
             this.label15 = new System.Windows.Forms.Label();
+            this.SelectedGameAutosaveTriggerFileSave = new System.Windows.Forms.CheckBox();
             this.SelectedGameAutosaveOnlyOnChange = new System.Windows.Forms.CheckBox();
             this.label14 = new System.Windows.Forms.Label();
             this.SelectedGameDiffAutosaveDirBrowse = new System.Windows.Forms.Button();
@@ -317,7 +321,6 @@ namespace Sledge.Editor.Settings
             this.btnApplyAndCloseSettings = new System.Windows.Forms.Button();
             this.btnApplySettings = new System.Windows.Forms.Button();
             this.HelpTooltip = new System.Windows.Forms.ToolTip(this.components);
-            this.SelectedGameAutosaveTriggerFileSave = new System.Windows.Forms.CheckBox();
             this.tbcSettings.SuspendLayout();
             this.tabGeneral.SuspendLayout();
             this.tabIntegration.SuspendLayout();
@@ -391,8 +394,8 @@ namespace Sledge.Editor.Settings
             // 
             // tbcSettings
             // 
-            this.tbcSettings.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            this.tbcSettings.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tbcSettings.Controls.Add(this.tabGeneral);
             this.tbcSettings.Controls.Add(this.tabIntegration);
@@ -475,8 +478,8 @@ namespace Sledge.Editor.Settings
             // 
             // AssociationsPanel
             // 
-            this.AssociationsPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            this.AssociationsPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.AssociationsPanel.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
             this.AssociationsPanel.Location = new System.Drawing.Point(6, 19);
@@ -937,6 +940,7 @@ namespace Sledge.Editor.Settings
             this.groupBox5.Controls.Add(this.label13);
             this.groupBox5.Controls.Add(this.HideGridFactor);
             this.groupBox5.Controls.Add(this.DefaultGridSize);
+            this.groupBox5.Controls.Add(this.DottedGridOn);
             this.groupBox5.Location = new System.Drawing.Point(6, 126);
             this.groupBox5.Name = "groupBox5";
             this.groupBox5.Size = new System.Drawing.Size(409, 113);
@@ -1028,6 +1032,17 @@ namespace Sledge.Editor.Settings
             this.DefaultGridSize.Size = new System.Drawing.Size(49, 20);
             this.DefaultGridSize.TabIndex = 0;
             this.DefaultGridSize.Text = "64";
+            // 
+            // DottedGridOn
+            // 
+            this.HideGridOn.Checked = true;
+            this.HideGridOn.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.DottedGridOn.Text = "Use dotted grid";
+            this.DottedGridOn.Location = new System.Drawing.Point(17, 79);
+            this.DottedGridOn.Name = "DottedGridOn";
+            this.DottedGridOn.Size = new System.Drawing.Size(104, 24);
+            this.DottedGridOn.TabIndex = 6;
+            this.HideGridOn.UseVisualStyleBackColor = true;
             // 
             // tab3DViews
             // 
@@ -1829,6 +1844,17 @@ namespace Sledge.Editor.Settings
             this.label15.Size = new System.Drawing.Size(69, 13);
             this.label15.TabIndex = 19;
             this.label15.Text = "Keep the last";
+            // 
+            // SelectedGameAutosaveTriggerFileSave
+            // 
+            this.SelectedGameAutosaveTriggerFileSave.Checked = true;
+            this.SelectedGameAutosaveTriggerFileSave.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.SelectedGameAutosaveTriggerFileSave.Location = new System.Drawing.Point(99, 199);
+            this.SelectedGameAutosaveTriggerFileSave.Name = "SelectedGameAutosaveTriggerFileSave";
+            this.SelectedGameAutosaveTriggerFileSave.Size = new System.Drawing.Size(330, 20);
+            this.SelectedGameAutosaveTriggerFileSave.TabIndex = 14;
+            this.SelectedGameAutosaveTriggerFileSave.Text = "Also save the actual file when autosaving (i.e. automatic Ctrl+S)";
+            this.SelectedGameAutosaveTriggerFileSave.UseVisualStyleBackColor = true;
             // 
             // SelectedGameAutosaveOnlyOnChange
             // 
@@ -3288,8 +3314,8 @@ namespace Sledge.Editor.Settings
             // 
             // HotkeyList
             // 
-            this.HotkeyList.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            this.HotkeyList.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.HotkeyList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.chAction,
@@ -3561,17 +3587,6 @@ namespace Sledge.Editor.Settings
             this.HelpTooltip.UseAnimation = false;
             this.HelpTooltip.UseFading = false;
             // 
-            // SelectedGameAutosaveTriggerFileSave
-            // 
-            this.SelectedGameAutosaveTriggerFileSave.Checked = true;
-            this.SelectedGameAutosaveTriggerFileSave.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.SelectedGameAutosaveTriggerFileSave.Location = new System.Drawing.Point(99, 199);
-            this.SelectedGameAutosaveTriggerFileSave.Name = "SelectedGameAutosaveTriggerFileSave";
-            this.SelectedGameAutosaveTriggerFileSave.Size = new System.Drawing.Size(330, 20);
-            this.SelectedGameAutosaveTriggerFileSave.TabIndex = 14;
-            this.SelectedGameAutosaveTriggerFileSave.Text = "Also save the actual file when autosaving (i.e. automatic Ctrl+S)";
-            this.SelectedGameAutosaveTriggerFileSave.UseVisualStyleBackColor = true;
-            // 
             // SettingsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -3673,154 +3688,155 @@ namespace Sledge.Editor.Settings
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).EndInit();
             this.ResumeLayout(false);
 
-		}
-		private System.Windows.Forms.TextBox SelectedBuildProfilePreview;
-		private System.Windows.Forms.TabPage tabBuildAdvancedPreview;
-		private System.Windows.Forms.GroupBox groupBox1;
-		private System.Windows.Forms.GroupBox groupBox2;
+        }
+        private System.Windows.Forms.TextBox SelectedBuildProfilePreview;
+        private System.Windows.Forms.TabPage tabBuildAdvancedPreview;
+        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.GroupBox groupBox15;
-		private System.Windows.Forms.TabPage tabBuildAdvancedShared;
-		private System.Windows.Forms.TabPage tabBuildAdvancedRAD;
-		private System.Windows.Forms.TabPage tabBuildAdvancedVIS;
-		private System.Windows.Forms.TabPage tabBuildAdvancedBSP;
-		private System.Windows.Forms.TabPage tabBuildAdvancedCSG;
+        private System.Windows.Forms.TabPage tabBuildAdvancedShared;
+        private System.Windows.Forms.TabPage tabBuildAdvancedRAD;
+        private System.Windows.Forms.TabPage tabBuildAdvancedVIS;
+        private System.Windows.Forms.TabPage tabBuildAdvancedBSP;
+        private System.Windows.Forms.TabPage tabBuildAdvancedCSG;
         private System.Windows.Forms.TabControl tabBuildAdvancedSubTabs;
-		private System.Windows.Forms.TabPage tabGame;
-		private System.Windows.Forms.Button AddGame;
-		private System.Windows.Forms.Button RemoveGame;
-		private System.Windows.Forms.Button SelectedGameAddFgd;
-		private System.Windows.Forms.Button SelectedGameAddAdditionalPackageFile;
-		private System.Windows.Forms.Button SelectedGameRemoveFgd;
-		private System.Windows.Forms.Button SelectedGameRemoveAdditionalPackage;
-		private System.Windows.Forms.Label lblGameWAD;
-		private System.Windows.Forms.Label lblGameBuild;
+        private System.Windows.Forms.TabPage tabGame;
+        private System.Windows.Forms.Button AddGame;
+        private System.Windows.Forms.Button RemoveGame;
+        private System.Windows.Forms.Button SelectedGameAddFgd;
+        private System.Windows.Forms.Button SelectedGameAddAdditionalPackageFile;
+        private System.Windows.Forms.Button SelectedGameRemoveFgd;
+        private System.Windows.Forms.Button SelectedGameRemoveAdditionalPackage;
+        private System.Windows.Forms.Label lblGameWAD;
+        private System.Windows.Forms.Label lblGameBuild;
         private System.Windows.Forms.ComboBox SelectedGameBuild;
-		private System.Windows.Forms.Label lblGameFGD;
-		private System.Windows.Forms.ComboBox SelectedGameDefaultPointEnt;
+        private System.Windows.Forms.Label lblGameFGD;
+        private System.Windows.Forms.ComboBox SelectedGameDefaultPointEnt;
         private System.Windows.Forms.ComboBox SelectedGameDefaultBrushEnt;
-		private System.Windows.Forms.NumericUpDown SelectedGameTextureScale;
+        private System.Windows.Forms.NumericUpDown SelectedGameTextureScale;
         private System.Windows.Forms.NumericUpDown SelectedGameLightmapScale;
-		private System.Windows.Forms.Label lblGameMod;
-		private System.Windows.Forms.ComboBox SelectedGameMod;
-		private System.Windows.Forms.TextBox SelectedGameWonDir;
-		private System.Windows.Forms.Label lblGameWONDir;
-		private System.Windows.Forms.Button SelectedGameDirBrowse;
-		private System.Windows.Forms.Label lblGameSteamDir;
-		private System.Windows.Forms.ComboBox SelectedGameSteamDir;
-		private System.Windows.Forms.TextBox SelectedGameName;
-		private System.Windows.Forms.Label lblGameName;
-		private System.Windows.Forms.Label lblGameEngine;
+        private System.Windows.Forms.Label lblGameMod;
+        private System.Windows.Forms.ComboBox SelectedGameMod;
+        private System.Windows.Forms.TextBox SelectedGameWonDir;
+        private System.Windows.Forms.Label lblGameWONDir;
+        private System.Windows.Forms.Button SelectedGameDirBrowse;
+        private System.Windows.Forms.Label lblGameSteamDir;
+        private System.Windows.Forms.ComboBox SelectedGameSteamDir;
+        private System.Windows.Forms.TextBox SelectedGameName;
+        private System.Windows.Forms.Label lblGameName;
+        private System.Windows.Forms.Label lblGameEngine;
         private System.Windows.Forms.ComboBox SelectedGameEngine;
         private System.Windows.Forms.TabControl GameSubTabs;
         private System.Windows.Forms.TreeView GameTree;
         private System.Windows.Forms.TreeView BuildTree;
-		private System.Windows.Forms.ColumnHeader ckKeyCombo;
-		private System.Windows.Forms.ColumnHeader chAction;
-		private System.Windows.Forms.ListView HotkeyList;
-		private System.Windows.Forms.TabPage tabHotkeys;
-		private System.Windows.Forms.Label label19;
-		private System.Windows.Forms.Panel GridBoundaryColour;
-		private System.Windows.Forms.Button btnCancelSettings;
-		private System.Windows.Forms.Button btnApplyAndCloseSettings;
-		private System.Windows.Forms.Button SteamInstallDirBrowseButton;
-		private System.Windows.Forms.TrackBar TimeToTopSpeed;
-		private System.Windows.Forms.CheckBox InvertMouseX;
-		private System.Windows.Forms.CheckBox InvertMouseY;
-		private System.Windows.Forms.TrackBar ForwardSpeed;
-		private System.Windows.Forms.TrackBar BackClippingPane;
-		private System.Windows.Forms.TextBox SteamInstallDir;
-		private System.Windows.Forms.ComboBox SteamUsername;
-		private System.Windows.Forms.Button btnApplySettings;
-		private System.Windows.Forms.CheckBox CrosshairCursorIn2DViews;
-		private System.Windows.Forms.RadioButton RotationStyle_SnapNever;
-		private System.Windows.Forms.RadioButton RotationStyle_SnapOffShift;
-		private System.Windows.Forms.RadioButton RotationStyle_SnapOnShift;
-		private System.Windows.Forms.NumericUpDown NudgeUnits;
-		private System.Windows.Forms.CheckBox ArrowKeysNudgeSelection;
-		private System.Windows.Forms.RadioButton SnapStyle_SnapOnAlt;
-		private System.Windows.Forms.RadioButton SnapStyle_SnapOffAlt;
-		private System.Windows.Forms.DomainUpDown DefaultGridSize;
-		private System.Windows.Forms.Panel GridHighlight2Colour;
-		private System.Windows.Forms.Panel GridHighlight1Colour;
-		private System.Windows.Forms.Panel GridColour;
-		private System.Windows.Forms.Panel GridBackgroundColour;
-		private System.Windows.Forms.Panel GridZeroAxisColour;
-		private System.Windows.Forms.NumericUpDown GridHighlight1Distance;
-		private System.Windows.Forms.CheckBox GridHighlight2On;
-		private System.Windows.Forms.CheckBox GridHighlight1On;
-		private System.Windows.Forms.DomainUpDown HideGridFactor;
-		private System.Windows.Forms.NumericUpDown HideGridLimit;
+        private System.Windows.Forms.ColumnHeader ckKeyCombo;
+        private System.Windows.Forms.ColumnHeader chAction;
+        private System.Windows.Forms.ListView HotkeyList;
+        private System.Windows.Forms.TabPage tabHotkeys;
+        private System.Windows.Forms.Label label19;
+        private System.Windows.Forms.Panel GridBoundaryColour;
+        private System.Windows.Forms.Button btnCancelSettings;
+        private System.Windows.Forms.Button btnApplyAndCloseSettings;
+        private System.Windows.Forms.Button SteamInstallDirBrowseButton;
+        private System.Windows.Forms.TrackBar TimeToTopSpeed;
+        private System.Windows.Forms.CheckBox InvertMouseX;
+        private System.Windows.Forms.CheckBox InvertMouseY;
+        private System.Windows.Forms.TrackBar ForwardSpeed;
+        private System.Windows.Forms.TrackBar BackClippingPane;
+        private System.Windows.Forms.TextBox SteamInstallDir;
+        private System.Windows.Forms.ComboBox SteamUsername;
+        private System.Windows.Forms.Button btnApplySettings;
+        private System.Windows.Forms.CheckBox CrosshairCursorIn2DViews;
+        private System.Windows.Forms.RadioButton RotationStyle_SnapNever;
+        private System.Windows.Forms.RadioButton RotationStyle_SnapOffShift;
+        private System.Windows.Forms.RadioButton RotationStyle_SnapOnShift;
+        private System.Windows.Forms.NumericUpDown NudgeUnits;
+        private System.Windows.Forms.CheckBox ArrowKeysNudgeSelection;
+        private System.Windows.Forms.RadioButton SnapStyle_SnapOnAlt;
+        private System.Windows.Forms.RadioButton SnapStyle_SnapOffAlt;
+        private System.Windows.Forms.DomainUpDown DefaultGridSize;
+        private System.Windows.Forms.Panel GridHighlight2Colour;
+        private System.Windows.Forms.Panel GridHighlight1Colour;
+        private System.Windows.Forms.Panel GridColour;
+        private System.Windows.Forms.Panel GridBackgroundColour;
+        private System.Windows.Forms.Panel GridZeroAxisColour;
+        private System.Windows.Forms.NumericUpDown GridHighlight1Distance;
+        private System.Windows.Forms.CheckBox GridHighlight2On;
+        private System.Windows.Forms.CheckBox GridHighlight1On;
+        private System.Windows.Forms.DomainUpDown HideGridFactor;
+        private System.Windows.Forms.NumericUpDown HideGridLimit;
         private System.Windows.Forms.TabPage tabBuildAdvanced;
-		private System.Windows.Forms.TabPage tabBuildExecutables;
-		private System.Windows.Forms.TabPage tabBuildGeneral;
-		private System.Windows.Forms.TabControl BuildSubTabs;
-		private System.Windows.Forms.TabPage tabConfigTextures;
-		private System.Windows.Forms.TabPage tabConfigEntities;
-		private System.Windows.Forms.TabPage tabConfigDirectories;
-		private System.Windows.Forms.TabPage tab2DViews;
-		private System.Windows.Forms.Label label18;
-		private System.Windows.Forms.Button ListAvailableGamesButton;
-		private System.Windows.Forms.Label label17;
+        private System.Windows.Forms.TabPage tabBuildExecutables;
+        private System.Windows.Forms.TabPage tabBuildGeneral;
+        private System.Windows.Forms.TabControl BuildSubTabs;
+        private System.Windows.Forms.TabPage tabConfigTextures;
+        private System.Windows.Forms.TabPage tabConfigEntities;
+        private System.Windows.Forms.TabPage tabConfigDirectories;
+        private System.Windows.Forms.TabPage tab2DViews;
+        private System.Windows.Forms.Label label18;
+        private System.Windows.Forms.Button ListAvailableGamesButton;
+        private System.Windows.Forms.Label label17;
         private System.Windows.Forms.TabPage tabSteam;
         private System.Windows.Forms.GroupBox groupBox14;
         private System.Windows.Forms.GroupBox groupBox13;
-		private System.Windows.Forms.TabPage tab3DViews;
-		private System.Windows.Forms.CheckBox checkBox5;
-		private System.Windows.Forms.CheckBox checkBox6;
-		private System.Windows.Forms.GroupBox groupBox10;
-		private System.Windows.Forms.Label label4;
-		private System.Windows.Forms.TrackBar trackBar1;
-		private System.Windows.Forms.GroupBox groupBox7;
-		private System.Windows.Forms.Label label1;
-		private System.Windows.Forms.TrackBar trackBar2;
-		private System.Windows.Forms.GroupBox groupBox8;
-		private System.Windows.Forms.Label label5;
-		private System.Windows.Forms.TrackBar trackBar3;
-		private System.Windows.Forms.GroupBox groupBox9;
-		private System.Windows.Forms.GroupBox groupBox3;
-		private System.Windows.Forms.GroupBox groupBox4;
-		private System.Windows.Forms.GroupBox groupBox5;
-		private System.Windows.Forms.GroupBox groupBox6;
-		private System.Windows.Forms.Label label13;
-		private System.Windows.Forms.Label label11;
+        private System.Windows.Forms.TabPage tab3DViews;
+        private System.Windows.Forms.CheckBox checkBox5;
+        private System.Windows.Forms.CheckBox checkBox6;
+        private System.Windows.Forms.GroupBox groupBox10;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.TrackBar trackBar1;
+        private System.Windows.Forms.GroupBox groupBox7;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.TrackBar trackBar2;
+        private System.Windows.Forms.GroupBox groupBox8;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.TrackBar trackBar3;
+        private System.Windows.Forms.GroupBox groupBox9;
+        private System.Windows.Forms.GroupBox groupBox3;
+        private System.Windows.Forms.GroupBox groupBox4;
+        private System.Windows.Forms.GroupBox groupBox5;
+        private System.Windows.Forms.GroupBox groupBox6;
+        private System.Windows.Forms.Label label13;
+        private System.Windows.Forms.Label label11;
         private System.Windows.Forms.Label label10;
-		private System.Windows.Forms.Label label6;
-		private System.Windows.Forms.Label label7;
-		private System.Windows.Forms.Label label8;
-		private System.Windows.Forms.Label label9;
-		private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label2;
-		private System.Windows.Forms.Label lblConfigLightmapScale;
-		private System.Windows.Forms.Label lblConfigTextureScale;
-		private System.Windows.Forms.Label lblConfigBrushEnt;
-		private System.Windows.Forms.Label lblConfigPointEnt;
-		private System.Windows.Forms.Label lblConfigSteamDir;
-		private System.Windows.Forms.Button btnConfigListSteamGames;
-		private System.Windows.Forms.Button btnConfigSteamDirBrowse;
-		private System.Windows.Forms.ComboBox cmbConfigSteamUser;
-		private System.Windows.Forms.Label lblConfigSteamUser;
-		private System.Windows.Forms.Button SelectedBuildExeFolderBrowse;
-		private System.Windows.Forms.ComboBox SelectedBuildEngine;
-		private System.Windows.Forms.Label lblBuildEngine;
-		private System.Windows.Forms.Label lblBuildExeFolder;
-		private System.Windows.Forms.Label lblBuildName;
-		private System.Windows.Forms.TextBox SelectedBuildExeFolder;
-		private System.Windows.Forms.TextBox SelectedBuildName;
-		private System.Windows.Forms.Button RemoveBuild;
+        private System.Windows.Forms.Label lblConfigLightmapScale;
+        private System.Windows.Forms.Label lblConfigTextureScale;
+        private System.Windows.Forms.Label lblConfigBrushEnt;
+        private System.Windows.Forms.Label lblConfigPointEnt;
+        private System.Windows.Forms.Label lblConfigSteamDir;
+        private System.Windows.Forms.Button btnConfigListSteamGames;
+        private System.Windows.Forms.Button btnConfigSteamDirBrowse;
+        private System.Windows.Forms.ComboBox cmbConfigSteamUser;
+        private System.Windows.Forms.Label lblConfigSteamUser;
+        private System.Windows.Forms.Button SelectedBuildExeFolderBrowse;
+        private System.Windows.Forms.ComboBox SelectedBuildEngine;
+        private System.Windows.Forms.Label lblBuildEngine;
+        private System.Windows.Forms.Label lblBuildExeFolder;
+        private System.Windows.Forms.Label lblBuildName;
+        private System.Windows.Forms.TextBox SelectedBuildExeFolder;
+        private System.Windows.Forms.TextBox SelectedBuildName;
+        private System.Windows.Forms.Button RemoveBuild;
         private System.Windows.Forms.Button AddBuild;
-		private System.Windows.Forms.ComboBox SelectedBuildRad;
-		private System.Windows.Forms.ComboBox SelectedBuildVis;
-		private System.Windows.Forms.Label lblBuildRAD;
-		private System.Windows.Forms.ComboBox SelectedBuildCsg;
-		private System.Windows.Forms.Label lblBuildVIS;
-		private System.Windows.Forms.ComboBox SelectedBuildBsp;
-		private System.Windows.Forms.Label lblBuildCSG;
+        private System.Windows.Forms.ComboBox SelectedBuildRad;
+        private System.Windows.Forms.ComboBox SelectedBuildVis;
+        private System.Windows.Forms.Label lblBuildRAD;
+        private System.Windows.Forms.ComboBox SelectedBuildCsg;
+        private System.Windows.Forms.Label lblBuildVIS;
+        private System.Windows.Forms.ComboBox SelectedBuildBsp;
+        private System.Windows.Forms.Label lblBuildCSG;
         private System.Windows.Forms.Label lblBuildBSP;
-		private System.Windows.Forms.TabPage tabBuild;
-		private System.Windows.Forms.TabPage tabGeneral;
-		private System.Windows.Forms.TabControl tbcSettings;
+        private System.Windows.Forms.TabPage tabBuild;
+        private System.Windows.Forms.TabPage tabGeneral;
+        private System.Windows.Forms.TabControl tbcSettings;
         private System.Windows.Forms.Label label21;
         private System.Windows.Forms.CheckBox HideGridOn;
+        private System.Windows.Forms.CheckBox DottedGridOn;
         private System.Windows.Forms.DomainUpDown GridHighlight2UnitNum;
         private System.Windows.Forms.CheckBox SelectedGameSteamInstall;
         private System.Windows.Forms.CheckBox SelectedBuildIncludePathInEnvironment;
@@ -3954,5 +3970,5 @@ namespace Sledge.Editor.Settings
         private System.Windows.Forms.TextBox SelectedGameBlacklistTextbox;
         private System.Windows.Forms.GroupBox groupBox19;
         private System.Windows.Forms.CheckBox SelectedGameAutosaveTriggerFileSave;
-	}
+    }
 }
