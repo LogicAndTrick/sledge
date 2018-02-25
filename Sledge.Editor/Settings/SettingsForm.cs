@@ -1862,10 +1862,10 @@ namespace Sledge.Editor.Settings
                 .Item(new HotkeyQuickFormItem("Hotkey", hk.HotkeyString))
                 .OkCancel())
             {
+                qf.ForwardTabKey = false;
                 if (qf.ShowDialog() != DialogResult.OK) return;
                 var key = qf.String("Hotkey");
                 if (String.IsNullOrWhiteSpace(key)) return;
-
                 var conflict = _hotkeys.FirstOrDefault(x => x.HotkeyString == key && x != hk);
                 if (conflict != null)
                 {
