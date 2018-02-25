@@ -110,7 +110,7 @@ namespace Sledge.Editor.Rendering.Renderers
             {
                 // Render grid
                 var vp2 = (Viewport2D) context;
-                if (GridArrays.ContainsKey(vp2)) GridArrays[vp2].Render(context.Context);
+                if (GridArrays.ContainsKey(vp2)) GridArrays[vp2].Render(context.Context, vp2);
             }
 
             // Render wireframe (untransformed)

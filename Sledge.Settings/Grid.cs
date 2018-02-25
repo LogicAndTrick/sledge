@@ -24,8 +24,6 @@ namespace Sledge.Settings
         public static int HideFactor { get; set; }
 
         public static bool DottedGrid { get; set; }
-        public static int DotSize { get; set; }
-        public static int DotHighlightSize { get; set; }
 
         static Grid()
         {
@@ -49,8 +47,6 @@ namespace Sledge.Settings
             HideFactor = 8;
 
             DottedGrid = false;
-            DotSize = 1;
-            DotHighlightSize = 2;
         }
     }
 }
