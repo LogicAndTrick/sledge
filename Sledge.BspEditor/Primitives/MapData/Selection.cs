@@ -5,6 +5,7 @@ using System.ComponentModel.Composition;
 using System.Globalization;
 using System.Linq;
 using System.Runtime.Serialization;
+using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Modification;
 using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.Common.Transport;
@@ -54,6 +55,27 @@ namespace Sledge.BspEditor.Primitives.MapData
             _selectedObjects.ExceptWith(change.Updated.Where(x => !x.IsSelected));
             _selectedObjects.ExceptWith(change.Removed);
             changed |= c != _selectedObjects.Count;
+
+            return changed;
+        }
+
+        /// <summary>
+        /// Update the selection to match the object state in the document
+        /// </summary>
+        /// <param name="document">The documnet</param>
+        /// <returns>True if the selection has changed after updating</returns>
+        public bool Update(MapDocument document)
+        {
+            var changed = false;
+
+            var selected = document.Map.Root.Find(x => x.IsSelected).ToList();
+
+            if (_selectedObjects.Count != selected.Count) changed = true;
+            _selectedObjects.ExceptWith(selected);
+            if (_selectedObjects.Count != 0) changed = true;
+            _selectedObjects.Clear();
+            _selectedObjects.UnionWith(selected);
+
 
             return changed;
         }

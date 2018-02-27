@@ -112,41 +112,6 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Actions\ActionCollection.cs" />
-    <Compile Include="Actions\MapObjects\Groups\GroupAction.cs" />
-    <Compile Include="Actions\IAction.cs" />
-    <Compile Include="Actions\MapObjects\Groups\UngroupAction.cs" />
-    <Compile Include="Actions\MapObjects\Operations\Clip.cs" />
-    <Compile Include="Actions\MapObjects\Operations\Carve.cs" />
-    <Compile Include="Actions\MapObjects\Operations\CreateEditDelete.cs" />
-    <Compile Include="Actions\MapObjects\Operations\EditOperations\AlignObjectsEditOperation.cs" />
-    <Compile Include="Actions\MapObjects\Operations\EditOperations\CopyPropertiesEditOperation.cs" />
-    <Compile Include="Actions\MapObjects\Operations\EditOperations\IEditOperation.cs" />
-    <Compile Include="Actions\MapObjects\Operations\EditOperations\SnapToGridEditOperation.cs" />
-    <Compile Include="Actions\MapObjects\Operations\EditOperations\TransformEditOperation.cs" />
-    <Compile Include="Actions\MapObjects\Operations\MakeHollow.cs" />
-    <Compile Include="Actions\MapObjects\Operations\Edit.cs" />
-    <Compile Include="Actions\MapObjects\Operations\Create.cs" />
-    <Compile Include="Actions\MapObjects\Operations\Delete.cs" />
-    <Compile Include="Actions\MapObjects\Operations\EditFace.cs" />
-    <Compile Include="Actions\MapObjects\Operations\PasteSpecial.cs" />
-    <Compile Include="Actions\MapObjects\Operations\Reparent.cs" />
-    <Compile Include="Actions\MapObjects\Operations\ReplaceObjects.cs" />
-    <Compile Include="Actions\MapObjects\Selection\ChangeFaceSelection.cs" />
-    <Compile Include="Actions\MapObjects\Selection\ChangeSelection.cs" />
-    <Compile Include="Actions\MapObjects\Selection\ChangeToObjectSelectionMode.cs" />
-    <Compile Include="Actions\MapObjects\Selection\Deselect.cs" />
-    <Compile Include="Actions\MapObjects\Selection\DeselectFace.cs" />
-    <Compile Include="Actions\MapObjects\Entities\EditEntityData.cs" />
-    <Compile Include="Actions\MapObjects\Selection\ChangeToFaceSelectionMode.cs" />
-    <Compile Include="Actions\MapObjects\Selection\Select.cs" />
-    <Compile Include="Actions\MapObjects\Selection\SelectFace.cs" />
-    <Compile Include="Actions\Visgroups\QuickShowObjects.cs" />
-    <Compile Include="Actions\Visgroups\QuickHideObjects.cs" />
-    <Compile Include="Actions\Visgroups\EditObjectVisgroups.cs" />
-    <Compile Include="Actions\Visgroups\CreateEditDeleteVisgroups.cs" />
-    <Compile Include="Actions\Visgroups\ShowAllVisgroups.cs" />
-    <Compile Include="Actions\Visgroups\ToggleVisgroup.cs" />
     <Compile Include="Documents\Document.cs" />
     <Compile Include="Documents\DocumentManager.cs" />
     <Compile Include="Documents\DocumentMemory.cs" />
@@ -156,51 +121,7 @@
     <Compile Include="Documents\TextureCollection.cs" />
     <Compile Include="Extensions\GeometricExtensions.cs" />
     <Compile Include="Extensions\ModelExtensions.cs" />
-    <Compile Include="Extensions\EnumExtensions.cs" />
-    <Compile Include="Tools\VMTool\Actions\MovePoints.cs" />
-    <Compile Include="Tools\VMTool\Actions\VMAction.cs" />
-    <Compile Include="Tools\VMTool\Controls\EditFaceControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Tools\VMTool\Controls\EditFaceControl.Designer.cs">
-      <DependentUpon>EditFaceControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Tools\VMTool\Controls\ScaleControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Tools\VMTool\Controls\ScaleControl.Designer.cs">
-      <DependentUpon>ScaleControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Tools\VMTool\Controls\StandardControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Tools\VMTool\Controls\StandardControl.Designer.cs">
-      <DependentUpon>StandardControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Tools\VMTool\Controls\VMErrorsSidebarPanel.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Tools\VMTool\Controls\VMErrorsSidebarPanel.Designer.cs">
-      <DependentUpon>VMErrorsSidebarPanel.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Tools\VMTool\Controls\VMSidebarPanel.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Tools\VMTool\Controls\VMSidebarPanel.Designer.cs">
-      <DependentUpon>VMSidebarPanel.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Tools\VMTool\ShowPoints.cs" />
-    <Compile Include="Tools\VMTool\SubTools\VMFaceEditTool.cs" />
-    <Compile Include="Tools\VMTool\SubTools\VMScaleTool.cs" />
-    <Compile Include="Tools\VMTool\SubTools\VMStandardTool.cs" />
-    <Compile Include="Tools\VMTool\SubTools\VMSubTool.cs" />
-    <Compile Include="Tools\VMTool\VMError.cs" />
-    <Compile Include="Tools\VMTool\VMPoint.cs" />
-    <Compile Include="Tools\VMTool\VMPointsState.cs" />
-    <Compile Include="Tools\VMTool\VMSolid.cs" />
-    <Compile Include="Tools\VMTool\VMTool.cs" />
     <Compile Include="SingleInstance.cs" />
-    <Compile Include="SledgeCursors.cs" />
     <Compile Include="UI\FileSystem\FileSystemBrowserControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -249,21 +170,6 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-    <EmbeddedResource Include="Tools\VMTool\Controls\EditFaceControl.resx">
-      <DependentUpon>EditFaceControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Tools\VMTool\Controls\ScaleControl.resx">
-      <DependentUpon>ScaleControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Tools\VMTool\Controls\StandardControl.resx">
-      <DependentUpon>StandardControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Tools\VMTool\Controls\VMErrorsSidebarPanel.resx">
-      <DependentUpon>VMErrorsSidebarPanel.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Tools\VMTool\Controls\VMSidebarPanel.resx">
-      <DependentUpon>VMSidebarPanel.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="UI\FileSystem\FileSystemBrowserControl.resx">
       <DependentUpon>FileSystemBrowserControl.cs</DependentUpon>
     </EmbeddedResource>
@@ -463,9 +369,7 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Tools\VMTool\Errors\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>"$(SolutionDir)Build\InsertIcons.exe" "$(TargetPath)" "$(ProjectDir)Resources\embedded_icons.txt"</PostBuildEvent>

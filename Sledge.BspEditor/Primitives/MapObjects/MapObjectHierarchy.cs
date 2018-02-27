@@ -28,7 +28,7 @@ namespace Sledge.BspEditor.Primitives.MapObjects
         /// </summary>
         public IMapObject Parent
         {
-            get { return _parent; }
+            get => _parent;
             set
             {
                 if (_parent != null)

@@ -10,6 +10,7 @@ using Sledge.BspEditor.Environment.Controls;
 using Sledge.BspEditor.Environment.Goldsource;
 using Sledge.BspEditor.Primitives;
 using Sledge.BspEditor.Providers;
+using Sledge.BspEditor.Providers.Processors;
 using Sledge.Common.Shell.Documents;
 using Sledge.Common.Translations;
 using Sledge.Shell;
@@ -21,6 +22,7 @@ namespace Sledge.BspEditor.Documents
     public class BspSourceDocumentLoader : IDocumentLoader
     {
         [ImportMany] private IEnumerable<Lazy<IBspSourceProvider>> _providers;
+        [ImportMany] private IEnumerable<Lazy<IBspSourceProcessor>> _processors;
         [Import] private EnvironmentRegister _environments;
 
         public string FileTypeDescription { get; set; }
@@ -66,7 +68,10 @@ namespace Sledge.BspEditor.Documents
         {
             var env = await GetEnvironment();
             if (env == null) return null;
-            return new MapDocument(new Map(), env);
+
+            var md =  new MapDocument(new Map(), env);
+            await ProcessAfterLoad(md);
+            return md;
         }
 
         public async Task<IDocument> Load(string location)
@@ -81,7 +86,9 @@ namespace Sledge.BspEditor.Documents
                     try
                     {
                         var map = await provider.Value.Load(stream);
-                        return new MapDocument(map, env) { FileName = location };
+                        var md = new MapDocument(map, env) { FileName = location };
+                        await ProcessAfterLoad(md);
+                        return md;
                     }
                     catch (NotSupportedException)
                     {
@@ -90,6 +97,14 @@ namespace Sledge.BspEditor.Documents
                 }
             }
             throw new NotSupportedException("This file type is not supported.");
+        }
+
+        private async Task ProcessAfterLoad(MapDocument document)
+        {
+            foreach (var p in _processors.Select(x => x.Value).OrderBy(x => x.OrderHint))
+            {
+                await p.AfterLoad(document);
+            }
         }
 
         public bool CanSave(IDocument document)
@@ -102,6 +117,8 @@ namespace Sledge.BspEditor.Documents
             var map = (MapDocument) document;
 
             await map.Environment.UpdateDocumentData(map);
+
+            await ProcessBeforeSave(map);
 
             using (var stream = new MemoryStream())
             {
@@ -124,6 +141,14 @@ namespace Sledge.BspEditor.Documents
                 }
             }
             throw new NotSupportedException("This file type is not supported.");
+        }
+
+        private async Task ProcessBeforeSave(MapDocument document)
+        {
+            foreach (var p in _processors.Select(x => x.Value).OrderBy(x => x.OrderHint))
+            {
+                await p.BeforeSave(document);
+            }
         }
     }
 }

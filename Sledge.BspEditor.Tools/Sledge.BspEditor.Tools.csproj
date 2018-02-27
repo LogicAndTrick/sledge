@@ -164,6 +164,7 @@
     <Compile Include="Selection\TransformationHandles\RotationOrigin.cs" />
     <Compile Include="Selection\TransformationHandles\SkewTransformHandle.cs" />
     <Compile Include="Selection\TransformationHandles\TextureTransformationType.cs" />
+    <Compile Include="ToolCursors.cs" />
     <Compile Include="State\IState.cs" />
     <Compile Include="State\StateAction.cs" />
     <Compile Include="State\StateEvent.cs" />
@@ -294,6 +295,7 @@
     <None Include="app.config" />
     <None Include="OpenTK.dll.config" />
     <None Include="packages.config" />
+    <None Include="Resources\Cursor_Rotate.cur" />
     <Content Include="Resources\Menu_Cordon.png" />
     <Content Include="Resources\Menu_IgnoreGrouping.png" />
     <Content Include="Resources\Menu_ReplaceTextures.png" />

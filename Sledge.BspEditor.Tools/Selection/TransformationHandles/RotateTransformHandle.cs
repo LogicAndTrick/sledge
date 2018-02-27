@@ -28,6 +28,12 @@ namespace Sledge.BspEditor.Tools.Selection.TransformationHandles
             _origin = origin;
         }
 
+        protected override void SetCursorForHandle(MapViewport viewport, ResizeHandle handle)
+        {
+            var ct = ToolCursors.RotateCursor;
+            viewport.Control.Cursor = ct;
+        }
+
         public override void StartDrag(MapViewport viewport, ViewportEvent e, Coordinate position)
         {
             _rotateStart = _rotateEnd = position;

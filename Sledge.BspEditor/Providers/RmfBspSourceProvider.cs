@@ -13,6 +13,7 @@ using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.Common.Extensions;
 using Sledge.Common.Shell.Documents;
 using Sledge.DataStructures;
+using Path = Sledge.BspEditor.Primitives.MapObjectData.Path;
 
 namespace Sledge.BspEditor.Providers
 {
@@ -58,7 +59,7 @@ namespace Sledge.BspEditor.Providers
                     }
 
                     // RMF header test
-                    var header = br.ReadFixedLengthString(Encoding.UTF8, 3);
+                    var header = br.ReadFixedLengthString(Encoding.ASCII, 3);
                     if (header != "RMF")
                     {
                         throw new NotSupportedException("Incorrect RMF header. Expected 'RMF', got '" + header + "'.");
@@ -73,7 +74,7 @@ namespace Sledge.BspEditor.Providers
                     if (stream.Position < stream.Length)
                     {
                         // DOCINFO string check
-                        var docinfo = br.ReadFixedLengthString(Encoding.UTF8, 8);
+                        var docinfo = br.ReadFixedLengthString(Encoding.ASCII, 8);
                         if (docinfo != "DOCINFO")
                         {
                             throw new NotSupportedException("Incorrect RMF format. Expected 'DOCINFO', got '" + docinfo + "'.");
@@ -97,7 +98,7 @@ namespace Sledge.BspEditor.Providers
             {
                 var vis = new Visgroup
                 {
-                    Name = br.ReadFixedLengthString(Encoding.UTF8, 128),
+                    Name = br.ReadFixedLengthString(Encoding.ASCII, 128),
                     Colour = br.ReadRGBAColour(),
                     ID = br.ReadInt32(),
                     Visible = br.ReadBoolean(),
@@ -165,14 +166,43 @@ namespace Sledge.BspEditor.Providers
         {
             var wld = new Root(map.NumberGenerator.Next("MapObject"));
             ReadMapBase(map, wld, br);
-            wld.Data.Add(ReadEntityData(map, br));
+            wld.Data.Add(ReadEntityData(br));
             var numPaths = br.ReadInt32();
             for (var i = 0; i < numPaths; i++)
             {
-                throw new NotImplementedException("Paths are not supported yet");
-                //wld.Paths.Add(ReadPath(br));
+                wld.Data.Add(ReadPath(br));
             }
             return wld;
+        }
+
+        private Path ReadPath(BinaryReader br)
+        {
+            var path = new Path
+            {
+                Name = br.ReadFixedLengthString(Encoding.ASCII, 128),
+                Type = br.ReadFixedLengthString(Encoding.ASCII, 128),
+                Direction = (Path.PathDirection) br.ReadInt32()
+            };
+            var numNodes = br.ReadInt32();
+            for (var i = 0; i < numNodes; i++)
+            {
+                var node = new Path.PathNode
+                {
+                    Position = br.ReadCoordinate(),
+                    ID = br.ReadInt32(),
+                    Name = br.ReadFixedLengthString(Encoding.ASCII, 128)
+                };
+
+                var numProps = br.ReadInt32();
+                for (var j = 0; j < numProps; j++)
+                {
+                    var key = br.ReadCString();
+                    var value = br.ReadCString();
+                    node.Properties[key] = value;
+                }
+                path.Nodes.Add(node);
+            }
+            return path;
         }
 
         private Group ReadGroup(Map map, BinaryReader br)
@@ -199,7 +229,7 @@ namespace Sledge.BspEditor.Providers
         {
             var ent = new Entity(map.NumberGenerator.Next("MapObject"));
             ReadMapBase(map, ent, br);
-            ent.Data.Add(ReadEntityData(map, br));
+            ent.Data.Add(ReadEntityData(br));
             br.ReadBytes(2); // Unused
             ent.Origin = br.ReadCoordinate();
             br.ReadBytes(4); // Unused
@@ -208,7 +238,7 @@ namespace Sledge.BspEditor.Providers
 
         private static readonly string[] ExcludedKeys = { "spawnflags", "classname", "origin", "wad", "mapversion" };
 
-        private EntityData ReadEntityData(Map map, BinaryReader br)
+        private EntityData ReadEntityData(BinaryReader br)
         {
             var data = new EntityData
             {
@@ -236,7 +266,7 @@ namespace Sledge.BspEditor.Providers
         private Face ReadFace(Map map, BinaryReader br)
         {
             var face = new Face(map.NumberGenerator.Next("Face"));
-            var textureName = br.ReadFixedLengthString(Encoding.UTF8, 256);
+            var textureName = br.ReadFixedLengthString(Encoding.ASCII, 256);
             br.ReadBytes(4); // Unused
             face.Texture.Name = textureName;
             face.Texture.UAxis = br.ReadCoordinate();
@@ -304,7 +334,7 @@ namespace Sledge.BspEditor.Providers
             bw.Write(vis.Count);
             foreach (var visgroup in vis)
             {
-                bw.WriteFixedLengthString(Encoding.UTF8, 128, visgroup.Name);
+                bw.WriteFixedLengthString(Encoding.ASCII, 128, visgroup.Name);
                 bw.WriteRGBAColour(visgroup.Colour);
                 bw.Write(visgroup.ID);
                 bw.Write(visgroup.Visible);
@@ -345,12 +375,31 @@ namespace Sledge.BspEditor.Providers
             bw.WriteCString("CMapWorld");
             WriteMapBase(root, bw);
             WriteEntityData(root.Data.GetOne<EntityData>(), bw);
-            var paths = new object[0]; // Root.Data.Get<Path> etc/
-            bw.Write(paths.Length);
+            var paths = root.Data.OfType<Path>().ToList();
+            bw.Write(paths.Count);
             foreach (var path in paths)
             {
-                throw new NotImplementedException("Paths are not supported yet");
-                // WritePath(path, bw);
+                WritePath(bw, path);
+            }
+        }
+
+        private void WritePath(BinaryWriter bw, Path path)
+        {
+            bw.WriteFixedLengthString(Encoding.ASCII, 128, path.Name);
+            bw.WriteFixedLengthString(Encoding.ASCII, 128, path.Type);
+            bw.Write((int) path.Direction);
+            bw.Write(path.Nodes.Count);
+            foreach (var node in path.Nodes)
+            {
+                bw.WriteCoordinate(node.Position);
+                bw.Write(node.ID);
+                bw.WriteFixedLengthString(Encoding.ASCII, 128, node.Name);
+                bw.Write(node.Properties.Count);
+                foreach (var property in node.Properties)
+                {
+                    bw.WriteCString(property.Key);
+                    bw.WriteCString(property.Value);
+                }
             }
         }
 
@@ -401,7 +450,7 @@ namespace Sledge.BspEditor.Providers
 
         private void WriteFace(Face face, BinaryWriter bw)
         {
-            bw.WriteFixedLengthString(Encoding.UTF8, 256, face.Texture.Name);
+            bw.WriteFixedLengthString(Encoding.ASCII, 256, face.Texture.Name);
             bw.Write(new byte[4]);
             bw.WriteCoordinate(face.Texture.UAxis);
             bw.WriteDecimalAsSingle(face.Texture.XShift);
