@@ -148,7 +148,6 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Selection\SelectionBoxDraggableState.cs" />
-    <Compile Include="Selection\SelectionOptions.cs" />
     <Compile Include="Selection\SelectionSidebarPanel.cs" />
     <Compile Include="Selection\SelectTool.cs" />
     <Compile Include="Selection\SelectToolSidebarPanel.cs">
@@ -171,7 +170,6 @@
     <Compile Include="State\StateTool.cs" />
     <Compile Include="Texture\AlignMode.cs" />
     <Compile Include="Texture\ReplaceTextures.cs" />
-    <Compile Include="Texture\HideFaceMask.cs" />
     <Compile Include="Texture\JustifyMode.cs" />
     <Compile Include="Texture\TextureApplicationForm.cs">
       <SubType>Form</SubType>

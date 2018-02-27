@@ -7,6 +7,8 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Sledge.BspEditor.Environment;
+using Sledge.BspEditor.Grid;
 using Sledge.BspEditor.Primitives;
 using Sledge.BspEditor.Primitives.MapData;
 using Sledge.BspEditor.Primitives.MapObjectData;
@@ -23,6 +25,7 @@ namespace Sledge.BspEditor.Providers
     {
         [Import] private SerialisedObjectFormatter _formatter;
         [Import] private MapElementFactory _factory;
+        [Import] private SquareGridFactory _squareGridFactory;
 
         private static readonly IEnumerable<Type> SupportedTypes = new List<Type>
         {
@@ -39,9 +42,9 @@ namespace Sledge.BspEditor.Providers
             new FileExtensionInfo("Valve map format", ".vmf", ".vmx"), 
         };
 
-        public async Task<Map> Load(Stream stream)
+        public async Task<Map> Load(Stream stream, IEnvironment environment)
         {
-            return await Task.Factory.StartNew(() =>
+            var task = await Task.Factory.StartNew(async () =>
             {
                 var map = new Map();
                 var so = _formatter.Deserialize(stream).ToList();
@@ -56,11 +59,11 @@ namespace Sledge.BspEditor.Providers
                     {
                         if (o.Name == nameof(Root))
                         {
-                            map.Root.Unclone((Root)_factory.Deserialise(o));
+                            map.Root.Unclone((Root) _factory.Deserialise(o));
                         }
                         else
                         {
-                            map.Data.Add((IMapData)_factory.Deserialise(o));
+                            map.Data.Add((IMapData) _factory.Deserialise(o));
                         }
                     }
                 }
@@ -71,12 +74,15 @@ namespace Sledge.BspEditor.Providers
                     LoadWorld(map, so);
                     LoadCameras(map, so.FirstOrDefault(x => x.Name == "cameras"));
                     LoadCordon(map, so.FirstOrDefault(x => x.Name == "cordon"));
-                    LoadViewSettings(map, so.FirstOrDefault(x => x.Name == "viewsettings"));
+                    await LoadViewSettings(map, so.FirstOrDefault(x => x.Name == "viewsettings"), environment);
+
+                    await Task.FromResult(0);
                 }
 
                 map.Root.DescendantsChanged();
                 return map;
             });
+            return await task;
         }
 
         #region Reading
@@ -169,17 +175,78 @@ namespace Sledge.BspEditor.Providers
 
         private void LoadCameras(Map map, SerialisedObject cameras)
         {
+            if (cameras == null) return;
+            var activeCam = cameras.Get("activecamera", 0);
 
+            var cams = cameras.Children.Where(x => x.Name?.ToLower() == "camera").ToList();
+            for (var i = 0; i < cams.Count; i++)
+            {
+                var cm = cams[i];
+                map.Data.Add(new Camera
+                {
+                    EyePosition = cm.Get("position", Coordinate.Zero),
+                    LookPosition = cm.Get("look", Coordinate.UnitX),
+                    IsActive = activeCam == i
+                });
+            }
         }
 
         private void LoadCordon(Map map, SerialisedObject cordon)
         {
+            if (cordon == null) return;
 
+            var start = cordon.Get("mins", Coordinate.One * -1024);
+            var end = cordon.Get("maxs", Coordinate.One * 1024);
+            map.Data.Add(new CordonBounds
+            {
+                Box = new Box(start, end),
+                Enabled = cordon.Get("active", 0) > 0
+            });
         }
 
-        private void LoadViewSettings(Map map, SerialisedObject viewsettings)
+        private async Task LoadViewSettings(Map map, SerialisedObject viewsettings, IEnvironment environment)
         {
+            if (viewsettings == null) return;
 
+            var snapToGrid = viewsettings.Get("bSnapToGrid", 1) == 1;
+            var show2DGrid = viewsettings.Get("bShowGrid", 1) == 1;
+            var show3DGrid = viewsettings.Get("bShow3DGrid", 0) == 1; // todo, I guess
+            var gridSpacing = viewsettings.Get("nGridSpacing", 64);
+
+            var grid = show2DGrid ? await _squareGridFactory.Create(environment) : new NoGrid();
+            if (grid is SquareGrid sg) sg.Step = gridSpacing;
+
+            map.Data.Add(new GridData(grid)
+            {
+                SnapToGrid = snapToGrid
+            });
+
+            var ignoreGrouping = viewsettings.Get("bIgnoreGrouping", 0) == 1;
+            map.Data.Add(new SelectionOptions
+            {
+                IgnoreGrouping = ignoreGrouping
+            });
+
+            var hideFaceMask = viewsettings.Get("bHideFaceMask", 0) == 1;
+            map.Data.Add(new HideFaceMask
+            {
+                Hidden = hideFaceMask
+            });
+
+            var hideNullTextures = viewsettings.Get("bHideNullTextures", 0) == 1;
+            map.Data.Add(new DisplayFlags
+            {
+                HideNullTextures = hideNullTextures,
+                HideDisplacementSolids = false
+            });
+
+            var textureLock = viewsettings.Get("bTextureLock", 1) == 1;
+            var textureScalingLock = viewsettings.Get("bTextureScalingLock", 0) == 1;
+            map.Data.Add(new TransformationFlags
+            {
+                TextureLock = textureLock,
+                TextureScaleLock = textureScalingLock
+            });
         }
 
         #endregion
@@ -257,20 +324,91 @@ namespace Sledge.BspEditor.Providers
 
         private void SaveCameras(Map map, List<SerialisedObject> list)
         {
+            var cams = map.Data.OfType<Camera>().ToList();
+            if (!cams.Any()) return;
 
+            var so = new SerialisedObject("cameras");
+            for (var i = 0; i < cams.Count; i++)
+            {
+                var camera = cams[i];
+                if (camera.IsActive) so.Set("activecamera", i);
+
+                var vgo = new SerialisedObject("camera");
+                vgo.Set("position", $"[{FormatCoordinate(camera.EyePosition)}]");
+                vgo.Set("look", $"[{FormatCoordinate(camera.LookPosition)}]");
+                so.Children.Add(vgo);
+            }
+
+            list.Add(so);
         }
 
         private void SaveCordon(Map map, List<SerialisedObject> list)
         {
+            var cordon = map.Data.GetOne<CordonBounds>();
+            if (cordon == null) return;
 
+            var so = new SerialisedObject("cordon");
+
+            so.Set("mins", $"({FormatCoordinate(cordon.Box.Start)})");
+            so.Set("maxs", $"({FormatCoordinate(cordon.Box.End)})");
+            so.Set("active", cordon.Enabled ? 1 : 0);
+
+            list.Add(so);
         }
 
         private void SaveViewSettings(Map map, List<SerialisedObject> list)
         {
+            var so = new SerialisedObject("viewsettings");
 
+            var grid = map.Data.GetOne<GridData>();
+            var sel = map.Data.GetOne<SelectionOptions>();
+            var face = map.Data.GetOne<HideFaceMask>();
+            var dis = map.Data.GetOne<DisplayFlags>();
+            var tf = map.Data.GetOne<TransformationFlags>();
+
+            if (grid != null)
+            {
+                so.Set("bSnapToGrid", grid.SnapToGrid ? 1 : 0);
+                so.Set("bShowGrid", grid.Grid is NoGrid ? 0 : 1);
+                so.Set("bShow3DGrid", 0);
+                so.Set("nGridSpacing", grid.Grid is SquareGrid s ? s.Step : 64);
+            }
+
+            if (sel != null)
+            {
+                so.Set("bIgnoreGrouping", sel.IgnoreGrouping ? 1 : 0);
+            }
+
+            if (face != null)
+            {
+                so.Set("bHideFaceMask", face.Hidden ? 1 : 0);
+            }
+
+            if (dis != null)
+            {
+                so.Set("bHideNullTextures", dis.HideNullTextures ? 1 : 0);
+            }
+
+            if (tf != null)
+            {
+                so.Set("bTextureLock", tf.TextureLock ? 1 : 0);
+                so.Set("bTextureScalingLock", tf.TextureScaleLock ? 1 : 0);
+            }
+
+            list.Add(so);
         }
         
         #endregion
+        
+        private static string FormatCoordinate(Coordinate c)
+        {
+            return $"{FormatDecimal(c.X)} {FormatDecimal(c.Y)} {FormatDecimal(c.Z)}";
+        }
+
+        private static string FormatDecimal(decimal d)
+        {
+            return d.ToString("0.00####", CultureInfo.InvariantCulture);
+        }
 
         private static bool ParseDecimalArray(string input, char[] splitChars, int expected, out decimal[] array)
         {
@@ -670,16 +808,6 @@ namespace Sledge.BspEditor.Providers
                 so.Children.Add(verts);
 
                 return so;
-            }
-
-            private static string FormatCoordinate(Coordinate c)
-            {
-                return $"{FormatDecimal(c.X)} {FormatDecimal(c.Y)} {FormatDecimal(c.Z)}";
-            }
-
-            private static string FormatDecimal(decimal d)
-            {
-                return d.ToString("0.00####", CultureInfo.InvariantCulture);
             }
         }
 

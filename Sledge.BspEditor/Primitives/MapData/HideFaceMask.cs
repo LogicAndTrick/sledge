@@ -1,12 +1,10 @@
 ﻿using System;
 using System.ComponentModel.Composition;
 using System.Runtime.Serialization;
-using Sledge.BspEditor.Primitives;
-using Sledge.BspEditor.Primitives.MapData;
 using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.Common.Transport;
 
-namespace Sledge.BspEditor.Tools.Texture
+namespace Sledge.BspEditor.Primitives.MapData
 {
     [Serializable]
     public class HideFaceMask : IMapData

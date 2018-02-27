@@ -85,7 +85,7 @@ namespace Sledge.BspEditor.Documents
                 {
                     try
                     {
-                        var map = await provider.Value.Load(stream);
+                        var map = await provider.Value.Load(stream, env);
                         var md = new MapDocument(map, env) { FileName = location };
                         await ProcessAfterLoad(md);
                         return md;

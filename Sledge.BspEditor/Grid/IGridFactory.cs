@@ -1,6 +1,7 @@
 using System.Drawing;
 using System.Threading.Tasks;
 using Sledge.BspEditor.Documents;
+using Sledge.BspEditor.Environment;
 
 namespace Sledge.BspEditor.Grid
 {
@@ -20,10 +21,10 @@ namespace Sledge.BspEditor.Grid
 
 
         /// <summary>
-        /// Create a grid for the provided document
+        /// Create a grid for the provided environment
         /// </summary>
-        /// <param name="document"></param>
+        /// <param name="environment"></param>
         /// <returns></returns>
-        Task<IGrid> Create(MapDocument document);
+        Task<IGrid> Create(IEnvironment environment);
     }
 }

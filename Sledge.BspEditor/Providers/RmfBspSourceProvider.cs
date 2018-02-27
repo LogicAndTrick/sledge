@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Sledge.BspEditor.Environment;
 using Sledge.BspEditor.Primitives;
 using Sledge.BspEditor.Primitives.MapData;
 using Sledge.BspEditor.Primitives.MapObjectData;
@@ -45,7 +46,7 @@ namespace Sledge.BspEditor.Providers
             new FileExtensionInfo("Worldcraft map formats", ".rmf", ".rmx"), 
         };
 
-        public async Task<Map> Load(Stream stream)
+        public async Task<Map> Load(Stream stream, IEnvironment environment)
         {
             return await Task.Factory.StartNew(() =>
             {

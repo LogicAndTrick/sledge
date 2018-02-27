@@ -86,7 +86,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ProviderException.cs" />
     <Compile Include="ProviderNotFoundException.cs" />
-    <Compile Include="Map\RmfProvider.cs" />
     <Compile Include="ProviderRegistration.cs" />
     <Compile Include="Texture\MultiTextureStreamSource.cs" />
     <Compile Include="Texture\Wad\WadTextureItemProvider.cs" />

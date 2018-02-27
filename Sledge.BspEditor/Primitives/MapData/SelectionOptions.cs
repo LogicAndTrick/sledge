@@ -1,15 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.Serialization;
-using System.Text;
-using Sledge.BspEditor.Primitives;
-using Sledge.BspEditor.Primitives.MapData;
+﻿using System.Runtime.Serialization;
 using Sledge.BspEditor.Primitives.MapObjects;
-using Sledge.Common.Shell.Context;
 using Sledge.Common.Transport;
 
-namespace Sledge.BspEditor.Tools.Selection
+namespace Sledge.BspEditor.Primitives.MapData
 {
     public class SelectionOptions : IMapData
     {

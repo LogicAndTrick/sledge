@@ -2,6 +2,7 @@ using System.ComponentModel.Composition;
 using System.Drawing;
 using System.Threading.Tasks;
 using Sledge.BspEditor.Documents;
+using Sledge.BspEditor.Environment;
 using Sledge.Common.Translations;
 
 namespace Sledge.BspEditor.Grid
@@ -17,7 +18,7 @@ namespace Sledge.BspEditor.Grid
         public string Details { get; set; }
         public Image Icon => null;
 
-        public async Task<IGrid> Create(MapDocument document)
+        public async Task<IGrid> Create(IEnvironment environment)
         {
             return new NoGrid();
         }

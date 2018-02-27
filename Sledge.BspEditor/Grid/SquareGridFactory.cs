@@ -2,6 +2,7 @@ using System.ComponentModel.Composition;
 using System.Drawing;
 using System.Threading.Tasks;
 using Sledge.BspEditor.Documents;
+using Sledge.BspEditor.Environment;
 using Sledge.BspEditor.Properties;
 using Sledge.Common.Translations;
 
@@ -25,9 +26,9 @@ namespace Sledge.BspEditor.Grid
         public int Highlight1LineNum { get; } = 8;
         public int Highlight2UnitNum { get; } = 1024;
 
-        public async Task<IGrid> Create(MapDocument document)
+        public async Task<IGrid> Create(IEnvironment environment)
         {
-            var gd = await document.Environment.GetGameData();
+            var gd = await environment.GetGameData();
             return new SquareGrid(gd.MapSizeHigh, gd.MapSizeLow, 16);
         }
     }

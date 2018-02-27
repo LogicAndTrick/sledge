@@ -310,6 +310,10 @@ namespace Sledge.DataStructures.Geometric
         {
             if (value is string str)
             {
+                // valid formats: `[X Y Z]` ; `(X, Y, Z)` ; `X Y Z`
+                if (str.Length > 1 && str[0] == '[' && str[str.Length - 1] == ']') str = str.Substring(1, str.Length - 2);
+                else if (str.Length > 1 && str[0] == '(' && str[str.Length - 1] == ')') str = str.Substring(1, str.Length - 2);
+
                 var s = str.Split(' ');
                 return new Coordinate(
                     decimal.Parse(s[0], NumberStyles.Float, culture),

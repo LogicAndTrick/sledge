@@ -18,6 +18,7 @@ using Sledge.Common.Shell.Commands;
 using Sledge.DataStructures.GameData;
 using Sledge.FileSystem;
 using Sledge.Providers.Texture;
+using Path = System.IO.Path;
 
 namespace Sledge.BspEditor.Environment.Goldsource
 {

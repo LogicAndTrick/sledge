@@ -44,7 +44,7 @@ namespace Sledge.Tests.BspEditor
                     loader.Save(ms, map).Wait();
                     ms.Seek(0, SeekOrigin.Begin);
                     
-                    var loaded = loader.Load(ms).Result;
+                    var loaded = loader.Load(ms, TODO).Result;
                     Assert.AreEqual(map.Root.Data.GetOne<EntityData>().Name, loaded.Root.Data.GetOne<EntityData>()?.Name, loader.GetType().Name);
                     
                     var loadedEntity = (Entity) loaded.Root.Hierarchy.FirstOrDefault();

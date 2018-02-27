@@ -43,7 +43,7 @@ namespace Sledge.BspEditor.Tools
                 {
                     if (!d.Map.Data.Any(x => x is GridData))
                     {
-                        var grid = await _squareGridFactory.Create(md);
+                        var grid = await _squareGridFactory.Create(md.Environment);
                         d.Map.Data.Add(new GridData(grid));
                     }
                     if (!d.Map.Data.Any(x => x is ActiveTexture))
