@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Sledge.BspEditor.Environment;
 using Sledge.BspEditor.Environment.Controls;
+using Sledge.BspEditor.Environment.Empty;
 using Sledge.BspEditor.Environment.Goldsource;
 using Sledge.BspEditor.Primitives;
 using Sledge.BspEditor.Providers;

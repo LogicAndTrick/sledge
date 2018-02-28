@@ -38,7 +38,6 @@ namespace Sledge.Providers.Texture.Wad
         public void Dispose()
         {
             _stream.Dispose();
-            _package.Dispose();
         }
     }
 }

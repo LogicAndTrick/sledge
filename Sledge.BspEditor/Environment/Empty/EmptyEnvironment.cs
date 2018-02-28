@@ -6,7 +6,7 @@ using Sledge.DataStructures.GameData;
 using Sledge.FileSystem;
 using Sledge.Providers.Texture;
 
-namespace Sledge.BspEditor.Environment.Goldsource
+namespace Sledge.BspEditor.Environment.Empty
 {
     public class EmptyEnvironment : IEnvironment
     {
@@ -18,7 +18,7 @@ namespace Sledge.BspEditor.Environment.Goldsource
 
         public async Task<TextureCollection> GetTextureCollection()
         {
-             return new TextureCollection(new TexturePackage[0]);
+             return new EmptyTextureCollection(new TexturePackage[0]);
         }
 
         public async Task<GameData> GetGameData()

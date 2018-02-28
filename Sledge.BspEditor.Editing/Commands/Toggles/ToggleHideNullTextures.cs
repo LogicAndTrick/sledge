@@ -32,13 +32,15 @@ namespace Sledge.BspEditor.Editing.Commands.Toggles
             var tl = document.Map.Data.GetOne<DisplayFlags>() ?? new DisplayFlags();
             tl.HideNullTextures = !tl.HideNullTextures;
 
+            var tc = await document.Environment.GetTextureCollection();
+
             await MapDocumentOperation.Perform(document,
                 new TrivialOperation(
                     x => x.Map.Data.Replace(tl),
                     x =>
                     {
                         x.Update(tl);
-                        x.UpdateRange(x.Document.Map.Root.Find(s => s is Solid).Where(s => s.Data.Get<Face>().Any(f => x.Document.Environment.IsNullTexture(f.Texture.Name))));
+                        x.UpdateRange(x.Document.Map.Root.Find(s => s is Solid).Where(s => s.Data.Get<Face>().Any(f => tc.IsNullTexture(f.Texture.Name))));
                     })
             );
         }

@@ -131,7 +131,7 @@ namespace Sledge.BspEditor.Environment.Goldsource
             var refs = _wadProvider.GetPackagesInFile(Root);
             var wads = await _wadProvider.GetTexturePackages(refs);
             // todo sprite packages
-            return new TextureCollection(wads);
+            return new GoldsourceTextureCollection(wads);
         }
 
         private async Task<GameData> MakeGameDataAsync()
@@ -282,18 +282,6 @@ namespace Sledge.BspEditor.Environment.Goldsource
             }));
 
             return batch;
-        }
-
-        public bool IsNullTexture(string name)
-        {
-            switch (name?.ToLower())
-            {
-                case "null":
-                case "bevel":
-                    return true;
-            }
-
-            return false;
         }
     }
 }

@@ -6,6 +6,7 @@ using System.Reactive.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Sledge.BspEditor.Environment;
+using Sledge.BspEditor.Environment.Empty;
 using Sledge.Providers.Texture;
 using Sledge.Shell;
 using Sledge.Shell.Input;
@@ -47,6 +48,11 @@ namespace Sledge.BspEditor.Tools.Texture
             get => _collection;
             set
             {
+                if (value != _collection)
+                {
+                    _streamSource?.Dispose();
+                    _streamSource = null;
+                }
                 _collection = value;
                 Invalidate();
             }
@@ -108,7 +114,7 @@ namespace Sledge.BspEditor.Tools.Texture
 
         public TextureListPanel()
         {
-            _collection = new TextureCollection(new List<TexturePackage>());
+            _collection = new EmptyTextureCollection(new List<TexturePackage>());
 
             BackColor = Color.Black;
             VScroll = true;
@@ -302,9 +308,7 @@ namespace Sledge.BspEditor.Tools.Texture
                 _textures.AddRange(textures);
             }
 
-            _streamSource?.Dispose();
-            _streamSource = null;
-            _streamSource = _collection.GetStreamSource();
+            if (_streamSource == null) _streamSource = _collection.GetStreamSource();
             
             UpdateTextureList();
 
@@ -509,6 +513,13 @@ namespace Sledge.BspEditor.Tools.Texture
         }
 
         #endregion
+
+        protected override void DestroyHandle()
+        {
+            base.DestroyHandle();
+            _streamSource?.Dispose();
+            _streamSource = null;
+        }
 
         private class TextureControl : IDisposable
         {

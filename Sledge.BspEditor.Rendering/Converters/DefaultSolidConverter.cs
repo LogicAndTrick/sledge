@@ -32,10 +32,6 @@ namespace Sledge.BspEditor.Rendering.Converters
 
         private bool ShouldBeVisible(Face face, MapDocument document, DisplayFlags displayFlags)
         {
-            if (displayFlags.HideNullTextures && document.Environment.IsNullTexture(face.Texture.Name))
-            {
-                return false;
-            }
             //if (document.Map.HideDisplacementSolids && face.Parent.Faces.Any(x => x is Displacement) && !(face is Displacement))
             //{
             //    return false;
@@ -80,19 +76,17 @@ namespace Sledge.BspEditor.Rendering.Converters
         {
             var c = await document.Environment.GetTextureCollection();
             var tex = await c.GetTextureItem(face.Texture.Name);
+
+            float op;
+            if (c.IsNullTexture(face.Texture.Name) && document.Map.Data.GetOne<DisplayFlags>()?.HideNullTextures == true) op = 0;
+            else op = c.GetOpacity(face.Texture.Name);
             
-            //    var op = SettingsManager.GetSpecialTextureOpacity(face.Texture.Name);
-            //    if (op < 0.1 && !document.Map.HideNullTextures) op = 1;
+            if (tex == null) return Material.Flat(Color.FromArgb((int) op * 255, solid.Color?.Color ?? Color.Red));
 
-            // todo !solid converter texture opacity
-            // if (tex == null) return Material.Flat(Color.FromArgb((int)(op * 255), face.Colour));
-
-            if (tex == null) return Material.Flat(solid.Color?.Color ?? Color.Red);
-            return Material.Texture($"{document.Environment.ID}::{tex.Name}", tex.Flags.HasFlag(TextureFlags.Transparent));
-
-            //    return op < 1
-            //        ? Material.Texture(tex.Name, op)
-            //        : Material.Texture(tex.Name, tex.Flags.HasFlag(TextureFlags.Transparent));
+            var texName = $"{document.Environment.ID}::{tex.Name}";
+            return op < 1
+                ? Material.Texture(texName, op)
+                : Material.Texture(texName, tex.Flags.HasFlag(TextureFlags.Transparent));
         }
 
         public static async Task<SceneFace> ConvertFace(Solid solid, Face face, MapDocument document)

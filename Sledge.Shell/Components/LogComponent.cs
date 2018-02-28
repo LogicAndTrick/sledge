@@ -45,13 +45,13 @@ namespace Sledge.Shell.Components
             _logs.Insert(0, log);
             if (_logs.Count > 100) _logs = _logs.Take(100).ToList();
             var sb = new StringBuilder();
-            foreach (var lm in _logs)
+            foreach (var lm in _logs.ToList())
             {
                 sb.AppendFormat("{0} [{1}]: {2}\r\n", lm.Type, lm.Source, lm.Message);
             }
             if (!_control.Created) return;
 
-            _control.Invoke((MethodInvoker) delegate
+            _control.InvokeLater(() =>
             {
                 _control.Text = sb.ToString();
                 _control.SelectionStart = 0;

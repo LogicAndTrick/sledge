@@ -67,12 +67,5 @@ namespace Sledge.BspEditor.Environment
         /// <param name="arguments">The list of batch arguments the user has selected</param>
         /// <returns>A batch to process this map</returns>
         Task<Batch> CreateBatch(IEnumerable<BatchArgument> arguments);
-
-        /// <summary>
-        /// Returns true if a given texture name is considered a 'null' texture (e.g. NODRAW)
-        /// </summary>
-        /// <param name="name">Texture name</param>
-        /// <returns>True if this is a null texture</returns>
-        bool IsNullTexture(string name);
     }
 }

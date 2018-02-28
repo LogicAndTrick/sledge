@@ -28,33 +28,29 @@ namespace Sledge.Providers.Texture.Wad
             var textures = new HashSet<string>(names);
             textures.IntersectWith(Textures);
             if (!textures.Any()) return new TextureItem[0];
-            
-            using (var wp = new WadPackage(_file))
+
+            var wp = new WadPackage(_file);
+            var list = new List<TextureItem>();
+
+            foreach (var name in textures)
             {
-                var list = new List<TextureItem>();
-
-                foreach (var name in textures)
-                {
-                    var entry = wp.GetEntry(name);
-                    if (entry == null) continue;
-                    var item = new TextureItem(entry.Name, TextureFlags.None, (int) entry.Width, (int) entry.Height);
-                    list.Add(item);
-                }
-
-                return list;
+                var entry = wp.GetEntry(name);
+                if (entry == null) continue;
+                var item = new TextureItem(entry.Name, TextureFlags.None, (int) entry.Width, (int) entry.Height);
+                list.Add(item);
             }
+
+            return list;
         }
 
         public override async Task<TextureItem> GetTexture(string name)
         {
             if (!Textures.Contains(name)) return null;
 
-            using (var wp = new WadPackage(_file))
-            {
-                var entry = wp.GetEntry(name);
-                if (entry == null) return null;
-                return new TextureItem(entry.Name, TextureFlags.None, (int) entry.Width, (int) entry.Height);
-            }
+            var wp = new WadPackage(_file);
+            var entry = wp.GetEntry(name);
+            if (entry == null) return null;
+            return new TextureItem(entry.Name, TextureFlags.None, (int) entry.Width, (int) entry.Height);
         }
 
         public override ITextureStreamSource GetStreamSource()

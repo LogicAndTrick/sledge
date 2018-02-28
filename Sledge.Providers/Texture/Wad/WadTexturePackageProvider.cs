@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
 using System.Threading.Tasks;
+using Sledge.Common.Logging;
 using Sledge.FileSystem;
 
 namespace Sledge.Providers.Texture.Wad
@@ -21,10 +22,7 @@ namespace Sledge.Providers.Texture.Wad
             return await Task.Factory.StartNew(() =>
             {
                 if (!reference.File.Exists || !string.Equals(reference.File.Extension, "wad", StringComparison.InvariantCultureIgnoreCase)) return null;
-                using (var stream = reference.File.Open())
-                {
-                    return new WadTexturePackage(reference);
-                }
+                return new WadTexturePackage(reference);
             });
         }
 
@@ -35,7 +33,15 @@ namespace Sledge.Providers.Texture.Wad
                 return references.AsParallel().Select(reference =>
                 {
                     if (!reference.File.Exists || !string.Equals(reference.File.Extension, "wad", StringComparison.InvariantCultureIgnoreCase)) return null;
-                    return new WadTexturePackage(reference);
+                    try
+                    {
+                        return new WadTexturePackage(reference);
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Debug(nameof(WadTexturePackageProvider), $"Invalid WAD file: {reference.File.Name} - {ex.Message}");
+                        return null;
+                    }
                 }).Where(x => x != null);
             });
         }

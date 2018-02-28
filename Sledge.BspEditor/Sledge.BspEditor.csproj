@@ -113,7 +113,8 @@
     <Compile Include="Environment\Controls\EnvironmentSelectionForm.Designer.cs">
       <DependentUpon>EnvironmentSelectionForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Environment\Goldsource\EmptyEnvironment.cs" />
+    <Compile Include="Environment\Empty\EmptyEnvironment.cs" />
+    <Compile Include="Environment\Empty\EmptyTextureCollection.cs" />
     <Compile Include="Environment\Goldsource\GoldsourceEnvironmentEditor.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -124,6 +125,7 @@
     <Compile Include="Environment\EnvironmentRegister.cs" />
     <Compile Include="Environment\Goldsource\GoldsourceEnvironment.cs" />
     <Compile Include="Environment\Goldsource\GoldsourceEnvironmentFactory.cs" />
+    <Compile Include="Environment\Goldsource\GoldsourceTextureCollection.cs" />
     <Compile Include="Environment\IEnvironment.cs" />
     <Compile Include="Environment\IEnvironmentData.cs" />
     <Compile Include="Environment\IEnvironmentEditor.cs" />

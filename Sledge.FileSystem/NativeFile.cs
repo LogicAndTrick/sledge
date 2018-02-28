@@ -90,7 +90,7 @@ namespace Sledge.FileSystem
         public Stream Open()
         {
             if (IsContainer) throw new FileNotFoundException("Unable to open a container.");
-            return FileInfo.Open(FileMode.Open, FileAccess.Read);
+            return FileInfo.Open(FileMode.Open, FileAccess.Read, FileShare.Read);
         }
 
         public byte[] ReadAll()

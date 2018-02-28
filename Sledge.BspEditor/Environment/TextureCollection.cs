@@ -8,7 +8,7 @@ using Sledge.Providers.Texture;
 
 namespace Sledge.BspEditor.Environment
 {
-    public class TextureCollection
+    public abstract class TextureCollection
     {
         public IEnumerable<TexturePackage> Packages => _packages;
 
@@ -16,7 +16,7 @@ namespace Sledge.BspEditor.Environment
 
         private readonly List<TexturePackage> _packages;
 
-        public TextureCollection(IEnumerable<TexturePackage> packages)
+        protected TextureCollection(IEnumerable<TexturePackage> packages)
         {
             _packages = packages.ToList();
             _itemCache = new ConcurrentDictionary<string, TextureItem>(StringComparer.InvariantCultureIgnoreCase);
@@ -103,5 +103,8 @@ namespace Sledge.BspEditor.Environment
         {
             return new MultiTextureStreamSource(packages.Select(x => x.GetStreamSource()));
         }
+
+        public abstract bool IsNullTexture(string name);
+        public abstract float GetOpacity(string name);
     }
 }

@@ -10,7 +10,7 @@ namespace Sledge.Providers.Texture.Wad.Format
 {
     // http://yuraj.ucoz.com/half-life-formats.pdf
     // https://developer.valvesoftware.com/wiki/WAD
-    public class WadPackage : IDisposable
+    public class WadPackage
     {
         private const string Signature = "WAD3";
 
@@ -172,10 +172,5 @@ namespace Sledge.Providers.Texture.Wad.Format
         public IEnumerable<WadEntry> GetEntries() => _entries.Values;
         public bool HasEntry(string name) => _entries.ContainsKey(name);
         public WadEntry GetEntry(string name) => _entries.ContainsKey(name) ? _entries[name] : null;
-
-        public void Dispose()
-        {
-            _entries.Clear();
-        }
     }
 }
