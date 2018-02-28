@@ -199,7 +199,7 @@ namespace Sledge.BspEditor.Tools.Texture
 
             if (item != null)
             {
-                using (var tp = await tc.GetStreamSource())
+                using (var tp = tc.GetStreamSource())
                 {
                     var bmp = await tp.GetImage(text, 128, 128);
                     image.SizeMode = bmp.Width > image.Width || bmp.Height > image.Height

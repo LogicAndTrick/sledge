@@ -1,57 +1,44 @@
-﻿using System.Collections.Generic;
-using System.Drawing;
-using System.IO;
+﻿using System.Drawing;
 using System.Threading.Tasks;
-using LogicAndTrick.Gimme.Providers;
-using Sledge.Packages;
-using Sledge.Packages.Wad;
+using Sledge.FileSystem;
+using Sledge.Providers.Texture.Wad.Format;
 
 namespace Sledge.Providers.Texture.Wad
 {
-    public class WadTextureStreamSourceProvider : SyncResourceProvider<ITextureStreamSource>
+    public class WadStreamSource : ITextureStreamSource
     {
-        public override bool CanProvide(string location)
+        private readonly WadPackageStreamSource _stream;
+        private readonly WadPackage _package;
+
+        public WadStreamSource(IFile file)
         {
-            return File.Exists(location) && location.EndsWith(".wad");
+            _package = new WadPackage(file);
+            _stream = new WadPackageStreamSource(_package);
         }
 
-        public override IEnumerable<ITextureStreamSource> Fetch(string location, List<string> resources)
+        public bool HasImage(string item)
         {
-            yield return new WadStreamSource(new FileInfo(location));
+            return _stream.HasEntry(item);
         }
 
-        private class WadStreamSource : ITextureStreamSource
+        public async Task<Bitmap> GetImage(string item, int maxWidth, int maxHeight)
         {
-            private readonly WadPackage _package;
-            private readonly IPackageStreamSource _stream;
+            var entry = _stream.GetEntry(item);
+            if (entry == null) return null;
 
-            public WadStreamSource(FileInfo location)
+            return await Task.Factory.StartNew(() =>
             {
-                _package = new WadPackage(location);
-                _stream = _package.GetStreamSource();
-            }
-
-            public bool HasImage(string item)
-            {
-                return _stream.HasFile(item);
-            }
-
-            public Task<Bitmap> GetImage(string item, int maxWidth, int maxHeight)
-            {
-                return Task.Factory.StartNew(() =>
+                using (var s = _stream.OpenEntry(entry))
                 {
-                    using (var s = _stream.OpenFile(item))
-                    {
-                        return new Bitmap(s);
-                    }
-                });
-            }
+                    return new Bitmap(s);
+                }
+            });
+        }
 
-            public void Dispose()
-            {
-                _stream.Dispose();
-                _package.Dispose();
-            }
+        public void Dispose()
+        {
+            _stream.Dispose();
+            _package.Dispose();
         }
     }
 }

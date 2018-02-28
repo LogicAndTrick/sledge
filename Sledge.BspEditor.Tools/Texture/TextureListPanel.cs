@@ -285,13 +285,11 @@ namespace Sledge.BspEditor.Tools.Texture
         }
 
         private ITextureStreamSource _streamSource;
-        private Task<ITextureStreamSource> _streamSourceTask = Task.FromResult<ITextureStreamSource>(null);
 
         public async Task<Bitmap> GetTextureBitmap(string name, int maxWidth, int maxHeight)
         {
-            var ss = await _streamSourceTask;
-            if (ss == null) return null;
-            return await ss.GetImage(name, maxWidth, maxHeight);
+            if (_streamSource == null) return null;
+            return await _streamSource.GetImage(name, maxWidth, maxHeight);
         }
 
         public async Task SetTextureList(IEnumerable<string> textures)
@@ -306,8 +304,7 @@ namespace Sledge.BspEditor.Tools.Texture
 
             _streamSource?.Dispose();
             _streamSource = null;
-            _streamSourceTask = _collection.GetStreamSource();
-            _streamSource = await _streamSourceTask;
+            _streamSource = _collection.GetStreamSource();
             
             UpdateTextureList();
 

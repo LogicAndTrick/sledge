@@ -2,31 +2,15 @@ using System;
 using System.IO;
 using System.Text;
 
-namespace Sledge.Packages.Wad
+namespace Sledge.Providers.Texture.Wad.Format
 {
-    internal class WadImageStream : Stream
+    public class WadImageStream : Stream
     {
         public override long Position { get; set; }
-
-        public override bool CanRead
-        {
-            get { return true; }
-        }
-
-        public override bool CanSeek
-        {
-            get { return true; }
-        }
-
-        public override bool CanWrite
-        {
-            get { return false; }
-        }
-
-        public override long Length
-        {
-            get { return _length; }
-        }
+        public override bool CanRead => true;
+        public override bool CanSeek => true;
+        public override bool CanWrite => false;
+        public override long Length => _length;
 
         private readonly WadEntry _entry;
 
@@ -36,7 +20,7 @@ namespace Sledge.Packages.Wad
         public WadImageStream(WadEntry entry, WadPackage package)
         {
             _entry = entry;
-            using (var br = new BinaryReader(package.OpenFile(package.PackageFile)))
+            using (var br = new BinaryReader(package.File.Open()))
             {
                 br.BaseStream.Position = entry.Offset;
                 PrepareData(br);
@@ -62,7 +46,7 @@ namespace Sledge.Packages.Wad
             using (var bw = new BinaryWriter(new MemoryStream(_data, true)))
             {
                 // BITMAPFILEHEADER
-                bw.WriteFixedLengthString(Encoding.ASCII, 2, "BM"); // Type
+                Packages.BinaryExtensions.WriteFixedLengthString(bw, Encoding.ASCII, 2, "BM"); // Type
                 bw.Write(_length); // Size
                 bw.Write((short)0); // Reserved 1
                 bw.Write((short)0); // Reserved 2
@@ -116,7 +100,7 @@ namespace Sledge.Packages.Wad
                     Position = Length + offset;
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException("origin");
+                    throw new ArgumentOutOfRangeException(nameof(origin));
             }
             return Position;
         }

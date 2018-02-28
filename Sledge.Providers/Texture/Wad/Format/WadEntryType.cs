@@ -1,4 +1,4 @@
-namespace Sledge.Packages.Wad
+namespace Sledge.Providers.Texture.Wad.Format
 {
     // Based off quake's qlumpy code
     public enum WadEntryType : byte

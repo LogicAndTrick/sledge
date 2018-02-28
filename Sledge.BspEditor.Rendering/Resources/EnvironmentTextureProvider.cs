@@ -38,7 +38,7 @@ namespace Sledge.BspEditor.Rendering.Resources
             var n = names.Where(x => x.Length > _idLen && x.Substring(0, _idLen - 2) == Environment.ID).Select(x => x.Substring(_idLen)).ToList();
             await _textureCollection.Precache(n);
             var items = await _textureCollection.GetTextureItems(n);
-            using (var ss = await _textureCollection.GetStreamSource())
+            using (var ss = _textureCollection.GetStreamSource())
             {
                 foreach (var item in items)
                 {

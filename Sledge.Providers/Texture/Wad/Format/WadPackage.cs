@@ -3,48 +3,59 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
+using Sledge.FileSystem;
+using Sledge.Packages;
 
-namespace Sledge.Packages.Wad
+namespace Sledge.Providers.Texture.Wad.Format
 {
     // http://yuraj.ucoz.com/half-life-formats.pdf
     // https://developer.valvesoftware.com/wiki/WAD
-    public class WadPackage : IPackage
+    public class WadPackage : IDisposable
     {
         private const string Signature = "WAD3";
 
-        public FileInfo PackageFile { get; private set; }
-        internal uint NumTextures { get; private set; }
-        internal uint LumpOffset { get; private set; }
-        internal List<WadEntry> Entries { get; private set; }
+        public IFile File { get; }
 
-        public WadPackage(FileInfo packageFile)
+        private readonly uint _numTextures;
+        private readonly uint _lumpOffset;
+        private readonly Dictionary<string, WadEntry> _entries;
+
+        public WadPackage(IFile file)
         {
-            PackageFile = packageFile;
-            Entries = new List<WadEntry>();
+            File = file;
+            _entries = new Dictionary<string, WadEntry>();
 
             // Read the data from the wad
-            using (var br = new BinaryReader(OpenFile(packageFile)))
+            using (var br = new BinaryReader(file.Open()))
             {
-                var sig = br.ReadFixedLengthString(Encoding.ASCII, 4);
+                var sig = Packages.BinaryExtensions.ReadFixedLengthString(br, Encoding.ASCII, 4);
                 if (sig != Signature) throw new PackageException("Unknown package signature: Expected '" + Signature + "', got '" + sig + "'.");
                 
-                NumTextures = br.ReadUInt32();
-                LumpOffset = br.ReadUInt32();
+                _numTextures = br.ReadUInt32();
+                _lumpOffset = br.ReadUInt32();
 
                 // Read all the entries from the wad
                 ReadTextureEntries(br);
                 SetAdditionalEntryData(br);
                 RemoveInvalidEntries();
-                BuildDirectories();
             }
         }
 
-        public static IEnumerable<string> GetEntryNames(FileInfo packageFile)
+        #region Entry names
+
+        public static IEnumerable<string> GetEntryNames(IFile file)
         {
-            using (var br = new BinaryReader(packageFile.Open(FileMode.Open, FileAccess.Read, FileShare.ReadWrite)))
+            using (var s = file.Open())
             {
-                var sig = br.ReadFixedLengthString(Encoding.ASCII, 4);
+                return GetEntryNames(s);
+            }
+        }
+
+        public static IEnumerable<string> GetEntryNames(Stream stream)
+        {
+            using (var br = new BinaryReader(stream, Encoding.ASCII, true))
+            {
+                var sig = Packages.BinaryExtensions.ReadFixedLengthString(br, Encoding.ASCII, 4);
                 if (sig != Signature) throw new PackageException("Unknown package signature: Expected '" + Signature + "', got '" + sig + "'.");
 
                 var numTextures = br.ReadUInt32();
@@ -66,29 +77,21 @@ namespace Sledge.Packages.Wad
                     else
                     {
                         br.BaseStream.Seek(3, SeekOrigin.Current);
-                        yield return br.ReadFixedLengthString(Encoding.ASCII, 16).ToLowerInvariant();
+                        yield return Packages.BinaryExtensions.ReadFixedLengthString(br, Encoding.ASCII, 16).ToLowerInvariant();
                     }
                 }
             }
         }
+        
+        #endregion
 
-        private void RemoveInvalidEntries()
-        {
-            Entries.RemoveAll(e => (e.PaletteDataOffset + e.PaletteSize * 3) - e.Offset > e.Length);
-        }
-
-        internal Stream OpenFile(FileInfo file)
-        {
-            return Stream.Synchronized(new FileStream(file.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, 4096, FileOptions.RandomAccess));
-        }
+        #region Loading
 
         private void ReadTextureEntries(BinaryReader br)
         {
-            var names = new HashSet<string>();
-
             var validTypes = Enum.GetValues(typeof (WadEntryType)).OfType<WadEntryType>().Select(x => (byte) x).ToArray();
-            br.BaseStream.Position = LumpOffset;
-            for (int i = 0; i < NumTextures; i++)
+            br.BaseStream.Position = _lumpOffset;
+            for (var i = 0; i < _numTextures; i++)
             {
                 var offset = br.ReadUInt32();
                 var compressedLength = br.ReadUInt32();
@@ -96,58 +99,22 @@ namespace Sledge.Packages.Wad
                 var type =  br.ReadByte();
                 var compressionType = br.ReadByte();
                 br.ReadBytes(2); // struct padding
-                var name = br.ReadFixedLengthString(Encoding.ASCII, 16).ToLowerInvariant();
+                var name = Packages.BinaryExtensions.ReadFixedLengthString(br, Encoding.ASCII, 16).ToLowerInvariant();
 
                 if (!validTypes.Contains(type)) continue; // Skip unsupported types
-                if (names.Contains(name)) continue; // Don't add duplicates
+                if (_entries.ContainsKey(name)) continue; // Don't add duplicates
 
-                names.Add(name);
-                Entries.Add(new WadEntry(this, name, (WadEntryType) type, offset, compressionType, compressedLength, fullLength));
+                _entries[name] = new WadEntry(name, (WadEntryType) type, offset, compressionType, compressedLength, fullLength);
             }
         }
 
         private void SetAdditionalEntryData(BinaryReader br)
         {
-            foreach (var wadEntry in Entries.OrderBy(x => x.Offset))
+            foreach (var wadEntry in _entries.Values.OrderBy(x => x.Offset))
             {
                 br.BaseStream.Position = wadEntry.Offset;
                 SetEntryData(wadEntry, br);
             }
-        }
-
-        public IEnumerable<IPackageEntry> GetEntries()
-        {
-            return Entries;
-        }
-
-        public IPackageEntry GetEntry(string path)
-        {
-            return _files.ContainsKey(path) ? _files[path] : null;
-        }
-
-        public byte[] ExtractEntry(IPackageEntry entry)
-        {
-            using (var sr = new BinaryReader(OpenStream(entry)))
-            {
-                return sr.ReadBytes((int) sr.BaseStream.Length);
-            }
-        }
-
-        public Stream OpenStream(IPackageEntry entry)
-        {
-            var pe = entry as WadEntry;
-            if (pe == null) throw new ArgumentException("This package is only compatible with WadEntry objects.");
-            return new WadImageStream(pe, this);
-        }
-
-        public IPackageStreamSource GetStreamSource()
-        {
-            return new WadPackageStreamSource(this);
-        }
-
-        public void Dispose()
-        {
-            Entries.Clear();
         }
 
         private void SetEntryData(WadEntry e, BinaryReader br)
@@ -175,7 +142,7 @@ namespace Sledge.Packages.Wad
                     paletteSize = br.ReadUInt16();
                     paletteDataOffset = br.BaseStream.Position;
                     break;
-                    /*
+                /*
                 case WadEntryType.Font:
                     width = br.ReadUInt32();
                     height = br.ReadUInt32();
@@ -194,61 +161,21 @@ namespace Sledge.Packages.Wad
             e.PaletteDataOffset = paletteDataOffset;
         }
 
-        private Dictionary<string, WadEntry> _files;
-
-        private void BuildDirectories()
+        private void RemoveInvalidEntries()
         {
-            _files = GetEntries().OfType<WadEntry>().ToDictionary(x => x.Name, x => x);
+            var inv = _entries.Where(e => (e.Value.PaletteDataOffset + e.Value.PaletteSize * 3) - e.Value.Offset > e.Value.Length).ToList();
+            foreach (var e in inv) _entries.Remove(e.Key);
         }
 
-        public bool HasDirectory(string path)
-        {
-            return false;
-        }
+        #endregion
 
-        public bool HasFile(string path)
-        {
-            path = path.ToLowerInvariant();
-            return _files.ContainsKey(path);
-        }
+        public IEnumerable<WadEntry> GetEntries() => _entries.Values;
+        public bool HasEntry(string name) => _entries.ContainsKey(name);
+        public WadEntry GetEntry(string name) => _entries.ContainsKey(name) ? _entries[name] : null;
 
-        public IEnumerable<string> GetDirectories()
+        public void Dispose()
         {
-            return _files.Keys;
-        }
-
-        public IEnumerable<string> GetFiles()
-        {
-            return _files.Values.Select(x => x.Name);
-        }
-
-        public IEnumerable<string> GetDirectories(string path)
-        {
-            return new string[0];
-        }
-
-        public IEnumerable<string> GetFiles(string path)
-        {
-            if (path != "") return new string[0];
-            return _files.Keys;
-        }
-
-        public IEnumerable<string> SearchDirectories(string path, string regex, bool recursive)
-        {
-            return new string[0];
-        }
-
-        public IEnumerable<string> SearchFiles(string path, string regex, bool recursive)
-        {
-            var files = GetFiles(path);
-            return files.Where(x => Regex.IsMatch(x, regex, RegexOptions.IgnoreCase));
-        }
-
-        public Stream OpenFile(string path)
-        {
-            var entry = GetEntry(path);
-            if (entry == null) throw new FileNotFoundException();
-            return OpenStream(entry);
+            _entries.Clear();
         }
     }
 }

@@ -88,7 +88,8 @@
     <Compile Include="ProviderNotFoundException.cs" />
     <Compile Include="ProviderRegistration.cs" />
     <Compile Include="Texture\MultiTextureStreamSource.cs" />
-    <Compile Include="Texture\Wad\WadTextureItemProvider.cs" />
+    <Compile Include="Texture\ITexturePackageProvider.cs" />
+    <Compile Include="Texture\TexturePackageReference.cs" />
     <Compile Include="Texture\NullTextureStreamSource.cs" />
     <Compile Include="Texture\TextureSubItemType.cs" />
     <Compile Include="Texture\SpriteOrientation.cs" />
@@ -96,7 +97,13 @@
     <Compile Include="Texture\TexturePackage.cs" />
     <Compile Include="Texture\ITextureStreamSource.cs" />
     <Compile Include="Texture\TextureSubItem.cs" />
+    <Compile Include="Texture\Wad\WadTexturePackage.cs" />
     <Compile Include="Texture\Wad\WadTexturePackageProvider.cs" />
+    <Compile Include="Texture\Wad\Format\WadEntry.cs" />
+    <Compile Include="Texture\Wad\Format\WadEntryType.cs" />
+    <Compile Include="Texture\Wad\Format\WadImageStream.cs" />
+    <Compile Include="Texture\Wad\Format\WadPackage.cs" />
+    <Compile Include="Texture\Wad\Format\WadPackageStreamSource.cs" />
     <Compile Include="Texture\Wad\WadTextureStreamSourceProvider.cs" />
   </ItemGroup>
   <ItemGroup>

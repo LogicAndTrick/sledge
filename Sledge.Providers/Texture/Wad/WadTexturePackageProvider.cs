@@ -1,30 +1,43 @@
-﻿using System.Collections.Generic;
-using System.IO;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.Linq;
-using LogicAndTrick.Gimme.Providers;
-using Sledge.Packages.Wad;
+using System.Threading.Tasks;
+using Sledge.FileSystem;
 
 namespace Sledge.Providers.Texture.Wad
 {
-    public class WadTexturePackageProvider : SyncResourceProvider<TexturePackage>
+    [Export("Wad3", typeof(ITexturePackageProvider))]
+    public class WadTexturePackageProvider : ITexturePackageProvider
     {
-        public override bool CanProvide(string location)
+        public IEnumerable<TexturePackageReference> GetPackagesInFile(IFile file)
         {
-            return Directory.Exists(location) && Directory.EnumerateFiles(location, "*.wad").Any();
+            if (!file.Exists || !file.IsContainer) return new TexturePackageReference[0];
+            return file.GetFilesWithExtension("wad").Select(x => new TexturePackageReference(x.Name, x));
         }
 
-        public override IEnumerable<TexturePackage> Fetch(string location, List<string> resources)
+        public async Task<TexturePackage> GetTexturePackage(TexturePackageReference reference)
         {
-            if (resources == null || resources.Count == 0)
+            return await Task.Factory.StartNew(() =>
             {
-                resources = Directory.EnumerateFiles(location, "*.wad").Select(Path.GetFileName).ToList();
-            }
-            foreach (var resource in resources)
+                if (!reference.File.Exists || !string.Equals(reference.File.Extension, "wad", StringComparison.InvariantCultureIgnoreCase)) return null;
+                using (var stream = reference.File.Open())
+                {
+                    return new WadTexturePackage(reference);
+                }
+            });
+        }
+
+        public async Task<IEnumerable<TexturePackage>> GetTexturePackages(IEnumerable<TexturePackageReference> references)
+        {
+            return await Task.Factory.StartNew(() =>
             {
-                var path = Path.Combine(location, resource);
-                if (!File.Exists(path)) continue;
-                yield return new TexturePackage(path, WadPackage.GetEntryNames(new FileInfo(path)));
-            }
+                return references.AsParallel().Select(reference =>
+                {
+                    if (!reference.File.Exists || !string.Equals(reference.File.Extension, "wad", StringComparison.InvariantCultureIgnoreCase)) return null;
+                    return new WadTexturePackage(reference);
+                }).Where(x => x != null);
+            });
         }
     }
 }

@@ -24,6 +24,11 @@ namespace Sledge.BspEditor.Environment.Goldsource
 {
     public class GoldsourceEnvironment : IEnvironment
     {
+        private readonly ITexturePackageProvider _wadProvider;
+        private readonly Lazy<Task<TextureCollection>> _textureCollection;
+        private readonly List<IEnvironmentData> _data;
+        private readonly Lazy<Task<GameData>> _gameData;
+
         public string Engine => "Goldsource";
         public string ID { get; set; }
         public string Name { get; set; }
@@ -110,12 +115,10 @@ namespace Sledge.BspEditor.Environment.Goldsource
             }
         }
 
-        private readonly Lazy<Task<TextureCollection>> _textureCollection;
-        private readonly List<IEnvironmentData> _data;
-        private readonly Lazy<Task<GameData>> _gameData;
-
-        public GoldsourceEnvironment()
+        public GoldsourceEnvironment(ITexturePackageProvider wadProvider)
         {
+            _wadProvider = wadProvider;
+
             _textureCollection = new Lazy<Task<TextureCollection>>(MakeTextureCollectionAsync);
             _gameData = new Lazy<Task<GameData>>(MakeGameDataAsync);
             _data = new List<IEnvironmentData>();
@@ -125,8 +128,10 @@ namespace Sledge.BspEditor.Environment.Goldsource
 
         private async Task<TextureCollection> MakeTextureCollectionAsync()
         {
-            var packages = await Directories.Select(x => Gimme.Fetch<TexturePackage>(x, null)).Merge().ToList().ToTask();
-            return new TextureCollection(packages);
+            var refs = _wadProvider.GetPackagesInFile(Root);
+            var wads = await _wadProvider.GetTexturePackages(refs);
+            // todo sprite packages
+            return new TextureCollection(wads);
         }
 
         private async Task<GameData> MakeGameDataAsync()

@@ -2,10 +2,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reactive.Linq;
-using System.Reactive.Threading.Tasks;
 using System.Threading.Tasks;
-using LogicAndTrick.Gimme;
 using Sledge.Common.Logging;
 using Sledge.Providers.Texture;
 
@@ -22,7 +19,7 @@ namespace Sledge.BspEditor.Environment
         public TextureCollection(IEnumerable<TexturePackage> packages)
         {
             _packages = packages.ToList();
-            _itemCache = new ConcurrentDictionary<string, TextureItem>();
+            _itemCache = new ConcurrentDictionary<string, TextureItem>(StringComparer.InvariantCultureIgnoreCase);
             
             Log.Debug(nameof(TextureCollection), $"Reading textures from: {String.Join("; ", _packages.Select(x => x.Location))}");
         }
@@ -54,15 +51,14 @@ namespace Sledge.BspEditor.Environment
             {
                 var found = new HashSet<string>(tex.Where(x => pack.HasTexture(x)));
                 tex.ExceptWith(found);
-                if (found.Any())
+                if (!found.Any()) continue;
+                var t = pack.GetTextures(found).ContinueWith(x =>
                 {
-                    var t = Gimme.Fetch<TextureItem>(pack.Location, found.ToList(), x =>
-                    {
-                        _itemCache[x.Name.ToLower()] = x;
-                    });
-                    tasks.Add(t);
-                }
+                    foreach (var ti in x.Result) _itemCache[ti.Name] = ti;
+                });
+                tasks.Add(t);
             }
+
             if (tasks.Any()) await Task.WhenAll(tasks);
         }
 
@@ -77,15 +73,15 @@ namespace Sledge.BspEditor.Environment
         {
             name = name.ToLower();
             if (_itemCache.ContainsKey(name)) return _itemCache[name];
+
             var packs = _packages.Where(x => x.HasTexture(name)).ToList();
             foreach (var tp in packs)
             {
-                var r = await Gimme.FetchOne<TextureItem>(tp.Location, name);
-                if (r != null)
-                {
-                    _itemCache[r.Name.ToLower()] = r;
-                    return r;
-                }
+                var r = await tp.GetTexture(name);
+                if (r == null) continue;
+
+                _itemCache[r.Name.ToLower()] = r;
+                return r;
             }
             return null;
         }
@@ -98,19 +94,14 @@ namespace Sledge.BspEditor.Environment
             return n.Where(x => _itemCache.ContainsKey(x)).Select(x => _itemCache[x]);
         }
 
-        public Task<ITextureStreamSource> GetStreamSource()
+        public ITextureStreamSource GetStreamSource()
         {
             return GetStreamSource(_packages);
         }
 
-        public async Task<ITextureStreamSource> GetStreamSource(IEnumerable<TexturePackage> packages)
+        public ITextureStreamSource GetStreamSource(IEnumerable<TexturePackage> packages)
         {
-            return await packages
-                .Select(x => Gimme.Fetch<ITextureStreamSource>(x.Location, null))
-                .Merge()
-                .ToList()
-                .ToTask()
-                .ContinueWith(x => new MultiTextureStreamSource(x.Result));
+            return new MultiTextureStreamSource(packages.Select(x => x.GetStreamSource()));
         }
     }
 }

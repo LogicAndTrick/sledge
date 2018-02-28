@@ -18,6 +18,12 @@ namespace Sledge.BspEditor.Rendering.Converters
         DefaultHigh,
         DefaultMedium,
         DefaultLow,
-        DefaultLowest
+        DefaultLowest,
+
+        BelowDefaultHighest,
+        BelowDefaultHigh,
+        BelowDefaultMedium,
+        BelowDefaultLow,
+        BelowDefaultLowest,
     }
 }

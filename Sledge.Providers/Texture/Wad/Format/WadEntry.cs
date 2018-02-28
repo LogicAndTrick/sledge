@@ -1,11 +1,7 @@
-using System.IO;
-
-namespace Sledge.Packages.Wad
+namespace Sledge.Providers.Texture.Wad.Format
 {
-    public class WadEntry : IPackageEntry
+    public class WadEntry
     {
-        public WadPackage Package { get; private set; }
-
         public uint Offset { get; private set; }
         public uint CompressedLength { get; private set; }
         public long Length { get; private set; }
@@ -23,20 +19,14 @@ namespace Sledge.Packages.Wad
         public string FullName { get { return Name; } }
         public string ParentPath { get { return ""; } }
 
-        public WadEntry(WadPackage package, string name, WadEntryType type, uint offset, byte compressionType, uint compressedLength, uint fullLength)
+        public WadEntry(string name, WadEntryType type, uint offset, byte compressionType, uint compressedLength, uint fullLength)
         {
-            Package = package;
             Name = name;
             Offset = offset;
             CompressionType = compressionType;
             CompressedLength = compressedLength;
             Length = fullLength;
             Type = type;
-        }
-
-        public Stream Open()
-        {
-            return Package.OpenStream(this);
         }
     };
 }

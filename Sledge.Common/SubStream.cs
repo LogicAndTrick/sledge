@@ -1,33 +1,22 @@
 using System;
 using System.IO;
 
-namespace Sledge.Packages
+namespace Sledge.Common
 {
-    internal class SubStream : Stream
+    public class SubStream : Stream
     {
-        public override bool CanRead
-        {
-            get { return true; }
-        }
-
-        public override bool CanSeek
-        {
-            get { return true; }
-        }
-
-        public override bool CanWrite
-        {
-            get { return false; }
-        }
+        public override bool CanRead => true;
+        public override bool CanSeek => true;
+        public override bool CanWrite => false;
 
         public override long Position { get; set; }
-        public override long Length { get { return _length; } }
+        public override long Length => _length;
 
         public bool CloseParentOnDispose { get; set; }
 
-        private Stream _stream;
-        private long _offset;
-        private long _length;
+        private readonly Stream _stream;
+        private readonly long _offset;
+        private readonly long _length;
 
         public SubStream(Stream stream, long offset, long length)
         {
@@ -51,7 +40,7 @@ namespace Sledge.Packages
                     Position = _length + offset;
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException("origin");
+                    throw new ArgumentOutOfRangeException(nameof(origin));
             }
             return Position;
         }

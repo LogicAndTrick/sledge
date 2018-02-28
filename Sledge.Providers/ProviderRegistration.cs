@@ -14,10 +14,6 @@ namespace Sledge.Providers
     {
         public async Task OnStartup()
         {
-            Gimme.Register(new Texture.Wad.WadTextureItemProvider());
-            Gimme.Register(new Texture.Wad.WadTexturePackageProvider());
-            Gimme.Register(new Texture.Wad.WadTextureStreamSourceProvider());
-
             Gimme.Register(new GameData.FgdGameDataProvider());
         }
     }

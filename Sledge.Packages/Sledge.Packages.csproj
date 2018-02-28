@@ -73,19 +73,19 @@
     <Compile Include="Zip\ZipPackageStreamSource.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PackageException.cs" />
-    <Compile Include="SubStream.cs" />
     <Compile Include="Vpk\VpkEntry.cs" />
     <Compile Include="Vpk\VpkEntryStream.cs" />
     <Compile Include="Vpk\VpkDirectory.cs" />
     <Compile Include="Vpk\VpkPackageStreamSource.cs" />
-    <Compile Include="Wad\WadEntry.cs" />
-    <Compile Include="Wad\WadEntryType.cs" />
-    <Compile Include="Wad\WadImageStream.cs" />
-    <Compile Include="Wad\WadPackage.cs" />
-    <Compile Include="Wad\WadPackageStreamSource.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Sledge.Common\Sledge.Common.csproj">
+      <Project>{5D414AC8-8B93-489F-9960-877923400FED}</Project>
+      <Name>Sledge.Common</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
