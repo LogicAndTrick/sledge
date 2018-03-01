@@ -76,6 +76,19 @@
     <Compile Include="Compile\BatchCallback.cs" />
     <Compile Include="Compile\BatchProcess.cs" />
     <Compile Include="Compile\BatchStep.cs" />
+    <Compile Include="Controls\FileSystem\FileSystemBrowserControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\FileSystem\FileSystemBrowserControl.Designer.cs">
+      <DependentUpon>FileSystemBrowserControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\FileSystem\FileSystemBrowserDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Controls\FileSystem\FileSystemBrowserDialog.Designer.cs">
+      <DependentUpon>FileSystemBrowserDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\FileSystem\FileSystemIcons.cs" />
     <Compile Include="Documents\BspSourceDocumentLoader.cs" />
     <Compile Include="Commands\Clipboard\Copy.cs" />
     <Compile Include="Commands\Clipboard\Cut.cs" />
@@ -253,6 +266,12 @@
   <ItemGroup>
     <EmbeddedResource Include="Components\ClipboardSidebarPanel.resx">
       <DependentUpon>ClipboardSidebarPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\FileSystem\FileSystemBrowserControl.resx">
+      <DependentUpon>FileSystemBrowserControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\FileSystem\FileSystemBrowserDialog.resx">
+      <DependentUpon>FileSystemBrowserDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Environment\Controls\EnvironmentCollectionEditor.resx">
       <DependentUpon>EnvironmentCollectionEditor.cs</DependentUpon>

@@ -117,12 +117,6 @@ namespace Sledge.BspEditor.Rendering.Converters
             //    sceneFace.RenderFlags |= RenderFlags.Point;
             //}
 
-            //if (document.Map.HideFaceMask && face.IsSelected)
-            //{
-            //    sceneFace.TintColor = Color.White;
-            //    sceneFace.AccentColor = Color.Yellow;
-            //}
-
             return sceneFace;
         }
 
@@ -152,12 +146,6 @@ namespace Sledge.BspEditor.Rendering.Converters
             //if (View.Draw2DVertices)
             //{
             //    sceneFace.RenderFlags |= RenderFlags.Point;
-            //}
-
-            //if (document.Map.HideFaceMask && face.IsSelected)
-            //{
-            //    sceneFace.TintColor = Color.White;
-            //    sceneFace.AccentColor = Color.Yellow;
             //}
 
             return true;

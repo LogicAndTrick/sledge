@@ -32,7 +32,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using Microsoft.Win32;
 
-namespace Sledge.Editor.UI.FileSystem
+namespace Sledge.BspEditor.Controls.FileSystem
 {
     public static class FileSystemIcons
     {

@@ -2,14 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
-using Sledge.Editor.Logging;
+using Sledge.Common.Logging;
 using Sledge.FileSystem;
 
-namespace Sledge.Editor.UI.FileSystem
+namespace Sledge.BspEditor.Controls.FileSystem
 {
     public partial class FileSystemBrowserDialog : Form
     {
         #region Events
+
         public delegate void ConfirmedButtonEventHandler(object sender, IEnumerable<IFile> selection);
         public delegate void CancelButtonEventHandler(object sender);
 
@@ -18,18 +19,12 @@ namespace Sledge.Editor.UI.FileSystem
 
         protected virtual void OnConfirmed(IEnumerable<IFile> files)
         {
-            if (Confirmed != null)
-            {
-                Confirmed(this, files);
-            }
+            Confirmed?.Invoke(this, files);
         }
 
         protected virtual void OnCancelled()
         {
-            if (Cancelled != null)
-            {
-                Cancelled(this);
-            }
+            Cancelled?.Invoke(this);
         }
 
         #endregion Events
@@ -38,26 +33,14 @@ namespace Sledge.Editor.UI.FileSystem
 
         public string Filter
         {
-            get
-            {
-                return Browser.Filter;
-            }
-            set
-            {
-                Browser.Filter = value;
-            }
+            get => Browser.Filter;
+            set => Browser.Filter = value;
         }
 
         public string FilterText
         {
-            get
-            {
-                return Browser.FilterText;
-            }
-            set
-            {
-                Browser.FilterText = value;
-            }
+            get => Browser.FilterText;
+            set => Browser.FilterText = value;
         }
 
         public FileSystemBrowserDialog(IFile root)
@@ -74,7 +57,7 @@ namespace Sledge.Editor.UI.FileSystem
             }
             catch (Exception ex)
             {
-                Logger.ShowException(ex);
+                Log.Error(nameof(FileSystemBrowserDialog), "Exception when mounting file root", ex);
             }
         }
 

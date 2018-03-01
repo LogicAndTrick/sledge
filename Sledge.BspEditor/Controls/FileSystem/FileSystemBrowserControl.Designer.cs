@@ -1,4 +1,4 @@
-﻿namespace Sledge.Editor.UI.FileSystem
+﻿namespace Sledge.BspEditor.Controls.FileSystem
 {
     partial class FileSystemBrowserControl
     {

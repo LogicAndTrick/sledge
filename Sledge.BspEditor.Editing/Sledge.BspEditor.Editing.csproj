@@ -140,6 +140,9 @@
     <Compile Include="Components\Properties\SmartEdit\SmartEditColor255.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Components\Properties\SmartEdit\SmartEditFileBrowser.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Components\Properties\SmartEdit\SmartEditInteger.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -259,6 +262,10 @@
     <ProjectReference Include="..\Sledge.DataStructures\Sledge.DataStructures.csproj">
       <Project>{26a974c9-e495-4fa3-8e87-1e00019d04f5}</Project>
       <Name>Sledge.DataStructures</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Sledge.FileSystem\Sledge.FileSystem.csproj">
+      <Project>{1C2C012D-DBA5-4C7F-994F-E3034AC60DCC}</Project>
+      <Name>Sledge.FileSystem</Name>
     </ProjectReference>
     <ProjectReference Include="..\Sledge.QuickForms\Sledge.QuickForms.csproj">
       <Project>{7FED88F3-717C-408A-85D9-28DD125DB61A}</Project>

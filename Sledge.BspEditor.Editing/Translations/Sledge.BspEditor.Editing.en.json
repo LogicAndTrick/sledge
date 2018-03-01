@@ -112,6 +112,12 @@
                 "FlagsTab": {
                     "Name": "Flags"
                 }
+            },
+            "SmartEdit": {
+                "SmartEditFileBrowser": {
+                    "Browse": "Browse...",
+                    "Preview": "Preview"
+                }
             }
         }, 
         "Visgroup": {

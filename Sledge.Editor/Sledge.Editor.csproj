@@ -122,19 +122,6 @@
     <Compile Include="Extensions\GeometricExtensions.cs" />
     <Compile Include="Extensions\ModelExtensions.cs" />
     <Compile Include="SingleInstance.cs" />
-    <Compile Include="UI\FileSystem\FileSystemBrowserControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="UI\FileSystem\FileSystemBrowserControl.Designer.cs">
-      <DependentUpon>FileSystemBrowserControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="UI\FileSystem\FileSystemBrowserDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\FileSystem\FileSystemBrowserDialog.Designer.cs">
-      <DependentUpon>FileSystemBrowserDialog.cs</DependentUpon>
-    </Compile>
-    <Compile Include="UI\FileSystem\FileSystemIcons.cs" />
     <Compile Include="UI\Layout\LayoutSettings.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -170,12 +157,6 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-    <EmbeddedResource Include="UI\FileSystem\FileSystemBrowserControl.resx">
-      <DependentUpon>FileSystemBrowserControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\FileSystem\FileSystemBrowserDialog.resx">
-      <DependentUpon>FileSystemBrowserDialog.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="UI\Layout\LayoutSettings.resx">
       <DependentUpon>LayoutSettings.cs</DependentUpon>
     </EmbeddedResource>

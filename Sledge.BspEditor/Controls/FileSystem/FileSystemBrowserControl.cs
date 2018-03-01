@@ -6,11 +6,12 @@ using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using Sledge.FileSystem;
 
-namespace Sledge.Editor.UI.FileSystem
+namespace Sledge.BspEditor.Controls.FileSystem
 {
     public partial class FileSystemBrowserControl : UserControl
     {
         #region Events
+
         public delegate void ConfirmedButtonEventHandler(object sender, IEnumerable<IFile> selection);
         public delegate void CancelButtonEventHandler(object sender);
 
@@ -19,18 +20,12 @@ namespace Sledge.Editor.UI.FileSystem
 
         protected virtual void OnConfirmed(IEnumerable<IFile> files)
         {
-            if (Confirmed != null)
-            {
-                Confirmed(this, files);
-            }
+            Confirmed?.Invoke(this, files);
         }
 
         protected virtual void OnCancelled()
         {
-            if (Cancelled != null)
-            {
-                Cancelled(this);
-            }
+            Cancelled?.Invoke(this);
         }
 
         #endregion Events
@@ -49,7 +44,7 @@ namespace Sledge.Editor.UI.FileSystem
 
         public IFile File
         {
-            get { return _file; }
+            get => _file;
             set { 
                 _file = value;
                 UpdateFile();
@@ -58,13 +53,13 @@ namespace Sledge.Editor.UI.FileSystem
 
         public string FilterText
         {
-            get { return FilterLabel.Text == "(none)" ? "" : FilterLabel.Text; }
-            set { FilterLabel.Text = value == "" ? "(none)" : value; }
+            get => FilterLabel.Text == "(none)" ? "" : FilterLabel.Text;
+            set => FilterLabel.Text = value == "" ? "(none)" : value;
         }
 
         public string Filter
         {
-            get { return _filter; }
+            get => _filter;
             set {
                 _filter = value;
                 _regexes.Clear();
