@@ -29,14 +29,14 @@
         private void InitializeComponent()
         {
             this.RandomShiftMin = new System.Windows.Forms.NumericUpDown();
-            this.label2 = new System.Windows.Forms.Label();
+            this.MinLabel = new System.Windows.Forms.Label();
             this.RandomShiftMax = new System.Windows.Forms.NumericUpDown();
-            this.label3 = new System.Windows.Forms.Label();
+            this.MaxLabel = new System.Windows.Forms.Label();
             this.RandomShiftXButton = new System.Windows.Forms.Button();
             this.RandomShiftYButton = new System.Windows.Forms.Button();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.label5 = new System.Windows.Forms.Label();
+            this.RandomiseShiftValuesGroup = new System.Windows.Forms.GroupBox();
+            this.FitGroup = new System.Windows.Forms.GroupBox();
+            this.TimesToTileLabel = new System.Windows.Forms.Label();
             this.TileFitX = new System.Windows.Forms.NumericUpDown();
             this.TileFitButton = new System.Windows.Forms.Button();
             this.TileFitY = new System.Windows.Forms.NumericUpDown();
@@ -44,8 +44,8 @@
             this.label4 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.RandomShiftMin)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.RandomShiftMax)).BeginInit();
-            this.groupBox1.SuspendLayout();
-            this.groupBox2.SuspendLayout();
+            this.RandomiseShiftValuesGroup.SuspendLayout();
+            this.FitGroup.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.TileFitX)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.TileFitY)).BeginInit();
             this.SuspendLayout();
@@ -67,14 +67,14 @@
             this.RandomShiftMin.Size = new System.Drawing.Size(46, 20);
             this.RandomShiftMin.TabIndex = 1;
             // 
-            // label2
+            // MinLabel
             // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(8, 23);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(27, 13);
-            this.label2.TabIndex = 2;
-            this.label2.Text = "Min:";
+            this.MinLabel.AutoSize = true;
+            this.MinLabel.Location = new System.Drawing.Point(8, 23);
+            this.MinLabel.Name = "MinLabel";
+            this.MinLabel.Size = new System.Drawing.Size(27, 13);
+            this.MinLabel.TabIndex = 2;
+            this.MinLabel.Text = "Min:";
             // 
             // RandomShiftMax
             // 
@@ -98,14 +98,14 @@
             0,
             0});
             // 
-            // label3
+            // MaxLabel
             // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(8, 49);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(30, 13);
-            this.label3.TabIndex = 2;
-            this.label3.Text = "Max:";
+            this.MaxLabel.AutoSize = true;
+            this.MaxLabel.Location = new System.Drawing.Point(8, 49);
+            this.MaxLabel.Name = "MaxLabel";
+            this.MaxLabel.Size = new System.Drawing.Size(30, 13);
+            this.MaxLabel.TabIndex = 2;
+            this.MaxLabel.Text = "Max:";
             // 
             // RandomShiftXButton
             // 
@@ -127,48 +127,48 @@
             this.RandomShiftYButton.UseVisualStyleBackColor = true;
             this.RandomShiftYButton.Click += new System.EventHandler(this.RandomShiftYButtonClicked);
             // 
-            // groupBox1
+            // RandomiseShiftValuesGroup
             // 
-            this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.RandomiseShiftValuesGroup.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBox1.Controls.Add(this.RandomShiftMin);
-            this.groupBox1.Controls.Add(this.RandomShiftYButton);
-            this.groupBox1.Controls.Add(this.RandomShiftMax);
-            this.groupBox1.Controls.Add(this.RandomShiftXButton);
-            this.groupBox1.Controls.Add(this.label2);
-            this.groupBox1.Controls.Add(this.label3);
-            this.groupBox1.Location = new System.Drawing.Point(8, 8);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(205, 73);
-            this.groupBox1.TabIndex = 4;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Randomise shift values";
+            this.RandomiseShiftValuesGroup.Controls.Add(this.RandomShiftMin);
+            this.RandomiseShiftValuesGroup.Controls.Add(this.RandomShiftYButton);
+            this.RandomiseShiftValuesGroup.Controls.Add(this.RandomShiftMax);
+            this.RandomiseShiftValuesGroup.Controls.Add(this.RandomShiftXButton);
+            this.RandomiseShiftValuesGroup.Controls.Add(this.MinLabel);
+            this.RandomiseShiftValuesGroup.Controls.Add(this.MaxLabel);
+            this.RandomiseShiftValuesGroup.Location = new System.Drawing.Point(8, 8);
+            this.RandomiseShiftValuesGroup.Name = "RandomiseShiftValuesGroup";
+            this.RandomiseShiftValuesGroup.Size = new System.Drawing.Size(205, 73);
+            this.RandomiseShiftValuesGroup.TabIndex = 4;
+            this.RandomiseShiftValuesGroup.TabStop = false;
+            this.RandomiseShiftValuesGroup.Text = "Randomise shift values";
             // 
-            // groupBox2
+            // FitGroup
             // 
-            this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.FitGroup.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBox2.Controls.Add(this.label5);
-            this.groupBox2.Controls.Add(this.TileFitX);
-            this.groupBox2.Controls.Add(this.TileFitButton);
-            this.groupBox2.Controls.Add(this.TileFitY);
-            this.groupBox2.Controls.Add(this.label1);
-            this.groupBox2.Controls.Add(this.label4);
-            this.groupBox2.Location = new System.Drawing.Point(8, 87);
-            this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(205, 99);
-            this.groupBox2.TabIndex = 5;
-            this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "Fit to multiple tiles";
+            this.FitGroup.Controls.Add(this.TimesToTileLabel);
+            this.FitGroup.Controls.Add(this.TileFitX);
+            this.FitGroup.Controls.Add(this.TileFitButton);
+            this.FitGroup.Controls.Add(this.TileFitY);
+            this.FitGroup.Controls.Add(this.label1);
+            this.FitGroup.Controls.Add(this.label4);
+            this.FitGroup.Location = new System.Drawing.Point(8, 87);
+            this.FitGroup.Name = "FitGroup";
+            this.FitGroup.Size = new System.Drawing.Size(205, 99);
+            this.FitGroup.TabIndex = 5;
+            this.FitGroup.TabStop = false;
+            this.FitGroup.Text = "Fit to multiple tiles";
             // 
-            // label5
+            // TimesToTileLabel
             // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(8, 21);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(105, 13);
-            this.label5.TabIndex = 4;
-            this.label5.Text = "Times to tile on face:";
+            this.TimesToTileLabel.AutoSize = true;
+            this.TimesToTileLabel.Location = new System.Drawing.Point(8, 21);
+            this.TimesToTileLabel.Name = "TimesToTileLabel";
+            this.TimesToTileLabel.Size = new System.Drawing.Size(105, 13);
+            this.TimesToTileLabel.TabIndex = 4;
+            this.TimesToTileLabel.Text = "Times to tile on face:";
             // 
             // TileFitX
             // 
@@ -237,17 +237,17 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
-            this.Controls.Add(this.groupBox2);
-            this.Controls.Add(this.groupBox1);
+            this.Controls.Add(this.FitGroup);
+            this.Controls.Add(this.RandomiseShiftValuesGroup);
             this.Name = "TextureToolSidebarPanel";
             this.Padding = new System.Windows.Forms.Padding(5);
             this.Size = new System.Drawing.Size(220, 196);
             ((System.ComponentModel.ISupportInitialize)(this.RandomShiftMin)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.RandomShiftMax)).EndInit();
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
-            this.groupBox2.ResumeLayout(false);
-            this.groupBox2.PerformLayout();
+            this.RandomiseShiftValuesGroup.ResumeLayout(false);
+            this.RandomiseShiftValuesGroup.PerformLayout();
+            this.FitGroup.ResumeLayout(false);
+            this.FitGroup.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.TileFitX)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.TileFitY)).EndInit();
             this.ResumeLayout(false);
@@ -257,19 +257,19 @@
         #endregion
 
         private System.Windows.Forms.NumericUpDown RandomShiftMin;
-        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label MinLabel;
         private System.Windows.Forms.NumericUpDown RandomShiftMax;
-        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label MaxLabel;
         private System.Windows.Forms.Button RandomShiftXButton;
         private System.Windows.Forms.Button RandomShiftYButton;
-        private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.GroupBox RandomiseShiftValuesGroup;
+        private System.Windows.Forms.GroupBox FitGroup;
         private System.Windows.Forms.NumericUpDown TileFitX;
         private System.Windows.Forms.Button TileFitButton;
         private System.Windows.Forms.NumericUpDown TileFitY;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Label TimesToTileLabel;
 
 
     }

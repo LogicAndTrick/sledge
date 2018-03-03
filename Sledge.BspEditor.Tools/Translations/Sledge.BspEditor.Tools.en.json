@@ -103,6 +103,23 @@
         }
     },
     "Texture": {
+        "BrowseActiveTexture": {
+            "Name": "Browse textures",
+            "Details": "Open the texture browser"
+        },
+        "ReplaceTextures": {
+            "Name": "Replace texture...",
+            "Details": "Replace textures in map"
+        },
+        "SmartEditTextureBrowser": {
+            "Browse": "Browse..."
+        },
+        "TextureApplicationForm": {
+
+        },
+        "TextureBrowser": {
+
+        },
         "TextureReplaceDialog": {
             "Title": "Replace Textures",
             "Find": "Find:",
@@ -120,6 +137,21 @@
             "ActionSelect": "Select matches (don't replace)",
             "OK": "OK",
             "Cancel": "Cancel"
+        },
+        "TextureSidebarPanel": {
+            "Apply": "Apply",
+            "Browse": "Browse...",
+            "Replace": "Replace..." 
+        },
+        "TextureToolSidebarPanel": {
+            "RandomiseShiftValues": "Randomise shift values",
+            "Min": "Min",
+            "Max": "Max",
+            "RandomiseX": "Randomise X",
+            "RandomiseY": "Randomise Y",
+            "FitToMultipleTiles": "Fit to multiple tiles",
+            "TimesToTile": "Times to tile on face:",
+            "Fit": "Fit"
         } 
     },
     "Vertex": {

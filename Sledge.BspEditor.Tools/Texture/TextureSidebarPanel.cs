@@ -37,9 +37,26 @@ namespace Sledge.BspEditor.Tools.Texture
         private string _currentTexture;
         private WeakReference<MapDocument> _activeDocument;
 
+        public string Apply
+        {
+            set => this.InvokeLater(() => ApplyButton.Text = value);
+        }
+
+        public string Browse
+        {
+            set => this.InvokeLater(() => BrowseButton.Text = value);
+        }
+
+        public string Replace
+        {
+            set => this.InvokeLater(() => ReplaceButton.Text = value);
+        }
+
         public TextureSidebarPanel()
         {
+            CreateHandle();
             InitializeComponent();
+
             SizeLabel.Text = "";
             NameLabel.Text = "";
             _activeDocument = new WeakReference<MapDocument>(null);
