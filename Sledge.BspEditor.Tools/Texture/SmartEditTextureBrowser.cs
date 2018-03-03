@@ -7,7 +7,6 @@ using Sledge.BspEditor.Editing.Components.Properties;
 using Sledge.BspEditor.Editing.Components.Properties.SmartEdit;
 using Sledge.Common.Translations;
 using Sledge.DataStructures.GameData;
-using Sledge.Rendering;
 using Sledge.Shell;
 
 namespace Sledge.BspEditor.Tools.Texture

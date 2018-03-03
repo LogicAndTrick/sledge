@@ -64,7 +64,7 @@ namespace Sledge.BspEditor.Tools.Texture
 
         private void ApplyButtonClicked(object sender, EventArgs e)
         {
-            // Mediator.Publish(HotkeysMediator.ApplyCurrentTextureToSelection);
+            Oy.Publish("Command:Run", new CommandMessage("BspEditor:ApplyActiveTexture"));
         }
 
         private void BrowseButtonClicked(object sender, EventArgs e)
@@ -74,7 +74,7 @@ namespace Sledge.BspEditor.Tools.Texture
 
         private void ReplaceButtonClicked(object sender, EventArgs e)
         {
-            // Mediator.Publish(HotkeysMediator.ReplaceTextures);
+            Oy.Publish("Command:Run", new CommandMessage("BspEditor:ReplaceTextures"));
         }
 
         private async Task DocumentActivated(IDocument doc)
