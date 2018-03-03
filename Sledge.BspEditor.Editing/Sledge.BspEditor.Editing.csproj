@@ -34,6 +34,7 @@
     <Reference Include="LogicAndTrick.Oy, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\LogicAndTrick.Oy.1.1.0\lib\net45\LogicAndTrick.Oy.dll</HintPath>
     </Reference>
+    <Reference Include="OpenTK, Version=2.0.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4" />
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
@@ -63,6 +64,11 @@
     <Compile Include="Commands\OpenRootProperties.cs" />
     <Compile Include="Commands\OpenSledgeWebsite.cs" />
     <Compile Include="Commands\OpenCompileWindow.cs" />
+    <Compile Include="Commands\Pointfile\QuickLoadPointfile.cs" />
+    <Compile Include="Commands\Pointfile\UnloadPointfile.cs" />
+    <Compile Include="Commands\Pointfile\LoadPointfile.cs" />
+    <Compile Include="Commands\Pointfile\Pointfile.cs" />
+    <Compile Include="Commands\Pointfile\PointfileConverter.cs" />
     <Compile Include="Commands\TieToEntity.cs" />
     <Compile Include="Commands\Hollow.cs" />
     <Compile Include="Commands\OpenObjectProperties.cs" />
@@ -251,6 +257,10 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Sledge.BspEditor.Rendering\Sledge.BspEditor.Rendering.csproj">
+      <Project>{d27bb6a7-fe81-45b5-9b68-b23e4169f16d}</Project>
+      <Name>Sledge.BspEditor.Rendering</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Sledge.BspEditor\Sledge.BspEditor.csproj">
       <Project>{37c3fe6b-16f4-431f-ab67-fba7c681ccee}</Project>
       <Name>Sledge.BspEditor</Name>
@@ -270,6 +280,10 @@
     <ProjectReference Include="..\Sledge.QuickForms\Sledge.QuickForms.csproj">
       <Project>{7FED88F3-717C-408A-85D9-28DD125DB61A}</Project>
       <Name>Sledge.QuickForms</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Sledge.Rendering\Sledge.Rendering.csproj">
+      <Project>{4DA7F88D-64FF-4036-8A11-6175169DA851}</Project>
+      <Name>Sledge.Rendering</Name>
     </ProjectReference>
     <ProjectReference Include="..\Sledge.Shell\Sledge.Shell.csproj">
       <Project>{1e0beb41-cf2e-4f48-838e-452c1dcf575f}</Project>
@@ -345,9 +359,11 @@
     <Content Include="Resources\Menu_EntityReport.png" />
     <Content Include="Resources\Menu_HideNullTextures.png" />
     <Content Include="Resources\Menu_Hollow.png" />
+    <Content Include="Resources\Menu_LoadPointfile.png" />
     <Content Include="Resources\Menu_MapProperties.png" />
     <Content Include="Resources\Menu_ObjectProperties.png" />
     <Content Include="Resources\Menu_PasteSpecial.png" />
+    <Content Include="Resources\Menu_QuickLoadPointfile.png" />
     <Content Include="Resources\Menu_Redo.png" />
     <Content Include="Resources\Menu_Run.png" />
     <Content Include="Resources\Menu_TextureLock.png" />
@@ -356,6 +372,7 @@
     <Content Include="Resources\Menu_TieToWorld.png" />
     <Content Include="Resources\Menu_Transform.png" />
     <Content Include="Resources\Menu_Undo.png" />
+    <Content Include="Resources\Menu_UnloadPointfile.png" />
     <Content Include="Translations\Sledge.BspEditor.Editing.en.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

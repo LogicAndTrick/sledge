@@ -163,6 +163,9 @@
     <Compile Include="Selection\TransformationHandles\RotationOrigin.cs" />
     <Compile Include="Selection\TransformationHandles\SkewTransformHandle.cs" />
     <Compile Include="Selection\TransformationHandles\TextureTransformationType.cs" />
+    <Compile Include="Texture\SmartEditTextureBrowser.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="ToolCursors.cs" />
     <Compile Include="State\IState.cs" />
     <Compile Include="State\StateAction.cs" />
@@ -260,6 +263,10 @@
     <Compile Include="Widgets\Widget.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Sledge.BspEditor.Editing\Sledge.BspEditor.Editing.csproj">
+      <Project>{D33E1027-1956-44C4-B920-85281F703704}</Project>
+      <Name>Sledge.BspEditor.Editing</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Sledge.BspEditor.Rendering\Sledge.BspEditor.Rendering.csproj">
       <Project>{D27BB6A7-FE81-45B5-9B68-B23E4169F16D}</Project>
       <Name>Sledge.BspEditor.Rendering</Name>

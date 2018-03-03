@@ -1,38 +1,48 @@
+using System.ComponentModel.Composition;
 using System.Drawing;
 using System.Threading.Tasks;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Primitives.MapObjects;
-using Sledge.DataStructures.MapObjects;
+using Sledge.BspEditor.Rendering;
+using Sledge.BspEditor.Rendering.Converters;
+using Sledge.BspEditor.Rendering.Scene;
 using Line = Sledge.Rendering.Scenes.Renderables.Line;
 
-namespace Sledge.BspEditor.Rendering.Converters
+namespace Sledge.BspEditor.Editing.Commands.Pointfile
 {
+    [Export(typeof(IMapObjectSceneConverter))]
     public class PointfileConverter : IMapObjectSceneConverter
     {
-        public MapObjectSceneConverterPriority Priority { get { return MapObjectSceneConverterPriority.OverrideLow; } }
+        public MapObjectSceneConverterPriority Priority => MapObjectSceneConverterPriority.OverrideLow;
+        
+        private Pointfile GetPointfile(MapDocument doc)
+        {
+            return doc.Map.Data.GetOne<Pointfile>();
+        }
 
-        public bool ShouldStopProcessing(SceneMapObject smo, MapObject obj)
+        public bool ShouldStopProcessing(SceneMapObject smo, MapDocument document, IMapObject obj)
         {
             return false;
         }
 
-        public bool Supports(MapObject obj)
+        public bool Supports(IMapObject obj)
         {
-            return obj is World;
+            return obj is Root;
         }
 
         public async Task<bool> Convert(SceneMapObject smo, MapDocument document, IMapObject obj)
         {
-            if (document.Pointfile == null) return true;
-
+            var pointfile = GetPointfile(document);
+            if (pointfile == null) return true;
+            
             var r = 255;
             var g = 127;
             var b = 127;
-            var change = 128 / (float)document.Pointfile.Lines.Count;
+            var change = 128 / (float) pointfile.Lines.Count;
 
-            for (int i = 0; i < document.Pointfile.Lines.Count; i++)
+            for (var i = 0; i < pointfile.Lines.Count; i++)
             {
-                var line = document.Pointfile.Lines[i];
+                var line = pointfile.Lines[i];
                 var colour = Color.FromArgb(r, g, b);
                 smo.SceneObjects.Add(new object(), new Line(colour, line.Start.ToVector3(), line.End.ToVector3()));
 

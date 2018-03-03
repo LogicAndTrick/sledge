@@ -1,23 +1,47 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.Windows.Forms;
+using Sledge.BspEditor.Documents;
+using Sledge.BspEditor.Editing.Components.Properties;
+using Sledge.BspEditor.Editing.Components.Properties.SmartEdit;
+using Sledge.Common.Translations;
 using Sledge.DataStructures.GameData;
+using Sledge.Rendering;
+using Sledge.Shell;
 
-namespace Sledge.BspEditor.Editing.Components.Properties.SmartEdit
+namespace Sledge.BspEditor.Tools.Texture
 {
-    internal class SmartEditTextureBrowser : SmartEditControl
+    [Export(typeof(IObjectPropertyEditor))]
+    [AutoTranslate]
+    public class SmartEditTextureBrowser : SmartEditControl
     {
+        private WeakReference<MapDocument> _document;
+
         private readonly TextBox _textBox;
+        private readonly Button _browseButton;
+
         public SmartEditTextureBrowser()
         {
+            CreateHandle();
+
             _textBox = new TextBox { Width = 180 };
             _textBox.TextChanged += (sender, e) => OnValueChanged();
             Controls.Add(_textBox);
 
-            var btn = new Button { Text = "Browse...", Margin = new Padding(1), Height = 24 };
-            btn.Click += OpenModelBrowser;
-            Controls.Add(btn);
+            _browseButton = new Button { Text = "Browse...", Margin = new Padding(1), Height = 24 };
+            _browseButton.Click += OpenModelBrowser;
+            Controls.Add(_browseButton);
+
+            _document = new WeakReference<MapDocument>(null);
         }
+
+        public string Browse
+        {
+            set { this.InvokeLater(() => _browseButton.Text = value); }
+        }
+
+        public override string PriorityHint => "H";
 
         public override bool SupportsType(VariableType type)
         {
@@ -26,11 +50,14 @@ namespace Sledge.BspEditor.Editing.Components.Properties.SmartEdit
 
         private void OpenModelBrowser(object sender, EventArgs e)
         {
-            using (var tb = new TextureBrowser(Document))
+            if (!_document.TryGetTarget(out var doc)) return;
+
+            using (var tb = new TextureBrowser(doc))
             {
-                tb.SetTextureList(GetTextureList());
+                tb.Initialise().Wait();
+                //tb.SetTextureList(GetTextureList(doc));
                 tb.SetSelectedTextures(GetSelectedTextures());
-                tb.SetFilterText(GetFilterText());
+                tb.SetFilterText(GetFilterText(doc));
                 tb.ShowDialog();
                 if (tb.SelectedTexture != null)
                 {
@@ -63,7 +90,7 @@ namespace Sledge.BspEditor.Editing.Components.Properties.SmartEdit
             //}
         }
 
-        private string GetFilterText()
+        private string GetFilterText(MapDocument doc)
         {
             switch (Property.VariableType)
             {
@@ -71,8 +98,9 @@ namespace Sledge.BspEditor.Editing.Components.Properties.SmartEdit
                     return "sprites/";
                 case VariableType.Decal:
                     // TODO goldsource/source
-                    if (Document.Game.Engine == Engine.Goldsource) return "{";
-                    else return "decals/";
+                    //if (Document.Game.Engine == Engine.Goldsource) return "{";
+                    //else return "decals/";
+                    return ""; // todo environment
                 default:
                     return null;
             }
@@ -88,8 +116,9 @@ namespace Sledge.BspEditor.Editing.Components.Properties.SmartEdit
             return _textBox.Text;
         }
 
-        protected override void OnSetProperty()
+        protected override void OnSetProperty(MapDocument document)
         {
+            _document = new WeakReference<MapDocument>(document);
             _textBox.Text = PropertyValue;
         }
     }

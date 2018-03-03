@@ -133,6 +133,9 @@
   <data name="Menu_Hollow" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\resources\menu_hollow.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="Menu_LoadPointfile" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\menu_loadpointfile.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="Menu_MapProperties" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\resources\menu_mapproperties.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -141,6 +144,9 @@
   </data>
   <data name="Menu_PasteSpecial" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\resources\menu_pastespecial.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Menu_QuickLoadPointfile" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\menu_quickloadpointfile.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Menu_Redo" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\resources\menu_redo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -165,6 +171,9 @@
   </data>
   <data name="Menu_Undo" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\resources\menu_undo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Menu_UnloadPointfile" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\menu_unloadpointfile.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Sledge_Large" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\sledge_large.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
