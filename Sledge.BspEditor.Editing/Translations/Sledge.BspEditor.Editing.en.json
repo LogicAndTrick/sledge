@@ -20,6 +20,14 @@
             "Name": "Sledge Website",
             "Details": "Go to the Sledge website."
         },
+        "OpenEntityReport": {
+            "Name": "Entity report",
+            "Details": "Open the entity report window."
+        },
+        "OpenMapInformation": {
+            "Name": "Map information",
+            "Details": "Open the map information window."
+        },
         "OpenObjectProperties": {
             "Name": "Object properties",
             "Details": "Open the object properties window."
@@ -204,6 +212,19 @@
             "CompileDialog": {
                 
             } 
+        },
+        "EntityReportDialog": {
+
+        },
+        "MapInformationDialog": {
+            "Solids": "Solids",
+            "Faces": "Faces",
+            "PointEntities": "Point entities",
+            "SolidEntities": "Solid entities",
+            "UniqueTextures": "Unique textures",
+            "TextureMemory": "Texture memory",
+            "TexturePackagesUsed": "Texuture packages used",
+            "CloseButton": "Close"
         }
     } 
 }

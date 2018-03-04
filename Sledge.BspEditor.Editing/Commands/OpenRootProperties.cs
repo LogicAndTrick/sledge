@@ -19,7 +19,6 @@ namespace Sledge.BspEditor.Editing.Commands
     [MenuItem("Map", "", "Properties", "B")]
     [CommandID("BspEditor:Map:RootProperties")]
     [MenuImage(typeof(Resources), nameof(Resources.Menu_MapProperties))]
-    [DefaultHotkey("Alt+Enter")]
     public class OpenRootProperties : BaseCommand
     {
         public override string Name { get; set; } = "Map properties";

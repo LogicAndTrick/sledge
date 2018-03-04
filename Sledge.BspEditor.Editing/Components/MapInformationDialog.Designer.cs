@@ -29,21 +29,21 @@
         private void InitializeComponent()
         {
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-            this.label1 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
-            this.label4 = new System.Windows.Forms.Label();
-            this.label5 = new System.Windows.Forms.Label();
-            this.label6 = new System.Windows.Forms.Label();
+            this.SolidsLabel = new System.Windows.Forms.Label();
+            this.FacesLabel = new System.Windows.Forms.Label();
+            this.PointEntitiesLabel = new System.Windows.Forms.Label();
+            this.SolidEntitiesLabel = new System.Windows.Forms.Label();
+            this.UniqueTexturesLabel = new System.Windows.Forms.Label();
+            this.TextureMemoryLabel = new System.Windows.Forms.Label();
             this.NumSolids = new System.Windows.Forms.Label();
             this.NumFaces = new System.Windows.Forms.Label();
             this.NumPointEntities = new System.Windows.Forms.Label();
             this.NumSolidEntities = new System.Windows.Forms.Label();
             this.NumUniqueTextures = new System.Windows.Forms.Label();
-            this.TextureMemory = new System.Windows.Forms.Label();
-            this.label7 = new System.Windows.Forms.Label();
+            this.TextureMemoryValue = new System.Windows.Forms.Label();
+            this.TexturePackagesUsedLabel = new System.Windows.Forms.Label();
             this.TexturePackages = new System.Windows.Forms.ListBox();
-            this.CloseButton = new System.Windows.Forms.Button();
+            this.CloseDialogButton = new System.Windows.Forms.Button();
             this.tableLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -54,18 +54,18 @@
             this.tableLayoutPanel1.ColumnCount = 2;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 99F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 152F));
-            this.tableLayoutPanel1.Controls.Add(this.label1, 0, 0);
-            this.tableLayoutPanel1.Controls.Add(this.label2, 0, 1);
-            this.tableLayoutPanel1.Controls.Add(this.label3, 0, 2);
-            this.tableLayoutPanel1.Controls.Add(this.label4, 0, 3);
-            this.tableLayoutPanel1.Controls.Add(this.label5, 0, 4);
-            this.tableLayoutPanel1.Controls.Add(this.label6, 0, 5);
+            this.tableLayoutPanel1.Controls.Add(this.SolidsLabel, 0, 0);
+            this.tableLayoutPanel1.Controls.Add(this.FacesLabel, 0, 1);
+            this.tableLayoutPanel1.Controls.Add(this.PointEntitiesLabel, 0, 2);
+            this.tableLayoutPanel1.Controls.Add(this.SolidEntitiesLabel, 0, 3);
+            this.tableLayoutPanel1.Controls.Add(this.UniqueTexturesLabel, 0, 4);
+            this.tableLayoutPanel1.Controls.Add(this.TextureMemoryLabel, 0, 5);
             this.tableLayoutPanel1.Controls.Add(this.NumSolids, 1, 0);
             this.tableLayoutPanel1.Controls.Add(this.NumFaces, 1, 1);
             this.tableLayoutPanel1.Controls.Add(this.NumPointEntities, 1, 2);
             this.tableLayoutPanel1.Controls.Add(this.NumSolidEntities, 1, 3);
             this.tableLayoutPanel1.Controls.Add(this.NumUniqueTextures, 1, 4);
-            this.tableLayoutPanel1.Controls.Add(this.TextureMemory, 1, 5);
+            this.tableLayoutPanel1.Controls.Add(this.TextureMemoryValue, 1, 5);
             this.tableLayoutPanel1.Location = new System.Drawing.Point(12, 12);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 6;
@@ -78,59 +78,59 @@
             this.tableLayoutPanel1.Size = new System.Drawing.Size(251, 120);
             this.tableLayoutPanel1.TabIndex = 0;
             // 
-            // label1
+            // SolidsLabel
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(3, 0);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(38, 13);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "Solids:";
+            this.SolidsLabel.AutoSize = true;
+            this.SolidsLabel.Location = new System.Drawing.Point(3, 0);
+            this.SolidsLabel.Name = "SolidsLabel";
+            this.SolidsLabel.Size = new System.Drawing.Size(38, 13);
+            this.SolidsLabel.TabIndex = 0;
+            this.SolidsLabel.Text = "Solids:";
             // 
-            // label2
+            // FacesLabel
             // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(3, 20);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(39, 13);
-            this.label2.TabIndex = 0;
-            this.label2.Text = "Faces:";
+            this.FacesLabel.AutoSize = true;
+            this.FacesLabel.Location = new System.Drawing.Point(3, 20);
+            this.FacesLabel.Name = "FacesLabel";
+            this.FacesLabel.Size = new System.Drawing.Size(39, 13);
+            this.FacesLabel.TabIndex = 0;
+            this.FacesLabel.Text = "Faces:";
             // 
-            // label3
+            // PointEntitiesLabel
             // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(3, 40);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(68, 13);
-            this.label3.TabIndex = 0;
-            this.label3.Text = "Point Entities";
+            this.PointEntitiesLabel.AutoSize = true;
+            this.PointEntitiesLabel.Location = new System.Drawing.Point(3, 40);
+            this.PointEntitiesLabel.Name = "PointEntitiesLabel";
+            this.PointEntitiesLabel.Size = new System.Drawing.Size(68, 13);
+            this.PointEntitiesLabel.TabIndex = 0;
+            this.PointEntitiesLabel.Text = "Point Entities";
             // 
-            // label4
+            // SolidEntitiesLabel
             // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(3, 60);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(67, 13);
-            this.label4.TabIndex = 0;
-            this.label4.Text = "Solid Entities";
+            this.SolidEntitiesLabel.AutoSize = true;
+            this.SolidEntitiesLabel.Location = new System.Drawing.Point(3, 60);
+            this.SolidEntitiesLabel.Name = "SolidEntitiesLabel";
+            this.SolidEntitiesLabel.Size = new System.Drawing.Size(67, 13);
+            this.SolidEntitiesLabel.TabIndex = 0;
+            this.SolidEntitiesLabel.Text = "Solid Entities";
             // 
-            // label5
+            // UniqueTexturesLabel
             // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(3, 80);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(88, 13);
-            this.label5.TabIndex = 0;
-            this.label5.Text = "Unique Textures:";
+            this.UniqueTexturesLabel.AutoSize = true;
+            this.UniqueTexturesLabel.Location = new System.Drawing.Point(3, 80);
+            this.UniqueTexturesLabel.Name = "UniqueTexturesLabel";
+            this.UniqueTexturesLabel.Size = new System.Drawing.Size(88, 13);
+            this.UniqueTexturesLabel.TabIndex = 0;
+            this.UniqueTexturesLabel.Text = "Unique Textures:";
             // 
-            // label6
+            // TextureMemoryLabel
             // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(3, 100);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(86, 13);
-            this.label6.TabIndex = 0;
-            this.label6.Text = "Texture Memory:";
+            this.TextureMemoryLabel.AutoSize = true;
+            this.TextureMemoryLabel.Location = new System.Drawing.Point(3, 100);
+            this.TextureMemoryLabel.Name = "TextureMemoryLabel";
+            this.TextureMemoryLabel.Size = new System.Drawing.Size(86, 13);
+            this.TextureMemoryLabel.TabIndex = 0;
+            this.TextureMemoryLabel.Text = "Texture Memory:";
             // 
             // NumSolids
             // 
@@ -177,23 +177,23 @@
             this.NumUniqueTextures.TabIndex = 0;
             this.NumUniqueTextures.Text = "12345";
             // 
-            // TextureMemory
+            // TextureMemoryValue
             // 
-            this.TextureMemory.AutoSize = true;
-            this.TextureMemory.Location = new System.Drawing.Point(102, 100);
-            this.TextureMemory.Name = "TextureMemory";
-            this.TextureMemory.Size = new System.Drawing.Size(37, 13);
-            this.TextureMemory.TabIndex = 0;
-            this.TextureMemory.Text = "12345";
+            this.TextureMemoryValue.AutoSize = true;
+            this.TextureMemoryValue.Location = new System.Drawing.Point(102, 100);
+            this.TextureMemoryValue.Name = "TextureMemoryValue";
+            this.TextureMemoryValue.Size = new System.Drawing.Size(37, 13);
+            this.TextureMemoryValue.TabIndex = 0;
+            this.TextureMemoryValue.Text = "12345";
             // 
-            // label7
+            // TexturePackagesUsedLabel
             // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(12, 135);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(122, 13);
-            this.label7.TabIndex = 1;
-            this.label7.Text = "Texture packages used:";
+            this.TexturePackagesUsedLabel.AutoSize = true;
+            this.TexturePackagesUsedLabel.Location = new System.Drawing.Point(12, 135);
+            this.TexturePackagesUsedLabel.Name = "TexturePackagesUsedLabel";
+            this.TexturePackagesUsedLabel.Size = new System.Drawing.Size(122, 13);
+            this.TexturePackagesUsedLabel.TabIndex = 1;
+            this.TexturePackagesUsedLabel.Text = "Texture packages used:";
             // 
             // TexturePackages
             // 
@@ -203,24 +203,25 @@
             this.TexturePackages.Size = new System.Drawing.Size(251, 108);
             this.TexturePackages.TabIndex = 2;
             // 
-            // CloseButton
+            // CloseDialogButton
             // 
-            this.CloseButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.CloseButton.Location = new System.Drawing.Point(188, 265);
-            this.CloseButton.Name = "CloseButton";
-            this.CloseButton.Size = new System.Drawing.Size(75, 23);
-            this.CloseButton.TabIndex = 3;
-            this.CloseButton.Text = "Close";
-            this.CloseButton.UseVisualStyleBackColor = true;
+            this.CloseDialogButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.CloseDialogButton.Location = new System.Drawing.Point(188, 265);
+            this.CloseDialogButton.Name = "CloseDialogButton";
+            this.CloseDialogButton.Size = new System.Drawing.Size(75, 23);
+            this.CloseDialogButton.TabIndex = 3;
+            this.CloseDialogButton.Text = "Close";
+            this.CloseDialogButton.UseVisualStyleBackColor = true;
+            this.CloseDialogButton.Click += new System.EventHandler(this.CloseButtonClicked);
             // 
             // MapInformationDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(275, 298);
-            this.Controls.Add(this.CloseButton);
+            this.Controls.Add(this.CloseDialogButton);
             this.Controls.Add(this.TexturePackages);
-            this.Controls.Add(this.label7);
+            this.Controls.Add(this.TexturePackagesUsedLabel);
             this.Controls.Add(this.tableLayoutPanel1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
@@ -239,20 +240,20 @@
         #endregion
 
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.Label SolidsLabel;
+        private System.Windows.Forms.Label FacesLabel;
+        private System.Windows.Forms.Label PointEntitiesLabel;
+        private System.Windows.Forms.Label SolidEntitiesLabel;
+        private System.Windows.Forms.Label UniqueTexturesLabel;
+        private System.Windows.Forms.Label TextureMemoryLabel;
         private System.Windows.Forms.Label NumSolids;
         private System.Windows.Forms.Label NumFaces;
         private System.Windows.Forms.Label NumPointEntities;
         private System.Windows.Forms.Label NumSolidEntities;
         private System.Windows.Forms.Label NumUniqueTextures;
-        private System.Windows.Forms.Label TextureMemory;
-        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.Label TextureMemoryValue;
+        private System.Windows.Forms.Label TexturePackagesUsedLabel;
         private System.Windows.Forms.ListBox TexturePackages;
-        private System.Windows.Forms.Button CloseButton;
+        private System.Windows.Forms.Button CloseDialogButton;
     }
 }
