@@ -1,13 +1,17 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using LogicAndTrick.Oy;
 using Sledge.BspEditor.Documents;
-using Sledge.BspEditor.Editing.Components.Visgroup.Operations;
 using Sledge.BspEditor.Modification;
+using Sledge.BspEditor.Modification.Operations;
 using Sledge.BspEditor.Modification.Operations.Selection;
+using Sledge.BspEditor.Primitives.MapData;
+using Sledge.BspEditor.Primitives.MapObjectData;
+using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.Common.Shell.Commands;
 using Sledge.Common.Shell.Components;
 using Sledge.Common.Shell.Context;
@@ -24,6 +28,8 @@ namespace Sledge.BspEditor.Editing.Components.Visgroup
     [OrderHint("G")]
     public partial class VisgroupSidebarPanel : UserControl, ISidebarComponent, IInitialiseHook
     {
+        [Import] private ITranslationStringProvider _translation;
+
         public Task OnInitialise()
         {
             Oy.Subscribe<IDocument>("Document:Activated", DocumentActivated);
@@ -51,19 +57,7 @@ namespace Sledge.BspEditor.Editing.Components.Visgroup
         {
             return context.TryGet("ActiveDocument", out MapDocument _);
         }
-
-        private Primitives.MapData.Visgroup SelectedVisgroup
-        {
-            get
-            {
-                var sel = VisgroupPanel.GetSelectedVisgroup();
-                if (!sel.HasValue) return null;
-                if (!_activeDocument.TryGetTarget(out MapDocument md)) return null;
-                return md.Map.Data.Get<Primitives.MapData.Visgroup>().FirstOrDefault(x => x.ID == sel);
-            }
-        }
-
-
+        
         private async Task DocumentActivated(IDocument doc)
         {
             var md = doc as MapDocument;
@@ -71,7 +65,7 @@ namespace Sledge.BspEditor.Editing.Components.Visgroup
             _activeDocument = new WeakReference<MapDocument>(md);
             this.InvokeLater(() =>
             {
-                VisgroupPanel.Update(md);
+                Update(md);
             });
         }
 
@@ -83,18 +77,101 @@ namespace Sledge.BspEditor.Editing.Components.Visgroup
                 {
                     this.InvokeLater(() =>
                     {
-                        VisgroupPanel.Update(change.Document);
+                        Update(change.Document);
                     });
                 }
             }
         }
+        
+        private void Update(MapDocument document)
+        {
+            VisgroupPanel.Clear();
+            if (document == null) return;
+
+            var tree = GetItemHierarchies(document);
+            VisgroupPanel.Update(tree);
+        }
+
+        private List<VisgroupItem> GetItemHierarchies(MapDocument document)
+        {
+            var list = new List<VisgroupItem>();
+
+            // add user visgroups
+            var visgroups = document.Map.Data.Get<Primitives.MapData.Visgroup>().ToList();
+            foreach (var v in visgroups)
+            {
+                list.Add(new VisgroupItem(v.Name)
+                {
+                    CheckState = GetVisibilityCheckState(v.Objects),
+                    Colour = v.Colour,
+                    Tag = v
+                });
+            }
+
+            // add auto visgroups
+            var autoVisgroups = document.Map.Data.Get<Primitives.MapData.AutomaticVisgroup>().ToList();
+            var parents = new Dictionary<string, VisgroupItem> {{"", null}};
+            foreach (var av in autoVisgroups.OrderBy(x => x.Path.Length))
+            {
+                VisgroupItem parent = null;
+                if (!parents.ContainsKey(av.Path))
+                {
+                    var path = new List<string>();
+                    foreach (var spl in av.Path.Split('/'))
+                    {
+                        path.Add(spl);
+                        var seg = String.Join("/", path);
+                        if (!parents.ContainsKey(seg))
+                        {
+                            var group = new VisgroupItem(_translation.GetString(spl)) {Parent = parent};
+                            list.Add(group);
+                            parents[seg] = group;
+                        }
+                        parent = parents[seg];
+                    }
+                }
+                else
+                {
+                    parent = parents[av.Path];
+                }
+                list.Add(new VisgroupItem(_translation.GetString(av.Key))
+                {
+                    CheckState = GetVisibilityCheckState(av.Objects),
+                    Tag = av,
+                    Parent = parent
+                });
+            }
+
+            return list;
+        }
+
+        private CheckState GetVisibilityCheckState(IEnumerable<IMapObject> objects)
+        {
+            var bools = objects.Select(x => x.Data.GetOne<VisgroupHidden>()?.IsHidden ?? false);
+            return GetCheckState(bools);
+        }
+
+        private CheckState GetCheckState(IEnumerable<bool> bools)
+        {
+            var a = bools.Distinct().ToArray();
+            if (a.Length == 0) return CheckState.Checked;
+            if (a.Length == 1) return a[0] ? CheckState.Unchecked : CheckState.Checked;
+            return CheckState.Indeterminate;
+        }
+
+        private HashSet<IMapObject> GetVisgroupObjects(VisgroupItem item)
+        {
+            if (item?.Tag is Primitives.MapData.Visgroup v) return v.Objects;
+            if (item?.Tag is AutomaticVisgroup av) return av.Objects;
+            return new HashSet<IMapObject>();
+        }
 
         private void SelectButtonClicked(object sender, EventArgs e)
         {
-            var sv = SelectedVisgroup;
+            var sv = VisgroupPanel.SelectedVisgroup;
             if (sv != null && _activeDocument.TryGetTarget(out MapDocument md))
             {
-                MapDocumentOperation.Perform(md, new Transaction(new Deselect(md.Selection), new Select(sv.Objects)));
+                MapDocumentOperation.Perform(md, new Transaction(new Deselect(md.Selection), new Select(GetVisgroupObjects(sv))));
             }
         }
 
@@ -107,12 +184,14 @@ namespace Sledge.BspEditor.Editing.Components.Visgroup
         {
             if (_activeDocument.TryGetTarget(out MapDocument md))
             {
-                var tns = new Transaction();
-                foreach (var visgroup in md.Map.Data.Get<Primitives.MapData.Visgroup>())
+                var objects = md.Map.Root.Find(x => x.Data.GetOne<VisgroupHidden>()?.IsHidden == true, true).ToList();
+                if (objects.Any())
                 {
-                    tns.Add(new SetVisgroupVisibility(visgroup.ID, false));
+                    MapDocumentOperation.Perform(md, new TrivialOperation(
+                        d => objects.ToList().ForEach(x => x.Data.Replace(new VisgroupHidden(false))),
+                        c => c.AddRange(objects)
+                    ));
                 }
-                MapDocumentOperation.Perform(md, tns);
             }
         }
 
@@ -121,18 +200,22 @@ namespace Sledge.BspEditor.Editing.Components.Visgroup
 
         }
 
-        private void VisgroupToggled(object sender, long visgroupId, CheckState state)
+        private void VisgroupToggled(object sender, VisgroupItem visgroup, CheckState state)
         {
             if (state == CheckState.Indeterminate) return;
             var visible = state == CheckState.Checked;
-            if (_activeDocument.TryGetTarget(out MapDocument md))
+            var objects = GetVisgroupObjects(visgroup).SelectMany(x => x.FindAll()).ToList();
+            if (objects.Any() && _activeDocument.TryGetTarget(out MapDocument md))
             {
-                MapDocumentOperation.Perform(md, new SetVisgroupVisibility(visgroupId, !visible));
+                MapDocumentOperation.Perform(md, new TrivialOperation(
+                    d => objects.ForEach(x => x.Data.Replace(new VisgroupHidden(!visible))),
+                    c => c.AddRange(objects)
+                ));
             }
 
         }
 
-        private void VisgroupSelected(object sender, long? visgroupId)
+        private void VisgroupSelected(object sender, VisgroupItem visgroup)
         {
 
         }

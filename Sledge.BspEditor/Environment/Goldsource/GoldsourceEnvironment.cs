@@ -11,6 +11,7 @@ using LogicAndTrick.Oy;
 using Sledge.BspEditor.Compile;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Primitives;
+using Sledge.BspEditor.Primitives.MapData;
 using Sledge.BspEditor.Primitives.MapObjectData;
 using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.BspEditor.Providers;
@@ -282,6 +283,17 @@ namespace Sledge.BspEditor.Environment.Goldsource
             }));
 
             return batch;
+        }
+
+        private static string AutoVisgroupPrefix = typeof(GoldsourceEnvironment).Namespace + ".AutomaticVisgroups";
+
+        public IEnumerable<AutomaticVisgroup> GetAutomaticVisgroups()
+        {
+            yield return new AutomaticVisgroup(x => x is Entity && !x.Hierarchy.HasChildren)
+            {
+                Path = $"{AutoVisgroupPrefix}.Entities",
+                Key = $"{AutoVisgroupPrefix}.PointEntities"
+            };
         }
     }
 }

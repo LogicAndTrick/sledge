@@ -102,8 +102,7 @@ namespace Sledge.BspEditor.Providers
                     Name = br.ReadFixedLengthString(Encoding.ASCII, 128),
                     Colour = br.ReadRGBAColour(),
                     ID = br.ReadInt32(),
-                    Visible = br.ReadBoolean(),
-                    Parent = 0
+                    Visible = br.ReadBoolean()
                 };
                 vis.Colour = Color.FromArgb(255, vis.Colour);
                 map.NumberGenerator.Seed("Visgroup", vis.ID);

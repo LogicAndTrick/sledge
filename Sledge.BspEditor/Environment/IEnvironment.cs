@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Sledge.BspEditor.Compile;
 using Sledge.BspEditor.Documents;
+using Sledge.BspEditor.Primitives.MapData;
 using Sledge.DataStructures.GameData;
 using Sledge.FileSystem;
 
@@ -67,5 +68,11 @@ namespace Sledge.BspEditor.Environment
         /// <param name="arguments">The list of batch arguments the user has selected</param>
         /// <returns>A batch to process this map</returns>
         Task<Batch> CreateBatch(IEnumerable<BatchArgument> arguments);
+
+        /// <summary>
+        /// Get a list of automatic visgroups provided by this environment
+        /// </summary>
+        /// <returns>A list of automatic visgroups</returns>
+        IEnumerable<AutomaticVisgroup> GetAutomaticVisgroups();
     }
 }

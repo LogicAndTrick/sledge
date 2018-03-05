@@ -37,7 +37,6 @@
             // 
             this.VisgroupTree.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.VisgroupTree.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.VisgroupTree.HideSelection = false;
             this.VisgroupTree.Indent = 16;
             this.VisgroupTree.Location = new System.Drawing.Point(0, 0);
             this.VisgroupTree.Name = "VisgroupTree";

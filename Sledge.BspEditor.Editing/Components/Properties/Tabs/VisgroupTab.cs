@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Sledge.BspEditor.Documents;
+using Sledge.BspEditor.Editing.Components.Visgroup;
 using Sledge.BspEditor.Modification;
 using Sledge.BspEditor.Modification.Operations.Data;
 using Sledge.BspEditor.Primitives.MapObjectData;
@@ -27,7 +28,7 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
     [Export(typeof(IObjectPropertyEditorTab))]
     public sealed partial class VisgroupTab : UserControl, IObjectPropertyEditorTab
     {
-        private Dictionary<Primitives.MapData.Visgroup, CheckState> _state;
+        private Dictionary<VisgroupItem, CheckState> _state;
 
         /// <inheritdoc />
         public string OrderHint => "Y";
@@ -57,7 +58,7 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
             InitializeComponent();
             CreateHandle();
 
-            _state = new Dictionary<Primitives.MapData.Visgroup, CheckState>();
+            _state = new Dictionary<VisgroupItem, CheckState>();
         }
 
         /// <inheritdoc />
@@ -73,7 +74,7 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
             visgroupPanel.InvokeLater(() =>
             {
                 _state = GetVisgroups(document, objects);
-                visgroupPanel.Update(_state);
+                visgroupPanel.Update(_state.Keys);
             });
         }
 
@@ -84,22 +85,23 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
         private Dictionary<Primitives.MapData.Visgroup, bool> GetMembershipChanges()
         {
             var dic = new Dictionary<Primitives.MapData.Visgroup, bool>();
-            var cs = visgroupPanel.GetAllCheckStates();
-            foreach (var kv in _state)
+
+            foreach (var checkState in visgroupPanel.GetAllCheckStates().Where(x => x.Value != CheckState.Indeterminate))
             {
-                if (kv.Value == CheckState.Indeterminate || !cs.ContainsKey(kv.Key.ID)) continue;
-                var newState = cs[kv.Key.ID];
-                if (newState != kv.Value) dic[kv.Key] = newState == CheckState.Checked;
+                if (_state.All(x => x.Key.Tag != checkState.Key.Tag)) continue;
+                var state = _state.First(x => x.Key.Tag == checkState.Key.Tag);
+                if (checkState.Value != state.Value) dic[(Primitives.MapData.Visgroup) state.Key.Tag] = checkState.Value == CheckState.Checked;
             }
+
             return dic;
         }
 
         /// <summary>
         /// Get the list of visgroups in the document and the membership states of the given objects.
         /// </summary>
-        private Dictionary<Primitives.MapData.Visgroup, CheckState> GetVisgroups(MapDocument document, List<IMapObject> objects)
+        private Dictionary<VisgroupItem, CheckState> GetVisgroups(MapDocument document, List<IMapObject> objects)
         {
-            var d = new Dictionary<Primitives.MapData.Visgroup, CheckState>();
+            var d = new Dictionary<VisgroupItem, CheckState>();
             if (document == null) return d;
 
             var objGroups = objects
@@ -116,7 +118,12 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
                     if (objGroups[id] == objects.Count) cs = CheckState.Checked;
                     else cs = CheckState.Indeterminate;
                 }
-                d[visgroup] = cs;
+                d.Add(new VisgroupItem(visgroup.Name)
+                {
+                    Tag = visgroup,
+                    CheckState = cs,
+                    Colour = visgroup.Colour
+                }, cs);
             }
 
             return d;
@@ -148,7 +155,7 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
             }
         }
 
-        private void VisgroupToggled(object sender, long visgroupId, CheckState state)
+        private void VisgroupToggled(object sender, VisgroupItem visgroup, CheckState state)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(HasChanges)));
         }

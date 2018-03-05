@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Drawing;
-using System.Linq;
 using System.Runtime.Serialization;
 using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.Common.Transport;
@@ -16,7 +15,6 @@ namespace Sledge.BspEditor.Primitives.MapData
         public string Name { get; set; }
         public bool Visible { get; set; } = true;
         public Color Colour { get; set; }
-        public long Parent { get; set; }
         public HashSet<IMapObject> Objects { get; set; }
 
         public Visgroup()
@@ -40,7 +38,6 @@ namespace Sledge.BspEditor.Primitives.MapData
             Name = info.GetString("Name");
             Visible = info.GetBoolean("Visible");
             Colour = Color.FromArgb(info.GetInt32("Colour"));
-            Parent = info.GetInt32("Parent");
         }
 
         public void GetObjectData(SerializationInfo info, StreamingContext context)
@@ -48,7 +45,6 @@ namespace Sledge.BspEditor.Primitives.MapData
             info.AddValue("ID", ID);
             info.AddValue("Name", Name);
             info.AddValue("Visible", Visible);
-            info.AddValue("Parent", Parent);
         }
 
         public virtual IMapElement Clone()
@@ -59,7 +55,6 @@ namespace Sledge.BspEditor.Primitives.MapData
                 Name = Name,
                 Visible = Visible,
                 Colour = Colour,
-                Parent = Parent
             };
         }
 
@@ -71,7 +66,6 @@ namespace Sledge.BspEditor.Primitives.MapData
                 Name = Name,
                 Visible = Visible,
                 Colour = Colour,
-                Parent = Parent
             };
         }
 
@@ -82,7 +76,6 @@ namespace Sledge.BspEditor.Primitives.MapData
             v.Set("Name", Name);
             v.Set("Visible", Visible);
             v.SetColor("Colour", Colour);
-            v.Set("ParentID", Parent);
             return v;
         }
     }

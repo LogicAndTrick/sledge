@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Sledge.BspEditor.Compile;
 using Sledge.BspEditor.Documents;
+using Sledge.BspEditor.Primitives.MapData;
 using Sledge.DataStructures.GameData;
 using Sledge.FileSystem;
 using Sledge.Providers.Texture;
@@ -44,6 +45,11 @@ namespace Sledge.BspEditor.Environment.Empty
         public Task<Batch> CreateBatch(IEnumerable<BatchArgument> arguments)
         {
             return Task.FromResult<Batch>(null);
+        }
+
+        public IEnumerable<AutomaticVisgroup> GetAutomaticVisgroups()
+        {
+            yield break;
         }
 
         public bool IsNullTexture(string name)

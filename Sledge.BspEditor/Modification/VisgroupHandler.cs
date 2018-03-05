@@ -3,10 +3,8 @@ using System.ComponentModel.Composition;
 using System.Linq;
 using System.Threading.Tasks;
 using LogicAndTrick.Oy;
-using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Primitives.MapData;
 using Sledge.BspEditor.Primitives.MapObjectData;
-using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.Common.Shell.Hooks;
 
 namespace Sledge.BspEditor.Modification
@@ -19,34 +17,14 @@ namespace Sledge.BspEditor.Modification
     {
         public async Task OnInitialise()
         {
-            Oy.Subscribe<MapDocument>("Document:Opened", Opened);
             Oy.Subscribe<Change>("MapDocument:Changed", Changed);
-        }
-
-        private async Task Opened(MapDocument doc)
-        {
-            var visgroups = doc.Map.Data.Get<Visgroup>().ToDictionary(x => x.ID, x => x);
-            foreach (var obj in doc.Map.Root.FindAll())
-            {
-                var ids = obj.Data.Get<VisgroupID>().ToList();
-                var visible = true;
-                foreach (var id in ids)
-                {
-                    if (!visgroups.ContainsKey(id.ID)) continue;
-
-                    var vis = visgroups[id.ID];
-                    vis.Objects.Add(obj);
-                    visible = vis.Visible;
-                }
-
-                obj.Data.Replace(new VisgroupHidden(!visible));
-            }
         }
 
         private async Task Changed(Change change)
         {
             var changed = false;
             var visgroups = change.Document.Map.Data.Get<Visgroup>().ToDictionary(x => x.ID, x => x);
+            var autoVisgroups = change.Document.Map.Data.Get<AutomaticVisgroup>().ToList();
 
             foreach (var mo in change.Added.Union(change.Updated))
             {
@@ -60,11 +38,29 @@ namespace Sledge.BspEditor.Modification
                     if (visgroups.ContainsKey(id)) visgroups[id].Objects.Remove(mo);
                 }
 
-                // Add visgroups the object is in now bue wasn't before
+                // Add visgroups the object is in now but wasn't before
                 foreach (var id in now.Except(bef))
                 {
                     changed = true;
                     if (visgroups.ContainsKey(id)) visgroups[id].Objects.Add(mo);
+                }
+
+                // Handle autovisgroups as well
+                foreach (var av in autoVisgroups)
+                {
+                    var match = av.IsMatch(mo);
+                    var contains = av.Objects.Contains(mo);
+
+                    if (!match && contains)
+                    {
+                        av.Objects.Remove(mo);
+                        changed = true;
+                    }
+                    else if (match && !contains)
+                    {
+                        av.Objects.Add(mo);
+                        changed = true;
+                    }
                 }
             }
 
@@ -74,6 +70,13 @@ namespace Sledge.BspEditor.Modification
                 var c = vg.Objects.Count;
                 vg.Objects.ExceptWith(change.Removed);
                 changed |= c != vg.Objects.Count;
+            }
+
+            foreach (var av in autoVisgroups)
+            {
+                var c = av.Objects.Count;
+                av.Objects.ExceptWith(change.Removed);
+                changed |= c != av.Objects.Count;
             }
 
             // Fire event if changes were found

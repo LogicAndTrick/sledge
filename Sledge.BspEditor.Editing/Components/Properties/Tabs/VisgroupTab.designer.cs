@@ -39,14 +39,10 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
             this.visgroupPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.visgroupPanel.DisableAutomatic = false;
-            this.visgroupPanel.HideAutomatic = false;
             this.visgroupPanel.Location = new System.Drawing.Point(3, 23);
             this.visgroupPanel.Name = "visgroupPanel";
             this.visgroupPanel.ShowCheckboxes = true;
-            this.visgroupPanel.ShowHidden = false;
             this.visgroupPanel.Size = new System.Drawing.Size(581, 413);
-            this.visgroupPanel.SortAutomaticFirst = false;
             this.visgroupPanel.TabIndex = 6;
             this.visgroupPanel.VisgroupToggled += new Sledge.BspEditor.Editing.Components.Visgroup.VisgroupPanel.VisgroupToggledEventHandler(this.VisgroupToggled);
             // 

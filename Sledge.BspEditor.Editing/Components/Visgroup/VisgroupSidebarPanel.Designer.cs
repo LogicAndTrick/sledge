@@ -76,14 +76,10 @@
             this.VisgroupPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.VisgroupPanel.DisableAutomatic = false;
-            this.VisgroupPanel.HideAutomatic = false;
             this.VisgroupPanel.Location = new System.Drawing.Point(3, 3);
             this.VisgroupPanel.Name = "VisgroupPanel";
             this.VisgroupPanel.ShowCheckboxes = true;
-            this.VisgroupPanel.ShowHidden = false;
             this.VisgroupPanel.Size = new System.Drawing.Size(196, 166);
-            this.VisgroupPanel.SortAutomaticFirst = true;
             this.VisgroupPanel.TabIndex = 8;
             this.VisgroupPanel.VisgroupToggled += new Sledge.BspEditor.Editing.Components.Visgroup.VisgroupPanel.VisgroupToggledEventHandler(this.VisgroupToggled);
             this.VisgroupPanel.VisgroupSelected += new Sledge.BspEditor.Editing.Components.Visgroup.VisgroupPanel.VisgroupSelectedEventHandler(this.VisgroupSelected);

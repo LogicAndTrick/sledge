@@ -215,13 +215,13 @@
     <Compile Include="Components\TransformDialog.Designer.cs">
       <DependentUpon>TransformDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="Components\Visgroup\Operations\SetVisgroupVisibility.cs" />
     <Compile Include="Components\Visgroup\VisgroupEditForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Components\Visgroup\VisgroupEditForm.Designer.cs">
       <DependentUpon>VisgroupEditForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Components\Visgroup\VisgroupItem.cs" />
     <Compile Include="Components\Visgroup\VisgroupPanel.cs">
       <SubType>UserControl</SubType>
     </Compile>

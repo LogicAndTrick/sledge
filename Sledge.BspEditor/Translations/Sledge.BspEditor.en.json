@@ -53,6 +53,14 @@
             "FileTypeDescription": "BSP Source File" 
         }
     },
+    "Environment": {
+        "Goldsource": {
+            "AutomaticVisgroups": {
+                "Entities": "Entities",
+                "PointEntities": "Point entities"
+            }
+        }
+    },
     "Grid": {
         "NoGridFactory": {
             "Name": "No grid",

@@ -53,16 +53,25 @@ namespace Sledge.BspEditor.Editing.Components.Visgroup
 
         private void UpdateVisgroups()
         {
-            VisgroupPanel.Update(_visgroups);
+            VisgroupPanel.Update(GetVisgroupItemList());
         }
 
-        private void SelectionChanged(object sender, long? visgroupId)
+        private IEnumerable<VisgroupItem> GetVisgroupItemList()
         {
-            ColourPanel.Enabled = RemoveButton.Enabled = GroupName.Enabled = visgroupId.HasValue;
-            ColourPanel.BackColor = SystemColors.Control;
-            if (visgroupId.HasValue)
+            return _visgroups.Select(x => new VisgroupItem(x.Name)
             {
-                var visgroup = _visgroups.First(x => x.ID == visgroupId.Value);
+                Colour = x.Colour,
+                Tag = x
+            });
+        }
+
+        private void SelectionChanged(object sender, VisgroupItem visgroupItem)
+        {
+            ColourPanel.Enabled = RemoveButton.Enabled = GroupName.Enabled = visgroupItem != null;
+            ColourPanel.BackColor = SystemColors.Control;
+            if (visgroupItem != null)
+            {
+                var visgroup = (Vg) visgroupItem.Tag;
                 GroupName.Text = visgroup.Name;
                 ColourPanel.BackColor = visgroup.Colour;
             }
@@ -89,16 +98,17 @@ namespace Sledge.BspEditor.Editing.Components.Visgroup
                                };
             _visgroups.Add(newGroup);
             UpdateVisgroups();
-            VisgroupPanel.SetSelectedVisgroup(newGroup.ID);
+            VisgroupPanel.SelectedVisgroup = new VisgroupItem("") { Tag = newGroup };
             GroupName.SelectAll();
             GroupName.Focus();
         }
 
         private void RemoveGroup(object sender, EventArgs e)
         {
-            var id = VisgroupPanel.GetSelectedVisgroup();
-            if (!id.HasValue) return;
-            var vg = _visgroups.First(x => x.ID == id.Value);
+            var visgroup = VisgroupPanel.SelectedVisgroup;
+            if (visgroup == null) return;
+
+            var vg = (Vg) visgroup.Tag;
             _visgroups.Remove(vg);
             _deleted.Add(vg);
             UpdateVisgroups();
@@ -106,26 +116,27 @@ namespace Sledge.BspEditor.Editing.Components.Visgroup
 
         private void GroupNameChanged(object sender, EventArgs e)
         {
-            var id = VisgroupPanel.GetSelectedVisgroup();
-            if (!id.HasValue) return;
-            var vg = _visgroups.First(x => x.ID == id.Value);
+            var visgroup = VisgroupPanel.SelectedVisgroup;
+            if (visgroup == null) return;
+            
+            var vg = (Vg) visgroup.Tag;
             if (vg.Name == GroupName.Text) return;
-            vg.Name = GroupName.Text;
-            VisgroupPanel.UpdateVisgroupName(id.Value, GroupName.Text);
+            visgroup.Text = vg.Name = GroupName.Text;
+            VisgroupPanel.UpdateVisgroupState(visgroup);
         }
 
         private void ColourClicked(object sender, EventArgs e)
         {
-            var id = VisgroupPanel.GetSelectedVisgroup();
-            if (!id.HasValue) return;
-            var vg = _visgroups.First(x => x.ID == id.Value);
+            var visgroup = VisgroupPanel.SelectedVisgroup;
+            if (visgroup == null) return;
+            
+            var vg = (Vg) visgroup.Tag;
             using (var cp = new ColorDialog {Color = vg.Colour})
             {
-                if (cp.ShowDialog() == DialogResult.OK)
-                {
-                    vg.Colour = cp.Color;
-                    VisgroupPanel.UpdateVisgroupColour(id.Value, cp.Color);
-                }
+                if (cp.ShowDialog() != DialogResult.OK) return;
+
+                ColourPanel.BackColor = visgroup.Colour = vg.Colour = cp.Color;
+                VisgroupPanel.UpdateVisgroupState(visgroup);
             }
         }
 

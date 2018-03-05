@@ -183,6 +183,7 @@
     <Compile Include="Primitives\ITransformable.cs" />
     <Compile Include="Primitives\MapData\HideFaceMask.cs" />
     <Compile Include="Primitives\MapData\SelectionOptions.cs" />
+    <Compile Include="Primitives\MapData\AutomaticVisgroup.cs" />
     <Compile Include="Primitives\MapObjectData\Path.cs" />
     <Compile Include="Primitives\MapData\CordonBounds.cs" />
     <Compile Include="Primitives\MapData\FaceSelection.cs" />
