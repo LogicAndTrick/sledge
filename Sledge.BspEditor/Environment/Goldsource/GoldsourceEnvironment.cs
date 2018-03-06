@@ -285,14 +285,84 @@ namespace Sledge.BspEditor.Environment.Goldsource
             return batch;
         }
 
-        private static string AutoVisgroupPrefix = typeof(GoldsourceEnvironment).Namespace + ".AutomaticVisgroups";
+        private static readonly string AutoVisgroupPrefix = typeof(GoldsourceEnvironment).Namespace + ".AutomaticVisgroups";
 
         public IEnumerable<AutomaticVisgroup> GetAutomaticVisgroups()
         {
+            // Entities
+            yield return new AutomaticVisgroup(x => x is Entity && x.Hierarchy.HasChildren)
+            {
+                Path = $"{AutoVisgroupPrefix}.Entities",
+                Key = $"{AutoVisgroupPrefix}.BrushEntities"
+            };
             yield return new AutomaticVisgroup(x => x is Entity && !x.Hierarchy.HasChildren)
             {
                 Path = $"{AutoVisgroupPrefix}.Entities",
                 Key = $"{AutoVisgroupPrefix}.PointEntities"
+            };
+            yield return new AutomaticVisgroup(x => x is Entity e && e.EntityData.Name.StartsWith("light", StringComparison.InvariantCultureIgnoreCase))
+            {
+                Path = $"{AutoVisgroupPrefix}.Entities",
+                Key = $"{AutoVisgroupPrefix}.Lights"
+            };
+            yield return new AutomaticVisgroup(x => x is Entity e && e.EntityData.Name.StartsWith("trigger_", StringComparison.InvariantCultureIgnoreCase))
+            {
+                Path = $"{AutoVisgroupPrefix}.Entities",
+                Key = $"{AutoVisgroupPrefix}.Triggers"
+            };
+            yield return new AutomaticVisgroup(x => x is Entity e && e.EntityData.Name.IndexOf("_node", StringComparison.InvariantCultureIgnoreCase) >= 0)
+            {
+                Path = $"{AutoVisgroupPrefix}.Entities",
+                Key = $"{AutoVisgroupPrefix}.Nodes"
+            };
+            
+            // Tool brushes
+            yield return new AutomaticVisgroup(x => x is Solid s && s.Faces.Any(f => string.Equals(f.Texture.Name, "bevel", StringComparison.InvariantCultureIgnoreCase)))
+            {
+                Path = $"{AutoVisgroupPrefix}.ToolBrushes",
+                Key = $"{AutoVisgroupPrefix}.Bevel"
+            };
+            yield return new AutomaticVisgroup(x => x is Solid s && s.Faces.Any(f => string.Equals(f.Texture.Name, "hint", StringComparison.InvariantCultureIgnoreCase)))
+            {
+                Path = $"{AutoVisgroupPrefix}.ToolBrushes",
+                Key = $"{AutoVisgroupPrefix}.Hint"
+            };
+            yield return new AutomaticVisgroup(x => x is Solid s && s.Faces.Any(f => string.Equals(f.Texture.Name, "origin", StringComparison.InvariantCultureIgnoreCase)))
+            {
+                Path = $"{AutoVisgroupPrefix}.ToolBrushes",
+                Key = $"{AutoVisgroupPrefix}.Origin"
+            };
+            yield return new AutomaticVisgroup(x => x is Solid s && s.Faces.Any(f => string.Equals(f.Texture.Name, "skip", StringComparison.InvariantCultureIgnoreCase)))
+            {
+                Path = $"{AutoVisgroupPrefix}.ToolBrushes",
+                Key = $"{AutoVisgroupPrefix}.Skip"
+            };
+            yield return new AutomaticVisgroup(x => x is Solid s && s.Faces.Any(f => string.Equals(f.Texture.Name, "aaatrigger", StringComparison.InvariantCultureIgnoreCase)))
+            {
+                Path = $"{AutoVisgroupPrefix}.ToolBrushes",
+                Key = $"{AutoVisgroupPrefix}.Trigger"
+            };
+
+            // World geometry
+            yield return new AutomaticVisgroup(x => x is Solid s && s.FindClosestParent(p => p is Entity) == null)
+            {
+                Path = $"{AutoVisgroupPrefix}.WorldGeometry",
+                Key = $"{AutoVisgroupPrefix}.Brushes"
+            };
+            yield return new AutomaticVisgroup(x => x is Solid s && s.FindClosestParent(p => p is Entity) == null && s.Faces.Any(f => string.Equals(f.Texture.Name, "null", StringComparison.InvariantCultureIgnoreCase)))
+            {
+                Path = $"{AutoVisgroupPrefix}.WorldGeometry",
+                Key = $"{AutoVisgroupPrefix}.Null"
+            };
+            yield return new AutomaticVisgroup(x => x is Solid s && s.FindClosestParent(p => p is Entity) == null && s.Faces.Any(f => string.Equals(f.Texture.Name, "sky", StringComparison.InvariantCultureIgnoreCase)))
+            {
+                Path = $"{AutoVisgroupPrefix}.WorldGeometry",
+                Key = $"{AutoVisgroupPrefix}.Sky"
+            };
+            yield return new AutomaticVisgroup(x => x is Solid s && s.FindClosestParent(p => p is Entity) == null && s.Faces.Any(f => f.Texture.Name.StartsWith("!")))
+            {
+                Path = $"{AutoVisgroupPrefix}.WorldGeometry",
+                Key = $"{AutoVisgroupPrefix}.Water"
             };
         }
     }

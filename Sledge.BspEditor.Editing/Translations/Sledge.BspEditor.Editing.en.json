@@ -160,7 +160,8 @@
                 "EditButton": "Edit",
                 "SelectButton": "Select",
                 "ShowAllButton": "Show all",
-                "NewButton": "New"
+                "NewButton": "New",
+                "AutoVisgroups": "Auto" 
             }
         },
         "AboutDialog": {

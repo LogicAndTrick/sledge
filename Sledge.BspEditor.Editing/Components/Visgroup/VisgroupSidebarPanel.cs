@@ -44,6 +44,7 @@ namespace Sledge.BspEditor.Editing.Components.Visgroup
         public string SelectButton { set { this.InvokeLater(() => { btnSelect.Text = value; }); } }
         public string ShowAllButton { set { this.InvokeLater(() => { btnShowAll.Text = value; }); } }
         public string NewButton { set { this.InvokeLater(() => { btnNew.Text = value; }); } }
+        public string AutoVisgroups { get; set; }
         
         private WeakReference<MapDocument> _activeDocument = new WeakReference<MapDocument>(null);
 
@@ -63,33 +64,31 @@ namespace Sledge.BspEditor.Editing.Components.Visgroup
             var md = doc as MapDocument;
 
             _activeDocument = new WeakReference<MapDocument>(md);
-            this.InvokeLater(() =>
-            {
-                Update(md);
-            });
+            Update(md);
         }
 
         private async Task DocumentChanged(Change change)
         {
-            if (_activeDocument.TryGetTarget(out MapDocument t) && change.Document == t && change.HasDataChanges)
+            if (_activeDocument.TryGetTarget(out MapDocument t) && change.Document == t)
             {
-                if (change.AffectedData.Any(x => x is Primitives.MapData.Visgroup))
-                {
-                    this.InvokeLater(() =>
-                    {
-                        Update(change.Document);
-                    });
-                }
+                Update(change.Document);
             }
         }
         
         private void Update(MapDocument document)
         {
-            VisgroupPanel.Clear();
-            if (document == null) return;
-
-            var tree = GetItemHierarchies(document);
-            VisgroupPanel.Update(tree);
+            Task.Factory.StartNew(() =>
+            {
+                if (document == null)
+                {
+                    this.InvokeLater(() => VisgroupPanel.Clear());
+                }
+                else
+                {
+                    var tree = GetItemHierarchies(document);
+                    this.InvokeLater(() => VisgroupPanel.Update(tree));
+                }
+            });
         }
 
         private List<VisgroupItem> GetItemHierarchies(MapDocument document)
@@ -108,12 +107,18 @@ namespace Sledge.BspEditor.Editing.Components.Visgroup
                 });
             }
 
+            var auto = new VisgroupItem(AutoVisgroups)
+            {
+                Disabled = true
+            };
+            list.Insert(0, auto);
+
             // add auto visgroups
-            var autoVisgroups = document.Map.Data.Get<Primitives.MapData.AutomaticVisgroup>().ToList();
-            var parents = new Dictionary<string, VisgroupItem> {{"", null}};
+            var autoVisgroups = document.Map.Data.Get<AutomaticVisgroup>().ToList();
+            var parents = new Dictionary<string, VisgroupItem> {{"", auto}};
             foreach (var av in autoVisgroups.OrderBy(x => x.Path.Length))
             {
-                VisgroupItem parent = null;
+                VisgroupItem parent = auto;
                 if (!parents.ContainsKey(av.Path))
                 {
                     var path = new List<string>();
@@ -123,7 +128,11 @@ namespace Sledge.BspEditor.Editing.Components.Visgroup
                         var seg = String.Join("/", path);
                         if (!parents.ContainsKey(seg))
                         {
-                            var group = new VisgroupItem(_translation.GetString(spl)) {Parent = parent};
+                            var group = new VisgroupItem(_translation.GetString(spl))
+                            {
+                                Parent = parent,
+                                Disabled = true
+                            };
                             list.Add(group);
                             parents[seg] = group;
                         }
@@ -140,6 +149,17 @@ namespace Sledge.BspEditor.Editing.Components.Visgroup
                     Tag = av,
                     Parent = parent
                 });
+            }
+
+            for (var i = list.Count - 1; i >= 0; i--)
+            {
+                var v = list[i];
+                if (v.Tag != null) continue;
+
+                var children = list.Where(x => x.Parent == v).ToList();
+                if (children.All(x => x.CheckState == CheckState.Checked)) v.CheckState = CheckState.Checked;
+                else if (children.All(x => x.CheckState == CheckState.Unchecked)) v.CheckState = CheckState.Unchecked;
+                else v.CheckState = CheckState.Indeterminate;
             }
 
             return list;
@@ -163,7 +183,9 @@ namespace Sledge.BspEditor.Editing.Components.Visgroup
         {
             if (item?.Tag is Primitives.MapData.Visgroup v) return v.Objects;
             if (item?.Tag is AutomaticVisgroup av) return av.Objects;
-            return new HashSet<IMapObject>();
+
+            var children = VisgroupPanel.GetAllItems().Where(x => x.Parent == item).SelectMany(GetVisgroupObjects);
+            return new HashSet<IMapObject>(children);
         }
 
         private void SelectButtonClicked(object sender, EventArgs e)

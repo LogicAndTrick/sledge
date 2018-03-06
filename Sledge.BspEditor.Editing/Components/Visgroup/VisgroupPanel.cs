@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
 
@@ -87,7 +89,7 @@ namespace Sledge.BspEditor.Editing.Components.Visgroup
         {
             var node = new TreeNode(visgroup.Text)
             {
-                StateImageKey = CastCheckState(visgroup.CheckState),
+                StateImageKey = CastCheckState(visgroup.CheckState) + (visgroup.Disabled ? "Disabled" : ""),
                 BackColor = visgroup.Colour,
                 Tag = visgroup
             };
@@ -110,14 +112,59 @@ namespace Sledge.BspEditor.Editing.Components.Visgroup
         /// </summary>
         public void Update(IEnumerable<VisgroupItem> visgroups)
         {
+            VisgroupTree.BeginUpdate();
+
+            var state = GetExpandState();
+            var scroll = GetTreeViewScrollPos(VisgroupTree);
+
             Clear();
             var vgs = visgroups.ToList();
             foreach (var v in vgs.Where(x => x.Parent == null))
             {
                 AddNode(null, vgs, v);
             }
+
+            RestoreExpandState(state);
+            SetTreeViewScrollPos(VisgroupTree, scroll);
+
+            VisgroupTree.EndUpdate();
         }
 
+        private void RestoreExpandState(List<string> expanded)
+        {
+            foreach (var node in GetAllNodePaths().Where(x => expanded.Contains(x.Value)))
+            {
+                node.Key.Expand();
+            }
+        }
+
+        private List<string> GetExpandState()
+        {
+            return GetAllNodePaths().Where(x => x.Key.IsExpanded).Select(x => x.Value).ToList();
+        }
+
+        private Dictionary<TreeNode, string> GetAllNodePaths()
+        {
+            return GetAllNodePaths(VisgroupTree.Nodes.OfType<TreeNode>().ToDictionary(x => x, x => x.Text));
+        }
+
+        private Dictionary<TreeNode, string> GetAllNodePaths(Dictionary<TreeNode, string> nodes)
+        {
+            var dic = new Dictionary<TreeNode, string>(nodes);
+
+            var children = nodes.SelectMany(x => x.Key.Nodes.OfType<TreeNode>().Select(n => new {x, n}))
+                .ToDictionary(x => x.n, x => x.x.Value + "/" + x.n.Text);
+            if (children.Any())
+            {
+                foreach (var kv in GetAllNodePaths(children))
+                {
+                    dic[kv.Key] = kv.Value;
+                }
+            }
+
+            return dic;
+        }
+        
         /// <summary>
         /// Convert a CheckState into a string representation of the checkbox icon.
         /// </summary>
@@ -217,6 +264,14 @@ namespace Sledge.BspEditor.Editing.Components.Visgroup
         }
 
         /// <summary>
+        /// Get all the visgroup items in the tree as a flat list
+        /// </summary>
+        public List<VisgroupItem> GetAllItems()
+        {
+            return GetAllNodes().Select(x => x.Tag).OfType<VisgroupItem>().ToList();
+        }
+
+        /// <summary>
         /// Set the checkstate of a visgroup.
         /// </summary>
         public void SetCheckState(VisgroupItem visgroup, CheckState state)
@@ -266,6 +321,30 @@ namespace Sledge.BspEditor.Editing.Components.Visgroup
         private void OnDragEnter(object sender, DragEventArgs e)
         {
             //if (e.Data.GetData(typeof (TreeNode)) != null) e.Effect = DragDropEffects.Move;
+        }
+
+
+        // https://stackoverflow.com/a/359896
+
+        [DllImport("user32.dll",  CharSet = CharSet.Unicode)]
+        public static extern int GetScrollPos(IntPtr hWnd, int nBar);
+
+        [DllImport("user32.dll",  CharSet = CharSet.Unicode)]
+        public static extern int SetScrollPos(IntPtr hWnd, int nBar, int nPos, bool bRedraw);
+
+        private const int SbHorz = 0x0;
+        private const int SbVert = 0x1;
+
+        private Point GetTreeViewScrollPos(TreeView treeView)
+        {
+            return new Point(
+                GetScrollPos(treeView.Handle, SbHorz), 
+                GetScrollPos(treeView.Handle, SbVert));
+        }
+        private void SetTreeViewScrollPos(TreeView treeView, Point scrollPosition)
+        {
+            SetScrollPos(treeView.Handle, SbHorz, scrollPosition.X, true);
+            SetScrollPos(treeView.Handle, SbVert, scrollPosition.Y, true); 
         }
     }
 }

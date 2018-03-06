@@ -10,6 +10,7 @@ namespace Sledge.BspEditor.Editing.Components.Visgroup
         public CheckState CheckState { get; set; }
         public Color Colour { get; set; }
         public object Tag { get; set; }
+        public bool Disabled { get; set; }
 
         public VisgroupItem(string text)
         {

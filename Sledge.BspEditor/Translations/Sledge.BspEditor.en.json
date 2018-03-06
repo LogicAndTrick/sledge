@@ -57,7 +57,25 @@
         "Goldsource": {
             "AutomaticVisgroups": {
                 "Entities": "Entities",
-                "PointEntities": "Point entities"
+                "ToolBrushes": "Tool brushes",
+                "WorldGeometry": "World geometry",
+
+                "BrushEntities": "Brush entities",
+                "PointEntities": "Point entities",
+                "Lights": "Lights",
+                "Triggers": "Triggers",
+                "Nodes": "Nodes",
+
+                "Bevel": "Bevel",
+                "Hint": "Hint",
+                "Origin": "Origin",
+                "Skip": "Skip",
+                "Trigger": "Trigger",
+
+                "Brushes": "Brushes",
+                "Null": "Null",
+                "Sky": "Sky",
+                "Water": "Water"
             }
         }
     },
