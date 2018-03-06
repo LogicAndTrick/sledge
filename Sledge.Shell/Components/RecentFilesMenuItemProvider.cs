@@ -6,7 +6,6 @@ using System.Drawing.Drawing2D;
 using System.Drawing.Text;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 using LogicAndTrick.Gimme;
 using LogicAndTrick.Oy;

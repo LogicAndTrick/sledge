@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -26,6 +27,7 @@ namespace Sledge.Shell.Forms
         private readonly object _lock = new object();
 
         [Import] private Bootstrapper _bootstrapper;
+        [ImportMany] private IEnumerable<Lazy<IDocumentLoader>> _loaders;
 
         public string Title { get; set; } = "Sledge Shell";
 
@@ -46,24 +48,48 @@ namespace Sledge.Shell.Forms
         {
             DocumentTabs.TabPages.Clear();
             
-            Oy.Subscribe<IContext>("Context:Changed", ContextChanged);
+            Oy.Subscribe<List<string>>("Shell:InstanceOpened", async a => await this.InvokeAsync(() => InstanceOpened(a)));
 
-            Oy.Subscribe<IDocument>("Document:Opened", OpenDocument);
-            Oy.Subscribe<IDocument>("Document:Closed", CloseDocument);
-            Oy.Subscribe<IDocument>("Document:NameChanged", DocumentNameChanged);
+            Oy.Subscribe<IDocument>("Document:Opened", async d => await this.InvokeAsync(() => OpenDocument(d)));
+            Oy.Subscribe<IDocument>("Document:Closed", async d => await this.InvokeAsync(() => CloseDocument(d)));
+            Oy.Subscribe<IDocument>("Document:NameChanged", async d => await this.InvokeAsync(() => DocumentNameChanged(d)));
 
-            Oy.Subscribe<string>("Shell:OpenCommandBox", OpenCommandBox);
+            Oy.Subscribe<string>("Shell:OpenCommandBox", async o => await this.InvokeAsync(() => OpenCommandBox(o)));
+        }
+
+        private async Task InstanceOpened(List<string> args)
+        {
+            foreach (var arg in args.Skip(1))
+            {
+                Sledge.Common.Logging.Log.Info(nameof(Shell), $"Argument: `{arg}`");
+                if (!File.Exists(arg)) continue;
+
+                var loader = _loaders.Select(x => x.Value).FirstOrDefault(x => x.CanLoad(arg));
+                if (loader == null) continue;
+
+                var doc = await loader.Load(arg);
+                if (doc == null) continue;
+
+                await Oy.Publish("Document:Opened", doc);
+            }
         }
 
         protected override void OnLoad(EventArgs e)
         {
             // Bootstrap the shell
-            _bootstrapper.Startup().ContinueWith(t => _bootstrapper.Initialise());
+            _bootstrapper.Startup()
+                .ContinueWith(_ => _bootstrapper.Initialise())
+                .ContinueWith(_ => PostLoad());
 
             // Set up bootstrapping for shutdown
             Closing += DoClosing;
 
             Text = Title;
+        }
+
+        private async Task PostLoad()
+        {
+            await Oy.Publish("Shell:InstanceOpened", Environment.GetCommandLineArgs().ToList());
         }
 
         private async void DoClosing(object sender, CancelEventArgs e)
@@ -134,11 +160,6 @@ namespace Sledge.Shell.Forms
         {
             var page = DocumentTabs.TabPages.OfType<TabPage>().FirstOrDefault(x => x.Tag == document);
             if (page != null && document != null) page.Text = document.Name;
-        }
-
-        private async Task ContextChanged(IContext context)
-        {
-
         }
 
         private async Task OpenCommandBox(string obj)

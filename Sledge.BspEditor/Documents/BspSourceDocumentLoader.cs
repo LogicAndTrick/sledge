@@ -25,6 +25,7 @@ namespace Sledge.BspEditor.Documents
         [ImportMany] private IEnumerable<Lazy<IBspSourceProvider>> _providers;
         [ImportMany] private IEnumerable<Lazy<IBspSourceProcessor>> _processors;
         [Import] private EnvironmentRegister _environments;
+        [Import("Shell", typeof(Form))] private Lazy<Form> _shell;
 
         public string FileTypeDescription { get; set; }
 
@@ -53,12 +54,16 @@ namespace Sledge.BspEditor.Documents
             }
             else if (envs.Count > 1)
             {
-                using (var esf = new EnvironmentSelectionForm(envs))
+                DialogResult result = DialogResult.Cancel;
+                await _shell.Value.InvokeAsync(() =>
                 {
-                    var result = await esf.ShowDialogAsync();
-                    if (result != DialogResult.OK) return null;
-                    chosenEnvironment = esf.SelectedEnvironment;
-                }
+                    using (var esf = new EnvironmentSelectionForm(envs))
+                    {
+                        result = esf.ShowDialog();
+                        if (result == DialogResult.OK) chosenEnvironment = esf.SelectedEnvironment;
+                    }
+                });
+                if (result != DialogResult.OK) return null;
             }
 
             if (chosenEnvironment != null) return _environments.GetEnvironment(chosenEnvironment.ID);

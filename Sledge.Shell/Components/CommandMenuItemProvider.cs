@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
-using System.Text;
 using Sledge.Common.Shell.Commands;
 using Sledge.Common.Shell.Menu;
 using Sledge.Shell.Registers;
