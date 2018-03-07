@@ -9,6 +9,7 @@ using System.IO;
 using System.Threading.Tasks;
 using LogicAndTrick.Gimme;
 using LogicAndTrick.Oy;
+using Sledge.Common.Shell.Commands;
 using Sledge.Common.Shell.Context;
 using Sledge.Common.Shell.Documents;
 using Sledge.Common.Shell.Menu;
@@ -126,15 +127,11 @@ namespace Sledge.Shell.Components
             public async Task Invoke(IContext context)
             {
                 if (!File.Exists(_file.Location)) return;
-                var loader = await Gimme.FetchOne<IDocumentLoader>(_file.Location, "");
-                if (loader != null)
+
+                await Oy.Publish("Command:Run", new CommandMessage("Internal:LoadDocument", new
                 {
-                    var doc = await loader.Load(_file.Location);
-                    if (doc != null)
-                    {
-                        await Oy.Publish("Document:Opened", doc);
-                    }
-                }
+                    Path = _file.Location
+                }));
             }
 
             public bool GetToggleState(IContext context)

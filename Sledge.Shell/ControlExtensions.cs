@@ -42,6 +42,25 @@ namespace Sledge.Shell
             if (!control.IsHandleCreated) return;
             control.BeginInvoke(action);
         }
+        
+        public static Task InvokeLaterAsync(this Control control, Action action)
+        {
+            if (!control.IsHandleCreated) return Task.FromResult(0);
+            var tcs = new TaskCompletionSource<int>();
+            control.BeginInvoke((MethodInvoker)(() =>
+            {
+                try
+                {
+                    action();
+                    tcs.SetResult(0);
+                }
+                catch (Exception ex)
+                {
+                    tcs.SetException(ex);
+                }
+            }));
+            return tcs.Task;
+        }
 
         /// <summary>
         /// Opens a dialog and returns an awaitable task that will resolve once the dialog has closed.

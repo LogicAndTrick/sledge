@@ -8,6 +8,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using LogicAndTrick.Oy;
+using Sledge.Common.Shell.Commands;
 using Sledge.Common.Shell.Context;
 using Sledge.Common.Shell.Documents;
 using Sledge.Common.Translations;
@@ -51,8 +52,9 @@ namespace Sledge.Shell.Forms
             Oy.Subscribe<List<string>>("Shell:InstanceOpened", async a => await this.InvokeAsync(() => InstanceOpened(a)));
 
             Oy.Subscribe<IDocument>("Document:Opened", async d => await this.InvokeAsync(() => OpenDocument(d)));
-            Oy.Subscribe<IDocument>("Document:Closed", async d => await this.InvokeAsync(() => CloseDocument(d)));
-            Oy.Subscribe<IDocument>("Document:NameChanged", async d => await this.InvokeAsync(() => DocumentNameChanged(d)));
+            Oy.Subscribe<IDocument>("Document:Closed", async d => await this.InvokeLaterAsync(() => CloseDocument(d)));
+            Oy.Subscribe<IDocument>("Document:Changed", async d => await this.InvokeAsync(() => DocumentChanged(d)));
+            Oy.Subscribe<IDocument>("Document:Switch", async d => await this.InvokeAsync(() => DocumentSwitch(d)));
 
             Oy.Subscribe<string>("Shell:OpenCommandBox", async o => await this.InvokeAsync(() => OpenCommandBox(o)));
         }
@@ -61,16 +63,13 @@ namespace Sledge.Shell.Forms
         {
             foreach (var arg in args.Skip(1))
             {
-                Sledge.Common.Logging.Log.Info(nameof(Shell), $"Argument: `{arg}`");
+                Sledge.Common.Logging.Log.Debug(nameof(Shell), $"Command line: `{arg}`");
                 if (!File.Exists(arg)) continue;
 
-                var loader = _loaders.Select(x => x.Value).FirstOrDefault(x => x.CanLoad(arg));
-                if (loader == null) continue;
-
-                var doc = await loader.Load(arg);
-                if (doc == null) continue;
-
-                await Oy.Publish("Document:Opened", doc);
+                await Oy.Publish("Command:Run", new CommandMessage("Internal:LoadDocument", new
+                {
+                    Path = arg
+                }));
             }
         }
 
@@ -92,15 +91,24 @@ namespace Sledge.Shell.Forms
             await Oy.Publish("Shell:InstanceOpened", Environment.GetCommandLineArgs().ToList());
         }
 
+        private void CancelClose(object sender, CancelEventArgs e) => e.Cancel = true;
+
         private async void DoClosing(object sender, CancelEventArgs e)
         {
+            e.Cancel = true;
+            Closing -= DoClosing;
+            Closing += CancelClose;
+
+            await Task.Yield();
+
             // Try to close all the open documents
             foreach (var doc in _documents.ToArray())
             {
                 await Oy.Publish("Document:RequestClose", doc);
                 if (_documents.Contains(doc))
                 {
-                    e.Cancel = true;
+                    Closing += DoClosing;
+                    Closing -= CancelClose;
                     return;
                 }
             }
@@ -108,14 +116,14 @@ namespace Sledge.Shell.Forms
             // Close anything else
             if (!await _bootstrapper.ShuttingDown())
             {
-                e.Cancel = true;
+                Closing += DoClosing;
+                Closing -= CancelClose;
                 return;
             }
 
             // Unsubscribe the event (no infinite loops!) and close for good
-            Closing -= DoClosing;
+            Closing -= CancelClose;
             Enabled = false;
-            e.Cancel = true;
             await _bootstrapper.Shutdown();
             Close();
         }
@@ -139,9 +147,29 @@ namespace Sledge.Shell.Forms
             {
                 if (_documents.Contains(document)) return;
                 _documents.Add(document);
-                DocumentTabs.TabPages.Add(new TabPage { Text = document.Name, Tag = document });
+                var page = new TabPage
+                {
+                    Text = document.Name,
+                    Tag = document
+                };
+                DocumentTabs.TabPages.Add(page);
+                page.ImageKey = document.HasUnsavedChanges ? "Dirty" : "Clean";
+                DocumentTabs.SelectedIndex = DocumentTabs.TabPages.Count - 1;
                 TabChanged(DocumentTabs, EventArgs.Empty);
             }
+        }
+
+        private void DocumentSwitch(IDocument document)
+        {
+            var tab = DocumentTabs.TabPages.OfType<TabPage>().FirstOrDefault(x => x.Tag == document);
+            if (tab == null) return;
+
+            var idx = DocumentTabs.TabPages.IndexOf(tab);
+            if (idx < 0) return;
+
+            DocumentTabs.SelectedIndex = idx;
+            TabChanged(DocumentTabs, EventArgs.Empty);
+
         }
 
         private async Task CloseDocument(IDocument document)
@@ -156,10 +184,14 @@ namespace Sledge.Shell.Forms
             }
         }
 
-        private async Task DocumentNameChanged(IDocument document)
+        private async Task DocumentChanged(IDocument document)
         {
             var page = DocumentTabs.TabPages.OfType<TabPage>().FirstOrDefault(x => x.Tag == document);
-            if (page != null && document != null) page.Text = document.Name;
+            if (page != null && document != null)
+            {
+                page.Text = document.Name;
+                page.ImageKey = document.HasUnsavedChanges ? "Dirty" : "Clean";
+            }
         }
 
         private async Task OpenCommandBox(string obj)

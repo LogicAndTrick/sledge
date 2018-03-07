@@ -16,5 +16,10 @@
         /// Mountable control for this document
         /// </summary>
         object Control { get; }
+
+        /// <summary>
+        /// True if this document has unsaved changes
+        /// </summary>
+        bool HasUnsavedChanges { get; }
     }
 }

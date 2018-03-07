@@ -20,6 +20,7 @@ namespace Sledge.Shell.Registers
     /// </summary>
     [Export(typeof(IStartupHook))]
     [Export(typeof(ISettingsContainer))]
+    [Export]
     public class DocumentRegister : SyncResourceProvider<IDocumentLoader>, IStartupHook, ISettingsContainer
     {
         [ImportMany] private IEnumerable<Lazy<IDocumentLoader>> _documentLoaders;
@@ -37,12 +38,29 @@ namespace Sledge.Shell.Registers
             Oy.Subscribe<IDocumentLoader>("DocumentLoader:Register", c => Add(c));
             Oy.Subscribe<IDocumentLoader>("DocumentLoader:Unregister", c => Remove(c));
 
+            
+            Oy.Subscribe<IDocument>("Document:Opened", OpenDocument);
+            Oy.Subscribe<IDocument>("Document:Closed", CloseDocument);
+
             // Register the resource provider
             Gimme.Register(this);
 
             RegisterExtensionHandlers();
 
             return Task.FromResult(0);
+        }
+        
+        private readonly List<IDocument> _openDocuments;
+        public IReadOnlyCollection<IDocument> OpenDocuments => _openDocuments;
+
+        private async Task OpenDocument(IDocument doc)
+        {
+            _openDocuments.Add(doc);
+        }
+
+        private async Task CloseDocument(IDocument doc)
+        {
+            _openDocuments.Remove(doc);
         }
 
         private readonly List<IDocumentLoader> _loaders;
@@ -56,6 +74,8 @@ namespace Sledge.Shell.Registers
             
             var assembly = Assembly.GetEntryAssembly()?.GetName().Name ?? "Sledge.Shell";
             _programId = assembly.Replace(".", "");
+
+            _openDocuments = new List<IDocument>();
         }
 
         /// <summary>

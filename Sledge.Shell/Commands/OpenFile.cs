@@ -12,6 +12,7 @@ using Sledge.Common.Shell.Hotkeys;
 using Sledge.Common.Shell.Menu;
 using Sledge.Common.Translations;
 using Sledge.Shell.Properties;
+using Sledge.Shell.Registers;
 
 namespace Sledge.Shell.Commands
 {
@@ -39,18 +40,12 @@ namespace Sledge.Shell.Commands
             filter.Add("All files|*.*");
             using (var ofd = new OpenFileDialog { Filter = String.Join("|", filter)})
             {
-                if (ofd.ShowDialog() == DialogResult.OK)
+                if (ofd.ShowDialog() != DialogResult.OK) return;
+
+                await Oy.Publish("Command:Run", new CommandMessage("Internal:LoadDocument", new
                 {
-                    var loader = _loaders.Select(x => x.Value).FirstOrDefault(x => x.CanLoad(ofd.FileName));
-                    if (loader != null)
-                    {
-                        var doc = await loader.Load(ofd.FileName);
-                        if (doc != null)
-                        {
-                            await Oy.Publish("Document:Opened", doc);
-                        }
-                    }
-                }
+                    Path = ofd.FileName
+                }));
             }
         }
     }

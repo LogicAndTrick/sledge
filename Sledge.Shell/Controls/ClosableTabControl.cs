@@ -24,9 +24,10 @@ namespace Sledge.Shell.Controls
             SetStyle(ControlStyles.SupportsTransparentBackColor, true);
 
             ImageList = new ImageList();
-            ImageList.Images.Add(new Bitmap(8, 8));
+            ImageList.Images.Add("Clean", new Bitmap(8, 8));
+            ImageList.Images.Add("Dirty", new Bitmap(8, 8));
 
-            TabPages.Add("Tab 1");
+            TabPages.Add(new TabPage("Tab 1") { ImageKey = "Dirty" });
             TabPages.Add("Tab 2");
             TabPages.Add("Tab 3");
         }
@@ -87,21 +88,24 @@ namespace Sledge.Shell.Controls
         private void Render(Graphics g)
         {
             if (!Visible) return;
+
             using (var b = new SolidBrush(BackColor))
             {
                 g.FillRectangle(b, ClientRectangle);
             }
+
             var display = new Rectangle(DisplayRectangle.Location, DisplayRectangle.Size);
             if (TabPages.Count == 0) display.Y += 21;
+
             var border = SystemInformation.Border3DSize.Width;
             display.Inflate(border, border);
             g.DrawLine(SystemPens.ControlDark, display.X, display.Y, display.X + display.Width, display.Y);
+
             var clip = g.Clip;
             g.SetClip(new Rectangle(display.Left, ClientRectangle.Top, display.Width, ClientRectangle.Height));
-            for (var i = 0; i < TabPages.Count; i++)
-            {
-                RenderTab(g, i);
-            }
+
+            for (var i = 0; i < TabPages.Count; i++) RenderTab(g, i);
+
             g.Clip = clip;
         }
 
@@ -113,27 +117,30 @@ namespace Sledge.Shell.Controls
             var tab = TabPages[index];
 
             var points = new[]
-                             {
-                                 new Point(rect.Left, rect.Bottom),
-                                 new Point(rect.Left, rect.Top + 3),
-                                 new Point(rect.Left + 3, rect.Top),
-                                 new Point(rect.Right - 3, rect.Top),
-                                 new Point(rect.Right, rect.Top + 3),
-                                 new Point(rect.Right, rect.Bottom),
-                                 new Point(rect.Left, rect.Bottom)
-                             };
+            {
+                new Point(rect.Left, rect.Bottom),
+                new Point(rect.Left, rect.Top + 3),
+                new Point(rect.Left + 3, rect.Top),
+                new Point(rect.Right - 3, rect.Top),
+                new Point(rect.Right, rect.Top + 3),
+                new Point(rect.Right, rect.Bottom),
+                new Point(rect.Left, rect.Bottom)
+            };
 
             // Background
             var p = PointToClient(MousePosition);
             var hoverClose = closeRect.Contains(p);
             var hover = rect.Contains(p);
             var backColour = tab.BackColor;
+
             if (selected) backColour = ControlPaint.Light(backColour, 1);
             else if (hover) backColour = ControlPaint.Light(backColour, 0.8f);
+
             using (var b = new SolidBrush(backColour))
             {
                 g.FillPolygon(b, points);
             }
+
             // Border
             g.SmoothingMode = SmoothingMode.AntiAlias;
             g.DrawPolygon(SystemPens.ControlDark, points);
@@ -144,15 +151,24 @@ namespace Sledge.Shell.Controls
                     g.DrawLine(pen, rect.Left, rect.Bottom, rect.Right, rect.Bottom);
                 }
             }
+
+            // Icon
+            if (tab.ImageKey == "Dirty")
+            {
+                g.FillEllipse(Brushes.OrangeRed, rect.X + 5, rect.Y + 5, 5, 5);
+            }
+
             // Text
-            var textWidth = (int) g.MeasureString(tab.Text, Font).Width;
+            var sf = new StringFormat(StringFormatFlags.NoWrap);
+            var textWidth = (int) g.MeasureString(tab.Text, Font, SizeF.Empty, sf).Width;
             var textLeft = rect.X + 14;
             var textRight = rect.Right - 26;
             var textRect = new Rectangle(textLeft + (textRight - textLeft - textWidth) / 2, rect.Y + 4, rect.Width - 26, rect.Height - 5);
             using (var b = new SolidBrush(tab.ForeColor))
             {
-                g.DrawString(tab.Text, Font, b, textRect);
+                g.DrawString(tab.Text, Font, b, textRect, sf);
             }
+
             // Close icon
             using (var pen = new Pen(tab.ForeColor))
             {

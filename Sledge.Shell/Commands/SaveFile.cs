@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using LogicAndTrick.Oy;
 using Sledge.Common.Shell.Commands;
 using Sledge.Common.Shell.Context;
@@ -37,11 +39,27 @@ namespace Sledge.Shell.Commands
             var doc = context.Get<IDocument>("ActiveDocument");
             if (doc != null)
             {
-                var loader = _loaders.Select(x => x.Value).FirstOrDefault(x => x.CanSave(doc) && x.CanLoad(doc.FileName));
+                var loaders = _loaders.Select(x => x.Value).Where(x => x.CanSave(doc)).ToList();
+
+                var filename = doc.FileName;
+
+                if (filename == null || !Directory.Exists(Path.GetDirectoryName(filename)))
+                {
+                    var filter = loaders.SelectMany(x => x.SupportedFileExtensions).Select(x => x.Description + "|" + String.Join(";", x.Extensions.Select(e => "*" + e))).ToList();
+
+                    using (var sfd = new SaveFileDialog {Filter = String.Join("|", filter)})
+                    {
+                        if (sfd.ShowDialog() != DialogResult.OK) return;
+                        filename = sfd.FileName;
+                    }
+                }
+
+                var loader = loaders.FirstOrDefault(x => x.CanLoad(filename));
                 if (loader != null)
                 {
                     await Oy.Publish("Document:BeforeSave", doc);
-                    await loader.Save(doc, doc.FileName);
+                    await loader.Save(doc, filename);
+                    doc.FileName = filename;
                     await Oy.Publish("Document:Saved", doc);
                 }
             }

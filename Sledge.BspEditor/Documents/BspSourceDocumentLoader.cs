@@ -28,6 +28,9 @@ namespace Sledge.BspEditor.Documents
         [Import("Shell", typeof(Form))] private Lazy<Form> _shell;
 
         public string FileTypeDescription { get; set; }
+        public string UntitledDocumentName { get; set; }
+
+        private static int _untitled = 1;
 
         public IEnumerable<FileExtensionInfo> SupportedFileExtensions
         {
@@ -41,7 +44,7 @@ namespace Sledge.BspEditor.Documents
 
         private bool CanLoad(IBspSourceProvider provider, string location)
         {
-            return provider.SupportedFileExtensions.Any(x => x.Matches(location));
+            return location == null || provider.SupportedFileExtensions.Any(x => x.Matches(location));
         }
 
         private async Task<IEnvironment> GetEnvironment()
@@ -75,7 +78,11 @@ namespace Sledge.BspEditor.Documents
             var env = await GetEnvironment();
             if (env == null) return null;
 
-            var md =  new MapDocument(new Map(), env);
+            var md =  new MapDocument(new Map(), env)
+            {
+                Name = string.Format(UntitledDocumentName, _untitled++),
+                HasUnsavedChanges = true
+            };
             await ProcessAfterLoad(md);
             return md;
         }

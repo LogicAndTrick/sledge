@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using LogicAndTrick.Oy;
 using Sledge.BspEditor.Components;
 using Sledge.BspEditor.Environment;
+using Sledge.BspEditor.Modification;
 using Sledge.BspEditor.Primitives;
 using Sledge.BspEditor.Primitives.MapData;
 using Sledge.Common.Shell.Documents;
@@ -13,8 +14,22 @@ namespace Sledge.BspEditor.Documents
     public class MapDocument : IDocument
     {
         public string Name { get; set; }
-        public string FileName { get; set; }
+        
+        private string _fileName;
+        public string FileName
+        {
+            get => _fileName;
+            set
+            {
+                _fileName = value;
+
+                var p = System.IO.Path.GetFileName(_fileName);
+                if (!String.IsNullOrWhiteSpace(p)) Name = p;
+            }
+        }
+
         public object Control => MapDocumentControlHost.Instance;
+        public bool HasUnsavedChanges { get; set; }
 
         public Map Map { get; set; }
         public IEnvironment Environment { get; }
@@ -35,22 +50,37 @@ namespace Sledge.BspEditor.Documents
         public MapDocument(Map map, IEnvironment environment)
         {
             FileName = null;
-            Name = "Untitled";
+            Name = null;
             Map = map;
 
             Environment = environment;
 
             Oy.Subscribe<IDocument>("Document:RequestClose", IfThis(RequestClose));
+            Oy.Subscribe<IDocument>("Document:Saved", IfThis(Saved));
+            Oy.Subscribe<MapDocumentOperation>("MapDocument:Perform", async c =>
+            {
+                if (c.Document == this && !c.Operation.Trivial)
+                {
+                    HasUnsavedChanges = true;
+                    await Oy.Publish("Document:Changed", this);
+                }
+            });
 
             // Subscribe to map changes
         }
 
-        private Action<IDocument> IfThis(Func<Task> callback)
+        private Func<IDocument, Task> IfThis(Func<Task> callback)
         {
-            return d =>
+            return async d =>
             {
-                if (d == this) callback();
+                if (d == this) await callback();
             };
+        }
+
+        private async Task Saved()
+        {
+            HasUnsavedChanges = false;
+            await Oy.Publish("Document:Changed", this);
         }
 
         private async Task RequestClose()

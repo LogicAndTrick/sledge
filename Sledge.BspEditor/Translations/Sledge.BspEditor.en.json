@@ -50,7 +50,8 @@
     },
     "Documents": {
         "BspSourceDocumentLoader": {
-            "FileTypeDescription": "BSP Source File" 
+            "FileTypeDescription": "BSP Source File",
+            "UntitledDocumentName": "Untitled {0}" 
         }
     },
     "Environment": {
