@@ -128,7 +128,7 @@ namespace Sledge.Shell.Components
             {
                 if (!File.Exists(_file.Location)) return;
 
-                await Oy.Publish("Command:Run", new CommandMessage("Internal:LoadDocument", new
+                await Oy.Publish("Command:Run", new CommandMessage("Internal:OpenDocument", new
                 {
                     Path = _file.Location
                 }));

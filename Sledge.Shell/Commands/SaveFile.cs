@@ -54,14 +54,11 @@ namespace Sledge.Shell.Commands
                     }
                 }
 
-                var loader = loaders.FirstOrDefault(x => x.CanLoad(filename));
-                if (loader != null)
+                await Oy.Publish("Command:Run", new CommandMessage("Internal:SaveDocument", new
                 {
-                    await Oy.Publish("Document:BeforeSave", doc);
-                    await loader.Save(doc, filename);
-                    doc.FileName = filename;
-                    await Oy.Publish("Document:Saved", doc);
-                }
+                    Document = doc,
+                    Path = filename
+                }));
             }
         }
     }

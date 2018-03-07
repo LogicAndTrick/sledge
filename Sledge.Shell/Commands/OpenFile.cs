@@ -42,7 +42,7 @@ namespace Sledge.Shell.Commands
             {
                 if (ofd.ShowDialog() != DialogResult.OK) return;
 
-                await Oy.Publish("Command:Run", new CommandMessage("Internal:LoadDocument", new
+                await Oy.Publish("Command:Run", new CommandMessage("Internal:OpenDocument", new
                 {
                     Path = ofd.FileName
                 }));

@@ -82,10 +82,11 @@
     <Compile Include="Commands\CloseFile.cs" />
     <Compile Include="Commands\Exit.cs" />
     <Compile Include="Commands\Export.cs" />
-    <Compile Include="Commands\LoadDocument.cs" />
+    <Compile Include="Commands\OpenDocument.cs" />
     <Compile Include="Commands\NewFile.cs" />
     <Compile Include="Commands\OpenSettingsForm.cs" />
     <Compile Include="Commands\OpenFile.cs" />
+    <Compile Include="Commands\CloseDocument.cs" />
     <Compile Include="Commands\SaveDocument.cs" />
     <Compile Include="Commands\SaveFile.cs" />
     <Compile Include="Commands\SaveFileAs.cs" />
@@ -135,6 +136,12 @@
     </Compile>
     <Compile Include="Forms\ExceptionWindow.Designer.cs">
       <DependentUpon>ExceptionWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\SaveChangesForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\SaveChangesForm.Designer.cs">
+      <DependentUpon>SaveChangesForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Settings\Editors\DefaultSettingEditor.cs">
       <SubType>UserControl</SubType>
@@ -244,6 +251,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\ExceptionWindow.resx">
       <DependentUpon>ExceptionWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\SaveChangesForm.resx">
+      <DependentUpon>SaveChangesForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\SettingsForm.resx">
       <DependentUpon>SettingsForm.cs</DependentUpon>

@@ -43,6 +43,7 @@ namespace Sledge.Shell.Commands
                 {
                     await Oy.Publish("Document:BeforeSave", doc);
                     await loader.Save(doc, path);
+                    doc.FileName = path;
                     await Oy.Publish("Document:Saved", doc);
                 }
             }

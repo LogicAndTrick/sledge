@@ -64,12 +64,21 @@
     },
     "Forms": {
         "Shell": {
-            "Title": "Sledge Shell"
+            "Title": "Sledge Editor",
+            "UnsavedChanges": "Document has unsaved changes",
+            "SaveChangesToFile": "Save changes to {0}?"
         },
         "SettingsForm": {
             "Title": "Settings",
             "OK": "OK",
             "Cancel": "Cancel"
+        },
+        "SaveChangesForm": {
+            "SaveAll": "Save all",
+            "DiscardAll": "Discard all",
+            "Cancel": "Cancel",
+            "UnsavedChangesMessage": "Some documents have unsaved changes. Would you like to save or discard these changes?",
+            "Title": "Unsaved changes in open documents"
         }
     }
 }

@@ -39,22 +39,22 @@ namespace Sledge.Shell.Commands
             if (doc != null)
             {
                 var loaders = _loaders.Select(x => x.Value).Where(x => x.CanSave(doc)).ToList();
-
+                
+                var filename = doc.FileName;
+                
                 var filter = loaders.SelectMany(x => x.SupportedFileExtensions).Select(x => x.Description + "|" + String.Join(";", x.Extensions.Select(e => "*" + e))).ToList();
 
-                using (var sfd = new SaveFileDialog { Filter = String.Join("|", filter) })
+                using (var sfd = new SaveFileDialog {Filter = String.Join("|", filter)})
                 {
-                    if (sfd.ShowDialog() == DialogResult.OK)
-                    {
-                        var loader = loaders.FirstOrDefault(x => x.CanLoad(doc.FileName));
-                        if (loader != null)
-                        {
-                            await loader.Save(doc, sfd.FileName);
-                            doc.FileName = sfd.FileName;
-                            await Oy.Publish("Document:Saved", doc);
-                        }
-                    }
+                    if (sfd.ShowDialog() != DialogResult.OK) return;
+                    filename = sfd.FileName;
                 }
+
+                await Oy.Publish("Command:Run", new CommandMessage("Internal:SaveDocument", new
+                {
+                    Document = doc,
+                    Path = filename
+                }));
             }
         }
     }

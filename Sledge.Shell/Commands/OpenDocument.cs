@@ -17,9 +17,9 @@ namespace Sledge.Shell.Commands
     /// Internal: Load a document from a path
     /// </summary>
     [Export(typeof(ICommand))]
-    [CommandID("Internal:LoadDocument")]
+    [CommandID("Internal:OpenDocument")]
     [Internal]
-    public class LoadDocument : ICommand
+    public class OpenDocument : ICommand
     {
         [ImportMany] private IEnumerable<Lazy<IDocumentLoader>> _loaders;
         [Import] private DocumentRegister _documentRegister;

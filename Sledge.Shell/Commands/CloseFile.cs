@@ -28,7 +28,13 @@ namespace Sledge.Shell.Commands
         public async Task Invoke(IContext context, CommandParameters parameters)
         {
             var doc = context.Get<IDocument>("ActiveDocument");
-            if (doc != null) await Oy.Publish("Document:RequestClose", doc);
+            if (doc != null)
+            {
+                await Oy.Publish("Command:Run", new CommandMessage("Internal:CloseDocument", new
+                {
+                    Document = doc
+                }));
+            }
         }
     }
 }

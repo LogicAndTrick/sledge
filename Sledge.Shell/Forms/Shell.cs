@@ -13,6 +13,7 @@ using Sledge.Common.Shell.Context;
 using Sledge.Common.Shell.Documents;
 using Sledge.Common.Translations;
 using Sledge.Shell.Controls;
+using Sledge.Shell.Registers;
 
 namespace Sledge.Shell.Forms
 {
@@ -29,8 +30,13 @@ namespace Sledge.Shell.Forms
 
         [Import] private Bootstrapper _bootstrapper;
         [ImportMany] private IEnumerable<Lazy<IDocumentLoader>> _loaders;
+        [Import] private DocumentRegister _documentRegister;
+        [Import] private ITranslationStringProvider _translation;
 
         public string Title { get; set; } = "Sledge Shell";
+
+        public string UnsavedChanges { get; set; } = "Unsaved changes in file";
+        public string SaveChangesToFile { get; set; } = "Save changes to {0}?";
 
         internal ToolStripPanel ToolStrip => ToolStripContainer.TopToolStripPanel;
 
@@ -55,6 +61,7 @@ namespace Sledge.Shell.Forms
             Oy.Subscribe<IDocument>("Document:Closed", async d => await this.InvokeLaterAsync(() => CloseDocument(d)));
             Oy.Subscribe<IDocument>("Document:Changed", async d => await this.InvokeAsync(() => DocumentChanged(d)));
             Oy.Subscribe<IDocument>("Document:Switch", async d => await this.InvokeAsync(() => DocumentSwitch(d)));
+            Oy.Subscribe<IDocument>("Document:CloseAndPrompt", async d => await this.InvokeAsync(() => DocumentCloseAndPrompt(d)));
 
             Oy.Subscribe<string>("Shell:OpenCommandBox", async o => await this.InvokeAsync(() => OpenCommandBox(o)));
         }
@@ -66,7 +73,7 @@ namespace Sledge.Shell.Forms
                 Sledge.Common.Logging.Log.Debug(nameof(Shell), $"Command line: `{arg}`");
                 if (!File.Exists(arg)) continue;
 
-                await Oy.Publish("Command:Run", new CommandMessage("Internal:LoadDocument", new
+                await Oy.Publish("Command:Run", new CommandMessage("Internal:OpenDocument", new
                 {
                     Path = arg
                 }));
@@ -101,6 +108,14 @@ namespace Sledge.Shell.Forms
 
             await Task.Yield();
 
+            // Save any unsaved documents
+            if (!await SaveUnsavedDocuments())
+            {
+                Closing += DoClosing;
+                Closing -= CancelClose;
+                return;
+            }
+
             // Try to close all the open documents
             foreach (var doc in _documents.ToArray())
             {
@@ -126,6 +141,35 @@ namespace Sledge.Shell.Forms
             Enabled = false;
             await _bootstrapper.Shutdown();
             Close();
+        }
+
+        private async Task<bool> SaveUnsavedDocuments()
+        {
+            var unsaved = _documentRegister.OpenDocuments.Where(x => x.HasUnsavedChanges).ToList();
+            if (!unsaved.Any()) return true; // nothing unsaved
+
+            DialogResult result;
+
+            using (var d = new SaveChangesForm(unsaved))
+            {
+                d.Translate(_translation);
+                d.Owner = this;
+                result = await d.ShowDialogAsync();
+            }
+
+            // Don't continue
+            if (result == DialogResult.Cancel) return false;
+
+            // Discard changes and continue
+            if (result == DialogResult.No) return true;
+
+            // Save changes and continue
+            foreach (var doc in unsaved)
+            {
+                await SaveDocument(doc);
+            }
+
+            return true;
         }
 
         /// <summary>
@@ -194,6 +238,48 @@ namespace Sledge.Shell.Forms
             }
         }
 
+        private async Task DocumentCloseAndPrompt(IDocument doc)
+        {
+            if (doc.HasUnsavedChanges)
+            {
+                var r = MessageBox.Show(this, String.Format(SaveChangesToFile, doc.Name), UnsavedChanges, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+                if (r == DialogResult.Cancel)
+                {
+                    return;
+                }
+
+                if (r == DialogResult.Yes)
+                {
+                    if (!await SaveDocument(doc)) return;
+                }
+            }
+            await Oy.Publish("Document:RequestClose", doc);
+        }
+
+        private async Task<bool> SaveDocument(IDocument doc)
+        {
+            var filename = doc.FileName;
+
+            if (String.IsNullOrWhiteSpace(filename) || !Directory.Exists(Path.GetDirectoryName(filename)))
+            {
+                var loaders = _loaders.Select(x => x.Value).Where(x => x.CanSave(doc)).ToList();
+                var filter = loaders.SelectMany(x => x.SupportedFileExtensions).Select(x => x.Description + "|" + String.Join(";", x.Extensions.Select(ex => "*" + ex))).ToList();
+
+                using (var sfd = new SaveFileDialog {Filter = String.Join("|", filter)})
+                {
+                    if (sfd.ShowDialog() != DialogResult.OK) return false;
+                    filename = sfd.FileName;
+                }
+            }
+
+            await Oy.Publish("Command:Run", new CommandMessage("Internal:SaveDocument", new
+            {
+                Document = doc,
+                Path = filename
+            }));
+            return true;
+        }
+
         private async Task OpenCommandBox(string obj)
         {
             var cb = new CommandBox();
@@ -240,7 +326,10 @@ namespace Sledge.Shell.Forms
             var doc = DocumentTabs.TabPages[index].Tag as IDocument;
             if (doc != null)
             {
-                Oy.Publish("Document:RequestClose", doc);
+                Oy.Publish("Command:Run", new CommandMessage("Internal:CloseDocument", new
+                {
+                    Document = doc
+                }));
             }
         }
     }
