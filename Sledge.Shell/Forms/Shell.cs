@@ -11,7 +11,9 @@ using LogicAndTrick.Oy;
 using Sledge.Common.Shell.Commands;
 using Sledge.Common.Shell.Context;
 using Sledge.Common.Shell.Documents;
+using Sledge.Common.Shell.Settings;
 using Sledge.Common.Translations;
+using Sledge.Common.Transport;
 using Sledge.Shell.Controls;
 using Sledge.Shell.Registers;
 
@@ -22,9 +24,11 @@ namespace Sledge.Shell.Forms
     /// </summary>
     [Export]
     [Export("Shell", typeof(Form))]
+    [Export(typeof(ISettingsContainer))]
     [AutoTranslate]
-    internal partial class Shell : BaseForm
+    internal partial class Shell : BaseForm, ISettingsContainer
     {
+
         private readonly List<IDocument> _documents;
         private readonly object _lock = new object();
 
@@ -95,6 +99,22 @@ namespace Sledge.Shell.Forms
 
         private async Task PostLoad()
         {
+            if (_openDocuments != null)
+            {
+                foreach (var dp in _openDocuments)
+                {
+                    if (!File.Exists(dp.FileName)) continue;
+                    
+                    var loader = _loaders.Select(x => x.Value).FirstOrDefault(x => x.GetType().Name == dp.Loader && x.CanLoad(dp.FileName));
+                    if (loader == null) continue;
+                    
+                    var doc = await loader.Load(dp.ToPointer());
+                    if (doc != null)
+                    {
+                        await Oy.Publish("Document:Opened", doc);
+                    }
+                }
+            }
             await Oy.Publish("Shell:InstanceOpened", Environment.GetCommandLineArgs().ToList());
         }
 
@@ -117,6 +137,7 @@ namespace Sledge.Shell.Forms
             }
 
             // Try to close all the open documents
+            SaveOpenDocuments();
             foreach (var doc in _documents.ToArray())
             {
                 await Oy.Publish("Document:RequestClose", doc);
@@ -141,6 +162,21 @@ namespace Sledge.Shell.Forms
             Enabled = false;
             await _bootstrapper.Shutdown();
             Close();
+        }
+
+        private void SaveOpenDocuments()
+        {
+            _openDocuments = new List<DocumentPointer>();
+            foreach (var d in _documents)
+            {
+                var loader = _loaders.Select(x => x.Value).FirstOrDefault(x => x.CanSave(d));
+                var pointer = loader?.GetDocumentPointer(d);
+                if (pointer != null)
+                {
+                    var dp = new DocumentPointer(pointer);
+                    _openDocuments.Add(dp);
+                }
+            }
         }
 
         private async Task<bool> SaveUnsavedDocuments()
@@ -330,6 +366,54 @@ namespace Sledge.Shell.Forms
                 {
                     Document = doc
                 }));
+            }
+        }
+
+        // settings
+        private List<DocumentPointer> _openDocuments;
+
+        string ISettingsContainer.Name => "Sledge.Shell";
+
+        public IEnumerable<SettingKey> GetKeys()
+        {
+            yield break;
+        }
+
+        public void LoadValues(ISettingsStore store)
+        {
+            _openDocuments = store.Get<DocumentPointer[]>("OpenDocuments")?.ToList();
+        }
+
+        public void StoreValues(ISettingsStore store)
+        {
+            store.Set("OpenDocuments", _openDocuments?.ToArray());
+        }
+
+        private class DocumentPointer
+        {
+            public string Loader { get; set; }
+            public string FileName { get; set; }
+            public Dictionary<string, string> Metadata { get; set; }
+
+            public DocumentPointer()
+            {
+                Metadata = new Dictionary<string, string>();
+            }
+
+            public DocumentPointer(SerialisedObject pointer)
+            {
+                Metadata = new Dictionary<string, string>();
+                Loader = pointer.Name;
+                foreach (var pp in pointer.Properties) Metadata[pp.Key] = pp.Value;
+                FileName = pointer.Get<string>("FileName");
+            }
+
+            public SerialisedObject ToPointer()
+            {
+                var so = new SerialisedObject(Loader);
+                foreach (var m in Metadata) so.Set(m.Key, m.Value);
+                so.Set("FileName", FileName);
+                return so;
             }
         }
     }

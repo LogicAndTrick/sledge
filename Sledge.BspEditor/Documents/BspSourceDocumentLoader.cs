@@ -14,6 +14,7 @@ using Sledge.BspEditor.Providers;
 using Sledge.BspEditor.Providers.Processors;
 using Sledge.Common.Shell.Documents;
 using Sledge.Common.Translations;
+using Sledge.Common.Transport;
 using Sledge.Shell;
 
 namespace Sledge.BspEditor.Documents
@@ -162,6 +163,47 @@ namespace Sledge.BspEditor.Documents
             {
                 await p.BeforeSave(document);
             }
+        }
+
+        public SerialisedObject GetDocumentPointer(IDocument document)
+        {
+            if (!(document is MapDocument doc)) return null;
+            var so = new SerialisedObject(nameof(BspSourceDocumentLoader));
+            so.Set("FileName", doc.FileName);
+            so.Set("Environment", doc.Environment.ID);
+            return so;
+        }
+
+        public async Task<IDocument> Load(SerialisedObject documentPointer)
+        {
+            var fileName = documentPointer.Get<string>("FileName");
+            var envId = documentPointer.Get<string>("Environment");
+            if (String.IsNullOrWhiteSpace(fileName) || String.IsNullOrWhiteSpace(envId)) return null;
+            
+            var env = _environments.GetEnvironment(envId);
+            if (env == null) return null;
+
+            if (!File.Exists(fileName)) return null;
+
+            using (var stream = File.Open(fileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+            {
+                foreach (var provider in _providers.Where(x => CanLoad(x.Value, fileName)))
+                {
+                    try
+                    {
+                        var map = await provider.Value.Load(stream, env);
+                        var md = new MapDocument(map, env) { FileName = fileName };
+                        await ProcessAfterLoad(md);
+                        return md;
+                    }
+                    catch (NotSupportedException)
+                    {
+                        stream.Seek(0, SeekOrigin.Begin);
+                    }
+                }
+            }
+
+            return null;
         }
     }
 }
