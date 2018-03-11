@@ -1,24 +1,34 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using LogicAndTrick.Gimme.Providers;
 
 namespace Sledge.Providers.GameData
 {
-    public class FgdGameDataProvider : SyncResourceProvider<DataStructures.GameData.GameData>
+    [Export("Fgd", typeof(IGameDataProvider))]
+    public class FgdGameDataProvider : IGameDataProvider
     {
-        public override bool CanProvide(string location)
+        public DataStructures.GameData.GameData GetGameDataFromFiles(IEnumerable<string> files)
         {
-            return File.Exists(location) && location.EndsWith(".fgd");
-        }
+            var gd = new DataStructures.GameData.GameData();
+            foreach (var f in files.Where(IsValidForFile))
+            {
+                var provider = new FgdProvider();
+                var d = provider.OpenFile(f);
 
-        public override IEnumerable<DataStructures.GameData.GameData> Fetch(string location, List<string> resources)
+                gd.MapSizeHigh = d.MapSizeHigh;
+                gd.MapSizeLow = d.MapSizeLow;
+                gd.Classes.AddRange(d.Classes);
+                gd.MaterialExclusions.AddRange(d.MaterialExclusions);
+            }
+            gd.CreateDependencies();
+            gd.RemoveDuplicates();
+            return gd;
+        }
+        
+        public bool IsValidForFile(string filename)
         {
-            var provider = new FgdProvider();
-            yield return provider.OpenFile(location);
+            return File.Exists(filename) && filename.EndsWith(".fgd");
         }
     }
 }

@@ -2,11 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reactive.Linq;
-using System.Reactive.Threading.Tasks;
 using System.Reflection;
 using System.Threading.Tasks;
-using LogicAndTrick.Gimme;
 using LogicAndTrick.Oy;
 using Sledge.BspEditor.Compile;
 using Sledge.BspEditor.Documents;
@@ -18,6 +15,7 @@ using Sledge.BspEditor.Providers;
 using Sledge.Common.Shell.Commands;
 using Sledge.DataStructures.GameData;
 using Sledge.FileSystem;
+using Sledge.Providers.GameData;
 using Sledge.Providers.Texture;
 using Path = System.IO.Path;
 
@@ -26,6 +24,7 @@ namespace Sledge.BspEditor.Environment.Goldsource
     public class GoldsourceEnvironment : IEnvironment
     {
         private readonly ITexturePackageProvider _wadProvider;
+        private readonly IGameDataProvider _fgdProvider;
         private readonly Lazy<Task<TextureCollection>> _textureCollection;
         private readonly List<IEnvironmentData> _data;
         private readonly Lazy<Task<GameData>> _gameData;
@@ -116,9 +115,10 @@ namespace Sledge.BspEditor.Environment.Goldsource
             }
         }
 
-        public GoldsourceEnvironment(ITexturePackageProvider wadProvider)
+        public GoldsourceEnvironment(ITexturePackageProvider wadProvider, IGameDataProvider fgdProvider)
         {
             _wadProvider = wadProvider;
+            _fgdProvider = fgdProvider;
 
             _textureCollection = new Lazy<Task<TextureCollection>>(MakeTextureCollectionAsync);
             _gameData = new Lazy<Task<GameData>>(MakeGameDataAsync);
@@ -137,20 +137,7 @@ namespace Sledge.BspEditor.Environment.Goldsource
 
         private async Task<GameData> MakeGameDataAsync()
         {
-            var gds = await FgdFiles.Select(x => Gimme.Fetch<GameData>(x, null)).Merge().ToList().ToTask();
-
-            var gd = new GameData();
-            foreach (var d in gds)
-            {
-                gd.MapSizeHigh = d.MapSizeHigh;
-                gd.MapSizeLow = d.MapSizeLow;
-                gd.Classes.AddRange(d.Classes);
-                gd.MaterialExclusions.AddRange(d.MaterialExclusions);
-            }
-            gd.CreateDependencies();
-            gd.RemoveDuplicates();
-
-            return gd;
+            return _fgdProvider.GetGameDataFromFiles(FgdFiles);
         }
 
         public Task<TextureCollection> GetTextureCollection()

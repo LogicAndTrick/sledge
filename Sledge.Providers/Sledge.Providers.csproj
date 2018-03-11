@@ -73,7 +73,7 @@
   <ItemGroup>
     <Compile Include="GameData\FgdGameDataProvider.cs" />
     <Compile Include="GameData\FgdProvider.cs" />
-    <Compile Include="GameData\GameDataProvider.cs" />
+    <Compile Include="GameData\IGameDataProvider.cs" />
     <Compile Include="GenericStructure.cs" />
     <Compile Include="BinaryExtensions.cs" />
     <Compile Include="Map\MapFormatProvider.cs" />
@@ -86,7 +86,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ProviderException.cs" />
     <Compile Include="ProviderNotFoundException.cs" />
-    <Compile Include="ProviderRegistration.cs" />
     <Compile Include="Texture\MultiTextureStreamSource.cs" />
     <Compile Include="Texture\ITexturePackageProvider.cs" />
     <Compile Include="Texture\TexturePackageReference.cs" />

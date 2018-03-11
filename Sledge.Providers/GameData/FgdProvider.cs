@@ -7,36 +7,32 @@ using Sledge.DataStructures.GameData;
 
 namespace Sledge.Providers.GameData
 {
-    public class FgdProvider : GameDataProvider
+    public class FgdProvider
     {
         private String CurrentFile { get; set; }
-
-        protected override bool IsValidForFile(string filename)
-        {
-            return filename.EndsWith(".fgd", true, CultureInfo.InvariantCulture);
-        }
-
-        protected override bool IsValidForStream(Stream stream)
-        {
-            // not really any way of knowing
-            return true;
-        }
 
         public DataStructures.GameData.GameData OpenFile(string filename)
         {
             return GetFromFile(filename);
         }
 
-        protected override DataStructures.GameData.GameData GetFromFile(string filename)
+        private DataStructures.GameData.GameData GetFromFile(string filename)
         {
             if (!File.Exists(filename)) throw new ProviderException("File does not exist: " + filename);
             CurrentFile = filename;
-            var parsed = base.GetFromFile(filename);
+
+            DataStructures.GameData.GameData parsed;
+
+            using (var s = File.Open(filename, FileMode.Open, FileAccess.Read, FileShare.Read))
+            {
+                parsed = GetFromStream(s);
+            }
+
             CurrentFile = null;
             return parsed;
         }
 
-        protected override DataStructures.GameData.GameData GetFromStream(Stream stream)
+        private DataStructures.GameData.GameData GetFromStream(Stream stream)
         {
             var lex = Lex(new StreamReader(stream));
             return Parse(lex.Where(l => l.Type != LexType.Comment).ToList());
@@ -71,7 +67,7 @@ namespace Sledge.Providers.GameData
                     var incfile = Path.Combine(path, filename);
 
                     var current = CurrentFile;
-                    var incgd = GetGameDataFromFile(incfile);
+                    var incgd = GetFromFile(incfile);
                     CurrentFile = current;
 
                     if (!gd.Includes.Any(x => String.Equals(x, filename, StringComparison.InvariantCultureIgnoreCase))) gd.Includes.Add(filename);

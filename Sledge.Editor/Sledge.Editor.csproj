@@ -112,17 +112,8 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Documents\Document.cs" />
-    <Compile Include="Documents\DocumentManager.cs" />
     <Compile Include="Documents\DocumentMemory.cs" />
     <Compile Include="Documents\DocumentSubscriptions.cs" />
-    <Compile Include="Documents\ModelCollection.cs" />
-    <Compile Include="Documents\TextureCache.cs" />
-    <Compile Include="Documents\TextureCollection.cs" />
-    <Compile Include="Extensions\GeometricExtensions.cs" />
-    <Compile Include="Extensions\ModelExtensions.cs" />
-    <Compile Include="SingleInstance.cs" />
-    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
