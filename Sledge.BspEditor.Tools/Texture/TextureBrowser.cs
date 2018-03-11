@@ -5,12 +5,14 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Sledge.BspEditor.Documents;
+using Sledge.Common.Translations;
 
 namespace Sledge.BspEditor.Tools.Texture
 {
-    public partial class TextureBrowser : Form
+    public partial class TextureBrowser : Form, IManualTranslate
     {
         private readonly MapDocument _document;
+        private TextureListPanel TextureList;
 
         public TextureBrowser(MapDocument document)
         {
@@ -19,6 +21,8 @@ namespace Sledge.BspEditor.Tools.Texture
             var so = GetMemory("SortBy", 0);
 
             InitializeComponent();
+            InitialiseTextureList();
+
             TextureList.TextureSelected += TextureSelected;
             TextureList.SelectionChanged += SelectionChanged;
             SizeCombo.SelectedIndex = 1;
@@ -37,6 +41,28 @@ namespace Sledge.BspEditor.Tools.Texture
             SortDescendingCheckbox.Checked = GetMemory("SortDescending", false);
 
             SelectionChanged(null, TextureList.GetSelectedTextures());
+        }
+
+        private void InitialiseTextureList()
+        {
+            TextureList = new TextureListPanel();
+            TextureList.AllowMultipleSelection = true;
+            TextureList.AllowSelection = true;
+            TextureList.AutoScroll = true;
+            TextureList.BackColor = System.Drawing.Color.Black;
+            TextureList.Dock = System.Windows.Forms.DockStyle.Fill;
+            TextureList.EnableDrag = true;
+            TextureList.ImageSize = 128;
+            TextureList.Location = new System.Drawing.Point(226, 0);
+            TextureList.Name = "TextureList";
+            TextureList.Size = new System.Drawing.Size(714, 495);
+            TextureList.TabIndex = 0;
+            Controls.Add(TextureList);
+        }
+
+        public void Translate(TranslationStringsCollection strings)
+        {
+            // 
         }
 
         public async Task Initialise()

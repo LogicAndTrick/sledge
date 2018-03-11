@@ -32,23 +32,22 @@
             this.panel1 = new System.Windows.Forms.Panel();
             this.SortDescendingCheckbox = new System.Windows.Forms.CheckBox();
             this.SortOrderCombo = new System.Windows.Forms.ComboBox();
-            this.label3 = new System.Windows.Forms.Label();
+            this.SortByLabel = new System.Windows.Forms.Label();
             this.SizeCombo = new System.Windows.Forms.ComboBox();
             this.TextureSizeLabel = new System.Windows.Forms.Label();
             this.TextureNameLabel = new System.Windows.Forms.Label();
             this.button2 = new System.Windows.Forms.Button();
             this.SelectButton = new System.Windows.Forms.Button();
             this.UsedTexturesOnlyBox = new System.Windows.Forms.CheckBox();
-            this.label2 = new System.Windows.Forms.Label();
+            this.SizeLabel = new System.Windows.Forms.Label();
             this.FilterTextbox = new System.Windows.Forms.TextBox();
-            this.label1 = new System.Windows.Forms.Label();
+            this.FilterLabel = new System.Windows.Forms.Label();
             this.FavouritesTree = new System.Windows.Forms.TreeView();
             this.LeftbarPanel = new System.Windows.Forms.Panel();
             this.DeleteFavouriteFolderButton = new System.Windows.Forms.Button();
             this.RemoveFavouriteItemButton = new System.Windows.Forms.Button();
             this.AddFavouriteFolderButton = new System.Windows.Forms.Button();
-            this.label4 = new System.Windows.Forms.Label();
-            this.TextureList = new TextureListPanel();
+            this.FavouriteTexturesLabel = new System.Windows.Forms.Label();
             this.panel1.SuspendLayout();
             this.LeftbarPanel.SuspendLayout();
             this.SuspendLayout();
@@ -67,16 +66,16 @@
             // 
             this.panel1.Controls.Add(this.SortDescendingCheckbox);
             this.panel1.Controls.Add(this.SortOrderCombo);
-            this.panel1.Controls.Add(this.label3);
+            this.panel1.Controls.Add(this.SortByLabel);
             this.panel1.Controls.Add(this.SizeCombo);
             this.panel1.Controls.Add(this.TextureSizeLabel);
             this.panel1.Controls.Add(this.TextureNameLabel);
             this.panel1.Controls.Add(this.button2);
             this.panel1.Controls.Add(this.SelectButton);
             this.panel1.Controls.Add(this.UsedTexturesOnlyBox);
-            this.panel1.Controls.Add(this.label2);
+            this.panel1.Controls.Add(this.SizeLabel);
             this.panel1.Controls.Add(this.FilterTextbox);
-            this.panel1.Controls.Add(this.label1);
+            this.panel1.Controls.Add(this.FilterLabel);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panel1.Location = new System.Drawing.Point(0, 495);
             this.panel1.Name = "panel1";
@@ -106,15 +105,15 @@
             this.SortOrderCombo.TabIndex = 9;
             this.SortOrderCombo.SelectedIndexChanged += new System.EventHandler(this.SortOrderComboIndexChanged);
             // 
-            // label3
+            // SortByLabel
             // 
-            this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(774, 12);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(41, 13);
-            this.label3.TabIndex = 8;
-            this.label3.Text = "Sort By";
+            this.SortByLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.SortByLabel.AutoSize = true;
+            this.SortByLabel.Location = new System.Drawing.Point(774, 12);
+            this.SortByLabel.Name = "SortByLabel";
+            this.SortByLabel.Size = new System.Drawing.Size(41, 13);
+            this.SortByLabel.TabIndex = 8;
+            this.SortByLabel.Text = "Sort By";
             // 
             // SizeCombo
             // 
@@ -179,14 +178,14 @@
             this.UsedTexturesOnlyBox.UseVisualStyleBackColor = true;
             this.UsedTexturesOnlyBox.CheckedChanged += new System.EventHandler(this.UsedTexturesOnlyChanged);
             // 
-            // label2
+            // SizeLabel
             // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(14, 35);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(27, 13);
-            this.label2.TabIndex = 2;
-            this.label2.Text = "Size";
+            this.SizeLabel.AutoSize = true;
+            this.SizeLabel.Location = new System.Drawing.Point(14, 35);
+            this.SizeLabel.Name = "SizeLabel";
+            this.SizeLabel.Size = new System.Drawing.Size(27, 13);
+            this.SizeLabel.TabIndex = 2;
+            this.SizeLabel.Text = "Size";
             // 
             // FilterTextbox
             // 
@@ -197,14 +196,14 @@
             this.FilterTextbox.TabIndex = 1;
             this.FilterTextbox.KeyUp += new System.Windows.Forms.KeyEventHandler(this.FilterTextboxKeyUp);
             // 
-            // label1
+            // FilterLabel
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(12, 9);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(29, 13);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "Filter";
+            this.FilterLabel.AutoSize = true;
+            this.FilterLabel.Location = new System.Drawing.Point(12, 9);
+            this.FilterLabel.Name = "FilterLabel";
+            this.FilterLabel.Size = new System.Drawing.Size(29, 13);
+            this.FilterLabel.TabIndex = 0;
+            this.FilterLabel.Text = "Filter";
             // 
             // FavouritesTree
             // 
@@ -228,7 +227,7 @@
             this.LeftbarPanel.Controls.Add(this.DeleteFavouriteFolderButton);
             this.LeftbarPanel.Controls.Add(this.RemoveFavouriteItemButton);
             this.LeftbarPanel.Controls.Add(this.AddFavouriteFolderButton);
-            this.LeftbarPanel.Controls.Add(this.label4);
+            this.LeftbarPanel.Controls.Add(this.FavouriteTexturesLabel);
             this.LeftbarPanel.Controls.Add(this.FavouritesTree);
             this.LeftbarPanel.Controls.Add(this.PackageTree);
             this.LeftbarPanel.Dock = System.Windows.Forms.DockStyle.Left;
@@ -270,35 +269,20 @@
             this.AddFavouriteFolderButton.UseVisualStyleBackColor = true;
             this.AddFavouriteFolderButton.Click += new System.EventHandler(this.AddFavouriteFolderButtonClicked);
             // 
-            // label4
+            // FavouriteTexturesLabel
             // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(3, 416);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(170, 13);
-            this.label4.TabIndex = 2;
-            this.label4.Text = "Favourite Textures (drag and drop)";
-            // 
-            // TextureList
-            // 
-            this.TextureList.AllowMultipleSelection = true;
-            this.TextureList.AllowSelection = true;
-            this.TextureList.AutoScroll = true;
-            this.TextureList.BackColor = System.Drawing.Color.Black;
-            this.TextureList.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.TextureList.EnableDrag = true;
-            this.TextureList.ImageSize = 128;
-            this.TextureList.Location = new System.Drawing.Point(226, 0);
-            this.TextureList.Name = "TextureList";
-            this.TextureList.Size = new System.Drawing.Size(714, 495);
-            this.TextureList.TabIndex = 0;
+            this.FavouriteTexturesLabel.AutoSize = true;
+            this.FavouriteTexturesLabel.Location = new System.Drawing.Point(3, 416);
+            this.FavouriteTexturesLabel.Name = "FavouriteTexturesLabel";
+            this.FavouriteTexturesLabel.Size = new System.Drawing.Size(170, 13);
+            this.FavouriteTexturesLabel.TabIndex = 2;
+            this.FavouriteTexturesLabel.Text = "Favourite Textures (drag and drop)";
             // 
             // TextureBrowser
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(940, 565);
-            this.Controls.Add(this.TextureList);
             this.Controls.Add(this.LeftbarPanel);
             this.Controls.Add(this.panel1);
             this.KeyPreview = true;
@@ -325,19 +309,18 @@
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Button SelectButton;
         private System.Windows.Forms.CheckBox UsedTexturesOnlyBox;
-        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label SizeLabel;
         private System.Windows.Forms.TextBox FilterTextbox;
-        private System.Windows.Forms.Label label1;
-        private TextureListPanel TextureList;
+        private System.Windows.Forms.Label FilterLabel;
         private System.Windows.Forms.ComboBox SizeCombo;
         private System.Windows.Forms.ComboBox SortOrderCombo;
-        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label SortByLabel;
         private System.Windows.Forms.CheckBox SortDescendingCheckbox;
         private System.Windows.Forms.TreeView FavouritesTree;
         private System.Windows.Forms.Panel LeftbarPanel;
         private System.Windows.Forms.Button DeleteFavouriteFolderButton;
         private System.Windows.Forms.Button AddFavouriteFolderButton;
-        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Label FavouriteTexturesLabel;
         private System.Windows.Forms.Button RemoveFavouriteItemButton;
     }
 }

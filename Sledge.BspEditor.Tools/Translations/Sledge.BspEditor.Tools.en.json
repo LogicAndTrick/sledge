@@ -115,7 +115,22 @@
             "Browse": "Browse..."
         },
         "TextureApplicationForm": {
-
+          "Scale": "Scale",
+          "Shift": "Shift",
+          "Browse": "Browse...",
+          "Replace": "Replace...",
+          "Apply": "Apply",
+          "Rotation": "Rotation",
+          "Lightmap": "Lightmap",
+          "SmoothingGroups": "Smoothing groups",
+          "Align": "Align",
+          "World": "World",
+          "Face": "Face",
+          "Justify": "Justify",
+          "Fit": "Fit",
+          "TreatAsOne": "Treat as one",
+          "HideMask": "Hide mask",
+          "FilterRecent:": "Filter recent"
         },
         "TextureBrowser": {
 

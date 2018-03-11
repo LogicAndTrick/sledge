@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Drawing;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
@@ -18,8 +19,10 @@ using Sledge.Common.Shell.Commands;
 using Sledge.Common.Shell.Components;
 using Sledge.Common.Shell.Context;
 using Sledge.Common.Shell.Documents;
+using Sledge.Common.Translations;
 using Sledge.DataStructures.Geometric;
 using Sledge.Shell;
+using Sledge.Shell.Forms;
 
 namespace Sledge.BspEditor.Tools.Texture
 {
@@ -27,7 +30,8 @@ namespace Sledge.BspEditor.Tools.Texture
     /// This dialog is linked directly to the texture tool's context and provides useful operations for editing textures.
     /// </summary>
     [Export(typeof(IDialog))]
-    public partial class TextureApplicationForm : Shell.Forms.BaseForm, IDialog
+    [AutoTranslate]
+    public partial class TextureApplicationForm : BaseForm, IDialog, IManualTranslate
     {
         // We want to use the shell for the parent
         [Import("Shell", typeof(Form))] private Form _shell;
@@ -44,6 +48,9 @@ namespace Sledge.BspEditor.Tools.Texture
 
         private event EventHandler DebouncedPropertiesChanged;
         private IDisposable _saveChanges;
+
+        private TextureListPanel SelectedTexturesList;
+        private TextureListPanel RecentTexturesList;
 
         public MapDocument Document
         {
@@ -65,6 +72,7 @@ namespace Sledge.BspEditor.Tools.Texture
             _freeze = true;
 
             InitializeComponent();
+            InitialiseTextureLists();
 
             SelectedTexturesList.SelectionChanged += TextureListSelectionChanged;
             RecentTexturesList.SelectionChanged += TextureListSelectionChanged;
@@ -84,6 +92,73 @@ namespace Sledge.BspEditor.Tools.Texture
                 {
                     ApplyPropertyChanges(false);
                 });
+        }
+
+        public void Translate(TranslationStringsCollection strings)
+        {
+            CreateHandle();
+            var prefix = GetType().FullName;
+            this.InvokeLater(() =>
+            {
+                Text = strings.GetString(prefix, "Title");
+
+                ScaleLabel.Text = strings.GetString(prefix, "Scale");
+                ShiftLabel.Text = strings.GetString(prefix, "Shift");
+
+                BrowseButton.Text = strings.GetString(prefix, "Browse");
+                ReplaceButton.Text = strings.GetString(prefix, "Replace");
+                ApplyButton.Text = strings.GetString(prefix, "Apply");
+                
+                RotationLabel.Text = strings.GetString(prefix, "Rotation");
+                LightmapLabel.Text = strings.GetString(prefix, "Lightmap");
+                SmoothingGroupsButton.Text = strings.GetString(prefix, "SmoothingGroups");
+
+                AlignGroup.Text = strings.GetString(prefix, "Align");
+                AlignToWorldCheckbox.Text = strings.GetString(prefix, "World");
+                AlignToFaceCheckbox.Text = strings.GetString(prefix, "Face");
+
+                JustifyGroup.Text = strings.GetString(prefix, "Justify");
+                JustifyFitButton.Text = strings.GetString(prefix, "Fit");
+                TreatAsOneCheckbox.Text = strings.GetString(prefix, "TreatAsOne");
+
+                HideMaskCheckbox.Text = strings.GetString(prefix, "HideMask");
+                FilterRecentLabel.Text = strings.GetString(prefix, "FilterRecent");
+            });
+        }
+
+        private void InitialiseTextureLists()
+        {
+            RecentTexturesList = new TextureListPanel();
+            SelectedTexturesList = new TextureListPanel();
+            
+            RecentTexturesList.AllowMultipleSelection = false;
+            RecentTexturesList.AllowSelection = true;
+            RecentTexturesList.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
+            RecentTexturesList.AutoScroll = true;
+            RecentTexturesList.BackColor = Color.Black;
+            RecentTexturesList.EnableDrag = false;
+            RecentTexturesList.ImageSize = 64;
+            RecentTexturesList.Location = new Point(318, 178);
+            RecentTexturesList.Name = "RecentTexturesList";
+            RecentTexturesList.Size = new Size(87, 179);
+            RecentTexturesList.TabIndex = 38;
+            RecentTexturesList.TextureSelected += TexturesListTextureSelected;
+
+            SelectedTexturesList.AllowMultipleSelection = false;
+            SelectedTexturesList.AllowSelection = true;
+            SelectedTexturesList.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            SelectedTexturesList.AutoScroll = true;
+            SelectedTexturesList.BackColor = Color.Black;
+            SelectedTexturesList.EnableDrag = false;
+            SelectedTexturesList.ImageSize = 64;
+            SelectedTexturesList.Location = new Point(12, 178);
+            SelectedTexturesList.Name = "SelectedTexturesList";
+            SelectedTexturesList.Size = new Size(300, 232);
+            SelectedTexturesList.TabIndex = 37;
+            SelectedTexturesList.TextureSelected += TexturesListTextureSelected;
+
+            Controls.Add(RecentTexturesList);
+            Controls.Add(SelectedTexturesList);
         }
 
         private async Task SetDocument(IDocument doc)
@@ -246,7 +321,7 @@ namespace Sledge.BspEditor.Tools.Texture
             }
         }
 
-        protected override void OnMouseEnter(System.EventArgs e)
+        protected override void OnMouseEnter(EventArgs e)
         {
             Focus();
             base.OnMouseEnter(e);

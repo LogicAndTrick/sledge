@@ -12,7 +12,6 @@ namespace Sledge.Common.Translations
     public class TranslationStringsCatalog
     {
         [ImportMany("AutoTranslate")] private IEnumerable<Lazy<object>> _autoTranslate;
-        [ImportMany] private IEnumerable<Lazy<IManualTranslate>> _manualTranslate;
 
         private List<string> _loaded;
         public Dictionary<string, TranslationStringsCollection> Languages { get; set; }
@@ -27,23 +26,13 @@ namespace Sledge.Common.Translations
         {
             foreach (var at in _autoTranslate)
             {
-                Inject(language, at.Value);
-            }
-
-            if (Languages.ContainsKey(language))
-            {
-                var strings = Languages[language];
-                foreach (var mt in _manualTranslate)
-                {
-                    mt.Value.Translate(strings);
-                }
+                Translate(language, at.Value);
             }
         }
 
         public void Translate(string language, object target)
         {
-            var mt = target as IManualTranslate;
-            if (mt != null)
+            if (target is IManualTranslate mt)
             {
                 if (!Languages.ContainsKey(language)) return;
                 var strings = Languages[language];
