@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.ComponentModel.Composition;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using LogicAndTrick.Oy;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Modification;
 using Sledge.BspEditor.Modification.Operations.Data;
@@ -10,45 +13,69 @@ using Sledge.BspEditor.Modification.Operations.Selection;
 using Sledge.BspEditor.Primitives.MapData;
 using Sledge.BspEditor.Primitives.MapObjectData;
 using Sledge.BspEditor.Primitives.MapObjects;
+using Sledge.Common.Shell.Components;
+using Sledge.Common.Shell.Context;
+using Sledge.Common.Shell.Hooks;
 using Sledge.Common.Translations;
 using Sledge.Rendering.Materials;
 using Sledge.Shell;
 
 namespace Sledge.BspEditor.Tools.Texture
 {
-    public partial class TextureReplaceDialog : Form, IManualTranslate
+    [Export(typeof(IDialog))]
+    [Export(typeof(IInitialiseHook))]
+    [AutoTranslate]
+    public partial class TextureReplaceDialog : Form, IManualTranslate, IDialog, IInitialiseHook
     {
-        private readonly MapDocument _document;
+        [Import("Shell", typeof(Form))] private Lazy<Form> _parent;
+        [Import] private IContext _context;
+        [Import] private Lazy<ITranslationStringProvider> _translation;
 
-        public TextureReplaceDialog(MapDocument document)
+        private List<Subscription> _subscriptions;
+
+        public TextureReplaceDialog()
         {
-            _document = document;
             InitializeComponent();
+        }
 
-            BindTextureControls(Find, FindImage, FindBrowse, FindInfo);
-            BindTextureControls(Replace, ReplaceImage, ReplaceBrowse, ReplaceInfo);
+        public Task OnInitialise()
+        {
+            BindTextureControls(FindTextbox, FindImage, FindBrowse, FindInfo);
+            BindTextureControls(ReplaceTextbox, ReplaceImage, ReplaceBrowse, ReplaceInfo);
+            return Task.FromResult(0);
+        }
 
-            ReplaceSelection.Checked = true;
-            ActionExact.Checked = true;
-
-            if (document.Selection.IsEmpty)
+        private void Reset()
+        {
+            this.InvokeLater(() =>
             {
-                ReplaceSelection.Enabled = false;
-                ReplaceVisible.Checked = true;
-            }
+                var document = GetDocument();
+                
+                FindTextbox.Text = "";
+                ReplaceTextbox.Text = "";
 
-            var at = _document.Map.Data.GetOne<ActiveTexture>()?.Name;
-            if (at != null)
-            {
-                Find.Text = at;
-            }
-            else if (!document.Selection.IsEmpty)
-            {
-                var first = document.Selection.FirstOrDefault(x => x is Solid) as Solid;
-                var face = first?.Faces.FirstOrDefault();
-                var texture = face?.Texture.Name;
-                if (texture != null) Find.Text = texture;
-            }
+                ReplaceSelection.Checked = true;
+                ActionExact.Checked = true;
+
+                if (document.Selection.IsEmpty)
+                {
+                    ReplaceSelection.Enabled = false;
+                    ReplaceVisible.Checked = true;
+                }
+
+                var at = document.Map.Data.GetOne<ActiveTexture>()?.Name;
+                if (at != null)
+                {
+                    FindTextbox.Text = at;
+                }
+                else if (!document.Selection.IsEmpty)
+                {
+                    var first = document.Selection.FirstOrDefault(x => x is Solid) as Solid;
+                    var face = first?.Faces.FirstOrDefault();
+                    var texture = face?.Texture.Name;
+                    if (texture != null) FindTextbox.Text = texture;
+                }
+            });
         }
 
         public void Translate(TranslationStringsCollection strings)
@@ -82,18 +109,91 @@ namespace Sledge.BspEditor.Tools.Texture
             });
         }
 
-        private IEnumerable<IMapObject> GetObjects()
+        protected override void OnClosing(CancelEventArgs e)
         {
-            if (ReplaceSelection.Checked) return _document.Selection.ToList();
-            if (ReplaceVisible.Checked) return _document.Map.Root.Find(x => !x.Data.OfType<IObjectVisibility>().Any(y => y.IsHidden));
-            return _document.Map.Root.FindAll();
+            e.Cancel = true;
+            Oy.Publish("Context:Remove", new ContextInfo("BspEditor:TextureReplace"));
+        }
+
+        public bool IsInContext(IContext context)
+        {
+            return context.HasAny("BspEditor:TextureReplace");
+        }
+
+        public void SetVisible(IContext context, bool visible)
+        {
+            this.InvokeLater(() =>
+            {
+                if (visible)
+                {
+                    if (!Visible) Show(_parent.Value);
+                    Subscribe();
+                    Reset();
+                }
+                else
+                {
+                    Hide();
+                    Unsubscribe();
+                }
+            });
+        }
+
+        private void Subscribe()
+        {
+            if (_subscriptions != null) return;
+            _subscriptions = new List<Subscription>
+            {
+                Oy.Subscribe<MapDocument>("Document:Activated", DocumentActivated),
+                Oy.Subscribe<MapDocument>("MapDocument:SelectionChanged", SelectionChanged)
+            };
+        }
+
+        private void Unsubscribe()
+        {
+            if (_subscriptions == null) return;
+            _subscriptions.ForEach(x => x.Dispose());
+            _subscriptions = null;
+        }
+
+        public async Task DocumentActivated(MapDocument document)
+        {
+            Reset();
+        }
+
+        public async Task SelectionChanged(MapDocument document)
+        {
+            this.InvokeLater(() =>
+            {
+                if (document.Selection.IsEmpty)
+                {
+                    if (ReplaceSelection.Checked) ReplaceVisible.Checked = true;
+                    ReplaceSelection.Enabled = false;
+                }
+                else
+                {
+                    ReplaceSelection.Enabled = true;
+                }
+            });
+        }
+
+        public MapDocument GetDocument()
+        {
+            var doc = _context.Get<MapDocument>("ActiveDocument");
+            return doc;
+        }
+
+        private IEnumerable<IMapObject> GetObjects(MapDocument doc)
+        {
+            if (ReplaceSelection.Checked) return doc.Selection.ToList();
+            if (ReplaceVisible.Checked) return doc.Map.Root.Find(x => !x.Data.OfType<IObjectVisibility>().Any(y => y.IsHidden));
+            return doc.Map.Root.FindAll();
         }
 
         private bool MatchTextureName(string name)
         {
             if (String.IsNullOrWhiteSpace(name)) return false;
 
-            var match = Find.Text;
+            var match = FindTextbox.Text;
             if (!ActionExact.Checked)
             {
                 return name.ToLowerInvariant().Contains(match.ToLowerInvariant());
@@ -105,8 +205,8 @@ namespace Sledge.BspEditor.Tools.Texture
         {
             var list = new List<TextureReplacement>();
             var substitute = ActionSubstitute.Checked;
-            var find = Find.Text.ToLowerInvariant();
-            var replace = Replace.Text.ToLowerInvariant();
+            var find = FindTextbox.Text.ToLowerInvariant();
+            var replace = ReplaceTextbox.Text.ToLowerInvariant();
 
             foreach (var name in names.Select(x => x.ToLowerInvariant()).Distinct())
             {
@@ -116,23 +216,23 @@ namespace Sledge.BspEditor.Tools.Texture
             return list;
         }
 
-        public async Task<IOperation> GetOperation()
+        public async Task<IOperation> GetOperation(MapDocument doc)
         {
             if (ActionSelect.Checked)
             {
                 return new Transaction(
-                    new Deselect(_document.Selection.ToList()),
-                    new Select(GetObjects())
+                    new Deselect(doc.Selection.ToList()),
+                    new Select(GetObjects(doc))
                 );
             }
 
-            var faces = GetObjects().OfType<Solid>()
+            var faces = GetObjects(doc).OfType<Solid>()
                 .SelectMany(x => x.Faces.Select(f => new { Face = f, Parent = x }))
                 .Where(x => MatchTextureName(x.Face.Texture.Name))
                 .ToList();
 
             var rescale = RescaleTextures.Checked;
-            var tc = rescale ? await _document.Environment.GetTextureCollection() : null;
+            var tc = rescale ? await doc.Environment.GetTextureCollection() : null;
             var replacements = GetReplacements(faces.Select(x => x.Face.Texture.Name));
 
             var tran = new Transaction();
@@ -175,9 +275,12 @@ namespace Sledge.BspEditor.Tools.Texture
 
         private async void BrowseTexture(TextBox box)
         {
-            using (var tb = new TextureBrowser(_document))
+            var doc = GetDocument();
+            if (doc == null) return;
+
+            using (var tb = new TextureBrowser(doc))
             {
-                await tb.Initialise();
+                await tb.Initialise(_translation.Value);
                 if (await tb.ShowDialogAsync() != DialogResult.OK) return;
                 if (tb.SelectedTexture == null) return;
                 box.Text = tb.SelectedTexture;
@@ -186,14 +289,15 @@ namespace Sledge.BspEditor.Tools.Texture
 
         private async void UpdateTexture(string text, PictureBox image, Label info)
         {
-            if (String.IsNullOrWhiteSpace(text))
+            var doc = GetDocument();
+            if (String.IsNullOrWhiteSpace(text) || doc == null)
             {
                 image.Image = null;
                 info.Text = "No Image";
                 return;
             }
             
-            var tc = await _document.Environment.GetTextureCollection();
+            var tc = await doc.Environment.GetTextureCollection();
             var item = await tc.GetTextureItem(text);
 
             if (item != null)
@@ -215,6 +319,28 @@ namespace Sledge.BspEditor.Tools.Texture
                 image.Image = null;
                 info.Text = "No Image";
             }
+        }
+
+        private void OkClicked(object sender, EventArgs e)
+        {
+            ExecuteReplace();
+            Close();
+        }
+
+        private async Task ExecuteReplace()
+        {
+            var doc = GetDocument();
+            if (doc == null) return;
+
+            var op = await GetOperation(doc);
+            if (op == null) return;
+
+            await MapDocumentOperation.Perform(doc, op);
+        }
+
+        private void CancelClicked(object sender, EventArgs e)
+        {
+            Close();
         }
 
         private class TextureReplacement

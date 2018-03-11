@@ -16,6 +16,7 @@ namespace Sledge.BspEditor.Tools.Texture
     public class SmartEditTextureBrowser : SmartEditControl
     {
         private WeakReference<MapDocument> _document;
+        [Import] private Lazy<ITranslationStringProvider> _translation;
 
         private readonly TextBox _textBox;
         private readonly Button _browseButton;
@@ -53,7 +54,7 @@ namespace Sledge.BspEditor.Tools.Texture
 
             using (var tb = new TextureBrowser(doc))
             {
-                tb.Initialise().Wait();
+                tb.Initialise(_translation.Value).Wait();
                 //tb.SetTextureList(GetTextureList(doc));
                 tb.SetSelectedTextures(GetSelectedTextures());
                 tb.SetFilterText(GetFilterText(doc));

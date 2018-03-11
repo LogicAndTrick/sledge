@@ -17,6 +17,8 @@ namespace Sledge.BspEditor.Tools.Texture
     [CommandID("BspEditor:BrowseActiveTexture")]
     public class BrowseActiveTexture : ICommand
     {
+        [Import] private Lazy<ITranslationStringProvider> _translation;
+
         public string Name { get; set; } = "Open texture browser";
         public string Details { get; set; } = "Open texture browser";
 
@@ -31,7 +33,7 @@ namespace Sledge.BspEditor.Tools.Texture
             if (md == null) return;
             using (var tb = new TextureBrowser(md))
             {
-                await tb.Initialise();
+                await tb.Initialise(_translation.Value);
                 if (tb.ShowDialog() == DialogResult.OK && !String.IsNullOrWhiteSpace(tb.SelectedTexture))
                 {
                     var tex = tb.SelectedTexture;

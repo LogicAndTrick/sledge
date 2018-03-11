@@ -6,13 +6,14 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Sledge.BspEditor.Documents;
 using Sledge.Common.Translations;
+using Sledge.Shell;
 
 namespace Sledge.BspEditor.Tools.Texture
 {
     public partial class TextureBrowser : Form, IManualTranslate
     {
         private readonly MapDocument _document;
-        private TextureListPanel TextureList;
+        private TextureListPanel _textureList;
 
         public TextureBrowser(MapDocument document)
         {
@@ -23,8 +24,8 @@ namespace Sledge.BspEditor.Tools.Texture
             InitializeComponent();
             InitialiseTextureList();
 
-            TextureList.TextureSelected += TextureSelected;
-            TextureList.SelectionChanged += SelectionChanged;
+            _textureList.TextureSelected += TextureSelected;
+            _textureList.SelectionChanged += SelectionChanged;
             SizeCombo.SelectedIndex = 1;
             _textures = new List<string>();
             SelectedTexture = null;
@@ -40,41 +41,62 @@ namespace Sledge.BspEditor.Tools.Texture
             SortOrderCombo.SelectedIndex = so;
             SortDescendingCheckbox.Checked = GetMemory("SortDescending", false);
 
-            SelectionChanged(null, TextureList.GetSelectedTextures());
+            SelectionChanged(null, _textureList.GetSelectedTextures());
         }
 
         private void InitialiseTextureList()
         {
-            TextureList = new TextureListPanel();
-            TextureList.AllowMultipleSelection = true;
-            TextureList.AllowSelection = true;
-            TextureList.AutoScroll = true;
-            TextureList.BackColor = System.Drawing.Color.Black;
-            TextureList.Dock = System.Windows.Forms.DockStyle.Fill;
-            TextureList.EnableDrag = true;
-            TextureList.ImageSize = 128;
-            TextureList.Location = new System.Drawing.Point(226, 0);
-            TextureList.Name = "TextureList";
-            TextureList.Size = new System.Drawing.Size(714, 495);
-            TextureList.TabIndex = 0;
-            Controls.Add(TextureList);
+            _textureList = new TextureListPanel
+            {
+                AllowMultipleSelection = true,
+                AllowSelection = true,
+                AutoScroll = true,
+                BackColor = Color.Black,
+                Dock = DockStyle.Fill,
+                EnableDrag = true,
+                ImageSize = 128,
+                Location = new Point(226, 0),
+                Name = "_textureList",
+                Size = new Size(714, 495),
+                TabIndex = 0
+            };
+            TextureListPanel.Controls.Add(_textureList);
         }
 
         public void Translate(TranslationStringsCollection strings)
         {
-            // 
+            CreateHandle();
+            var prefix = GetType().FullName;
+            this.InvokeLater(() =>
+            {
+                Text = strings.GetString(prefix, "Title");
+                FavouriteTexturesLabel.Text = strings.GetString(prefix, "FavouriteTextures");
+                AddFavouriteFolderButton.Text = strings.GetString(prefix, "AddFolder");
+                DeleteFavouriteFolderButton.Text = strings.GetString(prefix, "DeleteFolder");
+                RemoveFavouriteItemButton.Text = strings.GetString(prefix, "RemoveSelected");
+
+                FilterLabel.Text = strings.GetString(prefix, "Filter");
+                SizeLabel.Text = strings.GetString(prefix, "Size");
+
+                UsedTexturesOnlyBox.Text = strings.GetString(prefix, "UsedTexturesOnly");
+                SelectButton.Text = strings.GetString(prefix, "Select");
+                SortByLabel.Text = strings.GetString(prefix, "SortBy");
+                SortDescendingCheckbox.Text = strings.GetString(prefix, "SortDescending");
+            });
         }
 
-        public async Task Initialise()
+        public async Task Initialise(ITranslationStringProvider translation)
         {
-            TextureList.Collection = await _document.Environment.GetTextureCollection();
+            _textureList.Collection = await _document.Environment.GetTextureCollection();
 
             _textures.Clear();
-            _textures.AddRange(TextureList.Collection.GetAllTextures());
+            _textures.AddRange(_textureList.Collection.GetAllTextures());
 
-            TextureList.SetTextureList(_textures);
-            TextureList.SortTextureList(x => x, GetMemory("SortDescending", false));
+            _textureList.SetTextureList(_textures);
+            _textureList.SortTextureList(x => x, GetMemory("SortDescending", false));
             UpdatePackageList();
+
+            translation.Translate(this);
         }
 
         protected override void OnLoad(EventArgs e)
@@ -139,7 +161,7 @@ namespace Sledge.BspEditor.Tools.Texture
 
         public void SetSelectedTextures(IEnumerable<string> items)
         {
-            TextureList.SetSelectedTextures(items);
+            _textureList.SetSelectedTextures(items);
         }
 
         public void SetFilterText(string text)
@@ -187,7 +209,7 @@ namespace Sledge.BspEditor.Tools.Texture
         {
             var selected = PackageTree.SelectedNode;
             var selectedKey = selected == null ? GetMemory<string>("SelectedPackage") : selected.Name;
-            var packages = TextureList.Collection.Packages;
+            var packages = _textureList.Collection.Packages;
             PackageTree.Nodes.Clear();
             var parent = PackageTree.Nodes.Add("", "All Packages");
             TreeNode reselect = null;
@@ -236,7 +258,7 @@ namespace Sledge.BspEditor.Tools.Texture
             var package = PackageTree.SelectedNode;
             var key = package?.Name;
             if (String.IsNullOrWhiteSpace(key)) key = null;
-            var p = TextureList.Collection.Packages.FirstOrDefault(x => x.ToString() == key);
+            var p = _textureList.Collection.Packages.FirstOrDefault(x => x.ToString() == key);
             var set = new HashSet<string>(_textures);
             if (p != null) set.IntersectWith(p.Textures);
             return set;
@@ -282,27 +304,27 @@ namespace Sledge.BspEditor.Tools.Texture
                 //list = list.Where(x => used.Any(y => String.Equals(x, y, StringComparison.InvariantCultureIgnoreCase)));
             }
             var l = list.ToList();
-            await TextureList.SetTextureList(l);
+            await _textureList.SetTextureList(l);
 
             //var sel = _document?.TextureCollection.SelectedTexture;
             //if (sel != null)
             //{
-            //    TextureList.SetSelectedTextures(new[] { sel });
-            //    TextureList.ScrollToItem(sel);
+            //    _textureList.SetSelectedTextures(new[] { sel });
+            //    _textureList.ScrollToItem(sel);
             //}
         }
 
         private void SizeValueChanged(object sender, EventArgs e)
         {
             SetMemory("SizeMode", SizeCombo.SelectedIndex);
-            TextureList.ImageSize = Convert.ToInt32(SizeCombo.SelectedItem);
+            _textureList.ImageSize = Convert.ToInt32(SizeCombo.SelectedItem);
         }
 
         private static readonly char[] AllowedSpecialChars = "!@#$%^&*()-_=+<>,.?/'\"\\;:[]{}`~".ToCharArray();
 
         private void TextureBrowserKeyPress(object sender, KeyPressEventArgs e)
         {
-            if (!TextureList.Focused) return;
+            if (!_textureList.Focused) return;
 
             if (e.KeyChar == 8 && FilterTextbox.Text.Length > 0)
             {
@@ -354,7 +376,7 @@ namespace Sledge.BspEditor.Tools.Texture
         private void SortDescendingCheckboxChanged(object sender, EventArgs e)
         {
             SetMemory("SortDescending", SortDescendingCheckbox.Checked);
-            TextureList.SortTextureList(x => x, SortDescendingCheckbox.Checked);
+            _textureList.SortTextureList(x => x, SortDescendingCheckbox.Checked);
         }
 
         private void DeleteFavouriteFolderButtonClicked(object sender, EventArgs e)
@@ -463,7 +485,7 @@ namespace Sledge.BspEditor.Tools.Texture
 
         private void RemoveFavouriteItemButtonClicked(object sender, EventArgs e)
         {
-            //var selection = TextureList.GetSelectedTextures().Select(x => x);
+            //var selection = _textureList.GetSelectedTextures().Select(x => x);
 
             //var folder = FavouritesTree.SelectedNode;
             //var node = folder == null ? null : folder.Tag as FavouriteTextureFolder;
@@ -478,7 +500,7 @@ namespace Sledge.BspEditor.Tools.Texture
 
         private void SelectButtonClicked(object sender, EventArgs e)
         {
-            var sel = TextureList.GetSelectedTextures().ToList();
+            var sel = _textureList.GetSelectedTextures().ToList();
             if (!sel.Any()) return;
             // todo Mediator.Publish(EditorMediator.SelectMatchingTextures, sel.Select(x => x).ToList());
             Close();

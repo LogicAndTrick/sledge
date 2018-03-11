@@ -36,7 +36,6 @@
             this.SizeCombo = new System.Windows.Forms.ComboBox();
             this.TextureSizeLabel = new System.Windows.Forms.Label();
             this.TextureNameLabel = new System.Windows.Forms.Label();
-            this.button2 = new System.Windows.Forms.Button();
             this.SelectButton = new System.Windows.Forms.Button();
             this.UsedTexturesOnlyBox = new System.Windows.Forms.CheckBox();
             this.SizeLabel = new System.Windows.Forms.Label();
@@ -48,6 +47,7 @@
             this.RemoveFavouriteItemButton = new System.Windows.Forms.Button();
             this.AddFavouriteFolderButton = new System.Windows.Forms.Button();
             this.FavouriteTexturesLabel = new System.Windows.Forms.Label();
+            this.TextureListPanel = new System.Windows.Forms.Panel();
             this.panel1.SuspendLayout();
             this.LeftbarPanel.SuspendLayout();
             this.SuspendLayout();
@@ -70,7 +70,6 @@
             this.panel1.Controls.Add(this.SizeCombo);
             this.panel1.Controls.Add(this.TextureSizeLabel);
             this.panel1.Controls.Add(this.TextureNameLabel);
-            this.panel1.Controls.Add(this.button2);
             this.panel1.Controls.Add(this.SelectButton);
             this.panel1.Controls.Add(this.UsedTexturesOnlyBox);
             this.panel1.Controls.Add(this.SizeLabel);
@@ -147,15 +146,6 @@
             this.TextureNameLabel.Size = new System.Drawing.Size(35, 13);
             this.TextureNameLabel.TabIndex = 6;
             this.TextureNameLabel.Text = "Name";
-            // 
-            // button2
-            // 
-            this.button2.Location = new System.Drawing.Point(295, 32);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(57, 20);
-            this.button2.TabIndex = 5;
-            this.button2.Text = "Replace";
-            this.button2.UseVisualStyleBackColor = true;
             // 
             // SelectButton
             // 
@@ -278,11 +268,20 @@
             this.FavouriteTexturesLabel.TabIndex = 2;
             this.FavouriteTexturesLabel.Text = "Favourite Textures (drag and drop)";
             // 
+            // TextureListPanel
+            // 
+            this.TextureListPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.TextureListPanel.Location = new System.Drawing.Point(226, 0);
+            this.TextureListPanel.Name = "TextureListPanel";
+            this.TextureListPanel.Size = new System.Drawing.Size(714, 495);
+            this.TextureListPanel.TabIndex = 4;
+            // 
             // TextureBrowser
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(940, 565);
+            this.Controls.Add(this.TextureListPanel);
             this.Controls.Add(this.LeftbarPanel);
             this.Controls.Add(this.panel1);
             this.KeyPreview = true;
@@ -306,7 +305,6 @@
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Label TextureSizeLabel;
         private System.Windows.Forms.Label TextureNameLabel;
-        private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Button SelectButton;
         private System.Windows.Forms.CheckBox UsedTexturesOnlyBox;
         private System.Windows.Forms.Label SizeLabel;
@@ -322,5 +320,6 @@
         private System.Windows.Forms.Button AddFavouriteFolderButton;
         private System.Windows.Forms.Label FavouriteTexturesLabel;
         private System.Windows.Forms.Button RemoveFavouriteItemButton;
+        private System.Windows.Forms.Panel TextureListPanel;
     }
 }

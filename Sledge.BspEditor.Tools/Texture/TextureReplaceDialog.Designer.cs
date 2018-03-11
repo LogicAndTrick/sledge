@@ -29,12 +29,14 @@
         private void InitializeComponent()
         {
             this.FindGroup = new System.Windows.Forms.GroupBox();
-            this.Find = new System.Windows.Forms.TextBox();
+            this.FindTextbox = new System.Windows.Forms.TextBox();
             this.FindInfo = new System.Windows.Forms.Label();
+            this.FindImage = new System.Windows.Forms.PictureBox();
             this.FindBrowse = new System.Windows.Forms.Button();
             this.ReplaceGroup = new System.Windows.Forms.GroupBox();
-            this.Replace = new System.Windows.Forms.TextBox();
+            this.ReplaceTextbox = new System.Windows.Forms.TextBox();
             this.ReplaceInfo = new System.Windows.Forms.Label();
+            this.ReplaceImage = new System.Windows.Forms.PictureBox();
             this.ReplaceBrowse = new System.Windows.Forms.Button();
             this.ReplaceInGroup = new System.Windows.Forms.GroupBox();
             this.ReplaceEverything = new System.Windows.Forms.RadioButton();
@@ -48,19 +50,17 @@
             this.RescaleTextures = new System.Windows.Forms.CheckBox();
             this.CancelButton = new System.Windows.Forms.Button();
             this.OKButton = new System.Windows.Forms.Button();
-            this.ReplaceImage = new System.Windows.Forms.PictureBox();
-            this.FindImage = new System.Windows.Forms.PictureBox();
             this.FindGroup.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.FindImage)).BeginInit();
             this.ReplaceGroup.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.ReplaceImage)).BeginInit();
             this.ReplaceInGroup.SuspendLayout();
             this.ActionGroup.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.ReplaceImage)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.FindImage)).BeginInit();
             this.SuspendLayout();
             // 
             // FindGroup
             // 
-            this.FindGroup.Controls.Add(this.Find);
+            this.FindGroup.Controls.Add(this.FindTextbox);
             this.FindGroup.Controls.Add(this.FindInfo);
             this.FindGroup.Controls.Add(this.FindImage);
             this.FindGroup.Controls.Add(this.FindBrowse);
@@ -71,12 +71,12 @@
             this.FindGroup.TabStop = false;
             this.FindGroup.Text = "Find:";
             // 
-            // Find
+            // FindTextbox
             // 
-            this.Find.Location = new System.Drawing.Point(6, 20);
-            this.Find.Name = "Find";
-            this.Find.Size = new System.Drawing.Size(181, 20);
-            this.Find.TabIndex = 0;
+            this.FindTextbox.Location = new System.Drawing.Point(6, 20);
+            this.FindTextbox.Name = "FindTextbox";
+            this.FindTextbox.Size = new System.Drawing.Size(181, 20);
+            this.FindTextbox.TabIndex = 0;
             // 
             // FindInfo
             // 
@@ -86,6 +86,14 @@
             this.FindInfo.Size = new System.Drawing.Size(63, 13);
             this.FindInfo.TabIndex = 3;
             this.FindInfo.Text = "Texture info";
+            // 
+            // FindImage
+            // 
+            this.FindImage.Location = new System.Drawing.Point(6, 46);
+            this.FindImage.Name = "FindImage";
+            this.FindImage.Size = new System.Drawing.Size(100, 100);
+            this.FindImage.TabIndex = 2;
+            this.FindImage.TabStop = false;
             // 
             // FindBrowse
             // 
@@ -98,7 +106,7 @@
             // 
             // ReplaceGroup
             // 
-            this.ReplaceGroup.Controls.Add(this.Replace);
+            this.ReplaceGroup.Controls.Add(this.ReplaceTextbox);
             this.ReplaceGroup.Controls.Add(this.ReplaceInfo);
             this.ReplaceGroup.Controls.Add(this.ReplaceImage);
             this.ReplaceGroup.Controls.Add(this.ReplaceBrowse);
@@ -109,12 +117,12 @@
             this.ReplaceGroup.TabStop = false;
             this.ReplaceGroup.Text = "Replace:";
             // 
-            // Replace
+            // ReplaceTextbox
             // 
-            this.Replace.Location = new System.Drawing.Point(6, 20);
-            this.Replace.Name = "Replace";
-            this.Replace.Size = new System.Drawing.Size(181, 20);
-            this.Replace.TabIndex = 2;
+            this.ReplaceTextbox.Location = new System.Drawing.Point(6, 20);
+            this.ReplaceTextbox.Name = "ReplaceTextbox";
+            this.ReplaceTextbox.Size = new System.Drawing.Size(181, 20);
+            this.ReplaceTextbox.TabIndex = 2;
             // 
             // ReplaceInfo
             // 
@@ -124,6 +132,14 @@
             this.ReplaceInfo.Size = new System.Drawing.Size(63, 13);
             this.ReplaceInfo.TabIndex = 3;
             this.ReplaceInfo.Text = "Texture info";
+            // 
+            // ReplaceImage
+            // 
+            this.ReplaceImage.Location = new System.Drawing.Point(6, 46);
+            this.ReplaceImage.Name = "ReplaceImage";
+            this.ReplaceImage.Size = new System.Drawing.Size(100, 100);
+            this.ReplaceImage.TabIndex = 2;
+            this.ReplaceImage.TabStop = false;
             // 
             // ReplaceBrowse
             // 
@@ -255,6 +271,7 @@
             this.CancelButton.TabIndex = 14;
             this.CancelButton.Text = "Cancel";
             this.CancelButton.UseVisualStyleBackColor = true;
+            this.CancelButton.Click += new System.EventHandler(this.CancelClicked);
             // 
             // OKButton
             // 
@@ -265,27 +282,14 @@
             this.OKButton.TabIndex = 13;
             this.OKButton.Text = "OK";
             this.OKButton.UseVisualStyleBackColor = true;
-            // 
-            // ReplaceImage
-            // 
-            this.ReplaceImage.Location = new System.Drawing.Point(6, 46);
-            this.ReplaceImage.Name = "ReplaceImage";
-            this.ReplaceImage.Size = new System.Drawing.Size(100, 100);
-            this.ReplaceImage.TabIndex = 2;
-            this.ReplaceImage.TabStop = false;
-            // 
-            // FindImage
-            // 
-            this.FindImage.Location = new System.Drawing.Point(6, 46);
-            this.FindImage.Name = "FindImage";
-            this.FindImage.Size = new System.Drawing.Size(100, 100);
-            this.FindImage.TabIndex = 2;
-            this.FindImage.TabStop = false;
+            this.OKButton.Click += new System.EventHandler(this.OkClicked);
             // 
             // TextureReplaceDialog
             // 
+            this.AcceptButton = this.OKButton;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.CancelButton = this.CancelButton;
             this.ClientSize = new System.Drawing.Size(418, 322);
             this.Controls.Add(this.OKButton);
             this.Controls.Add(this.CancelButton);
@@ -302,14 +306,14 @@
             this.Text = "Replace Textures";
             this.FindGroup.ResumeLayout(false);
             this.FindGroup.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.FindImage)).EndInit();
             this.ReplaceGroup.ResumeLayout(false);
             this.ReplaceGroup.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.ReplaceImage)).EndInit();
             this.ReplaceInGroup.ResumeLayout(false);
             this.ReplaceInGroup.PerformLayout();
             this.ActionGroup.ResumeLayout(false);
             this.ActionGroup.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.ReplaceImage)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.FindImage)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -336,8 +340,8 @@
         private System.Windows.Forms.CheckBox RescaleTextures;
         private System.Windows.Forms.Button CancelButton;
         private System.Windows.Forms.Button OKButton;
-        private System.Windows.Forms.TextBox Find;
-        private System.Windows.Forms.TextBox Replace;
+        private System.Windows.Forms.TextBox FindTextbox;
+        private System.Windows.Forms.TextBox ReplaceTextbox;
         private System.Windows.Forms.RadioButton ActionSelect;
     }
 }

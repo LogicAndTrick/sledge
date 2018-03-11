@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.Composition;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using LogicAndTrick.Oy;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Modification;
 using Sledge.BspEditor.Tools.Properties;
@@ -33,15 +34,8 @@ namespace Sledge.BspEditor.Tools.Texture
         {
             var md = context.Get<MapDocument>("ActiveDocument");
             if (md == null) return;
-            using (var tb = new TextureReplaceDialog(md))
-            {
-                _translation.Translate(tb);
-                if (await tb.ShowDialogAsync() == DialogResult.OK)
-                {
-                    var op = await tb.GetOperation();
-                    if (op != null) MapDocumentOperation.Perform(md, op);
-                }
-            }
+
+            await Oy.Publish("Context:Add", new ContextInfo("BspEditor:TextureReplace"));
         }
     }
 }
