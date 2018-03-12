@@ -46,6 +46,8 @@ namespace Sledge.BspEditor.Rendering.Viewport
                 Oy.Subscribe<IDocument>("Document:Activated", DocumentActivated),
                 Oy.Subscribe<Coordinate>("MapDocument:Viewport:Focus2D", Focus2D),
                 Oy.Subscribe<Coordinate>("MapDocument:Viewport:Focus3D", Focus3D),
+                Oy.Subscribe<Box>("MapDocument:Viewport:Focus2D", Focus2D),
+                Oy.Subscribe<Box>("MapDocument:Viewport:Focus3D", Focus3D),
                 Oy.Subscribe<Tuple<Coordinate, Coordinate>>("MapDocument:Viewport:Set3D", Set3D),
                 Oy.Subscribe<Coordinate>("MapDocument:Viewport:Set2D", Set2D),
             };
@@ -80,6 +82,18 @@ namespace Sledge.BspEditor.Rendering.Viewport
         }
 
         private Task Focus3D(Coordinate c)
+        {
+            if (Camera is PerspectiveCamera) _mapViewport.FocusOn(c);
+            return Task.FromResult(0);
+        }
+
+        private Task Focus2D(Box c)
+        {
+            if (Camera is OrthographicCamera) _mapViewport.FocusOn(c);
+            return Task.FromResult(0);
+        }
+
+        private Task Focus3D(Box c)
         {
             if (Camera is PerspectiveCamera) _mapViewport.FocusOn(c);
             return Task.FromResult(0);

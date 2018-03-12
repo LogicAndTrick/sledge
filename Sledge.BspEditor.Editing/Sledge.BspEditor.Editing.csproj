@@ -79,6 +79,9 @@
     <Compile Include="Commands\Toggles\ToggleTextureLock.cs" />
     <Compile Include="Commands\Toggles\ToggleTextureScalingLock.cs" />
     <Compile Include="Commands\Transform.cs" />
+    <Compile Include="Commands\View\CenterSelection2D.cs" />
+    <Compile Include="Commands\View\CenterSelection3D.cs" />
+    <Compile Include="Commands\View\CenterSelectionAll.cs" />
     <Compile Include="Components\AboutDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -366,7 +369,12 @@
     <None Include="packages.config" />
     <None Include="Resources\Button_ColourPicker.png" />
     <Content Include="Resources\Menu_Carve.png" />
+    <Content Include="Resources\Menu_CenterSelection2D.png" />
+    <Content Include="Resources\Menu_CenterSelection3D.png" />
+    <Content Include="Resources\Menu_CenterSelectionAll.png" />
     <Content Include="Resources\Menu_EntityReport.png" />
+    <Content Include="Resources\Menu_GoToBrushID.png" />
+    <Content Include="Resources\Menu_GoToCoordinates.png" />
     <Content Include="Resources\Menu_HideNullTextures.png" />
     <Content Include="Resources\Menu_Hollow.png" />
     <Content Include="Resources\Menu_LoadPointfile.png" />

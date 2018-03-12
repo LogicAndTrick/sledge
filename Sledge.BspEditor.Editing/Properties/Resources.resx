@@ -124,8 +124,23 @@
   <data name="Menu_Carve" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\resources\menu_carve.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="Menu_CenterSelection2D" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\menu_centerselection2d.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Menu_CenterSelection3D" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\menu_centerselection3d.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Menu_CenterSelectionAll" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\menu_centerselectionall.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="Menu_EntityReport" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\resources\menu_entityreport.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Menu_GoToBrushID" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\menu_gotobrushid.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Menu_GoToCoordinates" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\menu_gotocoordinates.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Menu_HideNullTextures" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\resources\menu_hidenulltextures.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>

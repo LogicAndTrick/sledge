@@ -302,8 +302,8 @@ namespace Sledge.BspEditor.Editing.Components
             var selected = GetSelected();
             if (selected == null) return;
             SelectEntity(selected);
-            Oy.Publish("MapDocument:Viewport:Focus2D", selected.BoundingBox.Center);
-            Oy.Publish("MapDocument:Viewport:Focus3D", selected.BoundingBox.Center);
+            Oy.Publish("MapDocument:Viewport:Focus2D", selected.BoundingBox);
+            Oy.Publish("MapDocument:Viewport:Focus3D", selected.BoundingBox);
         }
 
         private void DeleteSelectedEntity(object sender, EventArgs e)

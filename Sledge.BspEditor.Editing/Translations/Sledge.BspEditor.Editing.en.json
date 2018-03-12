@@ -97,6 +97,20 @@
                 "Name": "Unload pointfile",
                 "Details": "Clear the currently loaded pointfile."
             }
+        },
+        "View": {
+            "CenterSelectionAll": {
+                "Name": "Center all views on selection",
+                "Details": "Move the cameras of all views to focus on the selected objects."
+            },
+            "CenterSelection3D": {
+                "Name": "Center 3D views on selection",
+                "Details": "Move the cameras of 3D views to focus on the selected objects."
+            },
+            "CenterSelection2D": {
+                "Name": "Center 2D views on selection",
+                "Details": "Move the cameras of 2D views to focus on the selected objects."
+            }
         }
     },
     "Components": {

@@ -268,36 +268,6 @@ namespace Sledge.Editor.Documents
             FlipObjects(new Coordinate(1, 1, -1));
         }
 
-        public void CenterAllViewsOnSelection()
-        {
-            var box = _document.Selection.GetSelectionBoundingBox()
-                      ?? new Box(Coordinate.Zero, Coordinate.Zero);
-            foreach (var vp in ViewportManager.Viewports)
-            {
-                vp.FocusOn(box);
-            }
-        }
-
-        public void Center2DViewsOnSelection()
-        {
-            var box = _document.Selection.GetSelectionBoundingBox()
-                      ?? new Box(Coordinate.Zero, Coordinate.Zero);
-            foreach (var vp in ViewportManager.Viewports.Where(x => x.Is2D))
-            {
-                vp.FocusOn(box);
-            }
-        }
-
-        public void Center3DViewsOnSelection()
-        {
-            var box = _document.Selection.GetSelectionBoundingBox()
-                      ?? new Box(Coordinate.Zero, Coordinate.Zero);
-            foreach (var vp in ViewportManager.Viewports.Where(x => x.Is3D))
-            {
-                vp.FocusOn(box);
-            }
-        }
-
         public void GoToCoordinates()
         {
             using (var qf = new QuickForm("Enter Coordinates") { LabelWidth = 50, UseShortcutKeys = true }

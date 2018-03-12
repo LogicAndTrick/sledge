@@ -83,9 +83,59 @@ namespace Sledge.BspEditor.Editing.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap Menu_CenterSelection2D {
+            get {
+                object obj = ResourceManager.GetObject("Menu_CenterSelection2D", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Menu_CenterSelection3D {
+            get {
+                object obj = ResourceManager.GetObject("Menu_CenterSelection3D", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Menu_CenterSelectionAll {
+            get {
+                object obj = ResourceManager.GetObject("Menu_CenterSelectionAll", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap Menu_EntityReport {
             get {
                 object obj = ResourceManager.GetObject("Menu_EntityReport", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Menu_GoToBrushID {
+            get {
+                object obj = ResourceManager.GetObject("Menu_GoToBrushID", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Menu_GoToCoordinates {
+            get {
+                object obj = ResourceManager.GetObject("Menu_GoToCoordinates", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
