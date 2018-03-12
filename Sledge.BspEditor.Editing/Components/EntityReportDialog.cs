@@ -17,6 +17,7 @@ using Sledge.Common.Shell.Commands;
 using Sledge.Common.Shell.Components;
 using Sledge.Common.Shell.Context;
 using Sledge.Common.Translations;
+using Sledge.DataStructures.Geometric;
 using Sledge.Shell;
 
 namespace Sledge.BspEditor.Editing.Components
@@ -146,13 +147,16 @@ namespace Sledge.BspEditor.Editing.Components
 
         private void SetSelected(IMapObject selection)
         {
-            if (selection == null) return;
+            this.InvokeLater(() =>
+            {
+                if (selection == null) return;
 
-            var item = EntityList.Items.OfType<ListViewItem>().FirstOrDefault(x => x.Tag == selection);
-            if (item == null) return;
+                var item = EntityList.Items.OfType<ListViewItem>().FirstOrDefault(x => x.Tag == selection);
+                if (item == null) return;
 
-            item.Selected = true;
-            EntityList.EnsureVisible(EntityList.Items.IndexOf(item));
+                item.Selected = true;
+                EntityList.EnsureVisible(EntityList.Items.IndexOf(item));
+            });
         }
 
         private void FiltersChanged(object sender, EventArgs e)
@@ -277,7 +281,8 @@ namespace Sledge.BspEditor.Editing.Components
             var selected = GetSelected();
             if (selected == null) return;
             SelectEntity(selected);
-            // todo! Mediator.Publish(HotkeysMediator.CenterAllViewsOnSelection);
+            Oy.Publish("MapDocument:Viewport:Focus2D", selected.BoundingBox.Center);
+            Oy.Publish("MapDocument:Viewport:Focus3D", selected.BoundingBox.Center);
         }
 
         private void DeleteSelectedEntity(object sender, EventArgs e)

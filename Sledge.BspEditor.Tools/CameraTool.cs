@@ -6,7 +6,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using LogicAndTrick.Oy;
-using OpenTK.Graphics.OpenGL;
 using Sledge.BspEditor.Components;
 using Sledge.BspEditor.Primitives.MapData;
 using Sledge.BspEditor.Rendering;

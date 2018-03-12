@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -6,6 +7,7 @@ using LogicAndTrick.Oy;
 using Sledge.BspEditor.Components;
 using Sledge.BspEditor.Documents;
 using Sledge.Common.Shell.Documents;
+using Sledge.DataStructures.Geometric;
 using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Interfaces;
 
@@ -41,8 +43,46 @@ namespace Sledge.BspEditor.Rendering.Viewport
             _panel = new Panel {Dock = DockStyle.Fill};
             _subscriptions = new List<Subscription>
             {
-                Oy.Subscribe<IDocument>("Document:Activated", DocumentActivated)
+                Oy.Subscribe<IDocument>("Document:Activated", DocumentActivated),
+                Oy.Subscribe<Coordinate>("MapDocument:Viewport:Focus2D", Focus2D),
+                Oy.Subscribe<Coordinate>("MapDocument:Viewport:Focus3D", Focus3D),
+                Oy.Subscribe<Tuple<Coordinate, Coordinate>>("MapDocument:Viewport:Set3D", Set3D),
+                Oy.Subscribe<Coordinate>("MapDocument:Viewport:Set2D", Set2D),
             };
+        }
+
+        private Task Set3D(Tuple<Coordinate, Coordinate> pair)
+        {
+            if (Camera is PerspectiveCamera cam)
+            {
+                var position = pair.Item1;
+                var look = pair.Item2;
+                look = (look - position).Normalise() + position;
+                cam.Position = position.ToVector3();
+                cam.LookAt = look.ToVector3();
+            }
+            return Task.FromResult(0);
+        }
+
+        private Task Set2D(Coordinate center)
+        {
+            if (Camera is OrthographicCamera cam)
+            {
+                cam.Position = center.ToVector3();
+            }
+            return Task.FromResult(0);
+        }
+
+        private Task Focus2D(Coordinate c)
+        {
+            if (Camera is OrthographicCamera) _mapViewport.FocusOn(c);
+            return Task.FromResult(0);
+        }
+
+        private Task Focus3D(Coordinate c)
+        {
+            if (Camera is PerspectiveCamera) _mapViewport.FocusOn(c);
+            return Task.FromResult(0);
         }
 
         private async Task DocumentActivated(IDocument doc)
