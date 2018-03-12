@@ -31,7 +31,7 @@
             this.EntityList = new System.Windows.Forms.ListView();
             this.ClassNameHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.EntityNameHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.FilterGroup = new System.Windows.Forms.GroupBox();
             this.ResetFiltersButton = new System.Windows.Forms.Button();
             this.IncludeHidden = new System.Windows.Forms.CheckBox();
             this.FilterClassExact = new System.Windows.Forms.CheckBox();
@@ -50,7 +50,7 @@
             this.PropertiesButton = new System.Windows.Forms.Button();
             this.CloseButton = new System.Windows.Forms.Button();
             this.FollowSelection = new System.Windows.Forms.CheckBox();
-            this.groupBox1.SuspendLayout();
+            this.FilterGroup.SuspendLayout();
             this.SuspendLayout();
             // 
             // EntityList
@@ -82,29 +82,29 @@
             this.EntityNameHeader.Text = "Name";
             this.EntityNameHeader.Width = 153;
             // 
-            // groupBox1
+            // FilterGroup
             // 
-            this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.FilterGroup.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBox1.Controls.Add(this.ResetFiltersButton);
-            this.groupBox1.Controls.Add(this.IncludeHidden);
-            this.groupBox1.Controls.Add(this.FilterClassExact);
-            this.groupBox1.Controls.Add(this.FilterKeyValueExact);
-            this.groupBox1.Controls.Add(this.label2);
-            this.groupBox1.Controls.Add(this.FilterValue);
-            this.groupBox1.Controls.Add(this.FilterClass);
-            this.groupBox1.Controls.Add(this.FilterByClassLabel);
-            this.groupBox1.Controls.Add(this.FilterKey);
-            this.groupBox1.Controls.Add(this.FilterByKeyValueLabel);
-            this.groupBox1.Controls.Add(this.TypeBrush);
-            this.groupBox1.Controls.Add(this.TypePoint);
-            this.groupBox1.Controls.Add(this.TypeAll);
-            this.groupBox1.Location = new System.Drawing.Point(326, 12);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(178, 242);
-            this.groupBox1.TabIndex = 1;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Filter";
+            this.FilterGroup.Controls.Add(this.ResetFiltersButton);
+            this.FilterGroup.Controls.Add(this.IncludeHidden);
+            this.FilterGroup.Controls.Add(this.FilterClassExact);
+            this.FilterGroup.Controls.Add(this.FilterKeyValueExact);
+            this.FilterGroup.Controls.Add(this.label2);
+            this.FilterGroup.Controls.Add(this.FilterValue);
+            this.FilterGroup.Controls.Add(this.FilterClass);
+            this.FilterGroup.Controls.Add(this.FilterByClassLabel);
+            this.FilterGroup.Controls.Add(this.FilterKey);
+            this.FilterGroup.Controls.Add(this.FilterByKeyValueLabel);
+            this.FilterGroup.Controls.Add(this.TypeBrush);
+            this.FilterGroup.Controls.Add(this.TypePoint);
+            this.FilterGroup.Controls.Add(this.TypeAll);
+            this.FilterGroup.Location = new System.Drawing.Point(326, 12);
+            this.FilterGroup.Name = "FilterGroup";
+            this.FilterGroup.Size = new System.Drawing.Size(178, 242);
+            this.FilterGroup.TabIndex = 1;
+            this.FilterGroup.TabStop = false;
+            this.FilterGroup.Text = "Filter";
             // 
             // ResetFiltersButton
             // 
@@ -305,7 +305,7 @@
             this.Controls.Add(this.PropertiesButton);
             this.Controls.Add(this.DeleteButton);
             this.Controls.Add(this.GoToButton);
-            this.Controls.Add(this.groupBox1);
+            this.Controls.Add(this.FilterGroup);
             this.Controls.Add(this.EntityList);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
@@ -314,8 +314,8 @@
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Entity Report";
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
+            this.FilterGroup.ResumeLayout(false);
+            this.FilterGroup.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -326,7 +326,7 @@
         private System.Windows.Forms.ListView EntityList;
         private System.Windows.Forms.ColumnHeader ClassNameHeader;
         private System.Windows.Forms.ColumnHeader EntityNameHeader;
-        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.GroupBox FilterGroup;
         private System.Windows.Forms.RadioButton TypeBrush;
         private System.Windows.Forms.RadioButton TypePoint;
         private System.Windows.Forms.RadioButton TypeAll;

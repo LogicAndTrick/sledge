@@ -28,6 +28,7 @@ namespace Sledge.BspEditor.Editing.Components
 
         #region Translations
 
+        public string Title { set => this.InvokeLater(() => Text = value); }
         public string Solids { set => this.InvokeLater(() => SolidsLabel.Text = value); }
         public string Faces { set => this.InvokeLater(() => FacesLabel.Text = value); }
         public string PointEntities { set => this.InvokeLater(() => PointEntitiesLabel.Text = value); }

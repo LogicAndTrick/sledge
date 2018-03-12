@@ -24,7 +24,7 @@ namespace Sledge.BspEditor.Editing.Components
 {
     [Export(typeof(IDialog))]
     [AutoTranslate]
-    public partial class EntityReportDialog : Form, IDialog
+    public partial class EntityReportDialog : Form, IDialog, IManualTranslate
     {
         [Import("Shell", typeof(Form))] private Lazy<Form> _parent;
         [Import] private IContext _context;
@@ -56,7 +56,6 @@ namespace Sledge.BspEditor.Editing.Components
         public EntityReportDialog()
         {
             InitializeComponent();
-            CreateHandle();
 
             _sorter = new ColumnComparer(0);
             EntityList.ListViewItemSorter = _sorter;
@@ -64,7 +63,29 @@ namespace Sledge.BspEditor.Editing.Components
 
         public void Translate(TranslationStringsCollection strings)
         {
-            
+            CreateHandle();
+            var prefix = GetType().FullName;
+            this.InvokeLater(() =>
+            {
+                Text = strings.GetString(prefix, "Title");
+                ClassNameHeader.Text = strings.GetString(prefix, "ClassHeader");
+                EntityNameHeader.Text = strings.GetString(prefix, "NameHeader");
+                GoToButton.Text = strings.GetString(prefix, "GoTo");
+                DeleteButton.Text = strings.GetString(prefix, "Delete");
+                PropertiesButton.Text = strings.GetString(prefix, "Properties");
+                FollowSelection.Text = strings.GetString(prefix, "FollowSelection");
+                FilterGroup.Text = strings.GetString(prefix, "Filter");
+                TypeAll.Text = strings.GetString(prefix, "ShowAll");
+                TypePoint.Text = strings.GetString(prefix, "ShowPoint");
+                TypeBrush.Text = strings.GetString(prefix, "ShowBrush");
+                IncludeHidden.Text = strings.GetString(prefix, "IncludeHidden");
+                FilterByKeyValueLabel.Text = strings.GetString(prefix, "FilterByKeyValue");
+                FilterByClassLabel.Text = strings.GetString(prefix, "FilterByClass");
+                FilterClassExact.Text = strings.GetString(prefix, "Exact");
+                FilterKeyValueExact.Text = strings.GetString(prefix, "Exact");
+                ResetFiltersButton.Text = strings.GetString(prefix, "ResetFilters");
+                CloseButton.Text = strings.GetString(prefix, "Close");
+            });
         }
 
         protected override void OnClosing(CancelEventArgs e)

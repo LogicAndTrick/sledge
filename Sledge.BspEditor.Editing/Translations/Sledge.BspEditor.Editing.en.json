@@ -215,9 +215,26 @@
             } 
         },
         "EntityReportDialog": {
-
+            "Title": "Entity Report",
+            "ClassHeader": "Class",
+            "NameHeader": "Name",
+            "GoTo": "Go to",
+            "Delete": "Delete",
+            "Properties": "Properties",
+            "FollowSelection": "Follow selection",
+            "Filter": "Filter",
+            "ShowAll": "Show all",
+            "ShowPoint": "Point entities only",
+            "ShowBrush": "Brush entities only",
+            "IncludeHidden": "Include hidden objects",
+            "FilterByKeyValue": "Filter by key/value:",
+            "Exact": "Exact",
+            "FilterByClass": "Filter by class",
+            "ResetFilters": "Reset filters",
+            "Close": "Close"
         },
         "MapInformationDialog": {
+            "Title": "Map Information",
             "Solids": "Solids",
             "Faces": "Faces",
             "PointEntities": "Point entities",
