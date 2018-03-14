@@ -114,6 +114,21 @@
             "CenterSelection2D": {
                 "Name": "Center 2D views on selection",
                 "Details": "Move the cameras of 2D views to focus on the selected objects."
+            },
+            "GoToObjectID": {
+                "Name": "Go to object ID",
+                "Details": "Select and center views on a specific object ID.",
+                "Title": "Enter ID",
+                "ObjectID": "Object ID",
+                "OK": "OK",
+                "Cancel": "Cancel"
+            },
+            "GoToLocation": {
+                "Name": "Go to locationn",
+                "Details": "Center views on a specific set of coordinates.",
+                "Title": "Enter Coordinates",
+                "OK": "OK",
+                "Cancel": "Cancel"
             }
         }
     },
