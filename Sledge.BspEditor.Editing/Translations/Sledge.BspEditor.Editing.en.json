@@ -24,6 +24,10 @@
             "Name": "Entity report",
             "Details": "Open the entity report window."
         },
+        "OpenSelectionDetails": {
+            "Name": "Show selected brush information",
+            "Details": "Show details of the currently selected objects."
+        },
         "OpenMapInformation": {
             "Name": "Map information",
             "Details": "Open the map information window."
@@ -257,6 +261,9 @@
             "TextureMemory": "Texture memory",
             "TexturePackagesUsed": "Texuture packages used",
             "CloseButton": "Close"
+        },
+        "SelectionDetailsDialog": {
+            "Title": "Selection Details"
         }
     } 
 }

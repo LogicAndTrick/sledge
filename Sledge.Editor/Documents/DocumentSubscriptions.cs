@@ -50,111 +50,6 @@ namespace Sledge.Editor.Documents
             _document.PerformAction("Show hidden objects", new QuickShowObjects(objects));
         }
 
-        private class EntityContainer
-        {
-            public Entity Entity { get; set; }
-            public override string ToString()
-            {
-                var name = Entity.EntityData.Properties.FirstOrDefault(x => x.Key.ToLower() == "targetname");
-                if (name != null) return name.Value + " (" + Entity.EntityData.Name + ")";
-                return Entity.EntityData.Name;
-            }
-        }
-
-        public void TieToEntity()
-        {
-            if (_document.Selection.IsEmpty() || _document.Selection.InFaceSelection) return;
-
-            var entities = _document.Selection.GetSelectedObjects().OfType<Entity>().ToList();
-
-            Entity existing = null;
-                
-            if (entities.Count == 1)
-            {
-                var result = new QuickForms.QuickForm("Existing Entity in Selection") { Width = 400 }
-                    .Label(String.Format("You have selected an existing entity (a '{0}'), how would you like to proceed?", entities[0].ClassName))
-                    .Label(" - Keep the existing entity and add the selected items to the entity")
-                    .Label(" - Create a new entity and add the selected items to the new entity")
-                    .Item(new QuickFormDialogButtons()
-                              .Button("Keep Existing", DialogResult.Yes)
-                              .Button("Create New", DialogResult.No)
-                              .Button("Cancel", DialogResult.Cancel))
-                    .ShowDialog();
-                if (result == DialogResult.Yes)
-                {
-                    existing = entities[0];
-                }
-            }
-            else if (entities.Count > 1)
-            {
-                var qf = new QuickForms.QuickForm("Multiple Entities Selected") {Width = 400}
-                    .Label("You have selected multiple entities, which one would you like to keep?")
-                    .ComboBox("Entity", entities.Select(x => new EntityContainer {Entity = x}))
-                    .OkCancel();
-                var result = qf.ShowDialog();
-                if (result == DialogResult.OK)
-                {
-                    var cont = qf.Object("Entity") as EntityContainer;
-                    if (cont != null) existing = cont.Entity;
-                }
-            }
-
-            var ac = new ActionCollection();
-
-            if (existing == null)
-            {
-                var def = _document.Game.DefaultBrushEntity;
-                var entity = _document.GameData.Classes.FirstOrDefault(x => x.Name.ToLower() == def.ToLower())
-                             ?? _document.GameData.Classes.Where(x => x.ClassType == ClassType.Solid)
-                                 .OrderBy(x => x.Name.StartsWith("trigger_once") ? 0 : 1)
-                                 .FirstOrDefault();
-                if (entity == null)
-                {
-                    MessageBox.Show("No solid entities found. Please make sure your FGDs are configured correctly.", "No entities found!");
-                    return;
-                }
-                existing = new Entity(_document.Map.IDGenerator.GetNextObjectID())
-                {
-                    EntityData = new EntityData(entity),
-                    ClassName = entity.Name,
-                    Colour = Colour.GetDefaultEntityColour()
-                };
-                ac.Add(new Create(_document.Map.WorldSpawn.ID, existing));
-            }
-            else
-            {
-                // Move the new parent to the root, in case it is a descendant of a selected parent...
-                ac.Add(new Reparent(_document.Map.WorldSpawn.ID, new[] { existing }));
-
-                // todo: get rid of all the other entities...
-            }
-                
-            var reparent = _document.Selection.GetSelectedParents().Where(x => x != existing).ToList();
-            ac.Add(new Reparent(existing.ID, reparent));
-            ac.Add(new Actions.MapObjects.Selection.Select(existing));
-
-            _document.PerformAction("Tie to Entity", ac);
-
-            if (Sledge.Settings.Select.OpenObjectPropertiesWhenCreatingEntity && !ObjectPropertiesDialog.IsShowing)
-            {
-                Mediator.Publish(HotkeysMediator.ObjectProperties);
-            }
-        }
-
-        public void TieToWorld()
-        {
-            if (_document.Selection.IsEmpty() || _document.Selection.InFaceSelection) return;
-
-            var entities = _document.Selection.GetSelectedObjects().OfType<Entity>().ToList();
-            var children = entities.SelectMany(x => x.GetChildren()).ToList();
-
-            var ac = new ActionCollection();
-            ac.Add(new Reparent(_document.Map.WorldSpawn.ID, children));
-            ac.Add(new Delete(entities.Select(x => x.ID)));
-
-            _document.PerformAction("Tie to World", ac);
-        }
-
         public void RotateClockwise()
         {
             if (_document.Selection.IsEmpty() || _document.Selection.InFaceSelection) return;
@@ -334,15 +229,6 @@ namespace Sledge.Editor.Documents
             {
                 cfpd.ShowDialog(Editor.Instance);
             }
-        }
-
-        public void SetZoomValue(decimal value)
-        {
-            foreach (var vp in ViewportManager.Viewports.Select(x => x.Viewport.Camera).OfType<OrthographicCamera>())
-            {
-                vp.Zoom = (float) value;
-            }
-            Mediator.Publish(EditorMediator.ViewZoomChanged, value);
         }
     }
 }

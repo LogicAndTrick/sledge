@@ -2,6 +2,7 @@
 using System.ComponentModel.Composition;
 using System.Windows.Forms;
 using LogicAndTrick.Oy;
+using Sledge.Common.Shell.Commands;
 using Sledge.Common.Shell.Components;
 using Sledge.Common.Shell.Context;
 
@@ -90,13 +91,12 @@ namespace Sledge.BspEditor.Tools.Selection
 
         private void MoveToWorldButtonClicked(object sender, EventArgs e)
         {
-            // Oy.Publish("TieToWorld", new object());
+            Oy.Publish("Command:Run", new CommandMessage("BspEditor:Tools:MoveToWorld"));
         }
 
         private void TieToEntityButtonClicked(object sender, EventArgs e)
         {
-            // todo !commands
-            // Oy.Publish("TieToEntity", new object());
+            Oy.Publish("Command:Run", new CommandMessage("BspEditor:Tools:TieToEntity"));
         }
     }
 }

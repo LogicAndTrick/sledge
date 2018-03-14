@@ -211,6 +211,7 @@
       <DependentUpon>TextureSidebarPanel.cs</DependentUpon>
     </Compile>
     <Compile Include="ToolInitialiser.cs" />
+    <Compile Include="ToolProcessor.cs" />
     <Compile Include="ToolSceneObjectProvider.cs" />
     <Compile Include="ToolSceneObjectProviderFactory.cs" />
     <Compile Include="ToolStatusItem.cs" />

@@ -60,6 +60,7 @@
     <Compile Include="Commands\Carve.cs" />
     <Compile Include="Commands\EditVisgroups.cs" />
     <Compile Include="Commands\MoveToWorld.cs" />
+    <Compile Include="Commands\OpenSelectionDetails.cs" />
     <Compile Include="Commands\OpenMapInformation.cs" />
     <Compile Include="Commands\OpenEntityReport.cs" />
     <Compile Include="Commands\OpenRootProperties.cs" />
@@ -212,6 +213,12 @@
     <Compile Include="Components\Properties\Tabs\VisgroupTab.designer.cs">
       <DependentUpon>VisgroupTab.cs</DependentUpon>
     </Compile>
+    <Compile Include="Components\SelectionDetailsDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Components\SelectionDetailsDialog.Designer.cs">
+      <DependentUpon>SelectionDetailsDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="Components\TransformDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -341,6 +348,9 @@
     <EmbeddedResource Include="Components\Properties\Tabs\VisgroupTab.resx">
       <DependentUpon>VisgroupTab.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Components\SelectionDetailsDialog.resx">
+      <DependentUpon>SelectionDetailsDialog.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Components\TransformDialog.resx">
       <DependentUpon>TransformDialog.cs</DependentUpon>
     </EmbeddedResource>
@@ -384,6 +394,7 @@
     <Content Include="Resources\Menu_QuickLoadPointfile.png" />
     <Content Include="Resources\Menu_Redo.png" />
     <Content Include="Resources\Menu_Run.png" />
+    <Content Include="Resources\Menu_ShowBrushID.png" />
     <Content Include="Resources\Menu_ShowInformation.png" />
     <Content Include="Resources\Menu_TextureLock.png" />
     <Content Include="Resources\Menu_TextureScalingLock.png" />

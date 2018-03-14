@@ -67,6 +67,7 @@ namespace Sledge.BspEditor.Tools.Texture
         private void SetActiveTexture(ITextured tex)
         {
             _sampled = tex;
+            if (tex == null) return;
             var at = new ActiveTexture {Name = _sampled?.Texture.Name};
             MapDocumentOperation.Perform(Document, new TrivialOperation(x => x.Map.Data.Replace(at), x => x.Update(at)));
         }
