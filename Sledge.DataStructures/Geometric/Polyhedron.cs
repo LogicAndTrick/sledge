@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
-using Sledge.DataStructures.Transformations;
 
 namespace Sledge.DataStructures.Geometric
 {
@@ -92,23 +91,6 @@ namespace Sledge.DataStructures.Geometric
             return !GetCoplanarPolygons().Any()
                    && !GetBackwardsPolygons(epsilon).Any()
                    && Polygons.All(x => x.IsConvex() && x.IsValid());
-        }
-
-        /// <summary>
-        /// Transforms all the points in the polyhedron.
-        /// </summary>
-        /// <param name="transform">The transformation to perform</param>
-        public void Transform(IUnitTransformation transform)
-        {
-            Polygons.ForEach(x => x.Transform(transform));
-
-            // Handle flip transforms / negative scales
-            var origin = GetOrigin();
-            if (Polygons.All(x => x.GetPlane().OnPlane(origin) >= 0))
-            {
-                // All planes are facing inwards - flip them all
-                Polygons.ForEach(x => x.Flip());
-            }
         }
 
         /// <summary>

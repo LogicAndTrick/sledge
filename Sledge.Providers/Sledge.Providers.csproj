@@ -76,10 +76,6 @@
     <Compile Include="GameData\IGameDataProvider.cs" />
     <Compile Include="GenericStructure.cs" />
     <Compile Include="BinaryExtensions.cs" />
-    <Compile Include="Map\MapFormatProvider.cs" />
-    <Compile Include="Map\MapProvider.cs" />
-    <Compile Include="Map\ObjProvider.cs" />
-    <Compile Include="Map\VmfProvider.cs" />
     <Compile Include="Model\MdlProvider.cs" />
     <Compile Include="Model\ModelProvider.cs" />
     <Compile Include="Model\ModelReference.cs" />
@@ -126,9 +122,6 @@
       <Project>{4da7f88d-64ff-4036-8a11-6175169da851}</Project>
       <Name>Sledge.Rendering</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Map\RMF22.txt" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

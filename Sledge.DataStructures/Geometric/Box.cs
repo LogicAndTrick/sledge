@@ -2,14 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
-using Sledge.DataStructures.Transformations;
 
 namespace Sledge.DataStructures.Geometric
 {
     [Serializable]
     public class Box : ISerializable
     {
-        public readonly static Box Empty = new Box(Coordinate.Zero, Coordinate.Zero);
+        public static readonly Box Empty = new Box(Coordinate.Zero, Coordinate.Zero);
 
         public Coordinate Start { get; private set; }
         public Coordinate End { get; private set; }

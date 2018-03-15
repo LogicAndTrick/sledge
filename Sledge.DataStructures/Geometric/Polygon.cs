@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
-using Sledge.DataStructures.Transformations;
 
 namespace Sledge.DataStructures.Geometric
 {
@@ -123,15 +122,6 @@ namespace Sledge.DataStructures.Geometric
                     Vertices.RemoveAt(i + 1);
                 }
             }
-        }
-
-        /// <summary>
-        /// Transforms all the points in the polygon.
-        /// </summary>
-        /// <param name="transform">The transformation to perform</param>
-        public void Transform(IUnitTransformation transform)
-        {
-            Vertices = Vertices.Select(transform.Transform).ToList();
         }
 
         public bool IsConvex(decimal epsilon = 0.001m)

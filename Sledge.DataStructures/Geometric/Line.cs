@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Runtime.Serialization;
-using Sledge.DataStructures.Transformations;
 
 namespace Sledge.DataStructures.Geometric
 {
@@ -68,11 +67,6 @@ namespace Sledge.DataStructures.Geometric
             if (start <= 0 && end <= 0) return PlaneClassification.Back;
             if (start >= 0 && end >= 0) return PlaneClassification.Front;
             return PlaneClassification.Spanning;
-        }
-
-        public Line Transform(IUnitTransformation transform)
-        {
-            return new Line(transform.Transform(Start), transform.Transform(End));
         }
 
         public bool EquivalentTo(Line other, decimal delta = 0.0001m)

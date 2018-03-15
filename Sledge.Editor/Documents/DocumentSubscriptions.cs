@@ -1,16 +1,7 @@
-using System;
-using System.Drawing;
-using System.Linq;
-using System.Windows.Forms;
 using Sledge.Common;
-using Sledge.DataStructures.GameData;
 using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.MapObjects;
 using Sledge.DataStructures.Transformations;
-using Sledge.QuickForms;
-using Sledge.QuickForms.Items;
-using Sledge.Rendering.Cameras;
-using Sledge.Settings;
 
 namespace Sledge.Editor.Documents
 {
