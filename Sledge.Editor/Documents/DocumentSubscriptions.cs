@@ -76,27 +76,6 @@ namespace Sledge.Editor.Documents
             _document.PerformAction("Transform selection", new Edit(selected, new TransformEditOperation(transform, _document.Map.GetTransformFlags())));
         }
 
-        public void SnapSelectionToGrid()
-        {
-            if (_document.Selection.IsEmpty() || _document.Selection.InFaceSelection) return;
-
-            var selected = _document.Selection.GetSelectedParents();
-
-            var box = _document.Selection.GetSelectionBoundingBox();
-            var transform = GetSnapTransform(box);
-
-            _document.PerformAction("Snap to grid", new Edit(selected, new TransformEditOperation(transform, _document.Map.GetTransformFlags())));
-        }
-
-        public void SnapSelectionToGridIndividually()
-        {
-            if (_document.Selection.IsEmpty() || _document.Selection.InFaceSelection) return;
-
-            var selected = _document.Selection.GetSelectedParents();
-
-            _document.PerformAction("Snap to grid individually", new Edit(selected, new SnapToGridEditOperation(_document.Map.GridSpacing, _document.Map.GetTransformFlags())));
-        }
-
         private void AlignObjects(AlignObjectsEditOperation.AlignAxis axis, AlignObjectsEditOperation.AlignDirection direction)
         {
             if (_document.Selection.IsEmpty() || _document.Selection.InFaceSelection) return;

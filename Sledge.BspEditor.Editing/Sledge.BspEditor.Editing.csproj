@@ -57,7 +57,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Commands\Carve.cs" />
+    <Compile Include="Commands\Modification\SnapToGrid.cs" />
+    <Compile Include="Commands\Modification\Carve.cs" />
     <Compile Include="Commands\EditVisgroups.cs" />
     <Compile Include="Commands\MoveToWorld.cs" />
     <Compile Include="Commands\OpenSelectionDetails.cs" />
@@ -72,14 +73,14 @@
     <Compile Include="Commands\Pointfile\Pointfile.cs" />
     <Compile Include="Commands\Pointfile\PointfileConverter.cs" />
     <Compile Include="Commands\TieToEntity.cs" />
-    <Compile Include="Commands\Hollow.cs" />
+    <Compile Include="Commands\Modification\Hollow.cs" />
     <Compile Include="Commands\OpenObjectProperties.cs" />
     <Compile Include="Commands\OpenAboutWindow.cs" />
     <Compile Include="Commands\PasteSpecial.cs" />
     <Compile Include="Commands\Toggles\ToggleHideNullTextures.cs" />
     <Compile Include="Commands\Toggles\ToggleTextureLock.cs" />
     <Compile Include="Commands\Toggles\ToggleTextureScalingLock.cs" />
-    <Compile Include="Commands\Transform.cs" />
+    <Compile Include="Commands\Modification\Transform.cs" />
     <Compile Include="Commands\View\CenterSelection2D.cs" />
     <Compile Include="Commands\View\CenterSelection3D.cs" />
     <Compile Include="Commands\View\GoToLocation.cs" />
@@ -398,6 +399,8 @@
     <Content Include="Resources\Menu_Run.png" />
     <Content Include="Resources\Menu_ShowBrushID.png" />
     <Content Include="Resources\Menu_ShowInformation.png" />
+    <Content Include="Resources\Menu_SnapSelection.png" />
+    <Content Include="Resources\Menu_SnapSelectionIndividual.png" />
     <Content Include="Resources\Menu_TextureLock.png" />
     <Content Include="Resources\Menu_TextureScalingLock.png" />
     <Content Include="Resources\Menu_TieToEntity.png" />

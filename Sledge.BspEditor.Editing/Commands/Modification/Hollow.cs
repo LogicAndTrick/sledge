@@ -19,7 +19,7 @@ using Sledge.Common.Translations;
 using Sledge.DataStructures.Geometric;
 using Sledge.QuickForms;
 
-namespace Sledge.BspEditor.Editing.Commands
+namespace Sledge.BspEditor.Editing.Commands.Modification
 {
     [AutoTranslate]
     [Export(typeof(ICommand))]

@@ -44,25 +44,6 @@
             "Name": "Paste special...",
             "Details": "Paste multiple copies with a transformation applied."
         },
-        "Carve": {
-            "Name": "Carve",
-            "Details": "Carve the selection into any brushes it overlaps. (Use with caution)"
-        },
-        "Hollow": {
-            "Name": "Make hollow...",
-            "Details": "Make the selected solids hollow. (Use with caution)",
-            "PromptTitle": "Select wall width",
-            "PromptWallWidth": "Wall width (negative to hollow outwards)",
-            "WarningMessage": "This will hollow all {0} solids that are selected.",
-            "OK": "OK",
-            "Cancel": "Cancel"
-        },
-        "Transform": {
-            "Name": "Transform...",
-            "Details": "Transform the current selection.",
-            "ErrorCannotScaleByZeroTitle": "Cannot scale by zero",
-            "ErrorCannotScaleByZeroMessage": "Please enter a non-zero value for all axes when scaling."
-        },
         "TieToEntity": {
             "Name": "Tie to entity",
             "Details": "Create an entity out of the currently selected objects.",
@@ -73,6 +54,35 @@
             "CreateNew": "Create new",
             "OK": "OK",
             "Cancel": "Cancel"
+        },
+        "Modification": {
+            "Carve": {
+                "Name": "Carve",
+                "Details": "Carve the selection into any brushes it overlaps. (Use with caution)"
+            },
+            "Hollow": {
+                "Name": "Make hollow...",
+                "Details": "Make the selected solids hollow. (Use with caution)",
+                "PromptTitle": "Select wall width",
+                "PromptWallWidth": "Wall width (negative to hollow outwards)",
+                "WarningMessage": "This will hollow all {0} solids that are selected.",
+                "OK": "OK",
+                "Cancel": "Cancel"
+            },
+            "Transform": {
+                "Name": "Transform...",
+                "Details": "Transform the current selection.",
+                "ErrorCannotScaleByZeroTitle": "Cannot scale by zero",
+                "ErrorCannotScaleByZeroMessage": "Please enter a non-zero value for all axes when scaling."
+            },
+            "SnapToGrid": {
+                "Name": "Snap to grid",
+                "Details": "Snap the whole selection to the grid in one piece."
+            },
+            "SnapToGridIndividually": {
+                "Name": "Snap to grid individually",
+                "Details": "Snap each selected object to grid as separate objects."
+            }
         },
         "Toggles": {
             "ToggleTextureLock": {

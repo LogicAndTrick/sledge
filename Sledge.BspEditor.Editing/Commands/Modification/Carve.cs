@@ -15,7 +15,7 @@ using Sledge.Common.Shell.Hotkeys;
 using Sledge.Common.Shell.Menu;
 using Sledge.Common.Translations;
 
-namespace Sledge.BspEditor.Editing.Commands
+namespace Sledge.BspEditor.Editing.Commands.Modification
 {
     [AutoTranslate]
     [Export(typeof(ICommand))]

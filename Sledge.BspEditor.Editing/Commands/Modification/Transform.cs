@@ -17,7 +17,7 @@ using Sledge.Common.Shell.Hotkeys;
 using Sledge.Common.Shell.Menu;
 using Sledge.Common.Translations;
 
-namespace Sledge.BspEditor.Editing.Commands
+namespace Sledge.BspEditor.Editing.Commands.Modification
 {
     [AutoTranslate]
     [Export(typeof(ICommand))]
@@ -56,7 +56,7 @@ namespace Sledge.BspEditor.Editing.Commands
 
                         // Add the operation
                         var transform = dialog.GetTransformation(box);
-                        var transformOperation = new Modification.Operations.Mutation.Transform(transform, objects);
+                        var transformOperation = new BspEditor.Modification.Operations.Mutation.Transform(transform, objects);
                         transaction.Add(transformOperation);
 
                         // Check for texture transform
