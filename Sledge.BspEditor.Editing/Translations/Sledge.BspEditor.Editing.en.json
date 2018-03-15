@@ -82,6 +82,30 @@
             "SnapToGridIndividually": {
                 "Name": "Snap to grid individually",
                 "Details": "Snap each selected object to grid as separate objects."
+            },
+            "AlignObjectsXMin": {
+                "Name": "Align to X axis minimum",
+                "Details": "Align selected objects to the minimum X value in the selection."
+            },
+            "AlignObjectsYMin": {
+                "Name": "Align to Y axis minimum",
+                "Details": "Align selected objects to the minimum Y value in the selection."
+            },
+            "AlignObjectsZMin": {
+                "Name": "Align to Z axis minimum",
+                "Details": "Align selected objects to the minimum Z value in the selection."
+            },
+            "AlignObjectsXMax": {
+                "Name": "Align to X axis maximum",
+                "Details": "Align selected objects to the maximum X value in the selection."
+            },
+            "AlignObjectsYMax": {
+                "Name": "Align to Y axis maximum",
+                "Details": "Align selected objects to the maximum Y value in the selection."
+            },
+            "AlignObjectsZMax": {
+                "Name": "Align to Z axis maximum",
+                "Details": "Align selected objects to the maximum Z value in the selection."
             }
         },
         "Toggles": {

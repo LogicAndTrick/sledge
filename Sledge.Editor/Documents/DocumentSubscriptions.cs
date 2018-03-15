@@ -76,46 +76,6 @@ namespace Sledge.Editor.Documents
             _document.PerformAction("Transform selection", new Edit(selected, new TransformEditOperation(transform, _document.Map.GetTransformFlags())));
         }
 
-        private void AlignObjects(AlignObjectsEditOperation.AlignAxis axis, AlignObjectsEditOperation.AlignDirection direction)
-        {
-            if (_document.Selection.IsEmpty() || _document.Selection.InFaceSelection) return;
-
-            var selected = _document.Selection.GetSelectedParents();
-            var box = _document.Selection.GetSelectionBoundingBox();
-
-            _document.PerformAction("Align Objects", new Edit(selected, new AlignObjectsEditOperation(box, axis, direction, _document.Map.GetTransformFlags())));
-        }
-
-        public void AlignXMax()
-        {
-            AlignObjects(AlignObjectsEditOperation.AlignAxis.X, AlignObjectsEditOperation.AlignDirection.Max);
-        }
-
-        public void AlignXMin()
-        {
-            AlignObjects(AlignObjectsEditOperation.AlignAxis.X, AlignObjectsEditOperation.AlignDirection.Min);
-        }
-
-        public void AlignYMax()
-        {
-            AlignObjects(AlignObjectsEditOperation.AlignAxis.Y, AlignObjectsEditOperation.AlignDirection.Max);
-        }
-
-        public void AlignYMin()
-        {
-            AlignObjects(AlignObjectsEditOperation.AlignAxis.Y, AlignObjectsEditOperation.AlignDirection.Min);
-        }
-
-        public void AlignZMax()
-        {
-            AlignObjects(AlignObjectsEditOperation.AlignAxis.Z, AlignObjectsEditOperation.AlignDirection.Max);
-        }
-
-        public void AlignZMin()
-        {
-            AlignObjects(AlignObjectsEditOperation.AlignAxis.Z, AlignObjectsEditOperation.AlignDirection.Min);
-        }
-
         private void FlipObjects(Coordinate scale)
         {
             if (_document.Selection.IsEmpty() || _document.Selection.InFaceSelection) return;
