@@ -153,6 +153,26 @@ namespace Sledge.BspEditor.Editing.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap Menu_HideSelected {
+            get {
+                object obj = ResourceManager.GetObject("Menu_HideSelected", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Menu_HideUnselected {
+            get {
+                object obj = ResourceManager.GetObject("Menu_HideUnselected", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap Menu_Hollow {
             get {
                 object obj = ResourceManager.GetObject("Menu_Hollow", resourceCulture);
@@ -236,6 +256,16 @@ namespace Sledge.BspEditor.Editing.Properties {
         internal static System.Drawing.Bitmap Menu_ShowBrushID {
             get {
                 object obj = ResourceManager.GetObject("Menu_ShowBrushID", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Menu_ShowHidden {
+            get {
+                object obj = ResourceManager.GetObject("Menu_ShowHidden", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

@@ -1,10 +1,12 @@
-﻿using System.ComponentModel.Composition;
+﻿using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.Linq;
 using System.Threading.Tasks;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Primitives.MapData;
 using Sledge.BspEditor.Primitives.MapObjectData;
 using Sledge.BspEditor.Primitives.MapObjects;
+using Sledge.Common.Translations;
 
 namespace Sledge.BspEditor.Providers.Processors
 {
@@ -14,6 +16,8 @@ namespace Sledge.BspEditor.Providers.Processors
     [Export(typeof(IBspSourceProcessor))]
     public class HandleVisgroups : IBspSourceProcessor
     {
+        public static string Prefix = typeof(HandleVisgroups).FullName;
+
         public string OrderHint => "C";
 
         public Task AfterLoad(MapDocument document)
@@ -40,21 +44,20 @@ namespace Sledge.BspEditor.Providers.Processors
             }
 
             // set up auto visgroups
-            var autoVis = document.Environment?.GetAutomaticVisgroups();
-            if (autoVis != null)
+            var autoVis = document.Environment?.GetAutomaticVisgroups()?.ToList() ?? new List<AutomaticVisgroup>();
+
+            foreach (var av in autoVis)
             {
-                foreach (var av in autoVis)
+                document.Map.Data.Add(av);
+                foreach (var obj in allObjects)
                 {
-                    document.Map.Data.Add(av);
-                    foreach (var obj in allObjects)
+                    if (av.IsMatch(obj))
                     {
-                        if (av.IsMatch(obj))
-                        {
-                            av.Objects.Add(obj);
-                        }
+                        av.Objects.Add(obj);
                     }
                 }
             }
+
 
             return Task.FromResult(0);
         }

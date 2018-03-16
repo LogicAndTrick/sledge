@@ -3,8 +3,10 @@ using System.ComponentModel.Composition;
 using System.Linq;
 using System.Threading.Tasks;
 using LogicAndTrick.Oy;
+using Sledge.BspEditor.Modification.Operations;
 using Sledge.BspEditor.Primitives.MapData;
 using Sledge.BspEditor.Primitives.MapObjectData;
+using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.Common.Shell.Hooks;
 
 namespace Sledge.BspEditor.Modification
@@ -26,6 +28,9 @@ namespace Sledge.BspEditor.Modification
             var visgroups = change.Document.Map.Data.Get<Visgroup>().ToDictionary(x => x.ID, x => x);
             var autoVisgroups = change.Document.Map.Data.Get<AutomaticVisgroup>().ToList();
 
+            // If an object is removed from a visgroup we should force it visible
+            var makeVisible = new HashSet<IMapObject>();
+
             foreach (var mo in change.Added.Union(change.Updated))
             {
                 var bef = new HashSet<long>(visgroups.Values.Where(x => x.Objects.Contains(mo)).Select(x => x.ID));
@@ -36,6 +41,7 @@ namespace Sledge.BspEditor.Modification
                 {
                     changed = true;
                     if (visgroups.ContainsKey(id)) visgroups[id].Objects.Remove(mo);
+                    makeVisible.UnionWith(mo.FindAll());
                 }
 
                 // Add visgroups the object is in now but wasn't before
@@ -55,6 +61,7 @@ namespace Sledge.BspEditor.Modification
                     {
                         av.Objects.Remove(mo);
                         changed = true;
+                        makeVisible.UnionWith(mo.FindAll());
                     }
                     else if (match && !contains)
                     {
@@ -77,6 +84,14 @@ namespace Sledge.BspEditor.Modification
                 var c = av.Objects.Count;
                 av.Objects.ExceptWith(change.Removed);
                 changed |= c != av.Objects.Count;
+            }
+
+            if (makeVisible.Any())
+            {
+                await MapDocumentOperation.Perform(change.Document, new TrivialOperation(
+                    d => makeVisible.ToList().ForEach(x => x.Data.Remove(v => v is VisgroupHidden)),
+                    c => c.UpdateRange(makeVisible)
+                ));
             }
 
             // Fire event if changes were found

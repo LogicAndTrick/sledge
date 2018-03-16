@@ -170,11 +170,25 @@
                 "Cancel": "Cancel"
             },
             "GoToLocation": {
-                "Name": "Go to locationn",
+                "Name": "Go to location",
                 "Details": "Center views on a specific set of coordinates.",
                 "Title": "Enter Coordinates",
                 "OK": "OK",
                 "Cancel": "Cancel"
+            }
+        },
+        "Quick": {
+            "HideSelectedObjects": {
+                "Name": "Hide selected objects",
+                "Details": "Hide all objects that are currently selected." 
+            },
+            "HideUnselectedObjects": {
+                "Name": "Hide unselected objects",
+                "Details": "Hide all objects that are not currently selected." 
+            },
+            "ShowHiddenObjects": {
+                "Name": "Show hidden objects",
+                "Details": "Show all objects that have been hidden." 
             }
         }
     },

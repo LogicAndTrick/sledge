@@ -75,6 +75,9 @@
     <Compile Include="Commands\Pointfile\LoadPointfile.cs" />
     <Compile Include="Commands\Pointfile\Pointfile.cs" />
     <Compile Include="Commands\Pointfile\PointfileConverter.cs" />
+    <Compile Include="Commands\Quick\HideSelectedObjects.cs" />
+    <Compile Include="Commands\Quick\HideUnselectedObjects.cs" />
+    <Compile Include="Commands\Quick\ShowHiddenObjects.cs" />
     <Compile Include="Commands\TieToEntity.cs" />
     <Compile Include="Commands\Modification\Hollow.cs" />
     <Compile Include="Commands\OpenObjectProperties.cs" />
@@ -392,6 +395,8 @@
     <Content Include="Resources\Menu_GoToBrushID.png" />
     <Content Include="Resources\Menu_GoToCoordinates.png" />
     <Content Include="Resources\Menu_HideNullTextures.png" />
+    <Content Include="Resources\Menu_HideSelected.png" />
+    <Content Include="Resources\Menu_HideUnselected.png" />
     <Content Include="Resources\Menu_Hollow.png" />
     <Content Include="Resources\Menu_LoadPointfile.png" />
     <Content Include="Resources\Menu_MapProperties.png" />
@@ -401,6 +406,7 @@
     <Content Include="Resources\Menu_Redo.png" />
     <Content Include="Resources\Menu_Run.png" />
     <Content Include="Resources\Menu_ShowBrushID.png" />
+    <Content Include="Resources\Menu_ShowHidden.png" />
     <Content Include="Resources\Menu_ShowInformation.png" />
     <Content Include="Resources\Menu_SnapSelection.png" />
     <Content Include="Resources\Menu_SnapSelectionIndividual.png" />
