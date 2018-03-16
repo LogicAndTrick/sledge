@@ -67,32 +67,6 @@ namespace Sledge.Editor.Documents
             _document.PerformAction("Transform selection", new Edit(selected, new TransformEditOperation(transform, _document.Map.GetTransformFlags())));
         }
 
-        private void FlipObjects(Coordinate scale)
-        {
-            if (_document.Selection.IsEmpty() || _document.Selection.InFaceSelection) return;
-
-            var selected = _document.Selection.GetSelectedParents();
-            var box = _document.Selection.GetSelectionBoundingBox();
-
-            var transform = new UnitScale(scale, box.Center);
-            _document.PerformAction("Flip Objects", new Edit(selected, new TransformEditOperation(transform, _document.Map.GetTransformFlags())));
-        }
-
-        public void FlipX()
-        {
-            FlipObjects(new Coordinate(-1, 1, 1));
-        }
-
-        public void FlipY()
-        {
-            FlipObjects(new Coordinate(1, -1, 1));
-        }
-
-        public void FlipZ()
-        {
-            FlipObjects(new Coordinate(1, 1, -1));
-        }
-
         public void ShowLogicalTree()
         {
             var mtw = new MapTreeWindow(_document);

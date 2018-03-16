@@ -106,6 +106,18 @@
             "AlignObjectsZMax": {
                 "Name": "Align to Z axis maximum",
                 "Details": "Align selected objects to the maximum Z value in the selection."
+            },
+            "FlipSelectionX": {
+                "Name": "Flip on X axis",
+                "Details": "Flip the selected objects on the X axis." 
+            },
+            "FlipSelectionY": {
+                "Name": "Flip on Y axis",
+                "Details": "Flip the selected objects on the Y axis." 
+            },
+            "FlipSelectionZ": {
+                "Name": "Flip on Z axis",
+                "Details": "Flip the selected objects on the Z axis." 
             }
         },
         "Toggles": {
