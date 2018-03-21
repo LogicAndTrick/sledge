@@ -5,6 +5,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Sledge.BspEditor.Documents;
+using Sledge.BspEditor.Primitives;
+using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.Common.Translations;
 using Sledge.Shell;
 
@@ -107,19 +109,28 @@ namespace Sledge.BspEditor.Tools.Texture
 
         private void SelectionChanged(object sender, IEnumerable<string> selection)
         {
+            TextureNameLabel.Text = "";
+            TextureSizeLabel.Text = "";
+
             var list = selection.ToList();
-            if (!list.Any())
-            {
-                TextureNameLabel.Text = "";
-                TextureSizeLabel.Text = "";
-            }
-            else if (list.Count == 1)
+            
+            if (list.Count == 1 && _document != null)
             {
                 var t = list[0];
-                //todo TextureNameLabel.Text = t.Name;
-                // todo TextureSizeLabel.Text = t.Width + " x " + t.Height;
+                TextureNameLabel.Text = t;
+                _document.Environment.GetTextureCollection().ContinueWith(tc =>
+                {
+                    tc.Result.GetTextureItem(t).ContinueWith(ti =>
+                    {
+                        this.InvokeLater(() =>
+                        {
+                            TextureNameLabel.Text = ti.Result.Name;
+                            TextureSizeLabel.Text = $@"{ti.Result.Width} x {ti.Result.Height}";
+                        });
+                    });
+                });
             }
-            else
+            else if (list.Count > 1)
             {
                 TextureNameLabel.Text = list.Count + " textures selected";
                 TextureSizeLabel.Text = "";
@@ -299,9 +310,8 @@ namespace Sledge.BspEditor.Tools.Texture
             }
             if (UsedTexturesOnlyBox.Checked && _document != null)
             {
-                // todo
-                //var used = _document.GetUsedTextures().ToList();
-                //list = list.Where(x => used.Any(y => String.Equals(x, y, StringComparison.InvariantCultureIgnoreCase)));
+                var textureNames = new HashSet<string>(_document.Map.Root.FindAll().SelectMany(x => x.Data.OfType<ITextured>()).Select(x => x.Texture.Name).Distinct());
+                list = list.Where(x => textureNames.Contains(x, StringComparer.InvariantCultureIgnoreCase));
             }
             var l = list.ToList();
             await _textureList.SetTextureList(l);

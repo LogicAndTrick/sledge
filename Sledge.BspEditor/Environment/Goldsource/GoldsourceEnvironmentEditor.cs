@@ -1,8 +1,14 @@
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using Sledge.DataStructures.GameData;
+using Sledge.FileSystem;
+using Sledge.Providers.GameData;
+using Sledge.Providers.Texture;
+using Sledge.Shell;
 
 namespace Sledge.BspEditor.Environment.Goldsource
 {
@@ -10,6 +16,9 @@ namespace Sledge.BspEditor.Environment.Goldsource
     {
         public event EventHandler EnvironmentChanged;
         public Control Control => this;
+
+        private IGameDataProvider _fgdProvider = Common.Container.Get<IGameDataProvider>("Fgd");
+        private ITexturePackageProvider _wadProvider = Common.Container.Get<ITexturePackageProvider>("Wad3");
 
         public IEnvironment Environment
         {
@@ -42,6 +51,8 @@ namespace Sledge.BspEditor.Environment.Goldsource
             cmbRadExe.SelectedIndexChanged += OnEnvironmentChanged;
 
             nudDefaultTextureScale.ValueChanged += OnEnvironmentChanged;
+
+            cklTexturePackages.ItemCheck += (s, e) => this.InvokeLater(() => OnEnvironmentChanged(s, e)); // So it happens after the checkstate has changed, not before
         }
 
         private void OnEnvironmentChanged(object sender, EventArgs e)
@@ -85,6 +96,13 @@ namespace Sledge.BspEditor.Environment.Goldsource
             cmbRadExe.SelectedItem = env.RadExe;
 
             nudDefaultTextureScale.Value = env.DefaultTextureScale;
+
+            cklTexturePackages.Items.Clear();
+            foreach (var exc in env.ExcludedWads)
+            {
+                cklTexturePackages.Items.Add(exc, false); // all wads not in this list will be excluded
+            }
+            UpdateTexturePackages();
         }
 
         public GoldsourceEnvironment GetEnvironment()
@@ -112,7 +130,8 @@ namespace Sledge.BspEditor.Environment.Goldsource
                 VisExe = Convert.ToString(cmbVisExe.SelectedItem, CultureInfo.InvariantCulture),
                 RadExe = Convert.ToString(cmbRadExe.SelectedItem, CultureInfo.InvariantCulture),
 
-                DefaultTextureScale = nudDefaultTextureScale.Value
+                DefaultTextureScale = nudDefaultTextureScale.Value,
+                ExcludedWads = GetTexturePackageSelection().Where(x => !x.Value).Select(x => x.Key).ToList()
             };
         }
 
@@ -133,6 +152,7 @@ namespace Sledge.BspEditor.Environment.Goldsource
         private void GameDirectoryTextChanged(object sender, EventArgs e)
         {
             UpdateGameDirectory();
+            UpdateTexturePackages();
         }
 
         private void UpdateGameDirectory()
@@ -217,7 +237,46 @@ namespace Sledge.BspEditor.Environment.Goldsource
         {
             lstFgds.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
 
-            // todo load fgds
+            var entities = new List<GameDataObject>();
+            if (_fgdProvider != null)
+            {
+                var files = lstFgds.Items.OfType<ListViewItem>().Select(x => x.SubItems[1].Text).Where(File.Exists).Where(_fgdProvider.IsValidForFile);
+                try
+                {
+                    var gd = _fgdProvider.GetGameDataFromFiles(files);
+                    entities.AddRange(gd.Classes);
+                }
+                catch
+                {
+                    //
+                }
+            }
+
+            var selPoint = cmbDefaultPointEntity.SelectedItem as string;
+            var selBrush = cmbDefaultBrushEntity.SelectedItem as string;
+
+            cmbDefaultPointEntity.BeginUpdate();
+            cmbDefaultBrushEntity.BeginUpdate();
+
+            cmbDefaultPointEntity.Items.Clear();
+            cmbDefaultBrushEntity.Items.Clear();
+
+            cmbDefaultPointEntity.Items.Add("");
+            cmbDefaultBrushEntity.Items.Add("");
+
+            foreach (var gdo in entities.OrderBy(x => x.Name, StringComparer.InvariantCultureIgnoreCase))
+            {
+                if (gdo.ClassType == ClassType.Solid) cmbDefaultBrushEntity.Items.Add(gdo.Name);
+                else if (gdo.ClassType != ClassType.Base) cmbDefaultPointEntity.Items.Add(gdo.Name);
+            }
+
+            var idx = cmbDefaultBrushEntity.Items.IndexOf(selBrush ?? "");
+            if (idx >= 0) cmbDefaultBrushEntity.SelectedIndex = idx;
+            idx = cmbDefaultPointEntity.Items.IndexOf(selPoint ?? "");
+            if (idx >= 0) cmbDefaultPointEntity.SelectedIndex = idx;
+
+            cmbDefaultPointEntity.EndUpdate();
+            cmbDefaultBrushEntity.EndUpdate();
         }
 
         // Build tools
@@ -278,6 +337,86 @@ namespace Sledge.BspEditor.Environment.Goldsource
 
             if (cmbRadExe.Items.Contains(selRad)) cmbRadExe.SelectedItem = selRad;
             else if (cmbRadExe.Items.Count > 0) cmbRadExe.SelectedIndex = Math.Max(0, range.FindIndex(x => x.ToLower().Contains("rad")));
+        }
+
+        public Dictionary<string, bool> GetTexturePackageSelection()
+        {
+            var d = new Dictionary<string, bool>(StringComparer.InvariantCultureIgnoreCase);
+
+            var packages = cklTexturePackages.Items.OfType<string>().ToList();
+            for (var i = 0; i < packages.Count; i++)
+            {
+                var name = packages[i];
+                var state = cklTexturePackages.GetItemCheckState(i);
+                if (state == CheckState.Indeterminate) continue;
+                d[name] = state == CheckState.Checked;
+            }
+
+            return d;
+        }
+
+        private void BaseGameDirectoryChanged(object sender, EventArgs e)
+        {
+            UpdateTexturePackages();
+        }
+
+        private void ModDirectoryChanged(object sender, EventArgs e)
+        {
+            UpdateTexturePackages();
+        }
+
+        private void UpdateTexturePackages()
+        {
+            var state = GetTexturePackageSelection();
+
+            var directories = new List<string>();
+            if (cmbBaseGame.SelectedItem is string sbg)
+            {
+                directories.AddRange(new[]
+                {
+                    Path.Combine(txtGameDir.Text, sbg),
+                    Path.Combine(txtGameDir.Text, sbg + "_hd"),
+                    Path.Combine(txtGameDir.Text, sbg + "_addon"),
+                });
+            }
+            if (cmbGameMod.SelectedItem is string sgm)
+            {
+                directories.AddRange(new[]
+                {
+                    Path.Combine(txtGameDir.Text, sgm),
+                    Path.Combine(txtGameDir.Text, sgm + "_hd"),
+                    Path.Combine(txtGameDir.Text, sgm + "_addon"),
+                });
+            }
+            directories = directories.Distinct().Where(Directory.Exists).ToList();
+
+            if (directories.Any())
+            {
+                try
+                {
+                    var packages = _wadProvider.GetPackagesInFile(new CompositeFile(
+                        new NativeFile(txtGameDir.Text),
+                        directories.Select(x => new NativeFile(x))
+                    )).ToList();
+                    foreach (var pr in packages)
+                    {
+                        if (!state.ContainsKey(pr.Name)) state[pr.Name] = true;
+                    }
+                }
+                catch
+                {
+                    //
+                }
+            }
+            cklTexturePackages.BeginUpdate();
+
+            cklTexturePackages.Items.Clear();
+            foreach (var kv in state.OrderBy(x => x.Key, StringComparer.InvariantCultureIgnoreCase))
+            {
+                cklTexturePackages.Items.Add(kv.Key, kv.Value);
+            }
+
+            cklTexturePackages.EndUpdate();
         }
     }
 }

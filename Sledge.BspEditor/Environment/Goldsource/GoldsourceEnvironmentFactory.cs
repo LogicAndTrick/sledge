@@ -46,7 +46,7 @@ namespace Sledge.BspEditor.Environment.Goldsource
                 GameExe = GetVal(environment.Properties, "GameExe", ""),
                 LoadHdModels = GetVal(environment.Properties, "LoadHdModels", true),
 
-                FgdFiles = GetVal(environment.Properties, "FgdFiles", "").Split(';').ToList(),
+                FgdFiles = GetVal(environment.Properties, "FgdFiles", "").Split(';').Where(x => !String.IsNullOrWhiteSpace(x)).ToList(),
                 DefaultPointEntity = GetVal(environment.Properties, "DefaultPointEntity", ""),
                 DefaultBrushEntity = GetVal(environment.Properties, "DefaultBrushEntity", ""),
                 OverrideMapSize = GetVal(environment.Properties, "OverrideMapSize", false),
@@ -61,7 +61,8 @@ namespace Sledge.BspEditor.Environment.Goldsource
                 VisExe = GetVal(environment.Properties, "VisExe", ""),
                 RadExe = GetVal(environment.Properties, "RadExe", ""),
 
-                DefaultTextureScale = GetVal(environment.Properties, "DefaultTextureScale", 0m)
+                DefaultTextureScale = GetVal(environment.Properties, "DefaultTextureScale", 0m),
+                ExcludedWads = GetVal(environment.Properties, "ExcludedWads", "").Split(';').Where(x => !String.IsNullOrWhiteSpace(x)).ToList(),
             };
             return gse;
         }
@@ -98,6 +99,8 @@ namespace Sledge.BspEditor.Environment.Goldsource
                     { "RadExe", env.RadExe },
 
                     { "DefaultTextureScale", Convert.ToString(env.DefaultTextureScale, CultureInfo.InvariantCulture) },
+
+                    { "ExcludedWads", String.Join(";", env.ExcludedWads) }
                 }
             };
             return se;

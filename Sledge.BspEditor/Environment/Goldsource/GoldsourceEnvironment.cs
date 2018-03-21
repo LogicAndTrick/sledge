@@ -57,6 +57,8 @@ namespace Sledge.BspEditor.Environment.Goldsource
         public string BspExe { get; set; }
         public string RadExe { get; set; }
 
+        public List<string> ExcludedWads { get; set; }
+
         private IFile _root;
 
         public IFile Root
@@ -124,12 +126,13 @@ namespace Sledge.BspEditor.Environment.Goldsource
             _gameData = new Lazy<Task<GameData>>(MakeGameDataAsync);
             _data = new List<IEnvironmentData>();
             FgdFiles = new List<string>();
+            ExcludedWads = new List<string>();
             IncludeToolsDirectoryInEnvironment = IncludeToolsDirectoryInEnvironment = true;
         }
 
         private async Task<TextureCollection> MakeTextureCollectionAsync()
         {
-            var refs = _wadProvider.GetPackagesInFile(Root);
+            var refs = _wadProvider.GetPackagesInFile(Root).Where(x => !ExcludedWads.Contains(x.Name, StringComparer.InvariantCultureIgnoreCase));
             var wads = await _wadProvider.GetTexturePackages(refs);
             // todo sprite packages
             return new GoldsourceTextureCollection(wads);

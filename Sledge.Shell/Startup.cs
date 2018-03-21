@@ -28,6 +28,8 @@ namespace Sledge.Shell
         /// <param name="container">The container</param>
         public static void Run(CompositionContainer container)
         {
+            Common.Container.Initialise(container);
+
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             

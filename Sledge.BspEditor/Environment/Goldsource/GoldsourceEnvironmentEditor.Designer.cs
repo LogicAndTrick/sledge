@@ -71,6 +71,8 @@ namespace Sledge.BspEditor.Environment.Goldsource
             this.lblBuildRAD = new System.Windows.Forms.Label();
             this.btnBuildToolsBrowse = new System.Windows.Forms.Button();
             this.grpTextures = new System.Windows.Forms.GroupBox();
+            this.lblTexturePackageExclusions = new System.Windows.Forms.Label();
+            this.cklTexturePackages = new System.Windows.Forms.CheckedListBox();
             ((System.ComponentModel.ISupportInitialize)(this.nudDefaultTextureScale)).BeginInit();
             this.grpDirectories.SuspendLayout();
             this.grpFgds.SuspendLayout();
@@ -98,6 +100,7 @@ namespace Sledge.BspEditor.Environment.Goldsource
             this.cmbBaseGame.Name = "cmbBaseGame";
             this.cmbBaseGame.Size = new System.Drawing.Size(153, 21);
             this.cmbBaseGame.TabIndex = 21;
+            this.cmbBaseGame.SelectedIndexChanged += new System.EventHandler(this.BaseGameDirectoryChanged);
             // 
             // txtGameDir
             // 
@@ -166,6 +169,7 @@ namespace Sledge.BspEditor.Environment.Goldsource
             this.cmbGameMod.Name = "cmbGameMod";
             this.cmbGameMod.Size = new System.Drawing.Size(153, 21);
             this.cmbGameMod.TabIndex = 19;
+            this.cmbGameMod.SelectedIndexChanged += new System.EventHandler(this.ModDirectoryChanged);
             // 
             // lstFgds
             // 
@@ -538,14 +542,35 @@ namespace Sledge.BspEditor.Environment.Goldsource
             // 
             // grpTextures
             // 
+            this.grpTextures.Controls.Add(this.lblTexturePackageExclusions);
+            this.grpTextures.Controls.Add(this.cklTexturePackages);
             this.grpTextures.Controls.Add(this.lblDefaultTextureScale);
             this.grpTextures.Controls.Add(this.nudDefaultTextureScale);
             this.grpTextures.Location = new System.Drawing.Point(6, 692);
             this.grpTextures.Name = "grpTextures";
-            this.grpTextures.Size = new System.Drawing.Size(459, 51);
+            this.grpTextures.Size = new System.Drawing.Size(459, 233);
             this.grpTextures.TabIndex = 49;
             this.grpTextures.TabStop = false;
             this.grpTextures.Text = "Textures";
+            // 
+            // lblTexturePackageExclusions
+            // 
+            this.lblTexturePackageExclusions.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.lblTexturePackageExclusions.Location = new System.Drawing.Point(14, 36);
+            this.lblTexturePackageExclusions.Name = "lblTexturePackageExclusions";
+            this.lblTexturePackageExclusions.Size = new System.Drawing.Size(176, 20);
+            this.lblTexturePackageExclusions.TabIndex = 34;
+            this.lblTexturePackageExclusions.Text = "Texture packages to include:";
+            this.lblTexturePackageExclusions.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // cklTexturePackages
+            // 
+            this.cklTexturePackages.CheckOnClick = true;
+            this.cklTexturePackages.FormattingEnabled = true;
+            this.cklTexturePackages.Location = new System.Drawing.Point(9, 59);
+            this.cklTexturePackages.Name = "cklTexturePackages";
+            this.cklTexturePackages.Size = new System.Drawing.Size(444, 169);
+            this.cklTexturePackages.TabIndex = 39;
             // 
             // GoldsourceEnvironmentEditor
             // 
@@ -556,7 +581,7 @@ namespace Sledge.BspEditor.Environment.Goldsource
             this.Controls.Add(this.grpFgds);
             this.Controls.Add(this.grpDirectories);
             this.Name = "GoldsourceEnvironmentEditor";
-            this.Size = new System.Drawing.Size(472, 749);
+            this.Size = new System.Drawing.Size(472, 928);
             ((System.ComponentModel.ISupportInitialize)(this.nudDefaultTextureScale)).EndInit();
             this.grpDirectories.ResumeLayout(false);
             this.grpDirectories.PerformLayout();
@@ -613,5 +638,7 @@ namespace Sledge.BspEditor.Environment.Goldsource
         private System.Windows.Forms.Label lblBuildRAD;
         private System.Windows.Forms.Button btnBuildToolsBrowse;
         private System.Windows.Forms.GroupBox grpTextures;
+        private System.Windows.Forms.CheckedListBox cklTexturePackages;
+        private System.Windows.Forms.Label lblTexturePackageExclusions;
     }
 }

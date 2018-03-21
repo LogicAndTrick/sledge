@@ -79,6 +79,7 @@ namespace Sledge.BspEditor.Environment.Controls
             {
                 var newEnv = new SerialisedEnvironment
                 {
+                    ID = Guid.NewGuid().ToString("N"),
                     Name = "New Environment",
                     Type = factory.TypeName
                 };
