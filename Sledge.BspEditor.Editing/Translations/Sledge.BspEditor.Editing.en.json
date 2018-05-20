@@ -175,6 +175,10 @@
                 "Title": "Enter Coordinates",
                 "OK": "OK",
                 "Cancel": "Cancel"
+            },
+            "AutosizeViews": {
+                "Name": "Autosize views",
+                "Details": "Automatically resize the split views to be the same size."
             }
         },
         "Quick": {

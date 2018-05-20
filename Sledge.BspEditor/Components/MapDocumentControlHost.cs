@@ -7,10 +7,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using LogicAndTrick.Oy;
 using Newtonsoft.Json;
 using Sledge.BspEditor.Controls;
 using Sledge.Common.Shell.Hooks;
 using Sledge.Common.Shell.Settings;
+using Sledge.Shell;
 
 namespace Sledge.BspEditor.Components
 {
@@ -28,7 +30,7 @@ namespace Sledge.BspEditor.Components
 
         public async Task OnInitialise()
         {
-            // Just here to make sure this gets initialised
+            Oy.Subscribe("BspEditor:SplitView:Autosize", () => this.InvokeLater(() => Table.ResetViews()));
         }
 
         public static MapDocumentControlHost Instance { get; private set; }

@@ -87,6 +87,7 @@
     <Compile Include="Commands\Toggles\ToggleTextureLock.cs" />
     <Compile Include="Commands\Toggles\ToggleTextureScalingLock.cs" />
     <Compile Include="Commands\Modification\Transform.cs" />
+    <Compile Include="Commands\View\AutosizeViews.cs" />
     <Compile Include="Commands\View\CenterSelection2D.cs" />
     <Compile Include="Commands\View\CenterSelection3D.cs" />
     <Compile Include="Commands\View\GoToLocation.cs" />
@@ -391,6 +392,7 @@
     <None Include="app.config" />
     <None Include="packages.config" />
     <None Include="Resources\Button_ColourPicker.png" />
+    <Content Include="Resources\Menu_AutosizeViews.png" />
     <Content Include="Resources\Menu_Carve.png" />
     <Content Include="Resources\Menu_CenterSelection2D.png" />
     <Content Include="Resources\Menu_CenterSelection3D.png" />
