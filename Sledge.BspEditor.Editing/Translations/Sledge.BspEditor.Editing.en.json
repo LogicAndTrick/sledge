@@ -335,7 +335,8 @@
             "UniqueTextures": "Unique textures",
             "TextureMemory": "Texture memory",
             "TexturePackagesUsed": "Texuture packages used",
-            "CloseButton": "Close"
+            "CloseButton": "Close",
+            "CalculatingTextureMemoryUsage": "Calculating..." 
         },
         "SelectionDetailsDialog": {
             "Title": "Selection Details"

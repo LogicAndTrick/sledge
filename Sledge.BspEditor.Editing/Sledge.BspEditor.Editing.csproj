@@ -303,6 +303,10 @@
       <Project>{1C2C012D-DBA5-4C7F-994F-E3034AC60DCC}</Project>
       <Name>Sledge.FileSystem</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Sledge.Providers\Sledge.Providers.csproj">
+      <Project>{C7BD4AC8-1F8D-4520-AF2D-D279C0601AB4}</Project>
+      <Name>Sledge.Providers</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Sledge.QuickForms\Sledge.QuickForms.csproj">
       <Project>{7FED88F3-717C-408A-85D9-28DD125DB61A}</Project>
       <Name>Sledge.QuickForms</Name>

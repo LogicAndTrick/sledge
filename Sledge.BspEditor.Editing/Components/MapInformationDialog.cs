@@ -37,6 +37,7 @@ namespace Sledge.BspEditor.Editing.Components
         public string TextureMemory { set => this.InvokeLater(() => TextureMemoryLabel.Text = value); }
         public string TexturePackagesUsed { set => this.InvokeLater(() => TexturePackagesUsedLabel.Text = value); }
         public string CloseButton { set => this.InvokeLater(() => CloseDialogButton.Text = value); }
+        public string CalculatingTextureMemoryUsage { get; set; }
 
         #endregion
 
@@ -92,21 +93,23 @@ namespace Sledge.BspEditor.Editing.Components
             _subscriptions = null;
         }
 
-        private async Task CalculateStats()
+        private Task CalculateStats()
         {
             var doc = _context.Get<MapDocument>("ActiveDocument");
+
             if (doc == null)
             {
-                NumSolids.Text = "\u2014";
-                NumFaces.Text = "\u2014";
-                NumPointEntities.Text = "\u2014";
-                NumSolidEntities.Text = "\u2014";
-                NumUniqueTextures.Text = "\u2014";
-                TextureMemoryValue.Text = "\u2014";
-                TexturePackages.Items.Clear();
-                return;
+                return this.InvokeLaterAsync(() =>
+                {
+                    NumSolids.Text = "\u2014";
+                    NumFaces.Text = "\u2014";
+                    NumPointEntities.Text = "\u2014";
+                    NumSolidEntities.Text = "\u2014";
+                    NumUniqueTextures.Text = "\u2014";
+                    TextureMemoryValue.Text = "\u2014";
+                    TexturePackages.Items.Clear();
+                });
             }
-
 
             var all = doc.Map.Root.FindAll();
             var solids = all.OfType<Solid>().ToList();
@@ -116,34 +119,55 @@ namespace Sledge.BspEditor.Editing.Components
             var numFaces = faces.Count;
             var numPointEnts = entities.Count(x => !x.Hierarchy.HasChildren);
             var numSolidEnts = entities.Count(x => x.Hierarchy.HasChildren);
-            var uniqueTextures = faces.Select(x => x.Texture.Name).Distinct().ToList();
+            var uniqueTextures = new HashSet<string>(faces.Select(x => x.Texture.Name));
             var numUniqueTextures = uniqueTextures.Count;
-            //var textureMemory = faces.Select(x => x.Texture.Name)
-            //    .Distinct()
-            //    .Select(document.GetTextureSize)
-            //    .Sum(x => x.Width * x.Height * 3); // 3 bytes per pixel
-            //var textureMemoryMb = textureMemory / (1024m * 1024m);
-            // todo texture memory, texture packages
 
-            NumSolids.Text = numSolids.ToString(CultureInfo.CurrentCulture);
-            NumFaces.Text = numFaces.ToString(CultureInfo.CurrentCulture);
-            NumPointEntities.Text = numPointEnts.ToString(CultureInfo.CurrentCulture);
-            NumSolidEntities.Text = numSolidEnts.ToString(CultureInfo.CurrentCulture);
-            NumUniqueTextures.Text = numUniqueTextures.ToString(CultureInfo.CurrentCulture);
-            TextureMemoryValue.Text = "?";
-            // TextureMemory.Text = textureMemory.ToString(CultureInfo.CurrentCulture);
-            //TextureMemory.Text = textureMemory.ToString("#,##0", CultureInfo.CurrentCulture)
-            //    + " bytes (" + textureMemoryMb.ToString("0.00", CultureInfo.CurrentCulture) + " MB)";
-            TexturePackages.Items.Clear();
-            //foreach (var tp in document.GetUsedTexturePackages())
-            //{
-            //    TexturePackages.Items.Add(tp);
-            //}
+            return this.InvokeLaterAsync(() =>
+            {
+                NumSolids.Text = numSolids.ToString(CultureInfo.CurrentCulture);
+                NumFaces.Text = numFaces.ToString(CultureInfo.CurrentCulture);
+                NumPointEntities.Text = numPointEnts.ToString(CultureInfo.CurrentCulture);
+                NumSolidEntities.Text = numSolidEnts.ToString(CultureInfo.CurrentCulture);
+                NumUniqueTextures.Text = numUniqueTextures.ToString(CultureInfo.CurrentCulture);
+                TextureMemoryValue.Text = CalculatingTextureMemoryUsage;
+            }).ContinueWith(async _ =>
+            {
+                var tc = await doc.Environment.GetTextureCollection();
+                var usedPackages = tc.Packages.Where(x => x.Textures.Overlaps(uniqueTextures));
+
+                this.InvokeLater(() =>
+                {
+                    TexturePackages.Items.Clear();
+                    foreach (var tp in usedPackages)
+                    {
+                        TexturePackages.Items.Add(tp);
+                    }
+                });
+
+                long texUsage = 0;
+                foreach (var ut in uniqueTextures)
+                {
+                    var tex = await tc.GetTextureItem(ut);
+                    // todo non-goldsource: the texture size operation will need to be outsourced to the provider to properly calculate usage for non-24-bit textures
+                    texUsage += tex.Width * tex.Height * 3; // 3 bytes per pixel
+                }
+                var textureMemoryMb = texUsage / (1024m * 1024m);
+                this.InvokeLater(() =>
+                {
+                    TextureMemoryValue.Text = $@"{textureMemoryMb:0.00} MB";
+                });
+            });
         }
 
         private void CloseButtonClicked(object sender, EventArgs e)
         {
             Close();
+        }
+
+        private void ComputeTextureUsage(object sender, EventArgs e)
+        {
+            TextureMemoryValue.Text = CalculatingTextureMemoryUsage;
+            // ...
         }
     }
 }

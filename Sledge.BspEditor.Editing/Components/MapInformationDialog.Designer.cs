@@ -40,16 +40,17 @@
             this.NumPointEntities = new System.Windows.Forms.Label();
             this.NumSolidEntities = new System.Windows.Forms.Label();
             this.NumUniqueTextures = new System.Windows.Forms.Label();
-            this.TextureMemoryValue = new System.Windows.Forms.Label();
             this.TexturePackagesUsedLabel = new System.Windows.Forms.Label();
             this.TexturePackages = new System.Windows.Forms.ListBox();
             this.CloseDialogButton = new System.Windows.Forms.Button();
+            this.TextureMemoryValue = new System.Windows.Forms.Label();
             this.tableLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // tableLayoutPanel1
             // 
-            this.tableLayoutPanel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.tableLayoutPanel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tableLayoutPanel1.ColumnCount = 2;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 99F));
@@ -75,7 +76,7 @@
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(251, 120);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(251, 122);
             this.tableLayoutPanel1.TabIndex = 0;
             // 
             // SolidsLabel
@@ -177,6 +178,38 @@
             this.NumUniqueTextures.TabIndex = 0;
             this.NumUniqueTextures.Text = "12345";
             // 
+            // TexturePackagesUsedLabel
+            // 
+            this.TexturePackagesUsedLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.TexturePackagesUsedLabel.AutoSize = true;
+            this.TexturePackagesUsedLabel.Location = new System.Drawing.Point(12, 137);
+            this.TexturePackagesUsedLabel.Name = "TexturePackagesUsedLabel";
+            this.TexturePackagesUsedLabel.Size = new System.Drawing.Size(122, 13);
+            this.TexturePackagesUsedLabel.TabIndex = 1;
+            this.TexturePackagesUsedLabel.Text = "Texture packages used:";
+            // 
+            // TexturePackages
+            // 
+            this.TexturePackages.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.TexturePackages.FormattingEnabled = true;
+            this.TexturePackages.Location = new System.Drawing.Point(12, 153);
+            this.TexturePackages.Name = "TexturePackages";
+            this.TexturePackages.Size = new System.Drawing.Size(251, 108);
+            this.TexturePackages.TabIndex = 2;
+            // 
+            // CloseDialogButton
+            // 
+            this.CloseDialogButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.CloseDialogButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.CloseDialogButton.Location = new System.Drawing.Point(188, 267);
+            this.CloseDialogButton.Name = "CloseDialogButton";
+            this.CloseDialogButton.Size = new System.Drawing.Size(75, 23);
+            this.CloseDialogButton.TabIndex = 3;
+            this.CloseDialogButton.Text = "Close";
+            this.CloseDialogButton.UseVisualStyleBackColor = true;
+            this.CloseDialogButton.Click += new System.EventHandler(this.CloseButtonClicked);
+            // 
             // TextureMemoryValue
             // 
             this.TextureMemoryValue.AutoSize = true;
@@ -186,39 +219,11 @@
             this.TextureMemoryValue.TabIndex = 0;
             this.TextureMemoryValue.Text = "12345";
             // 
-            // TexturePackagesUsedLabel
-            // 
-            this.TexturePackagesUsedLabel.AutoSize = true;
-            this.TexturePackagesUsedLabel.Location = new System.Drawing.Point(12, 135);
-            this.TexturePackagesUsedLabel.Name = "TexturePackagesUsedLabel";
-            this.TexturePackagesUsedLabel.Size = new System.Drawing.Size(122, 13);
-            this.TexturePackagesUsedLabel.TabIndex = 1;
-            this.TexturePackagesUsedLabel.Text = "Texture packages used:";
-            // 
-            // TexturePackages
-            // 
-            this.TexturePackages.FormattingEnabled = true;
-            this.TexturePackages.Location = new System.Drawing.Point(12, 151);
-            this.TexturePackages.Name = "TexturePackages";
-            this.TexturePackages.Size = new System.Drawing.Size(251, 108);
-            this.TexturePackages.TabIndex = 2;
-            // 
-            // CloseDialogButton
-            // 
-            this.CloseDialogButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.CloseDialogButton.Location = new System.Drawing.Point(188, 265);
-            this.CloseDialogButton.Name = "CloseDialogButton";
-            this.CloseDialogButton.Size = new System.Drawing.Size(75, 23);
-            this.CloseDialogButton.TabIndex = 3;
-            this.CloseDialogButton.Text = "Close";
-            this.CloseDialogButton.UseVisualStyleBackColor = true;
-            this.CloseDialogButton.Click += new System.EventHandler(this.CloseButtonClicked);
-            // 
             // MapInformationDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(275, 298);
+            this.ClientSize = new System.Drawing.Size(275, 300);
             this.Controls.Add(this.CloseDialogButton);
             this.Controls.Add(this.TexturePackages);
             this.Controls.Add(this.TexturePackagesUsedLabel);
@@ -251,9 +256,9 @@
         private System.Windows.Forms.Label NumPointEntities;
         private System.Windows.Forms.Label NumSolidEntities;
         private System.Windows.Forms.Label NumUniqueTextures;
-        private System.Windows.Forms.Label TextureMemoryValue;
         private System.Windows.Forms.Label TexturePackagesUsedLabel;
         private System.Windows.Forms.ListBox TexturePackages;
         private System.Windows.Forms.Button CloseDialogButton;
+        private System.Windows.Forms.Label TextureMemoryValue;
     }
 }
