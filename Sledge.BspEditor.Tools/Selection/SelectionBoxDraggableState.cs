@@ -39,6 +39,18 @@ namespace Sledge.BspEditor.Tools.Selection
         private RotationOrigin _rotationOrigin;
 
         public List<Widget> Widgets { get; private set; }
+
+        private bool _showWidgets;
+        public bool ShowWidgets
+        {
+            get => _showWidgets;
+            set
+            {
+                _showWidgets = value;
+                Update();
+            }
+        }
+
         private readonly RotationWidget _rotationWidget;
 
         public SelectionBoxDraggableState(SelectTool tool) : base(tool)
@@ -101,7 +113,7 @@ namespace Sledge.BspEditor.Tools.Selection
 
         public void Update()
         {
-            _rotationWidget.Active = State.Action != BoxAction.Idle && CurrentTransformationMode == TransformationMode.Rotate ;//&& Sledge.Settings.Select.Show3DSelectionWidgets;
+            _rotationWidget.Active = State.Action != BoxAction.Idle && CurrentTransformationMode == TransformationMode.Rotate && ShowWidgets;
             _rotationWidget.SetPivotPoint(_rotationOrigin.Position);
         }
 
@@ -231,7 +243,7 @@ namespace Sledge.BspEditor.Tools.Selection
             else _rotationOrigin.Position = Coordinate.Zero;
 
             //_scaleWidget.Active = _currentTransformationMode == TransformationMode.Resize;
-            _rotationWidget.Active = CurrentTransformationMode == TransformationMode.Rotate;
+            _rotationWidget.Active = CurrentTransformationMode == TransformationMode.Rotate && ShowWidgets;
             //_skewWidget.Active = _currentTransformationMode == TransformationMode.Skew;
 
             _tool.TransformationModeChanged(CurrentTransformationMode);

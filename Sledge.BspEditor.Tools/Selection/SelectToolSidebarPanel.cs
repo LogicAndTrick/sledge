@@ -26,6 +26,11 @@ namespace Sledge.BspEditor.Tools.Selection
                     TransformationToolChanged(mode);
                 }
             });
+
+            Oy.Subscribe<String>("SelectTool:SetShow3DWidgets", x =>
+            {
+                Show3DWidgetsCheckbox.Checked = x == "1";
+            });
         }
 
         public bool IsInContext(IContext context)

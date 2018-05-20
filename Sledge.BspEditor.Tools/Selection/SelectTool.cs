@@ -71,6 +71,7 @@ namespace Sledge.BspEditor.Tools.Selection
         void ISettingsContainer.LoadValues(ISettingsStore store)
         {
             store.LoadInstance(this);
+            Oy.Publish("SelectTool:SetShow3DWidgets", show3DWidgets ? "1" : "0");
         }
 
         void ISettingsContainer.StoreValues(ISettingsStore store)
@@ -112,6 +113,9 @@ namespace Sledge.BspEditor.Tools.Selection
             Oy.Subscribe<string>("SelectTool:Show3DWidgetsChanged", x =>
             {
                 show3DWidgets = x == "1";
+                _selectionBox.ShowWidgets = show3DWidgets;
+                //_selectionBox.Widgets.ForEach(a => a.Active = false);
+                //if (show3DWidgets && _selectionBox.Widgets.Any()) _selectionBox.Widgets[0].Active = true;
                 _selectionBox.Update();
             });
         }

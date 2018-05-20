@@ -71,10 +71,18 @@ namespace Sledge.BspEditor.Editing.Components.Visgroup
         {
             if (_activeDocument.TryGetTarget(out MapDocument t) && change.Document == t)
             {
-                Update(change.Document);
+                if (change.HasObjectChanges || IsVisgroupDataChange(change))
+                {
+                    Update(change.Document);
+                }
             }
         }
-        
+
+        private static bool IsVisgroupDataChange(Change change)
+        {
+            return change.HasDataChanges && change.AffectedData.Any(x => x is AutomaticVisgroup || x is Primitives.MapData.Visgroup);
+        }
+
         private void Update(MapDocument document)
         {
             Task.Factory.StartNew(() =>
