@@ -92,7 +92,13 @@ namespace Sledge.BspEditor.Rendering
                 default:
                 case RenderEngine.OpenGLRenderer:
                     _renderer = RenderEngine.OpenGLRenderer;
-                    _engine = new Lazy<Engine>(() => MakeEngine(new OpenGLRenderer()));
+
+                    // Only set up the engine if it hasn't been created
+                    if (_engine == null || !_engine.IsValueCreated)
+                    {
+                        _engine = new Lazy<Engine>(() => MakeEngine(new OpenGLRenderer()));
+                    }
+
                     break;
             }
             store.LoadInstance(this);

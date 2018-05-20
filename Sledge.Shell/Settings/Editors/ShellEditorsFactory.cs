@@ -1,16 +1,27 @@
-﻿using System.ComponentModel.Composition;
+﻿using System;
+using System.ComponentModel.Composition;
 using System.Drawing;
 using Sledge.Common.Shell.Settings;
+using Sledge.Common.Translations;
 using Sledge.Shell.Registers;
+using Sledge.Shell.Translations;
 
 namespace Sledge.Shell.Settings.Editors
 {
     [Export(typeof(ISettingEditorFactory))]
     public class ShellEditorsFactory : ISettingEditorFactory
     {
+        [Import] private Lazy<TranslationStringsCatalog> _catalog;
+
+        public string OrderHint => "W";
+
         public bool Supports(SettingKey key)
         {
-            if (key.Type == typeof(string))
+            if (key.EditorType == "LanguageSelectionEditor")
+            {
+                return true;
+            }
+            else if (key.Type == typeof(string))
             {
                 return true;
             }
@@ -43,7 +54,11 @@ namespace Sledge.Shell.Settings.Editors
 
         public ISettingEditor CreateEditorFor(SettingKey key)
         {
-            if (key.Type == typeof(string))
+            if (key.EditorType == "LanguageSelectionEditor")
+            {
+                return new LanguageSelectionEditor(_catalog.Value);
+            }
+            else if (key.Type == typeof(string))
             {
                 return new TextEditor();
             }

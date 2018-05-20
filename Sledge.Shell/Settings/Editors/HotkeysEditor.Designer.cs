@@ -34,8 +34,8 @@
             this.HotkeyAddButton = new System.Windows.Forms.Button();
             this.label25 = new System.Windows.Forms.Label();
             this.label23 = new System.Windows.Forms.Label();
-            this.HotkeyCombination = new System.Windows.Forms.TextBox();
             this.HotkeyRemoveButton = new System.Windows.Forms.Button();
+            this.HotkeyCombination = new System.Windows.Forms.TextBox();
             this.HotkeyList = new System.Windows.Forms.ListView();
             this.chAction = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.chDescription = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -109,14 +109,6 @@
             this.label23.TabIndex = 2;
             this.label23.Text = "Hotkey";
             // 
-            // HotkeyCombination
-            // 
-            this.HotkeyCombination.Location = new System.Drawing.Point(252, 19);
-            this.HotkeyCombination.Name = "HotkeyCombination";
-            this.HotkeyCombination.Size = new System.Drawing.Size(100, 20);
-            this.HotkeyCombination.TabIndex = 1;
-            this.HotkeyCombination.KeyDown += new System.Windows.Forms.KeyEventHandler(this.HotkeyCombinationKeyDown);
-            // 
             // HotkeyRemoveButton
             // 
             this.HotkeyRemoveButton.Location = new System.Drawing.Point(431, 16);
@@ -126,6 +118,14 @@
             this.HotkeyRemoveButton.Text = "Unset";
             this.HotkeyRemoveButton.UseVisualStyleBackColor = true;
             this.HotkeyRemoveButton.Click += new System.EventHandler(this.HotkeyUnsetButtonClicked);
+            // 
+            // HotkeyCombination
+            // 
+            this.HotkeyCombination.Location = new System.Drawing.Point(252, 19);
+            this.HotkeyCombination.Name = "HotkeyCombination";
+            this.HotkeyCombination.Size = new System.Drawing.Size(100, 20);
+            this.HotkeyCombination.TabIndex = 1;
+            this.HotkeyCombination.KeyDown += new System.Windows.Forms.KeyEventHandler(this.HotkeyCombinationKeyDown);
             // 
             // HotkeyList
             // 
@@ -175,6 +175,7 @@
             this.FilterBox.Name = "FilterBox";
             this.FilterBox.Size = new System.Drawing.Size(150, 20);
             this.FilterBox.TabIndex = 11;
+            this.FilterBox.TextChanged += new System.EventHandler(this.UpdateFilter);
             // 
             // HotkeysEditor
             // 

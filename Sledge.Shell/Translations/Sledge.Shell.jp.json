@@ -2,6 +2,7 @@
     "@Meta": {
         "Base": "Sledge.Shell",
         "Language": "jp",
+        "LanguageDescription": "日本語 / Japanese",
         "Inherit": "en"
     },
     "@Settings": {

@@ -158,7 +158,7 @@ namespace Sledge.Shell.Forms
 
         private ISettingEditor GetEditor(SettingKey key)
         {
-            foreach (var ef in _editorFactories)
+            foreach (var ef in _editorFactories.OrderBy(x => x.Value.OrderHint))
             {
                 if (ef.Value.Supports(key)) return ef.Value.CreateEditorFor(key);
             }

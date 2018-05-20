@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Globalization;
 using System.Linq;
+using Sledge.Common.Translations;
 using Sledge.Providers.GameData;
 using Sledge.Providers.Texture;
 
 namespace Sledge.BspEditor.Environment.Goldsource
 {
     [Export(typeof(IEnvironmentFactory))]
+    [AutoTranslate]
     public class GoldsourceEnvironmentFactory : IEnvironmentFactory
     {
         public Type Type => typeof(GoldsourceEnvironment);

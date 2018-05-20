@@ -15,6 +15,8 @@ namespace Sledge.BspEditor.Environment
         [ImportMany] private IEnumerable<Lazy<IEnvironmentFactory>> _factories;
         private EnvironmentCollection _environments = new EnvironmentCollection();
 
+        public string OrderHint => "B";
+
         public IEnumerable<SerialisedEnvironment> GetSerialisedEnvironments()
         {
             return _environments;

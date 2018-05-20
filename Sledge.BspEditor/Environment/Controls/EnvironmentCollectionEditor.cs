@@ -61,7 +61,8 @@ namespace Sledge.BspEditor.Environment.Controls
 
             foreach (var g in _value.GroupBy(x => x.Type))
             {
-                var groupNode = new TreeNode(g.Key);
+                var ef = _factories.FirstOrDefault(x => x.TypeName == g.Key)?.Description ?? g.Key;
+                var groupNode = new TreeNode(ef);
                 foreach (var se in g)
                 {
                     var envNode = new TreeNode(se.Name) { Tag = se };

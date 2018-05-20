@@ -38,7 +38,7 @@ namespace Sledge.Shell.Translations
             }
             if (data != null && data.ContainsKey("Language"))
             {
-                Language = data["Language"];
+                Language = data["Language"] ?? "en";
             }
             _catalog.Initialise(Language);
             return Task.FromResult(0);
@@ -53,7 +53,7 @@ namespace Sledge.Shell.Translations
         public string GetString(string key)
         {
             if (!_catalog.Languages.ContainsKey(Language)) return null;
-            var lang = _catalog.Languages[Language];
+            var lang = _catalog.Languages[Language].Collection;
             if (!lang.Strings.ContainsKey(key)) return null;
             return lang.Strings[key];
         }
@@ -61,7 +61,7 @@ namespace Sledge.Shell.Translations
         public string GetSetting(string key)
         {
             if (!_catalog.Languages.ContainsKey(Language)) return null;
-            var lang = _catalog.Languages[Language];
+            var lang = _catalog.Languages[Language].Collection;
             if (!lang.Settings.ContainsKey(key)) return null;
             return lang.Settings[key];
         }
@@ -70,17 +70,17 @@ namespace Sledge.Shell.Translations
 
         public IEnumerable<SettingKey> GetKeys()
         {
-            yield return new SettingKey("Interface", "Language", typeof(string));
+            yield return new SettingKey("Interface", "Language", typeof(string)) { EditorType = "LanguageSelectionEditor" };
         }
 
         public void LoadValues(ISettingsStore store)
         {
-            Language = store.Get("Language", Language);
+            Language = store.Get("Language", Language) ?? "en";
         }
 
         public void StoreValues(ISettingsStore store)
         {
-            store.Set("Language", Language);
+            store.Set("Language", Language ?? "en");
         }
     }
 }

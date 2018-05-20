@@ -14,11 +14,11 @@ namespace Sledge.Common.Translations
         [ImportMany("AutoTranslate")] private IEnumerable<Lazy<object>> _autoTranslate;
 
         private List<string> _loaded;
-        public Dictionary<string, TranslationStringsCollection> Languages { get; set; }
+        public Dictionary<string, Language> Languages { get; set; }
 
         public TranslationStringsCatalog()
         {
-            Languages = new Dictionary<string, TranslationStringsCollection>();
+            Languages = new Dictionary<string, Language>();
             _loaded = new List<string>();
         }
         
@@ -36,7 +36,7 @@ namespace Sledge.Common.Translations
             {
                 if (!Languages.ContainsKey(language)) return;
                 var strings = Languages[language];
-                mt.Translate(strings);
+                mt.Translate(strings.Collection);
             }
             else
             {
@@ -57,9 +57,9 @@ namespace Sledge.Common.Translations
             foreach (var prop in props)
             {
                 var path = ty.FullName + '.' + prop.Name;
-                if (strings.Strings.ContainsKey(path))
+                if (strings.Collection.Strings.ContainsKey(path))
                 {
-                    prop.SetValue(target, strings.Strings[path]);
+                    prop.SetValue(target, strings.Collection.Strings[path]);
                 }
             }
         }
@@ -95,13 +95,16 @@ namespace Sledge.Common.Translations
             var basePath = Convert.ToString(meta["Base"]) ?? "";
             if (!String.IsNullOrWhiteSpace(basePath)) basePath += ".";
             
-            TranslationStringsCollection collection;
+            Language language;
             if (!Languages.ContainsKey(lang))
             {
-                collection = new TranslationStringsCollection();
-                Languages[lang] = collection;
+                language = new Language(lang);
+                Languages[lang] = language;
             }
-            collection = Languages[lang];
+            language = Languages[lang];
+            
+            var langDesc = Convert.ToString(meta["LanguageDescription"]);
+            if (!string.IsNullOrWhiteSpace(langDesc) && string.IsNullOrWhiteSpace(language.Description)) language.Description = langDesc;
 
             var strings = obj.Descendants()
                 .OfType<JProperty>()
@@ -109,7 +112,7 @@ namespace Sledge.Common.Translations
                 .Where(x => x.Value.Type == JTokenType.String);
             foreach (var st in strings)
             {
-                collection.Strings[basePath + st.Path] = st.Value?.ToString();
+                language.Collection.Strings[basePath + st.Path] = st.Value?.ToString();
             }
 
             var settingsNode = obj["@Settings"] as JObject;
@@ -120,8 +123,8 @@ namespace Sledge.Common.Translations
                     .Where(x => x.Value.Type == JTokenType.String);
                 foreach (var se in settings)
                 {
-                    if (se.Name.StartsWith("@")) collection.Settings[se.Name] = se.Value?.ToString();
-                    else collection.Settings[basePath + GetSettingPath(se)] = se.Value?.ToString();
+                    if (se.Name.StartsWith("@")) language.Collection.Settings[se.Name] = se.Value?.ToString();
+                    else language.Collection.Settings[basePath + GetSettingPath(se)] = se.Value?.ToString();
                 }
             }
         }

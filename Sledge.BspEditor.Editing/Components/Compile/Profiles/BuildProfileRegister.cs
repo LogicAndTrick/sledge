@@ -16,7 +16,7 @@ namespace Sledge.BspEditor.Editing.Components.Compile.Profiles
 
         public IEnumerable<SettingKey> GetKeys()
         {
-            yield return new SettingKey("Build", "Profiles", typeof(List<BuildProfile>));
+            yield break;
         }
 
         public void LoadValues(ISettingsStore store)

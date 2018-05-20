@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using Sledge.Common.Shell.Hotkeys;
@@ -46,7 +47,7 @@ namespace Sledge.Shell.Settings.Editors
             var idx = HotkeyList.SelectedIndices.Count == 0 ? 0 : HotkeyList.SelectedIndices[0];
 
             HotkeyList.Items.Clear();
-            foreach (var hotkey in register.GetHotkeys().OrderBy(x => x.Name))
+            foreach (var hotkey in FilterHotkeys(register.GetHotkeys(), FilterBox.Text).OrderBy(x => x.Name))
             {
                 var binding = _bindings.ContainsKey(hotkey.ID) ? _bindings[hotkey.ID] : hotkey.DefaultHotkey;
                 HotkeyList.Items.Add(new ListViewItem(new[] {hotkey.Name, hotkey.Description, binding}) {Tag = hotkey});
@@ -67,6 +68,14 @@ namespace Sledge.Shell.Settings.Editors
             if (idx < 0 || idx >= HotkeyActionList.Items.Count) idx = HotkeyActionList.Items.Count - 1;
             HotkeyActionList.SelectedIndex = idx;
             HotkeyActionList.EndUpdate();
+        }
+
+        private IEnumerable<IHotkey> FilterHotkeys(IEnumerable<IHotkey> hotkeys, string filter)
+        {
+            return String.IsNullOrWhiteSpace(filter) ? hotkeys : hotkeys.Where(IsMatch);
+
+            bool IsMatch(IHotkey h) => h.Name.IndexOf(filter, StringComparison.InvariantCultureIgnoreCase) >= 0 ||
+                                       h.Description.IndexOf(filter, StringComparison.InvariantCultureIgnoreCase) >= 0;
         }
 
         private void DeleteHotkey(IHotkey hk)
@@ -187,6 +196,11 @@ namespace Sledge.Shell.Settings.Editors
             {
                 return Hotkey.Name;
             }
+        }
+
+        private void UpdateFilter(object sender, EventArgs e)
+        {
+            UpdateHotkeyList();
         }
     }
 }

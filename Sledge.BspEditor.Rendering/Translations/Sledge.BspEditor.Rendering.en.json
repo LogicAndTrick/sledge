@@ -26,7 +26,7 @@
             }
         },
         "Renderer": {
-            "Renderer": "Renderer",
+            "Renderer": "Renderer (requires restart)",
             "DisableTextureTransparency": "Disable texture transparency (compatibility mode)",
             "DisableTextureFiltering": "Disable texture filtering (compatibility mode)",
             "ForcePowerOfTwoTextureSizes": "Disable non-power-of-two texture sizes (compatibility mode)",
