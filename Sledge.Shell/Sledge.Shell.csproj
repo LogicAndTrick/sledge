@@ -32,10 +32,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="LogicAndTrick.Gimme, Version=1.3.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\LogicAndTrick.Gimme.1.3.2\lib\net45\LogicAndTrick.Gimme.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="LogicAndTrick.Oy, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\LogicAndTrick.Oy.1.1.0\lib\net45\LogicAndTrick.Oy.dll</HintPath>
     </Reference>
@@ -82,6 +78,7 @@
     <Compile Include="Commands\CloseFile.cs" />
     <Compile Include="Commands\Exit.cs" />
     <Compile Include="Commands\Export.cs" />
+    <Compile Include="Commands\IActivatorProvider.cs" />
     <Compile Include="Commands\OpenDocument.cs" />
     <Compile Include="Commands\NewFile.cs" />
     <Compile Include="Commands\OpenSettingsForm.cs" />

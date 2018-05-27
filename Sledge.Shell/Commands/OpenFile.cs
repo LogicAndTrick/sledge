@@ -12,7 +12,6 @@ using Sledge.Common.Shell.Hotkeys;
 using Sledge.Common.Shell.Menu;
 using Sledge.Common.Translations;
 using Sledge.Shell.Properties;
-using Sledge.Shell.Registers;
 
 namespace Sledge.Shell.Commands
 {

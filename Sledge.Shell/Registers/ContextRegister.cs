@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
 using System.Threading.Tasks;
-using LogicAndTrick.Gimme;
-using LogicAndTrick.Gimme.Providers;
 using LogicAndTrick.Oy;
 using Sledge.Common.Shell.Context;
 using Sledge.Common.Shell.Hooks;
@@ -16,9 +14,8 @@ namespace Sledge.Shell.Registers
     /// </summary>
     [Export(typeof(IStartupHook))]
     [Export(typeof(IInitialiseHook))]
-    [Export(typeof(IResourceProvider<>))]
     [Export(typeof(IContext))]
-    public class ContextRegister : SyncResourceProvider<ContextInfo>, IStartupHook, IInitialiseHook, IContext
+    public class ContextRegister : IStartupHook, IInitialiseHook, IContext
     {
         public Task OnStartup()
         {
@@ -26,9 +23,6 @@ namespace Sledge.Shell.Registers
             Oy.Subscribe<ContextInfo>("Context:Add", c => Add(c));
             Oy.Subscribe<ContextInfo>("Context:Remove", c => Remove(c.ID));
             Oy.Subscribe<string>("Context:Remove", c => Remove(c));
-
-            // Register the resource provider
-            Gimme.Register(this);
 
             return Task.FromResult(0);
         }
@@ -38,17 +32,6 @@ namespace Sledge.Shell.Registers
             // We run this on initialise so anything that listens for context changes
             // to set visibilities/active states will be notified at startup
             await Oy.Publish("Context:Changed", this);
-        }
-
-        // Context resource provider
-        public override bool CanProvide(string location)
-        {
-            return location == "meta://context";
-        }
-
-        public override IEnumerable<ContextInfo> Fetch(string location, List<string> resources)
-        {
-            return _context.Values.ToList();
         }
 
         private readonly ConcurrentDictionary<string, ContextInfo> _context;

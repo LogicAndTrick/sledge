@@ -4,8 +4,6 @@ using System.ComponentModel.Composition;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
-using LogicAndTrick.Gimme;
-using LogicAndTrick.Gimme.Providers;
 using LogicAndTrick.Oy;
 using Microsoft.Win32;
 using Sledge.Common.Logging;
@@ -21,7 +19,7 @@ namespace Sledge.Shell.Registers
     [Export(typeof(IStartupHook))]
     [Export(typeof(ISettingsContainer))]
     [Export]
-    public class DocumentRegister : SyncResourceProvider<IDocumentLoader>, IStartupHook, ISettingsContainer
+    public class DocumentRegister : IStartupHook, ISettingsContainer
     {
         [ImportMany] private IEnumerable<Lazy<IDocumentLoader>> _documentLoaders;
 
@@ -41,10 +39,7 @@ namespace Sledge.Shell.Registers
             
             Oy.Subscribe<IDocument>("Document:Opened", OpenDocument);
             Oy.Subscribe<IDocument>("Document:Closed", CloseDocument);
-
-            // Register the resource provider
-            Gimme.Register(this);
-
+            
             RegisterExtensionHandlers();
 
             return Task.FromResult(0);
@@ -95,19 +90,7 @@ namespace Sledge.Shell.Registers
         {
             _loaders.Remove(documentLoader);
         }
-
-        // Document loader resource provider
-
-        public override bool CanProvide(string location)
-        {
-            return _loaders.Any(x => x.CanLoad(location));
-        }
-
-        public override IEnumerable<IDocumentLoader> Fetch(string location, List<string> resources)
-        {
-            return _loaders.Where(x => x.CanLoad(location));
-        }
-
+        
         // Settings provider
 
         public string Name => "Sledge.Shell.Documents";

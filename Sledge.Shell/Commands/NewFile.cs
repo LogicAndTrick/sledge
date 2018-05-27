@@ -1,9 +1,8 @@
+using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
-using System.Reactive.Linq;
-using System.Reactive.Threading.Tasks;
 using System.Threading.Tasks;
-using LogicAndTrick.Gimme;
 using LogicAndTrick.Oy;
 using Sledge.Common.Logging;
 using Sledge.Common.Shell.Commands;
@@ -24,6 +23,8 @@ namespace Sledge.Shell.Commands
     [MenuImage(typeof(Resources), nameof(Resources.Menu_New))]
     public class NewFile : ICommand
     {
+        [ImportMany] private IEnumerable<Lazy<IDocumentLoader>> _loaders;
+
         public string Name { get; set; } = "New";
         public string Details { get; set; } = "New";
 
@@ -34,7 +35,7 @@ namespace Sledge.Shell.Commands
 
         public async Task Invoke(IContext context, CommandParameters parameters)
         {
-            var loaders = await Gimme.Fetch<IDocumentLoader>(null, null).ToList().ToTask();
+            var loaders = _loaders.Where(x => x.Value.CanLoad(null)).Select(x => x.Value).ToList();
             if (!loaders.Any()) return;
 
             var loader = loaders[0];

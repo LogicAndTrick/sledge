@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
-using LogicAndTrick.Gimme;
 using LogicAndTrick.Oy;
 using Sledge.Common.Shell.Commands;
 
@@ -88,7 +87,8 @@ namespace Sledge.BspEditor.Rendering.Viewport
                 _parameters = parameters;
                 Click += RunCommand;
 
-                var cmd = Gimme.FetchOne<ICommand>("meta://command", _commandID).Result;
+                var register = Common.Container.Get<Shell.Registers.CommandRegister>();
+                var cmd = register.Get(_commandID);
                 Text = cmd == null ? _commandID : cmd.Name;
             }
 

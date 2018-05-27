@@ -4,8 +4,6 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
 using System.Threading.Tasks;
-using LogicAndTrick.Gimme;
-using LogicAndTrick.Gimme.Providers;
 using LogicAndTrick.Oy;
 using Sledge.Common.Shell.Commands;
 using Sledge.Common.Shell.Context;
@@ -19,8 +17,8 @@ namespace Sledge.Shell.Registers
     /// This class should be the only thing to ever run commands in the application.
     /// </summary>
     [Export(typeof(IStartupHook))]
-    [Export(typeof(IResourceProvider<>))]
-    public class CommandRegister : SyncResourceProvider<ICommand>, IStartupHook
+    [Export(typeof(IActivatorProvider))]
+    public class CommandRegister : IStartupHook, IActivatorProvider
     {
         // Store the context (the command register is one of the few things that should need static access to the context)
         [Import] private IContext _context;
@@ -41,22 +39,7 @@ namespace Sledge.Shell.Registers
             // Hook to run a command
             Oy.Subscribe<CommandMessage>("Command:Run", Run);
 
-            // Register the resource provider
-            Gimme.Register(this);
-            Gimme.Register(new ActivatorProvider(this));
-
             return Task.FromResult(0);
-        }
-
-        // In the unlikely case anybody needs a command as a resource
-        public override bool CanProvide(string location)
-        {
-            return location == "meta://command";
-        }
-
-        public override IEnumerable<ICommand> Fetch(string location, List<string> resources)
-        {
-            return resources.Select(Get).Where(g => g != null);
         }
 
         /// <summary>
@@ -82,6 +65,12 @@ namespace Sledge.Shell.Registers
             _commands = new ConcurrentDictionary<string, ICommand>();
         }
 
+        public IEnumerable<IActivator> SearchActivators(string keywords)
+        {
+            var filter = (keywords ?? "").Trim().Split(' ');
+            return _commands.Values.Where(x => filter.All(f => x.Name.IndexOf(f, StringComparison.Ordinal) >= 0)).Select(x => new CommandActivator(x));
+        }
+
         /// <summary>
         /// Register a command
         /// </summary>
@@ -96,7 +85,7 @@ namespace Sledge.Shell.Registers
         /// </summary>
         /// <param name="id">The command id</param>
         /// <returns>The command or null if it's not found</returns>
-        private ICommand Get(string id)
+        public ICommand Get(string id)
         {
             return _commands.ContainsKey(id) ? _commands[id] : null;
         }
@@ -118,29 +107,6 @@ namespace Sledge.Shell.Registers
         {
             ICommand o;
             _commands.TryRemove(id, out o);
-        }
-
-        /// <summary>
-        /// The command register is the primary source of activators.
-        /// </summary>
-        private class ActivatorProvider : SyncResourceProvider<IActivator>
-        {
-            private readonly CommandRegister _self;
-
-            public ActivatorProvider(CommandRegister self)
-            {
-                _self = self;
-            }
-
-            public override bool CanProvide(string location)
-            {
-                return true;
-            }
-
-            public override IEnumerable<IActivator> Fetch(string location, List<string> resources)
-            {
-                return _self._commands.Values.Select(x => new CommandActivator(x));
-            }
         }
     }
 }

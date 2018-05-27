@@ -1,11 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Reactive.Linq;
-using System.Reactive.Threading.Tasks;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using LogicAndTrick.Gimme;
 using Sledge.Shell.Commands;
 
 namespace Sledge.Shell.Forms
@@ -13,10 +11,12 @@ namespace Sledge.Shell.Forms
     public partial class CommandBox : Form
     {
         private int _activeComponentIndex = 0;
+        private List<IActivatorProvider> _providers;
 
         public CommandBox()
         {
             InitializeComponent();
+            _providers = Common.Container.GetMany<IActivatorProvider>().ToList();
         }
 
         protected override void OnLoad(EventArgs e)
@@ -92,9 +92,9 @@ namespace Sledge.Shell.Forms
                     });
                     return;
                 }
-                var result = await Gimme.Fetch<IActivator>("shell://commandbox", SearchBox.Text.Split(' ').ToList())
-                    .ToList()
-                    .ToTask();
+
+                var keywords = SearchBox.Text.Trim();
+                var result = _providers.SelectMany(p => p.SearchActivators(keywords)).Take(10).ToList();
 
                 foreach (var x in result)
                 {

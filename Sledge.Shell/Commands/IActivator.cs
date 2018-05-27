@@ -6,7 +6,7 @@ namespace Sledge.Shell.Commands
     /// An activator are meta-commands exposed by the command box.
     /// They are usually wrappers for commands, open documents, and so on.
     /// </summary>
-    internal interface IActivator
+    public interface IActivator
     {
         /// <summary>
         /// The activator group
