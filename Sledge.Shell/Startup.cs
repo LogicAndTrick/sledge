@@ -36,6 +36,8 @@ namespace Sledge.Shell
             Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
             Application.ThreadException += (s, e) => UnhandledException(e.Exception);
             AppDomain.CurrentDomain.UnhandledException += (s, e) => UnhandledException(e.ExceptionObject as Exception);
+
+            Oy.UnhandledException += (s, e) => UnhandledException(e.Exception);
             
             var shell = container.GetExport<Forms.Shell>().Value;
             var si = new SingleInstance(shell);

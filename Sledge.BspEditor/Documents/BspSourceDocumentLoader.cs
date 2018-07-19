@@ -93,6 +93,7 @@ namespace Sledge.BspEditor.Documents
             var env = await GetEnvironment();
             if (env == null) return null;
 
+            NotSupportedException ex = null;
             using (var stream = File.Open(location, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
             {
                 foreach (var provider in _providers.Where(x => CanLoad(x.Value, location)))
@@ -104,11 +105,19 @@ namespace Sledge.BspEditor.Documents
                         await ProcessAfterLoad(md);
                         return md;
                     }
-                    catch (NotSupportedException)
+                    catch (NotSupportedException e)
                     {
+                        ex = e;
                         stream.Seek(0, SeekOrigin.Begin);
                     }
                 }
+            }
+
+            if (ex != null)
+            {
+                // This file type is explicitly supported, but the provider rejected it.
+                MessageBox.Show(ex.Message, "Unsupported file format", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return null;
             }
             throw new NotSupportedException("This file type is not supported.");
         }

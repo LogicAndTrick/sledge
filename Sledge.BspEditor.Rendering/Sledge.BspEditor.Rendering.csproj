@@ -31,8 +31,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="LogicAndTrick.Oy, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\LogicAndTrick.Oy.1.1.0\lib\net45\LogicAndTrick.Oy.dll</HintPath>
+    <Reference Include="LogicAndTrick.Oy, Version=1.2.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\LogicAndTrick.Oy.1.2.0\lib\net45\LogicAndTrick.Oy.dll</HintPath>
     </Reference>
     <Reference Include="OpenTK, Version=2.0.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
       <HintPath>..\packages\OpenTK.2.0.0\lib\net20\OpenTK.dll</HintPath>
@@ -68,6 +68,12 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Components\StringTextureManagerDebugger.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Components\StringTextureManagerDebugger.Designer.cs">
+      <DependentUpon>StringTextureManagerDebugger.cs</DependentUpon>
+    </Compile>
     <Compile Include="Converters\CenterHandlesConverter.cs" />
     <Compile Include="Converters\CordonBoundsConverter.cs" />
     <Compile Include="Converters\CordonClippingConverter.cs" />
@@ -146,6 +152,11 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Commands\" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Components\StringTextureManagerDebugger.resx">
+      <DependentUpon>StringTextureManagerDebugger.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

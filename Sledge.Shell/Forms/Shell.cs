@@ -68,6 +68,14 @@ namespace Sledge.Shell.Forms
             Oy.Subscribe<IDocument>("Document:CloseAndPrompt", async d => await this.InvokeAsync(() => DocumentCloseAndPrompt(d)));
 
             Oy.Subscribe<string>("Shell:OpenCommandBox", async o => await this.InvokeAsync(() => OpenCommandBox(o)));
+
+            Oy.Subscribe<Exception>("Shell:UnhandledException", ShowExceptionDialog);
+        }
+
+        private async Task ShowExceptionDialog(Exception obj)
+        {
+            var ed = new ExceptionWindow(obj);
+            ed.ShowDialog(this);
         }
 
         private async Task InstanceOpened(List<string> args)
