@@ -14,7 +14,7 @@ namespace Sledge.Rendering.Materials
 {
     public class StringTextureManager : IUpdatable, IDisposable
     {
-        internal class FontKey
+        public class FontKey
         {
             public string Name { get; private set; }
             public float Size { get; private set; }
@@ -62,7 +62,7 @@ namespace Sledge.Rendering.Materials
             }
         }
 
-        internal class StringTextureValue
+        public class StringTextureValue
         {
             public string Value { get; private set; }
             public string TextureName { get; private set; }
@@ -79,7 +79,7 @@ namespace Sledge.Rendering.Materials
             }
         }
 
-        internal class StringTexture : IDisposable, IUpdatable
+        public class StringTexture : IDisposable, IUpdatable
         {
             private const int MinSize = 512;
             private const int MaxSize = 2048;
@@ -94,23 +94,23 @@ namespace Sledge.Rendering.Materials
             public string TextureName { get; private set; }
             public int Size { get; private set; }
 
-            private readonly Font _font;
+            public Font Font { get; }
             private readonly Dictionary<string, StringTextureValue> _values;
             private readonly IRenderer _renderer;
             private readonly long _cacheMilliseconds;
 
-            private Bitmap _image;
+            public Bitmap Image { get; private set; }
             private int _fragmentation;
 
-            public StringTexture(IRenderer renderer, FontKey font, long cacheMilliseconds)
+            internal StringTexture(IRenderer renderer, FontKey font, long cacheMilliseconds)
             {
                 _renderer = renderer;
                 _cacheMilliseconds = cacheMilliseconds;
-                _font = font.CreateFont();
+                Font = font.CreateFont();
                 TextureName = GenerateTextureName();
                 Size = MinSize;
-                _image = new Bitmap(Size, Size);
-                using (var g = Graphics.FromImage(_image))
+                Image = new Bitmap(Size, Size);
+                using (var g = Graphics.FromImage(Image))
                 {
                     g.Clear(Color.Transparent);
                 }
@@ -119,6 +119,8 @@ namespace Sledge.Rendering.Materials
                 UpdateTexture();
                 _renderer.Materials.Add(Material.Texture(TextureName, true));
             }
+
+            public IEnumerable<StringTextureValue> GetValues() => _values.Values;
 
             public bool IsEmpty()
             {
@@ -198,10 +200,10 @@ namespace Sledge.Rendering.Materials
                 using (var g = Graphics.FromImage(img))
                 {
                     g.Clear(Color.Transparent);
-                    g.DrawImage(_image, 0, 0);
+                    g.DrawImage(Image, 0, 0);
                 }
-                _image.Dispose();
-                _image = img;
+                Image.Dispose();
+                Image = img;
 
                 UpdateTexture();
                 return true;
@@ -216,14 +218,14 @@ namespace Sledge.Rendering.Materials
 
             private void UpdateTexture()
             {
-                _renderer.Textures.Create(TextureName, _image, Size, Size, TextureFlags.PixelPerfect | TextureFlags.Transparent);
+                _renderer.Textures.Create(TextureName, Image, Size, Size, TextureFlags.PixelPerfect | TextureFlags.Transparent);
             }
 
             private StringTextureValue AddInternal(string value)
             {
                 if (Contains(value)) return _values[value];
 
-                var size = TextRenderer.MeasureText(value, _font);
+                var size = TextRenderer.MeasureText(value, Font);
                 size = new Size(size.Width, size.Height + 2);
                 var rec = FindSpaceFor(size.Width, size.Height);
 
@@ -235,7 +237,7 @@ namespace Sledge.Rendering.Materials
                 if (rec.IsEmpty) return null;
 
                 var stv = new StringTextureValue(value, TextureName, rec);
-                using (var g = Graphics.FromImage(_image))
+                using (var g = Graphics.FromImage(Image))
                 {
                     g.SmoothingMode = SmoothingMode.None;
                     g.TextRenderingHint = TextRenderingHint.SingleBitPerPixelGridFit;
@@ -246,7 +248,7 @@ namespace Sledge.Rendering.Materials
                     g.FillRectangle(Brushes.Transparent, stv.Rectangle);
 
                     g.CompositingMode = CompositingMode.SourceOver;
-                    g.DrawString(stv.Value, _font, Brushes.White, stv.Rectangle);
+                    g.DrawString(stv.Value, Font, Brushes.White, stv.Rectangle);
                 }
                 _values.Add(value, stv);
 
@@ -317,8 +319,8 @@ namespace Sledge.Rendering.Materials
 
             public void Dispose()
             {
-                _image.Dispose();
-                _font.Dispose();
+                Image.Dispose();
+                Font.Dispose();
             }
         }
 
@@ -333,6 +335,8 @@ namespace Sledge.Rendering.Materials
             _renderer = renderer;
             _textures = new Dictionary<FontKey, List<StringTexture>>();
         }
+
+        public IEnumerable<StringTexture> GetTextures() => _textures.Values.SelectMany(x => x);
 
         private StringTexture GetTexture(string text, FontKey key, bool addIfMissing = true)
         {
