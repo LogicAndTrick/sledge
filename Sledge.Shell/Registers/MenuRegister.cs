@@ -54,13 +54,7 @@ namespace Sledge.Shell.Registers
             _shell.InvokeSync(() =>
             {
                 _tree = new VirtualMenuTree(_context, _shell.MenuStrip, _shell.ToolStrip, _declaredSections, _declaredGroups);
-
-                foreach (var mi in _menuItems.Values)
-                {
-                    _tree.Add(mi);
-                }
-
-                _tree.Reposition();
+                _tree.ResetItems(_menuItems.Values);
             });
             
             Oy.Subscribe<IContext>("Context:Changed", ContextChanged);
@@ -82,7 +76,6 @@ namespace Sledge.Shell.Registers
         {
             _shell.InvokeLater(() =>
             {
-                _tree.Clear();
                 _menuItems.Clear();
 
                 foreach (var export in _itemProviders)
@@ -93,11 +86,7 @@ namespace Sledge.Shell.Registers
                     }
                 }
 
-                foreach (var mi in _menuItems.Values)
-                {
-                    _tree.Add(mi);
-                }
-                _tree.Reposition();
+                _tree.ResetItems(_menuItems.Values);
             });
         }
 
@@ -170,6 +159,34 @@ namespace Sledge.Shell.Registers
                 Clear();
             }
 
+            public void ResetItems(IEnumerable<IMenuItem> items)
+            {
+                Clear();
+
+                foreach (var mi in items)
+                {
+                    Add(mi);
+                }
+
+                Render();
+            }
+
+            private void Render()
+            {
+                MenuStrip.SuspendLayout();
+                MenuStrip.Items.Clear();
+                MenuStrip.Items.AddRange(RootNodes.Values.OrderBy(x => x.OrderHint).Select(x => x.MenuMenuItem).OfType<ToolStripItem>().ToArray());
+                MenuStrip.ResumeLayout();
+
+                ToolStrip.BeginInit();
+                ToolStrip.Controls.Clear();
+                foreach (var ts in RootNodes.Values.OrderByDescending(x => x.OrderHint))
+                {
+                    if (ts.ToolStrip.Items.Count > 0) ToolStrip.Join(ts.ToolStrip);
+                }
+                ToolStrip.EndInit();
+            }
+
             /// <summary>
             /// Add a section to the tree. This will create a top-level menu as well as a toolbar.
             /// </summary>
@@ -186,14 +203,12 @@ namespace Sledge.Shell.Registers
 
                 // Add the node, menu, and toolbar
                 RootNodes.Add(ds.Name, rtn);
-                MenuStrip.Items.Add(rtn.MenuMenuItem);
-                ToolStrip.Join(rtn.ToolStrip);
             }
 
             /// <summary>
             /// Add an item to the tree. This will add the menu item and the toolbar button if required.
             /// </summary>
-            public void Add(IMenuItem item)
+            private void Add(IMenuItem item)
             {
                 // If the section isn't known, add it to the end
                 if (!RootNodes.ContainsKey(item.Section)) AddSection(new MenuSection(item.Section, item.Section, "Z"));
@@ -211,15 +226,6 @@ namespace Sledge.Shell.Registers
 
                 // Add known sections straight away
                 foreach (var ds in _declaredSections.OrderBy(x => x.OrderHint)) AddSection(ds);
-            }
-
-            public void Reposition()
-            {
-                ToolStrip.Controls.Clear();
-                foreach (var ts in RootNodes.Values.OrderByDescending(x => x.OrderHint))
-                {
-                    if (ts.ToolStrip.Items.Count > 0) ToolStrip.Join(ts.ToolStrip);
-                }
             }
 
             public void Update()
