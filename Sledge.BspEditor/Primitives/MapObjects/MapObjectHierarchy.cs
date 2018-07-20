@@ -10,12 +10,12 @@ namespace Sledge.BspEditor.Primitives.MapObjects
     public class MapObjectHierarchy : IEnumerable<IMapObject>
     {
         private readonly IMapObject _self;
-        private readonly HashSet<long> _descendantIds;
+        private readonly Dictionary<long, IMapObject> _descendants;
         private readonly Dictionary<long, IMapObject> _children;
         private IMapObject _parent;
 
         public int NumChildren => _children.Count;
-        public int NumDescendants => _descendantIds.Count;
+        public int NumDescendants => _descendants.Count;
         public bool HasChildren => NumChildren > 0;
 
         /// <summary>
@@ -48,7 +48,7 @@ namespace Sledge.BspEditor.Primitives.MapObjects
         public MapObjectHierarchy(IMapObject obj)
         {
             _self = obj;
-            _descendantIds = new HashSet<long>();
+            _descendants = new Dictionary<long, IMapObject>();
             _children = new Dictionary<long, IMapObject>();
         }
 
@@ -64,26 +64,24 @@ namespace Sledge.BspEditor.Primitives.MapObjects
 
         public bool HasDescendant(long id)
         {
-            return _descendantIds.Contains(id);
+            return _descendants.ContainsKey(id);
         }
 
         public IMapObject GetDescendant(long id)
         {
-            if (!HasDescendant(id)) return null;
-            if (HasChild(id)) return GetChild(id);
-            var child = _children.FirstOrDefault(x => x.Value.Hierarchy.HasDescendant(id));
-            return child.Value?.Hierarchy.GetDescendant(id);
+            return _descendants.ContainsKey(id) ? _descendants[id] : null;
         }
 
         private void Add(IMapObject item)
         {
-            _children[item.ID] = item;
-            var set = new HashSet<long>(item.Hierarchy._descendantIds) { item.ID };
+            var id = item.ID;
+            _children[id] = item;
 
             var p = _self;
             while (p != null)
             {
-                p.Hierarchy._descendantIds.UnionWith(set);
+                p.Hierarchy._descendants[id] = item;
+                foreach (var kv in item.Hierarchy._descendants) p.Hierarchy._descendants[kv.Key] = kv.Value;
                 p = p.Hierarchy._parent;
             }
         }
@@ -91,13 +89,15 @@ namespace Sledge.BspEditor.Primitives.MapObjects
         private bool Remove(IMapObject item)
         {
             if (item == null || !_children.ContainsKey(item.ID)) return false;
-            _children.Remove(item.ID);
-            var set = new HashSet<long>(item.Hierarchy._descendantIds) { item.ID };
+
+            var id = item.ID;
+            _children.Remove(id);
 
             var p = _self;
             while (p != null)
             {
-                p.Hierarchy._descendantIds.ExceptWith(set);
+                p.Hierarchy._descendants.Remove(id);
+                foreach (var kv in item.Hierarchy._descendants) p.Hierarchy._descendants.Remove(kv.Key);
                 p = p.Hierarchy._parent;
             }
             return true;
@@ -105,18 +105,19 @@ namespace Sledge.BspEditor.Primitives.MapObjects
 
         public void Clear()
         {
-            var set = _descendantIds;
+            var set = _descendants.Keys.ToList();
             var p = _parent;
             while (p != null)
             {
-                p.Hierarchy._descendantIds.ExceptWith(set);
+                foreach (var v in set) p.Hierarchy._descendants.Remove(v);
                 p = p.Hierarchy._parent;
             }
             foreach (var mo in _children.Values)
             {
                 mo.Hierarchy._parent = null;
             }
-            _descendantIds.Clear();
+
+            _descendants.Clear();
             _children.Clear();
         }
 
