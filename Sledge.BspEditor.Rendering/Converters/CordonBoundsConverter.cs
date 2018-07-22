@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Drawing;
 using System.Threading.Tasks;
@@ -29,20 +30,22 @@ namespace Sledge.BspEditor.Rendering.Converters
             return obj is Root;
         }
 
-        public async Task<bool> Convert(SceneMapObject smo, MapDocument document, IMapObject obj)
+        public Task<bool> Convert(SceneMapObject smo, MapDocument document, IMapObject obj)
         {
             var c = GetCordon(document);
-            if (!c.Enabled) return true;
+            if (!c.Enabled) return Task.FromResult(true);
+
             foreach (var line in c.Box.GetBoxLines())
             {
                 smo.SceneObjects.Add(new object(), new Line(Color.Red, line.Start.ToVector3(), line.End.ToVector3()));
             }
-            return true;
+
+            return Task.FromResult(true);
         }
 
-        public async Task<bool> Update(SceneMapObject smo, MapDocument document, IMapObject obj)
+        public Task<bool> PropertiesChanged(SceneObjectsChangedEventArgs args, SceneMapObject smo, MapDocument document, IMapObject obj, HashSet<string> propertyNames)
         {
-            return false;
+            return Task.FromResult(false);
         }
     }
 }

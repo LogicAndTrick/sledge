@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Primitives.MapObjects;
@@ -39,13 +40,14 @@ namespace Sledge.BspEditor.Rendering.Converters
         Task<bool> Convert(SceneMapObject smo, MapDocument document, IMapObject obj);
 
         /// <summary>
-        /// Update an existing SceneMapObject with the new properties of this MapObject.
-        /// Returns false if the update operation isn't possible.
+        /// Process an existing SceneMapObject after the source properties have changed.
         /// </summary>
+        /// <param name="args">An object to inject changes and deletions into</param>
         /// <param name="smo">The SceneMapObject to update scene objects in</param>
         /// <param name="document">The current document</param>
         /// <param name="obj">The object to update</param>
-        /// <returns>False if the object could not be updated</returns>
-        Task<bool> Update(SceneMapObject smo, MapDocument document, IMapObject obj);
+        /// <param name="propertyNames">The names of all properties that have changed</param>
+        /// <returns>False if the update failed for some reason</returns>
+        Task<bool> PropertiesChanged(SceneObjectsChangedEventArgs args, SceneMapObject smo, MapDocument document, IMapObject obj, HashSet<string> propertyNames);
     }
 }

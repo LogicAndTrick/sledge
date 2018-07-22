@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Drawing;
+using System.Linq;
 using System.Threading.Tasks;
 using OpenTK;
 using Sledge.BspEditor.Documents;
@@ -37,19 +38,15 @@ namespace Sledge.BspEditor.Rendering.Converters
             return true;
         }
 
-        public async Task<bool> Update(SceneMapObject smo, MapDocument document, IMapObject obj)
+        public Task<bool> PropertiesChanged(SceneObjectsChangedEventArgs args, SceneMapObject smo, MapDocument document, IMapObject obj, HashSet<string> propertyNames)
         {
             var entity = (Entity)obj;
-            if (smo.SceneObjects.ContainsKey(entity.EntityData))
+            foreach (var ela in smo.SceneObjects.Values.OfType<EntityTextElement>())
             {
-                var ete = smo.SceneObjects[entity.EntityData] as EntityTextElement;
-                if (ete != null)
-                {
-                    ete.Update(entity);
-                    return true;
-                }
+                ela.Update(entity);
+                return Task.FromResult(true);
             }
-            return false;
+            return Task.FromResult(false);
         }
 
         /// <summary>

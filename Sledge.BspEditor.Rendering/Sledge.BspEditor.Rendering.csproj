@@ -74,14 +74,17 @@
     <Compile Include="Components\StringTextureManagerDebugger.Designer.cs">
       <DependentUpon>StringTextureManagerDebugger.cs</DependentUpon>
     </Compile>
+    <Compile Include="Converters\AxisLinesConverter.cs" />
     <Compile Include="Converters\CenterHandlesConverter.cs" />
     <Compile Include="Converters\CordonBoundsConverter.cs" />
     <Compile Include="Converters\CordonClippingConverter.cs" />
     <Compile Include="Converters\DefaultEntityConverter.cs" />
     <Compile Include="Converters\EntityAngleConverter.cs" />
     <Compile Include="Converters\EntityDecalConverter.cs" />
+    <Compile Include="Converters\EntityNameConverter.cs" />
     <Compile Include="Converters\GridConverter.cs" />
     <Compile Include="Converters\HiddenConverter.cs" />
+    <Compile Include="Converters\ViewportTextConverter.cs" />
     <Compile Include="Scene\ISceneObjectProvider.cs" />
     <Compile Include="Scene\ISceneObjectProviderFactory.cs" />
     <Compile Include="Scene\MapDocumentSceneObjectProvider.cs" />
@@ -92,13 +95,10 @@
     <Compile Include="Viewport\IViewportEventListenerFactory.cs" />
     <Compile Include="Viewport\PerspectiveCameraNavigationViewportListener.cs" />
     <Compile Include="Converters\DefaultSolidConverter.cs" />
-    <Compile Include="Converters\EntityNameConverter.cs" />
     <Compile Include="Resources\EnvironmentTextureProvider.cs" />
     <Compile Include="Scene\ConvertedScene.cs" />
-    <Compile Include="Converters\AxisLinesConverter.cs" />
     <Compile Include="Converters\IMapObjectSceneConverter.cs" />
     <Compile Include="Converters\MapObjectSceneConverterPriority.cs" />
-    <Compile Include="Converters\ViewportTextConverter.cs" />
     <Compile Include="GeometricExtensions.cs" />
     <Compile Include="Viewport\CameraNavigationViewportSettings.cs" />
     <Compile Include="Viewport\IViewportEventListener.cs" />

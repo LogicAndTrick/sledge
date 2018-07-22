@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using Sledge.BspEditor.Primitives.MapObjectData;
 using Sledge.Common.Transport;
@@ -15,10 +17,47 @@ namespace Sledge.BspEditor.Primitives.MapObjects
     public abstract class BaseMapObject : IMapObject
     {
         public long ID { get; }
-        public bool IsSelected { get; set; }
+
+        private bool _isSelected;
+        private MapObjectDataCollection _data;
+
+        public bool IsSelected
+        {
+            get => _isSelected;
+            set
+            {
+                _isSelected = value;
+                OnPropertyChanged(nameof(IsSelected));
+            }
+        }
+
         public Box BoundingBox { get; private set; }
-        public MapObjectDataCollection Data { get; private set; }
+
+        public MapObjectDataCollection Data
+        {
+            get => _data;
+            private set
+            {
+                if (_data == value) return;
+                if (_data != null) _data.PropertyChanged -= OnDataPropertyChanged;
+                _data = value;
+                if (_data != null) _data.PropertyChanged += OnDataPropertyChanged;
+            }
+        }
+
         public MapObjectHierarchy Hierarchy { get; private set; }
+
+        #region PropertyChanged
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        public void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        private void OnDataPropertyChanged(object sender, PropertyChangedEventArgs e) => OnPropertyChanged(e.PropertyName);
+
+        #endregion
 
         protected BaseMapObject(long id)
         {
@@ -139,6 +178,7 @@ namespace Sledge.BspEditor.Primitives.MapObjects
             foreach (var t in Data.OfType<ITransformable>())
             {
                 t.Transform(matrix);
+                OnPropertyChanged("Data." + t.GetType().Name);
             }
             foreach (var t in Hierarchy)
             {

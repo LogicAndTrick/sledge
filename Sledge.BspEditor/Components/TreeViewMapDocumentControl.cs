@@ -59,7 +59,7 @@ namespace Sledge.BspEditor.Components
 
         private void AddData(TreeNode treeNode, IMapObject obj)
         {
-            foreach (var d in obj.Data.Data)
+            foreach (var d in obj.Data)
             {
                 var node = new TreeNode(d.GetType().Name);
                 foreach (var pi in d.GetType().GetProperties().Where(x => x.CanRead))

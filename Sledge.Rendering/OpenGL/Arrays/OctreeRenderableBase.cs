@@ -57,8 +57,9 @@ namespace Sledge.Rendering.OpenGL.Arrays
             var replaceRenderable = changes.Replaced.OfType<RenderableObject>().ToList();
 
             var added = addRenderable.Union(replaceRenderable).Except(removeRenderable).ToList();
+            var removed = removeRenderable.Union(replaceRenderable).ToList();
 
-            Octree.Remove(removeRenderable.Union(replaceRenderable));
+            Octree.Remove(removed);
             Octree.Add(added);
             _changeNum += addRenderable.Count + removeRenderable.Count + (replaceRenderable.Count * 2);
 
@@ -93,7 +94,7 @@ namespace Sledge.Rendering.OpenGL.Arrays
 
                     foreach (var part in Partitions)
                     {
-                        UpdateItemsInPartition(part, updateRenderable, removeRenderable);
+                        UpdateItemsInPartition(part, updateRenderable, removed);
                     }
                 }
             }

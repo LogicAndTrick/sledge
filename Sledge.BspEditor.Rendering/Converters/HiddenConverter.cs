@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
 using System.Threading.Tasks;
@@ -28,7 +29,8 @@ namespace Sledge.BspEditor.Rendering.Converters
             return Task.FromResult(false);
         }
 
-        public Task<bool> Update(SceneMapObject smo, MapDocument document, IMapObject obj)
+        public Task<bool> PropertiesChanged(SceneObjectsChangedEventArgs args, SceneMapObject smo, MapDocument document,
+            IMapObject obj, HashSet<string> propertyNames)
         {
             return Task.FromResult(false);
         }

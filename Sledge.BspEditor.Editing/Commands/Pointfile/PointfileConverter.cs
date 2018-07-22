@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Drawing;
 using System.Threading.Tasks;
@@ -52,9 +53,10 @@ namespace Sledge.BspEditor.Editing.Commands.Pointfile
             return true;
         }
 
-        public async Task<bool> Update(SceneMapObject smo, MapDocument document, IMapObject obj)
+        public async Task<bool> PropertiesChanged(SceneObjectsChangedEventArgs args, SceneMapObject smo,
+            MapDocument document, IMapObject obj, HashSet<string> propertyNames)
         {
-            return false;
+            return true;
         }
     }
 }

@@ -72,18 +72,14 @@ namespace Sledge.BspEditor.Rendering.Converters
             return true;
         }
 
-        public async Task<bool> Update(SceneMapObject smo, MapDocument document, IMapObject obj)
+        public Task<bool> PropertiesChanged(SceneObjectsChangedEventArgs args, SceneMapObject smo, MapDocument document, IMapObject obj, HashSet<string> propertyNames)
         {
-            if (smo.SceneObjects.Keys.Any(x => x is Holder))
+            foreach (var ela in smo.SceneObjects.Values.OfType<EntityAnglesLineElement>())
             {
-                var ela = smo.SceneObjects.First(x => x.Key is Holder).Value as EntityAnglesLineElement;
-                if (ela != null)
-                {
-                    ela.Update(obj);
-                    return true;
-                }
+                ela.Update(obj);
+                return Task.FromResult(true);
             }
-            return false;
+            return Task.FromResult(false);
         }
 
         private class Holder { }

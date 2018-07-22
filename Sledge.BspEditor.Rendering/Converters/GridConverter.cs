@@ -32,24 +32,20 @@ namespace Sledge.BspEditor.Rendering.Converters
             return obj is Root;
         }
 
-        public async Task<bool> Convert(SceneMapObject smo, MapDocument document, IMapObject obj)
+        public Task<bool> Convert(SceneMapObject smo, MapDocument document, IMapObject obj)
         {
             smo.SceneObjects.Add(new Holder(), new GridElement(document));
-            return true;
+            return Task.FromResult(true);
         }
 
-        public async Task<bool> Update(SceneMapObject smo, MapDocument document, IMapObject obj)
+        public Task<bool> PropertiesChanged(SceneObjectsChangedEventArgs args, SceneMapObject smo, MapDocument document, IMapObject obj, HashSet<string> propertyNames)
         {
-            if (smo.SceneObjects.Keys.Any(x => x is Holder))
+            foreach (var ela in smo.SceneObjects.Values.OfType<GridElement>())
             {
-                var ela = smo.SceneObjects.First(x => x.Key is Holder).Value as GridElement;
-                if (ela != null)
-                {
-                    ela.Update(document);
-                    return true;
-                }
+                ela.Update(document);
+                return Task.FromResult(true);
             }
-            return false;
+            return Task.FromResult(false);
         }
 
         private class Holder { }
@@ -106,6 +102,9 @@ namespace Sledge.BspEditor.Rendering.Converters
                 var newBounds = GetValidatedBounds(viewport, 0);
                 if (!bounds.Contains(newBounds)) return true;
 
+                var spacing = GetValue<int>(viewport, "Spacing");
+                if (spacing != _grid.Spacing) return true;
+
                 return false;
             }
 
@@ -114,6 +113,7 @@ namespace Sledge.BspEditor.Rendering.Converters
                 SetValue(viewport, "Validated", true);
                 SetValue(viewport, "Scale", viewport.Camera.Zoom);
                 SetValue(viewport, "Bounds", GetValidatedBounds(viewport, Padding));
+                SetValue(viewport, "Spacing", _grid.Spacing);
             }
 
             private const int Padding = 50;
