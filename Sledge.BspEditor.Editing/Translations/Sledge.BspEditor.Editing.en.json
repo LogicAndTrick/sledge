@@ -338,7 +338,7 @@
             "SolidEntities": "Solid entities",
             "UniqueTextures": "Unique textures",
             "TextureMemory": "Texture memory",
-            "TexturePackagesUsed": "Texuture packages used",
+            "TexturePackagesUsed": "Texture packages used",
             "CloseButton": "Close",
             "CalculatingTextureMemoryUsage": "Calculating..." 
         },
