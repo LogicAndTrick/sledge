@@ -1,0 +1,95 @@
+﻿{
+    "@Meta": {
+        "Base": "Sledge.BspEditor",
+        "Language": "fr",
+        "Inherit": ""
+    },
+    "@Settings": {
+    },
+    "Commands": {
+        "Modification": {
+            "SelectNone": {
+                "Name": "Effacer la sélection",
+                "Details": "Efface la sélection actuelle."
+            },
+            "SelectAll": {
+                "Name": "Tout sélectionner",
+                "Details": "Sélectionne tous les objets dans le document."
+            }
+        },
+        "Clipboard": {
+            "Paste": {
+                "Name": "Coller",
+                "Details": "Colle le contenu gardé dans le presse-papier."
+            },
+            "Cut": {
+                "Name": "Couper",
+                "Details": "Copie la sélection actuelle dans le presse-papier et la retire."
+            },
+            "Copy": {
+                "Name": "Copier",
+                "Details": "Copie la sélection actuelle dans le presse-papier."
+            }
+        },
+        "Grouping": {
+            "Group": {
+                "Name": "Grouper",
+                "Details": "Groupe les objets sélectionnés."
+            },
+            "Ungroup": {
+                "Name": "Dégrouper",
+                "Details": "Dégroupe les objets sélectionnés."
+            }
+        }
+    },
+    "Components": {
+        "ClipboardSidebarPanel": {
+            "Title": "Presse-papier"
+        }
+    },
+    "Documents": {
+        "BspSourceDocumentLoader": {
+            "FileTypeDescription": "Fichier Source BSP",
+            "UntitledDocumentName": "Sans titre {0}"
+        }
+    },
+    "Environment": {
+        "Goldsource": {
+            "AutomaticVisgroups": {
+                "Entities": "Entités",
+                "ToolBrushes": "Blocs d'outils",
+                "WorldGeometry": "Géométrie du monde",
+
+                "BrushEntities": "Entités blocs",
+                "PointEntities": "Entités points",
+                "Lights": "Lumières",
+                "Triggers": "Déclencheurs",
+                "Nodes": "Noeuds",
+
+                "Bevel": "Biseau (Bevel)",
+                "Hint": "Astuce (Hint)",
+                "Origin": "Origine (Origin)",
+                "Skip": "Passer (Skip)",
+                "Trigger": "Déclencheurs (Trigger)",
+
+                "Brushes": "Blocs",
+                "Null": "Vide (Null)",
+                "Sky": "Ciel (Sky)",
+                "Water": "Eau (Water)"
+            },
+            "GoldsourceEnvironmentFactory": {
+                "Description": "GoldSrc (HL1)"
+            }
+        }
+    },
+    "Grid": {
+        "NoGridFactory": {
+            "Name": "Pas de grille",
+            "Details": "Affiche aucune grille."
+        },
+        "SquareGridFactory": {
+            "Name": "Grille standard",
+            "Details": "Une grille carrée standard en puissances de 2."
+        }
+    }
+}

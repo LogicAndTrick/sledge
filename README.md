@@ -1,7 +1,7 @@
 Sledge
 ======
 
-**Pull requests are welcome!** Also, please submit an issue if you encounter a prolem, you can also contact me via email (see GitHub profile).
+**Pull requests are welcome!** Also, please submit an issue if you encounter a problem, you can also contact me via email (see GitHub profile).
 
 *[Sledge alpha has been released! It's ready!][2]*
 

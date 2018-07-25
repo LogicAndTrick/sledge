@@ -1,0 +1,42 @@
+﻿{
+    "@Meta": {
+        "Base": "Sledge.BspEditor.Rendering",
+        "Language": "fr",
+        "Inherit": ""
+    },
+    "@Settings": {
+        "@Group.Navigation": "Navigation",
+        "@Group.Rendering": "Rendu",
+        "CameraNavigationViewportSettings": {
+            "Camera2DPanRequiresMouseClick": "Déplacer la caméra 2D nécessite un clic de la souris",
+            "Camera3DPanRequiresMouseClick": "Déplacer la caméra 3D nécessite un clic de la souris",
+            "ForwardSpeed": "Vitesse d'avancée dans la vue 3D",
+            "TimeToTopSpeed": "Temps pour atteindre la vitesse max. dans la vue 3D",
+            "MouseWheelMoveDistance": "Distance de déplacement avec la molette de la souris",
+            "InvertX": "Inverser l'axe X",
+            "InvertY": "Inverser l'axe Y"
+        },
+        "Converters": {
+            "CenterHandlesConverter": {
+                "DrawCenterHandles": "Afficher les poignées centrales des objets",
+                "CenterHandlesActiveViewportOnly": "Affiche les poignées centrales des objets dans la vue actuelle uniquement"
+            },
+            "EntityAngleConverter": {
+                "DrawEntityAngles": "Afficher les angles des entités"
+            }
+        },
+        "Renderer": {
+            "Renderer": "Librairie pour le rendu (nécessite un redémarrage)",
+            "DisableTextureTransparency": "Désactiver la transparence des textures (mode de compatibilité)",
+            "DisableTextureFiltering": "Désactiver le filtrage des textures (mode de compatibilité)",
+            "ForcePowerOfTwoTextureSizes": "Désactiver les textures dont la taille n'est pas une puissance de 2 (mode de compatibilité)",
+            "ShowPerspectiveGrid": "Activer la grille 3D",
+            "PerspectiveGridSpacing": "Espacement de la grille 3D",
+            "PerspectiveBackgroundColour": "Couleur d'arrière-plan dans la vue 3D",
+            "OrthographicBackgroundColour": "Couleur d'arrière-plan dans la vue 2D",
+            "PointSize": "Tailles décimales dans les vues 2D"
+        }
+    },
+    "Commands": {
+    }
+}
