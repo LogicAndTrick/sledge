@@ -149,7 +149,9 @@
     <Content Include="Translations\Sledge.BspEditor.Rendering.en.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <None Include="Translations\Sledge.BspEditor.Rendering.fr.json" />
+    <Content Include="Translations\Sledge.BspEditor.Rendering.fr.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Commands\" />

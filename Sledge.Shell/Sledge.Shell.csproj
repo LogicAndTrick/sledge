@@ -315,7 +315,9 @@
     <Content Include="Translations\Sledge.Shell.jp.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <None Include="Translations\Sledge.Shell.fr.json" />
+    <Content Include="Translations\Sledge.Shell.fr.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\arrow_down.png" />
