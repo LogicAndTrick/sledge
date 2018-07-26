@@ -429,6 +429,7 @@
     <None Include="Specifications\Goldsource.vdf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Translations\Sledge.BspEditor.Editing.fr.json" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\sledge_large.png" />

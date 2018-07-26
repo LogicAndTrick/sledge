@@ -303,6 +303,7 @@
     <Content Include="Translations\Sledge.BspEditor.en.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="Translations\Sledge.BspEditor.fr.json" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

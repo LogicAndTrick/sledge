@@ -149,6 +149,7 @@
     <Content Include="Translations\Sledge.BspEditor.Rendering.en.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <None Include="Translations\Sledge.BspEditor.Rendering.fr.json" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Commands\" />
