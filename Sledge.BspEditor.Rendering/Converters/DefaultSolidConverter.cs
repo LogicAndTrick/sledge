@@ -8,6 +8,7 @@ using Sledge.BspEditor.Primitives.MapData;
 using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.BspEditor.Rendering.Scene;
 using Sledge.Rendering.Materials;
+using Sledge.Rendering.Scenes;
 using Sledge.Rendering.Scenes.Renderables;
 using Face = Sledge.BspEditor.Primitives.MapObjectData.Face;
 using SceneFace = Sledge.Rendering.Scenes.Renderables.Face;
@@ -48,8 +49,44 @@ namespace Sledge.BspEditor.Rendering.Converters
                 var f = await ConvertFace(solid, face, document);
                 smo.SceneObjects.Add(face, f);
             }
-
             return true;
+        }
+
+        public async Task<bool> Update(SceneMapObject smo, MapDocument document, IMapObject obj)
+        {
+            var df = document.Map.Data.GetOne<DisplayFlags>() ?? new DisplayFlags();
+            var solid = (Solid) obj;
+            var faces = solid.Faces.Where(x => ShouldBeVisible(x, document, df)).ToList();
+            var values = smo.SceneObjects.Where(x => x.Key is Face).Select(x => x.Value).ToList();
+            if (values.Count != faces.Count) return false;
+
+            var objs = new Dictionary<object, SceneObject>();
+            for (var i = 0; i < faces.Count; i++)
+            {
+                var face = faces[i];
+                if (!await UpdateFace(solid, face, (SceneFace) values[i], document)) return false;
+                objs.Add(face, values[i]);
+            }
+            smo.SceneObjects.Clear();
+            foreach (var kv in objs) smo.SceneObjects.Add(kv.Key, kv.Value);
+            return true;
+        }
+
+        private static async Task<Material> GetMaterial(Solid solid, Face face, MapDocument document)
+        {
+            var c = await document.Environment.GetTextureCollection();
+            var tex = await c.GetTextureItem(face.Texture.Name);
+
+            float op;
+            if (c.IsNullTexture(face.Texture.Name) && document.Map.Data.GetOne<DisplayFlags>()?.HideNullTextures == true) op = 0;
+            else op = c.GetOpacity(face.Texture.Name);
+            
+            if (tex == null) return Material.Flat(Color.FromArgb((int) op * 255, solid.Color?.Color ?? Color.Red));
+
+            var texName = $"{document.Environment.ID}::{tex.Name}";
+            return op < 1
+                ? Material.Texture(texName, op)
+                : Material.Texture(texName, tex.Flags.HasFlag(TextureFlags.Transparent));
         }
 
         public static async Task<SceneFace> ConvertFace(Solid solid, Face face, MapDocument document)
@@ -83,73 +120,13 @@ namespace Sledge.BspEditor.Rendering.Converters
             return sceneFace;
         }
 
-        private static async Task<Material> GetMaterial(Solid solid, Face face, MapDocument document)
-        {
-            var c = await document.Environment.GetTextureCollection();
-            var tex = await c.GetTextureItem(face.Texture.Name);
-
-            float op;
-            if (c.IsNullTexture(face.Texture.Name) && document.Map.Data.GetOne<DisplayFlags>()?.HideNullTextures == true) op = 0;
-            else op = c.GetOpacity(face.Texture.Name);
-
-            if (tex == null) return Material.Flat(Color.FromArgb((int)op * 255, solid.Color?.Color ?? Color.Red));
-
-            var texName = $"{document.Environment.ID}::{tex.Name}";
-            return op < 1
-                ? Material.Texture(texName, op)
-                : Material.Texture(texName, tex.Flags.HasFlag(TextureFlags.Transparent));
-        }
-
-        public async Task<bool> PropertiesChanged(SceneObjectsChangedEventArgs args, SceneMapObject smo, MapDocument document, IMapObject obj, HashSet<string> propertyNames)
-        {
-            var solid = (Solid) obj;
-            var df = document.Map.Data.GetOne<DisplayFlags>() ?? new DisplayFlags();
-
-            if (propertyNames.Contains("IsSelected"))
-            {
-                var sel = solid.IsSelected;
-                foreach (var sceneFace in smo.SceneObjects.Where(x => x.Key is Face).Select(x => x.Value).OfType<SceneFace>())
-                {
-                    var color = solid.Color?.Color ?? Color.Green;
-                    sceneFace.AccentColor = sel ? Color.Red : color;
-                    sceneFace.PointColor = sel ? Color.Red : color;
-                    sceneFace.TintColor = sel ? Color.FromArgb(128, Color.Red) : Color.White;
-                    sceneFace.IsSelected = sel;
-                    sceneFace.ForcedRenderFlags = sel ? RenderFlags.Wireframe : RenderFlags.None;
-                }
-            }
-
-            if (propertyNames.Contains("Data.Face"))
-            {
-                var currentFaces = smo.SceneObjects.Where(x => x.Key is Face).ToDictionary(x => (Face) x.Key, x => (SceneFace) x.Value);
-                foreach (var face in solid.Faces.Where(x => ShouldBeVisible(x, document, df)).ToList())
-                {
-                    if (currentFaces.ContainsKey(face))
-                    {
-                        await UpdateFace(solid, face, currentFaces[face], document);
-                        currentFaces.Remove(face);
-                    }
-                    else
-                    {
-                        var f = await ConvertFace(solid, face, document);
-                        smo.SceneObjects.Add(face, f);
-                        args.Add(f);
-                    }
-                }
-
-                foreach (var kv in currentFaces)
-                {
-                    smo.Remove(kv.Value);
-                    args.Remove(kv.Value);
-                }
-            }
-
-            return true;
-        }
-
-        private static async Task<bool> UpdateFace(Solid solid, Face face, SceneFace sceneFace, MapDocument document)
+        public static async Task<bool> UpdateFace(Solid solid, Face face, SceneFace sceneFace, MapDocument document)
         {
             var mat = await GetMaterial(solid, face, document);
+
+            var sel = solid.IsSelected;
+
+            var color = solid.Color?.Color ?? Color.Green;
 
             var c = await document.Environment.GetTextureCollection();
             var tex = await c.GetTextureItem(face.Texture.Name);
@@ -159,7 +136,18 @@ namespace Sledge.BspEditor.Rendering.Converters
 
             sceneFace.Material = mat;
             sceneFace.Vertices = coords.Select(x => new Vertex(x.Item1.ToVector3(), (float) x.Item2, (float) x.Item3)).ToList();
-            
+            sceneFace.AccentColor = sel ? Color.Red : color;
+            sceneFace.PointColor = sel ? Color.Red : color;
+            sceneFace.TintColor = sel ? Color.FromArgb(128, Color.Red) : Color.White;
+            sceneFace.IsSelected = sel;
+            sceneFace.ForcedRenderFlags = sel ? RenderFlags.Wireframe : RenderFlags.None;
+            sceneFace.RenderFlags = RenderFlags.Polygon | RenderFlags.Wireframe;
+
+            //if (View.Draw2DVertices)
+            //{
+            //    sceneFace.RenderFlags |= RenderFlags.Point;
+            //}
+
             return true;
         }
     }

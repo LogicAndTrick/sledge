@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Threading.Tasks;
 using Sledge.BspEditor.Documents;
@@ -12,7 +11,7 @@ namespace Sledge.BspEditor.Rendering.Converters
     //       or as a custom converter like it is now. Using a hidden
     //       operation means that each tool doesn't have to know about
     //       cordon, just the normal IHidden interface.
-    // [Export(typeof(IMapObjectSceneConverter))]
+    [Export(typeof(IMapObjectSceneConverter))]
     public class CordonClippingConverter : IMapObjectSceneConverter
     {
         public MapObjectSceneConverterPriority Priority => MapObjectSceneConverterPriority.OverrideMedium;
@@ -39,9 +38,9 @@ namespace Sledge.BspEditor.Rendering.Converters
             return true;
         }
 
-        public Task<bool> PropertiesChanged(SceneObjectsChangedEventArgs args, SceneMapObject smo, MapDocument document, IMapObject obj, HashSet<string> propertyNames)
+        public async Task<bool> Update(SceneMapObject smo, MapDocument document, IMapObject obj)
         {
-            return Task.FromResult(false);
+            return false;
         }
     }
 }

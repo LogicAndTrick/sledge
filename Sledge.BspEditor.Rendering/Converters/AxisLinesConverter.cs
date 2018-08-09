@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Drawing;
 using System.Threading.Tasks;
@@ -27,18 +26,17 @@ namespace Sledge.BspEditor.Rendering.Converters
             return obj is Root;
         }
 
-        public Task<bool> Convert(SceneMapObject smo, MapDocument document, IMapObject obj)
+        public async Task<bool> Convert(SceneMapObject smo, MapDocument document, IMapObject obj)
         {
             smo.SceneObjects.Add(new Holder(), new Line(Color.FromArgb(255, Color.Red), Vector3.Zero, Vector3.UnitX * 10) { RenderFlags = RenderFlags.Wireframe, CameraFlags = CameraFlags.Perspective });
             smo.SceneObjects.Add(new Holder(), new Line(Color.FromArgb(255, Color.Lime), Vector3.Zero, Vector3.UnitY * 10) { RenderFlags = RenderFlags.Wireframe, CameraFlags = CameraFlags.Perspective });
             smo.SceneObjects.Add(new Holder(), new Line(Color.FromArgb(255, Color.Blue), Vector3.Zero, Vector3.UnitZ * 10) { RenderFlags = RenderFlags.Wireframe, CameraFlags = CameraFlags.Perspective });
-
-            return Task.FromResult(true);
+            return true;
         }
 
-        public Task<bool> PropertiesChanged(SceneObjectsChangedEventArgs args, SceneMapObject smo, MapDocument document, IMapObject obj, HashSet<string> propertyNames)
+        public async Task<bool> Update(SceneMapObject smo, MapDocument document, IMapObject obj)
         {
-            return Task.FromResult(true);
+            return true;
         }
 
         private class Holder { }

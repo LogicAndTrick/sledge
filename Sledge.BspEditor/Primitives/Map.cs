@@ -19,8 +19,6 @@ namespace Sledge.BspEditor.Primitives
             NumberGenerator = new UniqueNumberGenerator();
             Data = new MapDataCollection();
             Root = new Root(NumberGenerator.Next("MapObject"));
-
-            Data.PropertyChanged += (s, e) => Root.OnPropertyChanged(e.PropertyName);
         }
     }
 }

@@ -53,9 +53,9 @@ namespace Sledge.BspEditor.Rendering.Converters
             return true;
         }
 
-        public Task<bool> PropertiesChanged(SceneObjectsChangedEventArgs args, SceneMapObject smo, MapDocument document, IMapObject obj, HashSet<string> propertyNames)
+        public async Task<bool> Update(SceneMapObject smo, MapDocument document, IMapObject obj)
         {
-            return Task.FromResult(false);
+            return false;
         }
 
         private static string GetDecalName(Entity entity)

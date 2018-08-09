@@ -1,6 +1,5 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.Rendering.Scenes;
 
@@ -18,14 +17,6 @@ namespace Sledge.BspEditor.Rendering.Scene
             MapObject = mapObject;
             SceneObjects = new Dictionary<object, SceneObject>();
             MetaData = new Dictionary<string, object>();
-        }
-
-        public void Remove(SceneObject so)
-        {
-            foreach (var kv in SceneObjects.Where(x => x.Value == so).ToList())
-            {
-                SceneObjects.Remove(kv.Key);
-            }
         }
 
         public IEnumerator<SceneObject> GetEnumerator()

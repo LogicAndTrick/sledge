@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Runtime.Serialization;
 using Sledge.BspEditor.Primitives.MapObjectData;
 using Sledge.Common.Transport;
@@ -11,7 +10,7 @@ namespace Sledge.BspEditor.Primitives.MapObjects
     /// <summary>
     /// The base interface of all map objects.
     /// </summary>
-    public interface IMapObject : IEquatable<IMapObject>, ISerializable, IMapElement, ITransformable, INotifyPropertyChanged
+    public interface IMapObject : IEquatable<IMapObject>, ISerializable, IMapElement, ITransformable
     {
         /// <summary>
         /// Unique (per map) object ID

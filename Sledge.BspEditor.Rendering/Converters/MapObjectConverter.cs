@@ -12,7 +12,8 @@ namespace Sledge.BspEditor.Rendering.Converters
     [Export]
     public class MapObjectConverter
     {
-        [ImportMany] private IEnumerable<Lazy<IMapObjectSceneConverter>> _converters;
+        [ImportMany]
+        private IEnumerable<Lazy<IMapObjectSceneConverter>> _converters;
 
         public async Task<SceneMapObject> Convert(MapDocument document, IMapObject obj)
         {
@@ -26,15 +27,14 @@ namespace Sledge.BspEditor.Rendering.Converters
             return smo;
         }
 
-        public async Task<bool> PropertiesChanged(SceneObjectsChangedEventArgs args, SceneMapObject smo, MapDocument document, IMapObject obj, HashSet<string> propertyNames)
+        public async Task<bool> Update(SceneMapObject smo, MapDocument document, IMapObject obj)
         {
             foreach (var converter in _converters.Select(x => x.Value).OrderBy(x => (int)x.Priority))
             {
                 if (!converter.Supports(obj)) continue;
-                if (!await converter.PropertiesChanged(args, smo, document, obj, propertyNames)) return false;
+                if (!await converter.Update(smo, document, obj)) return false;
                 if (converter.ShouldStopProcessing(smo, document, obj)) break;
             }
-
             return true;
         }
     }

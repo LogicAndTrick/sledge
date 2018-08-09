@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using LogicAndTrick.Oy;
@@ -19,7 +18,6 @@ namespace Sledge.BspEditor.Rendering.Scene
 
         private readonly MapObjectConverter _converter;
         private readonly ConcurrentDictionary<IMapObject, SceneMapObject> _sceneObjects;
-        private readonly HashSet<Tuple<IMapObject, string>> _changeBuffer;
 
         public MapDocumentSceneObjectProvider(MapDocument document, MapObjectConverter converter)
         {
@@ -27,7 +25,6 @@ namespace Sledge.BspEditor.Rendering.Scene
             _converter = converter;
 
             _sceneObjects = new ConcurrentDictionary<IMapObject, SceneMapObject>();
-            _changeBuffer = new HashSet<Tuple<IMapObject, string>>();
         }
 
         public event EventHandler<SceneObjectsChangedEventArgs> SceneObjectsChanged;
@@ -60,8 +57,6 @@ namespace Sledge.BspEditor.Rendering.Scene
 
             foreach (var obj in delete)
             {
-                obj.PropertyChanged -= PropertyChanged;
-
                 var smo = _sceneObjects.ContainsKey(obj) ? _sceneObjects[obj] : null;
                 if (smo != null)
                 {
@@ -71,53 +66,35 @@ namespace Sledge.BspEditor.Rendering.Scene
                 }
             }
 
-            foreach (var obj in create)
+            foreach (var obj in create.Union(update))
             {
-                obj.PropertyChanged += PropertyChanged;
+                var smo = _sceneObjects.ContainsKey(obj) ? _sceneObjects[obj] : null;
 
-                var smo = await _converter.Convert(Document, obj);
+                if (smo != null && await _converter.Update(smo, Document, obj))
+                {
+                    updated.AddRange(smo);
+                    continue;
+                }
+
+                if (smo != null)
+                {
+                    var rem = _sceneObjects[obj];
+                    _sceneObjects.TryRemove(obj, out SceneMapObject _);
+                    deleted.AddRange(rem);
+                }
+
+                smo = await _converter.Convert(Document, obj);
                 if (smo == null) continue;
 
                 created.AddRange(smo);
                 _sceneObjects[smo.MapObject] = smo;
             }
 
-            var ea = new SceneObjectsChangedEventArgs(created, updated, deleted);
-            await FlushChangeBuffer(ea);
-
-            if (!ea.IsEmpty())
+            if (created.Any() || updated.Any() || deleted.Any())
             {
+                var ea = new SceneObjectsChangedEventArgs(created, updated, deleted);
                 SceneObjectsChanged?.Invoke(this, ea);
             }
-        }
-
-        private void PropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            _changeBuffer.Add(Tuple.Create((IMapObject)sender, e.PropertyName));
-        }
-
-        private async Task FlushChangeBuffer(SceneObjectsChangedEventArgs args)
-        {
-            foreach (var g in _changeBuffer.GroupBy(x => x.Item1, x => x.Item2))
-            {
-                var obj = g.Key;
-                var smo = _sceneObjects.ContainsKey(obj) ? _sceneObjects[obj] : null;
-                if (smo == null) continue;
-
-                // Update the existing object
-                if (await _converter.PropertiesChanged(args, smo, Document, obj, new HashSet<string>(g))) continue;
-                
-                // Update unsuccessful, delete and re-create
-                if (_sceneObjects.TryRemove(obj, out var rem)) args.Remove(rem);
-
-                smo = await _converter.Convert(Document, obj);
-                if (smo == null) continue;
-
-                args.Add(smo);
-                _sceneObjects[smo.MapObject] = smo;
-            }
-
-            _changeBuffer.Clear();
         }
     }
 }

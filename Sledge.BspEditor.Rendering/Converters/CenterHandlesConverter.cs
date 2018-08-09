@@ -58,21 +58,25 @@ namespace Sledge.BspEditor.Rendering.Converters
             return obj is Entity || obj is Solid;
         }
 
-        public Task<bool> Convert(SceneMapObject smo, MapDocument document, IMapObject obj)
+        public async Task<bool> Convert(SceneMapObject smo, MapDocument document, IMapObject obj)
         {
             var el = new CenterHandleTextElement(obj, _centerHandlesActiveViewportOnly);
             smo.SceneObjects.Add(new Holder(), el);
-            return Task.FromResult(true);
+            return true;
         }
 
-        public Task<bool> PropertiesChanged(SceneObjectsChangedEventArgs args, SceneMapObject smo, MapDocument document, IMapObject obj, HashSet<string> propertyNames)
+        public async Task<bool> Update(SceneMapObject smo, MapDocument document, IMapObject obj)
         {
-            foreach (var ela in smo.SceneObjects.Values.OfType<CenterHandleTextElement>())
+            if (smo.SceneObjects.Keys.Any(x => x is Holder))
             {
-                ela.Update(obj);
-                return Task.FromResult(true);
+                var ela = smo.SceneObjects.First(x => x.Key is Holder).Value as CenterHandleTextElement;
+                if (ela != null)
+                {
+                    ela.Update(obj);
+                    return true;
+                }
             }
-            return Task.FromResult(false);
+            return false;
         }
 
         private class Holder { }

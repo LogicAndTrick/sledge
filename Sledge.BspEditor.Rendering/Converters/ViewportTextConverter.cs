@@ -29,15 +29,15 @@ namespace Sledge.BspEditor.Rendering.Converters
             return obj is Root;
         }
 
-        public Task<bool> Convert(SceneMapObject smo, MapDocument document, IMapObject obj)
+        public async Task<bool> Convert(SceneMapObject smo, MapDocument document, IMapObject obj)
         {
             smo.SceneObjects.Add(new Holder(), new ViewportLabelTextElement());
-            return Task.FromResult(true);
+            return true;
         }
 
-        public Task<bool> PropertiesChanged(SceneObjectsChangedEventArgs args, SceneMapObject smo, MapDocument document, IMapObject obj, HashSet<string> propertyNames)
+        public async Task<bool> Update(SceneMapObject smo, MapDocument document, IMapObject obj)
         {
-            return Task.FromResult(true);
+            return true;
         }
 
         private class Holder { }
