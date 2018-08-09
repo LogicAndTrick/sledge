@@ -88,6 +88,7 @@
     <Compile Include="OpenGL\Arrays\ElementVertexArray.cs" />
     <Compile Include="OpenGL\Arrays\ModelVertexArray.cs" />
     <Compile Include="OpenGL\Arrays\OctreeRenderableBase.cs" />
+    <Compile Include="OpenGL\Arrays\ChunkingVertexArray.cs" />
     <Compile Include="OpenGL\Arrays\PolygonProperties.cs" />
     <Compile Include="OpenGL\Arrays\WireframeProperties.cs" />
     <Compile Include="OpenGL\ModelStorage.cs" />

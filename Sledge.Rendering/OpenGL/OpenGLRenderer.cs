@@ -285,12 +285,14 @@ namespace Sledge.Rendering.OpenGL
         private class SceneData : IDisposable
         {
             public Scene Scene { get; set; }
-            public OctreeVertexArray Array { get; private set; }
+            //public OctreeVertexArray Array { get; private set; }
+            public ChunkingVertexArray Array { get; set; }
 
             public SceneData(OpenGLRenderer renderer, Scene scene)
             {
                 Scene = scene;
-                Array = new OctreeVertexArray(renderer, scene, Math.Min(-float.MinValue, float.MaxValue));
+                //Array = new OctreeVertexArray(renderer, scene, Math.Min(-float.MinValue, float.MaxValue));
+                Array = new ChunkingVertexArray(renderer, scene);
             }
 
             public void Dispose()

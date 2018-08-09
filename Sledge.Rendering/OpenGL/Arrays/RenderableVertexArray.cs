@@ -233,6 +233,7 @@ namespace Sledge.Rendering.OpenGL.Arrays
             {
                 var offset = GetOffset(obj);
                 if (offset < 0) continue;
+
                 if (obj is Face) Update(offset, Convert((Face)obj));
                 if (obj is Line) Update(offset, Convert((Line)obj));
                 if (obj is Sprite) Update(offset, Convert((Sprite)obj));
@@ -245,9 +246,12 @@ namespace Sledge.Rendering.OpenGL.Arrays
             {
                 var offset = GetOffset(obj);
                 if (offset < 0) continue;
+
                 if (obj is Face) Update(offset, Convert((Face)obj, VertexFlags.InvisibleOrthographic | VertexFlags.InvisiblePerspective));
                 if (obj is Line) Update(offset, Convert((Line)obj, VertexFlags.InvisibleOrthographic | VertexFlags.InvisiblePerspective));
                 if (obj is Sprite) Update(offset, Convert((Sprite)obj, VertexFlags.InvisibleOrthographic | VertexFlags.InvisiblePerspective));
+
+                Items.Remove(obj);
             }
         }
 
