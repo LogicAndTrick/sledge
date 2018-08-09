@@ -310,6 +310,9 @@
     <Content Include="Translations\Sledge.BspEditor.Tools.en.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Translations\Sledge.BspEditor.Tools.fr.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Brush\Brushes\Controls\BooleanControl.resx">
