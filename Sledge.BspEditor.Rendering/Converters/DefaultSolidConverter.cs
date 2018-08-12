@@ -1,23 +1,26 @@
-using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Numerics;
 using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 using Sledge.BspEditor.Documents;
-using Sledge.BspEditor.Primitives.MapData;
 using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.BspEditor.Rendering.Scene;
-using Sledge.Rendering.Materials;
-using Sledge.Rendering.Scenes;
-using Sledge.Rendering.Scenes.Renderables;
-using Face = Sledge.BspEditor.Primitives.MapObjectData.Face;
-using SceneFace = Sledge.Rendering.Scenes.Renderables.Face;
+using Sledge.Rendering.Engine;
+using Sledge.Rendering.Pipelines;
+using Sledge.Rendering.Primitives;
+using Sledge.Rendering.Renderables;
+using Buffer = Sledge.Rendering.Renderables.Buffer;
 
 namespace Sledge.BspEditor.Rendering.Converters
 {
     [Export(typeof(IMapObjectSceneConverter))]
     public class DefaultSolidConverter : IMapObjectSceneConverter
     {
+        private static readonly object Holder1 = new object();
+        private static readonly object Holder2 = new object();
+        [Import] private EngineInterface _engine;
+
         public MapObjectSceneConverterPriority Priority => MapObjectSceneConverterPriority.DefaultLowest;
 
         public bool ShouldStopProcessing(SceneMapObject smo, MapDocument document, IMapObject obj)
@@ -30,125 +33,114 @@ namespace Sledge.BspEditor.Rendering.Converters
             return obj is Solid;
         }
 
-        private bool ShouldBeVisible(Face face, MapDocument document, DisplayFlags displayFlags)
-        {
-            //if (document.Map.HideDisplacementSolids && face.Parent.Faces.Any(x => x is Displacement) && !(face is Displacement))
-            //{
-            //    return false;
-            //}
-            //return !face.IsHidden;
-            return true;
-        }
+        private const string MaxVertCountMetaDataString = nameof(DefaultSolidConverter) + "MaxVertCount";
 
-        public async Task<bool> Convert(SceneMapObject smo, MapDocument document, IMapObject obj)
+        public Task Convert(SceneMapObject smo, MapDocument document, IMapObject obj)
         {
-            var df = document.Map.Data.GetOne<DisplayFlags>() ?? new DisplayFlags();
             var solid = (Solid) obj;
-            foreach (var face in solid.Faces.Where(x => ShouldBeVisible(x, document, df)).ToList())
+            var buffer = _engine.CreateBuffer();
+
+            var numVertices = solid.Faces.Sum(x => x.Vertices.Count);
+            var numSolidIndices = solid.Faces.Sum(x => (x.Vertices.Count - 2) * 3);
+            var numWireframeIndices = numVertices * 2;
+
+            UpdateBuffer(solid, buffer);
+            smo.Buffers.Add(Holder1, buffer);
+
+            smo.Renderables.Add(Holder1, new SimpleRenderable(buffer, new[] { PipelineNames.FlatColourGeneric }, 0, numSolidIndices) { PerspectiveOnly = true });
+            smo.Renderables.Add(Holder2, new SimpleRenderable(buffer, new[] { PipelineNames.WireframeGeneric }, numSolidIndices, numWireframeIndices) { OrthographicOnly = true });
+
+            smo.MetaData[MaxVertCountMetaDataString] = numVertices;
+
+            return Task.FromResult(0);
+        }
+
+        public Task<bool> Update(SceneMapObject smo, MapDocument document, IMapObject obj)
+        {
+            var solid = (Solid)obj;
+
+            var buffer = smo.Buffers[Holder1];
+
+            var numVertices = solid.Faces.Sum(x => x.Vertices.Count);
+            var numSolidIndices = solid.Faces.Sum(x => (x.Vertices.Count - 2) * 3);
+            var numWireframeIndices = numVertices * 2;
+
+            // Recreate the buffer if it's too small
+            var maxVertCount = (int) smo.MetaData[MaxVertCountMetaDataString];
+            if (maxVertCount < numVertices)
             {
-                var f = await ConvertFace(solid, face, document);
-                smo.SceneObjects.Add(face, f);
+                buffer.Dispose();
+                buffer = _engine.CreateBuffer();
+                smo.Buffers[Holder1] = buffer;
+                smo.MetaData[MaxVertCountMetaDataString] = numVertices;
             }
-            return true;
+
+            UpdateBuffer(solid, buffer);
+
+            var solidRenderable = (SimpleRenderable) smo.Renderables[Holder1];
+            var wireframeRenderable = (SimpleRenderable) smo.Renderables[Holder2];
+
+            solidRenderable.IndexOffset = 0;
+            solidRenderable.IndexCount = numSolidIndices;
+
+            wireframeRenderable.IndexOffset = numSolidIndices;
+            wireframeRenderable.IndexCount = numWireframeIndices;
+
+            return Task.FromResult(true);
         }
 
-        public async Task<bool> Update(SceneMapObject smo, MapDocument document, IMapObject obj)
+        private static void UpdateBuffer(Solid solid, Buffer buffer)
         {
-            var df = document.Map.Data.GetOne<DisplayFlags>() ?? new DisplayFlags();
-            var solid = (Solid) obj;
-            var faces = solid.Faces.Where(x => ShouldBeVisible(x, document, df)).ToList();
-            var values = smo.SceneObjects.Where(x => x.Key is Face).Select(x => x.Value).ToList();
-            if (values.Count != faces.Count) return false;
+            // Pack the vertices like this [ f1v1 ... f1vn ] ... [ fnv1 ... fnvn ]
+            var numVertices = (uint) solid.Faces.Sum(x => x.Vertices.Count);
 
-            var objs = new Dictionary<object, SceneObject>();
-            for (var i = 0; i < faces.Count; i++)
+            // Pack the indices like this [ solid1 ... solidn ] [ wireframe1 ... wireframe n ]
+            var numSolidIndices = (uint) solid.Faces.Sum(x => (x.Vertices.Count - 2) * 3);
+            var numWireframeIndices = numVertices * 2;
+
+            var points = new VertexStandard4[numVertices];
+            var indices = new uint[numSolidIndices + numWireframeIndices];
+
+            var c = solid.IsSelected ? Color.Red : solid.Color.Color;
+            var colour = new Vector4(c.R, c.G, c.B, c.A) / 255f;
+
+            var vi = 0u;
+            var si = 0u;
+            var wi = numSolidIndices;
+            foreach (var face in solid.Faces)
             {
-                var face = faces[i];
-                if (!await UpdateFace(solid, face, (SceneFace) values[i], document)) return false;
-                objs.Add(face, values[i]);
+                var offs = vi;
+                var numFaceVerts = (uint) face.Vertices.Count;
+
+                var normal = face.Plane.Normal;
+                foreach (var v in face.Vertices)
+                {
+                    points[vi++] = new VertexStandard4
+                    {
+                        Position = v,
+                        Colour = colour,
+                        Normal = normal,
+                        Texture = Vector2.Zero
+                    };
+                }
+
+                // Triangles - [0 1 2]  ... [0 n-1 n]
+                for (uint i = 2; i < numFaceVerts; i++)
+                {
+                    indices[si++] = offs;
+                    indices[si++] = offs + i - 1;
+                    indices[si++] = offs + i;
+                }
+
+                // Lines - [0 1] ... [n-1 n] [n 0]
+                for (uint i = 0; i < numFaceVerts; i++)
+                {
+                    indices[wi++] = offs + i;
+                    indices[wi++] = offs + (i == numFaceVerts - 1 ? 0 : i + 1);
+                }
             }
-            smo.SceneObjects.Clear();
-            foreach (var kv in objs) smo.SceneObjects.Add(kv.Key, kv.Value);
-            return true;
-        }
 
-        private static async Task<Material> GetMaterial(Solid solid, Face face, MapDocument document)
-        {
-            var c = await document.Environment.GetTextureCollection();
-            var tex = await c.GetTextureItem(face.Texture.Name);
-
-            float op;
-            if (c.IsNullTexture(face.Texture.Name) && document.Map.Data.GetOne<DisplayFlags>()?.HideNullTextures == true) op = 0;
-            else op = c.GetOpacity(face.Texture.Name);
-            
-            if (tex == null) return Material.Flat(Color.FromArgb((int) op * 255, solid.Color?.Color ?? Color.Red));
-
-            var texName = $"{document.Environment.ID}::{tex.Name}";
-            return op < 1
-                ? Material.Texture(texName, op)
-                : Material.Texture(texName, tex.Flags.HasFlag(TextureFlags.Transparent));
-        }
-
-        public static async Task<SceneFace> ConvertFace(Solid solid, Face face, MapDocument document)
-        {
-            var mat = await GetMaterial(solid, face, document);
-
-            var sel = solid.IsSelected;
-
-            var color = solid.Color?.Color ?? Color.Green;
-
-            var c = await document.Environment.GetTextureCollection();
-            var tex = await c.GetTextureItem(face.Texture.Name);
-
-            var size = tex?.Size ?? new Size(16, 16);
-            var coords = face.GetTextureCoordinates(size.Width, size.Height);
-
-            var sceneFace = new SceneFace(mat, coords.Select(x => new Vertex(x.Item1.ToVector3(), (float) x.Item2, (float) x.Item3)).ToList())
-            {
-                AccentColor = sel ? Color.Red : color,
-                PointColor = sel ? Color.Red : color,
-                TintColor = sel ? Color.FromArgb(128, Color.Red) : Color.White,
-                IsSelected = sel,
-                ForcedRenderFlags = sel ? RenderFlags.Wireframe : RenderFlags.None
-            };
-
-            //if (View.Draw2DVertices)
-            //{
-            //    sceneFace.RenderFlags |= RenderFlags.Point;
-            //}
-
-            return sceneFace;
-        }
-
-        public static async Task<bool> UpdateFace(Solid solid, Face face, SceneFace sceneFace, MapDocument document)
-        {
-            var mat = await GetMaterial(solid, face, document);
-
-            var sel = solid.IsSelected;
-
-            var color = solid.Color?.Color ?? Color.Green;
-
-            var c = await document.Environment.GetTextureCollection();
-            var tex = await c.GetTextureItem(face.Texture.Name);
-
-            var size = tex?.Size ?? new Size(16, 16);
-            var coords = face.GetTextureCoordinates(size.Width, size.Height);
-
-            sceneFace.Material = mat;
-            sceneFace.Vertices = coords.Select(x => new Vertex(x.Item1.ToVector3(), (float) x.Item2, (float) x.Item3)).ToList();
-            sceneFace.AccentColor = sel ? Color.Red : color;
-            sceneFace.PointColor = sel ? Color.Red : color;
-            sceneFace.TintColor = sel ? Color.FromArgb(128, Color.Red) : Color.White;
-            sceneFace.IsSelected = sel;
-            sceneFace.ForcedRenderFlags = sel ? RenderFlags.Wireframe : RenderFlags.None;
-            sceneFace.RenderFlags = RenderFlags.Polygon | RenderFlags.Wireframe;
-
-            //if (View.Draw2DVertices)
-            //{
-            //    sceneFace.RenderFlags |= RenderFlags.Point;
-            //}
-
-            return true;
+            buffer.Update(points, indices);
         }
     }
 }

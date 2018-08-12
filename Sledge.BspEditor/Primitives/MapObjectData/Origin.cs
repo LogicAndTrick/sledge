@@ -1,23 +1,23 @@
 ﻿using System.ComponentModel.Composition;
+using System.Numerics;
 using System.Runtime.Serialization;
 using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.Common.Transport;
-using Sledge.DataStructures.Geometric;
 
 namespace Sledge.BspEditor.Primitives.MapObjectData
 {
     public class Origin : IMapObjectData, ITransformable
     {
-        public Coordinate Location { get; set; }
+        public Vector3 Location { get; set; }
 
-        public Origin(Coordinate location)
+        public Origin(Vector3 location)
         {
             Location = location;
         }
 
         public Origin(SerialisedObject obj)
         {
-            Location = obj.Get<Coordinate>("Location");
+            Location = obj.Get<Vector3>("Location");
         }
 
         [Export(typeof(IMapElementFormatter))]
@@ -45,9 +45,9 @@ namespace Sledge.BspEditor.Primitives.MapObjectData
             return so;
         }
 
-        public void Transform(Matrix matrix)
+        public void Transform(Matrix4x4 matrix)
         {
-            Location = Location * matrix;
+            Location = Vector3.Transform(Location, matrix);
         }
     }
 }

@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Sledge.FileSystem;
 using Sledge.Providers.Texture.Wad.Format;
-using Sledge.Rendering.Materials;
 
 namespace Sledge.Providers.Texture.Wad
 {

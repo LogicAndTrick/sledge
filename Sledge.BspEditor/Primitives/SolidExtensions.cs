@@ -1,7 +1,6 @@
 using System.Linq;
 using Sledge.BspEditor.Primitives.MapObjectData;
 using Sledge.BspEditor.Primitives.MapObjects;
-using Sledge.DataStructures;
 using Sledge.DataStructures.Geometric;
 
 namespace Sledge.BspEditor.Primitives

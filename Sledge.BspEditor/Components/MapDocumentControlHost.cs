@@ -23,8 +23,9 @@ namespace Sledge.BspEditor.Components
     /// are saved.
     /// </summary>
     [Export(typeof(IInitialiseHook))]
+    [Export(typeof(IShutdownHook))]
     [Export(typeof(ISettingsContainer))]
-    public class MapDocumentControlHost : UserControl, ISettingsContainer, IInitialiseHook
+    public class MapDocumentControlHost : UserControl, ISettingsContainer, IInitialiseHook, IShutdownHook
     {
         [ImportMany] private IEnumerable<Lazy<IMapDocumentControlFactory>> _controlFactories;
 
@@ -33,11 +34,18 @@ namespace Sledge.BspEditor.Components
             Oy.Subscribe("BspEditor:SplitView:Autosize", () => this.InvokeLater(() => Table.ResetViews()));
         }
 
+        public Task OnShutdown()
+        {
+            MapDocumentControls.ForEach(x => x.Dispose());
+            MapDocumentControls.Clear();
+            return Task.FromResult(0);
+        }
+
         public static MapDocumentControlHost Instance { get; private set; }
         private TableSplitControl Table { get; }
         private List<CellReference> MapDocumentControls { get; }
 
-        private class CellReference
+        private class CellReference : IDisposable
         {
             public IMapDocumentControl Control { get; set; }
             public int Column { get; set; }
@@ -48,6 +56,11 @@ namespace Sledge.BspEditor.Components
                 Control = control;
                 Column = column;
                 Row = row;
+            }
+
+            public void Dispose()
+            {
+                Control?.Dispose();
             }
         }
 
@@ -67,7 +80,12 @@ namespace Sledge.BspEditor.Components
         {
             var controlAt = Table.GetControlFromPosition(column, row);
             if (controlAt != null) Table.Controls.Remove(controlAt);
-            MapDocumentControls.RemoveAll(x => x.Row == row && x.Column == column);
+
+            foreach (var rem in MapDocumentControls.Where(x => x.Row == row && x.Column == column).ToList())
+            {
+                rem.Dispose();
+                MapDocumentControls.Remove(rem);
+            }
 
             MapDocumentControls.Add(new CellReference(control, column, row));
             Table.Controls.Add(control.Control, column, row);

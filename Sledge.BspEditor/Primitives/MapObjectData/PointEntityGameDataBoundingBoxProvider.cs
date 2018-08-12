@@ -1,6 +1,6 @@
 ﻿using System;
-using System.ComponentModel.Composition;
 using System.Linq;
+using System.Numerics;
 using System.Runtime.Serialization;
 using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.Common.Transport;
@@ -32,7 +32,7 @@ namespace Sledge.BspEditor.Primitives.MapObjectData
         {
             // Try and get a bounding box for point entities
             var name = obj.Data.GetOne<EntityData>()?.Name;
-            var origin = obj.Data.GetOne<Origin>()?.Location ?? Coordinate.Zero;
+            var origin = obj.Data.GetOne<Origin>()?.Location ?? Vector3.Zero;
             if (name == null) return null;
 
             // Get the class (must be point)
@@ -40,21 +40,21 @@ namespace Sledge.BspEditor.Primitives.MapObjectData
             if (cls == null) return null;
 
             // Default to 16
-            var sub = new Coordinate(-16, -16, -16);
-            var add = new Coordinate(16, 16, 16);
+            var sub = new Vector3(-16, -16, -16);
+            var add = new Vector3(16, 16, 16);
 
             // Get the size behaviour
             var behav = cls.Behaviours.SingleOrDefault(x => x.Name == "size");
             if (behav != null && behav.Values.Count >= 6)
             {
-                sub = behav.GetCoordinate(0);
-                add = behav.GetCoordinate(1);
+                sub = behav.GetVector3(0) ?? Vector3.Zero;
+                add = behav.GetVector3(1) ?? Vector3.Zero;
             }
             else if (cls.Name == "infodecal")
             {
                 // Special handling for infodecal if it's not specified
-                sub = Coordinate.One * -4;
-                add = Coordinate.One * 4;
+                sub = Vector3.One * -4;
+                add = Vector3.One * 4;
             }
             return new Box(origin + sub, origin + add);
         }

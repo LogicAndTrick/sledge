@@ -1,31 +1,32 @@
 using System;
 using System.Linq;
+using System.Numerics;
 using Sledge.Common;
 using Sledge.DataStructures.Geometric;
-using Sledge.DataStructures.Transformations;
+using Plane = Sledge.DataStructures.Geometric.Plane;
 
 namespace Sledge.BspEditor.Primitives
 {
     public static class TextureExtensions
     {
-        public static void AlignToNormal(this Texture tex, Coordinate normal)
+        public static void AlignToNormal(this Texture tex, Vector3 normal)
         {
             // Get the closest axis for this normal
-            Coordinate axis;
-            if (normal.X >= normal.Y && normal.X >= normal.Z) axis = Coordinate.UnitX;
-            else if (normal.Y >= normal.Z) axis = Coordinate.UnitY;
-            else axis = Coordinate.UnitZ;
+            Vector3 axis;
+            if (normal.X >= normal.Y && normal.X >= normal.Z) axis = Vector3.UnitX;
+            else if (normal.Y >= normal.Z) axis = Vector3.UnitY;
+            else axis = Vector3.UnitZ;
 
-            var tempV = axis == Coordinate.UnitZ ? -Coordinate.UnitY : -Coordinate.UnitZ;
+            var tempV = axis == Vector3.UnitZ ? -Vector3.UnitY : -Vector3.UnitZ;
             tex.UAxis = normal.Cross(tempV).Normalise();
             tex.VAxis = tex.UAxis.Cross(normal).Normalise();
             tex.Rotation = 0;
         }
 
-        public static bool IsAlignedToNormal(this Texture tex, Coordinate normal)
+        public static bool IsAlignedToNormal(this Texture tex, Vector3 normal)
         {
             var cp = tex.UAxis.Cross(tex.VAxis).Normalise();
-            return cp.EquivalentTo(normal, 0.01m) || cp.EquivalentTo(-normal, 0.01m);
+            return cp.EquivalentTo(normal, 0.01f) || cp.EquivalentTo(-normal, 0.01f);
         }
 
         public static void AlignWithTexture(this Texture tex, Plane currentPlane, Plane alignToPlane, Texture alignToTexture)
@@ -64,16 +65,16 @@ namespace Sledge.BspEditor.Primitives
 
                 // Get the angle between the projected normals
                 var dot = Math.Round(ptNormal.Dot(ppNormal), 4);
-                var angle = DMath.Acos(dot); // A.B = cos(angle)
+                var angle = (float) Math.Acos(dot); // A.B = cos(angle)
 
                 // Rotate the texture axis by the angle around the intersection edge
-                var transform = new UnitRotate(angle, new Line(Coordinate.Zero, intersectionEdge));
+                var transform = Matrix4x4.CreateFromAxisAngle(intersectionEdge.Normalise(), angle);
                 refU = transform.Transform(refU);
                 refV = transform.Transform(refV);
 
                 // Rotate the texture reference points as well, but around the intersection line, not the origin
-                refX = transform.Transform(refX + intersect) - intersect;
-                refY = transform.Transform(refY + intersect) - intersect;
+                refX = transform.Transform(refX + intersect.Value) - intersect.Value;
+                refY = transform.Transform(refY + intersect.Value) - intersect.Value;
             }
 
             // Convert the reference points back to get the final values
@@ -93,8 +94,8 @@ namespace Sledge.BspEditor.Primitives
             // Keep the shift values to a minimum
             tex.XShift = tex.XShift % width;
             tex.YShift = tex.YShift % height;
-            if (tex.XShift < -width / 2m) tex.XShift += width;
-            if (tex.YShift < -height / 2m) tex.YShift += height;
+            if (tex.XShift < -width / 2f) tex.XShift += width;
+            if (tex.YShift < -height / 2f) tex.YShift += height;
         }
 
         public static void FitToPointCloud(this Texture tex, int width, int height, Cloud cloud, int tileX, int tileY)
@@ -141,8 +142,8 @@ namespace Sledge.BspEditor.Primitives
                 case BoxAlignMode.Center:
                     var avgU = (minU + maxU) / 2;
                     var avgV = (minV + maxV) / 2;
-                    tex.XShift = -avgU + width / 2m;
-                    tex.YShift = -avgV + height / 2m;
+                    tex.XShift = -avgU + width / 2f;
+                    tex.YShift = -avgV + height / 2f;
                     break;
                 case BoxAlignMode.Top:
                     tex.YShift = -minV;
@@ -153,13 +154,14 @@ namespace Sledge.BspEditor.Primitives
             }
         }
         
-        public static void SetRotation(this Texture tex, decimal rotate)
+        public static void SetRotation(this Texture tex, float rotate)
         {
-            var rads = DMath.DegreesToRadians(tex.Rotation - rotate);
+            var rads = (float) DMath.DegreesToRadians(tex.Rotation - rotate);
 
             // Rotate around the texture normal
             var texNorm = tex.VAxis.Cross(tex.UAxis).Normalise();
-            var transform = new UnitRotate(rads, new Line(Coordinate.Zero, texNorm));
+
+            var transform = Matrix4x4.CreateFromAxisAngle(texNorm, rads);
             tex.UAxis = transform.Transform(tex.UAxis);
             tex.VAxis = transform.Transform(tex.VAxis);
             tex.Rotation = rotate;

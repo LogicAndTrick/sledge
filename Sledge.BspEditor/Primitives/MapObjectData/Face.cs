@@ -3,10 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
+using System.Numerics;
 using System.Runtime.Serialization;
 using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.Common.Transport;
 using Sledge.DataStructures.Geometric;
+using Plane = Sledge.DataStructures.Geometric.Plane;
 
 namespace Sledge.BspEditor.Primitives.MapObjectData
 {
@@ -22,7 +24,7 @@ namespace Sledge.BspEditor.Primitives.MapObjectData
             set => Vertices.Plane = value;
         }
 
-        public Coordinate Origin => Vertices.Origin;
+        public Vector3 Origin => Vertices.Origin;
 
         public Face(long id)
         {
@@ -41,17 +43,17 @@ namespace Sledge.BspEditor.Primitives.MapObjectData
             if (t != null)
             {
                 Texture.Name = t.Get("Name", "");
-                Texture.Rotation = t.Get("Rotation", 0m);
-                Texture.UAxis = t.Get("UAxis", -Coordinate.UnitZ);
-                Texture.VAxis = t.Get("VAxis", Coordinate.UnitX);
-                Texture.XScale = t.Get("XScale", 1m);
-                Texture.XShift = t.Get("XShift", 0m);
-                Texture.YScale = t.Get("YScale", 1m);
-                Texture.YShift = t.Get("YShift", 0m);
+                Texture.Rotation = t.Get("Rotation", 0f);
+                Texture.UAxis = t.Get("UAxis", -Vector3.UnitZ);
+                Texture.VAxis = t.Get("VAxis", Vector3.UnitX);
+                Texture.XScale = t.Get("XScale", 1f);
+                Texture.XShift = t.Get("XShift", 0f);
+                Texture.YScale = t.Get("YScale", 1f);
+                Texture.YShift = t.Get("YShift", 0f);
             }
 
             Vertices = new VertexCollection();
-            Vertices.AddRange(obj.Children.Where(x => x.Name == "Vertex").Select(x => x.Get<Coordinate>("Position")));
+            Vertices.AddRange(obj.Children.Where(x => x.Name == "Vertex").Select(x => x.Get<Vector3>("Position")));
         }
 
         [Export(typeof(IMapElementFormatter))]
@@ -68,7 +70,7 @@ namespace Sledge.BspEditor.Primitives.MapObjectData
         private void CopyBase(Face face)
         {
             face.Texture = Texture.Clone();
-            face.Vertices.Reset(Vertices.Select(x => x.Clone()));
+            face.Vertices.Reset(Vertices.Select(x => x));
         }
 
         public IMapElement Clone()
@@ -117,11 +119,11 @@ namespace Sledge.BspEditor.Primitives.MapObjectData
             return so;
         }
 
-        public virtual IEnumerable<Tuple<Coordinate, decimal, decimal>> GetTextureCoordinates(int width, int height)
+        public virtual IEnumerable<Tuple<Vector3, float, float>> GetTextureCoordinates(int width, int height)
         {
             if (width <= 0 || height <= 0 || Texture.XScale == 0 || Texture.YScale == 0)
             {
-                return Vertices.Select(x => Tuple.Create(x, 0m, 0m));
+                return Vertices.Select(x => Tuple.Create(x, 0f, 0f));
             }
 
             var udiv = width * Texture.XScale;
@@ -132,9 +134,9 @@ namespace Sledge.BspEditor.Primitives.MapObjectData
             return Vertices.Select(x => Tuple.Create(x, x.Dot(Texture.UAxis) / udiv + uadd, x.Dot(Texture.VAxis) / vdiv + vadd));
         }
 
-        public void Transform(Matrix matrix)
+        public void Transform(Matrix4x4 matrix)
         {
-            Vertices.Transform(x => x * matrix);
+            Vertices.Transform(x => Vector3.Transform(x, matrix));
         }
 
         public Polygon ToPolygon()
@@ -150,10 +152,10 @@ namespace Sledge.BspEditor.Primitives.MapObjectData
             }
         }
 
-        public class VertexCollection : IList<Coordinate>
+        public class VertexCollection : IList<Vector3>
         {
-            private readonly List<Coordinate> _list = new List<Coordinate>();
-            private Plane _plane = new Plane(Coordinate.UnitZ, Coordinate.Zero);
+            private readonly List<Vector3> _list = new List<Vector3>();
+            private Plane _plane = new Plane(Vector3.UnitZ, Vector3.Zero);
 
             internal Plane Plane
             {
@@ -167,11 +169,11 @@ namespace Sledge.BspEditor.Primitives.MapObjectData
             public int Count => _list.Count;
             public bool IsReadOnly => false;
 
-            internal Coordinate Origin => !_list.Any()
-                ? Coordinate.Zero
-                : _list.Aggregate(Coordinate.Zero, (a, b) => a + b) / _list.Count;
+            internal Vector3 Origin => !_list.Any()
+                ? Vector3.Zero
+                : _list.Aggregate(Vector3.Zero, (a, b) => a + b) / _list.Count;
 
-            public Coordinate this[int index]
+            public Vector3 this[int index]
             {
                 get => _list[index];
                 set
@@ -181,13 +183,13 @@ namespace Sledge.BspEditor.Primitives.MapObjectData
                 }
             }
 
-            public void Add(Coordinate item)
+            public void Add(Vector3 item)
             {
                 _list.Add(item);
                 UpdatePlane();
             }
 
-            public void AddRange(IEnumerable<Coordinate> items)
+            public void AddRange(IEnumerable<Vector3> items)
             {
                 _list.AddRange(items);
                 UpdatePlane();
@@ -199,14 +201,14 @@ namespace Sledge.BspEditor.Primitives.MapObjectData
                 UpdatePlane();
             }
 
-            public bool Remove(Coordinate item)
+            public bool Remove(Vector3 item)
             {
                 var r = _list.Remove(item);
                 UpdatePlane();
                 return r;
             }
 
-            public void Insert(int index, Coordinate item)
+            public void Insert(int index, Vector3 item)
             {
                 _list.Insert(index, item);
                 UpdatePlane();
@@ -218,7 +220,7 @@ namespace Sledge.BspEditor.Primitives.MapObjectData
                 UpdatePlane();
             }
 
-            public void Transform(Func<Coordinate, Coordinate> tranform)
+            public void Transform(Func<Vector3, Vector3> tranform)
             {
                 for (var i = 0; i < _list.Count; i++)
                 {
@@ -227,7 +229,7 @@ namespace Sledge.BspEditor.Primitives.MapObjectData
                 UpdatePlane();
             }
 
-            public void Reset(IEnumerable<Coordinate> values)
+            public void Reset(IEnumerable<Vector3> values)
             {
                 _list.Clear();
                 _list.AddRange(values);
@@ -239,12 +241,12 @@ namespace Sledge.BspEditor.Primitives.MapObjectData
                 _plane = _list.Count < 3 ? _plane : new Plane(_list[0], _list[1], _list[2]);
             }
 
-            public IEnumerator<Coordinate> GetEnumerator() => _list.GetEnumerator();
+            public IEnumerator<Vector3> GetEnumerator() => _list.GetEnumerator();
             IEnumerator IEnumerable.GetEnumerator() => _list.GetEnumerator();
-            public bool Contains(Coordinate item) => _list.Contains(item);
-            public void CopyTo(Coordinate[] array, int arrayIndex) => _list.CopyTo(array, arrayIndex);
-            public int IndexOf(Coordinate item) => _list.IndexOf(item);
-            public void ForEach(Action<Coordinate> action) => _list.ForEach(action);
+            public bool Contains(Vector3 item) => _list.Contains(item);
+            public void CopyTo(Vector3[] array, int arrayIndex) => _list.CopyTo(array, arrayIndex);
+            public int IndexOf(Vector3 item) => _list.IndexOf(item);
+            public void ForEach(Action<Vector3> action) => _list.ForEach(action);
         }
     }
 }

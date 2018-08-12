@@ -40,10 +40,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sledge.BspEditor.Editing", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sledge.Tests", "Sledge.Tests\Sledge.Tests.csproj", "{E8B9264D-7AA0-4397-8F8E-367701C2DF89}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sandbox", "Sandbox\Sandbox.csproj", "{D65D7E48-C321-43EC-8792-B062159FA210}"
+EndProject
 Global
-	GlobalSection(Performance) = preSolution
-		HasPerformanceSessions = true
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Debug|Mixed Platforms = Debug|Mixed Platforms
@@ -226,12 +225,27 @@ Global
 		{E8B9264D-7AA0-4397-8F8E-367701C2DF89}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{E8B9264D-7AA0-4397-8F8E-367701C2DF89}.Release|x86.ActiveCfg = Release|Any CPU
 		{E8B9264D-7AA0-4397-8F8E-367701C2DF89}.Release|x86.Build.0 = Release|Any CPU
+		{D65D7E48-C321-43EC-8792-B062159FA210}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D65D7E48-C321-43EC-8792-B062159FA210}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D65D7E48-C321-43EC-8792-B062159FA210}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{D65D7E48-C321-43EC-8792-B062159FA210}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{D65D7E48-C321-43EC-8792-B062159FA210}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{D65D7E48-C321-43EC-8792-B062159FA210}.Debug|x86.Build.0 = Debug|Any CPU
+		{D65D7E48-C321-43EC-8792-B062159FA210}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D65D7E48-C321-43EC-8792-B062159FA210}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D65D7E48-C321-43EC-8792-B062159FA210}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{D65D7E48-C321-43EC-8792-B062159FA210}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{D65D7E48-C321-43EC-8792-B062159FA210}.Release|x86.ActiveCfg = Release|Any CPU
+		{D65D7E48-C321-43EC-8792-B062159FA210}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C5833E45-8695-4F71-A3AD-D1C1980E6A2F}
+	EndGlobalSection
+	GlobalSection(Performance) = preSolution
+		HasPerformanceSessions = true
 	EndGlobalSection
 	GlobalSection(Performance) = preSolution
 		HasPerformanceSessions = true

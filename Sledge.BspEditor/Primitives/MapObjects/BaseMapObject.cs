@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Runtime.Serialization;
 using Sledge.BspEditor.Primitives.MapObjectData;
 using Sledge.Common.Transport;
@@ -134,7 +135,7 @@ namespace Sledge.BspEditor.Primitives.MapObjects
         }
 
 
-        public virtual void Transform(Matrix matrix)
+        public virtual void Transform(Matrix4x4 matrix)
         {
             foreach (var t in Data.OfType<ITransformable>())
             {
@@ -181,7 +182,7 @@ namespace Sledge.BspEditor.Primitives.MapObjects
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
+            if (obj.GetType() != GetType()) return false;
             return Equals((IMapObject)obj);
         }
 

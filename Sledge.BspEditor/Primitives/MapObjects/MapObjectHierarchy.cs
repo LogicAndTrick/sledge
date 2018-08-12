@@ -33,7 +33,7 @@ namespace Sledge.BspEditor.Primitives.MapObjects
             {
                 if (_parent != null)
                 {
-                    if (_parent.Hierarchy.HasChild(_self.ID) && Parent.Hierarchy.GetChild(_self.ID) == _self) Parent.Hierarchy.Remove(_self);
+                    if (_parent.Hierarchy.HasChild(_self.ID) && ReferenceEquals(Parent.Hierarchy.GetChild(_self.ID), _self)) Parent.Hierarchy.Remove(_self);
                     _parent.DescendantsChanged();
                 }
                 _parent = value;

@@ -13,7 +13,6 @@ using Sledge.Common;
 using Sledge.Common.Shell.Settings;
 using Sledge.DataStructures.Geometric;
 using Sledge.DataStructures.Transformations;
-using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Interfaces;
 using Sledge.Rendering.Scenes.Elements;
 

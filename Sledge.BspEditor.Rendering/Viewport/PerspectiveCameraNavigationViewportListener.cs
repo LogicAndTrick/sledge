@@ -52,13 +52,13 @@ namespace Sledge.BspEditor.Rendering.Viewport
             }
         }
 
-        public void UpdateFrame(Frame frame)
+        public void UpdateFrame(long frame)
         {
             var currMillis = _lastMillis;
-            _lastMillis = frame.Milliseconds;
+            _lastMillis = frame;
 
             if (currMillis == 0) return;
-            if (!Focus || !Viewport.IsUnlocked(this) || !Viewport.Viewport.IsFocused)
+            if (!Focus || !Viewport.IsUnlocked(this)) //todo || !Viewport.Viewport.Control.Focused)
             {
                 if (FreeLook || FreeLookToggle)
                 {
@@ -68,7 +68,7 @@ namespace Sledge.BspEditor.Rendering.Viewport
                 return;
             }
 
-            var seconds = (frame.Milliseconds - currMillis) / 1000f;
+            var seconds = (frame - currMillis) / 1000f;
             var units = CameraNavigationViewportSettings.ForwardSpeed * seconds;
 
             var down = KeyboardState.IsAnyKeyDown(Keys.W, Keys.A, Keys.S, Keys.D);
@@ -77,7 +77,7 @@ namespace Sledge.BspEditor.Rendering.Viewport
 
             if (CameraNavigationViewportSettings.TimeToTopSpeed > 0)
             {
-                var downFor = (frame.Milliseconds - _downMillis) / CameraNavigationViewportSettings.TimeToTopSpeed;
+                var downFor = (frame - _downMillis) / CameraNavigationViewportSettings.TimeToTopSpeed;
                 if (downFor >= 0 && downFor < 1) units *= (float) _easing.Evaluate(downFor);
             }
 
@@ -122,7 +122,7 @@ namespace Sledge.BspEditor.Rendering.Viewport
 
         public bool IsActive()
         {
-            return Viewport != null && Viewport.Is3D;
+            return Viewport != null && Camera != null;
         }
 
         public void KeyUp(ViewportEvent e)
@@ -163,7 +163,8 @@ namespace Sledge.BspEditor.Rendering.Viewport
                 var left = Control.MouseButtons.HasFlag(MouseButtons.Left);
                 var right = Control.MouseButtons.HasFlag(MouseButtons.Right);
                 
-                if (false) //(ToolManager.ActiveTool is CameraTool)
+                //if (false) //(ToolManager.ActiveTool is CameraTool)
+                if (true)
                 {
                     FreeLook = left || right;
                 }

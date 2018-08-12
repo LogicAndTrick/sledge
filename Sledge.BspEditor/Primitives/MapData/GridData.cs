@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.Composition;
-using System.Linq;
+﻿using System.ComponentModel.Composition;
 using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
 using Sledge.BspEditor.Grid;
 using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.Common.Transport;

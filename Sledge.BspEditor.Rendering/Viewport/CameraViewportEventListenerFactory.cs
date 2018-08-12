@@ -9,7 +9,7 @@ namespace Sledge.BspEditor.Rendering.Viewport
         public IEnumerable<IViewportEventListener> Create(MapViewport viewport)
         {
             yield return new PerspectiveCameraNavigationViewportListener(viewport);
-            yield return new OrthographicCameraViewportListener(viewport);
+            //yield return new OrthographicCameraViewportListener(viewport);
         }
     }
 }

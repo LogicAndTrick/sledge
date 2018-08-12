@@ -4,7 +4,6 @@ using System.Windows.Forms;
 using Sledge.Common;
 using Sledge.DataStructures.Geometric;
 using Sledge.Rendering;
-using Sledge.Rendering.Cameras;
 using Sledge.Shell.Input;
 
 namespace Sledge.BspEditor.Rendering.Viewport

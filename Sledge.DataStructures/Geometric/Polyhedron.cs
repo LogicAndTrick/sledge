@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Runtime.Serialization;
 
 namespace Sledge.DataStructures.Geometric
@@ -67,9 +68,9 @@ namespace Sledge.DataStructures.Geometric
         /// Returns the origin of this polyhedron.
         /// </summary>
         /// <returns></returns>
-        public Coordinate GetOrigin()
+        public Vector3 GetOrigin()
         {
-            return Polygons.Aggregate(Coordinate.Zero, (x, y) => x + y.GetOrigin()) / Polygons.Count;
+            return Polygons.Aggregate(Vector3.Zero, (x, y) => x + y.GetOrigin()) / Polygons.Count;
         }
 
         /// <summary>
@@ -87,7 +88,7 @@ namespace Sledge.DataStructures.Geometric
         /// <returns>True if the polyhedron is valid</returns>
         public bool IsValid()
         {
-            const decimal epsilon = 0.5m;
+            const float epsilon = 0.5f;
             return !GetCoplanarPolygons().Any()
                    && !GetBackwardsPolygons(epsilon).Any()
                    && Polygons.All(x => x.IsConvex() && x.IsValid());
@@ -98,11 +99,11 @@ namespace Sledge.DataStructures.Geometric
         /// </summary>
         /// <param name="line">The intersection line</param>
         /// <returns>The closest intersecting point, or null if the line doesn't intersect.</returns>
-        public Coordinate GetIntersectionPoint(Line line)
+        public Vector3? GetIntersectionPoint(Line line)
         {
             return Polygons.Select(x => x.GetIntersectionPoint(line))
                 .Where(x => x != null)
-                .OrderBy(x => (x - line.Start).VectorMagnitude())
+                .OrderBy(x => (x.Value - line.Start).Length())
                 .FirstOrDefault();
         }
 
@@ -111,7 +112,7 @@ namespace Sledge.DataStructures.Geometric
             return Polygons.Where(f1 => Polygons.Where(f2 => f2 != f1).Any(f2 => f2.GetPlane() == f1.GetPlane()));
         }
 
-        public IEnumerable<Polygon> GetBackwardsPolygons(decimal epsilon = 0.001m)
+        public IEnumerable<Polygon> GetBackwardsPolygons(float epsilon = 0.001f)
         {
             var origin = GetOrigin();
             return Polygons.Where(x => x.GetPlane().OnPlane(origin, epsilon) > 0);

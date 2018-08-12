@@ -9,9 +9,10 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Sledge.MinimalEditor</RootNamespace>
     <AssemblyName>Sledge.MinimalEditor</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -82,6 +83,7 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
@@ -98,17 +100,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Sledge.BspEditor.Editing\Sledge.BspEditor.Editing.csproj">
-      <Project>{d33e1027-1956-44c4-b920-85281f703704}</Project>
-      <Name>Sledge.BspEditor.Editing</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Sledge.BspEditor.Rendering\Sledge.BspEditor.Rendering.csproj">
       <Project>{d27bb6a7-fe81-45b5-9b68-b23e4169f16d}</Project>
       <Name>Sledge.BspEditor.Rendering</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Sledge.BspEditor.Tools\Sledge.BspEditor.Tools.csproj">
-      <Project>{f5715cfa-8f04-4892-a1ef-c3e2c3017750}</Project>
-      <Name>Sledge.BspEditor.Tools</Name>
     </ProjectReference>
     <ProjectReference Include="..\Sledge.BspEditor\Sledge.BspEditor.csproj">
       <Project>{37c3fe6b-16f4-431f-ab67-fba7c681ccee}</Project>

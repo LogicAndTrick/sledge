@@ -21,21 +21,29 @@ namespace Sledge.BspEditor.Rendering.Converters
             foreach (var converter in _converters.Select(x => x.Value).OrderBy(x => (int) x.Priority))
             {
                 if (!converter.Supports(obj)) continue;
-                if (!await converter.Convert(smo, document, obj)) return null;
+                await converter.Convert(smo, document, obj);
                 if (converter.ShouldStopProcessing(smo, document, obj)) break;
             }
             return smo;
         }
 
+        /// <summary>
+        /// Updates a <see cref="SceneMapObject"/>. Returns true if the renderable list doesn't need to change.
+        /// </summary>
+        /// <param name="smo">The scene map object to update</param>
+        /// <param name="document">The current document</param>
+        /// <param name="obj">The current object</param>
+        /// <returns>True if the renderable list was unmodified, false otherwise</returns>
         public async Task<bool> Update(SceneMapObject smo, MapDocument document, IMapObject obj)
         {
+            var res = true;
             foreach (var converter in _converters.Select(x => x.Value).OrderBy(x => (int)x.Priority))
             {
                 if (!converter.Supports(obj)) continue;
-                if (!await converter.Update(smo, document, obj)) return false;
+                if (!await converter.Update(smo, document, obj)) res = false;
                 if (converter.ShouldStopProcessing(smo, document, obj)) break;
             }
-            return true;
+            return res;
         }
     }
 }

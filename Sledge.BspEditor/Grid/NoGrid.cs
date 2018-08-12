@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Sledge.DataStructures.Geometric;
+using System.Numerics;
 
 namespace Sledge.BspEditor.Grid
 {
@@ -7,21 +7,21 @@ namespace Sledge.BspEditor.Grid
     {
         public int Spacing
         {
-            get { return 1; }
+            get => 1;
             set { }
         }
 
-        public Coordinate Snap(Coordinate coordinate)
+        public Vector3 Snap(Vector3 vector)
         {
-            return coordinate;
+            return vector;
         }
 
-        public Coordinate AddStep(Coordinate coordinate, Coordinate add)
+        public Vector3 AddStep(Vector3 vector, Vector3 add)
         {
-            return coordinate + add;
+            return vector + add;
         }
 
-        public IEnumerable<GridLine> GetLines(Coordinate normal, decimal scale, Coordinate worldMinimum, Coordinate worldMaximum)
+        public IEnumerable<GridLine> GetLines(Vector3 normal, float scale, Vector3 worldMinimum, Vector3 worldMaximum)
         {
             yield break;
         }

@@ -1,32 +1,42 @@
-﻿using System.Collections;
+﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Sledge.BspEditor.Primitives.MapObjects;
-using Sledge.Rendering.Scenes;
+using Sledge.Rendering.Renderables;
+using Buffer = Sledge.Rendering.Renderables.Buffer;
 
 namespace Sledge.BspEditor.Rendering.Scene
 {
-    public class SceneMapObject : IEnumerable<SceneObject>
+    /// <summary>
+    /// A collection of <see cref="Buffer"/>s and <see cref="IRenderable"/>s for an <see cref="IMapObject"/>.
+    /// </summary>
+    /// <seealso cref="Converters.IMapObjectSceneConverter">The interface that handles this class's buffers and renderables</seealso>
+    /// <seealso cref="ConvertedScene">The class that manages instances of this class</seealso>
+    public class SceneMapObject : IDisposable
     {
-        public IMapObject MapObject { get; set; }
-        public Dictionary<object, SceneObject> SceneObjects { get; private set; }
+        public IMapObject MapObject { get; }
 
-        public Dictionary<string, object> MetaData { get; set; }
+        public Dictionary<object, Buffer> Buffers { get; }
+        public Dictionary<object, IRenderable> Renderables { get; }
+        public Dictionary<string, object> MetaData { get; }
 
         public SceneMapObject(IMapObject mapObject)
         {
             MapObject = mapObject;
-            SceneObjects = new Dictionary<object, SceneObject>();
+            Buffers = new Dictionary<object, Buffer>();
+            Renderables = new Dictionary<object, IRenderable>();
             MetaData = new Dictionary<string, object>();
         }
 
-        public IEnumerator<SceneObject> GetEnumerator()
+        public void Dispose()
         {
-            return SceneObjects.Values.GetEnumerator();
-        }
+            foreach (var r in Renderables.Values) r.Dispose();
+            foreach (var b in Buffers.Values) b.Dispose();
+            foreach (var m in MetaData.Values.OfType<IDisposable>()) m.Dispose();
 
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
+            Renderables.Clear();
+            Buffers.Clear();
+            MetaData.Clear();
         }
     }
 }

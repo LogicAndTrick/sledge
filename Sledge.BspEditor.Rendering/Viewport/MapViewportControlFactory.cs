@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
 using Sledge.BspEditor.Components;
-using Sledge.Rendering.Cameras;
 
 namespace Sledge.BspEditor.Rendering.Viewport
 {

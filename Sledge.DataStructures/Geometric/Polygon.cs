@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Runtime.Serialization;
 
 namespace Sledge.DataStructures.Geometric
@@ -11,13 +12,13 @@ namespace Sledge.DataStructures.Geometric
     [Serializable]
     public class Polygon : ISerializable
     {
-        public List<Coordinate> Vertices { get; set; }
+        public List<Vector3> Vertices { get; set; }
 
         /// <summary>
         /// Creates a polygon from a list of points
         /// </summary>
         /// <param name="vertices">The vertices of the polygon</param>
-        public Polygon(IEnumerable<Coordinate> vertices)
+        public Polygon(IEnumerable<Vector3> vertices)
         {
             Vertices = vertices.ToList();
             Simplify();
@@ -29,15 +30,15 @@ namespace Sledge.DataStructures.Geometric
         /// </summary>
         /// <param name="plane">The polygon plane</param>
         /// <param name="radius">The polygon radius</param>
-        public Polygon(Plane plane, decimal radius = 1000000m)
+        public Polygon(Plane plane, float radius = 1000000f)
         {
             // Get aligned up and right axes to the plane
             var direction = plane.GetClosestAxisToNormal();
-            var tempV = direction == Coordinate.UnitZ ? -Coordinate.UnitY : -Coordinate.UnitZ;
+            var tempV = direction == Vector3.UnitZ ? -Vector3.UnitY : -Vector3.UnitZ;
             var up = tempV.Cross(plane.Normal).Normalise();
             var right = plane.Normal.Cross(up).Normalise();
 
-            Vertices = new List<Coordinate>
+            Vertices = new List<Vector3>
                            {
                                plane.PointOnPlane + right + up, // Top right
                                plane.PointOnPlane - right + up, // Top left
@@ -49,7 +50,7 @@ namespace Sledge.DataStructures.Geometric
 
         protected Polygon(SerializationInfo info, StreamingContext context)
         {
-            Vertices = ((Coordinate[]) info.GetValue("Vertices", typeof (Coordinate[]))).ToList();
+            Vertices = ((Vector3[]) info.GetValue("Vertices", typeof (Vector3[]))).ToList();
         }
 
         public void GetObjectData(SerializationInfo info, StreamingContext context)
@@ -59,12 +60,12 @@ namespace Sledge.DataStructures.Geometric
 
         public Polygon Clone()
         {
-            return new Polygon(new List<Coordinate>(Vertices));
+            return new Polygon(new List<Vector3>(Vertices));
         }
 
         public void Unclone(Polygon polygon)
         {
-            Vertices = new List<Coordinate>(polygon.Vertices);
+            Vertices = new List<Vector3>(polygon.Vertices);
         }
 
         public Plane GetPlane()
@@ -76,9 +77,9 @@ namespace Sledge.DataStructures.Geometric
         /// Returns the origin of this polygon.
         /// </summary>
         /// <returns></returns>
-        public Coordinate GetOrigin()
+        public Vector3 GetOrigin()
         {
-            return Vertices.Aggregate(Coordinate.Zero, (x, y) => x + y) / Vertices.Count;
+            return Vertices.Aggregate(Vector3.Zero, (x, y) => x + y) / Vertices.Count;
         }
 
         /// <summary>
@@ -124,7 +125,7 @@ namespace Sledge.DataStructures.Geometric
             }
         }
 
-        public bool IsConvex(decimal epsilon = 0.001m)
+        public bool IsConvex(float epsilon = 0.001f)
         {
             if (Vertices.Count < 3) return false;
 
@@ -146,7 +147,7 @@ namespace Sledge.DataStructures.Geometric
         /// Expands this plane's points outwards from the origin by a radius value.
         /// </summary>
         /// <param name="radius">The distance the points will be from the origin after expanding</param>
-        public void Expand(decimal radius)
+        public void Expand(float radius)
         {
             // 1. Center the polygon at the world origin
             // 2. Normalise all the vertices
@@ -223,7 +224,7 @@ namespace Sledge.DataStructures.Geometric
             }
 
             // Get the new back vertices
-            var backVerts = new List<Coordinate>();
+            var backVerts = new List<Vector3>();
 
             var prev = 0;
 
@@ -242,7 +243,7 @@ namespace Sledge.DataStructures.Geometric
                     var line = new Line(start, end);
                     var isect = clip.GetIntersectionPoint(line, true);
                     if (isect == null) throw new Exception("Expected intersection, got null.");
-                    backVerts.Add(isect);
+                    backVerts.Add(isect.Value);
                 }
 
                 // Add original points
@@ -300,8 +301,8 @@ namespace Sledge.DataStructures.Geometric
             }
 
             // Get the new front and back vertices
-            var backVerts = new List<Coordinate>();
-            var frontVerts = new List<Coordinate>();
+            var backVerts = new List<Vector3>();
+            var frontVerts = new List<Vector3>();
             var prev = 0;
 
             for (var i = 0; i <= count; i++)
@@ -319,8 +320,8 @@ namespace Sledge.DataStructures.Geometric
                     var line = new Line(start, end);
                     var isect = clip.GetIntersectionPoint(line, true);
                     if (isect == null) throw new Exception("Expected intersection, got null.");
-                    frontVerts.Add(isect);
-                    backVerts.Add(isect);
+                    frontVerts.Add(isect.Value);
+                    backVerts.Add(isect.Value);
                 }
 
                 // Add original points
@@ -346,42 +347,44 @@ namespace Sledge.DataStructures.Geometric
             Vertices.Reverse();
         }
 
-        public Coordinate GetIntersectionPoint(Line line, bool ignoreDirection = false)
+        public Vector3? GetIntersectionPoint(Line line, bool ignoreDirection = false)
         {
             if (Vertices.Count < 3) return null;
 
             var plane = GetPlane();
-            var intersect = plane.GetIntersectionPoint(line, ignoreDirection);
-            if (intersect == null) return null;
+            var isect = plane.GetIntersectionPoint(line, ignoreDirection);
+            if (isect == null) return null;
 
-            var coordinates = Vertices;
+            var intersect = isect.Value;
+
+            var vectors = Vertices;
 
             // http://paulbourke.net/geometry/insidepoly/
 
             // The angle sum will be 2 * PI if the point is inside the face
             double sum = 0;
-            for (var i = 0; i < coordinates.Count; i++)
+            for (var i = 0; i < vectors.Count; i++)
             {
                 var i1 = i;
-                var i2 = (i + 1) % coordinates.Count;
+                var i2 = (i + 1) % vectors.Count;
 
                 // Translate the vertices so that the intersect point is on the origin
-                var v1 = coordinates[i1] - intersect;
-                var v2 = coordinates[i2] - intersect;
+                var v1 = vectors[i1] - intersect;
+                var v2 = vectors[i2] - intersect;
 
-                var m1 = v1.VectorMagnitude();
-                var m2 = v2.VectorMagnitude();
+                var m1 = v1.Length();
+                var m2 = v2.Length();
                 var nom = m1 * m2;
-                if (nom < 0.001m)
+                if (nom < 0.001f)
                 {
                     // intersection is at a vertex
                     return intersect;
                 }
-                sum += Math.Acos((double)(v1.Dot(v2) / nom));
+                sum += Math.Acos(v1.Dot(v2) / nom);
             }
 
             var delta = Math.Abs(sum - Math.PI * 2);
-            return (delta < 0.001d) ? intersect : null;
+            return (delta < 0.001d) ? intersect : (Vector3?) null;
         }
     }
 }

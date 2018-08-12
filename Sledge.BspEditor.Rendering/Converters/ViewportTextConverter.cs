@@ -7,7 +7,6 @@ using OpenTK;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.BspEditor.Rendering.Scene;
-using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Interfaces;
 using Sledge.Rendering.Materials;
 using Sledge.Rendering.Scenes.Elements;

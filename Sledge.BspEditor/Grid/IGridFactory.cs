@@ -1,6 +1,5 @@
 using System.Drawing;
 using System.Threading.Tasks;
-using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Environment;
 
 namespace Sledge.BspEditor.Grid

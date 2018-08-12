@@ -10,7 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Sledge.DataStructures</RootNamespace>
     <AssemblyName>Sledge.DataStructures</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -35,13 +35,13 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="OpenTK, Version=2.0.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
-      <HintPath>..\packages\OpenTK.2.0.0\lib\net20\OpenTK.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Numerics.Vectors, Version=4.1.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Numerics.Vectors.4.5.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BinaryExtensions.cs" />
@@ -49,15 +49,12 @@
     <Compile Include="GameData\AutoVisgroupSection.cs" />
     <Compile Include="Geometric\Box.cs" />
     <Compile Include="Geometric\Cloud.cs" />
-    <Compile Include="Geometric\CoordinateF.cs" />
     <Compile Include="Geometric\CsgNode.cs" />
     <Compile Include="Geometric\CsgSolid.cs" />
+    <Compile Include="Geometric\DVector3.cs" />
     <Compile Include="Geometric\Polygon.cs" />
-    <Compile Include="Geometric\Matrix.cs" />
     <Compile Include="Geometric\Plane.cs" />
     <Compile Include="Geometric\Polyhedron.cs" />
-    <Compile Include="Geometric\Quaternion.cs" />
-    <Compile Include="Geometric\Vector.cs" />
     <Compile Include="GameData\Behaviour.cs" />
     <Compile Include="GameData\ClassType.cs" />
     <Compile Include="GameData\GameData.cs" />
@@ -68,25 +65,10 @@
     <Compile Include="GameData\Property.cs" />
     <Compile Include="GameData\VariableType.cs" />
     <Compile Include="Geometric\Line.cs" />
-    <Compile Include="Geometric\Coordinate.cs" />
-    <Compile Include="Models\BodyPart.cs" />
-    <Compile Include="Models\Texture.cs" />
-    <Compile Include="OpenTKExtensions.cs" />
-    <Compile Include="PlaneClassification.cs" />
-    <Compile Include="Models\Animation.cs" />
-    <Compile Include="Models\AnimationFrame.cs" />
-    <Compile Include="Models\Bone.cs" />
-    <Compile Include="Models\BoneAnimationFrame.cs" />
-    <Compile Include="Models\BoneWeighting.cs" />
-    <Compile Include="Models\Mesh.cs" />
-    <Compile Include="Models\MeshVertex.cs" />
-    <Compile Include="Models\Model.cs" />
+    <Compile Include="Geometric\DVector3TypeConverter.cs" />
+    <Compile Include="Geometric\Vector3Extensions.cs" />
+    <Compile Include="Geometric\PlaneClassification.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Transformations\IUnitTransformation.cs" />
-    <Compile Include="Transformations\UnitMatrixMult.cs" />
-    <Compile Include="Transformations\UnitRotate.cs" />
-    <Compile Include="Transformations\UnitScale.cs" />
-    <Compile Include="Transformations\UnitTranslate.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Sledge.Common\Sledge.Common.csproj">
@@ -95,7 +77,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="OpenTK.dll.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Numerics;
 using System.Runtime.Serialization;
 using Sledge.DataStructures.Geometric;
 
@@ -9,34 +10,34 @@ namespace Sledge.BspEditor.Primitives
     {
         public string Name { get; set; }
 
-        public decimal Rotation { get; set; }
+        public float Rotation { get; set; }
 
-        private Coordinate _uAxis;
-        public Coordinate UAxis
+        private Vector3 _uAxis;
+        public Vector3 UAxis
         {
             get => _uAxis;
             set => _uAxis = value.Normalise();
         }
 
-        private Coordinate _vAxis;
-        public Coordinate VAxis
+        private Vector3 _vAxis;
+        public Vector3 VAxis
         {
             get => _vAxis;
             set => _vAxis = value.Normalise();
         }
 
-        public decimal XShift { get; set; }
-        public decimal XScale { get; set; }
+        public float XShift { get; set; }
+        public float XScale { get; set; }
 
-        public decimal YShift { get; set; }
-        public decimal YScale { get; set; }
+        public float YShift { get; set; }
+        public float YScale { get; set; }
 
         public Texture()
         {
             Name = "";
             Rotation = 0;
-            _uAxis = -Coordinate.UnitZ;
-            _vAxis = Coordinate.UnitX;
+            _uAxis = -Vector3.UnitZ;
+            _vAxis = Vector3.UnitX;
             XShift = YShift = 0;
             XScale = YScale = 1;
         }
@@ -45,12 +46,12 @@ namespace Sledge.BspEditor.Primitives
         {
             Name = info.GetString("Name");
             Rotation = info.GetInt32("Rotation");
-            _uAxis = (Coordinate)info.GetValue("UAxis", typeof(Coordinate));
-            _vAxis = (Coordinate)info.GetValue("VAxis", typeof(Coordinate));
-            XShift = info.GetDecimal("XShift");
-            XScale = info.GetDecimal("XScale");
-            YShift = info.GetDecimal("YShift");
-            YScale = info.GetDecimal("YScale");
+            _uAxis = (Vector3)info.GetValue("UAxis", typeof(Vector3));
+            _vAxis = (Vector3)info.GetValue("VAxis", typeof(Vector3));
+            XShift = info.GetSingle("XShift");
+            XScale = info.GetSingle("XScale");
+            YShift = info.GetSingle("YShift");
+            YScale = info.GetSingle("YScale");
         }
 
         public void GetObjectData(SerializationInfo info, StreamingContext context)
@@ -65,7 +66,7 @@ namespace Sledge.BspEditor.Primitives
             info.AddValue("YScale", YScale);
         }
 
-        public Coordinate GetNormal()
+        public Vector3 GetNormal()
         {
             return UAxis.Cross(VAxis).Normalise();
         }
@@ -74,8 +75,8 @@ namespace Sledge.BspEditor.Primitives
         {
             Name = source.Name;
             Rotation = source.Rotation;
-            UAxis = source.UAxis.Clone();
-            VAxis = source.VAxis.Clone();
+            UAxis = source.UAxis;
+            VAxis = source.VAxis;
             XShift = source.XShift;
             XScale = source.XScale;
             YShift = source.YShift;
@@ -88,8 +89,8 @@ namespace Sledge.BspEditor.Primitives
             {
                 Name = Name,
                 Rotation = Rotation,
-                UAxis = UAxis.Clone(),
-                VAxis = VAxis.Clone(),
+                UAxis = UAxis,
+                VAxis = VAxis,
                 XShift = XShift,
                 XScale = XScale,
                 YShift = YShift,
@@ -103,31 +104,31 @@ namespace Sledge.BspEditor.Primitives
         /// other for this transformation to be valid.
         /// </summary>
         /// <param name="matrix">The matrix to transform the texture by</param>
-        public void TransformUniform(Matrix matrix)
+        public void TransformUniform(Matrix4x4 matrix)
         {
             #if DEBUG
 
             // Validate that the transformation is indeed uniform.
             // If it's not, bail out.
 
-            var one = Coordinate.One * matrix;
-            var two = Coordinate.One * 2 * matrix;
-            if (Math.Abs((two - one).VectorMagnitude() - Coordinate.One.VectorMagnitude()) > 0.0001m)
+            var one = Vector3.Transform(Vector3.One, matrix);
+            var two = Vector3.Transform(Vector3.One * 2, matrix);
+            if (Math.Abs((two - one).Length() - Vector3.One.Length()) > 0.0001f)
                 throw new InvalidOperationException("Transform isn't uniform!");
 
             #endif
 
             // If the determinant isn't 1, then we can't transform safely.
-            if (Math.Abs(matrix.Determinant() - 1) > 0.0001m) return;
+            if (Math.Abs(matrix.GetDeterminant() - 1) > 0.0001f) return;
 
-            var startU = UAxis * matrix;
-            var startV = VAxis * matrix;
+            var startU = Vector3.Transform(UAxis, matrix);
+            var startV = Vector3.Transform(VAxis, matrix);
 
-            var origin = Coordinate.Zero * matrix;
+            var origin = Vector3.Transform(Vector3.Zero, matrix);
             UAxis = (startU - origin).Normalise();
             VAxis = (startV - origin).Normalise();
 
-            if (XScale != 0 && YScale != 0)
+            if (Math.Abs(XScale) > 0.001f && Math.Abs(YScale) > 0.001f)
             {
                 XShift -= (startU - UAxis).Dot(UAxis) / XScale;
                 YShift -= (startV - VAxis).Dot(VAxis) / YScale;
@@ -139,17 +140,17 @@ namespace Sledge.BspEditor.Primitives
         /// Only scale changes of the transformation are taken into account.
         /// </summary>
         /// <param name="matrix">The transformation matrix</param>
-        public void TransformScale(Matrix matrix)
+        public void TransformScale(Matrix4x4 matrix)
         {
-            var startU = UAxis * matrix;
-            var startV = VAxis * matrix;
+            var startU = Vector3.Transform(UAxis, matrix);
+            var startV = Vector3.Transform(VAxis, matrix);
 
-            var zero = Coordinate.Zero * matrix;
-            var deltaU = (startU - zero).VectorMagnitude();
-            var deltaV = (startV - zero).VectorMagnitude();
+            var zero = Vector3.Transform(Vector3.Zero, matrix);
+            var deltaU = (startU - zero).Length();
+            var deltaV = (startV - zero).Length();
 
-            if (deltaU != 0) XScale *= deltaU;
-            if (deltaV != 0) YScale *= deltaV;
+            if (Math.Abs(deltaU) > 0.001f) XScale *= deltaU;
+            if (Math.Abs(deltaV) > 0.001f) YScale *= deltaV;
         }
     }
 }

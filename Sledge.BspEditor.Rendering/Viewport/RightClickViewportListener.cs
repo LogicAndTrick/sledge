@@ -1,10 +1,6 @@
-using System;
-using System.Drawing;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using LogicAndTrick.Oy;
-using Sledge.Rendering;
 
 namespace Sledge.BspEditor.Rendering.Viewport
 {
@@ -112,7 +108,7 @@ namespace Sledge.BspEditor.Rendering.Viewport
 
         }
 
-        public void UpdateFrame(Frame frame)
+        public void UpdateFrame(long frame)
         {
 
         }

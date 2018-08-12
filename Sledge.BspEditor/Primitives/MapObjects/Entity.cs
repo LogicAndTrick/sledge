@@ -2,8 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
-using System.Runtime.Serialization;
-using Sledge.BspEditor.Primitives.MapData;
+using System.Numerics;
 using Sledge.BspEditor.Primitives.MapObjectData;
 using Sledge.Common.Transport;
 using Sledge.DataStructures.Geometric;
@@ -15,9 +14,9 @@ namespace Sledge.BspEditor.Primitives.MapObjects
         public EntityData EntityData => Data.GetOne<EntityData>();
         public ObjectColor Color => Data.GetOne<ObjectColor>();
 
-        public Coordinate Origin
+        public Vector3 Origin
         {
-            get => Data.GetOne<Origin>()?.Location ?? Coordinate.Zero;
+            get => Data.GetOne<Origin>()?.Location ?? Vector3.Zero;
             set => Data.Replace(new Origin(value));
         }
 
@@ -54,7 +53,7 @@ namespace Sledge.BspEditor.Primitives.MapObjects
                     }
                 }
             }
-            return new Box(Origin - Coordinate.One * 16, Origin + Coordinate.One * 16);
+            return new Box(Origin - Vector3.One * 16, Origin + Vector3.One * 16);
         }
 
         public override IEnumerable<Polygon> GetPolygons()

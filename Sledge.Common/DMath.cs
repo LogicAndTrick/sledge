@@ -61,6 +61,11 @@ namespace Sledge.Common
             return degrees * PI / 180;
         }
 
+        public static double DegreesToRadians(double degrees)
+        {
+            return degrees * Math.PI / 180;
+        }
+
         public static decimal RadiansToDegrees(decimal radians)
         {
             return radians * 180 / PI;
