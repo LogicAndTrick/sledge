@@ -17,6 +17,7 @@ namespace Sledge.Rendering.Engine
         public GraphicsDevice Device { get; }
         public Thread RenderThread { get; }
         public Scene Scene { get; }
+        internal RenderContext Context { get; }
 
         private readonly GraphicsDeviceOptions _options;
         private readonly Stopwatch _timer;
@@ -24,7 +25,6 @@ namespace Sledge.Rendering.Engine
         private readonly object _lock = new object();
         private readonly List<IViewport> _renderTargets;
         private readonly List<IPipeline> _pipelines;
-        private readonly RenderContext _context;
         private readonly CommandList _commandList;
 
         private Engine()
@@ -46,19 +46,21 @@ namespace Sledge.Rendering.Engine
 
             _renderTargets = new List<IViewport>();
             _pipelines = new List<IPipeline>();
-            _context = new RenderContext(Device);
+            Context = new RenderContext(Device);
+            Scene.Add(Context);
 
             RenderThread = new Thread(Loop);
 
             AddPipeline(new WireframeGenericPipeline());
             AddPipeline(new FlatColourGenericPipeline());
+            AddPipeline(new TexturedGenericPipeline());
 
             Application.ApplicationExit += Shutdown;
         }
 
         public void AddPipeline(IPipeline pipeline)
         {
-            pipeline.Create(_context);
+            pipeline.Create(Context);
             _pipelines.Add(pipeline);
         }
 
@@ -152,7 +154,7 @@ namespace Sledge.Rendering.Engine
             foreach (var pipeline in _pipelines.OrderBy(x => x.Order))
             {
                 var renderables = Scene.GetRenderables(pipeline, renderTarget);
-                pipeline.Render(_context, renderTarget, _commandList, renderables);
+                pipeline.Render(Context, renderTarget, _commandList, renderables);
             }
             
             _commandList.End();

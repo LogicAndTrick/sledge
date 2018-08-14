@@ -1,16 +1,21 @@
 using System.ComponentModel.Composition;
 using System.Numerics;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.BspEditor.Rendering.Scene;
 using Sledge.Rendering.Engine;
+using Sledge.Rendering.Interfaces;
 using Sledge.Rendering.Pipelines;
 using Sledge.Rendering.Primitives;
 using Sledge.Rendering.Renderables;
 using Buffer = Sledge.Rendering.Renderables.Buffer;
+using Sledge.BspEditor.Environment;
+using Sledge.Providers.Texture;
 
 namespace Sledge.BspEditor.Rendering.Converters
 {
@@ -47,9 +52,11 @@ namespace Sledge.BspEditor.Rendering.Converters
             UpdateBuffer(solid, buffer);
             smo.Buffers.Add(Holder1, buffer);
 
-            smo.Renderables.Add(Holder1, new SimpleRenderable(buffer, new[] { PipelineNames.FlatColourGeneric }, 0, numSolidIndices) { PerspectiveOnly = true });
-            smo.Renderables.Add(Holder2, new SimpleRenderable(buffer, new[] { PipelineNames.WireframeGeneric }, numSolidIndices, numWireframeIndices) { OrthographicOnly = true });
+            smo.Renderables.Add(Holder1, new SimpleRenderable(buffer, PipelineNames.FlatColourGeneric, 0, numSolidIndices));
+            smo.Renderables.Add(Holder2, new SimpleRenderable(buffer, PipelineNames.WireframeGeneric, numSolidIndices, numWireframeIndices));
 
+            UpdateRenderables(solid, smo, document);
+            
             smo.MetaData[MaxVertCountMetaDataString] = numVertices;
 
             return Task.FromResult(0);
@@ -62,8 +69,6 @@ namespace Sledge.BspEditor.Rendering.Converters
             var buffer = smo.Buffers[Holder1];
 
             var numVertices = solid.Faces.Sum(x => x.Vertices.Count);
-            var numSolidIndices = solid.Faces.Sum(x => (x.Vertices.Count - 2) * 3);
-            var numWireframeIndices = numVertices * 2;
 
             // Recreate the buffer if it's too small
             var maxVertCount = (int) smo.MetaData[MaxVertCountMetaDataString];
@@ -76,15 +81,7 @@ namespace Sledge.BspEditor.Rendering.Converters
             }
 
             UpdateBuffer(solid, buffer);
-
-            var solidRenderable = (SimpleRenderable) smo.Renderables[Holder1];
-            var wireframeRenderable = (SimpleRenderable) smo.Renderables[Holder2];
-
-            solidRenderable.IndexOffset = 0;
-            solidRenderable.IndexCount = numSolidIndices;
-
-            wireframeRenderable.IndexOffset = numSolidIndices;
-            wireframeRenderable.IndexCount = numWireframeIndices;
+            UpdateRenderables(solid, smo, document);
 
             return Task.FromResult(true);
         }
@@ -142,5 +139,49 @@ namespace Sledge.BspEditor.Rendering.Converters
 
             buffer.Update(points, indices);
         }
+
+        private void UpdateRenderables(Solid solid, SceneMapObject smo, MapDocument document)
+        {
+            var numVertices = solid.Faces.Sum(x => x.Vertices.Count);
+            var numSolidIndices = solid.Faces.Sum(x => (x.Vertices.Count - 2) * 3);
+            var numWireframeIndices = numVertices * 2;
+
+            var solidRenderable = (SimpleRenderable) smo.Renderables[Holder1];
+            var wireframeRenderable = (SimpleRenderable) smo.Renderables[Holder2];
+
+            solidRenderable.IndexOffset = 0;
+            solidRenderable.IndexCount = numSolidIndices;
+
+            wireframeRenderable.IndexOffset = numSolidIndices;
+            wireframeRenderable.IndexCount = numWireframeIndices;
+        }
+
+        private class EnvironmentTextureSource : ITextureDataSource
+        {
+            public int Width => _item.Width;
+            public int Height => _item.Height;
+
+            private readonly TextureCollection _textureCollection;
+            private readonly TextureItem _item;
+
+            public EnvironmentTextureSource(IEnvironment environment, string name)
+            {
+                _textureCollection = environment.GetTextureCollection().Result;
+                _item = _textureCollection.GetTextureItem(name).Result;
+            }
+
+            public byte[] GetData()
+            {
+                using (var bitmap = _textureCollection.GetStreamSource().GetImage(_item.Name, 512, 512).Result)
+                {
+                    var lb = bitmap.LockBits(new Rectangle(0, 0, Width, Height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
+                    var data = new byte[lb.Stride * lb.Height];
+                    Marshal.Copy(lb.Scan0, data, 0, data.Length);
+                    bitmap.UnlockBits(lb);
+                    return data;
+                }
+            }
+        }
+
     }
 }

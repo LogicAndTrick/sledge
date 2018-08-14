@@ -8,6 +8,6 @@ namespace Sledge.Rendering.Renderables
     public interface IRenderable : IDisposable
     {
         bool ShouldRender(IPipeline pipeline, IViewport viewport);
-        void Render(CommandList cl);
+        void Render(IPipeline pipeline, IViewport viewport, CommandList cl);
     }
 }

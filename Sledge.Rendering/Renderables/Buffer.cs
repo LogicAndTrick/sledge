@@ -6,9 +6,6 @@ using Veldrid;
 
 namespace Sledge.Rendering.Renderables
 {
-    /// <summary>
-    /// A buffer represents both a vertex buffer and an index buffer and a collection of renderables that use this buffer.
-    /// </summary>
     public class Buffer : IDisposable
     {
         private readonly GraphicsDevice _device;
@@ -20,12 +17,9 @@ namespace Sledge.Rendering.Renderables
         public int VertexCount { get; private set; }
         public int IndexCount { get; private set; }
 
-        private readonly List<IRenderable> _renderables;
-
         internal Buffer(GraphicsDevice device)
         {
             _device = device;
-            _renderables = new List<IRenderable>();
             _created = false;
         }
         
@@ -56,10 +50,6 @@ namespace Sledge.Rendering.Renderables
             VertexCount = verts.Length;
             IndexCount = index.Length;
         }
-
-        public void Attach(IRenderable renderable) => _renderables.Add(renderable);
-        public void Detatch(IRenderable renderable) => _renderables.Remove(renderable);
-        public bool HasRenderables() => _renderables.Any();
 
         public virtual void Dispose()
         {

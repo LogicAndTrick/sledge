@@ -1,18 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Concurrent;
 using System.ComponentModel.Composition;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Sledge.Rendering.Interfaces;
+using Sledge.Rendering.Renderables;
 
 namespace Sledge.Rendering.Engine
 {
     [Export]
     public class EngineInterface
     {
-        public Renderables.Buffer CreateBuffer()
+        public Buffer CreateBuffer()
         {
-            return new Renderables.Buffer(Engine.Instance.Device);
+            return new Buffer(Engine.Instance.Device);
+        }
+
+        public TextureBinding CreateTexture(string name, ITextureDataSource source)
+        {
+            return Engine.Instance.Context.ResourceLoader.CreateTextureBinding(name, source);
         }
     }
 }

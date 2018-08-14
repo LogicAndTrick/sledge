@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Pipelines;
@@ -37,11 +38,16 @@ namespace Sledge.Rendering.Renderables
                    && (!PerspectiveOnly || viewport.Camera is PerspectiveCamera);
         }
 
-        public void Render(CommandList cl)
+        public void Render(IPipeline pipeline, IViewport viewport, CommandList cl)
         {
             cl.SetVertexBuffer(0, _buffer.VertexBuffer);
             cl.SetIndexBuffer(_buffer.IndexBuffer, IndexFormat.UInt32);
-            cl.DrawIndexed((uint) IndexCount, 1, (uint) IndexOffset, 0, 0);
+            Draw(pipeline, viewport, cl);
+        }
+
+        protected virtual void Draw(IPipeline pipeline, IViewport viewport, CommandList cl)
+        {
+            cl.DrawIndexed((uint)IndexCount, 1, (uint)IndexOffset, 0, 0);
         }
 
         public void Dispose()

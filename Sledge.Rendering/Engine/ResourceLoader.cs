@@ -1,8 +1,13 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.IO;
+using System.Linq;
 using System.Reflection;
+using Sledge.Rendering.Interfaces;
+using Sledge.Rendering.Renderables;
 using Sledge.Rendering.Shaders;
 using Veldrid;
+using Texture = Sledge.Rendering.Renderables.Texture;
 
 namespace Sledge.Rendering.Engine
 {
@@ -10,8 +15,9 @@ namespace Sledge.Rendering.Engine
     {
         private readonly RenderContext _context;
 
-        public ResourceLayout ProjectionLayout { get; set; }
-        public ResourceLayout TextureLayout { get; set; }
+        public ResourceLayout ProjectionLayout { get; }
+        public ResourceLayout TextureLayout { get; }
+        public Sampler TextureSampler { get; }
 
         public VertexLayoutDescription VertexStandard4LayoutDescription { get; }
 
@@ -27,7 +33,6 @@ namespace Sledge.Rendering.Engine
             TextureLayout = context.Device.ResourceFactory.CreateResourceLayout(
                 new ResourceLayoutDescription(
                     new ResourceLayoutElementDescription("Texture", ResourceKind.TextureReadOnly, ShaderStages.Fragment),
-                    new ResourceLayoutElementDescription("Lightmap", ResourceKind.TextureReadOnly, ShaderStages.Fragment),
                     new ResourceLayoutElementDescription("Sampler", ResourceKind.Sampler, ShaderStages.Fragment)
                 )
             );
@@ -38,6 +43,24 @@ namespace Sledge.Rendering.Engine
                 new VertexElementDescription("Colour", VertexElementSemantic.Color, VertexElementFormat.Float4),
                 new VertexElementDescription("Texture", VertexElementSemantic.TextureCoordinate, VertexElementFormat.Float2)
             );
+            TextureSampler = context.Device.ResourceFactory.CreateSampler(SamplerDescription.Aniso4x);
+        }
+        
+        private readonly ConcurrentDictionary<string, Texture> _textures = new ConcurrentDictionary<string, Texture>();
+
+        public TextureBinding CreateTextureBinding(string name, ITextureDataSource source)
+        {
+            var tex = _textures.GetOrAdd(name, n => new Texture(Engine.Instance.Context, source));
+            return new TextureBinding(tex);
+        }
+
+        internal void DeleteUnreferencedTextures()
+        {
+            foreach (var tkv in _textures.Where(x => x.Value.RefCount == 0).ToList())
+            {
+                _textures.TryRemove(tkv.Key, out _);
+                tkv.Value.Dispose();
+            }
         }
 
         public (Shader, Shader) LoadShaders(string name)

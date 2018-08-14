@@ -58,8 +58,10 @@
     <Compile Include="Engine\Scene.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="Interfaces\FpsMonitor.cs" />
+    <Compile Include="Interfaces\ITextureDataSource.cs" />
     <Compile Include="MathFunctions.cs" />
     <Compile Include="Interfaces\IUpdateable.cs" />
+    <Compile Include="Pipelines\TexturedGenericPipeline.cs" />
     <Compile Include="Pipelines\IPipeline.cs" />
     <Compile Include="Pipelines\PipelineNames.cs" />
     <Compile Include="Pipelines\FlatColourGenericPipeline.cs" />
@@ -72,6 +74,8 @@
     <Compile Include="Renderables\IRenderable.cs" />
     <Compile Include="Cameras\ICamera.cs" />
     <Compile Include="Renderables\SimpleRenderable.cs" />
+    <Compile Include="Renderables\Texture.cs" />
+    <Compile Include="Renderables\TextureBinding.cs" />
     <Compile Include="Shaders\Scope.cs" />
     <Compile Include="Viewports\IRenderTarget.cs" />
     <Compile Include="Viewports\IViewport.cs" />
@@ -116,6 +120,12 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Shaders\FlatColourGeneric.vert.hlsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Shaders\TexturedGeneric.frag.hlsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Shaders\TexturedGeneric.vert.hlsl" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

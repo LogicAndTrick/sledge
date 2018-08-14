@@ -65,7 +65,7 @@ namespace Sledge.Rendering.Pipelines
 
             foreach (var r in renderables)
             {
-                r.Render(cl);
+                r.Render(this, target, cl);
             }
         }
 

@@ -9,9 +9,9 @@ using Veldrid;
 
 namespace Sledge.Rendering.Pipelines
 {
-    public class WireframeGenericPipeline : IPipeline
+    public class TexturedGenericPipeline : IPipeline
     {
-        public string Name => PipelineNames.WireframeGeneric;
+        public string Name => PipelineNames.TexturedGeneric;
         public float Order => 1;
 
         private Shader _vertex;
@@ -27,10 +27,10 @@ namespace Sledge.Rendering.Pipelines
             var pDesc = new GraphicsPipelineDescription
             {
                 BlendState = BlendStateDescription.SingleAlphaBlend,
-                DepthStencilState = DepthStencilStateDescription.DepthOnlyLessEqualRead,
+                DepthStencilState = DepthStencilStateDescription.DepthOnlyLessEqual,
                 RasterizerState = RasterizerStateDescription.Default,
-                PrimitiveTopology = PrimitiveTopology.LineList,
-                ResourceLayouts = new[] { context.ResourceLoader.ProjectionLayout },
+                PrimitiveTopology = PrimitiveTopology.TriangleList,
+                ResourceLayouts = new[] { context.ResourceLoader.ProjectionLayout, context.ResourceLoader.TextureLayout },
                 ShaderSet = new ShaderSetDescription(new[] { context.ResourceLoader.VertexStandard4LayoutDescription }, new[] { _vertex, _fragment }),
                 Outputs = new OutputDescription
                 {
