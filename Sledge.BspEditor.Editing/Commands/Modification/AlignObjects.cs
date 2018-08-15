@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.Composition;
 using System.Linq;
+using System.Numerics;
 using System.Threading.Tasks;
 using Sledge.BspEditor.Commands;
 using Sledge.BspEditor.Documents;
@@ -25,7 +26,7 @@ namespace Sledge.BspEditor.Editing.Commands.Modification
             return base.IsInContext(context, document) && !document.Selection.IsEmpty;
         }
 
-        protected abstract Coordinate GetTranslation(Box selectionBox, Box objectBox);
+        protected abstract Vector3 GetTranslation(Box selectionBox, Box objectBox);
 
         protected override async Task Invoke(MapDocument document, CommandParameters parameters)
         {
@@ -39,9 +40,9 @@ namespace Sledge.BspEditor.Editing.Commands.Modification
             {
                 var objBox = mo.BoundingBox;
                 var translation = GetTranslation(selBox, objBox);
-                if (translation == Coordinate.Zero) continue;
+                if (translation == Vector3.Zero) continue;
 
-                var tform = Matrix.Translation(translation);
+                var tform = Matrix4x4.CreateTranslation(translation);
 
                 var transformOperation = new BspEditor.Modification.Operations.Mutation.Transform(tform, mo);
                 transaction.Add(transformOperation);
@@ -63,9 +64,9 @@ namespace Sledge.BspEditor.Editing.Commands.Modification
     [CommandID("BspEditor:Tools:AlignXMin")]
     public class AlignObjectsXMin : AlignObjects
     {
-        protected override Coordinate GetTranslation(Box selectionBox, Box objectBox)
+        protected override Vector3 GetTranslation(Box selectionBox, Box objectBox)
         {
-            return new Coordinate(selectionBox.Start.X - objectBox.Start.X, 0, 0);
+            return new Vector3(selectionBox.Start.X - objectBox.Start.X, 0, 0);
         }
     }
 
@@ -75,9 +76,9 @@ namespace Sledge.BspEditor.Editing.Commands.Modification
     [CommandID("BspEditor:Tools:AlignYMin")]
     public class AlignObjectsYMin : AlignObjects
     {
-        protected override Coordinate GetTranslation(Box selectionBox, Box objectBox)
+        protected override Vector3 GetTranslation(Box selectionBox, Box objectBox)
         {
-            return new Coordinate(0, selectionBox.Start.Y - objectBox.Start.Y, 0);
+            return new Vector3(0, selectionBox.Start.Y - objectBox.Start.Y, 0);
         }
     }
 
@@ -87,9 +88,9 @@ namespace Sledge.BspEditor.Editing.Commands.Modification
     [CommandID("BspEditor:Tools:AlignZMin")]
     public class AlignObjectsZMin : AlignObjects
     {
-        protected override Coordinate GetTranslation(Box selectionBox, Box objectBox)
+        protected override Vector3 GetTranslation(Box selectionBox, Box objectBox)
         {
-            return new Coordinate(0, 0, selectionBox.Start.Z - objectBox.Start.Z);
+            return new Vector3(0, 0, selectionBox.Start.Z - objectBox.Start.Z);
         }
     }
 
@@ -99,9 +100,9 @@ namespace Sledge.BspEditor.Editing.Commands.Modification
     [CommandID("BspEditor:Tools:AlignXMax")]
     public class AlignObjectsXMax : AlignObjects
     {
-        protected override Coordinate GetTranslation(Box selectionBox, Box objectBox)
+        protected override Vector3 GetTranslation(Box selectionBox, Box objectBox)
         {
-            return new Coordinate(selectionBox.End.X - objectBox.End.X, 0, 0);
+            return new Vector3(selectionBox.End.X - objectBox.End.X, 0, 0);
         }
     }
 
@@ -111,9 +112,9 @@ namespace Sledge.BspEditor.Editing.Commands.Modification
     [CommandID("BspEditor:Tools:AlignYMax")]
     public class AlignObjectsYMax : AlignObjects
     {
-        protected override Coordinate GetTranslation(Box selectionBox, Box objectBox)
+        protected override Vector3 GetTranslation(Box selectionBox, Box objectBox)
         {
-            return new Coordinate(0, selectionBox.End.Y - objectBox.End.Y, 0);
+            return new Vector3(0, selectionBox.End.Y - objectBox.End.Y, 0);
         }
     }
 
@@ -123,9 +124,9 @@ namespace Sledge.BspEditor.Editing.Commands.Modification
     [CommandID("BspEditor:Tools:AlignZMax")]
     public class AlignObjectsZMax : AlignObjects
     {
-        protected override Coordinate GetTranslation(Box selectionBox, Box objectBox)
+        protected override Vector3 GetTranslation(Box selectionBox, Box objectBox)
         {
-            return new Coordinate(0, 0, selectionBox.End.Z - objectBox.End.Z);
+            return new Vector3(0, 0, selectionBox.End.Z - objectBox.End.Z);
         }
     }
 }

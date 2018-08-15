@@ -19,7 +19,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		Milestones.txt = Milestones.txt
 		NetworkingPlan.txt = NetworkingPlan.txt
-		Performance6.psess = Performance6.psess
 		TestSettings.testsettings = TestSettings.testsettings
 	EndProjectSection
 EndProject
@@ -247,6 +246,9 @@ Global
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C5833E45-8695-4F71-A3AD-D1C1980E6A2F}
+	EndGlobalSection
+	GlobalSection(Performance) = preSolution
+		HasPerformanceSessions = true
 	EndGlobalSection
 	GlobalSection(Performance) = preSolution
 		HasPerformanceSessions = true

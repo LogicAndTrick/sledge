@@ -11,7 +11,6 @@ using Sledge.BspEditor.Modification;
 using Sledge.BspEditor.Modification.Operations.Data;
 using Sledge.BspEditor.Primitives.MapData;
 using Sledge.Common.Shell.Commands;
-using Sledge.Common.Shell.Hotkeys;
 using Sledge.Common.Translations;
 
 namespace Sledge.BspEditor.Editing.Commands

@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel.Composition;
 using System.Drawing;
+using System.Numerics;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using LogicAndTrick.Oy;
@@ -41,9 +42,9 @@ namespace Sledge.BspEditor.Editing.Commands.View
                 if (!Decimal.TryParse(qf.String("Y"), out var y)) return;
                 if (!Decimal.TryParse(qf.String("Z"), out var z)) return;
 
-                var coordinate = new Coordinate(x, y, z);
+                var coordinate = new Vector3((float) x, (float) y, (float) z);
                 
-                var box = new Box(coordinate - (Coordinate.One * 10), coordinate + (Coordinate.One * 10));
+                var box = new Box(coordinate - (Vector3.One * 10), coordinate + (Vector3.One * 10));
 
                 await Task.WhenAll(
                     Oy.Publish("MapDocument:Viewport:Focus3D", box),

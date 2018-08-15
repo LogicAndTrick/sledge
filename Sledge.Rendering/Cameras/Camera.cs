@@ -10,9 +10,12 @@ namespace Sledge.Rendering.Cameras
     {
         public static ICamera Deserialise(string serialised)
         {
-            if (serialised.Length == 0) return new PerspectiveCamera();
-            if (serialised[0] == 'P') return new PerspectiveCamera(serialised);
-            if (serialised[0] == 'O') return new OrthographicCamera(serialised);
+            var idx = serialised.Split(new [] { '/'}, 2, StringSplitOptions.None);
+            if (idx.Length == 0) idx = new [] { "PerspectiveCamera", "" };
+            else if (idx.Length == 1) idx = new [] { idx[0], "" };
+
+            if (idx[0] == "PerspectiveCamera'") return new PerspectiveCamera(idx[1]);
+            if (idx[0] == "OrthographicCamera") return new OrthographicCamera(idx[1]);
             return new PerspectiveCamera();
         }
 

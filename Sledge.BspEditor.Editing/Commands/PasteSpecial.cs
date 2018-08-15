@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
+using System.Numerics;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Sledge.BspEditor.Commands;
@@ -14,7 +15,6 @@ using Sledge.BspEditor.Modification.Operations.Tree;
 using Sledge.BspEditor.Primitives;
 using Sledge.BspEditor.Primitives.MapObjectData;
 using Sledge.BspEditor.Primitives.MapObjects;
-using Sledge.Common;
 using Sledge.Common.Shell.Commands;
 using Sledge.Common.Shell.Hotkeys;
 using Sledge.Common.Shell.Menu;
@@ -109,10 +109,10 @@ namespace Sledge.BspEditor.Editing.Commands
             return objects;
         }
 
-        private Coordinate GetPasteOrigin(MapDocument document, PasteSpecialDialog.PasteSpecialStartPoint startPoint, List<IMapObject> objectsToPaste)
+        private Vector3 GetPasteOrigin(MapDocument document, PasteSpecialDialog.PasteSpecialStartPoint startPoint, List<IMapObject> objectsToPaste)
         {
             // Find the starting point of the paste
-            Coordinate origin;
+            Vector3 origin;
             switch (startPoint)
             {
                 case PasteSpecialDialog.PasteSpecialStartPoint.CenterOriginal:
@@ -126,19 +126,20 @@ namespace Sledge.BspEditor.Editing.Commands
                     break;
                 default:
                     // Use the map origin
-                    origin = Coordinate.Zero;
+                    origin = Vector3.Zero;
                     break;
             }
             return origin;
         }
 
-        private IEnumerable<IMapObject> CreateCopy(UniqueNumberGenerator gen, Coordinate origin, Coordinate rotation, List<string> names, List<IMapObject> objectsToPaste, bool makeEntitesUnique, bool prefixEntityNames, string entityNamePrefix)
+        private IEnumerable<IMapObject> CreateCopy(UniqueNumberGenerator gen, Vector3 origin, Vector3 rotation, List<string> names, List<IMapObject> objectsToPaste, bool makeEntitesUnique, bool prefixEntityNames, string entityNamePrefix)
         {
             var box = new Box(objectsToPaste.Select(x => x.BoundingBox));
-
-            var mov = Matrix.Translation(-box.Center); // Move to zero
-            var rot = Matrix.Rotation(Quaternion.EulerAngles(rotation * DMath.PI / 180)); // Do rotation
-            var fin = Matrix.Translation(origin); // Move to final origin
+            
+            var rads = rotation * (float) Math.PI / 180;
+            var mov = Matrix4x4.CreateTranslation(-box.Center); // Move to zero
+            var rot = Matrix4x4.CreateFromQuaternion(Quaternion.CreateFromYawPitchRoll(rads.Y, rads.X, rads.Z)); // Do rotation
+            var fin = Matrix4x4.CreateTranslation(origin); // Move to final origin
             var transform = fin * rot * mov;
 
             foreach (var mo in objectsToPaste)

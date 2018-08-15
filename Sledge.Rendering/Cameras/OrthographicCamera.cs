@@ -105,7 +105,7 @@ namespace Sledge.Rendering.Cameras
         {
             var translate = Matrix4x4.CreateTranslation(-Position.X, -Position.Y, 0);
             var scale = Matrix4x4.CreateScale(new Vector3(Zoom, Zoom, 0));
-            return translate * scale;
+            return GetModelMatrix() * translate * scale;
         }
 
         public Matrix4x4 GetViewportMatrix(int width, int height)

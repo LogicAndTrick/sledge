@@ -45,7 +45,8 @@ namespace Sledge.BspEditor.Rendering.Converters
             var c = entity.IsSelected ? Color.Red : entity.Color?.Color ?? Color.Magenta;
             var colour = new Vector4(c.R, c.G, c.B, c.A) / 255f;
 
-            c = entity.IsSelected ? Color.Red : Color.White;
+            //c = entity.IsSelected ? Color.FromArgb(255, 128, 128) : Color.White;
+            c = Color.White;
             var tint = new Vector4(c.R, c.G, c.B, c.A) / 255f;
 
             var vi = 0u;

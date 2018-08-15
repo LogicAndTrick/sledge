@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.Composition;
 using System.Linq;
+using System.Numerics;
 using System.Threading.Tasks;
 using Sledge.BspEditor.Commands;
 using Sledge.BspEditor.Documents;
@@ -12,7 +13,6 @@ using Sledge.Common.Shell.Commands;
 using Sledge.Common.Shell.Context;
 using Sledge.Common.Shell.Menu;
 using Sledge.Common.Translations;
-using Sledge.DataStructures.Geometric;
 
 namespace Sledge.BspEditor.Editing.Commands.Modification
 {
@@ -47,9 +47,9 @@ namespace Sledge.BspEditor.Editing.Commands.Modification
                 var start = box.Start;
                 var snapped = grid.Grid.Snap(start);
                 var trans = snapped - start;
-                if (trans == Coordinate.Zero) continue;
+                if (trans == Vector3.Zero) continue;
 
-                var tform = Matrix.Translation(trans);
+                var tform = Matrix4x4.CreateTranslation(trans);
 
                 var transformOperation = new BspEditor.Modification.Operations.Mutation.Transform(tform, mo);
                 transaction.Add(transformOperation);

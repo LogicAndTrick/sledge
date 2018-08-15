@@ -6,7 +6,6 @@ using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Editing.Properties;
 using Sledge.Common.Shell.Commands;
 using Sledge.Common.Shell.Context;
-using Sledge.Common.Shell.Hotkeys;
 using Sledge.Common.Shell.Menu;
 using Sledge.Common.Translations;
 

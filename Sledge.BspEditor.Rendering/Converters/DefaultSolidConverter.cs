@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 using Sledge.BspEditor.Documents;
+using Sledge.BspEditor.Primitives.MapData;
 using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.BspEditor.Rendering.Resources;
 using Sledge.BspEditor.Rendering.Scene;
@@ -36,6 +37,9 @@ namespace Sledge.BspEditor.Rendering.Converters
 
         public async Task Convert(SceneBuilder builder, MapDocument document, IMapObject obj)
         {
+            var displayFlags = document.Map.Data.GetOne<DisplayFlags>();
+            var hideNull = displayFlags?.HideNullTextures == true;
+
             var solid = (Solid) obj;
 
             // Pack the vertices like this [ f1v1 ... f1vn ] ... [ fnv1 ... fnvn ]
@@ -51,7 +55,7 @@ namespace Sledge.BspEditor.Rendering.Converters
             var c = solid.IsSelected ? Color.Red : solid.Color.Color;
             var colour = new Vector4(c.R, c.G, c.B, c.A) / 255f;
 
-            c = solid.IsSelected ? Color.Red : Color.White;
+            c = solid.IsSelected ? Color.FromArgb(255, 128, 128) : Color.White;
             var tint = new Vector4(c.R, c.G, c.B, c.A) / 255f;
 
             var tc = await document.Environment.GetTextureCollection();
@@ -108,18 +112,25 @@ namespace Sledge.BspEditor.Rendering.Converters
             uint texOffset = 0;
             foreach (var f in solid.Faces)
             {
+                var texInd = (uint)(f.Vertices.Count - 2) * 3;
+
+                if (hideNull && tc.IsNullTexture(f.Texture.Name))
+                {
+                    texOffset += texInd;
+                    continue;
+                }
+
                 var opacity = tc.GetOpacity(f.Texture.Name);
                 var t = await tc.GetTextureItem(f.Texture.Name);
                 var transparent = opacity < 0.95f || t?.Flags.HasFlag(TextureFlags.Transparent) == true;
 
                 var texture = $"{document.Environment.ID}::{f.Texture.Name}";
-                var texInd = (uint)(f.Vertices.Count - 2) * 3;
                 groups.Add(new BufferGroup(t == null ? PipelineType.FlatColourGeneric : PipelineType.TexturedGeneric, CameraType.Perspective, transparent, f.Origin, texture, texOffset, texInd));
                 texOffset += texInd;
+
                 if (t != null)
                 {
                     _engine.UploadTexture(texture, () => new EnvironmentTextureSource(document.Environment, t));
-
                 }
             }
 
