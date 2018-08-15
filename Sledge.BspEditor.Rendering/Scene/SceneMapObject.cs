@@ -16,7 +16,7 @@ namespace Sledge.BspEditor.Rendering.Scene
 
         public SceneBuilder(EngineInterface engine)
         {
-            MainBuffer = engine.CreateBufferBuilder();
+            MainBuffer = engine.CreateBufferBuilder(BufferSize.Large);
             MainRenderable = new BufferBuilderRenderable(MainBuffer);
             Buffers = new List<Buffer>();
             Renderables = new List<IRenderable>();

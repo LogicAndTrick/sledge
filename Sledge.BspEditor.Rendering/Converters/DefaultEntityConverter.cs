@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.BspEditor.Rendering.Scene;
+using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Pipelines;
 using Sledge.Rendering.Primitives;
 using Sledge.Rendering.Resources;
@@ -41,7 +42,7 @@ namespace Sledge.BspEditor.Rendering.Converters
             var points = new VertexStandard[numVertices];
             var indices = new uint[numSolidIndices + numWireframeIndices];
 
-            var c = entity.Color?.Color ?? Color.Magenta;
+            var c = entity.IsSelected ? Color.Red : entity.Color?.Color ?? Color.Magenta;
             var colour = new Vector4(c.R, c.G, c.B, c.A) / 255f;
 
             c = entity.IsSelected ? Color.Red : Color.White;
@@ -84,8 +85,8 @@ namespace Sledge.BspEditor.Rendering.Converters
 
                 var groups = new[]
                 {
-                    new BufferGroup(PipelineType.FlatColourGeneric, 0, numSolidIndices),
-                    new BufferGroup(PipelineType.WireframeGeneric, numSolidIndices, numWireframeIndices)
+                    new BufferGroup(PipelineType.FlatColourGeneric, CameraType.Perspective, false, entity.Origin, 0, numSolidIndices),
+                    new BufferGroup(PipelineType.WireframeGeneric, entity.IsSelected ? CameraType.Both : CameraType.Orthographic, false, entity.Origin, numSolidIndices, numWireframeIndices)
                 };
                 
                 builder.MainBuffer.Append(points, indices, groups);

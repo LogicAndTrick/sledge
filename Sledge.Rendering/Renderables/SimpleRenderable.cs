@@ -21,6 +21,8 @@ namespace Sledge.Rendering.Renderables
         public bool PerspectiveOnly { get; set; }
         public bool OrthographicOnly { get; set; }
 
+        public bool HasTransparency { get; set; }
+
         public SimpleRenderable(Buffer buffer, PipelineType pipeline, int indexOffset, int indexCount) : this(buffer, new [] { pipeline}, indexOffset, indexCount)
         {
         }
@@ -42,6 +44,15 @@ namespace Sledge.Rendering.Renderables
 
         public void Render(RenderContext context, IPipeline pipeline, IViewport viewport, CommandList cl)
         {
+            if (HasTransparency) return;
+            cl.SetVertexBuffer(0, _buffer.VertexBuffer);
+            cl.SetIndexBuffer(_buffer.IndexBuffer, IndexFormat.UInt32);
+            Draw(pipeline, viewport, cl);
+        }
+
+        public void RenderTransparent(RenderContext context, IPipeline pipeline, IViewport viewport, CommandList cl)
+        {
+            if (!HasTransparency) return;
             cl.SetVertexBuffer(0, _buffer.VertexBuffer);
             cl.SetIndexBuffer(_buffer.IndexBuffer, IndexFormat.UInt32);
             Draw(pipeline, viewport, cl);

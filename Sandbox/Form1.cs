@@ -36,7 +36,7 @@ namespace Sandbox
 
             if (viewport.Camera is PerspectiveCamera pc)
             {
-                pc.Location = new Vector3(-10, -20, 15);
+                pc.Position = new Vector3(-10, -20, 15);
                 pc.Direction = Vector3.Zero - pc.Location;
             }
             

@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.BspEditor.Rendering.Scene;
+using Sledge.Providers.Texture;
+using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Engine;
 using Sledge.Rendering.Pipelines;
 using Sledge.Rendering.Primitives;
@@ -58,9 +60,12 @@ namespace Sledge.BspEditor.Rendering.Converters
             var wi = numSolidIndices;
             foreach (var face in solid.Faces)
             {
+                var opacity = tc.GetOpacity(face.Texture.Name);
                 var t = await tc.GetTextureItem(face.Texture.Name);
                 var w = t?.Width ?? 0;
                 var h = t?.Height ?? 0;
+
+                var tintModifier = new Vector4(0, 0, 0, 1 - opacity);
 
                 var offs = vi;
                 var numFaceVerts = (uint)face.Vertices.Count;
@@ -77,7 +82,7 @@ namespace Sledge.BspEditor.Rendering.Converters
                         Colour = colour,
                         Normal = normal,
                         Texture = new Vector2(textureCoords[i].Item2, textureCoords[i].Item3),
-                        Tint = tint
+                        Tint = tint - tintModifier
                     };
                 }
 
@@ -102,16 +107,20 @@ namespace Sledge.BspEditor.Rendering.Converters
             uint texOffset = 0;
             foreach (var f in solid.Faces)
             {
+                var opacity = tc.GetOpacity(f.Texture.Name);
+                var t = await tc.GetTextureItem(f.Texture.Name);
+                var transparent = opacity < 0.95f || t.Flags.HasFlag(TextureFlags.Transparent);
+
                 var texture = $"{document.Environment.ID}::{f.Texture.Name}";
                 var texInd = (uint)(f.Vertices.Count - 2) * 3;
-                groups.Add(new BufferGroup(PipelineType.TexturedGeneric, texture, texOffset, texInd));
+                groups.Add(new BufferGroup(PipelineType.TexturedGeneric, CameraType.Perspective, transparent, f.Origin, texture, texOffset, texInd));
                 texOffset += texInd;
 
                 _engine.UploadTexture(texture, () => new EnvironmentTextureSource(document.Environment, f.Texture.Name));
             }
 
-            groups.Add(new BufferGroup(PipelineType.FlatColourGeneric, 0, numSolidIndices));
-            groups.Add(new BufferGroup(PipelineType.WireframeGeneric, numSolidIndices, numWireframeIndices));
+            // groups.Add(new BufferGroup(PipelineType.FlatColourGeneric, 0, numSolidIndices));
+            groups.Add(new BufferGroup(PipelineType.WireframeGeneric, solid.IsSelected ? CameraType.Both : CameraType.Orthographic, false, solid.BoundingBox.Center, numSolidIndices, numWireframeIndices));
 
             builder.MainBuffer.Append(points, indices, groups);
         }

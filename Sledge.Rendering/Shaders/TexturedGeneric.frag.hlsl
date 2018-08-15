@@ -21,7 +21,7 @@ float4 main(FragmentIn input) : SV_Target0
     float incidence = dot(input.fNormal.xyz, lightDirection);
     float lighting = lightIntensity * incidence + ambient;
 
-    float4 c = lighting * tex * input.fTint;
+    float4 c = lighting * tex;
     c.w = tex.w;
-    return c;
+    return c * input.fTint;
 }

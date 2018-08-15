@@ -10,5 +10,6 @@ namespace Sledge.Rendering.Renderables
     {
         bool ShouldRender(IPipeline pipeline, IViewport viewport);
         void Render(RenderContext context, IPipeline pipeline, IViewport viewport, CommandList cl);
+        void RenderTransparent(RenderContext context, IPipeline pipeline, IViewport viewport, CommandList cl);
     }
 }

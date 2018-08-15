@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.BspEditor.Rendering.Scene;
+using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Pipelines;
 using Sledge.Rendering.Primitives;
 using Sledge.Rendering.Resources;
@@ -46,7 +47,7 @@ namespace Sledge.BspEditor.Rendering.Converters
 
             builder.MainBuffer.Append(points, indices, new []
             {
-                new BufferGroup(PipelineType.WireframeGeneric, 0, (uint) indices.Length)
+                new BufferGroup(PipelineType.WireframeGeneric, CameraType.Perspective, false, Vector3.Zero, 0, (uint) indices.Length)
             });
 
             return Task.FromResult(0);

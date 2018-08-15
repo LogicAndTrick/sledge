@@ -51,12 +51,14 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Cameras\CameraType.cs" />
     <Compile Include="Cameras\PerspectiveCamera.cs" />
     <Compile Include="Engine\Engine.cs" />
     <Compile Include="Engine\EngineInterface.cs" />
     <Compile Include="Engine\RenderContext.cs" />
     <Compile Include="Engine\ResourceLoader.cs" />
     <Compile Include="Engine\Scene.cs" />
+    <Compile Include="Resources\BufferSize.cs" />
     <Compile Include="Resources\WhiteTextureSource.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="Renderables\FpsMonitor.cs" />
@@ -130,6 +132,12 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Shaders\TexturedGeneric.vert.hlsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Sledge.Common\Sledge.Common.csproj">
+      <Project>{5D414AC8-8B93-489F-9960-877923400FED}</Project>
+      <Name>Sledge.Common</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

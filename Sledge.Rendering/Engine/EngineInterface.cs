@@ -16,9 +16,9 @@ namespace Sledge.Rendering.Engine
             return new Buffer(Engine.Instance.Device);
         }
 
-        public BufferBuilder CreateBufferBuilder()
+        public BufferBuilder CreateBufferBuilder(BufferSize size)
         {
-            return new BufferBuilder(Engine.Instance.Device);
+            return new BufferBuilder(Engine.Instance.Device, size);
         }
 
         public void UploadTexture(string name, Func<ITextureDataSource> source)

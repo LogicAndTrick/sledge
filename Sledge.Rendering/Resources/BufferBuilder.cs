@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Pipelines;
 using Veldrid;
 
@@ -10,6 +12,13 @@ namespace Sledge.Rendering.Resources
 {
     public class BufferBuilder : IDisposable
     {
+        private static readonly Dictionary<BufferSize, uint> Sizes = new Dictionary<BufferSize, uint>
+        {
+            { BufferSize.Large, 1 * 1024 * 1024 }, // 1MB index / 4MB vert
+            { BufferSize.Medium, 128 * 1024 }, // 128KB index / 1MB vert
+            { BufferSize.Small, 32 * 1024 }, // 32KB index / 128KB vert
+        };
+
         private readonly GraphicsDevice _device;
 
         private bool _inBuffer;
@@ -22,7 +31,7 @@ namespace Sledge.Rendering.Resources
         private MappedResource _currentIndexMap;
         private uint _currentIndexOffset;
 
-        private List<(PipelineType, string, IndirectDrawIndexedArguments)> _currentIndirectArguments;
+        private List<IndirectArgument> _currentIndirectArguments;
 
         public List<DeviceBuffer> VertexBuffers { get; }
         public List<DeviceBuffer> IndexBuffers { get; }
@@ -31,16 +40,21 @@ namespace Sledge.Rendering.Resources
 
         public int NumBuffers => VertexBuffers.Count;
 
-        private const uint VertexBufferSize = 1 * 1024 * 1024; // 4mb
-        private const uint IndexBufferSize = 1 * 1024 * 1024; // 1mb
+        private readonly uint _vertexBufferSize;
+        private readonly uint _indexBufferSize;
 
-        internal BufferBuilder(GraphicsDevice device)
+        internal BufferBuilder(GraphicsDevice device, BufferSize size)
         {
             _device = device;
             VertexBuffers = new List<DeviceBuffer>();
             IndexBuffers = new List<DeviceBuffer>();
             IndirectBuffers = new List<DeviceBuffer>();
             IndirectBufferGroups = new List<List<BufferGroup>>();
+
+            // Vertex buffer being about 4 times the size of the index buffer is about right.
+            // A vertex is ~16 times the size of an index, but there's ~4 indexes per vertex so it evens out.
+            _indexBufferSize = Sizes[size];
+            _vertexBufferSize = _indexBufferSize * 4;
         }
 
         private void AllocateBuffer(uint vsize, uint isize)
@@ -56,11 +70,11 @@ namespace Sledge.Rendering.Resources
 
             if (_inBuffer) return;
 
-            _currentVertexBuffer = _device.ResourceFactory.CreateBuffer(new BufferDescription(VertexBufferSize, BufferUsage.Dynamic | BufferUsage.VertexBuffer));
-            _currentIndexBuffer = _device.ResourceFactory.CreateBuffer(new BufferDescription(IndexBufferSize, BufferUsage.Dynamic | BufferUsage.IndexBuffer));
+            _currentVertexBuffer = _device.ResourceFactory.CreateBuffer(new BufferDescription(_vertexBufferSize, BufferUsage.Dynamic | BufferUsage.VertexBuffer));
+            _currentIndexBuffer = _device.ResourceFactory.CreateBuffer(new BufferDescription(_indexBufferSize, BufferUsage.Dynamic | BufferUsage.IndexBuffer));
             _currentVertexMap = _device.Map(_currentVertexBuffer, MapMode.Write);
             _currentIndexMap = _device.Map(_currentIndexBuffer, MapMode.Write);
-            _currentIndirectArguments = new List<(PipelineType, string, IndirectDrawIndexedArguments)>();
+            _currentIndirectArguments = new List<IndirectArgument>();
             _inBuffer = true;
         }
 
@@ -77,17 +91,30 @@ namespace Sledge.Rendering.Resources
             var bufferGroups = new List<BufferGroup>();
             var indirectBuffer = _device.ResourceFactory.CreateBuffer(new BufferDescription((uint) (numInd * indSize), BufferUsage.IndirectBuffer));
             uint indirOffset = 0;
-            foreach (var g in _currentIndirectArguments.GroupBy(x => new { x.Item1, x.Item2 }))
+            foreach (var g in _currentIndirectArguments.GroupBy(x => new { x.Pipeline, x.Camera, x.HasTransparency, x.Binding }))
             {
-                var indir = g.Select(x => x.Item3).ToArray();
-                var indirCount = (uint) indir.Length;
+                if (g.Key.HasTransparency)
+                {
+                    foreach (var ia in g)
+                    {
+                        _device.UpdateBuffer(indirectBuffer, (uint) (indirOffset * indSize), ia.Arguments);
+                        var bg = new BufferGroup(ia.Pipeline, ia.Camera, true, ia.Location, ia.Binding, indirOffset, 1);
+                        bufferGroups.Add(bg);
+                        indirOffset += 1;
+                    }
+                }
+                else
+                {
+                    var indir = g.Select(x => x.Arguments).ToArray();
+                    var indirCount = (uint) indir.Length;
 
-                _device.UpdateBuffer(indirectBuffer, (uint) (indirOffset * indSize), indir);
+                    _device.UpdateBuffer(indirectBuffer, (uint) (indirOffset * indSize), indir);
 
-                var bg = new BufferGroup(g.Key.Item1, g.Key.Item2, indirOffset, indirCount);
-                bufferGroups.Add(bg);
+                    var bg = new BufferGroup(g.Key.Pipeline, g.Key.Camera, false, Vector3.Zero, g.Key.Binding, indirOffset, indirCount);
+                    bufferGroups.Add(bg);
 
-                indirOffset += indirCount;
+                    indirOffset += indirCount;
+                }
             }
             
             VertexBuffers.Add(_currentVertexBuffer);
@@ -95,6 +122,7 @@ namespace Sledge.Rendering.Resources
             IndirectBuffers.Add(indirectBuffer);
             IndirectBufferGroups.Add(bufferGroups);
 
+            _currentVertexMap = _currentIndexMap = default(MappedResource);
             _currentIndexBuffer = _currentVertexBuffer = null;
             _currentVertexOffset = _currentIndexOffset = 0;
             _currentIndirectArguments = null;
@@ -118,15 +146,17 @@ namespace Sledge.Rendering.Resources
 
             foreach (var bg in groups)
             {
-                _currentIndirectArguments.Add((bg.Pipeline, bg.Binding, new IndirectDrawIndexedArguments
-                {
-                    IndexCount = bg.Count,
-                    InstanceCount = 1,
-                    FirstIndex = (_currentIndexOffset / 4) + bg.Offset,
-                    VertexOffset = (int) (_currentVertexOffset / structSize),
-                    FirstInstance = 0
-                }));
-                
+                _currentIndirectArguments.Add(new IndirectArgument(
+                    bg.Pipeline, bg.Camera, bg.HasTransparency, bg.Location, bg.Binding,
+                    new IndirectDrawIndexedArguments
+                    {
+                        IndexCount = bg.Count,
+                        InstanceCount = 1,
+                        FirstIndex = (_currentIndexOffset / 4) + bg.Offset,
+                        VertexOffset = (int) (_currentVertexOffset / structSize),
+                        FirstInstance = 0
+                    }
+                ));
             }
 
             _currentVertexOffset += vsize;
@@ -161,6 +191,26 @@ namespace Sledge.Rendering.Resources
             VertexBuffers.ForEach(x => x.Dispose());
             IndexBuffers.ForEach(x => x.Dispose());
             IndirectBuffers.ForEach(x => x.Dispose());
+        }
+
+        private struct IndirectArgument
+        {
+            public PipelineType Pipeline;
+            public CameraType Camera;
+            public bool HasTransparency;
+            public Vector3 Location;
+            public string Binding;
+            public IndirectDrawIndexedArguments Arguments;
+
+            public IndirectArgument(PipelineType pipeline, CameraType camera, bool hasTransparency, Vector3 location, string binding, IndirectDrawIndexedArguments arguments)
+            {
+                Pipeline = pipeline;
+                Camera = camera;
+                HasTransparency = hasTransparency;
+                Location = location;
+                Binding = binding;
+                Arguments = arguments;
+            }
         }
     }
 }

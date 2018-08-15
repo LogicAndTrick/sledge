@@ -69,6 +69,24 @@ namespace Sledge.Rendering.Pipelines
             }
         }
 
+        public void RenderTransparent(RenderContext context, IViewport target, CommandList cl, IEnumerable<IRenderable> renderables)
+        {
+            context.Device.UpdateBuffer(_projectionBuffer, 0, new UniformProjection
+            {
+                Model = Matrix4x4.Identity,
+                View = target.Camera.View,
+                Projection = target.Camera.Projection,
+            });
+
+            cl.SetPipeline(_pipeline);
+            cl.SetGraphicsResourceSet(0, _projectionResourceSet);
+
+            foreach (var r in renderables)
+            {
+                r.RenderTransparent(context, this, target, cl);
+            }
+        }
+
         public void Bind(RenderContext context, CommandList cl, string binding)
         {
             var tex = context.ResourceLoader.GetTexture(binding);

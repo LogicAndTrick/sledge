@@ -157,8 +157,9 @@ namespace Sledge.Rendering.Engine
 
             foreach (var pipeline in _pipelines.OrderBy(x => x.Order))
             {
-                var renderables = Scene.GetRenderables(pipeline, renderTarget);
+                var renderables = Scene.GetRenderables(pipeline, renderTarget).ToList();
                 pipeline.Render(Context, renderTarget, _commandList, renderables);
+                pipeline.RenderTransparent(Context, renderTarget, _commandList, renderables);
             }
             
             _commandList.End();
