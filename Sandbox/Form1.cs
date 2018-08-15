@@ -53,7 +53,7 @@ namespace Sandbox
 
             foreach (var b in _buffers)
             {
-                Engine.Instance.Scene.Add(new SimpleRenderable(b, new [] { PipelineNames.WireframeGeneric }, 0, b.IndexCount));
+                Engine.Instance.Scene.Add(new SimpleRenderable(b, new [] { PipelineType.WireframeGeneric }, 0, b.IndexCount));
             }
         }
 

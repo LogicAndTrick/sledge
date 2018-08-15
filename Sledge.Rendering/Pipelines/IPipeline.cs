@@ -12,10 +12,11 @@ namespace Sledge.Rendering.Pipelines
 {
     public interface IPipeline : IDisposable
     {
-        string Name { get; }
+        PipelineType Type { get; }
         float Order { get; }
 
         void Create(RenderContext context);
         void Render(RenderContext context, IViewport target, CommandList cl, IEnumerable<IRenderable> renderables);
+        void Bind(CommandList cl, string binding);
     }
 }

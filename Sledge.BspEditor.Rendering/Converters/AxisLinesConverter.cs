@@ -57,7 +57,7 @@ namespace Sledge.BspEditor.Rendering.Converters
 
             smo.Buffers.Add(Holder, buffer);
 
-            var renderable = new SimpleRenderable(buffer, PipelineNames.WireframeGeneric, 0, indices.Length) { PerspectiveOnly = true };
+            var renderable = new SimpleRenderable(buffer, PipelineType.WireframeGeneric, 0, indices.Length) { PerspectiveOnly = true };
             smo.Renderables.Add(Holder, renderable);
 
             return Task.FromResult(0);

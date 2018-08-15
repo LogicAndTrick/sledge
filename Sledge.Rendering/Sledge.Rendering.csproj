@@ -23,6 +23,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -63,7 +64,7 @@
     <Compile Include="Interfaces\IUpdateable.cs" />
     <Compile Include="Pipelines\TexturedGenericPipeline.cs" />
     <Compile Include="Pipelines\IPipeline.cs" />
-    <Compile Include="Pipelines\PipelineNames.cs" />
+    <Compile Include="Pipelines\PipelineType.cs" />
     <Compile Include="Pipelines\FlatColourGenericPipeline.cs" />
     <Compile Include="Pipelines\WireframeGenericPipeline.cs" />
     <Compile Include="Primitives\UniformProjection.cs" />
@@ -71,6 +72,9 @@
     <Compile Include="Primitives\VertexStandard4.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Renderables\Buffer.cs" />
+    <Compile Include="Renderables\BufferBuilder.cs" />
+    <Compile Include="Renderables\BufferBuilderRenderable.cs" />
+    <Compile Include="Renderables\BufferGroup.cs" />
     <Compile Include="Renderables\IRenderable.cs" />
     <Compile Include="Cameras\ICamera.cs" />
     <Compile Include="Renderables\SimpleRenderable.cs" />

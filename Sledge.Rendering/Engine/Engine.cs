@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
+using Sledge.Rendering.Interfaces;
 using Sledge.Rendering.Pipelines;
 using Sledge.Rendering.Viewports;
 using Veldrid;
@@ -48,6 +49,7 @@ namespace Sledge.Rendering.Engine
             _pipelines = new List<IPipeline>();
             Context = new RenderContext(Device);
             Scene.Add(Context);
+            Scene.Add(new FpsMonitor());
 
             RenderThread = new Thread(Loop);
 

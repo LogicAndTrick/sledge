@@ -11,7 +11,7 @@ namespace Sledge.Rendering.Renderables
     public class SimpleRenderable : IRenderable
     {
         private readonly Buffer _buffer;
-        private readonly HashSet<string> _pipelines;
+        private readonly HashSet<PipelineType> _pipelines;
 
         public int IndexOffset { get; set; }
         public int IndexCount { get; set; }
@@ -19,11 +19,11 @@ namespace Sledge.Rendering.Renderables
         public bool PerspectiveOnly { get; set; }
         public bool OrthographicOnly { get; set; }
 
-        public SimpleRenderable(Buffer buffer, string pipeline, int indexOffset, int indexCount) : this(buffer, new [] { pipeline}, indexOffset, indexCount)
+        public SimpleRenderable(Buffer buffer, PipelineType pipeline, int indexOffset, int indexCount) : this(buffer, new [] { pipeline}, indexOffset, indexCount)
         {
         }
 
-        public SimpleRenderable(Buffer buffer, IEnumerable<string> pipelines, int indexOffset, int indexCount)
+        public SimpleRenderable(Buffer buffer, IEnumerable<PipelineType> pipelines, int indexOffset, int indexCount)
         {
             _buffer = buffer;
             _pipelines = pipelines.ToHashSet();
@@ -33,7 +33,7 @@ namespace Sledge.Rendering.Renderables
 
         public bool ShouldRender(IPipeline pipeline, IViewport viewport)
         {
-            return _pipelines.Contains(pipeline.Name)
+            return _pipelines.Contains(pipeline.Type)
                    && (!OrthographicOnly || false) // todo
                    && (!PerspectiveOnly || viewport.Camera is PerspectiveCamera);
         }

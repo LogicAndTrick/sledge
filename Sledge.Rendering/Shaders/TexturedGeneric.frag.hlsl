@@ -16,7 +16,6 @@ SamplerState Sampler;
 float4 main(FragmentIn input) : SV_Target0
 {
     float4 tex = Texture.Sample(Sampler, input.fTexture);
-    tex.rgb = float3(1, 1, 1);
 
     float incidence = dot(input.fNormal.xyz, lightDirection);
     float lighting = lightIntensity * incidence + ambient;

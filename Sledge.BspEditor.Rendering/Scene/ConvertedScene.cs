@@ -1,14 +1,19 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
+using System.Numerics;
 using System.Threading.Tasks;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Modification;
 using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.BspEditor.Rendering.Converters;
 using Sledge.Rendering.Engine;
+using Sledge.Rendering.Pipelines;
+using Sledge.Rendering.Primitives;
 using Sledge.Rendering.Renderables;
+using Sledge.Rendering.Viewports;
 
 namespace Sledge.BspEditor.Rendering.Scene
 {
@@ -25,7 +30,7 @@ namespace Sledge.BspEditor.Rendering.Scene
         public MapDocument Document { get; }
 
         private readonly MapObjectConverter _converter;
-        private readonly ConcurrentDictionary<long, SceneMapObject> _mapObjects;
+        private readonly List<IRenderable> _mapObjects;
         private bool _isActive;
 
         /// <summary>
@@ -37,9 +42,9 @@ namespace Sledge.BspEditor.Rendering.Scene
             _converter = converter;
 
             _isActive = false;
-            _mapObjects = new ConcurrentDictionary<long, SceneMapObject>();
+            _mapObjects = new List<IRenderable>();
 
-            Update(document.Map.Root.FindAll(), new IMapObject[0], new IMapObject[0]);
+            Update(document.Map.Root.FindAll());
         }
 
         /// <summary>
@@ -54,17 +59,17 @@ namespace Sledge.BspEditor.Rendering.Scene
             if (active)
             {
                 // Add the renderables to the scene
-                foreach (var smo in _mapObjects.Values)
+                foreach (var smo in _mapObjects)
                 {
-                    AddToScene(smo.Renderables.Values);
+                    Engine.Instance.Scene.Add(smo);
                 }
             }
             else
             {
                 // Remove the renderables from the scene
-                foreach (var smo in _mapObjects.Values)
+                foreach (var smo in _mapObjects)
                 {
-                    RemoveFromScene(smo.Renderables.Values);
+                    Engine.Instance.Scene.Remove(smo);
                 }
             }
             _isActive = active;
@@ -97,66 +102,115 @@ namespace Sledge.BspEditor.Rendering.Scene
         /// </summary>
         public async Task Update(Change change)
         {
-            await Update(change.Added, change.Updated, change.Removed);
+            await Update(change.Document.Map.Root.FindAll());
         }
 
-        private async Task Update(IEnumerable<IMapObject> created, IEnumerable<IMapObject> updated, IEnumerable<IMapObject> deleted)
+        private async Task Update(IEnumerable<IMapObject> objects)
         {
-            // Add new objects
-            foreach (var c in created)
-            {
-                var smo = await _converter.Convert(Document, c);
-                _mapObjects[c.ID] = smo;
+            var buffer = new EngineInterface().CreateBufferBuilder();
 
-                // If the scene is active, add them straight into the scene
-                if (_isActive) AddToScene(smo.Renderables.Values);
-            }
-
-            // Update existing objects
-            foreach (var u in updated)
+            foreach (var solid in objects.OfType<Solid>())
             {
-                // The object might not be in the scene yet, check if it is
-                if (_mapObjects.TryGetValue(u.ID, out var smo))
+                // Pack the vertices like this [ f1v1 ... f1vn ] ... [ fnv1 ... fnvn ]
+                var numVertices = (uint)solid.Faces.Sum(x => x.Vertices.Count);
+
+                // Pack the indices like this [ solid1 ... solidn ] [ wireframe1 ... wireframe n ]
+                var numSolidIndices = (uint)solid.Faces.Sum(x => (x.Vertices.Count - 2) * 3);
+                var numWireframeIndices = numVertices * 2;
+
+                var points = new VertexStandard4[numVertices];
+                var indices = new uint[numSolidIndices + numWireframeIndices];
+
+                var c = solid.IsSelected ? Color.Red : solid.Color.Color;
+                var colour = new Vector4(c.R, c.G, c.B, c.A) / 255f;
+
+                var tc = Document.Environment.GetTextureCollection().Result;
+
+                var vi = 0u;
+                var si = 0u;
+                var wi = numSolidIndices;
+                foreach (var face in solid.Faces)
                 {
-                    // Yep, it is, update in place
-                    var renderables = smo.Renderables.Values.ToList();
-                    var inPlaceChange = await _converter.Update(smo, Document, u);
+                    var t = tc.GetTextureItem(face.Texture.Name).Result;
+                    var w = t?.Width ?? 0;
+                    var h = t?.Height ?? 0;
 
-                    // If the scene is active and it wasn't an in-place change, remove the old renderables and add the new set
-                    if (_isActive && !inPlaceChange)
+                    var offs = vi;
+                    var numFaceVerts = (uint)face.Vertices.Count;
+
+                    var textureCoords = face.GetTextureCoordinates(w, h).ToList();
+
+                    var normal = face.Plane.Normal;
+                    for (var i = 0; i < face.Vertices.Count; i++)
                     {
-                        RemoveFromScene(renderables.Except(smo.Renderables.Values));
-                        AddToScene(smo.Renderables.Values.Except(renderables));
+                        var v = face.Vertices[i];
+                        points[vi++] = new VertexStandard4
+                        {
+                            Position = v,
+                            Colour = colour,
+                            Normal = normal,
+                            Texture = new Vector2(textureCoords[i].Item2, textureCoords[i].Item3)
+                        };
+                    }
+
+                    // Triangles - [0 1 2]  ... [0 n-1 n]
+                    for (uint i = 2; i < numFaceVerts; i++)
+                    {
+                        indices[si++] = offs;
+                        indices[si++] = offs + i - 1;
+                        indices[si++] = offs + i;
+                    }
+
+                    // Lines - [0 1] ... [n-1 n] [n 0]
+                    for (uint i = 0; i < numFaceVerts; i++)
+                    {
+                        indices[wi++] = offs + i;
+                        indices[wi++] = offs + (i == numFaceVerts - 1 ? 0 : i + 1);
                     }
                 }
-                else
-                {
-                    // Object isn't in the scene, convert to new renderables
-                    smo = await _converter.Convert(Document, u);
-                    _mapObjects[u.ID] = smo;
 
-                    // If the scene is active, add them straight into the scene
-                    if (_isActive) AddToScene(smo.Renderables.Values);
+                var groups = new List<BufferGroup>();
+                //groups.Add(new BufferGroup(PipelineNames.FlatColourGeneric + ".", 0, numSolidIndices));
+
+                uint texOffset = 0;
+                foreach (var f in solid.Faces)
+                {
+                    var texture = $"{Document.Environment.ID}::{f.Texture.Name}";
+                    var texInd = (uint) (f.Vertices.Count - 2) * 3;
+                    groups.Add(new BufferGroup(PipelineType.TexturedGeneric, texture, texOffset, texInd));
+                    texOffset += texInd;
+
+                    new EngineInterface().CreateTexture(texture, () => new EnvironmentTextureSource(Document.Environment, f.Texture.Name));
                 }
+
+                groups.Add(new BufferGroup(PipelineType.WireframeGeneric, numSolidIndices, numWireframeIndices));
+
+                buffer.Append(points, indices, groups);
             }
 
-            // Remove and dispose any deleted objects
-            foreach (var d in deleted)
+            buffer.Complete();
+
+            var render = new BufferBuilderRenderable(buffer);
+
+
+            foreach (var o in _mapObjects)
             {
-                if (_mapObjects.TryRemove(d.ID, out var smo) && _isActive)
-                {
-                    RemoveFromScene(smo.Renderables.Values);
-                    smo.Dispose();
-                }
+                Engine.Instance.Scene.Remove(o);
+                o.Dispose();
             }
+            _mapObjects.Clear();
+
+            _mapObjects.Add(render);
+            Engine.Instance.Scene.Add(render);
         }
 
         /// <inheritdoc cref="IDisposable.Dispose"/>
         public void Dispose()
         {
-            foreach (var o in _mapObjects.Values)
+            RemoveFromScene(_mapObjects);
+
+            foreach (var o in _mapObjects)
             {
-                RemoveFromScene(o.Renderables.Values);
                 o.Dispose();
             }
 

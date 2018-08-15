@@ -11,7 +11,7 @@ namespace Sledge.Rendering.Pipelines
 {
     public class FlatColourGenericPipeline : IPipeline
     {
-        public string Name => PipelineNames.FlatColourGeneric;
+        public PipelineType Type => PipelineType.FlatColourGeneric;
         public float Order => 1;
 
         private Shader _vertex;
@@ -22,7 +22,7 @@ namespace Sledge.Rendering.Pipelines
 
         public void Create(RenderContext context)
         {
-            (_vertex, _fragment) = context.ResourceLoader.LoadShaders(Name);
+            (_vertex, _fragment) = context.ResourceLoader.LoadShaders(Type.ToString());
 
             var pDesc = new GraphicsPipelineDescription
             {
@@ -67,6 +67,11 @@ namespace Sledge.Rendering.Pipelines
             {
                 r.Render(this, target, cl);
             }
+        }
+
+        public void Bind(CommandList cl, string binding)
+        {
+            //
         }
 
         public void Dispose()

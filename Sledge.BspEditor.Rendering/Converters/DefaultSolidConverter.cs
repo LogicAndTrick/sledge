@@ -52,8 +52,8 @@ namespace Sledge.BspEditor.Rendering.Converters
             UpdateBuffer(solid, buffer);
             smo.Buffers.Add(Holder1, buffer);
 
-            smo.Renderables.Add(Holder1, new SimpleRenderable(buffer, PipelineNames.FlatColourGeneric, 0, numSolidIndices));
-            smo.Renderables.Add(Holder2, new SimpleRenderable(buffer, PipelineNames.WireframeGeneric, numSolidIndices, numWireframeIndices));
+            smo.Renderables.Add(Holder1, new SimpleRenderable(buffer, PipelineType.FlatColourGeneric, 0, numSolidIndices));
+            smo.Renderables.Add(Holder2, new SimpleRenderable(buffer, PipelineType.WireframeGeneric, numSolidIndices, numWireframeIndices));
 
             UpdateRenderables(solid, smo, document);
             
@@ -156,32 +156,32 @@ namespace Sledge.BspEditor.Rendering.Converters
             wireframeRenderable.IndexCount = numWireframeIndices;
         }
 
-        private class EnvironmentTextureSource : ITextureDataSource
+    }
+
+    public class EnvironmentTextureSource : ITextureDataSource
+    {
+        public int Width => _item.Width;
+        public int Height => _item.Height;
+
+        private readonly TextureCollection _textureCollection;
+        private readonly TextureItem _item;
+
+        public EnvironmentTextureSource(IEnvironment environment, string name)
         {
-            public int Width => _item.Width;
-            public int Height => _item.Height;
-
-            private readonly TextureCollection _textureCollection;
-            private readonly TextureItem _item;
-
-            public EnvironmentTextureSource(IEnvironment environment, string name)
-            {
-                _textureCollection = environment.GetTextureCollection().Result;
-                _item = _textureCollection.GetTextureItem(name).Result;
-            }
-
-            public byte[] GetData()
-            {
-                using (var bitmap = _textureCollection.GetStreamSource().GetImage(_item.Name, 512, 512).Result)
-                {
-                    var lb = bitmap.LockBits(new Rectangle(0, 0, Width, Height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
-                    var data = new byte[lb.Stride * lb.Height];
-                    Marshal.Copy(lb.Scan0, data, 0, data.Length);
-                    bitmap.UnlockBits(lb);
-                    return data;
-                }
-            }
+            _textureCollection = environment.GetTextureCollection().Result;
+            _item = _textureCollection.GetTextureItem(name).Result;
         }
 
+        public byte[] GetData()
+        {
+            using (var bitmap = _textureCollection.GetStreamSource().GetImage(_item.Name, 512, 512).Result)
+            {
+                var lb = bitmap.LockBits(new Rectangle(0, 0, Width, Height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
+                var data = new byte[lb.Stride * lb.Height];
+                Marshal.Copy(lb.Scan0, data, 0, data.Length);
+                bitmap.UnlockBits(lb);
+                return data;
+            }
+        }
     }
 }

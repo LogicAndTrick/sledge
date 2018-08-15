@@ -48,9 +48,20 @@ namespace Sledge.Rendering.Engine
         
         private readonly ConcurrentDictionary<string, Texture> _textures = new ConcurrentDictionary<string, Texture>();
 
-        public TextureBinding CreateTextureBinding(string name, ITextureDataSource source)
+        internal Texture CreateTexture(string name, Func<ITextureDataSource> source)
         {
-            var tex = _textures.GetOrAdd(name, n => new Texture(Engine.Instance.Context, source));
+            return _textures.GetOrAdd(name, n => new Texture(Engine.Instance.Context, source()));
+        }
+
+        public TextureBinding CreateTextureBinding(string name, Func<ITextureDataSource> source)
+        {
+            var tex = _textures.GetOrAdd(name, n => new Texture(Engine.Instance.Context, source()));
+            return new TextureBinding(tex);
+        }
+
+        public TextureBinding CreateTextureBinding(string name)
+        {
+            if (!_textures.TryGetValue(name, out var tex)) return null;
             return new TextureBinding(tex);
         }
 
