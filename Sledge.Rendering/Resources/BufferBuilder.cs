@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 using Sledge.Rendering.Pipelines;
 using Veldrid;
 
-namespace Sledge.Rendering.Renderables
+namespace Sledge.Rendering.Resources
 {
     public class BufferBuilder : IDisposable
     {

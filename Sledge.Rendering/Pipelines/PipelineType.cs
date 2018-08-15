@@ -5,5 +5,8 @@
         WireframeGeneric,
         FlatColourGeneric,
         TexturedGeneric,
+
+        // WireframeModel,
+        // TexturedModel
     }
 }

@@ -6,6 +6,7 @@ using System.Threading;
 using System.Windows.Forms;
 using Sledge.Rendering.Interfaces;
 using Sledge.Rendering.Pipelines;
+using Sledge.Rendering.Renderables;
 using Sledge.Rendering.Viewports;
 using Veldrid;
 
@@ -13,7 +14,8 @@ namespace Sledge.Rendering.Engine
 {
     public class Engine : IDisposable
     {
-        public static Engine Instance { get; } = new Engine();
+        internal static Engine Instance { get; } = new Engine();
+        public static EngineInterface Interface { get; } = new EngineInterface();
 
         public GraphicsDevice Device { get; }
         public Thread RenderThread { get; }

@@ -14,7 +14,7 @@ using Sledge.Rendering.Interfaces;
 using Sledge.Rendering.Pipelines;
 using Sledge.Rendering.Primitives;
 using Sledge.Rendering.Renderables;
-using Buffer = Sledge.Rendering.Renderables.Buffer;
+using Buffer = Sledge.Rendering.Resources.Buffer;
 
 namespace Sandbox
 {
@@ -29,7 +29,7 @@ namespace Sandbox
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            var viewport = Engine.Instance.CreateViewport();
+            var viewport = Engine.Interface.CreateViewport();
 
             viewport.Control.Dock = DockStyle.Fill;
             Controls.Add(viewport.Control);
@@ -48,12 +48,12 @@ namespace Sandbox
 
             Update(0);
 
-            Engine.Instance.Scene.Add(this);
-            Engine.Instance.Scene.Add(new FpsMonitor());
+            Engine.Interface.Add(this);
+            Engine.Interface.Add(new FpsMonitor());
 
             foreach (var b in _buffers)
             {
-                Engine.Instance.Scene.Add(new SimpleRenderable(b, new [] { PipelineType.WireframeGeneric }, 0, b.IndexCount));
+                Engine.Interface.Add(new SimpleRenderable(b, new [] { PipelineType.WireframeGeneric }, 0, b.IndexCount));
             }
         }
 
@@ -67,16 +67,16 @@ namespace Sandbox
             var points = new[]
             {
                 // X axis - red
-                new VertexStandard4 { Position = Vector3.Zero, Colour = Vector4.UnitX + Vector4.UnitW },
-                new VertexStandard4 { Position = Vector3.UnitX * 10, Colour = Vector4.UnitX + Vector4.UnitW },
+                new VertexStandard { Position = Vector3.Zero, Colour = Vector4.UnitX + Vector4.UnitW },
+                new VertexStandard { Position = Vector3.UnitX * 10, Colour = Vector4.UnitX + Vector4.UnitW },
 
                 // Y axis - green
-                new VertexStandard4 { Position = Vector3.Zero, Colour = Vector4.UnitY + Vector4.UnitW },
-                new VertexStandard4 { Position = Vector3.UnitY * 10, Colour = Vector4.UnitY + Vector4.UnitW },
+                new VertexStandard { Position = Vector3.Zero, Colour = Vector4.UnitY + Vector4.UnitW },
+                new VertexStandard { Position = Vector3.UnitY * 10, Colour = Vector4.UnitY + Vector4.UnitW },
 
                 // Z axis - blue
-                new VertexStandard4 { Position = Vector3.Zero, Colour = Vector4.UnitZ + Vector4.UnitW },
-                new VertexStandard4 { Position = Vector3.UnitZ * 10, Colour = Vector4.UnitZ + Vector4.UnitW },
+                new VertexStandard { Position = Vector3.Zero, Colour = Vector4.UnitZ + Vector4.UnitW },
+                new VertexStandard { Position = Vector3.UnitZ * 10, Colour = Vector4.UnitZ + Vector4.UnitW },
             };
 
             var indices = new uint[] { 0, 1, 2, 3, 4, 5 };

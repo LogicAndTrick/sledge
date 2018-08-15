@@ -19,6 +19,7 @@ namespace Sledge.BspEditor.Rendering.Viewport
 {
     public class ViewportMapDocumentControl : IMapDocumentControl
     {
+        private readonly EngineInterface _engine;
         private readonly IEnumerable<IViewportEventListenerFactory> _listeners;
         private readonly Control _panel;
         private IViewport _viewport;
@@ -40,8 +41,9 @@ namespace Sledge.BspEditor.Rendering.Viewport
             }
         }
 
-        public ViewportMapDocumentControl(IEnumerable<IViewportEventListenerFactory> listeners)
+        public ViewportMapDocumentControl(EngineInterface engine, IEnumerable<IViewportEventListenerFactory> listeners)
         {
+            _engine = engine;
             _listeners = listeners;
             _camera = new PerspectiveCamera();
             _panel = new Panel {Dock = DockStyle.Fill, BackColor = Color.LightCyan};
@@ -110,7 +112,7 @@ namespace Sledge.BspEditor.Rendering.Viewport
             if (mapDoc == null) return;
             if (_viewport == null)
             {
-                _viewport = Engine.Instance.CreateViewport();
+                _viewport = _engine.CreateViewport();
                 _viewport.Camera = _camera;
                 _viewport.Control.Dock = DockStyle.Fill;
                 _panel.Controls.Add(_viewport.Control);

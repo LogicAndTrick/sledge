@@ -1,12 +1,14 @@
 using System.ComponentModel.Composition;
 using System.Drawing;
-using System.Linq;
+using System.Numerics;
 using System.Threading.Tasks;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.BspEditor.Rendering.Scene;
-using Sledge.Rendering.Materials;
-using Sledge.Rendering.Scenes.Renderables;
+using Sledge.Rendering.Pipelines;
+using Sledge.Rendering.Primitives;
+using Sledge.Rendering.Resources;
+using Plane = Sledge.DataStructures.Geometric.Plane;
 
 namespace Sledge.BspEditor.Rendering.Converters
 {
@@ -15,7 +17,7 @@ namespace Sledge.BspEditor.Rendering.Converters
     {
         public MapObjectSceneConverterPriority Priority => MapObjectSceneConverterPriority.DefaultLowest;
 
-        public bool ShouldStopProcessing(SceneMapObject smo, MapDocument document, IMapObject obj)
+        public bool ShouldStopProcessing(MapDocument document, IMapObject obj)
         {
             return false;
         }
@@ -25,38 +27,71 @@ namespace Sledge.BspEditor.Rendering.Converters
             return obj is Entity && !obj.Hierarchy.HasChildren;
         }
 
-        public async Task<bool> Convert(SceneMapObject smo, MapDocument document, IMapObject obj)
+        public Task Convert(SceneBuilder builder, MapDocument document, IMapObject obj)
         {
-            var flags = CameraFlags.All;
-            if (smo.MetaData.ContainsKey("ContentsReplaced")) flags = CameraFlags.Orthographic;
-
             var entity = (Entity) obj;
+
+            // It's always a box, these numbers are known
+            const uint numVertices = 4 * 6;
+
+            // Pack the indices like this [ solid1 ... solidn ] [ wireframe1 ... wireframe n ]
+            const uint numSolidIndices = 36;
+            const uint numWireframeIndices = numVertices * 2;
+
+            var points = new VertexStandard[numVertices];
+            var indices = new uint[numSolidIndices + numWireframeIndices];
+
+            var c = entity.Color?.Color ?? Color.Magenta;
+            var colour = new Vector4(c.R, c.G, c.B, c.A) / 255f;
+
+            c = entity.IsSelected ? Color.Red : Color.White;
+            var tint = new Vector4(c.R, c.G, c.B, c.A) / 255f;
+
+            var vi = 0u;
+            var si = 0u;
+            var wi = numSolidIndices;
             foreach (var face in entity.BoundingBox.GetBoxFaces())
             {
-                var sel = entity.IsSelected;
-                var color = entity.Color?.Color ?? Color.Green;
-                var mat = Material.Flat(color);
+                var offs = vi;
 
-                var f = new Face(mat, face.Select(x => new Vertex(x.ToVector3(), 0, 0)).ToList())
+                var normal = new Plane(face[0], face[1], face[2]).Normal;
+                foreach (var v in face)
                 {
-                    AccentColor = sel ? Color.Red : color,
-                    PointColor = sel ? Color.Red : color,
-                    TintColor = sel ? Color.FromArgb(128, Color.Red) : Color.White,
-                    IsSelected = sel,
-                    ForcedRenderFlags = sel ? RenderFlags.Wireframe : RenderFlags.None,
-                    RenderFlags = RenderFlags.Polygon | RenderFlags.Wireframe,
-                    CameraFlags = flags
-                };
+                    points[vi++] = new VertexStandard
+                    {
+                        Position = v,
+                        Colour = colour,
+                        Normal = normal,
+                        Texture = Vector2.Zero,
+                        Tint = tint
+                    };
+                }
 
-                smo.SceneObjects.Add(face, f);
+                // Triangles - [0 1 2]  ... [0 n-1 n]
+                for (uint i = 2; i < 4; i++)
+                {
+                    indices[si++] = offs;
+                    indices[si++] = offs + i - 1;
+                    indices[si++] = offs + i;
+                }
+
+                // Lines - [0 1] ... [n-1 n] [n 0]
+                for (uint i = 0; i < 4; i++)
+                {
+                    indices[wi++] = offs + i;
+                    indices[wi++] = offs + (i == 4 - 1 ? 0 : i + 1);
+                }
+
+                var groups = new[]
+                {
+                    new BufferGroup(PipelineType.FlatColourGeneric, 0, numSolidIndices),
+                    new BufferGroup(PipelineType.WireframeGeneric, numSolidIndices, numWireframeIndices)
+                };
+                
+                builder.MainBuffer.Append(points, indices, groups);
             }
 
-            return true;
-        }
-
-        public async Task<bool> Update(SceneMapObject smo, MapDocument document, IMapObject obj)
-        {
-            return false;
+            return Task.FromResult(0);
         }
     }
 }

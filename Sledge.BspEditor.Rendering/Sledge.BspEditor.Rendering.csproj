@@ -73,7 +73,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Converters\AxisLinesConverter.cs" />
+    <Compile Include="Converters\DefaultEntityConverter.cs" />
     <Compile Include="Converters\DefaultSolidConverter.cs" />
+    <Compile Include="Converters\EnvironmentTextureSource.cs" />
     <Compile Include="Viewport\CameraViewportEventListenerFactory.cs" />
     <Compile Include="Viewport\IViewportEventListenerFactory.cs" />
     <Compile Include="Viewport\PerspectiveCameraNavigationViewportListener.cs" />

@@ -1,19 +1,13 @@
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
-using System.Numerics;
 using System.Threading.Tasks;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Modification;
 using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.BspEditor.Rendering.Converters;
 using Sledge.Rendering.Engine;
-using Sledge.Rendering.Pipelines;
-using Sledge.Rendering.Primitives;
 using Sledge.Rendering.Renderables;
-using Sledge.Rendering.Viewports;
 
 namespace Sledge.BspEditor.Rendering.Scene
 {
@@ -30,16 +24,18 @@ namespace Sledge.BspEditor.Rendering.Scene
         public MapDocument Document { get; }
 
         private readonly MapObjectConverter _converter;
+        private readonly EngineInterface _engine;
         private readonly List<IRenderable> _mapObjects;
         private bool _isActive;
 
         /// <summary>
         /// Create an instance of this class for the given document.
         /// </summary>
-        public ConvertedScene(MapObjectConverter converter, MapDocument document)
+        public ConvertedScene(MapObjectConverter converter, MapDocument document, EngineInterface engine)
         {
             Document = document;
             _converter = converter;
+            _engine = engine;
 
             _isActive = false;
             _mapObjects = new List<IRenderable>();
@@ -61,7 +57,7 @@ namespace Sledge.BspEditor.Rendering.Scene
                 // Add the renderables to the scene
                 foreach (var smo in _mapObjects)
                 {
-                    Engine.Instance.Scene.Add(smo);
+                    _engine.Add(smo);
                 }
             }
             else
@@ -69,7 +65,7 @@ namespace Sledge.BspEditor.Rendering.Scene
                 // Remove the renderables from the scene
                 foreach (var smo in _mapObjects)
                 {
-                    Engine.Instance.Scene.Remove(smo);
+                    _engine.Remove(smo);
                 }
             }
             _isActive = active;
@@ -82,7 +78,7 @@ namespace Sledge.BspEditor.Rendering.Scene
         {
             foreach (var renderable in renderables)
             {
-                Engine.Instance.Scene.Add(renderable);
+                _engine.Add(renderable);
             }
         }
 
@@ -93,7 +89,7 @@ namespace Sledge.BspEditor.Rendering.Scene
         {
             foreach (var renderable in renderables)
             {
-                Engine.Instance.Scene.Remove(renderable);
+                _engine.Remove(renderable);
             }
         }
 
@@ -107,101 +103,28 @@ namespace Sledge.BspEditor.Rendering.Scene
 
         private async Task Update(IEnumerable<IMapObject> objects)
         {
-            var buffer = new EngineInterface().CreateBufferBuilder();
+            var builder = await _converter.Convert(Document, objects);
 
-            foreach (var solid in objects.OfType<Solid>())
-            {
-                // Pack the vertices like this [ f1v1 ... f1vn ] ... [ fnv1 ... fnvn ]
-                var numVertices = (uint)solid.Faces.Sum(x => x.Vertices.Count);
-
-                // Pack the indices like this [ solid1 ... solidn ] [ wireframe1 ... wireframe n ]
-                var numSolidIndices = (uint)solid.Faces.Sum(x => (x.Vertices.Count - 2) * 3);
-                var numWireframeIndices = numVertices * 2;
-
-                var points = new VertexStandard4[numVertices];
-                var indices = new uint[numSolidIndices + numWireframeIndices];
-
-                var c = solid.IsSelected ? Color.Red : solid.Color.Color;
-                var colour = new Vector4(c.R, c.G, c.B, c.A) / 255f;
-
-                var tc = Document.Environment.GetTextureCollection().Result;
-
-                var vi = 0u;
-                var si = 0u;
-                var wi = numSolidIndices;
-                foreach (var face in solid.Faces)
-                {
-                    var t = tc.GetTextureItem(face.Texture.Name).Result;
-                    var w = t?.Width ?? 0;
-                    var h = t?.Height ?? 0;
-
-                    var offs = vi;
-                    var numFaceVerts = (uint)face.Vertices.Count;
-
-                    var textureCoords = face.GetTextureCoordinates(w, h).ToList();
-
-                    var normal = face.Plane.Normal;
-                    for (var i = 0; i < face.Vertices.Count; i++)
-                    {
-                        var v = face.Vertices[i];
-                        points[vi++] = new VertexStandard4
-                        {
-                            Position = v,
-                            Colour = colour,
-                            Normal = normal,
-                            Texture = new Vector2(textureCoords[i].Item2, textureCoords[i].Item3)
-                        };
-                    }
-
-                    // Triangles - [0 1 2]  ... [0 n-1 n]
-                    for (uint i = 2; i < numFaceVerts; i++)
-                    {
-                        indices[si++] = offs;
-                        indices[si++] = offs + i - 1;
-                        indices[si++] = offs + i;
-                    }
-
-                    // Lines - [0 1] ... [n-1 n] [n 0]
-                    for (uint i = 0; i < numFaceVerts; i++)
-                    {
-                        indices[wi++] = offs + i;
-                        indices[wi++] = offs + (i == numFaceVerts - 1 ? 0 : i + 1);
-                    }
-                }
-
-                var groups = new List<BufferGroup>();
-                //groups.Add(new BufferGroup(PipelineNames.FlatColourGeneric + ".", 0, numSolidIndices));
-
-                uint texOffset = 0;
-                foreach (var f in solid.Faces)
-                {
-                    var texture = $"{Document.Environment.ID}::{f.Texture.Name}";
-                    var texInd = (uint) (f.Vertices.Count - 2) * 3;
-                    groups.Add(new BufferGroup(PipelineType.TexturedGeneric, texture, texOffset, texInd));
-                    texOffset += texInd;
-
-                    new EngineInterface().CreateTexture(texture, () => new EnvironmentTextureSource(Document.Environment, f.Texture.Name));
-                }
-
-                groups.Add(new BufferGroup(PipelineType.WireframeGeneric, numSolidIndices, numWireframeIndices));
-
-                buffer.Append(points, indices, groups);
-            }
-
-            buffer.Complete();
-
-            var render = new BufferBuilderRenderable(buffer);
-
-
-            foreach (var o in _mapObjects)
-            {
-                Engine.Instance.Scene.Remove(o);
-                o.Dispose();
-            }
+            // Add before removing - to avoid objects blinking in and out
+            var rem = _mapObjects.ToList();
             _mapObjects.Clear();
 
-            _mapObjects.Add(render);
-            Engine.Instance.Scene.Add(render);
+            // Add new renderables
+            _mapObjects.Add(builder.MainRenderable);
+            _engine.Add(builder.MainRenderable);
+
+            foreach (var r in builder.Renderables)
+            {
+                _mapObjects.Add(r);
+                _engine.Add(r);
+            }
+
+            // Remove old renderables
+            foreach (var o in rem)
+            {
+                _engine.Remove(o);
+                o.Dispose();
+            }
         }
 
         /// <inheritdoc cref="IDisposable.Dispose"/>

@@ -12,7 +12,7 @@ namespace Sledge.Rendering.Pipelines
     public class WireframeGenericPipeline : IPipeline
     {
         public PipelineType Type => PipelineType.WireframeGeneric;
-        public float Order => 1;
+        public float Order => 10;
 
         private Shader _vertex;
         private Shader _fragment;
@@ -31,7 +31,7 @@ namespace Sledge.Rendering.Pipelines
                 RasterizerState = RasterizerStateDescription.Default,
                 PrimitiveTopology = PrimitiveTopology.LineList,
                 ResourceLayouts = new[] { context.ResourceLoader.ProjectionLayout },
-                ShaderSet = new ShaderSetDescription(new[] { context.ResourceLoader.VertexStandard4LayoutDescription }, new[] { _vertex, _fragment }),
+                ShaderSet = new ShaderSetDescription(new[] { context.ResourceLoader.VertexStandardLayoutDescription }, new[] { _vertex, _fragment }),
                 Outputs = new OutputDescription
                 {
                     ColorAttachments = new[] { new OutputAttachmentDescription(PixelFormat.B8_G8_R8_A8_UNorm) },
@@ -65,11 +65,11 @@ namespace Sledge.Rendering.Pipelines
 
             foreach (var r in renderables)
             {
-                r.Render(this, target, cl);
+                r.Render(context, this, target, cl);
             }
         }
 
-        public void Bind(CommandList cl, string binding)
+        public void Bind(RenderContext context, CommandList cl, string binding)
         {
             //
         }

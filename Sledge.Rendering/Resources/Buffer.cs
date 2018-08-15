@@ -4,7 +4,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using Veldrid;
 
-namespace Sledge.Rendering.Renderables
+namespace Sledge.Rendering.Resources
 {
     public class Buffer : IDisposable
     {

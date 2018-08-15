@@ -4,6 +4,7 @@ struct VertexIn
     float3 Normal : NORMAL0;
     float4 Colour : COLOR0;
     float2 Texture : TEXCOORD0;
+    float4 Tint : COLOR1;
 };
 
 struct FragmentIn
@@ -12,6 +13,7 @@ struct FragmentIn
     float4 fNormal : NORMAL0;
     float4 fColour : COLOR0;
     float2 fTexture : TEXCOORD0;
+    float4 fTint : COLOR1;
 };
 
 cbuffer Projection
@@ -40,6 +42,7 @@ FragmentIn main(VertexIn input)
     output.fNormal = normal;
     output.fColour = input.Colour;
     output.fTexture = input.Texture;
+    output.fTint = input.Tint;
 
     return output;
 }

@@ -1,6 +1,7 @@
 using System;
+using Sledge.Rendering.Interfaces;
 
-namespace Sledge.Rendering.Interfaces
+namespace Sledge.Rendering.Renderables
 {
     public class FpsMonitor : IUpdateable
     {

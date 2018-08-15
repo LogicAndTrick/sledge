@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using Sledge.Rendering.Cameras;
+using Sledge.Rendering.Engine;
 using Sledge.Rendering.Pipelines;
 using Sledge.Rendering.Viewports;
 using Veldrid;
+using Buffer = Sledge.Rendering.Resources.Buffer;
 
 namespace Sledge.Rendering.Renderables
 {
@@ -38,7 +40,7 @@ namespace Sledge.Rendering.Renderables
                    && (!PerspectiveOnly || viewport.Camera is PerspectiveCamera);
         }
 
-        public void Render(IPipeline pipeline, IViewport viewport, CommandList cl)
+        public void Render(RenderContext context, IPipeline pipeline, IViewport viewport, CommandList cl)
         {
             cl.SetVertexBuffer(0, _buffer.VertexBuffer);
             cl.SetIndexBuffer(_buffer.IndexBuffer, IndexFormat.UInt32);

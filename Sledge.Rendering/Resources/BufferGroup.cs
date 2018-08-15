@@ -1,7 +1,7 @@
 ﻿using System;
 using Sledge.Rendering.Pipelines;
 
-namespace Sledge.Rendering.Renderables
+namespace Sledge.Rendering.Resources
 {
     public class BufferGroup
     {

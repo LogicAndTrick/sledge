@@ -1,6 +1,8 @@
 ﻿using System.Linq;
 using System.Runtime.CompilerServices;
+using Sledge.Rendering.Engine;
 using Sledge.Rendering.Pipelines;
+using Sledge.Rendering.Resources;
 using Sledge.Rendering.Viewports;
 using Veldrid;
 
@@ -22,7 +24,7 @@ namespace Sledge.Rendering.Renderables
             return true;
         }
 
-        public void Render(IPipeline pipeline, IViewport viewport, CommandList cl)
+        public void Render(RenderContext context, IPipeline pipeline, IViewport viewport, CommandList cl)
         {
             for (var i = 0; i < _buffer.NumBuffers; i++)
             {
@@ -33,7 +35,7 @@ namespace Sledge.Rendering.Renderables
                 cl.SetIndexBuffer(_buffer.IndexBuffers[i], IndexFormat.UInt32);
                 foreach (var bg in groups)
                 {
-                    pipeline.Bind(cl, bg.Binding);
+                    pipeline.Bind(context, cl, bg.Binding);
                     cl.DrawIndexedIndirect(_buffer.IndirectBuffers[i], bg.Offset * IndSize, bg.Count, 20);
                 }
             }

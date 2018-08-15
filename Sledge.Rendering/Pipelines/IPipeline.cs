@@ -17,6 +17,6 @@ namespace Sledge.Rendering.Pipelines
 
         void Create(RenderContext context);
         void Render(RenderContext context, IViewport target, CommandList cl, IEnumerable<IRenderable> renderables);
-        void Bind(CommandList cl, string binding);
+        void Bind(RenderContext context, CommandList cl, string binding);
     }
 }

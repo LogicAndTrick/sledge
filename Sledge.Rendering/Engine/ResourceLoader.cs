@@ -4,10 +4,10 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using Sledge.Rendering.Interfaces;
-using Sledge.Rendering.Renderables;
+using Sledge.Rendering.Resources;
 using Sledge.Rendering.Shaders;
 using Veldrid;
-using Texture = Sledge.Rendering.Renderables.Texture;
+using Texture = Sledge.Rendering.Resources.Texture;
 
 namespace Sledge.Rendering.Engine
 {
@@ -19,7 +19,9 @@ namespace Sledge.Rendering.Engine
         public ResourceLayout TextureLayout { get; }
         public Sampler TextureSampler { get; }
 
-        public VertexLayoutDescription VertexStandard4LayoutDescription { get; }
+        public VertexLayoutDescription VertexStandardLayoutDescription { get; }
+
+        private Lazy<Texture> MissingTexture { get; }
 
         public ResourceLoader(RenderContext context)
         {
@@ -37,40 +39,44 @@ namespace Sledge.Rendering.Engine
                 )
             );
 
-            VertexStandard4LayoutDescription = new VertexLayoutDescription(
+            VertexStandardLayoutDescription = new VertexLayoutDescription(
                 new VertexElementDescription("Position", VertexElementSemantic.Position, VertexElementFormat.Float3),
                 new VertexElementDescription("Normal", VertexElementSemantic.Normal, VertexElementFormat.Float3),
                 new VertexElementDescription("Colour", VertexElementSemantic.Color, VertexElementFormat.Float4),
-                new VertexElementDescription("Texture", VertexElementSemantic.TextureCoordinate, VertexElementFormat.Float2)
+                new VertexElementDescription("Texture", VertexElementSemantic.TextureCoordinate, VertexElementFormat.Float2),
+                new VertexElementDescription("Tint", VertexElementSemantic.Color, VertexElementFormat.Float4)
             );
             TextureSampler = context.Device.ResourceFactory.CreateSampler(SamplerDescription.Aniso4x);
+
+            MissingTexture = new Lazy<Texture>(() => UploadTexture("", () => new WhiteTextureSource()));
         }
-        
+
         private readonly ConcurrentDictionary<string, Texture> _textures = new ConcurrentDictionary<string, Texture>();
 
-        internal Texture CreateTexture(string name, Func<ITextureDataSource> source)
+        internal Texture UploadTexture(string name, Func<ITextureDataSource> source)
         {
-            return _textures.GetOrAdd(name, n => new Texture(Engine.Instance.Context, source()));
+            return _textures.GetOrAdd(name, n => new Texture(_context, source()));
         }
 
-        public TextureBinding CreateTextureBinding(string name, Func<ITextureDataSource> source)
+        internal Texture GetTexture(string name)
         {
-            var tex = _textures.GetOrAdd(name, n => new Texture(Engine.Instance.Context, source()));
-            return new TextureBinding(tex);
-        }
-
-        public TextureBinding CreateTextureBinding(string name)
-        {
-            if (!_textures.TryGetValue(name, out var tex)) return null;
-            return new TextureBinding(tex);
+            return _textures.TryGetValue(name, out var tex) ? tex : MissingTexture.Value;
         }
 
         internal void DeleteUnreferencedTextures()
         {
-            foreach (var tkv in _textures.Where(x => x.Value.RefCount == 0).ToList())
+            if (MissingTexture.IsValueCreated) MissingTexture.Value.NumBindings++;
+            foreach (var tkv in _textures.ToList())
             {
-                _textures.TryRemove(tkv.Key, out _);
-                tkv.Value.Dispose();
+                if (tkv.Value.NumBindings == 0)
+                {
+                    _textures.TryRemove(tkv.Key, out _);
+                    tkv.Value.Dispose();
+                }
+                else
+                {
+                    tkv.Value.NumBindings = 0;
+                }
             }
         }
 

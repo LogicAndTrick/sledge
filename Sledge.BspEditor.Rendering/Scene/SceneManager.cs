@@ -10,6 +10,7 @@ using Sledge.BspEditor.Rendering.Converters;
 using Sledge.Common.Logging;
 using Sledge.Common.Shell.Documents;
 using Sledge.Common.Shell.Hooks;
+using Sledge.Rendering.Engine;
 
 namespace Sledge.BspEditor.Rendering.Scene
 {
@@ -21,6 +22,7 @@ namespace Sledge.BspEditor.Rendering.Scene
     public class SceneManager : IStartupHook
     {
         [Import] private Lazy<MapObjectConverter> _converter;
+        [Import] private Lazy<EngineInterface> _engine;
 
         /// <inheritdoc />
         public Task OnStartup()
@@ -92,7 +94,7 @@ namespace Sledge.BspEditor.Rendering.Scene
                 var cs = _convertedScenes.FirstOrDefault(x => x.Document == doc);
                 if (cs != null) return cs;
 
-                cs = new ConvertedScene(_converter.Value, doc);
+                cs = new ConvertedScene(_converter.Value, doc, _engine.Value);
                 _convertedScenes.Add(cs);
                 Log.Debug("Bsp Renderer", "Scene created");
                 return cs;
