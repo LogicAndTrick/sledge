@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Sledge.Rendering.Engine;
 using Sledge.Rendering.Renderables;
 using Sledge.Rendering.Resources;
@@ -6,7 +7,7 @@ using Buffer = Sledge.Rendering.Resources.Buffer;
 
 namespace Sledge.BspEditor.Rendering.Scene
 {
-    public class SceneBuilder
+    public class SceneBuilder : IDisposable
     {
         public BufferBuilder MainBuffer { get; }
         public IRenderable MainRenderable { get; }
@@ -20,6 +21,14 @@ namespace Sledge.BspEditor.Rendering.Scene
             MainRenderable = new BufferBuilderRenderable(MainBuffer);
             Buffers = new List<Buffer>();
             Renderables = new List<IRenderable>();
+        }
+
+        public void Dispose()
+        {
+            MainRenderable.Dispose();
+            MainBuffer.Dispose();
+            Renderables.ForEach(x => x.Dispose());
+            Buffers.ForEach(x => x.Dispose());
         }
     }
 }

@@ -31,9 +31,9 @@ namespace Sledge.Rendering.Resources
                 TextureUsage.Sampled | TextureUsage.GenerateMipmaps
             ));
 
-            Task.Factory.StartNew(() =>
+            Task.Factory.StartNew(async () =>
             {
-                device.UpdateTexture(_texture, source.GetData(), 0, 0, 0, w, h, _texture.Depth, 0, 0);
+                device.UpdateTexture(_texture, await source.GetData(), 0, 0, 0, w, h, _texture.Depth, 0, 0);
                 _mipsGenerated = false;
             });
             

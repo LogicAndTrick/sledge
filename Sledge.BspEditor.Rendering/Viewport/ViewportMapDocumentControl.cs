@@ -124,17 +124,14 @@ namespace Sledge.BspEditor.Rendering.Viewport
 
         public string GetSerialisedSettings()
         {
-            return "";
-            throw new NotImplementedException();
-            // return Camera.Serialise(Camera);
+            return Sledge.Rendering.Cameras.Camera.Serialise(Camera);
         }
 
         public void SetSerialisedSettings(string settings)
         {
             try
             {
-                //throw new NotImplementedException();
-                //Camera = Camera.Deserialise(settings);
+                Camera = Sledge.Rendering.Cameras.Camera.Deserialise(settings);
             }
             catch
             {

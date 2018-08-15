@@ -51,7 +51,9 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Cameras\Camera.cs" />
     <Compile Include="Cameras\CameraType.cs" />
+    <Compile Include="Cameras\OrthographicCamera.cs" />
     <Compile Include="Cameras\PerspectiveCamera.cs" />
     <Compile Include="Engine\Engine.cs" />
     <Compile Include="Engine\EngineInterface.cs" />

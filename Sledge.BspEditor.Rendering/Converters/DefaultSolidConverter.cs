@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Primitives.MapObjects;
+using Sledge.BspEditor.Rendering.Resources;
 using Sledge.BspEditor.Rendering.Scene;
 using Sledge.Providers.Texture;
 using Sledge.Rendering.Cameras;
@@ -109,14 +110,17 @@ namespace Sledge.BspEditor.Rendering.Converters
             {
                 var opacity = tc.GetOpacity(f.Texture.Name);
                 var t = await tc.GetTextureItem(f.Texture.Name);
-                var transparent = opacity < 0.95f || t.Flags.HasFlag(TextureFlags.Transparent);
+                var transparent = opacity < 0.95f || t?.Flags.HasFlag(TextureFlags.Transparent) == true;
 
                 var texture = $"{document.Environment.ID}::{f.Texture.Name}";
                 var texInd = (uint)(f.Vertices.Count - 2) * 3;
-                groups.Add(new BufferGroup(PipelineType.TexturedGeneric, CameraType.Perspective, transparent, f.Origin, texture, texOffset, texInd));
+                groups.Add(new BufferGroup(t == null ? PipelineType.FlatColourGeneric : PipelineType.TexturedGeneric, CameraType.Perspective, transparent, f.Origin, texture, texOffset, texInd));
                 texOffset += texInd;
+                if (t != null)
+                {
+                    _engine.UploadTexture(texture, () => new EnvironmentTextureSource(document.Environment, t));
 
-                _engine.UploadTexture(texture, () => new EnvironmentTextureSource(document.Environment, f.Texture.Name));
+                }
             }
 
             // groups.Add(new BufferGroup(PipelineType.FlatColourGeneric, 0, numSolidIndices));

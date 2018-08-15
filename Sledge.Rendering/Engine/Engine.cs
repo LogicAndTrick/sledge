@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
-using Sledge.Rendering.Interfaces;
+using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Pipelines;
 using Sledge.Rendering.Renderables;
 using Sledge.Rendering.Viewports;
@@ -18,17 +18,21 @@ namespace Sledge.Rendering.Engine
         public static EngineInterface Interface { get; } = new EngineInterface();
 
         public GraphicsDevice Device { get; }
-        public Thread RenderThread { get; }
+        public Thread RenderThread { get; private set; }
         public Scene Scene { get; }
         internal RenderContext Context { get; }
 
+        private CancellationTokenSource _token;
+
         private readonly GraphicsDeviceOptions _options;
         private readonly Stopwatch _timer;
-        private readonly CancellationTokenSource _token;
         private readonly object _lock = new object();
         private readonly List<IViewport> _renderTargets;
         private readonly List<IPipeline> _pipelines;
         private readonly CommandList _commandList;
+
+        private RgbaFloat _clearColourPerspective;
+        private RgbaFloat _clearColourOrthographic;
 
         private Engine()
         {
@@ -43,6 +47,8 @@ namespace Sledge.Rendering.Engine
             Scene = new Scene();
 
             _commandList = Device.ResourceFactory.CreateCommandList();
+
+            SetClearColour(CameraType.Both, RgbaFloat.Black);
 
             _timer = new Stopwatch();
             _token = new CancellationTokenSource();
@@ -60,6 +66,13 @@ namespace Sledge.Rendering.Engine
             AddPipeline(new TexturedGenericPipeline());
 
             Application.ApplicationExit += Shutdown;
+        }
+
+        internal void SetClearColour(CameraType type, RgbaFloat colour)
+        {
+            if (type == CameraType.Both) _clearColourOrthographic = _clearColourPerspective = colour;
+            else if (type == CameraType.Orthographic) _clearColourOrthographic = colour;
+            else _clearColourPerspective = colour;
         }
 
         public void AddPipeline(IPipeline pipeline)
@@ -98,6 +111,9 @@ namespace Sledge.Rendering.Engine
         {
             _token.Cancel();
             _timer.Stop();
+
+            RenderThread = new Thread(Loop);
+            _token = new CancellationTokenSource();
         }
 
         private void Loop(object o)
@@ -153,7 +169,11 @@ namespace Sledge.Rendering.Engine
             _commandList.Begin();
             _commandList.SetFramebuffer(renderTarget.Swapchain.Framebuffer);
             _commandList.ClearDepthStencil(1);
-            _commandList.ClearColorTarget(0, RgbaFloat.Black);
+
+            var cc = renderTarget.Camera.Type == CameraType.Perspective
+                ? _clearColourPerspective
+                : _clearColourOrthographic;
+            _commandList.ClearColorTarget(0, cc);
 
             foreach (var pipeline in _pipelines.OrderBy(x => x.Order))
             {

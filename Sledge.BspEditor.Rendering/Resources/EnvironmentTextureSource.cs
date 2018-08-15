@@ -1,29 +1,32 @@
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 using Sledge.BspEditor.Environment;
 using Sledge.Providers.Texture;
 using Sledge.Rendering.Interfaces;
 
-namespace Sledge.BspEditor.Rendering.Converters
+namespace Sledge.BspEditor.Rendering.Resources
 {
     public class EnvironmentTextureSource : ITextureDataSource
     {
+        private readonly TextureItem _item;
+        private readonly IEnvironment _environment;
+
         public int Width => _item.Width;
         public int Height => _item.Height;
 
-        private readonly TextureCollection _textureCollection;
-        private readonly TextureItem _item;
-
-        public EnvironmentTextureSource(IEnvironment environment, string name)
+        public EnvironmentTextureSource(IEnvironment environment, TextureItem item)
         {
-            _textureCollection = environment.GetTextureCollection().Result;
-            _item = _textureCollection.GetTextureItem(name).Result;
+            _environment = environment;
+            _item = item;
         }
 
-        public byte[] GetData()
+        public async Task<byte[]> GetData()
         {
-            using (var bitmap = _textureCollection.GetStreamSource().GetImage(_item.Name, 512, 512).Result)
+            var textureCollection = await _environment.GetTextureCollection();
+
+            using (var bitmap = await textureCollection.GetStreamSource().GetImage(_item.Name, 512, 512))
             {
                 var lb = bitmap.LockBits(new Rectangle(0, 0, Width, Height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
                 var data = new byte[lb.Stride * lb.Height];

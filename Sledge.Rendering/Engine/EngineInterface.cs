@@ -1,9 +1,13 @@
 ﻿using System;
 using System.ComponentModel.Composition;
+using System.Drawing;
+using System.Numerics;
+using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Interfaces;
 using Sledge.Rendering.Renderables;
 using Sledge.Rendering.Resources;
 using Sledge.Rendering.Viewports;
+using Veldrid;
 using Buffer = Sledge.Rendering.Resources.Buffer;
 
 namespace Sledge.Rendering.Engine
@@ -11,6 +15,11 @@ namespace Sledge.Rendering.Engine
     [Export]
     public class EngineInterface
     {
+        public void SetClearColour(CameraType cameraType, Color colour)
+        {
+            Engine.Instance.SetClearColour(cameraType, new RgbaFloat(new Vector4(colour.R, colour.G, colour.B, colour.A) / 255));
+        }
+
         public Buffer CreateBuffer()
         {
             return new Buffer(Engine.Instance.Device);

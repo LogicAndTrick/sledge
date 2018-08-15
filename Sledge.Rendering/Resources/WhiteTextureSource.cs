@@ -1,4 +1,5 @@
-﻿using Sledge.Rendering.Interfaces;
+﻿using System.Threading.Tasks;
+using Sledge.Rendering.Interfaces;
 
 namespace Sledge.Rendering.Resources
 {
@@ -7,9 +8,9 @@ namespace Sledge.Rendering.Resources
         public int Width => 1;
         public int Height => 1;
 
-        public byte[] GetData()
+        public Task<byte[]> GetData()
         {
-            return new byte[] {255, 255, 255, 255};
+            return Task.FromResult(new byte[] {255, 255, 255, 255});
         }
     }
 }

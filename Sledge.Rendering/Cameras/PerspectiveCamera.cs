@@ -52,7 +52,7 @@ namespace Sledge.Rendering.Cameras
             ClipDistance = 10000;
         }
 
-        protected PerspectiveCamera(string serialised) : this()
+        internal PerspectiveCamera(string serialised) : this()
         {
             var tags = (serialised ?? "").Split(',', '/');
             if (tags.Length < 3) return;
