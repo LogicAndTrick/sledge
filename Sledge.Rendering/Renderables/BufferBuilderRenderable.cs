@@ -15,6 +15,8 @@ namespace Sledge.Rendering.Renderables
 
         private readonly BufferBuilder _buffer;
 
+        public float Order { get; set; }
+
         public BufferBuilderRenderable(BufferBuilder buffer)
         {
             _buffer = buffer;

@@ -22,6 +22,12 @@ namespace Sledge.Rendering.Resources
             _device = device;
             _created = false;
         }
+
+        public void Bind(CommandList cl, uint slot)
+        {
+            cl.SetVertexBuffer(slot, VertexBuffer);
+            cl.SetIndexBuffer(IndexBuffer, IndexFormat.UInt32);
+        }
         
         public void Update<T>(IEnumerable<T> vertices, IEnumerable<uint> indices) where T : struct
         {

@@ -15,6 +15,18 @@ namespace Sledge.Rendering.Engine
     [Export]
     public class EngineInterface
     {
+        public event EventHandler<IViewport> ViewportCreated
+        {
+            add => Engine.Instance.ViewportCreated += value;
+            remove => Engine.Instance.ViewportCreated -= value;
+        }
+
+        public event EventHandler<IViewport> ViewportDestroyed
+        {
+            add => Engine.Instance.ViewportDestroyed += value;
+            remove => Engine.Instance.ViewportDestroyed -= value;
+        }
+
         public void SetClearColour(CameraType cameraType, Color colour)
         {
             Engine.Instance.SetClearColour(cameraType, new RgbaFloat(new Vector4(colour.R, colour.G, colour.B, colour.A) / 255));

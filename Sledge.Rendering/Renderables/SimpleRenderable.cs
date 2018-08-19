@@ -12,6 +12,8 @@ namespace Sledge.Rendering.Renderables
 {
     public class SimpleRenderable : IRenderable
     {
+        public float Order { get; set; }
+
         private readonly Buffer _buffer;
         private readonly HashSet<PipelineType> _pipelines;
 

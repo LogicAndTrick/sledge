@@ -177,7 +177,7 @@ namespace Sledge.Rendering.Engine
 
             foreach (var pipeline in _pipelines.OrderBy(x => x.Order))
             {
-                var renderables = Scene.GetRenderables(pipeline, renderTarget).ToList();
+                var renderables = Scene.GetRenderables(pipeline, renderTarget).OrderBy(x => x.Order).ToList();
                 pipeline.Render(Context, renderTarget, _commandList, renderables);
                 pipeline.RenderTransparent(Context, renderTarget, _commandList, renderables);
             }
@@ -190,6 +190,9 @@ namespace Sledge.Rendering.Engine
 
         // Viewports
 
+        public event EventHandler<IViewport> ViewportCreated;
+        public event EventHandler<IViewport> ViewportDestroyed;
+
         public IViewport CreateViewport()
         {
             lock (_lock)
@@ -199,6 +202,8 @@ namespace Sledge.Rendering.Engine
 
                 if (!_renderTargets.Any()) Start();
                 _renderTargets.Add(control);
+
+                ViewportCreated?.Invoke(this, control);
 
                 return control;
             }
@@ -214,6 +219,8 @@ namespace Sledge.Rendering.Engine
                 Device.WaitForIdle();
 
                 if (!_renderTargets.Any()) Stop();
+
+                ViewportDestroyed?.Invoke(this, t);
 
                 t.Control.Disposed -= DestroyViewport;
                 t.Dispose();

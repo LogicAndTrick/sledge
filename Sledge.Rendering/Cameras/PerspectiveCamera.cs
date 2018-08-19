@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Numerics;
 using Sledge.Common;
@@ -97,55 +98,55 @@ namespace Sledge.Rendering.Cameras
             return Matrix4x4.Identity;
         }
 
-        //public Vector3 ScreenToWorld(Vector3 screen, int width, int height)
-        //{
-        //    screen = new Vector3(screen.X, screen.Y, 1);
-        //    var viewport = new[] { 0, 0, width, height };
-        //    var pm = Matrix4x4.CreatePerspectiveFieldOfView((float) DMath.DegreesToRadians(FOV), width / (float)height, 1.0f, 50000);
-        //    var vm = Matrix4x4.LookAt(Position, LookAt, Vector3.UnitZ);
-        //    return MathFunctions.Unproject(screen, viewport, pm, vm);
-        //}
+        public Vector3 ScreenToWorld(Vector3 screen, int width, int height)
+        {
+            screen = new Vector3(screen.X, screen.Y, 1);
+            var viewport = new[] { 0, 0, width, height };
+            var pm = Matrix4x4.CreatePerspectiveFieldOfView((float)DMath.DegreesToRadians(FOV), width / (float)height, 1.0f, 50000);
+            var vm = Matrix4x4.CreateLookAt(Position, LookAt, Vector3.UnitZ);
+            return MathFunctions.Unproject(screen, viewport, pm, vm);
+        }
 
-        //public Vector3 WorldToScreen(Vector3 world, int width, int height)
-        //{
-        //    var viewport = new[] { 0, 0, width, height };
-        //    var pm = Matrix4x4.CreatePerspectiveFieldOfView((float) DMath.DegreesToRadians(FOV), width / (float)height, 1.0f, 50000);
-        //    var vm = Matrix4x4.LookAt(Position, LookAt, Vector3.UnitZ);
-        //    return MathFunctions.Project(world, viewport, pm, vm);
-        //}
+        public Vector3 WorldToScreen(Vector3 world, int width, int height)
+        {
+            var viewport = new[] { 0, 0, width, height };
+            var pm = Matrix4x4.CreatePerspectiveFieldOfView((float)DMath.DegreesToRadians(FOV), width / (float)height, 1.0f, 50000);
+            var vm = Matrix4x4.CreateLookAt(Position, LookAt, Vector3.UnitZ);
+            return MathFunctions.Project(world, viewport, pm, vm);
+        }
 
-        //public Line CastRayFromScreen(Vector3 screen, int width, int height)
-        //{
-        //    var near = new Vector3(screen.X, height - screen.Y, 0);
-        //    var far = new Vector3(screen.X, height - screen.Y, 1);
-        //    var pm = Matrix4x4.CreatePerspectiveFieldOfView((float) DMath.DegreesToRadians(FOV), width / (float)height, 1.0f, 50000);
-        //    var vm = Matrix4x4.LookAt(Position, LookAt, Vector3.UnitZ);
-        //    var viewport = new[] { 0, 0, width, height };
-        //    var un = MathFunctions.Unproject(near, viewport, pm, vm);
-        //    var uf = MathFunctions.Unproject(far, viewport, pm, vm);
-        //    return new Line(un, uf);
-        //}
+        public (Vector3, Vector3) CastRayFromScreen(Vector3 screen, int width, int height)
+        {
+            var near = new Vector3(screen.X, height - screen.Y, 0);
+            var far = new Vector3(screen.X, height - screen.Y, 1);
+            var pm = Matrix4x4.CreatePerspectiveFieldOfView((float)DMath.DegreesToRadians(FOV), width / (float)height, 1.0f, 50000);
+            var vm = Matrix4x4.CreateLookAt(Position, LookAt, Vector3.UnitZ);
+            var viewport = new[] { 0, 0, width, height };
+            var un = MathFunctions.Unproject(near, viewport, pm, vm);
+            var uf = MathFunctions.Unproject(far, viewport, pm, vm);
+            return (un, uf);
+        }
 
         //public IEnumerable<Plane> GetClippingPlanes(int width, int height)
         //{
-        //    var pm = Matrix4x4.CreatePerspectiveFieldOfView((float) DMath.DegreesToRadians(FOV), width / (float)height, 1.0f, ClipDistance);
-        //    var vm = Matrix4x4.LookAt(Position, LookAt, Vector3.UnitZ);
+        //    var pm = Matrix4x4.CreatePerspectiveFieldOfView((float)DMath.DegreesToRadians(FOV), width / (float)height, 1.0f, ClipDistance);
+        //    var vm = Matrix4x4.CreateLookAt(Position, LookAt, Vector3.UnitZ);
         //    var viewport = new[] { 0, 0, width, height };
-
+        //
         //    var tlNear = MathFunctions.Unproject(new Vector3(0, height, 0), viewport, pm, vm);
         //    var tlFar = MathFunctions.Unproject(new Vector3(0, height, 1), viewport, pm, vm);
-
+        //
         //    var trNear = MathFunctions.Unproject(new Vector3(width, height, 0), viewport, pm, vm);
         //    var trFar = MathFunctions.Unproject(new Vector3(width, height, 1), viewport, pm, vm);
-
+        //
         //    var blNear = MathFunctions.Unproject(new Vector3(0, 0, 0), viewport, pm, vm);
         //    var blFar = MathFunctions.Unproject(new Vector3(0, 0, 1), viewport, pm, vm);
-
+        //
         //    var brNear = MathFunctions.Unproject(new Vector3(width, 0, 0), viewport, pm, vm);
         //    var brFar = MathFunctions.Unproject(new Vector3(width, 0, 1), viewport, pm, vm);
-
+        //    
         //    yield return new Plane((LookAt - EyeLocation), EyeLocation);
-
+        //
         //    yield return new Plane(tlNear, tlFar, blFar);
         //    yield return new Plane(trNear, trFar, tlFar);
         //    yield return new Plane(brNear, brFar, trFar);
