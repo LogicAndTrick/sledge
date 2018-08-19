@@ -2,19 +2,11 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using System.Linq;
 using System.Threading.Tasks;
-using OpenTK;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Primitives.MapObjectData;
 using Sledge.BspEditor.Primitives.MapObjects;
-using Sledge.BspEditor.Rendering.Scene;
 using Sledge.Common.Shell.Settings;
-using Sledge.Rendering.Cameras;
-using Sledge.Rendering.Interfaces;
-using Sledge.Rendering.Materials;
-using Sledge.Rendering.Scenes.Elements;
-using Sledge.Rendering.Scenes.Renderables;
 
 namespace Sledge.BspEditor.Rendering.Converters
 {
@@ -47,7 +39,7 @@ namespace Sledge.BspEditor.Rendering.Converters
 
         public MapObjectSceneConverterPriority Priority => MapObjectSceneConverterPriority.OverrideLow;
 
-        public bool ShouldStopProcessing(SceneMapObject smo, MapDocument document, IMapObject obj)
+        public bool ShouldStopProcessing(MapDocument document, IMapObject obj)
         {
             return false;
         }

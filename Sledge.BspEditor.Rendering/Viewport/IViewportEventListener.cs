@@ -28,9 +28,6 @@ namespace Sledge.BspEditor.Rendering.Viewport
         void ZoomChanged(ViewportEvent e);
         void PositionChanged(ViewportEvent e);
 
-        void UpdateFrame(Frame frame);
-        // todo: needed? void PreRender();
-        // void Render();
-        // void PostRender();
+        void UpdateFrame(long frame);
     }
 }

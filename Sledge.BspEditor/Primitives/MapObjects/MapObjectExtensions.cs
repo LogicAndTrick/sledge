@@ -75,6 +75,7 @@ namespace Sledge.BspEditor.Primitives.MapObjects
         /// <summary>
         /// Get the single object in the object tree with the given ID.
         /// </summary>
+        /// <param name="o"></param>
         /// <param name="id">The ID of the object to locate</param>
         /// <returns>The object with the matching ID or null if it wasn't found</returns>
         public static IMapObject FindByID(this IMapObject o, long id)

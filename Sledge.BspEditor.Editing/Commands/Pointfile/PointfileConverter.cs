@@ -1,12 +1,15 @@
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using System.Drawing;
+using System.Numerics;
 using System.Threading.Tasks;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Primitives.MapObjects;
-using Sledge.BspEditor.Rendering;
 using Sledge.BspEditor.Rendering.Converters;
 using Sledge.BspEditor.Rendering.Scene;
-using Line = Sledge.Rendering.Scenes.Renderables.Line;
+using Sledge.Rendering.Cameras;
+using Sledge.Rendering.Pipelines;
+using Sledge.Rendering.Primitives;
+using Sledge.Rendering.Resources;
 
 namespace Sledge.BspEditor.Editing.Commands.Pointfile
 {
@@ -20,7 +23,7 @@ namespace Sledge.BspEditor.Editing.Commands.Pointfile
             return doc.Map.Data.GetOne<Pointfile>();
         }
 
-        public bool ShouldStopProcessing(SceneMapObject smo, MapDocument document, IMapObject obj)
+        public bool ShouldStopProcessing(MapDocument document, IMapObject obj)
         {
             return false;
         }
@@ -30,31 +33,49 @@ namespace Sledge.BspEditor.Editing.Commands.Pointfile
             return obj is Root;
         }
 
-        public async Task<bool> Convert(SceneMapObject smo, MapDocument document, IMapObject obj)
+        public Task Convert(SceneBuilder builder, MapDocument document, IMapObject obj)
         {
             var pointfile = GetPointfile(document);
-            if (pointfile == null) return true;
-            
-            var r = 255;
-            var g = 127;
-            var b = 127;
-            var change = 128 / (float) pointfile.Lines.Count;
+            if (pointfile == null) return Task.FromResult(0);
 
+            var r = 1f;
+            var g = 0.5f;
+            var b = 0.5f;
+            var change = 0.5f / pointfile.Lines.Count;
+
+            var verts = new List<VertexStandard>();
+            var index = new List<uint>();
+            
             for (var i = 0; i < pointfile.Lines.Count; i++)
             {
                 var line = pointfile.Lines[i];
-                var colour = Color.FromArgb(r, g, b);
-                smo.SceneObjects.Add(new object(), new Line(colour, line.Start.ToVector3(), line.End.ToVector3()));
 
-                r = 255 - (int)(change * i);
-                b = 127 + (int)(change * i);
+                index.Add((uint) index.Count + 0);
+                index.Add((uint) index.Count + 1);
+
+                verts.Add(new VertexStandard
+                {
+                    Position = line.Start,
+                    Colour = new Vector4(r, g, b, 1),
+                    Tint = Vector4.One
+                });
+                verts.Add(new VertexStandard
+                {
+                    Position = line.End,
+                    Colour = new Vector4(r, g, b, 1),
+                    Tint = Vector4.One
+                });
+            
+                r = 1f - (change * i);
+                b = 0.5f + (change * i);
             }
-            return true;
-        }
 
-        public async Task<bool> Update(SceneMapObject smo, MapDocument document, IMapObject obj)
-        {
-            return false;
+            builder.MainBuffer.Append(verts, index, new []
+            {
+                new BufferGroup(PipelineType.WireframeGeneric, CameraType.Both, false, Vector3.Zero, 0, (uint) index.Count)
+            });
+
+            return Task.FromResult(0);
         }
     }
 }

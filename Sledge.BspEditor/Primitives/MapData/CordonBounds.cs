@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.Composition;
+using System.Numerics;
 using System.Runtime.Serialization;
 using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.Common.Transport;
@@ -14,14 +15,14 @@ namespace Sledge.BspEditor.Primitives.MapData
         public CordonBounds()
         {
             Enabled = false;
-            Box = new Box(Coordinate.One * -1024, Coordinate.One * 1024);
+            Box = new Box(Vector3.One * -1024, Vector3.One * 1024);
         }
 
         public CordonBounds(SerialisedObject obj)
         {
             Enabled = obj.Get<bool>("Enabled");
-            var start = obj.Get<Coordinate>("Start");
-            var end = obj.Get<Coordinate>("End");
+            var start = obj.Get<Vector3>("Start");
+            var end = obj.Get<Vector3>("End");
             Box = new Box(start, end);
         }
 

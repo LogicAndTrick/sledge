@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Sledge.FileSystem;
 using Sledge.Providers.Texture.Wad.Format;
-using Sledge.Rendering.Materials;
 
 namespace Sledge.Providers.Texture.Wad
 {
@@ -23,6 +22,11 @@ namespace Sledge.Providers.Texture.Wad
             }
         }
 
+        private TextureFlags GetFlags(WadEntry entry)
+        {
+            return entry.Name.StartsWith("{") ? TextureFlags.Transparent : TextureFlags.None;
+        }
+
         public override async Task<IEnumerable<TextureItem>> GetTextures(IEnumerable<string> names)
         {
             var textures = new HashSet<string>(names);
@@ -36,7 +40,7 @@ namespace Sledge.Providers.Texture.Wad
             {
                 var entry = wp.GetEntry(name);
                 if (entry == null) continue;
-                var item = new TextureItem(entry.Name, TextureFlags.None, (int) entry.Width, (int) entry.Height);
+                var item = new TextureItem(entry.Name, GetFlags(entry), (int) entry.Width, (int) entry.Height);
                 list.Add(item);
             }
 
@@ -50,7 +54,7 @@ namespace Sledge.Providers.Texture.Wad
             var wp = new WadPackage(_file);
             var entry = wp.GetEntry(name);
             if (entry == null) return null;
-            return new TextureItem(entry.Name, TextureFlags.None, (int) entry.Width, (int) entry.Height);
+            return new TextureItem(entry.Name, GetFlags(entry), (int) entry.Width, (int) entry.Height);
         }
 
         public override ITextureStreamSource GetStreamSource()

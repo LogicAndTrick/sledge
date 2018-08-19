@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
 using Sledge.Common;
-using Sledge.Rendering.Materials;
 
 namespace Sledge.Providers.Texture
 {

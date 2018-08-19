@@ -2,10 +2,8 @@
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
-using System.Threading.Tasks;
 using Sledge.BspEditor.Primitives.MapObjectData;
 using Sledge.BspEditor.Primitives.MapObjects;
-using Sledge.Common.Shell.Hooks;
 using Sledge.Common.Transport;
 
 namespace Sledge.BspEditor.Primitives
@@ -19,14 +17,13 @@ namespace Sledge.BspEditor.Primitives
         {
             var elem = _imports.Select(x => x.Value).FirstOrDefault(x => x.IsSupported(obj))?.Deserialise(obj);
 
-            var mo = elem as IMapObject;
-            if (mo != null)
+            if (elem is IMapObject mo)
             {
                 foreach (var so in obj.Children)
                 {
                     var data = Deserialise(so);
-                    if (data is IMapObject) ((IMapObject) data).Hierarchy.Parent = mo;
-                    else if (data is IMapObjectData) mo.Data.Add((IMapObjectData) data);
+                    if (data is IMapObject o) o.Hierarchy.Parent = mo;
+                    else if (data is IMapObjectData od) mo.Data.Add(od);
                 }
             }
 

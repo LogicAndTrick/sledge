@@ -1,7 +1,6 @@
 using System.ComponentModel.Composition;
 using System.Drawing;
 using System.Threading.Tasks;
-using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Environment;
 using Sledge.Common.Translations;
 

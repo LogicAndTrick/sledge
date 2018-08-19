@@ -1,6 +1,5 @@
 ﻿using System.Runtime.Serialization;
 using Sledge.BspEditor.Primitives.MapObjects;
-using Sledge.Common.Transport;
 
 namespace Sledge.BspEditor.Primitives.MapData
 {

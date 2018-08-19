@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
+using System.Numerics;
 using System.Runtime.Serialization;
 using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.Common.Transport;
-using Sledge.DataStructures.Geometric;
 
 namespace Sledge.BspEditor.Primitives.MapObjectData
 {
@@ -87,7 +87,7 @@ namespace Sledge.BspEditor.Primitives.MapObjectData
         [Serializable]
         public class PathNode : ISerializable
         {
-            public Coordinate Position { get; set; }
+            public Vector3 Position { get; set; }
             public int ID { get; set; }
             public string Name { get; set; }
             public Dictionary<string, string> Properties { get; private set; }
@@ -101,7 +101,7 @@ namespace Sledge.BspEditor.Primitives.MapObjectData
             {
                 ID = obj.Get("ID", 0);
                 Name = obj.Get("Name", "");
-                Position = obj.Get<Coordinate>("Position");
+                Position = obj.Get<Vector3>("Position");
                 
                 Properties = new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase);
                 foreach (var prop in obj.Properties)
@@ -115,7 +115,7 @@ namespace Sledge.BspEditor.Primitives.MapObjectData
             {
                 ID = info.GetInt32("ID");
                 Name = info.GetString("Name");
-                Position = (Coordinate) info.GetValue("Position", typeof(Coordinate));
+                Position = (Vector3) info.GetValue("Position", typeof(Vector3));
                 Properties = (Dictionary<string, string>) info.GetValue("Properties", typeof(Dictionary<string, string>));
             }
 
@@ -144,7 +144,7 @@ namespace Sledge.BspEditor.Primitives.MapObjectData
             {
                 var node = new PathNode
                 {
-                    Position = Position.Clone(),
+                    Position = Position,
                     ID = ID,
                     Name = Name
                 };

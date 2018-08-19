@@ -2,9 +2,13 @@ using System.Threading.Tasks;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.BspEditor.Rendering.Scene;
+using Sledge.Rendering.Renderables;
 
 namespace Sledge.BspEditor.Rendering.Converters
 {
+    /// <summary>
+    /// Converts <see cref="IMapObject"/>s into <see cref="IRenderable"/>s for rendering.
+    /// </summary>
     public interface IMapObjectSceneConverter
     {
         /// <summary>
@@ -15,11 +19,10 @@ namespace Sledge.BspEditor.Rendering.Converters
         /// <summary>
         /// Checks if further converters should be abandoned after this converter runs.
         /// </summary>
-        /// <param name="smo">The current SceneMapObject</param>
         /// <param name="document">The current document</param>
         /// <param name="obj">The MapObject that's being converted</param>
         /// <returns>True to stop processing all further converters</returns>
-        bool ShouldStopProcessing(SceneMapObject smo, MapDocument document, IMapObject obj);
+        bool ShouldStopProcessing(MapDocument document, IMapObject obj);
 
         /// <summary>
         /// Check if the object is supported by this converter.
@@ -30,22 +33,10 @@ namespace Sledge.BspEditor.Rendering.Converters
 
         /// <summary>
         /// Convert the MapObject and put the objects in the SceneMapObject.
-        /// Returns false if the MapObject is considered invalid and should be ignored.
         /// </summary>
-        /// <param name="smo">The SceneMapObject to add scene objects to</param>
+        /// <param name="builder">The scene builder</param>
         /// <param name="document">The current document</param>
         /// <param name="obj">The object to convert</param>
-        /// <returns>False if the object is invalid</returns>
-        Task<bool> Convert(SceneMapObject smo, MapDocument document, IMapObject obj);
-
-        /// <summary>
-        /// Update an existing SceneMapObject with the new properties of this MapObject.
-        /// Returns false if the update operation isn't possible.
-        /// </summary>
-        /// <param name="smo">The SceneMapObject to update scene objects in</param>
-        /// <param name="document">The current document</param>
-        /// <param name="obj">The object to update</param>
-        /// <returns>False if the object could not be updated</returns>
-        Task<bool> Update(SceneMapObject smo, MapDocument document, IMapObject obj);
+        Task Convert(SceneBuilder builder, MapDocument document, IMapObject obj);
     }
 }

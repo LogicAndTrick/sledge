@@ -30,7 +30,7 @@ namespace Sledge.BspEditor.Editing.Commands.Quick
         {
             var transaction = new Transaction();
 
-            foreach (var mo in document.Map.Root.Find(x => Enumerable.Any<QuickHidden>(x.Data.Get<QuickHidden>())))
+            foreach (var mo in document.Map.Root.Find(x => x.Data.Get<QuickHidden>().Any()))
             {
                 transaction.Add(new RemoveMapObjectData(mo.ID, mo.Data.GetOne<QuickHidden>()));
             }

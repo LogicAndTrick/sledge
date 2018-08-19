@@ -188,7 +188,7 @@ namespace Sledge.BspEditor.Providers
             {
                 var node = new Path.PathNode
                 {
-                    Position = br.ReadCoordinate(),
+                    Position = br.ReadVector3(),
                     ID = br.ReadInt32(),
                     Name = br.ReadFixedLengthString(Encoding.ASCII, 128)
                 };
@@ -231,7 +231,7 @@ namespace Sledge.BspEditor.Providers
             ReadMapBase(map, ent, br);
             ent.Data.Add(ReadEntityData(br));
             br.ReadBytes(2); // Unused
-            ent.Origin = br.ReadCoordinate();
+            ent.Origin = br.ReadVector3();
             br.ReadBytes(4); // Unused
             return ent;
         }
@@ -269,18 +269,18 @@ namespace Sledge.BspEditor.Providers
             var textureName = br.ReadFixedLengthString(Encoding.ASCII, 256);
             br.ReadBytes(4); // Unused
             face.Texture.Name = textureName;
-            face.Texture.UAxis = br.ReadCoordinate();
-            face.Texture.XShift = br.ReadSingleAsDecimal();
-            face.Texture.VAxis = br.ReadCoordinate();
-            face.Texture.YShift = br.ReadSingleAsDecimal();
-            face.Texture.Rotation = br.ReadSingleAsDecimal();
-            face.Texture.XScale = br.ReadSingleAsDecimal();
-            face.Texture.YScale = br.ReadSingleAsDecimal();
+            face.Texture.UAxis = br.ReadVector3();
+            face.Texture.XShift = br.ReadSingle();
+            face.Texture.VAxis = br.ReadVector3();
+            face.Texture.YShift = br.ReadSingle();
+            face.Texture.Rotation = br.ReadSingle();
+            face.Texture.XScale = br.ReadSingle();
+            face.Texture.YScale = br.ReadSingle();
             br.ReadBytes(16); // Unused
             var numVerts = br.ReadInt32();
             for (var i = 0; i < numVerts; i++)
             {
-                face.Vertices.Add(br.ReadCoordinate());
+                face.Vertices.Add(br.ReadVector3());
             }
             face.Plane = br.ReadPlane();
             return face;
@@ -296,8 +296,8 @@ namespace Sledge.BspEditor.Providers
             {
                 map.Data.Add(new Camera
                 {
-                    EyePosition = br.ReadCoordinate(),
-                    LookPosition = br.ReadCoordinate(),
+                    EyePosition = br.ReadVector3(),
+                    LookPosition = br.ReadVector3(),
                     IsActive = activeCamera == i
                 });
             }
@@ -391,7 +391,7 @@ namespace Sledge.BspEditor.Providers
             bw.Write(path.Nodes.Count);
             foreach (var node in path.Nodes)
             {
-                bw.WriteCoordinate(node.Position);
+                bw.WriteVector3(node.Position);
                 bw.Write(node.ID);
                 bw.WriteFixedLengthString(Encoding.ASCII, 128, node.Name);
                 bw.Write(node.Properties.Count);
@@ -427,7 +427,7 @@ namespace Sledge.BspEditor.Providers
             WriteMapBase(entity, bw);
             WriteEntityData(entity.EntityData, bw);
             bw.Write(new byte[2]); // Unused
-            bw.WriteCoordinate(entity.Origin);
+            bw.WriteVector3(entity.Origin);
             bw.Write(new byte[4]); // Unused
         }
 
@@ -452,18 +452,18 @@ namespace Sledge.BspEditor.Providers
         {
             bw.WriteFixedLengthString(Encoding.ASCII, 256, face.Texture.Name);
             bw.Write(new byte[4]);
-            bw.WriteCoordinate(face.Texture.UAxis);
-            bw.WriteDecimalAsSingle(face.Texture.XShift);
-            bw.WriteCoordinate(face.Texture.VAxis);
-            bw.WriteDecimalAsSingle(face.Texture.YShift);
-            bw.WriteDecimalAsSingle(face.Texture.Rotation);
-            bw.WriteDecimalAsSingle(face.Texture.XScale);
-            bw.WriteDecimalAsSingle(face.Texture.YScale);
+            bw.WriteVector3(face.Texture.UAxis);
+            bw.Write(face.Texture.XShift);
+            bw.WriteVector3(face.Texture.VAxis);
+            bw.Write(face.Texture.YShift);
+            bw.Write(face.Texture.Rotation);
+            bw.Write(face.Texture.XScale);
+            bw.Write(face.Texture.YScale);
             bw.Write(new byte[16]);
             bw.Write(face.Vertices.Count);
             foreach (var vertex in face.Vertices)
             {
-                bw.WriteCoordinate(vertex);
+                bw.WriteVector3(vertex);
             }
             bw.WritePlane(face.Vertices.ToArray());
         }
@@ -479,8 +479,8 @@ namespace Sledge.BspEditor.Providers
             bw.Write(cams.Count);
             foreach (var cam in cams)
             {
-                bw.WriteCoordinate(cam.EyePosition);
-                bw.WriteCoordinate(cam.LookPosition);
+                bw.WriteVector3(cam.EyePosition);
+                bw.WriteVector3(cam.LookPosition);
             }
         }
         

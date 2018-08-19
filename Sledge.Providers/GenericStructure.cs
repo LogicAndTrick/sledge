@@ -5,10 +5,11 @@ using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Numerics;
 using System.Reflection;
-using System.Text;
 using Sledge.Common.Extensions;
 using Sledge.DataStructures.Geometric;
+using Plane = Sledge.DataStructures.Geometric.Plane;
 
 namespace Sledge.Providers
 {
@@ -135,27 +136,27 @@ namespace Sledge.Providers
             return defaultValue;
         }
 
-        public decimal PropertyDecimal(string name, decimal defaultValue = 0)
+        public float Propertyfloat(string name, float defaultValue = 0)
         {
             var prop = this[name];
-            decimal d;
-            if (decimal.TryParse(prop, NumberStyles.Float, CultureInfo.InvariantCulture, out d))
+            float d;
+            if (float.TryParse(prop, NumberStyles.Float, CultureInfo.InvariantCulture, out d))
             {
                 return d;
             }
             return defaultValue;
         }
 
-        public decimal[] PropertyDecimalArray(string name, int count)
+        public float[] PropertyfloatArray(string name, int count)
         {
             var prop = this[name];
-            var defaultValue = Enumerable.Range(0, count).Select(i => 0m).ToArray();
+            var defaultValue = Enumerable.Range(0, count).Select(i => 0f).ToArray();
             if (prop == null || prop.Count(c => c == ' ') != (count - 1)) return defaultValue;
             var split = prop.Split(' ');
             for (var i = 0; i < count; i++)
             {
-                decimal d;
-                if (decimal.TryParse(split[i], NumberStyles.Float, CultureInfo.InvariantCulture, out d))
+                float d;
+                if (float.TryParse(split[i], NumberStyles.Float, CultureInfo.InvariantCulture, out d))
                 {
                     defaultValue[i] = d;
                 }
@@ -166,77 +167,77 @@ namespace Sledge.Providers
         public Plane PropertyPlane(string name)
         {
             var prop = this[name];
-            var defaultValue = new Plane(Coordinate.UnitZ, 0);
+            var defaultValue = new Plane(Vector3.UnitZ, 0);
             if (prop == null || prop.Count(c => c == ' ') != 8) return defaultValue;
             var split = prop.Replace("(", "").Replace(")", "").Split(' ');
-            decimal x1, x2, x3, y1, y2, y3, z1, z2, z3;
-            if (decimal.TryParse(split[0], NumberStyles.Float, CultureInfo.InvariantCulture, out x1)
-                && decimal.TryParse(split[1], NumberStyles.Float, CultureInfo.InvariantCulture, out y1)
-                && decimal.TryParse(split[2], NumberStyles.Float, CultureInfo.InvariantCulture, out z1)
-                && decimal.TryParse(split[3], NumberStyles.Float, CultureInfo.InvariantCulture, out x2)
-                && decimal.TryParse(split[4], NumberStyles.Float, CultureInfo.InvariantCulture, out y2)
-                && decimal.TryParse(split[5], NumberStyles.Float, CultureInfo.InvariantCulture, out z2)
-                && decimal.TryParse(split[6], NumberStyles.Float, CultureInfo.InvariantCulture, out x3)
-                && decimal.TryParse(split[7], NumberStyles.Float, CultureInfo.InvariantCulture, out y3)
-                && decimal.TryParse(split[8], NumberStyles.Float, CultureInfo.InvariantCulture, out z3))
+            float x1, x2, x3, y1, y2, y3, z1, z2, z3;
+            if (float.TryParse(split[0], NumberStyles.Float, CultureInfo.InvariantCulture, out x1)
+                && float.TryParse(split[1], NumberStyles.Float, CultureInfo.InvariantCulture, out y1)
+                && float.TryParse(split[2], NumberStyles.Float, CultureInfo.InvariantCulture, out z1)
+                && float.TryParse(split[3], NumberStyles.Float, CultureInfo.InvariantCulture, out x2)
+                && float.TryParse(split[4], NumberStyles.Float, CultureInfo.InvariantCulture, out y2)
+                && float.TryParse(split[5], NumberStyles.Float, CultureInfo.InvariantCulture, out z2)
+                && float.TryParse(split[6], NumberStyles.Float, CultureInfo.InvariantCulture, out x3)
+                && float.TryParse(split[7], NumberStyles.Float, CultureInfo.InvariantCulture, out y3)
+                && float.TryParse(split[8], NumberStyles.Float, CultureInfo.InvariantCulture, out z3))
             {
                 return new Plane(
-                    new Coordinate(x1, y1, z1).Round(),
-                    new Coordinate(x2, y2, z2).Round(),
-                    new Coordinate(x3, y3, z3).Round());
+                    new Vector3(x1, y1, z1).Round(),
+                    new Vector3(x2, y2, z2).Round(),
+                    new Vector3(x3, y3, z3).Round());
             }
             return defaultValue;
         }
 
-        public Coordinate PropertyCoordinate(string name, Coordinate defaultValue = null)
+        public Vector3? PropertyVector3(string name, Vector3? defaultValue = null)
         {
             var prop = this[name];
-            if (defaultValue == null) defaultValue = Coordinate.Zero;
+            if (defaultValue == null) defaultValue = Vector3.Zero;
             if (prop == null || prop.Count(c => c == ' ') != 2) return defaultValue;
             var split = prop.Replace("[", "").Replace("]", "").Replace("(", "").Replace(")", "").Split(' ');
-            decimal x, y, z;
-            if (decimal.TryParse(split[0], NumberStyles.Float, CultureInfo.InvariantCulture, out x)
-                && decimal.TryParse(split[1], NumberStyles.Float, CultureInfo.InvariantCulture, out y)
-                && decimal.TryParse(split[2], NumberStyles.Float, CultureInfo.InvariantCulture, out z))
+            float x, y, z;
+            if (float.TryParse(split[0], NumberStyles.Float, CultureInfo.InvariantCulture, out x)
+                && float.TryParse(split[1], NumberStyles.Float, CultureInfo.InvariantCulture, out y)
+                && float.TryParse(split[2], NumberStyles.Float, CultureInfo.InvariantCulture, out z))
             {
-                return new Coordinate(x, y, z);
+                return new Vector3(x, y, z);
             }
             return defaultValue;
         }
 
-        public Coordinate[] PropertyCoordinateArray(string name, int count)
+        public Vector3[] PropertyVector3Array(string name, int count)
         {
             var prop = this[name];
-            var defaultValue = Enumerable.Range(0, count).Select(i => Coordinate.Zero).ToArray();
+            var defaultValue = Enumerable.Range(0, count).Select(i => Vector3.Zero).ToArray();
             if (prop == null || prop.Count(c => c == ' ') != (count * 3 - 1)) return defaultValue;
             var split = prop.Split(' ');
             for (var i = 0; i < count; i++)
             {
-                decimal x, y, z;
-                if (decimal.TryParse(split[i * 3], NumberStyles.Float, CultureInfo.InvariantCulture, out x)
-                    && decimal.TryParse(split[i * 3 + 1], NumberStyles.Float, CultureInfo.InvariantCulture, out y)
-                    && decimal.TryParse(split[i * 3 + 2], NumberStyles.Float, CultureInfo.InvariantCulture, out z))
+                float x, y, z;
+                if (float.TryParse(split[i * 3], NumberStyles.Float, CultureInfo.InvariantCulture, out x)
+                    && float.TryParse(split[i * 3 + 1], NumberStyles.Float, CultureInfo.InvariantCulture, out y)
+                    && float.TryParse(split[i * 3 + 2], NumberStyles.Float, CultureInfo.InvariantCulture, out z))
                 {
-                    defaultValue[i] = new Coordinate(x, y, z);
+                    defaultValue[i] = new Vector3(x, y, z);
                 }
             }
             return defaultValue;
         }
 
-        public Tuple<Coordinate, decimal, decimal> PropertyTextureAxis(string name)
+        public Tuple<Vector3, float, float> PropertyTextureAxis(string name)
         {
             var prop = this[name];
-            var defaultValue = Tuple.Create(Coordinate.UnitX, 0m, 1m);
+            var defaultValue = Tuple.Create(Vector3.UnitX, 0f, 1f);
             if (prop == null || prop.Count(c => c == ' ') != 4) return defaultValue;
             var split = prop.Replace("[", "").Replace("]", "").Split(' ');
-            decimal x, y, z, sh, sc;
-            if (decimal.TryParse(split[0], NumberStyles.Float, CultureInfo.InvariantCulture, out x)
-                && decimal.TryParse(split[1], NumberStyles.Float, CultureInfo.InvariantCulture, out y)
-                && decimal.TryParse(split[2], NumberStyles.Float, CultureInfo.InvariantCulture, out z)
-                && decimal.TryParse(split[3], NumberStyles.Float, CultureInfo.InvariantCulture, out sh)
-                && decimal.TryParse(split[4], NumberStyles.Float, CultureInfo.InvariantCulture, out sc))
+            float x, y, z, sh, sc;
+            if (float.TryParse(split[0], NumberStyles.Float, CultureInfo.InvariantCulture, out x)
+                && float.TryParse(split[1], NumberStyles.Float, CultureInfo.InvariantCulture, out y)
+                && float.TryParse(split[2], NumberStyles.Float, CultureInfo.InvariantCulture, out z)
+                && float.TryParse(split[3], NumberStyles.Float, CultureInfo.InvariantCulture, out sh)
+                && float.TryParse(split[4], NumberStyles.Float, CultureInfo.InvariantCulture, out sc))
             {
-                return Tuple.Create(new Coordinate(x, y, z), sh, sc);
+                return Tuple.Create(new Vector3(x, y, z), sh, sc);
             }
             return defaultValue;
         }
@@ -299,7 +300,7 @@ namespace Sledge.Providers
 	        var ty = obj.GetType();
 
             // Handle primitive types
-	        if (ty.IsPrimitive || ty == typeof(string) || ty == typeof(decimal))
+	        if (ty.IsPrimitive || ty == typeof(string) || ty == typeof(float))
 	        {
 	            var name = "Primitives.";
 	            if (ty == typeof (bool)) name += "Boolean";
@@ -320,9 +321,9 @@ namespace Sledge.Providers
                 return new GenericStructure("Primitives.Colour") { Properties = { new GenericStructureProperty("Primitive.Value", col) } };
             }
 
-            if (ty == typeof(Coordinate))
+            if (ty == typeof(Vector3))
             {
-                return new GenericStructure("Primitives.Coordinate") { Properties = { new GenericStructureProperty("Primitive.Value", obj.ToString()) } };
+                return new GenericStructure("Primitives.Vector3") { Properties = { new GenericStructureProperty("Primitive.Value", obj.ToString()) } };
             }
 
             if (ty == typeof(Box))
@@ -487,19 +488,19 @@ namespace Sledge.Providers
                 case "String":
                     return value;
                 case "Numeric":
-                    return Decimal.Parse(value, NumberStyles.Float, CultureInfo.InvariantCulture);
+                    return float.Parse(value, NumberStyles.Float, CultureInfo.InvariantCulture);
                 case "DateTime":
                     return DateTime.ParseExact(value, "u", CultureInfo.InvariantCulture);
                 case "Colour":
                     return Color.FromArgb(int.Parse(spl[3]), int.Parse(spl[0]), int.Parse(spl[1]), int.Parse(spl[2]));
-                case "Coordinate":
-                    return Coordinate.Parse(spl[0].TrimStart('('), spl[1], spl[2].TrimEnd(')'));
+                case "Vector3":
+                    return Vector3Extensions.Parse(spl[0].TrimStart('('), spl[1], spl[2].TrimEnd(')'));
                 case "Box":
                     return new Box(
-                        Coordinate.Parse(spl[0].TrimStart('('), spl[1], spl[2].TrimEnd(')')),
-                        Coordinate.Parse(spl[3].TrimStart('('), spl[4], spl[5].TrimEnd(')')));
+                        Vector3Extensions.Parse(spl[0].TrimStart('('), spl[1], spl[2].TrimEnd(')')),
+                        Vector3Extensions.Parse(spl[3].TrimStart('('), spl[4], spl[5].TrimEnd(')')));
                 case "Plane":
-                    return new Plane(Coordinate.Parse(spl[0].TrimStart('('), spl[1], spl[2].TrimEnd(')')), Decimal.Parse(spl[3]));
+                    return new Plane(Vector3Extensions.Parse(spl[0].TrimStart('('), spl[1], spl[2].TrimEnd(')')), float.Parse(spl[3]));
                 case "Rectangle":
                     return new Rectangle(int.Parse(spl[0]), int.Parse(spl[1]), int.Parse(spl[2]), int.Parse(spl[3]));
                 default:
@@ -511,10 +512,10 @@ namespace Sledge.Providers
 	    {
             if (ty == typeof(bool)) return "Boolean";
             if (ty == typeof(char) || ty == typeof(string)) return "String";
-	        if (ty.IsPrimitive || ty == typeof (decimal)) return "Numeric";
+	        if (ty.IsPrimitive || ty == typeof (float)) return "Numeric";
 	        if (ty == typeof (DateTime)) return "DateTime";
             if (ty == typeof(Color)) return "Colour";
-            if (ty == typeof(Coordinate)) return "Coordinate";
+            if (ty == typeof(Vector3)) return "Vector3";
             if (ty == typeof(Box)) return "Box";
             if (ty == typeof(Plane)) return "Plane";
             if (ty == typeof(Rectangle)) return "Rectangle";
@@ -612,7 +613,7 @@ namespace Sledge.Providers
         {
             if (line == null) return null;
             var ret = line;
-            if (ret.Contains("//")) ret = ret.Substring(0, ret.IndexOf("//")); // Comments
+            if (ret.Contains("//")) ret = ret.Substring(0, ret.IndexOf("//", StringComparison.Ordinal)); // Comments
             return ret.Trim();
         }
 

@@ -1,20 +1,20 @@
 using System;
 using System.Collections.Generic;
-using Sledge.Common;
+using System.Numerics;
 using Sledge.DataStructures.Geometric;
 
 namespace Sledge.BspEditor.Grid
 {
     public class SquareGrid : IGrid
     {
-        public decimal High { get; set; }
-        public decimal Low { get; set; }
-        public decimal Step { get; set; }
+        public float High { get; set; }
+        public float Low { get; set; }
+        public float Step { get; set; }
 
         public int Spacing
         {
-            get => (int) Math.Log((double) Step, 2);
-            set => Step = DMath.Pow(2, value);
+            get => (int) Math.Log(Step, 2);
+            set => Step = (float) Math.Pow(2, value);
         }
 
         public int HideSmallerThan { get; } = 4;
@@ -22,24 +22,24 @@ namespace Sledge.BspEditor.Grid
         public int Highlight1LineNum { get; } = 8;
         public int Highlight2UnitNum { get; } = 1024;
 
-        public SquareGrid(decimal high, decimal low, decimal step)
+        public SquareGrid(float high, float low, float step)
         {
             High = high;
             Low = low;
             Step = step;
         }
 
-        public Coordinate Snap(Coordinate coordinate)
+        public Vector3 Snap(Vector3 vector)
         {
-            return coordinate.Snap(Step);
+            return vector.Snap(Step);
         }
 
-        public Coordinate AddStep(Coordinate coordinate, Coordinate add)
+        public Vector3 AddStep(Vector3 vector, Vector3 add)
         {
-            return coordinate + add * Step;
+            return vector + add * Step;
         }
 
-        private decimal GetActualStep(decimal step, decimal scale)
+        private float GetActualStep(float step, float scale)
         {
             var actualDist = step * scale;
             while (actualDist < HideSmallerThan)
@@ -50,28 +50,28 @@ namespace Sledge.BspEditor.Grid
             return step;
         }
 
-        public virtual IEnumerable<GridLine> GetLines(Coordinate normal, decimal scale, Coordinate worldMinimum, Coordinate worldMaximum)
+        public virtual IEnumerable<GridLine> GetLines(Vector3 normal, float scale, Vector3 worldMinimum, Vector3 worldMaximum)
         {
             var lower = Low;
             var upper = High;
             var step = GetActualStep(Step, scale);
 
-            Func<Coordinate, Coordinate> tform;
-            Func<Coordinate, Coordinate> rform;
-            if (normal == Coordinate.UnitX)
+            Func<Vector3, Vector3> tform;
+            Func<Vector3, Vector3> rform;
+            if (normal == Vector3.UnitX)
             {
-                tform = x => new Coordinate(Low, x.X, x.Y);
-                rform = x => new Coordinate(x.Y, x.Z, 0);
+                tform = x => new Vector3(Low, x.X, x.Y);
+                rform = x => new Vector3(x.Y, x.Z, 0);
             }
-            else if (normal == Coordinate.UnitY)
+            else if (normal == Vector3.UnitY)
             {
-                tform = x => new Coordinate(x.X, Low, x.Y);
-                rform = x => new Coordinate(x.X, x.Z, 0);
+                tform = x => new Vector3(x.X, Low, x.Y);
+                rform = x => new Vector3(x.X, x.Z, 0);
             }
-            else if (normal == Coordinate.UnitZ)
+            else if (normal == Vector3.UnitZ)
             {
-                tform = x => new Coordinate(x.X, x.Y, Low);
-                rform = x => new Coordinate(x.X, x.Y, 0);
+                tform = x => new Vector3(x.X, x.Y, Low);
+                rform = x => new Vector3(x.X, x.Y, 0);
             }
             else
             {
@@ -89,12 +89,12 @@ namespace Sledge.BspEditor.Grid
 
                 var type = GridLineType.Standard;
                 if (i == 0) type = GridLineType.Axis;
-                else if (i == Low || i == High) type = GridLineType.Boundary;
+                else if (Math.Abs(i - Low) < 0.01f || Math.Abs(i - High) < 0.01f) type = GridLineType.Boundary;
                 else if (i % Highlight2UnitNum == 0) type = GridLineType.Secondary;
                 else if (i % (int) (step * Highlight1LineNum) == 0) type = GridLineType.Primary;
 
-                yield return new GridLine(type, tform(new Coordinate(lower, f, 0)), tform(new Coordinate(upper, f, 0)));
-                yield return new GridLine(type, tform(new Coordinate(f, lower, 0)), tform(new Coordinate(f, upper, 0)));
+                yield return new GridLine(type, tform(new Vector3(lower, f, 0)), tform(new Vector3(upper, f, 0)));
+                yield return new GridLine(type, tform(new Vector3(f, lower, 0)), tform(new Vector3(f, upper, 0)));
             }
         }
     }

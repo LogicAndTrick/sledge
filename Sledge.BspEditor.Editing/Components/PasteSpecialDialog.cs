@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.Composition;
+using System.Numerics;
 using System.Windows.Forms;
 using Sledge.Common.Translations;
 using Sledge.DataStructures.Geometric;
@@ -81,25 +82,25 @@ namespace Sledge.BspEditor.Editing.Components
             }
         }
 
-        public Coordinate AccumulativeOffset
+        public Vector3 AccumulativeOffset
         {
-            get => new Coordinate(OffsetX.Value, OffsetY.Value, OffsetZ.Value);
+            get => new Vector3((float) OffsetX.Value, (float) OffsetY.Value, (float) OffsetZ.Value);
             set
             {
-                OffsetX.Value = value.X;
-                OffsetY.Value = value.Y;
-                OffsetZ.Value = value.Z;
+                OffsetX.Value = (decimal) value.X;
+                OffsetY.Value = (decimal) value.Y;
+                OffsetZ.Value = (decimal) value.Z;
             }
         }
 
-        public Coordinate AccumulativeRotation
+        public Vector3 AccumulativeRotation
         {
-            get => new Coordinate(RotationX.Value, RotationY.Value, RotationZ.Value);
+            get => new Vector3((float) RotationX.Value, (float) RotationY.Value, (float) RotationZ.Value);
             set
             {
-                RotationX.Value = value.X;
-                RotationY.Value = value.Y;
-                RotationZ.Value = value.Z;
+                RotationX.Value = (decimal) value.X;
+                RotationY.Value = (decimal) value.Y;
+                RotationZ.Value = (decimal) value.Z;
             }
         }
 
@@ -143,9 +144,9 @@ namespace Sledge.BspEditor.Editing.Components
             ZeroOffsetYButton.Click += (sender, e) => OffsetY.Value = 0;
             ZeroOffsetZButton.Click += (sender, e) => OffsetZ.Value = 0;
 
-            SourceOffsetXButton.Click += (sender, e) => OffsetX.Value = _source.Width;
-            SourceOffsetYButton.Click += (sender, e) => OffsetY.Value = _source.Length;
-            SourceOffsetZButton.Click += (sender, e) => OffsetZ.Value = _source.Height;
+            SourceOffsetXButton.Click += (sender, e) => OffsetX.Value = (decimal) _source.Width;
+            SourceOffsetYButton.Click += (sender, e) => OffsetY.Value = (decimal) _source.Length;
+            SourceOffsetZButton.Click += (sender, e) => OffsetZ.Value = (decimal) _source.Height;
 
             ZeroRotationXButton.Click += (sender, e) => RotationX.Value = 0;
             ZeroRotationYButton.Click += (sender, e) => RotationY.Value = 0;

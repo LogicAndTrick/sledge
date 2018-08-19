@@ -6,7 +6,6 @@ using Sledge.DataStructures.Geometric;
 using Sledge.Editor.Extensions;
 using Sledge.Editor.Rendering;
 using Sledge.Editor.Tools.SelectTool;
-using Sledge.Rendering.Cameras;
 
 namespace Sledge.Editor.Documents
 {

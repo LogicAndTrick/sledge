@@ -25,7 +25,7 @@ namespace Sledge.BspEditor.Editing.Problems
             //    EntityData = new EntityData { Name = "info_player_start" },
             //                          ClassName = "info_player_start",
             //                          Colour = Colour.GetDefaultEntityColour(),
-            //                          Origin = Coordinate.Zero
+            //                          Origin = Vector3.Zero
             //                      });
         }
     }

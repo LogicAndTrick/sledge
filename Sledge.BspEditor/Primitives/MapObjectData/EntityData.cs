@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Globalization;
-using System.Linq;
+using System.Numerics;
 using System.Runtime.Serialization;
 using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.Common.Transport;
-using Sledge.DataStructures.Geometric;
 
 namespace Sledge.BspEditor.Primitives.MapObjectData
 {
@@ -43,16 +42,16 @@ namespace Sledge.BspEditor.Primitives.MapObjectData
             info.AddValue("Properties", Properties);
         }
 
-        public Coordinate GetCoordinate(string key)
+        public Vector3? GetVector3(string key)
         {
             if (!Properties.ContainsKey(key)) return null;
             var spl = (Properties[key] ?? "").Split(' ');
-            decimal x, y, z;
-            if (decimal.TryParse(spl[0], NumberStyles.Float, CultureInfo.InvariantCulture, out x)
-                && decimal.TryParse(spl[1], NumberStyles.Float, CultureInfo.InvariantCulture, out y)
-                && decimal.TryParse(spl[2], NumberStyles.Float, CultureInfo.InvariantCulture, out z))
+            float x, y, z;
+            if (float.TryParse(spl[0], NumberStyles.Float, CultureInfo.InvariantCulture, out x)
+                && float.TryParse(spl[1], NumberStyles.Float, CultureInfo.InvariantCulture, out y)
+                && float.TryParse(spl[2], NumberStyles.Float, CultureInfo.InvariantCulture, out z))
             {
-                return new Coordinate(x, y, z);
+                return new Vector3(x, y, z);
             }
             return null;
         }

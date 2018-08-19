@@ -1,21 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.Composition;
-using System.Linq;
-using System.Text;
+﻿using System.ComponentModel.Composition;
+using System.Numerics;
 using System.Threading.Tasks;
-using OpenTK;
 using Sledge.BspEditor.Commands;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Modification;
 using Sledge.BspEditor.Modification.Operations.Mutation;
 using Sledge.BspEditor.Primitives.MapData;
-using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.Common.Shell.Commands;
 using Sledge.Common.Shell.Context;
 using Sledge.Common.Shell.Menu;
 using Sledge.Common.Translations;
-using Sledge.DataStructures.Geometric;
 
 namespace Sledge.BspEditor.Editing.Commands.Modification
 {
@@ -29,7 +23,7 @@ namespace Sledge.BspEditor.Editing.Commands.Modification
             return base.IsInContext(context, document) && !document.Selection.IsEmpty;
         }
 
-        protected abstract Coordinate GetScale();
+        protected abstract Vector3 GetScale();
 
         protected override async Task Invoke(MapDocument document, CommandParameters parameters)
         {
@@ -39,7 +33,7 @@ namespace Sledge.BspEditor.Editing.Commands.Modification
 
             var transaction = new Transaction();
 
-            var tform = Matrix.Translation(selBox.Center) * Matrix.Scale(GetScale()) * Matrix.Translation(-selBox.Center);
+            var tform = Matrix4x4.CreateTranslation(selBox.Center) * Matrix4x4.CreateScale(GetScale()) * Matrix4x4.CreateTranslation(-selBox.Center);
 
             var transformOperation = new BspEditor.Modification.Operations.Mutation.Transform(tform, document.Selection.GetSelectedParents());
             transaction.Add(transformOperation);
@@ -57,9 +51,9 @@ namespace Sledge.BspEditor.Editing.Commands.Modification
     [CommandID("BspEditor:Tools:FlipX")]
     public class FlipSelectionX : FlipSelection
     {
-        protected override Coordinate GetScale()
+        protected override Vector3 GetScale()
         {
-            return new Coordinate(-1, 1, 1);
+            return new Vector3(-1, 1, 1);
         }
     }
 
@@ -69,9 +63,9 @@ namespace Sledge.BspEditor.Editing.Commands.Modification
     [CommandID("BspEditor:Tools:FlipY")]
     public class FlipSelectionY : FlipSelection
     {
-        protected override Coordinate GetScale()
+        protected override Vector3 GetScale()
         {
-            return new Coordinate(1, -1, 1);
+            return new Vector3(1, -1, 1);
         }
     }
 
@@ -81,9 +75,9 @@ namespace Sledge.BspEditor.Editing.Commands.Modification
     [CommandID("BspEditor:Tools:FlipZ")]
     public class FlipSelectionZ : FlipSelection
     {
-        protected override Coordinate GetScale()
+        protected override Vector3 GetScale()
         {
-            return new Coordinate(1, 1, -1);
+            return new Vector3(1, 1, -1);
         }
     }
 }

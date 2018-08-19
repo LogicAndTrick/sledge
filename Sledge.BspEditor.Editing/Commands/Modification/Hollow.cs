@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
+using System.Numerics;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Sledge.BspEditor.Commands;
@@ -16,7 +17,6 @@ using Sledge.Common.Shell.Context;
 using Sledge.Common.Shell.Hotkeys;
 using Sledge.Common.Shell.Menu;
 using Sledge.Common.Translations;
-using Sledge.DataStructures.Geometric;
 using Sledge.QuickForms;
 
 namespace Sledge.BspEditor.Editing.Commands.Modification
@@ -56,7 +56,7 @@ namespace Sledge.BspEditor.Editing.Commands.Modification
 
             if (await qf.ShowDialogAsync() != DialogResult.OK) return;
 
-            var width = qf.Decimal("Width");
+            var width = (float) qf.Decimal("Width");
 
             var ops = new List<IOperation>();
 
@@ -68,7 +68,7 @@ namespace Sledge.BspEditor.Editing.Commands.Modification
                 // Make a scaled version of the solid for the "inside" of the hollowed solid
                 var origin = solid.BoundingBox.Center;
                 var current = obj.BoundingBox.Dimensions;
-                var target = current - new Coordinate(width, width, width) * 2; // Double the width to take from both sides
+                var target = current - new Vector3(width, width, width) * 2; // Double the width to take from both sides
 
                 // Ensure we don't have any invalid target sizes
                 if (target.X < 1) target.X = 1;
@@ -76,9 +76,9 @@ namespace Sledge.BspEditor.Editing.Commands.Modification
                 if (target.Z < 1) target.Z = 1;
 
                 // Clone and scale the solid
-                var scale = target.ComponentDivide(current);
+                var scale = Vector3.Divide(target, current);
                 var carver = (Solid) solid.Clone();
-                carver.Transform(Matrix.Translation(origin) * Matrix.Scale(scale) * Matrix.Translation(-origin));
+                carver.Transform(Matrix4x4.CreateTranslation(origin) * Matrix4x4.CreateScale(scale) * Matrix4x4.CreateTranslation(-origin));
 
                 // For a negative width, we want the original solid to be the inside instead
                 if (width < 0)

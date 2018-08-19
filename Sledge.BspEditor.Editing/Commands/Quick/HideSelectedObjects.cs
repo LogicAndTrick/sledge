@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel.Composition;
+﻿using System.ComponentModel.Composition;
 using System.Linq;
 using System.Threading.Tasks;
 using Sledge.BspEditor.Commands;
@@ -8,8 +7,6 @@ using Sledge.BspEditor.Editing.Properties;
 using Sledge.BspEditor.Modification;
 using Sledge.BspEditor.Modification.Operations.Data;
 using Sledge.BspEditor.Modification.Operations.Selection;
-using Sledge.BspEditor.Modification.Operations.Tree;
-using Sledge.BspEditor.Primitives;
 using Sledge.BspEditor.Primitives.MapObjectData;
 using Sledge.Common.Shell.Commands;
 using Sledge.Common.Shell.Context;

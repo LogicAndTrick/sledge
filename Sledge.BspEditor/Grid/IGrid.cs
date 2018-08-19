@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Sledge.DataStructures.Geometric;
+using System.Numerics;
 
 namespace Sledge.BspEditor.Grid
 {
@@ -13,19 +13,19 @@ namespace Sledge.BspEditor.Grid
         int Spacing { get; set; }
 
         /// <summary>
-        /// Snaps the given coordinate to the closest grid point
+        /// Snaps the given vector to the closest grid point
         /// </summary>
-        /// <param name="coordinate">The coordinate to snap</param>
-        /// <returns>A snapped coordinate</returns>
-        Coordinate Snap(Coordinate coordinate);
+        /// <param name="vector">The vector to snap</param>
+        /// <returns>A snapped vector</returns>
+        Vector3 Snap(Vector3 vector);
 
         /// <summary>
-        /// Add a single step to a given coordinate. The coordinate is not rounded first.
+        /// Add a single step to a given vector. The vector is not rounded first.
         /// </summary>
-        /// <param name="coordinate">The coordinate to add to</param>
-        /// <param name="add">The relative number of steps to add to the coordinate</param>
-        /// <returns>The new coordinate with the steps added</returns>
-        Coordinate AddStep(Coordinate coordinate, Coordinate add);
+        /// <param name="vector">The vector to add to</param>
+        /// <param name="add">The relative number of steps to add to the vector</param>
+        /// <returns>The new vector with the steps added</returns>
+        Vector3 AddStep(Vector3 vector, Vector3 add);
 
         /// <summary>
         /// Get the current grid lines for a viewport.
@@ -33,9 +33,9 @@ namespace Sledge.BspEditor.Grid
         /// </summary>
         /// <param name="normal">The normal to the plane, should be UnitX, UnitY, or UnitZ</param>
         /// <param name="scale">The scale of the viewport</param>
-        /// <param name="worldMinimum">The start of the viewport in world coordinates</param>
-        /// <param name="worldMaximum">The end of the viewport in world coordinates</param>
+        /// <param name="worldMinimum">The start of the viewport in world vectors</param>
+        /// <param name="worldMaximum">The end of the viewport in world vectors</param>
         /// <returns>The list of lines that are currently visible in the viewport</returns>
-        IEnumerable<GridLine> GetLines(Coordinate normal, decimal scale, Coordinate worldMinimum, Coordinate worldMaximum);
+        IEnumerable<GridLine> GetLines(Vector3 normal, float scale, Vector3 worldMinimum, Vector3 worldMaximum);
     }
 }

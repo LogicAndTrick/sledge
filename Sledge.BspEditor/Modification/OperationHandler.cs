@@ -11,11 +11,12 @@ namespace Sledge.BspEditor.Modification
     {
         private readonly TaskQueue _queue = new TaskQueue();
 
-        public async Task OnInitialise()
+        public Task OnInitialise()
         {
             Oy.Subscribe<MapDocumentOperation>("MapDocument:Perform:Bypass", Perform);
             Oy.Subscribe<MapDocumentOperation>("MapDocument:Perform", Perform);
             Oy.Subscribe<MapDocumentOperation>("MapDocument:Reverse", Reverse);
+            return Task.FromResult(0);
         }
 
         private async Task Perform(MapDocumentOperation operation)

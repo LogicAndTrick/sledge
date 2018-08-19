@@ -1,21 +1,16 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel.Composition;
+﻿using System.ComponentModel.Composition;
+using System.Numerics;
 using System.Threading.Tasks;
 using Sledge.BspEditor.Commands;
 using Sledge.BspEditor.Documents;
-using Sledge.BspEditor.Editing.Components;
 using Sledge.BspEditor.Editing.Properties;
 using Sledge.BspEditor.Modification;
 using Sledge.BspEditor.Modification.Operations.Mutation;
-using Sledge.BspEditor.Modification.Operations.Tree;
-using Sledge.BspEditor.Primitives;
 using Sledge.BspEditor.Primitives.MapData;
 using Sledge.Common.Shell.Commands;
 using Sledge.Common.Shell.Context;
-using Sledge.Common.Shell.Hotkeys;
 using Sledge.Common.Shell.Menu;
 using Sledge.Common.Translations;
-using Sledge.DataStructures.Geometric;
 
 namespace Sledge.BspEditor.Editing.Commands.Modification
 {
@@ -43,9 +38,9 @@ namespace Sledge.BspEditor.Editing.Commands.Modification
             var start = selBox.Start;
             var snapped = grid.Grid.Snap(start);
             var trans = snapped - start;
-            if (trans == Coordinate.Zero) return;
+            if (trans == Vector3.Zero) return;
 
-            var tform = Matrix.Translation(trans);
+            var tform = Matrix4x4.CreateTranslation(trans);
 
             var transaction = new Transaction();
             var transformOperation = new BspEditor.Modification.Operations.Mutation.Transform(tform, document.Selection.GetSelectedParents());

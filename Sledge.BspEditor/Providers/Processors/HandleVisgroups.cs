@@ -6,7 +6,6 @@ using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Primitives.MapData;
 using Sledge.BspEditor.Primitives.MapObjectData;
 using Sledge.BspEditor.Primitives.MapObjects;
-using Sledge.Common.Translations;
 
 namespace Sledge.BspEditor.Providers.Processors
 {

@@ -176,11 +176,11 @@ namespace Sledge.Shell.Forms
             {
                 if (visible)
                 {
-                    Show(_parent.Value);
+                    if (!Visible) Show(_parent.Value);
                 }
                 else
                 {
-                    Hide();
+                    if (Visible) Hide();
                 }
             });
         }

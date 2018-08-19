@@ -5,11 +5,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using OpenTK;
-using Sledge.DataStructures.Geometric;
-using Sledge.Rendering;
-using Sledge.Rendering.Cameras;
-using Sledge.Rendering.Interfaces;
+using Sledge.Rendering.Viewports;
 
 namespace Sledge.BspEditor.Rendering.Viewport
 {
@@ -18,9 +14,9 @@ namespace Sledge.BspEditor.Rendering.Viewport
         public List<IViewportEventListener> Listeners { get; private set; }
         public IViewport Viewport { get; private set; }
 
-        public Control Control { get { return Viewport.Control; } }
-        public int Height { get { return Control.Height; } }
-        public int Width { get { return Control.Width; } }
+        public Control Control => Viewport.Control;
+        public int Height => Control.Height;
+        public int Width => Control.Width;
 
         #region Input Locking
 
@@ -59,9 +55,7 @@ namespace Sledge.BspEditor.Rendering.Viewport
             viewport.Control.MouseDoubleClick += OnMouseDoubleClick;
             viewport.Control.KeyDown += OnKeyDown;
             viewport.Control.KeyUp += OnKeyUp;
-            viewport.Update += OnUpdate;
-
-            viewport.Camera.PropertyChanged += CameraPropertyChanged;
+            viewport.OnUpdate += OnUpdate;
         }
 
         #region Listeners
@@ -245,7 +239,7 @@ namespace Sledge.BspEditor.Rendering.Viewport
             ListenerDoEvent(new ViewportEvent(this, e), (l, v) => l.KeyUp(v));
         }
 
-        private void OnUpdate(object sender, Frame frame)
+        private void OnUpdate(object sender, long frame)
         {
             ListenerDo(x => x.UpdateFrame(frame));
         }
@@ -257,6 +251,7 @@ namespace Sledge.BspEditor.Rendering.Viewport
         }
 
         #endregion
+        /*
 
         #region 2D/3D methods
 
@@ -459,5 +454,7 @@ namespace Sledge.BspEditor.Rendering.Viewport
         }
 
         #endregion
+
+        */
     }
 }

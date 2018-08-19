@@ -1,22 +1,22 @@
 using System.ComponentModel.Composition;
-using System.Drawing;
+using System.Numerics;
 using System.Threading.Tasks;
-using OpenTK;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.BspEditor.Rendering.Scene;
 using Sledge.Rendering.Cameras;
-using Sledge.Rendering.Scenes.Renderables;
-using Line = Sledge.Rendering.Scenes.Renderables.Line;
+using Sledge.Rendering.Pipelines;
+using Sledge.Rendering.Primitives;
+using Sledge.Rendering.Resources;
 
 namespace Sledge.BspEditor.Rendering.Converters
 {
     [Export(typeof(IMapObjectSceneConverter))]
     public class AxisLinesConverter : IMapObjectSceneConverter
     {
-        public MapObjectSceneConverterPriority Priority { get { return MapObjectSceneConverterPriority.OverrideLow; } }
+        public MapObjectSceneConverterPriority Priority => MapObjectSceneConverterPriority.OverrideLow;
 
-        public bool ShouldStopProcessing(SceneMapObject smo, MapDocument document, IMapObject obj)
+        public bool ShouldStopProcessing(MapDocument document, IMapObject obj)
         {
             return false;
         }
@@ -25,20 +25,32 @@ namespace Sledge.BspEditor.Rendering.Converters
         {
             return obj is Root;
         }
-
-        public async Task<bool> Convert(SceneMapObject smo, MapDocument document, IMapObject obj)
+        
+        public Task Convert(SceneBuilder builder, MapDocument document, IMapObject obj)
         {
-            smo.SceneObjects.Add(new Holder(), new Line(Color.FromArgb(255, Color.Red), Vector3.Zero, Vector3.UnitX * 10) { RenderFlags = RenderFlags.Wireframe, CameraFlags = CameraFlags.Perspective });
-            smo.SceneObjects.Add(new Holder(), new Line(Color.FromArgb(255, Color.Lime), Vector3.Zero, Vector3.UnitY * 10) { RenderFlags = RenderFlags.Wireframe, CameraFlags = CameraFlags.Perspective });
-            smo.SceneObjects.Add(new Holder(), new Line(Color.FromArgb(255, Color.Blue), Vector3.Zero, Vector3.UnitZ * 10) { RenderFlags = RenderFlags.Wireframe, CameraFlags = CameraFlags.Perspective });
-            return true;
-        }
+            var points = new[]
+            {
+                // X axis - red
+                new VertexStandard { Position = Vector3.Zero, Colour = Vector4.UnitX + Vector4.UnitW },
+                new VertexStandard { Position = Vector3.UnitX * 10, Colour = Vector4.UnitX + Vector4.UnitW },
 
-        public async Task<bool> Update(SceneMapObject smo, MapDocument document, IMapObject obj)
-        {
-            return true;
-        }
+                // Y axis - green
+                new VertexStandard { Position = Vector3.Zero, Colour = Vector4.UnitY + Vector4.UnitW },
+                new VertexStandard { Position = Vector3.UnitY * 10, Colour = Vector4.UnitY + Vector4.UnitW },
 
-        private class Holder { }
+                // Z axis - blue
+                new VertexStandard { Position = Vector3.Zero, Colour = Vector4.UnitZ + Vector4.UnitW },
+                new VertexStandard { Position = Vector3.UnitZ * 10, Colour = Vector4.UnitZ + Vector4.UnitW },
+            };
+
+            var indices = new uint[] { 0, 1, 2, 3, 4, 5 };
+
+            builder.MainBuffer.Append(points, indices, new []
+            {
+                new BufferGroup(PipelineType.WireframeGeneric, CameraType.Perspective, false, Vector3.Zero, 0, (uint) indices.Length)
+            });
+
+            return Task.FromResult(0);
+        }
     }
 }

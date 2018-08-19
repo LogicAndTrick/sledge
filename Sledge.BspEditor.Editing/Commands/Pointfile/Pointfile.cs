@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
+using System.Numerics;
 using System.Runtime.Serialization;
 using Sledge.BspEditor.Primitives;
 using Sledge.BspEditor.Primitives.MapData;
-using Sledge.BspEditor.Primitives.MapObjectData;
 using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.Common.Transport;
 using Sledge.DataStructures.Geometric;
@@ -27,8 +27,8 @@ namespace Sledge.BspEditor.Editing.Commands.Pointfile
             foreach (var l in obj.Children.Where(x => x.Name == "Line"))
             {
                 Lines.Add(new Line(
-                    l.Get<Coordinate>("Start"),
-                    l.Get<Coordinate>("End")
+                    l.Get<Vector3>("Start"),
+                    l.Get<Vector3>("End")
                 ));
             }
         }
@@ -47,19 +47,19 @@ namespace Sledge.BspEditor.Editing.Commands.Pointfile
             var pts = detect.Length == 3;
             if (!lin && !pts) throw new Exception("Invalid pointfile format.");
 
-            Coordinate previous = null;
+            Vector3? previous = null;
             foreach (var line in list)
             {
                 var split = line.Split(' ');
-                var point = Coordinate.Parse(split[0], split[1], split[2]);
+                var point = Vector3Extensions.Parse(split[0], split[1], split[2]);
                 if (lin)
                 {
-                    var point2 = Coordinate.Parse(split[4], split[5], split[6]);
+                    var point2 = Vector3Extensions.Parse(split[4], split[5], split[6]);
                     pf.Lines.Add(new Line(point2, point));
                 }
                 else // pts
                 {
-                    if (previous != null) pf.Lines.Add(new Line(previous, point));
+                    if (previous.HasValue) pf.Lines.Add(new Line(previous.Value, point));
                     previous = point;
                 }
             }
@@ -84,7 +84,7 @@ namespace Sledge.BspEditor.Editing.Commands.Pointfile
         {
             return new Pointfile()
             {
-                Lines = Lines.Select(x => new Line(x.Start.Clone(), x.End.Clone())).ToList()
+                Lines = Lines.Select(x => new Line(x.Start, x.End)).ToList()
             };
         }
 

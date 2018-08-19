@@ -1,6 +1,7 @@
 ﻿using System;
+using System.Drawing;
+using System.Numerics;
 using System.Windows.Forms;
-using Sledge.DataStructures.Geometric;
 
 namespace Sledge.BspEditor.Rendering.Viewport
 {
@@ -25,24 +26,14 @@ namespace Sledge.BspEditor.Rendering.Viewport
         public int Y { get; set; }
         public int Delta { get; set; }
 
-        public Coordinate Location
-        {
-            get { return new Coordinate(X, Y, 0); }
-        }
+        public Point Location => new Point(X, Y);
 
         // Mouse movement
         public int LastX { get; set; }
         public int LastY { get; set; }
 
-        public int DeltaX
-        {
-            get { return X - LastX; }
-        }
-
-        public int DeltaY
-        {
-            get { return Y - LastY; }
-        }
+        public int DeltaX => X - LastX;
+        public int DeltaY => Y - LastY;
 
         // Click and drag
         public bool Dragging { get; set; }
@@ -50,7 +41,7 @@ namespace Sledge.BspEditor.Rendering.Viewport
         public int StartY { get; set; }
 
         // 2D Camera
-        public Coordinate CameraPosition { get; set; }
+        public Vector3 CameraPosition { get; set; }
         public decimal CameraZoom { get; set; }
 
         public ViewportEvent(MapViewport sender, EventArgs e = null)

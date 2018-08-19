@@ -1,9 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Threading.Tasks;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Primitives;
-using Sledge.DataStructures.Geometric;
 using Sledge.BspEditor.Primitives.MapObjects;
 
 namespace Sledge.BspEditor.Modification.Operations.Mutation
@@ -14,17 +15,17 @@ namespace Sledge.BspEditor.Modification.Operations.Mutation
     public class TransformTexturesUniform : IOperation
     {
         private readonly List<long> _idsToTransform;
-        private readonly Matrix _matrix;
-
+        private readonly Matrix4x4 _matrix;
+        
         public bool Trivial => false;
         
-        public TransformTexturesUniform(Matrix matrix, params IMapObject[] objectsToTransform)
+        public TransformTexturesUniform(Matrix4x4 matrix, params IMapObject[] objectsToTransform)
         {
             _matrix = matrix;
             _idsToTransform = objectsToTransform.Select(x => x.ID).ToList();
         }
 
-        public TransformTexturesUniform(Matrix matrix, IEnumerable<IMapObject> objectsToTransform)
+        public TransformTexturesUniform(Matrix4x4 matrix, IEnumerable<IMapObject> objectsToTransform)
         {
             _matrix = matrix;
             _idsToTransform = objectsToTransform.Select(x => x.ID).ToList();
@@ -50,7 +51,7 @@ namespace Sledge.BspEditor.Modification.Operations.Mutation
 
         public Task<Change> Reverse(MapDocument document)
         {
-            var inv = _matrix.Inverse();
+            if (!Matrix4x4.Invert(_matrix, out var inv)) throw new Exception("Unable to reverse this operation.");
             var ch = new Change(document);
 
             var objects = _idsToTransform.Select(x => document.Map.Root.FindByID(x)).Where(x => x != null).ToList();

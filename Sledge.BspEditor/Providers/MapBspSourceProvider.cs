@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 using Sledge.BspEditor.Environment;
@@ -14,6 +15,7 @@ using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.Common;
 using Sledge.Common.Shell.Documents;
 using Sledge.DataStructures.Geometric;
+using Plane = Sledge.DataStructures.Geometric.Plane;
 
 namespace Sledge.BspEditor.Providers
 {
@@ -92,14 +94,14 @@ namespace Sledge.BspEditor.Providers
         /// Same as Plane.GetClosestAxisToNormal(), but prioritises the axes Z, X, Y.
         /// </summary>
         /// <param name="plane">Input plane</param>
-        /// <returns>Coordinate.UnitX, Coordinate.UnitY, or Coordinate.UnitZ depending on the plane's normal</returns>
-        private static Coordinate QuakeEdClosestAxisToNormal(Plane plane)
+        /// <returns>Vector3.UnitX, Vector3.UnitY, or Vector3.UnitZ depending on the plane's normal</returns>
+        private static Vector3 QuakeEdClosestAxisToNormal(Plane plane)
         {
             var norm = plane.Normal.Absolute();
 
-            if (norm.Z >= norm.X && norm.Z >= norm.Y) return Coordinate.UnitZ;
-            if (norm.X >= norm.Y) return Coordinate.UnitX;
-            return Coordinate.UnitY;
+            if (norm.Z >= norm.X && norm.Z >= norm.Y) return Vector3.UnitZ;
+            if (norm.X >= norm.Y) return Vector3.UnitX;
+            return Vector3.UnitY;
         }
 
         /// <summary>
@@ -110,8 +112,8 @@ namespace Sledge.BspEditor.Providers
         private static void QuakeEdAlignTextureToWorld(Face face)
         {
             var direction = QuakeEdClosestAxisToNormal(face.Plane);
-            face.Texture.UAxis = direction == Coordinate.UnitX ? Coordinate.UnitY : Coordinate.UnitX;
-            face.Texture.VAxis = direction == Coordinate.UnitZ ? -Coordinate.UnitY : -Coordinate.UnitZ;
+            face.Texture.UAxis = direction == Vector3.UnitX ? Vector3.UnitY : Vector3.UnitX;
+            face.Texture.VAxis = direction == Vector3.UnitZ ? -Vector3.UnitY : -Vector3.UnitZ;
         }
 
         private Face ReadFace(string line, UniqueNumberGenerator generator)
@@ -130,9 +132,9 @@ namespace Sledge.BspEditor.Providers
             var face = new Face(generator.Next("Face"))
             {
                 Plane = new Plane(
-                    Coordinate.Parse(parts[1], parts[2], parts[3]),
-                    Coordinate.Parse(parts[6], parts[7], parts[8]),
-                    Coordinate.Parse(parts[11], parts[12], parts[13])
+                    Vector3Extensions.Parse(parts[1], parts[2], parts[3]),
+                    Vector3Extensions.Parse(parts[6], parts[7], parts[8]),
+                    Vector3Extensions.Parse(parts[11], parts[12], parts[13])
                 ),
                 Texture = {Name = parts[15]}
             };
@@ -143,11 +145,11 @@ namespace Sledge.BspEditor.Providers
             {
                 QuakeEdAlignTextureToWorld(face);
 
-                var xshift = decimal.Parse(parts[16], ns, CultureInfo.InvariantCulture);
-                var yshift = decimal.Parse(parts[17], ns, CultureInfo.InvariantCulture);
-                var rotate = decimal.Parse(parts[18], ns, CultureInfo.InvariantCulture);
-                var xscale = decimal.Parse(parts[19], ns, CultureInfo.InvariantCulture);
-                var yscale = decimal.Parse(parts[20], ns, CultureInfo.InvariantCulture);
+                var xshift = float.Parse(parts[16], ns, CultureInfo.InvariantCulture);
+                var yshift = float.Parse(parts[17], ns, CultureInfo.InvariantCulture);
+                var rotate = float.Parse(parts[18], ns, CultureInfo.InvariantCulture);
+                var xscale = float.Parse(parts[19], ns, CultureInfo.InvariantCulture);
+                var yscale = float.Parse(parts[20], ns, CultureInfo.InvariantCulture);
 
                 face.Texture.Rotation = -rotate;
                 face.Texture.Rotation = rotate;
@@ -163,13 +165,13 @@ namespace Sledge.BspEditor.Providers
                 Assert(parts[22] == "[");
                 Assert(parts[27] == "]");
 
-                face.Texture.UAxis = Coordinate.Parse(parts[17], parts[18], parts[19]);
-                face.Texture.XShift = decimal.Parse(parts[20], ns, CultureInfo.InvariantCulture);
-                face.Texture.VAxis = Coordinate.Parse(parts[23], parts[24], parts[25]);
-                face.Texture.YShift = decimal.Parse(parts[26], ns, CultureInfo.InvariantCulture);
-                face.Texture.Rotation = decimal.Parse(parts[28], ns, CultureInfo.InvariantCulture);
-                face.Texture.XScale = decimal.Parse(parts[29], ns, CultureInfo.InvariantCulture);
-                face.Texture.YScale = decimal.Parse(parts[30], ns, CultureInfo.InvariantCulture);
+                face.Texture.UAxis = Vector3Extensions.Parse(parts[17], parts[18], parts[19]);
+                face.Texture.XShift = float.Parse(parts[20], ns, CultureInfo.InvariantCulture);
+                face.Texture.VAxis = Vector3Extensions.Parse(parts[23], parts[24], parts[25]);
+                face.Texture.YShift = float.Parse(parts[26], ns, CultureInfo.InvariantCulture);
+                face.Texture.Rotation = float.Parse(parts[28], ns, CultureInfo.InvariantCulture);
+                face.Texture.XScale = float.Parse(parts[29], ns, CultureInfo.InvariantCulture);
+                face.Texture.YScale = float.Parse(parts[30], ns, CultureInfo.InvariantCulture);
             }
 
             return face;
@@ -188,7 +190,7 @@ namespace Sledge.BspEditor.Providers
 
                     var poly = new Polyhedron(faces.Select(x => x.Plane));
                     var ret = new Solid(generator.Next("MapObject"));
-                    ret.Data.Add(new ObjectColor(Sledge.Common.Colour.GetRandomBrushColour()));
+                    ret.Data.Add(new ObjectColor(Colour.GetRandomBrushColour()));
 
                     foreach (var face in faces)
                     {
@@ -247,7 +249,7 @@ namespace Sledge.BspEditor.Providers
             else if (key == "origin")
             {
                 var osp = val.Split(' ');
-                ent.Origin = Coordinate.Parse(osp[0], osp[1], osp[2]);
+                ent.Origin = Vector3Extensions.Parse(osp[0], osp[1], osp[2]);
             }
             else if (!ExcludedKeys.Contains(key.ToLower()))
             {
@@ -310,7 +312,7 @@ namespace Sledge.BspEditor.Providers
         #region Writing
 
 
-        private string FormatCoordinate(Coordinate c)
+        private string FormatVector3(Vector3 c)
         {
             return c.X.ToString("0.000", CultureInfo.InvariantCulture)
                    + " " + c.Y.ToString("0.000", CultureInfo.InvariantCulture)
@@ -338,14 +340,14 @@ namespace Sledge.BspEditor.Providers
         private void WriteFace(StreamWriter sw, Face face)
         {
             // ( -128 64 64 ) ( -64 64 64 ) ( -64 0 64 ) AAATRIGGER [ 1 0 0 0 ] [ 0 -1 0 0 ] 0 1 1
-            var strings = face.Vertices.Take(3).Select(x => "( " + FormatCoordinate(x) + " )").ToList();
+            var strings = face.Vertices.Take(3).Select(x => "( " + FormatVector3(x) + " )").ToList();
             strings.Add(String.IsNullOrWhiteSpace(face.Texture.Name) ? "AAATRIGGER" : face.Texture.Name);
             strings.Add("[");
-            strings.Add(FormatCoordinate(face.Texture.UAxis));
+            strings.Add(FormatVector3(face.Texture.UAxis));
             strings.Add(face.Texture.XShift.ToString("0.000", CultureInfo.InvariantCulture));
             strings.Add("]");
             strings.Add("[");
-            strings.Add(FormatCoordinate(face.Texture.VAxis));
+            strings.Add(FormatVector3(face.Texture.VAxis));
             strings.Add(face.Texture.YShift.ToString("0.000", CultureInfo.InvariantCulture));
             strings.Add("]");
             strings.Add(face.Texture.Rotation.ToString("0.000", CultureInfo.InvariantCulture));
@@ -400,7 +402,7 @@ namespace Sledge.BspEditor.Providers
             }
 
             if (solids.Any()) solids.ForEach(x => WriteSolid(sw, x)); // Brush entity
-            else WriteProperty(sw, "origin", FormatCoordinate(ent.Origin)); // Point entity
+            else WriteProperty(sw, "origin", FormatVector3(ent.Origin)); // Point entity
 
             sw.WriteLine("}");
         }

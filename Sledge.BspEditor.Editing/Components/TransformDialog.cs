@@ -1,6 +1,6 @@
 ﻿using System;
+using System.Numerics;
 using System.Windows.Forms;
-using Sledge.Common;
 using Sledge.Common.Translations;
 using Sledge.DataStructures.Geometric;
 using Sledge.Shell;
@@ -21,14 +21,14 @@ namespace Sledge.BspEditor.Editing.Components
         private readonly Box _source;
         private decimal _zeroValue = 0;
 
-        public Coordinate TransformValue
+        public Vector3 TransformValue
         {
-            get => new Coordinate(ValueX.Value, ValueY.Value, ValueZ.Value);
+            get => new Vector3((float) ValueX.Value, (float) ValueY.Value, (float) ValueZ.Value);
             set
             {
-                ValueX.Value = value.X;
-                ValueY.Value = value.Y;
-                ValueZ.Value = value.Z;
+                ValueX.Value = (decimal) value.X;
+                ValueY.Value = (decimal) value.Y;
+                ValueZ.Value = (decimal) value.Z;
             }
         }
 
@@ -66,9 +66,9 @@ namespace Sledge.BspEditor.Editing.Components
             ZeroValueYButton.Click += (sender, e) => ValueY.Value = _zeroValue;
             ZeroValueZButton.Click += (sender, e) => ValueZ.Value = _zeroValue;
 
-            SourceValueXButton.Click += (sender, e) => ValueX.Value = _source.Width;
-            SourceValueYButton.Click += (sender, e) => ValueY.Value = _source.Length;
-            SourceValueZButton.Click += (sender, e) => ValueZ.Value = _source.Height;
+            SourceValueXButton.Click += (sender, e) => ValueX.Value = (decimal) _source.Width;
+            SourceValueYButton.Click += (sender, e) => ValueY.Value = (decimal) _source.Length;
+            SourceValueZButton.Click += (sender, e) => ValueZ.Value = (decimal) _source.Height;
 
             TypeChanged(null, null);
         }
@@ -95,23 +95,24 @@ namespace Sledge.BspEditor.Editing.Components
             });
         }
 
-        public Matrix GetTransformation(Box selectionBox)
+        public Matrix4x4 GetTransformation(Box selectionBox)
         {
             var value = TransformValue;
             switch (Type)
             {
                 case TransformType.Rotate:
-                    var rMov = Matrix.Translation(-selectionBox.Center);
-                    var rRot = Matrix.Rotation(Quaternion.EulerAngles(value * DMath.PI / 180));
-                    var rFin = Matrix.Translation(selectionBox.Center);
+                    var rads = value * (float) Math.PI / 180;
+                    var rMov = Matrix4x4.CreateTranslation(-selectionBox.Center);
+                    var rRot = Matrix4x4.CreateFromQuaternion(Quaternion.CreateFromYawPitchRoll(rads.Y, rads.X, rads.Z));
+                    var rFin = Matrix4x4.CreateTranslation(selectionBox.Center);
                     return rFin * rRot * rMov;
                 case TransformType.Translate:
-                    return Matrix.Translation(value);
+                    return Matrix4x4.CreateTranslation(value);
                 case TransformType.Scale:
-                    if (value.X == 0 || value.Y == 0 || value.Z == 0) throw new CannotScaleByZeroException();
-                    var sMov = Matrix.Translation(-selectionBox.Center);
-                    var sScl = Matrix.Scale(value);
-                    var sFin = Matrix.Translation(selectionBox.Center);
+                    if (Math.Abs(value.X) < 0.001 || Math.Abs(value.Y) < 0.001 || Math.Abs(value.Z) < 0.001) throw new CannotScaleByZeroException();
+                    var sMov = Matrix4x4.CreateTranslation(-selectionBox.Center);
+                    var sScl = Matrix4x4.CreateScale(value);
+                    var sFin = Matrix4x4.CreateTranslation(selectionBox.Center);
                     return sFin * sScl * sMov;
                 default:
                     throw new ArgumentOutOfRangeException();

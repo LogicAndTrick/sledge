@@ -1,3 +1,4 @@
+using System.Numerics;
 using System.Runtime.Serialization;
 using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.Common.Transport;
@@ -7,14 +8,14 @@ namespace Sledge.BspEditor.Primitives.MapData
 {
     public class SelectionTransform : IMapData
     {
-        public Matrix Transform { get; set; }
+        public Matrix4x4 Transform { get; set; }
 
-        public SelectionTransform() : this(Matrix.Identity)
+        public SelectionTransform() : this(Matrix4x4.Identity)
         {
             
         }
     
-        public SelectionTransform(Matrix transform)
+        public SelectionTransform(Matrix4x4 transform)
         {
             Transform = transform;
         }
