@@ -2,19 +2,20 @@
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Linq;
+using System.Numerics;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using LogicAndTrick.Oy;
 using Sledge.BspEditor.Components;
 using Sledge.BspEditor.Primitives.MapData;
-using Sledge.BspEditor.Rendering;
 using Sledge.BspEditor.Rendering.Viewport;
 using Sledge.BspEditor.Tools.Properties;
 using Sledge.Common.Shell.Components;
 using Sledge.DataStructures.Geometric;
 using Sledge.Rendering.Cameras;
-using Sledge.Rendering.Scenes.Elements;
+using Sledge.Rendering.Viewports;
 using Sledge.Shell.Input;
 using Camera = Sledge.BspEditor.Primitives.MapData.Camera;
 
@@ -40,31 +41,43 @@ namespace Sledge.BspEditor.Tools
             yield return Oy.Subscribe<object>("BspEditor:CameraPrevious", CameraPrevious);
         }
 
-        public override async Task ToolSelected()
+        public override Task ToolSelected()
         {
             _state = State.None;
+            return Task.CompletedTask;
         }
 
-        private async Task CameraNext(object param)
+        private Task CameraNext(object param)
         {
             var cams = GetDocumentCameras();
-            if (_state != State.None || cams.Count < 2) return;
-            var idx = cams.FindIndex(x => x.IsActive);
-            idx = (idx + 1) % cams.Count;
-            cams.ForEach(x => x.IsActive = false);
-            cams[idx].IsActive = true;
-            SetViewportCamera(cams[idx].EyePosition, cams[idx].LookPosition);
+
+            if (_state == State.None && cams.Count >= 2)
+            {
+                var idx = cams.FindIndex(x => x.IsActive);
+                idx = (idx + 1) % cams.Count;
+                cams.ForEach(x => x.IsActive = false);
+                cams[idx].IsActive = true;
+                SetViewportCamera(cams[idx].EyePosition, cams[idx].LookPosition);
+            }
+
+            return Task.CompletedTask;
         }
 
-        private async Task CameraPrevious(object param)
+        private Task CameraPrevious(object param)
         {
             var cams = GetDocumentCameras();
-            if (_state != State.None || cams.Count < 2) return;
-            var idx = cams.FindIndex(x => x.IsActive);
-            idx = (idx + cams.Count - 1) % cams.Count;
-            cams.ForEach(x => x.IsActive = false);
-            cams[idx].IsActive = true;
-            SetViewportCamera(cams[idx].EyePosition, cams[idx].LookPosition);
+
+            if (_state == State.None && cams.Count >= 2)
+            {
+                var idx = cams.FindIndex(x => x.IsActive);
+                idx = (idx + cams.Count - 1) % cams.Count;
+                cams.ForEach(x => x.IsActive = false);
+                cams[idx].IsActive = true;
+                SetViewportCamera(cams[idx].EyePosition, cams[idx].LookPosition);
+                return Task.CompletedTask;
+            }
+
+            return Task.CompletedTask;
         }
 
         private void CameraDelete()
@@ -86,35 +99,35 @@ namespace Sledge.BspEditor.Tools
             return "Camera Tool";
         }
 
-        private Tuple<Coordinate, Coordinate> GetViewportCamera()
+        private Tuple<Vector3, Vector3> GetViewportCamera()
         {
             var cam = MapDocumentControlHost.Instance.GetControls().OfType<ViewportMapDocumentControl>().Select(x => x.Camera).OfType<PerspectiveCamera>().FirstOrDefault();
             if (cam == null) return null;
 
-            var pos = cam.Position.ToCoordinate();
-            var look = cam.LookAt.ToCoordinate();
+            var pos = cam.Position;
+            var look = cam.LookAt;
 
             var dir = (look - pos).Normalise()*20;
             return Tuple.Create(pos, pos + dir);
         }
 
-        private void SetViewportCamera(Coordinate position, Coordinate look)
+        private void SetViewportCamera(Vector3 position, Vector3 look)
         {
             var cam = MapDocumentControlHost.Instance.GetControls().OfType<ViewportMapDocumentControl>().Select(x => x.Camera).OfType<PerspectiveCamera>().FirstOrDefault();
             if (cam == null) return;
 
             look = (look - position).Normalise() + position;
-            cam.Position = position.ToVector3();
-            cam.LookAt = look.ToVector3();
+            cam.Position = position;
+            cam.LookAt = look;
         }
 
         private State GetStateAtPoint(int x, int y, MapViewport viewport, out Camera activeCamera)
         {
-            var d = 5 / (decimal) viewport.Zoom;
+            var d = 5 / viewport.Zoom;
 
             foreach (var cam in GetCameraList())
             {
-                var p = viewport.Flatten(viewport.ProperScreenToWorld(x, y));
+                var p = viewport.Flatten(viewport.ScreenToWorld(x, y));
                 var pos = viewport.Flatten(cam.EyePosition);
                 var look = viewport.Flatten(cam.LookPosition);
                 activeCamera = cam;
@@ -153,7 +166,7 @@ namespace Sledge.BspEditor.Tools
             foreach (var camera in Document.Map.Data.Get<Camera>())
             {
                 var dir = camera.LookPosition - camera.EyePosition;
-                camera.LookPosition = camera.EyePosition + dir.Normalise() * Math.Max(gs * 1.5m, dir.VectorMagnitude());
+                camera.LookPosition = camera.EyePosition + dir.Normalise() * Math.Max(gs * 1.5f, dir.Length());
                 cameras.Add(camera);
             }
             return cameras;
@@ -169,8 +182,8 @@ namespace Sledge.BspEditor.Tools
             _state = GetStateAtPoint(e.X, e.Y, vp, out _stateCamera);
             if (_state == State.None && KeyboardState.Shift)
             {
-                var p = SnapIfNeeded(vp.ProperScreenToWorld(e.X, e.Y));
-                _stateCamera = new Camera { EyePosition = p, LookPosition = p + Coordinate.UnitX * 1.5m * gs };
+                var p = SnapIfNeeded(vp.ScreenToWorld(e.X, e.Y));
+                _stateCamera = new Camera { EyePosition = p, LookPosition = p + Vector3.UnitX * 1.5f * gs };
                 Document.Map.Data.Add(_stateCamera);
                 _state = State.MovingLook;
             }
@@ -192,7 +205,7 @@ namespace Sledge.BspEditor.Tools
             var vp = viewport;
             if (vp == null) return;
 
-            var p = SnapIfNeeded(vp.ProperScreenToWorld(e.X, e.Y));
+            var p = SnapIfNeeded(vp.ScreenToWorld(e.X, e.Y));
             var cursor = Cursors.Default;
 
             switch (_state)
@@ -219,24 +232,28 @@ namespace Sledge.BspEditor.Tools
             vp.Control.Cursor = cursor;
         }
 
-        protected override IEnumerable<Element> GetViewportElements(MapViewport viewport, OrthographicCamera camera)
+        public override void Render(IViewport viewport, OrthographicCamera camera, Vector3 worldMin, Vector3 worldMax, Graphics graphics)
         {
-            var list = base.GetViewportElements(viewport, camera).ToList();
+            base.Render(viewport, camera, worldMin, worldMax, graphics);
+
+            graphics.SmoothingMode = SmoothingMode.HighQuality;
 
             foreach (var cam in GetCameraList())
             {
-                var p1 = cam.EyePosition.ToVector3();
-                var p2 = cam.LookPosition.ToVector3();
+                var p1 = camera.WorldToScreen(cam.EyePosition);
+                var p2 = camera.WorldToScreen(cam.LookPosition);
+                
+                var linePen = cam.IsActive ? Pens.Red : Pens.Cyan;
+                var handleBrush = cam.IsActive ? Brushes.DarkOrange : Brushes.LawnGreen;
 
-                var lineColor = cam.IsActive ? Color.Red : Color.Cyan;
-                var handleColor = cam.IsActive ? Color.DarkOrange : Color.LawnGreen;
+                graphics.DrawLine(linePen, p1.X, p1.Y, p2.X, p2.Y);
+                graphics.FillEllipse(handleBrush, p1.X - 4, p1.Y - 4, 8, 8);
+                graphics.DrawEllipse(Pens.Black, p1.X - 4, p1.Y - 4, 8, 8);
 
-                list.Add(new LineElement(PositionType.World, lineColor, new List<Position> { new Position(p1), new Position(p2) }));
-                list.Add(new HandleElement(PositionType.World, HandleElement.HandleType.Circle, new Position(p1), 4) { Color = handleColor, LineColor = Color.Black });
                 // todo: triangle arrow?
             }
 
-            return list;
+            graphics.SmoothingMode = SmoothingMode.Default;
         }
     }
 }

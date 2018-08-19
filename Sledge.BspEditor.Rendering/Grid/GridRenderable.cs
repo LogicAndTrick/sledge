@@ -140,8 +140,8 @@ namespace Sledge.BspEditor.Rendering.Grid
 
         private RectangleF GetValidatedBounds(OrthographicCamera camera, int padding)
         {
-            var vmin = camera.Flatten(camera.ScreenToWorld(new Vector3(-padding, camera.Height + padding, 0), camera.Width, camera.Height));
-            var vmax = camera.Flatten(camera.ScreenToWorld(new Vector3(camera.Width + padding, -padding, 0), camera.Width, camera.Height));
+            var vmin = camera.Flatten(camera.ScreenToWorld(new Vector3(-padding, camera.Height + padding, 0)));
+            var vmax = camera.Flatten(camera.ScreenToWorld(new Vector3(camera.Width + padding, -padding, 0)));
             return new RectangleF(vmin.X, vmin.Y, vmax.X - vmin.X, vmax.Y - vmin.Y);
         }
 

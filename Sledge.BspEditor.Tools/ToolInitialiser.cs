@@ -9,15 +9,17 @@ namespace Sledge.BspEditor.Tools
     [Export(typeof(IInitialiseHook))]
     public class ToolInitialiser : IInitialiseHook
     {
-        public async Task OnInitialise()
+        public Task OnInitialise()
         {
             Oy.Subscribe<MapViewport>("MapViewport:Created", MapViewportCreated);
+            return Task.CompletedTask;
         }
 
-        private async Task MapViewportCreated(MapViewport viewport)
+        private Task MapViewportCreated(MapViewport viewport)
         {
             var itl = new ToolViewportListener(viewport);
             viewport.Listeners.Add(itl);
+            return Task.CompletedTask;
         }
     }
 }

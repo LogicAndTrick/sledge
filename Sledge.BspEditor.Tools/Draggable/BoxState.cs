@@ -6,8 +6,8 @@ namespace Sledge.BspEditor.Tools.Draggable
 {
     public class BoxState
     {
-        private Coordinate _start;
-        private Coordinate _end;
+        private Vector3 _start;
+        private Vector3 _end;
         public event EventHandler Changed;
 
         protected virtual void OnChanged()
@@ -27,10 +27,10 @@ namespace Sledge.BspEditor.Tools.Draggable
             }
         }
 
-        public Coordinate OrigStart { get; set; }
-        public Coordinate OrigEnd { get; set; }
+        public Vector3 OrigStart { get; set; }
+        public Vector3 OrigEnd { get; set; }
 
-        public Coordinate Start
+        public Vector3 Start
         {
             get { return _start; }
             set
@@ -40,7 +40,7 @@ namespace Sledge.BspEditor.Tools.Draggable
             }
         }
 
-        public Coordinate End
+        public Vector3 End
         {
             get { return _end; }
             set
@@ -58,7 +58,7 @@ namespace Sledge.BspEditor.Tools.Draggable
             OnChanged();
         }
 
-        public void Move(MapViewport viewport, Coordinate delta)
+        public void Move(MapViewport viewport, Vector3 delta)
         {
             delta = viewport.Expand(delta);
             Start += delta;
@@ -66,12 +66,12 @@ namespace Sledge.BspEditor.Tools.Draggable
             OnChanged();
         }
 
-        public void Resize(ResizeHandle handle, MapViewport viewport, Coordinate position)
+        public void Resize(ResizeHandle handle, MapViewport viewport, Vector3 position)
         {
             var fs = viewport.Flatten(Start);
             var fe = viewport.Flatten(End);
-            var us = viewport.GetUnusedCoordinate(Start);
-            var ue = viewport.GetUnusedCoordinate(End);
+            var us = viewport.GetUnusedVector3(Start);
+            var ue = viewport.GetUnusedVector3(End);
             switch (handle)
             {
                 case ResizeHandle.TopLeft:

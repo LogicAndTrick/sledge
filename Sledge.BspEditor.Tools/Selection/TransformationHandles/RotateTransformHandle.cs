@@ -18,8 +18,8 @@ namespace Sledge.BspEditor.Tools.Selection.TransformationHandles
     public class RotateTransformHandle : BoxResizeHandle, ITransformationHandle
     {
         private readonly RotationOrigin _origin;
-        private Coordinate _rotateStart;
-        private Coordinate _rotateEnd;
+        private Vector3 _rotateStart;
+        private Vector3 _rotateEnd;
 
         public string Name { get { return "Rotate"; } }
 
@@ -34,18 +34,18 @@ namespace Sledge.BspEditor.Tools.Selection.TransformationHandles
             viewport.Control.Cursor = ct;
         }
 
-        public override void StartDrag(MapViewport viewport, ViewportEvent e, Coordinate position)
+        public override void StartDrag(MapViewport viewport, ViewportEvent e, Vector3 position)
         {
             _rotateStart = _rotateEnd = position;
             base.StartDrag(viewport, e, position);
         }
 
-        public override void Drag(MapViewport viewport, ViewportEvent e, Coordinate lastPosition, Coordinate position)
+        public override void Drag(MapViewport viewport, ViewportEvent e, Vector3 lastPosition, Vector3 position)
         {
             _rotateEnd = position;
         }
 
-        public override void EndDrag(MapViewport viewport, ViewportEvent e, Coordinate position)
+        public override void EndDrag(MapViewport viewport, ViewportEvent e, Vector3 position)
         {
             _rotateStart = _rotateEnd = null;
             base.EndDrag(viewport, e, position);
@@ -63,7 +63,7 @@ namespace Sledge.BspEditor.Tools.Selection.TransformationHandles
 
         public Matrix4? GetTransformationMatrix(MapViewport viewport, OrthographicCamera camera, BoxState state, MapDocument doc)
         {
-            var origin = viewport.ZeroUnusedCoordinate((state.OrigStart + state.OrigEnd) / 2);
+            var origin = viewport.ZeroUnusedVector3((state.OrigStart + state.OrigEnd) / 2);
             if (_origin != null) origin = _origin.Position;
 
             var forigin = viewport.Flatten(origin);

@@ -171,7 +171,7 @@ namespace Sledge.BspEditor.Tools.Selection
             return _handles[(int)CurrentTransformationMode];
         }
 
-        public override bool CanDrag(MapViewport viewport, ViewportEvent e, Coordinate position)
+        public override bool CanDrag(MapViewport viewport, ViewportEvent e, Vector3 position)
         {
             return false;
         }
@@ -240,7 +240,7 @@ namespace Sledge.BspEditor.Tools.Selection
             CurrentTransformationMode = mode;
 
             if (State.Start != null) _rotationOrigin.Position = new Box(State.Start, State.End).Center;
-            else _rotationOrigin.Position = Coordinate.Zero;
+            else _rotationOrigin.Position = Vector3.Zero;
 
             //_scaleWidget.Active = _currentTransformationMode == TransformationMode.Resize;
             _rotationWidget.Active = CurrentTransformationMode == TransformationMode.Rotate && ShowWidgets;

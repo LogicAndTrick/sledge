@@ -10,7 +10,7 @@ using Sledge.Rendering.Scenes.Elements;
 
 namespace Sledge.BspEditor.Tools.Selection.TransformationHandles
 {
-    public class RotationOrigin : DraggableCoordinate
+    public class RotationOrigin : DraggableVector3
     {
         private readonly BaseTool _tool;
 
@@ -25,9 +25,9 @@ namespace Sledge.BspEditor.Tools.Selection.TransformationHandles
             viewport.Control.Cursor = Cursors.Cross;
         }
 
-        public override void Drag(MapViewport viewport, ViewportEvent e, Coordinate lastPosition, Coordinate position)
+        public override void Drag(MapViewport viewport, ViewportEvent e, Vector3 lastPosition, Vector3 position)
         {
-            Position = _tool.SnapToSelection(viewport.Expand(position) + viewport.GetUnusedCoordinate(Position), viewport);
+            Position = _tool.SnapToSelection(viewport.Expand(position) + viewport.GetUnusedVector3(Position), viewport);
             OnDragMoved();
         }
 

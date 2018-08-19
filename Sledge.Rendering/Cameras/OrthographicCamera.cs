@@ -14,8 +14,6 @@ namespace Sledge.Rendering.Cameras
         }
 
         private static readonly Matrix4x4 TopMatrix = Matrix4x4.Identity;
-        //private static readonly Matrix4x4 FrontMatrix = new Matrix4x4(Vector4.UnitZ, Vector4.UnitX, Vector4.UnitY, Vector4.UnitW);
-        //private static readonly Matrix4x4 SideMatrix = new Matrix4x4(Vector4.UnitX, Vector4.UnitZ, Vector4.UnitY, Vector4.UnitW);
         private static readonly Matrix4x4 FrontMatrix = new Matrix4x4(
             0, 0, 1, 0,
             1, 0, 0, 0,
@@ -36,7 +34,7 @@ namespace Sledge.Rendering.Cameras
         public int Height { get; set; }
         public Vector3 Location => EyeLocation;
         public Matrix4x4 View => GetCameraMatrix();
-        public Matrix4x4 Projection => GetViewportMatrix(Width, Height);
+        public Matrix4x4 Projection => GetViewportMatrix();
 
         private static Matrix4x4 GetMatrixFor(OrthographicType dir)
         {
@@ -99,41 +97,36 @@ namespace Sledge.Rendering.Cameras
             if (float.TryParse(tags[4], NumberStyles.Float, CultureInfo.InvariantCulture, out p)) Zoom = p;
         }
 
-        public Vector3 EyeLocation => (Vector3.UnitZ * float.MaxValue) + _position;
+        private Vector3 EyeLocation => (Vector3.UnitZ * float.MaxValue) + _position;
 
-        public Matrix4x4 GetCameraMatrix()
+        private Matrix4x4 GetCameraMatrix()
         {
             var translate = Matrix4x4.CreateTranslation(-Position.X, -Position.Y, 0);
             var scale = Matrix4x4.CreateScale(new Vector3(Zoom, Zoom, 0));
-            return GetModelMatrix() * translate * scale;
+            return GetMatrixFor(ViewType) * translate * scale;
         }
 
-        public Matrix4x4 GetViewportMatrix(int width, int height)
+        private Matrix4x4 GetViewportMatrix()
         {
             const float near = -1000000;
             const float far = 1000000;
-            return Matrix4x4.CreateOrthographic(width, height, near, far);
+            return Matrix4x4.CreateOrthographic(Width, Height, near, far);
         }
 
-        public Matrix4x4 GetModelMatrix()
+        public Vector3 ScreenToWorld(Vector3 screen)
         {
-            return GetMatrixFor(ViewType);
-        }
-
-        public Vector3 ScreenToWorld(Vector3 screen, int width, int height)
-        {
-            screen = new Vector3(screen.X, height - screen.Y, screen.Z);
-            var cs = new Vector3(width / 2f, height / 2f, 0);
+            screen = new Vector3(screen.X, Height - screen.Y, screen.Z);
+            var cs = new Vector3(Width / 2f, Height / 2f, 0);
             var flat = Position + ((screen - cs) / Zoom);
             return Expand(flat);
         }
 
-        public Vector3 WorldToScreen(Vector3 world, int width, int height)
+        public Vector3 WorldToScreen(Vector3 world)
         {
             var flat = Flatten(world);
-            var cs = new Vector3(width / 2f, height / 2f, 0);
+            var cs = new Vector3(Width / 2f, Height / 2f, 0);
             var screen = cs + ((flat - Position) * Zoom);
-            return new Vector3(screen.X, height - screen.Y, screen.Z);
+            return new Vector3(screen.X, Height - screen.Y, screen.Z);
         }
 
         //public override Line CastRayFromScreen(Vector3 screen, int width, int height)

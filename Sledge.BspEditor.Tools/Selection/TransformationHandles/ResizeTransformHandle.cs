@@ -23,7 +23,7 @@ namespace Sledge.BspEditor.Tools.Selection.TransformationHandles
         {
         }
 
-        public override bool CanDrag(MapViewport viewport, ViewportEvent e, Coordinate position)
+        public override bool CanDrag(MapViewport viewport, ViewportEvent e, Vector3 position)
         {
             if (Handle == ResizeHandle.Center)
             {
@@ -36,13 +36,13 @@ namespace Sledge.BspEditor.Tools.Selection.TransformationHandles
             return base.CanDrag(viewport, e, position);
         }
 
-        protected override Coordinate GetResizeOrigin(MapViewport viewport, Coordinate position)
+        protected override Vector3 GetResizeOrigin(MapViewport viewport, Vector3 position)
         {
             if (Handle == ResizeHandle.Center)
             {
                 var st = viewport.Flatten(BoxState.Start);
                 var ed = viewport.Flatten(BoxState.End);
-                var points = new[] {st, ed, new Coordinate(st.X, ed.Y, 0), new Coordinate(ed.X, st.Y, 0)};
+                var points = new[] {st, ed, new Vector3(st.X, ed.Y, 0), new Vector3(ed.X, st.Y, 0)};
                 return points.OrderBy(x => (position - x).LengthSquared()).First();
             }
             return base.GetResizeOrigin(viewport, position);
@@ -103,7 +103,7 @@ namespace Sledge.BspEditor.Tools.Selection.TransformationHandles
                 var resize = (state.OrigStart - state.Start) +
                              (state.End - state.OrigEnd);
                 resize = resize.ComponentDivide(state.OrigEnd - state.OrigStart);
-                resize += new Coordinate(1, 1, 1);
+                resize += new Vector3(1, 1, 1);
                 var offset = -GetOriginForTransform(viewport, camera, state);
                 var trans = Matrix4.CreateTranslation((float)offset.X, (float)offset.Y, (float)offset.Z);
                 var scale = Matrix4.Mult(trans, Matrix4.CreateScale((float)resize.X, (float)resize.Y, (float)resize.Z));
@@ -120,7 +120,7 @@ namespace Sledge.BspEditor.Tools.Selection.TransformationHandles
             return TextureTransformationType.None;
         }
 
-        private Coordinate GetOriginForTransform(MapViewport viewport, OrthographicCamera camera, BoxState state)
+        private Vector3 GetOriginForTransform(MapViewport viewport, OrthographicCamera camera, BoxState state)
         {
             decimal x = 0;
             decimal y = 0;
@@ -156,7 +156,7 @@ namespace Sledge.BspEditor.Tools.Selection.TransformationHandles
                     x = cend.X;
                     break;
             }
-            return viewport.Expand(new Coordinate(x, y, 0));
+            return viewport.Expand(new Vector3(x, y, 0));
         }
     }
 }

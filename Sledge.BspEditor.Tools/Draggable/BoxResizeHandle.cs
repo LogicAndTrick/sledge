@@ -1,13 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Numerics;
 using System.Windows.Forms;
-using OpenTK;
-using Sledge.BspEditor.Rendering;
 using Sledge.BspEditor.Rendering.Viewport;
-using Sledge.DataStructures.Geometric;
 using Sledge.Rendering.Cameras;
-using Sledge.Rendering.Scenes;
-using Sledge.Rendering.Scenes.Elements;
 
 namespace Sledge.BspEditor.Tools.Draggable
 {
@@ -96,31 +92,31 @@ namespace Sledge.BspEditor.Tools.Draggable
             viewport.Control.Cursor = Cursors.Default;
         }
 
-        protected virtual Coordinate GetResizeOrigin(MapViewport viewport, Coordinate position)
+        protected virtual Vector3 GetResizeOrigin(MapViewport viewport, Vector3 position)
         {
             var st = viewport.Flatten(BoxState.Start);
             var ed = viewport.Flatten(BoxState.End);
             return (st + ed) / 2;
         }
 
-        protected Coordinate MoveOrigin;
-        protected Coordinate SnappedMoveOrigin;
+        protected Vector3 MoveOrigin;
+        protected Vector3 SnappedMoveOrigin;
 
-        public override void Click(MapViewport viewport, ViewportEvent e, Coordinate position)
+        public override void Click(MapViewport viewport, ViewportEvent e, Vector3 position)
         {
 
         }
 
-        public override bool CanDrag(MapViewport viewport, ViewportEvent e, Coordinate position)
+        public override bool CanDrag(MapViewport viewport, ViewportEvent e, Vector3 position)
         {
             const int width = 8;
             var pos = GetPosition(viewport);
-            var screenPosition = viewport.ProperWorldToScreen(pos.Location.ToCoordinate()) + pos.Offset.ToCoordinate();
+            var screenPosition = viewport.ProperWorldToScreen(pos.Location.ToVector3()) + pos.Offset.ToVector3();
             var diff = (e.Location - screenPosition).Absolute();
             return diff.X < width && diff.Y < width;
         }
 
-        public override void StartDrag(MapViewport viewport, ViewportEvent e, Coordinate position)
+        public override void StartDrag(MapViewport viewport, ViewportEvent e, Vector3 position)
         {
             BoxState.OrigStart = BoxState.Start;
             BoxState.OrigEnd = BoxState.End;
@@ -130,7 +126,7 @@ namespace Sledge.BspEditor.Tools.Draggable
             base.StartDrag(viewport, e, position);
         }
 
-        public override void Drag(MapViewport viewport, ViewportEvent e, Coordinate lastPosition, Coordinate position)
+        public override void Drag(MapViewport viewport, ViewportEvent e, Vector3 lastPosition, Vector3 position)
         {
             if (Handle == ResizeHandle.Center)
             {
@@ -149,7 +145,7 @@ namespace Sledge.BspEditor.Tools.Draggable
             base.Drag(viewport, e, lastPosition, position);
         }
 
-        public override void EndDrag(MapViewport viewport, ViewportEvent e, Coordinate position)
+        public override void EndDrag(MapViewport viewport, ViewportEvent e, Vector3 position)
         {
             BoxState.FixBounds();
             BoxState.Action = BoxAction.Drawn;

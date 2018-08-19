@@ -4,7 +4,9 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
+using System.Numerics;
 using System.Windows.Forms;
+using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Viewports;
 
 namespace Sledge.BspEditor.Rendering.Viewport
@@ -251,131 +253,62 @@ namespace Sledge.BspEditor.Rendering.Viewport
         }
 
         #endregion
-        /*
+        
 
         #region 2D/3D methods
 
-        public bool Is2D
-        {
-            get { return Viewport.Camera is OrthographicCamera; }
-        }
+        public bool Is2D => Viewport.Camera.Type == CameraType.Orthographic;
+        public bool Is3D => Viewport.Camera.Type == CameraType.Perspective;
+        public Vector3 CenterScreen => new Vector3(Control.Width / 2f, Control.Height / 2f, 0);
+        public float Zoom => Viewport.Camera.Zoom;
+        public OrthographicCamera.OrthographicType Direction => Is2D ? ((OrthographicCamera) Viewport.Camera).ViewType : OrthographicCamera.OrthographicType.Top;
+        
+        public Vector3 Flatten(Vector3 c) => Viewport.Camera.Flatten(c);
+        public Vector3 Expand(float x, float y) => Expand(new Vector3(x, y, 0));
+        public Vector3 Expand(Vector3 c) => Viewport.Camera.Expand(c);
 
-        public bool Is3D
-        {
-            get { return Viewport.Camera is PerspectiveCamera; }
-        }
-
-        public Coordinate CenterScreen
-        {
-            get { return new Coordinate(Control.Width / 2m, Control.Height / 2m, 0); }
-        }
-
-        public float Zoom
-        {
-            get {
-                return Is2D ? ((OrthographicCamera) Viewport.Camera).Zoom : 1;
-            }
-        }
-
-        public OrthographicCamera.OrthographicType Direction
-        {
-            get { return Is2D ? ((OrthographicCamera) Viewport.Camera).Type : OrthographicCamera.OrthographicType.Top; }
-        }
-
-        public Coordinate Flatten(Coordinate c)
+        public Vector3 GetUnusedCoordinate(Vector3 c)
         {
             if (!Is2D) return c;
-            var dir = ((OrthographicCamera)Viewport.Camera).Type;
+            var dir = ((OrthographicCamera)Viewport.Camera).ViewType;
             switch (dir)
             {
                 case OrthographicCamera.OrthographicType.Top:
-                    return new Coordinate(c.X, c.Y, 0);
+                    return new Vector3(0, 0, c.Z);
                 case OrthographicCamera.OrthographicType.Front:
-                    return new Coordinate(c.Y, c.Z, 0);
+                    return new Vector3(c.X, 0, 0);
                 case OrthographicCamera.OrthographicType.Side:
-                    return new Coordinate(c.X, c.Z, 0);
+                    return new Vector3(0, c.Y, 0);
                 default:
                     throw new ArgumentOutOfRangeException("Type");
             }
         }
 
-        public Coordinate Expand(decimal x, decimal y)
-        {
-            return Expand(new Coordinate(x, y, 0));
-        }
-
-        public Coordinate Expand(Coordinate c)
+        public Vector3 ZeroUnusedCoordinate(Vector3 c)
         {
             if (!Is2D) return c;
-            var dir = ((OrthographicCamera) Viewport.Camera).Type;
+            var dir = ((OrthographicCamera)Viewport.Camera).ViewType;
             switch (dir)
             {
                 case OrthographicCamera.OrthographicType.Top:
-                    return new Coordinate(c.X, c.Y, 0);
+                    return new Vector3(c.X, c.Y, 0);
                 case OrthographicCamera.OrthographicType.Front:
-                    return new Coordinate(0, c.X, c.Y);
+                    return new Vector3(0, c.Y, c.Z);
                 case OrthographicCamera.OrthographicType.Side:
-                    return new Coordinate(c.X, 0, c.Y);
+                    return new Vector3(c.X, 0, c.Z);
                 default:
                     throw new ArgumentOutOfRangeException("Type");
             }
         }
 
-        public Coordinate GetUnusedCoordinate(Coordinate c)
-        {
-            if (!Is2D) return c;
-            var dir = ((OrthographicCamera)Viewport.Camera).Type;
-            switch (dir)
-            {
-                case OrthographicCamera.OrthographicType.Top:
-                    return new Coordinate(0, 0, c.Z);
-                case OrthographicCamera.OrthographicType.Front:
-                    return new Coordinate(c.X, 0, 0);
-                case OrthographicCamera.OrthographicType.Side:
-                    return new Coordinate(0, c.Y, 0);
-                default:
-                    throw new ArgumentOutOfRangeException("Type");
-            }
-        }
+        public float UnitsToPixels(float units) => Viewport.Camera.UnitsToPixels(units);
+        public float PixelsToUnits(float pixels) => Viewport.Camera.PixelsToUnits(pixels);
 
-        public Coordinate ZeroUnusedCoordinate(Coordinate c)
-        {
-            if (!Is2D) return c;
-            var dir = ((OrthographicCamera)Viewport.Camera).Type;
-            switch (dir)
-            {
-                case OrthographicCamera.OrthographicType.Top:
-                    return new Coordinate(c.X, c.Y, 0);
-                case OrthographicCamera.OrthographicType.Front:
-                    return new Coordinate(0, c.Y, c.Z);
-                case OrthographicCamera.OrthographicType.Side:
-                    return new Coordinate(c.X, 0, c.Z);
-                default:
-                    throw new ArgumentOutOfRangeException("Type");
-            }
-        }
+        public Vector3 ScreenToWorld(float x, float y) => Viewport.Camera.ScreenToWorld(new Vector3(x, y, 0));
+        public Vector3 ScreenToWorld(Vector3 screen) => Viewport.Camera.ScreenToWorld(screen);
+        public Vector3 WorldToScreen(Vector3 world) => Viewport.Camera.WorldToScreen(world);
 
-        public Coordinate ProperScreenToWorld(Point location)
-        {
-            return ProperScreenToWorld(location.X, location.Y);
-        }
-
-        public Coordinate ProperScreenToWorld(decimal x, decimal y)
-        {
-            return ProperScreenToWorld(new Coordinate(x, y, 0));
-        }
-
-        // todo !after removing old editor project, rename this to ScreenToWorld
-        public Coordinate ProperScreenToWorld(Coordinate location)
-        {
-            return Viewport.Camera.ScreenToWorld(location.ToVector3(), Width, Height).ToCoordinate();
-        }
-
-        // todo !after removing old editor project, rename this to WorldToScreen
-        public Coordinate ProperWorldToScreen(Coordinate location)
-        {
-            return Viewport.Camera.WorldToScreen(location.ToVector3(), Width, Height).ToCoordinate();
-        }
+        /*
 
         /// <summary>
         /// Project the 2D coordinates from the screen coordinates outwards
@@ -392,19 +325,12 @@ namespace Sledge.BspEditor.Rendering.Viewport
             var l = Viewport.Camera.CastRayFromScreen(new Vector3(x, y, 0), Width, Height);
             return new Line(l.Start.ToCoordinate(), l.End.ToCoordinate());
         }
-
-        public decimal UnitsToPixels(decimal units)
-        {
-            return (decimal) Viewport.Camera.UnitsToPixels((float) units);
-        }
-
-        public decimal PixelsToUnits(decimal pixels)
-        {
-            return (decimal)Viewport.Camera.PixelsToUnits((float)pixels);
-        }
+        
+        */
 
         #endregion
 
+        /*
         #region Camera Manipulation
         
         public void FocusOn(Box box)

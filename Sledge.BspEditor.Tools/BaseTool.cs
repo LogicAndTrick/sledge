@@ -2,26 +2,24 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Numerics;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using LogicAndTrick.Oy;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Primitives.MapData;
-using Sledge.BspEditor.Rendering.Scene;
 using Sledge.BspEditor.Rendering.Viewport;
 using Sledge.Common.Shell.Components;
 using Sledge.Common.Shell.Context;
 using Sledge.Common.Shell.Documents;
-using Sledge.DataStructures.Geometric;
-using Sledge.Rendering;
 using Sledge.Rendering.Cameras;
-using Sledge.Rendering.Scenes;
-using Sledge.Rendering.Scenes.Elements;
+using Sledge.Rendering.Overlay;
+using Sledge.Rendering.Viewports;
 using Sledge.Shell.Input;
 
 namespace Sledge.BspEditor.Tools
 {
-    public abstract class BaseTool : ITool
+    public abstract class BaseTool : ITool, IOverlayRenderable
     {
         public enum ToolUsage
         {
@@ -38,7 +36,7 @@ namespace Sledge.BspEditor.Tools
             return context.Get<MapDocument>("ActiveDocument") != null;
         }
 
-        public Coordinate Snap(Coordinate c)
+        public Vector3 Snap(Vector3 c)
         {
             var gridData = Document.Map.Data.GetOne<GridData>();
             var snap = !KeyboardState.Alt && gridData?.SnapToGrid == true;
@@ -46,12 +44,12 @@ namespace Sledge.BspEditor.Tools
             return snap && grid != null ? grid.Snap(c) : c;
         }
 
-        public Coordinate SnapIfNeeded(Coordinate c)
+        public Vector3 SnapIfNeeded(Vector3 c)
         {
             return Snap(c);
         }
 
-        public Coordinate SnapToSelection(Coordinate c, MapViewport vp)
+        public Vector3 SnapToSelection(Vector3 c, MapViewport vp)
         {
             var gridData = Document.Map.Data.GetOne<GridData>();
             var snap = !KeyboardState.Alt && gridData?.SnapToGrid == true;
@@ -112,22 +110,22 @@ namespace Sledge.BspEditor.Tools
             //return closest;
         }
 
-        protected Coordinate GetNudgeValue(Keys k)
+        protected Vector3? GetNudgeValue(Keys k)
         {
             var gridData = Document.Map.Data.GetOne<GridData>();
             var useGrid = !KeyboardState.Ctrl && gridData?.SnapToGrid != false;
             var grid = gridData?.Grid;
-            var val = grid != null && !useGrid ? grid.AddStep(Coordinate.Zero, Coordinate.One) : Coordinate.One;
+            var val = grid != null && !useGrid ? grid.AddStep(Vector3.Zero, Vector3.One) : Vector3.One;
             switch (k)
             {
                 case Keys.Left:
-                    return new Coordinate(-val.X, 0, 0);
+                    return new Vector3(-val.X, 0, 0);
                 case Keys.Right:
-                    return new Coordinate(val.X, 0, 0);
+                    return new Vector3(val.X, 0, 0);
                 case Keys.Up:
-                    return new Coordinate(0, val.Y, 0);
+                    return new Vector3(0, val.Y, 0);
                 case Keys.Down:
-                    return new Coordinate(0, -val.Y, 0);
+                    return new Vector3(0, -val.Y, 0);
             }
             return null;
         }
@@ -138,9 +136,6 @@ namespace Sledge.BspEditor.Tools
         public bool Active { get; set; }
 
         protected bool UseValidation { get; set; }
-        private readonly HashSet<MapViewport> _validatedViewports;
-        private List<SceneObject> _currentObjects;
-        private readonly Dictionary<MapViewport, List<Element>> _currentViewportObjects;
 
         protected List<BaseTool> Children { get; private set; }
 
@@ -152,10 +147,7 @@ namespace Sledge.BspEditor.Tools
             Active = true;
             Viewport = null;
             Usage = ToolUsage.View2D;
-            _validatedViewports = new HashSet<MapViewport>();
             UseValidation = false;
-            _currentObjects = new List<SceneObject>();
-            _currentViewportObjects = new Dictionary<MapViewport, List<Element>>();
             Children = new List<BaseTool>();
 
             Oy.Subscribe<IDocument>("Document:Activated", id => SetDocument(id as MapDocument));
@@ -167,7 +159,7 @@ namespace Sledge.BspEditor.Tools
 
         }
 
-        public void SetDocument(MapDocument document)
+        protected void SetDocument(MapDocument document)
         {
             Document = document;
             foreach (var t in Children) t.SetDocument(document);
@@ -181,23 +173,23 @@ namespace Sledge.BspEditor.Tools
             yield break;
         }
 
-        public virtual async Task ToolSelected()
+        public virtual Task ToolSelected()
         {
             _subscriptions = Subscribe().ToList();
             Invalidate();
+            return Task.CompletedTask;
         }
 
-        public virtual async Task ToolDeselected()
+        public virtual Task ToolDeselected()
         {
             _subscriptions?.ForEach(x => x.Dispose());
-            ClearScene();
             Invalidate();
+            return Task.CompletedTask;
         }
 
-        public virtual void DocumentChanged()
+        protected virtual void DocumentChanged()
         {
             // Virtual
-            ClearScene();
             Invalidate();
         }
 
@@ -325,9 +317,8 @@ namespace Sledge.BspEditor.Tools
             if (viewport.Is3D) KeyUp(viewport, viewport.Viewport.Camera as PerspectiveCamera, e);
         }
 
-        public virtual void UpdateFrame(MapViewport viewport, Frame frame)
+        public virtual void UpdateFrame(MapViewport viewport, long frame)
         {
-            Validate(viewport);
             if (!Active) return;
             foreach (var child in Children) child.UpdateFrame(viewport, frame);
 
@@ -377,8 +368,8 @@ namespace Sledge.BspEditor.Tools
         protected virtual void KeyDown(MapViewport viewport, PerspectiveCamera camera, ViewportEvent e) { }
         protected virtual void KeyUp(MapViewport viewport, OrthographicCamera camera, ViewportEvent e) { }
         protected virtual void KeyUp(MapViewport viewport, PerspectiveCamera camera, ViewportEvent e) { }
-        protected virtual void UpdateFrame(MapViewport viewport, OrthographicCamera camera, Frame frame) { }
-        protected virtual void UpdateFrame(MapViewport viewport, PerspectiveCamera camera, Frame frame) { }
+        protected virtual void UpdateFrame(MapViewport viewport, OrthographicCamera camera, long frame) { }
+        protected virtual void UpdateFrame(MapViewport viewport, PerspectiveCamera camera, long frame) { }
 
         public virtual void PositionChanged(MapViewport viewport, OrthographicCamera camera, ViewportEvent e) { }
         public virtual void ZoomChanged(MapViewport viewport, OrthographicCamera camera, ViewportEvent e) { }
@@ -392,103 +383,34 @@ namespace Sledge.BspEditor.Tools
 
         #region Scene / rendering
 
-        public event EventHandler<SceneObjectsChangedEventArgs> SceneObjectsChanged;
-
-        private void ClearScene()
-        {
-            var created = new List<SceneObject>();
-            var updated = new List<SceneObject>();
-            var deleted = new List<SceneObject>();
-
-            ClearSceneImpl(created, updated, deleted);
-
-            if (created.Any() || updated.Any() || deleted.Any())
-            {
-                SceneObjectsChanged?.Invoke(this, new SceneObjectsChangedEventArgs(created, updated, deleted));
-            }
-        }
-
-        private void ClearSceneImpl(List<SceneObject> created, List<SceneObject> updated, List<SceneObject> deleted)
-        {
-            deleted.AddRange(_currentObjects);
-            deleted.AddRange(_currentViewportObjects.SelectMany(x => x.Value));
-
-            _currentObjects.Clear();
-            _currentViewportObjects.Clear();
-
-            foreach (var t in Children)
-            {
-                t.ClearSceneImpl(created, updated, deleted);
-            }
-        }
-
         protected virtual void Invalidate()
         {
-            _validatedViewports.Clear();
+            // todo
         }
 
-        private void Validate(MapViewport viewport)
+        public virtual void Render(IViewport viewport, OrthographicCamera camera, Vector3 worldMin, Vector3 worldMax, Graphics graphics)
         {
-            var created = new List<SceneObject>();
-            var updated = new List<SceneObject>();
-            var deleted = new List<SceneObject>();
-
-            ValidateImpl(viewport, created, updated, deleted);
-
-            if (created.Any() || updated.Any() || deleted.Any())
-            {
-                SceneObjectsChanged?.Invoke(this, new SceneObjectsChangedEventArgs(created, updated, deleted));
-            }
-        }
-
-        private void ValidateImpl(MapViewport viewport, List<SceneObject> created, List<SceneObject> updated, List<SceneObject> deleted)
-        {
-            if ((UseValidation && _validatedViewports.Contains(viewport)) || Document == null) return;
-            _validatedViewports.Add(viewport);
-            
-            deleted.AddRange(_currentObjects);
-            if (_currentViewportObjects.ContainsKey(viewport)) deleted.AddRange(_currentViewportObjects[viewport]);
-
-            _currentObjects.Clear();
-            _currentViewportObjects[viewport] = new List<Element>();
-
             if (!Active) return;
-            
-            _currentObjects = GetSceneObjects().ToList();
-            if (viewport.Is3D)
+            foreach (var c in Children.Where(x => x.Active))
             {
-                var vpObjects = GetViewportElements(viewport, viewport.Viewport.Camera as PerspectiveCamera).ToList();
-                foreach (var o in vpObjects) o.Viewport = viewport.Viewport;
-                _currentViewportObjects[viewport].AddRange(vpObjects);
+                c.Render(viewport, camera, worldMin, worldMax, graphics);
             }
-            else if (viewport.Is2D)
+        }
+
+        public virtual void Render(IViewport viewport, PerspectiveCamera camera, Graphics graphics)
+        {
+            if (!Active) return;
+            foreach (var c in Children.Where(x => x.Active))
             {
-                var vpObjects = GetViewportElements(viewport, viewport.Viewport.Camera as OrthographicCamera).ToList();
-                foreach (var o in vpObjects) o.Viewport = viewport.Viewport;
-                _currentViewportObjects[viewport].AddRange(vpObjects);
+                c.Render(viewport, camera, graphics);
             }
-
-            created.AddRange(_currentObjects);
-            created.AddRange(_currentViewportObjects[viewport]);
         }
 
-        protected virtual IEnumerable<SceneObject> GetSceneObjects()
-        {
-            if (!Active) return new SceneObject[0];
-            return Children.Where(x => x.Active).SelectMany(x => x.GetSceneObjects());
-        }
-
-        protected virtual IEnumerable<Element> GetViewportElements(MapViewport viewport, PerspectiveCamera camera)
-        {
-            if (!Active) return new Element[0];
-            return Children.Where(x => x.Active).SelectMany(x => x.GetViewportElements(viewport, camera));
-        }
-
-        protected virtual IEnumerable<Element> GetViewportElements(MapViewport viewport, OrthographicCamera camera)
-        {
-            if (!Active) return new Element[0];
-            return Children.Where(x => x.Active).SelectMany(x => x.GetViewportElements(viewport, camera));
-        }
+        // protected virtual IEnumerable<SceneObject> GetSceneObjects()
+        // {
+        //     if (!Active) return new SceneObject[0];
+        //     return Children.Where(x => x.Active).SelectMany(x => x.GetSceneObjects());
+        // }
 
         #endregion
     }

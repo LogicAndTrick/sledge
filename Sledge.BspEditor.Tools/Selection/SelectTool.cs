@@ -192,7 +192,7 @@ namespace Sledge.BspEditor.Tools.Selection
                     // todo: align
                     b.AddCallback("TODO: Align", () => { });
                     /*
-                    var flat = b.Viewport.Flatten(new Coordinate(1, 2, 3));
+                    var flat = b.Viewport.Flatten(new Vector3(1, 2, 3));
                     var left = flat.X == 1 ? HotkeysMediator.AlignXMin : (flat.X == 2 ? HotkeysMediator.AlignYMin : HotkeysMediator.AlignZMin);
                     var right = flat.X == 1 ? HotkeysMediator.AlignXMax : (flat.X == 2 ? HotkeysMediator.AlignYMax : HotkeysMediator.AlignZMax);
                     var bottom = flat.Y == 1 ? HotkeysMediator.AlignXMin : (flat.Y == 2 ? HotkeysMediator.AlignYMin : HotkeysMediator.AlignZMin);
@@ -360,7 +360,7 @@ namespace Sledge.BspEditor.Tools.Selection
             Oy.Publish("Context:Add", new ContextInfo("BspEditor:ObjectProperties"));
         }
 
-        private Coordinate GetIntersectionPoint(IMapObject obj, Line line)
+        private Vector3 GetIntersectionPoint(IMapObject obj, Line line)
         {
             // todo !selection opacity/hidden
             //.Where(x => x.Opacity > 0 && !x.IsHidden)
@@ -468,7 +468,7 @@ namespace Sledge.BspEditor.Tools.Selection
 
         #region 2D interaction
 
-        protected override void OnDraggableClicked(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Coordinate position, IDraggable draggable)
+        protected override void OnDraggableClicked(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position, IDraggable draggable)
         {
             var ctrl = KeyboardState.Ctrl;
             if (draggable == _emptyBox || ctrl)
@@ -489,7 +489,7 @@ namespace Sledge.BspEditor.Tools.Selection
             }
         }
 
-        protected override void OnDraggableDragStarted(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Coordinate position, IDraggable draggable)
+        protected override void OnDraggableDragStarted(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position, IDraggable draggable)
         {
             var ctrl = KeyboardState.Ctrl;
             if (draggable == _emptyBox && !ctrl && !Document.Selection.IsEmpty)
@@ -498,7 +498,7 @@ namespace Sledge.BspEditor.Tools.Selection
             }
         }
 
-        protected override void OnDraggableDragMoved(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Coordinate previousPosition, Coordinate position, IDraggable draggable)
+        protected override void OnDraggableDragMoved(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 previousPosition, Vector3 position, IDraggable draggable)
         {
             base.OnDraggableDragMoved(viewport, camera, e, previousPosition, position, draggable);
             if (_selectionBox.State.Action == BoxAction.Resizing && draggable is ITransformationHandle)
@@ -520,7 +520,7 @@ namespace Sledge.BspEditor.Tools.Selection
             }
         }
 
-        protected override void OnDraggableDragEnded(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Coordinate position, IDraggable draggable)
+        protected override void OnDraggableDragEnded(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position, IDraggable draggable)
         {
             var tt = draggable as ITransformationHandle;
             if (_selectionBox.State.Action == BoxAction.Resizing && tt != null)
@@ -559,7 +559,7 @@ namespace Sledge.BspEditor.Tools.Selection
 
         private bool CenterHandleIntersectFilter(IMapObject obj, Box box)
         {
-            return obj.BoundingBox != null && box.CoordinateIsInside(obj.BoundingBox.Center);
+            return obj.BoundingBox != null && box.Vector3IsInside(obj.BoundingBox.Center);
         }
 
         private bool LineIntersectFilter(IMapObject obj, Box box)
@@ -578,9 +578,9 @@ namespace Sledge.BspEditor.Tools.Selection
         private IMapObject SelectionTest(MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
         {
             // Create a box to represent the click, with a tolerance level
-            var unused = viewport.GetUnusedCoordinate(new Coordinate(100000, 100000, 100000));
+            var unused = viewport.GetUnusedVector3(new Vector3(100000, 100000, 100000));
             var tolerance = 4 / (decimal) viewport.Zoom; // Selection tolerance of four pixels
-            var used = viewport.Expand(new Coordinate(tolerance, tolerance, 0));
+            var used = viewport.Expand(new Vector3(tolerance, tolerance, 0));
             var add = used + unused;
             var click = viewport.ProperScreenToWorld(e.X, e.Y);
             var box = new Box(click - add, click + add);

@@ -161,9 +161,9 @@ namespace Sledge.BspEditor.Rendering.Viewport
 
         public void MouseWheel(ViewportEvent e)
         {
-            var before = Camera.Flatten(Camera.ScreenToWorld(new Vector3(e.X, e.Y, 0), Viewport.Width, Viewport.Height));
+            var before = Camera.Flatten(Camera.ScreenToWorld(new Vector3(e.X, e.Y, 0)));
             Camera.Zoom *= (float) DMath.Pow(/*Sledge.Settings.View.ScrollWheelZoomMultiplier*/ 1.4m, (e.Delta < 0 ? -1 : 1));
-            var after = Camera.Flatten(Camera.ScreenToWorld(new Vector3(e.X, e.Y, 0), Viewport.Width, Viewport.Height));
+            var after = Camera.Flatten(Camera.ScreenToWorld(new Vector3(e.X, e.Y, 0)));
             Camera.Position -= (after - before);
 
             //Mediator.Publish(EditorMediator.ViewZoomChanged, Camera.Zoom);

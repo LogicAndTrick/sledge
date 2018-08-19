@@ -12,8 +12,8 @@ namespace Sledge.BspEditor.Tools.Selection.TransformationHandles
 {
     public class SkewTransformHandle : BoxResizeHandle, ITransformationHandle
     {
-        private Coordinate _skewStart;
-        private Coordinate _skewEnd;
+        private Vector3 _skewStart;
+        private Vector3 _skewEnd;
 
         public string Name { get { return "Skew"; } }
 
@@ -39,18 +39,18 @@ namespace Sledge.BspEditor.Tools.Selection.TransformationHandles
             viewport.Control.Cursor = ct;
         }
 
-        public override void StartDrag(MapViewport viewport, ViewportEvent e, Coordinate position)
+        public override void StartDrag(MapViewport viewport, ViewportEvent e, Vector3 position)
         {
             _skewStart = _skewEnd = position;
             base.StartDrag(viewport, e, position);
         }
 
-        public override void Drag(MapViewport viewport, ViewportEvent e, Coordinate lastPosition, Coordinate position)
+        public override void Drag(MapViewport viewport, ViewportEvent e, Vector3 lastPosition, Vector3 position)
         {
             _skewEnd = position;
         }
 
-        public override void EndDrag(MapViewport viewport, ViewportEvent e, Coordinate position)
+        public override void EndDrag(MapViewport viewport, ViewportEvent e, Vector3 position)
         {
             _skewStart = _skewEnd = null;
             base.EndDrag(viewport, e, position);
@@ -72,7 +72,7 @@ namespace Sledge.BspEditor.Tools.Selection.TransformationHandles
             var relative = viewport.Flatten(state.OrigEnd - state.OrigStart);
             var shearOrigin = (shearTopRight) ? state.OrigStart : state.OrigEnd;
 
-            var shearAmount = new Coordinate(mouseDiff.X / relative.Y, mouseDiff.Y / relative.X, 0);
+            var shearAmount = new Vector3(mouseDiff.X / relative.Y, mouseDiff.Y / relative.X, 0);
             if (!shearTopRight) shearAmount *= -1;
 
             var shearMatrix = Matrix4.Identity;

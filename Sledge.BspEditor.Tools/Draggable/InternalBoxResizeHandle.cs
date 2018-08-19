@@ -2,13 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using OpenTK;
-using Sledge.BspEditor.Rendering;
+using System.Numerics;
 using Sledge.BspEditor.Rendering.Viewport;
 using Sledge.DataStructures.Geometric;
 using Sledge.Rendering.Cameras;
-using Sledge.Rendering.Materials;
-using Sledge.Rendering.Scenes.Elements;
 
 namespace Sledge.BspEditor.Tools.Draggable
 {
@@ -28,29 +25,29 @@ namespace Sledge.BspEditor.Tools.Draggable
             switch (Handle)
             {
                 case ResizeHandle.TopLeft:
-                    return new Box(new Coordinate(start.X, end.Y - len, 0), new Coordinate(start.X + wid, end.Y, 0));
+                    return new Box(new Vector3(start.X, end.Y - len, 0), new Vector3(start.X + wid, end.Y, 0));
                 case ResizeHandle.Top:
-                    return new Box(new Coordinate(start.X, end.Y - len, 0), end);
+                    return new Box(new Vector3(start.X, end.Y - len, 0), end);
                 case ResizeHandle.TopRight:
-                    return new Box(new Coordinate(end.X - wid, end.Y - len, 0), new Coordinate(end.X, end.Y, 0));
+                    return new Box(new Vector3(end.X - wid, end.Y - len, 0), new Vector3(end.X, end.Y, 0));
                 case ResizeHandle.Left:
-                    return new Box(start, new Coordinate(start.X + wid, end.Y, 0));
+                    return new Box(start, new Vector3(start.X + wid, end.Y, 0));
                 case ResizeHandle.Center:
                     return box;
                 case ResizeHandle.Right:
-                    return new Box(new Coordinate(end.X - wid, start.Y, 0), end);
+                    return new Box(new Vector3(end.X - wid, start.Y, 0), end);
                 case ResizeHandle.BottomLeft:
-                    return new Box(new Coordinate(start.X, start.Y, 0), new Coordinate(start.X + wid, start.Y + len, 0));
+                    return new Box(new Vector3(start.X, start.Y, 0), new Vector3(start.X + wid, start.Y + len, 0));
                 case ResizeHandle.Bottom:
-                    return new Box(start, new Coordinate(end.X, start.Y + len, 0));
+                    return new Box(start, new Vector3(end.X, start.Y + len, 0));
                 case ResizeHandle.BottomRight:
-                    return new Box(new Coordinate(end.X - wid, start.Y, 0), new Coordinate(end.X, start.Y + len, 0));
+                    return new Box(new Vector3(end.X - wid, start.Y, 0), new Vector3(end.X, start.Y + len, 0));
                 default:
                     throw new ArgumentOutOfRangeException();
             }
         }
 
-        public override bool CanDrag(MapViewport viewport, ViewportEvent e, Coordinate position)
+        public override bool CanDrag(MapViewport viewport, ViewportEvent e, Vector3 position)
         {
             const int padding = 2;
             var box = GetRectangle(viewport);
@@ -60,11 +57,11 @@ namespace Sledge.BspEditor.Tools.Draggable
         
         }
 
-        protected override Coordinate GetResizeOrigin(MapViewport viewport, Coordinate position)
+        protected override Vector3 GetResizeOrigin(MapViewport viewport, Vector3 position)
         {
             var st = viewport.Flatten(BoxState.Start);
             var ed = viewport.Flatten(BoxState.End);
-            var points = new[] { st, ed, new Coordinate(st.X, ed.Y, 0), new Coordinate(ed.X, st.Y, 0) };
+            var points = new[] { st, ed, new Vector3(st.X, ed.Y, 0), new Vector3(ed.X, st.Y, 0) };
             return points.OrderBy(x => (position - x).LengthSquared()).First();
         }
 

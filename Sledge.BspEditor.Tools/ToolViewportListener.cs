@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using LogicAndTrick.Oy;
 using Sledge.BspEditor.Rendering.Viewport;
 using Sledge.Common.Shell.Components;
-using Sledge.Rendering;
 
 namespace Sledge.BspEditor.Tools
 {
@@ -11,7 +10,7 @@ namespace Sledge.BspEditor.Tools
     {
         private WeakReference<BaseTool> _activeTool = new WeakReference<BaseTool>(null);
 
-        private BaseTool ActiveTool => _activeTool.TryGetTarget(out BaseTool t) ? t : null;
+        private BaseTool ActiveTool => _activeTool.TryGetTarget(out var t) ? t : null;
 
         public MapViewport Viewport { get; set; }
 
@@ -22,9 +21,10 @@ namespace Sledge.BspEditor.Tools
             Oy.Subscribe<ITool>("Tool:Activated", ToolActivated);
         }
 
-        private async Task ToolActivated(ITool tool)
+        private Task ToolActivated(ITool tool)
         {
             _activeTool = new WeakReference<BaseTool>(tool as BaseTool);
+            return Task.CompletedTask;
         }
 
         private bool ShouldRelayEvent(BaseTool tool)
@@ -137,7 +137,7 @@ namespace Sledge.BspEditor.Tools
             ActiveTool.PositionChanged(Viewport, e);
         }
 
-        public void UpdateFrame(Frame frame)
+        public void UpdateFrame(long frame)
         {
             if (!ShouldRelayEvent(ActiveTool)) return;
             ActiveTool.UpdateFrame(Viewport, frame);

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.Numerics;
 using Sledge.Common;
@@ -80,12 +79,12 @@ namespace Sledge.Rendering.Cameras
             if (int.TryParse(tags[7], NumberStyles.Integer, CultureInfo.InvariantCulture, out i)) ClipDistance = i;
         }
 
-        public Matrix4x4 GetCameraMatrix()
+        private Matrix4x4 GetCameraMatrix()
         {
             return Matrix4x4.CreateLookAt(Position, _lookAt, Vector3.UnitZ);
         }
 
-        public Matrix4x4 GetViewportMatrix(int width, int height)
+        private Matrix4x4 GetViewportMatrix(int width, int height)
         {
             const float near = 1.0f;
             var ratio = width / (float)height;
@@ -93,24 +92,19 @@ namespace Sledge.Rendering.Cameras
             return Matrix4x4.CreatePerspectiveFieldOfView((float) DMath.DegreesToRadians(FOV), ratio, near, ClipDistance);
         }
 
-        public Matrix4x4 GetModelMatrix()
-        {
-            return Matrix4x4.Identity;
-        }
-
-        public Vector3 ScreenToWorld(Vector3 screen, int width, int height)
+        public Vector3 ScreenToWorld(Vector3 screen)
         {
             screen = new Vector3(screen.X, screen.Y, 1);
-            var viewport = new[] { 0, 0, width, height };
-            var pm = Matrix4x4.CreatePerspectiveFieldOfView((float)DMath.DegreesToRadians(FOV), width / (float)height, 1.0f, 50000);
+            var viewport = new[] { 0, 0, Width, Height };
+            var pm = Matrix4x4.CreatePerspectiveFieldOfView((float)DMath.DegreesToRadians(FOV), Width / (float)Height, 1.0f, 50000);
             var vm = Matrix4x4.CreateLookAt(Position, LookAt, Vector3.UnitZ);
             return MathFunctions.Unproject(screen, viewport, pm, vm);
         }
 
-        public Vector3 WorldToScreen(Vector3 world, int width, int height)
+        public Vector3 WorldToScreen(Vector3 world)
         {
-            var viewport = new[] { 0, 0, width, height };
-            var pm = Matrix4x4.CreatePerspectiveFieldOfView((float)DMath.DegreesToRadians(FOV), width / (float)height, 1.0f, 50000);
+            var viewport = new[] { 0, 0, Width, Height };
+            var pm = Matrix4x4.CreatePerspectiveFieldOfView((float)DMath.DegreesToRadians(FOV), Width / (float)Height, 1.0f, 50000);
             var vm = Matrix4x4.CreateLookAt(Position, LookAt, Vector3.UnitZ);
             return MathFunctions.Project(world, viewport, pm, vm);
         }
@@ -173,7 +167,7 @@ namespace Sledge.Rendering.Cameras
             return flat;
         }
 
-        public float GetRotation()
+        private float GetRotation()
         {
             var temp = (LookAt - Position);
             if (Math.Abs(temp.Length()) > 0.0001f) temp = Vector3.Normalize(temp);
@@ -183,7 +177,7 @@ namespace Sledge.Rendering.Cameras
             return (float)rot;
         }
 
-        public void SetRotation(float rotation)
+        private void SetRotation(float rotation)
         {
             var temp = (LookAt - Position);
             if (Math.Abs(temp.Length()) > 0.0001f) temp = Vector3.Normalize(temp);
@@ -193,7 +187,7 @@ namespace Sledge.Rendering.Cameras
             LookAt = new Vector3((float)x + Position.X, (float)y + Position.Y, temp.Z + Position.Z);
         }
 
-        public float GetElevation()
+        private float GetElevation()
         {
             var temp = (LookAt - Position);
             if (Math.Abs(temp.Length()) > 0.0001f) temp = Vector3.Normalize(temp);
@@ -201,7 +195,7 @@ namespace Sledge.Rendering.Cameras
             return (float)elev;
         }
 
-        public void SetElevation(float elevation)
+        private void SetElevation(float elevation)
         {
             if (elevation > (Math.PI * 0.99)) elevation = (float)Math.PI * 0.99f;
             if (elevation < (Math.PI * 0.01)) elevation = (float)Math.PI * 0.01f;
@@ -256,7 +250,7 @@ namespace Sledge.Rendering.Cameras
             Position += up;
         }
 
-        public Vector3 GetUp()
+        private Vector3 GetUp()
         {
             var temp = LookAt - Position;
             temp = Vector3.Normalize(temp);
@@ -265,7 +259,7 @@ namespace Sledge.Rendering.Cameras
             return normal;
         }
 
-        public Vector3 GetRight()
+        private Vector3 GetRight()
         {
             var temp = LookAt - Position;
             temp.Z = 0;

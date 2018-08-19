@@ -1,33 +1,30 @@
 using System.Collections.Generic;
 using System.Drawing;
+using System.Numerics;
 using System.Windows.Forms;
-using Sledge.BspEditor.Rendering;
 using Sledge.BspEditor.Rendering.Viewport;
-using Sledge.DataStructures.Geometric;
 using Sledge.Rendering.Cameras;
-using Sledge.Rendering.Scenes;
-using Sledge.Rendering.Scenes.Elements;
 
 namespace Sledge.BspEditor.Tools.Draggable
 {
-    public class DraggableCoordinate : BaseDraggable
+    public class DraggableVector3 : BaseDraggable
     {
         public bool Highlighted { get; protected set; }
-        public Coordinate Position { get; set; }
+        public Vector3 Position { get; set; }
         public int Width { get; protected set; }
 
-        public DraggableCoordinate()
+        public DraggableVector3()
         {
             Width = 5;
-            Position = Coordinate.Zero;
+            Position = Vector3.Zero;
         }
 
-        public override void Click(MapViewport viewport, ViewportEvent e, Coordinate position)
+        public override void Click(MapViewport viewport, ViewportEvent e, Vector3 position)
         {
             
         }
 
-        public override bool CanDrag(MapViewport viewport, ViewportEvent e, Coordinate position)
+        public override bool CanDrag(MapViewport viewport, ViewportEvent e, Vector3 position)
         {
             var width = Width;
             var screenPosition = viewport.ProperWorldToScreen(Position);
@@ -52,9 +49,9 @@ namespace Sledge.BspEditor.Tools.Draggable
             viewport.Control.Cursor = Cursors.Default;
         }
 
-        public override void Drag(MapViewport viewport, ViewportEvent e, Coordinate lastPosition, Coordinate position)
+        public override void Drag(MapViewport viewport, ViewportEvent e, Vector3 lastPosition, Vector3 position)
         {
-            Position = viewport.Expand(position) + viewport.GetUnusedCoordinate(Position);
+            Position = viewport.Expand(position) + viewport.GetUnusedVector3(Position);
             base.Drag(viewport, e, lastPosition, position);
         }
 

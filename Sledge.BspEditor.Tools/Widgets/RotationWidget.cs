@@ -2,18 +2,15 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Numerics;
 using System.Windows.Forms;
-using OpenTK;
 using Sledge.BspEditor.Documents;
-using Sledge.BspEditor.Modification.Operations;
-using Sledge.BspEditor.Rendering;
 using Sledge.BspEditor.Rendering.Viewport;
 using Sledge.Common;
-using Sledge.DataStructures;
 using Sledge.DataStructures.Geometric;
 using Sledge.Rendering.Cameras;
-using Sledge.Rendering.Scenes.Elements;
 using Sledge.Shell.Input;
+using Plane = Sledge.DataStructures.Geometric.Plane;
 
 namespace Sledge.BspEditor.Tools.Widgets
 {
@@ -37,9 +34,9 @@ namespace Sledge.BspEditor.Tools.Widgets
         {
             public int Width { get; set; }
             public int Height { get; set; }
-            public Coordinate CameraLocation { get; set; }
-            public Coordinate CameraLookAt { get; set; }
-            public Coordinate PivotPoint { get; set; }
+            public Vector3 CameraLocation { get; set; }
+            public Vector3 CameraLookAt { get; set; }
+            public Vector3 PivotPoint { get; set; }
             public MapViewport MapViewport { get; set; }
             public Dictionary<CircleType, List<Line>> Cache { get; set; }
 
@@ -60,18 +57,18 @@ namespace Sledge.BspEditor.Tools.Widgets
 
         private bool _autoPivot = true;
 
-        private Coordinate _pivotPoint = Coordinate.Zero;
+        private Vector3 _pivotPoint = Vector3.Zero;
         private CircleType _mouseOver;
         private CircleType _mouseDown;
-        private Coordinate _mouseDownPoint;
-        private Coordinate _mouseMovePoint;
+        private Vector3 _mouseDownPoint;
+        private Vector3 _mouseMovePoint;
 
-        public Coordinate GetPivotPoint()
+        public Vector3 GetPivotPoint()
         {
             return _pivotPoint;
         }
 
-        public void SetPivotPoint(Coordinate point)
+        public void SetPivotPoint(Vector3 point)
         {
             _pivotPoint = point;
         }
@@ -85,12 +82,12 @@ namespace Sledge.BspEditor.Tools.Widgets
             if (!_autoPivot) return;
 
             var bb = Document.Selection.GetSelectionBoundingBox();
-            _pivotPoint = bb == null ? Coordinate.Zero : bb.Center;
+            _pivotPoint = bb == null ? Vector3.Zero : bb.Center;
         }
 
         #region Line cache
 
-        private void AddLine(CircleType type, Coordinate start, Coordinate end, Plane test, CachedLines cache)
+        private void AddLine(CircleType type, Vector3 start, Vector3 end, Plane test, CachedLines cache)
         {
             var line = new Line(start, end);
             var cls = line.ClassifyAgainstPlane(test);
@@ -106,8 +103,8 @@ namespace Sledge.BspEditor.Tools.Widgets
 
         private void UpdateCache(MapViewport viewport, PerspectiveCamera camera, MapDocument document)
         {
-            var ccl = camera.EyeLocation.ToCoordinate();
-            var ccla = camera.LookAt.ToCoordinate();
+            var ccl = camera.EyeLocation.ToVector3();
+            var ccla = camera.LookAt.ToVector3();
 
             var cache = _cachedLines.FirstOrDefault(x => x.MapViewport == viewport);
             if (cache == null)
@@ -129,7 +126,7 @@ namespace Sledge.BspEditor.Tools.Widgets
             cache.Height = viewport.Height;
 
             var normal = (ccl - origin).Normalise();
-            var right = normal.Cross(Coordinate.UnitZ).Normalise();
+            var right = normal.Cross(Vector3.UnitZ).Normalise();
             var up = normal.Cross(right).Normalise();
 
             var plane = new Plane(normal, origin.Dot(normal));
@@ -164,27 +161,27 @@ namespace Sledge.BspEditor.Tools.Widgets
 
                 // X/Y plane = Z axis
                 AddLine(CircleType.Z,
-                    origin + Coordinate.UnitX * cos1 + Coordinate.UnitY * sin1,
-                    origin + Coordinate.UnitX * cos2 + Coordinate.UnitY * sin2,
+                    origin + Vector3.UnitX * cos1 + Vector3.UnitY * sin1,
+                    origin + Vector3.UnitX * cos2 + Vector3.UnitY * sin2,
                     plane, cache);
 
                 // Y/Z plane = X axis
                 AddLine(CircleType.X,
-                    origin + Coordinate.UnitY * cos1 + Coordinate.UnitZ * sin1,
-                    origin + Coordinate.UnitY * cos2 + Coordinate.UnitZ * sin2,
+                    origin + Vector3.UnitY * cos1 + Vector3.UnitZ * sin1,
+                    origin + Vector3.UnitY * cos2 + Vector3.UnitZ * sin2,
                     plane, cache);
 
                 // X/Z plane = Y axis
                 AddLine(CircleType.Y,
-                    origin + Coordinate.UnitZ * cos1 + Coordinate.UnitX * sin1,
-                    origin + Coordinate.UnitZ * cos2 + Coordinate.UnitX * sin2,
+                    origin + Vector3.UnitZ * cos1 + Vector3.UnitX * sin1,
+                    origin + Vector3.UnitZ * cos2 + Vector3.UnitX * sin2,
                     plane, cache);
             }
         }
 
         #endregion
 
-        private Matrix4? GetTransformationMatrix(MapViewport viewport)
+        private Matrix4x4? GetTransformationMatrix(MapViewport viewport)
         {
             if (_mouseMovePoint == null || _mouseDownPoint == null || _pivotPoint == null) return null;
 
@@ -226,10 +223,10 @@ namespace Sledge.BspEditor.Tools.Widgets
             var dirAng = Math.Acos(Vector3.Dot(dir, axis)) * 180 / Math.PI;
             if (dirAng > 90) angle = -angle;
 
-            var rotm = Matrix4.CreateFromAxisAngle(axis, (float)angle);
-            var mov = Matrix4.CreateTranslation(-_pivotPoint.ToVector3());
-            var rot = Matrix4.Mult(mov, rotm);
-            return Matrix4.Mult(rot, Matrix4.Invert(mov));
+            var rotm = Matrix4x4.CreateFromAxisAngle(axis, (float)angle);
+            var mov = Matrix4x4.CreateTranslation(-_pivotPoint.ToVector3());
+            var rot = Matrix4x4.Mult(mov, rotm);
+            return Matrix4x4.Mult(rot, Matrix4x4.Invert(mov));
         }
 
         private bool MouseOver(CircleType type, ViewportEvent ev, MapViewport viewport)
@@ -237,7 +234,7 @@ namespace Sledge.BspEditor.Tools.Widgets
             var cache = _cachedLines.FirstOrDefault(x => x.MapViewport == viewport);
             if (cache == null) return false;
             var lines = cache.Cache[type];
-            var point = new Coordinate(ev.X, viewport.Height - ev.Y, 0);
+            var point = new Vector3(ev.X, viewport.Height - ev.Y, 0);
             return lines.Any(x => (x.ClosestPoint(point) - point).VectorMagnitude() <= 8);
         }
 
@@ -254,7 +251,7 @@ namespace Sledge.BspEditor.Tools.Widgets
 
             if (_mouseDown != CircleType.None)
             {
-                _mouseMovePoint = new Coordinate(e.X, viewport.Height - e.Y, 0);
+                _mouseMovePoint = new Vector3(e.X, viewport.Height - e.Y, 0);
                 e.Handled = true;
                 var tform = GetTransformationMatrix(viewport);
                 OnTransforming(tform);
@@ -277,7 +274,7 @@ namespace Sledge.BspEditor.Tools.Widgets
 
             if (e.Button != MouseButtons.Left || _mouseOver == CircleType.None) return;
             _mouseDown = _mouseOver;
-            _mouseDownPoint = new Coordinate(e.X, viewport.Height - e.Y, 0);
+            _mouseDownPoint = new Vector3(e.X, viewport.Height - e.Y, 0);
             _mouseMovePoint = null;
             e.Handled = true;
             viewport.AquireInputLock(this);
@@ -414,7 +411,7 @@ namespace Sledge.BspEditor.Tools.Widgets
                 });
             }
 
-            var plane = new Plane(normal.ToCoordinate(), (decimal) Vector3.Dot(origin, normal));
+            var plane = new Plane(normal.ToVector3(), (decimal) Vector3.Dot(origin, normal));
 
             for (var i = 0; i < sides; i++)
             {
@@ -424,20 +421,20 @@ namespace Sledge.BspEditor.Tools.Widgets
                 var sin2 = (float)Math.Sin(diff * (i + 1)) * radius;
 
                 var zline = GetLineElement(
-                    (origin + Vector3.UnitX * cos1 + Vector3.UnitY * sin1).ToCoordinate(),
-                    (origin + Vector3.UnitX * cos2 + Vector3.UnitY * sin2).ToCoordinate(),
+                    (origin + Vector3.UnitX * cos1 + Vector3.UnitY * sin1).ToVector3(),
+                    (origin + Vector3.UnitX * cos2 + Vector3.UnitY * sin2).ToVector3(),
                     plane,
                     _mouseOver == CircleType.Z ? Color.Blue : Color.DarkBlue);
 
                 var xline = GetLineElement(
-                    (origin + Vector3.UnitY * cos1 + Vector3.UnitZ * sin1).ToCoordinate(),
-                    (origin + Vector3.UnitY * cos2 + Vector3.UnitZ * sin2).ToCoordinate(),
+                    (origin + Vector3.UnitY * cos1 + Vector3.UnitZ * sin1).ToVector3(),
+                    (origin + Vector3.UnitY * cos2 + Vector3.UnitZ * sin2).ToVector3(),
                     plane,
                     _mouseOver == CircleType.X ? Color.Red : Color.DarkRed);
 
                 var yline = GetLineElement(
-                    (origin + Vector3.UnitZ * cos1 + Vector3.UnitX * sin1).ToCoordinate(),
-                    (origin + Vector3.UnitZ * cos2 + Vector3.UnitX * sin2).ToCoordinate(),
+                    (origin + Vector3.UnitZ * cos1 + Vector3.UnitX * sin1).ToVector3(),
+                    (origin + Vector3.UnitZ * cos2 + Vector3.UnitX * sin2).ToVector3(),
                     plane,
                     _mouseOver == CircleType.Y ? Color.Lime : Color.LimeGreen);
 
@@ -447,7 +444,7 @@ namespace Sledge.BspEditor.Tools.Widgets
             }
         }
 
-        private LineElement GetLineElement(Coordinate start, Coordinate end, Plane plane, Color color)
+        private LineElement GetLineElement(Vector3 start, Vector3 end, Plane plane, Color color)
         {
             var line = new Line(start, end);
             var cls = line.ClassifyAgainstPlane(plane);

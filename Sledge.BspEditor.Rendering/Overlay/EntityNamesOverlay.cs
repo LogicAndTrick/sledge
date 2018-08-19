@@ -31,7 +31,7 @@ namespace Sledge.BspEditor.Rendering.Overlay
             {
                 var c = ed.Color?.Color ?? Color.White;
 
-                var loc = camera.WorldToScreen(ed.BoundingBox.Center, camera.Width, camera.Height);
+                var loc = camera.WorldToScreen(ed.BoundingBox.Center);
 
                 var box = ed.BoundingBox;
                 var dim = camera.Flatten(box.Dimensions / 2);

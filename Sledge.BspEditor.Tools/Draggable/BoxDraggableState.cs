@@ -2,16 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Numerics;
 using LogicAndTrick.Oy;
-using OpenTK;
-using Sledge.BspEditor.Rendering;
 using Sledge.BspEditor.Rendering.Viewport;
 using Sledge.DataStructures.Geometric;
 using Sledge.Rendering.Cameras;
-using Sledge.Rendering.Materials;
-using Sledge.Rendering.Scenes;
-using Sledge.Rendering.Scenes.Elements;
-using Sledge.Rendering.Scenes.Renderables;
 
 namespace Sledge.BspEditor.Tools.Draggable
 {
@@ -75,12 +70,12 @@ namespace Sledge.BspEditor.Tools.Draggable
             // 
         }
 
-        public override void Click(MapViewport viewport, ViewportEvent e, Coordinate position)
+        public override void Click(MapViewport viewport, ViewportEvent e, Vector3 position)
         {
             State.Action = BoxAction.Idle;
         }
 
-        public override bool CanDrag(MapViewport viewport, ViewportEvent e, Coordinate position)
+        public override bool CanDrag(MapViewport viewport, ViewportEvent e, Vector3 position)
         {
             return true;
         }
@@ -95,30 +90,30 @@ namespace Sledge.BspEditor.Tools.Draggable
             //
         }
 
-        public override void StartDrag(MapViewport viewport, ViewportEvent e, Coordinate position)
+        public override void StartDrag(MapViewport viewport, ViewportEvent e, Vector3 position)
         {
             State.Viewport = viewport;
             State.Action = BoxAction.Drawing;
             State.OrigStart = State.Start;
             State.OrigEnd = State.End;
-            var st = RememberedDimensions == null ? Coordinate.Zero : viewport.GetUnusedCoordinate(RememberedDimensions.Start);
-            var wid = RememberedDimensions == null ? Coordinate.Zero : viewport.GetUnusedCoordinate(RememberedDimensions.End - RememberedDimensions.Start);
+            var st = RememberedDimensions == null ? Vector3.Zero : viewport.GetUnusedVector3(RememberedDimensions.Start);
+            var wid = RememberedDimensions == null ? Vector3.Zero : viewport.GetUnusedVector3(RememberedDimensions.End - RememberedDimensions.Start);
             State.Start = Tool.SnapIfNeeded(viewport.Expand(position) + st);
             State.End = State.Start + wid;
             base.StartDrag(viewport, e, position);
         }
 
-        public override void Drag(MapViewport viewport, ViewportEvent e, Coordinate lastPosition, Coordinate position)
+        public override void Drag(MapViewport viewport, ViewportEvent e, Vector3 lastPosition, Vector3 position)
         {
-            State.End = Tool.SnapIfNeeded(viewport.Expand(position)) + viewport.GetUnusedCoordinate(State.End);
+            State.End = Tool.SnapIfNeeded(viewport.Expand(position)) + viewport.GetUnusedVector3(State.End);
             base.Drag(viewport, e, lastPosition, position);
         }
 
-        public override void EndDrag(MapViewport viewport, ViewportEvent e, Coordinate position)
+        public override void EndDrag(MapViewport viewport, ViewportEvent e, Vector3 position)
         {
             State.Viewport = null;
             State.Action = BoxAction.Drawn;
-            State.End = Tool.SnapIfNeeded(viewport.Expand(position)) + viewport.GetUnusedCoordinate(State.End);
+            State.End = Tool.SnapIfNeeded(viewport.Expand(position)) + viewport.GetUnusedVector3(State.End);
             State.FixBounds();
             base.EndDrag(viewport, e, position);
         }

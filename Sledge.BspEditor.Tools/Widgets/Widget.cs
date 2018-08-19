@@ -1,5 +1,5 @@
 using System.Drawing;
-using OpenTK;
+using System.Numerics;
 using Sledge.BspEditor.Rendering.Viewport;
 
 namespace Sledge.BspEditor.Tools.Widgets
@@ -8,19 +8,19 @@ namespace Sledge.BspEditor.Tools.Widgets
     {
         protected MapViewport _activeViewport;
 
-        public delegate void TransformEventHandler(Widget sender, Matrix4? transformation);
+        public delegate void TransformEventHandler(Widget sender, Matrix4x4? transformation);
         public event TransformEventHandler Transforming;
         public event TransformEventHandler Transformed;
 
         public abstract bool IsUniformTransformation { get; }
         public abstract bool IsScaleTransformation { get; }
 
-        protected void OnTransforming(Matrix4? transformation)
+        protected void OnTransforming(Matrix4x4? transformation)
         {
             Transforming?.Invoke(this, transformation);
         }
 
-        protected void OnTransformed(Matrix4? transformation)
+        protected void OnTransformed(Matrix4x4? transformation)
         {
             Transformed?.Invoke(this, transformation);
         }

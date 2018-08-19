@@ -1,22 +1,23 @@
 ﻿using System;
+using System.ComponentModel.Composition;
 using System.Threading.Tasks;
 using LogicAndTrick.Oy;
-using Sledge.BspEditor.Rendering.Scene;
 using Sledge.Common.Shell.Components;
+using Sledge.Common.Shell.Hooks;
 
 namespace Sledge.BspEditor.Tools
 {
-    public class ToolSceneObjectProvider : ISceneObjectProvider
+    [Export(typeof(IStartupHook))]
+    public class ToolActivator : IStartupHook
     {
-        public event EventHandler<SceneObjectsChangedEventArgs> SceneObjectsChanged;
-
         private WeakReference<BaseTool> _activeTool;
 
         private BaseTool ActiveTool => _activeTool == null ? null : _activeTool.TryGetTarget(out BaseTool t) ? t : null;
-        
-        public ToolSceneObjectProvider()
+
+        public Task OnStartup()
         {
             Oy.Subscribe<ITool>("Tool:Activated", ToolActivated);
+            return Task.CompletedTask;
         }
 
         private async Task ToolActivated(ITool tool)
@@ -25,7 +26,6 @@ namespace Sledge.BspEditor.Tools
             if (at != null)
             {
                 await at.ToolDeselected();
-                at.SceneObjectsChanged -= ActiveToolSceneObjectsChanged;
             }
 
             _activeTool = new WeakReference<BaseTool>(tool as BaseTool);
@@ -33,19 +33,8 @@ namespace Sledge.BspEditor.Tools
             at = ActiveTool;
             if (at != null)
             {
-                at.SceneObjectsChanged += ActiveToolSceneObjectsChanged;
                 await at.ToolSelected();
             }
-        }
-
-        private void ActiveToolSceneObjectsChanged(object sender, SceneObjectsChangedEventArgs e)
-        {
-            SceneObjectsChanged?.Invoke(this, e);
-        }
-
-        public Task Initialise()
-        {
-            return Task.FromResult(0);
         }
     }
 }

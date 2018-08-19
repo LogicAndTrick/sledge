@@ -31,8 +31,8 @@ namespace Sledge.BspEditor.Rendering.Overlay
 
                 var origin = ed.BoundingBox.Center;
 
-                var start = camera.WorldToScreen(origin, camera.Width, camera.Height);
-                var end = camera.WorldToScreen(origin + Vector3.Transform(Vector3.UnitX, tform) * 0.4f * min, camera.Width, camera.Height);
+                var start = camera.WorldToScreen(origin);
+                var end = camera.WorldToScreen(origin + Vector3.Transform(Vector3.UnitX, tform) * 0.4f * min);
 
                 using (var p = new Pen(c, 2))
                 {
