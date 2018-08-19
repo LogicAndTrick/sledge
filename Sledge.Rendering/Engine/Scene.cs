@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Sledge.Rendering.Interfaces;
+using Sledge.Rendering.Overlay;
 using Sledge.Rendering.Pipelines;
 using Sledge.Rendering.Renderables;
 using Sledge.Rendering.Viewports;
@@ -12,18 +13,22 @@ namespace Sledge.Rendering.Engine
     {
         private readonly LinkedList<IRenderable> _renderables;
         private readonly LinkedList<IUpdateable> _updateables;
+        private readonly LinkedList<IOverlayRenderable> _overlayRenderables;
 
         public Scene()
         {
             _renderables = new LinkedList<IRenderable>();
             _updateables = new LinkedList<IUpdateable>();
+            _overlayRenderables = new LinkedList<IOverlayRenderable>();
         }
 
         public void Add(IRenderable renderable) => _renderables.AddLast(renderable);
         public void Add(IUpdateable updateable) => _updateables.AddLast(updateable);
+        public void Add(IOverlayRenderable overlayRenderable) => _overlayRenderables.AddLast(overlayRenderable);
 
         public void Remove(IRenderable renderable) => _renderables.Remove(renderable);
         public void Remove(IUpdateable updateable) => _updateables.Remove(updateable);
+        public void Remove(IOverlayRenderable overlayRenderable) => _overlayRenderables.Remove(overlayRenderable);
 
         public void Update(long frame)
         {
@@ -41,6 +46,11 @@ namespace Sledge.Rendering.Engine
             {
                 if (r.Value.ShouldRender(pipeline, target)) yield return r.Value;
             }
+        }
+
+        public IList<IOverlayRenderable> GetOverlayRenderables()
+        {
+            return _overlayRenderables.ToList();
         }
     }
 }

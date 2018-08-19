@@ -42,10 +42,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Converters\AxisLinesConverter.cs" />
+    <Compile Include="Converters\CordonBoundsConverter.cs" />
+    <Compile Include="Converters\CordonClippingConverter.cs" />
     <Compile Include="Converters\DefaultEntityConverter.cs" />
     <Compile Include="Converters\DefaultSolidConverter.cs" />
+    <Compile Include="Converters\HiddenConverter.cs" />
     <Compile Include="Grid\GridManager.cs" />
     <Compile Include="Grid\GridRenderable.cs" />
+    <Compile Include="Overlay\ViewportText.cs" />
+    <Compile Include="Overlay\OverlayManager.cs" />
     <Compile Include="Renderer.cs" />
     <Compile Include="Resources\EnvironmentTextureSource.cs" />
     <Compile Include="Viewport\CameraViewportEventListenerFactory.cs" />

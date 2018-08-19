@@ -18,6 +18,7 @@ namespace Sledge.Rendering.Engine
         public ResourceLayout ProjectionLayout { get; }
         public ResourceLayout TextureLayout { get; }
         public Sampler TextureSampler { get; }
+        public Sampler OverlaySampler { get; }
 
         public VertexLayoutDescription VertexStandardLayoutDescription { get; }
 
@@ -47,6 +48,7 @@ namespace Sledge.Rendering.Engine
                 new VertexElementDescription("Tint", VertexElementSemantic.Color, VertexElementFormat.Float4)
             );
             TextureSampler = context.Device.ResourceFactory.CreateSampler(SamplerDescription.Aniso4x);
+            OverlaySampler = context.Device.ResourceFactory.CreateSampler(SamplerDescription.Point);
 
             MissingTexture = new Lazy<Texture>(() => UploadTexture("", () => new WhiteTextureSource()));
         }

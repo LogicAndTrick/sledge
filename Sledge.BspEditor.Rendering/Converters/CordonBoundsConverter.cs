@@ -1,11 +1,15 @@
 using System.ComponentModel.Composition;
-using System.Drawing;
+using System.Numerics;
 using System.Threading.Tasks;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Primitives.MapData;
 using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.BspEditor.Rendering.Scene;
-using Sledge.Rendering.Scenes.Renderables;
+using Sledge.Rendering.Cameras;
+using Sledge.Rendering.Pipelines;
+using Sledge.Rendering.Primitives;
+using Sledge.Rendering.Resources;
+using Plane = Sledge.DataStructures.Geometric.Plane;
 
 namespace Sledge.BspEditor.Rendering.Converters
 {
@@ -19,7 +23,7 @@ namespace Sledge.BspEditor.Rendering.Converters
             return doc.Map.Data.GetOne<CordonBounds>() ?? new CordonBounds {Enabled = false};
         }
 
-        public bool ShouldStopProcessing(SceneMapObject smo, MapDocument document, IMapObject obj)
+        public bool ShouldStopProcessing(MapDocument document, IMapObject obj)
         {
             return false;
         }
@@ -29,20 +33,55 @@ namespace Sledge.BspEditor.Rendering.Converters
             return obj is Root;
         }
 
-        public async Task<bool> Convert(SceneMapObject smo, MapDocument document, IMapObject obj)
+        public Task Convert(SceneBuilder builder, MapDocument document, IMapObject obj)
         {
             var c = GetCordon(document);
-            if (!c.Enabled) return true;
-            foreach (var line in c.Box.GetBoxLines())
-            {
-                smo.SceneObjects.Add(new object(), new Line(Color.Red, line.Start.ToVector3(), line.End.ToVector3()));
-            }
-            return true;
-        }
+            if (!c.Enabled) return Task.FromResult(0);
 
-        public async Task<bool> Update(SceneMapObject smo, MapDocument document, IMapObject obj)
-        {
-            return false;
+            // It's always a box, these numbers are known
+            const uint numVertices = 4 * 6;
+            const uint numWireframeIndices = numVertices * 2;
+
+            var points = new VertexStandard[numVertices];
+            var indices = new uint[numWireframeIndices];
+
+            var colour = new Vector4(1, 0, 0, 1);
+
+            var vi = 0u;
+            var wi = 0u;
+            foreach (var face in c.Box.GetBoxFaces())
+            {
+                var offs = vi;
+
+                var normal = new Plane(face[0], face[1], face[2]).Normal;
+                foreach (var v in face)
+                {
+                    points[vi++] = new VertexStandard
+                    {
+                        Position = v,
+                        Colour = colour,
+                        Normal = normal,
+                        Texture = Vector2.Zero,
+                        Tint = Vector4.One
+                    };
+                }
+
+                // Lines - [0 1] ... [n-1 n] [n 0]
+                for (uint i = 0; i < 4; i++)
+                {
+                    indices[wi++] = offs + i;
+                    indices[wi++] = offs + (i == 4 - 1 ? 0 : i + 1);
+                }
+
+                var groups = new[]
+                {
+                    new BufferGroup(PipelineType.WireframeGeneric, CameraType.Both, false, c.Box.Center, 0, numWireframeIndices)
+                };
+
+                builder.MainBuffer.Append(points, indices, groups);
+            }
+
+            return Task.FromResult(0);
         }
     }
 }

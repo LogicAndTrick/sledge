@@ -60,7 +60,9 @@
     <Compile Include="Engine\RenderContext.cs" />
     <Compile Include="Engine\ResourceLoader.cs" />
     <Compile Include="Engine\Scene.cs" />
+    <Compile Include="Overlay\IOverlayRenderable.cs" />
     <Compile Include="Overlay\OverlayBuilder.cs" />
+    <Compile Include="Pipelines\OverlayPipeline.cs" />
     <Compile Include="Resources\BufferSize.cs" />
     <Compile Include="Resources\WhiteTextureSource.cs" />
     <Compile Include="Extensions.cs" />
@@ -142,7 +144,12 @@
       <Name>Sledge.Common</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <EmbeddedResource Include="Shaders\Overlay.vert.hlsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Shaders\Overlay.frag.hlsl" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

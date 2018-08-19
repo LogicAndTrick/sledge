@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Windows.Forms;
 using Sledge.Rendering.Cameras;
-using Sledge.Rendering.Interfaces;
-using Sledge.Rendering.Pipelines;
+using Sledge.Rendering.Overlay;
 
 namespace Sledge.Rendering.Viewports
 {
@@ -16,6 +14,7 @@ namespace Sledge.Rendering.Viewports
         Control Control { get; }
 
         ICamera Camera { get; set; }
+        ViewportOverlay Overlay { get; }
 
         void Update(long frame);
         event EventHandler<long> OnUpdate;

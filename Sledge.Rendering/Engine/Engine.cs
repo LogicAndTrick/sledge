@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
 using Sledge.Rendering.Cameras;
+using Sledge.Rendering.Overlay;
 using Sledge.Rendering.Pipelines;
 using Sledge.Rendering.Renderables;
 using Sledge.Rendering.Viewports;
@@ -64,6 +65,7 @@ namespace Sledge.Rendering.Engine
             AddPipeline(new WireframeGenericPipeline());
             AddPipeline(new FlatColourGenericPipeline());
             AddPipeline(new TexturedGenericPipeline());
+            AddPipeline(new OverlayPipeline());
 
             Application.ApplicationExit += Shutdown;
         }
@@ -152,10 +154,12 @@ namespace Sledge.Rendering.Engine
             lock (_lock)
             {
                 Scene.Update(frame);
+                var overlays = Scene.GetOverlayRenderables();
 
                 foreach (var rt in _renderTargets)
                 {
                     rt.Update(frame);
+                    rt.Overlay.Build(Context, overlays);
                     if (rt.ShouldRender(frame))
                     {
                         Render(rt);
@@ -203,6 +207,7 @@ namespace Sledge.Rendering.Engine
                 if (!_renderTargets.Any()) Start();
                 _renderTargets.Add(control);
 
+                Scene.Add(control.Overlay);
                 ViewportCreated?.Invoke(this, control);
 
                 return control;
@@ -221,6 +226,7 @@ namespace Sledge.Rendering.Engine
                 if (!_renderTargets.Any()) Stop();
 
                 ViewportDestroyed?.Invoke(this, t);
+                Scene.Remove(t.Overlay);
 
                 t.Control.Disposed -= DestroyViewport;
                 t.Dispose();

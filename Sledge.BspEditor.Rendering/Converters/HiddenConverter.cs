@@ -8,12 +8,15 @@ using Sledge.BspEditor.Rendering.Scene;
 
 namespace Sledge.BspEditor.Rendering.Converters
 {
+    /// <summary>
+    /// Stops processing for hidden objects to ensure they are actually hidden.
+    /// </summary>
     [Export(typeof(IMapObjectSceneConverter))]
     public class HiddenConverter : IMapObjectSceneConverter
     {
         public MapObjectSceneConverterPriority Priority => MapObjectSceneConverterPriority.OverrideLowest;
 
-        public bool ShouldStopProcessing(SceneMapObject smo, MapDocument document, IMapObject obj)
+        public bool ShouldStopProcessing(MapDocument document, IMapObject obj)
         {
             return true;
         }
@@ -23,12 +26,7 @@ namespace Sledge.BspEditor.Rendering.Converters
             return obj.Data.OfType<IObjectVisibility>().Any(x => x.IsHidden);
         }
 
-        public Task<bool> Convert(SceneMapObject smo, MapDocument document, IMapObject obj)
-        {
-            return Task.FromResult(false);
-        }
-
-        public Task<bool> Update(SceneMapObject smo, MapDocument document, IMapObject obj)
+        public Task Convert(SceneBuilder builder, MapDocument document, IMapObject obj)
         {
             return Task.FromResult(false);
         }

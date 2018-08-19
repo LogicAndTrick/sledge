@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows.Forms;
 using Sledge.Rendering.Cameras;
+using Sledge.Rendering.Overlay;
 using Sledge.Rendering.Pipelines;
 using Veldrid;
 
@@ -19,6 +20,7 @@ namespace Sledge.Rendering.Viewports
         public Swapchain Swapchain { get; }
         public ICamera Camera { get; set; }
         public Control Control => this;
+        public ViewportOverlay Overlay { get; }
 
         public event EventHandler<long> OnUpdate;
 
@@ -42,6 +44,8 @@ namespace Sledge.Rendering.Viewports
             var source = SwapchainSource.CreateWin32(hWnd, hInstance);
             var desc = new SwapchainDescription(source, w, h, options.SwapchainDepthFormat, options.SyncToVerticalBlank);
             Swapchain = graphics.ResourceFactory.CreateSwapchain(desc);
+
+            Overlay = new ViewportOverlay(this);
         }
 
         public void Update(long frame)
@@ -76,6 +80,7 @@ namespace Sledge.Rendering.Viewports
 
             if (disposing)
             {
+                Overlay.Dispose();
                 Swapchain.Dispose();
             }
         }

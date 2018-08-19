@@ -17,11 +17,14 @@ using Buffer = Sledge.Rendering.Resources.Buffer;
 
 namespace Sledge.BspEditor.Rendering.Grid
 {
+    /// <summary>
+    /// Renders the grid for a single viewport.
+    /// </summary>
     public class GridRenderable : IRenderable
     {
-        private readonly IViewport _viewport;
-
         public float Order => -100;
+
+        private readonly IViewport _viewport;
         private IGrid _grid;
 
         private bool _validated;
@@ -32,6 +35,11 @@ namespace Sledge.BspEditor.Rendering.Grid
         private readonly Buffer _buffer;
         private uint _indexCount;
 
+        /// <summary>
+        /// Create a grid renderable for a specific viewport.
+        /// </summary>
+        /// <param name="viewport">The viewport that will render this grid</param>
+        /// <param name="engine">The engine interface, to create a buffer</param>
         public GridRenderable(IViewport viewport, EngineInterface engine)
         {
             _viewport = viewport;
@@ -39,6 +47,10 @@ namespace Sledge.BspEditor.Rendering.Grid
             _buffer = engine.CreateBuffer();
         }
 
+        /// <summary>
+        /// Set the current grid that is being rendered by extracting it from a document.
+        /// </summary>
+        /// <param name="doc">The document to extract the grid data from</param>
         public void SetGrid(MapDocument doc)
         {
             _grid = doc?.Map.Data.GetOne<GridData>()?.Grid;

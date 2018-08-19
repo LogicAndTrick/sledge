@@ -21,7 +21,7 @@ namespace Sledge.BspEditor.Rendering.Converters
             return doc.Map.Data.GetOne<CordonBounds>() ?? new CordonBounds {Enabled = false};
         }
 
-        public bool ShouldStopProcessing(SceneMapObject smo, MapDocument document, IMapObject obj)
+        public bool ShouldStopProcessing(MapDocument document, IMapObject obj)
         {
             // If cordon is enabled and the cordon doesn't intersect our bbox, then we should stop
             var c = GetCordon(document);
@@ -33,14 +33,9 @@ namespace Sledge.BspEditor.Rendering.Converters
             return !(obj is Root);
         }
 
-        public async Task<bool> Convert(SceneMapObject smo, MapDocument document, IMapObject obj)
+        public Task Convert(SceneBuilder builder, MapDocument document, IMapObject obj)
         {
-            return true;
-        }
-
-        public async Task<bool> Update(SceneMapObject smo, MapDocument document, IMapObject obj)
-        {
-            return false;
+            return Task.CompletedTask;
         }
     }
 }

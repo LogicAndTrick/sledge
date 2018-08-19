@@ -14,6 +14,11 @@ using Sledge.Rendering.Viewports;
 
 namespace Sledge.BspEditor.Rendering.Grid
 {
+    /// <summary>
+    /// Handles rendering the grid for each viewport.
+    /// The grid is separate from the rest of the scene as it doesn't update at the same time as the document.
+    /// i.e. the grid will update when the user simply scrolls the viewport, but will not when the user edits an object.
+    /// </summary>
     [Export(typeof(IStartupHook))]
     public class GridManager : IStartupHook
     {

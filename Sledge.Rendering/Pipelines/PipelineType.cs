@@ -8,5 +8,7 @@
 
         // WireframeModel,
         // TexturedModel
+
+        Overlay,
     }
 }

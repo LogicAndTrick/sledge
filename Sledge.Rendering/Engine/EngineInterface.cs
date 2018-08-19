@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Numerics;
 using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Interfaces;
+using Sledge.Rendering.Overlay;
 using Sledge.Rendering.Renderables;
 using Sledge.Rendering.Resources;
 using Sledge.Rendering.Viewports;
@@ -54,7 +55,10 @@ namespace Sledge.Rendering.Engine
 
         public void Add(IRenderable renderable) => Engine.Instance.Scene.Add(renderable);
         public void Add(IUpdateable updateable) => Engine.Instance.Scene.Add(updateable);
+        public void Add(IOverlayRenderable overlayRenderable) => Engine.Instance.Scene.Add(overlayRenderable);
+
         public void Remove(IRenderable renderable) => Engine.Instance.Scene.Remove(renderable);
         public void Remove(IUpdateable updateable) => Engine.Instance.Scene.Remove(updateable);
+        public void Remove(IOverlayRenderable overlayRenderable) => Engine.Instance.Scene.Remove(overlayRenderable);
     }
 }
