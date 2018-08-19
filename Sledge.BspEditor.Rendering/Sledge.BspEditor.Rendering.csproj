@@ -49,7 +49,12 @@
     <Compile Include="Converters\HiddenConverter.cs" />
     <Compile Include="Grid\GridManager.cs" />
     <Compile Include="Grid\GridRenderable.cs" />
-    <Compile Include="Overlay\ViewportText.cs" />
+    <Compile Include="Overlay\EntityNamesOverlay.cs" />
+    <Compile Include="Overlay\EntityAnglesOverlay.cs" />
+    <Compile Include="Overlay\IMapDocumentOverlayRenderable.cs" />
+    <Compile Include="Overlay\IMapObject2DOverlay.cs" />
+    <Compile Include="Overlay\MapObject2DOverlayManager.cs" />
+    <Compile Include="Overlay\ViewportTextOverlay.cs" />
     <Compile Include="Overlay\OverlayManager.cs" />
     <Compile Include="Renderer.cs" />
     <Compile Include="Resources\EnvironmentTextureSource.cs" />

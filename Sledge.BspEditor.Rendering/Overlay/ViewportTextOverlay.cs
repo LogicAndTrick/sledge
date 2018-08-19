@@ -1,15 +1,20 @@
 using System.ComponentModel.Composition;
 using System.Drawing;
 using System.Numerics;
+using Sledge.BspEditor.Documents;
 using Sledge.Rendering.Cameras;
-using Sledge.Rendering.Overlay;
 using Sledge.Rendering.Viewports;
 
 namespace Sledge.BspEditor.Rendering.Overlay
 {
-    [Export(typeof(IOverlayRenderable))]
-    public class ViewportText : IOverlayRenderable
+    [Export(typeof(IMapDocumentOverlayRenderable))]
+    public class ViewportTextOverlay : IMapDocumentOverlayRenderable
     {
+        public void SetActiveDocument(MapDocument doc)
+        {
+            //
+        }
+
         public void Render(IViewport viewport, OrthographicCamera camera, Vector3 worldMin, Vector3 worldMax, Graphics graphics)
         {
             var str = $"2D {camera.ViewType}";

@@ -1,15 +1,15 @@
 using System;
-using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Linq;
 using System.Threading.Tasks;
 using LogicAndTrick.Oy;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Modification;
+using Sledge.BspEditor.Primitives.MapObjectData;
 using Sledge.Common.Shell.Documents;
 using Sledge.Common.Shell.Hooks;
 using Sledge.Rendering.Engine;
 using Sledge.Rendering.Overlay;
-using Sledge.Rendering.Viewports;
 
 namespace Sledge.BspEditor.Rendering.Overlay
 {
@@ -17,7 +17,8 @@ namespace Sledge.BspEditor.Rendering.Overlay
     public class OverlayManager : IStartupHook
     {
         [Import] private Lazy<EngineInterface> _engine;
-        [ImportMany] private IEnumerable<Lazy<IOverlayRenderable>> _overlayRenderables;
+        [ImportMany] private IOverlayRenderable[] _overlayRenderables;
+        [ImportMany] private IMapDocumentOverlayRenderable[] _documentOverlayRenderables;
 
         private readonly object _lock = new object();
 
@@ -25,16 +26,11 @@ namespace Sledge.BspEditor.Rendering.Overlay
         public Task OnStartup()
         {
             Oy.Subscribe<IDocument>("Document:Activated", DocumentActivated);
-            Oy.Subscribe<IDocument>("Document:Closed", DocumentClosed);
-            Oy.Subscribe<Change>("MapDocument:Changed", DocumentChanged);
 
-            foreach (var or in _overlayRenderables)
+            foreach (var or in _overlayRenderables.Union(_documentOverlayRenderables))
             {
-                _engine.Value.Add(or.Value);
+                _engine.Value.Add(or);
             }
-
-            _engine.Value.ViewportCreated += ViewportCreated;
-            _engine.Value.ViewportDestroyed += ViewportDestroyed;
 
             return Task.FromResult(0);
         }
@@ -43,29 +39,29 @@ namespace Sledge.BspEditor.Rendering.Overlay
 
         // Document events
 
-        private async Task DocumentChanged(Change change)
-        {
-            //
-        }
-
         private async Task DocumentActivated(IDocument doc)
         {
-            //
+            var md = doc as MapDocument;
+            _activeDocument = new WeakReference<MapDocument>(md);
+            await UpdateDocument(md);
         }
 
         private async Task DocumentClosed(IDocument doc)
         {
-            //
+            if (_activeDocument.TryGetTarget(out var md) && md == doc)
+            {
+                await UpdateDocument(null);
+            }
         }
 
-        private void ViewportCreated(object sender, IViewport viewport)
+        private Task UpdateDocument(MapDocument doc)
         {
-            //
-        }
+            foreach (var dor in _documentOverlayRenderables)
+            {
+                dor.SetActiveDocument(doc);
+            }
 
-        private void ViewportDestroyed(object sender, IViewport viewport)
-        {
-            //
+            return Task.CompletedTask;
         }
     }
 }

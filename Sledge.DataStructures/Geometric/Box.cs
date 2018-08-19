@@ -14,7 +14,7 @@ namespace Sledge.DataStructures.Geometric
         public Vector3 Start { get; }
         public Vector3 End { get; }
 
-        public Vector3 Center => (Start - End) / 2;
+        public Vector3 Center => (Start + End) / 2f;
 
         /// <summary>
         /// The X value difference of this box

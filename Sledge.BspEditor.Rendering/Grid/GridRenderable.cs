@@ -100,8 +100,7 @@ namespace Sledge.BspEditor.Rendering.Grid
             var max = oc.Expand(new Vector3(newBounds.Right, newBounds.Bottom, 0));
 
             var normal = Vector3.One - oc.Expand(new Vector3(1, 1, 0));
-
-
+            
             var points = new List<VertexStandard>();
             var indices = new List<uint>();
 

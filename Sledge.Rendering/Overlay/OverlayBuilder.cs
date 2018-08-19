@@ -90,8 +90,9 @@ namespace Sledge.Rendering.Overlay
 
             if (oc != null)
             {
-                var tl = oc.ScreenToWorld(Vector3.Zero, _width, _height);
-                var br = oc.ScreenToWorld(new Vector3(_width, _height, 0), _width, _height);
+                var up = (Vector3.One - oc.Expand(new Vector3(1, 1, 0))) * 1000000000;
+                var tl = oc.ScreenToWorld(Vector3.Zero, _width, _height) + up;
+                var br = oc.ScreenToWorld(new Vector3(_width, _height, 0), _width, _height) - up;
                 min = Vector3.Min(tl, br);
                 max = Vector3.Max(tl, br);
             }
