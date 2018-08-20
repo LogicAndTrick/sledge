@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows.Forms;
 using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Overlay;
-using Sledge.Rendering.Pipelines;
 using Veldrid;
 
 namespace Sledge.Rendering.Viewports
@@ -21,6 +19,9 @@ namespace Sledge.Rendering.Viewports
         public ICamera Camera { get; set; }
         public Control Control => this;
         public ViewportOverlay Overlay { get; }
+        
+        private bool _isFocused;
+        private int _unfocusedCounter = 0;
 
         public event EventHandler<long> OnUpdate;
 
@@ -61,6 +62,18 @@ namespace Sledge.Rendering.Viewports
             OnUpdate?.Invoke(this, frame);
         }
 
+        protected override void OnMouseEnter(EventArgs e)
+        {
+            _isFocused = true;
+            base.OnMouseEnter(e);
+        }
+
+        protected override void OnMouseLeave(EventArgs e)
+        {
+            _isFocused = false;
+            base.OnMouseLeave(e);
+        }
+
         protected override void OnResize(EventArgs e)
         {
             _resizeRequired = true;
@@ -71,6 +84,18 @@ namespace Sledge.Rendering.Viewports
 
         public bool ShouldRender(long frame)
         {
+            if (!_isFocused)
+            {
+                _unfocusedCounter++;
+
+                // Update every 10th frame
+                if (_unfocusedCounter % 10 != 0)
+                {
+                    return false;
+                }
+            }
+
+            _unfocusedCounter = 0;
             return true;
         }
 

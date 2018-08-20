@@ -61,7 +61,7 @@ namespace Sledge.BspEditor.Rendering.Viewport
         }
 
         #region Listeners
-        
+
         public delegate void ListenerExceptionEventHandler(object sender, Exception exception);
         public event ListenerExceptionEventHandler ListenerException;
         protected void OnListenerException(Exception ex)
@@ -122,6 +122,8 @@ namespace Sledge.BspEditor.Rendering.Viewport
 
         private void OnMouseEnter(object sender, EventArgs e)
         {
+            Viewport.Control.Focus();
+
             ListenerDoEvent(new ViewportEvent(this, e), (l, v) => l.MouseEnter(v));
         }
 

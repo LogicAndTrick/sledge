@@ -124,7 +124,7 @@ namespace Sledge.Rendering.Engine
         public IDisposable Pause()
         {
             _paused++;
-            _pauseThreadEvent.WaitOne();
+            if (_timer.IsRunning) _pauseThreadEvent.WaitOne();
             return new PauseImpl(() =>
             {
                 _paused--;
@@ -151,7 +151,7 @@ namespace Sledge.Rendering.Engine
                     if (diff < 16 || _paused > 0)
                     {
                         if (_paused > 0) _pauseThreadEvent.Set();
-                        Thread.Sleep(1);
+                        Thread.Sleep(2);
                         continue;
                     }
 
