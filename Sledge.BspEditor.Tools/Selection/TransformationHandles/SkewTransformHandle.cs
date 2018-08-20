@@ -1,10 +1,8 @@
-﻿using System.Windows.Forms;
-using OpenTK;
-using OpenTK.Input;
+﻿using System.Numerics;
+using System.Windows.Forms;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Rendering.Viewport;
 using Sledge.BspEditor.Tools.Draggable;
-using Sledge.DataStructures.Geometric;
 using Sledge.Rendering.Cameras;
 using KeyboardState = Sledge.Shell.Input.KeyboardState;
 
@@ -12,10 +10,10 @@ namespace Sledge.BspEditor.Tools.Selection.TransformationHandles
 {
     public class SkewTransformHandle : BoxResizeHandle, ITransformationHandle
     {
-        private Vector3 _skewStart;
-        private Vector3 _skewEnd;
+        private Vector3? _skewStart;
+        private Vector3? _skewEnd;
 
-        public string Name { get { return "Skew"; } }
+        public string Name => "Skew";
 
         public SkewTransformHandle(BoxDraggableState state, ResizeHandle handle)
             : base(state, handle)
@@ -56,12 +54,14 @@ namespace Sledge.BspEditor.Tools.Selection.TransformationHandles
             base.EndDrag(viewport, e, position);
         }
 
-        public Matrix4? GetTransformationMatrix(MapViewport viewport, OrthographicCamera camera, BoxState state, MapDocument doc)
+        public Matrix4x4? GetTransformationMatrix(MapViewport viewport, OrthographicCamera camera, BoxState state, MapDocument doc)
         {
             var shearUpDown = Handle == ResizeHandle.Left || Handle == ResizeHandle.Right;
             var shearTopRight = Handle == ResizeHandle.Top || Handle == ResizeHandle.Right;
 
-            var nsmd = _skewEnd - _skewStart;
+            if (!_skewStart.HasValue || !_skewEnd.HasValue) return null;
+
+            var nsmd = _skewEnd.Value - _skewStart.Value;
             var mouseDiff = nsmd; // doc.Snap(nsmd, doc.Map.GridSpacing);
             if (KeyboardState.Shift)
             {
@@ -75,7 +75,7 @@ namespace Sledge.BspEditor.Tools.Selection.TransformationHandles
             var shearAmount = new Vector3(mouseDiff.X / relative.Y, mouseDiff.Y / relative.X, 0);
             if (!shearTopRight) shearAmount *= -1;
 
-            var shearMatrix = Matrix4.Identity;
+            var shearMatrix = Matrix4x4.Identity;
             var sax = (float)shearAmount.X;
             var say = (float)shearAmount.Y;
 
@@ -95,9 +95,10 @@ namespace Sledge.BspEditor.Tools.Selection.TransformationHandles
                     break;
             }
 
-            var stran = Matrix4.CreateTranslation((float)-shearOrigin.X, (float)-shearOrigin.Y, (float)-shearOrigin.Z);
-            var shear = Matrix4.Mult(stran, shearMatrix);
-            return Matrix4.Mult(shear, Matrix4.Invert(stran));
+            var stran = Matrix4x4.CreateTranslation((float)-shearOrigin.X, (float)-shearOrigin.Y, (float)-shearOrigin.Z);
+            var shear = Matrix4x4.Multiply(stran, shearMatrix);
+            var inv = Matrix4x4.Invert(stran, out var i) ? i : Matrix4x4.Identity;
+            return Matrix4x4.Multiply(shear, inv);
         }
 
         public TextureTransformationType GetTextureTransformationType(MapDocument doc)

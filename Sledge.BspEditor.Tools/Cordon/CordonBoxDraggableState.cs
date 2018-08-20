@@ -1,7 +1,7 @@
-﻿using Sledge.BspEditor.Primitives.MapData;
+﻿using System.Numerics;
+using Sledge.BspEditor.Primitives.MapData;
 using Sledge.BspEditor.Rendering.Viewport;
 using Sledge.BspEditor.Tools.Draggable;
-using Sledge.DataStructures.Geometric;
 
 namespace Sledge.BspEditor.Tools.Cordon
 {
@@ -28,12 +28,12 @@ namespace Sledge.BspEditor.Tools.Cordon
             }
         }
 
-        public override void Click(MapViewport viewport, ViewportEvent e, Coordinate position)
+        public override void Click(MapViewport viewport, ViewportEvent e, Vector3 position)
         {
             //
         }
 
-        public override bool CanDrag(MapViewport viewport, ViewportEvent e, Coordinate position)
+        public override bool CanDrag(MapViewport viewport, ViewportEvent e, Vector3 position)
         {
             return false;
         }

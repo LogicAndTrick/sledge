@@ -13,6 +13,8 @@ namespace Sledge.BspEditor.Primitives.MapData
 {
     public class FaceSelection : IMapData, IEnumerable<Face>
     {
+        public bool AffectsRendering => false;
+
         private readonly Dictionary<IMapObject, HashSet<long>> _selectedFaces;
 
         public FaceSelection()

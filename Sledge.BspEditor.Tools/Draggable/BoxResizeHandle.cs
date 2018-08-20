@@ -1,9 +1,10 @@
 using System;
-using System.Collections.Generic;
+using System.Drawing;
 using System.Numerics;
 using System.Windows.Forms;
 using Sledge.BspEditor.Rendering.Viewport;
 using Sledge.Rendering.Cameras;
+using Sledge.Rendering.Viewports;
 
 namespace Sledge.BspEditor.Tools.Draggable
 {
@@ -11,7 +12,7 @@ namespace Sledge.BspEditor.Tools.Draggable
     {
         public BoxDraggableState State { get; protected set; }
         public ResizeHandle Handle { get; protected set; }
-        protected MapViewport HighlightedViewport { get; set; }
+        protected IViewport HighlightedViewport { get; set; }
 
         protected BoxState BoxState { get { return State.State; } }
 
@@ -22,12 +23,12 @@ namespace Sledge.BspEditor.Tools.Draggable
             HighlightedViewport = null;
         }
 
-        private Position GetPosition(MapViewport viewport)
+        private (Vector3, Vector3) GetWorldPositionAndScreenOffset(MapViewport viewport)
         {
             const int distance = 6;
             var camera = viewport.Viewport.Camera;
-            var start = camera.Flatten(BoxState.Start.ToVector3());
-            var end = camera.Flatten(BoxState.End.ToVector3());
+            var start = camera.Flatten(BoxState.Start);
+            var end = camera.Flatten(BoxState.End);
             var mid = (start + end) / 2;
             Vector3 center;
             Vector3 offset;
@@ -72,7 +73,8 @@ namespace Sledge.BspEditor.Tools.Draggable
                 default:
                     throw new ArgumentOutOfRangeException();
             }
-            return new Position(camera.Expand(center)) { Offset = offset };
+
+            return (camera.Expand(center), offset);
         }
 
         protected virtual void SetCursorForHandle(MapViewport viewport, ResizeHandle handle)
@@ -82,7 +84,7 @@ namespace Sledge.BspEditor.Tools.Draggable
 
         public override void Highlight(MapViewport viewport)
         {
-            HighlightedViewport = viewport;
+            HighlightedViewport = viewport.Viewport;
             SetCursorForHandle(viewport, Handle);
         }
 
@@ -99,8 +101,8 @@ namespace Sledge.BspEditor.Tools.Draggable
             return (st + ed) / 2;
         }
 
-        protected Vector3 MoveOrigin;
-        protected Vector3 SnappedMoveOrigin;
+        protected Vector3? MoveOrigin;
+        protected Vector3? SnappedMoveOrigin;
 
         public override void Click(MapViewport viewport, ViewportEvent e, Vector3 position)
         {
@@ -110,9 +112,9 @@ namespace Sledge.BspEditor.Tools.Draggable
         public override bool CanDrag(MapViewport viewport, ViewportEvent e, Vector3 position)
         {
             const int width = 8;
-            var pos = GetPosition(viewport);
-            var screenPosition = viewport.ProperWorldToScreen(pos.Location.ToVector3()) + pos.Offset.ToVector3();
-            var diff = (e.Location - screenPosition).Absolute();
+            var pos = GetWorldPositionAndScreenOffset(viewport);
+            var screenPosition = viewport.WorldToScreen(pos.Item1) + pos.Item2;
+            var diff = Vector3.Abs(e.Location - screenPosition);
             return diff.X < width && diff.Y < width;
         }
 
@@ -132,8 +134,8 @@ namespace Sledge.BspEditor.Tools.Draggable
             {
                 var delta = position - lastPosition;
                 var newOrigin = MoveOrigin + delta;
-                var snapped = State.Tool.SnapIfNeeded(newOrigin);
-                BoxState.Move(viewport, snapped - SnappedMoveOrigin);
+                var snapped = State.Tool.SnapIfNeeded(newOrigin.Value);
+                BoxState.Move(viewport, snapped - SnappedMoveOrigin.Value);
                 SnappedMoveOrigin = snapped;
                 MoveOrigin = newOrigin;
             }
@@ -153,22 +155,17 @@ namespace Sledge.BspEditor.Tools.Draggable
             base.EndDrag(viewport, e, position);
         }
 
-        public override IEnumerable<SceneObject> GetSceneObjects()
+        public override void Render(IViewport viewport, OrthographicCamera camera, Vector3 worldMin, Vector3 worldMax, Graphics graphics)
         {
-            yield break;
+            if (State.State.Action != BoxAction.Drawn) return;
+
+            //var pos = GetWorldPositionAndScreenOffset(viewport);
+            //yield return new HandleElement(PositionType.World, HandleElement.HandleType.Square, pos, 4);
         }
 
-        public override IEnumerable<Element> GetViewportElements(MapViewport viewport, PerspectiveCamera camera)
+        public override void Render(IViewport viewport, PerspectiveCamera camera, Graphics graphics)
         {
-            yield break;
-        }
-
-        public override IEnumerable<Element> GetViewportElements(MapViewport viewport, OrthographicCamera camera)
-        {
-            if (State.State.Action != BoxAction.Drawn) yield break;
-
-            var pos = GetPosition(viewport);
-            yield return new HandleElement(PositionType.World, HandleElement.HandleType.Square, pos, 4);
+            //
         }
     }
 }

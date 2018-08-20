@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Linq;
 using System.Threading.Tasks;
 using LogicAndTrick.Oy;
 using Sledge.BspEditor.Documents;
@@ -43,7 +45,14 @@ namespace Sledge.BspEditor.Rendering.Scene
         {
             if (_activeDocument.TryGetTarget(out var md) && change.Document == md)
             {
-                await UpdateScene(change.Document);
+                if (change.AffectedData.Any(x => x.AffectsRendering))
+                {
+                    await UpdateScene(change.Document, null);
+                }
+                else if (change.HasObjectChanges)
+                {
+                    await UpdateScene(change.Document, change.Added.Union(change.Updated).Union(change.Removed));
+                }
             }
         }
 
@@ -51,44 +60,45 @@ namespace Sledge.BspEditor.Rendering.Scene
         {
             var md = doc as MapDocument;
             _activeDocument = new WeakReference<MapDocument>(md);
-            await UpdateScene(md);
+            await UpdateScene(md, null);
         }
 
         private async Task DocumentClosed(IDocument doc)
         {
             if (_activeDocument.TryGetTarget(out var md) && md == doc)
             {
-                await UpdateScene(null);
+                await UpdateScene(null, null);
             }
         }
 
         // Scene handling
 
-        private async Task UpdateScene(MapDocument md)
+        private Task UpdateScene(MapDocument md, IEnumerable<IMapObject> affected)
         {
-            SceneBuilder builder = null;
-            if (md != null)
-            {
-                builder = await _converter.Value.Convert(md, md.Map.Root.FindAll());
-            }
-
             lock (_lock)
             {
-                if (builder != null)
+                if (_sceneBuilder == null)
                 {
-                    _engine.Value.Add(builder.MainRenderable);
-                    builder.Renderables.ForEach(x => _engine.Value.Add(x));
+                    _sceneBuilder = new SceneBuilder(_engine.Value);
+                    _engine.Value.Add(_sceneBuilder.SceneBuilderRenderable);
+                    affected = null;
                 }
 
-                if (_sceneBuilder != null)
+                using (_engine.Value.Pause())
                 {
-                    _engine.Value.Remove(_sceneBuilder.MainRenderable);
-                    _sceneBuilder.Renderables.ForEach(x => _engine.Value.Remove(x));
-                    _sceneBuilder.Dispose();
-                }
+                    if (affected == null || md == null)
+                    {
+                        _sceneBuilder.Clear();
+                    }
 
-                _sceneBuilder = builder;
+                    if (md != null)
+                    {
+                        _converter.Value.Convert(md, _sceneBuilder, affected).Wait();
+                    }
+                }
             }
+
+            return Task.CompletedTask;
         }
     }
 }

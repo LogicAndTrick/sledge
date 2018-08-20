@@ -113,7 +113,7 @@ namespace Sledge.BspEditor.Primitives
 
             var one = Vector3.Transform(Vector3.One, matrix);
             var two = Vector3.Transform(Vector3.One * 2, matrix);
-            if (Math.Abs((two - one).Length() - Vector3.One.Length()) > 0.0001f)
+            if (Math.Abs((two - one).Length() - Vector3.One.Length()) > 0.01f)
                 throw new InvalidOperationException("Transform isn't uniform!");
 
             #endif

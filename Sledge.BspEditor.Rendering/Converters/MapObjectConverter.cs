@@ -16,23 +16,33 @@ namespace Sledge.BspEditor.Rendering.Converters
         [ImportMany] private IEnumerable<Lazy<IMapObjectSceneConverter>> _converters;
         [Import] private Lazy<EngineInterface> _engine;
 
-        public async Task<SceneBuilder> Convert(MapDocument document, IEnumerable<IMapObject> objs)
+        public async Task Convert(MapDocument document, SceneBuilder builder, IEnumerable<IMapObject> affected)
         {
-            var builder = new SceneBuilder(_engine.Value);
+            var objs = document.Map.Root.FindAll();
+            if (affected != null)
+            {
+                var groups = affected.Select(x => x.ID / 200).ToHashSet();
+                foreach (var g in groups) builder.DeleteGroup(g);
+                objs = objs.Where(x => groups.Contains(x.ID / 200)).ToList();
+            }
+
             var converters = _converters.Select(x => x.Value).OrderBy(x => (int) x.Priority).ToList();
 
-            foreach (var obj in objs)
+            foreach (var g in objs.GroupBy(x => x.ID / 200))
             {
-                foreach (var converter in converters)
+                builder.SetCurrentGroup(g.Key);
+                foreach (var obj in g)
                 {
-                    if (!converter.Supports(obj)) continue;
-                    await converter.Convert(builder, document, obj);
-                    if (converter.ShouldStopProcessing(document, obj)) break;
+                    foreach (var converter in converters)
+                    {
+                        if (!converter.Supports(obj)) continue;
+                        await converter.Convert(builder, document, obj);
+                        if (converter.ShouldStopProcessing(document, obj)) break;
+                    }
                 }
             }
 
-            builder.MainBuffer.Complete();
-            return builder;
+            builder.Complete();
         }
     }
 }

@@ -9,6 +9,8 @@ namespace Sledge.BspEditor.Primitives.MapData
     [Serializable]
     public class TransformationFlags : IMapData
     {
+        public bool AffectsRendering => false;
+
         public bool TextureLock { get; set; } = true;
         public bool TextureScaleLock { get; set; }
 

@@ -1,22 +1,20 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using OpenTK;
+using System.Numerics;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Primitives.MapData;
-using Sledge.BspEditor.Rendering;
 using Sledge.BspEditor.Rendering.Viewport;
 using Sledge.BspEditor.Tools.Draggable;
 using Sledge.DataStructures.Geometric;
 using Sledge.Rendering.Cameras;
-using Sledge.Rendering.Materials;
-using Sledge.Rendering.Scenes.Elements;
+using Sledge.Rendering.Viewports;
 
 namespace Sledge.BspEditor.Tools.Selection.TransformationHandles
 {
     public class ResizeTransformHandle : BoxResizeHandle, ITransformationHandle
     {
-        public string Name { get { return Handle == ResizeHandle.Center ? "Move" : "Resize"; } }
+        public string Name => Handle == ResizeHandle.Center ? "Move" : "Resize";
 
         public ResizeTransformHandle(BoxDraggableState state, ResizeHandle handle)
             : base(state, handle)
@@ -48,66 +46,72 @@ namespace Sledge.BspEditor.Tools.Selection.TransformationHandles
             return base.GetResizeOrigin(viewport, position);
         }
 
-        public override IEnumerable<Element> GetViewportElements(MapViewport viewport, OrthographicCamera camera)
+        public override void Render(IViewport viewport, OrthographicCamera camera, Vector3 worldMin, Vector3 worldMax, Graphics graphics)
         {
-            if (Handle == ResizeHandle.Center)
-            {
-                if (HighlightedViewport != viewport) yield break;
-
-                var b = new Box(viewport.Flatten(BoxState.Start), viewport.Flatten(BoxState.End));
-                var st = b.Start.ToVector3();
-                var en = b.End.ToVector3();
-                var cam = viewport.Viewport.Camera;
-                yield return new FaceElement(PositionType.World, Material.Flat(State.FillColour), new[]
-                {
-                    new PositionVertex(new Position(cam.Expand(new Vector3(st.X, st.Y, 0))), 0, 0),
-                    new PositionVertex(new Position(cam.Expand(new Vector3(st.X, en.Y, 0))), 0, 0),
-                    new PositionVertex(new Position(cam.Expand(new Vector3(en.X, en.Y, 0))), 0, 0),
-                    new PositionVertex(new Position(cam.Expand(new Vector3(en.X, st.Y, 0))), 0, 0)
-                }) { ZIndex = -20 };
-                if (Handle == ResizeHandle.Center && SnappedMoveOrigin != null)
-                {
-                    const int size = 6;
-
-                    yield return new LineElement(PositionType.World, Color.Yellow, new List<Position>
-                    {
-                        new Position(SnappedMoveOrigin.ToVector3()) {Offset = new Vector3(-size, size, 0)},
-                        new Position(SnappedMoveOrigin.ToVector3()) {Offset = new Vector3(size, -size, 0)},
-                    });
-                    yield return new LineElement(PositionType.World, Color.Yellow, new List<Position>
-                    {
-                        new Position(SnappedMoveOrigin.ToVector3()) {Offset = new Vector3(size, size, 0)},
-                        new Position(SnappedMoveOrigin.ToVector3()) {Offset = new Vector3(-size, -size, 0)},
-                    });
-                }
-            }
-            else
-            {
-                foreach (var e in base.GetViewportElements(viewport, camera))
-                {
-                    yield return e;
-                }
-            }
+            // todo
+            base.Render(viewport, camera, worldMin, worldMax, graphics);
         }
 
-        public Matrix4? GetTransformationMatrix(MapViewport viewport, OrthographicCamera camera, BoxState state, MapDocument doc)
+        //public override IEnumerable<Element> GetViewportElements(MapViewport viewport, OrthographicCamera camera)
+        //{
+        //    if (Handle == ResizeHandle.Center)
+        //    {
+        //        if (HighlightedViewport != viewport) yield break;
+        //
+        //        var b = new Box(viewport.Flatten(BoxState.Start), viewport.Flatten(BoxState.End));
+        //        var st = b.Start.ToVector3();
+        //        var en = b.End.ToVector3();
+        //        var cam = viewport.Viewport.Camera;
+        //        yield return new FaceElement(PositionType.World, Material.Flat(State.FillColour), new[]
+        //        {
+        //            new PositionVertex(new Position(cam.Expand(new Vector3(st.X, st.Y, 0))), 0, 0),
+        //            new PositionVertex(new Position(cam.Expand(new Vector3(st.X, en.Y, 0))), 0, 0),
+        //            new PositionVertex(new Position(cam.Expand(new Vector3(en.X, en.Y, 0))), 0, 0),
+        //            new PositionVertex(new Position(cam.Expand(new Vector3(en.X, st.Y, 0))), 0, 0)
+        //        }) { ZIndex = -20 };
+        //        if (Handle == ResizeHandle.Center && SnappedMoveOrigin != null)
+        //        {
+        //            const int size = 6;
+        //
+        //            yield return new LineElement(PositionType.World, Color.Yellow, new List<Position>
+        //            {
+        //                new Position(SnappedMoveOrigin.ToVector3()) {Offset = new Vector3(-size, size, 0)},
+        //                new Position(SnappedMoveOrigin.ToVector3()) {Offset = new Vector3(size, -size, 0)},
+        //            });
+        //            yield return new LineElement(PositionType.World, Color.Yellow, new List<Position>
+        //            {
+        //                new Position(SnappedMoveOrigin.ToVector3()) {Offset = new Vector3(size, size, 0)},
+        //                new Position(SnappedMoveOrigin.ToVector3()) {Offset = new Vector3(-size, -size, 0)},
+        //            });
+        //        }
+        //    }
+        //    else
+        //    {
+        //        foreach (var e in base.GetViewportElements(viewport, camera))
+        //        {
+        //            yield return e;
+        //        }
+        //    }
+        //}
+
+        public Matrix4x4? GetTransformationMatrix(MapViewport viewport, OrthographicCamera camera, BoxState state, MapDocument doc)
         {
-            Matrix4 resizeMatrix;
+            Matrix4x4 resizeMatrix;
             if (Handle == ResizeHandle.Center)
             {
                 var movement = state.Start - state.OrigStart;
-                resizeMatrix = Matrix4.CreateTranslation((float)movement.X, (float)movement.Y, (float)movement.Z);
+                resizeMatrix = Matrix4x4.CreateTranslation(movement.X, movement.Y, movement.Z);
             }
             else
             {
-                var resize = (state.OrigStart - state.Start) +
-                             (state.End - state.OrigEnd);
-                resize = resize.ComponentDivide(state.OrigEnd - state.OrigStart);
+                var resize = (state.OrigStart - state.Start) + (state.End - state.OrigEnd);
+                resize = Vector3.Divide(resize, state.OrigEnd - state.OrigStart);
                 resize += new Vector3(1, 1, 1);
                 var offset = -GetOriginForTransform(viewport, camera, state);
-                var trans = Matrix4.CreateTranslation((float)offset.X, (float)offset.Y, (float)offset.Z);
-                var scale = Matrix4.Mult(trans, Matrix4.CreateScale((float)resize.X, (float)resize.Y, (float)resize.Z));
-                resizeMatrix = Matrix4.Mult(scale, Matrix4.Invert(trans));
+                var trans = Matrix4x4.CreateTranslation(offset.X, offset.Y, offset.Z);
+                var scale = Matrix4x4.Multiply(trans, Matrix4x4.CreateScale(resize.X, resize.Y, resize.Z));
+                var inv = Matrix4x4.Invert(trans, out var i) ? i : Matrix4x4.Identity;
+                resizeMatrix = Matrix4x4.Multiply(scale, inv);
             }
             return resizeMatrix;
         }
@@ -122,8 +126,8 @@ namespace Sledge.BspEditor.Tools.Selection.TransformationHandles
 
         private Vector3 GetOriginForTransform(MapViewport viewport, OrthographicCamera camera, BoxState state)
         {
-            decimal x = 0;
-            decimal y = 0;
+            float x = 0;
+            float y = 0;
             var cstart = viewport.Flatten(state.OrigStart);
             var cend = viewport.Flatten(state.OrigEnd);
             switch (Handle)

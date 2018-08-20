@@ -2,24 +2,20 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using OpenTK;
+using System.Numerics;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Modification;
 using Sledge.BspEditor.Modification.Operations;
 using Sledge.BspEditor.Modification.Operations.Mutation;
 using Sledge.BspEditor.Primitives.MapData;
 using Sledge.BspEditor.Primitives.MapObjects;
-using Sledge.BspEditor.Rendering;
 using Sledge.BspEditor.Rendering.Viewport;
 using Sledge.BspEditor.Tools.Draggable;
 using Sledge.BspEditor.Tools.Selection.TransformationHandles;
 using Sledge.BspEditor.Tools.Widgets;
 using Sledge.DataStructures.Geometric;
-using Sledge.DataStructures.Transformations;
 using Sledge.Rendering.Cameras;
-using Sledge.Rendering.Materials;
-using Sledge.Rendering.Scenes.Elements;
-using Sledge.Rendering.Scenes.Renderables;
+using Sledge.Rendering.Viewports;
 
 namespace Sledge.BspEditor.Tools.Selection
 {
@@ -72,16 +68,16 @@ namespace Sledge.BspEditor.Tools.Selection
             }
         }
 
-        private void WidgetTransforming(Widget sender, Matrix4? transformation)
+        private void WidgetTransforming(Widget sender, Matrix4x4? transformation)
         {
             if (transformation.HasValue)
             {
-                var st = new SelectionTransform(Matrix.FromOpenTKMatrix4(transformation.Value));
+                var st = new SelectionTransform(transformation.Value);
                 MapDocumentOperation.Perform(Tool.Document, new TrivialOperation(x => x.Map.Data.Replace(st), x => x.Update(st)));
             }
         }
 
-        private void WidgetTransformed(Widget sender, Matrix4? transformation)
+        private void WidgetTransformed(Widget sender, Matrix4x4? transformation)
         {
             if (transformation.HasValue)
             {
@@ -90,7 +86,7 @@ namespace Sledge.BspEditor.Tools.Selection
                 var transaction = new Transaction();
 
                 // Perform the operation
-                var matrix = Matrix.FromOpenTKMatrix4(transformation.Value);
+                var matrix = transformation.Value;
                 var transformOperation = new Transform(matrix, objects);
                 transaction.Add(transformOperation);
 
@@ -107,7 +103,7 @@ namespace Sledge.BspEditor.Tools.Selection
 
                 MapDocumentOperation.Perform(Tool.Document, transaction);
             }
-            var st = new SelectionTransform(Matrix.Identity);
+            var st = new SelectionTransform(Matrix4x4.Identity);
             MapDocumentOperation.Perform(Tool.Document, new TrivialOperation(x => x.Map.Data.Replace(st), x => x.Update(st)));
         }
 
@@ -176,44 +172,49 @@ namespace Sledge.BspEditor.Tools.Selection
             return false;
         }
 
-        public override IEnumerable<Element> GetViewportElements(MapViewport viewport, OrthographicCamera camera)
+        public override void Render(IViewport viewport, OrthographicCamera camera, Vector3 worldMin, Vector3 worldMax, Graphics graphics)
         {
-            var list = new List<Element>();
-            var tf = GetTransformationMatrix(viewport, camera, Tool.Document);
-            if (State.Action == BoxAction.Resizing && tf.HasValue)
-            {
-                // todo this looks pretty silly when the box doesn't perfectly match the transformed selection
-                var box = new Box(State.OrigStart, State.OrigEnd);
-                box = box.Transform(Matrix.FromOpenTKMatrix4(tf.Value));
-                if (ShouldDrawBox())
-                {
-                    foreach (var face in box.GetBoxFaces())
-                    {
-                        var verts = face.Select(x => new PositionVertex(new Position(x.ToVector3()), 0, 0)).ToList();
-                        var rc = GetRenderBoxColour();
-                        var fe = new FaceElement(PositionType.World, Material.Flat(Color.FromArgb(rc.A / 8, rc)), verts)
-                        {
-                            RenderFlags = RenderFlags.Wireframe,
-                            CameraFlags = CameraFlags.Orthographic,
-                            AccentColor = GetRenderBoxColour(),
-                            ZIndex = -20 // Put this face underneath the grid because it's semi-transparent
-                        };
-                        list.Add(fe);
-                    }
-                }
-                if (ShouldDrawBoxText())
-                {
-                    list.AddRange(GetBoxTextElements(viewport, box.Start.ToVector3(), box.End.ToVector3()));
-                }
-            }
-            else
-            {
-                list.AddRange(base.GetViewportElements(viewport, camera));
-            }
-            return list;
+            base.Render(viewport, camera, worldMin, worldMax, graphics);
         }
 
-        public Matrix4? GetTransformationMatrix(MapViewport viewport, OrthographicCamera camera, MapDocument doc)
+        // public override IEnumerable<Element> GetViewportElements(MapViewport viewport, OrthographicCamera camera)
+        // {
+        //     var list = new List<Element>();
+        //     var tf = GetTransformationMatrix(viewport, camera, Tool.Document);
+        //     if (State.Action == BoxAction.Resizing && tf.HasValue)
+        //     {
+        //         // todo this looks pretty silly when the box doesn't perfectly match the transformed selection
+        //         var box = new Box(State.OrigStart, State.OrigEnd);
+        //         box = box.Transform(Matrix.FromOpenTKMatrix4x4(tf.Value));
+        //         if (ShouldDrawBox())
+        //         {
+        //             foreach (var face in box.GetBoxFaces())
+        //             {
+        //                 var verts = face.Select(x => new PositionVertex(new Position(x.ToVector3()), 0, 0)).ToList();
+        //                 var rc = GetRenderBoxColour();
+        //                 var fe = new FaceElement(PositionType.World, Material.Flat(Color.FromArgb(rc.A / 8, rc)), verts)
+        //                 {
+        //                     RenderFlags = RenderFlags.Wireframe,
+        //                     CameraFlags = CameraFlags.Orthographic,
+        //                     AccentColor = GetRenderBoxColour(),
+        //                     ZIndex = -20 // Put this face underneath the grid because it's semi-transparent
+        //                 };
+        //                 list.Add(fe);
+        //             }
+        //         }
+        //         if (ShouldDrawBoxText())
+        //         {
+        //             list.AddRange(GetBoxTextElements(viewport, box.Start.ToVector3(), box.End.ToVector3()));
+        //         }
+        //     }
+        //     else
+        //     {
+        //         list.AddRange(base.GetViewportElements(viewport, camera));
+        //     }
+        //     return list;
+        // }
+
+        public Matrix4x4? GetTransformationMatrix(MapViewport viewport, OrthographicCamera camera, MapDocument doc)
         {
             if (State.Action != BoxAction.Resizing) return null;
             var tt = Tool.CurrentDraggable as ITransformationHandle;
@@ -239,8 +240,7 @@ namespace Sledge.BspEditor.Tools.Selection
         {
             CurrentTransformationMode = mode;
 
-            if (State.Start != null) _rotationOrigin.Position = new Box(State.Start, State.End).Center;
-            else _rotationOrigin.Position = Vector3.Zero;
+            _rotationOrigin.Position = new Box(State.Start, State.End).Center;
 
             //_scaleWidget.Active = _currentTransformationMode == TransformationMode.Resize;
             _rotationWidget.Active = CurrentTransformationMode == TransformationMode.Rotate && ShowWidgets;

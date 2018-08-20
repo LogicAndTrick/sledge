@@ -15,6 +15,8 @@ namespace Sledge.BspEditor.Primitives.MapData
 {
     public class Selection : IMapData, IEnumerable<IMapObject>
     {
+        public bool AffectsRendering => false;
+
         private readonly HashSet<IMapObject> _selectedObjects;
 
         public Selection()

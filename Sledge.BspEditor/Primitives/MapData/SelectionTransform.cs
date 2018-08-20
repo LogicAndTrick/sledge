@@ -8,6 +8,8 @@ namespace Sledge.BspEditor.Primitives.MapData
 {
     public class SelectionTransform : IMapData
     {
+        public bool AffectsRendering => false;
+
         public Matrix4x4 Transform { get; set; }
 
         public SelectionTransform() : this(Matrix4x4.Identity)

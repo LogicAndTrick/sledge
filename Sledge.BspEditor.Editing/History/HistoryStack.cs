@@ -10,6 +10,8 @@ namespace Sledge.BspEditor.Editing.History
 {
     public class HistoryStack : IMapData
     {
+        public bool AffectsRendering => false;
+
         private readonly List<IOperation> _items;
         private readonly int _maximumSize;
         private int _currentIndex;

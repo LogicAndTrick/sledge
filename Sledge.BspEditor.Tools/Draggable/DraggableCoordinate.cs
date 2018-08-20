@@ -1,9 +1,9 @@
-using System.Collections.Generic;
 using System.Drawing;
 using System.Numerics;
 using System.Windows.Forms;
 using Sledge.BspEditor.Rendering.Viewport;
 using Sledge.Rendering.Cameras;
+using Sledge.Rendering.Viewports;
 
 namespace Sledge.BspEditor.Tools.Draggable
 {
@@ -27,8 +27,8 @@ namespace Sledge.BspEditor.Tools.Draggable
         public override bool CanDrag(MapViewport viewport, ViewportEvent e, Vector3 position)
         {
             var width = Width;
-            var screenPosition = viewport.ProperWorldToScreen(Position);
-            var diff = (e.Location - screenPosition).Absolute();
+            var screenPosition = viewport.WorldToScreen(Position);
+            var diff = Vector3.Abs(e.Location - screenPosition);
             return diff.X < width && diff.Y < width;
         }
 
@@ -51,28 +51,23 @@ namespace Sledge.BspEditor.Tools.Draggable
 
         public override void Drag(MapViewport viewport, ViewportEvent e, Vector3 lastPosition, Vector3 position)
         {
-            Position = viewport.Expand(position) + viewport.GetUnusedVector3(Position);
+            Position = viewport.Expand(position) + viewport.GetUnusedCoordinate(Position);
             base.Drag(viewport, e, lastPosition, position);
         }
 
-        public override IEnumerable<SceneObject> GetSceneObjects()
+        public override void Render(IViewport viewport, OrthographicCamera camera, Vector3 worldMin, Vector3 worldMax, Graphics graphics)
         {
-            yield break;
+            // yield return new HandleElement(PositionType.World, HandleElement.HandleType.Square, new Position(Position.ToVector3()), Width)
+            // {
+            //     Color = GetColor()
+            // };
         }
 
-        public override IEnumerable<Element> GetViewportElements(MapViewport viewport, PerspectiveCamera camera)
+        public override void Render(IViewport viewport, PerspectiveCamera camera, Graphics graphics)
         {
-            yield break;
+            //
         }
-
-        public override IEnumerable<Element> GetViewportElements(MapViewport viewport, OrthographicCamera camera)
-        {
-            yield return new HandleElement(PositionType.World, HandleElement.HandleType.Square, new Position(Position.ToVector3()), Width)
-            {
-                Color = GetColor()
-            };
-        }
-
+        
         protected virtual Color GetColor()
         {
             return Highlighted ? Color.Red : Color.Green;

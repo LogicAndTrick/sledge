@@ -47,16 +47,16 @@ namespace Sledge.BspEditor.Tools.Cordon
 
         private void CordonBoxChanged(object sender, EventArgs e)
         {
-            if (_cordonBox.State.Action == BoxAction.Drawn || _cordonBox.State.Action == BoxAction.Resizing)
+            // Only commit changes after the resize has finished
+            if (_cordonBox.State.Action != BoxAction.Drawn) return;
+
+            var bounds = new Box(_cordonBox.State.Start, _cordonBox.State.End);
+            var cb = new CordonBounds
             {
-                var bounds = new Box(_cordonBox.State.Start, _cordonBox.State.End);
-                var cb = new CordonBounds
-                {
-                    Box = bounds,
-                    Enabled = Document.Map.Data.GetOne<CordonBounds>()?.Enabled == true
-                };
-                MapDocumentOperation.Perform(Document, new TrivialOperation(x => x.Map.Data.Replace(cb), x => x.Update(cb)));
-            }
+                Box = bounds,
+                Enabled = Document.Map.Data.GetOne<CordonBounds>()?.Enabled == true
+            };
+            MapDocumentOperation.Perform(Document, new TrivialOperation(x => x.Map.Data.Replace(cb), x => x.Update(cb)));
         }
     }
 }

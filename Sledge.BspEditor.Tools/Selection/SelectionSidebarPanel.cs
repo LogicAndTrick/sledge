@@ -27,14 +27,14 @@ namespace Sledge.BspEditor.Tools.Selection
         public SelectionSidebarPanel()
         {
             _panel = new Panel();
-            _label = new Label() { Dock = DockStyle.Fill};
+            _label = new Label { Dock = DockStyle.Fill};
             _panel.Controls.Add(_label);
 
             Oy.Subscribe<IDocument>("Document:Activated", DocumentActivated);
             Oy.Subscribe<MapDocument>("MapDocument:SelectionChanged", SelectionChanged);
         }
 
-        private async Task SelectionChanged(MapDocument doc)
+        private Task SelectionChanged(MapDocument doc)
         {
             if (_activeDocument != null && _activeDocument.TryGetTarget(out MapDocument d) && d == doc)
             {
@@ -45,12 +45,14 @@ namespace Sledge.BspEditor.Tools.Selection
                     _label.Text = $"{count} objects selected";
                 });
             }
+            return Task.CompletedTask;
         }
 
-        private async Task DocumentActivated(IDocument document)
+        private Task DocumentActivated(IDocument document)
         {
             var doc = document as MapDocument;
             _activeDocument = new WeakReference<MapDocument>(doc);
+            return Task.CompletedTask;
         }
 
         public bool IsInContext(IContext context)

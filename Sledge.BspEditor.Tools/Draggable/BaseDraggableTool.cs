@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Numerics;
 using System.Windows.Forms;
 using Sledge.BspEditor.Rendering.Viewport;
 using Sledge.Rendering.Cameras;
+using Sledge.Rendering.Viewports;
 
 namespace Sledge.BspEditor.Tools.Draggable
 {
@@ -14,7 +16,7 @@ namespace Sledge.BspEditor.Tools.Draggable
 
         public IDraggable CurrentDraggable { get; private set; }
         private ViewportEvent _lastDragMoveEvent = null;
-        private Vector3 _lastDragPoint = null;
+        private Vector3? _lastDragPoint = null;
 
         protected BaseDraggableTool()
         {
@@ -60,7 +62,7 @@ namespace Sledge.BspEditor.Tools.Draggable
         {
             if (e.Dragging || e.Button != MouseButtons.Left) return;
             if (CurrentDraggable == null) return;
-            var point = viewport.ProperScreenToWorld(e.X, e.Y);
+            var point = viewport.ScreenToWorld(e.X, e.Y);
             point = viewport.Flatten(point);
             OnDraggableClicked(viewport, camera, e, point, CurrentDraggable);
             if (!e.Handled) CurrentDraggable.Click(viewport, e, point);
@@ -70,7 +72,7 @@ namespace Sledge.BspEditor.Tools.Draggable
         protected override void MouseDown(MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
         {
             if (CurrentDraggable == null) return;
-            var point = viewport.ProperScreenToWorld(e.X, e.Y);
+            var point = viewport.ScreenToWorld(e.X, e.Y);
             point = viewport.Flatten(point);
             OnDraggableMouseDown(viewport, camera, e, point, CurrentDraggable);
             if (!e.Handled) CurrentDraggable.MouseDown(viewport, e, point);
@@ -80,7 +82,7 @@ namespace Sledge.BspEditor.Tools.Draggable
         protected override void MouseUp(MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
         {
             if (CurrentDraggable == null) return;
-            var point = viewport.ProperScreenToWorld(e.X, e.Y);
+            var point = viewport.ScreenToWorld(e.X, e.Y);
             point = viewport.Flatten(point);
             OnDraggableMouseUp(viewport, camera, e, point, CurrentDraggable);
             if (!e.Handled) CurrentDraggable.MouseUp(viewport, e, point);
@@ -90,7 +92,7 @@ namespace Sledge.BspEditor.Tools.Draggable
         protected override void MouseMove(MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
         {
             if (e.Dragging || e.Button == MouseButtons.Left) return;
-            var point = viewport.ProperScreenToWorld(e.X, e.Y);
+            var point = viewport.ScreenToWorld(e.X, e.Y);
             point = viewport.Flatten(point);
             IDraggable drag = null;
             foreach (var state in States)
@@ -109,9 +111,9 @@ namespace Sledge.BspEditor.Tools.Draggable
             }
             if (drag != CurrentDraggable)
             {
-                if (CurrentDraggable != null) CurrentDraggable.Unhighlight(viewport);
+                CurrentDraggable?.Unhighlight(viewport);
                 CurrentDraggable = drag;
-                if (CurrentDraggable != null) CurrentDraggable.Highlight(viewport);
+                CurrentDraggable?.Highlight(viewport);
                 Invalidate();
             }
         }
@@ -120,10 +122,10 @@ namespace Sledge.BspEditor.Tools.Draggable
         {
             if (e.Button != MouseButtons.Left) return;
             if (CurrentDraggable == null) return;
-            _lastDragPoint = viewport.ProperScreenToWorld(e.X, e.Y);
-            _lastDragPoint = viewport.Flatten(_lastDragPoint);
-            OnDraggableDragStarted(viewport, camera, e, _lastDragPoint, CurrentDraggable);
-            if (!e.Handled) CurrentDraggable.StartDrag(viewport, e, _lastDragPoint);
+            var point = viewport.Flatten(viewport.ScreenToWorld(e.X, e.Y));
+            OnDraggableDragStarted(viewport, camera, e, point, CurrentDraggable);
+            if (!e.Handled) CurrentDraggable.StartDrag(viewport, e, point);
+            _lastDragPoint = point;
             _lastDragMoveEvent = e;
             Invalidate();
         }
@@ -131,12 +133,12 @@ namespace Sledge.BspEditor.Tools.Draggable
         protected override void DragMove(MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
         {
             if (e.Button != MouseButtons.Left) return;
-            if (CurrentDraggable == null) return;
-            var point = viewport.ProperScreenToWorld(e.X, e.Y);
-            point = viewport.Flatten(point);
-            OnDraggableDragMoving(viewport, camera, e, _lastDragPoint, point, CurrentDraggable);
-            if (!e.Handled) CurrentDraggable.Drag(viewport, e, _lastDragPoint, point);
-            if (!e.Handled) OnDraggableDragMoved(viewport, camera, e, _lastDragPoint, point, CurrentDraggable);
+            if (CurrentDraggable == null || !_lastDragPoint.HasValue) return;
+            var point = viewport.Flatten(viewport.ScreenToWorld(e.X, e.Y));
+            var last = _lastDragPoint.Value;
+            OnDraggableDragMoving(viewport, camera, e, last, point, CurrentDraggable);
+            if (!e.Handled) CurrentDraggable.Drag(viewport, e, last, point);
+            if (!e.Handled) OnDraggableDragMoved(viewport, camera, e, last, point, CurrentDraggable);
             _lastDragPoint = point;
             _lastDragMoveEvent = e;
             Invalidate();
@@ -146,7 +148,7 @@ namespace Sledge.BspEditor.Tools.Draggable
         {
             if (e.Button != MouseButtons.Left) return;
             if (CurrentDraggable == null) return;
-            var point = viewport.ProperScreenToWorld(e.X, e.Y);
+            var point = viewport.ScreenToWorld(e.X, e.Y);
             point = viewport.Flatten(point);
             OnDraggableDragEnded(viewport, camera, e, point, CurrentDraggable);
             if (!e.Handled) CurrentDraggable.EndDrag(viewport, e, point);
@@ -157,10 +159,11 @@ namespace Sledge.BspEditor.Tools.Draggable
 
         public override void PositionChanged(MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
         {
-            if (viewport.Is2D && _lastDragMoveEvent != null && CurrentDraggable != null && _lastDragMoveEvent.Sender == viewport)
+            if (viewport.Is2D && _lastDragMoveEvent != null && _lastDragPoint.HasValue && CurrentDraggable != null && _lastDragMoveEvent.Sender == viewport)
             {
-                var point = viewport.ProperScreenToWorld(_lastDragMoveEvent.X, _lastDragMoveEvent.Y);
-                point = viewport.Flatten(point);
+                var point = viewport.Flatten(viewport.ScreenToWorld(_lastDragMoveEvent.X, _lastDragMoveEvent.Y));
+                var last = _lastDragPoint.Value;
+
                 var ev = new ViewportEvent(viewport)
                 {
                     Dragging = true,
@@ -171,9 +174,9 @@ namespace Sledge.BspEditor.Tools.Draggable
                 ev.X = ev.LastX = _lastDragMoveEvent.X;
                 ev.Y = ev.LastY = _lastDragMoveEvent.Y;
                 
-                OnDraggableDragMoving(viewport, camera, ev, _lastDragPoint, point, CurrentDraggable);
-                if (!ev.Handled) CurrentDraggable.Drag(viewport, ev, _lastDragPoint, point);
-                if (!ev.Handled) OnDraggableDragMoved(viewport, camera, ev, _lastDragPoint, point, CurrentDraggable);
+                OnDraggableDragMoving(viewport, camera, ev, last, point, CurrentDraggable);
+                if (!ev.Handled) CurrentDraggable.Drag(viewport, ev, last, point);
+                if (!ev.Handled) OnDraggableDragMoved(viewport, camera, ev, last, point, CurrentDraggable);
                 _lastDragPoint = point;
                 Invalidate();
             }
@@ -199,19 +202,22 @@ namespace Sledge.BspEditor.Tools.Draggable
             return list;
         }
 
-        protected override IEnumerable<SceneObject> GetSceneObjects()
+        public override void Render(IViewport viewport, OrthographicCamera camera, Vector3 worldMin, Vector3 worldMax, Graphics graphics)
         {
-            return CollectObjects(x => x.GetSceneObjects()).Union(base.GetSceneObjects());
+            foreach (var obj in CollectObjects(x => new[] {x}))
+            {
+                obj.Render(viewport, camera, worldMin, worldMax, graphics);
+            }
+            base.Render(viewport, camera, worldMin, worldMax, graphics);
         }
 
-        protected override IEnumerable<Element> GetViewportElements(MapViewport viewport, PerspectiveCamera camera)
+        public override void Render(IViewport viewport, PerspectiveCamera camera, Graphics graphics)
         {
-            return CollectObjects(x => x.GetViewportElements(viewport, camera)).Union(base.GetViewportElements(viewport, camera));
-        }
-
-        protected override IEnumerable<Element> GetViewportElements(MapViewport viewport, OrthographicCamera camera)
-        {
-            return CollectObjects(x => x.GetViewportElements(viewport, camera)).Union(base.GetViewportElements(viewport, camera));
+            foreach (var obj in CollectObjects(x => new[] { x }))
+            {
+                obj.Render(viewport, camera, graphics);
+            }
+            base.Render(viewport, camera, graphics);
         }
     }
 }

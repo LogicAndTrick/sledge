@@ -7,6 +7,8 @@ namespace Sledge.BspEditor.Primitives.MapData
 {
     public class ActiveTexture : IMapData
     {
+        public bool AffectsRendering => false;
+
         public string Name { get; set; }
 
         public ActiveTexture()

@@ -5,7 +5,6 @@ using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
 using Sledge.Rendering.Cameras;
-using Sledge.Rendering.Overlay;
 using Sledge.Rendering.Pipelines;
 using Sledge.Rendering.Renderables;
 using Sledge.Rendering.Viewports;
@@ -118,6 +117,27 @@ namespace Sledge.Rendering.Engine
             _token = new CancellationTokenSource();
         }
 
+
+        private int _paused = 0;
+        private readonly ManualResetEvent _pauseThreadEvent = new ManualResetEvent(false);
+
+        public IDisposable Pause()
+        {
+            _paused++;
+            _pauseThreadEvent.WaitOne();
+            return new PauseImpl(() =>
+            {
+                _paused--;
+                _pauseThreadEvent.Reset();
+            });
+        }
+        private class PauseImpl : IDisposable
+        {
+            private readonly Action _disposeAction;
+            public PauseImpl(Action disposeFunc) => _disposeAction = disposeFunc;
+            public void Dispose() => _disposeAction();
+        }
+
         private void Loop(object o)
         {
             var token = (CancellationToken) o;
@@ -128,8 +148,9 @@ namespace Sledge.Rendering.Engine
                 {
                     var frame = _timer.ElapsedMilliseconds;
                     var diff = (frame - lastFrame);
-                    if (diff < 16)
+                    if (diff < 16 || _paused > 0)
                     {
+                        if (_paused > 0) _pauseThreadEvent.Set();
                         Thread.Sleep(1);
                         continue;
                     }

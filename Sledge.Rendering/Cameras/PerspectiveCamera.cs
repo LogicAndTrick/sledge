@@ -109,13 +109,13 @@ namespace Sledge.Rendering.Cameras
             return MathFunctions.Project(world, viewport, pm, vm);
         }
 
-        public (Vector3, Vector3) CastRayFromScreen(Vector3 screen, int width, int height)
+        public (Vector3, Vector3) CastRayFromScreen(Vector3 screen)
         {
-            var near = new Vector3(screen.X, height - screen.Y, 0);
-            var far = new Vector3(screen.X, height - screen.Y, 1);
-            var pm = Matrix4x4.CreatePerspectiveFieldOfView((float)DMath.DegreesToRadians(FOV), width / (float)height, 1.0f, 50000);
+            var near = new Vector3(screen.X, Height - screen.Y, 0);
+            var far = new Vector3(screen.X, Height - screen.Y, 1);
+            var pm = Matrix4x4.CreatePerspectiveFieldOfView((float)DMath.DegreesToRadians(FOV), Width / (float)Height, 1.0f, 50000);
             var vm = Matrix4x4.CreateLookAt(Position, LookAt, Vector3.UnitZ);
-            var viewport = new[] { 0, 0, width, height };
+            var viewport = new[] { 0, 0, Width, Height };
             var un = MathFunctions.Unproject(near, viewport, pm, vm);
             var uf = MathFunctions.Unproject(far, viewport, pm, vm);
             return (un, uf);

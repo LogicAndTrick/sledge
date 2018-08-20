@@ -14,6 +14,8 @@ namespace Sledge.BspEditor.Editing.Commands.Pointfile
 {
     public class Pointfile : IMapData
     {
+        public bool AffectsRendering => true;
+
         public List<Line> Lines { get; set; }
 
         private Pointfile()

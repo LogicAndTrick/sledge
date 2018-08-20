@@ -1,11 +1,12 @@
 using System;
-using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Numerics;
 using Sledge.BspEditor.Rendering.Viewport;
 using Sledge.DataStructures.Geometric;
 using Sledge.Rendering.Cameras;
+using Sledge.Rendering.Viewports;
 
 namespace Sledge.BspEditor.Tools.Draggable
 {
@@ -15,13 +16,13 @@ namespace Sledge.BspEditor.Tools.Draggable
         {
         }
 
-        private Box GetRectangle(MapViewport viewport)
+        private Box GetRectangle(ICamera camera)
         {
-            var start = viewport.Flatten(BoxState.Start);
-            var end = viewport.Flatten(BoxState.End);
+            var start = camera.Flatten(BoxState.Start);
+            var end = camera.Flatten(BoxState.End);
             var box = new Box(start, end);
-            var wid = Math.Min(box.Width / 10, viewport.PixelsToUnits(20));
-            var len = Math.Min(box.Length / 10, viewport.PixelsToUnits(20));
+            var wid = Math.Min(box.Width / 10, camera.PixelsToUnits(20));
+            var len = Math.Min(box.Length / 10, camera.PixelsToUnits(20));
             switch (Handle)
             {
                 case ResizeHandle.TopLeft:
@@ -50,7 +51,7 @@ namespace Sledge.BspEditor.Tools.Draggable
         public override bool CanDrag(MapViewport viewport, ViewportEvent e, Vector3 position)
         {
             const int padding = 2;
-            var box = GetRectangle(viewport);
+            var box = GetRectangle(viewport.Viewport.Camera);
             var c = position;
             return c.X >= box.Start.X - padding && c.Y >= box.Start.Y - padding && c.Z >= box.Start.Z - padding
                    && c.X <= box.End.X + padding && c.Y <= box.End.Y + padding && c.Z <= box.End.Z + padding;
@@ -65,37 +66,30 @@ namespace Sledge.BspEditor.Tools.Draggable
             return points.OrderBy(x => (position - x).LengthSquared()).First();
         }
 
-        public override IEnumerable<Element> GetViewportElements(MapViewport viewport, OrthographicCamera camera)
+        public override void Render(IViewport viewport, OrthographicCamera camera, Vector3 worldMin, Vector3 worldMax, Graphics graphics)
         {
-            if (HighlightedViewport != viewport) yield break;
+            if (HighlightedViewport != viewport) return;
+            
+            var b = GetRectangle(camera);
+            var start = camera.WorldToScreen(camera.Expand(b.Start));
+            var end = camera.WorldToScreen(camera.Expand(b.End));
 
-            var b = GetRectangle(viewport);
-            var st = b.Start.ToVector3();
-            var en = b.End.ToVector3();
-            var cam = viewport.Viewport.Camera;
-            yield return new FaceElement(PositionType.World, Material.Flat(State.FillColour), new[]
+            graphics.SmoothingMode = SmoothingMode.HighQuality;
+
+            using (var br = new SolidBrush(State.FillColour))
             {
-                new PositionVertex(new Position(cam.Expand(new Vector3(st.X, st.Y, 0))), 0, 0),
-                new PositionVertex(new Position(cam.Expand(new Vector3(st.X, en.Y, 0))), 0, 0),
-                new PositionVertex(new Position(cam.Expand(new Vector3(en.X, en.Y, 0))), 0, 0),
-                new PositionVertex(new Position(cam.Expand(new Vector3(en.X, st.Y, 0))), 0, 0)
-            }) { ZIndex = -20 };
+                graphics.FillRectangle(br, start.X, end.Y, end.X - start.X, start.Y - end.Y);
+            }
             if (Handle == ResizeHandle.Center && SnappedMoveOrigin != null)
             {
-                const int size = 6;
-                var orig = viewport.Expand(SnappedMoveOrigin).ToVector3();
+                const int size = 4;
+                var orig = camera.WorldToScreen(camera.Expand(SnappedMoveOrigin.Value));
 
-                yield return new LineElement(PositionType.World, Color.Yellow, new List<Position>
-                {
-                    new Position(orig) {Offset = new Vector3(-size, size, 0)},
-                    new Position(orig) {Offset = new Vector3(size, -size, 0)},
-                });
-                yield return new LineElement(PositionType.World, Color.Yellow, new List<Position>
-                {
-                    new Position(orig) {Offset = new Vector3(size, size, 0)},
-                    new Position(orig) {Offset = new Vector3(-size, -size, 0)},
-                });
+                graphics.DrawLine(Pens.Yellow, orig.X - size, orig.Y - size, orig.X + size, orig.Y + size);
+                graphics.DrawLine(Pens.Yellow, orig.X + size, orig.Y - size, orig.X - size, orig.Y + size);
             }
+
+            graphics.SmoothingMode = SmoothingMode.Default;
         }
     }
 }

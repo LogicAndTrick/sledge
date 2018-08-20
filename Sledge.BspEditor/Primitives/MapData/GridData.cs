@@ -8,6 +8,8 @@ namespace Sledge.BspEditor.Primitives.MapData
 {
     public class GridData : IMapData
     {
+        public bool AffectsRendering => false;
+
         public bool SnapToGrid { get; set; }
         public IGrid Grid { get; set; }
 

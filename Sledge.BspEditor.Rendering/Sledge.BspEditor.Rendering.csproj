@@ -58,6 +58,7 @@
     <Compile Include="Overlay\OverlayManager.cs" />
     <Compile Include="Renderer.cs" />
     <Compile Include="Resources\EnvironmentTextureSource.cs" />
+    <Compile Include="Scene\SceneBuilderRenderable.cs" />
     <Compile Include="Viewport\CameraViewportEventListenerFactory.cs" />
     <Compile Include="Viewport\IViewportEventListenerFactory.cs" />
     <Compile Include="Viewport\OrthographicCameraViewportListener.cs" />

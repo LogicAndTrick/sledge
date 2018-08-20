@@ -9,6 +9,8 @@ namespace Sledge.BspEditor.Primitives.MapData
 {
     public class CordonBounds : IMapData
     {
+        public bool AffectsRendering => true;
+
         public bool Enabled { get; set; }
         public Box Box { get; set; }
 

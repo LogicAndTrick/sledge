@@ -9,6 +9,8 @@ namespace Sledge.BspEditor.Primitives.MapData
     [Serializable]
     public class HideFaceMask : IMapData
     {
+        public bool AffectsRendering => false;
+
         public bool Hidden { get; set; }
 
         [Export(typeof(IMapElementFormatter))]

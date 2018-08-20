@@ -21,11 +21,12 @@ namespace Sledge.BspEditor.Tools.Selection
     {
         public override string Name { get; set; } = "Ignore grouping";
         public override string Details { get; set; } = "Toggle ignore grouping on and off";
-        protected override async Task Invoke(MapDocument document, CommandParameters parameters)
+        protected override Task Invoke(MapDocument document, CommandParameters parameters)
         {
             var opt = document.Map.Data.GetOne<SelectionOptions>() ?? new SelectionOptions();
             opt.IgnoreGrouping = !opt.IgnoreGrouping;
             MapDocumentOperation.Perform(document, new TrivialOperation(x => x.Map.Data.Replace(opt), x => x.Update(opt)));
+            return Task.CompletedTask;
         }
     }
 }

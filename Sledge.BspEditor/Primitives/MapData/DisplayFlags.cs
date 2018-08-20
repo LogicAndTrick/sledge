@@ -10,6 +10,8 @@ namespace Sledge.BspEditor.Primitives.MapData
     [Serializable]
     public class DisplayFlags : IMapData
     {
+        public bool AffectsRendering => true;
+
         public bool HideNullTextures { get; set; } = false;
         public bool HideDisplacementSolids { get; set; } = false;
 

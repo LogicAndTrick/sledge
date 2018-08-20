@@ -9,6 +9,8 @@ namespace Sledge.BspEditor.Primitives.MapData
     [Serializable]
     public class AutomaticVisgroup : IMapData
     {
+        public bool AffectsRendering => false;
+
         public string Path { get; set; }
         public string Key { get; set; }
         public bool Visible { get; set; } = true;

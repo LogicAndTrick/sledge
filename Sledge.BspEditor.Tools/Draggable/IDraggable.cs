@@ -1,12 +1,11 @@
 using System;
-using System.Collections.Generic;
 using System.Numerics;
 using Sledge.BspEditor.Rendering.Viewport;
-using Sledge.Rendering.Cameras;
+using Sledge.Rendering.Overlay;
 
 namespace Sledge.BspEditor.Tools.Draggable
 {
-    public interface IDraggable
+    public interface IDraggable : IOverlayRenderable
     {
         event EventHandler DragStarted;
         event EventHandler DragMoved;
@@ -20,8 +19,5 @@ namespace Sledge.BspEditor.Tools.Draggable
         void StartDrag(MapViewport viewport, ViewportEvent e, Vector3 position);
         void Drag(MapViewport viewport, ViewportEvent e, Vector3 lastPosition, Vector3 position);
         void EndDrag(MapViewport viewport, ViewportEvent e, Vector3 position);
-        IEnumerable<SceneObject> GetSceneObjects();
-        IEnumerable<Element> GetViewportElements(MapViewport viewport, PerspectiveCamera camera);
-        IEnumerable<Element> GetViewportElements(MapViewport viewport, OrthographicCamera camera);
     }
 }

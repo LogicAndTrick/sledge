@@ -26,7 +26,7 @@ namespace Sledge.BspEditor.Rendering.Viewport
         public int Y { get; set; }
         public int Delta { get; set; }
 
-        public Point Location => new Point(X, Y);
+        public Vector3 Location => new Vector3(X, Y, 0);
 
         // Mouse movement
         public int LastX { get; set; }

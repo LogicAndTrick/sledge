@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Drawing;
 using System.Linq;
+using System.Numerics;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using LogicAndTrick.Oy;
-using OpenTK;
 using Sledge.BspEditor.Modification;
 using Sledge.BspEditor.Modification.Operations;
 using Sledge.BspEditor.Modification.Operations.Mutation;
@@ -152,7 +152,7 @@ namespace Sledge.BspEditor.Tools.Selection
             yield return Oy.Subscribe<RightClickMenuBuilder>("MapViewport:RightClick", b =>
             {
                 var selectionBoundingBox = Document.Selection.GetSelectionBoundingBox();
-                var point = b.Viewport.Flatten(b.Viewport.ProperScreenToWorld(b.Event.X, b.Event.Y));
+                var point = b.Viewport.Flatten(b.Viewport.ScreenToWorld(b.Event.X, b.Event.Y));
                 var start = b.Viewport.Flatten(selectionBoundingBox.Start);
                 var end = b.Viewport.Flatten(selectionBoundingBox.End);
 
@@ -360,14 +360,14 @@ namespace Sledge.BspEditor.Tools.Selection
             Oy.Publish("Context:Add", new ContextInfo("BspEditor:ObjectProperties"));
         }
 
-        private Vector3 GetIntersectionPoint(IMapObject obj, Line line)
+        private Vector3? GetIntersectionPoint(IMapObject obj, Line line)
         {
             // todo !selection opacity/hidden
             //.Where(x => x.Opacity > 0 && !x.IsHidden)
             return obj?.GetPolygons()
                 .Select(x => x.GetIntersectionPoint(line))
-                .Where(x => x != null)
-                .OrderBy(x => (x - line.Start).VectorMagnitude())
+                .Where(x => x.HasValue)
+                .OrderBy(x => (x.Value - line.Start).Length())
                 .FirstOrDefault();
         }
 
@@ -391,7 +391,8 @@ namespace Sledge.BspEditor.Tools.Selection
             //if (View.Camera3DPanRequiresMouseClick && KeyboardState.IsKeyDown(Keys.Space)) return;
 
             // First, get the ray that is cast from the clicked point along the viewport frustrum
-            var ray = viewport.CastRayFromScreen(e.X, e.Y);
+            var (rayStart, rayEnd) = camera.CastRayFromScreen(new Vector3(e.X, e.Y, 0));
+            var ray = new Line(rayStart, rayEnd);
 
             // Grab all the elements that intersect with the ray
             var hits = GetBoundingBoxIntersections(ray);
@@ -399,8 +400,8 @@ namespace Sledge.BspEditor.Tools.Selection
             // Sort the list of intersecting elements by distance from ray origin
             IntersectingObjectsFor3DSelection = hits
                 .Select(x => new { Item = x, Intersection = GetIntersectionPoint(x, ray) })
-                .Where(x => x.Intersection != null)
-                .OrderBy(x => (x.Intersection - ray.Start).VectorMagnitude())
+                .Where(x => x.Intersection.HasValue)
+                .OrderBy(x => (x.Intersection.Value - ray.Start).Length())
                 .Select(x => x.Item)
                 .ToList();
 
@@ -506,11 +507,11 @@ namespace Sledge.BspEditor.Tools.Selection
                 var tform = _selectionBox.GetTransformationMatrix(viewport, camera, Document);
                 if (tform.HasValue)
                 {
-                    var st = new SelectionTransform(Matrix.FromOpenTKMatrix4(tform.Value));
+                    var st = new SelectionTransform(tform.Value);
                     MapDocumentOperation.Perform(Document, new TrivialOperation(x => x.Map.Data.Replace(st), x => x.Update(st)));
 
                     var box = new Box(_selectionBox.State.OrigStart, _selectionBox.State.OrigEnd);
-                    var trans = Matrix.FromOpenTKMatrix4(tform.Value);
+                    var trans = tform.Value;
                     box = box.Transform(trans);
 
                     var label = "";
@@ -522,8 +523,7 @@ namespace Sledge.BspEditor.Tools.Selection
 
         protected override void OnDraggableDragEnded(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position, IDraggable draggable)
         {
-            var tt = draggable as ITransformationHandle;
-            if (_selectionBox.State.Action == BoxAction.Resizing && tt != null)
+            if (_selectionBox.State.Action == BoxAction.Resizing && draggable is ITransformationHandle tt)
             {
                 // Execute the transform on the selection
                 var tform = _selectionBox.GetTransformationMatrix(viewport, camera, Document);
@@ -531,10 +531,10 @@ namespace Sledge.BspEditor.Tools.Selection
                 {
                     var ttType = _selectionBox.GetTextureTransformationType(Document);
                     var createClone = KeyboardState.Shift && draggable is ResizeTransformHandle && ((ResizeTransformHandle)draggable).Handle == ResizeHandle.Center;
-                    ExecuteTransform(tt.Name, Matrix.FromOpenTKMatrix4(tform.Value), createClone, ttType);
+                    ExecuteTransform(tt.Name, tform.Value, createClone, ttType);
                 }
             }
-            var st = new SelectionTransform(Matrix.Identity);
+            var st = new SelectionTransform(Matrix4x4.Identity);
             MapDocumentOperation.Perform(Document, new TrivialOperation(x => x.Map.Data.Replace(st), x => x.Update(st)));
             base.OnDraggableDragEnded(viewport, camera, e, position, draggable);
         }
@@ -578,11 +578,11 @@ namespace Sledge.BspEditor.Tools.Selection
         private IMapObject SelectionTest(MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
         {
             // Create a box to represent the click, with a tolerance level
-            var unused = viewport.GetUnusedVector3(new Vector3(100000, 100000, 100000));
-            var tolerance = 4 / (decimal) viewport.Zoom; // Selection tolerance of four pixels
+            var unused = viewport.GetUnusedCoordinate(new Vector3(100000, 100000, 100000));
+            var tolerance = 4 / viewport.Zoom; // Selection tolerance of four pixels
             var used = viewport.Expand(new Vector3(tolerance, tolerance, 0));
             var add = used + unused;
-            var click = viewport.ProperScreenToWorld(e.X, e.Y);
+            var click = viewport.ScreenToWorld(e.X, e.Y);
             var box = new Box(click - add, click + add);
             
             // Get the first element that intersects with the box, selecting or deselecting as needed
@@ -600,9 +600,9 @@ namespace Sledge.BspEditor.Tools.Selection
             var nudge = GetNudgeValue(e.KeyCode);
             if (nudge != null && (_selectionBox.State.Action == BoxAction.Drawn) && !Document.Selection.IsEmpty)
             {
-                var translate = viewport.Expand(nudge);
-                var transformation = Matrix4.CreateTranslation((float)translate.X, (float)translate.Y, (float)translate.Z);
-                var matrix = Matrix.FromOpenTKMatrix4(transformation);
+                var translate = viewport.Expand(nudge.Value);
+                var transformation = Matrix4x4.CreateTranslation((float)translate.X, (float)translate.Y, (float)translate.Z);
+                var matrix = transformation;
                 ExecuteTransform("Nudge", matrix, KeyboardState.Shift, TextureTransformationType.Uniform);
                 SelectionChanged();
             }
@@ -684,7 +684,7 @@ namespace Sledge.BspEditor.Tools.Selection
         /// <param name="transform">The transformation to apply</param>
         /// <param name="clone">True to create a clone before transforming the original.</param>
         /// <param name="textureTransformationType"></param>
-        private void ExecuteTransform(string transformationName, Matrix transform, bool clone, TextureTransformationType textureTransformationType)
+        private void ExecuteTransform(string transformationName, Matrix4x4 transform, bool clone, TextureTransformationType textureTransformationType)
         {
             var parents = Document.Selection.GetSelectedParents().ToList();
             var transaction = new Transaction();

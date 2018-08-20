@@ -53,6 +53,11 @@ namespace Sledge.Rendering.Engine
             return Engine.Instance.CreateViewport();
         }
 
+        public IDisposable Pause()
+        {
+            return Engine.Instance.Pause();
+        }
+
         public void Add(IRenderable renderable) => Engine.Instance.Scene.Add(renderable);
         public void Add(IUpdateable updateable) => Engine.Instance.Scene.Add(updateable);
         public void Add(IOverlayRenderable overlayRenderable) => Engine.Instance.Scene.Add(overlayRenderable);

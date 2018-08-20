@@ -11,6 +11,8 @@ namespace Sledge.BspEditor.Primitives.MapData
     [Serializable]
     public class Visgroup : IMapData
     {
+        public bool AffectsRendering => false;
+
         public long ID { get; set; }
         public string Name { get; set; }
         public bool Visible { get; set; } = true;

@@ -1,4 +1,5 @@
 using System;
+using System.Numerics;
 using Sledge.BspEditor.Rendering.Viewport;
 using Sledge.DataStructures.Geometric;
 
@@ -19,7 +20,7 @@ namespace Sledge.BspEditor.Tools.Draggable
         private BoxAction _action;
         public BoxAction Action
         {
-            get { return _action; }
+            get => _action;
             set
             {
                 _action = value;
@@ -32,7 +33,7 @@ namespace Sledge.BspEditor.Tools.Draggable
 
         public Vector3 Start
         {
-            get { return _start; }
+            get => _start;
             set
             {
                 _start = value;
@@ -42,7 +43,7 @@ namespace Sledge.BspEditor.Tools.Draggable
 
         public Vector3 End
         {
-            get { return _end; }
+            get => _end;
             set
             {
                 _end = value;
@@ -70,8 +71,8 @@ namespace Sledge.BspEditor.Tools.Draggable
         {
             var fs = viewport.Flatten(Start);
             var fe = viewport.Flatten(End);
-            var us = viewport.GetUnusedVector3(Start);
-            var ue = viewport.GetUnusedVector3(End);
+            var us = viewport.GetUnusedCoordinate(Start);
+            var ue = viewport.GetUnusedCoordinate(End);
             switch (handle)
             {
                 case ResizeHandle.TopLeft:
@@ -111,20 +112,20 @@ namespace Sledge.BspEditor.Tools.Draggable
 
         public Box GetSelectionBox()
         {
-            // Don't actually use Decimal.Min/MaxValue because it just causes headaches
-            const decimal minValue = -10000000000m;
-            const decimal maxValue = +10000000000m;
+            // Don't actually use Single.Min/MaxValue because it just causes headaches
+            const float minValue = -10000000000f;
+            const float maxValue = +10000000000f;
 
             var state = this;
 
             // If one of the dimensions has a depth value of 0, extend it out into infinite space
             // If two or more dimensions have depth 0, do nothing.
             
-            var sameX = state.Start.X == state.End.X;
-            var sameY = state.Start.Y == state.End.Y;
-            var sameZ = state.Start.Z == state.End.Z;
-            var start = state.Start.Clone();
-            var end = state.End.Clone();
+            var sameX = Math.Abs(state.Start.X - state.End.X) < 0.001f;
+            var sameY = Math.Abs(state.Start.Y - state.End.Y) < 0.001f;
+            var sameZ = Math.Abs(state.Start.Z - state.End.Z) < 0.001f;
+            var start = state.Start;
+            var end = state.End;
 
             if (sameX)
             {

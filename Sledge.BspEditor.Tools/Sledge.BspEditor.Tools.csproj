@@ -69,6 +69,20 @@
     <Compile Include="ActiveToolOverlayRenderable.cs" />
     <Compile Include="BaseTool.cs" />
     <Compile Include="CameraTool.cs" />
+    <Compile Include="Cordon\CordonBoxDraggableState.cs" />
+    <Compile Include="Cordon\CordonTool.cs" />
+    <Compile Include="Cordon\ToggleCordon.cs" />
+    <Compile Include="Draggable\BaseDraggable.cs" />
+    <Compile Include="Draggable\BaseDraggableTool.cs" />
+    <Compile Include="Draggable\BoxAction.cs" />
+    <Compile Include="Draggable\BoxDraggableState.cs" />
+    <Compile Include="Draggable\BoxResizeHandle.cs" />
+    <Compile Include="Draggable\BoxState.cs" />
+    <Compile Include="Draggable\DraggableCoordinate.cs" />
+    <Compile Include="Draggable\IDraggable.cs" />
+    <Compile Include="Draggable\IDraggableState.cs" />
+    <Compile Include="Draggable\InternalBoxResizeHandle.cs" />
+    <Compile Include="Draggable\ResizeHandle.cs" />
     <Compile Include="Grid\DecreaseGrid.cs" />
     <Compile Include="Grid\GridListMenuItemProvider.cs" />
     <Compile Include="Grid\IncreaseGrid.cs" />
@@ -80,12 +94,30 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Selection\SelectionBoxDraggableState.cs" />
+    <Compile Include="Selection\SelectionSidebarPanel.cs" />
+    <Compile Include="Selection\SelectTool.cs" />
+    <Compile Include="Selection\SelectToolSidebarPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Selection\SelectToolSidebarPanel.Designer.cs">
+      <DependentUpon>SelectToolSidebarPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Selection\ToggleIgnoreGroupingCommand.cs" />
+    <Compile Include="Selection\TransformationHandles\ITransformationHandle.cs" />
+    <Compile Include="Selection\TransformationHandles\ResizeTransformHandle.cs" />
+    <Compile Include="Selection\TransformationHandles\RotateTransformHandle.cs" />
+    <Compile Include="Selection\TransformationHandles\RotationOrigin.cs" />
+    <Compile Include="Selection\TransformationHandles\SkewTransformHandle.cs" />
+    <Compile Include="Selection\TransformationHandles\TextureTransformationType.cs" />
     <Compile Include="ToolCursors.cs" />
     <Compile Include="ToolInitialiser.cs" />
     <Compile Include="ToolProcessor.cs" />
     <Compile Include="ToolActivator.cs" />
     <Compile Include="ToolStatusItem.cs" />
     <Compile Include="ToolViewportListener.cs" />
+    <Compile Include="Widgets\RotationWidget.cs" />
+    <Compile Include="Widgets\Widget.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Sledge.BspEditor.Editing\Sledge.BspEditor.Editing.csproj">
@@ -140,6 +172,9 @@
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Selection\SelectToolSidebarPanel.resx">
+      <DependentUpon>SelectToolSidebarPanel.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

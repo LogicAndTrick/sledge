@@ -11,6 +11,8 @@ namespace Sledge.BspEditor.Primitives.MapData
     [Serializable]
     public class Camera : IMapData, ISerializable
     {
+        public bool AffectsRendering => false;
+
         public Vector3 EyePosition { get; set; }
         public Vector3 LookPosition { get; set; }
         public bool IsActive { get; set; }

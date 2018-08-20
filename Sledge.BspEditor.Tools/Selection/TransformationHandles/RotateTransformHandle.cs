@@ -1,16 +1,13 @@
 using System;
-using System.Collections.Generic;
-using OpenTK;
-using OpenTK.Input;
+using System.Drawing;
+using System.Numerics;
 using Sledge.BspEditor.Documents;
-using Sledge.BspEditor.Modification.Operations;
 using Sledge.BspEditor.Primitives.MapData;
 using Sledge.BspEditor.Rendering.Viewport;
 using Sledge.BspEditor.Tools.Draggable;
-using Sledge.Common;
 using Sledge.DataStructures.Geometric;
 using Sledge.Rendering.Cameras;
-using Sledge.Rendering.Scenes.Elements;
+using Sledge.Rendering.Viewports;
 using KeyboardState = Sledge.Shell.Input.KeyboardState;
 
 namespace Sledge.BspEditor.Tools.Selection.TransformationHandles
@@ -18,10 +15,10 @@ namespace Sledge.BspEditor.Tools.Selection.TransformationHandles
     public class RotateTransformHandle : BoxResizeHandle, ITransformationHandle
     {
         private readonly RotationOrigin _origin;
-        private Vector3 _rotateStart;
-        private Vector3 _rotateEnd;
+        private Vector3? _rotateStart;
+        private Vector3? _rotateEnd;
 
-        public string Name { get { return "Rotate"; } }
+        public string Name => "Rotate";
 
         public RotateTransformHandle(BoxDraggableState state, ResizeHandle handle, RotationOrigin origin) : base(state, handle)
         {
@@ -51,28 +48,36 @@ namespace Sledge.BspEditor.Tools.Selection.TransformationHandles
             base.EndDrag(viewport, e, position);
         }
 
-        public override IEnumerable<Element> GetViewportElements(MapViewport viewport, OrthographicCamera camera)
+        public override void Render(IViewport viewport, OrthographicCamera camera, Vector3 worldMin, Vector3 worldMax, Graphics graphics)
         {
-            foreach (var e in base.GetViewportElements(viewport, camera))
-            {
-                var handle = e as HandleElement;
-                if (handle != null) handle.Type = HandleElement.HandleType.Circle;
-                yield return e;
-            }
+            // todo
+            base.Render(viewport, camera, worldMin, worldMax, graphics);
         }
 
-        public Matrix4? GetTransformationMatrix(MapViewport viewport, OrthographicCamera camera, BoxState state, MapDocument doc)
+        // public override IEnumerable<Element> GetViewportElements(MapViewport viewport, OrthographicCamera camera)
+        // {
+        //     foreach (var e in base.GetViewportElements(viewport, camera))
+        //     {
+        //         var handle = e as HandleElement;
+        //         if (handle != null) handle.Type = HandleElement.HandleType.Circle;
+        //         yield return e;
+        //     }
+        // }
+
+        public Matrix4x4? GetTransformationMatrix(MapViewport viewport, OrthographicCamera camera, BoxState state, MapDocument doc)
         {
-            var origin = viewport.ZeroUnusedVector3((state.OrigStart + state.OrigEnd) / 2);
+            var origin = viewport.ZeroUnusedCoordinate((state.OrigStart + state.OrigEnd) / 2);
             if (_origin != null) origin = _origin.Position;
+
+            if (!_rotateStart.HasValue || !_rotateEnd.HasValue) return null;
 
             var forigin = viewport.Flatten(origin);
 
-            var origv = (_rotateStart - forigin).Normalise();
-            var newv = (_rotateEnd - forigin).Normalise();
+            var origv = Vector3.Normalize(_rotateStart.Value - forigin);
+            var newv =  Vector3.Normalize(_rotateEnd.Value - forigin);
 
-            var angle = DMath.Acos(Math.Max(-1, Math.Min(1, origv.Dot(newv))));
-            if ((origv.Cross(newv).Z < 0)) angle = 2 * DMath.PI - angle;
+            var angle = Math.Acos(Math.Max(-1, Math.Min(1, origv.Dot(newv))));
+            if ((origv.Cross(newv).Z < 0)) angle = 2 * Math.PI - angle;
 
             var shf = KeyboardState.Shift;
             // todo !selection rotation style
@@ -80,19 +85,20 @@ namespace Sledge.BspEditor.Tools.Selection.TransformationHandles
             var snap = true; // (def == RotationStyle.SnapOnShift && shf) || (def == RotationStyle.SnapOffShift && !shf);
             if (snap)
             {
-                var deg = angle * (180 / DMath.PI);
+                var deg = angle * (180 / Math.PI);
                 var rnd = Math.Round(deg / 15) * 15;
-                angle = rnd * (DMath.PI / 180);
+                angle = rnd * (Math.PI / 180);
             }
 
-            Matrix4 rotm;
-            if (viewport.Direction == OrthographicCamera.OrthographicType.Top) rotm = Matrix4.CreateRotationZ((float)angle);
-            else if (viewport.Direction == OrthographicCamera.OrthographicType.Front) rotm = Matrix4.CreateRotationX((float)angle);
-            else rotm = Matrix4.CreateRotationY((float)-angle); // The Y axis rotation goes in the reverse direction for whatever reason
+            Matrix4x4 rotm;
+            if (viewport.Direction == OrthographicCamera.OrthographicType.Top) rotm = Matrix4x4.CreateRotationZ((float)angle);
+            else if (viewport.Direction == OrthographicCamera.OrthographicType.Front) rotm = Matrix4x4.CreateRotationX((float)angle);
+            else rotm = Matrix4x4.CreateRotationY((float)-angle); // The Y axis rotation goes in the reverse direction for whatever reason
 
-            var mov = Matrix4.CreateTranslation((float)-origin.X, (float)-origin.Y, (float)-origin.Z);
-            var rot = Matrix4.Mult(mov, rotm);
-            return Matrix4.Mult(rot, Matrix4.Invert(mov));
+            var mov = Matrix4x4.CreateTranslation(-origin.X, -origin.Y, -origin.Z);
+            var rot = Matrix4x4.Multiply(mov, rotm);
+            var inv = Matrix4x4.Invert(mov, out var i) ? i : Matrix4x4.Identity;
+            return Matrix4x4.Multiply(rot, inv);
         }
 
         public TextureTransformationType GetTextureTransformationType(MapDocument doc)

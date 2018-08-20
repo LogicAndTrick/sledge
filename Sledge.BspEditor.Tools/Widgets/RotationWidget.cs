@@ -9,6 +9,7 @@ using Sledge.BspEditor.Rendering.Viewport;
 using Sledge.Common;
 using Sledge.DataStructures.Geometric;
 using Sledge.Rendering.Cameras;
+using Sledge.Rendering.Viewports;
 using Sledge.Shell.Input;
 using Plane = Sledge.DataStructures.Geometric.Plane;
 
@@ -60,8 +61,8 @@ namespace Sledge.BspEditor.Tools.Widgets
         private Vector3 _pivotPoint = Vector3.Zero;
         private CircleType _mouseOver;
         private CircleType _mouseDown;
-        private Vector3 _mouseDownPoint;
-        private Vector3 _mouseMovePoint;
+        private Vector3? _mouseDownPoint;
+        private Vector3? _mouseMovePoint;
 
         public Vector3 GetPivotPoint()
         {
@@ -82,7 +83,7 @@ namespace Sledge.BspEditor.Tools.Widgets
             if (!_autoPivot) return;
 
             var bb = Document.Selection.GetSelectionBoundingBox();
-            _pivotPoint = bb == null ? Vector3.Zero : bb.Center;
+            _pivotPoint = bb?.Center ?? Vector3.Zero;
         }
 
         #region Line cache
@@ -96,15 +97,15 @@ namespace Sledge.BspEditor.Tools.Widgets
             {
                 var isect = test.GetIntersectionPoint(line, true);
                 var first = test.OnPlane(line.Start) > 0 ? line.Start : line.End;
-                line = new Line(first, isect);
+                if (isect.HasValue) line = new Line(first, isect.Value);
             }
-            cache.Cache[type].Add(new Line(cache.MapViewport.ProperWorldToScreen(line.Start), cache.MapViewport.ProperWorldToScreen(line.End)));
+            cache.Cache[type].Add(new Line(cache.MapViewport.WorldToScreen(line.Start), cache.MapViewport.WorldToScreen(line.End)));
         }
 
         private void UpdateCache(MapViewport viewport, PerspectiveCamera camera, MapDocument document)
         {
-            var ccl = camera.EyeLocation.ToVector3();
-            var ccla = camera.LookAt.ToVector3();
+            var ccl = camera.EyeLocation;
+            var ccla = camera.LookAt;
 
             var cache = _cachedLines.FirstOrDefault(x => x.MapViewport == viewport);
             if (cache == null)
@@ -115,7 +116,7 @@ namespace Sledge.BspEditor.Tools.Widgets
             if (ccl == cache.CameraLocation && ccla == cache.CameraLookAt && cache.PivotPoint == _pivotPoint && cache.Width == viewport.Width && cache.Height == viewport.Height) return;
 
             var origin = _pivotPoint;
-            var distance = (ccl - origin).VectorMagnitude();
+            var distance = (ccl - origin).Length();
 
             if (distance <= 1) return;
 
@@ -131,10 +132,10 @@ namespace Sledge.BspEditor.Tools.Widgets
 
             var plane = new Plane(normal, origin.Dot(normal));
 
-            const decimal sides = 32;
-            var diff = (2 * DMath.PI) / sides;
+            const float sides = 32;
+            var diff = (2 * Math.PI) / sides;
 
-            var radius = 0.15m * distance;
+            var radius = 0.15f * distance;
 
             cache.Cache[CircleType.Outer].Clear();
             cache.Cache[CircleType.X].Clear();
@@ -143,15 +144,15 @@ namespace Sledge.BspEditor.Tools.Widgets
 
             for (var i = 0; i < sides; i++)
             {
-                var cos1 = DMath.Cos(diff * i);
-                var sin1 = DMath.Sin(diff * i);
-                var cos2 = DMath.Cos(diff * (i + 1));
-                var sin2 = DMath.Sin(diff * (i + 1));
+                var cos1 = (float) Math.Cos(diff * i);
+                var sin1 = (float) Math.Sin(diff * i);
+                var cos2 = (float) Math.Cos(diff * (i + 1));
+                var sin2 = (float) Math.Sin(diff * (i + 1));
 
                 // outer circle
                 AddLine(CircleType.Outer,
-                    origin + right * cos1 * radius * 1.2m + up * sin1 * radius * 1.2m,
-                    origin + right * cos2 * radius * 1.2m + up * sin2 * radius * 1.2m,
+                    origin + right * cos1 * radius * 1.2f + up * sin1 * radius * 1.2f,
+                    origin + right * cos2 * radius * 1.2f + up * sin2 * radius * 1.2f,
                     plane, cache);
 
                 cos1 *= radius;
@@ -183,26 +184,26 @@ namespace Sledge.BspEditor.Tools.Widgets
 
         private Matrix4x4? GetTransformationMatrix(MapViewport viewport)
         {
-            if (_mouseMovePoint == null || _mouseDownPoint == null || _pivotPoint == null) return null;
+            if (_mouseMovePoint == null || _mouseDownPoint == null) return null;
 
-            var originPoint = viewport.ProperWorldToScreen(_pivotPoint);
-            var origv = (_mouseDownPoint - originPoint).Normalise();
-            var newv = (_mouseMovePoint - originPoint).Normalise();
-            var angle = DMath.Acos(Math.Max(-1, Math.Min(1, origv.Dot(newv))));
-            if ((origv.Cross(newv).Z < 0)) angle = 2 * DMath.PI - angle;
+            var originPoint = viewport.WorldToScreen(_pivotPoint);
+            var origv = Vector3.Normalize(_mouseDownPoint.Value - originPoint);
+            var newv = Vector3.Normalize(_mouseMovePoint.Value - originPoint);
+            var angle = Math.Acos(Math.Max(-1, Math.Min(1, origv.Dot(newv))));
+            if ((origv.Cross(newv).Z < 0)) angle = 2 * Math.PI - angle;
 
             var shf = KeyboardState.Shift;
             // var def = Select.RotationStyle;
             var snap = true; // (def == RotationStyle.SnapOnShift && shf) || (def == RotationStyle.SnapOffShift && !shf);
             if (snap)
             {
-                var deg = angle * (180 / DMath.PI);
+                var deg = angle * (180 / Math.PI);
                 var rnd = Math.Round(deg / 15) * 15;
-                angle = rnd * (DMath.PI / 180);
+                angle = rnd * (Math.PI / 180);
             }
 
             Vector3 axis;
-            var dir = (viewport.Viewport.Camera.EyeLocation - _pivotPoint.ToVector3()).Normalized();
+            var dir = Vector3.Normalize(viewport.Viewport.Camera.Location - _pivotPoint);
             switch (_mouseDown)
             {
                 case CircleType.Outer:
@@ -224,9 +225,10 @@ namespace Sledge.BspEditor.Tools.Widgets
             if (dirAng > 90) angle = -angle;
 
             var rotm = Matrix4x4.CreateFromAxisAngle(axis, (float)angle);
-            var mov = Matrix4x4.CreateTranslation(-_pivotPoint.ToVector3());
-            var rot = Matrix4x4.Mult(mov, rotm);
-            return Matrix4x4.Mult(rot, Matrix4x4.Invert(mov));
+            var mov = Matrix4x4.CreateTranslation(-_pivotPoint);
+            var rot = Matrix4x4.Multiply(mov, rotm);
+            var inv = Matrix4x4.Invert(mov, out var i) ? i : Matrix4x4.Identity;
+            return Matrix4x4.Multiply(rot, inv);
         }
 
         private bool MouseOver(CircleType type, ViewportEvent ev, MapViewport viewport)
@@ -235,7 +237,7 @@ namespace Sledge.BspEditor.Tools.Widgets
             if (cache == null) return false;
             var lines = cache.Cache[type];
             var point = new Vector3(ev.X, viewport.Height - ev.Y, 0);
-            return lines.Any(x => (x.ClosestPoint(point) - point).VectorMagnitude() <= 8);
+            return lines.Any(x => (x.ClosestPoint(point) - point).Length() <= 8);
         }
 
         protected override void MouseLeave(MapViewport viewport, PerspectiveCamera camera, ViewportEvent e)
@@ -299,171 +301,177 @@ namespace Sledge.BspEditor.Tools.Widgets
             if (_mouseDown != CircleType.None) e.Handled = true;
         }
 
-        protected override IEnumerable<Element> GetViewportElements(MapViewport viewport, PerspectiveCamera camera)
+        public override void Render(IViewport viewport, OrthographicCamera camera, Vector3 worldMin, Vector3 worldMax, Graphics graphics)
         {
-            if (!Document.Selection.IsEmpty)
-            {
-                switch (_mouseMovePoint == null ? CircleType.None : _mouseDown)
-                {
-                    case CircleType.None:
-                        return GetElementsCircleTypeNone(viewport, camera, Document);
-                    case CircleType.Outer:
-                    case CircleType.X:
-                    case CircleType.Y:
-                    case CircleType.Z:
-                        return GetElementsAxisRotating(viewport, camera, Document);
-                }
-            }
-            return new Element[0];
+            // todo
+            base.Render(viewport, camera, worldMin, worldMax, graphics);
         }
 
-        private IEnumerable<Element> GetElementsAxisRotating(MapViewport viewport, PerspectiveCamera camera, MapDocument document)
-        {
-            var axis = Vector3.UnitX;
-            var c = Color.Red;
+        //protected override IEnumerable<Element> GetViewportElements(MapViewport viewport, PerspectiveCamera camera)
+        //{
+        //    if (!Document.Selection.IsEmpty)
+        //    {
+        //        switch (_mouseMovePoint == null ? CircleType.None : _mouseDown)
+        //        {
+        //            case CircleType.None:
+        //                return GetElementsCircleTypeNone(viewport, camera, Document);
+        //            case CircleType.Outer:
+        //            case CircleType.X:
+        //            case CircleType.Y:
+        //            case CircleType.Z:
+        //                return GetElementsAxisRotating(viewport, camera, Document);
+        //        }
+        //    }
+        //    return new Element[0];
+        //}
 
-            if (_mouseDown == CircleType.Y)
-            {
-                axis = Vector3.UnitY;
-                c = Color.Lime;
-            }
+        //private IEnumerable<Element> GetElementsAxisRotating(MapViewport viewport, PerspectiveCamera camera, MapDocument document)
+        //{
+        //    var axis = Vector3.UnitX;
+        //    var c = Color.Red;
 
-            if (_mouseDown == CircleType.Z)
-            {
-                axis = Vector3.UnitZ;
-                c = Color.Blue;
-            }
+        //    if (_mouseDown == CircleType.Y)
+        //    {
+        //        axis = Vector3.UnitY;
+        //        c = Color.Lime;
+        //    }
 
-            if (_mouseDown == CircleType.Outer)
-            {
-                var vp3 = _activeViewport as MapViewport;
-                if (vp3 != null) axis = (camera.LookAt - camera.EyeLocation).Normalized();
-                c = Color.White;
-            }
+        //    if (_mouseDown == CircleType.Z)
+        //    {
+        //        axis = Vector3.UnitZ;
+        //        c = Color.Blue;
+        //    }
 
-            if (_activeViewport != viewport || _mouseDown != CircleType.Outer)
-            {
-                var zero = new Vector3((float)_pivotPoint.DX, (float)_pivotPoint.DY, (float)_pivotPoint.DZ);
+        //    if (_mouseDown == CircleType.Outer)
+        //    {
+        //        var vp3 = _activeViewport as MapViewport;
+        //        if (vp3 != null) axis = (camera.LookAt - camera.EyeLocation).Normalized();
+        //        c = Color.White;
+        //    }
 
-                yield return new LineElement(PositionType.World, c, new List<Position>
-                {
-                    new Position(zero - axis * 100000),
-                    new Position(zero + axis * 100000)
-                });
-            }
+        //    if (_activeViewport != viewport || _mouseDown != CircleType.Outer)
+        //    {
+        //        var zero = new Vector3((float)_pivotPoint.DX, (float)_pivotPoint.DY, (float)_pivotPoint.DZ);
 
-            if (_activeViewport == viewport)
-            {
-                yield return new LineElement(PositionType.World, Color.FromArgb(64, Color.Gray), new List<Position>
-                {
-                    new Position(_pivotPoint.ToVector3()),
-                    new Position(viewport.ProperScreenToWorld(_mouseDownPoint).ToVector3())
-                })
-                {
-                    Stippled = true
-                };
+        //        yield return new LineElement(PositionType.World, c, new List<Position>
+        //        {
+        //            new Position(zero - axis * 100000),
+        //            new Position(zero + axis * 100000)
+        //        });
+        //    }
 
-                yield return new LineElement(PositionType.World, Color.LightGray, new List<Position>
-                {
-                    new Position(_pivotPoint.ToVector3()),
-                    new Position(viewport.ProperScreenToWorld(_mouseMovePoint).ToVector3())
-                })
-                {
-                    Stippled = true
-                };
-            }
-        }
+        //    if (_activeViewport == viewport)
+        //    {
+        //        yield return new LineElement(PositionType.World, Color.FromArgb(64, Color.Gray), new List<Position>
+        //        {
+        //            new Position(_pivotPoint),
+        //            new Position(viewport.ProperScreenToWorld(_mouseDownPoint))
+        //        })
+        //        {
+        //            Stippled = true
+        //        };
 
-        private IEnumerable<Element> GetElementsCircleTypeNone(MapViewport viewport, PerspectiveCamera camera, MapDocument document)
-        {
-            var center = _pivotPoint;
-            var origin = new Vector3((float)center.DX, (float)center.DY, (float)center.DZ);
-            var distance = (camera.EyeLocation - origin).Length;
+        //        yield return new LineElement(PositionType.World, Color.LightGray, new List<Position>
+        //        {
+        //            new Position(_pivotPoint),
+        //            new Position(viewport.ProperScreenToWorld(_mouseMovePoint))
+        //        })
+        //        {
+        //            Stippled = true
+        //        };
+        //    }
+        //}
 
-            if (distance <= 1) yield break;
+        //private IEnumerable<Element> GetElementsCircleTypeNone(MapViewport viewport, PerspectiveCamera camera, MapDocument document)
+        //{
+        //    var center = _pivotPoint;
+        //    var origin = new Vector3((float)center.DX, (float)center.DY, (float)center.DZ);
+        //    var distance = (camera.EyeLocation - origin).Length;
 
-            var radius = 0.15f * distance;
+        //    if (distance <= 1) yield break;
 
-            var normal = Vector3.Subtract(camera.EyeLocation, origin).Normalized();
-            var right = Vector3.Cross(normal, Vector3.UnitZ).Normalized();
-            var up = Vector3.Cross(normal, right).Normalized();
+        //    var radius = 0.15f * distance;
 
-            const int sides = 32;
-            const float diff = (float)(2 * Math.PI) / sides;
+        //    var normal = Vector3.Subtract(camera.EyeLocation, origin).Normalized();
+        //    var right = Vector3.Cross(normal, Vector3.UnitZ).Normalized();
+        //    var up = Vector3.Cross(normal, right).Normalized();
 
-            for (var i = 0; i < sides; i++)
-            {
-                var cos1 = (float)Math.Cos(diff * i);
-                var sin1 = (float)Math.Sin(diff * i);
-                var cos2 = (float)Math.Cos(diff * (i + 1));
-                var sin2 = (float)Math.Sin(diff * (i + 1));
+        //    const int sides = 32;
+        //    const float diff = (float)(2 * Math.PI) / sides;
 
-                yield return new LineElement(PositionType.World, Color.DarkGray, new List<Position>
-                {
-                    new Position(origin + right * cos1 * radius + up * sin1 * radius),
-                    new Position(origin + right * cos2 * radius + up * sin2 * radius)
-                });
+        //    for (var i = 0; i < sides; i++)
+        //    {
+        //        var cos1 = (float)Math.Cos(diff * i);
+        //        var sin1 = (float)Math.Sin(diff * i);
+        //        var cos2 = (float)Math.Cos(diff * (i + 1));
+        //        var sin2 = (float)Math.Sin(diff * (i + 1));
 
-                yield return new LineElement(PositionType.World, _mouseOver == CircleType.Outer ? Color.White : Color.LightGray, new List<Position>
-                {
-                    new Position(origin + right * cos1 * radius * 1.2f + up * sin1 * radius * 1.2f),
-                    new Position(origin + right * cos2 * radius * 1.2f + up * sin2 * radius * 1.2f)
-                });
-            }
+        //        yield return new LineElement(PositionType.World, Color.DarkGray, new List<Position>
+        //        {
+        //            new Position(origin + right * cos1 * radius + up * sin1 * radius),
+        //            new Position(origin + right * cos2 * radius + up * sin2 * radius)
+        //        });
 
-            var plane = new Plane(normal.ToVector3(), (decimal) Vector3.Dot(origin, normal));
+        //        yield return new LineElement(PositionType.World, _mouseOver == CircleType.Outer ? Color.White : Color.LightGray, new List<Position>
+        //        {
+        //            new Position(origin + right * cos1 * radius * 1.2f + up * sin1 * radius * 1.2f),
+        //            new Position(origin + right * cos2 * radius * 1.2f + up * sin2 * radius * 1.2f)
+        //        });
+        //    }
 
-            for (var i = 0; i < sides; i++)
-            {
-                var cos1 = (float)Math.Cos(diff * i) * radius;
-                var sin1 = (float)Math.Sin(diff * i) * radius;
-                var cos2 = (float)Math.Cos(diff * (i + 1)) * radius;
-                var sin2 = (float)Math.Sin(diff * (i + 1)) * radius;
+        //    var plane = new Plane(normal, (decimal) Vector3.Dot(origin, normal));
 
-                var zline = GetLineElement(
-                    (origin + Vector3.UnitX * cos1 + Vector3.UnitY * sin1).ToVector3(),
-                    (origin + Vector3.UnitX * cos2 + Vector3.UnitY * sin2).ToVector3(),
-                    plane,
-                    _mouseOver == CircleType.Z ? Color.Blue : Color.DarkBlue);
+        //    for (var i = 0; i < sides; i++)
+        //    {
+        //        var cos1 = (float)Math.Cos(diff * i) * radius;
+        //        var sin1 = (float)Math.Sin(diff * i) * radius;
+        //        var cos2 = (float)Math.Cos(diff * (i + 1)) * radius;
+        //        var sin2 = (float)Math.Sin(diff * (i + 1)) * radius;
 
-                var xline = GetLineElement(
-                    (origin + Vector3.UnitY * cos1 + Vector3.UnitZ * sin1).ToVector3(),
-                    (origin + Vector3.UnitY * cos2 + Vector3.UnitZ * sin2).ToVector3(),
-                    plane,
-                    _mouseOver == CircleType.X ? Color.Red : Color.DarkRed);
+        //        var zline = GetLineElement(
+        //            (origin + Vector3.UnitX * cos1 + Vector3.UnitY * sin1),
+        //            (origin + Vector3.UnitX * cos2 + Vector3.UnitY * sin2),
+        //            plane,
+        //            _mouseOver == CircleType.Z ? Color.Blue : Color.DarkBlue);
 
-                var yline = GetLineElement(
-                    (origin + Vector3.UnitZ * cos1 + Vector3.UnitX * sin1).ToVector3(),
-                    (origin + Vector3.UnitZ * cos2 + Vector3.UnitX * sin2).ToVector3(),
-                    plane,
-                    _mouseOver == CircleType.Y ? Color.Lime : Color.LimeGreen);
+        //        var xline = GetLineElement(
+        //            (origin + Vector3.UnitY * cos1 + Vector3.UnitZ * sin1),
+        //            (origin + Vector3.UnitY * cos2 + Vector3.UnitZ * sin2),
+        //            plane,
+        //            _mouseOver == CircleType.X ? Color.Red : Color.DarkRed);
 
-                if (xline != null) yield return xline;
-                if (yline != null) yield return yline;
-                if (zline != null) yield return zline;
-            }
-        }
+        //        var yline = GetLineElement(
+        //            (origin + Vector3.UnitZ * cos1 + Vector3.UnitX * sin1),
+        //            (origin + Vector3.UnitZ * cos2 + Vector3.UnitX * sin2),
+        //            plane,
+        //            _mouseOver == CircleType.Y ? Color.Lime : Color.LimeGreen);
 
-        private LineElement GetLineElement(Vector3 start, Vector3 end, Plane plane, Color color)
-        {
-            var line = new Line(start, end);
-            var cls = line.ClassifyAgainstPlane(plane);
-            if (cls == PlaneClassification.Back) return null;
-            if (cls == PlaneClassification.Spanning)
-            {
-                var isect = plane.GetIntersectionPoint(line, true);
-                var first = plane.OnPlane(line.Start) > 0 ? line.Start : line.End;
-                line = new Line(first, isect);
-            }
+        //        if (xline != null) yield return xline;
+        //        if (yline != null) yield return yline;
+        //        if (zline != null) yield return zline;
+        //    }
+        //}
 
-            return new LineElement(PositionType.World, color, new List<Position>
-            {
-                new Position(line.Start.ToVector3()),
-                new Position(line.End.ToVector3())
-            })
-            {
-                Width = 2
-            };
-        }
+        //private LineElement GetLineElement(Vector3 start, Vector3 end, Plane plane, Color color)
+        //{
+        //    var line = new Line(start, end);
+        //    var cls = line.ClassifyAgainstPlane(plane);
+        //    if (cls == PlaneClassification.Back) return null;
+        //    if (cls == PlaneClassification.Spanning)
+        //    {
+        //        var isect = plane.GetIntersectionPoint(line, true);
+        //        var first = plane.OnPlane(line.Start) > 0 ? line.Start : line.End;
+        //        line = new Line(first, isect);
+        //    }
+
+        //    return new LineElement(PositionType.World, color, new List<Position>
+        //    {
+        //        new Position(line.Start),
+        //        new Position(line.End)
+        //    })
+        //    {
+        //        Width = 2
+        //    };
+        //}
     }
 }

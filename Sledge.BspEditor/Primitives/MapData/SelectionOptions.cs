@@ -6,6 +6,8 @@ namespace Sledge.BspEditor.Primitives.MapData
 {
     public class SelectionOptions : IMapData
     {
+        public bool AffectsRendering => false;
+
         public bool IgnoreGrouping { get; set; }
 
         public SelectionOptions()
