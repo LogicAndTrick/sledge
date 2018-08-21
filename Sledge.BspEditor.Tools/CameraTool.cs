@@ -105,7 +105,7 @@ namespace Sledge.BspEditor.Tools
             if (cam == null) return null;
 
             var pos = cam.Position;
-            var look = cam.LookAt;
+            var look = pos + cam.Direction;
 
             var dir = (look - pos).Normalise()*20;
             return Tuple.Create(pos, pos + dir);
@@ -118,7 +118,7 @@ namespace Sledge.BspEditor.Tools
 
             look = (look - position).Normalise() + position;
             cam.Position = position;
-            cam.LookAt = look;
+            cam.Direction = look - position;
         }
 
         private State GetStateAtPoint(int x, int y, MapViewport viewport, out Camera activeCamera)

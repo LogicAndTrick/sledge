@@ -105,7 +105,7 @@ namespace Sledge.BspEditor.Tools.Widgets
         private void UpdateCache(MapViewport viewport, PerspectiveCamera camera, MapDocument document)
         {
             var ccl = camera.EyeLocation;
-            var ccla = camera.LookAt;
+            var ccla = camera.Position + camera.Direction;
 
             var cache = _cachedLines.FirstOrDefault(x => x.MapViewport == viewport);
             if (cache == null)

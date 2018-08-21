@@ -24,7 +24,7 @@ namespace Sledge.BspEditor.Rendering.Viewport
         private PerspectiveCamera Camera => Viewport.Viewport.Camera as PerspectiveCamera;
         private long _downMillis;
         private long _lastMillis;
-        private Easing _easing;
+        private readonly Easing _easing;
         private readonly List<Keys> _downKeys;
 
         public PerspectiveCameraNavigationViewportListener(MapViewport vp)
@@ -58,7 +58,7 @@ namespace Sledge.BspEditor.Rendering.Viewport
             _lastMillis = frame;
 
             if (currMillis == 0) return;
-            if (!Focus || !Viewport.IsUnlocked(this)) //todo || !Viewport.Viewport.Control.Focused)
+            if (!Focus || !Viewport.IsUnlocked(this) || !Viewport.Viewport.IsFocused)
             {
                 if (FreeLook || FreeLookToggle)
                 {
@@ -163,8 +163,7 @@ namespace Sledge.BspEditor.Rendering.Viewport
                 var left = Control.MouseButtons.HasFlag(MouseButtons.Left);
                 var right = Control.MouseButtons.HasFlag(MouseButtons.Right);
                 
-                //if (false) //(ToolManager.ActiveTool is CameraTool)
-                if (true)
+                if (false) // TODO: ToolManager.ActiveTool is CameraTool)
                 {
                     FreeLook = left || right;
                 }
@@ -263,7 +262,7 @@ namespace Sledge.BspEditor.Rendering.Viewport
         {
             if (!Viewport.IsUnlocked(this) || e.Delta == 0) return;
             //if (!Focus || (ToolManager.ActiveTool != null && ToolManager.ActiveTool.IsCapturingMouseWheel())) return;
-            Camera.Advance((e.Delta / Math.Abs(e.Delta)) * (float) CameraNavigationViewportSettings.MouseWheelMoveDistance);
+            Camera.Advance((e.Delta / (float) Math.Abs(e.Delta)) * (float) CameraNavigationViewportSettings.MouseWheelMoveDistance);
         }
 
         public void MouseUp(ViewportEvent e)

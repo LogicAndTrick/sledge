@@ -6,6 +6,7 @@ using Sledge.Common;
 using Sledge.DataStructures.Geometric;
 using Sledge.Rendering;
 using Sledge.Rendering.Cameras;
+using Sledge.Shell;
 using Sledge.Shell.Input;
 
 namespace Sledge.BspEditor.Rendering.Viewport
@@ -28,37 +29,39 @@ namespace Sledge.BspEditor.Rendering.Viewport
 
         public void UpdateFrame(long frame)
         {
-            return;//todo cross thread etc
-            if (/*Viewport.Viewport.IsFocused &&*/ _mouseDown != null && Control.MouseButtons.HasFlag(MouseButtons.Left) && !KeyboardState.IsKeyDown(Keys.Space))
+            Viewport.Control.InvokeLater(() =>
             {
-                var pt = Viewport.Control.PointToClient(Control.MousePosition);
-                var pos = Camera.Position;
-                if (pt.X < ScrollPadding)
+                if (Viewport.Viewport.IsFocused && _mouseDown != null && Control.MouseButtons.HasFlag(MouseButtons.Left) && !KeyboardState.IsKeyDown(Keys.Space))
                 {
-                    var mx = ScrollStart + ScrollIncrement * Math.Min(ScrollMaximum, ScrollPadding - pt.X);
-                    mx = mx * mx + ScrollStart;
-                    pos.X -= mx / (float)Camera.Zoom;
+                    var pt = Viewport.Control.PointToClient(Control.MousePosition);
+                    var pos = Camera.Position;
+                    if (pt.X < ScrollPadding)
+                    {
+                        var mx = ScrollStart + ScrollIncrement * Math.Min(ScrollMaximum, ScrollPadding - pt.X);
+                        mx = mx * mx + ScrollStart;
+                        pos.X -= mx / Camera.Zoom;
+                    }
+                    else if (pt.X > Viewport.Width - ScrollPadding)
+                    {
+                        var mx = ScrollStart + ScrollIncrement * Math.Min(ScrollMaximum, pt.X - (Viewport.Width - ScrollPadding));
+                        mx = mx * mx + ScrollStart;
+                        pos.X += mx / Camera.Zoom;
+                    }
+                    if (pt.Y < ScrollPadding)
+                    {
+                        var my = ScrollStart + ScrollIncrement * Math.Min(ScrollMaximum, ScrollPadding - pt.Y);
+                        my = my * my + ScrollStart;
+                        pos.Y += my / Camera.Zoom;
+                    }
+                    else if (pt.Y > Viewport.Height - ScrollPadding)
+                    {
+                        var my = ScrollStart + ScrollIncrement * Math.Min(ScrollMaximum, pt.Y - (Viewport.Height - ScrollPadding));
+                        my = my * my + ScrollStart;
+                        pos.Y -= my / Camera.Zoom;
+                    }
+                    Camera.Position = pos;
                 }
-                else if (pt.X > Viewport.Width - ScrollPadding)
-                {
-                    var mx = ScrollStart + ScrollIncrement * Math.Min(ScrollMaximum, pt.X - (Viewport.Width - ScrollPadding));
-                    mx = mx * mx + ScrollStart;
-                    pos.X += mx / (float)Camera.Zoom;
-                }
-                if (pt.Y < ScrollPadding)
-                {
-                    var my = ScrollStart + ScrollIncrement * Math.Min(ScrollMaximum, ScrollPadding - pt.Y);
-                    my = my * my + ScrollStart;
-                    pos.Y += my / (float)Camera.Zoom;
-                }
-                else if (pt.Y > Viewport.Height - ScrollPadding)
-                {
-                    var my = ScrollStart + ScrollIncrement * Math.Min(ScrollMaximum, pt.Y - (Viewport.Height - ScrollPadding));
-                    my = my * my + ScrollStart;
-                    pos.Y -= my / (float)Camera.Zoom;
-                }
-                Camera.Position = pos;
-            }
+            });
         }
 
         public bool IsActive()
@@ -98,16 +101,16 @@ namespace Sledge.BspEditor.Rendering.Viewport
                 switch (e.KeyCode)
                 {
                     case Keys.Left:
-                        shift.X = (float) (-Viewport.Width / Camera.Zoom / 4);
+                        shift.X = -Viewport.Width / Camera.Zoom / 4;
                         break;
                     case Keys.Right:
-                        shift.X = (float)(Viewport.Width / Camera.Zoom / 4);
+                        shift.X = Viewport.Width / Camera.Zoom / 4;
                         break;
                     case Keys.Up:
-                        shift.Y = (float)(Viewport.Height / Camera.Zoom / 4);
+                        shift.Y = Viewport.Height / Camera.Zoom / 4;
                         break;
                     case Keys.Down:
-                        shift.Y = (float)(-Viewport.Height / Camera.Zoom / 4);
+                        shift.Y = -Viewport.Height / Camera.Zoom / 4;
                         break;
                 }
 
@@ -127,7 +130,7 @@ namespace Sledge.BspEditor.Rendering.Viewport
                         var num = Math.Max(press - 6, 6 - press);
                         var pow = (float) Math.Pow(2, num);
                         var zoom = press < 6 ? 1 / pow : pow;
-                        Camera.Zoom = (float) zoom;
+                        Camera.Zoom = zoom;
                         // Mediator.Publish(EditorMediator.ViewZoomChanged, Camera.Zoom);
                     }
                 }
@@ -147,8 +150,8 @@ namespace Sledge.BspEditor.Rendering.Viewport
                     var point = new Vector3(e.X, Viewport.Height - e.Y, 0);
                     if (_mouseDown != null)
                     {
-                        var difference = _mouseDown - point;
-                        Camera.Position += (difference / (float)Camera.Zoom);
+                        var difference = _mouseDown.Value - point;
+                        Camera.Position += (difference / Camera.Zoom);
                     }
                     _mouseDown = point;
                     e.Handled = true;
@@ -188,7 +191,7 @@ namespace Sledge.BspEditor.Rendering.Viewport
             }
         }
 
-        private Vector3 _mouseDown;
+        private Vector3? _mouseDown;
 
         public void MouseDown(ViewportEvent e)
         {

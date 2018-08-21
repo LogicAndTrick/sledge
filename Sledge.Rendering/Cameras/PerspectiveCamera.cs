@@ -7,31 +7,39 @@ namespace Sledge.Rendering.Cameras
 {
     public class PerspectiveCamera : ICamera
     {
-        public CameraType Type => CameraType.Perspective;
+        private const float Pi = (float) Math.PI;
 
-        private Vector3 _direction;
-        private Vector3 _lookAt;
+        private Vector3 _position;
+        private Vector3 _angles;
+
+        public CameraType Type => CameraType.Perspective;
 
         public float FOV { get; set; }
         public float ClipDistance { get; set; }
-        public Vector3 Position { get; set; }
-        public Vector3 Direction
+
+        public Vector3 Position
         {
-            get => _direction;
-            set
-            {
-                _direction = value;
-                _lookAt = Position + _direction;
-            }
+            get => _position;
+            set => _position = value;
         }
 
-        public Vector3 LookAt
+        public Vector3 Angles
         {
-            get => _lookAt;
+            get => _angles;
+            set => _angles = value;
+        }
+
+        public Vector3 Direction
+        {
+            get
+            {
+                var rot = Matrix4x4.CreateRotationX(_angles.Y) * Matrix4x4.CreateRotationZ(_angles.X);
+                return Vector3.Transform(-Vector3.UnitZ, rot);
+            }
             set
             {
-                _lookAt = value;
-                _direction = _lookAt - Position;
+                _angles.Y = (float) (Math.Asin(value.Z) + Math.PI / 2);
+                _angles.X = (float) (Math.Atan2(-value.Y, -value.X) + Math.PI / 2);
             }
         }
 
@@ -46,8 +54,8 @@ namespace Sledge.Rendering.Cameras
 
         public PerspectiveCamera()
         {
-            Position = Vector3.Zero;
-            Direction = Vector3.UnitY;
+            _position = Vector3.Zero;
+            _angles = new Vector3(0, Pi / 2, 0);
             FOV = 90;
             ClipDistance = 10000;
         }
@@ -62,7 +70,7 @@ namespace Sledge.Rendering.Cameras
             if (float.TryParse(tags[0], NumberStyles.Float, CultureInfo.InvariantCulture, out p)) x = p;
             if (float.TryParse(tags[1], NumberStyles.Float, CultureInfo.InvariantCulture, out p)) y = p;
             if (float.TryParse(tags[2], NumberStyles.Float, CultureInfo.InvariantCulture, out p)) z = p;
-            Position = new Vector3(x, y, z);
+            _position = new Vector3(x, y, z);
 
             if (tags.Length < 6) return;
 
@@ -70,7 +78,7 @@ namespace Sledge.Rendering.Cameras
             if (float.TryParse(tags[3], NumberStyles.Float, CultureInfo.InvariantCulture, out p)) x = p;
             if (float.TryParse(tags[4], NumberStyles.Float, CultureInfo.InvariantCulture, out p)) y = p;
             if (float.TryParse(tags[5], NumberStyles.Float, CultureInfo.InvariantCulture, out p)) z = p;
-            _lookAt = new Vector3(x, y, z);
+            _angles = new Vector3(x, y, z);
 
             if (tags.Length < 8) return;
 
@@ -81,7 +89,9 @@ namespace Sledge.Rendering.Cameras
 
         private Matrix4x4 GetCameraMatrix()
         {
-            return Matrix4x4.CreateLookAt(Position, _lookAt, Vector3.UnitZ);
+            var rot = Matrix4x4.CreateFromYawPitchRoll(-Angles.Z, -Angles.Y, -Angles.X);
+            var mov = Matrix4x4.CreateTranslation(-_position);
+            return mov * rot;
         }
 
         private Matrix4x4 GetViewportMatrix(int width, int height)
@@ -97,7 +107,7 @@ namespace Sledge.Rendering.Cameras
             screen = new Vector3(screen.X, screen.Y, 1);
             var viewport = new[] { 0, 0, Width, Height };
             var pm = Matrix4x4.CreatePerspectiveFieldOfView((float)DMath.DegreesToRadians(FOV), Width / (float)Height, 1.0f, 50000);
-            var vm = Matrix4x4.CreateLookAt(Position, LookAt, Vector3.UnitZ);
+            var vm = GetCameraMatrix();
             return MathFunctions.Unproject(screen, viewport, pm, vm);
         }
 
@@ -105,7 +115,7 @@ namespace Sledge.Rendering.Cameras
         {
             var viewport = new[] { 0, 0, Width, Height };
             var pm = Matrix4x4.CreatePerspectiveFieldOfView((float)DMath.DegreesToRadians(FOV), Width / (float)Height, 1.0f, 50000);
-            var vm = Matrix4x4.CreateLookAt(Position, LookAt, Vector3.UnitZ);
+            var vm = GetCameraMatrix();
             return MathFunctions.Project(world, viewport, pm, vm);
         }
 
@@ -114,7 +124,7 @@ namespace Sledge.Rendering.Cameras
             var near = new Vector3(screen.X, Height - screen.Y, 0);
             var far = new Vector3(screen.X, Height - screen.Y, 1);
             var pm = Matrix4x4.CreatePerspectiveFieldOfView((float)DMath.DegreesToRadians(FOV), Width / (float)Height, 1.0f, 50000);
-            var vm = Matrix4x4.CreateLookAt(Position, LookAt, Vector3.UnitZ);
+            var vm = GetCameraMatrix();
             var viewport = new[] { 0, 0, Width, Height };
             var un = MathFunctions.Unproject(near, viewport, pm, vm);
             var uf = MathFunctions.Unproject(far, viewport, pm, vm);
@@ -124,7 +134,7 @@ namespace Sledge.Rendering.Cameras
         //public IEnumerable<Plane> GetClippingPlanes(int width, int height)
         //{
         //    var pm = Matrix4x4.CreatePerspectiveFieldOfView((float)DMath.DegreesToRadians(FOV), width / (float)height, 1.0f, ClipDistance);
-        //    var vm = Matrix4x4.CreateLookAt(Position, LookAt, Vector3.UnitZ);
+        //    var vm = GetCameraMatrix();
         //    var viewport = new[] { 0, 0, width, height };
         //
         //    var tlNear = MathFunctions.Unproject(new Vector3(0, height, 0), viewport, pm, vm);
@@ -167,101 +177,53 @@ namespace Sledge.Rendering.Cameras
             return flat;
         }
 
-        private float GetRotation()
-        {
-            var temp = (LookAt - Position);
-            if (Math.Abs(temp.Length()) > 0.0001f) temp = Vector3.Normalize(temp);
-            var rot = Math.Atan2(temp.Y, temp.X);
-            if (rot < 0) rot += 2 * Math.PI;
-            if (rot > 2 * Math.PI) rot = rot % (2 * Math.PI);
-            return (float)rot;
-        }
-
-        private void SetRotation(float rotation)
-        {
-            var temp = (LookAt - Position);
-            if (Math.Abs(temp.Length()) > 0.0001f) temp = Vector3.Normalize(temp);
-            var e = GetElevation();
-            var x = Math.Cos(rotation) * Math.Sin(e);
-            var y = Math.Sin(rotation) * Math.Sin(e);
-            LookAt = new Vector3((float)x + Position.X, (float)y + Position.Y, temp.Z + Position.Z);
-        }
-
-        private float GetElevation()
-        {
-            var temp = (LookAt - Position);
-            if (Math.Abs(temp.Length()) > 0.0001f) temp = Vector3.Normalize(temp);
-            var elev = Math.Acos(temp.Z);
-            return (float)elev;
-        }
-
-        private void SetElevation(float elevation)
-        {
-            if (elevation > (Math.PI * 0.99)) elevation = (float)Math.PI * 0.99f;
-            if (elevation < (Math.PI * 0.01)) elevation = (float)Math.PI * 0.01f;
-            var rotation = GetRotation();
-            var x = Math.Cos(rotation) * Math.Sin(elevation);
-            var y = Math.Sin(rotation) * Math.Sin(elevation);
-            var z = Math.Cos(elevation);
-            LookAt = new Vector3((float)x + Position.X, (float)y + Position.Y, (float)z + Position.Z);
-        }
-
         public void Pan(float degrees)
         {
-            var rad = degrees * ((float)Math.PI / 180);
-            var rot = GetRotation();
-            SetRotation(rot + rad);
+            var rad = degrees * (Pi / 180);
+            _angles.X += rad;
         }
 
         public void Tilt(float degrees)
         {
-            SetElevation(GetElevation() + (degrees * ((float)Math.PI / 180)));
+            var rad = degrees * (Pi / 180);
+            _angles.Y -= rad;
+            if (_angles.Y < 0) _angles.Y = 0;
+            if (_angles.Y > Pi) _angles.Y = Pi;
         }
 
         public void Advance(float units)
         {
-            var temp = LookAt - Position;
-            temp = Vector3.Normalize(temp);
-            var add = temp * (float)units;
-            LookAt += add;
-            Position += add;
+            var add = Direction * units;
+            _position += add;
         }
 
         public void Strafe(float units)
         {
-            var right = GetRight();
-            var add = right * (float)units;
-            LookAt += add;
-            Position += add;
+            var add = GetRight() * units;
+            _position += add;
         }
 
         public void Ascend(float units)
         {
-            var up = GetUp();
-            var add = up * (float)units;
-            LookAt += add;
-            Position += add;
+            var add = GetUp() * units;
+            _position += add;
         }
 
         public void AscendAbsolute(float units)
         {
-            var up = new Vector3(0, 0, (float)units);
-            LookAt += up;
-            Position += up;
+            _position += Vector3.UnitZ * units;
         }
 
         private Vector3 GetUp()
         {
-            var temp = LookAt - Position;
-            temp = Vector3.Normalize(temp);
-            var normal = Vector3.Cross(GetRight(), temp);
+            var normal = Vector3.Cross(GetRight(), Direction);
             normal = Vector3.Normalize(normal);
             return normal;
         }
-
+        
         private Vector3 GetRight()
         {
-            var temp = LookAt - Position;
+            var temp = Direction;
             temp.Z = 0;
             temp = Vector3.Normalize(temp);
             var normal = Vector3.Cross(temp, Vector3.UnitZ);
@@ -273,8 +235,8 @@ namespace Sledge.Rendering.Cameras
         {
             return String.Format(CultureInfo.InvariantCulture,
                 "{0},{1},{2}/{3},{4},{5}/{6}/{7}",
-                Position.X, Position.Y, Position.Z,
-                _lookAt.X, _lookAt.Y, _lookAt.Z,
+                _position.X, _position.Y, _position.Z,
+                _angles.X, _angles.Y, _angles.Z,
                 FOV,
                 ClipDistance
             );

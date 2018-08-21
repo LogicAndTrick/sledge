@@ -12,6 +12,7 @@ namespace Sledge.Rendering.Viewports
         int Width { get; }
         int Height { get; }
         Control Control { get; }
+        bool IsFocused { get; }
 
         ICamera Camera { get; set; }
         ViewportOverlay Overlay { get; }

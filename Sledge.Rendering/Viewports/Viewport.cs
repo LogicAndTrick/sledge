@@ -19,7 +19,8 @@ namespace Sledge.Rendering.Viewports
         public ICamera Camera { get; set; }
         public Control Control => this;
         public ViewportOverlay Overlay { get; }
-        
+        public bool IsFocused => _isFocused;
+
         private bool _isFocused;
         private int _unfocusedCounter = 0;
 
