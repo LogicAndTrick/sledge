@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Drawing;
 using System.Linq;
+using System.Numerics;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using LogicAndTrick.Oy;
-using OpenTK;
 using Sledge.BspEditor.Modification;
 using Sledge.BspEditor.Modification.Operations.Tree;
 using Sledge.BspEditor.Primitives.MapObjectData;
@@ -21,9 +21,10 @@ using Sledge.Common.Translations;
 using Sledge.DataStructures.GameData;
 using Sledge.DataStructures.Geometric;
 using Sledge.Rendering.Cameras;
-using Sledge.Rendering.Scenes;
-using Sledge.Rendering.Scenes.Elements;
-using Line = Sledge.Rendering.Scenes.Renderables.Line;
+using Sledge.Rendering.Pipelines;
+using Sledge.Rendering.Primitives;
+using Sledge.Rendering.Resources;
+using Sledge.Rendering.Viewports;
 
 namespace Sledge.BspEditor.Tools.Entity
 {
@@ -39,7 +40,7 @@ namespace Sledge.BspEditor.Tools.Entity
             Moving
         }
 
-        private Coordinate _location;
+        private Vector3 _location;
         private EntityState _state;
         private string _activeEntity;
 
@@ -48,7 +49,7 @@ namespace Sledge.BspEditor.Tools.Entity
         public EntityTool()
         {
             Usage = ToolUsage.Both;
-            _location = new Coordinate(0, 0, 0);
+            _location = new Vector3(0, 0, 0);
             _state = EntityState.None;
         }
 
@@ -60,7 +61,7 @@ namespace Sledge.BspEditor.Tools.Entity
             base.ContextChanged(context);
         }
 
-        public override void DocumentChanged()
+        protected override void DocumentChanged()
         {
             Task.Factory.StartNew(BuildMenu);
             base.DocumentChanged();
@@ -131,14 +132,14 @@ namespace Sledge.BspEditor.Tools.Entity
 
         // 3D interaction
 
-        private Coordinate GetIntersectionPoint(IMapObject obj, DataStructures.Geometric.Line line)
+        private Vector3? GetIntersectionPoint(IMapObject obj, DataStructures.Geometric.Line line)
         {
             // todo !selection opacity/hidden
             //.Where(x => x.Opacity > 0 && !x.IsHidden)
             return obj?.GetPolygons()
                 .Select(x => x.GetIntersectionPoint(line))
                 .Where(x => x != null)
-                .OrderBy(x => (x - line.Start).VectorMagnitude())
+                .OrderBy(x => (x.Value - line.Start).Length())
                 .FirstOrDefault();
         }
 
@@ -155,7 +156,8 @@ namespace Sledge.BspEditor.Tools.Entity
             if (e.Button != MouseButtons.Left) return;
 
             // Get the ray that is cast from the clicked point along the viewport frustrum
-            var ray = viewport.CastRayFromScreen(e.X, e.Y);
+            var (rs, re) = camera.CastRayFromScreen(new Vector3(e.X, e.Y, 0));
+            var ray = new Line(rs, re);
 
             // Grab all the elements that intersect with the ray
             var hits = GetBoundingBoxIntersections(ray);
@@ -164,12 +166,12 @@ namespace Sledge.BspEditor.Tools.Entity
             var hit = hits
                 .Select(x => new { Item = x, Intersection = GetIntersectionPoint(x, ray) })
                 .Where(x => x.Intersection != null)
-                .OrderBy(x => (x.Intersection - ray.Start).VectorMagnitude())
+                .OrderBy(x => (x.Intersection.Value - ray.Start).Length())
                 .FirstOrDefault();
 
             if (hit == null) return; // Nothing was clicked
 
-            CreateEntity(hit.Intersection);
+            CreateEntity(hit.Intersection.Value);
         }
 
         // 2D interaction
@@ -189,7 +191,7 @@ namespace Sledge.BspEditor.Tools.Entity
             if (e.Button != MouseButtons.Left && e.Button != MouseButtons.Right) return;
 
             _state = EntityState.Moving;
-            var loc = SnapIfNeeded(viewport.ProperScreenToWorld(e.X, e.Y));
+            var loc = SnapIfNeeded(viewport.ScreenToWorld(e.X, e.Y));
             _location = viewport.GetUnusedCoordinate(_location) + loc;
             Invalidate();
         }
@@ -198,7 +200,7 @@ namespace Sledge.BspEditor.Tools.Entity
         {
             if (e.Button != MouseButtons.Left) return;
             _state = EntityState.Drawn;
-            var loc = SnapIfNeeded(viewport.ProperScreenToWorld(e.X, e.Y));
+            var loc = SnapIfNeeded(viewport.ScreenToWorld(e.X, e.Y));
             _location = viewport.GetUnusedCoordinate(_location) + loc;
             Invalidate();
         }
@@ -207,7 +209,7 @@ namespace Sledge.BspEditor.Tools.Entity
         {
             if (!Control.MouseButtons.HasFlag(MouseButtons.Left)) return;
             if (_state != EntityState.Moving) return;
-            var loc = SnapIfNeeded(viewport.ProperScreenToWorld(e.X, e.Y));
+            var loc = SnapIfNeeded(viewport.ScreenToWorld(e.X, e.Y));
             _location = viewport.GetUnusedCoordinate(_location) + loc;
             Invalidate();
         }
@@ -228,7 +230,7 @@ namespace Sledge.BspEditor.Tools.Entity
             }
         }
 
-        private async Task CreateEntity(Coordinate origin, string gd = null)
+        private async Task CreateEntity(Vector3 origin, string gd = null)
         {
             if (gd == null) gd = _activeEntity;
             if (gd == null) return;
@@ -267,37 +269,107 @@ namespace Sledge.BspEditor.Tools.Entity
 
         // Rendering
 
-        protected override IEnumerable<SceneObject> GetSceneObjects()
+        public override void Render(BufferBuilder builder)
         {
-            var list = base.GetSceneObjects().ToList();
-
             if (_state != EntityState.None)
             {
-                var vec = _location.ToVector3();
-                var high = (float) 1024 * 1024;
-                var low = (float) -high;
-                list.Add(new Line(Color.LimeGreen, new Vector3(low, vec.Y, vec.Z), new Vector3(high, vec.Y, vec.Z)));
-                list.Add(new Line(Color.LimeGreen, new Vector3(vec.X, low, vec.Z), new Vector3(vec.X, high, vec.Z)));
-                list.Add(new Line(Color.LimeGreen, new Vector3(vec.X, vec.Y, low), new Vector3(vec.X, vec.Y, high)));
-            }
+                var vec = _location;
+                var high = 1024f * 1024f;
+                var low = -high;
 
-            return list;
-        }
+                // Draw a box around the point
+                var c = new Box(vec - Vector3.One * 10, vec + Vector3.One * 10);
 
-        protected override IEnumerable<Element> GetViewportElements(MapViewport viewport, OrthographicCamera camera)
-        {
-            var list = base.GetViewportElements(viewport, camera).ToList();
+                const uint numVertices = 4 * 6 + 6;
+                const uint numWireframeIndices = numVertices * 2;
 
-            if (_state != EntityState.None)
-            {
-                list.Add(new HandleElement(PositionType.World, HandleElement.HandleType.Square, new Position(_location.ToVector3()), 5)
+                var points = new VertexStandard[numVertices];
+                var indices = new uint[numWireframeIndices];
+
+                var colour = new Vector4(0, 1, 0, 1);
+
+                var vi = 0u;
+                var wi = 0u;
+                foreach (var face in c.GetBoxFaces())
                 {
-                    Color = Color.Transparent,
-                    LineColor = Color.LimeGreen
-                });
+                    var offs = vi;
+
+                    foreach (var v in face)
+                    {
+                        points[vi++] = new VertexStandard { 
+                            Position = v,
+                            Colour = colour,
+                            Tint = Vector4.One
+                        };
+                    }
+
+                    // Lines - [0 1] ... [n-1 n] [n 0]
+                    for (uint i = 0; i < 4; i++)
+                    {
+                        indices[wi++] = offs + i;
+                        indices[wi++] = offs + (i == 4 - 1 ? 0 : i + 1);
+                    }
+                }
+
+                // Draw 3 lines pinpointing the point
+                var lineOffset = vi;
+
+                points[vi++] = new VertexStandard { Position = new Vector3(low , vec.Y, vec.Z), Colour = colour, Tint = Vector4.One };
+                points[vi++] = new VertexStandard { Position = new Vector3(high, vec.Y, vec.Z), Colour = colour, Tint = Vector4.One };
+                points[vi++] = new VertexStandard { Position = new Vector3(vec.X, low , vec.Z), Colour = colour, Tint = Vector4.One };
+                points[vi++] = new VertexStandard { Position = new Vector3(vec.X, high, vec.Z), Colour = colour, Tint = Vector4.One };
+                points[vi++] = new VertexStandard { Position = new Vector3(vec.X, vec.Y, low ), Colour = colour, Tint = Vector4.One };
+                points[vi++] = new VertexStandard { Position = new Vector3(vec.X, vec.Y, high), Colour = colour, Tint = Vector4.One };
+
+                indices[wi++] = lineOffset++;
+                indices[wi++] = lineOffset++;
+                indices[wi++] = lineOffset++;
+                indices[wi++] = lineOffset++;
+                indices[wi++] = lineOffset++;
+                indices[wi++] = lineOffset++;
+                
+                var groups = new[]
+                {
+                    new BufferGroup(PipelineType.WireframeGeneric, CameraType.Both, false, vec, 0, numWireframeIndices)
+                };
+
+                builder.Append(points, indices, groups);
             }
 
-            return list;
+            base.Render(builder);
         }
+
+        //protected override IEnumerable<SceneObject> GetSceneObjects()
+        //{
+        //    var list = base.GetSceneObjects().ToList();
+        //
+        //    if (_state != EntityState.None)
+        //    {
+        //        var vec = _location.ToVector3();
+        //        var high = (float) 1024 * 1024;
+        //        var low = (float) -high;
+        //        list.Add(new Line(Color.LimeGreen, new Vector3(low, vec.Y, vec.Z), new Vector3(high, vec.Y, vec.Z)));
+        //        list.Add(new Line(Color.LimeGreen, new Vector3(vec.X, low, vec.Z), new Vector3(vec.X, high, vec.Z)));
+        //        list.Add(new Line(Color.LimeGreen, new Vector3(vec.X, vec.Y, low), new Vector3(vec.X, vec.Y, high)));
+        //    }
+        //
+        //    return list;
+        //}
+
+        //protected override IEnumerable<Element> GetViewportElements(MapViewport viewport, OrthographicCamera camera)
+        //{
+        //    var list = base.GetViewportElements(viewport, camera).ToList();
+        //
+        //    if (_state != EntityState.None)
+        //    {
+        //        list.Add(new HandleElement(PositionType.World, HandleElement.HandleType.Square, new Position(_location.ToVector3()), 5)
+        //        {
+        //            Color = Color.Transparent,
+        //            LineColor = Color.LimeGreen
+        //        });
+        //    }
+        //
+        //    return list;
+        //}
     }
 }

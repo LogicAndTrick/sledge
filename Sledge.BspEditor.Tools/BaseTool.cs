@@ -14,6 +14,7 @@ using Sledge.Common.Shell.Context;
 using Sledge.Common.Shell.Documents;
 using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Overlay;
+using Sledge.Rendering.Resources;
 using Sledge.Rendering.Viewports;
 using Sledge.Shell.Input;
 
@@ -386,6 +387,15 @@ namespace Sledge.BspEditor.Tools
         protected virtual void Invalidate()
         {
             // todo
+        }
+
+        public virtual void Render(BufferBuilder builder)
+        {
+            if (!Active) return;
+            foreach (var c in Children.Where(x => x.Active))
+            {
+                c.Render(builder);
+            }
         }
 
         public virtual void Render(IViewport viewport, OrthographicCamera camera, Vector3 worldMin, Vector3 worldMax, Graphics graphics)

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Drawing;
 using System.Linq;
+using System.Numerics;
 using System.Threading.Tasks;
 using Sledge.BspEditor.Modification;
 using Sledge.BspEditor.Modification.Operations.Tree;
@@ -41,14 +42,14 @@ namespace Sledge.BspEditor.Tools.Decal
             return "Decal Tool";
         }
 
-        private Coordinate GetIntersectionPoint(IMapObject obj, Line line)
+        private Vector3? GetIntersectionPoint(IMapObject obj, Line line)
         {
             // todo !selection opacity/hidden
             //.Where(x => x.Opacity > 0 && !x.IsHidden)
             return obj?.GetPolygons()
                 .Select(x => x.GetIntersectionPoint(line))
                 .Where(x => x != null)
-                .OrderBy(x => (x - line.Start).VectorMagnitude())
+                .OrderBy(x => (x.Value - line.Start).Length())
                 .FirstOrDefault();
         }
 
@@ -66,7 +67,8 @@ namespace Sledge.BspEditor.Tools.Decal
             if (vp == null) return;
 
             // Get the ray that is cast from the clicked point along the viewport frustrum
-            var ray = vp.CastRayFromScreen(e.X, e.Y);
+            var (rs, re) = camera.CastRayFromScreen(new Vector3(e.X, e.Y, 0));
+            var ray = new Line(rs, re);
 
             // Grab all the elements that intersect with the ray
             var hits = GetBoundingBoxIntersections(ray);
@@ -75,15 +77,15 @@ namespace Sledge.BspEditor.Tools.Decal
             var hit = hits
                 .Select(x => new {Item = x, Intersection = GetIntersectionPoint(x, ray)})
                 .Where(x => x.Intersection != null)
-                .OrderBy(x => (x.Intersection - ray.Start).VectorMagnitude())
+                .OrderBy(x => (x.Intersection.Value - ray.Start).Length())
                 .FirstOrDefault();
 
             if (hit == null) return; // Nothing was clicked
 
-            CreateDecal(hit.Intersection);
+            CreateDecal(hit.Intersection.Value);
         }
 
-        private async Task CreateDecal(Coordinate origin)
+        private async Task CreateDecal(Vector3 origin)
         {
             var gameData = await Document.Environment.GetGameData();
             if (gameData == null) return;

@@ -47,6 +47,9 @@
     <Compile Include="Converters\DefaultEntityConverter.cs" />
     <Compile Include="Converters\DefaultSolidConverter.cs" />
     <Compile Include="Converters\HiddenConverter.cs" />
+    <Compile Include="Dynamic\DynamicRenderManager.cs" />
+    <Compile Include="Dynamic\IDynamicRenderable.cs" />
+    <Compile Include="Dynamic\IMapObjectDynamicRenderable.cs" />
     <Compile Include="Grid\GridManager.cs" />
     <Compile Include="Grid\GridRenderable.cs" />
     <Compile Include="Overlay\EntityNamesOverlay.cs" />

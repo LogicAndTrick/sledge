@@ -72,14 +72,14 @@ namespace Sledge.BspEditor.Rendering.Converters
                     indices[wi++] = offs + i;
                     indices[wi++] = offs + (i == 4 - 1 ? 0 : i + 1);
                 }
-
-                var groups = new[]
-                {
-                    new BufferGroup(PipelineType.WireframeGeneric, CameraType.Both, false, c.Box.Center, 0, numWireframeIndices)
-                };
-
-                builder.MainBuffer.Append(points, indices, groups);
             }
+
+            var groups = new[]
+            {
+                new BufferGroup(PipelineType.WireframeGeneric, CameraType.Both, false, c.Box.Center, 0, numWireframeIndices)
+            };
+
+            builder.MainBuffer.Append(points, indices, groups);
 
             return Task.FromResult(0);
         }

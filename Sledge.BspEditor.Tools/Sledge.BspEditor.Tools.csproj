@@ -72,6 +72,7 @@
     <Compile Include="Cordon\CordonBoxDraggableState.cs" />
     <Compile Include="Cordon\CordonTool.cs" />
     <Compile Include="Cordon\ToggleCordon.cs" />
+    <Compile Include="Decal\DecalTool.cs" />
     <Compile Include="Draggable\BaseDraggable.cs" />
     <Compile Include="Draggable\BaseDraggableTool.cs" />
     <Compile Include="Draggable\BoxAction.cs" />
@@ -83,6 +84,13 @@
     <Compile Include="Draggable\IDraggableState.cs" />
     <Compile Include="Draggable\InternalBoxResizeHandle.cs" />
     <Compile Include="Draggable\ResizeHandle.cs" />
+    <Compile Include="Entity\EntitySidebarPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Entity\EntitySidebarPanel.Designer.cs">
+      <DependentUpon>EntitySidebarPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Entity\EntityTool.cs" />
     <Compile Include="Grid\DecreaseGrid.cs" />
     <Compile Include="Grid\GridListMenuItemProvider.cs" />
     <Compile Include="Grid\IncreaseGrid.cs" />
@@ -169,6 +177,9 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Entity\EntitySidebarPanel.resx">
+      <DependentUpon>EntitySidebarPanel.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>

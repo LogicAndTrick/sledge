@@ -4,8 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using LogicAndTrick.Oy;
 using Sledge.BspEditor.Documents;
-using Sledge.BspEditor.Modification;
-using Sledge.BspEditor.Primitives.MapObjectData;
 using Sledge.Common.Shell.Documents;
 using Sledge.Common.Shell.Hooks;
 using Sledge.Rendering.Engine;
@@ -20,12 +18,11 @@ namespace Sledge.BspEditor.Rendering.Overlay
         [ImportMany] private IOverlayRenderable[] _overlayRenderables;
         [ImportMany] private IMapDocumentOverlayRenderable[] _documentOverlayRenderables;
 
-        private readonly object _lock = new object();
-
         /// <inheritdoc />
         public Task OnStartup()
         {
             Oy.Subscribe<IDocument>("Document:Activated", DocumentActivated);
+            Oy.Subscribe<IDocument>("Document:Closed", DocumentClosed);
 
             foreach (var or in _overlayRenderables.Union(_documentOverlayRenderables))
             {

@@ -83,15 +83,15 @@ namespace Sledge.BspEditor.Rendering.Converters
                     indices[wi++] = offs + i;
                     indices[wi++] = offs + (i == 4 - 1 ? 0 : i + 1);
                 }
-
-                var groups = new[]
-                {
-                    new BufferGroup(PipelineType.FlatColourGeneric, CameraType.Perspective, false, entity.Origin, 0, numSolidIndices),
-                    new BufferGroup(PipelineType.WireframeGeneric, entity.IsSelected ? CameraType.Both : CameraType.Orthographic, false, entity.Origin, numSolidIndices, numWireframeIndices)
-                };
-                
-                builder.MainBuffer.Append(points, indices, groups);
             }
+
+            var groups = new[]
+            {
+                new BufferGroup(PipelineType.FlatColourGeneric, CameraType.Perspective, false, entity.Origin, 0, numSolidIndices),
+                new BufferGroup(PipelineType.WireframeGeneric, entity.IsSelected ? CameraType.Both : CameraType.Orthographic, false, entity.Origin, numSolidIndices, numWireframeIndices)
+            };
+
+            builder.MainBuffer.Append(points, indices, groups);
 
             return Task.FromResult(0);
         }
