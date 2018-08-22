@@ -5,6 +5,7 @@ struct VertexIn
     float4 Colour : COLOR0;
     float2 Texture : TEXCOORD0;
     float4 Tint : COLOR1;
+    uint1 Flags : POSITION1;
 };
 
 struct FragmentIn
@@ -18,10 +19,15 @@ struct FragmentIn
 
 cbuffer Projection
 {
+    matrix Selective;
     matrix Model;
     matrix View;
     matrix Projection;
 };
+
+static const uint Flags_SelectiveTransformed = 1 << 0;
+
+static const float4x4 Identity = { 1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1 };
 
 FragmentIn main(VertexIn input)
 {
@@ -33,6 +39,8 @@ FragmentIn main(VertexIn input)
 
     float4 position = float4(input.Position, 1);
     float4 normal = float4(input.Normal, 1);
+
+    position = mul(position, lerp(Identity, transpose(Selective), (input.Flags.x & Flags_SelectiveTransformed) / Flags_SelectiveTransformed));
 
     float4 modelPos = mul(position, tModel);
     float4 cameraPos = mul(modelPos, tView);

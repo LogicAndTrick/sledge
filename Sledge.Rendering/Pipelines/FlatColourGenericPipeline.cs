@@ -55,6 +55,7 @@ namespace Sledge.Rendering.Pipelines
         {
             context.Device.UpdateBuffer(_projectionBuffer, 0, new UniformProjection
             {
+                Selective = context.SelectiveTransform,
                 Model = Matrix4x4.Identity,
                 View = target.Camera.View,
                 Projection = target.Camera.Projection,

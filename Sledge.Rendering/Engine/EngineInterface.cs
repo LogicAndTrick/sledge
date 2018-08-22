@@ -58,6 +58,11 @@ namespace Sledge.Rendering.Engine
             return Engine.Instance.Pause();
         }
 
+        public void SetSelectiveTransform(Matrix4x4 matrix)
+        {
+            Engine.Instance.Context.SelectiveTransform = matrix;
+        }
+
         public void Add(IRenderable renderable) => Engine.Instance.Scene.Add(renderable);
         public void Add(IUpdateable updateable) => Engine.Instance.Scene.Add(updateable);
         public void Add(IOverlayRenderable overlayRenderable) => Engine.Instance.Scene.Add(overlayRenderable);

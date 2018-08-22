@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 using Sledge.Rendering.Interfaces;
@@ -12,6 +13,7 @@ namespace Sledge.Rendering.Engine
     {
         public ResourceLoader ResourceLoader { get; }
         public GraphicsDevice Device { get; }
+        public Matrix4x4 SelectiveTransform { get; set; } = Matrix4x4.Identity;
 
         public RenderContext(GraphicsDevice device)
         {

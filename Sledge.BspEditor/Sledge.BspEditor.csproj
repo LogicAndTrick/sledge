@@ -195,7 +195,6 @@
     <Compile Include="Primitives\MapObjectData\PointEntityGameDataBoundingBoxProvider.cs" />
     <Compile Include="Primitives\MapData\GridData.cs" />
     <Compile Include="Primitives\MapData\Selection.cs" />
-    <Compile Include="Primitives\MapData\SelectionTransform.cs" />
     <Compile Include="Primitives\MapObjectData\Origin.cs" />
     <Compile Include="Primitives\MapObjectData\QuickHidden.cs" />
     <Compile Include="Primitives\MapObjectData\VisgroupHidden.cs" />

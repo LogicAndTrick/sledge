@@ -5,6 +5,7 @@ struct VertexIn
     float4 Colour : COLOR0;
     float2 Texture : TEXCOORD0;
     float4 Tint : COLOR1;
+    uint1 Flags : POSITION1;
 };
 
 struct FragmentIn
@@ -18,6 +19,7 @@ struct FragmentIn
 
 cbuffer Projection
 {
+    matrix Selective;
     matrix Model;
     matrix View;
     matrix Projection;

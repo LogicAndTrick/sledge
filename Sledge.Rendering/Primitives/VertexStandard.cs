@@ -1,4 +1,5 @@
-﻿using System.Numerics;
+﻿using System;
+using System.Numerics;
 using System.Runtime.InteropServices;
 
 namespace Sledge.Rendering.Primitives
@@ -21,7 +22,17 @@ namespace Sledge.Rendering.Primitives
         /// <summary>The colour modifier of the vertex when solid</summary>
         public Vector4 Tint;
 
+        /// <summary>Bitflags for the vertex</summary>
+        public VertexFlags Flags;
+
         /// <summary>The size of this structure in bytes</summary>
-        public const int SizeInBytes = (3 + 3 + 4 + 2 * 4) * 4;
+        public const int SizeInBytes = (3 + 3 + 4 + 2 + 1 * 4) * 4;
+    }
+
+    [Flags]
+    public enum VertexFlags : uint
+    {
+        None = 0,
+        SelectiveTransformed = 1 << 0,
     }
 }

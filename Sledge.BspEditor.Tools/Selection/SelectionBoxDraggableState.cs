@@ -15,6 +15,7 @@ using Sledge.BspEditor.Tools.Selection.TransformationHandles;
 using Sledge.BspEditor.Tools.Widgets;
 using Sledge.DataStructures.Geometric;
 using Sledge.Rendering.Cameras;
+using Sledge.Rendering.Engine;
 using Sledge.Rendering.Viewports;
 
 namespace Sledge.BspEditor.Tools.Selection
@@ -72,8 +73,7 @@ namespace Sledge.BspEditor.Tools.Selection
         {
             if (transformation.HasValue)
             {
-                var st = new SelectionTransform(transformation.Value);
-                MapDocumentOperation.Perform(Tool.Document, new TrivialOperation(x => x.Map.Data.Replace(st), x => x.Update(st)));
+                Engine.Interface.SetSelectiveTransform(transformation.Value);
             }
         }
 
@@ -103,8 +103,7 @@ namespace Sledge.BspEditor.Tools.Selection
 
                 MapDocumentOperation.Perform(Tool.Document, transaction);
             }
-            var st = new SelectionTransform(Matrix4x4.Identity);
-            MapDocumentOperation.Perform(Tool.Document, new TrivialOperation(x => x.Map.Data.Replace(st), x => x.Update(st)));
+            Engine.Interface.SetSelectiveTransform(Matrix4x4.Identity);
         }
 
         public void Update()

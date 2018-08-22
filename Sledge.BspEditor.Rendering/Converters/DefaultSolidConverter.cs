@@ -60,6 +60,8 @@ namespace Sledge.BspEditor.Rendering.Converters
 
             var tc = await document.Environment.GetTextureCollection();
 
+            var flags = solid.IsSelected ? VertexFlags.SelectiveTransformed : VertexFlags.None;
+
             var vi = 0u;
             var si = 0u;
             var wi = numSolidIndices;
@@ -87,7 +89,8 @@ namespace Sledge.BspEditor.Rendering.Converters
                         Colour = colour,
                         Normal = normal,
                         Texture = new Vector2(textureCoords[i].Item2, textureCoords[i].Item3),
-                        Tint = tint - tintModifier
+                        Tint = tint - tintModifier,
+                        Flags = flags
                     };
                 }
 

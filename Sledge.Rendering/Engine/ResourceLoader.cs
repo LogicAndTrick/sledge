@@ -45,7 +45,8 @@ namespace Sledge.Rendering.Engine
                 new VertexElementDescription("Normal", VertexElementSemantic.Normal, VertexElementFormat.Float3),
                 new VertexElementDescription("Colour", VertexElementSemantic.Color, VertexElementFormat.Float4),
                 new VertexElementDescription("Texture", VertexElementSemantic.TextureCoordinate, VertexElementFormat.Float2),
-                new VertexElementDescription("Tint", VertexElementSemantic.Color, VertexElementFormat.Float4)
+                new VertexElementDescription("Tint", VertexElementSemantic.Color, VertexElementFormat.Float4),
+                new VertexElementDescription("Flags", VertexElementSemantic.Position, VertexElementFormat.UInt1)
             );
             TextureSampler = context.Device.ResourceFactory.CreateSampler(SamplerDescription.Aniso4x);
             OverlaySampler = context.Device.ResourceFactory.CreateSampler(SamplerDescription.Point);

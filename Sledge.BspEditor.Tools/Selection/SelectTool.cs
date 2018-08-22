@@ -26,6 +26,7 @@ using Sledge.Common.Shell.Documents;
 using Sledge.Common.Shell.Settings;
 using Sledge.DataStructures.Geometric;
 using Sledge.Rendering.Cameras;
+using Sledge.Rendering.Engine;
 using Sledge.Shell.Input;
 
 namespace Sledge.BspEditor.Tools.Selection
@@ -507,8 +508,7 @@ namespace Sledge.BspEditor.Tools.Selection
                 var tform = _selectionBox.GetTransformationMatrix(viewport, camera, Document);
                 if (tform.HasValue)
                 {
-                    var st = new SelectionTransform(tform.Value);
-                    MapDocumentOperation.Perform(Document, new TrivialOperation(x => x.Map.Data.Replace(st), x => x.Update(st)));
+                    Engine.Interface.SetSelectiveTransform(tform.Value);
 
                     var box = new Box(_selectionBox.State.OrigStart, _selectionBox.State.OrigEnd);
                     var trans = tform.Value;
@@ -534,8 +534,7 @@ namespace Sledge.BspEditor.Tools.Selection
                     ExecuteTransform(tt.Name, tform.Value, createClone, ttType);
                 }
             }
-            var st = new SelectionTransform(Matrix4x4.Identity);
-            MapDocumentOperation.Perform(Document, new TrivialOperation(x => x.Map.Data.Replace(st), x => x.Update(st)));
+            Engine.Interface.SetSelectiveTransform(Matrix4x4.Identity);
             base.OnDraggableDragEnded(viewport, camera, e, position, draggable);
         }
 

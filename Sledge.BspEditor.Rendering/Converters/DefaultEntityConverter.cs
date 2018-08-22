@@ -48,6 +48,8 @@ namespace Sledge.BspEditor.Rendering.Converters
             //c = entity.IsSelected ? Color.FromArgb(255, 128, 128) : Color.White;
             c = Color.White;
             var tint = new Vector4(c.R, c.G, c.B, c.A) / 255f;
+            
+            var flags = entity.IsSelected ? VertexFlags.SelectiveTransformed : VertexFlags.None;
 
             var vi = 0u;
             var si = 0u;
@@ -65,7 +67,8 @@ namespace Sledge.BspEditor.Rendering.Converters
                         Colour = colour,
                         Normal = normal,
                         Texture = Vector2.Zero,
-                        Tint = tint
+                        Tint = tint,
+                        Flags = flags
                     };
                 }
 
