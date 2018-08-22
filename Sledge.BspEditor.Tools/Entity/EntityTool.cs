@@ -338,38 +338,5 @@ namespace Sledge.BspEditor.Tools.Entity
 
             base.Render(builder);
         }
-
-        //protected override IEnumerable<SceneObject> GetSceneObjects()
-        //{
-        //    var list = base.GetSceneObjects().ToList();
-        //
-        //    if (_state != EntityState.None)
-        //    {
-        //        var vec = _location.ToVector3();
-        //        var high = (float) 1024 * 1024;
-        //        var low = (float) -high;
-        //        list.Add(new Line(Color.LimeGreen, new Vector3(low, vec.Y, vec.Z), new Vector3(high, vec.Y, vec.Z)));
-        //        list.Add(new Line(Color.LimeGreen, new Vector3(vec.X, low, vec.Z), new Vector3(vec.X, high, vec.Z)));
-        //        list.Add(new Line(Color.LimeGreen, new Vector3(vec.X, vec.Y, low), new Vector3(vec.X, vec.Y, high)));
-        //    }
-        //
-        //    return list;
-        //}
-
-        //protected override IEnumerable<Element> GetViewportElements(MapViewport viewport, OrthographicCamera camera)
-        //{
-        //    var list = base.GetViewportElements(viewport, camera).ToList();
-        //
-        //    if (_state != EntityState.None)
-        //    {
-        //        list.Add(new HandleElement(PositionType.World, HandleElement.HandleType.Square, new Position(_location.ToVector3()), 5)
-        //        {
-        //            Color = Color.Transparent,
-        //            LineColor = Color.LimeGreen
-        //        });
-        //    }
-        //
-        //    return list;
-        //}
     }
 }

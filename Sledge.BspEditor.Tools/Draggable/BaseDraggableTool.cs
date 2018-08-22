@@ -6,6 +6,7 @@ using System.Numerics;
 using System.Windows.Forms;
 using Sledge.BspEditor.Rendering.Viewport;
 using Sledge.Rendering.Cameras;
+using Sledge.Rendering.Resources;
 using Sledge.Rendering.Viewports;
 
 namespace Sledge.BspEditor.Tools.Draggable
@@ -200,6 +201,15 @@ namespace Sledge.BspEditor.Tools.Draggable
             if (CurrentDraggable != null && foundActive) list.AddRange(collector(CurrentDraggable));
 
             return list;
+        }
+
+        public override void Render(BufferBuilder builder)
+        {
+            foreach (var obj in CollectObjects(x => new[] {x}))
+            {
+                obj.Render(builder);
+            }
+            base.Render(builder);
         }
 
         public override void Render(IViewport viewport, OrthographicCamera camera, Vector3 worldMin, Vector3 worldMax, Graphics graphics)

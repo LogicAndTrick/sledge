@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Numerics;
 using Sledge.BspEditor.Rendering.Viewport;
 using Sledge.Rendering.Cameras;
+using Sledge.Rendering.Resources;
 using Sledge.Rendering.Viewports;
 
 namespace Sledge.BspEditor.Tools.Draggable
@@ -58,6 +59,7 @@ namespace Sledge.BspEditor.Tools.Draggable
         public abstract bool CanDrag(MapViewport viewport, ViewportEvent e, Vector3 position);
         public abstract void Highlight(MapViewport viewport);
         public abstract void Unhighlight(MapViewport viewport);
+        public abstract void Render(BufferBuilder builder);
         public abstract void Render(IViewport viewport, OrthographicCamera camera, Vector3 worldMin, Vector3 worldMax, Graphics graphics);
         public abstract void Render(IViewport viewport, PerspectiveCamera camera, Graphics graphics);
     }

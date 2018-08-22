@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using Sledge.BspEditor.Primitives.MapObjects;
+using Sledge.Common.Threading;
 using Sledge.Common.Transport;
 
 namespace Sledge.BspEditor.Primitives.MapData
@@ -15,18 +16,18 @@ namespace Sledge.BspEditor.Primitives.MapData
         public string Key { get; set; }
         public bool Visible { get; set; } = true;
         public Predicate<IMapObject> IsMatch { get; private set; }
-        public HashSet<IMapObject> Objects { get; set; }
+        public ISet<IMapObject> Objects { get; set; }
 
         public AutomaticVisgroup(Predicate<IMapObject> isMatch)
         {
             IsMatch = isMatch;
-            Objects = new HashSet<IMapObject>();
+            Objects = new ThreadSafeSet<IMapObject>();
         }
 
         public AutomaticVisgroup(SerialisedObject obj, Predicate<IMapObject> isMatch)
         {
             IsMatch = isMatch;
-            Objects = new HashSet<IMapObject>();
+            Objects = new ThreadSafeSet<IMapObject>();
         }
 
         protected AutomaticVisgroup(SerializationInfo info, StreamingContext context)

@@ -12,7 +12,7 @@ namespace Sledge.BspEditor.Tools.Draggable
 
     public static class ResizeHandleExtensions
     {
-        public static System.Windows.Forms.Cursor GetCursorType(this ResizeHandle handle)
+        public static Cursor GetCursorType(this ResizeHandle handle)
         {
             switch (handle)
             {

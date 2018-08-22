@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using LogicAndTrick.Oy;
 using Sledge.BspEditor.Modification;
-using Sledge.BspEditor.Modification.Operations;
 using Sledge.BspEditor.Modification.Operations.Mutation;
 using Sledge.BspEditor.Modification.Operations.Selection;
 using Sledge.BspEditor.Modification.Operations.Tree;
@@ -523,6 +522,7 @@ namespace Sledge.BspEditor.Tools.Selection
 
         protected override void OnDraggableDragEnded(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position, IDraggable draggable)
         {
+            var task = Task.CompletedTask;
             if (_selectionBox.State.Action == BoxAction.Resizing && draggable is ITransformationHandle tt)
             {
                 // Execute the transform on the selection
@@ -531,10 +531,12 @@ namespace Sledge.BspEditor.Tools.Selection
                 {
                     var ttType = _selectionBox.GetTextureTransformationType(Document);
                     var createClone = KeyboardState.Shift && draggable is ResizeTransformHandle && ((ResizeTransformHandle)draggable).Handle == ResizeHandle.Center;
-                    ExecuteTransform(tt.Name, tform.Value, createClone, ttType);
+                    task = ExecuteTransform(tt.Name, tform.Value, createClone, ttType);
                 }
             }
-            Engine.Interface.SetSelectiveTransform(Matrix4x4.Identity);
+
+            task.ContinueWith(_ => Engine.Interface.SetSelectiveTransform(Matrix4x4.Identity));
+
             base.OnDraggableDragEnded(viewport, camera, e, position, draggable);
         }
 
@@ -683,7 +685,7 @@ namespace Sledge.BspEditor.Tools.Selection
         /// <param name="transform">The transformation to apply</param>
         /// <param name="clone">True to create a clone before transforming the original.</param>
         /// <param name="textureTransformationType"></param>
-        private void ExecuteTransform(string transformationName, Matrix4x4 transform, bool clone, TextureTransformationType textureTransformationType)
+        private Task ExecuteTransform(string transformationName, Matrix4x4 transform, bool clone, TextureTransformationType textureTransformationType)
         {
             var parents = Document.Selection.GetSelectedParents().ToList();
             var transaction = new Transaction();
@@ -734,7 +736,7 @@ namespace Sledge.BspEditor.Tools.Selection
                     transaction.Add(new TransformTexturesScale(transform, parents.SelectMany(p => p.FindAll())));
                 }
             }
-            MapDocumentOperation.Perform(Document, transaction);
+            return MapDocumentOperation.Perform(Document, transaction);
         }
 
         #endregion

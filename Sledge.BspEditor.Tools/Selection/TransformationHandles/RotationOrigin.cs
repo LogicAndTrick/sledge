@@ -31,22 +31,16 @@ namespace Sledge.BspEditor.Tools.Selection.TransformationHandles
 
         public override void Render(IViewport viewport, OrthographicCamera camera, Vector3 worldMin, Vector3 worldMax, Graphics graphics)
         {
-            // todo
-            base.Render(viewport, camera, worldMin, worldMax, graphics);
-        }
+            var spos = camera.WorldToScreen(Position);
 
-        //public override IEnumerable<Element> GetViewportElements(MapViewport viewport, OrthographicCamera camera)
-        //{
-        //    yield return new HandleElement(PositionType.World, HandleElement.HandleType.Circle, new Position(Position.ToVector3()), 4)
-        //    {
-        //        Color = Color.Transparent,
-        //        LineColor = Color.Cyan
-        //    };
-        //    yield return new HandleElement(PositionType.World, HandleElement.HandleType.Circle, new Position(Position.ToVector3()), 8)
-        //    {
-        //        Color = Color.Transparent,
-        //        LineColor = Highlighted ? Color.Red : Color.White
-        //    };
-        //}
+            const int inner = 8;
+            const int outer = 16;
+
+            var innerRect = new Rectangle((int)spos.X - inner / 2, (int)spos.Y - inner / 2, inner, inner);
+            var outerRect = new Rectangle((int)spos.X - outer / 2, (int)spos.Y - outer / 2, outer, outer);
+
+            graphics.DrawEllipse(Pens.Cyan, innerRect);
+            graphics.DrawEllipse(Highlighted ? Pens.Red : Pens.White, outerRect);
+        }
     }
 }

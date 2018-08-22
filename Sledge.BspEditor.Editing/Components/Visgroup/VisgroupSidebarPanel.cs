@@ -187,7 +187,7 @@ namespace Sledge.BspEditor.Editing.Components.Visgroup
             return CheckState.Indeterminate;
         }
 
-        private HashSet<IMapObject> GetVisgroupObjects(VisgroupItem item)
+        private IEnumerable<IMapObject> GetVisgroupObjects(VisgroupItem item)
         {
             if (item?.Tag is Primitives.MapData.Visgroup v) return v.Objects;
             if (item?.Tag is AutomaticVisgroup av) return av.Objects;

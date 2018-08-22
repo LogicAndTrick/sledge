@@ -50,19 +50,15 @@ namespace Sledge.BspEditor.Tools.Selection.TransformationHandles
 
         public override void Render(IViewport viewport, OrthographicCamera camera, Vector3 worldMin, Vector3 worldMax, Graphics graphics)
         {
-            // todo
-            base.Render(viewport, camera, worldMin, worldMax, graphics);
-        }
+            var (wpos, soff) = GetWorldPositionAndScreenOffset(camera);
+            var spos = camera.WorldToScreen(wpos) + soff;
 
-        // public override IEnumerable<Element> GetViewportElements(MapViewport viewport, OrthographicCamera camera)
-        // {
-        //     foreach (var e in base.GetViewportElements(viewport, camera))
-        //     {
-        //         var handle = e as HandleElement;
-        //         if (handle != null) handle.Type = HandleElement.HandleType.Circle;
-        //         yield return e;
-        //     }
-        // }
+            const int size = 8;
+            var rect = new Rectangle((int)spos.X - size / 2, (int)spos.Y - size / 2, size, size);
+
+            graphics.FillEllipse(Brushes.White, rect);
+            graphics.DrawEllipse(Pens.Black, rect);
+        }
 
         public Matrix4x4? GetTransformationMatrix(MapViewport viewport, OrthographicCamera camera, BoxState state, MapDocument doc)
         {

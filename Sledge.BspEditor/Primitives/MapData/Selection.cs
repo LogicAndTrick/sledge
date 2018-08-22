@@ -8,6 +8,7 @@ using System.Runtime.Serialization;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Modification;
 using Sledge.BspEditor.Primitives.MapObjects;
+using Sledge.Common.Threading;
 using Sledge.Common.Transport;
 using Sledge.DataStructures.Geometric;
 
@@ -17,16 +18,16 @@ namespace Sledge.BspEditor.Primitives.MapData
     {
         public bool AffectsRendering => false;
 
-        private readonly HashSet<IMapObject> _selectedObjects;
+        private readonly ISet<IMapObject> _selectedObjects;
 
         public Selection()
         {
-            _selectedObjects = new HashSet<IMapObject>();
+            _selectedObjects = new ThreadSafeSet<IMapObject>();
         }
 
         public Selection(SerialisedObject obj)
         {
-            _selectedObjects = new HashSet<IMapObject>();
+            _selectedObjects = new ThreadSafeSet<IMapObject>();
         }
 
         [Export(typeof(IMapElementFormatter))]

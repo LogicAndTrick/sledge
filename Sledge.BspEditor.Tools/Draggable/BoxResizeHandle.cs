@@ -4,6 +4,7 @@ using System.Numerics;
 using System.Windows.Forms;
 using Sledge.BspEditor.Rendering.Viewport;
 using Sledge.Rendering.Cameras;
+using Sledge.Rendering.Resources;
 using Sledge.Rendering.Viewports;
 
 namespace Sledge.BspEditor.Tools.Draggable
@@ -23,10 +24,9 @@ namespace Sledge.BspEditor.Tools.Draggable
             HighlightedViewport = null;
         }
 
-        private (Vector3, Vector3) GetWorldPositionAndScreenOffset(MapViewport viewport)
+        protected (Vector3, Vector3) GetWorldPositionAndScreenOffset(ICamera camera)
         {
             const int distance = 6;
-            var camera = viewport.Viewport.Camera;
             var start = camera.Flatten(BoxState.Start);
             var end = camera.Flatten(BoxState.End);
             var mid = (start + end) / 2;
@@ -112,7 +112,7 @@ namespace Sledge.BspEditor.Tools.Draggable
         public override bool CanDrag(MapViewport viewport, ViewportEvent e, Vector3 position)
         {
             const int width = 8;
-            var pos = GetWorldPositionAndScreenOffset(viewport);
+            var pos = GetWorldPositionAndScreenOffset(viewport.Viewport.Camera);
             var screenPosition = viewport.WorldToScreen(pos.Item1) + pos.Item2;
             var diff = Vector3.Abs(e.Location - screenPosition);
             return diff.X < width && diff.Y < width;
@@ -155,12 +155,23 @@ namespace Sledge.BspEditor.Tools.Draggable
             base.EndDrag(viewport, e, position);
         }
 
+        public override void Render(BufferBuilder builder)
+        {
+            //
+        }
+
         public override void Render(IViewport viewport, OrthographicCamera camera, Vector3 worldMin, Vector3 worldMax, Graphics graphics)
         {
             if (State.State.Action != BoxAction.Drawn) return;
 
-            //var pos = GetWorldPositionAndScreenOffset(viewport);
-            //yield return new HandleElement(PositionType.World, HandleElement.HandleType.Square, pos, 4);
+            var (wpos, soff) = GetWorldPositionAndScreenOffset(camera);
+            var spos = camera.WorldToScreen(wpos) + soff;
+
+            const int size = 8;
+            var rect = new Rectangle((int) spos.X - size / 2, (int) spos.Y - size / 2, size, size);
+
+            graphics.FillRectangle(Brushes.White, rect);
+            graphics.DrawRectangle(Pens.Black, rect);
         }
 
         public override void Render(IViewport viewport, PerspectiveCamera camera, Graphics graphics)

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Numerics;
+using System.Threading.Tasks;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Modification;
 using Sledge.BspEditor.Modification.Operations;
@@ -79,6 +80,7 @@ namespace Sledge.BspEditor.Tools.Selection
 
         private void WidgetTransformed(Widget sender, Matrix4x4? transformation)
         {
+            var task = Task.CompletedTask;
             if (transformation.HasValue)
             {
                 var objects = Tool.Document.Selection.GetSelectedParents().ToList();
@@ -101,9 +103,10 @@ namespace Sledge.BspEditor.Tools.Selection
                     transaction.Add(new TransformTexturesScale(matrix, objects.SelectMany(x => x.FindAll())));
                 }
 
-                MapDocumentOperation.Perform(Tool.Document, transaction);
+                task = MapDocumentOperation.Perform(Tool.Document, transaction);
             }
-            Engine.Interface.SetSelectiveTransform(Matrix4x4.Identity);
+
+            task.ContinueWith(_ => Engine.Interface.SetSelectiveTransform(Matrix4x4.Identity));
         }
 
         public void Update()
@@ -173,7 +176,14 @@ namespace Sledge.BspEditor.Tools.Selection
 
         public override void Render(IViewport viewport, OrthographicCamera camera, Vector3 worldMin, Vector3 worldMax, Graphics graphics)
         {
-            base.Render(viewport, camera, worldMin, worldMax, graphics);
+            if (State.Action == BoxAction.Resizing)
+            {
+                // todo ...?
+            }
+            else
+            {
+                base.Render(viewport, camera, worldMin, worldMax, graphics);
+            }
         }
 
         // public override IEnumerable<Element> GetViewportElements(MapViewport viewport, OrthographicCamera camera)

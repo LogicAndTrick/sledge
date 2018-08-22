@@ -116,7 +116,10 @@ namespace Sledge.Rendering.Cameras
             var viewport = new[] { 0, 0, Width, Height };
             var pm = Matrix4x4.CreatePerspectiveFieldOfView((float)DMath.DegreesToRadians(FOV), Width / (float)Height, 1.0f, 50000);
             var vm = GetCameraMatrix();
-            return MathFunctions.Project(world, viewport, pm, vm);
+
+            var proj = MathFunctions.Project(world, viewport, pm, vm);
+            proj.Y = Height - proj.Y;
+            return proj;
         }
 
         public (Vector3, Vector3) CastRayFromScreen(Vector3 screen)

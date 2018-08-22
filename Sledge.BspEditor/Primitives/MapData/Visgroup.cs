@@ -4,6 +4,7 @@ using System.ComponentModel.Composition;
 using System.Drawing;
 using System.Runtime.Serialization;
 using Sledge.BspEditor.Primitives.MapObjects;
+using Sledge.Common.Threading;
 using Sledge.Common.Transport;
 
 namespace Sledge.BspEditor.Primitives.MapData
@@ -17,16 +18,16 @@ namespace Sledge.BspEditor.Primitives.MapData
         public string Name { get; set; }
         public bool Visible { get; set; } = true;
         public Color Colour { get; set; }
-        public HashSet<IMapObject> Objects { get; set; }
+        public ISet<IMapObject> Objects { get; set; }
 
         public Visgroup()
         {
-            Objects = new HashSet<IMapObject>();
+            Objects = new ThreadSafeSet<IMapObject>();
         }
 
         public Visgroup(SerialisedObject obj)
         {
-            Objects = new HashSet<IMapObject>();
+            Objects = new ThreadSafeSet<IMapObject>();
         }
 
         [Export(typeof(IMapElementFormatter))]

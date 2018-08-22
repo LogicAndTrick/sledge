@@ -2,6 +2,7 @@ using System;
 using System.Numerics;
 using Sledge.BspEditor.Rendering.Viewport;
 using Sledge.Rendering.Overlay;
+using Sledge.Rendering.Resources;
 
 namespace Sledge.BspEditor.Tools.Draggable
 {
@@ -19,5 +20,6 @@ namespace Sledge.BspEditor.Tools.Draggable
         void StartDrag(MapViewport viewport, ViewportEvent e, Vector3 position);
         void Drag(MapViewport viewport, ViewportEvent e, Vector3 lastPosition, Vector3 position);
         void EndDrag(MapViewport viewport, ViewportEvent e, Vector3 position);
+        void Render(BufferBuilder builder);
     }
 }

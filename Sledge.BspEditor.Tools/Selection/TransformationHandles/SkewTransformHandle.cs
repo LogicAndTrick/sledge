@@ -76,8 +76,8 @@ namespace Sledge.BspEditor.Tools.Selection.TransformationHandles
             if (!shearTopRight) shearAmount *= -1;
 
             var shearMatrix = Matrix4x4.Identity;
-            var sax = (float)shearAmount.X;
-            var say = (float)shearAmount.Y;
+            var sax = shearAmount.X;
+            var say = shearAmount.Y;
 
             switch (viewport.Direction)
             {
@@ -95,7 +95,7 @@ namespace Sledge.BspEditor.Tools.Selection.TransformationHandles
                     break;
             }
 
-            var stran = Matrix4x4.CreateTranslation((float)-shearOrigin.X, (float)-shearOrigin.Y, (float)-shearOrigin.Z);
+            var stran = Matrix4x4.CreateTranslation(-shearOrigin.X, -shearOrigin.Y, -shearOrigin.Z);
             var shear = Matrix4x4.Multiply(stran, shearMatrix);
             var inv = Matrix4x4.Invert(stran, out var i) ? i : Matrix4x4.Identity;
             return Matrix4x4.Multiply(shear, inv);

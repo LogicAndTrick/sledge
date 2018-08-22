@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
+using Sledge.Common.Threading;
 
 namespace Sledge.BspEditor.Primitives.MapData
 {
@@ -10,11 +11,11 @@ namespace Sledge.BspEditor.Primitives.MapData
     /// </summary>
     public class MapDataCollection : IEnumerable<IMapData>, ISerializable
     {
-        public List<IMapData> Data { get; }
+        private ThreadSafeList<IMapData> Data { get; }
 
         public MapDataCollection()
         {
-            Data = new List<IMapData>();
+            Data = new ThreadSafeList<IMapData>();
         }
 
         public void GetObjectData(SerializationInfo info, StreamingContext context)
