@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Drawing;
 using System.Linq;
+using System.Numerics;
 using System.Threading.Tasks;
 using Sledge.BspEditor.Primitives;
 using Sledge.BspEditor.Primitives.MapObjectData;
@@ -12,6 +14,7 @@ using Sledge.Common.Shell.Components;
 using Sledge.Common.Shell.Hooks;
 using Sledge.Common.Translations;
 using Sledge.DataStructures.Geometric;
+using Plane = Sledge.DataStructures.Geometric.Plane;
 
 namespace Sledge.BspEditor.Tools.Brush.Brushes
 {
@@ -45,7 +48,7 @@ namespace Sledge.BspEditor.Tools.Brush.Brushes
         public string RingStart { get; set; }
         public string RotationHeight { get; set; }
 
-        public async Task OnInitialise()
+        public Task OnInitialise()
         {
             _crossSides = new NumericControl(this) { LabelText = CrossSectionSides };
             _crossRadius = new NumericControl(this) { LabelText = RingWidth, Minimum = 16, Maximum = 1024, Value = 32, Precision = 1 };
@@ -58,6 +61,8 @@ namespace Sledge.BspEditor.Tools.Brush.Brushes
             _ringStartAngle = new NumericControl(this) { LabelText = RingStart, Minimum = 0, Maximum = 359, Value = 0 };
             _rotationHeight = new NumericControl(this) { LabelText = RotationHeight, Minimum = -1024, Maximum = 1024, Value = 0, Precision = 1};
             _crossMakeHollow.ValuesChanged += (s, b) => _crossWallWidth.Enabled = _crossArc.Enabled = _crossMakeHollow.GetValue();
+
+            return Task.CompletedTask;
         }
 
         public string Name { get; set; } = "Torus";
@@ -78,7 +83,7 @@ namespace Sledge.BspEditor.Tools.Brush.Brushes
             yield return _rotationHeight;
         }
 
-        private Solid MakeSolid(UniqueNumberGenerator generator, IEnumerable<Coordinate[]> faces, string texture, Color col)
+        private Solid MakeSolid(UniqueNumberGenerator generator, IEnumerable<Vector3[]> faces, string texture, Color col)
         {
             var solid = new Solid(generator.Next("MapObject"));
             solid.Data.Add(new ObjectColor(Colour.GetRandomBrushColour()));
@@ -101,22 +106,22 @@ namespace Sledge.BspEditor.Tools.Brush.Brushes
         {
             var crossSides = (int)_crossSides.GetValue();
             if (crossSides < 3) yield break;
-            var crossWidth = _crossRadius.GetValue() * 2;
+            var crossWidth = (float) _crossRadius.GetValue() * 2;
             if (crossWidth < 1) yield break;
             var crossMakeHollow = _crossMakeHollow.GetValue();
-            var crossArc = !crossMakeHollow ? 360 : (int)_crossArc.GetValue();
+            var crossArc = !crossMakeHollow ? 360 : (float)_crossArc.GetValue();
             if (crossArc < 1) yield break;
-            var crossStartAngle = (int)_crossStartAngle.GetValue();
+            var crossStartAngle = (float)_crossStartAngle.GetValue();
             if (crossStartAngle < 0 || crossStartAngle > 359) yield break;
-            var crossWallWidth = _crossWallWidth.GetValue();
+            var crossWallWidth = (float) _crossWallWidth.GetValue();
             if (crossWallWidth < 1) yield break;
             var ringSides = (int)_ringSides.GetValue();
             if (ringSides < 3) yield break;
-            var ringArc = (int)_ringArc.GetValue();
+            var ringArc = (float)_ringArc.GetValue();
             if (ringArc < 1) yield break;
-            var ringStartAngle = (int)_ringStartAngle.GetValue();
+            var ringStartAngle = (float)_ringStartAngle.GetValue();
             if (ringStartAngle < 0 || ringStartAngle > 359) yield break;
-            var rotationHeight = _rotationHeight.GetValue();
+            var rotationHeight = (float) _rotationHeight.GetValue();
 
             // Sort of a combination of cylinder and pipe brushes
             var width = box.Width;
@@ -129,35 +134,35 @@ namespace Sledge.BspEditor.Tools.Brush.Brushes
             var majorSecondaryInner = (crossWidth - crossWallWidth) / 2; // Inner = inner ring (hollow only)
             var minorSecondaryInner = (height - crossWallWidth) / 2;
 
-            var ringStart = DMath.DegreesToRadians(ringStartAngle);
-            var ringAngle = DMath.DegreesToRadians(ringArc) / ringSides;
-            var crossStart = DMath.DegreesToRadians(crossStartAngle);
-            var crossAngle = DMath.DegreesToRadians(crossArc) / crossSides;
+            var ringStart = (float) DMath.DegreesToRadians(ringStartAngle);
+            var ringAngle = (float) DMath.DegreesToRadians(ringArc) / ringSides;
+            var crossStart = (float) DMath.DegreesToRadians(crossStartAngle);
+            var crossAngle = (float) DMath.DegreesToRadians(crossArc) / crossSides;
             var heightAdd = rotationHeight / ringSides;
 
             // Rotate around the ring, generating each cross section
-            var ringOuterSections = new List<Coordinate[]>();
-            var ringInnerSections = new List<Coordinate[]>();
+            var ringOuterSections = new List<Vector3[]>();
+            var ringInnerSections = new List<Vector3[]>();
             for (var i = 0; i < ringSides + 1; i++)
             {
                 var ring = ringStart + i * ringAngle;
-                var rxval = box.Center.X + majorPrimary * DMath.Cos(ring);
-                var ryval = box.Center.Y + minorPrimary * DMath.Sin(ring);
+                var rxval = box.Center.X + majorPrimary * (float) Math.Cos(ring);
+                var ryval = box.Center.Y + minorPrimary * (float) Math.Sin(ring);
                 var rzval = box.Center.Z;
-                var crossSecOuter = new Coordinate[crossSides + 1];
-                var crossSecInner = new Coordinate[crossSides + 1];
+                var crossSecOuter = new Vector3[crossSides + 1];
+                var crossSecInner = new Vector3[crossSides + 1];
                 for (var j = 0; j < crossSides + 1; j++)
                 {
                     var cross = crossStart + j * crossAngle;
-                    var xval = majorSecondaryOuter * DMath.Cos(cross) * DMath.Cos(ring);
-                    var yval = majorSecondaryOuter * DMath.Cos(cross) * DMath.Sin(ring);
-                    var zval = minorSecondaryOuter * DMath.Sin(cross);
-                    crossSecOuter[j] = new Coordinate(xval + rxval, yval + ryval, zval + rzval).Round(roundDecimals);
+                    var xval = majorSecondaryOuter * (float) Math.Cos(cross) * (float) Math.Cos(ring);
+                    var yval = majorSecondaryOuter * (float) Math.Cos(cross) * (float) Math.Sin(ring);
+                    var zval = minorSecondaryOuter * (float) Math.Sin(cross);
+                    crossSecOuter[j] = new Vector3(xval + rxval, yval + ryval, zval + rzval).Round(roundDecimals);
                     if (!crossMakeHollow) continue;
-                    xval = majorSecondaryInner * DMath.Cos(cross) * DMath.Cos(ring);
-                    yval = majorSecondaryInner * DMath.Cos(cross) * DMath.Sin(ring);
-                    zval = minorSecondaryInner * DMath.Sin(cross);
-                    crossSecInner[j] = new Coordinate(xval + rxval, yval + ryval, zval + rzval).Round(roundDecimals);
+                    xval = majorSecondaryInner * (float) Math.Cos(cross) * (float) Math.Cos(ring);
+                    yval = majorSecondaryInner * (float) Math.Cos(cross) * (float) Math.Sin(ring);
+                    zval = minorSecondaryInner * (float) Math.Sin(cross);
+                    crossSecInner[j] = new Vector3(xval + rxval, yval + ryval, zval + rzval).Round(roundDecimals);
                 }
                 ringOuterSections.Add(crossSecOuter);
                 ringInnerSections.Add(crossSecInner);
@@ -167,7 +172,7 @@ namespace Sledge.BspEditor.Tools.Brush.Brushes
             var colour = Colour.GetRandomBrushColour();
             for (var i = 0; i < ringSides; i++)
             {
-                var vertical = Coordinate.UnitZ * heightAdd * i;
+                var vertical = Vector3.UnitZ * heightAdd * i;
                 var nexti = i + 1;
                 if (crossMakeHollow)
                 {
@@ -179,7 +184,7 @@ namespace Sledge.BspEditor.Tools.Brush.Brushes
                     for (var j = 0; j < crossSides; j++)
                     {
                         var nextj = j + 1;
-                        var faces = new List<Coordinate[]>();
+                        var faces = new List<Vector3[]>();
                         faces.Add(new[] { outerPoints[j], outerPoints[nextj], nextOuterPoints[nextj], nextOuterPoints[j] }.Select(x => x + vertical).ToArray());
                         faces.Add(new[] { nextInnerPoints[j], nextInnerPoints[nextj], innerPoints[nextj], innerPoints[j] }.Select(x => x + vertical).ToArray());
                         faces.Add(new[] { innerPoints[nextj], nextInnerPoints[nextj], nextOuterPoints[nextj], outerPoints[nextj] }.Select(x => x + vertical).ToArray());
@@ -192,7 +197,7 @@ namespace Sledge.BspEditor.Tools.Brush.Brushes
                 else
                 {
                     // Use cylindrical cross sections
-                    var faces = new List<Coordinate[]>();
+                    var faces = new List<Vector3[]>();
                     var points = ringOuterSections[i];
                     var nextPoints = ringOuterSections[nexti];
                     // Add the outer faces

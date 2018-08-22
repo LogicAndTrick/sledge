@@ -28,7 +28,7 @@ namespace Sledge.BspEditor.Rendering.Converters
             return obj is Entity && !obj.Hierarchy.HasChildren;
         }
 
-        public Task Convert(SceneBuilder builder, MapDocument document, IMapObject obj)
+        public Task Convert(BufferBuilder builder, MapDocument document, IMapObject obj)
         {
             var entity = (Entity) obj;
 
@@ -94,7 +94,7 @@ namespace Sledge.BspEditor.Rendering.Converters
                 new BufferGroup(PipelineType.WireframeGeneric, entity.IsSelected ? CameraType.Both : CameraType.Orthographic, false, entity.Origin, numSolidIndices, numWireframeIndices)
             };
 
-            builder.MainBuffer.Append(points, indices, groups);
+            builder.Append(points, indices, groups);
 
             return Task.FromResult(0);
         }

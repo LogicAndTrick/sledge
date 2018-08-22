@@ -33,7 +33,7 @@ namespace Sledge.BspEditor.Editing.Commands.Pointfile
             return obj is Root;
         }
 
-        public Task Convert(SceneBuilder builder, MapDocument document, IMapObject obj)
+        public Task Convert(BufferBuilder builder, MapDocument document, IMapObject obj)
         {
             var pointfile = GetPointfile(document);
             if (pointfile == null) return Task.FromResult(0);
@@ -70,7 +70,7 @@ namespace Sledge.BspEditor.Editing.Commands.Pointfile
                 b = 0.5f + (change * i);
             }
 
-            builder.MainBuffer.Append(verts, index, new []
+            builder.Append(verts, index, new []
             {
                 new BufferGroup(PipelineType.WireframeGeneric, CameraType.Both, false, Vector3.Zero, 0, (uint) index.Count)
             });

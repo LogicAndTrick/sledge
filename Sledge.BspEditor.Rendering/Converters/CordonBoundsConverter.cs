@@ -33,7 +33,7 @@ namespace Sledge.BspEditor.Rendering.Converters
             return obj is Root;
         }
 
-        public Task Convert(SceneBuilder builder, MapDocument document, IMapObject obj)
+        public Task Convert(BufferBuilder builder, MapDocument document, IMapObject obj)
         {
             var c = GetCordon(document);
             if (!c.Enabled) return Task.FromResult(0);
@@ -79,7 +79,7 @@ namespace Sledge.BspEditor.Rendering.Converters
                 new BufferGroup(PipelineType.WireframeGeneric, CameraType.Both, false, c.Box.Center, 0, numWireframeIndices)
             };
 
-            builder.MainBuffer.Append(points, indices, groups);
+            builder.Append(points, indices, groups);
 
             return Task.FromResult(0);
         }

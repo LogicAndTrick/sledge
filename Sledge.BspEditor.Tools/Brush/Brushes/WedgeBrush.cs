@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using System.Linq;
+using System.Numerics;
 using Sledge.BspEditor.Primitives;
 using Sledge.BspEditor.Primitives.MapObjectData;
 using Sledge.BspEditor.Primitives.MapObjects;
@@ -9,6 +9,7 @@ using Sledge.Common;
 using Sledge.Common.Shell.Components;
 using Sledge.Common.Translations;
 using Sledge.DataStructures.Geometric;
+using Plane = Sledge.DataStructures.Geometric.Plane;
 
 namespace Sledge.BspEditor.Tools.Brush.Brushes
 {
@@ -31,12 +32,12 @@ namespace Sledge.BspEditor.Tools.Brush.Brushes
             solid.Data.Add(new ObjectColor(Colour.GetRandomBrushColour()));
 
             // The lower Z plane will be base, the x planes will be triangles
-            var c1 = new Coordinate(box.Start.X, box.Start.Y, box.Start.Z).Round(roundDecimals);
-            var c2 = new Coordinate(box.End.X, box.Start.Y, box.Start.Z).Round(roundDecimals);
-            var c3 = new Coordinate(box.End.X, box.End.Y, box.Start.Z).Round(roundDecimals);
-            var c4 = new Coordinate(box.Start.X, box.End.Y, box.Start.Z).Round(roundDecimals);
-            var c5 = new Coordinate(box.Center.X, box.Start.Y, box.End.Z).Round(roundDecimals);
-            var c6 = new Coordinate(box.Center.X, box.End.Y, box.End.Z).Round(roundDecimals);
+            var c1 = new Vector3(box.Start.X, box.Start.Y, box.Start.Z).Round(roundDecimals);
+            var c2 = new Vector3(box.End.X, box.Start.Y, box.Start.Z).Round(roundDecimals);
+            var c3 = new Vector3(box.End.X, box.End.Y, box.Start.Z).Round(roundDecimals);
+            var c4 = new Vector3(box.Start.X, box.End.Y, box.Start.Z).Round(roundDecimals);
+            var c5 = new Vector3(box.Center.X, box.Start.Y, box.End.Z).Round(roundDecimals);
+            var c6 = new Vector3(box.Center.X, box.End.Y, box.End.Z).Round(roundDecimals);
             var faces = new[]
                             {
                                 new[] { c1, c2, c3, c4 },

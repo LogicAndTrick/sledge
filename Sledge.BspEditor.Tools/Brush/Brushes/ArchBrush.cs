@@ -1,7 +1,9 @@
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Drawing;
 using System.Linq;
+using System.Numerics;
 using System.Threading.Tasks;
 using Sledge.BspEditor.Primitives;
 using Sledge.BspEditor.Primitives.MapObjectData;
@@ -12,6 +14,7 @@ using Sledge.Common.Shell.Components;
 using Sledge.Common.Shell.Hooks;
 using Sledge.Common.Translations;
 using Sledge.DataStructures.Geometric;
+using Plane = Sledge.DataStructures.Geometric.Plane;
 
 namespace Sledge.BspEditor.Tools.Brush.Brushes
 {
@@ -70,7 +73,7 @@ namespace Sledge.BspEditor.Tools.Brush.Brushes
             yield return _tiltInterp;
         }
 
-        private Solid MakeSolid(UniqueNumberGenerator generator, IEnumerable<Coordinate[]> faces, string texture, Color col)
+        private Solid MakeSolid(UniqueNumberGenerator generator, IEnumerable<Vector3[]> faces, string texture, Color col)
         {
             var solid = new Solid(generator.Next("MapObject"));
             solid.Data.Add(new ObjectColor(col));
@@ -92,16 +95,16 @@ namespace Sledge.BspEditor.Tools.Brush.Brushes
         {
             var numSides = (int)_numSides.GetValue();
             if (numSides < 3) yield break;
-            var wallWidth = _wallWidth.GetValue();
+            var wallWidth = (float) _wallWidth.GetValue();
             if (wallWidth < 1) yield break;
-            var arc = _arc.GetValue();
+            var arc = (float) _arc.GetValue();
             if (arc < 1) yield break;
-            var startAngle = _startAngle.GetValue();
+            var startAngle = (float) _startAngle.GetValue();
             if (startAngle < 0 || startAngle > 359) yield break;
-            var addHeight = _addHeight.GetValue();
+            var addHeight = (float) _addHeight.GetValue();
             var curvedRamp = _curvedRamp.GetValue();
-            var tiltAngle = curvedRamp ? _tiltAngle.GetValue() : 0;
-            if (DMath.Abs(tiltAngle % 180) == 90) yield break;
+            var tiltAngle = curvedRamp ? (float) _tiltAngle.GetValue() : 0;
+            if (Math.Abs(Math.Abs(tiltAngle % 180) - 90) < 0.001f) yield break;
             var tiltInterp = curvedRamp && _tiltInterp.GetValue();
             
             // Very similar to the pipe brush, except with options for start angle, arc, height and tilt
@@ -114,37 +117,37 @@ namespace Sledge.BspEditor.Tools.Brush.Brushes
             var minorOut = length / 2;
             var minorIn = minorOut - wallWidth;
 
-            var start = DMath.DegreesToRadians(startAngle);
-            var tilt = DMath.DegreesToRadians(tiltAngle);
-            var angle = DMath.DegreesToRadians(arc) / numSides;
+            var start = (float) DMath.DegreesToRadians(startAngle);
+            var tilt = (float) DMath.DegreesToRadians(tiltAngle);
+            var angle = (float) DMath.DegreesToRadians(arc) / numSides;
 
             // Calculate the coordinates of the inner and outer ellipses' points
-            var outer = new Coordinate[numSides + 1];
-            var inner = new Coordinate[numSides + 1];
+            var outer = new Vector3[numSides + 1];
+            var inner = new Vector3[numSides + 1];
             for (var i = 0; i < numSides + 1; i++)
             {
                 var a = start + i * angle;
                 var h = i * addHeight;
-                var interp = tiltInterp ? DMath.Cos(DMath.PI / numSides * (i - numSides / 2M)) : 1;
-                var tiltHeight = wallWidth / 2 * interp * DMath.Tan(tilt);
+                var interp = tiltInterp ? (float) Math.Cos(Math.PI / numSides * (i - numSides / 2f)) : 1;
+                var tiltHeight = wallWidth / 2 * interp * (float) Math.Tan(tilt);
                 
-                var xval = box.Center.X + majorOut * DMath.Cos(a);
-                var yval = box.Center.Y + minorOut * DMath.Sin(a);
+                var xval = box.Center.X + majorOut * (float) Math.Cos(a);
+                var yval = box.Center.Y + minorOut * (float) Math.Sin(a);
                 var zval = box.Start.Z + (curvedRamp ? h + tiltHeight : 0);
-                outer[i] = new Coordinate(xval, yval, zval).Round(roundDecimals);
+                outer[i] = new Vector3(xval, yval, zval).Round(roundDecimals);
 
-                xval = box.Center.X + majorIn * DMath.Cos(a);
-                yval = box.Center.Y + minorIn * DMath.Sin(a);
+                xval = box.Center.X + majorIn * (float) Math.Cos(a);
+                yval = box.Center.Y + minorIn * (float) Math.Sin(a);
                 zval = box.Start.Z + (curvedRamp ? h - tiltHeight : 0);
-                inner[i] = new Coordinate(xval, yval, zval).Round(roundDecimals);
+                inner[i] = new Vector3(xval, yval, zval).Round(roundDecimals);
             }
 
             // Create the solids
             var colour = Colour.GetRandomBrushColour();
-            var z = new Coordinate(0, 0, height).Round(roundDecimals);
+            var z = new Vector3(0, 0, height).Round(roundDecimals);
             for (var i = 0; i < numSides; i++)
             {
-                var faces = new List<Coordinate[]>();
+                var faces = new List<Vector3[]>();
 
                 // Since we are triangulating/splitting each arch segment, we need to generate 2 brushes per side
                 if (curvedRamp)
@@ -190,7 +193,7 @@ namespace Sledge.BspEditor.Tools.Brush.Brushes
                 }
                 else
                 {
-                    var h = i * addHeight * Coordinate.UnitZ;
+                    var h = i * addHeight * Vector3.UnitZ;
                     faces.Add(new[] { outer[i],       outer[i] + z,   outer[i+1] + z, outer[i+1]   }.Select(x => x + h).ToArray());
                     faces.Add(new[] { inner[i+1],     inner[i+1] + z, inner[i] + z,   inner[i]     }.Select(x => x + h).ToArray());
                     faces.Add(new[] { outer[i+1],     outer[i+1] + z, inner[i+1] + z, inner[i+1]   }.Select(x => x + h).ToArray());

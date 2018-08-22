@@ -4,6 +4,7 @@ using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Primitives.MapData;
 using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.BspEditor.Rendering.Scene;
+using Sledge.Rendering.Resources;
 
 namespace Sledge.BspEditor.Rendering.Converters
 {
@@ -33,7 +34,7 @@ namespace Sledge.BspEditor.Rendering.Converters
             return !(obj is Root);
         }
 
-        public Task Convert(SceneBuilder builder, MapDocument document, IMapObject obj)
+        public Task Convert(BufferBuilder builder, MapDocument document, IMapObject obj)
         {
             return Task.CompletedTask;
         }

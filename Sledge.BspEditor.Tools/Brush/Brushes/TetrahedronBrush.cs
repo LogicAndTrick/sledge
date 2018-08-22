@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
+using System.Numerics;
 using System.Threading.Tasks;
 using Sledge.BspEditor.Primitives;
 using Sledge.BspEditor.Primitives.MapObjectData;
@@ -11,6 +12,7 @@ using Sledge.Common.Shell.Components;
 using Sledge.Common.Shell.Hooks;
 using Sledge.Common.Translations;
 using Sledge.DataStructures.Geometric;
+using Plane = Sledge.DataStructures.Geometric.Plane;
 
 namespace Sledge.BspEditor.Tools.Brush.Brushes
 {
@@ -24,9 +26,10 @@ namespace Sledge.BspEditor.Tools.Brush.Brushes
         
         public string TopVertexAtCentroid { get; set; }
 
-        public async Task OnInitialise()
+        public Task OnInitialise()
         {
             _useCentroid = new BooleanControl(this) { LabelText = TopVertexAtCentroid, Checked = false };
+            return Task.CompletedTask;
         }
 
         public string Name { get; set; } = "Tetrahedron";
@@ -43,11 +46,11 @@ namespace Sledge.BspEditor.Tools.Brush.Brushes
             var useCentroid = _useCentroid.GetValue();
 
             // The lower Z plane will be the triangle, with the lower Y value getting the two corners
-            var c1 = new Coordinate(box.Start.X, box.Start.Y, box.Start.Z).Round(roundDecimals);
-            var c2 = new Coordinate(box.End.X, box.Start.Y, box.Start.Z).Round(roundDecimals);
-            var c3 = new Coordinate(box.Center.X, box.End.Y, box.Start.Z).Round(roundDecimals);
-            var centroid = new Coordinate((c1.X + c2.X + c3.X) / 3, (c1.Y + c2.Y + c3.Y) / 3, box.End.Z);
-            var c4 = (useCentroid ? centroid : new Coordinate(box.Center.X, box.Center.Y, box.End.Z)).Round(roundDecimals);
+            var c1 = new Vector3(box.Start.X, box.Start.Y, box.Start.Z).Round(roundDecimals);
+            var c2 = new Vector3(box.End.X, box.Start.Y, box.Start.Z).Round(roundDecimals);
+            var c3 = new Vector3(box.Center.X, box.End.Y, box.Start.Z).Round(roundDecimals);
+            var centroid = new Vector3((c1.X + c2.X + c3.X) / 3, (c1.Y + c2.Y + c3.Y) / 3, box.End.Z);
+            var c4 = (useCentroid ? centroid : new Vector3(box.Center.X, box.Center.Y, box.End.Z)).Round(roundDecimals);
 
             var faces = new[] {
                 new[] { c1, c2, c3 },

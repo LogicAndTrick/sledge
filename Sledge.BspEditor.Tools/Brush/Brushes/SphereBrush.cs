@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Drawing;
 using System.Linq;
+using System.Numerics;
 using System.Threading.Tasks;
 using Sledge.BspEditor.Primitives;
 using Sledge.BspEditor.Primitives.MapObjectData;
@@ -12,6 +14,7 @@ using Sledge.Common.Shell.Components;
 using Sledge.Common.Shell.Hooks;
 using Sledge.Common.Translations;
 using Sledge.DataStructures.Geometric;
+using Plane = Sledge.DataStructures.Geometric.Plane;
 
 namespace Sledge.BspEditor.Tools.Brush.Brushes
 {
@@ -25,9 +28,10 @@ namespace Sledge.BspEditor.Tools.Brush.Brushes
         
         public string NumberOfSides { get; set; }
 
-        public async Task OnInitialise()
+        public Task OnInitialise()
         {
             _numSides = new NumericControl(this) { LabelText = NumberOfSides };
+            return Task.CompletedTask;
         }
 
         public string Name { get; set; } = "Sphere";
@@ -39,7 +43,7 @@ namespace Sledge.BspEditor.Tools.Brush.Brushes
             yield return _numSides;
         }
 
-        private Solid MakeSolid(UniqueNumberGenerator generator, IEnumerable<Coordinate[]> faces, string texture, Color col)
+        private Solid MakeSolid(UniqueNumberGenerator generator, IEnumerable<Vector3[]> faces, string texture, Color col)
         {
             var solid = new Solid(generator.Next("MapObject"));
             solid.Data.Add(new ObjectColor(Colour.GetRandomBrushColour()));
@@ -71,36 +75,36 @@ namespace Sledge.BspEditor.Tools.Brush.Brushes
             var major = width / 2;
             var minor = length / 2;
             var heightRadius = height / 2;
-            
-            var angleV = DMath.DegreesToRadians(180) / numSides;
-            var angleH = DMath.DegreesToRadians(360) / numSides;
 
-            var faces = new List<Coordinate[]>();
-            var bottom = new Coordinate(box.Center.X, box.Center.Y, box.Start.Z).Round(roundDecimals);
-            var top = new Coordinate(box.Center.X, box.Center.Y, box.End.Z).Round(roundDecimals);
+            var angleV = (float) DMath.DegreesToRadians(180f) / numSides;
+            var angleH = (float) DMath.DegreesToRadians(360f) / numSides;
+            
+            var faces = new List<Vector3[]>();
+            var bottom = new Vector3(box.Center.X, box.Center.Y, box.Start.Z).Round(roundDecimals);
+            var top = new Vector3(box.Center.X, box.Center.Y, box.End.Z).Round(roundDecimals);
             
             for (var i = 0; i < numSides; i++)
             {
                 // Top -> bottom
                 var zAngleStart = angleV * i;
                 var zAngleEnd = angleV * (i + 1);
-                var zStart = heightRadius * DMath.Cos(zAngleStart);
-                var zEnd = heightRadius * DMath.Cos(zAngleEnd);
-                var zMultStart = DMath.Sin(zAngleStart);
-                var zMultEnd = DMath.Sin(zAngleEnd);
+                var zStart = heightRadius * (float) Math.Cos(zAngleStart);
+                var zEnd = heightRadius * (float) Math.Cos(zAngleEnd);
+                var zMultStart = (float) Math.Sin(zAngleStart);
+                var zMultEnd = (float) Math.Sin(zAngleEnd);
                 for (var j = 0; j < numSides; j++)
                 {
                     // Go around the circle in X/Y
                     var xyAngleStart = angleH * j;
                     var xyAngleEnd = angleH * ((j + 1) % numSides);
-                    var xyStartX = major * DMath.Cos(xyAngleStart);
-                    var xyStartY = minor * DMath.Sin(xyAngleStart);
-                    var xyEndX = major * DMath.Cos(xyAngleEnd);
-                    var xyEndY = minor * DMath.Sin(xyAngleEnd);
-                    var one = (new Coordinate(xyStartX * zMultStart, xyStartY * zMultStart, zStart) + box.Center).Round(roundDecimals);
-                    var two = (new Coordinate(xyEndX * zMultStart, xyEndY * zMultStart, zStart) + box.Center).Round(roundDecimals);
-                    var three = (new Coordinate(xyEndX * zMultEnd, xyEndY * zMultEnd, zEnd) + box.Center).Round(roundDecimals);
-                    var four = (new Coordinate(xyStartX * zMultEnd, xyStartY * zMultEnd, zEnd) + box.Center).Round(roundDecimals);
+                    var xyStartX = major * (float) Math.Cos(xyAngleStart);
+                    var xyStartY = minor * (float) Math.Sin(xyAngleStart);
+                    var xyEndX = major * (float) Math.Cos(xyAngleEnd);
+                    var xyEndY = minor * (float) Math.Sin(xyAngleEnd);
+                    var one = (new Vector3(xyStartX * zMultStart, xyStartY * zMultStart, zStart) + box.Center).Round(roundDecimals);
+                    var two = (new Vector3(xyEndX * zMultStart, xyEndY * zMultStart, zStart) + box.Center).Round(roundDecimals);
+                    var three = (new Vector3(xyEndX * zMultEnd, xyEndY * zMultEnd, zEnd) + box.Center).Round(roundDecimals);
+                    var four = (new Vector3(xyStartX * zMultEnd, xyStartY * zMultEnd, zEnd) + box.Center).Round(roundDecimals);
                     if (i == 0)
                     {
                         // Top faces are triangles

@@ -68,6 +68,52 @@
   <ItemGroup>
     <Compile Include="ActiveToolOverlayRenderable.cs" />
     <Compile Include="BaseTool.cs" />
+    <Compile Include="Brush\Brushes\ArchBrush.cs" />
+    <Compile Include="Brush\Brushes\BlockBrush.cs" />
+    <Compile Include="Brush\Brushes\ConeBrush.cs" />
+    <Compile Include="Brush\Brushes\Controls\BooleanControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Brush\Brushes\Controls\BooleanControl.Designer.cs">
+      <DependentUpon>BooleanControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Brush\Brushes\Controls\BrushControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Brush\Brushes\Controls\FontChooserControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Brush\Brushes\Controls\FontChooserControl.Designer.cs">
+      <DependentUpon>FontChooserControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Brush\Brushes\Controls\NumericControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Brush\Brushes\Controls\NumericControl.Designer.cs">
+      <DependentUpon>NumericControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Brush\Brushes\Controls\TextControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Brush\Brushes\Controls\TextControl.Designer.cs">
+      <DependentUpon>TextControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Brush\Brushes\CylinderBrush.cs" />
+    <Compile Include="Brush\Brushes\PipeBrush.cs" />
+    <Compile Include="Brush\Brushes\PyramidBrush.cs" />
+    <Compile Include="Brush\Brushes\SphereBrush.cs" />
+    <Compile Include="Brush\Brushes\TetrahedronBrush.cs" />
+    <Compile Include="Brush\Brushes\TextBrush.cs" />
+    <Compile Include="Brush\Brushes\TorusBrush.cs" />
+    <Compile Include="Brush\Brushes\WedgeBrush.cs" />
+    <Compile Include="Brush\BrushSidebarPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Brush\BrushSidebarPanel.Designer.cs">
+      <DependentUpon>BrushSidebarPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Brush\BrushTool.cs" />
+    <Compile Include="Brush\IBrush.cs" />
     <Compile Include="CameraTool.cs" />
     <Compile Include="Cordon\CordonBoxDraggableState.cs" />
     <Compile Include="Cordon\CordonTool.cs" />
@@ -177,6 +223,21 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Brush\Brushes\Controls\BooleanControl.resx">
+      <DependentUpon>BooleanControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Brush\Brushes\Controls\FontChooserControl.resx">
+      <DependentUpon>FontChooserControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Brush\Brushes\Controls\NumericControl.resx">
+      <DependentUpon>NumericControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Brush\Brushes\Controls\TextControl.resx">
+      <DependentUpon>TextControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Brush\BrushSidebarPanel.resx">
+      <DependentUpon>BrushSidebarPanel.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Entity\EntitySidebarPanel.resx">
       <DependentUpon>EntitySidebarPanel.cs</DependentUpon>
     </EmbeddedResource>

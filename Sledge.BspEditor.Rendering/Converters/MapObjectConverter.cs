@@ -36,7 +36,7 @@ namespace Sledge.BspEditor.Rendering.Converters
                     foreach (var converter in converters)
                     {
                         if (!converter.Supports(obj)) continue;
-                        await converter.Convert(builder, document, obj);
+                        await converter.Convert(builder.MainBuffer, document, obj);
                         if (converter.ShouldStopProcessing(document, obj)) break;
                     }
                 }

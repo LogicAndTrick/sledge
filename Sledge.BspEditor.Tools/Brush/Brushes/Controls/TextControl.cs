@@ -4,10 +4,12 @@ namespace Sledge.BspEditor.Tools.Brush.Brushes.Controls
 {
     public partial class TextControl : BrushControl
     {
+        private string _value;
+
         public string EnteredText
         {
             get => TextBox.Text;
-            set => TextBox.Text = value;
+            set => TextBox.Text = _value = value;
         }
 
         public string LabelText
@@ -19,15 +21,17 @@ namespace Sledge.BspEditor.Tools.Brush.Brushes.Controls
         public TextControl(IBrush brush) : base(brush)
         {
             InitializeComponent();
+            _value = TextBox.Text;
         }
 
         public string GetValue()
         {
-            return TextBox.Text;
+            return _value;
         }
 
         private void ValueChanged(object sender, EventArgs e)
         {
+            _value = TextBox.Text;
             OnValuesChanged(Brush);
         }
     }

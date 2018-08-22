@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
+using System.Numerics;
 using System.Threading.Tasks;
 using Sledge.BspEditor.Primitives;
 using Sledge.BspEditor.Primitives.MapObjectData;
@@ -11,6 +13,7 @@ using Sledge.Common.Shell.Components;
 using Sledge.Common.Shell.Hooks;
 using Sledge.Common.Translations;
 using Sledge.DataStructures.Geometric;
+using Plane = Sledge.DataStructures.Geometric.Plane;
 
 namespace Sledge.BspEditor.Tools.Brush.Brushes
 {
@@ -24,9 +27,10 @@ namespace Sledge.BspEditor.Tools.Brush.Brushes
         
         public string NumberOfSides { get; set; }
 
-        public async Task OnInitialise()
+        public Task OnInitialise()
         {
             _numSides = new NumericControl(this) { LabelText = NumberOfSides };
+            return Task.CompletedTask;
         }
 
         public string Name { get; set; } = "Cylinder";
@@ -49,23 +53,23 @@ namespace Sledge.BspEditor.Tools.Brush.Brushes
             var height = box.Height;
             var major = width / 2;
             var minor = length / 2;
-            var angle = 2 * DMath.PI / numSides;
+            var angle = 2 * (float) Math.PI / numSides;
 
             // Calculate the X and Y points for the ellipse
-            var points = new Coordinate[numSides];
+            var points = new Vector3[numSides];
             for (var i = 0; i < numSides; i++)
             {
                 var a = i * angle;
-                var xval = box.Center.X + major * DMath.Cos(a);
-                var yval = box.Center.Y + minor * DMath.Sin(a);
+                var xval = box.Center.X + major * (float) Math.Cos(a);
+                var yval = box.Center.Y + minor * (float) Math.Sin(a);
                 var zval = box.Start.Z;
-                points[i] = new Coordinate(xval, yval, zval).Round(roundDecimals);
+                points[i] = new Vector3(xval, yval, zval).Round(roundDecimals);
             }
 
-            var faces = new List<Coordinate[]>();
+            var faces = new List<Vector3[]>();
 
             // Add the vertical faces
-            var z = new Coordinate(0, 0, height).Round(roundDecimals);
+            var z = new Vector3(0, 0, height).Round(roundDecimals);
             for (var i = 0; i < numSides; i++)
             {
                 var next = (i + 1) % numSides;

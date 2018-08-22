@@ -4,6 +4,8 @@ namespace Sledge.BspEditor.Tools.Brush.Brushes.Controls
 {
     public partial class NumericControl : BrushControl
     {
+        private decimal _value;
+
         public decimal Minimum
         {
             get => Numeric.Minimum;
@@ -19,7 +21,7 @@ namespace Sledge.BspEditor.Tools.Brush.Brushes.Controls
         public decimal Value
         {
             get => Numeric.Value;
-            set => Numeric.Value = value;
+            set => Numeric.Value = _value = value;
         }
 
         public string LabelText
@@ -49,15 +51,17 @@ namespace Sledge.BspEditor.Tools.Brush.Brushes.Controls
         public NumericControl(IBrush brush) : base(brush)
         {
             InitializeComponent();
+            _value = Numeric.Value;
         }
 
         public decimal GetValue()
         {
-            return Numeric.Value;
+            return _value;
         }
 
         private void ValueChanged(object sender, EventArgs e)
         {
+            _value = Numeric.Value;
             OnValuesChanged(Brush);
         }
     }

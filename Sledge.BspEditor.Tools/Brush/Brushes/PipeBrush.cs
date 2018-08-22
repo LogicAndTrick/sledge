@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Drawing;
+using System.Numerics;
 using System.Threading.Tasks;
 using Sledge.BspEditor.Primitives;
 using Sledge.BspEditor.Primitives.MapObjectData;
@@ -11,6 +13,7 @@ using Sledge.Common.Shell.Components;
 using Sledge.Common.Shell.Hooks;
 using Sledge.Common.Translations;
 using Sledge.DataStructures.Geometric;
+using Plane = Sledge.DataStructures.Geometric.Plane;
 
 namespace Sledge.BspEditor.Tools.Brush.Brushes
 {
@@ -41,7 +44,7 @@ namespace Sledge.BspEditor.Tools.Brush.Brushes
             yield return _wallWidth;
         }
 
-        private Solid MakeSolid(UniqueNumberGenerator generator, IEnumerable<Coordinate[]> faces, string texture, Color col)
+        private Solid MakeSolid(UniqueNumberGenerator generator, IEnumerable<Vector3[]> faces, string texture, Color col)
         {
             var solid = new Solid(generator.Next("MapObject"));
             solid.Data.Add(new ObjectColor(col));
@@ -61,7 +64,7 @@ namespace Sledge.BspEditor.Tools.Brush.Brushes
 
         public IEnumerable<IMapObject> Create(UniqueNumberGenerator generator, Box box, string texture, int roundDecimals)
         {
-            var wallWidth = _wallWidth.GetValue();
+            var wallWidth = (float) _wallWidth.GetValue();
             if (wallWidth < 1) yield break;
             var numSides = (int) _numSides.GetValue();
             if (numSides < 3) yield break;
@@ -74,29 +77,29 @@ namespace Sledge.BspEditor.Tools.Brush.Brushes
             var majorIn = majorOut - wallWidth;
             var minorOut = length / 2;
             var minorIn = minorOut - wallWidth;
-            var angle = 2 * DMath.PI / numSides;
+            var angle = 2 * Math.PI / numSides;
 
             // Calculate the X and Y points for the inner and outer ellipses
-            var outer = new Coordinate[numSides];
-            var inner = new Coordinate[numSides];
+            var outer = new Vector3[numSides];
+            var inner = new Vector3[numSides];
             for (var i = 0; i < numSides; i++)
             {
                 var a = i * angle;
-                var xval = box.Center.X + majorOut * DMath.Cos(a);
-                var yval = box.Center.Y + minorOut * DMath.Sin(a);
+                var xval = box.Center.X + majorOut * (float) Math.Cos(a);
+                var yval = box.Center.Y + minorOut * (float) Math.Sin(a);
                 var zval = box.Start.Z;
-                outer[i] = new Coordinate(xval, yval, zval).Round(roundDecimals);
-                xval = box.Center.X + majorIn * DMath.Cos(a);
-                yval = box.Center.Y + minorIn * DMath.Sin(a);
-                inner[i] = new Coordinate(xval, yval, zval).Round(roundDecimals);
+                outer[i] = new Vector3(xval, yval, zval).Round(roundDecimals);
+                xval = box.Center.X + majorIn * (float) Math.Cos(a);
+                yval = box.Center.Y + minorIn * (float) Math.Sin(a);
+                inner[i] = new Vector3(xval, yval, zval).Round(roundDecimals);
             }
 
             // Create the solids
             var colour = Colour.GetRandomBrushColour();
-            var z = new Coordinate(0, 0, height).Round(roundDecimals);
+            var z = new Vector3(0, 0, height).Round(roundDecimals);
             for (var i = 0; i < numSides; i++)
             {
-                var faces = new List<Coordinate[]>();
+                var faces = new List<Vector3[]>();
                 var next = (i + 1) % numSides;
                 faces.Add(new[] { outer[i], outer[i] + z, outer[next] + z, outer[next] });
                 faces.Add(new[] { inner[next], inner[next] + z, inner[i] + z, inner[i] });

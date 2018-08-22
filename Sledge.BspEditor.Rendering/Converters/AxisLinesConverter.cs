@@ -26,7 +26,7 @@ namespace Sledge.BspEditor.Rendering.Converters
             return obj is Root;
         }
         
-        public Task Convert(SceneBuilder builder, MapDocument document, IMapObject obj)
+        public Task Convert(BufferBuilder builder, MapDocument document, IMapObject obj)
         {
             var points = new[]
             {
@@ -45,7 +45,7 @@ namespace Sledge.BspEditor.Rendering.Converters
 
             var indices = new uint[] { 0, 1, 2, 3, 4, 5 };
 
-            builder.MainBuffer.Append(points, indices, new []
+            builder.Append(points, indices, new []
             {
                 new BufferGroup(PipelineType.WireframeGeneric, CameraType.Perspective, false, Vector3.Zero, 0, (uint) indices.Length)
             });

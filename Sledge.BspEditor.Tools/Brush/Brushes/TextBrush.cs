@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Globalization;
 using System.Linq;
+using System.Numerics;
 using System.Threading.Tasks;
 using Poly2Tri;
 using Poly2Tri.Triangulation.Polygon;
@@ -17,6 +18,7 @@ using Sledge.Common.Shell.Components;
 using Sledge.Common.Shell.Hooks;
 using Sledge.Common.Translations;
 using Sledge.DataStructures.Geometric;
+using Plane = Sledge.DataStructures.Geometric.Plane;
 using Polygon = Poly2Tri.Triangulation.Polygon.Polygon;
 
 namespace Sledge.BspEditor.Tools.Brush.Brushes
@@ -36,11 +38,12 @@ namespace Sledge.BspEditor.Tools.Brush.Brushes
         public string Text { get; set; }
         public string EnteredText { get; set; }
 
-        public async Task OnInitialise()
+        public Task OnInitialise()
         {
             _fontChooser = new FontChooserControl(this) { LabelText = Font };
             _flattenFactor = new NumericControl(this) { LabelText = AliasingFactor, Minimum = 0.1m, Maximum = 10m, Value = 1, Precision = 1, Increment = 0.1m };
             _text = new TextControl(this) { EnteredText = EnteredText, LabelText = Text };
+            return Task.CompletedTask;
         }
 
         public string Name { get; set; } = "Text";
@@ -53,9 +56,8 @@ namespace Sledge.BspEditor.Tools.Brush.Brushes
             yield return _text;
         }
 
-        public IEnumerable<IMapObject> Create(UniqueNumberGenerator generator, Box box, string texture, int roundDecimals)
+        public IEnumerable<IMapObject> Create(UniqueNumberGenerator generator, Box box, string texture, int roundfloats)
         {
-            var width = box.Width;
             var length = Math.Max(1, Math.Abs((int) box.Length));
             var height = box.Height;
             var flatten = (float) _flattenFactor.Value;
@@ -89,8 +91,8 @@ namespace Sledge.BspEditor.Tools.Brush.Brushes
                 }
             }
 
-            var xOffset = box.Start.DX;
-            var yOffset = box.End.DY;
+            var xOffset = box.Start.X;
+            var yOffset = box.End.Y;
 
             for (var ci = 0; ci < text.Length; ci++)
             {
@@ -160,12 +162,12 @@ namespace Sledge.BspEditor.Tools.Brush.Brushes
             {
                 foreach (var t in polygon.Triangles)
                 {
-                    var points = t.Points.Select(x => new Coordinate((decimal) x.X, (decimal) x.Y, zOffset).Round(roundDecimals)).ToList();
+                    var points = t.Points.Select(x => new Vector3((float) x.X, (float) x.Y, zOffset).Round(roundfloats)).ToList();
 
-                    var faces = new List<Coordinate[]>();
+                    var faces = new List<Vector3[]>();
 
                     // Add the vertical faces
-                    var z = new Coordinate(0, 0, height).Round(roundDecimals);
+                    var z = new Vector3(0, 0, height).Round(roundfloats);
                     for (var j = 0; j < points.Count; j++)
                     {
                         var next = (j + 1) % points.Count;
@@ -186,7 +188,7 @@ namespace Sledge.BspEditor.Tools.Brush.Brushes
                             Plane = new Plane(arr[0], arr[1], arr[2]),
                             Texture = { Name = texture }
                         };
-                        face.Vertices.AddRange(arr.Select(x => x.Round(roundDecimals)));
+                        face.Vertices.AddRange(arr.Select(x => x.Round(roundfloats)));
                         solid.Data.Add(face);
                     }
                     solid.DescendantsChanged();

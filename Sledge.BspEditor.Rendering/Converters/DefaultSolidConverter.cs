@@ -35,7 +35,7 @@ namespace Sledge.BspEditor.Rendering.Converters
             return obj is Solid;
         }
 
-        public async Task Convert(SceneBuilder builder, MapDocument document, IMapObject obj)
+        public async Task Convert(BufferBuilder builder, MapDocument document, IMapObject obj)
         {
             var displayFlags = document.Map.Data.GetOne<DisplayFlags>();
             var hideNull = displayFlags?.HideNullTextures == true;
@@ -140,7 +140,7 @@ namespace Sledge.BspEditor.Rendering.Converters
             // groups.Add(new BufferGroup(PipelineType.FlatColourGeneric, 0, numSolidIndices));
             groups.Add(new BufferGroup(PipelineType.WireframeGeneric, solid.IsSelected ? CameraType.Both : CameraType.Orthographic, false, solid.BoundingBox.Center, numSolidIndices, numWireframeIndices));
 
-            builder.MainBuffer.Append(points, indices, groups);
+            builder.Append(points, indices, groups);
         }
     }
 }

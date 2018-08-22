@@ -1,8 +1,8 @@
 using System.Threading.Tasks;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Primitives.MapObjects;
-using Sledge.BspEditor.Rendering.Scene;
 using Sledge.Rendering.Renderables;
+using Sledge.Rendering.Resources;
 
 namespace Sledge.BspEditor.Rendering.Converters
 {
@@ -37,6 +37,6 @@ namespace Sledge.BspEditor.Rendering.Converters
         /// <param name="builder">The scene builder</param>
         /// <param name="document">The current document</param>
         /// <param name="obj">The object to convert</param>
-        Task Convert(SceneBuilder builder, MapDocument document, IMapObject obj);
+        Task Convert(BufferBuilder builder, MapDocument document, IMapObject obj);
     }
 }

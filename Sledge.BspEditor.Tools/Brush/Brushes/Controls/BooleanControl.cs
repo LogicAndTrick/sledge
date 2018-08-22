@@ -4,10 +4,12 @@ namespace Sledge.BspEditor.Tools.Brush.Brushes.Controls
 {
     public partial class BooleanControl : BrushControl
     {
+        private bool _value;
+
         public bool Checked
         {
-            get => Checkbox.Checked;
-            set => Checkbox.Checked = value;
+            get => _value;
+            set => Checkbox.Checked = _value = value;
         }
 
         public string LabelText
@@ -25,15 +27,17 @@ namespace Sledge.BspEditor.Tools.Brush.Brushes.Controls
         public BooleanControl(IBrush brush) : base(brush)
         {
             InitializeComponent();
+            _value = Checkbox.Checked;
         }
 
         public bool GetValue()
         {
-            return Checkbox.Checked;
+            return _value;
         }
 
         private void ValueChanged(object sender, EventArgs e)
         {
+            _value = Checkbox.Checked;
             OnValuesChanged(Brush);
         }
     }
