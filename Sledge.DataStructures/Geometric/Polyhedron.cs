@@ -28,7 +28,7 @@ namespace Sledge.DataStructures.Geometric
         public Polyhedron(IEnumerable<Plane> planes)
         {
             Polygons = new List<Polygon>();
-
+            
             var list = planes.ToList();
             for (var i = 0; i < list.Count; i++)
             {
@@ -36,9 +36,14 @@ namespace Sledge.DataStructures.Geometric
                 var poly = new Polygon(list[i]);
                 for (var j = 0; j < list.Count; j++)
                 {
-                    if (i != j) poly.Split(list[j]);
+                    if (i != j && poly.Split(list[j], out var back, out _))
+                    {
+                        poly = back;
+                    }
                 }
                 Polygons.Add(poly);
+
+                Console.WriteLine();
             }
 
             // Ensure all the faces point outwards
@@ -141,12 +146,15 @@ namespace Sledge.DataStructures.Geometric
             var backPlanes = new List<Plane> { plane };
             var frontPlanes = new List<Plane> { new Plane(-plane.Normal, -plane.DistanceFromOrigin) };
 
-            foreach (var face in Polygons)
-            {
-                var classification = face.ClassifyAgainstPlane(plane);
-                if (classification != PlaneClassification.Back) frontPlanes.Add(face.GetPlane());
-                if (classification != PlaneClassification.Front) backPlanes.Add(face.GetPlane());
-            }
+            backPlanes.AddRange(Polygons.Select(x => x.GetPlane()));
+            frontPlanes.AddRange(Polygons.Select(x => x.GetPlane()));
+
+            //foreach (var face in Polygons)
+            //{
+            //    var classification = face.ClassifyAgainstPlane(plane);
+            //    if (classification != PlaneClassification.Back) frontPlanes.Add(face.GetPlane());
+            //    if (classification != PlaneClassification.Front) backPlanes.Add(face.GetPlane());
+            //}
 
             back = new Polyhedron(backPlanes);
             front = new Polyhedron(frontPlanes);

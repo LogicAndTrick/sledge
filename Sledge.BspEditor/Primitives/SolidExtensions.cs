@@ -12,7 +12,7 @@ namespace Sledge.BspEditor.Primitives
             back = front = null;
             var poly = solid.ToPolyhedron();
             
-            if (!poly.Split(plane, out Polyhedron backPoly, out Polyhedron frontPoly)) return false;
+            if (!poly.Split(plane, out var backPoly, out var frontPoly)) return false;
 
             front = MakeSolid(generator, solid, frontPoly);
             back = MakeSolid(generator, solid, backPoly);

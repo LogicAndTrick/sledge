@@ -30,7 +30,7 @@ namespace Sledge.DataStructures.Geometric
         /// </summary>
         /// <param name="plane">The polygon plane</param>
         /// <param name="radius">The polygon radius</param>
-        public Polygon(Plane plane, float radius = 1000000f)
+        public Polygon(Plane plane, float radius = 3000f)
         {
             // Get aligned up and right axes to the plane
             var direction = plane.GetClosestAxisToNormal();
@@ -203,63 +203,6 @@ namespace Sledge.DataStructures.Geometric
         }
 
         /// <summary>
-        /// Splits this polygon by a clipping plane, discarding the front side.
-        /// The original polygon is modified to be the back side of the split.
-        /// If the front side doesn't exist then the polygon won't be modified.
-        /// </summary>
-        /// <param name="clip">The clipping plane</param>
-        public void Split(Plane clip)
-        {
-            // Ideally we would just be able to use Split(..., out back) and Unclone(back) but that takes twice as long.
-            // So we copy the whole algorithm and do it inline instead
-
-            var count = Vertices.Count;
-
-            var classify = ClassifyAgainstPlane(clip, out var classifications, out _, out _, out _);
-
-            // If the polygon doesn't span the plane don't do anything
-            if (classify != PlaneClassification.Spanning)
-            {
-                return;
-            }
-
-            // Get the new back vertices
-            var backVerts = new List<Vector3>();
-
-            var prev = 0;
-
-            for (var i = 0; i <= count; i++)
-            {
-                var idx = i % count;
-                var end = Vertices[idx];
-                var cls = classifications[idx];
-
-                // Check plane crossing
-                if (i > 0 && cls != 0 && prev != 0 && prev != cls)
-                {
-                    // This line end point has crossed the plane
-                    // Add the line intersect to the 
-                    var start = Vertices[i - 1];
-                    var line = new Line(start, end);
-                    var isect = clip.GetIntersectionPoint(line, true);
-                    if (isect == null) throw new Exception("Expected intersection, got null.");
-                    backVerts.Add(isect.Value);
-                }
-
-                // Add original points
-                if (i < Vertices.Count)
-                {
-                    if (cls <= 0) backVerts.Add(end);
-                }
-
-                prev = cls;
-            }
-
-            // Swap out the vertices
-            Vertices = backVerts;
-        }
-
-        /// <summary>
         /// Splits this polygon by a clipping plane, returning the back and front planes.
         /// The original polygon is not modified.
         /// </summary>
@@ -270,6 +213,51 @@ namespace Sledge.DataStructures.Geometric
         public bool Split(Plane clip, out Polygon back, out Polygon front)
         {
             return Split(clip, out back, out front, out _, out _);
+        }
+
+        private struct Vector3d
+        {
+            public decimal X;
+            public decimal Y;
+            public decimal Z;
+
+            public Vector3d(decimal x, decimal y, decimal z)
+            {
+                X = x;
+                Y = y;
+                Z = z;
+            }
+
+            public static Vector3d operator +(Vector3d left, Vector3d right)
+            {
+                return new Vector3d(left.X + right.X, left.Y + right.Y, left.Z + right.Z);
+            }
+
+            public static Vector3d operator *(Vector3d left, decimal right)
+            {
+                return new Vector3d(left.X * right, left.Y * right, left.Z * right);
+            }
+
+            public override string ToString()
+            {
+                return $"<{X}, {Y}, {Z}>";
+            }
+        }
+
+        private struct Vector4d
+        {
+            public decimal X;
+            public decimal Y;
+            public decimal Z;
+            public decimal W;
+
+            public Vector4d(decimal x, decimal y, decimal z, decimal w)
+            {
+                X = x;
+                Y = y;
+                Z = z;
+                W = w;
+            }
         }
 
         /// <summary>
@@ -284,59 +272,122 @@ namespace Sledge.DataStructures.Geometric
         /// <returns>True if the split was successful</returns>
         public bool Split(Plane clip, out Polygon back, out Polygon front, out Polygon coplanarBack, out Polygon coplanarFront)
         {
-            var count = Vertices.Count;
-
-            var classify = ClassifyAgainstPlane(clip, out var classifications, out _, out _, out _);
-
-            // If the polygon doesn't span the plane, return false.
-            if (classify != PlaneClassification.Spanning)
+            const decimal epsilon = (decimal) NumericsExtensions.Epsilon;
+            
+            var plane = new Vector4d((decimal) clip.A, (decimal) clip.B, (decimal) clip.C, (decimal) clip.D);
+            var verts = Vertices.Select(x => new Vector3d((decimal) x.X, (decimal) x.Y, (decimal) x.Z)).ToList();
+            var distances = verts.Select(x => plane.X * x.X + plane.Y * x.Y + plane.Z * x.Z + plane.W).ToList();
+            
+            int cb = 0, cf = 0;
+            for (var i = 0; i < distances.Count; i++)
             {
-                back = front = null;
-                coplanarBack = coplanarFront = null;
-                if (classify == PlaneClassification.Back) back = this;
-                else if (classify == PlaneClassification.Front) front = this;
-                else if (GetPlane().Normal.Dot(clip.Normal) > 0) coplanarFront = this;
+                if (distances[i] < -epsilon) cb++;
+                else if (distances[i] > epsilon) cf++;
+                else distances[i] = 0;
+            }
+
+            Console.WriteLine(string.Join(" ; ", distances));
+
+            // Check non-spanning cases
+            if (cb == 0 && cf == 0)
+            {
+                // Co-planar
+                back = front = coplanarBack = coplanarFront = null;
+                if (GetPlane().Normal.Dot(clip.Normal) > 0) coplanarFront = this;
                 else coplanarBack = this;
                 return false;
             }
-
-            // Get the new front and back vertices
-            var backVerts = new List<Vector3>();
-            var frontVerts = new List<Vector3>();
-            var prev = 0;
-
-            for (var i = 0; i <= count; i++)
+            else if (cb == 0)
             {
-                var idx = i % count;
-                var end = Vertices[idx];
-                var cls = classifications[idx];
-
-                // Check plane crossing
-                if (i > 0 && cls != 0 && prev != 0 && prev != cls)
-                {
-                    // This line end point has crossed the plane
-                    // Add the line intersect to the 
-                    var start = Vertices[i - 1];
-                    var line = new Line(start, end);
-                    var isect = clip.GetIntersectionPoint(line, true);
-                    if (isect == null) throw new Exception("Expected intersection, got null.");
-                    frontVerts.Add(isect.Value);
-                    backVerts.Add(isect.Value);
-                }
-
-                // Add original points
-                if (i < Vertices.Count)
-                {
-                    // OnPlane points get put in both polygons, doesn't generate split
-                    if (cls >= 0) frontVerts.Add(end);
-                    if (cls <= 0) backVerts.Add(end);
-                }
-
-                prev = cls;
+                // All vertices in front
+                back = coplanarBack = coplanarFront = null;
+                front = this;
+                return false;
+            }
+            else if (cf == 0)
+            {
+                // All vertices behind
+                front = coplanarBack = coplanarFront = null;
+                back = this;
+                return false;
             }
 
-            back = new Polygon(backVerts);
-            front = new Polygon(frontVerts);
+            //var count = Vertices.Count;
+            //
+            var classify = ClassifyAgainstPlane(clip, out var classifications, out _, out _, out _);
+            
+            //// If the polygon doesn't span the plane, return false.
+            //if (classify != PlaneClassification.Spanning)
+            //{
+            //    back = front = null;
+            //    coplanarBack = coplanarFront = null;
+            //    if (classify == PlaneClassification.Back) back = this;
+            //    else if (classify == PlaneClassification.Front) front = this;
+            //    else if (GetPlane().Normal.Dot(clip.Normal) > 0) coplanarFront = this;
+            //    else coplanarBack = this;
+            //    return false;
+            //}
+            //
+
+            // Get the new front and back vertices
+            var backVerts = new List<Vector3d>();
+            var frontVerts = new List<Vector3d>();
+
+            for (var i = 0; i < verts.Count; i++)
+            {
+                var j = (i + 1) % verts.Count;
+
+                Vector3d s = verts[i], e = verts[j];
+                decimal sd = distances[i], ed = distances[j];
+
+                if (sd <= 0) backVerts.Add(s);
+                if (sd >= 0) frontVerts.Add(s);
+
+                if (sd <= 0 != ed <= 0)
+                {
+                    var t = sd / (sd - ed);
+                    var intersect = s * (1 - t) + e * t;
+
+                    backVerts.Add(intersect);
+                    frontVerts.Add(intersect);
+                }
+            }
+
+
+            //var prev = 0;
+            //
+            //for (var i = 0; i <= count; i++)
+            //{
+            //    var idx = i % count;
+            //    var end = Vertices[idx];
+            //    var cls = classifications[idx];
+            //
+            //    // Check plane crossing
+            //    if (i > 0 && cls != 0 && prev != 0 && prev != cls)
+            //    {
+            //        // This line end point has crossed the plane
+            //        // Add the line intersect to the 
+            //        var start = Vertices[i - 1];
+            //        var line = new Line(start, end);
+            //        var isect = clip.GetIntersectionPoint(line, true);
+            //        if (isect == null) throw new Exception("Expected intersection, got null.");
+            //        frontVerts.Add(isect.Value);
+            //        backVerts.Add(isect.Value);
+            //    }
+            //
+            //    // Add original points
+            //    if (i < Vertices.Count)
+            //    {
+            //        // OnPlane points get put in both polygons, doesn't generate split
+            //        if (cls >= 0) frontVerts.Add(end);
+            //        if (cls <= 0) backVerts.Add(end);
+            //    }
+            //
+            //    prev = cls;
+            //}
+
+            back = new Polygon(backVerts.Select(x => new Vector3((float) x.X, (float) x.Y, (float) x.Z)));
+            front = new Polygon(frontVerts.Select(x => new Vector3((float)x.X, (float)x.Y, (float)x.Z)));
             coplanarBack = coplanarFront = null;
 
             return true;

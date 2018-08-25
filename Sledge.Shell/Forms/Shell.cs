@@ -74,8 +74,10 @@ namespace Sledge.Shell.Forms
 
         private async Task ShowExceptionDialog(Exception obj)
         {
-            var ed = new ExceptionWindow(obj);
-            ed.ShowDialog(this);
+            this.InvokeLater(() => {
+                var ed = new ExceptionWindow(obj);
+                ed.ShowDialog(this);
+            });
         }
 
         private async Task InstanceOpened(List<string> args)

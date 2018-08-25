@@ -66,7 +66,7 @@
     <Compile Include="GameData\VariableType.cs" />
     <Compile Include="Geometric\Line.cs" />
     <Compile Include="Geometric\DVector3TypeConverter.cs" />
-    <Compile Include="Geometric\Vector3Extensions.cs" />
+    <Compile Include="Geometric\NumericsExtensions.cs" />
     <Compile Include="Geometric\PlaneClassification.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

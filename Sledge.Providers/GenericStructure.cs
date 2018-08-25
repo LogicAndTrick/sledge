@@ -170,21 +170,21 @@ namespace Sledge.Providers
             var defaultValue = new Plane(Vector3.UnitZ, 0);
             if (prop == null || prop.Count(c => c == ' ') != 8) return defaultValue;
             var split = prop.Replace("(", "").Replace(")", "").Split(' ');
-            float x1, x2, x3, y1, y2, y3, z1, z2, z3;
-            if (float.TryParse(split[0], NumberStyles.Float, CultureInfo.InvariantCulture, out x1)
-                && float.TryParse(split[1], NumberStyles.Float, CultureInfo.InvariantCulture, out y1)
-                && float.TryParse(split[2], NumberStyles.Float, CultureInfo.InvariantCulture, out z1)
-                && float.TryParse(split[3], NumberStyles.Float, CultureInfo.InvariantCulture, out x2)
-                && float.TryParse(split[4], NumberStyles.Float, CultureInfo.InvariantCulture, out y2)
-                && float.TryParse(split[5], NumberStyles.Float, CultureInfo.InvariantCulture, out z2)
-                && float.TryParse(split[6], NumberStyles.Float, CultureInfo.InvariantCulture, out x3)
-                && float.TryParse(split[7], NumberStyles.Float, CultureInfo.InvariantCulture, out y3)
-                && float.TryParse(split[8], NumberStyles.Float, CultureInfo.InvariantCulture, out z3))
+            if (float.TryParse(split[0], NumberStyles.Float, CultureInfo.InvariantCulture, out var x1)
+                && float.TryParse(split[1], NumberStyles.Float, CultureInfo.InvariantCulture, out var y1)
+                && float.TryParse(split[2], NumberStyles.Float, CultureInfo.InvariantCulture, out var z1)
+                && float.TryParse(split[3], NumberStyles.Float, CultureInfo.InvariantCulture, out var x2)
+                && float.TryParse(split[4], NumberStyles.Float, CultureInfo.InvariantCulture, out var y2)
+                && float.TryParse(split[5], NumberStyles.Float, CultureInfo.InvariantCulture, out var z2)
+                && float.TryParse(split[6], NumberStyles.Float, CultureInfo.InvariantCulture, out var x3)
+                && float.TryParse(split[7], NumberStyles.Float, CultureInfo.InvariantCulture, out var y3)
+                && float.TryParse(split[8], NumberStyles.Float, CultureInfo.InvariantCulture, out var z3))
             {
                 return new Plane(
                     new Vector3(x1, y1, z1).Round(),
                     new Vector3(x2, y2, z2).Round(),
-                    new Vector3(x3, y3, z3).Round());
+                    new Vector3(x3, y3, z3).Round()
+                );
             }
             return defaultValue;
         }
@@ -494,13 +494,13 @@ namespace Sledge.Providers
                 case "Colour":
                     return Color.FromArgb(int.Parse(spl[3]), int.Parse(spl[0]), int.Parse(spl[1]), int.Parse(spl[2]));
                 case "Vector3":
-                    return Vector3Extensions.Parse(spl[0].TrimStart('('), spl[1], spl[2].TrimEnd(')'));
+                    return NumericsExtensions.Parse(spl[0].TrimStart('('), spl[1], spl[2].TrimEnd(')'));
                 case "Box":
                     return new Box(
-                        Vector3Extensions.Parse(spl[0].TrimStart('('), spl[1], spl[2].TrimEnd(')')),
-                        Vector3Extensions.Parse(spl[3].TrimStart('('), spl[4], spl[5].TrimEnd(')')));
+                        NumericsExtensions.Parse(spl[0].TrimStart('('), spl[1], spl[2].TrimEnd(')')),
+                        NumericsExtensions.Parse(spl[3].TrimStart('('), spl[4], spl[5].TrimEnd(')')));
                 case "Plane":
-                    return new Plane(Vector3Extensions.Parse(spl[0].TrimStart('('), spl[1], spl[2].TrimEnd(')')), float.Parse(spl[3]));
+                    return new Plane(NumericsExtensions.Parse(spl[0].TrimStart('('), spl[1], spl[2].TrimEnd(')')), float.Parse(spl[3]));
                 case "Rectangle":
                     return new Rectangle(int.Parse(spl[0]), int.Parse(spl[1]), int.Parse(spl[2]), int.Parse(spl[3]));
                 default:

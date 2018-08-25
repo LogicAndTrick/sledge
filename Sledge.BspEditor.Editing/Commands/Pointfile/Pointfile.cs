@@ -53,10 +53,10 @@ namespace Sledge.BspEditor.Editing.Commands.Pointfile
             foreach (var line in list)
             {
                 var split = line.Split(' ');
-                var point = Vector3Extensions.Parse(split[0], split[1], split[2]);
+                var point = NumericsExtensions.Parse(split[0], split[1], split[2]);
                 if (lin)
                 {
-                    var point2 = Vector3Extensions.Parse(split[4], split[5], split[6]);
+                    var point2 = NumericsExtensions.Parse(split[4], split[5], split[6]);
                     pf.Lines.Add(new Line(point2, point));
                 }
                 else // pts
