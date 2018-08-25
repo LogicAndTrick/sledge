@@ -14,7 +14,7 @@ namespace Sledge.BspEditor.Tools.Vertex.Errors
         {
             foreach (var face in solid.Copy.Faces)
             {
-                var nonPlanar = face.Vertices.Where(x => face.Plane.OnPlane(x, 0.5m) != 0).ToList();
+                var nonPlanar = face.Vertices.Where(x => face.Plane.OnPlane(x.Position, 0.5f) != 0).ToList();
                 if (nonPlanar.Any()) yield return new VertexError(Key, solid).Add(face).Add(nonPlanar);
             }
         }

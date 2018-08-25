@@ -20,9 +20,9 @@ namespace Sledge.BspEditor.Tools.Vertex.Errors
             }
         }
 
-        private static bool IsConvex(Face face)
+        private static bool IsConvex(MutableFace face)
         {
-            return face.Vertices.Count > 2 && new Polygon(face.Vertices.Select(x => x)).IsConvex();
+            return face.Vertices.Count > 2 && new Polygon(face.Vertices.Select(x => x.Position)).IsConvex();
         }
     }
 }

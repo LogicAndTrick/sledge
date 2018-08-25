@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.Numerics;
 using Sledge.BspEditor.Primitives.MapObjectData;
 using Sledge.BspEditor.Tools.Vertex.Selection;
-using Sledge.DataStructures.Geometric;
 
 namespace Sledge.BspEditor.Tools.Vertex.Errors
 {
@@ -9,36 +9,36 @@ namespace Sledge.BspEditor.Tools.Vertex.Errors
     {
         public string Key { get; set; }
         public VertexSolid Solid { get; set; }
-        public List<Face> Faces { get; set; }
-        public List<Coordinate> Points { get; set; }
+        public List<MutableFace> Faces { get; set; }
+        public List<MutableVertex> Points { get; set; }
 
         public VertexError(string key, VertexSolid solid)
         {
             Key = key;
             Solid = solid;
-            Faces = new List<Face>();
-            Points = new List<Coordinate>();
+            Faces = new List<MutableFace>();
+            Points = new List<MutableVertex>();
         }
 
-        public VertexError Add(params Face[] faces)
+        public VertexError Add(params MutableFace[] faces)
         {
             Faces.AddRange(faces);
             return this;
         }
 
-        public VertexError Add(IEnumerable<Face> faces)
+        public VertexError Add(IEnumerable<MutableFace> faces)
         {
             Faces.AddRange(faces);
             return this;
         }
 
-        public VertexError Add(params Coordinate[] points)
+        public VertexError Add(params MutableVertex[] points)
         {
             Points.AddRange(points);
             return this;
         }
 
-        public VertexError Add(IEnumerable<Coordinate> points)
+        public VertexError Add(IEnumerable<MutableVertex> points)
         {
             Points.AddRange(points);
             return this;

@@ -1,24 +1,23 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Linq;
+using System.Numerics;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using LogicAndTrick.Oy;
-using Sledge.BspEditor.Rendering;
+using Sledge.BspEditor.Primitives.MapObjectData;
 using Sledge.BspEditor.Rendering.Viewport;
 using Sledge.BspEditor.Tools.Vertex.Controls;
 using Sledge.BspEditor.Tools.Vertex.Selection;
 using Sledge.Common.Translations;
 using Sledge.DataStructures.Geometric;
 using Sledge.Rendering.Cameras;
-using Sledge.Rendering.Materials;
-using Sledge.Rendering.Scenes;
+using Sledge.Rendering.Pipelines;
+using Sledge.Rendering.Primitives;
+using Sledge.Rendering.Resources;
 using Sledge.Shell.Input;
-using Face = Sledge.BspEditor.Primitives.MapObjectData.Face;
-using SceneFace = Sledge.Rendering.Scenes.Renderables.Face;
-using SceneVertex = Sledge.Rendering.Scenes.Renderables.Vertex;
-using Line = Sledge.DataStructures.Geometric.Line;
 
 namespace Sledge.BspEditor.Tools.Vertex.Tools
 {
@@ -64,7 +63,7 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
             UpdateSolids(_selectedFaces.Select(x => x.Solid).ToList());
         }
 
-        private IList<Face> GetSelectedFaces()
+        private IList<MutableFace> GetSelectedFaces()
         {
             return _selectedFaces.Select(x => x.Face).ToList();
         }
@@ -83,22 +82,17 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
             var solid = solidFace.Solid.Copy;
 
             // Remove the face
-            solid.Data.Remove(face);
+            solid.Faces.Remove(face);
 
             var center = face.Origin + face.Plane.Normal * num;
             foreach (var edge in face.GetEdges())
             {
-                var v1 = face.Vertices.First(x => x == edge.Start);
-                var v2 = face.Vertices.First(x => x == edge.End);
-                var verts = new[] { v1, v2, center };
-                var f = new Face(Document.Map.NumberGenerator.Next("Face"))
-                {
-                    Texture = face.Texture.Clone()
-                };
-                f.Vertices.AddRange(verts.Select(x => x.Clone()));
-                solid.Data.Add(f);
+                var v1 = face.Vertices.First(x => x.Position.EquivalentTo(edge.Start));
+                var v2 = face.Vertices.First(x => x.Position.EquivalentTo(edge.End));
+                var verts = new[] { v1.Position, v2.Position, center };
+                var f = new MutableFace(verts, face.Texture.Clone());
+                solid.Faces.Add(f);
             }
-            solid.DescendantsChanged();
         }
 
         private void BevelFace(SolidFace solidFace, int num)
@@ -107,36 +101,31 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
             var solid = solidFace.Solid.Copy;
 
             // Remember the original positions
-            var vertexCoordinates = face.Vertices.Select(x => x.Clone()).ToList();
+            var vertexPositions = face.Vertices.Select(x => x.Position).ToList();
 
             // Scale the face a bit and move it away by the bevel distance
             var origin = face.Origin;
-            face.Transform(Matrix.Translation(origin) * Matrix.Scale(Coordinate.One * 0.9m) * Matrix.Translation(-origin));
-            face.Transform(Matrix.Translation(face.Plane.Normal * num));
+            face.Transform(Matrix4x4.CreateScale(Vector3.One * 0.9f, origin));
+            face.Transform(Matrix4x4.CreateTranslation(face.Plane.Normal * num));
 
             // Create a face for each new edge -> old edge
             foreach (var edge in face.GetEdges())
             {
-                var startIndex = face.Vertices.IndexOf(edge.Start);
-                var endIndex = face.Vertices.IndexOf(edge.End);
-                var verts = new[] { vertexCoordinates[startIndex], vertexCoordinates[endIndex], edge.End, edge.Start };
-                var f = new Face(Document.Map.NumberGenerator.Next("Face"))
-                {
-                    Texture = face.Texture.Clone()
-                };
-                f.Vertices.AddRange(verts.Select(x => x.Clone()));
-                solid.Data.Add(f);
+                var startIndex = face.Vertices.FindIndex(x => x.Position.EquivalentTo(edge.Start));
+                var endIndex = face.Vertices.FindIndex(x => x.Position.EquivalentTo(edge.End));
+                var verts = new[] { vertexPositions[startIndex], vertexPositions[endIndex], edge.End, edge.Start };
+                var f = new MutableFace(verts, face.Texture.Clone());
+                solid.Faces.Add(f);
             }
-            solid.DescendantsChanged();
         }
 
         #endregion
         
         #region 3D interaction
         
-        private Coordinate GetIntersectionPoint(Face face, Line line)
+        private Vector3? GetIntersectionPoint(MutableFace face, Line line)
         {
-            return face.ToPolygon().GetIntersectionPoint(line);
+            return new Polygon(face.Vertices.Select(x => x.Position)).GetIntersectionPoint(line);
         }
         
         protected override void MouseDown(MapViewport viewport, PerspectiveCamera camera, ViewportEvent e)
@@ -146,7 +135,8 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
             e.Handled = true;
 
             // First, get the ray that is cast from the clicked point along the viewport frustrum
-            var ray = viewport.CastRayFromScreen(e.X, e.Y);
+            var (start, end) = camera.CastRayFromScreen(new Vector3(e.X, e.Y, 0));
+            var ray = new Line(start, end);
 
             // Grab all the elements that intersect with the ray
             var hits = Selection.Where(x => x.Copy.BoundingBox.IntersectsWith(ray));
@@ -156,7 +146,7 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
                 .SelectMany(x => x.Copy.Faces.Select(f => new { Solid = x, Face = f}))
                 .Select(x => new { Item = x, Intersection = GetIntersectionPoint(x.Face, ray) })
                 .Where(x => x.Intersection != null)
-                .OrderBy(x => (x.Intersection - ray.Start).VectorMagnitude())
+                .OrderBy(x => (x.Intersection.Value - ray.Start).Length())
                 .Select(x => x.Item)
                 .FirstOrDefault();
             
@@ -205,36 +195,47 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
             foreach (var solid in solids)
             {
                 solid.IsDirty = true;
-                solid.Copy.DescendantsChanged();
             }
 
             Invalidate();
         }
 
-        protected override IEnumerable<SceneObject> GetSceneObjects()
+        public override void Render(BufferBuilder builder)
         {
-            var mat = Material.Flat(Color.FromArgb(128, Color.White));
+            base.Render(builder);
 
-            var objects = new List<SceneObject>();
-            foreach (var solidFace in _selectedFaces)
+            var verts = new List<VertexStandard>();
+            var indices = new List<int>();
+            var groups = new List<BufferGroup>();
+
+            var col = Color.FromArgb(128, Color.White).ToVector4();
+            var tintCol = Color.OrangeRed.ToVector4();
+
+            foreach (var face in _selectedFaces)
             {
-                var verts = solidFace.Face.Vertices.Select(x => new SceneVertex(x.ToVector3(), 0, 0)).ToList();
-                var sf = new SceneFace(mat, verts)
+                var vo = verts.Count;
+                var io = indices.Count;
+
+                verts.AddRange(face.Face.Vertices.Select(x => new VertexStandard { Position = x.Position, Colour = col, Tint = tintCol }));
+                for (var i = 2; i < face.Face.Vertices.Count; i++)
                 {
-                    TintColor = Color.OrangeRed
-                };
-                objects.Add(sf);
+                    indices.Add(vo);
+                    indices.Add(vo + i - 1);
+                    indices.Add(vo + i);
+                }
+
+                groups.Add(new BufferGroup(PipelineType.FlatColourGeneric, CameraType.Perspective, true, face.Face.Origin, (uint) io, (uint)(indices.Count - io)));
             }
-            objects.AddRange(base.GetSceneObjects());
-            return objects;
+
+            builder.Append(verts, indices.Select(x => (uint) x), groups);
         }
 
         private class SolidFace
         {
             public VertexSolid Solid { get; set; }
-            public Face Face { get; set; }
+            public MutableFace Face { get; set; }
 
-            public SolidFace(VertexSolid solid, Face face)
+            public SolidFace(VertexSolid solid, MutableFace face)
             {
                 Solid = solid;
                 Face = face;

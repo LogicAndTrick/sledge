@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Drawing;
 using System.Linq;
+using System.Numerics;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using LogicAndTrick.Oy;
-using Sledge.BspEditor.Primitives.MapObjectData;
-using Sledge.BspEditor.Rendering;
 using Sledge.BspEditor.Rendering.Viewport;
 using Sledge.BspEditor.Tools.Draggable;
 using Sledge.BspEditor.Tools.Vertex.Controls;
@@ -16,15 +14,15 @@ using Sledge.Common;
 using Sledge.Common.Translations;
 using Sledge.DataStructures.Geometric;
 using Sledge.Rendering.Cameras;
-using Sledge.Rendering.Scenes;
-using Sledge.Rendering.Scenes.Elements;
+using Sledge.Rendering.Resources;
+using Sledge.Rendering.Viewports;
 using Sledge.Shell.Input;
 
 namespace Sledge.BspEditor.Tools.Vertex.Tools
 {
     [AutoTranslate]
     [Export(typeof(VertexSubtool))]
-    public class VertexScaleTool : VertexSubtool, IDraggableState
+    public class VertexScaleTool : VertexSubtool
     {
         [Import] private VertexScaleControl _control;
 
@@ -35,12 +33,13 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
         private readonly BoxDraggableState _boxState;
         private readonly Dictionary<VertexSolid, VertexList> _vertices;
         private readonly ScaleOrigin _origin;
-        private Dictionary<VertexPoint, Coordinate> _originals;
+        private Dictionary<VertexPoint, Vector3> _originals;
         
         public VertexScaleTool()
         {
             _vertices = new Dictionary<VertexSolid, VertexList>();
-            States.Add(this);
+
+            States.Add(new WrapperDraggableState(GetDraggables));
 
             _boxState = new BoxDraggableState(this);
             _boxState.BoxColour = Color.Orange;
@@ -68,7 +67,7 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
 
         private void ValueChanged(decimal value)
         {
-            MovePoints(value);
+            MovePoints((float) value);
         }
 
         private void ValueReset(decimal value)
@@ -80,8 +79,8 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
         {
             var points = GetVisiblePoints().Where(x => x.IsSelected).Select(x => x.Position).ToList();
             if (!points.Any()) points = GetVisiblePoints().Select(x => x.Position).ToList();
-            if (!points.Any()) _origin.Position = Coordinate.Zero;
-            else _origin.Position = points.Aggregate(Coordinate.Zero, (a, b) => a + b) / points.Count;
+            if (!points.Any()) _origin.Position = Vector3.Zero;
+            else _origin.Position = points.Aggregate(Vector3.Zero, (a, b) => a + b) / points.Count;
             Invalidate();
         }
 
@@ -145,7 +144,7 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
             return GetVisiblePoints().OrderBy(x => x.IsSelected ? 1 : 0).Union(new IDraggable[] { _origin });
         }
 
-        private void MovePoints(decimal value)
+        private void MovePoints(float value)
         {
             var o = _origin.Position;
             var solids = new List<VertexSolid>();
@@ -193,7 +192,6 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
             foreach (var solid in solids)
             {
                 solid.IsDirty = true;
-                solid.Copy.DescendantsChanged();
             }
 
             Invalidate();
@@ -232,11 +230,11 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
             var toggle = KeyboardState.Ctrl;
 
             var l = camera.EyeLocation;
-            var pos = new Coordinate((decimal)l.X, (decimal)l.Y, (decimal)l.Z);
-            var p = new Coordinate(e.X, viewport.Height - e.Y, 0);
+            var pos = new Vector3((float)l.X, (float)l.Y, (float)l.Z);
+            var p = new Vector3(e.X, e.Y, 0);
             const int d = 5;
             var clicked = (from point in GetVisiblePoints()
-                let c = viewport.Viewport.Camera.WorldToScreen(point.Position.ToVector3(), viewport.Width, viewport.Height).ToCoordinate()
+                let c = viewport.Viewport.Camera.WorldToScreen(point.Position)
                 where c.Z <= 1
                 where p.X >= c.X - d && p.X <= c.X + d && p.Y >= c.Y - d && p.Y <= c.Y + d
                 orderby (pos - point.Position).LengthSquared()
@@ -248,7 +246,7 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
 
         public bool SelectPointsInBox(Box box, bool toggle)
         {
-            var inBox = GetVisiblePoints().Where(x => box.CoordinateIsInside(x.Position)).ToList();
+            var inBox = GetVisiblePoints().Where(x => box.Vector3IsInside(x.Position)).ToList();
             Select(inBox, toggle);
             return inBox.Any();
         }
@@ -300,15 +298,15 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
                 var verts = copy.Faces.SelectMany(x => x.Vertices.Select(v => new { Location = v, Face = x })).ToList();
 
                 // Add vertex points
-                foreach (var group in verts.GroupBy(x => x.Location.Round(2)))
+                foreach (var group in verts.GroupBy(x => x.Location.Position.Round(2)))
                 {
                     Points.Add(new VertexPoint(Tool, Solid)
                     {
                         ID = verts.IndexOf(group.First()) + 1,
-                        Position = group.First().Location.Round(2),
+                        Position = group.First().Location.Position.Round(2),
                         Vertices = group.Select(x => x.Location).ToList(),
                         Faces = group.Select(x => x.Face).ToList(),
-                        IsSelected = selected.Any(x => x.Position == group.First().Location.Round(2))
+                        IsSelected = selected.Any(x => x.Position == group.First().Location.Position.Round(2))
                     });
                 }
             }
@@ -317,14 +315,13 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
         private class VertexPoint : BaseDraggable
         {
             public VertexScaleTool Tool { get; set; }
-            private bool _isDragging;
 
             public int ID { get; set; }
             public VertexSolid Solid { get; set; }
-            public List<Coordinate> Vertices { get; set; }
-            public List<Face> Faces { get; set; }
-            public Coordinate Position { get; set; }
-            public Coordinate DraggingPosition { get; set; }
+            public List<MutableVertex> Vertices { get; set; }
+            public List<MutableFace> Faces { get; set; }
+            public Vector3 Position { get; set; }
+            public Vector3 DraggingPosition { get; set; }
 
             public bool IsHighlighted { get; set; }
             public bool IsSelected { get; set; }
@@ -332,10 +329,10 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
             public VertexPoint(VertexScaleTool tool, VertexSolid solid)
             {
                 Tool = tool;
-                DraggingPosition = Position = Coordinate.Zero;
+                DraggingPosition = Position = Vector3.Zero;
                 Solid = solid;
-                Vertices = new List<Coordinate>();
-                Faces = new List<Face>();
+                Vertices = new List<MutableVertex>();
+                Faces = new List<MutableFace>();
             }
 
             private Color GetColor()
@@ -346,12 +343,11 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
                 return IsHighlighted ? c.Lighten() : c;
             }
             
-            public void Move(Coordinate delta)
+            public void Move(Vector3 delta)
             {
                 Position += delta;
                 DraggingPosition = Position;
                 Vertices.ForEach(x => x.Set(Position));
-                Faces.ForEach(x => x.Vertices.UpdatePlane());
                 Solid.IsDirty = true;
             }
 
@@ -362,17 +358,17 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
                 return _selfArray ?? (_selfArray = new[] {this});
             }
 
-            public override void MouseDown(MapViewport viewport, ViewportEvent e, Coordinate position)
+            public override void MouseDown(MapViewport viewport, ViewportEvent e, Vector3 position)
             {
                 e.Handled = true;
             }
 
-            public override void Click(MapViewport viewport, ViewportEvent e, Coordinate position)
+            public override void Click(MapViewport viewport, ViewportEvent e, Vector3 position)
             {
                 // 
             }
 
-            public override bool CanDrag(MapViewport viewport, ViewportEvent e, Coordinate position)
+            public override bool CanDrag(MapViewport viewport, ViewportEvent e, Vector3 position)
             {
                 return false;
             }
@@ -387,31 +383,43 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
                 IsHighlighted = false;
             }
 
-            public override IEnumerable<SceneObject> GetSceneObjects()
+            public override void Render(BufferBuilder builder)
             {
-                yield break;
+                // 
             }
 
-            public override IEnumerable<Element> GetViewportElements(MapViewport viewport, PerspectiveCamera camera)
+            public override void Render(IViewport viewport, OrthographicCamera camera, Vector3 worldMin, Vector3 worldMax, Graphics graphics)
             {
-                var pos = Position;
-                yield return new HandleElement(PositionType.Anchored, HandleElement.HandleType.SquareTexture, new Position(pos.ToVector3()), 4)
+                const int size = 8;
+                
+                var spos = camera.WorldToScreen(Position);
+                var rect = new Rectangle((int)spos.X - size / 2, (int)spos.Y - size / 2, size, size);
+
+                var color = Color.FromArgb(255, GetColor());
+                using (var brush = new SolidBrush(color))
                 {
-                    Color = Color.FromArgb(255, GetColor())
-                };
+                    graphics.FillRectangle(brush, rect);
+                    graphics.DrawRectangle(Pens.Black, rect);
+                }
             }
 
-            public override IEnumerable<Element> GetViewportElements(MapViewport viewport, OrthographicCamera camera)
+            public override void Render(IViewport viewport, PerspectiveCamera camera, Graphics graphics)
             {
-                var opac = 255;
-                yield return new HandleElement(PositionType.World, HandleElement.HandleType.SquareTexture, new Position(Position.ToVector3()), 4)
+                const int size = 8;
+
+                var spos = camera.WorldToScreen(Position);
+                var rect = new Rectangle((int)spos.X - size / 2, (int)spos.Y - size / 2, size, size);
+
+                var color = Color.FromArgb(255, GetColor());
+                using (var brush = new SolidBrush(color))
                 {
-                    Color = Color.FromArgb(opac, GetColor())
-                };
+                    graphics.FillRectangle(brush, rect);
+                    graphics.DrawRectangle(Pens.Black, rect);
+                }
             }
         }
         
-        private class ScaleOrigin : DraggableCoordinate
+        private class ScaleOrigin : DraggableVector3
         {
             private readonly VertexScaleTool _vmScaleTool;
 
@@ -421,47 +429,25 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
                 Width = 10;
             }
 
-            public override void Drag(MapViewport viewport, ViewportEvent e, Coordinate lastPosition, Coordinate position)
+            public override void Drag(MapViewport viewport, ViewportEvent e, Vector3 lastPosition, Vector3 position)
             {
                 Position = _vmScaleTool.SnapIfNeeded(viewport.Expand(position) + viewport.GetUnusedCoordinate(Position));
                 OnDragMoved();
             }
 
-            public override IEnumerable<Element> GetViewportElements(MapViewport viewport, OrthographicCamera camera)
+            public override void Render(IViewport viewport, OrthographicCamera camera, Vector3 worldMin, Vector3 worldMax, Graphics graphics)
             {
-                yield return new HandleElement(PositionType.World, HandleElement.HandleType.Circle, new Position(Position.ToVector3()), 8)
-                {
-                    Color = Color.Transparent,
-                    LineColor = Color.AliceBlue,
-                    ZIndex = 10
-                };
-                yield return new HandleElement(PositionType.World, HandleElement.HandleType.Circle, new Position(Position.ToVector3()), 4)
-                {
-                    Color = Color.Transparent,
-                    LineColor = Color.AliceBlue,
-                    ZIndex = 10
-                };
+                var spos = camera.WorldToScreen(Position);
+
+                const int inner = 8;
+                const int outer = 16;
+
+                var innerRect = new Rectangle((int)spos.X - inner / 2, (int)spos.Y - inner / 2, inner, inner);
+                var outerRect = new Rectangle((int)spos.X - outer / 2, (int)spos.Y - outer / 2, outer, outer);
+
+                graphics.DrawEllipse(Pens.AliceBlue, innerRect);
+                graphics.DrawEllipse(Pens.AliceBlue, outerRect);
             }
         }
-
-        #region Draggable non-implementation
-
-        public event EventHandler DragStarted;
-        public event EventHandler DragMoved;
-        public event EventHandler DragEnded;
-        public void MouseDown(MapViewport viewport, ViewportEvent e, Coordinate position) {}
-        public void MouseUp(MapViewport viewport, ViewportEvent e, Coordinate position) {}
-        public void Click(MapViewport viewport, ViewportEvent e, Coordinate position) {}
-        public bool CanDrag(MapViewport viewport, ViewportEvent e, Coordinate position) => false;
-        public void Highlight(MapViewport viewport) {}
-        public void Unhighlight(MapViewport viewport) {}
-        public void StartDrag(MapViewport viewport, ViewportEvent e, Coordinate position) {}
-        public void Drag(MapViewport viewport, ViewportEvent e, Coordinate lastPosition, Coordinate position) {}
-        public void EndDrag(MapViewport viewport, ViewportEvent e, Coordinate position) {}
-        IEnumerable<SceneObject> IDraggable.GetSceneObjects() => new List<SceneObject>();
-        IEnumerable<Element> IDraggable.GetViewportElements(MapViewport viewport, PerspectiveCamera camera) => new List<Element>();
-        IEnumerable<Element> IDraggable.GetViewportElements(MapViewport viewport, OrthographicCamera camera) => new List<Element>();
-
-        #endregion
     }
 }

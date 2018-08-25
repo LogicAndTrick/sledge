@@ -10,17 +10,18 @@ using Sledge.BspEditor.Modification.Operations;
 using Sledge.BspEditor.Modification.Operations.Data;
 using Sledge.BspEditor.Primitives.MapObjectData;
 using Sledge.BspEditor.Primitives.MapObjects;
+using Sledge.Common.Threading;
 
 namespace Sledge.BspEditor.Tools.Vertex.Selection
 {
     public class VertexSelection : IEnumerable<VertexSolid>
     {
         private readonly object _lock = new object();
-        private readonly HashSet<VertexSolid> _selectedSolids;
+        private readonly ISet<VertexSolid> _selectedSolids;
 
         public VertexSelection()
         {
-            _selectedSolids = new HashSet<VertexSolid>();
+            _selectedSolids = new ThreadSafeSet<VertexSolid>();
         }
 
         public async Task Clear(MapDocument document)
@@ -72,7 +73,8 @@ namespace Sledge.BspEditor.Tools.Vertex.Selection
                     ));
                 }
 
-                _selectedSolids.RemoveWhere(s => toDeselect.Contains(s.Real));
+                var rem = _selectedSolids.Where(s => toDeselect.Contains(s.Real));
+                _selectedSolids.ExceptWith(rem);
                 _selectedSolids.UnionWith(toSelect.Select(s => new VertexSolid(s)));
             }
 
@@ -88,7 +90,7 @@ namespace Sledge.BspEditor.Tools.Vertex.Selection
                 foreach (var solid in _selectedSolids.Where(x => x.IsDirty))
                 {
                     tran.Add(new RemoveMapObjectData(solid.Real.ID, solid.Real.Faces));
-                    tran.Add(new AddMapObjectData(solid.Real.ID, solid.Copy.Faces.Select(x => (Face) x.Clone())));
+                    tran.Add(new AddMapObjectData(solid.Real.ID, solid.Copy.Faces.Select(x => x.ToFace(document.Map.NumberGenerator))));
                     solid.Reset();
                 }
             }

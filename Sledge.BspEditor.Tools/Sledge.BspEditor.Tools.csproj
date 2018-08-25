@@ -213,6 +213,55 @@
     <Compile Include="ToolActivator.cs" />
     <Compile Include="ToolStatusItem.cs" />
     <Compile Include="ToolViewportListener.cs" />
+    <Compile Include="Vertex\Controls\VertexEditFaceControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Vertex\Controls\VertexEditFaceControl.Designer.cs">
+      <DependentUpon>VertexEditFaceControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Vertex\Controls\VertexErrorsSidebarPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Vertex\Controls\VertexErrorsSidebarPanel.Designer.cs">
+      <DependentUpon>VertexErrorsSidebarPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Vertex\Controls\VertexPointControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Vertex\Controls\VertexPointControl.Designer.cs">
+      <DependentUpon>VertexPointControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Vertex\Controls\VertexScaleControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Vertex\Controls\VertexScaleControl.Designer.cs">
+      <DependentUpon>VertexScaleControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Vertex\Controls\VertexSidebarPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Vertex\Controls\VertexSidebarPanel.Designer.cs">
+      <DependentUpon>VertexSidebarPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Vertex\Errors\BackwardsFace.cs" />
+    <Compile Include="Vertex\Errors\ConcaveFace.cs" />
+    <Compile Include="Vertex\Errors\CoplanarFaces.cs" />
+    <Compile Include="Vertex\Errors\IVertexErrorCheck.cs" />
+    <Compile Include="Vertex\Errors\NonPlanarVertices.cs" />
+    <Compile Include="Vertex\Errors\OverlappingVertices.cs" />
+    <Compile Include="Vertex\Errors\VertexError.cs" />
+    <Compile Include="Vertex\Selection\MutableFace.cs" />
+    <Compile Include="Vertex\Selection\MutableSolid.cs" />
+    <Compile Include="Vertex\Selection\VertexHidden.cs" />
+    <Compile Include="Vertex\Selection\VertexSelection.cs" />
+    <Compile Include="Vertex\Selection\VertexSolid.cs" />
+    <Compile Include="Vertex\Tools\VertexFaceEditTool.cs" />
+    <Compile Include="Vertex\Tools\VertexPointTool.cs" />
+    <Compile Include="Vertex\Tools\VertexScaleTool.cs" />
+    <Compile Include="Vertex\Tools\VertexSubtool.cs" />
+    <Compile Include="Vertex\Selection\MutableVertex.cs" />
+    <Compile Include="Vertex\Tools\WrapperDraggableState.cs" />
+    <Compile Include="Vertex\VertexTool.cs" />
     <Compile Include="Widgets\RotationWidget.cs" />
     <Compile Include="Widgets\Widget.cs" />
   </ItemGroup>
@@ -305,6 +354,21 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Texture\TextureToolSidebarPanel.resx">
       <DependentUpon>TextureToolSidebarPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Vertex\Controls\VertexEditFaceControl.resx">
+      <DependentUpon>VertexEditFaceControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Vertex\Controls\VertexErrorsSidebarPanel.resx">
+      <DependentUpon>VertexErrorsSidebarPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Vertex\Controls\VertexPointControl.resx">
+      <DependentUpon>VertexPointControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Vertex\Controls\VertexScaleControl.resx">
+      <DependentUpon>VertexScaleControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Vertex\Controls\VertexSidebarPanel.resx">
+      <DependentUpon>VertexSidebarPanel.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

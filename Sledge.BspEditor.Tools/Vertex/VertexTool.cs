@@ -3,13 +3,16 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Drawing;
 using System.Linq;
+using System.Numerics;
 using System.Threading.Tasks;
-using System.Windows.Forms;
 using LogicAndTrick.Oy;
+using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Modification;
 using Sledge.BspEditor.Modification.Operations.Selection;
+using Sledge.BspEditor.Primitives.MapData;
 using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.BspEditor.Rendering.Converters;
+using Sledge.BspEditor.Rendering.Resources;
 using Sledge.BspEditor.Rendering.Viewport;
 using Sledge.BspEditor.Tools.Draggable;
 using Sledge.BspEditor.Tools.Properties;
@@ -22,11 +25,14 @@ using Sledge.Common.Shell.Documents;
 using Sledge.Common.Shell.Hooks;
 using Sledge.Common.Translations;
 using Sledge.DataStructures.Geometric;
+using Sledge.Providers.Texture;
 using Sledge.Rendering.Cameras;
-using Sledge.Rendering.Scenes;
-using Sledge.Rendering.Scenes.Renderables;
+using Sledge.Rendering.Engine;
+using Sledge.Rendering.Pipelines;
+using Sledge.Rendering.Primitives;
+using Sledge.Rendering.Resources;
+using Sledge.Rendering.Viewports;
 using Sledge.Shell.Input;
-using Line = Sledge.DataStructures.Geometric.Line;
 
 namespace Sledge.BspEditor.Tools.Vertex
 {
@@ -37,6 +43,7 @@ namespace Sledge.BspEditor.Tools.Vertex
     [AutoTranslate]
     public class VertexTool : BaseDraggableTool, IInitialiseHook
     {
+        [Import] private EngineInterface _engine;
         [ImportMany] private IEnumerable<Lazy<VertexSubtool>> _subTools;
         [ImportMany] private IEnumerable<Lazy<IVertexErrorCheck>> _errorChecks;
         [Import] private Lazy<MapObjectConverter> _converter;
@@ -172,14 +179,14 @@ namespace Sledge.BspEditor.Tools.Vertex
         
         #region 3D interaction
         
-        private Coordinate GetIntersectionPoint(Solid obj, Line line)
+        private Vector3? GetIntersectionPoint(Solid obj, Line line)
         {
             // todo !selection opacity/hidden
             //.Where(x => x.Opacity > 0 && !x.IsHidden)
             return obj?.GetPolygons()
                 .Select(x => x.GetIntersectionPoint(line))
                 .Where(x => x != null)
-                .OrderBy(x => (x - line.Start).VectorMagnitude())
+                .OrderBy(x => (x.Value - line.Start).Length())
                 .FirstOrDefault();
         }
 
@@ -200,7 +207,8 @@ namespace Sledge.BspEditor.Tools.Vertex
         protected override void MouseDown(MapViewport viewport, PerspectiveCamera camera, ViewportEvent e)
         {
             // First, get the ray that is cast from the clicked point along the viewport frustrum
-            var ray = viewport.CastRayFromScreen(e.X, e.Y);
+            var (start, end) = camera.CastRayFromScreen(new Vector3(e.X, e.Y, 0));
+            var ray = new Line(start, end);
 
             // Grab all the elements that intersect with the ray
             var hits = GetBoundingBoxIntersections(ray);
@@ -209,7 +217,7 @@ namespace Sledge.BspEditor.Tools.Vertex
             var closestObject = hits
                 .Select(x => new { Item = x, Intersection = GetIntersectionPoint(x, ray) })
                 .Where(x => x.Intersection != null)
-                .OrderBy(x => (x.Intersection - ray.Start).VectorMagnitude())
+                .OrderBy(x => (x.Intersection.Value - ray.Start).Length())
                 .Select(x => x.Item)
                 .FirstOrDefault();
 
@@ -231,11 +239,11 @@ namespace Sledge.BspEditor.Tools.Vertex
         private IMapObject SelectionTest(MapViewport viewport, ViewportEvent e)
         {
             // Create a box to represent the click, with a tolerance level
-            var unused = viewport.GetUnusedCoordinate(new Coordinate(100000, 100000, 100000));
-            var tolerance = 4 / (decimal) viewport.Zoom; // Selection tolerance of four pixels
-            var used = viewport.Expand(new Coordinate(tolerance, tolerance, 0));
+            var unused = viewport.GetUnusedCoordinate(new Vector3(100000, 100000, 100000));
+            var tolerance = 4 / viewport.Zoom; // Selection tolerance of four pixels
+            var used = viewport.Expand(new Vector3(tolerance, tolerance, 0));
             var add = used + unused;
-            var click = viewport.ProperScreenToWorld(e.X, e.Y);
+            var click = viewport.ScreenToWorld(e.X, e.Y);
             var box = new Box(click - add, click + add);
             return GetLineIntersections(box).FirstOrDefault();
         }
@@ -249,25 +257,123 @@ namespace Sledge.BspEditor.Tools.Vertex
 
         #endregion
 
-        protected override IEnumerable<SceneObject> GetSceneObjects()
+        public override void Render(BufferBuilder builder)
         {
-            var tasks = _selection.Select(x => _converter.Value.Convert(Document, x.Copy)).ToList();
-            Task.WaitAll(tasks.OfType<Task>().ToArray());
-            var objects = tasks.Select(x => x.Result).Where(x => x != null).SelectMany(x => x.SceneObjects.Values).ToList();
-            foreach (var o in objects.OfType<RenderableObject>())
+            base.Render(builder);
+
+            foreach (var x in _selection)
             {
-                o.ForcedRenderFlags |= RenderFlags.Wireframe;
-                o.TintColor = Colour.Blend(Color.FromArgb(128, Color.Green), o.TintColor);
-                o.AccentColor = Color.White;
+                Convert(builder, Document, x.Copy).Wait();
             }
-            objects.AddRange(base.GetSceneObjects());
-            return objects;
         }
 
         public new void Invalidate()
         {
             Oy.Publish("VertexTool:Updated", _selection);
             base.Invalidate();
+        }
+
+        private async Task Convert(BufferBuilder builder, MapDocument document, MutableSolid solid)
+        {
+            var displayFlags = document.Map.Data.GetOne<DisplayFlags>();
+            var hideNull = displayFlags?.HideNullTextures == true;
+
+            // Pack the vertices like this [ f1v1 ... f1vn ] ... [ fnv1 ... fnvn ]
+            var numVertices = (uint)solid.Faces.Sum(x => x.Vertices.Count);
+
+            // Pack the indices like this [ solid1 ... solidn ] [ wireframe1 ... wireframe n ]
+            var numSolidIndices = (uint)solid.Faces.Sum(x => (x.Vertices.Count - 2) * 3);
+            var numWireframeIndices = numVertices * 2;
+
+            var points = new VertexStandard[numVertices];
+            var indices = new uint[numSolidIndices + numWireframeIndices];
+
+            var c = Color.Red;
+            var colour = new Vector4(c.R, c.G, c.B, c.A) / 255f;
+
+            c = Color.Green;
+            var tint = new Vector4(c.R, c.G, c.B, c.A) / 255f;
+
+            var tc = await document.Environment.GetTextureCollection();
+
+            var vi = 0u;
+            var si = 0u;
+            var wi = numSolidIndices;
+            foreach (var face in solid.Faces)
+            {
+                var opacity = tc.GetOpacity(face.Texture.Name);
+                var t = await tc.GetTextureItem(face.Texture.Name);
+                var w = t?.Width ?? 0;
+                var h = t?.Height ?? 0;
+
+                var tintModifier = new Vector4(0, 0, 0, 1 - opacity);
+
+                var offs = vi;
+                var numFaceVerts = (uint)face.Vertices.Count;
+
+                var textureCoords = face.GetTextureCoordinates(w, h).ToList();
+
+                var normal = face.Plane.Normal;
+                for (var i = 0; i < face.Vertices.Count; i++)
+                {
+                    var v = face.Vertices[i];
+                    points[vi++] = new VertexStandard
+                    {
+                        Position = v.Position,
+                        Colour = colour,
+                        Normal = normal,
+                        Texture = new Vector2(textureCoords[i].Item2, textureCoords[i].Item3),
+                        Tint = tint - tintModifier
+                    };
+                }
+
+                // Triangles - [0 1 2]  ... [0 n-1 n]
+                for (uint i = 2; i < numFaceVerts; i++)
+                {
+                    indices[si++] = offs;
+                    indices[si++] = offs + i - 1;
+                    indices[si++] = offs + i;
+                }
+
+                // Lines - [0 1] ... [n-1 n] [n 0]
+                for (uint i = 0; i < numFaceVerts; i++)
+                {
+                    indices[wi++] = offs + i;
+                    indices[wi++] = offs + (i == numFaceVerts - 1 ? 0 : i + 1);
+                }
+            }
+
+            var groups = new List<BufferGroup>();
+
+            uint texOffset = 0;
+            foreach (var f in solid.Faces)
+            {
+                var texInd = (uint)(f.Vertices.Count - 2) * 3;
+
+                if (hideNull && tc.IsNullTexture(f.Texture.Name))
+                {
+                    texOffset += texInd;
+                    continue;
+                }
+
+                var opacity = tc.GetOpacity(f.Texture.Name);
+                var t = await tc.GetTextureItem(f.Texture.Name);
+                var transparent = opacity < 0.95f || t?.Flags.HasFlag(TextureFlags.Transparent) == true;
+
+                var texture = $"{document.Environment.ID}::{f.Texture.Name}";
+                groups.Add(new BufferGroup(t == null ? PipelineType.FlatColourGeneric : PipelineType.TexturedGeneric, CameraType.Perspective, transparent, f.Origin, texture, texOffset, texInd));
+                texOffset += texInd;
+
+                if (t != null)
+                {
+                    _engine.UploadTexture(texture, () => new EnvironmentTextureSource(document.Environment, t));
+                }
+            }
+
+            // groups.Add(new BufferGroup(PipelineType.FlatColourGeneric, 0, numSolidIndices));
+            groups.Add(new BufferGroup(PipelineType.WireframeGeneric, CameraType.Both, false, solid.BoundingBox.Center, numSolidIndices, numWireframeIndices));
+
+            builder.Append(points, indices, groups);
         }
     }
 }

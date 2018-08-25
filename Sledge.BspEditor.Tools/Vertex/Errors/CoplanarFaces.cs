@@ -12,7 +12,7 @@ namespace Sledge.BspEditor.Tools.Vertex.Errors
     {
         private const string Key = "Sledge.BspEditor.Tools.Vertex.Errors.CoplanarFaces";
 
-        private IEnumerable<Face> GetCoplanarFaces(Solid solid)
+        private IEnumerable<MutableFace> GetCoplanarFaces(MutableSolid solid)
         {
             var faces = solid.Faces.ToList();
             return faces.Where(f1 => faces.Where(f2 => f2 != f1).Any(f2 => f2.Plane == f1.Plane));

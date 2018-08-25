@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
+using System.Numerics;
 using Sledge.BspEditor.Primitives.MapObjectData;
 using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.BspEditor.Tools.Vertex.Selection;
-using Sledge.DataStructures.Geometric;
 
 namespace Sledge.BspEditor.Tools.Vertex.Errors
 {
@@ -13,14 +13,14 @@ namespace Sledge.BspEditor.Tools.Vertex.Errors
     {
         private const string Key = "Sledge.BspEditor.Tools.Vertex.Errors.BackwardsFace";
 
-        private Coordinate GetOrigin(IEnumerable<Face> faces)
+        private Vector3 GetOrigin(IEnumerable<MutableFace> faces)
         {
             var points = faces.SelectMany(x => x.Vertices).ToList();
-            var origin = points.Aggregate(Coordinate.Zero, (x, y) => x + y) / points.Count;
+            var origin = points.Aggregate(Vector3.Zero, (x, y) => x + y.Position) / points.Count;
             return origin;
         }
 
-        private IEnumerable<Face> GetBackwardsFaces(Solid solid, decimal epsilon = 0.001m)
+        private IEnumerable<MutableFace> GetBackwardsFaces(MutableSolid solid, float epsilon = 0.001f)
         {
             var faces = solid.Faces.ToList();
             var origin = GetOrigin(faces);
@@ -29,7 +29,7 @@ namespace Sledge.BspEditor.Tools.Vertex.Errors
 
         public IEnumerable<VertexError> GetErrors(VertexSolid solid)
         {
-            foreach (var face in GetBackwardsFaces(solid.Copy, 0.5m))
+            foreach (var face in GetBackwardsFaces(solid.Copy, 0.5f))
             {
                 yield return new VertexError(Key, solid).Add(face);
             }
