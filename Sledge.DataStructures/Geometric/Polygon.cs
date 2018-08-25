@@ -215,51 +215,6 @@ namespace Sledge.DataStructures.Geometric
             return Split(clip, out back, out front, out _, out _);
         }
 
-        private struct Vector3d
-        {
-            public decimal X;
-            public decimal Y;
-            public decimal Z;
-
-            public Vector3d(decimal x, decimal y, decimal z)
-            {
-                X = x;
-                Y = y;
-                Z = z;
-            }
-
-            public static Vector3d operator +(Vector3d left, Vector3d right)
-            {
-                return new Vector3d(left.X + right.X, left.Y + right.Y, left.Z + right.Z);
-            }
-
-            public static Vector3d operator *(Vector3d left, decimal right)
-            {
-                return new Vector3d(left.X * right, left.Y * right, left.Z * right);
-            }
-
-            public override string ToString()
-            {
-                return $"<{X}, {Y}, {Z}>";
-            }
-        }
-
-        private struct Vector4d
-        {
-            public decimal X;
-            public decimal Y;
-            public decimal Z;
-            public decimal W;
-
-            public Vector4d(decimal x, decimal y, decimal z, decimal w)
-            {
-                X = x;
-                Y = y;
-                Z = z;
-                W = w;
-            }
-        }
-
         /// <summary>
         /// Splits this polygon by a clipping plane, returning the back and front planes.
         /// The original polygon is not modified.
@@ -272,11 +227,9 @@ namespace Sledge.DataStructures.Geometric
         /// <returns>True if the split was successful</returns>
         public bool Split(Plane clip, out Polygon back, out Polygon front, out Polygon coplanarBack, out Polygon coplanarFront)
         {
-            const decimal epsilon = (decimal) NumericsExtensions.Epsilon;
+            const float epsilon = NumericsExtensions.Epsilon;
             
-            var plane = new Vector4d((decimal) clip.A, (decimal) clip.B, (decimal) clip.C, (decimal) clip.D);
-            var verts = Vertices.Select(x => new Vector3d((decimal) x.X, (decimal) x.Y, (decimal) x.Z)).ToList();
-            var distances = verts.Select(x => plane.X * x.X + plane.Y * x.Y + plane.Z * x.Z + plane.W).ToList();
+            var distances = Vertices.Select(clip.EvalAtPoint).ToList();
             
             int cb = 0, cf = 0;
             for (var i = 0; i < distances.Count; i++)
@@ -285,8 +238,6 @@ namespace Sledge.DataStructures.Geometric
                 else if (distances[i] > epsilon) cf++;
                 else distances[i] = 0;
             }
-
-            Console.WriteLine(string.Join(" ; ", distances));
 
             // Check non-spanning cases
             if (cb == 0 && cf == 0)
@@ -312,33 +263,16 @@ namespace Sledge.DataStructures.Geometric
                 return false;
             }
 
-            //var count = Vertices.Count;
-            //
-            var classify = ClassifyAgainstPlane(clip, out var classifications, out _, out _, out _);
-            
-            //// If the polygon doesn't span the plane, return false.
-            //if (classify != PlaneClassification.Spanning)
-            //{
-            //    back = front = null;
-            //    coplanarBack = coplanarFront = null;
-            //    if (classify == PlaneClassification.Back) back = this;
-            //    else if (classify == PlaneClassification.Front) front = this;
-            //    else if (GetPlane().Normal.Dot(clip.Normal) > 0) coplanarFront = this;
-            //    else coplanarBack = this;
-            //    return false;
-            //}
-            //
-
             // Get the new front and back vertices
-            var backVerts = new List<Vector3d>();
-            var frontVerts = new List<Vector3d>();
+            var backVerts = new List<Vector3>();
+            var frontVerts = new List<Vector3>();
 
-            for (var i = 0; i < verts.Count; i++)
+            for (var i = 0; i < Vertices.Count; i++)
             {
-                var j = (i + 1) % verts.Count;
+                var j = (i + 1) % Vertices.Count;
 
-                Vector3d s = verts[i], e = verts[j];
-                decimal sd = distances[i], ed = distances[j];
+                Vector3 s = Vertices[i], e = Vertices[j];
+                float sd = distances[i], ed = distances[j];
 
                 if (sd <= 0) backVerts.Add(s);
                 if (sd >= 0) frontVerts.Add(s);
@@ -352,39 +286,6 @@ namespace Sledge.DataStructures.Geometric
                     frontVerts.Add(intersect);
                 }
             }
-
-
-            //var prev = 0;
-            //
-            //for (var i = 0; i <= count; i++)
-            //{
-            //    var idx = i % count;
-            //    var end = Vertices[idx];
-            //    var cls = classifications[idx];
-            //
-            //    // Check plane crossing
-            //    if (i > 0 && cls != 0 && prev != 0 && prev != cls)
-            //    {
-            //        // This line end point has crossed the plane
-            //        // Add the line intersect to the 
-            //        var start = Vertices[i - 1];
-            //        var line = new Line(start, end);
-            //        var isect = clip.GetIntersectionPoint(line, true);
-            //        if (isect == null) throw new Exception("Expected intersection, got null.");
-            //        frontVerts.Add(isect.Value);
-            //        backVerts.Add(isect.Value);
-            //    }
-            //
-            //    // Add original points
-            //    if (i < Vertices.Count)
-            //    {
-            //        // OnPlane points get put in both polygons, doesn't generate split
-            //        if (cls >= 0) frontVerts.Add(end);
-            //        if (cls <= 0) backVerts.Add(end);
-            //    }
-            //
-            //    prev = cls;
-            //}
 
             back = new Polygon(backVerts.Select(x => new Vector3((float) x.X, (float) x.Y, (float) x.Z)));
             front = new Polygon(frontVerts.Select(x => new Vector3((float)x.X, (float)x.Y, (float)x.Z)));
@@ -436,6 +337,11 @@ namespace Sledge.DataStructures.Geometric
 
             var delta = Math.Abs(sum - Math.PI * 2);
             return (delta < 0.001d) ? intersect : (Vector3?) null;
+        }
+
+        public Precision.Polygon ToPrecisionPolygon()
+        {
+            return new Precision.Polygon(Vertices.Select(x => x.ToPrecisionVector3()));
         }
     }
 }

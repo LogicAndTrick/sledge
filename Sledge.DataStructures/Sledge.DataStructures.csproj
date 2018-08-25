@@ -51,7 +51,8 @@
     <Compile Include="Geometric\Cloud.cs" />
     <Compile Include="Geometric\CsgNode.cs" />
     <Compile Include="Geometric\CsgSolid.cs" />
-    <Compile Include="Geometric\DVector3.cs" />
+    <Compile Include="Geometric\Precision\Polyhedron.cs" />
+    <Compile Include="Geometric\Precision\Vector3.cs" />
     <Compile Include="Geometric\Polygon.cs" />
     <Compile Include="Geometric\Plane.cs" />
     <Compile Include="Geometric\Polyhedron.cs" />
@@ -65,9 +66,10 @@
     <Compile Include="GameData\Property.cs" />
     <Compile Include="GameData\VariableType.cs" />
     <Compile Include="Geometric\Line.cs" />
-    <Compile Include="Geometric\DVector3TypeConverter.cs" />
     <Compile Include="Geometric\NumericsExtensions.cs" />
     <Compile Include="Geometric\PlaneClassification.cs" />
+    <Compile Include="Geometric\Precision\Plane.cs" />
+    <Compile Include="Geometric\Precision\Polygon.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

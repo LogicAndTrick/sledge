@@ -300,22 +300,22 @@ namespace Sledge.BspEditor.Tools.Clip
                     }
                 );
 
-                if (!_clipPlanePoint1.Value.EquivalentTo(_clipPlanePoint2.Value)
-                    && !_clipPlanePoint2.Value.EquivalentTo(_clipPlanePoint3.Value)
-                    && !_clipPlanePoint1.Value.EquivalentTo(_clipPlanePoint3.Value)
+                if (!p1.EquivalentTo(p2)
+                    && !p2.EquivalentTo(p3)
+                    && !p1.EquivalentTo(p3)
                     && !Document.Selection.IsEmpty)
                 {
-                    var plane = new Plane(_clipPlanePoint1.Value, _clipPlanePoint2.Value, _clipPlanePoint3.Value);
+                    var plane = new Plane(p1, p2, p3).ToPrecisionPlane();
 
                     // Draw the clipped solids
                     var faces = new List<Polygon>();
                     foreach (var solid in Document.Selection.OfType<Solid>().ToList())
                     {
-                        var s = solid.ToPolyhedron();
+                        var s = solid.ToPolyhedron().ToPrecisionPolyhedron();
                         if (s.Split(plane, out var back, out var front))
                         {
-                            if (_side != ClipSide.Front) faces.AddRange(back.Polygons);
-                            if (_side != ClipSide.Back) faces.AddRange(front.Polygons);
+                            if (_side != ClipSide.Front) faces.AddRange(back.Polygons.Select(x => x.ToStandardPolygon()));
+                            if (_side != ClipSide.Back) faces.AddRange(front.Polygons.Select(x => x.ToStandardPolygon()));
                         }
                     }
 
@@ -335,7 +335,7 @@ namespace Sledge.BspEditor.Tools.Clip
 
                     builder.Append(
                         verts, indices.Select(x => (uint) x),
-                        new[] { new BufferGroup(PipelineType.WireframeGeneric, CameraType.Both, false, _clipPlanePoint1.Value, 0, (uint) indices.Count) }
+                        new[] { new BufferGroup(PipelineType.WireframeGeneric, CameraType.Both, false, p1, 0, (uint) indices.Count) }
                     );
 
                     // var lines = faces.Select(x => new Line(Color.White, x.Vertices.Select(v => v).ToArray()) {Width = 2});

@@ -42,6 +42,11 @@ namespace Sledge.DataStructures.Geometric
             );
         }
 
+        public static Precision.Vector3 ToPrecisionVector3(this Vector3 self)
+        {
+            return new Precision.Vector3((decimal) self.X, (decimal) self.Y, (decimal) self.Z);
+        }
+
         // Matrix
         public static Vector3 Transform(this Matrix4x4 self, Vector3 vector) => Vector3.Transform(vector, self);
     }

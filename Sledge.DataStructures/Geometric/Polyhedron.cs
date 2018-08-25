@@ -42,8 +42,6 @@ namespace Sledge.DataStructures.Geometric
                     }
                 }
                 Polygons.Add(poly);
-
-                Console.WriteLine();
             }
 
             // Ensure all the faces point outwards
@@ -146,20 +144,22 @@ namespace Sledge.DataStructures.Geometric
             var backPlanes = new List<Plane> { plane };
             var frontPlanes = new List<Plane> { new Plane(-plane.Normal, -plane.DistanceFromOrigin) };
 
-            backPlanes.AddRange(Polygons.Select(x => x.GetPlane()));
-            frontPlanes.AddRange(Polygons.Select(x => x.GetPlane()));
-
-            //foreach (var face in Polygons)
-            //{
-            //    var classification = face.ClassifyAgainstPlane(plane);
-            //    if (classification != PlaneClassification.Back) frontPlanes.Add(face.GetPlane());
-            //    if (classification != PlaneClassification.Front) backPlanes.Add(face.GetPlane());
-            //}
+            foreach (var face in Polygons)
+            {
+                var classification = face.ClassifyAgainstPlane(plane);
+                if (classification != PlaneClassification.Back) frontPlanes.Add(face.GetPlane());
+                if (classification != PlaneClassification.Front) backPlanes.Add(face.GetPlane());
+            }
 
             back = new Polyhedron(backPlanes);
             front = new Polyhedron(frontPlanes);
             
             return true;
+        }
+
+        public Precision.Polyhedron ToPrecisionPolyhedron()
+        {
+            return new Precision.Polyhedron(Polygons.Select(x => x.ToPrecisionPolygon()));
         }
     }
 }

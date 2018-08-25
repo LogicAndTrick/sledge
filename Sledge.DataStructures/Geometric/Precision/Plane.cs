@@ -1,21 +1,18 @@
 ﻿using System;
-using System.Numerics;
-using System.Runtime.Serialization;
 
-namespace Sledge.DataStructures.Geometric
+namespace Sledge.DataStructures.Geometric.Precision
 {
     /// <summary>
     /// Defines a plane in the form Ax + By + Cz + D = 0
     /// </summary>
-    [Serializable]
-    public class Plane : ISerializable
+    public struct Plane
     {
         public Vector3 Normal { get; }
-        public float DistanceFromOrigin { get; }
-        public float A { get; }
-        public float B { get; }
-        public float C { get; }
-        public float D { get; }
+        public decimal DistanceFromOrigin { get; }
+        public decimal A { get; }
+        public decimal B { get; }
+        public decimal C { get; }
+        public decimal D { get; }
         public Vector3 PointOnPlane { get; }
         
         public Plane(Vector3 p1, Vector3 p2, Vector3 p3)
@@ -45,7 +42,7 @@ namespace Sledge.DataStructures.Geometric
             D = -DistanceFromOrigin;
         }
         
-        public Plane(Vector3 norm, float distanceFromOrigin)
+        public Plane(Vector3 norm, decimal distanceFromOrigin)
         {
             Normal = norm.Normalise();
             DistanceFromOrigin = distanceFromOrigin;
@@ -57,17 +54,6 @@ namespace Sledge.DataStructures.Geometric
             D = -DistanceFromOrigin;
         }
 
-        protected Plane(SerializationInfo info, StreamingContext context) : this((Vector3)info.GetValue("Normal", typeof(Vector3)), info.GetSingle("DistanceFromOrigin"))
-        {
-
-        }
-
-        public void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            info.AddValue("Normal", Normal);
-            info.AddValue("DistanceFromOrigin", DistanceFromOrigin);
-        }
-
         ///  <summary>Finds if the given point is above, below, or on the plane.</summary>
         ///  <param name="co">The Vector3 to test</param>
         /// <param name="epsilon">Tolerance value</param>
@@ -76,7 +62,7 @@ namespace Sledge.DataStructures.Geometric
         ///  value == 1 if Vector3 is above the plane<br />
         ///  value == 0 if Vector3 is on the plane.
         /// </returns>
-        public int OnPlane(Vector3 co, float epsilon = 0.5f)
+        public int OnPlane(Vector3 co, decimal epsilon = 0.5m)
         {
             //eval (s = Ax + By + Cz + D) at point (x,y,z)
             //if s > 0 then point is "above" the plane (same side as normal)
@@ -91,24 +77,25 @@ namespace Sledge.DataStructures.Geometric
         /// <summary>
         /// Gets the point that the line intersects with this plane.
         /// </summary>
-        /// <param name="line">The line to intersect with</param>
+        /// <param name="start">The start of the line to intersect with</param>
+        /// <param name="end">The end of the line to intersect with</param>
         /// <param name="ignoreDirection">Set to true to ignore the direction
         /// of the plane and line when intersecting. Defaults to false.</param>
         /// <param name="ignoreSegment">Set to true to ignore the start and
         /// end points of the line in the intersection. Defaults to false.</param>
         /// <returns>The point of intersection, or null if the line does not intersect</returns>
-        public Vector3? GetIntersectionPoint(Line line, bool ignoreDirection = false, bool ignoreSegment = false)
+        public Vector3? GetIntersectionPoint(Vector3 start, Vector3 end, bool ignoreDirection = false, bool ignoreSegment = false)
         {
             // http://softsurfer.com/Archive/algorithm_0104/algorithm_0104B.htm#Line%20Intersections
             // http://paulbourke.net/geometry/planeline/
 
-            var dir = line.End - line.Start;
+            var dir = end - start;
             var denominator = -Normal.Dot(dir);
-            var numerator = Normal.Dot(line.Start - Normal * DistanceFromOrigin);
-            if (Math.Abs(denominator) < 0.00001f || (!ignoreDirection && denominator < 0)) return null;
+            var numerator = Normal.Dot(start - Normal * DistanceFromOrigin);
+            if (Math.Abs(denominator) < 0.00001m || (!ignoreDirection && denominator < 0)) return null;
             var u = numerator / denominator;
             if (!ignoreSegment && (u < 0 || u > 1)) return null;
-            return line.Start + u * dir;
+            return start + u * dir;
         }
 
         /// <summary>
@@ -124,7 +111,7 @@ namespace Sledge.DataStructures.Geometric
             return point - ((point - PointOnPlane).Dot(Normal)) * Normal;
         }
 
-        public float EvalAtPoint(Vector3 co)
+        public decimal EvalAtPoint(Vector3 co)
         {
             return A * co.X + B * co.Y + C * co.Z + D;
         }
@@ -161,54 +148,21 @@ namespace Sledge.DataStructures.Geometric
             var c3 = p1.Normal.Cross(p2.Normal);
 
             var denom = p1.Normal.Dot(c1);
-            if (denom < 0.00001f) return null; // No intersection, planes must be parallel
+            if (denom < 0.00001m) return null; // No intersection, planes must be parallel
 
             var numer = (-p1.D * c1) + (-p2.D * c2) + (-p3.D * c3);
             return numer / denom;
         }
 
-        public bool EquivalentTo(Plane other, float delta = 0.0001f)
+        public bool EquivalentTo(Plane other, decimal delta = 0.0001m)
         {
             return Normal.EquivalentTo(other.Normal, delta)
                    && Math.Abs(DistanceFromOrigin - other.DistanceFromOrigin) < delta;
         }
 
-        private bool Equals(Plane other)
+        public Geometric.Plane ToStandardPlane()
         {
-            if (ReferenceEquals(null, other)) return false;
-            if (ReferenceEquals(this, other)) return true;
-            return Equals(other.Normal, Normal) && Math.Abs(other.DistanceFromOrigin - DistanceFromOrigin) < 0.0001f;
-        }
-
-        public override bool Equals(object obj)
-        {
-            if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != typeof(Plane)) return false;
-            return Equals((Plane)obj);
-        }
-
-        public override int GetHashCode()
-        {
-            unchecked
-            {
-                return (Normal.GetHashCode() * 397) ^ DistanceFromOrigin.GetHashCode();
-            }
-        }
-
-        public static bool operator ==(Plane left, Plane right)
-        {
-            return Equals(left, right);
-        }
-
-        public static bool operator !=(Plane left, Plane right)
-        {
-            return !Equals(left, right);
-        }
-
-        public Precision.Plane ToPrecisionPlane()
-        {
-            return new Precision.Plane(Normal.ToPrecisionVector3(), (decimal) DistanceFromOrigin);
+            return new Geometric.Plane(Normal.ToStandardVector3(), (float) DistanceFromOrigin);
         }
     }
 }
