@@ -200,11 +200,18 @@ namespace Sledge.Rendering.Engine
                 : _clearColourOrthographic;
             _commandList.ClearColorTarget(0, cc);
 
+            var renderables = _pipelines.ToDictionary(x => x, x => Scene.GetRenderables(x, renderTarget).OrderBy(r => r.Order).ToList());
+
             foreach (var pipeline in _pipelines.OrderBy(x => x.Order))
             {
-                var renderables = Scene.GetRenderables(pipeline, renderTarget).OrderBy(x => x.Order).ToList();
-                pipeline.Render(Context, renderTarget, _commandList, renderables);
-                pipeline.RenderTransparent(Context, renderTarget, _commandList, renderables);
+                if (!renderables.ContainsKey(pipeline)) continue;
+                pipeline.Render(Context, renderTarget, _commandList, renderables[pipeline]);
+            }
+
+            foreach (var pipeline in _pipelines.OrderBy(x => x.Order))
+            {
+                if (!renderables.ContainsKey(pipeline)) continue;
+                pipeline.RenderTransparent(Context, renderTarget, _commandList, renderables[pipeline]);
             }
             
             _commandList.End();

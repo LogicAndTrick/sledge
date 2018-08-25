@@ -274,7 +274,7 @@ namespace Sledge.BspEditor.Tools.Brush
             var c = Color.Turquoise;
             var colour = new Vector4(c.R, c.G, c.B, c.A) / 255f;
 
-            c = Color.FromArgb(64, Color.Turquoise);
+            c = Color.FromArgb(192, Color.Turquoise);
             var tint = new Vector4(c.R, c.G, c.B, c.A) / 255f;
 
             var tc = await document.Environment.GetTextureCollection();

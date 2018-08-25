@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Drawing;
 using System.Linq;
+using System.Numerics;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using LogicAndTrick.Oy;
@@ -13,18 +14,17 @@ using Sledge.BspEditor.Modification.Operations.Selection;
 using Sledge.BspEditor.Primitives;
 using Sledge.BspEditor.Primitives.MapData;
 using Sledge.BspEditor.Primitives.MapObjects;
-using Sledge.BspEditor.Rendering;
 using Sledge.BspEditor.Rendering.Viewport;
 using Sledge.BspEditor.Tools.Properties;
 using Sledge.Common.Shell.Components;
 using Sledge.DataStructures.Geometric;
 using Sledge.Rendering.Cameras;
-using Sledge.Rendering.Materials;
-using Sledge.Rendering.Scenes;
-using Sledge.Rendering.Scenes.Renderables;
+using Sledge.Rendering.Pipelines;
+using Sledge.Rendering.Primitives;
+using Sledge.Rendering.Resources;
+using Buffer = System.Buffer;
 using Face = Sledge.BspEditor.Primitives.MapObjectData.Face;
 using KeyboardState = Sledge.Shell.Input.KeyboardState;
-using Line = Sledge.Rendering.Scenes.Renderables.Line;
 
 namespace Sledge.BspEditor.Tools.Texture
 {
@@ -83,7 +83,7 @@ namespace Sledge.BspEditor.Tools.Texture
             SetActiveTexture(sel.FirstOrDefault());
         }
 
-        public override void DocumentChanged()
+        protected override void DocumentChanged()
         {
             SetFaceSelectionFromObjectSelection();
             base.DocumentChanged();
@@ -151,13 +151,14 @@ namespace Sledge.BspEditor.Tools.Texture
             var vp = viewport;
             if (vp == null || (e.Button != MouseButtons.Left && e.Button != MouseButtons.Right)) return;
 
-            var ray = vp.CastRayFromScreen(e.X, e.Y);
+            var (start, end) = camera.CastRayFromScreen(new Vector3(e.X, e.Y, 0));
+            var ray = new Line(start, end);
             var hits = GetBoundingBoxIntersections(ray);
 
             var clickedFace = hits.OfType<Solid>().SelectMany(a => a.Faces.Select(f => new { Face = f, Solid = a }))
                 .Select(x => new {x.Face, x.Solid, Intersection = new Polygon(x.Face.Vertices).GetIntersectionPoint(ray) })
                 .Where(x => x.Intersection != null)
-                .OrderBy(x => (x.Intersection - ray.Start).VectorMagnitude())
+                .OrderBy(x => (x.Intersection.Value - ray.Start).Length())
                 .Select(x => x)
                 .FirstOrDefault();
 
@@ -261,45 +262,77 @@ namespace Sledge.BspEditor.Tools.Texture
             // todo: align texture
         }
 
-        protected override IEnumerable<SceneObject> GetSceneObjects()
+        public override void Render(BufferBuilder builder)
         {
-            var list = base.GetSceneObjects().ToList();
+            base.Render(builder);
+
+            var sel = GetSelection();
+            if (sel.IsEmpty) return;
+
+            var verts = new List<VertexStandard>();
+            var indices = new List<int>();
+            var groups = new List<BufferGroup>();
 
             var hideFaceMask = ShouldHideFaceMask;
 
-            foreach (var face in GetSelection())
+            // Add selection highlights
+            if (!hideFaceMask)
             {
-                // face masks
-
-                if (!hideFaceMask)
+                var selectionColour = Color.FromArgb(32, Color.Red).ToVector4();
+                foreach (var face in sel)
                 {
-                    list.Add(new Sledge.Rendering.Scenes.Renderables.Face(
-                        Material.Flat(Color.FromArgb(160, Color.Red)),
-                        face.GetTextureCoordinates(64, 64)
-                            .Select(x => new Sledge.Rendering.Scenes.Renderables.Vertex(x.Item1.ToVector3(), (float) x.Item2, (float) x.Item3)).ToList()
-                    )
+                    var indOffs = indices.Count;
+                    var offs = verts.Count;
+
+                    verts.AddRange(face.Vertices.Select(x => new VertexStandard {Position = x, Colour = selectionColour, Tint = Vector4.One}));
+                    for (var i = 2; i < face.Vertices.Count; i++)
                     {
-                        CameraFlags = CameraFlags.Perspective,
-                        ForcedRenderFlags = face == _sampled ? RenderFlags.Wireframe : RenderFlags.None,
-                        AccentColor = Color.Yellow
-                    });
+                        indices.Add(offs);
+                        indices.Add(offs + i - 1);
+                        indices.Add(offs + i);
+                    }
+
+                    groups.Add(new BufferGroup(PipelineType.FlatColourGeneric, CameraType.Perspective, true, face.Origin, (uint) indOffs, (uint) (indices.Count - indOffs)));
+                }
+
+                builder.Append(verts, indices.Select(x => (uint) x), groups);
+            }
+
+            // Add wireframes - selection outlines and texture axes
+            var lineColour = Color.Yellow.ToVector4();
+            var uAxisColour = Color.Yellow.ToVector4();
+            var vAxisColour = Color.Lime.ToVector4();
+            var wfIndOffs = indices.Count;
+            foreach (var face in sel)
+            {
+                var offs = verts.Count;
+
+                // outlines
+                verts.AddRange(face.Vertices.Select(x => new VertexStandard { Position = x, Colour = lineColour, Tint = Vector4.One }));
+                for (var i = 0; i < face.Vertices.Count; i++)
+                {
+                    indices.Add(offs + i);
+                    indices.Add(offs + (i + 1) % face.Vertices.Count);
                 }
 
                 // texture axes
-
-                var lineStart = (face.Vertices.Aggregate(Coordinate.Zero, (a,b) => a + b) / face.Vertices.Count) + face.Plane.Normal * 0.5m;
+                var lineStart = (face.Vertices.Aggregate(Vector3.Zero, (a, b) => a + b) / face.Vertices.Count) + face.Plane.Normal * 0.5f;
                 var uEnd = lineStart + face.Texture.UAxis * 20;
                 var vEnd = lineStart + face.Texture.VAxis * 20;
 
-                // If we don't want the axis markers to be depth tested, we can use an element instead:
-                //list.Add(new LineElement(PositionType.World, Color.Yellow, new List<Position> { new Position(lineStart.ToVector3()), new Position(uEnd.ToVector3()) }));
-                //list.Add(new LineElement(PositionType.World, Color.FromArgb(0, 255, 0), new List<Position> { new Position(lineStart.ToVector3()), new Position(vEnd.ToVector3()) }));
-
-                list.Add(new Line(Color.Yellow, lineStart.ToVector3(), uEnd.ToVector3()) { CameraFlags = CameraFlags.Perspective });
-                list.Add(new Line(Color.FromArgb(0, 255, 0), lineStart.ToVector3(), vEnd.ToVector3()) { CameraFlags = CameraFlags.Perspective });
+                offs = verts.Count;
+                verts.Add(new VertexStandard { Position = lineStart, Colour = uAxisColour, Tint = Vector4.One });
+                verts.Add(new VertexStandard { Position = uEnd, Colour = uAxisColour, Tint = Vector4.One });
+                verts.Add(new VertexStandard { Position = lineStart, Colour = vAxisColour, Tint = Vector4.One });
+                verts.Add(new VertexStandard { Position = vEnd, Colour = vAxisColour, Tint = Vector4.One });
+                indices.Add(offs + 0);
+                indices.Add(offs + 1);
+                indices.Add(offs + 2);
+                indices.Add(offs + 3);
             }
 
-            return list;
+            groups.Add(new BufferGroup(PipelineType.WireframeGeneric, CameraType.Perspective, false, Vector3.Zero, (uint)wfIndOffs, (uint)(indices.Count - wfIndOffs)));
+            builder.Append(verts, indices.Select(x => (uint)x), groups);
         }
     }
 }

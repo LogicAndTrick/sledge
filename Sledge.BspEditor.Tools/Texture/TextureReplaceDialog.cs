@@ -17,7 +17,6 @@ using Sledge.Common.Shell.Components;
 using Sledge.Common.Shell.Context;
 using Sledge.Common.Shell.Hooks;
 using Sledge.Common.Translations;
-using Sledge.Rendering.Materials;
 using Sledge.Shell;
 
 namespace Sledge.BspEditor.Tools.Texture
@@ -252,8 +251,8 @@ namespace Sledge.BspEditor.Tools.Texture
                     var replace = await tc.GetTextureItem(repl.Replace);
                     if (find != null && replace != null)
                     {
-                        clone.Texture.XScale *= find.Width / (decimal) replace.Width;
-                        clone.Texture.YScale *= find.Height / (decimal) replace.Height;
+                        clone.Texture.XScale *= find.Width / (float) replace.Width;
+                        clone.Texture.YScale *= find.Height / (float) replace.Height;
                     }
                 }
 
@@ -311,7 +310,7 @@ namespace Sledge.BspEditor.Tools.Texture
                     image.Image = bmp;
                 }
 
-                var format = item.Flags.HasFlag(TextureFlags.Missing) ? "Invalid texture" : "{0} x {1}";
+                var format = "{0} x {1}";
                 info.Text = string.Format(format, item.Width, item.Height);
             }
             else

@@ -47,6 +47,12 @@ namespace Sledge.DataStructures.Geometric
             return new Precision.Vector3(self.X, self.Y, self.Z);
         }
 
+        // Vector4
+        public static Vector4 ToVector4(this System.Drawing.Color self)
+        {
+            return new Vector4(self.R, self.G, self.B, self.A) / 255f;
+        }
+
         // Matrix
         public static Vector3 Transform(this Matrix4x4 self, Vector3 vector) => Vector3.Transform(vector, self);
     }

@@ -165,6 +165,48 @@
     <Compile Include="Selection\TransformationHandles\RotationOrigin.cs" />
     <Compile Include="Selection\TransformationHandles\SkewTransformHandle.cs" />
     <Compile Include="Selection\TransformationHandles\TextureTransformationType.cs" />
+    <Compile Include="Texture\AlignMode.cs" />
+    <Compile Include="Texture\ApplyActiveTexture.cs" />
+    <Compile Include="Texture\BrowseActiveTexture.cs" />
+    <Compile Include="Texture\JustifyMode.cs" />
+    <Compile Include="Texture\ReplaceTextures.cs" />
+    <Compile Include="Texture\SmartEditTextureBrowser.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Texture\TextureApplicationForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Texture\TextureApplicationForm.Designer.cs">
+      <DependentUpon>TextureApplicationForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Texture\TextureBrowser.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Texture\TextureBrowser.Designer.cs">
+      <DependentUpon>TextureBrowser.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Texture\TextureListPanel.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Texture\TextureReplaceDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Texture\TextureReplaceDialog.Designer.cs">
+      <DependentUpon>TextureReplaceDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Texture\TextureSidebarPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Texture\TextureSidebarPanel.Designer.cs">
+      <DependentUpon>TextureSidebarPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Texture\TextureTool.cs" />
+    <Compile Include="Texture\TextureToolSidebarPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Texture\TextureToolSidebarPanel.Designer.cs">
+      <DependentUpon>TextureToolSidebarPanel.cs</DependentUpon>
+    </Compile>
     <Compile Include="ToolCursors.cs" />
     <Compile Include="ToolInitialiser.cs" />
     <Compile Include="ToolProcessor.cs" />
@@ -248,6 +290,21 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Selection\SelectToolSidebarPanel.resx">
       <DependentUpon>SelectToolSidebarPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Texture\TextureApplicationForm.resx">
+      <DependentUpon>TextureApplicationForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Texture\TextureBrowser.resx">
+      <DependentUpon>TextureBrowser.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Texture\TextureReplaceDialog.resx">
+      <DependentUpon>TextureReplaceDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Texture\TextureSidebarPanel.resx">
+      <DependentUpon>TextureSidebarPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Texture\TextureToolSidebarPanel.resx">
+      <DependentUpon>TextureToolSidebarPanel.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

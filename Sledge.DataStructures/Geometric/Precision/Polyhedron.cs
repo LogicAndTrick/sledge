@@ -4,7 +4,7 @@ using System.Linq;
 namespace Sledge.DataStructures.Geometric.Precision
 {
     /// <summary>
-    /// Represents a convex polyhedron with at least 4 sides
+    /// Represents a convex polyhedron with at least 4 sides. Uses high-precision value types.
     /// </summary>
     public class Polyhedron
     {

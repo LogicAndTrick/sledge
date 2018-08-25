@@ -305,14 +305,15 @@ namespace Sledge.BspEditor.Tools.Clip
                     && !p1.EquivalentTo(p3)
                     && !Document.Selection.IsEmpty)
                 {
-                    var plane = new Plane(p1, p2, p3).ToPrecisionPlane();
+                    var plane = new Plane(p1, p2, p3);
+                    var pp = plane.ToPrecisionPlane();
 
                     // Draw the clipped solids
                     var faces = new List<Polygon>();
                     foreach (var solid in Document.Selection.OfType<Solid>().ToList())
                     {
                         var s = solid.ToPolyhedron().ToPrecisionPolyhedron();
-                        s.Split(plane, out var back, out var front);
+                        s.Split(pp, out var back, out var front);
 
                         if (_side != ClipSide.Front && back != null) faces.AddRange(back.Polygons.Select(x => x.ToStandardPolygon()));
                         if (_side != ClipSide.Back && front != null) faces.AddRange(front.Polygons.Select(x => x.ToStandardPolygon()));
@@ -337,33 +338,43 @@ namespace Sledge.BspEditor.Tools.Clip
                         new[] { new BufferGroup(PipelineType.WireframeGeneric, CameraType.Both, false, p1, 0, (uint) indices.Count) }
                     );
 
-                    // var lines = faces.Select(x => new Line(Color.White, x.Vertices.Select(v => v).ToArray()) {Width = 2});
-                    // list.AddRange(lines);
-                    // 
-                    // // Draw the clipping plane
-                    // var poly = new Polygon(plane);
-                    // var bbox = Document.Selection.GetSelectionBoundingBox();
-                    // var point = bbox.Center;
-                    // foreach (var boxPlane in bbox.GetBoxPlanes())
-                    // {
-                    //     var proj = boxPlane.Project(point);
-                    //     var dist = (point - proj).VectorMagnitude() * 0.1m;
-                    //     poly.Split(new Plane(boxPlane.Normal, proj + boxPlane.Normal * Math.Max(dist, 100)));
-                    // }
-                    // 
-                    // // Add the face in both directions so it renders on both sides
-                    // list.Add(new Face(
-                    //     Material.Flat(Color.FromArgb(100, Color.Turquoise)),
-                    //     poly.Vertices.Select(x => new Sledge.Rendering.Scenes.Renderables.Vertex(x.ToVector3(), 0, 0)).ToList())
-                    // {
-                    //     CameraFlags = CameraFlags.Perspective
-                    // });
-                    // list.Add(new Face(
-                    //     Material.Flat(Color.FromArgb(100, Color.Turquoise)),
-                    //     poly.Vertices.Select(x => new Sledge.Rendering.Scenes.Renderables.Vertex(x.ToVector3(), 0, 0)).Reverse().ToList())
-                    // {
-                    //     CameraFlags = CameraFlags.Perspective
-                    // });
+                    // Draw the clipping plane
+                    
+                    var poly = new DataStructures.Geometric.Precision.Polygon(pp);
+                    var bbox = Document.Selection.GetSelectionBoundingBox();
+                    var point = bbox.Center;
+                    foreach (var boxPlane in bbox.GetBoxPlanes())
+                    {
+                        var proj = boxPlane.Project(point);
+                        var dist = (point - proj).Length() * 0.1f;
+                        var pln = new Plane(boxPlane.Normal, proj + boxPlane.Normal * Math.Max(dist, 100)).ToPrecisionPlane();
+                        if (poly.Split(pln, out var b, out _)) poly = b;
+                    }
+
+                    verts.Clear();
+                    indices.Clear();
+
+                    var clipPoly = poly.ToStandardPolygon();
+                    var colour = Color.FromArgb(64, Color.Turquoise).ToVector4();
+
+                    // Add the face in both directions so it renders on both sides
+                    var polies = new[] { clipPoly.Vertices.ToList(), clipPoly.Vertices.Reverse().ToList() };
+                    foreach (var p in polies)
+                    {
+                        var offs = verts.Count;
+                        verts.AddRange(p.Select(x => new VertexStandard { Position = x, Colour = colour, Tint = Vector4.One }));
+                        for (var i = 2; i < clipPoly.Vertices.Count; i++)
+                        {
+                            indices.Add(offs);
+                            indices.Add(offs + i - 1);
+                            indices.Add(offs + i);
+                        }
+                    }
+
+                    builder.Append(
+                        verts, indices.Select(x => (uint)x),
+                        new[] { new BufferGroup(PipelineType.FlatColourGeneric, CameraType.Perspective, true, p1, 0, (uint)indices.Count) }
+                    );
                 }
             }
         }

@@ -359,11 +359,11 @@ namespace Sledge.BspEditor.Tools.Texture
             
             this.InvokeLater(() => {
 
-                ScaleXValue.Value = _currentTextureProperties.XScale;
-                ScaleYValue.Value = _currentTextureProperties.YScale;
-                ShiftXValue.Value = _currentTextureProperties.XShift;
-                ShiftYValue.Value = _currentTextureProperties.YShift;
-                RotationValue.Value = _currentTextureProperties.Rotation;
+                ScaleXValue.Value = (decimal) _currentTextureProperties.XScale;
+                ScaleYValue.Value = (decimal) _currentTextureProperties.YScale;
+                ShiftXValue.Value = (decimal) _currentTextureProperties.XShift;
+                ShiftYValue.Value = (decimal) _currentTextureProperties.YShift;
+                RotationValue.Value = (decimal) _currentTextureProperties.Rotation;
 
                 if (_currentTextureProperties.DifferentXScaleValues) ScaleXValue.Text = "";
                 if (_currentTextureProperties.DifferentYScaleValues) ScaleYValue.Text = "";
@@ -394,11 +394,11 @@ namespace Sledge.BspEditor.Tools.Texture
         {
             if (_freeze) return;
 
-            if (!_currentTextureProperties.DifferentXScaleValues) _currentTextureProperties.XScale = ScaleXValue.Value;
-            if (!_currentTextureProperties.DifferentYScaleValues) _currentTextureProperties.YScale = ScaleYValue.Value;
-            if (!_currentTextureProperties.DifferentXShiftValues) _currentTextureProperties.XShift = ShiftXValue.Value;
-            if (!_currentTextureProperties.DifferentYShiftValues) _currentTextureProperties.YShift = ShiftYValue.Value;
-            if (!_currentTextureProperties.DifferentRotationValues) _currentTextureProperties.Rotation = RotationValue.Value;
+            if (!_currentTextureProperties.DifferentXScaleValues) _currentTextureProperties.XScale = (float) ScaleXValue.Value;
+            if (!_currentTextureProperties.DifferentYScaleValues) _currentTextureProperties.YScale = (float) ScaleYValue.Value;
+            if (!_currentTextureProperties.DifferentXShiftValues) _currentTextureProperties.XShift = (float) ShiftXValue.Value;
+            if (!_currentTextureProperties.DifferentYShiftValues) _currentTextureProperties.YShift = (float) ShiftYValue.Value;
+            if (!_currentTextureProperties.DifferentRotationValues) _currentTextureProperties.Rotation = (float) RotationValue.Value;
 
             ApplyPropertyChanges(true);
             DebouncedPropertiesChanged?.Invoke(this, EventArgs.Empty);
@@ -751,11 +751,11 @@ namespace Sledge.BspEditor.Tools.Texture
                 // WinForms hack: use a tiny decimal place so that the NumericUpDown controls work when the value is typed into the box
                 // E.g. Different X scale defaults to value of 1, but if 1 is typed in the box, the ValueChanged event won't fire since the backing value hasn't changed
                 // Setting the value to 1.000001 instead triggers the change event properly, and since the NUD rounds to 4 decimal places, pressing the up/down buttons will start from the rounded value.
-                if (DifferentXScaleValues) XScale = 1.000001m;
-                if (DifferentYScaleValues) YScale = 1.000001m;
-                if (DifferentXShiftValues) XShift = 0.000001m;
-                if (DifferentYShiftValues) YShift = 0.000001m;
-                if (DifferentRotationValues) Rotation = 0.000001m;
+                if (DifferentXScaleValues) XScale = 1.000001f;
+                if (DifferentYScaleValues) YScale = 1.000001f;
+                if (DifferentXShiftValues) XShift = 0.000001f;
+                if (DifferentYShiftValues) YShift = 0.000001f;
+                if (DifferentRotationValues) Rotation = 0.000001f;
 
                 if (XScale < -4096 || XScale > 4096) XScale = 1;
                 if (YScale < -4096 || YScale > 4096) YScale = 1;

@@ -3,6 +3,9 @@ using System.Globalization;
 
 namespace Sledge.DataStructures.Geometric.Precision
 {
+    /// <summary>
+    /// A 3-dimensional immutable vector that uses high-precision value types.
+    /// </summary>
     [Serializable]
     public struct Vector3
     {

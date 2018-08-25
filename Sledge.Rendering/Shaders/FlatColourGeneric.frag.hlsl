@@ -13,9 +13,12 @@ static const float ambient = 0.8f;
 
 float4 main(FragmentIn input) : SV_Target0
 {
+    float4 tex = input.fColour;
+
     float incidence = dot(input.fNormal.xyz, lightDirection);
     float lighting = lightIntensity * incidence + ambient;
-    float4 c = input.fColour * lighting * input.fTint;
-    c.w = input.fColour.w;
-    return c;
+
+    float4 c = lighting * tex;
+    c.w = tex.w;
+    return c * input.fTint;
 }
