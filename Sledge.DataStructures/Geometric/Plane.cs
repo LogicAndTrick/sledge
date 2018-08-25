@@ -208,7 +208,7 @@ namespace Sledge.DataStructures.Geometric
 
         public Precision.Plane ToPrecisionPlane()
         {
-            return new Precision.Plane(Normal.ToPrecisionVector3(), (decimal) DistanceFromOrigin);
+            return new Precision.Plane(Normal.ToPrecisionVector3(), DistanceFromOrigin);
         }
     }
 }

@@ -16,7 +16,7 @@ namespace Sledge.DataStructures.Geometric
 
         public CsgNode(CsgSolid solid) : this()
         {
-            Build(solid.Polygons.Select(x => x.Clone()).ToList());
+            Build(solid.Polygons.ToList());
         }
 
         private CsgNode()
@@ -29,16 +29,16 @@ namespace Sledge.DataStructures.Geometric
         private List<Polygon> ClipPolygons(IEnumerable<Polygon> polygons)
         {
             if (Plane == null) return polygons.ToList();
+            var pp = Plane.ToPrecisionPlane();
             var front = new List<Polygon>();
             var back = new List<Polygon>();
-            foreach (var polygon in polygons)
+            foreach (var polygon in polygons.Select(x => x.ToPrecisionPolygon()))
             {
-                Polygon f, b, cf, cb;
-                polygon.Split(Plane, out b, out f, out cb, out cf);
-                if (f != null) front.Add(f);
-                if (b != null) back.Add(b);
-                if (cf != null) front.Add(cf);
-                if (cb != null) back.Add(cb);
+                polygon.Split(pp, out var b, out var f, out var cb, out var cf);
+                if (f != null) front.Add(f.ToStandardPolygon());
+                if (b != null) back.Add(b.ToStandardPolygon());
+                if (cf != null) front.Add(cf.ToStandardPolygon());
+                if (cb != null) back.Add(cb.ToStandardPolygon());
             }
             if (Front != null) front = Front.ClipPolygons(front);
             back = Back != null ? Back.ClipPolygons(back) : new List<Polygon>();
@@ -77,17 +77,17 @@ namespace Sledge.DataStructures.Geometric
         public void Build(List<Polygon> polygons)
         {
             if (polygons.Count == 0) return;
-            if (Plane == null) Plane = polygons[0].GetPlane().Clone();
+            if (Plane == null) Plane = polygons[0].Plane.Clone();
+            var pp = Plane.ToPrecisionPlane();
             var front = new List<Polygon>();
             var back = new List<Polygon>();
-            foreach (var polygon in polygons)
+            foreach (var polygon in polygons.Select(x => x.ToPrecisionPolygon()))
             {
-                Polygon f, b, cf, cb;
-                polygon.Split(Plane, out b, out f, out cb, out cf);
-                if (f != null) front.Add(f);
-                if (b != null) back.Add(b);
-                if (cf != null) Polygons.Add(cf);
-                if (cb != null) Polygons.Add(cb);
+                polygon.Split(pp, out var b, out var f, out var cb, out var cf);
+                if (f != null) front.Add(f.ToStandardPolygon());
+                if (b != null) back.Add(b.ToStandardPolygon());
+                if (cf != null) front.Add(cf.ToStandardPolygon());
+                if (cb != null) back.Add(cb.ToStandardPolygon());
             }
             if (front.Count > 0)
             {

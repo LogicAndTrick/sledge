@@ -10,18 +10,24 @@ namespace Sledge.BspEditor.Primitives
         public static bool Split(this Solid solid, UniqueNumberGenerator generator, Plane plane, out Solid back, out Solid front)
         {
             back = front = null;
-            var poly = solid.ToPolyhedron();
-            
-            if (!poly.Split(plane, out var backPoly, out var frontPoly)) return false;
+            var pln = plane.ToPrecisionPlane();
+            var poly = solid.ToPolyhedron().ToPrecisionPolyhedron();
 
-            front = MakeSolid(generator, solid, frontPoly);
-            back = MakeSolid(generator, solid, backPoly);
+            if (!poly.Split(pln, out var backPoly, out var frontPoly))
+            {
+                if (backPoly != null) back = solid;
+                else if (frontPoly != null) front = solid;
+                return false;
+            }
+
+            front = MakeSolid(generator, solid, frontPoly.ToStandardPolyhedron());
+            back = MakeSolid(generator, solid, backPoly.ToStandardPolyhedron());
             return true;
         }
 
         private static Solid MakeSolid(UniqueNumberGenerator generator, Solid original, Polyhedron poly)
         {
-            var solid = new Solid(generator.Next("MapObject"));
+            var solid = new Solid(generator.Next("MapObject")) { IsSelected = original.IsSelected };
             foreach (var p in poly.Polygons)
             {
                 // Use the first face if we can't find any with the same plane (it's the clipping plane)
@@ -31,7 +37,7 @@ namespace Sledge.BspEditor.Primitives
 
                 var face = new Face(generator.Next("Face"));
                 face.Vertices.AddRange(p.Vertices);
-                face.Plane = p.GetPlane();
+                face.Plane = p.Plane;
 
                 if (originalFace != null)
                 {
@@ -39,13 +45,12 @@ namespace Sledge.BspEditor.Primitives
                 }
 
                 solid.Data.Add(face);
+            }
 
-                // Add any extra data (visgroups, colour, etc)
-                foreach (var data in original.Data.Where(x => !(x is Face)))
-                {
-                    solid.Data.Add((IMapObjectData)data.Clone());
-                }
-
+            // Add any extra data (visgroups, colour, etc)
+            foreach (var data in original.Data.Where(x => !(x is Face)))
+            {
+                solid.Data.Add((IMapObjectData)data.Clone());
             }
             return solid;
         }

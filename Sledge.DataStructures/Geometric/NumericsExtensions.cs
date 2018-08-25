@@ -44,7 +44,7 @@ namespace Sledge.DataStructures.Geometric
 
         public static Precision.Vector3 ToPrecisionVector3(this Vector3 self)
         {
-            return new Precision.Vector3((decimal) self.X, (decimal) self.Y, (decimal) self.Z);
+            return new Precision.Vector3(self.X, self.Y, self.Z);
         }
 
         // Matrix

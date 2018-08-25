@@ -251,19 +251,19 @@ namespace Sledge.BspEditor.Tools.Clip
             var found = false;
             foreach (var solid in objects)
             {
-                if (!solid.Split(Document.Map.NumberGenerator, plane, out Solid backSolid, out Solid frontSolid)) continue;
+                solid.Split(Document.Map.NumberGenerator, plane, out var backSolid, out var frontSolid);
                 found = true;
                 
                 // Remove the clipped solid
                 clip.Add(new Detatch(solid.Hierarchy.Parent.ID, solid));
                 
-                if (_side != ClipSide.Back)
+                if (_side != ClipSide.Back && frontSolid != null)
                 {
                     // Add front solid
                     clip.Add(new Attach(solid.Hierarchy.Parent.ID, frontSolid));
                 }
                 
-                if (_side != ClipSide.Front)
+                if (_side != ClipSide.Front && backSolid != null)
                 {
                     // Add back solid
                     clip.Add(new Attach(solid.Hierarchy.Parent.ID, backSolid));
@@ -312,11 +312,10 @@ namespace Sledge.BspEditor.Tools.Clip
                     foreach (var solid in Document.Selection.OfType<Solid>().ToList())
                     {
                         var s = solid.ToPolyhedron().ToPrecisionPolyhedron();
-                        if (s.Split(plane, out var back, out var front))
-                        {
-                            if (_side != ClipSide.Front) faces.AddRange(back.Polygons.Select(x => x.ToStandardPolygon()));
-                            if (_side != ClipSide.Back) faces.AddRange(front.Polygons.Select(x => x.ToStandardPolygon()));
-                        }
+                        s.Split(plane, out var back, out var front);
+
+                        if (_side != ClipSide.Front && back != null) faces.AddRange(back.Polygons.Select(x => x.ToStandardPolygon()));
+                        if (_side != ClipSide.Back && front != null) faces.AddRange(front.Polygons.Select(x => x.ToStandardPolygon()));
                     }
 
                     var verts = new List<VertexStandard>();

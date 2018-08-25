@@ -29,7 +29,7 @@ namespace Sledge.DataStructures.Geometric.Precision
         /// </summary>
         /// <param name="plane">The polygon plane</param>
         /// <param name="radius">The polygon radius</param>
-        public Polygon(Plane plane, decimal radius = 1000000m)
+        public Polygon(Plane plane, double radius = 1000000d)
         {
             // Get aligned up and right axes to the plane
             var direction = plane.GetClosestAxisToNormal();
@@ -97,7 +97,7 @@ namespace Sledge.DataStructures.Geometric.Precision
         /// <returns>True if the split was successful</returns>
         public bool Split(Plane clip, out Polygon back, out Polygon front, out Polygon coplanarBack, out Polygon coplanarFront)
         {
-            const decimal epsilon = (decimal) NumericsExtensions.Epsilon;
+            const double epsilon = NumericsExtensions.Epsilon;
             
             var distances = Vertices.Select(clip.EvalAtPoint).ToList();
             
@@ -142,7 +142,7 @@ namespace Sledge.DataStructures.Geometric.Precision
                 var j = (i + 1) % Vertices.Count;
 
                 Vector3 s = Vertices[i], e = Vertices[j];
-                decimal sd = distances[i], ed = distances[j];
+                double sd = distances[i], ed = distances[j];
 
                 if (sd <= 0) backVerts.Add(s);
                 if (sd >= 0) frontVerts.Add(s);
@@ -157,8 +157,8 @@ namespace Sledge.DataStructures.Geometric.Precision
                 }
             }
             
-            back = new Polygon(backVerts.Select(x => new Vector3((decimal) x.X, (decimal) x.Y, (decimal) x.Z)));
-            front = new Polygon(frontVerts.Select(x => new Vector3((decimal)x.X, (decimal)x.Y, (decimal)x.Z)));
+            back = new Polygon(backVerts.Select(x => new Vector3(x.X, x.Y, x.Z)));
+            front = new Polygon(frontVerts.Select(x => new Vector3(x.X, x.Y, x.Z)));
             coplanarBack = coplanarFront = null;
 
             return true;

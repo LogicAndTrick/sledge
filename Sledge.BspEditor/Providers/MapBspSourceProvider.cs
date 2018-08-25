@@ -194,7 +194,7 @@ namespace Sledge.BspEditor.Providers
 
                     foreach (var face in faces)
                     {
-                        var pg = poly.Polygons.FirstOrDefault(x => x.GetPlane().Normal.EquivalentTo(face.Plane.Normal));
+                        var pg = poly.Polygons.FirstOrDefault(x => x.Plane.Normal.EquivalentTo(face.Plane.Normal));
                         if (pg == null)
                         {
                             // TODO: Report invalid solids

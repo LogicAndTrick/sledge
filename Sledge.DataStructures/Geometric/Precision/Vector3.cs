@@ -6,26 +6,26 @@ namespace Sledge.DataStructures.Geometric.Precision
     [Serializable]
     public struct Vector3
     {
-        public static readonly Vector3 MaxValue = new Vector3(Decimal.MaxValue, Decimal.MaxValue, Decimal.MaxValue);
-        public static readonly Vector3 MinValue = new Vector3(Decimal.MinValue, Decimal.MinValue, Decimal.MinValue);
+        public static readonly Vector3 MaxValue = new Vector3(double.MaxValue, double.MaxValue, double.MaxValue);
+        public static readonly Vector3 MinValue = new Vector3(double.MinValue, double.MinValue, double.MinValue);
         public static readonly Vector3 Zero = new Vector3(0, 0, 0);
         public static readonly Vector3 One = new Vector3(1, 1, 1);
         public static readonly Vector3 UnitX = new Vector3(1, 0, 0);
         public static readonly Vector3 UnitY = new Vector3(0, 1, 0);
         public static readonly Vector3 UnitZ = new Vector3(0, 0, 1);
 
-        public decimal X { get; }
-        public decimal Y { get; }
-        public decimal Z { get; }
+        public double X { get; }
+        public double Y { get; }
+        public double Z { get; }
         
-        public Vector3(decimal x, decimal y, decimal z)
+        public Vector3(double x, double y, double z)
         {
             X = x;
             Y = y;
             Z = z;
         }
 
-        public bool EquivalentTo(Vector3 test, decimal delta = 0.0001m)
+        public bool EquivalentTo(Vector3 test, double delta = 0.0001d)
         {
             var xd = Math.Abs(X - test.X);
             var yd = Math.Abs(Y - test.Y);
@@ -33,7 +33,7 @@ namespace Sledge.DataStructures.Geometric.Precision
             return (xd < delta) && (yd < delta) && (zd < delta);
         }
 
-        public decimal Dot(Vector3 c)
+        public double Dot(Vector3 c)
         {
             return X * c.X + Y * c.Y + Z * c.Z;
         }
@@ -51,7 +51,7 @@ namespace Sledge.DataStructures.Geometric.Precision
             return new Vector3(Math.Round(X, num), Math.Round(Y, num), Math.Round(Z, num));
         }
 
-        public Vector3 Snap(decimal snapTo)
+        public Vector3 Snap(double snapTo)
         {
             return new Vector3(
                 Math.Round(X / snapTo) * snapTo,
@@ -60,12 +60,12 @@ namespace Sledge.DataStructures.Geometric.Precision
             );
         }
 
-        public decimal Length()
+        public double Length()
         {
-            return (decimal) Math.Sqrt((double) LengthSquared());
+            return (double) Math.Sqrt((double) LengthSquared());
         }
 
-        public decimal LengthSquared()
+        public double LengthSquared()
         {
             return X * X + Y * Y + Z * Z;
         }
@@ -96,12 +96,12 @@ namespace Sledge.DataStructures.Geometric.Precision
             return new Vector3(-c1.X, -c1.Y, -c1.Z);
         }
 
-        public static Vector3 operator /(Vector3 c, decimal f)
+        public static Vector3 operator /(Vector3 c, double f)
         {
             return f == 0 ? new Vector3(0, 0, 0) : new Vector3(c.X / f, c.Y / f, c.Z / f);
         }
 
-        public static Vector3 operator *(Vector3 c, decimal f)
+        public static Vector3 operator *(Vector3 c, double f)
         {
             return new Vector3(c.X * f, c.Y * f, c.Z * f);
         }
@@ -116,7 +116,7 @@ namespace Sledge.DataStructures.Geometric.Precision
             return new Vector3(c.X / f.X, c.Y / f.Y, c.Z / f.Z);
         }
 
-        public static Vector3 operator *(decimal f, Vector3 c)
+        public static Vector3 operator *(double f, Vector3 c)
         {
             return c * f;
         }
@@ -166,12 +166,13 @@ namespace Sledge.DataStructures.Geometric.Precision
         public static Vector3 Parse(string x, string y, string z)
         {
             const NumberStyles ns = NumberStyles.Float;
-            return new Vector3(decimal.Parse(x, ns, CultureInfo.InvariantCulture), decimal.Parse(y, ns, CultureInfo.InvariantCulture), decimal.Parse(z, ns, CultureInfo.InvariantCulture));
+            return new Vector3(double.Parse(x, ns, CultureInfo.InvariantCulture), double.Parse(y, ns, CultureInfo.InvariantCulture), double.Parse(z, ns, CultureInfo.InvariantCulture));
         }
 
         public System.Numerics.Vector3 ToStandardVector3()
         {
-            return new System.Numerics.Vector3((float) X, (float) Y, (float) Z);
+            const int rounding = 2;
+            return new System.Numerics.Vector3((float) Math.Round(X, rounding), (float) Math.Round(Y, rounding), (float) Math.Round(Z, rounding));
         }
     }
 }

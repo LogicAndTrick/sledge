@@ -8,11 +8,11 @@ namespace Sledge.DataStructures.Geometric.Precision
     public struct Plane
     {
         public Vector3 Normal { get; }
-        public decimal DistanceFromOrigin { get; }
-        public decimal A { get; }
-        public decimal B { get; }
-        public decimal C { get; }
-        public decimal D { get; }
+        public double DistanceFromOrigin { get; }
+        public double A { get; }
+        public double B { get; }
+        public double C { get; }
+        public double D { get; }
         public Vector3 PointOnPlane { get; }
         
         public Plane(Vector3 p1, Vector3 p2, Vector3 p3)
@@ -42,7 +42,7 @@ namespace Sledge.DataStructures.Geometric.Precision
             D = -DistanceFromOrigin;
         }
         
-        public Plane(Vector3 norm, decimal distanceFromOrigin)
+        public Plane(Vector3 norm, double distanceFromOrigin)
         {
             Normal = norm.Normalise();
             DistanceFromOrigin = distanceFromOrigin;
@@ -62,7 +62,7 @@ namespace Sledge.DataStructures.Geometric.Precision
         ///  value == 1 if Vector3 is above the plane<br />
         ///  value == 0 if Vector3 is on the plane.
         /// </returns>
-        public int OnPlane(Vector3 co, decimal epsilon = 0.5m)
+        public int OnPlane(Vector3 co, double epsilon = 0.5d)
         {
             //eval (s = Ax + By + Cz + D) at point (x,y,z)
             //if s > 0 then point is "above" the plane (same side as normal)
@@ -92,7 +92,7 @@ namespace Sledge.DataStructures.Geometric.Precision
             var dir = end - start;
             var denominator = -Normal.Dot(dir);
             var numerator = Normal.Dot(start - Normal * DistanceFromOrigin);
-            if (Math.Abs(denominator) < 0.00001m || (!ignoreDirection && denominator < 0)) return null;
+            if (Math.Abs(denominator) < 0.00001d || (!ignoreDirection && denominator < 0)) return null;
             var u = numerator / denominator;
             if (!ignoreSegment && (u < 0 || u > 1)) return null;
             return start + u * dir;
@@ -111,7 +111,7 @@ namespace Sledge.DataStructures.Geometric.Precision
             return point - ((point - PointOnPlane).Dot(Normal)) * Normal;
         }
 
-        public decimal EvalAtPoint(Vector3 co)
+        public double EvalAtPoint(Vector3 co)
         {
             return A * co.X + B * co.Y + C * co.Z + D;
         }
@@ -148,13 +148,13 @@ namespace Sledge.DataStructures.Geometric.Precision
             var c3 = p1.Normal.Cross(p2.Normal);
 
             var denom = p1.Normal.Dot(c1);
-            if (denom < 0.00001m) return null; // No intersection, planes must be parallel
+            if (denom < 0.00001d) return null; // No intersection, planes must be parallel
 
             var numer = (-p1.D * c1) + (-p2.D * c2) + (-p3.D * c3);
             return numer / denom;
         }
 
-        public bool EquivalentTo(Plane other, decimal delta = 0.0001m)
+        public bool EquivalentTo(Plane other, double delta = 0.0001d)
         {
             return Normal.EquivalentTo(other.Normal, delta)
                    && Math.Abs(DistanceFromOrigin - other.DistanceFromOrigin) < delta;
@@ -162,7 +162,7 @@ namespace Sledge.DataStructures.Geometric.Precision
 
         public Geometric.Plane ToStandardPlane()
         {
-            return new Geometric.Plane(Normal.ToStandardVector3(), (float) DistanceFromOrigin);
+            return new Geometric.Plane(Normal.ToStandardVector3(), (float) Math.Round(DistanceFromOrigin, 2));
         }
     }
 }

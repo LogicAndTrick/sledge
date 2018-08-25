@@ -7,12 +7,17 @@ using System.Runtime.Serialization;
 namespace Sledge.DataStructures.Geometric
 {
     /// <summary>
-    /// Represents a convex polyhedron with at least 4 sides
+    /// Represents a convex polyhedron with at least 4 sides.
     /// </summary>
     [Serializable]
     public class Polyhedron : ISerializable
     {
-        public List<Polygon> Polygons { get; set; }
+        public IReadOnlyList<Polygon> Polygons { get; }
+
+        /// <summary>
+        /// Gets the origin of this polyhedron.
+        /// </summary>
+        public Vector3 Origin => Polygons.Aggregate(Vector3.Zero, (x, y) => x + y.Origin) / Polygons.Count;
 
         /// <summary>
         /// Creates a polyhedron from a list of polygons which are assumed to be valid.
@@ -24,32 +29,14 @@ namespace Sledge.DataStructures.Geometric
 
         /// <summary>
         /// Creates a polyhedron by intersecting a set of at least 4 planes.
+        /// This constructor uses high precision operations for plane intersections.
         /// </summary>
         public Polyhedron(IEnumerable<Plane> planes)
         {
-            Polygons = new List<Polygon>();
-            
-            var list = planes.ToList();
-            for (var i = 0; i < list.Count; i++)
-            {
-                // Split the polygon by all the other planes
-                var poly = new Polygon(list[i]);
-                for (var j = 0; j < list.Count; j++)
-                {
-                    if (i != j && poly.Split(list[j], out var back, out _))
-                    {
-                        poly = back;
-                    }
-                }
-                Polygons.Add(poly);
-            }
-
-            // Ensure all the faces point outwards
-            var origin = GetOrigin();
-            foreach (var face in Polygons)
-            {
-                if (face.GetPlane().OnPlane(origin) >= 0) face.Flip();
-            }
+            Polygons = new Precision.Polyhedron(planes.Select(x => x.ToPrecisionPlane()))
+                .Polygons
+                .Select(x => x.ToStandardPolygon())
+                .ToList();
         }
 
         protected Polyhedron(SerializationInfo info, StreamingContext context)
@@ -60,20 +47,6 @@ namespace Sledge.DataStructures.Geometric
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             info.AddValue("Polygons", Polygons.ToArray());
-        }
-
-        public Polyhedron Clone()
-        {
-            return new Polyhedron(Polygons.Select(x => x.Clone()));
-        }
-
-        /// <summary>
-        /// Returns the origin of this polyhedron.
-        /// </summary>
-        /// <returns></returns>
-        public Vector3 GetOrigin()
-        {
-            return Polygons.Aggregate(Vector3.Zero, (x, y) => x + y.GetOrigin()) / Polygons.Count;
         }
 
         /// <summary>
@@ -112,49 +85,13 @@ namespace Sledge.DataStructures.Geometric
 
         public IEnumerable<Polygon> GetCoplanarPolygons()
         {
-            return Polygons.Where(f1 => Polygons.Where(f2 => f2 != f1).Any(f2 => f2.GetPlane() == f1.GetPlane()));
+            return Polygons.Where(f1 => Polygons.Where(f2 => f2 != f1).Any(f2 => f2.Plane== f1.Plane));
         }
 
         public IEnumerable<Polygon> GetBackwardsPolygons(float epsilon = 0.001f)
         {
-            var origin = GetOrigin();
-            return Polygons.Where(x => x.GetPlane().OnPlane(origin, epsilon) > 0);
-        }
-
-        /// <summary>
-        /// Splits this polyhedron into two polyhedron by intersecting against a plane.
-        /// </summary>
-        /// <param name="plane">The splitting plane</param>
-        /// <param name="back">The back side of the polyhedron</param>
-        /// <param name="front">The front side of the polyhedron</param>
-        /// <returns>True if the plane splits the polyhedron, false if the plane doesn't intersect</returns>
-        public bool Split(Plane plane, out Polyhedron back, out Polyhedron front)
-        {
-            back = front = null;
-
-            // Check that this solid actually spans the plane
-            var classify = Polygons.Select(x => x.ClassifyAgainstPlane(plane)).Distinct().ToList();
-            if (classify.All(x => x != PlaneClassification.Spanning))
-            {
-                if (classify.Any(x => x == PlaneClassification.Back)) back = this;
-                else if (classify.Any(x => x == PlaneClassification.Front)) front = this;
-                return false;
-            }
-
-            var backPlanes = new List<Plane> { plane };
-            var frontPlanes = new List<Plane> { new Plane(-plane.Normal, -plane.DistanceFromOrigin) };
-
-            foreach (var face in Polygons)
-            {
-                var classification = face.ClassifyAgainstPlane(plane);
-                if (classification != PlaneClassification.Back) frontPlanes.Add(face.GetPlane());
-                if (classification != PlaneClassification.Front) backPlanes.Add(face.GetPlane());
-            }
-
-            back = new Polyhedron(backPlanes);
-            front = new Polyhedron(frontPlanes);
-            
-            return true;
+            var origin = Origin;
+            return Polygons.Where(x => x.Plane.OnPlane(origin, epsilon) > 0);
         }
 
         public Precision.Polyhedron ToPrecisionPolyhedron()
