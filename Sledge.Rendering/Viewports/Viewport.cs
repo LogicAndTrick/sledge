@@ -50,6 +50,12 @@ namespace Sledge.Rendering.Viewports
             Overlay = new ViewportOverlay(this);
         }
 
+        protected override bool IsInputKey(Keys keyData)
+        {
+            // Force all keys to be passed to the regular key events
+            return true;
+        }
+
         public void Update(long frame)
         {
             if (_resizeRequired)

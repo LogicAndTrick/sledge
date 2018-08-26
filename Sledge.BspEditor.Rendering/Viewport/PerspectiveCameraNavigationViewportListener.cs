@@ -81,6 +81,8 @@ namespace Sledge.BspEditor.Rendering.Viewport
                 if (downFor >= 0 && downFor < 1) units *= (float) _easing.Evaluate(downFor);
             }
 
+            if (KeyboardState.Shift) units *= 2;
+
             var move = units;
             var tilt = 2f;
 
