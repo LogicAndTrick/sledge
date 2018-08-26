@@ -1,30 +1,42 @@
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Drawing;
-using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
+using System.Linq;
+using System.Numerics;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Primitives.MapObjectData;
 using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.Common.Shell.Settings;
+using Sledge.DataStructures.Geometric;
+using Sledge.Rendering.Cameras;
+using Sledge.Rendering.Engine;
+using Sledge.Rendering.Interfaces;
+using Sledge.Rendering.Pipelines;
+using Sledge.Rendering.Primitives;
+using Sledge.Rendering.Resources;
 
 namespace Sledge.BspEditor.Rendering.Converters
 {
-    [Export(typeof(IMapObjectSceneConverter))]
+    [Export(typeof(IMapObjectGroupSceneConverter))]
     [Export(typeof(ISettingsContainer))]
-    public class CenterHandlesConverter : IMapObjectSceneConverter, ISettingsContainer
+    public class CenterHandlesConverter : IMapObjectGroupSceneConverter, ISettingsContainer
     {
+        [Import] private EngineInterface _engine;
+
         // Settings
 
         [Setting("DrawCenterHandles")] private bool _drawCenterHandles = true;
-        [Setting("CenterHandlesActiveViewportOnly")] private bool _centerHandlesActiveViewportOnly = false;
+        // [Setting("CenterHandlesActiveViewportOnly")] private bool _centerHandlesActiveViewportOnly = false;
 
         string ISettingsContainer.Name => "Sledge.BspEditor.Rendering.Converters.CenterHandlesConverter";
 
         IEnumerable<SettingKey> ISettingsContainer.GetKeys()
         {
             yield return new SettingKey("Rendering", "DrawCenterHandles", typeof(bool));
-            yield return new SettingKey("Rendering", "CenterHandlesActiveViewportOnly", typeof(bool));
+            //yield return new SettingKey("Rendering", "CenterHandlesActiveViewportOnly", typeof(bool));
         }
 
         void ISettingsContainer.LoadValues(ISettingsStore store)
@@ -37,123 +49,67 @@ namespace Sledge.BspEditor.Rendering.Converters
             store.StoreInstance(this);
         }
 
-        public MapObjectSceneConverterPriority Priority => MapObjectSceneConverterPriority.OverrideLow;
+        // Converter
 
-        public bool ShouldStopProcessing(MapDocument document, IMapObject obj)
-        {
-            return false;
-        }
+        public MapObjectSceneConverterPriority Priority => MapObjectSceneConverterPriority.DefaultMedium;
 
-        public bool Supports(IMapObject obj)
+        public Task Convert(BufferBuilder builder, MapDocument document, IEnumerable<IMapObject> objects)
         {
-            if (!_drawCenterHandles) return false;
-            return obj is Entity || obj is Solid;
-        }
+            if (!_drawCenterHandles) return Task.CompletedTask;
+            
+            _engine.UploadTexture(CenterHandleTextureDataSource.Name, () => HandleDataSource);
 
-        public async Task<bool> Convert(SceneMapObject smo, MapDocument document, IMapObject obj)
-        {
-            var el = new CenterHandleTextElement(obj, _centerHandlesActiveViewportOnly);
-            smo.SceneObjects.Add(new Holder(), el);
-            return true;
-        }
-
-        public async Task<bool> Update(SceneMapObject smo, MapDocument document, IMapObject obj)
-        {
-            if (smo.SceneObjects.Keys.Any(x => x is Holder))
-            {
-                var ela = smo.SceneObjects.First(x => x.Key is Holder).Value as CenterHandleTextElement;
-                if (ela != null)
+            var verts = (
+                from mo in objects
+                where mo is Solid || (mo is Entity && !mo.Hierarchy.HasChildren)
+                let color = mo.IsSelected ? Color.Red : mo.Data.GetOne<ObjectColor>()?.Color ?? Color.White
+                select new VertexStandard
                 {
-                    ela.Update(obj);
-                    return true;
+                    Position = mo.BoundingBox.Center,
+                    Normal = new Vector3(9, 9, 0),
+                    Colour = color.ToVector4(),
+                    Tint = Vector4.One
                 }
-            }
-            return false;
+            ).ToList();
+
+            builder.Append(verts, Enumerable.Range(0, verts.Count).Select(x => (uint) x), new[]
+            {
+                new BufferGroup(PipelineType.TexturedBillboard, CameraType.Orthographic, false, Vector3.Zero, CenterHandleTextureDataSource.Name, 0, (uint) verts.Count)
+            });
+
+            return Task.CompletedTask;
         }
 
-        private class Holder { }
-
-        private class CenterHandleTextElement : Element
+        private static readonly CenterHandleTextureDataSource HandleDataSource = new CenterHandleTextureDataSource();
+        private class CenterHandleTextureDataSource : ITextureDataSource
         {
-            private const string Name = "Sledge.BspEditor.Rendering.CenterHandlesConverter::x";
-            private static bool _initialised;
+            public const string Name = "DefaultSolidConverter::CenterHandle::X";
+            private readonly byte[] _data;
 
-            static void Init(IRenderer renderer)
+            public TextureSampleType SampleType => TextureSampleType.Point;
+            public int Width => 9;
+            public int Height => 9;
+
+            public CenterHandleTextureDataSource()
             {
-                if (_initialised) return;
-                _initialised = true;
-
-                using (var bmp = new Bitmap(5, 5))
+                using (var img = new Bitmap(Width, Height))
                 {
-                    using (var g = Graphics.FromImage(bmp))
+                    using (var g = Graphics.FromImage(img))
                     {
-                        g.SmoothingMode = SmoothingMode.None;
-                        g.DrawLine(Pens.White, 0, 0, 4, 4);
-                        g.DrawLine(Pens.White, 4, 0, 0, 4);
+                        g.FillRectangle(Brushes.Transparent, 0, 0, img.Width, img.Height);
+                        g.DrawLine(Pens.White, 1, 1, img.Width - 2, img.Height - 2);
+                        g.DrawLine(Pens.White, img.Width - 2, 1, 1, img.Height - 2);
                     }
-                    renderer.Textures.Create(Name, bmp, bmp.Width, bmp.Height, TextureFlags.PixelPerfect);
+                    var lb = img.LockBits(new Rectangle(0, 0, img.Width, img.Height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
+                    _data = new byte[lb.Stride * lb.Height];
+                    Marshal.Copy(lb.Scan0, _data, 0, _data.Length);
+                    img.UnlockBits(lb);
                 }
-
-                renderer.Materials.Add(Material.Texture(Name, false));
             }
 
-            private Vector3 _location;
-            private Color _color;
-            private readonly bool _activeViewportOnly;
-            public override string ElementGroup => "CenterHandles";
-
-            public CenterHandleTextElement(IMapObject obj, bool activeViewportOnly) : base(PositionType.World)
+            public Task<byte[]> GetData()
             {
-                _activeViewportOnly = activeViewportOnly;
-                _color = Color.FromArgb(192, obj.Data.GetOne<ObjectColor>()?.Color ?? Color.White);
-                _location = obj.BoundingBox.Center.ToVector3();
-            }
-
-            public void Update(IMapObject obj)
-            {
-                _location = obj.BoundingBox.Center.ToVector3();
-                _color = Color.FromArgb(192, Color.FromArgb(192, obj.Data.GetOne<ObjectColor>()?.Color ?? Color.White));
-                ClearValue("Validated");
-            }
-
-            public override bool RequiresValidation(IViewport viewport, IRenderer renderer)
-            {
-                if (_activeViewportOnly && viewport.IsFocused != GetValue<bool>(viewport, "Focused"))
-                {
-                    return true;
-                }
-                return !GetValue<bool>(viewport, "Validated");
-            }
-
-            public override void Validate(IViewport viewport, IRenderer renderer)
-            {
-                SetValue(viewport, "Focused", viewport.IsFocused);
-                SetValue(viewport, "Validated", true);
-            }
-
-            public override IEnumerable<LineElement> GetLines(IViewport viewport, IRenderer renderer)
-            {
-                yield break;
-            }
-
-            public override IEnumerable<FaceElement> GetFaces(IViewport viewport, IRenderer renderer)
-            {
-                if (_activeViewportOnly && !viewport.IsFocused) yield break;
-                Init(renderer);
-
-                var mat = new Material(MaterialType.Textured, _color, Name);
-                yield return new FaceElement(PositionType, mat, new[]
-                {
-                    new PositionVertex(new Position(_location) { Offset = new Vector3(-2.5f, -2.5f, 0) }, 0, 0),
-                    new PositionVertex(new Position(_location) { Offset = new Vector3(+2.5f, -2.5f, 0) }, 1, 0),
-                    new PositionVertex(new Position(_location) { Offset = new Vector3(+2.5f, +2.5f, 0) }, 1, 1),
-                    new PositionVertex(new Position(_location) { Offset = new Vector3(-2.5f, +2.5f, 0) }, 0, 1)
-                })
-                {
-                    AccentColor = _color,
-                    RenderFlags = RenderFlags.Polygon,
-                    CameraFlags = CameraFlags.Orthographic
-                };
+                return Task.FromResult(_data);
             }
         }
     }

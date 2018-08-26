@@ -21,7 +21,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <NoWarn>CS4014</NoWarn>
-    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <UseVSHostingProcess>true</UseVSHostingProcess>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -43,6 +43,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Converters\AxisLinesConverter.cs" />
+    <Compile Include="Converters\CenterHandlesConverter.cs" />
     <Compile Include="Converters\CordonBoundsConverter.cs" />
     <Compile Include="Converters\CordonClippingConverter.cs" />
     <Compile Include="Converters\DefaultEntityConverter.cs" />

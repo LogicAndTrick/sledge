@@ -14,6 +14,7 @@ namespace Sledge.BspEditor.Rendering.Converters
     public class MapObjectConverter
     {
         [ImportMany] private IEnumerable<Lazy<IMapObjectSceneConverter>> _converters;
+        [ImportMany] private IEnumerable<Lazy<IMapObjectGroupSceneConverter>> _groupConverters;
         [Import] private Lazy<EngineInterface> _engine;
 
         public async Task Convert(MapDocument document, SceneBuilder builder, IEnumerable<IMapObject> affected)
@@ -27,10 +28,17 @@ namespace Sledge.BspEditor.Rendering.Converters
             }
 
             var converters = _converters.Select(x => x.Value).OrderBy(x => (int) x.Priority).ToList();
+            var groupConverters = _groupConverters.Select(x => x.Value).OrderBy(x => (int) x.Priority).ToList();
 
             foreach (var g in objs.GroupBy(x => x.ID / 200))
             {
                 builder.SetCurrentGroup(g.Key);
+
+                foreach (var gc in groupConverters)
+                {
+                    gc.Convert(builder.MainBuffer, document, g);
+                }
+
                 foreach (var obj in g)
                 {
                     foreach (var converter in converters)

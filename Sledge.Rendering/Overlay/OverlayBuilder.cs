@@ -54,8 +54,8 @@ namespace Sledge.Rendering.Overlay
 
         private void Resize(RenderContext context)
         {
-            var vpw = _viewport.Width;
-            var vph = _viewport.Height;
+            var vpw = Math.Max(1, _viewport.Width);
+            var vph = Math.Max(1, _viewport.Height);
             if (_bitmap != null && vpw == _width && vph == _height) return;
 
             _width = vpw;

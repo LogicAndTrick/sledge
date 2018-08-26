@@ -41,9 +41,6 @@ namespace Sledge.Rendering.Engine
                 HasMainSwapchain = false,
                 ResourceBindingModel = ResourceBindingModel.Improved,
                 SwapchainDepthFormat = PixelFormat.R32_Float,
-#if DEBUG
-                Debug = true,
-#endif
             };
 
             Device = GraphicsDevice.CreateD3D11(_options);
