@@ -5,6 +5,7 @@ namespace Sledge.Rendering.Resources
 {
     public class WhiteTextureSource : ITextureDataSource
     {
+        public TextureSampleType SampleType => TextureSampleType.Standard;
         public int Width => 1;
         public int Height => 1;
 

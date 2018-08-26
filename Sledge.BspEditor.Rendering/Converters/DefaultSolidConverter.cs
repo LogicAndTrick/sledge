@@ -2,7 +2,9 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Numerics;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Primitives.MapData;
@@ -12,6 +14,7 @@ using Sledge.BspEditor.Rendering.Scene;
 using Sledge.Providers.Texture;
 using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Engine;
+using Sledge.Rendering.Interfaces;
 using Sledge.Rendering.Pipelines;
 using Sledge.Rendering.Primitives;
 using Sledge.Rendering.Resources;
@@ -142,11 +145,45 @@ namespace Sledge.BspEditor.Rendering.Converters
             
             builder.Append(points, indices, groups);
 
+            _engine.UploadTexture(CenterHandleTextureDataSource.Name, () => HandleDataSource);
             builder.Append(
-                new [] { new VertexStandard { Position =  solid.BoundingBox.Center, Normal = new Vector3(8, 8, 0), Colour = new Vector4(1, 0, 0, 1), Tint = Vector4.One } },
+                new [] { new VertexStandard { Position =  solid.BoundingBox.Center, Normal = new Vector3(9, 9, 0), Colour = colour, Tint = Vector4.One } },
                 new [] { 0u },
-                new [] {new BufferGroup(PipelineType.TexturedBillboard, CameraType.Both, false, solid.BoundingBox.Center, "", 0, 1) }
+                new [] {new BufferGroup(PipelineType.TexturedBillboard, CameraType.Orthographic, false, solid.BoundingBox.Center, CenterHandleTextureDataSource.Name, 0, 1) }
             );
+        }
+
+        private static readonly CenterHandleTextureDataSource HandleDataSource = new CenterHandleTextureDataSource();
+        private class CenterHandleTextureDataSource : ITextureDataSource
+        {
+            public const string Name = "DefaultSolidConverter::CenterHandle::X";
+            private readonly byte[] _data;
+
+            public TextureSampleType SampleType => TextureSampleType.Point;
+            public int Width => 9;
+            public int Height => 9;
+
+            public CenterHandleTextureDataSource()
+            {
+                using (var img = new Bitmap(Width, Height))
+                {
+                    using (var g = Graphics.FromImage(img))
+                    {
+                        g.FillRectangle(Brushes.Transparent, 0, 0, img.Width, img.Height);
+                        g.DrawLine(Pens.White, 1, 1, img.Width - 2, img.Height - 2);
+                        g.DrawLine(Pens.White, img.Width - 2, 1, 1, img.Height - 2);
+                    }
+                    var lb = img.LockBits(new Rectangle(0, 0, img.Width, img.Height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
+                    _data = new byte[lb.Stride * lb.Height];
+                    Marshal.Copy(lb.Scan0, _data, 0, _data.Length);
+                    img.UnlockBits(lb);
+                }
+            }
+
+            public Task<byte[]> GetData()
+            {
+                return Task.FromResult(_data);
+            }
         }
     }
 }

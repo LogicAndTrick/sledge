@@ -48,8 +48,8 @@ namespace Sledge.Rendering.Engine
                 new VertexElementDescription("Tint", VertexElementSemantic.Color, VertexElementFormat.Float4),
                 new VertexElementDescription("Flags", VertexElementSemantic.Position, VertexElementFormat.UInt1)
             );
-            TextureSampler = context.Device.ResourceFactory.CreateSampler(SamplerDescription.Aniso4x);
-            OverlaySampler = context.Device.ResourceFactory.CreateSampler(SamplerDescription.Point);
+            TextureSampler = context.Device.Aniso4xSampler;
+            OverlaySampler = context.Device.PointSampler;
 
             MissingTexture = new Lazy<Texture>(() => UploadTexture("", () => new WhiteTextureSource()));
         }

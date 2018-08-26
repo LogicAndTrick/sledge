@@ -13,6 +13,7 @@ namespace Sledge.BspEditor.Rendering.Resources
         private readonly TextureItem _item;
         private readonly IEnvironment _environment;
 
+        public TextureSampleType SampleType => TextureSampleType.Standard;
         public int Width => _item.Width;
         public int Height => _item.Height;
 

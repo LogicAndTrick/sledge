@@ -36,10 +36,13 @@ namespace Sledge.Rendering.Resources
                 device.UpdateTexture(_texture, await source.GetData(), 0, 0, 0, w, h, _texture.Depth, 0, 0);
                 _mipsGenerated = false;
             });
+
+            var sampler = context.ResourceLoader.TextureSampler;
+            if (source.SampleType == TextureSampleType.Point) sampler = context.ResourceLoader.OverlaySampler;
             
             _view = device.ResourceFactory.CreateTextureView(_texture);
             _set = device.ResourceFactory.CreateResourceSet(new ResourceSetDescription(
-                context.ResourceLoader.TextureLayout, _view, context.ResourceLoader.TextureSampler
+                context.ResourceLoader.TextureLayout, _view, sampler
             ));
         }
 
