@@ -26,6 +26,7 @@ namespace Sledge.BspEditor.Primitives.MapObjects
             ID = id;
             Data = new MapObjectDataCollection();
             Hierarchy = new MapObjectHierarchy(this);
+            BoundingBox = Box.Empty;
         }
 
         protected BaseMapObject(SerialisedObject obj)
@@ -35,6 +36,7 @@ namespace Sledge.BspEditor.Primitives.MapObjects
             IsSelected = obj.Get<bool>("IsSelected");
             Data = new MapObjectDataCollection();
             Hierarchy = new MapObjectHierarchy(this);
+            BoundingBox = Box.Empty;
             SetCustomSerialisedData(obj);
         }
 

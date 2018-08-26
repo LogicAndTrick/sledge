@@ -139,8 +139,14 @@ namespace Sledge.BspEditor.Rendering.Converters
 
             // groups.Add(new BufferGroup(PipelineType.FlatColourGeneric, 0, numSolidIndices));
             groups.Add(new BufferGroup(PipelineType.WireframeGeneric, solid.IsSelected ? CameraType.Both : CameraType.Orthographic, false, solid.BoundingBox.Center, numSolidIndices, numWireframeIndices));
-
+            
             builder.Append(points, indices, groups);
+
+            builder.Append(
+                new [] { new VertexStandard { Position =  solid.BoundingBox.Center, Normal = new Vector3(8, 8, 0), Colour = new Vector4(1, 0, 0, 1), Tint = Vector4.One } },
+                new [] { 0u },
+                new [] {new BufferGroup(PipelineType.TexturedBillboard, CameraType.Both, false, solid.BoundingBox.Center, "", 0, 1) }
+            );
         }
     }
 }

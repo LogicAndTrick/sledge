@@ -6,6 +6,8 @@
         FlatColourGeneric,
         TexturedGeneric,
 
+        TexturedBillboard,
+
         // WireframeModel,
         // TexturedModel
 

@@ -40,7 +40,10 @@ namespace Sledge.Rendering.Engine
             {
                 HasMainSwapchain = false,
                 ResourceBindingModel = ResourceBindingModel.Improved,
-                SwapchainDepthFormat = PixelFormat.R32_Float
+                SwapchainDepthFormat = PixelFormat.R32_Float,
+#if DEBUG
+                Debug = true,
+#endif
             };
 
             Device = GraphicsDevice.CreateD3D11(_options);
@@ -64,6 +67,7 @@ namespace Sledge.Rendering.Engine
             AddPipeline(new WireframeGenericPipeline());
             AddPipeline(new FlatColourGenericPipeline());
             AddPipeline(new TexturedGenericPipeline());
+            AddPipeline(new TexturedBillboardPipeline());
             AddPipeline(new OverlayPipeline());
 
             Application.ApplicationExit += Shutdown;

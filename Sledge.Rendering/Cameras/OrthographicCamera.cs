@@ -102,7 +102,7 @@ namespace Sledge.Rendering.Cameras
         private Matrix4x4 GetCameraMatrix()
         {
             var translate = Matrix4x4.CreateTranslation(-Position.X, -Position.Y, 0);
-            var scale = Matrix4x4.CreateScale(new Vector3(Zoom, Zoom, 0));
+            var scale = Matrix4x4.CreateScale(new Vector3(Zoom, Zoom, Zoom));
             return GetMatrixFor(ViewType) * translate * scale;
         }
 
