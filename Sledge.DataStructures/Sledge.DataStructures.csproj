@@ -50,7 +50,7 @@
     <Compile Include="GameData\AutoVisgroup.cs" />
     <Compile Include="GameData\AutoVisgroupSection.cs" />
     <Compile Include="Geometric\Box.cs" />
-    <Compile Include="Geometric\Class1.cs" />
+    <Compile Include="Geometric\Vector3TypeConverter.cs" />
     <Compile Include="Geometric\Cloud.cs" />
     <Compile Include="Geometric\CsgNode.cs" />
     <Compile Include="Geometric\CsgSolid.cs" />
