@@ -1,4 +1,4 @@
-﻿namespace Sledge.Providers.Texture
+﻿namespace Sledge.Providers.Texture.Spr
 {
     // The Quake source code in client/r_sprite.c has more info on this...
     public enum SpriteOrientation

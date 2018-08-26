@@ -55,7 +55,7 @@ namespace Sledge.BspEditor.Rendering.Converters
             var width = entity.BoundingBox.Width;
             var height = entity.BoundingBox.Height;
 
-            var t = await tc.GetTextureItem("aaatrigger"); // todo
+            var t = await tc.GetTextureItem(name);
 
             var texture = $"{document.Environment.ID}::{name}";
             if (t != null)

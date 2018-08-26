@@ -17,9 +17,6 @@ namespace Sledge.BspEditor.Environment.Goldsource
         public string TypeName => "GoldsourceEnvironment";
         public string Description { get; set; } = "Goldsource";
 
-        [Import("Wad3")] private ITexturePackageProvider _wadProvider;
-        [Import("Fgd")] private IGameDataProvider _fgdProvider;
-
         private T GetVal<T>(Dictionary<string, string> dictionary, string key, T def = default(T))
         {
             if (dictionary.TryGetValue(key, out string val))
@@ -38,7 +35,7 @@ namespace Sledge.BspEditor.Environment.Goldsource
 
         public IEnvironment Deserialise(SerialisedEnvironment environment)
         {
-            var gse = new GoldsourceEnvironment(_wadProvider, _fgdProvider)
+            var gse = new GoldsourceEnvironment()
             {
                 ID = environment.ID,
                 Name = environment.Name,
@@ -110,7 +107,7 @@ namespace Sledge.BspEditor.Environment.Goldsource
 
         public IEnvironment CreateEnvironment()
         {
-            return new GoldsourceEnvironment(_wadProvider, _fgdProvider);
+            return new GoldsourceEnvironment();
         }
 
         public IEnvironmentEditor CreateEditor()

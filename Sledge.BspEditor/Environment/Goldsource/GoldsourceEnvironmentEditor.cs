@@ -62,7 +62,7 @@ namespace Sledge.BspEditor.Environment.Goldsource
 
         public void SetEnvironment(GoldsourceEnvironment env)
         {
-            if (env == null) env = new GoldsourceEnvironment(null, null);
+            if (env == null) env = new GoldsourceEnvironment();
 
             txtGameDir.Text = env.BaseDirectory;
             cmbBaseGame.SelectedItem = env.GameDirectory;
@@ -107,7 +107,7 @@ namespace Sledge.BspEditor.Environment.Goldsource
 
         public GoldsourceEnvironment GetEnvironment()
         {
-            return new GoldsourceEnvironment(null, null)
+            return new GoldsourceEnvironment()
             {
                 BaseDirectory = txtGameDir.Text,
                 GameDirectory = Convert.ToString(cmbBaseGame.SelectedItem, CultureInfo.InvariantCulture),

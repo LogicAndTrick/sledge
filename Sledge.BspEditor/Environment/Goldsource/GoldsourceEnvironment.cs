@@ -12,6 +12,7 @@ using Sledge.BspEditor.Primitives.MapData;
 using Sledge.BspEditor.Primitives.MapObjectData;
 using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.BspEditor.Providers;
+using Sledge.Common;
 using Sledge.Common.Shell.Commands;
 using Sledge.DataStructures.GameData;
 using Sledge.FileSystem;
@@ -24,6 +25,7 @@ namespace Sledge.BspEditor.Environment.Goldsource
     public class GoldsourceEnvironment : IEnvironment
     {
         private readonly ITexturePackageProvider _wadProvider;
+        private readonly ITexturePackageProvider _spriteProvider;
         private readonly IGameDataProvider _fgdProvider;
         private readonly Lazy<Task<TextureCollection>> _textureCollection;
         private readonly List<IEnvironmentData> _data;
@@ -117,10 +119,11 @@ namespace Sledge.BspEditor.Environment.Goldsource
             }
         }
 
-        public GoldsourceEnvironment(ITexturePackageProvider wadProvider, IGameDataProvider fgdProvider)
+        public GoldsourceEnvironment()
         {
-            _wadProvider = wadProvider;
-            _fgdProvider = fgdProvider;
+            _wadProvider = Container.Get<ITexturePackageProvider>("Wad3");
+            _spriteProvider = Container.Get<ITexturePackageProvider>("Spr");
+            _fgdProvider = Container.Get<IGameDataProvider>("Fgd");
 
             _textureCollection = new Lazy<Task<TextureCollection>>(MakeTextureCollectionAsync);
             _gameData = new Lazy<Task<GameData>>(MakeGameDataAsync);
@@ -132,10 +135,13 @@ namespace Sledge.BspEditor.Environment.Goldsource
 
         private async Task<TextureCollection> MakeTextureCollectionAsync()
         {
-            var refs = _wadProvider.GetPackagesInFile(Root).Where(x => !ExcludedWads.Contains(x.Name, StringComparer.InvariantCultureIgnoreCase));
-            var wads = await _wadProvider.GetTexturePackages(refs);
-            // todo sprite packages
-            return new GoldsourceTextureCollection(wads);
+            var wadRefs = _wadProvider.GetPackagesInFile(Root).Where(x => !ExcludedWads.Contains(x.Name, StringComparer.InvariantCultureIgnoreCase));
+            var wads = await _wadProvider.GetTexturePackages(wadRefs);
+
+            var spriteRefs = _spriteProvider.GetPackagesInFile(Root);
+            var sprites = await _spriteProvider.GetTexturePackages(spriteRefs);
+
+            return new GoldsourceTextureCollection(wads.Union(sprites));
         }
 
         private async Task<GameData> MakeGameDataAsync()

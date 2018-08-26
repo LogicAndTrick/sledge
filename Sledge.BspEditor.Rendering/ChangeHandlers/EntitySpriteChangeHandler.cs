@@ -71,7 +71,7 @@ namespace Sledge.BspEditor.Rendering.ChangeHandlers
                        cls.Properties.FirstOrDefault(x => String.Equals(x.Name, "sprite", StringComparison.InvariantCultureIgnoreCase));
             if (prop != null)
             {
-                var val = entity.EntityData.Get<string>(prop.Name);
+                var val = entity.EntityData.Get(prop.Name, prop.DefaultValue);
                 if (!String.IsNullOrWhiteSpace(val)) return val;
             }
             return null;

@@ -78,11 +78,15 @@
     <Compile Include="ProviderNotFoundException.cs" />
     <Compile Include="Texture\MultiTextureStreamSource.cs" />
     <Compile Include="Texture\ITexturePackageProvider.cs" />
+    <Compile Include="Texture\Spr\SpriteRenderMode.cs" />
+    <Compile Include="Texture\Spr\SprTexturePackage.cs" />
+    <Compile Include="Texture\Spr\SprStreamSource.cs" />
+    <Compile Include="Texture\Spr\SprTexturePackageProvider.cs" />
     <Compile Include="Texture\TextureFlags.cs" />
     <Compile Include="Texture\TexturePackageReference.cs" />
     <Compile Include="Texture\NullTextureStreamSource.cs" />
     <Compile Include="Texture\TextureSubItemType.cs" />
-    <Compile Include="Texture\SpriteOrientation.cs" />
+    <Compile Include="Texture\Spr\SpriteOrientation.cs" />
     <Compile Include="Texture\TextureItem.cs" />
     <Compile Include="Texture\TexturePackage.cs" />
     <Compile Include="Texture\ITextureStreamSource.cs" />
