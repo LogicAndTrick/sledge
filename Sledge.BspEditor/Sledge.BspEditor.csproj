@@ -154,6 +154,8 @@
     <Compile Include="Grid\NoGridFactory.cs" />
     <Compile Include="Grid\SquareGrid.cs" />
     <Compile Include="Grid\SquareGridFactory.cs" />
+    <Compile Include="Modification\ChangeHandler.cs" />
+    <Compile Include="Modification\IMapDocumentChangeHandler.cs" />
     <Compile Include="Modification\MapDocumentOperation.cs" />
     <Compile Include="Modification\OperationHandler.cs" />
     <Compile Include="Modification\Operations\Data\AddMapData.cs" />

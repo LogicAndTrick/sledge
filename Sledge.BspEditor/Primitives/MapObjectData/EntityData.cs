@@ -45,11 +45,13 @@ namespace Sledge.BspEditor.Primitives.MapObjectData
         public Vector3? GetVector3(string key)
         {
             if (!Properties.ContainsKey(key)) return null;
+
             var spl = (Properties[key] ?? "").Split(' ');
-            float x, y, z;
-            if (float.TryParse(spl[0], NumberStyles.Float, CultureInfo.InvariantCulture, out x)
-                && float.TryParse(spl[1], NumberStyles.Float, CultureInfo.InvariantCulture, out y)
-                && float.TryParse(spl[2], NumberStyles.Float, CultureInfo.InvariantCulture, out z))
+            if (spl.Length < 3) return null;
+
+            if (float.TryParse(spl[0], NumberStyles.Float, CultureInfo.InvariantCulture, out var x)
+                && float.TryParse(spl[1], NumberStyles.Float, CultureInfo.InvariantCulture, out var y)
+                && float.TryParse(spl[2], NumberStyles.Float, CultureInfo.InvariantCulture, out var z))
             {
                 return new Vector3(x, y, z);
             }

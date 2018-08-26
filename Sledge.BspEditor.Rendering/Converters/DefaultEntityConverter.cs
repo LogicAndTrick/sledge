@@ -1,9 +1,12 @@
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Drawing;
+using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Primitives.MapObjects;
+using Sledge.BspEditor.Rendering.ChangeHandlers;
 using Sledge.BspEditor.Rendering.Scene;
 using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Pipelines;
@@ -88,11 +91,14 @@ namespace Sledge.BspEditor.Rendering.Converters
                 }
             }
 
-            var groups = new[]
+            var groups = new List<BufferGroup>();
+
+            if (!entity.Data.OfType<IContentsReplaced>().Any(x => x.ContentsReplaced))
             {
-                new BufferGroup(PipelineType.FlatColourGeneric, CameraType.Perspective, false, entity.Origin, 0, numSolidIndices),
-                new BufferGroup(PipelineType.WireframeGeneric, entity.IsSelected ? CameraType.Both : CameraType.Orthographic, false, entity.Origin, numSolidIndices, numWireframeIndices)
-            };
+                groups.Add(new BufferGroup(PipelineType.FlatColourGeneric, CameraType.Perspective, false, entity.Origin, 0, numSolidIndices));
+            }
+            
+            groups.Add(new BufferGroup(PipelineType.WireframeGeneric, entity.IsSelected ? CameraType.Both : CameraType.Orthographic, false, entity.Origin, numSolidIndices, numWireframeIndices));
 
             builder.Append(points, indices, groups);
 

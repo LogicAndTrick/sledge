@@ -42,12 +42,16 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ChangeHandlers\EntitySprite.cs" />
+    <Compile Include="ChangeHandlers\EntitySpriteChangeHandler.cs" />
+    <Compile Include="ChangeHandlers\IContentsReplaced.cs" />
     <Compile Include="Converters\AxisLinesConverter.cs" />
     <Compile Include="Converters\CenterHandlesConverter.cs" />
     <Compile Include="Converters\CordonBoundsConverter.cs" />
     <Compile Include="Converters\CordonClippingConverter.cs" />
     <Compile Include="Converters\DefaultEntityConverter.cs" />
     <Compile Include="Converters\DefaultSolidConverter.cs" />
+    <Compile Include="Converters\EntitySpriteConverter.cs" />
     <Compile Include="Converters\HiddenConverter.cs" />
     <Compile Include="Dynamic\DynamicRenderManager.cs" />
     <Compile Include="Dynamic\IDynamicRenderable.cs" />

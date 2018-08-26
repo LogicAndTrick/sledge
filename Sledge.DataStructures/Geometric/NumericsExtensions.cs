@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using System.Numerics;
 
 namespace Sledge.DataStructures.Geometric
@@ -48,9 +49,22 @@ namespace Sledge.DataStructures.Geometric
         }
 
         // Vector4
-        public static Vector4 ToVector4(this System.Drawing.Color self)
+        public static Vector4 ToVector4(this Color self)
         {
             return new Vector4(self.R, self.G, self.B, self.A) / 255f;
+        }
+
+        // Color
+        public static Color ToColor(this Vector4 self)
+        {
+            var mul = self * 255;
+            return Color.FromArgb((byte) mul.W, (byte) mul.X, (byte) mul.Y, (byte) mul.Z);
+        }
+
+        public static Color ToColor(this Vector3 self)
+        {
+            var mul = self * 255;
+            return Color.FromArgb(255, (byte) mul.X, (byte) mul.Y, (byte) mul.Z);
         }
 
         // Matrix

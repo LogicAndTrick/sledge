@@ -44,10 +44,10 @@ void main(point GeometryIn input[1], inout TriangleStream<FragmentIn> output)
     verts[3] = +right - up;
 
     float2 texCoords[4];
-    texCoords[0] = float2(0, 1);
-    texCoords[1] = float2(1, 1);
-    texCoords[2] = float2(0, 0);
-    texCoords[3] = float2(1, 0);
+    texCoords[0] = float2(0, 0);
+    texCoords[1] = float2(1, 0);
+    texCoords[2] = float2(0, 1);
+    texCoords[3] = float2(1, 1);
 
     FragmentIn gOut;
 

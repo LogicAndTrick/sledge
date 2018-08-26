@@ -7,22 +7,16 @@ using Sledge.BspEditor.Modification.Operations;
 using Sledge.BspEditor.Primitives.MapData;
 using Sledge.BspEditor.Primitives.MapObjectData;
 using Sledge.BspEditor.Primitives.MapObjects;
-using Sledge.Common.Shell.Hooks;
 
 namespace Sledge.BspEditor.Modification
 {
     /// <summary>
     /// Handles changes on visgroups and objects to maintain the object list and visibilities.
     /// </summary>
-    [Export(typeof(IInitialiseHook))]
-    public class VisgroupHandler : IInitialiseHook
+    [Export(typeof(IMapDocumentChangeHandler))]
+    public class VisgroupHandler : IMapDocumentChangeHandler
     {
-        public async Task OnInitialise()
-        {
-            Oy.Subscribe<Change>("MapDocument:Changed", Changed);
-        }
-
-        private async Task Changed(Change change)
+        public async Task Changed(Change change)
         {
             var changed = false;
             var visgroups = change.Document.Map.Data.Get<Visgroup>().ToDictionary(x => x.ID, x => x);

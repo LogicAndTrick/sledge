@@ -4,19 +4,13 @@ using System.Linq;
 using System.Threading.Tasks;
 using LogicAndTrick.Oy;
 using Sledge.BspEditor.Primitives.MapData;
-using Sledge.Common.Shell.Hooks;
 
 namespace Sledge.BspEditor.Modification
 {
-    [Export(typeof(IInitialiseHook))]
-    public class SelectionHandler : IInitialiseHook
+    [Export(typeof(IMapDocumentChangeHandler))]
+    public class SelectionHandler : IMapDocumentChangeHandler
     {
-        public async Task OnInitialise()
-        {
-            Oy.Subscribe<Change>("MapDocument:Changed", Changed);
-        }
-
-        private async Task Changed(Change change)
+        public async Task Changed(Change change)
         {
             var sel = change.Document.Map.Data.Get<Selection>().FirstOrDefault();
             if (sel == null)
